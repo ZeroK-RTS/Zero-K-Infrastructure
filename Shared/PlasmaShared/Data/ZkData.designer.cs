@@ -220,9 +220,6 @@ namespace ZkData
     partial void InsertKudosChange(KudosChange instance);
     partial void UpdateKudosChange(KudosChange instance);
     partial void DeleteKudosChange(KudosChange instance);
-    partial void InsertCampaignJournal(CampaignJournal instance);
-    partial void UpdateCampaignJournal(CampaignJournal instance);
-    partial void DeleteCampaignJournal(CampaignJournal instance);
     partial void InsertCampaign(Campaign instance);
     partial void UpdateCampaign(Campaign instance);
     partial void DeleteCampaign(Campaign instance);
@@ -235,6 +232,24 @@ namespace ZkData
     partial void InsertCampaignLink(CampaignLink instance);
     partial void UpdateCampaignLink(CampaignLink instance);
     partial void DeleteCampaignLink(CampaignLink instance);
+    partial void InsertCampaignVar(CampaignVar instance);
+    partial void UpdateCampaignVar(CampaignVar instance);
+    partial void DeleteCampaignVar(CampaignVar instance);
+    partial void InsertCampaignJournal(CampaignJournal instance);
+    partial void UpdateCampaignJournal(CampaignJournal instance);
+    partial void DeleteCampaignJournal(CampaignJournal instance);
+    partial void InsertCampaignPlanetVar(CampaignPlanetVar instance);
+    partial void UpdateCampaignPlanetVar(CampaignPlanetVar instance);
+    partial void DeleteCampaignPlanetVar(CampaignPlanetVar instance);
+    partial void InsertCampaignJournalVar(CampaignJournalVar instance);
+    partial void UpdateCampaignJournalVar(CampaignJournalVar instance);
+    partial void DeleteCampaignJournalVar(CampaignJournalVar instance);
+    partial void InsertAccountCampaignJournalProgress(AccountCampaignJournalProgress instance);
+    partial void UpdateAccountCampaignJournalProgress(AccountCampaignJournalProgress instance);
+    partial void DeleteAccountCampaignJournalProgress(AccountCampaignJournalProgress instance);
+    partial void InsertAccountCampaignVar(AccountCampaignVar instance);
+    partial void UpdateAccountCampaignVar(AccountCampaignVar instance);
+    partial void DeleteAccountCampaignVar(AccountCampaignVar instance);
     #endregion
 		
 		public ZkDataContext(string connection) : 
@@ -765,14 +780,6 @@ namespace ZkData
 			}
 		}
 		
-		public System.Data.Linq.Table<CampaignJournal> CampaignJournals
-		{
-			get
-			{
-				return this.GetTable<CampaignJournal>();
-			}
-		}
-		
 		public System.Data.Linq.Table<Campaign> Campaigns
 		{
 			get
@@ -802,6 +809,54 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<CampaignLink>();
+			}
+		}
+		
+		public System.Data.Linq.Table<CampaignVar> CampaignVars
+		{
+			get
+			{
+				return this.GetTable<CampaignVar>();
+			}
+		}
+		
+		public System.Data.Linq.Table<CampaignJournal> CampaignJournals
+		{
+			get
+			{
+				return this.GetTable<CampaignJournal>();
+			}
+		}
+		
+		public System.Data.Linq.Table<CampaignPlanetVar> CampaignPlanetVars
+		{
+			get
+			{
+				return this.GetTable<CampaignPlanetVar>();
+			}
+		}
+		
+		public System.Data.Linq.Table<CampaignJournalVar> CampaignJournalVars
+		{
+			get
+			{
+				return this.GetTable<CampaignJournalVar>();
+			}
+		}
+		
+		public System.Data.Linq.Table<AccountCampaignJournalProgress> AccountCampaignJournalProgress
+		{
+			get
+			{
+				return this.GetTable<AccountCampaignJournalProgress>();
+			}
+		}
+		
+		public System.Data.Linq.Table<AccountCampaignVar> AccountCampaignVars
+		{
+			get
+			{
+				return this.GetTable<AccountCampaignVar>();
 			}
 		}
 	}
@@ -2629,7 +2684,11 @@ namespace ZkData
 		
 		private EntitySet<KudosChange> _KudosChanges;
 		
-		private EntityRef<AccountCampaignProgress> _AccountCampaignProgress;
+		private EntitySet<AccountCampaignProgress> _AccountCampaignProgress;
+		
+		private EntitySet<AccountCampaignJournalProgress> _AccountCampaignJournalProgress;
+		
+		private EntitySet<AccountCampaignVar> _AccountCampaignVars;
 		
 		private EntityRef<Clan> _Clan;
 		
@@ -4275,38 +4334,60 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountCampaignProgress", Storage="_AccountCampaignProgress", ThisKey="AccountID", OtherKey="AccountID", IsUnique=true, IsForeignKey=false)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountCampaignProgress", Storage="_AccountCampaignProgress", ThisKey="AccountID", OtherKey="AccountID")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=78, EmitDefaultValue=false)]
-		public AccountCampaignProgress AccountCampaignProgress
+		public EntitySet<AccountCampaignProgress> AccountCampaignProgress
 		{
 			get
 			{
 				if ((this.serializing 
-							&& (this._AccountCampaignProgress.HasLoadedOrAssignedValue == false)))
+							&& (this._AccountCampaignProgress.HasLoadedOrAssignedValues == false)))
 				{
 					return null;
 				}
-				return this._AccountCampaignProgress.Entity;
+				return this._AccountCampaignProgress;
 			}
 			set
 			{
-				AccountCampaignProgress previousValue = this._AccountCampaignProgress.Entity;
-				if (((previousValue != value) 
-							|| (this._AccountCampaignProgress.HasLoadedOrAssignedValue == false)))
+				this._AccountCampaignProgress.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountCampaignJournalProgress", Storage="_AccountCampaignJournalProgress", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=79, EmitDefaultValue=false)]
+		public EntitySet<AccountCampaignJournalProgress> AccountCampaignJournalProgress
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountCampaignJournalProgress.HasLoadedOrAssignedValues == false)))
 				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._AccountCampaignProgress.Entity = null;
-						previousValue.Account = null;
-					}
-					this._AccountCampaignProgress.Entity = value;
-					if ((value != null))
-					{
-						value.Account = this;
-					}
-					this.SendPropertyChanged("AccountCampaignProgress");
+					return null;
 				}
+				return this._AccountCampaignJournalProgress;
+			}
+			set
+			{
+				this._AccountCampaignJournalProgress.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountCampaignVar", Storage="_AccountCampaignVars", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=80, EmitDefaultValue=false)]
+		public EntitySet<AccountCampaignVar> AccountCampaignVars
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountCampaignVars.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AccountCampaignVars;
+			}
+			set
+			{
+				this._AccountCampaignVars.Assign(value);
 			}
 		}
 		
@@ -4854,6 +4935,42 @@ namespace ZkData
 			entity.Account = null;
 		}
 		
+		private void attach_AccountCampaignProgress(AccountCampaignProgress entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_AccountCampaignProgress(AccountCampaignProgress entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
+		private void attach_AccountCampaignJournalProgress(AccountCampaignJournalProgress entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_AccountCampaignJournalProgress(AccountCampaignJournalProgress entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
+		private void attach_AccountCampaignVars(AccountCampaignVar entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_AccountCampaignVars(AccountCampaignVar entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
@@ -4894,7 +5011,9 @@ namespace ZkData
 			this._AbuseReportsByAccountID = new EntitySet<AbuseReport>(new Action<AbuseReport>(this.attach_AbuseReportsByAccountID), new Action<AbuseReport>(this.detach_AbuseReportsByAccountID));
 			this._AbuseReportsByReporterAccountID = new EntitySet<AbuseReport>(new Action<AbuseReport>(this.attach_AbuseReportsByReporterAccountID), new Action<AbuseReport>(this.detach_AbuseReportsByReporterAccountID));
 			this._KudosChanges = new EntitySet<KudosChange>(new Action<KudosChange>(this.attach_KudosChanges), new Action<KudosChange>(this.detach_KudosChanges));
-			this._AccountCampaignProgress = default(EntityRef<AccountCampaignProgress>);
+			this._AccountCampaignProgress = new EntitySet<AccountCampaignProgress>(new Action<AccountCampaignProgress>(this.attach_AccountCampaignProgress), new Action<AccountCampaignProgress>(this.detach_AccountCampaignProgress));
+			this._AccountCampaignJournalProgress = new EntitySet<AccountCampaignJournalProgress>(new Action<AccountCampaignJournalProgress>(this.attach_AccountCampaignJournalProgress), new Action<AccountCampaignJournalProgress>(this.detach_AccountCampaignJournalProgress));
+			this._AccountCampaignVars = new EntitySet<AccountCampaignVar>(new Action<AccountCampaignVar>(this.attach_AccountCampaignVars), new Action<AccountCampaignVar>(this.detach_AccountCampaignVars));
 			this._Clan = default(EntityRef<Clan>);
 			this._Faction = default(EntityRef<Faction>);
 			OnCreated();
@@ -27458,314 +27577,6 @@ namespace ZkData
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CampaignJournal")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class CampaignJournal : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _CampaignID;
-		
-		private int _JournalID;
-		
-		private int _PlanetID;
-		
-		private bool _RequiresUnlock;
-		
-		private bool _RequiresCompletion;
-		
-		private string _Title;
-		
-		private string _Text;
-		
-		private EntityRef<Campaign> _Campaign;
-		
-		private EntityRef<CampaignPlanet> _CampaignPlanet;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnCampaignIDChanging(int value);
-    partial void OnCampaignIDChanged();
-    partial void OnJournalIDChanging(int value);
-    partial void OnJournalIDChanged();
-    partial void OnPlanetIDChanging(int value);
-    partial void OnPlanetIDChanged();
-    partial void OnRequiresUnlockChanging(bool value);
-    partial void OnRequiresUnlockChanged();
-    partial void OnRequiresCompletionChanging(bool value);
-    partial void OnRequiresCompletionChanged();
-    partial void OnTitleChanging(string value);
-    partial void OnTitleChanged();
-    partial void OnTextChanging(string value);
-    partial void OnTextChanged();
-    #endregion
-		
-		public CampaignJournal()
-		{
-			this.Initialize();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CampaignID", DbType="Int NOT NULL", IsPrimaryKey=true)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int CampaignID
-		{
-			get
-			{
-				return this._CampaignID;
-			}
-			set
-			{
-				if ((this._CampaignID != value))
-				{
-					if (this._Campaign.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnCampaignIDChanging(value);
-					this.SendPropertyChanging();
-					this._CampaignID = value;
-					this.SendPropertyChanged("CampaignID");
-					this.OnCampaignIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_JournalID", DbType="Int NOT NULL", IsPrimaryKey=true)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int JournalID
-		{
-			get
-			{
-				return this._JournalID;
-			}
-			set
-			{
-				if ((this._JournalID != value))
-				{
-					this.OnJournalIDChanging(value);
-					this.SendPropertyChanging();
-					this._JournalID = value;
-					this.SendPropertyChanged("JournalID");
-					this.OnJournalIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlanetID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public int PlanetID
-		{
-			get
-			{
-				return this._PlanetID;
-			}
-			set
-			{
-				if ((this._PlanetID != value))
-				{
-					if (this._CampaignPlanet.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnPlanetIDChanging(value);
-					this.SendPropertyChanging();
-					this._PlanetID = value;
-					this.SendPropertyChanged("PlanetID");
-					this.OnPlanetIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RequiresUnlock", DbType="Bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public bool RequiresUnlock
-		{
-			get
-			{
-				return this._RequiresUnlock;
-			}
-			set
-			{
-				if ((this._RequiresUnlock != value))
-				{
-					this.OnRequiresUnlockChanging(value);
-					this.SendPropertyChanging();
-					this._RequiresUnlock = value;
-					this.SendPropertyChanged("RequiresUnlock");
-					this.OnRequiresUnlockChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RequiresCompletion", DbType="Bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public bool RequiresCompletion
-		{
-			get
-			{
-				return this._RequiresCompletion;
-			}
-			set
-			{
-				if ((this._RequiresCompletion != value))
-				{
-					this.OnRequiresCompletionChanging(value);
-					this.SendPropertyChanging();
-					this._RequiresCompletion = value;
-					this.SendPropertyChanged("RequiresCompletion");
-					this.OnRequiresCompletionChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Title", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
-		public string Title
-		{
-			get
-			{
-				return this._Title;
-			}
-			set
-			{
-				if ((this._Title != value))
-				{
-					this.OnTitleChanging(value);
-					this.SendPropertyChanging();
-					this._Title = value;
-					this.SendPropertyChanged("Title");
-					this.OnTitleChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Text", DbType="NVarChar(MAX)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
-		public string Text
-		{
-			get
-			{
-				return this._Text;
-			}
-			set
-			{
-				if ((this._Text != value))
-				{
-					this.OnTextChanging(value);
-					this.SendPropertyChanging();
-					this._Text = value;
-					this.SendPropertyChanged("Text");
-					this.OnTextChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_CampaignJournal", Storage="_Campaign", ThisKey="CampaignID", OtherKey="CampaignID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
-		public Campaign Campaign
-		{
-			get
-			{
-				return this._Campaign.Entity;
-			}
-			set
-			{
-				Campaign previousValue = this._Campaign.Entity;
-				if (((previousValue != value) 
-							|| (this._Campaign.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Campaign.Entity = null;
-						previousValue.CampaignJournal = null;
-					}
-					this._Campaign.Entity = value;
-					if ((value != null))
-					{
-						value.CampaignJournal = this;
-						this._CampaignID = value.CampaignID;
-					}
-					else
-					{
-						this._CampaignID = default(int);
-					}
-					this.SendPropertyChanged("Campaign");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignJournal", Storage="_CampaignPlanet", ThisKey="PlanetID", OtherKey="PlanetID", IsForeignKey=true)]
-		public CampaignPlanet CampaignPlanet
-		{
-			get
-			{
-				return this._CampaignPlanet.Entity;
-			}
-			set
-			{
-				CampaignPlanet previousValue = this._CampaignPlanet.Entity;
-				if (((previousValue != value) 
-							|| (this._CampaignPlanet.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._CampaignPlanet.Entity = null;
-						previousValue.CampaignJournals.Remove(this);
-					}
-					this._CampaignPlanet.Entity = value;
-					if ((value != null))
-					{
-						value.CampaignJournals.Add(this);
-						this._PlanetID = value.PlanetID;
-					}
-					else
-					{
-						this._PlanetID = default(int);
-					}
-					this.SendPropertyChanged("CampaignPlanet");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		
-		private void Initialize()
-		{
-			this._Campaign = default(EntityRef<Campaign>);
-			this._CampaignPlanet = default(EntityRef<CampaignPlanet>);
-			OnCreated();
-		}
-		
-		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
-		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
-		public void OnDeserializing(StreamingContext context)
-		{
-			this.Initialize();
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Campaign")]
 	[global::System.Runtime.Serialization.DataContractAttribute()]
 	public partial class Campaign : INotifyPropertyChanging, INotifyPropertyChanged
@@ -27789,13 +27600,23 @@ namespace ZkData
 		
 		private System.Nullable<bool> _IsHidden;
 		
-		private EntityRef<CampaignJournal> _CampaignJournal;
-		
 		private EntitySet<CampaignPlanet> _CampaignPlanets;
 		
 		private EntitySet<AccountCampaignProgress> _AccountCampaignProgress;
 		
 		private EntitySet<CampaignLink> _CampaignLinks;
+		
+		private EntitySet<CampaignVar> _CampaignVars;
+		
+		private EntitySet<CampaignJournal> _CampaignJournals;
+		
+		private EntitySet<CampaignPlanetVar> _CampaignPlanetVars;
+		
+		private EntitySet<CampaignJournalVar> _CampaignJournalVars;
+		
+		private EntitySet<AccountCampaignJournalProgress> _AccountCampaignJournalProgress;
+		
+		private EntitySet<AccountCampaignVar> _AccountCampaignVars;
 		
 		private bool serializing;
 		
@@ -27994,43 +27815,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_CampaignJournal", Storage="_CampaignJournal", ThisKey="CampaignID", OtherKey="CampaignID", IsUnique=true, IsForeignKey=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
-		public CampaignJournal CampaignJournal
-		{
-			get
-			{
-				if ((this.serializing 
-							&& (this._CampaignJournal.HasLoadedOrAssignedValue == false)))
-				{
-					return null;
-				}
-				return this._CampaignJournal.Entity;
-			}
-			set
-			{
-				CampaignJournal previousValue = this._CampaignJournal.Entity;
-				if (((previousValue != value) 
-							|| (this._CampaignJournal.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._CampaignJournal.Entity = null;
-						previousValue.Campaign = null;
-					}
-					this._CampaignJournal.Entity = value;
-					if ((value != null))
-					{
-						value.Campaign = this;
-					}
-					this.SendPropertyChanged("CampaignJournal");
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_CampaignPlanet", Storage="_CampaignPlanets", ThisKey="CampaignID", OtherKey="CampaignID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
 		public EntitySet<CampaignPlanet> CampaignPlanets
 		{
 			get
@@ -28049,7 +27835,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_AccountCampaignProgress", Storage="_AccountCampaignProgress", ThisKey="CampaignID", OtherKey="CampaignID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
 		public EntitySet<AccountCampaignProgress> AccountCampaignProgress
 		{
 			get
@@ -28068,7 +27854,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_CampaignLink", Storage="_CampaignLinks", ThisKey="CampaignID", OtherKey="CampaignID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
 		public EntitySet<CampaignLink> CampaignLinks
 		{
 			get
@@ -28083,6 +27869,120 @@ namespace ZkData
 			set
 			{
 				this._CampaignLinks.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_CampaignVar", Storage="_CampaignVars", ThisKey="CampaignID", OtherKey="CampaignID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
+		public EntitySet<CampaignVar> CampaignVars
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._CampaignVars.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._CampaignVars;
+			}
+			set
+			{
+				this._CampaignVars.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_CampaignJournal", Storage="_CampaignJournals", ThisKey="CampaignID", OtherKey="CampaignID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
+		public EntitySet<CampaignJournal> CampaignJournals
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._CampaignJournals.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._CampaignJournals;
+			}
+			set
+			{
+				this._CampaignJournals.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_CampaignPlanetVar", Storage="_CampaignPlanetVars", ThisKey="CampaignID", OtherKey="CampaignID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
+		public EntitySet<CampaignPlanetVar> CampaignPlanetVars
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._CampaignPlanetVars.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._CampaignPlanetVars;
+			}
+			set
+			{
+				this._CampaignPlanetVars.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_CampaignJournalVar", Storage="_CampaignJournalVars", ThisKey="CampaignID", OtherKey="CampaignID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
+		public EntitySet<CampaignJournalVar> CampaignJournalVars
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._CampaignJournalVars.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._CampaignJournalVars;
+			}
+			set
+			{
+				this._CampaignJournalVars.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_AccountCampaignJournalProgress", Storage="_AccountCampaignJournalProgress", ThisKey="CampaignID", OtherKey="CampaignID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
+		public EntitySet<AccountCampaignJournalProgress> AccountCampaignJournalProgress
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountCampaignJournalProgress.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AccountCampaignJournalProgress;
+			}
+			set
+			{
+				this._AccountCampaignJournalProgress.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_AccountCampaignVar", Storage="_AccountCampaignVars", ThisKey="CampaignID", OtherKey="CampaignID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
+		public EntitySet<AccountCampaignVar> AccountCampaignVars
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountCampaignVars.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AccountCampaignVars;
+			}
+			set
+			{
+				this._AccountCampaignVars.Assign(value);
 			}
 		}
 		
@@ -28142,12 +28042,89 @@ namespace ZkData
 			entity.Campaign = null;
 		}
 		
+		private void attach_CampaignVars(CampaignVar entity)
+		{
+			this.SendPropertyChanging();
+			entity.Campaign = this;
+		}
+		
+		private void detach_CampaignVars(CampaignVar entity)
+		{
+			this.SendPropertyChanging();
+			entity.Campaign = null;
+		}
+		
+		private void attach_CampaignJournals(CampaignJournal entity)
+		{
+			this.SendPropertyChanging();
+			entity.Campaign = this;
+		}
+		
+		private void detach_CampaignJournals(CampaignJournal entity)
+		{
+			this.SendPropertyChanging();
+			entity.Campaign = null;
+		}
+		
+		private void attach_CampaignPlanetVars(CampaignPlanetVar entity)
+		{
+			this.SendPropertyChanging();
+			entity.Campaign = this;
+		}
+		
+		private void detach_CampaignPlanetVars(CampaignPlanetVar entity)
+		{
+			this.SendPropertyChanging();
+			entity.Campaign = null;
+		}
+		
+		private void attach_CampaignJournalVars(CampaignJournalVar entity)
+		{
+			this.SendPropertyChanging();
+			entity.Campaign = this;
+		}
+		
+		private void detach_CampaignJournalVars(CampaignJournalVar entity)
+		{
+			this.SendPropertyChanging();
+			entity.Campaign = null;
+		}
+		
+		private void attach_AccountCampaignJournalProgress(AccountCampaignJournalProgress entity)
+		{
+			this.SendPropertyChanging();
+			entity.Campaign = this;
+		}
+		
+		private void detach_AccountCampaignJournalProgress(AccountCampaignJournalProgress entity)
+		{
+			this.SendPropertyChanging();
+			entity.Campaign = null;
+		}
+		
+		private void attach_AccountCampaignVars(AccountCampaignVar entity)
+		{
+			this.SendPropertyChanging();
+			entity.Campaign = this;
+		}
+		
+		private void detach_AccountCampaignVars(AccountCampaignVar entity)
+		{
+			this.SendPropertyChanging();
+			entity.Campaign = null;
+		}
+		
 		private void Initialize()
 		{
-			this._CampaignJournal = default(EntityRef<CampaignJournal>);
 			this._CampaignPlanets = new EntitySet<CampaignPlanet>(new Action<CampaignPlanet>(this.attach_CampaignPlanets), new Action<CampaignPlanet>(this.detach_CampaignPlanets));
 			this._AccountCampaignProgress = new EntitySet<AccountCampaignProgress>(new Action<AccountCampaignProgress>(this.attach_AccountCampaignProgress), new Action<AccountCampaignProgress>(this.detach_AccountCampaignProgress));
 			this._CampaignLinks = new EntitySet<CampaignLink>(new Action<CampaignLink>(this.attach_CampaignLinks), new Action<CampaignLink>(this.detach_CampaignLinks));
+			this._CampaignVars = new EntitySet<CampaignVar>(new Action<CampaignVar>(this.attach_CampaignVars), new Action<CampaignVar>(this.detach_CampaignVars));
+			this._CampaignJournals = new EntitySet<CampaignJournal>(new Action<CampaignJournal>(this.attach_CampaignJournals), new Action<CampaignJournal>(this.detach_CampaignJournals));
+			this._CampaignPlanetVars = new EntitySet<CampaignPlanetVar>(new Action<CampaignPlanetVar>(this.attach_CampaignPlanetVars), new Action<CampaignPlanetVar>(this.detach_CampaignPlanetVars));
+			this._CampaignJournalVars = new EntitySet<CampaignJournalVar>(new Action<CampaignJournalVar>(this.attach_CampaignJournalVars), new Action<CampaignJournalVar>(this.detach_CampaignJournalVars));
+			this._AccountCampaignJournalProgress = new EntitySet<AccountCampaignJournalProgress>(new Action<AccountCampaignJournalProgress>(this.attach_AccountCampaignJournalProgress), new Action<AccountCampaignJournalProgress>(this.detach_AccountCampaignJournalProgress));
+			this._AccountCampaignVars = new EntitySet<AccountCampaignVar>(new Action<AccountCampaignVar>(this.attach_AccountCampaignVars), new Action<AccountCampaignVar>(this.detach_AccountCampaignVars));
 			OnCreated();
 		}
 		
@@ -28198,11 +28175,15 @@ namespace ZkData
 		
 		private bool _StartsUnlocked;
 		
-		private EntitySet<CampaignJournal> _CampaignJournals;
-		
-		private EntityRef<CampaignLink> _CampaignLink;
+		private EntitySet<AccountCampaignProgress> _AccountCampaignProgress;
 		
 		private EntitySet<CampaignLink> _CampaignLinks;
+		
+		private EntitySet<CampaignLink> _CampaignLinks1;
+		
+		private EntitySet<CampaignJournal> _CampaignJournals;
+		
+		private EntitySet<CampaignPlanetVar> _CampaignPlanetVars;
 		
 		private EntityRef<Campaign> _Campaign;
 		
@@ -28436,8 +28417,65 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignJournal", Storage="_CampaignJournals", ThisKey="PlanetID", OtherKey="PlanetID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_AccountCampaignProgress", Storage="_AccountCampaignProgress", ThisKey="CampaignID,PlanetID", OtherKey="CampaignID,PlanetID")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
+		public EntitySet<AccountCampaignProgress> AccountCampaignProgress
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountCampaignProgress.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AccountCampaignProgress;
+			}
+			set
+			{
+				this._AccountCampaignProgress.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignLink", Storage="_CampaignLinks", ThisKey="CampaignID,PlanetID", OtherKey="CampaignID,PlanetToUnlockID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
+		public EntitySet<CampaignLink> CampaignLinks
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._CampaignLinks.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._CampaignLinks;
+			}
+			set
+			{
+				this._CampaignLinks.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignLink1", Storage="_CampaignLinks1", ThisKey="CampaignID,PlanetID", OtherKey="CampaignID,UnlockingPlanetID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
+		public EntitySet<CampaignLink> CampaignLinks1
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._CampaignLinks1.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._CampaignLinks1;
+			}
+			set
+			{
+				this._CampaignLinks1.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignJournal", Storage="_CampaignJournals", ThisKey="CampaignID,PlanetID", OtherKey="CampaignID,PlanetID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
 		public EntitySet<CampaignJournal> CampaignJournals
 		{
 			get
@@ -28455,57 +28493,22 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignLink", Storage="_CampaignLink", ThisKey="PlanetID", OtherKey="PlanetToUnlockID", IsUnique=true, IsForeignKey=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
-		public CampaignLink CampaignLink
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignPlanetVar", Storage="_CampaignPlanetVars", ThisKey="CampaignID,PlanetID", OtherKey="CampaignID,PlanetID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
+		public EntitySet<CampaignPlanetVar> CampaignPlanetVars
 		{
 			get
 			{
 				if ((this.serializing 
-							&& (this._CampaignLink.HasLoadedOrAssignedValue == false)))
+							&& (this._CampaignPlanetVars.HasLoadedOrAssignedValues == false)))
 				{
 					return null;
 				}
-				return this._CampaignLink.Entity;
+				return this._CampaignPlanetVars;
 			}
 			set
 			{
-				CampaignLink previousValue = this._CampaignLink.Entity;
-				if (((previousValue != value) 
-							|| (this._CampaignLink.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._CampaignLink.Entity = null;
-						previousValue.PlanetToUnlock = null;
-					}
-					this._CampaignLink.Entity = value;
-					if ((value != null))
-					{
-						value.PlanetToUnlock = this;
-					}
-					this.SendPropertyChanged("CampaignLink");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignLink1", Storage="_CampaignLinks", ThisKey="PlanetID", OtherKey="UnlockingPlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
-		public EntitySet<CampaignLink> CampaignLinks
-		{
-			get
-			{
-				if ((this.serializing 
-							&& (this._CampaignLinks.HasLoadedOrAssignedValues == false)))
-				{
-					return null;
-				}
-				return this._CampaignLinks;
-			}
-			set
-			{
-				this._CampaignLinks.Assign(value);
+				this._CampaignPlanetVars.Assign(value);
 			}
 		}
 		
@@ -28597,13 +28600,13 @@ namespace ZkData
 			}
 		}
 		
-		private void attach_CampaignJournals(CampaignJournal entity)
+		private void attach_AccountCampaignProgress(AccountCampaignProgress entity)
 		{
 			this.SendPropertyChanging();
 			entity.CampaignPlanet = this;
 		}
 		
-		private void detach_CampaignJournals(CampaignJournal entity)
+		private void detach_AccountCampaignProgress(AccountCampaignProgress entity)
 		{
 			this.SendPropertyChanging();
 			entity.CampaignPlanet = null;
@@ -28612,20 +28615,58 @@ namespace ZkData
 		private void attach_CampaignLinks(CampaignLink entity)
 		{
 			this.SendPropertyChanging();
-			entity.UnlockingPlanet = this;
+			entity.PlanetToUnlock = this;
 		}
 		
 		private void detach_CampaignLinks(CampaignLink entity)
 		{
 			this.SendPropertyChanging();
+			entity.PlanetToUnlock = null;
+		}
+		
+		private void attach_CampaignLinks1(CampaignLink entity)
+		{
+			this.SendPropertyChanging();
+			entity.UnlockingPlanet = this;
+		}
+		
+		private void detach_CampaignLinks1(CampaignLink entity)
+		{
+			this.SendPropertyChanging();
 			entity.UnlockingPlanet = null;
+		}
+		
+		private void attach_CampaignJournals(CampaignJournal entity)
+		{
+			this.SendPropertyChanging();
+			entity.Planet = this;
+		}
+		
+		private void detach_CampaignJournals(CampaignJournal entity)
+		{
+			this.SendPropertyChanging();
+			entity.Planet = null;
+		}
+		
+		private void attach_CampaignPlanetVars(CampaignPlanetVar entity)
+		{
+			this.SendPropertyChanging();
+			entity.CampaignPlanet = this;
+		}
+		
+		private void detach_CampaignPlanetVars(CampaignPlanetVar entity)
+		{
+			this.SendPropertyChanging();
+			entity.CampaignPlanet = null;
 		}
 		
 		private void Initialize()
 		{
-			this._CampaignJournals = new EntitySet<CampaignJournal>(new Action<CampaignJournal>(this.attach_CampaignJournals), new Action<CampaignJournal>(this.detach_CampaignJournals));
-			this._CampaignLink = default(EntityRef<CampaignLink>);
+			this._AccountCampaignProgress = new EntitySet<AccountCampaignProgress>(new Action<AccountCampaignProgress>(this.attach_AccountCampaignProgress), new Action<AccountCampaignProgress>(this.detach_AccountCampaignProgress));
 			this._CampaignLinks = new EntitySet<CampaignLink>(new Action<CampaignLink>(this.attach_CampaignLinks), new Action<CampaignLink>(this.detach_CampaignLinks));
+			this._CampaignLinks1 = new EntitySet<CampaignLink>(new Action<CampaignLink>(this.attach_CampaignLinks1), new Action<CampaignLink>(this.detach_CampaignLinks1));
+			this._CampaignJournals = new EntitySet<CampaignJournal>(new Action<CampaignJournal>(this.attach_CampaignJournals), new Action<CampaignJournal>(this.detach_CampaignJournals));
+			this._CampaignPlanetVars = new EntitySet<CampaignPlanetVar>(new Action<CampaignPlanetVar>(this.attach_CampaignPlanetVars), new Action<CampaignPlanetVar>(this.detach_CampaignPlanetVars));
 			this._Campaign = default(EntityRef<Campaign>);
 			this._Mission = default(EntityRef<Mission>);
 			OnCreated();
@@ -28674,9 +28715,7 @@ namespace ZkData
 		
 		private EntityRef<Campaign> _Campaign;
 		
-		private EntityRef<CampaignPlanet> _Planet;
-		
-		private bool serializing;
+		private EntityRef<CampaignPlanet> _CampaignPlanet;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -28736,7 +28775,7 @@ namespace ZkData
 			{
 				if ((this._CampaignID != value))
 				{
-					if (this._Campaign.HasLoadedOrAssignedValue)
+					if ((this._Campaign.HasLoadedOrAssignedValue || this._CampaignPlanet.HasLoadedOrAssignedValue))
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
@@ -28761,7 +28800,7 @@ namespace ZkData
 			{
 				if ((this._PlanetID != value))
 				{
-					if (this._Planet.HasLoadedOrAssignedValue)
+					if (this._CampaignPlanet.HasLoadedOrAssignedValue)
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
@@ -28833,12 +28872,12 @@ namespace ZkData
 					if ((previousValue != null))
 					{
 						this._Account.Entity = null;
-						previousValue.AccountCampaignProgress = null;
+						previousValue.AccountCampaignProgress.Remove(this);
 					}
 					this._Account.Entity = value;
 					if ((value != null))
 					{
-						value.AccountCampaignProgress = this;
+						value.AccountCampaignProgress.Add(this);
 						this._AccountID = value.AccountID;
 					}
 					else
@@ -28850,7 +28889,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_AccountCampaignProgress", Storage="_Campaign", ThisKey="CampaignID", OtherKey="CampaignID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_AccountCampaignProgress", Storage="_Campaign", ThisKey="CampaignID", OtherKey="CampaignID", IsForeignKey=true)]
 		public Campaign Campaign
 		{
 			get
@@ -28884,26 +28923,38 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_AccountCampaignProgress", Storage="_Planet", ThisKey="PlanetID", OtherKey="PlanetID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6, EmitDefaultValue=false)]
-		public CampaignPlanet Planet
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_AccountCampaignProgress", Storage="_CampaignPlanet", ThisKey="CampaignID,PlanetID", OtherKey="CampaignID,PlanetID", IsForeignKey=true)]
+		public CampaignPlanet CampaignPlanet
 		{
 			get
 			{
-				if ((this.serializing 
-							&& (this._Planet.HasLoadedOrAssignedValue == false)))
-				{
-					return null;
-				}
-				return this._Planet.Entity;
+				return this._CampaignPlanet.Entity;
 			}
 			set
 			{
-				if ((this._Planet.Entity != value))
+				CampaignPlanet previousValue = this._CampaignPlanet.Entity;
+				if (((previousValue != value) 
+							|| (this._CampaignPlanet.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
-					this._Planet.Entity = value;
-					this.SendPropertyChanged("Planet");
+					if ((previousValue != null))
+					{
+						this._CampaignPlanet.Entity = null;
+						previousValue.AccountCampaignProgress.Remove(this);
+					}
+					this._CampaignPlanet.Entity = value;
+					if ((value != null))
+					{
+						value.AccountCampaignProgress.Add(this);
+						this._CampaignID = value.CampaignID;
+						this._PlanetID = value.PlanetID;
+					}
+					else
+					{
+						this._CampaignID = default(int);
+						this._PlanetID = default(int);
+					}
+					this.SendPropertyChanged("CampaignPlanet");
 				}
 			}
 		}
@@ -28932,7 +28983,7 @@ namespace ZkData
 		{
 			this._Account = default(EntityRef<Account>);
 			this._Campaign = default(EntityRef<Campaign>);
-			this._Planet = default(EntityRef<CampaignPlanet>);
+			this._CampaignPlanet = default(EntityRef<CampaignPlanet>);
 			OnCreated();
 		}
 		
@@ -28941,20 +28992,6 @@ namespace ZkData
 		public void OnDeserializing(StreamingContext context)
 		{
 			this.Initialize();
-		}
-		
-		[global::System.Runtime.Serialization.OnSerializingAttribute()]
-		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
-		public void OnSerializing(StreamingContext context)
-		{
-			this.serializing = true;
-		}
-		
-		[global::System.Runtime.Serialization.OnSerializedAttribute()]
-		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
-		public void OnSerialized(StreamingContext context)
-		{
-			this.serializing = false;
 		}
 	}
 	
@@ -28968,8 +29005,6 @@ namespace ZkData
 		private int _PlanetToUnlockID;
 		
 		private int _UnlockingPlanetID;
-		
-		private int _UnlockSet;
 		
 		private int _CampaignID;
 		
@@ -28987,8 +29022,6 @@ namespace ZkData
     partial void OnPlanetToUnlockIDChanged();
     partial void OnUnlockingPlanetIDChanging(int value);
     partial void OnUnlockingPlanetIDChanged();
-    partial void OnUnlockSetChanging(int value);
-    partial void OnUnlockSetChanged();
     partial void OnCampaignIDChanging(int value);
     partial void OnCampaignIDChanged();
     #endregion
@@ -29048,29 +29081,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UnlockSet", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public int UnlockSet
-		{
-			get
-			{
-				return this._UnlockSet;
-			}
-			set
-			{
-				if ((this._UnlockSet != value))
-				{
-					this.OnUnlockSetChanging(value);
-					this.SendPropertyChanging();
-					this._UnlockSet = value;
-					this.SendPropertyChanged("UnlockSet");
-					this.OnUnlockSetChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CampaignID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
 		public int CampaignID
 		{
 			get
@@ -29081,7 +29093,8 @@ namespace ZkData
 			{
 				if ((this._CampaignID != value))
 				{
-					if (this._Campaign.HasLoadedOrAssignedValue)
+					if (((this._Campaign.HasLoadedOrAssignedValue || this._PlanetToUnlock.HasLoadedOrAssignedValue) 
+								|| this._UnlockingPlanet.HasLoadedOrAssignedValue))
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
@@ -29128,7 +29141,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignLink", Storage="_PlanetToUnlock", ThisKey="PlanetToUnlockID", OtherKey="PlanetID", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignLink", Storage="_PlanetToUnlock", ThisKey="CampaignID,PlanetToUnlockID", OtherKey="CampaignID,PlanetID", IsForeignKey=true)]
 		public CampaignPlanet PlanetToUnlock
 		{
 			get
@@ -29145,16 +29158,18 @@ namespace ZkData
 					if ((previousValue != null))
 					{
 						this._PlanetToUnlock.Entity = null;
-						previousValue.CampaignLink = null;
+						previousValue.CampaignLinks.Remove(this);
 					}
 					this._PlanetToUnlock.Entity = value;
 					if ((value != null))
 					{
-						value.CampaignLink = this;
+						value.CampaignLinks.Add(this);
+						this._CampaignID = value.CampaignID;
 						this._PlanetToUnlockID = value.PlanetID;
 					}
 					else
 					{
+						this._CampaignID = default(int);
 						this._PlanetToUnlockID = default(int);
 					}
 					this.SendPropertyChanged("PlanetToUnlock");
@@ -29162,7 +29177,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignLink1", Storage="_UnlockingPlanet", ThisKey="UnlockingPlanetID", OtherKey="PlanetID", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignLink1", Storage="_UnlockingPlanet", ThisKey="CampaignID,UnlockingPlanetID", OtherKey="CampaignID,PlanetID", IsForeignKey=true)]
 		public CampaignPlanet UnlockingPlanet
 		{
 			get
@@ -29179,16 +29194,18 @@ namespace ZkData
 					if ((previousValue != null))
 					{
 						this._UnlockingPlanet.Entity = null;
-						previousValue.CampaignLinks.Remove(this);
+						previousValue.CampaignLinks1.Remove(this);
 					}
 					this._UnlockingPlanet.Entity = value;
 					if ((value != null))
 					{
-						value.CampaignLinks.Add(this);
+						value.CampaignLinks1.Add(this);
+						this._CampaignID = value.CampaignID;
 						this._UnlockingPlanetID = value.PlanetID;
 					}
 					else
 					{
+						this._CampaignID = default(int);
 						this._UnlockingPlanetID = default(int);
 					}
 					this.SendPropertyChanged("UnlockingPlanet");
@@ -29221,6 +29238,1845 @@ namespace ZkData
 			this._Campaign = default(EntityRef<Campaign>);
 			this._PlanetToUnlock = default(EntityRef<CampaignPlanet>);
 			this._UnlockingPlanet = default(EntityRef<CampaignPlanet>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CampaignVar")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class CampaignVar : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _CampaignID;
+		
+		private int _VarID;
+		
+		private string _Description;
+		
+		private EntitySet<CampaignPlanetVar> _CampaignPlanetVars;
+		
+		private EntitySet<CampaignJournalVar> _CampaignJournalVars;
+		
+		private EntitySet<AccountCampaignVar> _AccountCampaignVars;
+		
+		private EntityRef<Campaign> _Campaign;
+		
+		private bool serializing;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnCampaignIDChanging(int value);
+    partial void OnCampaignIDChanged();
+    partial void OnVarIDChanging(int value);
+    partial void OnVarIDChanged();
+    partial void OnDescriptionChanging(string value);
+    partial void OnDescriptionChanged();
+    #endregion
+		
+		public CampaignVar()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CampaignID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int CampaignID
+		{
+			get
+			{
+				return this._CampaignID;
+			}
+			set
+			{
+				if ((this._CampaignID != value))
+				{
+					if (this._Campaign.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCampaignIDChanging(value);
+					this.SendPropertyChanging();
+					this._CampaignID = value;
+					this.SendPropertyChanged("CampaignID");
+					this.OnCampaignIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_VarID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int VarID
+		{
+			get
+			{
+				return this._VarID;
+			}
+			set
+			{
+				if ((this._VarID != value))
+				{
+					this.OnVarIDChanging(value);
+					this.SendPropertyChanging();
+					this._VarID = value;
+					this.SendPropertyChanged("VarID");
+					this.OnVarIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="NVarChar(MAX)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public string Description
+		{
+			get
+			{
+				return this._Description;
+			}
+			set
+			{
+				if ((this._Description != value))
+				{
+					this.OnDescriptionChanging(value);
+					this.SendPropertyChanging();
+					this._Description = value;
+					this.SendPropertyChanged("Description");
+					this.OnDescriptionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignVar_CampaignPlanetVar", Storage="_CampaignPlanetVars", ThisKey="CampaignID,VarID", OtherKey="CampaignID,RequiredVarID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4, EmitDefaultValue=false)]
+		public EntitySet<CampaignPlanetVar> CampaignPlanetVars
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._CampaignPlanetVars.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._CampaignPlanetVars;
+			}
+			set
+			{
+				this._CampaignPlanetVars.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignVar_CampaignJournalVar", Storage="_CampaignJournalVars", ThisKey="CampaignID,VarID", OtherKey="CampaignID,RequiredVarID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5, EmitDefaultValue=false)]
+		public EntitySet<CampaignJournalVar> CampaignJournalVars
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._CampaignJournalVars.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._CampaignJournalVars;
+			}
+			set
+			{
+				this._CampaignJournalVars.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignVar_AccountCampaignVar", Storage="_AccountCampaignVars", ThisKey="CampaignID,VarID", OtherKey="CampaignID,VarID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6, EmitDefaultValue=false)]
+		public EntitySet<AccountCampaignVar> AccountCampaignVars
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountCampaignVars.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AccountCampaignVars;
+			}
+			set
+			{
+				this._AccountCampaignVars.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_CampaignVar", Storage="_Campaign", ThisKey="CampaignID", OtherKey="CampaignID", IsForeignKey=true)]
+		public Campaign Campaign
+		{
+			get
+			{
+				return this._Campaign.Entity;
+			}
+			set
+			{
+				Campaign previousValue = this._Campaign.Entity;
+				if (((previousValue != value) 
+							|| (this._Campaign.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Campaign.Entity = null;
+						previousValue.CampaignVars.Remove(this);
+					}
+					this._Campaign.Entity = value;
+					if ((value != null))
+					{
+						value.CampaignVars.Add(this);
+						this._CampaignID = value.CampaignID;
+					}
+					else
+					{
+						this._CampaignID = default(int);
+					}
+					this.SendPropertyChanged("Campaign");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_CampaignPlanetVars(CampaignPlanetVar entity)
+		{
+			this.SendPropertyChanging();
+			entity.CampaignVar = this;
+		}
+		
+		private void detach_CampaignPlanetVars(CampaignPlanetVar entity)
+		{
+			this.SendPropertyChanging();
+			entity.CampaignVar = null;
+		}
+		
+		private void attach_CampaignJournalVars(CampaignJournalVar entity)
+		{
+			this.SendPropertyChanging();
+			entity.CampaignVar = this;
+		}
+		
+		private void detach_CampaignJournalVars(CampaignJournalVar entity)
+		{
+			this.SendPropertyChanging();
+			entity.CampaignVar = null;
+		}
+		
+		private void attach_AccountCampaignVars(AccountCampaignVar entity)
+		{
+			this.SendPropertyChanging();
+			entity.CampaignVar = this;
+		}
+		
+		private void detach_AccountCampaignVars(AccountCampaignVar entity)
+		{
+			this.SendPropertyChanging();
+			entity.CampaignVar = null;
+		}
+		
+		private void Initialize()
+		{
+			this._CampaignPlanetVars = new EntitySet<CampaignPlanetVar>(new Action<CampaignPlanetVar>(this.attach_CampaignPlanetVars), new Action<CampaignPlanetVar>(this.detach_CampaignPlanetVars));
+			this._CampaignJournalVars = new EntitySet<CampaignJournalVar>(new Action<CampaignJournalVar>(this.attach_CampaignJournalVars), new Action<CampaignJournalVar>(this.detach_CampaignJournalVars));
+			this._AccountCampaignVars = new EntitySet<AccountCampaignVar>(new Action<AccountCampaignVar>(this.attach_AccountCampaignVars), new Action<AccountCampaignVar>(this.detach_AccountCampaignVars));
+			this._Campaign = default(EntityRef<Campaign>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerializing(StreamingContext context)
+		{
+			this.serializing = true;
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializedAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerialized(StreamingContext context)
+		{
+			this.serializing = false;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CampaignJournal")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class CampaignJournal : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _CampaignID;
+		
+		private int _JournalID;
+		
+		private int _PlanetID;
+		
+		private bool _UnlockOnPlanetUnlock;
+		
+		private bool _UnlockOnPlanetCompletion;
+		
+		private bool _StartsUnlocked;
+		
+		private string _Title;
+		
+		private string _Text;
+		
+		private string _Category;
+		
+		private EntitySet<CampaignJournalVar> _CampaignJournalVars;
+		
+		private EntitySet<AccountCampaignJournalProgress> _AccountCampaignJournalProgress;
+		
+		private EntityRef<Campaign> _Campaign;
+		
+		private EntityRef<CampaignPlanet> _Planet;
+		
+		private bool serializing;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnCampaignIDChanging(int value);
+    partial void OnCampaignIDChanged();
+    partial void OnJournalIDChanging(int value);
+    partial void OnJournalIDChanged();
+    partial void OnPlanetIDChanging(int value);
+    partial void OnPlanetIDChanged();
+    partial void OnUnlockOnPlanetUnlockChanging(bool value);
+    partial void OnUnlockOnPlanetUnlockChanged();
+    partial void OnUnlockOnPlanetCompletionChanging(bool value);
+    partial void OnUnlockOnPlanetCompletionChanged();
+    partial void OnStartsUnlockedChanging(bool value);
+    partial void OnStartsUnlockedChanged();
+    partial void OnTitleChanging(string value);
+    partial void OnTitleChanged();
+    partial void OnTextChanging(string value);
+    partial void OnTextChanged();
+    partial void OnCategoryChanging(string value);
+    partial void OnCategoryChanged();
+    #endregion
+		
+		public CampaignJournal()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CampaignID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int CampaignID
+		{
+			get
+			{
+				return this._CampaignID;
+			}
+			set
+			{
+				if ((this._CampaignID != value))
+				{
+					if ((this._Campaign.HasLoadedOrAssignedValue || this._Planet.HasLoadedOrAssignedValue))
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCampaignIDChanging(value);
+					this.SendPropertyChanging();
+					this._CampaignID = value;
+					this.SendPropertyChanged("CampaignID");
+					this.OnCampaignIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_JournalID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int JournalID
+		{
+			get
+			{
+				return this._JournalID;
+			}
+			set
+			{
+				if ((this._JournalID != value))
+				{
+					this.OnJournalIDChanging(value);
+					this.SendPropertyChanging();
+					this._JournalID = value;
+					this.SendPropertyChanged("JournalID");
+					this.OnJournalIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlanetID", DbType="Int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int PlanetID
+		{
+			get
+			{
+				return this._PlanetID;
+			}
+			set
+			{
+				if ((this._PlanetID != value))
+				{
+					if (this._Planet.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnPlanetIDChanging(value);
+					this.SendPropertyChanging();
+					this._PlanetID = value;
+					this.SendPropertyChanged("PlanetID");
+					this.OnPlanetIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UnlockOnPlanetUnlock", DbType="Bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public bool UnlockOnPlanetUnlock
+		{
+			get
+			{
+				return this._UnlockOnPlanetUnlock;
+			}
+			set
+			{
+				if ((this._UnlockOnPlanetUnlock != value))
+				{
+					this.OnUnlockOnPlanetUnlockChanging(value);
+					this.SendPropertyChanging();
+					this._UnlockOnPlanetUnlock = value;
+					this.SendPropertyChanged("UnlockOnPlanetUnlock");
+					this.OnUnlockOnPlanetUnlockChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UnlockOnPlanetCompletion", DbType="Bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public bool UnlockOnPlanetCompletion
+		{
+			get
+			{
+				return this._UnlockOnPlanetCompletion;
+			}
+			set
+			{
+				if ((this._UnlockOnPlanetCompletion != value))
+				{
+					this.OnUnlockOnPlanetCompletionChanging(value);
+					this.SendPropertyChanging();
+					this._UnlockOnPlanetCompletion = value;
+					this.SendPropertyChanged("UnlockOnPlanetCompletion");
+					this.OnUnlockOnPlanetCompletionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StartsUnlocked", DbType="Bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public bool StartsUnlocked
+		{
+			get
+			{
+				return this._StartsUnlocked;
+			}
+			set
+			{
+				if ((this._StartsUnlocked != value))
+				{
+					this.OnStartsUnlockedChanging(value);
+					this.SendPropertyChanging();
+					this._StartsUnlocked = value;
+					this.SendPropertyChanged("StartsUnlocked");
+					this.OnStartsUnlockedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Title", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
+		public string Title
+		{
+			get
+			{
+				return this._Title;
+			}
+			set
+			{
+				if ((this._Title != value))
+				{
+					this.OnTitleChanging(value);
+					this.SendPropertyChanging();
+					this._Title = value;
+					this.SendPropertyChanged("Title");
+					this.OnTitleChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Text", DbType="NVarChar(MAX) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		public string Text
+		{
+			get
+			{
+				return this._Text;
+			}
+			set
+			{
+				if ((this._Text != value))
+				{
+					this.OnTextChanging(value);
+					this.SendPropertyChanging();
+					this._Text = value;
+					this.SendPropertyChanged("Text");
+					this.OnTextChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Category", DbType="NVarChar(MAX)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		public string Category
+		{
+			get
+			{
+				return this._Category;
+			}
+			set
+			{
+				if ((this._Category != value))
+				{
+					this.OnCategoryChanging(value);
+					this.SendPropertyChanging();
+					this._Category = value;
+					this.SendPropertyChanged("Category");
+					this.OnCategoryChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignJournal_CampaignJournalVar", Storage="_CampaignJournalVars", ThisKey="CampaignID,JournalID", OtherKey="CampaignID,JournalID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
+		public EntitySet<CampaignJournalVar> CampaignJournalVars
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._CampaignJournalVars.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._CampaignJournalVars;
+			}
+			set
+			{
+				this._CampaignJournalVars.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignJournal_AccountCampaignJournalProgress", Storage="_AccountCampaignJournalProgress", ThisKey="CampaignID,JournalID", OtherKey="CampaignID,JournalID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
+		public EntitySet<AccountCampaignJournalProgress> AccountCampaignJournalProgress
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountCampaignJournalProgress.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AccountCampaignJournalProgress;
+			}
+			set
+			{
+				this._AccountCampaignJournalProgress.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_CampaignJournal", Storage="_Campaign", ThisKey="CampaignID", OtherKey="CampaignID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Campaign Campaign
+		{
+			get
+			{
+				return this._Campaign.Entity;
+			}
+			set
+			{
+				Campaign previousValue = this._Campaign.Entity;
+				if (((previousValue != value) 
+							|| (this._Campaign.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Campaign.Entity = null;
+						previousValue.CampaignJournals.Remove(this);
+					}
+					this._Campaign.Entity = value;
+					if ((value != null))
+					{
+						value.CampaignJournals.Add(this);
+						this._CampaignID = value.CampaignID;
+					}
+					else
+					{
+						this._CampaignID = default(int);
+					}
+					this.SendPropertyChanged("Campaign");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignJournal", Storage="_Planet", ThisKey="CampaignID,PlanetID", OtherKey="CampaignID,PlanetID", IsForeignKey=true)]
+		public CampaignPlanet Planet
+		{
+			get
+			{
+				return this._Planet.Entity;
+			}
+			set
+			{
+				CampaignPlanet previousValue = this._Planet.Entity;
+				if (((previousValue != value) 
+							|| (this._Planet.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Planet.Entity = null;
+						previousValue.CampaignJournals.Remove(this);
+					}
+					this._Planet.Entity = value;
+					if ((value != null))
+					{
+						value.CampaignJournals.Add(this);
+						this._CampaignID = value.CampaignID;
+						this._PlanetID = value.PlanetID;
+					}
+					else
+					{
+						this._CampaignID = default(int);
+						this._PlanetID = default(int);
+					}
+					this.SendPropertyChanged("Planet");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_CampaignJournalVars(CampaignJournalVar entity)
+		{
+			this.SendPropertyChanging();
+			entity.CampaignJournal = this;
+		}
+		
+		private void detach_CampaignJournalVars(CampaignJournalVar entity)
+		{
+			this.SendPropertyChanging();
+			entity.CampaignJournal = null;
+		}
+		
+		private void attach_AccountCampaignJournalProgress(AccountCampaignJournalProgress entity)
+		{
+			this.SendPropertyChanging();
+			entity.CampaignJournal = this;
+		}
+		
+		private void detach_AccountCampaignJournalProgress(AccountCampaignJournalProgress entity)
+		{
+			this.SendPropertyChanging();
+			entity.CampaignJournal = null;
+		}
+		
+		private void Initialize()
+		{
+			this._CampaignJournalVars = new EntitySet<CampaignJournalVar>(new Action<CampaignJournalVar>(this.attach_CampaignJournalVars), new Action<CampaignJournalVar>(this.detach_CampaignJournalVars));
+			this._AccountCampaignJournalProgress = new EntitySet<AccountCampaignJournalProgress>(new Action<AccountCampaignJournalProgress>(this.attach_AccountCampaignJournalProgress), new Action<AccountCampaignJournalProgress>(this.detach_AccountCampaignJournalProgress));
+			this._Campaign = default(EntityRef<Campaign>);
+			this._Planet = default(EntityRef<CampaignPlanet>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerializing(StreamingContext context)
+		{
+			this.serializing = true;
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializedAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerialized(StreamingContext context)
+		{
+			this.serializing = false;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CampaignPlanetVar")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class CampaignPlanetVar : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _CampaignID;
+		
+		private int _PlanetID;
+		
+		private int _RequiredVarID;
+		
+		private string _RequiredValue;
+		
+		private EntityRef<Campaign> _Campaign;
+		
+		private EntityRef<CampaignPlanet> _CampaignPlanet;
+		
+		private EntityRef<CampaignVar> _CampaignVar;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnCampaignIDChanging(int value);
+    partial void OnCampaignIDChanged();
+    partial void OnPlanetIDChanging(int value);
+    partial void OnPlanetIDChanged();
+    partial void OnRequiredVarIDChanging(int value);
+    partial void OnRequiredVarIDChanged();
+    partial void OnRequiredValueChanging(string value);
+    partial void OnRequiredValueChanged();
+    #endregion
+		
+		public CampaignPlanetVar()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CampaignID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int CampaignID
+		{
+			get
+			{
+				return this._CampaignID;
+			}
+			set
+			{
+				if ((this._CampaignID != value))
+				{
+					if (((this._Campaign.HasLoadedOrAssignedValue || this._CampaignPlanet.HasLoadedOrAssignedValue) 
+								|| this._CampaignVar.HasLoadedOrAssignedValue))
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCampaignIDChanging(value);
+					this.SendPropertyChanging();
+					this._CampaignID = value;
+					this.SendPropertyChanged("CampaignID");
+					this.OnCampaignIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlanetID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int PlanetID
+		{
+			get
+			{
+				return this._PlanetID;
+			}
+			set
+			{
+				if ((this._PlanetID != value))
+				{
+					if (this._CampaignPlanet.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnPlanetIDChanging(value);
+					this.SendPropertyChanging();
+					this._PlanetID = value;
+					this.SendPropertyChanged("PlanetID");
+					this.OnPlanetIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RequiredVarID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int RequiredVarID
+		{
+			get
+			{
+				return this._RequiredVarID;
+			}
+			set
+			{
+				if ((this._RequiredVarID != value))
+				{
+					if (this._CampaignVar.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnRequiredVarIDChanging(value);
+					this.SendPropertyChanging();
+					this._RequiredVarID = value;
+					this.SendPropertyChanged("RequiredVarID");
+					this.OnRequiredVarIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RequiredValue", DbType="NVarChar(MAX) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public string RequiredValue
+		{
+			get
+			{
+				return this._RequiredValue;
+			}
+			set
+			{
+				if ((this._RequiredValue != value))
+				{
+					this.OnRequiredValueChanging(value);
+					this.SendPropertyChanging();
+					this._RequiredValue = value;
+					this.SendPropertyChanged("RequiredValue");
+					this.OnRequiredValueChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_CampaignPlanetVar", Storage="_Campaign", ThisKey="CampaignID", OtherKey="CampaignID", IsForeignKey=true)]
+		public Campaign Campaign
+		{
+			get
+			{
+				return this._Campaign.Entity;
+			}
+			set
+			{
+				Campaign previousValue = this._Campaign.Entity;
+				if (((previousValue != value) 
+							|| (this._Campaign.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Campaign.Entity = null;
+						previousValue.CampaignPlanetVars.Remove(this);
+					}
+					this._Campaign.Entity = value;
+					if ((value != null))
+					{
+						value.CampaignPlanetVars.Add(this);
+						this._CampaignID = value.CampaignID;
+					}
+					else
+					{
+						this._CampaignID = default(int);
+					}
+					this.SendPropertyChanged("Campaign");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignPlanetVar", Storage="_CampaignPlanet", ThisKey="CampaignID,PlanetID", OtherKey="CampaignID,PlanetID", IsForeignKey=true)]
+		public CampaignPlanet CampaignPlanet
+		{
+			get
+			{
+				return this._CampaignPlanet.Entity;
+			}
+			set
+			{
+				CampaignPlanet previousValue = this._CampaignPlanet.Entity;
+				if (((previousValue != value) 
+							|| (this._CampaignPlanet.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CampaignPlanet.Entity = null;
+						previousValue.CampaignPlanetVars.Remove(this);
+					}
+					this._CampaignPlanet.Entity = value;
+					if ((value != null))
+					{
+						value.CampaignPlanetVars.Add(this);
+						this._CampaignID = value.CampaignID;
+						this._PlanetID = value.PlanetID;
+					}
+					else
+					{
+						this._CampaignID = default(int);
+						this._PlanetID = default(int);
+					}
+					this.SendPropertyChanged("CampaignPlanet");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignVar_CampaignPlanetVar", Storage="_CampaignVar", ThisKey="CampaignID,RequiredVarID", OtherKey="CampaignID,VarID", IsForeignKey=true)]
+		public CampaignVar CampaignVar
+		{
+			get
+			{
+				return this._CampaignVar.Entity;
+			}
+			set
+			{
+				CampaignVar previousValue = this._CampaignVar.Entity;
+				if (((previousValue != value) 
+							|| (this._CampaignVar.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CampaignVar.Entity = null;
+						previousValue.CampaignPlanetVars.Remove(this);
+					}
+					this._CampaignVar.Entity = value;
+					if ((value != null))
+					{
+						value.CampaignPlanetVars.Add(this);
+						this._CampaignID = value.CampaignID;
+						this._RequiredVarID = value.VarID;
+					}
+					else
+					{
+						this._CampaignID = default(int);
+						this._RequiredVarID = default(int);
+					}
+					this.SendPropertyChanged("CampaignVar");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Campaign = default(EntityRef<Campaign>);
+			this._CampaignPlanet = default(EntityRef<CampaignPlanet>);
+			this._CampaignVar = default(EntityRef<CampaignVar>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CampaignJournalVar")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class CampaignJournalVar : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _CampaignID;
+		
+		private int _JournalID;
+		
+		private int _RequiredVarID;
+		
+		private string _RequiredValue;
+		
+		private EntityRef<Campaign> _Campaign;
+		
+		private EntityRef<CampaignJournal> _CampaignJournal;
+		
+		private EntityRef<CampaignVar> _CampaignVar;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnCampaignIDChanging(int value);
+    partial void OnCampaignIDChanged();
+    partial void OnJournalIDChanging(int value);
+    partial void OnJournalIDChanged();
+    partial void OnRequiredVarIDChanging(int value);
+    partial void OnRequiredVarIDChanged();
+    partial void OnRequiredValueChanging(string value);
+    partial void OnRequiredValueChanged();
+    #endregion
+		
+		public CampaignJournalVar()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CampaignID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int CampaignID
+		{
+			get
+			{
+				return this._CampaignID;
+			}
+			set
+			{
+				if ((this._CampaignID != value))
+				{
+					if (((this._Campaign.HasLoadedOrAssignedValue || this._CampaignJournal.HasLoadedOrAssignedValue) 
+								|| this._CampaignVar.HasLoadedOrAssignedValue))
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCampaignIDChanging(value);
+					this.SendPropertyChanging();
+					this._CampaignID = value;
+					this.SendPropertyChanged("CampaignID");
+					this.OnCampaignIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_JournalID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int JournalID
+		{
+			get
+			{
+				return this._JournalID;
+			}
+			set
+			{
+				if ((this._JournalID != value))
+				{
+					if (this._CampaignJournal.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnJournalIDChanging(value);
+					this.SendPropertyChanging();
+					this._JournalID = value;
+					this.SendPropertyChanged("JournalID");
+					this.OnJournalIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RequiredVarID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int RequiredVarID
+		{
+			get
+			{
+				return this._RequiredVarID;
+			}
+			set
+			{
+				if ((this._RequiredVarID != value))
+				{
+					if (this._CampaignVar.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnRequiredVarIDChanging(value);
+					this.SendPropertyChanging();
+					this._RequiredVarID = value;
+					this.SendPropertyChanged("RequiredVarID");
+					this.OnRequiredVarIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RequiredValue", DbType="NVarChar(MAX) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public string RequiredValue
+		{
+			get
+			{
+				return this._RequiredValue;
+			}
+			set
+			{
+				if ((this._RequiredValue != value))
+				{
+					this.OnRequiredValueChanging(value);
+					this.SendPropertyChanging();
+					this._RequiredValue = value;
+					this.SendPropertyChanged("RequiredValue");
+					this.OnRequiredValueChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_CampaignJournalVar", Storage="_Campaign", ThisKey="CampaignID", OtherKey="CampaignID", IsForeignKey=true)]
+		public Campaign Campaign
+		{
+			get
+			{
+				return this._Campaign.Entity;
+			}
+			set
+			{
+				Campaign previousValue = this._Campaign.Entity;
+				if (((previousValue != value) 
+							|| (this._Campaign.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Campaign.Entity = null;
+						previousValue.CampaignJournalVars.Remove(this);
+					}
+					this._Campaign.Entity = value;
+					if ((value != null))
+					{
+						value.CampaignJournalVars.Add(this);
+						this._CampaignID = value.CampaignID;
+					}
+					else
+					{
+						this._CampaignID = default(int);
+					}
+					this.SendPropertyChanged("Campaign");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignJournal_CampaignJournalVar", Storage="_CampaignJournal", ThisKey="CampaignID,JournalID", OtherKey="CampaignID,JournalID", IsForeignKey=true)]
+		public CampaignJournal CampaignJournal
+		{
+			get
+			{
+				return this._CampaignJournal.Entity;
+			}
+			set
+			{
+				CampaignJournal previousValue = this._CampaignJournal.Entity;
+				if (((previousValue != value) 
+							|| (this._CampaignJournal.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CampaignJournal.Entity = null;
+						previousValue.CampaignJournalVars.Remove(this);
+					}
+					this._CampaignJournal.Entity = value;
+					if ((value != null))
+					{
+						value.CampaignJournalVars.Add(this);
+						this._CampaignID = value.CampaignID;
+						this._JournalID = value.JournalID;
+					}
+					else
+					{
+						this._CampaignID = default(int);
+						this._JournalID = default(int);
+					}
+					this.SendPropertyChanged("CampaignJournal");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignVar_CampaignJournalVar", Storage="_CampaignVar", ThisKey="CampaignID,RequiredVarID", OtherKey="CampaignID,VarID", IsForeignKey=true)]
+		public CampaignVar CampaignVar
+		{
+			get
+			{
+				return this._CampaignVar.Entity;
+			}
+			set
+			{
+				CampaignVar previousValue = this._CampaignVar.Entity;
+				if (((previousValue != value) 
+							|| (this._CampaignVar.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CampaignVar.Entity = null;
+						previousValue.CampaignJournalVars.Remove(this);
+					}
+					this._CampaignVar.Entity = value;
+					if ((value != null))
+					{
+						value.CampaignJournalVars.Add(this);
+						this._CampaignID = value.CampaignID;
+						this._RequiredVarID = value.VarID;
+					}
+					else
+					{
+						this._CampaignID = default(int);
+						this._RequiredVarID = default(int);
+					}
+					this.SendPropertyChanged("CampaignVar");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Campaign = default(EntityRef<Campaign>);
+			this._CampaignJournal = default(EntityRef<CampaignJournal>);
+			this._CampaignVar = default(EntityRef<CampaignVar>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AccountCampaignJournalProgress")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class AccountCampaignJournalProgress : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _AccountID;
+		
+		private int _CampaignID;
+		
+		private int _JournalID;
+		
+		private bool _IsUnlocked;
+		
+		private EntityRef<Account> _Account;
+		
+		private EntityRef<Campaign> _Campaign;
+		
+		private EntityRef<CampaignJournal> _CampaignJournal;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnAccountIDChanging(int value);
+    partial void OnAccountIDChanged();
+    partial void OnCampaignIDChanging(int value);
+    partial void OnCampaignIDChanged();
+    partial void OnJournalIDChanging(int value);
+    partial void OnJournalIDChanged();
+    partial void OnIsUnlockedChanging(bool value);
+    partial void OnIsUnlockedChanged();
+    #endregion
+		
+		public AccountCampaignJournalProgress()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int AccountID
+		{
+			get
+			{
+				return this._AccountID;
+			}
+			set
+			{
+				if ((this._AccountID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._AccountID = value;
+					this.SendPropertyChanged("AccountID");
+					this.OnAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CampaignID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int CampaignID
+		{
+			get
+			{
+				return this._CampaignID;
+			}
+			set
+			{
+				if ((this._CampaignID != value))
+				{
+					if ((this._Campaign.HasLoadedOrAssignedValue || this._CampaignJournal.HasLoadedOrAssignedValue))
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCampaignIDChanging(value);
+					this.SendPropertyChanging();
+					this._CampaignID = value;
+					this.SendPropertyChanged("CampaignID");
+					this.OnCampaignIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_JournalID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int JournalID
+		{
+			get
+			{
+				return this._JournalID;
+			}
+			set
+			{
+				if ((this._JournalID != value))
+				{
+					if (this._CampaignJournal.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnJournalIDChanging(value);
+					this.SendPropertyChanging();
+					this._JournalID = value;
+					this.SendPropertyChanged("JournalID");
+					this.OnJournalIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsUnlocked", DbType="Bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public bool IsUnlocked
+		{
+			get
+			{
+				return this._IsUnlocked;
+			}
+			set
+			{
+				if ((this._IsUnlocked != value))
+				{
+					this.OnIsUnlockedChanging(value);
+					this.SendPropertyChanging();
+					this._IsUnlocked = value;
+					this.SendPropertyChanged("IsUnlocked");
+					this.OnIsUnlockedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountCampaignJournalProgress", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.AccountCampaignJournalProgress.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.AccountCampaignJournalProgress.Add(this);
+						this._AccountID = value.AccountID;
+					}
+					else
+					{
+						this._AccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_AccountCampaignJournalProgress", Storage="_Campaign", ThisKey="CampaignID", OtherKey="CampaignID", IsForeignKey=true)]
+		public Campaign Campaign
+		{
+			get
+			{
+				return this._Campaign.Entity;
+			}
+			set
+			{
+				Campaign previousValue = this._Campaign.Entity;
+				if (((previousValue != value) 
+							|| (this._Campaign.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Campaign.Entity = null;
+						previousValue.AccountCampaignJournalProgress.Remove(this);
+					}
+					this._Campaign.Entity = value;
+					if ((value != null))
+					{
+						value.AccountCampaignJournalProgress.Add(this);
+						this._CampaignID = value.CampaignID;
+					}
+					else
+					{
+						this._CampaignID = default(int);
+					}
+					this.SendPropertyChanged("Campaign");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignJournal_AccountCampaignJournalProgress", Storage="_CampaignJournal", ThisKey="CampaignID,JournalID", OtherKey="CampaignID,JournalID", IsForeignKey=true)]
+		public CampaignJournal CampaignJournal
+		{
+			get
+			{
+				return this._CampaignJournal.Entity;
+			}
+			set
+			{
+				CampaignJournal previousValue = this._CampaignJournal.Entity;
+				if (((previousValue != value) 
+							|| (this._CampaignJournal.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CampaignJournal.Entity = null;
+						previousValue.AccountCampaignJournalProgress.Remove(this);
+					}
+					this._CampaignJournal.Entity = value;
+					if ((value != null))
+					{
+						value.AccountCampaignJournalProgress.Add(this);
+						this._CampaignID = value.CampaignID;
+						this._JournalID = value.JournalID;
+					}
+					else
+					{
+						this._CampaignID = default(int);
+						this._JournalID = default(int);
+					}
+					this.SendPropertyChanged("CampaignJournal");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Account = default(EntityRef<Account>);
+			this._Campaign = default(EntityRef<Campaign>);
+			this._CampaignJournal = default(EntityRef<CampaignJournal>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AccountCampaignVar")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class AccountCampaignVar : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _AccountID;
+		
+		private int _CampaignID;
+		
+		private int _VarID;
+		
+		private string _Value;
+		
+		private EntityRef<Account> _Account;
+		
+		private EntityRef<Campaign> _Campaign;
+		
+		private EntityRef<CampaignVar> _CampaignVar;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnAccountIDChanging(int value);
+    partial void OnAccountIDChanged();
+    partial void OnCampaignIDChanging(int value);
+    partial void OnCampaignIDChanged();
+    partial void OnVarIDChanging(int value);
+    partial void OnVarIDChanged();
+    partial void OnValueChanging(string value);
+    partial void OnValueChanged();
+    #endregion
+		
+		public AccountCampaignVar()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int AccountID
+		{
+			get
+			{
+				return this._AccountID;
+			}
+			set
+			{
+				if ((this._AccountID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._AccountID = value;
+					this.SendPropertyChanged("AccountID");
+					this.OnAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CampaignID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int CampaignID
+		{
+			get
+			{
+				return this._CampaignID;
+			}
+			set
+			{
+				if ((this._CampaignID != value))
+				{
+					if ((this._Campaign.HasLoadedOrAssignedValue || this._CampaignVar.HasLoadedOrAssignedValue))
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCampaignIDChanging(value);
+					this.SendPropertyChanging();
+					this._CampaignID = value;
+					this.SendPropertyChanged("CampaignID");
+					this.OnCampaignIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_VarID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int VarID
+		{
+			get
+			{
+				return this._VarID;
+			}
+			set
+			{
+				if ((this._VarID != value))
+				{
+					if (this._CampaignVar.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnVarIDChanging(value);
+					this.SendPropertyChanging();
+					this._VarID = value;
+					this.SendPropertyChanged("VarID");
+					this.OnVarIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Value", DbType="NVarChar(MAX) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public string Value
+		{
+			get
+			{
+				return this._Value;
+			}
+			set
+			{
+				if ((this._Value != value))
+				{
+					this.OnValueChanging(value);
+					this.SendPropertyChanging();
+					this._Value = value;
+					this.SendPropertyChanged("Value");
+					this.OnValueChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountCampaignVar", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.AccountCampaignVars.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.AccountCampaignVars.Add(this);
+						this._AccountID = value.AccountID;
+					}
+					else
+					{
+						this._AccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_AccountCampaignVar", Storage="_Campaign", ThisKey="CampaignID", OtherKey="CampaignID", IsForeignKey=true)]
+		public Campaign Campaign
+		{
+			get
+			{
+				return this._Campaign.Entity;
+			}
+			set
+			{
+				Campaign previousValue = this._Campaign.Entity;
+				if (((previousValue != value) 
+							|| (this._Campaign.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Campaign.Entity = null;
+						previousValue.AccountCampaignVars.Remove(this);
+					}
+					this._Campaign.Entity = value;
+					if ((value != null))
+					{
+						value.AccountCampaignVars.Add(this);
+						this._CampaignID = value.CampaignID;
+					}
+					else
+					{
+						this._CampaignID = default(int);
+					}
+					this.SendPropertyChanged("Campaign");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignVar_AccountCampaignVar", Storage="_CampaignVar", ThisKey="CampaignID,VarID", OtherKey="CampaignID,VarID", IsForeignKey=true)]
+		public CampaignVar CampaignVar
+		{
+			get
+			{
+				return this._CampaignVar.Entity;
+			}
+			set
+			{
+				CampaignVar previousValue = this._CampaignVar.Entity;
+				if (((previousValue != value) 
+							|| (this._CampaignVar.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CampaignVar.Entity = null;
+						previousValue.AccountCampaignVars.Remove(this);
+					}
+					this._CampaignVar.Entity = value;
+					if ((value != null))
+					{
+						value.AccountCampaignVars.Add(this);
+						this._CampaignID = value.CampaignID;
+						this._VarID = value.VarID;
+					}
+					else
+					{
+						this._CampaignID = default(int);
+						this._VarID = default(int);
+					}
+					this.SendPropertyChanged("CampaignVar");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Account = default(EntityRef<Account>);
+			this._Campaign = default(EntityRef<Campaign>);
+			this._CampaignVar = default(EntityRef<CampaignVar>);
 			OnCreated();
 		}
 		

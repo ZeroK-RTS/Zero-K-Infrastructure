@@ -15,11 +15,8 @@ namespace ZkData
 
 	    public string GetColor(Account viewer)
 		{
-            var db = new ZkDataContext();
-            AccountCampaignProgress progress = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == viewer.AccountID && x.CampaignID == CampaignID && x.PlanetID == PlanetID);
-            if (progress == null) return StartsUnlocked ? "#FFFFFF" : "#808080";
-            bool isUnlocked = progress.IsUnlocked || StartsUnlocked;
-            bool isCompleted = progress.IsCompleted;
+            bool isUnlocked = IsUnlocked(viewer.AccountID);
+            bool isCompleted = IsCompleted(viewer.AccountID);
 
             if (isCompleted)
             {
@@ -51,5 +48,21 @@ namespace ZkData
             var yp = (int)(Y * camp.MapHeight);
 			return new Rectangle((int)(xp - w/2), (int)(yp - w/2), (int)w, (int)w);
 		}
+
+        public bool IsUnlocked(int accountID)
+        {
+            if (StartsUnlocked) return true;
+
+            var db = new ZkDataContext();
+            AccountCampaignProgress progress = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == accountID && x.CampaignID == CampaignID && x.PlanetID == PlanetID);
+            return progress.IsUnlocked;
+        }
+
+        public bool IsCompleted(int accountID)
+        {
+            var db = new ZkDataContext();
+            AccountCampaignProgress progress = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == accountID && x.CampaignID == CampaignID && x.PlanetID == PlanetID);
+            return progress.IsCompleted;
+        }
 	}
 }

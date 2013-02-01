@@ -5,7 +5,7 @@
     Page.Title = "Campaign " + Model.Name + " - Journal";
     var db = new ZkDataContext();
     Campaign camp = Model;
-    List<CampaignJournal> journals = db.CampaignJournals.Where(x => x.CampaignID == Model.CampaignID).OrderBy(x=> x.Title).ToList();
+    List<CampaignJournal> journals = db.CampaignJournals.Where(x => x.CampaignID == Model.CampaignID).OrderBy(x => x.Category).ThenBy(x=> x.Title).ToList();
 }
 <script type="text/javascript" src='@Href("~/Scripts/jquery.expand.js")' > </script>
 <script type="text/javascript">
@@ -26,9 +26,7 @@
 {
     foreach (var journal in journals)
     {
-        AccountCampaignProgress progress = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == Global.AccountID && x.CampaignID == Model.CampaignID && x.PlanetID == journal.PlanetID);
-        CampaignPlanet planet = db.CampaignPlanets.Single(x => x.CampaignID == Model.CampaignID && x.PlanetID == journal.PlanetID);
-        if ((!journal.RequiresCompletion || (progress != null && progress.IsCompleted)) && (!journal.RequiresUnlock || (progress != null && progress.IsUnlocked || planet.StartsUnlocked)) ) 
+        if ( journal.IsUnlocked(Global.AccountID) ) 
         {
             <h3 class="expand">@journal.Title</h3>
             <div id="journals" class="collapse width-90">
