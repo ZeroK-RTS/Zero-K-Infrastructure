@@ -55,14 +55,14 @@ namespace ZkData
 
             var db = new ZkDataContext();
             AccountCampaignProgress progress = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == accountID && x.CampaignID == CampaignID && x.PlanetID == PlanetID);
-            return progress.IsUnlocked;
+            return (progress != null && progress.IsUnlocked);
         }
 
         public bool IsCompleted(int accountID)
         {
             var db = new ZkDataContext();
             AccountCampaignProgress progress = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == accountID && x.CampaignID == CampaignID && x.PlanetID == PlanetID);
-            return progress.IsCompleted;
+            return (progress != null && progress.IsCompleted);
         }
 	}
 }

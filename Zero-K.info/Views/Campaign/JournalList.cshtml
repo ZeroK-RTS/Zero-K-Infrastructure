@@ -24,9 +24,9 @@
 <h2>Journals</h2>
 @if (journals != null && journals.Count > 0)
 {
-    foreach (var journal in journals)
+    foreach (CampaignJournal journal in journals)
     {
-        if ( journal.IsUnlocked(Global.AccountID) ) 
+        if ( journal.IsUnlocked(Global.AccountID) )
         {
             <h3 class="expand">@journal.Title</h3>
             <div id="journals" class="collapse width-90">

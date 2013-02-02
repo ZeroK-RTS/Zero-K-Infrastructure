@@ -16,11 +16,11 @@ namespace ZkData
             if (StartsUnlocked) return true;
 
             if (Planet.IsCompleted(accountID) && UnlockOnPlanetCompletion) return true;
-            if (Planet.IsUnlocked(accountID) && UnlockOnPlanetCompletion) return true;
+            if (Planet.IsUnlocked(accountID) && UnlockOnPlanetUnlock) return true;
 
             var db = new ZkDataContext();
             AccountCampaignJournalProgress progress = db.AccountCampaignJournalProgress.FirstOrDefault(x => x.AccountID == accountID && x.CampaignID == CampaignID && x.JournalID == JournalID);
-            return progress.IsUnlocked;
+            return (progress !=null && progress.IsUnlocked);
         }
 	}
 }

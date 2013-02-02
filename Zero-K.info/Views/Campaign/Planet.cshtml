@@ -56,7 +56,7 @@
                 @: r.rotate(@angle, @x1, @y1);
             } 
 
-            @foreach (var planet in campaign.CampaignPlanets)
+            @foreach (CampaignPlanet planet in campaign.CampaignPlanets)
             {
                 var mapIconSize = 10;
                 var stroke = "#000000";
@@ -101,7 +101,7 @@
     <br />
     <h3 class="expand">Journals</h3>
     <div id="journals" class="collapse width-90">
-        @foreach (var journal in journals){
+        @foreach (CampaignJournal journal in journals){
             if (journal.IsUnlocked(Global.AccountID))
             {
                 <h4>@(journal.Title)</h4>

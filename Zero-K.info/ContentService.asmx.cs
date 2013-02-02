@@ -231,23 +231,105 @@ namespace ZeroKWeb
                         db.AccountCampaignProgress.InsertOnSubmit(progress);
                     }
 
-                    if (progress != null && (planet.StartsUnlocked || progress.IsUnlocked))
+                    if (progress != null && planet.IsUnlocked(acc.AccountID))
                     {
                         progress.IsCompleted = true;
 
+                        // unlock this planet's journals if appropriate
+                        var journals = db.CampaignJournals.Where(x => x.CampaignID == planet.CampaignID && x.PlanetID == planet.PlanetID);
+                        foreach (CampaignJournal journal in journals)
+                        {
+                            bool proceed = true;
+                            var requiredVars = db.CampaignJournalVars.Where(x => x.CampaignID == journal.CampaignID && x.JournalID == journal.JournalID).ToList();
+                            if (requiredVars.Count() == 0) proceed = false; // no need to add to unlock table; it'll be marked as unlocked at runtime
+                            else
+                            {
+                                foreach (CampaignJournalVar variable in requiredVars)
+                                {
+                                    var accountVar = db.AccountCampaignVars.FirstOrDefault(x => x.CampaignID == variable.CampaignID && x.VarID == variable.RequiredVarID);
+                                    if (accountVar.Value != variable.RequiredValue)
+                                    {
+                                        proceed = false;
+                                        break;  // failed to meet var requirement, stop here
+                                    }
+                                }
+                            }
+                            if (proceed)    // met requirements for unlocking journal
+                            {
+                                AccountCampaignJournalProgress jp = db.AccountCampaignJournalProgress.FirstOrDefault(x => x.AccountID == acc.AccountID && x.JournalID == journal.JournalID);
+                                if (jp == null)
+                                {
+                                    jp = new AccountCampaignJournalProgress() { AccountID = acc.AccountID, CampaignID = journal.CampaignID, JournalID = journal.JournalID, IsUnlocked = true };
+                                    db.AccountCampaignJournalProgress.InsertOnSubmit(jp);
+                                }
+                                else jp.IsUnlocked = true;
+                            }
+                        }
+
+
                         // unlock planets made available by completing this one
-                        // FIXME: use the UnlockSet column to allow unlocking only when multiple prerequisite planets are complete
                         var links = db.CampaignLinks.Where(x => x.UnlockingPlanetID == planet.PlanetID && x.CampaignID == planet.CampaignID);
                         foreach (CampaignLink link in links)
                         {
                             CampaignPlanet toUnlock = link.PlanetToUnlock;
-                            AccountCampaignProgress progress2 = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == acc.AccountID && x.PlanetID == toUnlock.PlanetID);
-                            if (progress2 == null)
+                            bool proceed = true;
+                            var requiredVars = db.CampaignPlanetVars.Where(x => x.CampaignID == toUnlock.CampaignID && x.PlanetID == toUnlock.PlanetID);
+                            if (requiredVars.Count() == 0) proceed = true;
+                            else
                             {
-                                progress2 = new AccountCampaignProgress() { AccountID = acc.AccountID, CampaignID = planet.CampaignID, PlanetID = toUnlock.PlanetID, IsCompleted = false, IsUnlocked = true };
-                                db.AccountCampaignProgress.InsertOnSubmit(progress2);
+                                foreach (CampaignPlanetVar variable in requiredVars)
+                                {
+                                    var accountVar = db.AccountCampaignVars.FirstOrDefault(x => x.CampaignID == variable.CampaignID && x.VarID == variable.RequiredVarID);
+                                    if (accountVar.Value != variable.RequiredValue)
+                                    {
+                                        proceed = false;
+                                        break;  // failed to meet var requirement, stop here
+                                    }
+                                }
+                                proceed = true;
                             }
-                            else progress2.IsUnlocked = true;
+
+                            if (proceed)    // met requirements for unlocking planet
+                            {    
+                                AccountCampaignProgress progress2 = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == acc.AccountID && x.PlanetID == toUnlock.PlanetID);
+                                if (progress2 == null)
+                                {
+                                    progress2 = new AccountCampaignProgress() { AccountID = acc.AccountID, CampaignID = toUnlock.CampaignID, PlanetID = toUnlock.PlanetID, IsCompleted = false, IsUnlocked = true };
+                                    db.AccountCampaignProgress.InsertOnSubmit(progress2);
+                                }
+                                else progress2.IsUnlocked = true;
+
+                                // unlock their journals too if appropriate
+                                var journals2 = db.CampaignJournals.Where(x => x.CampaignID == planet.CampaignID && x.PlanetID == planet.PlanetID);
+                                foreach (CampaignJournal journal in journals)
+                                {
+                                    bool proceedJ = true;
+                                    var requiredVarsJ = db.CampaignJournalVars.Where(x => x.CampaignID == journal.CampaignID && x.JournalID == journal.JournalID).ToList();
+                                    if (requiredVarsJ.Count() == 0) proceedJ = false;   // no need to add to unlock table; it'll be marked as unlocked at runtime
+                                    else
+                                    {
+                                        foreach (CampaignJournalVar variableJ in requiredVarsJ)
+                                        {
+                                            var accountVar = db.AccountCampaignVars.FirstOrDefault(x => x.CampaignID == variableJ.CampaignID && x.VarID == variableJ.RequiredVarID);
+                                            if (accountVar.Value != variableJ.RequiredValue)
+                                            {
+                                                proceedJ = false;
+                                                break;  // failed to meet var requirement, stop here
+                                            }
+                                        }
+                                    }
+                                    if (proceedJ)    // met requirements for unlocking journal
+                                    {
+                                        AccountCampaignJournalProgress jp = db.AccountCampaignJournalProgress.FirstOrDefault(x => x.AccountID == acc.AccountID && x.JournalID == journal.JournalID);
+                                        if (jp == null)
+                                        {
+                                            jp = new AccountCampaignJournalProgress() { AccountID = acc.AccountID, CampaignID = journal.CampaignID, JournalID = journal.JournalID, IsUnlocked = true };
+                                            db.AccountCampaignJournalProgress.InsertOnSubmit(jp);
+                                        }
+                                        else jp.IsUnlocked = true;
+                                    }
+                                }
+                            }
                         }
                     }
                 }

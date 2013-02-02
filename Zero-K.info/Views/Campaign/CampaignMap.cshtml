@@ -21,7 +21,7 @@
 		{
 			var paper = Raphael(document.getElementById("linkMap"), @Model.MapWidth, @Model.MapHeight);
 
-            @foreach (var link in Model.CampaignLinks)
+            @foreach (CampaignLink link in Model.CampaignLinks)
             { 
                 CampaignPlanet p1 = link.PlanetToUnlock;
                 CampaignPlanet p2 = link.UnlockingPlanet;
@@ -72,7 +72,7 @@
     <img src="/img/galaxies/campaign/render_@(camp.CampaignID).jpg" style="position: relative; top: 0; left: 0; z-index:-50; " width="@Model.MapWidth" height="@Model.MapHeight"/>
 	
 
-@foreach (var p in Model.CampaignPlanets)
+@foreach (CampaignPlanet p in Model.CampaignPlanets)
 {
 	var pr = p.PlanetRectangle(Model);
 	var por = p.PlanetOverlayRectangle(Model);
