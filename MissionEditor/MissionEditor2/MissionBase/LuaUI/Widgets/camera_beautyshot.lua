@@ -22,12 +22,15 @@ local function BeautyShot(unitID, params)
   
   local validUnit
   local x, y, z = params.x, params.y, params.z
+  local spec = Spring.GetSpectatingState()
+  local unitExists = unitID and Spring.ValidUnitID(unitID)
+  if unitExists and (spec or Spring.GetUnitLosState(unitID, Spring.GetMyAllyTeamID()).los) then
+    validUnit = true
+  end
   if not (x and y and z) then
-    if (Spring.GetSpectatingState() or (unitID and Spring.ValidUnitID(unitID) and Spring.GetUnitLOSState(unitID, Spring.GetMyAllyTeamID())) then
-      _,_,_,x,y,z = Spring.GetUnitPosition(unitID, true)
-      validUnit = true
-    end
-    if not (x and y and z) then
+    if validUnit then
+	  _,_,_,x,y,z = Spring.GetUnitPosition(unitID, true)
+	else
       Spring.Log(widget:GetInfo().name, LOG.ERROR, "No valid unit and no position, cannot make beauty shot")
       return
     end
@@ -38,8 +41,8 @@ local function BeautyShot(unitID, params)
       camFromTargetHeading = -camFromTargetHeading
     end
     camFromTargetHeading = math.rad(camFromTargetHeading)
-    if validUnitID then
-      local unitHeading = Spring.GetUnitHeading(unitID)/65536*tau
+    if validUnit then
+      local unitHeading = Spring.GetUnitHeading(unitID)*tau/65536
       camFromTargetHeading = camFromTargetHeading + unitHeading
     end
     local angleMod = math.random(-params.maxCamOffset, params.maxCamOffset)
