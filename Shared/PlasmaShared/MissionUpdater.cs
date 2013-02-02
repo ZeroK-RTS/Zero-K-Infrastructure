@@ -42,10 +42,10 @@ namespace PlasmaShared
             var file = mission.Mutator.ToArray();
             var tempName = Path.GetTempFileName() + ".zip";
             File.WriteAllBytes(tempName, file);
+
             using (var zf = new ZipFile(tempName))
             {
-                
-                zf.UpdateEntry("modinfo.lua", Encoding.UTF8.GetBytes(GetModInfo(mission.NameWithVersion, mission.Mod, mission.Name, modInfo.ShortName)));
+                zf.UpdateEntry("modinfo.lua", Encoding.UTF8.GetBytes(GetModInfo(mission.NameWithVersion, mission.Mod, mission.Name, "ZK")));    // FIXME hardcoded crap
                 FixScript(mission, zf, "script.txt");
                 var script = FixScript(mission, zf, GlobalConst.MissionScriptFileName);
                 modInfo.MissionScript = script;
