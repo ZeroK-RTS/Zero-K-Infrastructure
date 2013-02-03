@@ -60,8 +60,7 @@ namespace ZeroKWeb.SpringieInterface
             if (playerCount <= 1 && !context.Bots.Any()) return new BalanceTeamsResult { CanStart = false, Message = "Cannot play alone, you can add bots using button on bottom left." };
 
             if (clanWise == null &&
-                (config.AutohostMode == AutohostMode.BigTeams || config.AutohostMode == AutohostMode.SmallTeams ||
-                 config.AutohostMode == AutohostMode.Experienced)) clanWise = true;
+                (config.AutohostMode == AutohostMode.SmallTeams || config.AutohostMode == AutohostMode.Teams)) clanWise = true;
 
             BalanceTeamsResult res = PerformBalance(context, isGameStart, allyCount, clanWise, config, playerCount);
 
@@ -342,9 +341,8 @@ namespace ZeroKWeb.SpringieInterface
                         if (!isGameStart) res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == true ? BalanceMode.ClanWise : BalanceMode.Normal, context);
                     }
                         break;
+                    case AutohostMode.Teams:
                     case AutohostMode.SmallTeams:
-                    case AutohostMode.Experienced:
-                    case AutohostMode.BigTeams:
                     {
                         Resource map = db.Resources.Single(x => x.InternalName == context.Map);
                         if (map.MapFFAMaxTeams != null) res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams.Value, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);

@@ -23,12 +23,10 @@ namespace ZkData
         GameChickens = 5,
         
         [Description("Teams")]
-        SmallTeams = 6,
+        Teams = 6,
         
-        [Description("Sily maps")]
-        BigTeams = 7,
-        [Description("Experienced players")]
-        Experienced = 8
+        [Description("Small teams")]
+        SmallTeams = 7,
     }
 
 }

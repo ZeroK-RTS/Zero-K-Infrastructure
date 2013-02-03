@@ -22,10 +22,9 @@ namespace ZeroKWeb.SpringieInterface
                                                       {
                                                           AutohostMode.Planetwars,
                                                           AutohostMode.SmallTeams,
+                                                          AutohostMode.Teams,
                                                           AutohostMode.GameFFA,
-                                                          AutohostMode.Experienced,
                                                           AutohostMode.GameChickens,
-                                                          AutohostMode.BigTeams,
                                                           AutohostMode.Game1v1,
                                                       };
         public static bool SuppressJuggler = false;

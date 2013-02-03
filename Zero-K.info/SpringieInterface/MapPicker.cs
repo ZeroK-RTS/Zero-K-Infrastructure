@@ -77,14 +77,9 @@ namespace ZeroKWeb.SpringieInterface
 					var players = context.Players.Count(x => !x.IsSpectator);
                     if (config != null && config.SplitBiggerThan != null && players > config.SplitBiggerThan) players = players/2; // expect the split
 					switch (mode) {
-						case AutohostMode.BigTeams:
-                            var ret = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa != true && x.MapIsChickens != true && x.MapIsSpecial == true);
-                            list = ret.ToList();
-                            break;
-
                         case AutohostMode.SmallTeams:
-                        case AutohostMode.Experienced:
-							ret = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa != true && x.MapIsChickens != true && x.MapIsSpecial != true);
+                        case AutohostMode.Teams:
+							var ret = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa != true && x.MapIsChickens != true && x.MapIsSpecial != true);
 							if (players > 11) ret = ret.Where(x => Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) ?? 0) > 16 && x.MapIs1v1 != true);
 							else if (players > 10) ret = ret.Where(x => Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) ?? 0) > 16 && Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) ?? 0) <= 24 && x.MapIs1v1 != true);
 							else if (players > 7) ret = ret.Where(x => Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) ?? 0) <= 24 || x.MapIs1v1 == true);
