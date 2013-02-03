@@ -46,6 +46,7 @@ namespace ZeroKWeb.SpringieInterface
                                         acc.SetPreferences(prefs);
                                         db.SubmitAndMergeChanges();
                                         SendAccountConfig(acc);
+                                        if (config.Active) tas.Say(TasClient.SayPlace.User, "Springie", "!juggle", false); // todo not very nice way to do that
                                     }
                                 } catch (Exception ex) {
                                     Trace.TraceError(ex.ToString());
