@@ -53,23 +53,18 @@ local searchlightGroundLeadTime    = 1           --roughly how many seconds ahea
 
 local startDayTime         = 0.5                   --start time, between 0 and 1; 0 = midnight, 0.5 = noon
 local secondsPerDay        = 120                 --seconds per day
+local dayNightCycle	   = false
 
 --------------------------------------------------------------------------------
 --other vars
 --------------------------------------------------------------------------------
-
 local currColor, currColorInverse
-
 local hoursPerDay = #nightColorMap
-
-local currDayTime
-
+local currDayTime = startDayTime
+local wantedTime = currDayTime
 local searchlightVertexIncrement = (math.pi * 2) / searchlightVertexCount
-
 local searchlightBuildingAngle = 0
-
 local noLightList = {}
-
 local vsx, vsy
 
 --------------------------------------------------------------------------------
@@ -438,22 +433,29 @@ function widget:ViewResize(viewSizeX, viewSizeY)
   vsy = viewSizeY
 end
 
+local update = 0
+local updatePeriod = 0.25
 function widget:Update(dt)
   local _, speedFactor, paused = GetGameSpeed()
   if (not paused) then
-    searchlightBuildingAngle = searchlightBuildingAngle + dt * speedFactor
+  update = update + dt
+  searchlightBuildingAngle = searchlightBuildingAngle + dt * speedFactor
+  if update > updatePeriod then
     if (WG.noonWanted or WG.midnightWanted) then
-      currDayTime = currDayTime + dt * speedFactor / secondsPerDay
+      currDayTime = currDayTime + update * speedFactor / secondsPerDay
       currDayTime = currDayTime - math.floor(currDayTime)
       if currDayTime > 0.49 and currDayTime < 0.51 then
-        WG.noonWanted = false
+	WG.noonWanted = false
       elseif currDayTime < 0.01 or currDayTime > 0.99 then
-        WG.midnightWanted = false
+	WG.midnightWanted = false
       end
       UpdateColors()
     elseif wantedTime ~= currDayTime then
-      currDayTime = currDayTime + dt * speedFactor / secondsPerDay
+      currDayTime = currDayTime + update * speedFactor / secondsPerDay
       currDayTime = currDayTime - math.floor(currDayTime)
+      UpdateColors()
+     end
+     update = 0
     end
   end
 end
