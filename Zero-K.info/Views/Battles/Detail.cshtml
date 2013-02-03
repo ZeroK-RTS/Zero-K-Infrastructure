@@ -1,4 +1,4 @@
-﻿@using ZeroKWeb
+ @using ZeroKWeb
 @model ZkData.SpringBattle
 @{
     Page.Title = "Battle " + Model.SpringBattleID + " detail";
@@ -53,7 +53,7 @@
             <td>@Model.StartTime.ToAgoString()
             </td>
         </tr>
-        <tr>
+        <tr class='hidden'>
             <td>
                 Duration:
             </td>
@@ -99,31 +99,33 @@
     @foreach (var grp in Model.SpringBattlePlayers.Where(x => !x.IsSpectator).GroupBy(x => x.AllyNumber))
     {
         var win = grp.First().IsInVictoryTeam;
-        <div class='fleft @(win ? "battle_winner" : "battle_loser")'>
+        <div class='fleft team @(win ? "winner" : "loser") hiddenBorder'>
             <span style="font-size: 130%; font-family: Skir;">Team @(grp.Key + 1)
-                @(win ? "Won!" : "Lost")</span><br />
-            <small>XP gained: @(win ? @Model.WinnerTeamXpChange : @Model.LoserTeamXpChange)
+                <span class="hidden">@(win ? "Won!" : "Lost")</span></span><br />
+            <small class="hidden">XP gained: @(win ? @Model.WinnerTeamXpChange : @Model.LoserTeamXpChange)
             </small>
             <br />
             @foreach (var u in grp)
             {
                 <span>
                     @Html.PrintAccount(u.Account)
-                    @(u.LoseTime.HasValue ? "died in " + TimeSpan.FromSeconds(u.LoseTime.Value).ToNiceString() : "")
-                    @if (u.EloChange.HasValue && Global.IsZeroKAdmin)
-                    {
-                        @:Elo: @u.EloChange.Value.ToString("F1")
-                    		}
-                    @foreach (var award in Model.AccountBattleAwards.Where(x => x.AccountID == u.AccountID))
-                    {
-                        <img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(award.AwardKey).png" height="30" title="@award.AwardDescription"/>
-                    }
+                    <span class="hidden">
+                        @(u.LoseTime.HasValue ? "died in " + TimeSpan.FromSeconds(u.LoseTime.Value).ToNiceString() : "")
+                        @if (u.EloChange.HasValue && Global.IsZeroKAdmin)
+                        {
+                            @:Elo: @u.EloChange.Value.ToString("F1")
+                         }
+                        @foreach (var award in Model.AccountBattleAwards.Where(x => x.AccountID == u.AccountID))
+                        {
+                            <img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(award.AwardKey).png" height="30" title="@award.AwardDescription"/>
+                        }
+                    </span>
                 </span>
                 <br />
             }
         </div>
     }
-    <div class="fleft battle_spec">
+    <div class="fleft team spec hiddenBorder">
         <span style="font-size: 130%; font-family: Skir;">Spectators</span><br />
         @foreach (var u in Model.SpringBattlePlayers.Where(x => x.IsSpectator))
         {
@@ -131,6 +133,8 @@
         }
     </div>
     <br class="clearfloat" />
+    <a onclick="$('.hidden').toggle(); $('.team').toggleClass('hiddenBorder'); return false" href="#"><span class="textbutton">Show/hide result</span></a>
+    <br />
 </div>
 <br />
 
