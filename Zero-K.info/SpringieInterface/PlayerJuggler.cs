@@ -80,7 +80,7 @@ namespace ZeroKWeb.SpringieInterface
             tas.UserStatusChanged += (sender, args) =>
                 {
                     User user = tas.ExistingUsers[args.ServerParams[0]];
-                    if ((user.IsAway && DateTime.Now.Subtract(user.AwaySince ?? DateTime.MinValue).TotalMinutes > 30) || user.IsInGame) {
+                    if ((user.IsAway && DateTime.Now.Subtract(user.AwaySince ?? DateTime.MinValue).TotalMinutes > 30)) {
                         ProtocolExtension.JugglerConfig conf = tas.Extensions.GetPublishedConfig(user.Name);
                         if (conf != null && conf.Active) {
                             using (var db = new ZkDataContext()) {
@@ -117,9 +117,9 @@ namespace ZeroKWeb.SpringieInterface
 
             List<int?> juggledLobbyIDs = tas.ExistingUsers.Values.Where(x => !x.IsInGame).Select(x => (int?)x.LobbyID).ToList();
             foreach (JugglerAutohost ah in autohosts) {
-                // safeguard - remove those known to be playing or speccing
+                // safeguard - remove those known to be playing or speccing actively
                 if (ah.RunningGameStartContext != null) foreach (int id in ah.RunningGameStartContext.Players.Where(x => !x.IsSpectator && x.IsIngame).Select(x => x.LobbyID)) juggledLobbyIDs.Remove(id);
-                if (ah.LobbyContext != null) foreach (int id in ah.LobbyContext.Players.Where(x => x.IsIngame || x.IsSpectator).Select(x => x.LobbyID)) juggledLobbyIDs.Remove(id);
+                if (ah.LobbyContext != null) foreach (int id in ah.LobbyContext.Players.Where(x => x.IsIngame).Select(x => x.LobbyID)) juggledLobbyIDs.Remove(id);
             }
 
             List<int?> existing = tas.ExistingUsers.Values.Select(y => (int?)y.LobbyID).ToList();

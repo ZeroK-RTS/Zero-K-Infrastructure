@@ -34,7 +34,7 @@
             this.showFullBox = new System.Windows.Forms.CheckBox();
             this.searchLabel = new System.Windows.Forms.Label();
             this.searchBox = new System.Windows.Forms.TextBox();
-            this.newBattleButton = new System.Windows.Forms.Button();
+            this.btnQuickMatch = new System.Windows.Forms.Button();
             this.battlePanel = new System.Windows.Forms.Panel();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -46,7 +46,7 @@
             this.panel1.Controls.Add(this.showFullBox);
             this.panel1.Controls.Add(this.searchLabel);
             this.panel1.Controls.Add(this.searchBox);
-            this.panel1.Controls.Add(this.newBattleButton);
+            this.panel1.Controls.Add(this.btnQuickMatch);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
@@ -103,15 +103,15 @@
             this.searchBox.TabIndex = 2;
             this.searchBox.TextChanged += new System.EventHandler(this.searchBox_TextChanged);
             // 
-            // newBattleButton
+            // btnQuickMatch
             // 
-            this.newBattleButton.Location = new System.Drawing.Point(3, 2);
-            this.newBattleButton.Name = "newBattleButton";
-            this.newBattleButton.Size = new System.Drawing.Size(75, 23);
-            this.newBattleButton.TabIndex = 1;
-            this.newBattleButton.Text = "Open New";
-            this.newBattleButton.UseVisualStyleBackColor = true;
-            this.newBattleButton.Click += new System.EventHandler(this.newBattleButton_Click);
+            this.btnQuickMatch.Location = new System.Drawing.Point(3, 2);
+            this.btnQuickMatch.Name = "btnQuickMatch";
+            this.btnQuickMatch.Size = new System.Drawing.Size(75, 23);
+            this.btnQuickMatch.TabIndex = 1;
+            this.btnQuickMatch.Text = "QuickMatch";
+            this.btnQuickMatch.UseVisualStyleBackColor = true;
+            this.btnQuickMatch.Click += new System.EventHandler(this.quickmatchButton_Click);
             // 
             // battlePanel
             // 
@@ -143,7 +143,7 @@
         private System.Windows.Forms.CheckBox showFullBox;
         private System.Windows.Forms.Label searchLabel;
         private System.Windows.Forms.TextBox searchBox;
-        private System.Windows.Forms.Button newBattleButton;
+        private System.Windows.Forms.Button btnQuickMatch;
         private System.Windows.Forms.Panel battlePanel;
 
     }

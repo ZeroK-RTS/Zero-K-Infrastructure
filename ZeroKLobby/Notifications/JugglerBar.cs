@@ -89,14 +89,14 @@ namespace ZeroKLobby.Notifications
                         InfoItems item;
                         if (Items.TryGetValue(entry.Mode, out item)) item.Label.Text = string.Format("({0}+{1})", entry.Count, entry.Playing);
 
-                        if (IsActive) lbInfo.Text = string.Format("in queue\n{0} playing\n{1} waiting", state.ModeCounts.Sum(x => x.Playing), state.TotalPlayers);
+                        if (IsActive) lbInfo.Text = string.Format("{0} playing\n{1} waiting", state.ModeCounts.Sum(x => x.Playing), state.TotalPlayers);
                     }
                 };
 
             client.LoginAccepted += (sender, args) =>
                 {
                     SendMyConfig(false);
-                    if (!Program.NotifySection.Bars.Contains(this)) Program.NotifySection.AddBar(this);
+                    //if (!Program.NotifySection.Bars.Contains(this)) Program.NotifySection.AddBar(this);
                 };
 
             client.Extensions.JugglerConfigReceived += (args, config) => { if (args.UserName == GlobalConst.NightwatchName) UpdateMyConfig(config); };
@@ -110,12 +110,10 @@ namespace ZeroKLobby.Notifications
             set {
                 _isActive = value;
                 if (IsActive) {
-                    BarContainer.btnDetail.Image = Resources.spec;
-                    lbInfo.Text = "in queue";
+                    if (!Program.NotifySection.Bars.Contains(this)) Program.NotifySection.AddBar(this);
                 }
                 else {
-                    BarContainer.btnDetail.Image = Resources.quickmatch_off;
-                    lbInfo.Text = "disabled";
+                    Program.NotifySection.RemoveBar(this);
                 }
             }
         }
@@ -124,8 +122,10 @@ namespace ZeroKLobby.Notifications
 
         public void AddedToContainer(NotifyBarContainer container) {
             BarContainer = container;
-            container.btnStop.Visible = false;
-            Program.ToolTip.SetText(BarContainer.btnDetail, "Enabled or disable QuickMatch");
+            BarContainer.btnDetail.Image = Resources.spec;
+            //container.btnStop.Visible = false;
+            container.btnDetail.Enabled = false;
+            Program.ToolTip.SetText(BarContainer.btnDetail, "QuickMatch will find or create a game for you");
         }
 
         public void CloseClicked(NotifyBarContainer container) {

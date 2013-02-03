@@ -27,6 +27,8 @@ namespace ZeroKLobby.MicroLobby
 
 			Program.ToolTip.SetText(searchBox, "Search game, description, map or player");
 
+            Program.ToolTip.SetText(btnQuickMatch,"Find or create battle automatically");
+
             showEmptyBox.Checked = Program.Conf.ShowEmptyBattles;
             showFullBox.Checked = Program.Conf.ShowNonJoinableBattles;
             showOfficialBox.Checked = Program.Conf.ShowOfficialBattles;
@@ -109,9 +111,9 @@ namespace ZeroKLobby.MicroLobby
 	    }
 
 	    private void newBattleButton_Click(object sender, EventArgs e)
-	    {
-	        if (battleListControl != null) battleListControl.ShowHostDialog(KnownGames.GetDefaultGame());
-	    }
+        {
+
+        }
 
         private void quickmatchButton_Click(object sender, EventArgs e)
         {
