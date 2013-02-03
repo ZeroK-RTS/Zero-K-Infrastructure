@@ -115,11 +115,11 @@ namespace ZeroKWeb.SpringieInterface
                     x => !tas.ExistingBattles.Values.Any(y => y.Founder.Name == x.LobbyContext.AutohostName && (y.IsPassworded || y.IsLocked))) //  
                          .ToList();
 
-            List<int?> juggledLobbyIDs = tas.ExistingUsers.Values.Where(x => !x.IsInGame).Select(x => (int?)x.LobbyID).ToList();
+            List<int?> juggledLobbyIDs = tas.ExistingUsers.Values.Where(x => !x.IsInGame || !x.IsInBattleRoom || tas.ExistingBattles.Values.Any(y=>y.Users.Any(z=>z.Name ==x.Name) && !y.Founder.IsInGame)).Select(x => (int?)x.LobbyID).ToList();
             foreach (JugglerAutohost ah in autohosts) {
                 // safeguard - remove those known to be playing or speccing actively
                 if (ah.RunningGameStartContext != null) foreach (int id in ah.RunningGameStartContext.Players.Where(x => !x.IsSpectator && x.IsIngame).Select(x => x.LobbyID)) juggledLobbyIDs.Remove(id);
-                if (ah.LobbyContext != null) foreach (int id in ah.LobbyContext.Players.Where(x => x.IsIngame).Select(x => x.LobbyID)) juggledLobbyIDs.Remove(id);
+                //if (ah.LobbyContext != null) foreach (int id in ah.LobbyContext.Players.Where(x => x.IsIngame).Select(x => x.LobbyID)) juggledLobbyIDs.Remove(id);
             }
 
             List<int?> existing = tas.ExistingUsers.Values.Select(y => (int?)y.LobbyID).ToList();

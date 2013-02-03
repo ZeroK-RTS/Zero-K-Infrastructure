@@ -161,6 +161,7 @@ namespace Springie
         public void RequestJuggle()
         {
             lastJuggle = DateTime.MinValue;
+            forceJuggleNext = true;
         }
 
 
