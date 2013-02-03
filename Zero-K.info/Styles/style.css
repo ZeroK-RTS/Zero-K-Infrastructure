@@ -381,6 +381,10 @@ span.button_2text
 
 /* Battle detail
 -----------------------------------------------------------*/
+.hidden
+{
+	display: none;
+}
 .team
 {
 	border: 1px solid;
