@@ -25,6 +25,7 @@ namespace Springie.autohost
     public partial class AutoHost
     {
         public const int PollTimeout = 60;
+        const int GameExitSplitDelay = 120;
         readonly CommandList Commands;
 
         IVotable activePoll;
@@ -154,7 +155,7 @@ namespace Springie.autohost
 
                         // auto start split vote
                         if (config.SplitBiggerThan != null && tas.MyBattle != null && config.SplitBiggerThan < tas.MyBattle.NonSpectatorCount) {
-                            if (DateTime.Now.Subtract(spring.GameEnded).TotalSeconds >= 60) ComSplitPlayers(TasSayEventArgs.Default, new string[]{});
+                            if (DateTime.Now.Subtract(spring.GameExited).TotalSeconds >= GameExitSplitDelay) ComSplitPlayers(TasSayEventArgs.Default, new string[]{});
                             /*
                             int cnt = tas.MyBattle.NonSpectatorCount;
                             if (cnt > lastSplitPlayersCountCalled && cnt%2 == 0) {
