@@ -225,6 +225,7 @@ namespace Springie.autohost
                 if (invalidUser != null)
                 {
                     SayBattle(String.Format("User {0} is not in proper mission slot", invalidUser.Name));
+                    SayBattle(String.Format("Current slot: {0}", invalidUser.TeamNumber));
                     return false;
                 }
 
