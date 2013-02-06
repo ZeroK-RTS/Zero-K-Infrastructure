@@ -1079,8 +1079,9 @@
       <Column Name="CampaignID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="X" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
       <Column Name="Y" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
-      <Column Name="IsSkirmish" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IsSkirmish" Type="System.Boolean" DbType="Bit" />
       <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="DescriptionStory" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
       <Column Name="StartsUnlocked" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Association Name="CampaignPlanet_AccountCampaignProgress" Member="AccountCampaignProgress" ThisKey="CampaignID,PlanetID" OtherKey="CampaignID,PlanetID" Type="AccountCampaignProgress" />
       <Association Name="CampaignPlanet_CampaignLink" Member="CampaignLinks" ThisKey="CampaignID,PlanetID" OtherKey="CampaignID,PlanetToUnlockID" Type="CampaignLink" />

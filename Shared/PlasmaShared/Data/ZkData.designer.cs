@@ -28169,9 +28169,11 @@ namespace ZkData
 		
 		private double _Y;
 		
-		private System.Nullable<bool> _IsSkirmish;
+		private bool _IsSkirmish;
 		
 		private string _Description;
+		
+		private string _DescriptionStory;
 		
 		private bool _StartsUnlocked;
 		
@@ -28207,10 +28209,12 @@ namespace ZkData
     partial void OnXChanged();
     partial void OnYChanging(double value);
     partial void OnYChanged();
-    partial void OnIsSkirmishChanging(System.Nullable<bool> value);
+    partial void OnIsSkirmishChanging(bool value);
     partial void OnIsSkirmishChanged();
     partial void OnDescriptionChanging(string value);
     partial void OnDescriptionChanged();
+    partial void OnDescriptionStoryChanging(string value);
+    partial void OnDescriptionStoryChanged();
     partial void OnStartsUnlockedChanging(bool value);
     partial void OnStartsUnlockedChanged();
     #endregion
@@ -28356,7 +28360,7 @@ namespace ZkData
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsSkirmish", DbType="Bit")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
-		public System.Nullable<bool> IsSkirmish
+		public bool IsSkirmish
 		{
 			get
 			{
@@ -28396,8 +28400,29 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StartsUnlocked", DbType="Bit NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DescriptionStory", DbType="NVarChar(MAX)")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		public string DescriptionStory
+		{
+			get
+			{
+				return this._DescriptionStory;
+			}
+			set
+			{
+				if ((this._DescriptionStory != value))
+				{
+					this.OnDescriptionStoryChanging(value);
+					this.SendPropertyChanging();
+					this._DescriptionStory = value;
+					this.SendPropertyChanged("DescriptionStory");
+					this.OnDescriptionStoryChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StartsUnlocked", DbType="Bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
 		public bool StartsUnlocked
 		{
 			get
@@ -28418,7 +28443,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_AccountCampaignProgress", Storage="_AccountCampaignProgress", ThisKey="CampaignID,PlanetID", OtherKey="CampaignID,PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
 		public EntitySet<AccountCampaignProgress> AccountCampaignProgress
 		{
 			get
@@ -28437,7 +28462,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignLink", Storage="_CampaignLinks", ThisKey="CampaignID,PlanetID", OtherKey="CampaignID,PlanetToUnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
 		public EntitySet<CampaignLink> CampaignLinks
 		{
 			get
@@ -28456,7 +28481,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignLink1", Storage="_CampaignLinks1", ThisKey="CampaignID,PlanetID", OtherKey="CampaignID,UnlockingPlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
 		public EntitySet<CampaignLink> CampaignLinks1
 		{
 			get
@@ -28475,7 +28500,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignJournal", Storage="_CampaignJournals", ThisKey="CampaignID,PlanetID", OtherKey="CampaignID,PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
 		public EntitySet<CampaignJournal> CampaignJournals
 		{
 			get
@@ -28494,7 +28519,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignPlanetVar", Storage="_CampaignPlanetVars", ThisKey="CampaignID,PlanetID", OtherKey="CampaignID,PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
 		public EntitySet<CampaignPlanetVar> CampaignPlanetVars
 		{
 			get

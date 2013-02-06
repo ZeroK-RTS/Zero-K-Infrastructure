@@ -94,14 +94,20 @@
 <br /><br />
 @if (unlocked){
     <h3>Mission: @Html.ActionLink(Model.Mission.Name, "Detail", "Missions", new { id = Model.MissionID }, null)</h3>
+    if (Model.DescriptionStory != null) {
+        <br />
+        @Html.BBCode("\t"+Model.DescriptionStory)
+    }
 }
 <br />
 
-@if (journals != null && journals.Count > 0) {
+@if (journals != null && journals.Count > 0)
+{
     <br />
     <h3 class="expand">Journals</h3>
     <div id="journals" class="collapse width-90">
-        @foreach (CampaignJournal journal in journals){
+        @foreach (CampaignJournal journal in journals)
+        {
             if (journal.IsUnlocked(Global.AccountID))
             {
                 <h4>@(journal.Title)</h4>
