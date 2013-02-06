@@ -381,13 +381,10 @@ span.button_2text
 
 /* Battle detail
 -----------------------------------------------------------*/
-.hidden
+
+.battle_winner
 {
-	display: none;
-}
-.team
-{
-	border: 1px solid;
+	border: 1px solid #00FF21;
 	padding: 5px;
 	margin: 2px;
 	border-radius: 5px;
@@ -395,25 +392,24 @@ span.button_2text
 	-moz-box-shadow: 0 0 3px 3px #000;
     -webkit-box-shadow: 0 0 3px 3px #000;
 }
-.winner.hiddenBorder, .loser.hiddenBorder
+
+.battle_loser
 {
-	border-color: #666;
-}
-.winner
-{
-	border-color: #00FF21;
+	border: 1px solid #FF0000;
+	padding: 5px;
+	margin: 2px;
+	border-radius: 5px;
+    box-shadow: 0 0 3px 3px #000;
+	-moz-box-shadow: 0 0 3px 3px #000;
+    -webkit-box-shadow: 0 0 3px 3px #000;
 }
 
-.loser
+.battle_spec
 {
-	border-color: #FF0000;
+	border: 1px solid #333;
+	margin: 2px;
+	border-radius: 5px;
 }
-
-.spec
-{
-	border-color: #333;
-}
-
 
 /* Map detail
 -----------------------------------------------------------*/
