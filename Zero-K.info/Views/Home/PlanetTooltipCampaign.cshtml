@@ -12,7 +12,7 @@
 <br />
 @if (Model.IsUnlocked(Global.AccountID))
 {
-    <b>"Mission:" @Model.Mission.Name</b>
+    @("Mission: " + Model.Mission.Name)
     <br />
     if (Model.DescriptionStory != null)
     {
@@ -20,8 +20,8 @@
         @Html.BBCode(Model.DescriptionStory)
         </small>
     }
+    <br />
 }
-<br />
 <table><tr>
 <td>@Html.Partial("PlanetIconCampaign", Model)</td>
 <td>
