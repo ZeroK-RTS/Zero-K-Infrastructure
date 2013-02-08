@@ -72,15 +72,10 @@ namespace Springie
         }
 
 
-        public string JugglePlayers()
+        public string JuggleNow()
         {
             try
             {
-                var lastJuggleAgo = DateTime.Now.Subtract(lastJuggle).TotalSeconds;
-                if (lastJuggleAgo < MinJuggleDelay) {
-                    forceJuggleNext = true;
-                    return null;
-                }
                 lastJuggle = DateTime.Now;
                 forceJuggleNext = false;
                 using (var serv = new SpringieService())
@@ -154,7 +149,7 @@ namespace Springie
             }
             if (DateTime.Now.Subtract(lastJuggle).TotalSeconds > JugglePeriod || forceJuggleNext)
             {
-                JugglePlayers();
+                JuggleNow();
             }
         }
 

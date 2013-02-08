@@ -597,7 +597,7 @@ namespace Springie.autohost
 
         public void ComJuggle(TasSayEventArgs e, string[] words)
         {
-            Respond(e, Program.main.JugglePlayers());
+            Respond(e, Program.main.JuggleNow());
         }
 
         public void ComKick(TasSayEventArgs e, string[] words)

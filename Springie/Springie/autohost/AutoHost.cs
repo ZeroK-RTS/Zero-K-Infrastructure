@@ -268,11 +268,11 @@ namespace Springie.autohost
             return false;
         }
 
-        public bool JuggleIfNeeded() {
+        public bool JuggleIfPlayerCountNotOk() {
             if (tas.MyBattle != null && !spring.IsRunning && config != null && SpawnConfig == null) {
                 int count = tas.MyBattle.Users.Count(x => !x.IsSpectator && x.SyncStatus != SyncStatuses.Unknown);
-                if (count > (config.SplitBiggerThan ?? 99) || (count > 0 && count < (config.MinToJuggle ?? 0))) {
-                    Program.main.JugglePlayers();
+                if (count > (config.SplitBiggerThan ?? 99) || (count > 0 && count < (config.MergeSmallerThan ?? 0))) {
+                    Program.main.RequestJuggle();;
                     return true;
                 }
             }
@@ -926,7 +926,7 @@ namespace Springie.autohost
             if (SpawnConfig != null && SpawnConfig.Owner == name) // owner joins, set him boss 
                 ComBoss(TasSayEventArgs.Default, new[] { name });
 
-            JuggleIfNeeded();
+            JuggleIfPlayerCountNotOk();
         }
 
         void tas_BattleUserLeft(object sender, BattleUserEventArgs e1) {
@@ -1036,7 +1036,7 @@ namespace Springie.autohost
                 Battle b = tas.MyBattle;
                 if (e.ServerParams[0] != tas.UserName && b.Users.Any(x => x.Name == e.ServerParams[0])) CheckForBattleExit();
             }
-            JuggleIfNeeded();
+            JuggleIfPlayerCountNotOk();
         }
     }
 }
