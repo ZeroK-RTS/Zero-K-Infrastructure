@@ -1145,6 +1145,12 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         /// <remarks/>
         SmallTeams,
+        
+        /// <remarks/>
+        LowSkill,
+        
+        /// <remarks/>
+        HighSkill,
     }
     
     /// <remarks/>
