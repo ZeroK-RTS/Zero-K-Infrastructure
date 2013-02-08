@@ -77,6 +77,8 @@ namespace ZeroKWeb.SpringieInterface
 					var players = context.Players.Count(x => !x.IsSpectator);
                     if (config != null && config.SplitBiggerThan != null && players > config.SplitBiggerThan) players = players/2; // expect the split
 					switch (mode) {
+                        case AutohostMode.HighSkill:
+                        case AutohostMode.LowSkill:
                         case AutohostMode.SmallTeams:
                         case AutohostMode.Teams:
 							var ret = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa != true && x.MapIsChickens != true && x.MapIsSpecial != true);

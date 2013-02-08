@@ -20,6 +20,8 @@ namespace ZeroKWeb.SpringieInterface
     {
         static readonly List<AutohostMode> BinOrder = new List<AutohostMode>
                                                       {
+                                                          AutohostMode.LowSkill,
+                                                          AutohostMode.HighSkill,
                                                           AutohostMode.Planetwars,
                                                           AutohostMode.SmallTeams,
                                                           AutohostMode.Teams,
@@ -278,8 +280,11 @@ namespace ZeroKWeb.SpringieInterface
                     if (!b.PlayerPriority.ContainsKey(i)) {
                         Account acc = allAccounts[i];
 
-                        if (b.Config.MinLevel != null && acc.Level < b.Config.MinLevel) continue; // dont queue who cannot join PW
-                        if (b.Config.MinElo != null && acc.EffectiveElo < b.Config.MinElo) continue; // dont queue those who cannot join high skill host
+                        // dont queue those who cannot join high/low skill host
+                        if (b.Config.MinLevel != null && acc.Level < b.Config.MinLevel) continue;
+                        if (b.Config.MaxLevel != null && acc.Level > b.Config.MaxLevel) continue;
+                        if (b.Config.MinElo != null && acc.EffectiveElo < b.Config.MinElo) continue; 
+                        if (b.Config.MaxElo != null && acc.EffectiveElo > b.Config.MaxElo) continue; 
 
                         if (b.Config.MaxToJuggle != null && b.ManuallyJoined.Count() >= b.Config.MaxToJuggle) continue; // full 1v1
                         if (b.Config.MaxEloDifference != null && b.ManuallyJoined.Count >= 1) {

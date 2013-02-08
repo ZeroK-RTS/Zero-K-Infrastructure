@@ -861,6 +861,8 @@
       <Column Name="DontMoveManuallyJoined" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="MinLevel" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="MinElo" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="MaxLevel" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="MaxElo" Type="System.Int32" DbType="int" CanBeNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.RoleType" Member="RoleTypes">
@@ -1058,8 +1060,8 @@
       <Column Name="MapWidth" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="MapHeight" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="IsDirty" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
-      <Column Name="MapImageName" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
       <Column Name="IsHidden" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="MapImageName" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
       <Association Name="Campaign_CampaignPlanet" Member="CampaignPlanets" ThisKey="CampaignID" OtherKey="CampaignID" Type="CampaignPlanet" />
       <Association Name="Campaign_AccountCampaignProgress" Member="AccountCampaignProgress" ThisKey="CampaignID" OtherKey="CampaignID" Type="AccountCampaignProgress" />
       <Association Name="Campaign_CampaignLink" Member="CampaignLinks" ThisKey="CampaignID" OtherKey="CampaignID" Type="CampaignLink" />
@@ -1075,14 +1077,15 @@
     <Type Name="CampaignPlanet">
       <Column Name="PlanetID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="Name" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="MissionID" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="CampaignID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MissionID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="CampaignID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="X" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
       <Column Name="Y" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
-      <Column Name="IsSkirmish" Type="System.Boolean" DbType="Bit" />
+      <Column Name="IsSkirmish" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
       <Column Name="DescriptionStory" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
       <Column Name="StartsUnlocked" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="HideIfLocked" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Association Name="CampaignPlanet_AccountCampaignProgress" Member="AccountCampaignProgress" ThisKey="CampaignID,PlanetID" OtherKey="CampaignID,PlanetID" Type="AccountCampaignProgress" />
       <Association Name="CampaignPlanet_CampaignLink" Member="CampaignLinks" ThisKey="CampaignID,PlanetID" OtherKey="CampaignID,PlanetToUnlockID" Type="CampaignLink" />
       <Association Name="CampaignPlanet_CampaignLink1" Member="CampaignLinks1" ThisKey="CampaignID,PlanetID" OtherKey="CampaignID,UnlockingPlanetID" Type="CampaignLink" />

@@ -23,46 +23,51 @@ namespace ZeroKWeb.SpringieInterface
         const double MaxCbalanceDifference = 150;
         const double MaxPwEloDifference = 300;
         const double MaxTeamSizeDifferenceRatio = 2;
-        readonly List<BalanceTeam> teams = new List<BalanceTeam>();
+
+        public enum BalanceMode
+        {
+            Normal,
+            ClanWise,
+            FactionWise
+        }
+
         List<BalanceItem> balanceItems;
 
         double bestStdDev = double.MaxValue;
         List<BalanceTeam> bestTeams;
         long iterationsChecked;
         int maxTeamSize;
+        readonly List<BalanceTeam> teams = new List<BalanceTeam>();
 
         public static BalanceTeamsResult BalanceTeams(BattleContext context, bool isGameStart, int? allyCount, bool? clanWise) {
-            AutohostConfig config = context.GetConfig();
-            int playerCount = context.Players.Count(x => !x.IsSpectator);
+            var config = context.GetConfig();
+            var playerCount = context.Players.Count(x => !x.IsSpectator);
 
             // game is managed, is bigger than split limit and wants to start -> split into two and issue starts
-            if (isGameStart && context.GetMode() != AutohostMode.None && config.SplitBiggerThan != null && config.SplitBiggerThan < playerCount)
-            {
+            if (isGameStart && context.GetMode() != AutohostMode.None && config.SplitBiggerThan != null && config.SplitBiggerThan < playerCount) {
                 new Thread(() =>
-                {
-                    try
                     {
-                        SplitAutohost(context, true);
-                    }
-                    catch (Exception ex) { Trace.TraceError("Error when splitting game:{0}",ex);}
-                }).Start();
+                        try {
+                            SplitAutohost(context, true);
+                        } catch (Exception ex) {
+                            Trace.TraceError("Error when splitting game:{0}", ex);
+                        }
+                    }).Start();
                 return new BalanceTeamsResult
-                {
-                    CanStart = false,
-                    Message =
-                        string.Format(
-                            "Game too big - splitting into two - max players is {0} here",
-                            config.SplitBiggerThan)
-                };
+                       {
+                           CanStart = false,
+                           Message =
+                               string.Format("Game too big - splitting into two - max players is {0} here",
+                                             config.SplitBiggerThan)
+                       };
             }
 
             // dont allow to start alone
             if (playerCount <= 1 && !context.Bots.Any()) return new BalanceTeamsResult { CanStart = false, Message = "Cannot play alone, you can add bots using button on bottom left." };
 
-            if (clanWise == null &&
-                (config.AutohostMode == AutohostMode.SmallTeams || config.AutohostMode == AutohostMode.Teams)) clanWise = true;
+            if (clanWise == null && (config.AutohostMode == AutohostMode.SmallTeams || config.AutohostMode == AutohostMode.Teams || config.AutohostMode == AutohostMode.LowSkill || config.AutohostMode == AutohostMode.HighSkill)) clanWise = true;
 
-            BalanceTeamsResult res = PerformBalance(context, isGameStart, allyCount, clanWise, config, playerCount);
+            var res = PerformBalance(context, isGameStart, allyCount, clanWise, config, playerCount);
 
             if (isGameStart) {
                 if (playerCount < (config.MinToStart ?? 0)) {
@@ -88,341 +93,20 @@ namespace ZeroKWeb.SpringieInterface
 
         public static double GetTeamsDifference(List<BalanceTeam> t) {
             if (t.Count == 2) return Math.Abs(t[0].AvgElo - t[1].AvgElo);
-            double min = Double.MaxValue;
-            double max = Double.MinValue;
-            foreach (BalanceTeam team in t) {
+            var min = Double.MaxValue;
+            var max = Double.MinValue;
+            foreach (var team in t) {
                 if (team.AvgElo > max) max = team.AvgElo;
                 if (team.AvgElo < min) min = team.AvgElo;
             }
             return max - min;
         }
 
-        BalanceTeamsResult PlanetwarsBalance(BattleContext context) {
-            var res = new BalanceTeamsResult();
-            context.Players = context.Players.Where(x => !x.IsSpectator).ToList();
-            res.CanStart = false;
-            res.DeleteBots = true;
-
-            using (var db = new ZkDataContext()) {
-                res.Message = "";
-                Planet planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == context.Map);
-                List<int> idList = context.Players.Select(x => x.LobbyID).ToList();
-                List<Account> players = idList.Select(x => db.Accounts.First(y => y.LobbyID == x)).ToList();
-                List<int> presentFactions = players.Where(x => x != null).GroupBy(x => x.FactionID??0).Select(x => x.Key).ToList();
-                Faction attackerFaction = planet.GetAttacker(presentFactions);
-                if (attackerFaction == null) {
-                    res.Message = "No planet was attacked - send your dropships somewhere!";
-                    return res;
-                }
-                Faction defenderFaction = planet.Faction;
-				
-				// "backup" defender of other faction with most influence here
-				if (defenderFaction == null) defenderFaction = planet.PlanetFactions.Where(x=>x.FactionID != attackerFaction.FactionID && x.Influence > 0).OrderByDescending(x=>x.Influence).Select(x=>x.Faction).FirstOrDefault();
-
-                // bots game
-                if (planet.PlanetStructures.Any(x => !string.IsNullOrEmpty(x.StructureType.EffectBots))) {
-                    int teamID = 0;
-                    for (int i = 0; i < players.Count; i++) res.Players.Add(new PlayerTeam { LobbyID = players[i].LobbyID ?? 0, Name = players[i].Name, AllyID = 0, TeamID = teamID++ });
-                    int cnt = 1;
-                    foreach (StructureType b in planet.PlanetStructures.Select(x => x.StructureType).Where(x => !string.IsNullOrEmpty(x.EffectBots))) res.Bots.Add(new BotTeam { AllyID = 1, BotAI = b.EffectBots, TeamID = teamID++, BotName = "Aliens" + cnt++ });
-
-                    res.Message += string.Format("This planet is infested by aliens, fight for your survival");
-                    return res;
-                }
-
-                // create attacker and defenders teams
-                List<Account> attackers = players.Where(x => x.Faction == attackerFaction).ToList();
-                var defenders = new List<Account>();
-                if (defenderFaction != null) defenders = players.Where(x => x.Faction == defenderFaction).ToList();
-                foreach (Account acc in players) {
-                    if (acc.Faction != null && acc.Faction != attackerFaction && acc.Faction != defenderFaction) {
-                        bool allyAttacker = attackerFaction.HasTreatyRight(acc.Faction, x => x.EffectBalanceSameSide == true, planet);
-                        bool allyDefender = defenderFaction != null &&
-                                            defenderFaction.HasTreatyRight(acc.Faction, x => x.EffectBalanceSameSide == true, planet);
-                        if (allyAttacker && allyDefender) continue;
-                        if (allyAttacker) attackers.Add(acc);
-                        if (allyDefender) defenders.Add(acc);
-                    }
-                }
-
-                res= LegacyBalance(2, BalanceMode.FactionWise, context, attackers, defenders);
-                res.DeleteBots = true;
-                return res;
-            }
-        }
-
-
-        public enum BalanceMode
-        {
-            Normal,
-            ClanWise,
-            FactionWise
-        }
-
-        BalanceTeamsResult LegacyBalance(int teamCount, BalanceMode mode, BattleContext b, params List<Account>[] unmovablePlayers) {
-            var ret = new BalanceTeamsResult();
-
-            try {
-                
-                ret.CanStart = true;
-                ret.Players = b.Players.ToList();
-
-                var db = new ZkDataContext();
-                List<Account> accs =
-                    db.Accounts.Where(x => b.Players.Where(y => !y.IsSpectator).Select(y => (int?)y.LobbyID).ToList().Contains(x.LobbyID)).ToList();
-                if (accs.Count < 1) {
-                    ret.CanStart = false;
-                    return ret;
-                }
-                if (teamCount < 1) teamCount = 1;
-                if (teamCount > accs.Count) teamCount = accs.Count;
-                if (teamCount == 1) {
-                    foreach (PlayerTeam p in ret.Players) p.AllyID = 0;
-                    return ret;
-                }
-
-                maxTeamSize = (int)Math.Ceiling(accs.Count/(double)teamCount);
-
-                teams.Clear();
-                for (int i = 0; i < teamCount; i++) {
-                    var team = new BalanceTeam();
-                    teams.Add(team);
-                    if (unmovablePlayers != null && unmovablePlayers.Length > i) {
-                        List<Account> unmovables = unmovablePlayers[i];
-                        team.AddItem(new BalanceItem(unmovablePlayers[i].ToArray()) { CanBeMoved = false });
-                        accs.RemoveAll(x => unmovables.Any(y => y.LobbyID == x.LobbyID));
-                    }
-                }
-
-                balanceItems = new List<BalanceItem>();
-                if (mode == BalanceMode.ClanWise) {
-                    List<IGrouping<int?, Account>> clanGroups = accs.GroupBy(x => x.ClanID ?? x.LobbyID).ToList();
-                    if (teamCount > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize)) mode = BalanceMode.Normal;
-                    else balanceItems.AddRange(clanGroups.Select(x => new BalanceItem(x.ToArray())));
-                }
-                if (mode == BalanceMode.FactionWise) {
-                    balanceItems.Clear();
-                    List<IGrouping<int?, Account>> factionGroups = accs.GroupBy(x => x.FactionID ?? x.LobbyID).ToList();
-                    balanceItems.AddRange(factionGroups.Select(x => new BalanceItem(x.ToArray())));
-                }
-
-                if (mode == BalanceMode.Normal) {
-                    balanceItems.Clear();
-                    balanceItems.AddRange(accs.Select(x => new BalanceItem(x)));
-                }
-
-                var sw = new Stopwatch();
-                sw.Start();
-                RecursiveBalance(0);
-                sw.Stop();
-
-                var minSize = bestTeams.Min(x => x.Count);
-                var maxSize = bestTeams.Max(x => x.Count);
-                var sizesWrong = maxSize/(double)minSize > MaxTeamSizeDifferenceRatio;
-                // cbalance failed, rebalance using normal
-                if (mode == BalanceMode.ClanWise && (bestTeams == null || GetTeamsDifference(bestTeams) > MaxCbalanceDifference || sizesWrong)) return new Balancer().LegacyBalance(teamCount, BalanceMode.Normal, b, unmovablePlayers); // cbalance failed, rebalance using normal
-                
-                if (sizesWrong && mode == BalanceMode.FactionWise) {
-                    ret.CanStart = false;
-                    ret.Message = string.Format("Failed to balance - too many people from same faction");
-                    return ret;
-                }
-
-                if (unmovablePlayers != null && unmovablePlayers.Length> 0) {
-                    var minElo = bestTeams.Min(x => x.AvgElo);
-                    var maxElo = bestTeams.Max(x => x.AvgElo);
-                    if (maxElo - minElo > MaxPwEloDifference) {
-                        ret.CanStart = false;
-                        ret.Message = string.Format("Team difference is too big - win chance {0}% - spectate some or wait for more people",
-                                                    Utils.GetWinChancePercent(maxElo - minElo));
-                        return ret;
-                    }
-
-                }
-
-                if (bestTeams == null) {
-                    ret.CanStart = false;
-                    ret.Message = string.Format("Failed to balance {0} - too many people from same clan or faction (in teams game you can try !random and !forcestart)");
-                    return ret;
-                }
-                else {
-                    if (unmovablePlayers == null || unmovablePlayers.Length == 0) bestTeams = bestTeams.Shuffle(); // permute when not unmovable players present
-
-                    string text = "( ";
-
-                    double lastTeamElo = 0.0;
-                    int allyNum = 0;
-                    foreach (BalanceTeam team in bestTeams) {
-                        if (allyNum > 0) text += " : ";
-                        text += string.Format("{0}", (allyNum + 1));
-                        if (allyNum > 0) {
-                            text += string.Format("={0}%)", Utils.GetWinChancePercent(lastTeamElo - team.AvgElo));
-                        }
-                        lastTeamElo = team.AvgElo;
-
-                        foreach (int u in team.Items.SelectMany(x => x.LobbyId)) ret.Players.Single(x => x.LobbyID == u).AllyID = allyNum;
-                        allyNum++;
-                    }
-                    text += ")";
-
-                    ret.Message = String.Format("{0} players balanced {2} to {1} teams {3}. {4} combinations checked, spent {5}ms of CPU time",
-                                                bestTeams.Sum(x=>x.Count),
-                                                teamCount,
-                                                mode,
-                                                text,
-                                                iterationsChecked,
-                                                sw.ElapsedMilliseconds);
-                }
-            } catch (Exception ex) {
-                ret.Message = ex.ToString();
-                ret.CanStart = false;
-            }
-
-            return ret;
-        }
-
-        static void SpecPlayerOnCondition(PlayerTeam player, Account account, string userMessage) {
-            player.IsSpectator = true;
-            AuthServiceClient.SendLobbyMessage(account, userMessage);
-        }
-
-        static bool CheckPlayersMinimumConditions(BattleContext battleContext,
-                                                  ZkDataContext dataContext,
-                                                  AutohostConfig config,
-                                                  ref string actionsDescription) {
-            bool ok = true;
-            foreach (var p in battleContext.Players.Where(x=>!x.IsSpectator).Select(x => new { player = x, account = dataContext.Accounts.First(y => y.LobbyID == x.LobbyID) })
-                ) {
-                if (config.MinLevel != null && p.account.Level < config.MinLevel) {
-                    SpecPlayerOnCondition(p.player,
-                                          p.account,
-                                          string.Format(
-                                              "Sorry, minimum level is {0} on this host. To increase your level, play more games on other hosts or open multiplayer game and play against computer AI bots. You can spectate/observe this game however.",
-                                              config.MinLevel));
-                    actionsDescription += string.Format("{0} cannot play, his level is {1}, minimum level is {2}\n",
-                                                        p.account.Name,
-                                                        p.account.Level,
-                                                        config.MinLevel);
-                    ok = false;
-                }
-                else if (config.MinElo != null && p.account.EffectiveElo < config.MinElo) {
-                    SpecPlayerOnCondition(p.player,
-                                          p.account,
-                                          string.Format("Sorry, minimum elo skill is {0} on this host. You can spectate/observe this game however.",
-                                                        config.MinElo));
-                    actionsDescription += string.Format("{0} cannot play here, his elo is {1}, minimum elo is {2}\n",
-                                                        p.account.Name,
-                                                        p.account.EffectiveElo,
-                                                        config.MinElo);
-                    ok = false;
-                }
-            }
-            return ok;
-        }
-
-        static BalanceTeamsResult PerformBalance(BattleContext context,
-                                                 bool isGameStart,
-                                                 int? allyCount,
-                                                 bool? clanWise,
-                                                 AutohostConfig config,
-                                                 int playerCount) {
-            var res = new BalanceTeamsResult();
-            AutohostMode mode = context.GetMode();
-
-            using (var db = new ZkDataContext()) {
-                if (!CheckPlayersMinimumConditions(context, db, config, ref res.Message)) {
-                    res.CanStart = false;
-                    return res;
-                }
-
-                switch (mode) {
-                    case AutohostMode.None:
-                    {
-                        if (!isGameStart) res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == true ? BalanceMode.ClanWise : BalanceMode.Normal, context);
-                    }
-                        break;
-                    case AutohostMode.Teams:
-                    case AutohostMode.SmallTeams:
-                    {
-                        Resource map = db.Resources.Single(x => x.InternalName == context.Map);
-                        if (map.MapFFAMaxTeams != null) res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams.Value, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
-                        else res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
-                        res.DeleteBots = true;
-                        return res;
-                    }
-                    case AutohostMode.Game1v1:
-                    {
-                        res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
-                        res.DeleteBots = true;
-                    }
-                        break;
-
-                    case AutohostMode.GameChickens:
-                    {
-                        res.Players = context.Players.ToList();
-                        res.Bots = context.Bots.Where(x => x.Owner != context.AutohostName).ToList();
-                        foreach (PlayerTeam p in res.Players) p.AllyID = 0;
-                        foreach (BotTeam b in res.Bots) b.AllyID = 1;
-
-                        if (!res.Bots.Any() && res.Players.Count > 0) {
-                            res.Message = "Add some bot (computer player) as your enemy. Use button on bottom left. Chicken or CAI is recommended.";
-                            res.CanStart = false;
-                            /*else
-                                    {
-                                        res.Bots.Add(new BotTeam() { AllyID = 1, TeamID = 16, BotName = "default_Chicken", BotAI = "Chicken: Normal", });
-                                        res.Message = "Adding a normal chickens bot for you";
-                                    }*/
-                        }
-                    }
-                        break;
-                    case AutohostMode.GameFFA:
-                    {
-                        Resource map = db.Resources.Single(x => x.InternalName == context.Map);
-                        if (map.MapFFAMaxTeams != null) res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams.Value, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
-                        else res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams ?? 8, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
-                        return res;
-                    }
-                    case AutohostMode.Planetwars:
-                        
-                        return new Balancer().PlanetwarsBalance(context);
-                }
-                return res;
-            }
-        }
-
-        void RecursiveBalance(int itemIndex) {
-            if (iterationsChecked > 2000000) return;
-
-            if (itemIndex < balanceItems.Count) {
-                BalanceItem item = balanceItems[itemIndex];
-
-                if (item.CanBeMoved) {
-                    foreach (BalanceTeam team in teams) {
-                        if (team.Count + item.Count <= maxTeamSize) {
-                            team.AddItem(item);
-                            RecursiveBalance(itemIndex + 1);
-                            team.RemoveItem(item);
-                        }
-                    }
-                }
-                else RecursiveBalance(itemIndex + 1);
-            }
-            else {
-                // end of recursion
-                iterationsChecked++;
-                double stdDev = GetTeamsDifference(teams);
-                if (stdDev < bestStdDev) {
-                    bestStdDev = stdDev;
-                    bestTeams = CloneTeams(teams);
-                }
-            }
-        }
-
         public static void SplitAutohost(BattleContext context, bool forceStart = false) {
-            TasClient tas = Global.Nightwatch.Tas;
+            var tas = Global.Nightwatch.Tas;
             try {
                 //find first one that isnt running and is using same mode (by name)
-                Battle splitTo =
+                var splitTo =
                     tas.ExistingBattles.Values.FirstOrDefault(
                         x =>
                         !x.Founder.IsInGame && x.NonSpectatorCount == 0 && x.Founder.Name != context.AutohostName && !x.IsPassworded &&
@@ -434,12 +118,12 @@ namespace ZeroKWeb.SpringieInterface
                     tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!map " + context.Map, false);
 
                     var db = new ZkDataContext();
-                    List<int?> ids = context.Players.Where(y => !y.IsSpectator).Select(x => (int?)x.LobbyID).ToList();
-                    List<Account> users = db.Accounts.Where(x => ids.Contains(x.LobbyID)).ToList();
+                    var ids = context.Players.Where(y => !y.IsSpectator).Select(x => (int?)x.LobbyID).ToList();
+                    var users = db.Accounts.Where(x => ids.Contains(x.LobbyID)).ToList();
                     var toMove = new List<Account>();
 
-                    double moveCount = Math.Ceiling(users.Count/2.0);
-                    
+                    var moveCount = Math.Ceiling(users.Count/2.0);
+
                     /*if (users.Count%2 == 0 && users.Count%4 != 0) {
                         // in case of say 18 people, move 10 nubs out, keep 8 pros
                         moveCount = users.Count/2 + 1;
@@ -454,7 +138,7 @@ namespace ZeroKWeb.SpringieInterface
 
                     try {
                         PlayerJuggler.SuppressJuggler = true;
-                        foreach (Account m in toMove) tas.ForceJoinBattle(m.Name, splitTo.BattleID);
+                        foreach (var m in toMove) tas.ForceJoinBattle(m.Name, splitTo.BattleID);
                         Thread.Sleep(5000);
                         tas.Say(TasClient.SayPlace.User, context.AutohostName, "!lock 180", false);
                         tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!lock 180", false);
@@ -463,9 +147,7 @@ namespace ZeroKWeb.SpringieInterface
                             Thread.Sleep(500);
                             tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!map", false);
                         }
-                        else {
-                            tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!map " + context.Map, false);
-                        }
+                        else tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!map " + context.Map, false);
                         if (forceStart) {
                             tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!balance", false);
                             tas.Say(TasClient.SayPlace.User, context.AutohostName, "!balance", false);
@@ -489,19 +171,335 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
+        static bool CheckPlayersMinimumConditions(BattleContext battleContext,
+                                                  ZkDataContext dataContext,
+                                                  AutohostConfig config,
+                                                  ref string actionsDescription) {
+            var ok = true;
+            foreach (
+                var p in
+                    battleContext.Players.Where(x => !x.IsSpectator)
+                                 .Select(x => new { player = x, account = dataContext.Accounts.First(y => y.LobbyID == x.LobbyID) })) {
+                if ((config.MinLevel != null && p.account.Level < config.MinLevel) || (config.MaxLevel != null && p.account.Level > config.MaxLevel) ||
+                    (config.MinElo != null && p.account.EffectiveElo < config.MinElo) ||
+                    (config.MaxElo != null && p.account.EffectiveElo > config.MaxElo)) {
+                    SpecPlayerOnCondition(p.player,
+                                          p.account,
+                                          string.Format(
+                                              "Sorry, you cannot play here because of skill limits. You can spectate/observe this game however."));
+                    actionsDescription += string.Format("{0} cannot play here because of skill limits\n", p.account.Name);
+                    ok = false;
+                }
+            }
+            return ok;
+        }
+
+        BalanceTeamsResult LegacyBalance(int teamCount, BalanceMode mode, BattleContext b, params List<Account>[] unmovablePlayers) {
+            var ret = new BalanceTeamsResult();
+
+            try {
+                ret.CanStart = true;
+                ret.Players = b.Players.ToList();
+
+                var db = new ZkDataContext();
+                var accs =
+                    db.Accounts.Where(x => b.Players.Where(y => !y.IsSpectator).Select(y => (int?)y.LobbyID).ToList().Contains(x.LobbyID)).ToList();
+                if (accs.Count < 1) {
+                    ret.CanStart = false;
+                    return ret;
+                }
+                if (teamCount < 1) teamCount = 1;
+                if (teamCount > accs.Count) teamCount = accs.Count;
+                if (teamCount == 1) {
+                    foreach (var p in ret.Players) p.AllyID = 0;
+                    return ret;
+                }
+
+                maxTeamSize = (int)Math.Ceiling(accs.Count/(double)teamCount);
+
+                teams.Clear();
+                for (var i = 0; i < teamCount; i++) {
+                    var team = new BalanceTeam();
+                    teams.Add(team);
+                    if (unmovablePlayers != null && unmovablePlayers.Length > i) {
+                        var unmovables = unmovablePlayers[i];
+                        team.AddItem(new BalanceItem(unmovablePlayers[i].ToArray()) { CanBeMoved = false });
+                        accs.RemoveAll(x => unmovables.Any(y => y.LobbyID == x.LobbyID));
+                    }
+                }
+
+                balanceItems = new List<BalanceItem>();
+                if (mode == BalanceMode.ClanWise) {
+                    var clanGroups = accs.GroupBy(x => x.ClanID ?? x.LobbyID).ToList();
+                    if (teamCount > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize)) mode = BalanceMode.Normal;
+                    else balanceItems.AddRange(clanGroups.Select(x => new BalanceItem(x.ToArray())));
+                }
+                if (mode == BalanceMode.FactionWise) {
+                    balanceItems.Clear();
+                    var factionGroups = accs.GroupBy(x => x.FactionID ?? x.LobbyID).ToList();
+                    balanceItems.AddRange(factionGroups.Select(x => new BalanceItem(x.ToArray())));
+                }
+
+                if (mode == BalanceMode.Normal) {
+                    balanceItems.Clear();
+                    balanceItems.AddRange(accs.Select(x => new BalanceItem(x)));
+                }
+
+                var sw = new Stopwatch();
+                sw.Start();
+                RecursiveBalance(0);
+                sw.Stop();
+
+                var minSize = bestTeams.Min(x => x.Count);
+                var maxSize = bestTeams.Max(x => x.Count);
+                var sizesWrong = maxSize/(double)minSize > MaxTeamSizeDifferenceRatio;
+                // cbalance failed, rebalance using normal
+                if (mode == BalanceMode.ClanWise && (bestTeams == null || GetTeamsDifference(bestTeams) > MaxCbalanceDifference || sizesWrong))
+                    return new Balancer().LegacyBalance(teamCount, BalanceMode.Normal, b, unmovablePlayers);
+                        // cbalance failed, rebalance using normal
+
+                if (sizesWrong && mode == BalanceMode.FactionWise) {
+                    ret.CanStart = false;
+                    ret.Message = string.Format("Failed to balance - too many people from same faction");
+                    return ret;
+                }
+
+                if (unmovablePlayers != null && unmovablePlayers.Length > 0) {
+                    var minElo = bestTeams.Min(x => x.AvgElo);
+                    var maxElo = bestTeams.Max(x => x.AvgElo);
+                    if (maxElo - minElo > MaxPwEloDifference) {
+                        ret.CanStart = false;
+                        ret.Message = string.Format("Team difference is too big - win chance {0}% - spectate some or wait for more people",
+                                                    Utils.GetWinChancePercent(maxElo - minElo));
+                        return ret;
+                    }
+                }
+
+                if (bestTeams == null) {
+                    ret.CanStart = false;
+                    ret.Message =
+                        string.Format(
+                            "Failed to balance {0} - too many people from same clan or faction (in teams game you can try !random and !forcestart)");
+                    return ret;
+                }
+                else {
+                    if (unmovablePlayers == null || unmovablePlayers.Length == 0) bestTeams = bestTeams.Shuffle(); // permute when not unmovable players present
+
+                    var text = "( ";
+
+                    var lastTeamElo = 0.0;
+                    var allyNum = 0;
+                    foreach (var team in bestTeams) {
+                        if (allyNum > 0) text += " : ";
+                        text += string.Format("{0}", (allyNum + 1));
+                        if (allyNum > 0) text += string.Format("={0}%)", Utils.GetWinChancePercent(lastTeamElo - team.AvgElo));
+                        lastTeamElo = team.AvgElo;
+
+                        foreach (var u in team.Items.SelectMany(x => x.LobbyId)) ret.Players.Single(x => x.LobbyID == u).AllyID = allyNum;
+                        allyNum++;
+                    }
+                    text += ")";
+
+                    ret.Message = String.Format("{0} players balanced {2} to {1} teams {3}. {4} combinations checked, spent {5}ms of CPU time",
+                                                bestTeams.Sum(x => x.Count),
+                                                teamCount,
+                                                mode,
+                                                text,
+                                                iterationsChecked,
+                                                sw.ElapsedMilliseconds);
+                }
+            } catch (Exception ex) {
+                ret.Message = ex.ToString();
+                ret.CanStart = false;
+            }
+
+            return ret;
+        }
+
+        static BalanceTeamsResult PerformBalance(BattleContext context,
+                                                 bool isGameStart,
+                                                 int? allyCount,
+                                                 bool? clanWise,
+                                                 AutohostConfig config,
+                                                 int playerCount) {
+            var res = new BalanceTeamsResult();
+            var mode = context.GetMode();
+
+            using (var db = new ZkDataContext()) {
+                if (!CheckPlayersMinimumConditions(context, db, config, ref res.Message)) {
+                    res.CanStart = false;
+                    return res;
+                }
+
+                switch (mode) {
+                    case AutohostMode.None:
+                    {
+                        if (!isGameStart) res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == true ? BalanceMode.ClanWise : BalanceMode.Normal, context);
+                    }
+                        break;
+                    case AutohostMode.HighSkill:
+                    case AutohostMode.LowSkill:
+                    case AutohostMode.Teams:
+                    case AutohostMode.SmallTeams:
+                    {
+                        var map = db.Resources.Single(x => x.InternalName == context.Map);
+                        if (map.MapFFAMaxTeams != null)
+                            res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams.Value,
+                                                               clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise,
+                                                               context);
+                        else res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
+                        res.DeleteBots = true;
+                        return res;
+                    }
+                    case AutohostMode.Game1v1:
+                    {
+                        res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
+                        res.DeleteBots = true;
+                    }
+                        break;
+
+                    case AutohostMode.GameChickens:
+                    {
+                        res.Players = context.Players.ToList();
+                        res.Bots = context.Bots.Where(x => x.Owner != context.AutohostName).ToList();
+                        foreach (var p in res.Players) p.AllyID = 0;
+                        foreach (var b in res.Bots) b.AllyID = 1;
+
+                        if (!res.Bots.Any() && res.Players.Count > 0) {
+                            res.Message = "Add some bot (computer player) as your enemy. Use button on bottom left. Chicken or CAI is recommended.";
+                            res.CanStart = false;
+                            /*else
+                                    {
+                                        res.Bots.Add(new BotTeam() { AllyID = 1, TeamID = 16, BotName = "default_Chicken", BotAI = "Chicken: Normal", });
+                                        res.Message = "Adding a normal chickens bot for you";
+                                    }*/
+                        }
+                    }
+                        break;
+                    case AutohostMode.GameFFA:
+                    {
+                        var map = db.Resources.Single(x => x.InternalName == context.Map);
+                        if (map.MapFFAMaxTeams != null)
+                            res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams.Value,
+                                                               clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise,
+                                                               context);
+                        else
+                            res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams ?? 8,
+                                                               clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise,
+                                                               context);
+                        return res;
+                    }
+                    case AutohostMode.Planetwars:
+
+                        return new Balancer().PlanetwarsBalance(context);
+                }
+                return res;
+            }
+        }
+
+        BalanceTeamsResult PlanetwarsBalance(BattleContext context) {
+            var res = new BalanceTeamsResult();
+            context.Players = context.Players.Where(x => !x.IsSpectator).ToList();
+            res.CanStart = false;
+            res.DeleteBots = true;
+
+            using (var db = new ZkDataContext()) {
+                res.Message = "";
+                var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == context.Map);
+                var idList = context.Players.Select(x => x.LobbyID).ToList();
+                var players = idList.Select(x => db.Accounts.First(y => y.LobbyID == x)).ToList();
+                var presentFactions = players.Where(x => x != null).GroupBy(x => x.FactionID ?? 0).Select(x => x.Key).ToList();
+                var attackerFaction = planet.GetAttacker(presentFactions);
+                if (attackerFaction == null) {
+                    res.Message = "No planet was attacked - send your dropships somewhere!";
+                    return res;
+                }
+                var defenderFaction = planet.Faction;
+
+                // "backup" defender of other faction with most influence here
+                if (defenderFaction == null) {
+                    defenderFaction =
+                        planet.PlanetFactions.Where(x => x.FactionID != attackerFaction.FactionID && x.Influence > 0)
+                              .OrderByDescending(x => x.Influence)
+                              .Select(x => x.Faction)
+                              .FirstOrDefault();
+                }
+
+                // bots game
+                if (planet.PlanetStructures.Any(x => !string.IsNullOrEmpty(x.StructureType.EffectBots))) {
+                    var teamID = 0;
+                    for (var i = 0; i < players.Count; i++) res.Players.Add(new PlayerTeam { LobbyID = players[i].LobbyID ?? 0, Name = players[i].Name, AllyID = 0, TeamID = teamID++ });
+                    var cnt = 1;
+                    foreach (var b in planet.PlanetStructures.Select(x => x.StructureType).Where(x => !string.IsNullOrEmpty(x.EffectBots))) res.Bots.Add(new BotTeam { AllyID = 1, BotAI = b.EffectBots, TeamID = teamID++, BotName = "Aliens" + cnt++ });
+
+                    res.Message += string.Format("This planet is infested by aliens, fight for your survival");
+                    return res;
+                }
+
+                // create attacker and defenders teams
+                var attackers = players.Where(x => x.Faction == attackerFaction).ToList();
+                var defenders = new List<Account>();
+                if (defenderFaction != null) defenders = players.Where(x => x.Faction == defenderFaction).ToList();
+                foreach (var acc in players) {
+                    if (acc.Faction != null && acc.Faction != attackerFaction && acc.Faction != defenderFaction) {
+                        var allyAttacker = attackerFaction.HasTreatyRight(acc.Faction, x => x.EffectBalanceSameSide == true, planet);
+                        var allyDefender = defenderFaction != null &&
+                                           defenderFaction.HasTreatyRight(acc.Faction, x => x.EffectBalanceSameSide == true, planet);
+                        if (allyAttacker && allyDefender) continue;
+                        if (allyAttacker) attackers.Add(acc);
+                        if (allyDefender) defenders.Add(acc);
+                    }
+                }
+
+                res = LegacyBalance(2, BalanceMode.FactionWise, context, attackers, defenders);
+                res.DeleteBots = true;
+                return res;
+            }
+        }
+
+        void RecursiveBalance(int itemIndex) {
+            if (iterationsChecked > 2000000) return;
+
+            if (itemIndex < balanceItems.Count) {
+                var item = balanceItems[itemIndex];
+
+                if (item.CanBeMoved) {
+                    foreach (var team in teams) {
+                        if (team.Count + item.Count <= maxTeamSize) {
+                            team.AddItem(item);
+                            RecursiveBalance(itemIndex + 1);
+                            team.RemoveItem(item);
+                        }
+                    }
+                }
+                else RecursiveBalance(itemIndex + 1);
+            }
+            else {
+                // end of recursion
+                iterationsChecked++;
+                var stdDev = GetTeamsDifference(teams);
+                if (stdDev < bestStdDev) {
+                    bestStdDev = stdDev;
+                    bestTeams = CloneTeams(teams);
+                }
+            }
+        }
+
+        static void SpecPlayerOnCondition(PlayerTeam player, Account account, string userMessage) {
+            player.IsSpectator = true;
+            AuthServiceClient.SendLobbyMessage(account, userMessage);
+        }
+
         static void VerifySpecCheaters(BattleContext context, BalanceTeamsResult res) {
             try {
                 // find specs with same IP as some player and kick them
                 using (var db = new ZkDataContext()) {
-                    List<int?> ids = context.Players.Select(y => (int?)y.LobbyID).ToList();
-                    Dictionary<int?, string> ipByLobbyID = db.Accounts.Where(x => ids.Contains(x.LobbyID)).ToDictionary(x => x.LobbyID,
-                                                                                                                        x =>
-                                                                                                                        x.AccountIPS.OrderByDescending
-                                                                                                                            (y => y.LastLogin).First()
-                                                                                                                            .IP);
+                    var ids = context.Players.Select(y => (int?)y.LobbyID).ToList();
+                    var ipByLobbyID = db.Accounts.Where(x => ids.Contains(x.LobbyID))
+                                        .ToDictionary(x => x.LobbyID, x => x.AccountIPS.OrderByDescending(y => y.LastLogin).First().IP);
                     // lobbyid -> ip mapping
 
-                    AutohostMode mode = context.GetMode();
+                    var mode = context.GetMode();
                     // kick same ip specs for starred and non chickens
                     /*
                     if (mode != AutohostMode.None && mode != AutohostMode.GameChickens) {
@@ -518,14 +516,12 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        #region Nested type: BalanceItem
-
         public class BalanceItem
         {
+            public bool CanBeMoved = true;
             public readonly int Count;
             public readonly double EloSum;
             public readonly List<int> LobbyId;
-            public bool CanBeMoved = true;
 
             public BalanceItem(params Account[] accounts) {
                 LobbyId = accounts.Select(x => x.LobbyID ?? 0).ToList();
@@ -534,16 +530,12 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        #endregion
-
-        #region Nested type: BalanceTeam
-
         public class BalanceTeam
         {
-            public List<BalanceItem> Items = new List<BalanceItem>();
             public double AvgElo { get; private set; }
             public int Count { get; private set; }
             public double EloSum { get; private set; }
+            public List<BalanceItem> Items = new List<BalanceItem>();
 
             public void AddItem(BalanceItem item) {
                 Items.Add(item);
@@ -570,7 +562,5 @@ namespace ZeroKWeb.SpringieInterface
                 else AvgElo = 0;
             }
         }
-
-        #endregion
     }
 }

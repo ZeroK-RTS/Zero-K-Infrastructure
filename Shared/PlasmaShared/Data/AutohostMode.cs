@@ -27,6 +27,12 @@ namespace ZkData
         
         [Description("Small teams")]
         SmallTeams = 7,
+
+        [Description("Newbies only")]
+        LowSkill = 8,
+
+        [Description("Experienced only")]
+        HighSkill = 9,
     }
 
 }
