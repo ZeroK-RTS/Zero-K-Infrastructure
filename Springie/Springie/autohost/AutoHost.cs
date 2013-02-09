@@ -940,12 +940,19 @@ namespace Springie.autohost
                 bossName = "";
             }
 
+            PlayerCountDecreased();
+
+        }
+
+
+        void PlayerCountDecreased() {
             Battle battle = tas.MyBattle;
-            if (battle.IsLocked && battle.Users.Count < 2) {
+            if (battle.NonSpectatorCount < (config.MergeSmallerThan ?? 2)) {
                 // player left and only 2 remaining (springie itself + some noob) -> unlock
                 lockedUntil = DateTime.MinValue;
                 tas.ChangeLock(false);
             }
+            JuggleIfPlayerCountNotOk();
         }
 
 
@@ -1036,7 +1043,7 @@ namespace Springie.autohost
                 Battle b = tas.MyBattle;
                 if (e.ServerParams[0] != tas.UserName && b.Users.Any(x => x.Name == e.ServerParams[0])) CheckForBattleExit();
             }
-            JuggleIfPlayerCountNotOk();
+            PlayerCountDecreased();
         }
     }
 }
