@@ -254,7 +254,7 @@ namespace ZeroKWeb.SpringieInterface
                 foreach (var b in bins) {
                     foreach (var a in b.Assigned) {
                         var acc = allAccounts[a];
-                        var origAh = autohosts.FirstOrDefault(x => x.LobbyContext.Players.Any(y => y.Name == acc.Name));
+                        var origAh = autohosts.FirstOrDefault(x => x.LobbyContext.Players.Any(y => y.Name == acc.Name && !y.IsSpectator));
                         if (origAh == null || origAh.LobbyContext.AutohostName != b.Autohost.LobbyContext.AutohostName) {
                             ret.PlayerMoves.Add(new JugglerMove
                                                 {

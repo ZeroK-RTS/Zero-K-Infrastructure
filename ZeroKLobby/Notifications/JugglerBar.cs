@@ -78,8 +78,7 @@ namespace ZeroKLobby.Notifications
             client.BattleJoined += (sender, args) => { };
             client.BattleMyUserStatusChanged += (sender, args) =>
                 {
-                    if (client.MyBattleStatus != null && client.MyBattleStatus.IsSpectator) Deactivate();
-
+                    if (client.MyBattleStatus != null && client.MyBattleStatus.IsSpectator && IsActive) ActionHandler.ChangeDesiredSpectatorState(false);
                 };
 
             client.Extensions.JugglerStateReceived += (args, state) =>
