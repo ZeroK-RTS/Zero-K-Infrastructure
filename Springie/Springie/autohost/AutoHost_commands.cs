@@ -219,6 +219,7 @@ namespace Springie.autohost
             {
                 alliances = 0;
                 allyno = 0;
+                bool err = false;
                 var invalidUser =
                     tas.MyBattle.Users.FirstOrDefault(
                         x => !x.IsSpectator && !hostedMod.MissionSlots.Any(y => y.IsHuman && y.TeamID == x.TeamNumber && y.AllyID == x.AllyNumber));
@@ -226,7 +227,7 @@ namespace Springie.autohost
                 {
                     SayBattle(String.Format("User {0} is not in proper mission slot", invalidUser.Name));
                     SayBattle(String.Format("Current slot: {0}", invalidUser.TeamNumber));
-                    return false;
+                    err = true;
                 }
 
                 var slot = GetFreeSlots().FirstOrDefault();
@@ -239,8 +240,9 @@ namespace Springie.autohost
                                             slot.AllyID,
                                             slot.TeamID));
                     allyno = slot.AllyID;
-                    return false;
+                    err = true;
                 }
+                if (err) return false;
             }
 
             var counts = new int[16];
