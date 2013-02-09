@@ -154,7 +154,7 @@ namespace Springie.autohost
                         if (!spring.IsRunning && config.Mode != AutohostMode.None) if (SpawnConfig == null && config.Mode == AutohostMode.Planetwars) ServerVerifyMap(false);
 
                         // auto start split vote
-                        if (config.SplitBiggerThan != null && tas.MyBattle != null && config.SplitBiggerThan < tas.MyBattle.NonSpectatorCount) {
+                        if (!spring.IsRunning && config.SplitBiggerThan != null && tas.MyBattle != null && config.SplitBiggerThan < tas.MyBattle.NonSpectatorCount) {
                             if (DateTime.Now.Subtract(spring.GameExited).TotalSeconds >= GameExitSplitDelay) ComSplitPlayers(TasSayEventArgs.Default, new string[]{});
                             /*
                             int cnt = tas.MyBattle.NonSpectatorCount;
