@@ -62,9 +62,7 @@ namespace ZeroKWeb.SpringieInterface
                        };
             }
 
-            // dont allow to start alone
-            if (playerCount <= 1 && !context.Bots.Any()) return new BalanceTeamsResult { CanStart = false, Message = "Cannot play alone, you can add bots using button on bottom left." };
-
+            
             if (clanWise == null && (config.AutohostMode == AutohostMode.SmallTeams || config.AutohostMode == AutohostMode.Teams || config.AutohostMode == AutohostMode.LowSkill || config.AutohostMode == AutohostMode.HighSkill)) clanWise = true;
 
             var res = PerformBalance(context, isGameStart, allyCount, clanWise, config, playerCount);
@@ -79,6 +77,12 @@ namespace ZeroKWeb.SpringieInterface
                     res.Message = string.Format("This host can only start with at most {0} players", config.MaxToStart);
                     res.CanStart = false;
                     return res;
+                }
+
+                // dont allow to start alone
+                if (playerCount <= 1) {
+                    if (res.DeleteBots) return new BalanceTeamsResult { CanStart = false, Message = "You cannot play alone on this host, wait for players or join another game room and play with bots." };
+                    if (!context.Bots.Any()) return new BalanceTeamsResult { CanStart = false, Message = "Cannot play alone, you can add bots using button on bottom left." };
                 }
             }
 
@@ -348,7 +352,7 @@ namespace ZeroKWeb.SpringieInterface
                                                                clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise,
                                                                context);
                         else res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
-                        res.DeleteBots = true;
+                        res.DeleteBots = mode == AutohostMode.SmallTeams || mode == AutohostMode.Teams;
                         return res;
                     }
                     case AutohostMode.Game1v1:
