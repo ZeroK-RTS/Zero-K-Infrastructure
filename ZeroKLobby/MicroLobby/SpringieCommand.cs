@@ -18,6 +18,7 @@ namespace ZeroKLobby.MicroLobby
 		                                                       	{ "zk:test", "Oxygen" },
 		                                                       	{ "evo:test", "Lithium" },
 		                                                       	{ "s44:test", "Nickel" },
+                                                                { "kp:latest", "Silicon1" }
 		                                                       };
 		public string Command { get; set; }
 		public string Reply { get; set; }

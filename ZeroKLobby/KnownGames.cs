@@ -32,13 +32,13 @@ namespace ZeroKLobby
         new GameInfo { Shortcut = "Cursed", FullName = "The Cursed", Channel = "cursed", Regex = new Regex("The Cursed.*"), RapidTag = "thecursed:latest", },
         new GameInfo { Shortcut = "Evo", FullName = "Evolution RTS", Channel = "evolution", Regex = new Regex("Evolution RTS.*"), RapidTag = "evo:test", },
         new GameInfo { Shortcut = "Gundam", FullName = "Gundam", Channel = "gundam", Regex = new Regex("Gundam.*"), RapidTag = "gundam:latest", },
-        new GameInfo { Shortcut = "KP", FullName = "Kernel Panic", Channel = "kp", Regex = new Regex("Kernel.*Panic.*"), RapidTag = "kp:stable", },
+        new GameInfo { Shortcut = "KP", FullName = "Kernel Panic", Channel = "kp", Regex = new Regex("Kernel.*Panic.*"), RapidTag = "kp:latest", },
         new GameInfo { Shortcut = "NOTA", FullName = "NOTA", Channel = "nota", Regex = new Regex("NOTA.*"), RapidTag = "nota:latest", },
         new GameInfo { Shortcut = "XTA", FullName = "XTA", Channel = "xta", Regex = new Regex("XTA.*"), RapidTag = "xta:latest", },
         new GameInfo
         { Shortcut = "BA", FullName = "Balanced Annihilation", Channel = "ba", Regex = new Regex("Balanced Annihilation.*"), RapidTag = "ba:latest", },
         new GameInfo { Shortcut = "CT", FullName = "Conflict Terra", Channel = "ct", Regex = new Regex("Conflict Terra.*"), RapidTag = "ct:stable", },
-        new GameInfo { Shortcut = "SA", FullName = "Supreme Annihilation", Channel = "sa", Regex = new Regex("Supreme Annihilation.*"), RapidTag = "sa:latest", },
+        //new GameInfo { Shortcut = "SA", FullName = "Supreme Annihilation", Channel = "sa", Regex = new Regex("Supreme Annihilation.*"), RapidTag = "sa:latest", },
       }.ToList();
 
     
