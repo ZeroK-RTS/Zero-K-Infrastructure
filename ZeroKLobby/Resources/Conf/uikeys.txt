@@ -79,7 +79,7 @@ bind             ctrl+c  selectcomm
 bind                  d  manualfire
 bind            Shift+d  manualfire
 bind                  d  oneclickwep
-bind            Shift+d  oneclickwep
+bind            Shift+d  oneclickwep queued
 bind                  e  reclaim
 bind            Shift+e  reclaim
 bind                  f  fight
