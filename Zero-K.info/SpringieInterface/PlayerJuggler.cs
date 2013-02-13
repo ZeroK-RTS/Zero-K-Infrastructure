@@ -135,8 +135,8 @@ namespace ZeroKWeb.SpringieInterface
             }
 
             var existing = tas.ExistingUsers.Values.Select(y => (int?)y.LobbyID).ToList();
-            var allAccounts = db.Accounts.Where(x => existing.Contains(x.LobbyID)).ToDictionary(x => x.LobbyID ?? 0);
-            var juggledAccounts = db.Accounts.Where(x => juggledLobbyIDs.Contains(x.LobbyID) && x.MatchMakingActive).ToDictionary(x => x.LobbyID ?? 0);
+            var allAccounts = db.Accounts.Where(x => existing.Contains(x.LobbyID)).GroupBy(x=>x.LobbyID ?? 0).ToDictionary(x => x.Key, x=>x.First());
+            var juggledAccounts = db.Accounts.Where(x => juggledLobbyIDs.Contains(x.LobbyID) && x.MatchMakingActive).GroupBy(x=>x.LobbyID??0).ToDictionary(x => x.Key, x=>x.First());
 
             // make bins from non-running games with players by each type
             foreach (var grp in
