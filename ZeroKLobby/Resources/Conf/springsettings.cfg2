@@ -38,6 +38,7 @@ FSAA = 0
 FSAALevel = 0
 Fullscreen = 0
 FullscreenEdgeMove = 1
+FPSFOV = 90
 GrassDetail = 4
 GroundDecals = 2
 GroundDetail = 90
