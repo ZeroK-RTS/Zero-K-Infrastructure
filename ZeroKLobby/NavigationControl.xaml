@@ -21,7 +21,9 @@
             <Button x:Name="forwardButton" Margin="1" Grid.Column="2" Click="forwardButton_Click">Forward</Button>
             <TextBox x:Name="urlBox" Margin="1" Grid.Column="3" Text="{Binding Path, ElementName=userControl}" GotFocus="urlBox_GotFocus" KeyDown="urlBox_KeyDown" />
         </Grid>
-        
+        <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto" Grid.Row="1">
+            <!-- Reference1: http://stackoverflow.com/questions/6068860/how-to-add-a-scrollbar-to-window-in-c-sharp -->
+            <!-- Reference2: http://stackoverflow.com/questions/7921672/how-to-add-comments-into-a-xaml-file-in-wpf -->
             <StackPanel Orientation="Horizontal" Grid.Row="1">
                 <ItemsControl  Margin="3" ItemsSource="{Binding Path=Buttons, ElementName=userControl}">
 				    <ItemsControl.ItemsPanel>
@@ -36,7 +38,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>	
             </StackPanel>
-        
+        </ScrollViewer>
         <TabControl Grid.Row="2" x:Name="tabControl" Background="Black" BorderThickness="0">
             <TabControl.ItemContainerStyle>
                 <Style TargetType="{x:Type TabItem}">
