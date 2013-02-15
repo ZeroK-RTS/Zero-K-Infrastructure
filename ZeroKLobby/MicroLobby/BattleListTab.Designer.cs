@@ -34,7 +34,6 @@
             this.showFullBox = new System.Windows.Forms.CheckBox();
             this.searchLabel = new System.Windows.Forms.Label();
             this.searchBox = new System.Windows.Forms.TextBox();
-            this.btnQuickMatch = new System.Windows.Forms.Button();
             this.battlePanel = new System.Windows.Forms.Panel();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -46,7 +45,6 @@
             this.panel1.Controls.Add(this.showFullBox);
             this.panel1.Controls.Add(this.searchLabel);
             this.panel1.Controls.Add(this.searchBox);
-            this.panel1.Controls.Add(this.btnQuickMatch);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
@@ -56,7 +54,7 @@
             // showOfficialBox
             // 
             this.showOfficialBox.AutoSize = true;
-            this.showOfficialBox.Location = new System.Drawing.Point(495, 5);
+            this.showOfficialBox.Location = new System.Drawing.Point(414, 5);
             this.showOfficialBox.Name = "showOfficialBox";
             this.showOfficialBox.Size = new System.Drawing.Size(82, 17);
             this.showOfficialBox.TabIndex = 6;
@@ -67,7 +65,7 @@
             // showEmptyBox
             // 
             this.showEmptyBox.AutoSize = true;
-            this.showEmptyBox.Location = new System.Drawing.Point(404, 5);
+            this.showEmptyBox.Location = new System.Drawing.Point(323, 5);
             this.showEmptyBox.Name = "showEmptyBox";
             this.showEmptyBox.Size = new System.Drawing.Size(85, 17);
             this.showEmptyBox.TabIndex = 5;
@@ -78,7 +76,7 @@
             // showFullBox
             // 
             this.showFullBox.AutoSize = true;
-            this.showFullBox.Location = new System.Drawing.Point(311, 5);
+            this.showFullBox.Location = new System.Drawing.Point(230, 5);
             this.showFullBox.Name = "showFullBox";
             this.showFullBox.Size = new System.Drawing.Size(72, 17);
             this.showFullBox.TabIndex = 4;
@@ -89,7 +87,7 @@
             // searchLabel
             // 
             this.searchLabel.AutoSize = true;
-            this.searchLabel.Location = new System.Drawing.Point(84, 7);
+            this.searchLabel.Location = new System.Drawing.Point(3, 7);
             this.searchLabel.Name = "searchLabel";
             this.searchLabel.Size = new System.Drawing.Size(41, 13);
             this.searchLabel.TabIndex = 3;
@@ -97,21 +95,11 @@
             // 
             // searchBox
             // 
-            this.searchBox.Location = new System.Drawing.Point(127, 5);
+            this.searchBox.Location = new System.Drawing.Point(46, 5);
             this.searchBox.Name = "searchBox";
             this.searchBox.Size = new System.Drawing.Size(178, 20);
             this.searchBox.TabIndex = 2;
             this.searchBox.TextChanged += new System.EventHandler(this.searchBox_TextChanged);
-            // 
-            // btnQuickMatch
-            // 
-            this.btnQuickMatch.Location = new System.Drawing.Point(3, 2);
-            this.btnQuickMatch.Name = "btnQuickMatch";
-            this.btnQuickMatch.Size = new System.Drawing.Size(75, 23);
-            this.btnQuickMatch.TabIndex = 1;
-            this.btnQuickMatch.Text = "QuickMatch";
-            this.btnQuickMatch.UseVisualStyleBackColor = true;
-            this.btnQuickMatch.Click += new System.EventHandler(this.quickmatchButton_Click);
             // 
             // battlePanel
             // 
@@ -143,7 +131,6 @@
         private System.Windows.Forms.CheckBox showFullBox;
         private System.Windows.Forms.Label searchLabel;
         private System.Windows.Forms.TextBox searchBox;
-        private System.Windows.Forms.Button btnQuickMatch;
         private System.Windows.Forms.Panel battlePanel;
 
     }

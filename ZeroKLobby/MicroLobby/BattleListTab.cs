@@ -24,10 +24,7 @@ namespace ZeroKLobby.MicroLobby
 			var lookingGlass = new PictureBox
 			                   { Width = 20, Height = 20, Image = Resources.search, SizeMode = PictureBoxSizeMode.CenterImage, Dock = DockStyle.Left };
 			Program.ToolTip.SetText(lookingGlass, "Search game, description, map or player");
-
 			Program.ToolTip.SetText(searchBox, "Search game, description, map or player");
-
-            Program.ToolTip.SetText(btnQuickMatch,"Find or create battle automatically");
 
             showEmptyBox.Checked = Program.Conf.ShowEmptyBattles;
             showFullBox.Checked = Program.Conf.ShowNonJoinableBattles;
@@ -83,10 +80,6 @@ namespace ZeroKLobby.MicroLobby
 			return null;
 		}
 
-    private void button1_Click(object sender, EventArgs e)
-    {
-        Program.JugglerBar.Activate();
-    }
 
     private void searchBox_TextChanged(object sender, EventArgs e)
     {
@@ -110,14 +103,5 @@ namespace ZeroKLobby.MicroLobby
 	        if (battleListControl != null) battleListControl.ShowOfficial = showOfficialBox.Checked;
 	    }
 
-	    private void newBattleButton_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void quickmatchButton_Click(object sender, EventArgs e)
-        {
-            Program.JugglerBar.Activate();
-        }
 	}
 }

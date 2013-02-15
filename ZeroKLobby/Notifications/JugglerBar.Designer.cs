@@ -50,7 +50,7 @@
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F);
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "JugglerBar";
-            this.Size = new System.Drawing.Size(572, 48);
+            this.Size = new System.Drawing.Size(572, 52);
             this.ResumeLayout(false);
             this.PerformLayout();
 

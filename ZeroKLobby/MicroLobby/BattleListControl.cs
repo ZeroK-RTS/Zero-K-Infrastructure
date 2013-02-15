@@ -15,7 +15,7 @@ namespace ZeroKLobby.MicroLobby
     public partial class BattleListControl: ScrollableControl
     {
         readonly Dictionary<BattleIcon, Point> battleIconPositions = new Dictionary<BattleIcon, Point>();
-        Battle hoverBattle;
+        object lastTooltip;
         readonly IEnumerable<BattleIcon> model;
         Point previousLocation;
         bool showEmpty;
@@ -68,12 +68,6 @@ namespace ZeroKLobby.MicroLobby
             Program.BattleIconManager.RemovedBattle -= HandleBattle;
         }
 
-        public static IEnumerable<Battle> BattleWordFilter(IEnumerable<Battle> battles, string filter)
-        {
-            if (string.IsNullOrEmpty(filter)) return battles;
-            var words = filter.ToUpper().Split(' ');
-            return battles.Where(x => BattleWordFilter(x, words));
-        }
 
         public bool ShowEmpty
         {
@@ -141,6 +135,7 @@ namespace ZeroKLobby.MicroLobby
                     else ActionHandler.JoinBattle(battle.BattleID, null);
                 }
                 else if (OpenGameButtonHitTest(e.X, e.Y)) ShowHostDialog(KnownGames.GetDefaultGame());
+                else if (QuickMatchButtonHitTest(e.X,e.Y)) ActionHandler.StartQuickMatch();
             }
         }
 
@@ -148,13 +143,16 @@ namespace ZeroKLobby.MicroLobby
         {
             base.OnMouseMove(e);
             var battle = GetBattle(e.X, e.Y);
-            var openGameButtonHit = OpenGameButtonHitTest(e.X, e.Y);
-            Cursor = battle != null || openGameButtonHit ? Cursors.Hand : Cursors.Default;
+            var openBattleButtonHit = OpenGameButtonHitTest(e.X, e.Y);
+            var quickMatchButtonHit = QuickMatchButtonHitTest(e.X, e.Y);
+            Cursor = battle != null || openBattleButtonHit || quickMatchButtonHit ? Cursors.Hand : Cursors.Default;
             var cursorPoint = new Point(e.X, e.Y);
             if (cursorPoint == previousLocation) return;
             previousLocation = cursorPoint;
 
-            UpdateTooltip(battle);
+            if (openBattleButtonHit) UpdateTooltip("Host your own battle room\nBest for private games with friends");
+            else if (quickMatchButtonHit) UpdateTooltip("Start QuickMatch - automatically find or create game\nLet's you sit back and relax while enough people gather for a game");
+            else UpdateTooltip(battle);
         }
 
         protected override void OnPaint(PaintEventArgs pe)
@@ -168,10 +166,18 @@ namespace ZeroKLobby.MicroLobby
                 var x = 0;
                 var y = 0;
 
-                g.DrawImage(Resources.Border, 3, 3, 70, 70);
-                g.DrawString("Open a new battle.", BattleIcon.TitleFont, BattleIcon.TextBrush, BattleIcon.MapCellSize.Width, y + 3);
+                g.DrawImage(Resources.spec, x + 8, 8, 60, 60);
+                g.DrawImage(Resources.Border, x + 3, 3, 70, 70);
+                g.DrawString("QuickMatch", BattleIcon.TitleFont, BattleIcon.TextBrush, x + BattleIcon.MapCellSize.Width, y + 3);
 
                 x += BattleIcon.Width;
+
+
+                g.DrawImage(Resources.Border, x+ 3, 3, 70, 70);
+                g.DrawString("Open a new battle.", BattleIcon.TitleFont, BattleIcon.TextBrush, x + BattleIcon.MapCellSize.Width, y + 3);
+
+                x += BattleIcon.Width;
+
 
                 foreach (var t in view)
                 {
@@ -262,7 +268,6 @@ namespace ZeroKLobby.MicroLobby
             if (String.IsNullOrEmpty(Program.Conf.BattleFilter)) view = model.ToList();
             else
             {
-                var words = Program.Conf.BattleFilter.ToUpper().Split(' ');
                 var filterText = Program.Conf.BattleFilter.ToUpper();
                 var orParts = filterOrSplit.Split(filterText);
                 view = model.Where(icon => orParts.Any(filterPart => BattleWordFilter(icon.Battle, filterPart.Split(' ')))).ToList();
@@ -323,8 +328,14 @@ namespace ZeroKLobby.MicroLobby
 
         bool OpenGameButtonHitTest(int x, int y)
         {
+            return x > 3 + BattleIcon.Width && x < 71 + BattleIcon.Width && y > 3 && y < 71;
+        }
+
+        bool QuickMatchButtonHitTest(int x, int y)
+        {
             return x > 3 && x < 71 && y > 3 && y < 71;
         }
+
 
         public void ShowHostDialog(GameInfo filter)
         {
@@ -350,14 +361,15 @@ namespace ZeroKLobby.MicroLobby
             view = ret.ToList();
         }
 
-        void UpdateTooltip(Battle battle)
+        void UpdateTooltip(object tooltip)
         {
-            if (hoverBattle != battle)
+            if (lastTooltip != tooltip)
             {
-                hoverBattle = battle;
-                if (battle != null) Program.ToolTip.SetBattle(this, battle.BattleID);
-                else Program.ToolTip.SetText(this, null);
-            }
+                lastTooltip = tooltip;
+                if (tooltip is Battle) Program.ToolTip.SetBattle(this, ((Battle)tooltip).BattleID);
+                else Program.ToolTip.SetText(this, (string)tooltip);
+            } 
+
         }
 
         void HandleBattle(object sender, EventArgs<BattleIcon> e)
@@ -366,7 +378,8 @@ namespace ZeroKLobby.MicroLobby
             FilterBattles();
             Sort();
             var point = PointToClient(MousePosition);
-            UpdateTooltip(GetBattle(point.X, point.Y));
+            var battle = GetBattle(point.X, point.Y);
+            if (battle != null) UpdateTooltip(battle);
             if (view.Contains(e.Data) || invalidate) Invalidate();
         }
     }

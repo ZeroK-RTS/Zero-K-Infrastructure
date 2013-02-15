@@ -122,9 +122,7 @@ namespace ZeroKLobby.Notifications
         public void AddedToContainer(NotifyBarContainer container) {
             BarContainer = container;
             BarContainer.btnDetail.Image = Resources.spec;
-            //container.btnStop.Visible = false;
-            container.btnDetail.Enabled = false;
-            Program.ToolTip.SetText(BarContainer.btnDetail, "QuickMatch will find or create a game for you");
+            Program.ToolTip.SetText(BarContainer.btnDetail, "Force QuickMatch check now");
         }
 
         public void CloseClicked(NotifyBarContainer container) {
@@ -132,8 +130,7 @@ namespace ZeroKLobby.Notifications
         }
 
         public void DetailClicked(NotifyBarContainer container) {
-            if (IsActive) Deactivate();
-            else Activate();
+            SendMyConfig(false, true);
         }
 
         public Control GetControl() {

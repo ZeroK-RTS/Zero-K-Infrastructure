@@ -311,8 +311,21 @@ namespace ZeroKLobby
       Program.BattleBar.Stop();
     }
 
+      public static void StartQuickMatch() {
+          Program.JugglerBar.Activate();
+      }
 
-    /// <summary>
+      public static void StopQuickMatch()
+      {
+          Program.JugglerBar.Deactivate();
+      }
+
+      public static void ToggleQuickMatch()
+      {
+          Program.JugglerBar.SwitchState();
+      }
+
+      /// <summary>
     /// Unspec this client
     /// </summary>
     public static void UnSpec()
