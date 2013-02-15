@@ -17,6 +17,7 @@ namespace ZeroKLobby.Notifications
         bool _isActive;
         ProtocolExtension.JugglerState lastState;
         bool suppressChangeEvent;
+        Timer tooltipLabelUpdate = new Timer();
         
         int DPIScaleUpY(int designHeight)
         {
@@ -87,8 +88,6 @@ namespace ZeroKLobby.Notifications
                     foreach (ProtocolExtension.JugglerState.ModePair entry in state.ModeCounts) {
                         InfoItems item;
                         if (Items.TryGetValue(entry.Mode, out item)) item.Label.Text = string.Format("({0}+{1})", entry.Count, entry.Playing);
-
-                        if (IsActive) lbInfo.Text = string.Format("{0} playing\n{1} waiting", state.ModeCounts.Sum(x => x.Playing), state.TotalPlayers);
                     }
                 };
 
@@ -99,7 +98,26 @@ namespace ZeroKLobby.Notifications
                 };
 
             client.Extensions.JugglerConfigReceived += (args, config) => { if (args.UserName == GlobalConst.NightwatchName) UpdateMyConfig(config); };
+
+            tooltipLabelUpdate.Tick += (sender, args) =>
+                {
+                    if (dots.Length == 6) dots = "";
+                    else dots += ".";
+                    if (IsActive) {
+                        if (lastState != null)
+                            lbInfo.Text = string.Format("Working{2}\n{0} playing\n{1} waiting",
+                                                        lastState.ModeCounts.Sum(x => x.Playing),
+                                                        lastState.TotalPlayers,
+                                                        dots);
+                        else lbInfo.Text = string.Format("Working{0}", dots);
+                    }
+                };
+
+            tooltipLabelUpdate.Interval = 1000;
+            tooltipLabelUpdate.Start();
         }
+
+        string dots = "";
 
         public NotifyBarContainer BarContainer { get; private set; }
 

@@ -34,7 +34,7 @@
             // lbInfo
             // 
             this.lbInfo.AutoSize = true;
-            this.lbInfo.Location = new System.Drawing.Point(5, 5);
+            this.lbInfo.Location = new System.Drawing.Point(5, 0);
             this.lbInfo.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lbInfo.MaximumSize = new System.Drawing.Size(93, 48);
             this.lbInfo.MinimumSize = new System.Drawing.Size(93, 48);
