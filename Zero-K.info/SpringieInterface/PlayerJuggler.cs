@@ -120,7 +120,7 @@ namespace ZeroKWeb.SpringieInterface
 
             List<int?> juggledLobbyIDs = new List<int?>();
             foreach (var u in tas.ExistingUsers.Values) {
-                if (u.IsInGame) continue; // dont move ingame 
+               // if (u.IsInGame) continue; // dont move ingame 
                 var battle = tas.ExistingBattles.Values.FirstOrDefault(y => y.Users.Any(z => z.Name == u.Name));
                 if (battle != null) {
                     if (battle.IsLocked) continue; // dont move away from locked
@@ -129,7 +129,7 @@ namespace ZeroKWeb.SpringieInterface
             }
 
             foreach (var ah in autohosts) {
-                // safeguard - remove those known to be playing or speccing actively
+                // remove those known to be playing actively
                 if (ah.RunningGameStartContext != null) foreach (var id in ah.RunningGameStartContext.Players.Where(x => !x.IsSpectator && x.IsIngame).Select(x => x.LobbyID)) juggledLobbyIDs.Remove(id);
                 //if (ah.LobbyContext != null) foreach (int id in ah.LobbyContext.Players.Where(x => x.IsIngame).Select(x => x.LobbyID)) juggledLobbyIDs.Remove(id);
             }
