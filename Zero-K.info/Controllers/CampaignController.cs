@@ -92,6 +92,41 @@ namespace ZeroKWeb.Controllers
             return View("JournalList", camp);
         }
 
+        public ActionResult Events(int? planetID,
+                                   int? journalID,
+                                   int campaignID,
+                                   string filter,
+                                   int pageSize = 0,
+                                   int page = 0,
+                                   bool partial = false)
+        {
+            int accountID = Global.AccountID;
+            var db = new ZkDataContext();
+            if (Request.IsAjaxRequest()) partial = true;
+            if (pageSize == 0)
+            {
+                if (!partial) pageSize = 40;
+                else pageSize = 10;
+            }
+            IQueryable<CampaignEvent> res = db.CampaignEvents.Where(x => x.AccountID == accountID && x.CampaignID == campaignID).AsQueryable();
+            if (planetID.HasValue) res = res.Where(x => x.PlanetID == planetID);
+            if (!string.IsNullOrEmpty(filter)) res = res.Where(x => x.Text.Contains(filter));
+            res = res.OrderByDescending(x => x.EventID);
+
+            var ret = new EventsResult
+            {
+                PageCount = (res.Count() / pageSize) + 1,
+                Page = page,
+                Events = res.Skip(page * pageSize).Take(pageSize),
+                PlanetID = planetID,
+                Filter = filter,
+                Partial = partial,
+                PageSize = pageSize
+            };
+
+            return View(ret);
+        }
+
         /*
         public ActionResult Minimap() {
             var db = new ZkDataContext();
@@ -106,6 +141,21 @@ namespace ZeroKWeb.Controllers
             CampaignPlanet planet = db.CampaignPlanets.Single(x => x.PlanetID == id);
             return View(planet);
         }
+
+        #region Nested type: EventsResult
+
+        public class EventsResult
+        {
+            public IQueryable<CampaignEvent> Events;
+            public string Filter;
+            public int Page;
+            public int PageCount;
+            public int PageSize;
+            public bool Partial;
+            public int? PlanetID;
+        }
+
+        #endregion
 
     }
 }

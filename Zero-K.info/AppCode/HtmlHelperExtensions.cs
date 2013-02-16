@@ -558,12 +558,12 @@ namespace System.Web.Mvc
             var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
             Resource map = db.Resources.FirstOrDefault(m => m.InternalName == planet.Mission.Map);
             return
-                new MvcHtmlString(string.Format("<a href='{0}' title='$planet${4}' style='{5}'><img src='/img/planets/{1}' width='{2}'>{3}</a>",
+                new MvcHtmlString(string.Format("<a href='{0}' title='$planet${4}'><img src='/img/planets/{1}' width='{2}'>{3}</a>",
                                                 url.Action("Planet", "Planetwars", new { id = planet.PlanetID }),
                                                 map.MapPlanetWarsIcon,
                                                 map.PlanetWarsIconSize / 3,
                                                 planet.Name,
-                                                planet.PlanetID, "color:" + planet.GetColor(Global.Account)));
+                                                planet.PlanetID));
         }
 
 
