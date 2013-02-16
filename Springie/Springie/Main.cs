@@ -90,7 +90,7 @@ namespace Springie
                                 new JugglerAutohost()
                                 {
                                     LobbyContext = x.tas.MyBattle.GetContext(),
-                                    RunningGameStartContext = x.spring.IsRunning ? x.spring.StartContext : null
+                                    RunningGameStartContext = (x.spring.IsRunning && !x.spring.IsBattleOver) ? x.spring.StartContext : null
                                 }).ToArray();
                     }
                     var ret = serv.JugglePlayers(data);

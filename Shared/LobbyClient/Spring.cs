@@ -110,6 +110,9 @@ namespace LobbyClient
                 }
             }
         }
+
+        public bool IsBattleOver { get; private set; }
+
         public StringBuilder LogLines = new StringBuilder();
 
 
@@ -228,6 +231,7 @@ namespace LobbyClient
 
             if (!IsRunning) {
                 gameEndedOk = false;
+                IsBattleOver = false;
                 lobbyUserName = client.UserName;
                 lobbyPassword = client.UserPassword;
                 battleResult = new BattleResult();
@@ -534,6 +538,10 @@ namespace LobbyClient
             }
 
             GameExited = DateTime.Now;
+
+            if (StartContext != null) foreach (var p in StartContext.Players) p.IsIngame = false;
+            IsBattleOver = true;
+
             if (SpringExited != null) SpringExited(this, new EventArgs<bool>(isCrash));
         }
 
@@ -581,16 +589,11 @@ namespace LobbyClient
                         break;
 
                     case Talker.SpringEventType.SERVER_GAMEOVER:
-                        
+                        if (StartContext != null) foreach (var p in StartContext.Players) p.IsIngame = false;
+                        IsBattleOver = true;
+
                         if (battleResult.IngameStartTime != null)
                         {
-                            if (StartContext != null)
-                            {
-                                foreach (var p in StartContext.Players)
-                                {
-                                    p.IsIngame = false;
-                                }
-                            }
                             gameEndedOk = true;
                             battleResult.Duration = (int)DateTime.UtcNow.Subtract(battleResult.IngameStartTime ?? battleResult.StartTime).TotalSeconds;
                             if (GameOver != null) GameOver(this, new SpringLogEventArgs(e.PlayerName));
@@ -620,11 +623,8 @@ namespace LobbyClient
                         break;
 
                     case Talker.SpringEventType.SERVER_QUIT:
-                        if (StartContext != null) {
-                            foreach (var p in StartContext.Players) {
-                                p.IsIngame = false;
-                            }
-                        }
+                        if (StartContext != null) foreach (var p in StartContext.Players) p.IsIngame = false;
+                        IsBattleOver = true;
                         //Program.main.AutoHost.SayBattle("dbg quit ");
                         //if (GameOver != null) GameOver(this, new SpringLogEventArgs(e.PlayerName));
                         break;

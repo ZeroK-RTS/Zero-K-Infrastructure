@@ -206,7 +206,6 @@ namespace ZeroKWeb.SpringieInterface
                             if (binElo != null) persons = persons.OrderByDescending(x => Math.Abs(allAccounts[x].EffectiveElo - binElo.Value)).ToList();
 
                             foreach (var person in persons) {
-                                var acc = allAccounts[person];
                                 var current = bins.FirstOrDefault(x => x.Assigned.Contains(person));
 
                                 var canMove = false;
@@ -214,8 +213,8 @@ namespace ZeroKWeb.SpringieInterface
                                 if (current == null) canMove = true;
                                 else {
                                     if (current != b) {
-                                        if (acc.Preferences[current.Mode] < acc.Preferences[b.Mode]) canMove = true;
-                                        if (acc.Preferences[current.Mode] == acc.Preferences[b.Mode] && !current.ManuallyJoined.Contains(person)) if (b.Assigned.Count < b.Config.MinToJuggle && current.Assigned.Count >= current.Config.MinToJuggle + 1) canMove = true;
+                                        if (current.PlayerPriority[person] < b.PlayerPriority[person]) canMove = true;
+                                        if (current.PlayerPriority[person] == b.PlayerPriority[person]) if (b.Assigned.Count < b.Config.MinToJuggle && current.Assigned.Count >= current.Config.MinToJuggle + 1) canMove = true;
                                     }
                                 }
 
@@ -346,7 +345,7 @@ namespace ZeroKWeb.SpringieInterface
                     if (b.Config.MinLevel != null && a.Value.Level < b.Config.MinLevel) continue; // dont queue who cannot join PW
                     if (b.Config.MinElo != null && a.Value.EffectiveElo < b.Config.MinElo) continue; // dont queue those who cannot join high skill host
 
-                    if (b.ManuallyJoined.Contains(lobbyID)) // was he there already
+                    if (b.Autohost.LobbyContext != null && b.Autohost.LobbyContext.Players.Any(x=>x.LobbyID == lobbyID)) // was he there already, increase his priority even if he is spec
                         b.PlayerPriority[lobbyID] = battlePref + 0.5; // player joined it already
                     else {
                         if (b.Config.MaxToJuggle != null && b.ManuallyJoined.Count() >= b.Config.MaxToJuggle) continue; // full 1v1
