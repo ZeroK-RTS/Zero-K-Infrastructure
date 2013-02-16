@@ -14,7 +14,7 @@
     }
     <small>
       @Html.Hidden("page", Model.Page, new { id = "ev_page" })
-      <table cellpadding='0' cellspacing='0'>
+      <table cellpadding='0' cellspacing='2'>
         <th>
           Time
         </th>
@@ -23,7 +23,7 @@
         </th>
         @foreach (var e in Model.Events) {
           <tr>
-            <td>@e.Time.ToAgoString()
+            <td>@e.Time.ToString()
             </td>
             <td>@Html.Raw(e.Text)
             </td>
