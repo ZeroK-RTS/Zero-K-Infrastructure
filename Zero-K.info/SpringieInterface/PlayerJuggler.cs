@@ -20,11 +20,11 @@ namespace ZeroKWeb.SpringieInterface
     {
         static readonly List<AutohostMode> BinOrder = new List<AutohostMode>
                                                       {
+                                                          AutohostMode.Planetwars,
+                                                          AutohostMode.Teams,
+                                                          AutohostMode.SmallTeams,
                                                           AutohostMode.LowSkill,
                                                           AutohostMode.HighSkill,
-                                                          AutohostMode.Planetwars,
-                                                          AutohostMode.SmallTeams,
-                                                          AutohostMode.Teams,
                                                           AutohostMode.GameFFA,
                                                           AutohostMode.GameChickens,
                                                           AutohostMode.Game1v1,
