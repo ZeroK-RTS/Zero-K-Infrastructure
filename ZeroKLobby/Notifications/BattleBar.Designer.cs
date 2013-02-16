@@ -38,6 +38,7 @@ namespace ZeroKLobby.Notifications
             this.cbReady = new System.Windows.Forms.CheckBox();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
+            this.cbQm = new System.Windows.Forms.CheckBox();
             this.battleExtras = new System.Windows.Forms.Button();
             this.picoChat = new ZeroKLobby.MicroLobby.ChatBox();
             ((System.ComponentModel.ISupportInitialize)(this.gameBox)).BeginInit();
@@ -99,6 +100,7 @@ namespace ZeroKLobby.Notifications
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.cbQm);
             this.panel1.Controls.Add(this.battleExtras);
             this.panel1.Controls.Add(this.cbSide);
             this.panel1.Controls.Add(this.lbPlayers);
@@ -110,6 +112,20 @@ namespace ZeroKLobby.Notifications
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(888, 76);
             this.panel1.TabIndex = 15;
+            // 
+            // cbQm
+            // 
+            this.cbQm.AutoSize = true;
+            this.cbQm.ImageIndex = 2;
+            this.cbQm.ImageList = this.imageList1;
+            this.cbQm.Location = new System.Drawing.Point(82, 3);
+            this.cbQm.Name = "cbQm";
+            this.cbQm.Size = new System.Drawing.Size(59, 17);
+            this.cbQm.TabIndex = 15;
+            this.cbQm.Text = "QM";
+            this.cbQm.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.cbQm.UseVisualStyleBackColor = true;
+            this.cbQm.CheckedChanged += new System.EventHandler(this.cbQm_CheckedChanged);
             // 
             // battleExtras
             // 
@@ -170,5 +186,6 @@ namespace ZeroKLobby.Notifications
 				private System.Windows.Forms.ImageList imageList1;
 				private System.Windows.Forms.Panel panel1;
                 private System.Windows.Forms.Button battleExtras;
+                private System.Windows.Forms.CheckBox cbQm;
     }
 }

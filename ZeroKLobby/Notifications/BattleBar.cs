@@ -11,6 +11,7 @@ using PlasmaDownloader;
 using PlasmaShared;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.VoiceCommand;
+using ZkData;
 
 namespace ZeroKLobby.Notifications
 {
@@ -29,7 +30,10 @@ namespace ZeroKLobby.Notifications
 		readonly Random random = new Random();
         readonly Spring spring;
 		bool suppressSideChangeEvent;
+	    bool suppressQmChangeEvent;
 		readonly Timer timer = new Timer();
+
+	    bool desiredQmState = true;
 
 
 		/// <summary>
@@ -39,6 +43,7 @@ namespace ZeroKLobby.Notifications
 		{
 			InitializeComponent();
 			Program.ToolTip.SetText(cbReady, "Choose whether to play, or join as spectator");
+            Program.ToolTip.SetText(cbQm, "Enable or disable QuickMatch");
 			Program.ToolTip.SetText(cbSide, "Choose the faction you wish to play.");
 
 			client = Program.TasClient;
@@ -196,6 +201,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 												IsReady = true,
 					             };
 					client.SendMyBattleStatus(status);
+				    if (battle.Founder.IsSpringieManaged && battle.IsOfficial() && desiredQmState) ActionHandler.StartQuickMatch();
 				};
 
 			client.MyBattleStarted += (s, e) =>
@@ -268,6 +274,12 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 					RefreshTooltip();
 					Stop();
 				};
+
+            client.Extensions.JugglerConfigReceived += (args, config) => { if (args.UserName == GlobalConst.NightwatchName) {
+                suppressQmChangeEvent = true;
+                cbQm.Checked = config.Active;
+                suppressQmChangeEvent = false;
+            } };
 
 			timer.Tick += (s, e) =>
 				{
@@ -542,6 +554,16 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
         {
             
             Program.JugglerBar.SwitchState();
+        }
+
+        private void cbQm_CheckedChanged(object sender, EventArgs e)
+        {
+            cbQm.ImageIndex = cbQm.Checked ? 1 : 2;
+            if (!suppressQmChangeEvent) {
+                if (cbQm.Checked) ActionHandler.StartQuickMatch();
+                else ActionHandler.StopQuickMatch();
+                desiredQmState = cbQm.Checked;
+            }
         }
 
 
