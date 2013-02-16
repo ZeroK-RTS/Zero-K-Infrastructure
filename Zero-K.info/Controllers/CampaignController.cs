@@ -92,7 +92,7 @@ namespace ZeroKWeb.Controllers
             return View("JournalList", camp);
         }
 
-        public ActionResult Events(int? planetID,
+        public ActionResult CampaignEvents(int? planetID,
                                    int? journalID,
                                    int campaignID,
                                    string filter,
@@ -113,7 +113,7 @@ namespace ZeroKWeb.Controllers
             if (!string.IsNullOrEmpty(filter)) res = res.Where(x => x.Text.Contains(filter));
             res = res.OrderByDescending(x => x.EventID);
 
-            var ret = new EventsResult
+            var ret = new CampaignEventsResult
             {
                 PageCount = (res.Count() / pageSize) + 1,
                 Page = page,
@@ -142,20 +142,20 @@ namespace ZeroKWeb.Controllers
             return View(planet);
         }
 
-        #region Nested type: EventsResult
-
-        public class EventsResult
-        {
-            public IQueryable<CampaignEvent> Events;
-            public string Filter;
-            public int Page;
-            public int PageCount;
-            public int PageSize;
-            public bool Partial;
-            public int? PlanetID;
-        }
-
-        #endregion
-
     }
+
+    #region Nested type: CampaignEventsResult
+
+    public class CampaignEventsResult
+    {
+        public IQueryable<CampaignEvent> Events;
+        public string Filter;
+        public int Page;
+        public int PageCount;
+        public int PageSize;
+        public bool Partial;
+        public int? PlanetID;
+    }
+
+    #endregion
 }
