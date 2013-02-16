@@ -82,7 +82,7 @@ namespace ZeroKWeb.SpringieInterface
             tas.UserStatusChanged += (sender, args) =>
                 {
                     var user = tas.ExistingUsers[args.ServerParams[0]];
-                    if ((user.IsAway && DateTime.Now.Subtract(user.AwaySince ?? DateTime.MinValue).TotalMinutes > 30)) {
+                    if ((user.IsAway && DateTime.Now.Subtract(user.AwaySince ?? DateTime.MinValue).TotalMinutes > 5)) {
                         var conf = tas.Extensions.GetPublishedConfig(user.Name);
                         if (conf != null && conf.Active) {
                             using (var db = new ZkDataContext()) {
