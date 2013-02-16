@@ -215,7 +215,7 @@ namespace ZeroKWeb.SpringieInterface
                                 else {
                                     if (current != b) {
                                         if (acc.Preferences[current.Mode] < acc.Preferences[b.Mode]) canMove = true;
-                                        if (acc.Preferences[current.Mode] == acc.Preferences[b.Mode]) if (b.Assigned.Count < b.Config.MinToJuggle && current.Assigned.Count >= current.Config.MinToJuggle + 1) canMove = true;
+                                        if (acc.Preferences[current.Mode] == acc.Preferences[b.Mode] && !current.ManuallyJoined.Contains(person)) if (b.Assigned.Count < b.Config.MinToJuggle && current.Assigned.Count >= current.Config.MinToJuggle + 1) canMove = true;
                                     }
                                 }
 
