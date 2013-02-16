@@ -281,11 +281,8 @@ namespace CMissionLib
 			Triggers.Add(gameStartTrigger);
 			gameStartTrigger.Logic.Add(new GameStartedCondition());
 			var unitType = game.UnitDefs.First();
-			var startUnits = new[]
+			var startUnits = new UnitStartInfo[]
 			                 {
-			                 	new UnitStartInfo(unitType, player1, 100, 200), new UnitStartInfo(unitType, player1, 200, 300),
-			                 	new UnitStartInfo(unitType, player1, 140, 220), new UnitStartInfo(unitType, player2, 162, 121),
-			                 	new UnitStartInfo(unitType, player2, 223, 142),
 			                 };
 			gameStartTrigger.Logic.Add(new CreateUnitsAction(startUnits));
             var widgets = new[] { "gui_pauseScreen.lua", "cmd_unit_mover.lua", "init_startup_info_selector.lua", "gui_center_n_select.lua", "gui_take_remind.lua", "gui_startup_info_selector.lua", "gui_local_colors.lua", "spring_direct_launch.lua" };

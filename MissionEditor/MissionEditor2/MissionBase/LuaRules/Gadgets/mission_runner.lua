@@ -839,6 +839,7 @@ local function ExecuteTrigger(trigger, frame)
             for i, order in ipairs(action.args.orders) do
               -- bug workaround: the table needs to be copied before it's used in GiveOrderToUnit
               local x, y, z = order.args[1], order.args[2], order.args[3]
+              if y == 0 then y = Spring.GetGroundHeight(x, z) end
               local options
               if i == 1 then
                 options = {}
@@ -1000,8 +1001,13 @@ function gadget:GamePreload()
   for _, trigger in ipairs(triggers) do
     for _, condition in ipairs(trigger.logic) do
       if condition.logicType == "GamePreloadCondition" then
-        ExecuteTrigger(trigger, n)
+        ExecuteTrigger(trigger, -1)
       end
+    end
+  end
+  if events[-1] then
+    for _, Event in ipairs(events[-1]) do
+        Event(-1) -- run event
     end
   end
 end
@@ -1010,11 +1016,13 @@ function gadget:GameFrame(n)
 
   if not gameStarted then
     -- start with a clean slate
+    --[[
     for _, unitID in ipairs(Spring.GetAllUnits()) do
       if Spring.GetUnitTeam(unitID) ~= gaiaTeamID then
         Spring.DestroyUnit(unitID, false, true)
       end
     end
+    ]]
     for _, trigger in ipairs(triggers) do
       for _, condition in ipairs(trigger.logic) do
         if condition.logicType == "GameStartedCondition" then

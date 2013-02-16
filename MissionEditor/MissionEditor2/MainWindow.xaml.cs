@@ -236,6 +236,7 @@ namespace MissionEditor2
 			addAction("Counter Modified", () => new CounterModifiedCondition());
 			addAction("Custom Condition", () => new CustomCondition());
 			addAction("Game Ends", () => new GameEndedCondition());
+            addAction("Game Preload", () => new GamePreloadCondition());
 			addAction("Game Starts", () => new GameStartedCondition());
 			addAction("Metronome Ticks", () => new TimeCondition());
 			addAction("Player Died", () => new PlayerDiedCondition(Mission.Players.First()));

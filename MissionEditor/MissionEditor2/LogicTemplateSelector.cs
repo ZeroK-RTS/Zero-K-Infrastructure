@@ -21,6 +21,7 @@ namespace MissionEditor2
 			// don't add new ones here, see how ListTemplates.xaml does it instead!
 			if (item is ConsoleMessageAction) resourceName = "showConsoleMessageTemplate";
 			else if (item is GameStartedCondition) resourceName = "gameStartedConditionTemplate";
+            else if (item is GamePreloadCondition) resourceName = "gamePreloadConditionTemplate";
 			else if (item is GameEndedCondition) resourceName = "gameEndedConditionTemplate";
 			else if (item is PlayerDiedCondition) resourceName = "playerDiedConditionTemplate";
 			else if (item is VictoryAction) resourceName = "victoryActionTemplate";

@@ -82,6 +82,12 @@
             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"> This condition is met when the game starts.</TextBlock>
         </DataTemplate>
 
+        <!-- ======== GamePreloadCondition Template ======== -->
+
+        <DataTemplate x:Key="gamePreloadConditionTemplate">
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"> This condition is met before the game starts, after assets are loaded..</TextBlock>
+        </DataTemplate>
+
         <!-- ======== WaitAction Template ======== -->
 
         <DataTemplate x:Key="waitActionTemplate">

@@ -249,9 +249,9 @@ local function DrawSearchlights()
 		local absHeight = py - groundy
 		local unitDefID = GetUnitDefID(unitID)
 		local unitDef = UnitDefs[unitDefID]
-		local speed = unitDef.speed
 		
-		if (absHeight > 0
+		if (unitDef
+			and absHeight > 0
 			and (not buildProgress or buildProgress >= 1)
 			and not noLightList[unitDefID]
 			and timeFromNoon > (0.25 + ((unitID * 97) % 256) / 8192)
@@ -263,6 +263,7 @@ local function DrawSearchlights()
 		  local ecc
 		  local heading
 		  local baseX, baseZ
+		  local speed = unitDef.speed
 		  
 		  if (not speed or speed == 0) then
 			heading = searchlightBuildingAngle * (0.5 + ((unitID * 137) % 256) / 512)
@@ -370,8 +371,9 @@ local function SetDayTime(time)
   if time > 1 then time = 1 
   elseif time < 0 then time = 0
   end
-  
+
   currDayTime = time
+  UpdateColors()
 end
 
 local function SetWantedDayTime(time)
@@ -380,6 +382,11 @@ local function SetWantedDayTime(time)
   end
 
   wantedTime = time
+end
+
+local function SetDayLength(time)
+  if time < 0 then time = 0 end
+  secondsPerDay = time
 end
 
 --------------------------------------------------------------------------------
@@ -393,7 +400,8 @@ function widget:Initialize()
   
   for unitDefID, unitDef in pairs(UnitDefs) do
     if (   string.find(unitDef.name, "chicken") 
-        or string.find(unitDef.name, "roost") 
+        or string.find(unitDef.name, "roost")
+        or string.find(unitDef.name, "fakeunit")
         or string.find(unitDef.humanName, "Chicken")
         or string.find(unitDef.humanName, "Montro")
         or (unitDef.speed == 0 and not 
@@ -414,6 +422,7 @@ function widget:Initialize()
   
   WG.Night.SetDayTime = SetDayTime
   WG.Night.SetWantedDayTime = SetWantedDayTime
+  WG.Night.SetDayLength = SetDayLength
 end
 
 function widget:Shutdown()
@@ -426,6 +435,7 @@ function widget:Shutdown()
   ]]--
   WG.Night.SetDayTime = nil
   WG.Night.SetWantedDayTime = nil
+  WG.Night.SetDayLength = nil
 end
 
 function widget:ViewResize(viewSizeX, viewSizeY)
@@ -453,6 +463,9 @@ function widget:Update(dt)
     elseif wantedTime ~= currDayTime then
       currDayTime = currDayTime + update * speedFactor / secondsPerDay
       currDayTime = currDayTime - math.floor(currDayTime)
+      if math.abs(currDayTime - wantedTime) < 0.01 then
+		currDayTime = wantedTime
+      end
       UpdateColors()
      end
      update = 0
