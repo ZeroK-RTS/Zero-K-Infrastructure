@@ -33,7 +33,7 @@ namespace ZeroKLobby.Notifications
 	    bool suppressQmChangeEvent;
 		readonly Timer timer = new Timer();
 
-	    bool desiredQmState = true;
+	    bool desiredQmState = false;
 
 
 		/// <summary>
