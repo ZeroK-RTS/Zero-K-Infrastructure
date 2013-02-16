@@ -151,7 +151,7 @@ namespace ZeroKLobby.MicroLobby
             previousLocation = cursorPoint;
 
             if (openBattleButtonHit) UpdateTooltip("Host your own battle room\nBest for private games with friends");
-            else if (quickMatchButtonHit) UpdateTooltip("Start QuickMatch - automatically find or create game\nLet's you sit back and relax while enough people gather for a game");
+            else if (quickMatchButtonHit) UpdateTooltip("Start QuickMatch - automatically find or create game\nLets you sit back and relax while enough people gather for a game");
             else UpdateTooltip(battle);
         }
 
