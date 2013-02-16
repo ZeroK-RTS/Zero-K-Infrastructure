@@ -213,5 +213,42 @@ namespace ZeroKWeb
 
             return ev;
         }
+
+        public static CampaignEvent CreateCampaignEvent(string format, params object[] args)
+        {
+            var ev = new CampaignEvent() { Time = DateTime.UtcNow };
+
+            ev.PlainText = string.Format(format, args);
+            var orgArgs = new List<object>(args);
+
+
+            for (var i = 0; i < args.Length; i++)
+            {
+                var arg = args[i];
+                var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+
+                if (arg is Account)
+                {
+                    /*
+                    var acc = (Account)arg;
+                    args[i] = HtmlHelperExtensions.PrintAccount(null, acc);
+                    if (acc.AccountID != 0)
+                    {
+                        if (!ev.EventAccounts.Any(x => x.AccountID == acc.AccountID)) ev.EventAccounts.Add(new EventAccount() { AccountID = acc.AccountID });
+                    }
+                    else if (!ev.EventAccounts.Any(x => x.Account == acc)) ev.EventAccounts.Add(new EventAccount() { Account = acc });
+                    */
+                }
+                else if (arg is CampaignPlanet)
+                {
+                    var planet = (CampaignPlanet)arg;
+                    args[i] = HtmlHelperExtensions.PrintPlanet(null, planet);
+                }
+            }
+
+
+            ev.Text = string.Format(format, args);
+            return ev;
+        }
     }
 }

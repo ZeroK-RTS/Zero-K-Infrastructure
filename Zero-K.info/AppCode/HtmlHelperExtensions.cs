@@ -551,6 +551,21 @@ namespace System.Web.Mvc
                                                 planet.PlanetID,planet.Faction != null ? "color:" + planet.Faction.Color:""));
         }
 
+        public static MvcHtmlString PrintPlanet(this HtmlHelper helper, CampaignPlanet planet)
+        {
+            if (planet == null) return new MvcHtmlString("?");
+            var db = new ZkDataContext();
+            var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+            Resource map = db.Resources.FirstOrDefault(m => m.InternalName == planet.Mission.Map);
+            return
+                new MvcHtmlString(string.Format("<a href='{0}' title='$planet${4}' style='{5}'><img src='/img/planets/{1}' width='{2}'>{3}</a>",
+                                                url.Action("Planet", "Planetwars", new { id = planet.PlanetID }),
+                                                map.MapPlanetWarsIcon,
+                                                map.PlanetWarsIconSize / 3,
+                                                planet.Name,
+                                                planet.PlanetID, "color:" + planet.GetColor(Global.Account)));
+        }
+
 
         public static MvcHtmlString Select(this HtmlHelper helper, string name, Type etype, int? selected, string anyItem)
         {
