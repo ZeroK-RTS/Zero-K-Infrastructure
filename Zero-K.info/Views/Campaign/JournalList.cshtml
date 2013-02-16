@@ -15,12 +15,16 @@
 </script>
 
 <h1>
-    Campaign @Model.Name - Journal
+    Campaign @Model.Name
 </h1>
-
+<div class="">
 @Html.BBCode(@Model.Description)
-<br /><br />
-
+</div>
+<br />
+<div class="">
+    @Html.ActionLink("Back to map", "")
+</div>
+<br />
 <h2>Journals</h2>
 @if (journals != null && journals.Count > 0)
 {
