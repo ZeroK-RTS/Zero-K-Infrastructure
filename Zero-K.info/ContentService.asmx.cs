@@ -242,7 +242,11 @@ namespace ZeroKWeb
                     if (progress != null && planet.IsUnlocked(acc.AccountID))
                     {
                         progress.IsCompleted = true;
-                        if (!alreadyCompleted) db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(campID, "Planet completed: {0}", planet));
+                        if (!alreadyCompleted) 
+                        { 
+                            db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(campID, "Planet completed: {0}", planet));
+                            db.SubmitChanges();
+                        }
 
                         // unlock this planet's journals if appropriate
                         var journals = db.CampaignJournals.Where(x => x.CampaignID == campID && x.PlanetID == planet.PlanetID);
@@ -257,6 +261,7 @@ namespace ZeroKWeb
                                 if (journal.UnlockOnPlanetCompletion && !alreadyCompleted) 
                                 {
                                     db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(campID, "Journal entry unlocked: {0}", journal));
+                                    db.SubmitChanges();
                                 }
                             }
                             else
@@ -280,13 +285,14 @@ namespace ZeroKWeb
                                 {
                                     jp = new AccountCampaignJournalProgress() { AccountID = acc.AccountID, CampaignID = campID, JournalID = journal.JournalID, IsUnlocked = true };
                                     db.AccountCampaignJournalProgress.InsertOnSubmit(jp);
-                                    db.SubmitChanges();
                                     db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(campID, "Journal entry unlocked: {0}", journal));
+                                    db.SubmitChanges();
                                 }
                                 else if (!jp.IsUnlocked)
                                 {
                                     jp.IsUnlocked = true;
                                     db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(campID, "Journal entry unlocked: {0}", journal));
+                                    db.SubmitChanges();
                                 }
                             }
                         }
@@ -324,13 +330,14 @@ namespace ZeroKWeb
                                 {
                                     progress2 = new AccountCampaignProgress() { AccountID = acc.AccountID, CampaignID = campID, PlanetID = toUnlock.PlanetID, IsCompleted = false, IsUnlocked = true };
                                     db.AccountCampaignProgress.InsertOnSubmit(progress2);
-                                    db.SubmitChanges();
                                     db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(campID, "Planet unlocked: {0}", planet));
+                                    db.SubmitChanges();
                                 }
                                 else if (!progress2.IsUnlocked)
                                 {
                                     progress2.IsUnlocked = true;
                                     db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(campID, "Planet unlocked: {0}", planet));
+                                    db.SubmitChanges();
                                 }
                                 else alreadyUnlocked = true;
 
@@ -346,6 +353,7 @@ namespace ZeroKWeb
                                         if (journal.UnlockOnPlanetUnlock && !alreadyUnlocked)
                                         {
                                             db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(campID, "Journal entry unlocked: {0}", journal));
+                                            db.SubmitChanges();
                                         }
                                     }
                                     else
@@ -369,13 +377,14 @@ namespace ZeroKWeb
                                         {
                                             jp = new AccountCampaignJournalProgress() { AccountID = acc.AccountID, CampaignID = campID, JournalID = journal.JournalID, IsUnlocked = true };
                                             db.AccountCampaignJournalProgress.InsertOnSubmit(jp);
-                                            db.SubmitChanges();
                                             db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(campID, "Journal entry unlocked: {0}", journal));
+                                            db.SubmitChanges();
                                         }
                                         else if (!jp.IsUnlocked)
                                         {
                                             jp.IsUnlocked = true;
                                             db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(campID, "Journal entry unlocked: {0}", journal));
+                                            db.SubmitChanges();
                                         }
                                     }
                                 }
