@@ -214,9 +214,9 @@ namespace ZeroKWeb
             return ev;
         }
 
-        public static CampaignEvent CreateCampaignEvent(string format, params object[] args)
+        public static CampaignEvent CreateCampaignEvent(int campaignID, string format, params object[] args)
         {
-            var ev = new CampaignEvent() { Time = DateTime.UtcNow };
+            var ev = new CampaignEvent() { CampaignID = campaignID, Time = DateTime.UtcNow };
 
             ev.PlainText = string.Format(format, args);
             var orgArgs = new List<object>(args);
