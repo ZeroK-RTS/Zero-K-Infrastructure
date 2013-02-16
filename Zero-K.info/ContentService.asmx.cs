@@ -218,14 +218,19 @@ namespace ZeroKWeb
                     }
                 }
 
+                // ====================
                 // campaign stuff
                 CampaignPlanet planet = db.CampaignPlanets.FirstOrDefault(p => p.MissionID == mission.MissionID);
                 if (planet != null)
                 {
                     // first mark this planet as completed - but only if it's already unlocked
                     AccountCampaignProgress progress = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == acc.AccountID && x.PlanetID == planet.PlanetID && x.CampaignID == planet.CampaignID);
-
-                    if (progress == null && planet.StartsUnlocked)
+                    bool alreadyCompleted = false;
+                    if (progress != null)
+                    {
+                        alreadyCompleted = progress.IsCompleted;
+                    }
+                    else if (planet.StartsUnlocked)
                     {
                         progress = new AccountCampaignProgress() { AccountID = acc.AccountID, CampaignID = planet.CampaignID, PlanetID = planet.PlanetID, IsCompleted = false, IsUnlocked = true };
                         db.AccountCampaignProgress.InsertOnSubmit(progress);
@@ -233,7 +238,6 @@ namespace ZeroKWeb
 
                     if (progress != null && planet.IsUnlocked(acc.AccountID))
                     {
-                        bool alreadyCompleted = progress.IsCompleted;
                         progress.IsCompleted = true;
                         if (!alreadyCompleted) db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent("Planet completed: {0}", planet));
 
@@ -242,10 +246,16 @@ namespace ZeroKWeb
                         foreach (CampaignJournal journal in journals)
                         {
                             bool proceed = true;
-                            if (journal.UnlockOnPlanetCompletion) db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent("Journal entry unlocked: {0}", journal));
 
                             var requiredVars = db.CampaignJournalVars.Where(x => x.CampaignID == journal.CampaignID && x.JournalID == journal.JournalID).ToList();
-                            if (requiredVars.Count() == 0) proceed = false; // no need to add to unlock table; it'll be marked as unlocked at runtime
+                            if (requiredVars.Count() == 0)
+                            {
+                            	proceed = false; // no need to add to unlock table; it'll be marked as unlocked at runtime
+                                if (journal.UnlockOnPlanetCompletion && !alreadyCompleted) 
+                                {
+                                    db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent("Journal entry unlocked: {0}", journal));
+                                }
+                            }
                             else
                             {
                                 foreach (CampaignJournalVar variable in requiredVars)
@@ -260,7 +270,7 @@ namespace ZeroKWeb
                             }
                             if (proceed)    // met requirements for unlocking journal
                             {
-                                AccountCampaignJournalProgress jp = db.AccountCampaignJournalProgress.FirstOrDefault(x => x.AccountID == acc.AccountID && x.JournalID == journal.JournalID);
+                                AccountCampaignJournalProgress jp = db.AccountCampaignJournalProgress.FirstOrDefault(x => x.AccountID == acc.AccountID && x.CampaignID == journal.CampaignID && x.JournalID == journal.JournalID);
                                 if (jp == null)
                                 {
                                     jp = new AccountCampaignJournalProgress() { AccountID = acc.AccountID, CampaignID = journal.CampaignID, JournalID = journal.JournalID, IsUnlocked = true };
@@ -301,6 +311,7 @@ namespace ZeroKWeb
                             if (proceed)    // met requirements for unlocking planet
                             {    
                                 AccountCampaignProgress progress2 = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == acc.AccountID && x.PlanetID == toUnlock.PlanetID);
+                                bool alreadyUnlocked = false;
                                 if (progress2 == null)
                                 {
                                     progress2 = new AccountCampaignProgress() { AccountID = acc.AccountID, CampaignID = toUnlock.CampaignID, PlanetID = toUnlock.PlanetID, IsCompleted = false, IsUnlocked = true };
@@ -312,6 +323,7 @@ namespace ZeroKWeb
                                     progress2.IsUnlocked = true;
                                     db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent("Planet unlocked: {0}", planet));
                                 }
+                                else alreadyUnlocked = true;
 
                                 // unlock their journals too if appropriate
                                 var journals2 = db.CampaignJournals.Where(x => x.CampaignID == planet.CampaignID && x.PlanetID == planet.PlanetID);
@@ -319,7 +331,14 @@ namespace ZeroKWeb
                                 {
                                     bool proceedJ = true;
                                     var requiredVarsJ = db.CampaignJournalVars.Where(x => x.CampaignID == journal.CampaignID && x.JournalID == journal.JournalID).ToList();
-                                    if (requiredVarsJ.Count() == 0) proceedJ = false;   // no need to add to unlock table; it'll be marked as unlocked at runtime
+                                    if (requiredVarsJ.Count() == 0)
+                                    {
+                                    	proceedJ = false;   // no need to add to unlock table; it'll be marked as unlocked at runtime
+                                        if (journal.UnlockOnPlanetUnlock && !alreadyUnlocked)
+                                        {
+                                            db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent("Journal entry unlocked: {0}", journal));
+                                        }
+                                    }
                                     else
                                     {
                                         foreach (CampaignJournalVar variableJ in requiredVarsJ)

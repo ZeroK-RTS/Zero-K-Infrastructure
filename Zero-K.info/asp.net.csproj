@@ -383,6 +383,7 @@
     <Content Include="Views\Home\PlanetTooltipCampaign.cshtml" />
     <Content Include="Views\Shared\PlanetIconCampaign.cshtml" />
     <Content Include="Views\Campaign\JournalList.cshtml" />
+    <Content Include="Views\Campaign\Events.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
