@@ -226,6 +226,7 @@ namespace ZeroKWeb
                     // first mark this planet as completed - but only if it's already unlocked
                     AccountCampaignProgress progress = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == acc.AccountID && x.PlanetID == planet.PlanetID && x.CampaignID == planet.CampaignID);
                     bool alreadyCompleted = false;
+                    int accountID = acc.AccountID;
                     int campID = planet.CampaignID;
 
                     if (progress != null)
@@ -234,17 +235,17 @@ namespace ZeroKWeb
                     }
                     else if (planet.StartsUnlocked)
                     {
-                        progress = new AccountCampaignProgress() { AccountID = acc.AccountID, CampaignID = campID, PlanetID = planet.PlanetID, IsCompleted = false, IsUnlocked = true };
+                        progress = new AccountCampaignProgress() { AccountID = accountID, CampaignID = campID, PlanetID = planet.PlanetID, IsCompleted = false, IsUnlocked = true };
                         db.AccountCampaignProgress.InsertOnSubmit(progress);
                         db.SubmitChanges();
                     }
 
-                    if (progress != null && planet.IsUnlocked(acc.AccountID))
+                    if (progress != null && planet.IsUnlocked(accountID))
                     {
                         progress.IsCompleted = true;
                         if (!alreadyCompleted) 
                         { 
-                            db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(campID, "Planet completed: {0}", planet));
+                            db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "Planet completed: {0}", planet));
                             db.SubmitChanges();
                         }
 
@@ -260,7 +261,7 @@ namespace ZeroKWeb
                             	proceed = false; // no need to add to unlock table; it'll be marked as unlocked at runtime
                                 if (journal.UnlockOnPlanetCompletion && !alreadyCompleted) 
                                 {
-                                    db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(campID, "Journal entry unlocked: {0}", journal));
+                                    db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "Journal entry unlocked: {0}", journal));
                                     db.SubmitChanges();
                                 }
                             }
@@ -278,20 +279,20 @@ namespace ZeroKWeb
                             }
                             if (proceed)    // met requirements for unlocking journal
                             {
-                                AccountCampaignJournalProgress jp = db.AccountCampaignJournalProgress.FirstOrDefault(x => x.AccountID == acc.AccountID
+                                AccountCampaignJournalProgress jp = db.AccountCampaignJournalProgress.FirstOrDefault(x => x.AccountID == accountID
                                     && x.CampaignID == campID
                                     && x.JournalID == journal.JournalID);
                                 if (jp == null)
                                 {
-                                    jp = new AccountCampaignJournalProgress() { AccountID = acc.AccountID, CampaignID = campID, JournalID = journal.JournalID, IsUnlocked = true };
+                                    jp = new AccountCampaignJournalProgress() { AccountID = accountID, CampaignID = campID, JournalID = journal.JournalID, IsUnlocked = true };
                                     db.AccountCampaignJournalProgress.InsertOnSubmit(jp);
-                                    db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(campID, "Journal entry unlocked: {0}", journal));
+                                    db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "Journal entry unlocked: {0}", journal));
                                     db.SubmitChanges();
                                 }
                                 else if (!jp.IsUnlocked)
                                 {
                                     jp.IsUnlocked = true;
-                                    db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(campID, "Journal entry unlocked: {0}", journal));
+                                    db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "Journal entry unlocked: {0}", journal));
                                     db.SubmitChanges();
                                 }
                             }
@@ -322,28 +323,29 @@ namespace ZeroKWeb
 
                             if (proceed)    // met requirements for unlocking planet
                             {    
-                                AccountCampaignProgress progress2 = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == acc.AccountID
+                                AccountCampaignProgress progress2 = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == accountID
                                     && x.CampaignID == campID
                                     && x.PlanetID == toUnlock.PlanetID);
                                 bool alreadyUnlocked = false;
                                 if (progress2 == null)
                                 {
-                                    progress2 = new AccountCampaignProgress() { AccountID = acc.AccountID, CampaignID = campID, PlanetID = toUnlock.PlanetID, IsCompleted = false, IsUnlocked = true };
+                                    progress2 = new AccountCampaignProgress() { AccountID = accountID, CampaignID = campID, PlanetID = toUnlock.PlanetID, IsCompleted = false, IsUnlocked = true };
                                     db.AccountCampaignProgress.InsertOnSubmit(progress2);
-                                    db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(campID, "Planet unlocked: {0}", planet));
+                                    db.SubmitChanges();
+                                    db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "Planet unlocked: {0}", toUnlock));
                                     db.SubmitChanges();
                                 }
                                 else if (!progress2.IsUnlocked)
                                 {
                                     progress2.IsUnlocked = true;
-                                    db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(campID, "Planet unlocked: {0}", planet));
+                                    db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "Planet unlocked: {0}", toUnlock));
                                     db.SubmitChanges();
                                 }
                                 else alreadyUnlocked = true;
 
                                 // unlock their journals too if appropriate
                                 var journals2 = db.CampaignJournals.Where(x => x.CampaignID == campID && x.PlanetID == planet.PlanetID);
-                                foreach (CampaignJournal journal in journals)
+                                foreach (CampaignJournal journal in journals2)
                                 {
                                     bool proceedJ = true;
                                     var requiredVarsJ = db.CampaignJournalVars.Where(x => x.CampaignID == campID && x.JournalID == journal.JournalID).ToList();
@@ -352,7 +354,7 @@ namespace ZeroKWeb
                                     	proceedJ = false;   // no need to add to unlock table; it'll be marked as unlocked at runtime
                                         if (journal.UnlockOnPlanetUnlock && !alreadyUnlocked)
                                         {
-                                            db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(campID, "Journal entry unlocked: {0}", journal));
+                                            db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "Journal entry unlocked: {0}", journal));
                                             db.SubmitChanges();
                                         }
                                     }
@@ -370,20 +372,20 @@ namespace ZeroKWeb
                                     }
                                     if (proceedJ)    // met requirements for unlocking journal
                                     {
-                                        AccountCampaignJournalProgress jp = db.AccountCampaignJournalProgress.FirstOrDefault(x => x.AccountID == acc.AccountID
+                                        AccountCampaignJournalProgress jp = db.AccountCampaignJournalProgress.FirstOrDefault(x => x.AccountID == accountID
                                             && x.CampaignID == campID
                                             && x.JournalID == journal.JournalID);
                                         if (jp == null)
                                         {
-                                            jp = new AccountCampaignJournalProgress() { AccountID = acc.AccountID, CampaignID = campID, JournalID = journal.JournalID, IsUnlocked = true };
+                                            jp = new AccountCampaignJournalProgress() { AccountID = accountID, CampaignID = campID, JournalID = journal.JournalID, IsUnlocked = true };
                                             db.AccountCampaignJournalProgress.InsertOnSubmit(jp);
-                                            db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(campID, "Journal entry unlocked: {0}", journal));
+                                            db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "Journal entry unlocked: {0}", journal));
                                             db.SubmitChanges();
                                         }
                                         else if (!jp.IsUnlocked)
                                         {
                                             jp.IsUnlocked = true;
-                                            db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(campID, "Journal entry unlocked: {0}", journal));
+                                            db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "Journal entry unlocked: {0}", journal));
                                             db.SubmitChanges();
                                         }
                                     }

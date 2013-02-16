@@ -214,9 +214,9 @@ namespace ZeroKWeb
             return ev;
         }
 
-        public static CampaignEvent CreateCampaignEvent(int campaignID, string format, params object[] args)
+        public static CampaignEvent CreateCampaignEvent(int accountID, int campaignID, string format, params object[] args)
         {
-            var ev = new CampaignEvent() { CampaignID = campaignID, Time = DateTime.UtcNow };
+            var ev = new CampaignEvent() { AccountID = accountID, CampaignID = campaignID, Time = DateTime.UtcNow };
 
             ev.PlainText = string.Format(format, args);
             var orgArgs = new List<object>(args);
@@ -243,6 +243,7 @@ namespace ZeroKWeb
                 {
                     var planet = (CampaignPlanet)arg;
                     args[i] = HtmlHelperExtensions.PrintPlanet(null, planet);
+                    ev.PlanetID = planet.PlanetID;
                 }
             }
 
