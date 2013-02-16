@@ -126,7 +126,16 @@ namespace Fixer
 
         }
 
-
+        public static void FixMissionScripts()
+        {
+            var db = new ZkDataContext();
+            var missions = db.Missions.ToList();
+            foreach (Mission mission in missions)
+            {
+                mission.Script = Regex.Replace(mission.Script, "GameType=([^;]+);", (m) => { return string.Format("GameType={0};", mission.NameWithVersion); });
+            }
+            db.SubmitChanges();
+        }
 
         static void Main(string[] args) {
 
@@ -147,7 +156,8 @@ namespace Fixer
             //GenerateStructures(9);
 
             //AddWormholes();
-            TestPrediction();
+            //TestPrediction();
+            FixMissionScripts();
         }
 
 

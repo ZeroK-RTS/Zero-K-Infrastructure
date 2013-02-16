@@ -5,6 +5,8 @@ using System.Data.Linq;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using PlasmaShared;
 using PlasmaShared.UnitSyncLib;
 using ZkData;
@@ -112,7 +114,6 @@ namespace ZeroKWeb
 				prev.Map = mission.Map;
 				prev.Name = mission.Name;
 				prev.ScoringMethod = mission.ScoringMethod;
-				prev.Script = mission.Script;
 				prev.ModRapidTag = mission.ModRapidTag;
 				prev.ModOptions = mission.ModOptions;
 				prev.Image = mission.Image;
@@ -131,6 +132,7 @@ namespace ZeroKWeb
 				db.Missions.InsertOnSubmit(mission);
 			}
 			mission.AccountID = acc.AccountID;
+			mission.Script = Regex.Replace(mission.Script, "GameType=([^;]+);", (m) => { return string.Format("GameType={0};", mission.NameWithVersion); });
 			mission.MinHumans = slots.Count(x => x.IsHuman && x.IsRequired);
 			mission.MaxHumans = slots.Count(x => x.IsHuman);
 			mission.ModifiedTime = DateTime.UtcNow;
