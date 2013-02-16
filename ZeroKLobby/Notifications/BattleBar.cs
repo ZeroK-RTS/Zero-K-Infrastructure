@@ -558,7 +558,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 
         private void cbQm_CheckedChanged(object sender, EventArgs e)
         {
-            cbQm.ImageIndex = cbQm.Checked ? 1 : 2;
+            cbQm.ImageIndex = cbQm.Checked ? 3 : 4;
             if (!suppressQmChangeEvent) {
                 if (cbQm.Checked) ActionHandler.StartQuickMatch();
                 else ActionHandler.StopQuickMatch();

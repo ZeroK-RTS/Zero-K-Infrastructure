@@ -20,13 +20,13 @@ namespace ZeroKWeb.SpringieInterface
     {
         static readonly List<AutohostMode> BinOrder = new List<AutohostMode>
                                                       {
-                                                          AutohostMode.Planetwars,
                                                           AutohostMode.Teams,
+                                                          AutohostMode.GameFFA,
+                                                          AutohostMode.GameChickens,
+                                                          AutohostMode.Planetwars,
                                                           AutohostMode.SmallTeams,
                                                           AutohostMode.LowSkill,
                                                           AutohostMode.HighSkill,
-                                                          AutohostMode.GameFFA,
-                                                          AutohostMode.GameChickens,
                                                           AutohostMode.Game1v1,
                                                       };
         public static bool SuppressJuggler = false;
@@ -342,13 +342,12 @@ namespace ZeroKWeb.SpringieInterface
                 foreach (var a in juggledAccounts) {
                     var lobbyID = a.Key;
                     var battlePref = a.Value.MatchMakingActive ? (double)a.Value.Preferences[b.Mode] : (double)GamePreference.Never;
-                    AutohostMode manualPref;
 
                     if (b.Config.MinLevel != null && a.Value.Level < b.Config.MinLevel) continue; // dont queue who cannot join PW
                     if (b.Config.MinElo != null && a.Value.EffectiveElo < b.Config.MinElo) continue; // dont queue those who cannot join high skill host
 
                     if (b.ManuallyJoined.Contains(lobbyID)) // was he there already
-                        b.PlayerPriority[lobbyID] = battlePref; // player joined it already
+                        b.PlayerPriority[lobbyID] = battlePref + 0.5; // player joined it already
                     else {
                         if (b.Config.MaxToJuggle != null && b.ManuallyJoined.Count() >= b.Config.MaxToJuggle) continue; // full 1v1
                         if (b.Config.MaxEloDifference != null && b.ManuallyJoined.Count >= 1) {

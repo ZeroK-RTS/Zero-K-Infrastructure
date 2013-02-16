@@ -97,6 +97,8 @@ namespace ZeroKLobby.Notifications
             this.imageList1.Images.SetKeyName(0, "joined.ico");
             this.imageList1.Images.SetKeyName(1, "ok.ico");
             this.imageList1.Images.SetKeyName(2, "run.ico");
+            this.imageList1.Images.SetKeyName(3, "spec.png");
+            this.imageList1.Images.SetKeyName(4, "quickmatch_off.png");
             // 
             // panel1
             // 
@@ -116,7 +118,7 @@ namespace ZeroKLobby.Notifications
             // cbQm
             // 
             this.cbQm.AutoSize = true;
-            this.cbQm.ImageIndex = 2;
+            this.cbQm.ImageIndex = 4;
             this.cbQm.ImageList = this.imageList1;
             this.cbQm.Location = new System.Drawing.Point(82, 3);
             this.cbQm.Name = "cbQm";
