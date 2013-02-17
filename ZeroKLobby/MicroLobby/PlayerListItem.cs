@@ -29,7 +29,11 @@ namespace ZeroKLobby.MicroLobby
         public string SlotButton;
         public int SortCategory { get; set; }
         public string Title { get; set; }
-        public bool IsZeroKBattle { get { return Program.TasClient.MyBattle != null && KnownGames.GetGame(Program.TasClient.MyBattle.ModName).IsPrimary; } }
+        public bool IsZeroKBattle 
+        { get 
+            { return Program.TasClient.MyBattle != null && KnownGames.GetGame(Program.TasClient.MyBattle.ModName) != null 
+                && KnownGames.GetGame(Program.TasClient.MyBattle.ModName).IsPrimary; } 
+        }
         public bool IsSpringieBattle { get { return Program.TasClient.MyBattle != null && Program.TasClient.MyBattle.Founder.IsZkLobbyUser; } }
         public User User
         {
