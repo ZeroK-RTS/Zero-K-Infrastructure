@@ -138,6 +138,7 @@ namespace ZeroKWeb.SpringieInterface
             var allAccounts = db.Accounts.Where(x => existing.Contains(x.LobbyID)).GroupBy(x=>x.LobbyID ?? 0).ToDictionary(x => x.Key, x=>x.First());
             var juggledAccounts = db.Accounts.Where(x => juggledLobbyIDs.Contains(x.LobbyID) && x.MatchMakingActive).GroupBy(x=>x.LobbyID??0).ToDictionary(x => x.Key, x=>x.First());
 
+
             // make bins from non-running games with players by each type
             foreach (var grp in
                 autohosts.Where(x => x.LobbyContext != null).GroupBy(x => x.LobbyContext.GetMode())) {
@@ -238,7 +239,7 @@ namespace ZeroKWeb.SpringieInterface
 
                 if (todel != null) {
                     bins.Remove(todel);
-                    MergeMauallyJoined(bins, todel, allAccounts);
+                    MergeMauallyJoined(bins, todel, allAccounts, juggledAccounts);
                     sb.AppendLine("removing bin " + todel.Mode);
                     PrintBins(allAccounts, bins, sb);
                 }
@@ -282,7 +283,7 @@ namespace ZeroKWeb.SpringieInterface
             Global.Nightwatch.Tas.Extensions.PublishPlayerJugglerConfig(new ProtocolExtension.JugglerConfig(acc), acc.Name);
         }
 
-        static void MergeMauallyJoined(List<Bin> bins, Bin deletedBin, Dictionary<int, Account> allAccounts) {
+        static void MergeMauallyJoined(List<Bin> bins, Bin deletedBin, Dictionary<int, Account> allAccounts, Dictionary<int, Account> juggledAccounts ) {
             foreach (var b in bins.Where(x => x.Mode == deletedBin.Mode)) {
                 // find other bins instead of deleted
                 foreach (var i in deletedBin.ManuallyJoined) {
@@ -301,9 +302,12 @@ namespace ZeroKWeb.SpringieInterface
                             var avgElo = b.ManuallyJoined.Average(x => allAccounts[x].EffectiveElo);
                             if (Math.Abs(acc.EffectiveElo - avgElo) > b.Config.MaxEloDifference) continue; //effective elo difference > 250 dont try to combine
                         }
-                        b.PlayerPriority.Add(i, (double)GamePreference.Best); // add him to battle if he can play there 
+
+
+                        // add him to battle if he can play there - priority best for nonjuggled, otherwise his current from deleted bin
+                        if (!juggledAccounts.ContainsKey(i)) b.PlayerPriority.Add(i, (double)GamePreference.Best); 
+                        else b.PlayerPriority.Add(i, deletedBin.PlayerPriority[i]);
                     }
-                    else b.PlayerPriority[i] = (double)GamePreference.Best; // this case should not happen
                 }
             }
         }
