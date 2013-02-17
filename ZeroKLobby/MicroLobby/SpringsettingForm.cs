@@ -67,7 +67,7 @@ namespace ZeroKLobby.MicroLobby
         {
             try
             {
-                Program.ToolTip.SetText(engineDefaultButton, "Replace all entries with default values");
+                Program.ToolTip.SetText(engineDefaultButton, "Replace all entries with Spring's default values");
                 Program.ToolTip.SetText(cancelButton, "Exit, do not commit change");
                 Program.ToolTip.SetText(applyButton, "Write all entries to Springsettings.cfg");
 

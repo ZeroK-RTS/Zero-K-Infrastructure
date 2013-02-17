@@ -60,7 +60,7 @@
             this.applyButton.Name = "applyButton";
             this.applyButton.Size = new System.Drawing.Size(58, 41);
             this.applyButton.TabIndex = 1;
-            this.applyButton.Text = "Apply";
+            this.applyButton.Text = "Save";
             this.applyButton.UseVisualStyleBackColor = true;
             this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
             // 
@@ -88,7 +88,7 @@
             this.engineDefaultButton.Name = "engineDefaultButton";
             this.engineDefaultButton.Size = new System.Drawing.Size(58, 41);
             this.engineDefaultButton.TabIndex = 3;
-            this.engineDefaultButton.Text = "Engine Default";
+            this.engineDefaultButton.Text = "Load Default";
             this.engineDefaultButton.UseVisualStyleBackColor = true;
             this.engineDefaultButton.Click += new System.EventHandler(this.engineDefaultButton_Click);
             // 

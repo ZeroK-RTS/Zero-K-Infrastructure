@@ -42,20 +42,22 @@ namespace ZeroKLobby.MicroLobby
             }
         }
 
-        int DPIScaleUp(int designHeight)
+        int DPIScaleUpY(int designHeight)
         {
             //-- code for scaling-up based on user's custom DPI.
             Graphics formGraphics = this.CreateGraphics(); //Reference: http://msdn.microsoft.com/en-us/library/system.drawing.graphics.dpix.aspx .ie: NotifyBarContainer.cs
-            float formDPIvertical = formGraphics.DpiY; //get current DPI
-            float scaleUpRatio = formDPIvertical / 96; //get scaleUP ratio, 96 is the original DPI
+            double formDPIvertical = formGraphics.DpiY; //get current DPI
+            double scaleUpRatio = formDPIvertical / 96; //get scaleUP ratio, 96 is the original DPI
+            double output = designHeight * scaleUpRatio;
+            output = Math.Round(output, 0, MidpointRounding.AwayFromZero); //Reference: http://stackoverflow.com/questions/8844674/how-to-round-up-to-the-nearest-whole-number-in-c-sharp
             //--
-            return ((int)(designHeight * scaleUpRatio)); //multiply the scaleUP ratio to the original design height, then change type to integer, then return value;
+            return ((int)output); //multiply the scaleUP ratio to the original design height, then change type to integer, then return value;
         }
 
         void HideAdvanced()
         {
             int designHeight = 235;
-            Height = DPIScaleUp(designHeight);
+            Height = DPIScaleUpY(designHeight);
             advancedOptionsGroup.Visible = false;
             showAdvancedButton.Text = "Show Advanced Options";
         }
@@ -63,7 +65,7 @@ namespace ZeroKLobby.MicroLobby
         void ShowAdvanced()
         {
             int designHeight = 405;
-            Height = DPIScaleUp(designHeight);
+            Height = DPIScaleUpY(designHeight);
             advancedOptionsGroup.Visible = true;
             showAdvancedButton.Text = "Hide Advanced Options";
         }
