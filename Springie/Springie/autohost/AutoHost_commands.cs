@@ -219,6 +219,7 @@ namespace Springie.autohost
             {
                 alliances = 0;
                 allyno = 0;
+                SayBattle(String.Format("Mod {0} has {1} mission slots", hostedMod.Name, hostedMod.MissionSlots.Count()));
                 bool err = false;
                 var invalidUser =
                     tas.MyBattle.Users.FirstOrDefault(
