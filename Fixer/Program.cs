@@ -137,6 +137,55 @@ namespace Fixer
             db.SubmitChanges();
         }
 
+        static void GetModuleUsage(int moduleID, List<Commander> comms, ZkDataContext db)
+        {
+            var modules = db.CommanderModules.Where(x => comms.Contains(x.Commander) && x.ModuleUnlockID == moduleID).ToList();
+            int numModules = 0;
+            Unlock wantedModule = db.Unlocks.FirstOrDefault(x => x.UnlockID == moduleID);
+            int moduleCost = (int)wantedModule.MetalCost;
+            numModules = modules.Count;
+
+            System.Console.WriteLine("MODULE: " + wantedModule.Name);
+            System.Console.WriteLine("Instances: " + numModules);
+            System.Console.WriteLine("Total cost: " + numModules*moduleCost);
+            System.Console.WriteLine();
+        }
+
+        public static void AnalyzeModuleUsagePatterns()
+        {
+            var db = new ZkDataContext();
+            var modules = db.Unlocks.Where(x => x.UnlockType == UnlockTypes.Weapon).ToList();
+
+            var players = db.Accounts.Where(x => x.Elo >= 1700 && DateTime.Compare(x.LastLogin.AddMonths(3), DateTime.UtcNow) > 0).ToList();
+            System.Console.WriteLine("Number of accounts to process: " + players.Count);
+            var comms = db.Commanders.Where(x => players.Contains(x.AccountByAccountID)).ToList();
+            System.Console.WriteLine("Number of comms to process: " + comms.Count);
+            System.Console.WriteLine();
+            
+
+            foreach (Unlock module in modules)
+            {
+                GetModuleUsage(module.UnlockID, comms, db);
+            }
+        }
+
+        public static void AnalyzeCommUsagePatterns()
+        {
+            var db = new ZkDataContext();
+            var chasses = db.Unlocks.Where(x => x.UnlockType == UnlockTypes.Chassis).ToList();
+
+            var players = db.Accounts.Where(x => x.Elo >= 1700 && DateTime.Compare(x.LastLogin.AddMonths(3), DateTime.UtcNow) > 0).ToList();
+            System.Console.WriteLine("Number of accounts to process: " + players.Count);
+            System.Console.WriteLine();
+
+            foreach (Unlock chassis in chasses)
+            {
+                var comms = db.Commanders.Where(x => players.Contains(x.AccountByAccountID) && x.ChassisUnlockID == chassis.UnlockID).ToList();
+                int chassisCount = comms.Count;
+                System.Console.WriteLine("CHASSIS " + chassis.Name + " : " + chassisCount);
+            }
+        }
+
         static void Main(string[] args) {
 
 
@@ -157,7 +206,10 @@ namespace Fixer
 
             //AddWormholes();
             //TestPrediction();
-            FixMissionScripts();
+            //FixMissionScripts();
+
+            AnalyzeModuleUsagePatterns();
+            //AnalyzeCommUsagePatterns();
         }
 
 
