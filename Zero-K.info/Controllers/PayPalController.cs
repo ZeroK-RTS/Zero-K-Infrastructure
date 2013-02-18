@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Web.Mvc;
@@ -29,6 +30,25 @@ namespace ZeroKWeb.Controllers
             return ret;
         }
 
+
+        public ActionResult Index() {
+            return View("PayPalIndex");
+
+        }
+
+
+        public ActionResult Confirm(FormCollection form) {
+            var sb = new StringBuilder();
+            foreach (var v in Request.QueryString.AllKeys) {
+                sb.AppendFormat("{0} = {1}<br/>\n", v, Request.QueryString[v]);
+            }
+
+            foreach (var v in form.AllKeys) {
+                sb.AppendFormat("{0} = {1}<br/>\n", v, form[v]);
+            }
+
+            return Content(sb.ToString());
+        }
 
 
         public ActionResult Ipn(FormCollection form) {

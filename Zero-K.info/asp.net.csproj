@@ -385,6 +385,7 @@
     <Content Include="Views\Shared\PlanetIconCampaign.cshtml" />
     <Content Include="Views\Campaign\JournalList.cshtml" />
     <Content Include="Views\Campaign\CampaignEvents.cshtml" />
+    <Content Include="Views\PayPal\PayPalIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
@@ -482,9 +483,9 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
-          <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>9738</DevelopmentServerPort>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>False</AutoAssignPort>
+          <DevelopmentServerPort>9739</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:9738/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
