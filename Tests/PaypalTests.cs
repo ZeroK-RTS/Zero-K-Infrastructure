@@ -63,8 +63,6 @@ namespace Tests
             Assert.AreNotEqual(null, ret.Currency);
             Assert.AreNotEqual(null, ret.Reference);
             Console.WriteLine("Payment by {0} of {1} {2}, reference {3}, confirmation: {4}, message: {5}", ret.Contributor, ret.Amount, ret.Currency, ret.Reference, ret.ConfirmationNumber, ret.Message);
-
-
         }
     }
 }

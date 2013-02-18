@@ -33,6 +33,7 @@ namespace CaTracker
         OfflineMessages offlineMessages;
         string webRoot;
         PlayerMover playerMover;
+        PayPalChecker payPalChecker;
 
         public AuthService Auth { get; private set; }
 
@@ -77,6 +78,23 @@ namespace CaTracker
             Auth = new AuthService(tas);
             offlineMessages = new OfflineMessages(tas);
             playerMover = new PlayerMover(tas);
+
+		    payPalChecker = new PayPalChecker();
+		    payPalChecker.Error += (e) =>
+		        { tas.Say(TasClient.SayPlace.Channel, "zkdev", "PAYMENT ERROR: " + e.ToString(), true); };
+
+		    payPalChecker.NewContribution += (c) =>
+		        {
+		            tas.Say(TasClient.SayPlace.Channel,
+		                    "zkdev",
+		                    string.Format("WOHOO! {0:d} New contribution of {1}€ by {2}  {3}", c.Time, c.Contributor, c.Euros, c.Message),
+		                    true);
+		            if (c.Account == null)
+		                tas.Say(TasClient.SayPlace.Channel,
+		                        "zkdev",
+		                        "Warning, user account unknown yet, payment remains unassigned. If you know user name, please assign it manually",
+		                        true);
+		        };
             
 
 			try
@@ -174,6 +192,7 @@ namespace CaTracker
 
 		void tas_LoginAccepted(object sender, TasEventArgs e)
 		{
+            payPalChecker.StartChecking();
             recon.Stop();
 			for (var i = 0; i < config.JoinChannels.Length; ++i) tas.JoinChannel(config.JoinChannels[i]);
 		}

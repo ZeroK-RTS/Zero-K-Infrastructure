@@ -177,11 +177,11 @@ namespace Tests {
         ///Donation Details
         ///-----------------------------------
         ///
-        /// Total amount: 2420.00 USD
+        /// Total amount: $20.00 USD
         ///Currency: U.S. Dollars
         ///Reference: SpringRTS=C2=A4cy_code=3DEUR
         ///Confirmation number: 9UE32391CK7671614
-        ///Purpose: Spring R [rest of string was truncated]&quot;;.
+        ///Purpose: Spring RT [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string mail5 {
             get {
