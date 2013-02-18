@@ -28,9 +28,8 @@ namespace ZkData
             return GetXpForLevel(Level) - AccountUnlocks.Where(x=> x.Unlock.KudosToAutoUnlock == null || x.Unlock.KudosToAutoUnlock > kudosGained).Sum(x => (int?)(x.Unlock.XpCost*x.Count)) ?? 0;
         } }
         
-        public int KudosAvailable { get { return KudosGained - KudosSpent; } }
-        public int KudosGained { get { return KudosChanges.Where(x => x.KudosValue > 0).Sum(x => x.KudosValue); } }
-        public int KudosSpent { get { return -KudosChanges.Where(x => x.KudosValue < 0).Sum(x => x.KudosValue); } }
+        public int KudosGained { get { return Contributions.Sum(x=>x.KudosValue); } }
+        public int KudosSpent { get { return  KudosPurchases.Sum(x=>x.KudosValue); } }
 
 
 

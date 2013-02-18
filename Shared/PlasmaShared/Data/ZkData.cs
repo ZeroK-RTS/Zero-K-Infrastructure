@@ -73,7 +73,7 @@ namespace ZkData
                 SubmitChanges(ConflictMode.ContinueOnConflict);
             }
 
-            catch (ChangeConflictException e)
+            catch (ChangeConflictException)
             {
                 // Automerge database values for members that client has modified
                 ChangeConflicts.ResolveAll(RefreshMode.KeepChanges);

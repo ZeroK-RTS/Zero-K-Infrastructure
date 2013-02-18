@@ -1,0 +1,2448 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>OpenPop</name>
+    </assembly>
+    <members>
+        <member name="T:OpenPop.Pop3.Exceptions.LoginDelayException">
+            <summary>
+            This exception indicates that the user has logged in recently and
+            will not be allowed to login again until the login delay period has expired.
+            Check the parameter to the LOGIN-DELAY capability, that the server responds with when
+            <see cref="M:OpenPop.Pop3.Pop3Client.Capabilities"/> is called, to see what the delay is.
+            </summary>
+        </member>
+        <member name="T:OpenPop.Pop3.Exceptions.PopClientException">
+            <summary>
+            This is the base exception for all <see cref="T:OpenPop.Pop3.Pop3Client"/> exceptions.
+            </summary>
+        </member>
+        <member name="M:OpenPop.Pop3.Exceptions.PopClientException.#ctor(System.String,System.Exception)">
+            <summary>
+             Creates a PopClientException with the given message and InnerException
+            </summary>
+            <param name="message">The message to include in the exception</param>
+            <param name="innerException">The exception that is the cause of this exception</param>
+        </member>
+        <member name="M:OpenPop.Pop3.Exceptions.PopClientException.#ctor(System.String)">
+            <summary>
+             Creates a PopClientException with the given message
+            </summary>
+            <param name="message">The message to include in the exception</param>
+        </member>
+        <member name="M:OpenPop.Pop3.Exceptions.LoginDelayException.#ctor(OpenPop.Pop3.Exceptions.PopServerException)">
+            <summary>
+             Creates a LoginDelayException with the given inner exception
+            </summary>
+            <param name="innerException">The exception that is the cause of this exception</param>
+        </member>
+        <member name="T:OpenPop.Mime.Traverse.FindAllMessagePartsWithMediaType">
+            <summary>
+             Finds all the <see cref="T:OpenPop.Mime.MessagePart"/>s which have a given MediaType using a depth first traversal.
+            </summary>
+        </member>
+        <member name="T:OpenPop.Mime.Traverse.IQuestionAnswerMessageTraverser`2">
+            <summary>
+            This interface describes a MessageTraverser which is able to traverse a Message structure
+            and deliver some answer given some question.
+            </summary>
+            <typeparam name="TAnswer">This is the type of the answer you want to have delivered.</typeparam>
+            <typeparam name="TQuestion">This is the type of the question you want to have answered.</typeparam>
+        </member>
+        <member name="M:OpenPop.Mime.Traverse.IQuestionAnswerMessageTraverser`2.VisitMessage(OpenPop.Mime.Message,`0)">
+            <summary>
+            Call this when you want to apply this traverser on a <see cref="T:OpenPop.Mime.Message"/>.
+            </summary>
+            <param name="message">The <see cref="T:OpenPop.Mime.Message"/> which you want to traverse. Must not be <see langword="null"/>.</param>
+            <param name="question">The question</param>
+            <returns>An answer</returns>
+        </member>
+        <member name="M:OpenPop.Mime.Traverse.IQuestionAnswerMessageTraverser`2.VisitMessagePart(OpenPop.Mime.MessagePart,`0)">
+            <summary>
+            Call this when you want to apply this traverser on a <see cref="T:OpenPop.Mime.MessagePart"/>.
+            </summary>
+            <param name="messagePart">The <see cref="T:OpenPop.Mime.MessagePart"/> which you want to traverse. Must not be <see langword="null"/>.</param>
+            <param name="question">The question</param>
+            <returns>An answer</returns>
+        </member>
+        <member name="M:OpenPop.Mime.Traverse.FindAllMessagePartsWithMediaType.VisitMessage(OpenPop.Mime.Message,System.String)">
+            <summary>
+            Finds all the <see cref="T:OpenPop.Mime.MessagePart"/>s with the given MediaType
+            </summary>
+            <param name="message">The <see cref="T:OpenPop.Mime.Message"/> to start looking in</param>
+            <param name="question">The MediaType to look for. Case is ignored.</param>
+            <returns>
+            A List of <see cref="T:OpenPop.Mime.MessagePart"/>s with the given MediaType.<br/>
+            <br/>
+            The List might be empty if no such <see cref="T:OpenPop.Mime.MessagePart"/>s were found.<br/>
+            The order of the elements in the list is the order which they are found using
+            a depth first traversal of the <see cref="T:OpenPop.Mime.Message"/> hierarchy.
+            </returns>
+        </member>
+        <member name="M:OpenPop.Mime.Traverse.FindAllMessagePartsWithMediaType.VisitMessagePart(OpenPop.Mime.MessagePart,System.String)">
+            <summary>
+            Finds all the <see cref="T:OpenPop.Mime.MessagePart"/>s with the given MediaType
+            </summary>
+            <param name="messagePart">The <see cref="T:OpenPop.Mime.MessagePart"/> to start looking in</param>
+            <param name="question">The MediaType to look for. Case is ignored.</param>
+            <returns>
+            A List of <see cref="T:OpenPop.Mime.MessagePart"/>s with the given MediaType.<br/>
+            <br/>
+            The List might be empty if no such <see cref="T:OpenPop.Mime.MessagePart"/>s were found.<br/>
+            The order of the elements in the list is the order which they are found using
+            a depth first traversal of the <see cref="T:OpenPop.Mime.Message"/> hierarchy.
+            </returns>
+        </member>
+        <member name="T:OpenPop.Common.StreamUtility">
+            <summary>
+            Utility to help reading bytes and strings of a <see cref="T:System.IO.Stream"/>
+            </summary>
+        </member>
+        <member name="M:OpenPop.Common.StreamUtility.ReadLineAsBytes(System.IO.Stream)">
+            <summary>
+            Read a line from the stream.
+            A line is interpreted as all the bytes read until a CRLF or LF is encountered.<br/>
+            CRLF pair or LF is not included in the string.
+            </summary>
+            <param name="stream">The stream from which the line is to be read</param>
+            <returns>A line read from the stream returned as a byte array or <see langword="null"/> if no bytes were readable from the stream</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="stream"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Common.StreamUtility.ReadLineAsAscii(System.IO.Stream)">
+            <summary>
+            Read a line from the stream. <see cref="M:OpenPop.Common.StreamUtility.ReadLineAsBytes(System.IO.Stream)"/> for more documentation.
+            </summary>
+            <param name="stream">The stream to read from</param>
+            <returns>A line read from the stream or <see langword="null"/> if nothing could be read from the stream</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="stream"/> is <see langword="null"/></exception>
+        </member>
+        <member name="T:OpenPop.Pop3.Apop">
+            <summary>
+            Class for computing the digest needed when issuing the APOP command to a POP3 server.
+            </summary>
+        </member>
+        <member name="M:OpenPop.Pop3.Apop.ComputeDigest(System.String,System.String)">
+            <summary>
+            Create the digest for the APOP command so that the server can validate
+            we know the password for some user.
+            </summary>
+            <param name="password">The password for the user</param>
+            <param name="serverTimestamp">The timestamp advertised in the server greeting to the POP3 client</param>
+            <returns>The password and timestamp hashed with the MD5 algorithm outputted as a HEX string</returns>
+        </member>
+        <member name="T:OpenPop.Mime.Traverse.IAnswerMessageTraverser`1">
+            <summary>
+            This interface describes a MessageTraverser which is able to traverse a Message hierarchy structure
+            and deliver some answer.
+            </summary>
+            <typeparam name="TAnswer">This is the type of the answer you want to have delivered.</typeparam>
+        </member>
+        <member name="M:OpenPop.Mime.Traverse.IAnswerMessageTraverser`1.VisitMessage(OpenPop.Mime.Message)">
+            <summary>
+            Call this when you want to apply this traverser on a <see cref="T:OpenPop.Mime.Message"/>.
+            </summary>
+            <param name="message">The <see cref="T:OpenPop.Mime.Message"/> which you want to traverse. Must not be <see langword="null"/>.</param>
+            <returns>An answer</returns>
+        </member>
+        <member name="M:OpenPop.Mime.Traverse.IAnswerMessageTraverser`1.VisitMessagePart(OpenPop.Mime.MessagePart)">
+            <summary>
+            Call this when you want to apply this traverser on a <see cref="T:OpenPop.Mime.MessagePart"/>.
+            </summary>
+            <param name="messagePart">The <see cref="T:OpenPop.Mime.MessagePart"/> which you want to traverse. Must not be <see langword="null"/>.</param>
+            <returns>An answer</returns>
+        </member>
+        <member name="T:OpenPop.Mime.MessagePart">
+            <summary>
+            A MessagePart is a part of an email message used to describe the whole email parse tree.<br/>
+            <br/>
+            <b>Email messages are tree structures</b>:<br/>
+            Email messages may contain large tree structures, and the MessagePart are the nodes of the this structure.<br/>
+            A MessagePart may either be a leaf in the structure or a internal node with links to other MessageParts.<br/>
+            The root of the message tree is the <see cref="T:OpenPop.Mime.Message"/> class.<br/>
+            <br/>
+            <b>Leafs</b>:<br/>
+            If a MessagePart is a leaf, the part is not a <see cref="P:OpenPop.Mime.MessagePart.IsMultiPart">MultiPart</see> message.<br/>
+            Leafs are where the contents of an email are placed.<br/>
+            This includes, but is not limited to: attachments, text or images referenced from HTML.<br/>
+            The content of an attachment can be fetched by using the <see cref="P:OpenPop.Mime.MessagePart.Body"/> property.<br/>
+            If you want to have the text version of a MessagePart, use the <see cref="M:OpenPop.Mime.MessagePart.GetBodyAsText"/> method which will<br/>
+            convert the <see cref="P:OpenPop.Mime.MessagePart.Body"/> into a string using the encoding the message was sent with.<br/>
+            <br/>
+            <b>Internal nodes</b>:<br/>
+            If a MessagePart is an internal node in the email tree structure, then the part is a <see cref="P:OpenPop.Mime.MessagePart.IsMultiPart">MultiPart</see> message.<br/>
+            The <see cref="P:OpenPop.Mime.MessagePart.MessageParts"/> property will then contain links to the parts it contain.<br/>
+            The <see cref="P:OpenPop.Mime.MessagePart.Body"/> property of the MessagePart will not be set.<br/>
+            <br/>
+            See the example for a parsing example.<br/>
+            This class cannot be instantiated from outside the library.
+            </summary>
+            <example>
+            This example illustrates how the message parse tree looks like given a specific message<br/>
+            <br/>
+            The message source in this example is:<br/>
+            <code>
+            MIME-Version: 1.0
+            Content-Type: multipart/mixed; boundary="frontier"
+            
+            This is a message with multiple parts in MIME format.
+            --frontier
+            Content-Type: text/plain
+            
+            This is the body of the message.
+            --frontier
+            Content-Type: application/octet-stream
+            Content-Transfer-Encoding: base64
+            
+            PGh0bWw+CiAgPGHLYWQ+CiAgPC9oZWFkPgogIDxib2R5PgogICAgPHA+VGhpcyBpcyB0aGUg
+            Ym9keSBvZiB0aGUgbWVzc2FnZS48L3A+CiAgPC9ib2R5Pgo8L2h0bWw+Cg==
+            --frontier--
+            </code>
+            The tree will look as follows, where the content-type media type of the message is listed<br/>
+            <code>
+            - Message root
+              - multipart/mixed MessagePart
+                - text/plain MessagePart
+                - application/octet-stream MessagePart
+            </code>
+            It is possible to have more complex message trees like the following:<br/>
+            <code>
+            - Message root
+              - multipart/mixed MessagePart
+                - text/plain MessagePart
+                - text/plain MessagePart
+                - multipart/parallel
+                  - audio/basic
+                  - image/tiff
+                - text/enriched
+                - message/rfc822
+            </code>
+            But it is also possible to have very simple message trees like:<br/>
+            <code>
+            - Message root
+              - text/plain
+            </code>
+            </example>
+        </member>
+        <member name="M:OpenPop.Mime.MessagePart.#ctor(System.Byte[],OpenPop.Mime.Header.MessageHeader)">
+            <summary>
+            Used to construct the topmost message part
+            </summary>
+            <param name="rawBody">The body that needs to be parsed</param>
+            <param name="headers">The headers that should be used from the message</param>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="rawBody"/> or <paramref name="headers"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Mime.MessagePart.ParseBodyEncoding(System.String)">
+            <summary>
+            Parses a character set into an encoding
+            </summary>
+            <param name="characterSet">The character set that needs to be parsed. <see langword="null"/> is allowed.</param>
+            <returns>The encoding specified by the <paramref name="characterSet"/> parameter, or ASCII if the character set was <see langword="null"/> or empty</returns>
+        </member>
+        <member name="M:OpenPop.Mime.MessagePart.FindFileName(System.Net.Mime.ContentType,System.Net.Mime.ContentDisposition,System.String)">
+            <summary>
+            Figures out the filename of this message part from some headers.
+            <see cref="P:OpenPop.Mime.MessagePart.FileName"/> property.
+            </summary>
+            <param name="contentType">The Content-Type header</param>
+            <param name="contentDisposition">The Content-Disposition header</param>
+            <param name="defaultName">The default filename to use, if no other could be found</param>
+            <returns>The filename found, or the default one if not such filename could be found in the headers</returns>
+            <exception cref="T:System.ArgumentNullException">if <paramref name="contentType"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Mime.MessagePart.ParseBody(System.Byte[])">
+            <summary>
+            Parses a byte array as a body of an email message.
+            </summary>
+            <param name="rawBody">The byte array to parse as body of an email message. This array may not contain headers.</param>
+        </member>
+        <member name="M:OpenPop.Mime.MessagePart.ParseMultiPartBody(System.Byte[])">
+            <summary>
+            Parses the <paramref name="rawBody"/> byte array as a MultiPart message.<br/>
+            It is not valid to call this method if <see cref="P:OpenPop.Mime.MessagePart.IsMultiPart"/> returned <see langword="false"/>.<br/>
+            Fills the <see cref="P:OpenPop.Mime.MessagePart.MessageParts"/> property of this <see cref="T:OpenPop.Mime.MessagePart"/>.
+            </summary>
+            <param name="rawBody">The byte array which is to be parsed as a MultiPart message</param>
+        </member>
+        <member name="M:OpenPop.Mime.MessagePart.GetMessagePart(System.Byte[])">
+            <summary>
+            Given a byte array describing a full message.<br/>
+            Parses the byte array into a <see cref="T:OpenPop.Mime.MessagePart"/>.
+            </summary>
+            <param name="rawMessageContent">The byte array containing both headers and body of a message</param>
+            <returns>A <see cref="T:OpenPop.Mime.MessagePart"/> which was described by the <paramref name="rawMessageContent"/> byte array</returns>
+        </member>
+        <member name="M:OpenPop.Mime.MessagePart.GetMultiPartParts(System.Byte[],System.String)">
+            <summary>
+            Gets a list of byte arrays where each entry in the list is a full message of a message part
+            </summary>
+            <param name="rawBody">The raw byte array describing the body of a message which is a MultiPart message</param>
+            <param name="multipPartBoundary">The delimiter that splits the different MultiPart bodies from each other</param>
+            <returns>A list of byte arrays, each a full message of a <see cref="T:OpenPop.Mime.MessagePart"/></returns>
+        </member>
+        <member name="M:OpenPop.Mime.MessagePart.FindPositionOfNextMultiPartBoundary(System.IO.Stream,System.String,System.Boolean@)">
+            <summary>
+            Method that is able to find a specific MultiPart boundary in a Stream.<br/>
+            The Stream passed should not be used for anything else then for looking for MultiPart boundaries
+            <param name="stream">The stream to find the next MultiPart boundary in. Do not use it for anything else then with this method.</param>
+            <param name="multiPartBoundary">The MultiPart boundary to look for. This should be found in the <see cref="P:OpenPop.Mime.MessagePart.ContentType"/> header</param>
+            <param name="lastMultipartBoundaryFound">Is set to <see langword="true"/> if the next MultiPart boundary was indicated to be the last one, by having -- appended to it. Otherwise set to <see langword="false"/></param>
+            </summary>
+            <returns>The position of the first character of the line that contained MultiPartBoundary or -1 if no (more) MultiPart boundaries was found</returns>
+        </member>
+        <member name="M:OpenPop.Mime.MessagePart.DecodeBody(System.Byte[],OpenPop.Mime.Header.ContentTransferEncoding)">
+            <summary>
+            Decodes a byte array into another byte array based upon the Content Transfer encoding
+            </summary>
+            <param name="messageBody">The byte array to decode into another byte array</param>
+            <param name="contentTransferEncoding">The <see cref="P:OpenPop.Mime.MessagePart.ContentTransferEncoding"/> of the byte array</param>
+            <returns>A byte array which comes from the <paramref name="contentTransferEncoding"/> being used on the <paramref name="messageBody"/></returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="messageBody"/> is <see langword="null"/></exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown if the <paramref name="contentTransferEncoding"/> is unsupported</exception>
+        </member>
+        <member name="M:OpenPop.Mime.MessagePart.GetBodyAsText">
+            <summary>
+            Gets this MessagePart's <see cref="P:OpenPop.Mime.MessagePart.Body"/> as text.<br/>
+            This is simply the <see cref="P:OpenPop.Mime.MessagePart.BodyEncoding"/> being used on the raw bytes of the <see cref="P:OpenPop.Mime.MessagePart.Body"/> property.<br/>
+            This method is only valid to call if it is not a MultiPart message and therefore contains a body.<br/>
+            </summary>
+            <returns>The <see cref="P:OpenPop.Mime.MessagePart.Body"/> property as a string</returns>
+        </member>
+        <member name="M:OpenPop.Mime.MessagePart.Save(System.IO.FileInfo)">
+            <summary>
+            Save this <see cref="T:OpenPop.Mime.MessagePart"/>'s contents to a file.<br/>
+            There are no methods to reload the file.
+            </summary>
+            <param name="file">The File location to save the <see cref="T:OpenPop.Mime.MessagePart"/> to. Existent files will be overwritten.</param>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="file"/> is <see langword="null"/></exception>
+            <exception>Other exceptions relevant to using a <see cref="T:System.IO.FileStream"/> might be thrown as well</exception>
+        </member>
+        <member name="M:OpenPop.Mime.MessagePart.Save(System.IO.Stream)">
+            <summary>
+            Save this <see cref="T:OpenPop.Mime.MessagePart"/>'s contents to a stream.<br/>
+            </summary>
+            <param name="messageStream">The stream to write to</param>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="messageStream"/> is <see langword="null"/></exception>
+            <exception>Other exceptions relevant to <see cref="M:System.IO.Stream.Write(System.Byte[],System.Int32,System.Int32)"/> might be thrown as well</exception>
+        </member>
+        <member name="P:OpenPop.Mime.MessagePart.ContentType">
+            <summary>
+            The Content-Type header field.<br/>
+            <br/>
+            If not set, the ContentType is created by the default "text/plain; charset=us-ascii" which is
+            defined in <a href="http://tools.ietf.org/html/rfc2045#section-5.2">RFC 2045 section 5.2</a>.<br/>
+            <br/>
+            If set, the default is overridden.
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.MessagePart.ContentDescription">
+            <summary>
+            A human readable description of the body<br/>
+            <br/>
+            <see langword="null"/> if no Content-Description header was present in the message.<br/>
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.MessagePart.ContentTransferEncoding">
+            <summary>
+            This header describes the Content encoding during transfer.<br/>
+            <br/>
+            If no Content-Transfer-Encoding header was present in the message, it is set
+            to the default of <see cref="F:OpenPop.Mime.Header.ContentTransferEncoding.SevenBit">SevenBit</see> in accordance to the RFC.
+            </summary>
+            <remarks>See <a href="http://tools.ietf.org/html/rfc2045#section-6">RFC 2045 section 6</a> for details</remarks>
+        </member>
+        <member name="P:OpenPop.Mime.MessagePart.ContentId">
+            <summary>
+            ID of the content part (like an attached image). Used with MultiPart messages.<br/>
+            <br/>
+            <see langword="null"/> if no Content-ID header field was present in the message.
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.MessagePart.ContentDisposition">
+            <summary>
+            Used to describe if a <see cref="T:OpenPop.Mime.MessagePart"/> is to be displayed or to be though of as an attachment.<br/>
+            Also contains information about filename if such was sent.<br/>
+            <br/>
+            <see langword="null"/> if no Content-Disposition header field was present in the message
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.MessagePart.BodyEncoding">
+            <summary>
+            This is the encoding used to parse the message body if the <see cref="T:OpenPop.Mime.MessagePart"/><br/>
+            is not a MultiPart message. It is derived from the <see cref="P:OpenPop.Mime.MessagePart.ContentType"/> character set property.
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.MessagePart.Body">
+            <summary>
+            This is the parsed body of this <see cref="T:OpenPop.Mime.MessagePart"/>.<br/>
+            It is parsed in that way, if the body was ContentTransferEncoded, it has been decoded to the
+            correct bytes.<br/>
+            <br/>
+            It will be <see langword="null"/> if this <see cref="T:OpenPop.Mime.MessagePart"/> is a MultiPart message.<br/>
+            Use <see cref="P:OpenPop.Mime.MessagePart.IsMultiPart"/> to check if this <see cref="T:OpenPop.Mime.MessagePart"/> is a MultiPart message.
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.MessagePart.IsMultiPart">
+            <summary>
+            Describes if this <see cref="T:OpenPop.Mime.MessagePart"/> is a MultiPart message<br/>
+            <br/>
+            The <see cref="T:OpenPop.Mime.MessagePart"/> is a MultiPart message if the <see cref="P:OpenPop.Mime.MessagePart.ContentType"/> media type property starts with "multipart/"
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.MessagePart.IsText">
+            <summary>
+            A <see cref="T:OpenPop.Mime.MessagePart"/> is considered to be holding text in it's body if the MediaType
+            starts either "text/" or is equal to "message/rfc822"
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.MessagePart.IsAttachment">
+            <summary>
+            A <see cref="T:OpenPop.Mime.MessagePart"/> is considered to be an attachment, if<br/>
+            - it is not holding <see cref="P:OpenPop.Mime.MessagePart.IsText">text</see> and is not a <see cref="P:OpenPop.Mime.MessagePart.IsMultiPart">MultiPart</see> message<br/>
+            or<br/>
+            - it has a Content-Disposition header that says it is an attachment
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.MessagePart.FileName">
+            <summary>
+            This is a convenient-property for figuring out a FileName for this <see cref="T:OpenPop.Mime.MessagePart"/>.<br/>
+            If the <see cref="T:OpenPop.Mime.MessagePart"/> is a MultiPart message, then it makes no sense to try to find a FileName.<br/>
+            <br/>
+            The FileName can be specified in the <see cref="P:OpenPop.Mime.MessagePart.ContentDisposition"/> or in the <see cref="P:OpenPop.Mime.MessagePart.ContentType"/> properties.<br/>
+            If none of these places two places tells about the FileName, a default "(no name)" is returned.
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.MessagePart.MessageParts">
+            <summary>
+            If this <see cref="T:OpenPop.Mime.MessagePart"/> is a MultiPart message, then this property
+            has a list of each of the Multiple parts that the message consists of.<br/>
+            <br/>
+            It is <see langword="null"/> if it is not a MultiPart message.<br/>
+            Use <see cref="P:OpenPop.Mime.MessagePart.IsMultiPart"/> to check if this <see cref="T:OpenPop.Mime.MessagePart"/> is a MultiPart message.
+            </summary>
+        </member>
+        <member name="T:OpenPop.Mime.Header.Received">
+            <summary>
+            Class that hold information about one "Received:" header line.
+            
+            Visit these RFCs for more information:
+            <see href="http://tools.ietf.org/html/rfc5321#section-4.4">RFC 5321 section 4.4</see>
+            <see href="http://tools.ietf.org/html/rfc4021#section-3.6.7">RFC 4021 section 3.6.7</see>
+            <see href="http://tools.ietf.org/html/rfc2822#section-3.6.7">RFC 2822 section 3.6.7</see>
+            <see href="http://tools.ietf.org/html/rfc2821#section-4.4">RFC 2821 section 4.4</see>
+            </summary>
+        </member>
+        <member name="M:OpenPop.Mime.Header.Received.#ctor(System.String)">
+            <summary>
+            Parses a Received header value.
+            </summary>
+            <param name="headerValue">The value for the header to be parsed</param>
+            <exception cref="T:System.ArgumentNullException"><exception cref="T:System.ArgumentNullException">If <paramref name="headerValue"/> is <see langword="null"/></exception></exception>
+        </member>
+        <member name="M:OpenPop.Mime.Header.Received.ParseDictionary(System.String)">
+            <summary>
+            Parses the Received header name-value-list into a dictionary.
+            </summary>
+            <param name="headerValue">The full header value for the Received header</param>
+            <returns>A dictionary where the name-value-list has been parsed into</returns>
+        </member>
+        <member name="P:OpenPop.Mime.Header.Received.Date">
+            <summary>
+            The date of this received line.
+            Is <see cref="F:System.DateTime.MinValue"/> if not present in the received header line.
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.Header.Received.Names">
+            <summary>
+            A dictionary that contains the names and values of the
+            received header line.
+            If the received header is invalid and contained one name
+            multiple times, the first one is used and the rest is ignored.
+            </summary>
+            <example>
+            If the header lines looks like:
+            <code>
+            from sending.com (localMachine [127.0.0.1]) by test.net (Postfix)
+            </code>
+            then the dictionary will contain two keys: "from" and "by" with the values
+            "sending.com (localMachine [127.0.0.1])" and "test.net (Postfix)".
+            </example>
+        </member>
+        <member name="P:OpenPop.Mime.Header.Received.Raw">
+            <summary>
+            The raw input string that was parsed into this class.
+            </summary>
+        </member>
+        <member name="T:OpenPop.Pop3.Disposable">
+            <summary>
+            Utility class that simplifies the usage of <see cref="T:System.IDisposable"/>
+            </summary>
+        </member>
+        <member name="M:OpenPop.Pop3.Disposable.Finalize">
+            <summary>
+            Releases unmanaged resources and performs other cleanup operations before the
+            <see cref="T:OpenPop.Pop3.Disposable"/> is reclaimed by garbage collection.
+            </summary>
+        </member>
+        <member name="M:OpenPop.Pop3.Disposable.Dispose">
+            <summary>
+            Releases unmanaged and - optionally - managed resources
+            </summary>
+        </member>
+        <member name="M:OpenPop.Pop3.Disposable.Dispose(System.Boolean)">
+            <summary>
+            Releases unmanaged and - optionally - managed resources. Remember to call this method from your derived classes.
+            </summary>
+            <param name="disposing">
+            Set to <c>true</c> to release both managed and unmanaged resources.<br/>
+            Set to <c>false</c> to release only unmanaged resources.
+            </param>
+        </member>
+        <member name="M:OpenPop.Pop3.Disposable.AssertDisposed">
+            <summary>
+            Used to assert that the object has not been disposed
+            </summary>
+            <exception cref="T:System.ObjectDisposedException">Thrown if the object is in a disposed state.</exception>
+            <remarks>
+            The method is to be used by the subclasses in order to provide a simple method for checking the 
+            disposal state of the object.
+            </remarks>
+        </member>
+        <member name="P:OpenPop.Pop3.Disposable.IsDisposed">
+            <summary>
+            Returns <see langword="true"/> if this instance has been disposed of, <see langword="false"/> otherwise
+            </summary>
+        </member>
+        <member name="T:OpenPop.Mime.Decode.EncodingFinder">
+            <summary>
+            Utility class used by OpenPop for mapping from a characterSet to an <see cref="T:System.Text.Encoding"/>.<br/>
+            <br/>
+            The functionality of the class can be altered by adding mappings
+            using <see cref="M:OpenPop.Mime.Decode.EncodingFinder.AddMapping(System.String,System.Text.Encoding)"/> and by adding a <see cref="P:OpenPop.Mime.Decode.EncodingFinder.FallbackDecoder"/>.<br/>
+            <br/>
+            Given a characterSet, it will try to find the Encoding as follows:
+            <list type="number">
+                <item>
+                    <description>If a mapping for the characterSet was added, use the specified Encoding from there. Mappings can be added using <see cref="M:OpenPop.Mime.Decode.EncodingFinder.AddMapping(System.String,System.Text.Encoding)"/>.</description>
+                </item>
+                <item>
+                    <description>Try to parse the characterSet and look it up using <see cref="M:System.Text.Encoding.GetEncoding(System.Int32)"/> for codepages or <see cref="M:System.Text.Encoding.GetEncoding(System.String)"/> for named encodings.</description>
+                </item>
+                <item>
+                    <description>If an encoding is not found yet, use the <see cref="P:OpenPop.Mime.Decode.EncodingFinder.FallbackDecoder"/> if defined. The <see cref="P:OpenPop.Mime.Decode.EncodingFinder.FallbackDecoder"/> is user defined.</description>
+                </item>
+            </list>
+            </summary>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.EncodingFinder.#cctor">
+            <summary>
+            Initialize the EncodingFinder
+            </summary>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.EncodingFinder.Reset">
+            <summary>
+            Used to reset this static class to facilite isolated unit testing.
+            </summary>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.EncodingFinder.FindEncoding(System.String)">
+            <summary>
+            Parses a character set into an encoding.
+            </summary>
+            <param name="characterSet">The character set to parse</param>
+            <returns>An encoding which corresponds to the character set</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="characterSet"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.EncodingFinder.AddMapping(System.String,System.Text.Encoding)">
+            <summary>
+            Puts a mapping from <paramref name="characterSet"/> to <paramref name="encoding"/>
+            into the <see cref="T:OpenPop.Mime.Decode.EncodingFinder"/>'s internal mapping Dictionary.
+            </summary>
+            <param name="characterSet">The string that maps to the <paramref name="encoding"/></param>
+            <param name="encoding">The <see cref="T:System.Text.Encoding"/> that should be mapped from <paramref name="characterSet"/></param>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="characterSet"/> is <see langword="null"/></exception>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="encoding"/> is <see langword="null"/></exception>
+        </member>
+        <member name="P:OpenPop.Mime.Decode.EncodingFinder.FallbackDecoder">
+            <summary>
+            Last resort decoder. <seealso cref="T:OpenPop.Mime.Decode.EncodingFinder.FallbackDecoderDelegate"/>.
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.Decode.EncodingFinder.EncodingMap">
+            <summary>
+            Mapping from charactersets to encodings.
+            </summary>
+        </member>
+        <member name="T:OpenPop.Mime.Decode.EncodingFinder.FallbackDecoderDelegate">
+            <summary>
+            Delegate that is used when the EncodingFinder is unable to find an encoding by
+            using the <see cref="P:OpenPop.Mime.Decode.EncodingFinder.EncodingMap"/> or general code.<br/>
+            This is used as a last resort and can be used for setting a default encoding or
+            for finding an encoding on runtime for some <paramref name="characterSet"/>.
+            </summary>
+            <param name="characterSet">The character set to find an encoding for.</param>
+            <returns>An encoding for the <paramref name="characterSet"/> or <see langword="null"/> if none could be found.</returns>
+        </member>
+        <member name="T:OpenPop.Pop3.ConnectionState">
+            <summary>
+            Some of these states are defined by <a href="http://tools.ietf.org/html/rfc1939">RFC 1939</a>.<br/>
+            Which commands that are allowed in which state can be seen in the same RFC.<br/>
+            <br/>
+            Used to keep track of which state the <see cref="T:OpenPop.Pop3.Pop3Client"/> is in.
+            </summary>
+        </member>
+        <member name="F:OpenPop.Pop3.ConnectionState.Disconnected">
+            <summary>
+            This is when the Pop3Client is not even connected to the server
+            </summary>
+        </member>
+        <member name="F:OpenPop.Pop3.ConnectionState.Authorization">
+            <summary>
+            This is when the server is awaiting user credentials
+            </summary>
+        </member>
+        <member name="F:OpenPop.Pop3.ConnectionState.Transaction">
+            <summary>
+            This is when the server has been given the user credentials, and we are allowed
+            to use commands specific to this users mail drop
+            </summary>
+        </member>
+        <member name="T:OpenPop.Pop3.Exceptions.PopServerNotFoundException">
+            <summary>
+            Thrown when the specified POP3 server can not be found or connected to.
+            </summary>	
+        </member>
+        <member name="M:OpenPop.Pop3.Exceptions.PopServerNotFoundException.#ctor(System.String,System.Exception)">
+            <summary>
+             Creates a PopServerNotFoundException with the given message and InnerException
+            </summary>
+            <param name="message">The message to include in the exception</param>
+            <param name="innerException">The exception that is the cause of this exception</param>
+        </member>
+        <member name="T:OpenPop.Pop3.Pop3Client">
+            <summary>
+            POP3 compliant POP Client<br/>
+            <br/>	
+            If you want to override where logging is sent, look at <see cref="T:OpenPop.Common.Logging.DefaultLogger"/>
+            </summary>
+            <example>
+            Examples are available on the <a href="http://hpop.sourceforge.net/">project homepage</a>.
+            </example>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.#ctor">
+            <summary>
+            Constructs a new Pop3Client for you to use.
+            </summary>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.Dispose(System.Boolean)">
+            <summary>
+            Disposes the <see cref="T:OpenPop.Pop3.Pop3Client"/>.<br/>
+            This is the implementation of the <see cref="T:System.IDisposable"/> interface.<br/>
+            Sends the QUIT command to the server before closing the streams.
+            </summary>
+            <param name="disposing"><see langword="true"/> if managed and unmanaged code should be disposed, <see langword="false"/> if only managed code should be disposed</param>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.Connect(System.IO.Stream)">
+            <summary>
+            Connect to the server using user supplied stream
+            </summary>
+            <param name="stream">The stream used to communicate with the server</param>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="stream"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.Connect(System.String,System.Int32,System.Boolean)">
+            <summary>
+            Connects to a remote POP3 server using default timeouts of 60.000 milliseconds
+            </summary>
+            <param name="hostname">The <paramref name="hostname"/> of the POP3 server</param>
+            <param name="port">The port of the POP3 server</param>
+            <param name="useSsl"><see langword="true"/> if SSL should be used. <see langword="false"/> if plain TCP should be used.</param>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerNotAvailableException">If the server did not send an OK message when a connection was established</exception>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerNotFoundException">If it was not possible to connect to the server</exception>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="hostname"/> is <see langword="null"/></exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">If port is not in the range [<see cref="F:System.Net.IPEndPoint.MinPort"/>, <see cref="F:System.Net.IPEndPoint.MaxPort"/></exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.Connect(System.String,System.Int32,System.Boolean,System.Int32,System.Int32,System.Net.Security.RemoteCertificateValidationCallback)">
+            <summary>
+            Connects to a remote POP3 server
+            </summary>
+            <param name="hostname">The <paramref name="hostname"/> of the POP3 server</param>
+            <param name="port">The port of the POP3 server</param>
+            <param name="useSsl"><see langword="true"/> if SSL should be used. <see langword="false"/> if plain TCP should be used.</param>
+            <param name="receiveTimeout">Timeout in milliseconds before a socket should time out from reading. Set to 0 or -1 to specify infinite timeout.</param>
+            <param name="sendTimeout">Timeout in milliseconds before a socket should time out from sending. Set to 0 or -1 to specify infinite timeout.</param>
+            <param name="certificateValidator">If you want to validate the certificate in a SSL connection, pass a reference to your validator. Supply <see langword="null"/> if default should be used.</param>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerNotAvailableException">If the server did not send an OK message when a connection was established</exception>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerNotFoundException">If it was not possible to connect to the server</exception>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="hostname"/> is <see langword="null"/></exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">If port is not in the range [<see cref="F:System.Net.IPEndPoint.MinPort"/>, <see cref="F:System.Net.IPEndPoint.MaxPort"/> or if any of the timeouts is less than -1.</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.Disconnect">
+            <summary>
+            Disconnects from POP3 server.
+            Sends the QUIT command before closing the connection, which deletes all the messages that was marked as such.
+            </summary>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.Authenticate(System.String,System.String)">
+            <summary>
+            Authenticates a user towards the POP server using <see cref="F:OpenPop.Pop3.AuthenticationMethod.Auto"/>.<br/>
+            If this authentication fails but you are sure that the username and password is correct, it might
+            be that that the POP3 server is wrongly telling the client it supports <see cref="F:OpenPop.Pop3.AuthenticationMethod.Apop"/>.
+            You should try using <see cref="M:OpenPop.Pop3.Pop3Client.Authenticate(System.String,System.String,OpenPop.Pop3.AuthenticationMethod)"/> while passing <see cref="F:OpenPop.Pop3.AuthenticationMethod.UsernameAndPassword"/> to the method.
+            </summary>
+            <param name="username">The username</param>
+            <param name="password">The user password</param>
+            <exception cref="T:OpenPop.Pop3.Exceptions.InvalidLoginException">If the user credentials was not accepted</exception>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerLockedException">If the server said the the mailbox was locked</exception>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="username"/> or <paramref name="password"/> is <see langword="null"/></exception>
+            <exception cref="T:OpenPop.Pop3.Exceptions.LoginDelayException">If the server rejects the login because of too recent logins</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.Authenticate(System.String,System.String,OpenPop.Pop3.AuthenticationMethod)">
+            <summary>
+            Authenticates a user towards the POP server using some <see cref="T:OpenPop.Pop3.AuthenticationMethod"/>.
+            </summary>
+            <param name="username">The username</param>
+            <param name="password">The user password</param>
+            <param name="authenticationMethod">The way that the client should authenticate towards the server</param>
+            <exception cref="T:System.NotSupportedException">If <see cref="F:OpenPop.Pop3.AuthenticationMethod.Apop"/> is used, but not supported by the server</exception>
+            <exception cref="T:OpenPop.Pop3.Exceptions.InvalidLoginException">If the user credentials was not accepted</exception>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerLockedException">If the server said the the mailbox was locked</exception>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="username"/> or <paramref name="password"/> is <see langword="null"/></exception>
+            <exception cref="T:OpenPop.Pop3.Exceptions.LoginDelayException">If the server rejects the login because of too recent logins</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.AuthenticateUsingUserAndPassword(System.String,System.String)">
+            <summary>
+            Authenticates a user towards the POP server using the USER and PASSWORD commands
+            </summary>
+            <param name="username">The username</param>
+            <param name="password">The user password</param>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerException">If the server responded with -ERR</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.AuthenticateUsingApop(System.String,System.String)">
+            <summary>
+            Authenticates a user towards the POP server using APOP
+            </summary>
+            <param name="username">The username</param>
+            <param name="password">The user password</param>
+            <exception cref="T:System.NotSupportedException">Thrown when the server does not support APOP</exception>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerException">If the server responded with -ERR</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.AuthenticateUsingCramMd5(System.String,System.String)">
+            <summary>
+            Authenticates using the CRAM-MD5 authentication method
+            </summary>
+            <param name="username">The username</param>
+            <param name="password">The user password</param>
+            <exception cref="T:System.NotSupportedException">Thrown when the server does not support AUTH CRAM-MD5</exception>
+            <exception cref="T:OpenPop.Pop3.Exceptions.InvalidLoginException">If the user credentials was not accepted</exception>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerLockedException">If the server said the the mailbox was locked</exception>
+            <exception cref="T:OpenPop.Pop3.Exceptions.LoginDelayException">If the server rejects the login because of too recent logins</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.GetMessageCount">
+            <summary>
+            Get the number of messages on the server using a STAT command
+            </summary>
+            <returns>The message count on the server</returns>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerException">If the server did not accept the STAT command</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.DeleteMessage(System.Int32)">
+            <summary>
+            Marks the message with the given message number as deleted.<br/>
+            <br/>
+            The message will not be deleted until a QUIT command is sent to the server.<br/>
+            This is done when you call <see cref="M:OpenPop.Pop3.Pop3Client.Disconnect"/> or when the Pop3Client is <see cref="M:OpenPop.Pop3.Pop3Client.Dispose(System.Boolean)">Disposed</see>.
+            </summary>
+            <param name="messageNumber">
+            The number of the message to be deleted. This message may not already have been deleted.<br/>
+            The <paramref name="messageNumber"/> must be inside the range [1, messageCount]
+            </param>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerException">If the server did not accept the delete command</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.DeleteAllMessages">
+            <summary>
+            Marks all messages as deleted.<br/>
+            <br/>
+            The messages will not be deleted until a QUIT command is sent to the server.<br/>
+            This is done when you call <see cref="M:OpenPop.Pop3.Pop3Client.Disconnect"/> or when the Pop3Client is <see cref="M:OpenPop.Pop3.Pop3Client.Dispose(System.Boolean)">Disposed</see>.<br/>
+            The method assumes that no prior message has been marked as deleted, and is not valid to call if this is wrong.
+            </summary>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerException">If the server did not accept one of the delete commands. All prior marked messages will still be marked.</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.NoOperation">
+            <summary>
+            Keep server active by sending a NOOP command.<br/>
+            This might keep the server from closing the connection due to inactivity.<br/>
+            <br/>
+            RFC:<br/>
+            The POP3 server does nothing, it merely replies with a positive response.
+            </summary>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerException">If the server did not accept the NOOP command</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.Reset">
+            <summary>
+            Send a reset command to the server.<br/>
+            <br/>
+            RFC:<br/>
+            If any messages have been marked as deleted by the POP3
+            server, they are unmarked. The POP3 server then replies
+            with a positive response.
+            </summary>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerException">If the server did not accept the RSET command</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.GetMessageUid(System.Int32)">
+            <summary>
+            Get a unique ID for a single message.<br/>
+            </summary>
+            <param name="messageNumber">
+            Message number, which may not be marked as deleted.<br/>
+            The <paramref name="messageNumber"/> must be inside the range [1, messageCount]
+            </param>
+            <returns>The unique ID for the message</returns>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerException">If the server did not accept the UIDL command. This could happen if the <paramref name="messageNumber"/> does not exist</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.GetMessageUids">
+            <summary>
+            Gets a list of unique IDs for all messages.<br/>
+            Messages marked as deleted are not listed.
+            </summary>
+            <returns>
+            A list containing the unique IDs in sorted order from message number 1 and upwards.
+            </returns>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerException">If the server did not accept the UIDL command</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.GetMessageSize(System.Int32)">
+            <summary>
+            Gets the size in bytes of a single message
+            </summary>
+            <param name="messageNumber">
+            The number of a message which may not be a message marked as deleted.<br/>
+            The <paramref name="messageNumber"/> must be inside the range [1, messageCount]
+            </param>
+            <returns>Size of the message</returns>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerException">If the server did not accept the LIST command</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.GetMessageSizes">
+            <summary>
+            Get the sizes in bytes of all the messages.<br/>
+            Messages marked as deleted are not listed.
+            </summary>
+            <returns>Size of each message excluding deleted ones</returns>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerException">If the server did not accept the LIST command</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.GetMessage(System.Int32)">
+            <summary>
+            Fetches a message from the server and parses it
+            </summary>
+            <param name="messageNumber">
+            Message number on server, which may not be marked as deleted.<br/>
+            Must be inside the range [1, messageCount]
+            </param>
+            <returns>The message, containing the email message</returns>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerException">If the server did not accept the command sent to fetch the message</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.GetMessageAsBytes(System.Int32)">
+            <summary>
+            Fetches a message in raw form from the server
+            </summary>
+            <param name="messageNumber">
+            Message number on server, which may not be marked as deleted.<br/>
+            Must be inside the range [1, messageCount]
+            </param>
+            <returns>The raw bytes of the message</returns>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerException">If the server did not accept the command sent to fetch the message</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.GetMessageHeaders(System.Int32)">
+            <summary>
+            Get all the headers for a message.<br/>
+            The server will not need to send the body of the message.
+            </summary>
+            <param name="messageNumber">
+            Message number, which may not be marked as deleted.<br/>
+            Must be inside the range [1, messageCount]
+            </param>
+            <returns>MessageHeaders object</returns>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerException">If the server did not accept the command sent to fetch the message</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.Capabilities">
+            <summary>
+            Asks the server to return it's capability listing.<br/>
+            This is an optional command, which a server is not enforced to accept.
+            </summary>
+            <returns>
+            The returned Dictionary keys are the capability names.<br/>
+            The Lists pointed to are the capability parameters fitting that certain capability name.
+            See <a href="http://tools.ietf.org/html/rfc2449#section-6">RFC section 6</a> for explanation for some of the capabilities.
+            </returns>
+            <remarks>
+            Capabilities are case-insensitive.<br/>
+            The dictionary uses case-insensitive searching, but the Lists inside
+            does not. Therefore you will have to use something like the code below
+            to search for a capability parameter.<br/>
+            foo is the capability name and bar is the capability parameter.
+            <code>
+            List&lt;string&gt; arguments = capabilities["foo"];
+            bool contains = null != arguments.Find(delegate(string str)
+            			{
+            				return String.Compare(str, "bar", true) == 0;
+            			});
+            </code>
+            If we were running on .NET framework &gt;= 3.5, a HashSet could have been used.
+            </remarks>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerException">If the server did not accept the capability command</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.ExtractApopTimestamp(System.String)">
+            <summary>
+            Examines string to see if it contains a time stamp to use with the APOP command.<br/>
+            If it does, sets the <see cref="P:OpenPop.Pop3.Pop3Client.ApopTimeStamp"/> property to this value.
+            </summary>
+            <param name="response">The string to examine</param>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.IsOkResponse(System.String)">
+            <summary>
+            Tests a string to see if it is a "+" string.<br/>
+            An "+" string should be returned by a compliant POP3
+            server if the request could be served.<br/>
+            <br/>
+            The method does only check if it starts with "+".
+            </summary>
+            <param name="response">The string to examine</param>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerException">Thrown if server did not respond with "+" message</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.SendCommand(System.String)">
+            <summary>
+            Sends a command to the POP server.<br/>
+            If this fails, an exception is thrown.
+            </summary>
+            <param name="command">The command to send to server</param>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerException">If the server did not send an OK message to the command</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.SendCommandIntResponse(System.String,System.Int32)">
+            <summary>
+            Sends a command to the POP server, expects an integer reply in the response
+            </summary>
+            <param name="command">command to send to server</param>
+            <param name="location">
+            The location of the int to return.<br/>
+            Example:<br/>
+            <c>S: +OK 2 200</c><br/>
+            Set <paramref name="location"/>=1 to get 2<br/>
+            Set <paramref name="location"/>=2 to get 200<br/>
+            </param>
+            <returns>Integer value in the reply</returns>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerException">If the server did not accept the command</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.GetMessageAsBytes(System.Int32,System.Boolean)">
+            <summary>
+            Asks the server for a message and returns the message response as a byte array.
+            </summary>
+            <param name="messageNumber">
+            Message number on server, which may not be marked as deleted.<br/>
+            Must be inside the range [1, messageCount]
+            </param>
+            <param name="askOnlyForHeaders">If <see langword="true"/> only the header part of the message is requested from the server. If <see langword="false"/> the full message is requested</param>
+            <returns>A byte array that the message requested consists of</returns>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerException">If the server did not accept the command sent to fetch the message</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.IsLastLineInMultiLineResponse(System.Byte[])">
+            <summary>
+            Check if the bytes received is the last line in a multi line response
+            from the pop3 server. It is the last line if the line contains only a "."
+            </summary>
+            <param name="bytesReceived">The last line received from the server, which could be the last response line</param>
+            <returns><see langword="true"/> if last line in a multi line response, <see langword="false"/> otherwise</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="bytesReceived"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.IsLastLineInMultiLineResponse(System.String)">
+            <see cref="M:OpenPop.Pop3.Pop3Client.IsLastLineInMultiLineResponse(System.Byte[])"> for documentation</see>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.ValidateMessageNumber(System.Int32)">
+            <summary>
+            Method for checking that a <paramref name="messageNumber"/> argument given to some method
+            is indeed valid. If not, <see cref="T:OpenPop.Pop3.Exceptions.InvalidUseException"/> will be thrown.
+            </summary>
+            <param name="messageNumber">The message number to validate</param>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.DisconnectStreams">
+            <summary>
+            Closes down the streams and sets the Pop3Client into the initial configuration
+            </summary>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.SetInitialValues">
+            <summary>
+            Sets the initial values on the public properties of this Pop3Client.
+            </summary>
+        </member>
+        <member name="M:OpenPop.Pop3.Pop3Client.CheckFailedLoginServerResponse(System.String,OpenPop.Pop3.Exceptions.PopServerException)">
+            <summary>
+            Checks for extra response codes when an authentication has failed and throws
+            the correct exception.
+            If no such response codes is found, nothing happens.
+            </summary>
+            <param name="serverErrorResponse">The server response string</param>
+            <param name="e">The exception thrown because the server responded with -ERR</param>
+            <exception cref="T:OpenPop.Pop3.Exceptions.PopServerLockedException">If the account is locked or in use</exception>
+            <exception cref="T:OpenPop.Pop3.Exceptions.LoginDelayException">If the server rejects the login because of too recent logins</exception>
+        </member>
+        <member name="P:OpenPop.Pop3.Pop3Client.Stream">
+            <summary>
+            The stream used to communicate with the server
+            </summary>
+        </member>
+        <member name="P:OpenPop.Pop3.Pop3Client.LastServerResponse">
+            <summary>
+            This is the last response the server sent back when a command was issued to it
+            </summary>
+        </member>
+        <member name="P:OpenPop.Pop3.Pop3Client.ApopTimeStamp">
+            <summary>
+            The APOP time stamp sent by the server in it's welcome message if APOP is supported.
+            </summary>
+        </member>
+        <member name="P:OpenPop.Pop3.Pop3Client.State">
+            <summary>
+            Describes what state the <see cref="T:OpenPop.Pop3.Pop3Client"/> is in
+            </summary>
+        </member>
+        <member name="P:OpenPop.Pop3.Pop3Client.Connected">
+            <summary>
+            Tells whether the <see cref="T:OpenPop.Pop3.Pop3Client"/> is connected to a POP server or not
+            </summary>
+        </member>
+        <member name="P:OpenPop.Pop3.Pop3Client.ApopSupported">
+            <summary>
+            Allows you to check if the server supports
+            the <see cref="F:OpenPop.Pop3.AuthenticationMethod.Apop"/> authentication method.<br/>
+            <br/>
+            This value is filled when the connect method has returned,
+            as the server tells in its welcome message if APOP is supported.
+            </summary>
+        </member>
+        <member name="T:OpenPop.Pop3.Exceptions.PopServerException">
+            <summary>
+            Thrown when the server does not return "+" to a command.<br/>
+            The server response is then placed inside.
+            </summary>
+        </member>
+        <member name="M:OpenPop.Pop3.Exceptions.PopServerException.#ctor(System.String)">
+            <summary>
+             Creates a PopServerException with the given message
+            </summary>
+            <param name="message">The message to include in the exception</param>
+        </member>
+        <member name="T:OpenPop.Mime.Header.MessageHeader">
+            <summary>
+            Class that holds all headers for a message<br/>
+            Headers which are unknown the the parser will be held in the <see cref="P:OpenPop.Mime.Header.MessageHeader.UnknownHeaders"/> collection.<br/>
+            <br/>
+            This class cannot be instantiated from outside the library.
+            </summary>
+            <remarks>
+            See <a href="http://tools.ietf.org/html/rfc4021">RFC 4021</a> for a large list of headers.<br/>
+            </remarks>
+        </member>
+        <member name="M:OpenPop.Mime.Header.MessageHeader.#ctor(System.Collections.Specialized.NameValueCollection)">
+            <summary>
+            Parses a <see cref="T:System.Collections.Specialized.NameValueCollection"/> to a MessageHeader
+            </summary>
+            <param name="headers">The collection that should be traversed and parsed</param>
+            <returns>A valid MessageHeader object</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="headers"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Mime.Header.MessageHeader.ParseHeaders(System.Collections.Specialized.NameValueCollection)">
+            <summary>
+            Parses a <see cref="T:System.Collections.Specialized.NameValueCollection"/> to a <see cref="T:OpenPop.Mime.Header.MessageHeader"/>
+            </summary>
+            <param name="headers">The collection that should be traversed and parsed</param>
+            <returns>A valid <see cref="T:OpenPop.Mime.Header.MessageHeader"/> object</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="headers"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Mime.Header.MessageHeader.ParseHeader(System.String,System.String)">
+            <summary>
+            Parses a single header and sets member variables according to it.
+            </summary>
+            <param name="headerName">The name of the header</param>
+            <param name="headerValue">The value of the header in unfolded state (only one line)</param>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="headerName"/> or <paramref name="headerValue"/> is <see langword="null"/></exception>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.UnknownHeaders">
+            <summary>
+            All headers which were not recognized and explicitly dealt with.<br/>
+            This should mostly be custom headers, which are marked as X-[name].<br/>
+            <br/>
+            This list will be empty if all headers were recognized and parsed.
+            </summary>
+            <remarks>
+            If you as a user, feels that a header in this collection should
+            be parsed, feel free to notify the developers.
+            </remarks>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.ContentDescription">
+            <summary>
+            A human readable description of the body<br/>
+            <br/>
+            <see langword="null"/> if no Content-Description header was present in the message.
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.ContentId">
+            <summary>
+            ID of the content part (like an attached image). Used with MultiPart messages.<br/>
+            <br/>
+            <see langword="null"/> if no Content-ID header field was present in the message.
+            </summary>
+            <see cref="P:OpenPop.Mime.Header.MessageHeader.MessageId">For an ID of the message</see>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.Keywords">
+            <summary>
+            Message keywords<br/>
+            <br/>
+            The list will be empty if no Keywords header was present in the message
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.DispositionNotificationTo">
+            <summary>
+            A List of emails to people who wishes to be notified when some event happens.<br/>
+            These events could be email:
+            <list type="bullet">
+              <item>deletion</item>
+              <item>printing</item>
+              <item>received</item>
+              <item>...</item>
+            </list>
+            The list will be empty if no Disposition-Notification-To header was present in the message
+            </summary>
+            <remarks>See <a href="http://tools.ietf.org/html/rfc3798">RFC 3798</a> for details</remarks>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.Received">
+            <summary>
+            This is the Received headers. This tells the path that the email went.<br/>
+            <br/>
+            The list will be empty if no Received header was present in the message
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.Importance">
+            <summary>
+            Importance of this email.<br/>
+            <br/>
+            The importance level is set to normal, if no Importance header field was mentioned or it contained
+            unknown information. This is the expected behavior according to the RFC.
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.ContentTransferEncoding">
+            <summary>
+            This header describes the Content encoding during transfer.<br/>
+            <br/>
+            If no Content-Transfer-Encoding header was present in the message, it is set
+            to the default of <see cref="F:OpenPop.Mime.Header.ContentTransferEncoding.SevenBit">SevenBit</see> in accordance to the RFC.
+            </summary>
+            <remarks>See <a href="http://tools.ietf.org/html/rfc2045#section-6">RFC 2045 section 6</a> for details</remarks>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.Cc">
+            <summary>
+            Carbon Copy. This specifies who got a copy of the message.<br/>
+            <br/>
+            The list will be empty if no Cc header was present in the message
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.Bcc">
+            <summary>
+            Blind Carbon Copy. This specifies who got a copy of the message, but others
+            cannot see who these persons are.<br/>
+            <br/>
+            The list will be empty if no Received Bcc was present in the message
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.To">
+            <summary>
+            Specifies who this mail was for<br/>
+            <br/>
+            The list will be empty if no To header was present in the message
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.From">
+            <summary>
+            Specifies who sent the email<br/>
+            <br/>
+            <see langword="null"/> if no From header field was present in the message
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.ReplyTo">
+            <summary>
+            Specifies who a reply to the message should be sent to<br/>
+            <br/>
+            <see langword="null"/> if no Reply-To header field was present in the message
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.InReplyTo">
+            <summary>
+            The message identifier(s) of the original message(s) to which the
+            current message is a reply.<br/>
+            <br/>
+            The list will be empty if no In-Reply-To header was present in the message
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.References">
+            <summary>
+            The message identifier(s) of other message(s) to which the current
+            message is related to.<br/>
+            <br/>
+            The list will be empty if no References header was present in the message
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.Sender">
+            <summary>
+            This is the sender of the email address.<br/>
+            <br/>
+            <see langword="null"/> if no Sender header field was present in the message
+            </summary>
+            <remarks>
+            The RFC states that this field can be used if a secretary
+            is sending an email for someone she is working for.
+            The email here will then be the secretary's email, and
+            the Reply-To field would hold the address of the person she works for.<br/>
+            RFC states that if the Sender is the same as the From field,
+            sender should not be included in the message.
+            </remarks>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.ContentType">
+            <summary>
+            The Content-Type header field.<br/>
+            <br/>
+            If not set, the ContentType is created by the default "text/plain; charset=us-ascii" which is
+            defined in <a href="http://tools.ietf.org/html/rfc2045#section-5.2">RFC 2045 section 5.2</a>.<br/>
+            If set, the default is overridden.
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.ContentDisposition">
+            <summary>
+            Used to describe if a <see cref="T:OpenPop.Mime.MessagePart"/> is to be displayed or to be though of as an attachment.<br/>
+            Also contains information about filename if such was sent.<br/>
+            <br/>
+            <see langword="null"/> if no Content-Disposition header field was present in the message
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.Date">
+            <summary>
+            The Date when the email was sent.<br/>
+            This is the raw value. <see cref="P:OpenPop.Mime.Header.MessageHeader.DateSent"/> for a parsed up <see cref="T:System.DateTime"/> value of this field.<br/>
+            <br/>
+            <see langword="DateTime.MinValue"/> if no Date header field was present in the message or if the date could not be parsed.
+            </summary>
+            <remarks>See <a href="http://tools.ietf.org/html/rfc5322#section-3.6.1">RFC 5322 section 3.6.1</a> for more details</remarks>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.DateSent">
+            <summary>
+            The Date when the email was sent.<br/>
+            This is the parsed equivalent of <see cref="P:OpenPop.Mime.Header.MessageHeader.Date"/>.<br/>
+            Notice that the <see cref="T:System.TimeZone"/> of the <see cref="T:System.DateTime"/> object is in UTC and has NOT been converted
+            to local <see cref="T:System.TimeZone"/>.
+            </summary>
+            <remarks>See <a href="http://tools.ietf.org/html/rfc5322#section-3.6.1">RFC 5322 section 3.6.1</a> for more details</remarks>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.MessageId">
+            <summary>
+            An ID of the message that is SUPPOSED to be in every message according to the RFC.<br/>
+            The ID is unique.<br/>
+            <br/>
+            <see langword="null"/> if no Message-ID header field was present in the message
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.MimeVersion">
+            <summary>
+            The Mime Version.<br/>
+            This field will almost always show 1.0<br/>
+            <br/>
+            <see langword="null"/> if no Mime-Version header field was present in the message
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.ReturnPath">
+            <summary>
+            A single <see cref="T:OpenPop.Mime.Header.RfcMailAddress"/> with no username inside.<br/>
+            This is a trace header field, that should be in all messages.<br/>
+            Replies should be sent to this address.<br/>
+            <br/>
+            <see langword="null"/> if no Return-Path header field was present in the message
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.Header.MessageHeader.Subject">
+            <summary>
+            The subject line of the message in decoded, one line state.<br/>
+            This should be in all messages.<br/>
+            <br/>
+            <see langword="null"/> if no Subject header field was present in the message
+            </summary>
+        </member>
+        <member name="T:OpenPop.Mime.Traverse.MultipleMessagePartFinder">
+            <summary>
+             An abstract class that implements the MergeLeafAnswers method.<br/>
+             The method simply returns the union of all answers from the leaves.
+            </summary>
+        </member>
+        <member name="T:OpenPop.Mime.Traverse.AnswerMessageTraverser`1">
+            <summary>
+            This is an abstract class which handles traversing of a <see cref="T:OpenPop.Mime.Message"/> tree structure.<br/>
+            It runs through the message structure using a depth-first traversal.
+            </summary>
+            <typeparam name="TAnswer">The answer you want from traversing the message tree structure</typeparam>
+        </member>
+        <member name="M:OpenPop.Mime.Traverse.AnswerMessageTraverser`1.VisitMessage(OpenPop.Mime.Message)">
+            <summary>
+            Call this when you want an answer for a full message.
+            </summary>
+            <param name="message">The message you want to traverse</param>
+            <returns>An answer</returns>
+            <exception cref="T:System.ArgumentNullException">if <paramref name="message"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Mime.Traverse.AnswerMessageTraverser`1.VisitMessagePart(OpenPop.Mime.MessagePart)">
+            <summary>
+            Call this method when you want to find an answer for a <see cref="T:OpenPop.Mime.MessagePart"/>
+            </summary>
+            <param name="messagePart">The <see cref="T:OpenPop.Mime.MessagePart"/> part you want an answer from.</param>
+            <returns>An answer</returns>
+            <exception cref="T:System.ArgumentNullException">if <paramref name="messagePart"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Mime.Traverse.AnswerMessageTraverser`1.CaseLeaf(OpenPop.Mime.MessagePart)">
+            <summary>
+            For a concrete implementation an answer must be returned for a leaf <see cref="T:OpenPop.Mime.MessagePart"/>, which are
+            MessageParts that are not <see cref="P:OpenPop.Mime.MessagePart.IsMultiPart">MultiParts.</see>
+            </summary>
+            <param name="messagePart">The message part which is a leaf and thereby not a MultiPart</param>
+            <returns>An answer</returns>
+        </member>
+        <member name="M:OpenPop.Mime.Traverse.AnswerMessageTraverser`1.MergeLeafAnswers(System.Collections.Generic.List{`0})">
+            <summary>
+            For a concrete implementation, when a MultiPart <see cref="T:OpenPop.Mime.MessagePart"/> has fetched it's answers from it's children, these
+            answers needs to be merged. This is the responsibility of this method.
+            </summary>
+            <param name="leafAnswers">The answer that the leafs gave</param>
+            <returns>A merged answer</returns>
+        </member>
+        <member name="M:OpenPop.Mime.Traverse.MultipleMessagePartFinder.MergeLeafAnswers(System.Collections.Generic.List{System.Collections.Generic.List{OpenPop.Mime.MessagePart}})">
+            <summary>
+            Adds all the <paramref name="leafAnswers"/> in one big answer
+            </summary>
+            <param name="leafAnswers">The answers to merge</param>
+            <returns>A list with has all the elements in the <paramref name="leafAnswers"/> lists</returns>
+            <exception cref="T:System.ArgumentNullException">if <paramref name="leafAnswers"/> is <see langword="null"/></exception>
+        </member>
+        <member name="T:OpenPop.Mime.Header.HeaderFieldParser">
+            <summary>
+            Class that can parse different fields in the header sections of a MIME message.
+            </summary>
+        </member>
+        <member name="M:OpenPop.Mime.Header.HeaderFieldParser.ParseContentTransferEncoding(System.String)">
+            <summary>
+            Parses the Content-Transfer-Encoding header.
+            </summary>
+            <param name="headerValue">The value for the header to be parsed</param>
+            <returns>A <see cref="T:OpenPop.Mime.Header.ContentTransferEncoding"/></returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="headerValue"/> is <see langword="null"/></exception>
+            <exception cref="T:System.ArgumentException">If the <paramref name="headerValue"/> could not be parsed to a <see cref="T:OpenPop.Mime.Header.ContentTransferEncoding"/></exception>
+        </member>
+        <member name="M:OpenPop.Mime.Header.HeaderFieldParser.ParseImportance(System.String)">
+            <summary>
+            Parses an ImportanceType from a given Importance header value.
+            </summary>
+            <param name="headerValue">The value to be parsed</param>
+            <returns>A <see cref="T:System.Net.Mail.MailPriority"/>. If the <paramref name="headerValue"/> is not recognized, Normal is returned.</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="headerValue"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Mime.Header.HeaderFieldParser.ParseContentType(System.String)">
+            <summary>
+            Parses a the value for the header Content-Type to 
+            a <see cref="T:System.Net.Mime.ContentType"/> object.
+            </summary>
+            <param name="headerValue">The value to be parsed</param>
+            <returns>A <see cref="T:System.Net.Mime.ContentType"/> object</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="headerValue"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Mime.Header.HeaderFieldParser.ParseContentDisposition(System.String)">
+            <summary>
+            Parses a the value for the header Content-Disposition to a <see cref="T:System.Net.Mime.ContentDisposition"/> object.
+            </summary>
+            <param name="headerValue">The value to be parsed</param>
+            <returns>A <see cref="T:System.Net.Mime.ContentDisposition"/> object</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="headerValue"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Mime.Header.HeaderFieldParser.ParseId(System.String)">
+            <summary>
+            Parses an ID like Message-Id and Content-Id.<br/>
+            Example:<br/>
+            <c>&lt;test@test.com&gt;</c><br/>
+            into<br/>
+            <c>test@test.com</c>
+            </summary>
+            <param name="headerValue">The id to parse</param>
+            <returns>A parsed ID</returns>
+        </member>
+        <member name="M:OpenPop.Mime.Header.HeaderFieldParser.ParseMultipleIDs(System.String)">
+            <summary>
+            Parses multiple IDs from a single string like In-Reply-To.
+            </summary>
+            <param name="headerValue">The value to parse</param>
+            <returns>A list of IDs</returns>
+        </member>
+        <member name="T:OpenPop.Mime.Decode.QuotedPrintable">
+            <summary>
+            Used for decoding Quoted-Printable text.<br/>
+            This is a robust implementation of a Quoted-Printable decoder defined in <a href="http://tools.ietf.org/html/rfc2045">RFC 2045</a> and <a href="http://tools.ietf.org/html/rfc2047">RFC 2047</a>.<br/>
+            Every measurement has been taken to conform to the RFC.
+            </summary>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.QuotedPrintable.DecodeEncodedWord(System.String,System.Text.Encoding)">
+            <summary>
+            Decodes a Quoted-Printable string according to <a href="http://tools.ietf.org/html/rfc2047">RFC 2047</a>.<br/>
+            RFC 2047 is used for decoding Encoded-Word encoded strings.
+            </summary>
+            <param name="toDecode">Quoted-Printable encoded string</param>
+            <param name="encoding">Specifies which encoding the returned string will be in</param>
+            <returns>A decoded string in the correct encoding</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="toDecode"/> or <paramref name="encoding"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.QuotedPrintable.DecodeContentTransferEncoding(System.String)">
+            <summary>
+            Decodes a Quoted-Printable string according to <a href="http://tools.ietf.org/html/rfc2045">RFC 2045</a>.<br/>
+            RFC 2045 specifies the decoding of a body encoded with Content-Transfer-Encoding of quoted-printable.
+            </summary>
+            <param name="toDecode">Quoted-Printable encoded string</param>
+            <returns>A decoded byte array that the Quoted-Printable encoded string described</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="toDecode"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.QuotedPrintable.Rfc2047QuotedPrintableDecode(System.String,System.Boolean)">
+            <summary>
+            This is the actual decoder.
+            </summary>
+            <param name="toDecode">The string to be decoded from Quoted-Printable</param>
+            <param name="encodedWordVariant">
+            If <see langword="true"/>, specifies that RFC 2047 quoted printable decoding is used.<br/>
+            This is for quoted-printable encoded words<br/>
+            <br/>
+            If <see langword="false"/>, specifies that RFC 2045 quoted printable decoding is used.<br/>
+            This is for quoted-printable Content-Transfer-Encoding
+            </param>
+            <returns>A decoded byte array that was described by <paramref name="toDecode"/></returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="toDecode"/> is <see langword="null"/></exception>
+            <remarks>See <a href="http://tools.ietf.org/html/rfc2047#section-4.2">RFC 2047 section 4.2</a> for RFC details</remarks>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.QuotedPrintable.WriteAllBytesToStream(System.IO.Stream,System.Byte[])">
+            <summary>
+            Writes all bytes in a byte array to a stream
+            </summary>
+            <param name="stream">The stream to write to</param>
+            <param name="toWrite">The bytes to write to the <paramref name="stream"/></param>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.QuotedPrintable.RemoveIllegalControlCharacters(System.String)">
+            <summary>
+            RFC 2045 states about robustness:<br/>
+            <code>
+            Control characters other than TAB, or CR and LF as parts of CRLF pairs,
+            must not appear. The same is true for octets with decimal values greater
+            than 126.  If found in incoming quoted-printable data by a decoder, a
+            robust implementation might exclude them from the decoded data and warn
+            the user that illegal characters were discovered.
+            </code>
+            Control characters are defined in RFC 2396 as<br/>
+            <c>control = US-ASCII coded characters 00-1F and 7F hexadecimal</c>
+            </summary>
+            <param name="input">String to be stripped from illegal control characters</param>
+            <returns>A string with no illegal control characters</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="input"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.QuotedPrintable.RemoveCarriageReturnAndNewLinewIfNotInPair(System.String)">
+            <summary>
+            This method will remove any \r and \n which is not paired as \r\n
+            </summary>
+            <param name="input">String to remove lonely \r and \n's from</param>
+            <returns>A string without lonely \r and \n's</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="input"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.QuotedPrintable.DecodeEqualSignNotLongEnough(System.String)">
+            <summary>
+            RFC 2045 says that a robust implementation should handle:<br/>
+            <code>
+            An "=" cannot be the ultimate or penultimate character in an encoded
+            object. This could be handled as in case (2) above.
+            </code>
+            Case (2) is:<br/>
+            <code>
+            An "=" followed by a character that is neither a
+            hexadecimal digit (including "abcdef") nor the CR character of a CRLF pair
+            is illegal.  This case can be the result of US-ASCII text having been
+            included in a quoted-printable part of a message without itself having
+            been subjected to quoted-printable encoding.  A reasonable approach by a
+            robust implementation might be to include the "=" character and the
+            following character in the decoded data without any transformation and, if
+            possible, indicate to the user that proper decoding was not possible at
+            this point in the data.
+            </code>
+            </summary>
+            <param name="decode">
+            The string to decode which cannot have length above or equal to 3
+            and must start with an equal sign.
+            </param>
+            <returns>A decoded byte array</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="decode"/> is <see langword="null"/></exception>
+            <exception cref="T:System.ArgumentException">Thrown if a the <paramref name="decode"/> parameter has length above 2 or does not start with an equal sign.</exception>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.QuotedPrintable.DecodeEqualSign(System.String)">
+            <summary>
+            This helper method will decode a string of the form "=XX" where X is any character.<br/>
+            This method will never fail, unless an argument of length not equal to three is passed.
+            </summary>
+            <param name="decode">The length 3 character that needs to be decoded</param>
+            <returns>A decoded byte array</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="decode"/> is <see langword="null"/></exception>
+            <exception cref="T:System.ArgumentException">Thrown if a the <paramref name="decode"/> parameter does not have length 3 or does not start with an equal sign.</exception>
+        </member>
+        <member name="T:OpenPop.Mime.Header.ContentTransferEncoding">
+            <summary>
+            <see cref="T:System.Enum"/> that describes the ContentTransferEncoding header field
+            </summary>
+            <remarks>See <a href="http://tools.ietf.org/html/rfc2045#section-6">RFC 2045 section 6</a> for more details</remarks>
+        </member>
+        <member name="F:OpenPop.Mime.Header.ContentTransferEncoding.SevenBit">
+            <summary>
+            7 bit Encoding
+            </summary>
+        </member>
+        <member name="F:OpenPop.Mime.Header.ContentTransferEncoding.EightBit">
+            <summary>
+            8 bit Encoding
+            </summary>
+        </member>
+        <member name="F:OpenPop.Mime.Header.ContentTransferEncoding.QuotedPrintable">
+            <summary>
+            Quoted Printable Encoding
+            </summary>
+        </member>
+        <member name="F:OpenPop.Mime.Header.ContentTransferEncoding.Base64">
+            <summary>
+            Base64 Encoding
+            </summary>
+        </member>
+        <member name="F:OpenPop.Mime.Header.ContentTransferEncoding.Binary">
+            <summary>
+            Binary Encoding
+            </summary>
+        </member>
+        <member name="T:OpenPop.Mime.Traverse.TextVersionFinder">
+            <summary>
+            Finds all text/[something] versions in a Message hierarchy
+            </summary>
+        </member>
+        <member name="T:OpenPop.Mime.Decode.Rfc2231Decoder">
+            <summary>
+            This class is responsible for decoding parameters that has been encoded with:<br/>
+            <list type="bullet">
+            <item>
+               <b>Continuation</b><br/>
+               This is where a single parameter has such a long value that it could
+               be wrapped while in transit. Instead multiple parameters is used on each line.<br/>
+               <br/>
+               <b>Example</b><br/>
+               From: <c>Content-Type: text/html; boundary="someVeryLongStringHereWhichCouldBeWrappedInTransit"</c><br/>
+               To: <c>Content-Type: text/html; boundary*0="someVeryLongStringHere" boundary*1="WhichCouldBeWrappedInTransit"</c><br/>
+            </item>
+            <item>
+               <b>Encoding</b><br/>
+               Sometimes other characters then ASCII characters are needed in parameters.<br/>
+               The parameter is then given a different name to specify that it is encoded.<br/>
+               <br/>
+               <b>Example</b><br/>
+               From: <c>Content-Disposition attachment; filename="specialCharsÆØÅ"</c><br/>
+               To: <c>Content-Disposition attachment; filename*="ISO-8859-1'en-us'specialCharsC6D8C0"</c><br/>
+               This encoding is almost the same as <see cref="T:OpenPop.Mime.Decode.EncodedWord"/> encoding, and is used to decode the value.<br/>
+            </item>
+            <item>
+               <b>Continuation and Encoding</b><br/>
+               Both Continuation and Encoding can be used on the same time.<br/>
+               <br/>
+               <b>Example</b><br/>
+               From: <c>Content-Disposition attachment; filename="specialCharsÆØÅWhichIsSoLong"</c><br/>
+               To: <c>Content-Disposition attachment; filename*0*="ISO-8859-1'en-us'specialCharsC6D8C0"; filename*1*="WhichIsSoLong"</c><br/>
+               This could also be encoded as:<br/>
+               To: <c>Content-Disposition attachment; filename*0*="ISO-8859-1'en-us'specialCharsC6D8C0"; filename*1="WhichIsSoLong"</c><br/>
+               Notice that <c>filename*1</c> does not have an <c>*</c> after it - denoting it IS NOT encoded.<br/>
+               There are some rules about this:<br/>
+               <list type="number">
+                 <item>The encoding must be mentioned in the first part (filename*0*), which has to be encoded.</item>
+                 <item>No other part must specify an encoding, but if encoded it uses the encoding mentioned in the first part.</item>
+                 <item>Parts may be encoded or not in any order.</item>
+               </list>
+               <br/>
+            </item>
+            </list>
+            More information and the specification is available in <see href="http://tools.ietf.org/html/rfc2231">RFC 2231</see>.
+            </summary>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.Rfc2231Decoder.Decode(System.String)">
+            <summary>
+            Decodes a string of the form:<br/>
+            <c>value0; key1=value1; key2=value2; key3=value3</c><br/>
+            The returned List of key value pairs will have the key as key and the decoded value as value.<br/>
+            The first value0 will have a key of <see cref="F:System.String.Empty"/>.<br/>
+            <br/>
+            If continuation is used, then multiple keys will be merged into one key with the different values
+            decoded into on big value for that key.<br/>
+            Example:<br/>
+            <code>
+            title*0=part1
+            title*1=part2
+            </code>
+            will have key and value of:<br></br>
+            <c>title=decode(part1)decode(part2)</c>
+            </summary>
+            <param name="toDecode">The string to decode.</param>
+            <returns>A list of decoded key value pairs.</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="toDecode"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.Rfc2231Decoder.DecodePairs(System.Collections.Generic.List{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
+            <summary>
+            Decodes the list of key value pairs into a decoded list of key value pairs.<br/>
+            There may be less keys in the decoded list, but then the values for the lost keys will have been appended
+            to the new key.
+            </summary>
+            <param name="pairs">The pairs to decode</param>
+            <returns>A decoded list of pairs</returns>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.Rfc2231Decoder.DecodeSingleValue(System.String,System.String@)">
+            <summary>
+            This will decode a single value of the form: <c>ISO-8859-1'en-us'%3D%3DIamHere</c><br/>
+            Which is basically a <see cref="T:OpenPop.Mime.Decode.EncodedWord"/> form just using % instead of =<br/>
+            Notice that 'en-us' part is not used for anything.<br/>
+            <br/>
+            If the single value given is not on the correct form, it will be returned without 
+            being decoded and <paramref name="encodingUsed"/> will be set to <see langword="null"/>.
+            </summary>
+            <param name="encodingUsed">
+            The encoding used to decode with - it is given back for later use.<br/>
+            <see langword="null"/> if input was not in the correct form.
+            </param>
+            <param name="toDecode">The value to decode</param>
+            <returns>
+            The decoded value that corresponds to <paramref name="toDecode"/> or if
+            <paramref name="toDecode"/> is not on the correct form, it will be non-decoded.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="toDecode"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.Rfc2231Decoder.DecodeSingleValue(System.String,System.String)">
+            <summary>
+            This will decode a single value of the form: %3D%3DIamHere
+            Which is basically a <see cref="T:OpenPop.Mime.Decode.EncodedWord"/> form just using % instead of =
+            </summary>
+            <param name="valueToDecode">The value to decode</param>
+            <param name="encoding">The encoding used to decode with</param>
+            <returns>The decoded value that corresponds to <paramref name="valueToDecode"/></returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="valueToDecode"/> is <see langword="null"/></exception>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="encoding"/> is <see langword="null"/></exception>
+        </member>
+        <member name="T:OpenPop.Pop3.Exceptions.PopServerNotAvailableException">
+            <summary>
+            Thrown when the POP3 server sends an error "-ERR" during initial handshake "HELO".
+            </summary>	
+        </member>
+        <member name="M:OpenPop.Pop3.Exceptions.PopServerNotAvailableException.#ctor(System.String,System.Exception)">
+            <summary>
+             Creates a PopServerNotAvailableException with the given message and InnerException
+            </summary>
+            <param name="message">The message to include in the exception</param>
+            <param name="innerException">The exception that is the cause of this exception</param>
+        </member>
+        <member name="T:OpenPop.Pop3.Exceptions.InvalidLoginException">
+            <summary>
+            Thrown when the supplied username or password is not accepted by the POP3 server.
+            </summary>
+        </member>
+        <member name="M:OpenPop.Pop3.Exceptions.InvalidLoginException.#ctor(System.Exception)">
+            <summary>
+             Creates a InvalidLoginException with the given message and InnerException
+            </summary>
+            <param name="innerException">The exception that is the cause of this exception</param>
+        </member>
+        <member name="T:OpenPop.Mime.Traverse.FindFirstMessagePartWithMediaType">
+            <summary>
+             Finds the first <see cref="T:OpenPop.Mime.MessagePart"/> which have a given MediaType in a depth first traversal.
+            </summary>
+        </member>
+        <member name="M:OpenPop.Mime.Traverse.FindFirstMessagePartWithMediaType.VisitMessage(OpenPop.Mime.Message,System.String)">
+            <summary>
+            Finds the first <see cref="T:OpenPop.Mime.MessagePart"/> with the given MediaType
+            </summary>
+            <param name="message">The <see cref="T:OpenPop.Mime.Message"/> to start looking in</param>
+            <param name="question">The MediaType to look for. Case is ignored.</param>
+            <returns>A <see cref="T:OpenPop.Mime.MessagePart"/> with the given MediaType or <see langword="null"/> if no such <see cref="T:OpenPop.Mime.MessagePart"/> was found</returns>
+        </member>
+        <member name="M:OpenPop.Mime.Traverse.FindFirstMessagePartWithMediaType.VisitMessagePart(OpenPop.Mime.MessagePart,System.String)">
+            <summary>
+            Finds the first <see cref="T:OpenPop.Mime.MessagePart"/> with the given MediaType
+            </summary>
+            <param name="messagePart">The <see cref="T:OpenPop.Mime.MessagePart"/> to start looking in</param>
+            <param name="question">The MediaType to look for. Case is ignored.</param>
+            <returns>A <see cref="T:OpenPop.Mime.MessagePart"/> with the given MediaType or <see langword="null"/> if no such <see cref="T:OpenPop.Mime.MessagePart"/> was found</returns>
+        </member>
+        <member name="T:OpenPop.Mime.Decode.Base64">
+            <summary>
+            Utility class for dealing with Base64 encoded strings
+            </summary>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.Base64.Decode(System.String)">
+            <summary>
+            Decodes a base64 encoded string into the bytes it describes
+            </summary>
+            <param name="base64Encoded">The string to decode</param>
+            <returns>A byte array that the base64 string described</returns>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.Base64.Decode(System.String,System.Text.Encoding)">
+            <summary>
+            Decodes a Base64 encoded string using a specified <see cref="T:System.Text.Encoding"/> 
+            </summary>
+            <param name="base64Encoded">Source string to decode</param>
+            <param name="encoding">The encoding to use for the decoded byte array that <paramref name="base64Encoded"/> describes</param>
+            <returns>A decoded string</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="base64Encoded"/> or <paramref name="encoding"/> is <see langword="null"/></exception>
+            <exception cref="T:System.FormatException">If <paramref name="base64Encoded"/> is not a valid base64 encoded string</exception>
+        </member>
+        <member name="T:OpenPop.Mime.Decode.Utility">
+            <summary>
+            Contains common operations needed while decoding.
+            </summary>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.Utility.RemoveQuotesIfAny(System.String)">
+            <summary>
+            Remove quotes, if found, around the string.
+            </summary>
+            <param name="text">Text with quotes or without quotes</param>
+            <returns>Text without quotes</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="text"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.Utility.SplitStringWithCharNotInsideQuotes(System.String,System.Char)">
+            <summary>
+            Split a string into a list of strings using a specified character.<br/>
+            Everything inside quotes are ignored.
+            </summary>
+            <param name="input">A string to split</param>
+            <param name="toSplitAt">The character to use to split with</param>
+            <returns>A List of strings that was delimited by the <paramref name="toSplitAt"/> character</returns>
+        </member>
+        <member name="T:OpenPop.Common.Logging.DefaultLogger">
+            <summary>
+            This is the log that all logging will go trough.
+            </summary>
+        </member>
+        <member name="M:OpenPop.Common.Logging.DefaultLogger.SetLog(OpenPop.Common.Logging.ILog)">
+            <summary>
+            Changes the default logging to log to a new logger
+            </summary>
+            <param name="newLogger">The new logger to use to send log messages to</param>
+            <exception cref="T:System.ArgumentNullException">
+            Never set this to <see langword="null"/>.<br/>
+            Instead you should implement a NullLogger which just does nothing.
+            </exception>
+        </member>
+        <member name="P:OpenPop.Common.Logging.DefaultLogger.Log">
+            <summary>
+            This is the logger used by all logging methods in the assembly.<br/>
+            You can override this if you want, to move logging to one of your own
+            logging implementations.<br/>
+            <br/>
+            By default a <see cref="T:OpenPop.Common.Logging.DiagnosticsLogger"/> is used.
+            </summary>
+        </member>
+        <member name="T:OpenPop.Common.Logging.FileLogger">
+            <summary>
+            This logging object writes application error and debug output to a text file.
+            </summary>
+        </member>
+        <member name="T:OpenPop.Common.Logging.ILog">
+            <summary>
+            Defines a logger for managing system logging output  
+            </summary>
+        </member>
+        <member name="M:OpenPop.Common.Logging.ILog.LogError(System.String)">
+            <summary>
+            Logs an error message to the logs
+            </summary>
+            <param name="message">This is the error message to log</param>
+        </member>
+        <member name="M:OpenPop.Common.Logging.ILog.LogDebug(System.String)">
+            <summary>
+            Logs a debug message to the logs
+            </summary>
+            <param name="message">This is the debug message to log</param>
+        </member>
+        <member name="F:OpenPop.Common.Logging.FileLogger.LogLock">
+            <summary>
+            Lock object to prevent thread interactions
+            </summary>
+        </member>
+        <member name="M:OpenPop.Common.Logging.FileLogger.#cctor">
+            <summary>
+            Static constructor
+            </summary>
+        </member>
+        <member name="M:OpenPop.Common.Logging.FileLogger.LogToFile(System.String)">
+            <summary>
+            Write a message to the log file
+            </summary>
+            <param name="text">The error text to log</param>
+        </member>
+        <member name="M:OpenPop.Common.Logging.FileLogger.LogError(System.String)">
+            <summary>
+            Logs an error message to the logs
+            </summary>
+            <param name="message">This is the error message to log</param>
+        </member>
+        <member name="M:OpenPop.Common.Logging.FileLogger.LogDebug(System.String)">
+            <summary>
+            Logs a debug message to the logs
+            </summary>
+            <param name="message">This is the debug message to log</param>
+        </member>
+        <member name="P:OpenPop.Common.Logging.FileLogger.Enabled">
+            <summary>
+            Turns the logging on and off.
+            </summary>
+        </member>
+        <member name="P:OpenPop.Common.Logging.FileLogger.Verbose">
+            <summary>
+            Enables or disables the output of Debug level log messages
+            </summary>
+        </member>
+        <member name="P:OpenPop.Common.Logging.FileLogger.LogFile">
+            <summary>
+            The file to which log messages will be written
+            </summary>
+            <remarks>This property defaults to OpenPOP.log.</remarks>
+        </member>
+        <member name="T:OpenPop.Common.Logging.DiagnosticsLogger">
+            <summary>
+            This logging object writes application error and debug output using the
+            <see cref="T:System.Diagnostics.Trace"/> facilities.
+            </summary>
+        </member>
+        <member name="M:OpenPop.Common.Logging.DiagnosticsLogger.LogError(System.String)">
+            <summary>
+            Logs an error message to the System Trace facility
+            </summary>
+            <param name="message">This is the error message to log</param>
+        </member>
+        <member name="M:OpenPop.Common.Logging.DiagnosticsLogger.LogDebug(System.String)">
+            <summary>
+            Logs a debug message to the system Trace Facility
+            </summary>
+            <param name="message">This is the debug message to log</param>
+        </member>
+        <member name="T:OpenPop.Mime.Message">
+            <summary>
+            This is the root of the email tree structure.<br/>
+            <see cref="T:OpenPop.Mime.MessagePart"/> for a description about the structure.<br/>
+            <br/>
+            A Message (this class) contains the headers of an email message such as:
+            <code>
+             - To
+             - From
+             - Subject
+             - Content-Type
+             - Message-ID
+            </code>
+            which are located in the <see cref="P:OpenPop.Mime.Message.Headers"/> property.<br/>
+            <br/>
+            Use the <see cref="P:OpenPop.Mime.Message.MessagePart"/> property to find the actual content of the email message.
+            </summary>
+            <example>
+            Examples are available on the <a href="http://hpop.sourceforge.net/">project homepage</a>.
+            </example>
+        </member>
+        <member name="M:OpenPop.Mime.Message.#ctor(System.Byte[])">
+            <summary>
+            Convenience constructor for <see cref="M:OpenPop.Mime.Message.#ctor(System.Byte[],System.Boolean)"/>.<br/>
+            <br/>
+            Creates a message from a byte array. The full message including its body is parsed.
+            </summary>
+            <param name="rawMessageContent">The byte array which is the message contents to parse</param>
+        </member>
+        <member name="M:OpenPop.Mime.Message.#ctor(System.Byte[],System.Boolean)">
+            <summary>
+            Constructs a message from a byte array.<br/>
+            <br/>
+            The headers are always parsed, but if <paramref name="parseBody"/> is <see langword="false"/>, the body is not parsed.
+            </summary>
+            <param name="rawMessageContent">The byte array which is the message contents to parse</param>
+            <param name="parseBody">
+            <see langword="true"/> if the body should be parsed,
+            <see langword="false"/> if only headers should be parsed out of the <paramref name="rawMessageContent"/> byte array
+            </param>
+        </member>
+        <member name="M:OpenPop.Mime.Message.ToMailMessage">
+            <summary>
+            This method will convert this <see cref="T:OpenPop.Mime.Message"/> into a <see cref="T:System.Net.Mail.MailMessage"/> equivalent.<br/>
+            The returned <see cref="T:System.Net.Mail.MailMessage"/> can be used with <see cref="T:System.Net.Mail.SmtpClient"/> to forward the email.<br/>
+            <br/>
+            You should be aware of the following about this method:
+            <list type="bullet">
+            <item>
+               All sender and receiver mail addresses are set.
+               If you send this email using a <see cref="T:System.Net.Mail.SmtpClient"/> then all
+               receivers in To, From, Cc and Bcc will receive the email once again.
+            </item>
+            <item>
+               If you view the source code of this Message and looks at the source code of the forwarded
+               <see cref="T:System.Net.Mail.MailMessage"/> returned by this method, you will notice that the source codes are not the same.
+               The content that is presented by a mail client reading the forwarded <see cref="T:System.Net.Mail.MailMessage"/> should be the
+               same as the original, though.
+            </item>
+            <item>
+               Content-Disposition headers will not be copied to the <see cref="T:System.Net.Mail.MailMessage"/>.
+               It is simply not possible to set these on Attachments.
+            </item>
+            <item>
+               HTML content will be treated as the preferred view for the <see cref="P:System.Net.Mail.MailMessage.Body"/>. Plain text content will be used for the
+               <see cref="P:System.Net.Mail.MailMessage.Body"/> when HTML is not available.
+            </item>
+            </list>
+            </summary>
+            <returns>A <see cref="T:System.Net.Mail.MailMessage"/> object that contains the same information that this Message does</returns>
+        </member>
+        <member name="M:OpenPop.Mime.Message.FindFirstPlainTextVersion">
+            <summary>
+            Finds the first text/plain <see cref="P:OpenPop.Mime.Message.MessagePart"/> in this message.<br/>
+            This is a convenience method - it simply propagates the call to <see cref="M:OpenPop.Mime.Message.FindFirstMessagePartWithMediaType(System.String)"/>.<br/>
+            <br/>
+            If no text/plain version is found, <see langword="null"/> is returned.
+            </summary>
+            <returns>
+            <see cref="P:OpenPop.Mime.Message.MessagePart"/> which has a MediaType of text/plain or <see langword="null"/>
+            if such <see cref="P:OpenPop.Mime.Message.MessagePart"/> could not be found.
+            </returns>
+        </member>
+        <member name="M:OpenPop.Mime.Message.FindFirstHtmlVersion">
+            <summary>
+            Finds the first text/html <see cref="P:OpenPop.Mime.Message.MessagePart"/> in this message.<br/>
+            This is a convenience method - it simply propagates the call to <see cref="M:OpenPop.Mime.Message.FindFirstMessagePartWithMediaType(System.String)"/>.<br/>
+            <br/>
+            If no text/html version is found, <see langword="null"/> is returned.
+            </summary>
+            <returns>
+            <see cref="P:OpenPop.Mime.Message.MessagePart"/> which has a MediaType of text/html or <see langword="null"/>
+            if such <see cref="P:OpenPop.Mime.Message.MessagePart"/> could not be found.
+            </returns>
+        </member>
+        <member name="M:OpenPop.Mime.Message.FindAllTextVersions">
+            <summary>
+            Finds all the <see cref="P:OpenPop.Mime.Message.MessagePart"/>'s which contains a text version.<br/>
+            <br/>
+            <see cref="P:OpenPop.Mime.MessagePart.IsText"/> for MessageParts which are considered to be text versions.<br/>
+            <br/>
+            Examples of MessageParts media types are:
+            <list type="bullet">
+               <item>text/plain</item>
+               <item>text/html</item>
+               <item>text/xml</item>
+            </list>
+            </summary>
+            <returns>A List of MessageParts where each part is a text version</returns>
+        </member>
+        <member name="M:OpenPop.Mime.Message.FindAllAttachments">
+            <summary>
+            Finds all the <see cref="P:OpenPop.Mime.Message.MessagePart"/>'s which are attachments to this message.<br/>
+            <br/>
+            <see cref="P:OpenPop.Mime.MessagePart.IsAttachment"/> for MessageParts which are considered to be attachments.
+            </summary>
+            <returns>A List of MessageParts where each is considered an attachment</returns>
+        </member>
+        <member name="M:OpenPop.Mime.Message.FindFirstMessagePartWithMediaType(System.String)">
+            <summary>
+            Finds the first <see cref="P:OpenPop.Mime.Message.MessagePart"/> in the <see cref="T:OpenPop.Mime.Message"/> hierarchy with the given MediaType.<br/>
+            <br/>
+            The search in the hierarchy is a depth-first traversal.
+            </summary>
+            <param name="mediaType">The MediaType to search for. Case is ignored.</param>
+            <returns>
+            A <see cref="P:OpenPop.Mime.Message.MessagePart"/> with the given MediaType or <see langword="null"/> if no such <see cref="P:OpenPop.Mime.Message.MessagePart"/> was found
+            </returns>
+        </member>
+        <member name="M:OpenPop.Mime.Message.FindAllMessagePartsWithMediaType(System.String)">
+            <summary>
+            Finds all the <see cref="P:OpenPop.Mime.Message.MessagePart"/>s in the <see cref="T:OpenPop.Mime.Message"/> hierarchy with the given MediaType.
+            </summary>
+            <param name="mediaType">The MediaType to search for. Case is ignored.</param>
+            <returns>
+            A List of <see cref="P:OpenPop.Mime.Message.MessagePart"/>s with the given MediaType.<br/>
+            The List might be empty if no such <see cref="P:OpenPop.Mime.Message.MessagePart"/>s were found.<br/>
+            The order of the elements in the list is the order which they are found using
+            a depth first traversal of the <see cref="T:OpenPop.Mime.Message"/> hierarchy.
+            </returns>
+        </member>
+        <member name="M:OpenPop.Mime.Message.Save(System.IO.FileInfo)">
+            <summary>
+            Save this <see cref="T:OpenPop.Mime.Message"/> to a file.<br/>
+            <br/>
+            Can be loaded at a later time using the <see cref="M:OpenPop.Mime.Message.Load(System.IO.FileInfo)"/> method.
+            </summary>
+            <param name="file">The File location to save the <see cref="T:OpenPop.Mime.Message"/> to. Existent files will be overwritten.</param>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="file"/> is <see langword="null"/></exception>
+            <exception>Other exceptions relevant to using a <see cref="T:System.IO.FileStream"/> might be thrown as well</exception>
+        </member>
+        <member name="M:OpenPop.Mime.Message.Save(System.IO.Stream)">
+            <summary>
+            Save this <see cref="T:OpenPop.Mime.Message"/> to a stream.<br/>
+            </summary>
+            <param name="messageStream">The stream to write to</param>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="messageStream"/> is <see langword="null"/></exception>
+            <exception>Other exceptions relevant to <see cref="M:System.IO.Stream.Write(System.Byte[],System.Int32,System.Int32)"/> might be thrown as well</exception>
+        </member>
+        <member name="M:OpenPop.Mime.Message.Load(System.IO.FileInfo)">
+            <summary>
+            Loads a <see cref="T:OpenPop.Mime.Message"/> from a file containing a raw email.
+            </summary>
+            <param name="file">The File location to load the <see cref="T:OpenPop.Mime.Message"/> from. The file must exist.</param>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="file"/> is <see langword="null"/></exception>
+            <exception cref="T:System.IO.FileNotFoundException">If <paramref name="file"/> does not exist</exception>
+            <exception>Other exceptions relevant to a <see cref="T:System.IO.FileStream"/> might be thrown as well</exception>
+            <returns>A <see cref="T:OpenPop.Mime.Message"/> with the content loaded from the <paramref name="file"/></returns>
+        </member>
+        <member name="M:OpenPop.Mime.Message.Load(System.IO.Stream)">
+            <summary>
+            Loads a <see cref="T:OpenPop.Mime.Message"/> from a <see cref="T:System.IO.Stream"/> containing a raw email.
+            </summary>
+            <param name="messageStream">The <see cref="T:System.IO.Stream"/> from which to load the raw <see cref="T:OpenPop.Mime.Message"/></param>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="messageStream"/> is <see langword="null"/></exception>
+            <exception>Other exceptions relevant to <see cref="M:System.IO.Stream.Read(System.Byte[],System.Int32,System.Int32)"/> might be thrown as well</exception>
+            <returns>A <see cref="T:OpenPop.Mime.Message"/> with the content loaded from the <paramref name="messageStream"/></returns>
+        </member>
+        <member name="P:OpenPop.Mime.Message.Headers">
+            <summary>
+            Headers of the Message.
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.Message.MessagePart">
+            <summary>
+            This is the body of the email Message.<br/>
+            <br/>
+            If the body was parsed for this Message, this property will never be <see langword="null"/>.
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.Message.RawMessage">
+            <summary>
+            The raw content from which this message has been constructed.<br/>
+            These bytes can be persisted and later used to recreate the Message.
+            </summary>
+        </member>
+        <member name="T:OpenPop.Mime.Decode.EncodedWord">
+            <summary>
+            Utility class for dealing with encoded word strings<br/>
+            <br/>
+            EncodedWord encoded strings are only in ASCII, but can embed information
+            about characters in other character sets.<br/>
+            <br/>
+            It is done by specifying the character set, an encoding that maps from ASCII to
+            the correct bytes and the actual encoded string.<br/>
+            <br/>
+            It is specified in a format that is best summarized by a BNF:<br/>
+            <c>"=?" character_set "?" encoding "?" encoded-text "?="</c><br/>
+            </summary>
+            <example>
+            <c>=?ISO-8859-1?Q?=2D?=</c>
+            Here <c>ISO-8859-1</c> is the character set.<br/>
+            <c>Q</c> is the encoding method (quoted-printable). <c>B</c> is also supported (Base 64).<br/>
+            The encoded text is the <c>=2D</c> part which is decoded to a space.
+            </example>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.EncodedWord.Decode(System.String)">
+             <summary>
+             Decode text that is encoded with the <see cref="T:OpenPop.Mime.Decode.EncodedWord"/> encoding.<br/>
+            <br/>
+             This method will decode any encoded-word found in the string.<br/>
+             All parts which is not encoded will not be touched.<br/>
+             <br/>
+             From <a href="http://tools.ietf.org/html/rfc2047">RFC 2047</a>:<br/>
+             <code>
+             Generally, an "encoded-word" is a sequence of printable ASCII
+             characters that begins with "=?", ends with "?=", and has two "?"s in
+             between.  It specifies a character set and an encoding method, and
+             also includes the original text encoded as graphic ASCII characters,
+             according to the rules for that encoding method.
+             </code>
+             Example:<br/>
+             <c>=?ISO-8859-1?q?this=20is=20some=20text?= other text here</c>
+             </summary>
+             <remarks>See <a href="http://tools.ietf.org/html/rfc2047#section-2">RFC 2047 section 2</a> "Syntax of encoded-words" for more details</remarks>
+             <param name="encodedWords">Source text. May be content which is not encoded.</param>
+             <returns>Decoded text</returns>
+             <exception cref="T:System.ArgumentNullException">If <paramref name="encodedWords"/> is <see langword="null"/></exception>
+        </member>
+        <member name="T:OpenPop.Mime.Header.HeaderExtractor">
+            <summary>
+             Utility class that divides a message into a body and a header.<br/>
+             The header is then parsed to a strongly typed <see cref="T:OpenPop.Mime.Header.MessageHeader"/> object.
+            </summary>
+        </member>
+        <member name="M:OpenPop.Mime.Header.HeaderExtractor.FindHeaderEndPosition(System.Byte[])">
+            <summary>
+            Find the end of the header section in a byte array.<br/>
+            The headers have ended when a blank line is found
+            </summary>
+            <param name="messageContent">The full message stored as a byte array</param>
+            <returns>The position of the line just after the header end blank line</returns>
+        </member>
+        <member name="M:OpenPop.Mime.Header.HeaderExtractor.ExtractHeadersAndBody(System.Byte[],OpenPop.Mime.Header.MessageHeader@,System.Byte[]@)">
+            <summary>
+            Extract the header part and body part of a message.<br/>
+            The headers are then parsed to a strongly typed <see cref="T:OpenPop.Mime.Header.MessageHeader"/> object.
+            </summary>
+            <param name="fullRawMessage">The full message in bytes where header and body needs to be extracted from</param>
+            <param name="headers">The extracted header parts of the message</param>
+            <param name="body">The body part of the message</param>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="fullRawMessage"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Mime.Header.HeaderExtractor.ExtractHeaders(System.String)">
+            <summary>
+            Method that takes a full message and extract the headers from it.
+            </summary>
+            <param name="messageContent">The message to extract headers from. Does not need the body part. Needs the empty headers end line.</param>
+            <returns>A collection of Name and Value pairs of headers</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="messageContent"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Mime.Header.HeaderExtractor.IsMoreLinesInHeaderValue(System.IO.TextReader)">
+            <summary>
+            Check if the next line is part of the current header value we are parsing by
+            peeking on the next character of the <see cref="T:System.IO.TextReader"/>.<br/>
+            This should only be called while parsing headers.
+            </summary>
+            <param name="reader">The reader from which the header is read from</param>
+            <returns><see langword="true"/> if multi-line header. <see langword="false"/> otherwise</returns>
+        </member>
+        <member name="M:OpenPop.Mime.Header.HeaderExtractor.SeparateHeaderNameAndValue(System.String)">
+            <summary>
+            Separate a full header line into a header name and a header value.
+            </summary>
+            <param name="rawHeader">The raw header line to be separated</param>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="rawHeader"/> is <see langword="null"/></exception>
+        </member>
+        <member name="T:OpenPop.Mime.Traverse.AttachmentFinder">
+            <summary>
+            Finds all <see cref="T:OpenPop.Mime.MessagePart"/>s which are considered to be attachments
+            </summary>
+        </member>
+        <member name="T:OpenPop.Pop3.AuthenticationMethod">
+            <summary>
+            Describes the authentication method to use when authenticating towards a POP3 server.
+            </summary>
+        </member>
+        <member name="F:OpenPop.Pop3.AuthenticationMethod.UsernameAndPassword">
+            <summary>
+            Authenticate using the UsernameAndPassword method.<br/>
+            This will pass the username and password to the server in cleartext.<br/>
+            <see cref="F:OpenPop.Pop3.AuthenticationMethod.Apop"/> is more secure but might not be supported on a server.<br/>
+            This method is not recommended. Use <see cref="F:OpenPop.Pop3.AuthenticationMethod.Auto"/> instead.
+            <br/>
+            If SSL is used, there is no loss of security by using this authentication method.
+            </summary>
+        </member>
+        <member name="F:OpenPop.Pop3.AuthenticationMethod.Apop">
+            <summary>
+            Authenticate using the Authenticated Post Office Protocol method, which is more secure then
+            <see cref="F:OpenPop.Pop3.AuthenticationMethod.UsernameAndPassword"/> since it is a request-response protocol where server checks if the
+             client knows a shared secret, which is the password, without the password itself being transmitted.<br/>
+            This authentication method uses MD5 under its hood.<br/>
+            <br/>
+            This authentication method is not supported by many servers.<br/>
+            Choose this option if you want maximum security.
+            </summary>
+        </member>
+        <member name="F:OpenPop.Pop3.AuthenticationMethod.Auto">
+            <summary>
+            This is the recomended method to authenticate with.<br/>
+            If <see cref="F:OpenPop.Pop3.AuthenticationMethod.Apop"/> is supported by the server, <see cref="F:OpenPop.Pop3.AuthenticationMethod.Apop"/> is used for authentication.<br/>
+            If <see cref="F:OpenPop.Pop3.AuthenticationMethod.Apop"/> is not supported, Auto will fall back to <see cref="F:OpenPop.Pop3.AuthenticationMethod.UsernameAndPassword"/> authentication.
+            </summary>
+        </member>
+        <member name="F:OpenPop.Pop3.AuthenticationMethod.CramMd5">
+            <summary>
+            Logs in the the POP3 server using CRAM-MD5 authentication scheme.<br/>
+            This in essence uses the MD5 hashing algorithm on the user password and a server challenge.
+            </summary>
+        </member>
+        <member name="T:OpenPop.Mime.Header.RfcMailAddress">
+            <summary>
+            This class is used for RFC compliant email addresses.<br/>
+            <br/>
+            The class cannot be instantiated from outside the library.
+            </summary>
+            <remarks>
+            The <seealso cref="P:OpenPop.Mime.Header.RfcMailAddress.MailAddress"/> does not cover all the possible formats 
+            for <a href="http://tools.ietf.org/html/rfc5322#section-3.4">RFC 5322 section 3.4</a> compliant email addresses.
+            This class is used as an address wrapper to account for that deficiency.
+            </remarks>
+        </member>
+        <member name="M:OpenPop.Mime.Header.RfcMailAddress.#ctor(System.Net.Mail.MailAddress,System.String)">
+            <summary>
+            Constructs an <see cref="T:OpenPop.Mime.Header.RfcMailAddress"/> object from a <see cref="P:OpenPop.Mime.Header.RfcMailAddress.MailAddress"/> object.<br/>
+            This constructor is used when we were able to construct a <see cref="P:OpenPop.Mime.Header.RfcMailAddress.MailAddress"/> from a string.
+            </summary>
+            <param name="mailAddress">The address that <paramref name="raw"/> was parsed into</param>
+            <param name="raw">The raw unparsed input which was parsed into the <paramref name="mailAddress"/></param>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="mailAddress"/> or <paramref name="raw"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Mime.Header.RfcMailAddress.#ctor(System.String)">
+            <summary>
+            When we were unable to parse a string into a <see cref="P:OpenPop.Mime.Header.RfcMailAddress.MailAddress"/>, this constructor can be
+            used. The Raw string is then used as the <see cref="P:OpenPop.Mime.Header.RfcMailAddress.DisplayName"/>.
+            </summary>
+            <param name="raw">The raw unparsed input which could not be parsed</param>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="raw"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Mime.Header.RfcMailAddress.ToString">
+            <summary>
+            A string representation of the <see cref="T:OpenPop.Mime.Header.RfcMailAddress"/> object
+            </summary>
+            <returns>Returns the string representation for the object</returns>
+        </member>
+        <member name="M:OpenPop.Mime.Header.RfcMailAddress.ParseMailAddress(System.String)">
+            <summary>
+            Parses an email address from a MIME header<br/>
+            <br/>
+            Examples of input:
+            <c>Eksperten mailrobot &lt;noreply@mail.eksperten.dk&gt;</c><br/>
+            <c>"Eksperten mailrobot" &lt;noreply@mail.eksperten.dk&gt;</c><br/>
+            <c>&lt;noreply@mail.eksperten.dk&gt;</c><br/>
+            <c>noreply@mail.eksperten.dk</c><br/>
+            <br/>
+            It might also contain encoded text, which will then be decoded.
+            </summary>
+            <param name="input">The value to parse out and email and/or a username</param>
+            <returns>A <see cref="T:OpenPop.Mime.Header.RfcMailAddress"/></returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="input"/> is <see langword="null"/></exception>
+            <remarks>
+            <see href="http://tools.ietf.org/html/rfc5322#section-3.4">RFC 5322 section 3.4</see> for more details on email syntax.<br/>
+            <see cref="M:OpenPop.Mime.Decode.EncodedWord.Decode(System.String)">For more information about encoded text</see>.
+            </remarks>
+        </member>
+        <member name="M:OpenPop.Mime.Header.RfcMailAddress.ParseMailAddresses(System.String)">
+            <summary>
+            Parses input of the form<br/>
+            <c>Eksperten mailrobot &lt;noreply@mail.eksperten.dk&gt;, ...</c><br/>
+            to a list of RFCMailAddresses
+            </summary>
+            <param name="input">The input that is a comma-separated list of EmailAddresses to parse</param>
+            <returns>A List of <seealso cref="T:OpenPop.Mime.Header.RfcMailAddress"/> objects extracted from the <paramref name="input"/> parameter.</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="input"/> is <see langword="null"/></exception>
+        </member>
+        <member name="P:OpenPop.Mime.Header.RfcMailAddress.Address">
+            <summary>
+             The email address of this <see cref="T:OpenPop.Mime.Header.RfcMailAddress"/><br/>
+             It is possibly string.Empty since RFC mail addresses does not require an email address specified.
+            </summary>
+            <example>
+             Example header with email address:<br/>
+             To: <c>Test test@mail.com</c><br/>
+             Address will be <c>test@mail.com</c><br/>
+            </example>
+            <example>
+             Example header without email address:<br/>
+             To: <c>Test</c><br/>
+             Address will be <see cref="F:System.String.Empty"/>.
+            </example>
+        </member>
+        <member name="P:OpenPop.Mime.Header.RfcMailAddress.DisplayName">
+            <summary>
+             The display name of this <see cref="T:OpenPop.Mime.Header.RfcMailAddress"/><br/>
+             It is possibly <see cref="F:System.String.Empty"/> since RFC mail addresses does not require a display name to be specified.
+            </summary>
+            <example>
+             Example header with display name:<br/>
+             To: <c>Test test@mail.com</c><br/>
+             DisplayName will be <c>Test</c>
+            </example>
+            <example>
+             Example header without display name:<br/>
+             To: <c>test@test.com</c><br/>
+             DisplayName will be <see cref="F:System.String.Empty"/>
+            </example>
+        </member>
+        <member name="P:OpenPop.Mime.Header.RfcMailAddress.Raw">
+            <summary>
+            This is the Raw string used to describe the <see cref="T:OpenPop.Mime.Header.RfcMailAddress"/>.
+            </summary>
+        </member>
+        <member name="P:OpenPop.Mime.Header.RfcMailAddress.MailAddress">
+            <summary>
+            The <see cref="P:OpenPop.Mime.Header.RfcMailAddress.MailAddress"/> associated with the <see cref="T:OpenPop.Mime.Header.RfcMailAddress"/>. 
+            </summary>
+            <remarks>
+            The value of this property can be <see lanword="null"/> in instances where the <see cref="P:OpenPop.Mime.Header.RfcMailAddress.MailAddress"/> cannot represent the address properly.<br/>
+            Use <see cref="P:OpenPop.Mime.Header.RfcMailAddress.HasValidMailAddress"/> property to see if this property is valid.
+            </remarks>
+        </member>
+        <member name="P:OpenPop.Mime.Header.RfcMailAddress.HasValidMailAddress">
+            <summary>
+            Specifies if the object contains a valid <see cref="P:OpenPop.Mime.Header.RfcMailAddress.MailAddress"/> reference.
+            </summary>
+        </member>
+        <member name="T:OpenPop.Pop3.Exceptions.PopServerLockedException">
+            <summary>
+            Thrown when the user mailbox is locked or in-use.<br/>
+            </summary>
+            <remarks>
+            The mail boxes are locked when an existing session is open on the POP3 server.<br/>
+            Only one POP3 client can use a POP3 account at a time.
+            </remarks>
+        </member>
+        <member name="M:OpenPop.Pop3.Exceptions.PopServerLockedException.#ctor(OpenPop.Pop3.Exceptions.PopServerException)">
+            <summary>
+             Creates a PopServerLockedException with the given inner exception
+            </summary>
+            <param name="innerException">The exception that is the cause of this exception</param>
+        </member>
+        <member name="T:OpenPop.Pop3.Exceptions.InvalidUseException">
+            <summary>
+            Thrown when the <see cref="T:OpenPop.Pop3.Pop3Client"/> is being used in an invalid way.<br/>
+            This could for example happen if a someone tries to fetch a message without authenticating.
+            </summary>
+        </member>
+        <member name="M:OpenPop.Pop3.Exceptions.InvalidUseException.#ctor(System.String)">
+            <summary>
+             Creates a InvalidUseException with the given message
+            </summary>
+            <param name="message">The message to include in the exception</param>
+        </member>
+        <member name="T:OpenPop.Pop3.CramMd5">
+            <summary>
+            Implements the CRAM-MD5 algorithm as specified in <a href="http://tools.ietf.org/html/rfc2195">RFC 2195</a>.
+            </summary>
+        </member>
+        <member name="F:OpenPop.Pop3.CramMd5.ipad">
+            <summary>
+            Defined by <a href="http://tools.ietf.org/html/rfc2104#section-2">RFC 2104</a>
+            Is a 64 byte array with all entries set to 0x36.
+            </summary>
+        </member>
+        <member name="F:OpenPop.Pop3.CramMd5.opad">
+            <summary>
+            Defined by <a href="http://tools.ietf.org/html/rfc2104#section-2">RFC 2104</a>
+            Is a 64 byte array with all entries set to 0x5C.
+            </summary>
+        </member>
+        <member name="M:OpenPop.Pop3.CramMd5.#cctor">
+            <summary>
+            Initializes the static fields
+            </summary>
+        </member>
+        <member name="M:OpenPop.Pop3.CramMd5.ComputeDigest(System.String,System.String,System.String)">
+            <summary>
+            Computes the digest needed to login to a server using CRAM-MD5.<br/>
+            <br/>
+            This computes:<br/>
+            MD5((password XOR opad), MD5((password XOR ipad), challenge))
+            </summary>
+            <param name="username">The username of the user who wants to log in</param>
+            <param name="password">The password for the <paramref name="username"/></param>
+            <param name="challenge">
+            The challenge received from the server when telling it CRAM-MD5 authenticated is wanted.
+            Is a base64 encoded string.
+            </param>
+            <returns>The response to the challenge, which the server can validate and log in the user if correct</returns>
+            <exception cref="T:System.ArgumentNullException">
+            If <paramref name="username"/>, 
+            <paramref name="password"/> or 
+            <paramref name="challenge"/> is <see langword="null"/>
+            </exception>
+        </member>
+        <member name="M:OpenPop.Pop3.CramMd5.Hash(System.Byte[])">
+            <summary>
+            Hashes a byte array using the MD5 algorithm.
+            </summary>
+            <param name="toHash">The byte array to hash</param>
+            <returns>The result of hashing the <paramref name="toHash"/> bytes with the MD5 algorithm</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="toHash"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Pop3.CramMd5.Concatenate(System.Byte[],System.Byte[])">
+            <summary>
+            Concatenates two byte arrays into one
+            </summary>
+            <param name="one">The first byte array</param>
+            <param name="two">The second byte array</param>
+            <returns>A concatenated byte array</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="one"/> or <paramref name="two"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:OpenPop.Pop3.CramMd5.Xor(System.Byte[],System.Byte[])">
+            <summary>
+            XORs a byte array with another.<br/>
+            Each byte in <paramref name="toXor"/> is XORed with the corresponding byte
+            in <paramref name="toXorWith"/> until the end of <paramref name="toXor"/> is encountered.
+            </summary>
+            <param name="toXor">The byte array to XOR</param>
+            <param name="toXorWith">The byte array to XOR with</param>
+            <returns>A new byte array with the XORed results</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="toXor"/> or <paramref name="toXorWith"/> is <see langword="null"/></exception>
+            <exception cref="T:System.ArgumentException">If the lengths of the arrays are not equal</exception>
+        </member>
+        <member name="M:OpenPop.Pop3.CramMd5.GetSharedSecretInBytes(System.String)">
+            <summary>
+            This method is responsible to generate the byte array needed
+            from the shared secret - the password.<br/>
+            
+            RFC 2195 says:<br/>
+            The shared secret is null-padded to a length of 64 bytes. If the
+            shared secret is longer than 64 bytes, the MD5 digest of the
+            shared secret is used as a 16 byte input to the keyed MD5
+            calculation.
+            </summary>
+            <param name="password">This is the shared secret</param>
+            <returns>The 64 bytes that is to be used from the shared secret</returns>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="password"/> is <see langword="null"/></exception>
+        </member>
+        <member name="T:OpenPop.Mime.Decode.Rfc2822DateTime">
+            <summary>
+            Class used to decode RFC 2822 Date header fields.
+            </summary>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.Rfc2822DateTime.StringToDate(System.String)">
+            <summary>
+            Converts a string in RFC 2822 format into a <see cref="T:System.DateTime"/> object
+            </summary>
+            <param name="inputDate">The date to convert</param>
+            <returns>
+            A valid <see cref="T:System.DateTime"/> object, which represents the same time as the string that was converted. 
+            If <paramref name="inputDate"/> is not a valid date representation, then <see cref="F:System.DateTime.MinValue"/> is returned.
+            </returns>
+            <exception cref="T:System.ArgumentNullException"><exception cref="T:System.ArgumentNullException">If <paramref name="inputDate"/> is <see langword="null"/></exception></exception>
+            <exception cref="T:System.ArgumentException">If the <paramref name="inputDate"/> could not be parsed into a <see cref="T:System.DateTime"/> object</exception>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.Rfc2822DateTime.AdjustTimezone(System.DateTime,System.String)">
+            <summary>
+            Adjust the <paramref name="dateTime"/> object given according to the timezone specified in the <paramref name="dateInput"/>.
+            </summary>
+            <param name="dateTime">The date to alter</param>
+            <param name="dateInput">The input date, in which the timezone can be found</param>
+            <returns>An date altered according to the timezone</returns>
+            <exception cref="T:System.ArgumentException">If no timezone was found in <paramref name="dateInput"/></exception>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.Rfc2822DateTime.MatchEvaluator(System.Text.RegularExpressions.Match)">
+            <summary>
+            Convert timezones in older formats to [+-]dddd format.
+            </summary>
+            <param name="match">The match that was found</param>
+            <returns>The string to replace the matched string with</returns>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.Rfc2822DateTime.ExtractDateTime(System.String)">
+            <summary>
+            Extracts the date and time parts from the <paramref name="dateInput"/>
+            </summary>
+            <param name="dateInput">The date input string, from which to extract the date and time parts</param>
+            <returns>The extracted date part or <see langword="DateTime.MinValue"/> if <paramref name="dateInput"/> is not recognized as a valid date.</returns>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.Rfc2822DateTime.ValidateDayNameIfAny(System.DateTime,System.String)">
+            <summary>
+            Validates that the given <paramref name="dateTime"/> agrees with a day-name specified
+            in <paramref name="dateInput"/>.
+            </summary>
+            <param name="dateTime">The time to check</param>
+            <param name="dateInput">The date input to extract the day-name from</param>
+            <exception cref="T:System.ArgumentException">If <paramref name="dateTime"/> and <paramref name="dateInput"/> does not agree on the day</exception>
+        </member>
+        <member name="M:OpenPop.Mime.Decode.Rfc2822DateTime.StripCommentsAndExcessWhitespace(System.String)">
+            <summary>
+            Strips and removes all comments and excessive whitespace from the string
+            </summary>
+            <param name="input">The input to strip from</param>
+            <returns>The stripped string</returns>
+        </member>
+    </members>
+</doc>
