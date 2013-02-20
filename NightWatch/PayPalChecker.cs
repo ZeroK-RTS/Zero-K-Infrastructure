@@ -115,19 +115,18 @@ namespace NightWatch
                     if (accountID != null) acc = Account.AccountByAccountID(db, accountID.Value);
 
                     if (!string.IsNullOrEmpty(parsed.ConfirmationNumber) &&
-                        db.Contributions.Any(x => x.PayPalConfirmationNumber == parsed.ConfirmationNumber)) throw new ApplicationException(string.Format("Contribution {0} already exists", parsed.ConfirmationNumber));
+                        db.Contributions.Any(x => x.PayPalTransactionID == parsed.ConfirmationNumber)) throw new ApplicationException(string.Format("Contribution {0} already exists", parsed.ConfirmationNumber));
 
                     var contrib = new Contribution()
                                   {
                                       Account = acc,
-                                      Contributor = parsed.Contributor,
+                                      Name = parsed.Contributor,
                                       Euros = euros,
                                       KudosValue = (int)Math.Round(euros*EurosToKudos),
-                                      Message = parsed.Message,
                                       OriginalAmount = parsed.Amount,
                                       OriginalCurrency = parsed.Currency,
-                                      PayPalConfirmationNumber = parsed.ConfirmationNumber,
-                                      PayPalReference = parsed.Reference,
+                                      PayPalTransactionID = parsed.ConfirmationNumber,
+                                      ItemCode = parsed.Reference,
                                       Time = message.Headers.DateSent,
                                   };
                     db.Contributions.InsertOnSubmit(contrib);

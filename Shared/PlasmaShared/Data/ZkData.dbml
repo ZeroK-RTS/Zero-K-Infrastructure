@@ -822,6 +822,7 @@
       <Column Name="BanSite" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="BanLobby" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="BanIP" Type="System.String" DbType="nvarchar(1000)" CanBeNull="true" />
+      <Column Name="BanForum" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="UserID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="CreatedAccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="DeleteInfluence" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
@@ -1209,14 +1210,15 @@
       <Column Name="ContributionID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="AccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="[Time]" Member="Time" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
-      <Column Name="PayPalConfirmationNumber" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
-      <Column Name="PayPalReference" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
-      <Column Name="Contributor" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
-      <Column Name="Message" Type="System.String" DbType="nvarchar(400)" CanBeNull="true" />
+      <Column Name="PayPalTransactionID" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
+      <Column Name="Name" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
       <Column Name="OriginalCurrency" Type="System.String" DbType="nvarchar(5)" CanBeNull="true" />
       <Column Name="OriginalAmount" Type="System.Double" DbType="float" CanBeNull="true" />
       <Column Name="Euros" Type="System.Double" DbType="float" CanBeNull="true" />
+      <Column Name="EurosNet" Type="System.Double" DbType="float" CanBeNull="true" />
       <Column Name="KudosValue" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="ItemName" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
+      <Column Name="ItemCode" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
       <Association Name="Account_Contribution" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>

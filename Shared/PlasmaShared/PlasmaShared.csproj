@@ -190,6 +190,7 @@
     <Compile Include="SerializableDictionary.cs" />
     <Compile Include="SpringPaths.cs" />
     <Compile Include="SpringScanner.cs" />
+    <Compile Include="CsvTable.cs" />
     <Compile Include="UnitSyncLib\Ai.cs" />
     <Compile Include="UnitSyncLib\AiInfoPair.cs" />
     <Compile Include="UnitSyncLib\DependencyMissingException.cs" />

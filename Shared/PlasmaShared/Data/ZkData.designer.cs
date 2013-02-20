@@ -258,7 +258,6 @@ namespace ZkData
     partial void DeleteContribution(Contribution instance);
     #endregion
 		
-		
 		public ZkDataContext(string connection) : 
 				base(connection, mappingSource)
 		{
@@ -21824,6 +21823,8 @@ namespace ZkData
 		
 		private string _BanIP;
 		
+		private bool _BanForum;
+		
 		private System.Nullable<int> _UserID;
 		
 		private System.Nullable<int> _CreatedAccountID;
@@ -21862,6 +21863,8 @@ namespace ZkData
     partial void OnBanLobbyChanged();
     partial void OnBanIPChanging(string value);
     partial void OnBanIPChanged();
+    partial void OnBanForumChanging(bool value);
+    partial void OnBanForumChanged();
     partial void OnUserIDChanging(System.Nullable<int> value);
     partial void OnUserIDChanged();
     partial void OnCreatedAccountIDChanging(System.Nullable<int> value);
@@ -22112,8 +22115,29 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserID", DbType="int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BanForum", DbType="bit NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
+		public bool BanForum
+		{
+			get
+			{
+				return this._BanForum;
+			}
+			set
+			{
+				if ((this._BanForum != value))
+				{
+					this.OnBanForumChanging(value);
+					this.SendPropertyChanging();
+					this._BanForum = value;
+					this.SendPropertyChanged("BanForum");
+					this.OnBanForumChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
 		public System.Nullable<int> UserID
 		{
 			get
@@ -22134,7 +22158,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedAccountID", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
 		public System.Nullable<int> CreatedAccountID
 		{
 			get
@@ -22159,7 +22183,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DeleteInfluence", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
 		public bool DeleteInfluence
 		{
 			get
@@ -22180,7 +22204,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DeleteXP", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
 		public bool DeleteXP
 		{
 			get
@@ -31636,13 +31660,9 @@ namespace ZkData
 		
 		private System.DateTime _Time;
 		
-		private string _PayPalConfirmationNumber;
+		private string _PayPalTransactionID;
 		
-		private string _PayPalReference;
-		
-		private string _Contributor;
-		
-		private string _Message;
+		private string _Name;
 		
 		private string _OriginalCurrency;
 		
@@ -31650,7 +31670,13 @@ namespace ZkData
 		
 		private System.Nullable<double> _Euros;
 		
+		private System.Nullable<double> _EurosNet;
+		
 		private int _KudosValue;
+		
+		private string _ItemName;
+		
+		private string _ItemCode;
 		
 		private EntityRef<Account> _Account;
 		
@@ -31664,22 +31690,24 @@ namespace ZkData
     partial void OnAccountIDChanged();
     partial void OnTimeChanging(System.DateTime value);
     partial void OnTimeChanged();
-    partial void OnPayPalConfirmationNumberChanging(string value);
-    partial void OnPayPalConfirmationNumberChanged();
-    partial void OnPayPalReferenceChanging(string value);
-    partial void OnPayPalReferenceChanged();
-    partial void OnContributorChanging(string value);
-    partial void OnContributorChanged();
-    partial void OnMessageChanging(string value);
-    partial void OnMessageChanged();
+    partial void OnPayPalTransactionIDChanging(string value);
+    partial void OnPayPalTransactionIDChanged();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
     partial void OnOriginalCurrencyChanging(string value);
     partial void OnOriginalCurrencyChanged();
     partial void OnOriginalAmountChanging(System.Nullable<double> value);
     partial void OnOriginalAmountChanged();
     partial void OnEurosChanging(System.Nullable<double> value);
     partial void OnEurosChanged();
+    partial void OnEurosNetChanging(System.Nullable<double> value);
+    partial void OnEurosNetChanged();
     partial void OnKudosValueChanging(int value);
     partial void OnKudosValueChanged();
+    partial void OnItemNameChanging(string value);
+    partial void OnItemNameChanged();
+    partial void OnItemCodeChanging(string value);
+    partial void OnItemCodeChanged();
     #endregion
 		
 		public Contribution()
@@ -31754,92 +31782,50 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PayPalConfirmationNumber", DbType="nvarchar(50)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PayPalTransactionID", DbType="nvarchar(50)")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public string PayPalConfirmationNumber
+		public string PayPalTransactionID
 		{
 			get
 			{
-				return this._PayPalConfirmationNumber;
+				return this._PayPalTransactionID;
 			}
 			set
 			{
-				if ((this._PayPalConfirmationNumber != value))
+				if ((this._PayPalTransactionID != value))
 				{
-					this.OnPayPalConfirmationNumberChanging(value);
+					this.OnPayPalTransactionIDChanging(value);
 					this.SendPropertyChanging();
-					this._PayPalConfirmationNumber = value;
-					this.SendPropertyChanged("PayPalConfirmationNumber");
-					this.OnPayPalConfirmationNumberChanged();
+					this._PayPalTransactionID = value;
+					this.SendPropertyChanged("PayPalTransactionID");
+					this.OnPayPalTransactionIDChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PayPalReference", DbType="nvarchar(200)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="nvarchar(100)")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public string PayPalReference
+		public string Name
 		{
 			get
 			{
-				return this._PayPalReference;
+				return this._Name;
 			}
 			set
 			{
-				if ((this._PayPalReference != value))
+				if ((this._Name != value))
 				{
-					this.OnPayPalReferenceChanging(value);
+					this.OnNameChanging(value);
 					this.SendPropertyChanging();
-					this._PayPalReference = value;
-					this.SendPropertyChanged("PayPalReference");
-					this.OnPayPalReferenceChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Contributor", DbType="nvarchar(100)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
-		public string Contributor
-		{
-			get
-			{
-				return this._Contributor;
-			}
-			set
-			{
-				if ((this._Contributor != value))
-				{
-					this.OnContributorChanging(value);
-					this.SendPropertyChanging();
-					this._Contributor = value;
-					this.SendPropertyChanged("Contributor");
-					this.OnContributorChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Message", DbType="nvarchar(400)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
-		public string Message
-		{
-			get
-			{
-				return this._Message;
-			}
-			set
-			{
-				if ((this._Message != value))
-				{
-					this.OnMessageChanging(value);
-					this.SendPropertyChanging();
-					this._Message = value;
-					this.SendPropertyChanged("Message");
-					this.OnMessageChanged();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
 				}
 			}
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OriginalCurrency", DbType="nvarchar(5)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
 		public string OriginalCurrency
 		{
 			get
@@ -31860,7 +31846,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OriginalAmount", DbType="float")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
 		public System.Nullable<double> OriginalAmount
 		{
 			get
@@ -31881,7 +31867,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Euros", DbType="float")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
 		public System.Nullable<double> Euros
 		{
 			get
@@ -31901,8 +31887,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EurosNet", DbType="float")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		public System.Nullable<double> EurosNet
+		{
+			get
+			{
+				return this._EurosNet;
+			}
+			set
+			{
+				if ((this._EurosNet != value))
+				{
+					this.OnEurosNetChanging(value);
+					this.SendPropertyChanging();
+					this._EurosNet = value;
+					this.SendPropertyChanged("EurosNet");
+					this.OnEurosNetChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_KudosValue", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
 		public int KudosValue
 		{
 			get
@@ -31918,6 +31925,48 @@ namespace ZkData
 					this._KudosValue = value;
 					this.SendPropertyChanged("KudosValue");
 					this.OnKudosValueChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ItemName", DbType="nvarchar(50)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		public string ItemName
+		{
+			get
+			{
+				return this._ItemName;
+			}
+			set
+			{
+				if ((this._ItemName != value))
+				{
+					this.OnItemNameChanging(value);
+					this.SendPropertyChanging();
+					this._ItemName = value;
+					this.SendPropertyChanged("ItemName");
+					this.OnItemNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ItemCode", DbType="nvarchar(50)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
+		public string ItemCode
+		{
+			get
+			{
+				return this._ItemCode;
+			}
+			set
+			{
+				if ((this._ItemCode != value))
+				{
+					this.OnItemCodeChanging(value);
+					this.SendPropertyChanging();
+					this._ItemCode = value;
+					this.SendPropertyChanged("ItemCode");
+					this.OnItemCodeChanged();
 				}
 			}
 		}
