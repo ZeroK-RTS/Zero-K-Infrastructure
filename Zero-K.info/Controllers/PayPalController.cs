@@ -18,6 +18,10 @@ namespace ZeroKWeb.Controllers
             public string payment_amount;
             public string payment_status;
             public string payment_currency;
+            public string first_name;
+            public string last_name;
+
+
         }
 
 
@@ -56,11 +60,16 @@ namespace ZeroKWeb.Controllers
 
             var ipn = DeserializeForm<IpnData>(form);
             var rawData = Request.BinaryRead(Request.ContentLength);
+            var sb = new StringBuilder();
+            foreach (var k in form.AllKeys) {
+                sb.AppendFormat("{0} = {1}\n", k, form[k]);
+            }
+
+            var path = Server.MapPath("~");
+            System.IO.File.WriteAllText(Path.Combine(path, "pp_" + ipn.txn_id + ".txt"), sb.ToString());
 
 
-            
-
-            VerifyRequest(rawData);
+            //VerifyRequest(rawData);
 
             //check the payment_status is Completed
             //check that txn_id has not been previously processed
