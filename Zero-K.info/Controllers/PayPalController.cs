@@ -30,7 +30,7 @@ namespace ZeroKWeb.Controllers
         /// </summary>
         static T DeserializeForm<T>(FormCollection form) where T:new() {
             var ret = new T();
-            foreach (var field in typeof(T).GetFields()) field.SetValue(ret, form.GetValue(field.Name));
+            foreach (var field in typeof(T).GetFields()) field.SetValue(ret, form[field.Name]);
             return ret;
         }
 
@@ -58,7 +58,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult Ipn(FormCollection form) {
             
 
-            //var ipn = DeserializeForm<IpnData>(form);
+            var ipn = DeserializeForm<IpnData>(form);
             //var rawData = Request.BinaryRead(Request.ContentLength);
             var sb = new StringBuilder();
             foreach (var k in form.AllKeys) {
@@ -67,7 +67,7 @@ namespace ZeroKWeb.Controllers
 
             var path = Server.MapPath("~");
             //System.IO.File.WriteAllText(Path.Combine(path, "pp_" + ipn.txn_id + ".txt"), sb.ToString());
-            System.IO.File.WriteAllText(Path.Combine(path, "pp_" + ".txt"), sb.ToString());
+            System.IO.File.WriteAllText(Path.Combine(path, "pp_" +ipn.txn_id+ ".txt"), sb.ToString());
 
 
             //VerifyRequest(rawData);
