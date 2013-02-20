@@ -67,10 +67,14 @@ namespace ZeroKWeb.Controllers
 
             var path = Server.MapPath("~");
             //System.IO.File.WriteAllText(Path.Combine(path, "pp_" + ipn.txn_id + ".txt"), sb.ToString());
-            System.IO.File.WriteAllText(Path.Combine(path, "pp_" +ipn.txn_id+ ".txt"), sb.ToString());
 
 
-            //VerifyRequest(rawData);
+            if (VerifyRequest(rawData)) {
+                System.IO.File.WriteAllText(Path.Combine(path, "pp_" + ipn.txn_id + ".txt"), sb.ToString());
+            }
+            else {
+                System.IO.File.WriteAllText(Path.Combine(path, "pp_fail_" + ipn.txn_id + ".txt"), sb.ToString());
+            }
 
             //check the payment_status is Completed
             //check that txn_id has not been previously processed
