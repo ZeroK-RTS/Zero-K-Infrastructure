@@ -58,15 +58,16 @@ namespace ZeroKWeb.Controllers
         public ActionResult Ipn(FormCollection form) {
             
 
-            var ipn = DeserializeForm<IpnData>(form);
-            var rawData = Request.BinaryRead(Request.ContentLength);
+            //var ipn = DeserializeForm<IpnData>(form);
+            //var rawData = Request.BinaryRead(Request.ContentLength);
             var sb = new StringBuilder();
             foreach (var k in form.AllKeys) {
                 sb.AppendFormat("{0} = {1}\n", k, form[k]);
             }
 
             var path = Server.MapPath("~");
-            System.IO.File.WriteAllText(Path.Combine(path, "pp_" + ipn.txn_id + ".txt"), sb.ToString());
+            //System.IO.File.WriteAllText(Path.Combine(path, "pp_" + ipn.txn_id + ".txt"), sb.ToString());
+            System.IO.File.WriteAllText(Path.Combine(path, "pp_" + ".txt"), sb.ToString());
 
 
             //VerifyRequest(rawData);
@@ -77,7 +78,8 @@ namespace ZeroKWeb.Controllers
             //check that payment_amount/payment_currency are correct
             //process payment
 
-            return Content(ipn.payment_amount);
+            return Content("");
+            //return Content(ipn.payment_amount);
         }
 
 
