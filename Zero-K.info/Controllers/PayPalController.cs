@@ -59,7 +59,7 @@ namespace ZeroKWeb.Controllers
             
 
             var ipn = DeserializeForm<IpnData>(form);
-            //var rawData = Request.BinaryRead(Request.ContentLength);
+            var rawData = Request.BinaryRead(Request.ContentLength);
             var sb = new StringBuilder();
             foreach (var k in form.AllKeys) {
                 sb.AppendFormat("{0} = {1}\n", k, form[k]);
