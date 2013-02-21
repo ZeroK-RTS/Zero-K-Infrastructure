@@ -13,8 +13,8 @@ namespace ZeroKWeb.Controllers
         }
 
 
-        public ActionResult Ipn(FormCollection form) {
-            Global.Nightwatch.PayPalInterface.ImportIpnPayment(form, Request.BinaryRead(Request.ContentLength));
+        public ActionResult Ipn() {
+            Global.Nightwatch.PayPalInterface.ImportIpnPayment(Request.Params, Request.BinaryRead(Request.ContentLength));
             return Content("");
         }
 
