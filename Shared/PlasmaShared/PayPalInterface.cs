@@ -105,6 +105,7 @@ namespace PlasmaShared
         }
 
         public static ParsedData ParseIpn(NameValueCollection values) {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             return new ParsedData()
                    {
                        Time = ConvertPayPalDateTime(values["payment_date"]),
