@@ -23,6 +23,23 @@ namespace PlasmaShared
         public event Action<Contribution> NewContribution = (c) => { };
 
 
+        public static DateTime ConvertPayPalDateTime(string payPalDateTime) {
+            // accept a few different date formats because of PST/PDT timezone and slight month difference in sandbox vs. prod.  
+            string[] dateFormats =
+            {
+                "HH:mm:ss MMM dd, yyyy PST", "HH:mm:ss MMM. dd, yyyy PST", "HH:mm:ss MMM dd, yyyy PDT",
+                "HH:mm:ss MMM. dd, yyyy PDT"
+            };
+            DateTime outputDateTime;
+
+            DateTime.TryParseExact(payPalDateTime, dateFormats, new CultureInfo("en-US"), DateTimeStyles.None, out outputDateTime);
+            
+            // convert to local timezone  
+            outputDateTime = outputDateTime.AddHours(8);
+
+            return outputDateTime;
+        }
+
         public static double ConvertToEuros(string fromCurrency, double fromAmount) {
             using (var wc = new WebClient()) {
                 var response =
@@ -31,7 +48,6 @@ namespace PlasmaShared
                 return ret.v*conversionMultiplier;
             }
         }
-
 
         public void ImportPaypalHistory(string folder) {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -61,6 +77,48 @@ namespace PlasmaShared
                     });
         }
 
+        public static ParsedData ParseIpn(NameValueCollection values) {
+            return new ParsedData()
+                   {
+                       Time = ConvertPayPalDateTime(values["payment_date"]),
+                       Name = values["first_name"] + " " + values["last_name"],
+                       Status = values["payment_status"],
+                       Currency = values["mc_currency"],
+                       Gross = double.Parse(values["mc_gross"]),
+                       Net = double.Parse(values["mc_gross"]) - double.Parse(values["mc_fee"]),
+                       Email = values["payer_email"],
+                       TransactionID = values["txn_id"],
+                       ItemName = values["item_name"],
+                       ItemCode = values["item_number"]
+                   };
+        }
+
+
+        /// <summary>
+        /// Sends request back to paypal to verify its true 
+        /// </summary>
+        /// <returns></returns>
+        public static bool VerifyRequest(byte[] data) {
+            var req = (HttpWebRequest)WebRequest.Create("https://www.sandbox.paypal.com/cgi-bin/webscr");
+
+            //Set values for the request back
+            req.Method = "POST";
+            req.ContentType = "application/x-www-form-urlencoded";
+
+            var strRequest = Encoding.ASCII.GetString(data);
+            strRequest += "&cmd=_notify-validate";
+            req.ContentLength = strRequest.Length;
+
+            //Send the request to PayPal and get the response
+            var streamOut = new StreamWriter(req.GetRequestStream(), Encoding.ASCII);
+            streamOut.Write(strRequest);
+            streamOut.Close();
+            var streamIn = new StreamReader(req.GetResponse().GetResponseStream());
+            var strResponse = streamIn.ReadToEnd();
+            streamIn.Close();
+
+            return strResponse == "VERIFIED";
+        }
 
         bool AddPayPalContribution(ParsedData parsed) {
             try {
@@ -119,32 +177,6 @@ namespace PlasmaShared
             }
         }
 
-        /// <summary>
-        /// Sends request back to paypal to verify its true 
-        /// </summary>
-        /// <returns></returns>
-        public static bool VerifyRequest(byte[] data) {
-            var req = (HttpWebRequest)WebRequest.Create("https://www.sandbox.paypal.com/cgi-bin/webscr");
-
-            //Set values for the request back
-            req.Method = "POST";
-            req.ContentType = "application/x-www-form-urlencoded";
-
-            var strRequest = Encoding.ASCII.GetString(data);
-            strRequest += "&cmd=_notify-validate";
-            req.ContentLength = strRequest.Length;
-
-            //Send the request to PayPal and get the response
-            var streamOut = new StreamWriter(req.GetRequestStream(), Encoding.ASCII);
-            streamOut.Write(strRequest);
-            streamOut.Close();
-            var streamIn = new StreamReader(req.GetResponse().GetResponseStream());
-            var strResponse = streamIn.ReadToEnd();
-            streamIn.Close();
-
-            return strResponse == "VERIFIED";
-        }
-
         class ConvertResponse
         {
             public string from;
@@ -165,23 +197,6 @@ namespace PlasmaShared
             public string Status;
             public DateTime Time;
             public string TransactionID;
-        }
-
-        public static ParsedData ParseIpn(NameValueCollection values)
-        {
-            return new ParsedData()
-            {
-                Time = DateTime.Parse(values["payment_date"]),
-                Name = values["first_name"] + " " + values["last_name"],
-                Status = values["payment_status"],
-                Currency = values["mc_currency"],
-                Gross = double.Parse(values["mc_gross"]),
-                Net = double.Parse(values["mc_gross"]) - double.Parse(values["mc_fee"]),
-                Email = values["payer_email"],
-                TransactionID = values["txn_id"],
-                ItemName = values["item_name"],
-                ItemCode = values["item_number"]
-            };
         }
     }
 }
