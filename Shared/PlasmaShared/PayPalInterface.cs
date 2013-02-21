@@ -125,8 +125,11 @@ namespace PlasmaShared
             if (!string.IsNullOrEmpty(itemCode)) {
                 var match = Regex.Match(itemCode, "ZK_ID_([0-9]*)_PACK_([0-9]*)");
                 if (match.Success) {
-                    accountID = int.Parse(match.Groups[1].Value);
-                    packID = int.Parse(match.Groups[2].Value);
+                    int i;
+                    if (int.TryParse(match.Groups[1].Value, out i)) accountID = i;
+                    else accountID = null;
+                    if (int.TryParse(match.Groups[2].Value, out i)) packID = i;
+                    else packID = null;
                     return true;
                 }
             }
