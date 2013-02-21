@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -16,7 +17,7 @@ namespace PlasmaShared
 {
     public class PayPalInterface
     {
-        public const string PayPalReferencePrefix = "ZK_ID_";
+        const string SpringItemCode = "SpringRTS";
         const double conversionMultiplier = 0.98; // extra cost of conversion from foreign currency
 
         public event Action<string> Error = (e) => { };
@@ -49,15 +50,21 @@ namespace PlasmaShared
             }
         }
 
+        public static string GetItemCode(int? accountID, int? packID) {
+            return string.Format("ZK_ID_{0}_PACK_{1}", accountID, packID);
+        }
+
         public void ImportIpnPayment(NameValueCollection values, byte[] rawRequest) {
             try {
                 var parsed = ParseIpn(values);
                 var contribution = AddPayPalContribution(parsed);
                 var verified = VerifyRequest(rawRequest);
                 if (contribution != null && !verified) {
-                    Error(string.Format("Warning, transaction {0} by {1} VERIFICATION FAILED, check that it is not a fake! http://zero-k.info/Contributions ",
-                                        parsed.TransactionID,
-                                        parsed.Name));
+                    Error(
+                        string.Format(
+                            "Warning, transaction {0} by {1} VERIFICATION FAILED, check that it is not a fake! http://zero-k.info/Contributions ",
+                            parsed.TransactionID,
+                            parsed.Name));
                     using (var db = new ZkDataContext()) {
                         db.Contributions.First(x => x.ContributionID == contribution.ContributionID).Comment = "VERIFICATION FAILED";
                         db.SubmitAndMergeChanges();
@@ -112,6 +119,20 @@ namespace PlasmaShared
                    };
         }
 
+        public static bool TryParseItemCode(string itemCode, out int? accountID, out int? packID) {
+            if (!string.IsNullOrEmpty(itemCode)) {
+                var match = Regex.Match(itemCode, "ZK_ID_([0-9]*)_PACK_([0-9]*)");
+                if (match.Success) {
+                    accountID = int.Parse(match.Groups[1].Value);
+                    packID = int.Parse(match.Groups[2].Value);
+                    return true;
+                }
+            }
+            accountID = null;
+            packID = null;
+            return false;
+        }
+
 
         /// <summary>
         /// Sends request back to paypal to verify its true 
@@ -154,11 +175,8 @@ namespace PlasmaShared
                     grossEur = ConvertToEuros(parsed.Currency, parsed.Gross);
                 }
 
-                int? accountID = null;
-                if (parsed.ItemCode != null) {
-                    var match = Regex.Match(parsed.ItemCode, string.Format("{0}([0-9]+)", PayPalReferencePrefix));
-                    if (match.Success) accountID = int.Parse(match.Groups[1].Value);
-                }
+                int? accountID, packID;
+                TryParseItemCode(parsed.ItemCode, out accountID, out packID);
 
                 Contribution contrib;
                 using (var db = new ZkDataContext()) {
@@ -180,11 +198,30 @@ namespace PlasmaShared
                                   Time = parsed.Time,
                                   EurosNet = netEur,
                                   ItemName = parsed.ItemName,
-                                  Email = parsed.Email
+                                  Email = parsed.Email,
+                                  PackID = packID,
+                                  RedeemCode = acc != null ? new Guid().ToString() : null
                               };
                     db.Contributions.InsertOnSubmit(contrib);
                     if (acc != null) acc.Kudos += contrib.KudosValue;
                     db.SubmitChanges();
+
+                    if (acc == null) {
+                        var smtp = new SmtpClient("localhost");
+
+                        var isSpring = !contrib.ItemCode.StartsWith("ZK");
+
+                        var subject = string.Format("Thank you for donating to {0}, redeem your Kudos now! :-)", isSpring ? "Spring/Zero-K" : "Zero-K");
+
+                        var body =
+                            string.Format(
+                                "Hi {0}, \nThank you for donating to {1}\nYou can now redeem Kudos - special reward for Zero-K by clicking here: {2} \n (Please be patient Kudos features for the game will be added in the short future)\n\nWe wish you lots of fun playing the game and we are looking forward to meet you in game!\nThe Zero-K team",
+                                contrib.Name,
+                                isSpring ? "the Spring project and Zero-K" : "Zero-K and Spring project",
+                                GetCodeLink(contrib.RedeemCode));
+
+                        smtp.Send(new MailMessage(GlobalConst.TeamEmail, contrib.Email, subject, body));
+                    }
 
                     NewContribution(contrib);
                 }
@@ -195,6 +232,10 @@ namespace PlasmaShared
                 Error(ex.ToString());
                 return null;
             }
+        }
+
+        static string GetCodeLink(string code) {
+            return string.Format("http://zero-k.info/Contributions/Redeem?code={0}", code);
         }
 
         class ConvertResponse

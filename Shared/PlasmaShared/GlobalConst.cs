@@ -63,6 +63,7 @@
 	    public const bool VpnCheckEnabled = false;
 
         public const double EurosToKudos = 10.0;
+	    public const string TeamEmail = "team@zero-k.info";
 
 
 	    public static bool IsZkMod(string name)

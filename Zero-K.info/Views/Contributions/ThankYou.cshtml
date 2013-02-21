@@ -1,0 +1,18 @@
+﻿@using ZeroKWeb
+@model dynamic
+@{
+    ViewBag.Title = "Thank you for donation!";
+}
+
+<b>Thank you for your donation to Zero-K! :-) </b><br/>
+Email with receip has been sent to you. You can view details of your transaction by logging into your account at <a href="http://www.paypal.com">http://www.paypal.com</a><br/>
+<br/>
+@if (Global.IsAccountAuthorized) {
+    <text>Kudos reward will be added to your gaming account shortly, enjoy :)</text>
+}
+else {
+    <text>
+        Please <a href="http://zero-k.info/Wiki/Download" target="_new">download the game</a> now to create your account and play :-)<br/>
+        Code to redeem your donation will be sent to your email.
+    </text>
+}

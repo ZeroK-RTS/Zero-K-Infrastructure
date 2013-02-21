@@ -31683,6 +31683,10 @@ namespace ZkData
 		
 		private string _Comment;
 		
+		private System.Nullable<int> _PackID;
+		
+		private string _RedeemCode;
+		
 		private EntityRef<Account> _Account;
 		
     #region Extensibility Method Definitions
@@ -31717,6 +31721,10 @@ namespace ZkData
     partial void OnEmailChanged();
     partial void OnCommentChanging(string value);
     partial void OnCommentChanged();
+    partial void OnPackIDChanging(System.Nullable<int> value);
+    partial void OnPackIDChanged();
+    partial void OnRedeemCodeChanging(string value);
+    partial void OnRedeemCodeChanged();
     #endregion
 		
 		public Contribution()
@@ -32018,6 +32026,48 @@ namespace ZkData
 					this._Comment = value;
 					this.SendPropertyChanged("Comment");
 					this.OnCommentChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PackID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
+		public System.Nullable<int> PackID
+		{
+			get
+			{
+				return this._PackID;
+			}
+			set
+			{
+				if ((this._PackID != value))
+				{
+					this.OnPackIDChanging(value);
+					this.SendPropertyChanging();
+					this._PackID = value;
+					this.SendPropertyChanged("PackID");
+					this.OnPackIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RedeemCode", DbType="nvarchar(100)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
+		public string RedeemCode
+		{
+			get
+			{
+				return this._RedeemCode;
+			}
+			set
+			{
+				if ((this._RedeemCode != value))
+				{
+					this.OnRedeemCodeChanging(value);
+					this.SendPropertyChanging();
+					this._RedeemCode = value;
+					this.SendPropertyChanged("RedeemCode");
+					this.OnRedeemCodeChanged();
 				}
 			}
 		}

@@ -1221,6 +1221,8 @@
       <Column Name="ItemCode" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
       <Column Name="Email" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
       <Column Name="Comment" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
+      <Column Name="PackID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="RedeemCode" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
       <Association Name="Account_Contribution" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>

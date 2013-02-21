@@ -1,7 +1,6 @@
-﻿using System;
-using System.IO;
+﻿using System.Linq;
 using System.Web.Mvc;
-using PlasmaShared;
+using ZkData;
 
 namespace ZeroKWeb.Controllers
 {
@@ -16,12 +15,27 @@ namespace ZeroKWeb.Controllers
 
         public ActionResult Ipn(FormCollection form) {
             Global.Nightwatch.PayPalInterface.ImportIpnPayment(form, Request.BinaryRead(Request.ContentLength));
-
             return Content("");
         }
 
+
+        [Auth]
+        public ActionResult Redeem(string code) {
+            var db = new ZkDataContext();
+            if (string.IsNullOrEmpty(code)) return Content("Code is empty");
+            var contrib = db.Contributions.SingleOrDefault(x => x.RedeemCode == code);
+            if (contrib == null) return Content("No contribution with that code found");
+            if (contrib.Account != null) return Content(string.Format("This contribution has already been assigned to {0}", contrib.Account.Name));
+            var acc = Account.AccountByAccountID(db, Global.AccountID);
+            acc.Kudos += contrib.KudosValue;
+            contrib.Account = acc;
+            db.SubmitAndMergeChanges();
+
+            return Content(string.Format("Thank you!! {0} Kudos have been added to your account {1}", contrib.KudosValue, contrib.Account.Name));
+        }
+
         public ActionResult ThankYou() {
-            return Content("Thank you !!");
+            return View("ThankYou");
         }
     }
 }

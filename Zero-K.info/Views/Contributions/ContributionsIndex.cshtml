@@ -1,31 +1,22 @@
-﻿@model dynamic
-<h1>TEST ONLY DO NOT USE YET </h1>
+﻿@using PlasmaShared
+@using ZeroKWeb
+@model dynamic
+<h1>Contribute to Zero-K and Spring project</h1>
 
 <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
 
-    <!-- Identify your business so that you can collect the payments. -->
-    <!--input type="hidden" name="business" value="S7LYLK6P63H48"-->
-    
-    <input type="hidden" name="business" value="licho_1361154319_per@ufo.cz">
-    
-    <!--input type="hidden" name="lc" value="CZ"-->
+    <input type="hidden" name="business" value="S7LYLK6P63H48">
 
     <!-- Specify a Donate button. -->
     <input type="hidden" name="cmd" value="_donations">
 
     <!-- Specify details about the contribution -->
     <input type="hidden" name="item_name" value="Zero-K">
-    <input type="hidden" name="item_number" value="ZK1">
-    <input type="hidden" name="amount" value="1">
-    <input type="hidden" name="currency_code" value="USD">
-    <input type="hidden" name="custom" value="Licho1234">
-    
+    <input type="hidden" name="item_number" value="@PayPalInterface.GetItemCode(Global.AccountID, null)">
+    <input type="hidden" name="currency_code" value="EUR">
     <input type="hidden" name="return" value="@Url.Action("ThankYou")">
-    
     <input type="hidden" name="notify_url" value="@Url.Action("Ipn")">
     
-
-
     <!-- Display the payment button. -->
     <input type="image" name="submit" border="0"
         src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"

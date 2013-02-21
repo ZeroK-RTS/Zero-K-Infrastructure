@@ -191,8 +191,8 @@ namespace Fixer
 
 
         static void Main(string[] args) {
-            //var pp = new PayPalInterface();
-            //pp.ImportPaypalHistory(@"e:\sosak");
+            var pp = new PayPalInterface();
+            pp.ImportPaypalHistory(Directory.GetCurrentDirectory());
 
             //Test1v1Elo();
             //GenerateTechs();
