@@ -25,7 +25,7 @@ namespace ZeroKWeb.Controllers
             if (string.IsNullOrEmpty(code)) return Content("Code is empty");
             var contrib = db.Contributions.SingleOrDefault(x => x.RedeemCode == code);
             if (contrib == null) return Content("No contribution with that code found");
-            if (contrib.Account != null) return Content(string.Format("This contribution has already been assigned to {0}", contrib.Account.Name));
+            if (contrib.Account != null) return Content(string.Format("This contribution has been assigned to {0}, thank you.", contrib.Account.Name));
             var acc = Account.AccountByAccountID(db, Global.AccountID);
             acc.Kudos += contrib.KudosValue;
             contrib.Account = acc;

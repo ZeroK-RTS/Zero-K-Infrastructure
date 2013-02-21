@@ -200,28 +200,29 @@ namespace PlasmaShared
                                   ItemName = parsed.ItemName,
                                   Email = parsed.Email,
                                   PackID = packID,
-                                  RedeemCode = acc == null ? Guid.NewGuid().ToString() : null
+                                  RedeemCode = Guid.NewGuid().ToString()
                               };
                     db.Contributions.InsertOnSubmit(contrib);
                     if (acc != null) acc.Kudos += contrib.KudosValue;
                     db.SubmitChanges();
 
-                    if (acc == null) {
-                        var smtp = new SmtpClient("localhost");
 
-                        var isSpring = !contrib.ItemCode.StartsWith("ZK");
+                    // technically not needed to sent when account is known, but perhaps its nice to get a confirmation like that
 
-                        var subject = string.Format("Thank you for donating to {0}, redeem your Kudos now! :-)", isSpring ? "Spring/Zero-K" : "Zero-K");
+                    var smtp = new SmtpClient("localhost");
 
-                        var body =
-                            string.Format(
-                                "Hi {0}, \nThank you for donating to {1}\nYou can now redeem Kudos - special reward for Zero-K by clicking here: {2} \n (Please be patient Kudos features for the game will be added in the short future)\n\nWe wish you lots of fun playing the game and we are looking forward to meet you in game!\nThe Zero-K team",
-                                contrib.Name,
-                                isSpring ? "the Spring project and Zero-K" : "Zero-K and Spring project",
-                                GetCodeLink(contrib.RedeemCode));
+                    var isSpring = !contrib.ItemCode.StartsWith("ZK");
 
-                        smtp.Send(new MailMessage(GlobalConst.TeamEmail, contrib.Email, subject, body));
-                    }
+                    var subject = string.Format("Thank you for donating to {0}, redeem your Kudos now! :-)", isSpring ? "Spring/Zero-K" : "Zero-K");
+
+                    var body =
+                        string.Format(
+                            "Hi {0}, \nThank you for donating to {1}\nYou can now redeem Kudos - special reward for Zero-K by clicking here: {2} \n (Please be patient Kudos features for the game will be added in the short future)\n\nWe wish you lots of fun playing the game and we are looking forward to meet you in game!\nThe Zero-K team",
+                            contrib.Name,
+                            isSpring ? "the Spring project and Zero-K" : "Zero-K and Spring project",
+                            GetCodeLink(contrib.RedeemCode));
+
+                    smtp.Send(new MailMessage(GlobalConst.TeamEmail, contrib.Email, subject, body));
 
                     NewContribution(contrib);
                 }
