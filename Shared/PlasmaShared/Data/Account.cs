@@ -9,6 +9,7 @@ namespace ZkData
 {
     partial class Account: IPrincipal, IIdentity
     {
+        Dictionary<AutohostMode, GamePreference> preferences;
         public static Func<ZkDataContext, int, Account> AccountByAccountID =
             CompiledQuery.Compile<ZkDataContext, int, Account>((db, accountID) => db.Accounts.SingleOrDefault(x => x.AccountID == accountID));
 
@@ -22,21 +23,17 @@ namespace ZkData
             CompiledQuery.Compile<ZkDataContext, string, string, Account>(
                 (db, login, passwordHash) => db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == passwordHash && x.LobbyID != null));
 
-        Dictionary<AutohostMode, GamePreference> preferences;
         public int AvailableXP { get {
-            var kudosGained = KudosGained;
-            return GetXpForLevel(Level) - AccountUnlocks.Where(x=> !KudosPurchases.Any(y=>y.UnlockID == x.UnlockID)).Sum(x => (int?)(x.Unlock.XpCost*x.Count)) ?? 0;
+            return GetXpForLevel(Level) -
+                   AccountUnlocks.Sum(x => (int?)(x.Unlock.XpCost*(x.Count - KudosPurchases.Count(y => y.UnlockID == x.UnlockID)))) ?? 0;
         } }
-        
-        public int KudosGained { get { return ContributionsByAccountID.Sum(x=>x.KudosValue); } }
-        public int KudosSpent { get { return  KudosPurchases.Sum(x=>x.KudosValue); } }
-
+        public double Effective1v1Elo { get { return Elo1v1Weight > 1 ? Elo1v1 + (GlobalConst.EloWeightMax - Elo1v1Weight)*GlobalConst.EloWeightMalusFactor : 0; } }
 
 
         public double EffectiveElo { get { return Elo + (GlobalConst.EloWeightMax - EloWeight)*GlobalConst.EloWeightMalusFactor; } }
         public double EloInvWeight { get { return GlobalConst.EloWeightMax + 1 - EloWeight; } }
-        public double Effective1v1Elo { get { return Elo1v1Weight > 1 ? Elo1v1 + (GlobalConst.EloWeightMax - Elo1v1Weight)*GlobalConst.EloWeightMalusFactor : 0; } }
-
+        public int KudosGained { get { return ContributionsByAccountID.Sum(x => x.KudosValue); } }
+        public int KudosSpent { get { return KudosPurchases.Sum(x => x.KudosValue); } }
 
 
         public Dictionary<AutohostMode, GamePreference> Preferences {
@@ -45,8 +42,8 @@ namespace ZkData
                 else {
                     preferences = new Dictionary<AutohostMode, GamePreference>();
                     if (!string.IsNullOrEmpty(GamePreferences)) {
-                        foreach (string line in GamePreferences.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)) {
-                            string[] parts = line.Split('=');
+                        foreach (var line in GamePreferences.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)) {
+                            var parts = line.Split('=');
 
                             var mode = (AutohostMode)int.Parse(parts[0]);
                             var preference = (GamePreference)int.Parse(parts[1]);
@@ -54,33 +51,11 @@ namespace ZkData
                         }
                     }
                     foreach (AutohostMode v in Enum.GetValues(typeof(AutohostMode))) if (!preferences.ContainsKey(v)) preferences[v] = v != AutohostMode.Game1v1 ? GamePreference.Like : GamePreference.Ok;
-                    if (preferences.Where(x => x.Key != AutohostMode.None).All(x => x.Value == GamePreference.Never)) foreach (var p in preferences.ToList()) preferences[p.Key] = p.Key != AutohostMode.Game1v1 ? GamePreference.Like : GamePreference.Ok; ;
+                    if (preferences.Where(x => x.Key != AutohostMode.None).All(x => x.Value == GamePreference.Never)) foreach (var p in preferences.ToList()) preferences[p.Key] = p.Key != AutohostMode.Game1v1 ? GamePreference.Like : GamePreference.Ok;
+                    ;
                 }
                 return preferences;
             }
-        }
-
-        #region IIdentity Members
-
-        public string AuthenticationType { get { return "LobbyServer"; } }
-        public bool IsAuthenticated { get { return true; } }
-
-        #endregion
-
-        #region IPrincipal Members
-
-        public bool IsInRole(string role) {
-            if (role == "LobbyAdmin") return IsLobbyAdministrator;
-            if (role == "ZkAdmin") return IsZeroKAdmin;
-            else return string.IsNullOrEmpty(role);
-        }
-
-        public IIdentity Identity { get { return this; } }
-
-        #endregion
-
-        public override string ToString() {
-            return Name;
         }
 
         public static double AdjustEloWeight(double currentWeight, double sumWeight, int sumCount) {
@@ -89,218 +64,6 @@ namespace ZkData
                 if (currentWeight > GlobalConst.EloWeightMax) currentWeight = GlobalConst.EloWeightMax;
             }
             return currentWeight;
-        }
-
-        public double GetWarpAvailable() {
-            if (Faction != null) return Math.Min(GetWarpQuota(), Faction.Warps);
-            else return 0;
-        }
-
-
-        public double GetMetalAvailable() {
-            if (Faction != null) return Math.Min(GetMetalQuota(), Faction.Metal);
-            else return 0;
-        }
-
-        public double GetDropshipsAvailable() {
-            if (Faction != null) {
-                double q = GetDropshipQuota();
-                if (q < 1 && !Faction.PlanetFactions.Any(x => x.Dropships > 0)) q = 1;
-                return Math.Min(q, Faction.Dropships);
-            }
-            else return 0;
-        }
-
-        public double GetBombersAvailable() {
-            if (Faction != null) return Math.Min(GetBomberQuota(), Faction.Bombers);
-            else return 0;
-        }
-
-        public bool CanSetPriority(PlanetStructure ps) {
-            if (Faction == null || ps.Account == null) return false;
-            if (ps.Account.FactionID == FactionID && HasFactionRight(x => x.RightSetEnergyPriority)) return true;
-            if (ClanID != null && ps.Account.ClanID == ClanID && HasClanRight(x => x.RightSetEnergyPriority)) return true;
-            return false;
-        }
-
-        public bool CanSetStructureTarget(PlanetStructure ps) {
-            if (Faction == null || ps.Account == null) return false;
-            if (ps.OwnerAccountID == AccountID || ps.Planet.OwnerAccountID == AccountID) return true; // owner of planet or owner of structure
-            if (ps.Account.FactionID == FactionID && HasFactionRight(x => x.RightDropshipQuota > 0)) return true;
-            return false;
-        }
-
-
-        public bool HasClanRight(Func<RoleType, bool> test) {
-            return AccountRolesByAccountID.Where(x => x.RoleType.IsClanOnly).Select(x => x.RoleType).Any(test);
-        }
-
-        public bool HasFactionRight(Func<RoleType, bool> test) {
-            return AccountRolesByAccountID.Where(x => !x.RoleType.IsClanOnly).Select(x => x.RoleType).Any(test);
-        }
-
-
-        public double GetDropshipQuota() {
-            if (PwDropshipsProduced < PwDropshipsUsed) PwDropshipsUsed = PwDropshipsProduced;
-
-            return GetQuota(x => x.PwDropshipsProduced, x => x.PwDropshipsUsed, x => x.RightDropshipQuota, x => x.Dropships);
-        }
-
-        public double GetMetalQuota() {
-            if (PwMetalProduced < PwMetalUsed) PwMetalUsed = PwMetalProduced;
-
-            return GetQuota(x => x.PwMetalProduced, x => x.PwMetalUsed, x => x.RightMetalQuota, x => x.Metal);
-        }
-
-        public double GetBomberQuota() {
-            if (PwBombersProduced < PwBombersUsed) PwBombersUsed = PwBombersProduced;
-
-            return GetQuota(x => x.PwBombersProduced, x => x.PwBombersUsed, x => x.RightBomberQuota, x => x.Bombers);
-        }
-
-        public double GetWarpQuota() {
-            if (PwWarpProduced < PwWarpUsed) PwWarpUsed = PwWarpProduced;
-
-            return GetQuota(x => x.PwWarpProduced, x => x.PwWarpUsed, x => x.RightWarpQuota, x => x.Warps);
-        }
-
-
-        public void SpendDropships(double count) {
-            PwDropshipsUsed += count;
-            Faction.Dropships -= count;
-
-            if (PwDropshipsProduced < PwDropshipsUsed) PwDropshipsUsed = PwDropshipsProduced;
-        }
-
-        public void ProduceDropships(double count) {
-            PwDropshipsProduced += count;
-            Faction.Dropships += count;
-
-            if (PwDropshipsProduced < PwDropshipsUsed) PwDropshipsUsed = PwDropshipsProduced;
-        }
-
-
-        public void SpendMetal(double count) {
-            PwMetalUsed += count;
-            Faction.Metal -= count;
-
-            if (PwMetalUsed > PwMetalProduced) PwMetalUsed = PwMetalProduced;
-        }
-
-        public void ProduceMetal(double count) {
-            PwMetalProduced += count;
-            Faction.Metal += count;
-
-            if (PwMetalUsed > PwMetalProduced) PwMetalUsed = PwMetalProduced;
-        }
-
-        public void SpendBombers(double count) {
-            PwBombersUsed += count;
-            Faction.Bombers -= count;
-
-            if (PwBombersUsed > PwBombersProduced) PwBombersUsed = PwBombersProduced;
-        }
-
-        public void ProduceBombers(double count) {
-            PwBombersProduced += count;
-            Faction.Bombers += count;
-
-            if (PwBombersUsed > PwBombersProduced) PwBombersUsed = PwBombersProduced;
-        }
-
-        public void SpendWarps(double count) {
-            PwWarpUsed += count;
-            Faction.Warps -= count;
-
-            if (PwWarpUsed > PwWarpProduced) PwWarpUsed = PwWarpProduced;
-        }
-
-        public void ProduceWarps(double count) {
-            PwWarpProduced += count;
-            Faction.Warps += count;
-
-            if (PwWarpUsed > PwWarpProduced) PwWarpUsed = PwWarpProduced;
-        }
-
-        public double GetQuota(Func<Account, double> producedSelector,
-                               Func<Account, double> usedSelector,
-                               Func<RoleType, double?> quotaSelector,
-                               Func<Faction, double> factionResources) {
-            double total = producedSelector(this) - usedSelector(this);
-            if (total < 0) total = 0;
-
-            if (Faction != null) {
-                double clanQratio = AccountRolesByAccountID.Where(x => x.RoleType.IsClanOnly).Select(x => x.RoleType).Max(quotaSelector) ?? 0;
-                double factionQratio = AccountRolesByAccountID.Where(x => !x.RoleType.IsClanOnly).Select(x => x.RoleType).Max(quotaSelector) ?? 0;
-
-                double facRes = factionResources(Faction);
-
-                if (factionQratio >= clanQratio) total += facRes*factionQratio;
-                else {
-                    if (clanQratio > 0 && Clan != null) {
-                        double sumClanProd = Clan.Accounts.Sum(producedSelector);
-                        double sumFacProd = Faction.Accounts.Sum(producedSelector);
-                        if (sumFacProd > 0) {
-                            double clanRes = facRes*sumClanProd/sumFacProd;
-                            total += clanRes*clanQratio + (facRes - clanRes)*factionQratio;
-                        }
-                    }
-                }
-            }
-
-            return Math.Floor(total);
-        }
-
-
-        public void SetPreferences(Dictionary<AutohostMode, GamePreference> data) {
-            string str = "";
-            foreach (var kvp in data) str += string.Format("{0}={1}\n", (int)kvp.Key, (int)kvp.Value);
-            GamePreferences = str;
-            preferences = null;
-        }
-
-
-        public void CheckLevelUp() {
-            if (XP > GetXpForLevel(Level + 1)) Level++;
-        }
-
-
-        public IEnumerable<Poll> ValidPolls(ZkDataContext db = null) {
-            if (db == null) db = new ZkDataContext();
-            return
-                db.Polls.Where(
-                    x =>
-                    (x.ExpireBy == null || x.ExpireBy > DateTime.UtcNow) && (x.RestrictClanID == null || x.RestrictClanID == ClanID) &&
-                    (x.RestrictFactionID == null || x.RestrictFactionID == FactionID));
-        }
-
-
-        public int GetDropshipCapacity() {
-            if (Faction == null) return 0;
-            return GlobalConst.DefaultDropshipCapacity +
-                   (Faction.Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipCapacity) ?? 0);
-        }
-
-        public int GetBomberCapacity() {
-            if (Faction == null) return 0;
-            return GlobalConst.DefaultBomberCapacity +
-                   (Faction.Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive).Sum(x => x.StructureType.EffectBomberCapacity) ?? 0);
-        }
-
-
-        public static int GetXpForLevel(int level) {
-            if (level < 0) return 0;
-            return level*80 + 20*level*level;
-        }
-
-
-        partial void OnCreated() {
-            FirstLogin = DateTime.UtcNow;
-            Elo = 1500;
-            Elo1v1 = 1500;
-            EloWeight = 1;
-            Elo1v1Weight = 1;
-            SpringieLevel = 1;
         }
 
         public bool CanAppoint(Account targetAccount, RoleType roleType) {
@@ -324,9 +87,232 @@ namespace ZkData
             else return false;
         }
 
+        public bool CanSetPriority(PlanetStructure ps) {
+            if (Faction == null || ps.Account == null) return false;
+            if (ps.Account.FactionID == FactionID && HasFactionRight(x => x.RightSetEnergyPriority)) return true;
+            if (ClanID != null && ps.Account.ClanID == ClanID && HasClanRight(x => x.RightSetEnergyPriority)) return true;
+            return false;
+        }
+
+        public bool CanSetStructureTarget(PlanetStructure ps) {
+            if (Faction == null || ps.Account == null) return false;
+            if (ps.OwnerAccountID == AccountID || ps.Planet.OwnerAccountID == AccountID) return true; // owner of planet or owner of structure
+            if (ps.Account.FactionID == FactionID && HasFactionRight(x => x.RightDropshipQuota > 0)) return true;
+            return false;
+        }
+
         public bool CanVoteRecall(Account targetAccount, RoleType roleType) {
             if (roleType.IsVoteable && targetAccount.FactionID == FactionID && (!roleType.IsClanOnly || targetAccount.ClanID == ClanID)) return true;
             else return false;
+        }
+
+        public void CheckLevelUp() {
+            if (XP > GetXpForLevel(Level + 1)) Level++;
+        }
+
+        public int GetBomberCapacity() {
+            if (Faction == null) return 0;
+            return GlobalConst.DefaultBomberCapacity +
+                   (Faction.Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive).Sum(x => x.StructureType.EffectBomberCapacity) ?? 0);
+        }
+
+        public double GetBomberQuota() {
+            if (PwBombersProduced < PwBombersUsed) PwBombersUsed = PwBombersProduced;
+
+            return GetQuota(x => x.PwBombersProduced, x => x.PwBombersUsed, x => x.RightBomberQuota, x => x.Bombers);
+        }
+
+        public double GetBombersAvailable() {
+            if (Faction != null) return Math.Min(GetBomberQuota(), Faction.Bombers);
+            else return 0;
+        }
+
+        public int GetDropshipCapacity() {
+            if (Faction == null) return 0;
+            return GlobalConst.DefaultDropshipCapacity +
+                   (Faction.Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipCapacity) ?? 0);
+        }
+
+
+        public double GetDropshipQuota() {
+            if (PwDropshipsProduced < PwDropshipsUsed) PwDropshipsUsed = PwDropshipsProduced;
+
+            return GetQuota(x => x.PwDropshipsProduced, x => x.PwDropshipsUsed, x => x.RightDropshipQuota, x => x.Dropships);
+        }
+
+        public double GetDropshipsAvailable() {
+            if (Faction != null) {
+                var q = GetDropshipQuota();
+                if (q < 1 && !Faction.PlanetFactions.Any(x => x.Dropships > 0)) q = 1;
+                return Math.Min(q, Faction.Dropships);
+            }
+            else return 0;
+        }
+
+        public double GetMetalAvailable() {
+            if (Faction != null) return Math.Min(GetMetalQuota(), Faction.Metal);
+            else return 0;
+        }
+
+        public double GetMetalQuota() {
+            if (PwMetalProduced < PwMetalUsed) PwMetalUsed = PwMetalProduced;
+
+            return GetQuota(x => x.PwMetalProduced, x => x.PwMetalUsed, x => x.RightMetalQuota, x => x.Metal);
+        }
+
+        public double GetQuota(Func<Account, double> producedSelector,
+                               Func<Account, double> usedSelector,
+                               Func<RoleType, double?> quotaSelector,
+                               Func<Faction, double> factionResources) {
+            var total = producedSelector(this) - usedSelector(this);
+            if (total < 0) total = 0;
+
+            if (Faction != null) {
+                var clanQratio = AccountRolesByAccountID.Where(x => x.RoleType.IsClanOnly).Select(x => x.RoleType).Max(quotaSelector) ?? 0;
+                var factionQratio = AccountRolesByAccountID.Where(x => !x.RoleType.IsClanOnly).Select(x => x.RoleType).Max(quotaSelector) ?? 0;
+
+                var facRes = factionResources(Faction);
+
+                if (factionQratio >= clanQratio) total += facRes*factionQratio;
+                else {
+                    if (clanQratio > 0 && Clan != null) {
+                        var sumClanProd = Clan.Accounts.Sum(producedSelector);
+                        var sumFacProd = Faction.Accounts.Sum(producedSelector);
+                        if (sumFacProd > 0) {
+                            var clanRes = facRes*sumClanProd/sumFacProd;
+                            total += clanRes*clanQratio + (facRes - clanRes)*factionQratio;
+                        }
+                    }
+                }
+            }
+
+            return Math.Floor(total);
+        }
+
+        public double GetWarpAvailable() {
+            if (Faction != null) return Math.Min(GetWarpQuota(), Faction.Warps);
+            else return 0;
+        }
+
+        public double GetWarpQuota() {
+            if (PwWarpProduced < PwWarpUsed) PwWarpUsed = PwWarpProduced;
+
+            return GetQuota(x => x.PwWarpProduced, x => x.PwWarpUsed, x => x.RightWarpQuota, x => x.Warps);
+        }
+
+        public static int GetXpForLevel(int level) {
+            if (level < 0) return 0;
+            return level*80 + 20*level*level;
+        }
+
+        public bool HasClanRight(Func<RoleType, bool> test) {
+            return AccountRolesByAccountID.Where(x => x.RoleType.IsClanOnly).Select(x => x.RoleType).Any(test);
+        }
+
+        public bool HasFactionRight(Func<RoleType, bool> test) {
+            return AccountRolesByAccountID.Where(x => !x.RoleType.IsClanOnly).Select(x => x.RoleType).Any(test);
+        }
+
+        public void ProduceBombers(double count) {
+            PwBombersProduced += count;
+            Faction.Bombers += count;
+
+            if (PwBombersUsed > PwBombersProduced) PwBombersUsed = PwBombersProduced;
+        }
+
+
+        public void ProduceDropships(double count) {
+            PwDropshipsProduced += count;
+            Faction.Dropships += count;
+
+            if (PwDropshipsProduced < PwDropshipsUsed) PwDropshipsUsed = PwDropshipsProduced;
+        }
+
+
+        public void ProduceMetal(double count) {
+            PwMetalProduced += count;
+            Faction.Metal += count;
+
+            if (PwMetalUsed > PwMetalProduced) PwMetalUsed = PwMetalProduced;
+        }
+
+        public void ProduceWarps(double count) {
+            PwWarpProduced += count;
+            Faction.Warps += count;
+
+            if (PwWarpUsed > PwWarpProduced) PwWarpUsed = PwWarpProduced;
+        }
+
+        /// <summary>
+        /// Todo distribute among clan and faction members
+        /// </summary>
+        public void ResetQuotas() {
+            PwBombersProduced = 0;
+            PwBombersUsed = 0;
+            PwDropshipsProduced = 0;
+            PwDropshipsUsed = 0;
+            PwMetalProduced = 0;
+            PwMetalUsed = 0;
+        }
+
+
+        public void SetPreferences(Dictionary<AutohostMode, GamePreference> data) {
+            var str = "";
+            foreach (var kvp in data) str += string.Format("{0}={1}\n", (int)kvp.Key, (int)kvp.Value);
+            GamePreferences = str;
+            preferences = null;
+        }
+
+        public void SpendBombers(double count) {
+            PwBombersUsed += count;
+            Faction.Bombers -= count;
+
+            if (PwBombersUsed > PwBombersProduced) PwBombersUsed = PwBombersProduced;
+        }
+
+        public void SpendDropships(double count) {
+            PwDropshipsUsed += count;
+            Faction.Dropships -= count;
+
+            if (PwDropshipsProduced < PwDropshipsUsed) PwDropshipsUsed = PwDropshipsProduced;
+        }
+
+        public void SpendMetal(double count) {
+            PwMetalUsed += count;
+            Faction.Metal -= count;
+
+            if (PwMetalUsed > PwMetalProduced) PwMetalUsed = PwMetalProduced;
+        }
+
+        public void SpendWarps(double count) {
+            PwWarpUsed += count;
+            Faction.Warps -= count;
+
+            if (PwWarpUsed > PwWarpProduced) PwWarpUsed = PwWarpProduced;
+        }
+
+
+        public IEnumerable<Poll> ValidPolls(ZkDataContext db = null) {
+            if (db == null) db = new ZkDataContext();
+            return
+                db.Polls.Where(
+                    x =>
+                    (x.ExpireBy == null || x.ExpireBy > DateTime.UtcNow) && (x.RestrictClanID == null || x.RestrictClanID == ClanID) &&
+                    (x.RestrictFactionID == null || x.RestrictFactionID == FactionID));
+        }
+
+        public override string ToString() {
+            return Name;
+        }
+
+
+        partial void OnCreated() {
+            FirstLogin = DateTime.UtcNow;
+            Elo = 1500;
+            Elo1v1 = 1500;
+            EloWeight = 1;
+            Elo1v1Weight = 1;
+            SpringieLevel = 1;
         }
 
 
@@ -350,7 +336,7 @@ namespace ZkData
             if (action == ChangeAction.Update || action == ChangeAction.Insert) {
                 if (string.IsNullOrEmpty(Avatar)) {
                     var rand = new Random();
-                    List<Avatar> avatars = ZkData.Avatar.GetCachedList();
+                    var avatars = ZkData.Avatar.GetCachedList();
                     if (avatars.Any()) Avatar = avatars[rand.Next(avatars.Count)].AvatarName;
                 }
             }
@@ -360,18 +346,16 @@ namespace ZkData
             CheckLevelUp();
         }
 
+        public string AuthenticationType { get { return "LobbyServer"; } }
+        public bool IsAuthenticated { get { return true; } }
 
-        /// <summary>
-        /// Todo distribute among clan and faction members
-        /// </summary>
-        public void ResetQuotas() {
-            PwBombersProduced = 0;
-            PwBombersUsed = 0;
-            PwDropshipsProduced = 0;
-            PwDropshipsUsed = 0;
-            PwMetalProduced = 0;
-            PwMetalUsed = 0;
+        public bool IsInRole(string role) {
+            if (role == "LobbyAdmin") return IsLobbyAdministrator;
+            if (role == "ZkAdmin") return IsZeroKAdmin;
+            else return string.IsNullOrEmpty(role);
         }
+
+        public IIdentity Identity { get { return this; } }
     }
 
     public enum GamePreference
@@ -390,11 +374,11 @@ namespace ZkData
     {
         protected String note;
 
+        public String Note { get { return note; } }
+
         public UserLanguageNoteAttribute(string note) {
             this.note = note;
         }
-
-        public String Note { get { return note; } }
     }
 
     public enum UserLanguage

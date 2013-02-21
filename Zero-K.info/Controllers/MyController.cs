@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Transactions;
@@ -217,6 +218,16 @@ namespace ZeroKWeb.Controllers
                 {
                     Unlock unlock = db.Unlocks.FirstOrDefault(x => x.UnlockID == id);
                     if (!useKudos && unlock.IsKudosOnly == true) return Content("That unlock cannot be bought using XP");
+
+                    if (useKudos) {
+                        var acc = Account.AccountByAccountID(db, Global.AccountID);
+                        if (acc.Kudos < unlock.KudosCost) return Content("Not enough kudos to unlock this");
+                        acc.KudosPurchases.Add(new KudosPurchase() {Time = DateTime.UtcNow, Unlock = unlock, Account = acc, KudosValue = unlock.KudosCost??0});
+                        db.SubmitAndMergeChanges();
+                        acc.Kudos = acc.KudosGained - acc.KudosSpent;
+                        db.SubmitAndMergeChanges();
+                    }
+                    
                     var au = db.AccountUnlocks.SingleOrDefault(x => x.AccountID == Global.AccountID && x.UnlockID == id);
                     if (au == null)
                     {
@@ -224,10 +235,7 @@ namespace ZeroKWeb.Controllers
                         db.AccountUnlocks.InsertOnSubmit(au);
                     }
                     else au.Count++;
-                    if (useKudos)   // TODO
-                    {
-                    }
-                    db.SubmitChanges();
+                    db.SubmitAndMergeChanges();
                 }
                 scope.Complete();
             }
