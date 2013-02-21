@@ -24,7 +24,7 @@
     {        
     <form method="post" action="@Url.Action("Logout", "Home")@(Global.IsLobbyAccess ? "@logout" : "")"  style="padding: 0; margin: 0; display:inline" >
     @Html.PrintAccount(Global.Account)
-        <input type="hidden" name="referer" value="@Request.Url" /> | @Html.PrintClan(Global.Clan) | @Html.PrintFaction(Global.Account.Faction, false) | <span nicetitle="Your level based on experience">Level: @Global.Account.Level</span> | <span nicetitle="Free XP which can be spent on unit and commander unlocks">Free XP: @Global.Account.AvailableXP</span> | @Html.PrintMetal(Global.Account) | @Html.PrintDropships(Global.Account) | @Html.PrintBombers(Global.Account) | @Html.PrintWarps(Global.Account) | Logout 
+        <input type="hidden" name="referer" value="@Request.Url" /> | @Html.PrintClan(Global.Clan) | @Html.PrintFaction(Global.Account.Faction, false) | <span nicetitle="Your level based on experience">Level: @Global.Account.Level</span> | <span nicetitle="Free XP which can be spent on unit and commander unlocks">Free XP: @Global.Account.AvailableXP</span> | <span nicetitle="Ingame currency that you can get by donating to Zero-K. You can use it to unlock items instantly or get access to unique visual improvements">Kudos: @Global.Account.Kudos</span> | @Html.PrintMetal(Global.Account) | @Html.PrintDropships(Global.Account) | @Html.PrintBombers(Global.Account) | @Html.PrintWarps(Global.Account) | Logout 
     <input type="image" value="Logout" src="/img/logout.png" style="border: none; width: 25px;
         height: 25px; vertical-align: middle;" alt="Logout" title="Logout" />
     </form>
