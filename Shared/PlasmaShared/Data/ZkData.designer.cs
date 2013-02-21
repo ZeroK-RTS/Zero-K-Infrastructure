@@ -31681,6 +31681,8 @@ namespace ZkData
 		
 		private string _Email;
 		
+		private string _Comment;
+		
 		private EntityRef<Account> _Account;
 		
     #region Extensibility Method Definitions
@@ -31713,6 +31715,8 @@ namespace ZkData
     partial void OnItemCodeChanged();
     partial void OnEmailChanging(string value);
     partial void OnEmailChanged();
+    partial void OnCommentChanging(string value);
+    partial void OnCommentChanged();
     #endregion
 		
 		public Contribution()
@@ -31993,6 +31997,27 @@ namespace ZkData
 					this._Email = value;
 					this.SendPropertyChanged("Email");
 					this.OnEmailChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Comment", DbType="nvarchar(200)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
+		public string Comment
+		{
+			get
+			{
+				return this._Comment;
+			}
+			set
+			{
+				if ((this._Comment != value))
+				{
+					this.OnCommentChanging(value);
+					this.SendPropertyChanging();
+					this._Comment = value;
+					this.SendPropertyChanged("Comment");
+					this.OnCommentChanged();
 				}
 			}
 		}

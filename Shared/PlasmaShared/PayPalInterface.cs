@@ -19,7 +19,7 @@ namespace PlasmaShared
         public const string PayPalReferencePrefix = "ZK_ID_";
         const double conversionMultiplier = 0.98; // extra cost of conversion from foreign currency
 
-        public event Action<Exception> Error = (e) => { };
+        public event Action<string> Error = (e) => { };
         public event Action<Contribution> NewContribution = (c) => { };
 
 
@@ -33,7 +33,7 @@ namespace PlasmaShared
             DateTime outputDateTime;
 
             DateTime.TryParseExact(payPalDateTime, dateFormats, new CultureInfo("en-US"), DateTimeStyles.None, out outputDateTime);
-            
+
             // convert to local timezone  
             outputDateTime = outputDateTime.AddHours(8);
 
@@ -46,6 +46,25 @@ namespace PlasmaShared
                     wc.DownloadString(string.Format("http://rate-exchange.appspot.com/currency?from={0}&to=EUR&q={1}", fromCurrency, fromAmount));
                 var ret = JsonConvert.DeserializeObject<ConvertResponse>(response);
                 return ret.v*conversionMultiplier;
+            }
+        }
+
+        public void ImportIpnPayment(NameValueCollection values, byte[] rawRequest) {
+            try {
+                var parsed = ParseIpn(values);
+                var contribution = AddPayPalContribution(parsed);
+                var verified = VerifyRequest(rawRequest);
+                if (contribution != null && !verified) {
+                    Error(string.Format("Warning, transaction {0} by {1} VERIFICATION FAILED, check that it is not a fake! http://zero-k.info/Contributions ",
+                                        parsed.TransactionID,
+                                        parsed.Name));
+                    using (var db = new ZkDataContext()) {
+                        db.Contributions.First(x => x.ContributionID == contribution.ContributionID).Comment = "VERIFICATION FAILED";
+                        db.SubmitAndMergeChanges();
+                    }
+                }
+            } catch (Exception ex) {
+                Trace.TraceError(ex.ToString());
             }
         }
 
@@ -99,7 +118,7 @@ namespace PlasmaShared
         /// </summary>
         /// <returns></returns>
         public static bool VerifyRequest(byte[] data) {
-            var req = (HttpWebRequest)WebRequest.Create("https://www.sandbox.paypal.com/cgi-bin/webscr");
+            var req = (HttpWebRequest)WebRequest.Create("https://www.paypal.com/cgi-bin/webscr");
 
             //Set values for the request back
             req.Method = "POST";
@@ -120,9 +139,9 @@ namespace PlasmaShared
             return strResponse == "VERIFIED";
         }
 
-        bool AddPayPalContribution(ParsedData parsed) {
+        Contribution AddPayPalContribution(ParsedData parsed) {
             try {
-                if (parsed.Status != "Completed" || parsed.Gross <= 0) return false; // not a contribution!
+                if (parsed.Status != "Completed" || parsed.Gross <= 0) return null; // not a contribution!
 
                 double netEur;
                 double grossEur;
@@ -141,27 +160,28 @@ namespace PlasmaShared
                     if (match.Success) accountID = int.Parse(match.Groups[1].Value);
                 }
 
+                Contribution contrib;
                 using (var db = new ZkDataContext()) {
                     Account acc = null;
                     if (accountID != null) acc = Account.AccountByAccountID(db, accountID.Value);
 
-                    if (!string.IsNullOrEmpty(parsed.TransactionID) && db.Contributions.Any(x => x.PayPalTransactionID == parsed.TransactionID)) return false; // contribution already exists
+                    if (!string.IsNullOrEmpty(parsed.TransactionID) && db.Contributions.Any(x => x.PayPalTransactionID == parsed.TransactionID)) return null; // contribution already exists
 
-                    var contrib = new Contribution()
-                                  {
-                                      Account = acc,
-                                      Name = parsed.Name,
-                                      Euros = grossEur,
-                                      KudosValue = (int)Math.Round(grossEur*GlobalConst.EurosToKudos),
-                                      OriginalAmount = parsed.Gross,
-                                      OriginalCurrency = parsed.Currency,
-                                      PayPalTransactionID = parsed.TransactionID,
-                                      ItemCode = parsed.ItemCode,
-                                      Time = parsed.Time,
-                                      EurosNet = netEur,
-                                      ItemName = parsed.ItemName,
-                                      Email = parsed.Email
-                                  };
+                    contrib = new Contribution()
+                              {
+                                  Account = acc,
+                                  Name = parsed.Name,
+                                  Euros = grossEur,
+                                  KudosValue = (int)Math.Round(grossEur*GlobalConst.EurosToKudos),
+                                  OriginalAmount = parsed.Gross,
+                                  OriginalCurrency = parsed.Currency,
+                                  PayPalTransactionID = parsed.TransactionID,
+                                  ItemCode = parsed.ItemCode,
+                                  Time = parsed.Time,
+                                  EurosNet = netEur,
+                                  ItemName = parsed.ItemName,
+                                  Email = parsed.Email
+                              };
                     db.Contributions.InsertOnSubmit(contrib);
                     if (acc != null) acc.Kudos += contrib.KudosValue;
                     db.SubmitChanges();
@@ -169,11 +189,11 @@ namespace PlasmaShared
                     NewContribution(contrib);
                 }
 
-                return true;
+                return contrib;
             } catch (Exception ex) {
                 Trace.TraceError("Error processing payment: {0}", ex);
-                Error(ex);
-                return false;
+                Error(ex.ToString());
+                return null;
             }
         }
 

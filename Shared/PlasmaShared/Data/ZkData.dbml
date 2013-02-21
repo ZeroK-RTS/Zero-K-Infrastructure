@@ -1220,6 +1220,7 @@
       <Column Name="ItemName" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
       <Column Name="ItemCode" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
       <Column Name="Email" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
+      <Column Name="Comment" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
       <Association Name="Account_Contribution" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>

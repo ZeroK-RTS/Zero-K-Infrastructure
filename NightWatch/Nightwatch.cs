@@ -34,7 +34,7 @@ namespace CaTracker
         OfflineMessages offlineMessages;
         string webRoot;
         PlayerMover playerMover;
-        PayPalInterface payPalInterface;
+        public PayPalInterface PayPalInterface { get; protected set; }
 
         public AuthService Auth { get; private set; }
 
@@ -80,20 +80,20 @@ namespace CaTracker
             offlineMessages = new OfflineMessages(tas);
             playerMover = new PlayerMover(tas);
 
-		    payPalInterface = new PayPalInterface();
-		    payPalInterface.Error += (e) =>
+		    PayPalInterface = new PayPalInterface();
+		    PayPalInterface.Error += (e) =>
 		        { tas.Say(TasClient.SayPlace.Channel, "zkdev", "PAYMENT ERROR: " + e.ToString(), true); };
 
-		    payPalInterface.NewContribution += (c) =>
+		    PayPalInterface.NewContribution += (c) =>
 		        {
 		            tas.Say(TasClient.SayPlace.Channel,
 		                    "zkdev",
-		                    string.Format("WOHOO! {0:d} New contribution of {1:F2}€ by {2}", c.Time, c.Euros, c.Name),
+		                    string.Format("WOHOO! {0:d} New contribution of {1:F2}€ by {2} {3}", c.Time, c.Euros, c.Name, c.Email),
 		                    true);
 		            if (c.Account == null)
 		                tas.Say(TasClient.SayPlace.Channel,
 		                        "zkdev",
-		                        "Warning, user account unknown yet, payment remains unassigned. If you know user name, please assign it manually",
+                                "Warning, user account unknown yet, payment remains unassigned. If you know user name, please assign it manually http://zero-k.info/Contributions ",
 		                        true);
 		        };
             
