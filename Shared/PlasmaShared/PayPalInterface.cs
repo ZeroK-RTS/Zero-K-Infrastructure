@@ -236,7 +236,7 @@ namespace PlasmaShared
         }
 
         static string GetCodeLink(string code) {
-            return string.Format("http://zero-k.info/Contributions/Redeem?code={0}", code);
+            return string.Format("http://zero-k.info/Contributions/Redeem/{0}", code);
         }
 
         class ConvertResponse

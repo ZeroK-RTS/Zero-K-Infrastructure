@@ -68,6 +68,7 @@ namespace ZeroKWeb
             routes.MapRoute("MissionImage", "Missions/Img/{name}", new { controller = "Missions", action = "Img", name = UrlParameter.Optional });
             routes.MapRoute("MissionFile", "Missions/File/{name}", new { controller = "Missions", action = "File", name = UrlParameter.Optional });
             routes.MapRoute("StaticFile", "Static/{name}", new { controller = "Static", action = "Index", name = UrlParameter.Optional });
+            routes.MapRoute("RedeemCode", "Contributions/Redeem/{code}", new { controller = "Contributions", action = "Redeem", code = UrlParameter.Optional });
 
             routes.MapRoute("Default", "{controller}/{action}/{id}", new { controller = "Home", action = "Index", id = UrlParameter.Optional });
 
