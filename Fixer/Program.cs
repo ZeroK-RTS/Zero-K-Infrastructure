@@ -213,8 +213,8 @@ namespace Fixer
             //TestPrediction();
             //FixMissionScripts();
 
-            //AnalyzeModuleUsagePatterns();
-            //AnalyzeCommUsagePatterns();
+            AnalyzeModuleUsagePatterns();
+            AnalyzeCommUsagePatterns();
         }
 
 
