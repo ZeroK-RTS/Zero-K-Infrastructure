@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Web.Mvc;
 using ZkData;
 
@@ -37,6 +38,36 @@ namespace ZeroKWeb.Controllers
 
         public ActionResult ThankYou() {
             return View("ThankYou");
+        }
+
+        [Auth(Role = AuthRole.ZkAdmin)]
+        public ActionResult AddContribution(int accountID,int kudos, string item, string currency, double gross, double grossEur, double netEur, string email, string comment, bool isSpring, DateTime date) {
+            using (var db = new ZkDataContext()) {
+                var acc = Account.AccountByAccountID(db, accountID);
+                var contrib = new Contribution()
+                              {
+                                  AccountID = accountID,
+                                  ManuallyAddedAccountID = Global.AccountID,
+                                  KudosValue = kudos,
+                                  ItemName = item,
+                                  IsSpringContribution = isSpring,
+                                  Comment = comment,
+                                  OriginalCurrency = currency,
+                                  OriginalAmount = gross,
+                                  Euros = grossEur,
+                                  EurosNet = netEur,
+                                  Time = date,
+                                  Name = acc.Name,
+                                  Email = email
+                              };
+                db.Contributions.InsertOnSubmit(contrib);
+                db.SubmitAndMergeChanges();
+                acc.Kudos = acc.KudosGained - acc.KudosSpent;
+                db.SubmitAndMergeChanges();
+            }
+
+
+            return RedirectToAction("Index");
         }
     }
 }

@@ -49,3 +49,27 @@
         </tr>
     }
 </table>
+
+@if (Global.IsZeroKAdmin) {
+    <div class="admin">
+        <h3>Add a manual contribution</h3>
+        <form action="@Url.Action("AddContribution")" method="POST">
+            <table>
+                <tr><td>Account ID</td><td>@Html.TextBox("accountID")</td></tr>
+                <tr><td>Kudos</td><td>@Html.TextBox("kudos")</td></tr>
+                <tr><td>Date</td><td>@Html.TextBox("date", DateTime.Now, new{@class="datepicker"})</td></tr>
+                <tr><td>Item</td><td>@Html.TextBox("item")</td></tr>
+                <tr><td>Original currency</td><td>@Html.TextBox("currency")</td></tr>
+                <tr><td>Original amount</td><td>@Html.TextBox("gross")</td></tr>
+                <tr><td>Gross EUR</td><td>@Html.TextBox("grossEur")</td></tr>
+                <tr><td>Net EUR</td><td>@Html.TextBox("netEur")</td></tr>
+                <tr><td>Email</td><td>@Html.TextBox("email")</td></tr>
+                <tr><td>Comment</td><td>@Html.TextBox("comment")</td></tr>
+                <tr><td>Is spring donation</td><td>@Html.CheckBox( "isSpring")</td></tr>
+            </table>
+            <input type="submit" value="Add a contribution"/>
+        </form>
+
+    </div>
+
+}
