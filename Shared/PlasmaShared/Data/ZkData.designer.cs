@@ -264,6 +264,7 @@ namespace ZkData
     partial void DeleteContributionJar(ContributionJar instance);
     #endregion
 		
+		
 		public ZkDataContext(string connection) : 
 				base(connection, mappingSource)
 		{
@@ -2742,6 +2743,8 @@ namespace ZkData
 		
 		private EntitySet<Contribution> _ContributionsByManuallyAddedAccountID;
 		
+		private EntitySet<ContributionJar> _ContributionJars;
+		
 		private EntityRef<Clan> _Clan;
 		
 		private EntityRef<Faction> _Faction;
@@ -4523,6 +4526,25 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ContributionJar", Storage="_ContributionJars", ThisKey="AccountID", OtherKey="GuarantorAccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=85, EmitDefaultValue=false)]
+		public EntitySet<ContributionJar> ContributionJars
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._ContributionJars.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._ContributionJars;
+			}
+			set
+			{
+				this._ContributionJars.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_Account", Storage="_Clan", ThisKey="ClanID", OtherKey="ClanID", IsForeignKey=true)]
 		public Clan Clan
 		{
@@ -5139,6 +5161,18 @@ namespace ZkData
 			entity.AccountByManuallyAddedAccountID = null;
 		}
 		
+		private void attach_ContributionJars(ContributionJar entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_ContributionJars(ContributionJar entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
@@ -5185,6 +5219,7 @@ namespace ZkData
 			this._KudosPurchases = new EntitySet<KudosPurchase>(new Action<KudosPurchase>(this.attach_KudosPurchases), new Action<KudosPurchase>(this.detach_KudosPurchases));
 			this._ContributionsByAccountID = new EntitySet<Contribution>(new Action<Contribution>(this.attach_ContributionsByAccountID), new Action<Contribution>(this.detach_ContributionsByAccountID));
 			this._ContributionsByManuallyAddedAccountID = new EntitySet<Contribution>(new Action<Contribution>(this.attach_ContributionsByManuallyAddedAccountID), new Action<Contribution>(this.detach_ContributionsByManuallyAddedAccountID));
+			this._ContributionJars = new EntitySet<ContributionJar>(new Action<ContributionJar>(this.attach_ContributionJars), new Action<ContributionJar>(this.detach_ContributionJars));
 			this._Clan = default(EntityRef<Clan>);
 			this._Faction = default(EntityRef<Faction>);
 			OnCreated();
@@ -31765,6 +31800,8 @@ namespace ZkData
 		
 		private EntityRef<Account> _AccountByManuallyAddedAccountID;
 		
+		private EntityRef<ContributionJar> _ContributionJar;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -32212,6 +32249,10 @@ namespace ZkData
 			{
 				if ((this._ContributionJarID != value))
 				{
+					if (this._ContributionJar.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
 					this.OnContributionJarIDChanging(value);
 					this.SendPropertyChanging();
 					this._ContributionJarID = value;
@@ -32289,6 +32330,40 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ContributionJar_Contribution", Storage="_ContributionJar", ThisKey="ContributionJarID", OtherKey="ContributionJarID", IsForeignKey=true, DeleteRule="SET NULL")]
+		public ContributionJar ContributionJar
+		{
+			get
+			{
+				return this._ContributionJar.Entity;
+			}
+			set
+			{
+				ContributionJar previousValue = this._ContributionJar.Entity;
+				if (((previousValue != value) 
+							|| (this._ContributionJar.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ContributionJar.Entity = null;
+						previousValue.Contributions.Remove(this);
+					}
+					this._ContributionJar.Entity = value;
+					if ((value != null))
+					{
+						value.Contributions.Add(this);
+						this._ContributionJarID = value.ContributionJarID;
+					}
+					else
+					{
+						this._ContributionJarID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("ContributionJar");
+				}
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -32313,6 +32388,7 @@ namespace ZkData
 		{
 			this._AccountByAccountID = default(EntityRef<Account>);
 			this._AccountByManuallyAddedAccountID = default(EntityRef<Account>);
+			this._ContributionJar = default(EntityRef<ContributionJar>);
 			OnCreated();
 		}
 		
@@ -32510,6 +32586,12 @@ namespace ZkData
 		
 		private bool _IsDefault;
 		
+		private EntitySet<Contribution> _Contributions;
+		
+		private EntityRef<Account> _Account;
+		
+		private bool serializing;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -32587,6 +32669,10 @@ namespace ZkData
 			{
 				if ((this._GuarantorAccountID != value))
 				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
 					this.OnGuarantorAccountIDChanging(value);
 					this.SendPropertyChanging();
 					this._GuarantorAccountID = value;
@@ -32659,6 +32745,59 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ContributionJar_Contribution", Storage="_Contributions", ThisKey="ContributionJarID", OtherKey="ContributionJarID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7, EmitDefaultValue=false)]
+		public EntitySet<Contribution> Contributions
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._Contributions.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._Contributions;
+			}
+			set
+			{
+				this._Contributions.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ContributionJar", Storage="_Account", ThisKey="GuarantorAccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.ContributionJars.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.ContributionJars.Add(this);
+						this._GuarantorAccountID = value.AccountID;
+					}
+					else
+					{
+						this._GuarantorAccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -32679,8 +32818,22 @@ namespace ZkData
 			}
 		}
 		
+		private void attach_Contributions(Contribution entity)
+		{
+			this.SendPropertyChanging();
+			entity.ContributionJar = this;
+		}
+		
+		private void detach_Contributions(Contribution entity)
+		{
+			this.SendPropertyChanging();
+			entity.ContributionJar = null;
+		}
+		
 		private void Initialize()
 		{
+			this._Contributions = new EntitySet<Contribution>(new Action<Contribution>(this.attach_Contributions), new Action<Contribution>(this.detach_Contributions));
+			this._Account = default(EntityRef<Account>);
 			OnCreated();
 		}
 		
@@ -32689,6 +32842,20 @@ namespace ZkData
 		public void OnDeserializing(StreamingContext context)
 		{
 			this.Initialize();
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerializing(StreamingContext context)
+		{
+			this.serializing = true;
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializedAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerialized(StreamingContext context)
+		{
+			this.serializing = false;
 		}
 	}
 }

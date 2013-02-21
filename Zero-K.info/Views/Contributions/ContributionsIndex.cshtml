@@ -30,6 +30,34 @@
          src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif">
 </form>
 
+<h2>Donations jars</h2>
+You can select where your donation goes! :-)<br/>
+<table>
+    <tr>
+        <td style="text-align: center">Jar</td><td style="text-align: center">Guarantor</td><td style="min-width: 80px; text-align: right">Pledged</td><td style="text-align: center">Progress</td><td>Needed</td>
+    </tr>
+    @foreach (var jar in new ZkDataContext().ContributionJars) {
+        var funded = Math.Round(jar.Contributions.Sum(x => x.EurosNet) ?? 0);
+        var ratio = funded/jar.TargetGrossEuros;
+        if (ratio > 1) {
+            ratio = 1;
+        }
+        <tr><td><span nicetitle="@jar.Description">@jar.Name</span></td><td>@Html.PrintAccount(jar.Account)</td><td style="text-align: right; ">€@funded</td>
+            <td>
+                <div nicetitle="@jar.Description">
+                    <img src="/img/progressl_base.png" height="17" class="fleft" />
+                    <img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300*ratio))" />
+                    <img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(300*(1 - ratio)))" />
+                    <img src="/img/progressr_base.png" height="17" class="fleft" /> 
+                </div>
+            </td>
+            <td>€@jar.TargetGrossEuros.ToString("F0")</td>
+        </tr>
+    
+    }
+</table>
+
+
 
 <h2>Many thanks to those great people!</h2>
 <table>

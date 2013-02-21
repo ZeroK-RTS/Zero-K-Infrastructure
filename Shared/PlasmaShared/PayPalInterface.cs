@@ -208,7 +208,8 @@ namespace PlasmaShared
                                   Email = parsed.Email,
                                   PackID = packID,
                                   RedeemCode = Guid.NewGuid().ToString(),
-                                  IsSpringContribution = isSpring
+                                  IsSpringContribution = isSpring,
+                                  ContributionJar = db.ContributionJars.FirstOrDefault(x=>x.IsDefault)
                               };
                     db.Contributions.InsertOnSubmit(contrib);
                     
