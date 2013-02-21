@@ -191,6 +191,8 @@ namespace Fixer
 
 
         static void Main(string[] args) {
+            //var guid = Guid.NewGuid().ToString();
+
             var pp = new PayPalInterface();
             pp.ImportPaypalHistory(Directory.GetCurrentDirectory());
 

@@ -200,7 +200,7 @@ namespace PlasmaShared
                                   ItemName = parsed.ItemName,
                                   Email = parsed.Email,
                                   PackID = packID,
-                                  RedeemCode = acc != null ? new Guid().ToString() : null
+                                  RedeemCode = acc == null ? Guid.NewGuid().ToString() : null
                               };
                     db.Contributions.InsertOnSubmit(contrib);
                     if (acc != null) acc.Kudos += contrib.KudosValue;
