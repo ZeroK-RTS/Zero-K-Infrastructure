@@ -2,39 +2,30 @@
 @using ZeroKWeb
 @using ZkData
 @model dynamic
-<h1>Contribute to Zero-K and Spring project</h1>
+<h1>Donate to Zero-K and Spring project</h1>
 
-<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-
-    <input type="hidden" name="business" value="S7LYLK6P63H48">
-
-    <!-- Specify a Donate button. -->
-    <input type="hidden" name="cmd" value="_donations">
-
-    <!-- Specify details about the contribution -->
-    <input type="hidden" name="item_name" value="Zero-K">
-    <input type="hidden" name="item_number" value="@PayPalInterface.GetItemCode(Global.AccountID, null)">
-    <input type="hidden" name="currency_code" value="EUR">
-    <input type="hidden" name="notify_url" value="@Url.Action("Ipn")">
-    <input type="hidden" name="no_note" value="0"/>
-    <input type="hidden" name="cn" value="Send message to the team"/>
-    <input type="hidden" name="no_shipping" value="1"/>
-    <input type="hidden" name="rm" value="1"/>
-    <input type="hidden" name="return" value="@Url.Action("ThankYou")">
-    
-    <!-- Display the payment button. -->
-    <input type="image" name="submit" border="0"
-           src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"
-           alt="PayPal - The safer, easier way to pay online">
-    <img alt="" border="0" width="1" height="1"
-         src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif">
-</form>
+This game is provided to you completely free<br/>
+However, we are a non-profit group of volunteers working on this game in our free time and we have no way to generate income from this project.<br/>
+If you wish to support us and continued development, you can donate any ammount you want!<br />
+<br/>
+As a reward for your donation, you will get @GlobalConst.EurosToKudos Kudos per 1€ donated.<br/>
+<br/>
+You can then spend Kudos on special visual upgrades for Zero-K in the @Html.ActionLink("unlocks menu.","UnlockList","My")<br/>
+You can also use Kudos to instantly unlock units which would otherwise need XP to unlock over time.<br/>
+To unlock all units you need 100 Kudos, to unlock all commander items and commanders you need 200 Kudos.<br/>
+<br/>
+<ul>
+    <li>If you donate at least 100 kudos, you will get a special bronze icon next to your name and your avatar will be bronze framed.</li>
+    <li>If you donate at least 300 kudos, you will get a special silver icon next to your name and your avatar will be silver framed, and you will gain ability to change lobby, forum and ingame avatars and icons.</li>
+    <li>If you donate at least 1000 kudos, you will get a special golden icon next to your name and your avatar will be gold framed, and you will gain ability to change lobby, forum and ingame avatars and icons, including ability to upload your own.</li>
+</ul>
+<br/>
 
 <h2>Donations jars</h2>
-You can select where your donation goes! :-)<br/>
+You can even select where your donation goes! :-)<br/>
 <table>
     <tr>
-        <td style="text-align: center">Jar</td><td style="text-align: center">Guarantor</td><td style="min-width: 80px; text-align: right">Pledged</td><td style="text-align: center">Progress</td><td>Needed</td>
+        <td style="text-align: center">Jar</td><td style="text-align: center">Guarantor</td><td style="min-width: 80px; text-align: right">Pledged</td><td style="text-align: center">Progress</td><td>Needed</td><td>Donate here</td>
     </tr>
     @foreach (var jar in new ZkDataContext().ContributionJars) {
         var funded = Math.Round(jar.Contributions.Sum(x => x.EurosNet) ?? 0);
@@ -42,7 +33,7 @@ You can select where your donation goes! :-)<br/>
         if (ratio > 1) {
             ratio = 1;
         }
-        <tr><td><span nicetitle="@jar.Description">@jar.Name</span></td><td>@Html.PrintAccount(jar.Account)</td><td style="text-align: right; ">€@funded</td>
+        <tr><td><span nicetitle="@jar.Description">@jar.Name</span></td><td>@Html.PrintAccount(jar.Account)</td><td style="text-align: right;">€@funded</td>
             <td>
                 <div nicetitle="@jar.Description">
                     <img src="/img/progressl_base.png" height="17" class="fleft" />
@@ -52,18 +43,43 @@ You can select where your donation goes! :-)<br/>
                 </div>
             </td>
             <td>€@jar.TargetGrossEuros.ToString("F0")</td>
-        </tr>
+            <td><form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+
+                    <input type="hidden" name="business" value="S7LYLK6P63H48">
+
+                    <!-- Specify a Donate button. -->
+                    <input type="hidden" name="cmd" value="_donations">
+
+                    <!-- Specify details about the contribution -->
+                    <input type="hidden" name="item_name" value="Zero-K">
+                    <input type="hidden" name="item_number" value="@PayPalInterface.GetItemCode(Global.AccountID, jar.ContributionJarID)">
+                    <input type="hidden" name="currency_code" value="EUR">
+                    <input type="hidden" name="no_note" value="0"/>
+                    <input type="hidden" name="cn" value="Send message to the team"/>
+                    <input type="hidden" name="no_shipping" value="1"/>
+                    <input type="hidden" name="rm" value="1"/>
+                    <input type="hidden" name="return" value="@Url.Action("ThankYou")">
     
+                    <!-- Display the payment button. -->
+                    <input type="image" name="submit" border="0"
+                           src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"
+                           alt="PayPal - The safer, easier way to pay online">
+                    <img alt="" border="0" width="1" height="1"
+                         src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif">
+                </form>
+            </td>
+        </tr>
     }
 </table>
 
 
-
+<br/>
 <h2>Many thanks to those great people!</h2>
 <table>
 
     @foreach (var c in new ZkDataContext().Contributions.OrderByDescending(x => x.Time)) {
         <tr>
+            <td>@c.Time.ToString("d")</td>
             <td>
                 @if (c.AccountByAccountID != null) {
                     @Html.PrintAccount(c.AccountByAccountID)
@@ -85,7 +101,7 @@ You can select where your donation goes! :-)<br/>
             <table>
                 <tr><td>Account ID</td><td>@Html.TextBox("accountID")</td></tr>
                 <tr><td>Kudos</td><td>@Html.TextBox("kudos")</td></tr>
-                <tr><td>Date</td><td>@Html.TextBox("date", DateTime.Now, new{@class="datepicker"})</td></tr>
+                <tr><td>Date</td><td>@Html.TextBox("date", DateTime.Now, new { @class = "datepicker" })</td></tr>
                 <tr><td>Item</td><td>@Html.TextBox("item")</td></tr>
                 <tr><td>Original currency</td><td>@Html.TextBox("currency")</td></tr>
                 <tr><td>Original amount</td><td>@Html.TextBox("gross")</td></tr>
@@ -93,11 +109,10 @@ You can select where your donation goes! :-)<br/>
                 <tr><td>Net EUR</td><td>@Html.TextBox("netEur")</td></tr>
                 <tr><td>Email</td><td>@Html.TextBox("email")</td></tr>
                 <tr><td>Comment</td><td>@Html.TextBox("comment")</td></tr>
-                <tr><td>Is spring donation</td><td>@Html.CheckBox( "isSpring")</td></tr>
+                <tr><td>Is spring donation</td><td>@Html.CheckBox("isSpring")</td></tr>
             </table>
             <input type="submit" value="Add a contribution"/>
         </form>
 
     </div>
-
 }

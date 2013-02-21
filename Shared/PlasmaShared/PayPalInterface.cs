@@ -50,8 +50,8 @@ namespace PlasmaShared
             }
         }
 
-        public static string GetItemCode(int? accountID, int? packID) {
-            return string.Format("ZK_ID_{0}_PACK_{1}", accountID, packID);
+        public static string GetItemCode(int? accountID, int? jarID) {
+            return string.Format("ZK_ID_{0}_JAR_{1}", accountID, jarID);
         }
 
         public void ImportIpnPayment(NameValueCollection values, byte[] rawRequest) {
@@ -121,20 +121,20 @@ namespace PlasmaShared
                    };
         }
 
-        public static bool TryParseItemCode(string itemCode, out int? accountID, out int? packID) {
+        public static bool TryParseItemCode(string itemCode, out int? accountID, out int? jarID) {
             if (!string.IsNullOrEmpty(itemCode)) {
-                var match = Regex.Match(itemCode, "ZK_ID_([0-9]*)_PACK_([0-9]*)");
+                var match = Regex.Match(itemCode, "ZK_ID_([0-9]*)_JAR_([0-9]*)");
                 if (match.Success) {
                     int i;
                     if (int.TryParse(match.Groups[1].Value, out i)) accountID = i;
                     else accountID = null;
-                    if (int.TryParse(match.Groups[2].Value, out i)) packID = i;
-                    else packID = null;
+                    if (int.TryParse(match.Groups[2].Value, out i)) jarID = i;
+                    else jarID = null;
                     return true;
                 }
             }
             accountID = null;
-            packID = null;
+            jarID = null;
             return false;
         }
 
@@ -180,12 +180,16 @@ namespace PlasmaShared
                     grossEur = ConvertToEuros(parsed.Currency, parsed.Gross);
                 }
 
-                int? accountID, packID;
-                TryParseItemCode(parsed.ItemCode, out accountID, out packID);
-
+                int? accountID, jarID;
+                TryParseItemCode(parsed.ItemCode, out accountID, out jarID);
+                
                 Contribution contrib;
                 using (var db = new ZkDataContext()) {
                     Account acc = null;
+                    ContributionJar jar;
+                    if (jarID == null) jar = db.ContributionJars.FirstOrDefault(x => x.IsDefault);
+                    else jar = db.ContributionJars.FirstOrDefault(x => x.ContributionJarID == jarID);
+
                     if (accountID != null) acc = Account.AccountByAccountID(db, accountID.Value);
 
                     if (!string.IsNullOrEmpty(parsed.TransactionID) && db.Contributions.Any(x => x.PayPalTransactionID == parsed.TransactionID)) return null; // contribution already exists
@@ -206,10 +210,9 @@ namespace PlasmaShared
                                   EurosNet = netEur,
                                   ItemName = parsed.ItemName,
                                   Email = parsed.Email,
-                                  PackID = packID,
                                   RedeemCode = Guid.NewGuid().ToString(),
                                   IsSpringContribution = isSpring,
-                                  ContributionJar = db.ContributionJars.FirstOrDefault(x=>x.IsDefault)
+                                  ContributionJar = jar
                               };
                     db.Contributions.InsertOnSubmit(contrib);
                     
