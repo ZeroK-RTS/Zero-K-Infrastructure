@@ -72,6 +72,7 @@ namespace PlasmaShared
                 }
             } catch (Exception ex) {
                 Trace.TraceError(ex.ToString());
+                Error(ex.ToString());
             }
         }
 
