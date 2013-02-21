@@ -1219,6 +1219,7 @@
       <Column Name="KudosValue" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="ItemName" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
       <Column Name="ItemCode" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
+      <Column Name="Email" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
       <Association Name="Account_Contribution" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>

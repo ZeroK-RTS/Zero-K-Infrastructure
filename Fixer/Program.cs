@@ -189,56 +189,11 @@ namespace Fixer
 
 
 
-        static void ImportPaypalHistory() {
-            System.Threading.Thread.CurrentThread.CurrentCulture= CultureInfo.InvariantCulture;
-            double sum = 0;
-            foreach (var file in Directory.GetFiles("e:\\sosak", "*.csv"))
-            {
-                var csv = new CsvTable(File.OpenRead(file), true, true, ',', "windows-1252");
-                foreach (var row in csv) {
-                    var time = DateTime.Parse(row["Date"] + " " + row["Time"]);
-                    var name = row["Name"];
-                    var status = row["Status"];
-                    var currency = row["Currency"];
-                    var gross = double.Parse(row["Gross"]);
-                    var net = double.Parse(row["Net"]);
-                    var email = row["From Email Address"];
-                    var transactionID = row["Transaction ID"];
-                    var itemName = row["Item Title"];
-                    var itemCode = row["Item ID"];
-                    var eurGross = gross;
-                    var eurNet = net;
-
-                    if (status == "Completed" && gross > 0) {
-
-                        if (currency != "EUR") {
-                            eurNet = PayPalChecker.ConvertToEuros(currency, net);
-                            eurGross = PayPalChecker.ConvertToEuros(currency, gross);
-
-                        }
-                        sum += eurNet;
-
-                        /*using (var db = new ZkDataContext()) {
-                        
-
-                        }*/
-
-                    }
-
-                }
-
-
-            }
-            Console.WriteLine(sum);
-
-        }
-
-
 
         static void Main(string[] args) {
-            ImportPaypalHistory();
+            //var pp = new PayPalInterface();
+            //pp.ImportPaypalHistory(@"e:\sosak");
 
-            
             //Test1v1Elo();
             //GenerateTechs();
 

@@ -62,6 +62,8 @@
 
 	    public const bool VpnCheckEnabled = false;
 
+        public const double EurosToKudos = 10.0;
+
 
 	    public static bool IsZkMod(string name)
         {

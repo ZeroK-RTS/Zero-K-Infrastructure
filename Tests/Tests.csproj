@@ -67,6 +67,10 @@
       <Project>{6ce1e0f1-447c-4871-9246-cc7ccb359d89}</Project>
       <Name>NightWatch</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Shared\PlasmaShared\PlasmaShared.csproj">
+      <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>
+      <Name>PlasmaShared</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resource.resx">

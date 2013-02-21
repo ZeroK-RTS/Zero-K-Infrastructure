@@ -258,6 +258,7 @@ namespace ZkData
     partial void DeleteContribution(Contribution instance);
     #endregion
 		
+		
 		public ZkDataContext(string connection) : 
 				base(connection, mappingSource)
 		{
@@ -31678,6 +31679,8 @@ namespace ZkData
 		
 		private string _ItemCode;
 		
+		private string _Email;
+		
 		private EntityRef<Account> _Account;
 		
     #region Extensibility Method Definitions
@@ -31708,6 +31711,8 @@ namespace ZkData
     partial void OnItemNameChanged();
     partial void OnItemCodeChanging(string value);
     partial void OnItemCodeChanged();
+    partial void OnEmailChanging(string value);
+    partial void OnEmailChanged();
     #endregion
 		
 		public Contribution()
@@ -31967,6 +31972,27 @@ namespace ZkData
 					this._ItemCode = value;
 					this.SendPropertyChanged("ItemCode");
 					this.OnItemCodeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Email", DbType="nvarchar(50)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
+		public string Email
+		{
+			get
+			{
+				return this._Email;
+			}
+			set
+			{
+				if ((this._Email != value))
+				{
+					this.OnEmailChanging(value);
+					this.SendPropertyChanging();
+					this._Email = value;
+					this.SendPropertyChanged("Email");
+					this.OnEmailChanged();
 				}
 			}
 		}

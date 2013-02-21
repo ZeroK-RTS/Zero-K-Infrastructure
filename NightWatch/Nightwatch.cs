@@ -11,6 +11,7 @@ using System.Web.Services.Description;
 using System.Xml.Serialization;
 using LobbyClient;
 using NightWatch;
+using PlasmaShared;
 using ZkData;
 
 #endregion
@@ -33,7 +34,7 @@ namespace CaTracker
         OfflineMessages offlineMessages;
         string webRoot;
         PlayerMover playerMover;
-        PayPalChecker payPalChecker;
+        PayPalInterface payPalInterface;
 
         public AuthService Auth { get; private set; }
 
@@ -79,11 +80,11 @@ namespace CaTracker
             offlineMessages = new OfflineMessages(tas);
             playerMover = new PlayerMover(tas);
 
-		    payPalChecker = new PayPalChecker();
-		    payPalChecker.Error += (e) =>
+		    payPalInterface = new PayPalInterface();
+		    payPalInterface.Error += (e) =>
 		        { tas.Say(TasClient.SayPlace.Channel, "zkdev", "PAYMENT ERROR: " + e.ToString(), true); };
 
-		    payPalChecker.NewContribution += (c) =>
+		    payPalInterface.NewContribution += (c) =>
 		        {
 		            tas.Say(TasClient.SayPlace.Channel,
 		                    "zkdev",
@@ -192,7 +193,6 @@ namespace CaTracker
 
 		void tas_LoginAccepted(object sender, TasEventArgs e)
 		{
-            payPalChecker.StartChecking();
             recon.Stop();
 			for (var i = 0; i < config.JoinChannels.Length; ++i) tas.JoinChannel(config.JoinChannels[i]);
 		}
