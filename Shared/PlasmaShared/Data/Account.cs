@@ -25,10 +25,10 @@ namespace ZkData
         Dictionary<AutohostMode, GamePreference> preferences;
         public int AvailableXP { get {
             var kudosGained = KudosGained;
-            return GetXpForLevel(Level) - AccountUnlocks.Where(x=> x.Unlock.KudosToAutoUnlock == null || x.Unlock.KudosToAutoUnlock > kudosGained).Sum(x => (int?)(x.Unlock.XpCost*x.Count)) ?? 0;
+            return GetXpForLevel(Level) - AccountUnlocks.Where(x=> !KudosPurchases.Any(y=>y.UnlockID == x.UnlockID)).Sum(x => (int?)(x.Unlock.XpCost*x.Count)) ?? 0;
         } }
         
-        public int KudosGained { get { return Contributions.Sum(x=>x.KudosValue); } }
+        public int KudosGained { get { return ContributionsByAccountID.Sum(x=>x.KudosValue); } }
         public int KudosSpent { get { return  KudosPurchases.Sum(x=>x.KudosValue); } }
 
 
@@ -36,6 +36,7 @@ namespace ZkData
         public double EffectiveElo { get { return Elo + (GlobalConst.EloWeightMax - EloWeight)*GlobalConst.EloWeightMalusFactor; } }
         public double EloInvWeight { get { return GlobalConst.EloWeightMax + 1 - EloWeight; } }
         public double Effective1v1Elo { get { return Elo1v1Weight > 1 ? Elo1v1 + (GlobalConst.EloWeightMax - Elo1v1Weight)*GlobalConst.EloWeightMalusFactor : 0; } }
+
 
 
         public Dictionary<AutohostMode, GamePreference> Preferences {

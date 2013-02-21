@@ -88,13 +88,17 @@ namespace CaTracker
 		        {
 		            tas.Say(TasClient.SayPlace.Channel,
 		                    "zkdev",
-		                    string.Format("WOHOO! {0:d} New contribution of {1:F2}€ by {2} {3}", c.Time, c.Euros, c.Name, c.Email),
+		                    string.Format("WOHOO! {0:d} New contribution of {1:F2}€ by {2}", c.Time, c.Euros, c.Name),
 		                    true);
-		            if (c.Account == null)
+		            if (c.AccountByAccountID == null)
 		                tas.Say(TasClient.SayPlace.Channel,
 		                        "zkdev",
-                                "Warning, user account unknown yet, payment remains unassigned. If you know user name, please assign it manually http://zero-k.info/Contributions ",
+                                "Warning, user account unknown yet, payment remains unassigned. If you know user name, please assign it manually http://zero-k.info/Contributions",
 		                        true);
+                    else tas.Say(TasClient.SayPlace.Channel,
+                                "zkdev",
+                                string.Format("It is {0} http://zero-k.info/Users/Detail/{1}", c.AccountByAccountID.Name, c.AccountID),
+                                true);
 		        };
             
 

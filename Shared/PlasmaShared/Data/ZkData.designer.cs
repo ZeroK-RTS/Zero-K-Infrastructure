@@ -256,8 +256,13 @@ namespace ZkData
     partial void InsertContribution(Contribution instance);
     partial void UpdateContribution(Contribution instance);
     partial void DeleteContribution(Contribution instance);
+    partial void InsertCommanderDecorationIcon(CommanderDecorationIcon instance);
+    partial void UpdateCommanderDecorationIcon(CommanderDecorationIcon instance);
+    partial void DeleteCommanderDecorationIcon(CommanderDecorationIcon instance);
+    partial void InsertContributionJar(ContributionJar instance);
+    partial void UpdateContributionJar(ContributionJar instance);
+    partial void DeleteContributionJar(ContributionJar instance);
     #endregion
-		
 		
 		public ZkDataContext(string connection) : 
 				base(connection, mappingSource)
@@ -880,6 +885,22 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<Contribution>();
+			}
+		}
+		
+		public System.Data.Linq.Table<CommanderDecorationIcon> CommanderDecorationIcons
+		{
+			get
+			{
+				return this.GetTable<CommanderDecorationIcon>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ContributionJar> ContributionJars
+		{
+			get
+			{
+				return this.GetTable<ContributionJar>();
 			}
 		}
 	}
@@ -2717,7 +2738,9 @@ namespace ZkData
 		
 		private EntitySet<KudosPurchase> _KudosPurchases;
 		
-		private EntitySet<Contribution> _Contributions;
+		private EntitySet<Contribution> _ContributionsByAccountID;
+		
+		private EntitySet<Contribution> _ContributionsByManuallyAddedAccountID;
 		
 		private EntityRef<Clan> _Clan;
 		
@@ -4462,22 +4485,41 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Contribution", Storage="_Contributions", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Contribution", Storage="_ContributionsByAccountID", ThisKey="AccountID", OtherKey="AccountID")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=83, EmitDefaultValue=false)]
-		public EntitySet<Contribution> Contributions
+		public EntitySet<Contribution> ContributionsByAccountID
 		{
 			get
 			{
 				if ((this.serializing 
-							&& (this._Contributions.HasLoadedOrAssignedValues == false)))
+							&& (this._ContributionsByAccountID.HasLoadedOrAssignedValues == false)))
 				{
 					return null;
 				}
-				return this._Contributions;
+				return this._ContributionsByAccountID;
 			}
 			set
 			{
-				this._Contributions.Assign(value);
+				this._ContributionsByAccountID.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Contribution1", Storage="_ContributionsByManuallyAddedAccountID", ThisKey="AccountID", OtherKey="ManuallyAddedAccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=84, EmitDefaultValue=false)]
+		public EntitySet<Contribution> ContributionsByManuallyAddedAccountID
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._ContributionsByManuallyAddedAccountID.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._ContributionsByManuallyAddedAccountID;
+			}
+			set
+			{
+				this._ContributionsByManuallyAddedAccountID.Assign(value);
 			}
 		}
 		
@@ -5073,16 +5115,28 @@ namespace ZkData
 			entity.Account = null;
 		}
 		
-		private void attach_Contributions(Contribution entity)
+		private void attach_ContributionsByAccountID(Contribution entity)
 		{
 			this.SendPropertyChanging();
-			entity.Account = this;
+			entity.AccountByAccountID = this;
 		}
 		
-		private void detach_Contributions(Contribution entity)
+		private void detach_ContributionsByAccountID(Contribution entity)
 		{
 			this.SendPropertyChanging();
-			entity.Account = null;
+			entity.AccountByAccountID = null;
+		}
+		
+		private void attach_ContributionsByManuallyAddedAccountID(Contribution entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByManuallyAddedAccountID = this;
+		}
+		
+		private void detach_ContributionsByManuallyAddedAccountID(Contribution entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByManuallyAddedAccountID = null;
 		}
 		
 		private void Initialize()
@@ -5129,7 +5183,8 @@ namespace ZkData
 			this._AccountCampaignVars = new EntitySet<AccountCampaignVar>(new Action<AccountCampaignVar>(this.attach_AccountCampaignVars), new Action<AccountCampaignVar>(this.detach_AccountCampaignVars));
 			this._CampaignEvents = new EntitySet<CampaignEvent>(new Action<CampaignEvent>(this.attach_CampaignEvents), new Action<CampaignEvent>(this.detach_CampaignEvents));
 			this._KudosPurchases = new EntitySet<KudosPurchase>(new Action<KudosPurchase>(this.attach_KudosPurchases), new Action<KudosPurchase>(this.detach_KudosPurchases));
-			this._Contributions = new EntitySet<Contribution>(new Action<Contribution>(this.attach_Contributions), new Action<Contribution>(this.detach_Contributions));
+			this._ContributionsByAccountID = new EntitySet<Contribution>(new Action<Contribution>(this.attach_ContributionsByAccountID), new Action<Contribution>(this.detach_ContributionsByAccountID));
+			this._ContributionsByManuallyAddedAccountID = new EntitySet<Contribution>(new Action<Contribution>(this.attach_ContributionsByManuallyAddedAccountID), new Action<Contribution>(this.detach_ContributionsByManuallyAddedAccountID));
 			this._Clan = default(EntityRef<Clan>);
 			this._Faction = default(EntityRef<Faction>);
 			OnCreated();
@@ -11714,8 +11769,6 @@ namespace ZkData
 		
 		private System.Nullable<bool> _IsKudosOnly;
 		
-		private System.Nullable<int> _KudosToAutoUnlock;
-		
 		private EntitySet<Unlock> _ChildUnlocks;
 		
 		private EntitySet<AccountUnlock> _AccountUnlocks;
@@ -11729,6 +11782,8 @@ namespace ZkData
 		private EntitySet<StructureType> _StructureTypes;
 		
 		private EntitySet<KudosPurchase> _KudosPurchases;
+		
+		private EntityRef<CommanderDecorationIcon> _CommanderDecorationIcon;
 		
 		private EntityRef<Unlock> _ParentUnlock;
 		
@@ -11774,8 +11829,6 @@ namespace ZkData
     partial void OnKudosCostChanged();
     partial void OnIsKudosOnlyChanging(System.Nullable<bool> value);
     partial void OnIsKudosOnlyChanged();
-    partial void OnKudosToAutoUnlockChanging(System.Nullable<int> value);
-    partial void OnKudosToAutoUnlockChanged();
     #endregion
 		
 		public Unlock()
@@ -12165,29 +12218,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_KudosToAutoUnlock", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
-		public System.Nullable<int> KudosToAutoUnlock
-		{
-			get
-			{
-				return this._KudosToAutoUnlock;
-			}
-			set
-			{
-				if ((this._KudosToAutoUnlock != value))
-				{
-					this.OnKudosToAutoUnlockChanging(value);
-					this.SendPropertyChanging();
-					this._KudosToAutoUnlock = value;
-					this.SendPropertyChanged("KudosToAutoUnlock");
-					this.OnKudosToAutoUnlockChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_Unlock", Storage="_ChildUnlocks", ThisKey="UnlockID", OtherKey="RequiredUnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
 		public EntitySet<Unlock> ChildUnlocks
 		{
 			get
@@ -12206,7 +12238,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_AccountUnlock", Storage="_AccountUnlocks", ThisKey="UnlockID", OtherKey="UnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
 		public EntitySet<AccountUnlock> AccountUnlocks
 		{
 			get
@@ -12225,7 +12257,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_Commander", Storage="_Commanders", ThisKey="UnlockID", OtherKey="ChassisUnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21, EmitDefaultValue=false)]
 		public EntitySet<Commander> Commanders
 		{
 			get
@@ -12244,7 +12276,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_CommanderModule", Storage="_CommanderModules", ThisKey="UnlockID", OtherKey="ModuleUnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22, EmitDefaultValue=false)]
 		public EntitySet<CommanderModule> CommanderModules
 		{
 			get
@@ -12263,7 +12295,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_CommanderDecoration", Storage="_CommanderDecorations", ThisKey="UnlockID", OtherKey="DecorationUnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
 		public EntitySet<CommanderDecoration> CommanderDecorations
 		{
 			get
@@ -12282,7 +12314,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_StructureType", Storage="_StructureTypes", ThisKey="UnlockID", OtherKey="EffectUnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
 		public EntitySet<StructureType> StructureTypes
 		{
 			get
@@ -12301,7 +12333,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_KudosPurchase", Storage="_KudosPurchases", ThisKey="UnlockID", OtherKey="UnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25, EmitDefaultValue=false)]
 		public EntitySet<KudosPurchase> KudosPurchases
 		{
 			get
@@ -12316,6 +12348,41 @@ namespace ZkData
 			set
 			{
 				this._KudosPurchases.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_CommanderDecorationIcon", Storage="_CommanderDecorationIcon", ThisKey="UnlockID", OtherKey="DecorationUnlockID", IsUnique=true, IsForeignKey=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26, EmitDefaultValue=false)]
+		public CommanderDecorationIcon CommanderDecorationIcon
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._CommanderDecorationIcon.HasLoadedOrAssignedValue == false)))
+				{
+					return null;
+				}
+				return this._CommanderDecorationIcon.Entity;
+			}
+			set
+			{
+				CommanderDecorationIcon previousValue = this._CommanderDecorationIcon.Entity;
+				if (((previousValue != value) 
+							|| (this._CommanderDecorationIcon.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CommanderDecorationIcon.Entity = null;
+						previousValue.Unlock = null;
+					}
+					this._CommanderDecorationIcon.Entity = value;
+					if ((value != null))
+					{
+						value.Unlock = this;
+					}
+					this.SendPropertyChanged("CommanderDecorationIcon");
+				}
 			}
 		}
 		
@@ -12466,6 +12533,7 @@ namespace ZkData
 			this._CommanderDecorations = new EntitySet<CommanderDecoration>(new Action<CommanderDecoration>(this.attach_CommanderDecorations), new Action<CommanderDecoration>(this.detach_CommanderDecorations));
 			this._StructureTypes = new EntitySet<StructureType>(new Action<StructureType>(this.attach_StructureTypes), new Action<StructureType>(this.detach_StructureTypes));
 			this._KudosPurchases = new EntitySet<KudosPurchase>(new Action<KudosPurchase>(this.attach_KudosPurchases), new Action<KudosPurchase>(this.detach_KudosPurchases));
+			this._CommanderDecorationIcon = default(EntityRef<CommanderDecorationIcon>);
 			this._ParentUnlock = default(EntityRef<Unlock>);
 			OnCreated();
 		}
@@ -31687,7 +31755,15 @@ namespace ZkData
 		
 		private string _RedeemCode;
 		
-		private EntityRef<Account> _Account;
+		private bool _IsSpringContribution;
+		
+		private System.Nullable<int> _ManuallyAddedAccountID;
+		
+		private System.Nullable<int> _ContributionJarID;
+		
+		private EntityRef<Account> _AccountByAccountID;
+		
+		private EntityRef<Account> _AccountByManuallyAddedAccountID;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -31725,6 +31801,12 @@ namespace ZkData
     partial void OnPackIDChanged();
     partial void OnRedeemCodeChanging(string value);
     partial void OnRedeemCodeChanged();
+    partial void OnIsSpringContributionChanging(bool value);
+    partial void OnIsSpringContributionChanged();
+    partial void OnManuallyAddedAccountIDChanging(System.Nullable<int> value);
+    partial void OnManuallyAddedAccountIDChanged();
+    partial void OnContributionJarIDChanging(System.Nullable<int> value);
+    partial void OnContributionJarIDChanged();
     #endregion
 		
 		public Contribution()
@@ -31765,7 +31847,7 @@ namespace ZkData
 			{
 				if ((this._AccountID != value))
 				{
-					if (this._Account.HasLoadedOrAssignedValue)
+					if (this._AccountByAccountID.HasLoadedOrAssignedValue)
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
@@ -32072,36 +32154,137 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Contribution", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
-		public Account Account
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsSpringContribution", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
+		public bool IsSpringContribution
 		{
 			get
 			{
-				return this._Account.Entity;
+				return this._IsSpringContribution;
 			}
 			set
 			{
-				Account previousValue = this._Account.Entity;
+				if ((this._IsSpringContribution != value))
+				{
+					this.OnIsSpringContributionChanging(value);
+					this.SendPropertyChanging();
+					this._IsSpringContribution = value;
+					this.SendPropertyChanged("IsSpringContribution");
+					this.OnIsSpringContributionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ManuallyAddedAccountID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18)]
+		public System.Nullable<int> ManuallyAddedAccountID
+		{
+			get
+			{
+				return this._ManuallyAddedAccountID;
+			}
+			set
+			{
+				if ((this._ManuallyAddedAccountID != value))
+				{
+					if (this._AccountByManuallyAddedAccountID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnManuallyAddedAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._ManuallyAddedAccountID = value;
+					this.SendPropertyChanged("ManuallyAddedAccountID");
+					this.OnManuallyAddedAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ContributionJarID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
+		public System.Nullable<int> ContributionJarID
+		{
+			get
+			{
+				return this._ContributionJarID;
+			}
+			set
+			{
+				if ((this._ContributionJarID != value))
+				{
+					this.OnContributionJarIDChanging(value);
+					this.SendPropertyChanging();
+					this._ContributionJarID = value;
+					this.SendPropertyChanged("ContributionJarID");
+					this.OnContributionJarIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Contribution", Storage="_AccountByAccountID", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account AccountByAccountID
+		{
+			get
+			{
+				return this._AccountByAccountID.Entity;
+			}
+			set
+			{
+				Account previousValue = this._AccountByAccountID.Entity;
 				if (((previousValue != value) 
-							|| (this._Account.HasLoadedOrAssignedValue == false)))
+							|| (this._AccountByAccountID.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
 					if ((previousValue != null))
 					{
-						this._Account.Entity = null;
-						previousValue.Contributions.Remove(this);
+						this._AccountByAccountID.Entity = null;
+						previousValue.ContributionsByAccountID.Remove(this);
 					}
-					this._Account.Entity = value;
+					this._AccountByAccountID.Entity = value;
 					if ((value != null))
 					{
-						value.Contributions.Add(this);
+						value.ContributionsByAccountID.Add(this);
 						this._AccountID = value.AccountID;
 					}
 					else
 					{
 						this._AccountID = default(Nullable<int>);
 					}
-					this.SendPropertyChanged("Account");
+					this.SendPropertyChanged("AccountByAccountID");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Contribution1", Storage="_AccountByManuallyAddedAccountID", ThisKey="ManuallyAddedAccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account AccountByManuallyAddedAccountID
+		{
+			get
+			{
+				return this._AccountByManuallyAddedAccountID.Entity;
+			}
+			set
+			{
+				Account previousValue = this._AccountByManuallyAddedAccountID.Entity;
+				if (((previousValue != value) 
+							|| (this._AccountByManuallyAddedAccountID.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AccountByManuallyAddedAccountID.Entity = null;
+						previousValue.ContributionsByManuallyAddedAccountID.Remove(this);
+					}
+					this._AccountByManuallyAddedAccountID.Entity = value;
+					if ((value != null))
+					{
+						value.ContributionsByManuallyAddedAccountID.Add(this);
+						this._ManuallyAddedAccountID = value.AccountID;
+					}
+					else
+					{
+						this._ManuallyAddedAccountID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("AccountByManuallyAddedAccountID");
 				}
 			}
 		}
@@ -32128,7 +32311,376 @@ namespace ZkData
 		
 		private void Initialize()
 		{
-			this._Account = default(EntityRef<Account>);
+			this._AccountByAccountID = default(EntityRef<Account>);
+			this._AccountByManuallyAddedAccountID = default(EntityRef<Account>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CommanderDecorationIcon")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class CommanderDecorationIcon : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _DecorationUnlockID;
+		
+		private int _IconPosition;
+		
+		private int _IconType;
+		
+		private EntityRef<Unlock> _Unlock;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnDecorationUnlockIDChanging(int value);
+    partial void OnDecorationUnlockIDChanged();
+    partial void OnIconPositionChanging(int value);
+    partial void OnIconPositionChanged();
+    partial void OnIconTypeChanging(int value);
+    partial void OnIconTypeChanged();
+    #endregion
+		
+		public CommanderDecorationIcon()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DecorationUnlockID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int DecorationUnlockID
+		{
+			get
+			{
+				return this._DecorationUnlockID;
+			}
+			set
+			{
+				if ((this._DecorationUnlockID != value))
+				{
+					if (this._Unlock.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnDecorationUnlockIDChanging(value);
+					this.SendPropertyChanging();
+					this._DecorationUnlockID = value;
+					this.SendPropertyChanged("DecorationUnlockID");
+					this.OnDecorationUnlockIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IconPosition", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int IconPosition
+		{
+			get
+			{
+				return this._IconPosition;
+			}
+			set
+			{
+				if ((this._IconPosition != value))
+				{
+					this.OnIconPositionChanging(value);
+					this.SendPropertyChanging();
+					this._IconPosition = value;
+					this.SendPropertyChanged("IconPosition");
+					this.OnIconPositionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IconType", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int IconType
+		{
+			get
+			{
+				return this._IconType;
+			}
+			set
+			{
+				if ((this._IconType != value))
+				{
+					this.OnIconTypeChanging(value);
+					this.SendPropertyChanging();
+					this._IconType = value;
+					this.SendPropertyChanged("IconType");
+					this.OnIconTypeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_CommanderDecorationIcon", Storage="_Unlock", ThisKey="DecorationUnlockID", OtherKey="UnlockID", IsForeignKey=true)]
+		public Unlock Unlock
+		{
+			get
+			{
+				return this._Unlock.Entity;
+			}
+			set
+			{
+				Unlock previousValue = this._Unlock.Entity;
+				if (((previousValue != value) 
+							|| (this._Unlock.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Unlock.Entity = null;
+						previousValue.CommanderDecorationIcon = null;
+					}
+					this._Unlock.Entity = value;
+					if ((value != null))
+					{
+						value.CommanderDecorationIcon = this;
+						this._DecorationUnlockID = value.UnlockID;
+					}
+					else
+					{
+						this._DecorationUnlockID = default(int);
+					}
+					this.SendPropertyChanged("Unlock");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Unlock = default(EntityRef<Unlock>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ContributionJar")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class ContributionJar : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ContributionJarID;
+		
+		private string _Name;
+		
+		private int _GuarantorAccountID;
+		
+		private string _Description;
+		
+		private double _TargetGrossEuros;
+		
+		private bool _IsDefault;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnContributionJarIDChanging(int value);
+    partial void OnContributionJarIDChanged();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    partial void OnGuarantorAccountIDChanging(int value);
+    partial void OnGuarantorAccountIDChanged();
+    partial void OnDescriptionChanging(string value);
+    partial void OnDescriptionChanged();
+    partial void OnTargetGrossEurosChanging(double value);
+    partial void OnTargetGrossEurosChanged();
+    partial void OnIsDefaultChanging(bool value);
+    partial void OnIsDefaultChanged();
+    #endregion
+		
+		public ContributionJar()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ContributionJarID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int ContributionJarID
+		{
+			get
+			{
+				return this._ContributionJarID;
+			}
+			set
+			{
+				if ((this._ContributionJarID != value))
+				{
+					this.OnContributionJarIDChanging(value);
+					this.SendPropertyChanging();
+					this._ContributionJarID = value;
+					this.SendPropertyChanged("ContributionJarID");
+					this.OnContributionJarIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="nvarchar(100) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GuarantorAccountID", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int GuarantorAccountID
+		{
+			get
+			{
+				return this._GuarantorAccountID;
+			}
+			set
+			{
+				if ((this._GuarantorAccountID != value))
+				{
+					this.OnGuarantorAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._GuarantorAccountID = value;
+					this.SendPropertyChanged("GuarantorAccountID");
+					this.OnGuarantorAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="nvarchar(500)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public string Description
+		{
+			get
+			{
+				return this._Description;
+			}
+			set
+			{
+				if ((this._Description != value))
+				{
+					this.OnDescriptionChanging(value);
+					this.SendPropertyChanging();
+					this._Description = value;
+					this.SendPropertyChanged("Description");
+					this.OnDescriptionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TargetGrossEuros", DbType="float NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public double TargetGrossEuros
+		{
+			get
+			{
+				return this._TargetGrossEuros;
+			}
+			set
+			{
+				if ((this._TargetGrossEuros != value))
+				{
+					this.OnTargetGrossEurosChanging(value);
+					this.SendPropertyChanging();
+					this._TargetGrossEuros = value;
+					this.SendPropertyChanged("TargetGrossEuros");
+					this.OnTargetGrossEurosChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsDefault", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public bool IsDefault
+		{
+			get
+			{
+				return this._IsDefault;
+			}
+			set
+			{
+				if ((this._IsDefault != value))
+				{
+					this.OnIsDefaultChanging(value);
+					this.SendPropertyChanging();
+					this._IsDefault = value;
+					this.SendPropertyChanged("IsDefault");
+					this.OnIsDefaultChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
 			OnCreated();
 		}
 		

@@ -37,8 +37,8 @@
     @foreach (var c in new ZkDataContext().Contributions.OrderByDescending(x => x.Time)) {
         <tr>
             <td>
-                @if (c.Account != null) {
-                    @Html.PrintAccount(c.Account)
+                @if (c.AccountByAccountID != null) {
+                    @Html.PrintAccount(c.AccountByAccountID)
                 }
                 else {
                     <span>@c.Name</span>
