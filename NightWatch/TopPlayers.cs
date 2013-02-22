@@ -9,7 +9,7 @@ namespace NightWatch
     {
         const int RefreshMinutes = 60;
         const int TakeCount = 100;
-        readonly List<int> exceptions = new List<int> { 5986, 45679 }; // licho, nightwatch
+        readonly List<int> exceptions = new List<int> { 5986, 45679, 5806 }; // licho, nightwatch, kingraptor
 
         DateTime lastRefresh = DateTime.MinValue;
         List<Account> top1v1 = new List<Account>();
