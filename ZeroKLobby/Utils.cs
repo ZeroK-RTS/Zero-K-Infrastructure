@@ -347,4 +347,53 @@ namespace ZeroKLobby
 
         }
     }
+
+    public static class DpiMeasurement
+    {
+        public static double dpiY = 0;
+        public static double scaleUpRatioY = 0;
+        public static double scaleDownRatioY = 0;
+        public static double dpiX = 0;
+        public static double scaleUpRatioX = 0;
+        public static double scaleDownRatioX = 0;
+
+        public static void DpiXYMeasurement(Control a)
+        {
+            if ((dpiY == 0 | dpiX == 0) & (scaleUpRatioY == 0 | scaleUpRatioX == 0))
+            {
+                Graphics formGraphics = a.CreateGraphics(); //Reference: http://msdn.microsoft.com/en-us/library/system.drawing.graphics.dpix.aspx
+                dpiY = formGraphics.DpiY; //get current DPI
+                scaleUpRatioY = (double)dpiY / 96; //get scaleUP ratio, 96 is the original DPI. Preserve decimal, Reference: http://www.dotnetperls.com/divide
+                scaleDownRatioY = (double)96 / dpiY; //get scaleDown ratio (to counter-act DPI virtualization/scaling)
+                dpiX = formGraphics.DpiX;
+                scaleUpRatioX = (double)dpiX / 96;
+                scaleDownRatioX = (double)96 / dpiX;
+            }
+        }
+        public static int ScaleValueX(double designWidth)
+        {
+            double output = designWidth * scaleUpRatioX;
+            output = Math.Round(output, 0, MidpointRounding.AwayFromZero); //Reference: http://stackoverflow.com/questions/8844674/how-to-round-up-to-the-nearest-whole-number-in-c-sharp
+            return ((int)output);  //multiply the scaleUP ratio to the original design height, then change type to integer, then return value;
+
+        }
+        public static int ScaleValueY(double designHeight)
+        {
+            double output = designHeight * scaleUpRatioY;
+            output = Math.Round(output, 0, MidpointRounding.AwayFromZero);
+            return ((int)output); //multiply the scaleUP ratio to the original design height, then change type to integer, then return value;
+        }
+        public static int ReverseScaleValueY(double designHeight)
+        {
+            double output = designHeight * scaleDownRatioY;
+            output = Math.Round(output, 0, MidpointRounding.AwayFromZero);
+            return ((int)output); //multiply the scaleDOWN ratio to the original design height, then change type to integer, then return value;
+        }
+        public static int ReverseScaleValueX(double designHeight)
+        {
+            double output = designHeight * scaleDownRatioX;
+            output = Math.Round(output, 0, MidpointRounding.AwayFromZero);
+            return ((int)output); //multiply the scaleDOWN ratio to the original design height, then change type to integer, then return value;
+        }
+    }
 }

@@ -19,30 +19,6 @@ namespace ZeroKLobby.Notifications
         bool suppressChangeEvent;
         Timer tooltipLabelUpdate = new Timer();
         
-        int DPIScaleUpY(int designHeight)
-        {
-            //-- code for scaling-up based on user's custom DPI.
-            Graphics formGraphics = this.CreateGraphics(); //Reference: http://msdn.microsoft.com/en-us/library/system.drawing.graphics.dpix.aspx .ie: NotifyBarContainer.cs
-            double formDPIvertical = formGraphics.DpiY; //get current DPI
-            double scaleUpRatio = formDPIvertical / 96; //get scaleUP ratio, 96 is the original DPI
-            double output = designHeight * scaleUpRatio;
-            output = Math.Round(output, 0, MidpointRounding.AwayFromZero); //Reference: http://stackoverflow.com/questions/8844674/how-to-round-up-to-the-nearest-whole-number-in-c-sharp
-            //--
-            return ((int)output); //multiply the scaleUP ratio to the original design height, then change type to integer, then return value;
-        }
-
-        int DPIScaleUpX(int designHeight)
-        {
-            //-- code for scaling-up based on user's custom DPI.
-            Graphics formGraphics = this.CreateGraphics(); //Reference: http://msdn.microsoft.com/en-us/library/system.drawing.graphics.dpix.aspx .ie: NotifyBarContainer.cs
-            double formDPIvertical = formGraphics.DpiX; //get current DPI
-            double scaleUpRatio = formDPIvertical / 96; //get scaleUP ratio, 96 is the original DPI
-            double output = designHeight * scaleUpRatio;
-            output = Math.Round(output, 0, MidpointRounding.AwayFromZero); //Reference: http://stackoverflow.com/questions/8844674/how-to-round-up-to-the-nearest-whole-number-in-c-sharp
-            //--
-            return ((int)output); //multiply the scaleUP ratio to the original design height, then change type to integer, then return value;
-        }
-
         public JugglerBar(TasClient client) {
             InitializeComponent();
             this.client = client;
@@ -58,21 +34,21 @@ namespace ZeroKLobby.Notifications
 
             int xOffset = 0, yOffset = 0;
             foreach (AutohostMode mode in Enum.GetValues(typeof(AutohostMode)).OfType<AutohostMode>().Where(x => x != AutohostMode.None)) {
-                xOffset = DPIScaleUpX(70 + (cnt/2)*190);
-                yOffset = DPIScaleUpY(0 + (cnt%2)*21);
+                DpiMeasurement.DpiXYMeasurement(this); //this measurement use cached value. It won't cost anything if another measurement was already done in other control element
+                xOffset = DpiMeasurement.ScaleValueX(70 + (cnt / 2) * 190); //DpiMeasurement is a static class stored in ZeroKLobby\Util.cs
+                yOffset = DpiMeasurement.ScaleValueY(0 + (cnt % 2) * 21);
                 var item = new InfoItems();
                 Items.Add(mode, item);
 
-                Controls.Add(new Label
-                             { Left = xOffset + 0, Width = DPIScaleUpX(100), TextAlign = ContentAlignment.TopRight, Top = yOffset, Text = mode.Description() });
-                item.ComboBox = new ComboBox { Left = xOffset + DPIScaleUpX(105), Width = DPIScaleUpX(50), Top = yOffset, DropDownStyle = ComboBoxStyle.DropDownList };
+                Controls.Add(new Label { Left = xOffset + 0, Width = DpiMeasurement.ScaleValueX(100), TextAlign = ContentAlignment.TopRight, Top = yOffset, Text = mode.Description() });
+                item.ComboBox = new ComboBox { Left = xOffset + DpiMeasurement.ScaleValueX(105), Width = DpiMeasurement.ScaleValueX(50), Top = yOffset, DropDownStyle = ComboBoxStyle.DropDownList };
                 foreach (GamePreference pref in Enum.GetValues(typeof(GamePreference)).OfType<GamePreference>().OrderByDescending(z => (int)z)) item.ComboBox.Items.Add(new CbItem { Value = pref });
                 item.ComboBox.SelectedValueChanged += (sender, args) => { if (!suppressChangeEvent) SendMyConfig(true); };
 
                 Program.ToolTip.SetText(item.ComboBox, info);
 
                 Controls.Add(item.ComboBox);
-                item.Label = new Label { Left = xOffset + DPIScaleUpX(155), Top = yOffset, Width = DPIScaleUpX(35) };
+                item.Label = new Label { Left = xOffset + DpiMeasurement.ScaleValueX(155), Top = yOffset, Width = DpiMeasurement.ScaleValueX(35) };
                 Controls.Add(item.Label);
 
                 Program.ToolTip.SetText(item.Label, "How many waiting people + how many playing");
