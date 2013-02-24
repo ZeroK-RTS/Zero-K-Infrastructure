@@ -137,7 +137,7 @@ namespace ZeroKWeb.SpringieInterface
                                         pc["[\"" + c.Name + "\"]"] = morphTable;
 
                                         // process decoration icons
-                                        LuaTable decorationData = new LuaTable();
+                                        LuaTable decorations = new LuaTable();
                                         foreach (Unlock d in
                                                         c.CommanderDecorations.Where(x => x.Unlock != null).OrderBy(
                                                             x => x.SlotID).Select(x => x.Unlock))
@@ -145,21 +145,28 @@ namespace ZeroKWeb.SpringieInterface
                                             CommanderDecorationIcon iconData = db.CommanderDecorationIcons.FirstOrDefault(x => x.DecorationUnlockID == d.UnlockID);
                                             if (iconData != null)
                                             {
-                                                string iconType, iconPosition;
+                                                string iconName = null, iconPosition = null;
                                                 // FIXME: handle avatars and preset/custom icons
                                                 if (iconData.IconType == (int)DecorationIconTypes.Faction)
                                                 {
-                                                    iconType = user.Faction != null ? user.Faction.Shortcut : null;
+                                                    iconName = user.Faction != null ? user.Faction.Shortcut : null;
                                                 }
                                                 else if (iconData.IconType == (int)DecorationIconTypes.Clan)
                                                 {
-                                                    iconType = user.Clan != null ? user.Clan.Shortcut : null;
+                                                    iconName = user.Clan != null ? user.Clan.Shortcut : null;
                                                 }
 
-                                                iconPosition = CommanderDecoration.GetIconPosition(d);
-                                                decorationData.Add(iconPosition, iconData);
+                                                if (iconName != null)
+                                                {
+                                                    iconPosition = CommanderDecoration.GetIconPosition(d);
+                                                    LuaTable entry = new LuaTable();
+                                                    entry.Add("image", iconName);
+                                                    decorations.Add(iconPosition, entry);
+                                                }
                                             }
+                                            else decorations.Add(d.Code);
                                         }
+                                        
 
                                         //string prevKey = null;
                                         for (int i = 0; i <= GlobalConst.NumCommanderLevels; i++) {
@@ -174,17 +181,7 @@ namespace ZeroKWeb.SpringieInterface
                                             var modules = new LuaTable();
                                             comdef["modules"] = modules;
                                             
-                                            var decorations = new LuaTable();
                                             comdef["decorations"] = decorations;
-                                            foreach (Unlock m in
-                                                        c.CommanderDecorations.Where(x => x.Unlock != null).OrderBy(x => x.SlotID).Select(x => x.Unlock)) 
-                                                        decorations.Add(m.Code);
-                                            
-                                            
-                                            comdef["decorationData"] = decorationData;
-                                            //decorationData.Add("icon_chest", TBD); 
-                                            //decorationData.Add("icon_shoulders", TBD); 
-                                            //decorationData.Add("icon_back", TBD); 
 
                                             comdef["name"] = c.Name.Substring(0, Math.Min(25, c.Name.Length)) + " level " + i;
 
