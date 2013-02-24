@@ -161,7 +161,7 @@ namespace ZeroKWeb.SpringieInterface
                                                     iconPosition = CommanderDecoration.GetIconPosition(d);
                                                     LuaTable entry = new LuaTable();
                                                     entry.Add("image", iconName);
-                                                    decorations.Add(iconPosition, entry);
+                                                    decorations.Add("icon_" + iconPosition.ToLower(), entry);
                                                 }
                                             }
                                             else decorations.Add(d.Code);
