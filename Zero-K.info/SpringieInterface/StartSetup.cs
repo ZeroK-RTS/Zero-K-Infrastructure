@@ -133,8 +133,33 @@ namespace ZeroKWeb.SpringieInterface
                                         {
                                             c.Name = c.CommanderID.ToString();
                                         }
-                                        var morphTable = new LuaTable();
+                                        LuaTable morphTable = new LuaTable();
                                         pc["[\"" + c.Name + "\"]"] = morphTable;
+
+                                        // process decoration icons
+                                        LuaTable decorationData = new LuaTable();
+                                        foreach (Unlock d in
+                                                        c.CommanderDecorations.Where(x => x.Unlock != null).OrderBy(
+                                                            x => x.SlotID).Select(x => x.Unlock))
+                                        {
+                                            CommanderDecorationIcon iconData = db.CommanderDecorationIcons.FirstOrDefault(x => x.DecorationUnlockID == d.UnlockID);
+                                            if (iconData != null)
+                                            {
+                                                string iconType, iconPosition;
+                                                // FIXME: handle avatars and preset/custom icons
+                                                if (iconData.IconType == (int)DecorationIconTypes.Faction)
+                                                {
+                                                    iconType = user.Faction != null ? user.Faction.Shortcut : null;
+                                                }
+                                                else if (iconData.IconType == (int)DecorationIconTypes.Clan)
+                                                {
+                                                    iconType = user.Clan != null ? user.Clan.Shortcut : null;
+                                                }
+
+                                                iconPosition = CommanderDecoration.GetIconPosition(d);
+                                                decorationData.Add(iconPosition, iconData);
+                                            }
+                                        }
 
                                         //string prevKey = null;
                                         for (int i = 0; i <= GlobalConst.NumCommanderLevels; i++) {
@@ -155,8 +180,8 @@ namespace ZeroKWeb.SpringieInterface
                                                         c.CommanderDecorations.Where(x => x.Unlock != null).OrderBy(x => x.SlotID).Select(x => x.Unlock)) 
                                                         decorations.Add(m.Code);
                                             
-                                            //var decorationData = new LuaTable();
-                                            //comdef["decorationData"] = decorationData;
+                                            
+                                            comdef["decorationData"] = decorationData;
                                             //decorationData.Add("icon_chest", TBD); 
                                             //decorationData.Add("icon_shoulders", TBD); 
                                             //decorationData.Add("icon_back", TBD); 

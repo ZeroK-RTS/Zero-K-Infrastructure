@@ -129,6 +129,7 @@
     <Compile Include="Data\Commander.cs" />
     <Compile Include="Data\CampaignPlanet.cs" />
     <Compile Include="Data\CampaignJournal.cs" />
+    <Compile Include="Data\Decorations.cs" />
     <Compile Include="Data\EnergyPriority.cs" />
     <Compile Include="Data\Event.cs" />
     <Compile Include="Data\Faction.cs" />
