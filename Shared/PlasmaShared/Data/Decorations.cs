@@ -24,9 +24,12 @@ namespace ZkData
 
   partial class CommanderDecoration
   {
+    static string[] iconPositions = { "overhead", "back", "chest", "shoulders" };
+
     public static string GetIconPosition(CommanderDecorationIcon decoration)
     {
-        return decoration.IconPosition.ToString();
+        int num = decoration.IconPosition;
+        return iconPositions[num];
     }
 
     public static string GetIconPosition(Unlock decoration)
