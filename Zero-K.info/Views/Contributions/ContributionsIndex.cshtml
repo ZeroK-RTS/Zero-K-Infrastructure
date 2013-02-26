@@ -17,7 +17,7 @@ To unlock all units you need 100 Kudos, to unlock all commander items and comman
 <ul>
     <li>If you in total donate at least 100 kudos, you will automatically get a special bronze icon next to your name and your avatar will be bronze framed.</li>
     <li>If you in total donate at least 300 kudos, you will automatically get a special silver icon next to your name and your avatar will be silver framed, and you will gain ability to change lobby, forum and ingame avatars and icons.</li>
-    <li>If you  in totaldonate at least 1000 kudos, you will automatically get a special golden icon next to your name and your avatar will be gold framed, and you will gain ability to change lobby, forum and ingame avatars and icons, including ability to upload your own.</li>
+    <li>If you  in total donate at least 1000 kudos, you will automatically get a special golden icon next to your name and your avatar will be gold framed, and you will gain ability to change lobby, forum and ingame avatars and icons, including ability to upload your own.</li>
 </ul>
 <br/>
 
@@ -85,7 +85,7 @@ You can even select where your donation goes! :-)<br/>
                     @Html.PrintAccount(c.AccountByAccountID)
                 }
                 else {
-                    <span>@c.Name</span>
+                    <span>@c.Name.Split(new[]{' '},StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()</span>
                 }
 
             </td>

@@ -167,7 +167,7 @@ namespace PlasmaShared
 
         Contribution AddPayPalContribution(ParsedData parsed) {
             try {
-                if (parsed.Status != "Completed" || parsed.Gross <= 0) return null; // not a contribution!
+                if ((parsed.Status != "Completed" && parsed.Status != "Cleared") || parsed.Gross <= 0) return null; // not a contribution!
 
                 double netEur;
                 double grossEur;
@@ -193,7 +193,7 @@ namespace PlasmaShared
                     if (accountID != null) acc = Account.AccountByAccountID(db, accountID.Value);
 
                     if (!string.IsNullOrEmpty(parsed.TransactionID) && db.Contributions.Any(x => x.PayPalTransactionID == parsed.TransactionID)) return null; // contribution already exists
-                    var isSpring = !parsed.ItemCode.StartsWith("ZK");
+                    var isSpring = !parsed.ItemCode.StartsWith("ZK") || jar.IsDefault;
 
 
                     contrib = new Contribution()
@@ -240,7 +240,7 @@ namespace PlasmaShared
         static void SendEmail(Contribution contrib) {
             var smtp = new SmtpClient("localhost");
 
-            var subject = string.Format("Thank you for donating to {0}, redeem your Kudos now! :-)", contrib.IsSpringContribution ? "Spring/Zero-K" : "Zero-K");
+            var subject = string.Format("Thank you for donating to {0}, redeem your Kudos now! :-)", contrib.IsSpringContribution  ? "Spring/Zero-K" : "Zero-K");
 
             var body =
                 string.Format(
