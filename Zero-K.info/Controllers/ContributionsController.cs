@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
+using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.Controllers
@@ -68,6 +69,14 @@ namespace ZeroKWeb.Controllers
 
 
             return RedirectToAction("Index");
+        }
+
+        [Auth(Role = AuthRole.ZkAdmin)]
+        public ActionResult ResendEmail(int contributionID) {
+            var db = new ZkDataContext();
+            var contrib = db.Contributions.First(x => x.ContributionID == contributionID);
+            PayPalInterface.SendEmail(contrib);
+            return Content(string.Format("Email with code has been sent to {0}", contrib.Email));
         }
     }
 }

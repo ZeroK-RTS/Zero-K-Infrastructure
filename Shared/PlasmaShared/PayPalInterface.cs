@@ -237,7 +237,7 @@ namespace PlasmaShared
             }
         }
 
-        static void SendEmail(Contribution contrib) {
+        public static void SendEmail(Contribution contrib) {
             var smtp = new SmtpClient("localhost");
 
             var subject = string.Format("Thank you for donating to {0}, redeem your Kudos now! :-)", contrib.IsSpringContribution  ? "Spring/Zero-K" : "Zero-K");

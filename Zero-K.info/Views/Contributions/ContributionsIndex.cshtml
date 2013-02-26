@@ -10,16 +10,21 @@ If you wish to support us and continued development, you can donate any ammount 
 <br/>
 As a reward for your donation, you will get @GlobalConst.EurosToKudos Kudos per 1€ donated.<br/>
 <br/>
-You can then spend Kudos on special visual upgrades for Zero-K in the @Html.ActionLink("unlocks menu.","UnlockList","My")<br/>
-You can also use Kudos to instantly unlock units which would otherwise need XP to unlock over time.<br/>
-To unlock all units you need 100 Kudos, to unlock all commander items and commanders you need 200 Kudos.<br/>
-<br/>
-<ul>
-    <li>If you in total donate at least 100 kudos, you will automatically get a special bronze icon next to your name and your avatar will be bronze framed.</li>
-    <li>If you in total donate at least 300 kudos, you will automatically get a special silver icon next to your name and your avatar will be silver framed, and you will gain ability to change lobby, forum and ingame avatars and icons.</li>
-    <li>If you  in total donate at least 1000 kudos, you will automatically get a special golden icon next to your name and your avatar will be gold framed, and you will gain ability to change lobby, forum and ingame avatars and icons, including ability to upload your own.</li>
-</ul>
-<br/>
+Kudos are work in progress, but you will be rewarded with a special ingame and forum icon, instant XP unlocks and you will be able to use Kudos to unlock unique visual game items.
+<!--
+
+
+    You can then spend Kudos on special visual upgrades for Zero-K in the @Html.ActionLink("unlocks menu.","UnlockList","My")<br/>
+    You can also use Kudos to instantly unlock units which would otherwise need XP to unlock over time.<br/>
+    To unlock all units you need 100 Kudos, to unlock all commander items and commanders you need 200 Kudos.<br/>
+    <br/>
+    <ul>
+        <li>If you in total donate at least 100 kudos, you will automatically get a special bronze icon next to your name and your avatar will be bronze framed.</li>
+        <li>If you in total donate at least 300 kudos, you will automatically get a special silver icon next to your name and your avatar will be silver framed, and you will gain ability to change lobby, forum and ingame avatars and icons.</li>
+        <li>If you  in total donate at least 1000 kudos, you will automatically get a special golden icon next to your name and your avatar will be gold framed, and you will gain ability to change lobby, forum and ingame avatars and icons, including ability to upload your own.</li>
+    </ul>
+    <br/>
+    -->
 
 <h2>Donations jars</h2>
 You can even select where your donation goes! :-)<br/>
@@ -90,6 +95,9 @@ You can even select where your donation goes! :-)<br/>
 
             </td>
             <td>€@c.Euros.Value.ToString("F2")</td>
+            @if (Global.IsZeroKAdmin) {
+                <td>@Html.ActionLink("resend email", "ResendEmail", new {contributionID = @c.ContributionID})</td>
+            }
         </tr>
     }
 </table>
