@@ -245,7 +245,7 @@ namespace PlasmaShared
             var body =
                 string.Format(
                     "Hi {0}, \nThank you for donating to {1}\nYou can now redeem Kudos - special reward for Zero-K by clicking here: {2} \n (Please be patient Kudos features for the game will be added in the short future)\n\nWe wish you lots of fun playing the game and we are looking forward to meet you in game!\nThe Zero-K team",
-                    contrib.Name,
+                    contrib.Name.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(),
                     contrib.IsSpringContribution ? "the Spring project and Zero-K" : "Zero-K and Spring project",
                     GetCodeLink(contrib.RedeemCode));
 

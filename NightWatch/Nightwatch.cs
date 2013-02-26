@@ -88,7 +88,7 @@ namespace CaTracker
 		        {
 		            tas.Say(TasClient.SayPlace.Channel,
 		                    "zkdev",
-		                    string.Format("WOHOO! {0:d} New contribution of {1:F2}€ by {2} - for the jar {3}", c.Time, c.Euros, c.Name, c.ContributionJar.Name),
+		                    string.Format("WOHOO! {0:d} New contribution of {1:F2}€ by {2} - for the jar {3}", c.Time, c.Euros, c.Name.Split(new[]{' '},StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(), c.ContributionJar.Name),
 		                    true);
 		            if (c.AccountByAccountID == null)
 		                tas.Say(TasClient.SayPlace.Channel,
