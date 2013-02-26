@@ -55,6 +55,7 @@ namespace ZeroKLobby.MicroLobby
 			mapPanel.Controls.Add(minimapBox);
 			mapPanel.Visible = true;
 			mapPanel.Height = playerBox.Width;
+            splitContainer2.Panel2Collapsed = false; //show minimap box
 		}
 
 		protected override void Dispose(bool disposing)

@@ -359,7 +359,7 @@ namespace ZeroKLobby
 
         public static void DpiXYMeasurement(Control a)
         {
-            if ((dpiY == 0 | dpiX == 0) & (scaleUpRatioY == 0 | scaleUpRatioX == 0))
+            if (dpiY == 0 || dpiX == 0)
             {
                 Graphics formGraphics = a.CreateGraphics(); //Reference: http://msdn.microsoft.com/en-us/library/system.drawing.graphics.dpix.aspx
                 dpiY = formGraphics.DpiY; //get current DPI
@@ -368,6 +368,7 @@ namespace ZeroKLobby
                 dpiX = formGraphics.DpiX;
                 scaleUpRatioX = (double)dpiX / 96;
                 scaleDownRatioX = (double)96 / dpiX;
+                formGraphics.Dispose();
             }
         }
         public static int ScaleValueX(double designWidth)

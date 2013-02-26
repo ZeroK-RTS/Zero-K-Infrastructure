@@ -27,6 +27,9 @@ namespace ZeroKLobby.MicroLobby
 		public IEnumerable<PlayerListItem> PlayerListItems { get { return playerListItems; } }
 		public event EventHandler<EventArgs<string>> ChatLine { add { sendBox.LineEntered += value; } remove { sendBox.LineEntered -= value; } }
 		public GameInfo GameInfo { get; set; }
+        public ChatBox ChatBox; //somehow I have to declare here because my Design-mode throw "has no property named" error otherwise. 
+        public Panel TopicPanel; //credit to: http://social.msdn.microsoft.com/Forums/en-US/Vsexpressvcs/thread/53c5ca91-056d-43db-abb1-f47265dbfd08/ for this idea.
+        public ChatBox TopicBox;
 
 		public class ChannelLineArgs:EventArgs {
 			public string Channel;
@@ -65,7 +68,6 @@ namespace ZeroKLobby.MicroLobby
 	  extras.Click += (s, e) => { ContextMenus.GetChannelContextMenu(this).Show(extras, new Point(0, 0)); };
 	  ChatBox.Controls.Add(extras);
 
-
 	  playerBox.DrawMode = DrawMode.OwnerDrawVariable;
 			playerBox.MeasureItem += (s, e) => { }; // needed for ListBox.OnMeasureItem
 			playerBox.BackColor = Program.Conf.BgColor;
@@ -85,7 +87,7 @@ namespace ZeroKLobby.MicroLobby
 			playerBox.Sorted = true;
 			var lookingGlass = new PictureBox { Width = 20, Height = 20, Image = Resources.search, SizeMode = PictureBoxSizeMode.CenterImage };
 
-			panel1.Controls.Add(lookingGlass);
+			searchBarContainer.Controls.Add(lookingGlass);
 			Program.ToolTip.SetText(lookingGlass, "Enter name or country shortcut to find");
 			Program.ToolTip.SetText(playerSearchBox, "Enter name or country shortcut to find");
 
@@ -127,7 +129,6 @@ namespace ZeroKLobby.MicroLobby
 
 			if (channel != null) foreach (var userName in Program.TasClient.JoinedChannels[ChannelName].ChannelUsers) AddUser(userName);
 		}
-
 
 		public void GoToSendBox()
 		{
@@ -528,5 +529,10 @@ namespace ZeroKLobby.MicroLobby
 				playerBox.EndUpdate();
 			}
 		}
+
+        private void splitContainer2_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            OnResize(e); //OnResize(e) will be intercepted by BattleChatControl.cs & resize minimap.
+        }
 	}
 }
