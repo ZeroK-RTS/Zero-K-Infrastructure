@@ -60,7 +60,7 @@
         public const string BomberIcon = "/img/fleets/neutral.png";
 	    public const string WarpIcon = "/img/warpcore.png";
 
-	    public const bool VpnCheckEnabled = true;
+	    public const bool VpnCheckEnabled = false;
 
         public const double EurosToKudos = 10.0;
 	    public const string TeamEmail = "Zero-K team <team@zero-k.info>";
