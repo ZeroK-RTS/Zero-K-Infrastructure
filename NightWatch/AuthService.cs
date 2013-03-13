@@ -197,7 +197,7 @@ namespace NightWatch
                     {
                         User user = client.ExistingUsers[e.UserName];
 
-                        if (!user.IsZkLobbyUser && battle.EngineVersion != client.ServerSpringVersion &&
+                        if (!user.IsZkLobbyUser && !user.IsNotaLobby && battle.EngineVersion != client.ServerSpringVersion &&
                             battle.EngineVersion != client.ServerSpringVersion + ".0")
                         {
                             client.Say(TasClient.SayPlace.User,

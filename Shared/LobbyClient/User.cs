@@ -70,6 +70,7 @@ namespace LobbyClient
 
         public bool IsZkLobbyUser { get { return Cpu == GlobalConst.ZkLobbyUserCpu || Cpu == GlobalConst.ZkSpringieManagedCpu; } }
         public bool IsSpringieManaged { get { return Cpu == GlobalConst.ZkSpringieManagedCpu; } }
+        public bool IsNotaLobby { get { return Cpu == GlobalConst.NotaLobbyLinuxCpu || Cpu == GlobalConst.NotaLobbyWindowsCpu || Cpu == GlobalConst.NotaLobbyMacCpu; } }
         public string Name { get; protected set; }
         public int Rank { get; protected set; }
         public bool IsZeroKAdmin { get; protected set; }

@@ -64,8 +64,11 @@
 
         public const double EurosToKudos = 10.0;
 	    public const string TeamEmail = "Zero-K team <team@zero-k.info>";
+	    public const int NotaLobbyLinuxCpu = 9999;
+        public const int NotaLobbyWindowsCpu = 9998;
+        public const int NotaLobbyMacCpu = 9997;
 
-
+        
 	    public static bool IsZkMod(string name)
         {
             if (string.IsNullOrEmpty(name)) return false;
