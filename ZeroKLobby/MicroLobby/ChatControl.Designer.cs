@@ -77,6 +77,7 @@ namespace ZeroKLobby.MicroLobby
             this.splitContainer1.Size = new System.Drawing.Size(1130, 793);
             this.splitContainer1.SplitterDistance = 850;
             this.splitContainer1.TabIndex = 0;
+            this.splitContainer1.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer1_SplitterMoved);
             // 
             // ChatBox
             // 

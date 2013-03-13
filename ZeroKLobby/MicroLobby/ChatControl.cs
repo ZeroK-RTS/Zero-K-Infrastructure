@@ -534,5 +534,10 @@ namespace ZeroKLobby.MicroLobby
         {
             OnResize(e); //OnResize(e) will be intercepted by BattleChatControl.cs & resize minimap.
         }
+
+        private void splitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            OnResize(e); //OnResize(e) will be intercepted by BattleChatControl.cs & resize minimap.
+        }
 	}
 }

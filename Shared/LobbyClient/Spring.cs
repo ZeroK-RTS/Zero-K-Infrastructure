@@ -54,6 +54,7 @@ namespace LobbyClient
         public double? minimumValue;
         public string safemodeValue;
         public string type;
+        public int readOnly;
     }
 
     /// <summary>
@@ -173,6 +174,7 @@ namespace LobbyClient
         }
 
         public Dictionary<string, EngineConfigEntry> GetEngineConfigOptions() {
+            Trace.TraceInformation("Extracting configuration from Spring located in {0}", paths.Executable);
             var sb = new StringBuilder();
             var p = new Process();
             p.StartInfo.CreateNoWindow = true;
@@ -187,9 +189,14 @@ namespace LobbyClient
             p.Start();
             p.BeginOutputReadLine();
             p.WaitForExit(3000);
+            sb.AppendLine(); //append terminator
 
             var text = sb.ToString();
-            text = text.Substring(text.IndexOf('\n') + 1); // skip the first line with useless crap
+            int whereIsTable = text.IndexOf('\n');
+            if (whereIsTable > 2)
+            {
+                text = text.Substring(whereIsTable + 1); // skip empty line (if exist). Compatibility with Spring 91.0
+            }
             var data = JsonConvert.DeserializeObject<Dictionary<string, EngineConfigEntry>>(text);
             return data;
         }

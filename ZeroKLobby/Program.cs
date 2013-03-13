@@ -238,6 +238,7 @@ namespace ZeroKLobby
                 TasClient.LoginAccepted += (s, e) =>
                     {
                         Trace.TraceInformation("TASC login accepted");
+                        Trace.TraceInformation("Server is using Spring version {0}", TasClient.ServerSpringVersion);
                         if (SpringPaths.SpringVersion != TasClient.ServerSpringVersion) Downloader.GetAndSwitchEngine(TasClient.ServerSpringVersion);
                     };
 

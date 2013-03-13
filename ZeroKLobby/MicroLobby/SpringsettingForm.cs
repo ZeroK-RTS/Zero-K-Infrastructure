@@ -99,6 +99,7 @@ namespace ZeroKLobby.MicroLobby
                     // Set up/customize the ToolTip text for the Button and Checkbox.
                     var tooltip = "";
                     if (option.description != null) tooltip += string.Format("Description: {0}\n", option.description);
+                    if (option.readOnly==1) tooltip += string.Format("ReadOnly: True\n");
                     if (option.defaultValue != null) tooltip += string.Format("DefaultValue: {0}\n", option.defaultValue);
                     if (option.safemodeValue != null) tooltip += string.Format("SafeModeValue: {0}\n", option.safemodeValue);
                     if (option.minimumValue != null) tooltip += string.Format("MinimumValue: {0}\n", option.minimumValue);
