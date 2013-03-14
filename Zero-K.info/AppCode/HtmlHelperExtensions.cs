@@ -559,7 +559,7 @@ namespace System.Web.Mvc
             Resource map = db.Resources.FirstOrDefault(m => m.InternalName == planet.Mission.Map);
             return
                 new MvcHtmlString(string.Format("<a href='{0}' title='$planet${4}'><img src='/img/planets/{1}' width='{2}'>{3}</a>",
-                                                url.Action("Planet", "Planetwars", new { id = planet.PlanetID }),
+                                                url.Action("Planet", "Campaign", new { id = planet.PlanetID }),
                                                 map.MapPlanetWarsIcon,
                                                 map.PlanetWarsIconSize / 3,
                                                 planet.Name,
