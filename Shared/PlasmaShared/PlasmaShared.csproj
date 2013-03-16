@@ -222,6 +222,7 @@
     <Compile Include="WebReferences\StatsCollector.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Whois.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Ionic.Zip.Reduced">

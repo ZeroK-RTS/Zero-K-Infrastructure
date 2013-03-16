@@ -55,6 +55,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
+    <Compile Include="WhoisTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
