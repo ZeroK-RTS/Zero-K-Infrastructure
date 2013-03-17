@@ -24,7 +24,7 @@ namespace NightWatch
         int messageId;
         readonly ConcurrentDictionary<int, RequestInfo> requests = new ConcurrentDictionary<int, RequestInfo>();
         readonly TopPlayers topPlayers = new TopPlayers();
-        public static string[] blockedCompanies = new string[] { "PRIVAX-LTD" };
+        public static string[] blockedCompanies = new string[] { "PRIVAX-LTD", "NetcoSolution-BLK-IP" };
         public static string[] blockedHosts = new string[] { "anchorfree.com", "leaseweb.com", "uk2net.com", "privax.com", "hidemyass.com" };
 
         public AuthService(TasClient client) {
@@ -141,14 +141,15 @@ namespace NightWatch
                                                                       "Connection using proxy or VPN is not allowed! (You can ask for exception). See http://dnsbl.tornevall.org/removal.php to get your IP removed from the blacklist.");
                                         }
 
+                                        var whois = new Whois();
+                                        var data = whois.QueryByIp(args.IP);
+                                        if (blockedCompanies.Contains(data["netname"]) || blockedHosts.Any(x => data["abuse-mailbox"].Contains(x))) client.AdminKickFromLobby(args.Name, "Connection using VPN is not allowed! (You can ask for exception)");
+
                                         var hostname = Dns.GetHostEntry(args.IP).HostName;
                                         if (blockedHosts.Any(hostname.Contains))
                                             client.AdminKickFromLobby(args.Name,
                                                                       "Connection using proxy or VPN is not allowed! (You can ask for exception)");
-
-                                        var whois = new Whois();
-                                        var data = whois.QueryByIp(args.IP);
-                                        if (blockedCompanies.Contains(data["netname"]) || blockedHosts.Any(x => data["abuse-mailbox"].Contains(x))) client.AdminKickFromLobby(args.Name, "Connection using VPN is not allowed! (You can ask for exception)");
+                                        
                                     }
                                 }
                             } catch (Exception ex) {
