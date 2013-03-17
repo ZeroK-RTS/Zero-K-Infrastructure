@@ -15,6 +15,7 @@ namespace Tests
             var whois = new Whois();
             var data = whois.QueryByIp("31.7.187.232");
             Assert.AreEqual("PRIVAX-LTD", data["netname"]);
+            Assert.AreEqual("info@hidemyass.com", data["abuse-mailbox"]);
         }
 
     }
