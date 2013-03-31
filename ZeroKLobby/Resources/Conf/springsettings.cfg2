@@ -64,6 +64,7 @@ LODScale = 1.000
 LODScaleReflection = 1.000
 LODScaleRefraction = 1.000
 LODScaleShadow = 1.000
+LogFlush = 0
 Language = en
 LastSelectedMap = Tropical
 LastSelectedMod = Zero-K $VERSION

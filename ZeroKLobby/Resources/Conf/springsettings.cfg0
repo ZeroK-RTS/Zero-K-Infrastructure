@@ -73,6 +73,7 @@ LastSelectedMod = Zero-K $VERSION
 LastSelectedScript = Commanders
 LastSelectedSetting = 
 LinkBandwidth = 0
+LogFlush = 0
 LogSubsystems = 
 LuaAutoModWidgets = 1
 LuaModUICtrl = 1
