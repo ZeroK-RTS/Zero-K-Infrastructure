@@ -267,5 +267,24 @@ namespace ZeroKLobby
       }
     }
 
+    private void hideButton_Click(object sender, RoutedEventArgs e)
+    {
+        //row height. Reference: http://wpftutorial.net/GridLayout.html 
+        //using element type & using event to set row height. Reference: http://stackoverflow.com/questions/7334208/expanders-in-grid
+        
+        System.Windows.Controls.Button ex = sender as System.Windows.Controls.Button;
+        System.Windows.Controls.Grid parent = FindName("bigGrid1") as System.Windows.Controls.Grid;
+        if (parent.RowDefinitions[0].Height != new GridLength(2, GridUnitType.Pixel))
+        {
+            parent.RowDefinitions[0].Height = new GridLength(2, GridUnitType.Pixel);
+            parent.RowDefinitions[1].Height = new GridLength(2, GridUnitType.Pixel);
+        }
+        else {
+            parent.RowDefinitions[0].Height = GridLength.Auto;
+            parent.RowDefinitions[1].Height = GridLength.Auto;
+        }
+
+    }
+
   }
 }

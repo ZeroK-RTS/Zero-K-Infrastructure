@@ -192,11 +192,8 @@ namespace LobbyClient
             sb.AppendLine(); //append terminator
 
             var text = sb.ToString();
-            int whereIsTable = text.IndexOf('\n');
-            if (whereIsTable > 2)
-            {
-                text = text.Substring(whereIsTable + 1); // skip empty line (if exist). Compatibility with Spring 91.0
-            }
+            int whereIsTable = text.IndexOf('{');
+            text = text.Substring(whereIsTable); // skip empty line or other info (if exist). Compatibility with Spring 94+
             var data = JsonConvert.DeserializeObject<Dictionary<string, EngineConfigEntry>>(text);
             return data;
         }

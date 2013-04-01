@@ -3,12 +3,13 @@
         xmlns:MicroLobby="clr-namespace:ZeroKLobby.MicroLobby" xmlns:MapDownloader="clr-namespace:ZeroKLobby.MapDownloader"
         xmlns:ZeroKLobby="clr-namespace:ZeroKLobby" xmlns:c="clr-namespace:ZeroKLobby.Controls"
         mc:Ignorable="d" d:DesignHeight="374" d:DesignWidth="773" Loaded="UserControl_Loaded" x:Name="userControl" Background="Black">
-    <Grid>
+    <Grid Name="bigGrid1">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="0" />
             <RowDefinition />
-        </Grid.RowDefinitions>
+        </Grid.RowDefinitions>      
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -39,7 +40,9 @@
                 </ItemsControl>	
             </StackPanel>
         </ScrollViewer>
-        <TabControl Grid.Row="2" x:Name="tabControl" Background="Black" BorderThickness="0">
+        <!--Note: hide/show button is in own row (a row with 0 height but the button margin is -4, so it use space from navigation bar) -->
+        <Button x:Name="hideButton"  Margin="-4" ToolTip="Show/Hide Navigation Bar" Grid.Row="2" MinHeight="9" FontSize="9" Height="9" Click="hideButton_Click">| | | | |</Button>
+        <TabControl Grid.Row="3" x:Name="tabControl" Background="Black" BorderThickness="0">
             <TabControl.ItemContainerStyle>
                 <Style TargetType="{x:Type TabItem}">
                     <Setter Property="Visibility" Value="Collapsed" />
