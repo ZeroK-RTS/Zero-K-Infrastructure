@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.Routing;
 using LobbyClient;
 using NightWatch;
 using ZkData;
@@ -147,6 +148,7 @@ namespace ZeroKWeb.Controllers
         }
 
 
+        [Auth(Role = AuthRole.ZkAdmin | AuthRole.LobbyAdmin)]
         public ActionResult Punish(int accountID,
                                    string reason,
                                    bool deleteXP,
@@ -158,7 +160,7 @@ namespace ZeroKWeb.Controllers
                                    bool banUnlocks,
                                    string banIP,
                                    int? banUserID,
-                                   DateTime? banExpires)
+                                   double banHours)
         {
             var db = new ZkDataContext();
             Account acc = db.Accounts.Single(x => x.AccountID == accountID);
@@ -170,7 +172,7 @@ namespace ZeroKWeb.Controllers
                                  BanCommanders = banCommanders,
                                  BanSite = banSite,
                                  BanLobby = banLobby,
-                                 BanExpires = banExpires,
+                                 BanExpires = DateTime.UtcNow.AddHours(banHours),
                                  BanUnlocks = banUnlocks,
                                  BanIP = banIP,
                                  DeleteXP = deleteXP,
@@ -223,6 +225,15 @@ namespace ZeroKWeb.Controllers
             }
 
             return Content("Thank you. Your issue was reported. Moderators will now look into it.");
+        }
+
+        [Auth(Role = AuthRole.LobbyAdmin|AuthRole.ZkAdmin)]
+        public ActionResult RemovePunishment(int punishmentID) {
+            var db = new ZkDataContext();
+            var todel = db.Punishments.First(x => x.PunishmentID == punishmentID);
+            db.Punishments.DeleteOnSubmit(todel);
+            db.SubmitAndMergeChanges();
+            return RedirectToAction("Detail", "Users", new { id = todel.UserID });
         }
     }
 }
