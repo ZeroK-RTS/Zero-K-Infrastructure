@@ -43,7 +43,7 @@
     Expires on: @p.BanExpires<br/>
     @if (Global.IsZeroKAdmin || Global.IsLobbyAdmin) {
         <div class="admin">
-            @Html.ActionLink("remove ban", "RemovePunishment","Users", new {punishmentID = p.PunishmentID}, null)
+            @Html.ActionLink("remove ban", "RemovePunishment","Users", new {punishmentID = p.PunishmentID}, new {@class="delete"})
         </div>
     }
 </div>
