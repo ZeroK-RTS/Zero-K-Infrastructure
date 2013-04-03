@@ -40,6 +40,11 @@
         <span>IP block: @p.BanIP</span><br />
         <span>UserID block: @p.UserID</span><br />
     }
-    Expires on: @p.BanExpires
+    Expires on: @p.BanExpires<br/>
+    @if (Global.IsZeroKAdmin || Global.IsLobbyAdmin) {
+        <div class="admin">
+            @Html.ActionLink("remove ban", "RemovePunishment","Users", new {punishmentID = p.PunishmentID}, null)
+        </div>
+    }
 </div>
 
