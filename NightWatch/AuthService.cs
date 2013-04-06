@@ -25,7 +25,7 @@ namespace NightWatch
         readonly ConcurrentDictionary<int, RequestInfo> requests = new ConcurrentDictionary<int, RequestInfo>();
         readonly TopPlayers topPlayers = new TopPlayers();
         public static string[] blockedCompanies = new string[] { "PRIVAX-LTD", "NetcoSolution-BLK-IP" };
-        public static string[] blockedHosts = new string[] { "anchorfree.com", "leaseweb.com", "uk2net.com", "privax.com", "hidemyass.com" };
+        public static string[] blockedHosts = new string[] { "anchorfree.com", "leaseweb.com", "uk2net.com", "privax.com", "hidemyass.com", "hotspotshield.com" };
 
         public AuthService(TasClient client) {
             this.client = client;
@@ -132,13 +132,17 @@ namespace NightWatch
                                     db.SubmitChanges();
                                 }
 
-                                if (GlobalConst.VpnCheckEnabled) {
+                                //if (GlobalConst.VpnCheckEnabled) {
                                     if (acc == null || !acc.HasVpnException) {
-                                        var reversedIP = string.Join(".", args.IP.Split('.').Reverse().ToArray());
-                                        var resolved = Dns.GetHostEntry(string.Format("{0}.dnsbl.tornevall.org", reversedIP)).AddressList;
-                                        if (resolved != null && resolved.Length > 0) {
-                                            client.AdminKickFromLobby(args.Name,
-                                                                      "Connection using proxy or VPN is not allowed! (You can ask for exception). See http://dnsbl.tornevall.org/removal.php to get your IP removed from the blacklist.");
+                                        if (GlobalConst.VpnCheckEnabled)
+                                        {
+                                            var reversedIP = string.Join(".", args.IP.Split('.').Reverse().ToArray());
+                                            var resolved = Dns.GetHostEntry(string.Format("{0}.dnsbl.tornevall.org", reversedIP)).AddressList;
+                                            if (resolved != null && resolved.Length > 0)
+                                            {
+                                                client.AdminKickFromLobby(args.Name,
+                                                                          "Connection using proxy or VPN is not allowed! (You can ask for exception). See http://dnsbl.tornevall.org/removal.php to get your IP removed from the blacklist.");
+                                            }
                                         }
 
                                         var whois = new Whois();
@@ -151,7 +155,7 @@ namespace NightWatch
                                                                       "Connection using proxy or VPN is not allowed! (You can ask for exception)");
                                         
                                     }
-                                }
+                                //}
                             } catch (Exception ex) {
                                 Trace.TraceError("Error getting user IP: {0}", ex);
                             }
