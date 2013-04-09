@@ -14,7 +14,7 @@ namespace ZeroKLobby.MicroLobby
 		                                                       	{ "thecursed:latest", "[GJL]autohost" },
 		                                                       	{ "xta:latest", "Helium" },
 		                                                       	{ "nota:latest", "Nitrogen" },
-		                                                       	{ "zk:stable", "Springie" },
+		                                                       	{ "zk:stable", "Springiee" },
 		                                                       	{ "zk:test", "Oxygen" },
 		                                                       	{ "evo:test", "Lithium" },
 		                                                       	{ "s44:test", "Nickel" },
