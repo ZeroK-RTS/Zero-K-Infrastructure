@@ -40,8 +40,6 @@
                 </ItemsControl>	
             </StackPanel>
         </ScrollViewer>
-        <!--Note: hide/show button is in own row (a row with 0 height but the button margin is -4, so it use space from navigation bar) -->
-        <Button x:Name="hideButton"  Margin="-4" ToolTip="Show/Hide Navigation Bar" Grid.Row="2" MinHeight="9" FontSize="9" Height="9" Click="hideButton_Click">| | | | |</Button>
         <TabControl Grid.Row="3" x:Name="tabControl" Background="Black" BorderThickness="0">
             <TabControl.ItemContainerStyle>
                 <Style TargetType="{x:Type TabItem}">
@@ -82,5 +80,7 @@
                 <MicroLobby:BrowserControl x:Name="browserControl"/>
             </TabItem>
         </TabControl>
+        <!--Note: hide/show button is in own row (a row with 0 height but the button margin is -4, so it use space from navigation bar) -->
+        <Button x:Name="hideButton"  Margin="-4" ToolTip="Show/Hide Navigation Bar" Grid.Row="2" MinHeight="9" FontSize="3" Height="9" FontWeight="UltraBold" Foreground="Gold" Cursor="UpArrow" Click="hideButton_Click">_A___A___A___A___A_</Button>
     </Grid>
 </UserControl>

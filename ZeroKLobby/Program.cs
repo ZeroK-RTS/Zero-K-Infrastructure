@@ -288,6 +288,28 @@ namespace ZeroKLobby
                 NewVersionBar = new NewVersionBar();
                 VoteBar =new VoteBar();
 
+                //This remove DPI-scaling for every bar and make its size constant (only for height).
+                //We want to remove DPI-scaling for these bars because the bar already inherit the size of scaled content (see NotifyBarContainer.cs line 19).
+                //If we did nothing then the size of resultant bar is effectively a bar with DPI-scaled twice.
+                DpiMeasurement.DpiXYMeasurement(VoteBar); //use a control element to measure current DPI-scaling
+                System.Drawing.Size votebarSize = new System.Drawing.Size(0, DpiMeasurement.ReverseScaleValueY(VoteBar.Height + 8)); //get reversed DPI-scaling for current bar height with 8 margin
+                System.Drawing.Size newversionbarSize = new System.Drawing.Size(0, DpiMeasurement.ReverseScaleValueY(NewVersionBar.Height + 8));
+                System.Drawing.Size battlebarSize = new System.Drawing.Size(0, DpiMeasurement.ReverseScaleValueY(BattleBar.Height + 8));
+                System.Drawing.Size connectbarSize = new System.Drawing.Size(0, DpiMeasurement.ReverseScaleValueY(ConnectBar.Height + 8));
+                System.Drawing.Size jugglerbarSize = new System.Drawing.Size(0, DpiMeasurement.ReverseScaleValueY(JugglerBar.Height + 8));
+
+                VoteBar.MinimumSize = votebarSize; //fix minimum size forever
+                VoteBar.MaximumSize = votebarSize; //fix maximum size forever
+                NewVersionBar.MinimumSize = newversionbarSize;
+                NewVersionBar.MaximumSize = newversionbarSize;
+                BattleBar.MinimumSize = battlebarSize;
+                BattleBar.MaximumSize = battlebarSize;
+                ConnectBar.MinimumSize = connectbarSize;
+                ConnectBar.MaximumSize = connectbarSize;
+                JugglerBar.MinimumSize = jugglerbarSize;
+                JugglerBar.MaximumSize = jugglerbarSize;
+                //End battlebar reverse DPI scaling
+
                 if (!Conf.DisableDriverCheck) PlasmaShared.Utils.StartAsync(DriverCheck.DoCheck);
 
                 if (Conf.ShowFriendsWindow == true)
