@@ -87,8 +87,8 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Button x:Name="hideButton" Visibility="Visible"  Margin="-4" ToolTip="Hide Navigation Bar" Grid.Column="0" MinHeight="13" Width="25" FontSize="4" Height="13" FontWeight="UltraLight" Foreground="Gold" Cursor="ScrollN" Click="hideButton_Click">_H _I _D _E</Button>
-            <Button x:Name="showButton" Visibility="Hidden" Margin="-4" ToolTip="Show Navigation Bar" Grid.Column="1" MinHeight="13" Width="25" FontSize="4" Height="13" FontWeight="UltraLight" Foreground="Gold" Cursor="ScrollS" Click="showButton_Click">_S _H _O _W</Button>
+            <Button x:Name="hideButton" Visibility="Visible"  Margin="-4" ToolTip="Hide Navigation Bar" Grid.Column="0" MinHeight="13" Width="25" FontSize="4" Height="13" Foreground="Gold" Cursor="ScrollN" Click="hideButton_Click">_/\ _/\ _/\ _/\</Button>
+            <Button x:Name="showButton" Visibility="Hidden" Margin="-4" ToolTip="Show Navigation Bar" Grid.Column="1" MinHeight="13" Width="25" FontSize="4" Height="13" Foreground="Gold" Cursor="ScrollS" Click="showButton_Click">_\/ _\/ _\/ _\/</Button>
         </Grid>
     </Grid>
 </UserControl>
