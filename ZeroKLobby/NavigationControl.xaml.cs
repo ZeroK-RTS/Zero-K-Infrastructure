@@ -274,20 +274,38 @@ namespace ZeroKLobby
         
         System.Windows.Controls.Button ex = sender as System.Windows.Controls.Button;
         System.Windows.Controls.Grid parent = FindName("bigGrid1") as System.Windows.Controls.Grid;
-        if (parent.RowDefinitions[1].Height != new GridLength(2, GridUnitType.Pixel))
+        if (parent.RowDefinitions[1].Height != new GridLength(2, GridUnitType.Pixel)) //if row[1] height is not pixel type, 2 (??)
         {
-            parent.RowDefinitions[1].Height = new GridLength(2, GridUnitType.Pixel);
+            System.Windows.Controls.Button showButton = FindName("showButton") as System.Windows.Controls.Button;
+            showButton.Visibility = System.Windows.Visibility.Visible; //make showButton visible
+            parent.RowDefinitions[1].Height = new GridLength(2, GridUnitType.Pixel); //set row[1] height to pixel type, 2
         }
-        else if (parent.RowDefinitions[0].Height != new GridLength(2, GridUnitType.Pixel))
+        else if (parent.RowDefinitions[0].Height != new GridLength(2, GridUnitType.Pixel)) //if row[0] height is not pixel type, 2 (??)
         {
-            parent.RowDefinitions[0].Height = new GridLength(2, GridUnitType.Pixel);
-        }
-        else 
-        {
-            parent.RowDefinitions[0].Height = GridLength.Auto;
-            parent.RowDefinitions[1].Height = GridLength.Auto; 
+            ex.Visibility = System.Windows.Visibility.Hidden;
+            parent.RowDefinitions[0].Height = new GridLength(2, GridUnitType.Pixel); //set row[0] height to pixel type, 2
         }
 
+    }
+
+    private void showButton_Click(object sender, RoutedEventArgs e)
+    {
+        //row height. Reference: http://wpftutorial.net/GridLayout.html 
+        //using element type & using event to set row height. Reference: http://stackoverflow.com/questions/7334208/expanders-in-grid
+
+        System.Windows.Controls.Button ex = sender as System.Windows.Controls.Button;
+        System.Windows.Controls.Grid parent = FindName("bigGrid1") as System.Windows.Controls.Grid;
+        if (parent.RowDefinitions[0].Height != GridLength.Auto) //if row[1] height is not auto
+        {
+            System.Windows.Controls.Button hideButton = FindName("hideButton") as System.Windows.Controls.Button;
+            hideButton.Visibility = System.Windows.Visibility.Visible; //make hideButton visible
+            parent.RowDefinitions[0].Height = GridLength.Auto; //set row[1] height to auto
+        }
+        else if (parent.RowDefinitions[1].Height != GridLength.Auto) //if row[0] height is not auto
+        {
+            ex.Visibility = System.Windows.Visibility.Hidden;
+            parent.RowDefinitions[1].Height = GridLength.Auto; //set row[0] height to auto
+        }
     }
 
   }

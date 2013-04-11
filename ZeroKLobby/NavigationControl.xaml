@@ -81,6 +81,14 @@
             </TabItem>
         </TabControl>
         <!--Note: hide/show button is in own row (a row with 0 height but the button margin is -4, so it use space from navigation bar) -->
-        <Button x:Name="hideButton"  Margin="-4" ToolTip="Show/Hide Navigation Bar" Grid.Row="2" MinHeight="9" FontSize="3" Height="9" FontWeight="UltraBold" Foreground="Gold" Cursor="UpArrow" Click="hideButton_Click">_A___A___A___A___A_</Button>
+        <Grid Grid.Row="2" HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Button x:Name="hideButton" Visibility="Visible"  Margin="-4" ToolTip="Hide Navigation Bar" Grid.Column="0" MinHeight="13" Width="25" FontSize="4" Height="13" FontWeight="UltraLight" Foreground="Gold" Cursor="ScrollN" Click="hideButton_Click">_H _I _D _E</Button>
+            <Button x:Name="showButton" Visibility="Hidden" Margin="-4" ToolTip="Show Navigation Bar" Grid.Column="1" MinHeight="13" Width="25" FontSize="4" Height="13" FontWeight="UltraLight" Foreground="Gold" Cursor="ScrollS" Click="showButton_Click">_S _H _O _W</Button>
+        </Grid>
     </Grid>
 </UserControl>
