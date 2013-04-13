@@ -25,7 +25,13 @@
 		<br />
 		@Html.BBCode(unlock.Description)
 		<br />
-		<a href="@Url.Action("Unlock", "My", new { id = unlock.UnlockID })" class="clearfloat">Unlock</a>
+        @if (unlock.IsKudosOnly != true) {
+            <a href="@Url.Action("Unlock", "My", new { id = unlock.UnlockID })" class="clearfloat">Unlock</a>
+        }
+        @if (unlock.KudosCost != null) {
+            <a href="@Url.Action("Unlock", "My", new { id = unlock.UnlockID, useKudos = true })" class="clearfloat">Unlock (kudos)</a>
+        }
+		
 	</div>
 }
 <br class="clearfloat" />
