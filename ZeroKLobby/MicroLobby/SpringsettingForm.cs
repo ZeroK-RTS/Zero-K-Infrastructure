@@ -83,10 +83,10 @@ namespace ZeroKLobby.MicroLobby
                     NewLinkLabel.Text = kvp.Key;
 
                     var cPlusPlusFile = option.declarationFile;
-                    var truncatedCPlusPlusPath = Regex.Match(cPlusPlusFile, @"build/([a-zA-Z0-9\\~\\!\\@\\#\\$\\%\\^\\&amp;\\*\\(\\)_\\-\\=\\+\\\\\\/\\?\\.\\:\\;\\'\\,]*)?", RegexOptions.IgnoreCase);
+                    var truncatedCPlusPlusPath = Regex.Match(cPlusPlusFile, @"rts/([a-zA-Z0-9\\~\\!\\@\\#\\$\\%\\^\\&amp;\\*\\(\\)_\\-\\=\\+\\\\\\/\\?\\.\\:\\;\\'\\,]*)?", RegexOptions.IgnoreCase);
                     //Reference: http://www.dotnetperls.com/regex-match, http://weblogs.asp.net/farazshahkhan/archive/2008/08/09/regex-to-find-url-within-text-and-make-them-as-link.aspx
 
-                    var hyperLink = "https://github.com/spring/spring/blob/develop/" + truncatedCPlusPlusPath.Groups[1].Value + "#L" + settingsOptions[kvp.Key].declarationLine;
+                    var hyperLink = "https://github.com/spring/spring/blob/develop/" + truncatedCPlusPlusPath.Groups[0].Value + "#L" + settingsOptions[kvp.Key].declarationLine;
 
                     var link = new LinkLabel.Link(); //Reference: http://www.dotnetperls.com/linklabel
                     link.LinkData = hyperLink;
@@ -150,6 +150,61 @@ namespace ZeroKLobby.MicroLobby
             }
             catch (Exception ex) {
                 ErrorHandling.HandleException(ex, false);
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string filterTerm;
+            filterTerm = textBox1.Text.ToLowerInvariant();
+
+            foreach (var kvp in settingsOptions)
+            {
+                var controlWithName = panel1.Controls.Find(kvp.Key, false);
+                if (controlWithName[0] != null) //CHECK in case the setting wasn't found (ie: when the new setting differ from previous list) then skip this one. Anti-bug.
+                {
+                    string keyNameLowercase = kvp.Key.ToLowerInvariant();
+                    if (keyNameLowercase.Contains(filterTerm))
+                    {
+                        controlWithName[0].BackColor = Color.Aqua;
+                    }
+                    else
+                    {
+                        controlWithName[0].BackColor = Color.White;
+                    }
+                }
+            }
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            //Reference3: http://stackoverflow.com/questions/7545775/how-to-loop-through-all-controls-in-a-windows-forms-form-or-how-to-find-if-a-par
+            //Reference2: http://stackoverflow.com/questions/12686623/change-cell-background-color-in-winform-datagrid-c-sharp
+            //Reference1: http://stackoverflow.com/questions/1845297/how-to-implement-a-search-box-in-c-sharp
+            string filterTerm;
+            bool zeroEntry=false;
+            filterTerm = textBox1.Text.ToLowerInvariant();
+            if (filterTerm == "") {
+                zeroEntry = true;
+            }
+            foreach (Control c in panel1.Controls)
+            {
+                if (zeroEntry)
+                { 
+                   c.BackColor = Color.White;
+                   continue;
+                }
+                string keyNameLowercase = c.Name.ToLowerInvariant();
+                string keyTextLowercase = c.Text.ToLowerInvariant();
+                if (keyNameLowercase.Contains(filterTerm) || keyTextLowercase.Contains(filterTerm))
+                {
+                    c.BackColor = Color.Aqua;
+                }
+                else
+                {
+                    c.BackColor = Color.White;
+                }
             }
         }
 
