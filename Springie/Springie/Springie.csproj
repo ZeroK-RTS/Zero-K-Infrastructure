@@ -155,6 +155,7 @@
     <Compile Include="autohost\CommandConfig.cs" />
     <Compile Include="autohost\CommandList.cs" />
     <Compile Include="autohost\Polls\AbstractPoll.cs" />
+    <Compile Include="autohost\Polls\VoteResetOptions.cs" />
     <Compile Include="autohost\Polls\VoteMove.cs" />
     <Compile Include="autohost\Polls\VoteStart.cs" />
     <Compile Include="autohost\Polls\IVotable.cs" />

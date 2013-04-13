@@ -765,6 +765,22 @@ namespace Springie.autohost
             }
         }
 
+        public void ComResetOptions(TasSayEventArgs e, string[] words)
+        {
+            foreach (var opt in tas.MyBattle.ModOptions)
+            {
+                var entry = hostedMod.Options.FirstOrDefault(x => x.Key.ToLower() == opt.Key.ToLower());
+                if (entry != null && entry.Default != opt.Value)
+                {
+                    string str;
+                    entry.GetPair(entry.Default, out str);
+                    tas.SetScriptTag(str);
+                }
+            }
+
+            Respond(e, "Game options reset to defaults");
+        }
+
         public void ComRing(TasSayEventArgs e, string[] words)
         {
             var usrlist = new List<string>();
@@ -1250,22 +1266,6 @@ namespace Springie.autohost
         {
             if (!toNotify.Contains(e.UserName)) toNotify.Add(e.UserName);
             Respond(e, "I will notify you when game ends");
-        }
-
-        void ComResetOptions(TasSayEventArgs e, string[] words)
-        {
-            foreach (var opt in tas.MyBattle.ModOptions)
-            {
-                var entry = hostedMod.Options.FirstOrDefault(x => x.Key.ToLower() == opt.Key.ToLower());
-                if (entry != null && entry.Default != opt.Value)
-                {
-                    string str;
-                    entry.GetPair(entry.Default, out str);
-                    tas.SetScriptTag(str);
-                }
-            }
-
-            Respond(e, "Game options reset to defaults");
         }
 
         void ComSaveBoxes(TasSayEventArgs e, string[] words)
