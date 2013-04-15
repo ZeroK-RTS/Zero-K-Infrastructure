@@ -288,15 +288,13 @@ namespace ZeroKLobby
                 NewVersionBar = new NewVersionBar();
                 VoteBar =new VoteBar();
 
-                //This remove DPI-scaling for every bar and make its size constant (only for height).
-                //We want to remove DPI-scaling for these bars because the bar already inherit the size of scaled content (see NotifyBarContainer.cs line 19).
-                //If we did nothing then the size of resultant bar is effectively a bar with DPI-scaled twice.
-                DpiMeasurement.DpiXYMeasurement(VoteBar); //use a control element to measure current DPI-scaling
-                System.Drawing.Size votebarSize = new System.Drawing.Size(0, DpiMeasurement.ReverseScaleValueY(VoteBar.Height)); //get reversed DPI-scaling for current bar height with 8 margin. Reference: http://stackoverflow.com/questions/5314041/set-minimum-window-size-in-c-sharp-net
-                System.Drawing.Size newversionbarSize = new System.Drawing.Size(0, DpiMeasurement.ReverseScaleValueY(NewVersionBar.Height));
-                System.Drawing.Size battlebarSize = new System.Drawing.Size(0, DpiMeasurement.ReverseScaleValueY(BattleBar.Height));
-                System.Drawing.Size connectbarSize = new System.Drawing.Size(0, DpiMeasurement.ReverseScaleValueY(ConnectBar.Height));
-                System.Drawing.Size jugglerbarSize = new System.Drawing.Size(0, DpiMeasurement.ReverseScaleValueY(JugglerBar.Height));
+                //This make the size of every bar constant (only for height).
+                //This is a HAX, we wanted to make them constant because the bar will be DPI-scaled twice/thrice/multiple-time again somewhere but we don't know where it is to fix them.
+                System.Drawing.Size votebarSize = new System.Drawing.Size(0, VoteBar.Height); // Reference: http://stackoverflow.com/questions/5314041/set-minimum-window-size-in-c-sharp-net
+                System.Drawing.Size newversionbarSize = new System.Drawing.Size(0,NewVersionBar.Height);
+                System.Drawing.Size battlebarSize = new System.Drawing.Size(0, BattleBar.Height);
+                System.Drawing.Size connectbarSize = new System.Drawing.Size(0, ConnectBar.Height);
+                System.Drawing.Size jugglerbarSize = new System.Drawing.Size(0, JugglerBar.Height);
 
                 VoteBar.MinimumSize = votebarSize; //fix minimum size forever
                 VoteBar.MaximumSize = votebarSize; //fix maximum size forever
@@ -308,7 +306,7 @@ namespace ZeroKLobby
                 ConnectBar.MaximumSize = connectbarSize;
                 JugglerBar.MinimumSize = jugglerbarSize;
                 JugglerBar.MaximumSize = jugglerbarSize;
-                //End battlebar reverse DPI scaling
+                //End battlebar size fix hax
 
                 if (!Conf.DisableDriverCheck) PlasmaShared.Utils.StartAsync(DriverCheck.DoCheck);
 
