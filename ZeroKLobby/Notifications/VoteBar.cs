@@ -41,7 +41,13 @@ namespace ZeroKLobby.Notifications
                                 e.Cancel = true; // vote bar already visible, dont spam vote text again
                             }
 
-                            lbQuestion.Text = question;
+                            lbQuestion.Text = question; //add vote text into linklabel
+                            lbQuestion.Links.Clear(); //remove all link (convert to normal text?)
+                            foreach (Match match in Regex.Matches(question, @"((mailto|spring|http|https|ftp|ftps)\://(\S+))")) //find map link
+                            {
+                                lbQuestion.Links.Add(match.Groups[1].Index, match.Groups[1].Length); //activate link for map link
+                            }
+                            
                             var m2 = Regex.Match(data, "!y=([0-9]+)/([0-9]+), !n=([0-9]+)/([0-9]+)");
                             if (m2.Success) {
                                 var yes = int.Parse(m2.Groups[1].Value);
@@ -93,6 +99,11 @@ namespace ZeroKLobby.Notifications
         private void btnNo_Click(object sender, EventArgs e)
         {
             tas.Say(TasClient.SayPlace.Battle, "", "!n", false);
+        }
+
+        private void lbQuestion_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Utils.OpenWeb(lbQuestion.Text.Substring(e.Link.Start, e.Link.Length)); //open map's webpage
         }
     }
 }

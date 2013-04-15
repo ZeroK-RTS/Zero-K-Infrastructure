@@ -87,8 +87,9 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Button x:Name="hideButton" Visibility="Visible"  Margin="-4" ToolTip="Hide Navigation Bar" Grid.Column="0" MinHeight="13" Width="25" FontSize="4" Height="13" Foreground="Gold" Cursor="ScrollN" Click="hideButton_Click">_/\ _/\ _/\ _/\</Button>
-            <Button x:Name="showButton" Visibility="Hidden" Margin="-4" ToolTip="Show Navigation Bar" Grid.Column="1" MinHeight="13" Width="25" FontSize="4" Height="13" Foreground="Gold" Cursor="ScrollS" Click="showButton_Click">_\/ _\/ _\/ _\/</Button>
+            <!--Up arrow ASCII Reference: http://www.csgnetwork.com/asciiextset.html -->
+            <Button x:Name="hideButton" Visibility="Visible"  Margin="-4" ToolTip="Hide Navigation Bar" Grid.Column="0" MinHeight="15" Width="25" FontSize="9" VerticalAlignment="Bottom" Height="15" Foreground="Gold" Cursor="ScrollN" Click="hideButton_Click"> ▲ </Button>
+            <Button x:Name="showButton" Visibility="Hidden" Margin="-4" ToolTip="Show Navigation Bar" Grid.Column="1" MinHeight="15" Width="25" FontSize="9" VerticalAlignment="Bottom" Height="15" Foreground="Gold" Cursor="ScrollS" Click="showButton_Click"> ▼ </Button>
         </Grid>
     </Grid>
 </UserControl>

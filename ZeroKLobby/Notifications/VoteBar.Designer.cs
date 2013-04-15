@@ -34,7 +34,7 @@
             this.lbNo = new System.Windows.Forms.Label();
             this.btnYes = new System.Windows.Forms.Button();
             this.btnNo = new System.Windows.Forms.Button();
-            this.lbQuestion = new System.Windows.Forms.Label();
+            this.lbQuestion = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
             // pbYes
@@ -101,7 +101,9 @@
             this.lbQuestion.Name = "lbQuestion";
             this.lbQuestion.Size = new System.Drawing.Size(41, 13);
             this.lbQuestion.TabIndex = 2;
+            this.lbQuestion.TabStop = true;
             this.lbQuestion.Text = "label1";
+            this.lbQuestion.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lbQuestion_LinkClicked);
             // 
             // VoteBar
             // 
@@ -129,6 +131,6 @@
         private System.Windows.Forms.Label lbNo;
         private System.Windows.Forms.Button btnYes;
         private System.Windows.Forms.Button btnNo;
-        private System.Windows.Forms.Label lbQuestion;
+        private System.Windows.Forms.LinkLabel lbQuestion;
     }
 }

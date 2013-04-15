@@ -16,7 +16,7 @@ namespace ZeroKLobby.Notifications
             btnStop.Click += stop_Click;
             btnStop.Image = Resources.Remove;
             var control = barContent.GetControl();
-            Height = control.Height; //inherit height from barContent
+            Height = control.Height + 8; //inherit height from barContent + 8 for margin for download bar
             tableLayoutPanel1.Controls.Add(control, 1, 0);
             control.Dock = DockStyle.Fill;
             Dock = DockStyle.Top;

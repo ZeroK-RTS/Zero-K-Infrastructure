@@ -67,6 +67,9 @@ namespace ZeroKLobby.MicroLobby
         {
             try
             {
+                Program.ToolTip.SetText(highlighttextBox, "Highlight any options that contain this term as name");
+                Program.ToolTip.SetText(highlightlabel, "Highlighter");
+
                 Program.ToolTip.SetText(engineDefaultButton, "Replace all entries with Spring's default values");
                 Program.ToolTip.SetText(cancelButton, "Exit, do not commit change");
                 Program.ToolTip.SetText(applyButton, "Write all entries to Springsettings.cfg");
@@ -95,6 +98,7 @@ namespace ZeroKLobby.MicroLobby
                     NewLinkLabel.Links.Add(0, 250, link.LinkData); //Reference: http://www.c-sharpcorner.com/uploadfile/mahesh/linklabel-in-C-Sharp/
                     NewLinkLabel.Location = new Point(10, location);
                     NewLinkLabel.Size = new Size(250, 17);
+                    Program.ToolTip.SetText(NewLinkLabel, "Hyperlink: Spring/" + truncatedCPlusPlusPath.Groups[0].Value + "#L" + settingsOptions[kvp.Key].declarationLine);
 
                     // Set up/customize the ToolTip text for the Button and Checkbox.
                     var tooltip = "";
@@ -121,7 +125,6 @@ namespace ZeroKLobby.MicroLobby
                         panel1.Controls.Add(NewLinkLabel);
                         panel1.Controls.Add(NewCheckBox);
 
-                        Program.ToolTip.SetText(NewLinkLabel, tooltip);
                         Program.ToolTip.SetText(NewCheckBox, tooltip);
                     }
                     else
@@ -139,7 +142,6 @@ namespace ZeroKLobby.MicroLobby
                         panel1.Controls.Add(NewLinkLabel);
                         panel1.Controls.Add(NewTextBox);
 
-                        Program.ToolTip.SetText(NewLinkLabel, tooltip);
                         Program.ToolTip.SetText(NewTextBox, tooltip);
                     }
 
@@ -156,7 +158,7 @@ namespace ZeroKLobby.MicroLobby
         private void button1_Click(object sender, EventArgs e)
         {
             string filterTerm;
-            filterTerm = textBox1.Text.ToLowerInvariant();
+            filterTerm = highlighttextBox.Text.ToLowerInvariant();
 
             foreach (var kvp in settingsOptions)
             {
@@ -184,7 +186,7 @@ namespace ZeroKLobby.MicroLobby
             //Reference1: http://stackoverflow.com/questions/1845297/how-to-implement-a-search-box-in-c-sharp
             string filterTerm;
             bool zeroEntry=false;
-            filterTerm = textBox1.Text.ToLowerInvariant();
+            filterTerm = highlighttextBox.Text.ToLowerInvariant();
             if (filterTerm == "") {
                 zeroEntry = true;
             }
