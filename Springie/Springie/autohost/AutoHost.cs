@@ -428,6 +428,10 @@ namespace Springie.autohost
                     StartVote(new VoteExit(tas, spring, this), e, words);
                     break;
 
+                case "voteresetoptions":
+                    StartVote(new VoteResetOptions(tas, spring, this), e, words);
+                    break;
+
                 case "predict":
                     ComPredict(e, words);
                     break;
