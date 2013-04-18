@@ -306,6 +306,7 @@ namespace LobbyClient
 
                 process.StartInfo.Arguments += string.Format("--config \"{0}\"", paths.GetSpringConfigPath());
                 process.StartInfo.EnvironmentVariables["SPRING_DATADIR"] = paths.WritableDirectory;
+                process.StartInfo.EnvironmentVariables["OMP_WAIT_POLICY"] = "ACTIVE";
 
                 if (UseDedicatedServer) {
                     process.StartInfo.EnvironmentVariables["SPRING_ISOLATED"] = paths.WritableDirectory;
