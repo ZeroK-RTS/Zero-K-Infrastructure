@@ -255,9 +255,9 @@ namespace System.Web.Mvc
             {
                 total += contrib.KudosValue;
             }
-            if (total > GlobalConst.KudosForGold) star = "star_yellow";
-            else if (total > GlobalConst.KudosForSilver) star = "star_white";
-            else if (total > GlobalConst.KudosForBronze) star = "star_brown";
+            if (total >= GlobalConst.KudosForGold) star = "star_yellow";
+            else if (total >= GlobalConst.KudosForSilver) star = "star_white";
+            else if (total >= GlobalConst.KudosForBronze) star = "star_brown";
             else return new MvcHtmlString("");
 
             if (large == false) star = star + "_small";
