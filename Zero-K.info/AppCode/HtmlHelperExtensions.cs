@@ -258,10 +258,11 @@ namespace System.Web.Mvc
             if (total > GlobalConst.KudosForGold) star = "star_yellow";
             else if (total > GlobalConst.KudosForSilver) star = "star_white";
             else if (total > GlobalConst.KudosForBronze) star = "star_brown";
+            else return new MvcHtmlString("");
 
             if (large == false) star = star + "_small";
             return new MvcHtmlString(
-                        string.Format("<img src='/img/stars/{0}.png' class='star' alt='Donator star'/>", star));
+                        string.Format("<img src='/img/stars/{0}.png' alt='Donator star'/>", star));
         }
 
        
