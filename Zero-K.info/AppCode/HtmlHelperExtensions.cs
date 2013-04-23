@@ -223,6 +223,11 @@ namespace System.Web.Mvc
                 else if (account.Faction != null) {
                     clanStr = string.Format("<img src='{0}' width='16'/>", account.Faction.GetImageUrl());
                 }
+                var adminStr = "";
+                if (account.IsZeroKAdmin)
+                {
+                    adminStr = "<img src='/img/police.png'  class='icon16' alt='Admin' />";
+                }
 
                 var clampedLevel = account.Level / 10 + 1;
                 if (clampedLevel < 1) clampedLevel = 1;
@@ -231,13 +236,32 @@ namespace System.Web.Mvc
                 return
                     new MvcHtmlString(
                         string.Format(
-                            "<img src='/img/flags/{0}.png' class='flag' height='11' width='16' alt='{0}'/><img src='/img/ranks/{1}.png'  class='icon16' alt='rank' />{5}<a href='/Users/Detail/{2}' style='color:{3}' nicetitle='$user${2}'>{4}</a>",
+                            "<img src='/img/flags/{0}.png' class='flag' height='11' width='16' alt='{0}'/><img src='/img/ranks/{1}.png'  class='icon16' alt='rank' />{5}{6}<a href='/Users/Detail/{2}' style='color:{3}' nicetitle='$user${2}'>{4}</a>",
                             account.Country != "??" ? account.Country : "unknown",
                             clampedLevel,
                             account.AccountID,
                             colorize ? Faction.FactionColor(account.Faction, Global.FactionID) : "",
-                            account.Name,clanStr));
+                            account.Name,
+                            clanStr,
+                            adminStr));
             }
+        }
+        public static MvcHtmlString PrintContributorStar(this HtmlHelper helper, Account account, bool large=false)
+        {
+            string star = "";
+            var contribs = account.ContributionsByAccountID.ToList();
+            int total = 0;
+            foreach (var contrib in contribs)
+            {
+                total += contrib.KudosValue;
+            }
+            if (total > GlobalConst.KudosForGold) star = "star_yellow";
+            else if (total > GlobalConst.KudosForSilver) star = "star_white";
+            else if (total > GlobalConst.KudosForBronze) star = "star_brown";
+
+            if (large == false) star = star + "_small";
+            return new MvcHtmlString(
+                        string.Format("<img src='/img/stars/{0}.png' class='star' alt='Donator star'/>", star));
         }
 
        

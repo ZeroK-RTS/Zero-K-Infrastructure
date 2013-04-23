@@ -12,6 +12,10 @@
         <b>Lobby rank: </b> <img src='/img/ranks/@(u.LobbyTimeRank+1).png'  class='icon16'/>
     </div>
 }
+@if (Model.ContributionsByAccountID.Count() > 0)
+{
+    @Html.PrintContributorStar(u, true); <br />
+}
 <b>Level:</b> @u.Level<br/>
 <br/>
 @foreach (var entry in Model.AccountRolesByAccountID) {

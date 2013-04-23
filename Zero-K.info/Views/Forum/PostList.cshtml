@@ -28,6 +28,11 @@
                             {
                                 <a nicetitle='Delete the post' href='@Url.Action("DeletePost", "Forum", new { postID = p.ForumPostID })' class='delete'><img src="/img/delete_trashcan.png" height="22"/></a>
                             }
+                            <br />
+                            @if (p.Account.ContributionsByAccountID.Count() > 0)
+                            {
+                                 @Html.PrintContributorStar(p.Account) <br />
+                            }
                         </td>
                     </tr>
 
