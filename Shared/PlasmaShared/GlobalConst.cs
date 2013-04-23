@@ -68,6 +68,10 @@
         public const int NotaLobbyWindowsCpu = 9998;
         public const int NotaLobbyMacCpu = 9997;
 
+        public const int KudosForBronze = 100;
+        public const int KudosForSilver = 500;
+        public const int KudosForGold = 1000;
+
         
 	    public static bool IsZkMod(string name)
         {
