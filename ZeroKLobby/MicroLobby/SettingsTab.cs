@@ -225,7 +225,8 @@ namespace ZeroKLobby.MicroLobby
         private void btnRestart_Click(object sender, EventArgs e)
         {
             Program.SaveConfig();
-            Application.Restart(); 
+            Application.Restart();
+            System.Windows.Application.Current.Shutdown(); //Reference: NewVersionBar.cs
         }
 
         private void btnDefaults_Click(object sender, EventArgs e)
@@ -239,6 +240,7 @@ namespace ZeroKLobby.MicroLobby
                 Directory.Delete(Utils.MakePath(path, "LuaUI"), true);
                 Directory.Delete(Utils.MakePath(path, "temp"), true);
                 Application.Restart();
+                System.Windows.Application.Current.Shutdown();
             
             }
         }
