@@ -98,6 +98,7 @@ namespace ZeroKLobby.MicroLobby
                     NewLinkLabel.Links.Add(0, 250, link.LinkData); //Reference: http://www.c-sharpcorner.com/uploadfile/mahesh/linklabel-in-C-Sharp/
                     NewLinkLabel.Location = new Point(10, location);
                     NewLinkLabel.Size = new Size(250, 17);
+                    NewLinkLabel.AccessibleDescription = truncatedCPlusPlusPath.Groups[0].Value + "#L" + settingsOptions[kvp.Key].declarationLine;
                     Program.ToolTip.SetText(NewLinkLabel, "Hyperlink: Spring/" + truncatedCPlusPlusPath.Groups[0].Value + "#L" + settingsOptions[kvp.Key].declarationLine);
 
                     // Set up/customize the ToolTip text for the Button and Checkbox.
@@ -120,6 +121,7 @@ namespace ZeroKLobby.MicroLobby
                         NewCheckBox.Location = new Point(260, location);
                         NewCheckBox.Size = new Size(200, 17);
                         NewCheckBox.Name = kvp.Key;
+                        NewCheckBox.AccessibleDescription = tooltip;
 
                         //add all the controls
                         panel1.Controls.Add(NewLinkLabel);
@@ -137,6 +139,7 @@ namespace ZeroKLobby.MicroLobby
                         NewTextBox.Location = new Point(260, location);
                         NewTextBox.Size = new Size(200, 17);
                         NewTextBox.Name = kvp.Key;
+                        NewTextBox.AccessibleDescription = tooltip;
 
                         //add all the controls
                         panel1.Controls.Add(NewLinkLabel);
@@ -199,7 +202,8 @@ namespace ZeroKLobby.MicroLobby
                 }
                 string keyNameLowercase = c.Name.ToLowerInvariant();
                 string keyTextLowercase = c.Text.ToLowerInvariant();
-                if (keyNameLowercase.Contains(filterTerm) || keyTextLowercase.Contains(filterTerm))
+                string textAssignedToTooltip = c.AccessibleDescription.ToLowerInvariant();
+                if (keyNameLowercase.Contains(filterTerm) || keyTextLowercase.Contains(filterTerm) || textAssignedToTooltip.Contains(filterTerm))
                 {
                     c.BackColor = Color.Aqua;
                 }

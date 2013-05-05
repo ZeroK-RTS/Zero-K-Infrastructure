@@ -21,14 +21,10 @@ namespace ZeroKLobby
                                                    {
                                                        RelativePath = "springsettings.cfg",
                                                        Resource = "/Resources/Conf/springsettings.cfg",
-                                                       KeyValueRegex = "([^=]+)=(.*)",
+                                                       KeyValueRegex = "([^=]+)=(.*)", //return "<key>=<value>", "<key>", and "<value>"
                                                        KeyValueFormat = "{0}={1}",
-                                                       MergeRegex = "([^=]+)=",
-                                                       SpecialLines = () =>
-                                                           {
-                                                               var size = SystemInformation.PrimaryMonitorSize;
-                                                               return string.Format("XResolution={0}\r\nYResolution={1}\r\n", size.Width, size.Height);
-                                                           }
+                                                       MergeRegex = "([^=]+)=", //return "<key>=", "<key>"
+                                                       SpecialLines = "addResolution",
                                                    }, new FileInfo() { RelativePath = "uikeys.txt", Resource = "/Resources/Conf/uikeys.txt" },
                                                    new FileInfo() { RelativePath = "selectkeys.txt", Resource = "/Resources/Conf/selectkeys.txt" },
                                                    new FileInfo() { RelativePath = "lups.cfg", Resource = "/Resources/Conf/lups.cfg" },
@@ -77,10 +73,35 @@ namespace ZeroKLobby
                 if (overwrite || !File.Exists(target))
                 {
                     var data = ReadResourceString(string.Format("{0}{1}", f.Resource, level));
-                    if (data == null) data = ReadResourceString(f.Resource);
+                    bool usinglocal = false;
+                    if (data == null) {
+                        data = ReadResourceString(f.Resource);
+                        usinglocal = true;
+                    }
 
-                    ApplyFileChanges(target, data, f.MergeRegex);
-                    if (f.SpecialLines != null) ApplyFileChanges(target, f.SpecialLines(), f.MergeRegex);
+                    ApplyFileChanges(target, data, f.KeyValueRegex);
+
+                    //add resolution data if not yet added:
+                    string SpecialLinesToAdd = null;
+                    if (f.SpecialLines == "addResolution")
+                    {
+                        bool useCustomRes = false;
+                        if (!usinglocal) //extract options from "data"
+                        {
+                            //find out if data file already contain resolution data
+                            var m = Regex.Match(data, "XResolution");
+                            if (m.Success) useCustomRes = true;
+                        }
+                        if (!useCustomRes)
+                        {   //if data file do not contain resolution data, create new one
+                            var size = SystemInformation.PrimaryMonitorSize;
+                            SpecialLinesToAdd = string.Format("XResolution={0}\r\nYResolution={1}\r\n", size.Width, size.Height);
+                            Trace.TraceInformation("addResolution:");
+                            Trace.TraceInformation(SpecialLinesToAdd);
+                        }
+                    }
+                    if (SpecialLinesToAdd != null) ApplyFileChanges(target, SpecialLinesToAdd, f.KeyValueRegex);
+                    //end add resolution data
                 }
             }
             SetConfigValue("widgetDetailLevel", level.ToString());
@@ -104,20 +125,42 @@ namespace ZeroKLobby
             if (string.IsNullOrEmpty(regex) || !File.Exists(target)) File.WriteAllText(target, data);
             else
             {
-                var targetDict = File.ReadAllLines(target).ToDictionary(x =>
+                Dictionary<string, string> targetDict = new Dictionary<string, string>();
+                foreach (var line in File.ReadAllLines(target))
+                {
+                    var m = Regex.Match(line, regex);
+                    if (m.Success)
                     {
-                        var m = Regex.Match(x, regex);
-                        if (m.Success) return m.Groups[1].Value;
-                        else return x;
-                    });
-                var sourceDict = data.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).ToDictionary(x =>
+                        string capturedKeyString = m.Groups[1].Value.Trim(); //remove whitespace
+                        if (!targetDict.ContainsKey(capturedKeyString)) targetDict.Add(capturedKeyString, m.Groups[0].Value);
+                        else Trace.TraceInformation("Duplicate key in user's configuration file detected: " + capturedKeyString);
+                    }
+                }
+                //    var targetDict = File.ReadAllLines(target).ToDictionary(x =>
+                //        {
+                //            var m = Regex.Match(x, regex);
+                //            if (m.Success) return m.Groups[1].Value;
+                //            else return x;
+                //        });
+                Dictionary<string, string> sourceDict = new Dictionary<string, string>();
+                string[] linesOfOption = data.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var line in linesOfOption)
+                {
+                    var m = Regex.Match(line, regex);
+                    if (m.Success)
                     {
-                        var m = Regex.Match(x, regex);
-                        if (m.Success) return m.Groups[1].Value;
-                        else return x;
-                    });
-                ;
-
+                        string capturedKeyString = m.Groups[1].Value.Trim(); //remove whitespace
+                        if (!sourceDict.ContainsKey(capturedKeyString)) sourceDict.Add(capturedKeyString, m.Groups[0].Value);
+                        else Trace.TraceInformation("Duplicate key in source's configuration file detected: " + capturedKeyString);
+                    }
+                }
+                //var sourceDict = data.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).ToDictionary(x =>
+                //    {
+                //        var m = Regex.Match(x, regex);
+                //        if (m.Success) return m.Groups[1].Value;
+                //        else return x;
+                //    });
+                //;
                 foreach (var kvp in targetDict) if (!sourceDict.ContainsKey(kvp.Key)) sourceDict[kvp.Key] = kvp.Value;
                 File.WriteAllLines(target, sourceDict.Values);
             }
@@ -172,7 +215,7 @@ namespace ZeroKLobby
             public string MergeRegex;
             public string RelativePath;
             public string Resource;
-            public Func<string> SpecialLines;
+            public string SpecialLines;
         }
     }
 }

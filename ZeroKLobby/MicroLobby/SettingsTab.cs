@@ -35,12 +35,15 @@ namespace ZeroKLobby.MicroLobby
 			                                     (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "LuaUI", "ctrlpanel.txt"))));
             cmDisplay.MenuItems.Add(new MenuItem("Edit UI keys", (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "uikeys.txt"))));
 
-            Program.ToolTip.SetText(cbSafeMode,"Use safe mode - all effects reduce to minimum, use if the game is crashing");
+            Program.ToolTip.SetText(cbSafeMode, "Turns off many things that are known to cause problems (on PC/Mac's with lower-end graphic cards). Use if the game is crashing.\nWill override Springsetting.cfg");
 
-            Program.ToolTip.SetText(cbHwCursor,"HW cursor moves faster with no lag, but it can become invisible on some machines");
+            Program.ToolTip.SetText(cbHwCursor,"HW cursor is uneffected by ingame lag, but it can become invisible on some machines");
             Program.ToolTip.SetText(cbMtEngine, "MT engine is experimental and it *can* improve or *decrease* performance, cause crashes and desyncs. \r\nUse at own risk");
+           
+            Program.ToolTip.SetText(cbWindowed, "Windowed: Run game on desktop in a window\nBorderless: Run game on desktop in a borderless window\nFullscreen: Run game fullscreen");
+            Program.ToolTip.SetText(button5, "Springsetting.cfg and Lups.cfg tuned for performance and compatibility");
+            Program.ToolTip.SetText(button1, "Springsetting.cfg and Lups.cfg with minimal features");
 
-			
 		}
 
 
@@ -49,7 +52,13 @@ namespace ZeroKLobby.MicroLobby
 		{
             refreshingConfig = true;
 			propertyGrid1.SelectedObject = Program.Conf;
-            cbWindowed.Checked = Program.EngineConfigurator.GetConfigValue("WindowBorderless") == "0";
+            if (Program.EngineConfigurator.GetConfigValue("Fullscreen") == "0" && Program.EngineConfigurator.GetConfigValue("WindowBorderless") == "1")
+                cbWindowed.SelectedItem = "Borderless";
+            else if(Program.EngineConfigurator.GetConfigValue("Fullscreen") == "0")
+                cbWindowed.SelectedItem = "Windowed";
+            else 
+                cbWindowed.SelectedItem = "Fullscreen";
+
             cbHwCursor.Checked = Program.EngineConfigurator.GetConfigValue("HardwareCursor") == "1";
             tbResx.Text = Program.EngineConfigurator.GetConfigValue("XResolution");
             tbResy.Text = Program.EngineConfigurator.GetConfigValue("YResolution");
@@ -60,22 +69,27 @@ namespace ZeroKLobby.MicroLobby
 
 
 	    public void SaveConfig() {
-            if (cbWindowed.Checked) {
+            if (cbWindowed.SelectedItem == "Fullscreen")
+            {
+                Program.EngineConfigurator.SetConfigValue("Fullscreen", "1");
+            }
+            else if (cbWindowed.SelectedItem == "Borderless")
+            {
+                Program.EngineConfigurator.SetConfigValue("Fullscreen", "0");
+                Program.EngineConfigurator.SetConfigValue("WindowBorderless", "1");
+            }
+            else if (cbWindowed.SelectedItem == "Windowed")
+            {
                 Program.EngineConfigurator.SetConfigValue("Fullscreen", "0");
                 Program.EngineConfigurator.SetConfigValue("WindowBorderless", "0");
-                Program.EngineConfigurator.SetConfigValue("XResolution", tbResx.Text);
-                Program.EngineConfigurator.SetConfigValue("YResolution", tbResy.Text);
-            } else {
-                Program.EngineConfigurator.SetConfigValue("Fullscreen","0");
-                Program.EngineConfigurator.SetConfigValue("WindowBorderless", "1");
-                Program.EngineConfigurator.SetConfigValue("WindowState", "0");
-                Program.EngineConfigurator.SetConfigValue("WindowPosY", "0");
-                Program.EngineConfigurator.SetConfigValue("WindowPosX", "0");
-                Program.EngineConfigurator.SetConfigValue("XResolution", "0");
-                Program.EngineConfigurator.SetConfigValue("YResolution", "0");
             }
+
+            Program.EngineConfigurator.SetConfigValue("XResolution", tbResx.Text);
+            Program.EngineConfigurator.SetConfigValue("YResolution", tbResy.Text);
 	        Program.EngineConfigurator.SetConfigValue("HardwareCursor", cbHwCursor.Checked?"1":"0");
             Program.EngineConfigurator.SetConfigValue("WindowState", "0"); // neded for borderless
+            Program.EngineConfigurator.SetConfigValue("WindowPosY", "0"); // neded for borderless
+            Program.EngineConfigurator.SetConfigValue("WindowPosX", "0"); // neded for borderless
             Program.Conf.UseSafeMode = cbSafeMode.Checked;
 	        Program.Conf.UseMtEngine = cbMtEngine.Checked;
 	    }
@@ -231,7 +245,9 @@ namespace ZeroKLobby.MicroLobby
 
         private void btnDefaults_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Do you want to reset configuration to defaults and delete all cached content?", "Local data reset", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes) {
+            MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button2;
+            if (MessageBox.Show("Do you want to reset configuration to defaults and delete all cached content?", "Local data reset", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, defaultButton) == DialogResult.Yes)
+            {
                 Program.EngineConfigurator.Reset();
                 var path = Program.SpringPaths.WritableDirectory;
                 Directory.Delete(Utils.MakePath(path,"cache"),true);

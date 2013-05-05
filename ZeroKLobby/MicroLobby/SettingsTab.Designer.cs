@@ -48,7 +48,7 @@
             this.button4 = new System.Windows.Forms.Button();
             this.tbResx = new System.Windows.Forms.TextBox();
             this.button5 = new System.Windows.Forms.Button();
-            this.cbWindowed = new System.Windows.Forms.CheckBox();
+            this.cbWindowed = new System.Windows.Forms.ComboBox();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.cbHwCursor = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -67,6 +67,8 @@
             this.splitContainerAtMid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainerAtMid.BackColor = System.Drawing.SystemColors.Control;
+            this.splitContainerAtMid.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.splitContainerAtMid.Location = new System.Drawing.Point(0, 0);
             this.splitContainerAtMid.Name = "splitContainerAtMid";
             this.splitContainerAtMid.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -104,7 +106,7 @@
             this.splitContainerAtMid.Panel2.Controls.Add(this.groupBox1);
             this.splitContainerAtMid.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.splitContainerAtMid.Size = new System.Drawing.Size(562, 380);
-            this.splitContainerAtMid.SplitterDistance = 193;
+            this.splitContainerAtMid.SplitterDistance = 149;
             this.splitContainerAtMid.TabIndex = 0;
             // 
             // label1
@@ -302,14 +304,16 @@
             // 
             // cbWindowed
             // 
-            this.cbWindowed.AutoSize = true;
+            this.cbWindowed.Items.AddRange(new object[] {
+            "Windowed",
+            "Borderless",
+            "Fullscreen"});
             this.cbWindowed.Location = new System.Drawing.Point(29, 54);
             this.cbWindowed.Name = "cbWindowed";
-            this.cbWindowed.Size = new System.Drawing.Size(77, 17);
+            this.cbWindowed.Size = new System.Drawing.Size(77, 21);
             this.cbWindowed.TabIndex = 27;
             this.cbWindowed.Text = "Windowed";
-            this.cbWindowed.UseVisualStyleBackColor = true;
-            this.cbWindowed.CheckedChanged += new System.EventHandler(this.settingsControlChanged);
+            this.cbWindowed.SelectionChangeCommitted += new System.EventHandler(this.settingsControlChanged);
             // 
             // btnBrowse
             // 
@@ -334,15 +338,14 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
             this.groupBox1.Controls.Add(this.propertyGrid1);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.MinimumSize = new System.Drawing.Size(300, 150);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(562, 183);
+            this.groupBox1.Size = new System.Drawing.Size(560, 225);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Zero-K lobby settings: (changes need restart)";
@@ -352,7 +355,7 @@
             this.propertyGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGrid1.Location = new System.Drawing.Point(3, 16);
             this.propertyGrid1.Name = "propertyGrid1";
-            this.propertyGrid1.Size = new System.Drawing.Size(556, 164);
+            this.propertyGrid1.Size = new System.Drawing.Size(554, 206);
             this.propertyGrid1.TabIndex = 0;
             this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid1_PropertyValueChanged);
             // 
@@ -406,7 +409,7 @@
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.TextBox tbResx;
         private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.CheckBox cbWindowed;
+        private System.Windows.Forms.ComboBox cbWindowed;
         private System.Windows.Forms.Button btnBrowse;
         private System.Windows.Forms.CheckBox cbHwCursor;
         private System.Windows.Forms.GroupBox groupBox1;
