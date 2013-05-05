@@ -825,6 +825,7 @@
       <Column Name="BanLobby" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="BanIP" Type="System.String" DbType="nvarchar(1000)" CanBeNull="true" />
       <Column Name="BanForum" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="SegregateHost" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="UserID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="CreatedAccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="DeleteInfluence" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />

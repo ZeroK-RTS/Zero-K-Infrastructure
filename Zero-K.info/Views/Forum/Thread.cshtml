@@ -2,6 +2,10 @@
 @model ZeroKWeb.Controllers.ForumController.ThreadResult
 
 @{
+    var penalty = ZkData.Punishment.GetActivePunishment(Global.AccountID, "", 0, x=>x.BanForum);
+}
+
+@{
     Page.Title = Model.CurrentThread.Title + " - forum thread";
 }
 @if (Model.GoToPost > 0)
@@ -17,9 +21,16 @@
 <h3>@Html.ActionLink(Model.CurrentThread.Title, "Thread", new { id = Model.CurrentThread.ForumThreadID })</h3>
 
 @if (!Model.CurrentThread.IsLocked)
-{
+{   
     <br />
-    <h3 class="textbutton">@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3>
+    if(penalty != null)
+    {
+        <h3 class="textbutton" nicetitle="@string.Format("Ban expires: {0} UTC\nReason: {0}", penalty.BanExpires, penalty.Reason)" style="color: #666666">Post comment</h3>
+    }
+    else
+    {
+        <h3 class="textbutton">@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3>
+    }
     <br />
 }
 @if (Global.IsZeroKAdmin)

@@ -31,10 +31,18 @@
     {
         <span>Site blocked</span><br />
     }
+    @if (p.BanForum)
+    {
+        <span>Forum blocked</span><br />
+    }    
     @if (p.BanLobby)
     {
         <span>Lobby blocked</span><br />
     }
+    @if (p.SegregateHost)
+    {
+        <span>Segregated to troll host</span><br />
+    }      
     @if (Global.IsZeroKAdmin)
     {
         <span>IP block: @p.BanIP</span><br />

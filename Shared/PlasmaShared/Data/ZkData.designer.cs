@@ -264,7 +264,6 @@ namespace ZkData
     partial void DeleteContributionJar(ContributionJar instance);
     #endregion
 		
-		
 		public ZkDataContext(string connection) : 
 				base(connection, mappingSource)
 		{
@@ -21929,6 +21928,8 @@ namespace ZkData
 		
 		private bool _BanForum;
 		
+		private bool _SegregateHost;
+		
 		private System.Nullable<int> _UserID;
 		
 		private System.Nullable<int> _CreatedAccountID;
@@ -21969,6 +21970,8 @@ namespace ZkData
     partial void OnBanIPChanged();
     partial void OnBanForumChanging(bool value);
     partial void OnBanForumChanged();
+    partial void OnSegregateHostChanging(bool value);
+    partial void OnSegregateHostChanged();
     partial void OnUserIDChanging(System.Nullable<int> value);
     partial void OnUserIDChanged();
     partial void OnCreatedAccountIDChanging(System.Nullable<int> value);
@@ -22240,8 +22243,29 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserID", DbType="int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SegregateHost", DbType="bit NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
+		public bool SegregateHost
+		{
+			get
+			{
+				return this._SegregateHost;
+			}
+			set
+			{
+				if ((this._SegregateHost != value))
+				{
+					this.OnSegregateHostChanging(value);
+					this.SendPropertyChanging();
+					this._SegregateHost = value;
+					this.SendPropertyChanged("SegregateHost");
+					this.OnSegregateHostChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
 		public System.Nullable<int> UserID
 		{
 			get
@@ -22262,7 +22286,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedAccountID", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
 		public System.Nullable<int> CreatedAccountID
 		{
 			get
@@ -22287,7 +22311,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DeleteInfluence", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
 		public bool DeleteInfluence
 		{
 			get
@@ -22308,7 +22332,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DeleteXP", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
 		public bool DeleteXP
 		{
 			get

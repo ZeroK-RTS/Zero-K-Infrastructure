@@ -158,13 +158,15 @@ namespace ZeroKWeb.Controllers
                                    bool banSite,
                                    bool banLobby,
                                    bool banUnlocks,
+                                   bool banForum,
+                                   bool segregateHost,
                                    string banIP,
                                    int? banUserID,
                                    double banHours)
         {
-            var db = new ZkDataContext();
+            ZkDataContext db = new ZkDataContext();
             Account acc = db.Accounts.Single(x => x.AccountID == accountID);
-            var punishment = new Punishment
+            Punishment punishment = new Punishment
                              {
                                  Time = DateTime.UtcNow,
                                  Reason = reason,
@@ -175,14 +177,14 @@ namespace ZeroKWeb.Controllers
                                  BanExpires = DateTime.UtcNow.AddHours(banHours),
                                  BanUnlocks = banUnlocks,
                                  BanIP = banIP,
+                                 BanForum = banForum,
+                                 SegregateHost = segregateHost,
                                  DeleteXP = deleteXP,
                                  DeleteInfluence = deleteInfluence,
                                  CreatedAccountID = Global.AccountID,
                                  UserID = banUserID
                              };
-            
             acc.PunishmentsByAccountID.Add(punishment);
-
             db.SubmitChanges();
 
             Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);

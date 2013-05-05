@@ -116,6 +116,8 @@
         UserID: @Html.TextBox("banUserID", Model.AccountUserIDS.OrderByDescending(x=>x.LastLogin).Select(x=>(int?)x.UserID).FirstOrDefault())<br />
         Ban site: @Html.CheckBox("banSite")<br />
         Ban lobby: @Html.CheckBox("banLobby")<br />
+        Ban forum: @Html.CheckBox("banForum")<br />
+        Segregate to troll host: @Html.CheckBox("segregateHost")<br />
         Ban hours: @Html.TextBox("banHours",1)<br />
 
         <input type="submit" value="BAN" class="delete" />
