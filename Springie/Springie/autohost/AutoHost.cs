@@ -809,7 +809,7 @@ namespace Springie.autohost
             SayBattle("Game over, exiting");
             PlasmaShared.Utils.SafeThread(() =>
                 {
-                    Thread.Sleep(5000); // wait for stats
+                    Thread.Sleep(10000); // wait for stats
                     spring.ExitGame();
                 }).Start();
 
