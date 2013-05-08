@@ -1,0 +1,10 @@
+[Sensors]
+{
+	[Los]
+	{
+		LosMipLevel=1;
+		AirLosMipLevel=2;
+		LosMul=10;
+		//AirLosMul=1.1;
+	}
+}
