@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.benchmarkList = new System.Windows.Forms.CheckedListBox();
-            this.tbBatchName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.btnLoad = new System.Windows.Forms.Button();
@@ -58,6 +57,7 @@
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.tbDownloads = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
+            this.lbBatchName = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
@@ -73,21 +73,14 @@
             this.benchmarkList.Size = new System.Drawing.Size(303, 169);
             this.benchmarkList.TabIndex = 0;
             // 
-            // tbBatchName
-            // 
-            this.tbBatchName.Location = new System.Drawing.Point(149, 12);
-            this.tbBatchName.Name = "tbBatchName";
-            this.tbBatchName.Size = new System.Drawing.Size(186, 20);
-            this.tbBatchName.TabIndex = 1;
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(25, 15);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(118, 13);
+            this.label1.Size = new System.Drawing.Size(67, 13);
             this.label1.TabIndex = 2;
-            this.label1.Text = "Name of the test batch:";
+            this.label1.Text = "Batch name:";
             // 
             // label2
             // 
@@ -268,6 +261,7 @@
             this.btnStart.TabIndex = 13;
             this.btnStart.Text = "START";
             this.btnStart.UseVisualStyleBackColor = true;
+            this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
             // btnPause
             // 
@@ -364,11 +358,21 @@
             this.label8.TabIndex = 19;
             this.label8.Text = "Downloads:";
             // 
+            // lbBatchName
+            // 
+            this.lbBatchName.AutoSize = true;
+            this.lbBatchName.Location = new System.Drawing.Point(98, 15);
+            this.lbBatchName.Name = "lbBatchName";
+            this.lbBatchName.Size = new System.Drawing.Size(54, 13);
+            this.lbBatchName.TabIndex = 20;
+            this.lbBatchName.Text = "-unsaved-";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(702, 587);
+            this.Controls.Add(this.lbBatchName);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.tbDownloads);
             this.Controls.Add(this.numericUpDown1);
@@ -386,7 +390,6 @@
             this.Controls.Add(this.btnLoad);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.tbBatchName);
             this.Controls.Add(this.benchmarkList);
             this.MinimumSize = new System.Drawing.Size(718, 625);
             this.Name = "MainForm";
@@ -405,7 +408,6 @@
         #endregion
 
         private System.Windows.Forms.CheckedListBox benchmarkList;
-        private System.Windows.Forms.TextBox tbBatchName;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnLoad;
@@ -434,5 +436,6 @@
         private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.TextBox tbDownloads;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label lbBatchName;
     }
 }

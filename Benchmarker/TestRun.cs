@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using PlasmaDownloader;
@@ -7,18 +9,17 @@ namespace Benchmarker
 {
     public class TestRun
     {
-        public List<Benchmark> Benchmarks;
         public Config Config;
+        public bool UseMultithreaded;
         public string Engine;
         public string Game;
         public string Map;
 
 
-        public TestRun(string engine, string game, string map, Config config, List<Benchmark> benchmarks) {
+        public TestRun(string engine, string game, string map, Config config) {
             Engine = engine;
             Game = game;
             Config = config;
-            Benchmarks = benchmarks;
             Map = map;
         }
 
@@ -26,7 +27,6 @@ namespace Benchmarker
             if (string.IsNullOrEmpty(Engine)) return "Engine name not set";
             if (string.IsNullOrEmpty(Map)) return "Map name not set";
             if (string.IsNullOrEmpty(Game)) return "Game name not set";
-            if (!Benchmarks.Any()) return "No benchamrks selected";
 
             var waitList = new List<WaitHandle>();
 
@@ -41,7 +41,15 @@ namespace Benchmarker
         }
 
         public override string ToString() {
-            return string.Format("{0} {1} {2} {3} {4}", Engine, Game, Map, Config, string.Join(",", Benchmarks));
+            return string.Format("{0} {1} {2} {3}", Engine, Game, Map, Config);
+        }
+
+    }
+
+    public class ScriptGenerator
+    {
+        public string Generate(Benchmark benchmark, TestRun test) {
+            return File.ReadAllText(Path.Combine(benchmark.BenchmarkPath, "script.txt"));
         }
     }
 }

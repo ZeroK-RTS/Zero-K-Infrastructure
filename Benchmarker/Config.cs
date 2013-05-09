@@ -6,26 +6,33 @@ namespace Benchmarker
 {
     public class Config
     {
-        string benchmarkPath;
-        readonly string name;
+        static List<Config> allConfigs;
+        public string ConfigPath;
+        public string Name;
 
         public Config(string path) {
-            benchmarkPath = path;
-            name = Path.GetFileName(path);
+            ConfigPath = path;
+            Name = Path.GetFileName(path);
         }
 
+
         public static IEnumerable<Config> GetConfigs() {
+            if (allConfigs != null) return allConfigs;
             var path = new DirectoryInfo(Directory.GetCurrentDirectory());
             do {
                 var bd = path.GetDirectories().FirstOrDefault(x => string.Equals(x.Name, "Configs"));
-                if (bd != null) return bd.GetDirectories().Where(x => x.Name.EndsWith(".cfg")).Select(x => new Config(x.FullName));
+                if (bd != null) {
+                    allConfigs = bd.GetDirectories().Select(x => new Config(x.FullName)).ToList();
+                    return allConfigs;
+                }
                 path = path.Parent;
             } while (path != null);
             return new List<Config>();
         }
 
+
         public override string ToString() {
-            return name;
+            return Name;
         }
     }
 }
