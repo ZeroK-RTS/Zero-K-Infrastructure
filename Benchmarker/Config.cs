@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace Benchmarker
 {
+    /// <summary>
+    /// Represents spring and mod config (springsettings, and luaui/config etc)
+    /// </summary>
     public class Config
     {
         static List<Config> allConfigs;

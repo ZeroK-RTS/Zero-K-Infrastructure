@@ -46,21 +46,17 @@
             this.lbTestRuns = new System.Windows.Forms.ListBox();
             this.label5 = new System.Windows.Forms.Label();
             this.btnRemoveRun = new System.Windows.Forms.Button();
-            this.label6 = new System.Windows.Forms.Label();
             this.btnStart = new System.Windows.Forms.Button();
-            this.btnPause = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.tbResults = new System.Windows.Forms.TextBox();
             this.btnDataSheet = new System.Windows.Forms.Button();
             this.btnVerify = new System.Windows.Forms.Button();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.tbDownloads = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.lbBatchName = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
             // 
             // benchmarkList
@@ -72,6 +68,7 @@
             this.benchmarkList.Name = "benchmarkList";
             this.benchmarkList.Size = new System.Drawing.Size(303, 169);
             this.benchmarkList.TabIndex = 0;
+            this.benchmarkList.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.benchmarkList_ItemCheck);
             // 
             // label1
             // 
@@ -241,16 +238,6 @@
             this.btnRemoveRun.UseVisualStyleBackColor = true;
             this.btnRemoveRun.Click += new System.EventHandler(this.btnRemoveRun_Click);
             // 
-            // label6
-            // 
-            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(382, 350);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(104, 13);
-            this.label6.TabIndex = 11;
-            this.label6.Text = "Repeat entire batch:";
-            // 
             // btnStart
             // 
             this.btnStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -263,32 +250,24 @@
             this.btnStart.UseVisualStyleBackColor = true;
             this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
-            // btnPause
-            // 
-            this.btnPause.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPause.Location = new System.Drawing.Point(474, 374);
-            this.btnPause.Name = "btnPause";
-            this.btnPause.Size = new System.Drawing.Size(75, 23);
-            this.btnPause.TabIndex = 14;
-            this.btnPause.Text = "PAUSE";
-            this.btnPause.UseVisualStyleBackColor = true;
-            // 
             // btnStop
             // 
             this.btnStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnStop.Enabled = false;
             this.btnStop.Location = new System.Drawing.Point(564, 374);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(75, 23);
             this.btnStop.TabIndex = 15;
             this.btnStop.Text = "STOP";
             this.btnStop.UseVisualStyleBackColor = true;
+            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
             // 
             // groupBox2
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.textBox3);
+            this.groupBox2.Controls.Add(this.tbResults);
             this.groupBox2.Controls.Add(this.btnDataSheet);
             this.groupBox2.Location = new System.Drawing.Point(28, 420);
             this.groupBox2.Name = "groupBox2";
@@ -297,16 +276,16 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Results";
             // 
-            // textBox3
+            // tbResults
             // 
-            this.textBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.tbResults.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox3.Location = new System.Drawing.Point(7, 19);
-            this.textBox3.Multiline = true;
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(629, 101);
-            this.textBox3.TabIndex = 1;
+            this.tbResults.Location = new System.Drawing.Point(7, 19);
+            this.tbResults.Multiline = true;
+            this.tbResults.Name = "tbResults";
+            this.tbResults.Size = new System.Drawing.Size(629, 101);
+            this.tbResults.TabIndex = 1;
             // 
             // btnDataSheet
             // 
@@ -327,18 +306,6 @@
             this.btnVerify.Text = "Validate";
             this.btnVerify.UseVisualStyleBackColor = true;
             this.btnVerify.Click += new System.EventHandler(this.btnVerify_Click);
-            // 
-            // numericUpDown1
-            // 
-            this.numericUpDown1.Location = new System.Drawing.Point(492, 348);
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(57, 20);
-            this.numericUpDown1.TabIndex = 17;
-            this.numericUpDown1.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
             // 
             // tbDownloads
             // 
@@ -375,13 +342,10 @@
             this.Controls.Add(this.lbBatchName);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.tbDownloads);
-            this.Controls.Add(this.numericUpDown1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.btnVerify);
             this.Controls.Add(this.btnStop);
-            this.Controls.Add(this.btnPause);
             this.Controls.Add(this.btnStart);
-            this.Controls.Add(this.label6);
             this.Controls.Add(this.btnRemoveRun);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.lbTestRuns);
@@ -394,12 +358,12 @@
             this.MinimumSize = new System.Drawing.Size(718, 625);
             this.Name = "MainForm";
             this.Text = "Benchmarker";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -423,17 +387,14 @@
         private System.Windows.Forms.ListBox lbTestRuns;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button btnRemoveRun;
-        private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btnStart;
-        private System.Windows.Forms.Button btnPause;
         private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox tbResults;
         private System.Windows.Forms.Button btnDataSheet;
         private System.Windows.Forms.Button btnVerify;
         private System.Windows.Forms.ComboBox cbConfigs;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.TextBox tbDownloads;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label lbBatchName;

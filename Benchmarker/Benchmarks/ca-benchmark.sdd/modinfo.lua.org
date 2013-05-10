@@ -7,6 +7,8 @@ return {
   game='',
   shortGame='',
   modtype=1,
-  depend = {'Spring content v1','Zero-K'},
+  depend = {
+    'Spring content v1',
+  },
 }
 

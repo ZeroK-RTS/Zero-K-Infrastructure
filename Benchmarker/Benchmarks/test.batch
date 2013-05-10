@@ -1,1 +1,1 @@
-{"Benchmarks":[{"Name":"ca-benchmark.sdd"}],"Name":"","TestRuns":[{"Config":{"Name":"ZKL default"},"Engine":"91.0","Game":"Zero-K v1.1.3.6","Map":"SmallDivide"}]}
+{"Benchmarks":[{"BenchmarkPath":"c:\\work\\other\\Benchmarker\\Benchmarks\\ca-benchmark.sdd","Name":"ca-benchmark.sdd"}],"TestRuns":[{"Config":{"ConfigPath":"c:\\work\\other\\Benchmarker\\Configs\\ZKL default","Name":"ZKL default"},"Engine":"91.0","Game":"Zero-K v1.1.3.6","Map":"SmallDivide","UseMultithreaded":false}]}
