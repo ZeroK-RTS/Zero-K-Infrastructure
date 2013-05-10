@@ -14,8 +14,7 @@ namespace Benchmarker
     {
         static readonly string[] invalidKeys = new string[]
         {
-            "Sent", "Received", "[CCollisionHandler] dis-/continuous tests", "Statistics for RectangleOptimizer(avg)",
-            "Statistics for RectangleOptimizer(min)", "Statistics for RectangleOptimizer(max)"
+            "Sent", "Received", "[CCollisionHandler] dis-/continuous tests", "Statistics for RectangleOptimizer"
         };
         public List<RunEntry> RunEntries = new List<RunEntry>();
 
