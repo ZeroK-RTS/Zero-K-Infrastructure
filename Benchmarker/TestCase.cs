@@ -4,9 +4,9 @@ using PlasmaDownloader;
 namespace Benchmarker
 {
     /// <summary>
-    /// Represents single test case (variables to be applied to benchmark)
+    /// Represents single test case (@case to be applied to benchmark)
     /// </summary>
-    public class TestRun
+    public class TestCase
     {
         /// <summary>
         /// Spring and mod configs
@@ -30,7 +30,7 @@ namespace Benchmarker
         public bool UseMultithreaded;
 
 
-        public TestRun(string engine, string game, string map, Config config) {
+        public TestCase(string engine, string game, string map, Config config) {
             Engine = engine;
             Game = game;
             Config = config;

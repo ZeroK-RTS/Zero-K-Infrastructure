@@ -19,11 +19,11 @@ namespace Benchmarker
         /// </summary>
         public List<Benchmark> Benchmarks = new List<Benchmark>();
         /// <summary>
-        /// Runs to perform (variables to check)
+        /// Cases to check
         /// </summary>
-        public List<TestRun> TestRuns = new List<TestRun>();
-        public event Action AllCompleted = () => { };
-        public event Action<TestRun, Benchmark, string> RunCompleted = (run, benchmark, log) => { };
+        public List<TestCase> TestCases = new List<TestCase>();
+        public event Action<BatchRunResult> AllCompleted = (result) => { };
+        public event Action<TestCase, Benchmark, string> RunCompleted = (run, benchmark, log) => { };
 
         public void Abort() {
             isAborted = true;
@@ -38,21 +38,27 @@ namespace Benchmarker
 
         public void RunTests() {
             isAborted = false;
-            foreach (var tr in TestRuns) {
+            var result = new BatchRunResult();
+            foreach (var tr in TestCases) {
                 foreach (var b in Benchmarks) {
                     if (isAborted) return;
                     b.ModifyModInfo(tr);
-                    run = new SpringRun();
-                    var lines = run.Start(new SpringPaths(null), tr, b);
-                    RunCompleted(tr, b, lines);
+                    try {
+                        run = new SpringRun();
+                        var log = run.Start(new SpringPaths(null), tr, b);
+                        result.AddRun(tr, b, log);
+                        RunCompleted(tr, b, log);
+                    } finally {
+                        b.RestoreModInfo();
+                    }
                 }
             }
             if (isAborted) return;
-            AllCompleted();
+            AllCompleted(result);
         }
 
         public void Save(string s) {
-            File.WriteAllText(s, JsonConvert.SerializeObject(this));
+            File.WriteAllText(s, JsonConvert.SerializeObject(this, Formatting.Indented));
         }
 
         /// <summary>
@@ -60,23 +66,23 @@ namespace Benchmarker
         /// </summary>
         public string Validate(PlasmaDownloader.PlasmaDownloader downloader) {
             if (!Benchmarks.Any()) return "No benchmarks selected";
-            if (!TestRuns.Any()) return "Please add test runs";
+            if (!TestCases.Any()) return "Please add testCase runs";
 
             foreach (var bench in Benchmarks) {
                 var ret = bench.Validate(downloader);
                 if (ret != null) return ret;
             }
 
-            foreach (var run in TestRuns) {
+            foreach (var run in TestCases) {
                 var ret = run.Validate(downloader);
                 if (ret != null) return ret;
             }
-            return "ALL OK, you can start batch";
+            return "OK";
         }
 
         void PostLoad() {
             Benchmarks = Benchmarks.Select(x => Benchmark.GetBenchmarks().First(y => y.Name == x.Name)).ToList();
-            foreach (var tr in TestRuns) tr.Config = Config.GetConfigs().Single(x => x.Name == tr.Config.Name);
+            foreach (var tr in TestCases) tr.Config = Config.GetConfigs().Single(x => x.Name == tr.Config.Name);
         }
     }
 }

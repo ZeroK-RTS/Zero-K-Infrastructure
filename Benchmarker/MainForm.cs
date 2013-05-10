@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -11,7 +12,10 @@ namespace Benchmarker
 {
     public partial class MainForm: Form
     {
+        string csvPath;
         readonly PlasmaDownloader.PlasmaDownloader downloader;
+        string jsonPath;
+        string lastUsedBatchFolder = null;
         readonly SpringScanner scanner;
         Batch testedBatch;
 
@@ -39,7 +43,7 @@ namespace Benchmarker
         public Batch CreateBatchFromGui() {
             var batch = new Batch()
             {
-                TestRuns = lbTestRuns.Items.Cast<TestRun>().ToList(),
+                TestCases = lbTestCases.Items.Cast<TestCase>().ToList(),
                 Benchmarks = benchmarkList.CheckedItems.OfType<Benchmark>().ToList()
             };
             return batch;
@@ -61,10 +65,14 @@ namespace Benchmarker
         }
 
         void btnAddTest_Click(object sender, EventArgs e) {
-            var testRun = new TestRun(tbEngine.Text, tbGame.Text, tbMap.Text, (Config)cbConfigs.SelectedItem);
-            var ret = testRun.Validate(downloader);
+            var testCase = new TestCase(tbEngine.Text, tbGame.Text, tbMap.Text, (Config)cbConfigs.SelectedItem);
+            var ret = testCase.Validate(downloader);
             if (ret != null) MessageBox.Show(ret);
-            else lbTestRuns.Items.Add(testRun);
+            else lbTestCases.Items.Add(testCase);
+        }
+
+        void btnDataSheet_Click(object sender, EventArgs e) {
+            if (!string.IsNullOrEmpty(csvPath)) Process.Start(csvPath);
         }
 
         void btnLoad_Click(object sender, EventArgs e) {
@@ -74,19 +82,20 @@ namespace Benchmarker
                 if (sd.ShowDialog() == DialogResult.OK) {
                     var batch = Batch.Load(sd.FileName);
                     if (batch != null) {
-                        lbBatchName.Text = Path.GetFileName(sd.FileName);
-                        lbTestRuns.Items.Clear();
-                        lbTestRuns.Items.AddRange(batch.TestRuns.ToArray());
+                        lbTestCases.Items.Clear();
+                        lbTestCases.Items.AddRange(batch.TestCases.ToArray());
 
                         // prefill gui from batch
                         for (var i = 0; i < benchmarkList.Items.Count; i++) benchmarkList.SetItemChecked(i, batch.Benchmarks.Contains(benchmarkList.Items[i]));
-                        var firstRun = batch.TestRuns.First();
+                        var firstRun = batch.TestCases.First();
                         tbEngine.Text = firstRun.Engine;
                         tbMap.Text = firstRun.Map;
                         tbGame.Text = firstRun.Game;
                         cbConfigs.SelectedValue = firstRun.Config;
 
                         batch.Validate(downloader);
+
+                        lastUsedBatchFolder = Path.GetDirectoryName(sd.FileName);
                     }
                     else MessageBox.Show("Batch file invalid");
                 }
@@ -95,8 +104,12 @@ namespace Benchmarker
             }
         }
 
+        void btnRaw_Click(object sender, EventArgs e) {
+            if (!string.IsNullOrEmpty(jsonPath)) Process.Start(jsonPath);
+        }
+
         void btnRemoveRun_Click(object sender, EventArgs e) {
-            if (lbTestRuns.SelectedIndex >= 0) lbTestRuns.Items.RemoveAt(lbTestRuns.SelectedIndex);
+            if (lbTestCases.SelectedIndex >= 0) lbTestCases.Items.RemoveAt(lbTestCases.SelectedIndex);
         }
 
         void btnSave_Click(object sender, EventArgs e) {
@@ -106,12 +119,20 @@ namespace Benchmarker
             sd.OverwritePrompt = true;
             if (sd.ShowDialog() == DialogResult.OK) {
                 batch.Save(sd.FileName);
-                lbBatchName.Text = Path.GetFileName(sd.FileName);
+                lastUsedBatchFolder = Path.GetDirectoryName(sd.FileName);
             }
         }
 
         void btnStart_Click(object sender, EventArgs e) {
+            tbResults.Clear();
+
             testedBatch = CreateBatchFromGui();
+            var validity = testedBatch.Validate(downloader);
+            if (validity != "OK") {
+                MessageBox.Show(validity);
+                return;
+            }
+
             testedBatch.RunCompleted += (run, benchmark, arg3) =>
                 {
                     Invoke(new Action(() =>
@@ -121,13 +142,20 @@ namespace Benchmarker
                         }));
                 };
 
-            testedBatch.AllCompleted += () =>
+            testedBatch.AllCompleted += (result) =>
                 {
+                    result.SaveFiles(lastUsedBatchFolder, out csvPath, out jsonPath);
+
+                    Process.Start(jsonPath);
+                    Process.Start(csvPath);
+
                     Invoke(new Action(() =>
                         {
                             btnStart.Enabled = true;
                             btnStop.Enabled = false;
-                            }));
+                            btnDataSheet.Enabled = true;
+                            btnRaw.Enabled = true;
+                        }));
                 };
 
             new Thread(() => { testedBatch.RunTests(); }).Start();
@@ -139,7 +167,7 @@ namespace Benchmarker
         void btnStop_Click(object sender, EventArgs e) {
             btnStart.Enabled = true;
             btnStop.Enabled = false;
-            if (testedBatch !=null) testedBatch.Abort();
+            if (testedBatch != null) testedBatch.Abort();
         }
 
         void btnVerify_Click(object sender, EventArgs e) {

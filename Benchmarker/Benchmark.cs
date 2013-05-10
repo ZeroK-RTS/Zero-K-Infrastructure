@@ -61,8 +61,8 @@ namespace Benchmarker
         public string GetOrgModInfo() {
             var orgFile = Path.Combine(BenchmarkPath, "modinfo.lua.org");
             var modFile = Path.Combine(BenchmarkPath, "modinfo.lua");
-            if (!File.Exists(orgFile)) File.Copy(modFile, orgFile);
-            return File.ReadAllText(orgFile);
+            if (File.Exists(orgFile)) return File.ReadAllText(orgFile);
+            return File.ReadAllText(modFile);
         }
 
 
@@ -78,8 +78,9 @@ namespace Benchmarker
         /// <summary>
         /// Gets modified startscript for starting the game
         /// </summary>
-        public string GetScriptForTestRun(TestRun test) {
+        public string GetScriptForTestCase(TestCase test) {
             var script = GetScript();
+            script = Regex.Replace(script, "(gametype=)([^;]*)", m => m.Groups[1] + Name);
             if (!string.IsNullOrEmpty(test.Map)) script = Regex.Replace(script, "(mapname=)([^;]*)", m => m.Groups[1] + test.Map);
             return script;
         }
@@ -119,20 +120,37 @@ namespace Benchmarker
 
 
         /// <summary>
-        /// Modify modinfo to add or change dependencies. If mod already depends on game which starts with same word as testrun game, replace it, otherwise append it
+        /// Modify modinfo to add or change dependencies. If mod already depends on game which starts with same word as testcase game, replace it, otherwise append it
         /// </summary>
-        public void ModifyModInfo(TestRun run) {
-            if (!string.IsNullOrEmpty(run.Game)) {
-                var firstWord = run.Game.Split(' ').First();
-                var deps = GetDependencies();
+        public void ModifyModInfo(TestCase testCase) {
+            var orgFile = Path.Combine(BenchmarkPath, "modinfo.lua.org");
+            var modFile = Path.Combine(BenchmarkPath, "modinfo.lua");
+            File.Copy(modFile, orgFile, true);
+
+
+            var deps = GetDependencies();
+
+            if (!string.IsNullOrEmpty(testCase.Game)) {
+                var firstWord = testCase.Game.Split(' ').First();
                 var toReplace = deps.FirstOrDefault(x => x.StartsWith(firstWord + " "));
                 if (toReplace != null) deps.Remove(toReplace);
-                deps.Add(firstWord);
-                File.WriteAllText(Path.Combine(BenchmarkPath, "modinfo.lua"),
-                                  Regex.Replace(GetOrgModInfo(),
-                                                "(depend[ ]*=[ ]*{)([^}]*)(})",
-                                                m => m.Groups[1].Value + string.Join(",", deps.Select(x => string.Format("'{0}'", x))) + m.Groups[3]));
+                deps.Add(testCase.Game);
             }
+
+            File.WriteAllText(Path.Combine(BenchmarkPath, "modinfo.lua"),
+                              Regex.Replace(GetOrgModInfo(),
+                                            "(depend[ ]*=[ ]*{)([^}]*)(})",
+                                            m => m.Groups[1].Value + string.Join(",", deps.Select(x => string.Format("'{0}'", x))) + m.Groups[3]));
+        }
+
+        /// <summary>
+        /// Restores modinfo to original state
+        /// </summary>
+        public void RestoreModInfo() {
+            var orgFile = Path.Combine(BenchmarkPath, "modinfo.lua.org");
+            var modFile = Path.Combine(BenchmarkPath, "modinfo.lua");
+            File.Copy(orgFile, modFile, true);
+            File.Delete(orgFile);
         }
 
 

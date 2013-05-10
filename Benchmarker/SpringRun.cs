@@ -15,7 +15,7 @@ namespace Benchmarker
             if (process != null) process.Kill();
         }
 
-        public string Start(SpringPaths paths, TestRun test, Benchmark benchmark) {
+        public string Start(SpringPaths paths, TestCase test, Benchmark benchmark) {
             LogLines = new StringBuilder();
 
             paths.SetEnginePath(paths.GetEngineFolderByVersion(test.Engine));
@@ -34,7 +34,7 @@ namespace Benchmarker
             process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.Executable);
 
             var scriptPath = Path.GetTempFileName();
-            File.WriteAllText(scriptPath, benchmark.GetScriptForTestRun(test));
+            File.WriteAllText(scriptPath, benchmark.GetScriptForTestCase(test));
             process.StartInfo.Arguments += string.Format(" \"{0}\"", scriptPath);
 
             process.StartInfo.UseShellExecute = false;
@@ -50,6 +50,9 @@ namespace Benchmarker
             process.BeginErrorReadLine();
             process.WaitForExit();
             var lines = LogLines.ToString();
+
+            File.Delete(scriptPath);
+
             return lines;
         }
     }

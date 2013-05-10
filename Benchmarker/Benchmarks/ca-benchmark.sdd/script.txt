@@ -32,7 +32,7 @@ teamleader=0;
 allyteam=1;
 teamleader=1;
 }
-gametype=Benchmark 0.1;
+gametype=ca-benchmark.sdd;
 ishost=1;
 mapname=Small_Divide-Remake-v04;
 myplayername=UnnamedPlayer;
