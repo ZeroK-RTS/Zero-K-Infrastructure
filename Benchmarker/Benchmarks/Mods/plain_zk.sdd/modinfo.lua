@@ -3,6 +3,6 @@ local modinfo = {
   description   =	[[Mission Mutator]],
   modtype       =	[[1]],
   shortname     =	[[Tutorial 2 - A Day Out]],
-  depend = {[[Zero-K v1.1.3.6]]},
+  depend = {'Zero-K v1.1.3.6'},
 }
 return modinfo
