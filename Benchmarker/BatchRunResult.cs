@@ -14,7 +14,8 @@ namespace Benchmarker
     {
         static readonly string[] invalidKeys = new string[]
         {
-            "Sent", "Received", "[CCollisionHandler] dis-/continuous tests", "Statistics for RectangleOptimizer"
+            "Sent", "Received", "[CCollisionHandler] dis-/continuous tests", "Statistics for RectangleOptimizer", "AL lib: ALc.c:1808: alcCloseDevice()"
+            , "[EPIC Menu] Error", "Game Over"
         };
         public List<RunEntry> RunEntries = new List<RunEntry>();
 
@@ -43,7 +44,7 @@ namespace Benchmarker
                         var key = match.Groups[1].Value.Trim();
                         var value = match.Groups[2].Value.Trim();
                         var valNum = 0.0;
-                        if (!invalidKeys.Contains(key)) {
+                        if (!invalidKeys.Contains(key) && !key.StartsWith("Wind Range:")) {
                             double.TryParse(value, out valNum);
                             runEntry.RawValues.Add(new ValueEntry() { GameFrame = gameframe, Key = key, Value = valNum });
                         }
@@ -132,10 +133,11 @@ namespace Benchmarker
         public class RunEntry
         {
             public Benchmark Benchmark;
+            public TestCase TestCase;
             public List<ValueEntry> GroupedValues = new List<ValueEntry>();
             public string RawLog;
             public List<ValueEntry> RawValues = new List<ValueEntry>();
-            public TestCase TestCase;
+            
         }
 
         public class ValueEntry

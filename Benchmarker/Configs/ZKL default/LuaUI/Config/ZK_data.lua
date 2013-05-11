@@ -2,14 +2,14 @@
 return {
 	version = 9,
 	["Auto Group"] = {
-		version = "3.03",
+		version = "3.031",
 		groups = {},
 	},
 	["Chili Docking"] = {
 		Chat = {
-			[1] = 1070,
+			[1] = 1055,
 			[2] = 0,
-			[3] = 1490,
+			[3] = 1475,
 			[4] = 200,
 		},
 		Minimap = {
@@ -37,7 +37,7 @@ return {
 			[4] = 1200,
 		},
 		epicmenubar = {
-			[1] = 1495,
+			[1] = 1475,
 			[2] = 50,
 			[3] = 1920,
 			[4] = 100,
@@ -84,6 +84,7 @@ return {
 		wl_y = 150,
 		config = {
 			epic_Chili_Minimap_alwaysDisplayMexes = false,
+			["epic_Settings/Camera_Camera_Type"] = "Total Annihilation",
 		},
 		keybounditems = {
 			areaattack = {

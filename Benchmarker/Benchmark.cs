@@ -35,7 +35,7 @@ namespace Benchmarker
             if (allBenchmarks != null) return allBenchmarks;
             var path = new DirectoryInfo(Directory.GetCurrentDirectory());
             do {
-                var bd = path.GetDirectories().FirstOrDefault(x => string.Equals(x.Name, "Benchmarks"));
+                var bd = path.GetDirectories().FirstOrDefault(x => string.Equals(x.Name, "Mods"));
                 if (bd != null) {
                     allBenchmarks = bd.GetDirectories().Where(x => x.Name.EndsWith(".sdd")).Select(x => new Benchmark(x.FullName)).ToList();
                     return allBenchmarks;
@@ -50,9 +50,9 @@ namespace Benchmarker
         /// Gets dependencies from modinfo.lua 
         /// </summary>
         public List<string> GetDependencies() {
-            var match = Regex.Match(GetOrgModInfo(), "depend[ ]*=[ ]*{([^}]*)}");
+            var match = Regex.Match(GetOrgModInfo(), "depend[ ]*=[ ]*{([^}]*)}", RegexOptions.IgnoreCase);
             return
-                match.Groups[1].Value.Split(',').Select(x => x.Trim().Trim(' ', '\r', '\n', '\'', '"')).Where(x => !string.IsNullOrEmpty(x)).ToList();
+                match.Groups[1].Value.Split(',').Select(x => x.Trim().Trim('[', ']',' ', '\r', '\n').Trim('\'', '"' )).Where(x => !string.IsNullOrEmpty(x)).ToList();
         }
 
         /// <summary>
@@ -80,8 +80,8 @@ namespace Benchmarker
         /// </summary>
         public string GetScriptForTestCase(TestCase test) {
             var script = GetScript();
-            script = Regex.Replace(script, "(gametype=)([^;]*)", m => m.Groups[1] + Name);
-            if (!string.IsNullOrEmpty(test.Map)) script = Regex.Replace(script, "(mapname=)([^;]*)", m => m.Groups[1] + test.Map);
+            script = Regex.Replace(script, "(gametype=)([^;]*)", m => m.Groups[1] + Name, RegexOptions.IgnoreCase);
+            if (!string.IsNullOrEmpty(test.Map)) script = Regex.Replace(script, "(mapname=)([^;]*)", m => m.Groups[1] + test.Map, RegexOptions.IgnoreCase);
             return script;
         }
 
@@ -91,7 +91,7 @@ namespace Benchmarker
         public string GetScriptMap() {
             var script = GetScript();
             if (script != null) {
-                var match = Regex.Match(script, "mapname=([^;]+);");
+                var match = Regex.Match(script, "mapname=([^;]+);", RegexOptions.IgnoreCase);
                 return match.Groups[1].Value;
             }
             else return null;
@@ -104,11 +104,11 @@ namespace Benchmarker
             var info = GetOrgModInfo();
             string name = null;
 
-            var matchName = Regex.Match(info, "name[ ]*=[ ]*([^,]+)");
+            var matchName = Regex.Match(info, "name[ ]*=[ ]*([^,]+)", RegexOptions.IgnoreCase);
             if (matchName.Success) name = matchName.Groups[1].Value;
 
             string version = null;
-            var matchVersion = Regex.Match(info, "version[ ]*=[ ]*([^,]+)");
+            var matchVersion = Regex.Match(info, "version[ ]*=[ ]*([^,]+)", RegexOptions.IgnoreCase);
             if (matchVersion.Success) version = matchVersion.Groups[1].Value;
 
             if (name != null) {
@@ -140,7 +140,7 @@ namespace Benchmarker
             File.WriteAllText(Path.Combine(BenchmarkPath, "modinfo.lua"),
                               Regex.Replace(GetOrgModInfo(),
                                             "(depend[ ]*=[ ]*{)([^}]*)(})",
-                                            m => m.Groups[1].Value + string.Join(",", deps.Select(x => string.Format("'{0}'", x))) + m.Groups[3]));
+                                            m => m.Groups[1].Value + string.Join(",", deps.Select(x => string.Format("'{0}'", x))) + m.Groups[3],RegexOptions.IgnoreCase));
         }
 
         /// <summary>
