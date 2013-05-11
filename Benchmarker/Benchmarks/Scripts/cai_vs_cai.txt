@@ -1,14 +1,10 @@
 [game]
 {
-
 [player0]
 {
 name=UnnamedPlayer;
 spectator=1;
 }
-
-
-
 	[AI1]
 	{
 		Name=Another_Bot;
@@ -23,8 +19,6 @@ spectator=1;
 		Team=1;
 		Host=0;
 	}
-
-	
 
 [team0]
 {
