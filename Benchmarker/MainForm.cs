@@ -13,24 +13,24 @@ namespace Benchmarker
     public partial class MainForm: Form
     {
         string csvPath;
-        readonly PlasmaDownloader.PlasmaDownloader downloader;
         string jsonPath;
         string lastUsedBatchFolder = null;
-        readonly SpringScanner scanner;
+        readonly PlasmaDownloader.PlasmaDownloader springDownloader;
         readonly SpringPaths springPaths;
+        readonly SpringScanner springScanner;
         Batch testedBatch;
 
-        public MainForm() {
+        public MainForm(SpringPaths paths = null, SpringScanner scanner = null, PlasmaDownloader.PlasmaDownloader downloader = null) {
             InitializeComponent();
-            springPaths = new SpringPaths(null, null, null);
-            scanner = new SpringScanner(springPaths);
-            scanner.Start();
-            downloader = new PlasmaDownloader.PlasmaDownloader(new PlasmaConfig(), scanner, springPaths);
+            springPaths = paths ?? new SpringPaths(null, null, null);
+            springScanner = scanner ?? new SpringScanner(springPaths);
+            springScanner.Start();
+            springDownloader = downloader ?? new PlasmaDownloader.PlasmaDownloader(new PlasmaConfig(), springScanner, springPaths);
             var timer = new Timer();
             timer.Tick += (sender, args) =>
                 {
                     tbDownloads.Clear();
-                    foreach (var d in downloader.Downloads.Where(x => x.IsComplete == null))
+                    foreach (var d in springDownloader.Downloads.Where(x => x.IsComplete == null))
                         tbDownloads.AppendText(string.Format("{1:F0}% {0}  ETA: {2}  {3}\n",
                                                              d.Name,
                                                              d.IndividualProgress,
@@ -50,15 +50,6 @@ namespace Benchmarker
             return batch;
         }
 
-        void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
-            scanner.Dispose();
-            downloader.Dispose();
-        }
-
-        void MainForm_Load(object sender, EventArgs e) {
-            RefreshBenchmarks();
-        }
-
         void RefreshBenchmarks() {
             benchmarkList.Items.Clear();
             benchmarkList.Items.AddRange(Benchmark.GetBenchmarks(springPaths, true).ToArray());
@@ -72,13 +63,26 @@ namespace Benchmarker
             if (cmbScripts.Items.Count > 0) cmbScripts.SelectedIndex = 0;
         }
 
+        void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
+            springScanner.Dispose();
+            springDownloader.Dispose();
+        }
+
+        void MainForm_Load(object sender, EventArgs e) {
+            RefreshBenchmarks();
+        }
+
         void benchmarkList_ItemCheck(object sender, ItemCheckEventArgs e) {
-            ((Benchmark)benchmarkList.Items[e.Index]).Validate(downloader);
+            ((Benchmark)benchmarkList.Items[e.Index]).Validate(springDownloader);
         }
 
         void btnAddTest_Click(object sender, EventArgs e) {
-            var testCase = new TestCase(tbEngine.Text, tbGame.Text, tbMap.Text, cbConfigs.SelectedItem as Config, cmbScripts.SelectedItem as StartScript);
-            var ret = testCase.Validate(downloader);
+            var testCase = new TestCase(tbEngine.Text,
+                                        tbGame.Text,
+                                        tbMap.Text,
+                                        cbConfigs.SelectedItem as Config,
+                                        cmbScripts.SelectedItem as StartScript);
+            var ret = testCase.Validate(springDownloader);
             if (ret != null) MessageBox.Show(ret);
             else lbTestCases.Items.Add(testCase);
         }
@@ -105,7 +109,7 @@ namespace Benchmarker
                         tbGame.Text = firstRun.Game;
                         cbConfigs.SelectedValue = firstRun.Config;
 
-                        batch.Validate(downloader);
+                        batch.Validate(springDownloader);
 
                         lastUsedBatchFolder = Path.GetDirectoryName(sd.FileName);
                     }
@@ -118,6 +122,10 @@ namespace Benchmarker
 
         void btnRaw_Click(object sender, EventArgs e) {
             if (!string.IsNullOrEmpty(jsonPath)) Process.Start(jsonPath);
+        }
+
+        void btnRefresh_Click(object sender, EventArgs e) {
+            RefreshBenchmarks();
         }
 
         void btnRemoveRun_Click(object sender, EventArgs e) {
@@ -139,7 +147,7 @@ namespace Benchmarker
             tbResults.Clear();
 
             testedBatch = CreateBatchFromGui();
-            var validity = testedBatch.Validate(downloader);
+            var validity = testedBatch.Validate(springDownloader);
             if (validity != "OK") {
                 MessageBox.Show(validity);
                 return;
@@ -180,11 +188,6 @@ namespace Benchmarker
             btnStart.Enabled = true;
             btnStop.Enabled = false;
             if (testedBatch != null) testedBatch.Abort();
-        }
-
-        private void btnRefresh_Click(object sender, EventArgs e)
-        {
-            RefreshBenchmarks();
         }
     }
 

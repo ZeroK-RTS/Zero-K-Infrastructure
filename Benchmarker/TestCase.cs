@@ -50,8 +50,8 @@ namespace Benchmarker
         public string Validate(PlasmaDownloader.PlasmaDownloader downloader) {
             if (string.IsNullOrEmpty(Engine)) return "Engine name not set";
 
-            if (StartScript == null) return "Please select a start script";
-            if (Config == null) return "Please select config to use";
+            if (StartScript == null) return "Please select a start script - put start scripts in Benchmarks/Scripts folder";
+            if (Config == null) return "Please select a config to use - create folders with configs in Benchmarks/Configs folder";
 
             var de = downloader.GetAndSwitchEngine(Engine);
             if (de != null && de.IsComplete == false) return "Failed download of engine " + de.Name;

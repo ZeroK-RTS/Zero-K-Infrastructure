@@ -45,13 +45,13 @@
     <ErrorReportUrl>http://code.google.com/p/zero-k/issues/entry</ErrorReportUrl>
     <ProductName>Zero-K</ProductName>
     <PublisherName>Zero-K</PublisherName>
-    <MinimumRequiredVersion>2.81.0.0</MinimumRequiredVersion>
+    <MinimumRequiredVersion>2.82.0.0</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
     <ApplicationRevision>1</ApplicationRevision>
-    <ApplicationVersion>2.81.0.%2a</ApplicationVersion>
+    <ApplicationVersion>2.82.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -562,6 +562,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Benchmarker\Benchmarker.csproj">
+      <Project>{67501a5b-b6bb-467e-85da-22d81c40829c}</Project>
+      <Name>Benchmarker</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Shared\LobbyClient\LobbyClient.csproj">
       <Project>{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}</Project>
       <Name>LobbyClient</Name>

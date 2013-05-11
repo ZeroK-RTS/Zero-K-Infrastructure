@@ -54,6 +54,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnBenchmarker = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerAtMid)).BeginInit();
             this.splitContainerAtMid.Panel1.SuspendLayout();
             this.splitContainerAtMid.Panel2.SuspendLayout();
@@ -76,6 +77,7 @@
             // splitContainerAtMid.Panel1
             // 
             this.splitContainerAtMid.Panel1.AutoScroll = true;
+            this.splitContainerAtMid.Panel1.Controls.Add(this.btnBenchmarker);
             this.splitContainerAtMid.Panel1.Controls.Add(this.label1);
             this.splitContainerAtMid.Panel1.Controls.Add(this.cbMtEngine);
             this.splitContainerAtMid.Panel1.Controls.Add(this.btnDisplay);
@@ -368,6 +370,16 @@
             this.panel1.Size = new System.Drawing.Size(562, 380);
             this.panel1.TabIndex = 15;
             // 
+            // btnBenchmarker
+            // 
+            this.btnBenchmarker.Location = new System.Drawing.Point(354, 167);
+            this.btnBenchmarker.Name = "btnBenchmarker";
+            this.btnBenchmarker.Size = new System.Drawing.Size(87, 23);
+            this.btnBenchmarker.TabIndex = 38;
+            this.btnBenchmarker.Text = "Benchmarker";
+            this.btnBenchmarker.UseVisualStyleBackColor = true;
+            this.btnBenchmarker.Click += new System.EventHandler(this.btnBenchmarker_Click);
+            // 
             // SettingsTab
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -415,6 +427,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.PropertyGrid propertyGrid1;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Button btnBenchmarker;
 
     }
 }

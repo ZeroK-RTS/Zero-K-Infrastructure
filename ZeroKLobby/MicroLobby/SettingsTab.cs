@@ -271,5 +271,10 @@ namespace ZeroKLobby.MicroLobby
             Program.Conf.UseMtEngine = cbMtEngine.Checked;
             Program.SaveConfig();
         }
+
+        private void btnBenchmarker_Click(object sender, EventArgs e) {
+            var benchmarker = new Benchmarker.MainForm(Program.SpringPaths, Program.SpringScanner, Program.Downloader);
+            benchmarker.ShowDialog();
+        }
 	}
 }

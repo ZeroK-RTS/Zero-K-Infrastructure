@@ -196,6 +196,12 @@ namespace ZeroKLobby
           case "join_player":
             JoinPlayer(arg);
             break;
+
+          case "benchmark":
+                var bench = new Benchmarker.MainForm(Program.SpringPaths, Program.SpringScanner, Program.Downloader);
+                bench.ShowDialog();
+            break;
+
         }
       }
     }

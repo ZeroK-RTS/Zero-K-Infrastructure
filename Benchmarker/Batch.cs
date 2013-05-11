@@ -86,8 +86,8 @@ namespace Benchmarker
         /// Validates content - downloads files
         /// </summary>
         public string Validate(PlasmaDownloader.PlasmaDownloader downloader) {
-            if (!Benchmarks.Any()) return "No benchmarks selected";
-            if (!TestCases.Any()) return "Please add testCase runs";
+            if (!Benchmarks.Any()) return "No benchmarks selected - please add benchmarks (mutators/mods) into Mods or Benchmarks/Mods folder - in the folder.sdd format";
+            if (!TestCases.Any()) return "Please add test case runs using add button here";
 
             foreach (var bench in Benchmarks) {
                 var ret = bench.Validate(downloader);
