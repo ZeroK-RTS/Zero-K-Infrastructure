@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.splitContainerAtMid = new System.Windows.Forms.SplitContainer();
+            this.btnBenchmarker = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.cbMtEngine = new System.Windows.Forms.CheckBox();
             this.btnDisplay = new System.Windows.Forms.Button();
@@ -54,7 +55,6 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.btnBenchmarker = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerAtMid)).BeginInit();
             this.splitContainerAtMid.Panel1.SuspendLayout();
             this.splitContainerAtMid.Panel2.SuspendLayout();
@@ -107,9 +107,19 @@
             this.splitContainerAtMid.Panel2.BackColor = System.Drawing.SystemColors.ControlDark;
             this.splitContainerAtMid.Panel2.Controls.Add(this.groupBox1);
             this.splitContainerAtMid.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.splitContainerAtMid.Size = new System.Drawing.Size(562, 380);
-            this.splitContainerAtMid.SplitterDistance = 149;
+            this.splitContainerAtMid.Size = new System.Drawing.Size(825, 692);
+            this.splitContainerAtMid.SplitterDistance = 203;
             this.splitContainerAtMid.TabIndex = 0;
+            // 
+            // btnBenchmarker
+            // 
+            this.btnBenchmarker.Location = new System.Drawing.Point(354, 167);
+            this.btnBenchmarker.Name = "btnBenchmarker";
+            this.btnBenchmarker.Size = new System.Drawing.Size(87, 23);
+            this.btnBenchmarker.TabIndex = 38;
+            this.btnBenchmarker.Text = "Benchmarker";
+            this.btnBenchmarker.UseVisualStyleBackColor = true;
+            this.btnBenchmarker.Click += new System.EventHandler(this.btnBenchmarker_Click);
             // 
             // label1
             // 
@@ -306,6 +316,7 @@
             // 
             // cbWindowed
             // 
+            this.cbWindowed.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbWindowed.Items.AddRange(new object[] {
             "Windowed",
             "Borderless",
@@ -314,7 +325,6 @@
             this.cbWindowed.Name = "cbWindowed";
             this.cbWindowed.Size = new System.Drawing.Size(77, 21);
             this.cbWindowed.TabIndex = 27;
-            this.cbWindowed.Text = "Windowed";
             this.cbWindowed.SelectionChangeCommitted += new System.EventHandler(this.settingsControlChanged);
             // 
             // btnBrowse
@@ -347,7 +357,7 @@
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.MinimumSize = new System.Drawing.Size(300, 150);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(560, 225);
+            this.groupBox1.Size = new System.Drawing.Size(823, 483);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Zero-K lobby settings: (changes need restart)";
@@ -357,7 +367,7 @@
             this.propertyGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGrid1.Location = new System.Drawing.Point(3, 16);
             this.propertyGrid1.Name = "propertyGrid1";
-            this.propertyGrid1.Size = new System.Drawing.Size(554, 206);
+            this.propertyGrid1.Size = new System.Drawing.Size(817, 464);
             this.propertyGrid1.TabIndex = 0;
             this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid1_PropertyValueChanged);
             // 
@@ -367,18 +377,8 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(562, 380);
+            this.panel1.Size = new System.Drawing.Size(825, 692);
             this.panel1.TabIndex = 15;
-            // 
-            // btnBenchmarker
-            // 
-            this.btnBenchmarker.Location = new System.Drawing.Point(354, 167);
-            this.btnBenchmarker.Name = "btnBenchmarker";
-            this.btnBenchmarker.Size = new System.Drawing.Size(87, 23);
-            this.btnBenchmarker.TabIndex = 38;
-            this.btnBenchmarker.Text = "Benchmarker";
-            this.btnBenchmarker.UseVisualStyleBackColor = true;
-            this.btnBenchmarker.Click += new System.EventHandler(this.btnBenchmarker_Click);
             // 
             // SettingsTab
             // 
@@ -386,7 +386,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.panel1);
             this.Name = "SettingsTab";
-            this.Size = new System.Drawing.Size(562, 380);
+            this.Size = new System.Drawing.Size(825, 692);
             this.Load += new System.EventHandler(this.SettingsTab_Load);
             this.splitContainerAtMid.Panel1.ResumeLayout(false);
             this.splitContainerAtMid.Panel1.PerformLayout();
