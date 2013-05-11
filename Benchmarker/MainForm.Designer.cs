@@ -50,13 +50,13 @@
             this.btnStart = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btnGraphs = new System.Windows.Forms.Button();
             this.btnRaw = new System.Windows.Forms.Button();
             this.tbResults = new System.Windows.Forms.TextBox();
             this.btnDataSheet = new System.Windows.Forms.Button();
             this.tbDownloads = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.btnRefresh = new System.Windows.Forms.Button();
-            this.btnGraphs = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -284,6 +284,18 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Benchmark results";
             // 
+            // btnGraphs
+            // 
+            this.btnGraphs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnGraphs.Enabled = false;
+            this.btnGraphs.Location = new System.Drawing.Point(246, 166);
+            this.btnGraphs.Name = "btnGraphs";
+            this.btnGraphs.Size = new System.Drawing.Size(96, 23);
+            this.btnGraphs.TabIndex = 3;
+            this.btnGraphs.Text = "Open graphs";
+            this.btnGraphs.UseVisualStyleBackColor = true;
+            this.btnGraphs.Click += new System.EventHandler(this.btnGraphs_Click);
+            // 
             // btnRaw
             // 
             this.btnRaw.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -349,18 +361,6 @@
             this.btnRefresh.Text = "Refresh benchmarks";
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
-            // 
-            // btnGraphs
-            // 
-            this.btnGraphs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnGraphs.Enabled = false;
-            this.btnGraphs.Location = new System.Drawing.Point(246, 166);
-            this.btnGraphs.Name = "btnGraphs";
-            this.btnGraphs.Size = new System.Drawing.Size(96, 23);
-            this.btnGraphs.TabIndex = 3;
-            this.btnGraphs.Text = "Open graphs";
-            this.btnGraphs.UseVisualStyleBackColor = true;
-            this.btnGraphs.Click += new System.EventHandler(this.btnGraphs_Click);
             // 
             // MainForm
             // 

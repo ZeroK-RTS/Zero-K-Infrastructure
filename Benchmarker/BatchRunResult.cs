@@ -37,7 +37,7 @@ namespace Benchmarker
                 }
 
                 if (gameId != null) {
-                    var match = Regex.Match(line, "(.+):[ ]*([0-9.]+)");
+                    var match = Regex.Match(line, "!transmitlobby (.+):[ ]*([0-9.]+)");
                     if (match.Success) {
                         var key = match.Groups[1].Value.Trim();
                         var value = match.Groups[2].Value.Trim();

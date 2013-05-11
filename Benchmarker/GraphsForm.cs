@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -16,30 +17,35 @@ namespace Benchmarker
         }
 
         void GraphsForm_Load(object sender, EventArgs e) {
+            
+            Dictionary<Tuple<Benchmark, string>, Chart> charts = new Dictionary<Tuple<Benchmark, string>, Chart>();
+
             foreach (var res in results.RunEntries) {
                 foreach (var grp in res.RawValues.GroupBy(x => x.Key).Where(x => x.Count() > 2)) {
-                    var graph = new Chart();
-                    var area = new ChartArea();
-                    area.AxisX.Title = "gameframe";
-                    area.AxisY.Title = grp.Key;
-                    graph.Titles.Add(string.Format("{0} {1}", res.Benchmark, res.TestCase));
-                    graph.BackGradientStyle = GradientStyle.DiagonalLeft;
-                    graph.BackSecondaryColor = Color.Silver;
-                    graph.ChartAreas.Add(area);
+                    Chart graph;
+                    if (!charts.TryGetValue(Tuple.Create(res.Benchmark, grp.Key), out graph)) {
+                        graph = new Chart();
+                        charts[Tuple.Create(res.Benchmark, grp.Key)] = graph;
+                        var area = new ChartArea();
+                        area.AxisX.Title = "gameframe";
+                        area.AxisY.Title = grp.Key;
+                        graph.Titles.Add(string.Format("{1} {0}", res.Benchmark, grp.Key));
+                        graph.BackGradientStyle = GradientStyle.DiagonalLeft;
+                        graph.BackSecondaryColor = Color.Silver;
+                        graph.ChartAreas.Add(area);
+                        graph.Width = Width - 40;
+                        graph.Height = Width / 4;
+                        graph.AutoSize = true;
+                        graph.Legends.Add(new Legend("default"));
+                        flowPanel.Controls.Add(graph);
+                    }
 
-                    var ser = new Series(grp.Key);
-                    ser.Color = Color.Red;
+                    var ser = new Series(res.TestCase.ToString());
                     ser.ChartType = SeriesChartType.Line;
-
                     graph.Series.Add(ser);
 
-                    graph.Legends.Clear();
-                    graph.Width = Width - 40;
-                    graph.Height = Width/4;
-                    graph.AutoSize = true;
-
                     foreach (var val in grp) ser.Points.Add(val.Value, val.GameFrame);
-                    flowPanel.Controls.Add(graph);
+                    
                 }
             }
             if (flowPanel.Controls.Count == 0) Close(); // no graphs
