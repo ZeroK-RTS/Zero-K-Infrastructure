@@ -38,8 +38,8 @@ function widget:Update(dt)
 		local time_spend_per_frame = timeInterval / PERIOD
 		local fps = 1 / time_spend_per_frame
 		
-		Spring.Echo("FPS: "..fps)
-		Spring.Echo("Max lag: ".. maxTimeInterval)
+		Spring.Echo("!transmitlobby FPS: "..fps)
+		Spring.Echo("!transmitlobby Max lag: ".. maxTimeInterval)
 		
 		loggedi = loggedi + 1
 		screenFrame = 0
