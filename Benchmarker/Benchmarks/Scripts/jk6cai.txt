@@ -1,23 +1,12 @@
 [GAME]
 {
 	HostIP=127.0.0.1;
-//	HostIP=192.168.123.115;
-//	HostPort=8452;
 	IsHost=1;
 	MyPlayerName=Host;
 
-//      Mapname=Red Comet;
-//	Mapname=TheHunters-v3;
-//	GameType=Balanced Annihilation V7.60;
-//	GameType=Spring: 1944 v1.54 RC5;
-//      GameType=Zero-K test-4545;
-//      GameType=Zero-K v1.0.3.9;
 
 	Mapname=Crossing_4_final;
 	GameType=Zero-K v1.0.10.8;
-	//Demofile=demos/20120423_220015_Red Comet_88.0.1-169-g42ad09a LuaJIT.sdf;
-	//Demofile=demos/20120423_031933_Red Comet_88.0.1-169-g42ad09a LuaJIT.sdf;
-	//GameID=1a06a150e447a8d39f3f9c371cdf4421;
 	GameID=00000000000000000000000000000000;
 
 	startpostype=0;
