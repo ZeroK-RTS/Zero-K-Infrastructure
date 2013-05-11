@@ -84,8 +84,13 @@ namespace ZeroKLobby.MicroLobby
                 Program.EngineConfigurator.SetConfigValue("WindowBorderless", "0");
             }
 
-            Program.EngineConfigurator.SetConfigValue("XResolution", tbResx.Text);
-            Program.EngineConfigurator.SetConfigValue("YResolution", tbResy.Text);
+	        int resX;
+	        int.TryParse(tbResx.Text, out resX);
+	        int resY;
+	        int.TryParse(tbResy.Text, out resY);
+
+            Program.EngineConfigurator.SetConfigValue("XResolution", resX.ToString());
+            Program.EngineConfigurator.SetConfigValue("YResolution", resY.ToString());
 	        Program.EngineConfigurator.SetConfigValue("HardwareCursor", cbHwCursor.Checked?"1":"0");
             Program.EngineConfigurator.SetConfigValue("WindowState", "0"); // neded for borderless
             Program.EngineConfigurator.SetConfigValue("WindowPosY", "0"); // neded for borderless
