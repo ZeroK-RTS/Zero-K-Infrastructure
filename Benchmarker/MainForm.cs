@@ -17,14 +17,15 @@ namespace Benchmarker
         string jsonPath;
         string lastUsedBatchFolder = null;
         readonly SpringScanner scanner;
+        readonly SpringPaths springPaths;
         Batch testedBatch;
 
         public MainForm() {
             InitializeComponent();
-            var paths = new SpringPaths(null, null, null);
-            scanner = new SpringScanner(paths);
+            springPaths = new SpringPaths(null, null, null);
+            scanner = new SpringScanner(springPaths);
             scanner.Start();
-            downloader = new PlasmaDownloader.PlasmaDownloader(new PlasmaConfig(), scanner, paths);
+            downloader = new PlasmaDownloader.PlasmaDownloader(new PlasmaConfig(), scanner, springPaths);
             var timer = new Timer();
             timer.Tick += (sender, args) =>
                 {
@@ -55,9 +56,20 @@ namespace Benchmarker
         }
 
         void MainForm_Load(object sender, EventArgs e) {
-            benchmarkList.Items.AddRange(Benchmark.GetBenchmarks().ToArray());
-            cbConfigs.Items.AddRange(Config.GetConfigs().ToArray());
+            RefreshBenchmarks();
+        }
+
+        void RefreshBenchmarks() {
+            benchmarkList.Items.Clear();
+            benchmarkList.Items.AddRange(Benchmark.GetBenchmarks(springPaths, true).ToArray());
+
+            cbConfigs.Items.Clear();
+            cbConfigs.Items.AddRange(Config.GetConfigs(springPaths, true).ToArray());
+
+            cmbScripts.Items.Clear();
+            cmbScripts.Items.AddRange(StartScript.GetStartScripts(springPaths, true).ToArray());
             if (cbConfigs.Items.Count > 0) cbConfigs.SelectedIndex = 0;
+            if (cmbScripts.Items.Count > 0) cmbScripts.SelectedIndex = 0;
         }
 
         void benchmarkList_ItemCheck(object sender, ItemCheckEventArgs e) {
@@ -65,7 +77,7 @@ namespace Benchmarker
         }
 
         void btnAddTest_Click(object sender, EventArgs e) {
-            var testCase = new TestCase(tbEngine.Text, tbGame.Text, tbMap.Text, (Config)cbConfigs.SelectedItem);
+            var testCase = new TestCase(tbEngine.Text, tbGame.Text, tbMap.Text, cbConfigs.SelectedItem as Config, cmbScripts.SelectedItem as StartScript);
             var ret = testCase.Validate(downloader);
             if (ret != null) MessageBox.Show(ret);
             else lbTestCases.Items.Add(testCase);
@@ -80,7 +92,7 @@ namespace Benchmarker
                 var sd = new OpenFileDialog();
                 sd.DefaultExt = ".batch";
                 if (sd.ShowDialog() == DialogResult.OK) {
-                    var batch = Batch.Load(sd.FileName);
+                    var batch = Batch.Load(sd.FileName, springPaths);
                     if (batch != null) {
                         lbTestCases.Items.Clear();
                         lbTestCases.Items.AddRange(batch.TestCases.ToArray());
@@ -170,9 +182,9 @@ namespace Benchmarker
             if (testedBatch != null) testedBatch.Abort();
         }
 
-        void btnVerify_Click(object sender, EventArgs e) {
-            var batch = CreateBatchFromGui();
-            MessageBox.Show(batch.Validate(downloader));
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            RefreshBenchmarks();
         }
     }
 

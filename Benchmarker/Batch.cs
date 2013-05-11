@@ -32,9 +32,27 @@ namespace Benchmarker
             if (run != null) run.Abort();
         }
 
-        public static Batch Load(string path) {
+        /// <summary>
+        /// Returns folders of interest - for example if you set "Mods" it will look in all datadirs and current dir for "Mods" and "Benchmarks/Mods"
+        /// </summary>
+        public static List<DirectoryInfo> GetBenchmarkFolders(SpringPaths paths, string folderName) {
+            var dirsToCheck = new List<string>(paths.DataDirectories);
+            dirsToCheck.Add(Directory.GetCurrentDirectory());
+            var ret = new List<DirectoryInfo>();
+            foreach (var dir in dirsToCheck) {
+                var sub = Path.Combine(dir, folderName);
+                if (Directory.Exists(sub)) ret.Add(new DirectoryInfo(sub));
+
+                var bsub = Path.Combine(dir, "Benchmarks", folderName);
+                if (Directory.Exists(bsub)) ret.Add(new DirectoryInfo(bsub));
+            }
+
+            return ret;
+        }
+
+        public static Batch Load(string path, SpringPaths springPaths) {
             var batch = JsonConvert.DeserializeObject<Batch>(File.ReadAllText(path));
-            batch.PostLoad();
+            batch.PostLoad(springPaths);
             return batch;
         }
 
@@ -83,9 +101,20 @@ namespace Benchmarker
             return "OK";
         }
 
-        void PostLoad() {
-            Benchmarks = Benchmarks.Select(x => Benchmark.GetBenchmarks().First(y => y.Name == x.Name)).ToList();
-            foreach (var tr in TestCases) tr.Config = Config.GetConfigs().Single(x => x.Name == tr.Config.Name);
+        void PostLoad(SpringPaths paths) {
+            Benchmarks =
+                Benchmarks.Select(
+                    x =>
+                    Benchmark.GetBenchmarks(paths).SingleOrDefault(y => y.BenchmarkPath == x.BenchmarkPath) ??
+                    Benchmark.GetBenchmarks(paths).First(y => y.Name == x.Name)).ToList();
+
+            foreach (var tr in TestCases) {
+                tr.Config = Config.GetConfigs(paths).SingleOrDefault(x => x.ConfigPath == tr.Config.ConfigPath) ??
+                            Config.GetConfigs(paths).First(x => x.Name == tr.Config.Name);
+
+                tr.StartScript = StartScript.GetStartScripts(paths).SingleOrDefault(x => x.ScriptPath == tr.StartScript.ScriptPath) ??
+                            StartScript.GetStartScripts(paths).First(x => x.Name == tr.StartScript.Name);
+            }
         }
     }
 }

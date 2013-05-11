@@ -34,7 +34,7 @@ namespace Benchmarker
             process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.Executable);
 
             var scriptPath = Path.GetTempFileName();
-            File.WriteAllText(scriptPath, benchmark.GetScriptForTestCase(test));
+            File.WriteAllText(scriptPath, test.StartScript.GetScriptForTestCase(test, benchmark));
             process.StartInfo.Arguments += string.Format(" \"{0}\"", scriptPath);
 
             process.StartInfo.UseShellExecute = false;

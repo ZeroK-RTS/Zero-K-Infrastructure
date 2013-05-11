@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using PlasmaDownloader;
+using PlasmaShared;
 using PlasmaShared.UnitSyncLib;
 
 namespace Benchmarker
@@ -31,19 +32,15 @@ namespace Benchmarker
         /// <summary>
         /// Gets all benchamrks and caches them. Looks for folder Benchmarks and traverses paths up until found
         /// </summary>
-        public static List<Benchmark> GetBenchmarks() {
+        public static List<Benchmark> GetBenchmarks(SpringPaths paths, bool refresh = false) {
+            if (refresh) allBenchmarks = null;
             if (allBenchmarks != null) return allBenchmarks;
-            var path = new DirectoryInfo(Directory.GetCurrentDirectory());
-            do {
-                var bd = path.GetDirectories().FirstOrDefault(x => string.Equals(x.Name, "Mods"));
-                if (bd != null) {
-                    allBenchmarks = bd.GetDirectories().Where(x => x.Name.EndsWith(".sdd")).Select(x => new Benchmark(x.FullName)).ToList();
-                    return allBenchmarks;
-                }
-                path = path.Parent;
-            } while (path != null);
-            return new List<Benchmark>();
+            allBenchmarks = new List<Benchmark>();
+            allBenchmarks = Batch.GetBenchmarkFolders(paths, "Mods").SelectMany(x => x.GetDirectories("*.sdd").Select(y=> new Benchmark(y.FullName))).ToList();
+            return allBenchmarks;
         }
+
+
 
 
         /// <summary>
@@ -65,37 +62,6 @@ namespace Benchmarker
             return File.ReadAllText(modFile);
         }
 
-
-        /// <summary>
-        /// Gets original startscript
-        /// </summary>
-        public string GetScript() {
-            var file = Path.Combine(BenchmarkPath, "script.txt");
-            if (File.Exists(file)) return File.ReadAllText(file);
-            else return null;
-        }
-
-        /// <summary>
-        /// Gets modified startscript for starting the game
-        /// </summary>
-        public string GetScriptForTestCase(TestCase test) {
-            var script = GetScript();
-            script = Regex.Replace(script, "(gametype=)([^;]*)", m => m.Groups[1] + Name, RegexOptions.IgnoreCase);
-            if (!string.IsNullOrEmpty(test.Map)) script = Regex.Replace(script, "(mapname=)([^;]*)", m => m.Groups[1] + test.Map, RegexOptions.IgnoreCase);
-            return script;
-        }
-
-        /// <summary>
-        /// Gets map selected for by default in script.txt
-        /// </summary>
-        public string GetScriptMap() {
-            var script = GetScript();
-            if (script != null) {
-                var match = Regex.Match(script, "mapname=([^;]+);", RegexOptions.IgnoreCase);
-                return match.Groups[1].Value;
-            }
-            else return null;
-        }
 
         /// <summary>
         /// Gets full benchmark name as a mod for spring
@@ -159,14 +125,10 @@ namespace Benchmarker
         /// </summary>
         public string Validate(PlasmaDownloader.PlasmaDownloader downloader) {
             foreach (var dep in
-                GetDependencies().Where(x => !UnitSync.DependencyExceptions.Contains(x) && !GetBenchmarks().Any(y => y.GetSpringName() == x))) {
+                GetDependencies().Where(x => !UnitSync.DependencyExceptions.Contains(x))) {
+                if (GetBenchmarks(downloader.SpringPaths).Any(y => y.GetSpringName() == dep || y.Name == dep)) continue;
                 var dl = downloader.GetResource(DownloadType.MOD, dep);
                 if (dl != null && dl.IsComplete == false) return "Failed to download dependency mod " + dep;
-            }
-            var map = GetScriptMap();
-            if (map != null) {
-                var dl = downloader.GetResource(DownloadType.MAP, map);
-                if (dl != null && dl.IsComplete == false) return "Failed to download map " + map;
             }
             return null;
         }

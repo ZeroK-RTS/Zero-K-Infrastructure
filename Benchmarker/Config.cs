@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using PlasmaShared;
 
 namespace Benchmarker
 {
@@ -19,18 +20,12 @@ namespace Benchmarker
         }
 
 
-        public static IEnumerable<Config> GetConfigs() {
+        public static IEnumerable<Config> GetConfigs(SpringPaths paths, bool refresh = false) {
+            if (refresh) allConfigs = null;
             if (allConfigs != null) return allConfigs;
-            var path = new DirectoryInfo(Directory.GetCurrentDirectory());
-            do {
-                var bd = path.GetDirectories().FirstOrDefault(x => string.Equals(x.Name, "Configs"));
-                if (bd != null) {
-                    allConfigs = bd.GetDirectories().Select(x => new Config(x.FullName)).ToList();
-                    return allConfigs;
-                }
-                path = path.Parent;
-            } while (path != null);
-            return new List<Config>();
+            allConfigs = new List<Config>();
+            allConfigs = Batch.GetBenchmarkFolders(paths, "Configs").SelectMany(x => x.GetDirectories().Select(y => new Config(y.FullName))).ToList();
+            return allConfigs;
         }
 
 

@@ -29,12 +29,18 @@ namespace Benchmarker
         /// </summary>
         public bool UseMultithreaded;
 
+        /// <summary>
+        /// StartScript to use
+        /// </summary>
+        public StartScript StartScript;
 
-        public TestCase(string engine, string game, string map, Config config) {
+
+        public TestCase(string engine, string game, string map, Config config, StartScript startScript) {
             Engine = engine;
             Game = game;
             Config = config;
             Map = map;
+            StartScript = startScript;
         }
 
 
@@ -43,6 +49,9 @@ namespace Benchmarker
         /// </summary>
         public string Validate(PlasmaDownloader.PlasmaDownloader downloader) {
             if (string.IsNullOrEmpty(Engine)) return "Engine name not set";
+
+            if (StartScript == null) return "Please select a start script";
+            if (Config == null) return "Please select config to use";
 
             var de = downloader.GetAndSwitchEngine(Engine);
             if (de != null && de.IsComplete == false) return "Failed download of engine " + de.Name;
@@ -57,11 +66,14 @@ namespace Benchmarker
                 if (dg != null && dg.IsComplete == false) return "Failed download of game " + dg.Name;
             }
 
+            var sVal = StartScript.Validate(downloader);
+            if (sVal != null) return sVal;
+
             return null;
         }
 
         public override string ToString() {
-            return string.Format("{0} {1} {2} {3}", Engine, Game, Map, Config);
+            return string.Format("{0} {1} {2} {3} {4}", Engine, StartScript, Game, Map, Config);
         }
     }
 }

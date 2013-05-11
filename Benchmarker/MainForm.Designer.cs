@@ -33,26 +33,29 @@
             this.btnLoad = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.cmbScripts = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.cbConfigs = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
             this.btnAddTest = new System.Windows.Forms.Button();
             this.tbMap = new System.Windows.Forms.TextBox();
             this.lbMap = new System.Windows.Forms.Label();
-            this.tbGame = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
             this.tbEngine = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.tbGame = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.lbTestCases = new System.Windows.Forms.ListBox();
             this.label5 = new System.Windows.Forms.Label();
             this.btnRemoveRun = new System.Windows.Forms.Button();
             this.btnStart = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btnRaw = new System.Windows.Forms.Button();
             this.tbResults = new System.Windows.Forms.TextBox();
             this.btnDataSheet = new System.Windows.Forms.Button();
             this.tbDownloads = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
-            this.btnRaw = new System.Windows.Forms.Button();
+            this.btnRefresh = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -97,6 +100,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.cmbScripts);
+            this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.cbConfigs);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.btnAddTest);
@@ -108,16 +113,34 @@
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Location = new System.Drawing.Point(357, 254);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(307, 158);
+            this.groupBox1.Size = new System.Drawing.Size(307, 180);
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Add a test case";
+            // 
+            // cmbScripts
+            // 
+            this.cmbScripts.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbScripts.FormattingEnabled = true;
+            this.cmbScripts.Location = new System.Drawing.Point(97, 22);
+            this.cmbScripts.Name = "cmbScripts";
+            this.cmbScripts.Size = new System.Drawing.Size(184, 21);
+            this.cmbScripts.TabIndex = 12;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(31, 25);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(60, 13);
+            this.label1.TabIndex = 11;
+            this.label1.Text = "Start script:";
             // 
             // cbConfigs
             // 
             this.cbConfigs.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbConfigs.FormattingEnabled = true;
-            this.cbConfigs.Location = new System.Drawing.Point(101, 52);
+            this.cbConfigs.Location = new System.Drawing.Point(97, 75);
             this.cbConfigs.Name = "cbConfigs";
             this.cbConfigs.Size = new System.Drawing.Size(184, 21);
             this.cbConfigs.TabIndex = 10;
@@ -125,7 +148,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(55, 55);
+            this.label7.Location = new System.Drawing.Point(51, 78);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(40, 13);
             this.label7.TabIndex = 9;
@@ -133,7 +156,7 @@
             // 
             // btnAddTest
             // 
-            this.btnAddTest.Location = new System.Drawing.Point(58, 131);
+            this.btnAddTest.Location = new System.Drawing.Point(97, 151);
             this.btnAddTest.Name = "btnAddTest";
             this.btnAddTest.Size = new System.Drawing.Size(75, 23);
             this.btnAddTest.TabIndex = 7;
@@ -145,7 +168,7 @@
             // 
             this.tbMap.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbMap.Location = new System.Drawing.Point(101, 105);
+            this.tbMap.Location = new System.Drawing.Point(97, 128);
             this.tbMap.Name = "tbMap";
             this.tbMap.Size = new System.Drawing.Size(184, 20);
             this.tbMap.TabIndex = 5;
@@ -153,35 +176,17 @@
             // lbMap
             // 
             this.lbMap.AutoSize = true;
-            this.lbMap.Location = new System.Drawing.Point(17, 108);
+            this.lbMap.Location = new System.Drawing.Point(13, 131);
             this.lbMap.Name = "lbMap";
             this.lbMap.Size = new System.Drawing.Size(78, 13);
             this.lbMap.TabIndex = 4;
             this.lbMap.Text = "Map (override):";
             // 
-            // tbGame
-            // 
-            this.tbGame.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbGame.Location = new System.Drawing.Point(101, 79);
-            this.tbGame.Name = "tbGame";
-            this.tbGame.Size = new System.Drawing.Size(184, 20);
-            this.tbGame.TabIndex = 3;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(17, 82);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(78, 13);
-            this.label4.TabIndex = 2;
-            this.label4.Text = "Mod (override):";
-            // 
             // tbEngine
             // 
             this.tbEngine.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbEngine.Location = new System.Drawing.Point(101, 26);
+            this.tbEngine.Location = new System.Drawing.Point(97, 49);
             this.tbEngine.Name = "tbEngine";
             this.tbEngine.Size = new System.Drawing.Size(184, 20);
             this.tbEngine.TabIndex = 1;
@@ -189,11 +194,29 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(52, 29);
+            this.label3.Location = new System.Drawing.Point(48, 52);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(43, 13);
             this.label3.TabIndex = 0;
             this.label3.Text = "Engine:";
+            // 
+            // tbGame
+            // 
+            this.tbGame.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbGame.Location = new System.Drawing.Point(97, 102);
+            this.tbGame.Name = "tbGame";
+            this.tbGame.Size = new System.Drawing.Size(184, 20);
+            this.tbGame.TabIndex = 3;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(13, 105);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(78, 13);
+            this.label4.TabIndex = 2;
+            this.label4.Text = "Mod (override):";
             // 
             // lbTestCases
             // 
@@ -252,12 +275,24 @@
             this.groupBox2.Controls.Add(this.btnRaw);
             this.groupBox2.Controls.Add(this.tbResults);
             this.groupBox2.Controls.Add(this.btnDataSheet);
-            this.groupBox2.Location = new System.Drawing.Point(28, 418);
+            this.groupBox2.Location = new System.Drawing.Point(28, 440);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(642, 155);
+            this.groupBox2.Size = new System.Drawing.Size(642, 195);
             this.groupBox2.TabIndex = 16;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Benchmark results";
+            // 
+            // btnRaw
+            // 
+            this.btnRaw.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnRaw.Enabled = false;
+            this.btnRaw.Location = new System.Drawing.Point(127, 166);
+            this.btnRaw.Name = "btnRaw";
+            this.btnRaw.Size = new System.Drawing.Size(96, 23);
+            this.btnRaw.TabIndex = 2;
+            this.btnRaw.Text = "Open raw";
+            this.btnRaw.UseVisualStyleBackColor = true;
+            this.btnRaw.Click += new System.EventHandler(this.btnRaw_Click);
             // 
             // tbResults
             // 
@@ -269,14 +304,14 @@
             this.tbResults.Name = "tbResults";
             this.tbResults.ReadOnly = true;
             this.tbResults.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.tbResults.Size = new System.Drawing.Size(629, 101);
+            this.tbResults.Size = new System.Drawing.Size(629, 141);
             this.tbResults.TabIndex = 1;
             // 
             // btnDataSheet
             // 
             this.btnDataSheet.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnDataSheet.Enabled = false;
-            this.btnDataSheet.Location = new System.Drawing.Point(7, 126);
+            this.btnDataSheet.Location = new System.Drawing.Point(7, 166);
             this.btnDataSheet.Name = "btnDataSheet";
             this.btnDataSheet.Size = new System.Drawing.Size(96, 23);
             this.btnDataSheet.TabIndex = 0;
@@ -286,40 +321,39 @@
             // 
             // tbDownloads
             // 
-            this.tbDownloads.Location = new System.Drawing.Point(35, 264);
+            this.tbDownloads.Location = new System.Drawing.Point(28, 264);
             this.tbDownloads.Multiline = true;
             this.tbDownloads.Name = "tbDownloads";
             this.tbDownloads.ReadOnly = true;
             this.tbDownloads.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.tbDownloads.Size = new System.Drawing.Size(282, 144);
+            this.tbDownloads.Size = new System.Drawing.Size(295, 170);
             this.tbDownloads.TabIndex = 18;
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(35, 248);
+            this.label8.Location = new System.Drawing.Point(25, 248);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(143, 13);
             this.label8.TabIndex = 19;
             this.label8.Text = "Running content downloads:";
             // 
-            // btnRaw
+            // btnRefresh
             // 
-            this.btnRaw.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnRaw.Enabled = false;
-            this.btnRaw.Location = new System.Drawing.Point(127, 126);
-            this.btnRaw.Name = "btnRaw";
-            this.btnRaw.Size = new System.Drawing.Size(96, 23);
-            this.btnRaw.TabIndex = 2;
-            this.btnRaw.Text = "Open raw";
-            this.btnRaw.UseVisualStyleBackColor = true;
-            this.btnRaw.Click += new System.EventHandler(this.btnRaw_Click);
+            this.btnRefresh.Location = new System.Drawing.Point(541, 10);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(118, 23);
+            this.btnRefresh.TabIndex = 20;
+            this.btnRefresh.Text = "Refresh benchmarks";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(702, 587);
+            this.ClientSize = new System.Drawing.Size(702, 649);
+            this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.tbDownloads);
             this.Controls.Add(this.groupBox2);
@@ -374,5 +408,8 @@
         private System.Windows.Forms.TextBox tbDownloads;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button btnRaw;
+        private System.Windows.Forms.ComboBox cmbScripts;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btnRefresh;
     }
 }
