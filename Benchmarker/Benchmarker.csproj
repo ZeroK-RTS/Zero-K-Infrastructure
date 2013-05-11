@@ -42,14 +42,23 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Batch.cs" />
     <Compile Include="BatchRunResult.cs" />
     <Compile Include="Benchmark.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="GraphsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GraphsForm.Designer.cs">
+      <DependentUpon>GraphsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -60,6 +69,9 @@
     <Compile Include="SpringRun.cs" />
     <Compile Include="StartScript.cs" />
     <Compile Include="TestCase.cs" />
+    <EmbeddedResource Include="GraphsForm.resx">
+      <DependentUpon>GraphsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>

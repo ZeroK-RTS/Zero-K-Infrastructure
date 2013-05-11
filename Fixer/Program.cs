@@ -359,6 +359,9 @@ namespace Fixer
 
 
         static void Main(string[] args) {
+            var bench = new Benchmarker.MainForm();
+            bench.ShowDialog();
+
             //var guid = Guid.NewGuid().ToString();
 
             var pp = new PayPalInterface();

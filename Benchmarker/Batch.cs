@@ -56,7 +56,7 @@ namespace Benchmarker
             return batch;
         }
 
-        public void RunTests() {
+        public void RunTests(SpringPaths paths) {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             isAborted = false;
             var result = new BatchRunResult();
@@ -66,7 +66,7 @@ namespace Benchmarker
                     b.ModifyModInfo(tr);
                     try {
                         run = new SpringRun();
-                        var log = run.Start(new SpringPaths(null), tr, b);
+                        var log = run.Start(paths, tr, b);
                         result.AddRun(tr, b, log);
                         RunCompleted(tr, b, log);
                     } finally {

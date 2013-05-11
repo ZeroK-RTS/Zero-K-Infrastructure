@@ -19,6 +19,7 @@ namespace Benchmarker
         readonly SpringPaths springPaths;
         readonly SpringScanner springScanner;
         Batch testedBatch;
+        BatchRunResult batchResult;
 
         public MainForm(SpringPaths paths = null, SpringScanner scanner = null, PlasmaDownloader.PlasmaDownloader downloader = null) {
             InitializeComponent();
@@ -39,6 +40,8 @@ namespace Benchmarker
                 };
             timer.Interval = 1000;
             timer.Enabled = true;
+
+            tbEngine.Text = springPaths.SpringVersion;
         }
 
         public Batch CreateBatchFromGui() {
@@ -164,7 +167,8 @@ namespace Benchmarker
 
             testedBatch.AllCompleted += (result) =>
                 {
-                    result.SaveFiles(lastUsedBatchFolder, out csvPath, out jsonPath);
+                    batchResult = result;
+                    result.SaveFiles(lastUsedBatchFolder ?? springPaths.WritableDirectory, out csvPath, out jsonPath);
 
                     //Process.Start(jsonPath);
                     Process.Start(csvPath);
@@ -175,10 +179,13 @@ namespace Benchmarker
                             btnStop.Enabled = false;
                             btnDataSheet.Enabled = true;
                             btnRaw.Enabled = true;
+                            btnGraphs.Enabled = true;
+                            var form = new GraphsForm(result);
+                            form.Show();
                         }));
                 };
 
-            new Thread(() => { testedBatch.RunTests(); }).Start();
+            new Thread(() => { testedBatch.RunTests(springPaths); }).Start();
 
             btnStart.Enabled = false;
             btnStop.Enabled = true;
@@ -188,6 +195,15 @@ namespace Benchmarker
             btnStart.Enabled = true;
             btnStop.Enabled = false;
             if (testedBatch != null) testedBatch.Abort();
+        }
+
+        private void btnGraphs_Click(object sender, EventArgs e)
+        {
+            if (batchResult != null) {
+                var form = new GraphsForm(batchResult);
+                form.Show();
+            }
+
         }
     }
 

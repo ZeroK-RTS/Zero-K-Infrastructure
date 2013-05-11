@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using Newtonsoft.Json;
 
 namespace Benchmarker
@@ -30,10 +28,10 @@ namespace Benchmarker
                 var line = cycleline;
                 var gameframe = 0;
 
-                if (line.StartsWith("[")) {
+                if (line.StartsWith("[f=")) {
                     var idx = line.IndexOf("] ");
                     if (idx > 0) {
-                        int.TryParse(line.Substring(1, idx - 1), out gameframe);
+                        int.TryParse(line.Substring(3, idx - 3), out gameframe);
                         if (idx >= 0) line = line.Substring(idx + 2);
                     }
                 }
@@ -44,10 +42,7 @@ namespace Benchmarker
                         var key = match.Groups[1].Value.Trim();
                         var value = match.Groups[2].Value.Trim();
                         var valNum = 0.0;
-                        if (!invalidKeys.Contains(key) && !key.StartsWith("Wind Range:") && !key.StartsWith("Skirmish AI") && !key.Contains(":"))
-                        {
-                            if (double.TryParse(value, out valNum)) runEntry.RawValues.Add(new ValueEntry() { GameFrame = gameframe, Key = key, Value = valNum });
-                        }
+                        if (!invalidKeys.Contains(key) && !key.StartsWith("Wind Range:") && !key.StartsWith("Skirmish AI") && !key.Contains(":")) if (double.TryParse(value, out valNum)) runEntry.RawValues.Add(new ValueEntry() { GameFrame = gameframe, Key = key, Value = valNum });
                     }
                 }
 
@@ -132,11 +127,10 @@ namespace Benchmarker
         public class RunEntry
         {
             public Benchmark Benchmark;
-            public TestCase TestCase;
             public List<ValueEntry> GroupedValues = new List<ValueEntry>();
             public string RawLog;
             public List<ValueEntry> RawValues = new List<ValueEntry>();
-            
+            public TestCase TestCase;
         }
 
         public class ValueEntry
