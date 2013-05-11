@@ -146,7 +146,7 @@ namespace Benchmarker
                 {
                     result.SaveFiles(lastUsedBatchFolder, out csvPath, out jsonPath);
 
-                    Process.Start(jsonPath);
+                    //Process.Start(jsonPath);
                     Process.Start(csvPath);
 
                     Invoke(new Action(() =>

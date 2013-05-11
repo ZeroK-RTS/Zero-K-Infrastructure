@@ -1,20 +1,51 @@
 [game]
 {
-[allyteam0]
-{
-numallies=0;
-}
+
 [player0]
 {
 name=UnnamedPlayer;
-team=0;
+spectator=1;
 }
+
+
+
+	[AI1]
+	{
+		Name=Another_Bot;
+		ShortName=CAI;
+		Team=0;
+		Host=0;
+	}
+	[AI2]
+	{
+		Name=Bot;
+		ShortName=CAI;
+		Team=1;
+		Host=0;
+	}
+
+	
+
 [team0]
 {
-allyteam=0;
 teamleader=0;
+allyteam=0;
 }
-gametype=ca-benchmark.sdd;
+[team1]
+{
+teamleader=0;
+allyteam=1;
+}
+
+[allyteam0]
+{
+}
+
+[allyteam1]
+{
+}
+
+gametype=whatever;
 ishost=1;
 mapname=Small_Divide-Remake-v04;
 myplayername=UnnamedPlayer;

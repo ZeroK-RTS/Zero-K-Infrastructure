@@ -44,9 +44,9 @@ namespace Benchmarker
                         var key = match.Groups[1].Value.Trim();
                         var value = match.Groups[2].Value.Trim();
                         var valNum = 0.0;
-                        if (!invalidKeys.Contains(key) && !key.StartsWith("Wind Range:")) {
-                            double.TryParse(value, out valNum);
-                            runEntry.RawValues.Add(new ValueEntry() { GameFrame = gameframe, Key = key, Value = valNum });
+                        if (!invalidKeys.Contains(key) && !key.StartsWith("Wind Range:") && !key.StartsWith("Skirmish AI"))
+                        {
+                            if (double.TryParse(value, out valNum)) runEntry.RawValues.Add(new ValueEntry() { GameFrame = gameframe, Key = key, Value = valNum });
                         }
                     }
                 }
@@ -57,7 +57,6 @@ namespace Benchmarker
 
 
         public string GroupAndGenerateResultTable() {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             var sb = new StringBuilder();
 
             foreach (var entry in RunEntries) {

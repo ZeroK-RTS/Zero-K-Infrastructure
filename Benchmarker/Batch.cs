@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Newtonsoft.Json;
 using PlasmaShared;
 
@@ -37,6 +39,7 @@ namespace Benchmarker
         }
 
         public void RunTests() {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             isAborted = false;
             var result = new BatchRunResult();
             foreach (var tr in TestCases) {
