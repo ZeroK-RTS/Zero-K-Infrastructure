@@ -13,7 +13,7 @@ namespace Benchmarker
         static readonly string[] invalidKeys = new string[]
         {
             "Sent", "Received", "[CCollisionHandler] dis-/continuous tests", "Statistics for RectangleOptimizer", "AL lib: ALc.c:1808: alcCloseDevice()"
-            , "[EPIC Menu] Error", "Game Over"
+            , "[EPIC Menu] Error", "Game Over","Commanders Remaining"
         };
         public List<RunEntry> RunEntries = new List<RunEntry>();
 

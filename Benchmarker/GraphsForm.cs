@@ -1,56 +1,48 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Benchmarker
 {
-    public partial class GraphsForm : Form
+    public partial class GraphsForm: Form
     {
-        BatchRunResult results;
+        readonly BatchRunResult results;
 
         public GraphsForm(BatchRunResult results) {
             this.results = results;
             InitializeComponent();
         }
 
-        private void GraphsForm_Load(object sender, EventArgs e)
-        {
+        void GraphsForm_Load(object sender, EventArgs e) {
             foreach (var res in results.RunEntries) {
                 foreach (var grp in res.RawValues.GroupBy(x => x.Key).Where(x => x.Count() > 2)) {
                     var graph = new Chart();
                     var area = new ChartArea();
                     area.AxisX.Title = "gameframe";
                     area.AxisY.Title = grp.Key;
-                    graph.Titles.Add(string.Format("{0} {1}", res.Benchmark,  res.TestCase));
+                    graph.Titles.Add(string.Format("{0} {1}", res.Benchmark, res.TestCase));
                     graph.BackGradientStyle = GradientStyle.DiagonalLeft;
                     graph.BackSecondaryColor = Color.Silver;
                     graph.ChartAreas.Add(area);
 
                     var ser = new Series(grp.Key);
                     ser.Color = Color.Red;
-                    ser.ChartType= SeriesChartType.Line;
-                    
+                    ser.ChartType = SeriesChartType.Line;
+
                     graph.Series.Add(ser);
 
                     graph.Legends.Clear();
-                    graph.Width = Width-40;
+                    graph.Width = Width - 40;
                     graph.Height = Width/4;
                     graph.AutoSize = true;
-                    
-                    foreach (var val in grp) {
-                        ser.Points.Add(val.Value, val.GameFrame);
-                    }
+
+                    foreach (var val in grp) ser.Points.Add(val.Value, val.GameFrame);
                     flowPanel.Controls.Add(graph);
                 }
-
             }
-
+            if (flowPanel.Controls.Count == 0) Close(); // no graphs
         }
     }
 }

@@ -199,7 +199,7 @@ namespace ZeroKLobby
 
           case "benchmark":
                 var bench = new Benchmarker.MainForm(Program.SpringPaths, Program.SpringScanner, Program.Downloader);
-                bench.ShowDialog();
+                bench.Show();
             break;
 
         }
