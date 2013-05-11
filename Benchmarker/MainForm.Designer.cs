@@ -51,7 +51,7 @@
             this.btnStop = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnGraphs = new System.Windows.Forms.Button();
-            this.btnRaw = new System.Windows.Forms.Button();
+            this.btnLoadResults = new System.Windows.Forms.Button();
             this.tbResults = new System.Windows.Forms.TextBox();
             this.btnDataSheet = new System.Windows.Forms.Button();
             this.tbDownloads = new System.Windows.Forms.TextBox();
@@ -274,7 +274,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.btnGraphs);
-            this.groupBox2.Controls.Add(this.btnRaw);
+            this.groupBox2.Controls.Add(this.btnLoadResults);
             this.groupBox2.Controls.Add(this.tbResults);
             this.groupBox2.Controls.Add(this.btnDataSheet);
             this.groupBox2.Location = new System.Drawing.Point(28, 440);
@@ -288,7 +288,7 @@
             // 
             this.btnGraphs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnGraphs.Enabled = false;
-            this.btnGraphs.Location = new System.Drawing.Point(246, 166);
+            this.btnGraphs.Location = new System.Drawing.Point(109, 166);
             this.btnGraphs.Name = "btnGraphs";
             this.btnGraphs.Size = new System.Drawing.Size(96, 23);
             this.btnGraphs.TabIndex = 3;
@@ -296,17 +296,16 @@
             this.btnGraphs.UseVisualStyleBackColor = true;
             this.btnGraphs.Click += new System.EventHandler(this.btnGraphs_Click);
             // 
-            // btnRaw
+            // btnLoadResults
             // 
-            this.btnRaw.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnRaw.Enabled = false;
-            this.btnRaw.Location = new System.Drawing.Point(127, 166);
-            this.btnRaw.Name = "btnRaw";
-            this.btnRaw.Size = new System.Drawing.Size(96, 23);
-            this.btnRaw.TabIndex = 2;
-            this.btnRaw.Text = "Open raw";
-            this.btnRaw.UseVisualStyleBackColor = true;
-            this.btnRaw.Click += new System.EventHandler(this.btnRaw_Click);
+            this.btnLoadResults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnLoadResults.Location = new System.Drawing.Point(540, 166);
+            this.btnLoadResults.Name = "btnLoadResults";
+            this.btnLoadResults.Size = new System.Drawing.Size(96, 23);
+            this.btnLoadResults.TabIndex = 2;
+            this.btnLoadResults.Text = "Load results";
+            this.btnLoadResults.UseVisualStyleBackColor = true;
+            this.btnLoadResults.Click += new System.EventHandler(this.btnLoadResults_Click);
             // 
             // tbResults
             // 
@@ -421,7 +420,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox tbDownloads;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Button btnRaw;
+        private System.Windows.Forms.Button btnLoadResults;
         private System.Windows.Forms.ComboBox cmbScripts;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnRefresh;

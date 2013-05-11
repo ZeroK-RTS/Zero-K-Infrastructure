@@ -18,14 +18,14 @@ namespace Benchmarker
 
         void GraphsForm_Load(object sender, EventArgs e) {
             
-            Dictionary<Tuple<Benchmark, string>, Chart> charts = new Dictionary<Tuple<Benchmark, string>, Chart>();
+            Dictionary<Tuple<string, string>, Chart> charts = new Dictionary<Tuple<string, string>, Chart>();
 
             foreach (var res in results.RunEntries) {
                 foreach (var grp in res.RawValues.GroupBy(x => x.Key).Where(x => x.Count() > 2)) {
                     Chart graph;
-                    if (!charts.TryGetValue(Tuple.Create(res.Benchmark, grp.Key), out graph)) {
+                    if (!charts.TryGetValue(Tuple.Create(res.Benchmark.Name, grp.Key), out graph)) {
                         graph = new Chart();
-                        charts[Tuple.Create(res.Benchmark, grp.Key)] = graph;
+                        charts[Tuple.Create(res.Benchmark.Name, grp.Key)] = graph;
                         var area = new ChartArea();
                         area.AxisX.Title = "gameframe";
                         area.AxisY.Title = grp.Key;

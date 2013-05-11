@@ -117,6 +117,15 @@ namespace Benchmarker
             jsonPath = jsonFileName;
         }
 
+        public static BatchRunResult Load(string path, out string csvPath) {
+            var ret = JsonConvert.DeserializeObject<BatchRunResult>(File.ReadAllText(path));
+            if (ret != null) {
+                csvPath = Path.ChangeExtension(path, ".csv");
+            }
+            else csvPath = null;
+            return ret;
+        }
+
         public class ColEntry
         {
             public Benchmark Benchmark;

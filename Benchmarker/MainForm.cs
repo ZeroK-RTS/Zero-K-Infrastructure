@@ -13,7 +13,6 @@ namespace Benchmarker
     public partial class MainForm: Form
     {
         string csvPath;
-        string jsonPath;
         string lastUsedBatchFolder = null;
         readonly PlasmaDownloader.PlasmaDownloader springDownloader;
         readonly SpringPaths springPaths;
@@ -98,6 +97,7 @@ namespace Benchmarker
             try {
                 var sd = new OpenFileDialog();
                 sd.DefaultExt = ".batch";
+                sd.Filter = ".batch (Benchmark batch configuration)|*.batch";
                 if (sd.ShowDialog() == DialogResult.OK) {
                     var batch = Batch.Load(sd.FileName, springPaths);
                     if (batch != null) {
@@ -123,8 +123,29 @@ namespace Benchmarker
             }
         }
 
-        void btnRaw_Click(object sender, EventArgs e) {
-            if (!string.IsNullOrEmpty(jsonPath)) Process.Start(jsonPath);
+        void btnLoadResults_Click(object sender, EventArgs e) {
+            var form = new OpenFileDialog
+            {
+                DefaultExt = ".json",
+                Filter = ".json (Benchmark batch results)|*.json",
+                InitialDirectory = lastUsedBatchFolder ?? springPaths.WritableDirectory,
+                Title = "Load results of benchmark run"
+            };
+            if (form.ShowDialog() == DialogResult.OK) {
+                batchResult = BatchRunResult.Load(form.FileName, out csvPath);
+                if (batchResult != null) {
+                    btnGraphs.Enabled = true;
+                    btnDataSheet.Enabled = true;
+                    var graph = new GraphsForm(batchResult);
+                    graph.Show();
+                    Process.Start(csvPath);
+                    tbResults.Clear();
+                    foreach (var run in batchResult.RunEntries) {
+                        tbResults.AppendText(string.Format("== RUN {0} {1} ==\n", run.TestCase, run.Benchmark));
+                        tbResults.AppendText(run.RawLog);
+                    }
+                }
+            }
         }
 
         void btnRefresh_Click(object sender, EventArgs e) {
@@ -139,6 +160,7 @@ namespace Benchmarker
             var batch = CreateBatchFromGui();
             var sd = new SaveFileDialog();
             sd.FileName = "myTest.batch";
+            sd.Filter = ".batch (Benchmark batch configuration)|*.batch";
             sd.OverwritePrompt = true;
             if (sd.ShowDialog() == DialogResult.OK) {
                 batch.Save(sd.FileName);
@@ -168,6 +190,7 @@ namespace Benchmarker
             testedBatch.AllCompleted += (result) =>
                 {
                     batchResult = result;
+                    string jsonPath;
                     result.SaveFiles(lastUsedBatchFolder ?? springPaths.WritableDirectory, out csvPath, out jsonPath);
 
                     //Process.Start(jsonPath);
@@ -178,7 +201,6 @@ namespace Benchmarker
                             btnStart.Enabled = true;
                             btnStop.Enabled = false;
                             btnDataSheet.Enabled = true;
-                            btnRaw.Enabled = true;
                             btnGraphs.Enabled = true;
                             var form = new GraphsForm(result);
                             form.Show();

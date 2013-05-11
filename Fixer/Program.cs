@@ -357,7 +357,7 @@ namespace Fixer
         }
 
 
-
+        [STAThread]
         static void Main(string[] args) {
             var bench = new Benchmarker.MainForm();
             bench.ShowDialog();
