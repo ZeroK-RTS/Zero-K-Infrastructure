@@ -43,6 +43,7 @@ local groundMin, groundMax = Spring.GetGroundExtremes(); groundMin, groundMax = 
 function StartBenchmark(id)
   curBenchmark = benchmarks[id]
   if (not curBenchmark) then
+	Spring.GameOver({})
     return
   end
 
