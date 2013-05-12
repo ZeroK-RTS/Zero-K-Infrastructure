@@ -144,7 +144,7 @@ namespace Benchmarker
 
         public class ValueEntry
         {
-            public int GameFrame;
+            public double GameFrame;
             public string Key;
             public double Value;
         }
