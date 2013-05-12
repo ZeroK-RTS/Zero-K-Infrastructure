@@ -24,7 +24,7 @@ namespace Benchmarker
             process.StartInfo.CreateNoWindow = true;
 
             process.StartInfo.Arguments += string.Format("--config \"{0}\"", Path.Combine(test.Config.ConfigPath, "springsettings.cfg"));
-
+            
             process.StartInfo.EnvironmentVariables["SPRING_DATADIR"] = test.Config.ConfigPath + ";" + paths.WritableDirectory + ";" +
                                                                        Directory.GetParent(benchmark.BenchmarkPath).Parent.FullName;
             process.StartInfo.EnvironmentVariables["OMP_WAIT_POLICY"] = "ACTIVE";

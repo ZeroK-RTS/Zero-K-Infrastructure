@@ -24,7 +24,7 @@ namespace ZeroKWeb.Controllers
 
 	        var db = new ZkDataContext();
 	        db.CommandTimeout = 600;
-
+            
 	        var data = (List<GameStats>)HttpContext.Cache.Get("gameStats");
 	        if (data == null) {
 	            data = (from bat in db.SpringBattles
@@ -52,11 +52,9 @@ namespace ZeroKWeb.Controllers
 			chart.AddTitle("Daily activity");
 			chart.AddLegend("Daily values", "dps");
 
-			chart.AddSeries("unique players+specs", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.PlayersAndSpecs), legend: "dps");
-            //chart.AddSeries("PW players+specs", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.PwPlayers), legend: "dps");
-			//chart.AddSeries("unique players", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.Players), legend: "dps");
-			chart.AddSeries("minutes/player", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.MinutesPerPlayer), legend: "dps");
-			chart.AddSeries("new players", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.FirstGamePlayers), legend: "dps");
+			chart.AddSeries("unique players+specs", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.PlayersAndSpecs).ToList(), legend: "dps");
+			chart.AddSeries("minutes/player", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.MinutesPerPlayer).ToList(), legend: "dps");
+			chart.AddSeries("new players", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.FirstGamePlayers).ToList(), legend: "dps");
 
             return File(chart.GetBytes("png"), "image/png");
 		}
