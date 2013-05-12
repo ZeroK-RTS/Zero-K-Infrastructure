@@ -6,10 +6,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Ionic.Zip;
 using MonoTorrent.Common;
 using PlasmaShared;
 using PlasmaShared.UnitSyncLib;
+using SharpCompress.Archive.Zip;
+using SharpCompress.Common;
+using SharpCompress.Compressor.Deflate;
 using ZkData;
 
 namespace PlasmaShared
@@ -37,21 +39,26 @@ namespace PlasmaShared
             return sb.ToString();
         }
 
-        
+        static void UpdateEntry(ZipArchive zf, string name, byte[] data) {
+            zf.RemoveEntry(zf.Entries.Single(x=>x.FilePath == name));
+            zf.AddEntry(name, new MemoryStream(data));
+        }
+
+
         public void UpdateMission(ZkDataContext db, Mission mission, Mod modInfo) {
             var file = mission.Mutator.ToArray();
             var tempName = Path.GetTempFileName() + ".zip";
             File.WriteAllBytes(tempName, file);
 
-            using (var zf = new ZipFile(tempName))
+            using (var zf = ZipArchive.Open(new MemoryStream(File.ReadAllBytes(tempName))))
             {
-                zf.UpdateEntry("modinfo.lua", Encoding.UTF8.GetBytes(GetModInfo(mission.NameWithVersion, mission.Mod, mission.Name, "ZK")));    // FIXME hardcoded crap
+                UpdateEntry(zf, "modinfo.lua", Encoding.UTF8.GetBytes(GetModInfo(mission.NameWithVersion, mission.Mod, mission.Name, "ZK")));    // FIXME hardcoded crap
                 FixScript(mission, zf, "script.txt");
                 var script = FixScript(mission, zf, GlobalConst.MissionScriptFileName);
                 modInfo.MissionScript = script;
                 //modInfo.ShortName = mission.Name;
                 modInfo.Name = mission.NameWithVersion;
-                zf.Save();
+                zf.SaveTo(File.OpenWrite(tempName), new CompressionInfo() {DeflateCompressionLevel = CompressionLevel.BestCompression, Type = CompressionType.Deflate});
             }
             mission.Mutator = new Binary(File.ReadAllBytes(tempName));
             
@@ -115,13 +122,13 @@ namespace PlasmaShared
 
         }
 
-        static string FixScript(Mission mission, ZipFile zf, string scriptName)
+        static string FixScript(Mission mission, ZipArchive zf, string scriptName)
         {
             var ms = new MemoryStream();
-            zf[scriptName].Extract(ms);
+            zf.Entries.First(x=>x.FilePath == scriptName).WriteTo(ms);
             var script = Encoding.UTF8.GetString(ms.ToArray());
             script = Regex.Replace(script, "GameType=([^;]+);", (m) => { return string.Format("GameType={0};", mission.NameWithVersion); });
-            zf.UpdateEntry(scriptName, Encoding.UTF8.GetBytes(script));
+            UpdateEntry(zf, scriptName, Encoding.UTF8.GetBytes(script));
             return script;
         }
     }

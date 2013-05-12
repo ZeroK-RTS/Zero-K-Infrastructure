@@ -5,8 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
-using Ionic.Zip;
 using PlasmaShared;
+using SharpCompress.Archive;
+using SharpCompress.Reader;
 
 namespace PlasmaDownloader
 {
@@ -127,19 +128,35 @@ namespace PlasmaDownloader
                                     }
                                     else
                                     {
-                                        using (var zip = ZipFile.Read(target))
-                                        {
-                                            zip.ExtractProgress +=
-                                                (s3, e3) => { if (e3.EntriesTotal > 0) IndividualProgress = 90 + (10*e3.EntriesExtracted/e3.EntriesTotal); };
-                                            try
-                                            {
-                                                zip.ExtractAll(springPaths.GetEngineFolderByVersion(Name), ExtractExistingFileAction.OverwriteSilently);
+                                        using (var archive = ArchiveFactory.Open(target)) {
+                                            long done = 0;
+                                            long totalSize = archive.TotalSize;
+                                            archive.EntryExtractionEnd += (sender, args) =>
+                                                {
+                                                    done += args.Item.CompressedSize;
+                                                    if (totalSize > 0) IndividualProgress = 90 + (10*done/totalSize);
+                                                };
+                                            var targetDir = springPaths.GetEngineFolderByVersion(Name);
+                                            try {
+                                                
+                                                if (!Directory.Exists(targetDir)) Directory.CreateDirectory(targetDir);
+                                                foreach (var entry in archive.Entries.Where(x=>x.IsDirectory)) {
+                                                    Directory.CreateDirectory(Path.Combine(targetDir, entry.FilePath));
+                                                }
+
+                                                foreach (var entry in archive.Entries.Where(x => !x.IsDirectory)) {
+                                                    entry.WriteToFile(Path.Combine(targetDir, entry.FilePath));
+                                                }
+
                                                 Trace.TraceInformation("Install of {0} complete", Name);
-                                                springPaths.SetEnginePath(springPaths.GetEngineFolderByVersion(Name));
+                                                springPaths.SetEnginePath(targetDir);
                                                 Finish(true);
                                             }
                                             catch (Exception ex)
                                             {
+                                                try {
+                                                    Directory.Delete(targetDir, true);
+                                                } catch {}
                                                 Trace.TraceWarning("Install of {0} failed: {1}", Name, ex);
                                                 Finish(false);
                                             }
