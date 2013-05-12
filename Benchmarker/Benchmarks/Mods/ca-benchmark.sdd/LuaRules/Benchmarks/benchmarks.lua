@@ -13,16 +13,10 @@ end
 
 local benchmarks = {
   {
-    name = "MemoryLeaks1",
-    duration = 5,
-    waitAfter = 1,
-    start = function() ResetCamera() end,
-  },
-
-  {
     name = "Terrain Rendering",
     duration = 15,
     waitAfter = 3,
+    start = function() ResetCamera() end,	
     gameframe = function()
       if not(Spring.GetGameFrame() % 30 < 1) then
         return
@@ -159,12 +153,6 @@ local benchmarks = {
         Spring.DestroyFeature(allFeatures[i])
       end
     end,
-  },
-
-  {
-    name = "MemoryLeaks2",
-    duration = 5,
-    start = function() ResetCamera() end,
   },
 }
 
