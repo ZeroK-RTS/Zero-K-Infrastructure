@@ -12,27 +12,41 @@ namespace ZeroKWeb.Controllers
 {
 	public class LaddersController: Controller
 	{
-		[OutputCache(Duration = 3600*2)]
-		public ActionResult Games()
-		{
-			
-            var db = new ZkDataContext();
-			var data = from bat in db.SpringBattles
-			           where bat.StartTime.Date < DateTime.Now.Date  && bat.StartTime.Date > new DateTime(2011,2,3)
-			           group bat by bat.StartTime.Date
-			           into x orderby x.Key
-			           let players = x.SelectMany(y => y.SpringBattlePlayers.Where(z => !z.IsSpectator)).Select(z => z.AccountID).Distinct().Count()
-			           select
-			           	new
-			           	{
-			           		Day = x.Key,
-			           		PlayersAndSpecs = x.SelectMany(y => y.SpringBattlePlayers).Select(z => z.AccountID).Distinct().Count(),
-			           		//Players = players,
-                            //PwPlayers = x.Where(y => SqlMethods.Like(y.Account.Name,"PlanetWars%")).SelectMany(y => y.SpringBattlePlayers).Select(z => z.AccountID).Distinct().Count(),
-			           		MinutesPerPlayer = x.Sum(y => y.Duration*y.PlayerCount)/60/players,
-										FirstGamePlayers = x.SelectMany(y=>y.SpringBattlePlayers).GroupBy(y=>y.Account).Where(y=>y.Any(z=>z == y.Key.SpringBattlePlayers.First())).Count()
-			           	};
+	    public class GameStats {
+	        public DateTime Day { get; set; }
+	        public int PlayersAndSpecs { get; set; }
+	        public int MinutesPerPlayer { get; set; }
+	        public int FirstGamePlayers { get; set; }
+	    }
 
+	    [OutputCache(Duration = 3600*2)]
+	    public ActionResult Games() {
+
+	        var db = new ZkDataContext();
+	        db.CommandTimeout = 600;
+
+	        var data = (List<GameStats>)HttpContext.Cache.Get("gameStats");
+	        if (data == null) {
+	            data = (from bat in db.SpringBattles
+	                    where bat.StartTime.Date < DateTime.Now.Date && bat.StartTime.Date > new DateTime(2011, 2, 3)
+	                    group bat by bat.StartTime.Date
+	                    into x orderby x.Key
+	                    let players = x.SelectMany(y => y.SpringBattlePlayers.Where(z => !z.IsSpectator)).Select(z => z.AccountID).Distinct().Count()
+	                    select
+	                        new GameStats
+	                        {
+	                            Day = x.Key,
+	                            PlayersAndSpecs = x.SelectMany(y => y.SpringBattlePlayers).Select(z => z.AccountID).Distinct().Count(),
+	                            MinutesPerPlayer = x.Sum(y => y.Duration*y.PlayerCount)/60/players,
+	                            FirstGamePlayers =
+	                                x.SelectMany(y => y.SpringBattlePlayers)
+	                                 .GroupBy(y => y.Account)
+	                                 .Count(y => y.Any(z => z == y.Key.SpringBattlePlayers.First()))
+	                        }).ToList();
+
+                HttpContext.Cache.Add("gameStats", data, null, DateTime.Now.AddHours(20), System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.Default, null);
+	        }
+            
 			var chart = new Chart(1500, 700, ChartTheme.Blue);
 
 			chart.AddTitle("Daily activity");
@@ -55,7 +69,7 @@ namespace ZeroKWeb.Controllers
             }
 
             var db = new ZkDataContext();
-            db.CommandTimeout = 300;
+            db.CommandTimeout = 600;
             var options = new DataLoadOptions();
             options.LoadWith<Account>(x=>x.Clan);
             options.LoadWith<Account>(x => x.Faction);
