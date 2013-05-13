@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -25,9 +26,13 @@ namespace Benchmarker
 
             process.StartInfo.Arguments += string.Format("--config \"{0}\"", Path.Combine(test.Config.ConfigPath, "springsettings.cfg"));
             if (test.BenchmarkArg > 0) process.StartInfo.Arguments += " --benchmark " + test.BenchmarkArg;
-            
-            process.StartInfo.EnvironmentVariables["SPRING_DATADIR"] = test.Config.ConfigPath + ";" + paths.WritableDirectory + ";" +
-                                                                       Directory.GetParent(benchmark.BenchmarkPath).Parent.FullName;
+
+            process.StartInfo.EnvironmentVariables["SPRING_DATADIR"] = string.Join(Environment.OSVersion.Platform == PlatformID.Unix ? ":" : ";",
+                                                                                   test.Config.ConfigPath,
+                                                                                   paths.WritableDirectory,
+                                                                                   Directory.GetParent(benchmark.BenchmarkPath).Parent.FullName);
+
+            ;
             process.StartInfo.EnvironmentVariables["OMP_WAIT_POLICY"] = "ACTIVE";
 
             process.StartInfo.EnvironmentVariables.Remove("SPRING_ISOLATED");

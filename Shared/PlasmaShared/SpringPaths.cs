@@ -44,7 +44,15 @@ namespace PlasmaShared
 
         public static string GetMySpringDocPath()
         {
-            if (Environment.OSVersion.Platform == PlatformID.Unix) return Utils.MakePath(Environment.GetEnvironmentVariable("HOME"), ".spring");
+            if (Environment.OSVersion.Platform == PlatformID.Unix) 
+            {
+                var path = Utils.MakePath(Environment.GetEnvironmentVariable("HOME"), ".spring");
+                if (!IsDirectoryWritable(path)) {
+                    path = Utils.MakePath(Directory.GetCurrentDirectory(), ".spring");
+                    IsDirectoryWritable(path);
+                }
+                return path;
+            }
             else
             {
                 var dir = Utils.MakePath(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Spring");
@@ -66,7 +74,7 @@ namespace PlasmaShared
         public bool HasEngineVersion(string version)
         {
             var path = GetEngineFolderByVersion(version);
-            var exec = Path.Combine(path, "spring.exe");
+            var exec = Path.Combine(path, Environment.OSVersion.Platform == PlatformID.Unix ? "spring" : "spring.exe");
             if (File.Exists(exec)) return GetSpringVersion(exec) == version;
             return false;
         }

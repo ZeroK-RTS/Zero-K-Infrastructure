@@ -8,7 +8,6 @@ using System.Threading;
 using PlasmaShared;
 using SharpCompress.Archive;
 using SharpCompress.Common;
-using SharpCompress.Reader;
 
 namespace PlasmaDownloader
 {
@@ -111,35 +110,32 @@ namespace PlasmaDownloader
                                         p.Start();
                                     }
                                     else {
-                                        using (var archive = ArchiveFactory.Open(target))
-                                        {
-                                            long done = 0;
-                                            var totalSize = archive.Entries.Count() + 1;
-                                            archive.EntryExtractionEnd += (sender, args) =>
-                                                {
-                                                    done++;
-                                                    IndividualProgress = 90 + (10*done/totalSize);
-                                                };
-                                            var targetDir = springPaths.GetEngineFolderByVersion(Name);
-                                            try
-                                            {
-                                                if (!Directory.Exists(targetDir)) Directory.CreateDirectory(targetDir);
-                                                archive.WriteToDirectory(targetDir, ExtractOptions.ExtractFullPath | ExtractOptions.Overwrite);
+                                        var targetDir = springPaths.GetEngineFolderByVersion(Name);
+                                        if (!Directory.Exists(targetDir)) Directory.CreateDirectory(targetDir);
 
-                                                Trace.TraceInformation("Install of {0} complete", Name);
-                                                springPaths.SetEnginePath(targetDir);
-                                                Finish(true);
-                                            }
-                                            catch (Exception ex)
-                                            {
-                                                try
-                                                {
-                                                    Directory.Delete(targetDir, true);
+                                        try {
+                                            if (extension == ".7z") {
+                                                var proc = Process.Start("7z", string.Format("x -r -y -o \"{1}\" \"{0}\"", target, targetDir));
+                                                if (proc != null) proc.WaitForExit();
+                                                if (proc == null || proc.ExitCode != 0) {
+                                                    Trace.TraceWarning("7z extraction failed, fallback to SharpCompress");
+                                                    ExtractArchive(target, targetDir);
                                                 }
-                                                catch { }
-                                                Trace.TraceWarning("Install of {0} failed: {1}", Name, ex);
-                                                Finish(false);
                                             }
+                                            else {
+                                                ExtractArchive(target, targetDir);
+                                            }
+
+                                            Trace.TraceInformation("Install of {0} complete", Name);
+                                            springPaths.SetEnginePath(targetDir);
+                                            Finish(true);
+                                        } catch
+                                        (Exception ex) {
+                                            try {
+                                                Directory.Delete(targetDir, true);
+                                            } catch {}
+                                            Trace.TraceWarning("Install of {0} failed: {1}", Name, ex);
+                                            Finish(false);
                                         }
                                     }
                                 }
@@ -151,6 +147,20 @@ namespace PlasmaDownloader
                     Trace.TraceInformation("Cannot find {0}", Name);
                     Finish(false);
                 });
+        }
+
+        void ExtractArchive(string target, string targetDir) {
+            using (var archive = ArchiveFactory.Open(target)) {
+                long done = 0;
+                var totalSize = archive.Entries.Count() + 1;
+                archive.EntryExtractionEnd += (sender, args) =>
+                    {
+                        done++;
+                        IndividualProgress = 90 + (10*done/totalSize);
+                    };
+
+                archive.WriteToDirectory(targetDir, ExtractOptions.ExtractFullPath | ExtractOptions.Overwrite);
+            }
         }
 
 
