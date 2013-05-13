@@ -43,6 +43,12 @@ namespace Benchmarker
             StartScript = startScript;
         }
 
+        
+        /// <summary>
+        /// Argument to use with --benchmark
+        /// </summary>
+        public int BenchmarkArg;
+
 
         /// <summary>
         /// Validates content - starts downloads, return null if all ok so far

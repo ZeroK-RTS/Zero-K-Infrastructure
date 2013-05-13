@@ -22,6 +22,32 @@ namespace Benchmarker
             var runEntry = new RunEntry() { TestCase = testCase, Benchmark = benchmark, RawLog = text };
             RunEntries.Add(runEntry);
 
+            ParseInfolog(text, runEntry);
+            if (testCase.BenchmarkArg > 0) ParseBenchmarkData(runEntry);
+        }
+
+        void ParseBenchmarkData(RunEntry runEntry) {
+            var path = Path.Combine(runEntry.TestCase.Config.ConfigPath, "benchmark.data");
+            if (File.Exists(path)) {
+                var data = File.ReadAllLines(path);
+                var headers = data.First().Split(' ').Skip(1).ToList();
+
+                foreach (var line in data.Skip(1)) {
+                    var lineData = line.Split(' ').ToList();
+                    var gameFrame = double.Parse(lineData[0]);
+                    for (int i = 1; i < lineData.Count; i++) {
+                        runEntry.RawValues.Add(new ValueEntry()
+                        {
+                            GameFrame = gameFrame,
+                            Key = headers[i],
+                            Value = double.Parse(lineData[i])
+                        });
+                    }
+                }
+            }
+        }
+
+        static void ParseInfolog(string text, RunEntry runEntry) {
             string gameId = null;
 
             foreach (var cycleline in text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)) {
@@ -42,7 +68,7 @@ namespace Benchmarker
                         var key = match.Groups[1].Value.Trim();
                         var value = match.Groups[2].Value.Trim();
                         var valNum = 0.0;
-                        if (!invalidKeys.Contains(key) && !key.StartsWith("Wind Range:") && !key.StartsWith("Skirmish AI") && !key.Contains(":")) if (double.TryParse(value, out valNum)) runEntry.RawValues.Add(new ValueEntry() { GameFrame = gameframe, Key = key, Value = valNum });
+                        if (!invalidKeys.Contains(key) && !key.Contains(":")) if (double.TryParse(value, out valNum)) runEntry.RawValues.Add(new ValueEntry() { GameFrame = gameframe, Key = key, Value = valNum });
                     }
                 }
 

@@ -33,6 +33,7 @@
             this.btnLoad = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.cbMultiThread = new System.Windows.Forms.CheckBox();
             this.cmbScripts = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.cbConfigs = new System.Windows.Forms.ComboBox();
@@ -57,6 +58,8 @@
             this.tbDownloads = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.btnRefresh = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
+            this.tbBenchmarkArg = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -64,7 +67,7 @@
             // benchmarkList
             // 
             this.benchmarkList.FormattingEnabled = true;
-            this.benchmarkList.Location = new System.Drawing.Point(20, 68);
+            this.benchmarkList.Location = new System.Drawing.Point(367, 59);
             this.benchmarkList.Name = "benchmarkList";
             this.benchmarkList.Size = new System.Drawing.Size(303, 154);
             this.benchmarkList.TabIndex = 0;
@@ -73,11 +76,11 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(17, 52);
+            this.label2.Location = new System.Drawing.Point(364, 43);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(118, 13);
+            this.label2.Size = new System.Drawing.Size(117, 13);
             this.label2.TabIndex = 3;
-            this.label2.Text = "Benchmarks to include:";
+            this.label2.Text = "Tests (mutators) to use:";
             // 
             // btnLoad
             // 
@@ -101,6 +104,9 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.tbBenchmarkArg);
+            this.groupBox1.Controls.Add(this.label6);
+            this.groupBox1.Controls.Add(this.cbMultiThread);
             this.groupBox1.Controls.Add(this.cmbScripts);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.cbConfigs);
@@ -112,12 +118,22 @@
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.tbGame);
             this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Location = new System.Drawing.Point(357, 254);
+            this.groupBox1.Location = new System.Drawing.Point(20, 241);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(307, 180);
+            this.groupBox1.Size = new System.Drawing.Size(650, 180);
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Add a test case";
+            // 
+            // cbMultiThread
+            // 
+            this.cbMultiThread.AutoSize = true;
+            this.cbMultiThread.Location = new System.Drawing.Point(347, 24);
+            this.cbMultiThread.Name = "cbMultiThread";
+            this.cbMultiThread.Size = new System.Drawing.Size(128, 17);
+            this.cbMultiThread.TabIndex = 13;
+            this.cbMultiThread.Text = "Multi threaded engine";
+            this.cbMultiThread.UseVisualStyleBackColor = true;
             // 
             // cmbScripts
             // 
@@ -157,11 +173,11 @@
             // 
             // btnAddTest
             // 
-            this.btnAddTest.Location = new System.Drawing.Point(97, 151);
+            this.btnAddTest.Location = new System.Drawing.Point(196, 151);
             this.btnAddTest.Name = "btnAddTest";
-            this.btnAddTest.Size = new System.Drawing.Size(75, 23);
+            this.btnAddTest.Size = new System.Drawing.Size(85, 23);
             this.btnAddTest.TabIndex = 7;
-            this.btnAddTest.Text = "Add";
+            this.btnAddTest.Text = "Add test case";
             this.btnAddTest.UseVisualStyleBackColor = true;
             this.btnAddTest.Click += new System.EventHandler(this.btnAddTest_Click);
             // 
@@ -222,7 +238,7 @@
             // lbTestCases
             // 
             this.lbTestCases.FormattingEnabled = true;
-            this.lbTestCases.Location = new System.Drawing.Point(356, 68);
+            this.lbTestCases.Location = new System.Drawing.Point(21, 59);
             this.lbTestCases.Name = "lbTestCases";
             this.lbTestCases.Size = new System.Drawing.Size(303, 147);
             this.lbTestCases.TabIndex = 8;
@@ -230,15 +246,15 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(353, 52);
+            this.label5.Location = new System.Drawing.Point(18, 43);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(62, 13);
+            this.label5.Size = new System.Drawing.Size(118, 13);
             this.label5.TabIndex = 9;
-            this.label5.Text = "Test cases:";
+            this.label5.Text = "Test cases to compare:";
             // 
             // btnRemoveRun
             // 
-            this.btnRemoveRun.Location = new System.Drawing.Point(551, 221);
+            this.btnRemoveRun.Location = new System.Drawing.Point(216, 212);
             this.btnRemoveRun.Name = "btnRemoveRun";
             this.btnRemoveRun.Size = new System.Drawing.Size(108, 23);
             this.btnRemoveRun.TabIndex = 10;
@@ -277,9 +293,9 @@
             this.groupBox2.Controls.Add(this.btnLoadResults);
             this.groupBox2.Controls.Add(this.tbResults);
             this.groupBox2.Controls.Add(this.btnDataSheet);
-            this.groupBox2.Location = new System.Drawing.Point(28, 440);
+            this.groupBox2.Location = new System.Drawing.Point(28, 503);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(642, 195);
+            this.groupBox2.Size = new System.Drawing.Size(642, 132);
             this.groupBox2.TabIndex = 16;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Benchmark results";
@@ -288,7 +304,7 @@
             // 
             this.btnGraphs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnGraphs.Enabled = false;
-            this.btnGraphs.Location = new System.Drawing.Point(109, 166);
+            this.btnGraphs.Location = new System.Drawing.Point(109, 103);
             this.btnGraphs.Name = "btnGraphs";
             this.btnGraphs.Size = new System.Drawing.Size(96, 23);
             this.btnGraphs.TabIndex = 3;
@@ -299,7 +315,7 @@
             // btnLoadResults
             // 
             this.btnLoadResults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnLoadResults.Location = new System.Drawing.Point(540, 166);
+            this.btnLoadResults.Location = new System.Drawing.Point(540, 103);
             this.btnLoadResults.Name = "btnLoadResults";
             this.btnLoadResults.Size = new System.Drawing.Size(96, 23);
             this.btnLoadResults.TabIndex = 2;
@@ -317,14 +333,14 @@
             this.tbResults.Name = "tbResults";
             this.tbResults.ReadOnly = true;
             this.tbResults.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.tbResults.Size = new System.Drawing.Size(629, 141);
+            this.tbResults.Size = new System.Drawing.Size(629, 78);
             this.tbResults.TabIndex = 1;
             // 
             // btnDataSheet
             // 
             this.btnDataSheet.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnDataSheet.Enabled = false;
-            this.btnDataSheet.Location = new System.Drawing.Point(7, 166);
+            this.btnDataSheet.Location = new System.Drawing.Point(7, 103);
             this.btnDataSheet.Name = "btnDataSheet";
             this.btnDataSheet.Size = new System.Drawing.Size(96, 23);
             this.btnDataSheet.TabIndex = 0;
@@ -334,18 +350,18 @@
             // 
             // tbDownloads
             // 
-            this.tbDownloads.Location = new System.Drawing.Point(28, 264);
+            this.tbDownloads.Location = new System.Drawing.Point(36, 444);
             this.tbDownloads.Multiline = true;
             this.tbDownloads.Name = "tbDownloads";
             this.tbDownloads.ReadOnly = true;
             this.tbDownloads.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.tbDownloads.Size = new System.Drawing.Size(295, 170);
+            this.tbDownloads.Size = new System.Drawing.Size(628, 53);
             this.tbDownloads.TabIndex = 18;
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(25, 248);
+            this.label8.Location = new System.Drawing.Point(33, 428);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(143, 13);
             this.label8.TabIndex = 19;
@@ -361,6 +377,22 @@
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(344, 52);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(115, 13);
+            this.label6.TabIndex = 14;
+            this.label6.Text = "--benchmark time (94+)";
+            // 
+            // tbBenchmarkArg
+            // 
+            this.tbBenchmarkArg.Location = new System.Drawing.Point(465, 49);
+            this.tbBenchmarkArg.Name = "tbBenchmarkArg";
+            this.tbBenchmarkArg.Size = new System.Drawing.Size(100, 20);
+            this.tbBenchmarkArg.TabIndex = 15;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -368,8 +400,8 @@
             this.ClientSize = new System.Drawing.Size(702, 649);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.label8);
-            this.Controls.Add(this.tbDownloads);
             this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.tbDownloads);
             this.Controls.Add(this.btnStop);
             this.Controls.Add(this.btnStart);
             this.Controls.Add(this.btnRemoveRun);
@@ -425,5 +457,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Button btnGraphs;
+        private System.Windows.Forms.CheckBox cbMultiThread;
+        private System.Windows.Forms.TextBox tbBenchmarkArg;
+        private System.Windows.Forms.Label label6;
     }
 }

@@ -83,7 +83,10 @@ namespace Benchmarker
                                         tbGame.Text,
                                         tbMap.Text,
                                         cbConfigs.SelectedItem as Config,
-                                        cmbScripts.SelectedItem as StartScript);
+                                        cmbScripts.SelectedItem as StartScript) {UseMultithreaded = cbMultiThread.Checked};
+            int arg;
+            int.TryParse(tbBenchmarkArg.Text, out arg);
+            testCase.BenchmarkArg = arg;
             var ret = testCase.Validate(springDownloader);
             if (ret != null) MessageBox.Show(ret);
             else lbTestCases.Items.Add(testCase);
@@ -227,6 +230,7 @@ namespace Benchmarker
             }
 
         }
+
     }
 
     public class PlasmaConfig: IPlasmaDownloaderConfig
