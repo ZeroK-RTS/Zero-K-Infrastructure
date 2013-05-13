@@ -115,7 +115,7 @@ namespace ZeroKWeb.Controllers
                                 isDownloadable,
                                 special,
                                 out ret);
-            return Json(ret.ToList(), JsonRequestBehavior.AllowGet);
+            return Json(ret.Select(x=>new{x.AuthorName, x.InternalName, x.DownloadCount, x.FeaturedOrder, x.ForumThreadID, x.HeightmapName, x.LastChange, x.LastLinkCheck, x.MapDiagonal, x.MapFFAMaxTeams, x.MapHeight, x.MapHills, x.MapIs1v1, x.MapIsAssymetrical,x.MapIsChickens,x.MapIsFfa,x.MapIsSpecial,x.MapPlanetWarsIcon,x.MapRating,x.MapRatingCount,x.MapRatingSum,x.MapWaterLevel,x.MapSpringieCommands,x.MapSizeRatio,x.MapSizeSquared,x.MapWidth,x.MetadataName,x.MetalmapName,x.MinimapName,x.MissionID,x.PlanetWarsIconSize,x.RatingPollID,x.ThumbnailName}).ToList(), JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult PlanetImageSelect(int resourceID) {
