@@ -454,19 +454,14 @@ namespace PlasmaShared
 
         void InitialFolderScan(string folder, Dictionary<string, bool> foundFiles)
         {
-            Trace.TraceInformation("scanning {0}", folder);
-
             var fileList = new List<string>();
             foreach (var dd in springPaths.DataDirectories)
             {
                 var path = Utils.MakePath(dd, folder);
-                if (Directory.Exists(path))
-                {
-                    try
-                    {
+                if (Directory.Exists(path)) {
+                    try {
                         fileList.AddRange(Directory.GetFiles(path));
-                    }
-                    catch {}
+                    } catch {}
                 }
             }
 

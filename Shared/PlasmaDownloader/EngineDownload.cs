@@ -115,7 +115,7 @@ namespace PlasmaDownloader
 
                                         try {
                                             if (extension == ".7z") {
-                                                var proc = Process.Start("7z", string.Format("x -r -y -o \"{1}\" \"{0}\"", target, targetDir));
+                                                var proc = Process.Start("7z", string.Format("x -r -y -o\"{1}\" \"{0}\"", target, targetDir));
                                                 if (proc != null) proc.WaitForExit();
                                                 if (proc == null || proc.ExitCode != 0) {
                                                     Trace.TraceWarning("7z extraction failed, fallback to SharpCompress");

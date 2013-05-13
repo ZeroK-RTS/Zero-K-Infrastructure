@@ -361,14 +361,8 @@ namespace PlasmaShared
 		/// <summary>
 		/// Creates paths in a cross-platform way.
 		/// </summary>
-		public static string MakePath(params string[] directories)
-		{
-			var separator = Path.DirectorySeparatorChar.ToString();
-			var path = String.Join(separator, directories);
-			path = (separator == "/") ? path.Replace("\\", "/") : path.Replace("/", "\\");
-			while (path.Contains(separator + separator)) path = path.Replace(separator + separator, separator);
-			if (path.EndsWith(separator)) path = path.Substring(0, path.Length - 1);
-			return path;
+		public static string MakePath(params string[] directories) {
+		    return Path.Combine(directories);
 		}
 
 		public static EventWaitHandle ParalellAction(Action action, ParalellActionContext context)

@@ -115,8 +115,9 @@ namespace PlasmaShared
         }
 
 
-        public void SetEnginePath(string springPath)
-        {
+        public void SetEnginePath(string springPath) {
+            if (springPath == null) springPath = "";
+
             DataDirectories = new List<string> { GetMySpringDocPath(), springPath };
             if (!string.IsNullOrEmpty(writableFolderOverride))
             {
@@ -144,6 +145,7 @@ namespace PlasmaShared
 
             var ov = springVersion;
             springVersion = GetSpringVersion(Executable);
+
             // get spring verison does not work for dedicated
 
             Environment.SetEnvironmentVariable("SPRING_DATADIR", WritableDirectory, EnvironmentVariableTarget.Process);

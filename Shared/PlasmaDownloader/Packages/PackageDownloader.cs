@@ -241,10 +241,12 @@ namespace PlasmaDownloader.Packages
 			try
 			{
 				var path = Utils.MakePath(plasmaDownloader.SpringPaths.WritableDirectory, "packages", "selected.list");
-				var text = File.ReadAllText(path);
-				var newPackages = new List<string>();
-				foreach (var s in text.Split('\n')) if (!string.IsNullOrEmpty(s)) newPackages.Add(s);
-				lock (selectedPackages) selectedPackages = newPackages;
+			    if (File.Exists(path)) {
+			        var text = File.ReadAllText(path);
+			        var newPackages = new List<string>();
+			        foreach (var s in text.Split('\n')) if (!string.IsNullOrEmpty(s)) newPackages.Add(s);
+			        lock (selectedPackages) selectedPackages = newPackages;
+			    }
 			}
 			catch (Exception ex)
 			{
