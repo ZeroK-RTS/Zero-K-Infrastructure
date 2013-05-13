@@ -64,11 +64,16 @@ namespace Benchmarker
         }
 
 
-        public string Validate(PlasmaDownloader.PlasmaDownloader downloader) {
+        public string Validate(PlasmaDownloader.PlasmaDownloader downloader, bool waitForDownload = false) {
             var map = GetScriptMap();
             if (map != null) {
                 var dl = downloader.GetResource(DownloadType.MAP, map);
-                if (dl != null && dl.IsComplete == false) return "Failed to download map " + map;
+                if (waitForDownload) {
+                    if (dl != null) {
+                        dl.WaitHandle.WaitOne();
+                        if (dl.IsComplete == false) return "Failed to download map " + map;
+                    } 
+                }
             }
             return null;
         }

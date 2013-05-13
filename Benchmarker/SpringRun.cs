@@ -12,6 +12,8 @@ namespace Benchmarker
         StringBuilder LogLines;
         Process process;
 
+        public Action<string> LineAdded = s => { };
+
         public void Abort() {
             if (process != null) process.Kill();
         }
@@ -48,8 +50,16 @@ namespace Benchmarker
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
 
-            process.ErrorDataReceived += (sender, args) => { LogLines.AppendLine(args.Data); };
-            process.OutputDataReceived += (sender, args) => { LogLines.AppendLine(args.Data); };
+            process.ErrorDataReceived += (sender, args) =>
+                {
+                    LineAdded(args.Data);
+                    LogLines.AppendLine(args.Data);
+                };
+            process.OutputDataReceived += (sender, args) =>
+                {
+                    LineAdded(args.Data);
+                    LogLines.AppendLine(args.Data);
+                };
             process.EnableRaisingEvents = true;
 
             process.Start();

@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EngineDownloadTests.cs" />
     <Compile Include="PaypalTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resource.Designer.cs">
@@ -73,6 +74,10 @@
     <ProjectReference Include="..\NightWatch\NightWatch.csproj">
       <Project>{6ce1e0f1-447c-4871-9246-cc7ccb359d89}</Project>
       <Name>NightWatch</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Shared\PlasmaDownloader\PlasmaDownloader.csproj">
+      <Project>{F3F74776-46A9-4415-B76E-CEEC771C2ABA}</Project>
+      <Name>PlasmaDownloader</Name>
     </ProjectReference>
     <ProjectReference Include="..\Shared\PlasmaShared\PlasmaShared.csproj">
       <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>

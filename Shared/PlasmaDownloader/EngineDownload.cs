@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading;
 using PlasmaShared;
 using SharpCompress.Archive;
@@ -21,6 +22,13 @@ namespace PlasmaDownloader
         public EngineDownload(string version, SpringPaths springPaths) {
             this.springPaths = springPaths;
             Name = version;
+        }
+
+        public static List<string> GetDevelopEngineList() {
+            var data = new WebClient().DownloadString(string.Format("{0}buildbot/default/develop/", EngineDownloadPath));
+            return Regex.Matches(data, "<img src=\"/icons/folder.gif\" alt=\"\\[DIR\\]\"></td><td><a href=\"([^\"]+)/\">\\1/</a>", RegexOptions.IgnoreCase)
+                 .OfType<Match>()
+                 .Select(x => x.Groups[1].Value).ToList();
         }
 
         public void Start() {

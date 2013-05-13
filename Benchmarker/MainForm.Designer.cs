@@ -33,6 +33,8 @@
             this.btnLoad = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.tbBenchmarkArg = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.cbMultiThread = new System.Windows.Forms.CheckBox();
             this.cmbScripts = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -58,8 +60,7 @@
             this.tbDownloads = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.btnRefresh = new System.Windows.Forms.Button();
-            this.label6 = new System.Windows.Forms.Label();
-            this.tbBenchmarkArg = new System.Windows.Forms.TextBox();
+            this.btnBisect = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -84,7 +85,7 @@
             // 
             // btnLoad
             // 
-            this.btnLoad.Location = new System.Drawing.Point(315, 10);
+            this.btnLoad.Location = new System.Drawing.Point(457, 10);
             this.btnLoad.Name = "btnLoad";
             this.btnLoad.Size = new System.Drawing.Size(75, 23);
             this.btnLoad.TabIndex = 5;
@@ -94,7 +95,7 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(225, 10);
+            this.btnSave.Location = new System.Drawing.Point(367, 10);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 6;
@@ -124,6 +125,22 @@
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Add a test case";
+            // 
+            // tbBenchmarkArg
+            // 
+            this.tbBenchmarkArg.Location = new System.Drawing.Point(465, 49);
+            this.tbBenchmarkArg.Name = "tbBenchmarkArg";
+            this.tbBenchmarkArg.Size = new System.Drawing.Size(100, 20);
+            this.tbBenchmarkArg.TabIndex = 15;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(344, 52);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(115, 13);
+            this.label6.TabIndex = 14;
+            this.label6.Text = "--benchmark time (94+)";
             // 
             // cbMultiThread
             // 
@@ -369,35 +386,30 @@
             // 
             // btnRefresh
             // 
-            this.btnRefresh.Location = new System.Drawing.Point(541, 10);
+            this.btnRefresh.Location = new System.Drawing.Point(568, 10);
             this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(118, 23);
+            this.btnRefresh.Size = new System.Drawing.Size(91, 23);
             this.btnRefresh.TabIndex = 20;
-            this.btnRefresh.Text = "Refresh benchmarks";
+            this.btnRefresh.Text = "Refresh lists";
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
-            // label6
+            // btnBisect
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(344, 52);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(115, 13);
-            this.label6.TabIndex = 14;
-            this.label6.Text = "--benchmark time (94+)";
-            // 
-            // tbBenchmarkArg
-            // 
-            this.tbBenchmarkArg.Location = new System.Drawing.Point(465, 49);
-            this.tbBenchmarkArg.Name = "tbBenchmarkArg";
-            this.tbBenchmarkArg.Size = new System.Drawing.Size(100, 20);
-            this.tbBenchmarkArg.TabIndex = 15;
+            this.btnBisect.Location = new System.Drawing.Point(249, 10);
+            this.btnBisect.Name = "btnBisect";
+            this.btnBisect.Size = new System.Drawing.Size(75, 23);
+            this.btnBisect.TabIndex = 21;
+            this.btnBisect.Text = "Bisect";
+            this.btnBisect.UseVisualStyleBackColor = true;
+            this.btnBisect.Click += new System.EventHandler(this.btnBisect_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(702, 649);
+            this.Controls.Add(this.btnBisect);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.groupBox2);
@@ -460,5 +472,6 @@
         private System.Windows.Forms.CheckBox cbMultiThread;
         private System.Windows.Forms.TextBox tbBenchmarkArg;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Button btnBisect;
     }
 }

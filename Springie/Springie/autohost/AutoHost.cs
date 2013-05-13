@@ -659,6 +659,7 @@ namespace Springie.autohost
             // no mod was provided, auto update is on, check if newer version exists, if it does use that instead of config one
             if (string.IsNullOrEmpty(modname) && !String.IsNullOrEmpty(config.AutoUpdateRapidTag)) {
                 var ver = Program.main.Downloader.PackageDownloader.GetByTag(config.AutoUpdateRapidTag);
+                
                 if (ver != null && cache.GetResourceDataByInternalName(ver.InternalName) != null) modname = config.AutoUpdateRapidTag;
             }
 

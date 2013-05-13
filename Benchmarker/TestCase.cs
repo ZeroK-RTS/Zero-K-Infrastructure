@@ -53,26 +53,42 @@ namespace Benchmarker
         /// <summary>
         /// Validates content - starts downloads, return null if all ok so far
         /// </summary>
-        public string Validate(PlasmaDownloader.PlasmaDownloader downloader) {
+        public string Validate(PlasmaDownloader.PlasmaDownloader downloader, bool waitDownload = false) {
             if (string.IsNullOrEmpty(Engine)) return "Engine name not set";
 
             if (StartScript == null) return "Please select a start script - put start scripts in Benchmarks/Scripts folder";
             if (Config == null) return "Please select a config to use - create folders with configs in Benchmarks/Configs folder";
 
             var de = downloader.GetAndSwitchEngine(Engine);
-            if (de != null && de.IsComplete == false) return "Failed download of engine " + de.Name;
+            Download dm = null;
 
             if (!string.IsNullOrEmpty(Map)) {
-                var dm = downloader.GetResource(DownloadType.MAP, Map);
-                if (dm != null && dm.IsComplete == false) return "Failed download of map " + dm.Name;
+                dm = downloader.GetResource(DownloadType.MAP, Map);
             }
 
+            Download dg = null;
             if (!string.IsNullOrEmpty(Game)) {
-                var dg = downloader.GetResource(DownloadType.MOD, Game);
-                if (dg != null && dg.IsComplete == false) return "Failed download of game " + dg.Name;
+                var ver = downloader.PackageDownloader.GetByTag(Game);
+                if (ver != null) Game = ver.InternalName;
+                dg = downloader.GetResource(DownloadType.MOD, Game);
+                }
+
+            if (waitDownload) {
+                if (de != null) {
+                    de.WaitHandle.WaitOne();
+                    if (de.IsComplete == false) return "Failed download of engine " + de.Name;
+                } 
+                if (dm != null) {
+                    dm.WaitHandle.WaitOne();
+                    if (dm.IsComplete == false)return "Failed download of map " + dm.Name;
+                }
+                if (dg != null) {
+                    dg.WaitHandle.WaitOne();
+                    if (dg.IsComplete == false) return "Failed download of game " + dg.Name;
+                } 
             }
 
-            var sVal = StartScript.Validate(downloader);
+            var sVal = StartScript.Validate(downloader, waitDownload);
             if (sVal != null) return sVal;
 
             return null;

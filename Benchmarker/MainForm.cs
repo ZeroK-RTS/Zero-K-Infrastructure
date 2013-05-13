@@ -61,8 +61,6 @@ namespace Benchmarker
 
             cmbScripts.Items.Clear();
             cmbScripts.Items.AddRange(StartScript.GetStartScripts(springPaths, true).ToArray());
-            if (cbConfigs.Items.Count > 0) cbConfigs.SelectedIndex = 0;
-            if (cmbScripts.Items.Count > 0) cmbScripts.SelectedIndex = 0;
         }
 
         void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
@@ -229,6 +227,11 @@ namespace Benchmarker
                 form.Show();
             }
 
+        }
+
+        private void btnBisect_Click(object sender, EventArgs e) {
+            var bisForm = new BisectForm(springPaths, springDownloader );
+            bisForm.Show();
         }
 
     }
