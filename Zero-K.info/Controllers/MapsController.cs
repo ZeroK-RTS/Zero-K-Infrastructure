@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using System.Xml.Serialization;
 using PlasmaShared;
 using PlasmaShared.UnitSyncLib;
@@ -85,7 +86,7 @@ namespace ZeroKWeb.Controllers
             }
         }
 
-        public ActionResult JsonSearch(string search,
+        public ContentResult JsonSearch(string callback, string search,
                                        bool? featured,
                                        int? offset,
                                        bool? ffa,
@@ -115,7 +116,46 @@ namespace ZeroKWeb.Controllers
                                 isDownloadable,
                                 special,
                                 out ret);
-            return Json(ret.Select(x=>new{x.AuthorName, x.InternalName, x.DownloadCount, x.FeaturedOrder, x.ForumThreadID, x.HeightmapName, x.LastChange, x.LastLinkCheck, x.MapDiagonal, x.MapFFAMaxTeams, x.MapHeight, x.MapHills, x.MapIs1v1, x.MapIsAssymetrical,x.MapIsChickens,x.MapIsFfa,x.MapIsSpecial,x.MapPlanetWarsIcon,x.MapRating,x.MapRatingCount,x.MapRatingSum,x.MapWaterLevel,x.MapSpringieCommands,x.MapSizeRatio,x.MapSizeSquared,x.MapWidth,x.MetadataName,x.MetalmapName,x.MinimapName,x.MissionID,x.PlanetWarsIconSize,x.RatingPollID,x.ThumbnailName}).ToList(), JsonRequestBehavior.AllowGet);
+            var retval =
+                ret.Select(
+                    x =>
+                    new
+                    {
+                        x.AuthorName,
+                        x.InternalName,
+                        x.DownloadCount,
+                        x.FeaturedOrder,
+                        x.ForumThreadID,
+                        x.HeightmapName,
+                        x.LastChange,
+                        x.LastLinkCheck,
+                        x.MapDiagonal,
+                        x.MapFFAMaxTeams,
+                        x.MapHeight,
+                        x.MapHills,
+                        x.MapIs1v1,
+                        x.MapIsAssymetrical,
+                        x.MapIsChickens,
+                        x.MapIsFfa,
+                        x.MapIsSpecial,
+                        x.MapPlanetWarsIcon,
+                        x.MapRating,
+                        x.MapRatingCount,
+                        x.MapRatingSum,
+                        x.MapWaterLevel,
+                        x.MapSpringieCommands,
+                        x.MapSizeRatio,
+                        x.MapSizeSquared,
+                        x.MapWidth,
+                        x.MetadataName,
+                        x.MetalmapName,
+                        x.MinimapName,
+                        x.MissionID,
+                        x.PlanetWarsIconSize,
+                        x.RatingPollID,
+                        x.ThumbnailName
+                    }).ToList();
+            return Content(String.Format("{0}({1});",callback,new JavaScriptSerializer().Serialize(retval)),"application/javascript");
         }
 
         public ActionResult PlanetImageSelect(int resourceID) {
