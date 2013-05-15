@@ -114,7 +114,7 @@ namespace ZeroKWeb
         public static bool IsLobbyAccess { get { return HttpContext.Current.Request.Cookies[GlobalConst.LobbyAccessCookieName] != null; } }
         public static bool IsLobbyAdmin { get { return IsAccountAuthorized && Account.IsLobbyAdministrator; } }
         public static bool IsZeroKAdmin { get { return IsAccountAuthorized && Account.IsZeroKAdmin; } }
-        public static bool IsWebLobbyAccess { get { return HttpContext.Current.Request["weblobby"] != null; } }
+        public static bool IsWebLobbyAccess { get { return HttpContext.Current.Session["weblobby"] != null; } }
 
 
         public static string DisplayLanguage { get { return ResolveLanguage(); } }

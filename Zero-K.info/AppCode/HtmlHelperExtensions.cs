@@ -270,7 +270,7 @@ namespace System.Web.Mvc
         public static MvcHtmlString PrintSpringLink(this HtmlHelper helper, Func<object, HelperResult> link)
         {
             if (!Global.IsWebLobbyAccess) return new MvcHtmlString("spring://"+link(null).ToString());
-            else return new MvcHtmlString(string.Format("javascript:window.parent.postMessage('{0}','{1}');", link(null), HttpContext.Current.Request["weblobby"]));
+            else return new MvcHtmlString(string.Format("javascript:window.parent.postMessage('{0}','{1}');", link(null), HttpContext.Current.Session["weblobby"]));
         }
 
 
