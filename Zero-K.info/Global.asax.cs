@@ -124,6 +124,11 @@ namespace ZeroKWeb
                 }
                 if (acc != null) HttpContext.Current.User = acc;
             }
+
+
+            if (Request["weblobby"] != null) { // save weblobby info
+                Response.SetCookie(new HttpCookie("weblobby", Request["weblobby"]));
+            }
         }
     }
 }

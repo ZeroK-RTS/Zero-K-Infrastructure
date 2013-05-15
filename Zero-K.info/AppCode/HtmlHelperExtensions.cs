@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Mvc.Html;
+using System.Web.WebPages;
 using ZeroKWeb;
 using ZkData;
 
@@ -265,7 +266,13 @@ namespace System.Web.Mvc
                         string.Format("<img src='/img/stars/{0}.png' alt='Donator star'/>", star));
         }
 
-       
+
+        public static MvcHtmlString PrintSpringLink(this HtmlHelper helper, Func<object, HelperResult> link)
+        {
+            if (!Global.IsWebLobbyAccess) return new MvcHtmlString("spring://"+link(null).ToString());
+            else return new MvcHtmlString(string.Format("javascript:window.parent.postMessage('{0}','{1}');", link(null), HttpContext.Current.Request["weblobby"]));
+        }
+
 
         public static MvcHtmlString PrintBattle(this HtmlHelper helper, SpringBattlePlayer battlePlayer) {
             if (battlePlayer == null) return null;

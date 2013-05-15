@@ -56,7 +56,7 @@
         <script type="text/javascript" src='@Href("~/Scripts/raphael-min.js")' > </script>
         
         @RenderSection("head", false)
-        @if (!Global.IsLobbyAccess && ViewBag.Minimal != true && Request["minimalDesign"] != "1") {
+        @if (!Global.IsLobbyAccess && ViewBag.Minimal != true && Request["minimalDesign"] != "1" && !Global.IsWebLobbyAccess) {
             //******should instead check cookie for design mode and choose style accordingly******
             if (ViewBag.StaticBackground == true) {
                 <style type="text/css">
@@ -98,7 +98,8 @@
 
         <div id='ajaxScrollProgress' class="border">
             Loading...<img src='/img/Loader.gif' class="vcenter"/></div>
-        @if (!Global.IsLobbyAccess && ViewBag.Minimal == null && Request["minimalDesign"] != "1") {
+        @if (!Global.IsLobbyAccess && ViewBag.Minimal == null && Request["minimalDesign"] != "1" && !Global.IsWebLobbyAccess)
+        {
             <div id="fadetoblack">
             </div>
             <div id="mainContentWrapper" class="wrapper">
@@ -149,12 +150,14 @@
         }
         else {
             <div id="simplestyle">
-                <div class="border" id="menu" style="padding:0">
-                    @Html.Partial("TopMenu")
-                </div>
-                <div class="border relative" style="padding: 0 10px 0 10px;" >
-                    @Html.Partial("LoginBar")
-                </div>
+                @if (!Global.IsWebLobbyAccess) {
+                    <div class="border" id="menu" style="padding: 0">
+                        @Html.Partial("TopMenu")
+                    </div>
+                    <div class="border relative" style="padding: 0 10px 0 10px;" >
+                        @Html.Partial("LoginBar")
+                    </div>
+                }
                 @RenderBody()
             </div>
             <br/>
