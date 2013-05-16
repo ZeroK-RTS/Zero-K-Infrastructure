@@ -53,10 +53,17 @@ namespace ZeroKWeb
             };
 
             PostAuthenticateRequest += MvcApplication_PostAuthenticateRequest;
-            
+            PostAcquireRequestState += OnPostAcquireRequestState;
             Error += MvcApplication_Error;
         }
 
+        void OnPostAcquireRequestState(object sender, EventArgs eventArgs) {
+            if (Request.QueryString["weblobby"] != null)
+            { // save weblobby info
+                Session["weblobby"] = Request.QueryString["weblobby"];
+            }
+           
+        }
 
 
         public static void RegisterRoutes(RouteCollection routes)
@@ -126,9 +133,6 @@ namespace ZeroKWeb
             }
 
 
-            if (Request.QueryString["weblobby"] != null) { // save weblobby info
-                Session["weblobby"] = Request.QueryString["weblobby"];
-            }
         }
     }
 }
