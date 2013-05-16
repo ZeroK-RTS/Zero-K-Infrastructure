@@ -126,8 +126,8 @@ namespace ZeroKWeb
             }
 
 
-            if (Request["weblobby"] != null) { // save weblobby info
-                Response.SetCookie(new HttpCookie("weblobby", Request["weblobby"]));
+            if (Request.QueryString["weblobby"] != null) { // save weblobby info
+                Session["weblobby"] = Request.QueryString["weblobby"];
             }
         }
     }
