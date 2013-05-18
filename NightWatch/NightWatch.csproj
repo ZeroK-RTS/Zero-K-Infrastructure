@@ -94,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthService.cs" />
+    <Compile Include="AdminCommands.cs" />
     <Compile Include="Nightwatch.cs" />
     <Compile Include="MainConfig.cs" />
     <Compile Include="OfflineMessages.cs" />
