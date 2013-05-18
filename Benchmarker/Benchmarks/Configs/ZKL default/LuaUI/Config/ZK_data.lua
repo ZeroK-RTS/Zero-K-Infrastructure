@@ -7,16 +7,16 @@ return {
 	},
 	["Chili Docking"] = {
 		Chat = {
-			[1] = 1055,
+			[1] = 899,
 			[2] = 0,
 			[3] = 1475,
-			[4] = 200,
+			[4] = 240,
 		},
 		Minimap = {
 			[1] = 0,
 			[2] = 0,
-			[3] = 565,
-			[4] = 316.95123291016,
+			[3] = 348,
+			[4] = 242.67407226563,
 		},
 		["Player List"] = {
 			[1] = 1624,
@@ -29,12 +29,6 @@ return {
 			[2] = 0,
 			[3] = 1920,
 			[4] = 50,
-		},
-		chickenpanel = {
-			[1] = 1650,
-			[2] = 1011,
-			[3] = 1920,
-			[4] = 1200,
 		},
 		epicmenubar = {
 			[1] = 1475,
@@ -54,12 +48,6 @@ return {
 			[3] = 450,
 			[4] = 1020,
 		},
-		rejoinProgress = {
-			[1] = 0,
-			[2] = 565,
-			[3] = 260,
-			[4] = 625,
-		},
 		selector_window = {
 			[1] = 450,
 			[2] = 1148,
@@ -71,202 +59,19 @@ return {
 		maxHungarianUnits = 20,
 	},
 	["EPIC Menu"] = {
-		country = "CZ",
+		country = "wut",
 		lang = "en",
 		music_volume = 0.5,
 		show_crudemenu = true,
-		sub_pos_x = 700,
-		sub_pos_y = 500,
+		sub_pos_x = 960,
+		sub_pos_y = 600,
 		versionmin = 50,
-		wl_h = 700,
+		wl_h = 840,
 		wl_w = 300,
-		wl_x = 550,
-		wl_y = 150,
+		wl_x = 810,
+		wl_y = 180,
 		config = {
-			epic_Chili_Minimap_alwaysDisplayMexes = false,
 			["epic_Settings/Camera_Camera_Type"] = "Total Annihilation",
-		},
-		keybounditems = {
-			areaattack = {
-				key = "a",
-				mod = "A+",
-			},
-			areamex = {
-				key = "w",
-				mod = "C+",
-			},
-			attack = {
-				key = "a",
-				mod = "",
-			},
-			cloak = {
-				key = "k",
-				mod = "",
-			},
-			decreaseviewradius = {
-				key = "end",
-				mod = "",
-			},
-			epic_chili_integral_menu_tab_defence = {
-				key = "c",
-				mod = "",
-			},
-			epic_chili_integral_menu_tab_economy = {
-				key = "x",
-				mod = "",
-			},
-			epic_chili_integral_menu_tab_factory = {
-				key = "z",
-				mod = "",
-			},
-			epic_chili_integral_menu_tab_special = {
-				key = "v",
-				mod = "",
-			},
-			epic_chili_minimap_alwaysdisplaymexes = {
-				key = "f4",
-				mod = "",
-			},
-			epic_chili_widget_selector_widgetlist = {
-				key = "f11",
-				mod = "",
-			},
-			fight = {
-				key = "f",
-				mod = "",
-			},
-			guard = {
-				key = "g",
-				mod = "",
-			},
-			increaseviewradius = {
-				key = "home",
-				mod = "",
-			},
-			jump = {
-				key = "j",
-				mod = "",
-			},
-			lastmsgpos = {
-				key = "f3",
-				mod = "",
-			},
-			loadunits = {
-				key = "l",
-				mod = "",
-			},
-			["luaui tweakgui"] = {
-				key = "f11",
-				mod = "C+",
-			},
-			manualfire = {
-				key = "d",
-				mod = "",
-			},
-			move = {
-				key = "m",
-				mod = "",
-			},
-			oneclickwep = {
-				key = "d",
-				mod = "",
-			},
-			onoff = {
-				key = "x",
-				mod = "",
-			},
-			patrol = {
-				key = "p",
-				mod = "",
-			},
-			pause = {
-				key = "pause",
-				mod = "",
-			},
-			reclaim = {
-				key = "e",
-				mod = "",
-			},
-			repair = {
-				key = "r",
-				mod = "",
-			},
-			resurrect = {
-				key = "t",
-				mod = "",
-			},
-			screenshot = {
-				key = "f12",
-				mod = "",
-			},
-			["select AllMap++_ClearSelection_SelectAll+"] = {
-				key = "a",
-				mod = "C+",
-			},
-			["select AllMap+_Builder_Not_Building_Idle+_ClearSelection_SelectOne+"] = {
-				key = "v",
-				mod = "C+",
-			},
-			["select AllMap+_Builder_Not_Building_Not_Transport_Idle+_ClearSelection_SelectAll+"] = {
-				key = "b",
-				mod = "C+",
-			},
-			["select AllMap+_InPrevSel+_ClearSelection_SelectAll+"] = {
-				key = "z",
-				mod = "C+",
-			},
-			["select PrevSelection+_Idle+_ClearSelection_SelectAll+"] = {
-				key = "i",
-				mod = "C+",
-			},
-			["select Visible+_InPrevSel+_ClearSelection_SelectAll+"] = {
-				key = "x",
-				mod = "C+",
-			},
-			selectcomm = {
-				key = "c",
-				mod = "C+",
-			},
-			selfd = {
-				key = "d",
-				mod = "C+",
-			},
-			sharedialog = {
-				key = "h",
-				mod = "",
-			},
-			showelevation = {
-				key = "f1",
-				mod = "",
-			},
-			showmetalmap = {
-				key = "f4",
-				mod = "",
-			},
-			showpathtraversability = {
-				key = "f2",
-				mod = "",
-			},
-			stop = {
-				key = "s",
-				mod = "",
-			},
-			togglelos = {
-				key = "l",
-				mod = "",
-			},
-			unloadunits = {
-				key = "u",
-				mod = "",
-			},
-			viewta = {
-				key = "f2",
-				mod = "C+",
-			},
-			wait = {
-				key = "w",
-				mod = "",
-			},
 		},
 		widgets = {},
 	},
@@ -275,6 +80,8 @@ return {
 		localWidgetsFirst = false,
 	},
 	["Persistent Build Spacing"] = {
-		buildSpacing = {},
+		buildSpacing = {
+			[228] = 2,
+		},
 	},
 }
