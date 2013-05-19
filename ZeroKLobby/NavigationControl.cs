@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using ZeroKLobby.Controls;
 using ZeroKLobby.MicroLobby;
 
 namespace ZeroKLobby
 {
     public partial class NavigationControl: UserControl, INotifyPropertyChanged
     {
+        static List<ButtonInfo> ButtonList { get; set; }
         bool CanGoBack { get { return backStack.Any(); } }
-
         bool CanGoForward { get { return forwardStack.Any(); } }
         INavigatable CurrentINavigatable { get { return GetINavigatableFromControl(tabControl.SelectedTab); } }
 
@@ -39,7 +38,6 @@ namespace ZeroKLobby
         readonly ChatTab chatTab;
         readonly Stack<NavigationStep> forwardStack = new Stack<NavigationStep>();
         readonly List<string> lastPaths = new List<string>();
-        static private List<ButtonInfo> ButtonList { get; set; }
         public ChatTab ChatTab { get { return chatTab; } }
         public static NavigationControl Instance { get; private set; }
 
@@ -57,6 +55,8 @@ namespace ZeroKLobby
 
                 if (CurrentPage != null && CurrentPage.ToString() == value) return; // we are already there, no navigation needed
 
+
+
                 var step = GoToPage(value.Split('/'));
                 if (step != null) {
                     lastPaths.Add(value);
@@ -64,11 +64,10 @@ namespace ZeroKLobby
                     CurrentPage = step;
                     //forwardStack.Clear();
                 }
-                
+
                 //PropertyChanged(this, new PropertyChangedEventArgs("Path"));
             }
         }
-        public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
         public NavigationControl() {
             InitializeComponent();
@@ -97,23 +96,17 @@ namespace ZeroKLobby
 
             Instance = this;
 
-            urlBox.DataBindings.Add("Text", this, "Path"); 
+            urlBox.DataBindings.Add("Text", this, "Path");
             tabControl.TabPages.Clear();
 
             chatTab = new ChatTab();
-            AddTabPage(chatTab, "Chat" );
+            AddTabPage(chatTab, "Chat");
             AddTabPage(new BattleListTab(), "Battles");
             AddTabPage(new SettingsTab(), "Settings");
-        }
 
-        void AddTabPage(Control content, string name = null) {
-            name = name ?? content.Text ?? content.Name;
-            var tb = new TabPage(name);
-            tb.Dock = DockStyle.Fill;
-            tb.Controls.Add(content);
-            content.Dock = DockStyle.Fill;
-            
-            tabControl.TabPages.Add(tb);
+            foreach (var but in ButtonList) {
+                flowLayoutPanel1.Controls.Add(but.GetButton());
+            }
         }
 
 
@@ -134,6 +127,16 @@ namespace ZeroKLobby
 
         public void NavigateForward() {
             if (CanGoForward) GoForward();
+        }
+
+        void AddTabPage(Control content, string name = null) {
+            name = name ?? content.Text ?? content.Name;
+            var tb = new TabPage(name);
+            tb.Dock = DockStyle.Fill;
+            tb.Controls.Add(content);
+            content.Dock = DockStyle.Fill;
+
+            tabControl.TabPages.Add(tb);
         }
 
         INavigatable GetINavigatableFromControl(object obj) {
@@ -170,12 +173,19 @@ namespace ZeroKLobby
             return null;
         }
 
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+
         void btnBack_Click(object sender, EventArgs e) {
             NavigateBack();
         }
 
         void btnForward_Click(object sender, EventArgs e) {
             if (CanGoForward) GoForward();
+        }
+
+        void tabControl_Selecting(object sender, TabControlCancelEventArgs e) {
+            Path = e.TabPage.Text.ToLower();
+            //e.Cancel = true;
         }
 
         void urlBox_Enter(object sender, EventArgs e) {
@@ -196,11 +206,6 @@ namespace ZeroKLobby
             public override string ToString() {
                 return string.Join("/", Path);
             }
-        }
-
-        private void tabControl_Selecting(object sender, TabControlCancelEventArgs e) {
-            Path = e.TabPage.Text.ToLower();
-            //e.Cancel = true;
         }
     }
 }

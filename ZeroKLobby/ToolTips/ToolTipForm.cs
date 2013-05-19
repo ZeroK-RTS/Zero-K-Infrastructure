@@ -33,7 +33,9 @@ namespace ZeroKLobby
             BackColor = Color.FromArgb(255, 255, 225);
             toolTipRenderer = renderer;
 
-            BringToFront();
+            //BringToFront();
+            
+
 
             SetStyle(ControlStyles.UserPaint | ControlStyles.UserMouse | ControlStyles.DoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
             SetStyle(ControlStyles.Selectable, false);

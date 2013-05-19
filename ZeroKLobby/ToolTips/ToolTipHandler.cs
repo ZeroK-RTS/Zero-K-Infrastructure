@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -29,7 +30,7 @@ namespace ZeroKLobby
         }
 
         public ToolTipHandler() {
-            timer.Interval = 250;
+            timer.Interval = 1000;
             timer.Tick += timer_Tick;
             timer.Start();
         }
@@ -120,7 +121,7 @@ namespace ZeroKLobby
                     }
 
                     tooltip.SetDesktopLocation(nx, ny);
-
+                    
                     var newSize = tooltip.GetTooltipSize();
                     if (newSize.HasValue && newSize.Value != tooltip.Size) tooltip.Size = newSize.Value;
 
@@ -135,10 +136,12 @@ namespace ZeroKLobby
         }
 
         public bool PreFilterMessage(ref Message m) {
-            if (m.Msg == WM_MOUSEMOVE) {
-                var mp = System.Windows.Forms.Control.MousePosition;
-                /*int xp = (int)m.LParam & 0xFFFF;
-                int yp = (int)m.LParam >> 16;*/
+            if (m.Msg == WM_MOUSEMOVE)
+            { // && Environment.OSVersion.Platform != PlatformID.Unix 
+                var mp = Control.MousePosition;
+                //int xp = (int)m.LParam & 0xFFFF;
+                //int yp = (int)m.LParam >> 16;
+
                 if (mp != lastMousePos) RefreshToolTip(false);
                 lastMousePos = mp;
             }
@@ -148,7 +151,7 @@ namespace ZeroKLobby
 
 
         private void timer_Tick(object sender, EventArgs e) {
-            RefreshToolTip(true);
+            if (Visible) RefreshToolTip(true);
         }
     }
 
