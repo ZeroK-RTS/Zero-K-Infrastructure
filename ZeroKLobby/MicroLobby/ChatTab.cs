@@ -28,6 +28,7 @@ namespace ZeroKLobby.MicroLobby
             InitializeComponent();
             if (Process.GetCurrentProcess().ProcessName == "devenv") return; // detect design mode, workaround for non-working this.DesignMode 
             Controls.Add(toolTabs);
+
             AddBattleControl();
 
             Program.TasClient.ChannelJoined += client_ChannelJoined;
@@ -42,8 +43,7 @@ namespace ZeroKLobby.MicroLobby
             Program.TasClient.ChannelJoinFailed += TasClient_ChannelJoinFailed;
             Program.TasClient.ChannelForceLeave += TasClient_ChannelForceLeave;
             Program.TasClient.BattleForceQuit += TasClient_BattleForceQuit;
-
-            AddBattleControl();
+            
             foreach (var channel in Program.TasClient.JoinedChannels.Values.Where(c => !IsIgnoredChannel(c.Name))) CreateChannelControl(channel.Name);
             toolTabs.SelectTab("Battle");
         }
@@ -60,7 +60,7 @@ namespace ZeroKLobby.MicroLobby
             var isFriend = Program.FriendManager.Friends.Contains(userName);
             User user;
             var isOffline = !Program.TasClient.ExistingUsers.TryGetValue(userName, out user);
-						var icon = isOffline ? Resources.Grayuser : TextImage.GetUserImage(userName);
+						var icon = isOffline ? Resources.grayuser : TextImage.GetUserImage(userName);
             var contextMenu = new ContextMenu();
             if (!isFriend)
             {
@@ -114,7 +114,7 @@ namespace ZeroKLobby.MicroLobby
         void AddBattleControl()
         {
             if (battleChatControl == null || battleChatControl.IsDisposed) battleChatControl = new BattleChatControl { Dock = DockStyle.Fill };
-            if (toolTabs.GetTab("Battle") == null) toolTabs.AddTab("Battle", "Battle", battleChatControl, Resources.Battle, "Current battle room", 3);
+            if (toolTabs.GetTab("Battle") == null) toolTabs.AddTab("Battle", "Battle", battleChatControl, Resources.battle, "Current battle room", 3);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
@@ -126,7 +126,7 @@ namespace ZeroKLobby.MicroLobby
             var chatControl = new ChatControl(channelName) { Dock = DockStyle.Fill };
             var gameInfo = KnownGames.List.FirstOrDefault(x => x.Channel == channelName);
 
-            if (gameInfo != null) toolTabs.AddTab(channelName, gameInfo.FullName, chatControl, Resources.Game, null, 2);
+            if (gameInfo != null) toolTabs.AddTab(channelName, gameInfo.FullName, chatControl, Resources.game, null, 2);
 						else toolTabs.AddTab(channelName, channelName, chatControl, Resources.chat, null, 1);
         	chatControl.ChatLine += (s, e) => Program.TasClient.Say(TasClient.SayPlace.Channel, channelName, e.Data, false);
             return chatControl;
@@ -332,14 +332,14 @@ namespace ZeroKLobby.MicroLobby
         {
         	var userName = e.Data.Name;
             var pmControl = GetPrivateMessageControl(userName);
-            if (pmControl != null) toolTabs.SetIcon(userName, Program.FriendManager.Friends.Contains(userName) ? Resources.Friend : TextImage.GetUserImage(userName));
+            if (pmControl != null) toolTabs.SetIcon(userName, Program.FriendManager.Friends.Contains(userName) ? Resources.friend : TextImage.GetUserImage(userName));
         }
 
         void TasClient_UserRemoved(object sender, TasEventArgs e)
         {
             var userName = e.ServerParams[0];
             var pmControl = GetPrivateMessageControl(userName);
-						if (pmControl != null) toolTabs.SetIcon(userName, Resources.Grayuser);
+						if (pmControl != null) toolTabs.SetIcon(userName, Resources.grayuser);
         }
 
 		public string PathHead { get { return "chat"; } }
@@ -389,5 +389,10 @@ namespace ZeroKLobby.MicroLobby
     	{
     		return null;
     	}
+
+        private void ChatTab_Load(object sender, EventArgs e)
+        {
+ 
+        }
     }
 }

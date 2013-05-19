@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoginForm));
             this.btnSubmit = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -41,12 +40,12 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.labelProxyInfo = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.labelProxy2 = new System.Windows.Forms.Label();
             this.rgName = new System.Windows.Forms.TextBox();
             this.rgPassword = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
-            this.labelProxy2 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -182,6 +181,16 @@
             this.tabPage2.Text = "Register";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // labelProxy2
+            // 
+            this.labelProxy2.AutoSize = true;
+            this.labelProxy2.Location = new System.Drawing.Point(-2, 130);
+            this.labelProxy2.Name = "labelProxy2";
+            this.labelProxy2.Size = new System.Drawing.Size(284, 26);
+            this.labelProxy2.TabIndex = 11;
+            this.labelProxy2.Text = "Note: You will not be able to connect using a proxy or VPN\r\nunless you have been " +
+    "whitelisted by the server admins.";
+            // 
             // rgName
             // 
             this.rgName.Location = new System.Drawing.Point(99, 18);
@@ -226,16 +235,6 @@
             this.label4.TabIndex = 1;
             this.label4.Text = "Player name:";
             // 
-            // labelProxy2
-            // 
-            this.labelProxy2.AutoSize = true;
-            this.labelProxy2.Location = new System.Drawing.Point(-2, 130);
-            this.labelProxy2.Name = "labelProxy2";
-            this.labelProxy2.Size = new System.Drawing.Size(284, 26);
-            this.labelProxy2.TabIndex = 11;
-            this.labelProxy2.Text = "Note: You will not be able to connect using a proxy or VPN\r\nunless you have been " +
-    "whitelisted by the server admins.";
-            // 
             // LoginForm
             // 
             this.AcceptButton = this.btnSubmit;
@@ -245,7 +244,6 @@
             this.ClientSize = new System.Drawing.Size(287, 221);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.lbInfo);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "LoginForm";

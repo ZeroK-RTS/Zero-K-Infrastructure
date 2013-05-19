@@ -37,10 +37,10 @@ namespace ZeroKLobby
 		}
 
 		[DllImport("dwmapi.dll", PreserveSig = false)]
-		public static extern void DwmExtendFrameIntoClientArea(IntPtr hwnd, ref MARGINS margins);
+		static extern void DwmExtendFrameIntoClientArea(IntPtr hwnd, ref MARGINS margins);
 
 		[DllImport("dwmapi.dll", PreserveSig = false)]
-		public static extern bool DwmIsCompositionEnabled();
+		static extern bool DwmIsCompositionEnabled();
 
 		[DllImport("user32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
@@ -48,9 +48,16 @@ namespace ZeroKLobby
 
 		/// <returns>windowhandle</returns>
 		[DllImport("user32.dll")]
-		public static extern int GetForegroundWindow();
+		private static extern int GetForegroundWindow();
 
-        [DllImport("user32.dll")]
+	    public static int GetForegroundWindowHandle() {
+	        if (Environment.OSVersion.Platform == PlatformID.Unix) return (int)Program.MainWindow.Handle;
+	        else return GetForegroundWindow();
+	    }
+
+
+
+	    [DllImport("user32.dll")]
         public static extern int GetActiveWindow();
 
 		[DllImport("user32.dll")]

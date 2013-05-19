@@ -1,4 +1,4 @@
-﻿namespace ZeroKLobby.Notifications
+﻿namespace SpringDownloader.Notifications
 {
     partial class NotifySection
     {

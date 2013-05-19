@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -9,10 +8,7 @@ using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Interop;
-using System.Windows.Media.Imaging;
 using LobbyClient;
 using Microsoft.Win32;
 using Application = System.Windows.Forms.Application;
@@ -23,7 +19,6 @@ namespace ZeroKLobby
 {
     static class Utils
     {
-        static IInputElement lastElement;
         public static Dictionary<string, Color> FactionColors = new Dictionary<string, Color>()
                                                                 {
                                                                     { "Ascended", ColorTranslator.FromHtml("#94C8FF") },
@@ -36,7 +31,6 @@ namespace ZeroKLobby
                                                                     { "Dynasty", ColorTranslator.FromHtml("#FFAA20") },
                                                                     { "Liberty", ColorTranslator.FromHtml("#55BB55") }
                                                                 };
-        public static bool IsDesignTime { get { return DesignerProperties.GetIsInDesignMode(new DependencyObject()); } }
 
         public static bool CanRead(string filename)
         {
@@ -161,52 +155,6 @@ namespace ZeroKLobby
             }
         }
 
-        public static void SetIeCompatibility()
-        {
-            var fileName = Path.GetFileName(Application.ExecutablePath);
-            try
-            {
-                Registry.SetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Internet Explorer\MAIN\FeatureControl\FEATURE_BROWSER_EMULATION",
-                                  fileName,
-                                  9000);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(string.Format("Error setting IE compatibility: {0}", ex));
-            }
-            try
-            {
-                Registry.SetValue(
-                    @"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Internet Explorer\MAIN\FeatureControl\FEATURE_BROWSER_EMULATION",
-                    fileName,
-                    9000);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(string.Format("Error setting IE compatibility: {0}", ex));
-            }
-        }
-
-        public static BitmapSource ToBitmapSource(this Image image)
-        {
-            using (var bitmap = new Bitmap(image)) return bitmap.ToBitmapSource();
-        }
-
-        public static BitmapSource ToBitmapSource(this Bitmap bitmap)
-        {
-            var hBitmap = bitmap.GetHbitmap();
-            BitmapSource bitmapSource;
-            try
-            {
-                bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-                bitmapSource.Freeze();
-            }
-            finally
-            {
-                DeleteObject(hBitmap);
-            }
-            return bitmapSource;
-        }
 
         public static void UnregisterProtocol()
         {

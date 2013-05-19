@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Design;
 using System.Windows;
+using System.Windows.Forms;
 using System.Xml.Serialization;
 using JetBrains.Annotations;
 using PlasmaDownloader;
@@ -19,7 +20,6 @@ namespace ZeroKLobby
     {
         public const string BaseUrl = "http://zero-k.info/";
         public const string ConfigFileName = "ZeroKLobbyConfig.xml";
-        public const string IpcFileName = "zero-k_args.txt";
         public const string LogFile = "ZeroKLobbyErrors.txt";
         public const string ReportUrl = "http://cadownloader.licho.eu/error.php";
 
@@ -151,7 +151,7 @@ namespace ZeroKLobby
         public int JoinColorInt = Color.FromArgb(42, 140, 42).ToArgb();
         
         [Browsable(false)]
-        public WindowState LastWindowState { get; set; }
+        public FormWindowState LastWindowState { get; set; }
 
         [Category("Chat")]
         [DisplayName("Color: Leaves")]

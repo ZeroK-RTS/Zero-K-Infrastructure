@@ -11,7 +11,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Timers;
-using Ionic.Zlib;
 using PlasmaShared;
 using ZkData;
 
@@ -538,8 +537,7 @@ namespace LobbyClient
             if (nic != null) {
                 data = string.Join(":", nic.GetPhysicalAddress().GetAddressBytes()) + "lobby.springrts.com";
             }
-            var crc = new CRC32();
-            return crc.GetCrc32(new MemoryStream(Encoding.ASCII.GetBytes(data))).ToString();
+            return Crc.Crc32(Encoding.ASCII.GetBytes(data)).ToString();
         }
 
 

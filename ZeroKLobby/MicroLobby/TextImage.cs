@@ -33,7 +33,7 @@ namespace ZeroKLobby.MicroLobby
         {
             bitmaps = new Image[8];
 						bitmaps[user] = Resources.user;
-						bitmaps[friend] = Resources.Friend;
+						bitmaps[friend] = Resources.friend;
 						bitmaps[admin] = Resources.police;
 						bitmaps[bot] = Resources.robot;
 						bitmaps[jimi] = Resources.jimi;
@@ -58,13 +58,13 @@ namespace ZeroKLobby.MicroLobby
             if (Program.TasClient.ExistingUsers.TryGetValue(userName, out user)) {
               if (userName == Program.TasClient.UserName) return Resources.jimi;
               if (user.IsBot) return Resources.robot;
-              if (Program.FriendManager.Friends.Contains(user.Name)) return Resources.Friend;
+              if (Program.FriendManager.Friends.Contains(user.Name)) return Resources.friend;
               if (user.IsAdmin|| user.IsZeroKAdmin) return Resources.police;
               if (user.EffectiveElo >= 1800)  return Resources.napoleon;
               if (user.EffectiveElo >= 1600) return Resources.soldier;
               if (user.EffectiveElo < 1400) return Resources.smurf;
                 
-            } else return Resources.Grayuser;
+            } else return Resources.grayuser;
 						return Resources.user;
         }
 

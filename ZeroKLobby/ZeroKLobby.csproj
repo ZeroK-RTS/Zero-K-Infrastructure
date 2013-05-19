@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ZeroKLobby</RootNamespace>
     <AssemblyName>Zero-K</AssemblyName>
-    <ApplicationIcon>ZK_logo_square.ico</ApplicationIcon>
+    <ApplicationIcon>SpringDownloader.ico</ApplicationIcon>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <ManifestCertificateThumbprint>FC2212B55F1B9944395B70DF91CE4D38FC17189D</ManifestCertificateThumbprint>
     <ManifestKeyFile>SpringDownloader_TemporaryKey.pfx</ManifestKeyFile>
@@ -28,7 +28,7 @@
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <StartupObject>ZeroKLobby.App</StartupObject>
+    <StartupObject>ZeroKLobby.Program</StartupObject>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <PublishUrl>ftp://zero-k.info/zero-k.info/www/lobby/</PublishUrl>
     <Install>true</Install>
@@ -111,21 +111,15 @@
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Management" />
     <Reference Include="System.Speech" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
-    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AcceptAgreementForm.cs">
@@ -141,22 +135,27 @@
     <Compile Include="AdvertiserWindow.designer.cs">
       <DependentUpon>AdvertiserWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="ButtonInfo.cs" />
     <Compile Include="ChatToSpeech.cs" />
-    <Compile Include="Controls\HeaderButton.cs" />
+    <Compile Include="Configs.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Configs.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\HeaderButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="DriverCheck.cs" />
     <Compile Include="EngineConfigurator.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="INavigatable.cs" />
     <Compile Include="KnownGames.cs" />
     <Compile Include="Lines\SelfJoinedBattleLine.cs" />
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="MainWindow.cs">
+      <SubType>Form</SubType>
     </Compile>
-    <Compile Include="BattleList.xaml.cs">
-      <DependentUpon>BattleList.xaml</DependentUpon>
+    <Compile Include="MainWindow.Designer.cs">
+      <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="MicroLobby\BattleListControl.cs">
       <SubType>Component</SubType>
@@ -170,28 +169,12 @@
     <Compile Include="MicroLobby\BattleListTab.Designer.cs">
       <DependentUpon>BattleListTab.cs</DependentUpon>
     </Compile>
-    <Compile Include="MicroLobby\BrowserControl.xaml.cs">
-      <DependentUpon>BrowserControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="MicroLobby\ChatTab.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MicroLobby\ChatTab.designer.cs">
       <DependentUpon>ChatTab.cs</DependentUpon>
     </Compile>
-    <Compile Include="MicroLobby\Floe\ChatBox.cs" />
-    <Compile Include="MicroLobby\Floe\ChatBoxBase.cs" />
-    <Compile Include="MicroLobby\Floe\ChatDecoration.cs" />
-    <Compile Include="MicroLobby\Floe\ChatFormatter.cs" />
-    <Compile Include="MicroLobby\Floe\ChatLine.cs" />
-    <Compile Include="MicroLobby\Floe\ChatPalette.cs" />
-    <Compile Include="MicroLobby\Floe\ChatPresenter.cs" />
-    <Compile Include="MicroLobby\Floe\ChatPresenter_Rendering.cs" />
-    <Compile Include="MicroLobby\Floe\ChatPresenter_Scrolling.cs" />
-    <Compile Include="MicroLobby\Floe\ChatPresenter_Searching.cs" />
-    <Compile Include="MicroLobby\Floe\ChatPresenter_Selecting.cs" />
-    <Compile Include="MicroLobby\Floe\Constants.cs" />
-    <Compile Include="MicroLobby\Floe\Enums.cs" />
     <Compile Include="MicroLobby\FriendsWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -210,8 +193,11 @@
     <Compile Include="MicroLobby\SpringsettingForm.Designer.cs">
       <DependentUpon>SpringsettingForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="NavigationControl.xaml.cs">
-      <DependentUpon>NavigationControl.xaml</DependentUpon>
+    <Compile Include="NavigationControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="NavigationControl.Designer.cs">
+      <DependentUpon>NavigationControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Notifications\JugglerBar.cs">
       <SubType>UserControl</SubType>
@@ -219,14 +205,23 @@
     <Compile Include="Notifications\JugglerBar.Designer.cs">
       <DependentUpon>JugglerBar.cs</DependentUpon>
     </Compile>
-    <Compile Include="Notifications\ReplayBar.xaml.cs">
-      <DependentUpon>ReplayBar.xaml</DependentUpon>
+    <Compile Include="Notifications\MissionBar.cs">
+      <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Notifications\MissionBar.xaml.cs">
-      <DependentUpon>MissionBar.xaml</DependentUpon>
+    <Compile Include="Notifications\MissionBar.Designer.cs">
+      <DependentUpon>MissionBar.cs</DependentUpon>
     </Compile>
-    <Compile Include="Notifications\NotifySection.xaml.cs">
-      <DependentUpon>NotifySection.xaml</DependentUpon>
+    <Compile Include="Notifications\NotifySection.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\NotifySection.Designer.cs">
+      <DependentUpon>NotifySection.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Notifications\ReplayBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\ReplayBar.Designer.cs">
+      <DependentUpon>ReplayBar.cs</DependentUpon>
     </Compile>
     <Compile Include="Notifications\SinglePlayerBar.cs">
       <SubType>UserControl</SubType>
@@ -302,6 +297,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Ranks.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ServerImagesHandler.cs" />
     <Compile Include="ToolTips\BattleTooltipRenderer.cs" />
@@ -428,8 +428,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UrlSecurityZone.cs" />
-    <Compile Include="UserToIconConverter.cs" />
     <Compile Include="VoiceCommand\BuildUnitRule.cs" />
     <Compile Include="VoiceCommand\FactoryPauseRule.cs" />
     <Compile Include="VoiceCommand\Pluralizer.cs" />
@@ -439,9 +437,17 @@
     <EmbeddedResource Include="AdvertiserWindow.resx">
       <DependentUpon>AdvertiserWindow.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Configs.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Configs.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Flags.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Flags.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainWindow.resx">
+      <DependentUpon>MainWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\BattleListTab.resx">
@@ -471,6 +477,9 @@
     <EmbeddedResource Include="MicroLobby\SpringsettingForm.resx">
       <DependentUpon>SpringsettingForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="NavigationControl.resx">
+      <DependentUpon>NavigationControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Notifications\BattleBar.resx">
       <DependentUpon>BattleBar.cs</DependentUpon>
     </EmbeddedResource>
@@ -485,9 +494,18 @@
     <EmbeddedResource Include="Notifications\JugglerBar.resx">
       <DependentUpon>JugglerBar.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\MissionBar.resx">
+      <DependentUpon>MissionBar.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Notifications\NotifyBarContainer.resx">
       <DependentUpon>NotifyBarContainer.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\NotifySection.resx">
+      <DependentUpon>NotifySection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\ReplayBar.resx">
+      <DependentUpon>ReplayBar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\ScannerBar.resx">
       <DependentUpon>ScannerBar.cs</DependentUpon>
@@ -502,16 +520,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Ranks.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources.resx">
-      <SubType>Designer</SubType>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <Compile Include="Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="ToolTips\TextTooltipRenderer.cs" />
     <Compile Include="ToolTips\ToolTipForm.cs">
       <SubType>Form</SubType>
@@ -523,6 +531,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
@@ -580,31 +593,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\PlayerStates\quickmatch_off.png" />
-    <None Include="Resources\star.png" />
     <Resource Include="Images\add.png" />
-    <Content Include="lua5.1.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Resource Include="Resources\Conf\cmdcolors.txt" />
-    <Resource Include="Resources\Conf\selectkeys.txt" />
-    <Resource Include="Resources\Conf\uikeys.txt" />
-    <Resource Include="Resources\Conf\lups.cfg" />
-    <Resource Include="Resources\Conf\lups.cfg0" />
-    <Resource Include="Resources\Conf\lups.cfg1" />
-    <Resource Include="Resources\Conf\springsettings.cfg0" />
-    <Resource Include="Resources\Conf\springsettings.cfg1" />
-    <Resource Include="Resources\Conf\springsettings.cfg3" />
-    <Resource Include="Resources\Conf\springsettings.cfg4" />
-    <Resource Include="Resources\Conf\lups.cfg2" />
-    <Resource Include="Resources\Conf\springsettings.cfg2" />
-    <None Include="Resources\Flags\in.png" />
-    <Resource Include="Resources\search.png" />
-    <Resource Include="Resources\battle.png" />
-    <Resource Include="Resources\chat.png" />
-    <Resource Include="Resources\game.png" />
-    <None Include="Resources\ZK_logo_square.png" />
-    <Resource Include="ZK_logo_square.ico" />
     <None Include="Properties\app.manifest">
       <SubType>Designer</SubType>
     </None>
@@ -642,6 +631,26 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\DownloadBar.resx">
     </EmbeddedResource>
+    <None Include="Resources\Conf\lups.cfg" />
+    <None Include="Resources\Conf\lups.cfg0" />
+    <None Include="Resources\Conf\lups.cfg1" />
+    <None Include="Resources\Conf\lups.cfg2" />
+    <None Include="Resources\Conf\lups.cfg4" />
+    <None Include="Resources\Conf\lups0.cfg" />
+    <None Include="Resources\Conf\lups1.cfg" />
+    <None Include="Resources\Conf\lups2.cfg" />
+    <None Include="Resources\Conf\lups3.cfg" />
+    <None Include="Resources\Conf\lups4.cfg" />
+    <None Include="Resources\Conf\springsettings.cfg0" />
+    <None Include="Resources\Conf\springsettings.cfg1" />
+    <None Include="Resources\Conf\springsettings.cfg2" />
+    <None Include="Resources\Conf\springsettings.cfg3" />
+    <None Include="Resources\Conf\springsettings.cfg4" />
+    <None Include="Resources\Conf\springsettings0.cfg" />
+    <None Include="Resources\Conf\springsettings1.cfg" />
+    <None Include="Resources\Conf\springsettings2.cfg" />
+    <None Include="Resources\Conf\springsettings3.cfg" />
+    <None Include="Resources\Conf\springsettings4.cfg" />
     <None Include="SpringDownloader_TemporaryKey.pfx" />
     <None Include="Web References\ModStats\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
@@ -675,76 +684,907 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Page Include="MainWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="BattleList.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="MicroLobby\BrowserControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="NavigationControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Notifications\ReplayBar.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Notifications\MissionBar.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Notifications\NotifySection.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ResourceDicts\Common.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ResourceDicts\SakButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ResourceDicts\SpinningDonut.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ResourceDicts\ZkButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ResourceDicts\ZkCheckbox.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ResourceDicts\ZkTextbox.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <COMReference Include="MSHTML">
-      <Guid>{3050F1C5-98B5-11CF-BB82-00AA00BDCE0B}</Guid>
-      <VersionMajor>4</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>primary</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="NightWatch\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Conf\cmdcolors.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Conf\selectkeys.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Conf\uikeys.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ae.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\af.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ag.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ai.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\al.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\am.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\an.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ao.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\as.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\at.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\au.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\aw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ax.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\az.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ba.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\be.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bi.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bj.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\br.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bv.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\by.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bz.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ca.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\catalonia.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ci.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ck.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cl.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\co.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cu.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cv.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cx.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cz.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\de.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\dj.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\dk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\dm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\do.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\dz.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ec.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ee.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\eg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\eh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\england.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\er.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\es.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\et.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\europeanunion.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\fam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\fi.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\fj.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\fk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\fm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\fo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\fr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ga.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gi.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gl.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gq.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gu.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\hk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\hm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\hn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\hr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ht.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\hu.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ch.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\id.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ie.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\il.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\in.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\io.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\iq.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ir.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\is.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\it.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\jm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\jo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\jp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ke.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\kg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\kh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ki.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\km.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\kn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\kp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\kr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\kw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ky.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\kz.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\la.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\lb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\lc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\li.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\lk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\lr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ls.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\lt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\lu.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\lv.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ly.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ma.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\md.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\me.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ml.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mq.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ms.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mu.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mv.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mx.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\my.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mz.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\na.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\nc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ne.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\nf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ng.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ni.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\nl.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\no.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\np.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\nr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\nu.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\nz.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\om.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\pa.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\pe.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\pf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\pg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ph.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\pk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\pl.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\pm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\pn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\pr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ps.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\pt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\pw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\py.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\qa.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\re.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ro.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\rs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ru.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\rw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sa.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\scotland.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\se.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\si.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sj.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sl.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\so.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\st.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sv.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sz.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\td.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\th.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tj.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tl.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\to.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tv.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tz.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ua.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ug.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\um.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\us.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\uy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\uz.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\va.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\vc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ve.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\vg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\vi.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\vn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\vu.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\wales.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\wf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ws.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ye.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\yt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\za.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\zm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\zw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ranks\1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ranks\2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ranks\3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ranks\4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ranks\5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ranks\6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ranks\7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ranks\8.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ranks\9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\battle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\boom.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\border.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cup.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\download.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\friend.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\game.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\grayuser.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\green.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\chat.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ingame.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\jimi.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\lock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\napoleon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\police.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\red.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\redlight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Remove.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\replay.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\robot.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\search.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\smurf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\soldier.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\springlogo_glass.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\star.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\user.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\warning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\WebDown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\yellow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ZK_logo_square.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayerStates\away.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayerStates\away.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayerStates\quickmatch_off.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayerStates\ready.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayerStates\spec.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayerStates\unready.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ZK_logo_square.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SpringDownloader.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="SpringDownloader.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

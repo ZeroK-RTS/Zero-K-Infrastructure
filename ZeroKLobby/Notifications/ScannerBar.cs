@@ -42,21 +42,21 @@ namespace ZeroKLobby.Notifications
 		{
 			if (e.WorkTotal > 1)
 			{
-				Program.MainWindow.Dispatcher.Invoke(new Action(() =>
+				Program.MainWindow.InvokeFunc(() =>
 					{
 						Program.NotifySection.AddBar(this);
 						progressBar1.Maximum = e.WorkTotal;
 						progressBar1.Value = Math.Min(e.WorkDone, e.WorkTotal);
 						label1.Text = "Scanning existing maps and games";
 						label2.Text = string.Format("{0}/{1} - {2}", e.WorkDone, e.WorkTotal, e.WorkName);
-					}));
+					});
 			}
 		}
 
 
 		void scanner_WorkStopped(object sender, EventArgs e)
 		{
-			Program.MainWindow.Dispatcher.Invoke(new Action(() => Program.NotifySection.RemoveBar(this)));
+			Program.MainWindow.InvokeFunc(() => Program.NotifySection.RemoveBar(this));
 		}
 	}
 }

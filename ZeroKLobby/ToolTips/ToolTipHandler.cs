@@ -2,21 +2,12 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using Application = System.Windows.Forms.Application;
-using Control = System.Windows.Controls.Control;
-using Point = System.Drawing.Point;
 
 namespace ZeroKLobby
 {
     public class ToolTipHandler: IMessageFilter, IDisposable
     {
-        public static readonly DependencyProperty MyToolTipProperty = DependencyProperty.RegisterAttached("MyToolTip", typeof(string), typeof(Control), new UIPropertyMetadata(null));
-
-
         private const int WM_MOUSEMOVE = 0x200;
         private bool lastActive = true;
         private Point lastMousePos;
@@ -62,11 +53,6 @@ namespace ZeroKLobby
             return string.Format("#map#{0}", name);
         }
 
-        public static string GetMyToolTip(DependencyObject obj) {
-            return (string)obj.GetValue(MyToolTipProperty);
-        }
-
-
         public static string GetUserToolTipString(string name) {
             return string.Format("#user#{0}", name);
         }
@@ -80,11 +66,6 @@ namespace ZeroKLobby
             UpdateTooltip(control, GetMapToolTipString(name));
         }
 
-        public static void SetMyToolTip(DependencyObject obj, string value) {
-            obj.SetValue(MyToolTipProperty, value);
-        }
-
-
         public void SetText(object target, string text) {
             UpdateTooltip(target, text);
         }
@@ -94,33 +75,13 @@ namespace ZeroKLobby
         }
 
         private void RefreshToolTip(bool invalidate) {
-            if (Program.MainWindow != null && Program.MainWindow.IsLoaded && !Program.CloseOnNext && Program.MainWindow.IsVisible && Program.MainWindow.WindowState != WindowState.Minimized) {
+            if (Program.MainWindow != null && Program.MainWindow.IsHandleCreated && !Program.CloseOnNext && Program.MainWindow.Visible && Program.MainWindow.WindowState != FormWindowState.Minimized) {
 
                 var control = MainWindow.Instance.GetHoveredControl();
                 string text = null;
                 if (control != null) tooltips.TryGetValue(control, out text);
-                else {
-                    var wpfElement = Mouse.DirectlyOver as FrameworkElement;
-                    while (wpfElement != null) {
-                        if (!string.IsNullOrEmpty(wpfElement.GetValue(MyToolTipProperty) as string)) {
-                            text = wpfElement.GetValue(MyToolTipProperty) as string;
-                            break;
-                        }
 
-                        if (!tooltips.TryGetValue(wpfElement, out text)) {
-                            var tag = wpfElement.Tag as IToolTipProvider;
-                            if (tag != null) {
-                                text = tag.ToolTip;
-                                break;
-                            }
-                        }
-                        else break;
-
-                        wpfElement = VisualTreeHelper.GetParent(wpfElement) as FrameworkElement;
-                    }
-                }
-
-                bool isWindowActive = WindowsApi.GetForegroundWindow() == (int)MainWindow.Instance.Handle || WindowsApi.GetForegroundWindow() == WindowsApi.GetActiveWindow();
+                bool isWindowActive = WindowsApi.GetForegroundWindowHandle() == (int)MainWindow.Instance.Handle || WindowsApi.GetForegroundWindowHandle() == WindowsApi.GetActiveWindow();
 
                 if (lastText != text || lastVisible != Visible || lastActive != isWindowActive) {
                     if (tooltip != null) {
@@ -142,7 +103,7 @@ namespace ZeroKLobby
                 if (tooltip != null) {
                     var mp = System.Windows.Forms.Control.MousePosition;
 
-                    var point = MainWindow.Instance.PointToScreen(new System.Windows.Point(5, 5));
+                    var point = MainWindow.Instance.PointToScreen(new Point(5, 5));
                     var scr = Screen.GetWorkingArea(new Point((int)point.X, (int)point.Y));
 
                     //need screen0's bounds because SetDesktopLocation is relative to screen0.

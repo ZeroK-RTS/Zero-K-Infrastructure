@@ -1,24 +1,21 @@
 using System;
 using System.Collections.Specialized;
-using System.Deployment.Application;
 using System.Diagnostics;
-using System.Globalization;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
-using System.Windows;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using LobbyClient;
 using PlasmaShared;
+using SpringDownloader.Notifications;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 using ZkData;
-using Application = System.Windows.Forms.Application;
-using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace ZeroKLobby
 {
@@ -50,42 +47,35 @@ namespace ZeroKLobby
         public static string StartupPath = Path.GetDirectoryName(Path.GetFullPath(Application.ExecutablePath));
         public static TasClient TasClient { get; private set; }
         public static ToolTipHandler ToolTip;
-        public static VoteBar VoteBar {get; private set;}
+        public static VoteBar VoteBar { get; private set; }
 
         /// <summary>
         /// windows only: do we have admin token?
         /// </summary>
-        public static bool IsAdmin()
-        {
+        public static bool IsAdmin() {
             return new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
         }
 
-        internal static void LoadConfig()
-        {
+        internal static void LoadConfig() {
             var configFilename = GetFullConfigPath();
-            if (!File.Exists(configFilename))
-            {
+            if (!File.Exists(configFilename)) {
                 // port old config      
-                if (ApplicationDeployment.IsNetworkDeployed)
+                /*if (ApplicationDeployment.IsNetworkDeployed)
                 {
                     try
                     {
                         File.Move(Path.Combine(ApplicationDeployment.CurrentDeployment.DataDirectory, "SpringDownloaderConfig.xml"), configFilename);
                     }
                     catch {}
-                }
+                }*/
             }
 
-            if (File.Exists(configFilename))
-            {
+            if (File.Exists(configFilename)) {
                 var xs = new XmlSerializer(typeof(Config));
-                try
-                {
+                try {
                     Conf = (Config)xs.Deserialize(new StringReader(File.ReadAllText(configFilename)));
                     Conf.IsFirstRun = false;
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     Trace.TraceError("Error reading config file: {0}", ex);
                     Conf = new Config();
                     Conf.IsFirstRun = true;
@@ -97,17 +87,16 @@ namespace ZeroKLobby
         }
 
         [STAThread]
-        public static bool Main(string[] args)
-        {
-            try
-            {
+        public static void Main(string[] args) {
+            try {
                 Trace.Listeners.Add(new ConsoleTraceListener());
                 Trace.Listeners.Add(new LogTraceListener());
 
-                if (Process.GetProcesses().Any(x => x.ProcessName.StartsWith("spring_"))) return false; // dont start if started from installer
+                if (Process.GetProcesses().Any(x => x.ProcessName.StartsWith("spring_"))) return; // dont start if started from installer
 
                 // if we started executable but clickonce link exists, runk through clickonce link
-                if (!ApplicationDeployment.IsNetworkDeployed)
+                // CONVERT
+                /*if (!ApplicationDeployment.IsNetworkDeployed)
                 {
                     if (!Debugger.IsAttached)
                     {
@@ -115,7 +104,7 @@ namespace ZeroKLobby
                         if (File.Exists(shortcutName))
                         {
                             Process.Start(shortcutName, String.Join("_divider_", args));
-                            return false;
+                            return;
                         }
                     }
                 }
@@ -131,7 +120,7 @@ namespace ZeroKLobby
                     {
                         Trace.TraceWarning("Failed to process clickonce arguments:{0}", ex);
                     }
-                }
+                }*/
 
                 StartupArgs = args;
 
@@ -139,8 +128,7 @@ namespace ZeroKLobby
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
 
-                if (!Debugger.IsAttached)
-                {
+                if (!Debugger.IsAttached) {
                     AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
                     Thread.GetDomain().UnhandledException += UnhandledException;
                     Application.ThreadException += Application_ThreadException;
@@ -151,13 +139,15 @@ namespace ZeroKLobby
                 //HttpWebRequest.DefaultCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
 
                 Utils.RegisterProtocol();
-                Utils.SetIeCompatibility();
+
+                // CONVERT
+                /*
                 if (ApplicationDeployment.IsNetworkDeployed) Trace.TraceInformation("Starting with version {0}", ApplicationDeployment.CurrentDeployment.CurrentVersion);
                 else
                 {
                     if (Debugger.IsAttached) Trace.TraceInformation("Starting with debugging");
                     else Trace.TraceError("Starting undeployed version!");
-                }
+                }*/
 
                 WebRequest.DefaultWebProxy = null;
                 ThreadPool.SetMaxThreads(500, 2000);
@@ -178,33 +168,20 @@ namespace ZeroKLobby
                         SaveConfig();
                     };
 
-                try
-                {
-                    if (!Debugger.IsAttached)
-                    {
+                try {
+                    if (!Debugger.IsAttached) {
                         mutex = new Mutex(false, "ZeroKLobby");
-                        if (!mutex.WaitOne((StartupArgs != null && StartupArgs.Length > 0) ? 200 : 10000, false))
-                        {
-                            if (args.Length > 0)
-                            {
-                                File.WriteAllLines(Utils.MakePath(SpringPaths.WritableDirectory, Config.IpcFileName),
-                                                   new string[] { string.Join(" ", args) });
-                                return false;
-                            }
-                            else
-                            {
-                                MessageBox.Show(
-                                    "Another copy of Zero-K lobby is still running" +
-                                    "\nMake sure the other lobby is closed (check task manager) before starting new one",
-                                    "There can be only one lobby running",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Stop);
-                            }
-                            return false;
+                        if (!mutex.WaitOne(10000, false)) {
+                            MessageBox.Show(
+                                "Another copy of Zero-K lobby is still running" +
+                                "\nMake sure the other lobby is closed (check task manager) before starting new one",
+                                "There can be only one lobby running",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Stop);
+                            return;
                         }
                     }
-                }
-                catch (AbandonedMutexException) {}
+                } catch (AbandonedMutexException) {}
 
                 FriendManager = new FriendManager();
                 AutoJoinManager = new AutoJoinManager();
@@ -221,11 +198,10 @@ namespace ZeroKLobby
                 Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
 
                 TasClient = new TasClient(TasClientInvoker,
-                                          string.Format("ZK {0}",
-                                                        ApplicationDeployment.IsNetworkDeployed
-                                                            ? ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString()
-                                                            : Application.ProductVersion),
-                                          GlobalConst.ZkLobbyUserCpu, true);
+                                          string.Format("ZK {0}", "2345"),
+                                          // CONVER ApplicationDeployment.IsNetworkDeployed? pplicationDeployment.CurrentDeployment.CurrentVersion.ToString(): Application.ProductVersion
+                                          GlobalConst.ZkLobbyUserCpu,
+                                          true);
 
                 SayCommandHandler = new SayCommandHandler(TasClient);
 
@@ -254,10 +230,8 @@ namespace ZeroKLobby
                         tas.ExistingUsers.TryGetValue(e.Data.UserName, out user);
                         if ((user != null && user.BanMute) || Conf.IgnoredUsers.Contains(e.Data.UserName)) e.Cancel = true;
 
-                        if (e.Data.Place == TasSayEventArgs.Places.Normal && e.Data.Text.StartsWith("!join") && user != null)
-                        {
-                            if (user.IsAdmin || user.IsZeroKAdmin || user.IsBot || (tas.MyBattle != null && tas.MyBattle.Founder.Name == user.Name))
-                            {
+                        if (e.Data.Place == TasSayEventArgs.Places.Normal && e.Data.Text.StartsWith("!join") && user != null) {
+                            if (user.IsAdmin || user.IsZeroKAdmin || user.IsBot || (tas.MyBattle != null && tas.MyBattle.Founder.Name == user.Name)) {
                                 e.Cancel = true;
                                 var parts = e.Data.Text.Split(' ');
                                 var battleID = tas.ExistingBattles.Values.Where(x => x.Founder.Name == parts[1]).First().BattleID;
@@ -267,7 +241,6 @@ namespace ZeroKLobby
                             }
                         }
                     };
-
 
                 ConnectBar = new ConnectBar(TasClient);
                 ModStore = new ModStore();
@@ -280,21 +253,22 @@ namespace ZeroKLobby
 
                 Application.AddMessageFilter(new ScrollMessageFilter());
 
-                if (Conf.StartMinimized) MainWindow.WindowState = WindowState.Minimized;
-                else MainWindow.WindowState = WindowState.Normal;
+                if (Conf.StartMinimized) MainWindow.WindowState = FormWindowState.Minimized;
+                else MainWindow.WindowState = FormWindowState.Normal;
 
                 BattleIconManager = new BattleIconManager(MainWindow);
                 BattleBar = new BattleBar();
                 NewVersionBar = new NewVersionBar();
-                VoteBar =new VoteBar();
+                VoteBar = new VoteBar();
 
                 //This make the size of every bar constant (only for height).
                 //This is a HAX, we wanted to make them constant because the bar will be DPI-scaled twice/thrice/multiple-time again somewhere but we don't know where it is to fix them.
-                System.Drawing.Size votebarSize = new System.Drawing.Size(0, VoteBar.Height); // Reference: http://stackoverflow.com/questions/5314041/set-minimum-window-size-in-c-sharp-net
-                System.Drawing.Size newversionbarSize = new System.Drawing.Size(0,NewVersionBar.Height);
-                System.Drawing.Size battlebarSize = new System.Drawing.Size(0, BattleBar.Height);
-                System.Drawing.Size connectbarSize = new System.Drawing.Size(0, ConnectBar.Height);
-                System.Drawing.Size jugglerbarSize = new System.Drawing.Size(0, JugglerBar.Height);
+                var votebarSize = new Size(0, VoteBar.Height);
+                    // Reference: http://stackoverflow.com/questions/5314041/set-minimum-window-size-in-c-sharp-net
+                var newversionbarSize = new Size(0, NewVersionBar.Height);
+                var battlebarSize = new Size(0, BattleBar.Height);
+                var connectbarSize = new Size(0, ConnectBar.Height);
+                var jugglerbarSize = new Size(0, JugglerBar.Height);
 
                 VoteBar.MinimumSize = votebarSize; //fix minimum size forever
                 VoteBar.MaximumSize = votebarSize; //fix maximum size forever
@@ -310,29 +284,24 @@ namespace ZeroKLobby
 
                 if (!Conf.DisableDriverCheck) PlasmaShared.Utils.StartAsync(DriverCheck.DoCheck);
 
-                if (Conf.ShowFriendsWindow == true)
-                {
+                if (Conf.ShowFriendsWindow == true) {
                     MainWindow.frdWindow = new FriendsWindow();
                     MainWindow.frdWindow.Show();
                     FriendsWindow.Creatable = false;
                 }
 
-                return true;
-            }
-            catch (Exception ex)
-            {
+                Application.Run(MainWindow);
+                ShutDown();
+            } catch (Exception ex) {
                 ErrorHandling.HandleException(ex, true);
                 Trace.TraceError("Error in application:" + ex);
             }
-            return false;
         }
 
 
-        internal static void SaveConfig()
-        {
+        internal static void SaveConfig() {
             var configFilename = GetFullConfigPath();
-            lock (configLock)
-            {
+            lock (configLock) {
                 var cols = new StringCollection();
                 cols.AddRange(Conf.AutoJoinChannels.OfType<string>().Distinct().ToArray());
                 Conf.AutoJoinChannels = cols;
@@ -343,14 +312,11 @@ namespace ZeroKLobby
             }
         }
 
-        public static void ShutDown()
-        {
-            try
-            {
+        public static void ShutDown() {
+            try {
                 if (!FriendsWindow.Creatable) MainWindow.frdWindow.Close();
                 if (!Debugger.IsAttached) mutex.ReleaseMutex();
-            }
-            catch {}
+            } catch {}
             if (ToolTip != null) ToolTip.Dispose();
             if (Downloader != null) Downloader.Dispose();
             if (SpringScanner != null) SpringScanner.Dispose();
@@ -358,21 +324,16 @@ namespace ZeroKLobby
         }
 
 
-        static string GetFullConfigPath()
-        {
-            if (ConfigDirectory == null)
-            {
+        static string GetFullConfigPath() {
+            if (ConfigDirectory == null) {
                 //detect configuration path once
-                if (Debugger.IsAttached)
-                {
-                    if (SpringPaths.IsDirectoryWritable(StartupPath))
-                    {
+                if (Debugger.IsAttached) {
+                    if (SpringPaths.IsDirectoryWritable(StartupPath)) {
                         //use startup path when on linux
                         //or if startup path is writable on windows
                         ConfigDirectory = StartupPath;
                     }
-                    else
-                    {
+                    else {
                         //if we are on windows and startup path isnt writable, use my documents/games/spring
                         ConfigDirectory = SpringPaths.GetMySpringDocPath();
                     }
@@ -384,42 +345,30 @@ namespace ZeroKLobby
         }
 
 
-        static void TasClientInvoker(TasClient.Invoker a)
-        {
-            if (!CloseOnNext)
-                if (!MainWindow.Dispatcher.CheckAccess()) MainWindow.Dispatcher.Invoke(a);
-                else a.Invoke();
+        static void TasClientInvoker(TasClient.Invoker a) {
+            if (!CloseOnNext) MainWindow.InvokeFunc(() => a());
         }
 
-        static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
-        {
-            try
-            {
+        static void Application_ThreadException(object sender, ThreadExceptionEventArgs e) {
+            try {
                 ErrorHandling.HandleException(e.Exception, true);
                 Trace.TraceError("unhandled exception: {0}", e.Exception);
-            }
-            catch {}
+            } catch {}
         }
 
-        static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            try
-            {
+        static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) {
+            try {
                 ErrorHandling.HandleException((Exception)e.ExceptionObject, e.IsTerminating);
                 Trace.TraceError("unhandled exception: {0}", e.ExceptionObject);
-            }
-            catch {}
+            } catch {}
         }
 
 
-        static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            try
-            {
+        static void UnhandledException(object sender, UnhandledExceptionEventArgs e) {
+            try {
                 ErrorHandling.HandleException((Exception)e.ExceptionObject, e.IsTerminating);
                 Trace.TraceError("unhandled exception: {0}", e.ExceptionObject);
-            }
-            catch {}
+            } catch {}
         }
     }
 }

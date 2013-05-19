@@ -1,5 +1,4 @@
 using System;
-using System.Deployment.Application;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -21,9 +20,12 @@ namespace ZeroKLobby
 				// write to error log
 				using (var s = File.AppendText(Utils.MakePath(Program.SpringPaths.WritableDirectory, Config.LogFile))) s.WriteLine("===============\r\n{0}\r\n{1}\r\n", DateTime.Now.ToString("g"), e);
 
+			    var version = "123";
+                // CONVERT
+                /*
 				var version = ApplicationDeployment.IsNetworkDeployed && ApplicationDeployment.CurrentDeployment != null
 												? ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString()
-												: Application.ProductVersion;
+												: Application.ProductVersion;*/
 				// send to error gathering site
 				if (!Debugger.IsAttached && sendWeb && Program.Conf != null)
 				{

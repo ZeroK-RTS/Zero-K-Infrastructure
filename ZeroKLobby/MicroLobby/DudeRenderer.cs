@@ -29,13 +29,13 @@ namespace ZeroKLobby.MicroLobby
 
                     for (var i = 0; i < friendCount; i++)
                     {
-                        if (x + Resources.Friend.Width > sizeX)
+                        if (x + Resources.friend.Width > sizeX)
                         {
                             x = 0;
-                            y += Resources.Friend.Height;
+                            y += Resources.friend.Height;
                         }
-                        g.DrawImage(Resources.Friend, x, y, Resources.Friend.Width, Resources.Friend.Height);
-                        x += Resources.Friend.Width;
+                        g.DrawImage(Resources.friend, x, y, Resources.friend.Width, Resources.friend.Height);
+                        x += Resources.friend.Width;
                     }
                     for (var i = 0; i < adminCount; i++)
                     {
@@ -45,7 +45,7 @@ namespace ZeroKLobby.MicroLobby
                             y += Resources.police.Height;
                         }
                         g.DrawImage(Resources.police, x, y, Resources.police.Width, Resources.police.Height);
-                        x += Resources.Friend.Width;
+                        x += Resources.friend.Width;
                     }
                     for (var i = 0; i < playerCount; i++)
                     {
@@ -64,7 +64,7 @@ namespace ZeroKLobby.MicroLobby
                             x = 0;
                             y += Resources.user.Height;
                         }
-                        g.DrawImage(Resources.Grayuser, x, y, Resources.user.Width, Resources.user.Height);
+                        g.DrawImage(Resources.grayuser, x, y, Resources.user.Width, Resources.user.Height);
                         x += Resources.user.Width;
                     }
                 }

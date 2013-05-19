@@ -1,6 +1,6 @@
-﻿namespace ZeroKLobby.MicroLobby
+﻿namespace ZeroKLobby.Notifications
 {
-    partial class ChatTab
+    partial class ReplayBar
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,22 +28,33 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // ChatTab
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(23, 17);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "label1";
+            // 
+            // ReplayBar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.Name = "ChatTab";
-            this.Size = new System.Drawing.Size(596, 444);
-            this.Load += new System.EventHandler(this.ChatTab_Load);
+            this.Controls.Add(this.label1);
+            this.Name = "ReplayBar";
+            this.Size = new System.Drawing.Size(339, 45);
+            this.Load += new System.EventHandler(this.ReplayBar_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
-
+        private System.Windows.Forms.Label label1;
     }
 }

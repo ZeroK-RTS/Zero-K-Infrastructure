@@ -10,13 +10,13 @@ namespace ZeroKLobby
     class ChatToSpeech
     {
         bool isSpeechEnabled = false;
-        readonly SpeechSynthesizer speechSynthesizer = new SpeechSynthesizer();
+        readonly SpeechSynthesizer speechSynthesizer;
         readonly ReadOnlyCollection<InstalledVoice> voices;
 
         public ChatToSpeech(Spring spring)
         {
-            try
-            {
+            try {
+                speechSynthesizer = new SpeechSynthesizer();
                 voices = speechSynthesizer.GetInstalledVoices();
                 spring.LogLineAdded += spring_LogLineAdded;
             }

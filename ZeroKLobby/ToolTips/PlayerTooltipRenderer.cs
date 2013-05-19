@@ -89,7 +89,7 @@ namespace ZeroKLobby
             }
             if (Program.FriendManager.Friends.Contains(user.Name))
             {
-							drawImage(Resources.Friend, 16, 16);
+							drawImage(Resources.friend, 16, 16);
                 drawString("Friend");
                 newLine();
             }
@@ -106,7 +106,7 @@ namespace ZeroKLobby
                 newLine();
                 if (user.IsAway)
                 {
-                    drawImage(Resources.AwayImage, 16, 16);
+                    drawImage(Resources.away, 16, 16);
                     drawString("User has been idle for " + DateTime.Now.Subtract(user.AwaySince.Value).PrintTimeRemaining() + ".");
                     newLine();
                 }
@@ -120,7 +120,7 @@ namespace ZeroKLobby
                 var top10 = Program.SpringieServer.GetTop10Rank(user.Name);
                 if (top10 > 0)
                 {
-									drawImage(Resources.Cup, 16, 16);
+									drawImage(Resources.cup, 16, 16);
                     drawString(string.Format("Top 10 Rank: {0}.", top10));
                     newLine();
                 }

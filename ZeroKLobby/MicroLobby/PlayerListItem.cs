@@ -195,16 +195,16 @@ namespace ZeroKLobby.MicroLobby
             if (top10 > 0)
             {
                 var oldProgression = x;
-                drawImage(Resources.Cup);
+                drawImage(Resources.cup);
                 x = oldProgression;
                 TextRenderer.DrawText(g, top10.ToString(), boldFont, new Point(bounds.Left + x + 1, bounds.Top), Color.Black, Color.Transparent);
                 x += 16;
             }
 
             if (user.IsInGame) drawImage(Resources.ingame);
-            else if (!isBattle && user.IsInBattleRoom) drawImage(Resources.Battle);
+            else if (!isBattle && user.IsInBattleRoom) drawImage(Resources.battle);
 
-            if (user.IsAway) drawImage(Resources.AwayImage);
+            if (user.IsAway) drawImage(Resources.away);
 
             if (isBattle && !userStatus.IsSpectator)
                 if (MissionSlot != null)

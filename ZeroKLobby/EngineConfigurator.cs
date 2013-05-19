@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using Application = System.Windows.Application;
 
 namespace ZeroKLobby
 {
@@ -16,18 +16,18 @@ namespace ZeroKLobby
 
         static readonly FileInfo[] FileInfos = new FileInfo[]
                                                {
-                                                   new FileInfo() { RelativePath = "cmdcolors.txt", Resource = "/Resources/Conf/cmdcolors.txt" },
+                                                   new FileInfo() { RelativePath = "cmdcolors.txt", Resource = "cmdcolors" },
                                                    new FileInfo()
                                                    {
                                                        RelativePath = "springsettings.cfg",
-                                                       Resource = "/Resources/Conf/springsettings.cfg",
+                                                       Resource = "springsettings",
                                                        KeyValueRegex = "([^=]+)=(.*)", //return "<key>=<value>", "<key>", and "<value>"
                                                        KeyValueFormat = "{0}={1}",
                                                        MergeRegex = "([^=]+)=", //return "<key>=", "<key>"
                                                        SpecialLines = "addResolution",
-                                                   }, new FileInfo() { RelativePath = "uikeys.txt", Resource = "/Resources/Conf/uikeys.txt" },
-                                                   new FileInfo() { RelativePath = "selectkeys.txt", Resource = "/Resources/Conf/selectkeys.txt" },
-                                                   new FileInfo() { RelativePath = "lups.cfg", Resource = "/Resources/Conf/lups.cfg" },
+                                                   }, new FileInfo() { RelativePath = "uikeys.txt", Resource = "uikeys" },
+                                                   new FileInfo() { RelativePath = "selectkeys.txt", Resource = "selectkeys" },
+                                                   new FileInfo() { RelativePath = "lups.cfg", Resource = "lups" },
                                                };
         readonly string path;
 
@@ -197,14 +197,15 @@ namespace ZeroKLobby
             return foundValue;
         }
 
-        string ReadResourceString(string uri)
-        {
-            try
-            {
-                using (var steam = new StreamReader(Application.GetResourceStream(new Uri(uri, UriKind.Relative)).Stream)) return steam.ReadToEnd();
+        public static string ReadResourceString(string uri) {
+            try {
+                var obj = Configs.ResourceManager.GetObject(uri);
+                if (obj is string) return obj as string;
+                return Encoding.UTF8.GetString((byte[])obj);
+            } catch (Exception ex) {
+                Trace.TraceError("Failed to load resource {0} :{1}", uri, ex);
+                return null;
             }
-            catch {}
-            return null;
         }
 
 

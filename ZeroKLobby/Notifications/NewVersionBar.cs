@@ -1,16 +1,16 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Deployment.Application;
 using System.Diagnostics;
 using System.Windows.Forms;
 using Timer = System.Threading.Timer;
 
 namespace ZeroKLobby.Notifications
 {
+    // CONVERT
 	public partial class NewVersionBar: UserControl, INotifyBar
 	{
 		NotifyBarContainer container;
-		readonly ApplicationDeployment deployment;
+		//readonly ApplicationDeployment deployment;
 		readonly Timer timer;
 		
 		/// <summary>
@@ -22,6 +22,7 @@ namespace ZeroKLobby.Notifications
 		{
 			InitializeComponent();
 
+            /*
 			if (ApplicationDeployment.IsNetworkDeployed && (deployment = ApplicationDeployment.CurrentDeployment) != null)
 			{
                 deployment.UpdateCompleted += deployment_UpdateCompleted;
@@ -30,11 +31,13 @@ namespace ZeroKLobby.Notifications
 			}
 
 			else Trace.TraceError("Zero-K not installed propery - get latest version from http://zero-k.info/");
+             * */
 		}
 
 
 		void timer_Tick(object token)
 		{
+            /*
 			try
 			{
 				UpdateCheckInfo updateInfo;
@@ -53,7 +56,7 @@ namespace ZeroKLobby.Notifications
 			catch (Exception ex)
 			{
 				Trace.TraceWarning("Error checking for update: {0}", ex);
-			}
+			}*/
 		}
 
 		public void AddedToContainer(NotifyBarContainer container)
@@ -71,8 +74,7 @@ namespace ZeroKLobby.Notifications
 
 		public void DetailClicked(NotifyBarContainer container)
 		{
-      Application.Restart();
-      System.Windows.Application.Current.Shutdown();
+            Application.Restart();
 		}
 
 		public Control GetControl()
@@ -98,9 +100,10 @@ namespace ZeroKLobby.Notifications
 				});
 		}
 
+        /*
 		void deployment_UpdateProgressChanged(object sender, DeploymentProgressChangedEventArgs e)
 		{
 			if (!barHidden) Program.MainWindow.InvokeFunc(() => { progressBar1.Value = e.ProgressPercentage; });
-		}
+		}*/
 	}
 }

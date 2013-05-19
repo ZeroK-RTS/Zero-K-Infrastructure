@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Newtonsoft.Json;
 using PlasmaShared;
 using ZkData;
+using ServiceStack.Text;
 
 namespace LobbyClient
 {
@@ -183,7 +183,7 @@ namespace LobbyClient
 
         static string EncodeJson(object data)
         {
-            string payload = JsonConvert.SerializeObject(data);
+            string payload = JsonSerializer.SerializeToString(data);
             return string.Format("!JSON {0} {1}", data.GetType().Name, payload);
         }
 
@@ -219,13 +219,13 @@ namespace LobbyClient
                 {
                     case "JugglerState":
                     {
-                        var state = JsonConvert.DeserializeObject<JugglerState>(payload);
+                        var state =  JsonSerializer.DeserializeFromString<JugglerState>(payload);
                         JugglerStateReceived(e, state);
                     }
                         break;
                     case "JugglerConfig":
                     {
-                        var config = JsonConvert.DeserializeObject<JugglerConfig>(payload);
+                        var config = JsonSerializer.DeserializeFromString<JugglerConfig>(payload);
                         JugglerConfigReceived(e, config);
                     }
 

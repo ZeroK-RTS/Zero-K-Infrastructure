@@ -3,12 +3,10 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Windows.Media.Animation;
 using JetBrains.Annotations;
 using LobbyClient;
 using PlasmaShared;
 using ZeroKLobby.Lines;
-using Label = System.Windows.Controls.Label;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -17,7 +15,6 @@ namespace ZeroKLobby.MicroLobby
     DateTime lastAnsweringMessageTime;
     public bool CanClose { get { return !Program.FriendManager.Friends.Contains(UserName); } }
 
-    public Storyboard FlashAnimation { get; set; }
 
     public Label Label { get; set; }
     public string UserName { get; set; }

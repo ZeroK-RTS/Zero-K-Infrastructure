@@ -167,7 +167,7 @@ namespace ZeroKLobby.Notifications
 			using (var g = Graphics.FromImage(image))
 			{
 				g.InterpolationMode = InterpolationMode.High;
-				g.DrawImage(Resources.Redlight, 0, 0, newSize, newSize);
+				g.DrawImage(Resources.redlight, 0, 0, newSize, newSize);
 			}
 			container.btnDetail.Image = image;
 			container.btnStop.Visible = false;

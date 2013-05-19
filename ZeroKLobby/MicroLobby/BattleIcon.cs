@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Windows.Media.Imaging;
 using LobbyClient;
 
 namespace ZeroKLobby.MicroLobby
@@ -13,7 +12,6 @@ namespace ZeroKLobby.MicroLobby
     public const int Height = 75;
     public const int Width = 300;
     const int minimapSize = 58;
-    BitmapSource cachedBitmapSource;
     bool dirty;
 
     bool disposed;
@@ -30,18 +28,6 @@ namespace ZeroKLobby.MicroLobby
     public Battle Battle { get; private set; }
 
 
-    public BitmapSource BitmapSource
-    {
-      get
-      {
-        if (dirty)
-        {
-          UpdateImage();
-          dirty = false;
-        }
-        return cachedBitmapSource;
-      }
-    }
     public Bitmap Image
     {
       get
@@ -155,7 +141,7 @@ namespace ZeroKLobby.MicroLobby
       if (resizedMinimap == null) return; // wait, map is not downloaded
 
       if (finishedMinimap != null) finishedMinimap.Dispose();
-      finishedMinimap = new Bitmap(Resources.Border.Width, Resources.Border.Height);
+      finishedMinimap = new Bitmap(Resources.border.Width, Resources.border.Height);
 
       using (var g = Graphics.FromImage(finishedMinimap))
       {
@@ -170,18 +156,18 @@ namespace ZeroKLobby.MicroLobby
           };
 
 
-        if (IsInGame) g.DrawImage(Resources.Boom, 10, 10, 50, 50);
+        if (IsInGame) g.DrawImage(Resources.boom, 10, 10, 50, 50);
         if (Battle.IsOfficial() && Battle.Founder.IsSpringieManaged) g.DrawImage(Resources.star, 48,8,15,15); 
-        if (Battle.IsPassworded) drawIcon(Resources.Lock);
+        if (Battle.IsPassworded) drawIcon(Resources._lock);
         if (Battle.IsReplay) drawIcon(Resources.replay);
         if (Battle.Rank > 0) drawIcon(Images.GetRank(Battle.Rank));
         if (Battle.IsLocked)
         {
           var s = 20;
-          g.DrawImage(Resources.Redlight, minimapSize - s + 3, minimapSize - s + 3, s, s);
+          g.DrawImage(Resources.redlight, minimapSize - s + 3, minimapSize - s + 3, s, s);
         }
 
-        g.DrawImage(Resources.Border, 0, 0, 70, 70);
+        g.DrawImage(Resources.border, 0, 0, 70, 70);
       }
     }
 
@@ -215,7 +201,7 @@ namespace ZeroKLobby.MicroLobby
         if (finishedMinimap != null) g.DrawImageUnscaled(finishedMinimap, 3, 3);
         else
         {
-          g.DrawImage(Resources.Download, 4, 3, 61, 64);
+          g.DrawImage(Resources.download, 4, 3, 61, 64);
           g.InterpolationMode = InterpolationMode.HighQualityBicubic;
           g.InterpolationMode = InterpolationMode.Default;
         }
@@ -226,7 +212,6 @@ namespace ZeroKLobby.MicroLobby
         g.DrawImageUnscaled(playersBoxImage, MapCellSize.Width, y + 16*2);
         g.ResetClip();
       }
-      cachedBitmapSource = image.ToBitmapSource();
     }
 
     public string ToolTip { get { return ToolTipHandler.GetBattleToolTipString(Battle.BattleID); } }
