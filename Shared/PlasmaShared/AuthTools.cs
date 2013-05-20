@@ -7,7 +7,8 @@ namespace PlasmaShared
     {
         public static string GetSiteAuthToken(string login, string passwordHash, DateTime? date = null) {
             if (date == null) date = DateTime.Now;
-            return Convert.ToBase64String((byte[])Hash.HashString(string.Format("{0}{1}{2:yyyy-mm-dd}", login,passwordHash, date)));
+            var str = string.Format("{0}{1}{2:yyyy-MM-dd}", login, passwordHash, date);
+            return Convert.ToBase64String((byte[])Hash.HashString(str));
         }
 
         public static bool ValidateSiteAuthToken(string login, string passwordHash, string token) {
