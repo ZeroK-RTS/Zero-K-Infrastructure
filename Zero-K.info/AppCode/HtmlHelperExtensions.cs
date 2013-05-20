@@ -451,7 +451,7 @@ namespace System.Web.Mvc
             if (!Global.IsWebLobbyAccess) return new MvcHtmlString("spring://" + link(null).ToString());
             else if (HttpContext.Current.Session["zkl"] != null) {
                 return
-                    new MvcHtmlString(string.Format("javascript:$('#zkl_iframe').src='http://127.0.0.1:{0}/link={1}\';",
+                    new MvcHtmlString(string.Format("javascript:document.getElementId('zkl_iframe').src='http://127.0.0.1:{0}/?link={1}\';",
                                                     HttpContext.Current.Session["zkl"],
                                                     Convert.ToBase64String(Encoding.UTF8.GetBytes(link(null).ToString()))));
             }

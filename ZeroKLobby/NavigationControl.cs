@@ -55,8 +55,6 @@ namespace ZeroKLobby
 
                 if (CurrentPage != null && CurrentPage.ToString() == value) return; // we are already there, no navigation needed
 
-
-
                 var step = GoToPage(value.Split('/'));
                 if (step != null) {
                     lastPaths.Add(value);
@@ -64,6 +62,8 @@ namespace ZeroKLobby
                     CurrentPage = step;
                     //forwardStack.Clear();
                 }
+
+                if (value.StartsWith("http://") || value.StartsWith("https://")) Program.BrowserInterop.OpenUrl(value);
 
                 //PropertyChanged(this, new PropertyChangedEventArgs("Path"));
             }
