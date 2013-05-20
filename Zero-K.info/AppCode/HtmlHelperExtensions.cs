@@ -448,18 +448,18 @@ namespace System.Web.Mvc
         }
 
         public static MvcHtmlString PrintSpringLink(this HtmlHelper helper, Func<object, HelperResult> link) {
-            if (!Global.IsWebLobbyAccess) return new MvcHtmlString("spring://" + link(null).ToString());
-            else if (HttpContext.Current.Session["zkl"] != null) {
+            if (HttpContext.Current.Session["zkl"] != null) {
                 return
                     new MvcHtmlString(string.Format("javascript:document.getElementById('zkl_iframe').src='http://127.0.0.1:{0}/?link={1}\';",
                                                     HttpContext.Current.Session["zkl"],
                                                     Convert.ToBase64String(Encoding.UTF8.GetBytes(link(null).ToString()))));
             }
-            else
+            if (Global.IsWebLobbyAccess)
                 return
                     new MvcHtmlString(string.Format("javascript:window.parent.postMessage('{0}','{1}');",
                                                     link(null),
                                                     HttpContext.Current.Session["weblobby"]));
+            return new MvcHtmlString("spring://" + link(null).ToString());
         }
 
         public static MvcHtmlString PrintStructureState(this HtmlHelper helper, PlanetStructure s) {
