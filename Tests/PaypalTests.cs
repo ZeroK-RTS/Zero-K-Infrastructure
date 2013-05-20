@@ -5,6 +5,7 @@ using System.Text;
 using NUnit.Framework;
 using NightWatch;
 using PlasmaShared;
+using ZkData;
 
 namespace Tests
 {
@@ -15,6 +16,9 @@ namespace Tests
         
         [Test]
         public void CheckConversion() {
+            var acc = Account.AccountByName(new ZkDataContext(), "CarRepairer");
+            Console.WriteLine(AuthTools.GetSiteAuthToken(acc.Name, acc.Password));
+
             Console.WriteLine("100 CZK in EUR = " + PayPalInterface.ConvertToEuros("CZK", 100));
         }
 

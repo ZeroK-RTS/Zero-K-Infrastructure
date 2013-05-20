@@ -122,6 +122,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="AuthTools.cs" />
     <Compile Include="ChangeEventArgs.cs" />
     <Compile Include="Connection.cs" />
     <Compile Include="Data\Account.cs" />

@@ -192,6 +192,7 @@ namespace ZeroKWeb.Controllers
 			if (acc == null) return Content("Invalid password");
 			else
 			{
+                // todo replace with safer permanent cookie
 				Response.SetCookie(new HttpCookie(GlobalConst.LoginCookieName, login) { Expires = DateTime.Now.AddMonths(12) });
 				Response.SetCookie(new HttpCookie(GlobalConst.PasswordHashCookieName, hashed) { Expires = DateTime.Now.AddMonths(12) });
 

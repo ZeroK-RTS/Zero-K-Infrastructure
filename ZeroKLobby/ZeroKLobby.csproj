@@ -135,6 +135,7 @@
     <Compile Include="AdvertiserWindow.designer.cs">
       <DependentUpon>AdvertiserWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="BrowserInterop.cs" />
     <Compile Include="ButtonInfo.cs" />
     <Compile Include="ChatToSpeech.cs" />
     <Compile Include="Configs.Designer.cs">
@@ -414,10 +415,10 @@
     <Compile Include="FormLog.Designer.cs">
       <DependentUpon>FormLog.cs</DependentUpon>
     </Compile>
-    <Compile Include="MapDownloader\DownloaderTab.cs">
+    <Compile Include="MicroLobby\DownloaderTab.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MapDownloader\DownloaderTab.Designer.cs">
+    <Compile Include="MicroLobby\DownloaderTab.Designer.cs">
       <DependentUpon>DownloaderTab.cs</DependentUpon>
     </Compile>
     <Compile Include="Notifications\NotifyBarContainer.cs">
@@ -487,7 +488,7 @@
       <DependentUpon>FormLog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="MapDownloader\DownloaderTab.resx">
+    <EmbeddedResource Include="MicroLobby\DownloaderTab.resx">
       <DependentUpon>DownloaderTab.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -683,9 +684,7 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="NightWatch\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="Resources\Conf\cmdcolors.txt" />
   </ItemGroup>
