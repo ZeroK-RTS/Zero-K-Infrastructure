@@ -97,11 +97,12 @@ namespace ZeroKWeb
             }
 
             Account acc = null;
-            if (Request[GlobalConst.LoginCookieName] != null) acc = AuthServiceClient.VerifyAccountHashed(Request[GlobalConst.LoginCookieName], Request[GlobalConst.PasswordHashCookieName]);
-            if (Request[GlobalConst.ASmallCakeCookieName] != null) {
+            if (Request[GlobalConst.ASmallCakeCookieName] != null)
+            {
                 var testAcc = Account.AccountByName(new ZkDataContext(), Request[GlobalConst.ASmallCakeLoginCookieName]);
                 if (testAcc != null) if (AuthTools.ValidateSiteAuthToken(testAcc.Name, testAcc.Password, Request[GlobalConst.ASmallCakeCookieName])) acc = testAcc;
             }
+            if (acc == null) if (Request[GlobalConst.LoginCookieName] != null) acc = AuthServiceClient.VerifyAccountHashed(Request[GlobalConst.LoginCookieName], Request[GlobalConst.PasswordHashCookieName]);
 
             if (acc != null) {
                 var ip = GetUserIP();
