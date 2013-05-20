@@ -28,14 +28,14 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-            this.btnSubmit = new System.Windows.Forms.Button();
+            this.btnSubmit = new ZeroKLobby.BitmapButton();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tbLogin = new System.Windows.Forms.TextBox();
             this.tbPassword = new System.Windows.Forms.TextBox();
             this.lbInfo = new System.Windows.Forms.Label();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnRegister = new System.Windows.Forms.Button();
+            this.btnCancel = new ZeroKLobby.BitmapButton();
+            this.btnRegister = new ZeroKLobby.BitmapButton();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.labelProxyInfo = new System.Windows.Forms.Label();
@@ -44,7 +44,7 @@
             this.rgName = new System.Windows.Forms.TextBox();
             this.rgPassword = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.button1 = new ZeroKLobby.BitmapButton();
             this.label4 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();

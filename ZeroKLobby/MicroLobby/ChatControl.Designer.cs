@@ -37,7 +37,7 @@ namespace ZeroKLobby.MicroLobby
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.ChatBox = new ZeroKLobby.MicroLobby.ChatBox();
             this.TopicPanel = new System.Windows.Forms.Panel();
-            this.hideButton = new System.Windows.Forms.Button();
+            this.hideButton = new ZeroKLobby.BitmapButton();
             this.TopicBox = new ZeroKLobby.MicroLobby.ChatBox();
             this.sendBox = new ZeroKLobby.MicroLobby.SendBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();

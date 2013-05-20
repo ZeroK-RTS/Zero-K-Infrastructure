@@ -31,7 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FriendsWindow));
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.buttonAddFriend = new System.Windows.Forms.Button();
+            this.buttonAddFriend = new ZeroKLobby.BitmapButton();
             this.labelFriends = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();

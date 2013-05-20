@@ -34,10 +34,10 @@
             this.battleTitleBox = new System.Windows.Forms.TextBox();
             this.passwordBox = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.okButton = new System.Windows.Forms.Button();
-            this.cancelButton = new System.Windows.Forms.Button();
+            this.okButton = new ZeroKLobby.BitmapButton();
+            this.cancelButton = new ZeroKLobby.BitmapButton();
             this.gameBox = new System.Windows.Forms.ComboBox();
-            this.showAdvancedButton = new System.Windows.Forms.Button();
+            this.showAdvancedButton = new ZeroKLobby.BitmapButton();
             this.advancedOptionsGroup = new System.Windows.Forms.GroupBox();
             this.springieCommandsBox = new System.Windows.Forms.TextBox();
             this.rapidTagBox = new System.Windows.Forms.TextBox();

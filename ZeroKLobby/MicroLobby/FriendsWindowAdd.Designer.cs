@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.labelAddFriend = new System.Windows.Forms.Label();
-            this.buttonCancel = new System.Windows.Forms.Button();
-            this.buttonOK = new System.Windows.Forms.Button();
+            this.buttonCancel = new ZeroKLobby.BitmapButton();
+            this.buttonOK = new ZeroKLobby.BitmapButton();
             this.textBoxAddFriend = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 

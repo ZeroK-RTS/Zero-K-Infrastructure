@@ -29,7 +29,7 @@
     {
       this.components = new System.ComponentModel.Container();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
-      this.btnReload = new System.Windows.Forms.Button();
+      this.btnReload = new ZeroKLobby.BitmapButton();
       this.tvAvailable = new System.Windows.Forms.TreeView();
       this.panel1 = new System.Windows.Forms.Panel();
       this.label2 = new System.Windows.Forms.Label();

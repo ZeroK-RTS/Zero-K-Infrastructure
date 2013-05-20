@@ -39,7 +39,7 @@ namespace ZeroKLobby.Notifications
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.cbQm = new System.Windows.Forms.CheckBox();
-            this.battleExtras = new System.Windows.Forms.Button();
+            this.battleExtras = new ZeroKLobby.BitmapButton();
             this.picoChat = new ZeroKLobby.MicroLobby.ChatBox();
             ((System.ComponentModel.ISupportInitialize)(this.gameBox)).BeginInit();
             this.panel1.SuspendLayout();

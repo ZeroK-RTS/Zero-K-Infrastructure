@@ -212,7 +212,7 @@ namespace ZeroKLobby.MicroLobby
     private void InitializeComponent()
     {
       this.tabControl = new System.Windows.Forms.TabControl();
-      this.butApplyChanges = new System.Windows.Forms.Button();
+      this.butApplyChanges = new ZeroKLobby.BitmapButton();
       this.proposedLabel = new System.Windows.Forms.Label();
       this.SuspendLayout();
       // 

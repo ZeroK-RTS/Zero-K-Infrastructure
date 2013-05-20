@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
-            this.applyButton = new System.Windows.Forms.Button();
-            this.cancelButton = new System.Windows.Forms.Button();
-            this.engineDefaultButton = new System.Windows.Forms.Button();
+            this.applyButton = new ZeroKLobby.BitmapButton();
+            this.cancelButton = new ZeroKLobby.BitmapButton();
+            this.engineDefaultButton = new ZeroKLobby.BitmapButton();
             this.doneLabel = new System.Windows.Forms.Label();
             this.loadDefaultDone = new System.Windows.Forms.Label();
             this.highlighttextBox = new System.Windows.Forms.TextBox();

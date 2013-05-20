@@ -39,7 +39,7 @@ namespace ZeroKLobby.MicroLobby
             var isDesignMode = Process.GetCurrentProcess().ProcessName == "devenv"; // workaround for this.DesignMode not working in constructor
             if (isDesignMode) return;
 
-            var extras = new Button();
+            var extras = new BitmapButton();
             extras.Text = "Extras";
             extras.Click += (s, e) => { ContextMenus.GetChannelContextMenu(this).Show(extras, new Point(0, 0)); };
             ChatBox.Controls.Add(extras);

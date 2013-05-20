@@ -28,7 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.btnAgree = new System.Windows.Forms.Button();
+			this.btnAgree = new ZeroKLobby.BitmapButton();
 			this.richTextBox1 = new System.Windows.Forms.RichTextBox();
 			this.SuspendLayout();
 			// 

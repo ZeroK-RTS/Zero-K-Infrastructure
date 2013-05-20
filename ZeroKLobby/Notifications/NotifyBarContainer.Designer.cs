@@ -15,8 +15,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnStop = new System.Windows.Forms.Button();
-            this.btnDetail = new System.Windows.Forms.Button();
+            this.btnStop = new ZeroKLobby.BitmapButton();
+            this.btnDetail = new ZeroKLobby.BitmapButton();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();

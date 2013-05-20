@@ -142,7 +142,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Configs.resx</DependentUpon>
     </Compile>
-    <Compile Include="Controls\HeaderButton.cs">
+    <Compile Include="Controls\BitmapButton.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="DriverCheck.cs" />

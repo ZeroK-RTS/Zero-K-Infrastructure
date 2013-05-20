@@ -30,8 +30,8 @@
         {
 					this.lbTitle = new System.Windows.Forms.Label();
 					this.tbPassword = new System.Windows.Forms.TextBox();
-					this.btnOk = new System.Windows.Forms.Button();
-					this.btnCancel = new System.Windows.Forms.Button();
+					this.btnOk = new ZeroKLobby.BitmapButton();
+					this.btnCancel = new ZeroKLobby.BitmapButton();
 					this.SuspendLayout();
 					// 
 					// lbTitle

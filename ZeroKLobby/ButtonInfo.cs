@@ -47,7 +47,7 @@ namespace ZeroKLobby
         }
 
         public Control GetButton() {
-            button = new Button();
+            button = new BitmapButton();
             button.Text = Label;
             button.Click += (sender, args) =>
                 { Program.MainWindow.navigationControl.Path = TargetPath; };

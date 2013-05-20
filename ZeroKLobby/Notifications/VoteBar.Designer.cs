@@ -32,8 +32,8 @@
             this.pbNo = new System.Windows.Forms.ProgressBar();
             this.lbYes = new System.Windows.Forms.Label();
             this.lbNo = new System.Windows.Forms.Label();
-            this.btnYes = new System.Windows.Forms.Button();
-            this.btnNo = new System.Windows.Forms.Button();
+            this.btnYes = new ZeroKLobby.BitmapButton();
+            this.btnNo = new ZeroKLobby.BitmapButton();
             this.lbQuestion = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 

@@ -31,8 +31,8 @@
             this.cbActive = new System.Windows.Forms.CheckBox();
             this.tbDelay = new System.Windows.Forms.TextBox();
             this.tbAdlines = new System.Windows.Forms.TextBox();
-            this.btnNow = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btnNow = new ZeroKLobby.BitmapButton();
+            this.button2 = new ZeroKLobby.BitmapButton();
             this.tbSuffix = new System.Windows.Forms.TextBox();
             this.tbChannels = new System.Windows.Forms.TextBox();
             this.tbPrefix = new System.Windows.Forms.TextBox();
