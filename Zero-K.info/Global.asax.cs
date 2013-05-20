@@ -99,12 +99,8 @@ namespace ZeroKWeb
             Account acc = null;
             if (Request[GlobalConst.LoginCookieName] != null) acc = AuthServiceClient.VerifyAccountHashed(Request[GlobalConst.LoginCookieName], Request[GlobalConst.PasswordHashCookieName]);
             if (Request[GlobalConst.ASmallCakeCookieName] != null) {
-                using (var db = new ZkDataContext()) {
-                    var testAcc = Account.AccountByName(db,Request[GlobalConst.ASmallCakeLoginCookieName]);
-                    if (testAcc != null) {
-                        if (AuthTools.ValidateSiteAuthToken(testAcc.Name, testAcc.Password, Request[GlobalConst.ASmallCakeCookieName])) acc = testAcc;
-                    }
-                }
+                var testAcc = Account.AccountByName(new ZkDataContext(), Request[GlobalConst.ASmallCakeLoginCookieName]);
+                if (testAcc != null) if (AuthTools.ValidateSiteAuthToken(testAcc.Name, testAcc.Password, Request[GlobalConst.ASmallCakeCookieName])) acc = testAcc;
             }
 
             if (acc != null) {
@@ -133,9 +129,7 @@ namespace ZeroKWeb
                 Session["weblobby"] = Request.QueryString["weblobby"];
             }
 
-            if (Request.QueryString["zkl"] != null) {
-                Session["zkl"] = Request.QueryString["zkl"];
-            }
+            if (Request.QueryString["zkl"] != null) Session["zkl"] = Request.QueryString["zkl"];
         }
     }
 }
