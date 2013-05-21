@@ -166,14 +166,14 @@ namespace ZeroKLobby.MicroLobby
                 var x = 0;
                 var y = 0;
 
-                g.DrawImage(Resources.spec, x + 8, 8, 60, 60);
-                g.DrawImage(Resources.border, x + 3, 3, 70, 70);
+                g.DrawImage(ZklResources.spec, x + 8, 8, 60, 60);
+                g.DrawImage(ZklResources.border, x + 3, 3, 70, 70);
                 g.DrawString("QuickMatch", BattleIcon.TitleFont, BattleIcon.TextBrush, x + BattleIcon.MapCellSize.Width, y + 3);
 
                 x += BattleIcon.Width;
 
 
-                g.DrawImage(Resources.border, x+ 3, 3, 70, 70);
+                g.DrawImage(ZklResources.border, x + 3, 3, 70, 70);
                 g.DrawString("Open a new battle.", BattleIcon.TitleFont, BattleIcon.TextBrush, x + BattleIcon.MapCellSize.Width, y + 3);
 
                 x += BattleIcon.Width;

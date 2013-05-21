@@ -98,7 +98,7 @@ namespace ZeroKLobby.Notifications
         public void AddedToContainer(NotifyBarContainer container)
         {
             container.btnDetail.BackgroundImageLayout = ImageLayout.Center;
-            container.btnDetail.BackgroundImage = Resources.WebDown;
+            container.btnDetail.BackgroundImage = ZklResources.WebDown;
             container.btnDetail.Enabled = false;
         }
 

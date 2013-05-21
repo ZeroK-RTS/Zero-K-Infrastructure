@@ -61,7 +61,7 @@ namespace ZeroKLobby.MicroLobby
 
         void HostDialog_Load(object sender, EventArgs e)
         {
-            pictureBox1.Image = Resources.star;
+            pictureBox1.Image = ZklResources.star;
         }
 
 

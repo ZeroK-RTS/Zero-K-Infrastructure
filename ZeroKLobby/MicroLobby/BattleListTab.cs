@@ -21,8 +21,7 @@ namespace ZeroKLobby.MicroLobby
 			base.OnCreateControl();
 			if (DesignMode) return;
 
-			var lookingGlass = new PictureBox
-			                   { Width = 20, Height = 20, Image = Resources.search, SizeMode = PictureBoxSizeMode.CenterImage, Dock = DockStyle.Left };
+			var lookingGlass = new PictureBox { Width = 20, Height = 20, Image = ZklResources.search, SizeMode = PictureBoxSizeMode.CenterImage, Dock = DockStyle.Left };
 			Program.ToolTip.SetText(lookingGlass, "Search game, description, map or player");
 			Program.ToolTip.SetText(searchBox, "Search game, description, map or player");
 

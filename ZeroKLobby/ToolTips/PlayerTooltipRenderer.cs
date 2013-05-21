@@ -77,25 +77,25 @@ namespace ZeroKLobby
             }
             if (user.IsBot)
             {
-							drawImage(Resources.robot, 16, 16);
+                drawImage(ZklResources.robot, 16, 16);
                 drawString("Bot");
                 newLine();
             }
             if (user.IsAdmin || user.IsZeroKAdmin)
             {
-							drawImage(Resources.police, 16, 16);
+                drawImage(ZklResources.police, 16, 16);
                 drawString("Administrator");
                 newLine();
             }
             if (Program.FriendManager.Friends.Contains(user.Name))
             {
-							drawImage(Resources.friend, 16, 16);
+                drawImage(ZklResources.friend, 16, 16);
                 drawString("Friend");
                 newLine();
             }
             if (user.IsZkLobbyUser)
             {
-				drawImage(Resources.ZK_logo_square, 16, 16);
+                drawImage(ZklResources.ZK_logo_square, 16, 16);
                 drawString("ZK Lobby (Windows) User");
                 newLine();
             }
@@ -106,13 +106,13 @@ namespace ZeroKLobby
                 newLine();
                 if (user.IsAway)
                 {
-                    drawImage(Resources.away, 16, 16);
+                    drawImage(ZklResources.away, 16, 16);
                     drawString("User has been idle for " + DateTime.Now.Subtract(user.AwaySince.Value).PrintTimeRemaining() + ".");
                     newLine();
                 }
                 if (user.IsInGame)
                 {
-			        drawImage(Resources.ingame, 16, 16);
+                    drawImage(ZklResources.ingame, 16, 16);
                     var time = DateTime.Now.Subtract(user.InGameSince.Value).PrintTimeRemaining();
                     drawString("Playing since " + time + " ago.");
                     newLine();
@@ -120,7 +120,7 @@ namespace ZeroKLobby
                 var top10 = Program.SpringieServer.GetTop10Rank(user.Name);
                 if (top10 > 0)
                 {
-									drawImage(Resources.cup, 16, 16);
+                    drawImage(ZklResources.cup, 16, 16);
                     drawString(string.Format("Top 10 Rank: {0}.", top10));
                     newLine();
                 }

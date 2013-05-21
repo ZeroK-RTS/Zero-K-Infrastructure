@@ -119,7 +119,7 @@ namespace ZeroKLobby.Notifications
 
         public void AddedToContainer(NotifyBarContainer container) {
             BarContainer = container;
-            BarContainer.btnDetail.Image = Resources.spec;
+            BarContainer.btnDetail.Image = ZklResources.spec;
             Program.ToolTip.SetText(BarContainer.btnDetail, "Force QuickMatch check now");
         }
 

@@ -32,14 +32,14 @@ namespace ZeroKLobby.MicroLobby
         static TextImage()
         {
             bitmaps = new Image[8];
-						bitmaps[user] = Resources.user;
-						bitmaps[friend] = Resources.friend;
-						bitmaps[admin] = Resources.police;
-						bitmaps[bot] = Resources.robot;
-						bitmaps[jimi] = Resources.jimi;
-						bitmaps[smurf] = Resources.smurf;
-						bitmaps[soldier] = Resources.soldier;
-						bitmaps[napoleon] = Resources.napoleon;
+            bitmaps[user] = ZklResources.user;
+            bitmaps[friend] = ZklResources.friend;
+            bitmaps[admin] = ZklResources.police;
+            bitmaps[bot] = ZklResources.robot;
+            bitmaps[jimi] = ZklResources.jimi;
+            bitmaps[smurf] = ZklResources.smurf;
+            bitmaps[soldier] = ZklResources.soldier;
+            bitmaps[napoleon] = ZklResources.napoleon;
         }
 
         public static Image GetImage(int imageNumber)
@@ -47,7 +47,7 @@ namespace ZeroKLobby.MicroLobby
             if (imageNumber >= bitmaps.Length)
             {
                 Trace.WriteLine("Image numbe out of bounds (" + imageNumber + ").");
-								return Resources.user;
+                return ZklResources.user;
             }
             return bitmaps[imageNumber];
         }
@@ -56,16 +56,17 @@ namespace ZeroKLobby.MicroLobby
         {
             User user;
             if (Program.TasClient.ExistingUsers.TryGetValue(userName, out user)) {
-              if (userName == Program.TasClient.UserName) return Resources.jimi;
-              if (user.IsBot) return Resources.robot;
-              if (Program.FriendManager.Friends.Contains(user.Name)) return Resources.friend;
-              if (user.IsAdmin|| user.IsZeroKAdmin) return Resources.police;
-              if (user.EffectiveElo >= 1800)  return Resources.napoleon;
-              if (user.EffectiveElo >= 1600) return Resources.soldier;
-              if (user.EffectiveElo < 1400) return Resources.smurf;
-                
-            } else return Resources.grayuser;
-						return Resources.user;
+                if (userName == Program.TasClient.UserName) return ZklResources.jimi;
+                if (user.IsBot) return ZklResources.robot;
+                if (Program.FriendManager.Friends.Contains(user.Name)) return ZklResources.friend;
+                if (user.IsAdmin || user.IsZeroKAdmin) return ZklResources.police;
+                if (user.EffectiveElo >= 1800) return ZklResources.napoleon;
+                if (user.EffectiveElo >= 1600) return ZklResources.soldier;
+                if (user.EffectiveElo < 1400) return ZklResources.smurf;
+
+            }
+            else return ZklResources.grayuser;
+            return ZklResources.user;
         }
 
         public static string GetUserImageCode(string userName)

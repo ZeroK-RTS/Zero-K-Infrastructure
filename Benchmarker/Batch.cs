@@ -4,8 +4,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Newtonsoft.Json;
 using PlasmaShared;
+using ServiceStack.Text;
+
 
 namespace Benchmarker
 {
@@ -19,13 +20,18 @@ namespace Benchmarker
         /// <summary>
         /// Benchmark mutators to use
         /// </summary>
-        public List<Benchmark> Benchmarks = new List<Benchmark>();
+        public List<Benchmark> Benchmarks  { get; set; }
         /// <summary>
         /// Cases to check
         /// </summary>
-        public List<TestCase> TestCases = new List<TestCase>();
+        public List<TestCase> TestCases { get; set; }
         public event Action<BatchRunResult> AllCompleted = (result) => { };
         public event Action<TestCase, Benchmark, string> RunCompleted = (run, benchmark, log) => { };
+
+        public Batch() {
+            Benchmarks = new List<Benchmark>();
+            TestCases = new List<TestCase>();
+        }
 
         public void Abort() {
             isAborted = true;
@@ -51,7 +57,7 @@ namespace Benchmarker
         }
 
         public static Batch Load(string path, SpringPaths springPaths) {
-            var batch = JsonConvert.DeserializeObject<Batch>(File.ReadAllText(path));
+            var batch = JsonSerializer.DeserializeFromString<Batch>(File.ReadAllText(path));
             batch.PostLoad(springPaths);
             return batch;
         }
@@ -79,7 +85,8 @@ namespace Benchmarker
         }
 
         public void Save(string s) {
-            File.WriteAllText(s, JsonConvert.SerializeObject(this, Formatting.Indented));
+            
+            File.WriteAllText(s, JsonSerializer.SerializeToString(this));
         }
 
         /// <summary>

@@ -28,7 +28,7 @@ namespace ZeroKLobby.MicroLobby
 
 				private void AskBattlePasswordForm_Load(object sender, EventArgs e)
 				{
-					Icon = Resources.ZkIcon;
+					Icon = ZklResources.ZkIcon;
 				}
     }
 }

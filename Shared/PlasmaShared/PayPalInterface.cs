@@ -10,7 +10,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Newtonsoft.Json;
+using ServiceStack.Text;
 using ZkData;
 
 namespace PlasmaShared
@@ -45,7 +45,7 @@ namespace PlasmaShared
             using (var wc = new WebClient()) {
                 var response =
                     wc.DownloadString(string.Format("http://rate-exchange.appspot.com/currency?from={0}&to=EUR&q={1}", fromCurrency, fromAmount));
-                var ret = JsonConvert.DeserializeObject<ConvertResponse>(response);
+                var ret = JsonSerializer.DeserializeFromString<ConvertResponse>(response);
                 return ret.v*conversionMultiplier;
             }
         }
@@ -258,24 +258,24 @@ namespace PlasmaShared
 
         class ConvertResponse
         {
-            public string from;
-            public double rate;
-            public string to;
-            public double v;
+            public string from { get; set; }
+            public double rate { get; set; }
+            public string to { get; set; }
+            public double v { get; set; }
         }
 
         public class ParsedData
         {
-            public string Currency;
-            public string Email;
-            public double Gross;
-            public string ItemCode;
-            public string ItemName;
-            public string Name;
-            public double Net;
-            public string Status;
-            public DateTime Time;
-            public string TransactionID;
+            public string Currency { get; set; }
+            public string Email { get; set; }
+            public double Gross { get; set; }
+            public string ItemCode { get; set; }
+            public string ItemName { get; set; }
+            public string Name { get; set; }
+            public double Net { get; set; }
+            public string Status { get; set; }
+            public DateTime Time { get; set; }
+            public string TransactionID { get; set; }
         }
     }
 }

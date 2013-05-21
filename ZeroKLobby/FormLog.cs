@@ -77,7 +77,7 @@ namespace ZeroKLobby
 
         void FormLog_Load(object sender, EventArgs e)
         {
-            Icon = Resources.ZkIcon;
+            Icon = ZklResources.ZkIcon;
             UpdateLines();
         }
 

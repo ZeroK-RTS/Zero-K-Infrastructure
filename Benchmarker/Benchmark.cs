@@ -17,11 +17,11 @@ namespace Benchmarker
         /// <summary>
         /// Full path to mutator
         /// </summary>
-        public string BenchmarkPath;
+        public string BenchmarkPath { get; set; }
         /// <summary>
         /// Short name (folder name)
         /// </summary>
-        public string Name;
+        public string Name { get; set; }
 
 
         public Benchmark(string path) {

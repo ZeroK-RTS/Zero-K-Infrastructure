@@ -14,7 +14,7 @@ namespace ZeroKLobby.Notifications
             InitializeComponent();
             btnDetail.Click += detail_Click;
             btnStop.Click += stop_Click;
-            btnStop.Image = Resources.Remove;
+            btnStop.Image = ZklResources.Remove;
             var control = barContent.GetControl();
             //Note: "control" is already DPI-scaled so we must downscale it
             DpiMeasurement.DpiXYMeasurement(control);

@@ -23,49 +23,49 @@ namespace ZeroKLobby.MicroLobby
 
                     if (myBattle)
                     {
-											g.DrawImage(Resources.jimi, x, y, Resources.jimi.Width, Resources.jimi.Height);
-											x += Resources.jimi.Width;
+                        g.DrawImage(ZklResources.jimi, x, y, ZklResources.jimi.Width, ZklResources.jimi.Height);
+                        x += ZklResources.jimi.Width;
                     }
 
                     for (var i = 0; i < friendCount; i++)
                     {
-                        if (x + Resources.friend.Width > sizeX)
+                        if (x + ZklResources.friend.Width > sizeX)
                         {
                             x = 0;
-                            y += Resources.friend.Height;
+                            y += ZklResources.friend.Height;
                         }
-                        g.DrawImage(Resources.friend, x, y, Resources.friend.Width, Resources.friend.Height);
-                        x += Resources.friend.Width;
+                        g.DrawImage(ZklResources.friend, x, y, ZklResources.friend.Width, ZklResources.friend.Height);
+                        x += ZklResources.friend.Width;
                     }
                     for (var i = 0; i < adminCount; i++)
                     {
-                        if (x + Resources.police.Width > sizeX)
+                        if (x + ZklResources.police.Width > sizeX)
                         {
                             x = 0;
-                            y += Resources.police.Height;
+                            y += ZklResources.police.Height;
                         }
-                        g.DrawImage(Resources.police, x, y, Resources.police.Width, Resources.police.Height);
-                        x += Resources.friend.Width;
+                        g.DrawImage(ZklResources.police, x, y, ZklResources.police.Width, ZklResources.police.Height);
+                        x += ZklResources.friend.Width;
                     }
                     for (var i = 0; i < playerCount; i++)
                     {
-                        if (x + Resources.user.Width > sizeX)
+                        if (x + ZklResources.user.Width > sizeX)
                         {
                             x = 0;
-                            y += Resources.user.Height;
+                            y += ZklResources.user.Height;
                         }
-                        g.DrawImage(Resources.user, x, y, Resources.user.Width, Resources.user.Height);
-                        x += Resources.user.Width;
+                        g.DrawImage(ZklResources.user, x, y, ZklResources.user.Width, ZklResources.user.Height);
+                        x += ZklResources.user.Width;
                     }
                     for (var i = 0; i < maxPlayerCount - playerCount - friendCount; i++)
                     {
-                        if (x + Resources.user.Width > sizeX)
+                        if (x + ZklResources.user.Width > sizeX)
                         {
                             x = 0;
-                            y += Resources.user.Height;
+                            y += ZklResources.user.Height;
                         }
-                        g.DrawImage(Resources.grayuser, x, y, Resources.user.Width, Resources.user.Height);
-                        x += Resources.user.Width;
+                        g.DrawImage(ZklResources.grayuser, x, y, ZklResources.user.Width, ZklResources.user.Height);
+                        x += ZklResources.user.Width;
                     }
                 }
             } 

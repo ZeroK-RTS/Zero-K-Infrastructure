@@ -11,28 +11,28 @@ namespace Benchmarker
         /// <summary>
         /// Spring and mod configs
         /// </summary>
-        public Config Config;
+        public Config Config { get; set; }
         /// <summary>
         /// Engine to use
         /// </summary>
-        public string Engine;
+        public string Engine { get; set; }
         /// <summary>
         /// Mod to use as a base (override)
         /// </summary>
-        public string Game;
+        public string Game { get; set; }
         /// <summary>
         /// Map to use (override)
         /// </summary>
-        public string Map;
+        public string Map { get; set; }
         /// <summary>
         /// Whether to use multithreaded engine
         /// </summary>
-        public bool UseMultithreaded;
+        public bool UseMultithreaded { get; set; }
 
         /// <summary>
         /// StartScript to use
         /// </summary>
-        public StartScript StartScript;
+        public StartScript StartScript { get; set; }
 
 
         public TestCase(string engine, string game, string map, Config config, StartScript startScript) {

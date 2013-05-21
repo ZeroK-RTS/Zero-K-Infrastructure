@@ -448,7 +448,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 
         public void AddedToContainer(NotifyBarContainer container) {
             barContainer = container;
-            container.btnDetail.Image = Resources.battle;
+            container.btnDetail.Image = ZklResources.battle;
             container.btnDetail.Text = "Start";
             Program.ToolTip.SetText(container.btnDetail, "Start battle");
             Program.ToolTip.SetText(container.btnStop, "Quit battle");

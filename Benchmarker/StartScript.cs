@@ -13,11 +13,11 @@ namespace Benchmarker
         /// <summary>
         /// Short name
         /// </summary>
-        public string Name;
+        public string Name { get; set; }
         /// <summary>
         /// Full path to StartScript
         /// </summary>
-        public string ScriptPath;
+        public string ScriptPath { get; set; }
 
         public StartScript(string path) {
             ScriptPath = path;

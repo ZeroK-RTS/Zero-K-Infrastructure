@@ -22,7 +22,7 @@ namespace ZeroKLobby.Notifications
         public void AddedToContainer(NotifyBarContainer container)
         {
             container.btnDetail.Enabled = false;
-						container.btnDetail.BackgroundImage = Resources.warning;
+            container.btnDetail.BackgroundImage = ZklResources.warning;
         }
 
         public void CloseClicked(NotifyBarContainer container)

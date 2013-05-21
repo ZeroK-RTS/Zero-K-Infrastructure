@@ -243,6 +243,12 @@ namespace ZeroKLobby
                         }
                     };
 
+                TasClient.Extensions.JsonDataReceived += (eventArgs, o) =>
+                    {
+                        var command = o as ProtocolExtension.SiteToLobbyCommand;
+                        if (command != null) MainWindow.navigationControl.Path = command.SpringLink;
+                    };
+
                 ConnectBar = new ConnectBar(TasClient);
                 ModStore = new ModStore();
                 ToolTip = new ToolTipHandler();

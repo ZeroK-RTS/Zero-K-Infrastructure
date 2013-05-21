@@ -61,7 +61,7 @@ namespace ZeroKLobby.MicroLobby
             ChannelName = name;
             if (!DesignMode) HistoryManager.InsertLastLines(ChannelName, ChatBox);
             playerBox.Sorted = true;
-            var lookingGlass = new PictureBox { Width = 20, Height = 20, Image = Resources.search, SizeMode = PictureBoxSizeMode.CenterImage };
+            var lookingGlass = new PictureBox { Width = 20, Height = 20, Image = ZklResources.search, SizeMode = PictureBoxSizeMode.CenterImage };
             searchBarContainer.Controls.Add(lookingGlass);
             Program.ToolTip.SetText(lookingGlass, "Enter name or country shortcut to find");
 

@@ -299,12 +299,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Ranks.resx</DependentUpon>
     </Compile>
-    <Compile Include="Resources.Designer.cs">
+    <Compile Include="ServerImagesHandler.cs" />
+    <Compile Include="StyleBitmaps.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
+      <DependentUpon>StyleBitmaps.resx</DependentUpon>
     </Compile>
-    <Compile Include="ServerImagesHandler.cs" />
     <Compile Include="ToolTips\BattleTooltipRenderer.cs" />
     <Compile Include="MicroLobby\AskBattlePasswordForm.cs">
       <SubType>Form</SubType>
@@ -435,6 +435,11 @@
     <Compile Include="VoiceCommand\VoiceCommandEngine.cs" />
     <Compile Include="VoiceCommand\VoiceRule.cs" />
     <Compile Include="WindowsApi.cs" />
+    <Compile Include="ZklResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ZklResources.resx</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="AdvertiserWindow.resx">
       <DependentUpon>AdvertiserWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -532,10 +537,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Resources.resx">
+    <EmbeddedResource Include="StyleBitmaps.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
+      <LastGenOutput>StyleBitmaps.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ZklResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ZklResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -684,7 +692,9 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\StyleBitmaps\button_test.png" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Conf\cmdcolors.txt" />
   </ItemGroup>

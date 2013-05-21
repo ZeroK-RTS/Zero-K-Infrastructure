@@ -26,7 +26,7 @@ namespace ZeroKLobby
 
 				private void AcceptAgreementForm_Load(object sender, EventArgs e)
 				{
-					Icon = Resources.ZkIcon;
+                    Icon = ZklResources.ZkIcon;
 				}
     }
 }

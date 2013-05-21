@@ -199,8 +199,8 @@ namespace ZeroKLobby
                 // CONVERT else if (ApplicationDeployment.IsNetworkDeployed) Text = "Zero-K lobby " + ApplicationDeployment.CurrentDeployment.CurrentVersion;
             else Text += " not installed properly - update from http://zero-k.info/";
 
-            Icon = Resources.ZkIcon;
-            systrayIcon.Icon = Resources.ZkIcon;
+            Icon = ZklResources.ZkIcon;
+            systrayIcon.Icon = ZklResources.ZkIcon;
 
             Program.SpringScanner.Start();
 

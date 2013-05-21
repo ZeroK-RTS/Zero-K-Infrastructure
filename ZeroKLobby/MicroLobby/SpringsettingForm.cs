@@ -151,7 +151,7 @@ namespace ZeroKLobby.MicroLobby
                     //lower next entry position -30 points
                     location = location + 30;
                 }
-                Icon = Resources.ZkIcon;
+                Icon = ZklResources.ZkIcon;
             }
             catch (Exception ex) {
                 ErrorHandling.HandleException(ex, false);

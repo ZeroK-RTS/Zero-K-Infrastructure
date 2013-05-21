@@ -73,28 +73,28 @@ namespace ZeroKLobby
 
             if (founder.IsInGame)
             {
-							drawImage(Resources.boom, 16, 16);
+                drawImage(ZklResources.boom, 16, 16);
                 var timeString = DateTime.Now.Subtract(founder.InGameSince.Value).PrintTimeRemaining();
                 drawString("The battle has been going on for at least " + timeString + ".");
                 newLine();
             }
             if (battle.IsPassworded)
             {
-							drawImage(Resources._lock, 16, 16);
+                drawImage(ZklResources._lock, 16, 16);
                 drawString("Joining requires a password.");
                 newLine();
             }
 
             if (battle.IsReplay)
             {
-							drawImage(Resources.replay, 16, 16);
+                drawImage(ZklResources.replay, 16, 16);
                 drawString("Battle is replay.");
                 newLine();
             }
 
             if (battle.IsLocked)
             {
-                drawImage(Resources.redlight, 16, 16);
+                drawImage(ZklResources.redlight, 16, 16);
                 drawString("Battle is locked.");
                 newLine();
             }
@@ -129,7 +129,7 @@ namespace ZeroKLobby
                 if (top10 > 0)
                 {
                     var oldx = x;
-										drawImage(Resources.cup, 16, 16);
+                    drawImage(ZklResources.cup, 16, 16);
                     x -= 17;
                     drawString(top10.ToString());
                     x = oldx + 16;
@@ -137,8 +137,8 @@ namespace ZeroKLobby
 
                 if (!user.IsBot)
                 {
-                    if (user.IsAway) drawImage(Resources.away, 16, 16);
-										if (user.IsInGame) drawImage(Resources.ingame, 16, 16);
+                    if (user.IsAway) drawImage(ZklResources.away, 16, 16);
+                    if (user.IsInGame) drawImage(ZklResources.ingame, 16, 16);
                 }
                 newLine();
             }

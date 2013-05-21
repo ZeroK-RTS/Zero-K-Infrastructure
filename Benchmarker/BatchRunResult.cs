@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json;
+using ServiceStack.Text;
 
 namespace Benchmarker
 {
@@ -136,7 +136,7 @@ namespace Benchmarker
             var jsonFileName = Path.Combine(folder, string.Format("batchResult_{0:yyyy-MM-dd_HH-mm-ss}.json", now));
             var csvFileName = Path.Combine(folder, string.Format("batchResult_{0:yyyy-MM-dd_HH-mm-ss}.csv", now));
 
-            File.WriteAllText(jsonFileName, JsonConvert.SerializeObject(this, Formatting.Indented));
+            File.WriteAllText(jsonFileName, JsonSerializer.SerializeToString(this));
             File.WriteAllText(csvFileName, csv);
 
             csvPath = csvFileName;
@@ -144,7 +144,7 @@ namespace Benchmarker
         }
 
         public static BatchRunResult Load(string path, out string csvPath) {
-            var ret = JsonConvert.DeserializeObject<BatchRunResult>(File.ReadAllText(path));
+            var ret = JsonSerializer.DeserializeFromString<BatchRunResult>(File.ReadAllText(path));
             if (ret != null) {
                 csvPath = Path.ChangeExtension(path, ".csv");
             }

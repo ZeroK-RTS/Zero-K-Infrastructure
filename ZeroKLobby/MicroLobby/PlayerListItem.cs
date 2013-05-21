@@ -93,7 +93,7 @@ namespace ZeroKLobby.MicroLobby
             if (Title != null)
             {
                 font = boldFont;
-                if (Title == "Search results:") drawImage(Resources.search);
+                if (Title == "Search results:") drawImage(ZklResources.search);
                 TextRenderer.DrawText(g, Title, font, bounds, foreColor, backColor, TextFormatFlags.HorizontalCenter);
                 return;
             }
@@ -138,7 +138,7 @@ namespace ZeroKLobby.MicroLobby
                         g.FillEllipse(brush, x, bounds.Top, bounds.Bottom - bounds.Top, bounds.Bottom - bounds.Top);
                     }
                 }
-                drawImage(Resources.robot);
+                drawImage(ZklResources.robot);
                 var botDisplayName = MissionSlot == null ? bot.aiLib : MissionSlot.TeamName;
                 drawText(botDisplayName + " (" + bot.owner + ")", foreColor, backColor);
                 return;
@@ -156,9 +156,9 @@ namespace ZeroKLobby.MicroLobby
 
             if (isBattle)
             {
-                if (userStatus.IsSpectator) drawImage(Resources.spec);
-                else if (userStatus.SyncStatus == SyncStatuses.Synced && (IsSpringieBattle || userStatus.IsReady)) drawImage(Resources.ready);
-                else drawImage(Resources.unready);
+                if (userStatus.IsSpectator) drawImage(ZklResources.spec);
+                else if (userStatus.SyncStatus == SyncStatuses.Synced && (IsSpringieBattle || userStatus.IsReady)) drawImage(ZklResources.ready);
+                else drawImage(ZklResources.unready);
 
                 if (!userStatus.IsSpectator)
                 {
@@ -195,16 +195,16 @@ namespace ZeroKLobby.MicroLobby
             if (top10 > 0)
             {
                 var oldProgression = x;
-                drawImage(Resources.cup);
+                drawImage(ZklResources.cup);
                 x = oldProgression;
                 TextRenderer.DrawText(g, top10.ToString(), boldFont, new Point(bounds.Left + x + 1, bounds.Top), Color.Black, Color.Transparent);
                 x += 16;
             }
 
-            if (user.IsInGame) drawImage(Resources.ingame);
-            else if (!isBattle && user.IsInBattleRoom) drawImage(Resources.battle);
+            if (user.IsInGame) drawImage(ZklResources.ingame);
+            else if (!isBattle && user.IsInBattleRoom) drawImage(ZklResources.battle);
 
-            if (user.IsAway) drawImage(Resources.away);
+            if (user.IsAway) drawImage(ZklResources.away);
 
             if (isBattle && !userStatus.IsSpectator)
                 if (MissionSlot != null)

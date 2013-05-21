@@ -141,7 +141,7 @@ namespace ZeroKLobby.MicroLobby
       if (resizedMinimap == null) return; // wait, map is not downloaded
 
       if (finishedMinimap != null) finishedMinimap.Dispose();
-      finishedMinimap = new Bitmap(Resources.border.Width, Resources.border.Height);
+      finishedMinimap = new Bitmap(ZklResources.border.Width, ZklResources.border.Height);
 
       using (var g = Graphics.FromImage(finishedMinimap))
       {
@@ -156,18 +156,18 @@ namespace ZeroKLobby.MicroLobby
           };
 
 
-        if (IsInGame) g.DrawImage(Resources.boom, 10, 10, 50, 50);
-        if (Battle.IsOfficial() && Battle.Founder.IsSpringieManaged) g.DrawImage(Resources.star, 48,8,15,15); 
-        if (Battle.IsPassworded) drawIcon(Resources._lock);
-        if (Battle.IsReplay) drawIcon(Resources.replay);
+        if (IsInGame) g.DrawImage(ZklResources.boom, 10, 10, 50, 50);
+        if (Battle.IsOfficial() && Battle.Founder.IsSpringieManaged) g.DrawImage(ZklResources.star, 48, 8, 15, 15);
+        if (Battle.IsPassworded) drawIcon(ZklResources._lock);
+        if (Battle.IsReplay) drawIcon(ZklResources.replay);
         if (Battle.Rank > 0) drawIcon(Images.GetRank(Battle.Rank));
         if (Battle.IsLocked)
         {
           var s = 20;
-          g.DrawImage(Resources.redlight, minimapSize - s + 3, minimapSize - s + 3, s, s);
+          g.DrawImage(ZklResources.redlight, minimapSize - s + 3, minimapSize - s + 3, s, s);
         }
 
-        g.DrawImage(Resources.border, 0, 0, 70, 70);
+        g.DrawImage(ZklResources.border, 0, 0, 70, 70);
       }
     }
 
@@ -201,7 +201,7 @@ namespace ZeroKLobby.MicroLobby
         if (finishedMinimap != null) g.DrawImageUnscaled(finishedMinimap, 3, 3);
         else
         {
-          g.DrawImage(Resources.download, 4, 3, 61, 64);
+            g.DrawImage(ZklResources.download, 4, 3, 61, 64);
           g.InterpolationMode = InterpolationMode.HighQualityBicubic;
           g.InterpolationMode = InterpolationMode.Default;
         }
