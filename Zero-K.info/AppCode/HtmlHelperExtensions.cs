@@ -448,18 +448,11 @@ namespace System.Web.Mvc
         }
 
         public static MvcHtmlString PrintSpringLink(this HtmlHelper helper, Func<object, HelperResult> link) {
-            if (HttpContext.Current.Session["zkl"] != null) {
+            if (HttpContext.Current.Session["zkl"] != null || Global.IsWebLobbyAccess) {
                 return
-                    new MvcHtmlString(string.Format("javascript:document.getElementById('zkl_iframe').src='http://127.0.0.1:{0}/?link={1}\';void(0);",
-                                                    HttpContext.Current.Session["zkl"],
-                                                    Convert.ToBase64String(Encoding.UTF8.GetBytes(link(null).ToString()))));
+                    new MvcHtmlString(string.Format("javascript:SendLobbyCommand('{0}');void(0);",link));
             }
-            if (Global.IsWebLobbyAccess)
-                return
-                    new MvcHtmlString(string.Format("javascript:window.parent.postMessage('{0}','{1}');void(0);",
-                                                    link(null),
-                                                    HttpContext.Current.Session["weblobby"]));
-            return new MvcHtmlString("spring://" + link(null).ToString());
+            else return new MvcHtmlString("spring://" + link(null).ToString());
         }
 
         public static MvcHtmlString PrintStructureState(this HtmlHelper helper, PlanetStructure s) {

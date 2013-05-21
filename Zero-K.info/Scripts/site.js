@@ -77,3 +77,16 @@ $(window).load(function () {
 		$(this).stop().animate({ height: $.data(this, 'size').height, width: $.data(this, 'size').width }, 600);
 	});
 });
+
+
+function SendLobbyCommand(link) {
+    $.ajax({
+        url: '/Lobby/SendCommand',
+        data: {
+            link: link
+        },
+        complete: function(data) {
+            if (data != null && data.length > 0) alert(data);
+        }
+    });
+}
