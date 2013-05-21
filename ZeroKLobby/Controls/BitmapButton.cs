@@ -36,6 +36,7 @@ namespace ZeroKLobby
     /// </summary>
     public class BitmapButton : System.Windows.Forms.Button
     {
+        /*
         #region Private Variables
 
         private System.Drawing.Image _ImageNormal = null;
@@ -1177,5 +1178,6 @@ namespace ZeroKLobby
 
 
         #endregion
+         */
     }
 }

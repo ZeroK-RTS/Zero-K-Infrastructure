@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using ZeroKLobby.MicroLobby;
@@ -107,6 +108,8 @@ namespace ZeroKLobby
             foreach (var but in ButtonList) {
                 flowLayoutPanel1.Controls.Add(but.GetButton());
             }
+
+            flowLayoutPanel1.BringToFront();
         }
 
 

@@ -85,8 +85,11 @@ function SendLobbyCommand(link) {
         data: {
             link: link
         },
-        complete: function(data) {
+        success: function(data) {
             if (data != null && data.length > 0) alert(data);
+        },
+        error: function() {
+            alert("Error sending the command to lobby, please try again later");
         }
     });
 }
