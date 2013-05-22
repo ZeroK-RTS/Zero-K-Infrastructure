@@ -8,20 +8,19 @@ using ZeroKLobby.MicroLobby;
 
 namespace ZeroKLobby
 {
-    public partial class NavigationControl: UserControl, INotifyPropertyChanged
+    public partial class NavigationControl: UserControl
     {
         static List<ButtonInfo> ButtonList { get; set; }
         bool CanGoBack { get { return backStack.Any(); } }
         bool CanGoForward { get { return forwardStack.Any(); } }
-        INavigatable CurrentINavigatable { get { return GetINavigatableFromControl(tabControl.SelectedTab); } }
 
 
         NavigationStep CurrentPage {
             get { return _currentPage; }
             set {
                 _currentPage = value;
-                PropertyChanged(this, new PropertyChangedEventArgs("CurrentPage"));
-                PropertyChanged(this, new PropertyChangedEventArgs("Path"));
+                urlBox.Text = Path;
+
                 foreach (var b in ButtonList) {
                     b.IsSelected = Path.StartsWith(b.TargetPath);
                     if (b.IsSelected) b.IsAlerting = false;
@@ -65,8 +64,6 @@ namespace ZeroKLobby
                 }
 
                 if (value.StartsWith("http://") || value.StartsWith("https://")) Program.BrowserInterop.OpenUrl(value);
-
-                //PropertyChanged(this, new PropertyChangedEventArgs("Path"));
             }
         }
 
@@ -97,7 +94,6 @@ namespace ZeroKLobby
 
             Instance = this;
 
-            urlBox.DataBindings.Add("Text", this, "Path");
             tabControl.TabPages.Clear();
 
             chatTab = new ChatTab();
@@ -176,7 +172,6 @@ namespace ZeroKLobby
             return null;
         }
 
-        public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
         void btnBack_Click(object sender, EventArgs e) {
             NavigateBack();
