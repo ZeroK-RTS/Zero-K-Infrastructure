@@ -217,10 +217,14 @@ namespace ZeroKLobby
                         Trace.TraceInformation("TASC login accepted");
                         Trace.TraceInformation("Server is using Spring version {0}", TasClient.ServerSpringVersion);
                         if (SpringPaths.SpringVersion != TasClient.ServerSpringVersion) Downloader.GetAndSwitchEngine(TasClient.ServerSpringVersion);
+                        Program.MainWindow.navigationControl.Path = "chat/channel/zk"; // todo ugly    
                     };
 
                 TasClient.LoginDenied += (s, e) => Trace.TraceInformation("TASC login denied");
-                TasClient.ChannelJoined += (s, e) => Trace.TraceInformation("TASC channel joined: " + e.ServerParams[0]);
+                TasClient.ChannelJoined += (s, e) =>
+                    {
+                        Trace.TraceInformation("TASC channel joined: " + e.ServerParams[0]);
+                    };
                 TasClient.ConnectionLost += (s, e) => Trace.TraceInformation("Connection lost");
 
                 // special "!join" command for quickmatching

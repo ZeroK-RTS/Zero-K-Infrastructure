@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ZeroKLobby
 {
-	interface INavigatable
+    public interface INavigatable
 	{
 		string PathHead { get; }
 		bool TryNavigate(params string[] path);

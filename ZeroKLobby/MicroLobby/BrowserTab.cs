@@ -1,27 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ZeroKLobby
 {
     public class BrowserTab: WebBrowser, INavigatable
     {
+        bool initLoad;
         int navigatedIndex = 0;
         readonly List<string> navigatedPlaces = new List<string>();
         string navigatingTo = null;
         string orgNavTo;
-        string pathHead;
-        bool initLoad;
+        readonly string pathHead;
 
         public BrowserTab(string head) {
             pathHead = head;
-            initLoad = true;
-            Navigate(head);
+            Program.TasClient.LoginAccepted += (sender, args) =>
+                {
+                    initLoad = true;
+                    Navigate(head); // todo handle change of login name -> first user scenarios! - preload on logi change        
+                };
         }
 
-        
 
         protected override void OnNavigated(WebBrowserNavigatedEventArgs e) {
             base.OnNavigated(e);
@@ -37,9 +38,18 @@ namespace ZeroKLobby
         }
 
         protected override void OnNavigating(WebBrowserNavigatingEventArgs e) {
-            if (string.IsNullOrEmpty(e.TargetFrameName) && e.Url.ToString().ToLower().Contains("zero-k.info")) {
-                orgNavTo = e.Url.ToString();
-                navigatingTo = Program.BrowserInterop.AddAuthToUrl(orgNavTo);
+            var url = e.Url.ToString();
+            if (string.IsNullOrEmpty(e.TargetFrameName) && url.ToLower().Contains("zero-k.info")) {
+                var nav = Program.MainWindow.navigationControl.GetInavigatableByPath(url);
+                if (nav == null || nav == this) {
+                    orgNavTo = url;
+                    navigatingTo = Program.BrowserInterop.AddAuthToUrl(orgNavTo);
+                }
+                else {
+                    // navigate to another tab actually
+                    e.Cancel = true;
+                    Program.MainWindow.navigationControl.Path = url;
+                }
             }
             base.OnNavigating(e);
         }
@@ -50,7 +60,8 @@ namespace ZeroKLobby
             var pathString = String.Join("/", path);
             if (!pathString.StartsWith(PathHead)) return false;
             var url = Url != null ? Url.ToString() : "";
-            if (navigatingTo == pathString || Program.BrowserInterop.AddAuthToUrl(pathString) == navigatingTo || Program.BrowserInterop.AddAuthToUrl(pathString) == Program.BrowserInterop.AddAuthToUrl(url)) return true; // already navigating there
+            if (navigatingTo == pathString || Program.BrowserInterop.AddAuthToUrl(pathString) == navigatingTo ||
+                Program.BrowserInterop.AddAuthToUrl(pathString) == Program.BrowserInterop.AddAuthToUrl(url)) return true; // already navigating there
             Navigate(pathString);
             return true;
         }

@@ -293,7 +293,12 @@ namespace ZeroKLobby
         [Description("Control the game using your voice")]
         public bool EnableVoiceCommands { get ; set; }
 
-        
+        [Category("General")]
+        [DisplayName("Use external browser (forced on linux)")]
+        [Description("Opens home, planetwars, maps etc in external browser")]
+        public bool UseExternalBrowser { get; set; }
+
+
         
         [Browsable(false)]
         public int AdDelays = 1;
@@ -305,7 +310,6 @@ namespace ZeroKLobby
         public string AdLines = "Faster, smarter, nicer! \r\n";
         [Browsable(false)]
         public string AdPreffix = "Join ZK \r\njoin zero-k. \r\nJoin ZK. \r\n";
-        bool autoActivateQuickmatch = true;
         [Browsable(false)]
         public bool UseSafeMode { get; set; }
         [Browsable(false)]

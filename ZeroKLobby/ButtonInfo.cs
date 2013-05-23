@@ -32,7 +32,6 @@ namespace ZeroKLobby
         /// <summary>
         /// If true, lobby wont remember subpath for this button and instead go directly to target location
         /// </summary>
-        public bool LinkBehavior;
         public string TargetPath;
         Button button;
         public bool Visible { get; set; }
@@ -50,7 +49,7 @@ namespace ZeroKLobby
             button = new BitmapButton();
             button.Text = Label;
             button.Click += (sender, args) =>
-                { Program.MainWindow.navigationControl.Path = TargetPath; };
+                { Program.MainWindow.navigationControl.SwitchTab(TargetPath); };
             return button;
 
         }

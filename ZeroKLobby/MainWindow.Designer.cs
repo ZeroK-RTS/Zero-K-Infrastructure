@@ -64,7 +64,6 @@
             this.navigationControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.navigationControl1.Location = new System.Drawing.Point(3, 3);
             this.navigationControl1.Name = "navigationControl1";
-            this.navigationControl1.Path = "";
             this.navigationControl1.Size = new System.Drawing.Size(662, 292);
             this.navigationControl1.TabIndex = 1;
             // 

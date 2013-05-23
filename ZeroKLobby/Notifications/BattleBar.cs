@@ -8,7 +8,6 @@ using LobbyClient;
 using PlasmaDownloader;
 using PlasmaShared;
 using ZeroKLobby.MicroLobby;
-using ZeroKLobby.VoiceCommand;
 using ZkData;
 
 namespace ZeroKLobby.Notifications
@@ -28,13 +27,13 @@ namespace ZeroKLobby.Notifications
 
 
         readonly Random random = new Random();
+        object speech;
         readonly Spring spring;
         bool suppressQmChangeEvent;
         bool suppressSideChangeEvent;
         bool suppressSpecChange = false;
         readonly Timer timer = new Timer();
-        ChatToSpeech speech;
-        VoiceCommandEngine voice;
+        object voice;
 
 
         /// <summary>
@@ -42,8 +41,7 @@ namespace ZeroKLobby.Notifications
         /// </summary>
         internal BattleBar() {
             InitializeComponent();
-            
-            
+
             Program.ToolTip.SetText(cbReady, "Choose whether to play, or join as spectator");
             Program.ToolTip.SetText(cbQm, "Enable or disable QuickMatch");
             Program.ToolTip.SetText(cbSide, "Choose the faction you wish to play.");
@@ -51,20 +49,12 @@ namespace ZeroKLobby.Notifications
             client = Program.TasClient;
             spring = new Spring(Program.SpringPaths);
 
-            if (Environment.OSVersion.Platform != PlatformID.Unix) {
-                speech = new ChatToSpeech(spring);
-                if (Program.Conf.EnableVoiceCommands)
-                {
-                    try
-                    {
-                        voice = new VoiceCommandEngine(client, spring);
-                    }
-                    catch (Exception ex)
-                    {
-                        Trace.TraceError("Failed to init VoiceCommands:{0}", ex);
-                    }
-                }
-
+            try {
+                // hacky way to create speech and voice engines on runtime - needed due to mono crash
+                speech = Activator.CreateInstance(Type.GetType("ZeroKLobby.ChatToSpeech,Zero-K"), spring);
+                if (Program.Conf.EnableVoiceCommands) voice = Activator.CreateInstance(Type.GetType("ZeroKLobby.VoiceCommand.VoiceCommandEngine,Zero-K"), client, spring);
+            } catch (Exception ex) {
+                Trace.TraceError("Failed to init VoiceCommands:{0}", ex);
             }
 
             spring.SpringExited += (s, e) =>
@@ -193,7 +183,6 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 	else tas.ForceSpectator(u.Name);
 }*/
 
-            
                     var status = new UserBattleStatus
                     {
                         AllyNumber = alliance,
@@ -304,8 +293,6 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
             BattleChatControl.BattleLine += (s, e) => picoChat.AddLine(e.Data);
 
             picoChat.MouseClick += (s, e) => NavigationControl.Instance.Path = "chat/battle";
-
-
         }
 
         /// <summary>
