@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Windows.Forms;
+using ZkData;
 
 namespace ZeroKLobby
 {
@@ -37,12 +39,16 @@ namespace ZeroKLobby
             var pathString = String.Join("/", path);
             if (!pathString.StartsWith(PathHead)) return false;
 
-            pathString = Program.BrowserInterop.AddAuthToUrl(pathString);
-            var browsurl = Url != null ? Url.ToString() : null;
-            if (navigatingTo == pathString || browsurl == pathString) return true; // already navigating there
+            
+            if (navigatingTo == pathString || Program.BrowserInterop.AddAuthToUrl(pathString) == navigatingTo) return true; // already navigating there
 
-            Navigate(pathString);
+            //var cookie = new Cookie(GlobalConst.LoginCookieName, Program.TasClient.UserName);
+            //var cookiePass = new Cookie(GlobalConst.PasswordHashCookieName, PlasmaShared.Utils.HashLobbyPassword(Program.TasClient.UserPassword));
+            //var zkl = new Cookie(GlobalConst.LobbyAccessCookieName, "1");
+            //Navigate(pathString,"",null,string.Format("Cookie: {0};{1};{2}\n", cookie, cookiePass, zkl));
+            Navigate(Program.BrowserInterop.AddAuthToUrl(pathString));
 
+            
             return true;
         }
 

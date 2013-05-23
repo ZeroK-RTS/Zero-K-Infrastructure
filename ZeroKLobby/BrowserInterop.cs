@@ -26,12 +26,12 @@ namespace ZeroKLobby
                 if (url.Contains("?")) url = url + "&";
                 else url = url + "?";
                 url = url +
-                      string.Format("{0}={1}&{2}={3}&zkl={4}",
+                      string.Format("{0}={1}&{2}={3}&{4}=1&zkl=1",
                                     GlobalConst.ASmallCakeCookieName,
                                     AuthTools.GetSiteAuthToken(tas.UserName, PlasmaShared.Utils.HashLobbyPassword(tas.UserPassword)),
                                     GlobalConst.ASmallCakeLoginCookieName,
                                     tas.UserName,
-                                    1); // todo remove zkl port stuff
+                                    GlobalConst.LobbyAccessCookieName); 
             }
             return url;
 

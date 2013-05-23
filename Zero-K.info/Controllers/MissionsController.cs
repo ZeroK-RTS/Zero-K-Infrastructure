@@ -6,11 +6,11 @@ using ZkData;
 
 namespace ZeroKWeb.Controllers
 {
-    public class MissionsController: Controller
+    public class MissionsController : Controller
     {
         //
         // GET: /Missions/
-
+        
 
         [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult ChangeFeaturedOrder(int id, float? featuredOrder, string script)

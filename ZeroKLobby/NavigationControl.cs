@@ -98,7 +98,7 @@ namespace ZeroKLobby
             AddTabPage(chatTab, "Chat");
             AddTabPage(new BattleListTab(), "Battles");
             AddTabPage(new SettingsTab(), "Settings");
-            AddTabPage(new BrowserTab(), "Home");
+            if (Environment.OSVersion.Platform!=PlatformID.Unix ) AddTabPage(new BrowserTab(), "Home");
 
             
             foreach (var but in ButtonList) {

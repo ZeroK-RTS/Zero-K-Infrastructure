@@ -52,8 +52,7 @@ namespace ZeroKLobby.Notifications
             spring = new Spring(Program.SpringPaths);
 
             if (Environment.OSVersion.Platform != PlatformID.Unix) {
-                // CONVERT
-                /*speech = new ChatToSpeech(spring);
+                speech = new ChatToSpeech(spring);
                 if (Program.Conf.EnableVoiceCommands)
                 {
                     try
@@ -64,7 +63,7 @@ namespace ZeroKLobby.Notifications
                     {
                         Trace.TraceError("Failed to init VoiceCommands:{0}", ex);
                     }
-                }*/
+                }
 
             }
 
