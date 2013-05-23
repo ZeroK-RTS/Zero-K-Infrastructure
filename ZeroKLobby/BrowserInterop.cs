@@ -13,11 +13,8 @@ namespace ZeroKLobby
 {
     public class BrowserInterop
     {
-        readonly TasClient tas;
 
-
-        public BrowserInterop(TasClient tas) {
-            this.tas = tas;
+        public BrowserInterop() {
         }
 
         public string AddAuthToUrl(string url) {
@@ -28,9 +25,9 @@ namespace ZeroKLobby
                 url = url +
                       string.Format("{0}={1}&{2}={3}&{4}=1&zkl=1",
                                     GlobalConst.ASmallCakeCookieName,
-                                    AuthTools.GetSiteAuthToken(tas.UserName, PlasmaShared.Utils.HashLobbyPassword(tas.UserPassword)),
+                                    AuthTools.GetSiteAuthToken(Program.Conf.LobbyPlayerName, PlasmaShared.Utils.HashLobbyPassword(Program.Conf.LobbyPlayerPassword)),
                                     GlobalConst.ASmallCakeLoginCookieName,
-                                    tas.UserName,
+                                    Program.Conf.LobbyPlayerName,
                                     GlobalConst.LobbyAccessCookieName); 
             }
             return url;

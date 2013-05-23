@@ -60,7 +60,6 @@ namespace ZeroKLobby
                     lastPaths.Add(value);
                     if (CurrentPage != null && CurrentPage.ToString() != value) backStack.Push(CurrentPage);
                     CurrentPage = step;
-                    //forwardStack.Clear();
                 } else if (value.StartsWith("http://") || value.StartsWith("https://")) Program.BrowserInterop.OpenUrl(value);
             }
         }
@@ -98,7 +97,13 @@ namespace ZeroKLobby
             AddTabPage(chatTab, "Chat");
             AddTabPage(new BattleListTab(), "Battles");
             AddTabPage(new SettingsTab(), "Settings");
-            if (Environment.OSVersion.Platform!=PlatformID.Unix ) AddTabPage(new BrowserTab(), "Home");
+            if (Environment.OSVersion.Platform != PlatformID.Unix) {
+                AddTabPage(new BrowserTab("http://zero-k.info/Maps"), "Maps");
+                AddTabPage(new BrowserTab("http://zero-k.info/Missions"), "sp");
+                AddTabPage(new BrowserTab("http://zero-k.info/Replays"), "rp");
+                AddTabPage(new BrowserTab("http://zero-k.info/PlanetWars"), "pw");
+                AddTabPage(new BrowserTab("http://zero-k.info/"), "Home");
+            }
 
             
             foreach (var but in ButtonList) {

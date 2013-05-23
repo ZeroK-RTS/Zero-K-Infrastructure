@@ -253,12 +253,13 @@ namespace ZeroKLobby
                 ModStore = new ModStore();
                 ToolTip = new ToolTipHandler();
                 JugglerBar = new JugglerBar(TasClient);
+                BrowserInterop = new BrowserInterop();
 
                 Application.AddMessageFilter(ToolTip);
 
                 MainWindow = new MainWindow();
 
-                BrowserInterop = new BrowserInterop(TasClient);
+                
 
                 Application.AddMessageFilter(new ScrollMessageFilter());
 

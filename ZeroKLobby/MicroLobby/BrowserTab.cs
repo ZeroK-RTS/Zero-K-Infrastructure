@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using ZkData;
 
 namespace ZeroKLobby
 {
@@ -12,43 +11,47 @@ namespace ZeroKLobby
         int navigatedIndex = 0;
         readonly List<string> navigatedPlaces = new List<string>();
         string navigatingTo = null;
+        string orgNavTo;
+        string pathHead;
+        bool initLoad;
 
-        public BrowserTab() {
-            
+        public BrowserTab(string head) {
+            pathHead = head;
+            initLoad = true;
+            Navigate(head);
         }
 
+        
+
         protected override void OnNavigated(WebBrowserNavigatedEventArgs e) {
-            if (navigatingTo == e.Url.ToString()) {
-                navigatingTo = null;
-                if (navigatedIndex == navigatedPlaces.Count) navigatedPlaces.Add(e.Url.ToString());
-                else navigatedPlaces[navigatedIndex] = e.Url.ToString();
-                navigatedIndex++;
-                Program.MainWindow.navigationControl.Path = Uri.UnescapeDataString(e.Url.ToString());
-            }
             base.OnNavigated(e);
+            if (navigatingTo == Program.BrowserInterop.AddAuthToUrl(e.Url.ToString())) {
+                if (!initLoad) {
+                    if (navigatedIndex == navigatedPlaces.Count) navigatedPlaces.Add(orgNavTo);
+                    else navigatedPlaces[navigatedIndex] = orgNavTo;
+                    navigatedIndex++;
+                    Program.MainWindow.navigationControl.Path = Uri.UnescapeDataString(orgNavTo);
+                }
+                initLoad = false;
+            }
         }
 
         protected override void OnNavigating(WebBrowserNavigatingEventArgs e) {
-            if (navigatingTo == null) navigatingTo = e.Url.ToString();
+            if (string.IsNullOrEmpty(e.TargetFrameName) && e.Url.ToString().ToLower().Contains("zero-k.info")) {
+                orgNavTo = e.Url.ToString();
+                navigatingTo = Program.BrowserInterop.AddAuthToUrl(orgNavTo);
+            }
             base.OnNavigating(e);
         }
 
-        public string PathHead { get { return "http://"; } }
+        public string PathHead { get { return pathHead; } }
 
         public bool TryNavigate(params string[] path) {
             var pathString = String.Join("/", path);
             if (!pathString.StartsWith(PathHead)) return false;
-
-            
-            if (navigatingTo == pathString || Program.BrowserInterop.AddAuthToUrl(pathString) == navigatingTo) return true; // already navigating there
-
-            //var cookie = new Cookie(GlobalConst.LoginCookieName, Program.TasClient.UserName);
-            //var cookiePass = new Cookie(GlobalConst.PasswordHashCookieName, PlasmaShared.Utils.HashLobbyPassword(Program.TasClient.UserPassword));
-            //var zkl = new Cookie(GlobalConst.LobbyAccessCookieName, "1");
-            //Navigate(pathString,"",null,string.Format("Cookie: {0};{1};{2}\n", cookie, cookiePass, zkl));
-            Navigate(Program.BrowserInterop.AddAuthToUrl(pathString));
-
-            
+            var url = Url != null ? Url.ToString() : "";
+            if (navigatingTo == pathString || Program.BrowserInterop.AddAuthToUrl(pathString) == navigatingTo || Program.BrowserInterop.AddAuthToUrl(pathString) == Program.BrowserInterop.AddAuthToUrl(url)) return true; // already navigating there
+            Navigate(pathString);
             return true;
         }
 
