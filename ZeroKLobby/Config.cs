@@ -182,14 +182,6 @@ namespace ZeroKLobby
             set
             {
                 lobbyPlayerName = value;
-                try
-                {
-                    WindowsApi.InternetSetCookie(BaseUrl, GlobalConst.LoginCookieName, value);
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceError("Cannot set user cookie: {0}", ex);
-                }
             }
         }
 
@@ -204,14 +196,6 @@ namespace ZeroKLobby
             set
             {
                 lobbyPlayerPassword = value;
-                try
-                {
-                    WindowsApi.InternetSetCookie(BaseUrl, GlobalConst.PasswordHashCookieName, PlasmaShared.Utils.HashLobbyPassword(value));
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceError("Cannot set user cookie: {0}", ex);
-                }
             }
         }
 

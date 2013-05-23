@@ -258,8 +258,7 @@ namespace ZeroKLobby
 
                 MainWindow = new MainWindow();
 
-                BrowserInterop = new BrowserInterop(TasClient, MainWindow.navigationControl);
-                BrowserInterop.Start();
+                BrowserInterop = new BrowserInterop(TasClient);
 
                 Application.AddMessageFilter(new ScrollMessageFilter());
 

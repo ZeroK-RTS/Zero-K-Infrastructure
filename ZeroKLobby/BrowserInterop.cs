@@ -13,22 +13,16 @@ namespace ZeroKLobby
 {
     public class BrowserInterop
     {
-        readonly HttpListener listener;
-        readonly NavigationControl nav;
-        int port = 16501;
         readonly TasClient tas;
-        Task task;
 
 
-        public BrowserInterop(TasClient tas, NavigationControl nav) {
-            this.nav = nav;
+        public BrowserInterop(TasClient tas) {
             this.tas = tas;
-            listener = new HttpListener();
-            listener.Prefixes.Add(string.Format("http://127.0.0.1:{0}/", port));
         }
 
-        public void OpenUrl(string url) {
-            if (url.ToLower().Contains("zero-k")) {
+        public string AddAuthToUrl(string url) {
+            if (url.ToLower().Contains("zero-k") && !url.ToLower().Contains(string.Format("{0}=", GlobalConst.ASmallCakeCookieName)))
+            {
                 if (url.Contains("?")) url = url + "&";
                 else url = url + "?";
                 url = url +
@@ -37,43 +31,14 @@ namespace ZeroKLobby
                                     AuthTools.GetSiteAuthToken(tas.UserName, PlasmaShared.Utils.HashLobbyPassword(tas.UserPassword)),
                                     GlobalConst.ASmallCakeLoginCookieName,
                                     tas.UserName,
-                                    port);
-                Process.Start(url);
+                                    1); // todo remove zkl port stuff
             }
+            return url;
+
         }
 
-        public void Start() {
-            while (!VerifyTcpSocket(port)) port++;
-            listener.Start();
-            listener.BeginGetContext(HandleRequest, this);
-        }
-
-        public void Stop() {
-            listener.Stop();
-        }
-
-        void HandleRequest(IAsyncResult ar) {
-            var context = listener.EndGetContext(ar);
-            if (context.Request.QueryString["link"] != null) {
-                var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(context.Request.QueryString["link"]));
-                Program.MainWindow.InvokeFunc(() => { nav.Path = decoded; });
-                
-            }
-            context.Response.OutputStream.Close();
-            listener.BeginGetContext(HandleRequest, this);
-        }
-
-        static bool VerifyTcpSocket(int port) {
-            try {
-                using (var sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
-                    var endpoint = new IPEndPoint(IPAddress.Loopback, port);
-                    sock.ExclusiveAddressUse = true;
-                    sock.Bind(endpoint);
-                }
-            } catch {
-                return false;
-            }
-            return true;
+        public void OpenUrl(string url) {
+            Process.Start(AddAuthToUrl(url));
         }
     }
 }

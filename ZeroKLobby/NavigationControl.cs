@@ -61,9 +61,7 @@ namespace ZeroKLobby
                     if (CurrentPage != null && CurrentPage.ToString() != value) backStack.Push(CurrentPage);
                     CurrentPage = step;
                     //forwardStack.Clear();
-                }
-
-                if (value.StartsWith("http://") || value.StartsWith("https://")) Program.BrowserInterop.OpenUrl(value);
+                } else if (value.StartsWith("http://") || value.StartsWith("https://")) Program.BrowserInterop.OpenUrl(value);
             }
         }
 
@@ -100,7 +98,9 @@ namespace ZeroKLobby
             AddTabPage(chatTab, "Chat");
             AddTabPage(new BattleListTab(), "Battles");
             AddTabPage(new SettingsTab(), "Settings");
+            AddTabPage(new BrowserTab(), "Home");
 
+            
             foreach (var but in ButtonList) {
                 flowLayoutPanel1.Controls.Add(but.GetButton());
             }

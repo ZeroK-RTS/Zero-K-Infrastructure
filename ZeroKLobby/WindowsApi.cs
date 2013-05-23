@@ -5,11 +5,6 @@ namespace ZeroKLobby
 {
 	static class WindowsApi
 	{
-		[DllImport("wininet.dll", SetLastError = true)]
-		public static extern long DeleteUrlCacheEntry(string lpszUrlName);
-
-		[DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)]
-		public static extern bool InternetSetCookie(string url, string cookieName, string cookieData);
 
 		public const UInt32 FLASHW_ALL = 3;
 		public static TimeSpan IdleTime
@@ -35,12 +30,6 @@ namespace ZeroKLobby
 				return TimeSpan.FromMilliseconds(idleTicks);
 			}
 		}
-
-		[DllImport("dwmapi.dll", PreserveSig = false)]
-		static extern void DwmExtendFrameIntoClientArea(IntPtr hwnd, ref MARGINS margins);
-
-		[DllImport("dwmapi.dll", PreserveSig = false)]
-		static extern bool DwmIsCompositionEnabled();
 
 		[DllImport("user32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
