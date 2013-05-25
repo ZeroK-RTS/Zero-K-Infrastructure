@@ -30,6 +30,8 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <StartupObject>ZeroKLobby.Program</StartupObject>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
     <PublishUrl>ftp://zero-k.info/zero-k.info/www/lobby/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -62,7 +64,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;DEPLOY</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
@@ -80,6 +82,7 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'LinuxDebug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -541,11 +544,6 @@
     </Compile>
     <Compile Include="ToolTips\ToolTipHandler.cs" />
     <Compile Include="Utils.cs" />
-    <Compile Include="Web References\ModStats\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="StyleBitmaps.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>StyleBitmaps.Designer.cs</LastGenOutput>
@@ -612,6 +610,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\add.png" />
+    <None Include="packages.config" />
     <None Include="Properties\app.manifest">
       <SubType>Designer</SubType>
     </None>
@@ -670,36 +669,11 @@
     <None Include="Resources\Conf\springsettings3.cfg" />
     <None Include="Resources\Conf\springsettings4.cfg" />
     <None Include="SpringDownloader_TemporaryKey.pfx" />
-    <None Include="Web References\ModStats\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\ModStats\StatsCollector.disco" />
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Web References\ModStats\StatsCollector.wsdl" />
-  </ItemGroup>
-  <ItemGroup>
-    <WebReferences Include="Web References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <WebReferenceUrl Include="http://planet-wars.eu/ModStats/StatsCollector.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\ModStats\</RelPath>
-      <UpdateFromURL>http://planet-wars.eu/ModStats/StatsCollector.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>SpringDownloader_ModStats_StatsCollector</CachedSettingsPropName>
-    </WebReferenceUrl>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\StyleBitmaps\button_test.png" />
@@ -1613,7 +1587,16 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>if /i $(ConfigurationName) NEQ Release exit 0
+"$(SolutionDir)packages\ilmerge.2.13.0307\ILMerge.exe" /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetDir)$(TargetName).exe" "$(TargetDir)*.dll" /target:exe "/targetplatform:v4,C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client" /wildcards
+del *.dll
+ren "$(TargetDir)$(TargetName).all.pdb" "$(TargetName).all.pdb.temp"
+del *.pdb
+ren "$(TargetDir)$(TargetName).all.pdb.temp" "$(TargetName).all.pdb"
+del "$(TargetDir)$(TargetName).exe"
+ren "$(TargetDir)$(TargetName).all.pdb" "$(TargetName).pdb"
+ren "$(TargetDir)$(TargetName).all.exe" "$(TargetName).exe"
+exit 0</PostBuildEvent>
   </PropertyGroup>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>

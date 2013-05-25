@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Media;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -198,6 +199,7 @@ namespace ZeroKLobby
             if (Debugger.IsAttached) Text = "==== DEBUGGING ===";
                 // CONVERT else if (ApplicationDeployment.IsNetworkDeployed) Text = "Zero-K lobby " + ApplicationDeployment.CurrentDeployment.CurrentVersion;
             else Text += " not installed properly - update from http://zero-k.info/";
+            Text += " " + Assembly.GetEntryAssembly().GetName().Version;
 
             Icon = ZklResources.ZkIcon;
             systrayIcon.Icon = ZklResources.ZkIcon;

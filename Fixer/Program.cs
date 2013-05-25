@@ -15,7 +15,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml.Serialization;
 using LobbyClient;
-using Newtonsoft.Json;
 using NightWatch;
 using PlasmaShared;
 using PlasmaShared.UnitSyncLib;

@@ -16,5 +16,16 @@
     <Setting Name="PlasmaShared_SpringieInterfaceReference_SpringieService" Type="(Web Service URL)" Scope="Application">
       <Value Profile="(Default)">http://zero-k.info/SpringieService.asmx</Value>
     </Setting>
+    <Setting Name="zero_kConnectionString1" Type="(Connection string)" Scope="Application">
+      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;ConnectionString&gt;Data Source=zero-k.info,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k&lt;/ConnectionString&gt;
+  &lt;ProviderName&gt;System.Data.SqlClient&lt;/ProviderName&gt;
+&lt;/SerializableConnectionString&gt;</DesignTimeValue>
+      <Value Profile="(Default)">Data Source=zero-k.info,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k</Value>
+    </Setting>
+    <Setting Name="PlasmaShared_ModStats_StatsCollector" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://planet-wars.eu/ModStats/StatsCollector.asmx</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

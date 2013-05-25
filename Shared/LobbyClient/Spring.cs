@@ -10,10 +10,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Timers;
-using Newtonsoft.Json;
 using PlasmaShared;
 using PlasmaShared.ContentService;
 using PlasmaShared.SpringieInterfaceReference;
+using ServiceStack.Text;
 using ZkData;
 using Timer = System.Timers.Timer;
 
@@ -46,15 +46,15 @@ namespace LobbyClient
 
     public class EngineConfigEntry
     {
-        public string description;
-        public string declarationFile;
-        public int declarationLine;
-        public string defaultValue;
-        public double? maximumValue;
-        public double? minimumValue;
-        public string safemodeValue;
-        public string type;
-        public int readOnly;
+        public string description { get; set; }
+        public string declarationFile { get; set; }
+        public int declarationLine { get; set; }
+        public string defaultValue { get; set; }
+        public double? maximumValue { get; set; }
+        public double? minimumValue { get; set; }
+        public string safemodeValue { get; set; }
+        public string type { get; set; }
+        public int readOnly { get; set; }
     }
 
     /// <summary>
@@ -194,7 +194,7 @@ namespace LobbyClient
             var text = sb.ToString();
             int whereIsTable = text.IndexOf('{');
             text = text.Substring(whereIsTable); // skip empty line or other info (if exist). Compatibility with Spring 94+
-            var data = JsonConvert.DeserializeObject<Dictionary<string, EngineConfigEntry>>(text);
+            var data = JsonSerializer.DeserializeFromString<Dictionary<string, EngineConfigEntry>>(text);
             return data;
         }
 
@@ -482,7 +482,7 @@ namespace LobbyClient
                             }
 
                             if (StartContext != null) {
-                                var result = service.SubmitSpringBattleResult(StartContext, lobbyPassword, battleResult, statsPlayers.Values.ToArray(), statsData.ToArray());
+                                var result = service.SubmitSpringBattleResult(StartContext, lobbyPassword, battleResult, Enumerable.ToArray(statsPlayers.Values), statsData.ToArray());
                                 if (result != null) {
                                     foreach (var line in result.Split('\n')) {
                                         client.Say(TasClient.SayPlace.Battle, "", line, true);

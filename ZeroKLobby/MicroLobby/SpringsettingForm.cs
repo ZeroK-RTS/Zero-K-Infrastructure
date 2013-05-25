@@ -5,8 +5,6 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using LobbyClient;
 
-//using Newtonsoft.Json; //Download: http://json.codeplex.com/
-//Allow to create Dictionary. Ref:http://www.dotnetperls.com/dictionary
 
 namespace ZeroKLobby.MicroLobby
 {

@@ -78,6 +78,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>x86</PlatformTarget>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -217,6 +218,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
+    <Compile Include="Web References\ModStats\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
     <Compile Include="Web References\SpringieInterfaceReference\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -288,6 +294,11 @@
     <None Include="Web References\ContentService\ScriptMissionData.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
+    <None Include="Web References\ModStats\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\ModStats\StatsCollector.wsdl" />
     <None Include="Web References\SpringieInterfaceReference\AhConfig.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
@@ -342,6 +353,17 @@
     <WebReferences Include="Web References\" />
   </ItemGroup>
   <ItemGroup>
+    <WebReferenceUrl Include="http://planet-wars.eu/ModStats/StatsCollector.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\ModStats\</RelPath>
+      <UpdateFromURL>http://planet-wars.eu/ModStats/StatsCollector.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>PlasmaShared_ModStats_StatsCollector</CachedSettingsPropName>
+    </WebReferenceUrl>
     <WebReferenceUrl Include="http://zero-k.info/ContentService.asmx">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\ContentService\</RelPath>
@@ -392,6 +414,9 @@
     <EmbeddedResource Include="Data\ZkData.dbml.views_def.layout">
       <DependentUpon>ZkData.dbml</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Web References\ModStats\StatsCollector.disco" />
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>
