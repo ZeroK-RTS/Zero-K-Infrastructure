@@ -30,6 +30,7 @@ namespace PlasmaShared
             this.writableFolderOverride = writableFolderOverride;
             SetEnginePath(springPath);
             if (version != null) springVersion = version;
+
         }
 
         public void OverrideDedicatedServer(string path) {
