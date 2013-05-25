@@ -39,8 +39,18 @@ namespace PlasmaDownloader
                     var archiveName = "minimal-portable+dedicated.zip";
 
                     if (Environment.OSVersion.Platform == PlatformID.Unix) {
-                        platform = "linux64";
-                        archiveName = "minimal-portable-linux64-static.7z";
+                        var pi = new ProcessStartInfo("uname", "-m")
+                        {
+                            RedirectStandardOutput = true,
+                            RedirectStandardError = true,
+                            UseShellExecute = false,
+                        };
+                        var p = Process.Start(pi);
+                        p.Start();
+                        var response = p.StandardOutput.ReadToEnd();
+                        p.WaitForExit();
+                        platform = response.Contains("64") ? "linux64" : "linux32";
+                        archiveName = string.Format("minimal-portable-{0}-static.7z", platform);
                     }
 
                     paths.Add(string.Format("{0}buildbot/default/master/{1}/spring_{1}_{2}", EngineDownloadPath, Name, archiveName));

@@ -67,8 +67,7 @@ namespace PlasmaShared
 
         public string GetSpringConfigPath()
         {
-            if (Environment.OSVersion.Platform == PlatformID.Unix) return Utils.MakePath(Environment.GetEnvironmentVariable("HOME"), ".springrc");
-            else return Utils.MakePath(WritableDirectory, "springsettings.cfg");
+            return Utils.MakePath(WritableDirectory, "springsettings.cfg");
         }
 
         public bool HasEngineVersion(string version)
