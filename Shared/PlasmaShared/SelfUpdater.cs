@@ -57,7 +57,7 @@ namespace PlasmaShared
                 File.Move(newname, filepath); // rename new
                 return true;
             } catch (Exception ex) {
-                Trace.TraceError("File update failed {0} : {1}", filepath, ex);
+                Trace.TraceWarning("File update failed {0} : {1}", filepath, ex.Message);
             }
             return false;
         }

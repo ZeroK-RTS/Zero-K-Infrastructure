@@ -39,7 +39,8 @@ namespace ZeroKLobby
 
 
         public Image GetAvatarImage(User user) {
-            return GetImage(String.Format("Avatars/{0}.png", user.Avatar));
+            if (!string.IsNullOrEmpty(user.Avatar)) return GetImage(String.Format("Avatars/{0}.png", user.Avatar));
+            else return null;
         }
 
 
@@ -60,7 +61,7 @@ namespace ZeroKLobby
                             item.IsLoaded = true;
                         }
                     } catch (Exception ex) {
-                        Trace.TraceWarning("Failed to load image:{0}", ex);
+                        Trace.TraceWarning("Failed to load image:{0}", ex.Message);
                     }
 
                     if (!item.IsLoaded || DateTime.Now.Subtract(File.GetLastWriteTime(item.LocalPath)).TotalDays > 3) {
@@ -74,7 +75,7 @@ namespace ZeroKLobby
                                     i.IsLoaded = true;
                                     File.SetLastWriteTime(i.LocalPath, DateTime.Now);
                                 } catch (Exception ex) {
-                                    Trace.TraceWarning("Failed to load server image: {0}: {1}", url, ex);
+                                    Trace.TraceWarning("Failed to load server image: {0}: {1}", url, ex.Message);
                                     if (!i.IsLoaded) i.IsError = true;
                                 }
                             },

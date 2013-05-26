@@ -260,13 +260,12 @@ namespace ZeroKLobby
 
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //hack ?if (e.CloseReason == CloseReason.UserClosing) Program.IsCrash = false;
-
             Program.CloseOnNext = true;
             if (Program.TasClient != null) Program.TasClient.Disconnect();
             Program.Conf.LastWindowState = WindowState;
             Program.SaveConfig();
-
+            WindowState = FormWindowState.Minimized;
+            Hide();
         }
     }
 }
