@@ -50,11 +50,11 @@ namespace ZeroKLobby.Notifications
             spring = new Spring(Program.SpringPaths);
 
             try {
-                // hacky way to create speech and voice engines on runtime - needed due to mono crash
+                // silly way to create speech and voice engines on runtime - needed due to mono crash
                 speech = Activator.CreateInstance(Type.GetType("ZeroKLobby.ChatToSpeech,Zero-K"), spring);
                 if (Program.Conf.EnableVoiceCommands) voice = Activator.CreateInstance(Type.GetType("ZeroKLobby.VoiceCommand.VoiceCommandEngine,Zero-K"), client, spring);
             } catch (Exception ex) {
-                Trace.TraceError("Failed to init VoiceCommands:{0}", ex);
+                Trace.TraceWarning("Failed to init VoiceCommands:{0}", ex.Message);
             }
 
             spring.SpringExited += (s, e) =>

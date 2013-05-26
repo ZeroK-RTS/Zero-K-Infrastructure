@@ -9,9 +9,6 @@ namespace ZeroKLobby
 {
     class HeadlessTabControl:TabControl
     {
-        public HeadlessTabControl() {
-        }
-
         protected override void OnSizeChanged(EventArgs e)
         {
             base.OnSizeChanged(e);
@@ -19,8 +16,6 @@ namespace ZeroKLobby
         }
 
         protected override void OnClick(EventArgs e) {
-            return;
-            base.OnClick(e);
         }
 
     }

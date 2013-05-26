@@ -11,9 +11,6 @@ namespace ZeroKLobby
 {
     class PlayerTooltipRenderer:IToolTipRenderer
     {
-        double loadedElo;
-        string loadedEloPlayerName;
-        double loadedW;
         string userName;
 
         public PlayerTooltipRenderer(string name)

@@ -10,7 +10,6 @@ namespace ZeroKLobby.MicroLobby
 	public partial class SettingsTab: UserControl, INavigatable
 	{
 		readonly ContextMenu cmDisplay;
-		readonly ContextMenu cmKeybinds;
 
 		public SettingsTab()
 		{
@@ -69,16 +68,16 @@ namespace ZeroKLobby.MicroLobby
 
 
 	    public void SaveConfig() {
-            if (cbWindowed.SelectedItem == "Fullscreen")
+            if ((string)cbWindowed.SelectedItem == "Fullscreen")
             {
                 Program.EngineConfigurator.SetConfigValue("Fullscreen", "1");
             }
-            else if (cbWindowed.SelectedItem == "Borderless")
+            else if ((string)cbWindowed.SelectedItem == "Borderless")
             {
                 Program.EngineConfigurator.SetConfigValue("Fullscreen", "0");
                 Program.EngineConfigurator.SetConfigValue("WindowBorderless", "1");
             }
-            else if (cbWindowed.SelectedItem == "Windowed")
+            else if ((string)cbWindowed.SelectedItem == "Windowed")
             {
                 Program.EngineConfigurator.SetConfigValue("Fullscreen", "0");
                 Program.EngineConfigurator.SetConfigValue("WindowBorderless", "0");
@@ -131,10 +130,6 @@ namespace ZeroKLobby.MicroLobby
 			cmDisplay.Show(this, PointToClient(MousePosition));
 		}
 
-		void btnKeybindings_Click(object sender, EventArgs e)
-		{
-			cmKeybinds.Show(this, PointToClient(MousePosition));
-		}
 
 		void button1_Click(object sender, EventArgs e)
 		{
