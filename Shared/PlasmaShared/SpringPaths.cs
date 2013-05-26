@@ -109,6 +109,7 @@ namespace PlasmaShared
         {
             CreateFolder(Utils.MakePath(WritableDirectory, "mods"));
             CreateFolder(Utils.MakePath(WritableDirectory, "maps"));
+            CreateFolder(Utils.MakePath(WritableDirectory, "engine"));
             CreateFolder(Utils.MakePath(WritableDirectory, "packages"));
             CreateFolder(Utils.MakePath(WritableDirectory, "pool"));
             if (!string.IsNullOrEmpty(Cache)) CreateFolder(Cache);

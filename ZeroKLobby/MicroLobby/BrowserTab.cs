@@ -5,47 +5,53 @@ using System.Windows.Forms;
 
 namespace ZeroKLobby
 {
-    public class BrowserTab: WebBrowser, INavigatable
+    public class BrowserTab : WebBrowser, INavigatable
     {
         bool initLoad;
         int navigatedIndex = 0;
         readonly List<string> navigatedPlaces = new List<string>();
         string navigatingTo = null;
-        string orgNavTo;
         readonly string pathHead;
 
-        public BrowserTab(string head) {
+        public BrowserTab(string head)
+        {
             pathHead = head;
             if (Program.TasClient != null) Program.TasClient.LoginAccepted += (sender, args) =>
-                {
-                    initLoad = true;
-                    Navigate(head); 
-                };
+            {
+                initLoad = true;
+                navigatingTo = head;
+                Navigate(head);
+            };
         }
 
 
-        protected override void OnNavigated(WebBrowserNavigatedEventArgs e) {
+        protected override void OnNavigated(WebBrowserNavigatedEventArgs e)
+        {
             base.OnNavigated(e);
-            if (navigatingTo == Program.BrowserInterop.AddAuthToUrl(e.Url.ToString())) {
+            if (navigatingTo == e.Url.ToString())
+            {
                 if (!initLoad) {
-                    if (navigatedIndex == navigatedPlaces.Count) navigatedPlaces.Add(orgNavTo);
-                    else navigatedPlaces[navigatedIndex] = orgNavTo;
+                    var final = navigatingTo;
+                    if (navigatedIndex == navigatedPlaces.Count) navigatedPlaces.Add(final);
+                    else navigatedPlaces[navigatedIndex] = final;
                     navigatedIndex++;
-                    Program.MainWindow.navigationControl.Path = Uri.UnescapeDataString(orgNavTo);
+                    Program.MainWindow.navigationControl.Path = Uri.UnescapeDataString(final);
                 }
                 initLoad = false;
             }
         }
 
-        protected override void OnNavigating(WebBrowserNavigatingEventArgs e) {
+        protected override void OnNavigating(WebBrowserNavigatingEventArgs e)
+        {
             var url = e.Url.ToString();
-            if (string.IsNullOrEmpty(e.TargetFrameName) && url.ToLower().Contains("zero-k.info")) {
+            if (string.IsNullOrEmpty(e.TargetFrameName) && url.Contains("zero-k"))
+            {
                 var nav = Program.MainWindow.navigationControl.GetInavigatableByPath(url);
                 if (nav == null || nav == this) {
-                    orgNavTo = url;
-                    navigatingTo = Program.BrowserInterop.AddAuthToUrl(orgNavTo);
+                    navigatingTo = url;
                 }
-                else {
+                else
+                {
                     // navigate to another tab actually
                     e.Cancel = true;
                     Program.MainWindow.navigationControl.Path = url;
@@ -56,21 +62,25 @@ namespace ZeroKLobby
 
         public string PathHead { get { return pathHead; } }
 
-        public bool TryNavigate(params string[] path) {
+        public bool TryNavigate(params string[] path)
+        {
             var pathString = String.Join("/", path);
             if (!pathString.StartsWith(PathHead)) return false;
             var url = Url != null ? Url.ToString() : "";
-            if (navigatingTo == pathString || Program.BrowserInterop.AddAuthToUrl(pathString) == navigatingTo ||
-                Program.BrowserInterop.AddAuthToUrl(pathString) == Program.BrowserInterop.AddAuthToUrl(url)) return true; // already navigating there
+            if (navigatingTo == pathString || pathString == url) return true; // already navigating there
+
+            navigatingTo = pathString;
             Navigate(pathString);
             return true;
         }
 
-        public bool Hilite(HiliteLevel level, params string[] path) {
+        public bool Hilite(HiliteLevel level, params string[] path)
+        {
             return false;
         }
 
-        public string GetTooltip(params string[] path) {
+        public string GetTooltip(params string[] path)
+        {
             throw new NotImplementedException();
         }
     }

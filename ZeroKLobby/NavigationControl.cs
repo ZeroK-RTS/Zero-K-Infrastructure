@@ -96,19 +96,23 @@ namespace ZeroKLobby
             tabControl.TabPages.Clear();
 
             chatTab = new ChatTab();
+            
+            lastTabPaths[chatTab] = string.Format("chat/channel/{0}", Program.Conf != null ? Program.Conf.AutoJoinChannels.OfType<string>().FirstOrDefault():"zk");
             AddTabPage(chatTab, "Chat");
-            AddTabPage(new BattleListTab(), "Battles");
-            AddTabPage(new SettingsTab(), "Settings");
-            AddTabPage(new ServerTab(),"Server");
-            AddTabPage(new AdvertiserWindow(), "Advertiser");
             if (Environment.OSVersion.Platform != PlatformID.Unix && !Program.Conf.UseExternalBrowser) {
-                AddTabPage(new BrowserTab("http://zero-k.info/Maps"), "Maps");
+                AddTabPage(new BrowserTab("http://zero-k.info/Maps"), "Maps"); 
                 AddTabPage(new BrowserTab("http://zero-k.info/Missions"), "sp");
                 AddTabPage(new BrowserTab("http://zero-k.info/Battles"), "rp");
                 AddTabPage(new BrowserTab("http://zero-k.info/PlanetWars"), "pw");
                 AddTabPage(new BrowserTab("http://zero-k.info/Forum"), "fm");
-                AddTabPage(new BrowserTab("http://zero-k.info/"), "Home");
-            }
+                var home = AddTabPage(new BrowserTab("http://zero-k.info/"), "hm"); ;
+                tabControl.SelectTab(home);
+            } 
+            AddTabPage(new BattleListTab(), "Battles");
+            AddTabPage(new SettingsTab(), "Settings");
+            AddTabPage(new ServerTab(), "Server");
+            AddTabPage(new AdvertiserWindow(), "Advertiser");
+
 
             foreach (var but in ButtonList) flowLayoutPanel1.Controls.Add(but.GetButton());
 
@@ -157,14 +161,14 @@ namespace ZeroKLobby
         }
 
 
-        void AddTabPage(Control content, string name = null) {
+        TabPage AddTabPage(Control content, string name = null) {
             name = name ?? content.Text ?? content.Name;
             var tb = new TabPage(name);
             tb.Dock = DockStyle.Fill;
             tb.Controls.Add(content);
             content.Dock = DockStyle.Fill;
-
             tabControl.TabPages.Add(tb);
+            return tb;
         }
 
         INavigatable GetINavigatableFromControl(object obj) {

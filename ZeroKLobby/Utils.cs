@@ -39,6 +39,32 @@ namespace ZeroKLobby
         }
 
 
+        public static void SetIeCompatibility()
+        {
+            var fileName = Path.GetFileName(Application.ExecutablePath);
+            try
+            {
+                Registry.SetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Internet Explorer\MAIN\FeatureControl\FEATURE_BROWSER_EMULATION",
+                                  fileName,
+                                  9000);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(string.Format("Error setting IE compatibility: {0}", ex));
+            }
+            try
+            {
+                Registry.SetValue(
+                    @"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Internet Explorer\MAIN\FeatureControl\FEATURE_BROWSER_EMULATION",
+                    fileName,
+                    9000);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(string.Format("Error setting IE compatibility: {0}", ex));
+            }
+        }
+
         public static void CheckPath(string path, bool delete = false) {
             if (delete) {
                 try {

@@ -16,7 +16,6 @@ namespace PlasmaDownloader
     {
         const string EngineDownloadPath = "http://springrts.com/dl/";
         readonly SpringPaths springPaths;
-        WebClient wc;
 
 
         public EngineDownload(string version, SpringPaths springPaths) {
@@ -72,7 +71,7 @@ namespace PlasmaDownloader
                         paths.Add(string.Format("{0}spring_{1}.zip", EngineDownloadPath, version));
                     }
 
-                    var source = paths.FirstOrDefault(VerifyFile);
+                    var source = paths.FirstOrDefault(VerifyFile) ?? paths.FirstOrDefault(VerifyFile);
 
                     if (source != null) {
                         var extension = source.Substring(source.LastIndexOf('.'));
@@ -177,7 +176,7 @@ namespace PlasmaDownloader
             try {
                 var request = WebRequest.Create(url);
                 request.Method = "HEAD";
-                request.Timeout = 4000;
+                request.Timeout = 5000;
                 var res = request.GetResponse();
                 var len = res.ContentLength;
                 request.Abort();

@@ -129,9 +129,6 @@ namespace ZeroKLobby
                 }
 
                 SpringPaths = new SpringPaths(Conf.ManualSpringPath, null, contentDir);
-                
-
-
                 SpringPaths.MakeFolders();
 
                 SaveConfig();
@@ -187,7 +184,7 @@ namespace ZeroKLobby
                         Trace.TraceInformation("TASC login accepted");
                         Trace.TraceInformation("Server is using Spring version {0}", TasClient.ServerSpringVersion);
                         if (SpringPaths.SpringVersion != TasClient.ServerSpringVersion) Downloader.GetAndSwitchEngine(TasClient.ServerSpringVersion);
-                        MainWindow.navigationControl.Path = string.Format("chat/channel/{0}", Conf.AutoJoinChannels.OfType<string>().FirstOrDefault());
+                        if (Environment.OSVersion.Platform == PlatformID.Unix || Conf.UseExternalBrowser) MainWindow.navigationControl.Path = string.Format("chat/channel/{0}", Conf.AutoJoinChannels.OfType<string>().FirstOrDefault());
                     };
 
                 TasClient.LoginDenied += (s, e) => Trace.TraceInformation("TASC login denied");
@@ -213,7 +210,7 @@ namespace ZeroKLobby
                 ModStore = new ModStore();
                 ToolTip = new ToolTipHandler();
                 JugglerBar = new JugglerBar(TasClient);
-                BrowserInterop = new BrowserInterop();
+                BrowserInterop = new BrowserInterop(TasClient, Conf);
 
                 Application.AddMessageFilter(ToolTip);
                 
