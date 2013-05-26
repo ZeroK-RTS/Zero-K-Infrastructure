@@ -102,7 +102,7 @@
         
         
 
-            <a href='spring://chat/user/@Model.Name'> Chat with @Model.Name in the lobby </a><br />
+            <a href="@Html.PrintSpringLink("chat/user/" + Model.Name)"> Chat with @Model.Name in the lobby </a><br />
             @if (Model.IsLobbyAdministrator || Model.IsZeroKAdmin) {
                 <div>
                     <b> @Model.Name </b> is an <b>Administrator</b> for: 

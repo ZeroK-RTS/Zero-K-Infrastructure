@@ -21,12 +21,12 @@ $(function() {
     @if (m.MinHumans < 2) {
       <br />
         <br />
-      <a href="@Html.PrintSpringLink(@<text>@(Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) + (m.IsScriptMission ? "@start_script_mission:" : "@start_mission:") + m.NameWithVersion)</text>)">
+      <a href="@Html.PrintSpringLink((m.IsScriptMission ? "@start_script_mission:" : "@start_mission:") + m.NameWithVersion)">
         <img src="../../img/playnow.png" width="250" /></a>
     }
     <br />
     @if (!m.IsScriptMission) {
-    <a href="@Html.PrintSpringLink(@<text>@((Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) + "@host_mission:" + m.NameWithVersion))</text>)">
+    <a href="@Html.PrintSpringLink("@host_mission:" + m.NameWithVersion)">
         <img src="../../img/hostmulti.png" width="300" /></a><br />
       <br />
     }

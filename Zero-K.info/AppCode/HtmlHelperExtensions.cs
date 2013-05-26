@@ -447,12 +447,12 @@ namespace System.Web.Mvc
                                                 rt.Name));
         }
 
-        public static MvcHtmlString PrintSpringLink(this HtmlHelper helper, Func<object, HelperResult> link) {
+        public static MvcHtmlString PrintSpringLink(this HtmlHelper helper, string link) {
             if (HttpContext.Current.Session["zkl"] != null || Global.IsWebLobbyAccess) {
                 return
-                    new MvcHtmlString(string.Format("javascript:SendLobbyCommand('{0}');void(0);",link(null)));
+                    new MvcHtmlString(string.Format("javascript:SendLobbyCommand('{0}');void(0);",link));
             }
-            else return new MvcHtmlString("spring://" + link(null).ToString());
+            else return new MvcHtmlString("spring://" + Uri.EscapeDataString(link));
         }
 
         public static MvcHtmlString PrintStructureState(this HtmlHelper helper, PlanetStructure s) {

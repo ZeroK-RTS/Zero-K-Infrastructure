@@ -25,17 +25,12 @@ namespace ZeroKLobby.MicroLobby
 
 			cmDisplay = new ContextMenu();
 			
-            cmDisplay.MenuItems.Add(new MenuItem("Edit engine settings (GUI)",(o, x) => {SpringsettingForm window1 = new SpringsettingForm(); window1.ShowDialog();}));
             cmDisplay.MenuItems.Add(new MenuItem("Edit engine settings (manually)", (o, x) => Utils.SafeStart("notepad.exe", Program.SpringPaths.GetSpringConfigPath())));
-
 			cmDisplay.MenuItems.Add(new MenuItem("Edit LUPS settings", (o, x) => Utils.SafeStart("notepad.exe", Utils.MakePath(cfRoot, "lups.cfg"))));
 			cmDisplay.MenuItems.Add(new MenuItem("Edit cmdcolors", (o, x) => Utils.SafeStart("notepad.exe", Utils.MakePath(cfRoot, "cmdcolors.txt"))));
-			cmDisplay.MenuItems.Add(new MenuItem("Edit ctrlpanel settings",
-			                                     (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "LuaUI", "ctrlpanel.txt"))));
             cmDisplay.MenuItems.Add(new MenuItem("Edit UI keys", (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "uikeys.txt"))));
 
             Program.ToolTip.SetText(cbSafeMode, "Turns off many things that are known to cause problems (on PC/Mac's with lower-end graphic cards). Use if the game is crashing.\nWill override Springsetting.cfg");
-
             Program.ToolTip.SetText(cbHwCursor,"HW cursor is uneffected by ingame lag, but it can become invisible on some machines");
             Program.ToolTip.SetText(cbMtEngine, "MT engine is experimental and it *can* improve or *decrease* performance, cause crashes and desyncs. \r\nUse at own risk");
            
@@ -272,6 +267,12 @@ namespace ZeroKLobby.MicroLobby
         private void btnBenchmarker_Click(object sender, EventArgs e) {
             var benchmarker = new Benchmarker.MainForm(Program.SpringPaths, Program.SpringScanner, Program.Downloader);
             benchmarker.Show();
+        }
+
+        private void btnCustom_Click(object sender, EventArgs e)
+        {
+            var window1 = new SpringsettingForm(); 
+            window1.ShowDialog();
         }
 	}
 }

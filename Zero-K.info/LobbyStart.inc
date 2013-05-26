@@ -5,15 +5,7 @@
   
   To learn basics, please read <a href='/Wiki/NewbieGuide'>Newbie Guide</a> and inform yourself by reading the <a href='/Wiki.mvc/FAQ'>FAQ</a>.<br/><br/>
   
-  Try game in single player first to gain some experiences with the game. Recommended missions are:<br/><br/>
-
-  <ul style="list-style-image:url(/img/bullet.png);">
-
-    <li> <a href='spring://http://@start_script_mission:sandbox'>Sandbox</a> - just test the GUI and learn your own units</li>
-    <li> <a href="spring://http://@start_script_mission:2v1">2v1</a> - play with AI against another AI</li>
-    <li> <a href="spring://http://@start_script_mission:Very%20easy%20chickens">Very easy chickens</a> - defend yourself from hordes of chicken aliens</li>
-     
-  </ul>
+  Try game in single player first to gain some experiences with the game. <br/><br/>
 
   <h2>How to register a new account</h2><br />
 

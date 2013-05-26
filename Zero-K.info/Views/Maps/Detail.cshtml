@@ -94,7 +94,7 @@
         </table>
     }
 	
-    <h3 class="textbutton"><a href='spring://chat/battle@select_map:@m.InternalName'>PLAY ON THIS MAP</a></h3><br />
+    <h3 class="textbutton"><a href="@Html.PrintSpringLink("chat/battle@select_map:"+ m.InternalName)">PLAY ON THIS MAP</a></h3><br />
     Downloads: @m.DownloadCount<br />
     @if (!ZeroKWeb.Global.IsLobbyAccess) {
         <div style="font-size: small">

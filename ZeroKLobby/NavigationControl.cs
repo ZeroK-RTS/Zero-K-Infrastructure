@@ -76,18 +76,18 @@ namespace ZeroKLobby
                 {
                     Label = "SINGLEPLAYER",
                     TargetPath = "http://zero-k.info/Missions",
-                    // Icon = HeaderButton.ButtonIcon.Singleplayer,
+                     Icon = ZklResources.jimi,
                 },
                 new ButtonInfo()
                 {
                     Label = "MULTIPLAYER",
-                    TargetPath = "battles", //Icon = HeaderButton.ButtonIcon.Multiplayer 
+                    TargetPath = "battles", Icon =  ZklResources.battle
                 },
-                new ButtonInfo() { Label = "CHAT", TargetPath = "chat" },
+                new ButtonInfo() { Label = "CHAT", TargetPath = "chat", Icon= ZklResources.chat },
                 new ButtonInfo() { Label = "PLANETWARS", TargetPath = "http://zero-k.info/PlanetWars" },
                 new ButtonInfo() { Label = "MAPS", TargetPath = "http://zero-k.info/Maps" },
-                new ButtonInfo() { Label = "REPLAYS", TargetPath = "http://zero-k.info/Battles" },
-                new ButtonInfo() { Label = "FORUM", TargetPath = "http://zero-k.info/Forum" },
+                new ButtonInfo() { Label = "REPLAYS", TargetPath = "http://zero-k.info/Battles"},
+                new ButtonInfo() { Label = "FORUM", TargetPath = "http://zero-k.info/Forum"},
                 new ButtonInfo() { Label = "SETTINGS", TargetPath = "settings" },
             };
 
@@ -107,13 +107,13 @@ namespace ZeroKLobby
                 AddTabPage(new BrowserTab("http://zero-k.info/Forum"), "fm");
                 var home = AddTabPage(new BrowserTab("http://zero-k.info/"), "hm"); ;
                 tabControl.SelectTab(home);
-            } 
-            AddTabPage(new BattleListTab(), "Battles");
+            }
+            var battles = new BattleListTab();
+            AddTabPage(battles, "Battles");
             AddTabPage(new SettingsTab(), "Settings");
             AddTabPage(new ServerTab(), "Server");
             AddTabPage(new AdvertiserWindow(), "Advertiser");
-
-
+            
             foreach (var but in ButtonList) flowLayoutPanel1.Controls.Add(but.GetButton());
 
             flowLayoutPanel1.BringToFront();

@@ -36,6 +36,8 @@ namespace ZeroKLobby
         Button button;
         public bool Visible { get; set; }
 
+        public Bitmap Icon { get; set; }
+
         public ButtonInfo() {
             Visible = true;
         }
@@ -47,7 +49,14 @@ namespace ZeroKLobby
 
         public Control GetButton() {
             button = new BitmapButton();
+            button.AutoSize = true;
+            button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             button.Text = Label;
+            if (Icon != null) {
+                button.Image = Icon;
+                button.ImageAlign = ContentAlignment.MiddleLeft;
+                button.TextImageRelation = TextImageRelation.ImageBeforeText;
+            }
             button.Click += (sender, args) =>
                 { Program.MainWindow.navigationControl.SwitchTab(TargetPath); };
             return button;

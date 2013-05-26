@@ -84,8 +84,8 @@
     </table>
     @if (!string.IsNullOrEmpty(Model.ReplayFileName))
     {
-        <a href="@Uri.EscapeUriString(string.Format("spring://http://zero-k.info/Battles/Detail/{4}@start_replay:{0},{1},{2},{3}", "http://zero-k.info/replays/" + Model.ReplayFileName, Model.ResourceByModResourceID.InternalName, Model.ResourceByMapResourceID.InternalName, Model.EngineVersion, Model.SpringBattleID))">
-            <span class="textbutton" style="font-size: 130%">Watch Replay Now</span> </a>
+        <a href="@Html.PrintSpringLink(string.Format("@start_replay:{0},{1},{2},{3}", "http://zero-k.info/replays/" + Model.ReplayFileName, Model.ResourceByModResourceID.InternalName, Model.ResourceByMapResourceID.InternalName, Model.EngineVersion, Model.SpringBattleID))">
+            <span class="textbutton" style="font-size: 130%">Watch Replay Now</span></a>
         <br />
         if (!ZeroKWeb.Global.IsLobbyAccess)
         {
