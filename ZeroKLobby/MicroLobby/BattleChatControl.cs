@@ -95,8 +95,7 @@ namespace ZeroKLobby.MicroLobby
 			Program.ToolTip.Clear(minimapBox);
 		}
 
-		protected override void SortByTeam()
-		{
+		protected override void SortByTeam() {
 			if (filtering || Program.TasClient.MyBattle == null) return;
 
 			var newList = new List<PlayerListItem>();
@@ -143,12 +142,11 @@ namespace ZeroKLobby.MicroLobby
 
 			newList = newList.OrderBy(x => x.ToString()).ToList();
 
-			playerBox.Items.Clear();
+
 			playerBox.BeginUpdate();
-
-			foreach (var item in newList) playerBox.Items.Add(item);
-
-			playerBox.EndUpdate();
+            playerBox.Items.Clear();
+            foreach (var item in newList) playerBox.Items.Add(item);
+            playerBox.EndUpdate();
 		}
 
 		protected override void client_ChannelUserAdded(object sender, TasEventArgs e) {}
@@ -201,7 +199,6 @@ namespace ZeroKLobby.MicroLobby
 		            }
 		        }
 		        minimapBox.Invalidate();
-		        // todo: drawing start points goes here, once we have the metadata
 		    } catch (Exception ex) {
 		        Trace.TraceError("Error updating minimap: {0}",ex);
 		    }

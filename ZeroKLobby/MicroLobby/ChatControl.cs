@@ -328,7 +328,7 @@ namespace ZeroKLobby.MicroLobby
             else {
                 playerBox.BeginUpdate();
                 playerBox.Items.Clear();
-                playerBox.Items.AddRange(playerListItems.ToArray());
+                foreach (var i in playerListItems) playerBox.Items.Add(i);
                 playerBox.EndUpdate();
             }
         }
