@@ -109,7 +109,6 @@ namespace ZeroKLobby.MicroLobby
             }
         }
         public int TotalDisplayLines { get; set; }
-        public bool UseTopicBackground { get; set; }
         public event EventHandler FocusInputRequested = delegate { };
 
         public TextWindow()

@@ -161,7 +161,6 @@ namespace ZeroKLobby.Notifications
             this.picoChat.TabIndex = 12;
             this.picoChat.TextFilter = null;
             this.picoChat.TotalDisplayLines = 0;
-            this.picoChat.UseTopicBackground = false;
             // 
             // BattleBar
             // 

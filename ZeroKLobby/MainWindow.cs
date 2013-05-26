@@ -153,6 +153,7 @@ namespace ZeroKLobby
             if (!Focused || !Visible || WindowState == FormWindowState.Minimized) {
                 Visible = true;
                 if (Environment.OSVersion.Platform != PlatformID.Unix) {
+                    // todo implement for linux with #define NET_WM_STATE_DEMANDS_ATTENTION=42
                     var info = new WindowsApi.FLASHWINFO();
                     info.hwnd = Handle;
                     info.dwFlags = 0x0000000C | 0x00000003; // flash all until foreground

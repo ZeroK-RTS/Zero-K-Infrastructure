@@ -19,15 +19,30 @@ namespace ZeroKLobby.MicroLobby
         readonly PlayerListItem notResultsItem = new PlayerListItem { Title = "No match", SortCategory = 3 };
         protected List<PlayerListItem> playerListItems = new List<PlayerListItem>();
         readonly PlayerListItem searchResultsItem = new PlayerListItem { Title = "Search results", SortCategory = 1 };
+        ChatBox topicBox;
+        Panel topicPanel;
         public bool CanLeave { get { return ChannelName != "Battle"; } }
         public static EventHandler<ChannelLineArgs> ChannelLineAdded = (sender, args) => { };
         public string ChannelName { get; set; }
         public ChatBox ChatBox; //somehow I have to declare here because my Design-mode throw "has no property named" error otherwise. 
         public GameInfo GameInfo { get; set; }
+        public bool IsTopicVisible {
+            get { return topicPanel.Visible; }
+            set {
+                float height = topicBox.LineSize;
+                height *= topicBox.TotalDisplayLines + 1;
+                height *= 1.1f;
+                height += topicBox.Margin.Top + topicBox.Margin.Bottom;
+                topicPanel.Height = (int)height;
+                topicPanel.Visible = value;
+                if (value) Program.Conf.Topics.Remove(ChannelName);
+                else {
+                    Channel channel;
+                    if (Program.TasClient.JoinedChannels.TryGetValue(ChannelName, out channel)) Program.Conf.Topics[channel.Name] = channel.TopicSetDate;
+                }
+            }
+        }
         public IEnumerable<PlayerListItem> PlayerListItems { get { return playerListItems; } }
-        public ChatBox TopicBox;
-        public Panel TopicPanel;
-                     //credit to: http://social.msdn.microsoft.com/Forums/en-US/Vsexpressvcs/thread/53c5ca91-056d-43db-abb1-f47265dbfd08/ for this idea.
         public event EventHandler<EventArgs<string>> ChatLine { add { sendBox.LineEntered += value; } remove { sendBox.LineEntered -= value; } }
 
         public ChatControl() {}
@@ -87,15 +102,16 @@ namespace ZeroKLobby.MicroLobby
             Program.TasClient.JoinedChannels.TryGetValue(ChannelName, out channel);
 
             //Topic Box that displays over the channel
-            TopicBox.ChatBackgroundColor = 15; //gray
-            TopicBox.HorizontalScroll.Enabled = true;
-            TopicBox.BorderStyle = BorderStyle.FixedSingle;
-            TopicBox.VerticalScroll.Visible = false;
-            TopicBox.VerticalScroll.Enabled = false;
-            TopicBox.HideScroll = true;
-            TopicBox.ShowUnreadLine = false;
-            TopicBox.ShowHistory = false;
-            TopicBox.UseTopicBackground = true;
+            topicBox.ChatBackgroundColor = 15; //gray
+            topicBox.HorizontalScroll.Enabled = true;
+            topicBox.BorderStyle = BorderStyle.FixedSingle;
+            topicBox.VerticalScroll.Visible = false;
+            topicBox.VerticalScroll.Enabled = false;
+            topicBox.AutoSize = true;
+            topicBox.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            topicBox.HideScroll = true;
+            topicBox.ShowUnreadLine = false;
+            topicBox.ShowHistory = false;
 
             sendBox.CompleteWord += (word) =>
                 {
@@ -289,32 +305,13 @@ namespace ZeroKLobby.MicroLobby
         void TasClient_ChannelTopicChanged(object sender, TasEventArgs e) {
             if (ChannelName == e.ServerParams[0]) {
                 var channel = Program.TasClient.JoinedChannels[ChannelName];
-                if (channel.Topic != null) {
-                    DateTime lastChange;
-                    Program.Conf.Topics.TryGetValue(channel.Name, out lastChange);
-                    if (lastChange == channel.TopicSetDate) TopicPanel.Visible = false;
-                    else TopicPanel.Visible = true;
-
-                    var topicLine = new TopicLine(channel.Topic, channel.TopicSetBy, channel.TopicSetDate);
-                    TopicBox.Reset();
-                    TopicBox.AddLine(topicLine);
-
-                    float height = TopicBox.LineSize;
-                    height *= TopicBox.TotalDisplayLines + 1;
-                    height *= 1.1f;
-                    // maybe underlines increase the line size? the CA topic seems to take more space than expected and it has lots of links
-                    height += TopicBox.Margin.Top + TopicBox.Margin.Bottom;
-                    height += TopicBox.Padding.Top + TopicBox.Padding.Bottom;
-
-                    TopicBox.Height = (int)Math.Ceiling(height);
-                    TopicPanel.Height = TopicBox.Height;
-
-                    TopicBox.VerticalScroll.Visible = false;
-                    TopicBox.VerticalScroll.Enabled = false;
-
-                    TopicBox.Visible = true;
-                }
-                else TopicBox.Visible = false;
+                DateTime lastChange;
+                Program.Conf.Topics.TryGetValue(channel.Name, out lastChange);
+                var topicLine = new TopicLine(channel.Topic, channel.TopicSetBy, channel.TopicSetDate);
+                topicBox.Reset();
+                topicBox.AddLine(topicLine);
+                if (channel.Topic != null && lastChange != channel.TopicSetDate) IsTopicVisible = true;
+                else IsTopicVisible = false;
             }
         }
 
@@ -404,12 +401,7 @@ namespace ZeroKLobby.MicroLobby
         }
 
         void hideButton_Click(object sender, EventArgs e) {
-            TopicPanel.Visible = false;
-            Channel channel;
-            if (Program.TasClient.JoinedChannels.TryGetValue(ChannelName, out channel)) {
-                Program.Conf.Topics[channel.Name] = channel.TopicSetDate;
-                Program.SaveConfig();
-            }
+            IsTopicVisible = false;
         }
 
         void playerBox_DoubleClick(object sender, EventArgs e) {

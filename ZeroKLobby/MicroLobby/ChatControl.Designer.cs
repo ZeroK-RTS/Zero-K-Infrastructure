@@ -36,9 +36,9 @@ namespace ZeroKLobby.MicroLobby
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.ChatBox = new ZeroKLobby.MicroLobby.ChatBox();
-            this.TopicPanel = new System.Windows.Forms.Panel();
+            this.topicPanel = new System.Windows.Forms.Panel();
             this.hideButton = new ZeroKLobby.BitmapButton();
-            this.TopicBox = new ZeroKLobby.MicroLobby.ChatBox();
+            this.topicBox = new ZeroKLobby.MicroLobby.ChatBox();
             this.sendBox = new ZeroKLobby.MicroLobby.SendBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.playerBoxSearchBarContainer = new System.Windows.Forms.Panel();
@@ -50,7 +50,7 @@ namespace ZeroKLobby.MicroLobby
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.TopicPanel.SuspendLayout();
+            this.topicPanel.SuspendLayout();
             //((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
@@ -68,7 +68,7 @@ namespace ZeroKLobby.MicroLobby
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.ChatBox);
-            this.splitContainer1.Panel1.Controls.Add(this.TopicPanel);
+            this.splitContainer1.Panel1.Controls.Add(this.topicPanel);
             this.splitContainer1.Panel1.Controls.Add(this.sendBox);
             // 
             // splitContainer1.Panel2
@@ -98,19 +98,18 @@ namespace ZeroKLobby.MicroLobby
             this.ChatBox.TabIndex = 1;
             this.ChatBox.TextFilter = null;
             this.ChatBox.TotalDisplayLines = 0;
-            this.ChatBox.UseTopicBackground = false;
             // 
             // TopicPanel
             // 
-            this.TopicPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.TopicPanel.Controls.Add(this.hideButton);
-            this.TopicPanel.Controls.Add(this.TopicBox);
-            this.TopicPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.TopicPanel.Location = new System.Drawing.Point(0, 0);
-            this.TopicPanel.Margin = new System.Windows.Forms.Padding(0);
-            this.TopicPanel.Name = "TopicPanel";
-            this.TopicPanel.Size = new System.Drawing.Size(850, 0);
-            this.TopicPanel.TabIndex = 3;
+            this.topicPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.topicPanel.Controls.Add(this.hideButton);
+            this.topicPanel.Controls.Add(this.topicBox);
+            this.topicPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.topicPanel.Location = new System.Drawing.Point(0, 0);
+            this.topicPanel.Margin = new System.Windows.Forms.Padding(0);
+            this.topicPanel.Name = "topicPanel";
+            this.topicPanel.Size = new System.Drawing.Size(850, 0);
+            this.topicPanel.TabIndex = 3;
             // 
             // hideButton
             // 
@@ -125,24 +124,23 @@ namespace ZeroKLobby.MicroLobby
             // 
             // TopicBox
             // 
-            this.TopicBox.ChatBackgroundColor = 0;
-            this.TopicBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.TopicBox.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TopicBox.HideScroll = false;
-            this.TopicBox.IRCForeColor = 0;
-            this.TopicBox.Location = new System.Drawing.Point(0, 0);
-            this.TopicBox.Name = "TopicBox";
-            this.TopicBox.NoColorMode = false;
-            this.TopicBox.ShowHistory = true;
-            this.TopicBox.ShowJoinLeave = false;
-            this.TopicBox.ShowUnreadLine = true;
-            this.TopicBox.SingleLine = false;
-            this.TopicBox.Size = new System.Drawing.Size(850, 0);
-            this.TopicBox.TabIndex = 2;
-            this.TopicBox.TextFilter = null;
-            this.TopicBox.TotalDisplayLines = 0;
-            this.TopicBox.UseTopicBackground = false;
-            this.TopicBox.Visible = false;
+            this.topicBox.ChatBackgroundColor = 0;
+            this.topicBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.topicBox.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.topicBox.HideScroll = false;
+            this.topicBox.IRCForeColor = 0;
+            this.topicBox.Location = new System.Drawing.Point(0, 0);
+            this.topicBox.Name = "topicBox";
+            this.topicBox.NoColorMode = false;
+            this.topicBox.ShowHistory = true;
+            this.topicBox.ShowJoinLeave = false;
+            this.topicBox.ShowUnreadLine = true;
+            this.topicBox.SingleLine = false;
+            this.topicBox.Size = new System.Drawing.Size(850, 0);
+            this.topicBox.TabIndex = 2;
+            this.topicBox.TextFilter = null;
+            this.topicBox.TotalDisplayLines = 0;
+            this.topicBox.Visible = true;
             // 
             // sendBox
             // 
@@ -246,7 +244,7 @@ namespace ZeroKLobby.MicroLobby
             this.splitContainer1.Panel2.ResumeLayout(false);
             //((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.TopicPanel.ResumeLayout(false);
+            this.topicPanel.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             this.splitContainer2.Panel2.PerformLayout();

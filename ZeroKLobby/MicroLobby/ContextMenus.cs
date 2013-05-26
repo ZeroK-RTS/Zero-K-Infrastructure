@@ -129,11 +129,11 @@ namespace ZeroKLobby.MicroLobby
 
                 if (!(chatControl is BattleChatControl))
                 {
-                    var showTopic = new System.Windows.Forms.MenuItem("Show Topic Header") { Checked = chatControl.TopicBox.Visible };
+                    var showTopic = new System.Windows.Forms.MenuItem("Show Topic Header") { Checked = chatControl.IsTopicVisible};
                     showTopic.Click += (s, e) =>
                         {
-                            chatControl.TopicPanel.Visible = !chatControl.TopicPanel.Visible;
-                            showTopic.Checked = chatControl.TopicPanel.Visible;
+                            chatControl.IsTopicVisible = !chatControl.IsTopicVisible;
+                            showTopic.Checked = chatControl.IsTopicVisible;
                         };
                     contextMenu.MenuItems.Add(showTopic);
                 }
