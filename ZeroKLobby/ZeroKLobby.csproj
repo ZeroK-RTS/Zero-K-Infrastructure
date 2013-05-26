@@ -141,7 +141,7 @@
     </Compile>
     <Compile Include="BrowserInterop.cs" />
     <Compile Include="ButtonInfo.cs" />
-    <Compile Include="ChatToSpeech.cs" />
+    <Compile Include="VoiceCommand\ChatToSpeech.cs" />
     <Compile Include="Configs.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

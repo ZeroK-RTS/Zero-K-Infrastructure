@@ -210,7 +210,7 @@ namespace ZeroKLobby
                 BrowserInterop = new BrowserInterop();
 
                 Application.AddMessageFilter(ToolTip);
-
+                
                 MainWindow = new MainWindow();
 
                 Application.AddMessageFilter(new ScrollMessageFilter());

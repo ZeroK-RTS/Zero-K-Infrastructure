@@ -10,11 +10,14 @@ namespace ZeroKLobby
     public class ToolTipHandler: IMessageFilter, IDisposable
     {
         private const int WM_MOUSEMOVE = 0x200;
+        const int WM_KEYDOWN = 0x0100;
         private bool lastActive = true;
         private Point lastMousePos;
         private string lastText;
         private bool lastVisible = true;
         private Timer timer = new Timer();
+
+        public DateTime LastUserAction = DateTime.Now;
 
 
         private ToolTipForm tooltip;
@@ -135,6 +138,8 @@ namespace ZeroKLobby
         }
 
         public bool PreFilterMessage(ref Message m) {
+            if (m.Msg == WM_KEYDOWN || m.Msg == WM_MOUSEMOVE) LastUserAction = DateTime.Now;
+            
             if (m.Msg == WM_MOUSEMOVE)
             { // && Environment.OSVersion.Platform != PlatformID.Unix 
                 var mp = Control.MousePosition;

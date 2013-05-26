@@ -492,7 +492,22 @@ namespace PlasmaShared
 			}
 		}
 
-		/// <summary>
+	    public static string ExecuteConsoleCommand(string command, string args = null) {
+	        string response = null;
+            try {
+	            var pi = new ProcessStartInfo(command, args) { RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false, };
+	            var p = Process.Start(pi);
+	            p.Start();
+	            response = p.StandardOutput.ReadToEnd();
+	            p.WaitForExit();
+	        } catch (Exception ex) {
+	            Trace.TraceWarning("Error executing {0} {1}: {2}", command,args,ex.Message);
+	        }
+	        return response;
+	    }
+
+
+	    /// <summary>
 		/// Invokes in the threadpool in a non-blocking way
 		/// </summary>
 		public static void StartAsync(Action action)

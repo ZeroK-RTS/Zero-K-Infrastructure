@@ -152,11 +152,13 @@ namespace ZeroKLobby
         protected void FlashWindow() {
             if (!Focused || !Visible || WindowState == FormWindowState.Minimized) {
                 Visible = true;
-                var info = new WindowsApi.FLASHWINFO();
-                info.hwnd = Handle;
-                info.dwFlags = 0x0000000C | 0x00000003; // flash all until foreground
-                info.cbSize = Convert.ToUInt32(Marshal.SizeOf(info));
-                WindowsApi.FlashWindowEx(ref info);
+                if (Environment.OSVersion.Platform != PlatformID.Unix) {
+                    var info = new WindowsApi.FLASHWINFO();
+                    info.hwnd = Handle;
+                    info.dwFlags = 0x0000000C | 0x00000003; // flash all until foreground
+                    info.cbSize = Convert.ToUInt32(Marshal.SizeOf(info));
+                    WindowsApi.FlashWindowEx(ref info);
+                }
             }
         }
 

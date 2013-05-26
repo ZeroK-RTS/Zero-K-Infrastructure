@@ -39,16 +39,7 @@ namespace PlasmaDownloader
                     var archiveName = "minimal-portable+dedicated.zip";
 
                     if (Environment.OSVersion.Platform == PlatformID.Unix) {
-                        var pi = new ProcessStartInfo("uname", "-m")
-                        {
-                            RedirectStandardOutput = true,
-                            RedirectStandardError = true,
-                            UseShellExecute = false,
-                        };
-                        var p = Process.Start(pi);
-                        p.Start();
-                        var response = p.StandardOutput.ReadToEnd();
-                        p.WaitForExit();
+                        var response = Utils.ExecuteConsoleCommand("uname", "-m") ?? "";
                         platform = response.Contains("64") ? "linux64" : "linux32";
                         archiveName = string.Format("minimal-portable-{0}-static.7z", platform);
                     }
