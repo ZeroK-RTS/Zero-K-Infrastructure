@@ -448,11 +448,9 @@ namespace System.Web.Mvc
         }
 
         public static MvcHtmlString PrintSpringLink(this HtmlHelper helper, string link) {
-            if (HttpContext.Current.Session["zkl"] != null || Global.IsWebLobbyAccess) {
-                return
-                    new MvcHtmlString(string.Format("javascript:SendLobbyCommand('{0}');void(0);",link));
-            }
-            else return new MvcHtmlString("spring://" + Uri.EscapeDataString(link));
+            if (Global.Account != null && !Global.Nightwatch.Tas.ExistingUsers.ContainsKey(Global.Account.Name)) {
+                return new MvcHtmlString("spring://" + Uri.EscapeDataString(link)); // user logged but lobby not running
+            } else return new MvcHtmlString(string.Format("javascript:SendLobbyCommand('{0}');void(0);",link));
         }
 
         public static MvcHtmlString PrintStructureState(this HtmlHelper helper, PlanetStructure s) {
