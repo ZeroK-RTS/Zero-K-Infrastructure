@@ -28,16 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-					this.SuspendLayout();
-					// 
-					// NotifySection
-					// 
-					this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-					this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-					this.Name = "NotifySection";
-					this.Size = new System.Drawing.Size(418, 10);
-					this.Load += new System.EventHandler(this.NotifySection_Load);
-					this.ResumeLayout(false);
+            this.SuspendLayout();
+            // 
+            // NotifySection
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.Name = "NotifySection";
+            this.Size = new System.Drawing.Size(418, 10);
+            this.Load += new System.EventHandler(this.NotifySection_Load);
+            this.ResumeLayout(false);
 
         }
 

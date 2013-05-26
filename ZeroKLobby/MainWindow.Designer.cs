@@ -46,7 +46,7 @@
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(668, 304);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(786, 465);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // notifySection1
@@ -54,9 +54,9 @@
             this.notifySection1.AutoSize = true;
             this.notifySection1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.notifySection1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.notifySection1.Location = new System.Drawing.Point(3, 301);
+            this.notifySection1.Location = new System.Drawing.Point(3, 462);
             this.notifySection1.Name = "notifySection1";
-            this.notifySection1.Size = new System.Drawing.Size(662, 1);
+            this.notifySection1.Size = new System.Drawing.Size(780, 1);
             this.notifySection1.TabIndex = 0;
             // 
             // navigationControl1
@@ -64,12 +64,15 @@
             this.navigationControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.navigationControl1.Location = new System.Drawing.Point(3, 3);
             this.navigationControl1.Name = "navigationControl1";
-            this.navigationControl1.Size = new System.Drawing.Size(662, 292);
+            this.navigationControl1.Path = "";
+            this.navigationControl1.Size = new System.Drawing.Size(780, 453);
             this.navigationControl1.TabIndex = 1;
             // 
             // MainWindow
             // 
-            this.ClientSize = new System.Drawing.Size(668, 304);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.ClientSize = new System.Drawing.Size(786, 465);
             this.Controls.Add(this.tableLayoutPanel2);
             this.Name = "MainWindow";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainWindow_FormClosing);

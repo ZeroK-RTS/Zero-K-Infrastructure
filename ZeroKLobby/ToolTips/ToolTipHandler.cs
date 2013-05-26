@@ -81,8 +81,7 @@ namespace ZeroKLobby
                 var control = MainWindow.Instance.GetHoveredControl();
                 string text = null;
                 if (control != null) tooltips.TryGetValue(control, out text);
-
-                bool isWindowActive = WindowsApi.GetForegroundWindowHandle() == (int)MainWindow.Instance.Handle || WindowsApi.GetForegroundWindowHandle() == WindowsApi.GetActiveWindow();
+                bool isWindowActive = Form.ActiveForm != null;
 
                 if (lastText != text || lastVisible != Visible || lastActive != isWindowActive) {
                     if (tooltip != null) {

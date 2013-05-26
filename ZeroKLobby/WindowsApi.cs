@@ -35,19 +35,6 @@ namespace ZeroKLobby
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool FlashWindowEx(ref FLASHWINFO pwfi);
 
-		/// <returns>windowhandle</returns>
-		[DllImport("user32.dll")]
-		private static extern int GetForegroundWindow();
-
-	    public static int GetForegroundWindowHandle() {
-	        if (Environment.OSVersion.Platform == PlatformID.Unix) return (int)Program.MainWindow.Handle;
-	        else return GetForegroundWindow();
-	    }
-
-
-
-	    [DllImport("user32.dll")]
-        public static extern int GetActiveWindow();
 
 		[DllImport("user32.dll")]
 		static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);

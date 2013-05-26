@@ -16,10 +16,10 @@ namespace ZeroKLobby
 
         public BrowserTab(string head) {
             pathHead = head;
-            Program.TasClient.LoginAccepted += (sender, args) =>
+            if (Program.TasClient != null) Program.TasClient.LoginAccepted += (sender, args) =>
                 {
                     initLoad = true;
-                    Navigate(head); // todo handle change of login name -> first user scenarios! - preload on logi change        
+                    Navigate(head); 
                 };
         }
 

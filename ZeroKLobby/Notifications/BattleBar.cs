@@ -285,14 +285,20 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 
             Program.BattleIconManager.BattleChanged += BattleIconManager_BattleChanged;
 
-            picoChat.Font = new Font(Program.Conf.ChatFont.FontFamily, Program.Conf.ChatFont.Size*0.8f);
+            //picoChat.Font = new Font(Program.Conf.ChatFont.FontFamily, Program.Conf.ChatFont.Size*0.8f);
             picoChat.ShowHistory = false;
             picoChat.ShowJoinLeave = false;
-            picoChat.HideScroll = true;
+            //picoChat.HideScroll = true;
 
             BattleChatControl.BattleLine += (s, e) => picoChat.AddLine(e.Data);
 
             picoChat.MouseClick += (s, e) => NavigationControl.Instance.Path = "chat/battle";
+        }
+
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            base.OnSizeChanged(e);
+            picoChat.Width = gameBox.Left - picoChat.Left + 5;
         }
 
         /// <summary>

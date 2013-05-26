@@ -119,7 +119,7 @@ namespace ZeroKLobby
                 !((Program.Conf.DisableChannelBubble && navigationPath.Contains("chat/channel/")) ||
                   (Program.Conf.DisablePmBubble && navigationPath.Contains("chat/user/")));
 
-            var isHidden = WindowState == FormWindowState.Minimized || Visible == false || WindowsApi.GetForegroundWindowHandle() != (int)Handle;
+            var isHidden = WindowState == FormWindowState.Minimized || Visible == false || ActiveForm == null;
             var isPathDifferent = navigationControl.Path != navigationPath;
 
             if (isHidden || isPathDifferent) {

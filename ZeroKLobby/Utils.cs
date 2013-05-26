@@ -129,7 +129,7 @@ namespace ZeroKLobby
             }
             catch (Exception ex)
             {
-                Trace.TraceError("Error registering protocol: {0}", ex);
+                Trace.TraceWarning("Error registering protocol: {0}", ex.Message);
             }
 
             // now try to set protocol globaly (like to fail on win7 + uac)

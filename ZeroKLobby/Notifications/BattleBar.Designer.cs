@@ -145,18 +145,19 @@ namespace ZeroKLobby.Notifications
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.picoChat.BackColor = System.Drawing.Color.White;
+            this.picoChat.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.picoChat.ChatBackgroundColor = 0;
-            this.picoChat.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.picoChat.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.picoChat.HideScroll = false;
             this.picoChat.IRCForeColor = 0;
-            this.picoChat.Location = new System.Drawing.Point(144, 5);
+            this.picoChat.Location = new System.Drawing.Point(144, 0);
             this.picoChat.Name = "picoChat";
             this.picoChat.NoColorMode = false;
             this.picoChat.ShowHistory = true;
             this.picoChat.ShowJoinLeave = false;
             this.picoChat.ShowUnreadLine = true;
             this.picoChat.SingleLine = false;
-            this.picoChat.Size = new System.Drawing.Size(429, 63);
+            this.picoChat.Size = new System.Drawing.Size(432, 76);
             this.picoChat.TabIndex = 12;
             this.picoChat.TextFilter = null;
             this.picoChat.TotalDisplayLines = 0;
@@ -186,8 +187,8 @@ namespace ZeroKLobby.Notifications
         private ChatBox picoChat;
 				private System.Windows.Forms.CheckBox cbReady;
 				private System.Windows.Forms.ImageList imageList1;
-				private System.Windows.Forms.Panel panel1;
-                private System.Windows.Forms.Button battleExtras;
+                private System.Windows.Forms.Panel panel1;
                 private System.Windows.Forms.CheckBox cbQm;
+                private BitmapButton battleExtras;
     }
 }
