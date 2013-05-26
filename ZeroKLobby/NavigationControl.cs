@@ -99,6 +99,8 @@ namespace ZeroKLobby
             AddTabPage(chatTab, "Chat");
             AddTabPage(new BattleListTab(), "Battles");
             AddTabPage(new SettingsTab(), "Settings");
+            AddTabPage(new ServerTab(),"Server");
+            AddTabPage(new AdvertiserWindow(), "Advertiser");
             if (Environment.OSVersion.Platform != PlatformID.Unix && !Program.Conf.UseExternalBrowser) {
                 AddTabPage(new BrowserTab("http://zero-k.info/Maps"), "Maps");
                 AddTabPage(new BrowserTab("http://zero-k.info/Missions"), "sp");

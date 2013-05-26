@@ -60,7 +60,7 @@ namespace ZeroKLobby.MicroLobby
             RefreshText();
         }
 
-        bool PassesFilter(IChatLine line)
+        public bool PassesFilter(IChatLine line)
         {
             if (!showJoinLeave && (line is JoinLine || line is LeaveLine)) return false;
             if (!showHistory && line is HistoryLine) return false;
