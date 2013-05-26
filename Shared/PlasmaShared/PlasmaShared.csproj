@@ -193,6 +193,7 @@
     </Compile>
     <Compile Include="ResharperAttribs.cs" />
     <Compile Include="SdpArchive.cs" />
+    <Compile Include="SelfUpdater.cs" />
     <Compile Include="SerializableDictionary.cs" />
     <Compile Include="SpringPaths.cs" />
     <Compile Include="SpringScanner.cs" />

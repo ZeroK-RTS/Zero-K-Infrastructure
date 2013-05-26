@@ -1,6 +1,7 @@
 #region using
 
 using System.Diagnostics;
+using System.Reflection;
 using PlasmaDownloader;
 
 #endregion
@@ -9,7 +10,7 @@ namespace Springie
 {
 	public class MainConfig: IPlasmaDownloaderConfig
 	{
-		public const string SpringieVersion = "Springie 2.6.0";
+		public static string SpringieVersion = "Springie " + Assembly.GetEntryAssembly().GetName().Version;
 	    public const int MaxLockTime = 240;
 	    public const int MapChangeDownloadWait = 120;
 

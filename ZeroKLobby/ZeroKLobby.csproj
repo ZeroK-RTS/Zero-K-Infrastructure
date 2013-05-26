@@ -1580,10 +1580,10 @@
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
-	<GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
-		<Output TaskParameter="Assemblies" ItemName="AssemblyIdentity"/>
-	</GetAssemblyIdentity>
-	<Exec Command='echo %(AssemblyIdentity.Version) > "$(TargetDir)$(TargetName).version.txt"'/>
+    <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+      <Output TaskParameter="Assemblies" ItemName="AssemblyIdentity" />
+    </GetAssemblyIdentity>
+    <Exec Command="echo %(AssemblyIdentity.Version) &gt; &quot;$(TargetDir)$(TargetName).version.txt&quot;" />
   </Target>
   <PropertyGroup>
     <PostBuildEvent>if /i $(ConfigurationName) NEQ Release exit 0
