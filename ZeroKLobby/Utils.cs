@@ -4,70 +4,92 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using LobbyClient;
 using Microsoft.Win32;
-using Application = System.Windows.Forms.Application;
-using MessageBox = System.Windows.Forms.MessageBox;
-
 
 namespace ZeroKLobby
 {
     static class Utils
     {
         public static Dictionary<string, Color> FactionColors = new Dictionary<string, Color>()
-                                                                {
-                                                                    { "Ascended", ColorTranslator.FromHtml("#94C8FF") },
-                                                                    { "Trueborn", ColorTranslator.FromHtml("#00FF00") },
-                                                                    { "Machines", ColorTranslator.FromHtml("#FF0000") },
-                                                                    { "Empire", ColorTranslator.FromHtml("#6010FF") },
-                                                                    { "Unaligned", ColorTranslator.FromHtml("#DDBB00") },
-                                                                    // PW11 new factions
-                                                                    { "Cybernetic", ColorTranslator.FromHtml("#88AAFF") },
-                                                                    { "Dynasty", ColorTranslator.FromHtml("#FFAA20") },
-                                                                    { "Liberty", ColorTranslator.FromHtml("#55BB55") }
-                                                                };
-
-        public static bool CanRead(string filename)
         {
+            { "Ascended", ColorTranslator.FromHtml("#94C8FF") },
+            { "Trueborn", ColorTranslator.FromHtml("#00FF00") },
+            { "Machines", ColorTranslator.FromHtml("#FF0000") },
+            { "Empire", ColorTranslator.FromHtml("#6010FF") },
+            { "Unaligned", ColorTranslator.FromHtml("#DDBB00") },
+            // PW11 new factions
+            { "Cybernetic", ColorTranslator.FromHtml("#88AAFF") },
+            { "Dynasty", ColorTranslator.FromHtml("#FFAA20") },
+            { "Liberty", ColorTranslator.FromHtml("#55BB55") }
+        };
+
+        public static bool CanRead(string filename) {
             if (!File.Exists(filename)) return true;
-            try
-            {
+            try {
                 using (var f = File.Open(filename, FileMode.Open, FileAccess.Read)) {}
                 return true;
-            }
-            catch
-            {
+            } catch {
                 return false;
             }
         }
 
 
-        public static void CheckPath(string path, bool delete = false)
-        {
-            if (delete)
-            {
-                try
-                {
+        public static void CheckPath(string path, bool delete = false) {
+            if (delete) {
+                try {
                     Directory.Delete(path, true);
-                }
-                catch {}
+                } catch {}
             }
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
         }
 
-        public static Color GetFactionColor(string faction)
-        {
+        public static void CreateDesktopShortcut(string name = "Zero-K") {
+            try {
+                var deskDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+
+                using (var writer = new StreamWriter(deskDir + "\\" + name + ".url")) {
+                    var app = Assembly.GetEntryAssembly().Location;
+                    writer.WriteLine("[InternetShortcut]");
+                    writer.WriteLine("URL=file:///" + app);
+                    writer.WriteLine("IconIndex=0");
+                    var icon = app.Replace('\\', '/');
+                    writer.WriteLine("IconFile=" + icon);
+                    writer.Flush();
+                }
+            } catch (Exception ex) {
+                Trace.TraceWarning("Error creating a desktop shortcut: {0}", ex.Message);
+            }
+        }
+
+        public static Color GetFactionColor(string faction) {
             if (FactionColors.ContainsKey(faction)) return FactionColors[faction];
             else return Color.Black;
         }
 
-        public static string MakePath(params string[] directories)
-        {
+        public static Control GetHoveredControl(this Control parent) {
+            var parentControl = parent;
+            var screenPoint = Control.MousePosition;
+            var parentPoint = parentControl.PointToClient(screenPoint);
+
+            if (!parentControl.DisplayRectangle.Contains(parentPoint)) return null;
+            Control child;
+            while (
+                (child =
+                 parentControl.GetChildAtPoint(parentPoint,
+                                               GetChildAtPointSkip.Disabled | GetChildAtPointSkip.Invisible | GetChildAtPointSkip.Transparent)) !=
+                null) {
+                parentControl = child;
+                parentPoint = parentControl.PointToClient(screenPoint);
+            }
+            return parentControl;
+        }
+
+        public static string MakePath(params string[] directories) {
             var s = Path.DirectorySeparatorChar.ToString();
 
             var path = String.Join(s, directories);
@@ -78,33 +100,24 @@ namespace ZeroKLobby
             return path;
         }
 
-        public static void OpenWeb(String url)
-        {
-            if (url.StartsWith("http://zero-k.info"))
-            {
+        public static void OpenWeb(String url) {
+            if (url.StartsWith("http://zero-k.info")) {
                 Program.MainWindow.navigationControl.Path = url;
                 return;
             }
-            try
-            {
+            try {
                 Process.Start(url);
-            }
-            catch (Exception ex1)
-            {
-                try
-                {
+            } catch (Exception ex1) {
+                try {
                     var pi = new ProcessStartInfo("iexplore", url);
                     Process.Start(pi);
-                }
-                catch (Exception ex2)
-                {
+                } catch (Exception ex2) {
                     Trace.TraceError("Error opening webpage: {0}, {1}", ex2, ex1);
                 }
             }
         }
 
-        public static string PrintByteLength(long bytes)
-        {
+        public static string PrintByteLength(long bytes) {
             if (bytes < 1024) return bytes.ToString();
             else if (bytes < 1024*1024) return ((double)bytes/1024).ToString("F2") + "k";
             else if (bytes < 1024*1024*1024) return ((double)bytes/1024/1024).ToString("F2") + "M";
@@ -112,58 +125,43 @@ namespace ZeroKLobby
         }
 
 
-        public static string PrintTimeRemaining(long remaining, double rate)
-        {
+        public static string PrintTimeRemaining(long remaining, double rate) {
             if (rate == 0) return "?:??:??";
             var secs = (int)(remaining/rate);
             if (secs >= 360000) return "?:??:??";
             return String.Format("{0:D}:{1:D2}:{2:D2}", secs/3600, secs/60%60, secs%60);
         }
 
-        public static void RegisterProtocol()
-        {
+        public static void RegisterProtocol() {
             var executableName = Assembly.GetEntryAssembly().Location;
-            try
-            {
+            try {
                 SetProtocolRegistry(Registry.CurrentUser.CreateSubKey("Software\\Classes\\spring"), executableName);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 Trace.TraceWarning("Error registering protocol: {0}", ex.Message);
             }
 
             // now try to set protocol globaly (like to fail on win7 + uac)
-            try
-            {
+            try {
                 SetProtocolRegistry(Registry.ClassesRoot, executableName);
-            }
-            catch {}
+            } catch {}
         }
 
-        public static void SafeStart(string path, string args = null)
-        {
-            try
-            {
+        public static void SafeStart(string path, string args = null) {
+            try {
                 var pi = new ProcessStartInfo(path, args);
                 pi.WorkingDirectory = Path.GetDirectoryName(path);
                 pi.UseShellExecute = true;
                 Process.Start(pi);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 MessageBox.Show(path + ": " + ex.Message, "Opening failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
 
-        public static void UnregisterProtocol()
-        {
-            try
-            {
+        public static void UnregisterProtocol() {
+            try {
                 Registry.ClassesRoot.DeleteSubKeyTree("spring");
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Trace.TraceWarning("Unable to unregister spring protocol: " + e.Message);
             }
             return;
@@ -174,8 +172,7 @@ namespace ZeroKLobby
                                         string fileFormName,
                                         string contenttype,
                                         NameValueCollection querystring,
-                                        CookieContainer cookies)
-        {
+                                        CookieContainer cookies) {
             if (String.IsNullOrEmpty(fileFormName)) fileFormName = "file";
 
             if (String.IsNullOrEmpty(contenttype)) contenttype = "application/octet-stream";
@@ -218,8 +215,7 @@ namespace ZeroKLobby
             var boundaryBytes = Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
 
             Stream requestStream;
-            using (var fileStream = new FileStream(uploadfile, FileMode.Open, FileAccess.Read))
-            {
+            using (var fileStream = new FileStream(uploadfile, FileMode.Open, FileAccess.Read)) {
                 var length = postHeaderBytes.Length + fileStream.Length + boundaryBytes.Length;
                 webrequest.ContentLength = length;
 
@@ -246,10 +242,9 @@ namespace ZeroKLobby
             return sr.ReadToEnd();
         }
 
-        public static bool VerifySpringInstalled()
-        {
-            if (Program.SpringPaths.SpringVersion == null)
-            {
+
+        public static bool VerifySpringInstalled() {
+            if (Program.SpringPaths.SpringVersion == null) {
                 MessageBox.Show("Cannot start yet, please wait until engine downloads",
                                 "Engine not prepared yet",
                                 MessageBoxButtons.OK,
@@ -259,12 +254,8 @@ namespace ZeroKLobby
             else return true;
         }
 
-        [DllImport("gdi32.dll")]
-        static extern bool DeleteObject(IntPtr hObject);
 
-
-        static void SetProtocolRegistry(RegistryKey protocolKey, string executableName)
-        {
+        static void SetProtocolRegistry(RegistryKey protocolKey, string executableName) {
             protocolKey.SetValue("", "URL:Spring Action");
             protocolKey.SetValue("URL Protocol", "");
             var defaultIconKey = protocolKey.CreateSubKey("DefaultIcon");
@@ -274,75 +265,54 @@ namespace ZeroKLobby
             var commandKey = openKey.CreateSubKey("command");
             commandKey.SetValue("", string.Format("\"{0}\" \"%1\"", executableName));
         }
-
-        public static Control GetHoveredControl(this Control parent) {
-            var parentControl = parent;
-            var screenPoint = Control.MousePosition;
-            var parentPoint = parentControl.PointToClient(screenPoint);
-
-            if (!parentControl.DisplayRectangle.Contains(parentPoint)) return null;
-            Control child;
-            while (
-                (child =
-                 parentControl.GetChildAtPoint(parentPoint,
-                                               GetChildAtPointSkip.Disabled | GetChildAtPointSkip.Invisible | GetChildAtPointSkip.Transparent)) !=
-                null)
-            {
-                parentControl = child;
-                parentPoint = parentControl.PointToClient(screenPoint);
-            }
-            return parentControl;
-
-        }
     }
 
     public static class DpiMeasurement
     {
-        public static double dpiY = 0;
-        public static double scaleUpRatioY = 0;
-        public static double scaleDownRatioY = 0;
         public static double dpiX = 0;
-        public static double scaleUpRatioX = 0;
+        public static double dpiY = 0;
         public static double scaleDownRatioX = 0;
+        public static double scaleDownRatioY = 0;
+        public static double scaleUpRatioX = 0;
+        public static double scaleUpRatioY = 0;
 
-        public static void DpiXYMeasurement(Control a)
-        {
-            if (dpiY == 0 || dpiX == 0)
-            {
-                Graphics formGraphics = a.CreateGraphics(); //Reference: http://msdn.microsoft.com/en-us/library/system.drawing.graphics.dpix.aspx
+        public static void DpiXYMeasurement(Control a) {
+            if (dpiY == 0 || dpiX == 0) {
+                var formGraphics = a.CreateGraphics(); //Reference: http://msdn.microsoft.com/en-us/library/system.drawing.graphics.dpix.aspx
                 dpiY = formGraphics.DpiY; //get current DPI
-                scaleUpRatioY = (double)dpiY / 96; //get scaleUP ratio, 96 is the original DPI. Preserve decimal, Reference: http://www.dotnetperls.com/divide
-                scaleDownRatioY = (double)96 / dpiY; //get scaleDown ratio (to counter-act DPI virtualization/scaling)
+                scaleUpRatioY = (double)dpiY/96;
+                    //get scaleUP ratio, 96 is the original DPI. Preserve decimal, Reference: http://www.dotnetperls.com/divide
+                scaleDownRatioY = (double)96/dpiY; //get scaleDown ratio (to counter-act DPI virtualization/scaling)
                 dpiX = formGraphics.DpiX;
-                scaleUpRatioX = (double)dpiX / 96;
-                scaleDownRatioX = (double)96 / dpiX;
+                scaleUpRatioX = (double)dpiX/96;
+                scaleDownRatioX = (double)96/dpiX;
                 formGraphics.Dispose();
             }
         }
-        public static int ScaleValueX(double designWidth)
-        {
-            double output = designWidth * scaleUpRatioX;
-            output = Math.Round(output, 0, MidpointRounding.AwayFromZero); //Reference: http://stackoverflow.com/questions/8844674/how-to-round-up-to-the-nearest-whole-number-in-c-sharp
-            return ((int)output);  //multiply the scaleUP ratio to the original design height, then change type to integer, then return value;
 
-        }
-        public static int ScaleValueY(double designHeight)
-        {
-            double output = designHeight * scaleUpRatioY;
+        public static int ReverseScaleValueX(double designHeight) {
+            var output = designHeight*scaleDownRatioX;
             output = Math.Round(output, 0, MidpointRounding.AwayFromZero);
+            return ((int)output); //multiply the scaleDOWN ratio to the original design height, then change type to integer, then return value;
+        }
+
+        public static int ReverseScaleValueY(double designHeight) {
+            var output = designHeight*scaleDownRatioY;
+            output = Math.Round(output, 0, MidpointRounding.AwayFromZero);
+            return ((int)output); //multiply the scaleDOWN ratio to the original design height, then change type to integer, then return value;
+        }
+
+        public static int ScaleValueX(double designWidth) {
+            var output = designWidth*scaleUpRatioX;
+            output = Math.Round(output, 0, MidpointRounding.AwayFromZero);
+                //Reference: http://stackoverflow.com/questions/8844674/how-to-round-up-to-the-nearest-whole-number-in-c-sharp
             return ((int)output); //multiply the scaleUP ratio to the original design height, then change type to integer, then return value;
         }
-        public static int ReverseScaleValueY(double designHeight)
-        {
-            double output = designHeight * scaleDownRatioY;
+
+        public static int ScaleValueY(double designHeight) {
+            var output = designHeight*scaleUpRatioY;
             output = Math.Round(output, 0, MidpointRounding.AwayFromZero);
-            return ((int)output); //multiply the scaleDOWN ratio to the original design height, then change type to integer, then return value;
-        }
-        public static int ReverseScaleValueX(double designHeight)
-        {
-            double output = designHeight * scaleDownRatioX;
-            output = Math.Round(output, 0, MidpointRounding.AwayFromZero);
-            return ((int)output); //multiply the scaleDOWN ratio to the original design height, then change type to integer, then return value;
+            return ((int)output); //multiply the scaleUP ratio to the original design height, then change type to integer, then return value;
         }
     }
 }

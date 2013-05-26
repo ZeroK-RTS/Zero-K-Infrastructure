@@ -5,7 +5,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Design;
+using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Windows;
 using System.Windows.Forms;
 using System.Xml.Serialization;
@@ -22,6 +25,42 @@ namespace ZeroKLobby
         public const string BaseUrl = "http://zero-k.info/";
         public const string ConfigFileName = "ZeroKLobbyConfig.xml";
         public const string LogFile = "ZeroKLobbyErrors.txt";
+
+
+        public void Save(string path) {
+            try {
+                var cols = new StringCollection();
+                cols.AddRange(AutoJoinChannels.OfType<string>().Distinct().ToArray());
+                AutoJoinChannels = cols;
+                var xs = new XmlSerializer(typeof(Config));
+                var sb = new StringBuilder();
+                using (var stringWriter = new StringWriter(sb)) xs.Serialize(stringWriter, this);
+                File.WriteAllText(path, sb.ToString());
+            } catch (Exception ex) {
+                Trace.TraceError("Error saving config: {0}",ex);
+            }
+        }
+
+        public static Config Load(string path) {
+            Config conf;
+            if (File.Exists(path))
+            {
+                var xs = new XmlSerializer(typeof(Config));
+                try
+                {
+                    conf = (Config)xs.Deserialize(new StringReader(File.ReadAllText(path)));
+                    conf.UpdateFadeColor();
+                    return conf;
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("Error reading config file: {0}", ex);
+                }
+            }
+            conf = new Config { IsFirstRun = true };
+            conf.UpdateFadeColor();
+            return conf;
+        }
 
 
         StringCollection autoJoinChannels = new StringCollection() { KnownGames.GetDefaultGame().Channel };
@@ -85,9 +124,10 @@ namespace ZeroKLobby
         [DisplayName("Connect on startup")]
         [Description("Connect and login player on program start?")]
         public bool ConnectOnStartup { get { return connectOnStartup; } set { connectOnStartup = value; } }
+
         [Category("General")]
-        [DisplayName("Data folder to store all game content")]
-        [Description("This path will be used for downloaded maps, games, logs, settings etc.")]
+        [DisplayName("Content data folder")]
+        [Description("Place where all the content is saved")]
         public string DataFolder { get; set; }
 
         [Browsable(false)]
@@ -196,7 +236,7 @@ namespace ZeroKLobby
         }
 
 
-        [Browsable(false)]
+        [Browsable(false)] // todo remove this
         public string ManualSpringPath { get { return manualSpringPath; } set { manualSpringPath = value; } }
 
         [Category("General")]

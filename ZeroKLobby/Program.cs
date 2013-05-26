@@ -22,7 +22,6 @@ namespace ZeroKLobby
     static class Program
     {
         static readonly object configLock = new object();
-        static string ConfigDirectory;
         static NewVersionBar NewVersionBar;
         static Mutex mutex;
         public static AutoJoinManager AutoJoinManager;
@@ -58,34 +57,16 @@ namespace ZeroKLobby
             return new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
         }
 
+        static bool pickInitFolder = false;
+
         internal static void LoadConfig() {
-            var configFilename = GetFullConfigPath();
-            if (!File.Exists(configFilename)) {
-                // port old config      
-                /*if (ApplicationDeployment.IsNetworkDeployed)
-                {
-                    try
-                    {
-                        File.Move(Path.Combine(ApplicationDeployment.CurrentDeployment.DataDirectory, "SpringDownloaderConfig.xml"), configFilename);
-                    }
-                    catch {}
-                }*/
+            var curConfPath = Path.Combine(StartupPath, Config.ConfigFileName);
+            if (File.Exists(curConfPath)) Conf = Config.Load(curConfPath);
+            else {
+                pickInitFolder = true;
+                Conf = Config.Load(Path.Combine(SpringPaths.GetMySpringDocPath(), Config.ConfigFileName));
+                Conf.IsFirstRun = true; // treat import as a first run
             }
-
-            if (File.Exists(configFilename)) {
-                var xs = new XmlSerializer(typeof(Config));
-                try {
-                    Conf = (Config)xs.Deserialize(new StringReader(File.ReadAllText(configFilename)));
-                    Conf.IsFirstRun = false;
-                } catch (Exception ex) {
-                    Trace.TraceError("Error reading config file: {0}", ex);
-                    Conf = new Config();
-                    Conf.IsFirstRun = true;
-                }
-            }
-            else Conf.IsFirstRun = true;
-
-            Conf.UpdateFadeColor();
         }
 
         [STAThread]
@@ -95,7 +76,6 @@ namespace ZeroKLobby
                 Trace.Listeners.Add(new LogTraceListener());
 
                 if (Process.GetProcesses().Any(x => x.ProcessName.StartsWith("spring_"))) return; // dont start if started from installer
-
                 StartupArgs = args;
 
                 Directory.SetCurrentDirectory(StartupPath);
@@ -111,8 +91,6 @@ namespace ZeroKLobby
 
                 //HttpWebRequest.DefaultCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
 
-                Utils.RegisterProtocol();
-
                 SelfUpdater = new SelfUpdater("Zero-K");
 
                 Trace.TraceInformation("Starting with version {0}", SelfUpdater.CurrentVersion);
@@ -123,9 +101,37 @@ namespace ZeroKLobby
 
                 LoadConfig();
 
-                SpringPaths = new SpringPaths(Conf.ManualSpringPath, null, Conf.DataFolder);
 
-                Conf.DataFolder = SpringPaths.WritableDirectory;
+                var contentDir = !string.IsNullOrEmpty(Conf.DataFolder) ? Conf.DataFolder : StartupPath;
+                if (!Directory.Exists(contentDir) || !SpringPaths.IsDirectoryWritable(contentDir) || pickInitFolder)
+                {
+                    var dc = new SelectWritableFolder() {SelectedPath = SpringPaths.GetMySpringDocPath()};
+                    if (dc.ShowDialog() != DialogResult.OK) return;
+                    contentDir = dc.SelectedPath;
+                }
+                if (Conf.DataFolder != StartupPath) Conf.DataFolder = contentDir;
+                else Conf.DataFolder = null;
+
+                if (!SpringPaths.IsDirectoryWritable(StartupPath) || StartupPath.Contains("Local\\Apps")) {
+                    MessageBox.Show(string.Format("Startup directory is not writable, Zero-K.exe will be moved to {0}", contentDir));
+                    var newTarget = Path.Combine(contentDir,"Zero-K.exe");
+                    if (SelfUpdater.CheckForUpdate(newTarget, true)) {
+                        Conf.Save(Path.Combine(contentDir, Config.ConfigFileName));
+                        Process.Start(newTarget);
+                        return;
+                    }
+                    MessageBox.Show("Move failed, please copy Zero-K.exe to a writable folder");
+                }
+
+                if (Conf.IsFirstRun) {
+                    Utils.CreateDesktopShortcut();
+                    Utils.RegisterProtocol();
+                }
+
+                SpringPaths = new SpringPaths(Conf.ManualSpringPath, null, contentDir);
+                
+
+
                 SpringPaths.MakeFolders();
 
                 SaveConfig();
@@ -263,19 +269,14 @@ namespace ZeroKLobby
         }
 
         internal static void SaveConfig() {
-            var configFilename = GetFullConfigPath();
             lock (configLock) {
-                var cols = new StringCollection();
-                cols.AddRange(Conf.AutoJoinChannels.OfType<string>().Distinct().ToArray());
-                Conf.AutoJoinChannels = cols;
-                var xs = new XmlSerializer(typeof(Config));
-                var sb = new StringBuilder();
-                using (var stringWriter = new StringWriter(sb)) xs.Serialize(stringWriter, Conf);
-                File.WriteAllText(configFilename, sb.ToString());
+                Conf.Save(Path.Combine(StartupPath, Config.ConfigFileName));
             }
         }
 
         public static void ShutDown() {
+            Conf.IsFirstRun = false;
+            SaveConfig();
             try {
                 if (!FriendsWindow.Creatable) MainWindow.frdWindow.Close();
                 if (!Debugger.IsAttached) mutex.ReleaseMutex();
@@ -283,29 +284,11 @@ namespace ZeroKLobby
             if (ToolTip != null) ToolTip.Dispose();
             if (Downloader != null) Downloader.Dispose();
             if (SpringScanner != null) SpringScanner.Dispose();
+
             Thread.Sleep(5000);
         }
 
 
-        static string GetFullConfigPath() {
-            if (ConfigDirectory == null) {
-                //detect configuration path once
-                if (Debugger.IsAttached) {
-                    if (SpringPaths.IsDirectoryWritable(StartupPath)) {
-                        //use startup path when on linux
-                        //or if startup path is writable on windows
-                        ConfigDirectory = StartupPath;
-                    }
-                    else {
-                        //if we are on windows and startup path isnt writable, use my documents/games/spring
-                        ConfigDirectory = SpringPaths.GetMySpringDocPath();
-                    }
-                }
-                else ConfigDirectory = SpringPaths.GetMySpringDocPath();
-            }
-
-            return Path.Combine(ConfigDirectory, Config.ConfigFileName);
-        }
 
 
         static void TasClientInvoker(TasClient.Invoker a) {

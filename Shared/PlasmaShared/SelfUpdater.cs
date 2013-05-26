@@ -35,12 +35,13 @@ namespace PlasmaShared
         }
 
 
-        public bool CheckForUpdate() {
+        public bool CheckForUpdate(string targetFile = null, bool forced = false) {
+            if (targetFile == null) targetFile = TargetExecutablePath;
             LatestVersion = GetLatestVersion();
-            if (!string.IsNullOrEmpty(LatestVersion) && LatestVersion != CurrentVersion) {
-                if (UpgradeFile(string.Format("{0}/{1}.exe", urlBase, urlUpdateName), TargetExecutablePath)) {
-                    Trace.TraceInformation("{0} updated to {1}", TargetExecutablePath, LatestVersion);
-                    ProgramUpdated(TargetExecutablePath);
+            if (forced || (!string.IsNullOrEmpty(LatestVersion) && LatestVersion != CurrentVersion)) {
+                if (UpgradeFile(string.Format("{0}/{1}.exe", urlBase, urlUpdateName), targetFile)) {
+                    Trace.TraceInformation("{0} updated to {1}", targetFile, LatestVersion);
+                    ProgramUpdated(targetFile);
                     return true;
                 }
             }
