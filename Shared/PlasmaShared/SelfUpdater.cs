@@ -35,14 +35,16 @@ namespace PlasmaShared
         }
 
 
-        public void CheckForUpdate(object state = null) {
+        public bool CheckForUpdate() {
             LatestVersion = GetLatestVersion();
             if (!string.IsNullOrEmpty(LatestVersion) && LatestVersion != CurrentVersion) {
                 if (UpgradeFile(string.Format("{0}/{1}.exe", urlBase, urlUpdateName), TargetExecutablePath)) {
                     Trace.TraceInformation("{0} updated to {1}", TargetExecutablePath, LatestVersion);
                     ProgramUpdated(TargetExecutablePath);
+                    return true;
                 }
             }
+            return false;
         }
 
         public static bool ReplaceFile(string filepath, byte[] data) {
@@ -62,7 +64,7 @@ namespace PlasmaShared
 
         public void StartChecking() {
             StopChecking();
-            timer = new Timer(CheckForUpdate, null, 100, PeriodSeconds*1000);
+            timer = new Timer((o) => { CheckForUpdate(); }, null, 100, PeriodSeconds * 1000);
         }
 
         public void StopChecking() {

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Design;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
 using System.Xml.Serialization;
@@ -21,7 +22,6 @@ namespace ZeroKLobby
         public const string BaseUrl = "http://zero-k.info/";
         public const string ConfigFileName = "ZeroKLobbyConfig.xml";
         public const string LogFile = "ZeroKLobbyErrors.txt";
-        public const string ReportUrl = "http://cadownloader.licho.eu/error.php";
 
 
         StringCollection autoJoinChannels = new StringCollection() { KnownGames.GetDefaultGame().Channel };
@@ -55,10 +55,6 @@ namespace ZeroKLobby
        
         [Browsable(false)]
         public string BattleFilter { get; set; }
-
-        [DisplayName("Disable driver check")]
-        [Description("Don't warn about incompatible video card drivers")]
-        public bool DisableDriverCheck { get; set; }
 
         [Category("Chat")]
         [DisplayName("Color: Background")]

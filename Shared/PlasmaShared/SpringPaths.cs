@@ -141,7 +141,7 @@ namespace PlasmaShared
             Executable = Utils.MakePath(springPath, Environment.OSVersion.Platform == PlatformID.Unix ? "spring" : "spring.exe");
             MtExecutable = Utils.MakePath(springPath, Environment.OSVersion.Platform == PlatformID.Unix ? "spring-multithreaded" : "spring-multithreaded.exe");
             DedicatedServer = Utils.MakePath(springPath, Environment.OSVersion.Platform == PlatformID.Unix ? "spring-dedicated" : "spring-dedicated.exe");
-            Cache = Utils.MakePath(WritableDirectory, "cache", "SD");
+            Cache = Utils.MakePath(WritableDirectory, "cache", "ZKL");
 
             var ov = springVersion;
             springVersion = GetSpringVersion(Executable);
@@ -159,66 +159,14 @@ namespace PlasmaShared
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
         }
 
-
-        // can be null
-        string DetectSpringConfigDataPath(string configPath)
-        {
-            string springDataPath = null;
-            try
-            {
-                foreach (var line in File.ReadAllLines(configPath))
-                {
-                    var kvp = line.Split('=');
-                    if (kvp.Length == 2 && kvp[0] == "SpringData" && kvp[1] != String.Empty) springDataPath = kvp[1];
-                }
-            }
-            catch (Exception e)
-            {
-                Trace.WriteLine("Unable to open springrc: " + e);
-            }
-            return springDataPath;
-        }
-
+        
         static string GetSpringVersion(string executablePath)
         {
             if (!File.Exists(executablePath)) return null;
             var LastPart =
                 Path.GetDirectoryName(executablePath).Split(new char[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
             return LastPart;
-
-            if (string.IsNullOrEmpty(executablePath)) throw new ApplicationException("Version can only be determined after executable path is known");
-            try
-            {
-                var p = new Process();
-                p.StartInfo = new ProcessStartInfo(executablePath, "--version")
-                              { RedirectStandardOutput = true, UseShellExecute = false, CreateNoWindow = true };
-                p.Start();
-                var data = p.StandardOutput.ReadToEnd();
-                data = data.Trim();
-                data = data.Replace("(MT-Sim)", "");
-                data = data.Replace(" MT-Sim", "");
-                var word = "";
-                var match = Regex.Match(data, @"Spring [^ ]+ \(([^\)]+)\)");
-                if (match.Success) word = match.Groups[1].Value;
-                else
-                {
-                    match = Regex.Match(data, @"Spring ([^ ]+)");
-                    if (match.Success) word = match.Groups[1].Value;
-                }
-                // parse word
-                match = Regex.Match(word, "(\\d+\\.\\d+\\.\\d+)\\.\\d+$");
-                if (match.Success) return match.Groups[1].Value;
-
-                match = Regex.Match(word, "(\\d+)\\.\\d+$");
-                if (match.Success) return match.Groups[1].Value;
-
-                return word;
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError("Error determining spring version for {0}: {1}", executablePath, ex);
-            }
-            return null;
+          
         }
     }
 }

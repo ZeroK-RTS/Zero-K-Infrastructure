@@ -28,6 +28,7 @@ namespace ZeroKLobby
         public static AutoJoinManager AutoJoinManager;
         public static BattleBar BattleBar { get; private set; }
         public static BattleIconManager BattleIconManager { get; private set; }
+        public static BrowserInterop BrowserInterop { get; private set; }
         public static bool CloseOnNext;
         public static Config Conf = new Config();
         public static ConnectBar ConnectBar { get; private set; }
@@ -39,6 +40,7 @@ namespace ZeroKLobby
         public static ModStore ModStore { get; private set; }
         public static NotifySection NotifySection { get { return MainWindow.NotifySection; } }
         public static SayCommandHandler SayCommandHandler { get; private set; }
+        public static SelfUpdater SelfUpdater { get; set; }
         public static ServerImagesHandler ServerImages { get; private set; }
         public static SpringPaths SpringPaths { get; private set; }
         public static SpringScanner SpringScanner { get; private set; }
@@ -48,7 +50,6 @@ namespace ZeroKLobby
         public static TasClient TasClient { get; private set; }
         public static ToolTipHandler ToolTip;
         public static VoteBar VoteBar { get; private set; }
-        public static BrowserInterop BrowserInterop { get; private set; }
 
         /// <summary>
         /// windows only: do we have admin token?
@@ -95,34 +96,6 @@ namespace ZeroKLobby
 
                 if (Process.GetProcesses().Any(x => x.ProcessName.StartsWith("spring_"))) return; // dont start if started from installer
 
-                // if we started executable but clickonce link exists, runk through clickonce link
-                // CONVERT
-                /*if (!ApplicationDeployment.IsNetworkDeployed)
-                {
-                    if (!Debugger.IsAttached)
-                    {
-                        var shortcutName = string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "\\Zero-K\\Zero-K.appref-ms");
-                        if (File.Exists(shortcutName))
-                        {
-                            Process.Start(shortcutName, String.Join("_divider_", args));
-                            return;
-                        }
-                    }
-                }
-                else
-                {
-                    // args to offline clickonce are passed in this special way
-                    try
-                    {
-                        var activationData = AppDomain.CurrentDomain.SetupInformation.ActivationArguments.ActivationData;
-                        if (activationData != null && activationData.Length > 0) args = activationData[0].Split(new[] { "_divider_" }, StringSplitOptions.None);
-                    }
-                    catch (Exception ex)
-                    {
-                        Trace.TraceWarning("Failed to process clickonce arguments:{0}", ex);
-                    }
-                }*/
-
                 StartupArgs = args;
 
                 Directory.SetCurrentDirectory(StartupPath);
@@ -136,19 +109,13 @@ namespace ZeroKLobby
                     Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
                 }
 
-                // this sets default caching policy - webbrowser will use local cache if possible -> for loading images from web resources in wpf
                 //HttpWebRequest.DefaultCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
 
                 Utils.RegisterProtocol();
 
-                // CONVERT
-                /*
-                if (ApplicationDeployment.IsNetworkDeployed) Trace.TraceInformation("Starting with version {0}", ApplicationDeployment.CurrentDeployment.CurrentVersion);
-                else
-                {
-                    if (Debugger.IsAttached) Trace.TraceInformation("Starting with debugging");
-                    else Trace.TraceError("Starting undeployed version!");
-                }*/
+                SelfUpdater = new SelfUpdater("Zero-K");
+
+                Trace.TraceInformation("Starting with version {0}", SelfUpdater.CurrentVersion);
 
                 WebRequest.DefaultWebProxy = null;
                 ThreadPool.SetMaxThreads(500, 2000);
@@ -171,7 +138,9 @@ namespace ZeroKLobby
 
                 try {
                     if (!Debugger.IsAttached) {
-                        mutex = new Mutex(false, "ZeroKLobby");
+                        var wp = "";
+                        foreach (var c in SpringPaths.WritableDirectory.Where(x => (x >= 'a' && x <= 'z') || (x >= 'A' && x <= 'Z'))) wp += c;
+                        mutex = new Mutex(false, "ZeroKLobby" + wp);
                         if (!mutex.WaitOne(10000, false)) {
                             MessageBox.Show(
                                 "Another copy of Zero-K lobby is still running" +
@@ -198,17 +167,12 @@ namespace ZeroKLobby
                 Downloader = new PlasmaDownloader.PlasmaDownloader(Conf, SpringScanner, SpringPaths);
                 Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
 
-                TasClient = new TasClient(TasClientInvoker,
-                                          string.Format("ZK {0}", "2345"),
-                                          // CONVER ApplicationDeployment.IsNetworkDeployed? pplicationDeployment.CurrentDeployment.CurrentVersion.ToString(): Application.ProductVersion
-                                          GlobalConst.ZkLobbyUserCpu,
-                                          true);
+                TasClient = new TasClient(TasClientInvoker, string.Format("ZK {0}", SelfUpdater.CurrentVersion), GlobalConst.ZkLobbyUserCpu, true);
 
                 SayCommandHandler = new SayCommandHandler(TasClient);
 
                 ServerImages = new ServerImagesHandler(SpringPaths, TasClient);
 
-                //DriverCheck.DoCheck();
 
                 // log, for debugging
                 TasClient.Connected += (s, e) => Trace.TraceInformation("TASC connected");
@@ -217,34 +181,20 @@ namespace ZeroKLobby
                         Trace.TraceInformation("TASC login accepted");
                         Trace.TraceInformation("Server is using Spring version {0}", TasClient.ServerSpringVersion);
                         if (SpringPaths.SpringVersion != TasClient.ServerSpringVersion) Downloader.GetAndSwitchEngine(TasClient.ServerSpringVersion);
-                        Program.MainWindow.navigationControl.Path = "chat/channel/zk"; // todo ugly    
+                        MainWindow.navigationControl.Path = "chat/channel/zk"; // todo ugly    
                     };
 
                 TasClient.LoginDenied += (s, e) => Trace.TraceInformation("TASC login denied");
-                TasClient.ChannelJoined += (s, e) =>
-                    {
-                        Trace.TraceInformation("TASC channel joined: " + e.ServerParams[0]);
-                    };
+                TasClient.ChannelJoined += (s, e) => { Trace.TraceInformation("TASC channel joined: " + e.ServerParams[0]); };
                 TasClient.ConnectionLost += (s, e) => Trace.TraceInformation("Connection lost");
 
-                // special "!join" command for quickmatching
+                // special handling
                 TasClient.PreviewSaid += (s, e) =>
                     {
                         var tas = (TasClient)s;
                         User user = null;
                         tas.ExistingUsers.TryGetValue(e.Data.UserName, out user);
                         if ((user != null && user.BanMute) || Conf.IgnoredUsers.Contains(e.Data.UserName)) e.Cancel = true;
-
-                        if (e.Data.Place == TasSayEventArgs.Places.Normal && e.Data.Text.StartsWith("!join") && user != null) {
-                            if (user.IsAdmin || user.IsZeroKAdmin || user.IsBot || (tas.MyBattle != null && tas.MyBattle.Founder.Name == user.Name)) {
-                                e.Cancel = true;
-                                var parts = e.Data.Text.Split(' ');
-                                var battleID = tas.ExistingBattles.Values.Where(x => x.Founder.Name == parts[1]).First().BattleID;
-                                var password = parts.Length > 2 ? parts[2] : null;
-                                ActionHandler.UnSpec();
-                                ActionHandler.JoinBattle(battleID, password);
-                            }
-                        }
                     };
 
                 TasClient.Extensions.JsonDataReceived += (eventArgs, o) =>
@@ -263,22 +213,22 @@ namespace ZeroKLobby
 
                 MainWindow = new MainWindow();
 
-                
-
                 Application.AddMessageFilter(new ScrollMessageFilter());
-
+                
+                
                 if (Conf.StartMinimized) MainWindow.WindowState = FormWindowState.Minimized;
                 else MainWindow.WindowState = FormWindowState.Normal;
 
                 BattleIconManager = new BattleIconManager(MainWindow);
                 BattleBar = new BattleBar();
-                NewVersionBar = new NewVersionBar();
+                NewVersionBar = new NewVersionBar(SelfUpdater);
                 VoteBar = new VoteBar();
 
                 //This make the size of every bar constant (only for height).
                 //This is a HAX, we wanted to make them constant because the bar will be DPI-scaled twice/thrice/multiple-time again somewhere but we don't know where it is to fix them.
+                // todo wtf fix this crazy thing
                 var votebarSize = new Size(0, VoteBar.Height);
-                    // Reference: http://stackoverflow.com/questions/5314041/set-minimum-window-size-in-c-sharp-net
+                // Reference: http://stackoverflow.com/questions/5314041/set-minimum-window-size-in-c-sharp-net
                 var newversionbarSize = new Size(0, NewVersionBar.Height);
                 var battlebarSize = new Size(0, BattleBar.Height);
                 var connectbarSize = new Size(0, ConnectBar.Height);
@@ -296,7 +246,7 @@ namespace ZeroKLobby
                 JugglerBar.MaximumSize = jugglerbarSize;
                 //End battlebar size fix hax
 
-                if (!Conf.DisableDriverCheck) PlasmaShared.Utils.StartAsync(DriverCheck.DoCheck);
+                if (!Debugger.IsAttached) Program.SelfUpdater.StartChecking();
 
                 if (Conf.ShowFriendsWindow == true) {
                     MainWindow.frdWindow = new FriendsWindow();
@@ -311,7 +261,6 @@ namespace ZeroKLobby
                 Trace.TraceError("Error in application:" + ex);
             }
         }
-
 
         internal static void SaveConfig() {
             var configFilename = GetFullConfigPath();

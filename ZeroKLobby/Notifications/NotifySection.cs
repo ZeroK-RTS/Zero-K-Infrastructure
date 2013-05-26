@@ -27,7 +27,7 @@ namespace SpringDownloader.Notifications
 			}
 		}
 
-		public void RemoveBar(object bar) // CONVERT object
+		public void RemoveBar(object bar)
 		{
 			var container = Controls.OfType<NotifyBarContainer>().Where(x => x.BarContent == bar).SingleOrDefault();
 			if (container != null) Controls.Remove(container);

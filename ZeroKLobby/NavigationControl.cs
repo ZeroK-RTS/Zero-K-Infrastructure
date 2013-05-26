@@ -76,7 +76,7 @@ namespace ZeroKLobby
                 {
                     Label = "SINGLEPLAYER",
                     TargetPath = "http://zero-k.info/Missions",
-                    // CONVERT Icon = HeaderButton.ButtonIcon.Singleplayer,
+                    // Icon = HeaderButton.ButtonIcon.Singleplayer,
                 },
                 new ButtonInfo()
                 {

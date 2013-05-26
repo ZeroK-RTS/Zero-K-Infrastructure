@@ -122,7 +122,7 @@ namespace ZeroKLobby
 
         public static void RegisterProtocol()
         {
-            var executableName = Assembly.GetExecutingAssembly().Location;
+            var executableName = Assembly.GetEntryAssembly().Location;
             try
             {
                 SetProtocolRegistry(Registry.CurrentUser.CreateSubKey("Software\\Classes\\spring"), executableName);

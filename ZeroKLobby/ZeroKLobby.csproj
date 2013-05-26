@@ -153,7 +153,6 @@
     <Compile Include="Controls\HeadlessTabControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="DriverCheck.cs" />
     <Compile Include="EngineConfigurator.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="INavigatable.cs" />
