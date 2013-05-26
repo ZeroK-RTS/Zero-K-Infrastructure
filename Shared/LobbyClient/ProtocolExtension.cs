@@ -37,7 +37,12 @@ namespace LobbyClient
         readonly Dictionary<string, Dictionary<string, string>> publishedUserAttributes = new Dictionary<string, Dictionary<string, string>>();
 
         readonly TasClient tas;
-        readonly Dictionary<string, Type> typeCache = new Dictionary<string, Type>();
+        readonly Dictionary<string, Type> typeCache = new Dictionary<string, Type>()
+        {
+            { typeof(JugglerConfig).Name, typeof(JugglerConfig) },
+            { typeof(JugglerState).Name, typeof(JugglerState) },
+            { typeof(SiteToLobbyCommand).Name, typeof(SiteToLobbyCommand) },
+        };
 
 
         readonly Dictionary<string, Dictionary<string, string>> userAttributes = new Dictionary<string, Dictionary<string, string>>();
@@ -105,13 +110,14 @@ namespace LobbyClient
             tas.Say(TasClient.SayPlace.User, name, EncodeJson(config), false);
         }
 
+        public void SendJsonData(string username, object data) {
+            tas.Say(TasClient.SayPlace.User, username, EncodeJson(data), false);
+        }
+
         public void SendMyJugglerConfig(JugglerConfig config) {
             tas.Say(TasClient.SayPlace.User, GlobalConst.NightwatchName, EncodeJson(config), false);
         }
 
-        public void SendJsonData(string username, object data) {
-            tas.Say(TasClient.SayPlace.User,  username, EncodeJson(data), false);
-        }
 
         object DecodeJson(string data, TasSayEventArgs e) {
             try {
@@ -122,7 +128,7 @@ namespace LobbyClient
 
                 Type type;
                 if (!typeCache.TryGetValue(tname, out type)) {
-                    type = Type.GetType(string.Format("LobbyClient.ProtocolExtension.{0}", tname)) ??
+                    type = Type.GetType(tname) ??
                            Assembly.GetExecutingAssembly().GetTypes().FirstOrDefault(x => x.Name == tname) ??
                            AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).FirstOrDefault(x => x.Name == tname);
                     typeCache[tname] = type;
@@ -220,7 +226,7 @@ namespace LobbyClient
             public bool Active { get; set; }
             public List<PreferencePair> Preferences { get; set; }
 
-            public JugglerConfig(Account acc):this() {
+            public JugglerConfig(Account acc): this() {
                 Active = acc.MatchMakingActive;
                 foreach (var item in acc.Preferences) Preferences.Add(new PreferencePair { Mode = item.Key, Preference = item.Value });
             }
@@ -241,15 +247,15 @@ namespace LobbyClient
             public List<ModePair> ModeCounts { get; set; }
             public int TotalPlayers { get; set; }
 
+            public JugglerState() {
+                ModeCounts = new List<ModePair>();
+            }
+
             public class ModePair
             {
                 public int Count { get; set; }
                 public AutohostMode Mode { get; set; }
                 public int Playing { get; set; }
-            }
-
-            public JugglerState() {
-                ModeCounts = new List<ModePair>();
             }
         }
 

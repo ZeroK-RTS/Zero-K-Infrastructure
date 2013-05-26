@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
@@ -167,7 +168,7 @@ namespace ZeroKLobby.MicroLobby
 
             if (filtering) FilterPlayers();
             else {
-                playerBox.Items.Remove(playerBox.Items.Cast<PlayerListItem>().SingleOrDefault(u => u.UserName == userName));
+                playerBox.Items.Remove(playerBox.Items.SingleOrDefault(u => u.UserName == userName));
                 playerBox.Items.Add(item);
                 SortByTeam();
             }
@@ -323,10 +324,7 @@ namespace ZeroKLobby.MicroLobby
 
             if (filtering) FilterPlayers();
             else {
-                playerBox.BeginUpdate();
-                playerBox.Items.Clear();
-                foreach (var i in playerListItems) playerBox.Items.Add(i);
-                playerBox.EndUpdate();
+                playerBox.AddItemRange(playerListItems);
             }
         }
 

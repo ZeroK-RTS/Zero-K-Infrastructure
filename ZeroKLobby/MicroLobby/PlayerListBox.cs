@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -28,10 +29,6 @@ namespace ZeroKLobby.MicroLobby
 		    timer.Tick += (sender, args) =>
 		        {
 		            try {
-		                if (IsDisposed || !IsHandleCreated) {
-		                    timer.Stop();
-		                    return;
-		                }
 		                BeginUpdate();
 		                base.Items.Clear();
 		                base.Items.AddRange(realItems.ToArray());
@@ -78,6 +75,13 @@ namespace ZeroKLobby.MicroLobby
 	    }
 
 	    public new ObservableCollection<PlayerListItem> Items { get { return realItems; } }
+	    public void AddItemRange(IEnumerable<PlayerListItem> items) {
+            foreach (var i in items) realItems.Add(i);
+            BeginUpdate();
+            base.Items.Clear();
+            base.Items.AddRange(realItems.ToArray());
+            EndUpdate();
+	    }
 
 	    public string[] GetUserNames()
 		{
