@@ -103,7 +103,7 @@ namespace ZeroKLobby.Notifications
 
         private void lbQuestion_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Utils.OpenWeb(lbQuestion.Text.Substring(e.Link.Start, e.Link.Length)); //open map's webpage
+            Utils.OpenWeb(lbQuestion.Text.Substring(e.Link.Start, e.Link.Length), true); //open map's webpage
         }
     }
 }

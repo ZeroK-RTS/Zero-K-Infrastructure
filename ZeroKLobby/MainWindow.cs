@@ -212,10 +212,6 @@ namespace ZeroKLobby
             else WindowState = Program.Conf.LastWindowState;
 
             if (Program.StartupArgs != null && Program.StartupArgs.Length > 0) navigationControl.Path = Program.StartupArgs[0];
-            else {
-                // if first run show lobby start
-                if (Program.Conf.IsFirstRun) navigationControl.Path = "http://zero-k.info/Wiki/LobbyStart";
-            }
 
             // download primary game 
             var defaultTag = KnownGames.GetDefaultGame().RapidTag;

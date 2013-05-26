@@ -52,7 +52,7 @@ namespace ZeroKLobby.MicroLobby
 
                     }
                     else if (words[0] == "/raw") Program.TasClient.SendRaw(PlasmaShared.Utils.Glue(words, 1));
-                    else if (words[0] == "/help") NavigationControl.Instance.Path = "help";
+                    //else if (words[0] == "/help") NavigationControl.Instance.Path = "help";
                     else MainWindow.Instance.NotifyUser("server", "Command not recognized");
                 }
             }

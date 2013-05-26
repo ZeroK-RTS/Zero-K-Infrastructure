@@ -43,7 +43,7 @@ namespace ZeroKLobby.Notifications
 					canRegister = false;
 					Program.NotifySection.AddBar(this);
 					lbState.Text = "Connected, logging in ...";
-					if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) LoginWithDialog("Please enter your name and password");
+					if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) LoginWithDialog("Please enter your name and password", true);
 					else client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
 				};
 
@@ -56,10 +56,10 @@ namespace ZeroKLobby.Notifications
 						lbState.Text = "Registering new account";
 						client.Register(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
 					}
-					else LoginWithDialog("Login denied: " + e.ServerParams[0]);
+					else LoginWithDialog("Login denied: " + e.ServerParams[0], false);
 				};
 
-			client.RegistrationDenied += (s, e) => LoginWithDialog("Registration denied: " + e.ServerParams[0]);
+			client.RegistrationDenied += (s, e) => LoginWithDialog("Registration denied: " + e.ServerParams[0], true);
 
 			client.RegistrationAccepted += (s, e) => client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
 
@@ -126,13 +126,13 @@ namespace ZeroKLobby.Notifications
 
 		}
 
-	    void LoginWithDialog(string text)
+	    void LoginWithDialog(string text, bool register = false)
 		{
 			do
 			{
-				var loginForm = new LoginForm();
+                var loginForm = new LoginForm(register);
 				loginForm.InfoText = text;
-				if (loginForm.ShowDialog() == DialogResult.Cancel) // hack dialog Program.MainWindow
+				if (loginForm.ShowDialog() == DialogResult.Cancel) 
 				{
 					tasClientConnectCalled = false;
 					client.Disconnect();
@@ -142,18 +142,16 @@ namespace ZeroKLobby.Notifications
 				canRegister = loginForm.CanRegister;
 				Program.Conf.LobbyPlayerName = loginForm.LoginValue;
 				Program.Conf.LobbyPlayerPassword = loginForm.PasswordValue;
-				if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) MessageBox.Show("Please fill player name and password", "Missing information", MessageBoxButtons.OK, MessageBoxIcon.Information); // hack dialog Program.MainWindow
+				if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) MessageBox.Show("Please fill player name and password", "Missing information", MessageBoxButtons.OK, MessageBoxIcon.Information); 
 			} while (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword));
 			Program.SaveConfig();
 			if (canRegister)
 			{
 			  client.Register(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
-        Program.MainWindow.navigationControl.Path = "http://zero-k.info/?";
 			}
 			else
 			{
 			  client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
-			  Program.MainWindow.navigationControl.Path = "http://zero-k.info/?";
 			}
 		}
 

@@ -268,7 +268,7 @@ namespace ZeroKLobby.MicroLobby
                               Program.MainWindow.navigationControl.Path = clickedWord;
                             } else
                             {
-                              Utils.OpenWeb(clickedWord);
+                              Utils.OpenWeb(clickedWord, false);
                             }
                         }
                         catch (Win32Exception ex)

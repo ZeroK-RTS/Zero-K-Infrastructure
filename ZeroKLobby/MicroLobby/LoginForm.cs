@@ -24,10 +24,10 @@ namespace ZeroKLobby.MicroLobby
 
 		public bool CanRegister { get; private set; }
 
-		public LoginForm()
+		public LoginForm(bool register = false)
 		{
 			InitializeComponent();
-            if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) && string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) tabControl1.SelectedTab = tabPage2; // register as primary no data about pass and name
+            if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) && string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword) || register) tabControl1.SelectedTab = tabPage2; // register as primary no data about pass and name
 			tbLogin.Text = Program.Conf.LobbyPlayerName;
 			tbPassword.Text = Program.Conf.LobbyPlayerPassword;
 		}

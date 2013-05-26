@@ -57,7 +57,7 @@
             this.btnSubmit.Location = new System.Drawing.Point(14, 95);
             this.btnSubmit.Name = "btnSubmit";
             this.btnSubmit.Size = new System.Drawing.Size(107, 23);
-            this.btnSubmit.TabIndex = 0;
+            this.btnSubmit.TabIndex = 3;
             this.btnSubmit.Text = "Login";
             this.btnSubmit.UseVisualStyleBackColor = true;
             this.btnSubmit.Click += new System.EventHandler(this.btnSubmit_Click);
@@ -85,14 +85,14 @@
             this.tbLogin.Location = new System.Drawing.Point(99, 18);
             this.tbLogin.Name = "tbLogin";
             this.tbLogin.Size = new System.Drawing.Size(146, 20);
-            this.tbLogin.TabIndex = 3;
+            this.tbLogin.TabIndex = 1;
             // 
             // tbPassword
             // 
             this.tbPassword.Location = new System.Drawing.Point(99, 59);
             this.tbPassword.Name = "tbPassword";
             this.tbPassword.Size = new System.Drawing.Size(146, 20);
-            this.tbPassword.TabIndex = 4;
+            this.tbPassword.TabIndex = 2;
             this.tbPassword.UseSystemPasswordChar = true;
             // 
             // lbInfo
@@ -111,7 +111,7 @@
             this.btnCancel.Location = new System.Drawing.Point(170, 95);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 6;
+            this.btnCancel.TabIndex = 4;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -122,7 +122,7 @@
             this.btnRegister.Location = new System.Drawing.Point(14, 95);
             this.btnRegister.Name = "btnRegister";
             this.btnRegister.Size = new System.Drawing.Size(107, 23);
-            this.btnRegister.TabIndex = 7;
+            this.btnRegister.TabIndex = 3;
             this.btnRegister.Text = "Register";
             this.btnRegister.UseVisualStyleBackColor = true;
             this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
@@ -196,14 +196,14 @@
             this.rgName.Location = new System.Drawing.Point(99, 18);
             this.rgName.Name = "rgName";
             this.rgName.Size = new System.Drawing.Size(146, 20);
-            this.rgName.TabIndex = 3;
+            this.rgName.TabIndex = 1;
             // 
             // rgPassword
             // 
             this.rgPassword.Location = new System.Drawing.Point(99, 59);
             this.rgPassword.Name = "rgPassword";
             this.rgPassword.Size = new System.Drawing.Size(146, 20);
-            this.rgPassword.TabIndex = 4;
+            this.rgPassword.TabIndex = 2;
             this.rgPassword.UseSystemPasswordChar = true;
             // 
             // label3
@@ -221,7 +221,7 @@
             this.button1.Location = new System.Drawing.Point(170, 95);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 6;
+            this.button1.TabIndex = 4;
             this.button1.Text = "Cancel";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.btnCancel_Click);
@@ -261,23 +261,23 @@
 
 		#endregion
 
-		private System.Windows.Forms.Button btnSubmit;
-		private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox tbLogin;
 		private System.Windows.Forms.TextBox tbPassword;
-		private System.Windows.Forms.Label lbInfo;
-        private System.Windows.Forms.Button btnCancel;
-				private System.Windows.Forms.Button btnRegister;
+        private System.Windows.Forms.Label lbInfo;
                 private System.Windows.Forms.TabControl tabControl1;
                 private System.Windows.Forms.TabPage tabPage1;
                 private System.Windows.Forms.TabPage tabPage2;
                 private System.Windows.Forms.TextBox rgName;
                 private System.Windows.Forms.TextBox rgPassword;
                 private System.Windows.Forms.Label label3;
-                private System.Windows.Forms.Button button1;
                 private System.Windows.Forms.Label label4;
                 private System.Windows.Forms.Label labelProxyInfo;
                 private System.Windows.Forms.Label labelProxy2;
+                private BitmapButton btnSubmit;
+                private BitmapButton btnCancel;
+                private BitmapButton btnRegister;
+                private BitmapButton button1;
 	}
 }

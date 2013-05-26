@@ -187,7 +187,7 @@ namespace ZeroKLobby
                         Trace.TraceInformation("TASC login accepted");
                         Trace.TraceInformation("Server is using Spring version {0}", TasClient.ServerSpringVersion);
                         if (SpringPaths.SpringVersion != TasClient.ServerSpringVersion) Downloader.GetAndSwitchEngine(TasClient.ServerSpringVersion);
-                        MainWindow.navigationControl.Path = "chat/channel/zk"; // todo ugly    
+                        MainWindow.navigationControl.Path = string.Format("chat/channel/{0}", Conf.AutoJoinChannels.OfType<string>().FirstOrDefault());
                     };
 
                 TasClient.LoginDenied += (s, e) => Trace.TraceInformation("TASC login denied");
@@ -259,6 +259,8 @@ namespace ZeroKLobby
                     MainWindow.frdWindow.Show();
                     FriendsWindow.Creatable = false;
                 }
+
+                if (Conf.IsFirstRun) Utils.OpenWeb("http://zero-k.info/Wiki/LobbyStart", false);
 
                 Application.Run(MainWindow);
                 ShutDown();

@@ -113,7 +113,7 @@ namespace ZeroKLobby.Notifications
 
         void minimapBox_Click(object sender, EventArgs e)
         {
-            Utils.OpenWeb("http://zero-k.info/Maps/DetailName?name=" + Uri.EscapeDataString(Download.Name));
+            Utils.OpenWeb("http://zero-k.info/Maps/DetailName?name=" + Uri.EscapeDataString(Download.Name), true);
         }
     }
 }

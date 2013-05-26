@@ -19,7 +19,7 @@ namespace ZeroKLobby.MicroLobby
         private void LinkedLabelClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             var CurrentLink = (LinkLabel)sender;
             CurrentLink.LinkVisited = true;
-            Utils.OpenWeb(e.Link.LinkData as string);
+            Utils.OpenWeb(e.Link.LinkData as string, false);
         }
 
 

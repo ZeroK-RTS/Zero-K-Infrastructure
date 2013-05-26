@@ -100,11 +100,12 @@ namespace ZeroKLobby
             return path;
         }
 
-        public static void OpenWeb(String url) {
+        public static void OpenWeb(String url, bool openInternal) {
             if (url.StartsWith("http://zero-k.info")) {
-                Program.MainWindow.navigationControl.Path = url;
+                if (openInternal) Program.MainWindow.navigationControl.Path = url;
+                else Program.BrowserInterop.OpenUrl(url);
                 return;
-            }
+            } 
             try {
                 Process.Start(url);
             } catch (Exception ex1) {
