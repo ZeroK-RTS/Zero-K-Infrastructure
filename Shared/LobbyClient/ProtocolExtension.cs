@@ -122,7 +122,7 @@ namespace LobbyClient
 
                 Type type;
                 if (!typeCache.TryGetValue(tname, out type)) {
-                    type = Type.GetType(tname) ??
+                    type = Type.GetType(string.Format("LobbyClient.ProtocolExtension.{0}", tname)) ??
                            Assembly.GetExecutingAssembly().GetTypes().FirstOrDefault(x => x.Name == tname) ??
                            AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).FirstOrDefault(x => x.Name == tname);
                     typeCache[tname] = type;

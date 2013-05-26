@@ -141,7 +141,7 @@ namespace PlasmaShared
             Executable = Utils.MakePath(springPath, Environment.OSVersion.Platform == PlatformID.Unix ? "spring" : "spring.exe");
             MtExecutable = Utils.MakePath(springPath, Environment.OSVersion.Platform == PlatformID.Unix ? "spring-multithreaded" : "spring-multithreaded.exe");
             DedicatedServer = Utils.MakePath(springPath, Environment.OSVersion.Platform == PlatformID.Unix ? "spring-dedicated" : "spring-dedicated.exe");
-            Cache = Utils.MakePath(WritableDirectory, "cache", "ZKL");
+            Cache = Utils.MakePath(WritableDirectory, "cache", "SD");
 
             var ov = springVersion;
             springVersion = GetSpringVersion(Executable);

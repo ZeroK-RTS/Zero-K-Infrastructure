@@ -27,40 +27,53 @@ namespace ZeroKLobby.MicroLobby
 		    timer = new Timer() { Interval = stagingMs, };
 		    timer.Tick += (sender, args) =>
 		        {
-		            BeginUpdate();
-                    base.Items.Clear();
-                    base.Items.AddRange(realItems.ToArray());
-                    EndUpdate();
-                    timer.Stop();
+		            try {
+		                if (IsDisposed || !IsHandleCreated) {
+		                    timer.Stop();
+		                    return;
+		                }
+		                BeginUpdate();
+		                base.Items.Clear();
+		                base.Items.AddRange(realItems.ToArray());
+		                EndUpdate();
+		                timer.Stop();
+		            } catch (Exception ex) {
+		                Trace.TraceError("Error updaing list: {0}",ex);
+		            }
 		        };
 		}
 
 	    void RealItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args) {
-            if (DateTime.UtcNow.Subtract(lastChange).TotalMilliseconds < stagingMs) {
-	            lastChange = DateTime.UtcNow;
-	            timer.Stop();
-	            timer.Start();
-	        }
-	        else {
-	            timer.Stop();
-	            lastChange = DateTime.UtcNow;
-                BeginUpdate();
-	            if (args.Action == NotifyCollectionChangedAction.Add) {
-	                foreach (var item in args.NewItems) {
-	                    base.Items.Add(item);
-	                }
-	            } else if (args.Action == NotifyCollectionChangedAction.Remove) {
-	                foreach (var item in args.OldItems) {
-	                    base.Items.Remove(item);
-	                }
+	        try {
+	            if (DateTime.UtcNow.Subtract(lastChange).TotalMilliseconds < stagingMs) {
+	                lastChange = DateTime.UtcNow;
+	                timer.Stop();
+	                timer.Start();
 	            }
 	            else {
-                    base.Items.Clear();
-                    base.Items.AddRange(realItems.ToArray());
+	                timer.Stop();
+	                lastChange = DateTime.UtcNow;
+	                BeginUpdate();
+	                if (args.Action == NotifyCollectionChangedAction.Add) {
+	                    foreach (var item in args.NewItems) {
+	                        base.Items.Add(item);
+	                    }
+	                }
+	                else if (args.Action == NotifyCollectionChangedAction.Remove) {
+	                    foreach (var item in args.OldItems) {
+	                        base.Items.Remove(item);
+	                    }
+	                }
+	                else {
+	                    base.Items.Clear();
+	                    base.Items.AddRange(realItems.ToArray());
+	                }
+	                EndUpdate();
 	            }
-                EndUpdate();
-            }
 
+	        } catch (Exception ex) {
+	            Trace.TraceError("Error updating list:{0}",ex);
+	        }
 
 	    }
 
