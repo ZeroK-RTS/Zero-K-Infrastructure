@@ -43,6 +43,15 @@ namespace PlasmaDownloader
                         archiveName = string.Format("minimal-portable-{0}-static.7z", platform);
                     }
 
+                    // special hack for engine 91.0
+                    if (platform == "linux64" && Name == "91.0") {
+                        paths.Add("https://dl.dropbox.com/u/971117/spring/spring_91.0.amd64.zip");
+                    } else if (platform == "linux32" && Name == "91.0")
+                    {
+                        paths.Add("http://springweblobby.googlecode.com/files/spring_91.0_portable_linux_i686.zip");
+                    }
+
+
                     paths.Add(string.Format("{0}buildbot/default/master/{1}/spring_{1}_{2}", EngineDownloadPath, Name, archiveName));
                     paths.Add(string.Format("{0}buildbot/default/develop/{1}/spring_{{develop}}{1}_{2}", EngineDownloadPath, Name, archiveName));
                     paths.Add(string.Format("{0}buildbot/default/release/{1}/spring_{{release}}{1}_{2}", EngineDownloadPath, Name, archiveName));
