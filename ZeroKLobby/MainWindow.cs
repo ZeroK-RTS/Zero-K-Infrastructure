@@ -134,16 +134,20 @@ namespace ZeroKLobby
         }
 
         public void PopupSelf() {
-            if (!InvokeRequired) {
-                var finalState = lastState;
-                var wasminimized = WindowState == FormWindowState.Minimized;
-                if (wasminimized) WindowState = FormWindowState.Maximized;
-                Show();
-                Activate();
-                Focus();
-                if (wasminimized) WindowState = finalState;
+            try {
+                if (!InvokeRequired) {
+                    var finalState = lastState;
+                    var wasminimized = WindowState == FormWindowState.Minimized;
+                    if (wasminimized) WindowState = FormWindowState.Maximized;
+                    Show();
+                    Activate();
+                    Focus();
+                    if (wasminimized) WindowState = finalState;
+                }
+                else InvokeFunc(PopupSelf);
+            } catch (Exception ex) {
+                Trace.TraceWarning("Error popping up self: {0}",ex.Message);
             }
-            else InvokeFunc(PopupSelf);
         }
 
         /// <summary>

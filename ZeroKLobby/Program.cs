@@ -203,7 +203,10 @@ namespace ZeroKLobby
                 TasClient.Extensions.JsonDataReceived += (eventArgs, o) =>
                     {
                         var command = o as ProtocolExtension.SiteToLobbyCommand;
-                        if (command != null) MainWindow.navigationControl.Path = command.SpringLink;
+                        if (command != null) {
+                            MainWindow.navigationControl.Path = command.SpringLink;
+                            MainWindow.PopupSelf();
+                        }
                     };
 
                 ConnectBar = new ConnectBar(TasClient);
