@@ -63,7 +63,7 @@ namespace ZeroKWeb
             string content;
             StripPieces("<div id=\"wikiheader\"", "<div id=\"wikiauthor\"", "<div id=\"wikicontent\"", "</td>", body, out availableLanguages, out content, out author);
             availableLanguages = FixPiece(availableLanguages);
-            availableLanguages = String.IsNullOrEmpty(availableLanguages) ? "page doesn't translated" : availableLanguages;
+            availableLanguages = String.IsNullOrEmpty(availableLanguages) ? "" : availableLanguages;
             content = FixPiece(content);
 
             content = HtmlHelperExtensions.ProcessAtSignTags(content);
