@@ -40,6 +40,8 @@ namespace ZeroKLobby
         }
 
         public string AddAuthToUrl(string url) {
+            if (string.IsNullOrEmpty(url)) return "";
+            if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password)) return url;
             if (url.ToLower().Contains("zero-k") && !url.ToLower().Contains(string.Format("{0}=", GlobalConst.ASmallCakeCookieName))) {
                 if (url.Contains("?")) url = url + "&";
                 else url = url + "?";
