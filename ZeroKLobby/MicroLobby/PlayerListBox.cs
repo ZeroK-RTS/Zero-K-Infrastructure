@@ -16,8 +16,10 @@ namespace ZeroKLobby.MicroLobby
 	    Timer timer;
 	    public PlayerListItem HoverItem { get; set; }
 		public bool IsBattle { get; set; }
-	    const int stagingMs = 200;
+	    const int stagingMs = 200; // staging only on linux
 	    DateTime lastChange = DateTime.UtcNow;
+	    bool useStaging = Environment.OSVersion.Platform == PlatformID.Unix;
+
 		public PlayerListBox()
 		{
 			DrawMode = DrawMode.OwnerDrawVariable;
@@ -42,7 +44,7 @@ namespace ZeroKLobby.MicroLobby
 
 	    void RealItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args) {
 	        try {
-	            if (DateTime.UtcNow.Subtract(lastChange).TotalMilliseconds < stagingMs) {
+	            if (useStaging && DateTime.UtcNow.Subtract(lastChange).TotalMilliseconds < stagingMs) {
 	                lastChange = DateTime.UtcNow;
 	                timer.Stop();
 	                timer.Start();

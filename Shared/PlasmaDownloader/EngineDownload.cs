@@ -45,10 +45,10 @@ namespace PlasmaDownloader
 
                     // special hack for engine 91.0
                     if (platform == "linux64" && Name == "91.0") {
-                        paths.Add("https://dl.dropbox.com/u/971117/spring/spring_91.0.amd64.zip");
+                        paths.Add("http://springrts.com/dl/spring_91.0.amd64.zip");
                     } else if (platform == "linux32" && Name == "91.0")
                     {
-                        paths.Add("http://springweblobby.googlecode.com/files/spring_91.0_portable_linux_i686.zip");
+                        paths.Add("http://springrts.com/dl/spring_91.0_portable_linux_i686.zip");
                     }
 
 
