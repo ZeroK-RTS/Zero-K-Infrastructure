@@ -40,20 +40,25 @@ namespace ZeroKLobby
         }
 
         public string AddAuthToUrl(string url) {
-            if (string.IsNullOrEmpty(url)) return "";
-            if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password)) return url;
-            if (url.ToLower().Contains("zero-k") && !url.ToLower().Contains(string.Format("{0}=", GlobalConst.ASmallCakeCookieName))) {
-                if (url.Contains("?")) url = url + "&";
-                else url = url + "?";
-                url = url +
-                      string.Format("{0}={1}&{2}={3}&{4}=1&zkl=1",
-                                    GlobalConst.ASmallCakeCookieName,
-                                    Uri.EscapeDataString(AuthTools.GetSiteAuthToken(login,PlasmaShared.Utils.HashLobbyPassword(password))),
-                                    GlobalConst.ASmallCakeLoginCookieName,
-                                    Uri.EscapeDataString(login),
-                                    GlobalConst.LobbyAccessCookieName);
+            try {
+                if (string.IsNullOrEmpty(url)) return "";
+                if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password)) return url;
+                if (url.ToLower().Contains("zero-k") && !url.ToLower().Contains(string.Format("{0}=", GlobalConst.ASmallCakeCookieName))) {
+                    if (url.Contains("?")) url = url + "&";
+                    else url = url + "?";
+                    url = url +
+                          string.Format("{0}={1}&{2}={3}&{4}=1&zkl=1",
+                                        GlobalConst.ASmallCakeCookieName,
+                                        Uri.EscapeDataString(AuthTools.GetSiteAuthToken(login, PlasmaShared.Utils.HashLobbyPassword(password))),
+                                        GlobalConst.ASmallCakeLoginCookieName,
+                                        Uri.EscapeDataString(login),
+                                        GlobalConst.LobbyAccessCookieName);
+                }
+                return url;
+            } catch (Exception ex) {
+                Trace.TraceError("Error adding auth info to url: {0}", ex);
+                return url;
             }
-            return url;
         }
 
         public void OpenUrl(string url) {
