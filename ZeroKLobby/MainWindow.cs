@@ -264,6 +264,7 @@ namespace ZeroKLobby
             Program.Conf.LastWindowState = WindowState;
             Program.SaveConfig();
             WindowState = FormWindowState.Minimized;
+            systrayIcon.Visible = false;
             Hide();
         }
     }

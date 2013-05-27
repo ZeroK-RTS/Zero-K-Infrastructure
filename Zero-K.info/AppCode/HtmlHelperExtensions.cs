@@ -448,9 +448,7 @@ namespace System.Web.Mvc
         }
 
         public static MvcHtmlString PrintSpringLink(this HtmlHelper helper, string link) {
-            if (Global.Account != null && !Global.Nightwatch.Tas.ExistingUsers.ContainsKey(Global.Account.Name)) {
-                return new MvcHtmlString("spring://" + Uri.EscapeDataString(link)); // user logged but lobby not running
-            } else return new MvcHtmlString(string.Format("javascript:SendLobbyCommand('{0}');void(0);",link));
+           return new MvcHtmlString(string.Format("javascript:SendLobbyCommand('{0}');void(0);",link));
         }
 
         public static MvcHtmlString PrintStructureState(this HtmlHelper helper, PlanetStructure s) {

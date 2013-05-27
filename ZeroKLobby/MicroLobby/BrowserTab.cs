@@ -44,7 +44,7 @@ namespace ZeroKLobby
         protected override void OnNavigating(WebBrowserNavigatingEventArgs e)
         {
             var url = e.Url.ToString();
-            if (string.IsNullOrEmpty(e.TargetFrameName) && url.Contains("zero-k"))
+            if (string.IsNullOrEmpty(e.TargetFrameName) && url.Contains("zero-k") && !url.StartsWith("javascript:"))
             {
                 var nav = Program.MainWindow.navigationControl.GetInavigatableByPath(url);
                 if (nav == null || nav == this) {

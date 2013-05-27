@@ -78,10 +78,10 @@ namespace ZeroKLobby
             try {
                 var deskDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 
-                using (var writer = new StreamWriter(deskDir + "\\" + name + ".url")) {
+                using (var writer = new StreamWriter(Path.Combine(deskDir, name + ".url"))) {
                     var app = Assembly.GetEntryAssembly().Location;
                     writer.WriteLine("[InternetShortcut]");
-                    writer.WriteLine("URL=file:///" + app);
+                    writer.WriteLine("URL=file://" + app);
                     writer.WriteLine("IconIndex=0");
                     var icon = app.Replace('\\', '/');
                     writer.WriteLine("IconFile=" + icon);
