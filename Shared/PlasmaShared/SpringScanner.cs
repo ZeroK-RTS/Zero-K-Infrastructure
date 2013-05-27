@@ -44,6 +44,12 @@ namespace PlasmaShared
         /// </summary>
         const int RescheduleServerQuery = 120;
 
+
+        /// <summary>
+        /// How long to wait to reask server if unitsync is missing
+        /// </summary>
+        const int UnitsyncMissingReaskQuery = 600;
+
         /// <summary>
         /// time between work item operations in ms
         /// </summary>
@@ -116,9 +122,10 @@ namespace PlasmaShared
         readonly LinkedList<WorkItem> workQueue = new LinkedList<WorkItem>();
         int workTotal;
 
+        public bool UseUnitSync = Environment.OSVersion.Platform != PlatformID.Unix; // unitsync fails on linux
+
 
         public MetaDataCache MetaData { get; private set; }
-        public bool UseSpringHashes = false;
 
 
         public bool WatchingEnabled { get { return mapsWatchers.First().EnableRaisingEvents; } set { foreach (var watcher in mapsWatchers.Concat(modsWatchers).Concat(packagesWatchers)) watcher.EnableRaisingEvents = value; } }
@@ -179,8 +186,7 @@ namespace PlasmaShared
                 CacheItem item;
                 if (cache.NameIndex.TryGetValue(name, out item))
                 {
-                    if (!UseSpringHashes) return item;
-                    else if (springHash == 0 || item.SpringHash.Any(x => x.SpringHash == springHash && x.SpringVersion == springPaths.SpringVersion)) return item;
+                    return item;
                 }
             }
             return null;
@@ -288,24 +294,6 @@ namespace PlasmaShared
             }
         }
 
-        void CheckCacheEntriesSpringHash()
-        {
-            if (cache != null)
-            {
-                if (UseSpringHashes && cache.SpringVersion != springPaths.SpringVersion && springPaths.SpringVersion != null)
-                {
-                    var todel = new List<CacheItem>();
-                    foreach (var entry in cache.HashIndex.Values) if (!entry.SpringHash.Any(x => x.SpringVersion == springPaths.SpringVersion)) todel.Add(entry);
-                    foreach (var item in todel)
-                    {
-                        Trace.WriteLine(string.Format("{0} has outdated spring hash, updating", item.InternalName));
-                        AddWork(item, WorkItem.OperationType.ReAskServer, DateTime.Now, false);
-                    }
-
-                    cache.SpringVersion = springPaths.SpringVersion;
-                }
-            }
-        }
 
         string GetFullPath(WorkItem work)
         {
@@ -363,23 +351,18 @@ namespace PlasmaShared
 
             if (result == null)
             {
-                Trace.WriteLine(String.Format("No server resource data for {0}, queing upload", work.CacheItem.ShortPath));
-                AddWork(work.CacheItem, WorkItem.OperationType.UnitSync, DateTime.Now, false);
+                if (UseUnitSync) {
+                    Trace.WriteLine(String.Format("No server resource data for {0}, queing upload", work.CacheItem.ShortPath));
+                    AddWork(work.CacheItem, WorkItem.OperationType.UnitSync, DateTime.Now, false);
+                }
+                else {
+                    Trace.WriteLine(String.Format("No server resource data for {0}, asking later", work.CacheItem.ShortPath));
+                    AddWork(work.CacheItem, WorkItem.OperationType.ReAskServer, DateTime.Now.AddSeconds(UnitsyncMissingReaskQuery), false);
+                }
                 return;
             }
             work.CacheItem.InternalName = result.InternalName;
             work.CacheItem.ResourceType = result.ResourceType;
-
-            if (UseSpringHashes)
-            {
-                var match = result.SpringHashes.Where(x => x.SpringVersion == springPaths.SpringVersion).FirstOrDefault();
-                if (match == null)
-                {
-                    Trace.WriteLine(String.Format("No server resource data for {0} for this spring version, queing upload", work.CacheItem.ShortPath));
-                    AddWork(work.CacheItem, WorkItem.OperationType.UnitSync, DateTime.Now, false);
-                    return;
-                }
-            }
 
             work.CacheItem.SpringHash = result.SpringHashes;
             Trace.WriteLine(string.Format("Adding {0}", work.CacheItem.InternalName));
@@ -511,16 +494,6 @@ namespace PlasmaShared
             lock (cache) copy = new Dictionary<string, CacheItem>(cache.ShortPathIndex);
             foreach (var pair in copy) if (!foundFiles.ContainsKey(pair.Key)) CacheItemRemove(pair.Value);
 
-            // if spring version changed from last scan, check stored entries, if we dont have hash for current spring version delete entry
-            CheckCacheEntriesSpringHash();
-            springPaths.SpringVersionChanged += (s, e) =>
-                {
-                    if (UseSpringHashes)
-                    {
-                        CheckCacheEntriesSpringHash();
-                        lock (workQueue) foreach (var i in workQueue) i.ExecuteOn = DateTime.Now;
-                    }
-                };
 
             Trace.TraceInformation("Initial scan done");
         }

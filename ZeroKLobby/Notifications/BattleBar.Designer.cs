@@ -148,7 +148,7 @@ namespace ZeroKLobby.Notifications
             this.picoChat.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.picoChat.ChatBackgroundColor = 0;
             this.picoChat.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.picoChat.HideScroll = false;
+            this.picoChat.HideScroll = true;
             this.picoChat.IRCForeColor = 0;
             this.picoChat.Location = new System.Drawing.Point(144, 0);
             this.picoChat.Name = "picoChat";
