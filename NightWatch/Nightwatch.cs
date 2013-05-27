@@ -31,8 +31,9 @@ namespace CaTracker
 
         public TasClient Tas { get { return tas; } }
         public static Config config;
-        OfflineMessages offlineMessages;
         string webRoot;
+        AdminCommands adminCommands;
+        OfflineMessages offlineMessages;
         PlayerMover playerMover;
         public PayPalInterface PayPalInterface { get; protected set; }
 
@@ -77,6 +78,7 @@ namespace CaTracker
 			tas.LoginAccepted += tas_LoginAccepted;
 
             Auth = new AuthService(tas);
+            adminCommands = new AdminCommands(tas);
             offlineMessages = new OfflineMessages(tas);
             playerMover = new PlayerMover(tas);
 
