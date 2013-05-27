@@ -257,7 +257,7 @@ namespace ZeroKLobby
                     FriendsWindow.Creatable = false;
                 }
 
-                if (Conf.IsFirstRun) Utils.OpenWeb("http://zero-k.info/Wiki/LobbyStart", false);
+                //if (Conf.IsFirstRun) Utils.OpenWeb("http://zero-k.info/Wiki/LobbyStart", false);
 
                 Application.Run(MainWindow);
                 ShutDown();
