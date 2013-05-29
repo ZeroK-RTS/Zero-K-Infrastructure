@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="btnStop.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="btnDetail.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAEAAAAAgCAYAAACinX6EAAAABHNCSVQICAgIfAhkiAAAAAFzUkdCAK7O
-        HOkAAAAEZ0FNQQAAsY8L/GEFAAAACXBIWXMAAA3UAAAN1AHvkboVAAAAGXRFWHRTb2Z0d2FyZQB3d3cu
+        HOkAAAAEZ0FNQQAAsY8L/GEFAAAACXBIWXMAAA3QAAAN0AEQbD0HAAAAGXRFWHRTb2Z0d2FyZQB3d3cu
         aW5rc2NhcGUub3Jnm+48GgAABClJREFUaEPlmWtIW2cYxwNiJwhSc5LTQ7J0ico6pKhBJh0oeJlVkGxe
         EGTWk5jLjNmEdazMdmPU0otjtAxN6eY+1LmLn1Z3a7/Udh0M1m7swkpvrHZZLetgYV6anJxzYvvsedwO
         OM7RRjuz9vjhF8I5zwn///897yXvawCANY3mxbXEwi/rckHuNkLyOHKWAfmkGZIfsSANcyAOWEHauxGE
@@ -143,10 +143,10 @@
         rh3A8BcAfiJrO7bx1QAAAABJRU5ErkJggg==
 </value>
   </data>
-  <data name="btnDetail.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="btnStop.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAEAAAAAgCAYAAACinX6EAAAABHNCSVQICAgIfAhkiAAAAAFzUkdCAK7O
-        HOkAAAAEZ0FNQQAAsY8L/GEFAAAACXBIWXMAAA3UAAAN1AHvkboVAAAAGXRFWHRTb2Z0d2FyZQB3d3cu
+        HOkAAAAEZ0FNQQAAsY8L/GEFAAAACXBIWXMAAA3QAAAN0AEQbD0HAAAAGXRFWHRTb2Z0d2FyZQB3d3cu
         aW5rc2NhcGUub3Jnm+48GgAABClJREFUaEPlmWtIW2cYxwNiJwhSc5LTQ7J0ico6pKhBJh0oeJlVkGxe
         EGTWk5jLjNmEdazMdmPU0otjtAxN6eY+1LmLn1Z3a7/Udh0M1m7swkpvrHZZLetgYV6anJxzYvvsedwO
         OM7RRjuz9vjhF8I5zwn///897yXvawCANY3mxbXEwi/rckHuNkLyOHKWAfmkGZIfsSANcyAOWEHauxGE

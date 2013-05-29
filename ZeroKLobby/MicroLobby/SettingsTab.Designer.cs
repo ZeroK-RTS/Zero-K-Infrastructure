@@ -28,7 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsTab));
             this.splitContainerAtMid = new System.Windows.Forms.SplitContainer();
+            this.btnCustom = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.cbMtEngine = new System.Windows.Forms.CheckBox();
             this.cbSafeMode = new System.Windows.Forms.CheckBox();
@@ -41,7 +43,6 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.btnCustom = new System.Windows.Forms.Button();
             this.btnBenchmarker = new ZeroKLobby.BitmapButton();
             this.btnDisplay = new ZeroKLobby.BitmapButton();
             this.problemButton = new ZeroKLobby.BitmapButton();
@@ -56,6 +57,7 @@
             this.button4 = new ZeroKLobby.BitmapButton();
             this.button5 = new ZeroKLobby.BitmapButton();
             this.btnBrowse = new ZeroKLobby.BitmapButton();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerAtMid)).BeginInit();
             this.splitContainerAtMid.Panel1.SuspendLayout();
             this.splitContainerAtMid.Panel2.SuspendLayout();
             this.splitContainerAtMid.SuspendLayout();
@@ -69,7 +71,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainerAtMid.BackColor = System.Drawing.SystemColors.Control;
-            this.splitContainerAtMid.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.splitContainerAtMid.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.splitContainerAtMid.Location = new System.Drawing.Point(0, 0);
             this.splitContainerAtMid.Name = "splitContainerAtMid";
             this.splitContainerAtMid.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -101,6 +103,7 @@
             this.splitContainerAtMid.Panel1.Controls.Add(this.cbWindowed);
             this.splitContainerAtMid.Panel1.Controls.Add(this.btnBrowse);
             this.splitContainerAtMid.Panel1.Controls.Add(this.cbHwCursor);
+            this.splitContainerAtMid.Panel1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.splitContainerAtMid.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // splitContainerAtMid.Panel2
@@ -111,6 +114,17 @@
             this.splitContainerAtMid.Size = new System.Drawing.Size(825, 692);
             this.splitContainerAtMid.SplitterDistance = 203;
             this.splitContainerAtMid.TabIndex = 0;
+            // 
+            // btnCustom
+            // 
+            this.btnCustom.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnCustom.Location = new System.Drawing.Point(524, 12);
+            this.btnCustom.Name = "btnCustom";
+            this.btnCustom.Size = new System.Drawing.Size(90, 23);
+            this.btnCustom.TabIndex = 39;
+            this.btnCustom.Text = "Custom details";
+            this.btnCustom.UseVisualStyleBackColor = true;
+            this.btnCustom.Click += new System.EventHandler(this.btnCustom_Click);
             // 
             // label1
             // 
@@ -210,7 +224,7 @@
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.MinimumSize = new System.Drawing.Size(300, 150);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(823, 483);
+            this.groupBox1.Size = new System.Drawing.Size(821, 481);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Zero-K lobby settings: (changes need restart)";
@@ -220,7 +234,7 @@
             this.propertyGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGrid1.Location = new System.Drawing.Point(3, 16);
             this.propertyGrid1.Name = "propertyGrid1";
-            this.propertyGrid1.Size = new System.Drawing.Size(817, 464);
+            this.propertyGrid1.Size = new System.Drawing.Size(815, 462);
             this.propertyGrid1.TabIndex = 0;
             this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid1_PropertyValueChanged);
             // 
@@ -232,19 +246,16 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(825, 692);
             this.panel1.TabIndex = 15;
-            // 
-            // btnCustom
-            // 
-            this.btnCustom.Location = new System.Drawing.Point(524, 12);
-            this.btnCustom.Name = "btnCustom";
-            this.btnCustom.Size = new System.Drawing.Size(90, 23);
-            this.btnCustom.TabIndex = 39;
-            this.btnCustom.Text = "Custom details";
-            this.btnCustom.UseVisualStyleBackColor = true;
-            this.btnCustom.Click += new System.EventHandler(this.btnCustom_Click);
+            this.panel1.Resize += new System.EventHandler(this.panel1_Resize);
             // 
             // btnBenchmarker
             // 
+            this.btnBenchmarker.BackColor = System.Drawing.Color.Transparent;
+            this.btnBenchmarker.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnBenchmarker.BackgroundImage")));
+            this.btnBenchmarker.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnBenchmarker.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnBenchmarker.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnBenchmarker.ForeColor = System.Drawing.Color.White;
             this.btnBenchmarker.Location = new System.Drawing.Point(354, 167);
             this.btnBenchmarker.Name = "btnBenchmarker";
             this.btnBenchmarker.Size = new System.Drawing.Size(87, 23);
@@ -255,7 +266,13 @@
             // 
             // btnDisplay
             // 
+            this.btnDisplay.BackColor = System.Drawing.Color.Transparent;
+            this.btnDisplay.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnDisplay.BackgroundImage")));
+            this.btnDisplay.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnDisplay.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnDisplay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.btnDisplay.ForeColor = System.Drawing.Color.White;
             this.btnDisplay.Location = new System.Drawing.Point(162, 99);
             this.btnDisplay.Name = "btnDisplay";
             this.btnDisplay.Size = new System.Drawing.Size(89, 23);
@@ -266,6 +283,12 @@
             // 
             // problemButton
             // 
+            this.problemButton.BackColor = System.Drawing.Color.Transparent;
+            this.problemButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("problemButton.BackgroundImage")));
+            this.problemButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.problemButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.problemButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.problemButton.ForeColor = System.Drawing.Color.White;
             this.problemButton.Location = new System.Drawing.Point(135, 138);
             this.problemButton.Name = "problemButton";
             this.problemButton.Size = new System.Drawing.Size(103, 23);
@@ -276,6 +299,12 @@
             // 
             // btnDefaults
             // 
+            this.btnDefaults.BackColor = System.Drawing.Color.Transparent;
+            this.btnDefaults.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnDefaults.BackgroundImage")));
+            this.btnDefaults.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnDefaults.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnDefaults.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDefaults.ForeColor = System.Drawing.Color.White;
             this.btnDefaults.Location = new System.Drawing.Point(269, 99);
             this.btnDefaults.Name = "btnDefaults";
             this.btnDefaults.Size = new System.Drawing.Size(75, 23);
@@ -286,6 +315,12 @@
             // 
             // helpButton
             // 
+            this.helpButton.BackColor = System.Drawing.Color.Transparent;
+            this.helpButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpButton.BackgroundImage")));
+            this.helpButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.helpButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.helpButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.helpButton.ForeColor = System.Drawing.Color.White;
             this.helpButton.Location = new System.Drawing.Point(32, 138);
             this.helpButton.Name = "helpButton";
             this.helpButton.Size = new System.Drawing.Size(86, 23);
@@ -295,6 +330,11 @@
             // 
             // btnRestart
             // 
+            this.btnRestart.BackColor = System.Drawing.Color.Transparent;
+            this.btnRestart.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnRestart.BackgroundImage")));
+            this.btnRestart.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnRestart.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnRestart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRestart.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.btnRestart.ForeColor = System.Drawing.Color.Red;
             this.btnRestart.Location = new System.Drawing.Point(81, 167);
@@ -308,6 +348,12 @@
             // 
             // logButton
             // 
+            this.logButton.BackColor = System.Drawing.Color.Transparent;
+            this.logButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("logButton.BackgroundImage")));
+            this.logButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.logButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.logButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.logButton.ForeColor = System.Drawing.Color.White;
             this.logButton.Location = new System.Drawing.Point(32, 99);
             this.logButton.Name = "logButton";
             this.logButton.Size = new System.Drawing.Size(124, 23);
@@ -318,6 +364,12 @@
             // 
             // btnRapid
             // 
+            this.btnRapid.BackColor = System.Drawing.Color.Transparent;
+            this.btnRapid.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnRapid.BackgroundImage")));
+            this.btnRapid.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnRapid.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnRapid.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRapid.ForeColor = System.Drawing.Color.White;
             this.btnRapid.Location = new System.Drawing.Point(269, 167);
             this.btnRapid.Name = "btnRapid";
             this.btnRapid.Size = new System.Drawing.Size(75, 23);
@@ -328,7 +380,13 @@
             // 
             // button1
             // 
+            this.button1.BackColor = System.Drawing.Color.Transparent;
+            this.button1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button1.BackgroundImage")));
+            this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.button1.ForeColor = System.Drawing.Color.White;
             this.button1.Location = new System.Drawing.Point(187, 12);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
@@ -339,7 +397,13 @@
             // 
             // button2
             // 
+            this.button2.BackColor = System.Drawing.Color.Transparent;
+            this.button2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button2.BackgroundImage")));
+            this.button2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button2.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.button2.ForeColor = System.Drawing.Color.White;
             this.button2.Location = new System.Drawing.Point(269, 12);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
@@ -350,7 +414,13 @@
             // 
             // button3
             // 
+            this.button3.BackColor = System.Drawing.Color.Transparent;
+            this.button3.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button3.BackgroundImage")));
+            this.button3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button3.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.button3.ForeColor = System.Drawing.Color.White;
             this.button3.Location = new System.Drawing.Point(350, 12);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
@@ -361,7 +431,13 @@
             // 
             // button4
             // 
+            this.button4.BackColor = System.Drawing.Color.Transparent;
+            this.button4.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button4.BackgroundImage")));
+            this.button4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button4.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.button4.ForeColor = System.Drawing.Color.White;
             this.button4.Location = new System.Drawing.Point(431, 12);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 23);
@@ -372,7 +448,13 @@
             // 
             // button5
             // 
+            this.button5.BackColor = System.Drawing.Color.Transparent;
+            this.button5.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button5.BackgroundImage")));
+            this.button5.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button5.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.button5.ForeColor = System.Drawing.Color.White;
             this.button5.Location = new System.Drawing.Point(106, 12);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(75, 23);
@@ -383,6 +465,12 @@
             // 
             // btnBrowse
             // 
+            this.btnBrowse.BackColor = System.Drawing.Color.Transparent;
+            this.btnBrowse.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnBrowse.BackgroundImage")));
+            this.btnBrowse.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnBrowse.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnBrowse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnBrowse.ForeColor = System.Drawing.Color.White;
             this.btnBrowse.Location = new System.Drawing.Point(354, 99);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(124, 23);
@@ -402,6 +490,7 @@
             this.splitContainerAtMid.Panel1.ResumeLayout(false);
             this.splitContainerAtMid.Panel1.PerformLayout();
             this.splitContainerAtMid.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerAtMid)).EndInit();
             this.splitContainerAtMid.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
