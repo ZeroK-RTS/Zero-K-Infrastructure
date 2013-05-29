@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using ZeroKLobby.MapDownloader;
 using ZeroKLobby.MicroLobby;
 
 namespace ZeroKLobby
@@ -71,12 +72,12 @@ namespace ZeroKLobby
 
             ButtonList = new List<ButtonInfo>()
             {
-                new ButtonInfo() { Label = "HOME", TargetPath = "http://zero-k.info/" },
+                new ButtonInfo() { Label = "HOME", TargetPath = "http://zero-k.info/", Icon= Buttons.home},
                 new ButtonInfo()
                 {
                     Label = "SINGLEPLAYER",
                     TargetPath = "http://zero-k.info/Missions",
-                     Icon = ZklResources.jimi,
+                     Icon = Buttons.spherebot,
                 },
                 new ButtonInfo()
                 {
@@ -85,10 +86,10 @@ namespace ZeroKLobby
                 },
                 new ButtonInfo() { Label = "CHAT", TargetPath = "chat", Icon= ZklResources.chat },
                 new ButtonInfo() { Label = "PLANETWARS", TargetPath = "http://zero-k.info/PlanetWars" },
-                new ButtonInfo() { Label = "MAPS", TargetPath = "http://zero-k.info/Maps" },
-                new ButtonInfo() { Label = "REPLAYS", TargetPath = "http://zero-k.info/Battles"},
+                new ButtonInfo() { Label = "MAPS", TargetPath = "http://zero-k.info/Maps", Icon = Buttons.map },
+                new ButtonInfo() { Label = "REPLAYS", TargetPath = "http://zero-k.info/Battles", Icon = Buttons.video_icon},
                 new ButtonInfo() { Label = "FORUM", TargetPath = "http://zero-k.info/Forum"},
-                new ButtonInfo() { Label = "SETTINGS", TargetPath = "settings" },
+                new ButtonInfo() { Label = "SETTINGS", TargetPath = "settings", Icon = Buttons.settings},
             };
 
             Instance = this;
@@ -113,6 +114,7 @@ namespace ZeroKLobby
             AddTabPage(new SettingsTab(), "Settings");
             AddTabPage(new ServerTab(), "Server");
             AddTabPage(new AdvertiserWindow(), "Advertiser");
+            AddTabPage(new DownloaderTab(), "Rapid");
             
             foreach (var but in ButtonList) flowLayoutPanel1.Controls.Add(but.GetButton());
 

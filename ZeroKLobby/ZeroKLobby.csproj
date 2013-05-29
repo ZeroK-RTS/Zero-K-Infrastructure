@@ -142,6 +142,11 @@
     </Compile>
     <Compile Include="BrowserInterop.cs" />
     <Compile Include="ButtonInfo.cs" />
+    <Compile Include="Buttons.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Buttons.resx</DependentUpon>
+    </Compile>
     <Compile Include="SampleForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -322,11 +327,6 @@
       <DependentUpon>Ranks.resx</DependentUpon>
     </Compile>
     <Compile Include="ServerImagesHandler.cs" />
-    <Compile Include="StyleBitmaps.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>StyleBitmaps.resx</DependentUpon>
-    </Compile>
     <Compile Include="ToolTips\BattleTooltipRenderer.cs" />
     <Compile Include="MicroLobby\AskBattlePasswordForm.cs">
       <SubType>Form</SubType>
@@ -465,6 +465,10 @@
     <EmbeddedResource Include="AdvertiserWindow.resx">
       <DependentUpon>AdvertiserWindow.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Buttons.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Buttons.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Configs.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Configs.Designer.cs</LastGenOutput>
@@ -559,10 +563,6 @@
     <Compile Include="Utils.cs" />
     <EmbeddedResource Include="SelectWritableFolder.resx">
       <DependentUpon>SelectWritableFolder.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="StyleBitmaps.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>StyleBitmaps.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="ZklResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -685,9 +685,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\StyleBitmaps\button_test.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Conf\cmdcolors.txt" />
@@ -1588,6 +1585,49 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="SpringDownloader.ico" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\Buttons\add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\game.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\glaive_icon_24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\home.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\chat.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\license.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\map.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\panel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\panel_border_128.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\panel_border_64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\panel_border_96.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\settings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\spherebot.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\video-icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">

@@ -43,6 +43,7 @@
             this.btnHome.BackColor = System.Drawing.Color.DarkSlateGray;
             this.btnHome.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnHome.BackgroundImage")));
             this.btnHome.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btnHome.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnHome.ForeColor = System.Drawing.Color.White;
             this.btnHome.Image = ((System.Drawing.Image)(resources.GetObject("btnHome.Image")));
             this.btnHome.Location = new System.Drawing.Point(12, 12);
@@ -58,6 +59,7 @@
             this.bitmapButton1.BackColor = System.Drawing.Color.DarkSlateGray;
             this.bitmapButton1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("bitmapButton1.BackgroundImage")));
             this.bitmapButton1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.bitmapButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bitmapButton1.ForeColor = System.Drawing.Color.White;
             this.bitmapButton1.Image = ((System.Drawing.Image)(resources.GetObject("bitmapButton1.Image")));
             this.bitmapButton1.Location = new System.Drawing.Point(12, 50);
@@ -73,11 +75,12 @@
             this.bitmapButton2.BackColor = System.Drawing.Color.DarkSlateGray;
             this.bitmapButton2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("bitmapButton2.BackgroundImage")));
             this.bitmapButton2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.bitmapButton2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bitmapButton2.ForeColor = System.Drawing.Color.White;
             this.bitmapButton2.Image = ((System.Drawing.Image)(resources.GetObject("bitmapButton2.Image")));
-            this.bitmapButton2.Location = new System.Drawing.Point(12, 88);
+            this.bitmapButton2.Location = new System.Drawing.Point(153, 39);
             this.bitmapButton2.Name = "bitmapButton2";
-            this.bitmapButton2.Size = new System.Drawing.Size(96, 32);
+            this.bitmapButton2.Size = new System.Drawing.Size(101, 69);
             this.bitmapButton2.TabIndex = 7;
             this.bitmapButton2.Text = "MAPS";
             this.bitmapButton2.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -85,14 +88,19 @@
             // 
             // bitmapButton3
             // 
-            this.bitmapButton3.BackColor = System.Drawing.Color.DarkSlateGray;
+            this.bitmapButton3.BackColor = System.Drawing.Color.Transparent;
             this.bitmapButton3.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("bitmapButton3.BackgroundImage")));
-            this.bitmapButton3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.bitmapButton3.ForeColor = System.Drawing.Color.White;
+            this.bitmapButton3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.bitmapButton3.FlatAppearance.BorderColor = System.Drawing.Color.Maroon;
+            this.bitmapButton3.FlatAppearance.BorderSize = 0;
+            this.bitmapButton3.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+            this.bitmapButton3.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Red;
+            this.bitmapButton3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bitmapButton3.ForeColor = System.Drawing.Color.Maroon;
             this.bitmapButton3.Image = ((System.Drawing.Image)(resources.GetObject("bitmapButton3.Image")));
-            this.bitmapButton3.Location = new System.Drawing.Point(12, 126);
+            this.bitmapButton3.Location = new System.Drawing.Point(12, 112);
             this.bitmapButton3.Name = "bitmapButton3";
-            this.bitmapButton3.Size = new System.Drawing.Size(128, 32);
+            this.bitmapButton3.Size = new System.Drawing.Size(128, 46);
             this.bitmapButton3.TabIndex = 8;
             this.bitmapButton3.Text = "REPLAYS";
             this.bitmapButton3.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -103,11 +111,12 @@
             this.bitmapButton4.BackColor = System.Drawing.Color.DarkSlateGray;
             this.bitmapButton4.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("bitmapButton4.BackgroundImage")));
             this.bitmapButton4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.bitmapButton4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bitmapButton4.ForeColor = System.Drawing.Color.White;
             this.bitmapButton4.Image = ((System.Drawing.Image)(resources.GetObject("bitmapButton4.Image")));
             this.bitmapButton4.Location = new System.Drawing.Point(12, 164);
             this.bitmapButton4.Name = "bitmapButton4";
-            this.bitmapButton4.Size = new System.Drawing.Size(128, 32);
+            this.bitmapButton4.Size = new System.Drawing.Size(223, 32);
             this.bitmapButton4.TabIndex = 9;
             this.bitmapButton4.Text = "SETTINGS";
             this.bitmapButton4.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -118,6 +127,7 @@
             this.bitmapButton5.BackColor = System.Drawing.Color.DarkSlateGray;
             this.bitmapButton5.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("bitmapButton5.BackgroundImage")));
             this.bitmapButton5.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.bitmapButton5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bitmapButton5.ForeColor = System.Drawing.Color.White;
             this.bitmapButton5.Image = ((System.Drawing.Image)(resources.GetObject("bitmapButton5.Image")));
             this.bitmapButton5.Location = new System.Drawing.Point(12, 202);
@@ -133,6 +143,7 @@
             this.bitmapButton6.BackColor = System.Drawing.Color.DarkSlateGray;
             this.bitmapButton6.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("bitmapButton6.BackgroundImage")));
             this.bitmapButton6.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.bitmapButton6.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bitmapButton6.ForeColor = System.Drawing.Color.White;
             this.bitmapButton6.Image = ((System.Drawing.Image)(resources.GetObject("bitmapButton6.Image")));
             this.bitmapButton6.Location = new System.Drawing.Point(12, 240);
@@ -147,7 +158,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 283);
+            this.ClientSize = new System.Drawing.Size(386, 318);
             this.Controls.Add(this.bitmapButton6);
             this.Controls.Add(this.bitmapButton5);
             this.Controls.Add(this.bitmapButton4);

@@ -15,7 +15,7 @@ namespace ZeroKLobby
             set {
                 var changed = isAlerting != value;
                 isAlerting = value;
-                button.ForeColor = isAlerting ? Color.Red : SystemColors.MenuText;
+                button.BackColor = isAlerting ? Color.Red : Color.Transparent;
                 if (changed) InvokePropertyChanged("IsAlerting");
             }
         }
@@ -24,7 +24,8 @@ namespace ZeroKLobby
             set {
                 var changed = isSelected != value;
                 isSelected = value;
-                button.BackColor = isSelected ? Color.PowderBlue : SystemColors.ButtonFace;
+                //button.BackColor = isSelected ? Color.PowderBlue : SystemColors.ButtonFace;
+                button.ForeColor = isSelected ? Color.Aqua: Color.White;
                 if (changed) InvokePropertyChanged("IsSelected");
             }
         }
@@ -49,8 +50,11 @@ namespace ZeroKLobby
 
         public Control GetButton() {
             button = new BitmapButton();
-            button.AutoSize = true;
-            button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            //button.AutoSize = true;
+            //button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            button.Height = 25;
+            button.Width = 100;
+            button.TextAlign = ContentAlignment.MiddleCenter;
             button.Text = Label;
             if (Icon != null) {
                 button.Image = Icon;
