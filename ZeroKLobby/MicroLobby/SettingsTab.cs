@@ -113,9 +113,6 @@ namespace ZeroKLobby.MicroLobby
 		void SettingsTab_Load(object sender, EventArgs e)
 		{
 			RefreshConfig();
-            DpiMeasurement.DpiXYMeasurement(this); //this measurement use cached value. It won't cost anything if another measurement was already done in other control element
-            int splitDistance = DpiMeasurement.ScaleValueY(203);//DpiMeasurement is a static class stored in ZeroKLobby\Util.cs
-            splitContainerAtMid.SplitterDistance = splitDistance;
 		}
 
 		void btnBrowse_Click(object sender, EventArgs e)
@@ -276,13 +273,6 @@ namespace ZeroKLobby.MicroLobby
         {
             var window1 = new SpringsettingForm(); 
             window1.ShowDialog();
-        }
-
-        private void panel1_Resize(object sender, EventArgs e)
-        {
-            DpiMeasurement.DpiXYMeasurement(this); //this measurement use cached value. It won't cost anything if another measurement was already done in other control element
-            int splitDistance = DpiMeasurement.ScaleValueY(203);//DpiMeasurement is a static class stored in ZeroKLobby\Util.cs
-            splitContainerAtMid.SplitterDistance = splitDistance;
         }
 	}
 }

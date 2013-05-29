@@ -13,6 +13,7 @@ namespace ZeroKLobby
         bool CanGoBack { get { return backStack.Any(); } }
         bool CanGoForward { get { return forwardStack.Any(); } }
 
+
         NavigationStep CurrentPage {
             get { return _currentPage; }
             set {
@@ -68,6 +69,7 @@ namespace ZeroKLobby
 
         public NavigationControl() {
             InitializeComponent();
+
             ButtonList = new List<ButtonInfo>()
             {
                 new ButtonInfo() { Label = "HOME", TargetPath = "http://zero-k.info/", Icon= Buttons.home},
@@ -115,10 +117,7 @@ namespace ZeroKLobby
             AddTabPage(new DownloaderTab(), "Rapid");
             
             foreach (var but in ButtonList) flowLayoutPanel1.Controls.Add(but.GetButton());
-            foreach (Control button in flowLayoutPanel1.Controls) {
-                button.Margin = new Padding(0,0,0,3);
-                button.Cursor = Cursors.Hand;
-            }
+
             flowLayoutPanel1.BringToFront();
         }
 
@@ -239,42 +238,5 @@ namespace ZeroKLobby
                 return string.Join("/", Path);
             }
         }
-
-        private void NavigationControl_Resize(object sender, EventArgs e)
-        {
-            int height = flowLayoutPanel1.Size.Height;
-            btnBack.Location = new System.Drawing.Point(btnBack.Location.X, height);
-            btnForward.Location = new System.Drawing.Point(btnForward.Location.X, height);
-            urlBox.Location = new System.Drawing.Point(urlBox.Location.X, height);
-            reloadButton1.Location = new System.Drawing.Point(reloadButton1.Location.X, height);
-
-            int windowHeight = this.Size.Height;
-            int freeHeight = windowHeight - height;
-            tabControl.Location = new System.Drawing.Point(tabControl.Location.X, height);
-            tabControl.Size = new System.Drawing.Size(tabControl.Size.Width, freeHeight);
-        }
-
-        private void reloadButton1_Click(object sender, EventArgs e) //make webpage refresh
-        {
-            string presentPage = CurrentPage.ToString() + " ";
-            
-            //Same as in Path()
-            if (presentPage.ToLower().StartsWith("spring://")) presentPage = presentPage.Substring(9);
-
-            var parts = presentPage.Split('@');
-            for (var i = 1; i < parts.Length; i++)
-            {
-                var action = parts[i];
-                ActionHandler.PerformAction(action);
-            }
-            presentPage = parts[0];
-
-            var step = GoToPage(presentPage.Split('/'));
-            if (step != null) 
-            { //do nothing
-            }
-            else if (presentPage.StartsWith("http://") || presentPage.StartsWith("https://")) Program.BrowserInterop.OpenUrl(presentPage);
-        }
-
     }
 }
