@@ -40,12 +40,14 @@
             // 
             // panel1
             // 
+            this.panel1.BackColor = System.Drawing.Color.DimGray;
             this.panel1.Controls.Add(this.showOfficialBox);
             this.panel1.Controls.Add(this.showEmptyBox);
             this.panel1.Controls.Add(this.showFullBox);
             this.panel1.Controls.Add(this.searchLabel);
             this.panel1.Controls.Add(this.searchBox);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel1.ForeColor = System.Drawing.Color.White;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(731, 31);

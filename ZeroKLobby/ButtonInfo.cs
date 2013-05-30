@@ -29,6 +29,8 @@ namespace ZeroKLobby
                 if (changed) InvokePropertyChanged("IsSelected");
             }
         }
+        public int Height { get; set; }
+        public int Width { get; set; }
         public string Label { get; set; }
         /// <summary>
         /// If true, lobby wont remember subpath for this button and instead go directly to target location
@@ -41,6 +43,8 @@ namespace ZeroKLobby
 
         public ButtonInfo() {
             Visible = true;
+            Width = 100;
+            Height = 25;
         }
 
         void InvokePropertyChanged(string name) {
@@ -52,13 +56,14 @@ namespace ZeroKLobby
             button = new BitmapButton();
             //button.AutoSize = true;
             //button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            button.Height = 25;
-            button.Width = 100;
+            button.Height = Height;
+            button.Width = Width;
             button.TextAlign = ContentAlignment.MiddleCenter;
             button.Text = Label;
             if (Icon != null) {
                 button.Image = Icon;
-                button.ImageAlign = ContentAlignment.MiddleLeft;
+                //button.ImageAlign = ContentAlignment.MiddleLeft;
+                button.TextAlign = ContentAlignment.MiddleCenter;
                 button.TextImageRelation = TextImageRelation.ImageBeforeText;
             }
             button.Click += (sender, args) =>

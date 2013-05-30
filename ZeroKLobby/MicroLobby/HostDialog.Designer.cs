@@ -100,7 +100,13 @@
             // okButton
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.okButton.BackColor = System.Drawing.Color.Transparent;
+            this.okButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("okButton.BackgroundImage")));
+            this.okButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.okButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.okButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.okButton.ForeColor = System.Drawing.Color.White;
             this.okButton.Location = new System.Drawing.Point(295, 330);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(118, 29);
@@ -112,7 +118,13 @@
             // cancelButton
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cancelButton.BackColor = System.Drawing.Color.Transparent;
+            this.cancelButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("cancelButton.BackgroundImage")));
+            this.cancelButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.cancelButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cancelButton.ForeColor = System.Drawing.Color.White;
             this.cancelButton.Location = new System.Drawing.Point(419, 330);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(109, 29);
@@ -130,6 +142,12 @@
             // showAdvancedButton
             // 
             this.showAdvancedButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.showAdvancedButton.BackColor = System.Drawing.Color.Transparent;
+            this.showAdvancedButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("showAdvancedButton.BackgroundImage")));
+            this.showAdvancedButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.showAdvancedButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.showAdvancedButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.showAdvancedButton.ForeColor = System.Drawing.Color.White;
             this.showAdvancedButton.Location = new System.Drawing.Point(13, 333);
             this.showAdvancedButton.Name = "showAdvancedButton";
             this.showAdvancedButton.Size = new System.Drawing.Size(133, 23);
@@ -145,6 +163,7 @@
             this.advancedOptionsGroup.Controls.Add(this.label5);
             this.advancedOptionsGroup.Controls.Add(this.label3);
             this.advancedOptionsGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.advancedOptionsGroup.ForeColor = System.Drawing.Color.White;
             this.advancedOptionsGroup.Location = new System.Drawing.Point(8, 141);
             this.advancedOptionsGroup.Name = "advancedOptionsGroup";
             this.advancedOptionsGroup.Size = new System.Drawing.Size(516, 181);
@@ -212,6 +231,7 @@
             this.AcceptButton = this.okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.DimGray;
             this.CancelButton = this.cancelButton;
             this.ClientSize = new System.Drawing.Size(540, 371);
             this.Controls.Add(this.pictureBox1);
@@ -226,6 +246,7 @@
             this.Controls.Add(this.battleTitleBox);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.ForeColor = System.Drawing.Color.White;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "HostDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
@@ -244,10 +265,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button okButton;
-        private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.ComboBox gameBox;
-        private System.Windows.Forms.Button showAdvancedButton;
         private System.Windows.Forms.GroupBox advancedOptionsGroup;
         private System.Windows.Forms.TextBox springieCommandsBox;
         private System.Windows.Forms.TextBox rapidTagBox;
@@ -257,5 +275,8 @@
         private System.Windows.Forms.TextBox passwordBox;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private BitmapButton okButton;
+        private BitmapButton cancelButton;
+        private BitmapButton showAdvancedButton;
     }
 }

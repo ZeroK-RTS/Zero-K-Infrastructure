@@ -72,24 +72,28 @@ namespace ZeroKLobby
 
             ButtonList = new List<ButtonInfo>()
             {
-                new ButtonInfo() { Label = "HOME", TargetPath = "http://zero-k.info/", Icon= Buttons.home},
+                new ButtonInfo() { Label = "HOME", TargetPath = "http://zero-k.info/", Icon= Buttons.home, Height = 32,},
                 new ButtonInfo()
                 {
                     Label = "SINGLEPLAYER",
                     TargetPath = "http://zero-k.info/Missions",
-                     Icon = Buttons.spherebot,
+                    Icon = Buttons.spherebot,
+                    Width = 128,
+                    Height = 32,
                 },
                 new ButtonInfo()
                 {
                     Label = "MULTIPLAYER",
-                    TargetPath = "battles", Icon =  ZklResources.battle
+                    TargetPath = "battles", Icon =  ZklResources.battle,
+                    Width = 128,
+                    Height = 32,
                 },
-                new ButtonInfo() { Label = "CHAT", TargetPath = "chat", Icon= ZklResources.chat },
-                new ButtonInfo() { Label = "PLANETWARS", TargetPath = "http://zero-k.info/PlanetWars" },
-                new ButtonInfo() { Label = "MAPS", TargetPath = "http://zero-k.info/Maps", Icon = Buttons.map },
-                new ButtonInfo() { Label = "REPLAYS", TargetPath = "http://zero-k.info/Battles", Icon = Buttons.video_icon},
-                new ButtonInfo() { Label = "FORUM", TargetPath = "http://zero-k.info/Forum"},
-                new ButtonInfo() { Label = "SETTINGS", TargetPath = "settings", Icon = Buttons.settings},
+                new ButtonInfo() { Label = "CHAT", TargetPath = "chat", Icon= ZklResources.chat, Height = 32, },
+                new ButtonInfo() { Label = "PLANETWARS", TargetPath = "http://zero-k.info/PlanetWars", Height = 32,  },
+                new ButtonInfo() { Label = "MAPS", TargetPath = "http://zero-k.info/Maps", Icon = Buttons.map, Height = 32,  },
+                new ButtonInfo() { Label = "REPLAYS", TargetPath = "http://zero-k.info/Battles", Icon = Buttons.video_icon, Height = 32, },
+                new ButtonInfo() { Label = "FORUM", TargetPath = "http://zero-k.info/Forum", Height = 32, },
+                new ButtonInfo() { Label = "SETTINGS", TargetPath = "settings", Icon = Buttons.settings, Height = 32, },
             };
 
             Instance = this;

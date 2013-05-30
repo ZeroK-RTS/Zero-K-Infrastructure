@@ -28,22 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsTab));
             this.splitContainerAtMid = new System.Windows.Forms.SplitContainer();
-            this.btnCustom = new System.Windows.Forms.Button();
+            this.btnBenchmarker = new ZeroKLobby.BitmapButton();
             this.label1 = new System.Windows.Forms.Label();
             this.cbMtEngine = new System.Windows.Forms.CheckBox();
-            this.cbSafeMode = new System.Windows.Forms.CheckBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.tbResy = new System.Windows.Forms.TextBox();
-            this.tbResx = new System.Windows.Forms.TextBox();
-            this.cbWindowed = new System.Windows.Forms.ComboBox();
-            this.cbHwCursor = new System.Windows.Forms.CheckBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.btnBenchmarker = new ZeroKLobby.BitmapButton();
             this.btnDisplay = new ZeroKLobby.BitmapButton();
+            this.cbSafeMode = new System.Windows.Forms.CheckBox();
             this.problemButton = new ZeroKLobby.BitmapButton();
             this.btnDefaults = new ZeroKLobby.BitmapButton();
             this.helpButton = new ZeroKLobby.BitmapButton();
@@ -51,11 +42,22 @@
             this.logButton = new ZeroKLobby.BitmapButton();
             this.btnRapid = new ZeroKLobby.BitmapButton();
             this.button1 = new ZeroKLobby.BitmapButton();
+            this.label3 = new System.Windows.Forms.Label();
             this.button2 = new ZeroKLobby.BitmapButton();
+            this.label2 = new System.Windows.Forms.Label();
             this.button3 = new ZeroKLobby.BitmapButton();
+            this.tbResy = new System.Windows.Forms.TextBox();
             this.button4 = new ZeroKLobby.BitmapButton();
+            this.tbResx = new System.Windows.Forms.TextBox();
             this.button5 = new ZeroKLobby.BitmapButton();
+            this.cbWindowed = new System.Windows.Forms.ComboBox();
             this.btnBrowse = new ZeroKLobby.BitmapButton();
+            this.cbHwCursor = new System.Windows.Forms.CheckBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.btnCustom = new ZeroKLobby.BitmapButton();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerAtMid)).BeginInit();
             this.splitContainerAtMid.Panel1.SuspendLayout();
             this.splitContainerAtMid.Panel2.SuspendLayout();
             this.splitContainerAtMid.SuspendLayout();
@@ -68,8 +70,9 @@
             this.splitContainerAtMid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainerAtMid.BackColor = System.Drawing.SystemColors.Control;
+            this.splitContainerAtMid.BackColor = System.Drawing.Color.DimGray;
             this.splitContainerAtMid.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.splitContainerAtMid.ForeColor = System.Drawing.Color.White;
             this.splitContainerAtMid.Location = new System.Drawing.Point(0, 0);
             this.splitContainerAtMid.Name = "splitContainerAtMid";
             this.splitContainerAtMid.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -112,16 +115,21 @@
             this.splitContainerAtMid.SplitterDistance = 203;
             this.splitContainerAtMid.TabIndex = 0;
             // 
-            // btnCustom
+            // btnBenchmarker
             // 
-            this.btnCustom.Location = new System.Drawing.Point(524, 12);
-            this.btnCustom.Name = "btnCustom";
-            this.btnCustom.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnCustom.Size = new System.Drawing.Size(90, 23);
-            this.btnCustom.TabIndex = 39;
-            this.btnCustom.Text = "Custom details";
-            this.btnCustom.UseVisualStyleBackColor = true;
-            this.btnCustom.Click += new System.EventHandler(this.btnCustom_Click);
+            this.btnBenchmarker.BackColor = System.Drawing.Color.Transparent;
+            this.btnBenchmarker.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnBenchmarker.BackgroundImage")));
+            this.btnBenchmarker.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnBenchmarker.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnBenchmarker.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnBenchmarker.ForeColor = System.Drawing.Color.White;
+            this.btnBenchmarker.Location = new System.Drawing.Point(354, 167);
+            this.btnBenchmarker.Name = "btnBenchmarker";
+            this.btnBenchmarker.Size = new System.Drawing.Size(87, 23);
+            this.btnBenchmarker.TabIndex = 38;
+            this.btnBenchmarker.Text = "Benchmarker";
+            this.btnBenchmarker.UseVisualStyleBackColor = true;
+            this.btnBenchmarker.Click += new System.EventHandler(this.btnBenchmarker_Click);
             // 
             // label1
             // 
@@ -143,6 +151,23 @@
             this.cbMtEngine.UseVisualStyleBackColor = true;
             this.cbMtEngine.CheckedChanged += new System.EventHandler(this.cbMtEngine_CheckedChanged);
             // 
+            // btnDisplay
+            // 
+            this.btnDisplay.BackColor = System.Drawing.Color.Transparent;
+            this.btnDisplay.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnDisplay.BackgroundImage")));
+            this.btnDisplay.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnDisplay.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnDisplay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.btnDisplay.ForeColor = System.Drawing.Color.White;
+            this.btnDisplay.Location = new System.Drawing.Point(162, 99);
+            this.btnDisplay.Name = "btnDisplay";
+            this.btnDisplay.Size = new System.Drawing.Size(89, 23);
+            this.btnDisplay.TabIndex = 13;
+            this.btnDisplay.Text = "Adv. Settings";
+            this.btnDisplay.UseVisualStyleBackColor = true;
+            this.btnDisplay.Click += new System.EventHandler(this.btnDisplay_Click);
+            // 
             // cbSafeMode
             // 
             this.cbSafeMode.AutoSize = true;
@@ -154,6 +179,120 @@
             this.cbSafeMode.UseVisualStyleBackColor = true;
             this.cbSafeMode.CheckedChanged += new System.EventHandler(this.cbSafeMode_CheckedChanged);
             // 
+            // problemButton
+            // 
+            this.problemButton.BackColor = System.Drawing.Color.Transparent;
+            this.problemButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("problemButton.BackgroundImage")));
+            this.problemButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.problemButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.problemButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.problemButton.ForeColor = System.Drawing.Color.White;
+            this.problemButton.Location = new System.Drawing.Point(135, 138);
+            this.problemButton.Name = "problemButton";
+            this.problemButton.Size = new System.Drawing.Size(103, 23);
+            this.problemButton.TabIndex = 17;
+            this.problemButton.Text = "Report a Problem";
+            this.problemButton.UseVisualStyleBackColor = true;
+            this.problemButton.Click += new System.EventHandler(this.problemButton_Click);
+            // 
+            // btnDefaults
+            // 
+            this.btnDefaults.BackColor = System.Drawing.Color.Transparent;
+            this.btnDefaults.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnDefaults.BackgroundImage")));
+            this.btnDefaults.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnDefaults.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnDefaults.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDefaults.ForeColor = System.Drawing.Color.White;
+            this.btnDefaults.Location = new System.Drawing.Point(269, 99);
+            this.btnDefaults.Name = "btnDefaults";
+            this.btnDefaults.Size = new System.Drawing.Size(75, 23);
+            this.btnDefaults.TabIndex = 35;
+            this.btnDefaults.Text = "Clear";
+            this.btnDefaults.UseVisualStyleBackColor = true;
+            this.btnDefaults.Click += new System.EventHandler(this.btnDefaults_Click);
+            // 
+            // helpButton
+            // 
+            this.helpButton.BackColor = System.Drawing.Color.Transparent;
+            this.helpButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpButton.BackgroundImage")));
+            this.helpButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.helpButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.helpButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.helpButton.ForeColor = System.Drawing.Color.White;
+            this.helpButton.Location = new System.Drawing.Point(32, 138);
+            this.helpButton.Name = "helpButton";
+            this.helpButton.Size = new System.Drawing.Size(86, 23);
+            this.helpButton.TabIndex = 15;
+            this.helpButton.Text = "Ask for Help";
+            this.helpButton.UseVisualStyleBackColor = true;
+            // 
+            // btnRestart
+            // 
+            this.btnRestart.BackColor = System.Drawing.Color.Transparent;
+            this.btnRestart.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnRestart.BackgroundImage")));
+            this.btnRestart.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnRestart.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnRestart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRestart.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.btnRestart.ForeColor = System.Drawing.Color.Red;
+            this.btnRestart.Location = new System.Drawing.Point(81, 167);
+            this.btnRestart.Name = "btnRestart";
+            this.btnRestart.Size = new System.Drawing.Size(130, 23);
+            this.btnRestart.TabIndex = 34;
+            this.btnRestart.Text = "RESTART LOBBY";
+            this.btnRestart.UseVisualStyleBackColor = true;
+            this.btnRestart.Visible = false;
+            this.btnRestart.Click += new System.EventHandler(this.btnRestart_Click);
+            // 
+            // logButton
+            // 
+            this.logButton.BackColor = System.Drawing.Color.Transparent;
+            this.logButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("logButton.BackgroundImage")));
+            this.logButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.logButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.logButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.logButton.ForeColor = System.Drawing.Color.White;
+            this.logButton.Location = new System.Drawing.Point(32, 99);
+            this.logButton.Name = "logButton";
+            this.logButton.Size = new System.Drawing.Size(124, 23);
+            this.logButton.TabIndex = 18;
+            this.logButton.Text = "Show Diagnostic Log";
+            this.logButton.UseVisualStyleBackColor = true;
+            this.logButton.Click += new System.EventHandler(this.logButton_Click);
+            // 
+            // btnRapid
+            // 
+            this.btnRapid.BackColor = System.Drawing.Color.Transparent;
+            this.btnRapid.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnRapid.BackgroundImage")));
+            this.btnRapid.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnRapid.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnRapid.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRapid.ForeColor = System.Drawing.Color.White;
+            this.btnRapid.Location = new System.Drawing.Point(269, 167);
+            this.btnRapid.Name = "btnRapid";
+            this.btnRapid.Size = new System.Drawing.Size(75, 23);
+            this.btnRapid.TabIndex = 33;
+            this.btnRapid.Text = "Rapid";
+            this.btnRapid.UseVisualStyleBackColor = true;
+            this.btnRapid.Click += new System.EventHandler(this.btnRapid_Click);
+            // 
+            // button1
+            // 
+            this.button1.BackColor = System.Drawing.Color.Transparent;
+            this.button1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button1.BackgroundImage")));
+            this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.button1.ForeColor = System.Drawing.Color.White;
+            this.button1.Location = new System.Drawing.Point(187, 12);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 19;
+            this.button1.Text = "Low";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // label3
             // 
             this.label3.AutoSize = true;
@@ -162,6 +301,23 @@
             this.label3.Size = new System.Drawing.Size(36, 13);
             this.label3.TabIndex = 32;
             this.label3.Text = "Tools:";
+            // 
+            // button2
+            // 
+            this.button2.BackColor = System.Drawing.Color.Transparent;
+            this.button2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button2.BackgroundImage")));
+            this.button2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button2.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.button2.ForeColor = System.Drawing.Color.White;
+            this.button2.Location = new System.Drawing.Point(269, 12);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 20;
+            this.button2.Text = "Medium";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // label2
             // 
@@ -172,6 +328,23 @@
             this.label2.TabIndex = 30;
             this.label2.Text = "Video resolution:";
             // 
+            // button3
+            // 
+            this.button3.BackColor = System.Drawing.Color.Transparent;
+            this.button3.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button3.BackgroundImage")));
+            this.button3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button3.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.button3.ForeColor = System.Drawing.Color.White;
+            this.button3.Location = new System.Drawing.Point(350, 12);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(75, 23);
+            this.button3.TabIndex = 21;
+            this.button3.Text = "High";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // tbResy
             // 
             this.tbResy.Location = new System.Drawing.Point(269, 52);
@@ -180,6 +353,23 @@
             this.tbResy.TabIndex = 29;
             this.tbResy.TextChanged += new System.EventHandler(this.settingsControlChanged);
             // 
+            // button4
+            // 
+            this.button4.BackColor = System.Drawing.Color.Transparent;
+            this.button4.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button4.BackgroundImage")));
+            this.button4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button4.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.button4.ForeColor = System.Drawing.Color.White;
+            this.button4.Location = new System.Drawing.Point(431, 12);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(75, 23);
+            this.button4.TabIndex = 22;
+            this.button4.Text = "Ultra";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
             // tbResx
             // 
             this.tbResx.Location = new System.Drawing.Point(200, 52);
@@ -187,6 +377,23 @@
             this.tbResx.Size = new System.Drawing.Size(63, 20);
             this.tbResx.TabIndex = 28;
             this.tbResx.TextChanged += new System.EventHandler(this.settingsControlChanged);
+            // 
+            // button5
+            // 
+            this.button5.BackColor = System.Drawing.Color.Transparent;
+            this.button5.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button5.BackgroundImage")));
+            this.button5.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button5.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.button5.ForeColor = System.Drawing.Color.White;
+            this.button5.Location = new System.Drawing.Point(106, 12);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(75, 23);
+            this.button5.TabIndex = 24;
+            this.button5.Text = "Minimal";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // cbWindowed
             // 
@@ -201,6 +408,22 @@
             this.cbWindowed.TabIndex = 27;
             this.cbWindowed.SelectionChangeCommitted += new System.EventHandler(this.settingsControlChanged);
             // 
+            // btnBrowse
+            // 
+            this.btnBrowse.BackColor = System.Drawing.Color.Transparent;
+            this.btnBrowse.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnBrowse.BackgroundImage")));
+            this.btnBrowse.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnBrowse.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnBrowse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnBrowse.ForeColor = System.Drawing.Color.White;
+            this.btnBrowse.Location = new System.Drawing.Point(354, 99);
+            this.btnBrowse.Name = "btnBrowse";
+            this.btnBrowse.Size = new System.Drawing.Size(124, 23);
+            this.btnBrowse.TabIndex = 25;
+            this.btnBrowse.Text = "Open game data folder";
+            this.btnBrowse.UseVisualStyleBackColor = true;
+            this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
+            // 
             // cbHwCursor
             // 
             this.cbHwCursor.AutoSize = true;
@@ -214,14 +437,15 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
+            this.groupBox1.BackColor = System.Drawing.Color.DimGray;
             this.groupBox1.Controls.Add(this.propertyGrid1);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.groupBox1.ForeColor = System.Drawing.Color.White;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.MinimumSize = new System.Drawing.Size(300, 150);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(823, 483);
+            this.groupBox1.Size = new System.Drawing.Size(821, 481);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Zero-K lobby settings: (changes need restart)";
@@ -231,7 +455,7 @@
             this.propertyGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGrid1.Location = new System.Drawing.Point(3, 16);
             this.propertyGrid1.Name = "propertyGrid1";
-            this.propertyGrid1.Size = new System.Drawing.Size(817, 464);
+            this.propertyGrid1.Size = new System.Drawing.Size(815, 462);
             this.propertyGrid1.TabIndex = 0;
             this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid1_PropertyValueChanged);
             // 
@@ -245,153 +469,21 @@
             this.panel1.TabIndex = 15;
             this.panel1.Resize += new System.EventHandler(this.panel1_Resize);
             // 
-            // btnBenchmarker
+            // btnCustom
             // 
-            this.btnBenchmarker.Location = new System.Drawing.Point(354, 167);
-            this.btnBenchmarker.Name = "btnBenchmarker";
-            this.btnBenchmarker.Size = new System.Drawing.Size(87, 23);
-            this.btnBenchmarker.TabIndex = 38;
-            this.btnBenchmarker.Text = "Benchmarker";
-            this.btnBenchmarker.UseVisualStyleBackColor = true;
-            this.btnBenchmarker.Click += new System.EventHandler(this.btnBenchmarker_Click);
-            // 
-            // btnDisplay
-            // 
-            this.btnDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.btnDisplay.Location = new System.Drawing.Point(162, 99);
-            this.btnDisplay.Name = "btnDisplay";
-            this.btnDisplay.Size = new System.Drawing.Size(89, 23);
-            this.btnDisplay.TabIndex = 13;
-            this.btnDisplay.Text = "Adv. Settings";
-            this.btnDisplay.UseVisualStyleBackColor = true;
-            this.btnDisplay.Click += new System.EventHandler(this.btnDisplay_Click);
-            // 
-            // problemButton
-            // 
-            this.problemButton.Location = new System.Drawing.Point(135, 138);
-            this.problemButton.Name = "problemButton";
-            this.problemButton.Size = new System.Drawing.Size(103, 23);
-            this.problemButton.TabIndex = 17;
-            this.problemButton.Text = "Report a Problem";
-            this.problemButton.UseVisualStyleBackColor = true;
-            this.problemButton.Click += new System.EventHandler(this.problemButton_Click);
-            // 
-            // btnDefaults
-            // 
-            this.btnDefaults.Location = new System.Drawing.Point(269, 99);
-            this.btnDefaults.Name = "btnDefaults";
-            this.btnDefaults.Size = new System.Drawing.Size(75, 23);
-            this.btnDefaults.TabIndex = 35;
-            this.btnDefaults.Text = "Clear";
-            this.btnDefaults.UseVisualStyleBackColor = true;
-            this.btnDefaults.Click += new System.EventHandler(this.btnDefaults_Click);
-            // 
-            // helpButton
-            // 
-            this.helpButton.Location = new System.Drawing.Point(32, 138);
-            this.helpButton.Name = "helpButton";
-            this.helpButton.Size = new System.Drawing.Size(86, 23);
-            this.helpButton.TabIndex = 15;
-            this.helpButton.Text = "Ask for Help";
-            this.helpButton.UseVisualStyleBackColor = true;
-            // 
-            // btnRestart
-            // 
-            this.btnRestart.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.btnRestart.ForeColor = System.Drawing.Color.Red;
-            this.btnRestart.Location = new System.Drawing.Point(81, 167);
-            this.btnRestart.Name = "btnRestart";
-            this.btnRestart.Size = new System.Drawing.Size(130, 23);
-            this.btnRestart.TabIndex = 34;
-            this.btnRestart.Text = "RESTART LOBBY";
-            this.btnRestart.UseVisualStyleBackColor = true;
-            this.btnRestart.Visible = false;
-            this.btnRestart.Click += new System.EventHandler(this.btnRestart_Click);
-            // 
-            // logButton
-            // 
-            this.logButton.Location = new System.Drawing.Point(32, 99);
-            this.logButton.Name = "logButton";
-            this.logButton.Size = new System.Drawing.Size(124, 23);
-            this.logButton.TabIndex = 18;
-            this.logButton.Text = "Show Diagnostic Log";
-            this.logButton.UseVisualStyleBackColor = true;
-            this.logButton.Click += new System.EventHandler(this.logButton_Click);
-            // 
-            // btnRapid
-            // 
-            this.btnRapid.Location = new System.Drawing.Point(269, 167);
-            this.btnRapid.Name = "btnRapid";
-            this.btnRapid.Size = new System.Drawing.Size(75, 23);
-            this.btnRapid.TabIndex = 33;
-            this.btnRapid.Text = "Rapid";
-            this.btnRapid.UseVisualStyleBackColor = true;
-            this.btnRapid.Click += new System.EventHandler(this.btnRapid_Click);
-            // 
-            // button1
-            // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.button1.Location = new System.Drawing.Point(187, 12);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 19;
-            this.button1.Text = "Low";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // button2
-            // 
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.button2.Location = new System.Drawing.Point(269, 12);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 20;
-            this.button2.Text = "Medium";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // button3
-            // 
-            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.button3.Location = new System.Drawing.Point(350, 12);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 21;
-            this.button3.Text = "High";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
-            // 
-            // button4
-            // 
-            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.button4.Location = new System.Drawing.Point(431, 12);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 23);
-            this.button4.TabIndex = 22;
-            this.button4.Text = "Ultra";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
-            // 
-            // button5
-            // 
-            this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.button5.Location = new System.Drawing.Point(106, 12);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(75, 23);
-            this.button5.TabIndex = 24;
-            this.button5.Text = "Minimal";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
-            // 
-            // btnBrowse
-            // 
-            this.btnBrowse.Location = new System.Drawing.Point(354, 99);
-            this.btnBrowse.Name = "btnBrowse";
-            this.btnBrowse.Size = new System.Drawing.Size(124, 23);
-            this.btnBrowse.TabIndex = 25;
-            this.btnBrowse.Text = "Open game data folder";
-            this.btnBrowse.UseVisualStyleBackColor = true;
-            this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
+            this.btnCustom.BackColor = System.Drawing.Color.Transparent;
+            this.btnCustom.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnCustom.BackgroundImage")));
+            this.btnCustom.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnCustom.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnCustom.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCustom.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.btnCustom.ForeColor = System.Drawing.Color.White;
+            this.btnCustom.Location = new System.Drawing.Point(527, 12);
+            this.btnCustom.Name = "btnCustom";
+            this.btnCustom.Size = new System.Drawing.Size(108, 23);
+            this.btnCustom.TabIndex = 39;
+            this.btnCustom.Text = "Custom details";
+            this.btnCustom.UseVisualStyleBackColor = true;
             // 
             // SettingsTab
             // 
@@ -404,6 +496,7 @@
             this.splitContainerAtMid.Panel1.ResumeLayout(false);
             this.splitContainerAtMid.Panel1.PerformLayout();
             this.splitContainerAtMid.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerAtMid)).EndInit();
             this.splitContainerAtMid.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
@@ -426,7 +519,6 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.PropertyGrid propertyGrid1;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button btnCustom;
         private BitmapButton btnDisplay;
         private BitmapButton problemButton;
         private BitmapButton btnDefaults;
@@ -441,6 +533,7 @@
         private BitmapButton button5;
         private BitmapButton btnBrowse;
         private BitmapButton btnBenchmarker;
+        private BitmapButton btnCustom;
 
     }
 }

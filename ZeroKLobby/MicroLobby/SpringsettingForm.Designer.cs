@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SpringsettingForm));
             this.panel1 = new System.Windows.Forms.Panel();
             this.applyButton = new ZeroKLobby.BitmapButton();
             this.cancelButton = new ZeroKLobby.BitmapButton();
@@ -55,6 +56,12 @@
             // applyButton
             // 
             this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.applyButton.BackColor = System.Drawing.Color.Transparent;
+            this.applyButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("applyButton.BackgroundImage")));
+            this.applyButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.applyButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.applyButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.applyButton.ForeColor = System.Drawing.Color.White;
             this.applyButton.Location = new System.Drawing.Point(0, 526);
             this.applyButton.Margin = new System.Windows.Forms.Padding(2);
             this.applyButton.MaximumSize = new System.Drawing.Size(58, 41);
@@ -69,6 +76,12 @@
             // cancelButton
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cancelButton.BackColor = System.Drawing.Color.Transparent;
+            this.cancelButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("cancelButton.BackgroundImage")));
+            this.cancelButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.cancelButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cancelButton.ForeColor = System.Drawing.Color.White;
             this.cancelButton.Location = new System.Drawing.Point(58, 526);
             this.cancelButton.Margin = new System.Windows.Forms.Padding(2);
             this.cancelButton.MaximumSize = new System.Drawing.Size(58, 41);
@@ -83,6 +96,12 @@
             // engineDefaultButton
             // 
             this.engineDefaultButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.engineDefaultButton.BackColor = System.Drawing.Color.Transparent;
+            this.engineDefaultButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("engineDefaultButton.BackgroundImage")));
+            this.engineDefaultButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.engineDefaultButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.engineDefaultButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.engineDefaultButton.ForeColor = System.Drawing.Color.White;
             this.engineDefaultButton.Location = new System.Drawing.Point(117, 526);
             this.engineDefaultButton.Margin = new System.Windows.Forms.Padding(2);
             this.engineDefaultButton.MaximumSize = new System.Drawing.Size(56, 41);
@@ -144,6 +163,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
+            this.BackColor = System.Drawing.Color.DimGray;
             this.ClientSize = new System.Drawing.Size(498, 567);
             this.Controls.Add(this.highlightlabel);
             this.Controls.Add(this.highlighttextBox);
@@ -153,9 +173,10 @@
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.applyButton);
             this.Controls.Add(this.panel1);
+            this.ForeColor = System.Drawing.Color.White;
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "SpringsettingForm";
-            this.Text = "Springsetting.cfg";
+            this.Text = "Springsettings.cfg";
             this.Load += new System.EventHandler(this.SpringsettingForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -165,13 +186,13 @@
         #endregion
 
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button applyButton;
-        private System.Windows.Forms.Button cancelButton;
-        private System.Windows.Forms.Button engineDefaultButton;
         private System.Windows.Forms.Label doneLabel;
         private System.Windows.Forms.Label loadDefaultDone;
         private System.Windows.Forms.TextBox highlighttextBox;
         private System.Windows.Forms.Label highlightlabel;
+        private BitmapButton applyButton;
+        private BitmapButton cancelButton;
+        private BitmapButton engineDefaultButton;
 
 
     }
