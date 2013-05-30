@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NavigationControl));
             this.urlBox = new System.Windows.Forms.TextBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.reloadButton1 = new ZeroKLobby.BitmapButton();
             this.btnForward = new ZeroKLobby.BitmapButton();
             this.btnBack = new ZeroKLobby.BitmapButton();
             this.tabControl = new ZeroKLobby.HeadlessTabControl();
@@ -47,20 +48,30 @@
             // 
             // flowLayoutPanel1
             // 
-            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowLayoutPanel1.AutoSize = true;
+            this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanel1.MinimumSize = new System.Drawing.Size(300, 28);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(703, 28);
             this.flowLayoutPanel1.TabIndex = 5;
             // 
+            // reloadButton1
+            // 
+            this.reloadButton1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("reloadButton1.BackgroundImage")));
+            this.reloadButton1.Location = new System.Drawing.Point(362, 27);
+            this.reloadButton1.Name = "reloadButton1";
+            this.reloadButton1.Size = new System.Drawing.Size(75, 23);
+            this.reloadButton1.TabIndex = 6;
+            this.reloadButton1.Text = "Reload";
+            this.reloadButton1.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.reloadButton1.UseVisualStyleBackColor = true;
+            this.reloadButton1.Click += new System.EventHandler(this.reloadButton1_Click);
+            // 
             // btnForward
             // 
-            this.btnForward.BackColor = System.Drawing.Color.Transparent;
             this.btnForward.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnForward.BackgroundImage")));
-            this.btnForward.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnForward.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnForward.ForeColor = System.Drawing.Color.White;
             this.btnForward.Location = new System.Drawing.Point(85, 30);
             this.btnForward.Name = "btnForward";
             this.btnForward.Size = new System.Drawing.Size(75, 23);
@@ -72,11 +83,7 @@
             // 
             // btnBack
             // 
-            this.btnBack.BackColor = System.Drawing.Color.Transparent;
             this.btnBack.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnBack.BackgroundImage")));
-            this.btnBack.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnBack.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnBack.ForeColor = System.Drawing.Color.White;
             this.btnBack.Location = new System.Drawing.Point(4, 30);
             this.btnBack.Name = "btnBack";
             this.btnBack.Size = new System.Drawing.Size(75, 23);
@@ -88,8 +95,7 @@
             // 
             // tabControl
             // 
-            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Location = new System.Drawing.Point(0, 34);
             this.tabControl.Name = "tabControl";
@@ -102,6 +108,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.Controls.Add(this.reloadButton1);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.btnForward);
             this.Controls.Add(this.btnBack);
@@ -109,6 +116,7 @@
             this.Controls.Add(this.tabControl);
             this.Name = "NavigationControl";
             this.Size = new System.Drawing.Size(703, 211);
+            this.Resize += new System.EventHandler(this.NavigationControl_Resize);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -121,5 +129,6 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private BitmapButton btnBack;
         private BitmapButton btnForward;
+        private BitmapButton reloadButton1;
     }
 }

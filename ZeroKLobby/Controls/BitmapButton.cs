@@ -9,6 +9,7 @@ namespace ZeroKLobby
         public BitmapButton() {
             //BackColor = Color.DarkSlateGray;
             BackColor = Color.Transparent;
+            Cursor = Cursors.Hand;
             BackgroundImage = Buttons.panel;
             FlatStyle = FlatStyle.Flat;
             BackgroundImageLayout = ImageLayout.Stretch;

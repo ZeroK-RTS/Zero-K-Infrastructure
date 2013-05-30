@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.splitContainerAtMid = new System.Windows.Forms.SplitContainer();
+            this.btnCustom = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.cbMtEngine = new System.Windows.Forms.CheckBox();
             this.cbSafeMode = new System.Windows.Forms.CheckBox();
@@ -41,7 +42,6 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.btnCustom = new System.Windows.Forms.Button();
             this.btnBenchmarker = new ZeroKLobby.BitmapButton();
             this.btnDisplay = new ZeroKLobby.BitmapButton();
             this.problemButton = new ZeroKLobby.BitmapButton();
@@ -69,7 +69,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainerAtMid.BackColor = System.Drawing.SystemColors.Control;
-            this.splitContainerAtMid.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.splitContainerAtMid.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.splitContainerAtMid.Location = new System.Drawing.Point(0, 0);
             this.splitContainerAtMid.Name = "splitContainerAtMid";
             this.splitContainerAtMid.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -111,6 +111,17 @@
             this.splitContainerAtMid.Size = new System.Drawing.Size(825, 692);
             this.splitContainerAtMid.SplitterDistance = 203;
             this.splitContainerAtMid.TabIndex = 0;
+            // 
+            // btnCustom
+            // 
+            this.btnCustom.Location = new System.Drawing.Point(524, 12);
+            this.btnCustom.Name = "btnCustom";
+            this.btnCustom.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnCustom.Size = new System.Drawing.Size(90, 23);
+            this.btnCustom.TabIndex = 39;
+            this.btnCustom.Text = "Custom details";
+            this.btnCustom.UseVisualStyleBackColor = true;
+            this.btnCustom.Click += new System.EventHandler(this.btnCustom_Click);
             // 
             // label1
             // 
@@ -232,16 +243,7 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(825, 692);
             this.panel1.TabIndex = 15;
-            // 
-            // btnCustom
-            // 
-            this.btnCustom.Location = new System.Drawing.Point(524, 12);
-            this.btnCustom.Name = "btnCustom";
-            this.btnCustom.Size = new System.Drawing.Size(90, 23);
-            this.btnCustom.TabIndex = 39;
-            this.btnCustom.Text = "Custom details";
-            this.btnCustom.UseVisualStyleBackColor = true;
-            this.btnCustom.Click += new System.EventHandler(this.btnCustom_Click);
+            this.panel1.Resize += new System.EventHandler(this.panel1_Resize);
             // 
             // btnBenchmarker
             // 
