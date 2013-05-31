@@ -115,6 +115,23 @@
             this.splitContainerAtMid.SplitterDistance = 203;
             this.splitContainerAtMid.TabIndex = 0;
             // 
+            // btnCustom
+            // 
+            this.btnCustom.BackColor = System.Drawing.Color.Transparent;
+            this.btnCustom.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnCustom.BackgroundImage")));
+            this.btnCustom.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnCustom.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnCustom.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCustom.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.btnCustom.ForeColor = System.Drawing.Color.White;
+            this.btnCustom.Location = new System.Drawing.Point(527, 12);
+            this.btnCustom.Name = "btnCustom";
+            this.btnCustom.Size = new System.Drawing.Size(108, 23);
+            this.btnCustom.TabIndex = 39;
+            this.btnCustom.Text = "Custom details";
+            this.btnCustom.UseVisualStyleBackColor = true;
+            this.btnCustom.Click += new System.EventHandler(this.btnCustom_Click);
+            // 
             // btnBenchmarker
             // 
             this.btnBenchmarker.BackColor = System.Drawing.Color.Transparent;
@@ -468,22 +485,6 @@
             this.panel1.Size = new System.Drawing.Size(825, 692);
             this.panel1.TabIndex = 15;
             this.panel1.Resize += new System.EventHandler(this.panel1_Resize);
-            // 
-            // btnCustom
-            // 
-            this.btnCustom.BackColor = System.Drawing.Color.Transparent;
-            this.btnCustom.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnCustom.BackgroundImage")));
-            this.btnCustom.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnCustom.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnCustom.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCustom.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.btnCustom.ForeColor = System.Drawing.Color.White;
-            this.btnCustom.Location = new System.Drawing.Point(527, 12);
-            this.btnCustom.Name = "btnCustom";
-            this.btnCustom.Size = new System.Drawing.Size(108, 23);
-            this.btnCustom.TabIndex = 39;
-            this.btnCustom.Text = "Custom details";
-            this.btnCustom.UseVisualStyleBackColor = true;
             // 
             // SettingsTab
             // 

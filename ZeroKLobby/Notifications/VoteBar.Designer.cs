@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(VoteBar));
             this.pbYes = new System.Windows.Forms.ProgressBar();
             this.pbNo = new System.Windows.Forms.ProgressBar();
             this.lbYes = new System.Windows.Forms.Label();
@@ -75,6 +76,12 @@
             // 
             // btnYes
             // 
+            this.btnYes.BackColor = System.Drawing.Color.Transparent;
+            this.btnYes.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnYes.BackgroundImage")));
+            this.btnYes.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnYes.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnYes.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnYes.ForeColor = System.Drawing.Color.White;
             this.btnYes.Location = new System.Drawing.Point(17, 25);
             this.btnYes.Name = "btnYes";
             this.btnYes.Size = new System.Drawing.Size(41, 20);
@@ -85,6 +92,12 @@
             // 
             // btnNo
             // 
+            this.btnNo.BackColor = System.Drawing.Color.Transparent;
+            this.btnNo.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnNo.BackgroundImage")));
+            this.btnNo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnNo.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnNo.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnNo.ForeColor = System.Drawing.Color.White;
             this.btnNo.Location = new System.Drawing.Point(17, 46);
             this.btnNo.Name = "btnNo";
             this.btnNo.Size = new System.Drawing.Size(41, 20);
@@ -97,6 +110,7 @@
             // 
             this.lbQuestion.AutoSize = true;
             this.lbQuestion.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.lbQuestion.LinkColor = System.Drawing.Color.DeepSkyBlue;
             this.lbQuestion.Location = new System.Drawing.Point(83, 9);
             this.lbQuestion.Name = "lbQuestion";
             this.lbQuestion.Size = new System.Drawing.Size(41, 13);
@@ -109,6 +123,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.DimGray;
             this.Controls.Add(this.btnNo);
             this.Controls.Add(this.btnYes);
             this.Controls.Add(this.lbNo);
@@ -116,6 +131,7 @@
             this.Controls.Add(this.lbQuestion);
             this.Controls.Add(this.pbNo);
             this.Controls.Add(this.pbYes);
+            this.ForeColor = System.Drawing.Color.White;
             this.Name = "VoteBar";
             this.Size = new System.Drawing.Size(480, 80);
             this.ResumeLayout(false);
@@ -129,8 +145,8 @@
         private System.Windows.Forms.ProgressBar pbNo;
         private System.Windows.Forms.Label lbYes;
         private System.Windows.Forms.Label lbNo;
-        private System.Windows.Forms.Button btnYes;
-        private System.Windows.Forms.Button btnNo;
         private System.Windows.Forms.LinkLabel lbQuestion;
+        private BitmapButton btnYes;
+        private BitmapButton btnNo;
     }
 }

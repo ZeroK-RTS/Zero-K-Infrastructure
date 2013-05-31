@@ -34,6 +34,7 @@ namespace ZeroKLobby.MicroLobby
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ChatControl));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.ChatBox = new ZeroKLobby.MicroLobby.ChatBox();
             this.topicPanel = new System.Windows.Forms.Panel();
@@ -46,12 +47,12 @@ namespace ZeroKLobby.MicroLobby
             this.searchBarContainer = new System.Windows.Forms.Panel();
             this.playerSearchBox = new System.Windows.Forms.TextBox();
             this.mapPanel = new System.Windows.Forms.Panel();
-            //((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.topicPanel.SuspendLayout();
-            //((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
@@ -99,7 +100,7 @@ namespace ZeroKLobby.MicroLobby
             this.ChatBox.TextFilter = null;
             this.ChatBox.TotalDisplayLines = 0;
             // 
-            // TopicPanel
+            // topicPanel
             // 
             this.topicPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.topicPanel.Controls.Add(this.hideButton);
@@ -114,6 +115,12 @@ namespace ZeroKLobby.MicroLobby
             // hideButton
             // 
             this.hideButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.hideButton.BackColor = System.Drawing.Color.Transparent;
+            this.hideButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("hideButton.BackgroundImage")));
+            this.hideButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.hideButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.hideButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.hideButton.ForeColor = System.Drawing.Color.White;
             this.hideButton.Location = new System.Drawing.Point(761, -29);
             this.hideButton.Name = "hideButton";
             this.hideButton.Size = new System.Drawing.Size(75, 23);
@@ -122,7 +129,7 @@ namespace ZeroKLobby.MicroLobby
             this.hideButton.UseVisualStyleBackColor = true;
             this.hideButton.Click += new System.EventHandler(this.hideButton_Click);
             // 
-            // TopicBox
+            // topicBox
             // 
             this.topicBox.ChatBackgroundColor = 0;
             this.topicBox.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -140,7 +147,6 @@ namespace ZeroKLobby.MicroLobby
             this.topicBox.TabIndex = 2;
             this.topicBox.TextFilter = null;
             this.topicBox.TotalDisplayLines = 0;
-            this.topicBox.Visible = true;
             // 
             // sendBox
             // 
@@ -157,7 +163,7 @@ namespace ZeroKLobby.MicroLobby
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.splitContainer2.Margin = new System.Windows.Forms.Padding(2);
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -228,7 +234,7 @@ namespace ZeroKLobby.MicroLobby
             this.mapPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mapPanel.Location = new System.Drawing.Point(0, 0);
             this.mapPanel.Name = "mapPanel";
-            this.mapPanel.Size = new System.Drawing.Size(112, 37);
+            this.mapPanel.Size = new System.Drawing.Size(150, 46);
             this.mapPanel.TabIndex = 2;
             this.mapPanel.Visible = false;
             // 
@@ -242,13 +248,13 @@ namespace ZeroKLobby.MicroLobby
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
-            //((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.topicPanel.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             this.splitContainer2.Panel2.PerformLayout();
-            //((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.playerBoxSearchBarContainer.ResumeLayout(false);
             this.searchBarContainer.ResumeLayout(false);
@@ -269,10 +275,10 @@ namespace ZeroKLobby.MicroLobby
         //public ChatBox ChatBox { get; set; } //note: for some reason I have to declare this at ChatControl.cs instead of let the default else my (VisualC#2010Express) Design-mode throw error.
         //public ChatBox TopicBox { get; set; }
         //public Panel TopicPanel { get; set; }
-        private System.Windows.Forms.Button hideButton;
         private System.Windows.Forms.Panel playerBoxSearchBarContainer;
         protected System.Windows.Forms.Panel mapPanel;
         protected SplitContainer splitContainer2;
+        private BitmapButton hideButton;
 
     }
 }

@@ -131,6 +131,12 @@ namespace ZeroKLobby.Notifications
             // 
             // battleExtras
             // 
+            this.battleExtras.BackColor = System.Drawing.Color.Transparent;
+            this.battleExtras.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("battleExtras.BackgroundImage")));
+            this.battleExtras.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.battleExtras.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.battleExtras.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.battleExtras.ForeColor = System.Drawing.Color.White;
             this.battleExtras.Location = new System.Drawing.Point(3, 45);
             this.battleExtras.Name = "battleExtras";
             this.battleExtras.Size = new System.Drawing.Size(94, 20);
@@ -166,7 +172,9 @@ namespace ZeroKLobby.Notifications
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.DimGray;
             this.Controls.Add(this.panel1);
+            this.ForeColor = System.Drawing.Color.White;
             this.MinimumSize = new System.Drawing.Size(492, 76);
             this.Name = "BattleBar";
             this.Size = new System.Drawing.Size(888, 76);

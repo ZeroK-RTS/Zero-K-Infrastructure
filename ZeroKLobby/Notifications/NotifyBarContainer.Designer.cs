@@ -41,23 +41,30 @@
             // 
             // btnDetail
             // 
+            this.btnDetail.BackColor = System.Drawing.Color.Transparent;
             this.btnDetail.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnDetail.BackgroundImage")));
             this.btnDetail.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnDetail.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnDetail.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnDetail.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.btnDetail.ForeColor = System.Drawing.Color.White;
             this.btnDetail.Location = new System.Drawing.Point(3, 3);
             this.btnDetail.Name = "btnDetail";
             this.btnDetail.Size = new System.Drawing.Size(56, 46);
             this.btnDetail.TabIndex = 1;
-            this.btnDetail.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.btnDetail.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnDetail.UseVisualStyleBackColor = false;
             // 
             // btnStop
             // 
+            this.btnStop.BackColor = System.Drawing.Color.Transparent;
             this.btnStop.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnStop.BackgroundImage")));
             this.btnStop.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnStop.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnStop.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnStop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnStop.ForeColor = System.Drawing.Color.White;
             this.btnStop.Location = new System.Drawing.Point(289, 3);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(54, 46);
@@ -67,8 +74,10 @@
             // 
             // NotifyBarContainer
             // 
+            this.BackColor = System.Drawing.Color.DimGray;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Controls.Add(this.tableLayoutPanel1);
+            this.ForeColor = System.Drawing.Color.White;
             this.Name = "NotifyBarContainer";
             this.Size = new System.Drawing.Size(346, 52);
             this.tableLayoutPanel1.ResumeLayout(false);
