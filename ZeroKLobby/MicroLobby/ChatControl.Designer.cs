@@ -35,13 +35,13 @@ namespace ZeroKLobby.MicroLobby
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ChatControl));
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer1 = new ZeroKLobby.ZkSplitContainer();
             this.ChatBox = new ZeroKLobby.MicroLobby.ChatBox();
             this.topicPanel = new System.Windows.Forms.Panel();
             this.hideButton = new ZeroKLobby.BitmapButton();
             this.topicBox = new ZeroKLobby.MicroLobby.ChatBox();
             this.sendBox = new ZeroKLobby.MicroLobby.SendBox();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer2 = new ZeroKLobby.ZkSplitContainer();
             this.playerBoxSearchBarContainer = new System.Windows.Forms.Panel();
             this.playerBox = new ZeroKLobby.MicroLobby.PlayerListBox();
             this.searchBarContainer = new System.Windows.Forms.Panel();
@@ -263,7 +263,7 @@ namespace ZeroKLobby.MicroLobby
 
         #endregion
 
-        private System.Windows.Forms.SplitContainer splitContainer1;
+        private ZeroKLobby.ZkSplitContainer splitContainer1;
         private SendBox sendBox;
         protected PlayerListBox playerBox;
         private System.Windows.Forms.Panel searchBarContainer;

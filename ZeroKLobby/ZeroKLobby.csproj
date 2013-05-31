@@ -147,6 +147,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Buttons.resx</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ZkSplitContainer.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="SampleForm.cs">
       <SubType>Form</SubType>
     </Compile>

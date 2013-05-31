@@ -29,7 +29,8 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsTab));
-            this.splitContainerAtMid = new System.Windows.Forms.SplitContainer();
+            this.splitContainerAtMid = new ZeroKLobby.ZkSplitContainer();
+            this.btnCustom = new ZeroKLobby.BitmapButton();
             this.btnBenchmarker = new ZeroKLobby.BitmapButton();
             this.label1 = new System.Windows.Forms.Label();
             this.cbMtEngine = new System.Windows.Forms.CheckBox();
@@ -56,7 +57,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.btnCustom = new ZeroKLobby.BitmapButton();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerAtMid)).BeginInit();
             this.splitContainerAtMid.Panel1.SuspendLayout();
             this.splitContainerAtMid.Panel2.SuspendLayout();
             this.splitContainerAtMid.SuspendLayout();
@@ -496,6 +497,7 @@
             this.splitContainerAtMid.Panel1.ResumeLayout(false);
             this.splitContainerAtMid.Panel1.PerformLayout();
             this.splitContainerAtMid.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerAtMid)).EndInit();
             this.splitContainerAtMid.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
@@ -505,7 +507,7 @@
 
         #endregion
 
-        private System.Windows.Forms.SplitContainer splitContainerAtMid;
+        private ZeroKLobby.ZkSplitContainer splitContainerAtMid;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox cbMtEngine;
         private System.Windows.Forms.CheckBox cbSafeMode;
