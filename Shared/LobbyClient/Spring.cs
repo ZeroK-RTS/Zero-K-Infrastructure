@@ -305,17 +305,14 @@ namespace LobbyClient
                 process.StartInfo.CreateNoWindow = true;
 
                 process.StartInfo.Arguments += string.Format("--config \"{0}\"", paths.GetSpringConfigPath());
-                process.StartInfo.EnvironmentVariables["SPRING_DATADIR"] = paths.WritableDirectory;
                 process.StartInfo.EnvironmentVariables["OMP_WAIT_POLICY"] = "ACTIVE";
 
                 if (UseDedicatedServer) {
-                    process.StartInfo.EnvironmentVariables["SPRING_ISOLATED"] = paths.WritableDirectory;
                     process.StartInfo.FileName = paths.DedicatedServer;
                     process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.DedicatedServer);
                     //process.StartInfo.Arguments += string.Format(" -i --isolation-dir \"{0}\"", paths.WritableDirectory);
                 }
                 else {
-                    process.StartInfo.EnvironmentVariables.Remove("SPRING_ISOLATED");
                     process.StartInfo.FileName = useMultithreaded ? paths.MtExecutable : paths.Executable;
                     process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.Executable);
                 }

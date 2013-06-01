@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -29,16 +30,22 @@ namespace Benchmarker
             process.StartInfo.Arguments += string.Format("--config \"{0}\"", Path.Combine(test.Config.ConfigPath, "springsettings.cfg"));
             if (test.BenchmarkArg > 0) process.StartInfo.Arguments += " --benchmark " + test.BenchmarkArg;
 
-            var datadirs = string.Join(Environment.OSVersion.Platform == PlatformID.Unix ? ":" : ";",
-                                       test.Config.ConfigPath,
-                                       paths.WritableDirectory,
-                                       Directory.GetParent(benchmark.BenchmarkPath).Parent.FullName);
-            //Trace.TraceInformation("setting process SPRING_DATADIR:{0}", datadirs);
+
+            var dataDirList = new List<string>()
+            {
+                test.Config.ConfigPath,
+                Directory.GetParent(benchmark.BenchmarkPath).Parent.FullName,
+                paths.WritableDirectory,
+            };
+            dataDirList.AddRange(paths.DataDirectories);
+            dataDirList.Add(Path.GetDirectoryName(paths.Executable));
+            var datadirs = string.Join(Environment.OSVersion.Platform == PlatformID.Unix ? ":" : ";", dataDirList.Distinct());
+
             process.StartInfo.EnvironmentVariables["SPRING_DATADIR"] = datadirs;
-
+            process.StartInfo.EnvironmentVariables["SPRING_ISOLATED"] = test.Config.ConfigPath;
+            process.StartInfo.EnvironmentVariables["SPRING_WRITEDIR"] = test.Config.ConfigPath;
             process.StartInfo.EnvironmentVariables["OMP_WAIT_POLICY"] = "ACTIVE";
-
-            process.StartInfo.EnvironmentVariables.Remove("SPRING_ISOLATED");
+            
             process.StartInfo.FileName = test.UseMultithreaded ? paths.MtExecutable : paths.Executable;
             process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.Executable);
 

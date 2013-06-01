@@ -147,12 +147,13 @@ namespace PlasmaShared
             var ov = springVersion;
             springVersion = GetSpringVersion(Executable);
 
-            // get spring verison does not work for dedicated
-
-            Environment.SetEnvironmentVariable("SPRING_DATADIR", WritableDirectory, EnvironmentVariableTarget.Process);
-
+            if (!string.IsNullOrEmpty(springPath)) DataDirectories.Add(Path.GetDirectoryName(springPath));
+            var ddenv = string.Join(Environment.OSVersion.Platform == PlatformID.Unix ? ":" : ";", DataDirectories.Distinct());
+            Environment.SetEnvironmentVariable("SPRING_DATADIR", ddenv, EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable("SPRING_WRITEDIR", WritableDirectory, EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable("SPRING_ISOLATED", WritableDirectory, EnvironmentVariableTarget.Process);
+            
             if (ov != springVersion  && SpringVersionChanged != null) SpringVersionChanged(this, EventArgs.Empty);
-
         }
 
         void CreateFolder(string path)
