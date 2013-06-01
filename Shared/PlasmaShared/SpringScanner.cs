@@ -145,7 +145,7 @@ namespace PlasmaShared
 
             foreach (var folder in springPaths.DataDirectories)
             {
-                var modsPath = Utils.MakePath(folder, "mods");
+                var modsPath = Utils.MakePath(folder, "games");
                 if (Directory.Exists(modsPath)) modsWatchers.Add(new FileSystemWatcher(modsPath));
                 var mapsPath = Utils.MakePath(folder, "maps");
                 if (Directory.Exists(mapsPath)) mapsWatchers.Add(new FileSystemWatcher(mapsPath));
@@ -421,7 +421,7 @@ namespace PlasmaShared
         string GetWatcherFolder(FileSystemWatcher watcher)
         {
             if (mapsWatchers.Contains(watcher)) return "maps";
-            if (modsWatchers.Contains(watcher)) return "mods";
+            if (modsWatchers.Contains(watcher)) return "games";
             if (packagesWatchers.Contains(watcher)) return "packages";
             throw new ArgumentException("Invalid watcher", "watcher");
         }
@@ -486,7 +486,7 @@ namespace PlasmaShared
 
             var foundFiles = new Dictionary<string, bool>();
 
-            InitialFolderScan("mods", foundFiles);
+            InitialFolderScan("games", foundFiles);
             InitialFolderScan("maps", foundFiles);
             InitialFolderScan("packages", foundFiles);
 

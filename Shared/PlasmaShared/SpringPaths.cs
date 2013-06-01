@@ -107,7 +107,7 @@ namespace PlasmaShared
 
         public void MakeFolders()
         {
-            CreateFolder(Utils.MakePath(WritableDirectory, "mods"));
+            CreateFolder(Utils.MakePath(WritableDirectory, "games"));
             CreateFolder(Utils.MakePath(WritableDirectory, "maps"));
             CreateFolder(Utils.MakePath(WritableDirectory, "engine"));
             CreateFolder(Utils.MakePath(WritableDirectory, "packages"));
@@ -152,6 +152,7 @@ namespace PlasmaShared
             Environment.SetEnvironmentVariable("SPRING_DATADIR", ddenv, EnvironmentVariableTarget.Process);
             Environment.SetEnvironmentVariable("SPRING_WRITEDIR", WritableDirectory, EnvironmentVariableTarget.Process);
             Environment.SetEnvironmentVariable("SPRING_ISOLATED", WritableDirectory, EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable("SPRING_NOCOLOR", "1", EnvironmentVariableTarget.Process);
             
             if (ov != springVersion  && SpringVersionChanged != null) SpringVersionChanged(this, EventArgs.Empty);
         }

@@ -760,7 +760,7 @@ namespace Springie.autohost
             {
                 string[] mods;
                 int[] indexes;
-                if (FilterMods(words, out mods, out indexes) == 0) Respond(e, "cannot find such mod");
+                if (FilterMods(words, out mods, out indexes) == 0) Respond(e, "cannot find such game");
                 else Start(mods[0], null);
             }
         }

@@ -223,7 +223,7 @@ namespace NightWatch
                                 client.Say(TasClient.SayPlace.User,
                                            e.Name,
                                            string.Format(
-                                               "WARNING: You are connected using {0} which is not fully compatible with this host. Please use Zero-K lobby. Download it from http://zero-k.info   NOTE: to play all Spring games/mods with Zero-K lobby, untick \"Official games\" on its multiplayer tab. Thank you!",
+                                               "WARNING: You are connected using {0} which is not fully compatible with this host. Please use Zero-K lobby. Download it from http://zero-k.info   NOTE: to play all Spring games with Zero-K lobby, untick \"Official games\" on its multiplayer tab. Thank you!",
                                                e.LobbyVersion),
                                            false);
                             }

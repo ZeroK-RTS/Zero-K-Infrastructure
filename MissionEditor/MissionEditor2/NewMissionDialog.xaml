@@ -28,7 +28,7 @@
             <GroupBox  Grid.Row="1" Grid.Column="0" Header="Maps">
                     <ListBox Name="MapList" x:FieldModifier="public" MouseUp="MapList_MouseDown"/>
             </GroupBox>
-            <GroupBox Grid.Row="1" Grid.Column="1" Header="Mods">
+            <GroupBox Grid.Row="1" Grid.Column="1" Header="Games">
                     <ListBox Name="ModList" x:FieldModifier="public" MouseUp="ModList_MouseUp"/>
             </GroupBox>
         </UniformGrid>

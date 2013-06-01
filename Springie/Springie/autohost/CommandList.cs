@@ -33,7 +33,7 @@ namespace Springie.autohost
 
             AddMissing(new CommandConfig("listmaps", 1, "[<filters>..] - lists maps on server, e.g. !listmaps altor div", 10));
 
-            AddMissing(new CommandConfig("listmods", 1, "[<filters>..] - lists mods on server, e.g. !listmods absolute 2.23", 5));
+            AddMissing(new CommandConfig("listmods", 1, "[<filters>..] - lists games on server, e.g. !listmods absolute 2.23", 5));
             AddMissing(new CommandConfig("map", 2, "[<filters>..] - changes server map, eg. !map altor div"));
 
             AddMissing(new CommandConfig("forcestart", 2, " - starts game forcibly (ignoring warnings)", 5));

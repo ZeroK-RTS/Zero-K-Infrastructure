@@ -21,7 +21,7 @@ namespace PlasmaDownloader.Torrents
         {
             this.plasmaDownloader = plasmaDownloader;
             Utils.CheckPath(Utils.MakePath(this.plasmaDownloader.SpringPaths.WritableDirectory, "maps"));
-            Utils.CheckPath(Utils.MakePath(this.plasmaDownloader.SpringPaths.WritableDirectory, "mods"));
+            Utils.CheckPath(Utils.MakePath(this.plasmaDownloader.SpringPaths.WritableDirectory, "games"));
             incomingFolder = Utils.MakePath(this.plasmaDownloader.SpringPaths.Cache, "Incoming");
             Utils.CheckPath(incomingFolder);
 
@@ -42,7 +42,7 @@ namespace PlasmaDownloader.Torrents
         {
             return
                 Utils.GetAlternativeFileName(Utils.MakePath(plasmaDownloader.SpringPaths.WritableDirectory,
-                                                            type == DownloadType.MAP ? "maps" : "mods",
+                                                            type == DownloadType.MAP ? "maps" : "games",
                                                             fileName));
         }
 

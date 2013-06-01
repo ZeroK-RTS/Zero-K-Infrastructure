@@ -76,7 +76,7 @@ namespace MissionEditor2
                     var paths = new SpringPaths(Settings.Default.SpringPath);
                     using (var unitSync = new PlasmaShared.UnitSyncLib.UnitSync(paths))
 					{
-						var modPath = Path.Combine(paths.WritableDirectory, "mods");
+						var modPath = Path.Combine(paths.WritableDirectory, "games");
 						tempPath = Path.Combine(modPath, missionFileName);
 					}
 					if (File.Exists(tempPath)) File.Delete(tempPath);

@@ -36,7 +36,7 @@ namespace Benchmarker
             if (refresh) allBenchmarks = null;
             if (allBenchmarks != null) return allBenchmarks;
             allBenchmarks = new List<Benchmark>();
-            allBenchmarks = Batch.GetBenchmarkFolders(paths, "Mods").SelectMany(x => x.GetDirectories("*.sdd").Select(y=> new Benchmark(y.FullName))).ToList();
+            allBenchmarks = Batch.GetBenchmarkFolders(paths, "Games").SelectMany(x => x.GetDirectories("*.sdd").Select(y=> new Benchmark(y.FullName))).ToList();
             return allBenchmarks;
         }
 

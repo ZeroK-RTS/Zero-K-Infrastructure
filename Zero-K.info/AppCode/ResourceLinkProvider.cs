@@ -60,7 +60,7 @@ namespace ZeroKWeb
         {
           var pom = string.Format("http://www.springfiles.com/checkmirror.php?q={0}&c={1}",
                                   Uri.EscapeDataString(fileName),
-                                  type == ZkData.ResourceType.Mod ? "mods" : "maps");
+                                  type == ZkData.ResourceType.Mod ? "games" : "maps");
 
           var ret = wc.DownloadString(pom);
 
