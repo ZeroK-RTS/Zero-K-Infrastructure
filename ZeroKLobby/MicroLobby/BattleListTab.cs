@@ -37,7 +37,7 @@ namespace ZeroKLobby.MicroLobby
 
 		public string PathHead { get { return "battles"; } }
 
-		public bool TryNavigate(params string[] path)
+		public bool TryNavigate(bool reload, params string[] path)
 		{
 			if (path.Length == 0) return false;
 			if (path[0] != PathHead) return false;

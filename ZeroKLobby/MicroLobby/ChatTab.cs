@@ -46,6 +46,7 @@ namespace ZeroKLobby.MicroLobby
             
             foreach (var channel in Program.TasClient.JoinedChannels.Values.Where(c => !IsIgnoredChannel(c.Name))) CreateChannelControl(channel.Name);
             toolTabs.SelectTab("Battle");
+            toolTabs.ForeColor = Program.Conf.OtherTextColor;
         }
 
         public void CloseTab(string key)
@@ -344,7 +345,7 @@ namespace ZeroKLobby.MicroLobby
 
 		public string PathHead { get { return "chat"; } }
 
-    	public bool TryNavigate(params string[] path)
+        public bool TryNavigate(bool reload, params string[] path)
     	{
 			if (path.Length == 0) return false;
 			if (path[0] != PathHead) return false;

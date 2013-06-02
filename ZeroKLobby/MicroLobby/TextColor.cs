@@ -14,7 +14,6 @@ namespace ZeroKLobby.MicroLobby
         public const char ColorChar = (char)3;
         const int date = 3;
         public static readonly string Date = ColorChar + date.ToString("00");
-        public const char EmotChar = '\xFF0A';
         const int emote = 4;
         public static readonly string Emote = ColorChar + emote.ToString("00");
         const int error = 5;
@@ -31,7 +30,6 @@ namespace ZeroKLobby.MicroLobby
         public static readonly string Link = ColorChar + link.ToString("00");
         const int message = 11;
         public static readonly string Message = ColorChar + message.ToString("00");
-        public const char NewColorChar = '\xFF03';
         const int outgoingCommand = 12;
         public static readonly string OutgoingCommand = ColorChar + outgoingCommand.ToString("00");
         const char plainChar = (char)15;
@@ -42,12 +40,15 @@ namespace ZeroKLobby.MicroLobby
         public static readonly string Topic = ColorChar + topic.ToString("00");
         const int topicBackground = 15;
         public static readonly string TopicBackground = ColorChar + topicBackground.ToString("00");
+        public const char NewColorChar = '\xFF03';
         public const char UnderlineChar = (char)31;
         public const char UrlEnd = '\xFF0C';
         public const char UrlStart = '\xFF0B';
+        public const char EmotChar = '\xFF0A';
         const int username = 13;
         public static readonly string Username = ColorChar + username.ToString("00");
 
+        static Regex allCodesExceptEmot = new Regex("\xFF03[0-9]{4}|\xFF0B|\xFF0C|\x3\\d{2},\\d{2}|\x3\\d{2}");
         static Regex allCodes = new Regex("\xFF03[0-9]{4}|\xFF0B|\xFF0C|\x3\\d{2},\\d{2}|\x3\\d{2}|\xFF0A\\d{3}|\xFF0A");
         static Regex codes = new Regex("\xFF03[0-9]{4}|\x3\\d{2},\\d{2}|\x3\\d{2}");
         static Color[] colors;
@@ -77,7 +78,7 @@ namespace ZeroKLobby.MicroLobby
 
         public static Color GetColor(int colorCode)
         {
-            return colorCode >= colors.Length ? colors[text] : colors[colorCode];
+            return colorCode >= colors.Length ? colors[text] : colors[colorCode]; //color code or use text color as defaut
         }
 
         public static string StripAllCodes(this string line)
@@ -87,6 +88,18 @@ namespace ZeroKLobby.MicroLobby
             if (line.Length > 0)
             {
                 var strippedLine = allCodes.Replace(line, ""); // does not replace all tags
+                return strippedLine;
+            }
+            return string.Empty;
+        }
+
+        public static string StripAllCodesExceptEmot(this string line) //Strip all codes except emot
+        {
+            if (line == null) return string.Empty;
+
+            if (line.Length > 0)
+            {
+                var strippedLine = allCodesExceptEmot.Replace(line, "");
                 return strippedLine;
             }
             return string.Empty;

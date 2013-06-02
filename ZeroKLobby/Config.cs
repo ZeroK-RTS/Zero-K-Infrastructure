@@ -281,8 +281,10 @@ namespace ZeroKLobby
         [DisplayName("Start Minimized")]
         [Description("Should program start minimized")]
         public bool StartMinimized { get; set; }
+
         [Category("Chat")]
         [DisplayName("Color: Default text")]
+        [Description("Color for the text on chat window and on playerlist")] //added safwan [tweak]
         [XmlIgnore]
         public Color TextColor
         {
@@ -293,10 +295,25 @@ namespace ZeroKLobby
                 UpdateFadeColor();
             }
         }
-
-
         [Browsable(false)]
         public int TextColorInt = Color.Black.ToArgb();
+
+        [Category("Chat")]
+        [DisplayName("Color: Other text")]
+        [Description("Color for text on tooltip and on channel tab")]
+        [XmlIgnore]
+        public Color OtherTextColor
+        {
+            get { return Color.FromArgb(OtherTextColorInt); }
+            set
+            {
+                OtherTextColorInt = value.ToArgb();
+                UpdateFadeColor();
+            }
+        }
+        [Browsable(false)]
+        public int OtherTextColorInt = Color.Black.ToArgb();
+ 
         /// <summary>
         /// Keeps datetime of last topic change for each channel
         /// </summary>
@@ -334,7 +351,10 @@ namespace ZeroKLobby
         [Description("Opens home, planetwars, maps etc in external browser")]
         public bool UseExternalBrowser { get; set; }
 
-
+        [Category("Debugging")]
+        [DisplayName("Disable Lobby Auto Update")]
+        [Description("Lobby will not update itself to latest release version. Use this if you are compiling your own lobby")]
+        public bool DisableAutoUpdate { get; set; }
         
         [Browsable(false)]
         public int AdDelays = 1;

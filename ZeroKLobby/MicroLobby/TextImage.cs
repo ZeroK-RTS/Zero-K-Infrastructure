@@ -9,16 +9,15 @@ namespace ZeroKLobby.MicroLobby
 {
     static class TextImage
     {
-        const int admin = 2;
-        const int bot = 3;
         const int friend = 1;
-        public static readonly string Friend = TextColor.EmotChar + friend.ToString("000");
+        public static readonly string Friend = TextColor.EmotChar + friend.ToString("000"); //convert "1" to "001" 
         const int jimi = 4;
         public static readonly string Jimi = TextColor.EmotChar + jimi.ToString("000");
         const int napoleon = 7;
         public static readonly string Napoleon = TextColor.EmotChar + napoleon.ToString("000");
-
+        const int admin = 2;
         public static readonly string Police = TextColor.EmotChar + admin.ToString("000");
+        const int bot = 3;
         public static readonly string Robot = TextColor.EmotChar + bot.ToString("000");
         const int smurf = 5;
         public static readonly string Smurf = TextColor.EmotChar + smurf.ToString("000");
@@ -26,12 +25,14 @@ namespace ZeroKLobby.MicroLobby
         public static readonly string Soldier = TextColor.EmotChar + soldier.ToString("000");
         const int user = 0;
         public static readonly string User = TextColor.EmotChar + user.ToString("000");
+        const int grayuser = 8;
+        public static readonly string GrayUser = TextColor.EmotChar + user.ToString("000");
         static Image[] bitmaps;
 
 
         static TextImage()
         {
-            bitmaps = new Image[8];
+            bitmaps = new Image[9];
             bitmaps[user] = ZklResources.user;
             bitmaps[friend] = ZklResources.friend;
             bitmaps[admin] = ZklResources.police;
@@ -40,13 +41,14 @@ namespace ZeroKLobby.MicroLobby
             bitmaps[smurf] = ZklResources.smurf;
             bitmaps[soldier] = ZklResources.soldier;
             bitmaps[napoleon] = ZklResources.napoleon;
+            bitmaps[grayuser] = ZklResources.grayuser;
         }
 
         public static Image GetImage(int imageNumber)
         {
             if (imageNumber >= bitmaps.Length)
             {
-                Trace.WriteLine("Image numbe out of bounds (" + imageNumber + ").");
+                Trace.WriteLine("Image number out of bounds (" + imageNumber + ").");
                 return ZklResources.user;
             }
             return bitmaps[imageNumber];
@@ -83,7 +85,8 @@ namespace ZeroKLobby.MicroLobby
                 if (user.EffectiveElo < 1400) return Smurf;
                 return User;
             }
-            return String.Empty;
+            else return GrayUser;
+            //return String.Empty;
         }
     }
 }

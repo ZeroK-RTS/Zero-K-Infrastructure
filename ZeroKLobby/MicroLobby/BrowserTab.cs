@@ -62,15 +62,22 @@ namespace ZeroKLobby
 
         public string PathHead { get { return pathHead; } }
 
-        public bool TryNavigate(params string[] path)
+        public bool TryNavigate(bool reload,params string[] path)
         {
             var pathString = String.Join("/", path);
             if (!pathString.StartsWith(PathHead)) return false;
+            if (reload) return NavRefresh();
             var url = Url != null ? Url.ToString() : "";
             if (navigatingTo == pathString || pathString == url) return true; // already navigating there
 
             navigatingTo = pathString;
             Navigate(pathString);
+            return true;
+        }
+
+        public bool NavRefresh()
+        {
+            Refresh(WebBrowserRefreshOption.IfExpired);
             return true;
         }
 

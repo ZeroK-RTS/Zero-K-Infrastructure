@@ -4,7 +4,7 @@ using ZeroKLobby.MicroLobby;
 
 namespace ZeroKLobby.Lines
 {
-    public class SaidLine: IChatLine
+    public class SaidLine: IChatLine //the composer of each line of chat message
     {
         public string AuthorName { get; set; }
         public DateTime Date { get; set; }

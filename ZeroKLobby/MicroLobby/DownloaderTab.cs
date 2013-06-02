@@ -64,7 +64,7 @@ namespace ZeroKLobby.MapDownloader
 
     public string PathHead { get { return "rapid"; } }
 
-    public bool TryNavigate(params string[] path)
+    public bool TryNavigate(bool reload, params string[] path)
     {
       return path.Length > 0 && path[0] == PathHead;
     }

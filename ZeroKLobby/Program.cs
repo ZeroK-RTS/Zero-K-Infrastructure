@@ -252,7 +252,7 @@ namespace ZeroKLobby
                 JugglerBar.MaximumSize = jugglerbarSize;
                 //End battlebar size fix hax
 
-                if (!Debugger.IsAttached) Program.SelfUpdater.StartChecking();
+                if (!Debugger.IsAttached && !Conf.DisableAutoUpdate) Program.SelfUpdater.StartChecking();
 
                 if (Conf.ShowFriendsWindow == true) {
                     MainWindow.frdWindow = new FriendsWindow();

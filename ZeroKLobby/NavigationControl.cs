@@ -58,7 +58,7 @@ namespace ZeroKLobby
 
                 if (CurrentPage != null && CurrentPage.ToString() == value) return; // we are already there, no navigation needed
 
-                var step = GoToPage(value.Split('/'));
+                var step = GoToPage(value.Split('/'), false); //go to page and is not reload
                 if (step != null) {
                     if (CurrentPage != null && CurrentPage.ToString() != value) backStack.Push(CurrentPage);
                     CurrentPage = step;
@@ -105,12 +105,12 @@ namespace ZeroKLobby
             lastTabPaths[chatTab] = string.Format("chat/channel/{0}", Program.Conf != null ? Program.Conf.AutoJoinChannels.OfType<string>().FirstOrDefault():"zk");
             AddTabPage(chatTab, "Chat");
             if (Environment.OSVersion.Platform != PlatformID.Unix && !Program.Conf.UseExternalBrowser) {
-                AddTabPage(new BrowserTab("http://zero-k.info/Maps"), "Maps"); 
+                AddTabPage(new BrowserTab("http://zero-k.info/Maps"), "Maps");
                 AddTabPage(new BrowserTab("http://zero-k.info/Missions"), "sp");
                 AddTabPage(new BrowserTab("http://zero-k.info/Battles"), "rp");
                 AddTabPage(new BrowserTab("http://zero-k.info/PlanetWars"), "pw");
                 AddTabPage(new BrowserTab("http://zero-k.info/Forum"), "fm");
-                var home = AddTabPage(new BrowserTab("http://zero-k.info/"), "hm"); ;
+                var home = AddTabPage(new BrowserTab("http://zero-k.info/"), "hm");
                 tabControl.SelectTab(home);
             }
             var battles = new BattleListTab();
@@ -189,21 +189,23 @@ namespace ZeroKLobby
         void GoBack() {
             if (forwardStack.Count == 0 || forwardStack.Peek().ToString() != CurrentPage.ToString()) forwardStack.Push(CurrentPage);
             CurrentPage = backStack.Pop();
-            GoToPage(CurrentPage.Path);
+            GoToPage(CurrentPage.Path,false);
         }
 
         void GoForward() {
             if (backStack.Count == 0 || backStack.Peek().ToString() != CurrentPage.ToString()) backStack.Push(CurrentPage);
             CurrentPage = forwardStack.Pop();
-            GoToPage(CurrentPage.Path);
+            GoToPage(CurrentPage.Path,false);
         }
 
 
-        NavigationStep GoToPage(string[] path) // todo cleanup
+        NavigationStep GoToPage(string[] path,bool reload) // todo cleanup
         {
-            foreach (TabPage tabPage in tabControl.Controls) {
+            foreach (TabPage tabPage in tabControl.Controls)
+            {
                 var navigatable = GetINavigatableFromControl(tabPage);
-                if (navigatable != null && navigatable.TryNavigate(path)) {
+                if (navigatable != null && navigatable.TryNavigate(reload, path))
+                {
                     tabControl.SelectTab(tabPage);
                     lastTabPaths[navigatable] = string.Join("/", path);
                     if (tabPage.Text == "Maps" ||
@@ -211,7 +213,7 @@ namespace ZeroKLobby
                         tabPage.Text == "rp" ||
                         tabPage.Text == "pw" ||
                         tabPage.Text == "fm" ||
-                        tabPage.Text == "hm") 
+                        tabPage.Text == "hm")
                     {
                         reloadButton1.Visible = true;
                     }
@@ -258,12 +260,14 @@ namespace ZeroKLobby
 
         private void NavigationControl_Resize(object sender, EventArgs e)
         {
+            //make back/forward/reload button follow Nav bar auto resize (in other word: dynamic repositioning)
             int height = flowLayoutPanel1.Size.Height;
             btnBack.Location = new System.Drawing.Point(btnBack.Location.X, height);
             btnForward.Location = new System.Drawing.Point(btnForward.Location.X, height);
             urlBox.Location = new System.Drawing.Point(urlBox.Location.X, height);
             reloadButton1.Location = new System.Drawing.Point(reloadButton1.Location.X, height);
 
+            //resize the "browser" (that show chat & internal browser) according to Nav bar auto resize (dynamic resizing)
             int windowHeight = this.Size.Height;
             int freeHeight = windowHeight - height;
             tabControl.Location = new System.Drawing.Point(tabControl.Location.X, height);
@@ -272,9 +276,15 @@ namespace ZeroKLobby
 
         private void reloadButton1_Click(object sender, EventArgs e) //make webpage refresh
         {
-            string presentPage = CurrentPage.ToString() + " "; //add " "  hax
+            //method A: reload page by giving slightly different URL
+            //string presentPage = CurrentPage.ToString() + " "; //add " "  hax
             //Same as in Path()
-            var step = GoToPage(presentPage.Split('/'));
+            //var step = GoToPage(presentPage.Split('/'));
+            //if (step == null && (presentPage.StartsWith("http://") || presentPage.StartsWith("https://"))) Program.BrowserInterop.OpenUrl(presentPage);
+
+            //method B: reload page thru official callin
+            string presentPage = CurrentPage.ToString();
+            var step = GoToPage(presentPage.Split('/'), true); //reload this current page in current tab
             if (step == null && (presentPage.StartsWith("http://") || presentPage.StartsWith("https://"))) Program.BrowserInterop.OpenUrl(presentPage);
         }
 
