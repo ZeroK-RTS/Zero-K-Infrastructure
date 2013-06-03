@@ -586,9 +586,9 @@ namespace ZeroKLobby.MicroLobby
 
                     try
                     {
+                        float emotSpace = 0.0f;
                         for (var i = 0; i < curLine.Length; i++)
                         {
-                            float emotSpace = 0.0f;
 
                             var ch = curLine.Substring(i, 1).ToCharArray();
                             switch (ch[0])
@@ -604,7 +604,7 @@ namespace ZeroKLobby.MicroLobby
                                     break;
                                 case TextColor.EmotChar:
                                     buildString.Append(curLine.Substring(i, 4));//make emot icon not disappear for multiline sentences
-                                    var emotNumber = Convert.ToInt32(curLine.Substring(i+1, 3));
+                                    var emotNumber = Convert.ToInt32(curLine.Substring(i+1, 3)); //take account for extra space caused by emotIcon, use it to find an accurate point where to split line
                                     var bm = TextImage.GetImage(emotNumber);
                                     emotSpace += bm.Width;
 
@@ -612,7 +612,7 @@ namespace ZeroKLobby.MicroLobby
                                     break;
                                 default:
                                     //check if there needs to be a linewrap
-                                    if ((int)g.MeasureString(buildString.ToString().StripAllCodes(), Font, 0, sf).Width + emotSpace > displayWidth) //check string width plus any emot's width whether it reach display width
+                                    if (g.MeasureString(buildString.ToString().StripAllCodes(), Font, 0, sf).Width + emotSpace > displayWidth)
                                     {
                                         if (lineSplit) displayLines[line].Line = lastColor + buildString;
                                         else displayLines[line].Line = buildString.ToString();
@@ -1173,8 +1173,8 @@ namespace ZeroKLobby.MicroLobby
                 var line = displayLines[lineNumber].Line.StripAllCodes(); //get all character of the line (Note: StripAllCodes() is a function in TextColor.cs)
 
                 //do line-width check once if "x" is greater than line width, else check every character for the correct position where "x" is pointing at. 
-                //int width = (int)g.MeasureString(line, Font, 0, sf).Width; //cons: underestimate end position if there's emotIcon, it cut some char during selection
-                int width = (int)g.MeasureString(lineEmot, Font, 0, sf).Width; //pros: overestimate end position, do no cut off any char
+                //float width = (int)g.MeasureString(line, Font, 0, sf).Width; //cons: underestimate end position if there's emotIcon, it cut some char during selection
+                float width = g.MeasureString(lineEmot, Font, 0, sf).Width;
                 if (x > width)
                 {
                     g.Dispose();
@@ -1194,8 +1194,9 @@ namespace ZeroKLobby.MicroLobby
                         i--; //halt pointer position for this time once (at second try the emot char will be gone, its size is added and continue checking the other stuff)
                         continue;
                     }
-                    lookWidth += g.MeasureString(lineEmot[i].ToString(), Font, 0, sf).Width;
-                    if (lookWidth >= x)
+                    float charWidth = g.MeasureString(line[i].ToString(), Font, 0, sf).Width;
+                    lookWidth += charWidth;
+                    if (lookWidth >= (x + charWidth/2)) //check whether this character is on cursor position or not.  Note: char checking & x-coordinate is checked from left to right (everything is from left to right)
                     {
                         g.Dispose();
                         return i;
@@ -1223,8 +1224,8 @@ namespace ZeroKLobby.MicroLobby
                 var line = displayLines[lineNumber].Line.StripAllCodes();
 
                 //do line-width check once if "x" is greater than line width,
-                int width = (int)g.MeasureString(line, Font, 0, sf).Width; //pros: never overestimate (cut off is OK for long words or word that act like hyperlink)
-                //int width = (int)g.MeasureString(lineEmot, Font, 0, sf).Width; //cons: will overestimate hyperlinks ending, which make you able to click empty space
+                float width = g.MeasureString(line, Font, 0, sf).Width;
+                //float width = g.MeasureString(lineEmot, Font, 0, sf).Width; //cons: will overestimate hyperlinks ending, which make you able to click empty space
                 if (x > width)
                 {
                     g.Dispose();
