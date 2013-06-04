@@ -132,11 +132,11 @@ function widget:GameFrame(frame)
 					unitResult.targetDistance = targetDistance
 					testResults[currentTest][testUnitID] = unitResult
 					
-					testResults[currentTest].overall = testResults[currentTest].overall or {count = 0, travelTime = 0, atTarget = 0}
+					testResults[currentTest].overall = testResults[currentTest].overall or {count = 0, travelTimeAvg = 0, atTargetTotal = 0}
 					local overallResults = testResults[currentTest].overall
 					if atTarget then
-						overallResults.travelTime = ((overallResults.travelTime * overallResults.atTarget) + travelTime)/(overallResults.atTarget + 1)
-						overallResults.atTarget = overallResults.atTarget + 1
+						overallResults.travelTimeAvg = ((overallResults.travelTimeAvg * overallResults.atTargetTotal) + travelTime)/(overallResults.atTargetTotal + 1)
+						overallResults.atTargetTotal = overallResults.atTargetTotal + 1
 					end
 					overallResults.count = overallResults.count + 1
 				end

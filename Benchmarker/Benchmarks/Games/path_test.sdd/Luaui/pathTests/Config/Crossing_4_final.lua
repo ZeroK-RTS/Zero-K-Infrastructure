@@ -49,7 +49,7 @@ for testNum = 1,#test do
 				teamID = 0,
 				startCoordinates = {x1, y1, z},
 				destinationCoordinates = {{x2, y2, z}},
-				maxTargetDist = 25,
+				maxTargetDist = 40,
 				maxTravelTime = maxTravelTime,
 			}
 		end
