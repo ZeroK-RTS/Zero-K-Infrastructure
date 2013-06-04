@@ -13,7 +13,7 @@ end
 local TEST_PATH = "pathTests"
 
 local configFilePath = TEST_PATH .. "/config/" .. Game.mapName .. ".lua"
-local resultFilePath = LUAUI_DIRNAME .. "/" .. TEST_PATH .. "/result/" .. Game.mapName .. "-" .. Game.version .. "-" .. os.date("%F-%T") .. ".lua"
+local resultFilePath = LUAUI_DIRNAME .. TEST_PATH .. "/results/" .. Game.mapName .. "-" .. Game.version .. "-" .. os.date("%Y%m%d-%H%M%S") .. ".lua"
 
 local LOG_PREFIX = "path_tester: "
 
@@ -23,7 +23,9 @@ local GetGameFrame = Spring.GetGameFrame
 local GetUnitPosition = Spring.GetUnitPosition
 local GetUnitDirection = Spring.GetUnitDirection
 local GetUnitVelocity = Spring.GetUnitVelocity
-local Log = Spring.Log
+local Log = function(...)
+	Spring.Log(widget:GetInfo().name, ...)
+end
 local CMD_MOVE = CMD.MOVE
 local CMD_SELFD = CMD.SELFD
 local CMD_FIRE_STATE = CMD.FIRE_STATE
@@ -36,23 +38,13 @@ local testResults = {}
 local remapUnitIDToInternalIndex = {}
 local delayNextTest
 
-function file_exists(name)
-	local f = io.open(name,"r")
-	if f then
-		io.close(f)
-		return true
-	else
-		return false
-	end
-end
-
 function widget:Initialize()
-	Spring.Echo(LUAUI_DIRNAME .. "/" .. configFilePath)
-	if file_exists(LUAUI_DIRNAME .. "/" .. configFilePath) then
+	Spring.Echo(LOG_PREFIX .. ": loading config " .. LUAUI_DIRNAME .. configFilePath)
+	if VFS.FileExists(LUAUI_DIRNAME .. configFilePath) then
 		testScheduled = include(configFilePath)
 	else
 		--nothing to be done, close spring
-		Log("info",LOG_PREFIX .. "missing config file")
+		Log("warning", LOG_PREFIX .. "missing config file")
 		return
 	end
 	--enable cheats
@@ -85,7 +77,7 @@ function widget:GameFrame(frame)
 	end
 	if not testInitialized then
 		--initialize result test table
-		Log("info",LOG_PREFIX .. "starting test session " .. currentTest)
+		Log("info", LOG_PREFIX .. "starting test session " .. currentTest)
 		testResults[currentTest] = {}
 		--spawn all units
 		for testUnitID, unitInfoData in ipairs(loadedTest.unitList) do
@@ -139,6 +131,14 @@ function widget:GameFrame(frame)
 					unitResult.velocity = unitVelocity
 					unitResult.targetDistance = targetDistance
 					testResults[currentTest][testUnitID] = unitResult
+					
+					testResults[currentTest].overall = testResults[currentTest].overall or {count = 0, travelTime = 0, atTarget = 0}
+					local overallResults = testResults[currentTest].overall
+					if atTarget then
+						overallResults.travelTime = ((overallResults.travelTime * overallResults.atTarget) + travelTime)/(overallResults.atTarget + 1)
+						overallResults.atTarget = overallResults.atTarget + 1
+					end
+					overallResults.count = overallResults.count + 1
 				end
 			end
 		end
@@ -151,8 +151,8 @@ function widget:GameFrame(frame)
 			local unitID = remapUnitIDToInternalIndex[testUnitID]
 			GiveOrderToUnit(unitID,CMD_SELFD,{},{})
 		end
-		--save result table to a file
-  		table.save( testResults, resultFilePath )
+		Spring.Echo(LOG_PREFIX .. ": saving results to " .. resultFilePath)
+		table.save( testResults, resultFilePath )
 		--set delay for next test
 		delayNextTest = frame + loadedTest.delayToNextTest
 		--reset unitID table
