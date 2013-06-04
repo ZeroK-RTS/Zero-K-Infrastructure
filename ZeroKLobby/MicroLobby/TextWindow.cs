@@ -688,7 +688,7 @@ namespace ZeroKLobby.MicroLobby
             {
                 using (var buffer = new Bitmap(Width, Height, PixelFormat.Format32bppPArgb))
                 using (var sf = StringFormat.GenericTypographic)
-                using (var g = Graphics.FromImage(buffer))
+                using (var g = Graphics.FromImage(buffer)) //"using" allow auto dispose
                 {
                     sf.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
 
@@ -701,6 +701,7 @@ namespace ZeroKLobby.MicroLobby
 
                     int curLine;
                     int curForeColor, curBackColor;
+                    int pastForeColor=-1; //remember what is the text color before highlighting. Hint: the code is looping from left char to right char
                     char[] ch;
 
                     var displayRect = new Rectangle(0, 0, Width, Height);
@@ -789,10 +790,12 @@ namespace ZeroKLobby.MicroLobby
                                 font.SafeDispose();
                                 font = new Font(Font.Name, Font.Size, Font.Style);
                             }
-                            using (var backColorBrush = new SolidBrush(TextColor.GetColor(curBackColor))) {
-                                if (line.Length > 0)
+
+                            if (line.Length > 0)
+                            {
+                                do //iterate over every character in a line
                                 {
-                                    do //iterate over every character in a line
+                                    using (SolidBrush backColorBrush = new SolidBrush(TextColor.GetColor(curBackColor))) //refresh backcolor
                                     {
                                         ch = line.ToString().Substring(i, 1).ToCharArray();
                                         switch (ch[0])
@@ -823,11 +826,11 @@ namespace ZeroKLobby.MicroLobby
 
                                                     using (var brush = new SolidBrush(TextColor.GetColor(curForeColor))) {
                                                         g.DrawString(buildString.ToString(),
-                                                                     Font,
-                                                                     brush,
-                                                                     startX,
-                                                                     startY,
-                                                                     sf);
+                                                                        Font,
+                                                                        brush,
+                                                                        startX,
+                                                                        startY,
+                                                                        sf);
                                                     }
 
                                                     startX += bm.Width + (int)g.MeasureString(buildString.ToString(), Font, 0, sf).Width;
@@ -845,11 +848,11 @@ namespace ZeroKLobby.MicroLobby
                                                 }
                                                 using (var brush = new SolidBrush(TextColor.GetColor(curForeColor))) {
                                                     g.DrawString(buildString.ToString(),
-                                                                 font,
-                                                                 brush,
-                                                                 startX,
-                                                                 startY,
-                                                                 sf);
+                                                                    font,
+                                                                    brush,
+                                                                    startX,
+                                                                    startY,
+                                                                    sf);
                                                 }
                                                 // TextRenderer.DrawText(g, buildString.ToString(), font, new Point((int)startX, startY), TextColor.GetColor(curForeColor), TextColor.GetColor(curBackColor));
 
@@ -877,11 +880,11 @@ namespace ZeroKLobby.MicroLobby
                                                 // TextRenderer.DrawText(g, buildString.ToString(), font, new Point((int)startX, startY), TextColor.GetColor(curForeColor), TextColor.GetColor(curBackColor));
                                                 using (var brush = new SolidBrush(TextColor.GetColor(curForeColor))) {
                                                     g.DrawString(buildString.ToString(),
-                                                                 font,
-                                                                 brush,
-                                                                 startX,
-                                                                 startY,
-                                                                 sf);
+                                                                    font,
+                                                                    brush,
+                                                                    startX,
+                                                                    startY,
+                                                                    sf);
                                                 }
 
                                                 startX += g.MeasureString(buildString.ToString(), font, 0, sf).Width; //textSizes[32]
@@ -907,11 +910,11 @@ namespace ZeroKLobby.MicroLobby
                                                 // TextRenderer.DrawText(g, buildString.ToString(), font, new Point((int)startX, startY), TextColor.GetColor(curForeColor), TextColor.GetColor(curBackColor));
                                                 using (var brush = new SolidBrush(TextColor.GetColor(curForeColor))) {
                                                     g.DrawString(buildString.ToString(),
-                                                                 font,
-                                                                 brush,
-                                                                 startX,
-                                                                 startY,
-                                                                 sf);
+                                                                    font,
+                                                                    brush,
+                                                                    startX,
+                                                                    startY,
+                                                                    sf);
                                                 }
 
                                                 startX += g.MeasureString(buildString.ToString(), font, 0, sf).Width; //textSizes[32]
@@ -940,11 +943,11 @@ namespace ZeroKLobby.MicroLobby
                                                 // TextRenderer.DrawText(g, buildString.ToString(), font, new Point((int)startX, startY), TextColor.GetColor(curForeColor), TextColor.GetColor(curBackColor));
                                                 using (var brush = new SolidBrush(TextColor.GetColor(curForeColor))) {
                                                     g.DrawString(buildString.ToString(),
-                                                                 font,
-                                                                 brush,
-                                                                 startX,
-                                                                 startY,
-                                                                 sf);
+                                                                    font,
+                                                                    brush,
+                                                                    startX,
+                                                                    startY,
+                                                                    sf);
                                                 }
 
                                                 startX += g.MeasureString(buildString.ToString(), font, 0, sf).Width; //textSizes[32]
@@ -965,6 +968,13 @@ namespace ZeroKLobby.MicroLobby
                                                     if (curForeColor > 31) curForeColor = displayLines[curLine].TextColor;
                                                     if (curBackColor > 31) curBackColor = backColor;
                                                 }
+                                                else //if highlighting then:
+                                                {
+                                                    pastForeColor = Convert.ToInt32(line.ToString().Substring(1, 2)); //remember what color this text suppose to be (will be restored to the text on the right if highlighting only happen to text on the left) 
+                                                    
+                                                    //check to make sure that FC and BC are in range 0-31
+                                                    if (pastForeColor > 31) pastForeColor = displayLines[curLine].TextColor; //only happen on exceptional case (this is only for safety, no significant whatsoever)
+                                                }
 
                                                 //remove the color codes from the string
                                                 line.Remove(0, 5);
@@ -980,7 +990,7 @@ namespace ZeroKLobby.MicroLobby
                                                 //j is "the char being processed here"
                                                 if (startHighLine >= 0 && //highlight is active
                                                     ((curLine >= startHighLine && curLine <= curHighLine) || //processing in between highlight (if highlight is upward)
-                                                     (curLine <= startHighLine && curLine >= curHighLine)))  //processing in between highlight (if highlight is downward)
+                                                        (curLine <= startHighLine && curLine >= curHighLine)))  //processing in between highlight (if highlight is downward)
                                                 {
                                                     if ((curLine > startHighLine && curLine < curHighLine) ||
                                                         (curLine == startHighLine && j >= startHighChar && (curLine <= curHighLine && j < curHighChar || curLine < curHighLine)) ||
@@ -989,8 +999,8 @@ namespace ZeroKLobby.MicroLobby
                                                         highlight = true;
                                                     }
                                                     else if ((curLine < startHighLine && curLine > curHighLine) ||
-                                                             (curLine == startHighLine && j < startHighChar && (curLine >= curHighLine && j >= curHighChar || curLine > curHighLine)) ||
-                                                             (curLine == curHighLine && j >= curHighChar && (curLine <= startHighLine && j < startHighChar || curLine < startHighLine)))
+                                                                (curLine == startHighLine && j < startHighChar && (curLine >= curHighLine && j >= curHighChar || curLine > curHighLine)) ||
+                                                                (curLine == curHighLine && j >= curHighChar && (curLine <= startHighLine && j < startHighChar || curLine < startHighLine)))
                                                     {
                                                         highlight = true;
                                                     }
@@ -999,7 +1009,7 @@ namespace ZeroKLobby.MicroLobby
                                                 else highlight = false;
                                                 ++j;
 
-                                                if (highlight != oldHighlight)
+                                                if (highlight != oldHighlight) //at highlight border (where left & right is highlight or not highlight)
                                                 {
                                                     oldHighlight = highlight;
 
@@ -1012,19 +1022,19 @@ namespace ZeroKLobby.MicroLobby
                                                     }
                                                     /*
                                                 TextRenderer.DrawText(g,
-                                                                      buildString.ToString(),
-                                                                      font,
-                                                                      new Point((int)startX, startY),
-                                                                      TextColor.GetColor(curForeColor),
-                                                                      TextColor.GetColor(curBackColor));
-                                                 */
+                                                                        buildString.ToString(),
+                                                                        font,
+                                                                        new Point((int)startX, startY),
+                                                                        TextColor.GetColor(curForeColor),
+                                                                        TextColor.GetColor(curBackColor));
+                                                    */
                                                     using (var solidBrush = new SolidBrush(TextColor.GetColor(curForeColor))) {
                                                         g.DrawString(buildString.ToString(),
-                                                                     font,
-                                                                     solidBrush,
-                                                                     startX,
-                                                                     startY,
-                                                                     sf);
+                                                                        font,
+                                                                        solidBrush,
+                                                                        startX,
+                                                                        startY,
+                                                                        sf);
                                                     }
 
                                                     startX += g.MeasureString(buildString.ToString(), font, 0, sf).Width; //textSizes[32]
@@ -1037,36 +1047,36 @@ namespace ZeroKLobby.MicroLobby
                                                     i = 0;
                                                     if (highlight)
                                                     {
-                                                        curForeColor = 0;
-                                                        curBackColor = 2;
+                                                        pastForeColor = curForeColor; //remember previous text color
+                                                        curForeColor = 0; //white (defined in TextColor.cs)
+                                                        curBackColor = 2; //black (defined in TextColor.cs)
                                                     }
                                                     else
                                                     {
-                                                        curForeColor = displayLines[curLine].TextColor;
+                                                        curForeColor = pastForeColor; //restore intended text color
                                                         curBackColor = backColor;
                                                     }
                                                 }
                                                 buildString.Append(ch[0]);
                                                 break;
                                         }
-
                                         i++;
-                                    } while (line.Length > 0 && i != line.Length);
-                                }
+                                    }
+                                } while (line.Length > 0 && i != line.Length);
+                            }
 
-                                //draw anything that is left over                
-                                if (i == line.Length && line.Length > 0)
+                            //draw anything that is left over                
+                            if (i == line.Length && line.Length > 0)
+                            {
+                                if (curBackColor != backColor)
                                 {
-                                    if (curBackColor != backColor)
-                                    {
-                                        textSize = (int)g.MeasureString(buildString.ToString(), font, 0, sf).Width + 1;
-                                        var r = new Rectangle((int)startX, startY, textSize + 1, LineSize + 1);
-                                        using (var brush = new SolidBrush(TextColor.GetColor(curBackColor))) g.FillRectangle(brush, r);
-                                    }
-                                    // TextRenderer.DrawText(g, buildString.ToString(), font, new Point((int)startX, startY), TextColor.GetColor(curForeColor), TextColor.GetColor(curBackColor));
-                                    using (var brush = new SolidBrush(TextColor.GetColor(curForeColor))) {
-                                        g.DrawString(buildString.ToString(), font, brush, startX, startY, sf);
-                                    }
+                                    textSize = (int)g.MeasureString(buildString.ToString(), font, 0, sf).Width + 1;
+                                    var r = new Rectangle((int)startX, startY, textSize + 1, LineSize + 1);
+                                    using (var brush = new SolidBrush(TextColor.GetColor(curBackColor))) g.FillRectangle(brush, r);
+                                }
+                                // TextRenderer.DrawText(g, buildString.ToString(), font, new Point((int)startX, startY), TextColor.GetColor(curForeColor), TextColor.GetColor(curBackColor));
+                                using (var brush = new SolidBrush(TextColor.GetColor(curForeColor))) {
+                                    g.DrawString(buildString.ToString(), font, brush, startX, startY, sf);
                                 }
                             }
 
