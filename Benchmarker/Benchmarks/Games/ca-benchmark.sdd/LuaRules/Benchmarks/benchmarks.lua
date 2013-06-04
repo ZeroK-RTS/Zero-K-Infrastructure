@@ -88,7 +88,7 @@ local benchmarks = {
       for x=64,Game.mapSizeX-128,(Game.mapSizeX-128)/10 do
         for z=64,Game.mapSizeZ-128,(Game.mapSizeZ-128)/50 do
 		  local y = Spring.GetGroundHeight(x,z);
-          Spring.CreateUnit("armwin", x,y,z, "n", Spring.GetGaiaTeamID() )
+          Spring.CreateUnit("armwin", x,y,z, "n", 0 )
         end
       end
     end,
@@ -139,7 +139,7 @@ local benchmarks = {
       local y = 0
       for x=64,Game.mapSizeX-128,(Game.mapSizeX-128)/50 do
         for z=64,Game.mapSizeZ-128,(Game.mapSizeZ-128)/50 do
-          Spring.CreateUnit(warriors[(math.floor(x+z)%#warriors)+1], x,y,z, "n", (math.floor(x+z)%teams)+1 )
+          Spring.CreateUnit(warriors[(math.floor(x+z)%#warriors)+1], x,y,z, "n", (math.floor(x+z)%teams) )
         end
       end
     end,
