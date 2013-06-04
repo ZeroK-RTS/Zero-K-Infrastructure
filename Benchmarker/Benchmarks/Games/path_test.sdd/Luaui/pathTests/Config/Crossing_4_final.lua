@@ -14,12 +14,9 @@ local test = {
 	{
 		delayToNextTest = 300,
 		unitList = {},
-	},
-	{
-		delayToNextTest = 300,
-		unitList = {},
-	}
+	},	
 }
+local MAX_DELAY_FACTOR = 1.75
 local stepSize = 128
 
 local units = {
@@ -27,6 +24,10 @@ local units = {
 	"corraid",
 	"corsh",
 	"correap",
+	"corak",
+	"corraid",
+	"corsh",
+	"correap",	
 }
 local x1 = 128
 local x2 = Game.mapSizeX - x1
@@ -35,7 +36,7 @@ for testNum = 1,#test do
 	if units[testNum] and UnitDefNames[units[testNum]] then
 		local unitDef = UnitDefNames[units[testNum]]
 		local unitList = test[testNum].unitList
-		local maxTravelTime = ((x1 - x2))/unitDef.speed * 30 * 1.5
+		local maxTravelTime = ((x1 - x2))/unitDef.speed * 30 * MAX_DELAY_FACTOR
 		if maxTravelTime < 0 then
 			maxTravelTime = -maxTravelTime
 		end
