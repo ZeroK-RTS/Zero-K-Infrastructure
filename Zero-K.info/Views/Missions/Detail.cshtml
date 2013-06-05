@@ -32,15 +32,9 @@ $(function() {
     }
     @if (!Global.IsLobbyAccess && !m.IsScriptMission) {
       <div class="border-test">
-        If you don't have Zero-K lobby, send a message to springie like
-        so:
-        <pre>/msg Springiee !spawn mod=@m.NameWithVersion</pre>
-        Then in the battle lobby:
-        <pre>
-!balance
-!start
-        </pre>
-        Alternative manual download: <a href='@Url.Action("File", "Missions", new { name = m.MissionID })'>@m.SanitizedFileName</a>
+        If you don't have Zero-K lobby, download the mission archive and run Spring with the provided script:
+
+        <a href='@Url.Action("File", "Missions", new { name = m.MissionID })'>@m.SanitizedFileName</a>
         and <a href='@Url.Action("Script", "Missions", new { id = m.MissionID })'>script.txt</a>
       </div>
       @*<!close zk warning>*@
