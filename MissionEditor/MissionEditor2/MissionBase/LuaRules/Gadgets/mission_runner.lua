@@ -1253,7 +1253,14 @@ function gadget:UnitCreated(unitID, unitDefID, unitTeam)
   UpdateDisabledUnits(unitID)
 end
 
+-- ZK custom functions
+function gadget:AllowCommand_GetWantedCommand()	
+	return true
+end
 
+function gadget:AllowCommand_GetWantedUnitDefID()	
+	return true
+end
 
 function gadget:AllowCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions, cmdTag, synced)
   --if isInCutscene and (not synced) then
