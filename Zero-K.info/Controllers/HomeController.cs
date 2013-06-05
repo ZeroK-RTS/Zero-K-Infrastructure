@@ -132,6 +132,10 @@ namespace ZeroKWeb.Controllers
 
 		public ActionResult Index()
 		{
+            if (Request[GlobalConst.ASmallCakeCookieName] != null)
+            {
+                return RedirectToAction("Index", new {});
+            }
 			var db = new ZkDataContext();
 
 			var result = new IndexResult()
