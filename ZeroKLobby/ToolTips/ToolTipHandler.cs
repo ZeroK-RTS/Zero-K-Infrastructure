@@ -111,66 +111,70 @@ namespace ZeroKLobby
 
                 if (tooltip != null) {
                     //method B: tooltip remain stationary until user block the vision or when new tooltip is available
-                    var mp = System.Windows.Forms.Control.MousePosition;
-                    int tooltipLocationX = tooltip.Location.X;
-                    if (mp.X > tooltipLocationX && mp.X < tooltipLocationX + tooltip.Width) 
-                    {
-                        int tooltipLocationY = tooltip.Location.Y;
-                        if (mp.Y > tooltipLocationY && mp.Y < tooltipLocationY + tooltip.Height)
-                        { 
-                            newTooltip = true; 
-                        }
-                    }
-                    if (newTooltip) //set new position for new tooltip
-                    {
-                        var point = MainWindow.Instance.PointToScreen(new Point(5, 5));
-                        var scr = Screen.GetWorkingArea(new Point((int)point.X, (int)point.Y));
-
-                        //need screen0's bounds because SetDesktopLocation is relative to screen0.
-                        var scr1 = Screen.AllScreens[0].WorkingArea;
-                        var scr1B = Screen.AllScreens[0].Bounds;
-
-                        var nx = Math.Min(mp.X + 14 + scr1B.X - scr1.X, scr.Right - tooltip.Width - 2);
-                        var ny = Math.Min(mp.Y + 14 + scr1B.Y - scr1.Y, scr.Bottom - tooltip.Height - 2);
-
-                        var rect = new Rectangle(nx, ny, tooltip.Width, tooltip.Height);
-                        if (rect.Contains(mp))
-                        {
-                            nx = mp.X - tooltip.Width - 8;
-                            ny = mp.Y - tooltip.Height - 8;
-                        }
-
-                        tooltip.SetDesktopLocation(nx, ny);
-
-                        var newSize = tooltip.GetTooltipSize();
-                        if (newSize.HasValue && newSize.Value != tooltip.Size) tooltip.Size = newSize.Value;
-                    } 
-                    //end method B
-
-                    //method A: tooltip follow mouse cursor everywhere it go
                     //var mp = System.Windows.Forms.Control.MousePosition;
-
-                    //var point = MainWindow.Instance.PointToScreen(new Point(5, 5));
-                    //var scr = Screen.GetWorkingArea(new Point((int)point.X, (int)point.Y));
-
-                    ////need screen0's bounds because SetDesktopLocation is relative to screen0.
-                    //var scr1 = Screen.AllScreens[0].WorkingArea;
-                    //var scr1B = Screen.AllScreens[0].Bounds;
-
-                    //var nx = Math.Min(mp.X + 14 + scr1B.X - scr1.X, scr.Right - tooltip.Width - 2);
-                    //var ny = Math.Min(mp.Y + 14 + scr1B.Y - scr1.Y, scr.Bottom - tooltip.Height - 2);
-
-                    //var rect = new Rectangle(nx, ny, tooltip.Width, tooltip.Height);
-                    //if (rect.Contains(mp))
+                    //int tooltipLocationX = tooltip.Location.X;
+                    //int tooltipLocationY = tooltip.Location.Y;
+                    //if (mp.X > tooltipLocationX && mp.X < tooltipLocationX + tooltip.Width)
                     //{
-                    //    nx = mp.X - tooltip.Width - 8;
-                    //    ny = mp.Y - tooltip.Height - 8;
+                    //    if (mp.Y > tooltipLocationY && mp.Y < tooltipLocationY + tooltip.Height)
+                    //    {
+                    //        newTooltip = true;
+                    //    }
                     //}
+                    //if (Math.Abs(mp.X - tooltipLocationX) > 50 || Math.Abs(mp.Y - tooltipLocationY) > 50)
+                    //{
+                    //    newTooltip = true;
+                    //}
+                    //if (newTooltip) //set new position for new tooltip
+                    //{
+                    //    var point = MainWindow.Instance.PointToScreen(new Point(5, 5));
+                    //    var scr = Screen.GetWorkingArea(new Point((int)point.X, (int)point.Y));
 
-                    //tooltip.SetDesktopLocation(nx, ny);
+                    //    //need screen0's bounds because SetDesktopLocation is relative to screen0.
+                    //    var scr1 = Screen.AllScreens[0].WorkingArea;
+                    //    var scr1B = Screen.AllScreens[0].Bounds;
 
-                    //var newSize = tooltip.GetTooltipSize();
-                    //if (newSize.HasValue && newSize.Value != tooltip.Size) tooltip.Size = newSize.Value;
+                    //    var nx = Math.Min(mp.X + 14 + scr1B.X - scr1.X, scr.Right - tooltip.Width - 2);
+                    //    var ny = Math.Min(mp.Y + 14 + scr1B.Y - scr1.Y, scr.Bottom - tooltip.Height - 2);
+
+                    //    var rect = new Rectangle(nx, ny, tooltip.Width, tooltip.Height);
+                    //    if (rect.Contains(mp))
+                    //    {
+                    //        nx = mp.X - tooltip.Width - 8;
+                    //        ny = mp.Y - tooltip.Height - 8;
+                    //    }
+
+                    //    tooltip.SetDesktopLocation(nx, ny);
+
+                    //    var newSize = tooltip.GetTooltipSize();
+                    //    if (newSize.HasValue && newSize.Value != tooltip.Size) tooltip.Size = newSize.Value;
+                    //} 
+                    //end method B
+                    
+                    //method A: tooltip follow mouse cursor everywhere it go
+                    var mp = System.Windows.Forms.Control.MousePosition;
+
+                    var point = MainWindow.Instance.PointToScreen(new Point(5, 5));
+                    var scr = Screen.GetWorkingArea(new Point((int)point.X, (int)point.Y));
+
+                    //need screen0's bounds because SetDesktopLocation is relative to screen0.
+                    var scr1 = Screen.AllScreens[0].WorkingArea;
+                    var scr1B = Screen.AllScreens[0].Bounds;
+
+                    var nx = Math.Min(mp.X + 14 + scr1B.X - scr1.X, scr.Right - tooltip.Width - 2);
+                    var ny = Math.Min(mp.Y + 14 + scr1B.Y - scr1.Y, scr.Bottom - tooltip.Height - 2);
+
+                    var rect = new Rectangle(nx, ny, tooltip.Width, tooltip.Height);
+                    if (rect.Contains(mp))
+                    {
+                        nx = mp.X - tooltip.Width - 8;
+                        ny = mp.Y - tooltip.Height - 8;
+                    }
+
+                    tooltip.SetDesktopLocation(nx, ny);
+
+                    var newSize = tooltip.GetTooltipSize();
+                    if (newSize.HasValue && newSize.Value != tooltip.Size) tooltip.Size = newSize.Value;
                     //end method A
 
                     if (invalidate) tooltip.Invalidate(true);
