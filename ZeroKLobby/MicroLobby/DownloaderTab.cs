@@ -64,7 +64,7 @@ namespace ZeroKLobby.MapDownloader
 
     public string PathHead { get { return "rapid"; } }
 
-    public bool TryNavigate(bool reload, params string[] path)
+    public bool TryNavigate(params string[] path)
     {
       return path.Length > 0 && path[0] == PathHead;
     }
@@ -79,7 +79,13 @@ namespace ZeroKLobby.MapDownloader
       return null;
     }
 
-    void Downloader_PackagesChanged(object sender, EventArgs e)
+      public void Reload() {
+          
+      }
+
+      public bool CanReload { get { return false; } }
+
+      void Downloader_PackagesChanged(object sender, EventArgs e)
     {
       if (InvokeRequired) Invoke(new EventHandler(Downloader_PackagesChanged));
       else

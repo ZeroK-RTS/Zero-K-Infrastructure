@@ -58,7 +58,7 @@ namespace ZeroKLobby
 
                 if (CurrentPage != null && CurrentPage.ToString() == value) return; // we are already there, no navigation needed
 
-                var step = GoToPage(value.Split('/'), false); //go to page and is not reload
+                var step = GoToPage(value.Split('/')); //go to page and is not reload
                 if (step != null) {
                     if (CurrentPage != null && CurrentPage.ToString() != value) backStack.Push(CurrentPage);
                     CurrentPage = step;
@@ -189,35 +189,25 @@ namespace ZeroKLobby
         void GoBack() {
             if (forwardStack.Count == 0 || forwardStack.Peek().ToString() != CurrentPage.ToString()) forwardStack.Push(CurrentPage);
             CurrentPage = backStack.Pop();
-            GoToPage(CurrentPage.Path,false);
+            GoToPage(CurrentPage.Path);
         }
 
         void GoForward() {
             if (backStack.Count == 0 || backStack.Peek().ToString() != CurrentPage.ToString()) backStack.Push(CurrentPage);
             CurrentPage = forwardStack.Pop();
-            GoToPage(CurrentPage.Path,false);
+            GoToPage(CurrentPage.Path);
         }
 
 
-        NavigationStep GoToPage(string[] path,bool reload) // todo cleanup
+        NavigationStep GoToPage(string[] path) // todo cleanup
         {
             foreach (TabPage tabPage in tabControl.Controls)
             {
                 var navigatable = GetINavigatableFromControl(tabPage);
-                if (navigatable != null && navigatable.TryNavigate(reload, path))
+                if (navigatable != null && navigatable.TryNavigate(path))
                 {
                     tabControl.SelectTab(tabPage);
-                    lastTabPaths[navigatable] = string.Join("/", path);
-                    if (tabPage.Text == "Maps" ||
-                        tabPage.Text == "sp" ||
-                        tabPage.Text == "rp" ||
-                        tabPage.Text == "pw" ||
-                        tabPage.Text == "fm" ||
-                        tabPage.Text == "hm")
-                    {
-                        reloadButton1.Visible = true;
-                    }
-                    else reloadButton1.Visible = false;
+                    reloadButton1.Visible = navigatable.CanReload;
                     return new NavigationStep { Path = path };
                 }
             }
@@ -276,18 +266,12 @@ namespace ZeroKLobby
             tabControl.Height = freeHeight;
         }
 
+        public INavigatable CurrentNavigatable { get { return tabControl.SelectedTab.Controls.OfType<INavigatable>().FirstOrDefault(); } }
+
         private void reloadButton1_Click(object sender, EventArgs e) //make webpage refresh
         {
-            //method A: reload page by giving slightly different URL
-            //string presentPage = CurrentPage.ToString() + " "; //add " "  hax
-            //Same as in Path()
-            //var step = GoToPage(presentPage.Split('/'));
-            //if (step == null && (presentPage.StartsWith("http://") || presentPage.StartsWith("https://"))) Program.BrowserInterop.OpenUrl(presentPage);
-
-            //method B: reload page thru official callin
-            string presentPage = CurrentPage.ToString();
-            var step = GoToPage(presentPage.Split('/'), true); //reload this current page in current tab
-            if (step == null && (presentPage.StartsWith("http://") || presentPage.StartsWith("https://"))) Program.BrowserInterop.OpenUrl(presentPage);
+            var navig = CurrentNavigatable;
+            if (navig != null && navig.CanReload) navig.Reload();
         }
 
     }

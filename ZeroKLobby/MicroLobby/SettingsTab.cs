@@ -95,7 +95,7 @@ namespace ZeroKLobby.MicroLobby
 
 	    public string PathHead { get { return "settings"; } }
 
-        public bool TryNavigate(bool reload, params string[] path)
+        public bool TryNavigate(params string[] path)
 		{
 			return path.Length > 0 && path[0] == PathHead;
 		}
@@ -110,7 +110,13 @@ namespace ZeroKLobby.MicroLobby
 			return null;
 		}
 
-		void SettingsTab_Load(object sender, EventArgs e)
+	    public void Reload() {
+	        
+	    }
+
+	    public bool CanReload { get { return false; }}
+
+	    void SettingsTab_Load(object sender, EventArgs e)
 		{
 			RefreshConfig();
             //make sure the split start at 203 (relative to any DPI scale)

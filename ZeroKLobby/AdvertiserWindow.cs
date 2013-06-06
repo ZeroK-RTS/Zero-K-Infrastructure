@@ -138,7 +138,7 @@ namespace ZeroKLobby
 
         public string PathHead { get { return "advertiser"; } }
 
-        public bool TryNavigate(bool reload, params string[] path)
+        public bool TryNavigate(params string[] path)
         {
             return path.Length > 0 && path[0] == PathHead;
         }
@@ -152,6 +152,12 @@ namespace ZeroKLobby
         {
             return null;
         }
+
+        public void Reload() {
+            
+        }
+
+        public bool CanReload { get { return false; } }
 
         void AdvertiserWindow_Load(object sender, EventArgs e)
         {

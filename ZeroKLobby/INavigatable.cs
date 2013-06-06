@@ -8,9 +8,11 @@ namespace ZeroKLobby
     public interface INavigatable
 	{
 		string PathHead { get; }
-        bool TryNavigate(bool reload, params string[] path);
+        bool TryNavigate(params string[] path);
 		bool Hilite(HiliteLevel level, params string[] path);
 		string GetTooltip(params string[] path);
+        void Reload();
+        bool CanReload { get; }
 	}
 
 	public enum HiliteLevel

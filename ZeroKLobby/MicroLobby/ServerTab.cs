@@ -51,7 +51,7 @@ namespace ZeroKLobby.MicroLobby
 
         public string PathHead { get { return "server"; } }
 
-        public bool TryNavigate(bool reload,params string[] path)
+        public bool TryNavigate(params string[] path)
         {
             return path.Length > 0 && path[0] == PathHead;
         }
@@ -63,6 +63,12 @@ namespace ZeroKLobby.MicroLobby
         public string GetTooltip(params string[] path) {
             return null;
         }
+
+        public void Reload() {
+            
+        }
+
+        public bool CanReload { get { return false; }}
 
         void TasClient_Input(object sender, TasInputArgs e) {
             if (e != null && e.Command != null) {

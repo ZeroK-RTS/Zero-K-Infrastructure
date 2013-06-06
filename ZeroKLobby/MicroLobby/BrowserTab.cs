@@ -62,11 +62,10 @@ namespace ZeroKLobby
 
         public string PathHead { get { return pathHead; } }
 
-        public bool TryNavigate(bool reload,params string[] path)
+        public bool TryNavigate(params string[] path)
         {
             var pathString = String.Join("/", path);
             if (!pathString.StartsWith(PathHead)) return false;
-            if (reload) return NavRefresh();
             var url = Url != null ? Url.ToString() : "";
             if (navigatingTo == pathString || pathString == url) return true; // already navigating there
 
@@ -75,11 +74,6 @@ namespace ZeroKLobby
             return true;
         }
 
-        public bool NavRefresh()
-        {
-            Refresh(WebBrowserRefreshOption.IfExpired);
-            return true;
-        }
 
         public bool Hilite(HiliteLevel level, params string[] path)
         {
@@ -90,5 +84,11 @@ namespace ZeroKLobby
         {
             throw new NotImplementedException();
         }
+
+        public void Reload() {
+            Refresh(WebBrowserRefreshOption.IfExpired);
+        }
+
+        public bool CanReload { get { return true; }}
     }
 }

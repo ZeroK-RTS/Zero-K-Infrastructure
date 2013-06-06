@@ -345,7 +345,7 @@ namespace ZeroKLobby.MicroLobby
 
 		public string PathHead { get { return "chat"; } }
 
-        public bool TryNavigate(bool reload, params string[] path)
+        public bool TryNavigate(params string[] path)
     	{
 			if (path.Length == 0) return false;
 			if (path[0] != PathHead) return false;
@@ -390,6 +390,12 @@ namespace ZeroKLobby.MicroLobby
     	{
     		return null;
     	}
+
+        public void Reload() {
+            
+        }
+
+        public bool CanReload { get { return false; } }
 
         private void ChatTab_Load(object sender, EventArgs e)
         {
