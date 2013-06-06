@@ -147,6 +147,7 @@ namespace ZeroKWeb.Controllers
             return View("UserDetail", user);
         }
 
+        const int MaxBanHours = 24*7;
 
         [Auth(Role = AuthRole.ZkAdmin | AuthRole.LobbyAdmin)]
         public ActionResult Punish(int accountID,
@@ -166,6 +167,9 @@ namespace ZeroKWeb.Controllers
         {
             ZkDataContext db = new ZkDataContext();
             Account acc = db.Accounts.Single(x => x.AccountID == accountID);
+
+            if (banHours > MaxBanHours) banHours = MaxBanHours; // todo show some notification 
+
             Punishment punishment = new Punishment
                              {
                                  Time = DateTime.UtcNow,
