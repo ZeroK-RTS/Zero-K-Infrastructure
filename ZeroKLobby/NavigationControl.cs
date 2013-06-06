@@ -260,6 +260,8 @@ namespace ZeroKLobby
 
         private void NavigationControl_Resize(object sender, EventArgs e)
         {
+            // todo  instead add flowlayoytpanel or tablelayout panel to entire navigation form and let i size elements as needed
+
             //make back/forward/reload button follow Nav bar auto resize (in other word: dynamic repositioning)
             int height = flowLayoutPanel1.Size.Height;
             btnBack.Location = new System.Drawing.Point(btnBack.Location.X, height);
@@ -271,7 +273,7 @@ namespace ZeroKLobby
             int windowHeight = this.Size.Height;
             int freeHeight = windowHeight - height;
             tabControl.Location = new System.Drawing.Point(tabControl.Location.X, height);
-            tabControl.Size = new System.Drawing.Size(tabControl.Size.Width, freeHeight);
+            tabControl.Height = freeHeight;
         }
 
         private void reloadButton1_Click(object sender, EventArgs e) //make webpage refresh
