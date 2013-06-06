@@ -80,8 +80,7 @@ namespace ZeroKWeb
         }
 
         string GetUserIP() {
-            var ip = Context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
-            if (string.IsNullOrEmpty(ip) || ip.Equals("unknown", StringComparison.OrdinalIgnoreCase)) ip = Context.Request.ServerVariables["REMOTE_ADDR"];
+            var ip = Context.Request.ServerVariables["REMOTE_ADDR"];
             return ip;
         }
 

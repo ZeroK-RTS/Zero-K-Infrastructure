@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -7,16 +6,12 @@ using System.Drawing;
 using System.Drawing.Design;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
-using System.Windows;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using JetBrains.Annotations;
 using PlasmaDownloader;
 using PlasmaShared;
-using ZkData;
-using FontStyle = System.Drawing.FontStyle;
 
 namespace ZeroKLobby
 {
@@ -27,50 +22,12 @@ namespace ZeroKLobby
         public const string LogFile = "ZeroKLobbyErrors.txt";
 
 
-        public void Save(string path) {
-            try {
-                var cols = new StringCollection();
-                cols.AddRange(AutoJoinChannels.OfType<string>().Distinct().ToArray());
-                AutoJoinChannels = cols;
-                var xs = new XmlSerializer(typeof(Config));
-                var sb = new StringBuilder();
-                using (var stringWriter = new StringWriter(sb)) xs.Serialize(stringWriter, this);
-                File.WriteAllText(path, sb.ToString());
-            } catch (Exception ex) {
-                Trace.TraceError("Error saving config: {0}",ex);
-            }
-        }
-
-        public static Config Load(string path) {
-            Config conf;
-            if (File.Exists(path))
-            {
-                var xs = new XmlSerializer(typeof(Config));
-                try
-                {
-                    conf = (Config)xs.Deserialize(new StringReader(File.ReadAllText(path)));
-                    conf.UpdateFadeColor();
-                    return conf;
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceError("Error reading config file: {0}", ex);
-                }
-            }
-            conf = new Config { IsFirstRun = true };
-            conf.UpdateFadeColor();
-            return conf;
-        }
-
-
         StringCollection autoJoinChannels = new StringCollection() { KnownGames.GetDefaultGame().Channel };
         bool connectOnStartup = true;
         Color fadeColor = Color.Gray;
         StringCollection friends = new StringCollection(); // lacks events for adding friends immediatly
         int idleTime = 5;
         StringCollection ignoredUsers = new StringCollection();
-        string lobbyPlayerName;
-        string lobbyPlayerPassword;
         string manualSpringPath = @"C:\Program Files\Spring";
         bool showEmptyBattles = true;
         bool showHourlyChimes = true;
@@ -78,8 +35,18 @@ namespace ZeroKLobby
         bool showOfficialBattles = true;
 
 
-        string springServerHost = "springrts.com";
+        string springServerHost = "lobby.springrts.com";
         int springServerPort = 8200;
+        [Browsable(false)]
+        public string AdChannels = "main,newbies";
+        [Browsable(false)]
+        public int AdDelays = 1;
+        [Browsable(false)]
+        public string AdLines = "Faster, smarter, nicer! \r\n";
+        [Browsable(false)]
+        public string AdPreffix = "Join ZK \r\njoin zero-k. \r\nJoin ZK. \r\n";
+        [Browsable(false)]
+        public string AdSuffix = "\r\n\r\nmodlink: http://zero-k.info/";
 
 
         [Category("Chat")]
@@ -91,18 +58,15 @@ namespace ZeroKLobby
         public StringCollection AutoJoinChannels { get { return autoJoinChannels; } set { autoJoinChannels = value; } }
 
 
-       
         [Browsable(false)]
         public string BattleFilter { get; set; }
 
         [Category("Chat")]
         [DisplayName("Color: Background")]
         [XmlIgnore]
-        public Color BgColor
-        {
+        public Color BgColor {
             get { return Color.FromArgb(BgColorInt); }
-            set
-            {
+            set {
                 BgColorInt = value.ToArgb();
                 UpdateFadeColor();
             }
@@ -132,6 +96,10 @@ namespace ZeroKLobby
 
         [Browsable(false)]
         public int DefaultPlayerColorInt = 16776960; // default teal color
+        [Category("Debugging")]
+        [DisplayName("Disable Lobby Auto Update")]
+        [Description("Lobby will not update itself to latest release version. Use this if you are compiling your own lobby")]
+        public bool DisableAutoUpdate { get; set; }
         [Category("Chat")]
         [DisplayName("Disable Bubble On Channel Highlight")]
         [Description("Disable the system tray bubble when someone says your name in a public channel.")]
@@ -147,6 +115,10 @@ namespace ZeroKLobby
         public Color EmoteColor { get { return Color.FromArgb(EmoteColorInt); } set { EmoteColorInt = value.ToArgb(); } }
         [Browsable(false)]
         public int EmoteColorInt = Color.FromArgb(178, 0, 178).ToArgb();
+        [Category("General")]
+        [DisplayName("Enable voice commands (EXPERIMENTAL)")]
+        [Description("Control the game using your voice")]
+        public bool EnableVoiceCommands { get; set; }
 
         [XmlIgnore]
         [Browsable(false)]
@@ -185,7 +157,7 @@ namespace ZeroKLobby
         public Color JoinColor { get { return Color.FromArgb(JoinColorInt); } set { JoinColorInt = value.ToArgb(); } }
         [Browsable(false)]
         public int JoinColorInt = Color.FromArgb(42, 140, 42).ToArgb();
-        
+
         [Browsable(false)]
         public FormWindowState LastWindowState { get; set; }
 
@@ -212,32 +184,21 @@ namespace ZeroKLobby
         [Category("Account")]
         [DisplayName("Lobby Player Name")]
         [Description("Player name from lobby (tasclient), needed for many features")]
-        public string LobbyPlayerName
-        {
-            get { return lobbyPlayerName; }
-            set
-            {
-                lobbyPlayerName = value;
-            }
-        }
+        public string LobbyPlayerName { get; set; }
 
 
         [Category("Account")]
         [DisplayName("Lobby Password")]
         [PasswordPropertyText(true)]
         [Description("Player password from lobby (tasclient), needed for widget online profile")]
-        public string LobbyPlayerPassword
-        {
-            get { return lobbyPlayerPassword; }
-            set
-            {
-                lobbyPlayerPassword = value;
-            }
-        }
+        public string LobbyPlayerPassword { get; set; }
 
 
         [Browsable(false)] // todo remove this
-        public string ManualSpringPath { get { return manualSpringPath; } set { manualSpringPath = value; } }
+        public string ManualSpringPath {
+            get { return manualSpringPath; }
+            set { manualSpringPath = value; }
+        }
 
         [Category("General")]
         [DisplayName("Minimize to tray")]
@@ -249,6 +210,21 @@ namespace ZeroKLobby
         public Color NoticeColor { get { return Color.FromArgb(NoticeColorInt); } set { NoticeColorInt = value.ToArgb(); } }
         [Browsable(false)]
         public int NoticeColorInt = Color.Red.ToArgb();
+        [Category("Chat")]
+        [DisplayName("Color: Other text")]
+        [Description("Color for text on tooltip and on channel tab")]
+        [XmlIgnore]
+        public Color OtherTextColor {
+            get { return Color.FromArgb(OtherTextColorInt); }
+            set {
+                OtherTextColorInt = value.ToArgb();
+                UpdateFadeColor();
+            }
+        }
+        [Browsable(false)]
+        public int OtherTextColorInt = Color.Black.ToArgb();
+        [Browsable(false)]
+        public bool ResetUiKeysHack4 { get; set; }
 
 
         [Browsable(false)]
@@ -286,11 +262,9 @@ namespace ZeroKLobby
         [DisplayName("Color: Default text")]
         [Description("Color for the text on chat window and on playerlist")] //added safwan [tweak]
         [XmlIgnore]
-        public Color TextColor
-        {
+        public Color TextColor {
             get { return Color.FromArgb(TextColorInt); }
-            set
-            {
+            set {
                 TextColorInt = value.ToArgb();
                 UpdateFadeColor();
             }
@@ -298,39 +272,58 @@ namespace ZeroKLobby
         [Browsable(false)]
         public int TextColorInt = Color.Black.ToArgb();
 
-        [Category("Chat")]
-        [DisplayName("Color: Other text")]
-        [Description("Color for text on tooltip and on channel tab")]
-        [XmlIgnore]
-        public Color OtherTextColor
-        {
-            get { return Color.FromArgb(OtherTextColorInt); }
-            set
-            {
-                OtherTextColorInt = value.ToArgb();
-                UpdateFadeColor();
-            }
-        }
-        [Browsable(false)]
-        public int OtherTextColorInt = Color.Black.ToArgb();
- 
         /// <summary>
         /// Keeps datetime of last topic change for each channel
         /// </summary>
         public SerializableDictionary<string, DateTime> Topics = new SerializableDictionary<string, DateTime>();
+        [Category("General")]
+        [DisplayName("Use external browser (forced on linux)")]
+        [Description("Opens home, planetwars, maps etc in external browser")]
+        public bool UseExternalBrowser { get; set; }
         [Browsable(false)]
-        public bool ResetUiKeysHack4 { get; set; }
+        public bool UseMtEngine { get; set; }
+        [Browsable(false)]
+        public bool UseSafeMode { get; set; }
         public Config() {}
 
+        public static Config Load(string path) {
+            Config conf;
+            if (File.Exists(path)) {
+                var xs = new XmlSerializer(typeof(Config));
+                try {
+                    conf = (Config)xs.Deserialize(new StringReader(File.ReadAllText(path)));
+                    conf.UpdateFadeColor();
+                    return conf;
+                } catch (Exception ex) {
+                    Trace.TraceError("Error reading config file: {0}", ex);
+                }
+            }
+            conf = new Config { IsFirstRun = true };
+            conf.UpdateFadeColor();
+            return conf;
+        }
 
-        public void UpdateFadeColor()
-        {
+        public void Save(string path) {
+            try {
+                var cols = new StringCollection();
+                cols.AddRange(AutoJoinChannels.OfType<string>().Distinct().ToArray());
+                AutoJoinChannels = cols;
+                var xs = new XmlSerializer(typeof(Config));
+                var sb = new StringBuilder();
+                using (var stringWriter = new StringWriter(sb)) xs.Serialize(stringWriter, this);
+                File.WriteAllText(path, sb.ToString());
+            } catch (Exception ex) {
+                Trace.TraceError("Error saving config: {0}", ex);
+            }
+        }
+
+
+        public void UpdateFadeColor() {
             FadeColor = Color.FromArgb((TextColor.R + BgColor.R)/2, (TextColor.G + BgColor.G)/2, (TextColor.B + BgColor.B)/2);
         }
 
 
-        public object Clone()
-        {
+        public object Clone() {
             return MemberwiseClone();
         }
 
@@ -340,36 +333,6 @@ namespace ZeroKLobby
 
         [Browsable(false)]
         public string PackageMasterUrl { get { return " http://repos.springrts.com/"; } }
-        
-        [Category("General")]
-        [DisplayName("Enable voice commands (EXPERIMENTAL)")]
-        [Description("Control the game using your voice")]
-        public bool EnableVoiceCommands { get ; set; }
-
-        [Category("General")]
-        [DisplayName("Use external browser (forced on linux)")]
-        [Description("Opens home, planetwars, maps etc in external browser")]
-        public bool UseExternalBrowser { get; set; }
-
-        [Category("Debugging")]
-        [DisplayName("Disable Lobby Auto Update")]
-        [Description("Lobby will not update itself to latest release version. Use this if you are compiling your own lobby")]
-        public bool DisableAutoUpdate { get; set; }
-        
-        [Browsable(false)]
-        public int AdDelays = 1;
-        [Browsable(false)]
-        public string AdChannels = "main,newbies";
-        [Browsable(false)]
-        public string AdSuffix = "\r\n\r\nmodlink: http://zero-k.info/";
-        [Browsable(false)]
-        public string AdLines = "Faster, smarter, nicer! \r\n";
-        [Browsable(false)]
-        public string AdPreffix = "Join ZK \r\njoin zero-k. \r\nJoin ZK. \r\n";
-        [Browsable(false)]
-        public bool UseSafeMode { get; set; }
-        [Browsable(false)]
-        public bool UseMtEngine { get; set; }
     }
 
 
@@ -382,8 +345,7 @@ namespace ZeroKLobby
         public float Size;
         public FontStyle Style;
 
-        public XmlFont([NotNull] Font f)
-        {
+        public XmlFont([NotNull] Font f) {
             if (f == null) throw new ArgumentNullException("f");
             FontFamilyName = f.FontFamily.Name;
             GraphicsUnit = f.Unit;
@@ -391,10 +353,8 @@ namespace ZeroKLobby
             Style = f.Style;
         }
 
-        public XmlFont()
-        {
-            using (var f = new Font("Microsoft Sans Serif", 10))
-            {
+        public XmlFont() {
+            using (var f = new Font("Microsoft Sans Serif", 10)) {
                 FontFamilyName = f.FontFamily.Name;
                 GraphicsUnit = f.Unit;
                 Size = f.Size;
@@ -402,8 +362,7 @@ namespace ZeroKLobby
             }
         }
 
-        public Font ToFont()
-        {
+        public Font ToFont() {
             return new Font(FontFamilyName, Size, Style, GraphicsUnit);
         }
     }

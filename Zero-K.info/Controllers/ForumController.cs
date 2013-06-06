@@ -9,7 +9,7 @@ namespace ZeroKWeb.Controllers
 {
 	public class ForumController: Controller
 	{
-		int PageSize = 1000;
+		int PageSize = 200;
 
 		[Auth(Role = AuthRole.ZkAdmin)]
 		public ActionResult DeletePost(int? postID)
