@@ -521,7 +521,8 @@ span.button_2text
   white-space:normal;
 }
 
-.forumPostText img{
+.forumPostText img
+{
   max-width:100%;
 }
 
