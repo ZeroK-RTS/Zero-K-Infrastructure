@@ -93,7 +93,7 @@ namespace ZeroKLobby
             if (user.IsZkLobbyUser)
             {
                 drawImage(ZklResources.ZK_logo_square, 16, 16);
-                drawString("ZK Lobby (Windows) User");
+                drawString(string.Format("ZK lobby user ({0})", user.IsZkLinuxUser ? "linux" : "windows"));
                 newLine();
             }
             if (!user.IsBot)

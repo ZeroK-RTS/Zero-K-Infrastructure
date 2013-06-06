@@ -550,7 +550,7 @@ namespace LobbyClient
             con.SendCommand("LOGIN", userName, Utils.HashLobbyPassword(password), cpu, localIp, appName, "\t" + GetMyUserID(), "\ta sp eb");
         }
 
-        int cpu = GlobalConst.ZkLobbyUserCpu;
+        int cpu = Environment.OSVersion.Platform == PlatformID.Unix ? GlobalConst.ZkLobbyUserCpuLinux : GlobalConst.ZkLobbyUserCpu;
 
         public void OpenBattle(Battle nbattle)
         {

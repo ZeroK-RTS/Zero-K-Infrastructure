@@ -172,7 +172,8 @@ namespace ZeroKLobby
                 Downloader = new PlasmaDownloader.PlasmaDownloader(Conf, SpringScanner, SpringPaths);
                 Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
 
-                TasClient = new TasClient(TasClientInvoker, string.Format("ZK {0}", SelfUpdater.CurrentVersion), GlobalConst.ZkLobbyUserCpu, true);
+                var isLinux = Environment.OSVersion.Platform == PlatformID.Unix;
+                TasClient = new TasClient(TasClientInvoker, string.Format("ZK {0}{1}", SelfUpdater.CurrentVersion, isLinux? " linux":""), isLinux?GlobalConst.ZkLobbyUserCpuLinux :  GlobalConst.ZkLobbyUserCpu, true);
 
                 SayCommandHandler = new SayCommandHandler(TasClient);
 
