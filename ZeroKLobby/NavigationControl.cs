@@ -160,9 +160,14 @@ namespace ZeroKLobby
             foreach (TabPage tabPage in tabControl.Controls) {
                 var nav = GetINavigatableFromControl(tabPage);
                 if (nav.PathHead == targetPath) {
-                    string lastPath;
-                    if (lastTabPaths.TryGetValue(nav, out lastPath)) targetPath = lastPath;
-                    Path = targetPath;
+                    if (CurrentNavigatable == nav) {
+                        Path = targetPath; // double click on forum go to forum home
+                    }
+                    else {
+                        string lastPath;
+                        if (lastTabPaths.TryGetValue(nav, out lastPath)) targetPath = lastPath;
+                        Path = targetPath;
+                    }
                     return;
                 }
             }
@@ -208,6 +213,7 @@ namespace ZeroKLobby
                 {
                     tabControl.SelectTab(tabPage);
                     reloadButton1.Visible = navigatable.CanReload;
+                    lastTabPaths[navigatable] = string.Join("/", path);
                     return new NavigationStep { Path = path };
                 }
             }
