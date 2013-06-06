@@ -11,6 +11,8 @@ namespace PlasmaShared
     public class SelfUpdater
     {
         Timer timer;
+        int timerTick = 0;
+        int timerTickInterval = 1;
         readonly string urlBase;
         readonly string urlUpdateName;
         public string CurrentVersion { get; private set; }
@@ -49,23 +51,44 @@ namespace PlasmaShared
         }
 
         public static bool ReplaceFile(string filepath, byte[] data) {
+            string newname = null;
+            string bakName = null;
             try {
-                var newname = Utils.GetAlternativeFileName(filepath + ".new");
+                newname = Utils.GetAlternativeFileName(filepath + ".new");
                 File.WriteAllBytes(newname, data); // write new data
-                try {
-                    File.Move(filepath, Utils.GetAlternativeFileName(filepath + ".bak")); // copy current to bak
-                } catch {}
+                bakName = Utils.GetAlternativeFileName(filepath + ".bak");
+                File.Move(filepath, bakName); // copy current to bak
                 File.Move(newname, filepath); // rename new
                 return true;
             } catch (Exception ex) {
                 Trace.TraceWarning("File update failed {0} : {1}", filepath, ex.Message);
+            } finally {
+                try {
+                    if (newname != null) File.Delete(newname);
+                } catch {}
+                foreach (var fb in Directory.GetFiles(Path.GetDirectoryName(bakName), Path.GetFileNameWithoutExtension(filepath) + "*.bak")) {
+                    try {
+                        File.Delete(fb);
+                    } catch {}
+                }
             }
+
             return false;
         }
 
         public void StartChecking() {
             StopChecking();
-            timer = new Timer((o) => { CheckForUpdate(); }, null, 100, PeriodSeconds * 1000);
+            timer = new Timer((o) =>
+                {
+                    timerTick++; // graduyally increase update check interval if update fails
+                    if (timerTick >= timerTickInterval) {
+                        timerTick = 0;
+                        if (!CheckForUpdate()) timerTickInterval *= 2;
+                    }
+                },
+                              null,
+                              100,
+                              PeriodSeconds*1000);
         }
 
         public void StopChecking() {
