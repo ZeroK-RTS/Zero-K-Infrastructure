@@ -521,6 +521,10 @@ span.button_2text
   white-space:normal;
 }
 
+.forumPostText img{
+  max-width:100%;
+}
+
 
 /* planetwars */
 .pwlabel 
