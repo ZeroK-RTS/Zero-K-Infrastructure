@@ -301,21 +301,35 @@ namespace LobbyClient
 
                 LogLines = new StringBuilder();
 
+                var optirun = Environment.GetEnvironmentVariable("OPTIRUN");
+
                 process = new Process();
                 process.StartInfo.CreateNoWindow = true;
 
+                if (string.IsNullOrEmpty(optirun))
+                {
+                    if (UseDedicatedServer)
+                    {
+                        process.StartInfo.FileName = paths.DedicatedServer;
+                        process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.DedicatedServer);
+                    }
+                    else
+                    {
+                        process.StartInfo.FileName = useMultithreaded ? paths.MtExecutable : paths.Executable;
+                        process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.Executable);
+                    }
+                }
+                else
+                {
+                    Trace.TraceInformation("Using optirun {0} to start the game (OPTIRUN env var defined)", optirun);
+                    process.StartInfo.FileName = optirun;
+                    process.StartInfo.Arguments += useMultithreaded ? paths.MtExecutable : paths.Executable; ;
+                }
+
+                
+
                 process.StartInfo.Arguments += string.Format("--config \"{0}\"", paths.GetSpringConfigPath());
                 process.StartInfo.EnvironmentVariables["OMP_WAIT_POLICY"] = "ACTIVE";
-
-                if (UseDedicatedServer) {
-                    process.StartInfo.FileName = paths.DedicatedServer;
-                    process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.DedicatedServer);
-                    //process.StartInfo.Arguments += string.Format(" -i --isolation-dir \"{0}\"", paths.WritableDirectory);
-                }
-                else {
-                    process.StartInfo.FileName = useMultithreaded ? paths.MtExecutable : paths.Executable;
-                    process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.Executable);
-                }
 
                 if (useSafeMode) process.StartInfo.Arguments += string.Format(" --safemode");
                 process.StartInfo.Arguments += string.Format(" \"{0}\"", scriptPath);

@@ -24,8 +24,22 @@ namespace Benchmarker
 
             paths.SetEnginePath(paths.GetEngineFolderByVersion(test.Engine));
 
+            var optirun = Environment.GetEnvironmentVariable("OPTIRUN");
+            
             process = new Process();
             process.StartInfo.CreateNoWindow = true;
+            if (string.IsNullOrEmpty(optirun)) {
+                process.StartInfo.FileName = test.UseMultithreaded ? paths.MtExecutable : paths.Executable;
+            }
+            else {
+                Trace.TraceInformation("Using optirun {0} to start the game (OPTIRUN env var defined)", optirun);
+                process.StartInfo.FileName = optirun;
+                process.StartInfo.Arguments += test.UseMultithreaded ? paths.MtExecutable : paths.Executable;
+            }
+
+
+
+            process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.Executable);
 
             process.StartInfo.Arguments += string.Format("--config \"{0}\"", Path.Combine(test.Config.ConfigPath, "springsettings.cfg"));
             if (test.BenchmarkArg > 0) process.StartInfo.Arguments += " --benchmark " + test.BenchmarkArg;
@@ -46,8 +60,6 @@ namespace Benchmarker
             process.StartInfo.EnvironmentVariables["SPRING_WRITEDIR"] = test.Config.ConfigPath;
             process.StartInfo.EnvironmentVariables["OMP_WAIT_POLICY"] = "ACTIVE";
             
-            process.StartInfo.FileName = test.UseMultithreaded ? paths.MtExecutable : paths.Executable;
-            process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.Executable);
 
             var scriptPath = Path.GetTempFileName();
             File.WriteAllText(scriptPath, test.StartScript.GetScriptForTestCase(test, benchmark));
