@@ -286,7 +286,7 @@
     <Content Include="Scripts\jquery.ui.stars.min.js" />
     <Content Include="Scripts\nicetitle.js" />
     <Content Include="Scripts\raphael-min.js" />
-    <Content Include="Scripts\site.js" />
+    <Content Include="Scripts\site_main.js" />
     <Content Include="SpringieService.asmx" />
     <Content Include="StructuresAdmin.aspx" />
     <Content Include="Styles\base.css" />
