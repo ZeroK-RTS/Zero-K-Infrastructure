@@ -29,6 +29,9 @@ local frameTimer= GetTimer()
 local gfTimer = GetTimer()
 local lastGameFrame = 0
 
+local gf_dt_exceed_count = 100  -- how many can exceeded limit
+local gf_dt_limit = 0.1 -- limit for the test
+
 
 function gadget:Update() 
 	local newTimer = GetTimer()
@@ -39,11 +42,28 @@ function gadget:Update()
 	frameTimer = newTimer
 end
 
+function gadget:GameOver()
+  local num = 0
+  if gf_dt_exceed_count <= 0 then
+		num = 1
+  end
+  Spring.Echo("!transmitlobby gf_dt_exceed:"..num)
+end 
+
+
 local function gameFrame(_, gf)
 	if gf > lastGameFrame then
 		local newTimer = GetTimer()
 		if (Spring.GetGameFrame() > START_GRACE) then
-			Spring.Echo("!transmitlobby g_gameframe_dt: "..DiffTimers(newTimer, gfTimer) / (gf - lastGameFrame))
+			local gf_dt = DiffTimers(newTimer, gfTimer) / (gf - lastGameFrame)
+			if (gf_dt > gf_dt_limit) then
+				gf_dt_exceed_count = gf_dt_exceed_count - 1
+				if gf_dt_exceed_count == 0 then
+					Spring.Echo("!transmitlobby gf_dt_exceed:1")
+					gf_dt_exceed_count = math.huge
+				end
+			end
+			Spring.Echo("!transmitlobby g_gameframe_dt: "..gf_dt)
 		end
 		lastGameFrame = gf
 		gfTimer = newTimer
