@@ -28,21 +28,23 @@ namespace Benchmarker
             
             process = new Process();
             process.StartInfo.CreateNoWindow = true;
+            List<string> arg = new List<string>();
+
             if (string.IsNullOrEmpty(optirun)) {
                 process.StartInfo.FileName = test.UseMultithreaded ? paths.MtExecutable : paths.Executable;
             }
             else {
                 Trace.TraceInformation("Using optirun {0} to start the game (OPTIRUN env var defined)", optirun);
                 process.StartInfo.FileName = optirun;
-                process.StartInfo.Arguments += test.UseMultithreaded ? paths.MtExecutable : paths.Executable;
+                arg.Add(string.Format("\"{0}\"", ( test.UseMultithreaded ? paths.MtExecutable : paths.Executable)));
             }
 
 
 
             process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.Executable);
 
-            process.StartInfo.Arguments += string.Format("--config \"{0}\"", Path.Combine(test.Config.ConfigPath, "springsettings.cfg"));
-            if (test.BenchmarkArg > 0) process.StartInfo.Arguments += " --benchmark " + test.BenchmarkArg;
+            arg.Add(string.Format("--config \"{0}\"", Path.Combine(test.Config.ConfigPath, "springsettings.cfg")));
+            if (test.BenchmarkArg > 0) arg.Add("--benchmark " + test.BenchmarkArg);
 
 
             var dataDirList = new List<string>()
@@ -63,8 +65,10 @@ namespace Benchmarker
 
             var scriptPath = Path.GetTempFileName();
             File.WriteAllText(scriptPath, test.StartScript.GetScriptForTestCase(test, benchmark));
-            process.StartInfo.Arguments += string.Format(" \"{0}\"", scriptPath);
+            arg.Add(string.Format("\"{0}\"", scriptPath));
 
+            
+            process.StartInfo.Arguments = string.Join(" ", arg);
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;

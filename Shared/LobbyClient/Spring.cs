@@ -305,6 +305,8 @@ namespace LobbyClient
 
                 process = new Process();
                 process.StartInfo.CreateNoWindow = true;
+                List<string> arg = new List<string>();
+
 
                 if (string.IsNullOrEmpty(optirun))
                 {
@@ -323,18 +325,19 @@ namespace LobbyClient
                 {
                     Trace.TraceInformation("Using optirun {0} to start the game (OPTIRUN env var defined)", optirun);
                     process.StartInfo.FileName = optirun;
-                    process.StartInfo.Arguments += useMultithreaded ? paths.MtExecutable : paths.Executable; ;
+                    arg.Add(string.Format("\"{0}\"", (useMultithreaded ? paths.MtExecutable : paths.Executable)));
                 }
 
                 
 
-                process.StartInfo.Arguments += string.Format("--config \"{0}\"", paths.GetSpringConfigPath());
+                arg.Add(string.Format("--config \"{0}\"", paths.GetSpringConfigPath()));
                 process.StartInfo.EnvironmentVariables["OMP_WAIT_POLICY"] = "ACTIVE";
 
-                if (useSafeMode) process.StartInfo.Arguments += string.Format(" --safemode");
-                process.StartInfo.Arguments += string.Format(" \"{0}\"", scriptPath);
+                if (useSafeMode) arg.Add("--safemode");
+                arg.Add(string.Format("\"{0}\"", scriptPath));
                 //Trace.TraceInformation("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
 
+                process.StartInfo.Arguments = string.Join(" ", arg);
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.RedirectStandardError = true;
