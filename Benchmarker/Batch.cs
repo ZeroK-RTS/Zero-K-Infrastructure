@@ -57,6 +57,7 @@ namespace Benchmarker
         }
 
         public static Batch Load(string path, SpringPaths springPaths) {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             var batch = JsonSerializer.DeserializeFromString<Batch>(File.ReadAllText(path));
             batch.PostLoad(springPaths);
             return batch;
@@ -92,6 +93,7 @@ namespace Benchmarker
         }
 
         public void Save(string s) {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             File.WriteAllText(s, JsonSerializer.SerializeToString(this));
         }
 

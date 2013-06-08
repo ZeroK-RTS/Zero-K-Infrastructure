@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using ServiceStack.Text;
 
 namespace Benchmarker
@@ -83,6 +85,7 @@ namespace Benchmarker
 
 
         public static BatchRunResult Load(string path) {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             var ret = JsonSerializer.DeserializeFromString<BatchRunResult>(File.ReadAllText(path));
             if (ret != null) ret.batchFileName = path;
             return ret;
@@ -96,6 +99,7 @@ namespace Benchmarker
         }
 
         public void SaveFiles(string folder) {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             var now = DateTime.Now;
             if (string.IsNullOrEmpty(folder)) folder = Directory.GetCurrentDirectory();
             batchFileName = Path.Combine(folder, string.Format("batchResult_{0:yyyy-MM-dd_HH-mm-ss}.json", now));

@@ -55,7 +55,11 @@ namespace Benchmarker
             };
             dataDirList.AddRange(paths.DataDirectories);
             dataDirList.Add(Path.GetDirectoryName(paths.Executable));
-            var datadirs = string.Join(Environment.OSVersion.Platform == PlatformID.Unix ? ":" : ";", dataDirList.Distinct());
+
+            if (Environment.OSVersion.Platform == PlatformID.Unix) dataDirList = dataDirList.Distinct().Select(x => x.Replace(" ", "\\ ")).ToList();
+            else dataDirList = dataDirList.Distinct().ToList();
+
+            var datadirs = string.Join(Environment.OSVersion.Platform == PlatformID.Unix ? ":" : ";", dataDirList);
 
             process.StartInfo.EnvironmentVariables["SPRING_DATADIR"] = datadirs;
             process.StartInfo.EnvironmentVariables["SPRING_ISOLATED"] = test.Config.ConfigPath;
