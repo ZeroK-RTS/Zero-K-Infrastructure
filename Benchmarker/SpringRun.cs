@@ -75,20 +75,25 @@ namespace Benchmarker
 
             process.ErrorDataReceived += (sender, args) =>
                 {
-                    LineAdded(args.Data);
                     LogLines.AppendLine(args.Data);
+                    LineAdded(args.Data);
                 };
             process.OutputDataReceived += (sender, args) =>
                 {
-                    LineAdded(args.Data);
                     LogLines.AppendLine(args.Data);
+                    LineAdded(args.Data);
                 };
             process.EnableRaisingEvents = true;
 
-            process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-            process.WaitForExit();
+            try {
+                process.Start();
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
+
+                process.WaitForExit();
+            } catch (Exception ex) {
+                Trace.TraceError("Error waiting for process: {0}", ex);
+            }
             var lines = LogLines.ToString();
 
             File.Delete(scriptPath);

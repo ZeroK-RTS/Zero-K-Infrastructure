@@ -48,8 +48,21 @@ namespace Benchmarker
             timer.Interval = 1000;
             timer.Enabled = true;
 
+            
+
             tbEngine.Text = springPaths.SpringVersion;
         }
+
+
+        public void InvokeIfNeeded(Action acc) {
+            try {
+                if (InvokeRequired) Invoke(acc);
+                else acc();
+            } catch (Exception ex) {
+                Trace.TraceError(ex.ToString());
+            }
+        }
+
 
         public Batch CreateBatchFromGui() {
             var batch = new Batch()
@@ -178,11 +191,11 @@ namespace Benchmarker
                     Trace.TraceError(ex.ToString());
                 }
 
-                Invoke(new Action(() =>
+                InvokeIfNeeded(() =>
                 {
                     tbEngine.AutoCompleteCustomSource.AddRange(engineList.ToArray());
                     tbGame.AutoCompleteCustomSource.AddRange(modList.ToArray());
-                }));
+                });
             }
             catch (Exception ex)
             {
@@ -221,11 +234,11 @@ namespace Benchmarker
 
             testedBatch.RunCompleted += (run, benchmark, arg3) =>
                 {
-                    Invoke(new Action(() =>
+                    InvokeIfNeeded(() =>
                         {
                             tbResults.AppendText(string.Format("== RUN {0} {1} ==\n", run, benchmark));
                             tbResults.AppendText(arg3);
-                        }));
+                        });
                 };
 
             testedBatch.AllCompleted += (result) =>
@@ -234,24 +247,26 @@ namespace Benchmarker
                     string jsonPath;
                     result.SaveFiles(lastUsedBatchFolder ?? springPaths.WritableDirectory, out csvPath, out jsonPath);
                     //Process.Start(jsonPath);
-                    Invoke(new Action(() =>
-                        {
-                            btnStart.Enabled = true;
-                            btnStop.Enabled = false;
-                            btnDataSheet.Enabled = true;
-                            btnGraphs.Enabled = true;
-                            var form = new GraphsForm(result);
-                            form.Show();
+                        InvokeIfNeeded(() =>
+                            {
+                                btnStart.Enabled = true;
+                                btnStop.Enabled = false;
+                                btnDataSheet.Enabled = true;
+                                btnGraphs.Enabled = true;
+                                if (Environment.OSVersion.Platform != PlatformID.Unix) {
+                                    var form = new GraphsForm(result);
+                                    form.Show();
 
-                            try
-                            {
-                                Process.Start(csvPath);
-                            }
-                            catch (Exception ex)
-                            {
-                                Trace.TraceError(ex.ToString());
-                            }
-                        }));
+                                    try {
+                                        Process.Start(csvPath);
+                                    } catch (Exception ex) {
+                                        Trace.TraceError(ex.ToString());
+                                    }
+                                }
+                                else {
+                                    MessageBox.Show("Test batch run complete, please open the graph and datasheet by pressing buttons on the left");
+                                }
+                            });
                 };
 
             new Thread(() =>

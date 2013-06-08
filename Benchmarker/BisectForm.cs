@@ -34,6 +34,20 @@ namespace Benchmarker
             InitializeComponent();
         }
 
+        public void InvokeIfNeeded(Action acc)
+        {
+            try
+            {
+                if (InvokeRequired) Invoke(acc);
+                else acc();
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.ToString());
+            }
+        }
+
+
         public string RunBisect() {
             startVal = GetBisectValue(engineStartIndex, modStartIndex);
             endVal = GetBisectValue(engineEndIndex, modEndIndex);
@@ -72,7 +86,7 @@ namespace Benchmarker
             testCaseBase.Game = modList[modIndex];
             var ret = testCaseBase.Validate(downloader, true);
             if (ret != null) {
-                Invoke(new Action(() => { tbBisectLog.AppendText(string.Format("Skipping test {0} - {1}\n", testCaseBase, ret)); }));
+                InvokeIfNeeded(() => { tbBisectLog.AppendText(string.Format("Skipping test {0} - {1}\n", testCaseBase, ret)); });
                 Trace.TraceError("Skipping test {0} - {1}", testCaseBase, ret);
                 return null;
             }
@@ -92,7 +106,7 @@ namespace Benchmarker
                 };
             springRun.Start(springPaths, testCaseBase, benchmark);
 
-            Invoke(new Action(() => { tbBisectLog.AppendText(string.Format("Test:{0}   value:{1}\n", testCaseBase, retVal)); }));
+            InvokeIfNeeded(() => { tbBisectLog.AppendText(string.Format("Test:{0}   value:{1}\n", testCaseBase, retVal)); });
             return retVal;
         }
 
@@ -103,21 +117,21 @@ namespace Benchmarker
                     modList = downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByTag.Keys).ToList();
                 } catch (Exception ex) {
                     Trace.TraceError(ex.ToString());
-                    Invoke(new Action(() =>
+                    InvokeIfNeeded(() =>
                         {
                             MessageBox.Show("Failed to get list: {0}", ex.Message);
                             Close();
-                       }));
+                       });
                     return;
                 }
 
-                Invoke(new Action(() =>
+                InvokeIfNeeded(() =>
                     {
                         tbEngine.AutoCompleteCustomSource.AddRange(engineList.ToArray());
                         tbEngineBisectTo.AutoCompleteCustomSource.AddRange(engineList.ToArray());
                         tbGame.AutoCompleteCustomSource.AddRange(modList.ToArray());
                         tbGameBisectTo.AutoCompleteCustomSource.AddRange(modList.ToArray());
-                    }));
+                    });
             } catch (Exception ex) {
                 Trace.TraceError(ex.ToString());
             }
@@ -183,11 +197,11 @@ namespace Benchmarker
             new Thread(() =>
                 {
                     var result = RunBisect();
-                    Invoke(new Action(() =>
+                    InvokeIfNeeded(() =>
                         {
                             MessageBox.Show(result);
                             btnBisect.Enabled = true;
-                        }));
+                        });
                 }).Start();
         }
     }
