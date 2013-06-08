@@ -22,10 +22,16 @@ namespace Benchmarker
 
         public MainForm(SpringPaths paths = null, SpringScanner scanner = null, PlasmaDownloader.PlasmaDownloader downloader = null) {
             InitializeComponent();
-            springPaths = paths ?? new SpringPaths(null, null, null);
-            springScanner = scanner ?? new SpringScanner(springPaths);
-            springScanner.Start();
-            springDownloader = downloader ?? new PlasmaDownloader.PlasmaDownloader(new PlasmaConfig(), springScanner, springPaths);
+            if (paths != null) springPaths = paths;
+            else springPaths = new SpringPaths(null, null, null);
+            if (scanner != null) springScanner = scanner;
+            else {
+                springScanner = new SpringScanner(springPaths);
+                springScanner.Start();
+            }
+            if (downloader != null)  springDownloader = downloader;
+            else springDownloader = new PlasmaDownloader.PlasmaDownloader(new PlasmaConfig(), springScanner, springPaths);
+
             var timer = new Timer();
             timer.Tick += (sender, args) =>
                 {
