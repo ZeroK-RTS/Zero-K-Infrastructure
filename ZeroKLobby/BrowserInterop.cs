@@ -62,7 +62,11 @@ namespace ZeroKLobby
         }
 
         public void OpenUrl(string url) {
-            Process.Start(AddAuthToUrl(url));
+            try {
+                Process.Start(AddAuthToUrl(url));
+            } catch (Exception ex) {
+                Trace.TraceError(ex.ToString());
+            }
         }
     }
 }

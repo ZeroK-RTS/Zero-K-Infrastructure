@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using PlasmaShared;
 using ServiceStack.Text;
-
 
 namespace Benchmarker
 {
@@ -20,7 +20,7 @@ namespace Benchmarker
         /// <summary>
         /// Benchmark mutators to use
         /// </summary>
-        public List<Benchmark> Benchmarks  { get; set; }
+        public List<Benchmark> Benchmarks { get; set; }
         /// <summary>
         /// Cases to check
         /// </summary>
@@ -70,13 +70,20 @@ namespace Benchmarker
                 foreach (var b in Benchmarks) {
                     if (isAborted) return;
                     b.ModifyModInfo(tr);
+                    string log = null;
                     try {
                         run = new SpringRun();
-                        var log = run.Start(paths, tr, b);
-                        result.AddRun(tr, b, log);
-                        RunCompleted(tr, b, log);
+                        log = run.Start(paths, tr, b);
+                    } catch (Exception ex) {
+                        Trace.TraceError(ex.ToString());
                     } finally {
                         b.RestoreModInfo();
+                    }
+                    try {
+                        result.AddRun(tr, b, log);
+                        RunCompleted(tr, b, log);
+                    } catch (Exception ex) {
+                        Trace.TraceError(ex.ToString());
                     }
                 }
             }
@@ -85,7 +92,6 @@ namespace Benchmarker
         }
 
         public void Save(string s) {
-            
             File.WriteAllText(s, JsonSerializer.SerializeToString(this));
         }
 
@@ -93,7 +99,9 @@ namespace Benchmarker
         /// Validates content - downloads files
         /// </summary>
         public string Validate(PlasmaDownloader.PlasmaDownloader downloader, bool waitForDownload) {
-            if (!Benchmarks.Any()) return "No benchmarks selected - please add benchmarks (mutators/games) into Gaqmes or Benchmarks/games folder - in the folder.sdd format";
+            if (!Benchmarks.Any())
+                return
+                    "No benchmarks selected - please add benchmarks (mutators/games) into Gaqmes or Benchmarks/games folder - in the folder.sdd format";
             if (!TestCases.Any()) return "Please add test case runs using add button here";
 
             foreach (var bench in Benchmarks) {
@@ -120,7 +128,7 @@ namespace Benchmarker
                             Config.GetConfigs(paths).First(x => x.Name == tr.Config.Name);
 
                 tr.StartScript = StartScript.GetStartScripts(paths).SingleOrDefault(x => x.ScriptPath == tr.StartScript.ScriptPath) ??
-                            StartScript.GetStartScripts(paths).First(x => x.Name == tr.StartScript.Name);
+                                 StartScript.GetStartScripts(paths).First(x => x.Name == tr.StartScript.Name);
             }
         }
     }

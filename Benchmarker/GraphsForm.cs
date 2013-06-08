@@ -10,6 +10,20 @@ namespace Benchmarker
 {
     public partial class GraphsForm: Form
     {
+        static readonly List<Color> Colors = new List<Color>()
+        {
+            Color.Blue,
+            Color.Red,
+            Color.Green,
+            Color.Orange,
+            Color.Black,
+            Color.Cyan,
+            Color.BlueViolet,
+            Color.Magenta,
+            Color.Gray,
+            Color.Yellow,
+            Color.Pink
+        };
         readonly BatchRunResult results;
 
         public GraphsForm(BatchRunResult results) {
@@ -17,12 +31,8 @@ namespace Benchmarker
             InitializeComponent();
         }
 
-        static List<Color> Colors = new List<Color>() { Color.Blue, Color.Red, Color.Green, Color.Orange, Color.Black, Color.Cyan, Color.BlueViolet, Color.Magenta, Color.Gray, Color.Yellow, Color.Pink };
-
         void GraphsForm_Load(object sender, EventArgs e) {
-            
-            Dictionary<Tuple<string, string>, ZedGraphControl> charts = new Dictionary<Tuple<string, string>, ZedGraphControl>();
-
+            var charts = new Dictionary<Tuple<string, string>, ZedGraphControl>();
 
             foreach (var res in results.RunEntries) {
                 foreach (var grp in res.RawValues.GroupBy(x => x.Key).Where(x => x.Count() > 2)) {
@@ -35,7 +45,7 @@ namespace Benchmarker
                         pane.YAxis.Title.Text = grp.Key;
                         pane.Title.Text = string.Format("{1} {0}", res.Benchmark, grp.Key);
                         pane.Chart.Fill = new Fill(Color.White, Color.LightGray, 45.0f);
-                        
+
                         pane.XAxis.Scale.MaxAuto = true;
                         pane.XAxis.Scale.MinAuto = true;
                         pane.YAxis.Scale.MaxAuto = true;
@@ -44,21 +54,20 @@ namespace Benchmarker
                         pane.XAxis.Scale.MaxGrace = 0;
                         pane.YAxis.Scale.MaxGrace = 0;
 
-
                         graph.Width = Width - 40;
-                        graph.Height = Width / 4;
+                        graph.Height = Width/4;
 
                         graph.IsShowPointValues = true;
                         flowPanel.Controls.Add(graph);
-
                     }
 
                     var curve = graph.GraphPane.AddCurve(res.TestCase.ToString(),
-                                             grp.Select(x => x.GameFrame).ToArray(),
-                                             grp.Select(x => x.Value).ToArray(),
-                                             Colors[graph.GraphPane.CurveList.Count%Colors.Count], SymbolType.None);
-                    
-                    curve.Line.Style= DashStyle.Solid;
+                                                         grp.Select(x => x.GameFrame).ToArray(),
+                                                         grp.Select(x => x.Value).ToArray(),
+                                                         Colors[graph.GraphPane.CurveList.Count%Colors.Count],
+                                                         SymbolType.None);
+
+                    curve.Line.Style = DashStyle.Solid;
                     curve.Line.Width = 2;
                 }
             }
@@ -67,8 +76,6 @@ namespace Benchmarker
                 graph.AxisChange();
                 graph.Invalidate();
             }
-
-            if (flowPanel.Controls.Count == 0) Close(); // no graphs
         }
     }
 }

@@ -13,9 +13,14 @@ namespace Benchmarker
         static readonly string[] invalidKeys = new string[]
         {
             "Sent", "Received", "[CCollisionHandler] dis-/continuous tests", "Statistics for RectangleOptimizer", "AL lib: ALc.c:1808: alcCloseDevice()"
-            , "[EPIC Menu] Error", "Game Over","Commanders Remaining"
+            , "[EPIC Menu] Error", "Game Over", "Commanders Remaining"
         };
-        public List<RunEntry> RunEntries = new List<RunEntry>();
+        string batchFileName;
+        public List<RunEntry> RunEntries { get; set; }
+        public BatchRunResult() {
+            RunEntries = new List<RunEntry>();
+        }
+
 
         public void AddRun(TestCase testCase, Benchmark benchmark, string text) {
             if (string.IsNullOrEmpty(text)) return;
@@ -24,56 +29,6 @@ namespace Benchmarker
 
             ParseInfolog(text, runEntry);
             if (testCase.BenchmarkArg > 0) ParseBenchmarkData(runEntry);
-        }
-
-        void ParseBenchmarkData(RunEntry runEntry) {
-            var path = Path.Combine(runEntry.TestCase.Config.ConfigPath, "benchmark.data");
-            if (File.Exists(path)) {
-                var data = File.ReadAllLines(path);
-                var headers = data.First().Split(' ').Skip(1).ToList();
-
-                foreach (var line in data.Skip(1)) {
-                    var lineData = line.Split(' ').ToList();
-                    var gameFrame = double.Parse(lineData[0]);
-                    for (int i = 1; i < lineData.Count; i++) {
-                        runEntry.RawValues.Add(new ValueEntry()
-                        {
-                            GameFrame = gameFrame,
-                            Key = headers[i],
-                            Value = double.Parse(lineData[i])
-                        });
-                    }
-                }
-            }
-        }
-
-        static void ParseInfolog(string text, RunEntry runEntry) {
-            string gameId = null;
-
-            foreach (var cycleline in text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)) {
-                var line = cycleline;
-                var gameframe = 0;
-
-                if (line.StartsWith("[f=")) {
-                    var idx = line.IndexOf("] ");
-                    if (idx > 0) {
-                        int.TryParse(line.Substring(3, idx - 3), out gameframe);
-                        if (idx >= 0) line = line.Substring(idx + 2);
-                    }
-                }
-
-                if (gameId != null) {
-                    var match = Regex.Match(line, "!transmitlobby (.+):[ ]*([0-9.]+)");
-                    if (match.Success) {
-                        var key = match.Groups[1].Value.Trim();
-                        var value = match.Groups[2].Value.Trim();
-                        var valNum = 0.0;
-                        if (!invalidKeys.Contains(key) && !key.Contains(":")) if (double.TryParse(value, out valNum)) runEntry.RawValues.Add(new ValueEntry() { GameFrame = gameframe, Key = key, Value = valNum });
-                    }
-                }
-
-                if (line.StartsWith("GameID: ") && gameId == null) gameId = line.Substring(8).Trim();
-            }
         }
 
 
@@ -127,52 +82,100 @@ namespace Benchmarker
         }
 
 
-        public void SaveFiles(string folder, out string csvPath, out string jsonPath) {
-            var now = DateTime.Now;
-            var csv = GroupAndGenerateResultTable();
-
-            if (string.IsNullOrEmpty(folder)) folder = Directory.GetCurrentDirectory();
-
-            var jsonFileName = Path.Combine(folder, string.Format("batchResult_{0:yyyy-MM-dd_HH-mm-ss}.json", now));
-            var csvFileName = Path.Combine(folder, string.Format("batchResult_{0:yyyy-MM-dd_HH-mm-ss}.csv", now));
-
-            File.WriteAllText(jsonFileName, JsonSerializer.SerializeToString(this));
-            File.WriteAllText(csvFileName, csv);
-
-            csvPath = csvFileName;
-            jsonPath = jsonFileName;
+        public static BatchRunResult Load(string path) {
+            var ret = JsonSerializer.DeserializeFromString<BatchRunResult>(File.ReadAllText(path));
+            if (ret != null) ret.batchFileName = path;
+            return ret;
         }
 
-        public static BatchRunResult Load(string path, out string csvPath) {
-            var ret = JsonSerializer.DeserializeFromString<BatchRunResult>(File.ReadAllText(path));
-            if (ret != null) {
-                csvPath = Path.ChangeExtension(path, ".csv");
+        public string SaveAndGetCsvFileName() {
+            var csv = GroupAndGenerateResultTable();
+            var csvFileName = Path.ChangeExtension(batchFileName, "csv");
+            File.WriteAllText(csvFileName, csv);
+            return csvFileName;
+        }
+
+        public void SaveFiles(string folder) {
+            var now = DateTime.Now;
+            if (string.IsNullOrEmpty(folder)) folder = Directory.GetCurrentDirectory();
+            batchFileName = Path.Combine(folder, string.Format("batchResult_{0:yyyy-MM-dd_HH-mm-ss}.json", now));
+            File.WriteAllText(batchFileName, JsonSerializer.SerializeToString(this));
+            SaveAndGetCsvFileName();
+        }
+
+        void ParseBenchmarkData(RunEntry runEntry) {
+            var path = Path.Combine(runEntry.TestCase.Config.ConfigPath, "benchmark.data");
+            if (File.Exists(path)) {
+                var data = File.ReadAllLines(path);
+                var headers = data.First().Split(' ').Skip(1).ToList();
+
+                foreach (var line in data.Skip(1)) {
+                    var lineData = line.Split(' ').ToList();
+                    var gameFrame = double.Parse(lineData[0]);
+                    for (var i = 1; i < lineData.Count; i++) runEntry.RawValues.Add(new ValueEntry() { GameFrame = gameFrame, Key = headers[i], Value = double.Parse(lineData[i]) });
+                }
             }
-            else csvPath = null;
-            return ret;
+        }
+
+        static void ParseInfolog(string text, RunEntry runEntry) {
+            string gameId = null;
+
+            foreach (var cycleline in text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)) {
+                var line = cycleline;
+                var gameframe = 0;
+
+                if (line.StartsWith("[f=")) {
+                    var idx = line.IndexOf("] ");
+                    if (idx > 0) {
+                        int.TryParse(line.Substring(3, idx - 3), out gameframe);
+                        if (idx >= 0) line = line.Substring(idx + 2);
+                    }
+                }
+
+                if (gameId != null) {
+                    var match = Regex.Match(line, "!transmitlobby (.+):[ ]*([0-9.]+)");
+                    if (match.Success) {
+                        var key = match.Groups[1].Value.Trim();
+                        var value = match.Groups[2].Value.Trim();
+                        var valNum = 0.0;
+                        if (!invalidKeys.Contains(key) && !key.Contains(":")) if (double.TryParse(value, out valNum)) runEntry.RawValues.Add(new ValueEntry() { GameFrame = gameframe, Key = key, Value = valNum });
+                    }
+                }
+
+                if (line.StartsWith("GameID: ") && gameId == null) gameId = line.Substring(8).Trim();
+            }
         }
 
         public class ColEntry
         {
-            public Benchmark Benchmark;
-            public string Key;
-            public Dictionary<TestCase, double> Rows = new Dictionary<TestCase, double>();
+            public Benchmark Benchmark { get; set; }
+            public string Key { get; set; }
+            public Dictionary<TestCase, double> Rows { get; set; }
+
+            public ColEntry() {
+                Rows = new Dictionary<TestCase, double>();
+            }
         }
 
         public class RunEntry
         {
-            public Benchmark Benchmark;
-            public List<ValueEntry> GroupedValues = new List<ValueEntry>();
-            public string RawLog;
-            public List<ValueEntry> RawValues = new List<ValueEntry>();
-            public TestCase TestCase;
+            public Benchmark Benchmark { get; set; }
+            public List<ValueEntry> GroupedValues { get; set; }
+            public string RawLog { get; set; }
+            public List<ValueEntry> RawValues { get; set; }
+            public TestCase TestCase { get; set; }
+
+            public RunEntry() {
+                GroupedValues = new List<ValueEntry>();
+                RawValues = new List<ValueEntry>();
+            }
         }
 
         public class ValueEntry
         {
-            public double GameFrame;
-            public string Key;
-            public double Value;
+            public double GameFrame { get; set; }
+            public string Key { get; set; }
+            public double Value { get; set; }
         }
     }
 }

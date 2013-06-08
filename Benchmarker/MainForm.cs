@@ -14,13 +14,28 @@ namespace Benchmarker
 {
     public partial class MainForm: Form
     {
-        string csvPath;
         string lastUsedBatchFolder = null;
         readonly PlasmaDownloader.PlasmaDownloader springDownloader;
         readonly SpringPaths springPaths;
         readonly SpringScanner springScanner;
         Batch testedBatch;
         BatchRunResult batchResult;
+
+        public static void SafeStart(string path, string args = null)
+        {
+            try
+            {
+                var pi = new ProcessStartInfo(path, args);
+                pi.WorkingDirectory = Path.GetDirectoryName(path);
+                pi.UseShellExecute = true;
+                Process.Start(pi);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(path + ": " + ex.Message, "Opening failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
 
         public MainForm(SpringPaths paths = null, SpringScanner scanner = null, PlasmaDownloader.PlasmaDownloader downloader = null) {
             InitializeComponent();
@@ -41,7 +56,7 @@ namespace Benchmarker
                     foreach (var d in springDownloader.Downloads.Where(x => x.IsComplete == null))
                         tbDownloads.AppendText(string.Format("{1:F0}% {0}  ETA: {2}  {3}\n",
                                                              d.Name,
-                                                             d.IndividualProgress,
+                                                             d.TotalProgress,
                                                              d.TimeRemaining,
                                                              d.IsComplete));
                 };
@@ -113,7 +128,11 @@ namespace Benchmarker
         }
 
         void btnDataSheet_Click(object sender, EventArgs e) {
-            if (!string.IsNullOrEmpty(csvPath)) Process.Start(csvPath);
+            try {
+                SafeStart(batchResult.SaveAndGetCsvFileName());
+            } catch (Exception ex) {
+                Trace.TraceError(ex.ToString());
+            }
         }
 
         void btnLoad_Click(object sender, EventArgs e) {
@@ -155,13 +174,11 @@ namespace Benchmarker
                 Title = "Load results of benchmark run"
             };
             if (form.ShowDialog() == DialogResult.OK) {
-                batchResult = BatchRunResult.Load(form.FileName, out csvPath);
+                batchResult = BatchRunResult.Load(form.FileName);
                 if (batchResult != null) {
                     btnGraphs.Enabled = true;
                     btnDataSheet.Enabled = true;
-                    var graph = new GraphsForm(batchResult);
-                    graph.Show();
-                    Process.Start(csvPath);
+
                     tbResults.Clear();
                     foreach (var run in batchResult.RunEntries) {
                         tbResults.AppendText(string.Format("== RUN {0} {1} ==\n", run.TestCase, run.Benchmark));
@@ -232,42 +249,8 @@ namespace Benchmarker
                 return;
             }
 
-            testedBatch.RunCompleted += (run, benchmark, arg3) =>
-                {
-                    InvokeIfNeeded(() =>
-                        {
-                            tbResults.AppendText(string.Format("== RUN {0} {1} ==\n", run, benchmark));
-                            tbResults.AppendText(arg3);
-                        });
-                };
-
-            testedBatch.AllCompleted += (result) =>
-                {
-                    batchResult = result;
-                    string jsonPath;
-                    result.SaveFiles(lastUsedBatchFolder ?? springPaths.WritableDirectory, out csvPath, out jsonPath);
-                    //Process.Start(jsonPath);
-                        InvokeIfNeeded(() =>
-                            {
-                                btnStart.Enabled = true;
-                                btnStop.Enabled = false;
-                                btnDataSheet.Enabled = true;
-                                btnGraphs.Enabled = true;
-                                if (Environment.OSVersion.Platform != PlatformID.Unix) {
-                                    var form = new GraphsForm(result);
-                                    form.Show();
-
-                                    try {
-                                        Process.Start(csvPath);
-                                    } catch (Exception ex) {
-                                        Trace.TraceError(ex.ToString());
-                                    }
-                                }
-                                else {
-                                    MessageBox.Show("Test batch run complete, please open the graph and datasheet by pressing buttons on the left");
-                                }
-                            });
-                };
+            testedBatch.RunCompleted += TestedBatchOnRunCompleted;
+            testedBatch.AllCompleted += TestedBatchOnAllCompleted;
 
             new Thread(() =>
                 {
@@ -277,6 +260,25 @@ namespace Benchmarker
 
             btnStart.Enabled = false;
             btnStop.Enabled = true;
+        }
+
+        void TestedBatchOnAllCompleted(BatchRunResult result) {
+            result.SaveFiles(lastUsedBatchFolder ?? springPaths.WritableDirectory);
+            batchResult = result;
+            InvokeIfNeeded(() =>
+            {
+                btnStart.Enabled = true;
+                btnStop.Enabled = false;
+                btnDataSheet.Enabled = true;
+                btnGraphs.Enabled = true;
+                MessageBox.Show("Test batch run complete, please open the graph and datasheet by pressing buttons on the left");
+            });
+
+        }
+
+        void TestedBatchOnRunCompleted(TestCase run, Benchmark benchmark, string arg3) {
+            var stringToAppend = string.Format("== RUN {0} {1} ==\n", run, benchmark) + arg3;
+                        InvokeIfNeeded(() => tbResults.AppendText(stringToAppend));
         }
 
         void btnStop_Click(object sender, EventArgs e) {
