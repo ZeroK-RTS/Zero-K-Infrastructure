@@ -220,6 +220,8 @@
             // 
             this.tbEngine.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbEngine.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.tbEngine.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.tbEngine.Location = new System.Drawing.Point(97, 49);
             this.tbEngine.Name = "tbEngine";
             this.tbEngine.Size = new System.Drawing.Size(184, 20);
@@ -238,6 +240,8 @@
             // 
             this.tbGame.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbGame.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.tbGame.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.tbGame.Location = new System.Drawing.Point(97, 102);
             this.tbGame.Name = "tbGame";
             this.tbGame.Size = new System.Drawing.Size(184, 20);

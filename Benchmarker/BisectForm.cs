@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using PlasmaDownloader;
 using PlasmaShared;
@@ -95,22 +96,35 @@ namespace Benchmarker
             return retVal;
         }
 
-        void BisectForm_Load(object sender, EventArgs e) {
+        void SetupAutoComplete() {
             try {
-                engineList = EngineDownload.GetDevelopEngineList();
-                modList = downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByTag.Keys).ToList();
+                try {
+                    engineList = EngineDownload.GetEngineList();
+                    modList = downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByTag.Keys).ToList();
+                } catch (Exception ex) {
+                    Trace.TraceError(ex.ToString());
+                    Invoke(new Action(() =>
+                        {
+                            MessageBox.Show("Failed to get list: {0}", ex.Message);
+                            Close();
+                       }));
+                    return;
+                }
+
+                Invoke(new Action(() =>
+                    {
+                        tbEngine.AutoCompleteCustomSource.AddRange(engineList.ToArray());
+                        tbEngineBisectTo.AutoCompleteCustomSource.AddRange(engineList.ToArray());
+                        tbGame.AutoCompleteCustomSource.AddRange(modList.ToArray());
+                        tbGameBisectTo.AutoCompleteCustomSource.AddRange(modList.ToArray());
+                    }));
             } catch (Exception ex) {
                 Trace.TraceError(ex.ToString());
-                MessageBox.Show("Failed to get list: {0}", ex.Message);
-                Close();
             }
+        }
 
-            tbEngine.AutoCompleteCustomSource.AddRange(engineList.ToArray());
-            tbEngineBisectTo.AutoCompleteCustomSource.AddRange(engineList.ToArray());
-
-            tbGame.AutoCompleteCustomSource.AddRange(modList.ToArray());
-            tbGameBisectTo.AutoCompleteCustomSource.AddRange(modList.ToArray());
-
+        void BisectForm_Load(object sender, EventArgs e) {
+            Task.Factory.StartNew(SetupAutoComplete);
             cbBenchmark.Items.AddRange(Benchmark.GetBenchmarks(springPaths).ToArray());
             cbConfigs.Items.AddRange(Config.GetConfigs(springPaths).ToArray());
             cmbScripts.Items.AddRange(StartScript.GetStartScripts(springPaths).ToArray());

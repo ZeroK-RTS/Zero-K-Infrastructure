@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using PlasmaDownloader;
 using PlasmaShared;
@@ -75,6 +77,7 @@ namespace Benchmarker
         }
 
         void MainForm_Load(object sender, EventArgs e) {
+            Task.Factory.StartNew(SetupAutoComplete);
             RefreshBenchmarks();
         }
 
@@ -159,6 +162,37 @@ namespace Benchmarker
             RefreshBenchmarks();
         }
 
+
+        void SetupAutoComplete()
+        {
+            try {
+                List<string> engineList = new List<string>();
+                List<string> modList = new List<string>();
+                try
+                {
+                    engineList = EngineDownload.GetEngineList();
+                    modList = springDownloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByTag.Keys).ToList();
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError(ex.ToString());
+                }
+
+                Invoke(new Action(() =>
+                {
+                    tbEngine.AutoCompleteCustomSource.AddRange(engineList.ToArray());
+                    tbGame.AutoCompleteCustomSource.AddRange(modList.ToArray());
+                }));
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.ToString());
+            }
+        }
+
+
+
+
         void btnRemoveRun_Click(object sender, EventArgs e) {
             if (lbTestCases.SelectedIndex >= 0) lbTestCases.Items.RemoveAt(lbTestCases.SelectedIndex);
         }
@@ -199,10 +233,7 @@ namespace Benchmarker
                     batchResult = result;
                     string jsonPath;
                     result.SaveFiles(lastUsedBatchFolder ?? springPaths.WritableDirectory, out csvPath, out jsonPath);
-
                     //Process.Start(jsonPath);
-                    Process.Start(csvPath);
-
                     Invoke(new Action(() =>
                         {
                             btnStart.Enabled = true;
@@ -211,6 +242,15 @@ namespace Benchmarker
                             btnGraphs.Enabled = true;
                             var form = new GraphsForm(result);
                             form.Show();
+
+                            try
+                            {
+                                Process.Start(csvPath);
+                            }
+                            catch (Exception ex)
+                            {
+                                Trace.TraceError(ex.ToString());
+                            }
                         }));
                 };
 

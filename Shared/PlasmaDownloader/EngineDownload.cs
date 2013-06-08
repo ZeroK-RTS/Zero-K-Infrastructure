@@ -23,11 +23,16 @@ namespace PlasmaDownloader
             Name = version;
         }
 
-        public static List<string> GetDevelopEngineList() {
-            var data = new WebClient().DownloadString(string.Format("{0}buildbot/default/develop/", EngineDownloadPath));
-            return Regex.Matches(data, "<img src=\"/icons/folder.gif\" alt=\"\\[DIR\\]\"></td><td><a href=\"([^\"]+)/\">\\1/</a>", RegexOptions.IgnoreCase)
-                 .OfType<Match>()
-                 .Select(x => x.Groups[1].Value).ToList();
+        public static List<string> GetEngineList() {
+            var data = new WebClient().DownloadString(string.Format("{0}buildbot/default/master/", EngineDownloadPath));
+            data += new WebClient().DownloadString(string.Format("{0}buildbot/default/develop/", EngineDownloadPath));
+
+            var comparer = new VersionNumberComparer();
+            var list =
+                Regex.Matches(data,
+                              "<img src=\"/icons/folder.gif\" alt=\"\\[DIR\\]\"></td><td><a href=\"([^\"]+)/\">\\1/</a>",
+                              RegexOptions.IgnoreCase).OfType<Match>().Select(x => x.Groups[1].Value).OrderBy(x => x, comparer).ToList();
+            return list;
         }
 
         public void Start() {
@@ -44,13 +49,8 @@ namespace PlasmaDownloader
                     }
 
                     // special hack for engine 91.0
-                    if (platform == "linux64" && Name == "91.0") {
-                        paths.Add("http://springrts.com/dl/spring_91.0.amd64.zip");
-                    } else if (platform == "linux32" && Name == "91.0")
-                    {
-                        paths.Add("http://springrts.com/dl/spring_91.0_portable_linux_i686.zip");
-                    }
-
+                    if (platform == "linux64" && Name == "91.0") paths.Add("http://springrts.com/dl/spring_91.0.amd64.zip");
+                    else if (platform == "linux32" && Name == "91.0") paths.Add("http://springrts.com/dl/spring_91.0_portable_linux_i686.zip");
 
                     paths.Add(string.Format("{0}buildbot/default/master/{1}/spring_{1}_{2}", EngineDownloadPath, Name, archiveName));
                     paths.Add(string.Format("{0}buildbot/default/develop/{1}/spring_{{develop}}{1}_{2}", EngineDownloadPath, Name, archiveName));
@@ -139,15 +139,12 @@ namespace PlasmaDownloader
                                                     ExtractArchive(target, targetDir);
                                                 }
                                             }
-                                            else {
-                                                ExtractArchive(target, targetDir);
-                                            }
+                                            else ExtractArchive(target, targetDir);
 
                                             Trace.TraceInformation("Install of {0} complete", Name);
                                             springPaths.SetEnginePath(targetDir);
                                             Finish(true);
-                                        } catch
-                                        (Exception ex) {
+                                        } catch (Exception ex) {
                                             try {
                                                 Directory.Delete(targetDir, true);
                                             } catch {}
@@ -192,6 +189,22 @@ namespace PlasmaDownloader
                 return len > 100000;
             } catch (Exception ex) {
                 return false;
+            }
+        }
+
+        public class VersionNumberComparer: IComparer<string>
+        {
+            public int Compare(string a, string b) {
+                var pa = a.Split(new char[] { '.', '-' });
+                var pb = b.Split(new char[] { '.', '-' });
+
+                for (var i = 0; i < Math.Min(pa.Length, pb.Length); i++) {
+                    int va;
+                    int vb;
+                    if (int.TryParse(pa[i], out va) && int.TryParse(pb[i], out vb) && va != vb) return va.CompareTo(vb);
+                    else if (pa[i] != pb[i]) return String.Compare(pa[i], pb[i], StringComparison.Ordinal);
+                }
+                return pa.Length.CompareTo(pb.Length);
             }
         }
     }
