@@ -11,7 +11,7 @@ namespace Tests
     public class EngineDownloadTests
     {
         public void GetDevelopList() {
-            var list = EngineDownload.GetDevelopEngineList();
+            var list = EngineDownload.GetEngineList();
             Assert.IsTrue(list.Count > 1);
         }
     }

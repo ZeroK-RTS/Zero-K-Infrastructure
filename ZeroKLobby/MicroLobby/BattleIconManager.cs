@@ -16,16 +16,14 @@ namespace ZeroKLobby.MicroLobby
     class BattleIconManager
     {
         readonly ObservableCollection<BattleIcon> battleIcons = new ObservableCollection<BattleIcon>();
-        Control control;
         public ObservableCollection<BattleIcon> BattleIcons { get { return battleIcons; } }
         public bool Running { get; set; }
         public event EventHandler<EventArgs<BattleIcon>> BattleAdded = delegate { };
         public event EventHandler<EventArgs<BattleIcon>> BattleChanged = delegate { };
         public event EventHandler<EventArgs<BattleIcon>> RemovedBattle = delegate { };
 
-        public BattleIconManager(Control control)
+        public BattleIconManager()
         {
-            this.control = control;
             Program.TasClient.BattleFound += TasClient_BattleFound;
             Program.TasClient.BattleEnded += TasClient_BattleEnded;
             Program.TasClient.BattleMapChanged += TasClient_BattleMapChanged;

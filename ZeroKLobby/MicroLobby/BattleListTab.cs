@@ -11,27 +11,7 @@ namespace ZeroKLobby.MicroLobby
 
         public BattleListTab() {
             InitializeComponent();
-        }
 
-        public bool TryNavigate(params string[] path) {
-            if (path.Length == 0) return false;
-            if (path[0] != PathHead) return false;
-
-            if (path.Length == 2 && !String.IsNullOrEmpty(path[1])) {
-                var gameShortcut = path[1];
-                if (battleListControl == null) Program.Conf.BattleFilter = gameShortcut;
-                else battleListControl.FilterText = gameShortcut;
-            }
-            else {
-                if (battleListControl == null) Program.Conf.BattleFilter = "";
-                else battleListControl.FilterText = "";
-            }
-            return true;
-        }
-
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        protected override void OnCreateControl() {
-            base.OnCreateControl();
             if (DesignMode) return;
 
             var lookingGlass = new PictureBox
@@ -52,7 +32,25 @@ namespace ZeroKLobby.MicroLobby
             // battle list
             battleListControl = new BattleListControl() { Dock = DockStyle.Fill };
             battlePanel.Controls.Add(battleListControl);
+
         }
+
+        public bool TryNavigate(params string[] path) {
+            if (path.Length == 0) return false;
+            if (path[0] != PathHead) return false;
+
+            if (path.Length == 2 && !String.IsNullOrEmpty(path[1])) {
+                var gameShortcut = path[1];
+                if (battleListControl == null) Program.Conf.BattleFilter = gameShortcut;
+                else battleListControl.FilterText = gameShortcut;
+            }
+            else {
+                if (battleListControl == null) Program.Conf.BattleFilter = "";
+                else battleListControl.FilterText = "";
+            }
+            return true;
+        }
+
 
         public string PathHead { get { return "battles"; } }
 
@@ -64,7 +62,8 @@ namespace ZeroKLobby.MicroLobby
             return null;
         }
 
-        public void Reload() {}
+        public void Reload() {
+        }
 
         public bool CanReload { get { return false; } }
 
@@ -86,5 +85,6 @@ namespace ZeroKLobby.MicroLobby
         void showOfficialButton_CheckedChanged(object sender, EventArgs e) {
             if (battleListControl != null) battleListControl.ShowOfficial = showOfficialBox.Checked;
         }
+
     }
 }

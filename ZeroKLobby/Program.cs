@@ -217,6 +217,7 @@ namespace ZeroKLobby
                 ToolTip = new ToolTipHandler();
                 JugglerBar = new JugglerBar(TasClient);
                 BrowserInterop = new BrowserInterop(TasClient, Conf);
+                BattleIconManager = new BattleIconManager();
 
                 Application.AddMessageFilter(ToolTip);
                 
@@ -228,7 +229,6 @@ namespace ZeroKLobby
                 if (Conf.StartMinimized) MainWindow.WindowState = FormWindowState.Minimized;
                 else MainWindow.WindowState = FormWindowState.Normal;
 
-                BattleIconManager = new BattleIconManager(MainWindow);
                 BattleBar = new BattleBar();
                 NewVersionBar = new NewVersionBar(SelfUpdater);
                 VoteBar = new VoteBar();
