@@ -36,7 +36,7 @@ namespace Benchmarker
             if (refresh) allBenchmarks = null;
             if (allBenchmarks != null) return allBenchmarks;
             allBenchmarks = new List<Benchmark>();
-            allBenchmarks = Batch.GetBenchmarkFolders(paths, "Games").SelectMany(x => x.GetDirectories("*.sdd").Select(y=> new Benchmark(y.FullName))).ToList();
+            allBenchmarks = Batch.GetBenchmarkFolders(paths, "games").SelectMany(x => x.GetDirectories("*.sdd").Select(y=> new Benchmark(y.FullName))).ToList();
             return allBenchmarks;
         }
 
@@ -123,12 +123,15 @@ namespace Benchmarker
         /// <summary>
         /// Validate content files - starts downloads
         /// </summary>
-        public string Validate(PlasmaDownloader.PlasmaDownloader downloader) {
+        public string Validate(PlasmaDownloader.PlasmaDownloader downloader, bool waitForDownload) {
             foreach (var dep in
                 GetDependencies().Where(x => !UnitSync.DependencyExceptions.Contains(x))) {
                 if (GetBenchmarks(downloader.SpringPaths).Any(y => y.GetSpringName() == dep || y.Name == dep)) continue;
                 var dl = downloader.GetResource(DownloadType.MOD, dep);
-                if (dl != null && dl.IsComplete == false) return "Failed to download dependency mod " + dep;
+                if (dl != null && waitForDownload) {
+                    dl.WaitHandle.WaitOne();
+                    if (dl.IsComplete == false) return "Failed to download dependency mod " + dep;
+                }
             }
             return null;
         }

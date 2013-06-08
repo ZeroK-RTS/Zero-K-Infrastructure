@@ -39,7 +39,7 @@ namespace Benchmarker
         }
 
         /// <summary>
-        /// Returns folders of interest - for example if you set "Games" it will look in all datadirs and current dir for "Games" and "Benchmarks/Games"
+        /// Returns folders of interest - for example if you set "games" it will look in all datadirs and current dir for "Games" and "Benchmarks/Games"
         /// </summary>
         public static List<DirectoryInfo> GetBenchmarkFolders(SpringPaths paths, string folderName) {
             var dirsToCheck = new List<string>(paths.DataDirectories);
@@ -92,17 +92,17 @@ namespace Benchmarker
         /// <summary>
         /// Validates content - downloads files
         /// </summary>
-        public string Validate(PlasmaDownloader.PlasmaDownloader downloader) {
-            if (!Benchmarks.Any()) return "No benchmarks selected - please add benchmarks (mutators/games) into Gaqmes or Benchmarks/Games folder - in the folder.sdd format";
+        public string Validate(PlasmaDownloader.PlasmaDownloader downloader, bool waitForDownload) {
+            if (!Benchmarks.Any()) return "No benchmarks selected - please add benchmarks (mutators/games) into Gaqmes or Benchmarks/games folder - in the folder.sdd format";
             if (!TestCases.Any()) return "Please add test case runs using add button here";
 
             foreach (var bench in Benchmarks) {
-                var ret = bench.Validate(downloader);
+                var ret = bench.Validate(downloader, waitForDownload);
                 if (ret != null) return ret;
             }
 
             foreach (var run in TestCases) {
-                var ret = run.Validate(downloader);
+                var ret = run.Validate(downloader, waitForDownload);
                 if (ret != null) return ret;
             }
             return "OK";

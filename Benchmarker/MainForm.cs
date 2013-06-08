@@ -79,7 +79,7 @@ namespace Benchmarker
         }
 
         void benchmarkList_ItemCheck(object sender, ItemCheckEventArgs e) {
-            ((Benchmark)benchmarkList.Items[e.Index]).Validate(springDownloader);
+            ((Benchmark)benchmarkList.Items[e.Index]).Validate(springDownloader, false);
         }
 
         void btnAddTest_Click(object sender, EventArgs e) {
@@ -119,7 +119,7 @@ namespace Benchmarker
                         tbGame.Text = firstRun.Game;
                         cbConfigs.SelectedValue = firstRun.Config;
 
-                        batch.Validate(springDownloader);
+                        batch.Validate(springDownloader, false);
 
                         lastUsedBatchFolder = Path.GetDirectoryName(sd.FileName);
                     }
@@ -179,7 +179,7 @@ namespace Benchmarker
             tbResults.Clear();
 
             testedBatch = CreateBatchFromGui();
-            var validity = testedBatch.Validate(springDownloader);
+            var validity = testedBatch.Validate(springDownloader, false);
             if (validity != "OK") {
                 MessageBox.Show(validity);
                 return;
@@ -214,7 +214,11 @@ namespace Benchmarker
                         }));
                 };
 
-            new Thread(() => { testedBatch.RunTests(springPaths); }).Start();
+            new Thread(() =>
+                {
+                    testedBatch.Validate(springDownloader, true);
+                    testedBatch.RunTests(springPaths);
+                }).Start();
 
             btnStart.Enabled = false;
             btnStop.Enabled = true;
