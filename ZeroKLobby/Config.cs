@@ -65,14 +65,14 @@ namespace ZeroKLobby
         [DisplayName("Color: Background")]
         [XmlIgnore]
         public Color BgColor {
-            get { return Color.FromArgb(BgColorInt); }
+            get { return Color.FromArgb(BgColInt); }
             set {
-                BgColorInt = value.ToArgb();
+                BgColInt = value.ToArgb();
                 UpdateFadeColor();
             }
         }
         [Browsable(false)]
-        public int BgColorInt = Color.White.ToArgb();
+        public int BgColInt = -12829636;
         [Browsable(false)]
         public bool BlockNonFriendPm;
 
@@ -95,7 +95,7 @@ namespace ZeroKLobby
         public string DataFolder { get; set; }
 
         [Browsable(false)]
-        public int DefaultPlayerColorInt = 16776960; // default teal color
+        public int DefaultPlayerColInt = 16776960; // default teal color
         [Category("Debugging")]
         [DisplayName("Disable Lobby Auto Update")]
         [Description("Lobby will not update itself to latest release version. Use this if you are compiling your own lobby")]
@@ -112,9 +112,9 @@ namespace ZeroKLobby
         [Category("Chat")]
         [DisplayName("Color: Emote")]
         [XmlIgnore]
-        public Color EmoteColor { get { return Color.FromArgb(EmoteColorInt); } set { EmoteColorInt = value.ToArgb(); } }
+        public Color EmoteColor { get { return Color.FromArgb(EmoteColInt); } set { EmoteColInt = value.ToArgb(); } }
         [Browsable(false)]
-        public int EmoteColorInt = Color.FromArgb(178, 0, 178).ToArgb();
+        public int EmoteColInt = -1315956;
         [Category("General")]
         [DisplayName("Enable voice commands (EXPERIMENTAL)")]
         [Description("Control the game using your voice")]
@@ -154,9 +154,9 @@ namespace ZeroKLobby
         [Category("Chat")]
         [DisplayName("Color: Joins")]
         [XmlIgnore]
-        public Color JoinColor { get { return Color.FromArgb(JoinColorInt); } set { JoinColorInt = value.ToArgb(); } }
+        public Color JoinColor { get { return Color.FromArgb(JoinColInt); } set { JoinColInt = value.ToArgb(); } }
         [Browsable(false)]
-        public int JoinColorInt = Color.FromArgb(42, 140, 42).ToArgb();
+        public int JoinColInt = -11759450;
 
         [Browsable(false)]
         public FormWindowState LastWindowState { get; set; }
@@ -164,9 +164,9 @@ namespace ZeroKLobby
         [Category("Chat")]
         [DisplayName("Color: Leaves")]
         [XmlIgnore]
-        public Color LeaveColor { get { return Color.FromArgb(LeaveColorInt); } set { LeaveColorInt = value.ToArgb(); } }
+        public Color LeaveColor { get { return Color.FromArgb(LeaveColInt); } set { LeaveColInt = value.ToArgb(); } }
         [Browsable(false)]
-        public int LeaveColorInt = Color.FromArgb(102, 54, 31).ToArgb();
+        public int LeaveColInt = -14127486;
         [Category("Chat")]
         [DisplayName("Disable Context Menu on Leftclick")]
         [Description("Only right clicking shows context menu. Left clicking on a playername will select them in the player list.")]
@@ -176,9 +176,9 @@ namespace ZeroKLobby
         [Category("Chat")]
         [DisplayName("Color: Links")]
         [XmlIgnore]
-        public Color LinkColor { get { return Color.FromArgb(LinkColorInt); } set { LinkColorInt = value.ToArgb(); } }
+        public Color LinkColor { get { return Color.FromArgb(LinkColInt); } set { LinkColInt = value.ToArgb(); } }
         [Browsable(false)]
-        public int LinkColorInt = Color.Blue.ToArgb();
+        public int LinkColInt = -13058068;
 
 
         [Category("Account")]
@@ -207,22 +207,22 @@ namespace ZeroKLobby
         [Category("Chat")]
         [DisplayName("Color: Notice")]
         [XmlIgnore]
-        public Color NoticeColor { get { return Color.FromArgb(NoticeColorInt); } set { NoticeColorInt = value.ToArgb(); } }
+        public Color NoticeColor { get { return Color.FromArgb(NoticeColInt); } set { NoticeColInt = value.ToArgb(); } }
         [Browsable(false)]
-        public int NoticeColorInt = Color.Red.ToArgb();
+        public int NoticeColInt = -1315956;
         [Category("Chat")]
         [DisplayName("Color: Other text")]
         [Description("Color for text on tooltip and on channel tab")]
         [XmlIgnore]
         public Color OtherTextColor {
-            get { return Color.FromArgb(OtherTextColorInt); }
+            get { return Color.FromArgb(OtherTextColInt); }
             set {
-                OtherTextColorInt = value.ToArgb();
+                OtherTextColInt = value.ToArgb();
                 UpdateFadeColor();
             }
         }
         [Browsable(false)]
-        public int OtherTextColorInt = Color.Black.ToArgb();
+        public int OtherTextColInt = -16777216;
         [Browsable(false)]
         public bool ResetUiKeysHack4 { get; set; }
 
@@ -263,14 +263,14 @@ namespace ZeroKLobby
         [Description("Color for the text on chat window and on playerlist")] //added safwan [tweak]
         [XmlIgnore]
         public Color TextColor {
-            get { return Color.FromArgb(TextColorInt); }
+            get { return Color.FromArgb(TextColInt); }
             set {
-                TextColorInt = value.ToArgb();
+                TextColInt = value.ToArgb();
                 UpdateFadeColor();
             }
         }
         [Browsable(false)]
-        public int TextColorInt = Color.Black.ToArgb();
+        public int TextColInt = -1;
 
         /// <summary>
         /// Keeps datetime of last topic change for each channel
