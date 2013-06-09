@@ -501,7 +501,11 @@ namespace PlasmaShared
 
         void MainThreadFunction()
         {
-            InitialScan();
+            try {
+                InitialScan();
+            } catch (Exception ex) {
+                Trace.TraceError("Error in scanner initial scan: {0}",ex);
+            }
 
             try
             {
@@ -509,49 +513,47 @@ namespace PlasmaShared
                 var workDone = 0;
                 while (!isDisposed)
                 {
-                    Thread.Sleep(ScannerCycleTime);
+                    try {
+                        Thread.Sleep(ScannerCycleTime);
 
-                    if (isCacheDirty && DateTime.Now.Subtract(lastCacheSave).TotalSeconds > DirtyCacheSave)
-                    {
-                        lastCacheSave = DateTime.Now;
-                        isCacheDirty = false;
-                        SaveCache();
-                    }
-
-                    WorkItem workItem;
-                    while ((workItem = GetNextWorkItem()) != null)
-                    {
-                        if (isDisposed) return;
-
-                        if (!isWorking)
-                        {
-                            isWorking = true;
-                            workDone = 0;
-                            workTotal = GetWorkCost();
-                            WorkStarted(this, new ProgressEventArgs(workDone, workTotal, workItem.CacheItem.FileName));
-                        }
-                        else
-                        {
-                            workDone++;
-                            workTotal = Math.Max(GetWorkCost(), workTotal);
-                            WorkProgressChanged(this,
-                                                new ProgressEventArgs(workDone,
-                                                                      workTotal,
-                                                                      string.Format("{0} {1}", workItem.Operation, workItem.CacheItem.FileName)));
+                        if (isCacheDirty && DateTime.Now.Subtract(lastCacheSave).TotalSeconds > DirtyCacheSave) {
+                            lastCacheSave = DateTime.Now;
+                            isCacheDirty = false;
+                            SaveCache();
                         }
 
-                        if (workItem.Operation == WorkItem.OperationType.Hash) PerformHashOperation(workItem);
-                        if (workItem.Operation == WorkItem.OperationType.UnitSync)
-                        {
-                            if (springPaths.UnitSyncDirectory != null) PerformUnitSyncOperation(workItem); // if there is no unitsync, retry later
-                            else AddWork(workItem.CacheItem, WorkItem.OperationType.UnitSync, DateTime.Now.AddSeconds(RescheduleServerQuery), false);
+                        WorkItem workItem;
+                        while ((workItem = GetNextWorkItem()) != null) {
+                            if (isDisposed) return;
+
+                            if (!isWorking) {
+                                isWorking = true;
+                                workDone = 0;
+                                workTotal = GetWorkCost();
+                                WorkStarted(this, new ProgressEventArgs(workDone, workTotal, workItem.CacheItem.FileName));
+                            }
+                            else {
+                                workDone++;
+                                workTotal = Math.Max(GetWorkCost(), workTotal);
+                                WorkProgressChanged(this,
+                                                    new ProgressEventArgs(workDone,
+                                                                          workTotal,
+                                                                          string.Format("{0} {1}", workItem.Operation, workItem.CacheItem.FileName)));
+                            }
+
+                            if (workItem.Operation == WorkItem.OperationType.Hash) PerformHashOperation(workItem);
+                            if (workItem.Operation == WorkItem.OperationType.UnitSync) {
+                                if (springPaths.UnitSyncDirectory != null) PerformUnitSyncOperation(workItem); // if there is no unitsync, retry later
+                                else AddWork(workItem.CacheItem, WorkItem.OperationType.UnitSync, DateTime.Now.AddSeconds(RescheduleServerQuery), false);
+                            }
+                            if (workItem.Operation == WorkItem.OperationType.ReAskServer) GetResourceData(workItem);
                         }
-                        if (workItem.Operation == WorkItem.OperationType.ReAskServer) GetResourceData(workItem);
-                    }
-                    if (isWorking)
-                    {
-                        isWorking = false;
-                        WorkStopped(this, EventArgs.Empty);
+                        if (isWorking) {
+                            isWorking = false;
+                            WorkStopped(this, EventArgs.Empty);
+                        }
+                    } catch (Exception ex) {
+                        Trace.TraceError("Exception in scanning thread: {0}",ex);
                     }
                 }
             }
