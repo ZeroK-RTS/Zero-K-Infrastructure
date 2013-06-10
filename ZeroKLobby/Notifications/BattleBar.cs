@@ -190,7 +190,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
                         SyncStatus = HasAllResources() ? SyncStatuses.Synced : SyncStatuses.Unsynced,
                         IsSpectator = desiredSpectatorState,
                         Side = cbSide.SelectedIndex >= 0 ? cbSide.SelectedIndex : 0,
-                        TeamColor = Program.Conf.DefaultPlayerColInt,
+                        TeamColor = Program.Conf.DefaultPlayerColorInt,
                         IsReady = true,
                     };
                     client.SendMyBattleStatus(status);

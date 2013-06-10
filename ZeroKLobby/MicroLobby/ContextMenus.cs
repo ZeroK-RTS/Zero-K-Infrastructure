@@ -268,7 +268,7 @@ namespace ZeroKLobby.MicroLobby
                                 if (colorDialog.ShowDialog() == DialogResult.OK)
                                 {
                                     var newColor = (int)(MyCol)colorDialog.Color;
-                                    Program.Conf.DefaultPlayerColInt = newColor;
+                                    Program.Conf.DefaultPlayerColorInt = newColor;
                                     Program.SaveConfig();
                                     var newStatus = Program.TasClient.MyBattleStatus.Clone();
                                     newStatus.TeamColor = newColor;
