@@ -26,8 +26,11 @@ namespace ZeroKLobby.MicroLobby
 
                     if (control is WebBrowser) {
                         var brows = control as WebBrowser;
-                        var htmlDoc = brows.Document.DomDocument as HTMLDocument;
-                        if (htmlDoc != null) htmlDoc.parentWindow.scrollBy(0, -delta);
+                        if (brows.Document != null) //check whether the page exist before adding a scroll bar
+                        {
+                            var htmlDoc = brows.Document.DomDocument as HTMLDocument;
+                            if (htmlDoc != null) htmlDoc.parentWindow.scrollBy(0, -delta);
+                        }
                     }
                     else {
                         if (Environment.OSVersion.Platform == PlatformID.Unix) {

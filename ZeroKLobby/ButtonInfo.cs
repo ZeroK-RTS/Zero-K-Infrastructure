@@ -60,6 +60,8 @@ namespace ZeroKLobby
             button.Width = Width;
             button.TextAlign = ContentAlignment.MiddleCenter;
             button.Text = Label;
+            button.Margin = new Padding(0, 0, 0, 3);
+            button.Cursor = Cursors.Hand;
             if (Icon != null) {
                 button.Image = Icon;
                 //button.ImageAlign = ContentAlignment.MiddleLeft;

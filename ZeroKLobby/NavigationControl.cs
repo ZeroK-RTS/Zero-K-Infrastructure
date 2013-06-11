@@ -121,10 +121,6 @@ namespace ZeroKLobby
             AddTabPage(new DownloaderTab(), "Rapid");
             
             foreach (var but in ButtonList) flowLayoutPanel1.Controls.Add(but.GetButton());
-            foreach (Control button in flowLayoutPanel1.Controls) {
-                button.Margin = new Padding(0,0,0,3);
-                button.Cursor = Cursors.Hand;
-            }
             flowLayoutPanel1.BringToFront();
         }
 
