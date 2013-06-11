@@ -40,8 +40,10 @@ namespace ZeroKLobby
 
         public void Dispose() {
             Application.RemoveMessageFilter(this);
-            timer.Stop();
-            timer = null;
+            if (timer != null) {
+                timer.Stop();
+                timer = null;
+            }
         }
 
         public void Clear(object control) {

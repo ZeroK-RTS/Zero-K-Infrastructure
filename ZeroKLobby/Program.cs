@@ -103,11 +103,8 @@ namespace ZeroKLobby
 
 
                 var contentDir = !string.IsNullOrEmpty(Conf.DataFolder) ? Conf.DataFolder : StartupPath;
-                if (!Directory.Exists(contentDir) || !SpringPaths.IsDirectoryWritable(contentDir) || pickInitFolder)
-                {
-                    var dc = new SelectWritableFolder() {SelectedPath = 
-                        
-                        SpringPaths.GetMySpringDocPath()};
+                if (!Directory.Exists(contentDir) || !SpringPaths.IsDirectoryWritable(contentDir) || pickInitFolder) {
+                    var dc = new SelectWritableFolder() { SelectedPath = SpringPaths.GetMySpringDocPath() };
                     if (dc.ShowDialog() != DialogResult.OK) return;
                     contentDir = dc.SelectedPath;
                 }
@@ -115,8 +112,11 @@ namespace ZeroKLobby
                 else Conf.DataFolder = null;
 
                 if (!SpringPaths.IsDirectoryWritable(StartupPath) || StartupPath.Contains("Local\\Apps")) {
-                    MessageBox.Show(string.Format("Startup directory is not writable. \r\n Please use the newly created desktop icon to start Zero-K not the old one!\r\n Zero-K.exe will be moved to {0}", contentDir));
-                    var newTarget = Path.Combine(contentDir,"Zero-K.exe");
+                    MessageBox.Show(
+                        string.Format(
+                            "Startup directory is not writable. \r\n Please use the newly created desktop icon to start Zero-K not the old one!\r\n Zero-K.exe will be moved to {0}",
+                            contentDir));
+                    var newTarget = Path.Combine(contentDir, "Zero-K.exe");
                     if (SelfUpdater.CheckForUpdate(newTarget, true)) {
                         Conf.Save(Path.Combine(contentDir, Config.ConfigFileName));
                         Process.Start(newTarget);
@@ -173,7 +173,10 @@ namespace ZeroKLobby
                 Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
 
                 var isLinux = Environment.OSVersion.Platform == PlatformID.Unix;
-                TasClient = new TasClient(TasClientInvoker, string.Format("ZK {0}{1}", SelfUpdater.CurrentVersion, isLinux? " linux":""), isLinux?GlobalConst.ZkLobbyUserCpuLinux :  GlobalConst.ZkLobbyUserCpu, true);
+                TasClient = new TasClient(TasClientInvoker,
+                                          string.Format("ZK {0}{1}", SelfUpdater.CurrentVersion, isLinux ? " linux" : ""),
+                                          isLinux ? GlobalConst.ZkLobbyUserCpuLinux : GlobalConst.ZkLobbyUserCpu,
+                                          true);
 
                 SayCommandHandler = new SayCommandHandler(TasClient);
 
@@ -187,7 +190,9 @@ namespace ZeroKLobby
                         Trace.TraceInformation("TASC login accepted");
                         Trace.TraceInformation("Server is using Spring version {0}", TasClient.ServerSpringVersion);
                         if (SpringPaths.SpringVersion != TasClient.ServerSpringVersion) Downloader.GetAndSwitchEngine(TasClient.ServerSpringVersion);
-                        if (Environment.OSVersion.Platform == PlatformID.Unix || Conf.UseExternalBrowser) MainWindow.navigationControl.Path = string.Format("chat/channel/{0}", Conf.AutoJoinChannels.OfType<string>().FirstOrDefault());
+                        if (Environment.OSVersion.Platform == PlatformID.Unix || Conf.UseExternalBrowser)
+                            MainWindow.navigationControl.Path = string.Format("chat/channel/{0}",
+                                                                              Conf.AutoJoinChannels.OfType<string>().FirstOrDefault());
                     };
 
                 TasClient.LoginDenied += (s, e) => Trace.TraceInformation("TASC login denied");
@@ -220,12 +225,12 @@ namespace ZeroKLobby
                 BattleIconManager = new BattleIconManager();
 
                 Application.AddMessageFilter(ToolTip);
-                
+
                 MainWindow = new MainWindow();
 
                 Application.AddMessageFilter(new ScrollMessageFilter());
-                
-                
+
+
                 if (Conf.StartMinimized) MainWindow.WindowState = FormWindowState.Minimized;
                 else MainWindow.WindowState = FormWindowState.Normal;
 
@@ -269,8 +274,10 @@ namespace ZeroKLobby
                 ShutDown();
             } catch (Exception ex) {
                 ErrorHandling.HandleException(ex, true);
-                Trace.TraceError("Error in application:" + ex);
+            } finally {
+                ShutDown();
             }
+            if (ErrorHandling.HasFatalException && !Program.CloseOnNext) Application.Restart();
         }
 
         internal static void SaveConfig() {
@@ -286,11 +293,13 @@ namespace ZeroKLobby
                 if (!FriendsWindow.Creatable) MainWindow.frdWindow.Close();
                 if (!Debugger.IsAttached) mutex.ReleaseMutex();
             } catch {}
-            if (ToolTip != null) ToolTip.Dispose();
-            if (Downloader != null) Downloader.Dispose();
-            if (SpringScanner != null) SpringScanner.Dispose();
-
-            Thread.Sleep(5000);
+            try {
+                if (ToolTip != null) ToolTip.Dispose();
+                if (Downloader != null) Downloader.Dispose();
+                if (SpringScanner != null) SpringScanner.Dispose();
+            } catch {}
+            //Thread.Sleep(5000);
+            Application.Exit();
         }
 
 
@@ -303,14 +312,12 @@ namespace ZeroKLobby
         static void Application_ThreadException(object sender, ThreadExceptionEventArgs e) {
             try {
                 ErrorHandling.HandleException(e.Exception, true);
-                Trace.TraceError("unhandled exception: {0}", e.Exception);
             } catch {}
         }
 
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) {
             try {
                 ErrorHandling.HandleException((Exception)e.ExceptionObject, e.IsTerminating);
-                Trace.TraceError("unhandled exception: {0}", e.ExceptionObject);
             } catch {}
         }
 
@@ -318,7 +325,6 @@ namespace ZeroKLobby
         static void UnhandledException(object sender, UnhandledExceptionEventArgs e) {
             try {
                 ErrorHandling.HandleException((Exception)e.ExceptionObject, e.IsTerminating);
-                Trace.TraceError("unhandled exception: {0}", e.ExceptionObject);
             } catch {}
         }
     }

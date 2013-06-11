@@ -263,7 +263,7 @@ namespace ZeroKLobby
 
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Program.CloseOnNext = true;
+            if (e.CloseReason == CloseReason.UserClosing) Program.CloseOnNext = true;
             if (Program.TasClient != null) Program.TasClient.Disconnect();
             Program.Conf.LastWindowState = WindowState;
             Program.SaveConfig();
