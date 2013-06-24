@@ -15,19 +15,27 @@ end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+
 include("keysym.h.lua")
 
 local spWarpMouse = Spring.WarpMouse
 local spSetMouseCursor = Spring.SetMouseCursor
 local spGetMapDrawMode = Spring.GetMapDrawMode
+local spGetCameraState = Spring.GetCameraState
 local glColor = gl.Color
 local glRect = gl.Rect
+
+--Spring.Utilities = Spring.Utilities or {}
+--VFS.Include("LuaRules/Utilities/math.lua")
 
 local LETTERBOX_ENTER_SPEED = 0.1  -- % of screen height/s
 local LETTERBOX_LEAVE_SPEED = 0.1
 local LETTERBOX_BOUNDARY = 0.15
 local FADE_SPEED = 0.5  -- 50% faded out after 1s
 local UPDATE_PERIOD = 0.05
+local RADIANS_TO_DEGREES = 180/math.pi
+
+local drawListCamScreen
 
 local vsx, vsy = gl.GetViewSizes()
 local isInCutscene = false
@@ -37,6 +45,10 @@ local letterboxPos = 0
 local isFadingIn = false
 local isFadingOut = false
 local screenFadeAlpha = 0
+local showCameraScreen = false
+local camState = spGetCameraState()
+local posCamDataX = vsx*0.85
+local posCamDataY = vsy*0.3
 
 local lastDrawMode = "normal"
 local lastIconDist = Spring.GetConfigInt("UnitIconDist", 150)
@@ -120,6 +132,33 @@ local function ProgressCutsceneExit(dt)
   end
 end
 
+local function DrawListCameraScreen(crosshairSize)
+  gl.Vertex(vsx*0.05, vsy*0.55, 0)
+  gl.Vertex(vsx*0.05, vsy*0.8, 0)
+  gl.Vertex(vsx*0.05, vsy*0.8, 0)
+  gl.Vertex(vsx*0.45, vsy*0.8, 0)
+  
+  gl.Vertex(vsx*0.95, vsy*0.55, 0)
+  gl.Vertex(vsx*0.95, vsy*0.8, 0)
+  gl.Vertex(vsx*0.95, vsy*0.8, 0)
+  gl.Vertex(vsx*0.55, vsy*0.8, 0)
+  
+  gl.Vertex(vsx*0.95, vsy*0.45, 0)
+  gl.Vertex(vsx*0.95, vsy*0.2, 0)
+  gl.Vertex(vsx*0.95, vsy*0.2, 0)
+  gl.Vertex(vsx*0.55, vsy*0.2, 0)
+  
+  gl.Vertex(vsx*0.05, vsy*0.45, 0)
+  gl.Vertex(vsx*0.05, vsy*0.2, 0)
+  gl.Vertex(vsx*0.05, vsy*0.2, 0)
+  gl.Vertex(vsx*0.45, vsy*0.2, 0)
+  
+  gl.Vertex(vsx/2 - crosshairSize, vsy/2, 0)
+  gl.Vertex(vsx/2 + crosshairSize, vsy/2, 0)
+  gl.Vertex(vsx/2, vsy/2 + crosshairSize, 0)
+  gl.Vertex(vsx/2, vsy/2 - crosshairSize, 0)
+end
+
 -- controls fade-out/fade-in/letterboxing progression; hides and locks mouse
 local timer = 0
 function widget:Update(dt)
@@ -138,6 +177,7 @@ function widget:Update(dt)
           ProgressCutsceneEntrance(timer)
         end
       end
+      
       if isFadingIn then
         screenFadeAlpha = screenFadeAlpha - FADE_SPEED*timer
         if screenFadeAlpha <= 0 then
@@ -150,6 +190,11 @@ function widget:Update(dt)
           screenFadeAlpha = 1
           isFadingOut = false
         end
+      end
+      
+      if showCameraScreen then
+        camState = spGetCameraState()
+        camState.px, camState.py, camState.pz = Spring.GetCameraPosition()
       end
       timer = 0
     end
@@ -178,6 +223,22 @@ local function FadeIn(instant)
   end
 end
 
+local function SetDrawCameraScreen(bool)
+  showCameraScreen = bool
+end
+
+local function DrawCameraScreen()
+  gl.LineWidth(3)
+  gl.Color(1,1,1,1)
+  gl.CallList(drawListCamScreen)
+  gl.Text("X\t\t"..math.ceil(camState.px + 0.5), posCamDataX,posCamDataY, 12, "s")
+  gl.Text("Y\t\t"..math.ceil(camState.py + 0.5), posCamDataX,posCamDataY-14, 12, "s")
+  gl.Text("Z\t\t"..math.ceil(camState.pz + 0.5), posCamDataX,posCamDataY-28, 12, "s")
+  gl.Text("RX\t"..math.ceil(camState.rx*RADIANS_TO_DEGREES + 0.5), posCamDataX,posCamDataY-42, 12, "s")
+  gl.Text("RY\t"..math.ceil(camState.ry*RADIANS_TO_DEGREES + 0.5), posCamDataX,posCamDataY-56, 12, "s")
+  gl.LineWidth(1)
+end
+
 function widget:Initialize()
   if not WG.IsGUIHidden then
     Spring.Log(widget:GetInfo().name, LOG.ERROR, "Cutscenes cannot work without GUI-hiding API. Shutting down...")
@@ -188,12 +249,15 @@ function widget:Initialize()
   WG.Cutscene = WG.Cutscene or {}
   WG.Cutscene.EnterCutscene = EnterCutscene
   WG.Cutscene.LeaveCutscene = LeaveCutscene
+  WG.Cutscene.FadeIn = FadeIn
+  WG.Cutscene.FadeOut = FadeOut
+  WG.Cutscene.SetDrawCameraScreen = SetDrawCameraScreen
   
   WG.Cutscene.IsInCutscene = function() return isInCutscene end
   
-  WG.Cutscene.FadeIn = FadeIn
-  WG.Cutscene.FadeOut = FadeOut
   --WG.AddNoHideWidget(self)
+  
+  drawListCamScreen = gl.CreateList(gl.BeginEnd, GL.LINES, DrawListCameraScreen, vsy*0.05)
 end
 
 function widget:Shutdown()
@@ -202,12 +266,13 @@ function widget:Shutdown()
     WG.UnhideGUI()
   end
   
+  Spring.SendCommands("disticon " .. lastIconDist)
   if lastDrawMode ~= "normal" then
-    local cmd = DRAW_MODE_COMMANDS[drawMode]
+    local cmd = DRAW_MODE_COMMANDS[lastDrawMode]
     Spring.SendCommands(cmd)
   end
-  Spring.SendCommands("disticon " .. lastIconDist)
   
+  gl.DeleteList(drawListCamScreen)
   WG.Cutscene = nil
 end
 
@@ -232,6 +297,17 @@ function widget:KeyPress(key, modifier, isRepeat)
       return false
     elseif key == KEYSYMS.F5 then
       return true
+    else
+      -- allow screenshots
+      local keystr = Spring.GetKeySymbol(key)
+      local keybinds = Spring.GetKeyBindings(keystr) or {}
+      for i=1,#keybinds do
+        for key in pairs(keybinds[i]) do
+          if key == "screenshot" then
+            return false
+          end
+        end
+      end
     end
     return guiHidden -- eat the keypress if appropriate (so nobody can use it)
   end
@@ -259,6 +335,9 @@ function widget:DrawScreenEffects()
     glRect(0, vsy*(1-letterboxPos), vsx, vsy)  --top letterbox
     glRect(0, 0, vsx, vsy*letterboxPos)  --bottom letterbox
     glColor(1,1,1,1)
+    if showCameraScreen then
+      DrawCameraScreen()
+    end
   end
   if screenFadeAlpha > 0 then
     glColor(0,0,0,screenFadeAlpha)
@@ -269,6 +348,10 @@ end
 
 function widget:ViewResize(viewSizeX, viewSizeY)
   vsx, vsy = viewSizeX, viewSizeY
+  gl.DeleteList(drawListCamScreen)
+  drawListCamScreen = gl.CreateList(gl.BeginEnd, GL.LINES, DrawListCameraScreen, vsy*0.05)
+  posCamDataX = vsx*0.85
+  posCamDataY = vsy*0.3
 end
 
 -- block commands while in cutscene
