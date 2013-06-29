@@ -24,6 +24,11 @@ namespace ZeroKLobby
             };
         }
 
+        protected override void OnNewWindow(System.ComponentModel.CancelEventArgs e) {
+            e.Cancel = true;
+            Navigate(StatusText);
+        }
+
 
         protected override void OnNavigated(WebBrowserNavigatedEventArgs e)
         {
