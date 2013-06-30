@@ -30,7 +30,9 @@ $(function() {
         <img src="../../img/hostmulti.png" width="300" /></a><br />
       <br />
     }
-    @if (!Global.IsLobbyAccess && !m.IsScriptMission) {
+    
+    <!-- obsolete - just use ZKL -->
+    <!-- @if (!Global.IsLobbyAccess && !m.IsScriptMission) {
       <div class="border-test">
         If you don't have Zero-K lobby, download the mission archive and run Spring with the provided script:
 
@@ -40,6 +42,7 @@ $(function() {
       @*<!close zk warning>*@
 			<br />
     }
+    -->
     <span class="">@Html.BBCode(Model.Mission.Description)
       <br />
       <br />
@@ -161,7 +164,8 @@ $(function() {
     </table>
   </div>
   <!close scores>
-  @if (m.DescriptionStory != null && m.DescriptionStory != String.Empty)
+  <!-- FIXME: stupid thing keeps losing its line breaks!! -->
+  <!--@if (m.DescriptionStory != null && m.DescriptionStory != String.Empty)
   {
     <br />
     <br />
@@ -169,7 +173,7 @@ $(function() {
     <div id="story" class="collapse width-90">
         @Html.BBCode(m.DescriptionStory)
     </div>
-  }
+  }-->
 </div>
 <!close wrapper>
 @{Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.Mission.ForumThread });}
