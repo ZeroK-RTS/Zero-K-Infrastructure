@@ -49,9 +49,8 @@ namespace PlasmaShared
             var file = mission.Mutator.ToArray();
             var tempName = Path.GetTempFileName() + ".zip";
             File.WriteAllBytes(tempName, file);
-            var memStream = new MemoryStream(File.ReadAllBytes(tempName));
-            var toWrite = File.OpenWrite(tempName);
-            using (var zf = ZipArchive.Open(memStream))
+
+            using (var zf = ZipArchive.Open(new MemoryStream(File.ReadAllBytes(tempName))))
             {
                 UpdateEntry(zf, "modinfo.lua", Encoding.UTF8.GetBytes(GetModInfo(mission.NameWithVersion, mission.Mod, mission.Name, "ZK")));    // FIXME hardcoded crap
                 FixScript(mission, zf, "script.txt");
@@ -59,11 +58,10 @@ namespace PlasmaShared
                 modInfo.MissionScript = script;
                 //modInfo.ShortName = mission.Name;
                 modInfo.Name = mission.NameWithVersion;
-                zf.SaveTo(toWrite, new CompressionInfo() {DeflateCompressionLevel = CompressionLevel.BestCompression, Type = CompressionType.Deflate});
+                zf.SaveTo(File.OpenWrite(tempName), new CompressionInfo() {DeflateCompressionLevel = CompressionLevel.BestCompression, Type = CompressionType.Deflate});
             }
-            memStream.Close();
-            toWrite.Close();
             mission.Mutator = new Binary(File.ReadAllBytes(tempName));
+            
             File.Delete(tempName);
             
             var resource = db.Resources.FirstOrDefault(x => x.MissionID == mission.MissionID); 
