@@ -59,7 +59,7 @@ namespace PlasmaShared
                 //modInfo.ShortName = mission.Name;
                 modInfo.Name = mission.NameWithVersion;
                 var toWrite = File.OpenWrite(tempName);
-                zf.SaveTo(toWrite, new CompressionInfo() {DeflateCompressionLevel = CompressionLevel.BestCompression, Type = CompressionType.Deflate});
+                zf.SaveTo(toWrite, new CompressionInfo() {DeflateCompressionLevel = CompressionLevel.BestCompression, Type = CompressionType.LZMA});
                 toWrite.Close();
             }
             mission.Mutator = new Binary(File.ReadAllBytes(tempName));
