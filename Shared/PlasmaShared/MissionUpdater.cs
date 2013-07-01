@@ -47,7 +47,7 @@ namespace PlasmaShared
 
         public void UpdateMission(ZkDataContext db, Mission mission, Mod modInfo) {
             var file = mission.Mutator.ToArray();
-            var tempName = Path.GetTempFileName() + ".zip";
+            var tempName = "C:/Temp/kingraptor/blablabla.zip"; //Path.GetTempFileName() + ".zip";
             File.WriteAllBytes(tempName, file);
 
             using (var zf = ZipArchive.Open(new MemoryStream(File.ReadAllBytes(tempName))))
