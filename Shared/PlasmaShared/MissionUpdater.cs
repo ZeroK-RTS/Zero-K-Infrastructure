@@ -61,10 +61,9 @@ namespace PlasmaShared
                 var toWrite = File.OpenWrite(tempName);
                 zf.SaveTo(toWrite, new CompressionInfo() {DeflateCompressionLevel = CompressionLevel.BestCompression, Type = CompressionType.Deflate});
                 toWrite.Close();
-                throw new Exception("bla");
             }
             mission.Mutator = new Binary(File.ReadAllBytes(tempName));
-            //File.Delete(tempName);    //FIXME
+            File.Delete(tempName);
             
             var resource = db.Resources.FirstOrDefault(x => x.MissionID == mission.MissionID); 
             if (resource == null)
