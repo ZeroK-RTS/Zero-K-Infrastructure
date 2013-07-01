@@ -61,10 +61,11 @@ namespace PlasmaShared
                 modInfo.Name = mission.NameWithVersion;
                 zf.SaveTo(File.OpenWrite(tempName), new CompressionInfo() {DeflateCompressionLevel = CompressionLevel.BestCompression, Type = CompressionType.Deflate});
             }
-            throw new Exception("bla");
-            memStream.Close();
-            mission.Mutator = new Binary(File.ReadAllBytes(tempName));
+            var tempName2 = Path.GetTempFileName() + ".zip";
+            File.Copy(tempName, tempName2, true);
+            mission.Mutator = new Binary(File.ReadAllBytes(tempName2));
             File.Delete(tempName);
+            File.Delete(tempName2);
             
             var resource = db.Resources.FirstOrDefault(x => x.MissionID == mission.MissionID); 
             if (resource == null)
