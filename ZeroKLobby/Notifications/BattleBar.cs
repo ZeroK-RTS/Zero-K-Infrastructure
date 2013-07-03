@@ -68,7 +68,7 @@ namespace ZeroKLobby.Notifications
                                 var defaultButton = MessageBoxDefaultButton.Button2;
                                 var icon = MessageBoxIcon.None;
                                 if (
-                                    MessageBox.Show("Do you want me to set Low details?\n(will effect: lups.cfg and springsettings.cfg)",
+                                    MessageBox.Show("Do you want me to set Low details?\n(will effect: lups.cfg and springsettings.cfg)\n\nIf you wish to file a bug report, please include a copy of infolog.txt in your game data folder (accessible through Settings).\nUpload it to a text sharing site such as pastebin.com.",
                                                     "Spring engine has crashed, update your video and audio drivers please!",
                                                     MessageBoxButtons.YesNo,
                                                     icon,
