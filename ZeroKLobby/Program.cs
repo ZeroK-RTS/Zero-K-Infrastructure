@@ -189,7 +189,8 @@ namespace ZeroKLobby
                     {
                         Trace.TraceInformation("TASC login accepted");
                         Trace.TraceInformation("Server is using Spring version {0}", TasClient.ServerSpringVersion);
-                        if (SpringPaths.SpringVersion != TasClient.ServerSpringVersion) Downloader.GetAndSwitchEngine(TasClient.ServerSpringVersion);
+                        var engineToGet = GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion;
+                        if (SpringPaths.SpringVersion != engineToGet) Downloader.GetAndSwitchEngine(engineToGet);
                         if (Environment.OSVersion.Platform == PlatformID.Unix || Conf.UseExternalBrowser)
                             MainWindow.navigationControl.Path = string.Format("chat/channel/{0}",
                                                                               Conf.AutoJoinChannels.OfType<string>().FirstOrDefault());

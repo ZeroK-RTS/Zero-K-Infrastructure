@@ -13,6 +13,8 @@
 	    public const double PlanetMetalPerTurn = 1;
         public const double PlanetWarsEnergyToMetalRatio = 1/20.0;
 
+	    public const string DefaultEngineOverride = "91.0"; // hack for ZKL using tasclient's engine - override here for missions etc
+
 
         public const int MinDurationForXP = 240;    // seconds
         public const int MinDurationForElo = 60;
