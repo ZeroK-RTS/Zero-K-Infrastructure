@@ -94,6 +94,7 @@ namespace ZeroKLobby.Notifications
                 {
                     if (Utils.VerifySpringInstalled())
                     {
+                        Program.SpringPaths.SetEnginePath(Program.SpringPaths.GetEngineFolderByVersion("91.0"));  //FIXME don't hardcode
                         var spring = new Spring(Program.SpringPaths);
                         spring.StartGame(Program.TasClient,
                                          null,
