@@ -242,7 +242,12 @@ namespace LobbyClient
             pingTimer.Start();
 
             minuteTimer = new Timer(60000) { AutoReset = true };
-            minuteTimer.Elapsed += (s, e) => { if (DateTime.Now.Minute == 0) HourChime(this, new EventArgs()); };
+            minuteTimer.Elapsed += (s, e) =>
+                {
+                    if (DateTime.Now.Minute == 0)
+                        if (guiThreadInvoker != null) guiThreadInvoker(() => HourChime(this, new EventArgs()));
+                        else HourChime(this, new EventArgs());
+                };
             minuteTimer.Start();
 
             udpPunchingTimer.Elapsed += udpPunchingTimer_Elapsed;
