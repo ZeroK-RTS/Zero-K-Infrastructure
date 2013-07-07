@@ -56,6 +56,12 @@ namespace MumbleIntegration
         }
 
 
+        public static T[] AddToArray<T>(T[] input, T item) {
+            var list = input.ToList();
+            if (!list.Contains(item)) list.Add(item);
+            return list.ToArray();
+        }
+
         /// <summary>
         /// Links channels together so that destination can hear source
         /// </summary>
@@ -65,8 +71,9 @@ namespace MumbleIntegration
             // link channels
             var srcChan = channels[sourceID];
             var dstChan = channels[destinationID];
-            srcChan.links = new[] { destinationID };
-            dstChan.links = new[] { sourceID };
+            
+            srcChan.links = AddToArray(srcChan.links,  destinationID );
+            dstChan.links = AddToArray(dstChan.links, sourceID);
             server.setChannelState(srcChan);
             server.setChannelState(dstChan);
 

@@ -15,7 +15,7 @@ namespace MumbleIntegration
             client.BattleUserJoined += (sender, args) =>
                 {
                     var bat = client.ExistingBattles[args.BattleID];
-                    if (bat.Founder.IsSpringieManaged) {
+                    if (bat.Founder.IsSpringieManaged && !client.ExistingUsers[args.UserName].IsInGame) {
                         var murmur = new MurmurSession();
                         murmur.MoveUser(args.UserName, murmur.GetOrCreateChannelID(MurmurSession.ZkRootNode, bat.Founder.Name, "Spectators"));
                     }
@@ -23,7 +23,7 @@ namespace MumbleIntegration
 
             client.BattleEnded += (sender, args) =>
                 {
-                    if (args.Data.Founder.IsSpringieManaged) {
+                    if (args.Data.Founder.IsSpringieManaged && !args.Data.Founder.IsInGame) {
                         var murmur = new MurmurSession();
                         var specChan = murmur.GetOrCreateChannelID(MurmurSession.ZkRootNode, args.Data.Founder.Name, "Spectators");
                         foreach (var us in args.Data.Users) murmur.MoveUser(us.Name, specChan);
