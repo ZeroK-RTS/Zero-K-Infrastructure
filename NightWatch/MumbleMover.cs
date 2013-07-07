@@ -44,7 +44,8 @@ namespace MumbleIntegration
                     foreach (var allyGrp in players.Where(x => !x.IsSpectator).GroupBy(x => x.AllyID)) {
                         var chan = murmur.GetOrCreateChannelID(MurmurSession.ZkRootNode, autohostName, "Team" + (allyGrp.Key + 1));
                         murmur.LinkChannel(chan, specchan);
-                        foreach (var p in allyGrp) murmur.MoveUser(p.Name, chan);
+                        if (allyGrp.Count() > 1) foreach (var p in allyGrp) murmur.MoveUser(p.Name, chan);
+                        else foreach (var p in allyGrp) murmur.MoveUser(p.Name, specchan); // if team only has one player keep in specs
                     }
                 }
             } catch (Exception ex) {
