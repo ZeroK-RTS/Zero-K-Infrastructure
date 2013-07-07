@@ -33,6 +33,10 @@ namespace MumbleIntegration
         readonly ServerPrx server;
         readonly Dictionary<int, User>.ValueCollection users;
 
+        public bool IsOnMumble(string name) {
+            return users.Any(x => string.Equals(x.name, name, StringComparison.InvariantCultureIgnoreCase));
+        }
+
 
         public MurmurSession() {
             var communicator = Util.initialize();

@@ -23,7 +23,7 @@ namespace MumbleIntegration
 
             client.BattleEnded += (sender, args) =>
                 {
-                    if (args.Data.Founder.IsSpringieManaged && !args.Data.Founder.IsInGame) {
+                    if (args.Data.Founder.IsSpringieManaged) {
                         var murmur = new MurmurSession();
                         var specChan = murmur.GetOrCreateChannelID(MurmurSession.ZkRootNode, args.Data.Founder.Name, "Spectators");
                         foreach (var us in args.Data.Users) murmur.MoveUser(us.Name, specChan);
@@ -44,7 +44,7 @@ namespace MumbleIntegration
                     foreach (var allyGrp in players.Where(x => !x.IsSpectator).GroupBy(x => x.AllyID)) {
                         var chan = murmur.GetOrCreateChannelID(MurmurSession.ZkRootNode, autohostName, "Team" + (allyGrp.Key + 1));
                         murmur.LinkChannel(chan, specchan);
-                        if (allyGrp.Count() > 1) foreach (var p in allyGrp) murmur.MoveUser(p.Name, chan);
+                        if (allyGrp.Count(x => murmur.IsOnMumble(x.Name)) > 1) foreach (var p in allyGrp) murmur.MoveUser(p.Name, chan);
                         else foreach (var p in allyGrp) murmur.MoveUser(p.Name, specchan); // if team only has one player keep in specs
                     }
                 }
