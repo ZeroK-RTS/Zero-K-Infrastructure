@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using LobbyClient;
+using MumbleIntegration;
 using ZkData;
 
 namespace ZeroKWeb.SpringieInterface
@@ -18,6 +20,7 @@ namespace ZeroKWeb.SpringieInterface
             var res = new PlayerJoinResult();
             var db = new ZkDataContext();
             AutohostMode mode = context.GetMode();
+
             if (mode == AutohostMode.Planetwars) {
                 Planet planet = db.Galaxies.Single(x => x.IsDefault).Planets.SingleOrDefault(x => x.Resource.InternalName == context.Map);
                 if (planet == null) {
