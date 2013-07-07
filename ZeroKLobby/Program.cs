@@ -131,16 +131,11 @@ namespace ZeroKLobby
                     Utils.RegisterProtocol();
                 }
 
-                SpringPaths = new SpringPaths(Conf.ManualSpringPath, null, contentDir);
+                SpringPaths = new SpringPaths(null, writableFolderOverride: contentDir);
                 SpringPaths.MakeFolders();
 
                 SaveConfig();
 
-                SpringPaths.SpringVersionChanged += (s, e) =>
-                    {
-                        Conf.ManualSpringPath = Path.GetDirectoryName(SpringPaths.Executable);
-                        SaveConfig();
-                    };
 
                 try {
                     if (!Debugger.IsAttached) {
@@ -190,8 +185,6 @@ namespace ZeroKLobby
                     {
                         Trace.TraceInformation("TASC login accepted");
                         Trace.TraceInformation("Server is using Spring version {0}", TasClient.ServerSpringVersion);
-                        var engineToGet = GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion;
-                        if (SpringPaths.SpringVersion != engineToGet) Downloader.GetAndSwitchEngine(engineToGet);
                         if (Environment.OSVersion.Platform == PlatformID.Unix || Conf.UseExternalBrowser)
                             MainWindow.navigationControl.Path = string.Format("chat/channel/{0}",
                                                                               Conf.AutoJoinChannels.OfType<string>().FirstOrDefault());
@@ -271,6 +264,8 @@ namespace ZeroKLobby
                 }
 
                 //if (Conf.IsFirstRun) Utils.OpenWeb("http://zero-k.info/Wiki/LobbyStart", false);
+
+                Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride);
 
                 Application.Run(MainWindow);
                 ShutDown();

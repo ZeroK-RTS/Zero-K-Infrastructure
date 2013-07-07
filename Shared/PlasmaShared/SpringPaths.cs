@@ -25,12 +25,10 @@ namespace PlasmaShared
         public string WritableDirectory { get; private set; }
         public event EventHandler SpringVersionChanged;
 
-        public SpringPaths(string springPath, string version = null, string writableFolderOverride = null)
+        public SpringPaths(string springPath, string writableFolderOverride = null)
         {
             this.writableFolderOverride = writableFolderOverride;
             SetEnginePath(springPath);
-            if (version != null) springVersion = version;
-
         }
 
         public void OverrideDedicatedServer(string path) {
@@ -145,7 +143,8 @@ namespace PlasmaShared
             Cache = Utils.MakePath(WritableDirectory, "cache", "SD");
 
             var ov = springVersion;
-            springVersion = GetSpringVersion(Executable);
+            if (springPath != "") springVersion = GetSpringVersion(Executable);
+            else springVersion = null;
 
             if (!string.IsNullOrEmpty(springPath)) DataDirectories.Add(Path.GetDirectoryName(springPath));
             var ddenv = string.Join(Environment.OSVersion.Platform == PlatformID.Unix ? ":" : ";", DataDirectories.Distinct());
@@ -156,6 +155,9 @@ namespace PlasmaShared
             
             if (ov != springVersion  && SpringVersionChanged != null) SpringVersionChanged(this, EventArgs.Empty);
         }
+
+
+
 
         void CreateFolder(string path)
         {

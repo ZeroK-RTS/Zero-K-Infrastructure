@@ -40,7 +40,7 @@ namespace Benchmarker
         public MainForm(SpringPaths paths = null, SpringScanner scanner = null, PlasmaDownloader.PlasmaDownloader downloader = null) {
             InitializeComponent();
             if (paths != null) springPaths = paths;
-            else springPaths = new SpringPaths(null, null, null);
+            else springPaths = new SpringPaths(null, writableFolderOverride: null);
             if (scanner != null) springScanner = scanner;
             else {
                 springScanner = new SpringScanner(springPaths);

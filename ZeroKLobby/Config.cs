@@ -194,12 +194,6 @@ namespace ZeroKLobby
         public string LobbyPlayerPassword { get; set; }
 
 
-        [Browsable(false)] // todo remove this
-        public string ManualSpringPath {
-            get { return manualSpringPath; }
-            set { manualSpringPath = value; }
-        }
-
         [Category("General")]
         [DisplayName("Minimize to tray")]
         [Description("Minimize to system tray instead of taskbar")]

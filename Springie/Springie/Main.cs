@@ -46,7 +46,7 @@ namespace Springie
             Config.RestartCounter++;
             if (Config.RestartCounter > 3) Config.RestartCounter = 0;
             SaveConfig();
-            paths = new SpringPaths(Path.GetDirectoryName(Config.ExecutableName), Config.SpringVersion, Config.DataDir);
+            paths = new SpringPaths(Path.GetDirectoryName(Config.ExecutableName), writableFolderOverride: Config.DataDir);
             if (!string.IsNullOrEmpty(Config.ExecutableName)) paths.OverrideDedicatedServer(Config.ExecutableName);
             paths.MakeFolders();
 

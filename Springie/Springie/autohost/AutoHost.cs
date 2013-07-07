@@ -63,7 +63,7 @@ namespace Springie.autohost
             this.hostingPort = hostingPort;
 
             string version = config.SpringVersion ?? Program.main.Config.SpringVersion ?? tas.ServerSpringVersion; // tas empty at this point! Possible null exception
-            springPaths = new SpringPaths(Program.main.paths.GetEngineFolderByVersion(version), version, Program.main.Config.DataDir);
+            springPaths = new SpringPaths(Program.main.paths.GetEngineFolderByVersion(version), writableFolderOverride: Program.main.Config.DataDir);
 
             Program.main.paths.SpringVersionChanged += (s, e) =>
                 {
