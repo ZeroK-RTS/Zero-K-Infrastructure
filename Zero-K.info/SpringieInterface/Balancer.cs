@@ -95,6 +95,9 @@ namespace ZeroKWeb.SpringieInterface
         }
 
         static void MoveOnMumble(BattleContext context, bool isGameStart, BalanceTeamsResult res) {
+            // todo also move newly joined to spectators even without !balance
+            // todo prevent moving all to spec when someone does !balance and game already running
+
             try {
                 var murmur = new MurmurSession();
                 var specchan = murmur.GetOrCreateChannelID(MurmurSession.ZkRootNode, context.AutohostName, "Spectators");
