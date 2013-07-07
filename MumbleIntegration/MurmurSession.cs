@@ -44,6 +44,7 @@ namespace MumbleIntegration
             var meta = MetaPrxHelper.uncheckedCast(proxy);
             server = meta.getAllServers().First();
             users = server.getUsers().Values;
+            
         }
 
         public int GetOrCreateChannelID(params string[] path) {
