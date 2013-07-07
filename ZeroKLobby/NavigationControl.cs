@@ -13,6 +13,7 @@ namespace ZeroKLobby
         bool CanGoBack { get { return backStack.Any(); } }
         bool CanGoForward { get { return forwardStack.Any(); } }
 
+
         NavigationStep CurrentPage {
             get { return _currentPage; }
             set {
@@ -57,75 +58,43 @@ namespace ZeroKLobby
 
                 if (CurrentPage != null && CurrentPage.ToString() == value) return; // we are already there, no navigation needed
 
-                var step = GoToPage(value.Split('/')); //go to page
+                var step = GoToPage(value.Split('/')); //go to page and is not reload
                 if (step != null) {
                     if (CurrentPage != null && CurrentPage.ToString() != value) backStack.Push(CurrentPage);
                     CurrentPage = step;
                 }
-                else if (value.StartsWith("http://") || value.StartsWith("https://") || value.StartsWith("www.")) { Program.BrowserInterop.OpenUrl(value); } //this open external browser
-
+                else if (value.StartsWith("http://") || value.StartsWith("https://")) Program.BrowserInterop.OpenUrl(value);
             }
         }
 
         public NavigationControl() {
             InitializeComponent();
 
-            if (Environment.OSVersion.Platform != PlatformID.Unix && !Program.Conf.UseExternalBrowser)
+            ButtonList = new List<ButtonInfo>()
             {
-                ButtonList = new List<ButtonInfo>() //normal arrangement
+                new ButtonInfo() { Label = "HOME", TargetPath = "http://zero-k.info/", Icon= Buttons.home, Height = 32,},
+                new ButtonInfo()
                 {
-                    new ButtonInfo() { Label = "HOME", TargetPath = "http://zero-k.info/", Icon= Buttons.home, Height = 32,},
-                    new ButtonInfo()
-                    {
-                        Label = "SINGLEPLAYER",
-                        TargetPath = "http://zero-k.info/Missions",
-                        Icon = Buttons.spherebot,
-                        Width = 128,
-                        Height = 32,
-                    },
-                    new ButtonInfo()
-                    {
-                        Label = "MULTIPLAYER",
-                        TargetPath = "battles", Icon =  ZklResources.battle,
-                        Width = 128,
-                        Height = 32,
-                    },
-                    new ButtonInfo() { Label = "CHAT", TargetPath = "chat", Icon= ZklResources.chat, Height = 32, },
-                    new ButtonInfo() { Label = "PLANETWARS", TargetPath = "http://zero-k.info/PlanetWars", Height = 32,  },
-                    new ButtonInfo() { Label = "MAPS", TargetPath = "http://zero-k.info/Maps", Icon = Buttons.map, Height = 32,  },
-                    new ButtonInfo() { Label = "REPLAYS", TargetPath = "http://zero-k.info/Battles", Icon = Buttons.video_icon, Height = 32, },
-                    new ButtonInfo() { Label = "FORUM", TargetPath = "http://zero-k.info/Forum", Height = 32, },
-                    new ButtonInfo() { Label = "SETTINGS", TargetPath = "settings", Icon = Buttons.settings, Height = 32, },
-                };
-            }
-            else //((Environment.OSVersion.Platform == PlatformID.Unix || Program.Conf.UseExternalBrowser)
-            {
-                ButtonList = new List<ButtonInfo>() //website button on the right
+                    Label = "SINGLEPLAYER",
+                    TargetPath = "http://zero-k.info/Missions",
+                    Icon = Buttons.spherebot,
+                    Width = 128,
+                    Height = 32,
+                },
+                new ButtonInfo()
                 {
-                    new ButtonInfo()
-                    {
-                        Label = "MULTIPLAYER",
-                        TargetPath = "battles", Icon =  ZklResources.battle,
-                        Width = 128,
-                        Height = 32,
-                    },
-                    new ButtonInfo() { Label = "CHAT", TargetPath = "chat", Icon= ZklResources.chat, Height = 32, },
-                    new ButtonInfo() { Label = "SETTINGS", TargetPath = "settings", Icon = Buttons.settings, Height = 32, },
-                    new ButtonInfo() { Label = "HOME", TargetPath = "http://zero-k.info/", Icon= Buttons.home, Height = 32,},
-                    new ButtonInfo()
-                    {
-                        Label = "SINGLEPLAYER",
-                        TargetPath = "http://zero-k.info/Missions",
-                        Icon = Buttons.spherebot,
-                        Width = 128,
-                        Height = 32,
-                    },
-                    new ButtonInfo() { Label = "PLANETWARS", TargetPath = "http://zero-k.info/PlanetWars", Height = 32,  },
-                    new ButtonInfo() { Label = "MAPS", TargetPath = "http://zero-k.info/Maps", Icon = Buttons.map, Height = 32,  },
-                    new ButtonInfo() { Label = "REPLAYS", TargetPath = "http://zero-k.info/Battles", Icon = Buttons.video_icon, Height = 32, },
-                    new ButtonInfo() { Label = "FORUM", TargetPath = "http://zero-k.info/Forum", Height = 32, },
-               };
-            }
+                    Label = "MULTIPLAYER",
+                    TargetPath = "battles", Icon =  ZklResources.battle,
+                    Width = 128,
+                    Height = 32,
+                },
+                new ButtonInfo() { Label = "CHAT", TargetPath = "chat", Icon= ZklResources.chat, Height = 32, },
+                new ButtonInfo() { Label = "PLANETWARS", TargetPath = "http://zero-k.info/PlanetWars", Height = 32,  },
+                new ButtonInfo() { Label = "MAPS", TargetPath = "http://zero-k.info/Maps", Icon = Buttons.map, Height = 32,  },
+                new ButtonInfo() { Label = "REPLAYS", TargetPath = "http://zero-k.info/Battles", Icon = Buttons.video_icon, Height = 32, },
+                new ButtonInfo() { Label = "FORUM", TargetPath = "http://zero-k.info/Forum", Height = 32, },
+                new ButtonInfo() { Label = "SETTINGS", TargetPath = "settings", Icon = Buttons.settings, Height = 32, },
+            };
 
             Instance = this;
 
@@ -151,23 +120,8 @@ namespace ZeroKLobby
             AddTabPage(new AdvertiserWindow(), "Advertiser");
             AddTabPage(new DownloaderTab(), "Rapid");
             
-            foreach (var but in ButtonList) flowLayoutPanel1.Controls.Add(but.GetButton());     
+            foreach (var but in ButtonList) flowLayoutPanel1.Controls.Add(but.GetButton());
             flowLayoutPanel1.BringToFront();
-
-            if (Environment.OSVersion.Platform == PlatformID.Unix || Program.Conf.UseExternalBrowser)//make these button more distinct when using external browser
-            {
-                foreach (Control button in flowLayoutPanel1.Controls)
-                {
-                    if (button.Text == "HOME" || button.Text == "MAPS" ||
-                        button.Text == "PLANETWARS" || button.Text == "REPLAYS" ||
-                        button.Text == "SINGLEPLAYER" || button.Text == "FORUM")
-                    {
-                        button.BackColor = System.Drawing.Color.FromArgb(255, 60, 75, 60);//NOTE: this color won't reset if using external browser because button will not be selectable
-                        button.Cursor = Cursors.Arrow;
-                    }
-                    if (button.Text == "HOME") { button.Margin = new Padding(15, 0, 0, 3); }
-                }
-            }
         }
 
         public INavigatable GetInavigatableByPath(string path) {
@@ -250,7 +204,7 @@ namespace ZeroKLobby
         {
             foreach (TabPage tabPage in tabControl.Controls)
             {
-                var navigatable = GetINavigatableFromControl(tabPage); //translate tab button into the page it represent
+                var navigatable = GetINavigatableFromControl(tabPage);
                 if (navigatable != null && navigatable.TryNavigate(path))
                 {
                     tabControl.SelectTab(tabPage);
@@ -306,7 +260,6 @@ namespace ZeroKLobby
             btnForward.Location = new System.Drawing.Point(btnForward.Location.X, height);
             urlBox.Location = new System.Drawing.Point(urlBox.Location.X, height);
             reloadButton1.Location = new System.Drawing.Point(reloadButton1.Location.X, height);
-            goButton1.Location = new System.Drawing.Point(goButton1.Location.X, height);
 
             //resize the "browser" (that show chat & internal browser) according to Nav bar auto resize (dynamic resizing)
             int windowHeight = this.Size.Height;
@@ -321,11 +274,6 @@ namespace ZeroKLobby
         {
             var navig = CurrentNavigatable;
             if (navig != null && navig.CanReload) navig.Reload();
-        }
-
-        private void goButton1_Click(object sender, EventArgs e)
-        {
-            Path = urlBox.Text;
         }
 
     }
