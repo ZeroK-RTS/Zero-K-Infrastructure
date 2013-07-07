@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using LobbyClient;
+using MumbleIntegration;
 using PlasmaShared;
 using ZkData;
 
@@ -67,6 +68,8 @@ namespace ZeroKWeb.SpringieInterface
 
             var res = PerformBalance(context, isGameStart, allyCount, clanWise, config, playerCount);
 
+            MoveOnMumble(context, isGameStart, res);
+
             if (isGameStart) {
                 if (playerCount < (config.MinToStart ?? 0)) {
                     res.Message = string.Format("This host needs at least {0} people to start", config.MinToStart);
@@ -89,6 +92,26 @@ namespace ZeroKWeb.SpringieInterface
             if (isGameStart) VerifySpecCheaters(context, res);
 
             return res;
+        }
+
+        static void MoveOnMumble(BattleContext context, bool isGameStart, BalanceTeamsResult res) {
+            try {
+                var murmur = new MurmurSession();
+                var specchan = murmur.GetOrCreateChannelID(MurmurSession.ZkRootNode, context.AutohostName, "Spectators");
+                if (!isGameStart) foreach (var p in res.Players) murmur.MoveUser(p.Name, specchan);
+                else {
+                    foreach (var p in res.Players.Where(x => x.IsSpectator)) murmur.MoveUser(p.Name, specchan);
+
+                    foreach (var allyGrp in res.Players.Where(x => !x.IsSpectator).GroupBy(x => x.AllyID)) {
+                        var chan = murmur.GetOrCreateChannelID(MurmurSession.ZkRootNode, context.AutohostName, "Team" + (allyGrp.Key + 1));
+                        foreach (var p in allyGrp) murmur.MoveUser(p.Name, chan);
+                    }
+                }
+            } catch (Exception ex) {
+                try {
+                    Global.Nightwatch.Tas.Say(TasClient.SayPlace.User, "Licho", ex.ToString(), false); // todo remove when tested
+                } catch {}
+            }
         }
 
         public static List<BalanceTeam> CloneTeams(List<BalanceTeam> t) {

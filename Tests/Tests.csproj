@@ -38,6 +38,10 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ice, Version=3.5.0.0, Culture=neutral, PublicKeyToken=cdd571ade22f2f16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libs\Ice.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
@@ -59,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EngineDownloadTests.cs" />
+    <Compile Include="MumbleTests.cs" />
     <Compile Include="PaypalTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resource.Designer.cs">
@@ -76,6 +81,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MumbleIntegration\MumbleIntegration.csproj">
+      <Project>{372a18cc-f59e-4720-b344-af15f0d64b52}</Project>
+      <Name>MumbleIntegration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NightWatch\NightWatch.csproj">
       <Project>{6ce1e0f1-447c-4871-9246-cc7ccb359d89}</Project>
       <Name>NightWatch</Name>

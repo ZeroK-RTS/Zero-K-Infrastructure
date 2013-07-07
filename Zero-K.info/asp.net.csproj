@@ -447,6 +447,10 @@
     <Content Include="Views\Battles\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MumbleIntegration\MumbleIntegration.csproj">
+      <Project>{372a18cc-f59e-4720-b344-af15f0d64b52}</Project>
+      <Name>MumbleIntegration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NightWatch\NightWatch.csproj">
       <Project>{6CE1E0F1-447C-4871-9246-CC7CCB359D89}</Project>
       <Name>NightWatch</Name>
