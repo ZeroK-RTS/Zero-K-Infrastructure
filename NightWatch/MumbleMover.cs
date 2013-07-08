@@ -16,17 +16,17 @@ namespace MumbleIntegration
                 {
                     var bat = client.ExistingBattles[args.BattleID];
                     if (bat.Founder.IsSpringieManaged && !client.ExistingUsers[args.UserName].IsInGame) {
-                        var murmur = new MurmurSession();
-                        murmur.MoveUser(args.UserName, murmur.GetOrCreateChannelID(MurmurSession.ZkRootNode, bat.Founder.Name, "Spectators"));
+                        using (var murmur = new MurmurSession()) murmur.MoveUser(args.UserName, murmur.GetOrCreateChannelID(MurmurSession.ZkRootNode, bat.Founder.Name, "Spectators"));
                     }
                 };
 
             client.BattleEnded += (sender, args) =>
                 {
                     if (args.Data.Founder.IsSpringieManaged) {
-                        var murmur = new MurmurSession();
-                        var specChan = murmur.GetOrCreateChannelID(MurmurSession.ZkRootNode, args.Data.Founder.Name, "Spectators");
-                        foreach (var us in args.Data.Users) murmur.MoveUser(us.Name, specChan);
+                        using (var murmur = new MurmurSession()) {
+                            var specChan = murmur.GetOrCreateChannelID(MurmurSession.ZkRootNode, args.Data.Founder.Name, "Spectators");
+                            foreach (var us in args.Data.Users) murmur.MoveUser(us.Name, specChan);
+                        }
                     }
                 };
         }
@@ -35,17 +35,18 @@ namespace MumbleIntegration
             try {
                 if (client.ExistingUsers[autohostName].IsInGame) return;// ignoring balance when in game
 
-                var murmur = new MurmurSession();
-                var specchan = murmur.GetOrCreateChannelID(MurmurSession.ZkRootNode, autohostName, "Spectators");
-                if (!isGameStart) foreach (var p in players) murmur.MoveUser(p.Name, specchan);
-                else {
-                    foreach (var p in players.Where(x => x.IsSpectator)) murmur.MoveUser(p.Name, specchan);
+                using (var murmur = new MurmurSession()) {
+                    var specchan = murmur.GetOrCreateChannelID(MurmurSession.ZkRootNode, autohostName, "Spectators");
+                    if (!isGameStart) foreach (var p in players) murmur.MoveUser(p.Name, specchan);
+                    else {
+                        foreach (var p in players.Where(x => x.IsSpectator)) murmur.MoveUser(p.Name, specchan);
 
-                    foreach (var allyGrp in players.Where(x => !x.IsSpectator).GroupBy(x => x.AllyID)) {
-                        var chan = murmur.GetOrCreateChannelID(MurmurSession.ZkRootNode, autohostName, "Team" + (allyGrp.Key + 1));
-                        murmur.LinkChannel(chan, specchan);
-                        if (allyGrp.Count(x => murmur.IsOnMumble(x.Name)) > 1) foreach (var p in allyGrp) murmur.MoveUser(p.Name, chan);
-                        else foreach (var p in allyGrp) murmur.MoveUser(p.Name, specchan); // if team only has one player keep in specs
+                        foreach (var allyGrp in players.Where(x => !x.IsSpectator).GroupBy(x => x.AllyID)) {
+                            var chan = murmur.GetOrCreateChannelID(MurmurSession.ZkRootNode, autohostName, "Team" + (allyGrp.Key + 1));
+                            murmur.LinkChannel(chan, specchan);
+                            if (allyGrp.Count(x => murmur.IsOnMumble(x.Name)) > 1) foreach (var p in allyGrp) murmur.MoveUser(p.Name, chan);
+                            else foreach (var p in allyGrp) murmur.MoveUser(p.Name, specchan); // if team only has one player keep in specs
+                        }
                     }
                 }
             } catch (Exception ex) {

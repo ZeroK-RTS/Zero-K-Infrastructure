@@ -6,7 +6,7 @@ using Murmur;
 
 namespace MumbleIntegration
 {
-    public class MurmurSession
+    public class MurmurSession:IDisposable
     {
         public const string ZkRootNode = " Zero-K";
 
@@ -32,6 +32,9 @@ namespace MumbleIntegration
 
         readonly ServerPrx server;
         readonly Dictionary<int, User>.ValueCollection users;
+        Communicator communicator;
+        ObjectPrx proxy;
+        MetaPrx meta;
 
         public bool IsOnMumble(string name) {
             return users.Any(x => string.Equals(x.name, name, StringComparison.InvariantCultureIgnoreCase));
@@ -39,9 +42,9 @@ namespace MumbleIntegration
 
 
         public MurmurSession() {
-            var communicator = Util.initialize();
-            var proxy = communicator.stringToProxy("Meta:tcp -h 94.23.170.70 -p 6502");
-            var meta = MetaPrxHelper.uncheckedCast(proxy);
+            communicator = Util.initialize();
+            proxy = communicator.stringToProxy("Meta:tcp -h 94.23.170.70 -p 6502");
+            meta = MetaPrxHelper.uncheckedCast(proxy);
             server = meta.getAllServers().First();
             users = server.getUsers().Values;
             
@@ -102,6 +105,10 @@ namespace MumbleIntegration
                 user.channel = channel;
                 server.setState(user);
             }
+        }
+
+        public void Dispose() {
+            communicator.destroy();
         }
     }
 }
