@@ -116,14 +116,9 @@ namespace ZeroKLobby
             navigatingTo = ((WebBrowser)sender).Url.ToString();
             Program.MainWindow.navigationControl.AddToHistoryStack(navigatingTo);
             ResumeLayout();
-            //NOTE on operation: 
-            //setting the path to this URL will cause "GoToPage(path)" to be called, 
-            //"GoToPage(path)" then will loop over all tab control (including this instance of "BrowserTab"), which will then call "TryToNavigate(path)".
-            //SINCE the "navigatingTo" is already set to this URL here, so when "TryToNavigate(path)" is called it matches to the current URL and return TRUE.
-            //when "TryToNavigate(path)" return TRUE it will cause the page to be pushed to stack & the "Back" button will work.
             
-            //This store previously visited URL for checking in TryNavigate() later. If checking found a match it meant that the URL belong to this WebBrowser.
-            //This list is unordered (it is not related at all to sequence in "Forward"/"Backward" button)
+            //The following code store previously visited URL for checking in TryNavigate() later. The checking determine which TAB "own" the URL.
+            //This list is unordered (it is not related to sequence in "Forward"/"Backward" button)
             var final = navigatingTo;
             bool inList = false;
             for (int i = 0; i < navigatedIndex; i++)
@@ -143,8 +138,8 @@ namespace ZeroKLobby
             AddToHistory(final);
         }
 
-        //this function keep track of new pages opened by WebBrowser and translate it into a stack that emulate the WebBrowser's actual history.
-        //We can't access WebBrowser's history directly, that's why we do this.
+        //this function keep track of new pages opened by WebBrowser and translate it into history stack.
+        //(We do this because there's difficulty with accessing WebBrowser's history directly)
         private void AddToHistory(String pathString) 
         {
             if (currrentHistoryPosition <= historyCount)
@@ -191,8 +186,8 @@ namespace ZeroKLobby
             }
         }
 
-        //this function compare the pathString with one in history, and determine whether WebBrowser should GoBack() or GoForward() to navigate to that pathString.
-        //The pathString come from TryNavigate() which actually triggered/come from NavigationControl.cs. The NavigationControl.cs controls the "Forward" and "Back" button and send the appropriate pathString.
+        //this function compare the pathString with one in history, and determine whether WebBrowser should GoBack() or GoForward()
+        //NavigationControl.cs (which controls the "Forward" and "Back" button) call TryNavigate() and in turn call TryToGoBackForward()
         private bool TryToGoBackForward(String pathString)
         {
             if (currrentHistoryPosition <= historyCount)
