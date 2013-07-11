@@ -63,7 +63,7 @@ namespace ZeroKLobby
                     if (CurrentPage != null && CurrentPage.ToString() != value) backStack.Push(CurrentPage);
                     CurrentPage = step;
                 }
-                else if (value.StartsWith("http://") || value.StartsWith("https://") || value.StartsWith("www.")) { Program.BrowserInterop.OpenUrl(value); } //this open external browser
+                else if (value.StartsWith("http://") || value.StartsWith("https://")) { Program.BrowserInterop.OpenUrl(value); } //this open external browser
             }
         }
 
@@ -238,7 +238,7 @@ namespace ZeroKLobby
 
         void urlBox_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyData == Keys.Return) {
-                Path = urlBox.Text;
+                goButton1_Click(sender, e);
                 e.Handled = true;
             }
         }
@@ -283,15 +283,25 @@ namespace ZeroKLobby
 
         private void goButton1_Click(object sender, EventArgs e)
         {
-            Path = urlBox.Text;
+            var navig = CurrentNavigatable;
+            if (navig != null && navig.CanReload && !urlBox.Text.ToLower().StartsWith("spring://")) //check if current TAB can handle website
+            {
+                bool success = navig.TryNavigate(urlBox.Text); //check if able to navigate Forward/Backward/Here in current TAB
+                if (!success)
+                {
+                    WebBrowser webbrowser = CurrentNavigatable as WebBrowser;
+                    webbrowser.Navigate(urlBox.Text); //navigate to new page in current TAB
+                }
+            }
+            else {  Path = urlBox.Text; } //perform general & common navigation specific to TAB (go to TAB and perform action)
         }
 
         //add path to BACK/FORWARD history stack skipping all checks
-        public void AddToHistoryStack(String pathString)
+        public void AddToHistoryStack(String pathString, Object obj)
         {
             if (CurrentPage != null && CurrentPage.ToString() != pathString) backStack.Push(CurrentPage);
             CurrentPage = new NavigationStep { Path = pathString.Split('/') };
-            INavigatable nav = GetInavigatableByPath(pathString);
+            INavigatable nav = GetINavigatableFromControl(obj);
             lastTabPaths[nav] = pathString;//if user navigate away from this TAB, display this page when he return
         }
 

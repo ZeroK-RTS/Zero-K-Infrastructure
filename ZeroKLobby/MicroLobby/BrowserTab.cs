@@ -114,7 +114,7 @@ namespace ZeroKLobby
             
             //This update URL textbox & add the page to NavigationBar's history (so that Back&Forward button can be used):
             navigatingTo = ((WebBrowser)sender).Url.ToString();
-            Program.MainWindow.navigationControl.AddToHistoryStack(navigatingTo);
+            Program.MainWindow.navigationControl.AddToHistoryStack(navigatingTo,this);
             ResumeLayout();
             
             //The following code store previously visited URL for checking in TryNavigate() later. The checking determine which TAB "own" the URL.
@@ -207,7 +207,7 @@ namespace ZeroKLobby
                     if (isBack)
                     {
                         currrentHistoryPosition = currrentHistoryPosition - 1;
-                        base.GoBack();
+                        GoBack();
                         //System.Diagnostics.Trace.TraceInformation("GoBack {0}", pathString);
                         navigatingTo = pathString;
                         return true;
@@ -215,7 +215,7 @@ namespace ZeroKLobby
                     else if (isFront)
                     {
                         currrentHistoryPosition = currrentHistoryPosition + 1;
-                        base.GoForward();
+                        GoForward();
                         //System.Diagnostics.Trace.TraceInformation("GoForward {0}", pathString);
                         navigatingTo = pathString;
                         return true;
