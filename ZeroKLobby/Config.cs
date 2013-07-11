@@ -254,7 +254,7 @@ namespace ZeroKLobby
 
         [Category("Chat")]
         [DisplayName("Color: Default text")]
-        [Description("Color for the text on chat window and on playerlist")] //added safwan [tweak]
+        [Description("Color for the text on chat window and on playerlist")]
         [XmlIgnore]
         public Color TextColor {
             get { return Color.FromArgb(TextColorInt); }

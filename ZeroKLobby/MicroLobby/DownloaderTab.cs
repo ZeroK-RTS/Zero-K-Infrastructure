@@ -48,10 +48,12 @@ namespace ZeroKLobby.MapDownloader
 
     void UpdateAvailablePackages()
     {
+        SuspendLayout(); //pause
       tvAvailable.BeginUpdate();
       tvAvailable.Nodes.Clear();
       foreach (var repo in Program.Downloader.PackageDownloader.Repositories) foreach (var key in repo.VersionsByTag.Keys) AddNode(key);
       tvAvailable.EndUpdate();
+        ResumeLayout();
     }
 
     void UpdateSelectedPackages()

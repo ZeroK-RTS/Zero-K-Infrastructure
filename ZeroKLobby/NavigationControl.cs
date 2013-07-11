@@ -68,6 +68,7 @@ namespace ZeroKLobby
         }
 
         public NavigationControl() {
+            SuspendLayout();//(Increase performance), Reference: http://msdn.microsoft.com/en-us/library/system.windows.forms.control.suspendlayout.aspx
             InitializeComponent();
 
             if (Environment.OSVersion.Platform != PlatformID.Unix && !Program.Conf.UseExternalBrowser)
@@ -168,6 +169,7 @@ namespace ZeroKLobby
                     if (button.Text == "HOME") { button.Margin = new Padding(15, 0, 0, 3); }
                 }
             }
+            ResumeLayout();
         }
 
         public INavigatable GetInavigatableByPath(string path) {
@@ -311,8 +313,10 @@ namespace ZeroKLobby
             //resize the "browser" (that show chat & internal browser) according to Nav bar auto resize (dynamic resizing)
             int windowHeight = this.Size.Height;
             int freeHeight = windowHeight - height;
+            int windowWidth = this.Size.Width;
             tabControl.Location = new System.Drawing.Point(tabControl.Location.X, height);
             tabControl.Height = freeHeight;
+            tabControl.Width = windowWidth;
         }
 
         public INavigatable CurrentNavigatable { get { return tabControl.SelectedTab.Controls.OfType<INavigatable>().FirstOrDefault(); } }
@@ -326,6 +330,13 @@ namespace ZeroKLobby
         private void goButton1_Click(object sender, EventArgs e)
         {
             Path = urlBox.Text;
+        }
+
+        //add path to history stack skipping all checks (attempt to check pathstring for valid TAB will make the ZKL jump/hop to the TAB)
+        public void AddToHistoryStack(String pathString)
+        {
+            if (CurrentPage != null && CurrentPage.ToString() != pathString) backStack.Push(CurrentPage);
+            CurrentPage = new NavigationStep { Path = pathString.Split('/') };
         }
 
     }

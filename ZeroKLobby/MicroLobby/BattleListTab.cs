@@ -10,6 +10,7 @@ namespace ZeroKLobby.MicroLobby
         BattleListControl battleListControl;
 
         public BattleListTab() {
+            SuspendLayout(); //pause
             InitializeComponent();
 
             if (DesignMode) return;
@@ -32,7 +33,7 @@ namespace ZeroKLobby.MicroLobby
             // battle list
             battleListControl = new BattleListControl() { Dock = DockStyle.Fill };
             battlePanel.Controls.Add(battleListControl);
-
+            ResumeLayout();
         }
 
         public bool TryNavigate(params string[] path) {

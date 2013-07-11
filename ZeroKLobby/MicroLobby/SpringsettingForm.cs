@@ -63,6 +63,7 @@ namespace ZeroKLobby.MicroLobby
 
         private void SpringsettingForm_Load(object sender, EventArgs e)
         {
+            SuspendLayout(); //pause layout until all element is set
             try
             {
                 Program.ToolTip.SetText(highlighttextBox, "Highlight any options that contain this term as name");
@@ -154,6 +155,7 @@ namespace ZeroKLobby.MicroLobby
             catch (Exception ex) {
                 ErrorHandling.HandleException(ex, false);
             }
+            ResumeLayout();
         }
 
         private void button1_Click(object sender, EventArgs e)

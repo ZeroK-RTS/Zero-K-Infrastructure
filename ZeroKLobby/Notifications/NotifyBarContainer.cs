@@ -10,6 +10,7 @@ namespace ZeroKLobby.Notifications
 
         public NotifyBarContainer(INotifyBar barContent)
         {
+            SuspendLayout(); //suspend layout until all bar element is finish set up
             BarContent = barContent;
             InitializeComponent();
             btnDetail.Click += detail_Click;
@@ -23,6 +24,7 @@ namespace ZeroKLobby.Notifications
             control.Dock = DockStyle.Fill;
             Dock = DockStyle.Top;
             BarContent.AddedToContainer(this);
+            ResumeLayout();
         }
 
 

@@ -65,6 +65,7 @@ namespace ZeroKLobby
             if (navigatingTo == pathString) { return true; }  //already navigating there, just return TRUE
             if (pathString.StartsWith(PathHead)) 
             {
+                SuspendLayout(); //pause layout until page loaded. //Reference: http://msdn.microsoft.com/en-us/library/system.windows.forms.control.suspendlayout.aspx
                 bool canNavigate = TryToGoBackForward(pathString);
                 if (canNavigate) { return true; }
                 navigatingTo = pathString;
@@ -81,6 +82,7 @@ namespace ZeroKLobby
             {
                 if (navigatedPlaces[i] == pathString) 
                 {
+                    SuspendLayout();
                     bool canNavigate = TryToGoBackForward(pathString);
                     if (canNavigate) {return true;}
                     navigatingTo = pathString;
@@ -112,7 +114,8 @@ namespace ZeroKLobby
             
             //This update URL textbox & add the page to NavigationBar's history (so that Back&Forward button can be used):
             navigatingTo = ((WebBrowser)sender).Url.ToString();
-            Program.MainWindow.navigationControl.Path = ((WebBrowser)sender).Url.ToString();
+            Program.MainWindow.navigationControl.AddToHistoryStack(navigatingTo);
+            ResumeLayout();
             //NOTE on operation: 
             //setting the path to this URL will cause "GoToPage(path)" to be called, 
             //"GoToPage(path)" then will loop over all tab control (including this instance of "BrowserTab"), which will then call "TryToNavigate(path)".

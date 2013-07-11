@@ -25,6 +25,7 @@ namespace ZeroKLobby.MicroLobby
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public ChatTab()
         {
+            SuspendLayout();
             InitializeComponent();
             if (Process.GetCurrentProcess().ProcessName == "devenv") return; // detect design mode, workaround for non-working this.DesignMode 
             Controls.Add(toolTabs);
@@ -47,6 +48,7 @@ namespace ZeroKLobby.MicroLobby
             foreach (var channel in Program.TasClient.JoinedChannels.Values.Where(c => !IsIgnoredChannel(c.Name))) CreateChannelControl(channel.Name);
             toolTabs.SelectTab("Battle");
             toolTabs.ForeColor = Program.Conf.OtherTextColor;
+            ResumeLayout();
         }
 
         public void CloseTab(string key)
