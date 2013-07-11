@@ -10,7 +10,7 @@ namespace MumbleIntegration
         readonly TasClient client;
 
         public MumbleMover(TasClient client) {
-            this.client = client;
+            /*this.client = client;
 
             client.BattleUserJoined += (sender, args) =>
                 {
@@ -28,11 +28,11 @@ namespace MumbleIntegration
                             foreach (var us in args.Data.Users) murmur.MoveUser(us.Name, specChan);
                         }
                     }
-                };
+                };*/
         }
 
         public void OnBalance(string autohostName, bool isGameStart, List<PlayerInfo> players) {
-            try {
+            /*try {
                 if (client.ExistingUsers[autohostName].IsInGame) return;// ignoring balance when in game
 
                 using (var murmur = new MurmurSession()) {
@@ -53,7 +53,7 @@ namespace MumbleIntegration
                 try {
                     client.Say(TasClient.SayPlace.User, "Licho", ex.ToString(), false); // todo remove when tested
                 } catch {}
-            }
+            }*/
         }
 
         public class PlayerInfo
