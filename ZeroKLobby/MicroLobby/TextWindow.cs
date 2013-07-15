@@ -114,6 +114,7 @@ namespace ZeroKLobby.MicroLobby
 
         public TextWindow()
         {
+            SuspendLayout();
             InitializeComponent();
             ShowUnreadLine = true;
             displayLines = new DisplayLine[MaxTextLines*4];
@@ -127,6 +128,7 @@ namespace ZeroKLobby.MicroLobby
             UpdateStyles();
 
             LoadTextSizes();
+            ResumeLayout();
         }
 
         public void AppendText(string newLine)
@@ -265,12 +267,14 @@ namespace ZeroKLobby.MicroLobby
                         try
                         {
                             startHighLine = -1; // reset selection
-                            if (clickedWord.StartsWith("spring://")) {
-                              Program.MainWindow.navigationControl.Path = clickedWord;
-                            } else
-                            {
-                              Utils.OpenWeb(clickedWord, false);
-                            }
+                            //if (clickedWord.StartsWith("spring://") || clickedWord.Contains("zero-k.info")) //tab name or zerok (or ZK) website
+                            //{
+                            //  Program.MainWindow.navigationControl.Path = clickedWord;
+                            //} else
+                            //{
+                            //  Utils.OpenWeb(clickedWord, false);
+                            //}
+                            Program.MainWindow.navigationControl.Path = clickedWord; //request URL be opened (in internal browser or external depending on which is appropriate)
                         }
                         catch (Win32Exception ex)
                         {
@@ -1183,7 +1187,7 @@ namespace ZeroKLobby.MicroLobby
                 var line = displayLines[lineNumber].Line.StripAllCodes(); //get all character of the line (Note: StripAllCodes() is a function in TextColor.cs)
 
                 //do line-width check once if "x" is greater than line width, else check every character for the correct position where "x" is pointing at. 
-                //float width = (int)g.MeasureString(line, Font, 0, sf).Width; //cons: underestimate end position if there's emotIcon, it cut some char during selection
+                //float width = (int)g.MeasureString(line, Font, 0, sf).Width; //<-- you can uncomment this and comment the next line. The bad thing is: it underestimate end position if there's emotIcon, it cut some char during selection
                 float width = g.MeasureString(lineEmot, Font, 0, sf).Width;
                 if (x > width)
                 {
@@ -1235,7 +1239,7 @@ namespace ZeroKLobby.MicroLobby
 
                 //do line-width check once if "x" is greater than line width,
                 float width = g.MeasureString(line, Font, 0, sf).Width;
-                //float width = g.MeasureString(lineEmot, Font, 0, sf).Width; //cons: will overestimate hyperlinks ending, which make you able to click empty space
+                //float width = g.MeasureString(lineEmot, Font, 0, sf).Width; / //<-- you can uncomment this and comment the previous line. The bad thing is: will overestimate hyperlinks ending, which make you able to click empty space
                 if (x > width)
                 {
                     g.Dispose();

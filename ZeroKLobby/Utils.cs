@@ -41,12 +41,18 @@ namespace ZeroKLobby
 
         public static void SetIeCompatibility()
         {
+            WebBrowser webBrowserInstance = new WebBrowser();
+            int iEnumber = webBrowserInstance.Version.Major; //reference: http://support.microsoft.com/kb/969393/en-us
+            int compatibilityCode = iEnumber * 1000;//Reference:http://msdn.microsoft.com/en-us/library/ee330730%28VS.85%29.aspx#browser_emulation
+            webBrowserInstance.Dispose();
+            Trace.TraceInformation("Using Internet Explorer {0}", iEnumber);
+
             var fileName = Path.GetFileName(Application.ExecutablePath);
             try
             {
                 Registry.SetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Internet Explorer\MAIN\FeatureControl\FEATURE_BROWSER_EMULATION",
                                   fileName,
-                                  9000);
+                                  compatibilityCode);
             }
             catch (Exception ex)
             {
@@ -57,7 +63,7 @@ namespace ZeroKLobby
                 Registry.SetValue(
                     @"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Internet Explorer\MAIN\FeatureControl\FEATURE_BROWSER_EMULATION",
                     fileName,
-                    9000);
+                    compatibilityCode);
             }
             catch (Exception ex)
             {

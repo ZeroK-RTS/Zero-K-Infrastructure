@@ -374,6 +374,7 @@ namespace ZeroKLobby.MicroLobby
 				}
 			}
 			return true;
+            //note: the path is set from ToolTabs.cs (to NavigationControl.cs) which happens when user pressed the channel's name.
     	}
 
     	public bool Hilite(HiliteLevel level, params string[] path)

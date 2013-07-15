@@ -43,6 +43,7 @@ namespace ZeroKLobby
         readonly Dictionary<INavigatable, string> lastTabPaths = new Dictionary<INavigatable, string>();
         public ChatTab ChatTab { get { return chatTab; } }
         public static NavigationControl Instance { get; private set; }
+        bool selectURLtextboxAll = false;
 
         public string Path {
             get { return CurrentPage != null ? CurrentPage.ToString() : string.Empty; }
@@ -58,12 +59,16 @@ namespace ZeroKLobby
 
                 if (CurrentPage != null && CurrentPage.ToString() == value) return; // we are already there, no navigation needed
 
+                if (value.StartsWith("www.")) { value = "http://" + value; } //create "http://www"
                 var step = GoToPage(value.Split('/')); //go to page
                 if (step != null) {
                     if (CurrentPage != null && CurrentPage.ToString() != value) backStack.Push(CurrentPage);
                     CurrentPage = step;
                 }
-                else if (value.StartsWith("http://") || value.StartsWith("https://")) { Program.BrowserInterop.OpenUrl(value); } //this open external browser
+                else if (value.StartsWith("http://") || value.StartsWith("https://"))
+                {
+                    Program.BrowserInterop.OpenUrl(value); //this open external browser
+                } 
             }
         }
 
@@ -106,13 +111,17 @@ namespace ZeroKLobby
             lastTabPaths[chatTab] = string.Format("chat/channel/{0}", Program.Conf != null ? Program.Conf.AutoJoinChannels.OfType<string>().FirstOrDefault():"zk");
             AddTabPage(chatTab, "Chat");
             if (Environment.OSVersion.Platform != PlatformID.Unix && !Program.Conf.UseExternalBrowser) {
-                AddTabPage(new BrowserTab("http://zero-k.info/Maps"), "Maps");
-                AddTabPage(new BrowserTab("http://zero-k.info/Missions"), "sp");
-                AddTabPage(new BrowserTab("http://zero-k.info/Battles"), "rp");
-                AddTabPage(new BrowserTab("http://zero-k.info/PlanetWars"), "pw");
-                AddTabPage(new BrowserTab("http://zero-k.info/Forum"), "fm");
+                if (!Program.Conf.SingleInstance) //run in multiple TAB?
+                {
+                    AddTabPage(new BrowserTab("http://zero-k.info/Maps"), "Maps");
+                    AddTabPage(new BrowserTab("http://zero-k.info/Missions"), "sp");
+                    AddTabPage(new BrowserTab("http://zero-k.info/Battles"), "rp");
+                    AddTabPage(new BrowserTab("http://zero-k.info/PlanetWars"), "pw");
+                    AddTabPage(new BrowserTab("http://zero-k.info/Forum"), "fm");
+                }
                 var home = AddTabPage(new BrowserTab("http://zero-k.info/"), "hm");
                 tabControl.SelectTab(home);
+                if (Program.Conf.InterceptPopup) { AddTabPage(new BrowserTab("http"), "other"); } //a tab with generic match that match 100% of random URL (block new window)
             }
             var battles = new BattleListTab();
             AddTabPage(battles, "Battles");
@@ -232,10 +241,6 @@ namespace ZeroKLobby
             //e.Cancel = true;
         }
 
-        void urlBox_Enter(object sender, EventArgs e) {
-            urlBox.SelectAll();
-        }
-
         void urlBox_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyData == Keys.Return) {
                 goButton1_Click(sender, e);
@@ -296,13 +301,28 @@ namespace ZeroKLobby
             else {  Path = urlBox.Text; } //perform general & common navigation specific to TAB (go to TAB and perform action)
         }
 
-        //add path to BACK/FORWARD history stack skipping all checks
+        //add path to BACK/FORWARD history (skipping all checks) and update current TAB's pathString. Is used by BrowserTab.cs to indicate page finish loading
         public void AddToHistoryStack(String pathString, Object obj)
         {
-            if (CurrentPage != null && CurrentPage.ToString() != pathString) backStack.Push(CurrentPage);
-            CurrentPage = new NavigationStep { Path = pathString.Split('/') };
             INavigatable nav = GetINavigatableFromControl(obj);
             lastTabPaths[nav] = pathString;//if user navigate away from this TAB, display this page when he return
+
+            if (CurrentNavigatable == nav) //is in current TAB
+            {
+                if (CurrentPage != null && CurrentPage.ToString() != pathString) backStack.Push(CurrentPage); //add previous currentPage to history
+                CurrentPage = new NavigationStep { Path = pathString.Split('/') }; //add this page as currentPage
+            }
+        }
+
+        private void urlBox_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (!selectURLtextboxAll) { urlBox.SelectAll(); }
+            selectURLtextboxAll = !selectURLtextboxAll;
+        }
+
+        private void urlBox_Enter(object sender, EventArgs e)
+        {
+            selectURLtextboxAll = false;
         }
 
     }

@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace ZeroKLobby
 {
-    public class BrowserTab : WebBrowser, INavigatable
+    public class BrowserTab : ExtendedWebBrowser, INavigatable //INavigatable as (WebBrowser as) ExtendedWebBrowser as BrowserTab //added ExtendedWebBrowser <--- WebBrowser
     {
         int navigatedIndex = 0;
         int historyCount = 0;
@@ -21,11 +21,17 @@ namespace ZeroKLobby
             if (Program.TasClient != null) Program.TasClient.LoginAccepted += (sender, args) =>
             {
                 navigatingTo = head;
-                Navigate(head);
+                base.Navigate(head);
             };
-            base.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(UpdateURL); //This will call "UpdateURL()" when page finish loading
+            base.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(browser_DocumentCompleted); //This will call "UpdateURL()" when page finish loading
+            base.NewWindow3 += BrowserTab_NewWindow3;
         }
 
+        void BrowserTab_NewWindow3(object sender, NewWindow3EventArgs e)
+        {
+            NavigationControl.Instance.Path = e.Url.ToString();
+            e.Cancel = true;
+        }
 
         //protected override void OnNewWindow(System.ComponentModel.CancelEventArgs e) //This block "Open In New Window" button.
         //{
@@ -37,7 +43,7 @@ namespace ZeroKLobby
         //{
         //    base.OnNavigated(e);
         //}
-        
+
         protected override void OnNavigating(WebBrowserNavigatingEventArgs e) //this intercept URL navigation induced when user click on link or during page loading
         {
             var url = e.Url.ToString();
@@ -61,7 +67,7 @@ namespace ZeroKLobby
 
         public bool TryNavigate(params string[] path) //navigation induced by call from "NavigationControl.cs"
         {
-            var pathString = String.Join("/", path);
+            String pathString = String.Join("/", path);
             if (navigatingTo == pathString) { return true; }  //already navigating there, just return TRUE
             if (pathString.StartsWith(PathHead)) 
             {
@@ -69,8 +75,8 @@ namespace ZeroKLobby
                 bool canNavigate = TryToGoBackForward(pathString);
                 if (canNavigate) { return true; }
                 navigatingTo = pathString;
-                Navigate(pathString);
-                return true; //the URL contain intended header, return TRUE and Navigate() to URL
+                base.Navigate(pathString);
+                return true; //the URL is intended header or is children of intended header, return TRUE and Navigate() to URL
             }
             String currentURL = String.Empty;
             if (Url != null && !string.IsNullOrEmpty(Url.ToString()))
@@ -86,7 +92,7 @@ namespace ZeroKLobby
                     bool canNavigate = TryToGoBackForward(pathString);
                     if (canNavigate) {return true;}
                     navigatingTo = pathString;
-                    Navigate(pathString);
+                    base.Navigate(pathString);
                     return true; //the URL is from history, return TRUE and Navigate() to URL
                 }
             }
@@ -104,12 +110,12 @@ namespace ZeroKLobby
         }
 
         public void Reload() {
-            Refresh(WebBrowserRefreshOption.IfExpired);
+            base.Refresh(WebBrowserRefreshOption.IfExpired);
         }
 
         public bool CanReload { get { return true; }}
 
-        private void UpdateURL(object sender, WebBrowserDocumentCompletedEventArgs e) //is called when webpage finish loading
+        private void browser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) //is called when webpage finish loading
         {   //Reference: http://msdn.microsoft.com/en-us/library/system.windows.forms.webbrowser.aspx
             
             //This update URL textbox & add the page to NavigationBar's history (so that Back&Forward button can be used):
@@ -136,6 +142,7 @@ namespace ZeroKLobby
             }
 
             AddToHistory(final);
+
         }
 
         //this function keep track of new pages opened by WebBrowser and translate it into history stack.
@@ -207,7 +214,7 @@ namespace ZeroKLobby
                     if (isBack)
                     {
                         currrentHistoryPosition = currrentHistoryPosition - 1;
-                        GoBack();
+                        base.GoBack();
                         //System.Diagnostics.Trace.TraceInformation("GoBack {0}", pathString);
                         navigatingTo = pathString;
                         return true;
@@ -215,7 +222,7 @@ namespace ZeroKLobby
                     else if (isFront)
                     {
                         currrentHistoryPosition = currrentHistoryPosition + 1;
-                        GoForward();
+                        base.GoForward();
                         //System.Diagnostics.Trace.TraceInformation("GoForward {0}", pathString);
                         navigatingTo = pathString;
                         return true;
@@ -230,6 +237,6 @@ namespace ZeroKLobby
             }
             return false;
         }
-         
+        
     }
 }
