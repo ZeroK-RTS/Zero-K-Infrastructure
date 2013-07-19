@@ -201,10 +201,10 @@ namespace NightWatch
                                 (acc.LastLobbyVersionCheck == null || DateTime.UtcNow.Subtract(acc.LastLobbyVersionCheck.Value).TotalDays > 3) &&
                                 aconf.AutohostMode != 0) client.RequestLobbyVersion(user.Name);
 
-                            if (acc != null && GlobalConst.IsZkMod(battle.ModName)) {
+                   /*         if (acc != null && GlobalConst.IsZkMod(battle.ModName)) {
                                 if ((!string.IsNullOrEmpty(acc.LobbyVersion) && acc.LobbyVersion.Contains("NOTA")) || (
 !acc.AccountUserIDS.Any())) client.AdminKickFromLobby(user.Name,string.Format("Sorry you are using unsupported lobby ({0}), please use Zero-K lobby, Weblobby or SpringLobby", acc.LobbyVersion));
-                            }
+                            }*/
                         }
                     }
                 };
