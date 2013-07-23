@@ -1,4 +1,4 @@
-﻿.nicetitle, .ui-tooltip, .qtip
+ .nicetitle, .ui-tooltip, .qtip
 {
     background: #000 url("../img/border-1.png") repeat-x;
     position: absolute;
@@ -11,8 +11,6 @@
     border: 1px solid #38bfec;
     border-radius: 3px;
     max-width: 400px;
-    min-width: 400px;
-    width: 400px;
     opacity: .9;
 	z-index:-2;
 }
@@ -31,7 +29,6 @@ div.nicetitle p.destination {
   background: none;
   color: #FFF;
   border: none;
-  width: 380px;
   }
 
 	.ui-tooltip-titlebar
