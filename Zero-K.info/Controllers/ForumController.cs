@@ -191,11 +191,11 @@ namespace ZeroKWeb.Controllers
 				else if (springBattleID.HasValue) return RedirectToAction("Detail", "Battles", new { id = springBattleID });
 				else if (clanID.HasValue) return RedirectToAction("Detail", "Clans", new { id = clanID });
 				else if (planetID.HasValue) return RedirectToAction("Planet", "Planetwars", new { id = planetID });
-				else return RedirectToAction("Thread", new { id = thread.ForumThreadID });
+				else return RedirectToAction("Thread", new { id = thread.ForumThreadID, postID = forumPostID });
 			}
 		}
 
-		public ActionResult Thread(int id, bool? lastPost, bool? lastSeen, int? page = 0)
+		public ActionResult Thread(int id, bool? lastPost, bool? lastSeen, int? postID, int? page = 0)
 		{
 			var db = new ZkDataContext();
 			var t = db.ForumThreads.FirstOrDefault(x => x.ForumThreadID == id);
@@ -210,7 +210,7 @@ namespace ZeroKWeb.Controllers
 			}
 
 			var res = new ThreadResult();
-			res.GoToPost = t.UpdateLastRead(Global.AccountID, false);
+			res.GoToPost = postID ?? t.UpdateLastRead(Global.AccountID, false);
 
 			db.SubmitChanges();
 
@@ -284,12 +284,28 @@ namespace ZeroKWeb.Controllers
         public ActionResult VotePost(int forumPostID, int delta)
         {
             var db = new ZkDataContext();
+            
+            /*
+            var key = Request.Form.AllKeys.First(x => !string.IsNullOrEmpty(x));
+            int delta = 0;
+            if (key == "upvote") delta = 1;
+            else if (key == "downvote") delta = -1;
+            else if (key == "clearvote") delta = 0;
+            else throw new Exception("WAAAAAAAAAAAA");
+            */
+
+            if (!Global.IsZeroKAdmin)
+            {
+                if (delta > 1) delta = 1;
+                else if (delta < -1) delta = -1;
+            }
+
             ForumPost post = db.ForumPosts.First(x => x.ForumPostID == forumPostID);
             Account author = post.Account;
             if (author == Global.Account) return Content("Cannot vote for your own posts");
 
             AccountForumVote existingVote = db.AccountForumVotes.SingleOrDefault(x => x.ForumPostID == forumPostID && x.AccountID == Global.AccountID);
-            if (existingVote != null)   // handle it ourselves rather than calling CancelVotePost, because that doesn't remove the old entry in time to add the new one without conflict
+            if (existingVote != null)   // clear existing vote
             {
                 int oldDelta = existingVote.Vote;
                 // reverse vote effects
@@ -316,11 +332,13 @@ namespace ZeroKWeb.Controllers
                 post.Downvotes = post.Downvotes - delta;
             }
 
-            AccountForumVote voteEntry = new AccountForumVote { AccountID = Global.AccountID, ForumPostID = forumPostID, Vote = delta };
-            db.AccountForumVotes.InsertOnSubmit(voteEntry);
+            if (delta != 0) {
+                AccountForumVote voteEntry = new AccountForumVote { AccountID = Global.AccountID, ForumPostID = forumPostID, Vote = delta };
+                db.AccountForumVotes.InsertOnSubmit(voteEntry);
+            }
 
             db.SubmitChanges();
-            return RedirectToAction("Thread", new { id = post.ForumThreadID });
+            return RedirectToAction("Thread", new { id = post.ForumThreadID, postID = forumPostID });
         }
 
         public ActionResult CancelVotePost(int forumPostID)
@@ -347,8 +365,7 @@ namespace ZeroKWeb.Controllers
             db.AccountForumVotes.DeleteOnSubmit(existingVote);
 
             db.SubmitChanges();
-            return RedirectToAction("Thread", new { id = post.ForumThreadID });
+            return RedirectToAction("Thread", new { id = post.ForumThreadID, postID = forumPostID });
         }
-
 	}
 }

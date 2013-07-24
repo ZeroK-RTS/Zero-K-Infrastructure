@@ -1,6 +1,7 @@
 ﻿@using ZeroKWeb
 @model IEnumerable<ZkData.ForumPost>
 
+
 @foreach (var p in Model)
 {
     <table width='100%'>
@@ -33,7 +34,6 @@
                             {
                                  @Html.PrintContributorStar(p.Account) <br />
                             }
-                            <small>@Html.PrintPostRating(p)</small>
                         </td>
                     </tr>
 
@@ -42,6 +42,7 @@
             <td valign="top" class="forumPostText">
                 <a name="post@(p.ForumPostID)" id="post@(p.ForumPostID)"></a>
                 @Html.BBCode(p.Text)
+                @Html.Partial("PostRating",p)
             </td>
         </tr>
     </table>

@@ -36,8 +36,7 @@ namespace PlasmaShared
             sb.AppendLine("return modinfo");
             return sb.ToString();
         }
-
-        
+  
         public void UpdateMission(ZkDataContext db, Mission mission, Mod modInfo) {
             var file = mission.Mutator.ToArray();
             var tempName = Path.GetTempFileName() + ".zip";
@@ -54,6 +53,7 @@ namespace PlasmaShared
                 zf.Save();
             }
             mission.Mutator = new Binary(File.ReadAllBytes(tempName));
+            mission.Script = Regex.Replace(mission.Script, "GameType=([^;]+);", (m) => { return string.Format("GameType={0};", mission.NameWithVersion); });
             
             File.Delete(tempName);
             

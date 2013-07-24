@@ -495,19 +495,29 @@ namespace System.Web.Mvc
             if (Global.Account == null || Global.AccountID == post.AuthorAccountID)
             {
                 return new MvcHtmlString(string.Format("{0} / {1}",
-                    string.Format("<font {0}{1}</font>", post.Upvotes > 0 ? "color='LawnGreen'>+" : ">", post.Upvotes),
-                    string.Format("<font {0}{1}</font>", post.Downvotes > 0 ? "color='Tomato'>-" : ">", post.Downvotes)
+                    string.Format("<font {0}>+{1}</font>", post.Upvotes > 0 ? "color='LawnGreen'" : "", post.Upvotes),
+                    string.Format("<font {0}>-{1}</font>", post.Downvotes > 0 ? "color='Tomato'" : "", post.Downvotes)
                     ));
             }
             AccountForumVote previousVote = post.AccountForumVotes.SingleOrDefault(x => x.AccountID == Global.AccountID);
             bool upvoted = (previousVote != null && previousVote.Vote > 0);
             bool downvoted = (previousVote != null && previousVote.Vote < 0);
-            return new MvcHtmlString(string.Format("<a href='{0}' class='clearfloat'>{5}{1}{6}</a> / <a href='{2}' class='clearfloat'>{7}{3}{8}</a> {4}",
+            /*
+            return new MvcHtmlString(string.Format("<input type='' name='upvote' value='{3}{0}{4}' title='Upvote'> / <input type='submit' name='downvote' value='{5}{1}{6}'> {2}",
+                    string.Format("<font {0}>+{1}</font>", post.Upvotes > 0 ? "color='LawnGreen'" : "", post.Upvotes),
+                    string.Format("<font {0}>-{1}</font>", post.Downvotes > 0 ? "color='Tomato'" : "", post.Downvotes),
+                    previousVote != null ? string.Format("(<input type='submit' name='clearvote' value='clear'>)") : "",
+                    upvoted ? "<strong>" : "",
+                    upvoted ? "</strong>" : "",
+                    downvoted ? "<strong>" : "",
+                    downvoted ? "</strong>" : ""));
+            */
+            return new MvcHtmlString(string.Format("<a href='{0}' nicetitle='Upvote'>{5}{1}{6}</a> / <a href='{2}' nicetitle='Downvote'>{7}{3}{8}</a> {4}",
                     url.Action("VotePost", "Forum", new { forumPostID = post.ForumPostID, delta = 1 }),
-                    string.Format("<font {0}{1}</font>", post.Upvotes > 0 ? "color='LawnGreen'>+" : ">", post.Upvotes),
+                    string.Format("<font {0}>+{1}</font>", post.Upvotes > 0 ? "color='LawnGreen'" : "", post.Upvotes),
                     url.Action("VotePost", "Forum", new { forumPostID = post.ForumPostID, delta = -1 }),
-                    string.Format("<font {0}{1}</font>", post.Downvotes > 0 ? "color='Tomato'>-" : ">", post.Downvotes),
-                    previousVote != null ? string.Format("(<a href='{0}' class='clearfloat'>cancel</a>)", url.Action("CancelVotePost", "Forum", new {forumPostID = post.ForumPostID})) : "",
+                    string.Format("<font {0}>-{1}</font>", post.Downvotes > 0 ? "color='Tomato'" : "", post.Downvotes),
+                    previousVote != null ? string.Format("(<a href='{0}'>cancel</a>)", url.Action("CancelVotePost", "Forum", new {forumPostID = post.ForumPostID})) : "",
                     upvoted ? "<strong>" : "",
                     upvoted ? "</strong>" : "",
                     downvoted ? "<strong>" : "",
