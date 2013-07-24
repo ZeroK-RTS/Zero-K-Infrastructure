@@ -490,6 +490,10 @@ namespace System.Web.Mvc
             else return null;
         }
 
+        public static MvcHtmlString PrintPostRating(this HtmlHelper helper, ForumPost post) {
+            return null;	//new MvcHtmlString(string.Format("+{0}/-{1}"));   // TBD
+        }
+
         public static string ProcessAtSignTags(string str) {
             var db = new ZkDataContext();
             str = Regex.Replace(str,

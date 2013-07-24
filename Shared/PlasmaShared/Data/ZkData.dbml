@@ -104,6 +104,8 @@
       <Column Name="[Language]" Member="Language" Type="System.String" DbType="nvarchar(2)" CanBeNull="true" />
       <Column Name="HasVpnException" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="Kudos" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="ForumTotalUpvotes" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="ForumTotalDownvotes" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
       <Association Name="Account_LobbyChannelSubscription" Member="LobbyChannelSubscriptions" ThisKey="AccountID" OtherKey="AccountID" Type="LobbyChannelSubscription" />
       <Association Name="Account_ForumThread" Member="ForumThreadsByCreatedAccountID" ThisKey="AccountID" OtherKey="CreatedAccountID" Type="ForumThread" />
@@ -313,6 +315,8 @@
       <Column Name="Created" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
       <Column Name="Text" Type="System.String" DbType="nvarchar(max) NOT NULL" CanBeNull="false" />
       <Column Name="ForumThreadID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="Upvotes" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="Downvotes" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="ForumPost_ForumPostEdit" Member="ForumPostEdits" ThisKey="ForumPostID" OtherKey="ForumPostID" Type="ForumPostEdit" />
       <Association Name="ForumThread_ForumPost" Member="ForumThread" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="ForumThread" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
       <Association Name="Account_ForumPost" Member="Account" ThisKey="AuthorAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
