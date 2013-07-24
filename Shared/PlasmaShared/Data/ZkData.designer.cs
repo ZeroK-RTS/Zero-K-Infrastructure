@@ -264,12 +264,6 @@ namespace ZkData
     partial void DeleteContributionJar(ContributionJar instance);
     #endregion
 		
-		public ZkDataContext() : 
-				base(global::PlasmaShared.Properties.Settings.Default.zero_kConnectionString1, mappingSource)
-		{
-			OnCreated();
-		}
-		
 		public ZkDataContext(string connection) : 
 				base(connection, mappingSource)
 		{
