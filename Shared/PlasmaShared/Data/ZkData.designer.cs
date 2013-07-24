@@ -262,6 +262,9 @@ namespace ZkData
     partial void InsertContributionJar(ContributionJar instance);
     partial void UpdateContributionJar(ContributionJar instance);
     partial void DeleteContributionJar(ContributionJar instance);
+    partial void InsertAccountForumVote(AccountForumVote instance);
+    partial void UpdateAccountForumVote(AccountForumVote instance);
+    partial void DeleteAccountForumVote(AccountForumVote instance);
     #endregion
 		
 		public ZkDataContext(string connection) : 
@@ -901,6 +904,14 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<ContributionJar>();
+			}
+		}
+		
+		public System.Data.Linq.Table<AccountForumVote> AccountForumVotes
+		{
+			get
+			{
+				return this.GetTable<AccountForumVote>();
 			}
 		}
 	}
@@ -2748,6 +2759,8 @@ namespace ZkData
 		
 		private EntitySet<ContributionJar> _ContributionJars;
 		
+		private EntitySet<AccountForumVote> _AccountForumVotes;
+		
 		private EntityRef<Clan> _Clan;
 		
 		private EntityRef<Faction> _Faction;
@@ -4594,6 +4607,25 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountForumVote", Storage="_AccountForumVotes", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=88, EmitDefaultValue=false)]
+		public EntitySet<AccountForumVote> AccountForumVotes
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountForumVotes.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AccountForumVotes;
+			}
+			set
+			{
+				this._AccountForumVotes.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_Account", Storage="_Clan", ThisKey="ClanID", OtherKey="ClanID", IsForeignKey=true)]
 		public Clan Clan
 		{
@@ -5222,6 +5254,18 @@ namespace ZkData
 			entity.Account = null;
 		}
 		
+		private void attach_AccountForumVotes(AccountForumVote entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_AccountForumVotes(AccountForumVote entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
@@ -5269,6 +5313,7 @@ namespace ZkData
 			this._ContributionsByAccountID = new EntitySet<Contribution>(new Action<Contribution>(this.attach_ContributionsByAccountID), new Action<Contribution>(this.detach_ContributionsByAccountID));
 			this._ContributionsByManuallyAddedAccountID = new EntitySet<Contribution>(new Action<Contribution>(this.attach_ContributionsByManuallyAddedAccountID), new Action<Contribution>(this.detach_ContributionsByManuallyAddedAccountID));
 			this._ContributionJars = new EntitySet<ContributionJar>(new Action<ContributionJar>(this.attach_ContributionJars), new Action<ContributionJar>(this.detach_ContributionJars));
+			this._AccountForumVotes = new EntitySet<AccountForumVote>(new Action<AccountForumVote>(this.attach_AccountForumVotes), new Action<AccountForumVote>(this.detach_AccountForumVotes));
 			this._Clan = default(EntityRef<Clan>);
 			this._Faction = default(EntityRef<Faction>);
 			OnCreated();
@@ -9093,6 +9138,8 @@ namespace ZkData
 		
 		private EntitySet<ForumPostEdit> _ForumPostEdits;
 		
+		private EntitySet<AccountForumVote> _AccountForumVotes;
+		
 		private EntityRef<ForumThread> _ForumThread;
 		
 		private EntityRef<Account> _Account;
@@ -9298,6 +9345,25 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumPost_AccountForumVote", Storage="_AccountForumVotes", ThisKey="ForumPostID", OtherKey="ForumPostID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
+		public EntitySet<AccountForumVote> AccountForumVotes
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountForumVotes.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AccountForumVotes;
+			}
+			set
+			{
+				this._AccountForumVotes.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_ForumPost", Storage="_ForumThread", ThisKey="ForumThreadID", OtherKey="ForumThreadID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
 		public ForumThread ForumThread
 		{
@@ -9398,9 +9464,22 @@ namespace ZkData
 			entity.ForumPost = null;
 		}
 		
+		private void attach_AccountForumVotes(AccountForumVote entity)
+		{
+			this.SendPropertyChanging();
+			entity.ForumPost = this;
+		}
+		
+		private void detach_AccountForumVotes(AccountForumVote entity)
+		{
+			this.SendPropertyChanging();
+			entity.ForumPost = null;
+		}
+		
 		private void Initialize()
 		{
 			this._ForumPostEdits = new EntitySet<ForumPostEdit>(new Action<ForumPostEdit>(this.attach_ForumPostEdits), new Action<ForumPostEdit>(this.detach_ForumPostEdits));
+			this._AccountForumVotes = new EntitySet<AccountForumVote>(new Action<AccountForumVote>(this.attach_AccountForumVotes), new Action<AccountForumVote>(this.detach_AccountForumVotes));
 			this._ForumThread = default(EntityRef<ForumThread>);
 			this._Account = default(EntityRef<Account>);
 			OnCreated();
@@ -32980,6 +33059,214 @@ namespace ZkData
 		public void OnSerialized(StreamingContext context)
 		{
 			this.serializing = false;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AccountForumVote")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class AccountForumVote : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _AccountID;
+		
+		private int _ForumPostID;
+		
+		private int _Vote;
+		
+		private EntityRef<Account> _Account;
+		
+		private EntityRef<ForumPost> _ForumPost;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnAccountIDChanging(int value);
+    partial void OnAccountIDChanged();
+    partial void OnForumPostIDChanging(int value);
+    partial void OnForumPostIDChanged();
+    partial void OnVoteChanging(int value);
+    partial void OnVoteChanged();
+    #endregion
+		
+		public AccountForumVote()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int AccountID
+		{
+			get
+			{
+				return this._AccountID;
+			}
+			set
+			{
+				if ((this._AccountID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._AccountID = value;
+					this.SendPropertyChanged("AccountID");
+					this.OnAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForumPostID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int ForumPostID
+		{
+			get
+			{
+				return this._ForumPostID;
+			}
+			set
+			{
+				if ((this._ForumPostID != value))
+				{
+					if (this._ForumPost.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnForumPostIDChanging(value);
+					this.SendPropertyChanging();
+					this._ForumPostID = value;
+					this.SendPropertyChanged("ForumPostID");
+					this.OnForumPostIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Vote", DbType="Int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int Vote
+		{
+			get
+			{
+				return this._Vote;
+			}
+			set
+			{
+				if ((this._Vote != value))
+				{
+					this.OnVoteChanging(value);
+					this.SendPropertyChanging();
+					this._Vote = value;
+					this.SendPropertyChanged("Vote");
+					this.OnVoteChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountForumVote", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.AccountForumVotes.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.AccountForumVotes.Add(this);
+						this._AccountID = value.AccountID;
+					}
+					else
+					{
+						this._AccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumPost_AccountForumVote", Storage="_ForumPost", ThisKey="ForumPostID", OtherKey="ForumPostID", IsForeignKey=true)]
+		public ForumPost ForumPost
+		{
+			get
+			{
+				return this._ForumPost.Entity;
+			}
+			set
+			{
+				ForumPost previousValue = this._ForumPost.Entity;
+				if (((previousValue != value) 
+							|| (this._ForumPost.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ForumPost.Entity = null;
+						previousValue.AccountForumVotes.Remove(this);
+					}
+					this._ForumPost.Entity = value;
+					if ((value != null))
+					{
+						value.AccountForumVotes.Add(this);
+						this._ForumPostID = value.ForumPostID;
+					}
+					else
+					{
+						this._ForumPostID = default(int);
+					}
+					this.SendPropertyChanged("ForumPost");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Account = default(EntityRef<Account>);
+			this._ForumPost = default(EntityRef<ForumPost>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
 		}
 	}
 }

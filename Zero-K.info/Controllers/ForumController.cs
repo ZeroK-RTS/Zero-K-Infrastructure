@@ -280,5 +280,75 @@ namespace ZeroKWeb.Controllers
             var post = db.ForumPosts.First(x => x.ForumPostID == forumPostID);
             return View("EditHistory", post);
 	    }
+
+        public ActionResult VotePost(int forumPostID, int delta)
+        {
+            var db = new ZkDataContext();
+            ForumPost post = db.ForumPosts.First(x => x.ForumPostID == forumPostID);
+            Account author = post.Account;
+            if (author == Global.Account) return Content("Cannot vote for your own posts");
+
+            AccountForumVote existingVote = db.AccountForumVotes.SingleOrDefault(x => x.ForumPostID == forumPostID && x.AccountID == Global.AccountID);
+            if (existingVote != null)   // handle it ourselves rather than calling CancelVotePost, because that doesn't remove the old entry in time to add the new one without conflict
+            {
+                int oldDelta = existingVote.Vote;
+                // reverse vote effects
+                if (oldDelta > 0)
+                {
+                    author.ForumTotalUpvotes = author.ForumTotalUpvotes - oldDelta;
+                    post.Upvotes = post.Upvotes - oldDelta;
+                }
+                else if (oldDelta < 0)
+                {
+                    author.ForumTotalDownvotes = author.ForumTotalDownvotes + oldDelta;
+                    post.Downvotes = post.Downvotes + oldDelta;
+                }
+                db.AccountForumVotes.DeleteOnSubmit(existingVote);
+            }
+            if (delta > 0)
+            {
+                author.ForumTotalUpvotes = author.ForumTotalUpvotes + delta;
+                post.Upvotes = post.Upvotes + delta;
+            }
+            else if (delta < 0)
+            {
+                author.ForumTotalDownvotes = author.ForumTotalDownvotes - delta;
+                post.Downvotes = post.Downvotes - delta;
+            }
+
+            AccountForumVote voteEntry = new AccountForumVote { AccountID = Global.AccountID, ForumPostID = forumPostID, Vote = delta };
+            db.AccountForumVotes.InsertOnSubmit(voteEntry);
+
+            db.SubmitChanges();
+            return RedirectToAction("Thread", new { id = post.ForumThreadID });
+        }
+
+        public ActionResult CancelVotePost(int forumPostID)
+        {
+            var db = new ZkDataContext();
+            AccountForumVote existingVote = db.AccountForumVotes.SingleOrDefault(x => x.ForumPostID == forumPostID && x.AccountID == Global.AccountID);
+            if (existingVote == null) return Content("No existing vote to remove");
+
+            ForumPost post = db.ForumPosts.First(x => x.ForumPostID == forumPostID);
+            Account author = post.Account;
+
+            int delta = existingVote.Vote;
+            // reverse vote effects
+            if (delta > 0)
+            {
+                author.ForumTotalUpvotes = author.ForumTotalUpvotes - delta;
+                post.Upvotes = post.Upvotes - delta;
+            }
+            else if (delta < 0)
+            {
+                author.ForumTotalDownvotes = author.ForumTotalDownvotes + delta;
+                post.Downvotes = post.Downvotes + delta;
+            }
+            db.AccountForumVotes.DeleteOnSubmit(existingVote);
+
+            db.SubmitChanges();
+            return RedirectToAction("Thread", new { id = post.ForumThreadID });
+        }
+
 	}
 }

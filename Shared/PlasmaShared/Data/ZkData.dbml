@@ -151,6 +151,7 @@
       <Association Name="Account_Contribution" Member="ContributionsByAccountID" ThisKey="AccountID" OtherKey="AccountID" Type="Contribution" />
       <Association Name="Account_Contribution1" Member="ContributionsByManuallyAddedAccountID" ThisKey="AccountID" OtherKey="ManuallyAddedAccountID" Type="Contribution" />
       <Association Name="Account_ContributionJar" Member="ContributionJars" ThisKey="AccountID" OtherKey="GuarantorAccountID" Type="ContributionJar" />
+      <Association Name="Account_AccountForumVote" Member="AccountForumVotes" ThisKey="AccountID" OtherKey="AccountID" Type="AccountForumVote" />
       <Association Name="Clan_Account" Member="Clan" ThisKey="ClanID" OtherKey="ClanID" Type="Clan" IsForeignKey="true" />
       <Association Name="Faction_Account" Member="Faction" ThisKey="FactionID" OtherKey="FactionID" Type="Faction" IsForeignKey="true" />
     </Type>
@@ -318,6 +319,7 @@
       <Column Name="Upvotes" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="Downvotes" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="ForumPost_ForumPostEdit" Member="ForumPostEdits" ThisKey="ForumPostID" OtherKey="ForumPostID" Type="ForumPostEdit" />
+      <Association Name="ForumPost_AccountForumVote" Member="AccountForumVotes" ThisKey="ForumPostID" OtherKey="ForumPostID" Type="AccountForumVote" />
       <Association Name="ForumThread_ForumPost" Member="ForumThread" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="ForumThread" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
       <Association Name="Account_ForumPost" Member="Account" ThisKey="AuthorAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
@@ -1256,6 +1258,15 @@
       <Column Name="IsDefault" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Association Name="ContributionJar_Contribution" Member="Contributions" ThisKey="ContributionJarID" OtherKey="ContributionJarID" Type="Contribution" />
       <Association Name="Account_ContributionJar" Member="Account" ThisKey="GuarantorAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AccountForumVote" Member="AccountForumVotes">
+    <Type Name="AccountForumVote">
+      <Column Name="AccountID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ForumPostID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Vote" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Account_AccountForumVote" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+      <Association Name="ForumPost_AccountForumVote" Member="ForumPost" ThisKey="ForumPostID" OtherKey="ForumPostID" Type="ForumPost" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>
