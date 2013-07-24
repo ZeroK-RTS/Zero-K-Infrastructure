@@ -42,7 +42,7 @@
             <td valign="top" class="forumPostText">
                 <a name="post@(p.ForumPostID)" id="post@(p.ForumPostID)"></a>
                 @Html.BBCode(p.Text)
-                @Html.Partial("PostRating",p)
+                @Html.Partial("~/Views/Forum/PostRating.cshtml", p)
             </td>
         </tr>
     </table>
