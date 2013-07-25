@@ -17,13 +17,14 @@ namespace ZeroKWeb.Controllers
 			var db = new ZkDataContext();
 			var post = db.ForumPosts.Single(x => x.ForumPostID == postID);
 			var thread = post.ForumThread;
+            var threadID = thread.ForumThreadID;
 			db.ForumPosts.DeleteOnSubmit(post);
 			db.SubmitChanges();
 			if (thread.ForumPosts.Count() <= 1) {
 				db.ForumThreads.DeleteOnSubmit(thread);
 				db.SubmitChanges();
 				return RedirectToAction("Index");
-			} else return RedirectToAction("Thread", new { id = post.ForumThreadID });
+			} else return RedirectToAction("Thread", new { id = threadID });
 		}
 
 		public ActionResult Index(int? categoryID)
