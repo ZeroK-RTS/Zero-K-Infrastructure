@@ -2665,9 +2665,9 @@ namespace ZkData
 		
 		private int _Kudos;
 		
-		private int _ForumTotalUpvotes;
+		private System.Nullable<int> _ForumTotalUpvotes;
 		
-		private int _ForumTotalDownvotes;
+		private System.Nullable<int> _ForumTotalDownvotes;
 		
 		private EntitySet<Mission> _Missions;
 		
@@ -2851,9 +2851,9 @@ namespace ZkData
     partial void OnHasVpnExceptionChanged();
     partial void OnKudosChanging(int value);
     partial void OnKudosChanged();
-    partial void OnForumTotalUpvotesChanging(int value);
+    partial void OnForumTotalUpvotesChanging(System.Nullable<int> value);
     partial void OnForumTotalUpvotesChanged();
-    partial void OnForumTotalDownvotesChanging(int value);
+    partial void OnForumTotalDownvotesChanging(System.Nullable<int> value);
     partial void OnForumTotalDownvotesChanged();
     #endregion
 		
@@ -3710,9 +3710,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForumTotalUpvotes", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForumTotalUpvotes", DbType="int")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=41)]
-		public int ForumTotalUpvotes
+		public System.Nullable<int> ForumTotalUpvotes
 		{
 			get
 			{
@@ -3731,9 +3731,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForumTotalDownvotes", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForumTotalDownvotes", DbType="int")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=42)]
-		public int ForumTotalDownvotes
+		public System.Nullable<int> ForumTotalDownvotes
 		{
 			get
 			{
