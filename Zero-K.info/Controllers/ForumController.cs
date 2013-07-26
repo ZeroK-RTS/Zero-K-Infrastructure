@@ -295,6 +295,11 @@ namespace ZeroKWeb.Controllers
             else throw new Exception("WAAAAAAAAAAAA");
             */
 
+            if (Global.Account.Level < GlobalConst.MinLevelForForumVote)
+            {
+                return Content(string.Format("You cannot vote until you are level {0} or higher", GlobalConst.MinLevelForForumVote));
+            }
+
             if (!Global.IsZeroKAdmin)
             {
                 if (delta > 1) delta = 1;
