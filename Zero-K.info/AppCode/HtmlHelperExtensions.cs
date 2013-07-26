@@ -489,6 +489,13 @@ namespace System.Web.Mvc
             }
             else return null;
         }
+        public static MvcHtmlString PrintTotalPostRating(this HtmlHelper helper, Account account)
+        {
+            return new MvcHtmlString(string.Format("{0} / {1}",
+                    string.Format("<font color='LawnGreen'>+{0}</font>", account.ForumTotalUpvotes),
+                    string.Format("<font color='Tomato'>-{0}</font>", account.ForumTotalDownvotes)
+                    ));
+        }
 
         public static MvcHtmlString PrintPostRating(this HtmlHelper helper, ForumPost post) {
             var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
