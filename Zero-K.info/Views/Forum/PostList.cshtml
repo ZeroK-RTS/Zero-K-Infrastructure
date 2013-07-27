@@ -1,6 +1,9 @@
 ﻿@using ZeroKWeb
 @model IEnumerable<ZkData.ForumPost>
 
+@{
+    var penalty = ZkData.Punishment.GetActivePunishment(Global.AccountID, "", 0, x=>x.BanForum);
+}
 
 @foreach (var p in Model)
 {
@@ -42,7 +45,12 @@
             <td valign="top" class="forumPostText">
                 <a name="post@(p.ForumPostID)" id="post@(p.ForumPostID)"></a>
                 @Html.BBCode(p.Text)
-                @Html.Partial("~/Views/Forum/PostRating.cshtml", p)
+                @{
+                    var divID = "ForumPostVoteForm" + p.ForumPostID;
+                }
+                <div id="@divID" align="right">
+                	@Html.PrintPostRating(p, penalty != null)
+                </div>
             </td>
         </tr>
     </table>

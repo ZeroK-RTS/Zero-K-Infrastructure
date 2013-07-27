@@ -497,9 +497,9 @@ namespace System.Web.Mvc
                     ));
         }
 
-        public static MvcHtmlString PrintPostRating(this HtmlHelper helper, ForumPost post) {
+        public static MvcHtmlString PrintPostRating(this HtmlHelper helper, ForumPost post, bool blockPost) {
             var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
-            if (Global.Account == null || Global.AccountID == post.AuthorAccountID || Global.Account.Level < GlobalConst.MinLevelForForumVote)
+            if (Global.Account == null || Global.AccountID == post.AuthorAccountID || Global.Account.Level < GlobalConst.MinLevelForForumVote || blockPost)
             {
                 return new MvcHtmlString(string.Format("{0} / {1}",
                     string.Format("<font {0}>+{1}</font>", post.Upvotes > 0 ? "color='LawnGreen'" : "", post.Upvotes),
