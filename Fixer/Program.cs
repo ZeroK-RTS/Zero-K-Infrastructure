@@ -355,16 +355,101 @@ namespace Fixer
             }
         }
 
+        public static void PrintNightwatchSubscriptions(string channel)
+        {
+            ZkDataContext db = new ZkDataContext();
+            var subscriptions = db.LobbyChannelSubscriptions.Where(x => x.Channel == channel);
+            foreach (var entry in subscriptions)
+            {
+                Account acc = entry.Account;
+                System.Console.WriteLine(acc);
+            }
+        }
+
+        public static void GetForumKarmaLadder()
+        {
+            ZkDataContext db = new ZkDataContext();
+            var accounts = db.Accounts.Where(x=> x.ForumTotalUpvotes > 0 || x.ForumTotalDownvotes > 0).OrderByDescending(x => x.ForumTotalUpvotes - x.ForumTotalDownvotes).ToList();
+
+            foreach (Account ac in accounts)
+            {
+                System.Console.WriteLine(ac.Name + "\t+" + ac.ForumTotalUpvotes + " / -" + ac.ForumTotalDownvotes);
+            }
+        }
+
+        public static void GetForumKarmaVotes()
+        {
+            ZkDataContext db = new ZkDataContext();
+            var posts = db.ForumPosts.Where(x => x.Upvotes > 0 || x.Downvotes > 0).OrderByDescending(x => x.Upvotes - x.Downvotes).ToList();
+
+            foreach (var p in posts)
+            {
+                System.Console.WriteLine(p.ForumThreadID + "\t+" + p.ForumPostID + "\t+" + p.Upvotes + " / -" + p.Downvotes);
+            }
+        }
+
+        public static void RecountForumVotes()
+        {
+            ZkDataContext db = new ZkDataContext();
+            var accounts = db.Accounts.Where(x => x.ForumTotalUpvotes > 0 || x.ForumTotalDownvotes > 0).ToList();
+            foreach (var acc in accounts)
+            {
+                acc.ForumTotalUpvotes = 0;
+                acc.ForumTotalDownvotes = 0;
+            }
+
+            var votes = db.AccountForumVotes.ToList();
+            foreach (var vote in votes)
+            {
+                Account poster = vote.ForumPost.Account;
+                int delta = vote.Vote;
+                if (delta > 0) poster.ForumTotalUpvotes = poster.ForumTotalUpvotes + delta;
+                else if (delta < 0) poster.ForumTotalDownvotes = poster.ForumTotalDownvotes - delta;
+            }
+            db.SubmitChanges();
+        }
+
+        public static void GetClanStackWinRate(int clanID, int minElo)
+        {
+            int won = 0, lost = 0;
+            ZkDataContext db = new ZkDataContext();
+            Clan clan = db.Clans.FirstOrDefault(x => x.ClanID == clanID);
+            var battles = db.SpringBattles.Where(x => x.SpringBattlePlayers.Count(p => p.Account.ClanID == clanID && p.Account.Elo >= minElo && !p.IsSpectator) >= 2 
+                && x.StartTime.CompareTo(DateTime.Now.AddMonths(-1)) > 0 && x.ResourceByMapResourceID.MapIsSpecial != true && !x.IsFfa).ToList();
+            System.Console.WriteLine(clan.ClanName + ", " + battles.Count);
+            foreach (SpringBattle battle in battles)
+            {
+                int onWinners = 0, onLosers = 0;
+                var players = battle.SpringBattlePlayers.Where(p => p.Account.ClanID == clanID && p.Account.Elo >= minElo && !p.IsSpectator).ToList();
+                foreach (SpringBattlePlayer player in players)
+                {
+                    if (player.IsInVictoryTeam) onWinners++;
+                    else onLosers++;
+                }
+                if (onWinners > onLosers)
+                {
+                    won++;
+                    System.Console.WriteLine("won " + battle.SpringBattleID);
+                }
+                else if (onLosers > onWinners)
+                {
+                    lost++;
+                    System.Console.WriteLine("lost " + battle.SpringBattleID);
+                }
+                //else System.Console.WriteLine("OMG, B" + battle.SpringBattleID);
+            }
+            System.Console.WriteLine(won + ", " + lost);
+        }
 
         [STAThread]
         static void Main(string[] args) {
-            var bench = new Benchmarker.MainForm();
-            bench.ShowDialog();
+            //var bench = new Benchmarker.MainForm();
+            //bench.ShowDialog();
 
             //var guid = Guid.NewGuid().ToString();
 
-            var pp = new PayPalInterface();
-            pp.ImportPaypalHistory(Directory.GetCurrentDirectory());
+            //var pp = new PayPalInterface();
+            //pp.ImportPaypalHistory(Directory.GetCurrentDirectory());
 
             //Test1v1Elo();
             //GenerateTechs();
@@ -388,8 +473,12 @@ namespace Fixer
             //AnalyzeModuleUsagePatterns();
             //AnalyzeCommUsagePatterns();
 
-            //UpdateMissionProgression(6);
-            //UpdateMissionProgression(8);
+            //UpdateMissionProgression(9);
+            //PrintNightwatchSubscriptions("zkadmin");
+            //RecountForumVotes();
+            //GetForumKarmaLadder();
+            //GetForumKarmaVotes();
+            //GetClanStackWinRate(465, 2000); //Mean
         }
 
 
