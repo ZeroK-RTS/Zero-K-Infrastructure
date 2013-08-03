@@ -3,6 +3,7 @@
 
 @{
     var penalty = ZkData.Punishment.GetActivePunishment(Global.AccountID, "", 0, x=>x.BanForum);
+    var netVotes = (Global.Account != null ? Global.Account.ForumTotalUpvotes - Global.Account.ForumTotalDownvotes : 0);
 }
 
 @foreach (var p in Model)
@@ -49,7 +50,7 @@
                     var divID = "ForumPostVoteForm" + p.ForumPostID;
                 }
                 <div id="@divID" align="right">
-                	@Html.PrintPostRating(p, penalty != null)
+                	@Html.PrintPostRating(p, penalty != null && netVotes >= ZkData.GlobalConst.MinNetKarmaToVote)
                 </div>
             </td>
         </tr>

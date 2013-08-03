@@ -78,7 +78,8 @@
         public const int KudosForSilver = 500;
         public const int KudosForGold = 1000;
 
-        public const int MinLevelForForumVote = 5;
+        public const int MinLevelForForumVote = 10;
+        public const int MinNetKarmaToVote = -30;
         
 	    public static bool IsZkMod(string name)
         {
