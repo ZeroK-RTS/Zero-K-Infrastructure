@@ -49,6 +49,12 @@ namespace ZeroKWeb.Controllers
 			var res = new NewPostResult();
 			var db = new ZkDataContext();
 
+            var penalty = ZkData.Punishment.GetActivePunishment(Global.AccountID, "", 0, x => x.BanForum);
+            if (penalty != null)
+            {
+                return Content(string.Format("You cannot post while banned from forum!\nExpires: {0} UTC\nReason: {1}", penalty.BanExpires, penalty.Reason));
+            }
+
 			if (threadID.HasValue)
 			{
 				var t = db.ForumThreads.Single(x => x.ForumThreadID == threadID.Value);

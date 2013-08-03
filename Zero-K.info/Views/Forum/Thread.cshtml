@@ -58,6 +58,15 @@ Pages:
 }
 @Html.Partial("~/Views/Forum/PostList.cshtml", Model.Posts)
 @if (!Model.CurrentThread.IsLocked)
-{
-    <h3 class="textbutton">@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3>
+{   
+    <br />
+    if(penalty != null)
+    {
+        <h3 class="textbutton" nicetitle="@string.Format("Forum ban\nExpires: {0} UTC\nReason: {1}", penalty.BanExpires, penalty.Reason)" style="color: #666666">Post comment</h3>
+    }
+    else
+    {
+        <h3 class="textbutton">@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3>
+    }
+    <br />
 }
