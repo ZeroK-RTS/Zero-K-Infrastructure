@@ -1,0 +1,29 @@
+﻿@using ZkData
+@model ForumPost
+@{
+    var p = Model;
+    var upvotes = Model.AccountForumVotes.Where(x=> x.Vote > 0).OrderByDescending(x => x.Account.ForumTotalUpvotes - x.Account.ForumTotalDownvotes);
+    var downvotes = Model.AccountForumVotes.Where(x => x.Vote < 0).OrderByDescending(x => x.Account.ForumTotalUpvotes - x.Account.ForumTotalDownvotes);
+}
+<table>
+    <b>Upvotes:</b>
+    @foreach (AccountForumVote vote in upvotes)
+    {
+        <tr>
+            <td>@{ var acc = vote.Account; }
+                <small>@Html.PrintAccount(acc) (@Html.PrintTotalPostRating(acc))</small>
+            </td>
+        </tr>
+    }
+</table>
+<table>
+    <b>Downvotes:</b>
+    @foreach (AccountForumVote vote in downvotes)
+    {
+        <tr>
+            <td>@{ var acc = vote.Account; }
+                <small>@Html.PrintAccount(acc) (@Html.PrintTotalPostRating(acc))</small>
+            </td>
+        </tr>
+    }
+</table>

@@ -80,6 +80,7 @@
 
         public const int MinLevelForForumVote = 10;
         public const int MinNetKarmaToVote = -30;
+        public const bool OnlyAdminsSeePostVoters = false;
         
 	    public static bool IsZkMod(string name)
         {

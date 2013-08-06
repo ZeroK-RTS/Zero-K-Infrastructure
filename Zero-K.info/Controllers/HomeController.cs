@@ -126,6 +126,8 @@ namespace ZeroKWeb.Controllers
                 case "structuretype":
 			        return PartialView("~/Views/Shared/DisplayTemplates/StructureType.cshtml",
 			                           db.StructureTypes.Single(x => x.StructureTypeID == int.Parse(args[1])));
+                case "forumVotes":
+                    return PartialView("~/Views/Forum/ForumVotesForPost.cshtml", db.ForumPosts.Single( x => x.ForumPostID == int.Parse(args[1])));
 			}
 			return Content(ret);
 		}
