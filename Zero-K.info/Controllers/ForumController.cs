@@ -314,7 +314,7 @@ namespace ZeroKWeb.Controllers
 
             ForumPost post = db.ForumPosts.First(x => x.ForumPostID == forumPostID);
             Account author = post.Account;
-            if (author == Global.Account) return Content("Cannot vote for your own posts");
+            if (author.AccountID == Global.AccountID) return Content("Cannot vote for your own posts");
 
             AccountForumVote existingVote = db.AccountForumVotes.SingleOrDefault(x => x.ForumPostID == forumPostID && x.AccountID == Global.AccountID);
             if (existingVote != null)   // clear existing vote
