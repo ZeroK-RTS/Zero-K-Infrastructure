@@ -291,17 +291,9 @@ namespace ZeroKWeb.Controllers
         public ActionResult VotePost(int forumPostID, int delta)
         {
             var db = new ZkDataContext();
-            
-            /*
-            var key = Request.Form.AllKeys.First(x => !string.IsNullOrEmpty(x));
-            int delta = 0;
-            if (key == "upvote") delta = 1;
-            else if (key == "downvote") delta = -1;
-            else if (key == "clearvote") delta = 0;
-            else throw new Exception("WAAAAAAAAAAAA");
-            */
+            Account myAcc = Global.Account;
 
-            if (Global.Account.Level < GlobalConst.MinLevelForForumVote)
+            if (myAcc.Level < GlobalConst.MinLevelForForumVote)
             {
                 return Content(string.Format("You cannot vote until you are level {0} or higher", GlobalConst.MinLevelForForumVote));
             }
@@ -315,6 +307,7 @@ namespace ZeroKWeb.Controllers
             ForumPost post = db.ForumPosts.First(x => x.ForumPostID == forumPostID);
             Account author = post.Account;
             if (author.AccountID == Global.AccountID) return Content("Cannot vote for your own posts");
+            if (myAcc.VotesAvailable <= 0) return Content("Out of votes");
 
             AccountForumVote existingVote = db.AccountForumVotes.SingleOrDefault(x => x.ForumPostID == forumPostID && x.AccountID == Global.AccountID);
             if (existingVote != null)   // clear existing vote
@@ -347,6 +340,7 @@ namespace ZeroKWeb.Controllers
             if (delta != 0) {
                 AccountForumVote voteEntry = new AccountForumVote { AccountID = Global.AccountID, ForumPostID = forumPostID, Vote = delta };
                 db.AccountForumVotes.InsertOnSubmit(voteEntry);
+                myAcc.VotesAvailable--;
             }
 
             db.SubmitChanges();

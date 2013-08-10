@@ -106,6 +106,7 @@
       <Column Name="Kudos" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="ForumTotalUpvotes" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="ForumTotalDownvotes" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="VotesAvailable" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
       <Association Name="Account_LobbyChannelSubscription" Member="LobbyChannelSubscriptions" ThisKey="AccountID" OtherKey="AccountID" Type="LobbyChannelSubscription" />
       <Association Name="Account_ForumThread" Member="ForumThreadsByCreatedAccountID" ThisKey="AccountID" OtherKey="CreatedAccountID" Type="ForumThread" />

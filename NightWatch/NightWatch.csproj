@@ -95,6 +95,7 @@
   <ItemGroup>
     <Compile Include="AuthService.cs" />
     <Compile Include="AdminCommands.cs" />
+    <Compile Include="ScheduledEvents.cs" />
     <Compile Include="MumbleMover.cs" />
     <Compile Include="Nightwatch.cs" />
     <Compile Include="MainConfig.cs" />

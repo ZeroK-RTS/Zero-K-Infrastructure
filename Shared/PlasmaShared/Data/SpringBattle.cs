@@ -111,6 +111,22 @@ namespace ZkData
                 LoserTeamXpChange = 0;
             }
 
+            if (ResourceByMapResourceID.MapIsSpecial == true)   // silly map, just process XP
+            {
+                foreach (var r in winners)
+                {
+                    r.Account.XP += WinnerTeamXpChange.Value;
+                    r.Player.XpChange = WinnerTeamXpChange;
+                }
+                foreach (var r in losers)
+                {
+                    r.Account.XP += LoserTeamXpChange.Value;
+                    r.Player.XpChange = LoserTeamXpChange.Value;
+                }
+                IsEloProcessed = true;
+                return;
+            }
+
 			foreach (var r in winners)
 			{
 				var change = (float)(scoreWin*r.Account.EloInvWeight);

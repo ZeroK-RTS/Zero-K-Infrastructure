@@ -499,11 +499,11 @@ namespace System.Web.Mvc
 
         public static MvcHtmlString PrintPostRating(this HtmlHelper helper, ForumPost post, bool blockPost) {
             var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
-            bool noLink = (Global.Account == null || Global.AccountID == post.AuthorAccountID || Global.Account.Level < GlobalConst.MinLevelForForumVote || blockPost);
+            bool noLink = (Global.Account == null || Global.AccountID == post.AuthorAccountID || Global.Account.Level < GlobalConst.MinLevelForForumVote || Global.Account.VotesAvailable <= 0 || blockPost);
             AccountForumVote previousVote = post.AccountForumVotes.SingleOrDefault(x => x.AccountID == Global.AccountID);
             bool upvoted = (previousVote != null && previousVote.Vote > 0);
             bool downvoted = (previousVote != null && previousVote.Vote < 0);
-            bool votersVisible = (!GlobalConst.OnlyAdminsSeePostVoters || Global.Account.IsZeroKAdmin);
+            bool votersVisible = (!GlobalConst.OnlyAdminsSeePostVoters || (Global.Account != null && Global.Account.IsZeroKAdmin));
             /*
             return new MvcHtmlString(string.Format("<input type='' name='upvote' value='{3}{0}{4}' title='Upvote'> / <input type='submit' name='downvote' value='{5}{1}{6}'> {2}",
                     string.Format("<font {0}>+{1}</font>", post.Upvotes > 0 ? "color='LawnGreen'" : "", post.Upvotes),
@@ -514,18 +514,28 @@ namespace System.Web.Mvc
                     downvoted ? "<strong>" : "",
                     downvoted ? "</strong>" : ""));
             */
-            return new MvcHtmlString(string.Format("<a {0} nicetitle='{9}'>{5}{1}{6}</a> / <a {2} nicetitle='{10}'>{7}{3}{8}</a> {4}",
-                    !noLink? string.Format("href='{0}'", url.Action("VotePost", "Forum", new { forumPostID = post.ForumPostID, delta = 1 })) : "",
-                    string.Format("<font {0}>+{1}</font>", post.Upvotes > 0 ? "color='LawnGreen'" : "", post.Upvotes),
-                    !noLink?  string.Format("href='{0}'", url.Action("VotePost", "Forum", new { forumPostID = post.ForumPostID, delta = -1 })) : "",
-                    string.Format("<font {0}>-{1}</font>", post.Downvotes > 0 ? "color='Tomato'" : "", post.Downvotes),
-                    previousVote != null ? string.Format("(<a href='{0}'>cancel</a>)", url.Action("CancelVotePost", "Forum", new {forumPostID = post.ForumPostID})) : "",
-                    upvoted ? "<strong>" : "",
-                    upvoted ? "</strong>" : "",
-                    downvoted ? "<strong>" : "",
-                    downvoted ? "</strong>" : "",
-                    votersVisible? string.Format("$forumVotes${0}", post.ForumPostID) : "Upvote",
-                    votersVisible? string.Format("$forumVotes${0}", post.ForumPostID) : "Downvote"
+
+            string upvote = string.Format("<{0} nicetitle='{1}'>{2}{3}{4}{5}",
+                !noLink? string.Format("a href='{0}'", url.Action("VotePost", "Forum", new { forumPostID = post.ForumPostID, delta = 1 })) : "span",
+                votersVisible? string.Format("$forumVotes${0}", post.ForumPostID) : "Upvote",
+                upvoted ? "<strong>" : "",
+                string.Format("<font {0}>+{1}</font>", post.Upvotes > 0 ? "color='LawnGreen'" : "", post.Upvotes),
+                upvoted ? "</strong>" : "",
+                !noLink? "</a>" : "</span>"
+            );
+            string downvote = string.Format("<{0} nicetitle='{1}'>{2}{3}{4}{5}",
+                !noLink? string.Format("a href='{0}'", url.Action("VotePost", "Forum", new { forumPostID = post.ForumPostID, delta = -1 })) : "span",
+                votersVisible? string.Format("$forumVotes${0}", post.ForumPostID) : "Downvote",
+                downvoted ? "<strong>" : "",
+                string.Format("<font {0}>+{1}</font>", post.Downvotes > 0 ? "color='Tomato'" : "", post.Downvotes),
+                downvoted ? "</strong>" : "",
+                !noLink? "</a>" : "</span>"
+            );
+
+            return new MvcHtmlString(string.Format("{0} / {1} {2}",
+                    upvote,
+                    downvote,
+                    previousVote != null ? string.Format("(<a href='{0}'>cancel</a>)", url.Action("CancelVotePost", "Forum", new {forumPostID = post.ForumPostID})) : ""
                     ));
         }
 
