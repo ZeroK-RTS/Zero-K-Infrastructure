@@ -527,7 +527,7 @@ namespace System.Web.Mvc
                 !noLink? string.Format("a href='{0}'", url.Action("VotePost", "Forum", new { forumPostID = post.ForumPostID, delta = -1 })) : "span",
                 votersVisible? string.Format("$forumVotes${0}", post.ForumPostID) : "Downvote",
                 downvoted ? "<strong>" : "",
-                string.Format("<font {0}>+{1}</font>", post.Downvotes > 0 ? "color='Tomato'" : "", post.Downvotes),
+                string.Format("<font {0}>-{1}</font>", post.Downvotes > 0 ? "color='Tomato'" : "", post.Downvotes),
                 downvoted ? "</strong>" : "",
                 !noLink? "</a>" : "</span>"
             );
