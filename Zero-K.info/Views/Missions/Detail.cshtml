@@ -13,6 +13,35 @@ $(function() {
   Page.Title = m.Name + " mission";
 }
 @Html.ActionLink("Back to List", "Index")
+
+<div class="border-test" style="float:right; padding-right:16px; padding-top:16px">
+  <h3>Top scores</h3>
+  @Html.BBCode(m.ScoringMethod ?? "")
+  <table>
+    @{
+        int cnt= 1;
+        var scores = Model.TopScores.ToArray();
+     }
+    @for (int i=1; i<=20; i++) {
+         var score = scores[i];
+         <tr>
+              <td>@(cnt++).
+              </td>
+              <td>@Html.PrintAccount(score.Account)
+              </td>
+              <td>@score.Score
+              </td>
+              <td>
+                <small>@(score.GameSeconds > 0 ? "in " + Utils.PrintTimeRemaining(score.GameSeconds) : "")</small>
+              </td>
+              <td>
+                <small>(rev. @score.MissionRevision)</small>
+              </td>
+          </tr>
+    }
+  </table>
+</div>
+<!close scores>
 <div class="wrapper">
   <div class="border-test width-50">
     <!info>
@@ -31,8 +60,7 @@ $(function() {
       <br />
     }
     
-    <!-- obsolete - just use ZKL -->
-    <!-- @if (!Global.IsLobbyAccess && !m.IsScriptMission) {
+    @if (false && !Global.IsLobbyAccess && !m.IsScriptMission) {    // FIXME: investigate why script (specifically mod tag) fails to autoupdate with stable
       <div class="border-test">
         If you don't have Zero-K lobby, download the mission archive and run Spring with the provided script:
 
@@ -42,7 +70,6 @@ $(function() {
       @*<!close zk warning>*@
 			<br />
     }
-    -->
     <span class="">@Html.BBCode(Model.Mission.Description)
       <br />
       <br />
@@ -140,30 +167,6 @@ $(function() {
       <a href='@Url.Action("Undelete", "Missions", new { id = m.MissionID })' >Undelete</a>
     }
   }
-  <div class="border-test abs top right">
-    <h3>Top scores</h3>
-    @Html.BBCode(m.ScoringMethod ?? "")
-    <table>
-      @{int cnt = 1;}
-      @foreach (var score in Model.TopScores) {
-        <tr>
-          <td>@(cnt++).
-          </td>
-          <td>@Html.PrintAccount(score.Account)
-          </td>
-          <td>@score.Score
-          </td>
-          <td>
-            <small>@(score.GameSeconds > 0 ? "in " + Utils.PrintTimeRemaining(score.GameSeconds) : "")</small>
-          </td>
-          <td>
-            <small>(revision @score.MissionRevision)</small>
-          </td>
-        </tr>
-      }
-    </table>
-  </div>
-  <!close scores>
   <!-- FIXME: stupid thing keeps losing its line breaks!! -->
   <!--@if (m.DescriptionStory != null && m.DescriptionStory != String.Empty)
   {
