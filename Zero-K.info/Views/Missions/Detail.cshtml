@@ -14,33 +14,35 @@ $(function() {
 }
 @Html.ActionLink("Back to List", "Index")
 
-<div class="border-test" style="float:right; padding-right:16px; padding-top:16px">
-  <h3>Top scores</h3>
-  @Html.BBCode(m.ScoringMethod ?? "")
-  <table>
-    @{
-        int cnt= 1;
-        var scores = Model.TopScores.ToArray();
-     }
-    @for (int i=1; i<=20; i++) {
-         var score = scores[i];
-         <tr>
-              <td>@(cnt++).
-              </td>
-              <td>@Html.PrintAccount(score.Account)
-              </td>
-              <td>@score.Score
-              </td>
-              <td>
-                <small>@(score.GameSeconds > 0 ? "in " + Utils.PrintTimeRemaining(score.GameSeconds) : "")</small>
-              </td>
-              <td>
-                <small>(rev. @score.MissionRevision)</small>
-              </td>
-          </tr>
-    }
-  </table>
-</div>
+@if(m.MissionScores.Count > 0) {
+    <div class="border-test" style="float:right; padding-right:16px; padding-top:16px">
+      <h3>Top scores</h3>
+      @Html.BBCode(m.ScoringMethod ?? "")
+      <table>
+        @{
+            int cnt= 1;
+            var scores = Model.TopScores.ToArray();
+         }
+        @for (int i=1; i<=(Math.Min(scores.Length,20)); i++) {
+             var score = scores[i];
+             <tr>
+                  <td>@(cnt++).
+                  </td>
+                  <td>@Html.PrintAccount(score.Account)
+                  </td>
+                  <td>@score.Score
+                  </td>
+                  <td>
+                    <small>@(score.GameSeconds > 0 ? "in " + Utils.PrintTimeRemaining(score.GameSeconds) : "")</small>
+                  </td>
+                  <td>
+                    <small>(rev. @score.MissionRevision)</small>
+                  </td>
+              </tr>
+        }
+      </table>
+    </div>
+}
 <!close scores>
 <div class="wrapper">
   <div class="border-test width-50">
