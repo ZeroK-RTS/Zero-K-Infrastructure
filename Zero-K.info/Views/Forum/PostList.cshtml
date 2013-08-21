@@ -50,7 +50,7 @@
                     var divID = "ForumPostVoteForm" + p.ForumPostID;
                 }
                 <div id="@divID" align="right">
-                	@Html.PrintPostRating(p, penalty != null && netVotes >= ZkData.GlobalConst.MinNetKarmaToVote)
+                	@Html.PrintPostRating(p, penalty != null || netVotes <= ZkData.GlobalConst.MinNetKarmaToVote)
                 </div>
             </td>
         </tr>

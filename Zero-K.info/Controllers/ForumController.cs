@@ -297,6 +297,10 @@ namespace ZeroKWeb.Controllers
             {
                 return Content(string.Format("You cannot vote until you are level {0} or higher", GlobalConst.MinLevelForForumVote));
             }
+            if ((Global.Account.ForumTotalUpvotes - Global.Account.ForumTotalDownvotes) < GlobalConst.MinNetKarmaToVote)
+            {
+                return Content("Your net karma is too low to vote");
+            }
 
             if (!Global.IsZeroKAdmin)
             {
