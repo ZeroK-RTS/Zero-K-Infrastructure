@@ -302,11 +302,8 @@ namespace ZeroKWeb.Controllers
                 return Content("Your net karma is too low to vote");
             }
 
-            if (!Global.IsZeroKAdmin)
-            {
-                if (delta > 1) delta = 1;
-                else if (delta < -1) delta = -1;
-            }
+            if (delta > 1) delta = 1;
+            else if (delta < -1) delta = -1;
 
             ForumPost post = db.ForumPosts.First(x => x.ForumPostID == forumPostID);
             Account author = post.Account;
