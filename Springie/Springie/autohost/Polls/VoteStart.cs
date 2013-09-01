@@ -14,7 +14,7 @@ namespace Springie.autohost.Polls
         {
             winCount = 0;
             question = null;
-            CountNoIntoWinCount = true;
+            CountNoIntoWinCount = false;
 
             if (!spring.IsRunning) {
 
