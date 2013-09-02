@@ -50,7 +50,8 @@ namespace ZeroKLobby
             var fileName = Path.GetFileName(Application.ExecutablePath);
             try
             {
-                Registry.SetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Internet Explorer\MAIN\FeatureControl\FEATURE_BROWSER_EMULATION",
+                //Note: write to HKCU (HKEY_CURRENT_USER) instead of HKLM (HKEY_LOCAL_MACHINE) because HKLM need admin privilege while HKCU do not. Ref:http://stackoverflow.com/questions/4612255/regarding-ie9-webbrowser-control
+                Registry.SetValue(@"HKEY_CURRENT_USER\SOFTWARE\Microsoft\Internet Explorer\MAIN\FeatureControl\FEATURE_BROWSER_EMULATION",
                                   fileName,
                                   compatibilityCode);
             }
@@ -58,10 +59,10 @@ namespace ZeroKLobby
             {
                 Trace.TraceError(string.Format("Error setting IE compatibility: {0}", ex));
             }
-            try
+            try //for 32 bit IE on 64 bit windows
             {
                 Registry.SetValue(
-                    @"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Internet Explorer\MAIN\FeatureControl\FEATURE_BROWSER_EMULATION",
+                    @"HKEY_CURRENT_USER\SOFTWARE\Wow6432Node\Microsoft\Internet Explorer\MAIN\FeatureControl\FEATURE_BROWSER_EMULATION",
                     fileName,
                     compatibilityCode);
             }

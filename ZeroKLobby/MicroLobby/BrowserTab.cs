@@ -25,6 +25,7 @@ namespace ZeroKLobby
             };
             base.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(browser_DocumentCompleted); //This will call "UpdateURL()" when page finish loading
             base.NewWindow3 += BrowserTab_NewWindow3;
+            this.ScriptErrorsSuppressed = true;
         }
 
         void BrowserTab_NewWindow3(object sender, NewWindow3EventArgs e)
