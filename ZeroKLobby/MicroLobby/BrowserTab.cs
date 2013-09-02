@@ -30,8 +30,11 @@ namespace ZeroKLobby
 
         void BrowserTab_NewWindow3(object sender, NewWindow3EventArgs e)
         {
-            NavigationControl.Instance.Path = e.Url.ToString();
-            e.Cancel = true;
+            if (Program.Conf.InterceptPopup) //any new window to be redirected internally?
+            {
+                NavigationControl.Instance.Path = e.Url.ToString();
+                e.Cancel = true;
+            }
         }
 
         //protected override void OnNewWindow(System.ComponentModel.CancelEventArgs e) //This block "Open In New Window" button.

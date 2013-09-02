@@ -121,7 +121,11 @@ namespace ZeroKLobby
                 }
                 var home = AddTabPage(new BrowserTab("http://zero-k.info/"), "hm");
                 tabControl.SelectTab(home);
-                if (Program.Conf.InterceptPopup) { AddTabPage(new BrowserTab("http"), "other"); } //a tab with generic match that match 100% of random URL (block new window)
+                if (Program.Conf.InterceptPopup) 
+                {
+                    AddTabPage(new BrowserTab("http"), "other"); //a tab with generic match that match 100% of random URL (block new window)
+                    ButtonList.Add(new ButtonInfo() { Label = "OTHER", TargetPath = "http", Height = 32,});
+                }
             }
             var battles = new BattleListTab();
             AddTabPage(battles, "Battles");
