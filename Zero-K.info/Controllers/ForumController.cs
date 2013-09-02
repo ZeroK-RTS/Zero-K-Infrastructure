@@ -77,6 +77,12 @@ namespace ZeroKWeb.Controllers
 		{
 			if (string.IsNullOrEmpty(text)) return Content("Please type some text :)");
 
+            var penalty = ZkData.Punishment.GetActivePunishment(Global.AccountID, "", 0, x => x.BanForum);
+            if (penalty != null)
+            {
+                return Content(string.Format("You cannot post while banned from forum!\nExpires: {0} UTC\nReason: {1}", penalty.BanExpires, penalty.Reason));
+            }
+
 			var db = new ZkDataContext();
 			using (var scope = new TransactionScope())
 			{
