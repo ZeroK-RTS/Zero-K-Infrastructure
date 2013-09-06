@@ -369,7 +369,9 @@ namespace ZeroKWeb.SpringieInterface
                     entry = new AccountPlanet { AccountID = acc.AccountID, PlanetID = planet.PlanetID };
                     db.AccountPlanets.InsertOnSubmit(entry);
                 }
-                entry.AttackPoints += acc.Faction == winnerFaction ? GlobalConst.AttackPointsForVictory : GlobalConst.AttackPointsForDefeat;
+                int ap = acc.Faction == winnerFaction ? GlobalConst.AttackPointsForVictory : GlobalConst.AttackPointsForDefeat;
+                entry.AttackPoints += ap;
+                acc.PwAttackPoints += ap;
             }
 
             // destroy pw structures killed ingame

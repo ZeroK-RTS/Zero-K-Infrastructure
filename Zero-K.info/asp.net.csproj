@@ -397,6 +397,7 @@
     <Content Include="Views\Contributions\ContributionsIndex.cshtml" />
     <Content Include="Views\Contributions\ThankYou.cshtml" />
     <Content Include="Views\Forum\ForumVotesForPost.cshtml" />
+    <Content Include="Views\Planetwars\Ladder.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

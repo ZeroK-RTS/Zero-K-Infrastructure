@@ -1,0 +1,51 @@
+﻿@using ZeroKWeb.Controllers
+@using ZkData
+@model List<PwLadder>
+@{
+    Page.Title = "PlanetWars Ladder";
+    int playerIndex = 1;
+    var db = new ZkDataContext();
+}
+
+<h2>Top players</h2>
+<br />
+@foreach (PwLadder ladder in Model)
+{
+    Faction f = ladder.Faction;
+    if (f != null)
+    {
+        <div style="color: @f.Color">
+            <a href="@Url.Action("Detail", "Factions", new { id = f.FactionID })" nicetitle="$faction$@f.FactionID">
+            <img src='@f.GetImageUrl()' style='float: left'/></a>
+            <a href="@Url.Action("Detail", "Factions", new { id = f.FactionID })" nicetitle="$faction$@f.FactionID">
+            <span style="font-size: 120%; color:@f.Color;">@f.Name</span></a>
+        </div>
+        playerIndex = 1;
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Attack points</th>
+                    <th>Planets</th>
+                    <th>Elo</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (Account acc in ladder.Top10)
+            {
+                {
+                    <tr>
+                        <td>@playerIndex</td>
+                        <td>@Html.PrintAccount(acc)</td>
+                        <td>@acc.PwAttackPoints</td>
+                        <td>@acc.Planets.Count</td>
+                        <td>@Math.Round(acc.EffectivePwElo)</td>                  
+                    </tr>
+                    playerIndex = playerIndex + 1;
+                }
+            }
+            </tbody>
+        </table>
+    }
+}

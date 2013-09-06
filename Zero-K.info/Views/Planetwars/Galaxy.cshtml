@@ -62,9 +62,19 @@
 	</script>
 }
 
+@{
+    DateTime started = Model.Started ?? DateTime.UtcNow;
+    TimeSpan limit = TimeSpan.FromDays(GlobalConst.RoundTimeLimitInDays);
+    TimeSpan remaining = (Model.Started + limit - DateTime.UtcNow) ?? limit;
+    int daysRemain = (int)remaining.TotalDays;
+    int hoursRemain = Math.Abs(remaining.Hours);
+}
+
 <div class="">
     <center>
-        @Html.ActionLink("Factions","Index","Factions") | @Html.ActionLink("Clans", "Index", "Clans") | @Html.ActionLink("Events", "Events") | turn: @Model.Turn | galaxy started: @Model.Started.ToAgoString() | <a href='/Wiki/PlanetWarsDesign'>Help/info</a> | <a href='/Forum?categoryID=9'>Forums</a> | <a href='/Forum/Thread/314'>Hall Of Fame</a>
+        @Html.ActionLink("Factions","Index","Factions") | @Html.ActionLink("Clans", "Index", "Clans") | @Html.ActionLink("Events", "Events")
+         | @Html.ActionLink("Ladder", "Ladder") | turn: @Model.Turn | galaxy started: @Model.Started.ToAgoString() (@(daysRemain)d @(hoursRemain)h remaining)
+         | <a href='/Wiki/PlanetWarsDesign'>Help/info</a> | <a href='/Forum?categoryID=9'>Forums</a> | <a href='/Forum/Thread/314'>Hall Of Fame</a>
     </center>
 </div>
 <br />
@@ -82,13 +92,13 @@
 @if (g.Turn > 100) { // hide before turn 100
 
 <div id="victory_conquest" class="fleft border" style="min-height: 60px;">
-<b>Conquest victory (50% planets):</b>
+<b>Conquest victory (70% planets):</b>
 @{
 	var conquest = @Model.Planets.Where(x => x.Faction != null).GroupBy(x => x.Faction).Select(x => new { Fac = x.Key, Count = x.Count() }).OrderByDescending(x => x.Count).FirstOrDefault();
 	
 	if (conquest != null)
 	{
-        var ratio_planets = @conquest.Count / @Math.Round(Model.Planets.Count() * 0.5);
+        var ratio_planets = @conquest.Count / @Math.Round(Model.Planets.Count() * 0.7);
 		<span><b>@Html.PrintFaction(conquest.Fac)</b></span>
 	<br />
 		<img src="/img/progressl_base.png" height="17" class="fleft" />

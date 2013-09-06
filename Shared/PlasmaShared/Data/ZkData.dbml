@@ -73,6 +73,7 @@
       <Column Name="EloWeight" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="Elo1v1" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="Elo1v1Weight" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="EloPw" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="IsLobbyAdministrator" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="IsBot" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="Password" Type="System.String" DbType="varchar(100)" CanBeNull="true" UpdateCheck="WhenChanged" />
@@ -99,6 +100,7 @@
       <Column Name="PwMetalUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="PwWarpProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="PwWarpUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="PwAttackPoints" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="LastLobbyVersionCheck" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Column Name="MatchMakingActive" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="[Language]" Member="Language" Type="System.String" DbType="nvarchar(2)" CanBeNull="true" />

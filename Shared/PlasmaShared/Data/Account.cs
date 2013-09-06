@@ -27,10 +27,11 @@ namespace ZkData
             return GetXpForLevel(Level) -
                    AccountUnlocks.Sum(x => (int?)(x.Unlock.XpCost*(x.Count - KudosPurchases.Count(y => y.UnlockID == x.UnlockID)))) ?? 0;
         } }
+
         public double Effective1v1Elo { get { return Elo1v1Weight > 1 ? Elo1v1 + (GlobalConst.EloWeightMax - Elo1v1Weight)*GlobalConst.EloWeightMalusFactor : 0; } }
-
-
         public double EffectiveElo { get { return Elo + (GlobalConst.EloWeightMax - EloWeight)*GlobalConst.EloWeightMalusFactor; } }
+        public double EffectivePwElo { get { return EloPw + (GlobalConst.EloWeightMax - EloWeight) * GlobalConst.EloWeightMalusFactor; } }
+
         public double EloInvWeight { get { return GlobalConst.EloWeightMax + 1 - EloWeight; } }
         public int KudosGained { get { return ContributionsByAccountID.Sum(x => x.KudosValue); } }
         public int KudosSpent { get { return KudosPurchases.Sum(x => x.KudosValue); } }

@@ -797,6 +797,15 @@ namespace ZeroKWeb.Controllers
             return null;
         }
 
+        public ActionResult Ladder()
+        {
+            ZkDataContext db = new ZkDataContext();
+            var factions = db.Factions.ToList();
+            List<PwLadder> items = db.Accounts.GroupBy(x => x.Faction).Select(x => new PwLadder 
+            { Faction = x.Key, Top10 = x.OrderByDescending(y => y.PwAttackPoints).ThenByDescending(y => y.Planets.Count).ThenByDescending(y => y.EloPw).Take(10).ToList() }).ToList();
+            return View("Ladder", items);
+        }
+
 
     }
 
@@ -833,6 +842,16 @@ namespace ZeroKWeb.Controllers
         public bool Partial;
         public int? PlanetID;
         public int? SpringBattleID;
+    }
+
+    #endregion
+
+    #region Nested type: PwLadder
+
+    public class PwLadder
+    {
+        public Faction Faction;
+        public List<Account> Top10;
     }
 
     #endregion
