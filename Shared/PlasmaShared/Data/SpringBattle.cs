@@ -23,7 +23,7 @@ namespace ZkData
             return "B" + SpringBattleID;
         }
 
-	    public void CalculateAllElo()
+	    public void CalculateAllElo(bool noElo = false)
 		{
             if (IsEloProcessed || Duration < GlobalConst.MinDurationForElo)
 			{
@@ -111,7 +111,7 @@ namespace ZkData
                 LoserTeamXpChange = 0;
             }
 
-            if (ResourceByMapResourceID.MapIsSpecial == true)   // silly map, just process XP
+            if (noElo ||ResourceByMapResourceID.MapIsSpecial == true)   // silly map, just process XP
             {
                 foreach (var r in winners)
                 {

@@ -103,11 +103,14 @@ namespace ZeroKWeb.SpringieInterface
                                                               });
                     }
                 }
+
+                bool noElo = (extraData.FirstOrDefault(x => x.StartsWith("noElo")) != null);
+
                 db.SubmitChanges();
 
                 Dictionary<int, int> orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
 
-                sb.CalculateAllElo();
+                sb.CalculateAllElo(noElo);
                 db.SubmitAndMergeChanges();
 
                 try {
