@@ -388,6 +388,53 @@ namespace Fixer
             }
         }
 
+        public static void GetForumVotesByVoter(int? accountID, int? threadID)
+        {
+            ZkDataContext db = new ZkDataContext();
+            var votes = db.AccountForumVotes.Where(x => (accountID == null || x.AccountID == accountID) && (threadID == null || x.ForumPost.ForumThreadID == threadID)).ToList();
+
+            foreach (var v in votes)
+            {
+                System.Console.WriteLine(v.Account.Name + "\t+" + v.ForumPostID + "\t" + v.Vote);
+            }
+        }
+
+        public static void DeleteUserVote(int accountID, int forumPostID, ZkDataContext db)
+        {
+            AccountForumVote existingVote = db.AccountForumVotes.SingleOrDefault(x => x.ForumPostID == forumPostID && x.AccountID == accountID);
+            if (existingVote == null) return;
+
+            ForumPost post = db.ForumPosts.First(x => x.ForumPostID == forumPostID);
+            Account author = post.Account;
+
+            int delta = existingVote.Vote;
+            // reverse vote effects
+            if (delta > 0)
+            {
+                author.ForumTotalUpvotes = author.ForumTotalUpvotes - delta;
+                post.Upvotes = post.Upvotes - delta;
+            }
+            else if (delta < 0)
+            {
+                author.ForumTotalDownvotes = author.ForumTotalDownvotes + delta;
+                post.Downvotes = post.Downvotes + delta;
+            }
+            db.AccountForumVotes.DeleteOnSubmit(existingVote);
+        }
+
+        public static void DeleteUserVotes(int accountID, int? threadID)
+        {
+            ZkDataContext db = new ZkDataContext();
+            var votes = db.AccountForumVotes.Where(x=> x.AccountID == accountID && (threadID == null || x.ForumPost.ForumThreadID == threadID)).ToList();
+
+            foreach (var v in votes)
+            {
+                DeleteUserVote(accountID, v.ForumPostID, db);
+                System.Console.WriteLine(v.Account.Name + "\t" + v.ForumPostID + "\t" + v.Vote);
+            }
+            db.SubmitChanges();
+        }
+
         public static void RecountForumVotes()
         {
             ZkDataContext db = new ZkDataContext();
@@ -441,6 +488,59 @@ namespace Fixer
             System.Console.WriteLine(won + ", " + lost);
         }
 
+        public static void GetForumVotesByUser(int voterID, int voteeID)
+        {
+            int up = 0, down = 0;
+            ZkDataContext db = new ZkDataContext();
+            Account voter = db.Accounts.FirstOrDefault(x => x.AccountID == voterID), votee = db.Accounts.FirstOrDefault(x => x.AccountID == voteeID);
+            var votes = db.AccountForumVotes.Where(x => x.AccountID == voterID && x.ForumPost.AuthorAccountID == voteeID).ToList();
+            System.Console.WriteLine(voter.Name + ", " + votee.Name);
+            foreach (var vote in votes)
+            {
+                int delta = vote.Vote;
+                if (delta > 0) up++;
+                else if (delta < 0) down++;
+                System.Console.WriteLine(vote.ForumPost.ForumThreadID + ", " + vote.ForumPostID);
+
+            }
+            System.Console.WriteLine(string.Format("+{0} / -{1}", up, down));
+        }
+
+        public static void GetForumVotesByUserVoterAgnostic(int voteeID)
+        {
+            int up = 0, down = 0;
+            ZkDataContext db = new ZkDataContext();
+            Account votee = db.Accounts.FirstOrDefault(x => x.AccountID == voteeID);
+            var votes = db.AccountForumVotes.Where(x => x.ForumPost.AuthorAccountID == voteeID && x.Vote > 0).OrderBy(x => x.Account.Name).ToList();
+            System.Console.WriteLine(votee.Name);
+            foreach (var vote in votes)
+            {
+                int delta = vote.Vote;
+                if (delta > 0) up++;
+                else if (delta < 0) down++;
+                System.Console.WriteLine(vote.ForumPost.ForumThreadID + ", " + vote.ForumPostID + ", " + vote.Account.Name);
+
+            }
+            System.Console.WriteLine(string.Format("+{0} / -{1}", up, down));
+        }
+
+        public static void GetForumVotesByPost(int voteeID)
+        {
+            int up = 0, down = 0;
+            ZkDataContext db = new ZkDataContext();
+            Account votee = db.Accounts.FirstOrDefault(x => x.AccountID == voteeID);
+            var posts = db.ForumPosts.Where(x => x.AuthorAccountID == voteeID && (x.Upvotes > 0 || x.Downvotes > 0)).ToList();
+            System.Console.WriteLine(votee.Name);
+            foreach (var post in posts)
+            {
+                up = up + post.Upvotes;
+                down = down + post.Downvotes;
+                System.Console.WriteLine(post.ForumThreadID + ", " + post.ForumPostID + String.Format(" ({0}/{1})",post.Upvotes, post.Downvotes) );
+                //System.Console.WriteLine(vote.ForumPost.Text);
+            }
+            System.Console.WriteLine(string.Format("+{0} / -{1}", up, down));
+        }
+
         [STAThread]
         static void Main(string[] args) {
             //var bench = new Benchmarker.MainForm();
@@ -478,7 +578,10 @@ namespace Fixer
             //RecountForumVotes();
             //GetForumKarmaLadder();
             //GetForumKarmaVotes();
+            //GetForumVotesByVoter(161294, 5340);
+            //DeleteUserVotes(189201, null);  //neon    
             //GetClanStackWinRate(465, 2000); //Mean
+            //GetForumVotesByUserVoterAgnostic(161294);
         }
 
 
