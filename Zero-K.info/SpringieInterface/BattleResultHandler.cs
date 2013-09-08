@@ -121,7 +121,7 @@ namespace ZeroKWeb.SpringieInterface
 
                 var text = new StringBuilder();
 
-                if (mode == AutohostMode.Planetwars && sb.SpringBattlePlayers.Count(x => !x.IsSpectator) >= 2 && sb.Duration >= GlobalConst.MinDurationForPlanetwars) {
+                if (mode == AutohostMode.Planetwars && sb.SpringBattlePlayers.Count(x => !x.IsSpectator) >= 2 && context.CanPlanetWars && sb.Duration >= GlobalConst.MinDurationForPlanetwars) {
                     ProcessPlanetwars(result, extraData, db, sb, text);
                 }
 
