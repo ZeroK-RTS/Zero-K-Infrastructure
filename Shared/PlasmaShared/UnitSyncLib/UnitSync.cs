@@ -25,6 +25,7 @@ namespace PlasmaShared.UnitSyncLib
 		int? loadedArchiveIndex;
 		Dictionary<uint, string> maps;
 		readonly string originalDirectory;
+        //readonly string originalEnvironmentVariable;
 
 		public static string[] DependencyExceptions = new[]
 		                                              {
@@ -40,11 +41,17 @@ namespace PlasmaShared.UnitSyncLib
 		{
             paths = springPaths;
 			originalDirectory = Directory.GetCurrentDirectory();
+            System.Diagnostics.Trace.TraceInformation("UnitSync UnitSyncDirectory: {0}", paths.UnitSyncDirectory);
+            System.Diagnostics.Trace.TraceInformation("UnitSync ZKLdirectory: {0}", originalDirectory);
 			Directory.SetCurrentDirectory(paths.UnitSyncDirectory);
-            Environment.SetEnvironmentVariable("SPRING_DATADIR", paths.WritableDirectory, EnvironmentVariableTarget.Process);
+            //originalEnvironmentVariable = Environment.GetEnvironmentVariable("SPRING_DATADIR", EnvironmentVariableTarget.Process);
+            //Environment.SetEnvironmentVariable("SPRING_DATADIR", paths.WritableDirectory, EnvironmentVariableTarget.Process);//no longer needed since SpringPath already set SPRING_DATADIR
 		    if (!NativeMethods.Init(false, 666)) throw new UnitSyncException("Unitsync initialization failed.");
 			Version = NativeMethods.GetSpringVersion();
             var writ = NativeMethods.GetWritableDataDirectory();
+            System.Diagnostics.Trace.TraceInformation("UnitSync Version: {0}", Version);
+            //System.Diagnostics.Trace.TraceInformation("UnitSync new SPRING_DATADIR: {0}", paths.WritableDirectory);
+            //System.Diagnostics.Trace.TraceInformation("UnitSync original SPRING_DATADIR: {0}", originalEnvironmentVariable);
 			TraceErrors();
 		}
 
@@ -58,6 +65,7 @@ namespace PlasmaShared.UnitSyncLib
 			if (!disposed)
 			{
 				Directory.SetCurrentDirectory(originalDirectory);
+                //Environment.SetEnvironmentVariable("SPRING_DATADIR", originalEnvironmentVariable, EnvironmentVariableTarget.Process); //restore original path??
 				try
 				{
 					NativeMethods.UnInit();
@@ -287,7 +295,7 @@ namespace PlasmaShared.UnitSyncLib
 			for (var i = 0; i < NativeMethods.GetSkirmishAIInfoCount(aiIndex); i++)
 			{
 				yield return
-					new AiInfoPair { Key = NativeMethods.GetInfoKey(i), Value = NativeMethods.GetInfoValue(i), Description = NativeMethods.GetInfoDescription(i) };
+					new AiInfoPair { Key = NativeMethods.GetInfoKey(i), Value = NativeMethods.GetInfoValueString(i), Description = NativeMethods.GetInfoDescription(i) };
 				TraceErrors();
 			}
 		}

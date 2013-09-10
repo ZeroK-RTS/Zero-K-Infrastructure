@@ -391,7 +391,7 @@ namespace PlasmaShared
                 if (map != null)
                 {
                     ret = map;
-                    if (map.Minimap == null || map.Metalmap == null || map.Heightmap == null) throw new Exception("Map bitamp is null");
+                    if (map.Minimap == null || map.Metalmap == null || map.Heightmap == null) throw new Exception("Map bitmap is null");
                 }
                 else ret = unitSync.GetModFromArchive(filename);
             }
@@ -753,6 +753,18 @@ namespace PlasmaShared
                 var serializedData = kvp.Value;
                 MetaData.SaveMetadata(mod.Name, serializedData);
                 ModRegistered(this, new EventArgs<Mod>(mod));
+            }
+            //upon completion of any work: dispose unitsync. It can be re-initialize again later by VerifyUnitSync()
+            if (unitSync != null)
+            {
+                try
+                {
+                    unitSync.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Error disposing unitsync: {0}", ex);
+                }
             }
         }
 

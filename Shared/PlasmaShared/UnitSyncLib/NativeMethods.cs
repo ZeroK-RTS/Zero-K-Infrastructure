@@ -615,13 +615,13 @@ namespace PlasmaShared.UnitSyncLib
             {
                 return Marshal.PtrToStringAnsi(RawGetInfoKey(infoIndex));
             }
-            
-            [DllImport(UnitSyncName, EntryPoint = "GetInfoValue")]
-            static extern IntPtr RawGetInfoValue(int infoIndex);
 
-            public static string GetInfoValue(int infoIndex)
+            [DllImport(UnitSyncName, EntryPoint = "GetInfoValueString")]
+            static extern IntPtr RawGetInfoValueString(int infoIndex);
+
+            public static string GetInfoValueString(int infoIndex)
             {
-                return Marshal.PtrToStringAnsi(RawGetInfoValue(infoIndex));
+                return Marshal.PtrToStringAnsi(RawGetInfoValueString(infoIndex));
             }
 
             [DllImport(UnitSyncName, EntryPoint = "GetInfoDescription")]
