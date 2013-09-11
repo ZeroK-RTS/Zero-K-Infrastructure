@@ -75,6 +75,7 @@ namespace PlasmaShared.UnitSyncLib
 					// do nothing, already thrown on init
 				}
 				disposed = true;
+                System.Diagnostics.Trace.TraceInformation("UnitSync Disposed");
 			}
 			GC.SuppressFinalize(this);
 		}
