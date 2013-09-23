@@ -246,7 +246,7 @@ namespace ZeroKWeb.SpringieInterface
                     balanceItems.Clear();
                     var factionGroups = accs.GroupBy(x => x.FactionID ?? x.LobbyID).ToList();
                     balanceItems.AddRange(factionGroups.Select(x => new BalanceItem(x.ToArray())));
-                }
+                } 
 
                 if (mode == BalanceMode.Normal) {
                     balanceItems.Clear();
