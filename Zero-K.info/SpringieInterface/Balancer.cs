@@ -15,7 +15,6 @@ namespace ZeroKWeb.SpringieInterface
         public List<BotTeam> Bots = new List<BotTeam>();
         public bool CanStart = true;
         public bool DeleteBots;
-        public bool CanPlanetwars = true;
         public string Message;
         public List<PlayerTeam> Players = new List<PlayerTeam>();
     }
@@ -91,7 +90,7 @@ namespace ZeroKWeb.SpringieInterface
             }
 
             if (isGameStart) VerifySpecCheaters(context, res);
-            context.CanPlanetWars = res.CanPlanetwars;
+
             return res;
         }
 
@@ -268,37 +267,27 @@ namespace ZeroKWeb.SpringieInterface
                         // cbalance failed, rebalance using normal
 
                 if (sizesWrong && mode == BalanceMode.FactionWise) {
-                    //ret.CanStart = false;
-                    //ret.Message = string.Format("Cannot balance for PW - too many people from same faction");
-                    //return ret;
-
-                    var result = new Balancer().LegacyBalance(teamCount, BalanceMode.Normal, b, unmovablePlayers);
-                    result.Message = string.Format("WARNING: Cannot balance for PlanetWars - too many people from same faction - spectate some or wait for more people"
-                        + "\n" + result.Message);
-                    result.CanPlanetwars = false;
-                    return result;
+                    ret.CanStart = false;
+                    ret.Message = string.Format("Failed to balance - too many people from same faction");
+                    return ret;
                 }
 
                 if (unmovablePlayers != null && unmovablePlayers.Length > 0) {
                     var minElo = bestTeams.Min(x => x.AvgElo);
                     var maxElo = bestTeams.Max(x => x.AvgElo);
                     if (maxElo - minElo > MaxPwEloDifference) {
-                        //ret.CanStart = false;
-                        //ret.Message = string.Format("Team difference is too big - win chance {0}% - spectate some or wait for more people",
-                        //                            Utils.GetWinChancePercent(maxElo - minElo));
-                        //return ret;
-                        var result = new Balancer().LegacyBalance(teamCount, BalanceMode.Normal, b, unmovablePlayers);
-                        result.Message = string.Format("WARNING: Team difference is too big for PlanetWars - win chance {0}% - spectate some or wait for more people"
-                            + "\n" + result.Message, Utils.GetWinChancePercent(maxElo - minElo));
-                        result.CanPlanetwars = false;
-                        return result;
+                        ret.CanStart = false;
+                        ret.Message = string.Format("Team difference is too big - win chance {0}% - spectate some or wait for more people",
+                                                    Utils.GetWinChancePercent(maxElo - minElo));
+                        return ret;
                     }
                 }
 
                 if (bestTeams == null) {
                     ret.CanStart = false;
-                    ret.Message = string.Format("Failed to balance {0} - too many people from same clan or faction (in teams game you can try !random and !forcestart)");
-                    ret.CanPlanetwars = false;
+                    ret.Message =
+                        string.Format(
+                            "Failed to balance {0} - too many people from same clan or faction (in teams game you can try !random and !forcestart)");
                     return ret;
                 }
                 else {

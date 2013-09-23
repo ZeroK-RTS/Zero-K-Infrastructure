@@ -65,7 +65,7 @@ namespace ZeroKWeb.SpringieInterface
                 Faction attacker = null;
                 Faction defender = null;
                 Planet planet = null;
-                if (mode == AutohostMode.Planetwars && context.CanPlanetWars) {
+                if (mode == AutohostMode.Planetwars) {
                     planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == context.Map);
                     List<int> presentFactions =
                         context.Players.Where(x => !x.IsSpectator).Select(x => db.Accounts.First(y => y.LobbyID == x.LobbyID)).Where(
