@@ -118,9 +118,10 @@
                     <b>Elo (1v1):</b> @Math.Round(@Model.Effective1v1Elo)
                     <b>Lobby rank: </b> <img src='/img/ranks/@(Model.LobbyTimeRank+1).png'  class='icon16'/>
                 </div>
+                <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)
+                <br />
             }
-            <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)
-            <br />
+             
             @{ double ratio = (Model.XP - Account.GetXpForLevel(Model.Level))/(double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)); }
             <div title='Your XP: @Model.XP (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio*100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
                 <b class="fleft"> Level @Model.Level </b> 
