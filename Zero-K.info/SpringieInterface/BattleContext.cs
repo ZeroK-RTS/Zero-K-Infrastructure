@@ -12,6 +12,7 @@ namespace ZeroKWeb.SpringieInterface
         public string AutohostName;
         public string Map;
         public string Mod;
+        public bool CanPlanetWars = true;
         public List<PlayerTeam> Players = new List<PlayerTeam>();
         public List<BotTeam> Bots = new List<BotTeam>();
         private AutohostConfig config;
