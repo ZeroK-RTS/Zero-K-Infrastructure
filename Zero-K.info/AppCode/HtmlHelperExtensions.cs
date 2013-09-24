@@ -42,56 +42,56 @@ namespace System.Web.Mvc
             Regex exp;
             // format the bold tags: [b][/b]
             // becomes: <strong></strong>
-            exp = new Regex(@"\[b\]((.|\n)+?)\[/b\]");
+            exp = new Regex(@"\[b\]((.|\n)+?)\[/b\]", RegexOptions.IgnoreCase);
             str = exp.Replace(str, "<strong>$1</strong>");
 
             // format the quote tags: [quote][/quote]
             // becomes: stuff
-            exp = new Regex(@"\[quote\]((.|\n)+?)\[/quote\]");
+            exp = new Regex(@"\[quote\]((.|\n)+?)\[/quote\]", RegexOptions.IgnoreCase);
             str = exp.Replace(str,
                               "<table border=\"0\" cellpadding=\"6\" cellspacing=\"0\" width=\"100%\"><tbody><tr><td style=\"border: 1px inset;\"><em>quote:<br>$1</em></td></tr></tbody></table>");
 
             // format the italic tags: [i][/i]
             // becomes: <em></em>
-            exp = new Regex(@"\[i\]((.|\n)+?)\[/i\]");
+            exp = new Regex(@"\[i\]((.|\n)+?)\[/i\]", RegexOptions.IgnoreCase);
             str = exp.Replace(str, "<em>$1</em>");
 
             // format the underline tags: [u][/u]
             // becomes: <u></u>
-            exp = new Regex(@"\[u\]((.|\n)+?)\[/u\]");
+            exp = new Regex(@"\[u\]((.|\n)+?)\[/u\]", RegexOptions.IgnoreCase);
             str = exp.Replace(str, "<u>$1</u>");
 
             // format the strike tags: [s][/s]
             // becomes: <strike></strike>
-            exp = new Regex(@"\[s\]((.|\n)+?)\[/s\]");
+            exp = new Regex(@"\[s\]((.|\n)+?)\[/s\]", RegexOptions.IgnoreCase);
             str = exp.Replace(str, "<strike>$1</strike>");
 
             // format the url tags: [url=www.website.com]my site[/url]
             // becomes: <a href="www.website.com">my site</a>
-            exp = new Regex(@"\[url\=([^\]]+)\]([^\]]+)\[/url\]");
+            exp = new Regex(@"\[url\=([^\]]+)\]([^\]]+)\[/url\]", RegexOptions.IgnoreCase);
             str = exp.Replace(str, "<a href=\"$1\">$2</a>");
 
             // format the img tags: [img]www.website.com/img/image.jpeg[/img]
             // becomes: <img src="www.website.com/img/image.jpeg" />
-            exp = new Regex(@"\[img\]([^\[]+)\[/img\]");
+            exp = new Regex(@"\[img\]([^\[]+)\[/img\]", RegexOptions.IgnoreCase);
             str = exp.Replace(str, "<img src=\"$1\" />");
 
             // format img tags with alt: [img=www.website.com/img/image.jpeg]this is the alt text[/img]
             // becomes: <img src="www.website.com/img/image.jpeg" alt="this is the alt text" />
-            exp = new Regex(@"\[img\=([^\]]+)\]([^\]]+)\[/img\]");
+            exp = new Regex(@"\[img\=([^\]]+)\]([^\]]+)\[/img\]", RegexOptions.IgnoreCase);
             str = exp.Replace(str, "<img src=\"$1\" alt=\"$2\" />");
 
             //format the colour tags: [color=red][/color]
             // becomes: <font color="red"></font>
             // supports UK English and US English spelling of colour/color
-            exp = new Regex(@"\[color\=([^\]]+)\]([^\]]+)\[/color\]");
+            exp = new Regex(@"\[color\=([^\]]+)\]([^\]]+)\[/color\]", RegexOptions.IgnoreCase);
             str = exp.Replace(str, "<font color=\"$1\">$2</font>");
-            exp = new Regex(@"\[colour\=([^\]]+)\]([^\]]+)\[/colour\]");
+            exp = new Regex(@"\[colour\=([^\]]+)\]([^\]]+)\[/colour\]", RegexOptions.IgnoreCase);
             str = exp.Replace(str, "<font color=\"$1\">$2</font>");
 
             // format the size tags: [size=3][/size]
             // becomes: <font size="+3"></font>
-            exp = new Regex(@"\[size\=([^\]]+)\]([^\]]+)\[/size\]");
+            exp = new Regex(@"\[size\=([^\]]+)\]([^\]]+)\[/size\]", RegexOptions.IgnoreCase);
             str = exp.Replace(str, "<font size=\"+$1\">$2</font>");
 
             str = Regex.Replace(str, @"(^|[\s])((mailto|spring|http|https|ftp|ftps)\://\S+)", @"$1<a href='$2'>$2</a>");
@@ -101,7 +101,7 @@ namespace System.Web.Mvc
 
             if (helper != null) {
                 // todo remove condition in the future
-                exp = new Regex(@"\[poll\]([0-9]+)\[/poll\]");
+                exp = new Regex(@"\[poll\]([0-9]+)\[/poll\]", RegexOptions.IgnoreCase);
                 str = exp.Replace(str, m => helper.Action("Index", "Poll", new { pollID = m.Groups[1].Value }).ToHtmlString());
             }
 

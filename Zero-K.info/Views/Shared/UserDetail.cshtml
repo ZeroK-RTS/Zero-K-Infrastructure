@@ -117,9 +117,9 @@
                     <b>Elo (all):</b> @Math.Round(@Model.EffectiveElo)
                     <b>Elo (1v1):</b> @Math.Round(@Model.Effective1v1Elo)
                     <b>Lobby rank: </b> <img src='/img/ranks/@(Model.LobbyTimeRank+1).png'  class='icon16'/>
+                    <br />
+                    <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)
                 </div>
-                <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)
-                <br />
             }
              
             @{ double ratio = (Model.XP - Account.GetXpForLevel(Model.Level))/(double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)); }
