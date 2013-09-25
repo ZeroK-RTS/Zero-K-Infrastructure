@@ -1,10 +1,17 @@
 ﻿@using ZeroKWeb
+
 @model IEnumerable<ZkData.ForumPost>
 
 @{
     var penalty = ZkData.Punishment.GetActivePunishment(Global.AccountID, "", 0, x=>x.BanForum);
     var netVotes = (Global.Account != null ? Global.Account.ForumTotalUpvotes - Global.Account.ForumTotalDownvotes : 0);
 }
+<script type="text/javascript" src='@Href("~/Scripts/jquery.expand.js")' > </script>
+<script type="text/javascript">
+    $(function () {
+        $("small.expand").toggler({ speed: 0 });
+    });
+</script>
 
 @foreach (var p in Model)
 {
@@ -45,9 +52,19 @@
             </td>
             <td valign="top" class="forumPostText">
                 <a name="post@(p.ForumPostID)" id="post@(p.ForumPostID)"></a>
-                @Html.BBCode(p.Text)
+                @if (p.Upvotes - p.Downvotes <= ZkData.GlobalConst.PostVoteHideThreshold)
+                {
+                    <small class="expand">post score below threshold</small>    //FIXME: figure out a way to color it grey
+                    <div class="collapse width-90">
+                        @Html.BBCode(p.Text)
+                    </div>
+                }
+                else
+                {
+                    @Html.BBCode(p.Text)
+                }
                 @{
-                    var divID = "ForumPostVoteForm" + p.ForumPostID;
+                var divID = "ForumPostVoteForm" + p.ForumPostID;
                 }
                 <div id="@divID" align="right">
                 	@Html.PrintPostRating(p, penalty != null || netVotes <= ZkData.GlobalConst.MinNetKarmaToVote)
