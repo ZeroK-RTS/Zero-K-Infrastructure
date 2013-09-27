@@ -479,25 +479,28 @@ namespace ZeroKWeb.SpringieInterface
             }
 
             //rotate map
-            db = new ZkDataContext();
-            gal = db.Galaxies.Single(x => x.IsDefault);
-            planet = gal.Planets.Single(x => x.Resource.InternalName == result.Map);
-            var mapList = db.Resources.Where(x => x.MapPlanetWarsIcon != null && x.Planets.Where(p => p.GalaxyID == gal.GalaxyID).Count() == 0 && x.FeaturedOrder != null 
-                && x.ResourceID != planet.MapResourceID && x.MapWaterLevel == planet.Resource.MapWaterLevel).ToList();
-            if (mapList.Count > 0)
+            if (GlobalConst.RotatePWMaps)
             {
-                int r = new Random().Next(mapList.Count);
-                int resourceID = mapList[r].ResourceID;
-                Resource newMap = db.Resources.Single(x => x.ResourceID == resourceID);
-                text.AppendLine(String.Format("Map cycler - {0} maps found, selected map {1} to replace map {2}", mapList.Count, newMap.InternalName, planet.Resource.InternalName));
-                planet.Resource = newMap;
-                gal.IsDirty = true;
+                db = new ZkDataContext();
+                gal = db.Galaxies.Single(x => x.IsDefault);
+                planet = gal.Planets.Single(x => x.Resource.InternalName == result.Map);
+                var mapList = db.Resources.Where(x => x.MapPlanetWarsIcon != null && x.Planets.Where(p => p.GalaxyID == gal.GalaxyID).Count() == 0 && x.FeaturedOrder != null
+                    && x.ResourceID != planet.MapResourceID && x.MapWaterLevel == planet.Resource.MapWaterLevel).ToList();
+                if (mapList.Count > 0)
+                {
+                    int r = new Random().Next(mapList.Count);
+                    int resourceID = mapList[r].ResourceID;
+                    Resource newMap = db.Resources.Single(x => x.ResourceID == resourceID);
+                    text.AppendLine(String.Format("Map cycler - {0} maps found, selected map {1} to replace map {2}", mapList.Count, newMap.InternalName, planet.Resource.InternalName));
+                    planet.Resource = newMap;
+                    gal.IsDirty = true;
+                }
+                else
+                {
+                    text.AppendLine("Map cycler - no maps found");
+                }
+                db.SubmitAndMergeChanges();
             }
-            else
-            {
-                text.AppendLine("Map cycler - no maps found");
-            }
-            db.SubmitAndMergeChanges();
         }
     }
 }

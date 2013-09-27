@@ -61,6 +61,7 @@
         public const int ClanLeaveLimit = 100;
         public const int FactionChannelMinLevel = 8;
         public const int RoundTimeLimitInDays = 30;
+        public const bool RotatePWMaps = false;
 
 	    public const string MetalIcon = "/img/luaui/ibeam.png";
         public const string EnergyIcon = "/img/luaui/energy.png";
