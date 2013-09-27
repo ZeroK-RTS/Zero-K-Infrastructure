@@ -1,5 +1,5 @@
 ﻿<Window x:Class="MissionEditor2.MissionSettingsDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Mission Settings" WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen" Height="500" Width="850" x:Name="dialog">
+        Title="Mission Settings" WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen" Height="540" Width="850" x:Name="dialog">
     <Grid Margin="3">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*" />
@@ -46,7 +46,7 @@
             <Label Grid.Row="5">Starting Player</Label>
             <ComboBox Grid.Column="1" Grid.Row="5" ItemsSource="{Binding Players}" SelectedItem="{Binding StartingPlayer}" Margin="2" Grid.ColumnSpan="2" />
             <Label Grid.Row="6">Scoring Explanation</Label>
-            <TextBox Grid.Column="1" Grid.Row="6" Text="{Binding ScoringMethod}" Margin="2" AcceptsReturn="True" Grid.ColumnSpan="2" />
+            <TextBox Grid.Column="1" Grid.Row="6" Text="{Binding ScoringMethod}" Margin="2" AcceptsReturn="True" TextWrapping="WrapWithOverflow" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" MinLines="3" Grid.ColumnSpan="2" />
             <Label Grid.Row="7">Rapid Tag</Label>
             <TextBox Grid.Column="1" Grid.Row="7" Text="{Binding RapidTag}" Margin="2" Grid.ColumnSpan="2" />
             <Label Grid.Row="8" Visibility="Collapsed">Starting Energy</Label>
@@ -135,7 +135,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox Text="{Binding DescriptionStory}" AcceptsReturn="True" TextWrapping="WrapWithOverflow" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" MinLines="3" MaxLines="6" MaxWidth="400" />
+                    <TextBox Text="{Binding DescriptionStory}" AcceptsReturn="True" TextWrapping="WrapWithOverflow" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" MinLines="5" MaxLines="6" MaxWidth="400" />
                     <TextBlock Grid.Row="2" TextWrapping="WrapWithOverflow">Suppports BBCode.<LineBreak />It is suggested that you format in a<LineBreak />text editor and paste here.</TextBlock>
                 </Grid>
             </GroupBox>
