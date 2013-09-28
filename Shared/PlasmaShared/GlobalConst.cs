@@ -7,7 +7,7 @@
         public const int ZkLobbyUserCpu = 6667;
         public const int ZkLobbyUserCpuLinux = 6668;
 	    public const string BaseImageUrl = "http://zero-k.info/img/";
-	    public const double EloWeightMalusFactor = -50;
+	    public const double EloWeightMalusFactor = -80;
 		public const int CommanderProfileCount = 6;
         public const int NumCommanderLevels = 5;
 	    public const double PlanetMetalPerTurn = 1;
@@ -23,7 +23,7 @@
 		public const int XpForMissionOrBots = 25;
 		public const int XpForMissionOrBotsVictory = 50;
 		public const double EloWeightMax = 6;
-		public const double EloWeightLearnFactor = 20;
+		public const double EloWeightLearnFactor = 30;
 		public const string AuthServiceUri = "net.tcp://localhost:8202";
 		public const string LoginCookieName = "zk_login";
         public const string ASmallCakeCookieName = "asmallcake";
