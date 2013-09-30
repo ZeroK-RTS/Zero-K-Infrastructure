@@ -4,7 +4,7 @@
     var db = new ZkDataContext();
 }
 
-@foreach (var f in db.Factions.OrderBy(x => x.Planets.Count()))
+@foreach (var f in db.Factions.Where(x => !x.IsDeleted))
 {
     <div style="float:left;">
     @Html.Partial("~/Views/Factions/FactionBox.cshtml", f)
