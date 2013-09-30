@@ -28,6 +28,7 @@ namespace GalaxyDesigner
 			this.planet = pd.Planet;
 			InitializeComponent();
 			lbName.Text = planet.Name;
+            maps = maps.OrderBy(x => x.MetadataName);
 			foreach (var mn in maps) cbMaps.Items.Add(new ComboBoxItem() { Content = mn.InternalName, Tag = mn.ResourceID, IsSelected = mn.ResourceID == this.planet.MapResourceID });
 
 			foreach (var s in structureTypes)
