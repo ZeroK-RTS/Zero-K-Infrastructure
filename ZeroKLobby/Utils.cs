@@ -25,7 +25,9 @@ namespace ZeroKLobby
             // PW11 new factions
             { "Cybernetic", ColorTranslator.FromHtml("#88AAFF") },
             { "Dynasty", ColorTranslator.FromHtml("#FFAA20") },
-            { "Liberty", ColorTranslator.FromHtml("#55BB55") }
+            { "Liberty", ColorTranslator.FromHtml("#55BB55") },
+            
+            { "SynPact", ColorTranslator.FromHtml("#5388EB") },
         };
 
         public static bool CanRead(string filename) {
