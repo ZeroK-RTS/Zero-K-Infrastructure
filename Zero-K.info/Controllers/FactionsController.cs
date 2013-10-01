@@ -21,6 +21,7 @@ namespace ZeroKWeb.Controllers
         [Auth]
         public ActionResult JoinFaction(int id) {
             if (Global.Account.FactionID != null) return Content("Already in faction");
+            if (Global.Account.Clan != null && Global.Account.Clan.FactionID != id) return Content("Must leave current clan first");
             var db = new ZkDataContext();
             Account acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             acc.FactionID = id;
@@ -28,23 +29,26 @@ namespace ZeroKWeb.Controllers
             Faction faction = db.Factions.Single(x => x.FactionID == id);
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} joins {1}", acc, faction));
             db.SubmitChanges();
-            return Content(string.Format("Done, welcome to the {0}!", faction.Name));
+            return RedirectToAction("Index", "Factions");
         }
 
-
-        [Auth]
-        public ActionResult LeaveFaction() {
-            var db = new ZkDataContext();
+        public static Faction PerformLeaveFaction(int accountID, ZkDataContext db = null)
+        {
+            if (db == null) db = new ZkDataContext();
             Account acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+            Faction faction = acc.Faction;
+
             if (acc.Clan != null) ClansController.PerformLeaveClan(Global.AccountID);
             db.AccountRoles.DeleteAllOnSubmit(acc.AccountRolesByAccountID);
             acc.ResetQuotas();
 
-            foreach (var ps in acc.PlanetStructures) {
+            foreach (var ps in acc.PlanetStructures)
+            {
                 ps.OwnerAccountID = null;
             }
 
-            foreach (var planet in acc.Planets) {
+            foreach (var planet in acc.Planets)
+            {
                 planet.OwnerAccountID = null;
                 planet.OwnerFactionID = null;
             }
@@ -52,7 +56,7 @@ namespace ZeroKWeb.Controllers
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} leaves faction {1}", acc, acc.Faction));
             db.SubmitChanges();
             PlanetwarsController.SetPlanetOwners(db);
-            
+
             db.Dispose();
             db = new ZkDataContext();
             Account acc2 = db.Accounts.Single(x => x.AccountID == Global.AccountID);
@@ -60,7 +64,13 @@ namespace ZeroKWeb.Controllers
             db.SubmitChanges();
 
             PlanetwarsController.SetPlanetOwners();
-            return RedirectToAction("Index", "Clans");
+            return faction;
+        }
+
+        [Auth]
+        public ActionResult LeaveFaction() {
+            PerformLeaveFaction(Global.AccountID);
+            return RedirectToAction("Index", "Factions");
         }
 
 

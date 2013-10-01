@@ -182,7 +182,11 @@ namespace ZeroKWeb.Controllers
                 {
                     var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
                     acc.ClanID = clan.ClanID;
-                    acc.FactionID = clan.FactionID;
+                    if (acc.FactionID != clan.FactionID)
+                    {
+                        //FactionsController.PerformLeaveFaction(Global.AccountID);
+                        acc.FactionID = clan.FactionID;
+                    }
                     var leader = db.RoleTypes.FirstOrDefault(x => x.RightKickPeople && x.IsClanOnly);
                     if (leader != null) db.AccountRoles.InsertOnSubmit(new AccountRole(){AccountID =  acc.AccountID, Clan = clan, RoleType = leader, Inauguration = DateTime.UtcNow});
 
