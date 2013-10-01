@@ -25,14 +25,14 @@ namespace CaTracker
                     if (acc.IsZeroKAdmin || acc.IsLobbyAdministrator)
                     {
                         var parts = e.Text.Split(' ');
-                        if (parts.Length != 2) tas.Say(TasClient.SayPlace.User, e.UserName, "!kick [player] [reason]", false);
+                        if (!(parts.Length >= 2)) tas.Say(TasClient.SayPlace.User, e.UserName, "!kick [player] [reason]", false);
                         else
                         {
                             var player = tas.ExistingUsers.FirstOrDefault(x => x.Key == parts[1]).Key;
                             var reason = parts[2] ?? "";
                             if (player != null)
                             {
-                                tas.AdminKickFromLobby(player, reason);
+                                tas.AdminKickFromLobby(parts[1], reason);
                             }
                             else tas.Say(TasClient.SayPlace.User, e.UserName, "Not a valid player name", false);
                         }
