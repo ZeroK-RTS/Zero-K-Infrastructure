@@ -76,7 +76,7 @@ namespace ZeroKWeb.Controllers
                                planet,
                                avail,
                                defense,
-                               useWarp == true ? "They attacked suddenly using warp drives. " : "",
+                               useWarp == true ? "They attacked by warp. " : "",
                                ipKillAmmount
                            };
                 args.AddRange(bombed.Select(x=>x.StructureType));
