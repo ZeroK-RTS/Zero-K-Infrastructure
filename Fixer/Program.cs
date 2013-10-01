@@ -722,6 +722,7 @@ namespace Fixer
     }
 
       public static void PurgeGalaxy(int galaxyID, bool resetclans = false) {
+          System.Console.WriteLine("Purging galaxy " + galaxyID);
 			using (var db = new ZkDataContext())
 			{
 				db.CommandTimeout = 300;
@@ -729,7 +730,7 @@ namespace Fixer
 			    var gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
                 foreach (var p in gal.Planets)
                 {
-                    p.ForumThread = null;
+                    //p.ForumThread = null;
                     p.OwnerAccountID = null;
                 }
                 db.SubmitChanges();
@@ -742,12 +743,18 @@ namespace Fixer
                 db.ExecuteCommand("delete from planetfaction");
 				db.ExecuteCommand("delete from accountplanet");
 				
-				db.ExecuteCommand("delete from forumthread where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsPlanets).ForumCategoryID);
+				//db.ExecuteCommand("delete from forumthread where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsPlanets).ForumCategoryID);
 
                 if (resetclans)
                 {
                     db.ExecuteCommand("delete from clan");
                     db.ExecuteCommand("delete from forumthread where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsClans).ForumCategoryID);
+                }
+
+                foreach (Planet planet in gal.Planets)
+                {
+                    planet.Faction == null;
+                    planet.Account == null;
                 }
 			}
 		}
