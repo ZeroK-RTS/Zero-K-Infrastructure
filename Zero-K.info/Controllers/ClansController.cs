@@ -133,6 +133,8 @@ namespace ZeroKWeb.Controllers
                 var db = new ZkDataContext();
                 var created = clan.ClanID == 0; // existing clan vs creation
 
+                //return Content(noFaction ? "true":"false");
+
                 if (noFaction) clan.FactionID = null;
 
                 if (!created)
@@ -158,7 +160,7 @@ namespace ZeroKWeb.Controllers
                 if (!ZkData.Clan.IsShortcutValid(clan.Shortcut)) return Content("Shortcut must have at least 1 characters and contain only numbers and letters");
                 if (db.Clans.Any(x => (SqlMethods.Like(x.Shortcut, clan.Shortcut) || SqlMethods.Like(x.ClanName, clan.ClanName)) && x.ClanID != clan.ClanID)) return Content("Clan with this shortcut or name already exists");
 
-                if (created && (image == null || image.ContentLength == 0)) return Content("Upload image");
+                if (created && (image == null || image.ContentLength == 0)) return Content("A clan image is required");
                 if (image != null && image.ContentLength > 0)
                 {
                     var im = Image.FromStream(image.InputStream);
