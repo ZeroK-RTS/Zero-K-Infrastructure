@@ -237,6 +237,11 @@
     <Content Include="Img\factions\Unaligned.png" />
     <Content Include="Img\factions\Unaligned_ship.png" />
     <Content Include="Img\favicon.png" />
+    <Content Include="Img\galaxies\galaxy1.jpg" />
+    <Content Include="Img\galaxies\galaxy2.jpg" />
+    <Content Include="Img\galaxies\galaxy3.jpg" />
+    <Content Include="Img\galaxies\galaxy4.jpg" />
+    <Content Include="Img\galaxies\galaxy5.jpg" />
     <Content Include="Img\mail\mail-new.png" />
     <Content Include="Img\mail\mail-read.png" />
     <Content Include="Img\mail\mail-unread.png" />
