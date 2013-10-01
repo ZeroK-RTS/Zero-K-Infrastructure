@@ -732,6 +732,8 @@ namespace Fixer
                 {
                     //p.ForumThread = null;
                     p.OwnerAccountID = null;
+                    p.Faction = null;
+                    p.Account = null;
                 }
                 db.SubmitChanges();
 
@@ -749,12 +751,6 @@ namespace Fixer
                 {
                     db.ExecuteCommand("delete from clan");
                     db.ExecuteCommand("delete from forumthread where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsClans).ForumCategoryID);
-                }
-
-                foreach (Planet planet in gal.Planets)
-                {
-                    planet.Faction = null;
-                    planet.Account = null;
                 }
 			}
 		}
