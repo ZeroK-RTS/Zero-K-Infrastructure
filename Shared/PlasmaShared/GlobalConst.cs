@@ -62,6 +62,8 @@
         public const int FactionChannelMinLevel = 8;
         public const int RoundTimeLimitInDays = 30;
         public const bool RotatePWMaps = false;
+        public const bool RequireWormholeToTravel = true;
+        public const bool CanChangeClanFaction = false;
 
 	    public const string MetalIcon = "/img/luaui/ibeam.png";
         public const string EnergyIcon = "/img/luaui/energy.png";

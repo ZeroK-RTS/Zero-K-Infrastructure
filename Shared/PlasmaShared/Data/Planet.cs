@@ -116,7 +116,7 @@ namespace ZkData
                 var otherPlanet = PlanetID == link.PlanetID1 ? link.PlanetByPlanetID2 : link.PlanetByPlanetID1;
 
                 // planet has wormhole active
-                if (otherPlanet.PlanetStructures.Any(x => x.IsActive && x.StructureType.EffectAllowShipTraversal == true))
+                if (!GlobalConst.RequireWormholeToTravel || otherPlanet.PlanetStructures.Any(x => x.IsActive && x.StructureType.EffectAllowShipTraversal == true))
                 {
 
                     // planet belongs to attacker or person who gave attacker rights to pass + if planet's faction has blocking treaty with attacker dont allow attack

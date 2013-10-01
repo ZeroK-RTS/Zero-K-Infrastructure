@@ -10,7 +10,7 @@
         <tr>
             <td>
                 Name:<br/>
-                WARNING: for consistency reasons make sure it matches theme of planetwars and the faction you choose
+                NOTE: for consistency reasons make sure it matches theme of Planetwars and the faction you choose
             </td>
             <td>
                 @Html.TextBoxFor(x => x.ClanName, new { maxlength = 50 })
@@ -25,9 +25,11 @@
             </td>
         </tr>
   
-        @if (Model.ClanID == 0) {
+        @if (GlobalConst.CanChangeClanFaction || Model.ClanID == 0) {
             <tr><td>Faction:</td>
-                <td>@Html.DropDownListFor(x => x.FactionID, new ZkDataContext().Factions.Shuffle().Select(x => new SelectListItem { Text = x.Name, Value = x.FactionID.ToString(), Selected = x.FactionID == Model.FactionID }))  <a href='http://zero-k.info/Wiki/PlanetWarsFactions'>read more</a></td>
+                <td>@Html.DropDownListFor(x => x.FactionID, new ZkDataContext().Factions.Shuffle().Select(x => new SelectListItem { Text = x.Name, Value = x.FactionID.ToString(), Selected = x.FactionID == Model.FactionID }))  <a href='http://zero-k.info/Wiki/PlanetWarsFactions'>read more</a>
+                <br />@Html.CheckBoxFor(x => x.FactionID == null);
+                </td>
             </tr>
         }
       
@@ -42,7 +44,7 @@
         <tr>
             <td>
                 Image (64x64 png with transparency):<br/>
-                WARNING: for consistency reasons make sure it matches color of the faciton and is thematically matching (no troll face or cat if you are killer robots faction :-)
+                NOTE: for consistency reasons make sure it matches color of the faction and is thematically matching (no troll face or cat if you are killer robots faction)
             </td>
             <td>
                 <img src='@Model.GetImageUrl()' />

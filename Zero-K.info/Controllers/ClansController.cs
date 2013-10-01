@@ -141,7 +141,7 @@ namespace ZeroKWeb.Controllers
                     orgClan.Description = clan.Description;
                     orgClan.SecretTopic = clan.SecretTopic;
                     orgClan.Password = clan.Password;
-                    // orgClan.FactionID = clan.FactionID; <- not possible to change faction
+                    orgClan.FactionID = clan.FactionID;     // <- not possible to change faction // now it is!
                     foreach (var a in orgClan.Accounts) a.FactionID = clan.FactionID;
                 }
                 else

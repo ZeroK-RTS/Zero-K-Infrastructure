@@ -15576,7 +15576,7 @@ namespace ZkData
 		
 		private bool _IsDeleted;
 		
-		private int _FactionID;
+		private System.Nullable<int> _FactionID;
 		
 		private EntitySet<Account> _Accounts;
 		
@@ -15616,7 +15616,7 @@ namespace ZkData
     partial void OnForumThreadIDChanged();
     partial void OnIsDeletedChanging(bool value);
     partial void OnIsDeletedChanged();
-    partial void OnFactionIDChanging(int value);
+    partial void OnFactionIDChanging(System.Nullable<int> value);
     partial void OnFactionIDChanged();
     #endregion
 		
@@ -15797,9 +15797,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FactionID", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FactionID", DbType="int")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
-		public int FactionID
+		public System.Nullable<int> FactionID
 		{
 			get
 			{
@@ -15997,7 +15997,7 @@ namespace ZkData
 					}
 					else
 					{
-						this._FactionID = default(int);
+						this._FactionID = default(Nullable<int>);
 					}
 					this.SendPropertyChanged("Faction");
 				}
