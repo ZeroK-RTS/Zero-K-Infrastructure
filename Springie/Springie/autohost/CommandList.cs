@@ -254,6 +254,8 @@ namespace Springie.autohost
             AddMissing(new CommandConfig("votemove", 1, "<where> - vote to move players to a new host"));
             AddMissing(new CommandConfig("juggle", 4, "- executes player juggler moving players between managed autohosts"));
 
+            AddMissing(new CommandConfig("planet", 0, "attack specified PlanetWars planet", 0, new[] {TasSayEventArgs.Places.Battle}));
+
             if (config != null && config.CommandLevels != null)
             {
                 foreach (var c in config.CommandLevels) {

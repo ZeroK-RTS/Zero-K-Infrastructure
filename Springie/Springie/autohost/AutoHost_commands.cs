@@ -660,6 +660,40 @@ namespace Springie.autohost
             else Respond(e, "Cannot find such map.");
         }
 
+        public void ComPlanet(TasSayEventArgs e, params string[] words)
+        {
+            if (spring.IsRunning)
+            {
+                Respond(e, "Cannot attack different planet while the game is running");
+                return;
+            }
+            if (words.All(String.IsNullOrEmpty))
+            {
+                ServerVerifyMap(true);
+                //Respond(e, "You must specify a map name");
+                return;
+            }
+
+            // FIXME get list of valid planets
+            /*
+            string[] vals;
+            int[] indexes;
+            if (FilterMaps(words, out vals, out indexes) > 0)
+            {
+                SayBattle("changing planet to " + vals[0]);
+                var mapi = cache.GetResourceDataByInternalName(vals[0]);
+                if (mapi != null)
+                {
+                    tas.ChangeMap(mapi.InternalName,
+                                  mapi.SpringHashes.Where(x => x.SpringVersion == springPaths.SpringVersion).Select(x => x.SpringHash).FirstOrDefault());
+                }
+            }
+            else Respond(e, "Invalid planet ID.");
+             */
+        }
+
+
+
         public void ComMove(TasSayEventArgs e, string[] words)
         {
             if (words.Length < 1)

@@ -38,19 +38,29 @@ namespace ZeroKWeb.SpringieInterface
                                             TotalShips = x.Dropships,
                                             LastAdded = x.DropshipsLastAdded
 
-				                        }).Where(x=>x.FreeShips > 0).OrderByDescending(x=>x.FreeShips).ThenBy(x=>x.LastAdded).FirstOrDefault();
+				                        }).Where(x=>x.FreeShips > 0).OrderByDescending(x=>x.FreeShips).ThenBy(x=>x.LastAdded).ToList();
 
                     if (valid == null) return new RecommendedMapResult()
                                                {
                                                    Message = "Use dropships to attack some planet!"
                                                };
 
-				    var planet = valid.Planet;
+                    foreach (var validChoice in valid)
+                    {
+                        if (validChoice.Planet.Resource.InternalName == context.Map)    // current map is fine
+                        {
+                            res.MapName = context.Map;
+                            return res;
+                        }
+                    }
+
+                    var firstChoice = valid.FirstOrDefault();
+                    var planet = firstChoice.Planet;
                     res.MapName = planet.Resource.InternalName;
 					var owner = "";
 					if (planet.Account != null) owner = planet.Account.Name;
 
-					var shipInfo = String.Format("{0} ships from {1}", valid.TotalShips, valid.Attacker.Name);
+					var shipInfo = String.Format("{0} ships from {1}", firstChoice.TotalShips, firstChoice.Attacker.Name);
 
 					res.Message = String.Format("Welcome to {0} planet {1} http://zero-k.info/PlanetWars/Planet/{2} attacked by {3}",
 					                            owner,
