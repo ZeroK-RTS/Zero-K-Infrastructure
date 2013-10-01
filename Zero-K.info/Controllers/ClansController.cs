@@ -126,7 +126,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
-        public ActionResult SubmitCreate(Clan clan, HttpPostedFileBase image, HttpPostedFileBase bgimage, bool noFaction)
+        public ActionResult SubmitCreate(Clan clan, HttpPostedFileBase image, HttpPostedFileBase bgimage, bool noFaction = false)
         {
             using (var scope = new TransactionScope())
             {
