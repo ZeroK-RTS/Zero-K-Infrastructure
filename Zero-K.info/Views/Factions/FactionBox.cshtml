@@ -3,6 +3,9 @@
 @model ZkData.Faction
 @{
     Faction f = Model;
+    var accounts = f.Accounts.Where(x => x.PwAttackPoints > 0).ToList();
+    int count = accounts.Count();
+    int skill = accounts.Count > 0 ? (int)Math.Round(accounts.Average(x => x.EffectiveElo)) : 1500;
 }
 <div style="color: @f.Color">
     <a href="@Url.Action("Detail", "Factions", new { id = f.FactionID })" nicetitle="$faction$@f.FactionID">
@@ -24,8 +27,8 @@
         </tr>
         <tr>
             <td>Commanders:</td>
-            <td>@f.Accounts.Count(x=>x.PwDropshipsProduced > 0)</td>
+            <td>@count</td>
         </tr>
-        <tr><td>Combat skill:</td><td>@Math.Round(f.Accounts.Where(x=>x.PwDropshipsProduced > 0).Average(x=>x.EffectiveElo))</td></tr>
+        <tr><td>Combat skill:</td><td>@skill</td></tr>
     </table>
 </div>
