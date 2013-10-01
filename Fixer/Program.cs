@@ -753,8 +753,8 @@ namespace Fixer
 
                 foreach (Planet planet in gal.Planets)
                 {
-                    planet.Faction == null;
-                    planet.Account == null;
+                    planet.Faction = null;
+                    planet.Account = null;
                 }
 			}
 		}
