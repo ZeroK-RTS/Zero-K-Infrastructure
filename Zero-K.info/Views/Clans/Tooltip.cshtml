@@ -11,8 +11,10 @@
             <img  src='@c.GetImageUrl()'/><br />
         </td>
         <td>
-            <span style='float: right'>
-                <img src='@Model.Faction.GetImageUrl()'/></span>
+            @if (c.Faction != null)
+            {
+                <span style='float: right'><img src='@Model.Faction.GetImageUrl()'/></span>
+            }
             <div style='font-size: 80%; margin: 10px;'>
                 @Html.BBCode(c.Description)
             </div>
