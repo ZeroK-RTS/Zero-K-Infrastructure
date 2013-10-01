@@ -49,3 +49,41 @@
         </table>
     }
 }
+
+<!-- FIXME find a proper way to put mercs at the bottom -->
+@{
+    var ladder2 = Model[0];
+    {
+        <div>
+            <img src='/img/factions/Mercenary.png' style='float: left'/>
+            <span style="font-size: 120%">Mercenaries</span>
+        </div>
+        playerIndex = 1;
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Attack points</th>
+                    <th>Planets</th>
+                    <th>Elo</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (Account acc in ladder2.Top10)
+            {
+                {
+                    <tr>
+                        <td>@playerIndex</td>
+                        <td>@Html.PrintAccount(acc)</td>
+                        <td>@acc.PwAttackPoints</td>
+                        <td>@acc.Planets.Count</td>
+                        <td>@Math.Round(acc.EffectivePwElo)</td>                  
+                    </tr>
+                    playerIndex = playerIndex + 1;
+                }
+            }
+            </tbody>
+        </table>
+    }
+}
