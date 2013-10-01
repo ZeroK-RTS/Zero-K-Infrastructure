@@ -126,12 +126,15 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
-        public ActionResult SubmitCreate(Clan clan, HttpPostedFileBase image, HttpPostedFileBase bgimage)
+        public ActionResult SubmitCreate(Clan clan, HttpPostedFileBase image, HttpPostedFileBase bgimage, bool noFaction)
         {
             using (var scope = new TransactionScope())
             {
                 var db = new ZkDataContext();
                 var created = clan.ClanID == 0; // existing clan vs creation
+
+                if (noFaction) clan.FactionID = null;
+
                 if (!created)
                 {
                     if (!Global.Account.HasClanRight(x=>x.RightEditTexts) || clan.ClanID != Global.Account.ClanID) return Content("Unauthorized");
