@@ -230,7 +230,7 @@
     <Content Include="Img\factions\Liberty_ship.png" />
     <Content Include="Img\factions\Machines.png" />
     <Content Include="Img\factions\Machines_ship.png" />
-    <Content Include="Img\factions\Mercenary.svg" />
+    <Content Include="Img\factions\Mercenary.png" />
     <Content Include="Img\factions\SynPact.png" />
     <Content Include="Img\factions\Synpact_ship.png" />
     <Content Include="Img\factions\Trueborn.png" />
