@@ -212,14 +212,15 @@ namespace ZeroKWeb.Controllers
             return View(ret);
         }
 
-        public Bitmap GenerateGalaxyImage(int galaxyID, double zoom = 1, double antiAliasingFactor = 4) {
+        // FIXME: having issues with bitmap parameters; setting AA factor to 1 as fallback (was 4)
+        public Bitmap GenerateGalaxyImage(int galaxyID, double zoom = 1, double antiAliasingFactor = 1) {
             zoom *= antiAliasingFactor;
             using (var db = new ZkDataContext()) {
                 Galaxy gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
 
                 using (Image background = Image.FromFile(Server.MapPath("/img/galaxies/" + gal.ImageName))) {
-                    int imWidth = (int)(background.Width * zoom), imHeight = (int)(background.Height * zoom);
-                    Bitmap im = new Bitmap(imWidth, imHeight);
+                    //var im = new Bitmap((int)(background.Width*zoom), (int)(background.Height*zoom));
+                    var im = new Bitmap(background.Width, background.Height);
                     using (Graphics gr = Graphics.FromImage(im)) {
                         gr.DrawImage(background, 0, 0, im.Width, im.Height);
 
@@ -258,9 +259,7 @@ namespace ZeroKWeb.Controllers
                         if (antiAliasingFactor == 1) return im;
                         else {
                             zoom /= antiAliasingFactor;
-                            imWidth = (int)(background.Width * zoom);
-                            imHeight = (int)(background.Height * zoom);
-                            return im.GetResized(imWidth, imHeight, InterpolationMode.HighQualityBicubic);
+                            return im.GetResized((int)(background.Width*zoom), (int)(background.Height*zoom), InterpolationMode.HighQualityBicubic);
                         }
                     }
                 }
