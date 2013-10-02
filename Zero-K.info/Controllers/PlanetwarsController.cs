@@ -219,7 +219,9 @@ namespace ZeroKWeb.Controllers
                 Galaxy gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
 
                 using (Image background = Image.FromFile(Server.MapPath("/img/galaxies/" + gal.ImageName))) {
-                    var im = new Bitmap((int)(background.Width*zoom), (int)(background.Height*zoom));
+                    //Bitmap im = new Bitmap((int)(background.Width*zoom), (int)(background.Height*zoom));
+                    Bitmap im = (Bitmap)background;
+                    if (zoom != 1) im = im.GetResized((int)(background.Width * zoom), (int)(background.Height * zoom), InterpolationMode.HighQualityBicubic);
                     using (Graphics gr = Graphics.FromImage(im)) {
                         gr.DrawImage(background, 0, 0, im.Width, im.Height);
 
