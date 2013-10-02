@@ -180,6 +180,9 @@ namespace System.Web.Mvc
                 if (clampedLevel < 1) clampedLevel = 1;
                 if (clampedLevel > 9) clampedLevel = 9;
 
+                string color = Faction.FactionColor(account.Faction, Global.FactionID);
+                if (String.IsNullOrEmpty(color)) color = "#B0D0C0";
+
                 return
                     new MvcHtmlString(
                         string.Format(
@@ -187,7 +190,7 @@ namespace System.Web.Mvc
                             account.Country != "??" ? account.Country : "unknown",
                             clampedLevel,
                             account.AccountID,
-                            colorize ? Faction.FactionColor(account.Faction, Global.FactionID) : "",
+                            color,
                             account.Name,
                             clanStr,
                             adminStr));
