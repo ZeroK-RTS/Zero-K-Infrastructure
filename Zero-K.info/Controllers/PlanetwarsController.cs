@@ -212,17 +212,15 @@ namespace ZeroKWeb.Controllers
             return View(ret);
         }
 
-
-        public Bitmap GenerateGalaxyImage(int galaxyID, double zoom = 1, double antiAliasingFactor = 4) {
+        // FIXME: having issues with bitmap parameters; setting AA factor to 1 as fallback (was 4)
+        public Bitmap GenerateGalaxyImage(int galaxyID, double zoom = 1, double antiAliasingFactor = 1) {
             zoom *= antiAliasingFactor;
             using (var db = new ZkDataContext()) {
                 Galaxy gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
 
                 using (Image background = Image.FromFile(Server.MapPath("/img/galaxies/" + gal.ImageName))) {
-                    //Bitmap im = new Bitmap((int)(background.Width*zoom), (int)(background.Height*zoom));
-                    Bitmap im = (Bitmap)background;
-                    int imWidth = im.Width, imHeight = im.Height;
-                    if (zoom != 1) im = im.GetResized((int)(imWidth * zoom), (int)(imHeight * zoom), InterpolationMode.HighQualityBicubic);
+                    //var im = new Bitmap((int)(background.Width*zoom), (int)(background.Height*zoom));
+                    var im = new Bitmap(background.Width, background.Height);
                     using (Graphics gr = Graphics.FromImage(im)) {
                         gr.DrawImage(background, 0, 0, im.Width, im.Height);
 
@@ -261,7 +259,7 @@ namespace ZeroKWeb.Controllers
                         if (antiAliasingFactor == 1) return im;
                         else {
                             zoom /= antiAliasingFactor;
-                            return im.GetResized((int)(imWidth*zoom), (int)(imHeight*zoom), InterpolationMode.HighQualityBicubic);
+                            return im.GetResized((int)(background.Width*zoom), (int)(background.Height*zoom), InterpolationMode.HighQualityBicubic);
                         }
                     }
                 }
@@ -277,7 +275,7 @@ namespace ZeroKWeb.Controllers
             else gal = db.Galaxies.Single(x => x.IsDefault);
 
             string cachePath = Server.MapPath(string.Format("/img/galaxies/render_{0}.jpg", gal.GalaxyID));
-            if (gal.IsDirty || !System.IO.File.Exists(cachePath)) {
+            if (true || gal.IsDirty || !System.IO.File.Exists(cachePath)) {
                 using (Bitmap im = GenerateGalaxyImage(gal.GalaxyID)) {
                     im.SaveJpeg(cachePath, 85);
                     gal.IsDirty = false;
@@ -804,8 +802,8 @@ namespace ZeroKWeb.Controllers
         {
             ZkDataContext db = new ZkDataContext();
             var factions = db.Factions.ToList();
-            List<PwLadder> items = db.Accounts.GroupBy(x => x.Faction).Select(x => new PwLadder 
-            { Faction = x.Key, Top10 = x.OrderByDescending(y => y.PwAttackPoints).ThenByDescending(y => y.Planets.Count).ThenByDescending(y => y.EloPw).Take(10).ToList() }).ToList();
+            List<PwLadder> items = db.Accounts.GroupBy(x => x.Faction).Select(x => new PwLadder {
+                Faction = x.Key, Top10 = x.OrderByDescending(y => y.EloWeight).ThenByDescending(y => y.PwAttackPoints).ThenByDescending(y => y.Planets.Count).ThenByDescending(y => y.EloPw).Take(10).ToList() }).ToList();
             return View("Ladder", items);
         }
 
