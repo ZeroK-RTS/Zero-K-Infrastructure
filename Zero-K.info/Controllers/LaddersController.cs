@@ -131,11 +131,11 @@ namespace ZeroKWeb.Controllers
             }
 
             var top50Accounts =
-                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1)) && x.Elo1v1Weight == 6).OrderByDescending(x => x.Elo1v1).
+                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1)) && x.Elo1v1Weight == GlobalConst.EloWeightMax).OrderByDescending(x => x.Elo1v1).
                     Take(50).ToList();
 
             var top50Teams =
-                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1)) && x.EloWeight == 6).OrderByDescending(x => x.Elo).
+                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1)) && x.EloWeight == GlobalConst.EloWeightMax).OrderByDescending(x => x.Elo).
                     Take(50).ToList();
 
             LadderModel ladder = new LadderModel { AwardItems = awardItems, Top50Accounts = top50Accounts, Top50Teams = top50Teams };
