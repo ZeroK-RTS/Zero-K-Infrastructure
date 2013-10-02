@@ -250,7 +250,7 @@ namespace System.Web.Mvc
             var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
             if (clan == null) return new MvcHtmlString(string.Format("<a href='{0}'>No Clan</a>", url.Action("Index", "Clans")));
             {
-                string color = Clan.ClanColor(clan, Global.ClanID;
+                string color = Clan.ClanColor(clan, Global.ClanID);
                 if (String.IsNullOrEmpty(color)) color = "#B0D0C0";
                 return
                     new MvcHtmlString(
