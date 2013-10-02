@@ -802,7 +802,7 @@ namespace ZeroKWeb.Controllers
         {
             ZkDataContext db = new ZkDataContext();
             var factions = db.Factions.ToList();
-            List<PwLadder> items = db.Accounts.GroupBy(x => x.Faction).Select(x => new PwLadder {
+            List<PwLadder> items = db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).GroupBy(x => x.Faction).Select(x => new PwLadder {
                 Faction = x.Key, Top10 = x.OrderByDescending(y => y.EloWeight).ThenByDescending(y => y.PwAttackPoints).ThenByDescending(y => y.Planets.Count).ThenByDescending(y => y.EloPw).Take(10).ToList() }).ToList();
             return View("Ladder", items);
         }
