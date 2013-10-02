@@ -221,7 +221,8 @@ namespace ZeroKWeb.Controllers
                 using (Image background = Image.FromFile(Server.MapPath("/img/galaxies/" + gal.ImageName))) {
                     //Bitmap im = new Bitmap((int)(background.Width*zoom), (int)(background.Height*zoom));
                     Bitmap im = (Bitmap)background;
-                    if (zoom != 1) im = im.GetResized((int)(background.Width * zoom), (int)(background.Height * zoom), InterpolationMode.HighQualityBicubic);
+                    int imWidth = im.Width, imHeight = im.Height;
+                    if (zoom != 1) im = im.GetResized((int)(imWidth * zoom), (int)(imHeight * zoom), InterpolationMode.HighQualityBicubic);
                     using (Graphics gr = Graphics.FromImage(im)) {
                         gr.DrawImage(background, 0, 0, im.Width, im.Height);
 
@@ -260,7 +261,7 @@ namespace ZeroKWeb.Controllers
                         if (antiAliasingFactor == 1) return im;
                         else {
                             zoom /= antiAliasingFactor;
-                            return im.GetResized((int)(background.Width*zoom), (int)(background.Height*zoom), InterpolationMode.HighQualityBicubic);
+                            return im.GetResized((int)(imWidth*zoom), (int)(imHeight*zoom), InterpolationMode.HighQualityBicubic);
                         }
                     }
                 }
