@@ -203,7 +203,12 @@ namespace NightWatch
                                 aconf.AutohostMode != 0) client.RequestLobbyVersion(user.Name);
 
                             if (acc != null && GlobalConst.IsZkMod(battle.ModName)) {
-                                if (!acc.AccountUserIDS.Any()) client.AdminKickFromLobby(user.Name,string.Format("Sorry you are using unsupported lobby ({0}), please upgrade or use Zero-K lobby, Weblobby or SpringLobby", acc.LobbyVersion));
+                                if (!acc.AccountUserIDS.Any())
+                                {
+                                    string reason = string.Format("Sorry you are using unsupported lobby ({0}), please upgrade or use Zero-K lobby, Weblobby or SpringLobby", acc.LobbyVersion);
+                                    client.Say(TasClient.SayPlace.User, user.Name, reason, false);
+                                    client.Say(TasClient.SayPlace.User, founder.Name, string.Format("!kick {0} {1}", acc.LobbyVersion, reason), false);
+                                }
                             }
                         }
                     }
