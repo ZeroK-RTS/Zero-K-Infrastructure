@@ -65,7 +65,6 @@
                     <th>Rank</th>
                     <th>Name</th>
                     <th>Attack points</th>
-                    <th>Planets</th>
                     <th>Elo</th>
                 </tr>
             </thead>
@@ -77,7 +76,6 @@
                         <td>@playerIndex</td>
                         <td>@Html.PrintAccount(acc)</td>
                         <td>@acc.PwAttackPoints</td>
-                        <td>@acc.Planets.Count</td>
                         <td>@Math.Round(acc.EffectivePwElo)</td>                  
                     </tr>
                     playerIndex = playerIndex + 1;
