@@ -128,8 +128,8 @@ namespace ZeroKWeb.Controllers
         [Auth]
         public ActionResult SubmitCreate(Clan clan, HttpPostedFileBase image, HttpPostedFileBase bgimage, bool noFaction = false)
         {
-            using (var scope = new TransactionScope())
-            {
+            //using (var scope = new TransactionScope())
+            //{
                 var db = new ZkDataContext();
                 var created = clan.ClanID == 0; // existing clan vs creation
 
@@ -193,10 +193,10 @@ namespace ZeroKWeb.Controllers
                     db.Events.InsertOnSubmit(Global.CreateEvent("New clan {0} formed by {1}", clan, acc));
                     db.SubmitChanges();
                 }
-                scope.Complete();
+                //scope.Complete();
                 Global.Nightwatch.Tas.AdminSetTopic(clan.Shortcut,clan.SecretTopic);
                 Global.Nightwatch.Tas.AdminSetChannelPassword(clan.Shortcut, clan.Password);
-            }
+            //}
             return RedirectToAction("Detail", new { id = clan.ClanID });
         }
 
