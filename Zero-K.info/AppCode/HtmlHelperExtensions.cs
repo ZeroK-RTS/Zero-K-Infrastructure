@@ -190,7 +190,7 @@ namespace System.Web.Mvc
                             account.Country != "??" ? account.Country : "unknown",
                             clampedLevel,
                             account.AccountID,
-                            color,
+                            colorize ? color : "",
                             account.Name,
                             clanStr,
                             adminStr));
@@ -250,12 +250,14 @@ namespace System.Web.Mvc
             var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
             if (clan == null) return new MvcHtmlString(string.Format("<a href='{0}'>No Clan</a>", url.Action("Index", "Clans")));
             {
+                string color = Clan.ClanColor(clan, Global.ClanID;
+                if (String.IsNullOrEmpty(color)) color = "#B0D0C0";
                 return
                     new MvcHtmlString(
                         string.Format("<a href='{0}' nicetitle='$clan${4}'><img src='{1}' width='16'><span style='color:{2}'>{3}</span></a>",
                                       url.Action("Detail", "Clans", new { id = clan.ClanID }),
                                       clan.GetImageUrl(),
-                                      colorize ? Clan.ClanColor(clan, Global.ClanID) : "",
+                                      colorize ? color : "",
                                       clan.Shortcut,
                                       clan.ClanID));
             }
