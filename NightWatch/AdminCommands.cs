@@ -55,6 +55,7 @@ namespace CaTracker
                             if (player != null)
                             {
                                 tas.Say(TasClient.SayPlace.User, "ChanServ", string.Format("!op {0} {1}", channel, player), false);
+                                tas.Say(TasClient.SayPlace.User, e.UserName, string.Format("DEBUG: !op {0} {1}", channel, player), false);
                             }
                             else tas.Say(TasClient.SayPlace.User, e.UserName, "Not a valid player name", false);
                         }
