@@ -61,7 +61,7 @@ namespace LobbyClient
         string mapToChangeTo;
         readonly Timer minuteTimer;
 
-        int pingInterval = 10; // how often to ping server (in seconds)
+        int pingInterval = 30; // how often to ping server (in seconds)
         readonly Timer pingTimer;
         readonly Random random = new Random();
         string serverHost;
