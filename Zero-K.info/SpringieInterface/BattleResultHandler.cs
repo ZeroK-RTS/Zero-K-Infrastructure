@@ -167,6 +167,43 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
+        static double GetEloDiff(SpringBattle sb)
+        {
+            double winnerW = 0;
+            double loserW = 0;
+            double winnerInvW = 0;
+            double loserInvW = 0;
+
+            double winnerElo = 0;
+            double loserElo = 0;
+
+            var losers = sb.SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam).Select(x => new { Player = x, x.Account }).ToList();
+            var winners = sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam).Select(x => new { Player = x, x.Account }).ToList();
+
+            if (losers.Count == 0 || winners.Count == 0)
+            {
+                return 1;
+            }
+
+            foreach (var r in winners)
+            {
+                winnerW += r.Account.EloWeight;
+                winnerInvW += r.Account.EloInvWeight;
+                winnerElo += r.Account.EffectiveElo;
+            }
+            foreach (var r in losers)
+            {
+                loserW += r.Account.EloWeight;
+                loserInvW += r.Account.EloInvWeight;
+                loserElo += r.Account.EffectiveElo;
+            }
+
+            winnerElo = winnerElo / winners.Count;
+            loserElo = loserElo / losers.Count;
+
+            return loserElo - winnerElo;
+        }
+
         static void ProcessPlanetwars(BattleResult result, List<string> extraData, ZkDataContext db, SpringBattle sb, StringBuilder text) {
             Galaxy gal = db.Galaxies.Single(x => x.IsDefault);
             Planet planet = gal.Planets.Single(x => x.MapResourceID == sb.MapResourceID);
@@ -223,8 +260,13 @@ namespace ZeroKWeb.SpringieInterface
                 int playerBonus = involvedCount*GlobalConst.InfluencePerInvolvedPlayer;
                 
                 double ccMalus = wasCcDestroyed ? -(influence+ shipBonus + techBonus + playerBonus)*GlobalConst.InfluenceCcKilledMultiplier : 0;
+
+
+                double eloModifier = GetEloDiff(sb)/250 + 1;
+
                 
                 influence = influence + shipBonus + techBonus + playerBonus + ccMalus;
+                influence = influence * eloModifier;
 
 
 
@@ -291,7 +333,7 @@ namespace ZeroKWeb.SpringieInterface
                         }
                     }
 
-                    var ev = Global.CreateEvent("{0} gained {1} ({4}{5}{6}{7}) influence at {2} from {3} ",
+                    var ev = Global.CreateEvent("{0} gained {1} ({4}{5}{6}{7}{8}) influence at {2} from {3} ",
                                                 winnerFaction,
                                                 influence,
                                                 planet,
@@ -299,7 +341,8 @@ namespace ZeroKWeb.SpringieInterface
                                                 techBonus > 0 ? "+" + techBonus + " from techs " : "",
                                                 playerBonus > 0 ? "+" + playerBonus + " from commanders " : "",
                                                 shipBonus > 0 ? "+" + shipBonus + " from ships " : "",
-                                                ccMalus != 0 ? "" + ccMalus + " from destroyed CC " : "");
+                                                ccMalus != 0 ? "" + ccMalus + " from destroyed CC " : "",
+                                                eloModifier != 1? "x" + eloModifier + " from Elo difference" : "");
                     db.Events.InsertOnSubmit(ev);
                     text.AppendLine(ev.PlainText);
                 }
