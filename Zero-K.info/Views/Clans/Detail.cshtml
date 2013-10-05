@@ -87,12 +87,7 @@
     @foreach (RoleType rt in new ZkDataContext().RoleTypes.Where(x => x.IsClanOnly && (x.RestrictFactionID == null || x.RestrictFactionID == Model.FactionID)).OrderBy(x => x.DisplayOrder))
     {
         @Html.PrintRoleType(rt)
-        foreach (AccountRole acc in rt.AccountRoles.Where(x => x.AccountByAccountID.ClanID == Model.ClanID))
-        {
-        @Html.PrintAccount(acc.AccountByAccountID)
-        @Html.DisplayFor(x => acc)
-        <span>, &nbsp;</span>
-        }
+        @Html.PrintClanRoleHolders(rt, c);
     }
     <br />
 

@@ -51,23 +51,26 @@
 @foreach (RoleType rt in new ZkDataContext().RoleTypes.Where(x => !x.IsClanOnly && (x.RestrictFactionID == null || x.RestrictFactionID == f.FactionID)).OrderBy(x => x.DisplayOrder)) {
     @Html.PrintRoleType(rt)
     foreach (AccountRole acc in rt.AccountRoles.Where(x => x.AccountByAccountID.FactionID == f.FactionID)) {
-        @Html.PrintAccount(acc.AccountByAccountID)
-        @Html.DisplayFor(x => acc)
-        <span>, &nbsp;</span>
+        @Html.PrintFactionRoleHolders(rt, f)
     }
     <br/>
 }
 
 <h2>Diplomacy</h2>
-@if (Global.Account != null && Global.Account.HasFactionRight(x => x.RightDiplomacy)) {
+@if (Global.Account != null && Global.Account.HasFactionRight(x => x.RightDiplomacy))
+{
     @Html.ActionLink("(propose new treaty)", "NewTreaty")
 }
 <br/>
-@foreach (FactionTreaty tr in db.FactionTreaties.Where(x => x.TreatyState != TreatyState.Invalid).Where(x => (x.ProposingFactionID == f.FactionID || x.AcceptingFactionID == f.FactionID)).OrderBy(x=>x.TreatyState)) {
-    if (tr.TreatyState == TreatyState.Proposed) {
+@foreach (FactionTreaty tr in db.FactionTreaties.Where(x => x.TreatyState != TreatyState.Invalid).Where(x => (x.ProposingFactionID == f.FactionID || x.AcceptingFactionID == f.FactionID)).OrderBy(x => x.TreatyState))
+{
+    if (tr.TreatyState == TreatyState.Proposed)
+    {
         @Html.DisplayFor(x => tr)
-    } else {
-        <b>@Html.PrintFactionTreaty(tr) between @Html.PrintFaction(tr.FactionByProposingFactionID,false) and @Html.PrintFaction(tr.FactionByAcceptingFactionID,false)</b>
+    }
+    else
+    {
+        <b>@Html.PrintFactionTreaty(tr) between @Html.PrintFaction(tr.FactionByProposingFactionID, false) and @Html.PrintFaction(tr.FactionByAcceptingFactionID, false)</b>
     }
     <br/>
 }
@@ -85,7 +88,8 @@
 
     <div id="starships">
         <table>
-            @foreach (var p in Model.PlanetFactions.Where(x=>x.Dropships>0).OrderByDescending(x => x.Dropships)) {
+            @foreach (var p in Model.PlanetFactions.Where(x => x.Dropships > 0).OrderByDescending(x => x.Dropships))
+            {
                 <tr>
                     <td>@Html.PrintPlanet(p.Planet)</td>
                     <td>
@@ -96,12 +100,13 @@
     </div>
     
         <div id="technologies">
-        @foreach (var unlockEntry in Model.GetFactionUnlocks()) {
-					var unlock = unlockEntry.Unlock;
-					var giver = unlockEntry.Faction;
+        @foreach (var unlockEntry in Model.GetFactionUnlocks())
+        {
+            var unlock = unlockEntry.Unlock;
+            var giver = unlockEntry.Faction;
   
           <span style="color: @unlock.LabelColor; font-size:x-small; display:inline-block; width:90px;height:90px" title="$unlock$@unlock.UnlockID"  >
-            <span style='font-size:x-small'>@Html.PrintFaction(giver,false)</span>
+            <span style='font-size:x-small'>@Html.PrintFaction(giver, false)</span>
             <img src="@unlock.ImageUrl"/><br />
             @unlock.Name
           </span>

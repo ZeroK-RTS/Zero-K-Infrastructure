@@ -449,7 +449,26 @@ namespace System.Web.Mvc
                 new MvcHtmlString(string.Format("<span title=\"<b>{0}</b><ul>{1}</ul>\"><b>{2}</b></span>",
                                                 rt.Description,
                                                 string.Join("", factoids.Select(x => "<li>" + x + "</li>")),
-                                                rt.Name));
+                                                rt.Name + "&nbsp"));
+        }
+
+        public static MvcHtmlString PrintFactionRoleHolders(this HtmlHelper helper, RoleType rt, Faction f) {
+            List<MvcHtmlString> holders = new List<MvcHtmlString>();
+            foreach (AccountRole acc in rt.AccountRoles.Where(x=>x.AccountByAccountID.FactionID == f.FactionID)) 
+            {
+                holders.Add(PrintAccount(helper, acc.AccountByAccountID));
+            }
+            return new MvcHtmlString(String.Join(", ", holders));
+        }
+
+        public static MvcHtmlString PrintClanRoleHolders(this HtmlHelper helper, RoleType rt, Clan c)
+        {
+            List<MvcHtmlString> holders = new List<MvcHtmlString>();
+            foreach (AccountRole acc in rt.AccountRoles.Where(x => x.AccountByAccountID.ClanID == c.ClanID))
+            {
+                holders.Add(PrintAccount(helper, acc.AccountByAccountID));
+            }
+            return new MvcHtmlString(String.Join(", ", holders));
         }
 
         public static MvcHtmlString PrintSpringLink(this HtmlHelper helper, string link) {
