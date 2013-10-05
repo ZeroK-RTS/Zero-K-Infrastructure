@@ -105,8 +105,13 @@ namespace ZeroKWeb.SpringieInterface
                 }
 
                 bool noElo = (extraData.FirstOrDefault(x => x.StartsWith("noElo")) != null);
-
-                db.SubmitChanges();
+                try {
+                    db.SubmitChanges();
+                }
+                catch (System.Data.Linq.DuplicateKeyException ex)
+                {
+                    // FIXME do something
+                }
 
                 Dictionary<int, int> orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
 
