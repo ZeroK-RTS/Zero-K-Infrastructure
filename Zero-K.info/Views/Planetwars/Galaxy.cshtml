@@ -79,7 +79,10 @@
 </div>
 <br />
 
-<h1 style="color:Red">Round 11 has concluded. Please wait for next round :)</h1>
+@if(Model.Started == null || remaining < TimeSpan.Zero)
+{
+    <h1 style="color:Red">Round has concluded. Please wait for next round :)</h1>
+}
 
 @Html.Partial("FactionList")
 <br style="clear:both"/>
@@ -152,16 +155,6 @@
 }
 
 <br class="clearfloat" />
-
-@*
-<div class="border"><center>
-<h1><a href='/Forum/Thread/314'>Valhalla has won!</a></h1>
-We are setting up the next round.
-<br />
-<img src="http://images1.wikia.nocookie.net/__cb20100726165117/starwarstech/images/thumb/0/0d/Imperial_Star_Destroyer_by_MasterofIntelligence.jpg/830px-Imperial_Star_Destroyer_by_MasterofIntelligence.jpg" border="2"	/><br/>
-</center>
-</div>
-*@
 
 <div style="position: relative; z-index: 100" >
 	<div id="linkMap" style="position: absolute; z-index: 0"> </div>
