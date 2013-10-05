@@ -51,11 +51,6 @@ namespace PlasmaDownloader
                     // special hack for engine 91.0
                     if (platform == "linux64" && Name == "91.0") paths.Add("http://springrts.com/dl/spring_91.0.amd64.zip");
                     else if (platform == "linux32" && Name == "91.0") paths.Add("http://springrts.com/dl/spring_91.0_portable_linux_i686.zip");
-                    else // FIXME remove after server is back up (2013.09.22)
-                    {
-                        if (Name == "91.0") paths.Add("http://zero-k.info/temp/spring_91.0.zip");
-                        else if (Name == "94.1") paths.Add("http://zero-k.info/temp/spring_94.1.zip");
-                    }
 
                     paths.Add(string.Format("{0}buildbot/default/master/{1}/spring_{1}_{2}", EngineDownloadPath, Name, archiveName));
                     paths.Add(string.Format("{0}buildbot/default/develop/{1}/spring_{{develop}}{1}_{2}", EngineDownloadPath, Name, archiveName));
