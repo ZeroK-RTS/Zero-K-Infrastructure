@@ -371,7 +371,7 @@ namespace LobbyClient
 
         public static DateTime ConvertMilisecondTime(string arg)
         {
-            return (new DateTime(1970, 1, 1, 0, 0, 0)).AddMilliseconds(long.Parse(arg));
+            return (new DateTime(1970, 1, 1, 0, 0, 0)).AddMilliseconds(double.Parse(arg));
         }
 
         public void DisableUnits(params string[] units)
