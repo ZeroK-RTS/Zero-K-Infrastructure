@@ -169,11 +169,6 @@ namespace ZeroKWeb.SpringieInterface
 
         static double GetEloDiff(SpringBattle sb)
         {
-            double winnerW = 0;
-            double loserW = 0;
-            double winnerInvW = 0;
-            double loserInvW = 0;
-
             double winnerElo = 0;
             double loserElo = 0;
 
@@ -187,14 +182,10 @@ namespace ZeroKWeb.SpringieInterface
 
             foreach (var r in winners)
             {
-                winnerW += r.Account.EloWeight;
-                winnerInvW += r.Account.EloInvWeight;
                 winnerElo += r.Account.EffectiveElo;
             }
             foreach (var r in losers)
             {
-                loserW += r.Account.EloWeight;
-                loserInvW += r.Account.EloInvWeight;
                 loserElo += r.Account.EffectiveElo;
             }
 
@@ -340,7 +331,7 @@ namespace ZeroKWeb.SpringieInterface
                                                 playerBonus > 0 ? "+" + playerBonus + " from commanders " : "",
                                                 shipBonus > 0 ? "+" + shipBonus + " from ships " : "",
                                                 ccMalus != 0 ? "" + ccMalus + " from destroyed CC " : "",
-                                                eloModifier != 1? "x" + eloModifier + " from Elo difference" : "");
+                                                eloModifier != 1? "x" + eloModifier.ToString("D2") + " from Elo difference" : "");
                     db.Events.InsertOnSubmit(ev);
                     text.AppendLine(ev.PlainText);
                 }
