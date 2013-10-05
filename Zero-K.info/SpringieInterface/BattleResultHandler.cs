@@ -332,7 +332,7 @@ namespace ZeroKWeb.SpringieInterface
                                                 playerBonus > 0 ? "+" + playerBonus + " from commanders " : "",
                                                 shipBonus > 0 ? "+" + shipBonus + " from ships " : "",
                                                 ccMalus != 0 ? "" + ccMalus + " from destroyed CC " : "",
-                                                eloModifier != 1? "x" + eloModifier.ToString("D2") + " from Elo difference" : "");
+                                                eloModifier != 1? "x" + eloModifier.ToString("F2") + " from Elo difference" : "");
                     db.Events.InsertOnSubmit(ev);
                     text.AppendLine(ev.PlainText);
                 }
