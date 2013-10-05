@@ -267,9 +267,7 @@ namespace ZeroKWeb.SpringieInterface
                 
                 influence = influence + shipBonus + techBonus + playerBonus + ccMalus;
                 influence = influence * eloModifier;
-
-
-
+                if (influence < 0) influence = 0;
 
                 
                 // save influence gains
