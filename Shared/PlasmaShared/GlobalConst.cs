@@ -41,8 +41,8 @@
 	    public const double BaseMetalPerBattle = 200;
         public const double CcDestroyedMetalMultWinners = 0.75;
 	    public const int DropshipsPerBattlePlayer = 1;
-        public const int InfluencePerInvolvedPlayer = 1;
-        public const int InfluencePerShip = 2;
+        public const int InfluencePerInvolvedPlayer = 2;
+        public const int InfluencePerShip = 3;
         public const double InfluencePerTech = 1;
         public const double InfluenceDecay = 1;
 	    public const double InfluenceToCapturePlanet = 50.1;
@@ -50,7 +50,7 @@
         public const double InfluenceCcKilledMultiplier = 0.5;
 	    public const double SelfDestructRefund = 0.5;
 	    public const double BomberKillStructureChance = 0.1;
-        public const double BomberKillIpChance = 0.8;
+        public const double BomberKillIpChance = 1.2;
         public const double BomberKillIpAmount = 1;
         public const double StructureIngameDisableTimeMult = 4;
         public const int DefaultDropshipCapacity = 10;
