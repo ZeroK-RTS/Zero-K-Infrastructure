@@ -63,11 +63,10 @@ namespace ZeroKLobby
                 }
             }
 
-
-            drawString("Country: ");
             Image flag;
             if (Images.CountryFlags.TryGetValue(user.Country, out flag) && flag != null)
             {
+                drawString("Country: ");
                 drawImage(flag, flag.Width, flag.Height);
                 drawString(user.CountryName);
                 newLine();
@@ -93,7 +92,7 @@ namespace ZeroKLobby
             if (user.IsZkLobbyUser)
             {
                 drawImage(ZklResources.ZK_logo_square, 16, 16);
-                drawString(string.Format("ZK lobby user ({0})", user.IsZkLinuxUser ? "linux" : "windows"));
+                drawString(string.Format("ZK lobby user ({0})", user.IsZkLinuxUser ? "Linux" : "Windows"));
                 newLine();
             }
             if (!user.IsBot)
