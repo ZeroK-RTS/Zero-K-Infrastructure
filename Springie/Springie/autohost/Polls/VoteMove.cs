@@ -58,7 +58,7 @@ namespace Springie.autohost.Polls
                 var moves =
                     tas.MyBattle.Users.Where(x => x.Name != tas.MyBattle.Founder.Name)
                        .Where(x => userVotes.TryGetValue(x.Name, out val) && val)
-                       .Select(x => new MovePlayerEntry() { BattleHost = host, PlayerName = x.Name })
+                       .Select(x => new MovePlayerEntry() { BattleHost = host, PlayerName = x.Name})
                        .ToArray(); // move those that voted yes if there are at least 2
                 if (moves.Length > 1) {
                     var serv = new SpringieService();

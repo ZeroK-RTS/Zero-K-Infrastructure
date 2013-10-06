@@ -86,12 +86,12 @@ namespace ZeroKWeb
             var name = autohostName.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
             var entry = db.AutohostConfigs.SingleOrDefault(x => x.Login == name);
             if (entry == null) throw new Exception("Not an autohost");
-            var battle = Global.Nightwatch.Tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == autohostName);
-            if (battle != null && (battle.IsLocked || battle.IsFull || battle.IsInGame)) throw new Exception(string.Format("{0} cannot be joined at this time", autohostName));
 
             try {
                 PlayerJuggler.SuppressJuggler = true;
                 foreach (var m in moves) {
+                    var battle = Global.Nightwatch.Tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == m.BattleHost);
+                    if (battle == null || (battle.IsLocked || battle.IsPassworded)) continue;
                     Global.Nightwatch.Tas.ForceJoinBattle(m.PlayerName, m.BattleHost);
                 }
             } catch (Exception ex) {
