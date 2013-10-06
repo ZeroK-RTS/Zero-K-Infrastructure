@@ -64,6 +64,7 @@
         public const bool RotatePWMaps = false;
         public const bool RequireWormholeToTravel = true;
         public const bool CanChangeClanFaction = false;
+        public const double MaxPwEloDifference = 250;
 
 	    public const string MetalIcon = "/img/luaui/ibeam.png";
         public const string EnergyIcon = "/img/luaui/energy.png";

@@ -22,7 +22,6 @@ namespace ZeroKWeb.SpringieInterface
     public class Balancer
     {
         const double MaxCbalanceDifference = 150;
-        const double MaxPwEloDifference = 300;
         const double MaxTeamSizeDifferenceRatio = 2;
 
         public enum BalanceMode
@@ -275,7 +274,7 @@ namespace ZeroKWeb.SpringieInterface
                 if (unmovablePlayers != null && unmovablePlayers.Length > 0) {
                     var minElo = bestTeams.Min(x => x.AvgElo);
                     var maxElo = bestTeams.Max(x => x.AvgElo);
-                    if (maxElo - minElo > MaxPwEloDifference) {
+                    if (maxElo - minElo > GlobalConst.MaxPwEloDifference) {
                         ret.CanStart = false;
                         ret.Message = string.Format("Team difference is too big - win chance {0}% - spectate some or wait for more people",
                                                     Utils.GetWinChancePercent(maxElo - minElo));

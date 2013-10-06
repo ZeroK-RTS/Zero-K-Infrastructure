@@ -249,7 +249,8 @@ namespace ZeroKWeb.SpringieInterface
                     sb.SpringBattlePlayers.Count(
                         x => !x.IsSpectator && x.Account.Faction != null && (x.Account.Faction == winnerFaction || x.Account.Faction == defender));
 
-                double influence = GlobalConst.BaseInfluencePerBattle;
+                double baseInfluence = GlobalConst.BaseInfluencePerBattle;
+                double influence = baseInfluence;
 
                 double shipBonus = winnerFaction == attacker ? (totalShips - planetDefs)*GlobalConst.InfluencePerShip : 0;
                 double techBonus = winnerFaction.GetFactionUnlocks().Count()*GlobalConst.InfluencePerTech;
@@ -258,7 +259,7 @@ namespace ZeroKWeb.SpringieInterface
                 double ccMalus = wasCcDestroyed ? -(influence+ shipBonus + techBonus + playerBonus)*GlobalConst.InfluenceCcKilledMultiplier : 0;
 
 
-                double eloModifier = GetEloDiff(sb)/250 + 1;
+                double eloModifier = GetEloDiff(sb)/GlobalConst.MaxPwEloDifference + 1;
 
                 
                 influence = influence + shipBonus + techBonus + playerBonus + ccMalus;
@@ -328,11 +329,12 @@ namespace ZeroKWeb.SpringieInterface
                         }
                     }
 
-                    var ev = Global.CreateEvent("{0} gained {1} ({4}{5}{6}{7}{8}) influence at {2} from {3} ",
+                    var ev = Global.CreateEvent("{0} gained {1} ({4}{5}{6}{7}{8}){9} influence at {2} from {3} ",
                                                 winnerFaction,
                                                 influence,
                                                 planet,
                                                 sb,
+                                                baseInfluence + " base",
                                                 techBonus > 0 ? "+" + techBonus + " from techs " : "",
                                                 playerBonus > 0 ? "+" + playerBonus + " from commanders " : "",
                                                 shipBonus > 0 ? "+" + shipBonus + " from ships " : "",
