@@ -90,8 +90,6 @@ namespace ZeroKWeb
             try {
                 PlayerJuggler.SuppressJuggler = true;
                 foreach (var m in moves) {
-                    var battle = Global.Nightwatch.Tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == m.BattleHost);
-                    if (battle == null || (battle.IsLocked || battle.IsPassworded)) continue;
                     Global.Nightwatch.Tas.ForceJoinBattle(m.PlayerName, m.BattleHost);
                 }
             } catch (Exception ex) {
