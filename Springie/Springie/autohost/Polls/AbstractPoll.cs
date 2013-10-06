@@ -46,7 +46,7 @@ namespace Springie.autohost.Polls
             else return false;
         }
 
-        public void End() {
+        public virtual void End() {
             if (!ended) ah.SayBattle(string.Format("Poll: {0} [END:FAILED]", Question));
             ended = true; // silly hack to avoid duplicate messages 
         }

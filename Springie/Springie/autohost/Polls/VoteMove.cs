@@ -1,5 +1,6 @@
 using System.Linq;
 using LobbyClient;
+using PlasmaShared.SpringieInterfaceReference;
 
 namespace Springie.autohost.Polls
 {
@@ -34,9 +35,31 @@ namespace Springie.autohost.Polls
         }
 
 
-        protected override void SuccessAction()
+        protected override void SuccessAction() {
+            bool val;
+            var moves =
+                tas.MyBattle.Users.Where(x => x.Name != tas.MyBattle.Founder.Name)
+                   .Where(x => !userVotes.TryGetValue(x.Name, out val) || val)
+                   .Select(x => new MovePlayerEntry() { BattleHost = host, PlayerName = x.Name })
+                   .ToArray(); // move all that didnt vote "no" 
+            var serv = new SpringieService();
+            serv.MovePlayers(tas.UserName,tas.UserPassword, moves.ToArray());
+        }
+
+        public override void End()
         {
-            ah.ComMove(TasSayEventArgs.Default, new string[] { host });
+            bool val;
+            var moves =
+                tas.MyBattle.Users.Where(x => x.Name != tas.MyBattle.Founder.Name)
+                   .Where(x => userVotes.TryGetValue(x.Name, out val) && val)
+                   .Select(x => new MovePlayerEntry() { BattleHost = host, PlayerName = x.Name })
+                   .ToArray(); // move those that voted yes if there are at least 2
+            if (moves.Length > 1) {
+                var serv = new SpringieService();
+                serv.MovePlayers(tas.UserName, tas.UserPassword, moves.ToArray());
+            }
+
+            base.End();
         }
     }
 }
