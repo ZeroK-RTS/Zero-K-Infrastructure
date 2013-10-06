@@ -952,7 +952,7 @@ namespace Springie.autohost
 
         void PlayerCountDecreased() {
             Battle battle = tas.MyBattle;
-            if (battle.NonSpectatorCount < (config.MergeSmallerThan ?? 2)) {
+            if (battle != null && battle.NonSpectatorCount < (config.MergeSmallerThan ?? 2)) {
                 // player left and only 2 remaining (springie itself + some noob) -> unlock
                 lockedUntil = DateTime.MinValue;
                 tas.ChangeLock(false);
