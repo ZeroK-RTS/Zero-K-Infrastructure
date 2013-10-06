@@ -129,7 +129,7 @@ namespace ZeroKWeb.SpringieInterface
                 if (mode == AutohostMode.Planetwars && sb.SpringBattlePlayers.Count(x => !x.IsSpectator) >= 2 && sb.Duration >= GlobalConst.MinDurationForPlanetwars) {
                     // test taht factions are not intermingled (each faction only has one ally number) - if they are it wasnt actually PW balanced
                     if (
-                        sb.SpringBattlePlayers.Where(x => !x.IsSpectator)
+                        sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.Account.Faction != null)
                           .GroupBy(x => x.Account.Faction)
                           .All(grp => grp.Select(x => x.AllyNumber).Distinct().Count() < 2)) {
                         ProcessPlanetwars(result, extraData, db, sb, text);
