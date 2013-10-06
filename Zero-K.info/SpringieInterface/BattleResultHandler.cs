@@ -127,7 +127,17 @@ namespace ZeroKWeb.SpringieInterface
                 var text = new StringBuilder();
 
                 if (mode == AutohostMode.Planetwars && sb.SpringBattlePlayers.Count(x => !x.IsSpectator) >= 2 && sb.Duration >= GlobalConst.MinDurationForPlanetwars) {
-                    ProcessPlanetwars(result, extraData, db, sb, text);
+                    // test taht factions are not intermingled (each faction only has one ally number) - if they are it wasnt actually PW balanced
+                    if (
+                        sb.SpringBattlePlayers.Where(x => !x.IsSpectator)
+                          .GroupBy(x => x.Account.Faction)
+                          .All(grp => grp.Select(x => x.AllyNumber).Distinct().Count() < 2)) {
+                        ProcessPlanetwars(result, extraData, db, sb, text);
+                    }
+                    else {
+                        text.AppendLine("Battle wasn't PlanetWars balanced, it counts as a normal team game only");
+                    }
+
                 }
 
                 foreach (Account account in sb.SpringBattlePlayers.Select(x => x.Account)) {

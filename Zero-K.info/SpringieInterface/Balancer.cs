@@ -266,9 +266,12 @@ namespace ZeroKWeb.SpringieInterface
                         // cbalance failed, rebalance using normal
 
                 if (sizesWrong && mode == BalanceMode.FactionWise) {
-                    ret.CanStart = false;
+                    var fallback = new Balancer().LegacyBalance(teamCount, BalanceMode.ClanWise, b, null);
+                    fallback.Message += "\nWarning: STANDARD TEAM BALANCE USED, PlanetWars not possible with those teams, too many from one faction";
+                    return fallback ; // fallback standard balance if PW balance fails
+                    /*ret.CanStart = false;
                     ret.Message = string.Format("Failed to balance - too many people from same faction");
-                    return ret;
+                    return ret;*/
                 }
 
                 if (unmovablePlayers != null && unmovablePlayers.Length > 0) {
