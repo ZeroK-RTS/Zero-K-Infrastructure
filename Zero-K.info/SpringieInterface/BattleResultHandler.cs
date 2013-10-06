@@ -329,7 +329,7 @@ namespace ZeroKWeb.SpringieInterface
                         }
                     }
 
-                    var ev = Global.CreateEvent("{0} gained {1} ({4}{5}{6}{7}{8}){9} influence at {2} from {3} ",
+                    var ev = Global.CreateEvent("{0} gained {1} influence (({4}{5}{6}{7}{8}){9} at {2}) from {3} ",
                                                 winnerFaction,
                                                 influence,
                                                 planet,
