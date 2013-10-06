@@ -101,6 +101,7 @@ namespace Springie.autohost
 
             tas.BattleUserLeft += tas_BattleUserLeft;
             tas.UserStatusChanged += tas_UserStatusChanged;
+            tas.BattleUserStatusChanged += TasOnBattleUserStatusChanged;
             tas.BattleUserJoined += tas_BattleUserJoined;
             tas.MyBattleMapChanged += tas_MyBattleMapChanged;
             tas.BattleLockChanged += tas_BattleLockChanged;
@@ -179,6 +180,10 @@ namespace Springie.autohost
                     }
                 };
             timer.Start();
+        }
+
+        void TasOnBattleUserStatusChanged(object sender, TasEventArgs tasEventArgs) {
+            PlayerCountDecreased();
         }
 
         public void Dispose() {
@@ -1048,7 +1053,7 @@ namespace Springie.autohost
                 Battle b = tas.MyBattle;
                 if (e.ServerParams[0] != tas.UserName && b.Users.Any(x => x.Name == e.ServerParams[0])) CheckForBattleExit();
             }
-            PlayerCountDecreased();
+            
         }
     }
 }
