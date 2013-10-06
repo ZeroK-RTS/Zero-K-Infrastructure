@@ -21,7 +21,7 @@ namespace ZeroKWeb.SpringieInterface
 
     public class Balancer
     {
-        const double MaxCbalanceDifference = 150;
+        const double MaxCbalanceDifference = 120;
         const double MaxTeamSizeDifferenceRatio = 2;
 
         public enum BalanceMode
@@ -278,10 +278,14 @@ namespace ZeroKWeb.SpringieInterface
                     var minElo = bestTeams.Min(x => x.AvgElo);
                     var maxElo = bestTeams.Max(x => x.AvgElo);
                     if (maxElo - minElo > GlobalConst.MaxPwEloDifference) {
+                        var fallback = new Balancer().LegacyBalance(teamCount, BalanceMode.ClanWise, b, null);
+                        fallback.Message += "\nWarning: STANDARD TEAM BALANCE USED, PlanetWars not possible with those teams, too many from one faction";
+                        return fallback; // fallback standard balance if PW balance fails
+                        /*
                         ret.CanStart = false;
                         ret.Message = string.Format("Team difference is too big - win chance {0}% - spectate some or wait for more people",
                                                     Utils.GetWinChancePercent(maxElo - minElo));
-                        return ret;
+                        return ret;*/
                     }
                 }
 
