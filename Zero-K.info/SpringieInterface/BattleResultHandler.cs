@@ -398,17 +398,20 @@ namespace ZeroKWeb.SpringieInterface
             }
 
             // add attack points
-            foreach (
-                Account acc in
-                    sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(
-                        x => x.Faction != null && (x.Faction == attacker || x.Faction == defender))) {
-                AccountPlanet entry = planet.AccountPlanets.SingleOrDefault(x => x.AccountID == acc.AccountID);
-                if (entry == null) {
-                    entry = new AccountPlanet { AccountID = acc.AccountID, PlanetID = planet.PlanetID };
-                    db.AccountPlanets.InsertOnSubmit(entry);
+            foreach (SpringBattlePlayer player in sb.SpringBattlePlayers.Where(x => !x.IsSpectator)) 
+            {
+                Account acc = player.Account;
+                int ap = player.IsInVictoryTeam ? GlobalConst.AttackPointsForVictory : GlobalConst.AttackPointsForDefeat;
+                if (acc.Faction != null && (acc.Faction == attacker || acc.Faction == defender))
+                {
+                    AccountPlanet entry = planet.AccountPlanets.SingleOrDefault(x => x.AccountID == acc.AccountID);
+                    if (entry == null) {
+                        entry = new AccountPlanet { AccountID = acc.AccountID, PlanetID = planet.PlanetID };
+                        db.AccountPlanets.InsertOnSubmit(entry);
+                    }
+                    
+                    entry.AttackPoints += ap;
                 }
-                int ap = acc.Faction == winnerFaction ? GlobalConst.AttackPointsForVictory : GlobalConst.AttackPointsForDefeat;
-                entry.AttackPoints += ap;
                 acc.PwAttackPoints += ap;
             }
 
