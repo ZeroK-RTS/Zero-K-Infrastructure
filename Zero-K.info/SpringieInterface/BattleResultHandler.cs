@@ -443,7 +443,7 @@ namespace ZeroKWeb.SpringieInterface
             // paranoia!
             try
             {
-                string metalStringWinner = string.Format("Winners gained {1}{2} metal. ", winnerMetal, eloModifier != 1 ? string.Format(" ({0} base x {1} Elo modifier)", baseMetal, eloModifier.ToString("F2")) : "");
+                string metalStringWinner = string.Format("Winners gained {0}{1} metal. ", winnerMetal, eloModifier != 1 ? string.Format(" ({0} base x {1} Elo modifier)", baseMetal, eloModifier.ToString("F2")) : "");
                 string metalStringLoser = loserMetal != 0 ? string.Format("Losers gained {0} metal. ", loserMetal) : "";
                 var mainEvent = Global.CreateEvent("{0} attacked {1} with {2} dropships at {3} and {4}{5}{6}",
                                             attacker,
