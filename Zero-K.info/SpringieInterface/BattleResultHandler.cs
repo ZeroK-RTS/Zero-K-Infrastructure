@@ -274,7 +274,7 @@ namespace ZeroKWeb.SpringieInterface
                 double ccMalus = wasCcDestroyed ? -(influence+ shipBonus + techBonus + playerBonus)*GlobalConst.InfluenceCcKilledMultiplier : 0;
                 
                 influence = influence + shipBonus + techBonus + playerBonus + ccMalus;
-                influence = influence * eloModifier;
+                //influence = influence * eloModifier;
                 if (influence < 0) influence = 0;
                 influence = Math.Floor(influence * 100) / 100;
 
