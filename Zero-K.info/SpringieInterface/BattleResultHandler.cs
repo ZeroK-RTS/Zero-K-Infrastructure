@@ -454,6 +454,7 @@ namespace ZeroKWeb.SpringieInterface
                                             metalStringWinner,
                                             metalStringLoser,
                                             string.Format("Defenders and allies gained {0} dropships.", dropshipsGained));
+                db.Events.InsertOnSubmit(mainEvent);
                 text.AppendLine(mainEvent.PlainText);
 
             }
