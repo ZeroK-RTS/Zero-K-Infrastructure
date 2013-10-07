@@ -127,7 +127,7 @@ namespace ZeroKWeb.SpringieInterface
                 var text = new StringBuilder();
 
                 if (mode == AutohostMode.Planetwars && sb.SpringBattlePlayers.Count(x => !x.IsSpectator) >= 2 && sb.Duration >= GlobalConst.MinDurationForPlanetwars) {
-                    // test taht factions are not intermingled (each faction only has one ally number) - if they are it wasnt actually PW balanced
+                    // test that factions are not intermingled (each faction only has one ally number) - if they are it wasnt actually PW balanced
                     if (
                         sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.Account.Faction != null)
                           .GroupBy(x => x.Account.Faction)
@@ -247,14 +247,20 @@ namespace ZeroKWeb.SpringieInterface
             List<Account> winners =
                 sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam && x.Account.Faction != null).Select(x => x.Account).ToList();
 
-            
+            double eloModifier = 1 - GetEloDiff(sb) / GlobalConst.EloMetalModDivisor + (1 - GlobalConst.EloMetalModMagnitude);
+            double baseMetal = GlobalConst.BaseMetalPerBattle;
+            double winnerMetal = baseMetal, loserMetal = 0;
+
+            int dropshipsSent = 0, dropshipsGained = 0;
+            string influenceReport = "";
+
             // distribute influence
             if (winnerFaction != null) {
 
                 
-                // give influence to main attac
+                // give influence to main attackers
                 double planetDefs = (planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0);
-                int totalShips = (planet.PlanetFactions.Where(x => x.Faction == attacker).Sum(x => (int?)x.Dropships) ?? 0);
+                dropshipsSent = (planet.PlanetFactions.Where(x => x.Faction == attacker).Sum(x => (int?)x.Dropships) ?? 0);
                 int involvedCount =
                     sb.SpringBattlePlayers.Count(
                         x => !x.IsSpectator && x.Account.Faction != null && (x.Account.Faction == winnerFaction || x.Account.Faction == defender));
@@ -262,15 +268,10 @@ namespace ZeroKWeb.SpringieInterface
                 double baseInfluence = GlobalConst.BaseInfluencePerBattle;
                 double influence = baseInfluence;
 
-                double shipBonus = winnerFaction == attacker ? (totalShips - planetDefs)*GlobalConst.InfluencePerShip : 0;
+                double shipBonus = winnerFaction == attacker ? (dropshipsSent - planetDefs)*GlobalConst.InfluencePerShip : 0;
                 double techBonus = winnerFaction.GetFactionUnlocks().Count()*GlobalConst.InfluencePerTech;
                 int playerBonus = involvedCount*GlobalConst.InfluencePerInvolvedPlayer;
-                
                 double ccMalus = wasCcDestroyed ? -(influence+ shipBonus + techBonus + playerBonus)*GlobalConst.InfluenceCcKilledMultiplier : 0;
-
-
-                double eloModifier = GetEloDiff(sb) / GlobalConst.EloInfluenceModDivisor + (1 - GlobalConst.EloInfluenceModMagnitude);
-
                 
                 influence = influence + shipBonus + techBonus + playerBonus + ccMalus;
                 influence = influence * eloModifier;
@@ -338,7 +339,7 @@ namespace ZeroKWeb.SpringieInterface
                             foreach (var pf in planet.PlanetFactions.Where(x => x.Faction != winnerFaction)) pf.Influence -= pf.Influence/sumOthers*excess;
                         }
                     }
-
+                    /*
                     var ev = Global.CreateEvent("{0} gained {1} influence (({4}{5}{6}{7}{8}) {9}) at {2} from {3} ",
                                                 winnerFaction,
                                                 influence,
@@ -351,40 +352,51 @@ namespace ZeroKWeb.SpringieInterface
                                                 ccMalus != 0 ? "" + ccMalus + " from destroyed CC " : "",
                                                 eloModifier != 1? "x" + eloModifier.ToString("F2") + " from Elo difference" : "");
                     db.Events.InsertOnSubmit(ev);
-                    text.AppendLine(ev.PlainText);
+                    //text.AppendLine(ev.PlainText);*/
+                    influenceReport = string.Format("{0} gained {1} influence ({2}{3}{4}{5}{6})",   // (({2}{3}{4}{5}{6}) {7})",
+                                                winnerFaction,
+                                                influence,
+                                                baseInfluence + " base ",
+                                                techBonus > 0 ? "+" + techBonus + " from techs " : "",
+                                                playerBonus > 0 ? "+" + playerBonus + " from commanders " : "",
+                                                shipBonus > 0 ? "+" + shipBonus + " from ships " : "",
+                                                ccMalus != 0 ? "" + ccMalus + " from destroyed CC " : "",
+                                                eloModifier != 1 ? "x" + eloModifier.ToString("F2") + " from Elo difference" : "");
                 }
             }
 
             // distribute metal
-            double metalPerWinner = GlobalConst.BaseMetalPerBattle/winners.Count;
-            if (wasCcDestroyed) metalPerWinner *= GlobalConst.CcDestroyedMetalMultWinners;
+            if (wasCcDestroyed) winnerMetal *= GlobalConst.CcDestroyedMetalMultWinners;
+            winnerMetal = Math.Floor(winnerMetal * eloModifier);
+            double metalPerWinner = winnerMetal/winners.Count;
             foreach (Account w in winners) {
                 w.ProduceMetal(metalPerWinner);
-
+                /*
                 var ev = Global.CreateEvent("{0} gained {1} metal from battle {2}",
                                             w,
                                             Math.Floor(metalPerWinner),
                                             sb,
                                             planet,
                                             w.Clan != null ? (object)w.Clan : "no clan");
-                db.Events.InsertOnSubmit(ev);
+                db.Events.InsertOnSubmit(ev);*/
                 //text.AppendLine(ev.PlainText);
             }
 
             if (wasCcDestroyed) {
                 List<Account> losers = sb.SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam && x.Account.Faction != null).Select(x => x.Account).ToList();
-                double metalPerLoser = GlobalConst.BaseMetalPerBattle * (1.0- GlobalConst.CcDestroyedMetalMultWinners) / losers.Count;
+                loserMetal = baseMetal * (1 - GlobalConst.CcDestroyedMetalMultWinners);
+                double metalPerLoser = loserMetal / losers.Count;
                 foreach (Account w in losers)
                 {
                     w.ProduceMetal(metalPerLoser);
 
-                    var ev = Global.CreateEvent("{0} gained {1} metal from killing CC in battle {2}",
+                    /*var ev = Global.CreateEvent("{0} gained {1} metal from killing CC in battle {2}",
                                                 w,
                                                 Math.Floor(metalPerLoser),
                                                 sb,
                                                 planet,
                                                 w.Clan != null ? (object)w.Clan : "no clan");
-                    db.Events.InsertOnSubmit(ev);
+                    db.Events.InsertOnSubmit(ev);*/
                     //text.AppendLine(ev.PlainText);
                 }   
             }
@@ -398,14 +410,15 @@ namespace ZeroKWeb.SpringieInterface
                 Account acc in
                     sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x => x.Faction != null && x.Faction != attacker)) {
                 acc.ProduceDropships(GlobalConst.DropshipsPerBattlePlayer);
-
+                dropshipsGained += GlobalConst.DropshipsPerBattlePlayer;
+                /*
                 var ev = Global.CreateEvent("{0} gained {1} dropship from battle {2}",
                                             acc,
                                             GlobalConst.DropshipsPerBattlePlayer,
                                             sb,
                                             planet,
                                             acc.Clan != null ? (object)acc.Clan : "no clan");
-                db.Events.InsertOnSubmit(ev);
+                db.Events.InsertOnSubmit(ev);*/
                 //text.AppendLine(ev.PlainText);
             }
 
@@ -425,6 +438,26 @@ namespace ZeroKWeb.SpringieInterface
                     entry.AttackPoints += ap;
                 }
                 acc.PwAttackPoints += ap;
+            }
+            
+            // paranoia!
+            try
+            {
+                string metalStringWinner = string.Format("Winners gained {1}{2} metal. ", winnerMetal, eloModifier != 1 ? string.Format(" ({0} base x {1} Elo modifier)", baseMetal, eloModifier.ToString("F2")) : "");
+                string metalStringLoser = loserMetal != 0 ? string.Format("Losers gained {0} metal. ", loserMetal) : "";
+                var mainEvent = Global.CreateEvent("{0} attacked {1} with {2} dropships at {3} and {4}{5}{6}",
+                                            attacker,
+                                            planet,
+                                            dropshipsSent,
+                                            sb,
+                                            winnerFaction == attacker ? "won. " + influenceReport + ". " : "lost. ",
+                                            metalStringWinner,
+                                            metalStringLoser,
+                                            string.Format("Defenders and allies gained {0} dropships.", dropshipsGained));
+            }
+            catch (Exception ex)
+            {
+                Global.Nightwatch.Tas.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
             }
 
             // destroy pw structures killed ingame
