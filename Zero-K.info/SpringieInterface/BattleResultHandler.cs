@@ -110,7 +110,7 @@ namespace ZeroKWeb.SpringieInterface
                 }
                 catch (System.Data.Linq.DuplicateKeyException ex)
                 {
-                    // FIXME do something
+                    Global.Nightwatch.Tas.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
                 }
 
                 Dictionary<int, int> orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
@@ -269,7 +269,7 @@ namespace ZeroKWeb.SpringieInterface
                 double ccMalus = wasCcDestroyed ? -(influence+ shipBonus + techBonus + playerBonus)*GlobalConst.InfluenceCcKilledMultiplier : 0;
 
 
-                double eloModifier = GetEloDiff(sb)/GlobalConst.MaxPwEloDifference + 1;
+                double eloModifier = GetEloDiff(sb) / GlobalConst.EloInfluenceModDivisor + (1 - GlobalConst.EloInfluenceModMagnitude);
 
                 
                 influence = influence + shipBonus + techBonus + playerBonus + ccMalus;

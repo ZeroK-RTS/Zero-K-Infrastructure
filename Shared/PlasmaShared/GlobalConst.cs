@@ -65,6 +65,8 @@
         public const bool RequireWormholeToTravel = true;
         public const bool CanChangeClanFaction = false;
         public const double MaxPwEloDifference = 120;
+        public const double EloInfluenceModDivisor = 240;
+        public const double EloInfluenceModMagnitude = 1;
 
 	    public const string MetalIcon = "/img/luaui/ibeam.png";
         public const string EnergyIcon = "/img/luaui/energy.png";
