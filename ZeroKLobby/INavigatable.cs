@@ -9,7 +9,7 @@ namespace ZeroKLobby
 	{
 		string PathHead { get; }
         bool TryNavigate(params string[] path);
-		bool Hilite(HiliteLevel level, params string[] path);
+		bool Hilite(HiliteLevel level, string path);
 		string GetTooltip(params string[] path);
         void Reload();
         bool CanReload { get; }

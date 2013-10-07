@@ -55,7 +55,7 @@ namespace ZeroKLobby.MicroLobby
 
         public string PathHead { get { return "battles"; } }
 
-        public bool Hilite(HiliteLevel level, params string[] path) {
+        public bool Hilite(HiliteLevel level, string path) {
             return false;
         }
 

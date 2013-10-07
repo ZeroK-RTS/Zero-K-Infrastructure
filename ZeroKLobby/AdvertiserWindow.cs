@@ -143,7 +143,7 @@ namespace ZeroKLobby
             return path.Length > 0 && path[0] == PathHead;
         }
 
-        public bool Hilite(HiliteLevel level, params string[] path)
+        public bool Hilite(HiliteLevel level, string path)
         {
             return false;
         }

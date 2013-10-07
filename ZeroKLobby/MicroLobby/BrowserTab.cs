@@ -103,7 +103,7 @@ namespace ZeroKLobby
             return false; //URL has nothing to do with this WebBrowser instance,  just return FALSE
         }
 
-        public bool Hilite(HiliteLevel level, params string[] path)
+        public bool Hilite(HiliteLevel level, string path)
         {
             return false;
         }

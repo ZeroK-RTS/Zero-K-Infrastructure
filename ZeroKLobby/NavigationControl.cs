@@ -20,8 +20,8 @@ namespace ZeroKLobby
                 _currentPage = value;
                 urlBox.Text = Path;
 
-                ButtonList.ForEach(x=>x.IsSelected = false);
-                
+                ButtonList.ForEach(x=>x.IsSelected = false); //unselect all button
+
                 var selbut = ButtonList.Where(x => Path.StartsWith(x.TargetPath)).OrderByDescending(x => x.TargetPath.Length).FirstOrDefault();
                 if (selbut != null) {
                     selbut.IsSelected = true;
@@ -29,10 +29,8 @@ namespace ZeroKLobby
                 }
 
 
-                var steps = Path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries); // todo cleanup
-                var navigable =
-                    tabControl.Controls.OfType<Object>().Select(GetINavigatableFromControl).FirstOrDefault(x => x != null && x.PathHead == steps[0]);
-                if (navigable != null) navigable.Hilite(HiliteLevel.None, steps);
+                var navigable = tabControl.Controls.OfType<Object>().Select(GetINavigatableFromControl).FirstOrDefault(x => x != null && Path.StartsWith(x.PathHead)); //find TAB with correct PathHead
+                if (navigable != null) navigable.Hilite(HiliteLevel.None, Path); //cancel hilite ChatTab's tab (if meet some condition)
             }
         }
 
@@ -95,7 +93,7 @@ namespace ZeroKLobby
                     Height = 32,
                 },
                 new ButtonInfo() { Label = "CHAT", TargetPath = "chat", Icon= ZklResources.chat, Height = 32, },
-                new ButtonInfo() { Label = "PLANETWARS", TargetPath = "http://zero-k.info/PlanetWars", Height = 32,  },
+                new ButtonInfo() { Label = "PLANETWARS", TargetPath = "http://zero-k.info/Planetwars", Height = 32,  },
                 new ButtonInfo() { Label = "MAPS", TargetPath = "http://zero-k.info/Maps", Icon = Buttons.map, Height = 32,  },
                 new ButtonInfo() { Label = "REPLAYS", TargetPath = "http://zero-k.info/Battles", Icon = Buttons.video_icon, Height = 32, },
                 new ButtonInfo() { Label = "FORUM", TargetPath = "http://zero-k.info/Forum", Height = 32, },
@@ -116,7 +114,7 @@ namespace ZeroKLobby
                     AddTabPage(new BrowserTab("http://zero-k.info/Maps"), "Maps");
                     AddTabPage(new BrowserTab("http://zero-k.info/Missions"), "sp");
                     AddTabPage(new BrowserTab("http://zero-k.info/Battles"), "rp");
-                    AddTabPage(new BrowserTab("http://zero-k.info/PlanetWars"), "pw");
+                    AddTabPage(new BrowserTab("http://zero-k.info/Planetwars"), "pw");
                     AddTabPage(new BrowserTab("http://zero-k.info/Forum"), "fm");
                 }
                 var home = AddTabPage(new BrowserTab("http://zero-k.info/"), "hm");
@@ -139,7 +137,7 @@ namespace ZeroKLobby
             ResumeLayout();
         }
 
-        public INavigatable GetInavigatableByPath(string path) {
+        public INavigatable GetInavigatableByPath(string path) { //get which TAB has which PathHead (header)
             foreach (TabPage tabPage in tabControl.Controls) {
                 var navigatable = GetINavigatableFromControl(tabPage);
                 if (path.Contains(navigatable.PathHead)) return navigatable;
@@ -150,12 +148,10 @@ namespace ZeroKLobby
 
         public bool HilitePath(string navigationPath, HiliteLevel hiliteLevel) {
             if (string.IsNullOrEmpty(navigationPath)) return false;
-            if (hiliteLevel == HiliteLevel.Flash) foreach (var b in ButtonList) if (navigationPath.StartsWith(b.TargetPath)) b.IsAlerting = true;
+            if (hiliteLevel == HiliteLevel.Flash) foreach (var b in ButtonList) if (navigationPath.StartsWith(b.TargetPath)) b.IsAlerting = true; //make BUTTON turn red
 
-            var steps = navigationPath.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            var navigable =
-                tabControl.Controls.OfType<Object>().Select(GetINavigatableFromControl).FirstOrDefault(x => x != null && x.PathHead == steps[0]);
-            if (navigable != null) return navigable.Hilite(hiliteLevel, steps);
+            var navigable = tabControl.Controls.OfType<Object>().Select(GetINavigatableFromControl).First(x => x != null && navigationPath.Contains(x.PathHead));
+            if (navigable != null) return navigable.Hilite(hiliteLevel, navigationPath); //make ChatTab's tab to flash
             else return false;
         }
 
@@ -167,16 +163,17 @@ namespace ZeroKLobby
             if (CanGoForward) GoForward();
         }
 
-        public void SwitchTab(string targetPath) {
+        public void SwitchTab(string targetPath) { //called by ButtonInfo.cs when clicked. "targetPath" is usually a "PathHead"
             foreach (TabPage tabPage in tabControl.Controls) {
                 var nav = GetINavigatableFromControl(tabPage);
-                if (nav.PathHead == targetPath) {
+                if (nav.PathHead == targetPath)
+                {
                     if (CurrentNavigatable == nav) {
                         Path = targetPath; // double click on forum go to forum home
                     }
                     else {
                         string lastPath;
-                        if (lastTabPaths.TryGetValue(nav, out lastPath)) targetPath = lastPath;
+                        if (lastTabPaths.TryGetValue(nav, out lastPath)) targetPath = lastPath; //go to current page of the tab
                         Path = targetPath;
                     }
                     return;
@@ -240,8 +237,8 @@ namespace ZeroKLobby
             if (CanGoForward) GoForward();
         }
 
-        void tabControl_Selecting(object sender, TabControlCancelEventArgs e) {
-            Path = e.TabPage.Text.ToLower();
+        void tabControl_Selecting(object sender, TabControlCancelEventArgs e) { //is called from NavigationControl.Designer.cs when Tab is selected
+            //Path = e.TabPage.Text; //this return TAB's name (eg: chat, pw, battle). NOTE: not needed because BUTTON press will call SwitchTab() which also started the navigation
             //e.Cancel = true;
         }
 
@@ -265,7 +262,8 @@ namespace ZeroKLobby
         {
             // todo  instead add flowlayoytpanel or tablelayout panel to entire navigation form and let i size elements as needed
 
-            //make back/forward/reload button follow Nav bar auto resize (in other word: dynamic repositioning)
+            //this make back/forward/reload button follow Nav bar auto resize (in other word: dynamic repositioning)
+            //NOTE: tweak here if not satisfy with Go/Forward/Backward button position. This override designer.
             int height = flowLayoutPanel1.Size.Height;
             btnBack.Location = new System.Drawing.Point(btnBack.Location.X, height);
             btnForward.Location = new System.Drawing.Point(btnForward.Location.X, height);
@@ -293,16 +291,17 @@ namespace ZeroKLobby
         private void goButton1_Click(object sender, EventArgs e)
         {
             var navig = CurrentNavigatable;
-            if (navig != null && navig.CanReload && !urlBox.Text.ToLower().StartsWith("spring://")) //check if current TAB can handle website
+            string urlString = urlBox.Text;
+            if (navig != null && navig.CanReload && !urlString.ToLower().StartsWith("spring://")) //check if current TAB can handle website
             {
-                bool success = navig.TryNavigate(urlBox.Text); //check if able to navigate Forward/Backward/Here in current TAB
+                bool success = navig.TryNavigate(urlString); //check if able to navigate Forward/Backward/Here in current TAB
                 if (!success)
                 {
                     WebBrowser webbrowser = CurrentNavigatable as WebBrowser;
-                    webbrowser.Navigate(urlBox.Text); //navigate to new page in current TAB
+                    webbrowser.Navigate(urlString); //navigate to new page in current TAB
                 }
             }
-            else {  Path = urlBox.Text; } //perform general & common navigation specific to TAB (go to TAB and perform action)
+            else {  Path = urlString; } //perform general & common navigation specific to TAB (go to TAB and perform action)
         }
 
         //add path to BACK/FORWARD history (skipping all checks) and update current TAB's pathString. Is used by BrowserTab.cs to indicate page finish loading
