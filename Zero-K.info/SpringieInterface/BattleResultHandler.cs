@@ -247,7 +247,7 @@ namespace ZeroKWeb.SpringieInterface
             List<Account> winners =
                 sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam && x.Account.Faction != null).Select(x => x.Account).ToList();
 
-            double eloModifier = 1 - GetEloDiff(sb) / GlobalConst.EloMetalModDivisor + (1 - GlobalConst.EloMetalModMagnitude);
+            double eloModifier = (GetEloDiff(sb) / GlobalConst.EloMetalModDivisor) * GlobalConst.EloMetalModMagnitude + 1;
             double baseMetal = GlobalConst.BaseMetalPerBattle;
             double winnerMetal = baseMetal, loserMetal = 0;
 
