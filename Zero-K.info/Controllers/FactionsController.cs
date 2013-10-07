@@ -50,7 +50,6 @@ namespace ZeroKWeb.Controllers
             foreach (var planet in acc.Planets)
             {
                 planet.OwnerAccountID = null;
-                planet.OwnerFactionID = null;
             }
 
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} leaves faction {1}", acc, acc.Faction));
