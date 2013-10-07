@@ -39,14 +39,15 @@ namespace ZeroKWeb.SpringieInterface
                                                                context.GetConfig().MinLevel));
                     }
 
+                    /*
                     if (account.Faction == null)
                     {
                         res.PrivateMessage =
                             string.Format(
-                                "{0} this is competetive PlanetWars campaign server. Join a clan to conquer the galaxy http://zero-k.info/Factions",
+                                "{0} this is competitive PlanetWars campaign server. Join a clan to conquer the galaxy http://zero-k.info/Factions",
                                 account.Name);
                         return res;
-                    }
+                    }*/
 
                     string owner = "";
                     if (planet.Account != null) owner = planet.Account.Name;
