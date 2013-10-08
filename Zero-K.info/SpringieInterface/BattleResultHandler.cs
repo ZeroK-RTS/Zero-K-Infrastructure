@@ -303,10 +303,10 @@ namespace ZeroKWeb.SpringieInterface
                             if (helperEntry.Influence > 100) helperEntry.Influence = 100;
 
                             var helpEv = Global.CreateEvent("{0} gained {1} influence at {2} for helping {3} during battle {4} ",
-                                                helpFac,
+                                                helpFac.Shortcut,
                                                 helperInfluence,
                                                 planet,
-                                                winnerFaction,
+                                                winnerFaction.Shortcut,
                                                 sb);
 
                             db.Events.InsertOnSubmit(helpEv);
@@ -354,7 +354,7 @@ namespace ZeroKWeb.SpringieInterface
                     db.Events.InsertOnSubmit(ev);
                     //text.AppendLine(ev.PlainText);*/
                     influenceReport = string.Format("{0} gained {1} influence ({2}{3}{4}{5}{6})",   // (({2}{3}{4}{5}{6}) {7})",
-                                                winnerFaction,
+                                                winnerFaction.Shortcut,
                                                 influence,
                                                 baseInfluence + " base ",
                                                 techBonus > 0 ? "+" + techBonus + " from techs " : "",
@@ -443,9 +443,9 @@ namespace ZeroKWeb.SpringieInterface
             // paranoia!
             try
             {
-                string metalStringWinner = string.Format("Winners gained {0}{1} metal. ", winnerMetal, eloModifier != 1 ? string.Format(" ({0} base x {1} Elo modifier)", baseMetal, eloModifier.ToString("F2")) : "");
+                string metalStringWinner = string.Format("Winners gained {0}{1} metal. ", winnerMetal, eloModifier != 1 ? string.Format(" ({0} base x {1} Elo modifier)", baseMetal - loserMetal, eloModifier.ToString("F2")) : "");
                 string metalStringLoser = loserMetal != 0 ? string.Format("Losers gained {0} metal. ", loserMetal) : "";
-                var mainEvent = Global.CreateEvent("{0} attacked {1} with {2} dropships at {3} and {4}{5}{6}",
+                var mainEvent = Global.CreateEvent("{0} attacked {1} with {2} dropships at {3} and {4}{5}{6}{7}",
                                             attacker,
                                             planet,
                                             dropshipsSent,
