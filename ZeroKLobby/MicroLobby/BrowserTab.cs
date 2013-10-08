@@ -64,6 +64,16 @@ namespace ZeroKLobby
                     Program.MainWindow.navigationControl.Path = url;
                 }
             }
+            if (url.StartsWith("javascript:SendLobbyCommand('"))
+            {
+                // intercept & not trigger the javascript, instead execute it directly from the url 
+                //(because for unknown reason mission/replay can't be triggered more than once using standard technique(javascript send text to lobby to trigger mission))
+                e.Cancel = true;
+
+                int endPosition = url.IndexOf("');void(0);", 29);
+                int commandLength = endPosition - 29; //NOTE: "javascript:SendLobbyCommand('" is 30 char. So the startPos in at 29th char
+                Program.MainWindow.navigationControl.Path = url.Substring(29, commandLength);
+            }
             base.OnNavigating(e);
         }
 
