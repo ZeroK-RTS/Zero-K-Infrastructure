@@ -104,6 +104,26 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 }
 
+                var text = new StringBuilder();
+                bool isPlanetwars = false;
+                if (mode == AutohostMode.Planetwars && sb.SpringBattlePlayers.Count(x => !x.IsSpectator) >= 2 && sb.Duration >= GlobalConst.MinDurationForPlanetwars)
+                {
+                    // test that factions are not intermingled (each faction only has one ally number) - if they are it wasnt actually PW balanced
+                    if (
+                        sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.Account.Faction != null)
+                          .GroupBy(x => x.Account.Faction)
+                          .All(grp => grp.Select(x => x.AllyNumber).Distinct().Count() < 2))
+                    {
+                        isPlanetwars = true;
+                        ProcessPlanetwars(result, extraData, db, sb, text);
+                    }
+                    else
+                    {
+                        text.AppendLine("Battle wasn't PlanetWars balanced, it counts as a normal team game only");
+                    }
+
+                }
+
                 bool noElo = (extraData.FirstOrDefault(x => x.StartsWith("noElo")) != null);
                 try {
                     db.SubmitChanges();
@@ -115,29 +135,13 @@ namespace ZeroKWeb.SpringieInterface
 
                 Dictionary<int, int> orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
 
-                sb.CalculateAllElo(noElo);
+                sb.CalculateAllElo(noElo, isPlanetwars);
                 db.SubmitAndMergeChanges();
 
                 try {
                     foreach (Account a in sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account)) Global.Nightwatch.Tas.Extensions.PublishAccountData(a);
                 } catch (Exception ex) {
                     Trace.TraceError("error updating extension data: {0}", ex);
-                }
-
-                var text = new StringBuilder();
-
-                if (mode == AutohostMode.Planetwars && sb.SpringBattlePlayers.Count(x => !x.IsSpectator) >= 2 && sb.Duration >= GlobalConst.MinDurationForPlanetwars) {
-                    // test that factions are not intermingled (each faction only has one ally number) - if they are it wasnt actually PW balanced
-                    if (
-                        sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.Account.Faction != null)
-                          .GroupBy(x => x.Account.Faction)
-                          .All(grp => grp.Select(x => x.AllyNumber).Distinct().Count() < 2)) {
-                        ProcessPlanetwars(result, extraData, db, sb, text);
-                    }
-                    else {
-                        text.AppendLine("Battle wasn't PlanetWars balanced, it counts as a normal team game only");
-                    }
-
                 }
 
                 foreach (Account account in sb.SpringBattlePlayers.Select(x => x.Account)) {
@@ -356,12 +360,12 @@ namespace ZeroKWeb.SpringieInterface
                     influenceReport = string.Format("{0} gained {1} influence ({2}{3}{4}{5}{6})",   // (({2}{3}{4}{5}{6}) {7})",
                                                 winnerFaction.Shortcut,
                                                 influence,
-                                                baseInfluence + " base ",
-                                                techBonus > 0 ? "+" + techBonus + " from techs " : "",
-                                                playerBonus > 0 ? "+" + playerBonus + " from commanders " : "",
-                                                shipBonus > 0 ? "+" + shipBonus + " from ships " : "",
-                                                ccMalus != 0 ? "" + ccMalus + " from destroyed CC " : "",
-                                                eloModifier != 1 ? "x" + eloModifier.ToString("F2") + " from Elo difference" : "");
+                                                baseInfluence + " base",
+                                                techBonus > 0 ? " +" + techBonus + " from techs" : "",
+                                                playerBonus > 0 ? " +" + playerBonus + " from commanders" : "",
+                                                shipBonus > 0 ? " +" + shipBonus + " from ships" : "",
+                                                ccMalus != 0 ? " " + ccMalus + " from destroyed CC" : "",
+                                                eloModifier != 1 ? " x" + eloModifier.ToString("F2") + " from Elo difference" : "");
                 }
             }
 
@@ -443,9 +447,9 @@ namespace ZeroKWeb.SpringieInterface
             // paranoia!
             try
             {
-                string metalStringWinner = string.Format("Winners gained {0}{1} metal. ", winnerMetal, eloModifier != 1 ? string.Format(" ({0} base x {1} Elo modifier)", baseMetal - loserMetal, eloModifier.ToString("F2")) : "");
+                string metalStringWinner = string.Format("Winners gained {0} metal{1}. ", winnerMetal, eloModifier != 1 ? string.Format(" ({0} base x {1} Elo modifier)", baseMetal - loserMetal, eloModifier.ToString("F2")) : "");
                 string metalStringLoser = loserMetal != 0 ? string.Format("Losers gained {0} metal. ", loserMetal) : "";
-                var mainEvent = Global.CreateEvent("{0} attacked {1} with {2} dropships at {3} and {4}{5}{6}{7}",
+                var mainEvent = Global.CreateEvent("{0} attacked {1} with {2} dropships in {3} and {4}{5}{6}{7}",
                                             attacker,
                                             planet,
                                             dropshipsSent,

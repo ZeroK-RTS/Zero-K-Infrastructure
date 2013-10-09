@@ -23,7 +23,7 @@ namespace ZkData
             return "B" + SpringBattleID;
         }
 
-	    public void CalculateAllElo(bool noElo = false)
+	    public void CalculateAllElo(bool noElo = false, bool planetwars = false)
 		{
             if (IsEloProcessed || Duration < GlobalConst.MinDurationForElo)
 			{
@@ -131,7 +131,8 @@ namespace ZkData
 			{
 				var change = (float)(scoreWin*r.Account.EloInvWeight);
 				r.Player.EloChange = change;
-				r.Account.Elo += change;
+                if (planetwars)	r.Account.EloPw += change;
+                else r.Account.Elo += change;
 
 				r.Account.XP += WinnerTeamXpChange.Value;
 				r.Player.XpChange = WinnerTeamXpChange;
@@ -143,7 +144,8 @@ namespace ZkData
 			{
 				var change = (float)(scoreLose*r.Account.EloInvWeight);
 				r.Player.EloChange = change;
-				r.Account.Elo += change;
+                if (planetwars) r.Account.EloPw += change;
+                else r.Account.Elo += change;
 
 				r.Account.XP += LoserTeamXpChange.Value;
 				r.Player.XpChange = LoserTeamXpChange.Value;

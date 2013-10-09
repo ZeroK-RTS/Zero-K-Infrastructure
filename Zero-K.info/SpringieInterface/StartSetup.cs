@@ -65,7 +65,7 @@ namespace ZeroKWeb.SpringieInterface
                 Faction attacker = null;
                 Faction defender = null;
                 Planet planet = null;
-                if (mode == AutohostMode.Planetwars) {
+                if (mode == AutohostMode.Planetwars && context.CanPlanetwars) {
                     planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == context.Map);
                     List<int> presentFactions =
                         context.Players.Where(x => !x.IsSpectator).Select(x => db.Accounts.First(y => y.LobbyID == x.LobbyID)).Where(
@@ -98,7 +98,8 @@ namespace ZeroKWeb.SpringieInterface
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "avatar", Value = user.Avatar });
 
                         if (!p.IsSpectator) {
-                            if (mode == AutohostMode.Planetwars) {
+                            if (mode == AutohostMode.Planetwars && context.CanPlanetwars)
+                            {
                                 bool allied = user.Faction != null && defender != null && user.Faction != defender &&
                                               defender.HasTreatyRight(user.Faction, x => x.EffectPreventIngamePwStructureDestruction == true, planet);
 
@@ -215,7 +216,8 @@ namespace ZeroKWeb.SpringieInterface
                 }
 
                 ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "commanderTypes", Value = commanderTypes.ToBase64String() });
-                if (mode == AutohostMode.Planetwars) {
+                if (mode == AutohostMode.Planetwars && context.CanPlanetwars)
+                {
                     string owner = planet.Faction != null ? planet.Faction.Shortcut : "";
 
                     var pwStructures = new LuaTable();

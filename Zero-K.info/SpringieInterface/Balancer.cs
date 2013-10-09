@@ -268,6 +268,7 @@ namespace ZeroKWeb.SpringieInterface
                 if (sizesWrong && mode == BalanceMode.FactionWise) {
                     var fallback = new Balancer().LegacyBalance(teamCount, BalanceMode.ClanWise, b, null);
                     fallback.Message += "\nWarning: STANDARD TEAM BALANCE USED, PlanetWars not possible with those teams, too many from one faction";
+                    b.CanPlanetwars = false;
                     return fallback ; // fallback standard balance if PW balance fails
                     /*ret.CanStart = false;
                     ret.Message = string.Format("Failed to balance - too many people from same faction");
@@ -280,6 +281,7 @@ namespace ZeroKWeb.SpringieInterface
                     if (maxElo - minElo > GlobalConst.MaxPwEloDifference) {
                         var fallback = new Balancer().LegacyBalance(teamCount, BalanceMode.ClanWise, b, null);
                         fallback.Message += "\nWarning: STANDARD TEAM BALANCE USED, PlanetWars not possible with those teams, too many from one faction";
+                        b.CanPlanetwars = false;
                         return fallback; // fallback standard balance if PW balance fails
                         /*
                         ret.CanStart = false;
@@ -326,7 +328,7 @@ namespace ZeroKWeb.SpringieInterface
                 ret.Message = ex.ToString();
                 ret.CanStart = false;
             }
-
+            b.CanPlanetwars = true;
             return ret;
         }
 
@@ -447,6 +449,7 @@ namespace ZeroKWeb.SpringieInterface
                     foreach (var b in planet.PlanetStructures.Select(x => x.StructureType).Where(x => !string.IsNullOrEmpty(x.EffectBots))) res.Bots.Add(new BotTeam { AllyID = 1, BotAI = b.EffectBots, TeamID = teamID++, BotName = "Aliens" + cnt++ });
 
                     res.Message += string.Format("This planet is infested by aliens, fight for your survival");
+                    context.CanPlanetwars = true;
                     return res;
                 }
 
