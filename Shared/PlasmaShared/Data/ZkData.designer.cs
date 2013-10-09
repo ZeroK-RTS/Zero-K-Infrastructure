@@ -19094,6 +19094,8 @@ namespace ZkData
 		
 		private System.Nullable<bool> _EffectCreateLink;
 		
+		private System.Nullable<bool> _EffectChangePlanetMap;
+		
 		private System.Nullable<bool> _EffectPlanetBuster;
 		
 		private double _Cost;
@@ -19174,6 +19176,8 @@ namespace ZkData
     partial void OnEffectRemoteInfluenceSpreadChanged();
     partial void OnEffectCreateLinkChanging(System.Nullable<bool> value);
     partial void OnEffectCreateLinkChanged();
+    partial void OnEffectChangePlanetMapChanging(System.Nullable<bool> value);
+    partial void OnEffectChangePlanetMapChanged();
     partial void OnEffectPlanetBusterChanging(System.Nullable<bool> value);
     partial void OnEffectPlanetBusterChanged();
     partial void OnCostChanging(double value);
@@ -19730,8 +19734,29 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectPlanetBuster", DbType="bit")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectChangePlanetMap", DbType="bit")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26)]
+		public System.Nullable<bool> EffectChangePlanetMap
+		{
+			get
+			{
+				return this._EffectChangePlanetMap;
+			}
+			set
+			{
+				if ((this._EffectChangePlanetMap != value))
+				{
+					this.OnEffectChangePlanetMapChanging(value);
+					this.SendPropertyChanging();
+					this._EffectChangePlanetMap = value;
+					this.SendPropertyChanged("EffectChangePlanetMap");
+					this.OnEffectChangePlanetMapChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectPlanetBuster", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27)]
 		public System.Nullable<bool> EffectPlanetBuster
 		{
 			get
@@ -19752,7 +19777,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Cost", DbType="float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28)]
 		public double Cost
 		{
 			get
@@ -19773,7 +19798,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsBuildable", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29)]
 		public bool IsBuildable
 		{
 			get
@@ -19794,7 +19819,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsIngameDestructible", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30)]
 		public bool IsIngameDestructible
 		{
 			get
@@ -19815,7 +19840,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsBomberDestructible", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31)]
 		public bool IsBomberDestructible
 		{
 			get
@@ -19836,7 +19861,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OwnerChangeDeletesThis", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=32)]
 		public bool OwnerChangeDeletesThis
 		{
 			get
@@ -19857,7 +19882,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OwnerChangeDisablesThis", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=32)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=33)]
 		public bool OwnerChangeDisablesThis
 		{
 			get
@@ -19878,7 +19903,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BattleDeletesThis", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=33)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=34)]
 		public bool BattleDeletesThis
 		{
 			get
@@ -19899,7 +19924,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsSingleUse", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=34)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=35)]
 		public bool IsSingleUse
 		{
 			get
@@ -19920,7 +19945,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RequiresPlanetTarget", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=35)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=36)]
 		public bool RequiresPlanetTarget
 		{
 			get
@@ -19941,7 +19966,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="StructureType_PlanetStructure", Storage="_PlanetStructures", ThisKey="StructureTypeID", OtherKey="StructureTypeID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=36, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=37, EmitDefaultValue=false)]
 		public EntitySet<PlanetStructure> PlanetStructures
 		{
 			get

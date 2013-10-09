@@ -724,6 +724,7 @@
       <Column Name="EffectBlocksJumpgate" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="EffectRemoteInfluenceSpread" Type="System.Double" DbType="float" CanBeNull="true" />
       <Column Name="EffectCreateLink" Type="System.Boolean" DbType="bit" CanBeNull="true" />
+      <Column Name="EffectChangePlanetMap" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="EffectPlanetBuster" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="Cost" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="IsBuildable" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />

@@ -714,19 +714,25 @@ namespace ZeroKWeb.Controllers
             {
                 ret = CreateLink(planetID, structureTypeID, targetID);
             }
-            if (ret != null) return ret;
+            if (ret != null) return ret;    // exit with message if error occurs
+            if (structure.StructureType.EffectChangePlanetMap == true)
+            {
+                ret = ChangePlanetMap(planetID, structureTypeID, targetID, null);
+            }
+            if (ret != null) return ret;    // exit with message if error occurs
+
             if (structure.StructureType.EffectPlanetBuster == true)
             {
                 ret = FirePlanetBuster(planetID, structureTypeID, targetID);
             }
-            if (ret != null) return ret;
+            if (ret != null) return ret;    // exit with message if error occurs
             if (structure.StructureType.IsSingleUse)    // single-use structure, remove
             {
                 db.PlanetStructures.DeleteOnSubmit(structure);
             }
             
             db.SubmitAndMergeChanges();
-            SetPlanetOwners(db);//this is needed for the buster to update ownership after planet destruction
+            SetPlanetOwners(db);    //this is needed for the buster to update ownership after planet destruction
 
             if (ret != null) return ret;
             return RedirectToAction("Planet", new { id = planetID });
@@ -796,6 +802,43 @@ namespace ZeroKWeb.Controllers
 
             
 
+            return null;
+        }
+
+        public ActionResult ChangePlanetMap(int planetID, int structureTypeID, int targetID, int? newMapID)
+        {
+            var db = new ZkDataContext();
+            PlanetStructure structure = db.PlanetStructures.FirstOrDefault(x => x.PlanetID == planetID && x.StructureTypeID == structureTypeID);
+            Planet planet = db.Planets.FirstOrDefault(x => x.PlanetID == planetID);
+            Planet target = db.Planets.FirstOrDefault(x => x.PlanetID == targetID);
+            Galaxy gal = db.Galaxies.FirstOrDefault(x => x.GalaxyID == planet.GalaxyID);
+
+            if (newMapID != null)
+            {
+                Resource newMap = db.Resources.Single(x => x.ResourceID == newMapID);
+                planet.Resource = newMap;
+                gal.IsDirty = true;
+                db.Events.InsertOnSubmit(Global.CreateEvent("{0} {1} has been terraformed by {2} from {3} {4}", target.Faction, target, structure.StructureType, planet.Faction, planet));
+                db.SubmitAndMergeChanges();
+                return null;
+            }
+
+            var mapList = db.Resources.Where(x => x.MapPlanetWarsIcon != null && x.Planets.Where(p => p.GalaxyID == gal.GalaxyID).Count() == 0 && x.FeaturedOrder != null
+                && x.ResourceID != planet.MapResourceID).ToList();
+            if (mapList.Count > 0)
+            {
+                int r = new Random().Next(mapList.Count);
+                int resourceID = mapList[r].ResourceID;
+                Resource newMap = db.Resources.Single(x => x.ResourceID == resourceID);
+                planet.Resource = newMap;
+                gal.IsDirty = true;
+                db.Events.InsertOnSubmit(Global.CreateEvent("{0} {1} has been terraformed by {2} from {3} {4}", target.Faction, target, structure.StructureType, planet.Faction, planet));
+            }
+            else
+            {
+                return Content(string.Format("Terraform attempt on {0} {1} using {2} from {3} {4} has failed - no valid maps", target.Faction, target, structure.StructureType, planet.Faction, planet));
+            }
+            db.SubmitAndMergeChanges();
             return null;
         }
 
