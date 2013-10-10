@@ -575,26 +575,8 @@ namespace Fixer
         public static void FixStuff()
         {
             ZkDataContext db = new ZkDataContext();
-            Galaxy gal = db.Galaxies.First(x => x.GalaxyID == 24);
-            foreach (Planet planet in gal.Planets)
-            {
-                System.Console.WriteLine(planet);
-                if (planet.Faction != null)
-                {
-                    foreach (PlanetStructure s in planet.PlanetStructures)
-                    {
-                        //s.ActivatedOnTurn = 0;
-                        s.IsActive = true;
-                    }
-                }
-                else
-                {
-                    foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.EffectIsVictoryPlanet != true))
-                    {
-                        s.IsActive = false;
-                    }
-                }
-            }
+            Planet p = db.Planets.First(x => x.PlanetID == 3915);
+            p.AddStruct(12);
             db.SubmitChanges();
         }
 
