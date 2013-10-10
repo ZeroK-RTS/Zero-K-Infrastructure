@@ -116,6 +116,7 @@
                 <div class="admin">
                     <b>Elo (all):</b> @Math.Round(@Model.EffectiveElo)
                     <b>Elo (1v1):</b> @Math.Round(@Model.Effective1v1Elo)
+                    <b>Elo (PW):</b> @Math.Round(@Model.EffectivePwElo)
                     <b>Lobby rank: </b> <img src='/img/ranks/@(Model.LobbyTimeRank+1).png'  class='icon16'/>
                     <br />
                     <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)

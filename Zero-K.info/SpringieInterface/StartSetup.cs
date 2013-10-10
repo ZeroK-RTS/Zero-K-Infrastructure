@@ -61,11 +61,19 @@ namespace ZeroKWeb.SpringieInterface
                         }
                     }
                 }
+                Dictionary<PlayerTeam, Account> playerAccountsByName = new Dictionary<PlayerTeam, Account>();
+                foreach (var player in context.Players)
+                {
+                    playerAccountsByName.Add(player, db.Accounts.FirstOrDefault(x => x.Name == player.Name));
+                }
+
+                bool pwBalanced = playerAccountsByName.GroupBy(x => x.Value.Faction)
+                          .All(grp => grp.Select(x => x.Key.AllyID).Distinct().Count() < 2);
 
                 Faction attacker = null;
                 Faction defender = null;
                 Planet planet = null;
-                if (mode == AutohostMode.Planetwars && context.CanPlanetwars) {
+                if (mode == AutohostMode.Planetwars && pwBalanced) {
                     planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == context.Map);
                     List<int> presentFactions =
                         context.Players.Where(x => !x.IsSpectator).Select(x => db.Accounts.First(y => y.LobbyID == x.LobbyID)).Where(
@@ -98,7 +106,7 @@ namespace ZeroKWeb.SpringieInterface
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "avatar", Value = user.Avatar });
 
                         if (!p.IsSpectator) {
-                            if (mode == AutohostMode.Planetwars && context.CanPlanetwars)
+                            if (mode == AutohostMode.Planetwars && pwBalanced)
                             {
                                 bool allied = user.Faction != null && defender != null && user.Faction != defender &&
                                               defender.HasTreatyRight(user.Faction, x => x.EffectPreventIngamePwStructureDestruction == true, planet);
@@ -216,7 +224,7 @@ namespace ZeroKWeb.SpringieInterface
                 }
 
                 ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "commanderTypes", Value = commanderTypes.ToBase64String() });
-                if (mode == AutohostMode.Planetwars && context.CanPlanetwars)
+                if (mode == AutohostMode.Planetwars && pwBalanced)
                 {
                     string owner = planet.Faction != null ? planet.Faction.Shortcut : "";
 
