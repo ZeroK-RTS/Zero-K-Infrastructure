@@ -67,8 +67,8 @@ namespace ZeroKWeb.SpringieInterface
                     playerAccountsByName.Add(player, db.Accounts.FirstOrDefault(x => x.Name == player.Name));
                 }
 
-                bool pwBalanced = playerAccountsByName.GroupBy(x => x.Value.Faction)
-                          .All(grp => grp.Select(x => x.Key.AllyID).Distinct().Count() < 2);
+                // FIXME find a way that actually works to turn off PW stuff when autohost is in fallback mode
+                bool pwBalanced = true;  //playerAccountsByName.GroupBy(x => x.Value.Faction).All(grp => grp.Select(x => x.Key.AllyID).Distinct().Count() < 2);
 
                 Faction attacker = null;
                 Faction defender = null;
