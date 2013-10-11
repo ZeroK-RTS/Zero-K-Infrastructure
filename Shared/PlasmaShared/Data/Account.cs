@@ -98,7 +98,7 @@ namespace ZkData
         public bool CanSetStructureTarget(PlanetStructure ps) {
             if (Faction == null || ps.Account == null) return false;
             if (ps.OwnerAccountID == AccountID || ps.Planet.OwnerAccountID == AccountID) return true; // owner of planet or owner of structure
-            if (ps.Account.FactionID == FactionID && HasFactionRight(x => x.RightDropshipQuota > 0)) return true;
+            if (ps.Planet.OwnerFactionID == FactionID && HasFactionRight(x => x.RightDropshipQuota > 0)) return true;
             return false;
         }
 

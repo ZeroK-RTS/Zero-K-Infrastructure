@@ -82,8 +82,8 @@ namespace ZeroKWeb.Controllers
                 args.AddRange(bombed.Select(x=>x.StructureType));
 
                 string str;
-                if (selfbomb) str = "{0} of {1} bombed own planet {3} using {4} bombers against {5} defenses. {6} Ground armies lost {7} influence";
-                else str = "{0} of {1} bombed {2} planet {3} using {4} bombers against {5} defenses. {6}. Ground armies lost {7} influence";
+                if (selfbomb) str = "{0} of {1} bombed own planet {3} using {4} bombers against {5} defenses. {6}Ground armies lost {7} influence";
+                else str = "{0} of {1} bombed {2} planet {3} using {4} bombers against {5} defenses. {6}Ground armies lost {7} influence";
                 if (bombed.Count > 0) {
                     str += " and ";
                     int counter = 8;
@@ -816,7 +816,7 @@ namespace ZeroKWeb.Controllers
             if (newMapID != null)
             {
                 Resource newMap = db.Resources.Single(x => x.ResourceID == newMapID);
-                planet.Resource = newMap;
+                target.Resource = newMap;
                 gal.IsDirty = true;
                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} {1} has been terraformed by {2} from {3} {4}", target.Faction, target, structure.StructureType, planet.Faction, planet));
                 db.SubmitAndMergeChanges();
@@ -830,7 +830,7 @@ namespace ZeroKWeb.Controllers
                 int r = new Random().Next(mapList.Count);
                 int resourceID = mapList[r].ResourceID;
                 Resource newMap = db.Resources.Single(x => x.ResourceID == resourceID);
-                planet.Resource = newMap;
+                target.Resource = newMap;
                 gal.IsDirty = true;
                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} {1} has been terraformed by {2} from {3} {4}", target.Faction, target, structure.StructureType, planet.Faction, planet));
             }
