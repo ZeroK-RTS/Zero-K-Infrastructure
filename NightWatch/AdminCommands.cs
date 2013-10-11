@@ -51,7 +51,7 @@ namespace CaTracker
                         else
                         {
                             var player = tas.ExistingUsers.FirstOrDefault(x => x.Key == parts[1]).Key;
-                            var channel = tas.ExistingChannels.FirstOrDefault(x => x.Key == parts[2]).Key;
+                            var channel = tas.ExistingChannels.FirstOrDefault(x => x.Key == "#" + parts[2]).Key;
                             if (player != null)
                             {
                                 tas.Say(TasClient.SayPlace.User, "ChanServ", string.Format("!op {0} {1}", channel, player), false);
