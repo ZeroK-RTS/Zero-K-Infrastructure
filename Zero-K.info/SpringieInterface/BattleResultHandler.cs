@@ -255,7 +255,7 @@ namespace ZeroKWeb.SpringieInterface
             double baseMetal = GlobalConst.BaseMetalPerBattle;
             double winnerMetal = baseMetal, loserMetal = 0;
 
-            int dropshipsSent = 0, dropshipsGained = 0;
+            int dropshipsSent = (planet.PlanetFactions.Where(x => x.Faction == attacker).Sum(x => (int?)x.Dropships) ?? 0), dropshipsGained = 0;
             string influenceReport = "";
 
             // distribute influence
@@ -264,7 +264,6 @@ namespace ZeroKWeb.SpringieInterface
                 
                 // give influence to main attackers
                 double planetDefs = (planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0);
-                dropshipsSent = (planet.PlanetFactions.Where(x => x.Faction == attacker).Sum(x => (int?)x.Dropships) ?? 0);
                 int involvedCount =
                     sb.SpringBattlePlayers.Count(
                         x => !x.IsSpectator && x.Account.Faction != null && (x.Account.Faction == winnerFaction || x.Account.Faction == defender));
