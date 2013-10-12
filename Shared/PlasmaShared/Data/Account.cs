@@ -91,7 +91,7 @@ namespace ZkData
         public bool CanSetPriority(PlanetStructure ps) {
             if (Faction == null) return false;
             if (ps.Planet.OwnerFactionID == FactionID && HasFactionRight(x => x.RightSetEnergyPriority)) return true;
-            if (ClanID != null && ps.Account.ClanID == ClanID && HasClanRight(x => x.RightSetEnergyPriority)) return true;
+            if (ClanID != null && ps.Account != null && ps.Account.ClanID == ClanID && HasClanRight(x => x.RightSetEnergyPriority)) return true;
             return false;
         }
 
