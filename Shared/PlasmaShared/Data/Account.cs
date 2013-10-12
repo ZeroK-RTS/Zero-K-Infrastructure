@@ -311,6 +311,7 @@ namespace ZkData
             FirstLogin = DateTime.UtcNow;
             Elo = 1500;
             Elo1v1 = 1500;
+            EloPw = 1500;
             EloWeight = 1;
             Elo1v1Weight = 1;
             SpringieLevel = 1;
