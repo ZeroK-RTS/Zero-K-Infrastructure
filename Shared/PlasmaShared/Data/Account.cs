@@ -89,14 +89,14 @@ namespace ZkData
         }
 
         public bool CanSetPriority(PlanetStructure ps) {
-            if (Faction == null || ps.Account == null) return false;
-            if (ps.Account.FactionID == FactionID && HasFactionRight(x => x.RightSetEnergyPriority)) return true;
+            if (Faction == null) return false;
+            if (ps.Planet.OwnerFactionID == FactionID && HasFactionRight(x => x.RightSetEnergyPriority)) return true;
             if (ClanID != null && ps.Account.ClanID == ClanID && HasClanRight(x => x.RightSetEnergyPriority)) return true;
             return false;
         }
 
         public bool CanSetStructureTarget(PlanetStructure ps) {
-            if (Faction == null || ps.Account == null) return false;
+            if (Faction == null) return false;
             if (ps.OwnerAccountID == AccountID || ps.Planet.OwnerAccountID == AccountID) return true; // owner of planet or owner of structure
             if (ps.Planet.OwnerFactionID == FactionID && HasFactionRight(x => x.RightDropshipQuota > 0)) return true;
             return false;
