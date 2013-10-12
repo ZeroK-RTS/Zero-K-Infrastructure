@@ -357,7 +357,7 @@ namespace ZeroKWeb.SpringieInterface
                     db.Events.InsertOnSubmit(ev);
                     //text.AppendLine(ev.PlainText);*/
                     influenceReport = string.Format("{0} gained {1} influence ({2}{3}{4}{5}{6})",   // (({2}{3}{4}{5}{6}) {7})",
-                                                winnerFaction.Shortcut,
+                                                System.Web.Mvc.HtmlHelperExtensions.PrintFaction(null, winnerFaction, false),
                                                 influence,
                                                 baseInfluence + " base",
                                                 techBonus > 0 ? " +" + techBonus + " from techs" : "",
