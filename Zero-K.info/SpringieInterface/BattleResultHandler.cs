@@ -1,4 +1,4 @@
-﻿using System;
+ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -359,7 +359,7 @@ namespace ZeroKWeb.SpringieInterface
                     try
                     {
                         influenceReport = string.Format("{0} gained {1} influence ({2}{3}{4}{5}{6})",   // (({2}{3}{4}{5}{6}) {7})",
-                                                    System.Web.Mvc.HtmlHelperExtensions.PrintFaction(null, winnerFaction, false),
+                                                    winnerFaction.Shortcut,
                                                     influence,
                                                     baseInfluence + " base",
                                                     techBonus > 0 ? " +" + techBonus + " from techs" : "",
