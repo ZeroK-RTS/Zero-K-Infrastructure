@@ -33,10 +33,9 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     if (account.Level < context.GetConfig().MinLevel)
                     {
-                        AuthServiceClient.SendLobbyMessage(account,
-                                                           string.Format(
-                                                               "Sorry, PlanetWars is competive online campaign for experienced players. You need to be at least level {0} to play here. To increase your level, play more games on other hosts or open multiplayer game and play against computer AI bots.  You can observe this game however.",
-                                                               context.GetConfig().MinLevel));
+                        res.PrivateMessage = string.Format("Sorry, PlanetWars is competive online campaign for experienced players. You need to be at least level {0} to play here. To increase your level, play more games on other hosts or open multiplayer game and play against computer AI bots.  You can observe this game however.",
+                                                               context.GetConfig().MinLevel);
+                        return res;
                     }
 
                     /*
