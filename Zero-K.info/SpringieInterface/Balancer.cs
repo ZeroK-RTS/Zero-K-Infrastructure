@@ -257,9 +257,17 @@ namespace ZeroKWeb.SpringieInterface
                 RecursiveBalance(0);
                 sw.Stop();
 
+                if (bestTeams == null)
+                {
+                    var fallback = new Balancer().LegacyBalance(teamCount, BalanceMode.ClanWise, b, null);
+                    fallback.Message += "\nWarning: STANDARD TEAM BALANCE USED, PlanetWars not possible with those teams, too many from one faction";
+                    return fallback;
+                }
+
                 var minSize = bestTeams.Min(x => x.Count);
                 var maxSize = bestTeams.Max(x => x.Count);
                 var sizesWrong = maxSize/(double)minSize > MaxTeamSizeDifferenceRatio;
+
                 // cbalance failed, rebalance using normal
                 if (mode == BalanceMode.ClanWise && (bestTeams == null || GetTeamsDifference(bestTeams) > MaxCbalanceDifference || sizesWrong))
                     return new Balancer().LegacyBalance(teamCount, BalanceMode.Normal, b, unmovablePlayers);
