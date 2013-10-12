@@ -92,7 +92,7 @@
 	var db = new ZkDataContext();
 }
 
-@if (g.Turn > 100) { // hide before turn 100
+@if (Model.Started != null) {
 
 <div id="victory_conquest" class="fleft border" style="min-height: 60px;">
 <b>Conquest victory (70% planets):</b>
@@ -101,14 +101,15 @@
 	
 	if (conquest != null)
 	{
-        var ratio_planets = @conquest.Count / @Math.Round(Model.Planets.Count() * 0.7);
+        double proportion = 0.7;
+        var ratio_planets = @conquest.Count / @Math.Round(Model.Planets.Count() * proportion);
 		<span><b>@Html.PrintFaction(conquest.Fac)</b></span>
 	<br />
 		<img src="/img/progressl_base.png" height="17" class="fleft" />
 		<img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300 * ratio_planets))" />
 		<img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(300 * (1 - ratio_planets)))" />
 		<img src="/img/progressr_base.png" height="17" class="fleft" />
-		<span class="fleft">@conquest.Count / @Math.Round(Model.Planets.Count() * 0.5) planets </span>
+		<span class="fleft">@conquest.Count / @Math.Round(Model.Planets.Count() * proportion) planets </span>
 		<br class="clearfloat" />
 	}
 }
