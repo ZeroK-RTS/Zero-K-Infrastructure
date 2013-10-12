@@ -1,4 +1,4 @@
- using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -251,7 +251,9 @@ namespace ZeroKWeb.SpringieInterface
             List<Account> winners =
                 sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam && x.Account.Faction != null).Select(x => x.Account).ToList();
 
-            double eloModifier = (GetEloDiff(sb) / GlobalConst.EloMetalModDivisor) * GlobalConst.EloMetalModMagnitude + 1;
+            double eloDiff = GetEloDiff(sb);
+            double eloModifierMetal = (eloDiff / GlobalConst.EloMetalModDivisor) * GlobalConst.EloMetalModMagnitude + 1;
+            double eloModifierIP = eloModifierMetal;
             double baseMetal = GlobalConst.BaseMetalPerBattle;
             double winnerMetal = baseMetal, loserMetal = 0;
 
@@ -358,15 +360,15 @@ namespace ZeroKWeb.SpringieInterface
                     //text.AppendLine(ev.PlainText);*/
                     try
                     {
-                        influenceReport = string.Format("{0} gained {1} influence ({2}{3}{4}{5}{6})",   // (({2}{3}{4}{5}{6}) {7})",
-                                                    winnerFaction.Shortcut,
-                                                    influence,
-                                                    baseInfluence + " base",
-                                                    techBonus > 0 ? " +" + techBonus + " from techs" : "",
-                                                    playerBonus > 0 ? " +" + playerBonus + " from commanders" : "",
-                                                    shipBonus > 0 ? " +" + shipBonus + " from ships" : "",
-                                                    ccMalus != 0 ? " " + ccMalus + " from destroyed CC" : "",
-                                                    eloModifier != 1 ? " x" + eloModifier.ToString("F2") + " from Elo difference" : "");
+                    influenceReport = string.Format("{0} gained {1} influence (({2}{3}{4}{5}{6}){7})",   // (({2}{3}{4}{5}{6}) {7})",
+                                                winnerFaction.Shortcut,
+                                                influence,
+                                                baseInfluence + " base",
+                                                techBonus > 0 ? " +" + techBonus + " from techs" : "",
+                                                playerBonus > 0 ? " +" + playerBonus + " from commanders" : "",
+                                                shipBonus > 0 ? " +" + shipBonus + " from ships" : "",
+                                                ccMalus != 0 ? " " + ccMalus + " from destroyed CC" : "",
+                                                eloModifierIP != 1 ? " x" + eloModifierIP.ToString("F2") + " from Elo difference" : "");
                     }
                     catch (Exception ex)
                     {
@@ -377,7 +379,7 @@ namespace ZeroKWeb.SpringieInterface
 
             // distribute metal
             if (wasCcDestroyed) winnerMetal *= GlobalConst.CcDestroyedMetalMultWinners;
-            winnerMetal = Math.Floor(winnerMetal * eloModifier);
+            winnerMetal = Math.Floor(winnerMetal * eloModifierMetal);
             double metalPerWinner = winnerMetal/winners.Count;
             foreach (Account w in winners) {
                 w.ProduceMetal(metalPerWinner);
@@ -453,7 +455,7 @@ namespace ZeroKWeb.SpringieInterface
             // paranoia!
             try
             {
-                string metalStringWinner = string.Format("Winners gained {0} metal{1}. ", winnerMetal, eloModifier != 1 ? string.Format(" ({0} base x {1} Elo modifier)", baseMetal - loserMetal, eloModifier.ToString("F2")) : "");
+                string metalStringWinner = string.Format("Winners gained {0} metal{1}. ", winnerMetal, eloModifierMetal != 1 ? string.Format(" ({0} base x {1} Elo modifier)", baseMetal - loserMetal, eloModifierMetal.ToString("F2")) : "");
                 string metalStringLoser = loserMetal != 0 ? string.Format("Losers gained {0} metal. ", loserMetal) : "";
                 var mainEvent = Global.CreateEvent("{0} attacked {1} with {2} dropships in {3} and {4}{5}{6}{7}",
                                             attacker,
