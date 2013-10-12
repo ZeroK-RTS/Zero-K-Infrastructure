@@ -61,7 +61,7 @@ namespace ZkData
 
         public static double AdjustEloWeight(double currentWeight, double sumWeight, int sumCount) {
             if (currentWeight < GlobalConst.EloWeightMax) {
-                currentWeight = (currentWeight + ((sumWeight - currentWeight)/(sumCount - 1))/GlobalConst.EloWeightLearnFactor);
+                currentWeight = (currentWeight + ((sumWeight - currentWeight - (sumCount - 1))/(sumCount - 1))/GlobalConst.EloWeightLearnFactor);
                 if (currentWeight > GlobalConst.EloWeightMax) currentWeight = GlobalConst.EloWeightMax;
             }
             return currentWeight;
