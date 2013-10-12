@@ -574,16 +574,13 @@ namespace Fixer
 
         public static void FixStuff()
         {
-            ZkDataContext db = new ZkDataContext();
-            Planet p = db.Planets.First(x => x.PlanetID == 3915);
-            p.AddStruct(12);
-            db.SubmitChanges();
+            // my code here
         }
 
         [STAThread]
         static void Main(string[] args)
         {
-            FixStuff();
+            //FixStuff();
 
             //var bench = new Benchmarker.MainForm();
             //bench.ShowDialog();
