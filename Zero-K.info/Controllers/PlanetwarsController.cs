@@ -744,17 +744,17 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
 
             PlanetStructure structure = db.PlanetStructures.FirstOrDefault(x => x.PlanetID == planetID && x.StructureTypeID == structureTypeID);
-            Planet planet = db.Planets.FirstOrDefault(x => x.PlanetID == planetID);
+            Planet source = db.Planets.FirstOrDefault(x => x.PlanetID == planetID);
             Planet target = db.Planets.FirstOrDefault(x => x.PlanetID == targetID);
 
             // warp jammers protect against link creation
             //var warpDefense = target.PlanetStructures.Where(x => x.StructureType.EffectBlocksJumpgate == true).ToList();
             //if (warpDefense.Count > 0) return Content("Warp jamming prevents link creation");
 
-            if (planet.GalaxyID != target.GalaxyID) return Content("Cannot form exo-galaxy link");
+            if (source.GalaxyID != target.GalaxyID) return Content("Cannot form exo-galaxy link");
 
-            db.Links.InsertOnSubmit(new Link { PlanetID1 = planet.PlanetID, PlanetID2 = target.PlanetID, GalaxyID = planet.GalaxyID } );
-            db.Events.InsertOnSubmit(Global.CreateEvent("A new link was created between {0} planet {1} and {2} planet {3} by the {4}", planet.Faction, planet, target.Faction, target, structure.StructureType));
+            db.Links.InsertOnSubmit(new Link { PlanetID1 = source.PlanetID, PlanetID2 = target.PlanetID, GalaxyID = source.GalaxyID } );
+            db.Events.InsertOnSubmit(Global.CreateEvent("A new link was created between {0} planet {1} and {2} planet {3} by the {4}", source.Faction, source, target.Faction, target, structure.StructureType));
             db.SubmitAndMergeChanges();
             return null;
         }
@@ -764,7 +764,7 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             PlanetStructure structure = db.PlanetStructures.FirstOrDefault(x => x.PlanetID == planetID && x.StructureTypeID == structureTypeID);
-            Planet planet = db.Planets.FirstOrDefault(x => x.PlanetID == planetID);
+            Planet source = db.Planets.FirstOrDefault(x => x.PlanetID == planetID);
             Planet target = db.Planets.FirstOrDefault(x => x.PlanetID == targetID);
 
             Account acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
@@ -793,7 +793,7 @@ namespace ZeroKWeb.Controllers
                 }
             }
 
-            db.Events.InsertOnSubmit(Global.CreateEvent("A {4} fired from {0} {1} has destroyed {2} {3}!", planet.Faction, planet, target.Faction, target, structure.StructureType));
+            db.Events.InsertOnSubmit(Global.CreateEvent("A {4} fired from {0} {1} has destroyed {2} {3}!", source.Faction, source, target.Faction, target, structure.StructureType));
             db.SubmitAndMergeChanges();
 
             var residue = db.StructureTypes.First(x => x.Name == "Residue"); // todo not nice use constant instead
@@ -809,22 +809,22 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             PlanetStructure structure = db.PlanetStructures.FirstOrDefault(x => x.PlanetID == planetID && x.StructureTypeID == structureTypeID);
-            Planet planet = db.Planets.FirstOrDefault(x => x.PlanetID == planetID);
+            Planet source = db.Planets.FirstOrDefault(x => x.PlanetID == planetID);
             Planet target = db.Planets.FirstOrDefault(x => x.PlanetID == targetID);
-            Galaxy gal = db.Galaxies.FirstOrDefault(x => x.GalaxyID == planet.GalaxyID);
+            Galaxy gal = db.Galaxies.FirstOrDefault(x => x.GalaxyID == source.GalaxyID);
 
             if (newMapID != null)
             {
                 Resource newMap = db.Resources.Single(x => x.ResourceID == newMapID);
                 target.Resource = newMap;
                 gal.IsDirty = true;
-                db.Events.InsertOnSubmit(Global.CreateEvent("{0} {1} has been terraformed by {2} from {3} {4}", target.Faction, target, structure.StructureType, planet.Faction, planet));
+                db.Events.InsertOnSubmit(Global.CreateEvent("{0} {1} has been terraformed by {2} from {3} {4}", target.Faction, target, structure.StructureType, source.Faction, source));
                 db.SubmitAndMergeChanges();
                 return null;
             }
 
             var mapList = db.Resources.Where(x => x.MapPlanetWarsIcon != null && x.Planets.Where(p => p.GalaxyID == gal.GalaxyID).Count() == 0 && x.FeaturedOrder != null
-                && x.ResourceID != planet.MapResourceID).ToList();
+                && x.ResourceID != source.MapResourceID).ToList();
             if (mapList.Count > 0)
             {
                 int r = new Random().Next(mapList.Count);
@@ -832,11 +832,11 @@ namespace ZeroKWeb.Controllers
                 Resource newMap = db.Resources.Single(x => x.ResourceID == resourceID);
                 target.Resource = newMap;
                 gal.IsDirty = true;
-                db.Events.InsertOnSubmit(Global.CreateEvent("{0} {1} has been terraformed by {2} from {3} {4}", target.Faction, target, structure.StructureType, planet.Faction, planet));
+                db.Events.InsertOnSubmit(Global.CreateEvent("{0} {1} has been terraformed by {2} from {3} {4}", target.Faction, target, structure.StructureType, source.Faction, source));
             }
             else
             {
-                return Content(string.Format("Terraform attempt on {0} {1} using {2} from {3} {4} has failed - no valid maps", target.Faction, target, structure.StructureType, planet.Faction, planet));
+                return Content(string.Format("Terraform attempt on {0} {1} using {2} from {3} {4} has failed - no valid maps", target.Faction, target, structure.StructureType, source.Faction, source));
             }
             db.SubmitAndMergeChanges();
             return null;
