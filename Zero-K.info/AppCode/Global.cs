@@ -135,51 +135,74 @@ namespace ZeroKWeb
 
             ev.PlainText = string.Format(format, args);
             var orgArgs = new List<object>(args);
-            
+            List<object> alreadyAddedEvents = new List<object>();
 
             for (var i = 0; i < args.Length; i++)
             {
+                bool dontDuplicate = false; // set to true for args that have their own Event table in DB, e.g. accounts, factions, clans, planets
                 var arg = args[i];
                 var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+                bool eventAlreadyExists = alreadyAddedEvents.Contains(arg);
 
                 if (arg is Account)
                 {
                     var acc = (Account)arg;
                     args[i] = HtmlHelperExtensions.PrintAccount(null, acc);
-                    if (acc.AccountID != 0) {
-                        if (!ev.EventAccounts.Any(x=>x.AccountID == acc.AccountID)) ev.EventAccounts.Add(new EventAccount() { AccountID = acc.AccountID });
+                    if (!eventAlreadyExists)
+                    {
+                        if (acc.AccountID != 0)
+                        {
+                            if (!ev.EventAccounts.Any(x => x.AccountID == acc.AccountID)) ev.EventAccounts.Add(new EventAccount() { AccountID = acc.AccountID });
+                        }
+                        else if (!ev.EventAccounts.Any(x => x.Account == acc)) ev.EventAccounts.Add(new EventAccount() { Account = acc });
+                        dontDuplicate = true;
                     }
-                    else if (!ev.EventAccounts.Any(x=>x.Account == acc)) ev.EventAccounts.Add(new EventAccount() { Account = acc });
                 }
                 else if (arg is Clan)
                 {
                     var clan = (Clan)arg;
                     args[i] = HtmlHelperExtensions.PrintClan(null, clan);
-                    if (clan.ClanID != 0) ev.EventClans.Add(new EventClan() { ClanID = clan.ClanID });
-                    else ev.EventClans.Add(new EventClan() { Clan = clan });
+                    if (!eventAlreadyExists)
+                    {
+                        if (clan.ClanID != 0) ev.EventClans.Add(new EventClan() { ClanID = clan.ClanID });
+                        else ev.EventClans.Add(new EventClan() { Clan = clan });
+                        dontDuplicate = true;
+                    }
                 }
                 else if (arg is Planet)
                 {
                     var planet = (Planet)arg;
                     args[i] = HtmlHelperExtensions.PrintPlanet(null, planet);
-                    if (planet.PlanetID != 0) ev.EventPlanets.Add(new EventPlanet() { PlanetID = planet.PlanetID });
-                    else ev.EventPlanets.Add(new EventPlanet() { Planet = planet });
+                    if (!eventAlreadyExists)
+                    {
+                        if (planet.PlanetID != 0) ev.EventPlanets.Add(new EventPlanet() { PlanetID = planet.PlanetID });
+                        else ev.EventPlanets.Add(new EventPlanet() { Planet = planet });
+                        dontDuplicate = true;
+                    }
                 }
                 else if (arg is SpringBattle)
                 {
                     var bat = (SpringBattle)arg;
                     args[i] = string.Format("<a href='{0}'>B{1}</a>",
                                             url.Action("Detail", "Battles", new { id = bat.SpringBattleID }),
-                                            bat.SpringBattleID); //todo no propoer helper for this
-                    if (bat.SpringBattleID != 0) ev.EventSpringBattles.Add(new EventSpringBattle() { SpringBattleID = bat.SpringBattleID });
-                    else ev.EventSpringBattles.Add(new EventSpringBattle() { SpringBattle = bat });
+                                            bat.SpringBattleID); //todo no proper helper for this
+                    if (!eventAlreadyExists)
+                    {
+                        if (bat.SpringBattleID != 0) ev.EventSpringBattles.Add(new EventSpringBattle() { SpringBattleID = bat.SpringBattleID });
+                        else ev.EventSpringBattles.Add(new EventSpringBattle() { SpringBattle = bat });
+                        dontDuplicate = true;
+                    }
                 }
                 else if (arg is Faction)
                 {
                     var fac = (Faction)arg;
                     args[i] = HtmlHelperExtensions.PrintFaction(null, fac, false);
-                    if (fac.FactionID != 0) ev.EventFactions.Add(new EventFaction() { FactionID = fac.FactionID });
-                    else ev.EventFactions.Add(new EventFaction() { Faction = fac});
+                    if (!eventAlreadyExists)
+                    {
+                        if (fac.FactionID != 0) ev.EventFactions.Add(new EventFaction() { FactionID = fac.FactionID });
+                        else ev.EventFactions.Add(new EventFaction() { Faction = fac });
+                        dontDuplicate = true;
+                    }
                 }
                 else if (arg is StructureType)
                 {
@@ -195,6 +218,10 @@ namespace ZeroKWeb
                     args[i] = HtmlHelperExtensions.PrintRoleType(null, rt);
                 }
 
+                if (dontDuplicate)
+                {
+                    alreadyAddedEvents.Add(arg);
+                }
             }
 
             
