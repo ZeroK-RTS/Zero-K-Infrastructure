@@ -1029,6 +1029,7 @@ namespace Springie.autohost
                 // remove first word (command)
                 string[] words = Utils.ShiftArray(allwords, -1);
 
+                /*
                 if (!HasRights(com, e)) {
                     if (!com.StartsWith("vote")) {
                         com = "vote" + com;
@@ -1037,6 +1038,7 @@ namespace Springie.autohost
                     }
                     else return;
                 }
+                */
 
                 if (e.Place == TasSayEventArgs.Places.Normal) {
                     if (com != "say" && com != "admins" && com != "help" && com != "helpall" && com != "springie" && com != "listoptions" &&
