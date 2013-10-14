@@ -83,7 +83,16 @@ namespace ZeroKLobby.Notifications
                 var path = Utils.MakePath(Program.SpringPaths.WritableDirectory, "demos", new Uri(demoUrl).Segments.Last());
                 try
                 {
-                    Process.Start(Program.SpringPaths.Executable, string.Format("\"{0}\" --config \"{1}\"", path, Program.SpringPaths.GetSpringConfigPath()));
+                    var optirun = Environment.GetEnvironmentVariable("OPTIRUN"); //get OPTIRUN filename from OS
+                    string springFilename = Program.Conf.UseMtEngine ? Program.SpringPaths.MtExecutable : Program.SpringPaths.Executable; //use springMT or standard
+                    if (string.IsNullOrEmpty(optirun))
+                    {
+                        Process.Start(springFilename, string.Format("\"{0}\" --config \"{1}\"", path, Program.SpringPaths.GetSpringConfigPath()));
+                    }
+                    else
+                    {
+                        Process.Start(optirun, string.Format("\"{0}\" \"{1}\" --config \"{2}\"", springFilename, path, Program.SpringPaths.GetSpringConfigPath()));
+                    }
 
                     Program.MainWindow.InvokeFunc(() => Program.NotifySection.RemoveBar(this));
                 }
