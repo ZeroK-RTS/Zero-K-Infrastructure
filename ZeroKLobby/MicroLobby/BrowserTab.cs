@@ -54,17 +54,25 @@ namespace ZeroKLobby
             if (string.IsNullOrEmpty(e.TargetFrameName) && url.Contains("zero-k") && !url.StartsWith("javascript:")) //if navigation is within Zero-K
             {
                 var nav = Program.MainWindow.navigationControl.GetInavigatableByPath(url); //check which TAB this URL represent
-                if (nav == null || nav == this) {
+                if (url.Contains("@logout"))
+                {   
+                    //if Logout signature, perform logout
+                    e.Cancel = true;
+                    ActionHandler.PerformAction("logout");
+                }
+                else if (nav == null || nav == this || url.Contains("/SubmitPost?"))
+                {
+                    //if url belong to this TAB or not other TAB, or is posting comment in this TAB, continue this browser instance uninterupted
                     navigatingTo = url;
                 }
                 else
                 {
-                    // navigate to another tab actually
+                    // else, navigate to another tab actually
                     e.Cancel = true;
                     Program.MainWindow.navigationControl.Path = url;
                 }
             }
-            if (url.StartsWith("javascript:SendLobbyCommand('"))
+            else if (url.StartsWith("javascript:SendLobbyCommand('"))
             {
                 // intercept & not trigger the javascript, instead execute it directly from the url 
                 //(because for unknown reason mission/replay can't be triggered more than once using standard technique(javascript send text to lobby to trigger mission))
@@ -74,6 +82,7 @@ namespace ZeroKLobby
                 int commandLength = endPosition - 29; //NOTE: "javascript:SendLobbyCommand('" is 30 char. So the startPos in at 29th char
                 Program.MainWindow.navigationControl.Path = url.Substring(29, commandLength);
             }
+
             base.OnNavigating(e);
         }
 
