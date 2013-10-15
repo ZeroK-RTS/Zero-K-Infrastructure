@@ -61,6 +61,27 @@ namespace CaTracker
                         }
                     }
                 }
+                else if (e.Text.StartsWith("!changeaccountpass"))
+                {
+                    var db = new ZkDataContext();
+                    var acc = Account.AccountByLobbyID(db, tas.ExistingUsers[e.UserName].LobbyID);
+                    if (acc.IsZeroKAdmin || acc.IsLobbyAdministrator)
+                    {
+                        var parts = e.Text.Split(' ');
+                        if (parts.Length != 3) tas.Say(TasClient.SayPlace.User, e.UserName, "!changeaccountpass [player] [password (plaintext)]", false);
+                        else
+                        {
+                            var player = tas.ExistingUsers.FirstOrDefault(x => x.Key == parts[1]).Key;
+                            var password = PlasmaShared.Utils.HashLobbyPassword(parts[2]);
+                            if (player != null)
+                            {
+                                tas.SendRaw(string.Format("CHANGEACCOUNTPASS {0} {1}", player, password));
+                                tas.Say(TasClient.SayPlace.User, e.UserName, string.Format("DEBUG: CHANGEACCOUNTPASS {0} {1}", player, password), false);
+                            }
+                            else tas.Say(TasClient.SayPlace.User, e.UserName, "Not a valid player name", false);
+                        }
+                    }
+                }
             }
         }
     }
