@@ -1438,7 +1438,7 @@ namespace Springie.autohost
             foreach (var line in what.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)) tas.Say(TasClient.SayPlace.User, e.UserName, line, false);
         }
 
-        void ServerVerifyMap(bool pickNew)
+        public void ServerVerifyMap(bool pickNew)
         {
             try
             {

@@ -175,6 +175,7 @@ namespace Springie
             {
                 var ah = new AutoHost(MetaCache, config, GetFreeHostingPort(), spawnData);
                 autoHosts.Add(ah);
+                ah.ServerVerifyMap(true);
             }
         }
 
