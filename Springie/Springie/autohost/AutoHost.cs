@@ -1031,12 +1031,12 @@ namespace Springie.autohost
 
                 
                 if (!HasRights(com, e)) {
-                    /*if (!com.StartsWith("vote")) {
+                    if (!com.StartsWith("vote")) {
                         com = "vote" + com;
 
                         if (!Commands.Commands.Any(x => x.Name == com) || !HasRights(com, e)) return;
                     }
-                    else*/ return;
+                    else return;
                 }
                
 
