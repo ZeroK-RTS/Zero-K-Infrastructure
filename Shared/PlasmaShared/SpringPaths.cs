@@ -152,9 +152,9 @@ namespace PlasmaShared
             Environment.SetEnvironmentVariable("SPRING_WRITEDIR", WritableDirectory, EnvironmentVariableTarget.Process);
             Environment.SetEnvironmentVariable("SPRING_ISOLATED", WritableDirectory, EnvironmentVariableTarget.Process);
             Environment.SetEnvironmentVariable("SPRING_NOCOLOR", "1", EnvironmentVariableTarget.Process);
-            System.Diagnostics.Trace.TraceInformation("SpringPaths SPRING_DATADIR: {0}", ddenv);
-            System.Diagnostics.Trace.TraceInformation("SpringPaths SPRING_WRITEDIR: {0}", WritableDirectory);
-            System.Diagnostics.Trace.TraceInformation("SpringPaths SPRING_ISOLATED: {0}", WritableDirectory);
+            System.Diagnostics.Trace.TraceInformation("SpringPaths: SPRING_DATADIR: {0}", ddenv);
+            System.Diagnostics.Trace.TraceInformation("SpringPaths: SPRING_WRITEDIR: {0}", WritableDirectory);
+            System.Diagnostics.Trace.TraceInformation("SpringPaths: SPRING_ISOLATED: {0}", WritableDirectory);
             
             if (ov != springVersion  && SpringVersionChanged != null) SpringVersionChanged(this, EventArgs.Empty);
         }

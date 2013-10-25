@@ -156,6 +156,7 @@ namespace ZeroKLobby.MicroLobby
             this.sendBox.Name = "sendBox";
             this.sendBox.Size = new System.Drawing.Size(850, 20);
             this.sendBox.TabIndex = 0;
+            this.sendBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.sendBox_KeyDown);
             // 
             // splitContainer2
             // 

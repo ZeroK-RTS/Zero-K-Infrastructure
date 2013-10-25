@@ -34,7 +34,8 @@ namespace PlasmaDownloader
 
     public override void Abort()
     {
-      wc.CancelAsync();
+        IsAborted = true;
+        wc.CancelAsync();
     }
 
     void wc_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)

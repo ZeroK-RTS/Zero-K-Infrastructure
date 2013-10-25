@@ -123,7 +123,7 @@ namespace PlasmaDownloader
 					{
 						down.parents.Add(this);
 						neededDownloads.Add(down);
-					} else Trace.TraceWarning(string.Format("{0} depends on itslef", down.Name));
+					} else Trace.TraceWarning(string.Format("{0} depends on itself", down.Name));
         }
 
         protected internal virtual void Finish(bool isComplete)

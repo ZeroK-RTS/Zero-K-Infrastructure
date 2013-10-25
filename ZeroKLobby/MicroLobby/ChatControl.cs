@@ -452,5 +452,19 @@ namespace ZeroKLobby.MicroLobby
             public string Channel;
             public IChatLine Line;
         }
+
+        //Ctrl+A and Ctrl+Backspace behaviour.
+        //Reference: http://stackoverflow.com/questions/14429445/how-can-i-allow-things-such-as-ctrl-a-and-ctrl-backspace-in-a-c-sharp-textbox
+        private void sendBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control & e.KeyCode == Keys.A)
+            {
+                sendBox.SelectAll();
+            }
+            else if (e.Control & e.KeyCode == Keys.Back)
+            {
+                SendKeys.SendWait("^+{LEFT}{BACKSPACE}");
+            }
+        }
     }
 }

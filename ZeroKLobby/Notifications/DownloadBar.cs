@@ -106,7 +106,7 @@ namespace ZeroKLobby.Notifications
         {
             container.btnStop.Enabled = false;
             //progress.Value = 0;
-            Download.Abort();
+            Download.Abort(); //IsAborted = true; . when IsAborted is TRUE it also cause periodic check in MainWindow.cs to remove DownloadBar
         }
 
         public void DetailClicked(NotifyBarContainer container) {}

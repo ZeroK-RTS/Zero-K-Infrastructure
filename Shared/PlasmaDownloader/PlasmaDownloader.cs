@@ -109,7 +109,7 @@ namespace PlasmaDownloader
                     } catch {}
                     var down = new WebFileDownload(name, filePath, null);
                     downloads.Add(down);
-                    DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down));
+                    DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down)); //create dowload bar (handled by MainWindow.cs)
                     down.Start();
                     return down;
                 }
