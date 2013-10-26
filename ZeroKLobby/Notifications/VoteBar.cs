@@ -60,7 +60,7 @@ namespace ZeroKLobby.Notifications
                             }
                         }
                         //SPAD's
-                        else if (args.Text.Contains("vote for command") || args.Text.StartsWith("Vote for command"))  //SPAD, at start & end of vote
+                        else if (args.Text.Contains("called a vote for command") || args.Text.StartsWith("Vote for command"))  //SPAD, at start & end of vote
                         {
                             var lid = args.Text.LastIndexOf('"');
                         

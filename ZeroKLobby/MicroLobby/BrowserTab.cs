@@ -51,7 +51,7 @@ namespace ZeroKLobby
         protected override void OnNavigating(WebBrowserNavigatingEventArgs e) //this intercept URL navigation induced when user click on link or during page loading
         {
             var url = e.Url.ToString();
-            if (string.IsNullOrEmpty(e.TargetFrameName) && url.Contains("zero-k") && !url.StartsWith("javascript:")) //if navigation is within Zero-K
+            if (string.IsNullOrEmpty(e.TargetFrameName) && url.StartsWith("http://zero-k.info") && !url.StartsWith("javascript:")) //if navigation is within Zero-K
             {
                 var nav = Program.MainWindow.navigationControl.GetInavigatableByPath(url); //check which TAB this URL represent
                 if (url.Contains("@logout"))

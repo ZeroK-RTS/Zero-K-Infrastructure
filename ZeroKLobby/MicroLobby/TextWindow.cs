@@ -258,8 +258,7 @@ namespace ZeroKLobby.MicroLobby
                 if (HoveredWord.Length > 0)
                 {
                     //check if it is a URL
-                    var re = new Regex(WwwMatch);
-                    var matches = re.Matches(HoveredWord);
+                    var matches = wwwRegex.Matches(HoveredWord);
                     string clickedWord;
                     if (matches.Count > 0)
                     {
@@ -1273,15 +1272,19 @@ namespace ZeroKLobby.MicroLobby
                         }
 
                         g.Dispose();
-                        return line.Substring(space, i - space);
+                        return line.Substring(space, i - space); //Substring(space, i - space), in example: xxx_VxxxxxxVxxx & VxxVxxxxxxx_xxx (where 2nd V is pointing at space, 1st V pointing at 1st letter after space)
                     }
 
                     if (line[i] == (char)32) //equal to "space"
                     {
                         if (!foundSpace)
                         {
-                            if (lookWidth >= x) foundSpace = true;
-                            else space = i + 1;
+                            if (lookWidth >= x) 
+                            {
+                                foundSpace = true; //current position, in example: xxx_xxxxxxxVxxx (where V is pointing at space)
+                                i--; //halt pointer position for this time once (at second loop the mid-code will be executed to return the Substring)
+                            } 
+                            else space = i + 1; //i + 1 position, in example: xxx_Vxxxxxx_xxx
                         }
                     }
 
