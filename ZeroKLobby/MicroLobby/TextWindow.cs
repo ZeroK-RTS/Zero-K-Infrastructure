@@ -1272,7 +1272,7 @@ namespace ZeroKLobby.MicroLobby
                         }
 
                         g.Dispose();
-                        return line.Substring(space, i - space); //Substring(space, i - space), in example: xxx_VxxxxxxVxxx & VxxVxxxxxxx_xxx (where 2nd V is pointing at space, 1st V pointing at 1st letter after space)
+                        return line.Substring(space, i - space); //Substring(space, i - space), in example: xxx__Yxxxx_T_xxx OR Yxx_T_xxxxx__xxx (where T is pointing at spaces, Y pointing at 1st letter)
                     }
 
                     if (line[i] == (char)32) //equal to "space"
@@ -1281,10 +1281,10 @@ namespace ZeroKLobby.MicroLobby
                         {
                             if (lookWidth >= x) 
                             {
-                                foundSpace = true; //current position, in example: xxx_xxxxxxxVxxx (where V is pointing at space)
+                                foundSpace = true; //current position, in example: xxx__xxxxx_T_xxx (where T is pointing at 2nd space)
                                 i--; //halt pointer position for this time once (at second loop the mid-code will be executed to return the Substring)
-                            } 
-                            else space = i + 1; //i + 1 position, in example: xxx_Vxxxxxx_xxx
+                            }
+                            else space = i + 1; //i + 1 position, in example: xxx__Yxxxx__xxx (Y at 1st letter)
                         }
                     }
 

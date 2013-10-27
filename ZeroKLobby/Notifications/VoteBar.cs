@@ -60,7 +60,7 @@ namespace ZeroKLobby.Notifications
                             }
                         }
                         //SPAD's
-                        else if (args.Text.Contains("called a vote for command") || args.Text.StartsWith("Vote for command"))  //SPAD, at start & end of vote
+                        else if (args.Text.Contains("called a vote for command") || args.Text.Contains("Vote for command"))  //SPAD, at start & end of vote
                         {
                             var lid = args.Text.LastIndexOf('"');
                         
@@ -83,18 +83,18 @@ namespace ZeroKLobby.Notifications
                                     foreach (Match match in Regex.Matches(question, @"((mailto|spring|http|https|ftp|ftps)\://(\S+))")) //find map link
                                         lbQuestion.Links.Add(match.Groups[1].Index, match.Groups[1].Length); //activate link for map link
 
-                                    lbYes.Text = string.Format("{0}/{1}", 1, 1);
-                                    lbNo.Text = string.Format("{0}/{1}", 0, 1);
-                                    pbYes.Maximum = 1;
+                                    lbYes.Text = "?/?";
+                                    lbNo.Text = "?/?";
+                                    pbYes.Maximum = 3;
                                     pbYes.Value = 1;
-                                    pbNo.Maximum = 1;
+                                    pbNo.Maximum = 3;
                                     pbNo.Value = 0;
                                 }
                             }
                         }
                         else if (isSpad == true) //SPAD at mid of vote event
                         {
-                            if (args.Text.StartsWith("Vote in progress: ")) //SPAD, update vote count
+                            if (args.Text.Contains("Vote in progress:")) //SPAD, update vote count
                             {
                                 var lid = args.Text.LastIndexOf("[");
 
@@ -108,7 +108,7 @@ namespace ZeroKLobby.Notifications
                                         if (!Program.NotifySection.Bars.Contains(this)) //readd SPAD vote bar if was closed manually before vote finished
                                         {
                                             Program.NotifySection.AddBar(this);
-                                            if (tas.MyBattleStatus == null || (!tas.MyUser.IsInGame && !tas.MyBattleStatus.IsSpectator)) Program.MainWindow.NotifyUser("chat/battle", string.Format("Poll: {0}", "?"), true, true);
+                                            if (tas.MyBattleStatus == null || (!tas.MyUser.IsInGame && !tas.MyBattleStatus.IsSpectator)) Program.MainWindow.NotifyUser("chat/battle", lbQuestion.Text, true, true);
                                         }
                                         var yes = int.Parse(m1.Groups[1].Value);
                                         var yesMax = int.Parse(m1.Groups[2].Value);
@@ -124,9 +124,10 @@ namespace ZeroKLobby.Notifications
                                 }
                             }
                             //SPAD, sudden vote cancellation
-                            else if (args.Text.StartsWith("Vote cancelled, launching game...")  //vote cancelled when game launch
-                                || (args.Text.StartsWith("Game starting, cancelling \"") && args.Text.Contains("\" vote")) //vote cancelled when game starting
-                                || (args.Text.StartsWith("Cancelling \"") && args.Text.Contains("\" vote")))  //vote cancelled by veto power
+                            else if (args.Text.Contains("Vote cancelled, launching game...")  //vote cancelled when game launch
+                                || (args.Text.Contains("Game starting, cancelling") && args.Text.Contains("vote")) //vote cancelled when game starting
+                                || (args.Text.Contains("Cancelling") && args.Text.Contains("vote"))  //vote cancelled by veto power
+                                || args.Text.Contains("Vote cancelled by"))
                             { Program.NotifySection.RemoveBar(this); isSpad = false; }
                         }
                     }
