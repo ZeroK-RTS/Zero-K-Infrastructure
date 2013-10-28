@@ -204,7 +204,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
                         if (client.MyBattleStatus.SyncStatus == SyncStatuses.Synced) {
                             if (Utils.VerifySpringInstalled()) {
                                 if (spring.IsRunning) spring.ExitGame();
-                                lastScript = spring.StartGame(client, null, null, null, Program.Conf.UseSafeMode, Program.Conf.UseMtEngine);
+                                lastScript = spring.StartGame(client, null, null, null, Program.Conf.UseSafeMode, client.MyBattleStatus.IsSpectator?Program.Conf.UseMtEngine:false); //use MT tag when in spectator slot
                             }
                         }
                     } catch (Exception ex) {
@@ -323,8 +323,8 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
         public void Rejoin() {
             if (Utils.VerifySpringInstalled()) {
                 if (spring.IsRunning) spring.ExitGame();
-                if (client.MyBattle != null) spring.StartGame(client, null, null, null, Program.Conf.UseSafeMode, Program.Conf.UseMtEngine);
-                else spring.StartGame(client, null, null, lastScript, Program.Conf.UseSafeMode, Program.Conf.UseMtEngine);
+                if (client.MyBattle != null) spring.StartGame(client, null, null, null, Program.Conf.UseSafeMode,  client.MyBattleStatus.IsSpectator?Program.Conf.UseMtEngine:false); //use MT tag when in spectator slot. NOTE!: a non-spec player might rejoin game in spec slot & confuse this checks!
+                else spring.StartGame(client, null, null, lastScript, Program.Conf.UseSafeMode, Program.Conf.UseMtEngine); //rejoining a running game from outside the battleroom???
             }
         }
 

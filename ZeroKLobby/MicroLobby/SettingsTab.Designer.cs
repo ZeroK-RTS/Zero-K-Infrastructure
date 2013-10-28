@@ -162,9 +162,9 @@
             this.cbMtEngine.AutoSize = true;
             this.cbMtEngine.Location = new System.Drawing.Point(350, 75);
             this.cbMtEngine.Name = "cbMtEngine";
-            this.cbMtEngine.Size = new System.Drawing.Size(193, 17);
+            this.cbMtEngine.Size = new System.Drawing.Size(293, 17);
             this.cbMtEngine.TabIndex = 37;
-            this.cbMtEngine.Text = "Multithreaded engine (experimental)";
+            this.cbMtEngine.Text = "Multithread engine for singleplayer, replay and spectating";
             this.cbMtEngine.UseVisualStyleBackColor = true;
             this.cbMtEngine.CheckedChanged += new System.EventHandler(this.cbMtEngine_CheckedChanged);
             // 

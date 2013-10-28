@@ -32,12 +32,18 @@ namespace ZeroKLobby.MicroLobby
 
             Program.ToolTip.SetText(cbSafeMode, "Turns off many things that are known to cause problems (on PC/Mac's with lower-end graphic cards). Use if the game is crashing.\nWill override Springsetting.cfg");
             Program.ToolTip.SetText(cbHwCursor,"HW cursor is uneffected by ingame lag, but it can become invisible on some machines");
-            Program.ToolTip.SetText(cbMtEngine, "MT engine is experimental and it *can* improve or *decrease* performance, cause crashes and desyncs. \r\nUse at own risk");
+            Program.ToolTip.SetText(cbMtEngine, "MT engine is experimental and can improve performance, but it cause desyncs in Multiplayer game. \r\nThis option allow MT usage when joining game as spectator.");
            
             Program.ToolTip.SetText(cbWindowed, "Windowed: Run game on desktop in a window\nBorderless: Run game on desktop in a borderless window\nFullscreen: Run game fullscreen");
             Program.ToolTip.SetText(button5, "Springsetting.cfg and Lups.cfg tuned for performance and compatibility");
             Program.ToolTip.SetText(button1, "Springsetting.cfg and Lups.cfg with minimal features");
-
+            Program.ToolTip.SetText(button4, "Springsetting.cfg and Lups.cfg recommended for Ultra setting");
+            Program.ToolTip.SetText(button3, "Springsetting.cfg and Lups.cfg recommended for high setting");
+            Program.ToolTip.SetText(button2, "Springsetting.cfg and Lups.cfg recommended for medium setting");
+            Program.ToolTip.SetText(btnCustom, "Edit current Springsetting.cfg");
+            Program.ToolTip.SetText(btnRapid, "Monitor certain mods for latest version and auto-download them when available.");
+            Program.ToolTip.SetText(problemButton, "Go to Zero-K development page.");
+            Program.ToolTip.SetText(btnDefaults, "Local data reset?");
 		}
 
 
@@ -192,11 +198,12 @@ namespace ZeroKLobby.MicroLobby
 
 		void helpForumItem_Click(object sender, EventArgs e)
 		{
-			try
-			{
-                Process.Start("http://zero-k.info/Forum?categoryID=3");
-			}
-			catch {}
+            //try
+            //{
+            //    Process.Start("http://zero-k.info/Forum?categoryID=3");
+            //}
+            //catch {}
+            Program.MainWindow.navigationControl.Path = "http://zero-k.info/Forum?categoryID=3"; //open using Navigation Bar. If internal browser fail, it open external browser.
 		}
 
 		void logButton_Click(object sender, EventArgs e)
@@ -206,20 +213,22 @@ namespace ZeroKLobby.MicroLobby
 
 		void problemButton_Click(object sender, EventArgs e)
 		{
-			try
-			{
-				Process.Start("http://code.google.com/p/zero-k/issues/entry");
-			}
-			catch {}
+            //try
+            //{
+            //    Process.Start("http://code.google.com/p/zero-k/issues/entry");
+            //}
+            //catch {}
+            Program.MainWindow.navigationControl.Path = "http://code.google.com/p/zero-k/issues/entry";
 		}
 
 		void siteFeatureRequestItem_Click(object sender, EventArgs e)
 		{
-			try
-			{
-				Process.Start("http://code.google.com/p/zero-k/issues/entry?template=Feature%20Request");
-			}
-			catch {}
+            //try
+            //{
+            //    Process.Start("http://code.google.com/p/zero-k/issues/entry?template=Feature%20Request");
+            //}
+            //catch {}
+            Program.MainWindow.navigationControl.Path = "http://code.google.com/p/zero-k/issues/entry?template=Feature%20Request";
 		}
 
         private void settingsControlChanged(object sender, EventArgs e)
