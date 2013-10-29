@@ -649,8 +649,8 @@ namespace LobbyClient
                 }
                 else {*/
                     //con.SendCommand("FORCEJOINBATTLE", name, battleID, password);
-                con.SendCommand(string.Format("FORCEQUITBATTLE {0}", name));
-                con.SendCommand(string.Format("FORCEJOINBATTLE {0} {1}", name, battleID));
+                    con.SendCommand(string.Format("FORGEREVERSEMSG {0} LEAVEBATTLE", name));
+                    con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOINBATTLE {1}", name, battleID));
                 //}
             }
         }
@@ -662,7 +662,7 @@ namespace LobbyClient
 
         public void ForceLeaveChannel(string user, string channel)
         {
-            con.SendCommand(string.Format("FORCELEAVECHANNEL {0} {1}", user, channel));
+            con.SendCommand(string.Format("FORGEREVERSEMSG {0} LEAVE {1}", user, channel));
         }
 
 
