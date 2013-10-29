@@ -190,6 +190,15 @@ namespace ZeroKWeb
                     {
                         if (bat.SpringBattleID != 0) ev.EventSpringBattles.Add(new EventSpringBattle() { SpringBattleID = bat.SpringBattleID });
                         else ev.EventSpringBattles.Add(new EventSpringBattle() { SpringBattle = bat });
+
+                        foreach (Account acc in bat.SpringBattlePlayers.Where(sb => !sb.IsSpectator).Select(x => x.Account).Where(y => ev.EventAccounts.First(z => z.AccountID == y.AccountID) == null))
+                        {
+                            if (acc.AccountID != 0)
+                            {
+                                if (!ev.EventAccounts.Any(x => x.AccountID == acc.AccountID)) ev.EventAccounts.Add(new EventAccount() { AccountID = acc.AccountID });
+                            }
+                            else if (!ev.EventAccounts.Any(x => x.Account == acc)) ev.EventAccounts.Add(new EventAccount() { Account = acc });
+                        }
                         dontDuplicate = true;
                     }
                 }
