@@ -648,9 +648,10 @@ namespace LobbyClient
                     Say(SayPlace.User, user.Name, "!join " + battle.Founder.Name, false);
                 }
                 else {*/
-                    //con.SendCommand("FORCEJOINBATTLE", name, battleID, password);
+                    //con.SendCommand(string.Format("KICKFROMBATTLE {0}", name));
+                    con.SendCommand("FORCEJOINBATTLE", name, battleID, password);
                     con.SendCommand(string.Format("FORGEREVERSEMSG {0} LEAVEBATTLE", name));
-                    con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOINBATTLE {1}", name, battleID));
+                    //con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOINBATTLE {1}", name, battleID));
                 //}
             }
         }
@@ -660,9 +661,9 @@ namespace LobbyClient
             else con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOIN {1} {2}", user,channel,password));
         }
 
-        public void ForceLeaveChannel(string user, string channel)
+        public void ForceLeaveChannel(string user, string channel, string reason = null)
         {
-            con.SendCommand(string.Format("FORGEREVERSEMSG {0} LEAVE {1}", user, channel));
+            con.SendCommand(string.Format("FORCELEAVECHANNEL {0} {1} {2}", channel, user, reason));
         }
 
 
