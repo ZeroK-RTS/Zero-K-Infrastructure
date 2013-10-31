@@ -649,7 +649,7 @@ namespace LobbyClient
                 }
                 else {*/
                     con.SendCommand(string.Format("KICKFROMBATTLE {0}", name));
-                    con.SendCommand(string.Format("FORCEJOINBATTLE", name, battleID, password));
+                    con.SendCommand(string.Format("FORCEJOINBATTLE {0} {1} {2}", name, battleID, password));
                     //con.SendCommand(string.Format("FORGEREVERSEMSG {0} LEAVEBATTLE", name));
                     //con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOINBATTLE {1}", name, battleID));
                 //}
