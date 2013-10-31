@@ -636,7 +636,7 @@ namespace LobbyClient
             if (battle != null) ForceJoinBattle(name, battle.BattleID, password);
         }
 
-
+        // FIXME: https://code.google.com/p/zero-k/issues/detail?id=2009
         public void ForceJoinBattle(string name, int battleID, string password = null) {
             User user;
             Battle battle;
@@ -648,10 +648,10 @@ namespace LobbyClient
                     Say(SayPlace.User, user.Name, "!join " + battle.Founder.Name, false);
                 }
                 else {*/
-                    con.SendCommand(string.Format("KICKFROMBATTLE {0}", name));
-                    con.SendCommand(string.Format("FORCEJOINBATTLE {0} {1} {2}", name, battleID, password));
-                    //con.SendCommand(string.Format("FORGEREVERSEMSG {0} LEAVEBATTLE", name));
-                    //con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOINBATTLE {1}", name, battleID));
+                    //con.SendCommand(string.Format("KICKFROMBATTLE {0}", name));
+                    //con.SendCommand(string.Format("FORCEJOINBATTLE {0} {1} {2}", name, battleID, password));
+                    con.SendCommand(string.Format("FORGEREVERSEMSG {0} LEAVEBATTLE", name));
+                    con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOINBATTLE {1}", name, battleID));
                 //}
             }
         }
@@ -663,7 +663,8 @@ namespace LobbyClient
 
         public void ForceLeaveChannel(string user, string channel, string reason = null)
         {
-            con.SendCommand(string.Format("FORCELEAVECHANNEL {0} {1} {2}", channel, user, reason));
+            //con.SendCommand(string.Format("FORCELEAVECHANNEL {0} {1} {2}", channel, user, reason));
+            con.SendCommand(string.Format("FORGEREVERSEMSG {0} LEAVE {1}", user, channel));
         }
 
 
