@@ -552,7 +552,7 @@ namespace LobbyClient
 
             UserPassword = password;
 
-            con.SendCommand("LOGIN", userName, Utils.HashLobbyPassword(password), cpu, localIp, appName, "\t" + GetMyUserID(), "\ta sp eb");
+            con.SendCommand("LOGIN", userName, Utils.HashLobbyPassword(password), cpu, localIp, appName, "\t" + GetMyUserID(), "\ta sp eb m");
         }
 
         int cpu = Environment.OSVersion.Platform == PlatformID.Unix ? GlobalConst.ZkLobbyUserCpuLinux : GlobalConst.ZkLobbyUserCpu;
@@ -648,9 +648,9 @@ namespace LobbyClient
                 }
                 else {*/
                     //con.SendCommand(string.Format("KICKFROMBATTLE {0}", name));
-                    //con.SendCommand(string.Format("FORCEJOINBATTLE {0} {1} {2}", name, battleID, password));
-                    con.SendCommand(string.Format("FORGEREVERSEMSG {0} LEAVEBATTLE", name));
-                    con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOINBATTLE {1}", name, battleID));
+                    con.SendCommand(string.Format("FORCEJOINBATTLE {0} {1} {2}", name, battleID, password));
+                    //con.SendCommand(string.Format("FORGEREVERSEMSG {0} LEAVEBATTLE", name));
+                    //con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOINBATTLE {1}", name, battleID));
                 //}
             }
         }
