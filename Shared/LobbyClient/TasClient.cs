@@ -636,7 +636,6 @@ namespace LobbyClient
             if (battle != null) ForceJoinBattle(name, battle.BattleID, password);
         }
 
-        // FIXME: https://code.google.com/p/zero-k/issues/detail?id=2009
         public void ForceJoinBattle(string name, int battleID, string password = null) {
             User user;
             Battle battle;
@@ -649,22 +648,23 @@ namespace LobbyClient
                 }
                 else {*/
                     //con.SendCommand(string.Format("KICKFROMBATTLE {0}", name));
-                    //con.SendCommand(string.Format("FORCEJOINBATTLE {0} {1} {2}", name, battleID, password));
-                    con.SendCommand(string.Format("FORGEREVERSEMSG {0} LEAVEBATTLE", name));
-                    con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOINBATTLE {1}", name, battleID));
+                    con.SendCommand(string.Format("FORCEJOINBATTLE {0} {1} {2}", name, battleID, password));
+                    //con.SendCommand(string.Format("FORGEREVERSEMSG {0} LEAVEBATTLE", name));
+                    //con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOINBATTLE {1}", name, battleID));
                 //}
             }
         }
 
         public void ForceJoinChannel(string user, string channel, string password= null) {
-            if (string.IsNullOrEmpty(password)) con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOIN {1}", user,channel));
-            else con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOIN {1} {2}", user,channel,password));
+            con.SendCommand(string.Format("FORCEJOIN {0} {1} {2}", user, channel, password));
+            //if (string.IsNullOrEmpty(password)) con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOIN {1}", user,channel));
+            //else con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOIN {1} {2}", user,channel,password));
         }
 
         public void ForceLeaveChannel(string user, string channel, string reason = null)
         {
-            //con.SendCommand(string.Format("FORCELEAVECHANNEL {0} {1} {2}", channel, user, reason));
-            con.SendCommand(string.Format("FORGEREVERSEMSG {0} LEAVE {1}", user, channel));
+            con.SendCommand(string.Format("FORCELEAVECHANNEL {0} {1} {2}", channel, user, reason));
+            //con.SendCommand(string.Format("FORGEREVERSEMSG {0} LEAVE {1}", user, channel));
         }
 
 
