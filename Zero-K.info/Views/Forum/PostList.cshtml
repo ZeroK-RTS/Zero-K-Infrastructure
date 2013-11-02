@@ -40,6 +40,8 @@
                             {
                                 <a nicetitle='Delete the post' href='@Url.Action("DeletePost", "Forum", new { postID = p.ForumPostID })' class='delete'><img src="/img/delete_trashcan.png" height="22"/></a>
                             }
+                            <br />
+                            <small><a href="#post@(p.ForumPostID)">Link</a></small>
                             @if (p.Account.ContributionsByAccountID.Count() > 0)
                             {
                                 <br />
@@ -67,9 +69,6 @@
                 var divID = "ForumPostVoteForm" + p.ForumPostID;
                 }
                 <br />
-                <div style="float:left">
-                    <small><a href="?postID=@p.ForumPostID">Link</a></small>
-                </div>
                 <div id="@divID" style="float:right">
                 	@Html.PrintPostRating(p, penalty != null || netVotes <= ZkData.GlobalConst.MinNetKarmaToVote)
                 </div>
