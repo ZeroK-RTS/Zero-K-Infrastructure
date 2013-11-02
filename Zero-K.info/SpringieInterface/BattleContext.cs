@@ -15,6 +15,7 @@ namespace ZeroKWeb.SpringieInterface
         public List<PlayerTeam> Players = new List<PlayerTeam>();
         public List<BotTeam> Bots = new List<BotTeam>();
         private AutohostConfig config;
+        public bool CanPlanetwars = false;
 
         public AutohostConfig GetConfig() {
             if (config != null) return config;
