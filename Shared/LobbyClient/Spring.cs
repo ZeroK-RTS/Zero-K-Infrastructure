@@ -427,7 +427,8 @@ namespace LobbyClient
 
                     if (modName == null && line.StartsWith("Using game")) modName = line.Substring(11).Trim();
 
-                    if (line.StartsWith("recording demo")) demoFileName = Path.GetFileName(line.Substring(15).Trim());
+                    if (line.StartsWith("recording demo")) demoFileName = Path.GetFileName(line.Substring(15).Trim());  // 91.0
+                    else if (line.StartsWith("[DedicatedServer] recording demo")) demoFileName = Path.GetFileName(line.Substring(33).Trim());    // 95.0 and later
 
                     if (line.StartsWith("Using demofile")) return; // do nothing if its demo
 
