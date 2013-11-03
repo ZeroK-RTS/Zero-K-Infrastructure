@@ -32,6 +32,7 @@
                                     <a href="@Url.Action("EditHistory", "Forum", new { forumPostID = p.ForumPostID })">(edited @lastEdit.EditTime.ToAgoString())</a>
                                 }
                             </small>
+							<br />
                             @if (Global.IsZeroKAdmin || Global.AccountID == p.AuthorAccountID)
                             {
                                 <a nicetitle='Edit the post' href='@Url.Action("NewPost","Forum", new { threadID = p.ForumThreadID, forumPostID = p.ForumPostID })'><img src="/img/edit_pencil.png" height="22"/></a>
@@ -40,7 +41,6 @@
                             {
                                 <a nicetitle='Delete the post' href='@Url.Action("DeletePost", "Forum", new { postID = p.ForumPostID })' class='delete'><img src="/img/delete_trashcan.png" height="22"/></a>
                             }
-                            <br />
                             <a nicetitle='Link to this post' href="#post@(p.ForumPostID)"><img src="/img/link.png" height="22"/></a>
                             @if (p.Account.ContributionsByAccountID.Count() > 0)
                             {
