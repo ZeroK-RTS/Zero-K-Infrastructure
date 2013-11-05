@@ -172,6 +172,7 @@ namespace PlasmaShared
         {
             WatchingEnabled = false;
             isDisposed = true;
+            if (unitSync != null) unitSync.Dispose(); //(visual studio recommend a dispose)
             service.Dispose();
             if (isCacheDirty) SaveCache();
             GC.SuppressFinalize(this);
@@ -380,12 +381,7 @@ namespace PlasmaShared
             try
             {
                 unitSyncReInitCounter++;
-                if (unitSyncReInitCounter >= UnitSyncReInitFrequency)
-                {
-                    unitSyncAttemptedFolder = null;
-                    unitSyncReInitCounter = 0;
-                }
-                VerifyUnitSync();
+                Trace.TraceInformation("GetUnitSyncData");
 
                 var map = unitSync.GetMapFromArchive(filename);
                 if (map != null)
@@ -586,6 +582,7 @@ namespace PlasmaShared
 
         void PerformUnitSyncOperation(WorkItem workItem)
         {
+            Trace.TraceInformation("PerformUnitSyncOperation");
             VerifyUnitSync();
 
             if (unitSync == null)
@@ -596,7 +593,18 @@ namespace PlasmaShared
             }
 
             var info = GetUnitSyncData(workItem.CacheItem.FileName);
-
+            //upon completion of any work: dispose unitsync. It can be re-initialize again later by VerifyUnitSync()
+            if (unitSync != null && GetWorkCost()<=1)
+            {
+                try
+                {
+                    unitSync.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Error disposing unitsync: {0}", ex);
+                }
+            }
             if (info != null)
             {
                 workItem.CacheItem.InternalName = info.Name;
@@ -695,20 +703,25 @@ namespace PlasmaShared
 
         void VerifyUnitSync()
         {
-            if (unitSyncAttemptedFolder != springPaths.UnitSyncDirectory)
+            if (unitSyncReInitCounter >= UnitSyncReInitFrequency)
+            {
+                unitSyncAttemptedFolder = null;
+                unitSyncReInitCounter = 0;
+            }
+            if (unitSyncAttemptedFolder != springPaths.UnitSyncDirectory || unitSync==null)
             {
                 if (unitSync != null)
                 {
                     try
                     {
                         unitSync.Dispose();
+                        unitSync = null;
                     }
                     catch (Exception ex)
                     {
                         Trace.TraceWarning("Error disposing unitsync: {0}", ex);
                     }
                 }
-                unitSync = null;
                 unitSyncAttemptedFolder = springPaths.UnitSyncDirectory;
                 try
                 {
@@ -753,18 +766,6 @@ namespace PlasmaShared
                 var serializedData = kvp.Value;
                 MetaData.SaveMetadata(mod.Name, serializedData);
                 ModRegistered(this, new EventArgs<Mod>(mod));
-            }
-            //upon completion of any work: dispose unitsync. It can be re-initialize again later by VerifyUnitSync()
-            if (unitSync != null)
-            {
-                try
-                {
-                    unitSync.Dispose();
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceWarning("Error disposing unitsync: {0}", ex);
-                }
             }
         }
 

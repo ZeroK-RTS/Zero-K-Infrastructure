@@ -40,10 +40,12 @@ namespace PlasmaShared.UnitSyncLib
 		public UnitSync(SpringPaths springPaths)
 		{
             paths = springPaths;
-			originalDirectory = Directory.GetCurrentDirectory();
-            System.Diagnostics.Trace.TraceInformation("UnitSync UnitSyncDirectory: {0}", paths.UnitSyncDirectory);
-            System.Diagnostics.Trace.TraceInformation("UnitSync ZKLdirectory: {0}", originalDirectory);
-			Directory.SetCurrentDirectory(paths.UnitSyncDirectory);
+			//originalDirectory = Directory.GetCurrentDirectory();
+            //Getting the directory of this application instead of the non-constant currentDirectory. Reference: http://stackoverflow.com/questions/52797/how-do-i-get-the-path-of-the-assembly-the-code-is-in
+            originalDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            System.Diagnostics.Trace.TraceInformation("UnitSync: Directory: {0}", paths.UnitSyncDirectory);
+            System.Diagnostics.Trace.TraceInformation("UnitSync: ZKL: {0}", originalDirectory);           
+            Directory.SetCurrentDirectory(paths.UnitSyncDirectory);
             //originalEnvironmentVariable = Environment.GetEnvironmentVariable("SPRING_DATADIR", EnvironmentVariableTarget.Process);
             //Environment.SetEnvironmentVariable("SPRING_DATADIR", paths.WritableDirectory, EnvironmentVariableTarget.Process);//no longer needed since SpringPath already set SPRING_DATADIR
 		    if (!NativeMethods.Init(false, 666)) throw new UnitSyncException("Unitsync initialization failed.");
@@ -53,6 +55,7 @@ namespace PlasmaShared.UnitSyncLib
             //System.Diagnostics.Trace.TraceInformation("UnitSync new SPRING_DATADIR: {0}", paths.WritableDirectory);
             //System.Diagnostics.Trace.TraceInformation("UnitSync original SPRING_DATADIR: {0}", originalEnvironmentVariable);
 			TraceErrors();
+            System.Diagnostics.Trace.TraceInformation("UnitSync Initialized");
 		}
 
 		~UnitSync()
@@ -87,7 +90,7 @@ namespace PlasmaShared.UnitSyncLib
 
 		public Map GetMap(string mapName)
 		{
-			return GetMap(mapName, GetMapArchive(mapName));
+            return GetMap(mapName, GetMapArchive(mapName));
 		}
 
 		public Map GetMap(string mapName, string archiveName)
@@ -190,7 +193,7 @@ namespace PlasmaShared.UnitSyncLib
 			          	Name = modName,
 			          	ArchiveName = archiveName,
 			          	UnitDefs = GetUnitList(modName).Select(ui => new UnitInfo(ui.Name, ui.FullName)).ToArray(),
-			          	Desctiption = NativeMethods.GetPrimaryModDescription(modIndex),
+			          	Description = NativeMethods.GetPrimaryModDescription(modIndex),
 			          	Game = NativeMethods.GetPrimaryModGame(modIndex),
 			          	Mutator = NativeMethods.GetPrimaryModMutator(modIndex),
 			          	ShortGame = NativeMethods.GetPrimaryModShortGame(modIndex),
@@ -204,6 +207,8 @@ namespace PlasmaShared.UnitSyncLib
 			          	Dependencies = GetModDependencies(modIndex).Where(x => x != modName && !string.IsNullOrEmpty(x)).ToArray(),
 			          	ModAis = GetAis().Where(ai => ai.IsLuaAi).ToArray()
 			          };
+
+            System.Diagnostics.Trace.TraceInformation("Mod Information: Description {0}, Game {1}, Mutator {2}, ShortGame {3}, PrimaryModVersion {4}", mod.Description, mod.Game, mod.Mutator, mod.ShortGame,mod.PrimaryModVersion);
 
 			var buf = ReadVfsFile(GlobalConst.MissionScriptFileName);
 			if (buf != null && buf.Length > 0) mod.MissionScript = Encoding.UTF8.GetString(buf, 0, buf.Length);
@@ -336,7 +341,7 @@ namespace PlasmaShared.UnitSyncLib
 		{
 			var width = 0;
 			var height = 0;
-			if (!NativeMethods.GetInfoMapSize(mapName, name, ref width, ref height)) throw new UnitSyncException("GetInfoMapSize failed");
+			if (!NativeMethods.GetInfoMapSize(mapName, name, ref width, ref height)) System.Diagnostics.Trace.TraceInformation("GetInfoMapSize failed");//ignore negative return
 			var infoMapData = new byte[width*height];
 			var infoMapHandle = GCHandle.Alloc(infoMapData, GCHandleType.Pinned);
 			try

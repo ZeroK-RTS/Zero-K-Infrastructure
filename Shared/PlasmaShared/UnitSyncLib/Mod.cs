@@ -13,7 +13,7 @@ namespace PlasmaShared.UnitSyncLib
 		string name;
 		public string[] Dependencies { get; set; }
 
-		public string Desctiption { get; set; }
+		public string Description { get; set; }
 		public string Game { get; set; }
 		public bool IsMission { get { return !string.IsNullOrEmpty(MissionScript); } }
 		public string MissionScript { get; set; }
