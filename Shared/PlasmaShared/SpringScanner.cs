@@ -173,6 +173,7 @@ namespace PlasmaShared
             WatchingEnabled = false;
             isDisposed = true;
             if (unitSync != null) unitSync.Dispose(); //(visual studio recommend a dispose)
+            unitSync = null;
             service.Dispose();
             if (isCacheDirty) SaveCache();
             GC.SuppressFinalize(this);
@@ -556,6 +557,7 @@ namespace PlasmaShared
             finally
             {
                 if (unitSync != null) unitSync.Dispose();
+                unitSync = null;
             }
         }
 
@@ -594,11 +596,12 @@ namespace PlasmaShared
 
             var info = GetUnitSyncData(workItem.CacheItem.FileName);
             //upon completion of any work: dispose unitsync. It can be re-initialize again later by VerifyUnitSync()
-            if (unitSync != null && GetWorkCost()<=1)
+            if (unitSync != null && GetWorkCost()<1)
             {
                 try
                 {
                     unitSync.Dispose();
+                    unitSync = null;
                 }
                 catch (Exception ex)
                 {

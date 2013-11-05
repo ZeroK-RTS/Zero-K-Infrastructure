@@ -348,7 +348,7 @@ namespace PlasmaShared.UnitSyncLib
 			{
 				var infoMapPointer = Marshal.UnsafeAddrOfPinnedArrayElement(infoMapData, 0);
 				var bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb);
-				if (!NativeMethods.GetInfoMap(mapName, name, infoMapPointer, bytesPerPixel)) throw new UnitSyncException("GetInfoMap failed");
+				if (!NativeMethods.GetInfoMap(mapName, name, infoMapPointer, bytesPerPixel)) throw new UnitSyncException("GetInfoMap " + name + " failed");
 				var bitmapData = bitmap.LockBits(new Rectangle(Point.Empty, bitmap.Size), ImageLockMode.ReadOnly, bitmap.PixelFormat);
 				const int PixelSize = 3;
 				var p = (byte*)bitmapData.Scan0;
