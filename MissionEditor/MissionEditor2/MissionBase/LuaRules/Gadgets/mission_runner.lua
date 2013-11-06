@@ -323,55 +323,56 @@ GG.mission.FindUnitsInGroups = FindUnitsInGroups
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-
-for _, trigger in pairs(triggers) do
-  trigger.occurrences = trigger.occurrences or 0
-  if trigger.maxOccurrences < 0 then
-    trigger.maxOccurrences = math.huge
-  elseif trigger.maxOccurrences == 0 then
-    RemoveTrigger(trigger)
-  end
-end
-
-for condition in pairs(FindAllLogic"TimeCondition") do
-  condition.args.period = condition.args.frames
-end
-
-for condition in pairs(FindAllLogic"UnitCreatedCondition") do
-  condition.args.unitDefIDs = {}
-  for _, unitName in ipairs(condition.args.units) do
-    condition.args.unitDefIDs[UnitDefNames[unitName].id] = true
-  end
-end
-
-for condition in pairs(FindAllLogic"UnitFinishedCondition") do
-  condition.args.unitDefIDs = {}
-  for _, unitName in ipairs(condition.args.units) do
-    condition.args.unitDefIDs[UnitDefNames[unitName].id] = true
-  end
-end
-
-for condition in pairs(FindAllLogic"UnitFinishedInFactoryCondition") do
-  condition.args.unitDefIDs = {}
-  for _, unitName in ipairs(condition.args.units) do
-    condition.args.unitDefIDs[UnitDefNames[unitName].id] = true
-  end
-end
-
 local disabledUnitDefIDs = {}
-for _, disabledUnitName in ipairs(mission.disabledUnits) do
-  disabledUnitDefIDs[UnitDefNames[disabledUnitName].id] = true
-end
-
-
 local selectedUnitConditionGroups = {}
-for condition in pairs(FindAllLogic("UnitSelectedCondition")) do
-  selectedUnitConditionGroups = MergeSets(selectedUnitConditionGroups, condition.args.groups)
-end
-
 local unitIsVisibleConditionGroups = {}
-for condition in pairs(FindAllLogic("UnitIsVisibleCondition")) do
-  unitIsVisibleConditionGroups = MergeSets(unitIsVisibleConditionGroups, condition.args.groups)
+
+do
+  for _, trigger in pairs(triggers) do
+    trigger.occurrences = trigger.occurrences or 0
+    if trigger.maxOccurrences < 0 then
+      trigger.maxOccurrences = math.huge
+    elseif trigger.maxOccurrences == 0 then
+      RemoveTrigger(trigger)
+    end
+  end
+  
+  for condition in pairs(FindAllLogic"TimeCondition") do
+    condition.args.period = condition.args.frames
+  end
+  
+  for condition in pairs(FindAllLogic"UnitCreatedCondition") do
+    condition.args.unitDefIDs = {}
+    for _, unitName in ipairs(condition.args.units) do
+      condition.args.unitDefIDs[UnitDefNames[unitName].id] = true
+    end
+  end
+  
+  for condition in pairs(FindAllLogic"UnitFinishedCondition") do
+    condition.args.unitDefIDs = {}
+    for _, unitName in ipairs(condition.args.units) do
+      condition.args.unitDefIDs[UnitDefNames[unitName].id] = true
+    end
+  end
+  
+  for condition in pairs(FindAllLogic"UnitFinishedInFactoryCondition") do
+    condition.args.unitDefIDs = {}
+    for _, unitName in ipairs(condition.args.units) do
+      condition.args.unitDefIDs[UnitDefNames[unitName].id] = true
+    end
+  end
+  
+  for _, disabledUnitName in ipairs(mission.disabledUnits) do
+    disabledUnitDefIDs[UnitDefNames[disabledUnitName].id] = true
+  end
+  
+  for condition in pairs(FindAllLogic("UnitSelectedCondition")) do
+    selectedUnitConditionGroups = MergeSets(selectedUnitConditionGroups, condition.args.groups)
+  end
+  
+  for condition in pairs(FindAllLogic("UnitIsVisibleCondition")) do
+    unitIsVisibleConditionGroups = MergeSets(unitIsVisibleConditionGroups, condition.args.groups)
+  end
 end
 
 
@@ -392,8 +393,6 @@ local function AddUnitGroups(unitID, groups)
     AddUnitGroup(unitID, group)
   end
 end
-
-
 
 
 --------------------------------------------------------------------------------

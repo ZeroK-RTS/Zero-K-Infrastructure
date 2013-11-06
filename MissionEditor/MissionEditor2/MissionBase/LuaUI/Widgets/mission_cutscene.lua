@@ -64,6 +64,7 @@ local DRAW_MODE_COMMANDS = {
 --------------------------------------------------------------------------------
 local function EnterCutscene(instant)
   isInCutscene = true
+  spWarpMouse(vsx/2, vsy/2)
   WG.HideGUI()
   local paused = select(3, Spring.GetGameSpeed())
   if paused then
