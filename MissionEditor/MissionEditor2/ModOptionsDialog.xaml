@@ -27,7 +27,6 @@
             </GroupBox>
             <GroupBox Grid.Row="1" Grid.Column="1" Header="Description" MinWidth="200">
                 <TextBlock Grid.Row="2" TextWrapping="WrapWithOverflow">Specify modoptions as key-value pairs, e.g. mymodption=1;
-                    <LineBreak />Do not place spaces on either side of the equals sign.
                     <LineBreak />Terminate each line with a semicolon.
                 </TextBlock>
             </GroupBox>
