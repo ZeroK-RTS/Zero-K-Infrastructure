@@ -5,12 +5,20 @@
     Page.Title = "Campaign " + Model.Name + " - Journal";
     var db = new ZkDataContext();
     Campaign camp = Model;
-    List<CampaignJournal> journals = db.CampaignJournals.Where(x => x.CampaignID == Model.CampaignID).OrderBy(x => x.Category).ThenBy(x=> x.Title).ToList();
+    Dictionary<string, List<CampaignJournal>> journals = new Dictionary<string, List<CampaignJournal>>();
+    foreach (var journalsByCategory in db.CampaignJournals.Where(x => x.CampaignID == Model.CampaignID).OrderBy(x => x.Title).GroupBy(x => x.Category))
+    {
+        if (journalsByCategory.Any(journal => journal.IsUnlocked(Global.AccountID)))
+        {
+            journals.Add(journalsByCategory.Key ?? "Uncategorized", journalsByCategory.ToList());
+        }
+    }
 }
 <script type="text/javascript" src='@Href("~/Scripts/jquery.expand.js")' > </script>
 <script type="text/javascript">
     $(function () {
-        $("h3.expand").toggler({ speed: 0 });
+        $("h3.expand").toggler({ method: "slideToggle", speed: "fast" });
+        $("h4.expand").toggler({ method: "slideToggle", speed: "fast" });
     });
 </script>
 
@@ -28,15 +36,18 @@
 <h2>Journals</h2>
 @if (journals != null && journals.Count > 0)
 {
-    foreach (CampaignJournal journal in journals)
+    foreach (var kvp in journals)
     {
-        if ( journal.IsUnlocked(Global.AccountID) )
-        {
-            <h3 class="expand">@journal.Title</h3>
-            <div id="journals" class="collapse width-90">
-                @Html.BBCode(journal.Text)
-            </div>
-            <br />
-        }
+        <h3 class="expand">@kvp.Key</h3>
+        <div id="@kvp.Key" class="collapse width-90">
+            @foreach( CampaignJournal journal in kvp.Value)
+            {
+                <h4 class="expand">@journal.Title</h4>
+                <div id="@journal.Title" class="collapse width-90">
+                    @Html.BBCode(journal.Text)
+                </div>
+            }
+        </div>
+        <br />
     } 
 }
