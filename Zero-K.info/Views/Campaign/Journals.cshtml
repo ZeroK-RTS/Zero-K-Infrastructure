@@ -40,7 +40,7 @@
     {
         <h3 class="expand">@kvp.Key</h3>
         <div id="@kvp.Key" class="collapse width-90">
-            @foreach( CampaignJournal journal in kvp.Value)
+            @foreach( CampaignJournal journal in kvp.Value.Where(j => j.IsUnlocked(Global.AccountID)))
             {
                 <h4 class="expand">@journal.Title</h4>
                 <div id="@journal.Title" class="collapse width-90">
