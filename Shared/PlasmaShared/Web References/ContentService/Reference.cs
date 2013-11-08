@@ -464,22 +464,29 @@ namespace PlasmaShared.ContentService {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SubmitMissionScore", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public void SubmitMissionScore(string login, string passwordHash, string missionName, int score, int gameSeconds) {
+        public void SubmitMissionScore(string login, string passwordHash, string missionName, int score, int gameSeconds, string missionVars) {
             this.Invoke("SubmitMissionScore", new object[] {
                         login,
                         passwordHash,
                         missionName,
                         score,
-                        gameSeconds});
+                        gameSeconds,
+                        missionVars});
         }
         
         /// <remarks/>
-        public void SubmitMissionScoreAsync(string login, string passwordHash, string missionName, int score, int gameSeconds) {
-            this.SubmitMissionScoreAsync(login, passwordHash, missionName, score, gameSeconds, null);
+        public void SubmitMissionScoreAsync(string login, string passwordHash, string missionName, int score, int gameSeconds)
+        {
+            this.SubmitMissionScoreAsync(login, passwordHash, missionName, score, gameSeconds, "", null);
         }
-        
+
+        public void SubmitMissionScoreAsync(string login, string passwordHash, string missionName, int score, int gameSeconds, string missionVars)
+        {
+            this.SubmitMissionScoreAsync(login, passwordHash, missionName, score, gameSeconds, missionVars, null );
+        }
+
         /// <remarks/>
-        public void SubmitMissionScoreAsync(string login, string passwordHash, string missionName, int score, int gameSeconds, object userState) {
+        public void SubmitMissionScoreAsync(string login, string passwordHash, string missionName, int score, int gameSeconds, string missionVars, object userState) {
             if ((this.SubmitMissionScoreOperationCompleted == null)) {
                 this.SubmitMissionScoreOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSubmitMissionScoreOperationCompleted);
             }
@@ -488,7 +495,8 @@ namespace PlasmaShared.ContentService {
                         passwordHash,
                         missionName,
                         score,
-                        gameSeconds}, this.SubmitMissionScoreOperationCompleted, userState);
+                        gameSeconds,
+                        missionVars}, this.SubmitMissionScoreOperationCompleted, userState);
         }
         
         private void OnSubmitMissionScoreOperationCompleted(object arg) {

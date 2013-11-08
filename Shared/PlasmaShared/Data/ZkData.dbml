@@ -1125,6 +1125,7 @@
     <Type Name="CampaignVar">
       <Column Name="CampaignID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="VarID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="KeyString" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
       <Association Name="CampaignVar_CampaignPlanetVar" Member="CampaignPlanetVars" ThisKey="CampaignID,VarID" OtherKey="CampaignID,RequiredVarID" Type="CampaignPlanetVar" />
       <Association Name="CampaignVar_CampaignJournalVar" Member="CampaignJournalVars" ThisKey="CampaignID,VarID" OtherKey="CampaignID,RequiredVarID" Type="CampaignJournalVar" />
