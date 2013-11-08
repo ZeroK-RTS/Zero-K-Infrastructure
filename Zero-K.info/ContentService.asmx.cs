@@ -352,6 +352,7 @@ namespace ZeroKWeb
                         else acv.Value = value;
                     }
                 }
+                db.SubmitChanges();
 
                 // now we unlock the next planet(s) and any journal entries
                 // first mark this planet as completed - but only if it's already unlocked
