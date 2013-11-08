@@ -344,7 +344,7 @@ namespace ZeroKWeb
                     if (!(string.IsNullOrEmpty(key) || string.IsNullOrEmpty(value)))
                     { 
                         CampaignVar cv = db.CampaignVars.First(x => x.CampaignID == planet.CampaignID && x.KeyString == key);
-                        AccountCampaignVar acv = acc.AccountCampaignVars.First(x => x.VarID == cv.VarID);
+                        AccountCampaignVar acv = acc.AccountCampaignVars.FirstOrDefault(x => x.VarID == cv.VarID);
                         if (acv == null)
                         {
                             db.AccountCampaignVars.InsertOnSubmit(new AccountCampaignVar() { AccountID = accountID, CampaignID = campID, VarID = cv.VarID, Value = value });
