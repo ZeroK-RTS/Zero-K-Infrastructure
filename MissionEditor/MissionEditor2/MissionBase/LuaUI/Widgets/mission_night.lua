@@ -5,10 +5,10 @@ local versionNumber = "v1.5.10"
 
 function widget:GetInfo()
   return {
-    name      = "Night",
+    name      = "Mission Night",
     desc      = versionNumber .. " Makes map appear as nighttime and gives units searchlights.\n",
     author    = "Evil4Zerggin; based on jK's darkening widget",
-    date      = "28 September 2008,2012,12 September 2013",
+    date      = "28 September 2008, 2012, 12 September 2013",
     license   = "GNU LGPL, v2.1 or later",
     layer     = 6, --draw stuff after gui_showeco_action.lua(0) & gui_ally_cursor.lua(5) have drawn theirs to avoid disturbing their color
     enabled   = true  --  loaded by default?
@@ -50,7 +50,7 @@ local searchlightAirLeadTime       = 0.5           --roughly how many seconds ah
 local searchlightGroundLeadTime    = 1           --roughly how many seconds ahead the searchlight aims
 
 local dayNightCycle        = true                --enables day/night cycle
-local startDayTime         = 0                   --start time, between 0 and 1; 0 = midnight, 0.5 = noon
+local startDayTime         = 0.5                   --start time, between 0 and 1; 0 = midnight, 0.5 = noon
 local secondsPerDay        = 600                 --seconds per day
 
 local maxBeamDivergent = 2 					--how big the light beam can expand if unit get further away from ground
@@ -61,17 +61,12 @@ local reverseCompatibility = Game.version:find('91.') or (Game.version:find('94'
 --------------------------------------------------------------------------------
 
 local currColor, currColorInverse
-
-local hoursPerDay = #nightColorMap --14hours per day
-
-local currDayTime
-
+local hoursPerDay = #nightColorMap
+local currDayTime = startDayTime
+local wantedTime = currDayTime
 local searchlightVertexIncrement = (math.pi * 2) / searchlightVertexCount
-
 local searchlightBuildingAngle = 0
-
 local noLightList = {}
-
 local vsx, vsy
 
 local cache = {} --cache some calculation result for efficiency
