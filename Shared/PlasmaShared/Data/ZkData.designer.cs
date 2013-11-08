@@ -29927,7 +29927,7 @@ namespace ZkData
 		
 		private int _JournalID;
 		
-		private int _PlanetID;
+		private System.Nullable<int> _PlanetID;
 		
 		private bool _UnlockOnPlanetUnlock;
 		
@@ -29959,7 +29959,7 @@ namespace ZkData
     partial void OnCampaignIDChanged();
     partial void OnJournalIDChanging(int value);
     partial void OnJournalIDChanged();
-    partial void OnPlanetIDChanging(int value);
+    partial void OnPlanetIDChanging(System.Nullable<int> value);
     partial void OnPlanetIDChanged();
     partial void OnUnlockOnPlanetUnlockChanging(bool value);
     partial void OnUnlockOnPlanetUnlockChanged();
@@ -30026,9 +30026,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlanetID", DbType="Int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlanetID", DbType="Int")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public int PlanetID
+		public System.Nullable<int> PlanetID
 		{
 			get
 			{
@@ -30278,7 +30278,7 @@ namespace ZkData
 					else
 					{
 						this._CampaignID = default(int);
-						this._PlanetID = default(int);
+						this._PlanetID = default(Nullable<int>);
 					}
 					this.SendPropertyChanged("Planet");
 				}

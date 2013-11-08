@@ -1137,7 +1137,7 @@
     <Type Name="CampaignJournal">
       <Column Name="CampaignID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="JournalID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="PlanetID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="PlanetID" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="UnlockOnPlanetUnlock" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="UnlockOnPlanetCompletion" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="StartsUnlocked" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />

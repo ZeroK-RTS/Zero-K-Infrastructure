@@ -201,17 +201,55 @@ namespace Fixer
             }
         }
 
-        public static void ProgressCampaign(ZkDataContext db, Account acc, Mission mission)
+        public static void ProgressCampaign(ZkDataContext db, Account acc, Mission mission, string missionVars = "")
         {
             CampaignPlanet planet = db.CampaignPlanets.FirstOrDefault(p => p.MissionID == mission.MissionID);
             if (planet != null)
             {
-                // first mark this planet as completed - but only if it's already unlocked
-                AccountCampaignProgress progress = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == acc.AccountID && x.PlanetID == planet.PlanetID && x.CampaignID == planet.CampaignID);
+                AccountCampaignProgress progress = acc.AccountCampaignProgress.FirstOrDefault(x => x.PlanetID == planet.PlanetID && x.CampaignID == planet.CampaignID);
                 bool alreadyCompleted = false;
                 int accountID = acc.AccountID;
                 int campID = planet.CampaignID;
+                Campaign camp = planet.Campaign;
+                List<CampaignPlanet> unlockedPlanets = new List<CampaignPlanet>();
+                List<CampaignJournal> unlockedJournals = new List<CampaignJournal>();
 
+                // start with processing the mission vars, if there are any
+                byte[] missionVarsAsByteArray = System.Convert.FromBase64String(missionVars);
+                string missionVarsDecoded = System.Text.Encoding.UTF8.GetString(missionVarsAsByteArray);
+                foreach (string kvpRaw in missionVarsDecoded.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    string kvpRaw2 = kvpRaw.Trim();
+                    string key = "", value = "";
+                    string[] kvpSplit = kvpRaw2.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (kvpSplit.Length == 2)
+                    {
+                        key = kvpSplit[0].Trim();
+                        value = kvpSplit[1].Trim();
+                    }
+                    else
+                    {
+                        throw new Exception("Invalid key-value pair in decoded mission vars: " + missionVarsDecoded);
+                    }
+                    if (!(string.IsNullOrEmpty(key) || string.IsNullOrEmpty(value)))
+                    {
+                        CampaignVar cv = camp.CampaignVars.First(x => x.KeyString == key);
+                        AccountCampaignVar acv = acc.AccountCampaignVars.FirstOrDefault(x => x.CampaignID == campID && x.VarID == cv.VarID);
+                        if (acv == null)
+                        {
+                            db.AccountCampaignVars.InsertOnSubmit(new AccountCampaignVar() { AccountID = accountID, CampaignID = campID, VarID = cv.VarID, Value = value });
+                        }
+                        else acv.Value = value;
+                    }
+                }
+
+                //reload DB - this allows the vars submitted this session to be used by the following code
+                db.SubmitChanges();
+                db = new ZkDataContext();
+                acc = db.Accounts.First(x => x.AccountID == accountID);
+
+                // now we unlock planets and journal entries
+                // first mark this planet as completed - but only if it's already unlocked
                 if (progress != null)
                 {
                     alreadyCompleted = progress.IsCompleted;
@@ -226,133 +264,99 @@ namespace Fixer
                 {
                     progress.IsCompleted = true;
 
-                    // unlock this planet's journals if appropriate
-                    var journals = db.CampaignJournals.Where(x => x.CampaignID == campID && x.PlanetID == planet.PlanetID);
-                    foreach (CampaignJournal journal in journals)
-                    {
-                        bool proceed = true;
-
-                        var requiredVars = db.CampaignJournalVars.Where(x => x.CampaignID == campID && x.JournalID == journal.JournalID).ToList();
-                        if (requiredVars.Count() == 0)
-                        {
-                            proceed = false; // no need to add to unlock table; it'll be marked as unlocked at runtime
-                            if (journal.UnlockOnPlanetCompletion && !alreadyCompleted)
-                            {
-                            }
-                        }
-                        else
-                        {
-                            foreach (CampaignJournalVar variable in requiredVars)
-                            {
-                                var accountVar = db.AccountCampaignVars.FirstOrDefault(x => x.CampaignID == campID && x.VarID == variable.RequiredVarID);
-                                if (accountVar.Value != variable.RequiredValue)
-                                {
-                                    proceed = false;
-                                    break;  // failed to meet var requirement, stop here
-                                }
-                            }
-                        }
-                        if (proceed)    // met requirements for unlocking journal
-                        {
-                            AccountCampaignJournalProgress jp = db.AccountCampaignJournalProgress.FirstOrDefault(x => x.AccountID == accountID
-                                && x.CampaignID == campID
-                                && x.JournalID == journal.JournalID);
-                            if (jp == null)
-                            {
-                                jp = new AccountCampaignJournalProgress() { AccountID = accountID, CampaignID = campID, JournalID = journal.JournalID, IsUnlocked = true };
-                                db.AccountCampaignJournalProgress.InsertOnSubmit(jp);
-                            }
-                            else if (!jp.IsUnlocked)
-                            {
-                                jp.IsUnlocked = true;
-                            }
-                        }
-                    }
-
 
                     // unlock planets made available by completing this one
-                    var links = db.CampaignLinks.Where(x => x.UnlockingPlanetID == planet.PlanetID && x.CampaignID == campID);
+                    var links = camp.CampaignLinks.Where(x => x.UnlockingPlanetID == planet.PlanetID);
                     foreach (CampaignLink link in links)
                     {
                         CampaignPlanet toUnlock = link.PlanetToUnlock;
                         bool proceed = true;
-                        var requiredVars = db.CampaignPlanetVars.Where(x => x.CampaignID == campID && x.PlanetID == toUnlock.PlanetID);
+                        var requiredVars = toUnlock.CampaignPlanetVars;
                         if (requiredVars.Count() == 0) proceed = true;
                         else
                         {
                             foreach (CampaignPlanetVar variable in requiredVars)
                             {
-                                var accountVar = db.AccountCampaignVars.FirstOrDefault(x => x.CampaignID == campID && x.VarID == variable.RequiredVarID);
-                                if (accountVar.Value != variable.RequiredValue)
+                                AccountCampaignVar accountVar = acc.AccountCampaignVars.FirstOrDefault(x => x.CampaignID == campID && x.VarID == variable.RequiredVarID);
+                                if (!(accountVar != null && accountVar.Value == variable.RequiredValue))
                                 {
                                     proceed = false;
                                     break;  // failed to meet var requirement, stop here
                                 }
                             }
-                            proceed = true;
                         }
 
                         if (proceed)    // met requirements for unlocking planet
                         {
-                            System.Console.WriteLine("\t" + toUnlock);
-                            AccountCampaignProgress progress2 = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == accountID
-                                && x.CampaignID == campID
-                                && x.PlanetID == toUnlock.PlanetID);
-                            bool alreadyUnlocked = false;
+                            AccountCampaignProgress progress2 = toUnlock.AccountCampaignProgress.FirstOrDefault(x => x.CampaignID == campID && x.AccountID == accountID);
                             if (progress2 == null)
                             {
                                 progress2 = new AccountCampaignProgress() { AccountID = accountID, CampaignID = campID, PlanetID = toUnlock.PlanetID, IsCompleted = false, IsUnlocked = true };
                                 db.AccountCampaignProgress.InsertOnSubmit(progress2);
+                                unlockedPlanets.Add(toUnlock);
                             }
                             else if (!progress2.IsUnlocked)
                             {
                                 progress2.IsUnlocked = true;
-                            }
-                            else alreadyUnlocked = true;
-
-                            // unlock their journals too if appropriate
-                            var journals2 = db.CampaignJournals.Where(x => x.CampaignID == campID && x.PlanetID == toUnlock.PlanetID);
-                            foreach (CampaignJournal journal in journals2)
-                            {
-                                bool proceedJ = true;
-                                var requiredVarsJ = db.CampaignJournalVars.Where(x => x.CampaignID == campID && x.JournalID == journal.JournalID).ToList();
-                                if (requiredVarsJ.Count() == 0)
-                                {
-                                    proceedJ = false;   // no need to add to unlock table; it'll be marked as unlocked at runtime
-                                    if (journal.UnlockOnPlanetUnlock && !alreadyUnlocked)
-                                    {
-                                    }
-                                }
-                                else
-                                {
-                                    foreach (CampaignJournalVar variableJ in requiredVarsJ)
-                                    {
-                                        var accountVar = db.AccountCampaignVars.FirstOrDefault(x => x.CampaignID == campID && x.VarID == variableJ.RequiredVarID);
-                                        if (accountVar.Value != variableJ.RequiredValue)
-                                        {
-                                            proceedJ = false;
-                                            break;  // failed to meet var requirement, stop here
-                                        }
-                                    }
-                                }
-                                if (proceedJ)    // met requirements for unlocking journal
-                                {
-                                    AccountCampaignJournalProgress jp = db.AccountCampaignJournalProgress.FirstOrDefault(x => x.AccountID == accountID
-                                        && x.CampaignID == campID
-                                        && x.JournalID == journal.JournalID);
-                                    if (jp == null)
-                                    {
-                                        jp = new AccountCampaignJournalProgress() { AccountID = accountID, CampaignID = campID, JournalID = journal.JournalID, IsUnlocked = true };
-                                        db.AccountCampaignJournalProgress.InsertOnSubmit(jp);
-                                    }
-                                    else if (!jp.IsUnlocked)
-                                    {
-                                        jp.IsUnlocked = true;
-                                    }
-                                }
+                                unlockedPlanets.Add(toUnlock);
                             }
                         }
                     }
+                }
+                // unlock journals
+                var journalsWithVars = db.CampaignJournals.Where(x => x.CampaignID == campID && x.CampaignJournalVars.Any());
+                foreach (CampaignJournal journal in journalsWithVars)
+                {
+                    bool proceed = true;
+                    var requiredVars = journal.CampaignJournalVars.Where(x => x.CampaignID == campID).ToList();
+                    foreach (CampaignJournalVar variable in requiredVars)
+                    {
+                        AccountCampaignVar accountVar = acc.AccountCampaignVars.FirstOrDefault(x => x.CampaignID == campID && x.VarID == variable.RequiredVarID);
+                        System.Console.WriteLine("{0}, {1}, {2}", journal.Title, variable.CampaignVar.Description, variable.RequiredValue);
+                        if (!(accountVar != null && accountVar.Value == variable.RequiredValue))
+                        {
+                            proceed = false;
+                            break;  // failed to meet var requirement, stop here
+                        }
+                    }
+
+                    if (proceed)    // met requirements for unlocking journal
+                    {
+                        System.Console.WriteLine(journal.Title);
+                        AccountCampaignJournalProgress jp = journal.AccountCampaignJournalProgress.FirstOrDefault(x => x.AccountID == accountID);
+                        if (jp == null)
+                        {
+                            jp = new AccountCampaignJournalProgress() { AccountID = accountID, CampaignID = campID, JournalID = journal.JournalID, IsUnlocked = true };
+                            db.AccountCampaignJournalProgress.InsertOnSubmit(jp);
+                            unlockedJournals.Add(journal);
+                        }
+                        else if (!jp.IsUnlocked)
+                        {
+                            jp.IsUnlocked = true;
+                            unlockedJournals.Add(journal);
+                        }
+                    }
+                }
+
+                if (!alreadyCompleted)
+                {
+                    System.Console.WriteLine("Planet completed: {0}", planet);
+                    foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.Planet == planet && x.UnlockOnPlanetCompletion))
+                    {
+                        unlockedJournals.Add(journal);
+                    }
+                }
+                foreach (CampaignPlanet unlocked in unlockedPlanets)
+                {
+                    System.Console.WriteLine("Planet unlocked: {0}", unlocked);
+                    foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.Planet == unlocked && x.UnlockOnPlanetUnlock))
+                    {
+                        unlockedJournals.Add(journal);
+                    }
+                }
+                foreach (CampaignJournal uj in unlockedJournals)
+                {
+                    System.Console.WriteLine("{1} - Journal entry unlocked: {0}", uj, uj.Planet);
                 }
                 db.SubmitChanges();
             }
@@ -575,6 +579,10 @@ namespace Fixer
         public static void FixStuff()
         {
             // my code here
+            ZkDataContext db = new ZkDataContext();
+            Account acc = db.Accounts.First(x => x.AccountID == 5806);
+            Mission mission = db.Missions.First(x => x.MissionID == 164);
+            ProgressCampaign(db, acc, mission, "dGVzdE1pc3Npb25fam91cm5hbDE9Mjs=");
         }
 
         [STAThread]
