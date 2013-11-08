@@ -318,7 +318,7 @@ namespace ZeroKWeb
             CampaignPlanet planet = db.CampaignPlanets.FirstOrDefault(p => p.MissionID == mission.MissionID);
             if (planet != null)
             {
-                AccountCampaignProgress progress = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == acc.AccountID && x.PlanetID == planet.PlanetID && x.CampaignID == planet.CampaignID);
+                AccountCampaignProgress progress = acc.AccountCampaignProgress.FirstOrDefault(x => x.PlanetID == planet.PlanetID && x.CampaignID == planet.CampaignID);
                 bool alreadyCompleted = false;
                 int accountID = acc.AccountID;
                 int campID = planet.CampaignID;
@@ -393,7 +393,7 @@ namespace ZeroKWeb
                             foreach (CampaignJournalVar variable in requiredVars)
                             {
                                 AccountCampaignVar accountVar = acc.AccountCampaignVars.FirstOrDefault(x => x.CampaignID == campID && x.VarID == variable.RequiredVarID);
-                                if (accountVar.Value != variable.RequiredValue)
+                                if (!(accountVar != null && accountVar.Value == variable.RequiredValue))
                                 {
                                     proceed = false;
                                     break;  // failed to meet var requirement, stop here
@@ -430,7 +430,7 @@ namespace ZeroKWeb
                             foreach (CampaignPlanetVar variable in requiredVars)
                             {
                                 AccountCampaignVar accountVar = acc.AccountCampaignVars.FirstOrDefault(x => x.CampaignID == campID && x.VarID == variable.RequiredVarID);
-                                if (accountVar.Value != variable.RequiredValue)
+                                if (!(accountVar != null && accountVar.Value == variable.RequiredValue))
                                 {
                                     proceed = false;
                                     break;  // failed to meet var requirement, stop here
@@ -474,7 +474,7 @@ namespace ZeroKWeb
                                     foreach (CampaignJournalVar variableJ in requiredVarsJ)
                                     {
                                         AccountCampaignVar accountVar = acc.AccountCampaignVars.FirstOrDefault(x => x.CampaignID == campID && x.VarID == variableJ.RequiredVarID);
-                                        if (accountVar.Value != variableJ.RequiredValue)
+                                        if (!(accountVar != null && accountVar.Value == variableJ.RequiredValue))
                                         {
                                             proceedJ = false;
                                             break;  // failed to meet var requirement, stop here
