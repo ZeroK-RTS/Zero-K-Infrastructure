@@ -343,7 +343,7 @@ namespace ZeroKWeb
                     }
                     if (!(string.IsNullOrEmpty(key) || string.IsNullOrEmpty(value)))
                     { 
-                        CampaignVar cv = db.CampaignVars.First(x => x.CampaignID == planet.CampaignID && x.KeyString == key);
+                        CampaignVar cv = camp.CampaignVars.First(x => x.KeyString == key);
                         AccountCampaignVar acv = acc.AccountCampaignVars.FirstOrDefault(x => x.VarID == cv.VarID);
                         if (acv == null)
                         {
@@ -392,7 +392,7 @@ namespace ZeroKWeb
                         {
                             foreach (CampaignJournalVar variable in requiredVars)
                             {
-                                var accountVar = camp.AccountCampaignVars.FirstOrDefault(x => x.VarID == variable.RequiredVarID);
+                                AccountCampaignVar accountVar = acc.AccountCampaignVars.FirstOrDefault(x => x.CampaignID == campID && x.VarID == variable.RequiredVarID);
                                 if (accountVar.Value != variable.RequiredValue)
                                 {
                                     proceed = false;
@@ -429,7 +429,7 @@ namespace ZeroKWeb
                         {
                             foreach (CampaignPlanetVar variable in requiredVars)
                             {
-                                var accountVar = camp.AccountCampaignVars.FirstOrDefault(x => x.VarID == variable.RequiredVarID);
+                                AccountCampaignVar accountVar = acc.AccountCampaignVars.FirstOrDefault(x => x.CampaignID == campID && x.VarID == variable.RequiredVarID);
                                 if (accountVar.Value != variable.RequiredValue)
                                 {
                                     proceed = false;
@@ -473,7 +473,7 @@ namespace ZeroKWeb
                                 {
                                     foreach (CampaignJournalVar variableJ in requiredVarsJ)
                                     {
-                                        var accountVar = camp.AccountCampaignVars.FirstOrDefault(x => x.VarID == variableJ.RequiredVarID);
+                                        AccountCampaignVar accountVar = acc.AccountCampaignVars.FirstOrDefault(x => x.CampaignID == campID && x.VarID == variableJ.RequiredVarID);
                                         if (accountVar.Value != variableJ.RequiredValue)
                                         {
                                             proceedJ = false;
