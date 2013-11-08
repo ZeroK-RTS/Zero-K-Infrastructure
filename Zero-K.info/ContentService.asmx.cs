@@ -472,6 +472,7 @@ namespace ZeroKWeb
                     db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "{1} - Journal entry unlocked: {0}", uj, uj.Planet));
                 }
             }
+            db.SubmitChanges();
         }
 
      
