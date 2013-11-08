@@ -967,8 +967,19 @@ local function CheckUnitsEntered(units, condition)
   return count >= condition.args.number
 end
 
+local function SendMissionVariables(tbl)
+  if not (tbl and type(tbl) == "table") then
+    Spring.Log(gadget:GetInfo().name, "error", "Invalid argument for SendMissionVariables")
+    return
+  end
+  local str = ""
+  for k,v in pairs(tbl) do
+    str = str .. k .. "=" .. v .. ";"
+  end
+  print("MISSIONVARS: "..GG.Base64Encode(str))
+end
 
-
+GG.mission.SendMissionVariables = SendMissionVariables
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------

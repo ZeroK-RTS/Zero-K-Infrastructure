@@ -408,6 +408,7 @@ namespace LobbyClient
                 var isCheating = false;
                 string gameId = null;
                 string demoFileName = null;
+                string missionVars = "";
 
                 foreach (var cycleline in text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)) {
                     var line = cycleline;
@@ -462,15 +463,22 @@ namespace LobbyClient
                                                 else Trace.TraceError("Error sending score: {0}", e.Error);
                                             }
                                         };
-                                    service.SubmitMissionScoreAsync(lobbyUserName, Utils.HashLobbyPassword(lobbyPassword), modName, score, gameframe/30);
+                                    service.SubmitMissionScoreAsync(lobbyUserName, Utils.HashLobbyPassword(lobbyPassword), modName, score, gameframe/30, missionVars);
                                 }
                             } catch (Exception ex) {
                                 Trace.TraceError(string.Format("Error sending mission score: {0}", ex));
                             }
                         }
                     }
-
-                    // obsolete, hnalded by pm messages if (line.StartsWith("STATS:")) statsData.Add(line.Substring(6));
+                    if (line.Contains("MISSIONVARS:") && battleResult.IsMission)
+                    {
+                        var match = Regex.Match(line, "MISSIONVARS: ([^ ]+)");
+                        missionVars = match.Groups[1].Value.Trim();
+                        Trace.TraceInformation(string.Format("Mission variables: {0} (original line: {1})", missionVars, line));
+                    }
+                    
+                    // obsolete, hanlded by pm messages 
+                    //if (line.StartsWith("STATS:")) statsData.Add(line.Substring(6));
 
                     if (line.StartsWith("Cheating!") || line.StartsWith("Cheating is enabled!")) isCheating = true;
 
