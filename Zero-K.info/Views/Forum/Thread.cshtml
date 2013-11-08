@@ -56,6 +56,7 @@ Pages:
 {
     <b>@Html.ActionLink((i + 1).ToString(), "Thread", new { threadID = Model.CurrentThread.ForumThreadID, page = i })</b>
 }
+<div style="float:right">@string.Format("{0} posts, {1} views", Model.CurrentThread.PostCount, Model.CurrentThread.ViewCount)</div>
 @Html.Partial("~/Views/Forum/PostList.cshtml", Model.Posts)
 @if (!Model.CurrentThread.IsLocked)
 {   
