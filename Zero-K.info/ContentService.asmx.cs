@@ -339,7 +339,7 @@ namespace ZeroKWeb
                     }
                     else
                     {
-                        //throw new Exception("Invalid key-value pair in decoded mission vars");
+                        throw new Exception("Invalid key-value pair in decoded mission vars: " + missionVarsDecoded);
                     }
                     if (!(string.IsNullOrEmpty(key) || string.IsNullOrEmpty(value)))
                     { 
