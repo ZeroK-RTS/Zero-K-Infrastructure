@@ -265,7 +265,7 @@ namespace ZeroKLobby
 
                 //if (Conf.IsFirstRun) Utils.OpenWeb("http://zero-k.info/Wiki/LobbyStart", false);
 
-                Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride);
+                Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion);
 
                 Application.Run(MainWindow);
                 ShutDown();
