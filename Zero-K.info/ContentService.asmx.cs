@@ -217,11 +217,11 @@ namespace ZeroKWeb
                         scoreEntry.GameSeconds = gameSeconds;
                     }
                 }
+                db.SubmitChanges();
 
                 // ====================
                 // campaign stuff
-                ProgressCampaign(db, acc, mission, missionVars);
-                db.SubmitChanges();
+                ProgressCampaign(acc.AccountID, mission.MissionID, missionVars);
             }
         }
 
@@ -313,14 +313,15 @@ namespace ZeroKWeb
             return ip;
         }
 
-        public static void ProgressCampaign(ZkDataContext db, Account acc, Mission mission, string missionVars = "")
+        public static void ProgressCampaign(int accountID, int missionID, string missionVars = "")
         {
-            CampaignPlanet planet = db.CampaignPlanets.FirstOrDefault(p => p.MissionID == mission.MissionID);
+            ZkDataContext db = new ZkDataContext();
+            CampaignPlanet planet = db.CampaignPlanets.FirstOrDefault(p => p.MissionID == missionID);
             if (planet != null)
             {
+                Account acc = db.Accounts.First(x => x.AccountID == accountID);
                 AccountCampaignProgress progress = acc.AccountCampaignProgress.FirstOrDefault(x => x.PlanetID == planet.PlanetID && x.CampaignID == planet.CampaignID);
                 bool alreadyCompleted = false;
-                int accountID = acc.AccountID;
                 int campID = planet.CampaignID;
                 Campaign camp = planet.Campaign;
                 List<CampaignPlanet> unlockedPlanets = new List<CampaignPlanet>();
