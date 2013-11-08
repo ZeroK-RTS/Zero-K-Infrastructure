@@ -79,7 +79,7 @@ namespace ZeroKWeb.Controllers
             return View("CampaignMap", camp);
         }
 
-        public ActionResult JournalList(int? campaignID = null)
+        public ActionResult Journals(int? campaignID = null)
         {
             if (Global.Account == null) return Content("You must be logged in to view campaign info");
 
@@ -89,7 +89,7 @@ namespace ZeroKWeb.Controllers
             if (campaignID != null) camp = db.Campaigns.Single(x => x.CampaignID == campaignID);
             else camp = db.Campaigns.Single(x => x.CampaignID == 1);
 
-            return View("JournalList", camp);
+            return View("Journals", camp);
         }
 
         public ActionResult CampaignEvents(int? planetID,
