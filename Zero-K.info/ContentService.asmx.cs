@@ -326,7 +326,7 @@ namespace ZeroKWeb
 
                 // start with processing the mission vars, if there are any
                 byte[] missionVarsAsByteArray = System.Convert.FromBase64String(missionVars);
-                string missionVarsDecoded = System.Text.Encoding.Unicode.GetString(missionVarsAsByteArray);
+                string missionVarsDecoded = System.Text.Encoding.UTF8.GetString(missionVarsAsByteArray);
                 foreach (string kvpRaw in missionVarsDecoded.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
                 {
                     string kvpRaw2 = kvpRaw.Trim();
