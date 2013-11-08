@@ -51,7 +51,7 @@ local searchlightGroundLeadTime    = 1           --roughly how many seconds ahea
 
 local dayNightCycle        = true                --enables day/night cycle
 local startDayTime         = 0.5                   --start time, between 0 and 1; 0 = midnight, 0.5 = noon
-local secondsPerDay        = 600                 --seconds per day
+local secondsPerDay        = 120                 --seconds per day
 
 local maxBeamDivergent = 2 					--how big the light beam can expand if unit get further away from ground
 
