@@ -286,7 +286,7 @@ namespace ZeroKLobby.MicroLobby
             var channelName = e.ServerParams[0];
             var userName = e.ServerParams[1];
             var reason = e.ServerParams[2];
-            WarningBar.DisplayWarning("You have been kicked by " + userName + ".\r\nReason: " + reason);
+            WarningBar.DisplayWarning("You have been kicked from chat channel " + channelName + " by " + userName + ".\r\nReason: " + reason);
             var chatControl = GetChannelControl(channelName);
             if (chatControl != null)
             {
