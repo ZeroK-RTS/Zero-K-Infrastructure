@@ -73,6 +73,7 @@
   <ItemGroup>
     <Compile Include="Action.cs" />
     <Compile Include="Actions\GUI\BeautyShotAction.cs" />
+    <Compile Include="Actions\Logic\MakeUnitsNeutralAction.cs" />
     <Compile Include="Actions\MusicLoopAction.cs" />
     <Compile Include="Actions\Logic\AllowUnitTransfersAction.cs" />
     <Compile Include="Actions\GUI\AddObjectiveAction.cs" />

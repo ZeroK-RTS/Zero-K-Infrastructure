@@ -113,7 +113,6 @@ namespace MissionEditor2
 		{
 			MenuItem menu = new MenuItem { Header = "New Action" };
 
-            /*
             Dictionary<String, MenuItem> submenus = new Dictionary<String, MenuItem>
             {
                 {"Logic", new MenuItem { Header = "Logic" }},
@@ -123,14 +122,14 @@ namespace MissionEditor2
             };
             foreach (var submenu in submenus)
             {
-                menu.Items.Add(submenu);
+                menu.Items.Add(submenu.Value);
             }
-            */
 
-			Action<string, Func<TriggerLogic>> addAction = (name, makeItem) =>
+			Action<string, Func<TriggerLogic>, string> addAction = (name, makeItem, submenuName) =>
 				{
 					var item = new MenuItem { Header = name };
-					menu.Items.Add(item);
+                    var submenu = submenuName != null ? submenus[submenuName] : menu;
+                    submenu.Items.Add(item);
 					item.Click += (s, ea) =>
 						{
 							var trigger = getTrigger();
@@ -147,60 +146,62 @@ namespace MissionEditor2
 				};
             String GuiMessagePersistentDesc = "Hello!\nI differ from the regular GUI message in that I can't pause the game, have no close button, and there can be only one of me!\nI require a Chili widget to work!";
 
-            addAction("Add Objective", () => new AddObjectiveAction("newObj"));
-			addAction("Allow Unit Transfers", () => new AllowUnitTransfersAction());
-            addAction("Beauty Shot", () => new BeautyShotAction());
-			addAction("Cancel Countdown", () => new CancelCountdownAction(Mission.Countdowns.FirstOrDefault()));
-			addAction("Cause Defeat", () => new DefeatAction());
-			addAction("Cause Sunrise", () => new SunriseAction());
-			addAction("Cause Sunset", () => new SunsetAction());
-			addAction("Cause Victory", () => new VictoryAction());
-			addAction("Create Units", () => new CreateUnitsAction());
-			addAction("Custom Action", () => new CustomAction());
-            addAction("Custom Action (alternate)", () => new CustomAction2());
-            addAction("Enter Cutscene", () => new EnterCutsceneAction());
-            addAction("Leave Cutscene", () => new LeaveCutsceneAction());
-			addAction("Destroy Units", () => new DestroyUnitsAction());
-			addAction("Disable Triggers", () => new DisableTriggersAction());
-			addAction("Display Counters", () => new DisplayCountersAction());
-			addAction("Enable Triggers", () => new EnableTriggersAction());
-			addAction("Execute Random Trigger", () => new ExecuteRandomTriggerAction());
-			addAction("Execute Triggers", () => new ExecuteTriggersAction());
-            addAction("Fade Out", () => new FadeOutAction());
-            addAction("Fade In", () => new FadeInAction());
-			addAction("Give Factory Orders", () => new GiveFactoryOrdersAction());
-			addAction("Give Orders", () => new GiveOrdersAction());
-			addAction("Lock Units", () => new LockUnitsAction());
-			addAction("Make Units Always Visible", () => new MakeUnitsAlwaysVisibleAction());
-			addAction("Modify Countdown", () => new ModifyCountdownAction(Mission.Countdowns.FirstOrDefault()));
-			addAction("Modify Counter", () => new ModifyCounterAction());
-            addAction("Modify Objective", () => new ModifyObjectiveAction("newObj"));
-			addAction("Modify Score", () => new ModifyScoreAction());
-			addAction("Modify Resources", () => new ModifyResourcesAction(Mission.Players.First()));
-			addAction("Modify Unit Health", () => new ModifyUnitHealthAction());
-			addAction("Pause", () => new PauseAction());
-			addAction("Play Sound", () => new SoundAction());
-            addAction("Play Music", () => new MusicAction());
-            addAction("Play Looping Music", () => new MusicLoopAction());
-            addAction("Stop Music", () => new StopMusicAction());
-			addAction("Point Camera at Map Position", () => new SetCameraPointTargetAction(Mission.Map.Texture.Width/2, Mission.Map.Texture.Height/2));
-			addAction("Point Camera at Unit", () => new SetCameraUnitTargetAction());
-            addAction("Set Camera Position/Direction", () => new SetCameraPosDirAction());
-            addAction("Shake Camera", () => new ShakeCameraAction());
-            addAction("Save Camera State", () => new SaveCameraStateAction());
-            addAction("Restore Camera State", () => new RestoreCameraStateAction());
-			addAction("Send Scores", () => new SendScoreAction());
-			addAction("Show Console Message", () => new ConsoleMessageAction("Hello!"));
-			addAction("Show GUI Message", () => new GuiMessageAction("Hello!"));
-            addAction("Show GUI Message (Persistent)", () => new GuiMessagePersistentAction(GuiMessagePersistentDesc));
-            addAction("Hide GUI Message (Persistent)", () => new HideGuiMessagePersistentAction());
-            addAction("Show Convo Message", () => new ConvoMessageAction("Hello! I am a talking head for missions! I require a custom widget to work!"));
-            addAction("Clear Convo Message Queue", () => new ClearConvoMessageQueueAction());
-			addAction("Show Marker Point", () => new MarkerPointAction(Mission.Map.Texture.Width/2, Mission.Map.Texture.Height/2));
-			addAction("Start Countdown", () => new StartCountdownAction(GetNewCountdownName()));
-			addAction("Transfer Units", () => new TransferUnitsAction(Mission.Players.First()));
-			addAction("Unlock Units", () => new UnlockUnitsAction());
-			addAction("Wait", () => new WaitAction());
+            addAction("Cancel Countdown", () => new CancelCountdownAction(Mission.Countdowns.FirstOrDefault()), "Logic");
+            addAction("Allow Unit Transfers", () => new AllowUnitTransfersAction(), "Logic");
+            addAction("Create Units", () => new CreateUnitsAction(), "Logic");
+            addAction("Destroy Units", () => new DestroyUnitsAction(), "Logic");
+            addAction("Enable Triggers", () => new EnableTriggersAction(), "Logic");
+            addAction("Disable Triggers", () => new DisableTriggersAction(), "Logic");
+            addAction("Execute Triggers", () => new ExecuteTriggersAction(), "Logic");
+            addAction("Execute Random Trigger", () => new ExecuteRandomTriggerAction(), "Logic");
+            addAction("Give Orders", () => new GiveOrdersAction(), "Logic");
+            addAction("Give Factory Orders", () => new GiveFactoryOrdersAction(), "Logic");
+            addAction("Lock Units", () => new LockUnitsAction(), "Logic");
+            addAction("Unlock Units", () => new UnlockUnitsAction(), "Logic");
+            addAction("Make Units Always Visible", () => new MakeUnitsAlwaysVisibleAction(), "Logic");
+            addAction("Make Units Neutral", () => new MakeUnitsAlwaysVisibleAction(), "Logic");
+            addAction("Modify Countdown", () => new ModifyCountdownAction(Mission.Countdowns.FirstOrDefault()), "Logic");
+            addAction("Modify Counter", () => new ModifyCounterAction(), "Logic");
+            addAction("Send Scores", () => new SendScoreAction(), "Logic");
+            addAction("Start Countdown", () => new StartCountdownAction(GetNewCountdownName()), "Logic");
+            addAction("Transfer Units", () => new TransferUnitsAction(Mission.Players.First()), "Logic");
+            addAction("Victory", () => new VictoryAction(), "Logic");
+            addAction("Defeat", () => new DefeatAction(), "Logic");
+
+            addAction("Beauty Shot", () => new BeautyShotAction(), "Camera");
+            addAction("Point Camera at Map Position", () => new SetCameraPointTargetAction(Mission.Map.Texture.Width / 2, Mission.Map.Texture.Height / 2), "Camera");
+            addAction("Point Camera at Unit", () => new SetCameraUnitTargetAction(), "Camera");
+            addAction("Set Camera Position/Direction", () => new SetCameraPosDirAction(), "Camera");
+            addAction("Shake Camera", () => new ShakeCameraAction(), "Camera");
+            addAction("Save Camera State", () => new SaveCameraStateAction(), "Camera");
+            addAction("Restore Camera State", () => new RestoreCameraStateAction(), "Camera");
+
+            addAction("Custom Action", () => new CustomAction(), "Misc");
+            addAction("Custom Action (alternate)", () => new CustomAction2(), "Misc");
+            addAction("Pause", () => new PauseAction(), "Misc");
+            addAction("Play Music", () => new MusicAction(), "Misc");
+            addAction("Play Looping Music", () => new MusicLoopAction(), "Misc");
+            addAction("Stop Music", () => new StopMusicAction(), "Misc");
+            addAction("Play Sound", () => new SoundAction(), "Misc");
+			addAction("Sunrise", () => new SunriseAction(), "Misc");
+			addAction("Sunset", () => new SunsetAction(), "Misc");
+            addAction("Wait", () => new WaitAction(), "Misc");
+
+            addAction("Add Objective", () => new AddObjectiveAction("newObj"), "GUI");
+            addAction("Modify Objective", () => new ModifyObjectiveAction("newObj"), "GUI");
+            addAction("Enter Cutscene", () => new EnterCutsceneAction(), "GUI");
+            addAction("Leave Cutscene", () => new LeaveCutsceneAction(), "GUI");
+            addAction("Display Counters", () => new DisplayCountersAction(), "GUI");
+            addAction("Fade In", () => new FadeInAction(), "GUI");
+            addAction("Fade Out", () => new FadeOutAction(), "GUI");
+            addAction("Show Console Message", () => new ConsoleMessageAction("Hello!"), "GUI");
+            addAction("Show GUI Message", () => new GuiMessageAction("Hello!"), "GUI");
+            addAction("Show GUI Message (Persistent)", () => new GuiMessagePersistentAction(GuiMessagePersistentDesc), "GUI");
+            addAction("Hide GUI Message (Persistent)", () => new HideGuiMessagePersistentAction(), "GUI");
+            addAction("Show Convo Message", () => new ConvoMessageAction("Hello! I am a talking head for missions! I require a custom widget to work!"), "GUI");
+            addAction("Clear Convo Message Queue", () => new ClearConvoMessageQueueAction(), "GUI");
+            addAction("Show Marker Point", () => new MarkerPointAction(Mission.Map.Texture.Width / 2, Mission.Map.Texture.Height / 2), "GUI");
+
 			return menu;
 		}
 

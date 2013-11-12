@@ -5,12 +5,12 @@ using System.Runtime.Serialization;
 namespace CMissionLib.Actions
 {
 	[DataContract]
-	public class MakeUnitsAlwaysVisibleAction : Action
+	public class MakeUnitsNeutralAction : Action
 	{
         bool value = true;
 		string group = String.Empty;
 
-		public MakeUnitsAlwaysVisibleAction()
+		public MakeUnitsNeutralAction()
 			: base() {}
 
 		[DataMember]

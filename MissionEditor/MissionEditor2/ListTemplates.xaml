@@ -186,12 +186,21 @@
         </DataTemplate>
 
         <DataTemplate x:Key="MakeUnitsAlwaysVisibleAction">
-            <DockPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Label>Group:</Label>
                 <ComboBox ItemsSource="{Binding Mission.AllGroups, ElementName=window}" SelectedItem="{Binding Group}" />
-            </DockPanel>
+                <CheckBox IsChecked="{Binding Value}">Always Visible</CheckBox>
+            </StackPanel>
         </DataTemplate>
 
+        <DataTemplate x:Key="MakeUnitsNeutralAction">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Label>Group:</Label>
+                <ComboBox ItemsSource="{Binding Mission.AllGroups, ElementName=window}" SelectedItem="{Binding Group}" />
+                <CheckBox IsChecked="{Binding Value}">Neutral</CheckBox>
+            </StackPanel>
+        </DataTemplate>       
+        
         <DataTemplate x:Key="ModifyCounterAction">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Button Click="AddCounterButton_Click">Add Counter</Button>
