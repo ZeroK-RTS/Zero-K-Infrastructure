@@ -41,8 +41,10 @@
 				var lineY = y1 + width / 2;
 
 				// don't let the line cover the planets
-                Resource map1 = db.Resources.FirstOrDefault(m => m.InternalName == p1.Mission.Map);
-                Resource map2 = db.Resources.FirstOrDefault(m => m.InternalName == p2.Mission.Map);
+                string mapName1 = p1.DisplayedMap ?? p1.Mission.Map;
+                string mapName2 = p2.DisplayedMap ?? p1.Mission.Map;
+                Resource map1 = db.Resources.FirstOrDefault(m => m.InternalName == mapName1);
+                Resource map2 = db.Resources.FirstOrDefault(m => m.InternalName == mapName2);
 				lineY += map1.PlanetWarsIconSize / 2 * 1.5;
 				length -= map2.PlanetWarsIconSize * 1.5;
 

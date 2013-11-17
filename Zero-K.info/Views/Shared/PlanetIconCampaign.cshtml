@@ -2,10 +2,11 @@
 @model CampaignPlanet
 @{
     var db = new ZkDataContext();
-    Resource map = db.Resources.FirstOrDefault(m => m.InternalName == Model.Mission.Map);
+    string mapName = Model.DisplayedMap ?? Model.Mission.Map;
+    Resource map = db.Resources.FirstOrDefault(m => m.InternalName == mapName);
     var planetIconUrl = "/img/planets/" + map.MapPlanetWarsIcon;
-    var size = map.PlanetWarsIconSize * Planet.OverlayRatio;
-    var offset = (map.PlanetWarsIconSize * Planet.OverlayRatio - Model.Mission.Resources.PlanetWarsIconSize) / 2;
+    var size = map.PlanetWarsIconSize * CampaignPlanet.OverlayRatio;
+    var offset = (map.PlanetWarsIconSize * CampaignPlanet.OverlayRatio - Model.Mission.Resources.PlanetWarsIconSize) / 2;
 }
 <span style='width: @(size)px; height:@(size)px; display: inline-block;'>
   <img src='@planetIconUrl' width='@(map.PlanetWarsIconSize)' style='position:absolute; padding-left: @(offset)px; padding-top: @(offset)px' />

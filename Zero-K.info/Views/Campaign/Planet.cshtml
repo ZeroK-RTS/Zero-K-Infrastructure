@@ -5,15 +5,16 @@
 @{
 	ViewBag.Title = "Planet";
 	Page.Title = "Planet " + Model.Name;
-	var db = new ZkDataContext();
-    Resource map = db.Resources.FirstOrDefault(m => m.InternalName == Model.Mission.Map);
+	ZkDataContext db = new ZkDataContext();
+    string mapName = Model.DisplayedMap ?? Model.Mission.Map;
+    Resource map = db.Resources.FirstOrDefault(m => m.InternalName == mapName);
     bool complete = Model.IsCompleted(Global.AccountID);
     bool unlocked = Model.IsUnlocked(Global.AccountID);
-    var colorStyle = "color:" + Model.GetColor(Global.Account) + ";";
+    string colorStyle = "color:" + Model.GetColor(Global.Account) + ";";
     var journals = db.CampaignJournals.Where(x => x.CampaignID == Model.CampaignID && x.PlanetID == Model.PlanetID).ToList();
     
     Campaign campaign = db.Campaigns.Single(c => c.CampaignID == Model.CampaignID);
-    var mapWidth = 700;
+    int mapWidth = 700;
     var mapHeight = 500;
 }
 @section head {

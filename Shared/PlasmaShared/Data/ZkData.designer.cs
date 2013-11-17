@@ -22875,6 +22875,8 @@ namespace ZkData
 		
 		private System.Nullable<int> _MaxElo;
 		
+		private System.Nullable<bool> _IsTrollHost;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -22937,6 +22939,8 @@ namespace ZkData
     partial void OnMaxLevelChanged();
     partial void OnMaxEloChanging(System.Nullable<int> value);
     partial void OnMaxEloChanged();
+    partial void OnIsTrollHostChanging(System.Nullable<bool> value);
+    partial void OnIsTrollHostChanged();
     #endregion
 		
 		public AutohostConfig()
@@ -23549,6 +23553,27 @@ namespace ZkData
 					this._MaxElo = value;
 					this.SendPropertyChanged("MaxElo");
 					this.OnMaxEloChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsTrollHost", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30)]
+		public System.Nullable<bool> IsTrollHost
+		{
+			get
+			{
+				return this._IsTrollHost;
+			}
+			set
+			{
+				if ((this._IsTrollHost != value))
+				{
+					this.OnIsTrollHostChanging(value);
+					this.SendPropertyChanging();
+					this._IsTrollHost = value;
+					this.SendPropertyChanged("IsTrollHost");
+					this.OnIsTrollHostChanged();
 				}
 			}
 		}
@@ -28452,6 +28477,8 @@ namespace ZkData
 		
 		private bool _HideIfLocked;
 		
+		private string _DisplayedMap;
+		
 		private EntitySet<AccountCampaignProgress> _AccountCampaignProgress;
 		
 		private EntitySet<CampaignLink> _CampaignLinks;
@@ -28496,6 +28523,8 @@ namespace ZkData
     partial void OnStartsUnlockedChanged();
     partial void OnHideIfLockedChanging(bool value);
     partial void OnHideIfLockedChanged();
+    partial void OnDisplayedMapChanging(string value);
+    partial void OnDisplayedMapChanged();
     #endregion
 		
 		public CampaignPlanet()
@@ -28742,8 +28771,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DisplayedMap", DbType="nvarchar(100)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
+		public string DisplayedMap
+		{
+			get
+			{
+				return this._DisplayedMap;
+			}
+			set
+			{
+				if ((this._DisplayedMap != value))
+				{
+					this.OnDisplayedMapChanging(value);
+					this.SendPropertyChanging();
+					this._DisplayedMap = value;
+					this.SendPropertyChanged("DisplayedMap");
+					this.OnDisplayedMapChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_AccountCampaignProgress", Storage="_AccountCampaignProgress", ThisKey="CampaignID,PlanetID", OtherKey="CampaignID,PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
 		public EntitySet<AccountCampaignProgress> AccountCampaignProgress
 		{
 			get
@@ -28762,7 +28812,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignLink", Storage="_CampaignLinks", ThisKey="CampaignID,PlanetID", OtherKey="CampaignID,PlanetToUnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
 		public EntitySet<CampaignLink> CampaignLinks
 		{
 			get
@@ -28781,7 +28831,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignLink1", Storage="_CampaignLinks1", ThisKey="CampaignID,PlanetID", OtherKey="CampaignID,UnlockingPlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
 		public EntitySet<CampaignLink> CampaignLinks1
 		{
 			get
@@ -28800,7 +28850,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignJournal", Storage="_CampaignJournals", ThisKey="CampaignID,PlanetID", OtherKey="CampaignID,PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
 		public EntitySet<CampaignJournal> CampaignJournals
 		{
 			get
@@ -28819,7 +28869,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignPlanetVar", Storage="_CampaignPlanetVars", ThisKey="CampaignID,PlanetID", OtherKey="CampaignID,PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
 		public EntitySet<CampaignPlanetVar> CampaignPlanetVars
 		{
 			get
@@ -28838,7 +28888,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignEvent", Storage="_CampaignEvents", ThisKey="CampaignID,PlanetID", OtherKey="CampaignID,PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
 		public EntitySet<CampaignEvent> CampaignEvents
 		{
 			get
