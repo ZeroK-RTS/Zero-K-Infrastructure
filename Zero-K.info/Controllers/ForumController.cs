@@ -197,9 +197,8 @@ namespace ZeroKWeb.Controllers
 
 					db.SubmitChanges();
 				}
-				scope.Complete();
-
                 int page = forumPostID.HasValue ? GetPostIndexInThread((int)forumPostID) : 0;
+                scope.Complete();
 
 				if (missionID.HasValue) return RedirectToAction("Detail", "Missions", new { id = missionID });
 				else if (resourceID.HasValue) return RedirectToAction("Detail", "Maps", new { id = resourceID });
