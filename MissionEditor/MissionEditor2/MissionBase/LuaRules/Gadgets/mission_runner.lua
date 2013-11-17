@@ -415,9 +415,9 @@ local function UpdateAllDisabledUnits()
   end
 end
 
-local function AddEvent(frame, event)
+local function AddEvent(frame, event, args)
   events[frame] = events[frame] or {}
-  table.insert(events[frame], event)
+  table.insert(events[frame], {event = event, args = args})
 end
 
 
@@ -432,27 +432,18 @@ local function CustomConditionMet(name)
   end
 end
 
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+-- actually defined in a bit
+local function ExecuteTrigger() end
 
-local function ExecuteTrigger(trigger, frame)
-  if not trigger.enabled then return end
-  if math.random() < trigger.probability then
-    if trigger.maxOccurrences == trigger.occurrences then
-      RemoveTrigger(trigger) -- the trigger is no longer needed
-      return
-    end
-    local createdUnits = {}
-    local frame = frame or (Spring.GetGameFrame() + 1) -- events will take place at this frame
-    for _, action in ipairs(trigger.logic) do
-      local Event
-      --Spring.Echo(action.logicType, action.name)
-      if action.logicType == "CustomAction" then
-        Event = function()
+local actionsTable = {
+  CustomAction = function(action)
           if action.name == "my custom action name" then
             -- fill in your custom actions
           end
-        end
-	  elseif action.logicType == "CustomAction2" then
-        Event = function()
+        end,
+  CustomAction2 = function(action)
           if action.args.synced then
             local func, err = loadstring(action.args.codeStr)
             if err then
@@ -466,36 +457,30 @@ local function ExecuteTrigger(trigger, frame)
             SendToUnsynced"MissionEvent"
             _G.missionEventArgs = nil
           end
-        end
-      elseif action.logicType == "DestroyUnitsAction" then
-        Event = function()
+        end,
+  DestroyUnitsAction = function(action)
           for unitID in pairs(FindUnitsInGroup(action.args.group)) do
             Spring.DestroyUnit(unitID, true, not action.args.explode)
           end
-        end
-      elseif action.logicType == "ExecuteTriggersAction" then
-        Event = function()
+        end,
+  ExecuteTriggersAction = function(action)
           for _, triggerIndex in ipairs(action.args.triggers) do
               ExecuteTrigger(allTriggers[triggerIndex])
           end
-        end
-      elseif action.logicType == "ExecuteRandomTriggerAction" then
-        Event = function()
+        end,
+  ExecuteRandomTriggerAction = function(action)
           local triggerIndex = TakeRandomI(action.args.triggers)
           ExecuteTrigger(allTriggers[triggerIndex])
-        end
-      elseif action.logicType == "AllowUnitTransfersAction" then
-        Event = function()
+        end,
+  AllowUnitTransfersAction = function(action)
           allowTransfer = true
-        end
-      elseif action.logicType == "TransferUnitsAction" then
-        Event = function()
+        end,
+  TransferUnitsAction = function(action)
           for unitID in pairs(FindUnitsInGroup(action.args.group)) do
             SpecialTransferUnit(unitID, action.args.player, false)
           end
-        end
-      elseif action.logicType == "ModifyResourcesAction" then
-        Event = function()  
+        end,
+  ModifyResourcesAction = function(action)  
           local teamID = action.args.player
           if Spring.GetTeamInfo(teamID) then
             if action.args.category == "metal" then
@@ -518,21 +503,23 @@ local function ExecuteTrigger(trigger, frame)
               Spring.SetTeamResource(teamID, "ms", currentStorage + action.args.amount)
             end
           end
-        end
-      elseif action.logicType == "ModifyUnitHealthAction" then
-        Event = function()
+        end,
+  ModifyUnitHealthAction = function(action)
           for unitID in pairs(FindUnitsInGroup(action.args.group)) do
             Spring.AddUnitDamage(unitID, action.args.damage)
           end
-        end
-      elseif action.logicType == "MakeUnitsAlwaysVisibleAction" then
-        Event = function()
+        end,
+  MakeUnitsAlwaysVisibleAction = function(action)
           for unitID in pairs(FindUnitsInGroup(action.args.group)) do
-            Spring.SetUnitAlwaysVisible(unitID, true)
+            Spring.SetUnitAlwaysVisible(unitID, action.args.value)
           end
-        end
-      elseif action.logicType == "ModifyCounterAction" then
-        Event = function()
+        end,
+  MakeUnitsNeutralAction = function(action)
+          for unitID in pairs(FindUnitsInGroup(action.args.group)) do
+            Spring.SetUnitAlwaysVisible(unitID, action.args.value)
+          end
+        end,
+  ModifyCounterAction = function(action)
           local counter = action.args.counter
           local value = action.args.value
           local n = counters[counter]
@@ -563,15 +550,13 @@ local function ExecuteTrigger(trigger, frame)
               end
             end
           end
-        end
-      elseif action.logicType == "DisplayCountersAction" then
-        Event = function()
+        end,
+  DisplayCountersAction = function(action)
           for counter, value in pairs(counters) do
             Spring.Echo(string.format("Counter %s: %f", counter, value))
           end
-        end
-      elseif action.logicType == "ModifyScoreAction" then
-        Event = function()
+        end,
+  ModifyScoreAction = function(action)
           for _, teamID in ipairs(action.args.players) do
             if Spring.GetTeamInfo(teamID) then
               local score = scores[teamID] or 0
@@ -588,38 +573,31 @@ local function ExecuteTrigger(trigger, frame)
               Spring.SetTeamRulesParam(teamID, "score", score)
             end
           end
-        end
-      elseif action.logicType == "EnableTriggersAction" then
-        Event = function()
+        end,
+  EnableTriggersAction = function(action)
           for _, triggerIndex in ipairs(action.args.triggers) do
-              allTriggers[triggerIndex].enabled = true
+            allTriggers[triggerIndex].enabled = true
           end
-        end
-      elseif action.logicType == "DisableTriggersAction" then
-        Event = function()
+        end,
+  DisableTriggersAction = function(action)
           for _, triggerIndex in ipairs(action.args.triggers) do
             allTriggers[triggerIndex].enabled = false
           end
-        end
-      elseif action.logicType == "WaitAction" then
-        frame = frame + action.args.frames
-      elseif action.logicType == "StartCountdownAction" then
-        Event = function()
+        end,
+  StartCountdownAction = function(action)
           local expiry = Spring.GetGameFrame() + action.args.frames
           countdowns[action.args.countdown] = expiry
           if action.args.display then
             displayedCountdowns[action.args.countdown] = true
             Spring.SetGameRulesParam("countdown:"..action.args.countdown, expiry)
           end
-        end
-      elseif action.logicType == "CancelCountdownAction" then
-        Event = function()
+        end,
+  CancelCountdownAction = function(action)
           countdowns[action.args.countdown] = nil
           displayedCountdowns[action.args.countdown] = nil
           Spring.SetGameRulesParam("countdown:"..action.args.countdown, "-1")
-        end
-      elseif action.logicType == "ModifyCountdownAction" then
-        Event = function()
+        end,
+  ModifyCountdownAction = function(action)
           if countdowns[action.args.countdown] then
             local newExpiry
             if action.args.action == "Extend" then
@@ -650,9 +628,8 @@ local function ExecuteTrigger(trigger, frame)
             end
           end
           -- todo: execute trigger if countdown has expired! print Spring.Echo
-        end
-      elseif action.logicType == "CreateUnitsAction" then
-        Event = function()
+        end,
+  CreateUnitsAction = function(action, createdUnits)
           local gameframe = Spring.GetGameFrame()
           for _, unit in ipairs(action.args.units) do
             if Spring.GetTeamInfo(unit.player) then
@@ -731,14 +708,11 @@ local function ExecuteTrigger(trigger, frame)
               end
             end
           end
-        end
-      elseif action.logicType == "ConsoleMessageAction" then
-        Event = function()
+        end,
+  ConsoleMessageAction = function(action)
           Spring.SendMessage(action.args.message)
-        end
-      elseif action.logicType == "DefeatAction" then
-        Event = function()
-          Spring.Echo("defeating")
+        end,
+  DefeatAction = function(action)
 	  local aiAllyTeams = {}
           local teams = Spring.GetTeamList()
           for i=1,#teams do
@@ -751,9 +725,8 @@ local function ExecuteTrigger(trigger, frame)
             end
           end
 	  Spring.GameOver(aiAllyTeams)
-        end
-      elseif action.logicType == "VictoryAction" then
-        Event = function()
+        end,
+  VictoryAction = function(action)
 	  local humanAllyTeams = {}
           local teams = Spring.GetTeamList()
           for i=1,#teams do
@@ -764,9 +737,8 @@ local function ExecuteTrigger(trigger, frame)
             end
           end
 	  Spring.GameOver(humanAllyTeams)
-        end
-      elseif action.logicType == "LockUnitsAction" then
-        Event = function()
+        end,
+  LockUnitsAction = function(action)
           for _, disabledUnitName in ipairs(action.args.units) do
             local disabledUnit = UnitDefNames[disabledUnitName]
             if disabledUnit then
@@ -774,9 +746,8 @@ local function ExecuteTrigger(trigger, frame)
             end
           end
           UpdateAllDisabledUnits()
-        end
-      elseif action.logicType == "UnlockUnitsAction" then
-        Event = function()
+        end,
+  UnlockUnitsAction = function(action)
           for _, disabledUnitName in ipairs(action.args.units) do
             local disabledUnit = UnitDefNames[disabledUnitName]
             if disabledUnit then
@@ -784,50 +755,8 @@ local function ExecuteTrigger(trigger, frame)
             end
           end
           UpdateAllDisabledUnits()
-        end
-      elseif action.logicType == "PauseAction" or
-             action.logicType == "MarkerPointAction" or 
-             action.logicType == "SetCameraPointTargetAction" or
-             action.logicType == "SetCameraPosDirAction" or
-             action.logicType == "SaveCameraStateAction" or
-             action.logicType == "RestoreCameraStateAction" or
-             action.logicType == "ShakeCameraAction" or
-             action.logicType == "GuiMessageAction" or
-             action.logicType == "GuiMessagePersistentAction" or
-             action.logicType == "HideGuiMessagePersistentAction" or
-             action.logicType == "ConvoMessageAction" or
-             action.logicType == "ClearConvoMessageQueueAction" or
-             action.logicType == "AddObjectiveAction" or
-             action.logicType == "ModifyObjectiveAction" or
-             action.logicType == "SoundAction" or
-             action.logicType == "MusicAction" or
-	     action.logicType == "MusicLoopAction" or
-             action.logicType == "StopMusicAction" or
-             action.logicType == "SunriseAction" or 
-             action.logicType == "SunsetAction" or
-             action.logicType == "EnterCutsceneAction" or
-             action.logicType == "LeaveCutsceneAction" or
-	     action.logicType == "FadeOutAction" or
-             action.logicType == "FadeInAction" then
-        Event = function()
-          action.args.logicType = action.logicType
-          _G.missionEventArgs = action.args
-          SendToUnsynced"MissionEvent"
-          _G.missionEventArgs = nil
-        end
-	if action.logicType == "AddObjectiveAction" then
-	  objectives[action.args.id] = {title = action.args.title, description = action.args.description}
-	elseif action.logicType == "ModifyObjectiveAction" then
-	  if objectives[action.args.id] then
-            -- TBD
-	  end
-        elseif action.logicType == "EnterCutsceneAction" then
-          isInCutscene = true
-        elseif action.logicType == "LeaveCutsceneAction" then
-          isInCutscene = false
-	end
-      elseif action.logicType == "GiveOrdersAction" then
-        Event = function()
+        end,
+  GiveOrdersAction = function(action, createdUnits)
           local orderedUnits
           if not next(action.args.groups) then
             orderedUnits = createdUnits
@@ -848,9 +777,8 @@ local function ExecuteTrigger(trigger, frame)
               Spring.GiveOrderToUnit(unitID, CMD[order.orderType], {x, y, z}, options)
             end
           end
-        end
-      elseif action.logicType == "GiveFactoryOrdersAction" then
-        Event = function()
+        end,
+  GiveFactoryOrdersAction = function(action, createdUnits)
           local orderedUnits
           if not next(action.args.factoryGroups) then
             orderedUnits = createdUnits
@@ -876,16 +804,14 @@ local function ExecuteTrigger(trigger, frame)
               repeatFactoryGroups[factoryID] = CopyTable(action.args.builtUnitsGroups)
             end
           end
-        end      
-      elseif action.logicType == "SendScoreAction" then
-        Event = function()
+        end,
+  SendScoreAction = function(action)
           if not (cheatingWasEnabled or scoreSent) then
             SendToUnsynced("ScoreEvent")
             scoreSent = true
           end
-        end
-      elseif action.logicType == "SetCameraUnitTargetAction" then
-        Event = function()
+        end,
+  SetCameraUnitTargetAction = function(action)
           for unitID, groups in pairs(unitGroups) do
             if groups[action.args.group] then
               local _,_,_,x,_,y = Spring.GetUnitPosition(unitID, true)
@@ -900,9 +826,8 @@ local function ExecuteTrigger(trigger, frame)
               break
             end
           end
-        end
-      elseif action.logicType == "BeautyShotAction" then
-        Event = function()
+        end,
+  BeautyShotAction = function(action)
           for unitID, groups in pairs(unitGroups) do
             if groups[action.args.group] then
               local _,_,_,x,y,z = Spring.GetUnitPosition(unitID, true)
@@ -918,9 +843,76 @@ local function ExecuteTrigger(trigger, frame)
             end
           end
         end
+}
+
+local unsyncedActions = {
+  PauseAction = true,
+  MarkerPointAction = true, 
+  SetCameraPointTargetAction = true,
+  SetCameraPosDirAction = true,
+  SaveCameraStateAction = true,
+  RestoreCameraStateAction = true,
+  ShakeCameraAction = true,
+  GuiMessageAction = true,
+  GuiMessagePersistentAction = true,
+  HideGuiMessagePersistentAction = true,
+  ConvoMessageAction = true,
+  ClearConvoMessageQueueAction = true,
+  AddObjectiveAction = true,
+  ModifyObjectiveAction = true,
+  SoundAction = true,
+  MusicAction = true,
+  MusicLoopAction = true,
+  StopMusicAction = true,
+  SunriseAction = true, 
+  SunsetAction = true,
+  EnterCutsceneAction = true,
+  LeaveCutsceneAction = true,
+  FadeOutAction = true,
+  FadeInAction = true,
+}
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+ExecuteTrigger = function(trigger, frame)
+  if not trigger.enabled then return end
+  if math.random() < trigger.probability then
+    if trigger.maxOccurrences == trigger.occurrences then
+      RemoveTrigger(trigger) -- the trigger is no longer needed
+      return
+    end
+    local createdUnits = {}
+    local frame = frame or (Spring.GetGameFrame() + 1) -- events will take place at this frame
+    for _, action in ipairs(trigger.logic) do
+      local args = {action, createdUnits}
+      local Event = actionsTable[action.logicType]
+      
+      if action.logicType == "WaitAction" then
+        frame = frame + action.args.frames
       end
+      
+      if unsyncedActions[action.logicType] then
+        Event = function(action)
+          action.args.logicType = action.logicType
+          _G.missionEventArgs = action.args
+          SendToUnsynced"MissionEvent"
+          _G.missionEventArgs = nil
+        end
+	if action.logicType == "AddObjectiveAction" then
+	  objectives[action.args.id] = {title = action.args.title, description = action.args.description}
+	elseif action.logicType == "ModifyObjectiveAction" then
+	  if objectives[action.args.id] then
+            -- TBD
+	  end
+        elseif action.logicType == "EnterCutsceneAction" then
+          isInCutscene = true
+        elseif action.logicType == "LeaveCutsceneAction" then
+          isInCutscene = false
+	end
+      end
+
       if Event then
-        AddEvent(frame, Event) -- schedule event
+        AddEvent(frame, Event, args) -- schedule event
       end
     end
   end
@@ -1017,7 +1009,7 @@ function gadget:GamePreload()
   end
   if events[-1] then
     for _, Event in ipairs(events[-1]) do
-        Event(-1) -- run event
+        Event.event(unpack(Event.args)) -- run event
     end
   end
 end
@@ -1063,7 +1055,7 @@ function gadget:GameFrame(n)
  
   if events[n] then -- list of events to run at this frame
     for _, Event in ipairs(events[n]) do
-      Event(n) -- run event
+      Event.event(unpack(Event.args)) -- run event
     end
     events[n] = nil
   end
