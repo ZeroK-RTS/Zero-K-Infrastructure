@@ -9,7 +9,7 @@ namespace ZeroKWeb.Controllers
 {
 	public class ForumController: Controller
 	{
-		int PageSize = 200;
+		public const int PageSize = 200;
 
 		[Auth(Role = AuthRole.ZkAdmin)]
 		public ActionResult DeletePost(int? postID)
@@ -199,12 +199,15 @@ namespace ZeroKWeb.Controllers
 				}
 				scope.Complete();
 
+                int page = forumPostID.HasValue ? GetPostIndexInThread((int)forumPostID) : 0;
+
 				if (missionID.HasValue) return RedirectToAction("Detail", "Missions", new { id = missionID });
 				else if (resourceID.HasValue) return RedirectToAction("Detail", "Maps", new { id = resourceID });
 				else if (springBattleID.HasValue) return RedirectToAction("Detail", "Battles", new { id = springBattleID });
 				else if (clanID.HasValue) return RedirectToAction("Detail", "Clans", new { id = clanID });
 				else if (planetID.HasValue) return RedirectToAction("Planet", "Planetwars", new { id = planetID });
-				else return RedirectToAction("Thread", new { id = thread.ForumThreadID, postID = forumPostID });
+				else if (page > 0) return RedirectToAction("Thread", new { id = thread.ForumThreadID, postID = forumPostID, page = page });
+                else return RedirectToAction("Thread", new { id = thread.ForumThreadID, postID = forumPostID});
 			}
 		}
 
@@ -351,7 +354,10 @@ namespace ZeroKWeb.Controllers
             }
 
             db.SubmitChanges();
-            return RedirectToAction("Thread", new { id = post.ForumThreadID, postID = forumPostID });
+
+            int page = GetPostIndexInThread(forumPostID);
+            if (page > 0) return RedirectToAction("Thread", new { id = post.ForumThreadID, postID = forumPostID, page = page });
+            return RedirectToAction("Thread", new { id = post.ForumThreadID, postID = forumPostID});
         }
 
         public ActionResult CancelVotePost(int forumPostID)
@@ -378,7 +384,16 @@ namespace ZeroKWeb.Controllers
             db.AccountForumVotes.DeleteOnSubmit(existingVote);
 
             db.SubmitChanges();
+            int page = GetPostIndexInThread(forumPostID);
+            if (page > 0) return RedirectToAction("Thread", new { id = post.ForumThreadID, postID = forumPostID, page = page });
             return RedirectToAction("Thread", new { id = post.ForumThreadID, postID = forumPostID });
+        }
+
+        public static int GetPostIndexInThread(int forumPostID)
+        {
+            var db = new ZkDataContext();
+            ForumPost post = db.ForumPosts.First(x => x.ForumPostID == forumPostID);
+            return post.ForumThread.ForumPosts.IndexOf(post) / ZeroKWeb.Controllers.ForumController.PageSize;
         }
 	}
 }
