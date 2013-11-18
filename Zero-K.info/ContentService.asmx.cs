@@ -320,7 +320,6 @@ namespace ZeroKWeb
             if (planet != null)
             {
                 Account acc = db.Accounts.First(x => x.AccountID == accountID);
-                AccountCampaignProgress progress = acc.AccountCampaignProgress.FirstOrDefault(x => x.PlanetID == planet.PlanetID && x.CampaignID == planet.CampaignID);
                 bool alreadyCompleted = false;
                 int campID = planet.CampaignID;
                 Campaign camp = planet.Campaign;
@@ -360,9 +359,13 @@ namespace ZeroKWeb
                 db.SubmitChanges();
                 db = new ZkDataContext();
                 acc = db.Accounts.First(x => x.AccountID == accountID);
+                camp = planet.Campaign;
+                planet = db.CampaignPlanets.FirstOrDefault(p => p.MissionID == missionID);
+
 
                 // now we unlock planets and journal entries
                 // first mark this planet as completed - but only if it's already unlocked
+                AccountCampaignProgress progress = acc.AccountCampaignProgress.FirstOrDefault(x => x.PlanetID == planet.PlanetID && x.CampaignID == planet.CampaignID);
                 if (progress != null)
                 {
                     alreadyCompleted = progress.IsCompleted;
