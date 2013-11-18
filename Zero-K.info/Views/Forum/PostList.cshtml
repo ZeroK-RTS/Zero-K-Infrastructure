@@ -43,11 +43,6 @@
                             }
                             @{
                                 string linkString = "?postID=" + p.ForumPostID;
-                                int page = ZeroKWeb.Controllers.ForumController.GetPostIndexInThread(p.ForumPostID);
-                                if (page > 0)
-                                {
-                                    linkString = linkString + "&page=" + page;
-                                }
                             }
                             <a nicetitle='Link to this post' href="@linkString"><img src="/img/link.png" height="22"/></a>
                             @if (p.Account.ContributionsByAccountID.Count() > 0)

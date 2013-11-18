@@ -85,6 +85,7 @@
         public const int KudosForSilver = 500;
         public const int KudosForGold = 1000;
 
+        public const int ForumPostsPerPage = 50;
         public const int MinLevelForForumVote = 10;
         public const int MinNetKarmaToVote = -30;
         public const int PostVoteHideThreshold = -6;

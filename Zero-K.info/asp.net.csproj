@@ -407,6 +407,7 @@
     <Content Include="Views\Forum\ForumVotesForPost.cshtml" />
     <Content Include="Views\Planetwars\Ladder.cshtml" />
     <Content Include="Views\Campaign\Journals.cshtml" />
+    <Content Include="Views\Forum\Paginator.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

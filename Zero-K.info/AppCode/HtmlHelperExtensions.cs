@@ -143,7 +143,7 @@ namespace System.Web.Mvc
 
         public static MvcHtmlString Print(this HtmlHelper helper, ForumThread thread) {
             var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
-            int page = thread.PostCount/ZeroKWeb.Controllers.ForumController.PageSize;
+            int page = thread.PostCount/GlobalConst.ForumPostsPerPage;
             string link;
             if (page > 0) link = url.Action("Thread", "Forum", new { id = thread.ForumThreadID, page = page});
             else link = url.Action("Thread", "Forum", new { id = thread.ForumThreadID });
