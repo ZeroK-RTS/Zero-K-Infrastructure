@@ -239,7 +239,7 @@ namespace ZeroKWeb.Controllers
 
 			res.Path = GetCategoryPath(t.ForumCategoryID, db);
 			res.CurrentThread = t;
-			res.PageCount = (t.PostCount/PageSize) + 1;
+			res.PageCount = ((t.PostCount-1)/PageSize) + 1;
 			res.Posts = t.ForumPosts.AsQueryable().Skip((page ?? 0)*PageSize).Take(PageSize).ToList();
 
 			return View(res);
