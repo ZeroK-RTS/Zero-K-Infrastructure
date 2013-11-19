@@ -514,9 +514,9 @@
                             <TreeView.Style>
                                 <Style>
                                     <Style.Resources>
-                                        <!-- Background of selected item when focussed -->
-                                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
-                                        <!-- Background of selected item when not focussed -->
+                                        <!-- Background of selected item when focused -->
+                                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Orange"/>
+                                        <!-- Background of selected item when not focused -->
                                         <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent" />
                                     </Style.Resources>
                                 </Style>

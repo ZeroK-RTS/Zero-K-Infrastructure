@@ -103,7 +103,6 @@ namespace CMissionLib
 			set
 			{
 				isHuman = value;
-				if (!value) if (name != null) name = name.Replace(" ", "_");
 				RaisePropertyChanged("IsHuman");
 			}
 		}
@@ -126,7 +125,7 @@ namespace CMissionLib
 			get { return name; }
 			set
 			{
-				name = IsHuman ? value : value.Replace(" ", "_");
+				name = value;
 				RaisePropertyChanged("Name");
 			}
 		}

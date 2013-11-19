@@ -47,7 +47,7 @@ namespace CMissionLib.Actions
 
 		public override string GetDefaultName()
 		{
-			return "Make Units Always Visible";
+			return "Make Units Neutral";
 		}
 	}
 }

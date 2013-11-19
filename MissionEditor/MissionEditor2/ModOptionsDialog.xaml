@@ -23,7 +23,7 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <GroupBox Grid.Row="0" Grid.Column="0" Header="Key-Value Pairs" MinWidth="200">
-                <TextBox Name="ModOptions" Text="{Binding CustomModOptions}" AcceptsReturn="True" TextWrapping="WrapWithOverflow" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" MinLines="4" MaxLines="30"/>
+                <TextBox Name="ModOptions" Text="{Binding CustomModOptions}" AcceptsReturn="True" TextWrapping="WrapWithOverflow" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" MinLines="7" MaxLines="30"/>
             </GroupBox>
             <GroupBox Grid.Row="1" Grid.Column="1" Header="Description" MinWidth="200">
                 <TextBlock Grid.Row="2" TextWrapping="WrapWithOverflow">Specify modoptions as key-value pairs, e.g. mymodption=1;

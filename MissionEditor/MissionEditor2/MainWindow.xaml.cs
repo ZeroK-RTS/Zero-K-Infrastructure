@@ -1,10 +1,14 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using CMissionLib;
 using CMissionLib.Actions;
 using CMissionLib.Conditions;
@@ -36,6 +40,8 @@ namespace MissionEditor2
 		public Mission Mission { get { return (Mission)GetValue(MissionProperty); } set { SetValue(MissionProperty, value); } }
 		public string SavePath { get; set; }
 
+        public DispatcherTimer autosaveTimer;
+
 		static MainWindow()
 		{
 			MissionProperty = DependencyProperty.Register("Mission", typeof(Mission), typeof(MainWindow));
@@ -46,6 +52,10 @@ namespace MissionEditor2
 		{
 			Instance = this;
 			InitializeComponent();
+            this.Closing += MainWindow_Closing;
+            this.autosaveTimer = new DispatcherTimer();
+            autosaveTimer.Tick += new EventHandler(autosaveTimer_Tick);
+            autosaveTimer.Interval = new TimeSpan(0, 5, 0);
 		}
 
 		public void QuickSave()
@@ -53,6 +63,23 @@ namespace MissionEditor2
 			if (SavePath != null) Mission.SaveToXmlFile(SavePath);
 			else SaveMission();
 		}
+
+        public bool QuickSaveCheckSuccess()
+        {
+            if (SavePath != null) return Mission.SaveToXmlFile(SavePath);
+            else return SaveMissionCheckSuccess();
+        }
+
+        public void AutoSave()
+        {
+            if (SavePath != null)
+            {
+                string dir = Path.GetDirectoryName(SavePath);
+                string filename = Path.GetFileName(SavePath);
+                Mission.SaveToXmlFile(Path.Combine(dir, "_autosave_" + filename), true);
+            }
+            else Mission.SaveToXmlFile(Path.Combine(Directory.GetCurrentDirectory(), "autosave.xml"), true);
+        }
 
 		void CreateNewRepeatingTrigger()
 		{
@@ -77,7 +104,13 @@ namespace MissionEditor2
 
         void CopyTrigger(Trigger source)
         {
-            Trigger trigger;
+            MemoryStream stream = new MemoryStream();
+            BinaryFormatter format = new BinaryFormatter();
+            format.Serialize(stream, source);
+            Trigger copy = (CMissionLib.Trigger)format.Deserialize(stream);
+            copy.Name = copy.Name + " (Copy)";
+            Mission.Triggers.Add(copy);
+            Mission.RaisePropertyChanged(String.Empty);
         }
 
 		void BuildMission(bool hideFromModList = false)
@@ -159,7 +192,7 @@ namespace MissionEditor2
             addAction("Lock Units", () => new LockUnitsAction(), "Logic");
             addAction("Unlock Units", () => new UnlockUnitsAction(), "Logic");
             addAction("Make Units Always Visible", () => new MakeUnitsAlwaysVisibleAction(), "Logic");
-            addAction("Make Units Neutral", () => new MakeUnitsAlwaysVisibleAction(), "Logic");
+            addAction("Make Units Neutral", () => new MakeUnitsNeutralAction(), "Logic");
             addAction("Modify Countdown", () => new ModifyCountdownAction(Mission.Countdowns.FirstOrDefault()), "Logic");
             addAction("Modify Counter", () => new ModifyCounterAction(), "Logic");
             addAction("Send Scores", () => new SendScoreAction(), "Logic");
@@ -460,16 +493,24 @@ namespace MissionEditor2
 
 		void SaveMission()
 		{
-			var saveFileDialog = new SaveFileDialog
-			                     { DefaultExt = WelcomeDialog.MissionExtension, Filter = WelcomeDialog.MissionDialogFilter, RestoreDirectory = true };
-			if (saveFileDialog.ShowDialog() == true)
-			{
-				SavePath = saveFileDialog.FileName;
-				Settings.Default.MissionPath = saveFileDialog.FileName;
-				Settings.Default.Save();
-				Mission.SaveToXmlFile(saveFileDialog.FileName);
-			}
+            SaveMissionCheckSuccess();
 		}
+
+        bool SaveMissionCheckSuccess()
+        {
+            var saveFileDialog = new SaveFileDialog { DefaultExt = WelcomeDialog.MissionExtension, Filter = WelcomeDialog.MissionDialogFilter, RestoreDirectory = true };
+            var result = saveFileDialog.ShowDialog();
+            if (result == true)
+            {
+                SavePath = saveFileDialog.FileName;
+                Settings.Default.MissionPath = saveFileDialog.FileName;
+                Settings.Default.Save();
+                Mission.SaveToXmlFile(saveFileDialog.FileName);
+                Mission.ModifiedSinceLastSave = false;
+                return true;
+            }
+            return false;
+        }
 
 		void ShowMissionManagement()
 		{
@@ -707,19 +748,53 @@ namespace MissionEditor2
 			}
 		}
 
+        void NewMission()
+        {
+            MessageBoxResult result = MessageBox.Show("You will lose any unsaved changes, save now?", "Mission Editor", MessageBoxButton.YesNoCancel);
+            if (result == MessageBoxResult.Cancel) return;
+            else if (result == MessageBoxResult.Yes)
+            {
+                if (!QuickSaveCheckSuccess()) return;
+            }
+            WelcomeDialog.PromptForNewMission();
+        }
+
+        void LoadMission()
+        {
+            MessageBoxResult result = MessageBox.Show("You will lose any unsaved changes, save now?", "Mission Editor", MessageBoxButton.YesNoCancel);
+            if (result == MessageBoxResult.Cancel) return;
+            else if (result == MessageBoxResult.Yes)
+            {
+                if (!QuickSaveCheckSuccess()) return;
+            }
+            WelcomeDialog.AskForExistingMission();
+        }
+
 		void window_Loaded(object sender, RoutedEventArgs e)
 		{
 			var project = MainMenu.AddContainer("Project");
-			project.AddAction("New", WelcomeDialog.PromptForNewMission);
-			project.AddAction("Open", WelcomeDialog.AskForExistingMission);
+			project.AddAction("New", NewMission);
+			project.AddAction("Open", LoadMission);
 			project.AddAction("Save", QuickSave);
 			project.AddAction("Save As", SaveMission);
-			var mission = MainMenu.AddContainer("Mission");
-			mission.AddAction("Create Mutator", () => BuildMission());
-			mission.AddAction("Create Invisible Mutator", () => BuildMission(true));
-			mission.AddAction("Test Mission", TestMission);
-			mission.AddAction("Publish", ShowMissionManagement);
-			mission.AddAction("Settings", ShowMissionSettings);
+
+			//var help = MainMenu.AddContainer("Help");
+			//help.AddAction("Basic Help", () => new Help().ShowDialog());
+
+            var welcomeScreen = new WelcomeDialog { ShowInTaskbar = true, Owner = this };
+            welcomeScreen.ShowDialog();
+            if (Mission == null)
+            {
+                MessageBox.Show("A mission needs to be selected");
+                Environment.Exit(0);
+            }
+
+            var mission = MainMenu.AddContainer("Mission");
+            mission.AddAction("Create Mutator", () => BuildMission());
+            mission.AddAction("Create Invisible Mutator", () => BuildMission(true));
+            mission.AddAction("Test Mission", TestMission);
+            mission.AddAction("Publish", ShowMissionManagement);
+            mission.AddAction("Settings", ShowMissionSettings);
 
             var newMenu = MainMenu.AddContainer("New");
             newMenu.AddAction("New Trigger", CreateNewTrigger);
@@ -735,36 +810,25 @@ namespace MissionEditor2
             }));
             newMenu.Items.Add(GetNewActionMenu(() => CurrentTrigger));
 
-			var editMenu = MainMenu.AddContainer("Edit");
-			editMenu.AddAction("Rename", RenameCurrentItem);
-			editMenu.AddAction("Delete", DeleteCurrentItem);
-			editMenu.AddAction("Move Up", () => MoveCurrentItem(MoveDirection.Up));
+            var editMenu = MainMenu.AddContainer("Edit");
+            editMenu.AddAction("Rename", RenameCurrentItem);
+            editMenu.AddAction("Delete", DeleteCurrentItem);
+            editMenu.AddAction("Move Up", () => MoveCurrentItem(MoveDirection.Up));
             editMenu.AddAction("Move Up 5 Spaces", () => MoveCurrentItem(MoveDirection.Up, 5));
             editMenu.AddAction("Move To Top", () => MoveCurrentItem(MoveDirection.Up, true));
-			editMenu.AddAction("Move Down", () => MoveCurrentItem(MoveDirection.Down));
+            editMenu.AddAction("Move Down", () => MoveCurrentItem(MoveDirection.Down));
             editMenu.AddAction("Move Down 5 Spaces", () => MoveCurrentItem(MoveDirection.Down, 5));
             editMenu.AddAction("Move To Bottom", () => MoveCurrentItem(MoveDirection.Down, true));
-			editMenu.AddAction("Expand All Triggers", ExpandAllTriggers);
-			editMenu.AddAction("Collapse All Triggers", CollapseAllTriggers);
-
-			//var help = MainMenu.AddContainer("Help");
-			//help.AddAction("Basic Help", () => new Help().ShowDialog());
-
-			var welcomeScreen = new WelcomeDialog { ShowInTaskbar = true, Owner = this };
-			welcomeScreen.ShowDialog();
-			if (Mission == null)
-			{
-				MessageBox.Show("A mission needs to be selected");
-				Environment.Exit(0);
-			}
-
-
+            editMenu.AddAction("Expand All Triggers", ExpandAllTriggers);
+            editMenu.AddAction("Collapse All Triggers", CollapseAllTriggers);
 
 			var menu = new ContextMenu();
 			menu.AddAction("New Trigger", CreateNewTrigger);
 			menu.AddAction("New Trigger (Repeating)", CreateNewRepeatingTrigger);
 			menu.AddAction("New Region", CreateNewRegion);
 			logicGrid.ContextMenu = menu;
+
+            autosaveTimer.Start();
 		}
 
 		enum MoveDirection
@@ -808,5 +872,39 @@ namespace MissionEditor2
 		{
 			Mission.Regions.Remove(region);
 		}
-	}
+
+        void MainWindow_Closing(object sender, CancelEventArgs e)
+        {
+            if (true)   //(Mission.ModifiedSinceLastSave)
+            {
+                MessageBoxResult result = MessageBox.Show("You will lose any unsaved changes, save before exiting?", "Mission Editor", MessageBoxButton.YesNoCancel);
+                if (result == MessageBoxResult.Cancel)
+                {
+                    e.Cancel = true;
+                }
+                else if (result == MessageBoxResult.Yes)
+                {
+                    e.Cancel = !QuickSaveCheckSuccess();
+                }
+            }
+        }
+
+        void autosaveTimer_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                //MessageBox.Show("Autosaving...", "Autosaving", MessageBoxButton.OK);
+                autosaveTimer.Stop();
+                AutoSave();
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                autosaveTimer.Start();
+            }
+        }
+    }
 }

@@ -55,6 +55,7 @@ namespace CMissionLib
 		Player startingPlayer = new Player { Name = "Player 1", Color = Colors.Blue, Alliance = "1", IsHuman = true };
 		ObservableCollection<Trigger> triggers = new ObservableCollection<Trigger>();
         ObservableCollection<Objective> objectives = new ObservableCollection<Objective>();
+        bool modifiedSinceLastSave = false;	// FIXME: is never true
 
 		public IEnumerable<string> AllGroups
 		{
@@ -263,6 +264,8 @@ namespace CMissionLib
 		[DataMember]
 		public ObservableCollection<Trigger> Triggers { get { return triggers; } set { triggers = value; } }
 
+        public bool ModifiedSinceLastSave { get { return modifiedSinceLastSave; } set { modifiedSinceLastSave = value; } }
+
 		public Mission(string name, Mod game, Map map)
 		{
 			Mod = game;
@@ -277,22 +280,29 @@ namespace CMissionLib
 			Players.Add(player1);
 			Players.Add(player2);
 			Regions.Add(new Region { Name = "Region 1" });
-			var gameStartTrigger = new Trigger();
-			Triggers.Add(gameStartTrigger);
-			gameStartTrigger.Logic.Add(new GameStartedCondition());
+
+            var gamePreloadTrigger = new Trigger();
+			Triggers.Add(gamePreloadTrigger);
+			gamePreloadTrigger.Logic.Add(new GamePreloadCondition());
+            gamePreloadTrigger.Name = "Initialization";
+
+            var gameStartTrigger = new Trigger();
+            Triggers.Add(gameStartTrigger);
+            gameStartTrigger.Logic.Add(new GameStartedCondition());
+            gameStartTrigger.Name = "Game Start";
 			var unitType = game.UnitDefs.First();
 			var startUnits = new UnitStartInfo[]
 			                 {
 			                 };
-			gameStartTrigger.Logic.Add(new CreateUnitsAction(startUnits));
+			gamePreloadTrigger.Logic.Add(new CreateUnitsAction(startUnits));
+
             var widgets = new[] { "gui_pauseScreen.lua", "cmd_unit_mover.lua", "init_startup_info_selector.lua", "gui_center_n_select.lua", "gui_take_remind.lua", "gui_startup_info_selector.lua", "gui_local_colors.lua", "spring_direct_launch.lua" };
 			foreach (var widget in widgets) DisabledWidgets.Add(widget);
 			var gadgets = new string[] { "game_over.lua", "game_end.lua", "awards.lua" };
 			foreach (var gadget in gadgets) DisabledGadgets.Add(gadget);
-			if (game.Name.Contains("Complete")) RapidTag = "zk:stable";
+			if (game.Name.Contains("Zero-K")) RapidTag = "zk:stable";
 			Items = new CompositeObservableCollection<Trigger, Region>(Triggers, Regions);
 		}
-
 
 		public void CreateArchive(string mutatorPath, bool hideFromModList = false)
 		{
@@ -493,7 +503,7 @@ namespace CMissionLib
 			line("HostPort", "8452");
 			line("IsHost", "1");
 			line("MyPlayerNum", Players.IndexOf(StartingPlayer));
-			line("MyPlayerName", StartingPlayer.Name.Replace(' ', '_'));
+			line("MyPlayerName", StartingPlayer.Name);
 			line("NumPlayers", Players.Count(p => p.IsHuman));
 			line("NumTeams", Players.Count);
 			line("NumUsers", Players.Count);
@@ -586,16 +596,23 @@ namespace CMissionLib
 			Items = new CompositeObservableCollection<Trigger, Region>(Triggers, Regions);
 		}
 
-		public void SaveToXmlFile(string path)
+		public bool SaveToXmlFile(string path, bool auto = false)
 		{
+            bool success = false;
 			var backupPath = path + ".backup.mission.xml";
 			if (File.Exists(path)) File.Copy(path, backupPath, true);
 			using (var writer = XmlWriter.Create(path, new XmlWriterSettings { Indent = true, CheckCharacters = true })) new NetDataContractSerializer().WriteObject(writer, this);
-			try
-			{
-				if (File.Exists(backupPath)) File.Delete(backupPath);
-			}
-			catch {}
+            try
+            {
+                if (File.Exists(backupPath)) File.Delete(backupPath);
+                if (!auto) modifiedSinceLastSave = false;
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return success;
 		}
 
 		public string SerializeToLua()
@@ -676,7 +693,7 @@ namespace CMissionLib
 				var index = Players.IndexOf(player);
 				sb.AppendFormat("\t[PLAYER" + index + "]\n");
 				sb.AppendLine("\t{");
-				sb.AppendFormat("\t\tName={0};\n", player.Name.Replace(' ', '_'));
+				sb.AppendFormat("\t\tName={0};\n", player.Name);
 				sb.AppendFormat("\t\tSpectator=0;\n");
 				sb.AppendFormat("\t\tTeam={0};\n", index);
 				sb.AppendLine("\t}");
@@ -686,7 +703,7 @@ namespace CMissionLib
 				var index = Players.IndexOf(player);
 				sb.AppendFormat("\t[AI" + index + "]\n");
 				sb.AppendLine("\t{");
-				sb.AppendFormat("\t\tName={0};\n", player.Name.Replace(' ', '_'));
+				sb.AppendFormat("\t\tName={0};\n", player.Name);
 				sb.AppendFormat("\t\tShortName={0};\n", player.AIDll);
 				// sb.AppendFormat("\t\tVersion={0};\n", String.IsNullOrEmpty(player.AIVersion) ? "0.1" : player.AIVersion);
 				sb.AppendFormat("\t\tTeam={0};\n", index);
