@@ -6,12 +6,11 @@
     var db = new ZkDataContext();
     Campaign camp = Model;
     Dictionary<string, List<CampaignJournal>> journals = new Dictionary<string, List<CampaignJournal>>();
-    foreach (var journalsByCategory in db.CampaignJournals.Where(x => x.CampaignID == Model.CampaignID).OrderBy(x => x.Title).GroupBy(x => x.Category))
+    var journalsRaw = db.CampaignJournals.Where(x => x.CampaignID == Model.CampaignID).ToList().Where(x => x.IsUnlocked(Global.AccountID)).OrderBy(x => x.Title).GroupBy(x => x.Category);
+    
+    foreach (var journalsByCategory in journalsRaw)
     {
-        if (journalsByCategory.Any(journal => journal.IsUnlocked(Global.AccountID)))
-        {
-            journals.Add(journalsByCategory.Key ?? "Uncategorized", journalsByCategory.ToList());
-        }
+        journals.Add(journalsByCategory.Key ?? "Uncategorized", journalsByCategory.ToList());
     }
 }
 <script type="text/javascript" src='@Href("~/Scripts/jquery.expand.js")' > </script>
@@ -40,7 +39,7 @@
     {
         <h3 class="expand">@kvp.Key</h3>
         <div id="@kvp.Key" class="collapse width-90">
-            @foreach( CampaignJournal journal in kvp.Value.Where(j => j.IsUnlocked(Global.AccountID)))
+            @foreach( CampaignJournal journal in kvp.Value)
             {
                 <h4 class="expand">@journal.Title</h4>
                 <div id="@journal.Title" class="collapse width-90">
