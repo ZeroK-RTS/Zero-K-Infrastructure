@@ -11,7 +11,8 @@
     bool complete = Model.IsCompleted(Global.AccountID);
     bool unlocked = Model.IsUnlocked(Global.AccountID);
     string colorStyle = "color:" + Model.GetColor(Global.Account) + ";";
-    var journals = db.CampaignJournals.Where(x => x.CampaignID == Model.CampaignID && x.PlanetID == Model.PlanetID).ToList();
+    var journalsRaw = db.CampaignJournals.Where(x => x.CampaignID == Model.CampaignID && x.PlanetID == Model.PlanetID);
+    var journals = journalsRaw.Where(x => x.IsUnlocked(Global.AccountID)).ToList();
     
     Campaign campaign = db.Campaigns.Single(c => c.CampaignID == Model.CampaignID);
     int mapWidth = 700;
@@ -21,7 +22,7 @@
     <script type="text/javascript" src='@Href("~/Scripts/jquery.expand.js")' > </script>
     <script type="text/javascript">
         $(function () {
-            $("h3.expand").toggler({ speed: 0 });
+            $("h4.expand").toggler({ speed: 0 });
         });
     </script>
 	<script type="text/javascript">
@@ -105,15 +106,14 @@
 @if (journals != null && journals.Count > 0)
 {
     <br />
-    <h3 class="expand">Journals</h3>
-    <div id="journals" class="collapse width-90">
+    <h3>Journals</h3>
+    <div id="journals">
         @foreach (CampaignJournal journal in journals)
         {
-            if (journal.IsUnlocked(Global.AccountID))
-            {
-                <h4>@(journal.Title)</h4>
+            <h4 class="expand">@journal.Title</h4>
+            <div id="@journal.Title" class="collapse width-90">
                 @Html.BBCode(journal.Text)
-            }
+            </div>
             <br />
         }
     </div>
