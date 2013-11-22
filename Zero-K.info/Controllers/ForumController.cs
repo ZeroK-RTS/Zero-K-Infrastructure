@@ -200,6 +200,7 @@ namespace ZeroKWeb.Controllers
 
 					db.SubmitChanges();
 				}
+                int lastPage = ((thread.PostCount - 1) / PageSize) + 1;
                 scope.Complete();
 
 				if (missionID.HasValue) return RedirectToAction("Detail", "Missions", new { id = missionID });
@@ -207,7 +208,8 @@ namespace ZeroKWeb.Controllers
 				else if (springBattleID.HasValue) return RedirectToAction("Detail", "Battles", new { id = springBattleID });
 				else if (clanID.HasValue) return RedirectToAction("Detail", "Clans", new { id = clanID });
 				else if (planetID.HasValue) return RedirectToAction("Planet", "Planetwars", new { id = planetID });
-                else return RedirectToAction("Thread", new { id = thread.ForumThreadID, postID = forumPostID});
+                else if (forumPostID.HasValue) return RedirectToAction("Thread", new { id = thread.ForumThreadID, postID = forumPostID });
+                else return RedirectToAction("Thread", new { id = thread.ForumThreadID, page = lastPage});
 			}
 		}
 
@@ -398,7 +400,7 @@ namespace ZeroKWeb.Controllers
             if (forumPostID == null) return 0;
             var db = new ZkDataContext();
             ForumPost post = db.ForumPosts.First(x => x.ForumPostID == forumPostID);
-            return post.ForumThread.ForumPosts.IndexOf(post) / GlobalConst.ForumPostsPerPage;
+            return post.ForumThread.ForumPosts.IndexOf(post) / PageSize;
         }
 	}
 }

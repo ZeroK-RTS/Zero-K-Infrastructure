@@ -52,7 +52,11 @@ namespace ZeroKWeb.Controllers
 					}
 				}
 
-				if (!string.IsNullOrEmpty(name)) comm.Name = name;
+                if (!string.IsNullOrEmpty(name))
+                {
+                    if (name.Length > 50) name = name.Substring(0, 50);
+                    comm.Name = name;
+                }
 
                 // process modules
 				foreach (var key in Request.Form.AllKeys.Where(x => !string.IsNullOrEmpty(x)))
