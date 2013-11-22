@@ -143,7 +143,13 @@ namespace System.Web.Mvc
 
         public static MvcHtmlString Print(this HtmlHelper helper, ForumThread thread) {
             var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
-            int page = thread.PostCount/GlobalConst.ForumPostsPerPage;
+
+            DateTime? lastTime = null;
+            if (Global.Account != null) lastTime = (DateTime)Global.Account.ForumThreadLastReads.FirstOrDefault(x => x.ForumThreadID == thread.ForumThreadID).LastRead;
+            ForumPost post = null;
+            if (lastTime != null) post = thread.ForumPosts.FirstOrDefault(x => x.Created > lastTime);
+            int page = post != null ? ZeroKWeb.Controllers.ForumController.GetPostPage(post.ForumPostID) : (thread.PostCount-1)/GlobalConst.ForumPostsPerPage;
+
             string link;
             if (page > 0) link = url.Action("Thread", "Forum", new { id = thread.ForumThreadID, page = page});
             else link = url.Action("Thread", "Forum", new { id = thread.ForumThreadID });
