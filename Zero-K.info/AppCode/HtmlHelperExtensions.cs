@@ -144,8 +144,10 @@ namespace System.Web.Mvc
         public static MvcHtmlString Print(this HtmlHelper helper, ForumThread thread) {
             var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
 
+            ForumThreadLastRead lastRead = null;
             DateTime? lastTime = null;
-            if (Global.Account != null) lastTime = (DateTime)Global.Account.ForumThreadLastReads.FirstOrDefault(x => x.ForumThreadID == thread.ForumThreadID).LastRead;
+            if (Global.Account != null) lastRead = Global.Account.ForumThreadLastReads.FirstOrDefault(x => x.ForumThreadID == thread.ForumThreadID);
+            if (lastRead != null) lastTime = lastRead.LastRead;
             ForumPost post = null;
             if (lastTime != null) post = thread.ForumPosts.FirstOrDefault(x => x.Created > lastTime);
             int page = post != null ? ZeroKWeb.Controllers.ForumController.GetPostPage(post.ForumPostID) : (thread.PostCount-1)/GlobalConst.ForumPostsPerPage;
@@ -154,7 +156,6 @@ namespace System.Web.Mvc
             if (page > 0) link = url.Action("Thread", "Forum", new { id = thread.ForumThreadID, page = page});
             else link = url.Action("Thread", "Forum", new { id = thread.ForumThreadID });
             link = string.Format("<a href='{0}' title='$thread${1}'>", link, thread.ForumThreadID);
-            var lastRead = thread.ForumThreadLastReads.FirstOrDefault(x => x.AccountID == Global.AccountID);
 
             string format;
 
