@@ -18,6 +18,7 @@ using MissionEditor2.Properties;
 using Action = CMissionLib.Action;
 using Condition = CMissionLib.Condition;
 using Trigger = CMissionLib.Trigger;
+using System.Reflection;
 
 namespace MissionEditor2
 {
@@ -101,17 +102,6 @@ namespace MissionEditor2
 			Mission.Triggers.Add(trigger);
 			Mission.RaisePropertyChanged(String.Empty);
 		}
-
-        void CopyTrigger(Trigger source)
-        {
-            MemoryStream stream = new MemoryStream();
-            BinaryFormatter format = new BinaryFormatter();
-            format.Serialize(stream, source);
-            Trigger copy = (CMissionLib.Trigger)format.Deserialize(stream);
-            copy.Name = copy.Name + " (Copy)";
-            Mission.Triggers.Add(copy);
-            Mission.RaisePropertyChanged(String.Empty);
-        }
 
 		void BuildMission(bool hideFromModList = false)
 		{
@@ -702,7 +692,7 @@ namespace MissionEditor2
 			var menu = new ContextMenu();
 			menu.AddAction("New Trigger", CreateNewTrigger);
 			menu.AddAction("New Trigger (Repeating)", CreateNewRepeatingTrigger);
-            //menu.AddAction("Copy Trigger", CreateNewTrigger);
+            menu.AddAction("Copy Trigger", () => Mission.CopyTrigger(trigger));
 			menu.Items.Add(GetNewActionMenu(trigger));
 			menu.Items.Add(GetNewConditionMenu(trigger));
 			menu.Items.Add(new Separator());
@@ -750,7 +740,7 @@ namespace MissionEditor2
 
         void NewMission()
         {
-            MessageBoxResult result = MessageBox.Show("You will lose any unsaved changes, save now?", "Mission Editor", MessageBoxButton.YesNoCancel);
+            MessageBoxResult result = ShowSaveWarning();
             if (result == MessageBoxResult.Cancel) return;
             else if (result == MessageBoxResult.Yes)
             {
@@ -761,7 +751,7 @@ namespace MissionEditor2
 
         void LoadMission()
         {
-            MessageBoxResult result = MessageBox.Show("You will lose any unsaved changes, save now?", "Mission Editor", MessageBoxButton.YesNoCancel);
+            MessageBoxResult result = ShowSaveWarning();
             if (result == MessageBoxResult.Cancel) return;
             else if (result == MessageBoxResult.Yes)
             {
@@ -777,9 +767,6 @@ namespace MissionEditor2
 			project.AddAction("Open", LoadMission);
 			project.AddAction("Save", QuickSave);
 			project.AddAction("Save As", SaveMission);
-
-			//var help = MainMenu.AddContainer("Help");
-			//help.AddAction("Basic Help", () => new Help().ShowDialog());
 
             var welcomeScreen = new WelcomeDialog { ShowInTaskbar = true, Owner = this };
             welcomeScreen.ShowDialog();
@@ -800,6 +787,7 @@ namespace MissionEditor2
             newMenu.AddAction("New Trigger", CreateNewTrigger);
             newMenu.AddAction("New Trigger (Repeating)", CreateNewRepeatingTrigger);
             newMenu.AddAction("New Region", CreateNewRegion);
+            newMenu.AddAction("Copy Trigger", () => Mission.CopyTrigger(CurrentTrigger));
             newMenu.Items.Add(GetNewConditionMenu(delegate
             {
                 if (logicGrid.SelectedItem is Trigger) return CurrentTrigger;
@@ -827,6 +815,13 @@ namespace MissionEditor2
 			menu.AddAction("New Trigger (Repeating)", CreateNewRepeatingTrigger);
 			menu.AddAction("New Region", CreateNewRegion);
 			logicGrid.ContextMenu = menu;
+
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+            string version = fileVersionInfo.FileVersion;
+            var aboutString = String.Format("Mission Editor {0}\n\nby Quantum and KingRaptor\n\nFor help with the program, visit {1}", version, "zero-k.info/Wiki/MissionEditorStartPage");
+            var help = MainMenu.AddContainer("Help");
+            help.AddAction("About", () => MessageBox.Show(aboutString, "About Mission Editor", MessageBoxButton.OK, MessageBoxImage.Information));
 
             autosaveTimer.Start();
 		}
@@ -877,7 +872,7 @@ namespace MissionEditor2
         {
             if (true)   //(Mission.ModifiedSinceLastSave)
             {
-                MessageBoxResult result = MessageBox.Show("You will lose any unsaved changes, save before exiting?", "Mission Editor", MessageBoxButton.YesNoCancel);
+                MessageBoxResult result = ShowSaveWarning();
                 if (result == MessageBoxResult.Cancel)
                 {
                     e.Cancel = true;
@@ -905,6 +900,12 @@ namespace MissionEditor2
             {
                 autosaveTimer.Start();
             }
+        }
+
+        MessageBoxResult ShowSaveWarning(bool exit = false)
+        {
+            string msg = exit ? "You will lose any unsaved changes, save before exiting?" : "You will lose any unsaved changes, save first?";
+            return MessageBox.Show(msg, "Mission Editor", MessageBoxButton.YesNoCancel, MessageBoxImage.Exclamation);
         }
     }
 }

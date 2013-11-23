@@ -291,9 +291,7 @@ namespace CMissionLib
             gameStartTrigger.Logic.Add(new GameStartedCondition());
             gameStartTrigger.Name = "Game Start";
 			var unitType = game.UnitDefs.First();
-			var startUnits = new UnitStartInfo[]
-			                 {
-			                 };
+			var startUnits = new UnitStartInfo[]  {};
 			gamePreloadTrigger.Logic.Add(new CreateUnitsAction(startUnits));
 
             var widgets = new[] { "gui_pauseScreen.lua", "cmd_unit_mover.lua", "init_startup_info_selector.lua", "gui_center_n_select.lua", "gui_take_remind.lua", "gui_startup_info_selector.lua", "gui_local_colors.lua", "spring_direct_launch.lua" };
@@ -729,5 +727,66 @@ namespace CMissionLib
 			sb.AppendFormat("\t\tStartPosZ=0;\n");
 			sb.AppendLine("\t}");
 		}
+
+        
+        public void CopyTrigger(Trigger source)
+        {
+            /*
+            MemoryStream stream = new MemoryStream();
+            System.Runtime.Serialization.Formatters.Binary.BinaryFormatter format = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+            format.Serialize(stream, source);
+            Trigger copy = (CMissionLib.Trigger)format.Deserialize(stream);
+            copy.Name = copy.Name + " (Copy)";
+            Triggers.Add(copy);
+            RaisePropertyChanged(String.Empty);
+            */
+            string path = Path.GetTempFileName();
+            using (var writer = XmlWriter.Create(path, new XmlWriterSettings { Indent = true, CheckCharacters = true })) new NetDataContractSerializer().WriteObject(writer, source);
+            try
+            {
+                using (var stream = File.OpenRead(path))
+                {
+                    Trigger copy = (Trigger)new NetDataContractSerializer().ReadObject(stream);
+                    copy.Name = copy.Name + " (Copy)";
+
+                    // reconstruct object references
+                    foreach (CreateUnitsAction action in copy.Actions.Where(x => x.GetType() == typeof(CreateUnitsAction)))
+                    {
+                        foreach (UnitStartInfo unit in action.Units)
+                        {
+                            unit.Player = Players.First(x => x.Name == unit.Player.Name);
+                            unit.UnitDef = Mod.UnitDefs.First(x => x.Name == unit.UnitDefName);
+                        }
+                    }
+                    foreach (UnitsAreInAreaCondition condition in copy.Conditions.Where(x => x.GetType() == typeof(UnitsAreInAreaCondition)))
+                    {
+                        condition.Players = (ObservableCollection<Player>)condition.Players.Select(x => Players.First(p => p.Name == x.Name));
+                    }
+                    foreach (UnitCreatedCondition condition in copy.Conditions.Where(x => x.GetType() == typeof(UnitCreatedCondition)))
+                    {
+                        condition.Players = (ObservableCollection<Player>)condition.Players.Select(x => Players.First(p => p.Name == x.Name));
+                    }
+                    foreach (UnitFinishedCondition condition in copy.Conditions.Where(x => x.GetType() == typeof(UnitFinishedCondition)))
+                    {
+                        condition.Players = (ObservableCollection<Player>)condition.Players.Select(x => Players.First(p => p.Name == x.Name));
+                    }
+                    foreach (PlayerDiedCondition condition in copy.Conditions.Where(x => x.GetType() == typeof(PlayerDiedCondition)))
+                    {
+                        condition.Player = Players.First(p => p.Name == condition.Player.Name);
+                    }
+                    foreach (PlayerJoinedCondition condition in copy.Conditions.Where(x => x.GetType() == typeof(PlayerJoinedCondition)))
+                    {
+                        condition.Player = Players.First(p => p.Name == condition.Player.Name);
+                    }
+
+                    Triggers.Add(copy);
+                    RaisePropertyChanged(String.Empty);
+                }
+                if (File.Exists(path)) File.Delete(path);
+            }
+            catch(Exception ex) {
+                throw ex;
+            }
+        }
 	}
 }

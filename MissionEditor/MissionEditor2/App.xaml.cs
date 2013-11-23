@@ -52,6 +52,12 @@ namespace MissionEditor2
 			}
 		}
 
+        public static void PrintDebugInfo(string str)
+        {
+            var logfile = Path.Combine(Directory.GetCurrentDirectory(), "MissionEditorInfolog.txt");
+            File.AppendAllText(logfile, str + "\n");
+        }
+
 		void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
 			ReportError(e.ExceptionObject as Exception);

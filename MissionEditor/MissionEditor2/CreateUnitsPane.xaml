@@ -95,6 +95,10 @@
                     <Canvas.Background>
                         <ImageBrush AlignmentX="Left" AlignmentY="Top" Stretch="None" ImageSource="{Binding Mission.Map.Texture, Source={x:Static local:MainWindow.Instance}}" />
                     </Canvas.Background>
+                    <Canvas>
+                        <!-- This canvas is overlaid over the previous canvas and is used to place the rectangle that implements the drag selection box. -->
+                        <Rectangle x:Name="selectionBox" Visibility="Collapsed" Stroke="Violet" StrokeThickness="1"/>
+                    </Canvas>
                 </Canvas>
             </local:ZoomControl>
 

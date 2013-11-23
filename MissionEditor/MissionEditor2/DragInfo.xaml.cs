@@ -1,11 +1,12 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Windows;
 
 namespace MissionEditor2
 {
 	class DragInfo
 	{
-		public FrameworkElement Element;
-		public Point ElementOrigin;
+		public List<FrameworkElement> Elements;
+		public Dictionary<FrameworkElement, Point> ElementOrigins;
 		public Point MouseOrigin;
 	}
 }

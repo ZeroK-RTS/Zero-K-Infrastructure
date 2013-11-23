@@ -12,6 +12,7 @@ using CMissionLib;
 using CMissionLib.Actions;
 using Action = System.Action;
 using Trigger = CMissionLib.Trigger;
+using System.Collections.Generic;
 
 namespace MissionEditor2
 {
@@ -41,13 +42,25 @@ namespace MissionEditor2
 					var pos = (Positionable) element.DataContext;
 					var origin = new Point(pos.X, pos.Y);
 					var startPoint = eventArgs.GetPosition(canvas);
+                    var origins = new Dictionary<FrameworkElement, Point>();
+                    origins.Add(element, origin);
 					if (canvas.CaptureMouse())
 					{
-						dragInfo = new DragInfo {Element = element, ElementOrigin = origin, MouseOrigin = startPoint};
+                        dragInfo = new DragInfo { Elements = new List<FrameworkElement> { element }, ElementOrigins =  origins, MouseOrigin = startPoint };
 					}
 				}
-			}
+			} 
 		}
+
+        void OrderMouseUp(object sender, MouseButtonEventArgs eventArgs)
+        {
+            if (eventArgs.ChangedButton == MouseButton.Right)
+            {
+                OrderIcon icon = (OrderIcon)eventArgs.Source;
+                IOrder order = (IOrder)icon.DataContext;
+                action.Orders.Remove(order);
+            }
+        }
 
 		void OrderGroupsListLoaded(object sender, RoutedEventArgs e)
 		{
@@ -98,7 +111,7 @@ namespace MissionEditor2
 		{
 			if (dragInfo == null)
 			{
-				if (DateTime.Now - canvasMouseDownDate < TimeSpan.FromMilliseconds(150))
+				if (DateTime.Now - canvasMouseDownDate < TimeSpan.FromMilliseconds(150) && e.ChangedButton == MouseButton.Left)
 				{
 					var mousePos = e.GetPosition(canvas);
 					CreateNewOrder(mousePos);
@@ -117,9 +130,10 @@ namespace MissionEditor2
 			if (dragInfo != null && canvas.IsMouseCaptured)
 			{
 				var currentPosition = e.GetPosition(canvas);
-				var pos = (Positionable)dragInfo.Element.DataContext;
-				pos.X = currentPosition.X - dragInfo.MouseOrigin.X + dragInfo.ElementOrigin.X;
-				pos.Y = currentPosition.Y - dragInfo.MouseOrigin.Y + dragInfo.ElementOrigin.Y;
+                var element = dragInfo.Elements[0];
+				var pos = (Positionable)element.DataContext;
+				pos.X = currentPosition.X - dragInfo.MouseOrigin.X + dragInfo.ElementOrigins[element].X;
+				pos.Y = currentPosition.Y - dragInfo.MouseOrigin.Y + dragInfo.ElementOrigins[element].Y;
 			}
 		}
 
@@ -157,6 +171,7 @@ namespace MissionEditor2
 				Canvas.SetZIndex(icon, 10);
 				canvas.Children.Add(icon);
 				icon.MouseDown += OrderMouseDown;
+                icon.MouseUp += OrderMouseUp;
 			}
 
 
@@ -183,8 +198,6 @@ namespace MissionEditor2
 			{
 				NewBoundLine(positionables[i], positionables[i + 1]);
 			}
-
-
 		}
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
