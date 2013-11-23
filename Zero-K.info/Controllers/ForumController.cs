@@ -22,12 +22,13 @@ namespace ZeroKWeb.Controllers
             int page = GetPostPage((int)postID);
 
 			db.ForumPosts.DeleteOnSubmit(post);
-			db.SubmitChanges();
 			if (thread.ForumPosts.Count() <= 1) {
 				db.ForumThreads.DeleteOnSubmit(thread);
 				db.SubmitChanges();
 				return RedirectToAction("Index");
-			} else return RedirectToAction("Thread", new { id = threadID, page = page });
+			}
+			db.SubmitChanges();
+			return RedirectToAction("Thread", new { id = threadID, page = page });
 		}
 
 		public ActionResult Index(int? categoryID)
