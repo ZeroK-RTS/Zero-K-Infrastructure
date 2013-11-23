@@ -25,7 +25,7 @@
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 62F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.tableLayoutPanel1.Controls.Add(this.btnDetail, 0, 0);
@@ -51,7 +51,7 @@
             this.btnDetail.ForeColor = System.Drawing.Color.White;
             this.btnDetail.Location = new System.Drawing.Point(3, 3);
             this.btnDetail.Name = "btnDetail";
-            this.btnDetail.Size = new System.Drawing.Size(56, 46);
+            this.btnDetail.Size = new System.Drawing.Size(74, 46);
             this.btnDetail.TabIndex = 1;
             this.btnDetail.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnDetail.UseVisualStyleBackColor = false;
