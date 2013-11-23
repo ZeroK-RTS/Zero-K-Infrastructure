@@ -201,7 +201,7 @@ namespace ZeroKWeb.Controllers
 
 					db.SubmitChanges();
 				}
-                int lastPage = ((thread.PostCount - 1) / PageSize) + 1;
+                int lastPage = ((thread.PostCount - 1) / PageSize);
                 scope.Complete();
 
 				if (missionID.HasValue) return RedirectToAction("Detail", "Missions", new { id = missionID });
