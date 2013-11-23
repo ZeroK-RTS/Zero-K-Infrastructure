@@ -6,7 +6,7 @@
     var db = new ZkDataContext();
     Campaign camp = Model;
     Dictionary<string, List<CampaignJournal>> journals = new Dictionary<string, List<CampaignJournal>>();
-    var journalsRaw = db.CampaignJournals.Where(x => x.CampaignID == Model.CampaignID).ToList().Where(x => x.IsUnlocked(Global.AccountID)).OrderBy(x => x.Title).GroupBy(x => x.Category);
+    var journalsRaw = db.CampaignJournals.Where(x => x.CampaignID == Model.CampaignID).ToList().Where(x => x.IsUnlocked(Global.AccountID)).OrderBy(x => x.Title).GroupBy(x => x.Category).OrderBy(x => x.Key);
     
     foreach (var journalsByCategory in journalsRaw)
     {
