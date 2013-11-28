@@ -17,6 +17,7 @@
           <s:element minOccurs="0" maxOccurs="1" name="Mod" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="Players" type="tns:ArrayOfPlayerTeam" />
           <s:element minOccurs="0" maxOccurs="1" name="Bots" type="tns:ArrayOfBotTeam" />
+          <s:element minOccurs="1" maxOccurs="1" name="CanPlanetwars" type="s:boolean" />
         </s:sequence>
       </s:complexType>
       <s:complexType name="ArrayOfPlayerTeam">
