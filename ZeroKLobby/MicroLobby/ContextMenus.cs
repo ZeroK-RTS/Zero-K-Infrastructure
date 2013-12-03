@@ -360,7 +360,36 @@ namespace ZeroKLobby.MicroLobby
             return contextMenu;
         }
 
+        public static ContextMenu GetBattleListContextMenu(Battle battle)
+        {
+            var contextMenu = new ContextMenu();
+            try
+            {
+                if (battle.Users.Count <= 1) return contextMenu; // don't display if just 1 player (probably a bot)
 
+                var headerItem = new System.Windows.Forms.MenuItem("Message Player");
+                headerItem.Enabled = false;
+                headerItem.DefaultItem = true; //This is to make it appear bold
+                contextMenu.MenuItems.Add(headerItem);
+                contextMenu.MenuItems.Add("-");
+
+                foreach (var user in battle.Users)
+                {
+                    if (!user.LobbyUser.IsBot)
+                    {
+                        var item = new System.Windows.Forms.MenuItem(user.Name);
+                        item.Click += (s, e) => NavigationControl.Instance.Path = "chat/user/" + user.Name;
+                        contextMenu.MenuItems.Add(item);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine("Error generating battle context menu: " + e);
+            }
+
+            return contextMenu;
+        }
 
         public static System.Windows.Forms.MenuItem GetShowOptions()
         {

@@ -122,9 +122,9 @@ namespace ZeroKLobby.MicroLobby
         {
             if (e == null) throw new ArgumentNullException("e");
             base.OnMouseDown(e);
+            var battle = GetBattle(e.X, e.Y);
             if (e.Button == MouseButtons.Left)
             {
-                var battle = GetBattle(e.X, e.Y);
                 if (battle != null)
                 {
                     if (battle.Password != "*")
@@ -136,6 +136,11 @@ namespace ZeroKLobby.MicroLobby
                 }
                 else if (OpenGameButtonHitTest(e.X, e.Y)) ShowHostDialog(KnownGames.GetDefaultGame());
                 else if (QuickMatchButtonHitTest(e.X,e.Y)) ActionHandler.StartQuickMatch();
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                // todo - disable OnMouseMove while this is open to stop battle tooltips floating under it
+                ContextMenus.GetBattleListContextMenu(battle).Show(this.Parent, e.Location);
             }
         }
 
