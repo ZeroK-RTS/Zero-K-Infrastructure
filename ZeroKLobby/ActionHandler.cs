@@ -115,7 +115,17 @@ namespace ZeroKLobby
       if (client.ExistingUsers.TryGetValue(name, out user) && user.IsInBattleRoom)
       {
         var bat = client.ExistingBattles.Values.FirstOrDefault(x => x.Users.Any(y => y.Name == name));
-        if (bat != null) JoinBattle(bat.BattleID, null);
+        if (bat != null)
+        {
+          string password = null;
+          // this could possibly use braces, but I'm crazy
+          if (bat.IsPassworded)
+            using (var form = new AskBattlePasswordForm(bat.Founder.Name))
+              if (form.ShowDialog() == DialogResult.OK)
+                password = form.Password;
+
+          JoinBattle(bat.BattleID, password);
+        }
       }
     }
 
