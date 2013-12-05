@@ -1,4 +1,4 @@
- using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -318,6 +318,27 @@ namespace ZeroKLobby.MicroLobby
 
         void TasClient_ChannelUsersAdded(object sender, TasEventArgs e) {
             if (e.ServerParams[0] != ChannelName) return;
+            
+            String[] invalidName = new String[32];
+            int invalidNameIndex = 0;
+            foreach (var username in Program.TasClient.JoinedChannels[ChannelName].ChannelUsers)
+            {
+                try
+                {
+                    var user = Program.TasClient.ExistingUsers[username];
+                }
+                catch (System.Collections.Generic.KeyNotFoundException)
+                {
+                    Trace.TraceInformation("ChatControl ERROR: player \"{0}\" did not exist or wasn't notified using ADDUSER command. Ignoring this username.", username);
+                    invalidName[invalidNameIndex] = username;
+                    if (invalidNameIndex < 32) invalidNameIndex = invalidNameIndex + 1;
+                }
+            }
+            for (int i = 0; i <= invalidNameIndex; i++)
+            {
+                Program.TasClient.JoinedChannels[ChannelName].ChannelUsers.Remove(invalidName[i]);
+            }
+            
             playerListItems = (from name in Program.TasClient.JoinedChannels[ChannelName].ChannelUsers
                                let user = Program.TasClient.ExistingUsers[name]
                                select new PlayerListItem { UserName = user.Name }).ToList();
