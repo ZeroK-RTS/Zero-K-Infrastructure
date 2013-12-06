@@ -1244,6 +1244,11 @@ namespace ZeroKLobby.MicroLobby
                     g.Dispose();
                     return "";
                 }
+                if (x <= 0)
+                {
+                    g.Dispose();
+                    return "";
+                }
 
                 var space = 0;
                 var foundSpace = false;
@@ -1279,12 +1284,12 @@ namespace ZeroKLobby.MicroLobby
                     {
                         if (!foundSpace)
                         {
-                            if (lookWidth >= x) 
+                            if (lookWidth >= x)
                             {
-                                foundSpace = true; //current position, in example: xxx__xxxxx_T_xxx (where T is pointing at 2nd space)
+                                foundSpace = true; //current position, in example: xxx__xxxxx_T_xxx (where T is pointing at space on right)
                                 i--; //halt pointer position for this time once (at second loop the mid-code will be executed to return the Substring)
                             }
-                            else space = i + 1; //i + 1 position, in example: xxx__Yxxxx__xxx (Y at 1st letter)
+                            else space = i + 1; //i + 1 position, in example: xxx__Yxxxx__xxx (Y at 1st letter after a space)
                         }
                     }
 
