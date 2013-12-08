@@ -66,7 +66,11 @@ namespace ZeroKLobby.MicroLobby
                     historyIndex--;
                     if (historyIndex < 0) historyIndex = 0;
 
-                    if (history.Count > historyIndex) Text = history[historyIndex];
+                    if (history.Count > historyIndex)
+                    {
+                        Text = history[historyIndex];
+                        SelectionStart = Text.Length;
+                    }
                 }
 			}
 			else if (e.KeyCode == Keys.Down)
@@ -78,9 +82,14 @@ namespace ZeroKLobby.MicroLobby
                 else
                 {
                     historyIndex++;
-                    if (historyIndex >= history.Count) historyIndex = history.Count - 1;
                     if (historyIndex < 0) historyIndex = 0;
                     if (history.Count > historyIndex) Text = history[historyIndex];
+                    if (historyIndex >= history.Count)
+                    {
+                        historyIndex = history.Count;
+                        Text = String.Empty;
+                    }
+                    SelectionStart = Text.Length;
                 }
 			}
 			else historyIndex = history.Count;
