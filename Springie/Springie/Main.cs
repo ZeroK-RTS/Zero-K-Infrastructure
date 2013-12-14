@@ -253,31 +253,38 @@ namespace Springie
                     var spawnedToDel =
                         autoHosts.Where(
                             x => x.SpawnConfig != null && !x.spring.IsRunning && (x.tas.MyBattle == null || x.tas.MyBattle.Users.Count <= 1)).ToList();
-                    foreach (var ah in spawnedToDel.Where(x => deletionCandidate.Contains(x))) StopAutohost(ah); // delete those who are empty during 2 checks
-                    deletionCandidate = spawnedToDel;
+                    if (spawnedToDel != null)
+                    {
+                        foreach (var ah in spawnedToDel.Where(x => deletionCandidate.Contains(x))) StopAutohost(ah); // delete those who are empty during 2 checks
+                        deletionCandidate = spawnedToDel;
+                    }
+                    else deletionCandidate = new List<AutoHost>();
 
                     // autohosts which have clones
                     var keys = autoHosts.Where(x => x.config.AutoSpawnClones).Select(x => x.config.Login).Distinct().ToList();
-                    foreach (var key in keys)
+                    if (keys != null)
                     {
-                        // 0-1 players = empty
-                        var empty =
-                            autoHosts.Where(
-                                x =>
-                                x.SpawnConfig == null && x.config.Login == key && !x.spring.IsRunning &&
-                                (x.tas.MyBattle == null || (x.tas.MyBattle.Users.Count <= 1 && !x.tas.MyUser.IsInGame))).ToList();
-
-                        if (empty.Count == 1) continue;
-
-                        else if (empty.Count == 0)
+                        foreach (var key in keys)
                         {
-                            var existing = autoHosts.Where(x => x.config.Login == key).First();
-                            SpawnAutoHost(existing.config, null);
-                        }
-                        else // more than 1 empty running, stop all but 1
-                        {
-                            var minNumber = empty.Min(y => y.CloneNumber);
-                            foreach (var ah in empty.Where(x => x.CloneNumber != minNumber && x.SpawnConfig == null)) StopAutohost(ah);
+                            // 0-1 players = empty
+                            var empty =
+                                autoHosts.Where(
+                                    x =>
+                                    x.SpawnConfig == null && x.config.Login == key && !x.spring.IsRunning &&
+                                    (x.tas.MyBattle == null || (x.tas.MyBattle.Users.Count <= 1 && !x.tas.MyUser.IsInGame))).ToList();
+
+                            if (empty.Count == 1) continue;
+
+                            else if (empty.Count == 0)
+                            {
+                                var existing = autoHosts.Where(x => x.config.Login == key).First();
+                                SpawnAutoHost(existing.config, null);
+                            }
+                            else // more than 1 empty running, stop all but 1
+                            {
+                                var minNumber = empty.Min(y => y.CloneNumber);
+                                foreach (var ah in empty.Where(x => x.CloneNumber != minNumber && x.SpawnConfig == null)) StopAutohost(ah);
+                            }
                         }
                     }
                 }
