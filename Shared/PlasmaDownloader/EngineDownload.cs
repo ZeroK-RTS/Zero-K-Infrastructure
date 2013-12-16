@@ -52,6 +52,7 @@ namespace PlasmaDownloader
                     if (platform == "linux64" && Name == "91.0") paths.Add("http://springrts.com/dl/spring_91.0.amd64.zip");
                     else if (platform == "linux32" && Name == "91.0") paths.Add("http://springrts.com/dl/spring_91.0_portable_linux_i686.zip");
 
+					paths.Add(string.Format("{0}buildbot/syncdebug/develop/{1}/spring_[syncdebug]{1}_{2}", EngineDownloadPath, Name, archiveName));
                     paths.Add(string.Format("{0}buildbot/default/master/{1}/spring_{1}_{2}", EngineDownloadPath, Name, archiveName));
                     paths.Add(string.Format("{0}buildbot/default/develop/{1}/spring_{{develop}}{1}_{2}", EngineDownloadPath, Name, archiveName));
                     paths.Add(string.Format("{0}buildbot/default/release/{1}/spring_{{release}}{1}_{2}", EngineDownloadPath, Name, archiveName));
