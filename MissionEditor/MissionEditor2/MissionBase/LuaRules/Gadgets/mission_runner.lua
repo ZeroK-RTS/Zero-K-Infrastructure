@@ -516,7 +516,7 @@ local actionsTable = {
         end,
   MakeUnitsNeutralAction = function(action)
           for unitID in pairs(FindUnitsInGroup(action.args.group)) do
-            Spring.SetUnitAlwaysVisible(unitID, action.args.value)
+            Spring.SetUnitNeutral(unitID, action.args.value)
           end
         end,
   ModifyCounterAction = function(action)
