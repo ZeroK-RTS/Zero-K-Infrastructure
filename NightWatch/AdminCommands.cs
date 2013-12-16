@@ -71,14 +71,9 @@ namespace CaTracker
                         if (parts.Length != 3) tas.Say(TasClient.SayPlace.User, e.UserName, "!changeaccountpass [player] [password (plaintext)]", false);
                         else
                         {
-                            var player = tas.ExistingUsers.FirstOrDefault(x => x.Key == parts[1]).Key;
                             var password = PlasmaShared.Utils.HashLobbyPassword(parts[2]);
-                            if (player != null)
-                            {
-                                tas.SendRaw(string.Format("CHANGEACCOUNTPASS {0} {1}", player, password));
-                                tas.Say(TasClient.SayPlace.User, e.UserName, string.Format("DEBUG: CHANGEACCOUNTPASS {0} {1}", player, password), false);
-                            }
-                            else tas.Say(TasClient.SayPlace.User, e.UserName, "Not a valid player name", false);
+                            tas.SendRaw(string.Format("CHANGEACCOUNTPASS {0} {1}", parts[1], password));
+                            tas.Say(TasClient.SayPlace.User, e.UserName, string.Format("DEBUG: CHANGEACCOUNTPASS {0} {1}", parts[1], password), false);
                         }
                     }
                 }
