@@ -48,6 +48,7 @@ namespace ZeroKWeb.Controllers
 			return View(res);
 		}
 
+        [Auth]
 		public ActionResult NewPost(int? categoryID, int? threadID, int? forumPostID)
 		{
 			var res = new NewPostResult();
@@ -57,6 +58,12 @@ namespace ZeroKWeb.Controllers
             if (penalty != null)
             {
                 return Content(string.Format("You cannot post while banned from forum!\nExpires: {0} UTC\nReason: {1}", penalty.BanExpires, penalty.Reason));
+            }
+
+            var clan = db.Clans.FirstOrDefault(x => x.ForumThreadID == threadID);
+            if (clan != null && Global.ClanID != clan.ClanID)
+            {
+                return Content(string.Format("You are not a member of {0}, you cannot post in their clan thread", clan.ClanName));
             }
 
 			if (threadID.HasValue)
@@ -70,7 +77,12 @@ namespace ZeroKWeb.Controllers
 			res.Path = GetCategoryPath(categoryID, db);
 			res.CurrentCategory = res.Path.LastOrDefault();
             if (forumPostID != null) {
-              res.EditedPost=  db.ForumPosts.Single(x=>x.ForumPostID == forumPostID);
+                ForumPost post = db.ForumPosts.Single(x=>x.ForumPostID == forumPostID);
+                if (!Global.IsZeroKAdmin && Global.AccountID != post.AuthorAccountID)
+                {
+                    return Content("You cannot edit this post");
+                }
+                res.EditedPost= post;   
             }
 
 			return View(res);
