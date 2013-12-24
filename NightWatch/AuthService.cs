@@ -184,6 +184,7 @@ namespace NightWatch
                     if (founder.IsZkLobbyUser) {
                         var user = client.ExistingUsers[e.UserName];
 
+                        /*  obsolete; all major lobbies have multiengine support
                         if (!user.IsZkLobbyUser && !user.IsNotaLobby && battle.EngineVersion != client.ServerSpringVersion &&
                             battle.EngineVersion != client.ServerSpringVersion + ".0") {
                             client.Say(TasClient.SayPlace.User,
@@ -193,6 +194,7 @@ namespace NightWatch
                                            battle.EngineVersion),
                                        false);
                         }
+                         */
 
                         using (var db = new ZkDataContext()) {
                             var acc = Account.AccountByLobbyID(db, user.LobbyID);
