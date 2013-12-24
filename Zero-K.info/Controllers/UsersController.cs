@@ -147,7 +147,7 @@ namespace ZeroKWeb.Controllers
             return View("UserDetail", user);
         }
 
-        const int MaxBanHours = 24*7*4*4;
+        const int MaxBanHours = 24 * 36525;   // 100 years
 
         [Auth(Role = AuthRole.ZkAdmin | AuthRole.LobbyAdmin)]
         public ActionResult Punish(int accountID,
