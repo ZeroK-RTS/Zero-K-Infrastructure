@@ -15,7 +15,7 @@ namespace Springie.autohost
 {
     public partial class AutoHost
     {
-        const int MaxMapListLength = 400;
+        const int MaxMapListLength = 100; //400
 
         readonly List<string> toNotify = new List<string>();
 
