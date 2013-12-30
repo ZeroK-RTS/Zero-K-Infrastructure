@@ -1,3 +1,4 @@
+using System.Linq;
 using LobbyClient;
 
 namespace Springie.autohost.Polls
@@ -20,6 +21,21 @@ namespace Springie.autohost.Polls
                 AutoHost.Respond(tas, spring, e, "game not running");
                 return false;
             }
+        }
+
+        protected override bool AllowVote(TasSayEventArgs e)
+        {
+            if (spring.IsRunning)
+            {
+                var entry = spring.StartContext.Players.FirstOrDefault(x => x.Name == e.UserName);
+                if (entry == null || entry.IsSpectator)
+                {
+                    ah.Respond(e, string.Format("You must be a player in the game"));
+                    return false;
+                }
+                else return true;
+            }
+            return false;
         }
 
         protected override void SuccessAction() {
