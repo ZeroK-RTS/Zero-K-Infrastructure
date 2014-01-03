@@ -61,9 +61,9 @@ namespace Fixer
             //GenerateArtefacts(24, new int[] {3923, 3930, 3964, 3973});
             //SwapPlanetOwners(3948, 3955);
             //SwapPlanetOwners(3973, 3932);
+            //AddWormholes();
             //StartGalaxy(24);
 
-            //AddWormholes();
             //TestPrediction();
             //FixMissionScripts();
 
