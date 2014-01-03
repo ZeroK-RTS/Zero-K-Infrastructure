@@ -24,7 +24,8 @@ namespace NightWatch
         int messageId;
         readonly ConcurrentDictionary<int, RequestInfo> requests = new ConcurrentDictionary<int, RequestInfo>();
         readonly TopPlayers topPlayers = new TopPlayers();
-        public static string[] blockedCompanies = new string[] { "PRIVAX-LTD", "NetcoSolution-BLK-IP", "ServeTheWorld", "AnchorFree", "AltusHost", "Altushost" };
+        // this stuff should really be in DB
+        public static string[] blockedCompanies = new string[] { "PRIVAX-LTD", "NetcoSolution-BLK-IP", "ServeTheWorld", "AnchorFree", "AltusHost", "Altushost", "IWeb", "iWeb" };
         public static string[] blockedHosts = new string[] { "anchorfree.com", "leaseweb.com", "uk2net.com", "privax.com", "hidemyass.com", "hotspotshield.com", "ipvanish.com",
             "alvotech.net", "unknown.puregig.net", "edis.at", "fastweb.ro", "ubiquityservers.com"};
 
