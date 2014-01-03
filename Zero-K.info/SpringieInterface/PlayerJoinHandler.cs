@@ -33,7 +33,7 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     if (account.Level < context.GetConfig().MinLevel)
                     {
-                        res.PrivateMessage = string.Format("Sorry, PlanetWars is competive online campaign for experienced players. You need to be at least level {0} to play here. To increase your level, play more games on other hosts or open multiplayer game and play against computer AI bots.  You can observe this game however.",
+                        res.PrivateMessage = string.Format("Sorry, PlanetWars is competive online campaign for experienced players. You need to be at least level {0} to play here. To increase your level, play more games on other hosts or open multiplayer game and play against computer AI bots.  You can still spectate this game, however.",
                                                                context.GetConfig().MinLevel);
                         res.ForceSpec = true;
                         return res;
@@ -77,16 +77,31 @@ namespace ZeroKWeb.SpringieInterface
                 AutohostConfig config = context.GetConfig();
                 if (acc.Level < config.MinLevel)
                 {
-                    res.PrivateMessage = string.Format("Sorry, you need to be at least level {0} to play here. To increase your level, play more games on other hosts or open multiplayer game and play against computer AI bots.  You can observe this game however.",
+                    res.PrivateMessage = string.Format("Sorry, you need to be at least level {0} to play here. To increase your level, play more games on other hosts or open multiplayer game and play against computer AI bots. You can still spectate this game, however.",
                                                            config.MinLevel);
                     res.ForceSpec = true;
                     return res;
                 }
+                else if (acc.Level > config.MaxLevel)
+                {
+                    res.PrivateMessage = string.Format("Sorry, your level must be {0} or lower to play here. Pick on someone your own size! You can still spectate this game, however.",
+                                                           config.MaxLevel);
+                    res.ForceSpec = true;
+                    return res;
+                }
+
                 // FIXME: use 1v1 Elo for 1v1
                 if (acc.EffectiveElo < config.MinElo)
                 {
-                    res.PrivateMessage = string.Format("Sorry, you need to have an Elo rating of at least {0} to play here. Win games against human opponents to raise your Elo.  You can observe this game however.",
+                    res.PrivateMessage = string.Format("Sorry, you need to have an Elo rating of at least {0} to play here. Win games against human opponents to raise your Elo. You can still spectate this game, however.",
                                                            config.MinElo);
+                    res.ForceSpec = true;
+                    return res;
+                }
+                else if (acc.EffectiveElo > config.MaxElo)
+                {
+                    res.PrivateMessage = string.Format("Sorry, your Elo rating must be {0} or lower to play here. Pick on someone your own size! You can still spectate this game, however.",
+                                                           config.MaxElo);
                     res.ForceSpec = true;
                     return res;
                 }
