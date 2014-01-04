@@ -152,11 +152,12 @@ namespace NightWatch
 
                                         if (!data.ContainsKey("org-name"))data["org-name"] = "UNKNOWN ORG";
                                         if (!data.ContainsKey("abuse-mailbox")) data["abuse-mailbox"] = "no mailbox";
+                                        if (!data.ContainsKey("role")) data["role"] = "UNKNOWN ROLE";
 
                                         //client.Say(TasClient.SayPlace.User, "KingRaptor", String.Format("USER {0}\nnetname: {1}\norgname: {2}\nabuse-mailbox: {3}",
                                         //    acc.Name, data["netname"], data["org-name"],  data["abuse-mailbox"]), false);
 
-                                        if (blockedCompanies.Contains(data["netname"]) || blockedCompanies.Contains(data["org-name"]) || blockedHosts.Any(x => data["abuse-mailbox"].Contains(x))) 
+                                        if (blockedCompanies.Contains(data["netname"]) || blockedCompanies.Contains(data["org-name"]) || blockedCompanies.Contains(data["role"]) || blockedHosts.Any(x => data["abuse-mailbox"].Contains(x))) 
                                             client.AdminKickFromLobby(args.Name, "Connection using VPN is not allowed! (You can ask for exception)");
 
                                         var hostname = Dns.GetHostEntry(args.IP).HostName;
