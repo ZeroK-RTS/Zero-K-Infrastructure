@@ -149,7 +149,9 @@ namespace NightWatch
 
                                         var whois = new Whois();
                                         var data = whois.QueryByIp(args.IP);
-                                        if (blockedCompanies.Contains(data["netname"]) || blockedHosts.Any(x => data["abuse-mailbox"].Contains(x))) client.AdminKickFromLobby(args.Name, "Connection using VPN is not allowed! (You can ask for exception)");
+                                        if (blockedCompanies.Contains(data["netname"]) || blockedCompanies.Contains(data["NetName"]) || blockedCompanies.Contains(data["orgname"])
+                                          || blockedCompanies.Contains(data["OrgName"]) || blockedHosts.Any(x => data["abuse-mailbox"].Contains(x))) 
+                                            client.AdminKickFromLobby(args.Name, "Connection using VPN is not allowed! (You can ask for exception)");
 
                                         var hostname = Dns.GetHostEntry(args.IP).HostName;
                                         if (blockedHosts.Any(hostname.Contains))
