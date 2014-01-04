@@ -28,41 +28,6 @@ namespace Fixer
         public static void FixStuff()
         {
             // my code here
-            /*
-            var whois = new Whois();
-            var data = whois.QueryWhois("-s ripe-grs,radb-grs,lacnic-grs,jpirr-grs,arin-grs,apnic-grs,afrinic-grs -l " + "175.140.90.205");
-            System.Console.WriteLine(data);
-            var result = new Dictionary<string, string>();
-            foreach (var line in data.Split('\n').Where(x=>!string.IsNullOrEmpty(x) && x[0] != '%')) {
-                var pieces = line.Split(new char[]{':'}, 2);
-                var key = pieces.First().Trim();
-                var value = pieces.Last().Trim();
-                //if (value.Contains("IANA") || value.Contains("Internet Assigned Numbers Authority")) break;
-                //System.Console.WriteLine("{0}:\t{1}", key, value);
-                result[key] = value;
-            }
-
-            foreach (var item in result)
-            {
-                //System.Console.WriteLine("{0}:\t{1}", item.Key, item.Value);
-            }
-            */
-
-            var db = new ZkDataContext();
-            string[] blockedCompanies = new string[] { "PRIVAX-LTD", "NetcoSolution-BLK-IP", "ServeTheWorld", "AnchorFree", "AltusHost", "Altushost", "IWeb", "iWeb", "Amanah Tech"};
-            string[] blockedHosts = new string[] { "anchorfree.com", "leaseweb.com", "uk2net.com", "privax.com", "hidemyass.com", "hotspotshield.com", "ipvanish.com",
-                "alvotech.net", "unknown.puregig.net", "edis.at", "fastweb.ro", "ubiquityservers.com"};
-            foreach (string company in blockedCompanies)
-            {
-                BlockedCompany item = new BlockedCompany { CompanyName = company };
-                db.BlockedCompanies.InsertOnSubmit(item);
-            }
-            foreach (string host in blockedHosts)
-            {
-                BlockedHost item = new BlockedHost { HostName = host };
-                db.BlockedHosts.InsertOnSubmit(item);
-            }
-            db.SubmitChanges();
         }
 
         [STAThread]
