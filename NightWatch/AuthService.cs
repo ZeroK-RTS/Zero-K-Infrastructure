@@ -149,10 +149,14 @@ namespace NightWatch
 
                                         var whois = new Whois();
                                         var data = whois.QueryByIp(args.IP);
-                                        client.Say(TasClient.SayPlace.User, "KingRaptor", String.Format("USER {0}\nnetname: {1}\norgname: {2}\nabuse-mailbox: {3}",
-                                            acc.Name, data["netname"], data["orgname"],  data["abuse-mailbox"]), false);
 
-                                        if (blockedCompanies.Contains(data["netname"]) || blockedCompanies.Contains(data["orgname"]) || blockedHosts.Any(x => data["abuse-mailbox"].Contains(x))) 
+                                        data["org-name"] = data["org-name"] ?? "FAKESTRING";
+                                        data["abuse-mailbox"] = data["abuse-mailbox"] ?? "FAKESTRING";
+
+                                        client.Say(TasClient.SayPlace.User, "KingRaptor", String.Format("USER {0}\nnetname: {1}\norgname: {2}\nabuse-mailbox: {3}",
+                                            acc.Name, data["netname"], data["org-name"],  data["abuse-mailbox"]), false);
+
+                                        if (blockedCompanies.Contains(data["netname"]) || blockedCompanies.Contains(data["org-name"]) || blockedHosts.Any(x => data["abuse-mailbox"].Contains(x))) 
                                             client.AdminKickFromLobby(args.Name, "Connection using VPN is not allowed! (You can ask for exception)");
 
                                         var hostname = Dns.GetHostEntry(args.IP).HostName;
