@@ -149,6 +149,10 @@ namespace NightWatch
 
                                         var whois = new Whois();
                                         var data = whois.QueryByIp(args.IP);
+                                        client.Say(TasClient.SayPlace.User, "KingRaptor", "USER LOGIN", false);
+                                        client.Say(TasClient.SayPlace.User, "KingRaptor", String.Format("USER {0}\nnetname: {1}\nNetName: {2}\norgname: {3}\nOrgName: {4}\nabuse-mailbox: {5}",
+                                            acc.Name, data["netname"], data["NetName"], data["orgname"], data["OrgName"], data["abuse-mailbox"]), false);
+
                                         if (blockedCompanies.Contains(data["netname"]) || blockedCompanies.Contains(data["NetName"]) || blockedCompanies.Contains(data["orgname"])
                                           || blockedCompanies.Contains(data["OrgName"]) || blockedHosts.Any(x => data["abuse-mailbox"].Contains(x))) 
                                             client.AdminKickFromLobby(args.Name, "Connection using VPN is not allowed! (You can ask for exception)");
@@ -157,9 +161,6 @@ namespace NightWatch
                                         if (blockedHosts.Any(hostname.Contains))
                                             client.AdminKickFromLobby(args.Name,
                                                                       "Connection using proxy or VPN is not allowed! (You can ask for exception)");
-
-                                        client.Say(TasClient.SayPlace.User, "KingRaptor", String.Format("USER {0}\nnetname: {1}\nNetName: {2}\norgname: {3}\nOrgName: {4}\nabuse-mailbox: {5}",
-                                            acc.Name, data["netname"], data["NetName"], data["orgname"], data["OrgName"], data["abuse-mailbox"]), false);
                                     }
                                 //}
                             } catch (Exception ex) {
