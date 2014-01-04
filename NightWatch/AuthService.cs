@@ -134,7 +134,7 @@ namespace NightWatch
                                     db.SubmitChanges();
                                 }
 
-                                try {
+                                //try {
                                     if (acc == null || !acc.HasVpnException) {
                                         if (GlobalConst.VpnCheckEnabled)
                                         {
@@ -150,8 +150,8 @@ namespace NightWatch
                                         var whois = new Whois();
                                         var data = whois.QueryByIp(args.IP);
 
-                                        data["org-name"] = data["org-name"] ?? "FAKESTRING";
-                                        data["abuse-mailbox"] = data["abuse-mailbox"] ?? "FAKESTRING";
+                                        if (!data.ContainsKey("org-name"))data["org-name"] = "UNKNOWN ORG";
+                                        if (!data.ContainsKey("abuse-mailbox")) data["abuse-mailbox"] = "no mailbox";
 
                                         client.Say(TasClient.SayPlace.User, "KingRaptor", String.Format("USER {0}\nnetname: {1}\norgname: {2}\nabuse-mailbox: {3}",
                                             acc.Name, data["netname"], data["org-name"],  data["abuse-mailbox"]), false);
@@ -164,11 +164,11 @@ namespace NightWatch
                                             client.AdminKickFromLobby(args.Name,
                                                                       "Connection using proxy or VPN is not allowed! (You can ask for exception)");
                                     }
-                                }
-                                catch (Exception ex)
-                                {
-                                    client.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
-                                }
+                                //}
+                                //catch (Exception ex)
+                                //{
+                                //    client.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
+                                //}
                             } catch (Exception ex) {
                                 Trace.TraceError("Error getting user IP: {0}", ex);
                             }
