@@ -12,7 +12,7 @@ namespace PlasmaShared
         const string whoisServer = "whois.ripe.net";
 
         public Dictionary<string, string> QueryByIp(string ip) {
-            var data = QueryWhois("-a -l " + ip);
+            var data = QueryWhois("-s ripe-grs,radb-grs,lacnic-grs,jpirr-grs,arin-grs,apnic-grs,afrinic-grs -l " + ip);
             var result = new Dictionary<string, string>();
             foreach (var line in data.Split('\n').Where(x=>!string.IsNullOrEmpty(x) && x[0] != '%')) {
                 var pieces = line.Split(new char[]{':'}, 2);
@@ -21,7 +21,7 @@ namespace PlasmaShared
             return result;
         }
 
-        string QueryWhois(string command) {
+        public string QueryWhois(string command) {
             var tcp = new TcpClient(whoisServer, 43);
             var stream = tcp.GetStream();
             var streamWriter = new StreamWriter(stream);
