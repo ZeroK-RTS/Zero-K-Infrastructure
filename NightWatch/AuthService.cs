@@ -27,7 +27,7 @@ namespace NightWatch
         // this stuff should really be in DB
         public static string[] blockedCompanies = new string[] { "PRIVAX-LTD", "NetcoSolution-BLK-IP", "ServeTheWorld", "AnchorFree", "AltusHost", "Altushost", "IWeb", "iWeb"};
         public static string[] blockedHosts = new string[] { "anchorfree.com", "leaseweb.com", "uk2net.com", "privax.com", "hidemyass.com", "hotspotshield.com", "ipvanish.com",
-            "alvotech.net", "unknown.puregig.net", "edis.at", "fastweb.ro", "ubiquityservers.com", "tm.net.my"};
+            "alvotech.net", "unknown.puregig.net", "edis.at", "fastweb.ro", "ubiquityservers.com"};
 
         public AuthService(TasClient client) {
             this.client = client;
@@ -153,8 +153,8 @@ namespace NightWatch
                                         if (!data.ContainsKey("org-name"))data["org-name"] = "UNKNOWN ORG";
                                         if (!data.ContainsKey("abuse-mailbox")) data["abuse-mailbox"] = "no mailbox";
 
-                                        client.Say(TasClient.SayPlace.User, "KingRaptor", String.Format("USER {0}\nnetname: {1}\norgname: {2}\nabuse-mailbox: {3}",
-                                            acc.Name, data["netname"], data["org-name"],  data["abuse-mailbox"]), false);
+                                        //client.Say(TasClient.SayPlace.User, "KingRaptor", String.Format("USER {0}\nnetname: {1}\norgname: {2}\nabuse-mailbox: {3}",
+                                        //    acc.Name, data["netname"], data["org-name"],  data["abuse-mailbox"]), false);
 
                                         if (blockedCompanies.Contains(data["netname"]) || blockedCompanies.Contains(data["org-name"]) || blockedHosts.Any(x => data["abuse-mailbox"].Contains(x))) 
                                             client.AdminKickFromLobby(args.Name, "Connection using VPN is not allowed! (You can ask for exception)");
