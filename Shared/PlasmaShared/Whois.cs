@@ -16,7 +16,9 @@ namespace PlasmaShared
             var result = new Dictionary<string, string>();
             foreach (var line in data.Split('\n').Where(x=>!string.IsNullOrEmpty(x) && x[0] != '%')) {
                 var pieces = line.Split(new char[]{':'}, 2);
-                result[pieces.First().Trim()] = pieces.Last().Trim();
+                var key = pieces.First().Trim();
+                var value = pieces.Last().Trim();
+                if (!result.ContainsKey(key)) result[key] = value;
             }
             return result;
         }

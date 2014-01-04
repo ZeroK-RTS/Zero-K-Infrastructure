@@ -1276,4 +1276,14 @@
       <Association Name="ForumPost_AccountForumVote" Member="ForumPost" ThisKey="ForumPostID" OtherKey="ForumPostID" Type="ForumPost" IsForeignKey="true" />
     </Type>
   </Table>
+  <Table Name="dbo.BlockedCompany" Member="BlockedCompanies">
+    <Type Name="BlockedCompany">
+      <Column Name="CompanyName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.BlockedHost" Member="BlockedHosts">
+    <Type Name="BlockedHost">
+      <Column Name="HostName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+    </Type>
+  </Table>
 </Database>

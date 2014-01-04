@@ -25,10 +25,10 @@ namespace NightWatch
         readonly ConcurrentDictionary<int, RequestInfo> requests = new ConcurrentDictionary<int, RequestInfo>();
         readonly TopPlayers topPlayers = new TopPlayers();
         // this stuff should really be in DB
-        public static string[] blockedCompanies = new string[] { "PRIVAX-LTD", "NetcoSolution-BLK-IP", "ServeTheWorld", "AnchorFree", "AltusHost", "Altushost", "IWeb", "iWeb", "Amanah Tech"};
-        public static string[] blockedHosts = new string[] { "anchorfree.com", "leaseweb.com", "uk2net.com", "privax.com", "hidemyass.com", "hotspotshield.com", "ipvanish.com",
-            "alvotech.net", "unknown.puregig.net", "edis.at", "fastweb.ro", "ubiquityservers.com"};
-
+        //public static string[] blockedCompanies = new string[] { "PRIVAX-LTD", "NetcoSolution-BLK-IP", "ServeTheWorld", "AnchorFree", "AltusHost", "Altushost", "IWeb", "iWeb", "Amanah Tech"};
+        //public static string[] blockedHosts = new string[] { "anchorfree.com", "leaseweb.com", "uk2net.com", "privax.com", "hidemyass.com", "hotspotshield.com", "ipvanish.com",
+        //    "alvotech.net", "unknown.puregig.net", "edis.at", "fastweb.ro", "ubiquityservers.com"};
+        //
         public AuthService(TasClient client) {
             this.client = client;
 
@@ -155,19 +155,23 @@ namespace NightWatch
                                         if (!data.ContainsKey("role")) data["role"] = "UNKNOWN ROLE";
                                         if (!data.ContainsKey("descr")) data["descr"] = "no description";
 
-                                        if (acc.Country == "CA" || acc.Country == "MY")
-                                        {
-                                            client.Say(TasClient.SayPlace.User, "KingRaptor", String.Format("USER {0}\nnetname: {1}\norgname: {2}\ndescr: {3}\nabuse-mailbox: {4}",
-                                                acc.Name, data["netname"], data["org-name"], data["descr"], data["abuse-mailbox"]), false);
-                                        }
+                                        
+                                        using (ZkDataContext db = new ZkDataContext()){
+                                            var blockedCompanies = db.BlockedCompanies.Select(x => x.CompanyName.ToLower()).ToArray();
+                                            var blockedHosts = db.BlockedHosts.Select(x => x.HostName).ToArray();
+                                            /*if (acc.Country == "CA" || acc.Country == "MY")
+                                            {
+                                                client.Say(TasClient.SayPlace.User, "KingRaptor", String.Format("USER {0}\nnetname: {1}\norgname: {2}\ndescr: {3}\nabuse-mailbox: {4}",
+                                                    acc.Name, data["netname"], data["org-name"], data["descr"], data["abuse-mailbox"]), false);
+                                            }*/
+                                            if (blockedCompanies.Contains(data["netname"].ToLower()) || blockedCompanies.Contains(data["org-name"].ToLower()) || blockedCompanies.Contains(data["role"].ToLower()) || blockedHosts.Any(x => data["abuse-mailbox"].Contains(x))) 
+                                                client.AdminKickFromLobby(args.Name, "Connection using VPN is not allowed! (You can ask for exception)");
 
-                                        if (blockedCompanies.Contains(data["netname"]) || blockedCompanies.Contains(data["org-name"]) || blockedCompanies.Contains(data["role"]) || blockedHosts.Any(x => data["abuse-mailbox"].Contains(x))) 
-                                            client.AdminKickFromLobby(args.Name, "Connection using VPN is not allowed! (You can ask for exception)");
-
-                                        var hostname = Dns.GetHostEntry(args.IP).HostName;
-                                        if (blockedHosts.Any(hostname.Contains))
-                                            client.AdminKickFromLobby(args.Name,
+                                            var hostname = Dns.GetHostEntry(args.IP).HostName;
+                                            if (blockedHosts.Any(hostname.Contains))
+                                                client.AdminKickFromLobby(args.Name,
                                                                       "Connection using proxy or VPN is not allowed! (You can ask for exception)");
+                                    }
                                     }
                                 //}
                                 //catch (Exception ex)
