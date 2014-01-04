@@ -12,7 +12,7 @@ namespace PlasmaShared
         const string whoisServer = "whois.ripe.net";
 
         public Dictionary<string, string> QueryByIp(string ip) {
-            var data = QueryWhois("-l " + ip);
+            var data = QueryWhois("-a -l " + ip);
             var result = new Dictionary<string, string>();
             foreach (var line in data.Split('\n').Where(x=>!string.IsNullOrEmpty(x) && x[0] != '%')) {
                 var pieces = line.Split(new char[]{':'}, 2);
