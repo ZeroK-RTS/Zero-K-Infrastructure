@@ -133,6 +133,15 @@ namespace ZeroKLobby
 
                 SpringPaths = new SpringPaths(null, writableFolderOverride: contentDir);
                 SpringPaths.MakeFolders();
+                //SpringPaths.SpringVersionChanged += (s, e) =>
+                //{
+                //    //System.Diagnostics.Trace.TraceInformation("SpringPaths version: {0}", SpringPaths.SpringVersion);
+                //    //new PlasmaShared.UnitSyncLib.UnitSync(SpringPaths);
+                //    //SpringScanner.VerifyUnitSync();
+                //    //if (SpringScanner != null) SpringScanner.Dispose();
+                //    //SpringScanner = new SpringScanner(SpringPaths);
+                //    //SpringScanner.Start();
+                //};
 
                 SaveConfig();
 
