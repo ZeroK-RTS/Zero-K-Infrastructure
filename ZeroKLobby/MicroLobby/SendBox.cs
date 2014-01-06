@@ -16,6 +16,7 @@ namespace ZeroKLobby.MicroLobby
         string ncSecondChunk;
         string ncWordToComplete = "";
         bool nickCompleteMode;
+        bool pressingEnter;
         public event Func<string, IEnumerable<string>> CompleteWord;
         public event EventHandler<EventArgs<string>> LineEntered = delegate { };
 
@@ -29,27 +30,24 @@ namespace ZeroKLobby.MicroLobby
         {
             if (e.KeyChar == '\t')
             {
-                CompleteNick();
-                e.Handled = true;
+                if (CompleteNick()) e.Handled = true; //intercept TAB when cursor is at end of a text (for autocomplete) but ignore other cases
+            }
+            if (e.KeyChar == '\r')
+            {
+                if (!pressingEnter) SendTextNow(); //send text online
+                e.Handled = true; //block ENTER because we already sent the text, no need to add newline character to textbox. We send it now rather than waiting the newline at OnKeyUp of ENTER (because we dont want this delay).
+                pressingEnter = true; //remember that we already pressed ENTER to avoid spamming sendtext due to key repeat.
             }
             base.OnKeyPress(e);
         }
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
-            if (Lines.Length > 1)
-            {
-                var line = Text.Replace("\t", "  ").TrimEnd(new[] { '\r', '\n' });
-
-                if (!string.IsNullOrEmpty(line))
-                {
-                    history.Add(line);
-                    historyIndex = history.Count;
-                }
-
-                Text = String.Empty;
-                LineEntered(this, new EventArgs<string>(line));
-            }
+            //if (Lines.Length > 1) //send text now if newline detected
+            //{
+            //    SendTextNow();
+            //}
+            if (pressingEnter && e.KeyCode == Keys.Return) pressingEnter = false; 
             base.OnKeyUp(e);
         }
 
@@ -101,24 +99,37 @@ namespace ZeroKLobby.MicroLobby
             base.OnPreviewKeyDown(e);
         }
 
-
-        void CompleteNick()
+        void SendTextNow()
         {
-            if (CompleteWord == null) return;
+            var line = Text.Replace("\t", "        ").TrimEnd(new[] { '\r', '\n' });
 
-            var ss = SelectionStart;
+            if (!string.IsNullOrEmpty(line))
+            {
+                history.Add(line);
+                historyIndex = history.Count;
+            }
 
-            //don't bother nick complete if caret is at start of box or after a space
-            if (ss == 0) return;
+            Text = String.Empty;
+            LineEntered(this, new EventArgs<string>(line)); //send text online
+        }
+
+        bool CompleteNick()
+        {
+            if (CompleteWord == null) return false;
+
+            var ss = SelectionStart; //cursor position
+
+            //don't bother nick complete if caret is at start of box or after a space or after a tab
+            if (ss == 0) return false;
             var test = Text.Substring(ss - 1, 1);
-            if (test == " ") return;
+            if (test == " " || test == "\t") return false;
 
             if (!nickCompleteMode)
             {
                 //split chatbox text chunks
                 var ncFirstChunkTemp = Text.Substring(0, ss).Split(' ');
                 ncFirstChunk = "";
-                for (var i = 0; i < ncFirstChunkTemp.Length - 1; i++) ncFirstChunk += ncFirstChunkTemp[i] + " ";
+                for (var i = 0; i < ncFirstChunkTemp.Length - 1; i++) ncFirstChunk += ncFirstChunkTemp[i] + " "; //text up to cursor
                 ncSecondChunk = Text.Substring(ss);
 
                 //word entered by user
@@ -149,6 +160,7 @@ namespace ZeroKLobby.MicroLobby
                 Text = ncFirstChunk + nick + ncSecondChunk;
                 SelectionStart = ncFirstChunk.Length + nick.Length;
             }
+            return true;
         }
     }
 }
