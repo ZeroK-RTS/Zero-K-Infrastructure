@@ -32,21 +32,25 @@ namespace ZeroKLobby.MicroLobby
 				CompleteNick();
 				e.Handled = true;
 			}
-            if (e.KeyChar == '\r')
-            {
-                var line = Text.Replace("\t", "  ").Trim(new[] {'\r', '\n'});
+			base.OnKeyPress(e);
+		}
 
-                if (!string.IsNullOrEmpty(line))
-                {
-                    history.Add(line);
-                    historyIndex = history.Count;
-                }
+		protected override void OnKeyUp(KeyEventArgs e)
+		{
+			if (Lines.Length > 1)
+			{
+				var line = Text.Replace("\t", "  ").TrimEnd(new[] { '\r', '\n' });
 
-                Text = String.Empty;
-                LineEntered(this, new EventArgs<string>(line));
-            }
+				if (!string.IsNullOrEmpty(line))
+				{
+					history.Add(line);
+					historyIndex = history.Count;
+				}
 
-            base.OnKeyPress(e);
+				Text = String.Empty;
+				LineEntered(this, new EventArgs<string>(line));
+			}
+			base.OnKeyUp(e);
 		}
 
 		protected override void OnPreviewKeyDown(PreviewKeyDownEventArgs e)
@@ -61,8 +65,12 @@ namespace ZeroKLobby.MicroLobby
                 {
                     historyIndex--;
                     if (historyIndex < 0) historyIndex = 0;
-                    if (historyIndex < history.Count) Text = history[historyIndex];
-                    SelectionStart = Text.Length; 
+
+                    if (history.Count > historyIndex)
+                    {
+                        Text = history[historyIndex];
+                        SelectionStart = Text.Length;
+                    }
                 }
 			}
 			else if (e.KeyCode == Keys.Down)
@@ -75,10 +83,13 @@ namespace ZeroKLobby.MicroLobby
                 {
                     historyIndex++;
                     if (historyIndex < 0) historyIndex = 0;
-                    Text = (historyIndex < history.Count) ? history[historyIndex] : String.Empty;
+                    if (history.Count > historyIndex) Text = history[historyIndex];
+                    if (historyIndex >= history.Count)
+                    {
+                        historyIndex = history.Count;
+                        Text = String.Empty;
+                    }
                     SelectionStart = Text.Length;
-
-                    if (historyIndex > history.Count) historyIndex = history.Count;
                 }
 			}
 			else historyIndex = history.Count;
