@@ -121,6 +121,8 @@ namespace PlasmaDownloader
                                                     Trace.TraceInformation("Install of {0} complete", Name);
                                                     springPaths.SetEnginePath(springPaths.GetEngineFolderByVersion(Name));
                                                     Finish(true);
+                                                    // run unitsync after engine download; for more info see comments in Program.cs
+                                                    new PlasmaShared.UnitSyncLib.UnitSync(springPaths); // put it after Finish() so it doesn't hold up the download bar
                                                 }
                                             };
 
@@ -145,6 +147,8 @@ namespace PlasmaDownloader
                                             Trace.TraceInformation("Install of {0} complete", Name);
                                             springPaths.SetEnginePath(targetDir);
                                             Finish(true);
+                                            // run unitsync after engine download; for more info see comments in Program.cs
+                                            new PlasmaShared.UnitSyncLib.UnitSync(springPaths); // put it after Finish() so it doesn't hold up the download bar
                                         } catch (Exception ex) {
                                             try {
                                                 Directory.Delete(targetDir, true);

@@ -133,6 +133,13 @@ namespace ZeroKLobby
 
                 SpringPaths = new SpringPaths(null, writableFolderOverride: contentDir);
                 SpringPaths.MakeFolders();
+
+                // run unitsync as soon as possible so we don't have to spend several minutes doing it on game start
+                // two problems:
+                // 1) unitsync can only be loaded once, even if in a different directory http://msdn.microsoft.com/en-us/library/ms682586.aspx#factors_that_affect_searching
+                //  so if we do it in SpringVersionChanged it'll be done at startup for GlobalConst.DefaultEngineOverride, then for no other engine version
+                // 2) unitsync can't be unloaded http://stackoverflow.com/questions/1371877/how-to-unload-the-dll-using-c
+                // also see EngineDownload.cs
                 //SpringPaths.SpringVersionChanged += (s, e) =>
                 //{
                 //    //System.Diagnostics.Trace.TraceInformation("SpringPaths version: {0}", SpringPaths.SpringVersion);
