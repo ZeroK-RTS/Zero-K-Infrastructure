@@ -18,6 +18,7 @@ namespace ZeroKWeb.Controllers
         
         string[] possiblePaths = new string[] { @"c:\springie_spring\demos-server", @"c:\springie_spring\demos" };
     
+        [OutputCache(Duration = int.MaxValue, VaryByParam = "none")]
         public ActionResult Download(string name) {
             if (string.IsNullOrEmpty(name)) {
                 return Content("");
