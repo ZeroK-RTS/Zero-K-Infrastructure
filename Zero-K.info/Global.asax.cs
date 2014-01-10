@@ -54,6 +54,8 @@ namespace ZeroKWeb
             routes.MapRoute("WikiPage2", "p/zero-k/wiki/{node}", new { controller = "Wiki", action = "Index", node = UrlParameter.Optional });
             routes.MapRoute("MissionImage", "Missions/Img/{name}", new { controller = "Missions", action = "Img", name = UrlParameter.Optional });
             routes.MapRoute("MissionFile", "Missions/File/{name}", new { controller = "Missions", action = "File", name = UrlParameter.Optional });
+            routes.MapRoute("ReplayFile", "Replays/{name}", new { controller = "Replays", action = "Download", name = UrlParameter.Optional });
+
             routes.MapRoute("StaticFile", "Static/{name}", new { controller = "Static", action = "Index", name = UrlParameter.Optional });
             routes.MapRoute("RedeemCode",
                             "Contributions/Redeem/{code}",
