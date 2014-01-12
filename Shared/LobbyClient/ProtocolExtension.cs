@@ -97,9 +97,9 @@ namespace LobbyClient
 
                 tas.Extensions.Publish(acc.Name, data);
 
-                if (acc.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby)) tas.AdminKickFromLobby(acc.Name, "Banned");
-                // var penalty = acc.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby);
-                // if (penalty != null) tas.AdminKickFromLobby(acc.Name, string.Format("Banned until {0}, reason: {1}", penalty.BanExpires, penalty.Reason)));
+                // if (acc.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby)) tas.AdminKickFromLobby(acc.Name, "Banned");
+                var penalty = acc.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby);
+                if (penalty != null) tas.AdminKickFromLobby(acc.Name, string.Format("Banned until {0}, reason: {1}", penalty.BanExpires, penalty.Reason));
 				}
         }
 
