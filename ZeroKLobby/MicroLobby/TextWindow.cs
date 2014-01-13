@@ -42,8 +42,10 @@ namespace ZeroKLobby.MicroLobby
     public partial class TextWindow: UserControl
     {
         const int MaxTextLines = 500;
-        //public const string WwwMatch = @"((https?|www\.|spring://)[^\s,]+)";
-        public const string WwwMatch = @"((www\.|www\d\.|(https?|ftp|irc|spring):((//)|(\\\\)))+[\w\d:#@%/!;$()~_?\+-=\\\.&]*)"; //from http://icechat.codeplex.com/SourceControl/latest#532131
+        //old URL regex for reference: WwwMatch = @"((https?|www\.|spring://)[^\s,]+)";
+        //Regex note: [^<>()] : exclude <<< or >>> or ( or ) at end of URL
+        //Regex note: [\w\d:#@%/!;$()~_?\+-=\\\.&]* : include any sort of character 1 or more times
+        public const string WwwMatch = @"((www\.|www\d\.|(https?|ftp|irc|spring):((//)|(\\\\)))+[\w\d:#@%/!;$()~_?\+-=\\\.&]*[^<>()])"; //from http://icechat.codeplex.com/SourceControl/latest#532131
         int backColor;
         int curHighChar;
         int curHighLine;
@@ -356,7 +358,7 @@ namespace ZeroKLobby.MicroLobby
 
                 var buildString = new StringBuilder();
                 var tl = displayLines[startHighLine].TextLine;
-                for (var curLine = startHighLine; curLine <= curHighLine; ++curLine)
+                for (var curLine = startHighLine; curLine <= curHighLine; ++curLine) //if have selected multiple line
                 {
                     if (tl != displayLines[curLine].TextLine)
                     {
@@ -526,8 +528,7 @@ namespace ZeroKLobby.MicroLobby
 
             public static Color ColorInvert(Color colorIn)
             {
-                return Color.FromArgb(colorIn.A, (colorIn.R + 128) % 256, (colorIn.G +
-128) % 256, (colorIn.B + 128) % 256);
+                return Color.FromArgb(colorIn.A, (colorIn.R + 128) % 256, (colorIn.G + 128) % 256, (colorIn.B + 128) % 256);
             }
 
         /// <summary>
@@ -691,7 +692,7 @@ namespace ZeroKLobby.MicroLobby
             {
                 using (var buffer = new Bitmap(Width, Height, PixelFormat.Format32bppPArgb))
                 using (var sf = StringFormat.GenericTypographic)
-                using (var g = Graphics.FromImage(buffer)) //"using" allow auto dispose
+                using (var g = Graphics.FromImage(buffer)) //using "using" allow auto dispose
                 {
                     sf.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
 
@@ -719,11 +720,11 @@ namespace ZeroKLobby.MicroLobby
                     }
                     else g.FillRectangle(new SolidBrush(TextColor.GetColor(backColor)), displayRect);
 
-                    g.InterpolationMode = InterpolationMode.Low;
+                    g.InterpolationMode = InterpolationMode.High;
                     g.SmoothingMode = SmoothingMode.HighSpeed;
-                    g.PixelOffsetMode = PixelOffsetMode.None;
+                    g.PixelOffsetMode = PixelOffsetMode.HighSpeed;
                     g.CompositingQuality = CompositingQuality.HighSpeed;
-                    g.TextRenderingHint = TextRenderingHint.SystemDefault;
+                    g.TextRenderingHint = TextRenderingHint.AntiAlias;
 
                     if (totalLines == 0) e.Graphics.DrawImageUnscaled(buffer, 0, 0);
                     else
@@ -786,7 +787,7 @@ namespace ZeroKLobby.MicroLobby
                             line.Append(displayLines[curLine].Line);
                             curBackColor = backColor;
 
-                            //check if in a url
+                            //check if in a url, cancel underline if not
                             if (!isInUrl)
                             {
                                 underline = false;
@@ -818,17 +819,17 @@ namespace ZeroKLobby.MicroLobby
                                                     {
                                                         textSize = (int)g.MeasureString(buildString.ToString(), Font, 0, sf).Width + 1;
                                                         var r = new Rectangle((int)startX, startY, textSize + 1, LineSize + 1);
-                                                        g.FillRectangle(backColorBrush, r);
+                                                        g.FillRectangle(backColorBrush, r); //draw white (or black) rectangle
                                                     }
 
-                                                    g.DrawImage(bm,
-                                                                startX + (int)g.MeasureString(buildString.ToString(), Font, 0, sf).Width,
+                                                    g.DrawImage(bm, //draw an emoticon
+                                                                startX + g.MeasureString(buildString.ToString(), Font, 0, sf).Width,
                                                                 startY,
                                                                 16,
                                                                 16);
 
                                                     using (var brush = new SolidBrush(TextColor.GetColor(curForeColor))) {
-                                                        g.DrawString(buildString.ToString(),
+                                                        g.DrawString(buildString.ToString(), //draw text (that wasn't yet drawn up to *this* point)
                                                                         Font,
                                                                         brush,
                                                                         startX,
@@ -836,10 +837,10 @@ namespace ZeroKLobby.MicroLobby
                                                                         sf);
                                                     }
 
-                                                    startX += bm.Width + (int)g.MeasureString(buildString.ToString(), Font, 0, sf).Width;
+                                                    startX += bm.Width + g.MeasureString(buildString.ToString(), Font, 0, sf).Width;
 
                                                     buildString = null;
-                                                    buildString = new StringBuilder(); //reset content
+                                                    buildString = new StringBuilder(); //reset the content (because we already draw it for user)
                                                 }
                                                 break;
                                             case TextColor.UrlStart:
@@ -1021,10 +1022,10 @@ namespace ZeroKLobby.MicroLobby
                                                     {
                                                         textSize = (int)g.MeasureString(buildString.ToString(), font, 0, sf).Width + 1;
                                                         var r = new Rectangle((int)startX, startY, textSize + 1, LineSize + 1);
-                                                        g.FillRectangle(backColorBrush, r);
+                                                        g.FillRectangle(backColorBrush, r); //draw black (or white) rectangle
                                                     }
                                                     /*
-                                                TextRenderer.DrawText(g,
+                                                        TextRenderer.DrawText(g,
                                                                         buildString.ToString(),
                                                                         font,
                                                                         new Point((int)startX, startY),
@@ -1032,7 +1033,7 @@ namespace ZeroKLobby.MicroLobby
                                                                         TextColor.GetColor(curBackColor));
                                                     */
                                                     using (var solidBrush = new SolidBrush(TextColor.GetColor(curForeColor))) {
-                                                        g.DrawString(buildString.ToString(),
+                                                        g.DrawString(buildString.ToString(), //draw text (that wasn't yet drawn up to *this* point)
                                                                         font,
                                                                         solidBrush,
                                                                         startX,
@@ -1042,7 +1043,7 @@ namespace ZeroKLobby.MicroLobby
 
                                                     startX += g.MeasureString(buildString.ToString(), font, 0, sf).Width; //textSizes[32]
 
-                                                    buildString = null;
+                                                    buildString = null; //reset the content (because we already draw it for user)
                                                     buildString = new StringBuilder();
 
                                                     //remove whats drawn from string
@@ -1176,8 +1177,12 @@ namespace ZeroKLobby.MicroLobby
             if (lineNumber < TotalDisplayLines && lineNumber >= 0)
             {
                 var g = CreateGraphics();
+
+                g.InterpolationMode = InterpolationMode.High;
+                g.SmoothingMode = SmoothingMode.HighSpeed;
+                g.PixelOffsetMode = PixelOffsetMode.HighSpeed;
+                g.CompositingQuality = CompositingQuality.HighSpeed;
                 g.TextRenderingHint = TextRenderingHint.AntiAlias;
-                g.SmoothingMode = SmoothingMode.AntiAlias;
 
                 var sf = StringFormat.GenericTypographic;
                 sf.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
@@ -1186,8 +1191,8 @@ namespace ZeroKLobby.MicroLobby
                 var line = displayLines[lineNumber].Line.StripAllCodes(); //get all character of the line (Note: StripAllCodes() is a function in TextColor.cs)
 
                 //do line-width check once if "x" is greater than line width, else check every character for the correct position where "x" is pointing at. 
-                //float width = (int)g.MeasureString(line, Font, 0, sf).Width; //<-- you can uncomment this and comment the next line. The bad thing is: it underestimate end position if there's emotIcon, it cut some char during selection
-                float width = g.MeasureString(lineEmot, Font, 0, sf).Width;
+                //int width = (int)g.MeasureString(line, Font, 0, sf).Width; //<-- you can uncomment this and comment the next line. The bad thing is: it underestimate end position if there's emotIcon, it cut some char during selection
+                int width = (int)g.MeasureString(lineEmot, Font, 0, sf).Width;
                 if (x > width)
                 {
                     g.Dispose();
@@ -1209,13 +1214,12 @@ namespace ZeroKLobby.MicroLobby
                     }
                     float charWidth = g.MeasureString(line[i].ToString(), Font, 0, sf).Width;
                     lookWidth += charWidth;
-                    if (lookWidth >= (x + charWidth/2)) //check whether this character is on cursor position or not.  Note: char checking & x-coordinate is checked from left to right (everything is from left to right)
+                    if ((int)lookWidth >= (x + (int)charWidth/2)) //check whether this character is on cursor position or not.  Note: char checking & x-coordinate is checked from left to right (everything is from left to right)
                     {
                         g.Dispose();
                         return i;
                     }
                 }
-                //end methodB
                 g.Dispose();
                 return line.Length;
             }
@@ -1227,8 +1231,11 @@ namespace ZeroKLobby.MicroLobby
             if (lineNumber < TotalDisplayLines && lineNumber >= 0)
             {
                 var g = CreateGraphics();
+                g.InterpolationMode = InterpolationMode.High;
+                g.SmoothingMode = SmoothingMode.HighSpeed;
+                g.PixelOffsetMode = PixelOffsetMode.HighSpeed;
+                g.CompositingQuality = CompositingQuality.HighSpeed;
                 g.TextRenderingHint = TextRenderingHint.AntiAlias;
-                g.SmoothingMode = SmoothingMode.AntiAlias;
 
                 var sf = StringFormat.GenericTypographic;
                 sf.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
@@ -1237,8 +1244,8 @@ namespace ZeroKLobby.MicroLobby
                 var line = displayLines[lineNumber].Line.StripAllCodes();
 
                 //do line-width check once if "x" is greater than line width,
-                float width = g.MeasureString(line, Font, 0, sf).Width;
-                //float width = g.MeasureString(lineEmot, Font, 0, sf).Width; / //<-- you can uncomment this and comment the previous line. The bad thing is: will overestimate hyperlinks ending, which make you able to click empty space
+                int width = (int)g.MeasureString(line, Font, 0, sf).Width;
+                //int width = (int)g.MeasureString(lineEmot, Font, 0, sf).Width; / //<-- you can uncomment this and comment the previous line. The bad thing is: will overestimate hyperlinks ending, which make you able to click empty space
                 if (x > width)
                 {
                     g.Dispose();
@@ -1257,25 +1264,24 @@ namespace ZeroKLobby.MicroLobby
                 {
                     if ((char)lineEmot[i] == TextColor.EmotChar) //equal to an emot icon
                     {
-                        var emotNumber = Convert.ToInt32(lineEmot.ToString().Substring(i + 1, 3));
+                        int emotNumber = Convert.ToInt32(lineEmot.ToString().Substring(i + 1, 3));
                         lineEmot = lineEmot.Remove(i, 4); //clear emot char from lineEmot
-                        var bm = TextImage.GetImage(emotNumber);
+                        Image bm = TextImage.GetImage(emotNumber);
                         lookWidth += bm.Width; //add emot size
                         i--; //halt pointer position for this time once (at second try the emot char will be gone, its size is added and continue checking the other stuff)
                         continue;
                     }
 
-                    if (lookWidth >= x && foundSpace)
+                    if ((int)lookWidth >= x && foundSpace)
                     {
                         if (displayLines[lineNumber].Previous && lineNumber > 0 && space == 0)
                         {
                             // this line wraps from the previous one. 
                             var prevline = displayLines[lineNumber - 1].Line.StripAllCodes();
-                            var prevwidth = (int)g.MeasureString(prevline, Font, 0, sf).Width;
+                            int prevwidth = (int)g.MeasureString(prevline, Font, 0, sf).Width;
                             g.Dispose();
                             return ReturnWord(lineNumber - 1, prevwidth);
                         }
-
                         g.Dispose();
                         return line.Substring(space, i - space); //Substring(space, i - space), in example: xxx__Yxxxx_T_xxx OR Yxx_T_xxxxx__xxx (where T is pointing at spaces, Y pointing at 1st letter)
                     }
@@ -1284,7 +1290,7 @@ namespace ZeroKLobby.MicroLobby
                     {
                         if (!foundSpace)
                         {
-                            if (lookWidth >= x)
+                            if ((int)lookWidth >= x)
                             {
                                 foundSpace = true; //current position, in example: xxx__xxxxx_T_xxx (where T is pointing at space on right)
                                 i--; //halt pointer position for this time once (at second loop the mid-code will be executed to return the Substring)
@@ -1301,7 +1307,7 @@ namespace ZeroKLobby.MicroLobby
                     var prevline = displayLines[lineNumber - 1].Line.StripAllCodes();
                     if (prevline[prevline.Length - 1] != ' ')
                     {
-                        var prevwidth = (int)g.MeasureString(prevline, Font, 0, sf).Width;
+                        int prevwidth = (int)g.MeasureString(prevline, Font, 0, sf).Width;
                         g.Dispose();
                         return ReturnWord(lineNumber - 1, prevwidth);
                     }
@@ -1327,12 +1333,10 @@ namespace ZeroKLobby.MicroLobby
                                 break;
                             }
                         }
-
                         g.Dispose();
                         return line.Substring(space) + extra;
                     }
                 }
-
                 g.Dispose();
             }
             return "";
