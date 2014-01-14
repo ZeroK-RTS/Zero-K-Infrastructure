@@ -733,7 +733,8 @@ namespace Springie.autohost
 
         void CheckForBattleExit() {
             if ((DateTime.Now - spring.GameStarted) > TimeSpan.FromSeconds(20)) {
-                if (spring.IsRunning) {
+                if (spring.IsRunning && !spring.IsBattleOver)
+                { // don't exit here if game is already over; leave it to the timed exit thread in spring_GameOver
                     Battle b = tas.MyBattle;
                     int count = 0;
                     foreach (UserBattleStatus p in b.Users) {
@@ -815,7 +816,7 @@ namespace Springie.autohost
             SayBattle("Game over, exiting");
             PlasmaShared.Utils.SafeThread(() =>
                 {
-                    Thread.Sleep(10000); // wait for stats
+                    Thread.Sleep(25000); // wait for stats
                     spring.ExitGame();
                 }).Start();
 
