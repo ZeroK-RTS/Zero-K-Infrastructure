@@ -111,17 +111,17 @@ namespace ZeroKLobby
             if (Environment.OSVersion.Platform != PlatformID.Unix && !Program.Conf.UseExternalBrowser) {
                 if (!Program.Conf.SingleInstance) //run in multiple TAB?
                 {
-                    AddTabPage(new BrowserTab("http://zero-k.info/Maps"), "Maps");
-                    AddTabPage(new BrowserTab("http://zero-k.info/Missions"), "sp");
-                    AddTabPage(new BrowserTab("http://zero-k.info/Battles"), "rp");
-                    AddTabPage(new BrowserTab("http://zero-k.info/Planetwars"), "pw");
-                    AddTabPage(new BrowserTab("http://zero-k.info/Forum"), "fm");
+                    AddTabPage(new BrowserTab("http://zero-k.info/Maps", false), "Maps");
+                    AddTabPage(new BrowserTab("http://zero-k.info/Missions", true), "sp");
+                    AddTabPage(new BrowserTab("http://zero-k.info/Battles", false), "rp");
+                    AddTabPage(new BrowserTab("http://zero-k.info/Planetwars", false), "pw");
+                    AddTabPage(new BrowserTab("http://zero-k.info/Forum", true), "fm");
                 }
-                var home = AddTabPage(new BrowserTab("http://zero-k.info/"), "hm");
+                var home = AddTabPage(new BrowserTab("http://zero-k.info/", true), "hm");
                 tabControl.SelectTab(home);
                 if (Program.Conf.InterceptPopup) 
                 {
-                    AddTabPage(new BrowserTab("http"), "other"); //a tab with generic match that match 100% of random URL (block new window)
+                    AddTabPage(new BrowserTab("http", false), "other"); //a tab with generic match that match 100% of random URL (block new window)
                     ButtonList.Add(new ButtonInfo() { Label = "OTHER", TargetPath = "http", Height = 32,});
                 }
             }

@@ -135,7 +135,7 @@ namespace ZeroKLobby.MicroLobby
             return chatControl;
         }
 
-        ChatControl GetChannelControl(string channelName)
+        public ChatControl GetChannelControl(string channelName)
         {
             return toolTabs.GetTab(channelName) as ChatControl;
         }
@@ -347,7 +347,7 @@ namespace ZeroKLobby.MicroLobby
 
 		public string PathHead { get { return "chat"; } }
 
-        public bool TryNavigate(params string[] path)
+        public bool TryNavigate(params string[] path) //called by NavigationControl.cs when user press Navigation button or the URL button
     	{
 			if (path.Length == 0) return false;
 			if (path[0] != PathHead) return false;

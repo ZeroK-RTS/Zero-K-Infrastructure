@@ -17,8 +17,9 @@ namespace ZeroKLobby.MicroLobby
         string ncWordToComplete = "";
         bool nickCompleteMode;
         bool pressingEnter;
-        public event Func<string, IEnumerable<string>> CompleteWord;
+        public event Func<string, IEnumerable<string>> CompleteWord; //processed by ChatControl.cs
         public event EventHandler<EventArgs<string>> LineEntered = delegate { };
+        bool isLinux = Environment.OSVersion.Platform == PlatformID.Unix; 
 
         public SendBox()
         {
@@ -28,7 +29,7 @@ namespace ZeroKLobby.MicroLobby
 
         protected override void OnKeyPress(KeyPressEventArgs e)
         {
-            if (e.KeyChar == '\t')
+            if (e.KeyChar == '\t') 
             {
                 if (CompleteNick()) e.Handled = true; //intercept TAB when cursor is at end of a text (for autocomplete) but ignore other cases
             }
@@ -118,11 +119,21 @@ namespace ZeroKLobby.MicroLobby
             if (CompleteWord == null) return false;
 
             var ss = SelectionStart; //cursor position
-
-            //don't bother nick complete if caret is at start of box or after a space or after a tab
-            if (ss == 0) return false;
-            var test = Text.Substring(ss - 1, 1);
-            if (test == " " || test == "\t") return false;
+            if (isLinux)
+            {
+                ss = ss - 1; //in Linux Mono (not sure which version), OnKeyPress() is called after text is entered when different than in MS Windows
+                if (ss <= 0) return false;
+                var test = Text.Substring(ss - 1, 1);
+                if (test == " " || test == "\t") return false;
+                Text.Remove(ss, 1); //remove the pre-entered TAB
+            }
+            else
+            {
+                //don't bother nick complete if caret is at start of box or after a space or after a tab
+                if (ss == 0) return false;
+                var test = Text.Substring(ss - 1, 1);
+                if (test == " " || test == "\t") return false;
+            }
 
             if (!nickCompleteMode)
             {

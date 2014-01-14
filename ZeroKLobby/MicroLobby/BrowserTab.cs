@@ -15,17 +15,17 @@ namespace ZeroKLobby
         string navigatingTo = null;
         readonly string pathHead;
 
-        public BrowserTab(string head)
+        public BrowserTab(string head, bool autoStartOnLogin)
         {
             pathHead = head;
-            if (Program.TasClient != null) Program.TasClient.LoginAccepted += (sender, args) =>
+            if (Program.TasClient != null && autoStartOnLogin==true) Program.TasClient.LoginAccepted += (sender, args) =>
             {
                 navigatingTo = head;
                 base.Navigate(head);
             };
             base.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(browser_DocumentCompleted); //This will call "UpdateURL()" when page finish loading
             base.NewWindow3 += BrowserTab_NewWindow3;
-            this.ScriptErrorsSuppressed = true;
+            this.ScriptErrorsSuppressed = false; // Ensure that ScriptErrorsSuppressed is set to false.
         }
 
         void BrowserTab_NewWindow3(object sender, NewWindow3EventArgs e)
@@ -35,6 +35,14 @@ namespace ZeroKLobby
                 NavigationControl.Instance.Path = e.Url.ToString();
                 e.Cancel = true;
             }
+        }
+
+        private void Window_Error(object sender, HtmlElementErrorEventArgs e)
+        { 
+            //Reference: http://stackoverflow.com/questions/2476360/disable-javascript-error-in-webbrowser-control
+            // Ignore the error and suppress the error dialog box.
+            System.Diagnostics.Trace.TraceInformation("Internet Explorer Error: TAB: {0} ERROR: {1}", pathHead, e.Description);
+            e.Handled = true;
         }
 
         //protected override void OnNewWindow(System.ComponentModel.CancelEventArgs e) //This block "Open In New Window" button.
@@ -78,7 +86,7 @@ namespace ZeroKLobby
                 //(because for unknown reason mission/replay can't be triggered more than once using standard technique(javascript send text to lobby to trigger mission))
                 e.Cancel = true;
 
-                int endPosition = url.IndexOf("');void(0);", 29);
+                int endPosition = url.IndexOf("');void(0);", 29); //the end of string as read from Internet Browser status bar
                 int commandLength = endPosition - 29; //NOTE: "javascript:SendLobbyCommand('" is 30 char. So the startPos in at 29th char
                 Program.MainWindow.navigationControl.Path = url.Substring(29, commandLength);
             }
@@ -140,7 +148,9 @@ namespace ZeroKLobby
 
         private void browser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) //is called when webpage finish loading
         {   //Reference: http://msdn.microsoft.com/en-us/library/system.windows.forms.webbrowser.aspx
-            
+
+            ((WebBrowser)sender).Document.Window.Error += new HtmlElementErrorEventHandler(Window_Error); // Hides script errors without hiding other dialog boxes.
+
             //This update URL textbox & add the page to NavigationBar's history (so that Back&Forward button can be used):
             navigatingTo = ((WebBrowser)sender).Url.ToString();
             Program.MainWindow.navigationControl.AddToHistoryStack(navigatingTo,this);

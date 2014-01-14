@@ -114,13 +114,25 @@ namespace ZeroKLobby.MicroLobby
             topicBox.ShowUnreadLine = false;
             topicBox.ShowHistory = false;
 
-            sendBox.CompleteWord += (word) =>
+            sendBox.CompleteWord += (word) => //autocomplete of username
                 {
                     var w = word.ToLower();
-                    return
-                        playerBox.GetUserNames()
-                                 .Where(x => x.ToLower().StartsWith(w))
-                                 .Union(playerBox.GetUserNames().Where(x => x.ToLower().Contains(w)));
+                    IEnumerable <string> firstResult = playerBox.GetUserNames()
+                        .Where(x => x.ToLower().StartsWith(w))
+                        .Union(playerBox.GetUserNames().Where(x => x.ToLower().Contains(w)));
+                    if (true)
+                    {
+                        ChatControl zkChatArea = Program.MainWindow.navigationControl.ChatTab.GetChannelControl("zk");
+                        if (zkChatArea != null)
+                        {
+                            IEnumerable<string> extraResult = zkChatArea.playerBox.GetUserNames()
+                                .Where(x => x.ToLower().StartsWith(w))
+                                .Union(zkChatArea.playerBox.GetUserNames().Where(x => x.ToLower().Contains(w)));
+                            firstResult = firstResult.Concat(extraResult); //Reference: http://stackoverflow.com/questions/590991/merging-two-ienumerablets
+                        }
+                    }
+                    return firstResult;
+                        
                 };
 
             if (channel != null) foreach (var userName in Program.TasClient.JoinedChannels[ChannelName].ChannelUsers) AddUser(userName);

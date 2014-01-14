@@ -282,7 +282,7 @@ namespace ZeroKLobby
 
         [Category("WebBrowser")]
         [DisplayName("Run only single instances")]
-        [Description("Internal browser will only run in single TAB and con't preload different part of Zero-K site in different TAB. This saves a little bit of system's memory but will make site navigation a bit slower.")]
+        [Description("Internal browser will only run in single TAB and won't store different part of Zero-K site in different TAB. This saves a bit of system's memory but will make site navigation a bit slower.")]
         public bool SingleInstance { get; set; }
         
         [Browsable(false)]

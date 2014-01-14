@@ -122,7 +122,8 @@ namespace PlasmaDownloader
                                                     springPaths.SetEnginePath(springPaths.GetEngineFolderByVersion(Name));
                                                     Finish(true);
                                                     // run unitsync after engine download; for more info see comments in Program.cs
-                                                    new PlasmaShared.UnitSyncLib.UnitSync(springPaths); // put it after Finish() so it doesn't hold up the download bar
+                                                    //new PlasmaShared.UnitSyncLib.UnitSync(springPaths); // put it after Finish() so it doesn't hold up the download bar
+                                                    //^ is commented because conflict/non-consensus. See: https://code.google.com/p/zero-k/source/detail?r=12394 for some issue/discussion
                                                 }
                                             };
 
@@ -148,7 +149,8 @@ namespace PlasmaDownloader
                                             springPaths.SetEnginePath(targetDir);
                                             Finish(true);
                                             // run unitsync after engine download; for more info see comments in Program.cs
-                                            new PlasmaShared.UnitSyncLib.UnitSync(springPaths); // put it after Finish() so it doesn't hold up the download bar
+                                            //new PlasmaShared.UnitSyncLib.UnitSync(springPaths); // put it after Finish() so it doesn't hold up the download bar
+                                            //^ is commented because conflict/non-consensus. See: https://code.google.com/p/zero-k/source/detail?r=12394 for some issue/discussion
                                         } catch (Exception ex) {
                                             try {
                                                 Directory.Delete(targetDir, true);

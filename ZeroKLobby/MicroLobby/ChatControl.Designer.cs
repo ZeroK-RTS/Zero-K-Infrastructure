@@ -266,7 +266,7 @@ namespace ZeroKLobby.MicroLobby
 
         private ZeroKLobby.ZkSplitContainer splitContainer1;
         private SendBox sendBox;
-        protected PlayerListBox playerBox;
+        public PlayerListBox playerBox;
         private System.Windows.Forms.Panel searchBarContainer;
         private System.Windows.Forms.TextBox playerSearchBox;
         //public ChatBox ChatBox { get; set; } //note: for some reason I have to declare this at ChatControl.cs instead of let the default else my (VisualC#2010Express) Design-mode throw error.
