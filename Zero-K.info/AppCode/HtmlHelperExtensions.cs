@@ -423,7 +423,7 @@ namespace System.Web.Mvc
             string mapName = planet.DisplayedMap ?? planet.Mission.Map;
             Resource map = db.Resources.FirstOrDefault(m => m.InternalName == mapName);
             return
-                new MvcHtmlString(string.Format("<a href='{0}' title='$planet${4}'><img src='/img/planets/{1}' width='{2}'>{3}</a>",
+                new MvcHtmlString(string.Format("<a href='{0}' title='$campaignPlanet${4}'><img src='/img/planets/{1}' width='{2}'>{3}</a>",
                                                 url.Action("Planet", "Campaign", new { id = planet.PlanetID }),
                                                 map.MapPlanetWarsIcon,
                                                 map.PlanetWarsIconSize/3,
