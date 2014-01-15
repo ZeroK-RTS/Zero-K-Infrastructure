@@ -822,14 +822,14 @@ namespace ZeroKLobby.MicroLobby
                                                         g.FillRectangle(backColorBrush, r); //draw white (or black) rectangle
                                                     }
 
-                                                    g.DrawImage(bm, //draw an emoticon
+                                                    g.DrawImage(bm,
                                                                 startX + g.MeasureString(buildString.ToString(), Font, 0, sf).Width,
                                                                 startY,
                                                                 16,
                                                                 16);
 
                                                     using (var brush = new SolidBrush(TextColor.GetColor(curForeColor))) {
-                                                        g.DrawString(buildString.ToString(), //draw text (that wasn't yet drawn up to *this* point)
+                                                        g.DrawString(buildString.ToString(),
                                                                         Font,
                                                                         brush,
                                                                         startX,
@@ -1033,7 +1033,7 @@ namespace ZeroKLobby.MicroLobby
                                                                         TextColor.GetColor(curBackColor));
                                                     */
                                                     using (var solidBrush = new SolidBrush(TextColor.GetColor(curForeColor))) {
-                                                        g.DrawString(buildString.ToString(), //draw text (that wasn't yet drawn up to *this* point)
+                                                        g.DrawString(buildString.ToString(),
                                                                         font,
                                                                         solidBrush,
                                                                         startX,
