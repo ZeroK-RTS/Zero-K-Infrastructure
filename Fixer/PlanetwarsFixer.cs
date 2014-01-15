@@ -399,5 +399,28 @@ namespace Fixer
             }
             db.SubmitChanges();
         }
+
+        public static void RemoveTechStructures(bool bRefund, bool removeDefs)
+        {
+            ZkDataContext db = new ZkDataContext();
+            foreach (PlanetStructure structure in db.PlanetStructures.Where(x => x.StructureType.Unlock != null && x.StructureType.Unlock.UnlockType == ZkData.UnlockTypes.Unit))
+            {
+                db.PlanetStructures.DeleteOnSubmit(structure);
+                if (bRefund)
+                {
+                    var refund = structure.StructureType.Cost;
+                    if (structure.Account != null) structure.Account.ProduceMetal(refund);
+                    else structure.Planet.Faction.ProduceMetal(refund);
+                }
+            }
+            if (removeDefs)
+            {
+                foreach (StructureType structType in db.StructureTypes.Where(x => x.Unlock != null && x.Unlock.UnlockType == ZkData.UnlockTypes.Unit))
+                {
+                    db.StructureTypes.DeleteOnSubmit(structType);
+                }
+            }
+            db.SubmitChanges();
+        }
     }
 }
