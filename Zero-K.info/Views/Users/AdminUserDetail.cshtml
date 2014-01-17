@@ -58,7 +58,8 @@
     @{
         var myIPs = Model.AccountIPS.Select(x => x.IP).ToList();
         var myIDs = Model.AccountUserIDS.Select(x => x.UserID).ToList();
-        var smurfs = new ZkDataContext().Accounts.Where(x => x.AccountID != Model.AccountID && (x.AccountIPS.Any(y => myIPs.Contains(y.IP)) || x.AccountUserIDS.Any(y => myIDs.Contains(y.UserID))));
+        int[] brokenIDs = { 1236934115, 1199297835, -2130083051, 195445522, 1141552226 };
+        var smurfs = new ZkDataContext().Accounts.Where(x => x.AccountID != Model.AccountID && (x.AccountIPS.Any(y => myIPs.Contains(y.IP)) || x.AccountUserIDS.Where(id => !brokenIDs.Contains(id.UserID)).Any(y => myIDs.Contains(y.UserID))));
     }
     <h2>Smurfs</h2>
     @foreach (var ac in smurfs)
