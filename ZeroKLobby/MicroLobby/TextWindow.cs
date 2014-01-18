@@ -720,11 +720,12 @@ namespace ZeroKLobby.MicroLobby
                     }
                     else g.FillRectangle(new SolidBrush(TextColor.GetColor(backColor)), displayRect);
 
-                    g.InterpolationMode = InterpolationMode.High;
+                    g.InterpolationMode = InterpolationMode.Low;
                     g.SmoothingMode = SmoothingMode.HighSpeed;
-                    g.PixelOffsetMode = PixelOffsetMode.HighSpeed;
+                    g.PixelOffsetMode = PixelOffsetMode.None;
                     g.CompositingQuality = CompositingQuality.HighSpeed;
-                    g.TextRenderingHint = TextRenderingHint.AntiAlias;
+                    g.TextRenderingHint = TextRenderingHint.SystemDefault;
+
 
                     if (totalLines == 0) e.Graphics.DrawImageUnscaled(buffer, 0, 0);
                     else
@@ -1178,10 +1179,7 @@ namespace ZeroKLobby.MicroLobby
             {
                 var g = CreateGraphics();
 
-                g.InterpolationMode = InterpolationMode.High;
-                g.SmoothingMode = SmoothingMode.HighSpeed;
-                g.PixelOffsetMode = PixelOffsetMode.HighSpeed;
-                g.CompositingQuality = CompositingQuality.HighSpeed;
+                g.SmoothingMode = SmoothingMode.AntiAlias;
                 g.TextRenderingHint = TextRenderingHint.AntiAlias;
 
                 var sf = StringFormat.GenericTypographic;
@@ -1231,10 +1229,7 @@ namespace ZeroKLobby.MicroLobby
             if (lineNumber < TotalDisplayLines && lineNumber >= 0)
             {
                 var g = CreateGraphics();
-                g.InterpolationMode = InterpolationMode.High;
-                g.SmoothingMode = SmoothingMode.HighSpeed;
-                g.PixelOffsetMode = PixelOffsetMode.HighSpeed;
-                g.CompositingQuality = CompositingQuality.HighSpeed;
+                g.SmoothingMode = SmoothingMode.AntiAlias;
                 g.TextRenderingHint = TextRenderingHint.AntiAlias;
 
                 var sf = StringFormat.GenericTypographic;
