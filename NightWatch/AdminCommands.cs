@@ -16,6 +16,8 @@ namespace CaTracker
 
         void tas_Said(object sender, TasSayEventArgs e)
         {
+            if (e.UserName.Contains("Nightwatch")) return;
+
             if (e.Place == TasSayEventArgs.Places.Normal)
             {
                 if (e.Text.StartsWith("!kick"))
