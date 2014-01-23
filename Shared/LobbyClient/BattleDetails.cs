@@ -34,7 +34,7 @@ namespace LobbyClient
 
         public string GetParamList()
         {
-            return string.Format("GAME/StartPosType={0}\t", (int)startPos);
+            return string.Format("GAME/hosttype=SPRINGIE\tGAME/StartPosType={0}\t", (int)startPos);
         }
 
         /// <summary>
