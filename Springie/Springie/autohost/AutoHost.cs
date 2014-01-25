@@ -99,6 +99,8 @@ namespace Springie.autohost
             spring.PlayerSaid += spring_PlayerSaid;
             spring.BattleStarted += spring_BattleStarted;
 
+            tas.SetScriptTag("game/hosttype=SPRINGIE");
+            
             tas.BattleUserLeft += tas_BattleUserLeft;
             tas.UserStatusChanged += tas_UserStatusChanged;
             tas.BattleUserStatusChanged += TasOnBattleUserStatusChanged;
