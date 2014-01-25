@@ -99,8 +99,6 @@ namespace Springie.autohost
             spring.PlayerSaid += spring_PlayerSaid;
             spring.BattleStarted += spring_BattleStarted;
 
-            tas.SetScriptTag("game/hosttype=SPRINGIE");
-            
             tas.BattleUserLeft += tas_BattleUserLeft;
             tas.UserStatusChanged += tas_UserStatusChanged;
             tas.BattleUserStatusChanged += TasOnBattleUserStatusChanged;
@@ -685,7 +683,9 @@ namespace Springie.autohost
             if (Program.main.Config.UseHolePunching) b.Nat = Battle.NatMode.HolePunching;
             else if (Program.main.Config.GargamelMode) b.Nat = Battle.NatMode.FixedPorts;
             else b.Nat = Battle.NatMode.None; // else either no nat or fixed ports (for gargamel fake - to get client IPs)
+
             tas.OpenBattle(b);
+            tas.SetScriptTag("GAME/hosttype=SPRINGIE");
         }
 
 
