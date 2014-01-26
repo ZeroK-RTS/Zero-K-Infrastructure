@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace PlasmaShared.UnitSyncLib
@@ -189,6 +188,11 @@ namespace PlasmaShared.UnitSyncLib
                 return Marshal.PtrToStringAnsi(RawGetPrimaryModArchive(index));
             }
 
+            public static string GetInfoType(int index)
+            {
+                return Marshal.PtrToStringAnsi(RawGetInfoType(index));
+            }
+
             [DllImport(UnitSyncName)]
             public static extern int GetPrimaryModArchiveCount(int index);
 
@@ -224,9 +228,26 @@ namespace PlasmaShared.UnitSyncLib
                 return Marshal.PtrToStringAnsi(RawGetPrimaryModMutator(index));
             }
 
+            [DllImport(UnitSyncName)]
+            public static extern int GetPrimaryModInfoCount(int index);
+
             public static string GetPrimaryModName(int index)
             {
-                return Marshal.PtrToStringAnsi(RawGetPrimaryModName(index));
+                return Marshal.PtrToStringAnsi(RawGetPrimaryModName(index));  // deprecated
+
+                /*  this is the not-deprecated way to do it, but if it ain't broke don't fix it
+                int infoKeyCount = GetPrimaryModInfoCount(index);
+                for (int infoKeyIndex=0; infoKeyIndex<infoKeyCount; ++infoKeyIndex)
+                {
+                    string infoKeyType = GetInfoType(infoKeyIndex);
+                    string infoKeyName = GetInfoKey(infoKeyIndex);
+                    if (infoKeyType == "string" && infoKeyName == "name")
+                    {
+                        return GetInfoValueString(infoKeyIndex);
+                    }
+                }
+                return null;
+                */
             }
 
             public static string GetPrimaryModShortGame(int index)
@@ -546,6 +567,9 @@ namespace PlasmaShared.UnitSyncLib
 
             [DllImport(UnitSyncName, EntryPoint = "GetOptionStyle")]
             static extern IntPtr RawGetOptionStyle(int optIndex);
+
+            [DllImport(UnitSyncName, EntryPoint = "GetInfoType")]
+            static extern IntPtr RawGetInfoType(int index);
 
             [DllImport(UnitSyncName, EntryPoint = "GetPrimaryModArchive")]
             static extern IntPtr RawGetPrimaryModArchive(int index);
