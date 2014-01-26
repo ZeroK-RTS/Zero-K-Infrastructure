@@ -185,6 +185,8 @@ namespace MissionEditor2
             addAction("Make Units Neutral", () => new MakeUnitsNeutralAction(), "Logic");
             addAction("Modify Countdown", () => new ModifyCountdownAction(Mission.Countdowns.FirstOrDefault()), "Logic");
             addAction("Modify Counter", () => new ModifyCounterAction(), "Logic");
+            addAction("Modify Resources", () => new ModifyResourcesAction(Mission.Players.First()), "Logic");
+            addAction("Modify Unit Health", () => new ModifyUnitHealthAction(), "Logic");
             addAction("Send Scores", () => new SendScoreAction(), "Logic");
             addAction("Start Countdown", () => new StartCountdownAction(GetNewCountdownName()), "Logic");
             addAction("Transfer Units", () => new TransferUnitsAction(Mission.Players.First()), "Logic");
