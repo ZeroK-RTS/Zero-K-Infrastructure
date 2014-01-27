@@ -19,7 +19,9 @@ namespace ZeroKLobby.MicroLobby
         bool pressingEnter;
         public event Func<string, IEnumerable<string>> CompleteWord; //processed by ChatControl.cs
         public event EventHandler<EventArgs<string>> LineEntered = delegate { };
-        bool isLinux = Environment.OSVersion.Platform == PlatformID.Unix; 
+        bool isLinux = Environment.OSVersion.Platform == PlatformID.Unix;
+        bool isPreviewingHistory = false;
+        String currentText = String.Empty;
 
         public SendBox()
         {
@@ -62,14 +64,16 @@ namespace ZeroKLobby.MicroLobby
                 }
                 else
                 {
+                    if (!isPreviewingHistory)
+                    {
+                        currentText = Text;
+                        isPreviewingHistory = true;
+                    }
                     historyIndex--;
                     if (historyIndex < 0) historyIndex = 0;
-
-                    if (history.Count > historyIndex)
-                    {
-                        Text = history[historyIndex];
-                        SelectionStart = Text.Length;
-                    }
+                    if (historyIndex < history.Count) Text = history[historyIndex];
+                    if (historyIndex == history.Count) Text = currentText;
+                    SelectionStart = Text.Length;
                 }
             }
             else if (e.KeyCode == Keys.Down)
@@ -80,18 +84,28 @@ namespace ZeroKLobby.MicroLobby
                 }
                 else
                 {
+                    if (!isPreviewingHistory)
+                    {
+                        currentText = Text;
+                        isPreviewingHistory = true;
+                    }
                     historyIndex++;
                     if (historyIndex < 0) historyIndex = 0;
-                    if (history.Count > historyIndex) Text = history[historyIndex];
-                    if (historyIndex >= history.Count)
+                    if (historyIndex < history.Count) Text = history[historyIndex];
+                    if (historyIndex == history.Count) Text = currentText;
+                    if (historyIndex > history.Count)
                     {
-                        historyIndex = history.Count;
+                        historyIndex = history.Count+1;
                         Text = String.Empty;
                     }
                     SelectionStart = Text.Length;
                 }
             }
-            else historyIndex = history.Count;
+            else
+            {
+                isPreviewingHistory = false;
+                historyIndex = history.Count;
+            }
 
             //Prevent cutting line in half when sending
             if (e.KeyCode == Keys.Return) SelectionStart = Text.Length;
