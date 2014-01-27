@@ -25,9 +25,9 @@ namespace Fixer
 {
     public static class Program
     {
-        public static void FixStuff()
-        {
+        public static void FixStuff() {
             // my code here
+
         }
 
         [STAThread]
@@ -83,6 +83,14 @@ namespace Fixer
             //GetAverageElo();
         }
 
+        public static void RecalculateKudos()
+        {
+            var db = new ZkDataContext(true);
+            foreach (var acc in db.Accounts.Where(x => x.KudosPurchases.Any() || x.ContributionsByAccountID.Any())) acc.Kudos = acc.KudosGained - acc.KudosSpent;
+            db.SubmitAndMergeChanges();
+        }
+
+        
         public static void FixHashes()
         {
             var db = new ZkDataContext();
