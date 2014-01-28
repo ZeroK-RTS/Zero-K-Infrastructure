@@ -33,7 +33,7 @@ namespace Fixer
         [STAThread]
         static void Main(string[] args)
         {
-            FixStuff();
+            //FixStuff();
 
             //var bench = new Benchmarker.MainForm();
             //bench.ShowDialog();
@@ -62,6 +62,7 @@ namespace Fixer
             //SwapPlanetOwners(3948, 3955);
             //SwapPlanetOwners(3973, 3932);
             //AddWormholes();
+            //PlanetwarsFixer.RemoveTechStructures(true, true);
             //StartGalaxy(24);
 
             //TestPrediction();
@@ -123,6 +124,24 @@ namespace Fixer
             db.SubmitChanges();
         }
 
+        public static void CountUserIDs()
+        {
+            var db = new ZkDataContext();
+            var userIDs = db.AccountUserIDS.ToList();
+            var uniqueIDs = userIDs.Select(x => x.UserID).Distinct().ToList();
+            Dictionary<Int32, int> userIDCounts = new Dictionary<Int32, int>();
+            System.Console.WriteLine("{0} userIDs, {1} uniques", userIDs.Count, uniqueIDs.Count);
+            foreach (int userID in uniqueIDs)
+            {
+                int count = userIDs.Count(x => x.UserID == userID);
+                userIDCounts[userID] = count;
+            }
+            var sortedIDs = uniqueIDs.OrderByDescending(x => userIDCounts[x]).Take(20).ToList();
+            foreach (int userID in sortedIDs)
+            {
+                System.Console.WriteLine("{0}: {1}", userID, userIDCounts[userID]);
+            }
+        }
 
         public static void SetFFATeams()
         {
