@@ -232,7 +232,10 @@ namespace NightWatch
                                 var acc = Account.AccountByLobbyID(db, user.LobbyID);
                                 var name = founder.Name.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
                                 var aconf = db.AutohostConfigs.FirstOrDefault(x => x.Login == name);
-                                client.Say(TasClient.SayPlace.User, "KingRaptor", string.Format("USER {0} joined battle {1}; has {2} userIDs; lobby version {3}", acc != null ? acc.Name : e.UserName + " (NO ACCOUNT)", founder, acc.LobbyVersion), false);
+                                if(acc != null)
+                                    client.Say(TasClient.SayPlace.User, "KingRaptor", string.Format("USER {0} joined battle {1}; has {2} userIDs; lobby version {3}", acc.Name, acc.AccountUserIDS.Count, founder.Name, acc.LobbyVersion), false);
+                                else
+                                    client.Say(TasClient.SayPlace.User, "KingRaptor", string.Format("USER {0} joined battle {1}", (acc != null ? acc.Name : e.UserName + " (NO ACCOUNT)"), founder), false);
                                 if (acc != null &&
                                     (acc.LastLobbyVersionCheck == null || DateTime.UtcNow.Subtract(acc.LastLobbyVersionCheck.Value).TotalDays > 3) &&
                                     aconf.AutohostMode != 0) client.RequestLobbyVersion(user.Name);
