@@ -233,7 +233,7 @@ namespace NightWatch
                                 var name = founder.Name.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
                                 var aconf = db.AutohostConfigs.FirstOrDefault(x => x.Login == name);
                                 if(acc != null)
-                                    client.Say(TasClient.SayPlace.User, "KingRaptor", string.Format("USER {0} joined battle {1}; has {2} userIDs; lobby version {3}", acc.Name, acc.AccountUserIDS.Count, founder.Name, acc.LobbyVersion), false);
+                                    client.Say(TasClient.SayPlace.User, "KingRaptor", string.Format("USER {0} joined battle {1}; has {2} userIDs; lobby version {3}", acc.Name, founder.Name, acc.AccountUserIDS.Count, acc.LobbyVersion), false);
                                 else
                                     client.Say(TasClient.SayPlace.User, "KingRaptor", string.Format("USER {0} joined battle {1}", (acc != null ? acc.Name : e.UserName + " (NO ACCOUNT)"), founder), false);
                                 if (acc != null &&
