@@ -228,13 +228,14 @@ namespace NightWatch
 
                         using (var db = new ZkDataContext()) {
                             var acc = Account.AccountByLobbyID(db, user.LobbyID);
+                            var isSpringie = founder.Cpu == GlobalConst.ZkSpringieManagedCpu;
                             var name = founder.Name.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
                             var aconf = db.AutohostConfigs.FirstOrDefault(x => x.Login == name);
                             if (acc != null &&
                                 (acc.LastLobbyVersionCheck == null || DateTime.UtcNow.Subtract(acc.LastLobbyVersionCheck.Value).TotalDays > 3) &&
                                 aconf.AutohostMode != 0) client.RequestLobbyVersion(user.Name);
 
-                            if (acc != null && GlobalConst.IsZkMod(battle.ModName)) {
+                            if (acc != null && isSpringie) {
                                 if (!acc.AccountUserIDS.Any())
                                 {
                                     string reason = string.Format("Sorry you are using unsupported lobby ({0}), please upgrade or use Zero-K lobby, Weblobby or SpringLobby", acc.LobbyVersion);
