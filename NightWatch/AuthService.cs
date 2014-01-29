@@ -211,8 +211,10 @@ namespace NightWatch
                 {
                     var battle = client.ExistingBattles[e.BattleID];
                     var founder = battle.Founder;
-                    if (founder.IsZkLobbyUser) {
-                        var user = client.ExistingUsers[e.UserName];
+                    if (founder.IsSpringieManaged) {
+                        try
+                        {
+                            var user = client.ExistingUsers[e.UserName];
 
                         /*  obsolete; all major lobbies have multiengine support
                         if (!user.IsZkLobbyUser && !user.IsNotaLobby && battle.EngineVersion != client.ServerSpringVersion &&
@@ -225,25 +227,30 @@ namespace NightWatch
                                        false);
                         }
                          */
+                            using (var db = new ZkDataContext())
+                            {
+                                var acc = Account.AccountByLobbyID(db, user.LobbyID);
+                                var name = founder.Name.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
+                                var aconf = db.AutohostConfigs.FirstOrDefault(x => x.Login == name);
+                                client.Say(TasClient.SayPlace.User, "KingRaptor", string.Format("USER {0} joined battle {1}; has {2} userIDs; lobby version {3}", acc != null ? acc.Name : e.UserName + " (NO ACCOUNT)", founder, acc.LobbyVersion), false);
+                                if (acc != null &&
+                                    (acc.LastLobbyVersionCheck == null || DateTime.UtcNow.Subtract(acc.LastLobbyVersionCheck.Value).TotalDays > 3) &&
+                                    aconf.AutohostMode != 0) client.RequestLobbyVersion(user.Name);
 
-                        using (var db = new ZkDataContext()) {
-                            var acc = Account.AccountByLobbyID(db, user.LobbyID);
-                            var isSpringie = founder.Cpu == GlobalConst.ZkSpringieManagedCpu;
-                            var name = founder.Name.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
-                            var aconf = db.AutohostConfigs.FirstOrDefault(x => x.Login == name);
-                            client.Say(TasClient.SayPlace.User, "KingRaptor", string.Format("USER {0} joined battle {1}; has {2} userIDs; lobby version {3}", acc != null ? acc.Name : e.UserName + " (NO ACCOUNT)", founder, acc.LobbyVersion), false);
-                            if (acc != null &&
-                                (acc.LastLobbyVersionCheck == null || DateTime.UtcNow.Subtract(acc.LastLobbyVersionCheck.Value).TotalDays > 3) &&
-                                aconf.AutohostMode != 0) client.RequestLobbyVersion(user.Name);
-
-                            if (acc != null && isSpringie) {
-                                if (!acc.AccountUserIDS.Any())
+                                if (acc != null)
                                 {
-                                    string reason = string.Format("Sorry you are using unsupported lobby ({0}), please upgrade or use Zero-K lobby, Weblobby or SpringLobby", acc.LobbyVersion);
-                                    client.Say(TasClient.SayPlace.User, user.Name, reason, false);
-                                    client.Say(TasClient.SayPlace.User, founder.Name, string.Format("!kick {0} {1}", acc.LobbyVersion, reason), false);
+                                    if (!acc.AccountUserIDS.Any())
+                                    {
+                                        string reason = string.Format("Sorry you are using unsupported lobby ({0}), please upgrade or use Zero-K lobby, Weblobby or SpringLobby", acc.LobbyVersion);
+                                        client.Say(TasClient.SayPlace.User, user.Name, reason, false);
+                                        client.Say(TasClient.SayPlace.User, founder.Name, string.Format("!kick {0} {1}", acc.LobbyVersion, reason), false);
+                                    }
                                 }
                             }
+                        }
+                        catch (Exception ex)
+                        {
+                            client.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
                         }
                     }
                 };
