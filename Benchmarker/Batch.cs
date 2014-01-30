@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -67,6 +67,8 @@ namespace Benchmarker
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             isAborted = false;
             var result = new BatchRunResult();
+            bool usingOptirun = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("OPTIRUN"));
+
             foreach (var tr in TestCases) {
                 foreach (var b in Benchmarks) {
                     if (isAborted) return;
@@ -81,6 +83,9 @@ namespace Benchmarker
                         b.RestoreModInfo();
                     }
                     try {
+                        if(usingOptirun) { // leave some time for optimus/primus to rest 
+                           Thread.Sleep(5000);
+                        }
                         result.AddRun(tr, b, log);
                         RunCompleted(tr, b, log);
                     } catch (Exception ex) {
