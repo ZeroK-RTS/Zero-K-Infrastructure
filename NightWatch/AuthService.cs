@@ -232,16 +232,19 @@ namespace NightWatch
                                 var acc = Account.AccountByLobbyID(db, user.LobbyID);
                                 var name = founder.Name.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
                                 var aconf = db.AutohostConfigs.FirstOrDefault(x => x.Login == name);
-                                if (!acc.LobbyVersion.Contains("ZK"))
-                                {
-                                    if(acc != null)
-                                        client.Say(TasClient.SayPlace.User, "KingRaptor", string.Format("USER {0} joined battle {1}; has {2} userIDs; lobby version {3}", acc.Name, founder.Name, acc.AccountUserIDS.Count, acc.LobbyVersion), false);
-                                    else
-                                        client.Say(TasClient.SayPlace.User, "KingRaptor", string.Format("USER {0} joined battle {1}", e.UserName + " (NO ACCOUNT)", founder), false);
-                                }
                                 if (acc != null &&
                                     (acc.LastLobbyVersionCheck == null || DateTime.UtcNow.Subtract(acc.LastLobbyVersionCheck.Value).TotalDays > 3) &&
                                     aconf.AutohostMode != 0) client.RequestLobbyVersion(user.Name);
+                                if (!acc.LobbyVersion.Contains("ZK"))
+                                {
+                                    if (acc != null)
+                                    {
+                                        int numIDs = acc.AccountUserIDS != null ? acc.AccountUserIDS.Count : 0;
+                                        client.Say(TasClient.SayPlace.User, "KingRaptor", string.Format("USER {0} joined battle {1}; has {2} userIDs; lobby version {3}", acc.Name, founder.Name, numIDs, acc.LobbyVersion), false);
+                                    }
+                                    else
+                                        client.Say(TasClient.SayPlace.User, "KingRaptor", string.Format("USER {0} joined battle {1}", e.UserName + " (NO ACCOUNT)", founder.Name), false);
+                                }
 
                                 if (acc != null)
                                 {
