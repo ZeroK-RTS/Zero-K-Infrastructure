@@ -187,5 +187,23 @@ namespace ZeroKLobby.MicroLobby
             }
             return true;
         }
+
+        
+        //Reference: http://stackoverflow.com/questions/1124639/winforms-textbox-using-ctrl-backspace-to-delete-whole-word (second answer)
+        internal void CtrlBackspace()
+        {
+            int selStart = SelectionStart;
+            while (selStart > 0 && Text.Substring(selStart - 1, 1) == " ")
+            {
+                selStart--;
+            }
+            int prevSpacePos = -1;
+            if (selStart != 0)
+            {
+                prevSpacePos = Text.LastIndexOf(' ', selStart - 1);
+            }
+            Select(prevSpacePos + 1, SelectionStart - prevSpacePos - 1);
+            SelectedText = "";
+        }
     }
 }
