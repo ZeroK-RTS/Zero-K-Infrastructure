@@ -152,6 +152,7 @@ namespace NightWatch
 
                                         if (!data.ContainsKey("org-name"))data["org-name"] = "UNKNOWN ORG";
                                         if (!data.ContainsKey("abuse-mailbox")) data["abuse-mailbox"] = "no mailbox";
+                                        if (!data.ContainsKey("notify")) data["notify"] = "no notify address";
                                         if (!data.ContainsKey("role")) data["role"] = "UNKNOWN ROLE";
                                         if (!data.ContainsKey("descr")) data["descr"] = "no description";
 
@@ -189,7 +190,7 @@ namespace NightWatch
                                 //}
                             } catch (Exception ex) {
                                 Trace.TraceError("Error getting user IP: {0}", ex);
-                                client.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
+                                //client.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
                             }
                         });
                 };
