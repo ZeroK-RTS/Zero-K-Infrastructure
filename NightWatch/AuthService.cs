@@ -189,6 +189,7 @@ namespace NightWatch
                                 //}
                             } catch (Exception ex) {
                                 Trace.TraceError("Error getting user IP: {0}", ex);
+                                client.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
                             }
                         });
                 };
