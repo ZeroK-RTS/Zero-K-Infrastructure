@@ -143,16 +143,24 @@ namespace NightWatch
 										if (chan != "main")
 										{
 											using (var db = new ZkDataContext()) {
-											    var accountID = Account.AccountByName(db, e.UserName).AccountID;
-												var subs = db.LobbyChannelSubscriptions.FirstOrDefault(x =>x.AccountID == accountID && x.Channel == chan);
-												if (subs == null)
-												{
-													subs = new LobbyChannelSubscription() { AccountID = accountID, Channel = chan };
-													db.LobbyChannelSubscriptions.InsertOnSubmit(subs);
-													db.SubmitChanges();
-													client.JoinChannel(chan);
-												}
-												client.Say(TasClient.SayPlace.User, user.Name, "Subscribed", false);
+                                                Account account = Account.AccountByName(db, e.UserName);
+                                                if (chan == "zkadmin" && !(account.IsZeroKAdmin || account.IsLobbyAdministrator))
+                                                {
+                                                    client.Say(TasClient.SayPlace.User, user.Name, "Not authorized to subscribe to this channel", false);
+                                                }
+                                                else
+                                                {
+                                                    var accountID = account.AccountID;
+                                                    var subs = db.LobbyChannelSubscriptions.FirstOrDefault(x => x.AccountID == accountID && x.Channel == chan);
+                                                    if (subs == null)
+                                                    {
+                                                        subs = new LobbyChannelSubscription() { AccountID = accountID, Channel = chan };
+                                                        db.LobbyChannelSubscriptions.InsertOnSubmit(subs);
+                                                        db.SubmitChanges();
+                                                        client.JoinChannel(chan);
+                                                    }
+                                                    client.Say(TasClient.SayPlace.User, user.Name, "Subscribed", false);
+                                                }
 											}
 										}
 									}
