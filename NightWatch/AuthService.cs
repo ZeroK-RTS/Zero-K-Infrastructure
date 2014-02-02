@@ -159,11 +159,11 @@ namespace NightWatch
                                         using (ZkDataContext db = new ZkDataContext()){
                                             var blockedCompanies = db.BlockedCompanies.Select(x => x.CompanyName.ToLower()).ToList();
                                             var blockedHosts = db.BlockedHosts.Select(x => x.HostName).ToList();
-                                            if (acc.Country == "MY")
+                                            /*if (acc.Country == "MY")
                                             {
                                                 client.Say(TasClient.SayPlace.User, "KingRaptor", String.Format("USER {0}\nnetname: {1}\norgname: {2}\ndescr: {3}\nabuse-mailbox: {4}",
                                                     acc.Name, data["netname"], data["org-name"], data["descr"], data["abuse-mailbox"]), false);
-                                            }
+                                            }*/
                                             if (blockedHosts.Any(x => data["abuse-mailbox"].Contains(x)) || (blockedHosts.Any(x => data["notify"].Contains(x)) ))
                                             {
                                                 client.AdminKickFromLobby(args.Name, "Connection using proxy or VPN is not allowed! (You can ask for exception)");
