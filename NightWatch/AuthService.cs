@@ -24,11 +24,7 @@ namespace NightWatch
         int messageId;
         readonly ConcurrentDictionary<int, RequestInfo> requests = new ConcurrentDictionary<int, RequestInfo>();
         readonly TopPlayers topPlayers = new TopPlayers();
-        // this stuff should really be in DB
-        //public static string[] blockedCompanies = new string[] { "PRIVAX-LTD", "NetcoSolution-BLK-IP", "ServeTheWorld", "AnchorFree", "AltusHost", "Altushost", "IWeb", "iWeb", "Amanah Tech"};
-        //public static string[] blockedHosts = new string[] { "anchorfree.com", "leaseweb.com", "uk2net.com", "privax.com", "hidemyass.com", "hotspotshield.com", "ipvanish.com",
-        //    "alvotech.net", "unknown.puregig.net", "edis.at", "fastweb.ro", "ubiquityservers.com"};
-        //
+
         public AuthService(TasClient client) {
             this.client = client;
 
@@ -234,19 +230,16 @@ namespace NightWatch
                                 var acc = Account.AccountByLobbyID(db, user.LobbyID);
                                 var name = founder.Name.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
                                 var aconf = db.AutohostConfigs.FirstOrDefault(x => x.Login == name);
-                                if (acc != null && user != null &&
+                                if (acc != null && user != null && aconf != null &&
                                     (acc.LastLobbyVersionCheck == null || DateTime.UtcNow.Subtract(acc.LastLobbyVersionCheck.Value).TotalDays > 3) &&
                                     aconf.AutohostMode != 0) client.RequestLobbyVersion(user.Name);
-                                if (!acc.LobbyVersion.Contains("ZK"))
+                                if (acc != null)
                                 {
-                                    if (acc != null)
-                                    {
-                                        int numIDs = acc.AccountUserIDS != null ? acc.AccountUserIDS.Count : 0;
-                                        client.Say(TasClient.SayPlace.User, "KingRaptor", string.Format("USER {0} joined battle {1}; has {2} userIDs; lobby version {3}", acc.Name, founder.Name, numIDs, acc.LobbyVersion), false);
-                                    }
-                                    else
-                                        client.Say(TasClient.SayPlace.User, "KingRaptor", string.Format("USER {0} joined battle {1}", e.UserName + " (NO ACCOUNT)", founder.Name), false);
+                                    int numIDs = acc.AccountUserIDS != null ? acc.AccountUserIDS.Count : 0;
+                                    if (numIDs == 0) client.Say(TasClient.SayPlace.User, "KingRaptor", string.Format("USER {0} joined battle {1}; has {2} userIDs; lobby version {3}", acc.Name, founder.Name, numIDs, acc.LobbyVersion), false);
                                 }
+                                else
+                                    client.Say(TasClient.SayPlace.User, "KingRaptor", string.Format("USER {0} joined battle {1}", e.UserName + " (NO ACCOUNT)", founder.Name), false);
 
                                 if (acc != null)
                                 {
