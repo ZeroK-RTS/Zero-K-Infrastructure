@@ -10,9 +10,10 @@ namespace ZeroKLobby
         int navigatedIndex = 0;
         int historyCount = 0;
         int currrentHistoryPosition = 0;
-        readonly List<string> navigatedPlaces = new List<string>();
-        readonly List<string> historyList = new List<string>();
-        string navigatingTo = null;
+        List<string> navigatedPlaces = new List<string>();
+        List<string> historyList = new List<string>();
+        string navigatingTo = null; //URL that we want to go (assigned in: TryNavigate, NavigationControl.goButton1_Click, & OnNavigating). Will NOT be same as final URL if website redirect us
+        bool finishNavigation = true;
         readonly string pathHead;
 
         public BrowserTab(string head, bool autoStartOnLogin)
@@ -20,12 +21,13 @@ namespace ZeroKLobby
             pathHead = head;
             if (Program.TasClient != null && autoStartOnLogin==true) Program.TasClient.LoginAccepted += (sender, args) =>
             {
-                navigatingTo = head;
+                Program.MainWindow.navigationControl.isBusyIcon.Visible = true;
+                HintNewNavigation(head);
                 base.Navigate(head);
             };
             base.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(browser_DocumentCompleted); //This will call "UpdateURL()" when page finish loading
             base.NewWindow3 += BrowserTab_NewWindow3;
-            this.ScriptErrorsSuppressed = false; // Ensure that ScriptErrorsSuppressed is set to false.
+            this.ScriptErrorsSuppressed = true;
         }
 
         void BrowserTab_NewWindow3(object sender, NewWindow3EventArgs e)
@@ -37,95 +39,88 @@ namespace ZeroKLobby
             }
         }
 
-        private void Window_Error(object sender, HtmlElementErrorEventArgs e)
-        { 
-            //Reference: http://stackoverflow.com/questions/2476360/disable-javascript-error-in-webbrowser-control
-            // Ignore the error and suppress the error dialog box.
-            System.Diagnostics.Trace.TraceInformation("Internet Explorer Error: TAB: {0} ERROR: {1}", pathHead, e.Description);
-            e.Handled = true;
-        }
-
         //protected override void OnNewWindow(System.ComponentModel.CancelEventArgs e) //This block "Open In New Window" button.
         //{
         //    e.Cancel = true;
         //    Navigate(StatusText);
         //}
 
-         //protected override void OnNavigated(WebBrowserNavigatedEventArgs e) //This intercept which URL finish loading (including Advertisement)
+        //protected override void OnNavigated(WebBrowserNavigatedEventArgs e) //This intercept which URL finish loading (including Advertisement)
         //{
         //    base.OnNavigated(e);
         //}
 
-        protected override void OnNavigating(WebBrowserNavigatingEventArgs e) //this intercept URL navigation induced when user click on link or during page loading
+        protected override void OnNavigating(WebBrowserNavigatingEventArgs e) //this intercept URL navigation induced when user click on link or during page loading  (including Advertisement)
         {
-            var url = e.Url.ToString();
-            if (string.IsNullOrEmpty(e.TargetFrameName) && url.StartsWith("http://zero-k.info") && !url.StartsWith("javascript:")) //if navigation is within Zero-K
+            if (finishNavigation) //if HintNewNavigation() was never called (meaning user's navigation was by clicking URL, and not thru UrlBox and not thru NavigationControl.cs button): Will do the following processing:
             {
-                var nav = Program.MainWindow.navigationControl.GetInavigatableByPath(url); //check which TAB this URL represent
-                if (url.Contains("@logout"))
-                {   
-                    //if Logout signature, perform logout
-                    e.Cancel = true;
-                    ActionHandler.PerformAction("logout");
-                }
-                else if (nav == null || nav == this || url.Contains("/SubmitPost?"))
+                var url = e.Url.ToString();
+                if (string.IsNullOrEmpty(e.TargetFrameName) && url.StartsWith("http://zero-k.info") && !url.StartsWith("javascript:")) //if navigation is within Zero-K
                 {
-                    //if url belong to this TAB or not other TAB, or is posting comment in this TAB, continue this browser instance uninterupted
-                    navigatingTo = url;
+                    var nav = Program.MainWindow.navigationControl.GetInavigatableByPath(url); //check which TAB this URL represent
+                    if (url.Contains("@logout"))
+                    {
+                        //if Logout signature, perform logout
+                        e.Cancel = true;
+                        ActionHandler.PerformAction("logout");
+                        Program.MainWindow.navigationControl.Path = url.Replace("@logout","");
+                    }
+                    else if (nav == null || nav == this || url.Contains("/SubmitPost?"))
+                    {
+                        //if url belong to this TAB or not other TAB, or is posting comment in this TAB, continue this browser instance uninterupted
+                        //HintNewNavigation(url);
+                    }
+                    else
+                    {
+                        // else, navigate to another tab actually
+                        e.Cancel = true;
+                        Program.MainWindow.navigationControl.Path = url;
+                    }
                 }
-                else
+                else if (url.StartsWith("javascript:SendLobbyCommand('"))
                 {
-                    // else, navigate to another tab actually
+                    // intercept & not trigger the javascript, instead execute it directly from the url 
+                    //(because for unknown reason mission/replay can't be triggered more than once using standard technique(javascript send text to lobby to trigger mission))
                     e.Cancel = true;
-                    Program.MainWindow.navigationControl.Path = url;
-                }
-            }
-            else if (url.StartsWith("javascript:SendLobbyCommand('"))
-            {
-                // intercept & not trigger the javascript, instead execute it directly from the url 
-                //(because for unknown reason mission/replay can't be triggered more than once using standard technique(javascript send text to lobby to trigger mission))
-                e.Cancel = true;
 
-                int endPosition = url.IndexOf("');void(0);", 29); //the end of string as read from Internet Browser status bar
-                int commandLength = endPosition - 29; //NOTE: "javascript:SendLobbyCommand('" is 30 char. So the startPos in at 29th char
-                Program.MainWindow.navigationControl.Path = url.Substring(29, commandLength);
+                    int endPosition = url.IndexOf("');void(0);", 29); //the end of string as read from Internet Browser status bar
+                    int commandLength = endPosition - 29; //NOTE: "javascript:SendLobbyCommand('" is 30 char. So the startPos in at 29th char
+                    Program.MainWindow.navigationControl.Path = url.Substring(29, commandLength);
+                }
+
+                if (!e.Cancel)
+                {
+                    Program.MainWindow.navigationControl.isBusyIcon.Visible = true; //busy icon
+                    HintNewNavigation(url);
+                }
             }
 
             base.OnNavigating(e);
         }
+
 
         public string PathHead { get { return pathHead; } }
 
         public bool TryNavigate(params string[] path) //navigation induced by call from "NavigationControl.cs"
         {
             String pathString = String.Join("/", path);
+
             if (navigatingTo == pathString) { return true; }  //already navigating there, just return TRUE
-            if (pathString.StartsWith(PathHead)) 
+            if (this.Url != null && !string.IsNullOrEmpty(this.Url.ToString()))
             {
-                SuspendLayout(); //pause layout until page loaded. //Reference: http://msdn.microsoft.com/en-us/library/system.windows.forms.control.suspendlayout.aspx
-                bool canNavigate = TryToGoBackForward(pathString);
-                if (canNavigate) { return true; }
-                navigatingTo = pathString;
-                base.Navigate(pathString);
-                return true; //the URL is intended header or is children of intended header, return TRUE and Navigate() to URL
-            }
-            String currentURL = String.Empty;
-            if (Url != null && !string.IsNullOrEmpty(Url.ToString()))
-            {
-                currentURL = Url.ToString();
+                String currentURL = this.Url.ToString();
                 if (pathString == currentURL) { return true; } //already there, just return TRUE
             }
-            for (int i = 0; i < navigatedIndex; i++)
+            if (pathString.StartsWith(PathHead)) 
             {
-                if (navigatedPlaces[i] == pathString) 
-                {
-                    SuspendLayout();
-                    bool canNavigate = TryToGoBackForward(pathString);
-                    if (canNavigate) {return true;}
-                    navigatingTo = pathString;
-                    base.Navigate(pathString);
-                    return true; //the URL is from history, return TRUE and Navigate() to URL
-                }
+                TryNavigateORBackForward(pathString);
+                return true; //the URL is intended header or is children of intended header, return TRUE and Navigate() to URL
+            }
+            bool beenThere = HaveVisitedBefore(pathString);
+            if (beenThere)
+            {
+                TryNavigateORBackForward(pathString);
+                return true; //the URL is from history, return TRUE and Navigate() to URL
             }
             return false; //URL has nothing to do with this WebBrowser instance,  just return FALSE
         }
@@ -149,33 +144,48 @@ namespace ZeroKLobby
         private void browser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) //is called when webpage finish loading
         {   //Reference: http://msdn.microsoft.com/en-us/library/system.windows.forms.webbrowser.aspx
 
-            ((WebBrowser)sender).Document.Window.Error += new HtmlElementErrorEventHandler(Window_Error); // Hides script errors without hiding other dialog boxes.
+            if (!finishNavigation)
+            {
+                string originalURL = navigatingTo;
+                string finalURL = this.Url.ToString();
 
-            //This update URL textbox & add the page to NavigationBar's history (so that Back&Forward button can be used):
-            navigatingTo = ((WebBrowser)sender).Url.ToString();
-            Program.MainWindow.navigationControl.AddToHistoryStack(navigatingTo,this);
+                //This update URL textbox & add the page to NavigationBar's history (so that Back&Forward button can be used):
+                Program.MainWindow.navigationControl.AddToHistoryStack(finalURL, originalURL, this);
+                Program.MainWindow.navigationControl.isBusyIcon.Visible = false;
+
+                //The following code store previously visited URL for checking in TryNavigate() later. The checking determine which TAB "own" the URL.
+                //This list is unordered (it is not related to sequence in "Forward"/"Backward" button)
+                bool beenThere = HaveVisitedBefore(finalURL);
+                if (!beenThere)
+                {
+                    navigatedPlaces.Add(finalURL);//if at end of table then use "Add"
+                    navigatedIndex++;
+                }
+                AddToHistory(finalURL);
+            }
+
+            finishNavigation = true;
             ResumeLayout();
-            
-            //The following code store previously visited URL for checking in TryNavigate() later. The checking determine which TAB "own" the URL.
-            //This list is unordered (it is not related to sequence in "Forward"/"Backward" button)
-            var final = navigatingTo;
-            bool inList = false;
+        }
+
+        //HISTORY CONTROL & CHECK SECTION//
+        public void HintNewNavigation(String newPath)
+        {
+            navigatingTo = newPath;
+            finishNavigation = false;
+        }
+        
+        //this function tell whether this WebBrowser have been in the specified URL
+        private bool HaveVisitedBefore(String pathString)
+        {
             for (int i = 0; i < navigatedIndex; i++)
             {
-                if (navigatedPlaces[i] == final)
+                if (navigatedPlaces[i] == pathString)
                 {
-                    inList = true;
-                    break;
+                    return true; //the URL is from history, return TRUE
                 }
             }
-            if (!inList)
-            {
-                navigatedPlaces.Add(final);//if at end of table then use "Add"
-                navigatedIndex++;
-            }
-
-            AddToHistory(final);
-
+            return false; //the URL is new, return FALSE
         }
 
         //this function keep track of new pages opened by WebBrowser and translate it into history stack.
@@ -191,33 +201,33 @@ namespace ZeroKLobby
                 }
                 else
                 {
-                    bool isBack = false;
-                    bool isFront = false;
-                    bool isHere = false;
                     if (currrentHistoryPosition > 0 && historyList[currrentHistoryPosition - 1] == pathString)
                     {
-                        isBack = true;
+                        //IS GOING BACK
                         currrentHistoryPosition = currrentHistoryPosition - 1;
                     }
                     else if (currrentHistoryPosition < historyCount - 1 && historyList[currrentHistoryPosition + 1] == pathString)
                     {
-                        isFront = true;
+                        //IS GOING FORWARD
                         currrentHistoryPosition = currrentHistoryPosition + 1;
                     }
                     else if (historyList[currrentHistoryPosition] == pathString)
                     {
-                        isHere = true;
+                        //IS NOT GOING ANYWHERE
                     }
-                    if (!isHere && !isBack && !isFront)
+                    else
                     {
+                        //IS NEW PAGE
                         if (currrentHistoryPosition == historyCount - 1)
                         {
+                            //IS NEW PAGE AT EDGE OF HISTORY
                             historyList.Add(pathString);
                             currrentHistoryPosition = historyCount;
                             historyCount++;
                         }
                         else if (currrentHistoryPosition < historyCount - 1)
                         {
+                            //IS NEW PAGE SOMEWHERE AT MID OF HISTORY
                             historyList[currrentHistoryPosition + 1] = pathString;
                             currrentHistoryPosition = currrentHistoryPosition + 1;
                         }
@@ -227,38 +237,30 @@ namespace ZeroKLobby
         }
 
         //this function compare the pathString with one in history, and determine whether WebBrowser should GoBack() or GoForward()
-        //NavigationControl.cs (which controls the "Forward" and "Back" button) call TryNavigate() and in turn call TryToGoBackForward()
-        private bool TryToGoBackForward(String pathString)
+        //NavigationControl.cs (which controls the "Forward" and "Back" button) call TryNavigate() which in turn call TryToGoBackForward()
+        private void TryNavigateORBackForward(String pathString)
         {
+            SuspendLayout(); //pause layout until page loaded for probably some performance improvement?.
+            HintNewNavigation(pathString);
+
+            bool usesBackForwardOption = false; 
             if (currrentHistoryPosition <= historyCount)
             {
                 if (currrentHistoryPosition != 0 || historyCount != 0)
                 {
-                    bool isBack = false;
-                    bool isFront = false;
                     if (currrentHistoryPosition > 0 && historyList[currrentHistoryPosition - 1] == pathString)
                     {
-                        isBack = true;
+                        //GO BACK
+                        usesBackForwardOption = true;
+                        currrentHistoryPosition = currrentHistoryPosition - 1;
+                        base.GoBack();
                     }
                     else if (currrentHistoryPosition < historyCount - 1 && historyList[currrentHistoryPosition + 1] == pathString)
                     {
-                        isFront = true;
-                    }
-                    if (isBack)
-                    {
-                        currrentHistoryPosition = currrentHistoryPosition - 1;
-                        base.GoBack();
-                        //System.Diagnostics.Trace.TraceInformation("GoBack {0}", pathString);
-                        navigatingTo = pathString;
-                        return true;
-                    }
-                    else if (isFront)
-                    {
+                        //GO FORWARD
+                        usesBackForwardOption = true;
                         currrentHistoryPosition = currrentHistoryPosition + 1;
                         base.GoForward();
-                        //System.Diagnostics.Trace.TraceInformation("GoForward {0}", pathString);
-                        navigatingTo = pathString;
-                        return true;
                     }
                     else
                     {
@@ -268,7 +270,12 @@ namespace ZeroKLobby
                     }
                 }
             }
-            return false;
+            if (!usesBackForwardOption)
+            {
+                //NEW NAVIGATE
+                base.Navigate(pathString);
+            }
+            return;
         }
         
     }

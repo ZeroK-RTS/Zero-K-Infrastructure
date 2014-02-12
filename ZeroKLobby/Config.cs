@@ -193,6 +193,15 @@ namespace ZeroKLobby
         [Description("Player password from lobby (tasclient), needed for widget online profile")]
         public string LobbyPlayerPassword { get; set; }
 
+        [Category("Account")]
+        [DisplayName("Forget Player Name")]
+        [Description("Tell ZKL to forget your Player Name and re-ask it each time ZKL start.")]
+        public bool DiscardPlayerName { get; set; }
+
+        [Category("Account")]
+        [DisplayName("Forget Password")]
+        [Description("Tell ZKL to forget your Password and re-ask it each time ZKL start.")]
+        public bool DiscardPassword { get; set; }
 
         [Category("General")]
         [DisplayName("Minimize to tray")]
@@ -276,13 +285,13 @@ namespace ZeroKLobby
         public bool UseExternalBrowser { get; set; }
 
         [Category("WebBrowser")]
-        [DisplayName("Block any new window")]
-        [Description("Any hyperlink that wanted to open new window will be forced to open in ZKL internally except the one in Springsetting GUI.")]
+        [DisplayName("Open new window internally")]
+        [Description("Any hyperlink that wanted to open new window will be told to open in ZKL internally (except the hyperlinks in Springsetting GUI).")]
         public bool InterceptPopup { get; set; }
 
         [Category("WebBrowser")]
         [DisplayName("Run only single instances")]
-        [Description("Internal browser will only run in single TAB and won't store different part of Zero-K site in different TAB. This saves a bit of system's memory but will make site navigation a bit slower.")]
+        [Description("Internal browser will only run in single TAB and won't store different part of Zero-K site in different TAB. This saves system's memory but could make site navigation a bit slower.")]
         public bool SingleInstance { get; set; }
         
         [Browsable(false)]

@@ -72,6 +72,8 @@ namespace ZeroKLobby
         [STAThread]
         public static void Main(string[] args) {
             try {
+                    //Stopwatch stopWatch = new Stopwatch(); stopWatch.Start();
+
                 Trace.Listeners.Add(new ConsoleTraceListener());
                 Trace.Listeners.Add(new LogTraceListener());
 
@@ -98,7 +100,7 @@ namespace ZeroKLobby
                 WebRequest.DefaultWebProxy = null;
                 ThreadPool.SetMaxThreads(500, 2000);
                 ServicePointManager.Expect100Continue = false;
-                if (Environment.OSVersion.Platform != PlatformID.Unix && !Conf.UseExternalBrowser) { Utils.SetIeCompatibility(); } //set to IE9
+                if (Environment.OSVersion.Platform != PlatformID.Unix && !Conf.UseExternalBrowser) { Utils.SetIeCompatibility(); } //set to current IE version
 
                 LoadConfig();
 
@@ -283,6 +285,9 @@ namespace ZeroKLobby
 
                 Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion);
 
+                    // Format and display the TimeSpan value.
+                    //stopWatch.Stop(); TimeSpan ts = stopWatch.Elapsed; string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+                    //Trace.TraceInformation("1 Runtime {0}", elapsedTime);
                 Application.Run(MainWindow);
                 ShutDown();
             } catch (Exception ex) {
@@ -299,8 +304,13 @@ namespace ZeroKLobby
             }
         }
 
-        public static void ShutDown() {
+        private static void FinalizeShutdown()
+        {
             Conf.IsFirstRun = false;
+            
+            if (Conf.DiscardPlayerName == true) { Conf.LobbyPlayerName = ""; }
+            if (Conf.DiscardPassword == true) { Conf.LobbyPlayerPassword = ""; }
+
             SaveConfig();
             try {
                 if (!FriendsWindow.Creatable) MainWindow.frdWindow.Close();
@@ -311,12 +321,21 @@ namespace ZeroKLobby
                 if (Downloader != null) Downloader.Dispose();
                 if (SpringScanner != null) SpringScanner.Dispose();
             } catch {}
+        }
+
+        public static void ShutDown() 
+        {
+            FinalizeShutdown();
             //Thread.Sleep(5000);
             Application.Exit();
         }
 
-
-
+        public static void Restart()
+        {
+            FinalizeShutdown();
+            //Thread.Sleep(5000);
+            Application.Restart();
+        }
 
         static void TasClientInvoker(TasClient.Invoker a) {
             if (!CloseOnNext) MainWindow.InvokeFunc(() => a());

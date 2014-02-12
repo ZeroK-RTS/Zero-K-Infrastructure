@@ -1,2 +1,5 @@
 Camera icon by DesignContest
 CC-BY 3.0
+
+ajax_loader.gif by www.ajaxload.info
+Free for use

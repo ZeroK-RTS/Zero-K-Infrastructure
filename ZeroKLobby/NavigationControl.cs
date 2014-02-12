@@ -112,7 +112,7 @@ namespace ZeroKLobby
                 if (!Program.Conf.SingleInstance) //run in multiple TAB?
                 {
                     AddTabPage(new BrowserTab("http://zero-k.info/Maps", false), "Maps");
-                    AddTabPage(new BrowserTab("http://zero-k.info/Missions", true), "sp");
+                    AddTabPage(new BrowserTab("http://zero-k.info/Missions", false), "sp");
                     AddTabPage(new BrowserTab("http://zero-k.info/Battles", false), "rp");
                     AddTabPage(new BrowserTab("http://zero-k.info/Planetwars", false), "pw");
                     AddTabPage(new BrowserTab("http://zero-k.info/Forum", true), "fm");
@@ -234,7 +234,7 @@ namespace ZeroKLobby
         }
 
         void btnForward_Click(object sender, EventArgs e) {
-            if (CanGoForward) GoForward();
+            NavigateForward();
         }
 
         void tabControl_Selecting(object sender, TabControlCancelEventArgs e) { //is called from NavigationControl.Designer.cs when Tab is selected
@@ -270,6 +270,7 @@ namespace ZeroKLobby
             urlBox.Location = new System.Drawing.Point(urlBox.Location.X, height);
             reloadButton1.Location = new System.Drawing.Point(reloadButton1.Location.X, height);
             goButton1.Location = new System.Drawing.Point(goButton1.Location.X, height);
+            isBusyIcon.Location = new System.Drawing.Point(isBusyIcon.Location.X, height);
 
             //resize the "browser" (that show chat & internal browser) according to Nav bar auto resize (dynamic resizing)
             int windowHeight = this.Size.Height;
@@ -297,23 +298,25 @@ namespace ZeroKLobby
                 bool success = navig.TryNavigate(urlString); //check if able to navigate Forward/Backward/Here in current TAB
                 if (!success)
                 {
-                    WebBrowser webbrowser = CurrentNavigatable as WebBrowser;
+                    BrowserTab webbrowser = CurrentNavigatable as BrowserTab;
                     webbrowser.Navigate(urlString); //navigate to new page in current TAB
+                    webbrowser.HintNewNavigation(urlString); //we hint the BrowserTab's this way because it have trouble differentiating between Advertisement's URL and urlBox's URL
                 }
             }
             else {  Path = urlString; } //perform general & common navigation specific to TAB (go to TAB and perform action)
         }
 
-        //add path to BACK/FORWARD history (skipping all checks) and update current TAB's pathString. Is used by BrowserTab.cs to indicate page finish loading
-        public void AddToHistoryStack(String pathString, Object obj)
+        //add path to BACK/FORWARD history (skipping all checks) and update current TAB's pathString. Is called by BrowserTab.cs to indicate page have finish loading
+        public void AddToHistoryStack(String finalURL, String firstURL, Object obj)
         {
             INavigatable nav = GetINavigatableFromControl(obj);
-            lastTabPaths[nav] = pathString;//if user navigate away from this TAB, display this page when he return
+            lastTabPaths[nav] = finalURL;//if user navigate away from this TAB, display this page when he return
 
             if (CurrentNavigatable == nav) //is in current TAB
             {
-                if (CurrentPage != null && CurrentPage.ToString() != pathString) backStack.Push(CurrentPage); //add previous currentPage to history
-                CurrentPage = new NavigationStep { Path = pathString.Split('/') }; //add this page as currentPage
+                if (CurrentPage != null && CurrentPage.ToString() != finalURL) backStack.Push(CurrentPage); //add current-page to HISTORY if new
+                if (finalURL != firstURL && backStack.Count > 0 && backStack.Peek().ToString() == firstURL) backStack.Pop(); //remove previous-page (from HISTORY) if current-page is just a duplicate of previous-page
+                CurrentPage = new NavigationStep { Path = finalURL.Split('/') }; //add new-page as current-page
             }
         }
 

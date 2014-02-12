@@ -26,7 +26,7 @@ namespace ZeroKLobby.Notifications
         }
 
         public void DetailClicked(NotifyBarContainer container) {
-            Application.Restart();
+            Program.Restart();
         }
 
         public Control GetControl() {

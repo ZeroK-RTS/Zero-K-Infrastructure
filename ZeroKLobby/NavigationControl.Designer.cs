@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NavigationControl));
             this.urlBox = new System.Windows.Forms.TextBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.isBusyIcon = new System.Windows.Forms.PictureBox();
             this.goButton1 = new ZeroKLobby.BitmapButton();
             this.reloadButton1 = new ZeroKLobby.BitmapButton();
             this.btnForward = new ZeroKLobby.BitmapButton();
@@ -60,6 +61,16 @@
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(703, 28);
             this.flowLayoutPanel1.TabIndex = 5;
+            // 
+            // isBusyIcon
+            // 
+            this.isBusyIcon.Image = ((System.Drawing.Image)(resources.GetObject("isBusyIcon.Image")));
+            this.isBusyIcon.Location = new System.Drawing.Point(468, 36);
+            this.isBusyIcon.Name = "isBusyIcon";
+            this.isBusyIcon.Size = new System.Drawing.Size(25, 20);
+            this.isBusyIcon.TabIndex = 8;
+            this.isBusyIcon.TabStop = false;
+            this.isBusyIcon.Visible = false;
             // 
             // goButton1
             // 
@@ -146,6 +157,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.DimGray;
+            this.Controls.Add(this.isBusyIcon);
             this.Controls.Add(this.goButton1);
             this.Controls.Add(this.reloadButton1);
             this.Controls.Add(this.flowLayoutPanel1);
@@ -170,5 +182,6 @@
         private BitmapButton btnForward;
         private BitmapButton reloadButton1;
         private BitmapButton goButton1;
+        public System.Windows.Forms.PictureBox isBusyIcon;
     }
 }

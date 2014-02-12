@@ -252,8 +252,7 @@ namespace ZeroKLobby.MicroLobby
 
         private void btnRestart_Click(object sender, EventArgs e)
         {
-            Program.SaveConfig();
-            Application.Restart();
+            Program.Restart();
         }
 
         private void btnDefaults_Click(object sender, EventArgs e)
@@ -268,7 +267,8 @@ namespace ZeroKLobby.MicroLobby
                 Directory.Delete(Utils.MakePath(path, "packages"), true);
                 Directory.Delete(Utils.MakePath(path, "LuaUI"), true);
                 Directory.Delete(Utils.MakePath(path, "temp"), true);
-                Application.Restart();
+
+                Program.Restart();
             }
         }
 
