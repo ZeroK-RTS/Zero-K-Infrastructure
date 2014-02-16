@@ -34,7 +34,6 @@
 			this.minimapBox = new System.Windows.Forms.PictureBox();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this.panel1 = new System.Windows.Forms.Panel();
-			((System.ComponentModel.ISupportInitialize)(this.minimapBox)).BeginInit();
 			this.panel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -94,7 +93,6 @@
 			this.DoubleBuffered = true;
 			this.Name = "DownloadBar";
 			this.Size = new System.Drawing.Size(300, 32);
-			((System.ComponentModel.ISupportInitialize)(this.minimapBox)).EndInit();
 			this.panel1.ResumeLayout(false);
 			this.ResumeLayout(false);
 

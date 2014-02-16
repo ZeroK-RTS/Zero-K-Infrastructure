@@ -41,7 +41,6 @@ namespace ZeroKLobby.Notifications
             this.cbQm = new System.Windows.Forms.CheckBox();
             this.battleExtras = new ZeroKLobby.BitmapButton();
             this.picoChat = new ZeroKLobby.MicroLobby.ChatBox();
-            ((System.ComponentModel.ISupportInitialize)(this.gameBox)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -179,7 +178,6 @@ namespace ZeroKLobby.Notifications
             this.Name = "BattleBar";
             this.Size = new System.Drawing.Size(888, 76);
             this.Load += new System.EventHandler(this.QuickMatchControl_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.gameBox)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);

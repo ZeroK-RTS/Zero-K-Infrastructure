@@ -46,7 +46,6 @@
             this.label6 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.advancedOptionsGroup.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -254,7 +253,6 @@
             this.Load += new System.EventHandler(this.HostDialog_Load);
             this.advancedOptionsGroup.ResumeLayout(false);
             this.advancedOptionsGroup.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

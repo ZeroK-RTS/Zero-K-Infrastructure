@@ -359,8 +359,6 @@ namespace ZeroKLobby.MicroLobby
             NotifyTitle = new Label();
             NotifyMessage = new Label();
             displayTimer = new Timer(components);
-            ((ISupportInitialize)(closeButton)).BeginInit();
-            ((ISupportInitialize)(iconBox)).BeginInit();
             SuspendLayout();
             // 
             // closeButton
@@ -433,8 +431,6 @@ namespace ZeroKLobby.MicroLobby
             TopMost = true;
             Closing += new CancelEventHandler(PopupNotify_Closing);
             Load += new EventHandler(PopupNotify_Load);
-            ((ISupportInitialize)(closeButton)).EndInit();
-            ((ISupportInitialize)(iconBox)).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
