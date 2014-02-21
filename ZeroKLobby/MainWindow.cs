@@ -130,7 +130,20 @@ namespace ZeroKLobby
             }
             if (isHidden && useFlashing) FlashWindow();
             if (isPathDifferent) navigationControl.HilitePath(navigationPath, useFlashing ? HiliteLevel.Flash : HiliteLevel.Bold);
-            if (useSound) SystemSounds.Exclamation.Play();
+            if (useSound)
+            {
+                if (Program.Conf.RingType >= 1) SystemSounds.Exclamation.Play();
+                else if (Program.Conf.RingType == 0)
+                {
+                    System.Threading.Thread t = new System.Threading.Thread(() =>
+                    {
+                        Console.Beep(1175, 250);
+                        Console.Beep(1319, 250);
+                        //37 - 32767Hz
+                    });
+                    t.Start();
+                }
+            }
         }
 
         public void PopupSelf() {
