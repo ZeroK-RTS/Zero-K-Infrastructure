@@ -37,7 +37,6 @@ namespace ZeroKLobby
 
         string springServerHost = "lobby.springrts.com";
         int springServerPort = 8200;
-        int ringType = 1;
         [Browsable(false)]
         public string AdChannels = "main,newbies";
         [Browsable(false)]
@@ -180,11 +179,6 @@ namespace ZeroKLobby
         public Color LinkColor { get { return Color.FromArgb(LinkColorInt); } set { LinkColorInt = value.ToArgb(); } }
         [Browsable(false)]
         public int LinkColorInt = Color.Blue.ToArgb();
-
-        [Category("Chat")]
-        [DisplayName("Ring/Beep")]
-        [Description("Set to \"1\" to use System Exclamation sound.\nSet to \"0\" to use beep.\nSet to \"-1\" to mute.")]
-        public int RingType { get { return ringType; } set { ringType = value; } }
 
         [Category("Account")]
         [DisplayName("Lobby Player Name")]

@@ -132,16 +132,9 @@ namespace ZeroKLobby
             if (isPathDifferent) navigationControl.HilitePath(navigationPath, useFlashing ? HiliteLevel.Flash : HiliteLevel.Bold);
             if (useSound)
             {
-                if (Program.Conf.RingType >= 1) SystemSounds.Exclamation.Play();
-                else if (Program.Conf.RingType == 0)
+                try
                 {
-                    System.Threading.Thread t = new System.Threading.Thread(() =>
-                    {
-                        Console.Beep(1175, 250);
-                        Console.Beep(1319, 250);
-                        //37 - 32767Hz
-                    });
-                    t.Start();
+                    SystemSounds.Exclamation.Play();
                 }
             }
         }
