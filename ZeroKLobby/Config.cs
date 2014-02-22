@@ -48,6 +48,8 @@ namespace ZeroKLobby
         [Browsable(false)]
         public string AdSuffix = "\r\n\r\nmodlink: http://zero-k.info/";
 
+        string snd_play_cmd = "aplay";
+        string snd_play_path = "/usr/share/sounds/alsa/test.wav"; // probably present in other than archlinux distros...
 
         [Category("Chat")]
         [DisplayName("Automatically Joined Channels")]
@@ -93,6 +95,16 @@ namespace ZeroKLobby
         [DisplayName("Content data folder")]
         [Description("Place where all the content is saved")]
         public string DataFolder { get; set; }
+        
+        [Category("General")]
+        [DisplayName("[UNIX] Sound play command")]
+        [Description("Name of command used to play sounds")]
+        public string SndPlayCmd { get { return snd_play_cmd; } set { snd_play_cmd = value; } }
+        
+        [Category("General")]
+        [DisplayName("[UNIX] Sound to play")]
+        [Description("Path to sound played")]
+        public string SndPlayPath { get { return snd_play_path; } set { snd_play_path = value; } }
 
         [Browsable(false)]
         public int DefaultPlayerColorInt = 16776960; // default teal color
