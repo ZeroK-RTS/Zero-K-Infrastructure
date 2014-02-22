@@ -136,6 +136,7 @@ namespace ZeroKLobby
                 {
                     SystemSounds.Exclamation.Play();
                 }
+                catch{ }
             }
         }
 
