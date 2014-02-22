@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -38,12 +38,41 @@ namespace ZeroKLobby
 
         public NotifySection NotifySection { get { return notifySection1; } }
         public static FriendsWindow frdWindow = null;
+        
+        public enum Platform
+        {
+           Windows,
+           Linux,
+           Mac
+        }
+        public Platform MyOS = Platform.Windows; // Which will most likely to be the case for most community
 
         public MainWindow() {
             InitializeComponent();
             //Invalidate(true);
             Instance = this;
             //systrayIcon.BalloonTipClicked += systrayIcon_BalloonTipClicked;
+            
+            switch (Environment.OSVersion.Platform)
+            {
+            case PlatformID.Unix:
+               // Well, there are chances MacOSX is reported as Unix instead of MacOSX.
+               // Instead of platform check, we'll do a feature checks (Mac specific root folders)
+               if (System.IO.Directory.Exists ("/Applications")
+                   & System.IO.Directory.Exists ("/System")
+                   & System.IO.Directory.Exists ("/Users")
+                   & System.IO.Directory.Exists ("/Volumes"))
+                  MyOS = Platform.Mac;
+               else
+                  MyOS = Platform.Linux;
+               break;
+            case PlatformID.MacOSX:
+               MyOS = Platform.Mac;
+               break;
+            default:
+               MyOS = Platform.Windows;
+               break;
+            }
 
             btnExit = new ToolStripMenuItem { Name = "btnExit", Size = new Size(92, 22), Text = "Exit" };
             btnExit.Click += btnExit_Click;
@@ -132,11 +161,26 @@ namespace ZeroKLobby
             if (isPathDifferent) navigationControl.HilitePath(navigationPath, useFlashing ? HiliteLevel.Flash : HiliteLevel.Bold);
             if (useSound)
             {
-                try
-                {
-                    SystemSounds.Exclamation.Play();
+                if (MyOS == Platform.Windows) {
+                    try
+                    {
+                        SystemSounds.Exclamation.Play();
+                    }
+                    catch (Exception ex) {
+                        Trace.TraceError("Error exclamation play: {0}", ex); // Is this how it's done?
+                    }
+                } else { // Unix folk may decide for beep sound themselves
+                    try {
+                        System.Diagnostics.Process proc = new System.Diagnostics.Process();
+                        proc.EnableRaisingEvents=false; 
+                        proc.StartInfo.FileName = Program.Conf.SndPlayCmd;
+                        proc.StartInfo.Arguments = Program.Conf.SndPlayPath;
+                        proc.Start();
+                    }
+                    catch (Exception ex) {
+                        Trace.TraceError("Error external UNIX play: {0}", ex); // Is this how it's done?
+                    }
                 }
-                catch{ }
             }
         }
 
