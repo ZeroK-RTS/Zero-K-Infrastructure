@@ -39,7 +39,7 @@ namespace ZeroKLobby
         public NotifySection NotifySection { get { return notifySection1; } }
         public static FriendsWindow frdWindow = null;
         
-        public enum Platform
+        public enum Platform // Zero-K lobby probably already has some global var like this somewhere
         {
            Windows,
            Linux,
