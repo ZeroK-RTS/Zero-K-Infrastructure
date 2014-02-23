@@ -1,6 +1,11 @@
 ﻿@using ZeroKWeb
 @using ZkData
 @model ZkData.Account
+
+@{
+    Page.Title = Model.Name + " user administration";
+}           
+
 <div class="admin">
     <h1>Administer @Html.PrintAccount(@Model)</h1>
     AccountID: @Model.AccountID
