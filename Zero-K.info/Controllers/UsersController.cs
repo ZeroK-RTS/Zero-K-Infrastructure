@@ -136,6 +136,19 @@ namespace ZeroKWeb.Controllers
             return View("UserList", ret.Take(100));
         }
 
+        [Auth(Role = AuthRole.ZkAdmin)]
+        public ActionResult NewUsers(string name, string ip, int? userID = null)
+        {
+            var db = new ZkDataContext();
+            IQueryable<Account> ret = db.Accounts.AsQueryable();
+
+            if (!string.IsNullOrEmpty(name)) ret = ret.Where(x => x.Name.Contains(name));
+            if (!string.IsNullOrEmpty(ip)) ret = ret.Where(x => x.AccountIPS.Any(y => y.IP == ip));
+            if (userID != null && userID != 0) ret = ret.Where(x => x.AccountUserIDS.Any(y => y.UserID == userID));
+
+            return View("NewUsers", ret.OrderByDescending(x=> x.FirstLogin).Take(100));
+        }
+
         public ActionResult LobbyDetail(string id)
         {
             var db = new ZkDataContext();

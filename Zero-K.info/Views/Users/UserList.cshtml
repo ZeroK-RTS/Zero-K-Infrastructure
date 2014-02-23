@@ -1,8 +1,9 @@
 ﻿@using ZkData
+@using ZeroKWeb
 @model IEnumerable<Account>
            
 @{
-    Page.Title = "Zero-K admins";
+    Page.Title = "Zero-K users";
 }
 
 <h2>Admins</h2>
@@ -11,9 +12,15 @@
     @Html.PrintAccount(admin)
     <br />
 }
-
+<br />
 @Html.ActionLink("User duplicates","Duplicates")
-
+@if (Global.IsZeroKAdmin)
+{
+    <div class="admin">
+        @Html.ActionLink("New user list", "NewUsers")
+    </div>
+}
+<br />
 <h2>Search (first 100 results)</h2>
 <form action="?" method="post">
     Name: @Html.TextBox("name")<br />

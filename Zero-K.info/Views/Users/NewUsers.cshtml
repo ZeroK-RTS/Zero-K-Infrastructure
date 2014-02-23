@@ -1,0 +1,39 @@
+﻿@using ZeroKWeb
+@using ZkData
+@model IEnumerable<Account>
+<div class="admin">
+           
+@{
+    Page.Title = "New users";
+}
+    <h2>Search (first 100 results)</h2>
+    <form action="?" method="post">
+        Name: @Html.TextBox("name")<br />
+        IP: @Html.TextBox("ip")<br />
+        UserID: @Html.TextBox("userID")<br />
+        <input type="submit" value="search"/>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>First login</th>
+                <th>Last login</th>
+                <th>Lobby ID</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var a in Model)
+        {
+            <tr>
+                <td>@Html.PrintAccount(a) -  @Html.ActionLink("admin", "AdminUserDetail", new{id=a.AccountID})</td>
+                <td>@a.FirstLogin</td>
+                <td>@a.LastLogin</td>
+                <td>@a.LobbyID</td>
+            </tr>
+        }
+        </tbody>
+
+</table>
+</div>
