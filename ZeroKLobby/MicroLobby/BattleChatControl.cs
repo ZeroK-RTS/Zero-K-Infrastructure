@@ -131,7 +131,11 @@ namespace ZeroKLobby.MicroLobby
 			if (missionSlots != null) buttonTeams = buttonTeams.Concat(missionSlots.Select(s => s.AllyID)).Distinct();
 			foreach (var team in buttonTeams)
 			{
-				var allianceName = "Team " + (team + 1);
+                int numPlayers = nonSpecs.Where(p => p.UserBattleStatus.AllyNumber == team).Count();
+                int numBots = Program.TasClient.MyBattle.Bots.Where(p => p.AllyNumber == team).Count();
+                int numTotal = numPlayers + numBots;
+
+                var allianceName = "Team " + (team + 1) + "  (" + numTotal + ")";
 				if (missionSlots != null)
 				{
 					var slot = missionSlots.FirstOrDefault(s => s.AllyID == team);
