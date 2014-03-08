@@ -231,6 +231,9 @@ namespace ZeroKWeb.Controllers
 			var db = new ZkDataContext();
 			var t = db.ForumThreads.FirstOrDefault(x => x.ForumThreadID == id);
 
+            // TODO - indicate thread has been deleted
+            if (t == null) return RedirectToAction("Index");
+
             if (page == null)
             {
                 if (postID == null) page = 0;

@@ -20,7 +20,7 @@ public class AuthAttribute: AuthorizeAttribute
 		if (!httpContext.User.Identity.IsAuthenticated || !(httpContext.User is Account))
 		{
 			//use the current url for the redirect
-			var redirectOnSuccess = httpContext.Request.Url.AbsolutePath;
+			var redirectOnSuccess = httpContext.Request.Url.PathAndQuery;
 
 			//send them off to the login page
 			var helper = new UrlHelper(httpContext.Request.RequestContext);
