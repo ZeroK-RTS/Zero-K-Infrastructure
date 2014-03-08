@@ -23,6 +23,7 @@ namespace ZeroKWeb.Controllers
 
 			db.ForumPosts.DeleteOnSubmit(post);
 			if (thread.ForumPosts.Count() <= 1) {
+                db.ForumThreadLastReads.DeleteAllOnSubmit(db.ForumThreadLastReads.Where(x => x.ForumThread == thread).ToList());
 				db.ForumThreads.DeleteOnSubmit(thread);
 				db.SubmitChanges();
 				return RedirectToAction("Index");
