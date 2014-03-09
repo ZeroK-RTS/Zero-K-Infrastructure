@@ -42,7 +42,7 @@
                                 <a nicetitle='Delete the post' href='@Url.Action("DeletePost", "Forum", new { postID = p.ForumPostID })' class='delete'><img src="/img/delete_trashcan.png" height="22"/></a>
                             }
                             @{
-                                string linkString = "?postID=" + p.ForumPostID;
+                                string linkString = "/Forum/Thread/" + p.ForumThreadID + "?postID=" + p.ForumPostID;
                             }
                             <a nicetitle='Link to this post' href="@linkString"><img src="/img/link.png" height="22"/></a>
                             @if (p.Account.ContributionsByAccountID.Count() > 0)
