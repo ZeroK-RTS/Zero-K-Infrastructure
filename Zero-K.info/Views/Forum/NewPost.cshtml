@@ -6,7 +6,11 @@
 @if (Model.EditedPost != null || Model.CurrentThread == null)
 {
   Html.RenderPartial("ForumPath", Model.Path);
-  <h3>Post new topic</h3>
+  if (Model.CurrentThread == null) {
+    <h3>Post new topic</h3>
+  } else {
+    <h3>Edit Post</h3>
+  }
 }
 
 <form method="post" action="@Url.Action("SubmitPost", "Forum", new { threadID = Model.CurrentThread != null ? (int?)Model.CurrentThread.ForumThreadID : null, categoryID = Model.CurrentCategory.ForumCategoryID, forumPostID = Model.EditedPost != null ? (int?)Model.EditedPost.ForumPostID : null })">
