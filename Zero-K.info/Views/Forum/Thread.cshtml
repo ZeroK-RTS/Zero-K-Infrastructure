@@ -29,7 +29,11 @@
     }
     else
     {
-        <h3 class="textbutton">@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3>
+        <div id="newPostTop">
+            <h3 class="textbutton">@Ajax.ActionLink("Post Comment", "NewPost", 
+                new { threadID = Model.CurrentThread.ForumThreadID }, 
+                new AjaxOptions() { UpdateTargetId = "newPostTop", InsertionMode = InsertionMode.Replace, HttpMethod = "post" })</h3>
+        </div>
     }
     <br />
 }
@@ -64,7 +68,11 @@
     }
     else
     {
-        <h3 class="textbutton">@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3>
+        <div id="newPostBot">
+            <h3 class="textbutton">@Ajax.ActionLink("Post Comment", "NewPost", 
+                new { threadID = Model.CurrentThread.ForumThreadID }, 
+                new AjaxOptions() { UpdateTargetId = "newPostBot", InsertionMode = InsertionMode.Replace, HttpMethod = "post" })</h3>
+        </div>
     }
     <br />
 }
