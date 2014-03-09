@@ -40,7 +40,16 @@ namespace ZeroKWeb
                 {
                     string link = m.Groups[1].Value;
                     if (link.Contains("/p/zero-k/wiki/"))
-                        links.Add(link.Replace("wl=", "language="));
+                    {
+                        var lang = link
+                            .Substring(0, link.Length - 4) // remove trailing </a>
+                            .Split('>').Last();  // get langcode
+                        link = link
+                            .Replace("wl=", "language=")
+                            .Replace(">" + lang + "<", "><")   // replace language text with flag image
+                            .Replace("</a>", "<img src=\"/img/flags/" + lang + ".png\" alt=\"" + lang + "\"></img></a>");
+                        links.Add(link);
+                    }
                 }
                 header = String.Join(", ", links);
             }
