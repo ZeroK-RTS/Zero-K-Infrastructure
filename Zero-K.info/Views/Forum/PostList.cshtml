@@ -42,7 +42,7 @@
                                 <a nicetitle='Delete the post' href='@Url.Action("DeletePost", "Forum", new { postID = p.ForumPostID })' class='delete'><img src="/img/delete_trashcan.png" height="22"/></a>
                             }
                             @{
-                                string linkString = "/Forum/Thread/" + p.ForumThreadID + "?postID=" + p.ForumPostID;
+                                string linkString = @Url.Action("Thread", "Forum", new { id = p.ForumThreadID }) + "#" + p.ForumPostID;
                             }
                             <a nicetitle='Link to this post' href="@linkString"><img src="/img/link.png" height="22"/></a>
                             @if (p.Account.ContributionsByAccountID.Count() > 0)
@@ -55,7 +55,7 @@
 
                 </table>
             </td>
-            <td valign="top" class="forumPostText">
+            <td valign="top" class="forumPostText" id="@p.ForumPostID">
                 <a name="post@(p.ForumPostID)" id="post@(p.ForumPostID)"></a>
                 @if (p.Upvotes - p.Downvotes <= ZkData.GlobalConst.PostVoteHideThreshold)
                 {
