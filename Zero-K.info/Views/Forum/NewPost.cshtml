@@ -1,17 +1,16 @@
 ﻿@model ZeroKWeb.Controllers.ForumController.NewPostResult
 @{
-  Page.Title = Model.EditedPost != null ? "Edit Post" : "New post";
+  Page.Title = "New post";
 }
 
-@if (Model.EditedPost != null || Model.CurrentThread == null)
-{
-  Html.RenderPartial("ForumPath", Model.Path);
-  if (Model.CurrentThread == null) {
-    <h3>Post new topic</h3>
-  } else {
-    <h3>Edit Post</h3>
-  }
+@{Html.RenderPartial("ForumPath", Model.Path);}
+
+@if (Model.CurrentThread != null) {
+  <h3>@Html.ActionLink(Model.CurrentThread.Title, "Thread", new { id = Model.CurrentThread.ForumThreadID })</h3>
+} else {
+  <h3>Post new topic</h3>
 }
+
 
 <form method="post" action="@Url.Action("SubmitPost", "Forum", new { threadID = Model.CurrentThread != null ? (int?)Model.CurrentThread.ForumThreadID : null, categoryID = Model.CurrentCategory.ForumCategoryID, forumPostID = Model.EditedPost != null ? (int?)Model.EditedPost.ForumPostID : null })">
 @if (Model.CurrentThread == null) {
@@ -21,8 +20,6 @@
 <textarea name="text" rows="8" cols="80">@(Model.EditedPost != null ? Model.EditedPost.Text:null)</textarea><br />
 <input  class="textbutton" type="submit" value="Submit Post" />
 </form>
-
-
-@if (Model.EditedPost != null) {
+@if (Model.LastPosts != null && Model.CurrentThread != null) {
   @Html.Partial("~/Views/Forum/PostList.cshtml", Model.LastPosts)
 }
