@@ -664,9 +664,12 @@ namespace LobbyClient
 
         private void timer_Elapsed(object sender, ElapsedEventArgs e) {
             try {
+                var timeSinceStart = DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds;
+                const int timeToWait = 180; // force start after 180s
+                const int timeToWarn = 120; // warn people after 120s 
+
                 if (isHosting && IsRunning && battleResult.IngameStartTime == null) {
-                    // force start after 180s
-                    if (DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds > 180) {
+                    if (timeSinceStart > timeToWait) {
                         foreach (var kvp in statsPlayers.Where(x => !x.Value.IsIngameReady && !x.Value.IsSpectator)) {
                             //User user;
                             //if (client.ExistingUsers.TryGetValue(kvp.Key, out user) && user.IsAway)
@@ -676,8 +679,7 @@ namespace LobbyClient
                         }
                         ForceStart();
                     }
-                    else if (DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds > 120) {
-                        //warn people after 60s 
+                    else if (timeSinceStart > timeToWarn) {
                         foreach (var kvp in statsPlayers.Where(x => !x.Value.IsIngameReady && !x.Value.IsSpectator)) {
                             //User user;
                             //if (client.ExistingUsers.TryGetValue(kvp.Key, out user) && user.IsAway)
@@ -686,7 +688,7 @@ namespace LobbyClient
                             client.Say(TasClient.SayPlace.User, kvp.Key, "Please ready up ingame, game starting soon", false);
                             //}
                         }
-                        SayGame(string.Format("Game will be force started in {0} seconds", Math.Max(20, 240 - Math.Round(DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds))));
+                        SayGame(string.Format("Game will be force started in {0} seconds", Math.Max(20, timeToWait - Math.Round(timeSinceStart))));
                     }
                 }
             } catch (Exception ex) {
