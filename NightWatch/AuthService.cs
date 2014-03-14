@@ -130,8 +130,10 @@ namespace NightWatch
                                     db.SubmitChanges();
                                 }
 
-                                try {
-                                    if (acc == null || !acc.HasVpnException) {
+                                try
+                                {
+                                    if (acc == null || !acc.HasVpnException)
+                                    {
                                         if (GlobalConst.VpnCheckEnabled)
                                         {
                                             var reversedIP = string.Join(".", args.IP.Split('.').Reverse().ToArray());
@@ -146,22 +148,23 @@ namespace NightWatch
                                         var whois = new Whois();
                                         var data = whois.QueryByIp(args.IP);
 
-                                        if (!data.ContainsKey("org-name"))data["org-name"] = "UNKNOWN ORG";
+                                        if (!data.ContainsKey("org-name")) data["org-name"] = "UNKNOWN ORG";
                                         if (!data.ContainsKey("abuse-mailbox")) data["abuse-mailbox"] = "no mailbox";
                                         if (!data.ContainsKey("notify")) data["notify"] = "no notify address";
                                         if (!data.ContainsKey("role")) data["role"] = "UNKNOWN ROLE";
                                         if (!data.ContainsKey("descr")) data["descr"] = "no description";
 
-                                        
-                                        using (ZkDataContext db = new ZkDataContext()){
+
+                                        using (ZkDataContext db = new ZkDataContext())
+                                        {
                                             var blockedCompanies = db.BlockedCompanies.Select(x => x.CompanyName.ToLower()).ToList();
                                             var blockedHosts = db.BlockedHosts.Select(x => x.HostName).ToList();
-                                            /*if (acc.Country == "MY")
+                                            if (acc.Country == "MY")
                                             {
                                                 client.Say(TasClient.SayPlace.User, "KingRaptor", String.Format("USER {0}\nnetname: {1}\norgname: {2}\ndescr: {3}\nabuse-mailbox: {4}",
                                                     acc.Name, data["netname"], data["org-name"], data["descr"], data["abuse-mailbox"]), false);
-                                            }*/
-                                            if (blockedHosts.Any(x => data["abuse-mailbox"].Contains(x)) || (blockedHosts.Any(x => data["notify"].Contains(x)) ))
+                                            }
+                                            if (blockedHosts.Any(x => data["abuse-mailbox"].Contains(x)) || (blockedHosts.Any(x => data["notify"].Contains(x))))
                                             {
                                                 client.AdminKickFromLobby(args.Name, "Connection using proxy or VPN is not allowed! (You can ask for exception)");
                                             }
@@ -179,6 +182,10 @@ namespace NightWatch
                                                 client.AdminKickFromLobby(args.Name, "Connection using proxy or VPN is not allowed! (You can ask for exception)");
                                         }
                                     }
+                                }
+                                catch (System.Net.Sockets.SocketException sockEx)
+                                {
+                                    // do nothing
                                 }
                                 catch (Exception ex)
                                 {
