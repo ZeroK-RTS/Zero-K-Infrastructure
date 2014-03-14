@@ -130,7 +130,7 @@ namespace NightWatch
                                     db.SubmitChanges();
                                 }
 
-                                //try {
+                                try {
                                     if (acc == null || !acc.HasVpnException) {
                                         if (GlobalConst.VpnCheckEnabled)
                                         {
@@ -177,13 +177,13 @@ namespace NightWatch
                                             var hostname = Dns.GetHostEntry(args.IP).HostName;
                                             if (blockedHosts.Any(hostname.Contains))
                                                 client.AdminKickFromLobby(args.Name, "Connection using proxy or VPN is not allowed! (You can ask for exception)");
+                                        }
                                     }
-                                    }
-                                //}
-                                //catch (Exception ex)
-                                //{
-                                //    client.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
-                                //}
+                                }
+                                catch (Exception ex)
+                                {
+                                    client.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
+                                }
                             } catch (Exception ex) {
                                 Trace.TraceError("Error getting user IP: {0}", ex);
                                 //client.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
