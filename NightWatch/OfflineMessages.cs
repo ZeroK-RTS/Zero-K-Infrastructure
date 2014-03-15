@@ -144,7 +144,7 @@ namespace NightWatch
 										{
 											using (var db = new ZkDataContext()) {
                                                 Account account = Account.AccountByName(db, e.UserName);
-                                                if (chan == "zkadmin" && !(account.IsZeroKAdmin || account.IsLobbyAdministrator))
+                                                if (chan == AuthService.ModeratorChannel && !(account.IsZeroKAdmin || account.IsLobbyAdministrator))
                                                 {
                                                     client.Say(TasClient.SayPlace.User, user.Name, "Not authorized to subscribe to this channel", false);
                                                 }

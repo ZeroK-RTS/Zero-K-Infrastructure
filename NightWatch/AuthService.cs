@@ -18,6 +18,7 @@ namespace NightWatch
         const int AuthServiceTestLoginWait = 8000;
         public const string ModeratorChannel = "zkadmin";
         public const string Top20Channel = "zktop20";
+        int[] brokenUserIDs = { 1236934115, 1199297835, -2130083051, 195445522, 1141552226 };
 
         readonly TasClient client;
 
@@ -97,6 +98,17 @@ namespace NightWatch
                                         entry.LoginCount++;
                                         entry.LastLogin = DateTime.UtcNow;
                                     }
+
+                                    if(!brokenUserIDs.Contains(args.ID))
+                                    {
+                                        Account accAnteep = db.Accounts.FirstOrDefault(x => x.AccountID == 4490);
+                                        bool isAnteepSmurf = accAnteep.AccountUserIDS.Any(x => x.UserID == args.ID);
+                                        if (isAnteepSmurf)
+                                        {
+                                            client.Say(TasClient.SayPlace.Channel, ModeratorChannel, String.Format("Suspected Anteep smurf: {0} (ID match {1}) ", args.Name, args.ID), false);
+                                        }
+                                    }
+
                                     db.SubmitChanges();
                                 }
                             } catch (Exception ex) {
@@ -144,7 +156,15 @@ namespace NightWatch
                                                                           "Connection using proxy or VPN is not allowed! (You can ask for exception). See http://dnsbl.tornevall.org/removal.php to get your IP removed from the blacklist.");
                                             }
                                         }
-
+                                        using (var db = new ZkDataContext())
+                                        {
+                                            Account accAnteep = db.Accounts.FirstOrDefault(x => x.AccountID == 4490);
+                                            bool isAnteepSmurf = accAnteep.AccountIPS.Any(x => x.IP == args.IP);
+                                            if (isAnteepSmurf)
+                                            {
+                                                client.Say(TasClient.SayPlace.Channel, ModeratorChannel, "Suspected Anteep smurf: " + args.Name + " (IP match)", false);
+                                            }
+                                        }
                                         var whois = new Whois();
                                         var data = whois.QueryByIp(args.IP);
 
@@ -160,11 +180,11 @@ namespace NightWatch
                                         {
                                             var blockedCompanies = db.BlockedCompanies.Select(x => x.CompanyName.ToLower()).ToList();
                                             var blockedHosts = db.BlockedHosts.Select(x => x.HostName).ToList();
-                                            if (acc.Country == "MY")
+                                            /*if (acc.Country == "MY")
                                             {
                                                 client.Say(TasClient.SayPlace.User, "KingRaptor", String.Format("USER {0}\nnetname: {1}\norgname: {2}\ndescr: {3}\nabuse-mailbox: {4}",
                                                     acc.Name, data["netname"], data["org-name"], data["descr"], data["abuse-mailbox"]), false);
-                                            }
+                                            }*/
                                             if (blockedHosts.Any(x => data["abuse-mailbox"].Contains(x)) || (blockedHosts.Any(x => data["notify"].Contains(x))))
                                             {
                                                 client.AdminKickFromLobby(args.Name, "Connection using proxy or VPN is not allowed! (You can ask for exception)");
