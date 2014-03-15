@@ -148,6 +148,7 @@ namespace NightWatch
                                         var whois = new Whois();
                                         var data = whois.QueryByIp(args.IP);
 
+                                        if (!data.ContainsKey("netname")) data["netname"] = "UNKNOWN NETNAME";
                                         if (!data.ContainsKey("org-name")) data["org-name"] = "UNKNOWN ORG";
                                         if (!data.ContainsKey("abuse-mailbox")) data["abuse-mailbox"] = "no mailbox";
                                         if (!data.ContainsKey("notify")) data["notify"] = "no notify address";
