@@ -87,7 +87,7 @@ namespace NightWatch
 
                                     if (penalty != null)
                                         client.AdminKickFromLobby(args.Name,
-                                                                  string.Format("Banned until {0}, reason: {1}", penalty.BanExpires, penalty.Reason));
+                                                                  string.Format("Banned until {0} (ID match to {1}), reason: {2}", penalty.BanExpires, penalty.AccountByAccountID.Name, penalty.Reason)); ;
 
                                     if (acc != null && args.ID != 0) {
                                         var entry = acc.AccountUserIDS.FirstOrDefault(x => x.UserID == args.ID);
@@ -130,7 +130,7 @@ namespace NightWatch
                                     var penalty = Punishment.GetActivePunishment(acc != null ? acc.AccountID : 0, args.IP, null, x => x.BanLobby, db);
                                     if (penalty != null)
                                         client.AdminKickFromLobby(args.Name,
-                                                                  string.Format("Banned until {0}, reason: {1}", penalty.BanExpires, penalty.Reason));
+                                                                  string.Format("Banned until {0} (IP match to {1}), reason: {2}", penalty.BanExpires, penalty.AccountByAccountID.Name, penalty.Reason));
                                     if (acc != null) {
                                         var entry = acc.AccountIPS.FirstOrDefault(x => x.IP == args.IP);
                                         if (entry == null) {
