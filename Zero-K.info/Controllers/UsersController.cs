@@ -274,12 +274,12 @@ namespace ZeroKWeb.Controllers
                     Global.Nightwatch.Tas.AdminBan(acc.Name, days / 24, otherPenalty.Reason);
                     if (otherPenalty.BanIP != null)
                     {
-                        Global.Nightwatch.Tas.AdminBan(otherPenalty.BanIP, days / 24, otherPenalty.Reason);
+                        Global.Nightwatch.Tas.AdminBanIP(otherPenalty.BanIP, days / 24, otherPenalty.Reason);
                     }
                 }
             }
 
-            return RedirectToAction("Detail", "Users", new { id = todel.UserID });
+            return RedirectToAction("Detail", "Users", new { id = todel.AccountID });
         }
     }
 }
