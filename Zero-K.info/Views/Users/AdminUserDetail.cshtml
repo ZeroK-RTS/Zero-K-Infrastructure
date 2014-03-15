@@ -65,7 +65,11 @@
         var myIDs = Model.AccountUserIDS.Select(x => x.UserID).ToList();
         int[] brokenIDs = { 1236934115, 1199297835, -2130083051, 195445522, 1141552226 };
         var smurfs = new ZkDataContext().Accounts.Where(x => x.AccountID != Model.AccountID && (x.AccountIPS.Any(y => myIPs.Contains(y.IP)) || x.AccountUserIDS.Where(id => !brokenIDs.Contains(id.UserID)).Any(y => myIDs.Contains(y.UserID))));
-        int lastUserID = Model.AccountUserIDS.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID;
+        
+        int? lastUserID = null;
+        if (Model.AccountUserIDS.Any()) {
+            lastUserID = Model.AccountUserIDS.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID;
+        }
     }
     <h2>Smurfs</h2>
     @foreach (var ac in smurfs)
@@ -120,7 +124,7 @@
         Ban unlocks: @Html.CheckBox("banUnlocks")<br />
         <br />
         IP: @Html.TextBox("banIP", Model.AccountIPS.OrderByDescending(x=>x.LastLogin).Select(x=>x.IP).FirstOrDefault())<br />
-        UserID: @Html.TextBox("banUserID", lastUserID != null && !brokenIDs.Contains(lastUserID) ? lastUserID.ToString() : "")<br />
+        UserID: @Html.TextBox("banUserID", lastUserID != null && !brokenIDs.Contains((int)lastUserID) ? lastUserID.ToString() : "")<br />
         Ban site: @Html.CheckBox("banSite")<br />
         Ban lobby: @Html.CheckBox("banLobby")<br />
         Ban forum: @Html.CheckBox("banForum")<br />

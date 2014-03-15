@@ -505,6 +505,26 @@ namespace LobbyClient
             }
         }
 
+        public void AdminBan(string username, double duration, string reason)
+        {
+            con.SendCommand("BAN", username, duration, reason);
+        }
+
+        public void AdminUnban(string username)
+        {
+            con.SendCommand("UNBAN", username);
+        }
+
+        public void AdminBanIP(string ip, double duration, string reason)
+        {
+            con.SendCommand("BANIP", ip, duration, reason);
+        }
+
+        public void AdminUnbanIP(string ip)
+        {
+            con.SendCommand("UNBANIP", ip);
+        }
+
         public void LeaveBattle()
         {
             if (MyBattle != null)
@@ -787,7 +807,7 @@ namespace LobbyClient
             else DispatchServerCommandOnGuiThread(command, args);
         }
 
-
+        // ugh
         private void HandleSpecialServerMessages(string[] args) {
             var text = Utils.Glue(args, 0);
             var match = Regex.Match(text, "<([^>]+)> is using (.+)");

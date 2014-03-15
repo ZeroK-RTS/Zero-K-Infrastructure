@@ -105,7 +105,8 @@ namespace NightWatch
                                         bool isAnteepSmurf = accAnteep.AccountUserIDS.Any(x => x.UserID == args.ID);
                                         if (isAnteepSmurf)
                                         {
-                                            client.Say(TasClient.SayPlace.Channel, ModeratorChannel, String.Format("Suspected Anteep smurf: {0} (ID match {1}) ", args.Name, args.ID), false);
+                                            client.Say(TasClient.SayPlace.Channel, ModeratorChannel, String.Format("Suspected Anteep smurf: {0} (ID match {1}) {2}", args.Name, args.ID,
+                                                acc != null? "http://zero-k.info/Users/Detail/" + acc.AccountID : ""), false);
                                         }
                                     }
 
@@ -162,7 +163,8 @@ namespace NightWatch
                                             bool isAnteepSmurf = accAnteep.AccountIPS.Any(x => x.IP == args.IP);
                                             if (isAnteepSmurf)
                                             {
-                                                client.Say(TasClient.SayPlace.Channel, ModeratorChannel, "Suspected Anteep smurf: " + args.Name + " (IP match)", false);
+                                                client.Say(TasClient.SayPlace.Channel, ModeratorChannel, String.Format("Suspected Anteep smurf: {0} (IP match {1}) {2}", args.Name, args.IP,
+                                                acc != null ? "http://zero-k.info/Users/Detail/" + acc.AccountID : ""), false);
                                             }
                                         }
                                         var whois = new Whois();

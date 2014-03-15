@@ -205,6 +205,14 @@ namespace ZeroKWeb.Controllers
             db.SubmitChanges();
 
             Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);
+            if (banLobby)
+            {
+                Global.Nightwatch.Tas.AdminBan(acc.Name, banHours / 24, reason);
+                if (banIP != null)
+                {
+                    Global.Nightwatch.Tas.AdminBanIP(banIP, banHours / 24, reason);
+                }
+            }
 
             Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("New penalty for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")), true);
 
@@ -252,6 +260,25 @@ namespace ZeroKWeb.Controllers
             var todel = db.Punishments.First(x => x.PunishmentID == punishmentID);
             db.Punishments.DeleteOnSubmit(todel);
             db.SubmitAndMergeChanges();
+
+            if (todel.BanLobby)
+            {
+                Account acc = todel.AccountByAccountID;
+                Global.Nightwatch.Tas.AdminUnban(acc.Name);
+                if(todel.BanIP != null) Global.Nightwatch.Tas.AdminUnban(todel.BanIP);
+                var otherPenalty = Punishment.GetActivePunishment(acc.AccountID, null, null, x => x.BanLobby, db);
+                if (otherPenalty != null)
+                {
+                    var time = otherPenalty.BanExpires - DateTime.Now;
+                    double days = time.Value.TotalDays;
+                    Global.Nightwatch.Tas.AdminBan(acc.Name, days / 24, otherPenalty.Reason);
+                    if (otherPenalty.BanIP != null)
+                    {
+                        Global.Nightwatch.Tas.AdminBan(otherPenalty.BanIP, days / 24, otherPenalty.Reason);
+                    }
+                }
+            }
+
             return RedirectToAction("Detail", "Users", new { id = todel.UserID });
         }
     }

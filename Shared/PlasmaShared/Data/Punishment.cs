@@ -30,7 +30,7 @@ namespace ZkData
             ret =
                 ret.Where(
                     x => (accountID != null && x.AccountID == accountID) || (userID != null && x.UserID == userID) || (ip != null && x.BanIP == ip));
-            return ret.FirstOrDefault();
+            return ret.OrderByDescending(x=> x.BanExpires).FirstOrDefault();
         }
 
     }
