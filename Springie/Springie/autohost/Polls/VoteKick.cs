@@ -20,7 +20,7 @@ namespace Springie.autohost.Polls
 
             string[] players;
             int[] indexes;
-            if (AutoHost.FilterUsers(words, tas, spring, out players, out indexes) > 0)
+            if (AutoHost.FilterUsers(new[] {words[0]}, tas, spring, out players, out indexes) > 0)
             {
                 player = players[0];
                 if (player == tas.UserName)
@@ -30,7 +30,9 @@ namespace Springie.autohost.Polls
                 }
                 else
                 {
-                    question = "Kick " + player + "?";
+                    string reason = (words.Length > 1 && words[1] != "for") ? " for" : "";
+                    for (var i = 1; i < words.Length; i++) reason += " " + words[i];
+                    question = "Kick " + player + reason + "?";
                     return true;
                 }
             }
