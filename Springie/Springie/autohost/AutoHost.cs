@@ -81,7 +81,7 @@ namespace Springie.autohost
             bool isManaged = SpawnConfig == null && config.Mode != AutohostMode.None;
 
             tas = new TasClient(null,
-                                "Springie " + MainConfig.SpringieVersion,
+                                MainConfig.SpringieVersion,
                                 isManaged ? GlobalConst.ZkSpringieManagedCpu : GlobalConst.ZkLobbyUserCpu,
                                 false,
                                 Program.main.Config.IpOverride);
