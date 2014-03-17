@@ -1,4 +1,4 @@
-﻿#region using
+#region using
 
 using System;
 using System.Collections.Generic;
@@ -154,7 +154,7 @@ namespace LobbyClient
             try {
                 if (IsRunning) {
                     SayGame("/kill"); // todo dont do this if talker does not work (not a host)
-                    process.WaitForExit(2000);
+                    process.WaitForExit(20000);
                     if (!IsRunning) return;
                     wasKilled = true;
                     process.Kill();
