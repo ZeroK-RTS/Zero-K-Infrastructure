@@ -127,34 +127,38 @@ namespace ZkData
                 return;
             }
 
-			foreach (var r in winners)
-			{
-				var change = (float)(scoreWin*r.Account.EloInvWeight);
-				r.Player.EloChange = change;
-                if (planetwars)	r.Account.EloPw += change;
-                else r.Account.Elo += change;
+            if (losers.Count == 1 && winners.Count == 1) Calculate1v1Elo();
+            else
+            {
+                foreach (var r in winners)
+                {
+                    var change = (float)(scoreWin * r.Account.EloInvWeight);
+                    r.Player.EloChange = change;
+                    if (planetwars) r.Account.EloPw += change;
+                    else r.Account.Elo += change;
 
-				r.Account.XP += WinnerTeamXpChange.Value;
-				r.Player.XpChange = WinnerTeamXpChange;
+                    r.Account.XP += WinnerTeamXpChange.Value;
+                    r.Player.XpChange = WinnerTeamXpChange;
 
-                r.Account.EloWeight = Account.AdjustEloWeight(r.Account.EloWeight, sumW, sumCount);
-			}
+                    r.Account.EloWeight = Account.AdjustEloWeight(r.Account.EloWeight, sumW, sumCount);
+                    r.Account.Elo1v1Weight = Account.AdjustEloWeight(r.Account.Elo1v1Weight, sumW, sumCount);
+                }
 
-			foreach (var r in losers)
-			{
-				var change = (float)(scoreLose*r.Account.EloInvWeight);
-				r.Player.EloChange = change;
-                if (planetwars) r.Account.EloPw += change;
-                else r.Account.Elo += change;
+                foreach (var r in losers)
+                {
+                    var change = (float)(scoreLose * r.Account.EloInvWeight);
+                    r.Player.EloChange = change;
+                    if (planetwars) r.Account.EloPw += change;
+                    else r.Account.Elo += change;
 
-				r.Account.XP += LoserTeamXpChange.Value;
-				r.Player.XpChange = LoserTeamXpChange.Value;
+                    r.Account.XP += LoserTeamXpChange.Value;
+                    r.Player.XpChange = LoserTeamXpChange.Value;
 
-
-			    r.Account.EloWeight = Account.AdjustEloWeight(r.Account.EloWeight, sumW, sumCount);
-			}
-
-	        Calculate1v1Elo();
+                    r.Account.EloWeight = Account.AdjustEloWeight(r.Account.EloWeight, sumW, sumCount);
+                    r.Account.Elo1v1Weight = Account.AdjustEloWeight(r.Account.Elo1v1Weight, sumW, sumCount);
+                }
+            }
+            
 
 			IsEloProcessed = true;
 		}
@@ -181,7 +185,9 @@ namespace ZkData
 
                     var sumW = winner.Elo1v1Weight + loser.Elo1v1Weight;
                     winner.Elo1v1Weight  = Account.AdjustEloWeight(winner.Elo1v1Weight, sumW, 2);
+                    winner.EloWeight = Account.AdjustEloWeight(winner.EloWeight, sumW, 2);
                     loser.Elo1v1Weight = Account.AdjustEloWeight(loser.Elo1v1Weight, sumW, 2);
+                    loser.EloWeight = Account.AdjustEloWeight(loser.EloWeight, sumW, 2);
                 }
             }
         }
