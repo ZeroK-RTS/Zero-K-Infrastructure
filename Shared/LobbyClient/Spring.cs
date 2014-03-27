@@ -154,8 +154,21 @@ namespace LobbyClient
             try {
                 if (IsRunning) {
                     SayGame("/kill"); // todo dont do this if talker does not work (not a host)
-                    process.WaitForExit(20000);
+                    process.WaitForExit(5000);
                     if (!IsRunning) return;
+                    
+                    SayGame("/kill"); 
+                    process.WaitForExit(5000);
+                    if (!IsRunning) return;
+                    
+                    SayGame("/kill"); 
+                    process.WaitForExit(5000);
+                    if (!IsRunning) return;
+                    
+                    SayGame("/kill"); 
+                    process.WaitForExit(5000);
+                    if (!IsRunning) return;
+                    
                     wasKilled = true;
                     process.Kill();
                     ;
