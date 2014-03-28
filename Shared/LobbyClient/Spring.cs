@@ -169,6 +169,7 @@ namespace LobbyClient
                     process.WaitForExit(5000);
                     if (!IsRunning) return;
                     
+                    SayGame("Terminating spring process");
                     wasKilled = true;
                     process.Kill();
                     ;
