@@ -50,6 +50,7 @@ local allowTransfer = false
 local factoryExpectedUnits = {} -- key: factoryID, value: {unitDefID, groups: group set}
 local repeatFactoryGroups = {} -- key: factoryID, value: group set
 local objectives = {}	-- key: ID, value: {title, description, color, target}	-- important: widget must be able to access on demand
+local wantUpdateDisabledUnits = false
 
 GG.mission = {
   scores = scores,
@@ -178,9 +179,9 @@ local function StartsWith(s, startString)
 end
 
 
-local function SetCount(set)
+local function CountTableElements(t)
   local count = 0
-  for _ in pairs(set) do
+  for _ in pairs(t) do
     count = count + 1
   end
   return count
@@ -323,11 +324,12 @@ GG.mission.FindUnitsInGroups = FindUnitsInGroups
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-local disabledUnitDefIDs = {}
+local disabledUnitDefIDs = {} -- [team] = {[unitDefID1] = true, [unitDefID2] = true, ...}
 local selectedUnitConditionGroups = {}
 local unitIsVisibleConditionGroups = {}
 
 do
+  local teams = Spring.GetTeamList()
   for _, trigger in pairs(triggers) do
     trigger.occurrences = trigger.occurrences or 0
     if trigger.maxOccurrences < 0 then
@@ -362,8 +364,12 @@ do
     end
   end
   
-  for _, disabledUnitName in ipairs(mission.disabledUnits) do
-    disabledUnitDefIDs[UnitDefNames[disabledUnitName].id] = true
+  for i=1,#teams do
+    local teamID = teams[i]
+    disabledUnitDefIDs[teamID] = {}
+    for _, disabledUnitName in ipairs(mission.disabledUnits) do
+      disabledUnitDefIDs[teamID][UnitDefNames[disabledUnitName].id] = true
+    end
   end
   
   for condition in pairs(FindAllLogic("UnitSelectedCondition")) do
@@ -398,20 +404,25 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local function UpdateDisabledUnits(unitID)
+local function UpdateDisabledUnits(unitID, teamID)
   local unitDefID = Spring.GetUnitDefID(unitID)
-  for _, buildID in ipairs(UnitDefs[unitDefID].buildOptions) do
+  local buildOpts = UnitDefs[unitDefID].buildOptions
+  for i=1,#buildOpts do
+    local buildID = buildOpts[i]
     local cmdDescID = Spring.FindUnitCmdDesc(unitID, -buildID)
     if cmdDescID then
-      Spring.EditUnitCmdDesc(unitID, cmdDescID, {disabled = disabledUnitDefIDs[buildID] or false})
+      Spring.EditUnitCmdDesc(unitID, cmdDescID, {disabled = disabledUnitDefIDs[teamID][buildID] or false})
     end
   end
 end
 
 
 local function UpdateAllDisabledUnits()
-  for _, unitID in ipairs(Spring.GetAllUnits()) do
-    UpdateDisabledUnits(unitID)
+  local units = Spring.GetAllUnits()
+  for i=1,#units do
+    local unitID = units[i]
+    local teamID = Spring.GetUnitTeam(unitID)
+    UpdateDisabledUnits(unitID, teamID)
   end
 end
 
@@ -739,22 +750,35 @@ local actionsTable = {
 	  Spring.GameOver(humanAllyTeams)
         end,
   LockUnitsAction = function(action)
+          local teams = action.args.players or {}
+          if CountTableElements(teams) == 0 then
+            teams = Spring.GetTeamList()
+          end
           for _, disabledUnitName in ipairs(action.args.units) do
             local disabledUnit = UnitDefNames[disabledUnitName]
             if disabledUnit then
-              disabledUnitDefIDs[disabledUnit.id] = true
+              for _,teamID in pairs(teams) do
+                Spring.Echo(disabledUnit.name)
+                disabledUnitDefIDs[teamID][disabledUnit.id] = true
+              end
             end
           end
-          UpdateAllDisabledUnits()
+          wantUpdateDisabledUnits = true
         end,
   UnlockUnitsAction = function(action)
+          local teams = action.args.players or {}
+          if CountTableElements(teams) == 0 then
+            teams = Spring.GetTeamList()
+          end
           for _, disabledUnitName in ipairs(action.args.units) do
             local disabledUnit = UnitDefNames[disabledUnitName]
             if disabledUnit then
-              disabledUnitDefIDs[disabledUnit.id] = nil
+              for _,teamID in pairs(teams) do
+                disabledUnitDefIDs[teamID][disabledUnit.id] = nil
+              end
             end
           end
-          UpdateAllDisabledUnits()
+          wantUpdateDisabledUnits = true
         end,
   GiveOrdersAction = function(action, createdUnits)
           local orderedUnits
@@ -1144,6 +1168,11 @@ function gadget:GameFrame(n)
       end
     end
   end
+  
+  if wantUpdateDisabledUnits then
+    UpdateAllDisabledUnits()
+    wantUpdateDisabledUnits = false
+  end
 end
 
 
@@ -1252,7 +1281,7 @@ function gadget:UnitCreated(unitID, unitDefID, unitTeam)
       end
     end
   end
-  UpdateDisabledUnits(unitID)
+  UpdateDisabledUnits(unitID, unitTeam)
 end
 
 -- ZK custom functions
@@ -1269,7 +1298,7 @@ function gadget:AllowCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOpt
   --  return false
   --end
   -- prevent widgets from building disabled units
-  if disabledUnitDefIDs[-cmdID] then
+  if disabledUnitDefIDs[teamID][-cmdID] then
     local luaAI = Spring.GetTeamLuaAI(teamID) or ''
     return (luaAI ~= '') and EXEMPT_AI_FROM_UNIT_LOCK
   end
@@ -1392,7 +1421,8 @@ else
 function WrapToLuaUI()
   if Script.LuaUI"MissionEvent" then
     local missionEventArgs = {}
-    for k, v in spairs(SYNCED.missionEventArgs) do
+    local missionEventArgsSynced = SYNCED.missionEventArgs
+    for k, v in spairs(missionEventArgsSynced) do
       missionEventArgs[k] = v
     end
     Script.LuaUI.MissionEvent(missionEventArgs)
@@ -1402,10 +1432,10 @@ end
 
 local ghosts = {}
 
-
 function GhostEvent()
   local ghost= {}
-  for k, v in spairs(SYNCED.ghostEventArgs) do
+  local ghostSynced = SYNCED.ghostEventArgs
+  for k, v in spairs(ghostSynced) do
     ghost[k] = v
   end
   ghosts[ghost] = true

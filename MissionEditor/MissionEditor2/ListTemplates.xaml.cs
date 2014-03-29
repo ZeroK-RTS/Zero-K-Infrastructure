@@ -102,6 +102,27 @@ namespace MissionEditor2
 			{
 				unitList.BindCollection(((UnitFinishedInFactoryCondition)currentLogic).Players);
 			}
+            else if (currentLogic is LockUnitsAction)
+            {
+                // reverse compat
+                /*
+                if (((LockUnitsAction)currentLogic).Players == null)
+                {
+                    ((LockUnitsAction)currentLogic).Players = new ObservableCollection<CMissionLib.Player>();
+                }
+                */
+                unitList.BindCollection(((LockUnitsAction)currentLogic).Players);
+            }
+            else if (currentLogic is UnlockUnitsAction)
+            {
+                // reverse compat
+                /*
+                if (((UnlockUnitsAction)currentLogic).Players == null)
+                {
+                    ((UnlockUnitsAction)currentLogic).Players = new ObservableCollection<CMissionLib.Player>();
+                }*/
+                unitList.BindCollection(((UnlockUnitsAction)currentLogic).Players);
+            }
 		}
 
 		void MarkerPointCanvas_Loaded(object sender, RoutedEventArgs e)

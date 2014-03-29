@@ -115,7 +115,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="LockUnitsAction">
-            <local:UnitDefsGrid Tag="{Binding Mission.Mod.UnitDefs, ElementName=window}" Loaded="UnitDefGrid_Loaded" />
+            <ContentControl Content="{StaticResource unitConditionPane}" />
         </DataTemplate>
 
         <DataTemplate x:Key="GiveFactoryOrdersAction">
@@ -123,7 +123,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="UnlockUnitsAction">
-            <local:UnitDefsGrid Tag="{Binding Mission.Mod.UnitDefs, ElementName=window}" Loaded="UnitDefGrid_Loaded" />
+            <ContentControl Content="{StaticResource unitConditionPane}" />
         </DataTemplate>
 
         <DataTemplate x:Key="CustomCondition">

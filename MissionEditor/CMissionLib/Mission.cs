@@ -570,6 +570,7 @@ namespace CMissionLib
 			foreach (var unit in AllUnits)
 			{
 				var unitDef = Mod.UnitDefs.FirstOrDefault(ud => unit.UnitDefName == ud.Name);
+                if (unitDef == null) unitDef = Mod.UnitDefs.FirstOrDefault(ud => unit.UnitDef.FullName == ud.FullName);
 				unit.UnitDef = unitDef ?? Mod.UnitDefs.First(); // if unit not found, use first valid unitdef - show warning?
 			}
 
@@ -589,6 +590,22 @@ namespace CMissionLib
 			// compatibility
 			if (regions == null) regions = new ObservableCollection<Region>();
 			if (folders == null) folders = new Dictionary<string, string>();
+
+            foreach (Trigger trigger in Triggers)
+            {
+                foreach (Action action in trigger.Actions)
+                {
+                    if (action is LockUnitsAction && ((LockUnitsAction)action).Players == null)
+                    {
+                        ((LockUnitsAction)action).Players = new ObservableCollection<Player>();
+                    }
+                    else if (action is UnlockUnitsAction && ((UnlockUnitsAction)action).Players == null)
+                    {
+                        ((UnlockUnitsAction)action).Players = new ObservableCollection<Player>();
+                    }
+                }
+            }
+
 			// get rid of legacy dummies
 			foreach (var trigger in triggers) foreach (var item in trigger.Logic.ToArray()) if (item is DummyAction || item is DummyCondition) trigger.Logic.Remove(item);
 			Items = new CompositeObservableCollection<Trigger, Region>(Triggers, Regions);

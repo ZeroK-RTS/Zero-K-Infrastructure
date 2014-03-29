@@ -16,7 +16,7 @@
     </DataTemplate>
   </UserControl.Resources>
   <DataGrid Name="Grid" x:FieldModifier="public" Background="White" ItemsSource="{Binding Tag, ElementName=control}" AutoGenerateColumns="False"
-      IsSynchronizedWithCurrentItem="True" VirtualizingStackPanel.IsVirtualizing="True" IsReadOnly="True">
+      IsSynchronizedWithCurrentItem="False" VirtualizingStackPanel.IsVirtualizing="True" IsReadOnly="True">
     <DataGrid.Columns>
       <DataGridTemplateColumn Header="Image" CellTemplate="{StaticResource unitDefBuildPic}" IsReadOnly="True" />
       <DataGridTextColumn Binding="{Binding Name}" Header="Name" IsReadOnly="True" />
