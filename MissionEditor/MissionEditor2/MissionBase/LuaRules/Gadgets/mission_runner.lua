@@ -1002,6 +1002,7 @@ GG.mission.SendMissionVariables = SendMissionVariables
 
 function gadget:UnitDamaged(unitID, unitDefID, unitTeam, damage, paralyzer, 
                             weaponID, attackerID, attackerDefID, attackerTeam)
+  local toExecute = {}
   for triggerIndex=1, #triggers do
     local trigger = triggers[triggerIndex]
     for conditionIndex=1, #trigger.logic do
@@ -1011,10 +1012,14 @@ function gadget:UnitDamaged(unitID, unitDefID, unitTeam, damage, paralyzer,
          (Spring.GetUnitHealth(unitID) < condition.args.value) and
          (condition.args.anyAttacker or FindUnitsInGroup(condition.args.attackerGroup)[attackerID]) and
          (condition.args.anyVictim or FindUnitsInGroup(condition.args.victimGroup)[unitID]) then
-        ExecuteTrigger(trigger)
+        toExecute[#toExecute + 1] = trigger
         break
       end
     end
+  end
+  -- do it this way to avoid the problem when you remove elements from a table while still iterating over it
+  for i=1,#toExecute do
+    ExecuteTrigger(toExecute[i])
   end
 end
 
