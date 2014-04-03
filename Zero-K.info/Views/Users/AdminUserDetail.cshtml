@@ -116,12 +116,10 @@
         Reason: @Html.TextBox("reason","You are too ugly")<br />
         <br />
 
+        Mute: @Html.CheckBox("banMute")<br />
         Delete XP: @Html.CheckBox("deleteXP")<br />
         Delete influence: @Html.CheckBox("deleteInfluence")<br />
-        <br />
-        Ban mute: @Html.CheckBox("banMute")<br />
         Ban commanders: @Html.CheckBox("banCommanders")<br />
-        Ban unlocks: @Html.CheckBox("banUnlocks")<br />
         <br />
         IP: @Html.TextBox("banIP", Model.AccountIPS.OrderByDescending(x=>x.LastLogin).Select(x=>x.IP).FirstOrDefault())<br />
         UserID: @Html.TextBox("banUserID", lastUserID != null && !brokenIDs.Contains((int)lastUserID) ? lastUserID.ToString() : "")<br />
