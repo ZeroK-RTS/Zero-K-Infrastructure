@@ -5,7 +5,7 @@
 }
 <div>
     <h3>PENALTY: @p.Reason</h3>
-    @p.Time.ToAgoString()<br />
+    Issued on: @p.Time (@p.Time.ToAgoString())<br />
     Issued by: @Html.PrintAccount(p.AccountByCreatedAccountID)<br />
     @if (p.DeleteInfluence)
     {
