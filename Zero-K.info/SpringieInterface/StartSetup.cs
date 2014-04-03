@@ -33,9 +33,12 @@ namespace ZeroKWeb.SpringieInterface
         #endregion
     }
 
+    
 
     public class StartSetup
     {
+        static bool listOnlyThatLevelsModules = false;  // may cause bugs
+
         public static SpringBattleStartSetup GetSpringBattleStartSetup(BattleContext context) {
             try {
                 AutohostMode mode = context.GetMode();
@@ -125,7 +128,7 @@ namespace ZeroKWeb.SpringieInterface
                                 if (mode != AutohostMode.Planetwars || user.Faction == null) foreach (Unlock unlock in user.AccountUnlocks.Select(x => x.Unlock)) pu.Add(unlock.Code);
                                 else {
                                     foreach (Unlock unlock in
-                                        user.AccountUnlocks.Select(x => x.Unlock).Union(user.Faction.GetFactionUnlocks().Select(x => x.Unlock))) pu.Add(unlock.Code);
+                                        user.AccountUnlocks.Select(x => x.Unlock).Union(user.Faction.GetFactionUnlocks().Select(x => x.Unlock)).Where(x => x.UnlockType == UnlockTypes.Unit)) pu.Add(unlock.Code);
                                 }
                             }
 
@@ -177,10 +180,10 @@ namespace ZeroKWeb.SpringieInterface
                                         }
                                         
 
-                                        //string prevKey = null;
+                                        string prevKey = null;
                                         for (int i = 0; i <= GlobalConst.NumCommanderLevels; i++) {
                                             string key = string.Format("c{0}_{1}_{2}", user.AccountID, c.ProfileNumber, i);
-                                            morphTable.Add(key);
+                                            morphTable.Add(key);    // TODO: maybe don't specify morph series in player data, only starting unit
 
                                             var comdef = new LuaTable();
                                             commanderTypes[key] = comdef;
@@ -194,15 +197,30 @@ namespace ZeroKWeb.SpringieInterface
 
                                             comdef["name"] = c.Name.Substring(0, Math.Min(25, c.Name.Length)) + " level " + i;
 
+                                            //if (i < GlobalConst.NumCommanderLevels)
+                                            //{
+                                            //    comdef["next"] = string.Format("c{0}_{1}_{2}", user.AccountID, c.ProfileNumber, i+1);
+                                            //}
+                                            //comdef["owner"] = user.Name;
+
                                             if (i > 0)
                                             {
                                                 comdef["cost"] = c.GetTotalMorphLevelCost(i);
 
-                                                //if (prevKey != null) comdef["prev"] = prevKey;
-                                                //prevKey = key;
-                                                foreach (Unlock m in
+                                                if (listOnlyThatLevelsModules)
+                                                {
+                                                    if (prevKey != null) comdef["prev"] = prevKey;
+                                                    prevKey = key;
+                                                    foreach (Unlock m in
+                                                        c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel == i && x.Unlock != null).OrderBy(
+                                                            x => x.Unlock.UnlockType).ThenBy(x => x.SlotID).Select(x => x.Unlock)) modules.Add(m.Code);
+                                                }
+                                                else
+                                                {
+                                                    foreach (Unlock m in
                                                         c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel <= i && x.Unlock != null).OrderBy(
                                                             x => x.Unlock.UnlockType).ThenBy(x => x.SlotID).Select(x => x.Unlock)) modules.Add(m.Code);
+                                                }
                                             }
                                         }
                                     } catch (Exception ex) {
