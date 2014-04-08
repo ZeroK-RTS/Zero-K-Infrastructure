@@ -651,12 +651,14 @@ namespace Springie.autohost
 
             string title = config.Title.Replace("%1", MainConfig.SpringieVersion);
             string password = "*";
+            string springVersion = springPaths.SpringVersion;
             if (!string.IsNullOrEmpty(config.BattlePassword)) password = config.BattlePassword;
 
             if (SpawnConfig != null) {
                 modname = SpawnConfig.Mod;
                 title = SpawnConfig.Title;
                 if (!String.IsNullOrEmpty(SpawnConfig.Password)) password = SpawnConfig.Password;
+                if (!String.IsNullOrEmpty(SpawnConfig.Engine)) springVersion = SpawnConfig.Engine;
             }
 
             //title = title + string.Format(" [engine{0}]", springPaths.SpringVersion);
@@ -672,13 +674,13 @@ namespace Springie.autohost
             if (version != null && cache.GetResourceDataByInternalName(version.InternalName) != null) modname = version.InternalName;
 
             hostedMod = new Mod();
-            cache.GetMod(modname, (m) => { hostedMod = m; }, (m) => { }, springPaths.SpringVersion);
+            cache.GetMod(modname, (m) => { hostedMod = m; }, (m) => { }, springVersion);
             if (hostedMod.IsMission && !String.IsNullOrEmpty(hostedMod.MissionMap)) mapname = hostedMod.MissionMap;
 
             Map mapi = null;
-            cache.GetMap(mapname, (m, x, y, z) => { mapi = m; }, (e) => { }, springPaths.SpringVersion);
+            cache.GetMap(mapname, (m, x, y, z) => { mapi = m; }, (e) => { }, springVersion);
             //int mint, maxt;
-            var b = new Battle(springPaths.SpringVersion, password, hostingPort, config.MaxPlayers, 0, mapi, title, hostedMod, new BattleDetails());
+            var b = new Battle(springVersion, password, hostingPort, config.MaxPlayers, 0, mapi, title, hostedMod, new BattleDetails());
             // if hole punching enabled then we use it
             if (Program.main.Config.UseHolePunching) b.Nat = Battle.NatMode.HolePunching;
             else if (Program.main.Config.GargamelMode) b.Nat = Battle.NatMode.FixedPorts;
