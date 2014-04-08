@@ -35,14 +35,16 @@ namespace ZeroKLobby.MicroLobby
             Program.ToolTip.SetText(cbMtEngine, "MT engine is experimental and can improve performance, but it cause desyncs in Multiplayer game. \r\nThis option allow MT usage when joining game as spectator.");
            
             Program.ToolTip.SetText(cbWindowed, "Windowed: Run game on desktop in a window\nBorderless: Run game on desktop in a borderless window\nFullscreen: Run game fullscreen");
-            Program.ToolTip.SetText(button5, "Springsetting.cfg and Lups.cfg tuned for performance and compatibility");
-            Program.ToolTip.SetText(button1, "Springsetting.cfg and Lups.cfg with minimal features");
-            Program.ToolTip.SetText(button4, "Springsetting.cfg and Lups.cfg recommended for Ultra setting");
-            Program.ToolTip.SetText(button3, "Springsetting.cfg and Lups.cfg recommended for high setting");
-            Program.ToolTip.SetText(button2, "Springsetting.cfg and Lups.cfg recommended for medium setting");
-            Program.ToolTip.SetText(btnCustom, "Edit current Springsetting.cfg");
+            Program.ToolTip.SetText(button5, "Springsettings.cfg and Lups.cfg tuned for performance and compatibility; many graphical features are disabled");
+            Program.ToolTip.SetText(button1, "Springsettings.cfg and Lups.cfg for performance; some graphical features are disabled");
+            Program.ToolTip.SetText(button2, "Springsettings.cfg and Lups.cfg recommended for medium settings");
+            Program.ToolTip.SetText(button3, "Springsettings.cfg and Lups.cfg recommended for high settings");
+            Program.ToolTip.SetText(button4, "Springsettings.cfg and Lups.cfg recommended for Ultra settings");
+            Program.ToolTip.SetText(btnCustom, "Edit current Springsettings.cfg");
             Program.ToolTip.SetText(btnRapid, "Monitor certain mods for latest version and auto-download them when available.");
             Program.ToolTip.SetText(problemButton, "Go to Zero-K development page.");
+            Program.ToolTip.SetText(lobbyLogButton, "Diagnostic log for ZKL lobby client (this is what you have open now)");
+            Program.ToolTip.SetText(gameLogButton, "Diagnostic log for Spring engine (what the actual game plays on)");
             Program.ToolTip.SetText(btnDefaults, "Local data reset?");
 		}
 
@@ -206,10 +208,15 @@ namespace ZeroKLobby.MicroLobby
             Program.MainWindow.navigationControl.Path = "http://zero-k.info/Forum?categoryID=3"; //open using Navigation Bar. If internal browser fail, it open external browser.
 		}
 
-		void logButton_Click(object sender, EventArgs e)
+		void lobbyLogButton_Click(object sender, EventArgs e)
 		{
 			ActionHandler.ShowLog();
 		}
+
+        private void gameLogButton_Click(object sender, EventArgs e)
+        {
+            Utils.SafeStart("file://" + Utils.MakePath(Program.SpringPaths.WritableDirectory, "infolog.txt"));
+        }
 
 		void problemButton_Click(object sender, EventArgs e)
 		{

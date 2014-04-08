@@ -40,7 +40,8 @@
             this.btnDefaults = new ZeroKLobby.BitmapButton();
             this.helpButton = new ZeroKLobby.BitmapButton();
             this.btnRestart = new ZeroKLobby.BitmapButton();
-            this.logButton = new ZeroKLobby.BitmapButton();
+            this.lobbyLogButton = new ZeroKLobby.BitmapButton();
+            this.gameLogButton = new ZeroKLobby.BitmapButton();
             this.btnRapid = new ZeroKLobby.BitmapButton();
             this.button1 = new ZeroKLobby.BitmapButton();
             this.label3 = new System.Windows.Forms.Label();
@@ -57,6 +58,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
             this.panel1 = new System.Windows.Forms.Panel();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerAtMid)).BeginInit();
             this.splitContainerAtMid.Panel1.SuspendLayout();
             this.splitContainerAtMid.Panel2.SuspendLayout();
             this.splitContainerAtMid.SuspendLayout();
@@ -89,7 +91,8 @@
             this.splitContainerAtMid.Panel1.Controls.Add(this.btnDefaults);
             this.splitContainerAtMid.Panel1.Controls.Add(this.helpButton);
             this.splitContainerAtMid.Panel1.Controls.Add(this.btnRestart);
-            this.splitContainerAtMid.Panel1.Controls.Add(this.logButton);
+            this.splitContainerAtMid.Panel1.Controls.Add(this.lobbyLogButton);
+            this.splitContainerAtMid.Panel1.Controls.Add(this.gameLogButton);
             this.splitContainerAtMid.Panel1.Controls.Add(this.btnRapid);
             this.splitContainerAtMid.Panel1.Controls.Add(this.button1);
             this.splitContainerAtMid.Panel1.Controls.Add(this.label3);
@@ -176,7 +179,7 @@
             this.btnDisplay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.btnDisplay.ForeColor = System.Drawing.Color.White;
-            this.btnDisplay.Location = new System.Drawing.Point(162, 99);
+            this.btnDisplay.Location = new System.Drawing.Point(32, 99);
             this.btnDisplay.Name = "btnDisplay";
             this.btnDisplay.Size = new System.Drawing.Size(89, 23);
             this.btnDisplay.TabIndex = 13;
@@ -219,7 +222,7 @@
             this.btnDefaults.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnDefaults.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDefaults.ForeColor = System.Drawing.Color.White;
-            this.btnDefaults.Location = new System.Drawing.Point(269, 99);
+            this.btnDefaults.Location = new System.Drawing.Point(136, 99);
             this.btnDefaults.Name = "btnDefaults";
             this.btnDefaults.Size = new System.Drawing.Size(75, 23);
             this.btnDefaults.TabIndex = 35;
@@ -260,21 +263,37 @@
             this.btnRestart.Visible = false;
             this.btnRestart.Click += new System.EventHandler(this.btnRestart_Click);
             // 
-            // logButton
+            // lobbyLogButton
             // 
-            this.logButton.BackColor = System.Drawing.Color.Transparent;
-            this.logButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("logButton.BackgroundImage")));
-            this.logButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.logButton.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.logButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.logButton.ForeColor = System.Drawing.Color.White;
-            this.logButton.Location = new System.Drawing.Point(32, 99);
-            this.logButton.Name = "logButton";
-            this.logButton.Size = new System.Drawing.Size(124, 23);
-            this.logButton.TabIndex = 18;
-            this.logButton.Text = "Show Diagnostic Log";
-            this.logButton.UseVisualStyleBackColor = true;
-            this.logButton.Click += new System.EventHandler(this.logButton_Click);
+            this.lobbyLogButton.BackColor = System.Drawing.Color.Transparent;
+            this.lobbyLogButton.BackgroundImage = global::ZeroKLobby.Buttons.panel;
+            this.lobbyLogButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.lobbyLogButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lobbyLogButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.lobbyLogButton.ForeColor = System.Drawing.Color.White;
+            this.lobbyLogButton.Location = new System.Drawing.Point(257, 138);
+            this.lobbyLogButton.Name = "lobbyLogButton";
+            this.lobbyLogButton.Size = new System.Drawing.Size(124, 23);
+            this.lobbyLogButton.TabIndex = 18;
+            this.lobbyLogButton.Text = "Lobby Diagnostic Log";
+            this.lobbyLogButton.UseVisualStyleBackColor = false;
+            this.lobbyLogButton.Click += new System.EventHandler(this.lobbyLogButton_Click);
+            // 
+            // gameLogButton
+            // 
+            this.gameLogButton.BackColor = System.Drawing.Color.Transparent;
+            this.gameLogButton.BackgroundImage = global::ZeroKLobby.Buttons.panel;
+            this.gameLogButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.gameLogButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.gameLogButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.gameLogButton.ForeColor = System.Drawing.Color.White;
+            this.gameLogButton.Location = new System.Drawing.Point(397, 138);
+            this.gameLogButton.Name = "gameLogButton";
+            this.gameLogButton.Size = new System.Drawing.Size(124, 23);
+            this.gameLogButton.TabIndex = 40;
+            this.gameLogButton.Text = "Game Diagnostic Log";
+            this.gameLogButton.UseVisualStyleBackColor = true;
+            this.gameLogButton.Click += new System.EventHandler(this.gameLogButton_Click);
             // 
             // btnRapid
             // 
@@ -432,7 +451,7 @@
             this.btnBrowse.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnBrowse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnBrowse.ForeColor = System.Drawing.Color.White;
-            this.btnBrowse.Location = new System.Drawing.Point(354, 99);
+            this.btnBrowse.Location = new System.Drawing.Point(257, 99);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(124, 23);
             this.btnBrowse.TabIndex = 25;
@@ -496,6 +515,7 @@
             this.splitContainerAtMid.Panel1.ResumeLayout(false);
             this.splitContainerAtMid.Panel1.PerformLayout();
             this.splitContainerAtMid.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerAtMid)).EndInit();
             this.splitContainerAtMid.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
@@ -523,7 +543,8 @@
         private BitmapButton btnDefaults;
         private BitmapButton helpButton;
         private BitmapButton btnRestart;
-        private BitmapButton logButton;
+        private BitmapButton lobbyLogButton;
+        private BitmapButton gameLogButton;
         private BitmapButton btnRapid;
         private BitmapButton button1;
         private BitmapButton button2;
