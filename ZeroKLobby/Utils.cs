@@ -324,6 +324,7 @@ namespace ZeroKLobby
                 scaleUpRatioX = (double)dpiX/96;
                 scaleDownRatioX = (double)96/dpiX;
                 formGraphics.Dispose();
+                Trace.TraceInformation("System DPI Value: dpiX= {0}, dpiY= {1}", dpiX, dpiY);
             }
         }
 

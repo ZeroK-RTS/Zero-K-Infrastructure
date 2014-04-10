@@ -1,4 +1,4 @@
- namespace ZeroKLobby.MicroLobby
+﻿namespace ZeroKLobby.MicroLobby
 {
     partial class SettingsTab
     {
@@ -432,6 +432,7 @@
             // cbWindowed
             // 
             this.cbWindowed.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbWindowed.ForeColor = System.Drawing.SystemColors.InfoText;
             this.cbWindowed.Items.AddRange(new object[] {
             "Windowed",
             "Borderless",

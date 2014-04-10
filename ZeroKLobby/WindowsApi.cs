@@ -24,15 +24,18 @@ namespace ZeroKLobby
         }
 
     
-
+		private static bool haveXprintIdle = true;
         public static TimeSpan CalculateIdleTime() {
             if (Environment.OSVersion.Platform == PlatformID.Unix) {
-                var ret = PlasmaShared.Utils.ExecuteConsoleCommand("xprintidle");
-                if (ret != null) {
-                    int ms;
-                    if (int.TryParse(ret, out ms)) return TimeSpan.FromMilliseconds(ms);
-                }
-                return DateTime.Now - Program.ToolTip.LastUserAction;
+				if (haveXprintIdle)
+				{
+					var ret = PlasmaShared.Utils.ExecuteConsoleCommand("xprintidle");
+                	if (ret != null) {
+                    	int ms;
+                    	if (int.TryParse(ret, out ms)) return TimeSpan.FromMilliseconds(ms);
+					}else{ haveXprintIdle = false;} //some Linux might not have "xprintidle", stop trying, avoid spam in Diagnostic Log.
+				}
+				return DateTime.Now - Program.ToolTip.LastUserAction;
             }
 
             var systemUptime = Environment.TickCount; // Get the system uptime
