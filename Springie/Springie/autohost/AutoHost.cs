@@ -660,7 +660,7 @@ namespace Springie.autohost
                 if (!String.IsNullOrEmpty(SpawnConfig.Password)) password = SpawnConfig.Password;
                 if (!String.IsNullOrEmpty(SpawnConfig.Engine))
                 {
-                    //springVersion = SpawnConfig.Engine;
+                    requestedEngineChange = SpawnConfig.Engine;
                     Program.main.Downloader.GetAndSwitchEngine(SpawnConfig.Engine);
                 }
             }
