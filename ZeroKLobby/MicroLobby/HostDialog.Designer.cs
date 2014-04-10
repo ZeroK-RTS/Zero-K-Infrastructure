@@ -135,6 +135,7 @@
             // 
             this.gameBox.Location = new System.Drawing.Point(144, 114);
             this.gameBox.Name = "gameBox";
+			this.gameBox.ForeColor = System.Drawing.SystemColors.WindowText;
             this.gameBox.Size = new System.Drawing.Size(380, 21);
             this.gameBox.TabIndex = 11;
             // 

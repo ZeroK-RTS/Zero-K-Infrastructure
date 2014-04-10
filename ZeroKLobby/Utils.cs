@@ -314,18 +314,18 @@ namespace ZeroKLobby
         public static double scaleUpRatioY = 0;
 
         public static void DpiXYMeasurement(Control a) {
-            if (dpiY == 0 || dpiX == 0) {
+			if (dpiY == 0 || dpiX == 0) {
                 var formGraphics = a.CreateGraphics(); //Reference: http://msdn.microsoft.com/en-us/library/system.drawing.graphics.dpix.aspx
                 dpiY = formGraphics.DpiY; //get current DPI
-                scaleUpRatioY = (double)dpiY/96;
-                    //get scaleUP ratio, 96 is the original DPI. Preserve decimal, Reference: http://www.dotnetperls.com/divide
+				dpiX = formGraphics.DpiX;
+				formGraphics.Dispose();
+				Trace.TraceInformation("System DPI Value: dpiX= {0}, dpiY= {1}", dpiX, dpiY);
+				scaleUpRatioY = (double)dpiY/96;
+                //get scaleUP ratio, 96 is the original DPI. Preserve decimal, Reference: http://www.dotnetperls.com/divide
                 scaleDownRatioY = (double)96/dpiY; //get scaleDown ratio (to counter-act DPI virtualization/scaling)
-                dpiX = formGraphics.DpiX;
                 scaleUpRatioX = (double)dpiX/96;
                 scaleDownRatioX = (double)96/dpiX;
-                formGraphics.Dispose();
-                Trace.TraceInformation("System DPI Value: dpiX= {0}, dpiY= {1}", dpiX, dpiY);
-            }
+			}
         }
 
         public static int ReverseScaleValueX(double designHeight) {

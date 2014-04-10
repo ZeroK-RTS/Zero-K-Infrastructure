@@ -47,7 +47,7 @@ namespace ZeroKLobby.Notifications
             // cbSide
             // 
             this.cbSide.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbSide.ForeColor = System.Drawing.SystemColors.InfoText;
+            this.cbSide.ForeColor = System.Drawing.SystemColors.WindowText;
             this.cbSide.FormattingEnabled = true;
             this.cbSide.Location = new System.Drawing.Point(4, 21);
             this.cbSide.Name = "cbSide";

@@ -13,8 +13,7 @@ namespace ZeroKLobby.MicroLobby
 
 		public SettingsTab()
 		{
-			InitializeComponent();
-
+			InitializeComponent(); //Fixme: tooltip for button don't appear on Linux. Diagnosis so far: button failed to be the Child of the elements or had "" as name.
 
 			helpButton.MouseUp += helpButton_MouseUp;
 
@@ -32,7 +31,7 @@ namespace ZeroKLobby.MicroLobby
 
             Program.ToolTip.SetText(cbSafeMode, "Turns off many things that are known to cause problems (on PC/Mac's with lower-end graphic cards). Use if the game is crashing.\nWill override Springsetting.cfg");
             Program.ToolTip.SetText(cbHwCursor,"HW cursor is uneffected by ingame lag, but it can become invisible on some machines");
-            Program.ToolTip.SetText(cbMtEngine, "MT engine is experimental and can improve performance, but it cause desyncs in Multiplayer game. \r\nThis option allow MT usage when joining game as spectator.");
+            Program.ToolTip.SetText(cbMtEngine, "MT engine is experimental and can improve performance, but it cause desyncs in Multiplayer game. \r\nThis option allow MT usage when joining game as spectator (this option only valid for Spring 91).");
            
             Program.ToolTip.SetText(cbWindowed, "Windowed: Run game on desktop in a window\nBorderless: Run game on desktop in a borderless window\nFullscreen: Run game fullscreen");
             Program.ToolTip.SetText(button5, "Springsettings.cfg and Lups.cfg tuned for performance and compatibility; many graphical features are disabled");
@@ -43,8 +42,8 @@ namespace ZeroKLobby.MicroLobby
             Program.ToolTip.SetText(btnCustom, "Edit current Springsettings.cfg");
             Program.ToolTip.SetText(btnRapid, "Monitor certain mods for latest version and auto-download them when available.");
             Program.ToolTip.SetText(problemButton, "Go to Zero-K development page.");
-            Program.ToolTip.SetText(lobbyLogButton, "Diagnostic log for ZKL lobby client (this is what you have open now)");
-            Program.ToolTip.SetText(gameLogButton, "Diagnostic log for Spring engine (what the actual game plays on)");
+            Program.ToolTip.SetText(lobbyLogButton, "Diagnostic log for ZKL lobby client ( Useful to report things such as: download issue or lobby issue)");
+            Program.ToolTip.SetText(gameLogButton, "Diagnostic log for Spring engine (this is the game. Useful to report things such as: ingame graphic bug or game crash)");
             Program.ToolTip.SetText(btnDefaults, "Local data reset?");
 		}
 

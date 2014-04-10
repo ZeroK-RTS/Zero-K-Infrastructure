@@ -432,7 +432,7 @@
             // cbWindowed
             // 
             this.cbWindowed.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbWindowed.ForeColor = System.Drawing.SystemColors.InfoText;
+            this.cbWindowed.ForeColor = System.Drawing.SystemColors.WindowText;
             this.cbWindowed.Items.AddRange(new object[] {
             "Windowed",
             "Borderless",
@@ -489,6 +489,7 @@
             // 
             this.propertyGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGrid1.Location = new System.Drawing.Point(3, 16);
+			this.propertyGrid1.HelpForeColor = System.Drawing.SystemColors.WindowText;
             this.propertyGrid1.Name = "propertyGrid1";
             this.propertyGrid1.Size = new System.Drawing.Size(815, 462);
             this.propertyGrid1.TabIndex = 0;
