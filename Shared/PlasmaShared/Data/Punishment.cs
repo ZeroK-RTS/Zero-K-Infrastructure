@@ -17,7 +17,24 @@ namespace ZkData
         /// <param name="filter">additional filtering to punishments</param>
         /// <param name="db">db context to use</param>
         /// <returns></returns>
-        public static Punishment GetActivePunishment(int? accountID, string ip, int? userID, Expression<Func<Punishment,bool>> filter = null, ZkDataContext db = null)
+
+        public static bool DoIPv4sMatch(string ip1, string ip2)
+        {
+            string[] ip1Split = ip1.Split('.');
+            string[] ip2Split = ip2.Split('.');
+            if (ip1Split.Length != ip2Split.Length) return false;
+
+            for (int i = 0; i < ip1Split.Length; i++)
+            {
+                if (ip1Split[i] != "*" && ip2Split[i] != "*")
+                {
+                    if (ip1Split[i] != ip2Split[i]) return false;
+                }
+            }
+            return true;
+        }
+
+        public static Punishment GetActivePunishment(int? accountID, string ip, int? userID, Expression<Func<Punishment, bool>> filter = null, ZkDataContext db = null)
         {
             if (ip == "") ip = null;
             if (accountID == 0) accountID = null;
@@ -25,12 +42,14 @@ namespace ZkData
 
             if (db == null) db = new ZkDataContext();
             var ret = db.Punishments.Where(x => x.BanExpires > DateTime.UtcNow);
-            if (filter != null) ret = ret.Where(filter);
+            System.Collections.Generic.List<Punishment> ret2;
+            if (filter != null) ret2 = ret.Where(filter).ToList();
+            else ret2 = ret.ToList();
 
-            ret =
-                ret.Where(
-                    x => (accountID != null && x.AccountID == accountID) || (userID != null && x.UserID == userID) || (ip != null && x.BanIP == ip));
-            return ret.OrderByDescending(x=> x.BanExpires).FirstOrDefault();
+            ret2 =
+                ret2.Where(
+                    x => (accountID != null && x.AccountID == accountID) || (userID != null && x.UserID == userID) || (ip != null && x.BanIP != null && DoIPv4sMatch(x.BanIP, ip))).ToList();
+            return ret2.OrderByDescending(x=> x.BanExpires).FirstOrDefault();
         }
 
     }
