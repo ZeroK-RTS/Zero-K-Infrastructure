@@ -660,10 +660,18 @@ namespace Springie.autohost
                 if (!String.IsNullOrEmpty(SpawnConfig.Password)) password = SpawnConfig.Password;
                 if (!String.IsNullOrEmpty(SpawnConfig.Engine))
                 {
+                    //Something needs to go here to properly tell Springie to use a specific engine version,
+                    //attempted code below may or may not be responsible for recent springie drops, so commenting.
+                    
+                    //the below may be causing a rehost
                     //requestedEngineChange = SpawnConfig.Engine;
+                    
+                    //alternate attempt
+                    /*
                     Program.main.Downloader.GetAndSwitchEngine(SpawnConfig.Engine);
                     config.SpringVersion = SpawnConfig.Engine;
                     springPaths.SetEnginePath(Program.main.paths.GetEngineFolderByVersion(SpawnConfig.Engine));
+                    */
                 }
             }
 
