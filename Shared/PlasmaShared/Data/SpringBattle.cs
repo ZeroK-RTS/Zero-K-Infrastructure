@@ -165,29 +165,33 @@ namespace ZkData
 
         public void Calculate1v1Elo() {
             if (!HasBots) {
-                var losers = SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam).Select(x => x.Account).ToList();
-                var winners = SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam).Select(x => x.Account).ToList();
+                var losers = SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam).ToList();
+                var winners = SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam).ToList();
                 if (losers.Count == 1 && winners.Count == 1) {
-                    var winner = winners.First();
-                    var loser = losers.First();
+                    SpringBattlePlayer winner = winners.First();
+                    SpringBattlePlayer loser = losers.First();
+                    Account winnerAcc = winner.Account;
+                    Account loserAcc = loser.Account;
 
-                    var winnerElo = winner.Elo1v1;
-                    var loserElo = loser.Elo1v1;
+                    var winnerElo = winnerAcc.Elo1v1;
+                    var loserElo = loserAcc.Elo1v1;
 
                     var eWin = 1/(1 + Math.Pow(10, (loserElo - winnerElo)/400));
                     var eLose = 1/(1 + Math.Pow(10, (winnerElo - loserElo)/400));
 
                     var scoreWin = 32*(1 - eWin);
                     var scoreLose = 32*(0 - eLose);
+                    
+                    winnerAcc.Elo1v1 += scoreWin;
+                    loserAcc.Elo1v1 += scoreLose;
+                    winner.EloChange = (float)scoreWin;
+                    loser.EloChange = (float)scoreLose;
 
-                    winner.Elo1v1 += scoreWin;
-                    loser.Elo1v1 += scoreLose;
-
-                    var sumW = winner.Elo1v1Weight + loser.Elo1v1Weight;
-                    winner.Elo1v1Weight  = Account.AdjustEloWeight(winner.Elo1v1Weight, sumW, 2);
-                    winner.EloWeight = Account.AdjustEloWeight(winner.EloWeight, sumW, 2);
-                    loser.Elo1v1Weight = Account.AdjustEloWeight(loser.Elo1v1Weight, sumW, 2);
-                    loser.EloWeight = Account.AdjustEloWeight(loser.EloWeight, sumW, 2);
+                    var sumW = winnerAcc.Elo1v1Weight + loserAcc.Elo1v1Weight;
+                    winnerAcc.Elo1v1Weight = Account.AdjustEloWeight(winnerAcc.Elo1v1Weight, sumW, 2);
+                    winnerAcc.EloWeight = Account.AdjustEloWeight(winnerAcc.EloWeight, sumW, 2);
+                    loserAcc.Elo1v1Weight = Account.AdjustEloWeight(loserAcc.Elo1v1Weight, sumW, 2);
+                    loserAcc.EloWeight = Account.AdjustEloWeight(loserAcc.EloWeight, sumW, 2);
                 }
             }
         }
