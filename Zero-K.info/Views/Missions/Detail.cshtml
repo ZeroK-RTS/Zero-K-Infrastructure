@@ -23,7 +23,7 @@ $(function() {
             int cnt= 1;
             var scores = Model.TopScores.OrderByDescending(x => x.Score).ThenBy(x => x.GameSeconds).ToArray();
          }
-        @for (int i=1; i<=(Math.Min(scores.Length,20)); i++) {
+        @for (int i=0; i<(Math.Min(scores.Length,20)); i++) {
              var score = scores[i];
              <tr>
                   <td>@(cnt++).
