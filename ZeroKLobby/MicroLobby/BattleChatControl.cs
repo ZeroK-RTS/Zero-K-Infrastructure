@@ -135,7 +135,7 @@ namespace ZeroKLobby.MicroLobby
                 int numBots = Program.TasClient.MyBattle.Bots.Where(p => p.AllyNumber == team).Count();
                 int numTotal = numPlayers + numBots;
 
-                var allianceName = "Team " + (team + 1) + "  (" + numTotal + ")";
+                var allianceName = "Team " + (team + 1) + (numTotal>3?"  (" + numTotal + ")":"");
 				if (missionSlots != null)
 				{
 					var slot = missionSlots.FirstOrDefault(s => s.AllyID == team);
