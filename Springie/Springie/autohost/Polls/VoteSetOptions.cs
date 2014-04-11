@@ -15,13 +15,21 @@ namespace Springie.autohost.Polls
         protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount) {
             winCount = 0;
             question = null;
-            var wordFormat = Utils.Glue(words);
-            scriptTagsFormat = ah.GetOptionsString(e, words);
-            if (scriptTagsFormat == "") return false;
+            if (spring.IsRunning)
+            {
+                AutoHost.Respond(tas, spring, e, "Cannot set options while the game is running");
+                return false;
+            }
             else
             {
-                question  = "Set option " + wordFormat + "?";
-                return true;
+                var wordFormat = Utils.Glue(words);
+                scriptTagsFormat = ah.GetOptionsString(e, words);
+                if (scriptTagsFormat == "") return false;
+                else
+                {
+                    question  = "Set option " + wordFormat + "?";
+                    return true;
+                }
             }
         }
 

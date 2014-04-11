@@ -1376,6 +1376,11 @@ namespace Springie.autohost
 
         void ComSetOption(TasSayEventArgs e, string[] words)
         {
+            if (spring.IsRunning)
+            {
+                Respond(e, "Cannot set options while the game is running");
+                return;
+            }
             var ret = GetOptionsString(e, words);
             if (ret != "")
             {
