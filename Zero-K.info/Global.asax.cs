@@ -110,7 +110,7 @@ namespace ZeroKWeb
                 using (var db = new ZkDataContext()) {
                     var penalty = Punishment.GetActivePunishment(acc.AccountID, ip, null, x => x.BanSite, db);
                     if (penalty != null) {
-                        Response.Write("You are banned!\n");
+                        Response.Write(string.Format("You are banned! (IP match to account {0})\n", penalty.AccountByAccountID.Name));
                         Response.Write(string.Format("Ban expires: {0} UTC\n", penalty.BanExpires));
                         Response.Write(string.Format("Reason: {0}\n", penalty.Reason));
                         Response.End();
