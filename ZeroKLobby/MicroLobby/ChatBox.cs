@@ -74,5 +74,17 @@ namespace ZeroKLobby.MicroLobby
             var splitText = line.Text.Replace("\r\n", "\n").Replace("\\n", "\n").Split('\n');
             foreach (var t in splitText) AppendText(t);
         }
+
+        private void InitializeComponent()  //minimum size >0 avoid chat window crash
+        {
+            this.SuspendLayout();
+            // 
+            // ChatBox
+            // 
+            this.MinimumSize = new System.Drawing.Size(10, 10);
+            this.Name = "ChatBox";
+            this.ResumeLayout(false);
+
+        }
     }
 }

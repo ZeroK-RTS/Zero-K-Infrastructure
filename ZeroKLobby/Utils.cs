@@ -320,11 +320,11 @@ namespace ZeroKLobby
 				dpiX = formGraphics.DpiX;
 				formGraphics.Dispose();
 				Trace.TraceInformation("System DPI Value: dpiX= {0}, dpiY= {1}", dpiX, dpiY);
-				scaleUpRatioY = (double)dpiY/96;
+				scaleUpRatioY = dpiY/96.0;
                 //get scaleUP ratio, 96 is the original DPI. Preserve decimal, Reference: http://www.dotnetperls.com/divide
-                scaleDownRatioY = (double)96/dpiY; //get scaleDown ratio (to counter-act DPI virtualization/scaling)
-                scaleUpRatioX = (double)dpiX/96;
-                scaleDownRatioX = (double)96/dpiX;
+                scaleDownRatioY = 96.0/dpiY; //get scaleDown ratio (to counter-act DPI virtualization/scaling)
+                scaleUpRatioX = dpiX/96.0;
+                scaleDownRatioX = 96.0/dpiX;
 			}
         }
 

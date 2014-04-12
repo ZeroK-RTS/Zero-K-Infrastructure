@@ -298,7 +298,8 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
         protected override void OnSizeChanged(EventArgs e)
         {
             base.OnSizeChanged(e);
-            picoChat.Width = gameBox.Left - picoChat.Left + 5;
+            //picoChat.Width = gameBox.Left - picoChat.Left + 5;
+            zkSplitContainer1.SplitterDistance = (int)(Math.Max(zkSplitContainer1.Width * 0.5, zkSplitContainer1.Width- gameBox.Width)); //make gameBox & miniChatBox to always have >0 size.
         }
 
         /// <summary>
@@ -523,6 +524,11 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
             var status = client.MyBattleStatus;
             if (status == null) return;
             client.ChangeMyBattleStatus(side: cbSide.SelectedIndex);
+        }
+
+        private void zkSplitContainer1_SplitterMoving(object sender, SplitterCancelEventArgs e)
+        {
+            gameBox.Left = 0; //anchor gameBox to zkSplitContainer slider
         }
     }
 

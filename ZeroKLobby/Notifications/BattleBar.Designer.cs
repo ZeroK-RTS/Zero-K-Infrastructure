@@ -34,14 +34,18 @@ namespace ZeroKLobby.Notifications
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BattleBar));
             this.cbSide = new System.Windows.Forms.ComboBox();
             this.lbPlayers = new System.Windows.Forms.Label();
-            this.gameBox = new System.Windows.Forms.PictureBox();
             this.cbReady = new System.Windows.Forms.CheckBox();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.cbQm = new System.Windows.Forms.CheckBox();
-            this.battleExtras = new ZeroKLobby.BitmapButton();
+            this.zkSplitContainer1 = new ZeroKLobby.ZkSplitContainer();
             this.picoChat = new ZeroKLobby.MicroLobby.ChatBox();
+            this.gameBox = new System.Windows.Forms.PictureBox();
+            this.battleExtras = new ZeroKLobby.BitmapButton();
             this.panel1.SuspendLayout();
+            this.zkSplitContainer1.Panel1.SuspendLayout();
+            this.zkSplitContainer1.Panel2.SuspendLayout();
+            this.zkSplitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // cbSide
@@ -63,17 +67,6 @@ namespace ZeroKLobby.Notifications
             this.lbPlayers.Name = "lbPlayers";
             this.lbPlayers.Size = new System.Drawing.Size(0, 13);
             this.lbPlayers.TabIndex = 3;
-            // 
-            // gameBox
-            // 
-            this.gameBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.gameBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.gameBox.Location = new System.Drawing.Point(582, 0);
-            this.gameBox.Name = "gameBox";
-            this.gameBox.Size = new System.Drawing.Size(306, 76);
-            this.gameBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.gameBox.TabIndex = 11;
-            this.gameBox.TabStop = false;
             // 
             // cbReady
             // 
@@ -102,12 +95,11 @@ namespace ZeroKLobby.Notifications
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.zkSplitContainer1);
             this.panel1.Controls.Add(this.cbQm);
             this.panel1.Controls.Add(this.battleExtras);
             this.panel1.Controls.Add(this.cbSide);
             this.panel1.Controls.Add(this.lbPlayers);
-            this.panel1.Controls.Add(this.gameBox);
-            this.panel1.Controls.Add(this.picoChat);
             this.panel1.Controls.Add(this.cbReady);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
@@ -129,6 +121,63 @@ namespace ZeroKLobby.Notifications
             this.cbQm.UseVisualStyleBackColor = true;
             this.cbQm.CheckedChanged += new System.EventHandler(this.cbQm_CheckedChanged);
             // 
+            // zkSplitContainer1
+            // 
+            this.zkSplitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.zkSplitContainer1.Location = new System.Drawing.Point(147, 0);
+            this.zkSplitContainer1.MinimumSize = new System.Drawing.Size(20, 20);
+            this.zkSplitContainer1.Name = "zkSplitContainer1";
+            // 
+            // zkSplitContainer1.Panel1
+            // 
+            this.zkSplitContainer1.Panel1.Controls.Add(this.picoChat);
+            this.zkSplitContainer1.Panel1MinSize = 10;
+            // 
+            // zkSplitContainer1.Panel2
+            // 
+            this.zkSplitContainer1.Panel2.Controls.Add(this.gameBox);
+            this.zkSplitContainer1.Panel2MinSize = 10;
+            this.zkSplitContainer1.Size = new System.Drawing.Size(744, 76);
+            this.zkSplitContainer1.SplitterDistance = 429;
+            this.zkSplitContainer1.TabIndex = 16;
+            this.zkSplitContainer1.SplitterMoving += new System.Windows.Forms.SplitterCancelEventHandler(this.zkSplitContainer1_SplitterMoving);
+            // 
+            // picoChat
+            // 
+            this.picoChat.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.picoChat.BackColor = System.Drawing.Color.White;
+            this.picoChat.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.picoChat.ChatBackgroundColor = 0;
+            this.picoChat.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.picoChat.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.picoChat.HideScroll = true;
+            this.picoChat.IRCForeColor = 0;
+            this.picoChat.Location = new System.Drawing.Point(0, 0);
+            this.picoChat.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
+            this.picoChat.MinimumSize = new System.Drawing.Size(10, 10);
+            this.picoChat.Name = "picoChat";
+            this.picoChat.NoColorMode = false;
+            this.picoChat.ShowHistory = true;
+            this.picoChat.ShowJoinLeave = false;
+            this.picoChat.ShowUnreadLine = true;
+            this.picoChat.SingleLine = false;
+            this.picoChat.Size = new System.Drawing.Size(429, 76);
+            this.picoChat.TabIndex = 12;
+            this.picoChat.TextFilter = null;
+            this.picoChat.TotalDisplayLines = 0;
+            // 
+            // gameBox
+            // 
+            this.gameBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.gameBox.Location = new System.Drawing.Point(0, 0);
+            this.gameBox.Margin = new System.Windows.Forms.Padding(0);
+            this.gameBox.Name = "gameBox";
+            this.gameBox.Size = new System.Drawing.Size(311, 76);
+            this.gameBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.gameBox.TabIndex = 11;
+            this.gameBox.TabStop = false;
+            // 
             // battleExtras
             // 
             this.battleExtras.BackColor = System.Drawing.Color.Transparent;
@@ -145,29 +194,6 @@ namespace ZeroKLobby.Notifications
             this.battleExtras.UseVisualStyleBackColor = true;
             this.battleExtras.Click += new System.EventHandler(this.battleExtras_Click);
             // 
-            // picoChat
-            // 
-            this.picoChat.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.picoChat.BackColor = System.Drawing.Color.White;
-            this.picoChat.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picoChat.ChatBackgroundColor = 0;
-            this.picoChat.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.picoChat.HideScroll = true;
-            this.picoChat.IRCForeColor = 0;
-            this.picoChat.Location = new System.Drawing.Point(144, 0);
-            this.picoChat.Name = "picoChat";
-            this.picoChat.NoColorMode = false;
-            this.picoChat.ShowHistory = true;
-            this.picoChat.ShowJoinLeave = false;
-            this.picoChat.ShowUnreadLine = true;
-            this.picoChat.SingleLine = false;
-            this.picoChat.Size = new System.Drawing.Size(432, 76);
-            this.picoChat.TabIndex = 12;
-            this.picoChat.TextFilter = null;
-            this.picoChat.TotalDisplayLines = 0;
-            // 
             // BattleBar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -181,6 +207,9 @@ namespace ZeroKLobby.Notifications
             this.Load += new System.EventHandler(this.QuickMatchControl_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.zkSplitContainer1.Panel1.ResumeLayout(false);
+            this.zkSplitContainer1.Panel2.ResumeLayout(false);
+            this.zkSplitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -196,5 +225,6 @@ namespace ZeroKLobby.Notifications
                 private System.Windows.Forms.Panel panel1;
                 private System.Windows.Forms.CheckBox cbQm;
                 private BitmapButton battleExtras;
+                private ZkSplitContainer zkSplitContainer1;
     }
 }
