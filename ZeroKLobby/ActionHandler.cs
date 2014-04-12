@@ -265,6 +265,8 @@ namespace ZeroKLobby
                       Program.TasClient.Say(TasClient.SayPlace.User, myHostName, command, false);
                     }
                   }
+                  HidePM("!map");
+                  Program.TasClient.Say(TasClient.SayPlace.User, myHostName, "!map", false);
                   Program.TasClient.BattleJoined -= battleJoined;
                 }
               };
