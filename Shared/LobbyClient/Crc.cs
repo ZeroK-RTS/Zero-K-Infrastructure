@@ -7,7 +7,8 @@ namespace LobbyClient
 {
     public static class Crc
     {
-        static readonly uint[] Crc32Table = new uint[256]
+        public static readonly uint[] Crc32Table = MakeCrc32Table();
+        public static readonly uint[] Crc32TableManual = new uint[256]
         {
             0U, 1996959894U, 3993919788U, 2567524794U, 124634137U, 1886057615U, 3915621685U, 2657392035U, 249268274U, 2044508324U, 3772115230U,
             2547177864U, 162941995U, 2125561021U, 3887607047U, 2428444049U, 498536548U, 1789927666U, 4089016648U, 2227061214U, 450548861U, 1843258603U
@@ -45,6 +46,40 @@ namespace LobbyClient
                                                  (Func<uint, byte, uint>)
                                                  ((current, b) => Crc.Crc32Table[(long)(current >> 24 ^ (uint)b) & (long)byte.MaxValue] ^ current << 8)) ^
                 uint.MaxValue;
+        }
+
+        public static uint Crc32Alt(byte[] data)
+        {
+            uint crc = 0xffffffff;
+            for(int i = 0; i < data.Length; ++i) {
+                byte index = (byte)(((crc) & 0xff) ^ data[i]);
+                crc = (uint)((crc >> 8) ^ Crc32Table[index]);
+            }
+            return ~crc;
+        }
+
+        public static uint[] MakeCrc32Table()
+        {
+            uint poly = 0xedb88320;
+            uint[] table = new uint[256];
+            uint temp = 0;
+            for (uint i = 0; i < table.Length; ++i)
+            {
+                temp = i;
+                for (int j = 8; j > 0; --j)
+                {
+                    if ((temp & 1) == 1)
+                    {
+                        temp = (uint)((temp >> 1) ^ poly);
+                    }
+                    else
+                    {
+                        temp >>= 1;
+                    }
+                }
+                table[i] = temp;
+            }
+            return table;
         }
     }
 }
