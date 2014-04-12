@@ -38,6 +38,7 @@ namespace ZeroKLobby
         public string TargetPath;
         Button button;
         public bool Visible { get; set; }
+        public DockStyle Dock { get; set; }
 
         public Bitmap Icon { get; set; }
 
@@ -45,6 +46,7 @@ namespace ZeroKLobby
             Visible = true;
             Width = 100;
             Height = 25;
+            Dock = DockStyle.Left;
         }
 
         void InvokePropertyChanged(string name) {
@@ -62,6 +64,7 @@ namespace ZeroKLobby
             button.Text = Label;
             button.Margin = new Padding(0, 0, 0, 3);
             button.Cursor = Cursors.Hand;
+            //button.Dock = Dock;
             if (Icon != null) {
                 button.Image = Icon;
                 //button.ImageAlign = ContentAlignment.MiddleLeft;

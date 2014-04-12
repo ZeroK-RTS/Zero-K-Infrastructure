@@ -31,12 +31,15 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NavigationControl));
             this.urlBox = new System.Windows.Forms.TextBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.logoutButton = new ZeroKLobby.BitmapButton();
             this.isBusyIcon = new System.Windows.Forms.PictureBox();
             this.goButton1 = new ZeroKLobby.BitmapButton();
             this.reloadButton1 = new ZeroKLobby.BitmapButton();
             this.btnForward = new ZeroKLobby.BitmapButton();
             this.btnBack = new ZeroKLobby.BitmapButton();
             this.tabControl = new ZeroKLobby.HeadlessTabControl();
+            this.flowLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.isBusyIcon)).BeginInit();
             this.SuspendLayout();
             // 
             // urlBox
@@ -59,8 +62,26 @@
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.MinimumSize = new System.Drawing.Size(300, 28);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(703, 28);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(703, 31);
             this.flowLayoutPanel1.TabIndex = 5;
+            // 
+            // logoutButton
+            // 
+            this.logoutButton.BackColor = System.Drawing.Color.Transparent;
+            this.logoutButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("logoutButton.BackgroundImage")));
+            this.logoutButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.logoutButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.logoutButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.logoutButton.ForeColor = System.Drawing.Color.White;
+            this.logoutButton.Image = global::ZeroKLobby.Buttons.logout;
+            this.logoutButton.Margin = new System.Windows.Forms.Padding(0, 0, 0, 3);
+            this.logoutButton.Name = "logoutButton";
+            this.logoutButton.Size = new System.Drawing.Size(96, 32);
+            this.logoutButton.TabIndex = 8;
+            this.logoutButton.Text = "LOGOUT";
+            this.logoutButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.logoutButton.UseVisualStyleBackColor = true;
+            this.logoutButton.Click += new System.EventHandler(this.logoutButton_Click);
             // 
             // isBusyIcon
             // 
@@ -168,6 +189,8 @@
             this.Name = "NavigationControl";
             this.Size = new System.Drawing.Size(703, 219);
             this.Resize += new System.EventHandler(this.NavigationControl_Resize);
+            this.flowLayoutPanel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.isBusyIcon)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -183,5 +206,6 @@
         private BitmapButton reloadButton1;
         private BitmapButton goButton1;
         public System.Windows.Forms.PictureBox isBusyIcon;
+        private BitmapButton logoutButton;
     }
 }

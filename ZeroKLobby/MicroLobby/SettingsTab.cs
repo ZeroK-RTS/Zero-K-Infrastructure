@@ -27,7 +27,7 @@ namespace ZeroKLobby.MicroLobby
             cmDisplay.MenuItems.Add(new MenuItem("Edit engine settings (manually)", (o, x) => Utils.SafeStart(Program.SpringPaths.GetSpringConfigPath())));
 			cmDisplay.MenuItems.Add(new MenuItem("Edit LUPS settings", (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "lups.cfg"))));
 			cmDisplay.MenuItems.Add(new MenuItem("Edit cmdcolors", (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "cmdcolors.txt"))));
-            cmDisplay.MenuItems.Add(new MenuItem("Edit keybinds", (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "LuaUI/Configs/zk_keys.lua"))));
+            cmDisplay.MenuItems.Add(new MenuItem("Edit keybinds", (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "LuaUI", "Configs", "zk_keys.lua"))));
 
             Program.ToolTip.SetText(cbSafeMode, "Turns off many things that are known to cause problems (on PC/Mac's with lower-end graphic cards). Use if the game is crashing.\nWill override Springsetting.cfg");
             Program.ToolTip.SetText(cbHwCursor,"HW cursor is uneffected by ingame lag, but it can become invisible on some machines");

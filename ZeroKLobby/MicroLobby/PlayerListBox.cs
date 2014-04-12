@@ -23,6 +23,7 @@ namespace ZeroKLobby.MicroLobby
 		public PlayerListBox()
 		{
 			DrawMode = DrawMode.OwnerDrawVariable;
+            this.BackColor = Color.DimGray;
 			SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
 		    realItems = new ObservableCollection<PlayerListItem>();
             realItems.CollectionChanged += RealItemsOnCollectionChanged;

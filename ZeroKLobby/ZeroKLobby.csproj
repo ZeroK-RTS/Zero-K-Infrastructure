@@ -153,6 +153,9 @@
     <Compile Include="Controls\ZkSplitContainer.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="MicroLobby\BattleFunctionsBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="SampleForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -483,6 +486,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Flags.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\BattleChatControl.resx">
+      <DependentUpon>BattleChatControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\BattleFunctionsBox.resx">
+      <DependentUpon>BattleFunctionsBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SampleForm.resx">
       <DependentUpon>SampleForm.cs</DependentUpon>
@@ -1593,7 +1602,9 @@
   <ItemGroup>
     <Resource Include="SpringDownloader.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Images\logout.png" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Buttons\add.png" />
   </ItemGroup>

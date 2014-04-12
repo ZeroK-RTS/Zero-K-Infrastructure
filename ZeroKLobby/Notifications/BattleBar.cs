@@ -42,7 +42,6 @@ namespace ZeroKLobby.Notifications
         internal BattleBar() {
             InitializeComponent();
 
-            Program.ToolTip.SetText(cbReady, "Choose whether to play, or join as spectator");
             Program.ToolTip.SetText(cbQm, "Enable or disable QuickMatch");
             Program.ToolTip.SetText(cbSide, "Choose the faction you wish to play.");
 
@@ -218,9 +217,9 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
                     if (client.MyBattleStatus != null) {
                         barContainer.btnDetail.Enabled = client.MyBattleStatus.SyncStatus == SyncStatuses.Synced;
 
-                        if (client.MyBattleStatus.IsSpectator && cbReady.Checked) // i was spectated
+                        if (client.MyBattleStatus.IsSpectator && radioPlay.Checked) // i was spectated
                             ChangeGuiSpectatorWithoutEvent(true);
-                        if (!client.MyBattleStatus.IsSpectator && !cbReady.Checked) ChangeGuiSpectatorWithoutEvent(false); //i was unspectated
+                        if (!client.MyBattleStatus.IsSpectator && radioSpec.Checked) ChangeGuiSpectatorWithoutEvent(false); //i was unspectated
                     }
                 };
 
@@ -370,7 +369,8 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 
         void ChangeGuiSpectatorWithoutEvent(bool newState) {
             suppressSpecChange = true;
-            cbReady.Checked = !newState;
+            if (newState) radioPlay.Checked = true;
+            else radioSpec.Checked = true;
             suppressSpecChange = false;
         }
 
@@ -392,7 +392,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
             // fix my id
             if (battle.Users.Count(x => !x.IsSpectator && x.TeamNumber == currentStatus.TeamNumber) > 1) newStatus.TeamNumber = battle.GetFreeTeamID(client.UserName);
 
-            newStatus.IsSpectator = !cbReady.Checked;
+            newStatus.IsSpectator = radioSpec.Checked;
             newStatus.IsReady = true;
 
             if (newStatus != currentStatus) client.SendMyBattleStatus(newStatus);
@@ -470,13 +470,6 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 
         void QuickMatchControl_Load(object sender, EventArgs e) {}
 
-        void battleExtras_Click(object sender, EventArgs e) {
-            var menu = new ContextMenu();
-            menu.MenuItems.Add(ContextMenus.GetAddBotItem());
-            menu.MenuItems.Add(ContextMenus.GetShowOptions());
-            menu.Show(battleExtras, new Point(0, 0));
-        }
-
         void cbQm_CheckedChanged(object sender, EventArgs e) {
             cbQm.ImageIndex = cbQm.Checked ? 3 : 4;
             if (!suppressQmChangeEvent) {
@@ -484,20 +477,6 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
                 else ActionHandler.StopQuickMatch();
                 desiredQmState = cbQm.Checked;
             }
-        }
-
-
-        void cbReady_CheckedChanged(object sender, EventArgs e) {
-            cbReady.ImageIndex = cbReady.Checked ? 1 : 2;
-            cbReady.Text = cbReady.Checked ? "Play" : "Watch";
-            if (!suppressSpecChange) {
-                desiredSpectatorState = !cbReady.Checked;
-                client.ChangeMyBattleStatus(spectate: !cbReady.Checked);
-            }
-        }
-
-        void cbReady_Click(object sender, EventArgs e) {
-            if (client != null && client.MyBattle != null) client.ChangeMyBattleStatus(ready: cbReady.Checked);
         }
 
         void cbSide_DrawItem(object sender, DrawItemEventArgs e) {
@@ -529,6 +508,24 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
         private void zkSplitContainer1_SplitterMoving(object sender, SplitterCancelEventArgs e)
         {
             gameBox.Left = 0; //anchor gameBox to zkSplitContainer slider
+        }
+        
+        private void radioPlay_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!suppressSpecChange)
+            {
+                desiredSpectatorState = !radioPlay.Checked;
+                client.ChangeMyBattleStatus(spectate: desiredSpectatorState);
+            }
+        }
+
+        private void radioSpec_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!suppressSpecChange)
+            {
+                desiredSpectatorState = radioSpec.Checked;
+                client.ChangeMyBattleStatus(spectate: desiredSpectatorState);
+            }
         }
     }
 

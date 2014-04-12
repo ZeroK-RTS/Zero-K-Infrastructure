@@ -411,7 +411,7 @@ namespace ZeroKLobby.MicroLobby
         }
 
 
-        static List<int> GetExistingTeams(out int freeAllyTeam)
+        public static List<int> GetExistingTeams(out int freeAllyTeam)
         {
             var nonSpecs = Program.TasClient.MyBattle.Users.Where(p => !p.IsSpectator);
             var existingTeams = nonSpecs.GroupBy(p => p.AllyNumber).Select(team => team.Key).ToList();

@@ -20,8 +20,9 @@ namespace ZeroKLobby.MicroLobby
 	{
 		Image minimap;
 		readonly PictureBox minimapBox;
+        readonly BattleFunctionBox battleFuncBox;
 		Size minimapSize;
-		List<MissionSlot> missionSlots;
+        List<MissionSlot> missionSlots;
 		public static event EventHandler<EventArgs<IChatLine>> BattleLine = delegate { };
 
 
@@ -47,14 +48,20 @@ namespace ZeroKLobby.MicroLobby
 			playerBox.IsBattle = true;
 			playerBox.MouseDown += playerBox_MouseDown;
 
+            battleFuncBox = new BattleFunctionBox();
+            battleFuncBox.Dock = DockStyle.Bottom;
+
 			minimapBox = new PictureBox { Dock = DockStyle.Fill, SizeMode = PictureBoxSizeMode.CenterImage };
 			minimapBox.Cursor = Cursors.Hand;
 			minimapBox.Click +=
 				(s, e) => { if (Program.TasClient.MyBattle != null) Program.MainWindow.navigationControl.Path = string.Format("http://zero-k.info/Maps/DetailName?name={0}", Program.TasClient.MyBattle.MapName); };
 
+            playerBoxSearchBarContainer.Controls.Add(battleFuncBox);
+            battleFuncBox.TabIndex = 2;
 			mapPanel.Controls.Add(minimapBox);
 			mapPanel.Visible = true;
 			mapPanel.Height = playerBox.Width;
+            mapPanel.ResumeLayout();
             splitContainer2.Panel2Collapsed = false; //show minimap box
 		}
 
@@ -378,6 +385,18 @@ namespace ZeroKLobby.MicroLobby
 					}*/
 			}
 		}
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // BattleChatControl
+            // 
+            this.Name = "BattleChatControl";
+            this.Size = new System.Drawing.Size(246, 242);
+            this.ResumeLayout(false);
+
+        }
 	}
 }
 

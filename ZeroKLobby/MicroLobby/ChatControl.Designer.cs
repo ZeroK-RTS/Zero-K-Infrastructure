@@ -26,6 +26,19 @@ namespace ZeroKLobby.MicroLobby
             base.Dispose(disposing);
         }
 
+        private ZeroKLobby.ZkSplitContainer splitContainer1;
+        protected SplitContainer splitContainer2;
+        private SendBox sendBox;
+        public PlayerListBox playerBox;
+        private System.Windows.Forms.Panel searchBarContainer;
+        private System.Windows.Forms.TextBox playerSearchBox;
+        //public ChatBox ChatBox { get; set; } //note: for some reason I have to declare this at ChatControl.cs instead of let the default else my (VisualC#2010Express) Design-mode throw error.
+        //public ChatBox TopicBox { get; set; }
+        //public Panel TopicPanel { get; set; }
+        protected System.Windows.Forms.Panel playerBoxSearchBarContainer;
+        protected System.Windows.Forms.Panel mapPanel;
+        private BitmapButton hideButton;
+
         #region Component Designer generated code
 
         /// <summary> 
@@ -47,10 +60,12 @@ namespace ZeroKLobby.MicroLobby
             this.searchBarContainer = new System.Windows.Forms.Panel();
             this.playerSearchBox = new System.Windows.Forms.TextBox();
             this.mapPanel = new System.Windows.Forms.Panel();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.topicPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
@@ -80,10 +95,11 @@ namespace ZeroKLobby.MicroLobby
             // 
             // ChatBox
             // 
-            this.ChatBox.BackColor = System.Drawing.SystemColors.Window;
+            this.ChatBox.BackColor = System.Drawing.Color.DimGray;
             this.ChatBox.ChatBackgroundColor = 0;
             this.ChatBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ChatBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.ChatBox.ForeColor = System.Drawing.Color.White;
             this.ChatBox.HideScroll = false;
             this.ChatBox.IRCForeColor = 0;
             this.ChatBox.Location = new System.Drawing.Point(0, 0);
@@ -160,6 +176,7 @@ namespace ZeroKLobby.MicroLobby
             // 
             // splitContainer2
             // 
+            this.splitContainer2.BackColor = System.Drawing.Color.DimGray;
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
             this.splitContainer2.Margin = new System.Windows.Forms.Padding(2);
@@ -194,8 +211,10 @@ namespace ZeroKLobby.MicroLobby
             // 
             // playerBox
             // 
+            this.playerBox.BackColor = System.Drawing.Color.DimGray;
             this.playerBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.playerBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.playerBox.ForeColor = System.Drawing.Color.White;
             this.playerBox.FormattingEnabled = true;
             this.playerBox.HoverItem = null;
             this.playerBox.IsBattle = false;
@@ -247,11 +266,13 @@ namespace ZeroKLobby.MicroLobby
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.topicPanel.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             this.splitContainer2.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.playerBoxSearchBarContainer.ResumeLayout(false);
             this.searchBarContainer.ResumeLayout(false);
@@ -263,19 +284,6 @@ namespace ZeroKLobby.MicroLobby
 
 
         #endregion
-
-        private ZeroKLobby.ZkSplitContainer splitContainer1;
-        private SendBox sendBox;
-        public PlayerListBox playerBox;
-        private System.Windows.Forms.Panel searchBarContainer;
-        private System.Windows.Forms.TextBox playerSearchBox;
-        //public ChatBox ChatBox { get; set; } //note: for some reason I have to declare this at ChatControl.cs instead of let the default else my (VisualC#2010Express) Design-mode throw error.
-        //public ChatBox TopicBox { get; set; }
-        //public Panel TopicPanel { get; set; }
-        private System.Windows.Forms.Panel playerBoxSearchBarContainer;
-        protected System.Windows.Forms.Panel mapPanel;
-        protected SplitContainer splitContainer2;
-        private BitmapButton hideButton;
 
     }
 }

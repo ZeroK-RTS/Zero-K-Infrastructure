@@ -77,6 +77,7 @@ namespace ZeroKLobby
             ButtonList = new List<ButtonInfo>() //normal arrangement
             {
                 new ButtonInfo() { Label = "HOME", TargetPath = "http://zero-k.info/", Icon= Buttons.home, Height = 32,},
+                new ButtonInfo() { Label = "CHAT", TargetPath = "chat", Icon= ZklResources.chat, Height = 32, },
                 new ButtonInfo()
                 {
                     Label = "SINGLEPLAYER",
@@ -92,12 +93,13 @@ namespace ZeroKLobby
                     Width = 128,
                     Height = 32,
                 },
-                new ButtonInfo() { Label = "CHAT", TargetPath = "chat", Icon= ZklResources.chat, Height = 32, },
-                new ButtonInfo() { Label = "PLANETWARS", TargetPath = "http://zero-k.info/Planetwars", Height = 32,  },
+                
+                //new ButtonInfo() { Label = "PLANETWARS", TargetPath = "http://zero-k.info/Planetwars", Height = 32,  },
                 new ButtonInfo() { Label = "MAPS", TargetPath = "http://zero-k.info/Maps", Icon = Buttons.map, Height = 32,  },
                 new ButtonInfo() { Label = "REPLAYS", TargetPath = "http://zero-k.info/Battles", Icon = Buttons.video_icon, Height = 32, },
                 new ButtonInfo() { Label = "FORUM", TargetPath = "http://zero-k.info/Forum", Height = 32, },
-                new ButtonInfo() { Label = "SETTINGS", TargetPath = "settings", Icon = Buttons.settings, Height = 32, },
+                new ButtonInfo() { Label = "SETTINGS", TargetPath = "settings", Icon = Buttons.settings, Height = 32, Dock = DockStyle.Right},
+               
             };
 
             Instance = this;
@@ -132,7 +134,8 @@ namespace ZeroKLobby
             AddTabPage(new AdvertiserWindow(), "Advertiser");
             AddTabPage(new DownloaderTab(), "Rapid");
             
-            foreach (var but in ButtonList) flowLayoutPanel1.Controls.Add(but.GetButton());     
+            foreach (var but in ButtonList) flowLayoutPanel1.Controls.Add(but.GetButton());
+            flowLayoutPanel1.Controls.Add(logoutButton);
             flowLayoutPanel1.BringToFront();
             ResumeLayout();
         }
@@ -329,6 +332,12 @@ namespace ZeroKLobby
         private void urlBox_Enter(object sender, EventArgs e)
         {
             selectURLtextboxAll = false;
+        }
+
+        private void logoutButton_Click(object sender, EventArgs e)
+        {
+            Program.TasClient.Disconnect();
+            //Program.Conf.LobbyPlayerName = "";
         }
 
     }

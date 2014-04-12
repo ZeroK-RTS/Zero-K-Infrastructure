@@ -34,14 +34,14 @@ namespace ZeroKLobby.Notifications
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BattleBar));
             this.cbSide = new System.Windows.Forms.ComboBox();
             this.lbPlayers = new System.Windows.Forms.Label();
-            this.cbReady = new System.Windows.Forms.CheckBox();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
+            this.radioPlay = new System.Windows.Forms.RadioButton();
+            this.radioSpec = new System.Windows.Forms.RadioButton();
             this.cbQm = new System.Windows.Forms.CheckBox();
             this.zkSplitContainer1 = new ZeroKLobby.ZkSplitContainer();
             this.picoChat = new ZeroKLobby.MicroLobby.ChatBox();
             this.gameBox = new System.Windows.Forms.PictureBox();
-            this.battleExtras = new ZeroKLobby.BitmapButton();
             this.panel1.SuspendLayout();
             this.zkSplitContainer1.Panel1.SuspendLayout();
             this.zkSplitContainer1.Panel2.SuspendLayout();
@@ -68,21 +68,6 @@ namespace ZeroKLobby.Notifications
             this.lbPlayers.Size = new System.Drawing.Size(0, 13);
             this.lbPlayers.TabIndex = 3;
             // 
-            // cbReady
-            // 
-            this.cbReady.AutoSize = true;
-            this.cbReady.ImageIndex = 2;
-            this.cbReady.ImageList = this.imageList1;
-            this.cbReady.Location = new System.Drawing.Point(3, 3);
-            this.cbReady.Name = "cbReady";
-            this.cbReady.Size = new System.Drawing.Size(73, 17);
-            this.cbReady.TabIndex = 13;
-            this.cbReady.Text = "Ready";
-            this.cbReady.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.cbReady.UseVisualStyleBackColor = true;
-            this.cbReady.CheckedChanged += new System.EventHandler(this.cbReady_CheckedChanged);
-            this.cbReady.Click += new System.EventHandler(this.cbReady_Click);
-            // 
             // imageList1
             // 
             this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
@@ -96,25 +81,50 @@ namespace ZeroKLobby.Notifications
             // panel1
             // 
             this.panel1.Controls.Add(this.zkSplitContainer1);
+            this.panel1.Controls.Add(this.radioPlay);
+            this.panel1.Controls.Add(this.radioSpec);
             this.panel1.Controls.Add(this.cbQm);
-            this.panel1.Controls.Add(this.battleExtras);
             this.panel1.Controls.Add(this.cbSide);
             this.panel1.Controls.Add(this.lbPlayers);
-            this.panel1.Controls.Add(this.cbReady);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(888, 76);
             this.panel1.TabIndex = 15;
             // 
+            // radioPlay
+            // 
+            this.radioPlay.Checked = true;
+            this.radioPlay.Image = global::ZeroKLobby.ZklResources.game;
+            this.radioPlay.Location = new System.Drawing.Point(4, 6);
+            this.radioPlay.Name = "radioPlay";
+            this.radioPlay.Size = new System.Drawing.Size(61, 20);
+            this.radioPlay.TabIndex = 16;
+            this.radioPlay.TabStop = true;
+            this.radioPlay.Text = "Play";
+            this.radioPlay.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.radioPlay.UseVisualStyleBackColor = true;
+            this.radioPlay.CheckedChanged += new System.EventHandler(this.radioPlay_CheckedChanged);
+            // 
+            // radioSpec
+            // 
+            this.radioSpec.Image = global::ZeroKLobby.ZklResources.away1;
+            this.radioSpec.Location = new System.Drawing.Point(4, 29);
+            this.radioSpec.Name = "radioSpec";
+            this.radioSpec.Size = new System.Drawing.Size(84, 20);
+            this.radioSpec.TabIndex = 16;
+            this.radioSpec.Text = "Spectate";
+            this.radioSpec.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.radioSpec.UseVisualStyleBackColor = true;
+            this.radioSpec.CheckedChanged += new System.EventHandler(this.radioSpec_CheckedChanged);
+            // 
             // cbQm
             // 
-            this.cbQm.AutoSize = true;
             this.cbQm.ImageIndex = 4;
             this.cbQm.ImageList = this.imageList1;
-            this.cbQm.Location = new System.Drawing.Point(82, 3);
+            this.cbQm.Location = new System.Drawing.Point(79, 6);
             this.cbQm.Name = "cbQm";
-            this.cbQm.Size = new System.Drawing.Size(59, 17);
+            this.cbQm.Size = new System.Drawing.Size(59, 20);
             this.cbQm.TabIndex = 15;
             this.cbQm.Text = "QM";
             this.cbQm.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -178,22 +188,6 @@ namespace ZeroKLobby.Notifications
             this.gameBox.TabIndex = 11;
             this.gameBox.TabStop = false;
             // 
-            // battleExtras
-            // 
-            this.battleExtras.BackColor = System.Drawing.Color.Transparent;
-            this.battleExtras.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("battleExtras.BackgroundImage")));
-            this.battleExtras.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.battleExtras.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.battleExtras.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.battleExtras.ForeColor = System.Drawing.Color.White;
-            this.battleExtras.Location = new System.Drawing.Point(3, 45);
-            this.battleExtras.Name = "battleExtras";
-            this.battleExtras.Size = new System.Drawing.Size(94, 20);
-            this.battleExtras.TabIndex = 14;
-            this.battleExtras.Text = "Add bots/config";
-            this.battleExtras.UseVisualStyleBackColor = true;
-            this.battleExtras.Click += new System.EventHandler(this.battleExtras_Click);
-            // 
             // BattleBar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -220,11 +214,11 @@ namespace ZeroKLobby.Notifications
 				private System.Windows.Forms.Label lbPlayers;
         private System.Windows.Forms.PictureBox gameBox;
         private ChatBox picoChat;
-				private System.Windows.Forms.CheckBox cbReady;
 				private System.Windows.Forms.ImageList imageList1;
                 private System.Windows.Forms.Panel panel1;
                 private System.Windows.Forms.CheckBox cbQm;
-                private BitmapButton battleExtras;
+                private System.Windows.Forms.RadioButton radioPlay;
+                private System.Windows.Forms.RadioButton radioSpec;
                 private ZkSplitContainer zkSplitContainer1;
     }
 }
