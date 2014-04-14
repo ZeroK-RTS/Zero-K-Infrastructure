@@ -64,7 +64,7 @@ namespace ZeroKLobby.MicroLobby
           resizedMinimap = null;
           return;
         }
-        resizedMinimap = new Bitmap(value, minimapSize, minimapSize);
+        resizedMinimap = new Bitmap(value, DpiMeasurement.ScaleValueX(minimapSize), DpiMeasurement.ScaleValueY(minimapSize));
         dirty = true;
         OnPropertyChanged("BitmapSource"); // notify wpf about icon change
       }
@@ -131,8 +131,8 @@ namespace ZeroKLobby.MicroLobby
                                               0,
                                               maxPlayers,
                                               mes > 0,
-                                              playersBoxSize.Width,
-                                              playersBoxSize.Height);
+                                               DpiMeasurement.ScaleValueX(playersBoxSize.Width),
+                                               DpiMeasurement.ScaleValueY(playersBoxSize.Height));
     }
 
 
@@ -141,33 +141,33 @@ namespace ZeroKLobby.MicroLobby
       if (resizedMinimap == null) return; // wait, map is not downloaded
 
       if (finishedMinimap != null) finishedMinimap.Dispose();
-      finishedMinimap = new Bitmap(ZklResources.border.Width, ZklResources.border.Height);
+      finishedMinimap = new Bitmap( DpiMeasurement.ScaleValueX(ZklResources.border.Width),  DpiMeasurement.ScaleValueY(ZklResources.border.Height));
 
       using (var g = Graphics.FromImage(finishedMinimap))
       {
-        g.DrawImage(resizedMinimap, 6, 5);
+        g.DrawImage(resizedMinimap, DpiMeasurement.ScaleValueX(6), DpiMeasurement.ScaleValueY(5));
         g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-        var x = 10;
-        var y = minimapSize - 20;
+        var x = DpiMeasurement.ScaleValueX(10);
+        var y =  DpiMeasurement.ScaleValueY(minimapSize - 20);
         Action<Image> drawIcon = image =>
           {
-            g.DrawImage(image, x, y, 20, 20);
-            x += 30;
+            g.DrawImage(image, x, y,  DpiMeasurement.ScaleValueX(20),  DpiMeasurement.ScaleValueY(20));
+            x +=  DpiMeasurement.ScaleValueX(30);
           };
 
 
-        if (IsInGame) g.DrawImage(ZklResources.boom, 10, 10, 50, 50);
-        if (Battle.IsOfficial() && Battle.Founder.IsSpringieManaged) g.DrawImage(ZklResources.star, 48, 8, 15, 15);
+        if (IsInGame) g.DrawImage(ZklResources.boom, DpiMeasurement.ScaleValueX(10), DpiMeasurement.ScaleValueY(10),  DpiMeasurement.ScaleValueX(50),  DpiMeasurement.ScaleValueY(50));
+        if (Battle.IsOfficial() && Battle.Founder.IsSpringieManaged) g.DrawImage(ZklResources.star, DpiMeasurement.ScaleValueX(48), DpiMeasurement.ScaleValueY(8),  DpiMeasurement.ScaleValueX(15),  DpiMeasurement.ScaleValueY(15));
         if (Battle.IsPassworded) drawIcon(ZklResources._lock);
         if (Battle.IsReplay) drawIcon(ZklResources.replay);
         if (Battle.Rank > 0) drawIcon(Images.GetRank(Battle.Rank));
         if (Battle.IsLocked)
         {
-          var s = 20;
-          g.DrawImage(ZklResources.redlight, minimapSize - s + 3, minimapSize - s + 3, s, s);
+          var s =  DpiMeasurement.ScaleValueX(20);
+          g.DrawImage(ZklResources.redlight, DpiMeasurement.ScaleValueX(minimapSize + 3)-s, DpiMeasurement.ScaleValueY(minimapSize + 3) - s,  s, s);
         }
 
-        g.DrawImage(ZklResources.border, 0, 0, 70, 70);
+        g.DrawImage(ZklResources.border, 0, 0,  DpiMeasurement.ScaleValueX(70), DpiMeasurement.ScaleValueY(70));
       }
     }
 
@@ -188,28 +188,33 @@ namespace ZeroKLobby.MicroLobby
 
     void UpdateImage()
     {
+        DpiMeasurement.DpiXYMeasurement();
       MakeMinimap();
       RenderPlayers();
-      image = MakeSolidColorBitmap(Brushes.White, Width, Height);
+      int scaledWidth = DpiMeasurement.ScaleValueX(Width);
+      int scaledHeight = DpiMeasurement.ScaleValueY(Height);
+      image = MakeSolidColorBitmap(Brushes.White, scaledWidth, scaledHeight);
       using (var g = Graphics.FromImage(image))
       {
         if (disposed)
         {
-          image = MakeSolidColorBitmap(Brushes.White, Width, Height);
+            image = MakeSolidColorBitmap(Brushes.White, scaledWidth, scaledHeight);
           return;
         }
-        if (finishedMinimap != null) g.DrawImageUnscaled(finishedMinimap, 3, 3);
+        if (finishedMinimap != null) g.DrawImageUnscaled(finishedMinimap, DpiMeasurement.ScaleValueX(3), DpiMeasurement.ScaleValueY(3));
         else
         {
-            g.DrawImage(ZklResources.download, 4, 3, 61, 64);
+            g.DrawImage(ZklResources.download, DpiMeasurement.ScaleValueX(4), DpiMeasurement.ScaleValueY(3), DpiMeasurement.ScaleValueX(61),  DpiMeasurement.ScaleValueY(64));
           g.InterpolationMode = InterpolationMode.HighQualityBicubic;
           g.InterpolationMode = InterpolationMode.Default;
         }
-        g.SetClip(new Rectangle(0, 0, Width, Height));
-        var y = 3;
-        g.DrawString(Battle.Title, TitleFont, TextBrush, MapCellSize.Width, y + 16*0);
-        g.DrawString(string.Format("{0}     {1}{2}", Battle.ModName, Battle.EngineName, Battle.EngineVersion), ModFont, TextBrush, MapCellSize.Width, y + 16*1);
-        g.DrawImageUnscaled(playersBoxImage, MapCellSize.Width, y + 16*2);
+        g.SetClip(new Rectangle(0, 0, scaledWidth, scaledHeight));
+        var y = DpiMeasurement.ScaleValueY(3);
+        int offset = DpiMeasurement.ScaleValueY(16);
+        int curMapCellSize = DpiMeasurement.ScaleValueX(MapCellSize.Width);
+        g.DrawString(Battle.Title, TitleFont, TextBrush, curMapCellSize, y + offset * 0);
+        g.DrawString(string.Format("{0}     {1}{2}", Battle.ModName, Battle.EngineName, Battle.EngineVersion), ModFont, TextBrush, curMapCellSize, y + offset * 1);
+        g.DrawImageUnscaled(playersBoxImage, curMapCellSize, y + offset * 2);
         g.ResetClip();
       }
     }

@@ -133,9 +133,12 @@ namespace ZeroKLobby.Notifications
                     if (battle != previousBattle) {
                         previousBattle = battle;
                         if (gameBox.Image != null) gameBox.Image.Dispose();
-                        gameBox.Image = new Bitmap(BattleIcon.Width, BattleIcon.Height);
+                        DpiMeasurement.DpiXYMeasurement(this);
+                        int scaledIconHeight = DpiMeasurement.ScaleValueY(BattleIcon.Height);
+                        int scaledIconWidth = DpiMeasurement.ScaleValueX(BattleIcon.Width);
+                        gameBox.Image = new Bitmap(scaledIconWidth, scaledIconHeight);
                         using (var g = Graphics.FromImage(gameBox.Image)) {
-                            g.FillRectangle(Brushes.White, 0, 0, BattleIcon.Width, BattleIcon.Height);
+                            g.FillRectangle(Brushes.White, 0, 0, scaledIconWidth, scaledIconHeight);
                             var bi = Program.BattleIconManager.GetBattleIcon(battle.BattleID);
                             g.DrawImageUnscaled(bi.Image, 0, 0);
                         }
@@ -217,9 +220,8 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
                     if (client.MyBattleStatus != null) {
                         barContainer.btnDetail.Enabled = client.MyBattleStatus.SyncStatus == SyncStatuses.Synced;
 
-                        if (client.MyBattleStatus.IsSpectator && radioPlay.Checked) // i was spectated
-                            ChangeGuiSpectatorWithoutEvent(true);
-                        if (!client.MyBattleStatus.IsSpectator && radioSpec.Checked) ChangeGuiSpectatorWithoutEvent(false); //i was unspectated
+                        if (client.MyBattleStatus.IsSpectator && radioPlay.Checked) ChangeGuiSpectatorWithoutEvent(false); // i was spectated
+                        if (!client.MyBattleStatus.IsSpectator && radioSpec.Checked) ChangeGuiSpectatorWithoutEvent(true); //i was unspectated
                     }
                 };
 
@@ -459,9 +461,12 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 
         void BattleIconManager_BattleChanged(object sender, EventArgs<BattleIcon> e) {
             if (e.Data.Battle == Program.TasClient.MyBattle) {
-                if (gameBox.Image == null) gameBox.Image = new Bitmap(BattleIcon.Width, BattleIcon.Height);
+                DpiMeasurement.DpiXYMeasurement(this);
+                int scaledIconHeight = DpiMeasurement.ScaleValueY(BattleIcon.Height);
+                int scaledIconWidth = DpiMeasurement.ScaleValueX(BattleIcon.Width);
+                if (gameBox.Image == null) gameBox.Image = new Bitmap(scaledIconWidth, scaledIconHeight);
                 using (var g = Graphics.FromImage(gameBox.Image)) {
-                    g.FillRectangle(Brushes.White, 0, 0, BattleIcon.Width, BattleIcon.Height);
+                    g.FillRectangle(Brushes.White, 0, 0, scaledIconWidth, scaledIconHeight);
                     g.DrawImageUnscaled(e.Data.Image, 0, 0);
                     gameBox.Invalidate();
                 }

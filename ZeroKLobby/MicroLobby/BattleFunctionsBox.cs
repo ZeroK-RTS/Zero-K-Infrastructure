@@ -23,11 +23,62 @@ namespace ZeroKLobby.MicroLobby
 
         private void InitializeComponent()
         {
-            this.btnAddAI = new ZeroKLobby.BitmapButton();
-            this.btnChangeTeam = new ZeroKLobby.BitmapButton();
-            this.btnMapList = new ZeroKLobby.BitmapButton();
             this.btnGameOptions = new ZeroKLobby.BitmapButton();
+            this.btnMapList = new ZeroKLobby.BitmapButton();
+            this.btnChangeTeam = new ZeroKLobby.BitmapButton();
+            this.btnAddAI = new ZeroKLobby.BitmapButton();
             this.SuspendLayout();
+            // 
+            // btnGameOptions
+            // 
+            this.btnGameOptions.BackColor = System.Drawing.Color.Transparent;
+            this.btnGameOptions.BackgroundImage = global::ZeroKLobby.Buttons.panel;
+            this.btnGameOptions.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnGameOptions.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnGameOptions.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnGameOptions.ForeColor = System.Drawing.Color.White;
+            this.btnGameOptions.Location = new System.Drawing.Point(2, 56);
+            this.btnGameOptions.Margin = new System.Windows.Forms.Padding(1);
+            this.btnGameOptions.Name = "btnGameOptions";
+            this.btnGameOptions.Size = new System.Drawing.Size(85, 25);
+            this.btnGameOptions.TabIndex = 18;
+            this.btnGameOptions.Text = "Mod Options";
+            this.btnGameOptions.UseVisualStyleBackColor = true;
+            this.btnGameOptions.Click += new System.EventHandler(this.btnGameOptions_Click);
+            // 
+            // btnMapList
+            // 
+            this.btnMapList.BackColor = System.Drawing.Color.Transparent;
+            this.btnMapList.BackgroundImage = global::ZeroKLobby.Buttons.panel;
+            this.btnMapList.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnMapList.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnMapList.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnMapList.ForeColor = System.Drawing.Color.White;
+            this.btnMapList.Location = new System.Drawing.Point(3, 38);
+            this.btnMapList.Margin = new System.Windows.Forms.Padding(1);
+            this.btnMapList.Name = "btnMapList";
+            this.btnMapList.Size = new System.Drawing.Size(84, 25);
+            this.btnMapList.TabIndex = 17;
+            this.btnMapList.Text = "Map List";
+            this.btnMapList.UseVisualStyleBackColor = true;
+            this.btnMapList.Click += new System.EventHandler(this.btnMapList_Click);
+            // 
+            // btnChangeTeam
+            // 
+            this.btnChangeTeam.BackColor = System.Drawing.Color.Transparent;
+            this.btnChangeTeam.BackgroundImage = global::ZeroKLobby.Buttons.panel;
+            this.btnChangeTeam.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnChangeTeam.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnChangeTeam.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnChangeTeam.ForeColor = System.Drawing.Color.White;
+            this.btnChangeTeam.Location = new System.Drawing.Point(3, 20);
+            this.btnChangeTeam.Margin = new System.Windows.Forms.Padding(1);
+            this.btnChangeTeam.Name = "btnChangeTeam";
+            this.btnChangeTeam.Size = new System.Drawing.Size(84, 25);
+            this.btnChangeTeam.TabIndex = 16;
+            this.btnChangeTeam.Text = "Change Team";
+            this.btnChangeTeam.UseVisualStyleBackColor = false;
+            this.btnChangeTeam.Click += new System.EventHandler(this.changeTeamButton_Click);
             // 
             // btnAddAI
             // 
@@ -38,72 +89,28 @@ namespace ZeroKLobby.MicroLobby
             this.btnAddAI.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAddAI.ForeColor = System.Drawing.Color.White;
             this.btnAddAI.Location = new System.Drawing.Point(3, 0);
+            this.btnAddAI.Margin = new System.Windows.Forms.Padding(1);
             this.btnAddAI.Name = "btnAddAI";
-            this.btnAddAI.Size = new System.Drawing.Size(94, 25);
+            this.btnAddAI.Size = new System.Drawing.Size(84, 25);
             this.btnAddAI.TabIndex = 15;
             this.btnAddAI.Text = "Add AI";
             this.btnAddAI.UseVisualStyleBackColor = true;
             this.btnAddAI.Click += new System.EventHandler(this.addAIButton_Click);
             // 
-            // btnChangeTeam
-            // 
-            this.btnChangeTeam.BackColor = System.Drawing.Color.Transparent;
-            this.btnChangeTeam.BackgroundImage = global::ZeroKLobby.Buttons.panel;
-            this.btnChangeTeam.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnChangeTeam.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnChangeTeam.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnChangeTeam.ForeColor = System.Drawing.Color.White;
-            this.btnChangeTeam.Location = new System.Drawing.Point(103, 0);
-            this.btnChangeTeam.Name = "btnChangeTeam";
-            this.btnChangeTeam.Size = new System.Drawing.Size(94, 25);
-            this.btnChangeTeam.TabIndex = 16;
-            this.btnChangeTeam.Text = "Change Team";
-            this.btnChangeTeam.UseVisualStyleBackColor = false;
-            this.btnChangeTeam.Click += new System.EventHandler(this.changeTeamButton_Click);
-            // 
-            // btnMapList
-            // 
-            this.btnMapList.BackColor = System.Drawing.Color.Transparent;
-            this.btnMapList.BackgroundImage = global::ZeroKLobby.Buttons.panel;
-            this.btnMapList.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnMapList.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnMapList.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnMapList.ForeColor = System.Drawing.Color.White;
-            this.btnMapList.Location = new System.Drawing.Point(3, 31);
-            this.btnMapList.Name = "btnMapList";
-            this.btnMapList.Size = new System.Drawing.Size(94, 25);
-            this.btnMapList.TabIndex = 17;
-            this.btnMapList.Text = "Map List";
-            this.btnMapList.UseVisualStyleBackColor = true;
-            this.btnMapList.Click += new System.EventHandler(this.btnMapList_Click);
-            // 
-            // btnGameOptions
-            // 
-            this.btnGameOptions.BackColor = System.Drawing.Color.Transparent;
-            this.btnGameOptions.BackgroundImage = global::ZeroKLobby.Buttons.panel;
-            this.btnGameOptions.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnGameOptions.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnGameOptions.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnGameOptions.ForeColor = System.Drawing.Color.White;
-            this.btnGameOptions.Location = new System.Drawing.Point(103, 31);
-            this.btnGameOptions.Name = "btnGameOptions";
-            this.btnGameOptions.Size = new System.Drawing.Size(94, 25);
-            this.btnGameOptions.TabIndex = 18;
-            this.btnGameOptions.Text = "Game Options";
-            this.btnGameOptions.UseVisualStyleBackColor = true;
-            this.btnGameOptions.Click += new System.EventHandler(this.btnGameOptions_Click);
-            // 
             // BattleFunctionBox
             // 
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.btnGameOptions);
             this.Controls.Add(this.btnMapList);
             this.Controls.Add(this.btnChangeTeam);
             this.Controls.Add(this.btnAddAI);
+            this.ForeColor = System.Drawing.Color.Transparent;
             this.Name = "BattleFunctionBox";
-            this.Anchor = AnchorStyles.None;
+            this.Size = new System.Drawing.Size(88, 82);
             this.ResumeLayout(false);
+
         }
 
         private void addAIButton_Click(object sender, EventArgs e)

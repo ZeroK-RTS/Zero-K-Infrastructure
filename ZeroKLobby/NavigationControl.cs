@@ -267,6 +267,7 @@ namespace ZeroKLobby
 
             //this make back/forward/reload button follow Nav bar auto resize (in other word: dynamic repositioning)
             //NOTE: tweak here if not satisfy with Go/Forward/Backward button position. This override designer.
+            flowLayoutPanel1.Width = this.Size.Width; //nav button resize according  to window size
             int height = flowLayoutPanel1.Size.Height;
             btnBack.Location = new System.Drawing.Point(btnBack.Location.X, height);
             btnForward.Location = new System.Drawing.Point(btnForward.Location.X, height);

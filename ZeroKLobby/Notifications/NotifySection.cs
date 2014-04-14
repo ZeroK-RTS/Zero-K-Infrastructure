@@ -38,6 +38,9 @@ namespace SpringDownloader.Notifications
 		void NotifySection_Load(object sender, EventArgs e)
 		{
 			scannerBar = new ScannerBar(Program.SpringScanner);
+            var scannerBarSize = new System.Drawing.Size(0, scannerBar.Height);
+            scannerBar.MinimumSize = scannerBarSize; //fix minimum size forever
+            scannerBar.MaximumSize = scannerBarSize; //fix maximum size forever
 		}
 	}
 }

@@ -252,8 +252,8 @@ namespace ZeroKLobby
                 VoteBar = new VoteBar();
 
                 //This make the size of every bar constant (only for height).
-                //This is a HAX, we wanted to make them constant because the bar will be DPI-scaled twice/thrice/multiple-time again somewhere but we don't know where it is to fix them.
-                // todo wtf fix this crazy thing
+                //We wanted to make them constant because the bar will be DPI-scaled twice/thrice/multiple-time (especially for reusable bar). 
+				//Setting maximum height upon creation will hopefully make sure it is not DPI-scaled multiple time.
                 var votebarSize = new Size(0, VoteBar.Height);
                 // Reference: http://stackoverflow.com/questions/5314041/set-minimum-window-size-in-c-sharp-net
                 var newversionbarSize = new Size(0, NewVersionBar.Height);
@@ -271,7 +271,7 @@ namespace ZeroKLobby
                 ConnectBar.MaximumSize = connectbarSize;
                 JugglerBar.MinimumSize = jugglerbarSize;
                 JugglerBar.MaximumSize = jugglerbarSize;
-                //End battlebar size fix hax
+                //End battlebar size hax
 
                 if (!Debugger.IsAttached && !Conf.DisableAutoUpdate) Program.SelfUpdater.StartChecking();
 

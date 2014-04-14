@@ -17,14 +17,9 @@ namespace ZeroKLobby.Notifications
             btnStop.Click += stop_Click;
             btnStop.Image = ZklResources.Remove;
             var control = barContent.GetControl();
-            //Note: "control" is already DPI-scaled so we must downscale it
-			if(Environment.OSVersion.Platform != PlatformID.Unix){
-            	DpiMeasurement.DpiXYMeasurement(control);
-            	Height = DpiMeasurement.ReverseScaleValueY(control.Height) + 8; //inherit height from barContent + 8 for margin (margin is for download bar).
-			}
-			else { //dont need scaling for Linux, the scaling bug seems to only happen in Windows
-				Height = control.Height + 8;
-			}
+            //Note: control-element is already DPI-scaled and might be DPI-scaled again, and we dont need more scaling
+			//Set size to control-element's maximum size (if defined in Program.cs). If not defined then use current height (hopefully the control-element is only used once)
+			Height = (control.MaximumSize.Height>0?control.MaximumSize.Height:control.Height) + DpiMeasurement.ScaleValueY(8);
 			tableLayoutPanel1.Controls.Add(control, 1, 0);
             control.Dock = DockStyle.Fill;
             Dock = DockStyle.Top;

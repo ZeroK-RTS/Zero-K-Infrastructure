@@ -38,8 +38,6 @@
             this.btnForward = new ZeroKLobby.BitmapButton();
             this.btnBack = new ZeroKLobby.BitmapButton();
             this.tabControl = new ZeroKLobby.HeadlessTabControl();
-            this.flowLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.isBusyIcon)).BeginInit();
             this.SuspendLayout();
             // 
             // urlBox
@@ -62,8 +60,9 @@
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.MinimumSize = new System.Drawing.Size(300, 28);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(703, 31);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(703, 28);
             this.flowLayoutPanel1.TabIndex = 5;
+            this.flowLayoutPanel1.WrapContents = false;
             // 
             // logoutButton
             // 
@@ -74,6 +73,7 @@
             this.logoutButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.logoutButton.ForeColor = System.Drawing.Color.White;
             this.logoutButton.Image = global::ZeroKLobby.Buttons.logout;
+            this.logoutButton.Location = new System.Drawing.Point(0, 0);
             this.logoutButton.Margin = new System.Windows.Forms.Padding(0, 0, 0, 3);
             this.logoutButton.Name = "logoutButton";
             this.logoutButton.Size = new System.Drawing.Size(96, 32);
@@ -189,8 +189,6 @@
             this.Name = "NavigationControl";
             this.Size = new System.Drawing.Size(703, 219);
             this.Resize += new System.EventHandler(this.NavigationControl_Resize);
-            this.flowLayoutPanel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.isBusyIcon)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
