@@ -313,6 +313,13 @@ namespace ZeroKLobby
         public static double scaleUpRatioX = 0;
         public static double scaleUpRatioY = 0;
 
+        public static void DpiXYMeasurement()
+        {
+            if (dpiY == 0 || dpiX == 0)
+            {
+                DpiXYMeasurement(new Control());
+            }
+        }
         public static void DpiXYMeasurement(Control a) {
 			if (dpiY == 0 || dpiX == 0) {
                 var formGraphics = a.CreateGraphics(); //Reference: http://msdn.microsoft.com/en-us/library/system.drawing.graphics.dpix.aspx
