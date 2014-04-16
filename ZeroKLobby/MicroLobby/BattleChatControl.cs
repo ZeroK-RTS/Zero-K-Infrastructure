@@ -20,6 +20,7 @@ namespace ZeroKLobby.MicroLobby
 	{
 		Image minimap;
 		readonly PictureBox minimapBox;
+        readonly BattleFunctionBox battleFuncBox;
 		Size minimapSize;
         List<MissionSlot> missionSlots;
 		public static event EventHandler<EventArgs<IChatLine>> BattleLine = delegate { };
@@ -47,15 +48,18 @@ namespace ZeroKLobby.MicroLobby
 			playerBox.IsBattle = true;
 			playerBox.MouseDown += playerBox_MouseDown;
 
-             minimapBox = new PictureBox { Dock = DockStyle.Fill, SizeMode = PictureBoxSizeMode.CenterImage };
+            battleFuncBox = new BattleFunctionBox();
+
+			minimapBox = new PictureBox { Dock = DockStyle.Fill, SizeMode = PictureBoxSizeMode.CenterImage };
 			minimapBox.Cursor = Cursors.Hand;
 			minimapBox.Click +=
 				(s, e) => { if (Program.TasClient.MyBattle != null) Program.MainWindow.navigationControl.Path = string.Format("http://zero-k.info/Maps/DetailName?name={0}", Program.TasClient.MyBattle.MapName); };
 
-            mapPanel.Controls.Add(minimapBox);
+            playerBoxSearchBarContainer.Controls.Add(battleFuncBox);
+            battleFuncBox.TabIndex = 2;
+			mapPanel.Controls.Add(minimapBox);
 			mapPanel.Visible = true;
-			//mapPanel.Height = playerBox.Width;
-            mapPanel.Height = mapPanelSplitContainer.Panel2.Width; 
+			mapPanel.Height = playerBox.Width;
             mapPanel.ResumeLayout();
 
             playerListMapSplitContainer.Panel2Collapsed = false; //show mappanel when in battleroom
@@ -84,13 +88,9 @@ namespace ZeroKLobby.MicroLobby
 
 		protected override void OnResize(EventArgs e)
 		{
-            base.OnResize(e);
-            if (mapPanelSplitContainer.SplitterDistance > battleFunctionBox1.Width) {
-                mapPanelSplitContainer.SplitterDistance = battleFunctionBox1.Width;  //adjust mapPanelSplitContainer's splitter to not clip on map image.
-            }
-            //mapPanel.Height = playerBox.Width;
-            mapPanel.Height = mapPanelSplitContainer.Panel2.Width;
-            DrawMinimap();
+			base.OnResize(e);
+			mapPanel.Height = playerBox.Width;
+			DrawMinimap();
 		}
 
 		public override void Reset()
@@ -100,10 +100,6 @@ namespace ZeroKLobby.MicroLobby
 			minimapBox.Image = null;
 			minimap = null;
 			Program.ToolTip.Clear(minimapBox);
-
-            mapPanelSplitContainer.Panel1Collapsed = false;
-            mapPanelSplitContainer.SplitterDistance = battleFunctionBox1.Width;
-            battleFunctionBox1.Visible = true; //show button when joining game
 		}
 
 		protected override void SortByTeam() {
@@ -309,8 +305,6 @@ namespace ZeroKLobby.MicroLobby
 			var userName = e.UserName;
 			if (userName == Program.Conf.LobbyPlayerName)
 			{
-                mapPanelSplitContainer.Panel1Collapsed = true;
-                battleFunctionBox1.Visible = false; //hide buttons when leaving game
 				playerListItems.Clear();
 				playerBox.Items.Clear();
 			}

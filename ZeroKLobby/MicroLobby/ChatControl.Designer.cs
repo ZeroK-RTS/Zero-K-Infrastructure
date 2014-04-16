@@ -59,8 +59,6 @@ namespace ZeroKLobby.MicroLobby
             this.playerBox = new ZeroKLobby.MicroLobby.PlayerListBox();
             this.searchBarContainer = new System.Windows.Forms.Panel();
             this.playerSearchBox = new System.Windows.Forms.TextBox();
-            this.mapPanelSplitContainer = new System.Windows.Forms.SplitContainer();
-            this.battleFunctionBox1 = new ZeroKLobby.MicroLobby.BattleFunctionBox();
             this.mapPanel = new System.Windows.Forms.Panel();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -71,9 +69,6 @@ namespace ZeroKLobby.MicroLobby
             this.playerListMapSplitContainer.SuspendLayout();
             this.playerBoxSearchBarContainer.SuspendLayout();
             this.searchBarContainer.SuspendLayout();
-            this.mapPanelSplitContainer.Panel1.SuspendLayout();
-            this.mapPanelSplitContainer.Panel2.SuspendLayout();
-            this.mapPanelSplitContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -193,12 +188,12 @@ namespace ZeroKLobby.MicroLobby
             // playerListMapSplitContainer.Panel2
             // 
             this.playerListMapSplitContainer.Panel2.AutoScroll = true;
-            this.playerListMapSplitContainer.Panel2.Controls.Add(this.mapPanelSplitContainer);
+            this.playerListMapSplitContainer.Panel2.Controls.Add(this.mapPanel);
             this.playerListMapSplitContainer.Size = new System.Drawing.Size(326, 793);
             this.playerListMapSplitContainer.SplitterDistance = 565;
             this.playerListMapSplitContainer.SplitterWidth = 3;
             this.playerListMapSplitContainer.TabIndex = 0;
-            this.playerListMapSplitContainer.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer2_SplitterMoved);
+            this.playerListMapSplitContainer.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.playerListMapSplitContainer_SplitterMoved);
             // 
             // playerBoxSearchBarContainer
             // 
@@ -247,36 +242,6 @@ namespace ZeroKLobby.MicroLobby
             this.playerSearchBox.TabIndex = 0;
             this.playerSearchBox.TextChanged += new System.EventHandler(this.playerSearchBox_TextChanged);
             // 
-            // mapPanelSplitContainer
-            // 
-            this.mapPanelSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mapPanelSplitContainer.Location = new System.Drawing.Point(0, 0);
-            this.mapPanelSplitContainer.Margin = new System.Windows.Forms.Padding(0);
-            this.mapPanelSplitContainer.Name = "mapPanelSplitContainer";
-            // 
-            // mapPanelSplitContainer.Panel1
-            // 
-            this.mapPanelSplitContainer.Panel1.Controls.Add(this.battleFunctionBox1);
-            // 
-            // mapPanelSplitContainer.Panel2
-            // 
-            this.mapPanelSplitContainer.Panel2.Controls.Add(this.mapPanel);
-            this.mapPanelSplitContainer.Size = new System.Drawing.Size(326, 225);
-            this.mapPanelSplitContainer.SplitterDistance = 100;
-            this.mapPanelSplitContainer.TabIndex = 1;
-            this.mapPanelSplitContainer.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.mapPanelSplitContainer_SplitterMoved);
-            // 
-            // battleFunctionBox1
-            // 
-            this.battleFunctionBox1.AutoSize = true;
-            this.battleFunctionBox1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.battleFunctionBox1.BackColor = System.Drawing.Color.Transparent;
-            this.battleFunctionBox1.ForeColor = System.Drawing.Color.Transparent;
-            this.battleFunctionBox1.Location = new System.Drawing.Point(0, 3);
-            this.battleFunctionBox1.Name = "battleFunctionBox1";
-            this.battleFunctionBox1.Size = new System.Drawing.Size(88, 82);
-            this.battleFunctionBox1.TabIndex = 0;
-            // 
             // mapPanel
             // 
             this.mapPanel.AutoSize = true;
@@ -306,11 +271,6 @@ namespace ZeroKLobby.MicroLobby
             this.playerBoxSearchBarContainer.ResumeLayout(false);
             this.searchBarContainer.ResumeLayout(false);
             this.searchBarContainer.PerformLayout();
-            this.mapPanelSplitContainer.Panel1.ResumeLayout(false);
-            this.mapPanelSplitContainer.Panel1.PerformLayout();
-            this.mapPanelSplitContainer.Panel2.ResumeLayout(false);
-            this.mapPanelSplitContainer.Panel2.PerformLayout();
-            this.mapPanelSplitContainer.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -318,10 +278,6 @@ namespace ZeroKLobby.MicroLobby
 
 
         #endregion
-
-        protected BattleFunctionBox battleFunctionBox1;
-        protected SplitContainer mapPanelSplitContainer;
-
 
     }
 }

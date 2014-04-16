@@ -114,10 +114,6 @@ namespace ZeroKLobby.MicroLobby
             topicBox.ShowUnreadLine = false;
             topicBox.ShowHistory = false;
 
-            //hide mappanel for normal chat operation. Overriden in BattleChatControl.cs
-            playerListMapSplitContainer.Panel2Collapsed = true;
-            mapPanelSplitContainer.Panel1Collapsed = true;
-
             sendBox.CompleteWord += (word) => //autocomplete of username
                 {
                     var w = word.ToLower();
@@ -480,7 +476,8 @@ namespace ZeroKLobby.MicroLobby
             OnResize(e); //OnResize(e) will be intercepted by BattleChatControl.cs & resize minimap.
         }
 
-        void splitContainer2_SplitterMoved(object sender, SplitterEventArgs e) {
+        void playerListMapSplitContainer_SplitterMoved(object sender, SplitterEventArgs e)
+        {
             OnResize(e); //OnResize(e) will be intercepted by BattleChatControl.cs & resize minimap.
         }
 
@@ -504,11 +501,6 @@ namespace ZeroKLobby.MicroLobby
                 e.SuppressKeyPress = true;
                 sendBox.CtrlBackspace();
             }
-        }
-
-        private void mapPanelSplitContainer_SplitterMoved(object sender, SplitterEventArgs e)
-        {
-            OnResize(e); //OnResize(e) will be intercepted by BattleChatControl.cs & resize minimap.
         }
     }
 }

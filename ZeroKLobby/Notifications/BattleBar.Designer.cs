@@ -53,7 +53,7 @@ namespace ZeroKLobby.Notifications
             this.cbSide.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbSide.ForeColor = System.Drawing.SystemColors.WindowText;
             this.cbSide.FormattingEnabled = true;
-            this.cbSide.Location = new System.Drawing.Point(80, 6);
+            this.cbSide.Location = new System.Drawing.Point(80, 3);
             this.cbSide.Name = "cbSide";
             this.cbSide.Size = new System.Drawing.Size(64, 21);
             this.cbSide.TabIndex = 4;
@@ -183,9 +183,9 @@ namespace ZeroKLobby.Notifications
             this.cbQm.ImageIndex = 4;
             this.cbQm.ImageList = this.imageList1;
             this.cbQm.Location = new System.Drawing.Point(2, 51);
-            this.cbQm.Margin = new System.Windows.Forms.Padding(2);
+            this.cbQm.Margin = new System.Windows.Forms.Padding(0);
             this.cbQm.Name = "cbQm";
-            this.cbQm.Size = new System.Drawing.Size(61, 20);
+            this.cbQm.Size = new System.Drawing.Size(61, 24);
             this.cbQm.TabIndex = 15;
             this.cbQm.Text = "QM";
             this.cbQm.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
