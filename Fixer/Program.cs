@@ -25,18 +25,92 @@ namespace Fixer
 {
     public static class Program
     {
-        public static void FixStuff() {
-            // my code here
+        public static string GenerateMACAddress()
+        {
+            var sBuilder = new StringBuilder();
+            var r = new Random();
+            int number;
+            byte b;
+            for (int i = 0; i < 6; i++)
+            {
+                number = r.Next(0, 255);
+                b = Convert.ToByte(number);
+                if (i == 0)
+                {
+                    b = setBit(b, 6); //--> set locally administered
+                    b = unsetBit(b, 7); // --> set unicast 
+                }
+                sBuilder.Append(number.ToString("X2"));
+            }
+            return sBuilder.ToString().ToUpper();
+        }
 
+        private static byte setBit(byte b, int BitNumber)
+        {
+            if (BitNumber < 8 && BitNumber > -1)
+            {
+                return (byte)(b | (byte)(0x01 << BitNumber));
+            }
+            else
+            {
+                throw new InvalidOperationException(
+                "Der Wert für BitNumber " + BitNumber.ToString() + " war nicht im zulässigen Bereich! (BitNumber = (min)0 - (max)7)");
+            }
+        }
+
+        private static byte unsetBit(byte b, int BitNumber)
+        {
+            if (BitNumber < 8 && BitNumber > -1)
+            {
+                return (byte)(b | (byte)(0x00 << BitNumber));
+            }
+            else
+            {
+                throw new InvalidOperationException(
+                "Der Wert für BitNumber " + BitNumber.ToString() + " war nicht im zulässigen Bereich! (BitNumber = (min)0 - (max)7)");
+            }
+        }
+
+        static byte[] GetBytes(string str)
+        {
+            byte[] bytes = new byte[str.Length * sizeof(char)];
+            System.Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
+            return bytes;
+        }
+
+        public static void FixStuff() {
+            ZkDataContext db = new ZkDataContext();
+            var games = db.SpringBattles.Where(x=> DateTime.Now - x.StartTime < TimeSpan.FromDays(60) && !x.IsFfa && !x.IsMission && !x.HasBots && x.PlayerCount >= 6 && x.SpringBattlePlayers.Any(a => a.AccountID == 3323 && !a.IsSpectator)).ToList();
+            Console.WriteLine(games.Count);
+            List<SpringBattle> games2 = new List<SpringBattle>();
+            int numProcessed = 0;
+            foreach (SpringBattle game in games)
+            {
+                bool anyInvalidPlayers = false;
+                int count = 0;
+                foreach (SpringBattlePlayer player in game.SpringBattlePlayers.Where(x=> !x.IsSpectator))
+                {
+                    if (player.Account.EloWeight < 5)
+                    {
+                        anyInvalidPlayers = true;
+                        break;
+                    }
+                    else count++;
+                }
+                if (!anyInvalidPlayers && count >= 6 && count <= 24) games2.Add(game);
+                numProcessed++;
+                if (numProcessed % 50 == 0) Console.WriteLine("{0} of {1} selected", games2.Count, numProcessed);
+            }
+
+            Console.WriteLine(games2.Count);
+            BattleBalanceData.PrintBattleData(games2);
+            //Console.WriteLine(games2.FirstOrDefault().SpringBattleID);
         }
 
         [STAThread]
         static void Main(string[] args)
         {
             //FixStuff();
-
-            //var bench = new Benchmarker.MainForm();
-            //bench.ShowDialog();
 
             //var guid = Guid.NewGuid().ToString();
 
@@ -71,7 +145,7 @@ namespace Fixer
             //AnalyzeModuleUsagePatterns();
             //AnalyzeCommUsagePatterns();
 
-            //UpdateMissionProgression(11);
+            //UpdateMissionProgression(12);
             //PrintNightwatchSubscriptions("zkadmin");
 
             //RecountForumVotes();
