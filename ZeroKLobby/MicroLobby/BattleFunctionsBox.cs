@@ -120,7 +120,7 @@ namespace ZeroKLobby.MicroLobby
             this.layoutPanel.Location = new System.Drawing.Point(0, 0);
             this.layoutPanel.Name = "layoutPanel";
             this.layoutPanel.RowCount = 1;
-            this.layoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24F));
+            this.layoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             this.layoutPanel.Size = new System.Drawing.Size(480, 24);
             this.layoutPanel.TabIndex = 0;
             // 
@@ -133,7 +133,6 @@ namespace ZeroKLobby.MicroLobby
             this.ForeColor = System.Drawing.Color.Transparent;
             this.Name = "BattleFunctionBox";
             this.Size = new System.Drawing.Size(600, 24);
-            this.MaximumSize = new System.Drawing.Size(600, 24);
             this.Dock = DockStyle.Bottom;
             this.layoutPanel.ResumeLayout(true);
             this.ResumeLayout(false);
