@@ -49,14 +49,16 @@ namespace ZeroKLobby.MicroLobby
 			playerBox.MouseDown += playerBox_MouseDown;
 
             battleFuncBox = new BattleFunctionBox();
+            battleFuncBox.Dock = DockStyle.Top;
 
 			minimapBox = new PictureBox { Dock = DockStyle.Fill, SizeMode = PictureBoxSizeMode.CenterImage };
 			minimapBox.Cursor = Cursors.Hand;
 			minimapBox.Click +=
 				(s, e) => { if (Program.TasClient.MyBattle != null) Program.MainWindow.navigationControl.Path = string.Format("http://zero-k.info/Maps/DetailName?name={0}", Program.TasClient.MyBattle.MapName); };
 
-            playerBoxSearchBarContainer.Controls.Add(battleFuncBox);
+            //playerBoxSearchBarContainer.Controls.Add(battleFuncBox);
             battleFuncBox.TabIndex = 2;
+            mapPanel.Controls.Add(battleFuncBox);
 			mapPanel.Controls.Add(minimapBox);
 			mapPanel.Visible = true;
 			mapPanel.Height = playerBox.Width;
