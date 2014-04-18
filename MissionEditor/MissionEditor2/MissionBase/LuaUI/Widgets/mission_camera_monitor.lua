@@ -44,7 +44,7 @@ function widget:Update(dt)
   if timer > 3 then
     timer = 0
     for _, unitID in ipairs(Spring.GetVisibleUnits()) do
-      if Spring.GetUnitRulesParam(unitID, "notifyvisible") then
+      if Spring.GetUnitRulesParam(unitID, "notifyvisible") == 1 then
         Spring.SendLuaRulesMsg("notifyvisible "..unitID)
       end
     end

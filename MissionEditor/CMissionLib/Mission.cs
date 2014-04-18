@@ -491,7 +491,7 @@ namespace CMissionLib
 			line("MapName", MapName);
 			line("StartMetal", StartingMetal);
 			line("StartEnergy", StartingEnergy);
-			line("StartposType", "3");
+			line("StartposType", "2");
 			line("GameMode", "0");
 			line("GameType", Name);
 			line("LimitDGun", "0");

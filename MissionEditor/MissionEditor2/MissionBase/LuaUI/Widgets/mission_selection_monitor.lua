@@ -41,7 +41,7 @@ function UpdateSelection()
   if changed then
     for i=1, newSelectionCount do
       local unitID = newSelection[i]
-      if Spring.GetUnitRulesParam(unitID, "notifyselect") then
+      if Spring.GetUnitRulesParam(unitID, "notifyselect") == 1 then
         Spring.SendLuaRulesMsg("notifyselect "..unitID)
       end
     end   

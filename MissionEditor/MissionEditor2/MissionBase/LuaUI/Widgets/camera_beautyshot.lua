@@ -29,9 +29,9 @@ local function BeautyShot(unitID, params)
   end
   if not (x and y and z) then
     if validUnit then
-	  _,_,_,x,y,z = Spring.GetUnitPosition(unitID, true)
-	else
-      Spring.Log(widget:GetInfo().name, LOG.ERROR, "No valid unit and no position, cannot make beauty shot")
+	_,_,_,x,y,z = Spring.GetUnitPosition(unitID, true)
+      else
+	Spring.Log(widget:GetInfo().name, LOG.ERROR, "No valid unit and no position, cannot make beauty shot")
       return
     end
   end
@@ -48,6 +48,9 @@ local function BeautyShot(unitID, params)
     local angleMod = math.random(-params.maxCamOffset, params.maxCamOffset)
     angleMod = math.rad(angleMod)
     local dist2d = params.distance or math.random(params.minDistance,params.maxDistance)
+    if validUnit then
+      dist2d = dist2d + Spring.GetUnitRadius(unitID)
+    end
     local camPitch = math.random(params.minPitch, params.maxPitch)
     camPitch = math.rad(camPitch)
     local dy = dist2d*math.tan(camPitch)

@@ -400,7 +400,17 @@ local function AddUnitGroups(unitID, groups)
   end
 end
 
+local function RemoveUnitGroup(unitID, group)
+  unitGroups[unitID][group] = nil
+  if selectedUnitConditionGroups[group] then
+    Spring.SetUnitRulesParam(unitID, "notifyselect", 0)
+  end
+  if unitIsVisibleConditionGroups[group] then
+    Spring.SetUnitRulesParam(unitID, "notifyvisible", 0)
+  end 
+end
 
+GG.mission.RemoveUnitGroup = RemoveUnitGroup
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
@@ -758,7 +768,6 @@ local actionsTable = {
             local disabledUnit = UnitDefNames[disabledUnitName]
             if disabledUnit then
               for _,teamID in pairs(teams) do
-                Spring.Echo(disabledUnit.name)
                 disabledUnitDefIDs[teamID][disabledUnit.id] = true
               end
             end
