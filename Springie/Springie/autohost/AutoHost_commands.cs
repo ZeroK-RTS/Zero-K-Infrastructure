@@ -1491,5 +1491,238 @@ namespace Springie.autohost
             }
         }
 
+        /////-------------KARMARKAR & KARP PARTITION ALGORITHM---------------/////
+        //KARMARKAR & KARP Partition Algorithm is a Heuristic algorithm that split a set of integers
+        //into 2 different set with an equal (or almost equal) sum. The advantage of this algorithm
+        //over a brute force checking is it is really cheap and yield the same exact result as brute
+        //force checking. 
+        //
+        //This version of this algorithm use recursive search for exact result. Benchmarked running
+        //time on AMD Athlon(tm) XP 2800+ at 2 GHz** was
+        //  0.00 second for 30 integers on EASY problem.
+        //  120 second for 70 integers on EASY problem.
+        //  27 second for 30 integers on HARD problem.
+        //
+        //EXAMPLE of usage:
+        //  int[] eloList = new int[] {2144,2063,2010,2007,1889,1884,1783,1714,1629,1621};
+        //  int[] team1 = new int[1];
+        //  int[] team2 = new int[1];
+        //  KarmarkarKarpPartitioning(eloList, out team1, out team2);
+        //  for (int i = 0; i < team1.Length; i++)
+        //      System.Diagnostics.Trace.TraceInformation("Team1 {0}", team1[i]);
+        //  for (int i = 0; i < team2.Length; i++)
+        //      System.Diagnostics.Trace.TraceInformation("Team2 {0}", team2[i]);
+        //OUTPUT:
+        //  Team1 1783 
+        //  Team1 1629 
+        //  Team1 1889 
+        //  Team1 2007 
+        //  Team1 2063
+        //  
+        //  Team2 1884 
+        //  Team2 2010 
+        //  Team2 1621 
+        //  Team2 1714 
+        //  Team2 2144
+        //
+        //SOME NOTE:
+        //  The function will not work with integer count less than 3. Will output a table with
+        //  -1 in this case.
+        //
+        //SOURCE:
+        //"The Differencing Method of Set Partitioning" (1982) by Nanrendrar Karmarkar and Richard M. Karp 
+        //**"Heuristics and Exact Methods for Number Partitioning" (2008) by Joao Pedro Pedroso and Mikio Kubo 
+
+        public void KarmarkarKarpPartitioning(int[] numberList, out int[] _team1, out int[] _team2)
+        {
+            //initialize table/value
+            int numberCount = numberList.Length;
+            int[] team1 = new int[numberCount];
+            int[] team2 = new int[numberCount];
+            for (int i = 0; i < numberCount; i++)
+            {
+                team1[i] = -1;
+                team2[i] = -1;
+            }
+            int team1index = 0;
+            int team2index = 0;
+            _team1 = team1;
+            _team2 = team2;
+
+            //skip number list with less than 4 member
+            if (numberCount < 3)
+                return;
+
+            System.Array.Sort(numberList); //sort in ascending order (big value on end of table)
+
+            //copy number list
+            int[] numberList1 = new int[numberCount];
+            for (int j = 0; j < numberCount; j++)
+                numberList1[j] = numberList[j];
+
+            //perform differencing
+            int[] differencingResult = DifferencingTree(numberList1, numberCount, false);
+
+            //explore right branch of differencing tree if no optimal result found
+            if (differencingResult[differencingResult.Length - 1] > 1 && numberCount > 4)
+            {
+                int[] numberList2 = new int[numberCount];
+                for (int j = 0; j < numberCount; j++)
+                    numberList2[j] = numberList[j];
+                int[] differencingResult2 = DifferencingTree(numberList, numberCount, true);
+                if (differencingResult[differencingResult.Length - 1] > differencingResult2[differencingResult2.Length - 1])
+                    differencingResult = differencingResult2;
+            }
+
+            //partition number list (reconstruct list using operation results from differencing operation)
+            //intialize value
+            int difference = differencingResult[differencingResult.Length - 1];
+            int team1sum = difference;
+            int team2sum = 0;
+            team1index = 1;
+            team2index = 0;
+            team1[0] = difference;
+
+            //loop, step-by-step fill value into 2 new table using value from operation results
+            for (int i = differencingResult.Length - 1; i > 0; i = i - 3)
+            {
+                difference = differencingResult[i];
+                bool found = false;
+                for (int j = team1index - 1; j >= 0; j--)
+                {
+                    if (team1[j] == difference)
+                    {
+                        team1sum = team1sum - difference;
+                        team1index = team1index - 1;
+                        team1[j] = team1[team1index];
+                        team1[team1index] = -1;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    for (int j = team2index - 1; j >= 0; j--)
+                    {
+                        if (team2[j] == difference)
+                        {
+                            team2sum = team2sum - difference;
+                            team2index = team2index - 1;
+                            team2[j] = team2[team2index];
+                            team2[team2index] = -1;
+                            break;
+                        }
+                    }
+                }
+
+                int firstLargeValue = differencingResult[i - 2];
+                int secondLargeValue = differencingResult[i - 1];
+
+                if (team1sum < team2sum)
+                {
+                    team1sum = team1sum + firstLargeValue;
+                    team1[team1index] = firstLargeValue;
+                    team1index = team1index + 1;
+                }
+                else
+                {
+                    team2sum = team2sum + firstLargeValue;
+                    team2[team2index] = firstLargeValue;
+                    team2index = team2index + 1;
+                }
+                if (team1sum < team2sum)
+                {
+                    team1sum = team1sum + secondLargeValue;
+                    team1[team1index] = secondLargeValue;
+                    team1index = team1index + 1;
+                }
+                else
+                {
+                    team2sum = team2sum + secondLargeValue;
+                    team2[team2index] = secondLargeValue;
+                    team2index = team2index + 1;
+                }
+            }
+
+            _team1 = new int[team1index];
+            _team2 = new int[team2index];
+            for (int j = 0; j < team1index; j++)
+                _team1[j] = team1[j];
+            for (int j = 0; j < team2index; j++)
+                _team2[j] = team2[j];
+
+            //FINISH
+        }
+
+        public int[] DifferencingTree(int[] numberList, int numberCount, bool goToPlusSide)
+        {
+            //do differencing
+            int firstLargeValue = numberList[numberCount - 1];
+            int secondLargeValue = numberList[numberCount - 2];
+            int difference = 0;
+            if (!goToPlusSide)
+                difference = firstLargeValue - secondLargeValue;
+            else
+                difference = firstLargeValue + secondLargeValue;
+
+            //clear last 2 content
+            numberList[numberCount - 1] = -1;
+            numberList[numberCount - 2] = -1;
+            numberCount = numberCount - 2;
+
+            //insert "differenced" value into (sorted) number list
+            numberCount = numberCount + 1;
+            int i = numberCount - 1;
+            while (i >= 0)
+            {
+                if (i == 0 || difference >= numberList[i - 1])
+                {
+                    numberList[i] = difference;
+                    break;
+                }
+                else if (i > 0) numberList[i] = numberList[i - 1];
+                i--;
+            }
+
+            //put operation result into secondary table.
+            int expectedSize = numberCount * 3;
+            int[] differencingResult = new int[expectedSize];
+            differencingResult[0] = firstLargeValue;
+            differencingResult[1] = secondLargeValue;
+            differencingResult[2] = difference;
+
+            if (numberCount > 1)
+            {
+                //copy number list
+                int[] numberList1 = new int[numberCount];
+                for (int j = 0; j < numberCount; j++)
+                    numberList1[j] = numberList[j];
+
+                //go deeper
+                int[] differencingResultChild = DifferencingTree(numberList1, numberCount, false);
+
+                //go to right side of tree if optimal result not yet obtained
+                if (differencingResultChild[differencingResultChild.Length - 1] > 1 && numberCount > 4)
+                {
+                    int[] numberList2 = new int[numberCount];
+                    for (int j = 0; j < numberCount; j++)
+                        numberList2[j] = numberList[j];
+                    int[] differencingResultChild2 = DifferencingTree(numberList2, numberCount, true);
+                    if (differencingResultChild[differencingResultChild.Length - 1] > differencingResultChild2[differencingResultChild2.Length - 1])
+                        differencingResultChild = differencingResultChild2;
+                }
+
+                //copy operation result from branches into secondary table.
+                int differencingResultIndex = 3;
+                for (int j = 0; j < differencingResultChild.Length; j++)
+                {
+                    differencingResult[j + differencingResultIndex] = differencingResultChild[j];
+                }
+            }
+
+            //return operation results to parent
+            return differencingResult;
+        }
+        /////-------------END PARTITION ALGORITHM---------------/////
     }
 }
