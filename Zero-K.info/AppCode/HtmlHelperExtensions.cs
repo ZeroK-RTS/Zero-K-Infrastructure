@@ -416,7 +416,7 @@ namespace System.Web.Mvc
                                                 planet.Faction != null ? "color:" + planet.Faction.Color : ""));
         }
 
-        public static MvcHtmlString PrintPlanet(this HtmlHelper helper, CampaignPlanet planet) {
+        public static MvcHtmlString PrintCampaignPlanet(this HtmlHelper helper, CampaignPlanet planet) {
             if (planet == null) return new MvcHtmlString("?");
             var db = new ZkDataContext();
             var url = new UrlHelper(HttpContext.Current.Request.RequestContext);

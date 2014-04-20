@@ -280,7 +280,7 @@ namespace ZeroKWeb
                 else if (arg is CampaignPlanet)
                 {
                     var planet = (CampaignPlanet)arg;
-                    args[i] = HtmlHelperExtensions.PrintPlanet(null, planet);
+                    args[i] = HtmlHelperExtensions.PrintCampaignPlanet(null, planet);
                     ev.PlanetID = planet.PlanetID;
                 }
             }

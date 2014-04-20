@@ -21,7 +21,7 @@ namespace ZeroKWeb.Controllers
                 Campaign camp = db.Campaigns.Single(x => x.CampaignID == campaignID);
 
                 using (Image background = Image.FromFile(Server.MapPath("/img/galaxies/" + camp.MapImageName))) {
-                    var im = new Bitmap((int)(background.Width*zoom), (int)(background.Height*zoom));
+                    Bitmap im = new Bitmap((int)(background.Width*zoom), (int)(background.Height*zoom));
                     using (Graphics gr = Graphics.FromImage(im)) {
                         gr.DrawImage(background, 0, 0, im.Width, im.Height);
 
