@@ -138,5 +138,34 @@ namespace Fixer
                 }
             }
         }
+
+        public static void AnalyseBalance()
+        {
+            ZkDataContext db = new ZkDataContext();
+            var games = db.SpringBattles.Where(x => DateTime.Now - x.StartTime < TimeSpan.FromDays(60) && !x.IsFfa && !x.IsMission && !x.HasBots && x.PlayerCount >= 6).ToList();
+            Console.WriteLine(games.Count);
+            List<SpringBattle> games2 = new List<SpringBattle>();
+            int numProcessed = 0;
+            foreach (SpringBattle game in games)
+            {
+                bool anyInvalidPlayers = false;
+                int count = 0;
+                foreach (SpringBattlePlayer player in game.SpringBattlePlayers.Where(x => !x.IsSpectator))
+                {
+                    if (player.Account.EloWeight < 5)
+                    {
+                        anyInvalidPlayers = true;
+                        break;
+                    }
+                    else count++;
+                }
+                if (!anyInvalidPlayers && count >= 6 && count <= 24) games2.Add(game);
+                numProcessed++;
+                if (numProcessed % 50 == 0) Console.WriteLine("{0} of {1} selected", games2.Count, numProcessed);
+            }
+
+            Console.WriteLine(games2.Count);
+            BattleBalanceData.PrintBattleData(games2);
+        }
     }
 }

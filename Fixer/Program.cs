@@ -14,8 +14,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml.Serialization;
-using LobbyClient;
-using NightWatch;
+//using LobbyClient;
+//using NightWatch;
 using PlasmaShared;
 using PlasmaShared.UnitSyncLib;
 using ZkData;
@@ -79,38 +79,25 @@ namespace Fixer
         }
 
         public static void FixStuff() {
-            ZkDataContext db = new ZkDataContext();
-            var games = db.SpringBattles.Where(x=> DateTime.Now - x.StartTime < TimeSpan.FromDays(60) && !x.IsFfa && !x.IsMission && !x.HasBots && x.PlayerCount >= 6 && x.SpringBattlePlayers.Any(a => a.AccountID == 3323 && !a.IsSpectator)).ToList();
-            Console.WriteLine(games.Count);
-            List<SpringBattle> games2 = new List<SpringBattle>();
-            int numProcessed = 0;
-            foreach (SpringBattle game in games)
+            var db = new ZkDataContext();
+            var events = db.CampaignEvents.ToList();
+            int count = events.Count;
+            int doneSoFar = 0;
+            System.Console.WriteLine(count + " total");
+            foreach (CampaignEvent cev in events)
             {
-                bool anyInvalidPlayers = false;
-                int count = 0;
-                foreach (SpringBattlePlayer player in game.SpringBattlePlayers.Where(x=> !x.IsSpectator))
-                {
-                    if (player.Account.EloWeight < 5)
-                    {
-                        anyInvalidPlayers = true;
-                        break;
-                    }
-                    else count++;
-                }
-                if (!anyInvalidPlayers && count >= 6 && count <= 24) games2.Add(game);
-                numProcessed++;
-                if (numProcessed % 50 == 0) Console.WriteLine("{0} of {1} selected", games2.Count, numProcessed);
+                string text = cev.Text;
+                cev.Text = text.Replace("$planet$", "$campaignPlanet$");
+                doneSoFar++;
+                if (doneSoFar%50 == 0) Console.WriteLine("Done {0} of {1}", doneSoFar, count);
             }
-
-            Console.WriteLine(games2.Count);
-            BattleBalanceData.PrintBattleData(games2);
-            //Console.WriteLine(games2.FirstOrDefault().SpringBattleID);
+            db.SubmitChanges();
         }
 
         [STAThread]
         static void Main(string[] args)
         {
-            //FixStuff();
+            FixStuff();
 
             //var guid = Guid.NewGuid().ToString();
 
