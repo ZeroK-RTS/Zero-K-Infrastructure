@@ -111,7 +111,7 @@ namespace ZeroKLobby.MicroLobby
         {
           if (me.Button == MouseButtons.Right || !Program.Conf.LeftClickSelectsPlayer)
           {
-            ContextMenus.GetPrivateMessageContextMenu(this).Show(this, me.Location);
+            ContextMenus.GetPlayerContextMenu(user,false).Show(this, me.Location);
             return;
           }
         }
