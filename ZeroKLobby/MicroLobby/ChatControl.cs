@@ -114,6 +114,9 @@ namespace ZeroKLobby.MicroLobby
             topicBox.ShowUnreadLine = false;
             topicBox.ShowHistory = false;
 
+            //hide mappanel for normal chat operation. Overriden in BattleChatControl.cs 
+            playerListMapSplitContainer.Panel2Collapsed = true;
+
             sendBox.CompleteWord += (word) => //autocomplete of username
                 {
                     var w = word.ToLower();

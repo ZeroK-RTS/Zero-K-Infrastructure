@@ -13,13 +13,17 @@ namespace ZeroKLobby.MicroLobby
     {
         private BitmapButton btnAddAI;
         private BitmapButton btnChangeTeam;
-        private BitmapButton btnMapList;
         private BitmapButton btnGameOptions;
+        private BitmapButton btnMapList;
         private TableLayoutPanel layoutPanel;
 
         public BattleFunctionBox()
         {
             InitializeComponent();
+            Program.ToolTip.SetText(btnGameOptions, "List available map/mod-options");
+            Program.ToolTip.SetText(btnMapList, "List featured map");
+            Program.ToolTip.SetText(btnChangeTeam, "Create or move to new team");
+            Program.ToolTip.SetText(btnAddAI, "Add AI to other team");
         }
 
         private void InitializeComponent()
@@ -211,7 +215,7 @@ namespace ZeroKLobby.MicroLobby
 
         private void btnMapList_Click(object sender, EventArgs e)
         {
-            Program.MainWindow.navigationControl.SwitchTab("http://zero-k.info/Maps");
+            Program.MainWindow.navigationControl.Path= "http://zero-k.info/Maps";
         }
 
         private void btnGameOptions_Click(object sender, EventArgs e)

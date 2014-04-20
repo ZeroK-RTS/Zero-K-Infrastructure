@@ -58,12 +58,13 @@ namespace ZeroKLobby.MicroLobby
 
             //playerBoxSearchBarContainer.Controls.Add(battleFuncBox);
             battleFuncBox.TabIndex = 2;
-            mapPanel.Controls.Add(battleFuncBox);
+            playerListMapSplitContainer.Panel2.Controls.Add(battleFuncBox);
 			mapPanel.Controls.Add(minimapBox);
 			mapPanel.Visible = true;
 			mapPanel.Height = playerBox.Width;
             mapPanel.ResumeLayout();
 
+            battleFuncBox.Visible = false ; //hide button before joining game 
             playerListMapSplitContainer.Panel2Collapsed = false; //show mappanel when in battleroom
 		}
 
@@ -97,6 +98,8 @@ namespace ZeroKLobby.MicroLobby
 
 		public override void Reset()
 		{
+            playerListMapSplitContainer.Panel2Collapsed = false;
+            battleFuncBox.Visible = true; //show button when joining game 
 			base.Reset();
 			missionSlots = null;
 			minimapBox.Image = null;
@@ -307,6 +310,7 @@ namespace ZeroKLobby.MicroLobby
 			var userName = e.UserName;
 			if (userName == Program.Conf.LobbyPlayerName)
 			{
+                battleFuncBox.Visible = false; //hide buttons when leaving game 
 				playerListItems.Clear();
 				playerBox.Items.Clear();
 			}

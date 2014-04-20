@@ -38,7 +38,7 @@ namespace ZeroKLobby.MicroLobby
 		                EndUpdate();
 		                timer.Stop();
 		            } catch (Exception ex) {
-		                Trace.TraceError("Error updaing list: {0}",ex);
+		                Trace.TraceError("Error updating list: {0}",ex);
 		            }
 		        };
 		}
