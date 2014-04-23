@@ -21,7 +21,6 @@ namespace ZeroKLobby
             pathHead = head;
             if (Program.TasClient != null && autoStartOnLogin==true) Program.TasClient.LoginAccepted += (sender, args) =>
             {
-                Program.MainWindow.navigationControl.isBusyIcon.Visible = true;
                 HintNewNavigation(head);
                 base.Navigate(head);
             };
@@ -90,7 +89,6 @@ namespace ZeroKLobby
 
                 if (!e.Cancel)
                 {
-                    Program.MainWindow.navigationControl.isBusyIcon.Visible = true; //busy icon
                     HintNewNavigation(url);
                 }
             }
@@ -151,7 +149,6 @@ namespace ZeroKLobby
 
                 //This update URL textbox & add the page to NavigationBar's history (so that Back&Forward button can be used):
                 Program.MainWindow.navigationControl.AddToHistoryStack(finalURL, originalURL, this);
-                Program.MainWindow.navigationControl.isBusyIcon.Visible = false;
 
                 //The following code store previously visited URL for checking in TryNavigate() later. The checking determine which TAB "own" the URL.
                 //This list is unordered (it is not related to sequence in "Forward"/"Backward" button)

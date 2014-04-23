@@ -68,6 +68,7 @@ namespace ZeroKLobby.MicroLobby
 
         public bool CanReload { get { return false; } }
 
+        public bool IsBusy { get { return false;} }
 
         void searchBox_TextChanged(object sender, EventArgs e) {
             if (!string.IsNullOrEmpty(searchBox.Text)) Program.MainWindow.navigationControl.Path = "battles/" + searchBox.Text;

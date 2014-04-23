@@ -20,12 +20,9 @@ namespace ZeroKLobby.MicroLobby
         readonly PlayerListItem notResultsItem = new PlayerListItem { Title = "No match", SortCategory = 3 };
         protected List<PlayerListItem> playerListItems = new List<PlayerListItem>();
         readonly PlayerListItem searchResultsItem = new PlayerListItem { Title = "Search results", SortCategory = 1 };
-        ChatBox topicBox;
-        Panel topicPanel;
         public bool CanLeave { get { return ChannelName != "Battle"; } }
         public static EventHandler<ChannelLineArgs> ChannelLineAdded = (sender, args) => { };
         public string ChannelName { get; set; }
-        public ChatBox ChatBox; //somehow I have to declare here because my Design-mode throw "has no property named" error otherwise. 
         public GameInfo GameInfo { get; set; }
         public bool IsTopicVisible {
             get { return topicPanel.Visible; }

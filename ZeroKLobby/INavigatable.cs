@@ -13,6 +13,7 @@ namespace ZeroKLobby
 		string GetTooltip(params string[] path);
         void Reload();
         bool CanReload { get; }
+        bool IsBusy{ get; }
 	}
 
 	public enum HiliteLevel

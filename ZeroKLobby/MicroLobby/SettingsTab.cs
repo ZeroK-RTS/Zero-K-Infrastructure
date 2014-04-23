@@ -123,6 +123,8 @@ namespace ZeroKLobby.MicroLobby
 
 	    public bool CanReload { get { return false; }}
 
+        public bool IsBusy { get { return false; } }
+
 	    void SettingsTab_Load(object sender, EventArgs e)
 		{
 			RefreshConfig();

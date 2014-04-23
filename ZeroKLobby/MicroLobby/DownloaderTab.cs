@@ -87,6 +87,8 @@ namespace ZeroKLobby.MapDownloader
 
       public bool CanReload { get { return false; } }
 
+      public bool IsBusy { get { return false; } }
+
       void Downloader_PackagesChanged(object sender, EventArgs e)
     {
       if (InvokeRequired) Invoke(new EventHandler(Downloader_PackagesChanged));

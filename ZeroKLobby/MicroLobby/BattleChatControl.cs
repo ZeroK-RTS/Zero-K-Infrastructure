@@ -18,9 +18,10 @@ namespace ZeroKLobby.MicroLobby
 {
 	class BattleChatControl: ChatControl
 	{
+        private bool finishLoad = false; //wait for element to initialize before manipulate them in OnResize()
 		Image minimap;
 		readonly PictureBox minimapBox;
-        readonly BattleFunctionBox battleFuncBox;
+        readonly ZeroKLobby.Controls.MinimapFuncBox minimapFuncBox;
 		Size minimapSize;
         List<MissionSlot> missionSlots;
 		public static event EventHandler<EventArgs<IChatLine>> BattleLine = delegate { };
@@ -48,8 +49,7 @@ namespace ZeroKLobby.MicroLobby
 			playerBox.IsBattle = true;
 			playerBox.MouseDown += playerBox_MouseDown;
 
-            battleFuncBox = new BattleFunctionBox();
-            battleFuncBox.Dock = DockStyle.Top;
+            minimapFuncBox = new ZeroKLobby.Controls.MinimapFuncBox();
 
 			minimapBox = new PictureBox { Dock = DockStyle.Fill, SizeMode = PictureBoxSizeMode.CenterImage };
 			minimapBox.Cursor = Cursors.Hand;
@@ -57,15 +57,12 @@ namespace ZeroKLobby.MicroLobby
 				(s, e) => { if (Program.TasClient.MyBattle != null) Program.MainWindow.navigationControl.Path = string.Format("http://zero-k.info/Maps/DetailName?name={0}", Program.TasClient.MyBattle.MapName); };
 
             //playerBoxSearchBarContainer.Controls.Add(battleFuncBox);
-            battleFuncBox.TabIndex = 2;
-            playerListMapSplitContainer.Panel2.Controls.Add(battleFuncBox);
-			mapPanel.Controls.Add(minimapBox);
-			mapPanel.Visible = true;
-			mapPanel.Height = playerBox.Width;
-            mapPanel.ResumeLayout();
+            playerListMapSplitContainer.Panel2.Controls.Add(minimapFuncBox);
+            minimapFuncBox.mapPanel.Controls.Add(minimapBox);
 
-            battleFuncBox.Visible = false ; //hide button before joining game 
+            minimapFuncBox.Visible = false; //hide button before joining game 
             playerListMapSplitContainer.Panel2Collapsed = false; //show mappanel when in battleroom
+            finishLoad = true;
 		}
 
 		protected override void Dispose(bool disposing)
@@ -92,14 +89,18 @@ namespace ZeroKLobby.MicroLobby
 		protected override void OnResize(EventArgs e)
 		{
 			base.OnResize(e);
-			mapPanel.Height = playerBox.Width;
-			DrawMinimap();
+            if (finishLoad)
+            {
+                DpiMeasurement.DpiXYMeasurement(this);
+                minimapFuncBox.minimapSplitContainer1.SplitterDistance = Math.Min(DpiMeasurement.ScaleValueY(23),minimapFuncBox.minimapSplitContainer1.Height); //always show button fully
+                DrawMinimap();
+            }
 		}
 
 		public override void Reset()
 		{
             playerListMapSplitContainer.Panel2Collapsed = false;
-            battleFuncBox.Visible = true; //show button when joining game 
+            minimapFuncBox.Visible = true; //show button when joining game 
 			base.Reset();
 			missionSlots = null;
 			minimapBox.Image = null;
@@ -310,7 +311,7 @@ namespace ZeroKLobby.MicroLobby
 			var userName = e.UserName;
 			if (userName == Program.Conf.LobbyPlayerName)
 			{
-                battleFuncBox.Visible = false; //hide buttons when leaving game 
+                minimapFuncBox.Visible = false; //hide buttons when leaving game 
 				playerListItems.Clear();
 				playerBox.Items.Clear();
 			}

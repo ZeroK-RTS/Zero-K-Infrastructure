@@ -70,6 +70,8 @@ namespace ZeroKLobby.MicroLobby
 
         public bool CanReload { get { return false; }}
 
+        public bool IsBusy { get { return false; } }
+
         void TasClient_Input(object sender, TasInputArgs e) {
             if (e != null && e.Command != null) {
                 var entry = new FromServerLine(e.Command, e.Args);

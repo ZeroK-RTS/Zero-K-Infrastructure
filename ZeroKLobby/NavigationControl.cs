@@ -9,6 +9,7 @@ namespace ZeroKLobby
 {
     public partial class NavigationControl: UserControl
     {
+        private Timer isBusyTimer = new Timer();
         static List<ButtonInfo> ButtonList { get; set; }
         bool CanGoBack { get { return backStack.Any(); } }
         bool CanGoForward { get { return forwardStack.Any(); } }
@@ -74,6 +75,10 @@ namespace ZeroKLobby
             SuspendLayout();//(Increase performance), Reference: http://msdn.microsoft.com/en-us/library/system.windows.forms.control.suspendlayout.aspx
             InitializeComponent();
 
+            isBusyTimer.Interval = 1020; //timer tick to update "isBusyIcon" every 1020 ms.
+            isBusyTimer.Tick += isBusyTimer_Tick;
+            isBusyTimer.Start();
+
             ButtonList = new List<ButtonInfo>() //normal arrangement
             {
                 new ButtonInfo() { Label = "HOME", TargetPath = "http://zero-k.info/", Icon= Buttons.home, Height = 32,},
@@ -126,6 +131,7 @@ namespace ZeroKLobby
                     AddTabPage(new BrowserTab("http", false), "other"); //a tab with generic match that match 100% of random URL (block new window)
                     ButtonList.Add(new ButtonInfo() { Label = "OTHER", TargetPath = "http", Height = 32,});
                 }
+                reloadButton1.Visible = true;
             }
             var battles = new BattleListTab();
             AddTabPage(battles, "Battles");
@@ -263,7 +269,7 @@ namespace ZeroKLobby
 
         private void NavigationControl_Resize(object sender, EventArgs e)
         {
-            // todo  instead add flowlayoytpanel or tablelayout panel to entire navigation form and let i size elements as needed
+            // todo  instead add flowlayoutpanel or tablelayout panel to entire navigation form and let i size elements as needed
 
             //this make back/forward/reload button follow Nav bar auto resize (in other word: dynamic repositioning)
             //NOTE: tweak here if not satisfy with Go/Forward/Backward button position. This override designer.
@@ -338,8 +344,13 @@ namespace ZeroKLobby
         private void logoutButton_Click(object sender, EventArgs e)
         {
             Program.TasClient.Disconnect();
-            //Program.Conf.LobbyPlayerName = "";
+            Program.Conf.LobbyPlayerName = "";
         }
 
+
+        private void isBusyTimer_Tick(object sender, EventArgs e)
+        {
+            isBusyIcon.Visible = CurrentNavigatable.IsBusy;
+        }
     }
 }

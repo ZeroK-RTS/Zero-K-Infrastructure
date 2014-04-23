@@ -147,14 +147,17 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Buttons.resx</DependentUpon>
     </Compile>
+    <Compile Include="Controls\MinimapFuncBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\MinimapFuncBox.Designer.cs">
+      <DependentUpon>MinimapFuncBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="ExtendedWebBrowser.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\ZkSplitContainer.cs">
       <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="MicroLobby\BattleFunctionsBox.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SampleForm.cs">
       <SubType>Form</SubType>
@@ -473,14 +476,20 @@
     </Compile>
     <EmbeddedResource Include="AdvertiserWindow.resx">
       <DependentUpon>AdvertiserWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Buttons.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Buttons.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Configs.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Configs.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\MinimapFuncBox.resx">
+      <DependentUpon>MinimapFuncBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Flags.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -489,9 +498,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\BattleChatControl.resx">
       <DependentUpon>BattleChatControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MicroLobby\BattleFunctionsBox.resx">
-      <DependentUpon>BattleFunctionsBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SampleForm.resx">
       <DependentUpon>SampleForm.cs</DependentUpon>
@@ -570,6 +576,7 @@
     <EmbeddedResource Include="Ranks.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Ranks.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="ToolTips\TextTooltipRenderer.cs" />
     <Compile Include="ToolTips\ToolTipForm.cs">
@@ -666,6 +673,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AcceptAgreementForm.resx">
       <DependentUpon>AcceptAgreementForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\PrivateMessageControl.resx">
       <DependentUpon>PrivateMessageControl.cs</DependentUpon>
