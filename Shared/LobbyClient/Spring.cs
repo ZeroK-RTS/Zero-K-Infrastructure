@@ -153,23 +153,27 @@ namespace LobbyClient
         public void ExitGame() {
             try {
                 if (IsRunning) {
+                    Console.WriteLine("Sending  /kill attempt #1");
                     SayGame("/kill"); // todo dont do this if talker does not work (not a host)
                     process.WaitForExit(5000);
                     if (!IsRunning) return;
-                    
+
+                    Console.WriteLine("Sending  /kill attempt #2");
+                    SayGame("/kill"); 
+                    process.WaitForExit(5000);
+                    if (!IsRunning) return;
+
+                    Console.WriteLine("Sending  /kill attempt #3");
+                    SayGame("/kill"); 
+                    process.WaitForExit(5000);
+                    if (!IsRunning) return;
+
+                    Console.WriteLine("Sending  /kill attempt #4");
                     SayGame("/kill"); 
                     process.WaitForExit(5000);
                     if (!IsRunning) return;
                     
-                    SayGame("/kill"); 
-                    process.WaitForExit(5000);
-                    if (!IsRunning) return;
-                    
-                    SayGame("/kill"); 
-                    process.WaitForExit(5000);
-                    if (!IsRunning) return;
-                    
-                    SayGame("Terminating Spring process");
+                    Console.WriteLine("Terminating Spring process");
                     wasKilled = true;
                     process.Kill();
                     ;
@@ -227,7 +231,15 @@ namespace LobbyClient
 
 
         public void SayGame(string text) {
-            if (IsRunning) talker.SendText(text);
+            try
+            {
+                talker.SendText(text);
+            }
+            catch (Exception e) {
+               // Console.WriteLine("-------------------------------------------");
+                Console.WriteLine("Exception when trying to SayGame");
+               // Console.WriteLine(e.ToString());
+            }
         }
 
 
