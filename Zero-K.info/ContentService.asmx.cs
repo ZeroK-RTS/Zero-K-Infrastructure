@@ -457,7 +457,7 @@ namespace ZeroKWeb
                 if (!alreadyCompleted)
                 {
                     db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "Planet completed: {0}", planet));
-                    foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.Planet == planet && x.UnlockOnPlanetCompletion))
+                    foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.PlanetID == planet.PlanetID && x.UnlockOnPlanetCompletion))
                     {
                         unlockedJournals.Add(journal);
                     }
@@ -465,7 +465,7 @@ namespace ZeroKWeb
                 foreach (CampaignPlanet unlocked in unlockedPlanets)
                 {
                     db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "Planet unlocked: {0}", unlocked));
-                    foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.Planet == unlocked && x.UnlockOnPlanetUnlock))
+                    foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.PlanetID == unlocked.PlanetID && x.UnlockOnPlanetUnlock))
                     {
                         unlockedJournals.Add(journal);
                     }
