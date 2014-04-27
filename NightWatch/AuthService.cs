@@ -176,6 +176,7 @@ namespace NightWatch
                                         if (!data.ContainsKey("notify")) data["notify"] = "no notify address";
                                         if (!data.ContainsKey("role")) data["role"] = "UNKNOWN ROLE";
                                         if (!data.ContainsKey("descr")) data["descr"] = "no description";
+                                        if (!data.ContainsKey("remarks")) data["remarks"] = "no remarks";
 
 
                                         using (ZkDataContext db = new ZkDataContext())
@@ -193,7 +194,7 @@ namespace NightWatch
                                             }
                                             foreach (string company in blockedCompanies)
                                             {
-                                                if (data["netname"].ToLower().Contains(company) || data["org-name"].ToLower().Contains(company) || data["descr"].ToLower().Contains(company) || data["role"].ToLower().Contains(company))
+                                                if (data["netname"].ToLower().Contains(company) || data["org-name"].ToLower().Contains(company) || data["descr"].ToLower().Contains(company) || data["role"].ToLower().Contains(company)|| data["remarks"].ToLower().Contains(company))
                                                 {
                                                     client.AdminKickFromLobby(args.Name, "Connection using proxy or VPN is not allowed! (You can ask for exception)");
                                                     break;
@@ -212,7 +213,7 @@ namespace NightWatch
                                 }
                                 catch (Exception ex)
                                 {
-                                    client.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
+                                    //client.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
                                 }
                             } catch (Exception ex) {
                                 Trace.TraceError("Error getting user IP: {0}", ex);
@@ -263,6 +264,7 @@ namespace NightWatch
                                 if (acc != null && user != null && aconf != null &&
                                     (acc.LastLobbyVersionCheck == null || DateTime.UtcNow.Subtract(acc.LastLobbyVersionCheck.Value).TotalDays > 3) &&
                                     aconf.AutohostMode != 0) client.RequestLobbyVersion(user.Name);
+                                /*
                                 if (acc != null)
                                 {
                                     int numIDs = acc.AccountUserIDS != null ? acc.AccountUserIDS.Count : 0;
@@ -270,7 +272,7 @@ namespace NightWatch
                                 }
                                 else
                                     client.Say(TasClient.SayPlace.User, "KingRaptor", string.Format("USER {0} joined battle {1}", e.UserName + " (NO ACCOUNT)", founder.Name), false);
-
+                                */
                                 if (acc != null)
                                 {
                                     if (!acc.AccountUserIDS.Any())
@@ -284,7 +286,8 @@ namespace NightWatch
                         }
                         catch (Exception ex)
                         {
-                            client.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
+                            //client.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
+                            Trace.TraceError("Error procesisng battle user joined: {0}", ex);
                         }
                     }
                 };

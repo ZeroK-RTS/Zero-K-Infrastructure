@@ -33,7 +33,7 @@ namespace CaTracker
                             var player = tas.ExistingUsers.FirstOrDefault(x => x.Key == parts[1]).Key;
                             var reasonParts = ((string[])parts.Clone()).ToList();
                             reasonParts.RemoveRange(0, 2);
-                            string reason = string.Concat(reasonParts) ?? "";
+                            string reason = string.Join(" ", reasonParts) ?? "";
                             if (player != null)
                             {
                                 tas.AdminKickFromLobby(player, reason);
