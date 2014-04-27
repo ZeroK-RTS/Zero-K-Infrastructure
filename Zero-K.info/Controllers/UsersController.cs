@@ -204,18 +204,24 @@ namespace ZeroKWeb.Controllers
             acc.PunishmentsByAccountID.Add(punishment);
             db.SubmitChanges();
 
-            Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);
-            if (banLobby)
+            try
             {
-                Global.Nightwatch.Tas.AdminBan(acc.Name, banHours / 24, reason);
-                if (banIP != null)
+                Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);
+                if (banLobby)
                 {
-                    Global.Nightwatch.Tas.AdminBanIP(banIP, banHours / 24, reason);
+                    Global.Nightwatch.Tas.AdminBan(acc.Name, banHours / 24, reason);
+                    if (banIP != null)
+                    {
+                        Global.Nightwatch.Tas.AdminBanIP(banIP, banHours / 24, reason);
+                    }
                 }
+
+                Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("New penalty for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")), true);
             }
-
-            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("New penalty for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")), true);
-
+            catch (Exception ex)
+            {
+                Global.Nightwatch.Tas.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
+            }
             return RedirectToAction("Detail", new { id = accountID });
         }
 
