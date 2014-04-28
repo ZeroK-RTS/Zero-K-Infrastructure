@@ -9,7 +9,7 @@
 
 @if (!ZeroKWeb.Global.IsLobbyAccess) {
     <div class="border">
-    @(stat.UsersIdle+stat.UsersWaiting+stat.UsersFighting) players in game: @stat.UsersFighting players fighting in @stat.BattlesRunning battles, @stat.UsersWaiting waiting for battle, @stat.UsersIdle idling in chat (@stat.UsersLastMonth played this month)
+    @(stat.UsersIdle+stat.UsersWaiting+stat.UsersFighting) players online: @stat.UsersFighting of them fighting in @stat.BattlesRunning battles, @stat.UsersWaiting waiting for battle, @stat.UsersIdle idling in chat (@stat.UsersLastMonth played this month)
     </div>
 }
 
