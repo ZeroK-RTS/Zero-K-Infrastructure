@@ -236,9 +236,7 @@ namespace LobbyClient
                 talker.SendText(text);
             }
             catch (Exception e) {
-               // Console.WriteLine("-------------------------------------------");
                 Console.WriteLine("Exception when trying to SayGame");
-               // Console.WriteLine(e.ToString());
             }
         }
 
