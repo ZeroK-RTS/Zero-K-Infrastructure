@@ -61,6 +61,19 @@ namespace LobbyClient
 		}
 	}
 
+    public class KickedFromServerEventArgs : EventArgs
+    {
+        //WarningBar.DisplayWarning("You have been kicked server by " + name + ".\r\nReason: " + match.Groups[2].Value)
+        public string UserName { get; private set; }
+        public string Reason { get; private set; }
+
+        public KickedFromServerEventArgs(string userName, string reason = null)
+		{
+			UserName = userName;
+			Reason = reason;
+		}
+    }
+
 
     public class UserLobbyVersionEventArgs: EventArgs {
         public string Name;

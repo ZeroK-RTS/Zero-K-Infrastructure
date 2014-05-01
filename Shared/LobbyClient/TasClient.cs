@@ -167,6 +167,7 @@ namespace LobbyClient
         public event EventHandler<EventArgs> HourChime = delegate { };
         public event EventHandler<TasInputArgs> Input = delegate { };
         public event EventHandler<TasEventArgs> JoinBattleFailed = delegate { };
+        public event EventHandler<KickedFromServerEventArgs> KickedFromServer = delegate { };
         public event EventHandler<TasEventArgs> LoginAccepted = delegate { };
         public event EventHandler<TasEventArgs> LoginDenied = delegate { };
         public event EventHandler<EventArgs<Battle>> MyBattleEnded = delegate { }; // raised just after the battle is removed from the battle list
@@ -557,10 +558,15 @@ namespace LobbyClient
         }
 
         public static string GetMyUserID() {
-            var nic = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault();
+            var nics = NetworkInterface.GetAllNetworkInterfaces().Where(x=> !String.IsNullOrWhiteSpace(x.GetPhysicalAddress().ToString())
+                && x.NetworkInterfaceType != NetworkInterfaceType.Loopback && x.NetworkInterfaceType != NetworkInterfaceType.Tunnel);
+
+            var wantedNic = nics.FirstOrDefault();
+
             string data = "0";
-            if (nic != null) {
-                data = string.Join(":", nic.GetPhysicalAddress().GetAddressBytes()) + "lobby.springrts.com";
+            if (wantedNic != null)
+            {
+                data = string.Join(":", wantedNic.GetPhysicalAddress().GetAddressBytes()) + "lobby.springrts.com";
             }
             return Crc.Crc32(Encoding.ASCII.GetBytes(data)).ToString();
         }
@@ -807,7 +813,7 @@ namespace LobbyClient
             else DispatchServerCommandOnGuiThread(command, args);
         }
 
-        // ugh
+        // FIXME: ugh
         private void HandleSpecialServerMessages(string[] args) {
             var text = Utils.Glue(args, 0);
             var match = Regex.Match(text, "<([^>]+)> is using (.+)");
@@ -834,7 +840,19 @@ namespace LobbyClient
                         int id;
                         if (int.TryParse(match.Groups[2].Value.Trim(), out id)) UserIDRecieved(this, new UserIDEventArgs() { Name = name, ID = id });
                     }
-
+                    /*
+                    else
+                    {
+                        match = Regex.Match(text, "You've been kicked from server by <([^>]+)> (.+)");
+                        if (match.Success)
+                        {
+                            Trace.TraceWarning(String.Format("User {0} kicked (we are {1})"), args[1], MyUser.Name);
+                            string name = match.Groups[1].Value;
+                            string reason = match.Groups.Count > 2 ? string.Join(" ", match.Groups, 2) : null;
+                            KickedFromServer(this, new KickedFromServerEventArgs(name, ""));
+                        }
+                    }
+                    */
                 }
             }
             
@@ -946,6 +964,17 @@ namespace LobbyClient
 
                     case "FORCEQUITBATTLE":
                         BattleForceQuit(this, EventArgs.Empty);
+                        break;
+
+                    case "KICKUSER":
+                        Trace.TraceInformation(String.Format("User {0} kicked (we are {1})"), args[1], MyUser.Name);
+                        string us = args[1];
+                        if (us == MyUser.Name)
+                        {
+                            string kicker = args[0];
+                            string reason = args.Length > 2 ? string.Join(" ", args, 2) : null;
+                            KickedFromServer(this, new KickedFromServerEventArgs(kicker, reason));
+                        }
                         break;
 
                     case "REMOVEUSER": // user left ta server

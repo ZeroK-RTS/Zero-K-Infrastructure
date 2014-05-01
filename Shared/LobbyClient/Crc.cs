@@ -7,7 +7,8 @@ namespace LobbyClient
 {
     public static class Crc
     {
-        public static readonly uint[] Crc32Table = MakeCrc32Table();
+        public static readonly uint[] Crc32Table;
+        public static readonly uint[] Crc32TableRev;
         public static readonly uint[] Crc32TableManual = new uint[256]
         {
             0U, 1996959894U, 3993919788U, 2567524794U, 124634137U, 1886057615U, 3915621685U, 2657392035U, 249268274U, 2044508324U, 3772115230U,
@@ -37,7 +38,43 @@ namespace LobbyClient
             , 3020668471U, 3272380065U, 1510334235U, 755167117U
         };
 
-        static Crc() {}
+        static Crc() {
+            uint poly = 0xedb88320;
+            uint[] table = new uint[256];
+            uint[] revtable = new uint[256];
+
+            uint fwd, rev;
+            for (int i = 0; i < table.Length; i++)
+            {
+                fwd = (uint)i;
+                rev = (uint)(i) << (3 * 8);
+                for (int j = 8; j > 0; j--)
+                {
+                    if ((fwd & 1) == 1)
+                    {
+                        fwd = (uint)((fwd >> 1) ^ poly);
+                    }
+                    else
+                    {
+                        fwd >>= 1;
+                    }
+
+                    if ((rev & 0x80000000) != 0)
+                    {
+                        rev = ((rev ^ poly) << 1) | 1;
+                    }
+                    else
+                    {
+                        rev <<= 1;
+                    }
+                }
+                table[i] = fwd;
+                revtable[i] = rev;
+            }
+
+            Crc32Table = table;
+            Crc32TableRev = revtable;
+        }
 
         public static uint Crc32(byte[] data) {
             return
@@ -58,28 +95,5 @@ namespace LobbyClient
             return ~crc;
         }
 
-        public static uint[] MakeCrc32Table()
-        {
-            uint poly = 0xedb88320;
-            uint[] table = new uint[256];
-            uint temp = 0;
-            for (uint i = 0; i < table.Length; ++i)
-            {
-                temp = i;
-                for (int j = 8; j > 0; --j)
-                {
-                    if ((temp & 1) == 1)
-                    {
-                        temp = (uint)((temp >> 1) ^ poly);
-                    }
-                    else
-                    {
-                        temp >>= 1;
-                    }
-                }
-                table[i] = temp;
-            }
-            return table;
-        }
     }
 }
