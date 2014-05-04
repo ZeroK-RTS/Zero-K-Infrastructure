@@ -15,7 +15,7 @@ $(function() {
 @Html.ActionLink("Back to List", "Index")
 
 @if(m.MissionScores.Count > 0) {
-    <div class="border-test" style="float:right; padding-right:16px; padding-top:16px">
+    <div class="border-test" style="float:right; padding-right:16px; padding-top:16px; max-width:40%">
       <h3>Top scores</h3>
       @Html.BBCode(m.ScoringMethod ?? "")
       <table>
