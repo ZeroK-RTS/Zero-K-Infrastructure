@@ -272,7 +272,7 @@ namespace NightWatch
                                 }
                                 else
                                     client.Say(TasClient.SayPlace.User, "KingRaptor", string.Format("USER {0} joined battle {1}", e.UserName + " (NO ACCOUNT)", founder.Name), false);
-                                */
+                                
                                 if (acc != null)
                                 {
                                     if (!acc.AccountUserIDS.Any())
@@ -281,7 +281,7 @@ namespace NightWatch
                                         client.Say(TasClient.SayPlace.User, user.Name, reason, false);
                                         client.Say(TasClient.SayPlace.User, founder.Name, string.Format("!kick {0} {1}", acc.LobbyVersion, reason), false);
                                     }
-                                }
+                                }*/
                             }
                         }
                         catch (Exception ex)
