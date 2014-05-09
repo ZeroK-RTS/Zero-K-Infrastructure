@@ -146,7 +146,7 @@ namespace ZeroKWeb.Controllers
             if (!string.IsNullOrEmpty(ip)) ret = ret.Where(x => x.AccountIPS.Any(y => y.IP == ip));
             if (userID != null && userID != 0) ret = ret.Where(x => x.AccountUserIDS.Any(y => y.UserID == userID));
 
-            return View("NewUsers", ret.OrderByDescending(x=> x.FirstLogin).Take(100));
+            return View("NewUsers", ret.OrderByDescending(x=> x.FirstLogin).Take(200));
         }
 
         public ActionResult LobbyDetail(string id)

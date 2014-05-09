@@ -6,7 +6,7 @@
 @{
     Page.Title = "New users";
 }
-    <h2>Search (first 100 results)</h2>
+    <h2>Search (first 200 results)</h2>
     <form action="?" method="post">
         Name: @Html.TextBox("name")<br />
         IP: @Html.TextBox("ip")<br />
@@ -20,17 +20,19 @@
                 <th>Name</th>
                 <th>First login</th>
                 <th>Last login</th>
-                <th>Lobby ID</th>
+                <th>User ID</th>
             </tr>
         </thead>
         <tbody>
         @foreach (var a in Model)
         {
+            AccountUserID userIDEntry = a.AccountUserIDS.OrderByDescending(x=> x.LastLogin).FirstOrDefault();
+            string userID = userIDEntry != null? userIDEntry.UserID.ToString() : "";
             <tr>
                 <td>@Html.PrintAccount(a) -  @Html.ActionLink("admin", "AdminUserDetail", new{id=a.AccountID})</td>
                 <td>@a.FirstLogin</td>
                 <td>@a.LastLogin</td>
-                <td>@a.LobbyID</td>
+                <td>@userID</td>
             </tr>
         }
         </tbody>
