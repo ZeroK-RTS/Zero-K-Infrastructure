@@ -36,14 +36,15 @@ namespace ZeroKWeb.Controllers
         public ActionResult Index(string search,
                                   bool? featured,
                                   int? offset,
-                                  bool? ffa,
                                   bool? assymetrical,
                                   int? sea,
                                   int? hills,
                                   int? size,
                                   bool? elongated,
                                   bool? needsTagging,
+                                  bool? isTeams,
                                   bool? is1v1,
+                                  bool? ffa,
                                   bool? chicken,
                                   int? isDownloadable = 1,
                                   int? special = 0) {
@@ -51,14 +52,15 @@ namespace ZeroKWeb.Controllers
             var db = FilterMaps(search,
                                 featured,
                                 offset,
-                                ffa,
                                 assymetrical,
                                 sea,
                                 hills,
                                 size,
                                 elongated,
                                 needsTagging,
+                                isTeams,
                                 is1v1,
+                                ffa,
                                 chicken,
                                 isDownloadable,
                                 special,
@@ -89,14 +91,16 @@ namespace ZeroKWeb.Controllers
         public ContentResult JsonSearch(string callback, string search,
                                        bool? featured,
                                        int? offset,
-                                       bool? ffa,
+                                       
                                        bool? assymetrical,
                                        int? sea,
                                        int? hills,
                                        int? size,
                                        bool? elongated,
                                        bool? needsTagging,
+                                       bool? isTeams,
                                        bool? is1v1,
+                                       bool? ffa,
                                        bool? chicken,
                                        int? isDownloadable = 1,
                                        int? special = 0) {
@@ -104,14 +108,15 @@ namespace ZeroKWeb.Controllers
             var db = FilterMaps(search,
                                 featured,
                                 offset,
-                                ffa,
                                 assymetrical,
                                 sea,
                                 hills,
                                 size,
                                 elongated,
                                 needsTagging,
+                                isTeams,
                                 is1v1,
+                                ffa,
                                 chicken,
                                 isDownloadable,
                                 special,
@@ -138,6 +143,7 @@ namespace ZeroKWeb.Controllers
                         x.MapIsChickens,
                         x.MapIsFfa,
                         x.MapIsSpecial,
+                        x.MapIsTeams,
                         x.MapPlanetWarsIcon,
                         x.MapRating,
                         x.MapRatingCount,
@@ -243,14 +249,15 @@ namespace ZeroKWeb.Controllers
         static ZkDataContext FilterMaps(string search,
                                         bool? featured,
                                         int? offset,
-                                        bool? ffa,
                                         bool? assymetrical,
                                         int? sea,
                                         int? hills,
                                         int? size,
                                         bool? elongated,
                                         bool? needsTagging,
+                                        bool? isTeams,
                                         bool? is1v1,
+                                        bool? ffa,
                                         bool? chicken,
                                         int? isDownloadable,
                                         int? special,
@@ -278,24 +285,26 @@ namespace ZeroKWeb.Controllers
             if (isDownloadable == 1) ret = ret.Where(x => x.ResourceContentFiles.Any(y => y.LinkCount > 0));
             else if (isDownloadable == 0) ret = ret.Where(x => x.ResourceContentFiles.All(y => y.LinkCount <= 0));
             if (special != -1) ret = ret.Where(x => x.MapIsSpecial == (special == 1));
-            if (ffa.HasValue) ret = ret.Where(x => x.MapIsFfa == ffa);
+            
             if (sea.HasValue) ret = ret.Where(x => x.MapWaterLevel == sea);
             if (hills.HasValue) ret = ret.Where(x => x.MapHills == hills);
             if (assymetrical.HasValue) ret = ret.Where(x => x.MapIsAssymetrical == assymetrical);
             if (elongated == true) ret = ret.Where(x => x.MapSizeRatio <= 0.5 || x.MapSizeRatio >= 2);
             else if (elongated == false) ret = ret.Where(x => x.MapSizeRatio > 0.5 && x.MapSizeRatio < 2);
             // Diagonal of a map used to determine size; 16 and below are considered small, bigger than 24 is large
-            if (size == 1) ret = ret.Where(x => Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) ?? 0) <= 16);
+            if (size == 1) ret = ret.Where(x => (x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) <= 16*16);
             else if (size == 2) {
                 ret =
                     ret.Where(
                         x =>
-                        Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) ?? 0) > 16 &&
-                        Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) ?? 0) <= 24);
+                        (x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) > 16*16 &&
+                        (x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) <= 24*24);
             }
-            else if (size == 3) ret = ret.Where(x => Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) ?? 0) > 24);
+            else if (size == 3) ret = ret.Where(x =>(x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) > 24*24);
+            if (isTeams.HasValue) ret = ret.Where(x => x.MapIsTeams == isTeams);
             if (is1v1.HasValue) ret = ret.Where(x => x.MapIs1v1 == is1v1);
             if (chicken.HasValue) ret = ret.Where(x => x.MapIsChickens == chicken);
+            if (ffa.HasValue) ret = ret.Where(x => x.MapIsFfa == ffa);
 
             if (featured == true) ret = ret.OrderByDescending(x => -x.FeaturedOrder).ThenByDescending(x => x.ResourceID);
             else ret = ret.OrderByDescending(x => x.ResourceID);
