@@ -187,6 +187,9 @@ namespace ZkData
                     winner.EloChange = (float)scoreWin;
                     loser.EloChange = (float)scoreLose;
 
+                    winnerAcc.XP += WinnerTeamXpChange.Value;
+                    loserAcc.XP += LoserTeamXpChange.Value;
+
                     var sumW = winnerAcc.Elo1v1Weight + loserAcc.Elo1v1Weight;
                     winnerAcc.Elo1v1Weight = Account.AdjustEloWeight(winnerAcc.Elo1v1Weight, sumW, 2);
                     winnerAcc.EloWeight = Account.AdjustEloWeight(winnerAcc.EloWeight, sumW, 2);
