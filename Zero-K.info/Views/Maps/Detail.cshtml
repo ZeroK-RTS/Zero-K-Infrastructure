@@ -136,21 +136,24 @@
                             <td>Hills:</td><td>@Html.Select("hills", typeof(Resource.Hill), m.MapHills, "?")</td>
                         </tr>
                         <tr>
-                            <td>FFA:</td><td>@Html.BoolSelect("ffa", m.MapIsFfa, "?")</td>
-                        </tr>
-                        <tr><td>Max FFA team count</td><td>@Html.TextBox("ffaTeams", m.MapFFAMaxTeams)</td></tr>
-                        <tr>
                             <td>Asymmetrical:</td><td>@Html.BoolSelect("assymetrical", m.MapIsAssymetrical, "?")</td>
                         </tr>
                         <tr>
                             <td title='Maps with special features, speedmetal, duck, greenfields etc.'>Special:</td><td>@Html.BoolSelect("special", m.MapIsSpecial, "?")</td>
                         </tr>
                         <tr>
-                            <td title='Is the map also good for 1v1?'>1v1:</td><td>@Html.BoolSelect("is1v1", m.MapIs1v1, "?")</td>
+                            <td title='Is the map good for 1v1?'>1v1:</td><td>@Html.BoolSelect("is1v1", m.MapIs1v1, "?")</td>
                         </tr>
                         <tr>
-                            <td title='Is the map ONLY good for chickens?'>Chickens:</td><td>@Html.BoolSelect("chickens", m.MapIsChickens, "?")</td>
+                            <td title='Is the map good for teams'>Teams:</td><td>@Html.BoolSelect("isTeams", m.MapIsTeams, "?")</td>
                         </tr>
+                        <tr>
+                            <td title='Is the map good for chickens?'>Chickens:</td><td>@Html.BoolSelect("chickens", m.MapIsChickens, "?")</td>
+                        </tr>
+                        <tr>
+                            <td title='Is the map good for FFA?'>FFA:</td><td>@Html.BoolSelect("ffa", m.MapIsFfa, "?")</td>
+                        </tr>
+                        <tr><td>Max FFA team count</td><td>@Html.TextBox("ffaTeams", m.MapFFAMaxTeams)</td></tr>
                         <tr>
                             <td>Author:</td><td>@Html.TextBox("author", m.AuthorName)</td>
                         </tr>
@@ -160,13 +163,13 @@
                                 <td>Featured order:</td><td>@Html.TextBox("featuredOrder", Model.Resource.FeaturedOrder)</td>
                             </tr>
                             <tr><td>Springie commands</td><td>
-                                                              <a href="http://knorke.darkstars.co.uk/startboxxy.html?map=@(m.InternalName)" target="_blank">Boxxy</a><br/>
-                                                              @Html.TextArea("springieCommands", m.MapSpringieCommands, 8, 30, null)
-                                                          </td></tr>    
+                                <a href="http://knorke.darkstars.co.uk/startboxxy.html?map=@(m.InternalName)" target="_blank">Boxxy</a><br/>
+                                @Html.TextArea("springieCommands", m.MapSpringieCommands, 8, 30, null)
+                            </td></tr>    
         
                             <tr>
                                 <td>Planetwars image:</td><td valign="middle"><img src='/img/planets/@Model.Resource.MapPlanetWarsIcon' width='@Model.Resource.PlanetWarsIconSize' /> 
-                                                              @Html.ActionLink("pick new", "PlanetImageSelect", new { resourceID = Model.Resource.ResourceID })</td>
+                                @Html.ActionLink("pick new", "PlanetImageSelect", new { resourceID = Model.Resource.ResourceID })</td>
                             </tr>
                         }
                     </table>

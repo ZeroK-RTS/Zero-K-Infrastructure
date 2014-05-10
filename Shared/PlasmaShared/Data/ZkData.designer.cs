@@ -7500,17 +7500,31 @@ namespace ZkData
 		
 		private System.Nullable<System.DateTime> _LastChange;
 		
-		private System.Nullable<bool> _MapIsSpecial;
+		private System.Nullable<int> _MapWidth;
+		
+		private System.Nullable<int> _MapHeight;
 		
 		private System.Nullable<int> _MapSizeSquared;
 		
 		private System.Nullable<float> _MapSizeRatio;
 		
+		private System.Nullable<bool> _MapIsAssymetrical;
+		
+		private System.Nullable<int> _MapHills;
+		
 		private System.Nullable<int> _MapWaterLevel;
+		
+		private System.Nullable<bool> _MapIs1v1;
+		
+		private System.Nullable<bool> _MapIsTeams;
 		
 		private System.Nullable<bool> _MapIsFfa;
 		
-		private System.Nullable<int> _MapHills;
+		private System.Nullable<bool> _MapIsChickens;
+		
+		private System.Nullable<bool> _MapIsSpecial;
+		
+		private System.Nullable<int> _MapFFAMaxTeams;
 		
 		private string _AuthorName;
 		
@@ -7518,29 +7532,17 @@ namespace ZkData
 		
 		private System.Nullable<int> _MapRatingSum;
 		
-		private System.Nullable<bool> _MapIsAssymetrical;
-		
 		private System.Nullable<int> _TaggedByAccountID;
-		
-		private System.Nullable<int> _MapWidth;
-		
-		private System.Nullable<int> _MapHeight;
 		
 		private System.Nullable<int> _ForumThreadID;
 		
 		private System.Nullable<float> _FeaturedOrder;
 		
-		private System.Nullable<bool> _MapIs1v1;
-		
 		private string _MapPlanetWarsIcon;
-		
-		private System.Nullable<bool> _MapIsChickens;
 		
 		private System.Nullable<int> _RatingPollID;
 		
 		private string _MapSpringieCommands;
-		
-		private System.Nullable<int> _MapFFAMaxTeams;
 		
 		private EntitySet<ResourceDependency> _ResourceDependencies;
 		
@@ -7586,48 +7588,50 @@ namespace ZkData
     partial void OnMissionIDChanged();
     partial void OnLastChangeChanging(System.Nullable<System.DateTime> value);
     partial void OnLastChangeChanged();
-    partial void OnMapIsSpecialChanging(System.Nullable<bool> value);
-    partial void OnMapIsSpecialChanged();
+    partial void OnMapWidthChanging(System.Nullable<int> value);
+    partial void OnMapWidthChanged();
+    partial void OnMapHeightChanging(System.Nullable<int> value);
+    partial void OnMapHeightChanged();
     partial void OnMapSizeSquaredChanging(System.Nullable<int> value);
     partial void OnMapSizeSquaredChanged();
     partial void OnMapSizeRatioChanging(System.Nullable<float> value);
     partial void OnMapSizeRatioChanged();
-    partial void OnMapWaterLevelChanging(System.Nullable<int> value);
-    partial void OnMapWaterLevelChanged();
-    partial void OnMapIsFfaChanging(System.Nullable<bool> value);
-    partial void OnMapIsFfaChanged();
+    partial void OnMapIsAssymetricalChanging(System.Nullable<bool> value);
+    partial void OnMapIsAssymetricalChanged();
     partial void OnMapHillsChanging(System.Nullable<int> value);
     partial void OnMapHillsChanged();
+    partial void OnMapWaterLevelChanging(System.Nullable<int> value);
+    partial void OnMapWaterLevelChanged();
+    partial void OnMapIs1v1Changing(System.Nullable<bool> value);
+    partial void OnMapIs1v1Changed();
+    partial void OnMapIsTeamsChanging(System.Nullable<bool> value);
+    partial void OnMapIsTeamsChanged();
+    partial void OnMapIsFfaChanging(System.Nullable<bool> value);
+    partial void OnMapIsFfaChanged();
+    partial void OnMapIsChickensChanging(System.Nullable<bool> value);
+    partial void OnMapIsChickensChanged();
+    partial void OnMapIsSpecialChanging(System.Nullable<bool> value);
+    partial void OnMapIsSpecialChanged();
+    partial void OnMapFFAMaxTeamsChanging(System.Nullable<int> value);
+    partial void OnMapFFAMaxTeamsChanged();
     partial void OnAuthorNameChanging(string value);
     partial void OnAuthorNameChanged();
     partial void OnMapRatingCountChanging(System.Nullable<int> value);
     partial void OnMapRatingCountChanged();
     partial void OnMapRatingSumChanging(System.Nullable<int> value);
     partial void OnMapRatingSumChanged();
-    partial void OnMapIsAssymetricalChanging(System.Nullable<bool> value);
-    partial void OnMapIsAssymetricalChanged();
     partial void OnTaggedByAccountIDChanging(System.Nullable<int> value);
     partial void OnTaggedByAccountIDChanged();
-    partial void OnMapWidthChanging(System.Nullable<int> value);
-    partial void OnMapWidthChanged();
-    partial void OnMapHeightChanging(System.Nullable<int> value);
-    partial void OnMapHeightChanged();
     partial void OnForumThreadIDChanging(System.Nullable<int> value);
     partial void OnForumThreadIDChanged();
     partial void OnFeaturedOrderChanging(System.Nullable<float> value);
     partial void OnFeaturedOrderChanged();
-    partial void OnMapIs1v1Changing(System.Nullable<bool> value);
-    partial void OnMapIs1v1Changed();
     partial void OnMapPlanetWarsIconChanging(string value);
     partial void OnMapPlanetWarsIconChanged();
-    partial void OnMapIsChickensChanging(System.Nullable<bool> value);
-    partial void OnMapIsChickensChanged();
     partial void OnRatingPollIDChanging(System.Nullable<int> value);
     partial void OnRatingPollIDChanged();
     partial void OnMapSpringieCommandsChanging(string value);
     partial void OnMapSpringieCommandsChanged();
-    partial void OnMapFFAMaxTeamsChanging(System.Nullable<int> value);
-    partial void OnMapFFAMaxTeamsChanged();
     #endregion
 		
 		public Resource()
@@ -7807,29 +7811,50 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapIsSpecial", DbType="bit")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapWidth", DbType="int")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
-		public System.Nullable<bool> MapIsSpecial
+		public System.Nullable<int> MapWidth
 		{
 			get
 			{
-				return this._MapIsSpecial;
+				return this._MapWidth;
 			}
 			set
 			{
-				if ((this._MapIsSpecial != value))
+				if ((this._MapWidth != value))
 				{
-					this.OnMapIsSpecialChanging(value);
+					this.OnMapWidthChanging(value);
 					this.SendPropertyChanging();
-					this._MapIsSpecial = value;
-					this.SendPropertyChanged("MapIsSpecial");
-					this.OnMapIsSpecialChanged();
+					this._MapWidth = value;
+					this.SendPropertyChanged("MapWidth");
+					this.OnMapWidthChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapHeight", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		public System.Nullable<int> MapHeight
+		{
+			get
+			{
+				return this._MapHeight;
+			}
+			set
+			{
+				if ((this._MapHeight != value))
+				{
+					this.OnMapHeightChanging(value);
+					this.SendPropertyChanging();
+					this._MapHeight = value;
+					this.SendPropertyChanged("MapHeight");
+					this.OnMapHeightChanged();
 				}
 			}
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapSizeSquared", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
 		public System.Nullable<int> MapSizeSquared
 		{
 			get
@@ -7850,7 +7875,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapSizeRatio", DbType="real")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
 		public System.Nullable<float> MapSizeRatio
 		{
 			get
@@ -7870,44 +7895,23 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapWaterLevel", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
-		public System.Nullable<int> MapWaterLevel
-		{
-			get
-			{
-				return this._MapWaterLevel;
-			}
-			set
-			{
-				if ((this._MapWaterLevel != value))
-				{
-					this.OnMapWaterLevelChanging(value);
-					this.SendPropertyChanging();
-					this._MapWaterLevel = value;
-					this.SendPropertyChanged("MapWaterLevel");
-					this.OnMapWaterLevelChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapIsFfa", DbType="bit")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapIsAssymetrical", DbType="bit")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
-		public System.Nullable<bool> MapIsFfa
+		public System.Nullable<bool> MapIsAssymetrical
 		{
 			get
 			{
-				return this._MapIsFfa;
+				return this._MapIsAssymetrical;
 			}
 			set
 			{
-				if ((this._MapIsFfa != value))
+				if ((this._MapIsAssymetrical != value))
 				{
-					this.OnMapIsFfaChanging(value);
+					this.OnMapIsAssymetricalChanging(value);
 					this.SendPropertyChanging();
-					this._MapIsFfa = value;
-					this.SendPropertyChanged("MapIsFfa");
-					this.OnMapIsFfaChanged();
+					this._MapIsAssymetrical = value;
+					this.SendPropertyChanged("MapIsAssymetrical");
+					this.OnMapIsAssymetricalChanged();
 				}
 			}
 		}
@@ -7933,8 +7937,155 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AuthorName", DbType="nvarchar(200)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapWaterLevel", DbType="int")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
+		public System.Nullable<int> MapWaterLevel
+		{
+			get
+			{
+				return this._MapWaterLevel;
+			}
+			set
+			{
+				if ((this._MapWaterLevel != value))
+				{
+					this.OnMapWaterLevelChanging(value);
+					this.SendPropertyChanging();
+					this._MapWaterLevel = value;
+					this.SendPropertyChanged("MapWaterLevel");
+					this.OnMapWaterLevelChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapIs1v1", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
+		public System.Nullable<bool> MapIs1v1
+		{
+			get
+			{
+				return this._MapIs1v1;
+			}
+			set
+			{
+				if ((this._MapIs1v1 != value))
+				{
+					this.OnMapIs1v1Changing(value);
+					this.SendPropertyChanging();
+					this._MapIs1v1 = value;
+					this.SendPropertyChanged("MapIs1v1");
+					this.OnMapIs1v1Changed();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapIsTeams", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
+		public System.Nullable<bool> MapIsTeams
+		{
+			get
+			{
+				return this._MapIsTeams;
+			}
+			set
+			{
+				if ((this._MapIsTeams != value))
+				{
+					this.OnMapIsTeamsChanging(value);
+					this.SendPropertyChanging();
+					this._MapIsTeams = value;
+					this.SendPropertyChanged("MapIsTeams");
+					this.OnMapIsTeamsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapIsFfa", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18)]
+		public System.Nullable<bool> MapIsFfa
+		{
+			get
+			{
+				return this._MapIsFfa;
+			}
+			set
+			{
+				if ((this._MapIsFfa != value))
+				{
+					this.OnMapIsFfaChanging(value);
+					this.SendPropertyChanging();
+					this._MapIsFfa = value;
+					this.SendPropertyChanged("MapIsFfa");
+					this.OnMapIsFfaChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapIsChickens", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
+		public System.Nullable<bool> MapIsChickens
+		{
+			get
+			{
+				return this._MapIsChickens;
+			}
+			set
+			{
+				if ((this._MapIsChickens != value))
+				{
+					this.OnMapIsChickensChanging(value);
+					this.SendPropertyChanging();
+					this._MapIsChickens = value;
+					this.SendPropertyChanged("MapIsChickens");
+					this.OnMapIsChickensChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapIsSpecial", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20)]
+		public System.Nullable<bool> MapIsSpecial
+		{
+			get
+			{
+				return this._MapIsSpecial;
+			}
+			set
+			{
+				if ((this._MapIsSpecial != value))
+				{
+					this.OnMapIsSpecialChanging(value);
+					this.SendPropertyChanging();
+					this._MapIsSpecial = value;
+					this.SendPropertyChanged("MapIsSpecial");
+					this.OnMapIsSpecialChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapFFAMaxTeams", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21)]
+		public System.Nullable<int> MapFFAMaxTeams
+		{
+			get
+			{
+				return this._MapFFAMaxTeams;
+			}
+			set
+			{
+				if ((this._MapFFAMaxTeams != value))
+				{
+					this.OnMapFFAMaxTeamsChanging(value);
+					this.SendPropertyChanging();
+					this._MapFFAMaxTeams = value;
+					this.SendPropertyChanged("MapFFAMaxTeams");
+					this.OnMapFFAMaxTeamsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AuthorName", DbType="nvarchar(200)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
 		public string AuthorName
 		{
 			get
@@ -7955,7 +8106,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapRatingCount", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23)]
 		public System.Nullable<int> MapRatingCount
 		{
 			get
@@ -7976,7 +8127,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapRatingSum", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24)]
 		public System.Nullable<int> MapRatingSum
 		{
 			get
@@ -7996,29 +8147,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapIsAssymetrical", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18)]
-		public System.Nullable<bool> MapIsAssymetrical
-		{
-			get
-			{
-				return this._MapIsAssymetrical;
-			}
-			set
-			{
-				if ((this._MapIsAssymetrical != value))
-				{
-					this.OnMapIsAssymetricalChanging(value);
-					this.SendPropertyChanging();
-					this._MapIsAssymetrical = value;
-					this.SendPropertyChanged("MapIsAssymetrical");
-					this.OnMapIsAssymetricalChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TaggedByAccountID", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25)]
 		public System.Nullable<int> TaggedByAccountID
 		{
 			get
@@ -8042,50 +8172,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapWidth", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20)]
-		public System.Nullable<int> MapWidth
-		{
-			get
-			{
-				return this._MapWidth;
-			}
-			set
-			{
-				if ((this._MapWidth != value))
-				{
-					this.OnMapWidthChanging(value);
-					this.SendPropertyChanging();
-					this._MapWidth = value;
-					this.SendPropertyChanged("MapWidth");
-					this.OnMapWidthChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapHeight", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21)]
-		public System.Nullable<int> MapHeight
-		{
-			get
-			{
-				return this._MapHeight;
-			}
-			set
-			{
-				if ((this._MapHeight != value))
-				{
-					this.OnMapHeightChanging(value);
-					this.SendPropertyChanging();
-					this._MapHeight = value;
-					this.SendPropertyChanged("MapHeight");
-					this.OnMapHeightChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForumThreadID", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26)]
 		public System.Nullable<int> ForumThreadID
 		{
 			get
@@ -8110,7 +8198,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FeaturedOrder", DbType="real")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27)]
 		public System.Nullable<float> FeaturedOrder
 		{
 			get
@@ -8130,29 +8218,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapIs1v1", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24)]
-		public System.Nullable<bool> MapIs1v1
-		{
-			get
-			{
-				return this._MapIs1v1;
-			}
-			set
-			{
-				if ((this._MapIs1v1 != value))
-				{
-					this.OnMapIs1v1Changing(value);
-					this.SendPropertyChanging();
-					this._MapIs1v1 = value;
-					this.SendPropertyChanged("MapIs1v1");
-					this.OnMapIs1v1Changed();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapPlanetWarsIcon", DbType="nvarchar(50)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28)]
 		public string MapPlanetWarsIcon
 		{
 			get
@@ -8172,29 +8239,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapIsChickens", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26)]
-		public System.Nullable<bool> MapIsChickens
-		{
-			get
-			{
-				return this._MapIsChickens;
-			}
-			set
-			{
-				if ((this._MapIsChickens != value))
-				{
-					this.OnMapIsChickensChanging(value);
-					this.SendPropertyChanging();
-					this._MapIsChickens = value;
-					this.SendPropertyChanged("MapIsChickens");
-					this.OnMapIsChickensChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RatingPollID", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29)]
 		public System.Nullable<int> RatingPollID
 		{
 			get
@@ -8219,7 +8265,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapSpringieCommands", DbType="nvarchar(2000)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30)]
 		public string MapSpringieCommands
 		{
 			get
@@ -8239,29 +8285,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapFFAMaxTeams", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29)]
-		public System.Nullable<int> MapFFAMaxTeams
-		{
-			get
-			{
-				return this._MapFFAMaxTeams;
-			}
-			set
-			{
-				if ((this._MapFFAMaxTeams != value))
-				{
-					this.OnMapFFAMaxTeamsChanging(value);
-					this.SendPropertyChanging();
-					this._MapFFAMaxTeams = value;
-					this.SendPropertyChanged("MapFFAMaxTeams");
-					this.OnMapFFAMaxTeamsChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceDependency", Storage="_ResourceDependencies", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31, EmitDefaultValue=false)]
 		public EntitySet<ResourceDependency> ResourceDependencies
 		{
 			get
@@ -8280,7 +8305,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceContentFile", Storage="_ResourceContentFiles", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=32, EmitDefaultValue=false)]
 		public EntitySet<ResourceContentFile> ResourceContentFiles
 		{
 			get
@@ -8299,7 +8324,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceSpringHash", Storage="_ResourceSpringHashes", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=32, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=33, EmitDefaultValue=false)]
 		public EntitySet<ResourceSpringHash> ResourceSpringHashes
 		{
 			get
@@ -8318,7 +8343,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_MapRating", Storage="_MapRatings", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=33, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=34, EmitDefaultValue=false)]
 		public EntitySet<MapRating> MapRatings
 		{
 			get
@@ -8337,7 +8362,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_SpringBattle", Storage="_SpringBattlesByMapResourceID", ThisKey="ResourceID", OtherKey="MapResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=34, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=35, EmitDefaultValue=false)]
 		public EntitySet<SpringBattle> SpringBattlesByMapResourceID
 		{
 			get
@@ -8356,7 +8381,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_SpringBattle1", Storage="_SpringBattlesByModResourceID", ThisKey="ResourceID", OtherKey="ModResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=35, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=36, EmitDefaultValue=false)]
 		public EntitySet<SpringBattle> SpringBattlesByModResourceID
 		{
 			get
@@ -8375,7 +8400,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_Planet", Storage="_Planets", ThisKey="ResourceID", OtherKey="MapResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=36, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=37, EmitDefaultValue=false)]
 		public EntitySet<Planet> Planets
 		{
 			get
