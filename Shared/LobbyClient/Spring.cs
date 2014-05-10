@@ -430,6 +430,8 @@ namespace LobbyClient
                 var modName = battleResult.Mod;
                 var mapName = battleResult.Map;
                 var isCheating = false;
+                int score = 0;
+                int scoreFrame = 0;
                 string gameId = null;
                 string demoFileName = null;
                 string missionVars = "";
@@ -464,34 +466,20 @@ namespace LobbyClient
                     if (line.Contains("SCORE: ") && !isCheating && battleResult.IsMission) {
                         var match = Regex.Match(line, "SCORE: ([^ ]+)");
                         if (match.Success) {
-                            try {
-                                // game score
-                                var data = match.Groups[1].Value;
-                                //Trace.TraceInformation("Score data (raw) : " + data);
-                                data = Encoding.ASCII.GetString(Convert.FromBase64String(match.Groups[1].Value));
-                                //Trace.TraceInformation("Score data (decoded) : " + data);
-                                Trace.TraceInformation("Submitting score for mission " + modName);
-                                var parts = data.Split('/');
-                                var score = 0;
-                                if (parts.Length > 1) {
-                                    score = Convert.ToInt32(parts[1]);
-                                    gameframe = Convert.ToInt32(parts[0]);
-                                }
-                                else score = Convert.ToInt32(data);
-
-                                using (var service = new ContentService { Proxy = null }) {
-                                    service.SubmitMissionScoreCompleted += (s, e) =>
-                                        {
-                                            if (e.Error != null) {
-                                                if (e.Error is WebException) Trace.TraceWarning("Error sending score: {0}", e.Error);
-                                                else Trace.TraceError("Error sending score: {0}", e.Error);
-                                            }
-                                        };
-                                    service.SubmitMissionScoreAsync(lobbyUserName, Utils.HashLobbyPassword(lobbyPassword), modName, score, gameframe/30, missionVars);
-                                }
-                            } catch (Exception ex) {
-                                Trace.TraceError(string.Format("Error sending mission score: {0}", ex));
+                            // game score
+                            var data = match.Groups[1].Value;
+                            //Trace.TraceInformation("Score data (raw) : " + data);
+                            data = Encoding.ASCII.GetString(Convert.FromBase64String(match.Groups[1].Value));
+                            //Trace.TraceInformation("Score data (decoded) : " + data);
+                            var parts = data.Split('/');
+                            score = 0;
+                            if (parts.Length > 1) {
+                                score = Convert.ToInt32(parts[1]);
+                                gameframe = Convert.ToInt32(parts[0]);
                             }
+                            else score = Convert.ToInt32(data);
+
+                            scoreFrame = gameframe;
                         }
                     }
                     if (line.Contains("MISSIONVARS:") && battleResult.IsMission)
@@ -508,6 +496,24 @@ namespace LobbyClient
 
                     if (line.StartsWith("Error") || line.StartsWith("LuaRules") || line.StartsWith("Internal error") || line.StartsWith("LuaCOB") ||
                         (line.StartsWith("Failed to load") && !line.Contains("duplicate name"))) hasError = true;
+                }
+                if (score != 0 || !String.IsNullOrEmpty(missionVars))
+                {
+                    Trace.TraceInformation("Submitting score for mission " + modName);
+                    try {
+                        using (var service = new ContentService { Proxy = null }) {
+                            service.SubmitMissionScoreCompleted += (s, e) =>
+                                {
+                                    if (e.Error != null) {
+                                        if (e.Error is WebException) Trace.TraceWarning("Error sending score: {0}", e.Error);
+                                        else Trace.TraceError("Error sending score: {0}", e.Error);
+                                    }
+                                };
+                            service.SubmitMissionScoreAsync(lobbyUserName, Utils.HashLobbyPassword(lobbyPassword), modName, score, scoreFrame/30, missionVars);
+                        }
+                    } catch (Exception ex) {
+                        Trace.TraceError(string.Format("Error sending mission score: {0}", ex));
+                    }
                 }
 
                 var modOk = GlobalConst.IsZkMod(modName);
