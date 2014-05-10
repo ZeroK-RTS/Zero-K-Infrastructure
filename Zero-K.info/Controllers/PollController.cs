@@ -112,6 +112,11 @@ namespace ZeroKWeb.Controllers
             var pollActive = Global.Account.PollsByRoleTargetAccountID.Any(x => x.ExpireBy > DateTime.UtcNow);
             if (pollActive) return Content("Poll already active, wait until it ends");
 
+            Galaxy gal = db.Galaxies.Single(x => x.IsDefault);
+            DateTime started = gal.Started ?? DateTime.UtcNow;
+            TimeSpan limit = TimeSpan.FromDays(GlobalConst.RoundTimeLimitInDays);
+            if (DateTime.UtcNow - started > limit) return Content("Round over, no nominations can be made");
+
             var rt = db.RoleTypes.Single(x => x.RoleTypeID == roleTypeID);
             if (rt.RestrictFactionID != null && rt.RestrictFactionID != Global.FactionID) throw new ApplicationException("Invalid faction");
             if (Global.FactionID == 0) throw new ApplicationException("No faction");

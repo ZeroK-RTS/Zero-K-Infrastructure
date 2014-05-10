@@ -2,6 +2,15 @@
 @using ZkData
 @model ZkData.Account
 
+@{
+    var db = new ZkDataContext();
+    Galaxy gal = db.Galaxies.Single(x => x.IsDefault);
+    DateTime started = gal.Started ?? DateTime.UtcNow;
+    TimeSpan limit = TimeSpan.FromDays(GlobalConst.RoundTimeLimitInDays);
+    bool roundOver = (DateTime.UtcNow - started > limit);
+    int index = 0;
+}
+
 @foreach (var entry in Model.AccountRolesByAccountID.OrderBy(x=>x.RoleType.DisplayOrder)) {
     <span>
         @Html.PrintRoleType(entry.RoleType) of @(entry.RoleType.IsClanOnly ? Html.PrintClan(entry.Clan) : Html.PrintFaction(entry.Faction, false))
@@ -25,14 +34,17 @@
         {
             @Html.PrintRoleType(role)
 
-            if (role.IsVoteable && Global.AccountID == Model.AccountID) {
-            <a href="@Url.Action("NominateRole", "Poll", new { roleTypeID = role.RoleTypeID })" onclick="var text = prompt('What is your slogan?', 'vote me!'); $(this).attr('href', $(this).attr('href') + '&text=' + text);">(nominate)</a>    
+            if (role.IsVoteable && Global.AccountID == Model.AccountID && !roundOver) {
+                <a href="@Url.Action("NominateRole", "Poll", new { roleTypeID = role.RoleTypeID })" onclick="var text = prompt('What is your slogan?', 'vote me!'); $(this).attr('href', $(this).attr('href') + '&text=' + text);">(nominate)</a>    
             }
             if (Global.Account.CanAppoint(Model, role)) {
                 <a href="@Url.Action("AppointRole","Planetwars", new {accountID = Model.AccountID, roleTypeID = role.RoleTypeID})">(appoint)</a>
             }
-
-            <span>,&nbsp;&nbsp;</span>
+            index++;
+            if(index < grp.ToList().Count)
+            {
+                <span>,&nbsp;</span>
+            }
         }
        </small><br/>
     }
