@@ -95,8 +95,8 @@ namespace ZeroKWeb.SpringieInterface
 							var ret = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsTeams != false && x.MapIsSpecial != true);
 							if (players > 11) ret = ret.Where(x => (x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) > 16*16);
 							else if (players > 8) ret = ret.Where(x => (x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) > 16*16 && (x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) <= 24*24);
-							else if (players > 5) ret = ret.Where(x =>(x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) <= 24*24);
-							else ret = ret.Where(x => (x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) <= 16*16);
+                            else if (players > 5) ret = ret.Where(x => (x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth) <= 24 * 24 || x.MapIs1v1 == true);
+							else ret = ret.Where(x => (x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) <= 16*16 || x.MapIs1v1 == true);
 							list = ret.ToList();
 
 							break;
@@ -107,8 +107,8 @@ namespace ZeroKWeb.SpringieInterface
 							ret = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsSpecial != true && (x.MapIsChickens == true || x.MapWaterLevel == 1));
                             if (players > 5) ret = ret.Where(x => (x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth) > 16 * 16);
                             else if (players > 4) ret = ret.Where(x => (x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth) > 16 * 16 && (x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth) <= 24 * 24);
-                            else if (players > 2) ret = ret.Where(x => (x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth) <= 24 * 24);
-                            else ret = ret.Where(x => (x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth) <= 16 * 16);
+                            else if (players > 2) ret = ret.Where(x => (x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth) <= 24 * 24 || x.MapIs1v1 == true);
+                            else ret = ret.Where(x => (x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth) <= 16 * 16 || x.MapIs1v1 == true);
 							list = ret.ToList();
 
 							break;

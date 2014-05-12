@@ -212,16 +212,17 @@ namespace ZeroKWeb.Controllers
 
         [Auth]
         public ActionResult Tag(int id,
-                                bool? special,
                                 int? sea,
                                 int? hills,
-                                bool? ffa,
                                 bool? assymetrical,
                                 string author,
                                 float? featuredOrder,
+                                bool? isTeams,
                                 bool? is1v1,
+                                bool? ffa,
                                 bool? chickens,
                                 int? ffaTeams,
+                                bool? special,
                                 string springieCommands) {
             var db = new ZkDataContext();
             var r = db.Resources.Single(x => x.ResourceID == id);
@@ -229,10 +230,11 @@ namespace ZeroKWeb.Controllers
             r.MapIsSpecial = special;
             r.MapWaterLevel = sea;
             r.MapHills = hills;
-            r.MapIsFfa = ffa;
             r.MapIsAssymetrical = assymetrical;
             r.AuthorName = author;
+            r.MapIsTeams = isTeams;
             r.MapIs1v1 = is1v1;
+            r.MapIsFfa = ffa;
             r.MapIsChickens = chickens;
             if (Global.Account.IsZeroKAdmin) {
                 r.FeaturedOrder = featuredOrder;
