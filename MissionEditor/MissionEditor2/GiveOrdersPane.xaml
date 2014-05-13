@@ -71,7 +71,9 @@
                     </ad:DockablePane>
                 </ad:ResizingPanel>
                 <local:ZoomControl>
-                    <Canvas x:Name="canvas" MouseDown="canvas_MouseDown" PreviewMouseUp="canvas_PreviewMouseUp">
+                    <Canvas x:Name="canvas" MouseDown="canvas_MouseDown" PreviewMouseUp="canvas_PreviewMouseUp"
+                        Width="{Binding Mission.Map.Texture.Width, Source={x:Static local:MainWindow.Instance}}"
+                        Height="{Binding Mission.Map.Texture.Height, Source={x:Static local:MainWindow.Instance}}">
                         <Canvas.Background>
                             <ImageBrush AlignmentX="Left" AlignmentY="Top" Stretch="None" ImageSource="{Binding Mission.Map.Texture, Source={x:Static local:MainWindow.Instance}}" />
                         </Canvas.Background>

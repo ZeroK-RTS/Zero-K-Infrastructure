@@ -37,7 +37,6 @@ local allTriggers = {unpack(triggers)} -- we'll never remove triggers from here,
 local unitGroups = {} -- key: unitID, value: group set (an array of strings)
 local gaiaTeamID = Spring.GetGaiaTeamID()
 local cheatingWasEnabled = false
-local scoreSent = false
 local scores = {}
 local gameStarted = false
 local isInCutscene = false
@@ -839,9 +838,8 @@ local actionsTable = {
           end
         end,
   SendScoreAction = function(action)
-          if not (cheatingWasEnabled or scoreSent) then
+          if not (cheatingWasEnabled) then
             SendToUnsynced("ScoreEvent")
-            scoreSent = true
           end
         end,
   SetCameraUnitTargetAction = function(action)

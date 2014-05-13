@@ -490,7 +490,7 @@
 
         <DataTemplate x:Key="sendScoreTemplate">
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
-        This action sends the player score to the central score server. Scores can only be sent once.
+        This action sends the player score to the central score server.
             </TextBlock>
         </DataTemplate>
 

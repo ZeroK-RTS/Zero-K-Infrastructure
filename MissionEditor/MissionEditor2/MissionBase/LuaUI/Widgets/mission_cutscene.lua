@@ -279,7 +279,7 @@ end
 
 -- block all keypresses that aren't pause or Esc while in cutscene
 function widget:KeyPress(key, modifier, isRepeat)
-  if isInCutscene then
+  if isInCutscene and (Spring.GetGameFrame() > 0) then
     local guiHidden = WG.IsGUIHidden()
     local paused = select(3, Spring.GetGameSpeed())
     if key == KEYSYMS.PAUSE or key == KEYSYMS.ESCAPE then
