@@ -563,12 +563,11 @@ namespace LobbyClient
 
             var wantedNic = nics.FirstOrDefault();
 
-            string data = "0";
             if (wantedNic != null)
             {
-                data = string.Join(":", wantedNic.GetPhysicalAddress().GetAddressBytes()) + "lobby.springrts.com";
+                return Crc.Crc32(wantedNic.GetPhysicalAddress().GetAddressBytes()).ToString();
             }
-            return Crc.Crc32(Encoding.ASCII.GetBytes(data)).ToString();
+            return "0";
         }
 
 
