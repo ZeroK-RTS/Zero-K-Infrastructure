@@ -789,13 +789,18 @@ namespace Springie.autohost
 
         public void ComRehost(TasSayEventArgs e, string[] words)
         {
-            if (words.Length == 0) Start(null, null);
+            /*if (spring.IsRunning)
+            {
+                Respond(e, "Cannot rehost while game is running");
+                return;
+            }*/
+            if (words.Length == 0) Start(null, null, false);
             else
             {
                 string[] mods;
                 int[] indexes;
                 if (FilterMods(words, out mods, out indexes) == 0) Respond(e, "cannot find such game");
-                else Start(mods[0], null);
+                else Start(mods[0], null, false);
             }
         }
 

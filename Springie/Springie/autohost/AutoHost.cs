@@ -641,7 +641,8 @@ namespace Springie.autohost
             if (!String.IsNullOrEmpty(text)) foreach (string line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)) tas.Say(TasClient.SayPlace.BattlePrivate, user, text, true);
         }
 
-        public void Start(string modname, string mapname) {
+        public void Start(string modname, string mapname, bool now = true) {
+            if (!now && spring.IsRunning) spring.WaitForExit();
             Stop();
 
             lastMapChange = DateTime.Now;

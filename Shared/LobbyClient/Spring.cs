@@ -725,5 +725,10 @@ namespace LobbyClient
                 Trace.TraceError("Error checking start: {0}", ex);
             }
         }
+
+        public void WaitForExit()
+        {
+            process.WaitForExit();
+        }
     }
 }
