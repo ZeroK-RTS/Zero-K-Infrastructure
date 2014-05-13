@@ -76,7 +76,8 @@ namespace LobbyClient
             Crc32TableRev = revtable;
         }
 
-        public static uint Crc32(byte[] data) {
+        // broke: see https://code.google.com/p/zero-k/issues/detail?id=2129
+        public static uint Crc32Old(byte[] data) {
             return
                 Enumerable.Aggregate<byte, uint>((IEnumerable<byte>)data,
                                                  uint.MaxValue,
@@ -85,7 +86,7 @@ namespace LobbyClient
                 uint.MaxValue;
         }
 
-        public static uint Crc32Alt(byte[] data)
+        public static uint Crc32(byte[] data)
         {
             uint crc = 0xffffffff;
             for(int i = 0; i < data.Length; ++i) {

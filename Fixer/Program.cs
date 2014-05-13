@@ -25,6 +25,8 @@ namespace Fixer
 {
     public static class Program
     {
+        const int MaxBanHours = 24 * 36525;   // 100 years
+
         public static string GenerateMACAddress()
         {
             var sBuilder = new StringBuilder();
@@ -78,20 +80,36 @@ namespace Fixer
             return bytes;
         }
 
-        public static void FixStuff() {
-            var db = new ZkDataContext();
-            var events = db.CampaignEvents.ToList();
-            int count = events.Count;
-            int doneSoFar = 0;
-            System.Console.WriteLine(count + " total");
-            foreach (CampaignEvent cev in events)
+        public static void TestCRC()
+        {
+            for (int i = 0; i < 8192; i++)
             {
-                string text = cev.Text;
-                cev.Text = text.Replace("$planet$", "$campaignPlanet$");
-                doneSoFar++;
-                if (doneSoFar%50 == 0) Console.WriteLine("Done {0} of {1}", doneSoFar, count);
+                string mac = GenerateMACAddress() + "lobby.springrts.com";
+                byte[] mac2 = Encoding.ASCII.GetBytes(mac);
+                uint hash1 = LobbyClient.Crc.Crc32(mac2);
+                uint hash2 = LobbyClient.Crc.Crc32Old(mac2);
+                if (hash1 != hash2)
+                {
+                    Console.WriteLine("MISMATCH: {0} vs. {1} (MAC {2})", hash1, hash2, mac);
+                }
             }
-            db.SubmitChanges();
+        }
+
+        public static void GetNICs()
+        {
+            var nics = NetworkInterface.GetAllNetworkInterfaces();
+            foreach (NetworkInterface nic in nics)
+            {
+                System.Console.WriteLine("{0} | type {1}", nic.GetPhysicalAddress(), nic.NetworkInterfaceType);
+            }
+        }
+
+        public static void FixStuff()
+        {
+            //MassBan("OMGZZZ", 1, 49, "Anteep smurf", MaxBanHours);
+            string line = "The quick brown fox jumps over the lazy dog";
+            byte[] line2 = Encoding.ASCII.GetBytes(line);
+            System.Console.WriteLine("{0}, {1}", LobbyClient.Crc.Crc32(line2), LobbyClient.Crc.Crc32Old(line2));
         }
 
         [STAThread]
@@ -313,7 +331,7 @@ namespace Fixer
             }
         }
 
-        public static void ProgressCampaign(ZkDataContext db, Account acc, Mission mission, string missionVars = "")
+        public static void ProgressCampaign(ZkDataContext db, Account acc, Mission mission, bool completeNext = false, string missionVars = "")
         {
             CampaignPlanet planet = db.CampaignPlanets.FirstOrDefault(p => p.MissionID == mission.MissionID);
             if (planet != null)
@@ -403,7 +421,7 @@ namespace Fixer
                             AccountCampaignProgress progress2 = toUnlock.AccountCampaignProgress.FirstOrDefault(x => x.CampaignID == campID && x.AccountID == accountID);
                             if (progress2 == null)
                             {
-                                progress2 = new AccountCampaignProgress() { AccountID = accountID, CampaignID = campID, PlanetID = toUnlock.PlanetID, IsCompleted = false, IsUnlocked = true };
+                                progress2 = new AccountCampaignProgress() { AccountID = accountID, CampaignID = campID, PlanetID = toUnlock.PlanetID, IsCompleted = completeNext, IsUnlocked = true };
                                 db.AccountCampaignProgress.InsertOnSubmit(progress2);
                                 unlockedPlanets.Add(toUnlock);
                             }
@@ -472,7 +490,7 @@ namespace Fixer
             }
         }
 
-        public static void UpdateMissionProgression(int planetID)
+        public static void UpdateMissionProgression(int planetID, bool completeNext = true, string missionVars = "")
         {
             ZkDataContext db = new ZkDataContext();
             var accp = db.AccountCampaignProgress.Where(x => x.PlanetID == planetID && x.IsCompleted).ToList();
@@ -480,7 +498,7 @@ namespace Fixer
             {
                 Account acc = prog.Account;
                 System.Console.WriteLine(acc);
-                ProgressCampaign(db, acc, prog.CampaignPlanet.Mission);
+                ProgressCampaign(db, acc, prog.CampaignPlanet.Mission, completeNext, missionVars);
             }
         }
 
@@ -798,6 +816,34 @@ namespace Fixer
             {
                 Console.WriteLine(ex);
             }
+        }
+
+        public static void MassBan(string name, int startIndex, int endIndex, string reason, int banHours, bool banSite = false, bool banLobby = true, bool banIP = false, bool banID = false)
+        {
+            ZkDataContext db = new ZkDataContext();
+            for (int i = startIndex; i <= endIndex; i++)
+            {
+                Account acc = db.Accounts.FirstOrDefault(x => x.Name == name + i);
+                if (acc != null)
+                {
+                    int? userID = banID ? (int?)acc.AccountUserIDS.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
+                    string userIP = banIP ? acc.AccountIPS.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
+                    System.Console.WriteLine(acc.Name, userID, userIP);
+                    Punishment punishment = new Punishment
+                    {
+                        Time = DateTime.UtcNow,
+                        Reason = reason,
+                        BanSite = banSite,
+                        BanLobby = banLobby,
+                        BanExpires = DateTime.UtcNow.AddHours(banHours),
+                        BanIP = userIP,
+                        CreatedAccountID = 5806,
+                        UserID = userID,
+                    };
+                    acc.PunishmentsByAccountID.Add(punishment);
+                }
+            }
+            db.SubmitChanges();
         }
     }
 }
