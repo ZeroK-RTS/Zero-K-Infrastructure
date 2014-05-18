@@ -138,11 +138,11 @@ namespace Springie.autohost
                                          new[] { TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
 
             AddMissing(new CommandConfig("rehost", 3, "[<modname>..] - rehosts game, e.g. !rehost abosol 2.23 - rehosts AA2.23"));
-            AddMissing(new CommandConfig("voterehost",
+            /*AddMissing(new CommandConfig("voterehost",
                                          1,
                                          "[<modname>..] - votes to rehost game, e.g. !rehost abosol 2.23 - rehosts AA2.23",
                                          0,
-                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));*/
 
             AddMissing(new CommandConfig("admins", 0, " - lists admins", 5));
 

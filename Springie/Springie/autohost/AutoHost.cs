@@ -449,9 +449,9 @@ namespace Springie.autohost
                     ComRehost(e, words);
                     break;
 
-                case "voterehost":
-                    StartVote(new VoteRehost(tas, spring, this), e, words);
-                    break;
+                //case "voterehost":
+                //    StartVote(new VoteRehost(tas, spring, this), e, words);
+                //    break;
 
                 case "random":
                     ComRandom(e, words);
