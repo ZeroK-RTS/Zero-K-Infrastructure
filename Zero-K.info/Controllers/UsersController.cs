@@ -15,7 +15,7 @@ namespace ZeroKWeb.Controllers
         // GET: /Users/
 
 
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
         public ActionResult AutoResolveDuplicates()
         {
             var db = new ZkDataContext();
@@ -41,7 +41,7 @@ namespace ZeroKWeb.Controllers
             return Redirect("Duplicates");
         }
 
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
         public ActionResult ChangeHideCountry(int accountID, bool hideCountry)
         {
             var db = new ZkDataContext();
@@ -54,7 +54,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
 
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
         public ActionResult ChangeLobbyID(int accountID, int? newLobbyID)
         {
             var db = new ZkDataContext();
@@ -73,7 +73,7 @@ namespace ZeroKWeb.Controllers
             return Content(response);
         }
 
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
         public ActionResult ChangePermissions(int accountID, int springieLevel, bool zkAdmin, bool vpnException)
         {
             var db = new ZkDataContext();
@@ -88,7 +88,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
 
-        [Auth(Role= AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
         public ActionResult AdminUserDetail(int id)
         {
             var db = new ZkDataContext();
@@ -136,7 +136,7 @@ namespace ZeroKWeb.Controllers
             return View("UserList", ret.Take(100));
         }
 
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
         public ActionResult NewUsers(string name, string ip, int? userID = null)
         {
             var db = new ZkDataContext();
@@ -286,6 +286,65 @@ namespace ZeroKWeb.Controllers
             }
 
             return RedirectToAction("Detail", "Users", new { id = todel.AccountID });
+        }
+
+        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
+        public ActionResult MassBan()
+        {
+            return View("MassBan");
+        }
+
+        [Auth(Role = AuthRole.LobbyAdmin|AuthRole.ZkAdmin)]
+        public ActionResult MassBanSubmit(int accountID, string name, int startIndex, int endIndex, string reason, int banHours, bool banSite = false, bool banLobby = true, bool banIP = false, bool banID = false)
+        {
+            ZkDataContext db = new ZkDataContext();
+            int? firstAccID = null;
+            if (banHours > MaxBanHours) banHours = MaxBanHours;
+            for (int i = startIndex; i <= endIndex; i++)
+            {
+                Account acc = db.Accounts.FirstOrDefault(x => x.Name == name + i);
+                if (acc != null)
+                {
+                    firstAccID = firstAccID ?? acc.AccountID;
+                    int? userID = banID ? (int?)acc.AccountUserIDS.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
+                    string userIP = banIP ? acc.AccountIPS.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
+                    System.Console.WriteLine(acc.Name, userID, userIP);
+                    Punishment punishment = new Punishment
+                    {
+                        Time = DateTime.UtcNow,
+                        Reason = reason,
+                        BanSite = banSite,
+                        BanLobby = banLobby,
+                        BanExpires = DateTime.UtcNow.AddHours(banHours),
+                        BanIP = userIP,
+                        CreatedAccountID = accountID,
+                        UserID = userID,
+                    };
+                    acc.PunishmentsByAccountID.Add(punishment);
+
+                    try
+                    {
+                        Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);
+                        if (banLobby)
+                        {
+                            Global.Nightwatch.Tas.AdminBan(acc.Name, banHours / 24, reason);
+                            if (banIP)
+                            {
+                                Global.Nightwatch.Tas.AdminBanIP(userIP, banHours / 24, reason);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Global.Nightwatch.Tas.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
+                    }
+                }
+            }
+            db.SubmitChanges();
+            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Mass ban executed for user series {0} ({1} - {2}): {3}",
+                name, startIndex, endIndex, Url.Action("Detail", "Users", new { id = firstAccID }, "http")), true);
+
+            return Index(name, null, null);
         }
     }
 }

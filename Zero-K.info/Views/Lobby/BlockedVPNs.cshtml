@@ -1,0 +1,95 @@
+﻿@using ZeroKWeb
+@using ZkData
+<div class="admin">
+           
+@{
+    Page.Title = "Blocked VPNs";
+    ZkDataContext db = new ZkDataContext();
+}
+
+<head>
+    <style>
+        table 
+        {
+            max-width: 100%;
+        }
+        td th tr
+        {
+            max-width:40%; word-wrap:break-word;
+        }
+    </style>
+</head>
+
+    <h1>Blocked VPNs</h1>
+    Powered by <a href="https://apps.db.ripe.net/search/query.html">RIPE</a>
+    <br />
+    <br />
+
+    <h2>Blocked companies</h2>
+    Kicks user if the IP whois contains the company name in the following entries: netname, org-name, descr, role, remarks<br />
+    Only the first key in the whois result is checked, ordered top to bottom.
+    <br />
+    <br />
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Remarks</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (BlockedCompany entry in db.BlockedCompanies)
+        {
+            <tr>
+                <td>@entry.CompanyName</td>
+                <td>@entry.Comment</td>
+                <td><a href="@Url.Action("RemoveBlockedCompany", new { companyID = entry.CompanyID })">remove</a></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    <br />
+
+    <h2>Blocked hosts</h2>
+    Kicks user if the IP whois contains the company name in the following entries: abuse-mailbox, notify<br />
+    Only the first key in the whois result is checked, ordered top to bottom.
+    <br />
+    <br />
+    <table>
+        <thead>
+            <tr>
+                <th>Hostname</th>
+                <th>Remarks</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (BlockedHost entry in db.BlockedHosts)
+        {
+            <tr>
+                <td>@entry.HostName</td>
+                <td>@entry.Comment</td>
+                <td><a href="@Url.Action("RemoveBlockedHost", new { hostID = entry.HostID })">remove</a></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    <br />
+
+    <h2>New blocked company</h2>
+    <form action="@Url.Action("AddBlockedCompany",  new {})" method="post">
+        Name: @Html.TextBox("companyName")<br />
+        Remarks: @Html.TextBox("comment")<br />
+        <input type="submit" value="Add to list"/>
+    </form>
+    <br />
+
+    <h2>New blocked host</h2>
+    <form action="@Url.Action("AddBlockedHost", new {})" method="post">
+        Name: @Html.TextBox("hostname")<br />
+        Remarks: @Html.TextBox("comment")<br />
+        <input type="submit" value="Add to list"/>
+    </form>
+
+</div>

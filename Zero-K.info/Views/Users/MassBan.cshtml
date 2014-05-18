@@ -1,0 +1,26 @@
+﻿@using ZeroKWeb
+@using ZkData
+
+@{
+    Page.Title = "Mass ban";
+}           
+
+<div class="admin">
+    <h1>Mass ban</h1>
+    This applies a lobby ban to all accounts with the specified name and trailing number.
+    <br />
+ 
+    <form action="@Url.Action("MassBanSubmit", "Users", new { })" method="post">
+        Name: @Html.TextBox("name", null)<br />
+        Start num: @Html.TextBox("startIndex")<br />
+        End num: @Html.TextBox("endIndex")<br />
+        Reason: @Html.TextBox("reason")<br />
+        Ban lobby: @Html.CheckBox("banLobby", true)<br />
+        Ban site (requires IP): @Html.CheckBox("banSite")<br />
+        Ban most recent IP: @Html.CheckBox("banIP", false)<br />
+        Ban most recent userID: @Html.CheckBox("banID", false)<br />
+        Ban hours: @Html.TextBox("banHours",999999)<br />
+
+        <input type="submit" value="BAN" class="delete" />
+    </form>
+</div>

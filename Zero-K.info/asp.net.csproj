@@ -410,6 +410,8 @@
     <Content Include="Views\Campaign\Journals.cshtml" />
     <Content Include="Views\Forum\Paginator.cshtml" />
     <Content Include="Views\Users\NewUsers.cshtml" />
+    <Content Include="Views\Users\MassBan.cshtml" />
+    <Content Include="Views\Lobby\BlockedVPNs.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
