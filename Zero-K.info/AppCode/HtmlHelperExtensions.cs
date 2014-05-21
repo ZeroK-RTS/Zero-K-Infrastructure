@@ -37,6 +37,7 @@ namespace System.Web.Mvc
         public static MvcHtmlString BBCode(this HtmlHelper helper, string str) {
             if (str == null) return null;
 
+            str = HttpContext.Current.Server.HtmlEncode(str);
             str = ProcessAtSignTags(str);
 
             Regex exp;
@@ -670,3 +671,125 @@ namespace System.Web.Mvc
         }
     }
 }
+
+// backup
+//    public static class HtmlHelperExtensions
+//    {
+//        public static MvcHtmlString AccountAvatar(this HtmlHelper helper, Account account) {
+//            return new MvcHtmlString(string.Format("<img src='/img/avatars/{0}.png' class='avatar'>", account.Avatar));
+//        }
+//
+//        // todo all calls must provide helper!
+//        public static MvcHtmlString BBCode(this HtmlHelper helper, string str) {
+//            if (str == null) return null;
+//            Regex exp;
+//            MatchCollection matches;
+//
+//            str = HttpContext.Current.Server.HtmlEncode(str);
+//            str = ProcessAtSignTags(str);
+//
+//            // remove javascript
+//            exp = new Regex("(\\<script(.+?)\\</script\\>)|(\\<style(.+?)\\</style\\>)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+//            str = exp.Replace(str, "");
+//
+//            // format the bold tags: [b][/b]
+//            // becomes: <strong></strong>
+//            exp = new Regex(@"\[b\]((.|\n)+?)\[/b\]", RegexOptions.IgnoreCase);
+//            str = exp.Replace(str, "<strong>$1</strong>");
+//
+//            // format the quote tags: [quote][/quote]
+//            // becomes: stuff
+//            exp = new Regex(@"\[quote\]((.|\n)+?)\[/quote\]", RegexOptions.IgnoreCase);
+//            str = exp.Replace(str,
+//                              "<table border=\"0\" cellpadding=\"6\" cellspacing=\"0\" width=\"100%\"><tbody><tr><td style=\"border: 1px inset;\"><em>quote:<br>$1</em></td></tr></tbody></table>");
+//
+//            // format the italic tags: [i][/i]
+//            // becomes: <em></em>
+//            exp = new Regex(@"\[i\]((.|\n)+?)\[/i\]", RegexOptions.IgnoreCase);
+//            str = exp.Replace(str, "<em>$1</em>");
+//
+//            // format the underline tags: [u][/u]
+//            // becomes: <u></u>
+//            exp = new Regex(@"\[u\]((.|\n)+?)\[/u\]", RegexOptions.IgnoreCase);
+//            str = exp.Replace(str, "<u>$1</u>");
+//
+//            // format the strike tags: [s][/s]
+//            // becomes: <strike></strike>
+//            exp = new Regex(@"\[s\]((.|\n)+?)\[/s\]", RegexOptions.IgnoreCase);
+//            str = exp.Replace(str, "<strike>$1</strike>");
+//
+//            // format the url tags: [url=www.website.com]my site[/url]
+//            // becomes: <a href="www.website.com">my site</a>
+//            exp = new Regex(@"\[url\=([^\]]+)\]([^\]]+)\[/url\]", RegexOptions.IgnoreCase);
+//            str = exp.Replace(str, "<a href=\"$1\">$2</a>");
+//
+//            // format the img tags: [img]www.website.com/img/image.jpeg[/img]
+//            // becomes: <img src="www.website.com/img/image.jpeg" />
+//            exp = new Regex(@"\[img\]([^\[]+)\[/img\]", RegexOptions.IgnoreCase);
+//            matches = exp.Matches(str);
+//            foreach (Match match in matches)
+//            {
+//                string[] names = exp.GetGroupNames();
+//                string url = match.Groups[names[1]].Value;
+//                str = exp.Replace(str, ZeroKWeb.BBCodeHandler.Image(null, url), 1);
+//            }
+//
+//            // format img tags with alt: [img=www.website.com/img/image.jpeg]this is the alt text[/img]
+//            // becomes: <img src="www.website.com/img/image.jpeg" alt="this is the alt text" />
+//            exp = new Regex(@"\[img\=([^\]]+)\]([^\]]+)\[/img\]", RegexOptions.IgnoreCase);
+//            matches = exp.Matches(str);
+//            foreach (Match match in matches)
+//            {
+//                string[] names = exp.GetGroupNames();
+//                string url = match.Groups[names[1]].Value;
+//                string alt = match.Groups[names[2]].Value;
+//                str = exp.Replace(str, ZeroKWeb.BBCodeHandler.Image(null, url, alt), 1);
+//            }
+//
+//            //format the colour tags: [color=red][/color]
+//            // becomes: <font color="red"></font>
+//            // supports UK English and US English spelling of colour/color
+//            exp = new Regex(@"\[color\=([^\]]+)\]([^\]]+)\[/color\]", RegexOptions.IgnoreCase);
+//            matches = exp.Matches(str);
+//            foreach (Match match in matches)
+//            {
+//                string[] names = exp.GetGroupNames();
+//                string color = match.Groups[names[1]].Value;
+//                string inner = match.Groups[names[2]].Value;
+//                str = exp.Replace(str, ZeroKWeb.BBCodeHandler.Color(null, color, inner), 1);
+//            }
+//            exp = new Regex(@"\[colour\=([^\]]+)\]([^\]]+)\[/colour\]", RegexOptions.IgnoreCase);
+//            matches = exp.Matches(str);
+//            foreach (Match match in matches)
+//            {
+//                string[] names = exp.GetGroupNames();
+//                string color = match.Groups[names[1]].Value;
+//                string inner = match.Groups[names[2]].Value;
+//                str = exp.Replace(str, ZeroKWeb.BBCodeHandler.Color(null, color, inner), 1);
+//            }
+//
+//            // format the size tags: [size=3][/size]
+//            // becomes: <font size="+3"></font>
+//            exp = new Regex(@"\[size\=([^\]]+)\]([^\]]+)\[/size\]", RegexOptions.IgnoreCase);
+//            matches = exp.Matches(str);
+//            foreach (Match match in matches)
+//            {
+//                string[] names = exp.GetGroupNames();
+//                string size = "+" + match.Groups[names[1]].Value;
+//                string inner = match.Groups[names[2]].Value;
+//                str = exp.Replace(str, ZeroKWeb.BBCodeHandler.Size(null, size, inner), 1);
+//            }
+//
+//            str = Regex.Replace(str, @"(^|[\s])((mailto|spring|http|https|ftp|ftps)\://\S+)", @"$1<a href='$2'>$2</a>");
+//
+//            // lastly, replace any new line characters with <br />
+//            str = str.Replace("\r\n", "<br />\r\n");
+//
+//            if (helper != null) {
+//                // todo remove condition in the future
+//                exp = new Regex(@"\[poll\]([0-9]+)\[/poll\]", RegexOptions.IgnoreCase);
+//                str = exp.Replace(str, m => helper.Action("Index", "Poll", new { pollID = m.Groups[1].Value }).ToHtmlString());
+//            }
+//
+//            return new MvcHtmlString(str);
+//        }

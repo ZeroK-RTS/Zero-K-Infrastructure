@@ -105,6 +105,7 @@
   <ItemGroup>
     <Compile Include="AppCode\Auth.cs" />
     <Compile Include="AppCode\AuthServiceClient.cs" />
+    <Compile Include="AppCode\BBCodeHandler.cs" />
     <Compile Include="AppCode\ModStatsDb.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
