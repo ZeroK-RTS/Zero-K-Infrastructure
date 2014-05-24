@@ -199,8 +199,7 @@ namespace LobbyClient
 
 
         void tas_PreviewSaid(object sender, CancelEventArgs<TasSayEventArgs> e) {
-            if (e.Data.Channel == GlobalConst.NightwatchName || e.Data.UserName == GlobalConst.NightwatchName ||
-                e.Data.Channel == ExtensionChannelName || tas.UserName == GlobalConst.NightwatchName) {
+            if (e.Data.Channel == GlobalConst.NightwatchName || e.Data.UserName == GlobalConst.NightwatchName || tas.UserName == GlobalConst.NightwatchName) {
                 var parts = e.Data.Text.Split(new[] { ' ' }, 3);
                 if (parts.Length == 3 && parts[0] == "USER_EXT") {
                     e.Cancel = true;
