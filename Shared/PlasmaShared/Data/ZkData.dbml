@@ -265,9 +265,9 @@
       <Column Name="MapIs1v1" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="MapIsTeams" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="MapIsFfa" Type="System.Boolean" DbType="bit" CanBeNull="true" />
-      <Column Name="MapIsChickens" Type="System.Boolean" DbType="bit" CanBeNull="true" />  
+      <Column Name="MapIsChickens" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="MapIsSpecial" Type="System.Boolean" DbType="bit" CanBeNull="true" />
-      <Column Name="MapFFAMaxTeams" Type="System.Int32" DbType="int" CanBeNull="true" />  
+      <Column Name="MapFFAMaxTeams" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="AuthorName" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
       <Column Name="MapRatingCount" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="MapRatingSum" Type="System.Int32" DbType="int" CanBeNull="true" />
@@ -1279,16 +1279,16 @@
   </Table>
   <Table Name="dbo.BlockedCompany" Member="BlockedCompanies">
     <Type Name="BlockedCompany">
-      <Column Name="CompanyID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="CompanyID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="CompanyName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
-      <Column Name="Comment" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="Comment" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.BlockedHost" Member="BlockedHosts">
     <Type Name="BlockedHost">
-      <Column Name="HostID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="HostID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="HostName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
-      <Column Name="Comment" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="Comment" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
     </Type>
   </Table>
 </Database>
