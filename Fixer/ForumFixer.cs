@@ -81,10 +81,11 @@ namespace Fixer
             db.AccountForumVotes.DeleteOnSubmit(existingVote);
         }
 
-        public static void DeleteUserVotes(int accountID, int? threadID)
+        public static void DeleteUserVotes(int accountID, int? threadID, bool? onlyNegative = false)
         {
             ZkDataContext db = new ZkDataContext();
-            var votes = db.AccountForumVotes.Where(x => x.AccountID == accountID && (threadID == null || x.ForumPost.ForumThreadID == threadID)).ToList();
+            var votes = db.AccountForumVotes.Where(x => x.AccountID == accountID && (threadID == null || x.ForumPost.ForumThreadID == threadID)
+                && (onlyNegative == false || x.Vote < 0)).ToList();
 
             foreach (var v in votes)
             {
