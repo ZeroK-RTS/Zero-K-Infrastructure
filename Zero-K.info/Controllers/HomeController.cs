@@ -254,7 +254,7 @@ namespace ZeroKWeb.Controllers
 			var sb = new StringBuilder();
 			var c = db.Commanders.Single(x => x.CommanderID == commanderID);
 			sb.AppendLine("<span>");
-			sb.AppendFormat("<h3>{0}</h3>", c.Name);
+			sb.AppendFormat("<h3>{0}</h3>", System.Web.HttpContext.Current.Server.HtmlEncode(c.Name));
 			sb.AppendFormat("<img src='{0}'/><br/>", c.Unlock.ImageUrl);
 			foreach (var slots in c.CommanderModules.GroupBy(x => x.CommanderSlot.MorphLevel).OrderBy(x => x.Key))
 			{

@@ -46,7 +46,7 @@ namespace ZeroKWeb.Controllers
 		}
 
 
-		[Auth]
+        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
 		public ActionResult PostNews(News nn, HttpPostedFileBase image)
 		{
 			if (string.IsNullOrEmpty(nn.Title) || string.IsNullOrEmpty(nn.Text)) return Content("Empty text!");

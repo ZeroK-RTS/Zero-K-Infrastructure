@@ -7,7 +7,7 @@
 }
 <h2>@(c != null ? c.Name : "Commander " + Model.ProfileID)</h2>
 
-Commander name: @Html.TextBox("name", c != null ? c.Name : "Commander " + Model.ProfileID)
+Commander name: @Html.TextBox("name", c != null ? HttpContext.Current.Server.HtmlEncode(c.Name) : "Commander " + Model.ProfileID)
 <input type="image" src="@(c != null ? "http://cdn1.iconfinder.com/data/icons/dellipack/32/interact.png" : "/img/add.png")" alt="@(c != null ? "Update" : "Construct!")" id="commanderUpdate@(Model.ProfileID)" class="vcenter noborder" /><br />
 @if (c != null)
 {

@@ -218,7 +218,7 @@
         } 
         <br />
         @foreach (Commander comm in Model.Commanders) {
-            <span class="fleft border"><center><img src='@comm.Unlock.ImageUrl' alt="unlock" title='$commander$@comm.CommanderID'/><br />@comm.Name</center></span>
+            <span class="fleft border"><center><img src='@comm.Unlock.ImageUrl' alt="unlock" title='$commander$@comm.CommanderID'/><br />@HttpContext.Current.Server.HtmlEncode(comm.Name)</center></span>
         }
         <br class="clearfloat" />
     </div>

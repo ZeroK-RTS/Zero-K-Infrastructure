@@ -169,7 +169,7 @@ namespace System.Web.Mvc
                 }
             }
 
-            return new MvcHtmlString(string.Format(format, link, thread.Title));
+            return new MvcHtmlString(string.Format(format, link, HttpContext.Current.Server.HtmlEncode(thread.Title)));
         }
 
         public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account, bool colorize = true) {
@@ -269,7 +269,7 @@ namespace System.Web.Mvc
                                       url.Action("Detail", "Clans", new { id = clan.ClanID }),
                                       clan.GetImageUrl(),
                                       colorize ? color : "",
-                                      clan.Shortcut,
+                                      HttpContext.Current.Server.HtmlEncode(clan.Shortcut),
                                       clan.ClanID));
             }
         }

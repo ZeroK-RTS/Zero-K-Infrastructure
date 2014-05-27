@@ -18,7 +18,7 @@
 }
 @{Html.RenderPartial("ForumPath", Model.Path);}
 
-<h3>@Html.ActionLink(Model.CurrentThread.Title, "Thread", new { id = Model.CurrentThread.ForumThreadID })</h3>
+<h3>@Html.ActionLink(HttpContext.Current.Server.HtmlEncode(Model.CurrentThread.Title), "Thread", new { id = Model.CurrentThread.ForumThreadID })</h3>
 
 @if (!Model.CurrentThread.IsLocked)
 {   

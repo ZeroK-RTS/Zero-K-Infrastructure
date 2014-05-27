@@ -304,7 +304,7 @@ namespace ZeroKWeb.Controllers
 			public List<ForumPost> Posts;
 		}
 
-		[Auth]
+        [Auth(Role = AuthRole.ZkAdmin)]
 		public ActionResult AdminThread(int threadID, int newcat, bool isPinned, bool isLocked)
 		{
 			var db = new ZkDataContext();
@@ -323,6 +323,7 @@ namespace ZeroKWeb.Controllers
             return View("EditHistory", post);
 	    }
 
+        [Auth]
         public ActionResult VotePost(int forumPostID, int delta)
         {
             var db = new ZkDataContext();
@@ -384,6 +385,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Thread", new { id = post.ForumThreadID, postID = forumPostID});
         }
 
+        [Auth]
         public ActionResult CancelVotePost(int forumPostID)
         {
             var db = new ZkDataContext();
