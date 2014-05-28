@@ -364,11 +364,7 @@ namespace ZeroKWeb.SpringieInterface
                     case AutohostMode.SmallTeams:
                     {
                         var map = db.Resources.Single(x => x.InternalName == context.Map);
-                        if (map.MapFFAMaxTeams != null)
-                            res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams.Value,
-                                                               clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise,
-                                                               context);
-                        else res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
+                        res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
                         res.DeleteBots = mode == AutohostMode.SmallTeams || mode == AutohostMode.Teams;
                         return res;
                     }
