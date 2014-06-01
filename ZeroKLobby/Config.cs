@@ -92,7 +92,7 @@ namespace ZeroKLobby
         public bool ConnectOnStartup { get { return connectOnStartup; } set { connectOnStartup = value; } }
 
         [Category("General")]
-        [DisplayName("Content data folder")]
+        [DisplayName("Content DATA FOLDER")]
         [Description("Place where all the content is saved")]
         public string DataFolder { get; set; }
         
@@ -225,8 +225,8 @@ namespace ZeroKLobby
         [Browsable(false)]
         public int NoticeColorInt = Color.Red.ToArgb();
         [Category("Chat")]
-        [DisplayName("Color: Other text")]
-        [Description("Color for text on tooltip and on channel tab")]
+        [DisplayName("Color: Tooltip text")]
+        [Description("Color for text on tooltip")]
         [XmlIgnore]
         public Color OtherTextColor {
             get { return Color.FromArgb(OtherTextColorInt); }

@@ -47,7 +47,6 @@ namespace ZeroKLobby.MicroLobby
             
             foreach (var channel in Program.TasClient.JoinedChannels.Values.Where(c => !IsIgnoredChannel(c.Name))) CreateChannelControl(channel.Name);
             toolTabs.SelectTab("Battle");
-            toolTabs.ForeColor = Program.Conf.OtherTextColor;
             ResumeLayout();
         }
 

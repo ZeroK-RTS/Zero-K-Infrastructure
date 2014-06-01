@@ -20,9 +20,13 @@ namespace ZeroKLobby.MicroLobby
                                         Stretch = false,
                                         GripStyle = ToolStripGripStyle.Hidden,
                                         ShowItemToolTips = false,
-                                        AutoSize = false,
+                                        Tag = HiliteLevel.None,
                                         RenderMode = ToolStripRenderMode.System,
-                                        Width = 155, Tag = HiliteLevel.None
+                                        //AutoSize = false,
+                                        //Width = 155,
+                                        AutoSize = true, //auto save space
+                                        MaximumSize = new Size(155,4000),
+                                        MinimumSize = new Size(100,0),
                                        };
 
         public ToolStripButton ActiveButton
@@ -43,7 +47,12 @@ namespace ZeroKLobby.MicroLobby
 
         public ToolTabs()
         {
-            toolStrip.BackColor = Color.White;
+            toolStrip.BackColor = Program.Conf.BgColor; //Color.White;
+            toolStrip.ForeColor = Program.Conf.TextColor;
+            panel.BackColor = Program.Conf.BgColor;
+            panel.ForeColor = Program.Conf.TextColor;
+            BackColor = Program.Conf.BgColor;
+            ForeColor = Program.Conf.TextColor;
             Controls.Add(panel);
             Controls.Add(toolStrip);
 
