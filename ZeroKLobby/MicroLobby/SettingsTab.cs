@@ -31,7 +31,7 @@ namespace ZeroKLobby.MicroLobby
 
             Program.ToolTip.SetText(cbSafeMode, "Turns off many things that are known to cause problems (on PC/Mac's with lower-end graphic cards). Use if the game is crashing.\nWill override Springsetting.cfg");
             Program.ToolTip.SetText(cbHwCursor,"HW cursor is uneffected by ingame lag, but it can become invisible on some machines");
-            Program.ToolTip.SetText(cbMtEngine, "For Spring 97: enable use of multiple core, \nFor Older Spring: enable MT engine for non-multiplayer game.");
+            Program.ToolTip.SetText(cbMtEngine, "Enable MT engine for non-multiplayer games in Spring 91.0");
            
             Program.ToolTip.SetText(cbWindowed, "Windowed: Run game on desktop in a window\nBorderless: Run game on desktop in a borderless window\nFullscreen: Run game fullscreen");
             Program.ToolTip.SetText(button5, "Springsettings.cfg and Lups.cfg tuned for performance and compatibility; many graphical features are disabled");
@@ -287,7 +287,7 @@ namespace ZeroKLobby.MicroLobby
         }
 
         private void cbMtEngine_CheckedChanged(object sender, EventArgs e) {
-            Program.EngineConfigurator.SetConfigValue("WorkerThreadCount", cbMtEngine.Checked?"-1":"1"); //Spring 97
+            //Program.EngineConfigurator.SetConfigValue("WorkerThreadCount", cbMtEngine.Checked?"-1":"1"); //Spring 97
             Program.Conf.UseMtEngine = cbMtEngine.Checked;
             Program.SaveConfig();
         }
