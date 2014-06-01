@@ -70,7 +70,7 @@ namespace ZeroKLobby.MicroLobby
 
         public void DrawPlayerLine(Graphics g, Rectangle bounds, Color foreColor, Color backColor, bool grayedOut, bool isBattle)
         {
-            g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+            g.TextRenderingHint = TextRenderingHint.SystemDefault;
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
             var x = 0;
