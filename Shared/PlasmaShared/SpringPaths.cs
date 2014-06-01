@@ -142,6 +142,8 @@ namespace PlasmaShared
             DedicatedServer = Utils.MakePath(springPath, Environment.OSVersion.Platform == PlatformID.Unix ? "spring-dedicated" : "spring-dedicated.exe");
             Cache = Utils.MakePath(WritableDirectory, "cache", "SD");
 
+            MtExecutable = File.Exists(MtExecutable) ? MtExecutable : Executable; //a case where MT spring no longer exist in Spring >91 
+
             var ov = springVersion;
             if (springPath != "") springVersion = GetSpringVersion(Executable);
             else springVersion = null;
