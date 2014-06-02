@@ -239,7 +239,7 @@ namespace ZeroKWeb
                 var tas = nightwatch.Tas;
                 if (tas != null) {
                     foreach (var clan in orgArgs.OfType<Clan>().Where(x => x != null)) {
-                        tas.Say(TasClient.SayPlace.Channel, clan.Shortcut, ev.PlainText, true);
+                        tas.Say(TasClient.SayPlace.Channel, clan.GetClanChannel(), ev.PlainText, true);
                     }
                     foreach (var faction in orgArgs.OfType<Faction>().Where(x=>x!=null)) {
                         tas.Say(TasClient.SayPlace.Channel, faction.Shortcut, ev.PlainText, true);
