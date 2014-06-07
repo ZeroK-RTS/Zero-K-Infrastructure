@@ -59,6 +59,11 @@ namespace ZkData
 	    public override string ToString() {
 	        return ClanName;
 	    }
+
+        public string GetClanChannel()
+        {
+            return "clan-" + this.Shortcut;
+        }
 	}
 
 }
