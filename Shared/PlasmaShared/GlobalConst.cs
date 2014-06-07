@@ -2,7 +2,7 @@
 {
 	public static class GlobalConst
 	{
-	    public const string InfologPathFormat=@"C:\springie_spring\infolog_{0}.txt";
+	    public const string InfologPathFormat=@"C:\projekty\springie_spring\infolog_{0}.txt";
 	    public const int ZkSpringieManagedCpu = 6666;
         public const int ZkLobbyUserCpu = 6667;
         public const int ZkLobbyUserCpuLinux = 6668;
