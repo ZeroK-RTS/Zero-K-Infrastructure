@@ -372,7 +372,7 @@ namespace LobbyClient
 
         public static DateTime ConvertMilisecondTime(string arg)
         {
-            return (new DateTime(1970, 1, 1, 0, 0, 0)).AddMilliseconds(double.Parse(arg));
+            return (new DateTime(1970, 1, 1, 0, 0, 0)).AddMilliseconds(double.Parse(arg, System.Globalization.CultureInfo.InvariantCulture));
         }
 
         public void DisableUnits(params string[] units)

@@ -82,15 +82,18 @@ namespace Springie.autohost
                     return;
                 }
 
+                //fill ranker table with players
                 var ranker = new List<UsRank>();
                 foreach (var u in b.Users) if (!u.IsSpectator) ranker.Add(new UsRank(ranker.Count, u.LobbyUser.EffectiveElo, clanwise ? (u.LobbyUser.Clan ?? "") : "", u));
                 var totalPlayers = ranker.Count;
 
                 var rand = new Random();
 
+                //sanity check for teamCount (1<teamCount<playerCount)
                 if (teamCount < 1) teamCount = 1;
                 if (teamCount > ranker.Count) teamCount = ranker.Count;
 
+                //initialize teamSums & teamUsers & teamClans table (no value set yet)
                 var teamUsers = new List<UsRank>[teamCount];
                 for (var i = 0; i < teamUsers.Length; ++i) teamUsers[i] = new List<UsRank>();
                 var teamSums = new double[teamCount];
@@ -1531,14 +1534,17 @@ namespace Springie.autohost
         //  Team2 2144
         //
         //SOME NOTE:
-        //  The function will not work with integer count less than 3. Will output a table with
-        //  -1 in this case.
-        //
+        //1) The function will not work with integer count less than 3. Will output a table with
+        //   -1 in this case.
+        //2) The "noRecursion" tag allow a purely KK algorithm that do not output an exact value. 
+        //   Good for finding approximate solution for really hard problem which otherwise take too
+        //   long to solve. See**
+        //   
         //SOURCE:
         //"The Differencing Method of Set Partitioning" (1982) by Nanrendrar Karmarkar and Richard M. Karp 
         //**"Heuristics and Exact Methods for Number Partitioning" (2008) by Joao Pedro Pedroso and Mikio Kubo 
 
-        public void KarmarkarKarpPartitioning(int[] numberList, out int[] _team1, out int[] _team2)
+        public void KarmarkarKarpPartitioning(int[] numberList, out int[] _team1, out int[] _team2, bool noRecursion = false)
         {
             //initialize table/value
             int numberCount = numberList.Length;
@@ -1566,15 +1572,15 @@ namespace Springie.autohost
                 numberList1[j] = numberList[j];
 
             //perform differencing
-            int[] differencingResult = DifferencingTree(numberList1, numberCount, false);
+            int[] differencingResult = DifferencingTree(numberList1, false, noRecursion);
 
             //explore right branch of differencing tree if no optimal result found
-            if (differencingResult[differencingResult.Length - 1] > 1 && numberCount > 4)
+            if (differencingResult[differencingResult.Length - 1] > 1 && numberCount > 4 && !noRecursion)
             {
                 int[] numberList2 = new int[numberCount];
                 for (int j = 0; j < numberCount; j++)
                     numberList2[j] = numberList[j];
-                int[] differencingResult2 = DifferencingTree(numberList, numberCount, true);
+                int[] differencingResult2 = DifferencingTree(numberList, true);
                 if (differencingResult[differencingResult.Length - 1] > differencingResult2[differencingResult2.Length - 1])
                     differencingResult = differencingResult2;
             }
@@ -1659,9 +1665,10 @@ namespace Springie.autohost
             //FINISH
         }
 
-        public int[] DifferencingTree(int[] numberList, int numberCount, bool goToPlusSide)
+        public int[] DifferencingTree(int[] numberList, bool goToPlusSide, bool noRecursion = false)
         {
             //do differencing
+            int numberCount = numberList.Length;
             int firstLargeValue = numberList[numberCount - 1];
             int secondLargeValue = numberList[numberCount - 2];
             int difference = 0;
@@ -1704,15 +1711,15 @@ namespace Springie.autohost
                     numberList1[j] = numberList[j];
 
                 //go deeper
-                int[] differencingResultChild = DifferencingTree(numberList1, numberCount, false);
+                int[] differencingResultChild = DifferencingTree(numberList1, false, noRecursion);
 
                 //go to right side of tree if optimal result not yet obtained
-                if (differencingResultChild[differencingResultChild.Length - 1] > 1 && numberCount > 4)
+                if (differencingResultChild[differencingResultChild.Length - 1] > 1 && numberCount > 4 && !noRecursion)
                 {
                     int[] numberList2 = new int[numberCount];
                     for (int j = 0; j < numberCount; j++)
                         numberList2[j] = numberList[j];
-                    int[] differencingResultChild2 = DifferencingTree(numberList2, numberCount, true);
+                    int[] differencingResultChild2 = DifferencingTree(numberList2, true);
                     if (differencingResultChild[differencingResultChild.Length - 1] > differencingResultChild2[differencingResultChild2.Length - 1])
                         differencingResultChild = differencingResultChild2;
                 }

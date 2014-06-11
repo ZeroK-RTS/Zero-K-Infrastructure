@@ -175,7 +175,7 @@
             this.cbMtEngine.Name = "cbMtEngine";
             this.cbMtEngine.Size = new System.Drawing.Size(293, 17);
             this.cbMtEngine.TabIndex = 37;
-            this.cbMtEngine.Text = "Enable Multi-threading";
+            this.cbMtEngine.Text = "Enable Spring 91 Multi-threading";
             this.cbMtEngine.UseVisualStyleBackColor = true;
             this.cbMtEngine.CheckedChanged += new System.EventHandler(this.cbMtEngine_CheckedChanged);
             // 
