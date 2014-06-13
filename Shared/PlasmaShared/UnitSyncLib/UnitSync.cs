@@ -238,7 +238,7 @@ namespace PlasmaShared.UnitSyncLib
 
 		public Mod GetModFromArchive(string archiveName)
 		{
-			var modName = GetModNameFromArchive(archiveName);
+			string modName = GetModNameFromArchive(archiveName);
 			return modName != null ? GetMod(modName) : null;
 		}
 
@@ -473,9 +473,18 @@ namespace PlasmaShared.UnitSyncLib
 
 		string GetModNameFromArchive(string archiveName)
 		{
-			var archives = GetModArchives();
-			string modName;
-			return archives.TryGetValue(archiveName, out modName) ? modName : null;
+			string modName = null;
+			for (var i = NativeMethods.GetPrimaryModCount() - 1; i >= 0; i--) //check from last because modname is sorted by version and latest version should be last. ArchiveScanner.cpp line 1007
+				if (GetModArchiveName(NativeMethods.GetPrimaryModName(i)) == archiveName)
+				{
+					modName = NativeMethods.GetPrimaryModName(i); //this archiveName (filename) is matched to the filename of this mod. We found it!
+					break;
+				}
+			return modName;
+
+			//var archives = GetModArchives(); //inefficient because it get all archive first before searching
+			//string modName;
+			//return archives.TryGetValue(archiveName, out modName) ? modName : null;
 		}
 
 		IEnumerable<Option> GetModOptions(string archiveName)
@@ -516,7 +525,14 @@ namespace PlasmaShared.UnitSyncLib
 		Dictionary<string, string> GetStartUnits(string modName, out string[] sides)
 		{
 			if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
-			var modIndex = Array.LastIndexOf(GetModNames().ToArray(), modName);
+			//int modIndex = Array.LastIndexOf(GetModNames().ToArray(), modName); //inefficient because it check all archive first before searching.
+			int modIndex = -1;
+			for (var i = NativeMethods.GetPrimaryModCount() - 1; i >= 0; i--) //check from last because modname is sorted by version and latest version should be last. see: ArchiveScanner.cpp line 1007
+				if (NativeMethods.GetPrimaryModName(i) == modName)
+				{
+					modIndex = i;
+					break;
+				}
 			if (modIndex < 0) throw new UnitSyncException("Mod not found (" + modName + ").");
 			return GetStartUnits(modIndex, out sides);
 		}
@@ -539,7 +555,14 @@ namespace PlasmaShared.UnitSyncLib
 
 		IEnumerable<UnitInfo> GetUnitList(string modName)
 		{
-			var modIndex = Array.LastIndexOf(GetModNames().ToArray(), modName);
+			//int modIndex = Array.LastIndexOf(GetModNames().ToArray(), modName); //inefficient because it check all archive first before searching.
+			int modIndex = -1;
+			for (var i = NativeMethods.GetPrimaryModCount() - 1; i >= 0; i--) //check from last because modname is sorted by version and latest version should be last. ArchiveScanner.cpp line 1007
+				if (NativeMethods.GetPrimaryModName(i) == modName)
+				{
+					modIndex = i;
+					break;
+				}
 			if (modIndex < 0) throw new UnitSyncException(string.Format("Mod not found ({0}).", modName));
 			return GetUnitList(modIndex);
 		}
