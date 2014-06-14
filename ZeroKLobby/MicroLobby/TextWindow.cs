@@ -431,7 +431,8 @@ namespace ZeroKLobby.MicroLobby
                 else if (unreadMarker > 0) unreadMarker++;
 
                 newLine = newLine.Replace("\n", " ");
-                newLine = newLine.Replace("&#x3;", TextColor.ColorChar.ToString());
+                newLine = newLine.Replace("&#x3;", TextColor.ColorChar.ToString()); //color start. &#x3 is 0x003
+                newLine = newLine.Replace("&#x3", TextColor.ColorChar.ToString()); //color end
                 newLine = ParseUrl(newLine);
 
                 //get the color from the line
@@ -969,16 +970,16 @@ namespace ZeroKLobby.MicroLobby
                                                     curForeColor = Convert.ToInt32(line.ToString().Substring(1, 2));
                                                     curBackColor = Convert.ToInt32(line.ToString().Substring(3, 2));
 
-                                                    //check to make sure that FC and BC are in range 0-31
-                                                    if (curForeColor > 31) curForeColor = displayLines[curLine].TextColor;
-                                                    if (curBackColor > 31) curBackColor = backColor;
+                                                    //check to make sure that FC and BC are in range 0-32
+                                                    if (curForeColor > TextColor.colorRange) curForeColor = displayLines[curLine].TextColor;
+                                                    if (curBackColor > TextColor.colorRange) curBackColor = backColor;
                                                 }
                                                 else //if highlighting then:
                                                 {
                                                     pastForeColor = Convert.ToInt32(line.ToString().Substring(1, 2)); //remember what color this text suppose to be (will be restored to the text on the right if highlighting only happen to text on the left) 
                                                     
-                                                    //check to make sure that FC and BC are in range 0-31
-                                                    if (pastForeColor > 31) pastForeColor = displayLines[curLine].TextColor; //only happen on exceptional case (this is only for safety, no significant whatsoever)
+                                                    //check to make sure that FC and BC are in range 0-32
+                                                    if (pastForeColor > TextColor.colorRange) pastForeColor = displayLines[curLine].TextColor; //only happen on exceptional case (this is only for safety, no significant whatsoever)
                                                 }
 
                                                 //remove the color codes from the string
@@ -1053,8 +1054,8 @@ namespace ZeroKLobby.MicroLobby
                                                     if (highlight)
                                                     {
                                                         pastForeColor = curForeColor; //remember previous text color
-                                                        curForeColor = 0; //white (defined in TextColor.cs)
-                                                        curBackColor = 2; //black (defined in TextColor.cs)
+                                                        curForeColor = TextColor.background; //white (defined in TextColor.cs)
+                                                        curBackColor = TextColor.text; //black (defined in TextColor.cs)
                                                     }
                                                     else
                                                     {

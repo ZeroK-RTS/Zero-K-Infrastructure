@@ -42,6 +42,9 @@ namespace ZeroKLobby.Notifications
         internal BattleBar() {
             InitializeComponent();
 
+            picoChat.ChatBackgroundColor = TextColor.background; //same color as Program.Conf.BgColor
+            picoChat.IRCForeColor = 14; //mirc grey. Unknown use
+
             Program.ToolTip.SetText(cbQm, "Enable or disable QuickMatch");
             Program.ToolTip.SetText(cbSide, "Choose the faction you wish to play.");
 

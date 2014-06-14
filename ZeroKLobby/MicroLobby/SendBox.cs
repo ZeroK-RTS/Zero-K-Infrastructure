@@ -26,7 +26,10 @@ namespace ZeroKLobby.MicroLobby
         public SendBox()
         {
             Multiline = true;
+            WordWrap = false; //long text continue to the right instead of appearing in new line
             this.Font = Program.Conf.ChatFont;
+            this.BackColor = Program.Conf.BgColor;
+            this.ForeColor = Program.Conf.TextColor;
         }
 
         protected override void OnKeyPress(KeyPressEventArgs e)
@@ -204,6 +207,12 @@ namespace ZeroKLobby.MicroLobby
             }
             Select(prevSpacePos + 1, SelectionStart - prevSpacePos - 1);
             SelectedText = "";
+        }
+
+        internal void InsertColorCharacter()
+        {
+            Text = Text.Insert(SelectionStart + SelectionLength, "\x03");
+            Text = Text.Insert(SelectionStart, "\x0301,00");
         }
     }
 }

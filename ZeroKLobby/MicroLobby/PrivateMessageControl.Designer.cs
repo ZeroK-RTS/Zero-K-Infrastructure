@@ -28,21 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.sendBox1 = new SendBox();
+            this.sendBox = new SendBox();
             this.ChatBox = new ChatBox();
             this.SuspendLayout();
             // 
-            // sendBox1
+            // sendBox
             // 
-            this.sendBox1.AcceptsTab = true;
-            this.sendBox1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.sendBox1.Location = new System.Drawing.Point(0, 389);
-            this.sendBox1.Multiline = true;
-            this.sendBox1.Name = "sendBox1";
-            this.sendBox1.Size = new System.Drawing.Size(455, 20);
-            this.sendBox1.TabIndex = 0;
-            this.sendBox1.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.sendBox1_PreviewKeyDown);
-            this.sendBox1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.sendBox1_KeyPress);
+            this.sendBox.AcceptsTab = true;
+            this.sendBox.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.sendBox.Location = new System.Drawing.Point(0, 389);
+            this.sendBox.Multiline = true;
+            this.sendBox.Name = "sendBox";
+            this.sendBox.Size = new System.Drawing.Size(455, 20);
+            this.sendBox.TabIndex = 0;
+            this.sendBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.sendBox_KeyDown);
             // 
             // chatBox
             // 
@@ -58,7 +57,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.ChatBox);
-            this.Controls.Add(this.sendBox1);
+            this.Controls.Add(this.sendBox);
             this.Name = "PrivateMessageControl";
             this.Size = new System.Drawing.Size(455, 409);
             this.ResumeLayout(false);
@@ -68,7 +67,7 @@
 
         #endregion
 
-        private SendBox sendBox1;
+        private SendBox sendBox;
         public ChatBox ChatBox { get; set; }
     }
 }
