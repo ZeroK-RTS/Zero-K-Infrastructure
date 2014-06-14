@@ -39,7 +39,7 @@ CC	Cocos (Keeling) Islands
 CF	Central African Republic
 CG	Congo
 CH	Switzerland
-CI	C�te D'ivoire (Ivory Coast)
+CI	Côte D'ivoire (Ivory Coast)
 CK	Cook Iislands
 CL	Chile
 CM	Cameroon
@@ -179,9 +179,8 @@ PT	Portugal
 PW	Palau
 PY	Paraguay
 QA	Qatar
-RE	R�union
+RE	Réunion
 RO	Romania
-RS  Serbia
 RU	Russian Federation
 RW	Rwanda
 SA	Saudi Arabia
@@ -238,6 +237,7 @@ WS	Samoa
 YD	Democratic Yemen (no longer exists)
 YE	Yemen
 YT	Mayotte
+YU	Yugoslavia
 ZA	South Africa
 ZM	Zambia
 ZR	Zaire
