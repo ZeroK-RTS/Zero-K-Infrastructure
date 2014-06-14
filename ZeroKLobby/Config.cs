@@ -65,6 +65,7 @@ namespace ZeroKLobby
 
         [Category("Chat")]
         [DisplayName("Color: Background")]
+        [Description("Background color for chat window and playerlist")]
         [XmlIgnore]
         public Color BgColor {
             get { return Color.FromArgb(BgColorInt); }

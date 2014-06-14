@@ -18,26 +18,50 @@ namespace ZeroKLobby.MicroLobby
 
     public Label Label { get; set; }
     public string UserName { get; set; }
-    public event EventHandler<EventArgs<string>> ChatLine { add { sendBox1.LineEntered += value; } remove { sendBox1.LineEntered -= value; } }
+    public event EventHandler<EventArgs<string>> ChatLine { add { sendBox.LineEntered += value; } remove { sendBox.LineEntered -= value; } }
 
     public PrivateMessageControl(string name)
     {
-      InitializeComponent();
-      ChatBox.Font = Program.Conf.ChatFont;
-      Name = name;
-      UserName = name;
-      ChatBox.MouseUp += autoscrollRichTextBox1_MouseUp;
-      ChatBox.FocusInputRequested += (s, e) => GoToSendBox();
-      HistoryManager.InsertLastLines(UserName, ChatBox);
-      VisibleChanged += PrivateMessageControl_VisibleChanged;
-      Program.TasClient.BattleUserJoined += TasClient_BattleUserJoined;
-      Program.TasClient.UserAdded += TasClient_UserAdded;
-      Program.TasClient.UserRemoved += TasClient_UserRemoved;
+        InitializeComponent();
+        ChatBox.Font = Program.Conf.ChatFont;
+        Name = name;
+        UserName = name;
+        ChatBox.MouseUp += autoscrollRichTextBox1_MouseUp;
+        ChatBox.FocusInputRequested += (s, e) => GoToSendBox();
+        ChatBox.ChatBackgroundColor = TextColor.background; //same as Program.Conf.BgColor but TextWindow.cs need this.
+        ChatBox.IRCForeColor = 14; //mirc grey. Unknown use
 
-      var extras = new BitmapButton();
-      extras.Text = "Extras";
-      extras.Click += (s, e) => { ContextMenus.GetPrivateMessageContextMenu(this).Show(extras, new Point(0, 0)); };
-      ChatBox.Controls.Add(extras);
+        HistoryManager.InsertLastLines(UserName, ChatBox);
+        VisibleChanged += PrivateMessageControl_VisibleChanged;
+        Program.TasClient.BattleUserJoined += TasClient_BattleUserJoined;
+        Program.TasClient.UserAdded += TasClient_UserAdded;
+        Program.TasClient.UserRemoved += TasClient_UserRemoved;
+
+        var extras = new BitmapButton();
+        extras.Text = "Extras";
+        extras.Click += (s, e) => { ContextMenus.GetPrivateMessageContextMenu(this).Show(extras, new Point(0, 0)); };
+        ChatBox.Controls.Add(extras);
+
+        sendBox.CompleteWord += (word) => //autocomplete of username
+        {
+            var w = word.ToLower();
+            string[] nameInArray = new string[1]{name};
+            System.Collections.Generic.IEnumerable<string> firstResult = nameInArray
+                        .Where(x => x.ToLower().StartsWith(w))
+                        .Union(nameInArray.Where(x => x.ToLower().Contains(w)));; 
+            if (true)
+            {
+                ChatControl zkChatArea = Program.MainWindow.navigationControl.ChatTab.GetChannelControl("zk");
+                if (zkChatArea != null)
+                {
+                    System.Collections.Generic.IEnumerable<string> extraResult = zkChatArea.playerBox.GetUserNames()
+                        .Where(x => x.ToLower().StartsWith(w))
+                        .Union(zkChatArea.playerBox.GetUserNames().Where(x => x.ToLower().Contains(w)));
+                    firstResult = firstResult.Concat(extraResult); //Reference: http://stackoverflow.com/questions/590991/merging-two-ienumerablets
+                }
+            }
+            return firstResult;
+        };
     }
 
 
@@ -66,7 +90,7 @@ namespace ZeroKLobby.MicroLobby
 
     public void GoToSendBox()
     {
-      sendBox1.Focus();
+      sendBox.Focus();
     }
 
     public event PropertyChangedEventHandler PropertyChanged = delegate { };
@@ -120,17 +144,32 @@ namespace ZeroKLobby.MicroLobby
       if (me.Button == MouseButtons.Right) ContextMenus.GetPrivateMessageContextMenu(this).Show(this, me.Location);
     }
 
+    //Ctrl+A and Ctrl+Backspace behaviour.
+    //Reference: http://stackoverflow.com/questions/14429445/how-can-i-allow-things-such-as-ctrl-a-and-ctrl-backspace-in-a-c-sharp-textbox
 
-    void sendBox1_KeyPress(object sender, KeyPressEventArgs e)
+    private void sendBox_KeyDown(object sender, KeyEventArgs e)
     {
-      if (e.KeyChar != '\t') return;
-      e.Handled = true;
+        if (e.Control & e.KeyCode == Keys.A)
+        {
+            sendBox.SelectAll();
+        }
+        else if (e.Control & e.KeyCode == Keys.Back)
+        {
+            e.SuppressKeyPress = true;
+            sendBox.CtrlBackspace();
+        }
     }
 
-    void sendBox1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-    {
-      //Prevent cutting line in half when sending
-      if (e.KeyCode == Keys.Return) sendBox1.SelectionStart = sendBox1.Text.Length;
-    }
+    //void sendBox1_KeyPress(object sender, KeyPressEventArgs e) //we can handle TAB character fine
+    //{
+    //  if (e.KeyChar != '\t') return;
+    //  e.Handled = true;
+    //}
+
+    //void sendBox1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e) //Note: we turn off WordWrap so text should no longer be in multiple line
+    //{
+    //  //Prevent cutting line in half when sending
+    //  if (e.KeyCode == Keys.Return) sendBox1.SelectionStart = sendBox1.Text.Length;
+    //}
   }
 }

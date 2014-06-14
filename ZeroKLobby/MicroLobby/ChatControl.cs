@@ -62,9 +62,6 @@ namespace ZeroKLobby.MicroLobby
             playerBox.BackColor = Program.Conf.BgColor;
             playerBox.ForeColor = Program.Conf.TextColor;
 
-            sendBox.BackColor = Program.Conf.BgColor;
-            sendBox.ForeColor = Program.Conf.TextColor;
-
             playerSearchBox.BackColor = Program.Conf.BgColor;
             playerSearchBox.ForeColor = Program.Conf.TextColor;
 
@@ -86,6 +83,8 @@ namespace ZeroKLobby.MicroLobby
             ChatBox.MouseDown += chatBox_MouseDown;
             ChatBox.MouseMove += chatBox_MouseMove;
             ChatBox.FocusInputRequested += (s, e) => GoToSendBox();
+            ChatBox.ChatBackgroundColor = TextColor.background; //same as Program.Conf.BgColor but TextWindow.cs need this.
+            ChatBox.IRCForeColor = 14; //mirc grey. Unknown use
 
             Program.TasClient.ChannelUserAdded += client_ChannelUserAdded;
             Program.TasClient.ChannelUserRemoved += client_ChannelUserRemoved;
@@ -100,7 +99,8 @@ namespace ZeroKLobby.MicroLobby
             Program.TasClient.JoinedChannels.TryGetValue(ChannelName, out channel);
 
             //Topic Box that displays over the channel
-            topicBox.ChatBackgroundColor = 15; //gray
+            topicBox.IRCForeColor = 14; //mirc grey. Unknown use
+            topicBox.ChatBackgroundColor = TextColor.topicBackground;
             topicBox.HorizontalScroll.Enabled = true;
             topicBox.BorderStyle = BorderStyle.FixedSingle;
             topicBox.VerticalScroll.Visible = false;

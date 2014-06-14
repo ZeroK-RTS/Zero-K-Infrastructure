@@ -47,6 +47,9 @@ namespace ZeroKLobby.MicroLobby
                     }
                     prevVis = Visible;
                 };
+
+            textBox.ChatBackgroundColor = TextColor.background; //same as Program.Conf.BgColor but TextWindow.cs need this.
+            textBox.IRCForeColor = 14; //mirc grey. Unknown use
         }
 
         public string PathHead { get { return "server"; } }
