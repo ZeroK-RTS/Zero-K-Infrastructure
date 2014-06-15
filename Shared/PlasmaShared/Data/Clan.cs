@@ -62,7 +62,7 @@ namespace ZkData
 
         public string GetClanChannel()
         {
-            return "clan-" + this.Shortcut;
+            return "clan_" + this.Shortcut;
         }
 	}
 
