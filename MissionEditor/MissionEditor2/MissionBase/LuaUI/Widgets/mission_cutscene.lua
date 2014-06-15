@@ -75,8 +75,8 @@ local function EnterCutscene(instant)
   -- set view settings to remove gameplay-oriented stuff
   lastIconDist = Spring.GetConfigInt("UnitIconDist", 150)
   Spring.SendCommands("disticon " .. 1000)
-  --useEdgeScroll = Spring.GetConfigInt("WindowedEdgeMove", 1)
-  --Spring.SetConfigInt( "WindowedEdgeMove", 0 )
+  useEdgeScroll = Spring.GetConfigInt("WindowedEdgeMove", 1)
+  Spring.SetConfigInt( "WindowedEdgeMove", 0 )
   local drawMode = spGetMapDrawMode()
   if drawMode ~= "normal" then
     local cmd = DRAW_MODE_COMMANDS[drawMode]
@@ -104,7 +104,7 @@ local function RestoreFromCutscene()
     Spring.SendCommands(cmd)
   end
   Spring.SendCommands("disticon " .. lastIconDist)
-  --Spring.SetConfigInt( "WindowedEdgeMove", useEdgeScroll )
+  Spring.SetConfigInt( "WindowedEdgeMove", useEdgeScroll )
   WG.UnhideGUI()
 end
 

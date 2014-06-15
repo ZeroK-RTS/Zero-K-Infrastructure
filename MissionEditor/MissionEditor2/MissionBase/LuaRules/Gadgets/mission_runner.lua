@@ -20,7 +20,7 @@ local callInList = { -- events forwarded to unsynced
 
 VFS.Include("savetable.lua")
 local magic = "--mt\r\n"
-
+local SAVE_FILE = "mission.lua"
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 --
@@ -35,11 +35,10 @@ local mission = VFS.Include("mission.lua")
 local triggers = mission.triggers -- array
 local allTriggers = {unpack(triggers)} -- we'll never remove triggers from here, so the indices will stay correct
 local unitGroups = {} -- key: unitID, value: group set (an array of strings)
-local gaiaTeamID = Spring.GetGaiaTeamID()
 local cheatingWasEnabled = false
 local scores = {}
 local gameStarted = false
-local isInCutscene = false
+local isInCutscene = false  -- currently set but never read
 local events = {} -- key: frame, value: event array
 local counters = {} -- key: name, value: count
 local countdowns = {} -- key: name, value: frame
@@ -48,8 +47,12 @@ local lastFinishedUnits = {} -- key: teamID, value: unitID
 local allowTransfer = false
 local factoryExpectedUnits = {} -- key: factoryID, value: {unitDefID, groups: group set}
 local repeatFactoryGroups = {} -- key: factoryID, value: group set
-local objectives = {}	-- key: ID, value: {title, description, color, target}	-- important: widget must be able to access on demand
+local objectives = {}	-- [index] = {id, title, description, color, target}	-- important: widget must be able to access on demand
 local wantUpdateDisabledUnits = false
+
+_G.displayedCountdowns = displayedCountdowns
+_G.factoryExpectedUnits = factoryExpectedUnits
+_G.repeatFactoryGroups = repeatFactoryGroups
 
 GG.mission = {
   scores = scores,
@@ -57,11 +60,18 @@ GG.mission = {
   countdowns = countdowns,
   unitGroups = unitGroups,
   triggers = triggers,
+  allTriggers = allTriggers,
+  objectives = objectives,
+  cheatingWasEnabled = cheatingWasEnabled,
+  allowTransfer = allowTransfer,
 }
+_G.mission = GG.mission
 
 for _, counter in ipairs(mission.counters) do
   counters[counter] = 0
 end
+
+local shiftOptsTable = {"shift"}
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -494,6 +504,7 @@ local actionsTable = {
         end,
   AllowUnitTransfersAction = function(action)
           allowTransfer = true
+          GG.mission.allowTransfer = true
         end,
   TransferUnitsAction = function(action)
           for unitID in pairs(FindUnitsInGroup(action.args.group)) do
@@ -801,12 +812,37 @@ local actionsTable = {
               local x, y, z = order.args[1], order.args[2], order.args[3]
               if y == 0 then y = Spring.GetGroundHeight(x, z) end
               local options
-              if i == 1 then
-                options = {}
+              if i == 1 and (not action.args.queue) then
+                options = 0
               else
-                options = {"shift"}
+                options = shiftOptsTable
               end
               Spring.GiveOrderToUnit(unitID, CMD[order.orderType], {x, y, z}, options)
+            end
+          end
+        end,
+  GiveTargetedOrdersAction = function(action, createdUnits)
+          local orderedUnits
+          if not next(action.args.groups) then
+            orderedUnits = createdUnits
+          else
+            orderedUnits = FindUnitsInGroups(action.args.groups)
+          end
+          for unitID in pairs(orderedUnits) do
+            for i, order in ipairs(action.args.orders) do
+              local targets = FindUnitsInGroups(action.args.targetGroups)
+              local target
+              for unitID in pairs(targets) do
+                target = unitID
+                break
+              end
+              local options
+              if i == 1 and (not action.args.queue) then
+                options = 0
+              else
+                options = shiftOptsTable
+              end
+              Spring.GiveOrderToUnit(unitID, CMD[order.orderType], {target}, options)
             end
           end
         end,
@@ -873,7 +909,21 @@ local actionsTable = {
               break
             end
           end
-        end
+        end,
+  AddObjectiveAction = function(action)
+          objectives[#objectives+1] = {id = action.args.id, title = action.args.title, description = action.args.description}
+        end,
+  ModifyObjectiveAction = function(action)
+          for i=1,#objectives do
+            local obj = objectives[i]
+            if obj.id == action.args.id then
+              obj.title = action.args.title or obj.title
+              obj.description = action.args.description or obj.description
+              obj.status = action.args.status or obj.status
+              break
+            end
+          end
+        end,
 }
 
 local unsyncedActions = {
@@ -929,13 +979,7 @@ ExecuteTrigger = function(trigger, frame)
           SendToUnsynced"MissionEvent"
           _G.missionEventArgs = nil
         end
-	if action.logicType == "AddObjectiveAction" then
-	  objectives[action.args.id] = {title = action.args.title, description = action.args.description}
-	elseif action.logicType == "ModifyObjectiveAction" then
-	  if objectives[action.args.id] then
-            -- TBD
-	  end
-        elseif action.logicType == "EnterCutsceneAction" then
+	if action.logicType == "EnterCutsceneAction" then
           isInCutscene = true
         elseif action.logicType == "LeaveCutsceneAction" then
           isInCutscene = false
@@ -1053,14 +1097,6 @@ end
 function gadget:GameFrame(n)
 
   if not gameStarted then
-    -- start with a clean slate
-    --[[
-    for _, unitID in ipairs(Spring.GetAllUnits()) do
-      if Spring.GetUnitTeam(unitID) ~= gaiaTeamID then
-        Spring.DestroyUnit(unitID, false, true)
-      end
-    end
-    ]]
     for _, trigger in ipairs(triggers) do
       for _, condition in ipairs(trigger.logic) do
         if condition.logicType == "GameStartedCondition" then
@@ -1153,6 +1189,7 @@ function gadget:GameFrame(n)
   if Spring.IsCheatingEnabled() then
     if not cheatingWasEnabled then
       cheatingWasEnabled = true
+      GG.mission.cheatingWasEnabled = true
       Spring.Echo "The score will not be saved."
     end
   end
@@ -1421,6 +1458,34 @@ function gadget:UnitEnteredLos(unitID, unitTeam, allyTeam, unitDefID)
 end
 ]]--
 
+function gadget:Load(zip)
+  if not GG.SaveLoad then
+    Spring.Log(gadget:GetInfo().name, LOG.WARNING, "Save/Load API not found")
+    return
+  end
+  
+  local data = GG.SaveLoad.ReadFile(zip, "Mission Runner", SAVE_FILE)
+  if data then
+    scores = data.scores
+    counters = data.counters
+    countdowns = data.countdowns
+    displayedCountdowns = data.displayedCountdowns
+    unitGroups = data.unitGroups
+    repeatFactoryGroups = data.repeatFactoryGroups
+    factoryExpectedUnits = data.factoryExpectedUnits
+    triggers = data.triggers
+    allTriggers = data.triggers
+    objectives = data.objectives
+    cheatingWasEnabled = data.cheatingWasEnabled
+    allowTransfer = data.allowTransfer
+    GG.mission.cheatingWasEnabled = cheatingWasEnabled
+    GG.mission.allowTransfer = allowTransfer
+    gameStarted = true 
+  end
+  
+  SendToUnsynced("SendMissionObjectives")
+end
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 -- 
@@ -1429,9 +1494,22 @@ end
 else
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+-- need this because SYNCED.tables are merely proxies, not real tables
+local function MakeRealTable(proxy)
+  local proxyLocal = proxy
+  local ret = {}
+  for i,v in spairs(proxyLocal) do
+    if type(v) == "table" then
+      ret[i] = MakeRealTable(v)
+    else
+      ret[i] = v
+    end
+  end
+  return ret
+end
 
 function WrapToLuaUI()
-  if Script.LuaUI"MissionEvent" then
+  if Script.LuaUI("MissionEvent") then
     local missionEventArgs = {}
     local missionEventArgsSynced = SYNCED.missionEventArgs
     for k, v in spairs(missionEventArgsSynced) do
@@ -1509,6 +1587,13 @@ function ScoreEvent()
   end
 end
 
+function SendMissionObjectives()
+  if Script.LuaUI("MissionObjectivesFromSynced") then
+    local objectives = MakeRealTable(SYNCED.mission.objectives)
+    Script.LuaUI.MissionObjectivesFromSynced(objectives)
+  end
+end
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
@@ -1516,12 +1601,33 @@ function gadget:Initialize()
   gadgetHandler:AddSyncAction('MissionEvent', WrapToLuaUI)
   gadgetHandler:AddSyncAction('GhostEvent', GhostEvent)
   gadgetHandler:AddSyncAction('ScoreEvent', ScoreEvent)
+  gadgetHandler:AddSyncAction('SendMissionObjectives', SendMissionObjectives)
   for _,callIn in pairs(callInList) do
-      local fun = gadget[callIn]
-      gadgetHandler:AddSyncAction(callIn, fun)
+    local fun = gadget[callIn]
+    gadgetHandler:AddSyncAction(callIn, fun)
   end
 end
 
+function gadget:Shutdown()
+  gadgetHandler:RemoveSyncAction('MissionEvent')
+  gadgetHandler:RemoveSyncAction('GhostEvent')
+  gadgetHandler:RemoveSyncAction('ScoreEvent')
+  gadgetHandler:RemoveSyncAction('SendMissionObjectives')
+end
+
+function gadget:Save(zip)
+  if not GG.SaveLoad then
+    Spring.Log(gadget:GetInfo().name, LOG.WARNING, "Save/Load API not found")
+    return
+  end
+  
+  local toSave = MakeRealTable(SYNCED.mission)
+  toSave.displayedCountdowns = MakeRealTable(SYNCED.displayedCountdowns)
+  toSave.factoryExpectedUnits = MakeRealTable(SYNCED.factoryExpectedUnits)
+  toSave.repeatFactoryGroups = MakeRealTable(SYNCED.repeatFactoryGroups)  
+  
+  GG.SaveLoad.WriteSaveData(zip, SAVE_FILE, toSave)
+end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 end

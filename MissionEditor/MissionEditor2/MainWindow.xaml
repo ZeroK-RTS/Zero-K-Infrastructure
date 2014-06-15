@@ -510,7 +510,7 @@
             <ad:ResizingPanel>
                 <ad:DockablePane ad:ResizingPanel.ResizeWidth="200">
                     <ad:DockableContent IsCloseable="False" Title="Triggers" DockableStyle="Dockable">
-                        <TreeView x:Name="logicGrid" DockPanel.Dock="Left" ItemsSource="{Binding Mission.Items}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <TreeView x:Name="logicGrid" DockPanel.Dock="Left" ItemsSource="{Binding Mission.Items}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AllowDrop="True"  Drop="logicGrid_Drop" PreviewMouseLeftButtonDown="logicGrid_PreviewMouseLeftButtonDown" PreviewMouseMove="logicGrid_PreviewMouseMove" MouseUp="logicGrid_MouseUp">
                             <TreeView.Style>
                                 <Style>
                                     <Style.Resources>
@@ -528,9 +528,7 @@
                                 <local:TriggerConverter x:Key="triggerConverter" />
                                 <HierarchicalDataTemplate ItemsSource="{Binding Converter={StaticResource triggerConverter}}" DataType="{x:Type CMissionLib:Trigger}">
                                     <Border Background="SteelBlue" Margin="3,5,-5,3" CornerRadius="5" Padding="3,3,7,3" Loaded="trigger_Loaded" Width="1000">
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" />
-                                        </StackPanel>
+                                        <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" />
                                     </Border>
                                 </HierarchicalDataTemplate>
                                 <HierarchicalDataTemplate DataType="{x:Type local:ActionsFolder}" ItemsSource="{Binding Path=Items}">

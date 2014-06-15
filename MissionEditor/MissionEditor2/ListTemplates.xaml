@@ -93,6 +93,10 @@
             <local:GiveOrdersPane />
         </DataTemplate>
 
+        <DataTemplate x:Key="GiveTargetedOrdersAction">
+            <local:GiveTargetedOrdersActionControl />
+        </DataTemplate>
+        
         <DataTemplate x:Key="CreateUnitsAction">
             <local:CreateUnitsPane />
         </DataTemplate>

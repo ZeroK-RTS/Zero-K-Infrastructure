@@ -3,7 +3,7 @@
 namespace CMissionLib
 {
 	[DataContract]
-	public class AttackOrder : OrderTypeIconMap, IOrder
+	public class AttackOrder : OrderTypeIconUnitMap, IOrder
 	{
 		public override string Name
 		{

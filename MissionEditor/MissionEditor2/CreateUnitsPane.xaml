@@ -64,13 +64,20 @@
                     <ad:DockableContent Title="Help">
                         <ScrollViewer Background="White">
                             <TextBlock TextWrapping="WrapWithOverflow">
-                    Add units by clicking on the map. You can drag units around by grabbing their border. 
-                    <LineBreak /> 
-                    <LineBreak /> 
-                    Rotate units by dragging the top part of their border.
-                    <LineBreak /> 
-                    <LineBreak /> 
-                    Remove units by switching to the unit list tab, selecting the unit and pressing the delete key. Or, right-click on the unit in the map.
+                                Add units by clicking on the map. You can drag units around by grabbing their border. 
+                                <LineBreak /> 
+                                <LineBreak /> 
+                                Rotate units by dragging the top part of their border.
+                                <LineBreak /> 
+                                <LineBreak /> 
+                                Remove units by switching to the unit list tab, selecting the unit and pressing the delete key. Or, right-click on the unit in the map.
+                                <LineBreak /> 
+                                <LineBreak /> 
+                                Shift-click units to toggle selection (multiple units can be selected). Hold down Alt to drag a box. 
+                                Setting a group, moving and deleting apply to all selected units, unless performed on a non-selected unit.
+                                <LineBreak /> 
+                                <LineBreak /> 
+                                Right-click a unit for more options.
                             </TextBlock>
                         </ScrollViewer>
                     </ad:DockableContent>

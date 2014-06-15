@@ -7,16 +7,17 @@ using System.Runtime.Serialization;
 namespace CMissionLib.Actions
 {
 	[DataContract]
-	public class GiveOrdersAction : Action
+	public class GiveTargetedOrdersAction : Action
 	{
 		ObservableCollection<string> groups = new ObservableCollection<string>();
+        ObservableCollection<string> targetGroups = new ObservableCollection<string>();
 		ObservableCollection<IOrder> orders;
         bool queue = false;
 
-		public GiveOrdersAction()
+		public GiveTargetedOrdersAction()
 			: this(new ObservableCollection<IOrder>()) {}
 
-		public GiveOrdersAction(IEnumerable<IOrder> orders)
+		public GiveTargetedOrdersAction(IEnumerable<IOrder> orders)
 		{
 			this.orders = new ObservableCollection<IOrder>(orders);
 		}
@@ -44,6 +45,17 @@ namespace CMissionLib.Actions
 		}
 
         [DataMember]
+        public ObservableCollection<string> TargetGroups
+        {
+            get { return targetGroups; }
+            set
+            {
+                targetGroups = value;
+                RaisePropertyChanged("TargetGroups");
+            }
+        }
+
+        [DataMember]
         public bool Queue
         {
             get { return queue; }
@@ -60,6 +72,7 @@ namespace CMissionLib.Actions
 				{
 					{"orders", LuaTable.CreateArray(orders.Select(o => o.GetLuaMap(mission)).ToArray())},
 					{"groups", LuaTable.CreateSet(groups)},
+                    {"targetGroups", targetGroups},
                     {"queue", queue}
 				};
 			return new LuaTable(map);
@@ -67,7 +80,7 @@ namespace CMissionLib.Actions
 
 		public override string GetDefaultName()
 		{
-			return "Give Orders";
+			return "Give Targeted Orders";
 		}
 	}
 }

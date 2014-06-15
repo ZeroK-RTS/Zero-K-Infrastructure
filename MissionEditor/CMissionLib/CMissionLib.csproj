@@ -73,6 +73,7 @@
   <ItemGroup>
     <Compile Include="Action.cs" />
     <Compile Include="Actions\GUI\BeautyShotAction.cs" />
+    <Compile Include="Actions\Logic\GiveTargetedOrdersAction.cs" />
     <Compile Include="Actions\Logic\MakeUnitsNeutralAction.cs" />
     <Compile Include="Actions\MusicLoopAction.cs" />
     <Compile Include="Actions\Logic\AllowUnitTransfersAction.cs" />
@@ -162,6 +163,10 @@
     <Compile Include="Conditions\UnitCreatedCondition.cs" />
     <Compile Include="MyCol.cs" />
     <Compile Include="Orders\AttackOrder.cs" />
+    <Compile Include="Orders\OrderTypeIconUnitMap.cs" />
+    <Compile Include="Orders\MoveStateOrder.cs" />
+    <Compile Include="Orders\FireStateOrder.cs" />
+    <Compile Include="Orders\OrderTypeIconUnit.cs" />
     <Compile Include="Orders\FightOrder.cs" />
     <Compile Include="Orders\MoveOrder.cs" />
     <Compile Include="Orders\OrderTypeIcon.cs" />

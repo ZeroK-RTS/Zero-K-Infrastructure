@@ -19,6 +19,8 @@ using Action = CMissionLib.Action;
 using Condition = CMissionLib.Condition;
 using Trigger = CMissionLib.Trigger;
 using System.Reflection;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace MissionEditor2
 {
@@ -37,11 +39,16 @@ namespace MissionEditor2
 		public static MainWindow Instance { get; private set; }
 
 		public TreeView LogicGrid { get { return logicGrid; } }
+        public System.Windows.Forms.TreeView LogicGrid2;
 
 		public Mission Mission { get { return (Mission)GetValue(MissionProperty); } set { SetValue(MissionProperty, value); } }
 		public string SavePath { get; set; }
 
-        public DispatcherTimer autosaveTimer;
+        DispatcherTimer autosaveTimer;
+
+        object draggedItem;
+        Point dragStartPoint;
+        bool isDragging;
 
 		static MainWindow()
 		{
@@ -57,6 +64,10 @@ namespace MissionEditor2
             this.autosaveTimer = new DispatcherTimer();
             autosaveTimer.Tick += new EventHandler(autosaveTimer_Tick);
             autosaveTimer.Interval = new TimeSpan(0, 5, 0);
+
+            draggedItem = null;
+            isDragging = false;
+            dragStartPoint = new Point();
 		}
 
 		public void QuickSave()
@@ -178,6 +189,7 @@ namespace MissionEditor2
             addAction("Execute Triggers", () => new ExecuteTriggersAction(), "Logic");
             addAction("Execute Random Trigger", () => new ExecuteRandomTriggerAction(), "Logic");
             addAction("Give Orders", () => new GiveOrdersAction(), "Logic");
+            //addAction("Give Targeted Orders", () => new GiveTargetedOrdersAction(), "Logic");
             addAction("Give Factory Orders", () => new GiveFactoryOrdersAction(), "Logic");
             addAction("Lock Units", () => new LockUnitsAction(), "Logic");
             addAction("Unlock Units", () => new UnlockUnitsAction(), "Logic");
@@ -714,9 +726,6 @@ namespace MissionEditor2
 			border.ContextMenu = menu;
 		}
 
-
-
-
 		void CollapseAllButThisTrigger(Trigger thisTrigger)
 		{
 			foreach (var trigger in Mission.Triggers)
@@ -863,8 +872,353 @@ namespace MissionEditor2
 			menu.AddAction("Rename", () => RenameRegion(region));
 			menu.AddAction("Delete", () => DeleteRegion(region));
 			border.ContextMenu = menu;
-
 		}
+
+        private bool GetVisualAbovePoint(Visual parent, Point pt, ref Visual last)
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                // Retrieve child visual at specified index value.
+                Visual childVisual = (Visual)VisualTreeHelper.GetChild(parent, i);
+                if (childVisual is Border)
+                {
+                    // Do processing of the child visual object.
+                    //int midY = (int)(((Border)childVisual).Height / 2);
+                    Point childScreenPos = childVisual.PointToScreen(new Point(0, 0));
+                    Point childPosInGrid = logicGrid.PointFromScreen(childScreenPos);
+                    if (childPosInGrid.Y > pt.Y)
+                    {
+                        return true;
+                    }
+                    last = childVisual;
+                }
+                // Enumerate children of the child visual object.
+                bool success = GetVisualAbovePoint(childVisual, pt, ref last);
+                if (success) return true;
+            }
+            return false;
+        }
+
+        // implements drag and drop
+        // goddamn WPF
+        private void logicGrid_Drop(object sender, DragEventArgs e)
+        {
+            if (!isDragging || draggedItem == null) return;
+            Point pt = e.GetPosition(logicGrid);
+            Visual above = null;
+            bool success = GetVisualAbovePoint(logicGrid, pt, ref above);
+            bool handled = false;
+
+            if (above == null)
+            {
+                if (draggedItem is Trigger)
+                {
+                    var myIndex = Mission.Triggers.IndexOf((Trigger)draggedItem);
+                    Mission.Triggers.Move(myIndex, 0);
+                    handled = true;
+                }
+                else if (draggedItem is Region)
+                {
+                    var myIndex = Mission.Regions.IndexOf((Region)draggedItem);
+                    Mission.Regions.Move(myIndex, 0);
+                    handled = true;
+                }
+            }
+            else
+            {
+                Border border = (Border)above;
+                object item = border.DataContext;
+                if (draggedItem == item)
+                {
+                    // do nothing
+                }
+                else if (draggedItem is Trigger)
+                {
+                    var myIndex = Mission.Triggers.IndexOf((Trigger)draggedItem);
+
+                    Trigger targetTrigger = null;
+                    if (item is Trigger)
+                    {
+                        targetTrigger = (Trigger)item;
+                    }
+                    else if (item is ActionsFolder)
+                    {
+                        targetTrigger = ((ActionsFolder)item).Trigger;
+                    }
+                    else if (item is ConditionsFolder)
+                    {
+                        targetTrigger = ((ConditionsFolder)item).Trigger;
+                    }
+                    else if (item is TriggerLogic)
+                    {
+                        targetTrigger = Mission.FindLogicOwner((TriggerLogic)item);
+                    }
+
+                    if (targetTrigger == null)
+                    {
+                        var newIndex = (item is Region) ? Mission.Triggers.Count - 1 : 0;
+                        Mission.Triggers.Move(myIndex, newIndex);
+                        handled = true;
+                    }
+                    else
+                    {
+                        var newIndex = Mission.Triggers.IndexOf(targetTrigger);
+                        if(newIndex != myIndex) Mission.Triggers.Move(myIndex, newIndex);
+                        handled = true;
+                    }
+                }
+                else if (draggedItem is TriggerLogic)
+                {
+                    var myTrigger = Mission.FindLogicOwner((TriggerLogic)draggedItem);
+                    var myIndex = myTrigger.Logic.IndexOf((TriggerLogic)draggedItem);
+
+                    object hit = logicGrid.InputHitTest(pt);
+                    Border hitBorder = null;
+                    if (hit is Border) hitBorder = (Border)hit;
+                    else if (hit is TextBlock) hitBorder = (Border)((TextBlock)hit).Parent;
+                    bool directDropIntoBin = (hitBorder != null) && (item == hitBorder.DataContext);
+
+                    Trigger targetTrigger = null;
+                    int newIndex = 0;
+
+                    if (item is Trigger)
+                    {
+                        targetTrigger = (Trigger)item;
+                        newIndex = targetTrigger.Logic.Count - 1;
+                    }
+                    else if (item is ActionsFolder && draggedItem is Action)
+                    {
+                        targetTrigger = ((ActionsFolder)item).Trigger;
+                    }
+                    else if (item is ConditionsFolder && draggedItem is Condition)
+                    {
+                        targetTrigger = ((ConditionsFolder)item).Trigger;
+                    }
+                    else if (item is Action && draggedItem is Action)
+                    {
+                        targetTrigger = Mission.FindLogicOwner((TriggerLogic)item);
+                        newIndex = targetTrigger.Logic.IndexOf((Action)item);
+                    }
+                    else if (item is Condition && draggedItem is Condition)
+                    {
+                        targetTrigger = Mission.FindLogicOwner((TriggerLogic)item);
+                        newIndex = targetTrigger.Logic.IndexOf((Condition)item);
+                    }
+
+                    if (targetTrigger == null)
+                    {
+                        // do nothing
+                    }
+                    else if (targetTrigger != myTrigger)
+                    {
+                        targetTrigger.Logic.Add((TriggerLogic)draggedItem);
+                        if(!directDropIntoBin) targetTrigger.Logic.Move(targetTrigger.Logic.Count - 1, newIndex);
+                        myTrigger.Logic.Remove((TriggerLogic)draggedItem);
+                        handled = true;
+                    }
+                    else if (newIndex != myIndex)
+                    {
+                        targetTrigger.Logic.Move(myIndex, newIndex);
+                        handled = true;
+                    }
+                }
+                else if (draggedItem is Region)
+                {
+                    var myIndex = Mission.Regions.IndexOf((Region)draggedItem);
+                    Region targetRegion = null;
+                    if (item is Region)
+                    {
+                        targetRegion = (Region)item;
+                    }
+
+                    if (targetRegion == null)
+                    {
+                        Mission.Regions.Move(myIndex, 0);
+                        handled = true;
+                    }
+                    else
+                    {
+                        var newIndex = Mission.Regions.IndexOf(targetRegion);
+                        if (newIndex != myIndex) Mission.Regions.Move(myIndex, newIndex);
+                        handled = true;
+                    }
+                }
+            }
+            e.Handled = handled;
+            draggedItem = null;
+            isDragging = false;
+        }
+
+        private void logicGrid_MouseUp(object sender, MouseEventArgs e)
+        {
+            draggedItem = null;
+            isDragging = false;
+        }
+
+        private void logicGrid_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed && !isDragging && draggedItem != null)
+            {
+                Point position = e.GetPosition(logicGrid);
+                if (Math.Abs(position.Y - dragStartPoint.Y) > SystemParameters.MinimumVerticalDragDistance || 
+                    Math.Abs(position.X - dragStartPoint.X) > SystemParameters.MinimumHorizontalDragDistance)
+                {
+                    isDragging = true;
+                    DragDrop.DoDragDrop(logicGrid, draggedItem, DragDropEffects.Move);
+                }
+            }  
+        }
+        
+        private void logicGrid_PreviewMouseLeftButtonDown(object sender, MouseEventArgs e)
+        {
+            Point pt = e.GetPosition(logicGrid);
+            object hit = logicGrid.InputHitTest(pt);
+            Border hitBorder = null;
+            if (hit is Border) hitBorder = (Border)hit;
+            else if (hit is TextBlock) hitBorder = (Border)((TextBlock)hit).Parent;
+            else return;
+
+            isDragging = false;
+            draggedItem = hitBorder.DataContext;
+            dragStartPoint = pt;
+        }
+
+        // manual drag and drop implementation - ugh
+        /*
+        private void triggerItem_Drop(object sender, DragEventArgs e)
+        {
+            if (draggedItem == null) return;
+
+            bool handled = false;
+            bool toEnd = true;
+            Point pt = e.GetPosition(logicGrid);
+            object hit = logicGrid.InputHitTest(pt);
+            Border border;
+            if (hit is Border) border = (Border)e.Source;
+            else if (hit is TextBlock) border = (Border)((TextBlock)e.Source).Parent;
+            // dropped on to the grid; if this is a trigger or region, move to the end of its list
+            else if (hit == logicGrid)
+            {
+                if (draggedItem is Trigger)
+                {
+                    var myIndex = Mission.Triggers.IndexOf((Trigger)draggedItem);
+                    Mission.Triggers.Move(myIndex, Mission.Triggers.Count);
+                    handled = true;
+                }
+                draggedItem = null;
+                return;
+            }
+            else
+            {
+                MessageBox.Show(string.Format("{0}, {1}", hit.ToString(), hit.GetType()));  //debug
+                draggedItem = null;
+                return;
+            }
+
+            object hitDataContext = border.DataContext;
+
+            if (draggedItem is Trigger)
+            {
+                var myIndex = Mission.Triggers.IndexOf((Trigger)draggedItem);
+
+                foreach (object item in logicGrid.Items)
+                {
+                    if (item == hitDataContext)
+                    {
+                        toEnd = false;
+
+                        Trigger target = (Trigger)draggedItem;
+                        if (item is Trigger)
+                        {
+                            target = (Trigger)item;
+                        }
+                        else if (item is ActionsFolder)
+                        {
+                            target = ((ActionsFolder)item).Trigger;
+                        }
+                        else if (item is ConditionsFolder)
+                        {
+                            target = ((ConditionsFolder)item).Trigger;
+                        }
+                        else if (item is TriggerLogic)
+                        {
+                            target = Mission.FindLogicOwner((TriggerLogic)item);
+                        }
+                        if (target != draggedItem)
+                        {
+                            var newIndex = Mission.Triggers.IndexOf(target);
+                            Mission.Triggers.Move(myIndex, newIndex);
+                            handled = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (!handled)
+                {
+                    //Mission.Triggers.Move(myIndex, Mission.Triggers.Count - 1);
+                    //handled = true;
+                }
+            }
+            else if (draggedItem is TriggerLogic)
+            {
+                var myTrigger = Mission.FindLogicOwner((TriggerLogic)draggedItem);
+                var myIndex = myTrigger.Logic.IndexOf((TriggerLogic)draggedItem);
+
+                foreach (object item in logicGrid.Items)
+                {
+                    if (item == hitDataContext)
+                    {
+                        Trigger targetTrigger = (Trigger)item;
+                        int newIndex = myIndex;
+
+                        if (item is Trigger)
+                        {
+                            targetTrigger = (Trigger)item;
+                        }
+                        else if (item is ActionsFolder && draggedItem is Action)
+                        {
+                            targetTrigger = ((ActionsFolder)item).Trigger;
+                        }
+                        else if (item is ConditionsFolder && draggedItem is Condition)
+                        {
+                            targetTrigger = ((ConditionsFolder)item).Trigger;
+                        }
+                        else if (item is Action && draggedItem is Action)
+                        {
+                            targetTrigger = Mission.FindLogicOwner((TriggerLogic)item);
+                            newIndex = targetTrigger.Logic.IndexOf((Action)item);
+                            toEnd = false;
+                        }
+                        else if (item is Condition && draggedItem is Condition)
+                        {
+                            targetTrigger = Mission.FindLogicOwner((TriggerLogic)item);
+                            newIndex = targetTrigger.Logic.IndexOf((Condition)item);
+                            toEnd = false;
+                        }
+
+                        //MessageBox.Show(string.Format("{0}, {1}, {2}", targetTrigger == myTrigger, myIndex, newIndex));  //debug
+                        if (targetTrigger != myTrigger)
+                        {
+                            if (toEnd) targetTrigger.Logic.Add((TriggerLogic)draggedItem);
+                            else targetTrigger.Logic.Insert(newIndex, (TriggerLogic)draggedItem);
+                            myTrigger.Logic.Remove((TriggerLogic)draggedItem);
+                            handled = true;
+                            break;
+                        }
+                        else if(newIndex != myIndex)
+                        {
+                            targetTrigger.Logic.Move(myIndex, newIndex);
+                            handled = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            e.Handled = handled;
+            if (handled) Mission.RaisePropertyChanged("AllLogic");
+            draggedItem = null;
+        }*/
 
 		void DeleteRegion(Region region)
 		{

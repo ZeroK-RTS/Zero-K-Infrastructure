@@ -95,6 +95,24 @@ namespace MissionEditor2
 				case "Attack":
 					newOrder = new AttackOrder(position.X, position.Y);
 					break;
+                case "Hold Position":
+                    newOrder = new MoveStateOrder(0);
+                    break;
+                case "Maneuver":
+                    newOrder = new MoveStateOrder(1);
+                    break;
+                case "Roam":
+                    newOrder = new MoveStateOrder(2);
+                    break;
+                case "Hold Fire":
+                    newOrder = new FireStateOrder(0);
+                    break;
+                case "Return Fire":
+                    newOrder = new FireStateOrder(1);
+                    break;
+                case "Fire At Will":
+                    newOrder = new FireStateOrder(2);
+                    break;
 				case "Enable Repeat Mode":
 					newOrder = new RepeatOrder(1);
 					break;

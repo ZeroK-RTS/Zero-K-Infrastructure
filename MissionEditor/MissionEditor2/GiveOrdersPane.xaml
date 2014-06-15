@@ -34,32 +34,39 @@
                         <ad:DockableContent Title="Help">
                             <ScrollViewer Background="White">
                                 <TextBlock TextWrapping="WrapWithOverflow">
-                    The orders are given to units that are are part of one of the selected groups. If no group is selected, all units created in this trigger so far are given the orders.
-                    <LineBreak />
-                    Delete orders by selecting them in the orders list and pressing the delete key.
-                    <LineBreak />
-                    If you want to give different sets of orders to different units, create more Give Orders actions.
-                    <LineBreak />
-                    You can add units to groups by editing the group column of the unit list in the Create Units display or by right-clicking on the unit icons.
-                    <LineBreak />
-                    Separate multiple groups with commas and no spaces.
+                                    The orders are given to units that are are part of one of the selected groups. If no group is selected, all units created in this trigger so far are given the orders.
+                                    <LineBreak />
+                                    <LineBreak />
+                                    Delete orders by selecting them in the orders list and pressing the delete key, or right-clicking the order icon in the map.
+                                    <LineBreak />
+                                    <LineBreak />
+                                    If you want to give different sets of orders to different units, create more Give Orders actions.
                                 </TextBlock>
                             </ScrollViewer>
                         </ad:DockableContent>
 
                         <ad:DockableContent Title="Order Type">
-                            <ListBox x:Name="orderTypeListBox" Tag="orderTypeListBox" IsSynchronizedWithCurrentItem="True">
-                                <ListBoxItem IsSelected="True">Move</ListBoxItem>
-                                <ListBoxItem>Patrol</ListBoxItem>
-                                <ListBoxItem>Stop</ListBoxItem>
-                                <ListBoxItem>Fight</ListBoxItem>
-                                <ListBoxItem>Attack</ListBoxItem>
-                                <ListBoxItem>Enable Repeat Mode</ListBoxItem>
-                                <ListBoxItem>Disable Repeat Mode</ListBoxItem>
-                            </ListBox>
+                            <DockPanel>
+                                <CheckBox DockPanel.Dock="Bottom" IsChecked="{Binding Queue}" Height="24">Queued</CheckBox>
+                                <ListBox x:Name="orderTypeListBox" Tag="orderTypeListBox" IsSynchronizedWithCurrentItem="True">
+                                    <ListBoxItem IsSelected="True">Move</ListBoxItem>
+                                    <ListBoxItem>Patrol</ListBoxItem>
+                                    <ListBoxItem>Stop</ListBoxItem>
+                                    <ListBoxItem>Fight</ListBoxItem>
+                                    <ListBoxItem>Attack</ListBoxItem>
+                                    <ListBoxItem>Hold Position</ListBoxItem>
+                                    <ListBoxItem>Maneuver</ListBoxItem>
+                                    <ListBoxItem>Roam</ListBoxItem>
+                                    <ListBoxItem>Hold Fire</ListBoxItem>
+                                    <ListBoxItem>Return Fire</ListBoxItem>
+                                    <ListBoxItem>Fire At Will</ListBoxItem>
+                                    <ListBoxItem>Enable Repeat Mode</ListBoxItem>
+                                    <ListBoxItem>Disable Repeat Mode</ListBoxItem>
+                                </ListBox>
+                            </DockPanel>
                         </ad:DockableContent>
                     </ad:DockablePane>
-                    <ad:ResizingPanel>
+                    <ad:ResizingPanel Margin="0,0,0,-10">
                         <ad:DockablePane ad:ResizingPanel.ResizeHeight="139">
                             <ad:DockableContent Title="Groups">
                                 <ListBox ItemsSource="{Binding Mission.AllGroups, ElementName=window}" SelectionMode="Multiple" Loaded="OrderGroupsListLoaded" />
@@ -81,6 +88,7 @@
                 </local:ZoomControl>
             </ad:ResizingPanel>
         </ad:DockingManager>
+        
 
     </Grid>
 </UserControl>
