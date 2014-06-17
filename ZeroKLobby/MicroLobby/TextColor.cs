@@ -11,6 +11,7 @@ namespace ZeroKLobby.MicroLobby
         public const int background = ircColorOffset + 0;
         public const char boldChar = (char)2; // not implemented
         public const char ColorChar = (char)3; //&#x3 or \x003
+        public const char ColorResetChar = 'F';
         public const int date = ircColorOffset + 3;
         public const int emote = ircColorOffset + 4;
         public const int error = ircColorOffset + 5;
@@ -48,9 +49,9 @@ namespace ZeroKLobby.MicroLobby
         public static readonly string Topic = ColorChar + topic.ToString("00");
         public static readonly string TopicBackground = ColorChar + topicBackground.ToString("00");
         public static readonly string Username = ColorChar + username.ToString("00");
-        static Regex allCodesExceptEmot = new Regex("\xFF03[0-9]{4}|\xFF0B|\xFF0C|\x3\\d{2},\\d{2}|\x3\\d{2}|\x3");
-        static Regex allCodes = new Regex("\xFF03[0-9]{4}|\xFF0B|\xFF0C|\x3\\d{2},\\d{2}|\x3\\d{2}|\x3|\xFF0A\\d{3}|\xFF0A");
-        static Regex codes = new Regex("\xFF03[0-9]{4}|\x3\\d{2},\\d{2}|\x3\\d{2}|\x3");
+        static Regex allCodesExceptEmot = new Regex("\xFF03[0-9]{4}|\xFF0B|\xFF0C|\x3\\d{2},\\d{2}|\x3\\d{2}|\x3|\xF");
+        static Regex allCodes = new Regex("\xFF03[0-9]{4}|\xFF0B|\xFF0C|\x3\\d{2},\\d{2}|\x3\\d{2}|\x3|\xF|\xFF0A\\d{3}|\xFF0A");
+        static Regex codes = new Regex("\xFF03[0-9]{4}|\x3\\d{2},\\d{2}|\x3\\d{2}|\x3|\xF");
         static Color[] colors;
         public const int colorRange = 16 + ircColorOffset;
 

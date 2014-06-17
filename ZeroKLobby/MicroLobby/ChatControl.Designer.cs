@@ -138,7 +138,6 @@ namespace ZeroKLobby.MicroLobby
             this.sendBox.Name = "sendBox";
             this.sendBox.Size = new System.Drawing.Size(800, 20);
             this.sendBox.TabIndex = 0;
-            this.sendBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.sendBox_KeyDown);
             // 
             // topicPanel
             // 
@@ -259,12 +258,12 @@ namespace ZeroKLobby.MicroLobby
         public PlayerListBox playerBox;
         private Panel searchBarContainer;
         private TextBox playerSearchBox;
-        private SendBox sendBox;
         private Panel topicPanel;
         private BitmapButton hideButton;
         private ChatBox topicBox;
         public ChatBox ChatBox;
         private ZkSplitContainer splitContainer1;
+        public SendBox sendBox;
 
 
     }

@@ -169,10 +169,14 @@ namespace ZeroKLobby.MicroLobby
                     leaveItem.Click += (s, e) => Program.TasClient.LeaveChannel(chatControl.ChannelName);
                     contextMenu.MenuItems.Add(leaveItem);
                 }
-
                 contextMenu.MenuItems.Add("-");
+                var textColoringMenu = new System.Windows.Forms.MenuItem("Compose a colored text");
+                textColoringMenu.Click += (s, e) => {ActionHandler.ShowColoringPanel();};
+                contextMenu.MenuItems.Add(textColoringMenu);
+
                 if (chatControl is BattleChatControl)
                 {
+                    contextMenu.MenuItems.Add("-");
                     contextMenu.MenuItems.Add(GetShowOptions());
                     contextMenu.MenuItems.Add(GetAddBotItem());
                 }
@@ -351,6 +355,11 @@ namespace ZeroKLobby.MicroLobby
                     closeItem.Click += (s, e) => ActionHandler.CloseChannel(control.UserName);
                     contextMenu.MenuItems.Add(closeItem);
                 }
+
+                contextMenu.MenuItems.Add("-");
+                var textColoringMenu = new System.Windows.Forms.MenuItem("Compose a colored text");
+                textColoringMenu.Click += (s, e) => { ActionHandler.ShowColoringPanel(); };
+                contextMenu.MenuItems.Add(textColoringMenu);
             }
             catch (Exception e)
             {

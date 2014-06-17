@@ -144,22 +144,6 @@ namespace ZeroKLobby.MicroLobby
       if (me.Button == MouseButtons.Right) ContextMenus.GetPrivateMessageContextMenu(this).Show(this, me.Location);
     }
 
-    //Ctrl+A and Ctrl+Backspace behaviour.
-    //Reference: http://stackoverflow.com/questions/14429445/how-can-i-allow-things-such-as-ctrl-a-and-ctrl-backspace-in-a-c-sharp-textbox
-
-    private void sendBox_KeyDown(object sender, KeyEventArgs e)
-    {
-        if (e.Control & e.KeyCode == Keys.A)
-        {
-            sendBox.SelectAll();
-        }
-        else if (e.Control & e.KeyCode == Keys.Back)
-        {
-            e.SuppressKeyPress = true;
-            sendBox.CtrlBackspace();
-        }
-    }
-
     //void sendBox1_KeyPress(object sender, KeyPressEventArgs e) //we can handle TAB character fine
     //{
     //  if (e.KeyChar != '\t') return;
