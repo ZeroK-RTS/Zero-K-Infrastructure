@@ -159,6 +159,12 @@
     <Compile Include="Controls\ZkSplitContainer.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="MicroLobby\TextColoringPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\TextColoringPanel.Designer.cs">
+      <DependentUpon>TextColoringPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="SampleForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -498,6 +504,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\BattleChatControl.resx">
       <DependentUpon>BattleChatControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\TextColoringPanel.resx">
+      <DependentUpon>TextColoringPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SampleForm.resx">
       <DependentUpon>SampleForm.cs</DependentUpon>

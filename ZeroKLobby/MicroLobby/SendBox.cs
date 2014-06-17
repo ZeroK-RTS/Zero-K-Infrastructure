@@ -22,6 +22,7 @@ namespace ZeroKLobby.MicroLobby
         bool isLinux = Environment.OSVersion.Platform == PlatformID.Unix;
         bool isPreviewingHistory = false;
         String currentText = String.Empty;
+        public bool dontSendTextOnEnter = false; //allow multi-line text when pressing enter
 
         public SendBox()
         {
@@ -30,6 +31,7 @@ namespace ZeroKLobby.MicroLobby
             this.Font = Program.Conf.ChatFont;
             this.BackColor = Program.Conf.BgColor;
             this.ForeColor = Program.Conf.TextColor;
+            this.KeyDown += SendBox_KeyDown;
         }
 
         protected override void OnKeyPress(KeyPressEventArgs e)
@@ -38,7 +40,7 @@ namespace ZeroKLobby.MicroLobby
             {
                 if (CompleteNick()) e.Handled = true; //intercept TAB when cursor is at end of a text (for autocomplete) but ignore other cases
             }
-            if (e.KeyChar == '\r')
+            if (e.KeyChar == '\r' && !dontSendTextOnEnter)
             {
                 if (!pressingEnter) SendTextNow(); //send text online
                 e.Handled = true; //block ENTER because we already sent the text, no need to add newline character to textbox. We send it now rather than waiting the newline at OnKeyUp of ENTER (because we dont want this delay).
@@ -209,10 +211,33 @@ namespace ZeroKLobby.MicroLobby
             SelectedText = "";
         }
 
-        internal void InsertColorCharacter()
+        internal void InsertColorCharacter(string textColor,string backColor)
         {
-            Text = Text.Insert(SelectionStart + SelectionLength, "\x03");
-            Text = Text.Insert(SelectionStart, "\x0301,00");
+            int curSelectionStart = SelectionStart;
+            Text = Text.Insert(curSelectionStart + SelectionLength, "\x03");
+            Text = Text.Insert(curSelectionStart, "\x03" + textColor +"," + backColor);
+            SelectionStart = curSelectionStart + 6;
+        }
+
+        //Ctrl+A and Ctrl+Backspace behaviour.
+        //Reference: http://stackoverflow.com/questions/14429445/how-can-i-allow-things-such-as-ctrl-a-and-ctrl-backspace-in-a-c-sharp-textbox
+
+        private void SendBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control & e.KeyCode == Keys.A)
+            {
+                SelectAll();
+            }
+            else if (e.Control & e.KeyCode == Keys.Back)
+            {
+                e.SuppressKeyPress = true;
+                CtrlBackspace();
+            }else if (e.Control & e.KeyCode == Keys.R)
+                InsertColorCharacter("04","12"); //red on light cyan
+            else if (e.Control & e.KeyCode == Keys.G)
+                InsertColorCharacter("03", "12"); //green on light cyan
+            else if (e.Control & e.KeyCode == Keys.B)
+                InsertColorCharacter("02", "12");//blue on light cyan
         }
     }
 }
