@@ -299,8 +299,7 @@ namespace ZeroKLobby.MicroLobby
 
         private void btnCustom_Click(object sender, EventArgs e)
         {
-            var window1 = new SpringsettingForm(); 
-            window1.ShowDialog();
+            ActionHandler.ShowSpringsetting();
         }
 
         private void panel1_Resize(object sender, EventArgs e)

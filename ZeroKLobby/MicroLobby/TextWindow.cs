@@ -135,7 +135,7 @@ namespace ZeroKLobby.MicroLobby
 
         public void AppendText(string newLine)
         {
-            AppendText(newLine, 1);
+            AppendText(newLine, TextColor.text);
         }
 
         public void ClearTextWindow()
@@ -442,10 +442,11 @@ namespace ZeroKLobby.MicroLobby
                     else if (Char.IsNumber(newLine[1]) && !Char.IsNumber(newLine[2])) foreColor = Convert.ToInt32(newLine[1].ToString());
 
                     //check of foreColor is less then 32     
-                    if (foreColor > 31)
+                    if (foreColor > TextColor.colorRange)
                     {
-                        foreColor = foreColor - 32;
-                        if (foreColor > 31) foreColor = foreColor - 32;
+                        foreColor = TextColor.text;
+                        //foreColor = foreColor - 32; //fixme: keep this magic shift 32? why is 32 important? might need to recheck
+                        //if (foreColor > 31) foreColor = foreColor - 32;
                     }
                 }
                 else foreColor = color;
@@ -1121,18 +1122,26 @@ namespace ZeroKLobby.MicroLobby
 
         string RedefineColorCodes(string line)
         {
-            //redefine the irc server colors to own standard
+            //redefine the irc server colors to own standard (ie: don't have comma)
             // go from \x0003xx,xx to \x0003xxxx
             const string parseBackColor = @"\x03([0-9]{1,2}),([0-9]{1,2})";
             const string parseForeColor = @"\x03[0-9]{1,2}";
             const string parseColorChar = @"\x03";
+            const string parseColorResetChar = @"\x0F";
 
-            var parseIrcCodes = new Regex(parseBackColor + "|" + parseForeColor + "|" + parseColorChar);
+            var parseIrcCodes = new Regex(parseBackColor + "|" + parseForeColor + "|" + parseColorChar + "|" + parseColorResetChar);
 
             var sLine = new StringBuilder();
             sLine.Append(line);
 
             var currentBackColor = -1;
+
+            int[] foreColorNest = new int[32]; //try to record/remember up to 32 color nest
+            int[] backColorNest = new int[32];
+            int foreColorInd = 0;
+            int backColorInd = 0;
+            foreColorNest[0] = TextColor.text;
+            backColorNest[0] = TextColor.background;
 
             var m = parseIrcCodes.Match(sLine.ToString());
             while (m.Success)
@@ -1152,6 +1161,13 @@ namespace ZeroKLobby.MicroLobby
                     currentBackColor = bc;
 
                     sLine.Insert(m.Index, TextColor.NewColorChar + fc.ToString("00") + bc.ToString("00"));
+                    if (foreColorInd < 32)
+                    {
+                        foreColorInd++;
+                        backColorInd++;
+                        foreColorNest[foreColorInd] = fc;
+                        backColorNest[backColorInd] = bc;
+                    }
                     oldLen--;
                 }
                 else if (Regex.Match(m.Value, parseForeColor).Success)
@@ -1160,14 +1176,36 @@ namespace ZeroKLobby.MicroLobby
 
                     if (currentBackColor > -1) sLine.Insert(m.Index, TextColor.NewColorChar + fc.ToString("00") + currentBackColor.ToString("00"));
                     else
+                        sLine.Insert(m.Index, TextColor.NewColorChar + fc.ToString("00") + "99"); //note: any background_color > 32 automatically use current backcolor
                         //sLine.Insert(m.Index, newColorChar.ToString() + fc.ToString("00") + backColor.ToString("00"));
-                        sLine.Insert(m.Index, TextColor.NewColorChar + fc.ToString("00") + "99");
+
+                    if (foreColorInd < 32)
+                    {
+                        foreColorInd++;
+                        backColorInd++;
+                        foreColorNest[foreColorInd] = fc;
+                        backColorNest[backColorInd] = currentBackColor > -1? currentBackColor:99;
+                    }
                 }
                 else if (Regex.Match(m.Value, parseColorChar).Success)
                 {
-                    currentBackColor = -1;
+                    if (foreColorInd > 0) foreColorInd--;
+                    if (backColorInd > 0) backColorInd--;
+                    int prevForeColor = foreColorNest[foreColorInd];
+                    int backForeColor = backColorNest[backColorInd];
+                    sLine.Insert(m.Index, TextColor.NewColorChar + prevForeColor.ToString("00") + backForeColor.ToString("00"));
+                    currentBackColor = backForeColor;
+
+                    //currentBackColor = -1;
                     //sLine.Insert(m.Index, newColorChar.ToString() + foreColor.ToString("00") + backColor.ToString("00"));
-                    sLine.Insert(m.Index, TextColor.NewColorChar + foreColor.ToString("00") + "99");
+                    //sLine.Insert(m.Index, TextColor.NewColorChar + foreColor.ToString("00") + "99"); //note: any background_color > 32 automatically use current backcolor
+                }
+                else if (Regex.Match(m.Value, parseColorResetChar).Success)
+                {
+                    foreColorInd = 0;
+                    backColorInd = 0;
+                    currentBackColor = -1;
+                    sLine.Insert(m.Index, TextColor.NewColorChar + TextColor.text.ToString("00") + TextColor.background.ToString("00"));
                 }
                 m = parseIrcCodes.Match(sLine.ToString(), sLine.Length - oldLen);
             }

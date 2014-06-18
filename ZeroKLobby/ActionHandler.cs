@@ -233,6 +233,22 @@ namespace ZeroKLobby
       Program.MainWindow.DisplayLog();
     }
 
+    static SpringsettingForm currentForm = null; //using static field so that we know whether the same window is already open or not
+    public static void ShowSpringsetting()
+    {
+        if (currentForm != null && !currentForm.IsDisposed) currentForm.Dispose();
+        currentForm = new SpringsettingForm();
+        currentForm.Show();
+    }
+
+    static TextColoringPanel currentColorForm = null;
+    public static void ShowColoringPanel()
+    {
+        if (currentColorForm != null && !currentColorForm.IsDisposed) currentColorForm.Dispose();
+        currentColorForm = new TextColoringPanel();
+        currentColorForm.Show();
+    }
+
     public static void SpawnAutohost(string gameName, string battleTitle, string password, IEnumerable<string> springieCommands)
     {
       var hostSpawnerName = SpringieCommand.GetHostSpawnerName(gameName);
