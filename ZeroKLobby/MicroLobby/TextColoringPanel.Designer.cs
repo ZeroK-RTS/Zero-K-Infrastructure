@@ -54,6 +54,7 @@
             this.interatorLabel = new System.Windows.Forms.Label();
             this.sendBox = new ZeroKLobby.MicroLobby.SendBox();
             this.chatBox = new ZeroKLobby.MicroLobby.ChatBox();
+            this.pasteToChat = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -232,7 +233,8 @@
             // 
             // removeColorButton
             // 
-            this.removeColorButton.Location = new System.Drawing.Point(198, 152);
+            this.removeColorButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.removeColorButton.Location = new System.Drawing.Point(197, 151);
             this.removeColorButton.Margin = new System.Windows.Forms.Padding(0);
             this.removeColorButton.Name = "removeColorButton";
             this.removeColorButton.Size = new System.Drawing.Size(87, 21);
@@ -243,8 +245,9 @@
             // 
             // helpLabel
             // 
+            this.helpLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.helpLabel.AutoSize = true;
-            this.helpLabel.Location = new System.Drawing.Point(-1, 230);
+            this.helpLabel.Location = new System.Drawing.Point(-1, 238);
             this.helpLabel.Name = "helpLabel";
             this.helpLabel.Size = new System.Drawing.Size(71, 13);
             this.helpLabel.TabIndex = 18;
@@ -300,19 +303,23 @@
             // 
             // sendBox
             // 
+            this.sendBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.sendBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.sendBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.sendBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.sendBox.Location = new System.Drawing.Point(2, 127);
             this.sendBox.Multiline = true;
             this.sendBox.Name = "sendBox";
-            this.sendBox.Size = new System.Drawing.Size(283, 46);
+            this.sendBox.Size = new System.Drawing.Size(286, 46);
             this.sendBox.TabIndex = 0;
             this.sendBox.WordWrap = false;
             this.sendBox.TextChanged += new System.EventHandler(this.sendBox_TextChanged);
             // 
             // chatBox
             // 
+            this.chatBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.chatBox.ChatBackgroundColor = 0;
             this.chatBox.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chatBox.HideScroll = false;
@@ -324,16 +331,28 @@
             this.chatBox.ShowJoinLeave = false;
             this.chatBox.ShowUnreadLine = true;
             this.chatBox.SingleLine = false;
-            this.chatBox.Size = new System.Drawing.Size(283, 51);
+            this.chatBox.Size = new System.Drawing.Size(286, 51);
             this.chatBox.TabIndex = 22;
             this.chatBox.TextFilter = null;
             this.chatBox.TotalDisplayLines = 0;
+            // 
+            // pasteToChat
+            // 
+            this.pasteToChat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pasteToChat.Location = new System.Drawing.Point(200, 233);
+            this.pasteToChat.Name = "pasteToChat";
+            this.pasteToChat.Size = new System.Drawing.Size(88, 23);
+            this.pasteToChat.TabIndex = 26;
+            this.pasteToChat.Text = "Copy To Chat";
+            this.pasteToChat.UseVisualStyleBackColor = true;
+            this.pasteToChat.Click += new System.EventHandler(this.pasteToChat_Click);
             // 
             // TextColoringPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 243);
+            this.ClientSize = new System.Drawing.Size(287, 257);
+            this.Controls.Add(this.pasteToChat);
             this.Controls.Add(this.helpLabel);
             this.Controls.Add(this.previewLabel);
             this.Controls.Add(this.interatorLabel);
@@ -361,7 +380,9 @@
             this.Controls.Add(this.sendBox);
             this.Controls.Add(this.chatBox);
             this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(1000, 292);
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(295, 292);
             this.Name = "TextColoringPanel";
             this.Text = "Coloring Panel";
             this.ResumeLayout(false);
@@ -397,5 +418,6 @@
         private SendBox sendBox;
         private System.Windows.Forms.Label previewLabel;
         private System.Windows.Forms.Label interatorLabel;
+        private System.Windows.Forms.Button pasteToChat;
     }
 }

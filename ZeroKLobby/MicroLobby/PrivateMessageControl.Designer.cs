@@ -66,7 +66,7 @@
 
         #endregion
 
-        private SendBox sendBox;
+        public SendBox sendBox;
         public ChatBox ChatBox { get; set; }
     }
 }

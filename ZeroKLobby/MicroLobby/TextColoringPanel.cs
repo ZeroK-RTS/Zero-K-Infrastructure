@@ -15,7 +15,8 @@ namespace ZeroKLobby.MicroLobby
         private bool waitForBackground = false;
         private int backgroundColor = 99;
         private bool tooltipOnce = false;
-        public TextColoringPanel()
+        private SendBox currentSendbox_ = null;
+        public TextColoringPanel(SendBox currentSendbox)
         {
             InitializeComponent();
             button1.BackColor = TextColor.GetColor(0);//white
@@ -55,7 +56,9 @@ namespace ZeroKLobby.MicroLobby
 
             };
             sendBox.WordWrap = true;
-            Program.ToolTip.SetText(sendBox, "Tips: press CTRL+R,G or B on chatbox for a quick Red,Green and Blue coloring respectively");
+            sendBox.Text = currentSendbox.Text; //copy paste from chat area to coloring panel
+            currentSendbox_ = currentSendbox;
+            Program.ToolTip.SetText(sendBox, "Tips: press CTRL+R/G/B on chatbox for instant Red,Green or Blue coloring");
         }
 
         private void button17_Click(object sender, EventArgs e) //remove color button
@@ -68,6 +71,7 @@ namespace ZeroKLobby.MicroLobby
         private void comboBox1_SelectionChangeCommitted(object sender, EventArgs e)
         {
             sendBox.SelectionStart = 0;
+            sendBox.SelectionLength = 1;
             if (comboBox1.SelectedItem == "To-line-end") progressType = 1;
             else if (comboBox1.SelectedItem == "Word-by-word") progressType = 2;
             else if (comboBox1.SelectedItem == "Char-by-char") progressType = 3;
@@ -156,6 +160,11 @@ namespace ZeroKLobby.MicroLobby
                 Program.ToolTip.Clear(sendBox);
                 tooltipOnce = true;
             }
+        }
+
+        private void pasteToChat_Click(object sender, EventArgs e)
+        {
+            currentSendbox_.Text = sendBox.Text;
         }
     }
 }

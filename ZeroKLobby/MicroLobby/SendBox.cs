@@ -213,10 +213,30 @@ namespace ZeroKLobby.MicroLobby
 
         internal void InsertColorCharacter(string textColor,string backColor)
         {
-            int curSelectionStart = SelectionStart;
-            Text = Text.Insert(curSelectionStart + SelectionLength, "\x03");
-            Text = Text.Insert(curSelectionStart, "\x03" + textColor +"," + backColor);
-            SelectionStart = curSelectionStart + 6;
+            if (SelectionLength > 1) //color selection
+            {
+                int curSelectionStart = SelectionStart;
+                int selLen = SelectionLength;
+                Text = Text.Insert(curSelectionStart + SelectionLength, "\x03");
+                Text = Text.Insert(curSelectionStart, "\x03" + textColor + "," + backColor);
+                SelectionStart = curSelectionStart + selLen + 6;
+            }
+            else if (SelectionStart > 0) //color previous word
+            {
+                int end = SelectionStart;
+                int begin = SelectionStart-1;
+                while (begin > 0 && (Text.Substring(begin, 1) == " " || Text.Substring(begin, 1) == "\t"))
+                {
+                    begin = begin - 1;
+                }
+                while (begin > 0 && Text.Substring(begin, 1) != " " && Text.Substring(begin, 1) != "\t")
+                {
+                    begin = begin - 1;
+                }
+                Text = Text.Insert(end, "\x03");
+                Text = Text.Insert(begin, "\x03" + textColor + "," + backColor);
+                SelectionStart = end + 6;
+            }
         }
 
         //Ctrl+A and Ctrl+Backspace behaviour.

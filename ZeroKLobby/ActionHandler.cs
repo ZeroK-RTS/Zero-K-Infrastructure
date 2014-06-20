@@ -242,10 +242,10 @@ namespace ZeroKLobby
     }
 
     static TextColoringPanel currentColorForm = null;
-    public static void ShowColoringPanel()
+    public static void ShowColoringPanel(SendBox currentSendbox)
     {
         if (currentColorForm != null && !currentColorForm.IsDisposed) currentColorForm.Dispose();
-        currentColorForm = new TextColoringPanel();
+        currentColorForm = new TextColoringPanel(currentSendbox);
         currentColorForm.Show();
     }
 

@@ -480,6 +480,11 @@ namespace LobbyClient
 
         public void JoinChannel(string channelName, string key=null)
         {
+            if (con == null) 
+            {
+                System.Diagnostics.Trace.TraceError("ERROR TasClient/JoinChannel: No server connection yet");
+                return;
+            }
             if (!String.IsNullOrEmpty(key)) con.SendCommand("JOIN", channelName, key);
             else con.SendCommand("JOIN", channelName);
         }
