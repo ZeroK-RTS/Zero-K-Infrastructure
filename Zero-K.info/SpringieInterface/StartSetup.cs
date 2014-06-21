@@ -64,6 +64,9 @@ namespace ZeroKWeb.SpringieInterface
                         }
                     }
                 }
+
+                bool is1v1 = context.Players.Where(x => !x.IsSpectator).ToList().Count == 2 && context.Bots.Count == 0;
+
                 Dictionary<PlayerTeam, Account> playerAccountsByName = new Dictionary<PlayerTeam, Account>();
                 foreach (var player in context.Players)
                 {
@@ -105,7 +108,8 @@ namespace ZeroKWeb.SpringieInterface
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair
                                        { Key = "clan", Value = user.Clan != null ? user.Clan.Shortcut : "" });
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "level", Value = user.Level.ToString() });
-                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "elo", Value = Math.Round(user.EffectiveElo).ToString() }); // elo for ingame is just ordering for auto /take
+                        double elo = is1v1 ? user.Effective1v1Elo : user.EffectiveElo;
+                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "elo", Value = Math.Round(elo).ToString() }); // elo for ingame is just ordering for auto /take
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "avatar", Value = user.Avatar });
 
                         if (!p.IsSpectator) {
