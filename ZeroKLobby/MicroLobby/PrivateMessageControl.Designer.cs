@@ -41,7 +41,6 @@
             this.sendBox.Name = "sendBox";
             this.sendBox.Size = new System.Drawing.Size(455, 20);
             this.sendBox.TabIndex = 0;
-            this.sendBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.sendBox_KeyDown);
             // 
             // chatBox
             // 
@@ -67,7 +66,7 @@
 
         #endregion
 
-        private SendBox sendBox;
+        public SendBox sendBox;
         public ChatBox ChatBox { get; set; }
     }
 }

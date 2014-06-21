@@ -181,6 +181,7 @@ PY	Paraguay
 QA	Qatar
 RE	Réunion
 RO	Romania
+RS	Serbia
 RU	Russian Federation
 RW	Rwanda
 SA	Saudi Arabia
