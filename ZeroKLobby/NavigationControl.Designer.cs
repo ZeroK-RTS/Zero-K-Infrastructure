@@ -46,9 +46,8 @@
             this.urlBox.Name = "urlBox";
             this.urlBox.Size = new System.Drawing.Size(190, 20);
             this.urlBox.TabIndex = 2;
-            this.urlBox.Enter += new System.EventHandler(this.urlBox_Enter);
             this.urlBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.urlBox_KeyDown);
-            this.urlBox.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.urlBox_MouseDoubleClick);
+            this.urlBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.urlBox_MouseDown);
             // 
             // flowLayoutPanel1
             // 
