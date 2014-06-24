@@ -33,7 +33,7 @@ local glScale          = gl.Scale
 local glText           = gl.Text
 local glTranslate      = gl.Translate
 
-local yOffset = isMission and 50 or 150
+local yOffset = 150
 
 local missionReady = false
 
@@ -47,7 +47,7 @@ function gadget:KeyPress()
 end
 
 function gadget:MousePress()
-	if isMission and missionReady == false then
+	if missionReady == false then
 		missionReady = true
 		Spring.SendCommands("forcestart")
 		return true
