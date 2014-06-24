@@ -21,7 +21,7 @@ namespace ZeroKWeb.SpringieInterface
 
     public class Balancer
     {
-        const double MaxCbalanceDifference = 120;
+        const double MaxCbalanceDifference = 40;
         const double MaxTeamSizeDifferenceRatio = 2;
 
         public enum BalanceMode
