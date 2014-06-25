@@ -106,10 +106,15 @@ namespace Fixer
 
         public static void FixStuff()
         {
-            //MassBan("OMGZZZ", 1, 49, "Anteep smurf", MaxBanHours);
-            string line = "The quick brown fox jumps over the lazy dog";
-            byte[] line2 = Encoding.ASCII.GetBytes(line);
-            System.Console.WriteLine("{0}, {1}", LobbyClient.Crc.Crc32(line2), LobbyClient.Crc.Crc32Old(line2));
+            ZkDataContext db = new ZkDataContext();
+            var sheepsploit = db.Clans.FirstOrDefault(x => x.Shortcut == "zkdev");
+            sheepsploit.IsDeleted = true;
+
+            var clans = db.Clans.Where(x => !x.IsDeleted);
+            foreach (Clan clan in clans)
+            {
+
+            }
         }
 
         [STAThread]
