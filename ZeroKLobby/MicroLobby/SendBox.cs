@@ -32,6 +32,7 @@ namespace ZeroKLobby.MicroLobby
             this.BackColor = Program.Conf.BgColor;
             this.ForeColor = Program.Conf.TextColor;
             this.KeyDown += SendBox_KeyDown;
+            this.MouseDown += SendBox_MouseDown;
         }
 
         protected override void OnKeyPress(KeyPressEventArgs e)
@@ -258,6 +259,19 @@ namespace ZeroKLobby.MicroLobby
                 InsertColorCharacter("03", "12"); //green on light cyan
             else if (e.Control & e.KeyCode == Keys.B)
                 InsertColorCharacter("02", "12");//blue on light cyan
+        }
+
+        private int clickCount = 0;
+        private long lastClick = 0;
+        private int systemDoubleClickTime = SystemInformation.DoubleClickTime * 10000;
+        private void SendBox_MouseDown(object sender, EventArgs e)
+        {   //reference: http://stackoverflow.com/questions/5014825/triple-mouse-click-in-c
+            //10,000 ticks is a milisecond, therefore 2,000,000 ticks is 200milisecond . http://msdn.microsoft.com/en-us/library/system.datetime.ticks.aspx
+            //double click time: http://msdn.microsoft.com/en-us/library/system.windows.forms.systeminformation.doubleclicktime(v=vs.110).aspx
+            if (DateTime.Now.Ticks - lastClick <= systemDoubleClickTime) clickCount = clickCount + 1;
+            else clickCount = 1;
+            if (clickCount%3 == 0) SelectAll(); //select all text when triple click
+            lastClick = DateTime.Now.Ticks;
         }
     }
 }
