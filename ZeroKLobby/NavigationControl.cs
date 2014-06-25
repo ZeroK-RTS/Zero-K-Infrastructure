@@ -42,7 +42,6 @@ namespace ZeroKLobby
         readonly Dictionary<INavigatable, string> lastTabPaths = new Dictionary<INavigatable, string>();
         public ChatTab ChatTab { get { return chatTab; } }
         public static NavigationControl Instance { get; private set; }
-        bool selectURLtextboxAll = false;
 
         public string Path {
             get { return CurrentPage != null ? CurrentPage.ToString() : string.Empty; }
@@ -330,17 +329,6 @@ namespace ZeroKLobby
             }
         }
 
-        private void urlBox_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            if (!selectURLtextboxAll) { urlBox.SelectAll(); }
-            selectURLtextboxAll = !selectURLtextboxAll;
-        }
-
-        private void urlBox_Enter(object sender, EventArgs e)
-        {
-            selectURLtextboxAll = false;
-        }
-
         private void logoutButton_Click(object sender, EventArgs e)
         {
             Program.TasClient.Disconnect();
@@ -351,6 +339,20 @@ namespace ZeroKLobby
         private void isBusyTimer_Tick(object sender, EventArgs e)
         {
             isBusyIcon.Visible = CurrentNavigatable.IsBusy;
+        }
+
+        private int clickCount = 0;
+        private long lastClick = 0;
+        private int systemDoubleClickTime = SystemInformation.DoubleClickTime * 10000;
+        private void urlBox_MouseDown(object sender, MouseEventArgs e)
+        {
+            //reference: http://stackoverflow.com/questions/5014825/triple-mouse-click-in-c
+            //10,000 ticks is a milisecond, therefore 2,000,000 ticks is 200milisecond . http://msdn.microsoft.com/en-us/library/system.datetime.ticks.aspx
+            //double click time: http://msdn.microsoft.com/en-us/library/system.windows.forms.systeminformation.doubleclicktime(v=vs.110).aspx
+            if (DateTime.Now.Ticks - lastClick <= systemDoubleClickTime) clickCount = clickCount + 1;
+            else clickCount = 1;
+            if (clickCount % 3 == 0) urlBox.SelectAll(); //select all text when triple click
+            lastClick = DateTime.Now.Ticks;
         }
     }
 }
