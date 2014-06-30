@@ -14,6 +14,7 @@ namespace ZeroKLobby.MicroLobby
 
         public SpringsettingForm() {
             InitializeComponent();
+            Icon = ZklResources.ZkIcon;
         }
 
         private void LinkedLabelClicked(object sender, LinkLabelLinkClickedEventArgs e) {

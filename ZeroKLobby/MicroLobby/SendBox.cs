@@ -22,7 +22,14 @@ namespace ZeroKLobby.MicroLobby
         bool isLinux = Environment.OSVersion.Platform == PlatformID.Unix;
         bool isPreviewingHistory = false;
         String currentText = String.Empty;
-        public bool dontSendTextOnEnter = false; //allow multi-line text when pressing enter
+        /// <summary>
+        ///  use Enter key to create new-line or use Enter key to send text to current active Chat-Control
+        /// </summary>
+        public bool dontSendTextOnEnter = false;
+        /// <summary>
+        ///  use Up/Down key to cycle thru sent text history or use Up/Down key to move caret
+        /// </summary>
+        public bool dontUseUpDownHistoryKey = false;
 
         public SendBox()
         {
@@ -62,59 +69,61 @@ namespace ZeroKLobby.MicroLobby
 
         protected override void OnPreviewKeyDown(PreviewKeyDownEventArgs e)
         {
-            if (e.KeyCode == Keys.Up)
+            if (!dontUseUpDownHistoryKey)
             {
-                if (e.Control)
+                if (e.KeyCode == Keys.Up)
                 {
-                    ActionHandler.PrevButton();
+                    if (e.Control)
+                    {
+                        ActionHandler.PrevButton();
+                    }
+                    else
+                    {
+                        if (!isPreviewingHistory)
+                        {
+                            currentText = Text;
+                            isPreviewingHistory = true;
+                        }
+                        historyIndex--;
+                        if (historyIndex < 0) historyIndex = 0;
+                        if (historyIndex < history.Count) Text = history[historyIndex];
+                        if (historyIndex == history.Count) Text = currentText;
+                        SelectionStart = Text.Length;
+                    }
+                }
+                else if (e.KeyCode == Keys.Down)
+                {
+                    if (e.Control)
+                    {
+                        ActionHandler.NextButton();
+                    }
+                    else
+                    {
+                        if (!isPreviewingHistory)
+                        {
+                            currentText = Text;
+                            isPreviewingHistory = true;
+                        }
+                        historyIndex++;
+                        if (historyIndex < 0) historyIndex = 0;
+                        if (historyIndex < history.Count) Text = history[historyIndex];
+                        if (historyIndex == history.Count) Text = currentText;
+                        if (historyIndex > history.Count)
+                        {
+                            historyIndex = history.Count+1;
+                            Text = String.Empty;
+                        }
+                        SelectionStart = Text.Length;
+                    }
                 }
                 else
                 {
-                    if (!isPreviewingHistory)
-                    {
-                        currentText = Text;
-                        isPreviewingHistory = true;
-                    }
-                    historyIndex--;
-                    if (historyIndex < 0) historyIndex = 0;
-                    if (historyIndex < history.Count) Text = history[historyIndex];
-                    if (historyIndex == history.Count) Text = currentText;
-                    SelectionStart = Text.Length;
+                    isPreviewingHistory = false;
+                    historyIndex = history.Count;
                 }
-            }
-            else if (e.KeyCode == Keys.Down)
-            {
-                if (e.Control)
-                {
-                    ActionHandler.NextButton();
-                }
-                else
-                {
-                    if (!isPreviewingHistory)
-                    {
-                        currentText = Text;
-                        isPreviewingHistory = true;
-                    }
-                    historyIndex++;
-                    if (historyIndex < 0) historyIndex = 0;
-                    if (historyIndex < history.Count) Text = history[historyIndex];
-                    if (historyIndex == history.Count) Text = currentText;
-                    if (historyIndex > history.Count)
-                    {
-                        historyIndex = history.Count+1;
-                        Text = String.Empty;
-                    }
-                    SelectionStart = Text.Length;
-                }
-            }
-            else
-            {
-                isPreviewingHistory = false;
-                historyIndex = history.Count;
             }
 
-            //Prevent cutting line in half when sending
-            if (e.KeyCode == Keys.Return) SelectionStart = Text.Length;
+            //if (e.KeyCode == Keys.Return) SelectionStart = Text.Length; //Prevent cutting line in half when sending. note: no longer needed because we instantly send text when Enter is pressed
             if (e.KeyCode != Keys.Tab) nickCompleteMode = false;
 
             base.OnPreviewKeyDown(e);

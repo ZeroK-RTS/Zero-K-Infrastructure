@@ -170,9 +170,12 @@ namespace ZeroKLobby.MicroLobby
                     contextMenu.MenuItems.Add(leaveItem);
                 }
                 contextMenu.MenuItems.Add("-");
-                var textColoringMenu = new System.Windows.Forms.MenuItem("Compose a colored text");
+                MenuItem textColoringMenu = new System.Windows.Forms.MenuItem("Compose a colored text");
                 textColoringMenu.Click += (s, e) => { ActionHandler.ShowColoringPanel(chatControl.sendBox); };
                 contextMenu.MenuItems.Add(textColoringMenu);
+                MenuItem unicodeTranslator = new System.Windows.Forms.MenuItem("Get Unicode symbols");
+                unicodeTranslator.Click += (s, e) => { ActionHandler.ShowUnicodeTranslator(); };
+                contextMenu.MenuItems.Add(unicodeTranslator);
 
                 if (chatControl is BattleChatControl)
                 {
@@ -357,9 +360,12 @@ namespace ZeroKLobby.MicroLobby
                 }
 
                 contextMenu.MenuItems.Add("-");
-                var textColoringMenu = new System.Windows.Forms.MenuItem("Compose a colored text");
+                MenuItem textColoringMenu = new System.Windows.Forms.MenuItem("Compose a colored text");
                 textColoringMenu.Click += (s, e) => { ActionHandler.ShowColoringPanel(control.sendBox); };
                 contextMenu.MenuItems.Add(textColoringMenu);
+                MenuItem unicodeTranslator = new System.Windows.Forms.MenuItem("Get Unicode symbols");
+                unicodeTranslator.Click += (s, e) => { ActionHandler.ShowUnicodeTranslator(); };
+                contextMenu.MenuItems.Add(unicodeTranslator);
             }
             catch (Exception e)
             {
