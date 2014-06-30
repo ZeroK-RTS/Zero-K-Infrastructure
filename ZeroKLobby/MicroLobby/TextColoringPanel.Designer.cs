@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TextColoringPanel));
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
@@ -375,7 +374,7 @@
             // 
             // undoButton
             // 
-            this.undoButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.undoButton.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.undoButton.Location = new System.Drawing.Point(156, 195);
             this.undoButton.Margin = new System.Windows.Forms.Padding(0);
             this.undoButton.Name = "undoButton";

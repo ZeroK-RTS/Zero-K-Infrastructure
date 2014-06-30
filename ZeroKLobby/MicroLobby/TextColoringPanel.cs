@@ -264,11 +264,14 @@ namespace ZeroKLobby.MicroLobby
             currentSendbox_.Text = sendBox.Text;
         }
 
-        private void TextColoringPanel_Resize(object sender, EventArgs e)
+        private void TextColoringPanel_Resize(object sender, EventArgs e) //reposition un-anchored button during resize. Note: do not include 'raw' numbers or it need to take account of DPI scaling
         {
             int layoutPanelMidY = tableLayoutPanel1.Location.Y + tableLayoutPanel1.Height / 2;
+            int layoutPanelRightMidBottomX = tableLayoutPanel1.Location.X + tableLayoutPanel1.Width - removeColorButton.Width;
+            int layoutPanelRightMidBottomY = layoutPanelMidY - removeColorButton.Height;
             previewLabel.Location = new Point(tableLayoutPanel1.Location.X, layoutPanelMidY);
-            removeColorButton.Location = new Point(tableLayoutPanel1.Location.X + tableLayoutPanel1.Width - removeColorButton.Width, layoutPanelMidY - removeColorButton.Height);
+            removeColorButton.Location = new Point(layoutPanelRightMidBottomX, layoutPanelRightMidBottomY);
+            undoButton.Location = new Point(layoutPanelRightMidBottomX - undoButton.Width, layoutPanelRightMidBottomY);
         }
     }
 }

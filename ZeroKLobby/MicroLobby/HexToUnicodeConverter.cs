@@ -12,7 +12,7 @@ namespace ZeroKLobby.MicroLobby
 {
     public partial class HexToUnicodeConverter : Form
     {
-        private int activeSendbox = 1;
+        private int activeSendbox = 2;
         public HexToUnicodeConverter()
         {
             InitializeComponent();
@@ -21,6 +21,12 @@ namespace ZeroKLobby.MicroLobby
             sendBox1.dontUseUpDownHistoryKey = true;
             sendBox2.dontSendTextOnEnter = true;
             sendBox2.dontUseUpDownHistoryKey = true;
+            //random reference: http://stackoverflow.com/questions/2706500/how-to-generate-random-int-number
+            //convert integer to hex string: http://stackoverflow.com/questions/1139957/c-sharp-convert-integer-to-hex-and-back-again
+            //useful tool: http://www.binaryhexconverter.com/hex-to-decimal-converter
+            int randomNum = (new Random()).Next(9312, 10240); //some funny icon range
+            String randomHex = randomNum.ToString("X");
+            sendBox2.Text = randomHex;
         }
 
         private void sendBox2_TextChanged(object sender, EventArgs e)
