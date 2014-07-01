@@ -209,12 +209,24 @@ namespace ZeroKLobby.MicroLobby
           g.InterpolationMode = InterpolationMode.Default;
         }
         g.SetClip(new Rectangle(0, 0, scaledWidth, scaledHeight));
+        String mod_and_engine_name = string.Format("{0}     {1}{2}", Battle.ModName, Battle.EngineName, Battle.EngineVersion);
         var y = DpiMeasurement.ScaleValueY(3);
         int offset = DpiMeasurement.ScaleValueY(16);
         int curMapCellSize = DpiMeasurement.ScaleValueX(MapCellSize.Width);
         g.DrawString(Battle.Title, TitleFont, TextBrush, curMapCellSize, y + offset * 0);
-        g.DrawString(string.Format("{0}     {1}{2}", Battle.ModName, Battle.EngineName, Battle.EngineVersion), ModFont, TextBrush, curMapCellSize, y + offset * 1);
-        g.DrawImageUnscaled(playersBoxImage, curMapCellSize, y + offset * 2);
+        if (g.MeasureString(mod_and_engine_name, ModFont).Width < scaledWidth - curMapCellSize)
+        {
+            g.DrawString(mod_and_engine_name, ModFont, TextBrush, curMapCellSize, y + offset * 1);
+            g.DrawImageUnscaled(playersBoxImage, curMapCellSize, y + offset * 2);
+        }
+        else
+        {
+            int offset_offset = DpiMeasurement.ScaleValueY(4); //this squishes modName & engine-name and dude-icons together abit
+            int offset_offset2 = DpiMeasurement.ScaleValueY(6); //this squished modName & engine-name into 2 tight lines
+            g.DrawString(Battle.ModName, ModFont, TextBrush, curMapCellSize, y + offset * 1 - offset_offset);
+            g.DrawString(string.Format("{0}{1}", Battle.EngineName, Battle.EngineVersion), ModFont, TextBrush, curMapCellSize, y + offset * 2 - offset_offset - offset_offset2);
+            g.DrawImageUnscaled(playersBoxImage, curMapCellSize, y + offset * 3 - offset_offset - offset_offset2);
+        }
         g.ResetClip();
       }
     }
