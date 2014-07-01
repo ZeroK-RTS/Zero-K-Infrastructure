@@ -234,6 +234,9 @@ namespace ZeroKLobby
     }
 
     static SpringsettingForm currentForm = null; //using static field so that we know whether the same window is already open or not
+    /// <summary>
+    /// Displays springsettings window
+    /// </summary>
     public static void ShowSpringsetting()
     {
         if (currentForm != null && !currentForm.IsDisposed) currentForm.Dispose();
@@ -242,11 +245,25 @@ namespace ZeroKLobby
     }
 
     static TextColoringPanel currentColorForm = null;
+    /// <summary>
+    /// Displays colouring window
+    /// </summary>
     public static void ShowColoringPanel(SendBox currentSendbox)
     {
         if (currentColorForm != null && !currentColorForm.IsDisposed) currentColorForm.Dispose();
         currentColorForm = new TextColoringPanel(currentSendbox);
         currentColorForm.Show();
+    }
+
+    static HexToUnicodeConverter currentTranslatorForm = null;
+    /// <summary>
+    /// Displays number-to-unicode-char translator window
+    /// </summary>
+    public static void ShowUnicodeTranslator()
+    {
+        if (currentTranslatorForm != null && !currentTranslatorForm.IsDisposed) currentTranslatorForm.Dispose();
+        currentTranslatorForm = new HexToUnicodeConverter();
+        currentTranslatorForm.Show();
     }
 
     public static void SpawnAutohost(string gameName, string battleTitle, string password, IEnumerable<string> springieCommands)

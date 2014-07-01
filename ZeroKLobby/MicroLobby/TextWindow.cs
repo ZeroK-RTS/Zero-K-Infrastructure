@@ -430,7 +430,7 @@ namespace ZeroKLobby.MicroLobby
                 if (!Visible) unreadMarker++;
                 else if (unreadMarker > 0) unreadMarker++;
 
-                newLine = newLine.Replace("\n", " ");
+                newLine = newLine.Replace("\n", " "); //Tips: don't use newline char for newline, split line into diff row (call AppendText() multiple time) instead
                 newLine = newLine.Replace("&#x3;", TextColor.ColorChar.ToString()); //color start. &#x3 is 0x003
                 newLine = newLine.Replace("&#x3", TextColor.ColorChar.ToString()); //color end
                 newLine = ParseUrl(newLine);
@@ -861,7 +861,7 @@ namespace ZeroKLobby.MicroLobby
                                                                     startY,
                                                                     sf);
                                                 }
-                                                // TextRenderer.DrawText(g, buildString.ToString(), font, new Point((int)startX, startY), TextColor.GetColor(curForeColor), TextColor.GetColor(curBackColor));
+                                                // TextRenderer.DrawText(g, buildString.ToString(), font, new Point((int)startX, startY), TextColor.GetColor(curForeColor), TextColor.GetColor(curBackColor)); //is slow for slow gpu IMO
 
                                                 startX += g.MeasureString(buildString.ToString(), font, 0, sf).Width; //textSizes[32]
 
