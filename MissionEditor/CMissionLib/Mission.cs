@@ -559,7 +559,7 @@ namespace CMissionLib
 			foreach (var unit in AllUnits)
 			{
 				var unitDef = Mod.UnitDefs.FirstOrDefault(ud => unit.UnitDefName == ud.Name);
-                if (unitDef == null) unitDef = Mod.UnitDefs.FirstOrDefault(ud => unit.UnitDef.FullName == ud.FullName);
+                //if (unitDef == null) unitDef = Mod.UnitDefs.FirstOrDefault(ud => unit.UnitDef.FullName == ud.FullName);   // this doesn't work - unit.UnitDef will be null
 				unit.UnitDef = unitDef ?? Mod.UnitDefs.First(); // if unit not found, use first valid unitdef - show warning?
 			}
 
@@ -687,6 +687,10 @@ namespace CMissionLib
 			sb.AppendFormat("\t[ALLYTEAM{0}]\n", index);
 			sb.AppendLine("\t{");
 			sb.AppendFormat("\t\tNumAllies=0;\n"); // it seems that NumAllies has no effect
+            //sb.AppendFormat("\t\tStartRectTop=0;");
+            //sb.AppendFormat("\t\tStartRectBottom=0;");
+            //sb.AppendFormat("\t\tStartRectLeft=0;");
+            //sb.AppendFormat("\t\tStartRectRight=0;");
 			sb.AppendLine("\t}");
 		}
 
@@ -729,8 +733,6 @@ namespace CMissionLib
 			sb.AppendFormat("\t\tAllyTeam={0};\n", alliances.IndexOf(player.Alliance));
 			sb.AppendFormat("\t\tRGBColor={0} {1} {2};\n", player.Color.ScR, player.Color.ScG, player.Color.ScB); // range: 0-1
 			//sb.AppendFormat("\t\tSide={0};\n", Mod.Sides.First());
-			sb.AppendFormat("\t\tStartPosX=0;\n");
-			sb.AppendFormat("\t\tStartPosZ=0;\n");
 			sb.AppendLine("\t}");
 		}
 
@@ -793,6 +795,32 @@ namespace CMissionLib
             catch(Exception ex) {
                 throw ex;
             }
+        }
+
+        // TODO
+        public void CopyAction(Action source)
+        {
+            string path = Path.GetTempFileName();
+            using (var writer = XmlWriter.Create(path, new XmlWriterSettings { Indent = true, CheckCharacters = true })) new NetDataContractSerializer().WriteObject(writer, source);
+            try
+            {
+                using (var stream = File.OpenRead(path))
+                {
+                    Action copy = (Action)new NetDataContractSerializer().ReadObject(stream);
+                    // do stuff here
+
+                    RaisePropertyChanged(String.Empty);
+                }
+                if (File.Exists(path)) File.Delete(path);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public void CopyCondition(Condition source)
+        {
         }
 	}
 }
