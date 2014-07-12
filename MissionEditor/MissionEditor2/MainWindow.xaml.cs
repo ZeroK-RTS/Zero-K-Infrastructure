@@ -573,20 +573,19 @@ namespace MissionEditor2
                     {
                         if (!springProcess.Start()) throw new Exception("Failed to start Spring");
 
-                        System.Action readOut = null;
-                        readOut = async () =>
+                        System.Action readOut = async () =>
                             {
-                                var line = await springProcess.StandardOutput.ReadLineAsync();
-                                if (!String.IsNullOrEmpty(line)) Console.WriteLine(line);
-                                if (line != null) readOut();
+                                string line;
+                                while((line = await springProcess.StandardOutput.ReadLineAsync()) != null)
+                                    if (!String.IsNullOrEmpty(line)) Console.WriteLine(line);
                             };
                         readOut();
-                        System.Action readErr = null;
-                        readErr = async () =>
+
+                        System.Action readErr = async () =>
                         {
-                            var line = await springProcess.StandardError.ReadLineAsync();
-                            if (!String.IsNullOrEmpty(line)) Console.WriteLine(line);
-                            if (line != null) readErr();
+                            string line;
+                            while ((line = await springProcess.StandardError.ReadLineAsync()) != null)
+                                if (!String.IsNullOrEmpty(line)) Console.WriteLine(line);
                         };
                         readErr();
                     });
