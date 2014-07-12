@@ -567,22 +567,31 @@ namespace MissionEditor2
 			                	UseShellExecute = false
 			                };
 			var springProcess = new Process { StartInfo = startInfo };
-            if (Debugger.IsAttached)    // this code seems to cause it to hang at Loading Weapon Definitions or LuaRules, depending on engine version
+            if (Debugger.IsAttached)
             {
                 Utils.InvokeInNewThread(delegate
                     {
                         if (!springProcess.Start()) throw new Exception("Failed to start Spring");
 
-                        while (!springProcess.HasExited)
+                        System.Action readOut = null;
+                        readOut = async () =>
+                            {
+                                var line = await springProcess.StandardOutput.ReadLineAsync();
+                                if (!String.IsNullOrEmpty(line)) Console.WriteLine(line);
+                                if (line != null) readOut();
+                            };
+                        readOut();
+                        System.Action readErr = null;
+                        readErr = async () =>
                         {
-                            var line = springProcess.StandardOutput.ReadLine();
+                            var line = await springProcess.StandardError.ReadLineAsync();
                             if (!String.IsNullOrEmpty(line)) Console.WriteLine(line);
-                            var output = springProcess.StandardOutput.ReadToEnd();
-                            if (!String.IsNullOrEmpty(output)) Console.WriteLine(output);
-                        }
+                            if (line != null) readErr();
+                        };
+                        readErr();
                     });
             }
-            else   // no hang
+            else
             {
                 springProcess.Start();
             }
