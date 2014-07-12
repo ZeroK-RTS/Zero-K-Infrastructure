@@ -62,7 +62,7 @@ end
 
 function gadget:DrawScreen() 
 	local vsx, vsy = gl.GetViewSizes()
-	local text = lastLabel
+	local text = lastLabel or ''
 	if not missionReady then
 		text = "Press any key to begin"
 	end
