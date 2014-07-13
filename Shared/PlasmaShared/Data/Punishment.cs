@@ -24,7 +24,7 @@ namespace ZkData
             if (userID == 0) userID = null;
 
             if (db == null) db = new ZkDataContext();
-            var ret = db.Punishments.Where(x => x.BanExpires > DateTime.UtcNow);
+            var ret = db.Punishments.Where(x => !x.IsExpired);
             if (filter != null) ret = ret.Where(filter);
 
             ret =
@@ -33,5 +33,12 @@ namespace ZkData
             return ret.OrderByDescending(x=> x.BanExpires).FirstOrDefault();
         }
 
+        public bool IsExpired
+        {
+            get
+            {
+                return this.BanExpires < DateTime.UtcNow;
+            }
+        }
     }
 }

@@ -92,8 +92,8 @@ namespace LobbyClient
                 };
                 if (acc.IsZeroKAdmin) data.Add(Keys.ZkAdmin.ToString(), "1");
 
-                if (acc.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanMute)) data.Add(Keys.BanMute.ToString(), "1");
-                if (acc.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby)) data.Add(Keys.BanLobby.ToString(), "1");
+                if (acc.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanMute)) data.Add(Keys.BanMute.ToString(), "1");
+                if (acc.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanLobby)) data.Add(Keys.BanLobby.ToString(), "1");
 
                 tas.Extensions.Publish(acc.Name, data);
 

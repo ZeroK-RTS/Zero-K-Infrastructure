@@ -101,7 +101,7 @@ namespace ZeroKWeb.SpringieInterface
                         var userParams = new List<SpringBattleStartSetup.ScriptKeyValuePair>();
                         ret.UserParameters.Add(new SpringBattleStartSetup.UserCustomParameters { LobbyID = p.LobbyID, Parameters = userParams });
 
-                        bool userBanMuted = user.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanMute);
+                        bool userBanMuted = user.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanMute);
                         if (userBanMuted) userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "muted", Value = "1" });
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair
                                        { Key = "faction", Value = user.Faction != null ? user.Faction.Shortcut : "" });
@@ -125,8 +125,8 @@ namespace ZeroKWeb.SpringieInterface
                             }
 
                             var pu = new LuaTable();
-                            bool userUnlocksBanned = user.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanUnlocks);
-                            bool userCommandersBanned = user.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanCommanders);
+                            bool userUnlocksBanned = user.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanUnlocks);
+                            bool userCommandersBanned = user.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanCommanders);
 
                             if (!userUnlocksBanned) {
                                 if (mode != AutohostMode.Planetwars || user.Faction == null) foreach (Unlock unlock in user.AccountUnlocks.Select(x => x.Unlock)) pu.Add(unlock.Code);
