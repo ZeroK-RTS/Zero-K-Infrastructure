@@ -54,7 +54,6 @@ namespace CMissionLib
 		int startingMetal = 1000;
 		Player startingPlayer = new Player { Name = "Player 1", Color = Colors.Blue, Alliance = "1", IsHuman = true };
 		ObservableCollection<Trigger> triggers = new ObservableCollection<Trigger>();
-        ObservableCollection<Objective> objectives = new ObservableCollection<Objective>();
         bool modifiedSinceLastSave = false;	// FIXME: is never true
 
 		public IEnumerable<string> AllGroups
@@ -97,6 +96,8 @@ namespace CMissionLib
 			}
 		}
 		public IEnumerable<string> Countdowns { get { return AllLogic.OfType<StartCountdownAction>().Select(u => u.Countdown).Distinct(); } }
+        public IEnumerable<string> Objectives { get { return AllLogic.OfType<AddObjectiveAction>().Select(u => u.ID).Distinct(); } }
+
 		[DataMember]
 		public ObservableCollection<string> Counters
 		{
@@ -687,10 +688,10 @@ namespace CMissionLib
 			sb.AppendFormat("\t[ALLYTEAM{0}]\n", index);
 			sb.AppendLine("\t{");
 			sb.AppendFormat("\t\tNumAllies=0;\n"); // it seems that NumAllies has no effect
-            //sb.AppendFormat("\t\tStartRectTop=0;");
-            //sb.AppendFormat("\t\tStartRectBottom=0;");
-            //sb.AppendFormat("\t\tStartRectLeft=0;");
-            //sb.AppendFormat("\t\tStartRectRight=0;");
+            sb.AppendFormat("\t\tStartRectTop=0;");
+            sb.AppendFormat("\t\tStartRectBottom=0;");
+            sb.AppendFormat("\t\tStartRectLeft=1;");
+            sb.AppendFormat("\t\tStartRectRight=1;");
 			sb.AppendLine("\t}");
 		}
 

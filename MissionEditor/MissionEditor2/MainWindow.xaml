@@ -378,29 +378,24 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <GroupBox Header="Settings">
-                    <StackPanel>
-                        <DockPanel>
-                            <Label DockPanel.Dock="Left">ID</Label>
-                            <TextBox DockPanel.Dock="Left" Text="{Binding ID, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="False" MaxWidth="200" MaxLines="1"/>
-                        </DockPanel>
-                        <DockPanel>
-                            <Label DockPanel.Dock="Left">Title</Label>
-                            <TextBox DockPanel.Dock="Left" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="False" MaxWidth="200" MaxLines="1"/>
-                        </DockPanel>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>                        
-                            <Label>Description</Label>
-                            <TextBox Grid.Column="1" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MaxWidth="500" MaxHeight="500" MinLines="3"
-                                    HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" MaxLines="10" TextWrapping="Wrap" />
-                        </Grid>
-                    </StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Label>ID</Label>
+                        <TextBox Grid.Column="1" Text="{Binding ID, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="False" MaxWidth="500" MaxLines="1"/>
+                        <Label Grid.Row="1">Title</Label>
+                        <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="False" MaxWidth="500" MaxLines="1"/>
+                        <Label Grid.Row="2">Description</Label>
+                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MaxWidth="500" MaxHeight="500" MinLines="3"
+                                HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" MaxLines="10" TextWrapping="Wrap" />
+                    </Grid>
                 </GroupBox>
                 <GroupBox Grid.Row="1" Header="Description">
                     <TextBlock TextWrapping="Wrap">
@@ -419,43 +414,27 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <GroupBox Header="Settings">
-                    <StackPanel>
-                        <DockPanel>
-                            <Label DockPanel.Dock="Left">ID</Label>
-                            <TextBox DockPanel.Dock="Left" Text="{Binding ID, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="False" MaxWidth="200" MaxLines="1"/>
-                        </DockPanel>
-                        <DockPanel>
-                            <Label DockPanel.Dock="Left">Title</Label>
-                            <TextBox DockPanel.Dock="Left" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="False" MaxWidth="200" MaxLines="1"/>
-                        </DockPanel>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Label>Description</Label>
-                            <TextBox Grid.Column="1" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MaxWidth="500" MaxHeight="500" MinLines="3"
-                                    HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" MaxLines="10" TextWrapping="Wrap" />
-                        </Grid>
-                        <DockPanel>
-                            <Label DockPanel.Dock="Left">Status</Label>
-                            <ComboBox DockPanel.Dock="Left" ItemsSource="{x:Static Actions:ModifyObjectiveAction.Statuses}" SelectedItem="{Binding Status}" />
-                        </DockPanel>
-                        <!-->
-                        <DockPanel>
-                            <Label DockPanel.Dock="Left">Status</Label>
-                            <ComboBox x:Name ="StatusComboBox" DockPanel.Dock="Left" Text="Status" SelectedItem="{Binding Status}">
-                                <ComboBoxItem Name="Complete">Complete</ComboBoxItem>
-                                <ComboBoxItem Name="Incomplete">Incomplete</ComboBoxItem>
-                                <ComboBoxItem Name="Failed">Failed</ComboBoxItem>
-                            </ComboBox>
-                        </DockPanel>
-                        </!-->
-                    </StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Label>ID</Label>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding Mission.Objectives, ElementName=window}" SelectedItem="{Binding ID}" />
+                        <Label Grid.Row="1">Title</Label>
+                        <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="False" MaxWidth="500" MaxLines="1"/>
+                        <Label Grid.Row="2">Description</Label>
+                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MaxWidth="500" MaxHeight="500" MinLines="3"
+                                HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" MaxLines="10" TextWrapping="Wrap" />
+                        <Label Grid.Row="3">Status</Label>
+                        <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{x:Static Actions:ModifyObjectiveAction.Statuses}" SelectedItem="{Binding Status}" />
+                    </Grid>
                 </GroupBox>
                 <GroupBox Grid.Row="1" Header="Description">
                     <TextBlock TextWrapping="Wrap">
