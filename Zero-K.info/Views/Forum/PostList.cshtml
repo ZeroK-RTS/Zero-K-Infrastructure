@@ -24,7 +24,8 @@
                         </td>
                         <td valign='top'>
                             @Html.PrintAccount(p.Account)<br />
-                            <small>@p.Created.ToAgoString()
+                            <small>@p.Created.AddTicks( - (p.Created.Ticks % TimeSpan.TicksPerSecond))<br />
+                                @p.Created.ToAgoString()
                                 @if (p.ForumPostEdits.Any())
                                 {
                                     var lastEdit = p.ForumPostEdits.OrderByDescending(x => x.EditTime).First();
