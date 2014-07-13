@@ -174,6 +174,7 @@ namespace ZeroKWeb.Controllers
                                    bool banUnlocks,
                                    bool banForum,
                                    bool segregateHost,
+                                   bool setRightsToZero,            
                                    string banIP,
                                    int? banUserID,
                                    double banHours)
@@ -196,6 +197,7 @@ namespace ZeroKWeb.Controllers
                                  BanIP = banIP,
                                  BanForum = banForum,
                                  SegregateHost = segregateHost,
+                                 SetRightsToZero = setRightsToZero,
                                  DeleteXP = deleteXP,
                                  DeleteInfluence = deleteInfluence,
                                  CreatedAccountID = Global.AccountID,

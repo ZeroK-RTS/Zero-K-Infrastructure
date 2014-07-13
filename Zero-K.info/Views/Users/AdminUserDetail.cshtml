@@ -119,16 +119,16 @@
         Delete XP: @Html.CheckBox("deleteXP")<br />
         Delete influence: @Html.CheckBox("deleteInfluence")<br />
         <br />
-        Ban mute: @Html.CheckBox("banMute")<br />
-        Ban commanders: @Html.CheckBox("banCommanders")<br />
-        Ban unlocks: @Html.CheckBox("banUnlocks")<br />
+        Mute: @Html.CheckBox("banMute")<br />
+        Block commanders: @Html.CheckBox("banCommanders")<br />
+        Block unlocks: @Html.CheckBox("banUnlocks")<br />
         <br />
         IP: @Html.TextBox("banIP", Model.AccountIPS.OrderByDescending(x=>x.LastLogin).Select(x=>x.IP).FirstOrDefault())<br />
         UserID: @Html.TextBox("banUserID", lastUserID != null && !brokenIDs.Contains((int)lastUserID) ? lastUserID.ToString() : "")<br />
         Ban site: @Html.CheckBox("banSite")<br />
         Ban lobby: @Html.CheckBox("banLobby")<br />
         Ban forum: @Html.CheckBox("banForum")<br />
-        Segregate to troll host: @Html.CheckBox("segregateHost")<br />
+        Set rights to zero: @Html.CheckBox("setRightsToZero")<br />
         Ban hours: @Html.TextBox("banHours",1)<br />
 
         <input type="submit" value="BAN" class="delete" />

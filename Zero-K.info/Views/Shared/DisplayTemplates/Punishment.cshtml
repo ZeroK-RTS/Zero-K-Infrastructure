@@ -2,6 +2,9 @@
 @model ZkData.Punishment
 @{
     var p = Model;
+    TimeSpan timeRemaining = (TimeSpan)(Model.BanExpires - DateTime.UtcNow);
+    int daysRemain = (int)timeRemaining.TotalDays;
+    int hoursRemain = Math.Abs(timeRemaining.Hours);
 }
 <div>
     <h3>PENALTY: @p.Reason</h3>
@@ -42,13 +45,22 @@
     @if (p.SegregateHost)
     {
         <span>Segregated to troll host</span><br />
-    }      
+    }
+    @if (p.SetRightsToZero)
+    {
+        <span>Springie rights removed</span><br />
+    }
     @if (Global.IsZeroKAdmin)
     {
         <span>IP block: @p.BanIP</span><br />
         <span>UserID block: @p.UserID</span><br />
     }
-    Expires on: @p.BanExpires<br/>
+    Expires on: @p.BanExpires
+    @if (!p.IsExpired && timeRemaining < TimeSpan.FromDays(7))
+    {
+        <span> (@(daysRemain)d @(hoursRemain)h remaining)</span>
+    }
+    <br/>
     @if (Global.IsZeroKAdmin || Global.IsLobbyAdmin) {
         <div class="admin">
             @Html.ActionLink("remove ban", "RemovePunishment","Users", new {punishmentID = p.PunishmentID}, new {@class="delete"})

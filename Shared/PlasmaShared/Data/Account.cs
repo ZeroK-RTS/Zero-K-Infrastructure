@@ -358,6 +358,12 @@ namespace ZkData
         }
 
         public IIdentity Identity { get { return this; } }
+
+        public int GetEffectiveSpringieLevel()
+        {
+            if (PunishmentsByAccountID.Any(x => x.SetRightsToZero && !x.IsExpired)) return 0;
+            return SpringieLevel;
+        }
     }
 
     public enum GamePreference
