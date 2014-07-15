@@ -23,6 +23,8 @@ local function PlaySound(fileName, ...)
   local path = "LuaUI/Sounds/"..fileName
   if VFS.FileExists(path) then
     Spring.PlaySoundFile(path, ...)
+  elseif VFS.FileExists(fileName) then
+    Spring.PlaySoundFile(fileName, ...)
   else
     print("Error: file "..path.." doest not exist.")
   end
@@ -32,7 +34,7 @@ function MissionEvent(e)
   if e.logicType == "GuiMessageAction" then
     if e.image then 
       WG.Message:Show{
-        texture = ":n:LuaUI/Images/"..e.image,
+        texture = (e.imageFromArchive and "" or ":n:LuaUI/Images/") .. e.image,
         text = e.message,
         width = e.imageWidth,
         height = e.imageHeight,
@@ -48,7 +50,11 @@ function MissionEvent(e)
     end
   elseif e.logicType == "GuiMessagePersistentAction" then
       if WG.ShowPersistentMessageBox then
-        WG.ShowPersistentMessageBox(e.message, e.width, e.height, e.fontSize, (e.image and "LuaUI/Images/"..e.image) or nil)
+	local image
+	if e.image then
+	  image = (e.imageFromArchive and "" or ":n:LuaUI/Images/") .. e.image
+	end
+        WG.ShowPersistentMessageBox(e.message, e.width, e.height, e.fontSize, image or nil)
       else
 	Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing message box widget for action " .. e.logicType)
       end
@@ -58,7 +64,14 @@ function MissionEvent(e)
       end
   elseif e.logicType == "ConvoMessageAction" then
       if WG.AddConvo then
-        WG.AddConvo(e.message, e.fontSize, (e.image and "LuaUI/Images/"..e.image) or nil, e.sound and "LuaUI/sounds/convo/"..e.sound or nil, e.time)
+	local image, sound
+	if e.image then
+	  image = (e.imageFromArchive and "" or ":n:LuaUI/Images/") .. e.image
+	end
+	if e.sound then
+	  sound = (e.soundFromArchive and "" or ":n:LuaUI/Sounds/") .. e.sound
+	end
+        WG.AddConvo(e.message, e.fontSize, image, sound, e.time)
       else
 	Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing message box widget for action " .. e.logicType)
       end
@@ -129,20 +142,32 @@ function MissionEvent(e)
   elseif e.logicType == "SoundAction" then
     PlaySound(e.sound)
   elseif e.logicType == "MusicAction" then
+    local track = e.track
+    if track and (not e.trackFromArchive) then
+      track = "LuaUI/Sounds/music/" .. track
+    end
     if WG.Music and WG.Music.StartTrack then
       if e.track then
-	WG.Music.StartTrack("LuaUI/Sounds/music/"..e.track)
+	WG.Music.StartTrack(track)
       else
 	WG.Music.StartTrack()
       end
     elseif e.track ~= nil then
       Spring.StopSoundStream()
-      Spring.PlaySoundStream("LuaUI/Sounds/music/"..e.track, 0.5)
+      Spring.PlaySoundStream(track, 0.5)
     end
   elseif e.logicType == "MusicLoopAction" then
     if WG.Music and WG.Music.StartLoopingTrack then
+      local intro, loop = e.trackIntro, e.trackLoop
+      if intro and (not e.trackIntroFromArchive) then
+	intro = "LuaUI/Sounds/music/" .. intro
+      end
+      if loop and (not e.trackLoopFromArchive) then
+	loop = "LuaUI/Sounds/music/" .. loop
+      end
+      
       if e.trackIntro and e.trackLoop then
-	WG.Music.StartLoopingTrack("LuaUI/Sounds/music/"..e.trackIntro, "LuaUI/Sounds/music/"..e.trackLoop)
+	WG.Music.StartLoopingTrack(intro, loop)
       else
 	Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing Music Player widget for action " .. e.logicType)
       end
@@ -158,7 +183,7 @@ function MissionEvent(e)
   elseif e.logicType == "SunsetAction" then
     WG.midnightWanted = true
   elseif e.logicType == "CustomAction2" then
-    -- workaround to make WG accessible to the customaction
+    -- workaround to make WG accessible to the customAction
     local func, err = loadstring("local WG = ({...})[1]; " .. e.codeStr)
     if err then
       error("Failed to load custom action: ".. e.codeStr)

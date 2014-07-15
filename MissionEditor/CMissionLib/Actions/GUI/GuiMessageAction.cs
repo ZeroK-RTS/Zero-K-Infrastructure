@@ -90,6 +90,11 @@ namespace CMissionLib.Actions
 						{"pause", Pause},
                         {"fontSize", FontSize},
 					};
+                if(!string.IsNullOrWhiteSpace(imagePath))
+                {
+                    map.Add("image", imagePath);
+                    map.Add("imageFromArchive", true);
+                }
 				return new LuaTable(map);
 			}
 			else

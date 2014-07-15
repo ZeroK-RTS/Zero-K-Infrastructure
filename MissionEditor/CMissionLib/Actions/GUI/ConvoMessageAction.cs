@@ -90,9 +90,19 @@ namespace CMissionLib.Actions
 				map.Add("imageWidth", image.PixelWidth);
                 map.Add("imageHeight", image.PixelHeight);
 			}
+            else if (!string.IsNullOrWhiteSpace(imagePath))
+            {
+                map.Add("image", ImagePath);
+                map.Add("imageFromArchive", true);
+            }
             if (!string.IsNullOrEmpty(soundPath) && File.Exists(SoundPath))
             {
                 map.Add("sound", Path.GetFileName(soundPath));
+            }
+            else if (!string.IsNullOrWhiteSpace(soundPath))
+            {
+                map.Add("sound", soundPath);
+                map.Add("soundFromArchive", true);
             }
 
             return new LuaTable(map);

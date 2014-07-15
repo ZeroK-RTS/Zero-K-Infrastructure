@@ -218,6 +218,7 @@
                                 <Image Source="{Binding ImagePath}" />
                             </Grid>
                         </Viewbox>
+                        <TextBox Text="{Binding ImagePath, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                         <Button Loaded="GuiMessageButtonLoaded" Tag="{Binding}">Select</Button>
                     </StackPanel>
                 </GroupBox>
@@ -275,6 +276,7 @@
                                 <Image Source="{Binding ImagePath}" />
                             </Grid>
                         </Viewbox>
+                        <TextBox Text="{Binding ImagePath, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                         <Button Loaded="GuiMessagePersistentButtonLoaded" Tag="{Binding}">Select</Button>
                     </StackPanel>
                 </GroupBox>
@@ -338,6 +340,7 @@
                                 <Image Source="{Binding ImagePath}" />
                             </Grid>
                         </Viewbox>
+                        <TextBox Text="{Binding ImagePath, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                         <Button Loaded="ConvoMessageButtonLoadedImg" Tag="{Binding}">Select</Button>
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -349,7 +352,7 @@
                                 <RowDefinition />
                             </Grid.RowDefinitions>
                             <Label>Sound:</Label>
-                            <TextBox Grid.Column="1" Grid.Row="0" IsReadOnly="True"  Text="{Binding SoundPath, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                            <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding SoundPath, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                             <Button Grid.Column="0" Grid.Row="1" Loaded="ConvoMessageButtonLoadedSound" Tag="{Binding}">Select</Button>
                         </Grid>
                     </StackPanel>

@@ -28,9 +28,14 @@ namespace CMissionLib.Actions
 		public override LuaTable GetLuaTable(Mission mission)
 		{
 			var map = new Dictionary<object, object>{};
-            if (File.Exists(TrackPath)) 
+            if (File.Exists(TrackPath))
             {
                 map.Add("track", Path.GetFileName(TrackPath));
+            }
+            else
+            {
+                map.Add("track", TrackPath);
+                map.Add("trackFromArchive", true);
             }
 			return new LuaTable(map);
 		}

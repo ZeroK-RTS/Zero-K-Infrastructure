@@ -87,6 +87,11 @@ namespace CMissionLib.Actions
             {
                map.Add("image", Path.GetFileName(ImagePath));
             }
+            else if (!string.IsNullOrWhiteSpace(imagePath))
+            {
+                map.Add("image", imagePath);
+                map.Add("imageFromArchive", true);
+            }
 			return new LuaTable(map);
 		}
 

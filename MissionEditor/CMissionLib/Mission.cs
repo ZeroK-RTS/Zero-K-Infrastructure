@@ -353,13 +353,13 @@ namespace CMissionLib
 				// include media in mod archive
 				foreach (var item in AllLogic)
 				{
+                    // note we want a silent failure if file not found (with the new read-from-archive system it often won't fail anyway)
 					if (item is GuiMessageAction)
 					{
 						var action = (GuiMessageAction)item;
 						if (!String.IsNullOrEmpty(action.ImagePath))
 						{
-							if (!File.Exists(action.ImagePath)) throw new Exception("Image not found: " + action.ImagePath);
-							zip.SafeAddFile(action.ImagePath, "LuaUI/Images/");
+							if (File.Exists(action.ImagePath)) zip.SafeAddFile(action.ImagePath, "LuaUI/Images/");
 						}
 					}
                     else if (item is GuiMessagePersistentAction)
@@ -367,8 +367,7 @@ namespace CMissionLib
                         var action = (GuiMessagePersistentAction)item;
                         if (!String.IsNullOrEmpty(action.ImagePath))
                         {
-                            if (!File.Exists(action.ImagePath)) throw new Exception("Image not found: " + action.ImagePath);
-                            zip.SafeAddFile(action.ImagePath, "LuaUI/Images/");
+                            if (File.Exists(action.ImagePath)) zip.SafeAddFile(action.ImagePath, "LuaUI/Images/");
                         }
                     }
                     else if (item is ConvoMessageAction)
@@ -376,13 +375,11 @@ namespace CMissionLib
                         var action = (ConvoMessageAction)item;
                         if (!String.IsNullOrEmpty(action.ImagePath))
                         {
-                            if (!File.Exists(action.ImagePath)) throw new Exception("Image not found: " + action.ImagePath);
-                            zip.SafeAddFile(action.ImagePath, "LuaUI/Images/");
+                            if (File.Exists(action.ImagePath)) zip.SafeAddFile(action.ImagePath, "LuaUI/Images/");
                         }
                         if (!String.IsNullOrEmpty(action.SoundPath) && File.Exists(action.SoundPath))
                         {
-                            if (!File.Exists(action.SoundPath)) throw new Exception("Sound not found: " + action.SoundPath);
-                            zip.SafeAddFile(action.SoundPath, "LuaUI/Sounds/convo");
+                            if (File.Exists(action.SoundPath)) zip.SafeAddFile(action.SoundPath, "LuaUI/Sounds/convo");
                         }
                     }
                     else if (item is SoundAction)
@@ -390,8 +387,7 @@ namespace CMissionLib
                         var action = (SoundAction)item;
                         if (!String.IsNullOrEmpty(action.SoundPath) && File.Exists(action.SoundPath))
                         {
-                            if (!File.Exists(action.SoundPath)) throw new Exception("Sound not found: " + action.SoundPath);
-                            zip.SafeAddFile(action.SoundPath, "LuaUI/Sounds/");
+                            if (File.Exists(action.SoundPath)) zip.SafeAddFile(action.SoundPath, "LuaUI/Sounds/");
                         }
                     }
                     else if (item is MusicAction)
