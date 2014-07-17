@@ -299,9 +299,7 @@ namespace ZeroKLobby.MicroLobby
             return contextMenu;
         }
 
-        // warning: a lot of duplication in GetPrivateMessageContextMenuWpf! change both at once! (temporary solution)
-
-        // warning: a lot of duplication in GetPrivateMessageContextMenuWpf! change both at once!  (temporary solution)
+        //UPDATE: there's no more GetPrivateMessageContextMenuWPF duplicate
         public static ContextMenu GetPrivateMessageContextMenu(PrivateMessageControl control)
         {
             var contextMenu = new ContextMenu();
@@ -355,10 +353,10 @@ namespace ZeroKLobby.MicroLobby
                 if (control.CanClose)
                 {
                     var closeItem = new System.Windows.Forms.MenuItem("Close");
-                    closeItem.Click += (s, e) => ActionHandler.CloseChannel(control.UserName);
+                    closeItem.Click += (s, e) => Program.MainWindow.ChatTab.CloseTab(control.UserName, control);
                     contextMenu.MenuItems.Add(closeItem);
                 }
-
+                //Add coloring panel
                 contextMenu.MenuItems.Add("-");
                 MenuItem textColoringMenu = new System.Windows.Forms.MenuItem("Compose a colored text");
                 textColoringMenu.Click += (s, e) => { ActionHandler.ShowColoringPanel(control.sendBox); };
@@ -366,6 +364,18 @@ namespace ZeroKLobby.MicroLobby
                 MenuItem unicodeTranslator = new System.Windows.Forms.MenuItem("Get Unicode symbols");
                 unicodeTranslator.Click += (s, e) => { ActionHandler.ShowUnicodeTranslator(); };
                 contextMenu.MenuItems.Add(unicodeTranslator);
+
+                //Add chat encryption option
+                contextMenu.MenuItems.Add("-");
+                MenuItem encryptionWithHistory = new System.Windows.Forms.MenuItem("Start encrypted chat");
+                encryptionWithHistory.Click += (s, e) => { control.StartEncryption(true); };
+                contextMenu.MenuItems.Add(encryptionWithHistory);
+                MenuItem requestEncryption = new System.Windows.Forms.MenuItem("Start encrypted chat (no history)");
+                requestEncryption.Click += (s, e) => { control.StartEncryption(false); };
+                contextMenu.MenuItems.Add(requestEncryption);
+                MenuItem endEncryption = new System.Windows.Forms.MenuItem("End encrypted chat");
+                endEncryption.Click += (s, e) => { control.RequestEndEncryption("user"); };
+                contextMenu.MenuItems.Add(endEncryption);
             }
             catch (Exception e)
             {

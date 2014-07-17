@@ -50,8 +50,9 @@ namespace ZeroKLobby.MicroLobby
             ResumeLayout();
         }
 
-        public void CloseTab(string key)
+        public void CloseTab(string key, PrivateMessageControl pmControl = null)
         {
+            if (pmControl != null) pmControl.EndEncryption(); //dispose any open encryption if any.
             toolTabs.RemoveTab(key);
         }
 
@@ -63,19 +64,19 @@ namespace ZeroKLobby.MicroLobby
             User user;
             var isOffline = !Program.TasClient.ExistingUsers.TryGetValue(userName, out user);
             var icon = isOffline ? ZklResources.grayuser : TextImage.GetUserImage(userName);
-            var contextMenu = new ContextMenu();
-            if (!isFriend)
-            {
-                var closeButton = new MenuItem();
-                closeButton.Click += (s, e) => toolTabs.RemoveTab(userName);
-                contextMenu.MenuItems.Add(closeButton);
-            }
+            //Note: context menu options is added in ContextMenus.cs
             toolTabs.AddTab(userName, userName, pmControl, icon, ToolTipHandler.GetUserToolTipString(userName), 0);
             pmControl.ChatLine +=
                 (s, e) => { if (Program.TasClient.IsLoggedIn)
                 {
-                	if (Program.TasClient.ExistingUsers.ContainsKey(userName)) Program.TasClient.Say(TasClient.SayPlace.User, userName, e.Data, false);
-									else Program.TasClient.Say(TasClient.SayPlace.User, GlobalConst.NightwatchName, string.Format("!pm {0} {1}", userName, e.Data), false ); // send using PM
+                    string textToSend = e.Data;
+                    if (pmControl.encryptionState == PrivateMessageControl.isInEncryption)
+                    {
+                        textToSend = PrivateMessageControl.encryptionSign + pmControl.encryptionInstance.AESEncryptTo64Base(textToSend, false, pmControl.myEncryptMsgCount); //encrypted chat
+                        pmControl.myEncryptMsgCount += 1;
+                    }
+                    if (Program.TasClient.ExistingUsers.ContainsKey(userName)) Program.TasClient.Say(TasClient.SayPlace.User, userName, textToSend, false);
+                    else Program.TasClient.Say(TasClient.SayPlace.User, GlobalConst.NightwatchName, string.Format("!pm {0} {1}", userName, textToSend), false); // send using PM
                 } };
             return pmControl;
         }

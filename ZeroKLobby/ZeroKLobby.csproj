@@ -159,6 +159,7 @@
     <Compile Include="Controls\ZkSplitContainer.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Lines\SecureSaidLine.cs" />
     <Compile Include="MicroLobby\HexToUnicodeConverter.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -183,6 +184,7 @@
     <Compile Include="SelectWritableFolder.Designer.cs">
       <DependentUpon>SelectWritableFolder.cs</DependentUpon>
     </Compile>
+    <Compile Include="SimpleEncryptionRSAandAES.cs" />
     <Compile Include="VoiceCommand\ChatToSpeech.cs" />
     <Compile Include="Configs.Designer.cs">
       <AutoGen>True</AutoGen>
