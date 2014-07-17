@@ -38,7 +38,10 @@ namespace ZeroKLobby.MicroLobby
                 var fileName = channelName + ".txt";
                 if (line is JoinLine || line is LeaveLine || line is HistoryLine || line is TopicLine) return;
                 Directory.CreateDirectory(historyFolder);
-                lock (locker) File.AppendAllText(Path.Combine(historyFolder, fileName), line.Text.StripAllCodes() + Environment.NewLine);
+                var lineStr = line is ChimeLine ? "*** " +
+                    ((ChimeLine)line).Date.ToString(System.Globalization.CultureInfo.CurrentCulture) :
+                    line.Text.StripAllCodes();
+                lock (locker) File.AppendAllText(Path.Combine(historyFolder, fileName), lineStr + Environment.NewLine);
             }
             catch (Exception e)
             {
