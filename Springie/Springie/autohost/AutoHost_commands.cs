@@ -293,7 +293,7 @@ namespace Springie.autohost
 
         public void ComUnlock(TasSayEventArgs e, string[] words)
         {
-            if (DateTime.Now < lockedUntil) Respond(e, string.Format("Lock is timed, wait {0} seconds", (int)lockedUntil.Subtract(DateTime.UtcNow).TotalSeconds));
+            if (DateTime.Now < lockedUntil) Respond(e, string.Format("Lock is timed, wait {0} seconds", (int)lockedUntil.Subtract(DateTime.Now).TotalSeconds));
             else {
                 tas.ChangeLock(false);
                 lockedUntil = DateTime.MinValue;

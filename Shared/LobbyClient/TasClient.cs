@@ -1382,6 +1382,7 @@ namespace LobbyClient
                         if (battle == MyBattle)
                         {
                             battle.ScriptTags.Clear();
+                            battle.Users.Clear();
                             BattleClosed(this, new EventArgs<Battle>(battle));
                             MyBattleEnded(this, new EventArgs<Battle>(battle));
                         }
