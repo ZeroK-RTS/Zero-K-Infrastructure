@@ -34,7 +34,7 @@ function MissionEvent(e)
   if e.logicType == "GuiMessageAction" then
     if e.image then 
       WG.Message:Show{
-        texture = (e.imageFromArchive and "" or ":n:LuaUI/Images/") .. e.image,
+        texture = (e.imageFromArchive and "" or "LuaUI/Images/") .. e.image,
         text = e.message,
         width = e.imageWidth,
         height = e.imageHeight,
@@ -52,7 +52,7 @@ function MissionEvent(e)
       if WG.ShowPersistentMessageBox then
 	local image
 	if e.image then
-	  image = (e.imageFromArchive and "" or ":n:LuaUI/Images/") .. e.image
+	  image = (e.imageFromArchive and "" or "LuaUI/Images/") .. e.image
 	end
         WG.ShowPersistentMessageBox(e.message, e.width, e.height, e.fontSize, image or nil)
       else
@@ -66,10 +66,10 @@ function MissionEvent(e)
       if WG.AddConvo then
 	local image, sound
 	if e.image then
-	  image = (e.imageFromArchive and "" or ":n:LuaUI/Images/") .. e.image
+	  image = (e.imageFromArchive and "" or "LuaUI/Images/") .. e.image
 	end
 	if e.sound then
-	  sound = (e.soundFromArchive and "" or ":n:LuaUI/Sounds/") .. e.sound
+	  sound = (e.soundFromArchive and "" or "LuaUI/Sounds/convo/") .. e.sound
 	end
         WG.AddConvo(e.message, e.fontSize, image, sound, e.time)
       else
@@ -147,12 +147,12 @@ function MissionEvent(e)
       track = "LuaUI/Sounds/music/" .. track
     end
     if WG.Music and WG.Music.StartTrack then
-      if e.track then
+      if track then
 	WG.Music.StartTrack(track)
       else
 	WG.Music.StartTrack()
       end
-    elseif e.track ~= nil then
+    elseif track ~= nil then
       Spring.StopSoundStream()
       Spring.PlaySoundStream(track, 0.5)
     end
