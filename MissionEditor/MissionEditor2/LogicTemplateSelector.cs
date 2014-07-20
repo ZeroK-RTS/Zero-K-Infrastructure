@@ -33,7 +33,6 @@ namespace MissionEditor2
             else if (item is ClearConvoMessageQueueAction) resourceName = "clearConvoMessageQueueTemplate";
             else if (item is AddObjectiveAction) resourceName = "addObjectiveTemplate";
             else if (item is ModifyObjectiveAction) resourceName = "modifyObjectiveTemplate";
-			else if (item is UnitDestroyedCondition) resourceName = "unitDestroyedTemplate";
 			else if (item is DummyCondition || item is DummyAction || item is ConditionsFolder || item is ActionsFolder) resourceName = "dummyTemplate";
 			else if (item is SunriseAction) resourceName = "sunriseTemplate";
 			else if (item is SunsetAction) resourceName = "sunsetTemplate";

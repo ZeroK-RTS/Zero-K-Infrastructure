@@ -680,12 +680,6 @@ namespace MissionEditor2
             };
         }
 
-		void UnitDestroyedGroupsListLoaded(object sender, RoutedEventArgs e)
-		{
-			var collection = ((UnitDestroyedCondition)CurrentLogic).Groups;
-			((ListBox)e.Source).BindCollection(collection);
-		}
-
 		void action_Loaded(object sender, RoutedEventArgs e)
 		{
 			logic_Loaded(sender, e);

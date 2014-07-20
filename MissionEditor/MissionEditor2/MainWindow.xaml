@@ -447,27 +447,6 @@
             </Grid>
         </DataTemplate>
 
-        <!-- ======== UnitDestroyed Template ======== -->
-
-        <DataTemplate x:Key="unitDestroyedTemplate">
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                <GroupBox Header="Groups" VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <ListBox ItemsSource="{Binding Mission.AllGroups, ElementName=window}" SelectionMode="Multiple" MaxHeight="200" Loaded="UnitDestroyedGroupsListLoaded" />
-                </GroupBox>
-                <GroupBox Header="Description">
-                    <TextBlock TextWrapping="WrapWithOverflow">
-            This condition is met when a unit in any of the selected groups is destroyed.
-            <LineBreak />
-            You can add units to groups by editing the group column of the unit list in the Create Units display or by right-clicking on unit icons.
-            <LineBreak />
-            Separate multiple groups with commas and no spaces.
-            <LineBreak />
-            Units can be in multiple groups.
-                    </TextBlock>
-                </GroupBox>
-            </StackPanel>
-        </DataTemplate>
-
         <!-- ======== Send Score Template ======== -->
 
         <DataTemplate x:Key="sendScoreTemplate">

@@ -118,6 +118,10 @@
             <ContentControl Content="{StaticResource unitConditionPane}" />
         </DataTemplate>
 
+        <DataTemplate x:Key="UnitDestroyedCondition">
+            <local:UnitDestroyedConditionControl />
+        </DataTemplate>
+
         <DataTemplate x:Key="LockUnitsAction">
             <ContentControl Content="{StaticResource unitConditionPane}" />
         </DataTemplate>

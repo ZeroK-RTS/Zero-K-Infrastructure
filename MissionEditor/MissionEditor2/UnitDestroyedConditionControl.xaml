@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="MissionEditor2.UnitDestroyedConditionControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300" Loaded="UserControl_Loaded">
+    <Grid HorizontalAlignment="Center">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <GroupBox Header="Groups">
+            <ListBox x:Name="groupBox" ItemsSource="{Binding Mission.AllGroups, ElementName=window}" SelectionMode="Multiple"/>
+        </GroupBox>
+        <GroupBox Header="Description" Grid.Row="1">
+            <TextBlock TextWrapping="WrapWithOverflow">
+                    This condition is met when a unit in any of the selected groups is destroyed.
+                    <LineBreak />
+                    You can add units to groups by editing the group column of the unit list in the Create Units display or by right-clicking on unit icons.
+                    <LineBreak />
+                    Separate multiple groups with commas and no spaces.
+                    <LineBreak />
+                    Units can be in multiple groups.
+            </TextBlock>
+        </GroupBox>
+    </Grid>
+</UserControl>
