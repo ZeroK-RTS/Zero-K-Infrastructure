@@ -765,15 +765,18 @@ namespace CMissionLib
                     }
                     foreach (UnitsAreInAreaCondition condition in copy.Conditions.Where(x => x.GetType() == typeof(UnitsAreInAreaCondition)))
                     {
-                        condition.Players = (ObservableCollection<Player>)condition.Players.Select(x => Players.First(p => p.Name == x.Name));
+                        var players = condition.Players.Select(x => Players.First(p => p.Name == x.Name));
+                        condition.Players = new ObservableCollection<Player>(players);
                     }
                     foreach (UnitCreatedCondition condition in copy.Conditions.Where(x => x.GetType() == typeof(UnitCreatedCondition)))
                     {
-                        condition.Players = (ObservableCollection<Player>)condition.Players.Select(x => Players.First(p => p.Name == x.Name));
+                        var players = condition.Players.Select(x => Players.First(p => p.Name == x.Name));
+                        condition.Players = new ObservableCollection<Player>(players);
                     }
                     foreach (UnitFinishedCondition condition in copy.Conditions.Where(x => x.GetType() == typeof(UnitFinishedCondition)))
                     {
-                        condition.Players = (ObservableCollection<Player>)condition.Players.Select(x => Players.First(p => p.Name == x.Name));
+                        var players = condition.Players.Select(x => Players.First(p => p.Name == x.Name));
+                        condition.Players = new ObservableCollection<Player>(players);
                     }
                     foreach (PlayerDiedCondition condition in copy.Conditions.Where(x => x.GetType() == typeof(PlayerDiedCondition)))
                     {
@@ -782,6 +785,16 @@ namespace CMissionLib
                     foreach (PlayerJoinedCondition condition in copy.Conditions.Where(x => x.GetType() == typeof(PlayerJoinedCondition)))
                     {
                         condition.Player = Players.First(p => p.Name == condition.Player.Name);
+                    }
+                    foreach (LockUnitsAction action in copy.Actions.Where(x => x.GetType() == typeof(LockUnitsAction)))
+                    {
+                        var players = action.Players.Select(x => Players.First(p => p.Name == x.Name));
+                        action.Players = new ObservableCollection<Player>(players);
+                    }
+                    foreach (UnlockUnitsAction action in copy.Actions.Where(x => x.GetType() == typeof(UnlockUnitsAction)))
+                    {
+                        var players = action.Players.Select(x => Players.First(p => p.Name == x.Name));
+                        action.Players = new ObservableCollection<Player>(players);
                     }
 
                     Triggers.Add(copy);
@@ -803,8 +816,18 @@ namespace CMissionLib
             {
                 using (var stream = File.OpenRead(path))
                 {
-                    Action copy = (Action)new NetDataContractSerializer().ReadObject(stream);
-                    // do stuff here
+                    dynamic copy = (Action)new NetDataContractSerializer().ReadObject(stream);
+                    // reconstruct object references
+                    if (source is LockUnitsAction)
+                    {
+                        var players = ((LockUnitsAction)(source)).Players.Select(x => Players.First(p => p.Name == x.Name));
+                        copy.Players = new ObservableCollection<Player>(players);
+                    }
+                    else if (source is UnlockUnitsAction)
+                    {
+                        var players = ((UnlockUnitsAction)(source)).Players.Select(x => Players.First(p => p.Name == x.Name));
+                        copy.Players = new ObservableCollection<Player>(players);
+                    }
 
                     RaisePropertyChanged(String.Empty);
                 }
