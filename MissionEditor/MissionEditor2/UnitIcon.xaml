@@ -26,8 +26,8 @@
         	<MenuItem Header="Tutorial Ghost" IsCheckable="True" IsChecked="{Binding IsGhost}" />
         </ContextMenu>
     </UserControl.ContextMenu>
-    <Viewbox Height="16" Width="16">
-        <Grid>
+    <Grid>
+        <Grid HorizontalAlignment="Left">
             <Border x:Name="selectionBorder" CornerRadius="0" BorderBrush="Red" Visibility="Hidden" BorderThickness="1">
                 <Border.RenderTransform>
                     <ScaleTransform ScaleX="1.2" ScaleY="1.2" CenterX="8" CenterY="8" />
@@ -51,17 +51,16 @@
                     </ControlTemplate>
                 </Thumb.Template>
             </Thumb>
-            <TextBlock Text="{Binding Groups, Converter={StaticResource csvConverter}}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="4">
-      <TextBlock.RenderTransform>
-        <TransformGroup>
-          <TranslateTransform Y="10" />
-          <RotateTransform Angle="{Binding Heading, Converter={StaticResource opposedConverter}}" CenterX="8" CenterY="8" />
-        </TransformGroup>
-      </TextBlock.RenderTransform>
-      <TextBlock.Effect>
-        <DropShadowEffect Color="Black" BlurRadius="3" />
-      </TextBlock.Effect>
-            </TextBlock>
         </Grid>
-    </Viewbox>
+        <TextBlock Text="{Binding Groups, Converter={StaticResource csvConverter}}" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="4">
+            <TextBlock.RenderTransform>
+                <TransformGroup>
+                    <RotateTransform Angle="{Binding Heading, Converter={StaticResource opposedConverter}}"/>
+                </TransformGroup>
+            </TextBlock.RenderTransform>
+            <TextBlock.Effect>
+                <DropShadowEffect Color="Black" BlurRadius="3" />
+            </TextBlock.Effect>
+        </TextBlock>
+    </Grid>
 </UserControl>
