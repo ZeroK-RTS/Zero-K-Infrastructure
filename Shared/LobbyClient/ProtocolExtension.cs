@@ -88,7 +88,7 @@ namespace LobbyClient
                     { Keys.Faction.ToString(), acc.Faction != null ? acc.Faction.Shortcut : "" },
                     { Keys.Clan.ToString(), acc.Clan != null ? acc.Clan.Shortcut : "" },
                     { Keys.Avatar.ToString(), acc.Avatar },
-                    { Keys.SpringieLevel.ToString(), acc.SpringieLevel.ToString() }
+                    { Keys.SpringieLevel.ToString(), acc.GetEffectiveSpringieLevel().ToString() }
                 };
                 if (acc.IsZeroKAdmin) data.Add(Keys.ZkAdmin.ToString(), "1");
 
