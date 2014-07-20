@@ -12,9 +12,9 @@
             </GroupBox>
             <GroupBox Header="Description">
                 <TextBlock TextWrapping="WrapWithOverflow">
-            This condition is met when a unit is built over a tutorial ghost of the selected group.<LineBreak />
-            The unit will be placed in the same groups as the tutorial ghost.<LineBreak />
-            You can add create a tutorial ghosts in the Create Units Action. Right click on a created unit and select "Tutorial Ghost".<LineBreak />
+                    This condition is met when a unit is built over a tutorial ghost of the selected group.<LineBreak />
+                    The unit will be placed in the same groups as the tutorial ghost.<LineBreak />
+                    You can add create a tutorial ghosts in the Create Units Action. Right click on a created unit and select "Tutorial Ghost".
                 </TextBlock>
             </GroupBox>
         </StackPanel>
