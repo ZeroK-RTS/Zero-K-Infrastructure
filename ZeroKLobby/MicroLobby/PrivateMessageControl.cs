@@ -15,14 +15,14 @@ namespace ZeroKLobby.MicroLobby
       public int encryptionState = 0;
       public SimpleCryptographicProvider encryptionInstance;
       private Timer timeoutTimer = new Timer();
-      private const int keyExchangeTimeout = 10000; //in milisecond
+      private const int keyExchangeTimeout = 5000; //in milisecond
       public const string encryptionSign = "\x2D0";
       private bool blockHistory = false;
       public const int isNoEncryption = 0;
       public const int isInitialRequest = 1;
       public const int isKeyExchange = 2;
       public const int isInEncryption = 3;
-      public int myEncryptMsgCount = 0; //use to offset IV for encrypted message to avoid showing same ciphertext for same plaintext
+      public int myEncryptMsgCount = 0; //used to offset IV for encrypted message to avoid showing same ciphertext for same plaintext
       public int otherEncryptMsgCount = 0;
 
     DateTime lastAnsweringMessageTime;
@@ -180,6 +180,16 @@ namespace ZeroKLobby.MicroLobby
 
     //ENCRYPTION SEGMENT:
     //the following code allow 2 users to negotiate exchange (sharing) of encryption key.
+      const string encryptStart1 = "Encryption:ExchangeNewKey";
+      const string encryptStart2 = "Encryption:Options:";
+      const string encryptExchange1 = "Encrypt:PublicKey:";
+      const string encryptExchange2a = "Encrypt:SymKey:";
+      const string encryptExchange2b = " SymIV:";
+      const string encryptExchange2 = encryptExchange2a + "{0}" + encryptExchange2b + "{1}";
+      const string encryptEnd1 = "Encryption:Active";
+      const string encryptEnd2 = "Encryption:End";
+      const string encryptEnd2Ack = "Encryption:0";
+
     public void StartEncryption(bool saveEncryptionSession)
     {
         if (encryptionState != isInitialRequest && (encryptionState == isInEncryption || encryptionState == isNoEncryption))
@@ -187,7 +197,7 @@ namespace ZeroKLobby.MicroLobby
             blockHistory = !saveEncryptionSession;
             Program.TasClient.Say(TasClient.SayPlace.User,
                                         UserName,
-                                        "Encryption:RequestKeyExchange" + (blockHistory ? "(no history)" :""),
+                                        encryptStart1 + (blockHistory ? "(no history)" : ""), //"Encryption:ExchangeNewKey"
                                         false);
             encryptionState = isInitialRequest; //this ensure that if both A & B send "Encryption:RequestKeyExchange" at same time it will block the sequence and we have to do again with only 1 sender OR if sequence already progressed then previous step will be ignored
             timeoutTimer.Start(); //to auto cancel if no-reply for too long.
@@ -201,13 +211,13 @@ namespace ZeroKLobby.MicroLobby
         try
         {
             if (line == null) return false; //is Null if line isn't actually a SaidLine type
-            if (encryptionState != isInitialRequest && (encryptionState == isInEncryption || encryptionState == isNoEncryption) && (line.AuthorName != Program.TasClient.UserName) && (line.Message.StartsWith("Encryption:RequestKeyExchange")))
+            if (encryptionState != isInitialRequest && (encryptionState == isInEncryption || encryptionState == isNoEncryption) && (line.AuthorName != Program.TasClient.UserName) && (line.Message.StartsWith(encryptStart1))) //"Encryption:ExchangeNewKey"
             {//B
                 //Note: accept case when previous state was fully-encrypted (a reset/refresh of key) or not-encrypted (first time)
                 blockHistory = line.Message.Contains("(no history)"); //2nd party should obey no history request too.
                 Program.TasClient.Say(TasClient.SayPlace.User,
                                        UserName,
-                                       "Encryption:Parameter:" + (blockHistory ? "(no history)" : ""),
+                                       encryptStart2 + (blockHistory ? "(no history)" : ""), //"Encryption:Options:"
                                        false);
                 encryptionState = isInitialRequest;
                 timeoutTimer.Start();
@@ -215,7 +225,7 @@ namespace ZeroKLobby.MicroLobby
                 otherEncryptMsgCount = 0;
                 return false;
             }
-            else if (encryptionState != isKeyExchange && (encryptionState == isInitialRequest) && (line.AuthorName != Program.TasClient.UserName) && (line.Message.StartsWith("Encryption:Parameter:")))
+            else if (encryptionState != isKeyExchange && (encryptionState == isInitialRequest) && (line.AuthorName != Program.TasClient.UserName) && (line.Message.StartsWith(encryptStart2)))
             {//A
                 encryptionInstance = new SimpleCryptographicProvider();
                 encryptionInstance.InitializeRSAKeyPair(1024);
@@ -223,18 +233,18 @@ namespace ZeroKLobby.MicroLobby
 
                 Program.TasClient.Say(TasClient.SayPlace.User,
                                         UserName,
-                                        "Encryption:PublicKey:" + publicKey,
+                                        encryptExchange1 + publicKey, //"Encrypt:PublicKey:"
                                         false);
                 encryptionState = isKeyExchange;
                 return false;
             }
-            else if (line.Message.StartsWith("Encryption:PublicKey:"))
+            else if (line.Message.StartsWith(encryptExchange1)) //"Encrypt:PublicKey:"
             {
                 if (encryptionState != isKeyExchange && (encryptionState == isInitialRequest) && (line.AuthorName != Program.TasClient.UserName))
                 {//B
                     //Note: "(2 - encryptionState == 1)" mean it only accept if its progression upward from lower state (ensure no skipped sequence)
                     encryptionInstance = new SimpleCryptographicProvider();
-                    string keyTxt = line.Message.Substring(21);
+                    string keyTxt = line.Message.Substring(encryptExchange1.Length);
                     encryptionInstance.InitializeRSAPublicKey(keyTxt);
                     encryptionInstance.InitializeAESWith64BaseKey();
 
@@ -243,55 +253,55 @@ namespace ZeroKLobby.MicroLobby
 
                     Program.TasClient.Say(TasClient.SayPlace.User,
                                             UserName,
-                                            "Encryption:SymKey:" + symKey + " SymIV:" + symIV,
+                                            string.Format(encryptExchange2, symKey, symIV), //"Encrypt:SymKey: SymIV:"
                                             false);
                     encryptionState = isKeyExchange;
                 }
                 return true;
             }
-            else if (line.Message.StartsWith("Encryption:SymKey:"))
+            else if (line.Message.StartsWith(encryptExchange2a)) //"Encrypt:SymKey: SymIV:"
             {
                 if (encryptionState != isInEncryption && (encryptionState == isKeyExchange) && (line.AuthorName != Program.TasClient.UserName))
                 {//A
-                    int symIVStart = line.Message.IndexOf(" SymIV:", 18);
-                    string keyTxt = line.Message.Substring(18, symIVStart - 18);
+                    int symIVStart = line.Message.IndexOf(encryptExchange2b, encryptExchange2a.Length);
+                    string keyTxt = line.Message.Substring(encryptExchange2a.Length, symIVStart - encryptExchange2a.Length);
                     keyTxt = encryptionInstance.RSADecryptFrom64Base(keyTxt, true);
-                    string ivTxt = line.Message.Substring(symIVStart + 7);
+                    string ivTxt = line.Message.Substring(symIVStart + encryptExchange2b.Length);
                     encryptionInstance.InitializeAESWith64BaseKey(keyTxt, ivTxt);
 
                     Program.TasClient.Say(TasClient.SayPlace.User,
                                             UserName,
-                                            "Encryption:Active",
+                                            encryptEnd1, //"Encryption:Active"
                                             false);
                     encryptionState = isInEncryption;
                     timeoutTimer.Stop();
                 }
                 return true;
             }
-            else if (encryptionState != isInEncryption && (encryptionState == isKeyExchange) && (line.Message.StartsWith("Encryption:Active")))
+            else if (encryptionState != isInEncryption && (encryptionState == isKeyExchange) && (line.Message.StartsWith(encryptEnd1))) //"Encryption:Active"
             {//B 
                 //Note: A can also receive this with no harm but "encryptionState" check prevented this
                 encryptionState = isInEncryption;
                 timeoutTimer.Stop();
                 return false;
             }
-            else if (line.Message.StartsWith("Encryption:End"))
+            else if (line.Message.StartsWith(encryptEnd2)) //"Encryption:End"
             {//A & B
-                EndEncryption();
-                if (line.AuthorName != Program.TasClient.UserName)
+                if (encryptionState != isNoEncryption && line.AuthorName != Program.TasClient.UserName)
                 {//B or A
                     Program.TasClient.Say(TasClient.SayPlace.User,
                                         UserName,
-                                        "Encryption:Inactive",
+                                        encryptEnd2Ack, //"Encryption:0"
                                         false);
                 }
+                EndEncryption();
                 return false;
             }
             return false;
         }
         catch (Exception e)
         {
-            System.Diagnostics.Trace.TraceError("ERROR performing encryption key-exchange protocol: {0}", e.Message);
+            System.Diagnostics.Trace.TraceError("ERROR performing encryption key-exchange protocol: {0}", e);
             return true;
         }
     }
@@ -313,7 +323,7 @@ namespace ZeroKLobby.MicroLobby
     {
         Program.TasClient.Say(TasClient.SayPlace.User,
                             UserName,
-                            "Encryption:End"+ (reason==null?"":" ("+reason+")"),
+                            encryptEnd2 + (reason == null ? "" : " (" + reason + ")"), //"Encryption:End"
                             false);
         EndEncryption();
     }
