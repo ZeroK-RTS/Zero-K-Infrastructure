@@ -432,7 +432,7 @@ namespace ZeroKLobby.MicroLobby
             var existingTeams = nonSpecs.GroupBy(p => p.AllyNumber).Select(team => team.Key).ToList();
             var botTeams = Program.TasClient.MyBattle.Bots.Select(bot => bot.AllyNumber);
             existingTeams.AddRange(botTeams.ToArray());
-            freeAllyTeam = Enumerable.Range(0, Int32.MaxValue).First(allyTeam => !existingTeams.Contains(allyTeam));
+            freeAllyTeam = Enumerable.Range(0, 100).First(allyTeam => !existingTeams.Contains(allyTeam));
             return existingTeams;
         }
 

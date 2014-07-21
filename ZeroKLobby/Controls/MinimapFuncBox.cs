@@ -62,14 +62,13 @@ namespace ZeroKLobby.Controls
             if (Program.TasClient.MyBattle != null)
             {
                 int freeAllyTeam;
-
+                bool iAmSpectator = Program.TasClient.MyBattleStatus.IsSpectator;
                 foreach (var allyTeam in ZeroKLobby.MicroLobby.ContextMenus.GetExistingTeams(out freeAllyTeam).Distinct())
                 {
-                    var at = allyTeam;
-                    if (allyTeam != Program.TasClient.MyBattleStatus.AllyNumber)
+                    if (iAmSpectator || allyTeam != Program.TasClient.MyBattleStatus.AllyNumber)
                     {
                         var item = new System.Windows.Forms.MenuItem("Join Team " + (allyTeam + 1));
-                        item.Click += (s, e2) => ActionHandler.JoinAllyTeam(at);
+                        item.Click += (s, e2) => ActionHandler.JoinAllyTeam(allyTeam);
                         menu.MenuItems.Add(item);
                     }
                 }
