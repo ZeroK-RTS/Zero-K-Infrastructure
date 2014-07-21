@@ -42,10 +42,10 @@ namespace ZeroKLobby.MicroLobby
 {
     public partial class TextWindow: UserControl
     {
-        private const int defaultMaxLines = 500; //about 10 pages
-        private const int HardMaximumLines = 3000; //absolute maximum to avoid extreme case. around 11 days of chat or 1% of 3 year of chat
-        private int MaxTextLines = defaultMaxLines; //this size is not fixed. It expand when detected spam, and maintain size when new line are added at slow interval.
-        private int MaxDisplayLines = defaultMaxLines;
+        private const int defaultMaxLines = 495; //about 10 pages
+        private const int HardMaximumLines = 2995; //absolute maximum to avoid extreme case. around 11 days of chat or 1% of 3 year of chat
+        private int MaxTextLines = 1; //this size is not fixed. It expand when detected spam, and maintain size when new line are added at slow interval.
+        private int MaxDisplayLines = 1;
         //old URL regex for reference: WwwMatch = @"((https?|www\.|spring://)[^\s,]+)";
         //Regex note: [^<>()] : exclude <<< or >>> or ( or ) at end of URL
         //Regex note: [\w\d:#@%/!;$()~_?\+-=\\\.&]* : include any sort of character 1 or more times
@@ -309,7 +309,7 @@ namespace ZeroKLobby.MicroLobby
 
             if (!SingleLine)
             {
-                // Get the line count from the bottom... 
+                // Get the line count from the bottom... (relative to screen)
                 line = ((Height + (LineSize/2)) - e.Y)/LineSize;
 
                 // Then, convert it to count from the top. 
@@ -441,7 +441,6 @@ namespace ZeroKLobby.MicroLobby
                 if (newLine.Length == 0) return;
                 bool isSpam = (DateTime.Now.Ticks - previousAppendText) <= 2000000; //2,000,000 ticks is 200milisecond.
                 previousAppendText = DateTime.Now.Ticks;
-                bool isFull = totalLines >= HardMaximumLines;
 
                 if (!Visible) unreadMarker++;
                 else if (unreadMarker > 0) unreadMarker++;
@@ -473,11 +472,13 @@ namespace ZeroKLobby.MicroLobby
 
                 if (singleLine) totalLines = 1;
 
-                bool needSpace = totalLines > (MaxTextLines - 5);
-                if (needSpace && (!isSpam || isFull))
-                {
+                bool needSpace = totalLines >= MaxTextLines;
+                bool isExpanding = MaxTextLines < defaultMaxLines;
+                bool isFull = MaxTextLines >= HardMaximumLines;
+                if (needSpace && !isExpanding && (isFull || !isSpam))
+                { //remove old text, create space for new text (recycle existing row)
                     var x = 0;
-                    int toRemove = MaxTextLines / 10; //remove 10% of old text
+                    int toRemove = (MaxTextLines / 10) + 1; //remove 10% of old text
                     for (int i = toRemove; i < totalLines; i++) 
                     {
                         textLines[x].TotalLines = textLines[i].TotalLines;
@@ -505,9 +506,8 @@ namespace ZeroKLobby.MicroLobby
 
                     totalLines++;
                 }
-
-                if (needSpace && isSpam && !isFull)
-                    AddFiveNewTextLines();
+                else if (needSpace && !isFull && (isExpanding || isSpam))
+                    AddNewTextLines(); //create new space for new text (new row)
 
                 textLines[totalLines].Line = newLine;
 
@@ -597,8 +597,8 @@ namespace ZeroKLobby.MicroLobby
                         displayLines[line].TextLine = currentLine;
                         displayLines[line].TextColor = textLines[currentLine].TextColor;
                         line++;
-                        if (line > MaxDisplayLines - 5)
-                            AddFiveNewDisplayLines();
+                        if (line >= MaxDisplayLines)
+                            AddNewDisplayLines();
                     }
                     catch (Exception e)
                     {
@@ -657,8 +657,8 @@ namespace ZeroKLobby.MicroLobby
                                             nextColor = "";
                                         }
                                         line++;
-                                        if (line > MaxDisplayLines - 5)
-                                            AddFiveNewDisplayLines();
+                                        if (line >= MaxDisplayLines)
+                                            AddNewDisplayLines();
 
                                         displayLines[line].Previous = true;
                                         buildString = null;
@@ -684,8 +684,8 @@ namespace ZeroKLobby.MicroLobby
                     displayLines[line].TextLine = currentLine;
                     displayLines[line].TextColor = textLines[currentLine].TextColor;
                     line++;
-                    if (line > MaxDisplayLines - 5)
-                        AddFiveNewDisplayLines();
+                    if (line >= MaxDisplayLines)
+                        AddNewDisplayLines();
                 }
             }
 
@@ -1436,7 +1436,7 @@ namespace ZeroKLobby.MicroLobby
                 if (newValue != 0)
                 {
                     vScrollBar.Minimum = 1;
-                    vScrollBar.Maximum = TotalDisplayLines + vScrollBar.LargeChange - 1; // maximum value that can be reached through UI is: 1 + Maximum - LargeChange. Ref: http://msdn.microsoft.com/en-us/library/system.windows.forms.scrollbar.maximum(v=vs.110).aspx
+                    vScrollBar.Maximum = Math.Max(TotalDisplayLines + vScrollBar.LargeChange - 1,1); // maximum value that can be reached through UI is: 1 + Maximum - LargeChange. Ref: http://msdn.microsoft.com/en-us/library/system.windows.forms.scrollbar.maximum(v=vs.110).aspx
 
                     if (!vScrollBar.Enabled || !vScrollBar.Visible) nearBottom = true;
                     if (hideScroll || nearBottom) vScrollBar.Value = newValue;
@@ -1447,7 +1447,7 @@ namespace ZeroKLobby.MicroLobby
         void OnScroll(object sender, EventArgs e)
         {
             var scrollBar = (VScrollBar)sender;
-            scrollBar.Value = Math.Max(scrollBar.Value , 1);
+            scrollBar.Value = Math.Max(scrollBar.Value , 1); //Note: Math.Max is used for clamping value (to avoid OutOfRange message in MONO)
 
             Invalidate();
         }
@@ -1482,35 +1482,31 @@ namespace ZeroKLobby.MicroLobby
             public int Width { get; set; }
         }
 
-        private void AddFiveNewTextLines()
+        private void AddNewTextLines()
         {
-            for (int add = 0; add < 5; add++)
-                textLines.Add(new TextLine());
-            MaxTextLines = MaxTextLines + 5;
+            textLines.Add(new TextLine());
+            MaxTextLines = MaxTextLines + 1;
         }
 
-        private void AddFiveNewDisplayLines()
+        private void AddNewDisplayLines()
         {
-            for (int add = 0; add < 5; add++)
-                displayLines.Add(new DisplayLine());
-            MaxDisplayLines = MaxDisplayLines + 5;
+            displayLines.Add(new DisplayLine());
+            MaxDisplayLines = MaxDisplayLines + 1;
         }
 
         private void InitializeTextLines()
         {
             textLines.Clear();
-            MaxTextLines = defaultMaxLines;
-            for (int i = 0; i < MaxTextLines; i++)
-                textLines.Add(new TextLine());
+            MaxTextLines = 1;
+            textLines.Add(new TextLine());
             textLines.TrimExcess();
         }
 
         private void InitializeDisplayLines()
         {
             displayLines.Clear();
-            MaxDisplayLines = defaultMaxLines;
-            for (int i = 0; i < MaxDisplayLines; i++)
-                displayLines.Add(new DisplayLine());
+            MaxDisplayLines = 1;
+            displayLines.Add(new DisplayLine());
             displayLines.TrimExcess();
         }
     }
