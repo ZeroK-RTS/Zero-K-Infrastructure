@@ -36,12 +36,16 @@ using System.Windows.Forms.VisualStyles;
 using JetBrains.Annotations;
 using PlasmaShared;
 using ZeroKLobby;
+using System.Collections.Generic;
 
 namespace ZeroKLobby.MicroLobby
 {
     public partial class TextWindow: UserControl
     {
-        const int MaxTextLines = 500;
+        private const int defaultMaxLines = 495; //about 10 pages
+        private const int HardMaximumLines = 2995; //absolute maximum to avoid extreme case. around 11 days of chat or 1% of 3 year of chat
+        private int MaxTextLines = 1; //this size is not fixed. It expand when detected spam, and maintain size when new line are added at slow interval.
+        private int MaxDisplayLines = 1;
         //old URL regex for reference: WwwMatch = @"((https?|www\.|spring://)[^\s,]+)";
         //Regex note: [^<>()] : exclude <<< or >>> or ( or ) at end of URL
         //Regex note: [\w\d:#@%/!;$()~_?\+-=\\\.&]* : include any sort of character 1 or more times
@@ -49,20 +53,24 @@ namespace ZeroKLobby.MicroLobby
         int backColor;
         int curHighChar;
         int curHighLine;
-        readonly DisplayLine[] displayLines;
+        //NOTE: using List<T> instead of Array because or resize-able ability. List's "item[index]" access time is O(1) same as Array.
+        //If we don't use "foreach" is probably okay.
+        //Ref: http://programmers.stackexchange.com/questions/221892/should-i-use-a-list-or-an-array
+        //Ref2: http://msmvps.com/blogs/jon_skeet/archive/2009/01/29/for-vs-foreach-on-arrays-and-lists.aspx
+        readonly List<DisplayLine> displayLines; 
         int foreColor;
         bool hideScroll;
         string hoveredWord = "";
 
         string previousWord;
-
+        private long previousAppendText = 0; //timer to check for spam (message from bots or copy-pasting humans).
 
         bool reformatLines;
         int showMaxLines;
         bool singleLine;
         int startHighChar;
         int startHighLine = -1;
-        readonly TextLine[] textLines;
+        readonly List<TextLine> textLines;
         int totalLines;
 
         int unreadMarker; // Unread marker
@@ -119,8 +127,6 @@ namespace ZeroKLobby.MicroLobby
             SuspendLayout();
             InitializeComponent();
             ShowUnreadLine = true;
-            displayLines = new DisplayLine[MaxTextLines*4];
-            textLines = new TextLine[MaxTextLines];
 
             vScrollBar.Scroll += OnScroll;
 
@@ -131,6 +137,11 @@ namespace ZeroKLobby.MicroLobby
 
             LoadTextSizes();
             ResumeLayout();
+
+            displayLines = new List<DisplayLine>(MaxDisplayLines);
+            textLines = new List<TextLine>(MaxTextLines);
+            InitializeTextLines();
+            InitializeDisplayLines();
         }
 
         public void AppendText(string newLine)
@@ -141,8 +152,8 @@ namespace ZeroKLobby.MicroLobby
         public void ClearTextWindow()
         {
             //clear the text window of all its lines
-            displayLines.Initialize();
-            textLines.Initialize();
+            InitializeTextLines();
+            InitializeDisplayLines();
 
             totalLines = 0;
             TotalDisplayLines = 0;
@@ -154,7 +165,7 @@ namespace ZeroKLobby.MicroLobby
         {
             LoadTextSizes();
 
-            displayLines.Initialize();
+            InitializeDisplayLines();
 
             TotalDisplayLines = FormatLines(totalLines, 1, 0);
             UpdateScrollBar(TotalDisplayLines);
@@ -190,7 +201,7 @@ namespace ZeroKLobby.MicroLobby
                 }
                 else
                 {
-                    if (vScrollBar.Value <= vScrollBar.Maximum - vScrollBar.LargeChange)
+                    if (vScrollBar.Value < TotalDisplayLines) //scroll down until reach maximum
                     {
                         vScrollBar.Value++;
                         Invalidate();
@@ -207,7 +218,7 @@ namespace ZeroKLobby.MicroLobby
         /// Used to scroll the Text Window a Page at a Time
         /// </summary>
         /// <param name="scrollUp"></param>
-        public void ScrollWindowPage(bool scrollUp)
+        public void ScrollWindowPage(bool scrollUp) //seems unused
         {
             try
             {
@@ -216,15 +227,17 @@ namespace ZeroKLobby.MicroLobby
                 if (scrollUp)
                 {
                     if (vScrollBar.Value > vScrollBar.LargeChange)
-                    {
-                        vScrollBar.Value = vScrollBar.Value - (vScrollBar.LargeChange - 1);
-                        Invalidate();
-                    }
+                        vScrollBar.Value = vScrollBar.Value - vScrollBar.LargeChange;
+                    else
+                        vScrollBar.Value = 1; //reach top
+                    Invalidate();
                 }
                 else
                 {
-                    if (vScrollBar.Value <= vScrollBar.Maximum - (vScrollBar.LargeChange*2)) vScrollBar.Value = vScrollBar.Value + (vScrollBar.LargeChange - 1);
-                    else vScrollBar.Value = vScrollBar.Maximum - vScrollBar.LargeChange + 1;
+                    if (vScrollBar.Value < (TotalDisplayLines - vScrollBar.LargeChange))
+                        vScrollBar.Value = vScrollBar.Value + vScrollBar.LargeChange;
+                    else 
+                        vScrollBar.Value = TotalDisplayLines;//reach bottom
                     Invalidate();
                 }
             }
@@ -296,7 +309,7 @@ namespace ZeroKLobby.MicroLobby
 
             if (!SingleLine)
             {
-                // Get the line count from the bottom... 
+                // Get the line count from the bottom... (relative to screen)
                 line = ((Height + (LineSize/2)) - e.Y)/LineSize;
 
                 // Then, convert it to count from the top. 
@@ -413,7 +426,7 @@ namespace ZeroKLobby.MicroLobby
             base.OnResize(e);
             if (Height == 0 || totalLines == 0) return;
 
-            displayLines.Initialize();
+            InitializeDisplayLines();
 
             reformatLines = true;
 
@@ -426,6 +439,8 @@ namespace ZeroKLobby.MicroLobby
             {
                 //adds a new line to the Text Window
                 if (newLine.Length == 0) return;
+                bool isSpam = (DateTime.Now.Ticks - previousAppendText) <= 2000000; //2,000,000 ticks is 200milisecond.
+                previousAppendText = DateTime.Now.Ticks;
 
                 if (!Visible) unreadMarker++;
                 else if (unreadMarker > 0) unreadMarker++;
@@ -457,10 +472,14 @@ namespace ZeroKLobby.MicroLobby
 
                 if (singleLine) totalLines = 1;
 
-                if (totalLines >= (MaxTextLines - 5))
-                {
-                    var x = 1;
-                    for (var i = totalLines - (MaxTextLines - 50); i <= totalLines - 1; i++)
+                bool needSpace = totalLines >= MaxTextLines;
+                bool isExpanding = MaxTextLines < defaultMaxLines;
+                bool isFull = MaxTextLines >= HardMaximumLines;
+                if (needSpace && !isExpanding && (isFull || !isSpam))
+                { //remove old text, create space for new text (recycle existing row)
+                    var x = 0;
+                    int toRemove = (MaxTextLines / 10) + 1; //remove 10% of old text
+                    for (int i = toRemove; i < totalLines; i++) 
                     {
                         textLines[x].TotalLines = textLines[i].TotalLines;
                         textLines[x].Width = textLines[i].Width;
@@ -469,14 +488,14 @@ namespace ZeroKLobby.MicroLobby
                         x++;
                     }
 
-                    for (var i = (MaxTextLines - 49); i < MaxTextLines; i++)
+                    for (var i = totalLines - toRemove; i < MaxTextLines; i++) //fill new space with empty string
                     {
                         textLines[i].TotalLines = 0;
                         textLines[i].Line = "";
                         textLines[i].Width = 0;
                     }
 
-                    totalLines = MaxTextLines - 50;
+                    totalLines = totalLines - toRemove - 1; //set draw line to new space
 
                     if (Height != 0)
                     {
@@ -487,6 +506,8 @@ namespace ZeroKLobby.MicroLobby
 
                     totalLines++;
                 }
+                else if (needSpace && !isFull && (isExpanding || isSpam))
+                    AddNewTextLines(); //create new space for new text (new row)
 
                 textLines[totalLines].Line = newLine;
 
@@ -576,10 +597,12 @@ namespace ZeroKLobby.MicroLobby
                         displayLines[line].TextLine = currentLine;
                         displayLines[line].TextColor = textLines[currentLine].TextColor;
                         line++;
+                        if (line >= MaxDisplayLines)
+                            AddNewDisplayLines();
                     }
                     catch (Exception e)
                     {
-                        Trace.WriteLine("FormatLines Error1:" + startLine + ":" + endLine + ":" + ii + ":" + currentLine + ":" + textLines.Length,
+                        Trace.WriteLine("FormatLines Error1:" + startLine + ":" + endLine + ":" + ii + ":" + currentLine + ":" + textLines.Capacity,
                                         e.StackTrace);
                     }
                 }
@@ -634,6 +657,9 @@ namespace ZeroKLobby.MicroLobby
                                             nextColor = "";
                                         }
                                         line++;
+                                        if (line >= MaxDisplayLines)
+                                            AddNewDisplayLines();
+
                                         displayLines[line].Previous = true;
                                         buildString = null;
                                         buildString = new StringBuilder();
@@ -647,7 +673,7 @@ namespace ZeroKLobby.MicroLobby
                     catch (Exception e)
                     {
                         Trace.WriteLine("Line:" + curLine.Length + ":" + curLine);
-                        Trace.WriteLine("FormatLines Error2:" + startLine + ":" + endLine + ":" + ii + ":" + currentLine + ":" + textLines.Length,
+                        Trace.WriteLine("FormatLines Error2:" + startLine + ":" + endLine + ":" + ii + ":" + currentLine + ":" + textLines.Capacity,
                                         e.StackTrace);
                     }
 
@@ -658,6 +684,8 @@ namespace ZeroKLobby.MicroLobby
                     displayLines[line].TextLine = currentLine;
                     displayLines[line].TextColor = textLines[currentLine].TextColor;
                     line++;
+                    if (line >= MaxDisplayLines)
+                        AddNewDisplayLines();
                 }
             }
 
@@ -674,7 +702,7 @@ namespace ZeroKLobby.MicroLobby
                 LineSize = Convert.ToInt32(Font.GetHeight(g));
 
                 showMaxLines = (Height/LineSize) + 1;
-                vScrollBar.LargeChange = showMaxLines;
+                vScrollBar.LargeChange = Math.Max(showMaxLines - 3 , 1); //include previous 3 lines for continuity
             }
         }
 
@@ -734,7 +762,7 @@ namespace ZeroKLobby.MicroLobby
                     {
                         var val = vScrollBar.Value;
 
-                        linesToDraw = (showMaxLines > val ? val : showMaxLines);
+                        linesToDraw = Math.Min(showMaxLines, val); //Math.Min is faster and more readable than if-else, Reference:http://stackoverflow.com/questions/5478877/math-max-vs-inline-if-what-are-the-differences
 
                         curLine = val - linesToDraw;
 
@@ -1391,11 +1419,12 @@ namespace ZeroKLobby.MicroLobby
             }
             else
             {
-                var isBottom = vScrollBar.Value + vScrollBar.LargeChange - 1 >= vScrollBar.Maximum;
+                bool nearBottom = vScrollBar.Value + 5 >= TotalDisplayLines;
+                //bool isBottom = vScrollBar.Value + vScrollBar.LargeChange - 1 >= vScrollBar.Maximum; //exactly at UI's scrollbar bottom
 
                 if (showMaxLines < TotalDisplayLines)
                 {
-                    vScrollBar.LargeChange = showMaxLines;
+                    vScrollBar.LargeChange = Math.Max(showMaxLines - 3, 1); //include previous 3 lines for continuity
                     vScrollBar.Enabled = true;
                 }
                 else
@@ -1407,10 +1436,10 @@ namespace ZeroKLobby.MicroLobby
                 if (newValue != 0)
                 {
                     vScrollBar.Minimum = 1;
-                    vScrollBar.Maximum = newValue + vScrollBar.LargeChange - 1;
+                    vScrollBar.Maximum = Math.Max(TotalDisplayLines + vScrollBar.LargeChange - 1,1); // maximum value that can be reached through UI is: 1 + Maximum - LargeChange. Ref: http://msdn.microsoft.com/en-us/library/system.windows.forms.scrollbar.maximum(v=vs.110).aspx
 
-                    if (!vScrollBar.Enabled || !vScrollBar.Visible) isBottom = true;
-                    if (isBottom || hideScroll) vScrollBar.Value = newValue;
+                    if (!vScrollBar.Enabled || !vScrollBar.Visible) nearBottom = true;
+                    if (hideScroll || nearBottom) vScrollBar.Value = newValue;
                 }
             }
         }
@@ -1418,28 +1447,67 @@ namespace ZeroKLobby.MicroLobby
         void OnScroll(object sender, EventArgs e)
         {
             var scrollBar = (VScrollBar)sender;
-            if (scrollBar.Value <= 1) scrollBar.Value = 1;
+            scrollBar.Value = Math.Max(scrollBar.Value , 1); //Note: Math.Max is used for clamping value (to avoid OutOfRange message in MONO)
 
             Invalidate();
         }
 
-        struct DisplayLine
+        //NOTE: using LIST require us to use  "private class" instead of "struct". Reference: http://forums.whirlpool.net.au/archive/1282624
+        //example of "struct" used for ARRAY:
+        //struct DisplayLine
+        //{
+        //    public string Line;
+        //    public bool Previous;
+        //    public int TextColor;
+        //    public int TextLine;
+        //    public bool Wrapped;
+        //}
+
+        private class DisplayLine
         {
-            public string Line;
-            public bool Previous;
-            public int TextColor;
-            public int TextLine;
-            public bool Wrapped;
+            public string Line { get; set; }
+            public bool Previous { get; set; }
+            public int TextColor { get; set; }
+            public int TextLine { get; set; }
+            public bool Wrapped { get; set; }
         }
 
         delegate void ScrollValueDelegate(int value);
 
-        struct TextLine
+        private class TextLine
         {
-            public string Line;
-            public int TextColor;
-            public int TotalLines;
-            public int Width;
+            public string Line { get; set; }
+            public int TextColor { get; set; }
+            public int TotalLines { get; set; }
+            public int Width { get; set; }
+        }
+
+        private void AddNewTextLines()
+        {
+            textLines.Add(new TextLine());
+            MaxTextLines = MaxTextLines + 1;
+        }
+
+        private void AddNewDisplayLines()
+        {
+            displayLines.Add(new DisplayLine());
+            MaxDisplayLines = MaxDisplayLines + 1;
+        }
+
+        private void InitializeTextLines()
+        {
+            textLines.Clear();
+            MaxTextLines = 1;
+            textLines.Add(new TextLine());
+            textLines.TrimExcess();
+        }
+
+        private void InitializeDisplayLines()
+        {
+            displayLines.Clear();
+            MaxDisplayLines = 1;
+            displayLines.Add(new DisplayLine());
+            displayLines.TrimExcess();
         }
     }
 }
