@@ -529,11 +529,11 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 
         private void radioSpec_CheckedChanged(object sender, EventArgs e)
         {
-            if (!suppressSpecChange)
-            {
-                desiredSpectatorState = radioSpec.Checked;
-                client.ChangeMyBattleStatus(spectate: desiredSpectatorState);
-            }
+            //if (!suppressSpecChange) //NOTE: when "radioPlay" is checked/un-checked it already change status once.
+            //{
+            //    desiredSpectatorState = radioSpec.Checked;
+            //    client.ChangeMyBattleStatus(spectate: desiredSpectatorState);
+            //}
         }
     }
 
