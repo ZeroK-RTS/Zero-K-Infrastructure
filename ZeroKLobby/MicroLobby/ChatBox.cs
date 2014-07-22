@@ -50,7 +50,7 @@ namespace ZeroKLobby.MicroLobby
         {
             ClearTextWindow();
 
-            foreach (var line in lines) if (PassesFilter(line)) AppendText(line.Text);
+            foreach (var line in lines) if (PassesFilter(line)) WriteLine(line);
         }
 
         public void Reset()
