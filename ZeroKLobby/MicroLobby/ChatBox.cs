@@ -56,7 +56,7 @@ namespace ZeroKLobby.MicroLobby
         public void Reset()
         {
             Text = "";
-            lines = new List<IChatLine>();
+            lines.Clear(); // clear() seems to be more efficient than new List because it just reset index. Reference: http://stackoverflow.com/questions/5358129/how-is-list-clear-implemented-in-c ;
             RefreshText();
         }
 

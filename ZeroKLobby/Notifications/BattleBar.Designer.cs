@@ -137,7 +137,6 @@ namespace ZeroKLobby.Notifications
             this.picoChat.Size = new System.Drawing.Size(428, 76);
             this.picoChat.TabIndex = 12;
             this.picoChat.TextFilter = null;
-            this.picoChat.TotalDisplayLines = 0;
             // 
             // gameBox
             // 

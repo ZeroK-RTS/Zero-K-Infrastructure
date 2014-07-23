@@ -119,7 +119,7 @@ namespace ZeroKLobby.MicroLobby
                 Invalidate();
             }
         }
-        public int TotalDisplayLines { get; set; }
+        public int TotalDisplayLines { get; private set; }
         public event EventHandler FocusInputRequested = delegate { };
 
         public TextWindow()
