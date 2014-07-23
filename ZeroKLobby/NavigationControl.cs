@@ -128,7 +128,7 @@ namespace ZeroKLobby
                 if (Program.Conf.InterceptPopup) 
                 {
                     AddTabPage(new BrowserTab("http", false), "other"); //a tab with generic match that match 100% of random URL (block new window)
-                    ButtonList.Add(new ButtonInfo() { Label = "OTHER", TargetPath = "http", Height = 32,});
+                    ButtonList.Add(new ButtonInfo() { Label = "OTHER", TargetPath = "http", Height = 32, Width = 65,});
                 }
                 reloadButton1.Visible = true;
             }

@@ -50,13 +50,13 @@ namespace ZeroKLobby.MicroLobby
         {
             ClearTextWindow();
 
-            foreach (var line in lines) if (PassesFilter(line)) AppendText(line.Text);
+            foreach (var line in lines) if (PassesFilter(line)) WriteLine(line);
         }
 
         public void Reset()
         {
             Text = "";
-            lines = new List<IChatLine>();
+            lines.Clear(); // clear() seems to be more efficient than new List because it just reset index. Reference: http://stackoverflow.com/questions/5358129/how-is-list-clear-implemented-in-c
             RefreshText();
         }
 
