@@ -207,12 +207,12 @@ namespace ZeroKLobby
 
         [Category("Account")]
         [DisplayName("Forget Player Name")]
-        [Description("Tell ZKL to forget your Player Name and re-ask it each time ZKL start.")]
+        [Description("Tell ZKL to forget your Player Name and re-ask it each time it start. (Note: If ZKL crashed or forced to exit this might fail)")]
         public bool DiscardPlayerName { get; set; }
 
         [Category("Account")]
         [DisplayName("Forget Password")]
-        [Description("Tell ZKL to forget your Password and re-ask it each time ZKL start.")]
+        [Description("Tell ZKL to forget your Password and re-ask it each time it start. (Note: If ZKL crashed or forced to exit this might fail)")]
         public bool DiscardPassword { get; set; }
 
         [Category("General")]
