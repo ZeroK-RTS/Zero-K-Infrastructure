@@ -155,9 +155,6 @@ namespace ZeroKLobby.MicroLobby
             InitializeTextLines();
             InitializeDisplayLines();
 
-            totalLines = 0;
-            TotalDisplayLines = 0;
-
             Invalidate();
         }
 
@@ -521,12 +518,13 @@ namespace ZeroKLobby.MicroLobby
 
                 textLines[totalLines].TextColor = foreColor;
 
-                var addedLines = FormatLines(totalLines, totalLines, TotalDisplayLines);
+                int addedLines = FormatLines(totalLines, totalLines, TotalDisplayLines); //split text into multi-line, and put into "displayLines[]"
                 addedLines -= TotalDisplayLines;
 
                 textLines[totalLines].TotalLines = addedLines;
 
-                for (var i = TotalDisplayLines + 1; i < TotalDisplayLines + addedLines; i++) displayLines[i].TextLine = totalLines;
+                for (var i = TotalDisplayLines + 1; i < TotalDisplayLines + addedLines; i++)
+                    displayLines[i].TextLine = totalLines; //identify to current "textLines[]" index
 
                 TotalDisplayLines += addedLines;
 
@@ -1498,6 +1496,7 @@ namespace ZeroKLobby.MicroLobby
         {
             textLines.Clear();
             MaxTextLines = 1;
+            totalLines = 0;
             textLines.Add(new TextLine());
             textLines.TrimExcess();
         }
@@ -1506,6 +1505,7 @@ namespace ZeroKLobby.MicroLobby
         {
             displayLines.Clear();
             MaxDisplayLines = 1;
+            TotalDisplayLines = 0;
             displayLines.Add(new DisplayLine());
             displayLines.TrimExcess();
         }
