@@ -953,7 +953,8 @@ namespace LobbyClient
                         }
                         catch (Exception e)
                         {
-                            Trace.WriteLine("Error in processing ADDUSER: " + e);
+                            //TraceError ensure bright red coloured message (WriteLine looked harmless):
+                            Trace.TraceError("Error was thrown while processing chat command ADDUSER (check if this event trigger faulty code in application): " + e);
                         }
                     }
                         break;
@@ -1481,10 +1482,8 @@ namespace LobbyClient
             }
             catch (Exception e)
             {
-                var newEx =
-                    new ApplicationException(string.Format("Error while processing command {0} {1}: {2}", command, Utils.Glue(args), e.Message), e);
-
-                Trace.TraceError("TASC error {0}", newEx);
+                //not throwing "ApplicationException" because we can explicitly say its application fault here:
+                Trace.TraceError("TASC error: Error was thrown while processing chat command {0} \"{1}\" (check if chat event trigger faulty code in application): {2}", command, Utils.Glue(args), e);
             }
         }
 
