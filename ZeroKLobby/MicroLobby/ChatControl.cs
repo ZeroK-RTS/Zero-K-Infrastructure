@@ -27,9 +27,10 @@ namespace ZeroKLobby.MicroLobby
         public bool IsTopicVisible {
             get { return topicPanel.Visible; }
             set {
+                topicBox.RefreshText(); //Fixme: why do we have to recalculate TotalDisplayLines? is topicBox was re-initialized somewhere (causing TotalDisplayLines==0)?
                 float height = topicBox.LineSize;
                 height *= topicBox.TotalDisplayLines + 1;
-                height *= 1.1f;
+                //height *= 1.1f;
                 height += topicBox.Margin.Top + topicBox.Margin.Bottom;
                 topicPanel.Height = (int)height;
                 topicPanel.Visible = value;
