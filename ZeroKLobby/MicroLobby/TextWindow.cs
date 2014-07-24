@@ -423,8 +423,6 @@ namespace ZeroKLobby.MicroLobby
             base.OnResize(e);
             if (Height == 0 || totalLines == 0) return;
 
-            InitializeDisplayLines();
-
             reformatLines = true;
 
             Invalidate();
@@ -711,6 +709,7 @@ namespace ZeroKLobby.MicroLobby
         {
             if (reformatLines)
             {
+                InitializeDisplayLines();
                 TotalDisplayLines = FormatLines(totalLines, 1, 0);
                 UpdateScrollBar(TotalDisplayLines);
                 reformatLines = false;
