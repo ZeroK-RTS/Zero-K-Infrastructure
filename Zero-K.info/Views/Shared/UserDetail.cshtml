@@ -153,6 +153,11 @@
             @Html.ActionLink("Admin user", "AdminUserDetail", "Users", new { id = Model.AccountID }, null)
         </div>
     }
+
+    @if (Global.AccountID == Model.AccountID && Model.Level <= 5)
+    {
+        @Html.IncludeWiki("NewbieIntro")
+    }
 	
     <div id="usr_trophies" class="">
         <h3>Trophies:</h3>
