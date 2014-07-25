@@ -324,14 +324,8 @@ namespace ZeroKLobby.MicroLobby
 
 		void TasClient_BattleUserStatusChanged(object sender, TasEventArgs e)
 		{
-			try{
-				var userName = e.ServerParams[0];
-				RefreshBattleUser(userName);
-			}
-			catch (Exception exception) //BattleUserStatus event use somekind of thread, so TraceError in TasClient.cs is not complete.
-			{
-				System.Diagnostics.Trace.TraceError("BattleUserStatus Event throw an error: {0}", exception);
-			}
+			var userName = e.ServerParams[0];
+			RefreshBattleUser(userName);
 		}
 
 

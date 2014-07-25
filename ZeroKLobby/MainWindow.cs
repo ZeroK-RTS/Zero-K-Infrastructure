@@ -98,7 +98,6 @@ namespace ZeroKLobby
                 Program.Downloader.DownloadAdded += TorrentManager_DownloadAdded;
                 timer1.Start();
             }
-			MinimumSize = new Size(200, 300); //so splitcontainer in SettingTab dont throw exception when pushed too close together
         }
 
         public void DisplayLog() {
