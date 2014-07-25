@@ -1417,7 +1417,7 @@ namespace ZeroKLobby.MicroLobby
             else
             {
                 bool nearBottom = vScrollBar.Value + 5 >= TotalDisplayLines;
-                //bool isBottom = vScrollBar.Value + vScrollBar.LargeChange - 1 >= vScrollBar.Maximum; //exactly at UI's scrollbar bottom
+                bool isBottom = vScrollBar.Value + vScrollBar.LargeChange - 1 >= vScrollBar.Maximum; //exactly at UI's scrollbar bottom
 
                 if (showMaxLines < TotalDisplayLines)
                 {
@@ -1435,8 +1435,8 @@ namespace ZeroKLobby.MicroLobby
                     vScrollBar.Minimum = 1;
                     vScrollBar.Maximum = Math.Max(TotalDisplayLines + vScrollBar.LargeChange - 1,1); // maximum value that can be reached through UI is: 1 + Maximum - LargeChange. Ref: http://msdn.microsoft.com/en-us/library/system.windows.forms.scrollbar.maximum(v=vs.110).aspx
 
-                    if (!vScrollBar.Enabled || !vScrollBar.Visible) nearBottom = true;
-                    if (hideScroll || nearBottom) vScrollBar.Value = newValue;
+                    if (!vScrollBar.Enabled || !vScrollBar.Visible) isBottom = true;
+                    if (isBottom || hideScroll || nearBottom) vScrollBar.Value = newValue;
                 }
             }
         }
