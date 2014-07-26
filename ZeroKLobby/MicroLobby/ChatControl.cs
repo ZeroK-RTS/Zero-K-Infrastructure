@@ -27,9 +27,10 @@ namespace ZeroKLobby.MicroLobby
         public bool IsTopicVisible {
             get { return topicPanel.Visible; }
             set {
+                //Note: topic window doesn't have listener to any resize event. This is minor issues.
                 float height = topicBox.LineSize;
                 height *= topicBox.TotalDisplayLines + 1;
-                height *= 1.1f;
+                //height *= 1.1f;
                 height += topicBox.Margin.Top + topicBox.Margin.Bottom;
                 topicPanel.Height = (int)height;
                 topicPanel.Visible = value;

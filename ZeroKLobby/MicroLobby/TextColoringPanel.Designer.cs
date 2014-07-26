@@ -370,7 +370,6 @@
             this.chatBox.Size = new System.Drawing.Size(277, 85);
             this.chatBox.TabIndex = 22;
             this.chatBox.TextFilter = null;
-            this.chatBox.TotalDisplayLines = 0;
             // 
             // undoButton
             // 

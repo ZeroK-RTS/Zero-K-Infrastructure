@@ -119,7 +119,7 @@ namespace ZeroKLobby.MicroLobby
                 Invalidate();
             }
         }
-        public int TotalDisplayLines { get; set; }
+        public int TotalDisplayLines { get; private set; }
         public event EventHandler FocusInputRequested = delegate { };
 
         public TextWindow()
@@ -154,9 +154,6 @@ namespace ZeroKLobby.MicroLobby
             //clear the text window of all its lines
             InitializeTextLines();
             InitializeDisplayLines();
-
-            totalLines = 0;
-            TotalDisplayLines = 0;
 
             Invalidate();
         }
@@ -426,8 +423,6 @@ namespace ZeroKLobby.MicroLobby
             base.OnResize(e);
             if (Height == 0 || totalLines == 0) return;
 
-            InitializeDisplayLines();
-
             reformatLines = true;
 
             Invalidate();
@@ -521,12 +516,13 @@ namespace ZeroKLobby.MicroLobby
 
                 textLines[totalLines].TextColor = foreColor;
 
-                var addedLines = FormatLines(totalLines, totalLines, TotalDisplayLines);
+                int addedLines = FormatLines(totalLines, totalLines, TotalDisplayLines); //split text into multi-line, and put into "displayLines[]"
                 addedLines -= TotalDisplayLines;
 
                 textLines[totalLines].TotalLines = addedLines;
 
-                for (var i = TotalDisplayLines + 1; i < TotalDisplayLines + addedLines; i++) displayLines[i].TextLine = totalLines;
+                for (var i = TotalDisplayLines + 1; i < TotalDisplayLines + addedLines; i++) 
+                    displayLines[i].TextLine = totalLines; //identify to current "textLines[]" index
 
                 TotalDisplayLines += addedLines;
 
@@ -713,6 +709,7 @@ namespace ZeroKLobby.MicroLobby
         {
             if (reformatLines)
             {
+                InitializeDisplayLines();
                 TotalDisplayLines = FormatLines(totalLines, 1, 0);
                 UpdateScrollBar(TotalDisplayLines);
                 reformatLines = false;
@@ -1420,7 +1417,7 @@ namespace ZeroKLobby.MicroLobby
             else
             {
                 bool nearBottom = vScrollBar.Value + 5 >= TotalDisplayLines;
-                //bool isBottom = vScrollBar.Value + vScrollBar.LargeChange - 1 >= vScrollBar.Maximum; //exactly at UI's scrollbar bottom
+                bool isBottom = vScrollBar.Value + vScrollBar.LargeChange - 1 >= vScrollBar.Maximum; //exactly at UI's scrollbar bottom
 
                 if (showMaxLines < TotalDisplayLines)
                 {
@@ -1438,8 +1435,8 @@ namespace ZeroKLobby.MicroLobby
                     vScrollBar.Minimum = 1;
                     vScrollBar.Maximum = Math.Max(TotalDisplayLines + vScrollBar.LargeChange - 1,1); // maximum value that can be reached through UI is: 1 + Maximum - LargeChange. Ref: http://msdn.microsoft.com/en-us/library/system.windows.forms.scrollbar.maximum(v=vs.110).aspx
 
-                    if (!vScrollBar.Enabled || !vScrollBar.Visible) nearBottom = true;
-                    if (hideScroll || nearBottom) vScrollBar.Value = newValue;
+                    if (!vScrollBar.Enabled || !vScrollBar.Visible) isBottom = true;
+                    if (isBottom || hideScroll || nearBottom) vScrollBar.Value = newValue;
                 }
             }
         }
@@ -1498,6 +1495,7 @@ namespace ZeroKLobby.MicroLobby
         {
             textLines.Clear();
             MaxTextLines = 1;
+            totalLines = 0;
             textLines.Add(new TextLine());
             textLines.TrimExcess();
         }
@@ -1506,6 +1504,7 @@ namespace ZeroKLobby.MicroLobby
         {
             displayLines.Clear();
             MaxDisplayLines = 1;
+            TotalDisplayLines = 0;
             displayLines.Add(new DisplayLine());
             displayLines.TrimExcess();
         }

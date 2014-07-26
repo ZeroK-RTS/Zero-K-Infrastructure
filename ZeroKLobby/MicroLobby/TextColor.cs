@@ -11,7 +11,7 @@ namespace ZeroKLobby.MicroLobby
         public const int background = ircColorOffset + 0;
         public const char boldChar = (char)2; // not implemented
         public const char ColorChar = (char)3; //&#x3 or \x003
-        public const char ColorResetChar = 'F';
+        public const char ColorResetChar = '\x00F';
         public const int date = ircColorOffset + 3;
         public const int emote = ircColorOffset + 4;
         public const int error = ircColorOffset + 5;

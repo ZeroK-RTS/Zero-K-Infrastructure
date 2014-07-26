@@ -304,10 +304,12 @@ namespace ZeroKLobby.MicroLobby
 
         private void panel1_Resize(object sender, EventArgs e)
         {
+            if (Program.MainWindow!=null && Program.MainWindow.WindowState == FormWindowState.Minimized) return;
 			//prevent splitter from being dragged when window resize
             DpiMeasurement.DpiXYMeasurement(this); //this measurement use cached value. It won't cost anything if another measurement was already done in other control element
             int splitDistance = DpiMeasurement.ScaleValueY(203);//DpiMeasurement is a static class stored in ZeroKLobby\Util.cs
-            splitContainerAtMid.SplitterDistance = splitDistance;
+            splitDistance = Math.Min(splitDistance, splitContainerAtMid.Width - splitContainerAtMid.Panel2MinSize);
+            splitContainerAtMid.SplitterDistance = splitDistance; //must obey minimum size constraint
         }
 	}
 }

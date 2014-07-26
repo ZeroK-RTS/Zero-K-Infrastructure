@@ -168,7 +168,6 @@ namespace ZeroKLobby.MicroLobby
             this.topicBox.Size = new System.Drawing.Size(800, 0);
             this.topicBox.TabIndex = 2;
             this.topicBox.TextFilter = null;
-            this.topicBox.TotalDisplayLines = 0;
             // 
             // hideButton
             // 
@@ -206,7 +205,6 @@ namespace ZeroKLobby.MicroLobby
             this.ChatBox.Size = new System.Drawing.Size(800, 773);
             this.ChatBox.TabIndex = 1;
             this.ChatBox.TextFilter = null;
-            this.ChatBox.TotalDisplayLines = 0;
             // 
             // splitContainer1
             // 
