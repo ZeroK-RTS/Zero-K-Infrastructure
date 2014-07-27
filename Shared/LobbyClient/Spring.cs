@@ -430,7 +430,7 @@ namespace LobbyClient
                 var modName = battleResult.Mod;
                 var mapName = battleResult.Map;
                 var isCheating = false;
-                int score = 0;
+                int? score = null;
                 int scoreFrame = 0;
                 string gameId = null;
                 string demoFileName = null;
@@ -497,7 +497,7 @@ namespace LobbyClient
                     if (line.StartsWith("Error") || line.StartsWith("LuaRules") || line.StartsWith("Internal error") || line.StartsWith("LuaCOB") ||
                         (line.StartsWith("Failed to load") && !line.Contains("duplicate name"))) hasError = true;
                 }
-                if (score != 0 || !String.IsNullOrEmpty(missionVars))
+                if (score != null || !String.IsNullOrEmpty(missionVars))
                 {
                     Trace.TraceInformation("Submitting score for mission " + modName);
                     try {
@@ -509,7 +509,7 @@ namespace LobbyClient
                                         else Trace.TraceError("Error sending score: {0}", e.Error);
                                     }
                                 };
-                            service.SubmitMissionScoreAsync(lobbyUserName, Utils.HashLobbyPassword(lobbyPassword), modName, score, scoreFrame/30, missionVars);
+                            service.SubmitMissionScoreAsync(lobbyUserName, Utils.HashLobbyPassword(lobbyPassword), modName, score ?? 0, scoreFrame/30, missionVars);
                         }
                     } catch (Exception ex) {
                         Trace.TraceError(string.Format("Error sending mission score: {0}", ex));
