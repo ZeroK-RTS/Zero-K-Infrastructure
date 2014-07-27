@@ -833,26 +833,16 @@ namespace Springie.autohost
 
         void spring_GameOver(object sender, SpringLogEventArgs e) {
             SayBattle("Game over, exiting");
+            // Spring sends GAMEOVER for every player and spec, we only need the first one.
+            spring.GameOver -= spring_GameOver;
             PlasmaShared.Utils.SafeThread(() =>
                 {
-                    Thread.Sleep(25000); // wait for stats
+                    // Wait for gadgets that send spring autohost messages after gadget:GameOver()
+                    // such as awards.lua
+                    Thread.Sleep(10000);
                     spring.ExitGame();
+                    spring.GameOver += spring_GameOver;
                 }).Start();
-
-            /*			try
-			{
-				var service = new ContentService();
-				service.GetRecommendedMap()
-
-			}
-
-			if (config.MapCycle.Length > 0)
-			{
-				mapCycleIndex = mapCycleIndex%config.MapCycle.Length;
-				SayBattle("changing to another map in mapcycle");
-				ComMap(TasSayEventArgs.Default, config.MapCycle[mapCycleIndex].Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
-				mapCycleIndex++;
-			}*/
         }
 
 
