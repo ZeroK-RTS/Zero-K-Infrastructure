@@ -40,6 +40,10 @@ namespace Springie.autohost.Polls
                 Question = question;
                 if (WinCount <= 0) WinCount = tas.MyBattle != null ? (tas.MyBattle.NonSpectatorCount/2 + 1) : 1;
                 if (WinCount <= 0) WinCount = 1;
+                // If vote is started by a spec while there are players present don't let the number go below 2.
+                if (WinCount <= 1 && tas.MyBattle.NonSpectatorCount != 0 &&
+                        tas.MyBattle.Users.Any(u => u.Name == e.UserName && u.IsSpectator))
+                    WinCount = 2;
                 ah.SayBattle(string.Format("Poll: {0} [!y=0/{1}, !n=0/{1}]", Question, WinCount));
                 return true;
             }
