@@ -20,10 +20,10 @@ namespace Springie.autohost.Polls
             }
             else
             {
+                string[] vals;
+                int[] indexes;
                 if (words.Length > 0)
                 {
-                    string[] vals;
-                    int[] indexes;
                     ah.FilterMaps(words, out vals, out indexes);
                     if (vals.Length > 0)
                     {
@@ -40,7 +40,12 @@ namespace Springie.autohost.Polls
                 }
                 else
                 {
-                    question = "Do you want to change to a suitable random map?";
+                    //question = "Do you want to change to a suitable random map?";
+                    ah.FilterMaps(words, out vals, out indexes);
+                    var rand = new System.Random();
+                    map = vals[rand.Next(vals.Length)];
+                    var resource = ah.cache.FindResourceData(new string[] { map }, ResourceType.Map);
+                    question = string.Format("Change map to {0} http://zero-k.info/Maps/Detail/{1} ?", map, resource[0].ResourceID);
                     return true;
                 }
             }
