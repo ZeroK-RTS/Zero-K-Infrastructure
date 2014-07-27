@@ -60,8 +60,8 @@ namespace Springie.autohost.Polls
                 ah.SayBattle(string.Format("Poll: {0} [!y={1}/{3}, !n={2}/{3}]", Question, yes, no, CountNoIntoWinCount ? WinCount + no : WinCount));
                 if ((!CountNoIntoWinCount && yes >= WinCount) || (CountNoIntoWinCount && yes >= WinCount + no)) {
                     ah.SayBattle(string.Format("Poll: {0} [END:SUCCESS]", Question));
-                    SuccessAction();
                     ended = true;
+                    SuccessAction();
                     return true;
                 }
                 else if (no >= WinCount) {
