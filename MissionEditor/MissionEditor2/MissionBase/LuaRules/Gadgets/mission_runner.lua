@@ -1442,21 +1442,19 @@ function gadget:Initialize()
     end
 end
 
---[[
 function gadget:UnitEnteredLos(unitID, unitTeam, allyTeam, unitDefID)
   for i=1,#triggers do
     for j=1,#triggers[i].logic do
       local condition = triggers[i].logic[j]
-      if condition.logicType == "UnitEnteredLosCondition" then
-        if not next(condition.args.players) or ArrayContains(condition.args.players, teamID) then
-          ExecuteTrigger(trigger)
+      if condition.logicType == "UnitEnteredLOSCondition" then
+        if not next(condition.args.alliances) or ArrayContains(condition.args.alliances, allyTeam) then
+          ExecuteTrigger(triggers[i])
           break
         end
       end
     end
   end
 end
-]]--
 
 function gadget:Load(zip)
   if not GG.SaveLoad then

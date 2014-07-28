@@ -122,6 +122,7 @@
     <Compile Include="Area.cs" />
     <Compile Include="CompositeObservableCollection.cs" />
     <Compile Include="Condition.cs" />
+    <Compile Include="Conditions\UnitEnteredLOSCondition.cs" />
     <Compile Include="Conditions\GamePreloadCondition.cs" />
     <Compile Include="Conditions\CountdownTickCondition.cs" />
     <Compile Include="Actions\GUI\ConsoleMessageAction.cs" />

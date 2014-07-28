@@ -288,6 +288,7 @@ namespace MissionEditor2
 			addAction("Unit Destroyed", () => new UnitDestroyedCondition());
 			addAction("Unit Finished", () => new UnitFinishedCondition());
 			addAction("Unit Finished In Factory", () => new UnitFinishedInFactoryCondition());
+            addAction("Unit Entered LOS", () => new UnitEnteredLOSCondition());
 			addAction("Unit Is Visible", () => new UnitIsVisibleCondition());
 			addAction("Unit Selected", () => new UnitSelectedCondition());
 			addAction("Units Are In Area", () => new UnitsAreInAreaCondition());

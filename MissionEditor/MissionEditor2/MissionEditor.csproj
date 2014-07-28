@@ -154,6 +154,9 @@
     <Compile Include="AreaDragInfo.xaml.cs" />
     <Compile Include="CircleDragInfo.xaml.cs" />
     <Compile Include="ConditionsFolder.cs" />
+    <Compile Include="UnitEnteredLOSConditionControl.xaml.cs">
+      <DependentUpon>UnitEnteredLOSConditionControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UnitDestroyedConditionControl.xaml.cs">
       <DependentUpon>UnitDestroyedConditionControl.xaml</DependentUpon>
     </Compile>
@@ -240,6 +243,10 @@
     </Compile>
     <Compile Include="ZoomControl.cs" />
     <Compile Include="ZoomConverter.cs" />
+    <Page Include="UnitEnteredLOSConditionControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UnitDestroyedConditionControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

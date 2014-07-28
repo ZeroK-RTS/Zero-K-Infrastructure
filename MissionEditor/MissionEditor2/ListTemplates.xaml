@@ -81,6 +81,10 @@
             </TextBlock>
         </DataTemplate>
 
+        <DataTemplate x:Key="UnitEnteredLOSCondition">
+            <local:UnitEnteredLOSConditionControl />
+        </DataTemplate>
+        
         <DataTemplate x:Key="UnitSelectedCondition">
             <local:UnitSelectedConditionControl />
         </DataTemplate>
