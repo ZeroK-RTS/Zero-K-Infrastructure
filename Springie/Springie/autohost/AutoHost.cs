@@ -252,7 +252,8 @@ namespace Springie.autohost
                             }
                             else {
                                 if (e.Place == TasSayEventArgs.Places.Battle && tas.MyBattle != null && tas.MyBattle.NonSpectatorCount == 1 &&
-                                    (!command.StartsWith("vote") && HasRights("vote" + command, e))) {
+                                    (!command.StartsWith("vote") && HasRights("vote" + command, e) &&
+                                        tas.MyBattle.Users.Any(u => u.Name == e.UserName && !u.IsSpectator))) {
                                     // server only has 1 player and we have rights for vote variant - we might as well just do it
                                     return true;
                                 }
