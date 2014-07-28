@@ -202,6 +202,7 @@ namespace MissionEditor2
             addAction("Modify Unit Health", () => new ModifyUnitHealthAction(), "Logic");
             addAction("Send Scores", () => new SendScoreAction(), "Logic");
             addAction("Start Countdown", () => new StartCountdownAction(GetNewCountdownName()), "Logic");
+            addAction("Stop Cutscene Actions", () => new StopCutsceneActionsAction(), "Logic");
             addAction("Transfer Units", () => new TransferUnitsAction(Mission.Players.First()), "Logic");
             addAction("Victory", () => new VictoryAction(), "Logic");
             addAction("Defeat", () => new DefeatAction(), "Logic");
@@ -274,6 +275,7 @@ namespace MissionEditor2
 			addAction("Countdown Ticks", () => new CountdownTickCondition(Mission.Countdowns.FirstOrDefault()));
 			addAction("Counter Modified", () => new CounterModifiedCondition());
 			addAction("Custom Condition", () => new CustomCondition());
+            addAction("Cutscene Skipped", () => new CutsceneSkippedCondition());
 			addAction("Game Ends", () => new GameEndedCondition());
             addAction("Game Preload", () => new GamePreloadCondition());
 			addAction("Game Starts", () => new GameStartedCondition());

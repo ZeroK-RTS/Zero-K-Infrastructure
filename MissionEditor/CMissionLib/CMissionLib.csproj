@@ -73,6 +73,7 @@
   <ItemGroup>
     <Compile Include="Action.cs" />
     <Compile Include="Actions\GUI\BeautyShotAction.cs" />
+    <Compile Include="Actions\GUI\StopCutsceneActionsAction.cs" />
     <Compile Include="Actions\Logic\GiveTargetedOrdersAction.cs" />
     <Compile Include="Actions\Logic\MakeUnitsNeutralAction.cs" />
     <Compile Include="Actions\MusicLoopAction.cs" />
@@ -122,6 +123,7 @@
     <Compile Include="Area.cs" />
     <Compile Include="CompositeObservableCollection.cs" />
     <Compile Include="Condition.cs" />
+    <Compile Include="Conditions\CutsceneSkippedCondition.cs" />
     <Compile Include="Conditions\UnitEnteredLOSCondition.cs" />
     <Compile Include="Conditions\GamePreloadCondition.cs" />
     <Compile Include="Conditions\CountdownTickCondition.cs" />

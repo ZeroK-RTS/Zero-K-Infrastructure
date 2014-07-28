@@ -97,6 +97,16 @@ namespace CMissionLib
 		}
 		public IEnumerable<string> Countdowns { get { return AllLogic.OfType<StartCountdownAction>().Select(u => u.Countdown).Distinct(); } }
         public IEnumerable<string> Objectives { get { return AllLogic.OfType<AddObjectiveAction>().Select(u => u.ID).Distinct(); } }
+        public IEnumerable<string> Cutscenes 
+        { 
+            get 
+            { 
+                var ret = AllLogic.OfType<EnterCutsceneAction>().Where(x => !String.IsNullOrEmpty(x.ID)).Select(u => u.ID).Distinct().ToList();
+                ret.Add("Current Cutscene");
+                ret.Add("Any Cutscene");
+                return ret;
+            }
+        }
 
 		[DataMember]
 		public ObservableCollection<string> Counters

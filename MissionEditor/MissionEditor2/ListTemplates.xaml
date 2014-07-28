@@ -23,7 +23,7 @@
                 </GroupBox>
             </Grid>
         </DataTemplate>
-        
+
         <DataTemplate x:Key="TimeCondition">
             <local:TimeConditionControl />
         </DataTemplate>
@@ -568,8 +568,28 @@
 
         <DataTemplate x:Key="EnterCutsceneAction">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <CheckBox IsChecked="{Binding Instant}">Instant</CheckBox>
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"> This action will start a cutscene. The GUI is hidden and the player's controls are disabled.</TextBlock>
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Label>ID</Label>
+                    <TextBox Grid.Column="1" Text="{Binding ID, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Grid.Row="1" Grid.ColumnSpan="2" IsChecked="{Binding Instant}">Instant</CheckBox>
+                    <CheckBox Grid.Row="2" Grid.ColumnSpan="2" IsChecked="{Binding Skippable}">Skippable</CheckBox>
+                </Grid>
+                <GroupBox Header="Help" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock TextWrapping="WrapWithOverflow">
+                        This action will start a cutscene. The GUI is hidden and the player's controls are disabled.
+                        <LineBreak/>
+                        ID is only needed if the cutscene is to be skippable.
+                    </TextBlock>
+                </GroupBox>
             </StackPanel>
         </DataTemplate>
 
@@ -580,6 +600,22 @@
             </StackPanel>
         </DataTemplate>
 
+        <DataTemplate x:Key="CutsceneSkippedCondition">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ComboBox ItemsSource="{Binding Mission.Cutscenes, ElementName=window}" SelectedItem="{Binding CutsceneID}" />
+                <Label>This condition triggers when the "skip cutscene" command is sent while the selected cutscene is active.</Label>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="StopCutsceneActionsAction">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ComboBox ItemsSource="{Binding Mission.Cutscenes, ElementName=window}" SelectedItem="{Binding CutsceneID}" />
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"> 
+                    This action stops all actions contained within a single trigger, between the specified Enter Cutscene action and (if present) the Leave Cutscene action.
+                </TextBlock>
+            </StackPanel>
+        </DataTemplate>
+        
         <DataTemplate x:Key="FadeOutAction">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <CheckBox IsChecked="{Binding Instant}">Instant</CheckBox>
@@ -595,8 +631,6 @@
         </DataTemplate>
 
         <!-- ======== Unit Entered Area Template ======== -->
-
-
 
         <!--todo: TextSearch.TextPath="@Name"-->
 

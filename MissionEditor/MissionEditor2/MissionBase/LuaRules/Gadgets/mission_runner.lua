@@ -38,7 +38,8 @@ local unitGroups = {} -- key: unitID, value: group set (an array of strings)
 local cheatingWasEnabled = false
 local scores = {}
 local gameStarted = false
-local isInCutscene = false  -- currently set but never read
+local currCutsceneID
+local currCutsceneIsSkippable
 local events = {} -- key: frame, value: event array
 local counters = {} -- key: name, value: count
 local countdowns = {} -- key: name, value: frame
@@ -445,9 +446,9 @@ local function UpdateAllDisabledUnits()
   end
 end
 
-local function AddEvent(frame, event, args)
+local function AddEvent(frame, event, args, cutsceneID)
   events[frame] = events[frame] or {}
-  table.insert(events[frame], {event = event, args = args})
+  table.insert(events[frame], {event = event, args = args, cutsceneID = cutsceneID})
 end
 
 
@@ -466,6 +467,13 @@ end
 --------------------------------------------------------------------------------
 -- actually defined in a bit
 local function ExecuteTrigger() end
+
+local function UnsyncedEventFunc(action)
+  action.args.logicType = action.logicType
+  _G.missionEventArgs = action.args
+  SendToUnsynced("MissionEvent")
+  _G.missionEventArgs = nil
+end
 
 local actionsTable = {
   CustomAction = function(action)
@@ -902,16 +910,14 @@ local actionsTable = {
               action.args.y = y
               action.args.z = z
               action.args.unitID = unitID
-              action.args.logicType = action.logicType
-              _G.missionEventArgs = action.args
-              SendToUnsynced("MissionEvent")
-              _G.missionEventArgs = nil
+              UnsyncedEventFunc(action)
               break
             end
           end
         end,
   AddObjectiveAction = function(action)
           objectives[#objectives+1] = {id = action.args.id, title = action.args.title, description = action.args.description}
+          UnsyncedEventFunc(action)
         end,
   ModifyObjectiveAction = function(action)
           for i=1,#objectives do
@@ -921,6 +927,30 @@ local actionsTable = {
               obj.description = action.args.description or obj.description
               obj.status = action.args.status or obj.status
               break
+            end
+          end
+          UnsyncedEventFunc(action)
+        end,
+  EnterCutsceneAction = function(action)
+          currCutsceneID = action.args.id
+          currCutsceneIsSkippable = action.args.skippable
+          UnsyncedEventFunc(action)
+        end,
+  LeaveCutsceneAction = function(action)
+          currCutsceneID = nil
+          currCutsceneIsSkippable = false
+          UnsyncedEventFunc(action)
+        end,
+  StopCutsceneActionsAction = function(action)
+          local toKillID = action.args.cutsceneID
+          local anyCutscene = (toKillID == "Any Cutscene")
+          local currentCutscene = (toKillID == "Current Cutscene")
+          for frame, eventsAtFrame in pairs(events) do
+            for i=#eventsAtFrame,1,-1 do  -- work backwards so we don't mess up the indexes ahead of us when removing table entries
+              local event = eventsAtFrame[i]
+              if anyCutscene or (event.cutsceneID == toKillID) or (currentCutscene and (event.cutsceneID == currCutsceneID)) then
+                table.remove(eventsAtFrame, i)
+              end
             end
           end
         end,
@@ -963,31 +993,27 @@ ExecuteTrigger = function(trigger, frame)
       return
     end
     local createdUnits = {}
+    local cutsceneID
     local frame = frame or (Spring.GetGameFrame() + 1) -- events will take place at this frame
-    for _, action in ipairs(trigger.logic) do
-      local args = {action, createdUnits}
+    for i=1,#trigger.logic do
+      local action = trigger.logic[i]
+      local args = {action, createdUnits, action.logicType}
       local Event = actionsTable[action.logicType]
       
       if action.logicType == "WaitAction" then
         frame = frame + action.args.frames
+      elseif action.logicType == "EnterCutsceneAction" then
+        cutsceneID = action.args.id
+      elseif action.logicType == "LeaveCutsceneAction" then
+        cutsceneID = nil
       end
       
-      if unsyncedActions[action.logicType] then
-        Event = function(action)
-          action.args.logicType = action.logicType
-          _G.missionEventArgs = action.args
-          SendToUnsynced"MissionEvent"
-          _G.missionEventArgs = nil
-        end
-	if action.logicType == "EnterCutsceneAction" then
-          isInCutscene = true
-        elseif action.logicType == "LeaveCutsceneAction" then
-          isInCutscene = false
-	end
+      if unsyncedActions[action.logicType] and (not Event) then
+        Event = UnsyncedEventFunc
       end
 
       if Event then
-        AddEvent(frame, Event, args) -- schedule event
+        AddEvent(frame, Event, args, cutsceneID) -- schedule event
       end
     end
   end
@@ -1409,6 +1435,21 @@ function gadget:RecvLuaMsg(msg, player)
           if not next(condition.args.players) or ArrayContains(condition.args.players, teamID) then
             ExecuteTrigger(trigger)
             break
+          end
+        end
+      end
+    end
+  elseif StartsWith(msg, "sendobjectives") then
+    -- TODO
+  elseif StartsWith(msg, "skipcutscene") then
+    if currCutsceneID and currCutsceneIsSkippable then
+      for _, trigger in ipairs(triggers) do
+        for _, condition in ipairs(trigger.logic) do
+          local conditionCutsceneID = condition.args.cutsceneID
+          if condition.logicType == "CutsceneSkippedCondition"
+            and ((conditionCutsceneID == currCutsceneID) or (conditionCutsceneID == "Any Cutscene") or (conditionCutsceneID == "Current Cutscene"))
+            then
+            ExecuteTrigger(trigger)
           end
         end
       end

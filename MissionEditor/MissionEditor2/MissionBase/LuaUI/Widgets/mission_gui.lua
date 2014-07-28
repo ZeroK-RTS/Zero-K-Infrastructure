@@ -95,7 +95,7 @@ function MissionEvent(e)
       end
   elseif e.logicType == "EnterCutsceneAction" then
       if WG.Cutscene and WG.Cutscene.EnterCutscene then
-        WG.Cutscene.EnterCutscene(e.instant)
+        WG.Cutscene.EnterCutscene(e.instant, e.skippable)
       end
   elseif e.logicType == "LeaveCutsceneAction" then
       if WG.Cutscene and WG.Cutscene.LeaveCutscene then
