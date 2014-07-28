@@ -106,15 +106,7 @@ namespace Fixer
 
         public static void FixStuff()
         {
-            ZkDataContext db = new ZkDataContext();
-            var sheepsploit = db.Clans.FirstOrDefault(x => x.Shortcut == "zkdev");
-            sheepsploit.IsDeleted = true;
 
-            var clans = db.Clans.Where(x => !x.IsDeleted);
-            foreach (Clan clan in clans)
-            {
-
-            }
         }
 
         [STAThread]
