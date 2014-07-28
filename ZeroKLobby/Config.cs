@@ -310,10 +310,6 @@ namespace ZeroKLobby
         public bool UseMtEngine { get; set; }
         [Browsable(false)]
         public bool UseSafeMode { get; set; }
-        [Browsable(false)]
-        public Point windowLocation { get; set; }
-        [Browsable(false)]
-        public Size windowSize { get; set; }
         public Config() {}
 
         public static Config Load(string path) {
