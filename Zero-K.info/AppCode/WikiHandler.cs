@@ -50,12 +50,29 @@ namespace ZeroKWeb
                             .Replace("</a>", "<img src=\"/img/flags/" + lang + ".png\" alt=\"" + lang + "\"></img></a>");
                         links.Add(link);
                     }
+                    else if (link.Contains("/ZeroK-RTS/Zero-K/wiki/"))
+                    {
+                        // TODO
+                    }
                 }
                 header = String.Join(", ", links);
             }
 
             if (iContent > -1 && iTo > -1)
                 content = source.Substring(iContent, iTo - iContent);
+        }
+
+        private static string GetGitHubWikiAuthor(string html)
+        {
+            Regex rex = new Regex("class=\"author\">(.*?)</a> edited this page <time .*>(.*?)</time>");
+            //var match = rex.Match(html);
+            //return "Last edited by " + match.Groups["name"].Value + " on " + match.Groups["timeStamp"].Value;
+            var match = rex.Match(html);
+            string[] names = rex.GetGroupNames();
+            string name = names.Length > 0 ? match.Groups[names[1]].Value : "unknown author";
+            string time = names.Length > 1 ? match.Groups[names[2]].Value : "at unknown time";
+            name = String.Format("<a href=\"http://github.com/{0}\">{0}</a>", name);
+            return String.Format("Updated {1} by {0}", name, time);
         }
         
         private static string FixPiece(string piece)
@@ -65,7 +82,7 @@ namespace ZeroKWeb
             return piece.Trim();
         }
 
-        private static string FormatWiki(string node, string language, string body, bool isOnlyBody = false)
+        private static string FormatGoogleCodeWiki(string node, string language, string body, bool isOnlyBody = false)
         {
             string availableLanguages;            
             string author;
@@ -85,9 +102,30 @@ namespace ZeroKWeb
             return 
                 "<div>" + 
                 "<span style='float: left; width: 32%; text-align: left;'>" + availableLanguages + "</span>" +
-                "<span style='float: left; width: 32%; text-align: center;'><a href='" + wikiLink + "'>edit</a></span>" +
-                "<span style='float: left; width: 32%; text-align: right;'>" + author + "</span>" + 
+                "<span style='float: left; width: 32%; text-align: center;'>" + author + "</span>" + 
+                "<span style='float: left; width: 32%; text-align: right;'><a href='" + wikiLink + "'>edit</a></span>" +
                 "</div><div style='clear: both;'></div><br />" + 
+                content;
+        }
+
+        private static string FormatGitHubWiki(string node, string html, string raw, bool isOnlyBody = false)
+        {
+            string availableLanguages;
+            string author = GetGitHubWikiAuthor(html);
+            string content;
+
+            string wikiLink = "https://github.com/ZeroK-RTS/Zero-K/wiki/" + node;
+            content = MarkdownHelper.MarkdownRaw(raw);
+            content = HtmlHelperExtensions.ProcessAtSignTags(content);
+
+            if (isOnlyBody)
+                return content;
+
+            return
+                "<div>" +
+                "<span style='float: left; width: 50%; text-align: center;'>" + author + "</span>" + 
+                "<span style='float: left; width: 50%; text-align: center;'><a href='" + wikiLink + "'>edit</a></span>" +
+                "</div><div style='clear: both;'></div><br />" +
                 content;
         }
 
@@ -100,12 +138,44 @@ namespace ZeroKWeb
             var wc = new WebClient();
             wc.Headers[HttpRequestHeader.AcceptLanguage] = language;
             wc.Encoding = Encoding.UTF8;
+            HttpWebResponse response;
+            string ret = string.Empty;
+            bool success = false;
+
             if (String.IsNullOrEmpty(node)) node = "Manual";
 
-            var url = "http://code.google.com/p/zero-k/wiki/" + node;
-            var ret = FormatWiki(node, language, wc.DownloadString(url), isOnlyBody);
+            if (!success)
+            {
+                string gitHubURLraw = "https://raw.githubusercontent.com/wiki/ZeroK-RTS/Zero-K/" + node + ".md";
+                string gitHubURL = "http://github.com/ZeroK-RTS/Zero-K/wiki/" + node;
+                HttpWebRequest checkGithub = (HttpWebRequest)HttpWebRequest.Create(gitHubURLraw);
+                checkGithub.Method = "HEAD";
+                try
+                {
+                    response = (HttpWebResponse)checkGithub.GetResponse();
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        ret = FormatGitHubWiki(node, wc.DownloadString(gitHubURL), wc.DownloadString(gitHubURLraw), isOnlyBody);
+                        success = true;
+                    }
+                }
+                catch (Exception ex) { }  // next!
+            }
 
-            HttpContext.Current.Cache.Insert(key, ret, null, DateTime.UtcNow.AddMinutes(15), Cache.NoSlidingExpiration);
+            if (!success)
+            {
+                string googleCodeURL = "http://code.google.com/p/zero-k/wiki/" + node;
+                HttpWebRequest checkGoogleCode = (HttpWebRequest)WebRequest.Create(googleCodeURL);
+                checkGoogleCode.Method = "HEAD";
+                response = (HttpWebResponse)checkGoogleCode.GetResponse();
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    ret = FormatGoogleCodeWiki(node, language, wc.DownloadString(googleCodeURL), isOnlyBody);
+                    success = true;
+                }
+            }
+
+            if (success) HttpContext.Current.Cache.Insert(key, ret, null, DateTime.UtcNow.AddMinutes(15), Cache.NoSlidingExpiration);
             return ret;
         }
 

@@ -77,6 +77,9 @@
     <Reference Include="DbLinq.MySql">
       <HintPath>..\Libs\DbLinq.MySql.dll</HintPath>
     </Reference>
+    <Reference Include="MarkdownDeep">
+      <HintPath>..\packages\MarkdownDeep.NET.1.4\lib\.NetFramework 3.5\MarkdownDeep.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="MySql.Data">
       <HintPath>..\Libs\MySql.Data.dll</HintPath>
@@ -120,6 +123,7 @@
     <Compile Include="Controllers\LobbyController.cs" />
     <Compile Include="Controllers\ReplaysController.cs" />
     <Compile Include="Controllers\UnitStatsController.cs" />
+    <Compile Include="AppCode\MarkdownHelper.cs" />
     <Compile Include="SpringieInterface\AutohostConfigs.cs" />
     <Compile Include="SpringieInterface\Balancer.cs" />
     <Compile Include="AppCode\Global.cs" />
