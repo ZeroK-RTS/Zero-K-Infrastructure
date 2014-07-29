@@ -147,7 +147,7 @@ namespace ZeroKWeb
             bool success = false;
 
             if (String.IsNullOrEmpty(node)) node = "Manual";
-
+            /*
             if (!success)
             {
                 string gitHubURLraw = "https://raw.githubusercontent.com/wiki/ZeroK-RTS/Zero-K/" + node + ".md";
@@ -165,6 +165,7 @@ namespace ZeroKWeb
                 }
                 catch (Exception ex) { }  // next!
             }
+             */
 
             if (!success)
             {
