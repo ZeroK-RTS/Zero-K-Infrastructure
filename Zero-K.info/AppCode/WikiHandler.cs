@@ -113,9 +113,13 @@ namespace ZeroKWeb
             string availableLanguages;
             string author = GetGitHubWikiAuthor(html);
             string content;
-
             string wikiLink = "https://github.com/ZeroK-RTS/Zero-K/wiki/" + node;
-            content = MarkdownHelper.MarkdownRaw(raw);
+
+            // handle Github flavouring
+            Regex rex = new Regex(@"\[\[(.*)?\|(.*)?\]\]", RegexOptions.IgnoreCase);
+            content = rex.Replace(raw, "[$1]($2)");
+
+            content = MarkdownHelper.MarkdownRaw(content);
             content = HtmlHelperExtensions.ProcessAtSignTags(content);
 
             if (isOnlyBody)
