@@ -1,0 +1,66 @@
+﻿@using ZeroKWeb
+@model ZeroKWeb.Controllers.ForumController.SearchResult
+
+@{
+    Page.Title = "Post search results";
+}
+<h2>Search returned @Model.Posts.Count results</h2>
+@if(Model.DisplayAsPosts)
+{
+    foreach (var p in Model.Posts)
+    {
+        string linkURL = Url.Action("Thread", "Forum", new { id = p.ForumThreadID }) + "#" + p.ForumPostID;
+        bool isFirstPost = p == p.ForumThread.ForumPosts[0];
+        string linkText = String.Format("{0} / {1}{2}", p.ForumThread.ForumCategory.Title, isFirstPost ? "Re:":"", p.ForumThread.Title);
+        bool isOver200 = p.Text.Length > 200;
+        
+        <table width='100%'>
+            <tr class="forumRow">
+                <td valign="top" class="forumPostText" id="@p.ForumPostID">
+                    <a href="@linkURL">@linkText</a><br />
+                    @(p.Text.Substring(0,isOver200?200:p.Text.Length) + (isOver200 ? "..." : ""))
+                </td>
+            </tr>
+        </table>
+    }
+}
+else
+{
+    var tog = true;
+	<table border="0" cellspacing="0" width="100%" >
+	<tr class="forum_row toggleFalse" >
+		<td title="status">S</td>
+		<td>Thread</td>
+		<td>Author</td>
+		<td>Posts</td>
+		<td>Views</td>
+		<td>Last post</td>
+	</tr>
+		@foreach (var t in Model.Posts.Select(x => x.ForumThread).Distinct())
+        {
+			<tr class="forum_row toggle@(tog)">
+				<td>
+					@if (t.IsLocked && t.IsPinned)
+					{
+						<img src="../../img/stickylock.png" width="25" />
+					}
+					else if (t.IsLocked)
+					{
+						<img src="../../img/lock.png" width="25" />
+					}
+					else if (t.IsPinned)
+					{
+						<img src="../../img/sticky.png" width="25" />
+					}
+				</td>
+				<td>@Html.Print(t)</td>
+				<td>@Html.PrintAccount(t.AccountByCreatedAccountID)</td>
+				<td>@t.PostCount</td>
+				<td>@t.ViewCount</td>
+				<td>@t.LastPost.ToAgoString() <br /> @Html.PrintAccount(t.AccountByLastPostAccountID)</td>
+			</tr>
+			tog = !tog;
+		}
+	</table>   
+}
+

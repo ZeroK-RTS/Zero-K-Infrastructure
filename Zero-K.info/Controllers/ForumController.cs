@@ -304,6 +304,12 @@ namespace ZeroKWeb.Controllers
 			public List<ForumPost> Posts;
 		}
 
+        public class SearchResult
+        {
+            public List<ForumPost> Posts;
+            public bool DisplayAsPosts;
+        }
+
         [Auth(Role = AuthRole.ZkAdmin)]
 		public ActionResult AdminThread(int threadID, int newcat, bool isPinned, bool isLocked)
 		{
@@ -420,6 +426,37 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             ForumPost post = db.ForumPosts.First(x => x.ForumPostID == forumPostID);
             return post.ForumThread.ForumPosts.IndexOf(post) / PageSize;
+        }
+
+        public ActionResult SearchForumPosts(string keywords, string userName, List<int> categoryIDs, bool firstPostOnly = false, bool resultsAsPosts = true)
+        {
+            if (String.IsNullOrEmpty(keywords) && String.IsNullOrEmpty(userName)) return Content("You must enter keywords and/or username");
+            
+            ZkDataContext db = new ZkDataContext();
+            if (categoryIDs == null) categoryIDs = new List<int>();
+
+            var posts = db.ForumPosts.Where(x=> (!firstPostOnly || x.ForumThread.ForumPosts[0] == x)
+                && (String.IsNullOrEmpty(userName) || x.Account.Name == userName)
+                && (categoryIDs.Count == 0 || categoryIDs.Contains((int)x.ForumThread.ForumCategoryID))
+                ).OrderByDescending(x=> x.Created).ToList();
+            if (!String.IsNullOrEmpty(keywords))
+            {
+                string[] keywordArray = keywords.Split(null as string[], StringSplitOptions.RemoveEmptyEntries);
+                foreach (ForumPost p in posts)
+                {
+                    bool success = false;
+                    foreach (string word in keywordArray)
+                    {
+                        if (p.Text.Contains(word))
+                        {
+                            success = true;
+                            break;
+                        }
+                    }
+                    if (!success) posts.Remove(p);
+                }
+            }
+            return View("SearchResults", new SearchResult {Posts = posts.Take(100).ToList(), DisplayAsPosts = resultsAsPosts});
         }
 	}
 }

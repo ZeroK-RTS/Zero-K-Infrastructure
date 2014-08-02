@@ -8,7 +8,7 @@
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{06EE7D11-6403-4ABF-AD73-24F8394BA69B}</ProjectGuid>
-    <ProjectTypeGuids>{E53F8FEA-EAE0-44A6-8774-FFD645390401};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ZeroKWeb</RootNamespace>
@@ -447,6 +447,7 @@
     <Content Include="Views\Users\NewUsers.cshtml" />
     <Content Include="Views\Users\MassBan.cshtml" />
     <Content Include="Views\Lobby\BlockedVPNs.cshtml" />
+    <Content Include="Views\Forum\SearchResults.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

@@ -122,6 +122,7 @@
                     <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)
                 </div>
             }
+            <a href="@Url.Action("SearchForumPosts", "Forum", new { userName = Model.Name })">Find all posts by this user</a>
              
             @{ double ratio = (Model.XP - Account.GetXpForLevel(Model.Level))/(double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)); }
             <div title='Your XP: @Model.XP (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio*100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
