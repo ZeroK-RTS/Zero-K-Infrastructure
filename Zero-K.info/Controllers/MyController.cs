@@ -290,14 +290,15 @@ namespace ZeroKWeb.Controllers
 			var temp =
 				db.Unlocks.Where(
 					x =>
-					x.NeededLevel <= Global.Account.Level && (x.XpCost <= Global.Account.AvailableXP) && !maxedUnlockList.Contains(x.UnlockID) &&
-					(x.RequiredUnlockID == null || anyUnlockList.Contains(x.RequiredUnlockID ?? 0))
+					x.NeededLevel <= Global.Account.Level && !maxedUnlockList.Contains(x.UnlockID)
+                    && ((x.KudosCost != null && x.KudosCost <= Global.Account.Kudos) || ((x.IsKudosOnly == null || x.IsKudosOnly == false) && x.XpCost <= Global.Account.AvailableXP))
+                    && (x.RequiredUnlockID == null || anyUnlockList.Contains(x.RequiredUnlockID ?? 0))
                     ).OrderBy(x => x.NeededLevel).ThenBy(x => x.XpCost).ThenBy(x => x.UnlockType).ToList();
 			unlocks = temp;
 
 			future =
 				db.Unlocks.Where(x => !maxedUnlockList.Contains(x.UnlockID) && !temp.Select(y => y.UnlockID).Contains(x.UnlockID)).OrderBy(x => x.NeededLevel).
-					ThenBy(x => x.XpCost).ToList();
+					ThenBy(x => x.XpCost).ThenBy(x => x.Name).ToList();
 		}
 
 
