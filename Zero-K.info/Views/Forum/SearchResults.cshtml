@@ -18,6 +18,7 @@
             <tr class="forumRow">
                 <td valign="top" class="forumPostText" id="@p.ForumPostID">
                     <a href="@linkURL">@linkText</a><br />
+                    <small><span nicetitle="@p.Created.AddTicks(-(p.Created.Ticks % TimeSpan.TicksPerSecond))">@p.Created.ToAgoString()</span></small><br />
                     @(p.Text.Substring(0,isOver200?200:p.Text.Length) + (isOver200 ? "..." : ""))
                 </td>
             </tr>
