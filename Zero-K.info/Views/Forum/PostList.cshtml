@@ -15,6 +15,8 @@
 
 @foreach (var p in Model)
 {
+    string linkURL = Url.Action("Thread", "Forum", new { id = p.ForumThreadID, page = ZeroKWeb.Controllers.ForumController.GetPostPage((int)p.ForumPostID) }) + "#" + p.ForumPostID;
+
     <table width='100%'>
         <tr class="forumRow">
             <td width='250px' class="forumPostHead" valign="top" >
@@ -42,10 +44,7 @@
                             {
                                 <a nicetitle='Delete the post' href='@Url.Action("DeletePost", "Forum", new { postID = p.ForumPostID })' class='delete'><img src="/img/delete_trashcan.png" height="22"/></a>
                             }
-                            @{
-                                string linkString = @Url.Action("Thread", "Forum", new { id = p.ForumThreadID }) + "#" + p.ForumPostID;
-                            }
-                            <a nicetitle='Link to this post' href="@linkString"><img src="/img/link.png" height="22"/></a>
+                            <a nicetitle='Link to this post' href="@linkURL"><img src="/img/link.png" height="22"/></a>
                             @if (p.Account.ContributionsByAccountID.Count() > 0)
                             {
                                 <br />
