@@ -338,7 +338,7 @@ end
 function widget:KeyRelease(key, modifier, isRepeat)
   if key == KEYSYMS.SPACE and isSkippable then
     if displaySkipMessage or (not WG.IsGUIHidden()) then
-      Spring.SendLuaRulesMsg("skipcutscene")
+      Spring.SendLuaRulesMsg("skipCutscene")
       displaySkipMessage = false
       return true
     else

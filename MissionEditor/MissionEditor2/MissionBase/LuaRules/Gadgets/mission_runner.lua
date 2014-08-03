@@ -916,7 +916,7 @@ local actionsTable = {
           end
         end,
   AddObjectiveAction = function(action)
-          objectives[#objectives+1] = {id = action.args.id, title = action.args.title, description = action.args.description}
+          objectives[#objectives+1] = {id = action.args.id, title = action.args.title, description = action.args.description, status = "Incomplete"}
           UnsyncedEventFunc(action)
         end,
   ModifyObjectiveAction = function(action)
@@ -1439,9 +1439,9 @@ function gadget:RecvLuaMsg(msg, player)
         end
       end
     end
-  elseif StartsWith(msg, "sendobjectives") then
-    -- TODO
-  elseif StartsWith(msg, "skipcutscene") then
+  elseif StartsWith(msg, "sendMissionObjectives") then
+    SendToUnsynced("SendMissionObjectives")
+  elseif StartsWith(msg, "skipCutscene") then
     if currCutsceneID and currCutsceneIsSkippable then
       for _, trigger in ipairs(triggers) do
         for _, condition in ipairs(trigger.logic) do
