@@ -66,12 +66,20 @@
   <ProcedurePrefs>
     <ProperCase>true</ProperCase>
     <RemoveUnderscore>true</RemoveUnderscore>
-    <RemovePrefixes />
-    <RemoveSuffixes />
+    <RemovePrefixes>
+      <string />
+    </RemovePrefixes>
+    <RemoveSuffixes>
+      <string />
+    </RemoveSuffixes>
+    <AddPrefix />
+    <AddSuffix />
     <Pluralization>None</Pluralization>
     <DualLetterEndingToUpper>false</DualLetterEndingToUpper>
     <PreserveLeadingParentName>false</PreserveLeadingParentName>
     <RegExUsage>NoRegex</RegExUsage>
+    <RegEx />
+    <RegExReplacement />
     <AllowCSKeywords>false</AllowCSKeywords>
     <AllowVBKeywords>false</AllowVBKeywords>
     <FullyQualifiedName>false</FullyQualifiedName>
