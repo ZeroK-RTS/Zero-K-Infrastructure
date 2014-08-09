@@ -102,10 +102,10 @@ namespace LobbyClient
     public class UserIDEventArgs : EventArgs
     {
         public string Name;
-        public int ID;
+        public long ID;
         public UserIDEventArgs() { }
 
-        public UserIDEventArgs(string name, int id)
+        public UserIDEventArgs(string name, long id)
         {
             Name = name;
             ID = id;

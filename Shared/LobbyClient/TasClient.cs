@@ -841,8 +841,8 @@ namespace LobbyClient
                     if (match.Success)
                     {
                         var name = match.Groups[1].Value;
-                        int id;
-                        if (int.TryParse(match.Groups[2].Value.Trim(), out id)) UserIDRecieved(this, new UserIDEventArgs() { Name = name, ID = id });
+                        long id;
+                        if (long.TryParse(match.Groups[2].Value.Trim(), out id)) UserIDRecieved(this, new UserIDEventArgs() { Name = name, ID = id });
                     }
                     /*
                     else

@@ -175,7 +175,7 @@ namespace ZeroKWeb.Controllers
                                    bool banForum,
                                    bool setRightsToZero,            
                                    string banIP,
-                                   int? banUserID,
+                                   long? banUserID,
                                    double banHours)
         {
             ZkDataContext db = new ZkDataContext();
@@ -317,7 +317,7 @@ namespace ZeroKWeb.Controllers
                 if (acc != null)
                 {
                     firstAccID = firstAccID ?? acc.AccountID;
-                    int? userID = banID ? (int?)acc.AccountUserIDS.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
+                    uint? userID = banID ? (uint?)acc.AccountUserIDS.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
                     string userIP = banIP ? acc.AccountIPS.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
                     System.Console.WriteLine(acc.Name, userID, userIP);
                     Punishment punishment = new Punishment
