@@ -240,6 +240,10 @@ namespace ZeroKLobby.MicroLobby
                             else Program.Conf.IgnoredUsers.Remove(user.Name);
                         };
                     contextMenu.MenuItems.Add(ignoreUser);
+
+                    var reportUser = new System.Windows.Forms.MenuItem("Report User");
+                    reportUser.Click += (s, e) => NavigationControl.Instance.Path = "http://zero-k.info/Users/ReportToAdminFromLobby/" + user.Name;
+                    contextMenu.MenuItems.Add(reportUser);
                 }
 
                 if (Program.TasClient.MyBattle != null)
@@ -337,6 +341,10 @@ namespace ZeroKLobby.MicroLobby
                 joinItem.Enabled = isUserOnline && Program.TasClient.ExistingUsers[control.UserName].IsInBattleRoom;
                 joinItem.Click += (s, e) => ActionHandler.JoinPlayer(control.UserName);
                 contextMenu.MenuItems.Add(joinItem);
+
+                var reportUser = new System.Windows.Forms.MenuItem("Report User");
+                reportUser.Click += (s, e) => NavigationControl.Instance.Path = "http://zero-k.info/Users/ReportToAdminFromLobby/" + control.UserName;
+                contextMenu.MenuItems.Add(reportUser);
 
                 contextMenu.MenuItems.Add("-");
 
