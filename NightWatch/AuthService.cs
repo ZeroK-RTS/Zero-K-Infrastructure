@@ -18,7 +18,6 @@ namespace NightWatch
         const int AuthServiceTestLoginWait = 8000;
         public const string ModeratorChannel = "zkadmin";
         public const string Top20Channel = "zktop20";
-        int[] brokenUserIDs = { 1236934115, 1199297835, -2130083051, 195445522, 1141552226 };
 
         readonly TasClient client;
 
@@ -99,15 +98,12 @@ namespace NightWatch
                                         entry.LastLogin = DateTime.UtcNow;
                                     }
 
-                                    if(!brokenUserIDs.Contains(args.ID))
+                                    Account accAnteep = db.Accounts.FirstOrDefault(x => x.AccountID == 4490);
+                                    bool isAnteepSmurf = accAnteep.AccountUserIDS.Any(x => x.UserID == args.ID);
+                                    if (isAnteepSmurf)
                                     {
-                                        Account accAnteep = db.Accounts.FirstOrDefault(x => x.AccountID == 4490);
-                                        bool isAnteepSmurf = accAnteep.AccountUserIDS.Any(x => x.UserID == args.ID);
-                                        if (isAnteepSmurf)
-                                        {
-                                            client.Say(TasClient.SayPlace.Channel, ModeratorChannel, String.Format("Suspected Anteep smurf: {0} (ID match {1}) {2}", args.Name, args.ID,
-                                                acc != null? "http://zero-k.info/Users/Detail/" + acc.AccountID : ""), false);
-                                        }
+                                        client.Say(TasClient.SayPlace.Channel, ModeratorChannel, String.Format("Suspected Anteep smurf: {0} (ID match {1}) {2}", args.Name, args.ID,
+                                            acc != null? "http://zero-k.info/Users/Detail/" + acc.AccountID : ""), false);
                                     }
 
                                     db.SubmitChanges();

@@ -22256,7 +22256,7 @@ namespace ZkData
 		
 		private bool _SegregateHost;
 		
-		private System.Nullable<int> _UserID;
+		private System.Nullable<uint> _UserID;
 		
 		private System.Nullable<int> _CreatedAccountID;
 		
@@ -22300,7 +22300,7 @@ namespace ZkData
     partial void OnBanForumChanged();
     partial void OnSegregateHostChanging(bool value);
     partial void OnSegregateHostChanged();
-    partial void OnUserIDChanging(System.Nullable<int> value);
+    partial void OnUserIDChanging(System.Nullable<uint> value);
     partial void OnUserIDChanged();
     partial void OnCreatedAccountIDChanging(System.Nullable<int> value);
     partial void OnCreatedAccountIDChanged();
@@ -22594,9 +22594,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserID", DbType="int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserID", DbType="bigint")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
-		public System.Nullable<int> UserID
+		public System.Nullable<uint> UserID
 		{
 			get
 			{
@@ -27006,7 +27006,7 @@ namespace ZkData
 		
 		private int _AccountID;
 		
-		private int _UserID;
+		private uint _UserID;
 		
 		private int _LoginCount;
 		
@@ -27022,7 +27022,7 @@ namespace ZkData
     partial void OnCreated();
     partial void OnAccountIDChanging(int value);
     partial void OnAccountIDChanged();
-    partial void OnUserIDChanging(int value);
+    partial void OnUserIDChanging(uint value);
     partial void OnUserIDChanged();
     partial void OnLoginCountChanging(int value);
     partial void OnLoginCountChanged();
@@ -27062,9 +27062,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserID", DbType="bigint NOT NULL", IsPrimaryKey=true)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int UserID
+		public uint UserID
 		{
 			get
 			{

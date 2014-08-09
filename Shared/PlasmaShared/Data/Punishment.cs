@@ -17,7 +17,7 @@ namespace ZkData
         /// <param name="filter">additional filtering to punishments</param>
         /// <param name="db">db context to use</param>
         /// <returns></returns>
-        public static Punishment GetActivePunishment(int? accountID, string ip, int? userID, Expression<Func<Punishment,bool>> filter = null, ZkDataContext db = null)
+        public static Punishment GetActivePunishment(int? accountID, string ip, uint? userID, Expression<Func<Punishment,bool>> filter = null, ZkDataContext db = null)
         {
             if (ip == "") ip = null;
             if (accountID == 0) accountID = null;

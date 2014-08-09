@@ -837,7 +837,7 @@
       <Column Name="BanIP" Type="System.String" DbType="nvarchar(1000)" CanBeNull="true" />
       <Column Name="BanForum" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="SegregateHost" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="UserID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="UserID" Type="System.UInt32" DbType="bigint" CanBeNull="true" />
       <Column Name="CreatedAccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="DeleteInfluence" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="DeleteXP" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
@@ -1020,7 +1020,7 @@
   <Table Name="dbo.AccountUserID" Member="AccountUserIDS">
     <Type Name="AccountUserID">
       <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="UserID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="UserID" Type="System.UInt32" DbType="bigint NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="LoginCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="FirstLogin" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
       <Column Name="LastLogin" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
