@@ -43,7 +43,9 @@
             {
                 <h4 class="expand">@journal.Title</h4>
                 <div id="@journal.Title" class="collapse width-90">
-                    @Html.BBCode(journal.Text)
+                    <div class="journal">
+                        @Html.BBCode(journal.Text)
+                    </div>
                 </div>
             }
         </div>
