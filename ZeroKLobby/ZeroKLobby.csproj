@@ -159,6 +159,7 @@
     <Compile Include="Controls\ZkSplitContainer.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="MicroLobby\SpringStore.cs" />
     <Compile Include="MicroLobby\HexToUnicodeConverter.cs">
       <SubType>Form</SubType>
     </Compile>

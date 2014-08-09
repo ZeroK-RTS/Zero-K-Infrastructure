@@ -43,7 +43,7 @@ namespace LobbyClient
         }
     };
 
-
+    [Serializable] //Serializable for saving as cache
     public class EngineConfigEntry
     {
         public string description { get; set; }
@@ -236,7 +236,7 @@ namespace LobbyClient
                 talker.SendText(text);
             }
             catch (Exception e) {
-                Console.WriteLine("Exception when trying to SayGame");
+                Console.WriteLine("Exception when trying to SayGame:" + text);
             }
         }
 
