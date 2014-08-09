@@ -205,9 +205,9 @@ namespace Fixer
             var db = new ZkDataContext();
             var userIDs = db.AccountUserIDS.ToList();
             var uniqueIDs = userIDs.Select(x => x.UserID).Distinct().ToList();
-            Dictionary<Int32, int> userIDCounts = new Dictionary<Int32, int>();
+            Dictionary<long, int> userIDCounts = new Dictionary<long, int>();
             System.Console.WriteLine("{0} userIDs, {1} uniques", userIDs.Count, uniqueIDs.Count);
-            foreach (int userID in uniqueIDs)
+            foreach (long userID in uniqueIDs)
             {
                 int count = userIDs.Count(x => x.UserID == userID);
                 userIDCounts[userID] = count;
