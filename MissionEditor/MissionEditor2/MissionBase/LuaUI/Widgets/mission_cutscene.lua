@@ -231,8 +231,7 @@ local function FadeIn(instant)
   end
 end
 
-local function HandlePause()
-  local guiHidden = WG.IsGUIHidden()
+local function HandlePause(guiHidden)
   local paused = select(3, Spring.GetGameSpeed())
   
   Spring.SelectUnitMap({})
@@ -307,9 +306,10 @@ end
 
 -- block all keypresses that aren't pause or Esc while in cutscene
 function widget:KeyPress(key, modifier, isRepeat)
+  local guiHidden = WG.IsGUIHidden()
   if isInCutscene and (Spring.GetGameFrame() > 0) then
     if key == KEYSYMS.PAUSE or key == KEYSYMS.ESCAPE then
-      HandlePause()
+      HandlePause(guiHidden)
       return false
     elseif key == KEYSYMS.SPACE and isSkippable then
       return true -- pass to KeyRelease
@@ -324,7 +324,7 @@ function widget:KeyPress(key, modifier, isRepeat)
         if lowerkey == "screenshot" then --or key:lower() == "hideinterface"
           return false
         elseif lowerkey == "crudemenu" or lowerkey == "pause" then
-          HandlePause()
+          HandlePause(guiHidden)
           return false
         end
       end

@@ -923,8 +923,16 @@ local actionsTable = {
           for i=1,#objectives do
             local obj = objectives[i]
             if obj.id == action.args.id then
-              obj.title = action.args.title or obj.title
-              obj.description = action.args.description or obj.description
+              local title = action.args.title
+              if title and title ~= '' then
+                obj.title = title
+              end
+              
+              local description = action.args.description
+              if description and description ~= '' then
+                obj.description = description
+              end
+              
               obj.status = action.args.status or obj.status
               break
             end
@@ -1034,6 +1042,17 @@ local function ExecuteTriggerByName(name)
   end
 end
 GG.mission.ExecuteTriggerByName = ExecuteTriggerByName
+
+local function SetTriggerEnabledByName(name, enabled)
+  local triggers = GG.mission.triggers
+  for i=1,#triggers do
+    local trigger = triggers[i]
+    if trigger and trigger.name == name then
+      trigger.enabled = enabled
+    end
+  end
+end
+GG.mission.SetTriggerEnabledByName = SetTriggerEnabledByName
 
 local function CheckUnitsEnteredGroups(unitID, condition)
   if not next(condition.args.groups) then return true end -- no group selected: any unit is ok
