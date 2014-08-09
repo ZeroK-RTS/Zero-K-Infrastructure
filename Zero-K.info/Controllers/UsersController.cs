@@ -233,6 +233,17 @@ namespace ZeroKWeb.Controllers
             return View("ReportToAdmin", acc);
         }
 
+        public ActionResult ReportToAdminFromLobby(string id)
+        {
+            var db = new ZkDataContext();
+            int idint;
+            Account user = null;
+            if (int.TryParse(id, out idint)) user = Account.AccountByLobbyID(db, idint);
+            if (user == null) user = Account.AccountByName(db, id);
+
+            return View("ReportToAdmin", user);
+        }
+
         [Auth]
         public ActionResult ReportToAdminSubmit(int accountID, string text)
         {

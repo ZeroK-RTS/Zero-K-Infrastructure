@@ -1,15 +1,17 @@
 ﻿@model ZkData.Account
-
+@{
+    Page.Title = "Report user " + Model.Name;
+}
 <h2>Report abuse by player @Html.PrintAccount(Model)</h2>
 
 <div>
-    Please describe briefly what has happend. Include link to battle replay or other evidence. <br/>
+    Please describe briefly what has happened. Include link to battle replay or other evidence.<br/>
     Moderators will look into issue.<br/>
     <a href="http://zero-k.info/Wiki/CodeOfConduct">Code of Conduct</a>
 </div>
 
 <form method="POST" action="@Url.Action("ReportToAdminSubmit")">
     @Html.HiddenFor(x=>x.AccountID)
-    @Html.TextArea("text","",4,40,null)
+    @Html.TextArea("text","",8,60,null)
     <input type="submit"/>
 </form>
