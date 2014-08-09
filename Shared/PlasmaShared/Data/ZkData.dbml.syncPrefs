@@ -24,7 +24,7 @@
   <NewForeignKeys>true</NewForeignKeys>
   <ExcludeParentNavProp>false</ExcludeParentNavProp>
   <ExcludeChildNavProp>false</ExcludeChildNavProp>
-  <DroppedForeignKeys>true</DroppedForeignKeys>
+  <DroppedForeignKeys>false</DroppedForeignKeys>
   <SmartNavigationNaming>true</SmartNavigationNaming>
   <NewStoredProcedures>true</NewStoredProcedures>
   <ChangedStoredProcedures>false</ChangedStoredProcedures>
