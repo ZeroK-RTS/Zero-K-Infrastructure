@@ -67,15 +67,26 @@ namespace ZeroKLobby.Notifications
 				{
 					lbState.Text = "Waiting to accept agreement";
 					var acceptForm = new AcceptAgreementForm { AgreementText = e.Text };
-					acceptForm.ShowDialog();
-
-					client.AcceptAgreement();
-
-					PlasmaShared.Utils.SafeThread(() =>
+					if (acceptForm.ShowDialog() == DialogResult.OK)
+					{
+						lbState.Text = "Sending accept agreement";
+						client.AcceptAgreement();
+						PlasmaShared.Utils.SafeThread(() =>
 						{
 							Thread.Sleep(7000);
 							if (!Program.CloseOnNext) client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
 						}).Start();
+					}
+					else
+					{
+						lbState.Text = "did not accept agreement";
+						PlasmaShared.Utils.SafeThread(() =>
+						{
+							Thread.Sleep(2000);
+							if (!Program.CloseOnNext) client.Disconnect(); //server will re-ask AcceptAgreement if we re-connect
+						}).Start();
+
+					}
 				};
 
 
