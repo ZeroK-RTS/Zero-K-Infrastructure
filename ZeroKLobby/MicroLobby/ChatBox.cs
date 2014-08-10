@@ -72,7 +72,10 @@ namespace ZeroKLobby.MicroLobby
         void WriteLine(IChatLine line)
         {
             var splitText = line.Text.Replace("\r\n", "\n").Replace("\\n", "\n").Split('\n');
-            foreach (var t in splitText) AppendText(t);
+            AppendText(splitText[0]);
+            string padding = (line is TopicLine) ? "" : "        "; //padding to avoid player spoofing different player using multi-line & color & formating
+            for (int i = 1; i < splitText.Length;i++ )
+                AppendText(padding + splitText[i]); 
         }
 
         private void InitializeComponent()  //minimum size >0 avoid chat window crash
