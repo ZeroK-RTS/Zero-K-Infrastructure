@@ -13,8 +13,8 @@
 
 
 <form method="post" action="@Url.Action("SubmitPost", "Forum", new { threadID = Model.CurrentThread != null ? (int?)Model.CurrentThread.ForumThreadID : null, categoryID = Model.CurrentCategory.ForumCategoryID, forumPostID = Model.EditedPost != null ? (int?)Model.EditedPost.ForumPostID : null })">
-@if (Model.CurrentThread == null) {
-  @:Title: <input type="text" name="title" cols="50"/><br/>
+@if (Model.CanSetTopic) {
+  @:Title: <input type="text" name="title" cols="50" value="@(Model.EditedPost != null ? Model.EditedPost.ForumThread.Title:null)"/><br/>
 }
 
 <textarea name="text" rows="8" cols="80">@(Model.EditedPost != null ? Model.EditedPost.Text:null)</textarea><br />

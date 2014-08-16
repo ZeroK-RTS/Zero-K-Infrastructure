@@ -76,7 +76,8 @@ namespace ZeroKWeb.Controllers
 			}
 
 			res.Path = GetCategoryPath(categoryID, db);
-			res.CurrentCategory = res.Path.LastOrDefault();
+            var category = res.Path.LastOrDefault();
+			res.CurrentCategory = category;
             if (forumPostID != null) {
                 ForumPost post = db.ForumPosts.Single(x=>x.ForumPostID == forumPostID);
                 if (!Global.IsZeroKAdmin && Global.AccountID != post.AuthorAccountID)
@@ -85,6 +86,13 @@ namespace ZeroKWeb.Controllers
                 }
                 res.EditedPost= post;   
             }
+            if (threadID != null)
+            {
+                var thread = res.CurrentThread;
+                res.CanSetTopic = (thread.ForumPosts.Count > 0 && thread.ForumPosts[0].ForumPostID == forumPostID 
+                    && !category.IsClans && !category.IsMaps && !category.IsMissions && !category.IsPlanets && !category.IsSpringBattles);
+            }
+            else res.CanSetTopic = true;
 
 			return View(res);
 		}
@@ -106,6 +114,7 @@ namespace ZeroKWeb.Controllers
 				var thread = db.ForumThreads.SingleOrDefault(x => x.ForumThreadID == threadID);
 
 				// update title
+                if (thread != null) thread.Title = title;
 				if (thread != null && planetID != null)
 				{
 					var planet = db.Planets.Single(x => x.PlanetID == planetID);
@@ -293,6 +302,7 @@ namespace ZeroKWeb.Controllers
 			public IEnumerable<ForumPost> LastPosts;
 			public IEnumerable<ForumCategory> Path;
             public ForumPost EditedPost;
+            public bool CanSetTopic;
 		}
 
 		public class ThreadResult
@@ -438,6 +448,7 @@ namespace ZeroKWeb.Controllers
             var posts = db.ForumPosts.Where(x=> (!firstPostOnly || x.ForumThread.ForumPosts[0] == x)
                 && (String.IsNullOrEmpty(userName) || x.Account.Name == userName)
                 && (categoryIDs.Count == 0 || categoryIDs.Contains((int)x.ForumThread.ForumCategoryID))
+                && (x.ForumThread.RestrictedClanID == null || x.ForumThread.RestrictedClanID == Global.ClanID)
                 ).OrderByDescending(x=> x.Created).ToList();
             if (!String.IsNullOrEmpty(keywords))
             {
