@@ -17,7 +17,7 @@ namespace SpringDownloader.Notifications
 		{
 			InitializeComponent();
 
-            timedUpdate.Interval = 50; //timer tick to add micro delay to Layout update.
+            timedUpdate.Interval =100; //timer tick to add micro delay to Layout update.
             timedUpdate.Tick += timedUpdate_Tick;
 		}
 

@@ -19,6 +19,8 @@ namespace ZeroKLobby
                 var baseParams = base.CreateParams;
                 baseParams.ExStyle &= ~WS_EX_APPWINDOW;
                 baseParams.ExStyle |= WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW;
+				baseParams.Style &= ~WS_EX_APPWINDOW; //In MONO it seem to needed, not just add to ExtendedStyle
+                baseParams.Style |= WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW;
                 return baseParams;
             }
         }
