@@ -8,7 +8,8 @@ using LobbyClient;
 using PlasmaShared.ContentService;
 using PlasmaShared.SpringieInterfaceReference;
 using AutohostMode = PlasmaShared.SpringieInterfaceReference.AutohostMode;
-
+using System.Timers;
+using Timer = System.Timers.Timer;
 #endregion
 
 namespace Springie.autohost
@@ -16,6 +17,10 @@ namespace Springie.autohost
     public partial class AutoHost
     {
         const int MaxMapListLength = 100; //400
+
+        List<string> engineListCache = null;
+        public const int engineListTimeout = 600; //10 minutes
+        Timer engineListTimer;
 
         readonly List<string> toNotify = new List<string>();
 
@@ -1349,10 +1354,39 @@ namespace Springie.autohost
             }
             else
             {
-                var version = words[0];
-                requestedEngineChange = version;
-                Respond(e, "Preparing engine change to " + version);
-                Program.main.Downloader.GetAndSwitchEngine(version);
+                string partVersion = words[0];
+                string specificVer = null;
+                if (engineListCache != null) //have a cache of entire list of engine version?
+                    specificVer = engineListCache.Find(x => x.StartsWith(partVersion));
+                else
+                {
+                    string engineFolder = PlasmaShared.Utils.MakePath(Program.main.Downloader.SpringPaths.WritableDirectory, "engine");
+                    foreach (string folderName in System.IO.Directory.EnumerateDirectories(engineFolder, partVersion + "*"))
+                    {
+                        //get first match from local folder, extract only name, and break. Reference: http://stackoverflow.com/questions/17809306/c-sharp-list-all-leaf-subdirectories-with-enumeratedirectories
+                        specificVer = folderName.Substring(folderName.LastIndexOf("\\") + 1);
+                        break;
+                    }
+                    if (specificVer == null) //don't have this engine locally and need to download?
+                    {
+                        engineListCache = PlasmaDownloader.EngineDownload.GetEngineList(); //get entire list online
+                        specificVer = engineListCache.Find(x => x.StartsWith(partVersion));
+                        engineListTimer = new Timer(engineListTimeout * 1000);
+                        engineListTimer.Elapsed += EngineListTimer_Elapsed;
+                        engineListTimer.Start();
+                    }
+                }
+                if (specificVer == null)
+                {
+                    Respond(e, "No such engine version");
+                    return;
+                }
+                requestedEngineChange = specificVer;
+                Respond(e, "Preparing engine change to " + specificVer);
+                var springCheck = Program.main.Downloader.GetAndSwitchEngine(specificVer);
+                if (springCheck == null); //Respond(e, "Engine available");
+                else
+                    Respond(e, "Downloading engine. " + springCheck.IndividualProgress + "%");
             }
         }
 
@@ -1497,6 +1531,14 @@ namespace Springie.autohost
                 User = user;
                 Clan = clan;
             }
+        }
+
+        void EngineListTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            engineListTimer.Stop();
+            engineListTimer.Dispose();
+            engineListTimer = null;
+            engineListCache = null;
         }
 
         /////-------------KARMARKAR & KARP PARTITION ALGORITHM---------------/////
