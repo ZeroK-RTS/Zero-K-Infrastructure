@@ -20,6 +20,22 @@ namespace ZeroKLobby.Controls
             Program.ToolTip.SetText(btnAddAI, "Add AI to other team");
         }
 
+        bool showSpringAi = false;
+        private void AddAIToTeam(string botShortName)
+        {
+            var botNumber =
+                Enumerable.Range(1, int.MaxValue).First(i => !Program.TasClient.MyBattle.Bots.Any(bt => bt.Name == "Bot_" + i));
+            var botStatus = Program.TasClient.MyBattleStatus.Clone();
+            // new team        	
+            botStatus.TeamNumber =
+                Enumerable.Range(0, TasClient.MaxTeams - 1).FirstOrDefault(
+                    x => !Program.TasClient.MyBattle.Users.Any(y => y.TeamNumber == x));
+            //different alliance than player
+            botStatus.AllyNumber = Enumerable.Range(0, TasClient.MaxAlliances - 1).FirstOrDefault(x => x != botStatus.AllyNumber);
+
+            Program.TasClient.AddBot("Bot_" + botNumber, botStatus, (int)(ZeroKLobby.MicroLobby.MyCol)Color.White, botShortName);
+        }
+
         private void addAIButton_Click(object sender, EventArgs e)
         {
             var enabled = Program.TasClient.MyBattle != null && Program.ModStore.Ais != null && Program.ModStore.Ais.Any();
@@ -34,21 +50,32 @@ namespace ZeroKLobby.Controls
                 foreach (var bot in Program.ModStore.Ais)
                 {
                     var item = new System.Windows.Forms.MenuItem(string.Format("{0} ({1})", bot.ShortName, bot.Description));
-                    var b = bot;
-                    item.Click += (s, e2) =>
-                    {
-                        var botNumber =
-                            Enumerable.Range(1, int.MaxValue).First(i => !Program.TasClient.MyBattle.Bots.Any(bt => bt.Name == "Bot_" + i));
-                        var botStatus = Program.TasClient.MyBattleStatus.Clone();
-                        // new team        	
-                        botStatus.TeamNumber =
-                            Enumerable.Range(0, TasClient.MaxTeams - 1).FirstOrDefault(
-                                x => !Program.TasClient.MyBattle.Users.Any(y => y.TeamNumber == x));
-                        //different alliance than player
-                        botStatus.AllyNumber = Enumerable.Range(0, TasClient.MaxAlliances - 1).FirstOrDefault(x => x != botStatus.AllyNumber);
+                    item.Click += (s, e2) => { AddAIToTeam(bot.ShortName); };
+                    menu.MenuItems.Add(item);
+                }
+            }
+            //spring's AI list is not shown because the list is full, also it require us to invoke/load cache or UnitSync which will cost resources
+            menu.MenuItems.Add("-");
+            MenuItem item2 = new System.Windows.Forms.MenuItem("Show spring AI") { Checked = showSpringAi }; //so user must choose to press it!
+            item2.Click += (s, e2) =>
+                        {
+                            showSpringAi = !showSpringAi;
+                            item2.Checked = showSpringAi;
+                            addAIButton_Click(s, e2);
+                        };
+            menu.MenuItems.Add(item2);
 
-                        Program.TasClient.AddBot("Bot_" + botNumber, botStatus, (int)(ZeroKLobby.MicroLobby.MyCol)Color.White, b.ShortName);
-                    };
+            if (showSpringAi)
+            {
+                List<PlasmaShared.UnitSyncLib.Ai> springAI = Program.SpringStore.GetSpringAis();
+                MenuItem item; string description; int descLength;
+                for (int i = 0; i < springAI.Count; i++)
+                {
+                    description = springAI[i].Description;
+                    string shortName = springAI[i].ShortName;
+                    descLength = 65 - shortName.Length;
+                    item = new System.Windows.Forms.MenuItem(string.Format("{0} ({1}" + (description.Length > descLength ? "..." : ")"), shortName, description.Substring(0, Math.Min(descLength, description.Length)))); //description too long
+                    item.Click += (s, e2) => { AddAIToTeam(shortName); };
                     menu.MenuItems.Add(item);
                 }
             }

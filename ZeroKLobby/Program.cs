@@ -37,6 +37,7 @@ namespace ZeroKLobby
         public static JugglerBar JugglerBar { get; private set; }
         public static MainWindow MainWindow { get; private set; }
         public static ModStore ModStore { get; private set; }
+        public static SpringStore SpringStore { get; private set; }
         public static NotifySection NotifySection { get { return MainWindow.NotifySection; } }
         public static SayCommandHandler SayCommandHandler { get; private set; }
         public static SelfUpdater SelfUpdater { get; set; }
@@ -232,6 +233,7 @@ namespace ZeroKLobby
 
                 ConnectBar = new ConnectBar(TasClient);
                 ModStore = new ModStore();
+                SpringStore = new SpringStore();
                 ToolTip = new ToolTipHandler();
                 JugglerBar = new JugglerBar(TasClient);
                 BrowserInterop = new BrowserInterop(TasClient, Conf);
@@ -246,8 +248,6 @@ namespace ZeroKLobby
 
                 if (Conf.StartMinimized) MainWindow.WindowState = FormWindowState.Minimized;
                 else MainWindow.WindowState = FormWindowState.Normal;
-                MainWindow.Size = new Size( Math.Min(SystemInformation.VirtualScreen.Width-30, MainWindow.Width),
-                                            Math.Min(SystemInformation.VirtualScreen.Height-30, MainWindow.Height)); //in case user have less space than 1024x768
 
                 BattleBar = new BattleBar();
                 NewVersionBar = new NewVersionBar(SelfUpdater);
