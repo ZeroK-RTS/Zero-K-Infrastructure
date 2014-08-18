@@ -1360,21 +1360,11 @@ namespace Springie.autohost
                     specificVer = engineListCache.Find(x => x.StartsWith(partVersion));
                 else
                 {
-                    string engineFolder = PlasmaShared.Utils.MakePath(Program.main.Downloader.SpringPaths.WritableDirectory, "engine");
-                    foreach (string folderName in System.IO.Directory.EnumerateDirectories(engineFolder, partVersion + "*"))
-                    {
-                        //get first match from local folder, extract only name, and break. Reference: http://stackoverflow.com/questions/17809306/c-sharp-list-all-leaf-subdirectories-with-enumeratedirectories
-                        specificVer = folderName.Substring(folderName.LastIndexOf("\\") + 1);
-                        break;
-                    }
-                    if (specificVer == null) //don't have this engine locally and need to download?
-                    {
-                        engineListCache = PlasmaDownloader.EngineDownload.GetEngineList(); //get entire list online
-                        specificVer = engineListCache.Find(x => x.StartsWith(partVersion));
-                        engineListTimer = new Timer(engineListTimeout * 1000);
-                        engineListTimer.Elapsed += EngineListTimer_Elapsed;
-                        engineListTimer.Start();
-                    }
+                    engineListCache = PlasmaDownloader.EngineDownload.GetEngineList(); //get entire list online
+                    specificVer = engineListCache.Find(x => x.StartsWith(partVersion));
+                    engineListTimer = new Timer(engineListTimeout * 1000);
+                    engineListTimer.Elapsed += EngineListTimer_Elapsed;
+                    engineListTimer.Start();
                 }
                 if (specificVer == null)
                 {
