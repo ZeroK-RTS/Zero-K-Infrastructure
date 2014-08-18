@@ -1426,7 +1426,7 @@ namespace Springie.autohost
             if (words.Length == 0)
             {
                 config.Password = "";
-                Respond(e, "password remoded");
+                Respond(e, "password removed");
             }
             else
             {
