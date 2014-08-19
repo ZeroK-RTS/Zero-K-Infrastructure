@@ -8,8 +8,6 @@ using LobbyClient;
 using PlasmaShared.ContentService;
 using PlasmaShared.SpringieInterfaceReference;
 using AutohostMode = PlasmaShared.SpringieInterfaceReference.AutohostMode;
-using System.Timers;
-using Timer = System.Timers.Timer;
 #endregion
 
 namespace Springie.autohost
@@ -18,9 +16,9 @@ namespace Springie.autohost
     {
         const int MaxMapListLength = 100; //400
 
-        List<string> engineListCache = null;
-        public const int engineListTimeout = 600; //10 minutes
-        Timer engineListTimer;
+        List<string> engineListCache = new List<string>();
+        public const int engineListTimeout = 600; //hold existing enginelist for at least 10 minutes before re-check for update
+        DateTime engineListDate = new DateTime(0);
 
         readonly List<string> toNotify = new List<string>();
 
@@ -1356,27 +1354,29 @@ namespace Springie.autohost
             {
                 string partVersion = words[0];
                 string specificVer = null;
-                if (engineListCache != null) //have a cache of entire list of engine version?
+                PlasmaShared.Utils.SafeThread(() =>
+                {       
                     specificVer = engineListCache.Find(x => x.StartsWith(partVersion));
-                else
-                {
-                    engineListCache = PlasmaDownloader.EngineDownload.GetEngineList(); //get entire list online
-                    specificVer = engineListCache.Find(x => x.StartsWith(partVersion));
-                    engineListTimer = new Timer(engineListTimeout * 1000);
-                    engineListTimer.Elapsed += EngineListTimer_Elapsed;
-                    engineListTimer.Start();
-                }
-                if (specificVer == null)
-                {
-                    Respond(e, "No such engine version");
+                    if (specificVer == null && DateTime.Now.Subtract(engineListDate).TotalSeconds > engineListTimeout) //no result & old list
+                    {
+                        engineListCache = PlasmaDownloader.EngineDownload.GetEngineList(); //get entire list online
+                        engineListDate = DateTime.Now;
+                        specificVer = engineListCache.Find(x => x.StartsWith(partVersion));
+                    }
+                    if (specificVer == null) //still no result
+                    {
+                        Respond(e, "No such engine version");
+                        return;
+                    }
+                    requestedEngineChange = specificVer; //in autohost.cs
+                    Respond(e, "Preparing engine change to " + specificVer);
+                    var springCheck = Program.main.Downloader.GetAndSwitchEngine(specificVer);
+                    if (springCheck == null) ; //Respond(e, "Engine available");
+                    else
+                        Respond(e, "Downloading engine. " + springCheck.IndividualProgress + "%");
+
                     return;
-                }
-                requestedEngineChange = specificVer;
-                Respond(e, "Preparing engine change to " + specificVer);
-                var springCheck = Program.main.Downloader.GetAndSwitchEngine(specificVer);
-                if (springCheck == null); //Respond(e, "Engine available");
-                else
-                    Respond(e, "Downloading engine. " + springCheck.IndividualProgress + "%");
+                }).Start();
             }
         }
 
@@ -1521,14 +1521,6 @@ namespace Springie.autohost
                 User = user;
                 Clan = clan;
             }
-        }
-
-        void EngineListTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            engineListTimer.Stop();
-            engineListTimer.Dispose();
-            engineListTimer = null;
-            engineListCache = null;
         }
 
         /////-------------KARMARKAR & KARP PARTITION ALGORITHM---------------/////
