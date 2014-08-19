@@ -8,7 +8,6 @@ using LobbyClient;
 using PlasmaShared.ContentService;
 using PlasmaShared.SpringieInterfaceReference;
 using AutohostMode = PlasmaShared.SpringieInterfaceReference.AutohostMode;
-
 #endregion
 
 namespace Springie.autohost
@@ -16,6 +15,10 @@ namespace Springie.autohost
     public partial class AutoHost
     {
         const int MaxMapListLength = 100; //400
+
+        List<string> engineListCache = new List<string>();
+        public const int engineListTimeout = 600; //hold existing enginelist for at least 10 minutes before re-check for update
+        DateTime engineListDate = new DateTime(0);
 
         readonly List<string> toNotify = new List<string>();
 
@@ -1349,10 +1352,31 @@ namespace Springie.autohost
             }
             else
             {
-                var version = words[0];
-                requestedEngineChange = version;
-                Respond(e, "Preparing engine change to " + version);
-                Program.main.Downloader.GetAndSwitchEngine(version);
+                string partVersion = words[0];
+                string specificVer = null;
+                PlasmaShared.Utils.SafeThread(() =>
+                {       
+                    specificVer = engineListCache.Find(x => x.StartsWith(partVersion));
+                    if (specificVer == null && DateTime.Now.Subtract(engineListDate).TotalSeconds > engineListTimeout) //no result & old list
+                    {
+                        engineListCache = PlasmaDownloader.EngineDownload.GetEngineList(); //get entire list online
+                        engineListDate = DateTime.Now;
+                        specificVer = engineListCache.Find(x => x.StartsWith(partVersion));
+                    }
+                    if (specificVer == null) //still no result
+                    {
+                        Respond(e, "No such engine version");
+                        return;
+                    }
+                    requestedEngineChange = specificVer; //in autohost.cs
+                    Respond(e, "Preparing engine change to " + specificVer);
+                    var springCheck = Program.main.Downloader.GetAndSwitchEngine(specificVer);
+                    if (springCheck == null) ; //Respond(e, "Engine available");
+                    else
+                        Respond(e, "Downloading engine. " + springCheck.IndividualProgress + "%");
+
+                    return;
+                }).Start();
             }
         }
 
@@ -1402,7 +1426,7 @@ namespace Springie.autohost
             if (words.Length == 0)
             {
                 config.Password = "";
-                Respond(e, "password remoded");
+                Respond(e, "password removed");
             }
             else
             {
