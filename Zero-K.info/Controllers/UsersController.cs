@@ -220,7 +220,7 @@ namespace ZeroKWeb.Controllers
             }
             catch (Exception ex)
             {
-                Global.Nightwatch.Tas.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
+                Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, ex.ToString(), false);
             }
             return RedirectToAction("Detail", new { id = accountID });
         }
