@@ -67,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BattleBalanceData.cs" />
+    <Compile Include="WikiPorting.cs" />
     <Compile Include="PlanetwarsFixer.cs" />
     <Compile Include="ForumFixer.cs" />
     <Compile Include="Program.cs" />
