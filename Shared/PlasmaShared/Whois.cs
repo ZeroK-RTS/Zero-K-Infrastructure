@@ -10,9 +10,12 @@ namespace PlasmaShared
     public class Whois
     {
         const string whoisServer = "whois.ripe.net";
+        const string sourcesGRS = "ripe-grs,radb-grs,lacnic-grs,jpirr-grs,arin-grs,apnic-grs,afrinic-grs";
+        const string sourcesNoGRS = "ripe";
 
-        public Dictionary<string, string> QueryByIp(string ip) {
-            var data = QueryWhois("-s ripe-grs,radb-grs,lacnic-grs,jpirr-grs,arin-grs,apnic-grs,afrinic-grs -l " + ip);
+        public Dictionary<string, string> QueryByIp(string ip, bool useGRS = false) {
+            string sources = "-s " + (useGRS ? sourcesGRS : sourcesNoGRS );
+            var data = QueryWhois(sources + " -l " + ip);
             var result = new Dictionary<string, string>();
             foreach (var line in data.Split('\n').Where(x=>!string.IsNullOrEmpty(x) && x[0] != '%')) {
                 var pieces = line.Split(new char[]{':'}, 2);

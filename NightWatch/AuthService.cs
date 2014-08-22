@@ -163,43 +163,46 @@ namespace NightWatch
                                                 acc != null ? "http://zero-k.info/Users/Detail/" + acc.AccountID : ""), false);
                                             }
                                         }
-                                        var whois = new Whois();
-                                        var data = whois.QueryByIp(args.IP);
-
-                                        if (!data.ContainsKey("netname")) data["netname"] = "UNKNOWN NETNAME";
-                                        if (!data.ContainsKey("org-name")) data["org-name"] = "UNKNOWN ORG";
-                                        if (!data.ContainsKey("abuse-mailbox")) data["abuse-mailbox"] = "no mailbox";
-                                        if (!data.ContainsKey("notify")) data["notify"] = "no notify address";
-                                        if (!data.ContainsKey("role")) data["role"] = "UNKNOWN ROLE";
-                                        if (!data.ContainsKey("descr")) data["descr"] = "no description";
-                                        if (!data.ContainsKey("remarks")) data["remarks"] = "no remarks";
-
 
                                         using (ZkDataContext db = new ZkDataContext())
                                         {
-                                            var blockedCompanies = db.BlockedCompanies.Select(x => x.CompanyName.ToLower()).ToList();
-                                            var blockedHosts = db.BlockedHosts.Select(x => x.HostName).ToList();
-                                            /*if (acc.Country == "MY")
+                                            for (int i=0; i<=1; i++)
                                             {
-                                                client.Say(TasClient.SayPlace.User, "KingRaptor", String.Format("USER {0}\nnetname: {1}\norgname: {2}\ndescr: {3}\nabuse-mailbox: {4}",
-                                                    acc.Name, data["netname"], data["org-name"], data["descr"], data["abuse-mailbox"]), false);
-                                            }*/
-                                            if (blockedHosts.Any(x => data["abuse-mailbox"].Contains(x)) || (blockedHosts.Any(x => data["notify"].Contains(x))))
-                                            {
-                                                client.AdminKickFromLobby(args.Name, "Connection using proxy or VPN is not allowed! (You can ask for exception)");
-                                            }
-                                            foreach (string company in blockedCompanies)
-                                            {
-                                                if (data["netname"].ToLower().Contains(company) || data["org-name"].ToLower().Contains(company) || data["descr"].ToLower().Contains(company) || data["role"].ToLower().Contains(company)|| data["remarks"].ToLower().Contains(company))
+                                                var whois = new Whois();
+                                                var data = whois.QueryByIp(args.IP, i==1);
+
+                                                if (!data.ContainsKey("netname")) data["netname"] = "UNKNOWN NETNAME";
+                                                if (!data.ContainsKey("org-name")) data["org-name"] = "UNKNOWN ORG";
+                                                if (!data.ContainsKey("abuse-mailbox")) data["abuse-mailbox"] = "no mailbox";
+                                                if (!data.ContainsKey("notify")) data["notify"] = "no notify address";
+                                                if (!data.ContainsKey("role")) data["role"] = "UNKNOWN ROLE";
+                                                if (!data.ContainsKey("descr")) data["descr"] = "no description";
+                                                if (!data.ContainsKey("remarks")) data["remarks"] = "no remarks";
+
+                                                var blockedCompanies = db.BlockedCompanies.Select(x => x.CompanyName.ToLower()).ToList();
+                                                var blockedHosts = db.BlockedHosts.Select(x => x.HostName).ToList();
+                                                /*if (acc.Country == "MY")
+                                                {
+                                                    client.Say(TasClient.SayPlace.User, "KingRaptor", String.Format("USER {0}\nnetname: {1}\norgname: {2}\ndescr: {3}\nabuse-mailbox: {4}",
+                                                        acc.Name, data["netname"], data["org-name"], data["descr"], data["abuse-mailbox"]), false);
+                                                }*/
+                                                if (blockedHosts.Any(x => data["abuse-mailbox"].Contains(x)) || (blockedHosts.Any(x => data["notify"].Contains(x))))
                                                 {
                                                     client.AdminKickFromLobby(args.Name, "Connection using proxy or VPN is not allowed! (You can ask for exception)");
-                                                    break;
                                                 }
-                                            }
+                                                foreach (string company in blockedCompanies)
+                                                {
+                                                    if (data["netname"].ToLower().Contains(company) || data["org-name"].ToLower().Contains(company) || data["descr"].ToLower().Contains(company) || data["role"].ToLower().Contains(company)|| data["remarks"].ToLower().Contains(company))
+                                                    {
+                                                        client.AdminKickFromLobby(args.Name, "Connection using proxy or VPN is not allowed! (You can ask for exception)");
+                                                        break;
+                                                    }
+                                                }
 
-                                            var hostname = Dns.GetHostEntry(args.IP).HostName;
-                                            if (blockedHosts.Any(hostname.Contains))
-                                                client.AdminKickFromLobby(args.Name, "Connection using proxy or VPN is not allowed! (You can ask for exception)");
+                                                var hostname = Dns.GetHostEntry(args.IP).HostName;
+                                                if (blockedHosts.Any(hostname.Contains))
+                                                    client.AdminKickFromLobby(args.Name, "Connection using proxy or VPN is not allowed! (You can ask for exception)");
+                                            }
                                         }
                                     }
                                 }
