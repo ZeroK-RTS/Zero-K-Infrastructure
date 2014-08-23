@@ -104,9 +104,48 @@ namespace Fixer
             }
         }
 
+        public enum OptionType
+        {
+            Undefined = 0,
+            Bool = 1,
+            List = 2,
+            Number = 3,
+            String = 4,
+            Section = 5
+        }
+        public static OptionType Type { get; set; }
+
+        public static bool GetPair(string Value, out string result)
+        {
+            result = "";
+            Type = OptionType.Number;
+            switch (Type)
+            {
+                case OptionType.Bool:
+                    if (Value != "0" && Value != "1") return false;
+                    return true;
+
+                case OptionType.Number:
+                    double d;
+                    if (!double.TryParse(Value, out d)) return false;
+                    return true;
+
+                case OptionType.String:
+                    return true;
+            }
+
+            return false;
+        }
+
         public static void FixStuff()
         {
-
+            var client = MissionEditor2.MissionServiceClientFactory.MakeClient();
+            var list = client.ListMissionInfos();
+            foreach (Mission m in list)
+            {
+                Console.WriteLine(m.Name);
+                Console.WriteLine(m.Description);
+            }
         }
 
         [STAThread]
@@ -487,7 +526,7 @@ namespace Fixer
             }
         }
 
-        public static void UpdateMissionProgression(int planetID, bool completeNext = true, string missionVars = "")
+        public static void UpdateMissionProgression(int planetID, bool completeNext = false, string missionVars = "")
         {
             ZkDataContext db = new ZkDataContext();
             var accp = db.AccountCampaignProgress.Where(x => x.PlanetID == planetID && x.IsCompleted).ToList();

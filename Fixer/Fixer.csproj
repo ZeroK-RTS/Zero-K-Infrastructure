@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Fixer</RootNamespace>
     <AssemblyName>Fixer</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -33,6 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Deployment|x86'">
     <OutputPath>bin\x86\Deployment\</OutputPath>
@@ -49,6 +51,7 @@
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
@@ -82,6 +85,10 @@
     <ProjectReference Include="..\Benchmarker\Benchmarker.csproj">
       <Project>{67501a5b-b6bb-467e-85da-22d81c40829c}</Project>
       <Name>Benchmarker</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MissionEditor\MissionEditor2\MissionEditor.csproj">
+      <Project>{713275bf-2fab-4f51-8766-1e8182bcdaa4}</Project>
+      <Name>MissionEditor</Name>
     </ProjectReference>
     <ProjectReference Include="..\NightWatch\NightWatch.csproj">
       <Project>{6CE1E0F1-447C-4871-9246-CC7CCB359D89}</Project>
