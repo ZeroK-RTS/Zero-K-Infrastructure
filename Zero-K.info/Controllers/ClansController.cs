@@ -140,8 +140,8 @@ namespace ZeroKWeb.Controllers
         {
             //using (var scope = new TransactionScope())
             //{
-                var db = new ZkDataContext();
-                var created = clan.ClanID == 0; // existing clan vs creation
+                ZkDataContext db = new ZkDataContext();
+                bool created = clan.ClanID == 0; // existing clan vs creation
 
                 //return Content(noFaction ? "true":"false");
 
@@ -163,12 +163,21 @@ namespace ZeroKWeb.Controllers
                 {
                     if (Global.Clan != null) return Content("You already have a clan");
                     if (Global.FactionID != 0 && Global.FactionID != clan.FactionID) return Content("Clan must belong to same faction you are in");
-                    
-                    db.Clans.InsertOnSubmit(clan);
                 }
                 if (string.IsNullOrEmpty(clan.ClanName) || string.IsNullOrEmpty(clan.Shortcut)) return Content("Name and shortcut cannot be empty!");
                 if (!ZkData.Clan.IsShortcutValid(clan.Shortcut)) return Content("Shortcut must have at least 1 characters and contain only numbers and letters");
-                if (db.Clans.Any(x => (SqlMethods.Like(x.Shortcut, clan.Shortcut) || SqlMethods.Like(x.ClanName, clan.ClanName)) && x.ClanID != clan.ClanID)) return Content("Clan with this shortcut or name already exists");
+
+                // check if our name or shortcut conflicts with existing clans
+                // if so, allow us to create a new clan over it if it's a deleted clan, else block action
+                var existingClans = db.Clans.Where(x => (SqlMethods.Like(x.Shortcut, clan.Shortcut) || SqlMethods.Like(x.ClanName, clan.ClanName) && x.ClanID != clan.ClanID));
+                if (existingClans.Count() > 0) 
+                {
+                    if(existingClans.Any(x=> !x.IsDeleted)) return Content("Clan with this shortcut or name already exists");
+                    Clan deadClan = existingClans.First();
+                    clan = deadClan;
+                    if (noFaction) clan.FactionID = null;
+                }
+                else db.Clans.InsertOnSubmit(clan);
 
                 if (created && (image == null || image.ContentLength == 0)) return Content("A clan image is required");
                 if (image != null && image.ContentLength > 0)
