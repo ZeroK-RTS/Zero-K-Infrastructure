@@ -116,7 +116,7 @@ namespace Springie.autohost
                                          new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
 
             AddMissing(new CommandConfig("voteresign",
-                                                     1,
+                                                     0,
                                                      " - starts a vote to resign game",
                                                      0,
                                                      new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
