@@ -114,7 +114,7 @@ namespace ZeroKWeb.Controllers
 				var thread = db.ForumThreads.SingleOrDefault(x => x.ForumThreadID == threadID);
 
 				// update title
-                if (thread != null) thread.Title = title;
+                if (thread != null && !String.IsNullOrEmpty(title)) thread.Title = title;
 				if (thread != null && planetID != null)
 				{
 					var planet = db.Planets.Single(x => x.PlanetID == planetID);
