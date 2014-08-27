@@ -74,17 +74,18 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
-        public ActionResult ChangePermissions(int accountID, int springieLevel, bool zkAdmin, bool vpnException)
+        public ActionResult ChangePermissions(int accountID, int adminAccountID, int springieLevel, bool zkAdmin, bool vpnException)
         {
             var db = new ZkDataContext();
             Account acc = db.Accounts.Single(x => x.AccountID == accountID);
+            Account adminAcc = db.Accounts.Single(x => x.AccountID == adminAccountID);
             acc.SpringieLevel = springieLevel;
             acc.IsZeroKAdmin = zkAdmin;
             acc.HasVpnException = vpnException;
             db.SubmitChanges();
             Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);
             
-            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Permissions changed for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")), true);
+            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Permissions changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name), true);
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
 
