@@ -220,7 +220,7 @@ namespace Springie.autohost
         public int GetUserLevel(string name) {
             int ret = tas.ExistingUsers[name].SpringieLevel;
             if (!String.IsNullOrEmpty(bossName)) {
-                if (name == bossName) ret += 1;
+                if (name == bossName) ret = Math.Max(GlobalConst.SpringieBossEffectiveRights, ret);
                 else ret += -1;
             }
             return ret;

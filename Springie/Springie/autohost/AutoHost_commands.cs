@@ -730,15 +730,15 @@ namespace Springie.autohost
         public void ComPredict(TasSayEventArgs e, string[] words)
         {
             var b = tas.MyBattle;
-            var grouping = b.Users.Where(u => !u.IsSpectator).GroupBy(u => u.AllyNumber);
-
+            var grouping = b.Users.Where(u => !u.IsSpectator).GroupBy(u => u.AllyNumber).ToList();
+            bool is1v1 = grouping.Count == 2 && grouping[0].Count() == 1 && grouping[1].Count() == 1;
             IGrouping<int, UserBattleStatus> oldg = null;
             foreach (var g in grouping)
             {
                 if (oldg != null)
                 {
+                    // FIXME use 1v1 elo for 1v1 prediction
                     var t1elo = oldg.Average(x => x.LobbyUser.EffectiveElo);
-
                     var t2elo = g.Average(x => x.LobbyUser.EffectiveElo);
                     Respond(e,
                             String.Format("team {0} has {1}% chance to win over team {2}",

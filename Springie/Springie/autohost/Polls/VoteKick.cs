@@ -33,6 +33,14 @@ namespace Springie.autohost.Polls
                     string reason = (words.Length > 1 && words[1] != "for") ? " for" : "";
                     for (var i = 1; i < words.Length; i++) reason += " " + words[i];
                     question = "Kick " + player + reason + "?";
+
+                    int cnt = 0;
+                    foreach (var user in tas.MyBattle.Users)
+                    {
+                        if (!tas.ExistingUsers[user.Name].IsAway) cnt++;
+                    }
+                    winCount = (int)(cnt * 0.75 + 1);
+
                     return true;
                 }
             }
