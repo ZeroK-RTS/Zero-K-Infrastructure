@@ -329,7 +329,7 @@ namespace NightWatch
                         var user = args.ServerParams[1];
                         if (channel == ModeratorChannel) {
                             var u = client.ExistingUsers[user];
-                            if (u.SpringieLevel <= 1 && !u.IsZeroKAdmin) client.ForceLeaveChannel(user, ModeratorChannel);
+                            if (u.SpringieLevel <= 2 && !u.IsZeroKAdmin) client.ForceLeaveChannel(user, ModeratorChannel);
                         }
                         else if (channel == Top20Channel) {
                             var u = client.ExistingUsers[user];
@@ -357,7 +357,7 @@ namespace NightWatch
                         var user = args.ServerParams[1];
                         if (channel == ModeratorChannel) {
                             var u = client.ExistingUsers[user];
-                            if (u.SpringieLevel > 1 || u.IsZeroKAdmin) client.ForceJoinChannel(user, ModeratorChannel);
+                            if (u.SpringieLevel > 2 || u.IsZeroKAdmin) client.ForceJoinChannel(user, ModeratorChannel);
                         }
                     } catch (Exception ex) {
                         Trace.TraceError("Error procesisng channel user added: {0}", ex);
