@@ -236,6 +236,17 @@ namespace ZeroKWeb.Controllers
 			}
 		}
 
+        public ActionResult Post(int id)
+        {
+            var db = new ZkDataContext();
+            ForumPost post = db.ForumPosts.FirstOrDefault(x => x.ForumPostID == id);
+            int? page = GetPostPage((int)id);
+            if (page == 0) page = null;
+            ForumThread thread = post.ForumThread;
+            return RedirectToAction("Thread", new { id = thread.ForumThreadID, page = page});
+
+        }
+
 		public ActionResult Thread(int id, bool? lastPost, bool? lastSeen, int? postID, int? page)
 		{
 			var db = new ZkDataContext();
@@ -438,23 +449,30 @@ namespace ZeroKWeb.Controllers
             return post.ForumThread.ForumPosts.IndexOf(post) / PageSize;
         }
 
-        public ActionResult SearchForumPosts(string keywords, string userName, List<int> categoryIDs, bool firstPostOnly = false, bool resultsAsPosts = true)
+        public ActionResult Search()
         {
-            if (String.IsNullOrEmpty(keywords) && String.IsNullOrEmpty(userName)) return Content("You must enter keywords and/or username");
+            return View("Search");
+        }
+
+        public ActionResult SubmitSearch(string keywords, string username, List<int> categoryIDs, bool firstPostOnly = false, bool resultsAsPosts = true)
+        {
+            if (String.IsNullOrEmpty(keywords) && String.IsNullOrEmpty(username)) return Content("You must enter keywords and/or username");
             
             ZkDataContext db = new ZkDataContext();
             if (categoryIDs == null) categoryIDs = new List<int>();
 
-            var posts = db.ForumPosts.Where(x=> (!firstPostOnly || x.ForumThread.ForumPosts[0] == x)
-                && (String.IsNullOrEmpty(userName) || x.Account.Name == userName)
+            var posts = db.ForumPosts.Where(x=> (String.IsNullOrEmpty(username) || x.Account.Name == username)
                 && (categoryIDs.Count == 0 || categoryIDs.Contains((int)x.ForumThread.ForumCategoryID))
                 && (x.ForumThread.RestrictedClanID == null || x.ForumThread.RestrictedClanID == Global.ClanID)
                 ).OrderByDescending(x=> x.Created).ToList();
+            if (firstPostOnly) posts = posts.Where(x => x.ForumThread.ForumPosts[0] == x).ToList();
+            var invalidResults = new List<ForumPost>();
             if (!String.IsNullOrEmpty(keywords))
             {
                 string[] keywordArray = keywords.Split(null as string[], StringSplitOptions.RemoveEmptyEntries);
                 foreach (ForumPost p in posts)
                 {
+                    /*  // use this for an OR search
                     bool success = false;
                     foreach (string word in keywordArray)
                     {
@@ -464,9 +482,19 @@ namespace ZeroKWeb.Controllers
                             break;
                         }
                     }
-                    if (!success) posts.Remove(p);
+                    if (!success) invalidResults.Add(p);
+                    */
+                    // AND search
+                    foreach (string word in keywordArray)
+                    {
+                        if (!p.Text.Contains(word))
+                        {
+                            invalidResults.Add(p);
+                        }
+                    }
                 }
             }
+            posts = posts.Where(x => !invalidResults.Contains(x)).ToList();
             return View("SearchResults", new SearchResult {Posts = posts.Take(100).ToList(), DisplayAsPosts = resultsAsPosts});
         }
 	}

@@ -15,7 +15,7 @@
 
 @foreach (var p in Model)
 {
-    string linkURL = Url.Action("Thread", "Forum", new { id = p.ForumThreadID, page = ZeroKWeb.Controllers.ForumController.GetPostPage((int)p.ForumPostID) }) + "#" + p.ForumPostID;
+    string linkURL = Url.Action("Post", "Forum", new { id = p.ForumPostID }) + "#" + p.ForumPostID;
 
     <table width='100%'>
         <tr class="forumRow">

@@ -9,7 +9,7 @@
 {
     foreach (var p in Model.Posts)
     {
-        string linkURL = Url.Action("Thread", "Forum", new { id = p.ForumThreadID }) + "#" + p.ForumPostID;
+        string linkURL = Url.Action("Post", "Forum", new { id = p.ForumPostID }) + "#" + p.ForumPostID;
         bool isFirstPost = p == p.ForumThread.ForumPosts[0];
         string linkText = String.Format("{0} / {1}{2}", p.ForumThread.ForumCategory.Title, isFirstPost ? "Re:":"", p.ForumThread.Title);
         bool isOver200 = p.Text.Length > 200;
