@@ -1298,7 +1298,6 @@ function gadget:UnitDestroyed(unitID, unitDefID, unitTeam)
   for _, trigger in ipairs(triggers) do
     for _, condition in ipairs(trigger.logic) do
       if condition.logicType == "UnitDestroyedCondition" then
-        local execute = false
         -- check if the unit is in a region the trigger is watching
         for groupName in pairs(condition.args.groups) do
           if FindUnitsInGroup(groupName)[unitID] then
@@ -1508,8 +1507,13 @@ function gadget:UnitEnteredLos(unitID, unitTeam, allyTeam, unitDefID)
       local condition = triggers[i].logic[j]
       if condition.logicType == "UnitEnteredLOSCondition" then
         if not next(condition.args.alliances) or ArrayContains(condition.args.alliances, allyTeam) then
-          ExecuteTrigger(triggers[i])
-          break
+          for groupName in pairs(condition.args.groups) do
+            local unitDefID = Spring.GetUnitDefID(unitID)
+            if FindUnitsInGroup(groupName)[unitID] then
+              ExecuteTrigger(triggers[i])
+              break
+            end
+          end
         end
       end
     end
