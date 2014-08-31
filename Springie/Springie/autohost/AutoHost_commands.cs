@@ -1234,7 +1234,7 @@ namespace Springie.autohost
         void ComAdmins(TasSayEventArgs e, string[] words)
         {
             tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
-            foreach (var u in tas.ExistingUsers.Values.Where(x => x.SpringieLevel > 1)) tas.Say(TasClient.SayPlace.User, e.UserName, " " + u.Name + " (level " + u.SpringieLevel + ")", false);
+            foreach (var u in tas.ExistingUsers.Values.Where(x => x.SpringieLevel >= 3)) tas.Say(TasClient.SayPlace.User, e.UserName, " " + u.Name + " (level " + u.SpringieLevel + ")", false);
             tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
         }
 
