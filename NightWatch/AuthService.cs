@@ -106,6 +106,12 @@ namespace NightWatch
                                             acc != null? "http://zero-k.info/Users/Detail/" + acc.AccountID : ""), false);
                                     }
 
+                                    if (args.ID != 0 && args.ID < 1000)
+                                    {
+                                        client.Say(TasClient.SayPlace.Channel, ModeratorChannel, String.Format("Suspected Anteep smurf: {0} (too short userID {1}) {2}", args.Name, args.ID,
+                                            acc != null ? "http://zero-k.info/Users/Detail/" + acc.AccountID : ""), false);
+                                    }
+
                                     db.SubmitChanges();
                                 }
                             } catch (Exception ex) {
