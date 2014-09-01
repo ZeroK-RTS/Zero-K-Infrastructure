@@ -151,12 +151,24 @@ namespace NightWatch
                                     {
                                         if (GlobalConst.VpnCheckEnabled)
                                         {
+                                            // check user IP against http://dnsbl.tornevall.org
+                                            // does not catch all smurfs
+                                            // note: false positives reported for russians using mobilke connections
                                             var reversedIP = string.Join(".", args.IP.Split('.').Reverse().ToArray());
-                                            var resolved = Dns.GetHostEntry(string.Format("{0}.dnsbl.tornevall.org", reversedIP)).AddressList;
-                                            if (resolved != null && resolved.Length > 0)
+                                            try
                                             {
-                                                client.AdminKickFromLobby(args.Name,
-                                                                          "Connection using proxy or VPN is not allowed! (You can ask for exception). See http://dnsbl.tornevall.org/removal.php to get your IP removed from the blacklist.");
+                                                var resolved = Dns.GetHostEntry(string.Format("{0}.dnsbl.tornevall.org", reversedIP)).AddressList;
+                                                if (resolved.Length > 0)
+                                                {
+                                                    client.Say(TasClient.SayPlace.Channel, ModeratorChannel, String.Format("User {0} {3} has IP {1} on dnsbl.tornevall.org ({2} result/s)", 
+                                                        args.Name, args.IP, resolved.Length, acc != null ? "http://zero-k.info/Users/Detail/" + acc.AccountID : ""), false);
+                                                    //client.AdminKickFromLobby(args.Name,
+                                                    //                      "Connection using proxy or VPN is not allowed! (You can ask for exception). See http://dnsbl.tornevall.org/removal.php to get your IP removed from the blacklist.");
+                                                }
+                                            }
+                                            catch (System.Net.Sockets.SocketException sockEx)
+                                            {
+                                                // not in database, do nothing
                                             }
                                         }
                                         using (var db = new ZkDataContext())
