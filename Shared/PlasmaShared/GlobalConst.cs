@@ -40,7 +40,7 @@
 
         public const double PlanetMetalPerTurn = 1;
         public const double PlanetWarsEnergyToMetalRatio = 1 / 20.0;
-        public const int BaseInfluencePerBattle = 25;
+        public const int BaseInfluencePerBattle = 35;
 	    public const double MetalPerBattlePlayer = 100;
         public const double CcDestroyedMetalMultWinners = 0.75;
         public const double CcDestroyedMetalMultLosers = 1.25;
