@@ -751,13 +751,11 @@
       <Column Name="TurnStarted" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Column Name="ImageName" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
       <Column Name="IsDirty" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="ChallengeTime" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Column Name="Width" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="Height" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="IsDefault" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="AttackerSideCounter" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="AttackerSideChangeTime" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
-      <Column Name="ChallengePlanetID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Association Name="Galaxy_Link" Member="Links" ThisKey="GalaxyID" OtherKey="GalaxyID" Type="Link" />
       <Association Name="Galaxy_Planet" Member="Planets" ThisKey="GalaxyID" OtherKey="GalaxyID" Type="Planet" />
       <Association Name="Planet_Galaxy" Member="Planet" ThisKey="ChallengePlanetID" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" />
