@@ -66,49 +66,50 @@
     <Type Name="Account">
       <Column Name="AccountID" Storage="_Id" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Name" Type="System.String" DbType="varchar(200) NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
-      <Column Name="FirstLogin" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
-      <Column Name="LastLogin" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
-      <Column Name="Aliases" Type="System.String" DbType="varchar(max)" CanBeNull="true" UpdateCheck="WhenChanged" />
-      <Column Name="Elo" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
-      <Column Name="ForumTotalUpvotes" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="ForumTotalDownvotes" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="Email" Type="System.String" DbType="nvarchar(max)" CanBeNull="true" />
       <Column Name="VotesAvailable" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="PwAttackPoints" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
-      <Column Name="LastLobbyVersionCheck" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Column Name="MatchMakingActive" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="[Language]" Member="Language" Type="System.String" DbType="nvarchar(2)" CanBeNull="true" />
       <Column Name="HasVpnException" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="Kudos" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="PwBombersProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
-      <Column Name="PwBombersUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="ForumTotalUpvotes" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="ForumTotalDownvotes" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="PwMetalProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="PwMetalUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="PwWarpProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="PwWarpUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
-      <Column Name="Avatar" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
-      <Column Name="SpringieLevel" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="PwAttackPoints" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="LastLobbyVersionCheck" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Column Name="GamePreferences" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
       <Column Name="LobbyVersion" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
       <Column Name="PwDropshipsProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="PwDropshipsUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
-      <Column Name="[Level]" Member="Level" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
-      <Column Name="ClanID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="PwBombersProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="PwBombersUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="LastNewsRead" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Column Name="FactionID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="LobbyID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="IsDeleted" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="Password" Type="System.String" DbType="varchar(100)" CanBeNull="true" UpdateCheck="WhenChanged" />
-      <Column Name="Country" Type="System.String" DbType="varchar(5)" CanBeNull="true" UpdateCheck="WhenChanged" />
+      <Column Name="Avatar" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
+      <Column Name="SpringieLevel" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="LobbyTimeRank" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="MissionRunCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="IsZeroKAdmin" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="Xp" Member="XP" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
-      <Column Name="EloWeight" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
-      <Column Name="Elo1v1" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="[Level]" Member="Level" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="ClanID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="Elo1v1Weight" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="EloPw" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="IsLobbyAdministrator" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="IsBot" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="Password" Type="System.String" DbType="varchar(100)" CanBeNull="true" UpdateCheck="WhenChanged" />
+      <Column Name="Country" Type="System.String" DbType="varchar(5)" CanBeNull="true" UpdateCheck="WhenChanged" />
+      <Column Name="FirstLogin" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="LastLogin" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="Aliases" Type="System.String" DbType="varchar(max)" CanBeNull="true" UpdateCheck="WhenChanged" />
+      <Column Name="Elo" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="EloWeight" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="Elo1v1" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
       <Association Name="Account_LobbyChannelSubscription" Member="LobbyChannelSubscriptions" ThisKey="AccountID" OtherKey="AccountID" Type="LobbyChannelSubscription" />
       <Association Name="Account_ForumThread" Member="ForumThreadsByCreatedAccountID" ThisKey="AccountID" OtherKey="CreatedAccountID" Type="ForumThread" />
@@ -605,6 +606,7 @@
       <Association Name="Planet_PlanetOwnerHistory" Member="PlanetOwnerHistories" ThisKey="PlanetID" OtherKey="PlanetID" Type="PlanetOwnerHistory" />
       <Association Name="Planet_PlanetStructure" Member="PlanetStructures" Storage="_PlanetStructuresByPlanetID" ThisKey="PlanetID" OtherKey="PlanetID" Type="PlanetStructure" />
       <Association Name="Planet_PlanetStructure1" Member="PlanetStructuresByTargetPlanetID" ThisKey="PlanetID" OtherKey="TargetPlanetID" Type="PlanetStructure" />
+      <Association Name="Planet_Galaxy" Member="Galaxies" ThisKey="PlanetID" OtherKey="ChallengePlanetID" Type="Galaxy" />
       <Association Name="Planet_TreatyEffect" Member="TreatyEffects" ThisKey="PlanetID" OtherKey="PlanetID" Type="TreatyEffect" />
       <Association Name="Planet_PlanetFaction" Member="PlanetFactions" ThisKey="PlanetID" OtherKey="PlanetID" Type="PlanetFaction" />
       <Association Name="Galaxy_Planet" Member="Galaxy" ThisKey="GalaxyID" OtherKey="GalaxyID" Type="Galaxy" IsForeignKey="true" />
@@ -749,11 +751,16 @@
       <Column Name="TurnStarted" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Column Name="ImageName" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
       <Column Name="IsDirty" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="ChallengeTime" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Column Name="Width" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="Height" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="IsDefault" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="AttackerSideCounter" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="AttackerSideChangeTime" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
+      <Column Name="ChallengePlanetID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Association Name="Galaxy_Link" Member="Links" ThisKey="GalaxyID" OtherKey="GalaxyID" Type="Link" />
       <Association Name="Galaxy_Planet" Member="Planets" ThisKey="GalaxyID" OtherKey="GalaxyID" Type="Planet" />
+      <Association Name="Planet_Galaxy" Member="Planet" ThisKey="ChallengePlanetID" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.RatingPoll" Member="RatingPolls">
