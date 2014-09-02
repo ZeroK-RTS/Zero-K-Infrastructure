@@ -41,9 +41,9 @@
         public const double PlanetMetalPerTurn = 1;
         public const double PlanetWarsEnergyToMetalRatio = 1 / 20.0;
         public const int BaseInfluencePerBattle = 25;
-        public const double AssistInfluencePerBattle = 15;
-	    public const double BaseMetalPerBattle = 200;
+	    public const double MetalPerBattlePlayer = 100;
         public const double CcDestroyedMetalMultWinners = 0.75;
+        public const double CcDestroyedMetalMultLosers = 1.25;
 	    public const int DropshipsPerBattlePlayer = 0;
         public const int InfluencePerShip = 3;
         public const double InfluencePerTech = 1;
@@ -68,8 +68,6 @@
         public const bool RequireWormholeToTravel = true;
         public const bool CanChangeClanFaction = false;
         public const double MaxPwEloDifference = 120;
-        public const double EloMetalModDivisor = 240;
-        public const double EloMetalModMagnitude = 1;
 
 	    public const string MetalIcon = "/img/luaui/ibeam.png";
         public const string EnergyIcon = "/img/luaui/energy.png";

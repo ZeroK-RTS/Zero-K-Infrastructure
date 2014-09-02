@@ -43,8 +43,10 @@ namespace ZeroKWeb.SpringieInterface
                                                       string password,
                                                       BattleResult result,
                                                       List<BattlePlayerResult> players,
-                                                      List<string> extraData) {
-            try {
+                                                      List<string> extraData)
+        {
+            try
+            {
                 Account acc = AuthServiceClient.VerifyAccountPlain(context.AutohostName, password);
                 if (acc == null) throw new Exception("Account name or password not valid");
                 AutohostMode mode = context.GetMode();
@@ -70,7 +72,8 @@ namespace ZeroKWeb.SpringieInterface
                          };
                 db.SpringBattles.InsertOnSubmit(sb);
 
-                foreach (BattlePlayerResult p in players) {
+                foreach (BattlePlayerResult p in players)
+                {
                     sb.SpringBattlePlayers.Add(new SpringBattlePlayer
                                                {
                                                    AccountID = db.Accounts.First(x => x.LobbyID == p.LobbyID).AccountID,
@@ -86,14 +89,16 @@ namespace ZeroKWeb.SpringieInterface
                 db.SubmitChanges();
 
                 // awards
-                foreach (string line in extraData.Where(x => x.StartsWith("award"))) {
+                foreach (string line in extraData.Where(x => x.StartsWith("award")))
+                {
                     string[] partsSpace = line.Substring(6).Split(new[] { ' ' }, 3);
                     string name = partsSpace[0];
                     string awardType = partsSpace[1];
                     string awardText = partsSpace[2];
 
                     SpringBattlePlayer player = sb.SpringBattlePlayers.FirstOrDefault(x => x.Account.Name == name && x.Account.LobbyID != null);
-                    if (player != null) {
+                    if (player != null)
+                    {
                         db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward
                                                               {
                                                                   AccountID = player.AccountID,
@@ -125,7 +130,8 @@ namespace ZeroKWeb.SpringieInterface
                 }
 
                 bool noElo = (extraData.FirstOrDefault(x => x.StartsWith("noElo")) != null);
-                try {
+                try
+                {
                     db.SubmitChanges();
                 }
                 catch (System.Data.Linq.DuplicateKeyException ex)
@@ -138,15 +144,21 @@ namespace ZeroKWeb.SpringieInterface
                 sb.CalculateAllElo(noElo, isPlanetwars);
                 db.SubmitAndMergeChanges();
 
-                try {
+                try
+                {
                     foreach (Account a in sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account)) Global.Nightwatch.Tas.Extensions.PublishAccountData(a);
-                } catch (Exception ex) {
+                }
+                catch (Exception ex)
+                {
                     Trace.TraceError("error updating extension data: {0}", ex);
                 }
 
-                foreach (Account account in sb.SpringBattlePlayers.Select(x => x.Account)) {
-                    if (account.Level > orgLevels[account.AccountID]) {
-                        try {
+                foreach (Account account in sb.SpringBattlePlayers.Select(x => x.Account))
+                {
+                    if (account.Level > orgLevels[account.AccountID])
+                    {
+                        try
+                        {
                             string message =
                                 string.Format("Congratulations {0}! You just leveled up to level {1}. http://zero-k.info/Users/Detail/{2}",
                                               account.Name,
@@ -154,7 +166,9 @@ namespace ZeroKWeb.SpringieInterface
                                               account.AccountID);
                             //text.AppendLine(message);
                             AuthServiceClient.SendLobbyMessage(account, message);
-                        } catch (Exception ex) {
+                        }
+                        catch (Exception ex)
+                        {
                             Trace.TraceError("Error sending level up lobby message: {0}", ex);
                         }
                     }
@@ -170,7 +184,8 @@ namespace ZeroKWeb.SpringieInterface
                 TasClient tas = Global.Nightwatch.Tas;
                 Battle bat = tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == context.AutohostName); // add those in lobby atm
 
-                if (bat != null) {
+                if (bat != null)
+                {
                     List<string> inbatPlayers = bat.Users.Select(x => x.Name).ToList();
                     joinplayers.RemoveAll(x => inbatPlayers.Contains(x));
                 }
@@ -181,7 +196,9 @@ namespace ZeroKWeb.SpringieInterface
 
                 //text.Append(string.Format("Debriefing in #{0} - spring://chat/channel/{0}  ", channelName));
                 return text.ToString();
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 return ex.ToString();
             }
         }
@@ -214,7 +231,8 @@ namespace ZeroKWeb.SpringieInterface
             return loserElo - winnerElo;
         }
 
-        static void ProcessPlanetwars(BattleResult result, List<string> extraData, ZkDataContext db, SpringBattle sb, StringBuilder text) {
+        static void ProcessPlanetwars(BattleResult result, List<string> extraData, ZkDataContext db, SpringBattle sb, StringBuilder text)
+        {
             Galaxy gal = db.Galaxies.Single(x => x.IsDefault);
             Planet planet = gal.Planets.Single(x => x.MapResourceID == sb.MapResourceID);
 
@@ -225,7 +243,8 @@ namespace ZeroKWeb.SpringieInterface
                     x => x.Key ?? 0).ToList();
 
             Faction attacker = planet.GetAttacker(presentFactions);
-            if (attacker == null) {
+            if (attacker == null)
+            {
                 text.AppendLine("ERROR: Invalid attacker");
                 return;
             }
@@ -235,9 +254,11 @@ namespace ZeroKWeb.SpringieInterface
             bool wasCcDestroyed = false;
             List<int> winnerTeams =
                 sb.SpringBattlePlayers.Where(x => x.IsInVictoryTeam && !x.IsSpectator).Select(x => x.AllyNumber).Distinct().ToList();
-            if (winnerTeams.Count == 1) {
+            if (winnerTeams.Count == 1)
+            {
                 int winNum = winnerTeams[0];
-                if (winNum > 1) {
+                if (winNum > 1)
+                {
                     text.AppendLine("ERROR: Invalid winner");
                     return;
                 }
@@ -247,79 +268,37 @@ namespace ZeroKWeb.SpringieInterface
                 wasCcDestroyed = extraData.Any(x => x.StartsWith("hqkilled," + winNum));
             }
 
-            
+
             List<Account> winners =
                 sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam && x.Account.Faction != null).Select(x => x.Account).ToList();
 
-            double eloDiff = GetEloDiff(sb);
-            double eloModifierMetal = (eloDiff / GlobalConst.EloMetalModDivisor) * GlobalConst.EloMetalModMagnitude + 1;
-            double eloModifierIP = eloModifierMetal;
-            double baseMetal = GlobalConst.BaseMetalPerBattle;
-            double winnerMetal = baseMetal, loserMetal = 0;
 
             int dropshipsSent = (planet.PlanetFactions.Where(x => x.Faction == attacker).Sum(x => (int?)x.Dropships) ?? 0), dropshipsGained = 0;
             string influenceReport = "";
 
             // distribute influence
-            if (winnerFaction != null) {
+            if (winnerFaction != null)
+            {
 
-                
                 // give influence to main attackers
                 double planetDefs = (planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0);
-                int involvedCount =
-                    sb.SpringBattlePlayers.Count(
-                        x => !x.IsSpectator && x.Account.Faction != null && (x.Account.Faction == winnerFaction || x.Account.Faction == defender));
 
                 double baseInfluence = GlobalConst.BaseInfluencePerBattle;
                 double influence = baseInfluence;
 
-                double shipBonus = winnerFaction == attacker ? (dropshipsSent - planetDefs)*GlobalConst.InfluencePerShip : 0;
-                double techBonus = winnerFaction.GetFactionUnlocks().Count()*GlobalConst.InfluencePerTech;
-                double ccMalus = wasCcDestroyed ? -(influence+ shipBonus + techBonus)*GlobalConst.InfluenceCcKilledMultiplier : 0;
-                
+                double shipBonus = winnerFaction == attacker ? (dropshipsSent - planetDefs) * GlobalConst.InfluencePerShip : 0;
+                double techBonus = winnerFaction.GetFactionUnlocks().Count() * GlobalConst.InfluencePerTech;
+                double ccMalus = wasCcDestroyed ? -(influence + shipBonus + techBonus) * GlobalConst.InfluenceCcKilledMultiplier : 0;
+
                 influence = influence + shipBonus + techBonus + ccMalus;
-                influence = influence * eloModifierIP;
                 if (influence < 0) influence = 0;
                 influence = Math.Floor(influence * 100) / 100;
 
-                
+
                 // save influence gains
-                if (winnerFaction != defender) {
+                if (winnerFaction != defender)
+                {
 
-                    // give influence to helpers
-                    // distribute influence to helping factions
-                    var helpers = winners.Where(x => x.Faction != winnerFaction).GroupBy(x => x.Faction).Select(x => x.Key).ToList(); // other factions that helped winners 
-                    if (helpers.Count > 0)
-                    {
-                        var helperInfluence = GlobalConst.AssistInfluencePerBattle;
-                        if (wasCcDestroyed) helperInfluence = helperInfluence * GlobalConst.CcDestroyedMetalMultWinners;
-                        helperInfluence = helperInfluence / helpers.Count;
-
-                        foreach (var helpFac in helpers)
-                        {
-                            PlanetFaction helperEntry = planet.PlanetFactions.FirstOrDefault(x => x.Faction == helpFac);
-                            if (helperEntry == null)
-                            {
-                                helperEntry = new PlanetFaction { Faction = helpFac, Planet = planet, };
-                                planet.PlanetFactions.Add(helperEntry);
-                            }
-                            helperEntry.Influence += helperInfluence;
-                            if (helperEntry.Influence > 100) helperEntry.Influence = 100;
-
-                            var helpEv = Global.CreateEvent("{0} gained {1} influence at {2} for helping {3} during battle {4} ",
-                                                helpFac.Shortcut,
-                                                helperInfluence,
-                                                planet,
-                                                winnerFaction.Shortcut,
-                                                sb);
-
-                            db.Events.InsertOnSubmit(helpEv);
-                            text.AppendLine(helpEv.PlainText);
-                        }
-                    }
-
-
-                   
                     // main winner influence 
                     PlanetFaction entry = planet.PlanetFactions.FirstOrDefault(x => x.Faction == winnerFaction);
                     if (entry == null)
@@ -329,18 +308,22 @@ namespace ZeroKWeb.SpringieInterface
                     }
 
                     entry.Influence += influence;
-                
+
 
                     // clamping of influence
                     // gained over 100, sole owner
-                    if (entry.Influence >= 100) {
+                    if (entry.Influence >= 100)
+                    {
                         entry.Influence = 100;
                         foreach (var pf in planet.PlanetFactions.Where(x => x.Faction != winnerFaction)) pf.Influence = 0;
-                    } else {
+                    }
+                    else
+                    {
                         var sumOthers = planet.PlanetFactions.Where(x => x.Faction != winnerFaction).Sum(x => (double?)x.Influence) ?? 0;
-                        if (sumOthers + entry.Influence > 100) {
+                        if (sumOthers + entry.Influence > 100)
+                        {
                             var excess = sumOthers + entry.Influence - 100;
-                            foreach (var pf in planet.PlanetFactions.Where(x => x.Faction != winnerFaction)) pf.Influence -= pf.Influence/sumOthers*excess;
+                            foreach (var pf in planet.PlanetFactions.Where(x => x.Faction != winnerFaction)) pf.Influence -= pf.Influence / sumOthers * excess;
                         }
                     }
                     /*
@@ -359,14 +342,13 @@ namespace ZeroKWeb.SpringieInterface
                     //text.AppendLine(ev.PlainText);*/
                     try
                     {
-                    influenceReport = string.Format("{0} gained {1} influence (({2}{3}{4}{5}{6}){7})",   // (({2}{3}{4}{5}{6}) {7})",
-                                                winnerFaction.Shortcut,
-                                                influence,
-                                                baseInfluence + " base",
-                                                techBonus > 0 ? " +" + techBonus + " from techs" : "",
-                                                shipBonus > 0 ? " +" + shipBonus + " from ships" : "",
-                                                ccMalus != 0 ? " " + ccMalus + " from destroyed CC" : "",
-                                                eloModifierIP != 1 ? " x" + eloModifierIP.ToString("F2") + " from Elo difference" : "");
+                        influenceReport = string.Format("{0} gained {1} influence (({2}{3}{4}{5}))",
+                                                    winnerFaction.Shortcut,
+                                                    influence,
+                                                    baseInfluence + " base",
+                                                    techBonus > 0 ? " +" + techBonus + " from techs" : "",
+                                                    shipBonus > 0 ? " +" + shipBonus + " from ships" : "",
+                                                    ccMalus != 0 ? " " + ccMalus + " from destroyed CC" : "");
                     }
                     catch (Exception ex)
                     {
@@ -376,15 +358,30 @@ namespace ZeroKWeb.SpringieInterface
             }
 
             // distribute metal
-            if (wasCcDestroyed) winnerMetal *= GlobalConst.CcDestroyedMetalMultWinners;
-            winnerMetal = Math.Floor(winnerMetal * eloModifierMetal);
-            double metalPerWinner = winnerMetal/winners.Count;
-            foreach (Account w in winners) {
-                w.ProduceMetal(metalPerWinner);
-                /*
+            var winnerMetal = Math.Floor(GlobalConst.MetalPerBattlePlayer * (wasCcDestroyed ? GlobalConst.CcDestroyedMetalMultWinners : 1.0));
+            foreach (Account w in winners)
+            {
+                /*w.ProduceMetal(winnerMetal);
                 var ev = Global.CreateEvent("{0} gained {1} metal from battle {2}",
                                             w,
-                                            Math.Floor(metalPerWinner),
+                                            winnerMetal,
+                                            sb,
+                                            planet,
+                                            w.Clan != null ? (object)w.Clan : "no clan");
+                db.Events.InsertOnSubmit(ev);
+                text.AppendLine(ev.PlainText);*/
+            }
+
+            var loserMetal = Math.Floor(GlobalConst.MetalPerBattlePlayer * (wasCcDestroyed ? GlobalConst.CcDestroyedMetalMultLosers : 1.0));
+
+            var losers = sb.SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam && x.Account.Faction != null).Select(x => x.Account).ToList();
+            foreach (Account w in losers)
+            {
+                w.ProduceMetal(loserMetal);
+
+                /*var ev = Global.CreateEvent("{0} gained {1} metal from killing CC in battle {2}",
+                                            w,
+                                            Math.Floor(metalPerLoser),
                                             sb,
                                             planet,
                                             w.Clan != null ? (object)w.Clan : "no clan");
@@ -392,24 +389,6 @@ namespace ZeroKWeb.SpringieInterface
                 //text.AppendLine(ev.PlainText);
             }
 
-            if (wasCcDestroyed) {
-                List<Account> losers = sb.SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam && x.Account.Faction != null).Select(x => x.Account).ToList();
-                loserMetal = baseMetal * (1 - GlobalConst.CcDestroyedMetalMultWinners);
-                double metalPerLoser = loserMetal / losers.Count;
-                foreach (Account w in losers)
-                {
-                    w.ProduceMetal(metalPerLoser);
-
-                    /*var ev = Global.CreateEvent("{0} gained {1} metal from killing CC in battle {2}",
-                                                w,
-                                                Math.Floor(metalPerLoser),
-                                                sb,
-                                                planet,
-                                                w.Clan != null ? (object)w.Clan : "no clan");
-                    db.Events.InsertOnSubmit(ev);*/
-                    //text.AppendLine(ev.PlainText);
-                }   
-            }
 
             // remove dropships
             foreach (var pf in planet.PlanetFactions.Where(x => x.Faction == attacker)) pf.Dropships = 0;
@@ -418,7 +397,8 @@ namespace ZeroKWeb.SpringieInterface
             // produce dropships
             foreach (
                 Account acc in
-                    sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x => x.Faction != null && x.Faction != attacker)) {
+                    sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x => x.Faction != null && x.Faction != attacker))
+            {
                 acc.ProduceDropships(GlobalConst.DropshipsPerBattlePlayer);
                 dropshipsGained += GlobalConst.DropshipsPerBattlePlayer;
                 /*
@@ -433,28 +413,29 @@ namespace ZeroKWeb.SpringieInterface
             }
 
             // add attack points
-            foreach (SpringBattlePlayer player in sb.SpringBattlePlayers.Where(x => !x.IsSpectator)) 
+            foreach (SpringBattlePlayer player in sb.SpringBattlePlayers.Where(x => !x.IsSpectator))
             {
                 Account acc = player.Account;
                 int ap = player.IsInVictoryTeam ? GlobalConst.AttackPointsForVictory : GlobalConst.AttackPointsForDefeat;
                 if (acc.Faction != null && (acc.Faction == attacker || acc.Faction == defender))
                 {
                     AccountPlanet entry = planet.AccountPlanets.SingleOrDefault(x => x.AccountID == acc.AccountID);
-                    if (entry == null) {
+                    if (entry == null)
+                    {
                         entry = new AccountPlanet { AccountID = acc.AccountID, PlanetID = planet.PlanetID };
                         db.AccountPlanets.InsertOnSubmit(entry);
                     }
-                    
+
                     entry.AttackPoints += ap;
                 }
                 acc.PwAttackPoints += ap;
             }
-            
+
             // paranoia!
             try
             {
-                string metalStringWinner = string.Format("Winners gained {0} metal{1}. ", winnerMetal, eloModifierMetal != 1 ? string.Format(" ({0} base x {1} Elo modifier)", baseMetal - loserMetal, eloModifierMetal.ToString("F2")) : "");
-                string metalStringLoser = loserMetal != 0 ? string.Format("Losers gained {0} metal. ", loserMetal) : "";
+                string metalStringWinner = string.Format("Winners gained {0} metal{1}. ", winnerMetal, wasCcDestroyed ? string.Format(" ({0:F0}% because CC was destroyed)", GlobalConst.CcDestroyedMetalMultWinners*100) : "");
+                string metalStringLoser = string.Format("Winners gained {0} metal{1}. ", loserMetal, wasCcDestroyed ? string.Format(" ({0:F0}% because CC was destroyed)", GlobalConst.CcDestroyedMetalMultLosers * 100) : "");
                 var mainEvent = Global.CreateEvent("{0} attacked {1} with {2} dropships in {3} and {4}{5}{6}{7}",
                                             attacker,
                                             planet,
@@ -463,7 +444,7 @@ namespace ZeroKWeb.SpringieInterface
                                             winnerFaction == attacker ? "won. " + influenceReport + ". " : "lost. ",
                                             metalStringWinner,
                                             metalStringLoser,
-                                            dropshipsGained > 0 ? string.Format("Defenders and allies gained {0} dropships.", dropshipsGained): null);
+                                            dropshipsGained > 0 ? string.Format("Defenders and allies gained {0} dropships.", dropshipsGained) : null);
                 db.Events.InsertOnSubmit(mainEvent);
                 text.AppendLine(mainEvent.PlainText);
 
@@ -474,15 +455,19 @@ namespace ZeroKWeb.SpringieInterface
             }
 
             // destroy pw structures killed ingame
-            if (winnerFaction != attacker) {
+            if (winnerFaction != attacker)
+            {
                 var handled = new List<string>();
-                foreach (string line in extraData.Where(x => x.StartsWith("structurekilled"))) {
+                foreach (string line in extraData.Where(x => x.StartsWith("structurekilled")))
+                {
                     string[] data = line.Substring(16).Split(',');
                     string unitName = data[0];
                     if (handled.Contains(unitName)) continue;
                     handled.Add(unitName);
-                    foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.IngameUnitName == unitName)) {
-                        if (s.StructureType.IsIngameDestructible) {
+                    foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.IngameUnitName == unitName))
+                    {
+                        if (s.StructureType.IsIngameDestructible)
+                        {
                             s.IsActive = false;
                             if (s.ActivatedOnTurn == null) s.ActivatedOnTurn = gal.Turn;
                             s.ActivatedOnTurn = s.ActivatedOnTurn + (int)(s.StructureType.TurnsToActivate * GlobalConst.StructureIngameDisableTimeMult);
@@ -493,7 +478,9 @@ namespace ZeroKWeb.SpringieInterface
                         }
                     }
                 }
-            } else {
+            }
+            else
+            {
                 // attacker won disable all
                 foreach (var s in planet.PlanetStructures.Where(x => x.StructureType.IsIngameDestructible))
                 {
@@ -503,7 +490,7 @@ namespace ZeroKWeb.SpringieInterface
                 }
                 // destroy structures by battle (usually defenses)
                 foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.BattleDeletesThis).ToList()) planet.PlanetStructures.Remove(s);
-                
+
                 var ev = Global.CreateEvent("All structures have been disabled on {0} planet {1}. {2}", defender, planet, sb);
                 db.Events.InsertOnSubmit(ev);
                 text.AppendLine(ev.PlainText);
@@ -518,30 +505,35 @@ namespace ZeroKWeb.SpringieInterface
             gal.SpreadInfluence();
 
             // process faction energies
-            foreach (var fac in db.Factions.Where(x=>!x.IsDeleted)) fac.ProcessEnergy(gal.Turn);
+            foreach (var fac in db.Factions.Where(x => !x.IsDeleted)) fac.ProcessEnergy(gal.Turn);
 
             // process production
             gal.ProcessProduction();
 
 
             // process treaties
-            foreach (var tr in db.FactionTreaties.Where(x=>x.TreatyState == TreatyState.Accepted || x.TreatyState == TreatyState.Suspended)) {
-                if (tr.ProcessTrade(false)) {
+            foreach (var tr in db.FactionTreaties.Where(x => x.TreatyState == TreatyState.Accepted || x.TreatyState == TreatyState.Suspended))
+            {
+                if (tr.ProcessTrade(false))
+                {
                     tr.TreatyState = TreatyState.Accepted;
-                    if (tr.TurnsTotal != null) {
+                    if (tr.TurnsTotal != null)
+                    {
                         tr.TurnsRemaining--;
-                        if (tr.TurnsRemaining <=0 ) {
+                        if (tr.TurnsRemaining <= 0)
+                        {
                             tr.TreatyState = TreatyState.Invalid;
                             db.FactionTreaties.DeleteOnSubmit(tr);
                         }
                     }
-                } else tr.TreatyState = TreatyState.Suspended;
+                }
+                else tr.TreatyState = TreatyState.Suspended;
             }
 
             // burn extra energy
             foreach (var fac in db.Factions.Where(x => !x.IsDeleted)) fac.ConvertExcessEnergyToMetal();
 
-   
+
             int? oldOwner = planet.OwnerAccountID;
             gal.Turn++;
             db.SubmitAndMergeChanges();
@@ -551,17 +543,20 @@ namespace ZeroKWeb.SpringieInterface
             gal = db.Galaxies.Single(x => x.IsDefault);
 
             planet = gal.Planets.Single(x => x.Resource.InternalName == result.Map);
-            if (planet.OwnerAccountID != oldOwner && planet.OwnerAccountID != null) {
+            if (planet.OwnerAccountID != oldOwner && planet.OwnerAccountID != null)
+            {
                 text.AppendFormat("Congratulations!! Planet {0} was conquered by {1} !!  http://zero-k.info/PlanetWars/Planet/{2}\n",
                                   planet.Name,
                                   planet.Account.Name,
                                   planet.PlanetID);
             }
 
-            try {
+            try
+            {
 
                 // store history
-                foreach (Planet p in gal.Planets) {
+                foreach (Planet p in gal.Planets)
+                {
                     db.PlanetOwnerHistories.InsertOnSubmit(new PlanetOwnerHistory
                                                            {
                                                                PlanetID = p.PlanetID,
@@ -573,7 +568,9 @@ namespace ZeroKWeb.SpringieInterface
                 }
 
                 db.SubmitChanges();
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 text.AppendLine("error saving history: " + ex);
             }
 
