@@ -25,10 +25,12 @@ namespace LobbyClient
         public int SpringieLevel = 1;
 
         string country;
-
+		
+		//This is only called once
         static User() {
             Assembly assembly = Assembly.GetAssembly(typeof(User));
-            var reader = new StreamReader(assembly.GetManifestResourceStream("Resources.CountryNames.txt"));
+			System.IO.Stream countryNames = assembly.GetManifestResourceStream(typeof(User), "Resources.CountryNames.txt"); //Note: GetManifestResourceStream with only 1 argument do not work in MonoDevelop
+            var reader = new StreamReader(countryNames);
 
             string line;
             while ((line = reader.ReadLine()) != null) {
