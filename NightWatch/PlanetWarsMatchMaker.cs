@@ -28,16 +28,6 @@ namespace NightWatch
             public int Needed = GlobalConst.PlanetWarsMatchSize;
             public int PlanetID;
             public string PlanetName;
-
-
-            public VoteOption(AttackOption option, ModeType mode)
-            {
-                PlanetID = option.PlanetID;
-                PlanetName = option.Name;
-                Map = option.Map;
-                if (mode == ModeType.Attack) Count = option.Attackers.Count;
-                else if (mode == ModeType.Defend) Count = option.Defenders.Count;
-            }
         }
     }
 
@@ -55,7 +45,7 @@ namespace NightWatch
         /// <summary>
         ///     Faction that should attack this turn
         /// </summary>
-        Faction attackingFaction { get { return factions[attackerSideCounter % factions.Count]; } }
+        Faction attackingFaction { get { return factions[attackerSideCounter%factions.Count]; } }
         AttackOption challenge;
 
         DateTime? challengeTime;
@@ -135,11 +125,11 @@ namespace NightWatch
                             if (attackOption.Attackers.Count == GlobalConst.PlanetWarsMatchSize) StartChallenge(attackOption);
                             else
                             {
-                                SendFactionCommand(attackingFaction,
+                                SendLobbyCommand(attackingFaction,
                                     new PwMatchCommand
                                     {
                                         Mode = PwMatchCommand.ModeType.Attack,
-                                        Options = attackOptions.Select(x => new PwMatchCommand.VoteOption(x, PwMatchCommand.ModeType.Attack)).ToList()
+                                        Options = attackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList()
                                     });
                             }
                         }
@@ -158,7 +148,7 @@ namespace NightWatch
             }
         }
 
-        void SendFactionCommand(Faction faction, PwMatchCommand command)
+        void SendLobbyCommand(Faction faction, PwMatchCommand command)
         {
             tas.Say(TasClient.SayPlace.Channel, faction.Shortcut, "PW: " + JsonConvert.SerializeObject(command), true);
         }
@@ -167,14 +157,14 @@ namespace NightWatch
         {
             challenge = attackOption;
             challengeTime = DateTime.UtcNow;
-            SendFactionCommand(attackingFaction, new PwMatchCommand { Mode = PwMatchCommand.ModeType.Clear });
+            SendLobbyCommand(attackingFaction, new PwMatchCommand { Mode = PwMatchCommand.ModeType.Clear });
             foreach (Faction def in GetDefendingFactions(challenge))
             {
-                SendFactionCommand(def,
+                SendLobbyCommand(def,
                     new PwMatchCommand
                     {
                         Mode = PwMatchCommand.ModeType.Defend,
-                        Options = new List<PwMatchCommand.VoteOption> { new PwMatchCommand.VoteOption(attackOption, PwMatchCommand.ModeType.Defend) }
+                        Options = new List<PwMatchCommand.VoteOption> { attackOption.ToVoteOption(PwMatchCommand.ModeType.Defend) }
                     });
             }
         }
@@ -184,8 +174,8 @@ namespace NightWatch
             attackOptions.Clear();
             foreach (Faction f in factions)
             {
-                if (f != attackingFaction) SendFactionCommand(f, new PwMatchCommand { Mode = PwMatchCommand.ModeType.Clear });
-                else SendFactionCommand(attackingFaction, new PwMatchCommand { Mode = PwMatchCommand.ModeType.Attack });
+                if (f != attackingFaction) SendLobbyCommand(f, new PwMatchCommand { Mode = PwMatchCommand.ModeType.Clear });
+                else SendLobbyCommand(attackingFaction, new PwMatchCommand { Mode = PwMatchCommand.ModeType.Attack });
             }
         }
 
@@ -215,15 +205,28 @@ namespace NightWatch
                 }
             }
         }
-    }
 
-    public class AttackOption
-    {
-        public List<User> Attackers = new List<User>();
-        public List<User> Defenders = new List<User>();
-        public string Map;
-        public string Name;
-        public int? OwnerFactionID;
-        public int PlanetID;
+        public class AttackOption
+        {
+            public List<User> Attackers = new List<User>();
+            public List<User> Defenders = new List<User>();
+            public string Map;
+            public string Name;
+            public int? OwnerFactionID;
+            public int PlanetID;
+
+            public PwMatchCommand.VoteOption ToVoteOption(PwMatchCommand.ModeType mode)
+            {
+                var opt = new PwMatchCommand.VoteOption
+                {
+                    PlanetID = PlanetID,
+                    PlanetName = Name,
+                    Map = Map,
+                    Count = mode == PwMatchCommand.ModeType.Attack ? Attackers.Count : Defenders.Count
+                };
+
+                return opt;
+            }
+        }
     }
 }
