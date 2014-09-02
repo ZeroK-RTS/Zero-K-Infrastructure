@@ -2,101 +2,104 @@
 using System.Collections.Generic;
 using System.Linq;
 using LobbyClient;
+using Newtonsoft.Json;
 using PlasmaShared;
 using ZkData;
 
 namespace NightWatch
 {
+    public class PwMatchCommand
+    {
+        public enum ModeType
+        {
+            Clear = 0,
+            Attack = 1,
+            Defend = 2
+        }
+
+        public ModeType Mode;
+
+        public List<VoteOption> Options = new List<VoteOption>();
+
+        public class VoteOption
+        {
+            public int Count;
+            public string Map;
+            public int Needed = GlobalConst.PlanetWarsMatchSize;
+            public int PlanetID;
+            public string PlanetName;
+
+
+            public VoteOption(AttackOption option, ModeType mode)
+            {
+                PlanetID = option.PlanetID;
+                PlanetName = option.Name;
+                Map = option.Map;
+                if (mode == ModeType.Attack) Count = option.Attackers.Count;
+                else if (mode == ModeType.Defend) Count = option.Defenders.Count;
+            }
+        }
+    }
+
     /// <summary>
     ///     Handles arranging and starting of PW games
+    ///     Commands sent by nightwatch:
+    ///     PW: CLEAR
+    ///     PW: ATTACK jsondata
     /// </summary>
     public class PlanetWarsMatchMaker
     {
-        /// <summary>
-        ///     Possible attack options
-        /// </summary>
-        readonly List<AttackOption> attackOptions = new List<AttackOption>();
-        AttackOption challenge;
-
         DateTime? attackerNoBattleRunningTime;
-        readonly DateTime? attackerSideChangeTime;
-        readonly int attackerSideCounter;
 
 
         /// <summary>
         ///     Faction that should attack this turn
         /// </summary>
-        Faction attackingFaction { get { return factions[attackerSideCounter%factions.Count]; } }
-        
-        readonly DateTime? challengeTime;
+        Faction attackingFaction { get { return factions[attackerSideCounter % factions.Count]; } }
+        AttackOption challenge;
+
+        DateTime? challengeTime;
         readonly List<Faction> factions;
-        TasClient tas;
+        readonly TasClient tas;
+        /// <summary>
+        ///     Possible attack options
+        /// </summary>
+        public readonly List<AttackOption> attackOptions = new List<AttackOption>();
+        public readonly DateTime? attackerSideChangeTime;
+        public readonly int attackerSideCounter;
 
         public PlanetWarsMatchMaker(TasClient tas)
         {
             this.tas = tas;
-            tas.PreviewSaid+= TasOnPreviewSaid;
+            tas.PreviewSaid += TasOnPreviewSaid;
             tas.LoginAccepted += TasOnLoginAccepted;
 
             var db = new ZkDataContext();
             Galaxy gal = db.Galaxies.First(x => x.IsDefault);
             attackerSideCounter = gal.AttackerSideCounter;
             attackerSideChangeTime = gal.AttackerSideChangeTime;
+
             factions = db.Factions.Where(x => !x.IsDeleted).ToList();
-        }
-
-        void TasOnLoginAccepted(object sender, TasEventArgs tasEventArgs)
-        {
-            attackOptions.Clear();
-            // todo update polls
-        }
-
-        /// <summary>
-        /// Intercept channel messages for attacking/defending 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        void TasOnPreviewSaid(object sender, CancelEventArgs<TasSayEventArgs> args)
-        {
-            if (args.Data.Text.StartsWith("!") && args.Data.Place == TasSayEventArgs.Places.Channel && args.Data.Origin == TasSayEventArgs.Origins.Player && args.Data.UserName != GlobalConst.NightwatchName)
-            {
-                var faction = factions.FirstOrDefault(x => x.Shortcut == args.Data.Channel);
-                if (faction != null)
-                {
-                    if (faction == attackingFaction)
-                    {
-                        int targetPlanetID;
-                        if (int.TryParse(args.Data.Text.Substring(1), out targetPlanetID))
-                        {
-                            JoinPlanetAttack(targetPlanetID, args.Data.UserName);
-                        }
-                    }
-                }
-
-            }
-        }
-
-        void JoinPlanetAttack(int targetPlanetId, string userName)
-        {
-            var attackOption = attackOptions.Find(x => x.Planet.PlanetID == targetPlanetId);
-            if (attackOption != null)
-            {
-                User user;
-                if (tas.ExistingUsers.TryGetValue(userName, out user))
-                {
-                    // remove existing user from other options
-                    foreach (var aop in attackOptions) aop.Attackers.Remove(aop.Attackers.First(x => x.Name == userName));
-
-                    // add user to this option
-                    attackOption.Attackers.Add(user);
-                    
-                }
-            }
         }
 
         public void AddAttackOption(Planet planet)
         {
-            if (!attackOptions.Any(x => x.Planet.PlanetID == planet.PlanetID)) attackOptions.Add(new AttackOption { Planet = planet, });
+            if (!attackOptions.Any(x => x.PlanetID == planet.PlanetID))
+            {
+                attackOptions.Add(new AttackOption
+                {
+                    PlanetID = planet.PlanetID,
+                    Map = planet.Resource.InternalName,
+                    OwnerFactionID = planet.OwnerFactionID,
+                    Name = planet.Name
+                });
+            }
+        }
+
+        public List<Faction> GetDefendingFactions(AttackOption target)
+        {
+            if (target.OwnerFactionID != null) return new List<Faction> { factions.Find(x => x.FactionID == target.OwnerFactionID) };
+            return factions.Where(x => x != attackingFaction).ToList();
         }
 
         public void SaveStateToDb()
@@ -109,11 +112,118 @@ namespace NightWatch
             db.SubmitAndMergeChanges();
         }
 
-        public class AttackOption
+        void JoinPlanetAttack(int targetPlanetId, string userName)
         {
-            public Planet Planet;
-            public List<User> Attackers = new List<User>();
-            public List<User> Defenders = new List<User>();
+            AttackOption attackOption = attackOptions.Find(x => x.PlanetID == targetPlanetId);
+            if (attackOption != null)
+            {
+                User user;
+                if (tas.ExistingUsers.TryGetValue(userName, out user))
+                {
+                    var db = new ZkDataContext();
+                    Account account = Account.AccountByLobbyID(db, user.LobbyID);
+                    if (account != null && account.FactionID == attackingFaction.FactionID)
+                    {
+                        // remove existing user from other options
+                        foreach (AttackOption aop in attackOptions) aop.Attackers.Remove(aop.Attackers.First(x => x.Name == userName));
+
+                        // add user to this option
+                        if (attackOption.Attackers.Count < GlobalConst.PlanetWarsMatchSize)
+                        {
+                            attackOption.Attackers.Add(user);
+
+                            if (attackOption.Attackers.Count == GlobalConst.PlanetWarsMatchSize) StartChallenge(attackOption);
+                            else
+                            {
+                                SendFactionCommand(attackingFaction,
+                                    new PwMatchCommand
+                                    {
+                                        Mode = PwMatchCommand.ModeType.Attack,
+                                        Options = attackOptions.Select(x => new PwMatchCommand.VoteOption(x, PwMatchCommand.ModeType.Attack)).ToList()
+                                    });
+                            }
+                        }
+                    }
+                }
+            }
         }
+
+        void JoinPlanetDefense(string userName)
+        {
+            User user;
+            if (tas.ExistingUsers.TryGetValue(userName, out user))
+            {
+                var db = new ZkDataContext();
+                Account account = Account.AccountByLobbyID(db, user.LobbyID);
+            }
+        }
+
+        void SendFactionCommand(Faction faction, PwMatchCommand command)
+        {
+            tas.Say(TasClient.SayPlace.Channel, faction.Shortcut, "PW: " + JsonConvert.SerializeObject(command), true);
+        }
+
+        void StartChallenge(AttackOption attackOption)
+        {
+            challenge = attackOption;
+            challengeTime = DateTime.UtcNow;
+            SendFactionCommand(attackingFaction, new PwMatchCommand { Mode = PwMatchCommand.ModeType.Clear });
+            foreach (Faction def in GetDefendingFactions(challenge))
+            {
+                SendFactionCommand(def,
+                    new PwMatchCommand
+                    {
+                        Mode = PwMatchCommand.ModeType.Defend,
+                        Options = new List<PwMatchCommand.VoteOption> { new PwMatchCommand.VoteOption(attackOption, PwMatchCommand.ModeType.Defend) }
+                    });
+            }
+        }
+
+        void TasOnLoginAccepted(object sender, TasEventArgs tasEventArgs)
+        {
+            attackOptions.Clear();
+            foreach (Faction f in factions)
+            {
+                if (f != attackingFaction) SendFactionCommand(f, new PwMatchCommand { Mode = PwMatchCommand.ModeType.Clear });
+                else SendFactionCommand(attackingFaction, new PwMatchCommand { Mode = PwMatchCommand.ModeType.Attack });
+            }
+        }
+
+        /// <summary>
+        ///     Intercept channel messages for attacking/defending
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        void TasOnPreviewSaid(object sender, CancelEventArgs<TasSayEventArgs> args)
+        {
+            if (args.Data.Text.StartsWith("!") && args.Data.Place == TasSayEventArgs.Places.Channel &&
+                args.Data.Origin == TasSayEventArgs.Origins.Player && args.Data.UserName != GlobalConst.NightwatchName)
+            {
+                Faction faction = factions.FirstOrDefault(x => x.Shortcut == args.Data.Channel);
+                if (faction != null)
+                {
+                    if (faction == attackingFaction)
+                    {
+                        int targetPlanetID;
+                        if (int.TryParse(args.Data.Text.Substring(1), out targetPlanetID)) JoinPlanetAttack(targetPlanetID, args.Data.UserName);
+                    }
+                    else if (GetDefendingFactions(challenge).Contains(faction))
+                    {
+                        int targetPlanetID;
+                        if (int.TryParse(args.Data.Text.Substring(1), out targetPlanetID) && targetPlanetID == challenge.PlanetID) JoinPlanetDefense(args.Data.UserName);
+                    }
+                }
+            }
+        }
+    }
+
+    public class AttackOption
+    {
+        public List<User> Attackers = new List<User>();
+        public List<User> Defenders = new List<User>();
+        public string Map;
+        public string Name;
+        public int? OwnerFactionID;
+        public int PlanetID;
     }
 }
