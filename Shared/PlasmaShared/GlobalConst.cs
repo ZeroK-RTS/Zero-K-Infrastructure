@@ -44,7 +44,7 @@
         public const double AssistInfluencePerBattle = 15;
 	    public const double BaseMetalPerBattle = 200;
         public const double CcDestroyedMetalMultWinners = 0.75;
-	    public const int DropshipsPerBattlePlayer = 1;
+	    public const int DropshipsPerBattlePlayer = 0;
         public const int InfluencePerShip = 3;
         public const double InfluencePerTech = 1;
         public const double InfluenceDecay = 1;

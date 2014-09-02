@@ -463,7 +463,7 @@ namespace ZeroKWeb.SpringieInterface
                                             winnerFaction == attacker ? "won. " + influenceReport + ". " : "lost. ",
                                             metalStringWinner,
                                             metalStringLoser,
-                                            string.Format("Defenders and allies gained {0} dropships.", dropshipsGained));
+                                            dropshipsGained > 0 ? string.Format("Defenders and allies gained {0} dropships.", dropshipsGained): null);
                 db.Events.InsertOnSubmit(mainEvent);
                 text.AppendLine(mainEvent.PlainText);
 
