@@ -275,10 +275,9 @@ namespace ZeroKWeb.SpringieInterface
 
                 double shipBonus = winnerFaction == attacker ? (dropshipsSent - planetDefs)*GlobalConst.InfluencePerShip : 0;
                 double techBonus = winnerFaction.GetFactionUnlocks().Count()*GlobalConst.InfluencePerTech;
-                int playerBonus = involvedCount*GlobalConst.InfluencePerInvolvedPlayer;
-                double ccMalus = wasCcDestroyed ? -(influence+ shipBonus + techBonus + playerBonus)*GlobalConst.InfluenceCcKilledMultiplier : 0;
+                double ccMalus = wasCcDestroyed ? -(influence+ shipBonus + techBonus)*GlobalConst.InfluenceCcKilledMultiplier : 0;
                 
-                influence = influence + shipBonus + techBonus + playerBonus + ccMalus;
+                influence = influence + shipBonus + techBonus + ccMalus;
                 influence = influence * eloModifierIP;
                 if (influence < 0) influence = 0;
                 influence = Math.Floor(influence * 100) / 100;
@@ -365,7 +364,6 @@ namespace ZeroKWeb.SpringieInterface
                                                 influence,
                                                 baseInfluence + " base",
                                                 techBonus > 0 ? " +" + techBonus + " from techs" : "",
-                                                playerBonus > 0 ? " +" + playerBonus + " from commanders" : "",
                                                 shipBonus > 0 ? " +" + shipBonus + " from ships" : "",
                                                 ccMalus != 0 ? " " + ccMalus + " from destroyed CC" : "",
                                                 eloModifierIP != 1 ? " x" + eloModifierIP.ToString("F2") + " from Elo difference" : "");
