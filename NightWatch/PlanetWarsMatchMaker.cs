@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using LobbyClient;
 using Newtonsoft.Json;
 using PlasmaShared;
@@ -8,6 +9,9 @@ using ZkData;
 
 namespace NightWatch
 {
+    /// <summary>
+    ///     Command sent to lobbies (with pw options)
+    /// </summary>
     public class PwMatchCommand
     {
         public enum ModeType
@@ -20,6 +24,11 @@ namespace NightWatch
         public ModeType Mode;
 
         public List<VoteOption> Options = new List<VoteOption>();
+
+        public PwMatchCommand(ModeType mode)
+        {
+            Mode = mode;
+        }
 
         public class VoteOption
         {
@@ -50,13 +59,16 @@ namespace NightWatch
 
         DateTime? challengeTime;
         readonly List<Faction> factions;
+        readonly string pwHostName;
+        readonly Dictionary<string, AttackOption> runningBattles = new Dictionary<string, AttackOption>();
+        string targetHost;
         readonly TasClient tas;
         /// <summary>
         ///     Possible attack options
         /// </summary>
         public readonly List<AttackOption> attackOptions = new List<AttackOption>();
-        public readonly DateTime? attackerSideChangeTime;
-        public readonly int attackerSideCounter;
+        public DateTime? attackerSideChangeTime;
+        public int attackerSideCounter;
 
         public PlanetWarsMatchMaker(TasClient tas)
         {
@@ -65,6 +77,8 @@ namespace NightWatch
             tas.LoginAccepted += TasOnLoginAccepted;
 
             var db = new ZkDataContext();
+            pwHostName = db.AutohostConfigs.First(x => x.AutohostMode == AutohostMode.Planetwars).Login.TrimNumbers();
+
             Galaxy gal = db.Galaxies.First(x => x.IsDefault);
             attackerSideCounter = gal.AttackerSideCounter;
             attackerSideChangeTime = gal.AttackerSideChangeTime;
@@ -102,6 +116,47 @@ namespace NightWatch
             db.SubmitAndMergeChanges();
         }
 
+        void AcceptChallenge()
+        {
+            List<Faction> defenders = GetDefendingFactions(challenge);
+            foreach (Faction def in defenders) SendLobbyCommand(def, new PwMatchCommand(PwMatchCommand.ModeType.Clear));
+
+            attackerSideCounter++;
+            attackerSideChangeTime = DateTime.UtcNow;
+
+            Battle emptyHost =
+                tas.ExistingBattles.Values.FirstOrDefault(
+                    x => !x.IsInGame && x.Founder.Name.TrimNumbers() == pwHostName && x.Users.All(y => y.IsSpectator));
+
+            if (emptyHost != null)
+            {
+                targetHost = emptyHost.Founder.Name;
+                runningBattles[targetHost] = challenge;
+                foreach (User x in challenge.Attackers) tas.ForceJoinBattle(x.Name, emptyHost.BattleID);
+                foreach (User x in challenge.Defenders) tas.ForceJoinBattle(x.Name, emptyHost.BattleID);
+
+                Utils.StartAsync(() =>
+                {
+                    Thread.Sleep(5000);
+                    tas.Say(TasClient.SayPlace.User, targetHost, "!lock 180", false);
+                    tas.Say(TasClient.SayPlace.User, targetHost, "!map " + challenge.Map, false);
+                    Thread.Sleep(500);
+                    tas.Say(TasClient.SayPlace.User, targetHost, "!balance", false);
+                    tas.Say(TasClient.SayPlace.User, targetHost, "!forcestart", false);
+                    tas.Say(TasClient.SayPlace.User, targetHost, "!endvote", false);
+                    tas.Say(TasClient.SayPlace.User, targetHost, "!start", false);
+                    tas.Say(TasClient.SayPlace.User, targetHost, "!forcestart", true);
+                });
+            }
+
+            SendLobbyCommand(attackingFaction, new PwMatchCommand(PwMatchCommand.ModeType.Attack));
+
+            challenge = null;
+            challengeTime = null;
+
+            SaveStateToDb();
+        }
+
         void JoinPlanetAttack(int targetPlanetId, string userName)
         {
             AttackOption attackOption = attackOptions.Find(x => x.PlanetID == targetPlanetId);
@@ -126,9 +181,8 @@ namespace NightWatch
                             else
                             {
                                 SendLobbyCommand(attackingFaction,
-                                    new PwMatchCommand
+                                    new PwMatchCommand(PwMatchCommand.ModeType.Attack)
                                     {
-                                        Mode = PwMatchCommand.ModeType.Attack,
                                         Options = attackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList()
                                     });
                             }
@@ -138,15 +192,38 @@ namespace NightWatch
             }
         }
 
-        void JoinPlanetDefense(string userName)
+        void JoinPlanetDefense(int targetPlanetID, string userName)
         {
-            User user;
-            if (tas.ExistingUsers.TryGetValue(userName, out user))
+            if (challenge != null && challenge.PlanetID == targetPlanetID && challenge.Defenders.Count < GlobalConst.PlanetWarsMatchSize)
             {
-                var db = new ZkDataContext();
-                Account account = Account.AccountByLobbyID(db, user.LobbyID);
+                User user;
+                if (tas.ExistingUsers.TryGetValue(userName, out user))
+                {
+                    var db = new ZkDataContext();
+                    Account account = Account.AccountByLobbyID(db, user.LobbyID);
+                    if (account != null && GetDefendingFactions(challenge).Any(y => y.FactionID == account.FactionID))
+                    {
+                        if (!challenge.Defenders.Any(y => y.LobbyID == user.LobbyID))
+                        {
+                            challenge.Defenders.Add(user);
+                            if (challenge.Defenders.Count == GlobalConst.PlanetWarsMatchSize) AcceptChallenge();
+                            else
+                            {
+                                foreach (Faction def in GetDefendingFactions(challenge))
+                                {
+                                    SendLobbyCommand(def,
+                                        new PwMatchCommand(PwMatchCommand.ModeType.Defend)
+                                        {
+                                            Options = new List<PwMatchCommand.VoteOption> { challenge.ToVoteOption(PwMatchCommand.ModeType.Defend) }
+                                        });
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
+
 
         void SendLobbyCommand(Faction faction, PwMatchCommand command)
         {
@@ -157,13 +234,12 @@ namespace NightWatch
         {
             challenge = attackOption;
             challengeTime = DateTime.UtcNow;
-            SendLobbyCommand(attackingFaction, new PwMatchCommand { Mode = PwMatchCommand.ModeType.Clear });
+            SendLobbyCommand(attackingFaction, new PwMatchCommand(PwMatchCommand.ModeType.Clear));
             foreach (Faction def in GetDefendingFactions(challenge))
             {
                 SendLobbyCommand(def,
-                    new PwMatchCommand
+                    new PwMatchCommand(PwMatchCommand.ModeType.Defend)
                     {
-                        Mode = PwMatchCommand.ModeType.Defend,
                         Options = new List<PwMatchCommand.VoteOption> { attackOption.ToVoteOption(PwMatchCommand.ModeType.Defend) }
                     });
             }
@@ -174,8 +250,8 @@ namespace NightWatch
             attackOptions.Clear();
             foreach (Faction f in factions)
             {
-                if (f != attackingFaction) SendLobbyCommand(f, new PwMatchCommand { Mode = PwMatchCommand.ModeType.Clear });
-                else SendLobbyCommand(attackingFaction, new PwMatchCommand { Mode = PwMatchCommand.ModeType.Attack });
+                if (f != attackingFaction) SendLobbyCommand(f, new PwMatchCommand(PwMatchCommand.ModeType.Clear));
+                else SendLobbyCommand(f, new PwMatchCommand(PwMatchCommand.ModeType.Attack));
             }
         }
 
@@ -200,7 +276,7 @@ namespace NightWatch
                     else if (GetDefendingFactions(challenge).Contains(faction))
                     {
                         int targetPlanetID;
-                        if (int.TryParse(args.Data.Text.Substring(1), out targetPlanetID) && targetPlanetID == challenge.PlanetID) JoinPlanetDefense(args.Data.UserName);
+                        if (int.TryParse(args.Data.Text.Substring(1), out targetPlanetID)) JoinPlanetDefense(targetPlanetID, args.Data.UserName);
                     }
                 }
             }

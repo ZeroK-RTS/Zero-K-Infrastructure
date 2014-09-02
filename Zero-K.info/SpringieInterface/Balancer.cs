@@ -117,8 +117,8 @@ namespace ZeroKWeb.SpringieInterface
                     tas.ExistingBattles.Values.FirstOrDefault(
                         x =>
                         !x.Founder.IsInGame && x.NonSpectatorCount == 0 && x.Founder.Name != context.AutohostName && !x.IsPassworded &&
-                        x.Founder.Name.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9') ==
-                        context.AutohostName.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'));
+                        x.Founder.Name.TrimNumbers() ==
+                        context.AutohostName.TrimNumbers());
 
                 if (splitTo != null) {
                     // set same map 

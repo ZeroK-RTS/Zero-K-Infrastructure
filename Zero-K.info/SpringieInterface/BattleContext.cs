@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.SpringieInterface
@@ -21,7 +22,7 @@ namespace ZeroKWeb.SpringieInterface
             if (config != null) return config;
             if (string.IsNullOrEmpty(AutohostName)) return null;
             var db = new ZkDataContext();
-            var name = AutohostName.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
+            var name = AutohostName.TrimNumbers();
             var entry = db.AutohostConfigs.SingleOrDefault(x => x.Login == name);
             if (entry != null) config = entry;
             return config;

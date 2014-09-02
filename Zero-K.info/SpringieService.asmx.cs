@@ -83,7 +83,7 @@ namespace ZeroKWeb
             var db = new ZkDataContext();
             var acc = AuthServiceClient.VerifyAccountPlain(autohostName, autohostPassword);
             if (acc == null) throw new Exception("Invalid password");
-            var name = autohostName.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
+            var name = autohostName.TrimNumbers();
             var entry = db.AutohostConfigs.SingleOrDefault(x => x.Login == name);
             if (entry == null) throw new Exception("Not an autohost");
 
