@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Timers;
 using LobbyClient;
@@ -47,7 +48,6 @@ namespace NightWatch
     /// </summary>
     public class PlanetWarsMatchMaker
     {
-        // todo timeouts
         // todo user inactivity/cancel poll removal
         // todo running battle detection? 
         // todo thread safety/locking
@@ -225,8 +225,10 @@ namespace NightWatch
         void RecordPlanetwarsLoss(AttackOption option)
         {
             var db = new ZkDataContext();
-
-            // TODO continue here
+            var text = new StringBuilder();
+            var playerIds = option.Attackers.Select(x => (int?)x.LobbyID).Union(option.Defenders.Select(x=>(int?)x.LobbyID)).ToList();
+            text.AppendFormat("{0} won because nobody tried to defend", attackingFaction.Name);
+            PlanetWarsTurnHandler.EndTurn(option.Map, null, db,0, db.Accounts.Where(x=> playerIds.Contains(x.LobbyID)).ToList(), text, null);
         }
 
         void ResetAttackOptions()

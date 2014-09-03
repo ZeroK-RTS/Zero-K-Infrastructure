@@ -20,7 +20,7 @@ public static class PlanetWarsTurnHandler {
     /// <param name="players"></param>
     /// <param name="text"></param>
     /// <param name="sb"></param>
-    public static void EndTurn(string mapName, List<string> extraData, ZkDataContext db, int? winNum, List<Account> players, StringBuilder text, SpringBattle sb = null)
+    public static void EndTurn(string mapName, List<string> extraData, ZkDataContext db, int? winNum, List<Account> players, StringBuilder text, SpringBattle sb)
     {
         if (extraData == null) extraData = new List<string>();
         Galaxy gal = db.Galaxies.Single(x => x.IsDefault);
