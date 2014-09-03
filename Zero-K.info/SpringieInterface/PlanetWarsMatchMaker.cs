@@ -79,6 +79,7 @@ namespace NightWatch
             this.tas = tas;
             tas.PreviewSaid += TasOnPreviewSaid;
             tas.LoginAccepted += TasOnLoginAccepted;
+            tas.UserRemoved += TasOnUserRemoved;
 
             timer = new Timer(10000);
             timer.AutoReset = true;
@@ -92,6 +93,37 @@ namespace NightWatch
             attackerSideChangeTime = gal.AttackerSideChangeTime ?? DateTime.UtcNow;
 
             factions = db.Factions.Where(x => !x.IsDeleted).ToList();
+        }
+
+        /// <summary>
+        /// Remove/reduce poll count due to lobby quits
+        /// </summary>
+        void TasOnUserRemoved(object sender, TasEventArgs args)
+        {
+            if (challenge == null)
+            {
+                if (attackOptions.Count > 0)
+                {
+                    var userName = args.ServerParams[0];
+                    foreach (AttackOption aop in attackOptions) aop.Attackers.Remove(aop.Attackers.First(x => x.Name == userName));
+                    UpdateAttackerLobby();
+                }
+            }
+            else
+            {
+                var userName = args.ServerParams[0];
+                challenge.Defenders.Remove(challenge.Defenders.First(x => x.Name == userName));
+                UpdateDefenderLobby();
+            }
+        }
+
+        void UpdateAttackerLobby()
+        {
+            SendLobbyCommand(attackingFaction,
+                new PwMatchCommand(PwMatchCommand.ModeType.Attack)
+                {
+                    Options = attackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList()
+                });
         }
 
         /// <summary>
@@ -110,11 +142,7 @@ namespace NightWatch
                     Name = planet.Name
                 });
 
-                SendLobbyCommand(attackingFaction,
-                    new PwMatchCommand(PwMatchCommand.ModeType.Attack)
-                    {
-                        Options = attackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList()
-                    });
+                UpdateAttackerLobby();
             }
         }
 
@@ -178,11 +206,7 @@ namespace NightWatch
                             if (attackOption.Attackers.Count == GlobalConst.PlanetWarsMatchSize) StartChallenge(attackOption);
                             else
                             {
-                                SendLobbyCommand(attackingFaction,
-                                    new PwMatchCommand(PwMatchCommand.ModeType.Attack)
-                                    {
-                                        Options = attackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList()
-                                    });
+                                UpdateAttackerLobby();
                             }
                         }
                     }
@@ -207,18 +231,23 @@ namespace NightWatch
                             if (challenge.Defenders.Count == GlobalConst.PlanetWarsMatchSize) AcceptChallenge();
                             else
                             {
-                                foreach (Faction def in GetDefendingFactions(challenge))
-                                {
-                                    SendLobbyCommand(def,
-                                        new PwMatchCommand(PwMatchCommand.ModeType.Defend)
-                                        {
-                                            Options = new List<PwMatchCommand.VoteOption> { challenge.ToVoteOption(PwMatchCommand.ModeType.Defend) }
-                                        });
-                                }
+                                UpdateDefenderLobby();
                             }
                         }
                     }
                 }
+            }
+        }
+
+        void UpdateDefenderLobby()
+        {
+            foreach (Faction def in GetDefendingFactions(challenge))
+            {
+                SendLobbyCommand(def,
+                    new PwMatchCommand(PwMatchCommand.ModeType.Defend)
+                    {
+                        Options = new List<PwMatchCommand.VoteOption> { challenge.ToVoteOption(PwMatchCommand.ModeType.Defend) }
+                    });
             }
         }
 
@@ -266,15 +295,9 @@ namespace NightWatch
         {
             challenge = attackOption;
             challengeTime = DateTime.UtcNow;
+            attackOptions.Clear();
             SendLobbyCommand(attackingFaction, new PwMatchCommand(PwMatchCommand.ModeType.Clear));
-            foreach (Faction def in GetDefendingFactions(challenge))
-            {
-                SendLobbyCommand(def,
-                    new PwMatchCommand(PwMatchCommand.ModeType.Defend)
-                    {
-                        Options = new List<PwMatchCommand.VoteOption> { attackOption.ToVoteOption(PwMatchCommand.ModeType.Defend) }
-                    });
-            }
+            UpdateDefenderLobby();
         }
 
         void TasOnLoginAccepted(object sender, TasEventArgs tasEventArgs)
