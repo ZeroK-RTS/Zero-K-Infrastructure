@@ -46,7 +46,6 @@
 	    public const double MetalPerBattlePlayer = 100;
         public const double CcDestroyedMetalMultWinners = 0.75;
         public const double CcDestroyedMetalMultLosers = 1.25;
-	    public const int DropshipsPerBattlePlayer = 0;
         public const int InfluencePerShip = 3;
         public const double InfluencePerTech = 1;
         public const double InfluenceDecay = 1;
@@ -94,7 +93,9 @@
         public const int PostVoteHideThreshold = -6;
         public const bool OnlyAdminsSeePostVoters = false;
         public const int VotesPerDay = 3;
-        
+	    public const int PlanetWarsMinutesToAttack = 20;
+        public const int PlanetWarsMinutesToAccept = 20;
+
 	    public static bool IsZkMod(string name)
         {
             if (string.IsNullOrEmpty(name)) return false;

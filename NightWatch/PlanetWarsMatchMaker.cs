@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Timers;
 using LobbyClient;
 using Newtonsoft.Json;
 using PlasmaShared;
 using ZkData;
+using Timer = System.Timers.Timer;
 
 namespace NightWatch
 {
@@ -42,19 +44,24 @@ namespace NightWatch
 
     /// <summary>
     ///     Handles arranging and starting of PW games
-    ///     Commands sent by nightwatch:
-    ///     PW: CLEAR
-    ///     PW: ATTACK jsondata
     /// </summary>
     public class PlanetWarsMatchMaker
     {
-        DateTime? attackerNoBattleRunningTime;
+        // todo timeouts
+        // todo user inactivity/cancel poll removal
+        // todo running battle detection? 
+        // todo thread safety/locking
 
-
+        /// <summary>
+        ///     Possible attack options
+        /// </summary>
+        readonly List<AttackOption> attackOptions = new List<AttackOption>();
+        DateTime attackerSideChangeTime;
+        int attackerSideCounter;
         /// <summary>
         ///     Faction that should attack this turn
         /// </summary>
-        Faction attackingFaction { get { return factions[attackerSideCounter%factions.Count]; } }
+        Faction attackingFaction { get { return factions[attackerSideCounter % factions.Count]; } }
         AttackOption challenge;
 
         DateTime? challengeTime;
@@ -63,12 +70,8 @@ namespace NightWatch
         readonly Dictionary<string, AttackOption> runningBattles = new Dictionary<string, AttackOption>();
         string targetHost;
         readonly TasClient tas;
-        /// <summary>
-        ///     Possible attack options
-        /// </summary>
-        public readonly List<AttackOption> attackOptions = new List<AttackOption>();
-        public DateTime? attackerSideChangeTime;
-        public int attackerSideCounter;
+
+        Timer timer;
 
         public PlanetWarsMatchMaker(TasClient tas)
         {
@@ -76,19 +79,27 @@ namespace NightWatch
             tas.PreviewSaid += TasOnPreviewSaid;
             tas.LoginAccepted += TasOnLoginAccepted;
 
+            timer = new Timer(10000);
+            timer.AutoReset = true;
+            timer.Elapsed += TimerOnElapsed;
+
             var db = new ZkDataContext();
             pwHostName = db.AutohostConfigs.First(x => x.AutohostMode == AutohostMode.Planetwars).Login.TrimNumbers();
 
             Galaxy gal = db.Galaxies.First(x => x.IsDefault);
             attackerSideCounter = gal.AttackerSideCounter;
-            attackerSideChangeTime = gal.AttackerSideChangeTime;
+            attackerSideChangeTime = gal.AttackerSideChangeTime ?? DateTime.UtcNow;
 
             factions = db.Factions.Where(x => !x.IsDeleted).ToList();
         }
 
+        /// <summary>
+        ///     Invoked from web page
+        /// </summary>
+        /// <param name="planet"></param>
         public void AddAttackOption(Planet planet)
         {
-            if (!attackOptions.Any(x => x.PlanetID == planet.PlanetID))
+            if (!attackOptions.Any(x => x.PlanetID == planet.PlanetID) && challenge == null && planet.OwnerFactionID == attackingFaction.FactionID)
             {
                 attackOptions.Add(new AttackOption
                 {
@@ -97,33 +108,17 @@ namespace NightWatch
                     OwnerFactionID = planet.OwnerFactionID,
                     Name = planet.Name
                 });
+
+                SendLobbyCommand(attackingFaction,
+                    new PwMatchCommand(PwMatchCommand.ModeType.Attack)
+                    {
+                        Options = attackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList()
+                    });
             }
-        }
-
-        public List<Faction> GetDefendingFactions(AttackOption target)
-        {
-            if (target.OwnerFactionID != null) return new List<Faction> { factions.Find(x => x.FactionID == target.OwnerFactionID) };
-            return factions.Where(x => x != attackingFaction).ToList();
-        }
-
-        public void SaveStateToDb()
-        {
-            var db = new ZkDataContext();
-            Galaxy gal = db.Galaxies.First(x => x.IsDefault);
-
-            gal.AttackerSideCounter = attackerSideCounter;
-            gal.AttackerSideChangeTime = attackerSideChangeTime;
-            db.SubmitAndMergeChanges();
         }
 
         void AcceptChallenge()
         {
-            List<Faction> defenders = GetDefendingFactions(challenge);
-            foreach (Faction def in defenders) SendLobbyCommand(def, new PwMatchCommand(PwMatchCommand.ModeType.Clear));
-
-            attackerSideCounter++;
-            attackerSideChangeTime = DateTime.UtcNow;
-
             Battle emptyHost =
                 tas.ExistingBattles.Values.FirstOrDefault(
                     x => !x.IsInGame && x.Founder.Name.TrimNumbers() == pwHostName && x.Users.All(y => y.IsSpectator));
@@ -149,12 +144,14 @@ namespace NightWatch
                 });
             }
 
-            SendLobbyCommand(attackingFaction, new PwMatchCommand(PwMatchCommand.ModeType.Attack));
+            attackerSideCounter++;
+            ResetAttackOptions();
+        }
 
-            challenge = null;
-            challengeTime = null;
-
-            SaveStateToDb();
+        List<Faction> GetDefendingFactions(AttackOption target)
+        {
+            if (target.OwnerFactionID != null) return new List<Faction> { factions.Find(x => x.FactionID == target.OwnerFactionID) };
+            return factions.Where(x => x != attackingFaction).ToList();
         }
 
         void JoinPlanetAttack(int targetPlanetId, string userName)
@@ -224,6 +221,38 @@ namespace NightWatch
             }
         }
 
+        void RecordPlanetwarsLoss(AttackOption option)
+        {
+            var db = new ZkDataContext();
+
+            // TODO continue here
+        }
+
+        void ResetAttackOptions()
+        {
+            attackOptions.Clear();
+            attackerSideChangeTime = DateTime.UtcNow;
+            challenge = null;
+            challengeTime = null;
+            SaveStateToDb();
+
+            foreach (Faction f in factions)
+            {
+                if (f != attackingFaction) SendLobbyCommand(f, new PwMatchCommand(PwMatchCommand.ModeType.Clear));
+                else SendLobbyCommand(f, new PwMatchCommand(PwMatchCommand.ModeType.Attack));
+            }
+        }
+
+        void SaveStateToDb()
+        {
+            var db = new ZkDataContext();
+            Galaxy gal = db.Galaxies.First(x => x.IsDefault);
+
+            gal.AttackerSideCounter = attackerSideCounter;
+            gal.AttackerSideChangeTime = attackerSideChangeTime;
+            db.SubmitAndMergeChanges();
+        }
+
 
         void SendLobbyCommand(Faction faction, PwMatchCommand command)
         {
@@ -247,12 +276,7 @@ namespace NightWatch
 
         void TasOnLoginAccepted(object sender, TasEventArgs tasEventArgs)
         {
-            attackOptions.Clear();
-            foreach (Faction f in factions)
-            {
-                if (f != attackingFaction) SendLobbyCommand(f, new PwMatchCommand(PwMatchCommand.ModeType.Clear));
-                else SendLobbyCommand(f, new PwMatchCommand(PwMatchCommand.ModeType.Attack));
-            }
+            ResetAttackOptions();
         }
 
         /// <summary>
@@ -278,6 +302,30 @@ namespace NightWatch
                         int targetPlanetID;
                         if (int.TryParse(args.Data.Text.Substring(1), out targetPlanetID)) JoinPlanetDefense(targetPlanetID, args.Data.UserName);
                     }
+                }
+            }
+        }
+
+        void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            if (challenge == null)
+            {
+                // attack timer
+                if (DateTime.UtcNow.Subtract(attackerSideChangeTime).TotalMinutes > GlobalConst.PlanetWarsMinutesToAttack)
+                {
+                    attackerSideCounter++;
+                    ResetAttackOptions();
+                }
+            }
+            else
+            {
+                // accept timer
+                if (DateTime.UtcNow.Subtract(challengeTime.Value).TotalMinutes > GlobalConst.PlanetWarsMinutesToAccept)
+                {
+                    RecordPlanetwarsLoss(challenge);
+
+                    attackerSideCounter++;
+                    ResetAttackOptions();
                 }
             }
         }

@@ -216,6 +216,7 @@
     <Compile Include="ResourceDetail.aspx.designer.cs">
       <DependentUpon>ResourceDetail.aspx</DependentUpon>
     </Compile>
+    <Compile Include="SpringieInterface\PlanetWarsTurnHandler.cs" />
     <Compile Include="SpringieInterface\PlayerJoinHandler.cs" />
     <Compile Include="SpringieInterface\PlayerJuggler.cs" />
     <Compile Include="SpringieInterface\StartSetup.cs" />
