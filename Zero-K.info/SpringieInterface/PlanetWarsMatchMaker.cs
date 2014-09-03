@@ -73,13 +73,14 @@ namespace NightWatch
 
         Timer timer;
 
-        
+
         public PlanetWarsMatchMaker(TasClient tas)
         {
             this.tas = tas;
             tas.PreviewSaid += TasOnPreviewSaid;
             tas.LoginAccepted += TasOnLoginAccepted;
             tas.UserRemoved += TasOnUserRemoved;
+            tas.ChannelUserAdded += TasOnChannelUserAdded;
 
             timer = new Timer(10000);
             timer.AutoReset = true;
@@ -93,37 +94,6 @@ namespace NightWatch
             attackerSideChangeTime = gal.AttackerSideChangeTime ?? DateTime.UtcNow;
 
             factions = db.Factions.Where(x => !x.IsDeleted).ToList();
-        }
-
-        /// <summary>
-        /// Remove/reduce poll count due to lobby quits
-        /// </summary>
-        void TasOnUserRemoved(object sender, TasEventArgs args)
-        {
-            if (challenge == null)
-            {
-                if (attackOptions.Count > 0)
-                {
-                    var userName = args.ServerParams[0];
-                    foreach (AttackOption aop in attackOptions) aop.Attackers.Remove(aop.Attackers.First(x => x.Name == userName));
-                    UpdateAttackerLobby();
-                }
-            }
-            else
-            {
-                var userName = args.ServerParams[0];
-                challenge.Defenders.Remove(challenge.Defenders.First(x => x.Name == userName));
-                UpdateDefenderLobby();
-            }
-        }
-
-        void UpdateAttackerLobby()
-        {
-            SendLobbyCommand(attackingFaction,
-                new PwMatchCommand(PwMatchCommand.ModeType.Attack)
-                {
-                    Options = attackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList()
-                });
         }
 
         /// <summary>
@@ -204,10 +174,7 @@ namespace NightWatch
                             attackOption.Attackers.Add(user);
 
                             if (attackOption.Attackers.Count == GlobalConst.PlanetWarsMatchSize) StartChallenge(attackOption);
-                            else
-                            {
-                                UpdateAttackerLobby();
-                            }
+                            else UpdateAttackerLobby();
                         }
                     }
                 }
@@ -229,25 +196,10 @@ namespace NightWatch
                         {
                             challenge.Defenders.Add(user);
                             if (challenge.Defenders.Count == GlobalConst.PlanetWarsMatchSize) AcceptChallenge();
-                            else
-                            {
-                                UpdateDefenderLobby();
-                            }
+                            else UpdateDefenderLobby();
                         }
                     }
                 }
-            }
-        }
-
-        void UpdateDefenderLobby()
-        {
-            foreach (Faction def in GetDefendingFactions(challenge))
-            {
-                SendLobbyCommand(def,
-                    new PwMatchCommand(PwMatchCommand.ModeType.Defend)
-                    {
-                        Options = new List<PwMatchCommand.VoteOption> { challenge.ToVoteOption(PwMatchCommand.ModeType.Defend) }
-                    });
             }
         }
 
@@ -255,9 +207,9 @@ namespace NightWatch
         {
             var db = new ZkDataContext();
             var text = new StringBuilder();
-            var playerIds = option.Attackers.Select(x => (int?)x.LobbyID).Union(option.Defenders.Select(x=>(int?)x.LobbyID)).ToList();
+            List<int?> playerIds = option.Attackers.Select(x => (int?)x.LobbyID).Union(option.Defenders.Select(x => (int?)x.LobbyID)).ToList();
             text.AppendFormat("{0} won because nobody tried to defend", attackingFaction.Name);
-            PlanetWarsTurnHandler.EndTurn(option.Map, null, db,0, db.Accounts.Where(x=> playerIds.Contains(x.LobbyID)).ToList(), text, null);
+            PlanetWarsTurnHandler.EndTurn(option.Map, null, db, 0, db.Accounts.Where(x => playerIds.Contains(x.LobbyID)).ToList(), text, null);
         }
 
         void ResetAttackOptions()
@@ -291,6 +243,12 @@ namespace NightWatch
             tas.Say(TasClient.SayPlace.Channel, faction.Shortcut, "PW: " + JsonSerializer.SerializeToString(command), true);
         }
 
+        void SendLobbyCommand(string username, PwMatchCommand command)
+        {
+            tas.Say(TasClient.SayPlace.User, username, "PW: " + JsonSerializer.SerializeToString(command), true);
+        }
+
+
         void StartChallenge(AttackOption attackOption)
         {
             challenge = attackOption;
@@ -298,6 +256,56 @@ namespace NightWatch
             attackOptions.Clear();
             SendLobbyCommand(attackingFaction, new PwMatchCommand(PwMatchCommand.ModeType.Clear));
             UpdateDefenderLobby();
+        }
+
+        void UpdateAttackerLobby()
+        {
+            SendLobbyCommand(attackingFaction,
+                new PwMatchCommand(PwMatchCommand.ModeType.Attack)
+                {
+                    Options = attackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList()
+                });
+        }
+
+        void UpdateDefenderLobby()
+        {
+            foreach (Faction def in GetDefendingFactions(challenge))
+            {
+                SendLobbyCommand(def,
+                    new PwMatchCommand(PwMatchCommand.ModeType.Defend)
+                    {
+                        Options = new List<PwMatchCommand.VoteOption> { challenge.ToVoteOption(PwMatchCommand.ModeType.Defend) }
+                    });
+            }
+        }
+
+        void TasOnChannelUserAdded(object sender, TasEventArgs args)
+        {
+            string chan = args.ServerParams[0];
+            string userName = args.ServerParams[1];
+            Faction faction = factions.First(x => x.Shortcut == chan);
+            if (faction != null)
+            {
+                if (challenge == null)
+                {
+                    if (faction == attackingFaction)
+                    {
+                        SendLobbyCommand(userName,
+                            new PwMatchCommand(PwMatchCommand.ModeType.Attack)
+                            {
+                                Options = attackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList()
+                            });
+                    }
+                }
+                else if (GetDefendingFactions(challenge).Contains(faction))
+                {
+                    SendLobbyCommand(userName,
+                        new PwMatchCommand(PwMatchCommand.ModeType.Defend)
+                        {
+                            Options = attackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Defend)).ToList()
+                        });
+                }
+            }
         }
 
         void TasOnLoginAccepted(object sender, TasEventArgs tasEventArgs)
@@ -329,6 +337,28 @@ namespace NightWatch
                         if (int.TryParse(args.Data.Text.Substring(1), out targetPlanetID)) JoinPlanetDefense(targetPlanetID, args.Data.UserName);
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        ///     Remove/reduce poll count due to lobby quits
+        /// </summary>
+        void TasOnUserRemoved(object sender, TasEventArgs args)
+        {
+            if (challenge == null)
+            {
+                if (attackOptions.Count > 0)
+                {
+                    string userName = args.ServerParams[0];
+                    foreach (AttackOption aop in attackOptions) aop.Attackers.Remove(aop.Attackers.First(x => x.Name == userName));
+                    UpdateAttackerLobby();
+                }
+            }
+            else
+            {
+                string userName = args.ServerParams[0];
+                challenge.Defenders.Remove(challenge.Defenders.First(x => x.Name == userName));
+                UpdateDefenderLobby();
             }
         }
 
