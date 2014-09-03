@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Timers;
 using LobbyClient;
-using Newtonsoft.Json;
 using PlasmaShared;
+using ServiceStack.Text;
 using ZkData;
 using Timer = System.Timers.Timer;
 
@@ -73,6 +73,7 @@ namespace NightWatch
 
         Timer timer;
 
+        
         public PlanetWarsMatchMaker(TasClient tas)
         {
             this.tas = tas;
@@ -256,7 +257,7 @@ namespace NightWatch
 
         void SendLobbyCommand(Faction faction, PwMatchCommand command)
         {
-            tas.Say(TasClient.SayPlace.Channel, faction.Shortcut, "PW: " + JsonConvert.SerializeObject(command), true);
+            tas.Say(TasClient.SayPlace.Channel, faction.Shortcut, "PW: " + JsonSerializer.SerializeToString(command), true);
         }
 
         void StartChallenge(AttackOption attackOption)
