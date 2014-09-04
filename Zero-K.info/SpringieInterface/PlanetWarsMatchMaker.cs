@@ -344,15 +344,15 @@ namespace ZeroKWeb
                 if (attackOptions.Count > 0)
                 {
                     string userName = args.ServerParams[0];
-                    foreach (AttackOption aop in attackOptions) aop.Attackers.RemoveAll(x => x.Name == userName);
-                    UpdateAttackerLobby();
+                    var sumRemoved = 0;
+                    foreach (AttackOption aop in attackOptions) sumRemoved += aop.Attackers.RemoveAll(x => x.Name == userName);
+                    if (sumRemoved > 0) UpdateAttackerLobby();
                 }
             }
             else
             {
                 string userName = args.ServerParams[0];
-                challenge.Defenders.Remove(challenge.Defenders.First(x => x.Name == userName));
-                UpdateDefenderLobby();
+                if (challenge.Defenders.RemoveAll(x => x.Name == userName) > 0) UpdateDefenderLobby();
             }
         }
 
