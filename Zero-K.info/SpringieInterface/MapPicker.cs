@@ -40,7 +40,7 @@ namespace ZeroKWeb.SpringieInterface
 
 				                        }).Where(x=>x.FreeShips > 0).OrderByDescending(x=>x.FreeShips).ThenBy(x=>x.LastAdded).ToList();
 
-                    if (valid == null) return new RecommendedMapResult()
+                    if (!valid.Any()) return new RecommendedMapResult()
                                                {
                                                    Message = "Use dropships to attack some planet!"
                                                };
@@ -68,13 +68,6 @@ namespace ZeroKWeb.SpringieInterface
 					                            planet.PlanetID,
 					                            shipInfo);
 
-                    if (res.MapName != context.Map)
-                    {
-                        if (planet.OwnerFactionID != null)
-                        {
-                            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, planet.Faction.Shortcut, string.Format("Your planet {0} is about to be attacked, defend it! Come to PlanetWars spring://@join_player:{1} ", planet.Name, context.AutohostName), true);
-                        }
-                    }
 				    db.SubmitChanges();
 				}
 				else { 
