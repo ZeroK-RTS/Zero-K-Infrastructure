@@ -116,6 +116,7 @@
     <Compile Include="Channel.cs" />
     <Compile Include="Crc.cs" />
     <Compile Include="ProtocolExtension.cs" />
+    <Compile Include="PwMatchCommand.cs" />
     <Compile Include="SayingEventArgs.cs" />
     <Compile Include="ServerConnection.cs" />
     <Compile Include="Spring.cs" />

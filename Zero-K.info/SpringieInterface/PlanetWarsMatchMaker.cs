@@ -66,9 +66,8 @@ namespace ZeroKWeb
             Galaxy gal = db.Galaxies.First(x => x.IsDefault);
             factions = db.Factions.Where(x => !x.IsDeleted).ToList();
 
-            attackerSideCounter = new Random().Next(factions.Count);
-            //attackerSideCounter = gal.AttackerSideCounter;
-            //attackerSideChangeTime = gal.AttackerSideChangeTime ?? DateTime.UtcNow;
+            attackerSideCounter = gal.AttackerSideCounter;
+            attackerSideChangeTime = gal.AttackerSideChangeTime ?? DateTime.UtcNow;
             attackerSideChangeTime = DateTime.UtcNow;
 
 
@@ -210,8 +209,8 @@ namespace ZeroKWeb
             var db = new ZkDataContext();
             Galaxy gal = db.Galaxies.First(x => x.IsDefault);
 
-            //gal.AttackerSideCounter = attackerSideCounter;
-            //gal.AttackerSideChangeTime = attackerSideChangeTime;
+            gal.AttackerSideCounter = attackerSideCounter;
+            gal.AttackerSideChangeTime = attackerSideChangeTime;
             db.SubmitAndMergeChanges();
         }
 
