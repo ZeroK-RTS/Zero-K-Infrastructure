@@ -236,6 +236,8 @@ namespace ZeroKWeb
             UpdateDefenderLobby();
         }
 
+        
+        
         void UpdateAttackerLobby()
         {
             SendLobbyCommand(AttackingFaction,
@@ -273,8 +275,14 @@ namespace ZeroKWeb
                         SendLobbyCommand(userName,
                             new PwMatchCommand(PwMatchCommand.ModeType.Attack)
                             {
-                                Options = attackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList()
+                                Options = attackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList(),
+                                DeadlineSeconds =
+                                    GlobalConst.PlanetWarsMinutesToAttack*60 - (int)DateTime.UtcNow.Subtract(attackerSideChangeTime).TotalSeconds
                             });
+                    }
+                    else
+                    {
+                        SendLobbyCommand(userName, new PwMatchCommand(PwMatchCommand.ModeType.Clear));
                     }
                 }
                 else if (GetDefendingFactions(challenge).Contains(faction))
@@ -282,8 +290,15 @@ namespace ZeroKWeb
                     SendLobbyCommand(userName,
                         new PwMatchCommand(PwMatchCommand.ModeType.Defend)
                         {
-                            Options = attackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Defend)).ToList()
+                            Options = attackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Defend)).ToList(),
+                            DeadlineSeconds =
+                                GlobalConst.PlanetWarsMinutesToAccept*60 -
+                                (int)DateTime.UtcNow.Subtract(challengeTime ?? DateTime.UtcNow).TotalSeconds
                         });
+                }
+                else
+                {
+                    SendLobbyCommand(userName, new PwMatchCommand(PwMatchCommand.ModeType.Clear));
                 }
             }
         }
