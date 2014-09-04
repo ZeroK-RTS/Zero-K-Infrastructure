@@ -93,11 +93,11 @@ namespace ZeroKWeb
             }
         }
 
-        void AcceptChallenge()
+        public void AcceptChallenge()
         {
             Battle emptyHost =
                 tas.ExistingBattles.Values.FirstOrDefault(
-                    x => !x.IsInGame && x.Founder.Name.TrimNumbers() == pwHostName && x.Users.All(y => y.IsSpectator));
+                    x => !x.IsInGame && x.Founder.Name.TrimNumbers() == pwHostName && x.Users.All(y => y.IsSpectator || y.Name == x.Founder.Name));
 
             if (emptyHost != null)
             {
@@ -167,7 +167,7 @@ namespace ZeroKWeb
                 {
                     var db = new ZkDataContext();
                     Account account = Account.AccountByLobbyID(db, user.LobbyID);
-                    if (account != null && GetDefendingFactions(challenge).Any(y => y.FactionID == account.FactionID)&& account.CanPlayerPlanetWars())
+                    if (account != null && GetDefendingFactions(challenge).Any(y => y.FactionID == account.FactionID) && account.CanPlayerPlanetWars())
                     {
                         if (!challenge.Defenders.Any(y => y.LobbyID == user.LobbyID))
                         {
@@ -305,6 +305,7 @@ namespace ZeroKWeb
         void TasOnLoginAccepted(object sender, TasEventArgs tasEventArgs)
         {
             ResetAttackOptions();
+           
         }
 
         /// <summary>

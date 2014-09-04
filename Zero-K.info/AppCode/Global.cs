@@ -20,6 +20,7 @@ namespace ZeroKWeb
                 nightwatch = (Nightwatch)HttpContext.Current.Application["Nightwatch"];
                 return nightwatch;
             }
+            set { nightwatch = value; }
         }
 
         static PlanetWarsMatchMaker planetWarsMatchMaker;
@@ -31,6 +32,7 @@ namespace ZeroKWeb
                 planetWarsMatchMaker = (PlanetWarsMatchMaker)HttpContext.Current.Application["PwMatchMaker"];
                 return planetWarsMatchMaker;
             }
+            set { planetWarsMatchMaker = value; }
         }
 
         public const int AjaxScrollCount = 40;

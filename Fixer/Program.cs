@@ -16,8 +16,10 @@ using System.Threading;
 using System.Xml.Serialization;
 //using LobbyClient;
 //using NightWatch;
+using CaTracker;
 using PlasmaShared;
 using PlasmaShared.UnitSyncLib;
+using ZeroKWeb;
 using ZkData;
 using Encoder = System.Drawing.Imaging.Encoder;
 
@@ -151,7 +153,8 @@ namespace Fixer
         [STAThread]
         static void Main(string[] args)
         {
-            FixStuff();
+            TestPwMatch();
+            //FixStuff();
 
             //var guid = Guid.NewGuid().ToString();
 
@@ -880,6 +883,27 @@ namespace Fixer
                 }
             }
             db.SubmitChanges();
+        }
+
+
+        public static void TestPwMatch()
+        {
+            Global.Nightwatch = new Nightwatch(Directory.GetCurrentDirectory());
+            Global.Nightwatch.Start();
+            Global.PlanetWarsMatchMaker = new PlanetWarsMatchMaker(Global.Nightwatch.Tas);
+            /*
+            Utils.StartAsync(() =>
+            {
+                Thread.Sleep(30000);
+                challenge = new AttackOption();
+                challenge.Attackers.Add(tas.ExistingUsers["Licho"]);
+                challenge.Defenders.Add(tas.ExistingUsers["gajop"]);
+                AcceptChallenge();
+            });*/
+
+            
+            Console.ReadLine();
+
         }
     }
 }
