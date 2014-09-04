@@ -34,7 +34,11 @@
 		public const string MissionScriptFileName = "_missionScript.txt";
 		public const string MissionServiceUri = "http://zero-k.info/missions/MissionService.svc";
 		public const string MissionSlotsFileName = "_missionSlots.xml"; 
-		public const string NightwatchName = "Nightwatch";
+#if DEPLOY
+        public const string NightwatchName = "Nightwatch";
+#else 
+        public const string NightwatchName = "NightwatchDev";
+#endif
 		public const string PasswordHashCookieName = "zk_passwordHash";
 		public const string LobbyAccessCookieName = "zk_lobby";
 

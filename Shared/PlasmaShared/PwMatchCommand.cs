@@ -19,7 +19,7 @@ namespace PlasmaShared
         public ModeType Mode { get; set; }
 
 
-        public DateTime Deadline { get; set; }
+        public int DeadlineSeconds { get; set; }
 
         public List<VoteOption> Options { get; set; }
 
