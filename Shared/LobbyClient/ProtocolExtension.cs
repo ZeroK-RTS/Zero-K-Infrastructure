@@ -116,6 +116,12 @@ namespace LobbyClient
             tas.Say(TasClient.SayPlace.User, username, EncodeJson(data), false);
         }
 
+        public void SendJsonDataToChannel(string channel, object data)
+        {
+            tas.Say(TasClient.SayPlace.Channel, channel, EncodeJson(data), false);
+        }
+
+
         public void SendMyJugglerConfig(JugglerConfig config) {
             tas.Say(TasClient.SayPlace.User, GlobalConst.NightwatchName, EncodeJson(config), false);
         }

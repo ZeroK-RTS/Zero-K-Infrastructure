@@ -18,9 +18,6 @@ namespace ZeroKWeb
     /// </summary>
     public class PlanetWarsMatchMaker
     {
-        // todo diagnostic messages to zkdev
-        // todo thread safety/locking if needed
-
         /// <summary>
         ///     Possible attack options
         /// </summary>
@@ -221,12 +218,12 @@ namespace ZeroKWeb
 
         void SendLobbyCommand(Faction faction, PwMatchCommand command)
         {
-            tas.Say(TasClient.SayPlace.Channel, faction.Shortcut, "PW: " + JsonSerializer.SerializeToString(command), true);
+            tas.Extensions.SendJsonDataToChannel(faction.Shortcut, command);
         }
 
         void SendLobbyCommand(string username, PwMatchCommand command)
         {
-            tas.Say(TasClient.SayPlace.User, username, "PW: " + JsonSerializer.SerializeToString(command), true);
+            tas.Extensions.SendJsonData(username, command);
         }
 
 

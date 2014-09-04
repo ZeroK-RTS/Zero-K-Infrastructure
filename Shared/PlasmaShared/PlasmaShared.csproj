@@ -191,7 +191,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="PwMatchCommand.cs" />
     <Compile Include="ResharperAttribs.cs" />
     <Compile Include="SdpArchive.cs" />
     <Compile Include="SelfUpdater.cs" />

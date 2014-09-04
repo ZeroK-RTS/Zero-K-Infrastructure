@@ -1,12 +1,8 @@
-using System;
 using System.Collections.Generic;
 using ZkData;
 
-namespace PlasmaShared
+namespace LobbyClient
 {
-    /// <summary>
-    ///     Command sent to lobbies (with pw options)
-    /// </summary>
     public class PwMatchCommand
     {
         public enum ModeType
