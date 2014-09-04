@@ -30,7 +30,7 @@ namespace ZeroKWeb
         /// <summary>
         ///     Faction that should attack this turn
         /// </summary>
-        Faction attackingFaction { get { return factions[attackerSideCounter % factions.Count]; } }
+        public Faction AttackingFaction { get { return factions[attackerSideCounter % factions.Count]; } }
         AttackOption challenge;
 
         DateTime? challengeTime;
@@ -61,6 +61,7 @@ namespace ZeroKWeb
             timer = new Timer(10000);
             timer.AutoReset = true;
             timer.Elapsed += TimerOnElapsed;
+            timer.Start();
 
             var db = new ZkDataContext();
             pwHostName = db.AutohostConfigs.First(x => x.AutohostMode == AutohostMode.Planetwars).Login.TrimNumbers();
@@ -82,7 +83,7 @@ namespace ZeroKWeb
         /// <param name="planet"></param>
         public void AddAttackOption(Planet planet)
         {
-            if (!attackOptions.Any(x => x.PlanetID == planet.PlanetID) && challenge == null && planet.OwnerFactionID == attackingFaction.FactionID)
+            if (!attackOptions.Any(x => x.PlanetID == planet.PlanetID) && challenge == null && planet.OwnerFactionID != AttackingFaction.FactionID)
             {
                 attackOptions.Add(new AttackOption
                 {
@@ -130,7 +131,7 @@ namespace ZeroKWeb
         List<Faction> GetDefendingFactions(AttackOption target)
         {
             if (target.OwnerFactionID != null) return new List<Faction> { factions.Find(x => x.FactionID == target.OwnerFactionID) };
-            return factions.Where(x => x != attackingFaction).ToList();
+            return factions.Where(x => x != AttackingFaction).ToList();
         }
 
         void JoinPlanetAttack(int targetPlanetId, string userName)
@@ -143,7 +144,7 @@ namespace ZeroKWeb
                 {
                     var db = new ZkDataContext();
                     Account account = Account.AccountByLobbyID(db, user.LobbyID);
-                    if (account != null && account.FactionID == attackingFaction.FactionID && account.CanPlayerPlanetWars())
+                    if (account != null && account.FactionID == AttackingFaction.FactionID && account.CanPlayerPlanetWars())
                     {
                         // remove existing user from other options
                         foreach (AttackOption aop in attackOptions) aop.Attackers.Remove(aop.Attackers.First(x => x.Name == userName));
@@ -188,7 +189,7 @@ namespace ZeroKWeb
             var db = new ZkDataContext();
             var text = new StringBuilder();
             List<int?> playerIds = option.Attackers.Select(x => (int?)x.LobbyID).Union(option.Defenders.Select(x => (int?)x.LobbyID)).ToList();
-            text.AppendFormat("{0} won because nobody tried to defend", attackingFaction.Name);
+            text.AppendFormat("{0} won because nobody tried to defend", AttackingFaction.Name);
             PlanetWarsTurnHandler.EndTurn(option.Map, null, db, 0, db.Accounts.Where(x => playerIds.Contains(x.LobbyID)).ToList(), text, null);
         }
 
@@ -202,7 +203,7 @@ namespace ZeroKWeb
 
             foreach (Faction f in factions)
             {
-                if (f != attackingFaction) SendLobbyCommand(f, new PwMatchCommand(PwMatchCommand.ModeType.Clear));
+                if (f != AttackingFaction) SendLobbyCommand(f, new PwMatchCommand(PwMatchCommand.ModeType.Clear));
                 else SendLobbyCommand(f, new PwMatchCommand(PwMatchCommand.ModeType.Attack));
             }
         }
@@ -234,13 +235,13 @@ namespace ZeroKWeb
             challenge = attackOption;
             challengeTime = DateTime.UtcNow;
             attackOptions.Clear();
-            SendLobbyCommand(attackingFaction, new PwMatchCommand(PwMatchCommand.ModeType.Clear));
+            SendLobbyCommand(AttackingFaction, new PwMatchCommand(PwMatchCommand.ModeType.Clear));
             UpdateDefenderLobby();
         }
 
         void UpdateAttackerLobby()
         {
-            SendLobbyCommand(attackingFaction,
+            SendLobbyCommand(AttackingFaction,
                 new PwMatchCommand(PwMatchCommand.ModeType.Attack)
                 {
                     Options = attackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList()
@@ -268,7 +269,7 @@ namespace ZeroKWeb
             {
                 if (challenge == null)
                 {
-                    if (faction == attackingFaction)
+                    if (faction == AttackingFaction)
                     {
                         SendLobbyCommand(userName,
                             new PwMatchCommand(PwMatchCommand.ModeType.Attack)
@@ -306,7 +307,7 @@ namespace ZeroKWeb
                 Faction faction = factions.FirstOrDefault(x => x.Shortcut == args.Data.Channel);
                 if (faction != null)
                 {
-                    if (faction == attackingFaction)
+                    if (faction == AttackingFaction)
                     {
                         int targetPlanetID;
                         if (int.TryParse(args.Data.Text.Substring(1), out targetPlanetID)) JoinPlanetAttack(targetPlanetID, args.Data.UserName);
