@@ -851,7 +851,17 @@ namespace ZeroKWeb.Controllers
             return View("Ladder", items);
         }
 
-
+        [Auth]
+        public ActionResult MatchMakerAttack(int planetID)
+        {
+            var db = new ZkDataContext();
+            var planet = db.Planets.Single(x => x.PlanetID == planetID);
+            if (Global.IsAccountAuthorized && Global.Account.CanPlayerPlanetWars() && planet.CanDropshipsAttack(Global.Account.Faction))
+            {
+                Global.PlanetWarsMatchMaker.AddAttackOption(planet);
+            }
+            return RedirectToAction("Planet", new { id = planetID });
+        }
     }
 
     #region Nested type: ClanEntry

@@ -63,7 +63,7 @@
         public const int AttackPointsForDefeat = 1;
         public const int MaxClanSkilledSize = 16;
         public const int ClanLeaveLimit = 100;
-        public const int FactionChannelMinLevel = 8;
+        public const int FactionChannelMinLevel = 10;
         public const int RoundTimeLimitInDays = 30;
         public const bool RotatePWMaps = false;
         public const bool RequireWormholeToTravel = true;
@@ -95,6 +95,7 @@
         public const int VotesPerDay = 3;
 	    public const int PlanetWarsMinutesToAttack = 20;
         public const int PlanetWarsMinutesToAccept = 20;
+	    public const int MinPlanetWarsLevel = 10;
 
 	    public static bool IsZkMod(string name)
         {

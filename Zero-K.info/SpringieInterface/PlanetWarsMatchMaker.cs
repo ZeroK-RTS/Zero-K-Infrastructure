@@ -136,7 +136,7 @@ namespace ZeroKWeb
                 {
                     var db = new ZkDataContext();
                     Account account = Account.AccountByLobbyID(db, user.LobbyID);
-                    if (account != null && account.FactionID == attackingFaction.FactionID)
+                    if (account != null && account.FactionID == attackingFaction.FactionID && account.CanPlayerPlanetWars())
                     {
                         // remove existing user from other options
                         foreach (AttackOption aop in attackOptions) aop.Attackers.Remove(aop.Attackers.First(x => x.Name == userName));
@@ -156,14 +156,14 @@ namespace ZeroKWeb
 
         void JoinPlanetDefense(int targetPlanetID, string userName)
         {
-            if (challenge != null && challenge.PlanetID == targetPlanetID && challenge.Defenders.Count < GlobalConst.PlanetWarsMatchSize)
+            if (challenge != null && challenge.PlanetID == targetPlanetID && challenge.Defenders.Count < GlobalConst.PlanetWarsMatchSize )
             {
                 User user;
                 if (tas.ExistingUsers.TryGetValue(userName, out user))
                 {
                     var db = new ZkDataContext();
                     Account account = Account.AccountByLobbyID(db, user.LobbyID);
-                    if (account != null && GetDefendingFactions(challenge).Any(y => y.FactionID == account.FactionID))
+                    if (account != null && GetDefendingFactions(challenge).Any(y => y.FactionID == account.FactionID)&& account.CanPlayerPlanetWars())
                     {
                         if (!challenge.Defenders.Any(y => y.LobbyID == user.LobbyID))
                         {
