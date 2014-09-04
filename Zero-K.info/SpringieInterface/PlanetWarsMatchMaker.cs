@@ -43,6 +43,13 @@ namespace ZeroKWeb
         Timer timer;
 
 
+        public AttackOption GetBattleInfo(string hostName)
+        {
+            AttackOption option;
+            runningBattles.TryGetValue(hostName, out option);
+            return option;
+        }
+
         public PlanetWarsMatchMaker(TasClient tas)
         {
             this.tas = tas;
