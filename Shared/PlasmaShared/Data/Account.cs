@@ -88,6 +88,13 @@ namespace ZkData
             else return false;
         }
 
+
+        public bool CanPlayerPlanetWars()
+        {
+            return FactionID != null && Level >= GlobalConst.MinPlanetWarsLevel;
+        }
+
+
         public bool CanSetPriority(PlanetStructure ps) {
             if (Faction == null) return false;
             if (ps.Planet.OwnerFactionID == FactionID && HasFactionRight(x => x.RightSetEnergyPriority)) return true;

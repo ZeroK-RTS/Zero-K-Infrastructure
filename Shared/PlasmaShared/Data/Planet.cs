@@ -16,7 +16,7 @@ namespace ZkData
 
      
         public Faction GetAttacker(IEnumerable<int> presentFactions) {
-            return PlanetFactions.Where(x => presentFactions.Contains(x.FactionID) && x.FactionID != OwnerFactionID && x.Dropships > 0).OrderByDescending(x => x.Dropships).ThenBy(x => x.DropshipsLastAdded).Select(x => x.Faction).FirstOrDefault();
+            return PlanetFactions.Where(x => presentFactions.Contains(x.FactionID) && x.FactionID != OwnerFactionID).OrderByDescending(x => x.Dropships).ThenBy(x => x.DropshipsLastAdded).Select(x => x.Faction).FirstOrDefault();
         }
 
         /*

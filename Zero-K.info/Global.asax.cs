@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using CaTracker;
+using NightWatch;
 using PlasmaShared;
 using ZeroKWeb.Controllers;
 using ZkData;
@@ -71,10 +72,13 @@ namespace ZeroKWeb
             return base.GetVaryByCustomString(context, custom);
         }
 
-        protected void Application_Start() {
-            Application["Nightwatch"] = new Nightwatch(Server.MapPath("/"));
+        protected void Application_Start()
+        {
+            var nw = new Nightwatch(Server.MapPath("/"));
+            Application["Nightwatch"] = nw;
 #if DEPLOY
             Global.Nightwatch.Start();
+            Application["PwMatchMaker"] = new PlanetWarsMatchMaker(nw.Tas);
 #endif
 
             AreaRegistration.RegisterAllAreas();

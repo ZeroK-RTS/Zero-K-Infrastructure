@@ -117,8 +117,8 @@ namespace ZeroKWeb.SpringieInterface
                     tas.ExistingBattles.Values.FirstOrDefault(
                         x =>
                         !x.Founder.IsInGame && x.NonSpectatorCount == 0 && x.Founder.Name != context.AutohostName && !x.IsPassworded &&
-                        x.Founder.Name.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9') ==
-                        context.AutohostName.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'));
+                        x.Founder.Name.TrimNumbers() ==
+                        context.AutohostName.TrimNumbers());
 
                 if (splitTo != null) {
                     // set same map 
@@ -425,51 +425,44 @@ namespace ZeroKWeb.SpringieInterface
                 var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == context.Map);
                 var idList = context.Players.Select(x => x.LobbyID).ToList();
                 var players = idList.Select(x => db.Accounts.First(y => y.LobbyID == x)).ToList();
+
+                var info = Global.PlanetWarsMatchMaker.GetBattleInfo(context.AutohostName);
+                if (info == null)
+                {
+                    res.Message = "Start battle using matchmaker";
+                    return res;
+                } 
+
                 var presentFactions = players.Where(x => x != null).GroupBy(x => x.FactionID ?? 0).Select(x => x.Key).ToList();
                 var attackerFaction = planet.GetAttacker(presentFactions);
                 if (attackerFaction == null) {
                     res.Message = "No planet was attacked - send your dropships somewhere!";
                     return res;
                 }
-                var defenderFaction = planet.Faction;
 
-                // "backup" defender of other faction with most influence here
-                if (defenderFaction == null) {
-                    defenderFaction =
-                        planet.PlanetFactions.Where(x => x.FactionID != attackerFaction.FactionID && x.Influence > 0)
-                              .OrderByDescending(x => x.Influence)
-                              .Select(x => x.Faction)
-                              .FirstOrDefault();
+                int teamID = 0;
+                foreach (User matchUser in info.Attackers)
+                {
+                    PlayerTeam player = context.Players.FirstOrDefault(x => x.Name == matchUser.Name);
+                    if (player != null) res.Players.Add(new PlayerTeam { AllyID = 0, IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID , TeamID = teamID++});
                 }
 
+                foreach (User a in info.Defenders)
+                {
+                    PlayerTeam player = context.Players.FirstOrDefault(x => x.Name == a.Name);
+                    if (player != null) res.Players.Add(new PlayerTeam { AllyID = 0, IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID, TeamID = teamID++});
+                }
+                
                 // bots game
-                if (planet.PlanetStructures.Any(x => !string.IsNullOrEmpty(x.StructureType.EffectBots))) {
-                    var teamID = 0;
-                    for (var i = 0; i < players.Count; i++) res.Players.Add(new PlayerTeam { LobbyID = players[i].LobbyID ?? 0, Name = players[i].Name, AllyID = 0, TeamID = teamID++ });
-                    var cnt = 1;
-                    foreach (var b in planet.PlanetStructures.Select(x => x.StructureType).Where(x => !string.IsNullOrEmpty(x.EffectBots))) res.Bots.Add(new BotTeam { AllyID = 1, BotAI = b.EffectBots, TeamID = teamID++, BotName = "Aliens" + cnt++ });
+                int cnt = 0;
+                if (planet.PlanetStructures.Any(x => !string.IsNullOrEmpty(x.StructureType.EffectBots)))
+                {
+                    foreach (var b in planet.PlanetStructures.Select(x => x.StructureType).Where(x => !string.IsNullOrEmpty(x.EffectBots))) res.Bots.Add(new BotTeam { AllyID = 2, BotAI = b.EffectBots, TeamID = teamID++, BotName = "Aliens" + cnt++ });
 
                     res.Message += string.Format("This planet is infested by aliens, fight for your survival");
                     return res;
                 }
 
-                // create attacker and defenders teams
-                var attackers = players.Where(x => x.Faction == attackerFaction).ToList();
-                var defenders = new List<Account>();
-                if (defenderFaction != null) defenders = players.Where(x => x.Faction == defenderFaction).ToList();
-                foreach (var acc in players) {
-                    if (acc.Faction != null && acc.Faction != attackerFaction && acc.Faction != defenderFaction) {
-                        var allyAttacker = attackerFaction.HasTreatyRight(acc.Faction, x => x.EffectBalanceSameSide == true, planet);
-                        var allyDefender = defenderFaction != null &&
-                                           defenderFaction.HasTreatyRight(acc.Faction, x => x.EffectBalanceSameSide == true, planet);
-                        if (allyAttacker && allyDefender) continue;
-                        if (allyAttacker) attackers.Add(acc);
-                        if (allyDefender) defenders.Add(acc);
-                    }
-                }
-
-                res = LegacyBalance(2, BalanceMode.FactionWise, context, attackers, defenders);
-                res.DeleteBots = true;
                 return res;
             }
         }

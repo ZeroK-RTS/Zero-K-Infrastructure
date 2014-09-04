@@ -22,6 +22,16 @@ namespace ZeroKWeb
             }
         }
 
+        static PlanetWarsMatchMaker planetWarsMatchMaker;
+        public static PlanetWarsMatchMaker PlanetWarsMatchMaker
+        {
+            get
+            {
+                if (planetWarsMatchMaker != null) return planetWarsMatchMaker;
+                planetWarsMatchMaker = (PlanetWarsMatchMaker)HttpContext.Current.Application["PwMatchMaker"];
+                return planetWarsMatchMaker;
+            }
+        }
 
         public const int AjaxScrollCount = 40;
         public static Account Account { get { return HttpContext.Current.User as Account; } }

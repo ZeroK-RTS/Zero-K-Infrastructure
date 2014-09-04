@@ -276,7 +276,7 @@ namespace NightWatch
                             using (var db = new ZkDataContext())
                             {
                                 var acc = Account.AccountByLobbyID(db, user.LobbyID);
-                                var name = founder.Name.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
+                                var name = founder.Name.TrimNumbers();
                                 var aconf = db.AutohostConfigs.FirstOrDefault(x => x.Login == name);
                                 if (acc != null && user != null && aconf != null &&
                                     (acc.LastLobbyVersionCheck == null || DateTime.UtcNow.Subtract(acc.LastLobbyVersionCheck.Value).TotalDays > 3) &&

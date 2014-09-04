@@ -38,14 +38,14 @@
 		public const string PasswordHashCookieName = "zk_passwordHash";
 		public const string LobbyAccessCookieName = "zk_lobby";
 
+	    public const int PlanetWarsMatchSize = 2;
+
         public const double PlanetMetalPerTurn = 1;
         public const double PlanetWarsEnergyToMetalRatio = 1 / 20.0;
-        public const int BaseInfluencePerBattle = 25;
-        public const double AssistInfluencePerBattle = 15;
-	    public const double BaseMetalPerBattle = 200;
+        public const int BaseInfluencePerBattle = 35;
+	    public const double MetalPerBattlePlayer = 100;
         public const double CcDestroyedMetalMultWinners = 0.75;
-	    public const int DropshipsPerBattlePlayer = 1;
-        public const int InfluencePerInvolvedPlayer = 1;
+        public const double CcDestroyedMetalMultLosers = 1.25;
         public const int InfluencePerShip = 3;
         public const double InfluencePerTech = 1;
         public const double InfluenceDecay = 1;
@@ -63,14 +63,12 @@
         public const int AttackPointsForDefeat = 1;
         public const int MaxClanSkilledSize = 16;
         public const int ClanLeaveLimit = 100;
-        public const int FactionChannelMinLevel = 8;
+        public const int FactionChannelMinLevel = 10;
         public const int RoundTimeLimitInDays = 30;
         public const bool RotatePWMaps = false;
         public const bool RequireWormholeToTravel = true;
         public const bool CanChangeClanFaction = false;
         public const double MaxPwEloDifference = 120;
-        public const double EloMetalModDivisor = 240;
-        public const double EloMetalModMagnitude = 1;
 
 	    public const string MetalIcon = "/img/luaui/ibeam.png";
         public const string EnergyIcon = "/img/luaui/energy.png";
@@ -95,7 +93,10 @@
         public const int PostVoteHideThreshold = -6;
         public const bool OnlyAdminsSeePostVoters = false;
         public const int VotesPerDay = 3;
-        
+	    public const int PlanetWarsMinutesToAttack = 20;
+        public const int PlanetWarsMinutesToAccept = 20;
+	    public const int MinPlanetWarsLevel = 10;
+
 	    public static bool IsZkMod(string name)
         {
             if (string.IsNullOrEmpty(name)) return false;
