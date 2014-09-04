@@ -11,6 +11,24 @@ namespace ZeroKWeb.Controllers
 	{
         const int PageSize = GlobalConst.ForumPostsPerPage;
 
+        void ResetThreadLastPostTime(int threadID)
+        {
+            var db = new ZkDataContext();
+            var thread = db.ForumThreads.FirstOrDefault(x=> x.ForumThreadID == threadID);
+            DateTime lastPost = thread.Created;
+            foreach (ForumPost p in thread.ForumPosts.Reverse())
+            {
+                if (p.ForumPostEdits.Count > 0)
+                {
+                    var lastEdit = p.ForumPostEdits.Last().EditTime;
+                    if (lastEdit > lastPost) lastPost = lastEdit;
+                }
+                else if (p.Created > lastPost) lastPost = p.Created;
+            }
+            thread.LastPost = lastPost;
+            db.SubmitChanges();
+        }
+
 		[Auth(Role = AuthRole.ZkAdmin)]
 		public ActionResult DeletePost(int? postID)
 		{
@@ -29,8 +47,19 @@ namespace ZeroKWeb.Controllers
 				return RedirectToAction("Index");
 			}
 			db.SubmitChanges();
+            ResetThreadLastPostTime(threadID);
 			return RedirectToAction("Thread", new { id = threadID, page = page });
 		}
+
+        [Auth(Role = AuthRole.ZkAdmin)]
+        public ActionResult DeleteAllPostsByUser(int accountID, string accountName)
+        {
+            var db = new ZkDataContext();
+            Account acc = db.Accounts.FirstOrDefault(x => x.AccountID == accountID);
+            if (acc.Name != accountName) return Content("Invalid safety code");
+            foreach (ForumPost p in acc.ForumPosts) DeletePost(p.ForumPostID);
+            return RedirectToAction("Index");
+        }
 
 		public ActionResult Index(int? categoryID)
 		{

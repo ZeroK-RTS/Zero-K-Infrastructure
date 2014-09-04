@@ -132,6 +132,15 @@
         Ban hours: @Html.TextBox("banHours",1)<br />
 
         <input type="submit" value="BAN" class="delete" />
+    </form>
 
+    <h2>Special functions</h2>
+    <h3>Delete all posts</h3>
+    <form action="@Url.Action("DeleteAllPostsByUser", "Forum", new { accountID = Model.AccountID })" method="post">
+        This will <b>permanently</b> remove <b>all</b> of the user's posts.<br />
+        This action <b>cannot</b> be undone!<br />
+        <br />
+        Enter the target's user name to confirm: @Html.TextBox("accountName")
+        <input type="submit" value="DELETE" class="delete" />
     </form>
 </div>
