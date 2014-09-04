@@ -15,22 +15,29 @@ namespace PlasmaShared
             Defend = 2
         }
 
-        public ModeType Mode;
+        public ModeType Mode { get; set; }
+    
 
-        public List<VoteOption> Options = new List<VoteOption>();
+        public List<VoteOption> Options { get; set; }
 
         public PwMatchCommand(ModeType mode)
         {
             Mode = mode;
+            Options = new List<VoteOption>();
         }
 
         public class VoteOption
         {
-            public int Count;
-            public string Map;
-            public int Needed = GlobalConst.PlanetWarsMatchSize;
-            public int PlanetID;
-            public string PlanetName;
+            public int Count { get; set; }
+            public string Map { get; set; }
+            public int Needed { get; set; }
+            public int PlanetID { get; set; }
+            public string PlanetName { get; set; }
+
+            public VoteOption()
+            {
+                Needed = GlobalConst.PlanetWarsMatchSize;
+            }
         }
     }
 }

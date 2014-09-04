@@ -377,7 +377,7 @@ namespace ZeroKWeb
         {
             public List<User> Attackers = new List<User>();
             public List<User> Defenders = new List<User>();
-            public string Map;
+            public string Map;;
             public string Name;
             public int? OwnerFactionID;
             public int PlanetID;
