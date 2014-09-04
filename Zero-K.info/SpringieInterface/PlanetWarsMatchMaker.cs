@@ -306,7 +306,7 @@ namespace ZeroKWeb
             if (args.Data.Text.StartsWith("!") && args.Data.Place == TasSayEventArgs.Places.Channel &&
                 args.Data.Origin == TasSayEventArgs.Origins.Player && args.Data.UserName != GlobalConst.NightwatchName)
             {
-                Faction faction = factions.FirstOrDefault(x =>  x.Shortcut == args.Data.Channel) ?? AttackingFaction;
+                Faction faction = factions.FirstOrDefault(x =>  x.Shortcut == args.Data.Channel);
                 if (faction != null)
                 {
                     if (faction == AttackingFaction)
