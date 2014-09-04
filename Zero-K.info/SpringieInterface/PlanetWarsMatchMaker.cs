@@ -59,10 +59,14 @@ namespace ZeroKWeb
             pwHostName = db.AutohostConfigs.First(x => x.AutohostMode == AutohostMode.Planetwars).Login.TrimNumbers();
 
             Galaxy gal = db.Galaxies.First(x => x.IsDefault);
-            attackerSideCounter = gal.AttackerSideCounter;
-            attackerSideChangeTime = gal.AttackerSideChangeTime ?? DateTime.UtcNow;
-
             factions = db.Factions.Where(x => !x.IsDeleted).ToList();
+
+            attackerSideCounter = new Random().Next(factions.Count);
+            //attackerSideCounter = gal.AttackerSideCounter;
+            //attackerSideChangeTime = gal.AttackerSideChangeTime ?? DateTime.UtcNow;
+            attackerSideChangeTime = DateTime.UtcNow;
+
+
         }
 
         /// <summary>
@@ -201,8 +205,8 @@ namespace ZeroKWeb
             var db = new ZkDataContext();
             Galaxy gal = db.Galaxies.First(x => x.IsDefault);
 
-            gal.AttackerSideCounter = attackerSideCounter;
-            gal.AttackerSideChangeTime = attackerSideChangeTime;
+            //gal.AttackerSideCounter = attackerSideCounter;
+            //gal.AttackerSideChangeTime = attackerSideChangeTime;
             db.SubmitAndMergeChanges();
         }
 
