@@ -42,7 +42,7 @@
 		public const string PasswordHashCookieName = "zk_passwordHash";
 		public const string LobbyAccessCookieName = "zk_lobby";
 
-	    public const int PlanetWarsMatchSize = 1;
+	    public const int PlanetWarsMatchSize = 2;
 
         public const double PlanetMetalPerTurn = 1;
         public const double PlanetWarsEnergyToMetalRatio = 1 / 20.0;

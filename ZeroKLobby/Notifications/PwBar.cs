@@ -50,7 +50,7 @@ namespace ZeroKLobby.Notifications
                             foreach (var c in pnl.Controls.OfType<Button>().ToList()) pnl.Controls.Remove(c);
                             if (pw.Options == null || pw.Options.Count == 0)
                             {
-                                headerLabel.Text += "Your turn - choose a planet on galaxy map and select attack";
+                                headerLabel.Text = "Your turn - choose a planet on galaxy map and select attack";
                             }
                             else
                             {

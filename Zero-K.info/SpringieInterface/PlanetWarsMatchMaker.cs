@@ -111,11 +111,11 @@ namespace ZeroKWeb
                     Thread.Sleep(5000);
                     tas.Say(TasClient.SayPlace.User, targetHost, "!lock 180", false);
                     tas.Say(TasClient.SayPlace.User, targetHost, "!map " + challenge.Map, false);
-                    Thread.Sleep(500);
+                    Thread.Sleep(1000);
                     tas.Say(TasClient.SayPlace.User, targetHost, "!balance", false);
                     tas.Say(TasClient.SayPlace.User, targetHost, "!forcestart", false);
-                    tas.Say(TasClient.SayPlace.User, targetHost, "!endvote", false);
-                    tas.Say(TasClient.SayPlace.User, targetHost, "!start", false);
+                    Thread.Sleep(1000);
+                    tas.Say(TasClient.SayPlace.User, targetHost, "!balance", false);
                     tas.Say(TasClient.SayPlace.User, targetHost, "!forcestart", true);
                 });
             }
