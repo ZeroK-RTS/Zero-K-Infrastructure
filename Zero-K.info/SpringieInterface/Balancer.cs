@@ -417,28 +417,20 @@ namespace ZeroKWeb.SpringieInterface
         BalanceTeamsResult PlanetwarsBalance(BattleContext context) {
             var res = new BalanceTeamsResult();
             context.Players = context.Players.Where(x => !x.IsSpectator).ToList();
-            res.CanStart = false;
+            res.CanStart = true;
             res.DeleteBots = true;
 
             using (var db = new ZkDataContext()) {
                 res.Message = "";
                 var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == context.Map);
-                var idList = context.Players.Select(x => x.LobbyID).ToList();
-                var players = idList.Select(x => db.Accounts.First(y => y.LobbyID == x)).ToList();
 
                 var info = Global.PlanetWarsMatchMaker.GetBattleInfo(context.AutohostName);
                 if (info == null)
                 {
                     res.Message = "Start battle using matchmaker";
+                    res.CanStart = false;
                     return res;
                 } 
-
-                var presentFactions = players.Where(x => x != null).GroupBy(x => x.FactionID ?? 0).Select(x => x.Key).ToList();
-                var attackerFaction = planet.GetAttacker(presentFactions);
-                if (attackerFaction == null) {
-                    res.Message = "No planet was attacked - send your dropships somewhere!";
-                    return res;
-                }
 
                 int teamID = 0;
                 foreach (User matchUser in info.Attackers)
@@ -447,10 +439,10 @@ namespace ZeroKWeb.SpringieInterface
                     if (player != null) res.Players.Add(new PlayerTeam { AllyID = 0, IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID , TeamID = teamID++});
                 }
 
-                foreach (User a in info.Defenders)
+                foreach (User matchUser in info.Defenders)
                 {
-                    PlayerTeam player = context.Players.FirstOrDefault(x => x.Name == a.Name);
-                    if (player != null) res.Players.Add(new PlayerTeam { AllyID = 0, IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID, TeamID = teamID++});
+                    PlayerTeam player = context.Players.FirstOrDefault(x => x.Name == matchUser.Name);
+                    if (player != null) res.Players.Add(new PlayerTeam { AllyID = 1, IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID, TeamID = teamID++});
                 }
                 
                 // bots game
@@ -463,6 +455,7 @@ namespace ZeroKWeb.SpringieInterface
                     return res;
                 }
 
+                
                 return res;
             }
         }

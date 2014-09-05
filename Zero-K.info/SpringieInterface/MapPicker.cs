@@ -20,55 +20,15 @@ namespace ZeroKWeb.SpringieInterface
 		    var config = context.GetConfig();
 			var res = new RecommendedMapResult();
 			using (var db = new ZkDataContext()) {
-				if (mode == AutohostMode.Planetwars) {
-				    var blockedMaps = Global.Nightwatch.GetPlanetWarsBattles().Where(x=>x.IsInGame).Select(x => x.MapName).ToList();
-					var playerAccounts = context.Players.Where(x => !x.IsSpectator).Select(x => db.Accounts.First(z => z.LobbyID == x.LobbyID)).ToList();
+				if (mode == AutohostMode.Planetwars)
+				{
 
-				    var validAttackerFactionIDs = playerAccounts.Where(x => x.FactionID != null).GroupBy(x => x.FactionID).Select(x => x.Key).ToList();
-
-				    var valid =
-				        db.PlanetFactions.Where(
-				            x => x.Dropships > 0 && !blockedMaps.Contains(x.Planet.Resource.InternalName) && validAttackerFactionIDs.Contains(x.FactionID)).
-				            Select(x => new
-				                        {
-                                            Planet = x.Planet,
-                                            Attacker = x.Faction,
-
-                                            FreeShips = x.Dropships - (x.Planet.PlanetStructures.Where(y => y.IsActive && (y.Planet.OwnerFactionID != x.FactionID)).Sum(y => y.StructureType.EffectDropshipDefense) ?? 0),
-                                            TotalShips = x.Dropships,
-                                            LastAdded = x.DropshipsLastAdded
-
-				                        }).Where(x=>x.FreeShips > 0).OrderByDescending(x=>x.FreeShips).ThenBy(x=>x.LastAdded).ToList();
-
-                    if (!valid.Any()) return new RecommendedMapResult()
-                                               {
-                                                   Message = "Use dropships to attack some planet!"
-                                               };
-
-                    foreach (var validChoice in valid)
-                    {
-                        if (validChoice.Planet.Resource.InternalName == context.Map)    // current map is fine
-                        {
-                            res.MapName = context.Map;
-                            return res;
-                        }
-                    }
-
-                    var firstChoice = valid.FirstOrDefault();
-                    var planet = firstChoice.Planet;
-                    res.MapName = planet.Resource.InternalName;
-					var owner = "";
-					if (planet.Account != null) owner = planet.Account.Name;
-
-					var shipInfo = String.Format("{0} ships from {1}", firstChoice.TotalShips, firstChoice.Attacker.Name);
-
-					res.Message = String.Format("Welcome to {0} planet {1} http://zero-k.info/PlanetWars/Planet/{2} attacked by {3}",
-					                            owner,
-					                            planet.Name,
-					                            planet.PlanetID,
-					                            shipInfo);
-
-				    db.SubmitChanges();
+				    var info = Global.PlanetWarsMatchMaker.GetBattleInfo(context.AutohostName);
+				    if (info != null)
+				    {
+				        res.MapName = info.Map;
+                        res.Message = String.Format("Welcome to planet {0} http://zero-k.info/PlanetWars/Planet/{1} attacked", info.Name, info.PlanetID);
+				    } else res.MapName = context.Map;
 				}
 				else { 
 					if (!pickNew) {
