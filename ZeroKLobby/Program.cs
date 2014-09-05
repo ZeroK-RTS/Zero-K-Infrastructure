@@ -252,6 +252,7 @@ namespace ZeroKLobby
                 BattleBar = new BattleBar();
                 NewVersionBar = new NewVersionBar(SelfUpdater);
                 VoteBar = new VoteBar();
+                PwBar = new PwBar();
 
                 //This make the size of every bar constant (only for height).
                 //We wanted to make them constant because the bar will be DPI-scaled twice/thrice/multiple-time (especially for reusable bar). 
@@ -299,6 +300,8 @@ namespace ZeroKLobby
             }
             if (ErrorHandling.HasFatalException && !Program.CloseOnNext) Application.Restart();
         }
+
+        public static PwBar PwBar { get; private set; }
 
         internal static void SaveConfig() {
             lock (configLock) {

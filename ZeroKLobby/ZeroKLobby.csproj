@@ -171,6 +171,12 @@
     <Compile Include="MicroLobby\TextColoringPanel.Designer.cs">
       <DependentUpon>TextColoringPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Notifications\PwBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\PwBar.Designer.cs">
+      <DependentUpon>PwBar.cs</DependentUpon>
+    </Compile>
     <Compile Include="SampleForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -510,6 +516,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\BattleChatControl.resx">
       <DependentUpon>BattleChatControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\PwBar.resx">
+      <DependentUpon>PwBar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SampleForm.resx">
       <DependentUpon>SampleForm.cs</DependentUpon>
