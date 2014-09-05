@@ -289,7 +289,7 @@ namespace ZeroKWeb
                     SendLobbyCommand(userName,
                         new PwMatchCommand(PwMatchCommand.ModeType.Defend)
                         {
-                            Options = attackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Defend)).ToList(),
+                            Options = new List<PwMatchCommand.VoteOption>() {challenge.ToVoteOption(PwMatchCommand.ModeType.Defend)},
                             DeadlineSeconds =
                                 GlobalConst.PlanetWarsMinutesToAccept*60 -
                                 (int)DateTime.UtcNow.Subtract(challengeTime ?? DateTime.UtcNow).TotalSeconds
