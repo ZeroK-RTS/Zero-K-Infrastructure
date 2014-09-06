@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using System.Globalization;
 using System.Linq;
 using CaTracker;
+using JetBrains.Annotations;
 using LobbyClient;
 using ZkData;
 
@@ -141,6 +142,7 @@ namespace ZeroKWeb
             }            
         } }
 
+        [StringFormatMethod("format")]
         public static Event CreateEvent(string format, params object[] args)
         {
             var ev = new Event() { Time = DateTime.UtcNow };
@@ -153,6 +155,7 @@ namespace ZeroKWeb
             {
                 bool dontDuplicate = false; // set to true for args that have their own Event table in DB, e.g. accounts, factions, clans, planets
                 var arg = args[i];
+                if (arg == null) continue;
                 var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
                 bool eventAlreadyExists = alreadyAddedEvents.Contains(arg);
 
