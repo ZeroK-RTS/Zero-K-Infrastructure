@@ -425,7 +425,7 @@ namespace Springie.autohost
             else
             {
                 var numrect = 0;
-                if (!Int32.TryParse(words[0], out numrect)) Respond(e, "paramater must by a number of rectangle");
+                if (!Int32.TryParse(words[0], out numrect)) Respond(e, "parameter must be a number of rectangle");
                 tas.RemoveBattleRectangle(numrect - 1);
             }
         }
