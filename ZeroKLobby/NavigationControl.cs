@@ -98,7 +98,7 @@ namespace ZeroKLobby
                     Height = 32,
                 },
                 
-                //new ButtonInfo() { Label = "PLANETWARS", TargetPath = "http://zero-k.info/Planetwars", Height = 32,  },
+                new ButtonInfo() { Label = "PLANETWARS", TargetPath = "http://zero-k.info/Planetwars", Height = 32,  },
                 new ButtonInfo() { Label = "MAPS", TargetPath = "http://zero-k.info/Maps", Icon = Buttons.map, Height = 32, Width = 75 },
                 new ButtonInfo() { Label = "REPLAYS", TargetPath = "http://zero-k.info/Battles", Icon = Buttons.video_icon, Height = 32, Width = 95 },
                 new ButtonInfo() { Label = "FORUM", TargetPath = "http://zero-k.info/Forum", Height = 32, Width = 65, },

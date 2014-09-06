@@ -7,7 +7,6 @@ using System.Threading;
 using System.Timers;
 using LobbyClient;
 using PlasmaShared;
-using ServiceStack.Text;
 using ZkData;
 using Timer = System.Timers.Timer;
 
@@ -24,10 +23,6 @@ namespace ZeroKWeb
         readonly List<AttackOption> attackOptions = new List<AttackOption>();
         DateTime attackerSideChangeTime;
         int attackerSideCounter;
-        /// <summary>
-        ///     Faction that should attack this turn
-        /// </summary>
-        public Faction AttackingFaction { get { return factions[attackerSideCounter % factions.Count]; } }
         AttackOption challenge;
 
         DateTime? challengeTime;
@@ -38,14 +33,11 @@ namespace ZeroKWeb
         readonly TasClient tas;
 
         Timer timer;
+        /// <summary>
+        ///     Faction that should attack this turn
+        /// </summary>
+        public Faction AttackingFaction { get { return factions[attackerSideCounter%factions.Count]; } }
 
-
-        public AttackOption GetBattleInfo(string hostName)
-        {
-            AttackOption option;
-            runningBattles.TryGetValue(hostName, out option);
-            return option;
-        }
 
         public PlanetWarsMatchMaker(TasClient tas)
         {
@@ -69,28 +61,6 @@ namespace ZeroKWeb
             attackerSideCounter = gal.AttackerSideCounter;
             attackerSideChangeTime = gal.AttackerSideChangeTime ?? DateTime.UtcNow;
             attackerSideChangeTime = DateTime.UtcNow;
-
-
-        }
-
-        /// <summary>
-        ///     Invoked from web page
-        /// </summary>
-        /// <param name="planet"></param>
-        public void AddAttackOption(Planet planet)
-        {
-            if (!attackOptions.Any(x => x.PlanetID == planet.PlanetID) && challenge == null && planet.OwnerFactionID != AttackingFaction.FactionID)
-            {
-                attackOptions.Add(new AttackOption
-                {
-                    PlanetID = planet.PlanetID,
-                    Map = planet.Resource.InternalName,
-                    OwnerFactionID = planet.OwnerFactionID,
-                    Name = planet.Name
-                });
-
-                UpdateAttackerLobby();
-            }
         }
 
         public void AcceptChallenge()
@@ -124,6 +94,69 @@ namespace ZeroKWeb
             ResetAttackOptions();
         }
 
+        /// <summary>
+        ///     Invoked from web page
+        /// </summary>
+        /// <param name="planet"></param>
+        public void AddAttackOption(Planet planet)
+        {
+            if (!attackOptions.Any(x => x.PlanetID == planet.PlanetID) && challenge == null && planet.OwnerFactionID != AttackingFaction.FactionID)
+            {
+                attackOptions.Add(new AttackOption
+                {
+                    PlanetID = planet.PlanetID,
+                    Map = planet.Resource.InternalName,
+                    OwnerFactionID = planet.OwnerFactionID,
+                    Name = planet.Name
+                });
+
+                UpdateLobby();
+            }
+        }
+
+        public PwMatchCommand GenerateLobbyCommand()
+        {
+            PwMatchCommand command;
+            if (challenge == null)
+            {
+                command = new PwMatchCommand(PwMatchCommand.ModeType.Attack)
+                {
+                    Options = attackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList(),
+                    DeadlineSeconds = GlobalConst.PlanetWarsMinutesToAttack*60 - (int)DateTime.UtcNow.Subtract(attackerSideChangeTime).TotalSeconds,
+                    AttackerFaction = AttackingFaction.Shortcut
+                };
+            }
+            else
+            {
+                command = new PwMatchCommand(PwMatchCommand.ModeType.Defend)
+                {
+                    Options = new List<PwMatchCommand.VoteOption> { challenge.ToVoteOption(PwMatchCommand.ModeType.Defend) },
+                    DeadlineSeconds =
+                        GlobalConst.PlanetWarsMinutesToAccept*60 - (int)DateTime.UtcNow.Subtract(challengeTime ?? DateTime.UtcNow).TotalSeconds,
+                    AttackerFaction = AttackingFaction.Shortcut,
+                    DefenderFactions = GetDefendingFactions(challenge).Select(x => x.Shortcut).ToList()
+                };
+            }
+            return command;
+        }
+
+        public AttackOption GetBattleInfo(string hostName)
+        {
+            AttackOption option;
+            runningBattles.TryGetValue(hostName, out option);
+            return option;
+        }
+
+        public void UpdateLobby()
+        {
+            tas.Extensions.SendJsonData(GenerateLobbyCommand());
+        }
+
+        public void UpdateLobby(string player)
+        {
+            tas.Extensions.SendJsonData(player, GenerateLobbyCommand());
+        }
+
         List<Faction> GetDefendingFactions(AttackOption target)
         {
             if (target.OwnerFactionID != null) return new List<Faction> { factions.Find(x => x.FactionID == target.OwnerFactionID) };
@@ -151,7 +184,7 @@ namespace ZeroKWeb
                             attackOption.Attackers.Add(user);
 
                             if (attackOption.Attackers.Count == GlobalConst.PlanetWarsMatchSize) StartChallenge(attackOption);
-                            else UpdateAttackerLobby();
+                            else UpdateLobby();
                         }
                     }
                 }
@@ -160,7 +193,7 @@ namespace ZeroKWeb
 
         void JoinPlanetDefense(int targetPlanetID, string userName)
         {
-            if (challenge != null && challenge.PlanetID == targetPlanetID && challenge.Defenders.Count < GlobalConst.PlanetWarsMatchSize )
+            if (challenge != null && challenge.PlanetID == targetPlanetID && challenge.Defenders.Count < GlobalConst.PlanetWarsMatchSize)
             {
                 User user;
                 if (tas.ExistingUsers.TryGetValue(userName, out user))
@@ -173,7 +206,7 @@ namespace ZeroKWeb
                         {
                             challenge.Defenders.Add(user);
                             if (challenge.Defenders.Count == GlobalConst.PlanetWarsMatchSize) AcceptChallenge();
-                            else UpdateDefenderLobby();
+                            else UpdateLobby();
                         }
                     }
                 }
@@ -196,12 +229,7 @@ namespace ZeroKWeb
             challenge = null;
             challengeTime = null;
             SaveStateToDb();
-
-            foreach (Faction f in factions)
-            {
-                if (f != AttackingFaction) SendLobbyCommand(f, new PwMatchCommand(PwMatchCommand.ModeType.Clear));
-            }
-            UpdateAttackerLobby();
+            UpdateLobby();
         }
 
         void SaveStateToDb()
@@ -215,97 +243,26 @@ namespace ZeroKWeb
         }
 
 
-        void SendLobbyCommand(Faction faction, PwMatchCommand command)
-        {
-            tas.Extensions.SendJsonDataToChannel(faction.Shortcut, command);
-        }
-
-        void SendLobbyCommand(string username, PwMatchCommand command)
-        {
-            tas.Extensions.SendJsonData(username, command);
-        }
-
-
         void StartChallenge(AttackOption attackOption)
         {
             challenge = attackOption;
             challengeTime = DateTime.UtcNow;
             attackOptions.Clear();
-            SendLobbyCommand(AttackingFaction, new PwMatchCommand(PwMatchCommand.ModeType.Clear));
-            UpdateDefenderLobby();
+            UpdateLobby();
         }
 
-        
-        
-        void UpdateAttackerLobby()
-        {
-            SendLobbyCommand(AttackingFaction,
-                new PwMatchCommand(PwMatchCommand.ModeType.Attack)
-                {
-                    Options = attackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList(),
-                    DeadlineSeconds = GlobalConst.PlanetWarsMinutesToAttack*60 - (int)DateTime.UtcNow.Subtract(attackerSideChangeTime).TotalSeconds
-                });
-        }
-
-        void UpdateDefenderLobby()
-        {
-            foreach (Faction def in GetDefendingFactions(challenge))
-            {
-                SendLobbyCommand(def,
-                    new PwMatchCommand(PwMatchCommand.ModeType.Defend)
-                    {
-                        Options = new List<PwMatchCommand.VoteOption> { challenge.ToVoteOption(PwMatchCommand.ModeType.Defend) },
-                        DeadlineSeconds = GlobalConst.PlanetWarsMinutesToAccept*60 - (int)DateTime.UtcNow.Subtract(challengeTime??DateTime.UtcNow).TotalSeconds
-                    });
-            }
-        }
 
         void TasOnChannelUserAdded(object sender, TasEventArgs args)
         {
             string chan = args.ServerParams[0];
             string userName = args.ServerParams[1];
             Faction faction = factions.First(x => x.Shortcut == chan);
-            if (faction != null)
-            {
-                if (challenge == null)
-                {
-                    if (faction == AttackingFaction)
-                    {
-                        SendLobbyCommand(userName,
-                            new PwMatchCommand(PwMatchCommand.ModeType.Attack)
-                            {
-                                Options = attackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList(),
-                                DeadlineSeconds =
-                                    GlobalConst.PlanetWarsMinutesToAttack*60 - (int)DateTime.UtcNow.Subtract(attackerSideChangeTime).TotalSeconds
-                            });
-                    }
-                    else
-                    {
-                        SendLobbyCommand(userName, new PwMatchCommand(PwMatchCommand.ModeType.Clear));
-                    }
-                }
-                else if (GetDefendingFactions(challenge).Contains(faction))
-                {
-                    SendLobbyCommand(userName,
-                        new PwMatchCommand(PwMatchCommand.ModeType.Defend)
-                        {
-                            Options = new List<PwMatchCommand.VoteOption>() {challenge.ToVoteOption(PwMatchCommand.ModeType.Defend)},
-                            DeadlineSeconds =
-                                GlobalConst.PlanetWarsMinutesToAccept*60 -
-                                (int)DateTime.UtcNow.Subtract(challengeTime ?? DateTime.UtcNow).TotalSeconds
-                        });
-                }
-                else
-                {
-                    SendLobbyCommand(userName, new PwMatchCommand(PwMatchCommand.ModeType.Clear));
-                }
-            }
+            if (faction != null) UpdateLobby();
         }
 
         void TasOnLoginAccepted(object sender, TasEventArgs tasEventArgs)
         {
             ResetAttackOptions();
-           
         }
 
         /// <summary>
@@ -318,7 +275,7 @@ namespace ZeroKWeb
             if (args.Data.Text.StartsWith("!") && args.Data.Place == TasSayEventArgs.Places.Channel &&
                 args.Data.Origin == TasSayEventArgs.Origins.Player && args.Data.UserName != GlobalConst.NightwatchName)
             {
-                Faction faction = factions.FirstOrDefault(x =>  x.Shortcut == args.Data.Channel);
+                Faction faction = factions.FirstOrDefault(x => x.Shortcut == args.Data.Channel);
                 if (faction != null)
                 {
                     if (faction == AttackingFaction)
@@ -345,15 +302,15 @@ namespace ZeroKWeb
                 if (attackOptions.Count > 0)
                 {
                     string userName = args.ServerParams[0];
-                    var sumRemoved = 0;
+                    int sumRemoved = 0;
                     foreach (AttackOption aop in attackOptions) sumRemoved += aop.Attackers.RemoveAll(x => x.Name == userName);
-                    if (sumRemoved > 0) UpdateAttackerLobby();
+                    if (sumRemoved > 0) UpdateLobby();
                 }
             }
             else
             {
                 string userName = args.ServerParams[0];
-                if (challenge.Defenders.RemoveAll(x => x.Name == userName) > 0) UpdateDefenderLobby();
+                if (challenge.Defenders.RemoveAll(x => x.Name == userName) > 0) UpdateLobby();
             }
         }
 

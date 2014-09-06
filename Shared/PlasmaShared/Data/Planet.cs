@@ -19,21 +19,6 @@ namespace ZkData
             return PlanetFactions.Where(x => presentFactions.Contains(x.FactionID) && x.FactionID != OwnerFactionID).OrderByDescending(x => x.Dropships).ThenBy(x => x.DropshipsLastAdded).Select(x => x.Faction).FirstOrDefault();
         }
 
-        /*
-        public Faction GetAttacker(IEnumerable<int> presentFactions, Planet planet) {
-            List<PlanetFaction> factions = PlanetFactions.Where(x => presentFactions.Contains(x.FactionID) && x.Dropships > 0).ToList();
-            Dictionary<int, double> dropships = new Dictionary<int, double>();
-            foreach (PlanetFaction f in factions) {
-                if (f.FactionID == planet.OwnerFactionID)
-                {
-                    var defense = planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectBomberDefense) ?? 0;
-                    dropships.Add(f.FactionID, f.Dropships + defense);
-                }
-                else dropships.Add(f.FactionID, f.Dropships);
-            }
-            return factions.OrderByDescending(x => dropships[x.FactionID]).ThenBy(x => x.DropshipsLastAdded).Select(x => x.Faction).FirstOrDefault();
-        }
-        */
 
 	    public override string ToString() {
 	        return Name;

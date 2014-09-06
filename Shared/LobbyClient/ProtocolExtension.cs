@@ -112,6 +112,12 @@ namespace LobbyClient
             tas.Say(TasClient.SayPlace.User, name, EncodeJson(config), false);
         }
 
+        public void SendJsonData(object data)
+        {
+            tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, EncodeJson(data), false);
+        }
+
+
         public void SendJsonData(string username, object data) {
             tas.Say(TasClient.SayPlace.User, username, EncodeJson(data), false);
         }

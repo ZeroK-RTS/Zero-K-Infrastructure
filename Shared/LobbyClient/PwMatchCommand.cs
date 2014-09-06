@@ -14,6 +14,8 @@ namespace LobbyClient
 
         public ModeType Mode { get; set; }
 
+        public string AttackerFaction { get; set; }
+        public List<string> DefenderFactions { get; set; }
 
         public int DeadlineSeconds { get; set; }
 
@@ -23,6 +25,7 @@ namespace LobbyClient
         {
             Mode = mode;
             Options = new List<VoteOption>();
+            DefenderFactions = new List<string>();
         }
 
         public class VoteOption

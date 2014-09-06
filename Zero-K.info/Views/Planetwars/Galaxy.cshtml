@@ -81,12 +81,10 @@
 
 @if(Model.Started == null || remaining < TimeSpan.Zero)
 {
-    <h1 style="color:Red">Round has concluded. Please wait for next round :)</h1>
+    <h1 style="color:Red">Alpha mode testing in progress :)</h1>
 }
 
-@Html.Partial("FactionList")
 <br style="clear:both"/>
-
 
 @{
 	var db = new ZkDataContext();
