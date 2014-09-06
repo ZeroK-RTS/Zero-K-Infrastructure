@@ -206,7 +206,7 @@ namespace ZeroKWeb
                         if (bat.SpringBattleID != 0) ev.EventSpringBattles.Add(new EventSpringBattle() { SpringBattleID = bat.SpringBattleID });
                         else ev.EventSpringBattles.Add(new EventSpringBattle() { SpringBattle = bat });
 
-                        foreach (Account acc in bat.SpringBattlePlayers.Where(sb => !sb.IsSpectator).Select(x => x.Account).Where(y => ev.EventAccounts.First(z => z.AccountID == y.AccountID) == null))
+                        foreach (Account acc in bat.SpringBattlePlayers.Where(sb => !sb.IsSpectator).Select(x => x.Account).Where(y => !ev.EventAccounts.Any(z => z.AccountID == y.AccountID)))
                         {
                             if (acc.AccountID != 0)
                             {
