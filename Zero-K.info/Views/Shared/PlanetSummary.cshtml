@@ -8,6 +8,7 @@
         var dropshipProd = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipProduction);
         var bombDefense = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectBomberDefense);
         var dropDefense = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense);
+        var ipDefense = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectReduceBattleInfluenceGain);
         var warpProd = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectWarpProduction);
         var bombProd = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectBomberProduction);
         var victory = Model.PlanetStructures.Where(x => x.IsActive).Any(x => x.StructureType.EffectIsVictoryPlanet == true);
@@ -31,6 +32,10 @@
                 }
                 @if (spread > 0) {
                     @:, <span>+@Html.PrintInfluence(Model.Faction, spread??0) influence spread</span>
+                }
+                @if (ipDefense > 0)
+                {
+                    @:, <span style='color: red'>+@ipDefense influence gain defense</span>
                 }
                 @if (bombDefense > 0)
                 {

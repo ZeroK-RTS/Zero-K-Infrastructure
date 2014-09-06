@@ -31,6 +31,10 @@
         @if (s.EffectDropshipCapacity > 0) {
             <li>increases fleet size by +@s.EffectDropshipCapacity</li>
         }
+        @if (s.EffectReduceBattleInfluenceGain > 0)
+        {
+            <li>reduce battle influence gain -@s.EffectReduceBattleInfluenceGain</li>
+        }
         @if (s.EffectDropshipDefense > 0) {
             <li>dropship defense +@s.EffectDropshipDefense</li>
         }
