@@ -220,6 +220,10 @@ namespace ZeroKWeb
             List<int?> playerIds = option.Attackers.Select(x => (int?)x.LobbyID).Union(option.Defenders.Select(x => (int?)x.LobbyID)).ToList();
             text.AppendFormat("{0} won because nobody tried to defend", AttackingFaction.Name);
             PlanetWarsTurnHandler.EndTurn(option.Map, null, db, 0, db.Accounts.Where(x => playerIds.Contains(x.LobbyID)).ToList(), text, null);
+            foreach (var fac in factions)
+            {
+                tas.Say(TasClient.SayPlace.Channel, fac.Shortcut, text.ToString(), true);
+            }
         }
 
         void ResetAttackOptions()
@@ -233,6 +237,7 @@ namespace ZeroKWeb
             using (var db = new ZkDataContext())
             {
                 var gal = db.Galaxies.First(x => x.IsDefault);
+                
                 var target = gal.Planets.Where(x => x.OwnerFactionID != AttackingFaction.FactionID)
                     .OrderByDescending(x => x.PlanetFactions.Where(y => y.FactionID == AttackingFaction.FactionID).Select(y => y.Influence).FirstOrDefault()).FirstOrDefault();
                 if (target != null) AddAttackOption(target);
