@@ -228,6 +228,17 @@ namespace ZeroKWeb
             attackerSideChangeTime = DateTime.UtcNow;
             challenge = null;
             challengeTime = null;
+
+            // pick a planet where attacker has highest influence
+            using (var db = new ZkDataContext())
+            {
+                var gal = db.Galaxies.First(x => x.IsDefault);
+                var target = gal.Planets.Where(x => x.OwnerFactionID != AttackingFaction.FactionID)
+                    .OrderByDescending(x => x.PlanetFactions.Where(y => y.FactionID == AttackingFaction.FactionID).Select(y => y.Influence).FirstOrDefault()).FirstOrDefault();
+                if (target != null) AddAttackOption(target);
+            }
+            
+
             SaveStateToDb();
             UpdateLobby();
         }
@@ -257,7 +268,12 @@ namespace ZeroKWeb
             string chan = args.ServerParams[0];
             string userName = args.ServerParams[1];
             Faction faction = factions.First(x => x.Shortcut == chan);
-            if (faction != null) UpdateLobby();
+            if (faction != null)
+            {
+                var db = new ZkDataContext();
+                var acc = Account.AccountByName(db, userName);
+                if (acc != null && acc.CanPlayerPlanetWars()) UpdateLobby(userName);
+            }
         }
 
         void TasOnLoginAccepted(object sender, TasEventArgs tasEventArgs)

@@ -7,7 +7,7 @@ using PlasmaDownloader;
 
 namespace ZeroKLobby.Notifications
 {
-    public partial class PwBar: UserControl, INotifyBar
+    public partial class PwBar : UserControl, INotifyBar
     {
         NotifyBarContainer container;
         Label headerLabel = new Label();
@@ -45,37 +45,48 @@ namespace ZeroKLobby.Notifications
                     {
                         deadline = pw.DeadlineSeconds;
                         timerLabel.Text = PlasmaShared.Utils.PrintTimeRemaining(pw.DeadlineSeconds);
+                        
+
                         if (pw.Mode == PwMatchCommand.ModeType.Attack)
                         {
-                            foreach (var c in pnl.Controls.OfType<Button>().ToList()) pnl.Controls.Remove(c);
-                            if (pw.Options == null || pw.Options.Count == 0)
-                            {
-                                headerLabel.Text = "Your turn - choose a planet on galaxy map and select attack";
-                            }
-                            else
-                            {
-                                headerLabel.Text = "Join planet attack";
-                                
-                                foreach (var opt in pw.Options)
-                                {
-                                    Program.Downloader.GetResource(DownloadType.MAP, opt.Map);
+                            headerLabel.Text = string.Format("{0} picks a planet to attack", pw.AttackerFaction);
 
-                                    var but = new Button() { Text = string.Format("{0} [{1}/{2}]", opt.PlanetName, opt.Count, opt.Needed), AutoSize = true };
+                            foreach (var c in pnl.Controls.OfType<Button>().ToList()) pnl.Controls.Remove(c);
+
+                            foreach (var opt in pw.Options)
+                            {
+                                Program.Downloader.GetResource(DownloadType.MAP, opt.Map);
+
+                                var but = new Button() { Text = string.Format("{0} [{1}/{2}]", opt.PlanetName, opt.Count, opt.Needed), AutoSize = true };
+                                if (pw.AttackerFaction == tas.MyUser.Faction)
+                                {
                                     PwMatchCommand.VoteOption opt1 = opt;
                                     but.Click += (s2, ev) => tas.Say(TasClient.SayPlace.Channel, tas.MyUser.Faction, "!" + opt1.PlanetID, true);
-                                    pnl.Controls.Add(but);
                                 }
+                                else
+                                {
+                                    but.Enabled = false;
+                                }
+                                pnl.Controls.Add(but);
                             }
                         }
                         else if (pw.Mode == PwMatchCommand.ModeType.Defend)
                         {
-                            foreach (var c in pnl.Controls.OfType<Button>().ToList()) pnl.Controls.Remove(c);
                             var opt = pw.Options.First();
-                            headerLabel.Text = "Join planet defense";
+                            headerLabel.Text = string.Format("{0} attacks planet {2}, {1} defends", pw.AttackerFaction, string.Join(",", pw.DefenderFactions), opt.PlanetName);
                             
-                            var but = new Button() { Text = string.Format("{0} [{1}/{2}]", opt.PlanetName, opt.Count, opt.Needed), AutoSize = true};
-                            PwMatchCommand.VoteOption opt1 = opt;
-                            but.Click += (s2, ev) => tas.Say(TasClient.SayPlace.Channel, tas.MyUser.Faction, "!" + opt1.PlanetID, true);
+                            foreach (var c in pnl.Controls.OfType<Button>().ToList()) pnl.Controls.Remove(c);
+                            
+                            var but = new Button() { Text = string.Format("{0} [{1}/{2}]", opt.PlanetName, opt.Count, opt.Needed), AutoSize = true };
+                            if (pw.DefenderFactions.Contains(tas.MyUser.Faction))
+                            {
+                                PwMatchCommand.VoteOption opt1 = opt;
+                                but.Click += (s2, ev) => tas.Say(TasClient.SayPlace.Channel, tas.MyUser.Faction, "!" + opt1.PlanetID, true);
+                            }
+                            else
+                            {
+                                but.Enabled = false;
+                            }
                             pnl.Controls.Add(but);
                         }
 
@@ -98,7 +109,7 @@ namespace ZeroKLobby.Notifications
             Program.NotifySection.RemoveBar(this);
         }
 
-        public void DetailClicked(NotifyBarContainer container) {}
+        public void DetailClicked(NotifyBarContainer container) { }
 
         public Control GetControl()
         {
