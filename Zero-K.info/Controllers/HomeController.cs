@@ -202,6 +202,7 @@ namespace ZeroKWeb.Controllers
 				Response.SetCookie(new HttpCookie(GlobalConst.LoginCookieName, login) { Expires = DateTime.Now.AddMonths(12) });
 				Response.SetCookie(new HttpCookie(GlobalConst.PasswordHashCookieName, hashed) { Expires = DateTime.Now.AddMonths(12) });
 
+                if (string.IsNullOrEmpty(referer)) referer = Url.Action("Index");
 				return Redirect(referer);
 			}
 		}

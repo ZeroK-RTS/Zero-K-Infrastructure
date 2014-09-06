@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -91,8 +92,10 @@ namespace ZeroKWeb
         }
 
         void MvcApplication_Error(object sender, EventArgs e) {
-            if (Request.Url.ToString().Contains(".mvc")) Response.RedirectPermanent(Request.Url.ToString().Replace(".mvc", ""));
-            else Server.GetLastError();
+            var context = HttpContext.Current;
+            Exception ex = Context.Server.GetLastError();
+            Trace.TraceError(ex.ToString());
+            context.Server.ClearError();
         }
 
         void MvcApplication_PostAuthenticateRequest(object sender, EventArgs e) {
