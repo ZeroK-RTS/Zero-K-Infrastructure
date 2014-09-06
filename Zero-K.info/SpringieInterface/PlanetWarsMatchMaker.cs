@@ -241,14 +241,20 @@ namespace ZeroKWeb
             challenge = null;
             challengeTime = null;
 
-            // pick a planet where attacker has highest influence
             using (var db = new ZkDataContext())
             {
                 var gal = db.Galaxies.First(x => x.IsDefault);
-                
-                var target = gal.Planets.Where(x => x.OwnerFactionID != AttackingFaction.FactionID)
-                    .OrderByDescending(x => x.PlanetFactions.Where(y => y.FactionID == AttackingFaction.FactionID).Select(y => y.Influence).FirstOrDefault()).FirstOrDefault();
-                if (target != null) AddAttackOption(target);
+                var attacker = db.Factions.Single(x => x.FactionID == AttackingFaction.FactionID);
+                var planets = gal.Planets.Where(x => x.OwnerFactionID != AttackingFaction.FactionID)
+                    .OrderByDescending(x => x.PlanetFactions.Where(y => y.FactionID == AttackingFaction.FactionID).Select(y => y.Influence).FirstOrDefault()).ToList();
+                // list of planets by attacker's influence
+
+                foreach (var p in planets)
+                {
+                    if (p.CanDropshipsAttack(attacker) || p.PlanetFactions.Where(x=>x.FactionID == attacker.FactionID).Sum(y=>y.Dropships) > p.PlanetStructures.Where(x=>x.IsActive).Sum(y=>y.StructureType.EffectDropshipDefense)) AddAttackOption(p);
+
+                    // pick only those where you can actually attack atm
+                }
             }
             
 
