@@ -219,7 +219,15 @@ namespace ZeroKWeb
             var text = new StringBuilder();
             List<int?> playerIds = option.Attackers.Select(x => (int?)x.LobbyID).Union(option.Defenders.Select(x => (int?)x.LobbyID)).ToList();
             text.AppendFormat("{0} won because nobody tried to defend", AttackingFaction.Name);
-            PlanetWarsTurnHandler.EndTurn(option.Map, null, db, 0, db.Accounts.Where(x => playerIds.Contains(x.LobbyID)).ToList(), text, null);
+            try
+            {
+                PlanetWarsTurnHandler.EndTurn(option.Map, null, db, 0, db.Accounts.Where(x => playerIds.Contains(x.LobbyID)).ToList(), text, null);
+            }
+            catch (Exception ex)
+            {
+                text.Append(ex);
+            }
+
             foreach (var fac in factions)
             {
                 tas.Say(TasClient.SayPlace.Channel, fac.Shortcut, text.ToString(), true);
