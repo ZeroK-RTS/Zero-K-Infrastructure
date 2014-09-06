@@ -92,10 +92,10 @@ namespace ZeroKWeb
         }
 
         void MvcApplication_Error(object sender, EventArgs e) {
-            var context = HttpContext.Current;
             Exception ex = Context.Server.GetLastError();
             Trace.TraceError(ex.ToString());
-            context.Server.ClearError();
+            //var context = HttpContext.Current;
+            //context.Server.ClearError();
         }
 
         void MvcApplication_PostAuthenticateRequest(object sender, EventArgs e) {
