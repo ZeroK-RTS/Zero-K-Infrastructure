@@ -62,16 +62,18 @@ public static class PlanetWarsTurnHandler {
         {
 
             // give influence to main attackers
-            double planetDefs = (planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0);
+            double planetDropshipDefs = (planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0);
+            double planetIpDefs = (planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectReduceBattleInfluenceGain) ?? 0);
 
             double baseInfluence = GlobalConst.BaseInfluencePerBattle;
             double influence = baseInfluence;
 
-            double shipBonus = winnerFaction == attacker ? (dropshipsSent - planetDefs) * GlobalConst.InfluencePerShip : 0;
+            double shipBonus = winnerFaction == attacker ? (dropshipsSent - planetDropshipDefs) * GlobalConst.InfluencePerShip : 0;
+            double defenseBonus = winnerFaction == attacker ? -planetIpDefs : 0;
             double techBonus = winnerFaction.GetFactionUnlocks().Count() * GlobalConst.InfluencePerTech;
             double ccMalus = wasCcDestroyed ? -(influence + shipBonus + techBonus) * GlobalConst.InfluenceCcKilledMultiplier : 0;
 
-            influence = influence + shipBonus + techBonus + ccMalus;
+            influence = influence + shipBonus + techBonus + ccMalus + defenseBonus;
             if (influence < 0) influence = 0;
             influence = Math.Floor(influence * 100) / 100;
 
@@ -123,10 +125,11 @@ public static class PlanetWarsTurnHandler {
                     //text.AppendLine(ev.PlainText);*/
                 try
                 {
-                    influenceReport = String.Format("{0} gained {1} influence (({2}{3}{4}{5}))",
+                    influenceReport = String.Format("{0} gained {1} influence (({2}{3}{4}{5}{6}))",
                         winnerFaction.Shortcut,
                         influence,
                         baseInfluence + " base",
+                        defenseBonus != 0 ? " -" + -defenseBonus + " from defenses" : "",
                         techBonus > 0 ? " +" + techBonus + " from techs" : "",
                         shipBonus > 0 ? " +" + shipBonus + " from ships" : "",
                         ccMalus != 0 ? " " + ccMalus + " from destroyed CC" : "");

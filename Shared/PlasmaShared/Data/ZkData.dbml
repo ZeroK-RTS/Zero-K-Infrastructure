@@ -708,6 +708,7 @@
       <Column Name="IngameUnitName" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
       <Column Name="MapIcon" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
       <Column Name="DisabledMapIcon" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
+      <Column Name="EffectReduceBattleInfluenceGain" Type="System.Double" DbType="float" CanBeNull="true" />
       <Column Name="IsBomberDestructible" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="OwnerChangeDeletesThis" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="OwnerChangeDisablesThis" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
