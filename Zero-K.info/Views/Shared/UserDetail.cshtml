@@ -116,7 +116,7 @@
  
             <b>First Login:</b> @Model.FirstLogin.ToAgoString(), <b>Last Login:</b> @Model.LastLogin.ToAgoString()
             <br />
-            @if (Global.IsZeroKAdmin || Global.IsLobbyAdministrator) {
+            @if (Global.IsZeroKAdmin || Global.IsLobbyAdmin) {
                 <div class="admin">
                     <b>Elo (all):</b> @Math.Round(@Model.EffectiveElo)
                     <b>Elo (1v1):</b> @Math.Round(@Model.Effective1v1Elo)
@@ -153,7 +153,7 @@
 
   
     </div>	
-    @if (Global.IsZeroKAdmin || Global.IsLobbyAdministrator) {
+    @if (Global.IsZeroKAdmin || Global.IsLobbyAdmin) {
         <div class="admin">
             @Html.ActionLink("Admin user", "AdminUserDetail", "Users", new { id = Model.AccountID }, null)
         </div>
@@ -294,7 +294,7 @@
     </div>
 	
 
-    @if ((Global.IsZeroKAdmin || Global.IsLobbyAdministrator) && Global.AccountID == Model.AccountID) {
+    @if ((Global.IsZeroKAdmin || Global.IsLobbyAdmin) && Global.AccountID == Model.AccountID) {
         <div class="admin">
             <h3>Admin extras</h3>
             <a href="@Url.Content("~/UnlocksAdmin.aspx")">Unlocks admin</a><br />
