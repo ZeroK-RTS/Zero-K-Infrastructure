@@ -7,6 +7,7 @@ using System.Threading;
 using System.Timers;
 using LobbyClient;
 using PlasmaShared;
+using ServiceStack.Text;
 using ZkData;
 using Timer = System.Timers.Timer;
 
@@ -20,27 +21,32 @@ namespace ZeroKWeb
         /// <summary>
         ///     Possible attack options
         /// </summary>
-        readonly List<AttackOption> attackOptions = new List<AttackOption>();
-        DateTime attackerSideChangeTime;
-        int attackerSideCounter;
-        AttackOption challenge;
+        public List<AttackOption> AttackOptions { get; set; }
+        public DateTime AttackerSideChangeTime { get; set; }
+        public int AttackerSideCounter { get; set; }
+        public AttackOption Challenge { get; set; }
 
-        DateTime? challengeTime;
+        public DateTime? ChallengeTime { get; set; }
+
+        public Dictionary<string, AttackOption> RunningBattles { get; set; }
+        
         readonly List<Faction> factions;
         readonly string pwHostName;
-        readonly Dictionary<string, AttackOption> runningBattles = new Dictionary<string, AttackOption>();
-        string targetHost;
+        
         readonly TasClient tas;
 
         Timer timer;
         /// <summary>
         ///     Faction that should attack this turn
         /// </summary>
-        public Faction AttackingFaction { get { return factions[attackerSideCounter%factions.Count]; } }
+        public Faction AttackingFaction { get { return factions[AttackerSideCounter%factions.Count]; } }
 
 
         public PlanetWarsMatchMaker(TasClient tas)
         {
+            AttackOptions = new List<AttackOption>();
+            RunningBattles = new Dictionary<string, AttackOption>();
+
             this.tas = tas;
             tas.PreviewSaid += TasOnPreviewSaid;
             tas.LoginAccepted += TasOnLoginAccepted;
@@ -58,13 +64,26 @@ namespace ZeroKWeb
             Galaxy gal = db.Galaxies.First(x => x.IsDefault);
             factions = db.Factions.Where(x => !x.IsDeleted).ToList();
 
-            attackerSideCounter = gal.AttackerSideCounter;
-            attackerSideChangeTime = gal.AttackerSideChangeTime ?? DateTime.UtcNow;
-            attackerSideChangeTime = DateTime.UtcNow;
+            var dbState = JsonSerializer.DeserializeFromString<PlanetWarsMatchMaker>(gal.MatchMakerState);
+            if (dbState != null)
+            {
+                AttackerSideCounter = dbState.AttackerSideCounter;
+                AttackOptions = dbState.AttackOptions;
+                Challenge = dbState.Challenge;
+                ChallengeTime = dbState.ChallengeTime;
+                AttackerSideChangeTime = dbState.AttackerSideChangeTime;
+                RunningBattles = dbState.RunningBattles;
+            }
+            else
+            {
+                AttackerSideCounter = gal.AttackerSideCounter;
+                AttackerSideChangeTime = gal.AttackerSideChangeTime ?? DateTime.UtcNow;
+            }
         }
 
         public void AcceptChallenge()
         {
+            string targetHost;
             Battle emptyHost =
                 tas.ExistingBattles.Values.FirstOrDefault(
                     x => !x.IsInGame && x.Founder.Name.TrimNumbers() == pwHostName && x.Users.All(y => y.IsSpectator || y.Name == x.Founder.Name));
@@ -72,11 +91,11 @@ namespace ZeroKWeb
             if (emptyHost != null)
             {
                 targetHost = emptyHost.Founder.Name;
-                runningBattles[targetHost] = challenge;
-                tas.Say(TasClient.SayPlace.User, targetHost, "!map " + challenge.Map, false);
+                RunningBattles[targetHost] = Challenge;
+                tas.Say(TasClient.SayPlace.User, targetHost, "!map " + Challenge.Map, false);
                 Thread.Sleep(500);
-                foreach (User x in challenge.Attackers) tas.ForceJoinBattle(x.Name, emptyHost.BattleID);
-                foreach (User x in challenge.Defenders) tas.ForceJoinBattle(x.Name, emptyHost.BattleID);
+                foreach (User x in Challenge.Attackers) tas.ForceJoinBattle(x.Name, emptyHost.BattleID);
+                foreach (User x in Challenge.Defenders) tas.ForceJoinBattle(x.Name, emptyHost.BattleID);
 
                 Utils.StartAsync(() =>
                 {
@@ -85,7 +104,7 @@ namespace ZeroKWeb
                 });
             }
 
-            attackerSideCounter++;
+            AttackerSideCounter++;
             ResetAttackOptions();
         }
 
@@ -95,9 +114,9 @@ namespace ZeroKWeb
         /// <param name="planet"></param>
         public void AddAttackOption(Planet planet)
         {
-            if (!attackOptions.Any(x => x.PlanetID == planet.PlanetID) && challenge == null && planet.OwnerFactionID != AttackingFaction.FactionID)
+            if (!AttackOptions.Any(x => x.PlanetID == planet.PlanetID) && Challenge == null && planet.OwnerFactionID != AttackingFaction.FactionID)
             {
-                attackOptions.Add(new AttackOption
+                AttackOptions.Add(new AttackOption
                 {
                     PlanetID = planet.PlanetID,
                     Map = planet.Resource.InternalName,
@@ -112,12 +131,12 @@ namespace ZeroKWeb
         public PwMatchCommand GenerateLobbyCommand()
         {
             PwMatchCommand command;
-            if (challenge == null)
+            if (Challenge == null)
             {
                 command = new PwMatchCommand(PwMatchCommand.ModeType.Attack)
                 {
-                    Options = attackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList(),
-                    DeadlineSeconds = GlobalConst.PlanetWarsMinutesToAttack*60 - (int)DateTime.UtcNow.Subtract(attackerSideChangeTime).TotalSeconds,
+                    Options = AttackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList(),
+                    DeadlineSeconds = GlobalConst.PlanetWarsMinutesToAttack*60 - (int)DateTime.UtcNow.Subtract(AttackerSideChangeTime).TotalSeconds,
                     AttackerFaction = AttackingFaction.Shortcut
                 };
             }
@@ -125,11 +144,11 @@ namespace ZeroKWeb
             {
                 command = new PwMatchCommand(PwMatchCommand.ModeType.Defend)
                 {
-                    Options = new List<PwMatchCommand.VoteOption> { challenge.ToVoteOption(PwMatchCommand.ModeType.Defend) },
+                    Options = new List<PwMatchCommand.VoteOption> { Challenge.ToVoteOption(PwMatchCommand.ModeType.Defend) },
                     DeadlineSeconds =
-                        GlobalConst.PlanetWarsMinutesToAccept*60 - (int)DateTime.UtcNow.Subtract(challengeTime ?? DateTime.UtcNow).TotalSeconds,
+                        GlobalConst.PlanetWarsMinutesToAccept*60 - (int)DateTime.UtcNow.Subtract(ChallengeTime ?? DateTime.UtcNow).TotalSeconds,
                     AttackerFaction = AttackingFaction.Shortcut,
-                    DefenderFactions = GetDefendingFactions(challenge).Select(x => x.Shortcut).ToList()
+                    DefenderFactions = GetDefendingFactions(Challenge).Select(x => x.Shortcut).ToList()
                 };
             }
             return command;
@@ -138,13 +157,14 @@ namespace ZeroKWeb
         public AttackOption GetBattleInfo(string hostName)
         {
             AttackOption option;
-            runningBattles.TryGetValue(hostName, out option);
+            RunningBattles.TryGetValue(hostName, out option);
             return option;
         }
 
         public void UpdateLobby()
         {
             tas.Extensions.SendJsonData(GenerateLobbyCommand());
+            SaveStateToDb();
         }
 
         public void UpdateLobby(string player)
@@ -160,7 +180,7 @@ namespace ZeroKWeb
 
         void JoinPlanetAttack(int targetPlanetId, string userName)
         {
-            AttackOption attackOption = attackOptions.Find(x => x.PlanetID == targetPlanetId);
+            AttackOption attackOption = AttackOptions.Find(x => x.PlanetID == targetPlanetId);
             if (attackOption != null)
             {
                 User user;
@@ -171,7 +191,7 @@ namespace ZeroKWeb
                     if (account != null && account.FactionID == AttackingFaction.FactionID && account.CanPlayerPlanetWars())
                     {
                         // remove existing user from other options
-                        foreach (AttackOption aop in attackOptions) aop.Attackers.RemoveAll(x => x.Name == userName);
+                        foreach (AttackOption aop in AttackOptions) aop.Attackers.RemoveAll(x => x.Name == userName);
 
                         // add user to this option
                         if (attackOption.Attackers.Count < GlobalConst.PlanetWarsMatchSize)
@@ -188,19 +208,19 @@ namespace ZeroKWeb
 
         void JoinPlanetDefense(int targetPlanetID, string userName)
         {
-            if (challenge != null && challenge.PlanetID == targetPlanetID && challenge.Defenders.Count < GlobalConst.PlanetWarsMatchSize)
+            if (Challenge != null && Challenge.PlanetID == targetPlanetID && Challenge.Defenders.Count < GlobalConst.PlanetWarsMatchSize)
             {
                 User user;
                 if (tas.ExistingUsers.TryGetValue(userName, out user))
                 {
                     var db = new ZkDataContext();
                     Account account = Account.AccountByLobbyID(db, user.LobbyID);
-                    if (account != null && GetDefendingFactions(challenge).Any(y => y.FactionID == account.FactionID) && account.CanPlayerPlanetWars())
+                    if (account != null && GetDefendingFactions(Challenge).Any(y => y.FactionID == account.FactionID) && account.CanPlayerPlanetWars())
                     {
-                        if (!challenge.Defenders.Any(y => y.LobbyID == user.LobbyID))
+                        if (!Challenge.Defenders.Any(y => y.LobbyID == user.LobbyID))
                         {
-                            challenge.Defenders.Add(user);
-                            if (challenge.Defenders.Count == GlobalConst.PlanetWarsMatchSize) AcceptChallenge();
+                            Challenge.Defenders.Add(user);
+                            if (Challenge.Defenders.Count == GlobalConst.PlanetWarsMatchSize) AcceptChallenge();
                             else UpdateLobby();
                         }
                     }
@@ -231,10 +251,10 @@ namespace ZeroKWeb
 
         void ResetAttackOptions()
         {
-            attackOptions.Clear();
-            attackerSideChangeTime = DateTime.UtcNow;
-            challenge = null;
-            challengeTime = null;
+            AttackOptions.Clear();
+            AttackerSideChangeTime = DateTime.UtcNow;
+            Challenge = null;
+            ChallengeTime = null;
 
             using (var db = new ZkDataContext())
             {
@@ -255,8 +275,6 @@ namespace ZeroKWeb
                 }
             }
             
-
-            SaveStateToDb();
             UpdateLobby();
 
             tas.Say(TasClient.SayPlace.Channel, AttackingFaction.Shortcut, "It's your turn! Select a planet to attack", true);
@@ -267,20 +285,22 @@ namespace ZeroKWeb
             var db = new ZkDataContext();
             Galaxy gal = db.Galaxies.First(x => x.IsDefault);
 
-            gal.AttackerSideCounter = attackerSideCounter;
-            gal.AttackerSideChangeTime = attackerSideChangeTime;
+            gal.MatchMakerState = JsonSerializer.SerializeToString(this);
+            
+            gal.AttackerSideCounter = AttackerSideCounter;
+            gal.AttackerSideChangeTime = AttackerSideChangeTime;
             db.SubmitAndMergeChanges();
         }
 
 
         void StartChallenge(AttackOption attackOption)
         {
-            challenge = attackOption;
-            challengeTime = DateTime.UtcNow;
-            attackOptions.Clear();
+            Challenge = attackOption;
+            ChallengeTime = DateTime.UtcNow;
+            AttackOptions.Clear();
             UpdateLobby();
 
-            foreach (var def in GetDefendingFactions(challenge))
+            foreach (var def in GetDefendingFactions(Challenge))
             {
                 tas.Say(TasClient.SayPlace.Channel, def.Shortcut, "Join defense of your planet now, before it falls", true);
             }
@@ -323,7 +343,7 @@ namespace ZeroKWeb
                         int targetPlanetID;
                         if (int.TryParse(args.Data.Text.Substring(1), out targetPlanetID)) JoinPlanetAttack(targetPlanetID, args.Data.UserName);
                     }
-                    else if (challenge != null && GetDefendingFactions(challenge).Contains(faction))
+                    else if (Challenge != null && GetDefendingFactions(Challenge).Contains(faction))
                     {
                         int targetPlanetID;
                         if (int.TryParse(args.Data.Text.Substring(1), out targetPlanetID)) JoinPlanetDefense(targetPlanetID, args.Data.UserName);
@@ -337,20 +357,20 @@ namespace ZeroKWeb
         /// </summary>
         void TasOnUserRemoved(object sender, TasEventArgs args)
         {
-            if (challenge == null)
+            if (Challenge == null)
             {
-                if (attackOptions.Count > 0)
+                if (AttackOptions.Count > 0)
                 {
                     string userName = args.ServerParams[0];
                     int sumRemoved = 0;
-                    foreach (AttackOption aop in attackOptions) sumRemoved += aop.Attackers.RemoveAll(x => x.Name == userName);
+                    foreach (AttackOption aop in AttackOptions) sumRemoved += aop.Attackers.RemoveAll(x => x.Name == userName);
                     if (sumRemoved > 0) UpdateLobby();
                 }
             }
             else
             {
                 string userName = args.ServerParams[0];
-                if (challenge.Defenders.RemoveAll(x => x.Name == userName) > 0) UpdateLobby();
+                if (Challenge.Defenders.RemoveAll(x => x.Name == userName) > 0) UpdateLobby();
             }
         }
 
@@ -358,23 +378,23 @@ namespace ZeroKWeb
         {
             try
             {
-                if (challenge == null)
+                if (Challenge == null)
                 {
                     // attack timer
-                    if (DateTime.UtcNow.Subtract(attackerSideChangeTime).TotalMinutes > GlobalConst.PlanetWarsMinutesToAttack)
+                    if (DateTime.UtcNow.Subtract(AttackerSideChangeTime).TotalMinutes > GlobalConst.PlanetWarsMinutesToAttack)
                     {
-                        attackerSideCounter++;
+                        AttackerSideCounter++;
                         ResetAttackOptions();
                     }
                 }
                 else
                 {
                     // accept timer
-                    if (DateTime.UtcNow.Subtract(challengeTime.Value).TotalMinutes > GlobalConst.PlanetWarsMinutesToAccept)
+                    if (DateTime.UtcNow.Subtract(ChallengeTime.Value).TotalMinutes > GlobalConst.PlanetWarsMinutesToAccept)
                     {
-                        RecordPlanetwarsLoss(challenge);
+                        RecordPlanetwarsLoss(Challenge);
 
-                        attackerSideCounter++;
+                        AttackerSideCounter++;
                         ResetAttackOptions();
                     }
                 }

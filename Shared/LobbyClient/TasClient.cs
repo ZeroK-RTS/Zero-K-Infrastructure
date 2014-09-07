@@ -687,14 +687,11 @@ namespace LobbyClient
 
         public void ForceJoinChannel(string user, string channel, string password= null) {
             con.SendCommand(string.Format("FORCEJOIN {0} {1} {2}", user, channel, password));
-            //if (string.IsNullOrEmpty(password)) con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOIN {1}", user,channel));
-            //else con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOIN {1} {2}", user,channel,password));
         }
 
         public void ForceLeaveChannel(string user, string channel, string reason = null)
         {
             con.SendCommand(string.Format("FORCELEAVECHANNEL {0} {1} {2}", channel, user, reason));
-            //con.SendCommand(string.Format("FORGEREVERSEMSG {0} LEAVE {1}", user, channel));
         }
 
 

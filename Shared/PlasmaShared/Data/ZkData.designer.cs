@@ -20255,6 +20255,8 @@ namespace ZkData
 		
 		private System.Nullable<System.DateTime> _AttackerSideChangeTime;
 		
+		private string _MatchMakerState;
+		
 		private EntitySet<Link> _Links;
 		
 		private EntitySet<Planet> _Planets;
@@ -20287,6 +20289,8 @@ namespace ZkData
     partial void OnAttackerSideCounterChanged();
     partial void OnAttackerSideChangeTimeChanging(System.Nullable<System.DateTime> value);
     partial void OnAttackerSideChangeTimeChanged();
+    partial void OnMatchMakerStateChanging(string value);
+    partial void OnMatchMakerStateChanged();
     #endregion
 		
 		public Galaxy()
@@ -20525,8 +20529,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MatchMakerState", DbType="text", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
+		public string MatchMakerState
+		{
+			get
+			{
+				return this._MatchMakerState;
+			}
+			set
+			{
+				if ((this._MatchMakerState != value))
+				{
+					this.OnMatchMakerStateChanging(value);
+					this.SendPropertyChanging();
+					this._MatchMakerState = value;
+					this.SendPropertyChanged("MatchMakerState");
+					this.OnMatchMakerStateChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Galaxy_Link", Storage="_Links", ThisKey="GalaxyID", OtherKey="GalaxyID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
 		public EntitySet<Link> Links
 		{
 			get
@@ -20545,7 +20570,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Galaxy_Planet", Storage="_Planets", ThisKey="GalaxyID", OtherKey="GalaxyID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
 		public EntitySet<Planet> Planets
 		{
 			get

@@ -756,6 +756,7 @@
       <Column Name="IsDefault" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="AttackerSideCounter" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="AttackerSideChangeTime" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
+      <Column Name="MatchMakerState" Type="System.String" DbType="text" CanBeNull="true" UpdateCheck="Never" />
       <Association Name="Galaxy_Link" Member="Links" ThisKey="GalaxyID" OtherKey="GalaxyID" Type="Link" />
       <Association Name="Galaxy_Planet" Member="Planets" ThisKey="GalaxyID" OtherKey="GalaxyID" Type="Planet" />
     </Type>
