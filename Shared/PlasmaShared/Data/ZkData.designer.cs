@@ -9919,6 +9919,8 @@ namespace ZkData
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
+		private System.Nullable<int> _WinnerTeamXpChange;
+		
 		private System.Nullable<int> _LoserTeamXpChange;
 		
 		private System.Nullable<int> _ForumThreadID;
@@ -9928,6 +9930,8 @@ namespace ZkData
 		private bool _IsFfa;
 		
 		private System.Nullable<int> _RatingPollID;
+		
+		private int _PlayerCount;
 		
 		private bool _HasBots;
 		
@@ -9939,7 +9943,7 @@ namespace ZkData
 		
 		private bool _IsEloProcessed;
 		
-		private System.Nullable<int> _WinnerTeamXpChange;
+		private int _HostAccountID;
 		
 		private string _Title;
 		
@@ -9951,13 +9955,9 @@ namespace ZkData
 		
 		private int _Duration;
 		
-		private int _PlayerCount;
-		
 		private int _SpringBattleID;
 		
 		private string _EngineGameID;
-		
-		private int _HostAccountID;
 		
 		private EntitySet<SpringBattlePlayer> _SpringBattlePlayers;
 		
@@ -9981,6 +9981,8 @@ namespace ZkData
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
+    partial void OnWinnerTeamXpChangeChanging(System.Nullable<int> value);
+    partial void OnWinnerTeamXpChangeChanged();
     partial void OnLoserTeamXpChangeChanging(System.Nullable<int> value);
     partial void OnLoserTeamXpChangeChanged();
     partial void OnForumThreadIDChanging(System.Nullable<int> value);
@@ -9991,6 +9993,8 @@ namespace ZkData
     partial void OnIsFfaChanged();
     partial void OnRatingPollIDChanging(System.Nullable<int> value);
     partial void OnRatingPollIDChanged();
+    partial void OnPlayerCountChanging(int value);
+    partial void OnPlayerCountChanged();
     partial void OnHasBotsChanging(bool value);
     partial void OnHasBotsChanged();
     partial void OnIsMissionChanging(bool value);
@@ -10001,8 +10005,8 @@ namespace ZkData
     partial void OnEngineVersionChanged();
     partial void OnIsEloProcessedChanging(bool value);
     partial void OnIsEloProcessedChanged();
-    partial void OnWinnerTeamXpChangeChanging(System.Nullable<int> value);
-    partial void OnWinnerTeamXpChangeChanged();
+    partial void OnHostAccountIDChanging(int value);
+    partial void OnHostAccountIDChanged();
     partial void OnTitleChanging(string value);
     partial void OnTitleChanged();
     partial void OnMapResourceIDChanging(int value);
@@ -10013,14 +10017,10 @@ namespace ZkData
     partial void OnStartTimeChanged();
     partial void OnDurationChanging(int value);
     partial void OnDurationChanged();
-    partial void OnPlayerCountChanging(int value);
-    partial void OnPlayerCountChanged();
     partial void OnSpringBattleIDChanging(int value);
     partial void OnSpringBattleIDChanged();
     partial void OnEngineGameIDChanging(string value);
     partial void OnEngineGameIDChanged();
-    partial void OnHostAccountIDChanging(int value);
-    partial void OnHostAccountIDChanged();
     #endregion
 		
 		public SpringBattle()
@@ -10028,8 +10028,29 @@ namespace ZkData
 			this.Initialize();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LoserTeamXpChange", DbType="int", UpdateCheck=UpdateCheck.WhenChanged)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WinnerTeamXpChange", DbType="int", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public System.Nullable<int> WinnerTeamXpChange
+		{
+			get
+			{
+				return this._WinnerTeamXpChange;
+			}
+			set
+			{
+				if ((this._WinnerTeamXpChange != value))
+				{
+					this.OnWinnerTeamXpChangeChanging(value);
+					this.SendPropertyChanging();
+					this._WinnerTeamXpChange = value;
+					this.SendPropertyChanged("WinnerTeamXpChange");
+					this.OnWinnerTeamXpChangeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LoserTeamXpChange", DbType="int", UpdateCheck=UpdateCheck.WhenChanged)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
 		public System.Nullable<int> LoserTeamXpChange
 		{
 			get
@@ -10050,7 +10071,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForumThreadID", DbType="int", UpdateCheck=UpdateCheck.WhenChanged)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
 		public System.Nullable<int> ForumThreadID
 		{
 			get
@@ -10075,7 +10096,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TeamsTitle", DbType="nvarchar(250)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
 		public string TeamsTitle
 		{
 			get
@@ -10096,7 +10117,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsFfa", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
 		public bool IsFfa
 		{
 			get
@@ -10117,7 +10138,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RatingPollID", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
 		public System.Nullable<int> RatingPollID
 		{
 			get
@@ -10141,8 +10162,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlayerCount", DbType="int NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
+		public int PlayerCount
+		{
+			get
+			{
+				return this._PlayerCount;
+			}
+			set
+			{
+				if ((this._PlayerCount != value))
+				{
+					this.OnPlayerCountChanging(value);
+					this.SendPropertyChanging();
+					this._PlayerCount = value;
+					this.SendPropertyChanged("PlayerCount");
+					this.OnPlayerCountChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HasBots", DbType="bit NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
 		public bool HasBots
 		{
 			get
@@ -10163,7 +10205,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsMission", DbType="bit NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
 		public bool IsMission
 		{
 			get
@@ -10184,7 +10226,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReplayFileName", DbType="nvarchar(500)", UpdateCheck=UpdateCheck.WhenChanged)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
 		public string ReplayFileName
 		{
 			get
@@ -10205,7 +10247,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EngineVersion", DbType="nvarchar(100)", UpdateCheck=UpdateCheck.WhenChanged)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
 		public string EngineVersion
 		{
 			get
@@ -10226,7 +10268,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsEloProcessed", DbType="bit NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
 		public bool IsEloProcessed
 		{
 			get
@@ -10246,29 +10288,33 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WinnerTeamXpChange", DbType="int", UpdateCheck=UpdateCheck.WhenChanged)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
-		public System.Nullable<int> WinnerTeamXpChange
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HostAccountID", DbType="int NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
+		public int HostAccountID
 		{
 			get
 			{
-				return this._WinnerTeamXpChange;
+				return this._HostAccountID;
 			}
 			set
 			{
-				if ((this._WinnerTeamXpChange != value))
+				if ((this._HostAccountID != value))
 				{
-					this.OnWinnerTeamXpChangeChanging(value);
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnHostAccountIDChanging(value);
 					this.SendPropertyChanging();
-					this._WinnerTeamXpChange = value;
-					this.SendPropertyChanged("WinnerTeamXpChange");
-					this.OnWinnerTeamXpChangeChanged();
+					this._HostAccountID = value;
+					this.SendPropertyChanged("HostAccountID");
+					this.OnHostAccountIDChanged();
 				}
 			}
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Title", DbType="nvarchar(200)", UpdateCheck=UpdateCheck.WhenChanged)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
 		public string Title
 		{
 			get
@@ -10289,7 +10335,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapResourceID", DbType="int NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
 		public int MapResourceID
 		{
 			get
@@ -10314,7 +10360,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ModResourceID", DbType="int NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
 		public int ModResourceID
 		{
 			get
@@ -10339,7 +10385,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StartTime", DbType="datetime NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
 		public System.DateTime StartTime
 		{
 			get
@@ -10360,7 +10406,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Duration", DbType="int NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18)]
 		public int Duration
 		{
 			get
@@ -10380,29 +10426,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlayerCount", DbType="int NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
-		public int PlayerCount
-		{
-			get
-			{
-				return this._PlayerCount;
-			}
-			set
-			{
-				if ((this._PlayerCount != value))
-				{
-					this.OnPlayerCountChanging(value);
-					this.SendPropertyChanging();
-					this._PlayerCount = value;
-					this.SendPropertyChanged("PlayerCount");
-					this.OnPlayerCountChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringBattleID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true, UpdateCheck=UpdateCheck.WhenChanged)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
 		public int SpringBattleID
 		{
 			get
@@ -10423,7 +10448,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EngineGameID", DbType="varchar(64)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20)]
 		public string EngineGameID
 		{
 			get
@@ -10439,31 +10464,6 @@ namespace ZkData
 					this._EngineGameID = value;
 					this.SendPropertyChanged("EngineGameID");
 					this.OnEngineGameIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HostAccountID", DbType="int NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20)]
-		public int HostAccountID
-		{
-			get
-			{
-				return this._HostAccountID;
-			}
-			set
-			{
-				if ((this._HostAccountID != value))
-				{
-					if (this._Account.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnHostAccountIDChanging(value);
-					this.SendPropertyChanging();
-					this._HostAccountID = value;
-					this.SendPropertyChanged("HostAccountID");
-					this.OnHostAccountIDChanged();
 				}
 			}
 		}
@@ -16278,6 +16278,8 @@ namespace ZkData
 		
 		private System.Nullable<int> _OwnerFactionID;
 		
+		private int _TeamSize;
+		
 		private EntitySet<Link> _LinksByPlanetID1;
 		
 		private EntitySet<Link> _LinksByPlanetID2;
@@ -16332,6 +16334,8 @@ namespace ZkData
     partial void OnForumThreadIDChanged();
     partial void OnOwnerFactionIDChanging(System.Nullable<int> value);
     partial void OnOwnerFactionIDChanged();
+    partial void OnTeamSizeChanging(int value);
+    partial void OnTeamSizeChanged();
     #endregion
 		
 		public Planet()
@@ -16548,8 +16552,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TeamSize", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		public int TeamSize
+		{
+			get
+			{
+				return this._TeamSize;
+			}
+			set
+			{
+				if ((this._TeamSize != value))
+				{
+					this.OnTeamSizeChanging(value);
+					this.SendPropertyChanging();
+					this._TeamSize = value;
+					this.SendPropertyChanged("TeamSize");
+					this.OnTeamSizeChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_Link", Storage="_LinksByPlanetID1", ThisKey="PlanetID", OtherKey="PlanetID1")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
 		public EntitySet<Link> LinksByPlanetID1
 		{
 			get
@@ -16568,7 +16593,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_Link1", Storage="_LinksByPlanetID2", ThisKey="PlanetID", OtherKey="PlanetID2")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
 		public EntitySet<Link> LinksByPlanetID2
 		{
 			get
@@ -16587,7 +16612,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_MarketOffer", Storage="_MarketOffers", ThisKey="PlanetID", OtherKey="PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
 		public EntitySet<MarketOffer> MarketOffers
 		{
 			get
@@ -16606,7 +16631,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_AccountPlanet", Storage="_AccountPlanets", ThisKey="PlanetID", OtherKey="PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
 		public EntitySet<AccountPlanet> AccountPlanets
 		{
 			get
@@ -16625,7 +16650,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_EventPlanet", Storage="_EventPlanets", ThisKey="PlanetID", OtherKey="PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
 		public EntitySet<EventPlanet> EventPlanets
 		{
 			get
@@ -16644,7 +16669,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlanetOwnerHistory", Storage="_PlanetOwnerHistories", ThisKey="PlanetID", OtherKey="PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
 		public EntitySet<PlanetOwnerHistory> PlanetOwnerHistories
 		{
 			get
@@ -16663,7 +16688,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlanetStructure", Storage="_PlanetStructuresByPlanetID", ThisKey="PlanetID", OtherKey="PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
 		public EntitySet<PlanetStructure> PlanetStructures
 		{
 			get
@@ -16682,7 +16707,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlanetStructure1", Storage="_PlanetStructuresByTargetPlanetID", ThisKey="PlanetID", OtherKey="TargetPlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
 		public EntitySet<PlanetStructure> PlanetStructuresByTargetPlanetID
 		{
 			get
@@ -16701,7 +16726,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_TreatyEffect", Storage="_TreatyEffects", ThisKey="PlanetID", OtherKey="PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
 		public EntitySet<TreatyEffect> TreatyEffects
 		{
 			get
@@ -16720,7 +16745,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlanetFaction", Storage="_PlanetFactions", ThisKey="PlanetID", OtherKey="PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
 		public EntitySet<PlanetFaction> PlanetFactions
 		{
 			get

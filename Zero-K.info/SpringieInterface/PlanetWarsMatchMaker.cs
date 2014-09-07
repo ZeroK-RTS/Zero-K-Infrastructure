@@ -121,7 +121,8 @@ namespace ZeroKWeb
                     PlanetID = planet.PlanetID,
                     Map = planet.Resource.InternalName,
                     OwnerFactionID = planet.OwnerFactionID,
-                    Name = planet.Name
+                    Name = planet.Name,
+                    TeamSize = planet.TeamSize,
                 });
 
                 UpdateLobby();
@@ -194,11 +195,11 @@ namespace ZeroKWeb
                         foreach (AttackOption aop in AttackOptions) aop.Attackers.RemoveAll(x => x.Name == userName);
 
                         // add user to this option
-                        if (attackOption.Attackers.Count < GlobalConst.PlanetWarsMatchSize)
+                        if (attackOption.Attackers.Count < attackOption.TeamSize)
                         {
                             attackOption.Attackers.Add(user);
 
-                            if (attackOption.Attackers.Count == GlobalConst.PlanetWarsMatchSize) StartChallenge(attackOption);
+                            if (attackOption.Attackers.Count == attackOption.TeamSize) StartChallenge(attackOption);
                             else UpdateLobby();
                         }
                     }
@@ -208,7 +209,7 @@ namespace ZeroKWeb
 
         void JoinPlanetDefense(int targetPlanetID, string userName)
         {
-            if (Challenge != null && Challenge.PlanetID == targetPlanetID && Challenge.Defenders.Count < GlobalConst.PlanetWarsMatchSize)
+            if (Challenge != null && Challenge.PlanetID == targetPlanetID && Challenge.Defenders.Count < Challenge.TeamSize)
             {
                 User user;
                 if (tas.ExistingUsers.TryGetValue(userName, out user))
@@ -220,7 +221,7 @@ namespace ZeroKWeb
                         if (!Challenge.Defenders.Any(y => y.LobbyID == user.LobbyID))
                         {
                             Challenge.Defenders.Add(user);
-                            if (Challenge.Defenders.Count == GlobalConst.PlanetWarsMatchSize) AcceptChallenge();
+                            if (Challenge.Defenders.Count == Challenge.TeamSize) AcceptChallenge();
                             else UpdateLobby();
                         }
                     }
@@ -413,6 +414,7 @@ namespace ZeroKWeb
             public string Name;
             public int? OwnerFactionID;
             public int PlanetID;
+            public int TeamSize;
 
             public PwMatchCommand.VoteOption ToVoteOption(PwMatchCommand.ModeType mode)
             {
@@ -421,7 +423,8 @@ namespace ZeroKWeb
                     PlanetID = PlanetID,
                     PlanetName = Name,
                     Map = Map,
-                    Count = mode == PwMatchCommand.ModeType.Attack ? Attackers.Count : Defenders.Count
+                    Count = mode == PwMatchCommand.ModeType.Attack ? Attackers.Count : Defenders.Count,
+                    Needed = TeamSize
                 };
 
                 return opt;

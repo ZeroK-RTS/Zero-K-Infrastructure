@@ -341,26 +341,26 @@
   </Table>
   <Table Name="dbo.SpringBattle" Member="SpringBattles">
     <Type Name="SpringBattle">
+      <Column Name="WinnerTeamXpChange" Type="System.Int32" DbType="int" CanBeNull="true" UpdateCheck="WhenChanged" />
       <Column Name="LoserTeamXpChange" Type="System.Int32" DbType="int" CanBeNull="true" UpdateCheck="WhenChanged" />
       <Column Name="ForumThreadID" Type="System.Int32" DbType="int" CanBeNull="true" UpdateCheck="WhenChanged" />
       <Column Name="TeamsTitle" Type="System.String" DbType="nvarchar(250)" CanBeNull="true" />
       <Column Name="IsFfa" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="RatingPollID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="PlayerCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="HasBots" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="IsMission" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="ReplayFileName" Type="System.String" DbType="nvarchar(500)" CanBeNull="true" UpdateCheck="WhenChanged" />
       <Column Name="EngineVersion" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" UpdateCheck="WhenChanged" />
       <Column Name="IsEloProcessed" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
-      <Column Name="WinnerTeamXpChange" Type="System.Int32" DbType="int" CanBeNull="true" UpdateCheck="WhenChanged" />
+      <Column Name="HostAccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="Title" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" UpdateCheck="WhenChanged" />
       <Column Name="MapResourceID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="ModResourceID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="StartTime" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="Duration" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
-      <Column Name="PlayerCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="SpringBattleID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="EngineGameID" Type="System.String" DbType="varchar(64)" CanBeNull="true" />
-      <Column Name="HostAccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Association Name="SpringBattle_SpringBattlePlayer" Member="SpringBattlePlayers" ThisKey="SpringBattleID" OtherKey="SpringBattleID" Type="SpringBattlePlayer" />
       <Association Name="SpringBattle_AccountBattleAward" Member="AccountBattleAwards" ThisKey="SpringBattleID" OtherKey="SpringBattleID" Type="AccountBattleAward" />
       <Association Name="SpringBattle_EventSpringBattle" Member="EventSpringBattles" ThisKey="SpringBattleID" OtherKey="SpringBattleID" Type="EventSpringBattle" />
@@ -598,6 +598,7 @@
       <Column Name="GalaxyID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="ForumThreadID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="OwnerFactionID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="TeamSize" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Planet_Link" Member="LinksByPlanetID1" ThisKey="PlanetID" OtherKey="PlanetID1" Type="Link" />
       <Association Name="Planet_Link1" Member="LinksByPlanetID2" ThisKey="PlanetID" OtherKey="PlanetID2" Type="Link" />
       <Association Name="Planet_MarketOffer" Member="MarketOffers" ThisKey="PlanetID" OtherKey="PlanetID" Type="MarketOffer" />

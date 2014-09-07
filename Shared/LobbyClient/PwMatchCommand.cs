@@ -36,10 +36,6 @@ namespace LobbyClient
             public int PlanetID { get; set; }
             public string PlanetName { get; set; }
 
-            public VoteOption()
-            {
-                Needed = GlobalConst.PlanetWarsMatchSize;
-            }
         }
     }
 }
