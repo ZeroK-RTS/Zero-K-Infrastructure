@@ -76,7 +76,8 @@ namespace ZeroKWeb
             tas.PreviewSaid += TasOnPreviewSaid;
             tas.UserRemoved += TasOnUserRemoved;
             tas.ChannelUserAdded += TasOnChannelUserAdded;
-            tas.LoginAccepted += TasOnLoginAccepted;
+            tas.ChannelJoined += (sender, args) =>
+            { if (args.ServerParams[0] == "extension") tas.Extensions.SendJsonData(GenerateLobbyCommand()); };
 
             timer = new Timer(10000);
             timer.AutoReset = true;
@@ -323,18 +324,6 @@ namespace ZeroKWeb
                 var db = new ZkDataContext();
                 var acc = Account.AccountByName(db, userName);
                 if (acc != null && acc.CanPlayerPlanetWars()) UpdateLobby(userName);
-            }
-        }
-
-        void TasOnLoginAccepted(object sender, TasEventArgs tasEventArgs)
-        {
-            try
-            {
-                UpdateLobby();
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.ToString());
             }
         }
 
