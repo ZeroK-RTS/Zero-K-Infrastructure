@@ -78,8 +78,8 @@ namespace ZeroKWeb
         {
             var nw = new Nightwatch(Server.MapPath("/"));
             Application["Nightwatch"] = nw;
-            Global.Nightwatch.Start();
             Application["PwMatchMaker"] = new PlanetWarsMatchMaker(nw.Tas);
+            Global.Nightwatch.Start();
             
 
             AreaRegistration.RegisterAllAreas();

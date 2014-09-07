@@ -281,11 +281,22 @@ namespace ZeroKWeb
                 var planets = gal.Planets.Where(x => x.OwnerFactionID != AttackingFaction.FactionID).OrderByDescending(x=>x.PlanetFactions.Where(y=>y.FactionID == AttackingFaction.FactionID).Sum(y=>y.Dropships)).ThenBy(x => x.PlanetFactions.Where(y => y.FactionID == AttackingFaction.FactionID).Sum(y => y.Influence));
                 // list of planets by attacker's influence
 
-                foreach (var p in planets)
+                foreach (var planet in planets)
                 {
-                    if (p.CanMatchMakerPlay(attacker))
+                    if (planet.CanMatchMakerPlay(attacker))
                     {
-                        AddAttackOption(p);                     // pick only those where you can actually attack atm
+                        // pick only those where you can actually attack atm
+
+                        AttackOptions.Add(new AttackOption
+                        {
+                            PlanetID = planet.PlanetID,
+                            Map = planet.Resource.InternalName,
+                            OwnerFactionID = planet.OwnerFactionID,
+                            Name = planet.Name,
+                            TeamSize = planet.TeamSize,
+                        });
+
+                        
                         cnt--;
                     }
                     if (cnt == 0) break;

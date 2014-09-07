@@ -38,7 +38,7 @@
 #if DEPLOY
         public const string NightwatchName = "Nightwatch";
 #else 
-        public const string NightwatchName = "Nightwatch";
+        public const string NightwatchName = "NightwatchDev";
 #endif
 		public const string PasswordHashCookieName = "zk_passwordHash";
 		public const string LobbyAccessCookieName = "zk_lobby";

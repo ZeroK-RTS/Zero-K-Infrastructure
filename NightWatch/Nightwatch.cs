@@ -54,6 +54,7 @@ namespace CaTracker
         public Nightwatch(string webRoot)
 		
         {
+            tas = new TasClient(null, "NightWatch", GlobalConst.ZkLobbyUserCpu);
             this.webRoot = webRoot;
 			config = new Config();
 			statsTimer.Elapsed += statsTimer_Elapsed;
@@ -74,8 +75,8 @@ namespace CaTracker
 
 			recon.Enabled = false;
 
-            tas = new TasClient(null, "NightWatch", GlobalConst.ZkLobbyUserCpu);
-			tas.ConnectionLost += tas_ConnectionLost;
+
+            tas.ConnectionLost += tas_ConnectionLost;
 			tas.Connected += tas_Connected;
 			tas.LoginDenied += tas_LoginDenied;
 			tas.LoginAccepted += tas_LoginAccepted;
