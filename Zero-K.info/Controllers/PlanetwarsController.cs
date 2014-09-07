@@ -856,7 +856,7 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             var planet = db.Planets.Single(x => x.PlanetID == planetID);
-            if (Global.IsAccountAuthorized && Global.Account.CanPlayerPlanetWars() && planet.CanDropshipsAttack(Global.Account.Faction))
+            if (Global.IsAccountAuthorized && Global.Account.CanPlayerPlanetWars() && planet.CanMatchMakerPlay(Global.Account.Faction))
             {
                 Global.PlanetWarsMatchMaker.AddAttackOption(planet);
             }

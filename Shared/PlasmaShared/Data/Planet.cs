@@ -73,6 +73,14 @@ namespace ZkData
             return CheckWarpAttack(attacker, x => x.EffectPreventBomberAttack == true);
         }
 
+	    public bool CanMatchMakerPlay(Faction attacker)
+	    {
+	        if (CanDropshipsAttack(attacker) ||
+	            PlanetFactions.Where(x => x.FactionID == attacker.FactionID).Sum(y => y.Dropships) >
+	            PlanetStructures.Where(x => x.IsActive).Sum(y => y.StructureType.EffectDropshipDefense)) return true;
+	        else return false;
+	    }
+
         public bool CanFirePlanetBuster(Faction attacker)
         {
             if (!Galaxy.IsDefault) return false;    // no exo-galaxy strikes
