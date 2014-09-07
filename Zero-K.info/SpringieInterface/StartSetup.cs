@@ -11,6 +11,7 @@ namespace ZeroKWeb.SpringieInterface
     {
         public List<ScriptKeyValuePair> ModOptions = new List<ScriptKeyValuePair>();
         public List<UserCustomParameters> UserParameters = new List<UserCustomParameters>();
+        public BalanceTeamsResult BalanceTeamsResult;
 
         #region Nested type: ScriptKeyValuePair
 
@@ -30,6 +31,7 @@ namespace ZeroKWeb.SpringieInterface
             public List<ScriptKeyValuePair> Parameters = new List<ScriptKeyValuePair>();
         }
 
+        
         #endregion
     }
 
