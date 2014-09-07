@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaDownloader;
 
 namespace ZeroKLobby.Notifications
 {
-    public partial class PwBar : UserControl, INotifyBar
+    public partial class PwBar: UserControl, INotifyBar
     {
         NotifyBarContainer container;
-        Label headerLabel = new Label();
-        readonly TasClient tas;
-        readonly Label timerLabel = new Label();
-        Timer timer;
         int deadline;
+        readonly Label headerLabel = new Label();
+        readonly TasClient tas;
+        Timer timer;
+        readonly Label timerLabel = new Label();
+
         public PwBar()
         {
             InitializeComponent();
@@ -31,7 +30,6 @@ namespace ZeroKLobby.Notifications
             };
             timer.Start();
 
-
             pnl.Controls.Add(timerLabel);
             pnl.Controls.Add(headerLabel);
 
@@ -45,48 +43,64 @@ namespace ZeroKLobby.Notifications
                     {
                         deadline = pw.DeadlineSeconds;
                         timerLabel.Text = PlasmaShared.Utils.PrintTimeRemaining(pw.DeadlineSeconds);
-                        
 
                         if (pw.Mode == PwMatchCommand.ModeType.Attack)
                         {
                             headerLabel.Text = string.Format("{0} picks a planet to attack", pw.AttackerFaction);
 
-                            foreach (var c in pnl.Controls.OfType<Button>().ToList()) pnl.Controls.Remove(c);
+                            foreach (Button c in pnl.Controls.OfType<Button>().ToList()) pnl.Controls.Remove(c);
 
-                            foreach (var opt in pw.Options)
+                            foreach (PwMatchCommand.VoteOption opt in pw.Options)
                             {
                                 Program.Downloader.GetResource(DownloadType.MAP, opt.Map);
 
-                                var but = new Button() { Text = string.Format("{0} [{1}/{2}]", opt.PlanetName, opt.Count, opt.Needed), AutoSize = true };
+                                var but = new Button { Text = string.Format("{0} [{1}/{2}]", opt.PlanetName, opt.Count, opt.Needed), AutoSize = true };
                                 if (pw.AttackerFaction == tas.MyUser.Faction)
                                 {
                                     PwMatchCommand.VoteOption opt1 = opt;
-                                    but.Click += (s2, ev) => tas.Say(TasClient.SayPlace.Channel, tas.MyUser.Faction, "!" + opt1.PlanetID, true);
+                                    but.Click += (s2, ev) =>
+                                    {
+                                        if (Program.SpringScanner.HasResource(opt1.Map)) tas.Say(TasClient.SayPlace.Channel, tas.MyUser.Faction, "!" + opt1.PlanetID, true);
+                                        else
+                                        {
+                                            tas.Say(TasClient.SayPlace.Channel,
+                                                tas.MyUser.Faction,
+                                                string.Format("wants to play {0}, but lacks the map..", opt1.PlanetID),
+                                                true);
+                                        }
+                                    };
                                 }
-                                else
-                                {
-                                    but.Enabled = false;
-                                }
+                                else but.Enabled = false;
                                 pnl.Controls.Add(but);
                             }
                         }
                         else if (pw.Mode == PwMatchCommand.ModeType.Defend)
                         {
-                            var opt = pw.Options.First();
-                            headerLabel.Text = string.Format("{0} attacks planet {2}, {1} defends", pw.AttackerFaction, string.Join(",", pw.DefenderFactions), opt.PlanetName);
-                            
-                            foreach (var c in pnl.Controls.OfType<Button>().ToList()) pnl.Controls.Remove(c);
-                            
-                            var but = new Button() { Text = string.Format("{0} [{1}/{2}]", opt.PlanetName, opt.Count, opt.Needed), AutoSize = true };
+                            PwMatchCommand.VoteOption opt = pw.Options.First();
+                            headerLabel.Text = string.Format("{0} attacks planet {2}, {1} defends",
+                                pw.AttackerFaction,
+                                string.Join(",", pw.DefenderFactions),
+                                opt.PlanetName);
+
+                            foreach (Button c in pnl.Controls.OfType<Button>().ToList()) pnl.Controls.Remove(c);
+
+                            var but = new Button { Text = string.Format("{0} [{1}/{2}]", opt.PlanetName, opt.Count, opt.Needed), AutoSize = true };
                             if (pw.DefenderFactions.Contains(tas.MyUser.Faction))
                             {
                                 PwMatchCommand.VoteOption opt1 = opt;
-                                but.Click += (s2, ev) => tas.Say(TasClient.SayPlace.Channel, tas.MyUser.Faction, "!" + opt1.PlanetID, true);
+                                but.Click += (s2, ev) =>
+                                {
+                                    if (Program.SpringScanner.HasResource(opt1.Map)) tas.Say(TasClient.SayPlace.Channel, tas.MyUser.Faction, "!" + opt1.PlanetID, true);
+                                    else
+                                    {
+                                        tas.Say(TasClient.SayPlace.Channel,
+                                            tas.MyUser.Faction,
+                                            string.Format("wants to play {0}, but lacks the map..", opt1.PlanetID),
+                                            true);
+                                    }
+                                };
                             }
-                            else
-                            {
-                                but.Enabled = false;
-                            }
+                            else but.Enabled = false;
                             pnl.Controls.Add(but);
                         }
 
@@ -109,7 +123,7 @@ namespace ZeroKLobby.Notifications
             Program.NotifySection.RemoveBar(this);
         }
 
-        public void DetailClicked(NotifyBarContainer container) { }
+        public void DetailClicked(NotifyBarContainer container) {}
 
         public Control GetControl()
         {
