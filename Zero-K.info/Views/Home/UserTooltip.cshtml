@@ -5,7 +5,7 @@
 }
 <span style="float:left;">@Html.AccountAvatar(u)</span><b>@Html.PrintAccount(u)</b><br/>
 <b>First Login:</b> @u.FirstLogin.ToAgoString(), <b>Last Login:</b> @u.LastLogin.ToAgoString()<br />
-@if (Global.IsZeroKAdmin) {
+@if (Global.IsZeroKAdmin || Global.IsLobbyAdministrator) {
     <div class="admin">
         <b>Elo (all): </b> @Math.Round(@u.EffectiveElo)
         <b>Elo (1v1): </b> @Math.Round(@u.Effective1v1Elo)
@@ -23,14 +23,18 @@
         @Html.PrintRoleType(entry.RoleType) of @(entry.RoleType.IsClanOnly ? Html.PrintClan(entry.Clan) : Html.PrintFaction(entry.Faction,false))
     </span><br/>
 }<br/>
-@if (Model.IsLobbyAdministrator || Model.IsZeroKAdmin)
+@if (Model.IsLobbyAdministrator)
  {
 			<span>
-				<b> @Model.Name </b> is an <b>Administrator</b> for: 
-				@(Model.IsLobbyAdministrator ? "Lobby" : "Zero-K")
+				<b> @Model.Name </b> is a <b>Lobby Moderator</b><br/>
 			</span>
  }
-
+@if (Model.IsZeroKAdmin)
+ {
+			<span>
+				<b> @Model.Name </b> is a <b>ZK Administrator</b><br/>
+			</span>
+ }
 
 
 <div id="usr_trophies" class="">
