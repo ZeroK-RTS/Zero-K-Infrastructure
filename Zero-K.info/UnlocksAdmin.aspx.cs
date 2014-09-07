@@ -14,7 +14,7 @@ namespace ZeroKWeb
     protected void Page_Load(object sender, EventArgs e)
     {
    
-      if (Global.Account == null || !Global.Account.IsZeroKAdmin) throw new ApplicationException("You are not an admin!");
+      if (Global.Account == null || !(Global.Account.IsZeroKAdmin || Global.Account.IsLobbyAdministrator)) throw new ApplicationException("You are not an admin!");
       if (!IsPostBack)
       {
         foreach (int kvp in Enum.GetValues(typeof(UnlockTypes)))
