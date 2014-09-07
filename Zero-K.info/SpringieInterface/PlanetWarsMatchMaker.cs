@@ -73,6 +73,8 @@ namespace ZeroKWeb
             {
                 targetHost = emptyHost.Founder.Name;
                 runningBattles[targetHost] = challenge;
+                tas.Say(TasClient.SayPlace.User, targetHost, "!map " + challenge.Map, false);
+                Thread.Sleep(500);
                 foreach (User x in challenge.Attackers) tas.ForceJoinBattle(x.Name, emptyHost.BattleID);
                 foreach (User x in challenge.Defenders) tas.ForceJoinBattle(x.Name, emptyHost.BattleID);
 
@@ -80,7 +82,6 @@ namespace ZeroKWeb
                 {
                     Thread.Sleep(5000);
                     tas.Say(TasClient.SayPlace.User, targetHost, "!lock 180", false);
-                    tas.Say(TasClient.SayPlace.User, targetHost, "!map " + challenge.Map, false);
                     Thread.Sleep(2000);
                     tas.Say(TasClient.SayPlace.User, targetHost, "!forcestart", false);
                     Thread.Sleep(1000);
