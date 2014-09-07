@@ -37,8 +37,12 @@ namespace ZeroKLobby.Notifications
 
             tas.Extensions.JsonDataReceived += (sender, e) =>
             {
-                pw = e as PwMatchCommand;
-                UpdateGui();
+                var newPw = e as PwMatchCommand;
+                if (newPw != null)
+                {
+                    pw = newPw;
+                    UpdateGui();
+                }
             };
 
             tas.MyExtensionsChanged += (sender, args) => UpdateGui();
