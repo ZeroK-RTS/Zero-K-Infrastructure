@@ -14,7 +14,7 @@
 }
 <br />
 @Html.ActionLink("User duplicates","Duplicates")
-@if (Global.IsZeroKAdmin)
+@if (Global.IsZeroKAdmin || Global.IsLobbyAdministrator)
 {
     <div class="admin">
         @Html.ActionLink("New user list", "NewUsers")<br />
