@@ -56,7 +56,7 @@
         }
 		<p>@Html.BBCode(n.Text)</p>
 		<small>Posted by @Html.PrintAccount(n.Account) @n.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new { id = n.ForumThreadID }, null)
-        @if (Global.IsZeroKAdmin)
+        @if (Global.IsZeroKAdmin || Global.IsLobbyAdministrator)
         {
             <span class="admin">
                 @Html.ActionLink("Edit", "Detail", "News", new { id = n.NewsID }, null)
@@ -67,7 +67,7 @@
 		<br /><br />
     }
 	<a href="@Url.Action("Index", "News")"><img src="/img/rss.png" width="25" alt="rss" /> RSS feed</a> | <a href='/Forum?categoryID=13'>news archive</a> 
-	@if (Global.IsZeroKAdmin)
+	@if (Global.IsZeroKAdmin || Global.IsLobbyAdministrator)
  {
 		<div class="admin">
             @Html.Partial("/Views/News/NewsDetail.cshtml", new News() { Created = DateTime.UtcNow, HeadlineUntil = DateTime.UtcNow.AddDays(7) })
