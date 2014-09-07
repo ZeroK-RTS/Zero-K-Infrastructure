@@ -244,15 +244,16 @@ namespace ZeroKWeb
             using (var db = new ZkDataContext())
             {
                 var gal = db.Galaxies.First(x => x.IsDefault);
+                int cnt = 3;
                 var attacker = db.Factions.Single(x => x.FactionID == AttackingFaction.FactionID);
-                var planets = gal.Planets.Where(x => x.OwnerFactionID != AttackingFaction.FactionID)
-                    .OrderByDescending(x => x.PlanetFactions.Where(y => y.FactionID == AttackingFaction.FactionID).Select(y => y.Influence).FirstOrDefault()).ToList();
+                var planets = gal.Planets.Where(x => x.OwnerFactionID != AttackingFaction.FactionID).OrderByDescending(x=>x.PlanetFactions.Where(y=>y.FactionID == AttackingFaction.FactionID).Sum(y=>y.Dropships)).ThenBy(x => x.PlanetFactions.Where(y => y.FactionID == AttackingFaction.FactionID).Select(y => y.Influence).FirstOrDefault()).ToList();
                 // list of planets by attacker's influence
 
                 foreach (var p in planets)
                 {
+                    cnt--;
                     if (p.CanDropshipsAttack(attacker) || p.PlanetFactions.Where(x=>x.FactionID == attacker.FactionID).Sum(y=>y.Dropships) > p.PlanetStructures.Where(x=>x.IsActive).Sum(y=>y.StructureType.EffectDropshipDefense)) AddAttackOption(p);
-
+                    if (cnt == 0) break;
                     // pick only those where you can actually attack atm
                 }
             }
