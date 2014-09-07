@@ -124,7 +124,14 @@ namespace ZeroKWeb
             return "en";
         }
 
-        public static bool IsAccountAuthorized { get { return HttpContext.Current.User as Account != null; } }
+        public static bool IsAccountAuthorized
+        {
+            get
+            {
+                if (HttpContext.Current == null) return false;
+                return HttpContext.Current.User as Account != null;
+            }
+        }
 
         public static bool IsLobbyAccess { get { return HttpContext.Current.Request.Cookies[GlobalConst.LobbyAccessCookieName] != null; } }
         public static bool IsLobbyAdmin { get { return IsAccountAuthorized && Account.IsLobbyAdministrator; } }
