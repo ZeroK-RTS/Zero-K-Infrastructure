@@ -50,7 +50,7 @@
     {
         <span>Springie rights removed</span><br />
     }
-    @if (Global.IsZeroKAdmin)
+    @if (Global.IsZeroKAdmin || Global.IsLobbyAdmin)
     {
         <span>IP block: @p.BanIP</span><br />
         <span>UserID block: @p.UserID</span><br />
