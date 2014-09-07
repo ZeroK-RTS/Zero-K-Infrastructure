@@ -80,13 +80,8 @@ namespace ZeroKWeb
 
                 Utils.StartAsync(() =>
                 {
-                    Thread.Sleep(5000);
-                    tas.Say(TasClient.SayPlace.User, targetHost, "!lock 180", false);
+                    Thread.Sleep(8000);
                     tas.Say(TasClient.SayPlace.User, targetHost, "!forcestart", false);
-                    Thread.Sleep(1000);
-                    tas.Say(TasClient.SayPlace.User, targetHost, "!forcestart", false);
-                    tas.Say(TasClient.SayPlace.User, targetHost, "!balance", false);
-                    tas.Say(TasClient.SayPlace.User, targetHost, "!start", true);
                 });
             }
 
