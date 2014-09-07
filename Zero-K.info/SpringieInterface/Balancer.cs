@@ -432,15 +432,15 @@ namespace ZeroKWeb.SpringieInterface
                     return res;
                 } 
 
-                foreach (User matchUser in info.Attackers)
+                foreach (string matchUser in info.Attackers)
                 {
-                    PlayerTeam player = context.Players.FirstOrDefault(x => x.Name == matchUser.Name);
+                    PlayerTeam player = context.Players.FirstOrDefault(x => x.Name == matchUser);
                     if (player != null) res.Players.Add(new PlayerTeam { AllyID = 0, IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID , TeamID = player.TeamID});
                 }
 
-                foreach (User matchUser in info.Defenders)
+                foreach (string matchUser in info.Defenders)
                 {
-                    PlayerTeam player = context.Players.FirstOrDefault(x => x.Name == matchUser.Name);
+                    PlayerTeam player = context.Players.FirstOrDefault(x => x.Name == matchUser);
                     if (player != null) res.Players.Add(new PlayerTeam { AllyID = 1, IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID, TeamID = player.TeamID});
                 }
                 

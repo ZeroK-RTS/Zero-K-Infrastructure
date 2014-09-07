@@ -6,9 +6,10 @@ using System.Text;
 using System.Threading;
 using System.Timers;
 using LobbyClient;
+using Newtonsoft.Json;
 using PlasmaShared;
-using ServiceStack.Text;
 using ZkData;
+using JsonSerializer = ServiceStack.Text.JsonSerializer;
 using Timer = System.Timers.Timer;
 
 namespace ZeroKWeb
@@ -39,6 +40,7 @@ namespace ZeroKWeb
         /// <summary>
         ///     Faction that should attack this turn
         /// </summary>
+        [JsonIgnore]
         public Faction AttackingFaction { get { return factions[AttackerSideCounter%factions.Count]; } }
 
 
@@ -63,8 +65,9 @@ namespace ZeroKWeb
 
             Galaxy gal = db.Galaxies.First(x => x.IsDefault);
             factions = db.Factions.Where(x => !x.IsDeleted).ToList();
-
-            var dbState = JsonSerializer.DeserializeFromString<PlanetWarsMatchMaker>(gal.MatchMakerState);
+            
+            PlanetWarsMatchMaker dbState = null;
+            if (gal.MatchMakerState != null) dbState = JsonConvert.DeserializeObject<PlanetWarsMatchMaker>(gal.MatchMakerState);
             if (dbState != null)
             {
                 AttackerSideCounter = dbState.AttackerSideCounter;
@@ -94,8 +97,8 @@ namespace ZeroKWeb
                 RunningBattles[targetHost] = Challenge;
                 tas.Say(TasClient.SayPlace.User, targetHost, "!map " + Challenge.Map, false);
                 Thread.Sleep(500);
-                foreach (User x in Challenge.Attackers) tas.ForceJoinBattle(x.Name, emptyHost.BattleID);
-                foreach (User x in Challenge.Defenders) tas.ForceJoinBattle(x.Name, emptyHost.BattleID);
+                foreach (string x in Challenge.Attackers) tas.ForceJoinBattle(x, emptyHost.BattleID);
+                foreach (string x in Challenge.Defenders) tas.ForceJoinBattle(x, emptyHost.BattleID);
 
                 Utils.StartAsync(() =>
                 {
@@ -192,12 +195,12 @@ namespace ZeroKWeb
                     if (account != null && account.FactionID == AttackingFaction.FactionID && account.CanPlayerPlanetWars())
                     {
                         // remove existing user from other options
-                        foreach (AttackOption aop in AttackOptions) aop.Attackers.RemoveAll(x => x.Name == userName);
+                        foreach (AttackOption aop in AttackOptions) aop.Attackers.RemoveAll(x => x == userName);
 
                         // add user to this option
                         if (attackOption.Attackers.Count < attackOption.TeamSize)
                         {
-                            attackOption.Attackers.Add(user);
+                            attackOption.Attackers.Add(user.Name);
 
                             if (attackOption.Attackers.Count == attackOption.TeamSize) StartChallenge(attackOption);
                             else UpdateLobby();
@@ -218,9 +221,9 @@ namespace ZeroKWeb
                     Account account = Account.AccountByLobbyID(db, user.LobbyID);
                     if (account != null && GetDefendingFactions(Challenge).Any(y => y.FactionID == account.FactionID) && account.CanPlayerPlanetWars())
                     {
-                        if (!Challenge.Defenders.Any(y => y.LobbyID == user.LobbyID))
+                        if (!Challenge.Defenders.Any(y => y == user.Name))
                         {
-                            Challenge.Defenders.Add(user);
+                            Challenge.Defenders.Add(user.Name);
                             if (Challenge.Defenders.Count == Challenge.TeamSize) AcceptChallenge();
                             else UpdateLobby();
                         }
@@ -233,11 +236,11 @@ namespace ZeroKWeb
         {
             var db = new ZkDataContext();
             var text = new StringBuilder();
-            List<int?> playerIds = option.Attackers.Select(x => (int?)x.LobbyID).Union(option.Defenders.Select(x => (int?)x.LobbyID)).ToList();
+            List<string> playerIds = option.Attackers.Select(x => x).Union(option.Defenders.Select(x => x)).ToList();
             text.AppendFormat("{0} won because nobody tried to defend", AttackingFaction.Name);
             try
             {
-                PlanetWarsTurnHandler.EndTurn(option.Map, null, db, 0, db.Accounts.Where(x => playerIds.Contains(x.LobbyID)).ToList(), text, null);
+                PlanetWarsTurnHandler.EndTurn(option.Map, null, db, 0, db.Accounts.Where(x => playerIds.Contains(x.Name)).ToList(), text, null);
             }
             catch (Exception ex)
             {
@@ -286,7 +289,7 @@ namespace ZeroKWeb
             var db = new ZkDataContext();
             Galaxy gal = db.Galaxies.First(x => x.IsDefault);
 
-            gal.MatchMakerState = JsonSerializer.SerializeToString(this);
+            gal.MatchMakerState = JsonConvert.SerializeObject(this);
             
             gal.AttackerSideCounter = AttackerSideCounter;
             gal.AttackerSideChangeTime = AttackerSideChangeTime;
@@ -364,14 +367,14 @@ namespace ZeroKWeb
                 {
                     string userName = args.ServerParams[0];
                     int sumRemoved = 0;
-                    foreach (AttackOption aop in AttackOptions) sumRemoved += aop.Attackers.RemoveAll(x => x.Name == userName);
+                    foreach (AttackOption aop in AttackOptions) sumRemoved += aop.Attackers.RemoveAll(x=>x == userName);
                     if (sumRemoved > 0) UpdateLobby();
                 }
             }
             else
             {
                 string userName = args.ServerParams[0];
-                if (Challenge.Defenders.RemoveAll(x => x.Name == userName) > 0) UpdateLobby();
+                if (Challenge.Defenders.RemoveAll(x => x == userName) > 0) UpdateLobby();
             }
         }
 
@@ -408,13 +411,20 @@ namespace ZeroKWeb
 
         public class AttackOption
         {
-            public List<User> Attackers = new List<User>();
-            public List<User> Defenders = new List<User>();
-            public string Map;
-            public string Name;
-            public int? OwnerFactionID;
-            public int PlanetID;
-            public int TeamSize;
+            public List<string> Attackers { get; set; }
+            
+            public List<string> Defenders { get; set; }
+            public string Map { get; set; }
+            public string Name { get; set; }
+            public int? OwnerFactionID { get; set; }
+            public int PlanetID { get; set; }
+            public int TeamSize { get; set; }
+
+            public AttackOption()
+            {
+                Attackers = new List<string>();
+                Defenders = new List<string>();
+            }
 
             public PwMatchCommand.VoteOption ToVoteOption(PwMatchCommand.ModeType mode)
             {
