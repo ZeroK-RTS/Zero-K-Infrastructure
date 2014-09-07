@@ -173,11 +173,14 @@ namespace ZeroKWeb.Controllers
                 if (existingClans.Count() > 0) 
                 {
                     if(existingClans.Any(x=> !x.IsDeleted)) return Content("Clan with this shortcut or name already exists");
-                    Clan deadClan = existingClans.First();
-                    clan = deadClan;
-                    if (noFaction) clan.FactionID = null;
+                    if (created)
+                    {
+                        Clan deadClan = existingClans.First();
+                        clan = deadClan;
+                        if (noFaction) clan.FactionID = null;
+                    }
                 }
-                else db.Clans.InsertOnSubmit(clan);
+                else if (created) db.Clans.InsertOnSubmit(clan);
 
                 if (created && (image == null || image.ContentLength == 0)) return Content("A clan image is required");
                 if (image != null && image.ContentLength > 0)
