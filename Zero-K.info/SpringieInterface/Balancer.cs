@@ -434,14 +434,12 @@ namespace ZeroKWeb.SpringieInterface
 
                 foreach (string matchUser in info.Attackers)
                 {
-                    PlayerTeam player = context.Players.FirstOrDefault(x => x.Name == matchUser);
-                    if (player != null) res.Players.Add(new PlayerTeam { AllyID = 0, IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID , TeamID = player.TeamID});
+                    AddPwPlayer(context, matchUser, res, 0);
                 }
 
                 foreach (string matchUser in info.Defenders)
                 {
-                    PlayerTeam player = context.Players.FirstOrDefault(x => x.Name == matchUser);
-                    if (player != null) res.Players.Add(new PlayerTeam { AllyID = 1, IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID, TeamID = player.TeamID});
+                    AddPwPlayer(context, matchUser, res, 1);
                 }
                 
                 // bots game
@@ -457,6 +455,18 @@ namespace ZeroKWeb.SpringieInterface
                 
                 return res;
             }
+        }
+
+        static void AddPwPlayer(BattleContext context, string matchUser, BalanceTeamsResult res, int allyID)
+        {
+            PlayerTeam player = context.Players.FirstOrDefault(x => x.Name == matchUser);
+            if (player == null)
+            {
+                player = new PlayerTeam() { Name = matchUser };
+                User us;
+                if (Global.Nightwatch.Tas.GetExistingUser(matchUser, out us)) player.LobbyID = us.LobbyID;
+            }
+            res.Players.Add(new PlayerTeam { AllyID = allyID , IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID, TeamID = player.TeamID });
         }
 
         void RecursiveBalance(int itemIndex) {

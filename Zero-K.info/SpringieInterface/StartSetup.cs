@@ -45,6 +45,13 @@ namespace ZeroKWeb.SpringieInterface
             try {
                 AutohostMode mode = context.GetMode();
                 var ret = new SpringBattleStartSetup();
+
+                if (mode == AutohostMode.Planetwars)
+                {
+                    ret.BalanceTeamsResult = Balancer.BalanceTeams(context, true,null, null);
+                    context.Players = ret.BalanceTeamsResult.Players;
+                }
+                
                 var commanderTypes = new LuaTable();
                 var db = new ZkDataContext();
 
