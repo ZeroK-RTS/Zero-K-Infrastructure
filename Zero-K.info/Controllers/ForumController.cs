@@ -232,7 +232,7 @@ namespace ZeroKWeb.Controllers
 				{
                     if (forumPostID != null) {
                         var post = thread.ForumPosts.Single(x => x.ForumPostID == forumPostID);
-                        if (post.AuthorAccountID != Global.AccountID && !Global.Account.IsZeroKAdmin && !Global.IsLobbyAdministrator) throw new ApplicationException("Not authorized to edit the post");
+                        if (post.AuthorAccountID != Global.AccountID && !Global.Account.IsZeroKAdmin && !Global.Account.IsLobbyAdministrator) throw new ApplicationException("Not authorized to edit the post");
                         post.ForumPostEdits.Add(new ForumPostEdit() { 
                                 EditorAccountID = Global.AccountID,
                                 EditTime = DateTime.UtcNow,
