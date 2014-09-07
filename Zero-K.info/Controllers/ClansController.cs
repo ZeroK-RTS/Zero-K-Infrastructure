@@ -169,7 +169,7 @@ namespace ZeroKWeb.Controllers
 
                 // check if our name or shortcut conflicts with existing clans
                 // if so, allow us to create a new clan over it if it's a deleted clan, else block action
-                var existingClans = db.Clans.Where(x => (SqlMethods.Like(x.Shortcut, clan.Shortcut) || SqlMethods.Like(x.ClanName, clan.ClanName) && x.ClanID != clan.ClanID));
+                var existingClans = db.Clans.Where(x => ((SqlMethods.Like(x.Shortcut, clan.Shortcut) || SqlMethods.Like(x.ClanName, clan.ClanName)) && x.ClanID != clan.ClanID));
                 if (existingClans.Count() > 0) 
                 {
                     if(existingClans.Any(x=> !x.IsDeleted)) return Content("Clan with this shortcut or name already exists");
