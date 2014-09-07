@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Web.Mvc;
+using ZeroKWeb;
 using ZkData;
 
 [Flags]
@@ -24,7 +25,7 @@ public class AuthAttribute: AuthorizeAttribute
             var redirectOnSuccess = httpContext.Request.Url.PathAndQuery;
 
             //send them off to the login page
-            var helper = new UrlHelper(httpContext.Request.RequestContext);
+            var helper = Global.UrlHelper();
             var loginUrl = helper.Action("NotLoggedIn", "Home", new { ReturnUrl = redirectOnSuccess });
             filterContext.Result = new RedirectResult(loginUrl, false);
         }

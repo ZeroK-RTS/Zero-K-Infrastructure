@@ -7,6 +7,7 @@
         public const int ZkLobbyUserCpu = 6667;
         public const int ZkLobbyUserCpuLinux = 6668;
 	    public const string BaseImageUrl = "http://zero-k.info/img/";
+        public const string BaseSiteUrl = "http://zero-k.info/";
 		public const int CommanderProfileCount = 6;
         public const int NumCommanderLevels = 5;
 

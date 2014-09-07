@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Web;
 using System.Web.Mvc;
 using System.Globalization;
 using System.Linq;
+using System.Web.Routing;
 using CaTracker;
 using JetBrains.Annotations;
 using LobbyClient;
@@ -156,7 +158,7 @@ namespace ZeroKWeb
                 bool dontDuplicate = false; // set to true for args that have their own Event table in DB, e.g. accounts, factions, clans, planets
                 var arg = args[i];
                 if (arg == null) continue;
-                var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+                var url = Global.UrlHelper();
                 bool eventAlreadyExists = alreadyAddedEvents.Contains(arg);
 
                 if (arg is Account)
@@ -278,7 +280,7 @@ namespace ZeroKWeb
             for (var i = 0; i < args.Length; i++)
             {
                 var arg = args[i];
-                var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+                var url = Global.UrlHelper();
 
                 if (arg is Account)
                 {
@@ -303,6 +305,25 @@ namespace ZeroKWeb
 
             ev.Text = string.Format(format, args);
             return ev;
+        }
+
+        public static UrlHelper UrlHelper()
+        {
+            var httpContext = HttpContext.Current;
+
+            RequestContext requestContext;
+            if (httpContext == null)
+            {
+                var request = new HttpRequest("/", GlobalConst.BaseSiteUrl, "");
+                var response = new HttpResponse(new StringWriter());
+                httpContext = new HttpContext(request, response);
+                var httpContextBase = new HttpContextWrapper(httpContext);
+                var routeData = new RouteData();
+                requestContext = new RequestContext(httpContextBase, routeData);
+            }
+            else requestContext = httpContext.Request.RequestContext;
+
+            return new UrlHelper(requestContext);
         }
     }
 }

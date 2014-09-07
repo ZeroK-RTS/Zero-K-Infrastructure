@@ -143,7 +143,7 @@ namespace System.Web.Mvc
         }
 
         public static MvcHtmlString Print(this HtmlHelper helper, ForumThread thread) {
-            var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+            var url = Global.UrlHelper();
 
             ForumThreadLastRead lastRead = null;
             DateTime? lastTime = null;
@@ -176,7 +176,7 @@ namespace System.Web.Mvc
             if (account == null) return new MvcHtmlString("Nobody");
             else {
                 var clanStr = "";
-                var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+                var url = Global.UrlHelper();
                 if (account.Clan != null) {
                     clanStr = string.Format("<a href='{1}' nicetitle='$clan${2}'><img src='{0}' width='16'/></a>",
                                             account.Clan.GetImageUrl(),
@@ -215,7 +215,7 @@ namespace System.Web.Mvc
         }
 
         public static MvcHtmlString PrintBattle(this HtmlHelper helper, SpringBattle battle, bool? isVictory = null) {
-            var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+            var url = Global.UrlHelper();
             var icon = "";
             if (isVictory == true) icon = "battlewon.png";
             else if (isVictory == null) icon = "spec.png";
@@ -258,7 +258,7 @@ namespace System.Web.Mvc
 
 
         public static MvcHtmlString PrintClan(this HtmlHelper helper, Clan clan, bool colorize = true) {
-            var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+            var url = Global.UrlHelper();
             if (clan == null) return new MvcHtmlString(string.Format("<a href='{0}'>No Clan</a>", url.Action("Index", "Clans")));
             {
                 string color = Clan.ClanColor(clan, Global.ClanID);
@@ -313,7 +313,7 @@ namespace System.Web.Mvc
         }
 
         public static MvcHtmlString PrintFaction(this HtmlHelper helper, Faction fac, bool big = true) {
-            var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+            var url = Global.UrlHelper();
             if (fac != null) {
                 if (big) {
                     return
@@ -339,7 +339,7 @@ namespace System.Web.Mvc
 
 
         public static MvcHtmlString PrintFactionTreaty(this HtmlHelper helper, FactionTreaty treaty) {
-            var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+            var url = Global.UrlHelper();
             if (treaty != null) {
                 return
                     new MvcHtmlString(string.Format("<a href='{1}' nicetitle='$treaty${0}'>TR{0}</span></a>",
@@ -377,7 +377,7 @@ namespace System.Web.Mvc
         }
 
         public static MvcHtmlString PrintMap(this HtmlHelper helper, string name) {
-            var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+            var url = Global.UrlHelper();
             return new MvcHtmlString(string.Format("<a href='{0}' title='$map${1}'>{1}</a>", url.Action("DetailName", "Maps", new { name }), name));
         }
 
@@ -406,7 +406,7 @@ namespace System.Web.Mvc
 
         public static MvcHtmlString PrintPlanet(this HtmlHelper helper, Planet planet) {
             if (planet == null) return new MvcHtmlString("?");
-            var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+            var url = Global.UrlHelper();
             return
                 new MvcHtmlString(string.Format("<a href='{0}' title='$planet${4}' style='{5}'><img src='/img/planets/{1}' width='{2}'>{3}</a>",
                                                 url.Action("Planet", "Planetwars", new { id = planet.PlanetID }),
@@ -420,7 +420,7 @@ namespace System.Web.Mvc
         public static MvcHtmlString PrintCampaignPlanet(this HtmlHelper helper, CampaignPlanet planet) {
             if (planet == null) return new MvcHtmlString("?");
             var db = new ZkDataContext();
-            var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+            var url = Global.UrlHelper();
             string mapName = planet.DisplayedMap ?? planet.Mission.Map;
             Resource map = db.Resources.FirstOrDefault(m => m.InternalName == mapName);
             return
@@ -488,7 +488,7 @@ namespace System.Web.Mvc
         }
 
         public static MvcHtmlString PrintStructureState(this HtmlHelper helper, PlanetStructure s) {
-            var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+            var url = Global.UrlHelper();
             var state = "";
             if (!s.IsActive) {
                 if (s.ActivatedOnTurn == null) state = "<span style='color:red'>DISABLED</span>";
@@ -502,7 +502,7 @@ namespace System.Web.Mvc
         }
 
         public static MvcHtmlString PrintStructureType(this HtmlHelper helper, StructureType stype) {
-            var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+            var url = Global.UrlHelper();
             if (stype != null) return new MvcHtmlString(string.Format("<span nicetitle='$structuretype${0}'>{1}</span>", stype.StructureTypeID, stype.Name));
             else return new MvcHtmlString("");
         }
@@ -534,7 +534,7 @@ namespace System.Web.Mvc
         }
 
         public static MvcHtmlString PrintPostRating(this HtmlHelper helper, ForumPost post, bool blockPost) {
-            var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+            var url = Global.UrlHelper();
             bool noLink = (Global.Account == null || Global.AccountID == post.AuthorAccountID || Global.Account.Level < GlobalConst.MinLevelForForumVote || Global.Account.VotesAvailable <= 0 || blockPost);
             AccountForumVote previousVote = post.AccountForumVotes.SingleOrDefault(x => x.AccountID == Global.AccountID);
             bool upvoted = (previousVote != null && previousVote.Vote > 0);
