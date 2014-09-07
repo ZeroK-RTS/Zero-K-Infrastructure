@@ -102,7 +102,9 @@ namespace ZeroKWeb
 
                 Utils.StartAsync(() =>
                 {
-                    Thread.Sleep(8000);
+                    Thread.Sleep(7000);
+                    tas.Say(TasClient.SayPlace.User, targetHost, "!balance", false);
+                    Thread.Sleep(1000);
                     tas.Say(TasClient.SayPlace.User, targetHost, "!forcestart", false);
                 });
             }
