@@ -326,7 +326,7 @@ namespace ZeroKWeb
 
         void TasOnLoginAccepted(object sender, TasEventArgs tasEventArgs)
         {
-            ResetAttackOptions();
+            UpdateLobby();
         }
 
         /// <summary>
