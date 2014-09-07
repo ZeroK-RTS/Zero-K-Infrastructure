@@ -33,7 +33,7 @@ namespace ZeroKWeb
 
     protected void btnAdd_Click(object sender, EventArgs e)
     {
-			if (!Global.Account.IsZeroKAdmin) throw new ApplicationException("You are not an admin!");
+			if (!Global.Account.IsZeroKAdmin && !Global.Account.IsLobbyAdministrator) throw new ApplicationException("You are not an admin!");
 			var db = new ZkDataContext();
       var unlock = new Unlock()
                    {
