@@ -547,8 +547,8 @@ namespace ZeroKWeb.Controllers
                 var db = new ZkDataContext();
                 Planet planet = db.Planets.Single(p => p.PlanetID == planetID);
                 /*if ((Global.Account.AccountID != planet.OwnerAccountID) &&
-                    !(Global.Account.FactionID == planet.OwnerFactionID && Global.Account.HasFactionRight(x => x.RightEditTexts) || Global.Account.IsZeroKAdmin))*/
-                if (!Global.Account.IsZeroKAdmin)
+                    !(Global.Account.FactionID == planet.OwnerFactionID && Global.Account.HasFactionRight(x => x.RightEditTexts) || Global.Account.IsZeroKAdmin || Global.Account.IsLobbyAdministrator))*/
+                if (!Global.Account.IsZeroKAdmin && !Global.Account.IsLobbyAdministrator)
                     return Content("Unauthorized");
                 db.SubmitChanges();
                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} renamed planet {1} to {2}", Global.Account, planet, newName));
