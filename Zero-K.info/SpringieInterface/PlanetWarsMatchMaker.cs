@@ -49,17 +49,6 @@ namespace ZeroKWeb
             AttackOptions = new List<AttackOption>();
             RunningBattles = new Dictionary<string, AttackOption>();
 
-            this.tas = tas;
-            tas.PreviewSaid += TasOnPreviewSaid;
-            tas.LoginAccepted += TasOnLoginAccepted;
-            tas.UserRemoved += TasOnUserRemoved;
-            tas.ChannelUserAdded += TasOnChannelUserAdded;
-
-            timer = new Timer(10000);
-            timer.AutoReset = true;
-            timer.Elapsed += TimerOnElapsed;
-            timer.Start();
-
             var db = new ZkDataContext();
             pwHostName = db.AutohostConfigs.First(x => x.AutohostMode == AutohostMode.Planetwars).Login.TrimNumbers();
 
@@ -82,6 +71,17 @@ namespace ZeroKWeb
                 AttackerSideCounter = gal.AttackerSideCounter;
                 AttackerSideChangeTime = gal.AttackerSideChangeTime ?? DateTime.UtcNow;
             }
+
+            this.tas = tas;
+            tas.PreviewSaid += TasOnPreviewSaid;
+            tas.UserRemoved += TasOnUserRemoved;
+            tas.ChannelUserAdded += TasOnChannelUserAdded;
+            tas.LoginAccepted += TasOnLoginAccepted;
+
+            timer = new Timer(10000);
+            timer.AutoReset = true;
+            timer.Elapsed += TimerOnElapsed;
+            timer.Start();
         }
 
         public void AcceptChallenge()
@@ -326,7 +326,14 @@ namespace ZeroKWeb
 
         void TasOnLoginAccepted(object sender, TasEventArgs tasEventArgs)
         {
-            UpdateLobby();
+            try
+            {
+                UpdateLobby();
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.ToString());
+            }
         }
 
         /// <summary>
