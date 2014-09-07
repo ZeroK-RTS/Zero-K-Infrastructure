@@ -261,6 +261,8 @@ namespace ZeroKWeb
 
             SaveStateToDb();
             UpdateLobby();
+
+            tas.Say(TasClient.SayPlace.Channel, AttackingFaction.Shortcut, "It's your turn! Select a planet to attack", true);
         }
 
         void SaveStateToDb()
@@ -280,6 +282,11 @@ namespace ZeroKWeb
             challengeTime = DateTime.UtcNow;
             attackOptions.Clear();
             UpdateLobby();
+
+            foreach (var def in GetDefendingFactions(challenge))
+            {
+                tas.Say(TasClient.SayPlace.Channel, def.Shortcut, "Join defense of your planet now, before it falls", true);
+            }
         }
 
 
