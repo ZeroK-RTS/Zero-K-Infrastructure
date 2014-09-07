@@ -55,7 +55,7 @@ namespace ZeroKLobby.Notifications
                                 Program.Downloader.GetResource(DownloadType.MAP, opt.Map);
 
                                 var but = new Button { Text = string.Format("{0} [{1}/{2}]", opt.PlanetName, opt.Count, opt.Needed), AutoSize = true };
-                                if (pw.AttackerFaction == tas.MyUser.Faction)
+                                if (pw.AttackerFaction == tas.MyUser.Faction || tas.MyUser.Faction == null) // NOTE this is for cases where nightwatch self faction info is delayed
                                 {
                                     PwMatchCommand.VoteOption opt1 = opt;
                                     but.Click += (s2, ev) =>
@@ -85,7 +85,7 @@ namespace ZeroKLobby.Notifications
                             foreach (Button c in pnl.Controls.OfType<Button>().ToList()) pnl.Controls.Remove(c);
 
                             var but = new Button { Text = string.Format("{0} [{1}/{2}]", opt.PlanetName, opt.Count, opt.Needed), AutoSize = true };
-                            if (pw.DefenderFactions.Contains(tas.MyUser.Faction))
+                            if (pw.DefenderFactions.Contains(tas.MyUser.Faction) || tas.MyUser.Faction == null)// NOTE this is for cases where nightwatch self faction info is delayed
                             {
                                 PwMatchCommand.VoteOption opt1 = opt;
                                 but.Click += (s2, ev) =>
