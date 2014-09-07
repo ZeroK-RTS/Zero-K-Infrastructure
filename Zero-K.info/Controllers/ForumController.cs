@@ -109,7 +109,7 @@ namespace ZeroKWeb.Controllers
 			res.CurrentCategory = category;
             if (forumPostID != null) {
                 ForumPost post = db.ForumPosts.Single(x=>x.ForumPostID == forumPostID);
-                if (!Global.IsZeroKAdmin && !Global.IsLobbyAdministrator && Global.AccountID != post.AuthorAccountID)
+                if (!Global.IsZeroKAdmin && !Global.IsLobbyAdmin && Global.AccountID != post.AuthorAccountID)
                 {
                     return Content("You cannot edit this post");
                 }
