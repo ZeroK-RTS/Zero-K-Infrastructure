@@ -43,7 +43,7 @@
 }
 
 
-@if (Global.Account != null && (false && (Model.OwnerAccountID == Global.AccountID || (Global.Account.FactionID == Model.OwnerFactionID && Global.Account.HasFactionRight(x => x.RightEditTexts))) || Global.Account.IsZeroKAdmin ))
+@if (Global.Account != null && (false && (Model.OwnerAccountID == Global.AccountID || (Global.Account.FactionID == Model.OwnerFactionID && Global.Account.HasFactionRight(x => x.RightEditTexts))) || (Global.Account.IsZeroKAdmin || Global.Account.IsLobbyAdministrator) ))
 {
 	<form method="post" action="@Url.Action("SubmitRenamePlanet")">
 	<input type="hidden" name="planetID" value="@Model.PlanetID"/>
