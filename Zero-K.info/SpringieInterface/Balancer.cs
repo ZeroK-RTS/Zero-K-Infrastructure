@@ -432,24 +432,23 @@ namespace ZeroKWeb.SpringieInterface
                     return res;
                 } 
 
-                int teamID = 0;
                 foreach (User matchUser in info.Attackers)
                 {
                     PlayerTeam player = context.Players.FirstOrDefault(x => x.Name == matchUser.Name);
-                    if (player != null) res.Players.Add(new PlayerTeam { AllyID = 0, IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID , TeamID = teamID++});
+                    if (player != null) res.Players.Add(new PlayerTeam { AllyID = 0, IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID , TeamID = player.TeamID});
                 }
 
                 foreach (User matchUser in info.Defenders)
                 {
                     PlayerTeam player = context.Players.FirstOrDefault(x => x.Name == matchUser.Name);
-                    if (player != null) res.Players.Add(new PlayerTeam { AllyID = 1, IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID, TeamID = teamID++});
+                    if (player != null) res.Players.Add(new PlayerTeam { AllyID = 1, IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID, TeamID = player.TeamID});
                 }
                 
                 // bots game
                 int cnt = 0;
                 if (planet.PlanetStructures.Any(x => !string.IsNullOrEmpty(x.StructureType.EffectBots)))
                 {
-                    foreach (var b in planet.PlanetStructures.Select(x => x.StructureType).Where(x => !string.IsNullOrEmpty(x.EffectBots))) res.Bots.Add(new BotTeam { AllyID = 2, BotAI = b.EffectBots, TeamID = teamID++, BotName = "Aliens" + cnt++ });
+                    foreach (var b in planet.PlanetStructures.Select(x => x.StructureType).Where(x => !string.IsNullOrEmpty(x.EffectBots))) res.Bots.Add(new BotTeam { AllyID = 2, BotAI = b.EffectBots, BotName = "Aliens" + cnt++ });
 
                     res.Message += string.Format("This planet is infested by aliens, fight for your survival");
                     return res;

@@ -200,7 +200,7 @@ public static class PlanetWarsTurnHandler {
         try
         {
             string metalStringWinner = String.Format("Winners gained {0} metal{1}. ", winnerMetal, wasCcDestroyed ? String.Format(" ({0:F0}% because CC was destroyed)", GlobalConst.CcDestroyedMetalMultWinners*100) : "");
-            string metalStringLoser = String.Format("Winners gained {0} metal{1}. ", loserMetal, wasCcDestroyed ? String.Format(" ({0:F0}% because CC was destroyed)", GlobalConst.CcDestroyedMetalMultLosers * 100) : "");
+            string metalStringLoser = String.Format("Losers gained {0} metal{1}. ", loserMetal, wasCcDestroyed ? String.Format(" ({0:F0}% because CC was destroyed)", GlobalConst.CcDestroyedMetalMultLosers * 100) : "");
             var mainEvent = Global.CreateEvent("{0} attacked {1} with {2} dropships in {3} and {4}{5}{6}{7}",
                 attacker,
                 planet,
