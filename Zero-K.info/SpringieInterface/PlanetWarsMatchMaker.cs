@@ -56,7 +56,17 @@ namespace ZeroKWeb
             factions = db.Factions.Where(x => !x.IsDeleted).ToList();
             
             PlanetWarsMatchMaker dbState = null;
-            if (gal.MatchMakerState != null) dbState = JsonConvert.DeserializeObject<PlanetWarsMatchMaker>(gal.MatchMakerState);
+            if (gal.MatchMakerState != null)
+            {
+                try
+                {
+                    dbState = JsonConvert.DeserializeObject<PlanetWarsMatchMaker>(gal.MatchMakerState);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError(ex.ToString());
+                }
+            }
             if (dbState != null)
             {
                 AttackerSideCounter = dbState.AttackerSideCounter;
