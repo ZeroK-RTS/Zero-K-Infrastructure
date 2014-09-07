@@ -262,7 +262,7 @@ namespace ZeroKWeb
                 var gal = db.Galaxies.First(x => x.IsDefault);
                 int cnt = 3;
                 var attacker = db.Factions.Single(x => x.FactionID == AttackingFaction.FactionID);
-                var planets = gal.Planets.Where(x => x.OwnerFactionID != AttackingFaction.FactionID).OrderByDescending(x=>x.PlanetFactions.Where(y=>y.FactionID == AttackingFaction.FactionID).Sum(y=>y.Dropships)).ThenBy(x => x.PlanetFactions.Where(y => y.FactionID == AttackingFaction.FactionID).Select(y => y.Influence).FirstOrDefault());
+                var planets = gal.Planets.Where(x => x.OwnerFactionID != AttackingFaction.FactionID).OrderByDescending(x=>x.PlanetFactions.Where(y=>y.FactionID == AttackingFaction.FactionID).Sum(y=>y.Dropships)).ThenBy(x => x.PlanetFactions.Where(y => y.FactionID == AttackingFaction.FactionID).Sum(y => y.Influence));
                 // list of planets by attacker's influence
 
                 foreach (var p in planets)

@@ -10,5 +10,6 @@ namespace LobbyClient
             this.owner = owner;
             this.aiLib = aiLib;
         }
+
     } ;
 }

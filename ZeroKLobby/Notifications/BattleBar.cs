@@ -99,8 +99,6 @@ namespace ZeroKLobby.Notifications
                     var battle = client.MyBattle;
                     lastBattleFounder = battle.Founder.Name;
                     
-                    if (battle.Founder.Name.StartsWith("PlanetWars")) ChangeDesiredSpectatorState(false); // TODO pw unpsec hack, remove later
-
                     Program.SpringScanner.MetaData.GetModAsync(battle.ModName,
                                                                (mod) =>
                                                                    {

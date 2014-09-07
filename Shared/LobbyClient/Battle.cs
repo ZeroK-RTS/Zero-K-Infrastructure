@@ -197,120 +197,46 @@ namespace LobbyClient
                     var positions = map.Positions != null ? map.Positions.ToList() : new List<StartPos>();
                     if (Details.StartPos == BattleStartPos.Random) positions = positions.Shuffle();
 
-                    if (mod != null && mod.IsMission)
+                    List<UserBattleStatus> users;
+                    List<BotBattleStatus> bots;
+                    
+                    if (startSetup != null && startSetup.BalanceTeamsResult != null && startSetup.BalanceTeamsResult.Players != null)
                     {
-                        var aiNum = 0;
-                        var declaredTeams = new HashSet<int>();
-                        var orderedUsers = Users.OrderBy(x => x.TeamNumber).ToList();
-                        for (var i = 0; i < orderedUsers.Count; i++)
+                        // if there is a balance results as a part of start setup, use values from this (override lobby state)
+                        users = new List<UserBattleStatus>(this.Users.Select(x=>x.Clone()));
+                        bots = new List<BotBattleStatus>(this.Bots.Select(x => (BotBattleStatus)x.Clone()));
+                        foreach (var p in startSetup.BalanceTeamsResult.Players)
                         {
-                            var u = orderedUsers[i];
-                            ScriptAddUser(script, i, playersExport, startSetup, u.TeamNumber, u);
-                            if (!u.IsSpectator && !declaredTeams.Contains(u.TeamNumber))
-                            {
-                                ScriptAddTeam(script, u.TeamNumber, positions, i, u);
-                                declaredTeams.Add(u.TeamNumber);
+                            var us = users.FirstOrDefault(x => x.Name == p.Name);
+                            if (us == null) {
+                                us = new UserBattleStatus(p.Name, null, Password);
+                                users.Add(us);
                             }
-                        }
+                            us.TeamNumber = p.TeamID;
+                            us.IsSpectator = p.IsSpectator;
+                            us.AllyNumber = p.AllyID;
 
-                        for (var i = 0; i < orderedUsers.Count; i++)
+                        }
+                        foreach (var p in startSetup.BalanceTeamsResult.Bots)
                         {
-                            var u = orderedUsers[i];
-                            foreach (var b in Bots.Where(x => x.owner == u.Name))
+                            var bot = bots.FirstOrDefault(x => x.Name == p.BotName);
+                            if (bot == null)
                             {
-                                ScriptAddBot(script, aiNum++, b.TeamNumber, i, b);
-                                if (!declaredTeams.Contains(b.TeamNumber))
-                                {
-                                    ScriptAddTeam(script, b.TeamNumber, positions, i, b);
-                                    declaredTeams.Add(b.TeamNumber);
-                                }
+                                bot = new BotBattleStatus(p.BotName, p.Owner, p.BotAI);
+                                bots.Add(bot);
                             }
+                            bot.AllyNumber = bot.AllyNumber;
+                            bot.TeamNumber = bot.TeamNumber;
                         }
                     }
                     else
                     {
-                        var userNum = 0;
-                        var teamNum = 0;
-                        var aiNum = 0;
-                        foreach (var u in Users.OrderBy(x => x.TeamNumber).Where(x=>x.Name!=localUser.Name))
-                        {
-                            ScriptAddUser(script, userNum, playersExport, startSetup, teamNum, u);
-
-                            if (!u.IsSpectator)
-                            {
-                                ScriptAddTeam(script, teamNum, positions, userNum, u);
-                                teamNum++;
-                            }
-
-                            foreach (var b in Bots.Where(x => x.owner == u.Name))
-                            {
-                                ScriptAddBot(script, aiNum, teamNum, userNum, b);
-                                aiNum++;
-                                ScriptAddTeam(script, teamNum, positions, userNum, b);
-                                teamNum++;
-                            }
-                            userNum++;
-                        }
+                        users = this.Users;
+                        bots = this.Bots;
                     }
 
-                    // ALLIANCES
-                    script.AppendLine();
-                    foreach (var allyNumber in
-                        Users.Where(x => !x.IsSpectator).Select(x => x.AllyNumber).Union(Bots.Select(x => x.AllyNumber)).Union(Rectangles.Keys).
-                            Distinct())
-                    {
-                        // get allies from each player, bot and rectangles (for koth)
-                        script.AppendFormat("[ALLYTEAM{0}]\n", allyNumber);
-                        script.AppendLine("{");
-                        script.AppendFormat("     NumAllies={0};\n", 0);
-                        double left = 0, top = 0, right = 1, bottom = 1;
-                        BattleRect rect;
-                        if (Rectangles.TryGetValue(allyNumber, out rect)) rect.ToFractions(out left, out top, out right, out bottom);
-                        script.AppendFormat("     StartRectLeft={0};\n", left);
-                        script.AppendFormat("     StartRectTop={0};\n", top);
-                        script.AppendFormat("     StartRectRight={0};\n", right);
-                        script.AppendFormat("     StartRectBottom={0};\n", bottom);
-                        script.AppendLine("}");
-                    }
-
-                    script.AppendLine();
-                    script.AppendFormat("  NumRestrictions={0};\n", DisabledUnits.Count);
-                    script.AppendLine();
-
-                    if (!mod.IsMission)
-                    {
-                        script.AppendLine("  [RESTRICT]");
-                        script.AppendLine("  {");
-                        for (var i = 0; i < DisabledUnits.Count; ++i)
-                        {
-                            script.AppendFormat("    Unit{0}={1};\n", i, DisabledUnits[i]);
-                            script.AppendFormat("    Limit{0}=0;\n", i);
-                        }
-                        script.AppendLine("  }");
-
-                        script.AppendLine("  [MODOPTIONS]");
-                        script.AppendLine("  {");
-
-                        var options = new Dictionary<string, string>();
-
-                        // put standard modoptions to options dictionary
-                        foreach (var o in mod.Options.Where(x => x.Type != OptionType.Section))
-                        {
-                            var v = o.Default;
-                            if (ModOptions.ContainsKey(o.Key)) v = ModOptions[o.Key];
-                            options[o.Key] = v;
-                        }
-
-                        // replace/add custom modoptions from startsetup (if they exist)
-                        if (startSetup != null && startSetup.ModOptions != null) foreach (var entry in startSetup.ModOptions) options[entry.Key] = entry.Value;
-
-                        // write final options to script
-                        foreach (var kvp in options) script.AppendFormat("    {0}={1};\n", kvp.Key, kvp.Value);
-
-                        script.AppendLine("  }");
-                    }
-
-                    script.AppendLine("}");
+                    
+                    GeneratePlayerSection(playersExport, localUser, startSetup, users, script, positions, bots);
 
                     return script.ToString();
                 }
@@ -320,6 +246,131 @@ namespace LobbyClient
             {
                 Thread.CurrentThread.CurrentCulture = previousCulture;
             }
+        }
+
+        void GeneratePlayerSection(List<UserBattleStatus> playersExport,
+            User localUser,
+            SpringBattleStartSetup startSetup,
+            List<UserBattleStatus> users,
+            StringBuilder script,
+            List<StartPos> positions,
+            List<BotBattleStatus> bots)
+        {
+            if (mod != null && mod.IsMission) // mission stuff
+            {
+                var aiNum = 0;
+                var declaredTeams = new HashSet<int>();
+                var orderedUsers = users.OrderBy(x => x.TeamNumber).ToList();
+                for (var i = 0; i < orderedUsers.Count; i++)
+                {
+                    var u = orderedUsers[i];
+                    ScriptAddUser(script, i, playersExport, startSetup, u.TeamNumber, u);
+                    if (!u.IsSpectator && !declaredTeams.Contains(u.TeamNumber))
+                    {
+                        ScriptAddTeam(script, u.TeamNumber, positions, i, u);
+                        declaredTeams.Add(u.TeamNumber);
+                    }
+                }
+
+                for (var i = 0; i < orderedUsers.Count; i++)
+                {
+                    var u = orderedUsers[i];
+                    foreach (var b in bots.Where(x => x.owner == u.Name))
+                    {
+                        ScriptAddBot(script, aiNum++, b.TeamNumber, i, b);
+                        if (!declaredTeams.Contains(b.TeamNumber))
+                        {
+                            ScriptAddTeam(script, b.TeamNumber, positions, i, b);
+                            declaredTeams.Add(b.TeamNumber);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // ordinary battle stuff
+
+                var userNum = 0;
+                var teamNum = 0;
+                var aiNum = 0;
+                foreach (var u in users.OrderBy(x => x.TeamNumber).Where(x => x.Name != localUser.Name))
+                {
+                    ScriptAddUser(script, userNum, playersExport, startSetup, teamNum, u);
+
+                    if (!u.IsSpectator)
+                    {
+                        ScriptAddTeam(script, teamNum, positions, userNum, u);
+                        teamNum++;
+                    }
+
+                    foreach (var b in bots.Where(x => x.owner == u.Name))
+                    {
+                        ScriptAddBot(script, aiNum, teamNum, userNum, b);
+                        aiNum++;
+                        ScriptAddTeam(script, teamNum, positions, userNum, b);
+                        teamNum++;
+                    }
+                    userNum++;
+                }
+            }
+
+            // ALLIANCES
+            script.AppendLine();
+            foreach (var allyNumber in
+                users.Where(x => !x.IsSpectator).Select(x => x.AllyNumber).Union(bots.Select(x => x.AllyNumber)).Union(Rectangles.Keys).Distinct())
+            {
+                // get allies from each player, bot and rectangles (for koth)
+                script.AppendFormat("[ALLYTEAM{0}]\n", allyNumber);
+                script.AppendLine("{");
+                script.AppendFormat("     NumAllies={0};\n", 0);
+                double left = 0, top = 0, right = 1, bottom = 1;
+                BattleRect rect;
+                if (Rectangles.TryGetValue(allyNumber, out rect)) rect.ToFractions(out left, out top, out right, out bottom);
+                script.AppendFormat("     StartRectLeft={0};\n", left);
+                script.AppendFormat("     StartRectTop={0};\n", top);
+                script.AppendFormat("     StartRectRight={0};\n", right);
+                script.AppendFormat("     StartRectBottom={0};\n", bottom);
+                script.AppendLine("}");
+            }
+
+            script.AppendLine();
+            script.AppendFormat("  NumRestrictions={0};\n", DisabledUnits.Count);
+            script.AppendLine();
+
+            if (!mod.IsMission)
+            {
+                script.AppendLine("  [RESTRICT]");
+                script.AppendLine("  {");
+                for (var i = 0; i < DisabledUnits.Count; ++i)
+                {
+                    script.AppendFormat("    Unit{0}={1};\n", i, DisabledUnits[i]);
+                    script.AppendFormat("    Limit{0}=0;\n", i);
+                }
+                script.AppendLine("  }");
+
+                script.AppendLine("  [MODOPTIONS]");
+                script.AppendLine("  {");
+
+                var options = new Dictionary<string, string>();
+
+                // put standard modoptions to options dictionary
+                foreach (var o in mod.Options.Where(x => x.Type != OptionType.Section))
+                {
+                    var v = o.Default;
+                    if (ModOptions.ContainsKey(o.Key)) v = ModOptions[o.Key];
+                    options[o.Key] = v;
+                }
+
+                // replace/add custom modoptions from startsetup (if they exist)
+                if (startSetup != null && startSetup.ModOptions != null) foreach (var entry in startSetup.ModOptions) options[entry.Key] = entry.Value;
+
+                // write final options to script
+                foreach (var kvp in options) script.AppendFormat("    {0}={1};\n", kvp.Key, kvp.Value);
+
+                script.AppendLine("  }");
+            }
+
+            script.AppendLine("}");
         }
 
 
@@ -430,10 +481,14 @@ namespace LobbyClient
             script.AppendFormat("     Spectator={0};\n", status.IsSpectator ? 1 : 0);
             if (!status.IsSpectator) script.AppendFormat("     team={0};\n", teamNum);
 
-            script.AppendFormat("     Rank={0};\n", status.LobbyUser.Rank);
-            script.AppendFormat("     CountryCode={0};\n", status.LobbyUser.Country);
-            script.AppendFormat("     LobbyID={0};\n", status.LobbyUser.LobbyID);
-            script.AppendFormat("     LobbyRank={0};\n", status.LobbyUser.Rank);
+            if (status.LobbyUser != null)
+            {
+
+                script.AppendFormat("     Rank={0};\n", status.LobbyUser.Rank);
+                script.AppendFormat("     CountryCode={0};\n", status.LobbyUser.Country);
+                script.AppendFormat("     LobbyID={0};\n", status.LobbyUser.LobbyID);
+                script.AppendFormat("     LobbyRank={0};\n", status.LobbyUser.Rank);
+            }
             if (status.ScriptPassword != null) script.AppendFormat("     Password={0};\n", status.ScriptPassword);
 
             if (startSetup != null)
