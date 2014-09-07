@@ -36,11 +36,11 @@
                                 }
                             </small>
 							<br />
-                            @if (Global.IsZeroKAdmin || Global.AccountID == p.AuthorAccountID)
+                            @if (Global.IsZeroKAdmin || Global.IsLobbyAdministrator || Global.AccountID == p.AuthorAccountID)
                             {
                                 <a nicetitle='Edit the post' href='@Url.Action("NewPost", "Forum", new { threadID = p.ForumThreadID, forumPostID = p.ForumPostID })'><img src="/img/edit_pencil.png" height="22"/></a>
                             }
-                            @if (Global.IsZeroKAdmin)
+                            @if (Global.IsZeroKAdmin || Global.IsLobbyAdministrator)
                             {
                                 <a nicetitle='Delete the post' href='@Url.Action("DeletePost", "Forum", new { postID = p.ForumPostID })' class='delete'><img src="/img/delete_trashcan.png" height="22"/></a>
                             }
