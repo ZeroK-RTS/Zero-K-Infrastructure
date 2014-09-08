@@ -289,11 +289,17 @@ namespace LobbyClient
                     if (isHosting && GlobalConst.IsZkMod(client.MyBattle.ModName)) {
                         try {
                             StartContext = client.MyBattle.GetContext();
+                            startSetup = service.GetSpringBattleStartSetup(StartContext);
+                            if (startSetup.BalanceTeamsResult != null)
+                            {
+                                StartContext.Players = startSetup.BalanceTeamsResult.Players;
+                                StartContext.Bots = startSetup.BalanceTeamsResult.Bots;
+                            }
                             connectedPlayers.Clear();
-                            foreach (var p in StartContext.Players) {
+                            foreach (var p in StartContext.Players)
+                            {
                                 p.IsIngame = true;
                             }
-                            startSetup = service.GetSpringBattleStartSetup(StartContext);
                         } catch (Exception ex) {
                             Trace.TraceError("Error getting start setup: {0}", ex);
                         }

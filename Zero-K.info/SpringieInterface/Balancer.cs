@@ -416,13 +416,12 @@ namespace ZeroKWeb.SpringieInterface
 
         BalanceTeamsResult PlanetwarsBalance(BattleContext context) {
             var res = new BalanceTeamsResult();
-            context.Players = context.Players.Where(x => !x.IsSpectator).ToList();
             res.CanStart = true;
             res.DeleteBots = true;
 
             using (var db = new ZkDataContext()) {
                 res.Message = "";
-                var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == context.Map);
+                var planet = db.Galaxies.Single(x => x.IsDefault).Planets.First(x => x.Resource.InternalName == context.Map);
 
                 var info = Global.PlanetWarsMatchMaker.GetBattleInfo(context.AutohostName);
                 if (info == null)
@@ -440,6 +439,18 @@ namespace ZeroKWeb.SpringieInterface
                 foreach (string matchUser in info.Defenders)
                 {
                     AddPwPlayer(context, matchUser, res, 1);
+                }
+
+                foreach (var p in context.Players.Where(x => !res.Players.Any(y => y.Name == x.Name)))
+                {
+                    p.IsSpectator = true;
+                    res.Players.Add(p);
+                }
+
+                var teamNum = 1;
+                foreach (var p in res.Players)
+                {
+                    p.TeamID = teamNum++; // normalize teams
                 }
                 
                 // bots game

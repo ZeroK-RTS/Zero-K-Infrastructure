@@ -182,7 +182,9 @@ namespace LobbyClient
                     }
 
                     script.AppendFormat("  GameType={0};\n", ModName);
-                    if (ModHash.HasValue) script.AppendFormat("  ModHash={0};\n", ModHash.Value != 0 ? (uint)ModHash.Value : 1); // hack dont set to 1 when dedi srever is patched
+                    if (ModHash.HasValue)
+                        script.AppendFormat("  ModHash={0};\n", ModHash.Value != 0 ? (uint)ModHash.Value : 1);
+                            // hack dont set to 1 when dedi srever is patched
                     if (MapHash.HasValue) script.AppendFormat("  MapHash={0};\n", MapHash.Value != 0 ? (uint)MapHash.Value : 1);
                     script.AppendFormat("  AutohostPort={0};\n", loopbackListenPort);
                     script.AppendLine();
@@ -199,16 +201,17 @@ namespace LobbyClient
 
                     List<UserBattleStatus> users;
                     List<BotBattleStatus> bots;
-                    
+
                     if (startSetup != null && startSetup.BalanceTeamsResult != null && startSetup.BalanceTeamsResult.Players != null)
                     {
                         // if there is a balance results as a part of start setup, use values from this (override lobby state)
-                        users = new List<UserBattleStatus>(this.Users.Select(x=>x.Clone()));
+                        users = new List<UserBattleStatus>(this.Users.Select(x => x.Clone()));
                         bots = new List<BotBattleStatus>(this.Bots.Select(x => (BotBattleStatus)x.Clone()));
                         foreach (var p in startSetup.BalanceTeamsResult.Players)
                         {
                             var us = users.FirstOrDefault(x => x.Name == p.Name);
-                            if (us == null) {
+                            if (us == null)
+                            {
                                 us = new UserBattleStatus(p.Name, null, Password);
                                 users.Add(us);
                             }
@@ -235,13 +238,12 @@ namespace LobbyClient
                         bots = this.Bots;
                     }
 
-                    
+
                     GeneratePlayerSection(playersExport, localUser, startSetup, users, script, positions, bots);
 
                     return script.ToString();
                 }
             }
-
             finally
             {
                 Thread.CurrentThread.CurrentCulture = previousCulture;
@@ -483,7 +485,6 @@ namespace LobbyClient
 
             if (status.LobbyUser != null)
             {
-
                 script.AppendFormat("     Rank={0};\n", status.LobbyUser.Rank);
                 script.AppendFormat("     CountryCode={0};\n", status.LobbyUser.Country);
                 script.AppendFormat("     LobbyID={0};\n", status.LobbyUser.LobbyID);

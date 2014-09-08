@@ -132,6 +132,8 @@ namespace ZeroKLobby.Notifications
             this.container = container;
             container.btnDetail.Enabled = false;
             container.btnDetail.Text = "PlanetWars";
+            container.btnStop.Enabled = false;
+            container.btnStop.Visible = false;
             //container.btnDetail.Visible = false;
         }
 
