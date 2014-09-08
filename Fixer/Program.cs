@@ -212,11 +212,9 @@ namespace Fixer
             int num = 0;
             foreach (var p in planets)
             {
-                if (num < cnt*0.25)
-                {
-                    p.TeamSize = 1;
-                } else if (num < cnt*0.70) p.TeamSize = 2;
-                else if (num < cnt*0.90) p.TeamSize = 3;
+                if (num < cnt*0.15) p.TeamSize = 1;
+                else if (num < cnt*0.70) p.TeamSize = 2;
+                else if (num < cnt*0.85) p.TeamSize = 3;
                 else p.TeamSize = 4;
                 num++;
             }
