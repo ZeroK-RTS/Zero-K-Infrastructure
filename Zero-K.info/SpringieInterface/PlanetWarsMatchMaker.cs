@@ -101,14 +101,13 @@ namespace ZeroKWeb
 
         public void AcceptChallenge()
         {
-            string targetHost;
             Battle emptyHost =
                 tas.ExistingBattles.Values.FirstOrDefault(
                     x => !x.IsInGame && x.Founder.Name.TrimNumbers() == pwHostName && x.Users.All(y => y.IsSpectator || y.Name == x.Founder.Name));
 
             if (emptyHost != null)
             {
-                targetHost = emptyHost.Founder.Name;
+                var targetHost = emptyHost.Founder.Name;
                 RunningBattles[targetHost] = Challenge;
                 tas.Say(TasClient.SayPlace.User, targetHost, "!map " + Challenge.Map, false);
                 Thread.Sleep(500);
@@ -122,6 +121,13 @@ namespace ZeroKWeb
                     Thread.Sleep(1000);
                     tas.Say(TasClient.SayPlace.User, targetHost, "!forcestart", false);
                 });
+            }
+            else
+            {
+                foreach (var c in factions)
+                {
+                    tas.Say(TasClient.SayPlace.Channel, c.Shortcut, "Battle could not start - no autohost found", true);
+                }
             }
 
             AttackerSideCounter++;
