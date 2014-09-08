@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaDownloader;
@@ -9,7 +10,7 @@ namespace ZeroKLobby.Notifications
     public partial class PwBar: UserControl, INotifyBar
     {
         NotifyBarContainer container;
-        int deadline;
+        DateTime deadline;
         readonly Label headerLabel = new Label();
         readonly TasClient tas;
         Timer timer;
@@ -27,8 +28,7 @@ namespace ZeroKLobby.Notifications
             timer.Interval = 1000;
             timer.Tick += (sender, args) =>
             {
-                deadline--;
-                if (Program.NotifySection.Contains(this)) timerLabel.Text = PlasmaShared.Utils.PrintTimeRemaining(deadline);
+                if (Program.NotifySection.Contains(this)) timerLabel.Text = PlasmaShared.Utils.PrintTimeRemaining((int)DateTime.Now.Subtract(deadline).TotalSeconds);
             };
             timer.Start();
 
@@ -55,7 +55,7 @@ namespace ZeroKLobby.Notifications
                 if (pw.Mode == PwMatchCommand.ModeType.Clear) Program.NotifySection.RemoveBar(this);
                 else
                 {
-                    deadline = pw.DeadlineSeconds;
+                    deadline = DateTime.Now.AddSeconds(pw.DeadlineSeconds);
                     timerLabel.Text = PlasmaShared.Utils.PrintTimeRemaining(pw.DeadlineSeconds);
 
                     if (pw.Mode == PwMatchCommand.ModeType.Attack)
