@@ -338,15 +338,6 @@ namespace ZeroKWeb
             ChallengeTime = DateTime.UtcNow;
             AttackOptions.Clear();
             UpdateLobby();
-
-            foreach (var def in GetDefendingFactions(Challenge))
-            {
-                tas.Say(TasClient.SayPlace.Channel, def.Shortcut, "Join defense of your planet now, before it falls", true);
-                foreach (var u in tas.JoinedChannels[def.Shortcut].ChannelUsers)
-                {
-                    Global.Nightwatch.Tas.Ring(u);
-                }
-            }
         }
 
 
