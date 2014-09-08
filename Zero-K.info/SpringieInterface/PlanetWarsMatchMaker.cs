@@ -263,7 +263,7 @@ namespace ZeroKWeb
             text.AppendFormat("{0} won because nobody tried to defend", AttackingFaction.Name);
             try
             {
-                PlanetWarsTurnHandler.EndTurn(option.Map, null, db, 0, db.Accounts.Where(x => playerIds.Contains(x.Name)).ToList(), text, null);
+                PlanetWarsTurnHandler.EndTurn(option.Map, null, db, 0, db.Accounts.Where(x => playerIds.Contains(x.Name)).ToList(), text, null, db.Accounts.Where(x => option.Attackers.Contains(x.Name)).ToList());
             }
             catch (Exception ex)
             {

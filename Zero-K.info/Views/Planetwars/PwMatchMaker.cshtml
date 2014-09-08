@@ -1,0 +1,31 @@
+﻿@using IceInternal
+@using LobbyClient
+@using ZeroKWeb
+@model LobbyClient.PwMatchCommand
+@{
+    var pw = Model;
+    string text = "";
+    if (pw.Mode == PwMatchCommand.ModeType.Attack)
+    {
+        text = string.Format("{0} picks a planet to attack", pw.AttackerFaction);
+    }
+    else
+    {
+        PwMatchCommand.VoteOption opt = pw.Options.First();
+        text = string.Format("{0} attacks planet {2}, {1} defends",
+            pw.AttackerFaction,
+            string.Join(",", pw.DefenderFactions),
+            opt.PlanetName);        
+    }
+    
+    var canClick = pw.Mode == PwMatchCommand.ModeType.Attack && pw.AttackerFaction == Global.Account.Faction.Shortcut;
+}
+
+<div>
+    <span id="pwTimer">
+        @PlasmaShared.Utils.PrintTimeRemaining(pw.DeadlineSeconds)
+    </span>
+    <span>@text</span>
+    
+</div>
+

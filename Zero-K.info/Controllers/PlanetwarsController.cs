@@ -862,6 +862,14 @@ namespace ZeroKWeb.Controllers
             }
             return RedirectToAction("Planet", new { id = planetID });
         }
+
+
+        [Auth]
+        public ActionResult MatchMaker()
+        {
+            var state = Global.PlanetWarsMatchMaker.GenerateLobbyCommand();
+            return View("PwMatchMaker", state);
+        }
     }
 
     #region Nested type: ClanEntry

@@ -20,7 +20,7 @@ public static class PlanetWarsTurnHandler {
     /// <param name="players"></param>
     /// <param name="text"></param>
     /// <param name="sb"></param>
-    public static void EndTurn(string mapName, List<string> extraData, ZkDataContext db, int? winNum, List<Account> players, StringBuilder text, SpringBattle sb)
+    public static void EndTurn(string mapName, List<string> extraData, ZkDataContext db, int? winNum, List<Account> players, StringBuilder text, SpringBattle sb, List<Account> attackers)
     {
         if (extraData == null) extraData = new List<string>();
         Galaxy gal = db.Galaxies.Single(x => x.IsDefault);
@@ -32,7 +32,7 @@ public static class PlanetWarsTurnHandler {
             players.Where(x => x.Faction != null).GroupBy(x => x.FactionID).Select(
                 x => x.Key ?? 0).ToList();
 
-        Faction attacker = planet.GetAttacker(presentFactions);
+        Faction attacker = attackers.Where(x => x.Faction != null).Select(x => x.Faction).First();
         if (attacker == null)
         {
             text.AppendLine("ERROR: Invalid attacker");

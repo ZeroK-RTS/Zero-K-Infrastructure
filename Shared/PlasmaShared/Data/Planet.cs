@@ -14,11 +14,6 @@ namespace ZkData
 			return PlanetFactions.Where(x=>x.Influence > 0).OrderByDescending(x => x.Influence);
 		}
 
-     
-        public Faction GetAttacker(IEnumerable<int> presentFactions) {
-            return PlanetFactions.Where(x => presentFactions.Contains(x.FactionID) && x.FactionID != OwnerFactionID).OrderByDescending(x => x.Dropships).ThenBy(x => x.DropshipsLastAdded).Select(x => x.Faction).FirstOrDefault();
-        }
-
 
 	    public override string ToString() {
 	        return Name;

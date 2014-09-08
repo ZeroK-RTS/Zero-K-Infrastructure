@@ -86,11 +86,15 @@ namespace ZeroKWeb.SpringieInterface
                 Planet planet = null;
                 if (mode == AutohostMode.Planetwars) {
                     planet = db.Galaxies.First(x => x.IsDefault).Planets.First(x => x.Resource.InternalName == context.Map);
-                    List<int> presentFactions =
-                        context.Players.Where(x => !x.IsSpectator).Select(x => db.Accounts.First(y => y.LobbyID == x.LobbyID)).Where(
-                            x => x.Faction != null).GroupBy(x => x.Faction).Select(x => x.Key.FactionID).ToList();
-                    attacker = planet.GetAttacker(presentFactions);
+                    attacker =
+                        context.Players.Where(x => x.AllyID == 0 && !x.IsSpectator)
+                            .Select(x => db.Accounts.First(y => y.LobbyID == x.LobbyID))
+                            .Where(x => x.Faction != null)
+                            .Select(x => x.Faction)
+                            .First();
+
                     defender = planet.Faction;
+
                     if (attacker == defender) defender = null;
 
                     ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "attackingFaction", Value = attacker.Shortcut });

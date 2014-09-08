@@ -476,6 +476,12 @@ namespace ZeroKWeb.SpringieInterface
                 player = new PlayerTeam() { Name = matchUser };
                 User us;
                 if (Global.Nightwatch.Tas.GetExistingUser(matchUser, out us)) player.LobbyID = us.LobbyID;
+                else
+                {
+                    var db = new ZkDataContext();
+                    var acc = Account.AccountByName(db, matchUser);
+                    if (acc != null && acc.LobbyID.HasValue) player.LobbyID = acc.LobbyID.Value;
+                }
             }
             res.Players.Add(new PlayerTeam { AllyID = allyID , IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID, TeamID = player.TeamID });
         }
