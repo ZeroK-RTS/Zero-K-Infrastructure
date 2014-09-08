@@ -231,6 +231,11 @@ namespace LobbyClient
                             bot.AllyNumber = bot.AllyNumber;
                             bot.TeamNumber = bot.TeamNumber;
                         }
+
+                        foreach (var u in users.Where(x => !startSetup.BalanceTeamsResult.Players.Any(y => y.Name == x.Name)))
+                        {
+                            u.IsSpectator = true;
+                        } // spec those not known at the time of balance
                     }
                     else
                     {
