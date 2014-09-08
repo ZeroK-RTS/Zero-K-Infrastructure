@@ -14,23 +14,27 @@ using Timer = System.Timers.Timer;
 
 namespace ZeroKWeb
 {
-    /// <summary>
-    ///     Handles arranging and starting of PW games
-    /// </summary>
-    public class PlanetWarsMatchMaker
+    public class MatchMakerState
     {
         /// <summary>
         ///     Possible attack options
         /// </summary>
-        public List<AttackOption> AttackOptions { get; set; }
+        public List<PlanetWarsMatchMaker.AttackOption> AttackOptions { get; set; }
         public DateTime AttackerSideChangeTime { get; set; }
         public int AttackerSideCounter { get; set; }
-        public AttackOption Challenge { get; set; }
+        public PlanetWarsMatchMaker.AttackOption Challenge { get; set; }
 
         public DateTime? ChallengeTime { get; set; }
 
-        public Dictionary<string, AttackOption> RunningBattles { get; set; }
-        
+        public Dictionary<string, PlanetWarsMatchMaker.AttackOption> RunningBattles { get; set; }
+        public MatchMakerState() {}
+    }
+
+    /// <summary>
+    ///     Handles arranging and starting of PW games
+    /// </summary>
+    public class PlanetWarsMatchMaker:MatchMakerState
+    {
         readonly List<Faction> factions;
         readonly string pwHostName;
         
@@ -55,12 +59,12 @@ namespace ZeroKWeb
             Galaxy gal = db.Galaxies.First(x => x.IsDefault);
             factions = db.Factions.Where(x => !x.IsDeleted).ToList();
             
-            PlanetWarsMatchMaker dbState = null;
+            MatchMakerState dbState = null;
             if (gal.MatchMakerState != null)
             {
                 try
                 {
-                    dbState = JsonConvert.DeserializeObject<PlanetWarsMatchMaker>(gal.MatchMakerState);
+                    dbState = JsonConvert.DeserializeObject<MatchMakerState>(gal.MatchMakerState);
                 }
                 catch (Exception ex)
                 {
@@ -313,7 +317,7 @@ namespace ZeroKWeb
             var db = new ZkDataContext();
             Galaxy gal = db.Galaxies.First(x => x.IsDefault);
 
-            gal.MatchMakerState = JsonConvert.SerializeObject(this);
+            gal.MatchMakerState = JsonConvert.SerializeObject((MatchMakerState)this);
             
             gal.AttackerSideCounter = AttackerSideCounter;
             gal.AttackerSideChangeTime = AttackerSideChangeTime;
