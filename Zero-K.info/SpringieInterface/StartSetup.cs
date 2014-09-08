@@ -79,20 +79,13 @@ namespace ZeroKWeb.SpringieInterface
 
                 bool is1v1 = context.Players.Where(x => !x.IsSpectator).ToList().Count == 2 && context.Bots.Count == 0;
 
-                Dictionary<PlayerTeam, Account> playerAccountsByName = new Dictionary<PlayerTeam, Account>();
-                foreach (var player in context.Players)
-                {
-                    playerAccountsByName.Add(player, db.Accounts.FirstOrDefault(x => x.Name == player.Name));
-                }
 
-                // FIXME find a way that actually works to turn off PW stuff when autohost is in fallback mode
-                bool pwBalanced = true;  //playerAccountsByName.GroupBy(x => x.Value.Faction).All(grp => grp.Select(x => x.Key.AllyID).Distinct().Count() < 2);
 
                 Faction attacker = null;
                 Faction defender = null;
                 Planet planet = null;
-                if (mode == AutohostMode.Planetwars && pwBalanced) {
-                    planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == context.Map);
+                if (mode == AutohostMode.Planetwars) {
+                    planet = db.Galaxies.First(x => x.IsDefault).Planets.First(x => x.Resource.InternalName == context.Map);
                     List<int> presentFactions =
                         context.Players.Where(x => !x.IsSpectator).Select(x => db.Accounts.First(y => y.LobbyID == x.LobbyID)).Where(
                             x => x.Faction != null).GroupBy(x => x.Faction).Select(x => x.Key.FactionID).ToList();
@@ -125,14 +118,13 @@ namespace ZeroKWeb.SpringieInterface
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "avatar", Value = user.Avatar });
 
                         if (!p.IsSpectator) {
-                            if (mode == AutohostMode.Planetwars && pwBalanced)
+                            if (mode == AutohostMode.Planetwars)
                             {
                                 bool allied = user.Faction != null && defender != null && user.Faction != defender &&
                                               defender.HasTreatyRight(user.Faction, x => x.EffectPreventIngamePwStructureDestruction == true, planet);
 
                                 if (!allied && user.Faction != null && (user.Faction == attacker || user.Faction == defender)) {
                                     userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "canAttackPwStructures", Value = "1" });
-                                    ;
                                 }
                             }
 
@@ -258,7 +250,7 @@ namespace ZeroKWeb.SpringieInterface
                 }
 
                 ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "commanderTypes", Value = commanderTypes.ToBase64String() });
-                if (mode == AutohostMode.Planetwars && pwBalanced)
+                if (mode == AutohostMode.Planetwars)
                 {
                     string owner = planet.Faction != null ? planet.Faction.Shortcut : "";
 
