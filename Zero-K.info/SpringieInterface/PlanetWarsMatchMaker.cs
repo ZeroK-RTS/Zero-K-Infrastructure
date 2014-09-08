@@ -413,10 +413,13 @@ namespace ZeroKWeb
                     // accept timer
                     if (DateTime.UtcNow.Subtract(ChallengeTime.Value).TotalMinutes > GlobalConst.PlanetWarsMinutesToAccept)
                     {
-                        RecordPlanetwarsLoss(Challenge);
-
-                        AttackerSideCounter++;
-                        ResetAttackOptions();
+                        if (Challenge.Defenders.Count >= Challenge.Attackers.Count - 1) AcceptChallenge();
+                        else
+                        {
+                            RecordPlanetwarsLoss(Challenge);
+                            AttackerSideCounter++;
+                            ResetAttackOptions();
+                        }
                     }
                 }
             }
