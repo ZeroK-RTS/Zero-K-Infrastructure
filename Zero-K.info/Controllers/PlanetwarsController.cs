@@ -870,6 +870,13 @@ namespace ZeroKWeb.Controllers
             var state = Global.PlanetWarsMatchMaker.GenerateLobbyCommand();
             return View("PwMatchMaker", state);
         }
+
+        [Auth]
+        public ActionResult MatchMakerJoin(int planetID)
+        {
+            Global.PlanetWarsMatchMaker.JoinPlanet(Global.Account.Name, Global.Account.Faction.Shortcut, planetID);
+            return MatchMaker();
+        }
     }
 
     #region Nested type: ClanEntry

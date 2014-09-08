@@ -1,10 +1,12 @@
-﻿@using IceInternal
-@using LobbyClient
+﻿@using LobbyClient
+@using PlasmaShared
 @using ZeroKWeb
+@using ZkData
 @model LobbyClient.PwMatchCommand
 @{
-    var pw = Model;
+    PwMatchCommand pw = Model;
     string text = "";
+    var db = new ZkDataContext();
     if (pw.Mode == PwMatchCommand.ModeType.Attack)
     {
         text = string.Format("{0} picks a planet to attack", pw.AttackerFaction);
@@ -12,20 +14,28 @@
     else
     {
         PwMatchCommand.VoteOption opt = pw.Options.First();
-        text = string.Format("{0} attacks planet {2}, {1} defends",
-            pw.AttackerFaction,
-            string.Join(",", pw.DefenderFactions),
-            opt.PlanetName);        
+        text = string.Format("{0} attacks planet {2}, {1} defends", pw.AttackerFaction, string.Join(",", pw.DefenderFactions), opt.PlanetName);
     }
-    
-    var canClick = pw.Mode == PwMatchCommand.ModeType.Attack && pw.AttackerFaction == Global.Account.Faction.Shortcut;
+
+    bool canClick = (pw.Mode == PwMatchCommand.ModeType.Attack && pw.AttackerFaction == Global.Account.Faction.Shortcut) || (pw.Mode == PwMatchCommand.ModeType.Defend && pw.DefenderFactions.Contains(Global.Account.Faction.Shortcut));
 }
 
-<div>
+<div id="matchMaker">
     <span id="pwTimer">
-        @PlasmaShared.Utils.PrintTimeRemaining(pw.DeadlineSeconds)
+        @Utils.PrintTimeRemaining(pw.DeadlineSeconds)
     </span>
     <span>@text</span>
+    @foreach (PwMatchCommand.VoteOption opt in pw.Options)
+    {
+        <span style="border: 1px solid cyan;">
+            @if (canClick)
+            {
+                @Ajax.ActionLink("Join", "MatchMakerJoin", new { planetID = opt.PlanetID }, new AjaxOptions { UpdateTargetId = "matchMaker", InsertionMode = InsertionMode.Replace })
+            }
+            @Html.PrintPlanet(db.Planets.First(x => x.PlanetID == opt.PlanetID))
+            <span>[@opt.Count/@opt.Needed]</span>
+        </span>
+        <text>&nbsp; &nbsp;&nbsp;</text>
+    }
     
 </div>
-

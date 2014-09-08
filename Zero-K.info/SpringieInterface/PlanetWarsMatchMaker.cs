@@ -116,9 +116,10 @@ namespace ZeroKWeb
 
                 Utils.StartAsync(() =>
                 {
-                    Thread.Sleep(7000);
+                    Thread.Sleep(6000);
                     tas.Say(TasClient.SayPlace.User, targetHost, "!balance", false);
                     Thread.Sleep(1000);
+                    tas.Say(TasClient.SayPlace.User, targetHost, "!endvote", false);
                     tas.Say(TasClient.SayPlace.User, targetHost, "!forcestart", false);
                 });
             }
@@ -375,16 +376,8 @@ namespace ZeroKWeb
                 Faction faction = factions.FirstOrDefault(x => x.Shortcut == args.Data.Channel);
                 if (faction != null)
                 {
-                    if (faction == AttackingFaction)
-                    {
-                        int targetPlanetID;
-                        if (int.TryParse(args.Data.Text.Substring(1), out targetPlanetID)) JoinPlanetAttack(targetPlanetID, args.Data.UserName);
-                    }
-                    else if (Challenge != null && GetDefendingFactions(Challenge).Contains(faction))
-                    {
-                        int targetPlanetID;
-                        if (int.TryParse(args.Data.Text.Substring(1), out targetPlanetID)) JoinPlanetDefense(targetPlanetID, args.Data.UserName);
-                    }
+                    int targetPlanetId;
+                    if (int.TryParse(args.Data.Text.Substring(1), out targetPlanetId)) JoinPlanet(args.Data.UserName, faction.Shortcut, targetPlanetId);
                 }
             }
         }
@@ -471,6 +464,22 @@ namespace ZeroKWeb
                 };
 
                 return opt;
+            }
+        }
+
+        public void JoinPlanet(string name, string factionShortcut, int planetId)
+        {
+            if (tas.ExistingUsers.ContainsKey(name))
+            {
+                Faction faction = factions.FirstOrDefault(x => x.Shortcut == factionShortcut);
+                if (faction == AttackingFaction)
+                {
+                    JoinPlanetAttack(planetId, name);
+                }
+                else if (Challenge != null && GetDefendingFactions(Challenge).Contains(faction))
+                {
+                    JoinPlanetDefense(planetId, name);
+                }
             }
         }
     }

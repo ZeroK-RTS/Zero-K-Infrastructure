@@ -86,6 +86,11 @@
 
 <br style="clear:both"/>
 
+@if (Global.IsAccountAuthorized && Global.Account.CanPlayerPlanetWars())
+{
+    @Html.Action("MatchMaker")
+}
+
 @{
 	var db = new ZkDataContext();
 }

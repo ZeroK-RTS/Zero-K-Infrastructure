@@ -28,9 +28,6 @@ public static class PlanetWarsTurnHandler {
 
         text.AppendFormat("Battle on http://zero-k.info/PlanetWars/Planet/{0} has ended\n", planet.PlanetID);
 
-        List<int> presentFactions =
-            players.Where(x => x.Faction != null).GroupBy(x => x.FactionID).Select(
-                x => x.Key ?? 0).ToList();
 
         Faction attacker = attackers.Where(x => x.Faction != null).Select(x => x.Faction).First();
         if (attacker == null)
