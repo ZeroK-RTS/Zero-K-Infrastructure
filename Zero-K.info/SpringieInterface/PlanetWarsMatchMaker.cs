@@ -417,7 +417,7 @@ namespace ZeroKWeb
                     // accept timer
                     if (DateTime.UtcNow.Subtract(ChallengeTime.Value).TotalMinutes > GlobalConst.PlanetWarsMinutesToAccept)
                     {
-                        if (Challenge.Defenders.Count >= Challenge.Attackers.Count - 1) AcceptChallenge();
+                        if (Challenge.Defenders.Count >= Challenge.Attackers.Count - 1 && Challenge.Defenders.Count > 0) AcceptChallenge();
                         else
                         {
                             RecordPlanetwarsLoss(Challenge);

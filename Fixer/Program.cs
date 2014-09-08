@@ -153,7 +153,8 @@ namespace Fixer
         [STAThread]
         static void Main(string[] args)
         {
-            TestPwMatch();
+            SetPlanetTeamSizes();
+            //TestPwMatch();
             //FixStuff();
 
             //var guid = Guid.NewGuid().ToString();
@@ -200,6 +201,26 @@ namespace Fixer
             //GetClanStackWinRate(465, 2000); //Mean
             //GetForumVotesByUserVoterAgnostic(161294);
             //GetAverageElo();
+        }
+
+        static void SetPlanetTeamSizes()
+        {
+            var db = new ZkDataContext();
+            var gal = db.Galaxies.First(x => x.IsDefault);
+            var planets = gal.Planets.ToList().OrderBy(x=>x.Resource.MapDiagonal).ToList();
+            var cnt = planets.Count;
+            int num = 0;
+            foreach (var p in planets)
+            {
+                if (num < cnt*0.25)
+                {
+                    p.TeamSize = 1;
+                } else if (num < cnt*0.70) p.TeamSize = 2;
+                else if (num < cnt*0.90) p.TeamSize = 3;
+                else p.TeamSize = 4;
+                num++;
+            }
+            db.SubmitAndMergeChanges();
         }
 
         public static void RecalculateKudos()
