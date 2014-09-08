@@ -39,7 +39,14 @@ namespace ZeroKWeb
         }
 
         public const int AjaxScrollCount = 40;
-        public static Account Account { get { return HttpContext.Current.User as Account; } }
+        public static Account Account
+        {
+            get
+            {
+                if (HttpContext.Current == null) return null;
+                return HttpContext.Current.User as Account;
+            }
+        }
         public static int AccountID
         {
             get

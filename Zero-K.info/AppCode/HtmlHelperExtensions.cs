@@ -37,7 +37,7 @@ namespace System.Web.Mvc
         public static MvcHtmlString BBCode(this HtmlHelper helper, string str) {
             if (str == null) return null;
 
-            str = HttpContext.Current.Server.HtmlEncode(str);
+            str = HttpUtility.HtmlEncode(str);
             str = ProcessAtSignTags(str);
 
             Regex exp;
@@ -169,7 +169,7 @@ namespace System.Web.Mvc
                 }
             }
 
-            return new MvcHtmlString(string.Format(format, link, HttpContext.Current.Server.HtmlEncode(thread.Title)));
+            return new MvcHtmlString(string.Format(format, link, HttpUtility.HtmlEncode(thread.Title)));
         }
 
         public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account, bool colorize = true) {
@@ -269,7 +269,7 @@ namespace System.Web.Mvc
                                       url.Action("Detail", "Clans", new { id = clan.ClanID }),
                                       clan.GetImageUrl(),
                                       colorize ? color : "",
-                                      HttpContext.Current.Server.HtmlEncode(clan.Shortcut),
+                                      HttpUtility.HtmlEncode(clan.Shortcut),
                                       clan.ClanID));
             }
         }
