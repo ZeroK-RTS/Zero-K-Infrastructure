@@ -52,7 +52,7 @@ namespace ZeroKWeb.SpringieInterface
                     ret.BalanceTeamsResult = Balancer.BalanceTeams(context, true,null, null);
                     context.Players = ret.BalanceTeamsResult.Players;
 
-                    Global.Nightwatch.Tas.Say(TasClient.SayPlace.User, "Licho", "Overriding PW with " + string.Join(",", context.Players.Select(x => x.Name)), false); // TODO 
+                    /*Global.Nightwatch.Tas.Say(TasClient.SayPlace.User, "Licho", "Overriding PW with " + string.Join(",", context.Players.Select(x => x.Name)), false); // TODO */
                 }
                 
                 var commanderTypes = new LuaTable();

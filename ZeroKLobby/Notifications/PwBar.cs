@@ -73,18 +73,7 @@ namespace ZeroKLobby.Notifications
 
                             if (pw.AttackerFaction == tas.MyUser.Faction) // NOTE this is for cases where nightwatch self faction info is delayed
                             {
-                                PwMatchCommand.VoteOption opt1 = opt;
-                                but.Click += (s2, ev) =>
-                                {
-                                    if (Program.SpringScanner.HasResource(opt1.Map)) tas.Say(TasClient.SayPlace.Channel, tas.MyUser.Faction, "!" + opt1.PlanetID, true);
-                                    else
-                                    {
-                                        tas.Say(TasClient.SayPlace.Channel,
-                                            tas.MyUser.Faction,
-                                            string.Format("wants to play {0}, but lacks the map..", opt1.PlanetID),
-                                            true);
-                                    }
-                                };
+                                AddButtonClick(opt, but);
                             }
                             else but.Enabled = false;
                             pnl.Controls.Add(but);
@@ -105,18 +94,7 @@ namespace ZeroKLobby.Notifications
 
                         if (pw.DefenderFactions.Contains(tas.MyUser.Faction)) // NOTE this is for cases where nightwatch self faction info is delayed
                         {
-                            PwMatchCommand.VoteOption opt1 = opt;
-                            but.Click += (s2, ev) =>
-                            {
-                                if (Program.SpringScanner.HasResource(opt1.Map)) tas.Say(TasClient.SayPlace.Channel, tas.MyUser.Faction, "!" + opt1.PlanetID, true);
-                                else
-                                {
-                                    tas.Say(TasClient.SayPlace.Channel,
-                                        tas.MyUser.Faction,
-                                        string.Format("wants to play {0}, but lacks the map..", opt1.PlanetID),
-                                        true);
-                                }
-                            };
+                            AddButtonClick(opt, but);
                         }
                         else but.Enabled = false;
                         pnl.Controls.Add(but);
@@ -125,6 +103,16 @@ namespace ZeroKLobby.Notifications
                     Program.NotifySection.AddBar(this);
                 }
             } else Program.NotifySection.RemoveBar(this);
+        }
+
+        void AddButtonClick(PwMatchCommand.VoteOption opt, Button but)
+        {
+            PwMatchCommand.VoteOption opt1 = opt;
+            but.Click += (s2, ev) =>
+            {
+                if (Program.SpringScanner.HasResource(opt1.Map)) tas.Say(TasClient.SayPlace.Channel, tas.MyUser.Faction, "!" + opt1.PlanetID, true);
+                else tas.Say(TasClient.SayPlace.Channel, tas.MyUser.Faction, string.Format("wants to play {0}, but lacks the map..", opt1.PlanetID), true);
+            };
         }
 
         public void AddedToContainer(NotifyBarContainer container)
