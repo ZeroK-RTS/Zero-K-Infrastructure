@@ -96,8 +96,8 @@
         public const int PostVoteHideThreshold = -6;
         public const bool OnlyAdminsSeePostVoters = false;
         public const int VotesPerDay = 3;
-	    public const int PlanetWarsMinutesToAttack = 20;
-        public const int PlanetWarsMinutesToAccept = 20;
+	    public const int PlanetWarsMinutesToAttack = 30;
+        public const int PlanetWarsMinutesToAccept = 10;
 	    public const int MinPlanetWarsLevel = 10;
 
 	    public static bool IsZkMod(string name)
