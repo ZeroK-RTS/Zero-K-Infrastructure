@@ -10,12 +10,13 @@ using ZkData;
 
 namespace ZeroKWeb.Controllers
 {
-    public class PlanetwarsController: Controller
+    public class PlanetwarsController : Controller
     {
         //
         // GET: /Planetwars/
         [Auth]
-        public ActionResult BombPlanet(int planetID, int count, bool? useWarp) {
+        public ActionResult BombPlanet(int planetID, int count, bool? useWarp)
+        {
             var db = new ZkDataContext();
             Account acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             if (acc.Faction == null) return Content("Join some faction first");
@@ -32,7 +33,8 @@ namespace ZeroKWeb.Controllers
             var capa = acc.GetBomberCapacity();
             if (avail > capa) return Content("Too many bombers, increase bomber fleet size capacity");
 
-            if (avail > 0) {
+            if (avail > 0)
+            {
                 double defense = planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectBomberDefense) ?? 0;
                 double effective = avail;
                 if (!selfbomb) effective = effective - defense;
@@ -44,15 +46,16 @@ namespace ZeroKWeb.Controllers
 
                 var r = new Random();
 
-                double strucKillChance = !selfbomb ? effective*GlobalConst.BomberKillStructureChance : 0;
+                double strucKillChance = !selfbomb ? effective * GlobalConst.BomberKillStructureChance : 0;
                 int strucKillCount = (int)Math.Floor(strucKillChance + r.NextDouble());
 
-                double ipKillChance = effective*GlobalConst.BomberKillIpChance;
+                double ipKillChance = effective * GlobalConst.BomberKillIpChance;
                 int ipKillCount = (int)Math.Floor(ipKillChance + r.NextDouble());
 
                 List<PlanetStructure> structs = planet.PlanetStructures.Where(x => x.StructureType.IsBomberDestructible).ToList();
                 var bombed = new List<PlanetStructure>();
-                while (structs.Count > 0 && strucKillCount > 0) {
+                while (structs.Count > 0 && strucKillCount > 0)
+                {
                     strucKillCount--;
                     PlanetStructure s = structs[r.Next(structs.Count)];
                     bombed.Add(s);
@@ -60,9 +63,11 @@ namespace ZeroKWeb.Controllers
                     db.PlanetStructures.DeleteOnSubmit(s);
                 }
 
-                double ipKillAmmount = ipKillCount*GlobalConst.BomberKillIpAmount;
-                if (ipKillAmmount > 0) {
-                    foreach (PlanetFaction pf in planet.PlanetFactions.Where(x=>x.FactionID != acc.FactionID)) {
+                double ipKillAmmount = ipKillCount * GlobalConst.BomberKillIpAmount;
+                if (ipKillAmmount > 0)
+                {
+                    foreach (PlanetFaction pf in planet.PlanetFactions.Where(x => x.FactionID != acc.FactionID))
+                    {
                         pf.Influence -= ipKillAmmount;
                         if (pf.Influence < 0) pf.Influence = 0;
                     }
@@ -79,15 +84,17 @@ namespace ZeroKWeb.Controllers
                                useWarp == true ? "They attacked by warp. " : "",
                                ipKillAmmount
                            };
-                args.AddRange(bombed.Select(x=>x.StructureType));
+                args.AddRange(bombed.Select(x => x.StructureType));
 
                 string str;
                 if (selfbomb) str = "{0} of {1} bombed own planet {3} using {4} bombers against {5} defenses. {6}Ground armies lost {7} influence";
                 else str = "{0} of {1} bombed {2} planet {3} using {4} bombers against {5} defenses. {6}Ground armies lost {7} influence";
-                if (bombed.Count > 0) {
+                if (bombed.Count > 0)
+                {
                     str += " and ";
                     int counter = 8;
-                    foreach (PlanetStructure b in bombed) {
+                    foreach (PlanetStructure b in bombed)
+                    {
                         str += "{" + counter + "}" + ", ";
                         counter++;
                     }
@@ -104,8 +111,10 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
-        public ActionResult BuildStructure(int planetID, int structureTypeID) {
-            using (var db = new ZkDataContext()) {
+        public ActionResult BuildStructure(int planetID, int structureTypeID)
+        {
+            using (var db = new ZkDataContext())
+            {
                 Planet planet = db.Planets.Single(p => p.PlanetID == planetID);
                 if (Global.Nightwatch.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot build structures");
                 Account acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
@@ -140,8 +149,10 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
-        public ActionResult DestroyStructure(int planetID, int structureTypeID) {
-            using (var db = new ZkDataContext()) {
+        public ActionResult DestroyStructure(int planetID, int structureTypeID)
+        {
+            using (var db = new ZkDataContext())
+            {
                 Planet planet = db.Planets.Single(p => p.PlanetID == planetID);
                 if (Global.Nightwatch.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot destroy structures");
                 Account acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
@@ -159,7 +170,7 @@ namespace ZeroKWeb.Controllers
                 var canDestroy = toDestroy.OwnerAccountID == acc.AccountID || toDestroy.OwnerAccountID == planet.OwnerAccountID;
                 if (!canDestroy) return Content("Structure is not under your control.");
                 db.PlanetStructures.DeleteOnSubmit(toDestroy);
-                var refund = toDestroy.StructureType.Cost*GlobalConst.SelfDestructRefund;
+                var refund = toDestroy.StructureType.Cost * GlobalConst.SelfDestructRefund;
                 if (toDestroy.Account != null) toDestroy.Account.ProduceMetal(refund);
                 else faction.ProduceMetal(refund);
                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} has demolished a {1} on {2}.", Global.Account, toDestroy.StructureType, planet));
@@ -179,10 +190,12 @@ namespace ZeroKWeb.Controllers
                                    string filter,
                                    int pageSize = 0,
                                    int page = 0,
-                                   bool partial = false) {
+                                   bool partial = false)
+        {
             var db = new ZkDataContext();
             if (Request.IsAjaxRequest()) partial = true;
-            if (pageSize == 0) {
+            if (pageSize == 0)
+            {
                 if (!partial) pageSize = 40;
                 else pageSize = 10;
             }
@@ -197,9 +210,9 @@ namespace ZeroKWeb.Controllers
 
             var ret = new EventsResult
                       {
-                          PageCount = (res.Count()/pageSize) + 1,
+                          PageCount = (res.Count() / pageSize) + 1,
                           Page = page,
-                          Events = res.Skip(page*pageSize).Take(pageSize),
+                          Events = res.Skip(page * pageSize).Take(pageSize),
                           PlanetID = planetID,
                           AccountID = accountID,
                           SpringBattleID = springBattleID,
@@ -213,15 +226,19 @@ namespace ZeroKWeb.Controllers
         }
 
         // FIXME: having issues with bitmap parameters; setting AA factor to 1 as fallback (was 4)
-        public Bitmap GenerateGalaxyImage(int galaxyID, double zoom = 1, double antiAliasingFactor = 1) {
+        public Bitmap GenerateGalaxyImage(int galaxyID, double zoom = 1, double antiAliasingFactor = 1)
+        {
             zoom *= antiAliasingFactor;
-            using (var db = new ZkDataContext()) {
+            using (var db = new ZkDataContext())
+            {
                 Galaxy gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
 
-                using (Image background = Image.FromFile(Server.MapPath("/img/galaxies/" + gal.ImageName))) {
+                using (Image background = Image.FromFile(Server.MapPath("/img/galaxies/" + gal.ImageName)))
+                {
                     //var im = new Bitmap((int)(background.Width*zoom), (int)(background.Height*zoom));
                     var im = new Bitmap(background.Width, background.Height);
-                    using (Graphics gr = Graphics.FromImage(im)) {
+                    using (Graphics gr = Graphics.FromImage(im))
+                    {
                         gr.DrawImage(background, 0, 0, im.Width, im.Height);
 
                         /*
@@ -237,17 +254,22 @@ namespace ZeroKWeb.Controllers
 							}
 						}*/
 
-                        foreach (Planet p in gal.Planets) {
+                        foreach (Planet p in gal.Planets)
+                        {
                             string planetIconPath = null;
-                            try {
+                            try
+                            {
                                 planetIconPath = "/img/planets/" + (p.Resource.MapPlanetWarsIcon ?? "1.png"); // backup image is 1.png
-                                using (Image pi = Image.FromFile(Server.MapPath(planetIconPath))) {
-                                    double aspect = pi.Height/(double)pi.Width;
-                                    var width = (int)(p.Resource.PlanetWarsIconSize*zoom);
-                                    var height = (int)(width*aspect);
-                                    gr.DrawImage(pi, (int)(p.X*im.Width) - width/2, (int)(p.Y*im.Height) - height/2, width, height);
+                                using (Image pi = Image.FromFile(Server.MapPath(planetIconPath)))
+                                {
+                                    double aspect = pi.Height / (double)pi.Width;
+                                    var width = (int)(p.Resource.PlanetWarsIconSize * zoom);
+                                    var height = (int)(width * aspect);
+                                    gr.DrawImage(pi, (int)(p.X * im.Width) - width / 2, (int)(p.Y * im.Height) - height / 2, width, height);
                                 }
-                            } catch (Exception ex) {
+                            }
+                            catch (Exception ex)
+                            {
                                 throw new ApplicationException(
                                     string.Format("Cannot process planet image {0} for planet {1} map {2}",
                                                   planetIconPath,
@@ -257,9 +279,10 @@ namespace ZeroKWeb.Controllers
                             }
                         }
                         if (antiAliasingFactor == 1) return im;
-                        else {
+                        else
+                        {
                             zoom /= antiAliasingFactor;
-                            return im.GetResized((int)(background.Width*zoom), (int)(background.Height*zoom), InterpolationMode.HighQualityBicubic);
+                            return im.GetResized((int)(background.Width * zoom), (int)(background.Height * zoom), InterpolationMode.HighQualityBicubic);
                         }
                     }
                 }
@@ -267,7 +290,8 @@ namespace ZeroKWeb.Controllers
         }
 
 
-        public ActionResult Index(int? galaxyID = null) {
+        public ActionResult Index(int? galaxyID = null)
+        {
             var db = new ZkDataContext();
 
             Galaxy gal;
@@ -275,8 +299,10 @@ namespace ZeroKWeb.Controllers
             else gal = db.Galaxies.Single(x => x.IsDefault);
 
             string cachePath = Server.MapPath(string.Format("/img/galaxies/render_{0}.jpg", gal.GalaxyID));
-            if (true || gal.IsDirty || !System.IO.File.Exists(cachePath)) {
-                using (Bitmap im = GenerateGalaxyImage(gal.GalaxyID)) {
+            if (true || gal.IsDirty || !System.IO.File.Exists(cachePath))
+            {
+                using (Bitmap im = GenerateGalaxyImage(gal.GalaxyID))
+                {
                     im.SaveJpeg(cachePath, 85);
                     gal.IsDirty = false;
                     gal.Width = im.Width;
@@ -288,17 +314,20 @@ namespace ZeroKWeb.Controllers
         }
 
 
-        public ActionResult Minimap() {
+        public ActionResult Minimap()
+        {
             var db = new ZkDataContext();
 
             return View(db.Galaxies.Single(g => g.IsDefault));
         }
 
 
-        public ActionResult Planet(int id) {
+        public ActionResult Planet(int id)
+        {
             var db = new ZkDataContext();
             Planet planet = db.Planets.Single(x => x.PlanetID == id);
-            if (planet.ForumThread != null) {
+            if (planet.ForumThread != null)
+            {
                 planet.ForumThread.UpdateLastRead(Global.AccountID, false);
                 db.SubmitChanges();
             }
@@ -306,7 +335,8 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
-        public ActionResult SendDropships(int planetID, int count, bool? useWarp) {
+        public ActionResult SendDropships(int planetID, int count, bool? useWarp)
+        {
             var db = new ZkDataContext();
             Account acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             if (acc.Faction == null) return Content("Join a faction first");
@@ -323,11 +353,13 @@ namespace ZeroKWeb.Controllers
             if (cnt + there > capa) return Content("Too many ships, increase fleet size");
             cnt = Math.Min(cnt, (int)acc.GetDropshipsAvailable());
             if (useWarp == true) cnt = Math.Min(cnt, (int)acc.GetWarpAvailable());
-            if (cnt > 0) {
+            if (cnt > 0)
+            {
                 acc.SpendDropships(cnt);
                 if (useWarp == true) acc.SpendWarps(cnt);
 
-                if (planet.Account != null) {
+                if (planet.Account != null)
+                {
                     AuthServiceClient.SendLobbyMessage(planet.Account,
                                                        string.Format(
                                                            "Warning: long range scanners detected fleet of {0} ships inbound to your planet {1} http://zero-k.info/Planetwars/Planet/{2}",
@@ -336,14 +368,16 @@ namespace ZeroKWeb.Controllers
                                                            planet.PlanetID));
                 }
                 PlanetFaction pac = planet.PlanetFactions.SingleOrDefault(x => x.FactionID == acc.FactionID);
-                if (pac == null) {
+                if (pac == null)
+                {
                     pac = new PlanetFaction { FactionID = Global.FactionID, PlanetID = planetID };
                     db.PlanetFactions.InsertOnSubmit(pac);
                 }
                 pac.Dropships += cnt;
                 pac.DropshipsLastAdded = DateTime.UtcNow;
 
-                if (cnt > 0) {
+                if (cnt > 0)
+                {
                     db.Events.InsertOnSubmit(Global.CreateEvent("{0} sends {1} {2} dropships to {3} {4} {5}",
                                                                 acc,
                                                                 cnt,
@@ -357,7 +391,8 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Planet", new { id = planetID });
         }
 
-        public ActionResult RunSetPlanetOwners() {
+        public ActionResult RunSetPlanetOwners()
+        {
             using (var db = new ZkDataContext()) SetPlanetOwners(db);
             return Content("Done.");
         }
@@ -368,37 +403,45 @@ namespace ZeroKWeb.Controllers
         /// </summary>
         /// <param name="db"></param>
         /// <param name="sb">optional spring batle that caused this change (for event logging)</param>
-        public static void SetPlanetOwners(ZkDataContext db = null, SpringBattle sb = null) {
+        public static void SetPlanetOwners(ZkDataContext db = null, SpringBattle sb = null)
+        {
             if (db == null) db = new ZkDataContext();
 
             Galaxy gal = db.Galaxies.Single(x => x.IsDefault);
-            foreach (Planet planet in gal.Planets) {
-                if (planet.OwnerAccountID != null) foreach (var ps in planet.PlanetStructures.Where(x => x.OwnerAccountID == null)) {
-                    ps.OwnerAccountID = planet.OwnerAccountID;
-                    ps.IsActive = false;
-                }
+            foreach (Planet planet in gal.Planets)
+            {
+                if (planet.OwnerAccountID != null) foreach (var ps in planet.PlanetStructures.Where(x => x.OwnerAccountID == null))
+                    {
+                        ps.OwnerAccountID = planet.OwnerAccountID;
+                        ps.IsActive = false;
+                    }
 
 
                 PlanetFaction best = planet.PlanetFactions.OrderByDescending(x => x.Influence).FirstOrDefault();
                 Faction newFaction = planet.Faction;
                 Account newAccount = planet.Account;
 
-                if (best == null || best.Influence < GlobalConst.InfluenceToCapturePlanet) {
+                if (best == null || best.Influence < GlobalConst.InfluenceToCapturePlanet)
+                {
                     // planet not capture 
 
-                    if (planet.Faction != null) {
+                    if (planet.Faction != null)
+                    {
                         var curFacInfluence =
                             planet.PlanetFactions.Where(x => x.FactionID == planet.OwnerFactionID).Select(x => x.Influence).FirstOrDefault();
 
-                        if (curFacInfluence <= GlobalConst.InfluenceToLosePlanet) {
+                        if (curFacInfluence <= GlobalConst.InfluenceToLosePlanet)
+                        {
                             // owners have too small influence, planet belong to nobody
                             newFaction = null;
                             newAccount = null;
                         }
                     }
                 }
-                else {
-                    if (best.Faction != planet.Faction) {
+                else
+                {
+                    if (best.Faction != planet.Faction)
+                    {
                         newFaction = best.Faction;
 
                         // best attacker without planets
@@ -407,7 +450,8 @@ namespace ZeroKWeb.Controllers
                                 x => x.Account.FactionID == newFaction.FactionID && x.AttackPoints > 0 && !x.Account.Planets.Any()).OrderByDescending(
                                     x => x.AttackPoints).Select(x => x.Account).FirstOrDefault();
 
-                        if (candidate == null) {
+                        if (candidate == null)
+                        {
                             // best attacker
                             candidate =
                                 planet.AccountPlanets.Where(x => x.Account.FactionID == newFaction.FactionID && x.AttackPoints > 0).OrderByDescending(
@@ -415,14 +459,16 @@ namespace ZeroKWeb.Controllers
                         }
 
                         // best player without planets
-                        if (candidate == null) {
+                        if (candidate == null)
+                        {
                             candidate =
                                 newFaction.Accounts.Where(x => !x.Planets.Any()).OrderByDescending(x => x.AccountPlanets.Sum(y => y.AttackPoints)).
                                     FirstOrDefault();
                         }
-                        
+
                         // best with planets 
-                        if (candidate == null) {
+                        if (candidate == null)
+                        {
                             candidate =
                                 newFaction.Accounts.OrderByDescending(x => x.AccountPlanets.Sum(y => y.AttackPoints)).
                                     FirstOrDefault();
@@ -433,9 +479,11 @@ namespace ZeroKWeb.Controllers
                 }
 
                 // change has occured
-                if (newFaction != planet.Faction) {
+                if (newFaction != planet.Faction)
+                {
                     // disable structures 
-                    foreach (PlanetStructure structure in planet.PlanetStructures.Where(x => x.StructureType.OwnerChangeDisablesThis)) {
+                    foreach (PlanetStructure structure in planet.PlanetStructures.Where(x => x.StructureType.OwnerChangeDisablesThis))
+                    {
                         structure.IsActive = false;
                         structure.Account = newAccount;
                     }
@@ -447,7 +495,8 @@ namespace ZeroKWeb.Controllers
                     // reset attack points memory
                     foreach (AccountPlanet acp in planet.AccountPlanets) acp.AttackPoints = 0;
 
-                    if (newFaction == null) {
+                    if (newFaction == null)
+                    {
                         Account account = planet.Account;
                         String accountName = "no-one";
                         Clan clan = null;
@@ -474,7 +523,8 @@ namespace ZeroKWeb.Controllers
                                                                    planet.PlanetID));
                         }
                     }
-                    else {
+                    else
+                    {
                         // new real owner
 
                         // log messages
@@ -492,7 +542,8 @@ namespace ZeroKWeb.Controllers
                                                                    planet.Name,
                                                                    planet.PlanetID));
                         }
-                        else {
+                        else
+                        {
                             db.Events.InsertOnSubmit(Global.CreateEvent("{0} of {1} {2} has captured planet {3} from {4} of {5} {6}. {7}",
                                                                         newAccount,
                                                                         newFaction,
@@ -526,12 +577,16 @@ namespace ZeroKWeb.Controllers
         }
 
 
-        public static void ReturnPeacefulDropshipsHome(ZkDataContext db, Planet planet) {
+        public static void ReturnPeacefulDropshipsHome(ZkDataContext db, Planet planet)
+        {
             //    return dropshuips home if owner is ceasefired/allied/same faction
-            if (planet.Faction != null) {
-                foreach (PlanetFaction entry in planet.PlanetFactions.Where(x => x.Dropships > 0)) {
+            if (planet.Faction != null)
+            {
+                foreach (PlanetFaction entry in planet.PlanetFactions.Where(x => x.Dropships > 0))
+                {
                     if (entry.FactionID == planet.OwnerFactionID ||
-                        planet.Faction.HasTreatyRight(entry.Faction, x => x.EffectPreventDropshipAttack == true, planet)) {
+                        planet.Faction.HasTreatyRight(entry.Faction, x => x.EffectPreventDropshipAttack == true, planet))
+                    {
                         planet.Faction.SpendDropships(-entry.Dropships);
                         entry.Dropships = 0;
                     }
@@ -541,8 +596,10 @@ namespace ZeroKWeb.Controllers
 
 
         [Auth]
-        public ActionResult SubmitRenamePlanet(int planetID, string newName) {
-            using (var scope = new TransactionScope()) {
+        public ActionResult SubmitRenamePlanet(int planetID, string newName)
+        {
+            using (var scope = new TransactionScope())
+            {
                 if (String.IsNullOrWhiteSpace(newName)) return Content("Error: the planet must have a name.");
                 var db = new ZkDataContext();
                 Planet planet = db.Planets.Single(p => p.PlanetID == planetID);
@@ -560,12 +617,14 @@ namespace ZeroKWeb.Controllers
         }
 
 
-        public ActionResult RecallRole(int accountID, int roletypeID) {
+        public ActionResult RecallRole(int accountID, int roletypeID)
+        {
             var db = new ZkDataContext();
             Account targetAccount = db.Accounts.Single(x => x.AccountID == accountID);
             Account myAccount = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             RoleType role = db.RoleTypes.Single(x => x.RoleTypeID == roletypeID);
-            if (myAccount.CanRecall(targetAccount, role)) {
+            if (myAccount.CanRecall(targetAccount, role))
+            {
                 db.AccountRoles.DeleteAllOnSubmit(db.AccountRoles.Where(x => x.AccountID == accountID && x.RoleTypeID == roletypeID));
                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} was recalled from the {1} role of {2} by {3}",
                                                             targetAccount,
@@ -580,18 +639,22 @@ namespace ZeroKWeb.Controllers
             else return Content("Cannot recall");
         }
 
-        public ActionResult AppointRole(int accountID, int roletypeID) {
+        public ActionResult AppointRole(int accountID, int roletypeID)
+        {
             var db = new ZkDataContext();
             Account targetAccount = db.Accounts.Single(x => x.AccountID == accountID);
             Account myAccount = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             RoleType role = db.RoleTypes.Single(x => x.RoleTypeID == roletypeID);
-            if (myAccount.CanAppoint(targetAccount, role)) {
+            if (myAccount.CanAppoint(targetAccount, role))
+            {
                 Account previous = null;
-                if (role.IsOnePersonOnly) {
+                if (role.IsOnePersonOnly)
+                {
                     List<AccountRole> entries =
                         db.AccountRoles.Where(
                         x => x.RoleTypeID == role.RoleTypeID && (role.IsClanOnly ? x.ClanID == myAccount.ClanID : x.FactionID == myAccount.FactionID)).ToList();
-                    if (entries.Any()) {
+                    if (entries.Any())
+                    {
                         previous = entries.First().AccountByAccountID;
                         db.AccountRoles.DeleteAllOnSubmit(entries);
                     }
@@ -605,7 +668,8 @@ namespace ZeroKWeb.Controllers
                                 RoleTypeID = roletypeID,
                             };
                 db.AccountRoles.InsertOnSubmit(entry);
-                if (previous != null) {
+                if (previous != null)
+                {
                     db.Events.InsertOnSubmit(Global.CreateEvent("{0} was appointed to the {1} role of {2} by {3} - replacing {4}",
                                                                 targetAccount,
                                                                 role.IsClanOnly ? (object)myAccount.Clan : myAccount.Faction,
@@ -613,7 +677,8 @@ namespace ZeroKWeb.Controllers
                                                                 myAccount,
                                                                 previous));
                 }
-                else {
+                else
+                {
                     db.Events.InsertOnSubmit(Global.CreateEvent("{0} was appointed to the {1} role of {2} by {3}",
                                                                 targetAccount,
                                                                 role.IsClanOnly ? (object)myAccount.Clan : myAccount.Faction,
@@ -629,8 +694,10 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
-        public ActionResult ConfiscateStructure(int planetID, int structureTypeID) {
-            using (var db = new ZkDataContext()) {
+        public ActionResult ConfiscateStructure(int planetID, int structureTypeID)
+        {
+            using (var db = new ZkDataContext())
+            {
                 Planet planet = db.Planets.Single(p => p.PlanetID == planetID);
                 //if (Global.Nightwatch.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot destroy structures");
                 Account acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
@@ -663,7 +730,8 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
-        public ActionResult SetEnergyPriority(int planetID, int structuretypeID, EnergyPriority priority) {
+        public ActionResult SetEnergyPriority(int planetID, int structuretypeID, EnergyPriority priority)
+        {
             var db = new ZkDataContext();
             var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             var planet = db.Planets.Single(x => x.PlanetID == planetID);
@@ -684,15 +752,16 @@ namespace ZeroKWeb.Controllers
             var structure = planet.PlanetStructures.Single(x => x.StructureTypeID == structureTypeID);
             if (!acc.CanSetStructureTarget(structure)) return Content("Cannot set target");
             var target = db.Planets.Single(x => x.PlanetID == targetPlanetID);
-            if (target != structure.PlanetByTargetPlanetID) {
+            if (target != structure.PlanetByTargetPlanetID)
+            {
                 structure.IsActive = false; // deactivate on target change
                 structure.ActivatedOnTurn = null;
             }
             structure.PlanetByTargetPlanetID = target;
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} of {1} aimed {2} located at {3} to {4} planet {5}", acc, acc.Faction, structure.StructureType, planet, target.Faction, target));
-            
+
             if (structure.IsActive && !structure.StructureType.IsSingleUse) return ActivateTargetedStructure(planetID, structureTypeID);
-            
+
             db.SubmitAndMergeChanges();
             return RedirectToAction("Planet", new { id = planet.PlanetID });
         }
@@ -706,7 +775,7 @@ namespace ZeroKWeb.Controllers
             PlanetStructure structure = db.PlanetStructures.FirstOrDefault(x => x.PlanetID == planetID && x.StructureTypeID == structureTypeID);
             int targetID = structure.TargetPlanetID ?? -1;
             if (targetID == -1) return Content("Structure has no target");
-            
+
             if (!structure.IsActive) return Content(String.Format("Structure {0} is inactive", structure.StructureType.Name));
 
             ActionResult ret = null;
@@ -730,7 +799,7 @@ namespace ZeroKWeb.Controllers
             {
                 db.PlanetStructures.DeleteOnSubmit(structure);
             }
-            
+
             db.SubmitAndMergeChanges();
             SetPlanetOwners(db);    //this is needed for the buster to update ownership after planet destruction
 
@@ -753,7 +822,7 @@ namespace ZeroKWeb.Controllers
 
             if (source.GalaxyID != target.GalaxyID) return Content("Cannot form exo-galaxy link");
 
-            db.Links.InsertOnSubmit(new Link { PlanetID1 = source.PlanetID, PlanetID2 = target.PlanetID, GalaxyID = source.GalaxyID } );
+            db.Links.InsertOnSubmit(new Link { PlanetID1 = source.PlanetID, PlanetID2 = target.PlanetID, GalaxyID = source.GalaxyID });
             db.Events.InsertOnSubmit(Global.CreateEvent("A new link was created between {0} planet {1} and {2} planet {3} by the {4}", source.Faction, source, target.Faction, target, structure.StructureType));
             db.SubmitAndMergeChanges();
             return null;
@@ -772,9 +841,9 @@ namespace ZeroKWeb.Controllers
             if (!target.CanFirePlanetBuster(acc.Faction)) return Content("You cannot attack here");
 
             //Get rid of all strutures
-            var structures = target.PlanetStructures.Where(x => x.StructureType.EffectIsVictoryPlanet == false);            
+            var structures = target.PlanetStructures.Where(x => x.StructureType.EffectIsVictoryPlanet == false);
             db.PlanetStructures.DeleteAllOnSubmit(structures);
-            
+
 
             //kill all IP
             foreach (var pf in target.PlanetFactions.Where(x => x.Influence > 0))
@@ -787,7 +856,7 @@ namespace ZeroKWeb.Controllers
                 Planet planet1 = db.Planets.FirstOrDefault(x => x.PlanetID == link.PlanetID1);
                 Planet planet2 = db.Planets.FirstOrDefault(x => x.PlanetID == link.PlanetID2);
                 if (!(planet1.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true)) &&
-                    !(planet2.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true)) )
+                    !(planet2.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true)))
                 {
                     db.Links.DeleteOnSubmit(link);
                 }
@@ -797,10 +866,10 @@ namespace ZeroKWeb.Controllers
             db.SubmitAndMergeChanges();
 
             var residue = db.StructureTypes.First(x => x.Name == "Residue"); // todo not nice use constant instead
-            target.PlanetStructures.Add(new PlanetStructure(){StructureType = residue, IsActive = true});
+            target.PlanetStructures.Add(new PlanetStructure() { StructureType = residue, IsActive = true });
             db.SubmitAndMergeChanges();
 
-            
+
 
             return null;
         }
@@ -813,30 +882,54 @@ namespace ZeroKWeb.Controllers
             Planet target = db.Planets.FirstOrDefault(x => x.PlanetID == targetID);
             Galaxy gal = db.Galaxies.FirstOrDefault(x => x.GalaxyID == source.GalaxyID);
 
+            if (newMapID == null)
+            {
+                List<Resource> mapList =
+                    db.Resources.Where(
+                        x =>
+                            x.MapPlanetWarsIcon != null && x.Planets.Where(p => p.GalaxyID == gal.GalaxyID).Count() == 0 && x.FeaturedOrder != null &&
+                            x.ResourceID != source.MapResourceID).ToList();
+                if (mapList.Count > 0)
+                {
+                    int r = new Random().Next(mapList.Count);
+                    newMapID = mapList[r].ResourceID;
+                }
+            }
             if (newMapID != null)
             {
                 Resource newMap = db.Resources.Single(x => x.ResourceID == newMapID);
                 target.Resource = newMap;
                 gal.IsDirty = true;
-                db.Events.InsertOnSubmit(Global.CreateEvent("{0} {1} has been terraformed by {2} from {3} {4}", target.Faction, target, structure.StructureType, source.Faction, source));
-                db.SubmitAndMergeChanges();
-                return null;
-            }
+                string word = "";
+                if (target.Faction == source.Faction)
+                {
+                    target.TeamSize++;
+                    word = "terraformed";
+                }
+                else
+                {
+                    word = "nanodegraded";
+                    if (target.TeamSize > 1) target.TeamSize--;
+                }
 
-            var mapList = db.Resources.Where(x => x.MapPlanetWarsIcon != null && x.Planets.Where(p => p.GalaxyID == gal.GalaxyID).Count() == 0 && x.FeaturedOrder != null
-                && x.ResourceID != source.MapResourceID).ToList();
-            if (mapList.Count > 0)
-            {
-                int r = new Random().Next(mapList.Count);
-                int resourceID = mapList[r].ResourceID;
-                Resource newMap = db.Resources.Single(x => x.ResourceID == resourceID);
-                target.Resource = newMap;
-                gal.IsDirty = true;
-                db.Events.InsertOnSubmit(Global.CreateEvent("{0} {1} has been terraformed by {2} from {3} {4}", target.Faction, target, structure.StructureType, source.Faction, source));
+                db.Events.InsertOnSubmit(Global.CreateEvent("{0} {1} has been {6} by {2} from {3} {4}. New team size is {5} vs {5}",
+                    target.Faction,
+                    target,
+                    structure.StructureType,
+                    source.Faction,
+                    source,
+                    target.TeamSize,
+                    word));
             }
             else
             {
-                return Content(string.Format("Terraform attempt on {0} {1} using {2} from {3} {4} has failed - no valid maps", target.Faction, target, structure.StructureType, source.Faction, source));
+                return
+                    Content(string.Format("Terraform attempt on {0} {1} using {2} from {3} {4} has failed - no valid maps",
+                        target.Faction,
+                        target,
+                        structure.StructureType,
+                        source.Faction,
+                        source));
             }
             db.SubmitAndMergeChanges();
             return null;
@@ -846,8 +939,11 @@ namespace ZeroKWeb.Controllers
         {
             ZkDataContext db = new ZkDataContext();
             var factions = db.Factions.ToList();
-            List<PwLadder> items = db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).GroupBy(x => x.Faction).Select(x => new PwLadder {
-                Faction = x.Key, Top10 = x.OrderByDescending(y => y.EloWeight).ThenByDescending(y => y.PwAttackPoints).ThenByDescending(y => y.Planets.Count).ThenByDescending(y => y.EloPw).Take(10).ToList() }).ToList();
+            List<PwLadder> items = db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).GroupBy(x => x.Faction).Select(x => new PwLadder
+            {
+                Faction = x.Key,
+                Top10 = x.OrderByDescending(y => y.EloWeight).ThenByDescending(y => y.PwAttackPoints).ThenByDescending(y => y.Planets.Count).ThenByDescending(y => y.EloPw).Take(10).ToList()
+            }).ToList();
             return View("Ladder", items);
         }
 
@@ -887,7 +983,8 @@ namespace ZeroKWeb.Controllers
         readonly int clanInfluence;
         public int ShadowInfluence;
 
-        public ClanEntry(Clan clan, int clanInfluence) {
+        public ClanEntry(Clan clan, int clanInfluence)
+        {
             this.clan = clan;
             this.clanInfluence = clanInfluence;
         }
