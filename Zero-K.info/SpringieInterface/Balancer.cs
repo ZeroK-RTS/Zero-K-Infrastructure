@@ -69,25 +69,42 @@ namespace ZeroKWeb.SpringieInterface
 
             Global.Nightwatch.MumbleMover.OnBalance(context.AutohostName, isGameStart, res.Players.Select(x=>new MumbleMover.PlayerInfo() {AllyID = x.AllyID, IsSpectator = x.IsSpectator, Name = x.Name}).ToList());
 
-            if (isGameStart) {
-                if (playerCount < (config.MinToStart ?? 0)) {
-                    res.Message = string.Format("This host needs at least {0} people to start", config.MinToStart);
-                    res.CanStart = false;
-                    return res;
-                }
-                if (playerCount > (config.MaxToStart ?? 99)) {
-                    res.Message = string.Format("This host can only start with at most {0} players", config.MaxToStart);
-                    res.CanStart = false;
-                    return res;
-                }
+            if (context.GetMode() != AutohostMode.Planetwars) // planetwars skip other checks
+            {
 
-                // dont allow to start alone
-                if (playerCount <= 1) {
-                    if (res.DeleteBots) return new BalanceTeamsResult { CanStart = false, Message = "You cannot play alone on this host, wait for players or join another game room and play with bots." };
-                    if (!context.Bots.Any()) return new BalanceTeamsResult { CanStart = false, Message = "Cannot play alone, you can add bots using button on bottom left." };
+                if (isGameStart)
+                {
+                    if (playerCount < (config.MinToStart ?? 0))
+                    {
+                        res.Message = string.Format("This host needs at least {0} people to start", config.MinToStart);
+                        res.CanStart = false;
+                        return res;
+                    }
+                    if (playerCount > (config.MaxToStart ?? 99))
+                    {
+                        res.Message = string.Format("This host can only start with at most {0} players", config.MaxToStart);
+                        res.CanStart = false;
+                        return res;
+                    }
+
+                    // dont allow to start alone
+                    if (playerCount <= 1)
+                    {
+                        if (res.DeleteBots)
+                            return new BalanceTeamsResult
+                            {
+                                CanStart = false,
+                                Message = "You cannot play alone on this host, wait for players or join another game room and play with bots."
+                            };
+                        if (!context.Bots.Any())
+                            return new BalanceTeamsResult
+                            {
+                                CanStart = false,
+                                Message = "Cannot play alone, you can add bots using button on bottom left."
+                            };
+                    }
                 }
             }
-
             if (isGameStart) VerifySpecCheaters(context, res);
 
             return res;
