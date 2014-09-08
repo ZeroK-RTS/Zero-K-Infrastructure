@@ -28,7 +28,7 @@ namespace ZeroKLobby.Notifications
             timer.Interval = 1000;
             timer.Tick += (sender, args) =>
             {
-                if (Program.NotifySection.Contains(this)) timerLabel.Text = PlasmaShared.Utils.PrintTimeRemaining((int)DateTime.Now.Subtract(deadline).TotalSeconds);
+                if (Program.NotifySection.Contains(this)) timerLabel.Text = PlasmaShared.Utils.PrintTimeRemaining((int)deadline.Subtract(DateTime.Now).TotalSeconds);
             };
             timer.Start();
 
@@ -50,7 +50,7 @@ namespace ZeroKLobby.Notifications
 
         void UpdateGui()
         {
-            if (pw != null && tas.MyUser.Faction != null && tas.MyUser.Level >= GlobalConst.MinPlanetWarsLevel)
+            if (pw != null && !string.IsNullOrEmpty(tas.MyUser.Faction) && tas.MyUser.Level >= GlobalConst.MinPlanetWarsLevel)
             {
                 if (pw.Mode == PwMatchCommand.ModeType.Clear) Program.NotifySection.RemoveBar(this);
                 else
