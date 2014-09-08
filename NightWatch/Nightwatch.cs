@@ -83,7 +83,7 @@ namespace CaTracker
 
             Auth = new AuthService(tas);
             adminCommands = new AdminCommands(tas);
-            offlineMessages = new OfflineMessages(tas);
+            // HACK offline messages disabled for NW testing offlineMessages = new OfflineMessages(tas);
             playerMover = new PlayerMover(tas);
             MumbleMover = new MumbleMover(tas);
 
