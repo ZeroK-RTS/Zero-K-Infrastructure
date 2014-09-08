@@ -121,6 +121,7 @@ namespace ZeroKWeb.SpringieInterface
                     {
                         isPlanetwars = true;
 
+                        
                         List<int> winnerTeams =
     sb.SpringBattlePlayers.Where(x => x.IsInVictoryTeam && !x.IsSpectator).Select(x => x.AllyNumber).Distinct().ToList();
                         int? winNum = null;

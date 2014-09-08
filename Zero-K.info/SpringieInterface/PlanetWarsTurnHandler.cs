@@ -76,7 +76,7 @@ public static class PlanetWarsTurnHandler {
 
 
             // save influence gains
-            if (winnerFaction != defender)
+            if (winnerFaction != defender && winnerFaction != null)
             {
 
                 // main winner influence 
@@ -142,8 +142,8 @@ public static class PlanetWarsTurnHandler {
         var winnerMetal = Math.Floor(GlobalConst.MetalPerBattlePlayer * (wasCcDestroyed ? GlobalConst.CcDestroyedMetalMultWinners : 1.0));
         foreach (Account w in winners)
         {
-            /*w.ProduceMetal(winnerMetal);
-                var ev = Global.CreateEvent("{0} gained {1} metal from battle {2}",
+            w.ProduceMetal(winnerMetal);
+                /*var ev = Global.CreateEvent("{0} gained {1} metal from battle {2}",
                                             w,
                                             winnerMetal,
                                             sb,
@@ -196,7 +196,7 @@ public static class PlanetWarsTurnHandler {
         // paranoia!
         try
         {
-            string metalStringWinner = String.Format("{2} gained {0} metal{1}. ", winnerMetal, wasCcDestroyed ? String.Format(" ({0:F0}% because CC was destroyed)", GlobalConst.CcDestroyedMetalMultWinners*100) : "", winnerFaction.Shortcut);
+            string metalStringWinner = String.Format("Winners gained {0} metal{1}. ", winnerMetal, wasCcDestroyed ? String.Format(" ({0:F0}% because CC was destroyed)", GlobalConst.CcDestroyedMetalMultWinners*100) : "");
             string metalStringLoser = String.Format("Losers gained {0} metal{1}. ", loserMetal, wasCcDestroyed ? String.Format(" ({0:F0}% because CC was destroyed)", GlobalConst.CcDestroyedMetalMultLosers * 100) : "");
             var mainEvent = Global.CreateEvent("{0} attacked {1} with {2} dropships in {3} and {4}{5}{6}{7}",
                 attacker,
