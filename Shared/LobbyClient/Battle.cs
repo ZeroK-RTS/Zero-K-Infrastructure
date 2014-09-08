@@ -212,7 +212,7 @@ namespace LobbyClient
                             var us = users.FirstOrDefault(x => x.Name == p.Name);
                             if (us == null)
                             {
-                                us = new UserBattleStatus(p.Name, null, Password);
+                                us = new UserBattleStatus(p.Name, new User() {LobbyID = p.LobbyID}, Password);
                                 users.Add(us);
                             }
                             us.TeamNumber = p.TeamID;
