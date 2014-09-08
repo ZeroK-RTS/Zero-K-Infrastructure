@@ -258,12 +258,19 @@ namespace ZeroKWeb
 
         void RecordPlanetwarsLoss(AttackOption option)
         {
-            var db = new ZkDataContext();
+            var message = string.Format("{0} won because nobody tried to defend", AttackingFaction.Name);
+            foreach (var fac in factions)
+            {
+                tas.Say(TasClient.SayPlace.Channel, fac.Shortcut, message, true);
+            }
+
+            
             var text = new StringBuilder();
-            List<string> playerIds = option.Attackers.Select(x => x).Union(option.Defenders.Select(x => x)).ToList();
-            text.AppendFormat("{0} won because nobody tried to defend", AttackingFaction.Name);
             try
             {
+                var db = new ZkDataContext();
+                List<string> playerIds = option.Attackers.Select(x => x).Union(option.Defenders.Select(x => x)).ToList();
+
                 PlanetWarsTurnHandler.EndTurn(option.Map, null, db, 0, db.Accounts.Where(x => playerIds.Contains(x.Name)).ToList(), text, null, db.Accounts.Where(x => option.Attackers.Contains(x.Name)).ToList());
             }
             catch (Exception ex)
@@ -271,10 +278,7 @@ namespace ZeroKWeb
                 text.Append(ex);
             }
 
-            foreach (var fac in factions)
-            {
-                tas.Say(TasClient.SayPlace.Channel, fac.Shortcut, text.ToString(), true);
-            }
+            
         }
 
         void ResetAttackOptions()
