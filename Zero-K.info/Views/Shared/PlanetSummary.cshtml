@@ -21,6 +21,10 @@
         var upkeep = Model.GetUpkeepCost();
 
         <tr>
+            <td>Team size:</td>
+            <td>@Model.TeamSize vs @Model.TeamSize</td>
+        </tr>
+        <tr>
             <td>Governor:</td>
             <td>@Html.PrintAccount(Model.Account)  @Html.PrintClan(Model.Account != null ? Model.Account.Clan : null)</td>
         </tr>
