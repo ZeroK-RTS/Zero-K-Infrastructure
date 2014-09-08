@@ -21,8 +21,10 @@
 }
 
 <div id="matchMaker">
+    @Ajax.ActionLink("refresh", "MatchMaker", new AjaxOptions { UpdateTargetId = "matchMaker", InsertionMode = InsertionMode.Replace })
+    &nbsp;
     <span id="pwTimer">
-        @Utils.PrintTimeRemaining(pw.DeadlineSeconds)
+        Deadline: @Utils.PrintTimeRemaining(pw.DeadlineSeconds)
     </span>
     <span>@text</span>
     @foreach (PwMatchCommand.VoteOption opt in pw.Options)
