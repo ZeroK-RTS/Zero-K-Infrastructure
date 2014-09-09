@@ -903,7 +903,7 @@ namespace ZeroKWeb.Controllers
                 string word = "";
                 if (target.Faction == source.Faction)
                 {
-                    target.TeamSize++;
+                    if (target.TeamSize < GlobalConst.PlanetWarsMaxTeamsize) target.TeamSize++;
                     word = "terraformed";
                 }
                 else
