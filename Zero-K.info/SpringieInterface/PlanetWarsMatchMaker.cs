@@ -27,17 +27,17 @@ namespace ZeroKWeb
         public DateTime? ChallengeTime { get; set; }
 
         public Dictionary<string, PlanetWarsMatchMaker.AttackOption> RunningBattles { get; set; }
-        public MatchMakerState() {}
+        public MatchMakerState() { }
     }
 
     /// <summary>
     ///     Handles arranging and starting of PW games
     /// </summary>
-    public class PlanetWarsMatchMaker:MatchMakerState
+    public class PlanetWarsMatchMaker : MatchMakerState
     {
         readonly List<Faction> factions;
         readonly string pwHostName;
-        
+
         readonly TasClient tas;
 
         Timer timer;
@@ -45,7 +45,7 @@ namespace ZeroKWeb
         ///     Faction that should attack this turn
         /// </summary>
         [JsonIgnore]
-        public Faction AttackingFaction { get { return factions[AttackerSideCounter%factions.Count]; } }
+        public Faction AttackingFaction { get { return factions[AttackerSideCounter % factions.Count]; } }
 
 
         public PlanetWarsMatchMaker(TasClient tas)
@@ -58,7 +58,7 @@ namespace ZeroKWeb
 
             Galaxy gal = db.Galaxies.First(x => x.IsDefault);
             factions = db.Factions.Where(x => !x.IsDeleted).ToList();
-            
+
             MatchMakerState dbState = null;
             if (gal.MatchMakerState != null)
             {
@@ -116,10 +116,11 @@ namespace ZeroKWeb
                 foreach (string x in Challenge.Defenders) tas.ForceJoinBattle(x, emptyHost.BattleID);
 
                 // move spectators to battle
-                var bat = tas.ExistingBattles.Values.First(x => x.Founder.Name == PwSpecHost);
+                var pwSpec = FindPwSpecHost();
+                var bat = tas.ExistingBattles.Values.First(x => x.Founder.Name == pwSpec);
                 if (bat != null)
                 {
-                    foreach (var b in bat.Users.Where(x => x.Name != PwSpecHost)) tas.ForceJoinBattle(b.Name, targetHost);
+                    foreach (var b in bat.Users.Where(x => x.Name != pwSpec)) tas.ForceJoinBattle(b.Name, targetHost);
                 }
 
                 var text = string.Format("Battle for planet {0} starts on spring://@join_player:{1}  Roster: {2} vs {3}",
@@ -175,7 +176,7 @@ namespace ZeroKWeb
                 command = new PwMatchCommand(PwMatchCommand.ModeType.Attack)
                 {
                     Options = AttackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList(),
-                    DeadlineSeconds = GlobalConst.PlanetWarsMinutesToAttack*60 - (int)DateTime.UtcNow.Subtract(AttackerSideChangeTime).TotalSeconds,
+                    DeadlineSeconds = GlobalConst.PlanetWarsMinutesToAttack * 60 - (int)DateTime.UtcNow.Subtract(AttackerSideChangeTime).TotalSeconds,
                     AttackerFaction = AttackingFaction.Shortcut
                 };
             }
@@ -185,7 +186,7 @@ namespace ZeroKWeb
                 {
                     Options = new List<PwMatchCommand.VoteOption> { Challenge.ToVoteOption(PwMatchCommand.ModeType.Defend) },
                     DeadlineSeconds =
-                        GlobalConst.PlanetWarsMinutesToAccept*60 - (int)DateTime.UtcNow.Subtract(ChallengeTime ?? DateTime.UtcNow).TotalSeconds,
+                        GlobalConst.PlanetWarsMinutesToAccept * 60 - (int)DateTime.UtcNow.Subtract(ChallengeTime ?? DateTime.UtcNow).TotalSeconds,
                     AttackerFaction = AttackingFaction.Shortcut,
                     DefenderFactions = GetDefendingFactions(Challenge).Select(x => x.Shortcut).ToList()
                 };
@@ -236,7 +237,7 @@ namespace ZeroKWeb
                         if (attackOption.Attackers.Count < attackOption.TeamSize)
                         {
                             attackOption.Attackers.Add(user.Name);
-                            tas.Say(TasClient.SayPlace.Channel, user.Faction,string.Format("{0} joins attack on {1}", userName, attackOption.Name),true);
+                            tas.Say(TasClient.SayPlace.Channel, user.Faction, string.Format("{0} joins attack on {1}", userName, attackOption.Name), true);
 
                             if (attackOption.Attackers.Count == attackOption.TeamSize) StartChallenge(attackOption);
                             else UpdateLobby();
@@ -278,7 +279,7 @@ namespace ZeroKWeb
                 tas.Say(TasClient.SayPlace.Channel, fac.Shortcut, message, true);
             }
 
-            
+
             var text = new StringBuilder();
             try
             {
@@ -292,7 +293,7 @@ namespace ZeroKWeb
                 text.Append(ex);
             }
 
-            
+
         }
 
         void ResetAttackOptions()
@@ -307,7 +308,7 @@ namespace ZeroKWeb
                 var gal = db.Galaxies.First(x => x.IsDefault);
                 int cnt = 2;
                 var attacker = db.Factions.Single(x => x.FactionID == AttackingFaction.FactionID);
-                var planets = gal.Planets.Where(x => x.OwnerFactionID != AttackingFaction.FactionID).OrderByDescending(x=>x.PlanetFactions.Where(y=>y.FactionID == AttackingFaction.FactionID).Sum(y=>y.Dropships)).ThenByDescending(x => x.PlanetFactions.Where(y => y.FactionID == AttackingFaction.FactionID).Sum(y => y.Influence)).ToList();
+                var planets = gal.Planets.Where(x => x.OwnerFactionID != AttackingFaction.FactionID).OrderByDescending(x => x.PlanetFactions.Where(y => y.FactionID == AttackingFaction.FactionID).Sum(y => y.Dropships)).ThenByDescending(x => x.PlanetFactions.Where(y => y.FactionID == AttackingFaction.FactionID).Sum(y => y.Influence)).ToList();
                 // list of planets by attacker's influence
 
                 foreach (var planet in planets)
@@ -332,7 +333,7 @@ namespace ZeroKWeb
                     if (planet != null) InternalAddOption(planet);
                 }
             }
-            
+
             UpdateLobby();
 
             tas.Say(TasClient.SayPlace.Channel, AttackingFaction.Shortcut, "It's your turn! Select a planet to attack", true);
@@ -356,7 +357,7 @@ namespace ZeroKWeb
             Galaxy gal = db.Galaxies.First(x => x.IsDefault);
 
             gal.MatchMakerState = JsonConvert.SerializeObject((MatchMakerState)this);
-            
+
             gal.AttackerSideCounter = AttackerSideCounter;
             gal.AttackerSideChangeTime = AttackerSideChangeTime;
             db.SubmitAndMergeChanges();
@@ -411,7 +412,7 @@ namespace ZeroKWeb
                 {
                     string userName = args.ServerParams[0];
                     int sumRemoved = 0;
-                    foreach (AttackOption aop in AttackOptions) sumRemoved += aop.Attackers.RemoveAll(x=>x == userName);
+                    foreach (AttackOption aop in AttackOptions) sumRemoved += aop.Attackers.RemoveAll(x => x == userName);
                     if (sumRemoved > 0) UpdateLobby();
                 }
             }
@@ -459,7 +460,7 @@ namespace ZeroKWeb
         public class AttackOption
         {
             public List<string> Attackers { get; set; }
-            
+
             public List<string> Defenders { get; set; }
             public string Map { get; set; }
             public string Name { get; set; }
@@ -496,7 +497,7 @@ namespace ZeroKWeb
                 if (faction == null)
                 {
                     var db = new ZkDataContext(); // this is a fallback, should not be needed
-                    var acc = Account.AccountByName(db,name);
+                    var acc = Account.AccountByName(db, name);
                     faction = factions.FirstOrDefault(x => x.FactionID == acc.FactionID);
                 }
                 if (faction == AttackingFaction)
@@ -510,16 +511,22 @@ namespace ZeroKWeb
             }
         }
 
-        const string PwSpecHost = "PlanetWarsSpec";
+        public string FindPwSpecHost()
+        {
+            return tas.ExistingBattles.Values.Select(x => x.Founder.Name).FirstOrDefault(x => x.StartsWith("PlanetWarsSpec"));
+        }
+
         public void RemoveFromRunningBattles(string autohostName)
         {
             RunningBattles.Remove(autohostName);
 
             // move spectators out from battle
+            var pwSpec = FindPwSpecHost();
+
             var bat = tas.ExistingBattles.Values.First(x => x.Founder.Name == autohostName);
-            if (bat != null && tas.ExistingBattles.Values.Any(x=>x.Founder.Name == PwSpecHost))
+            if (bat != null && tas.ExistingBattles.Values.Any(x => x.Founder.Name == pwSpec))
             {
-                foreach (var b in bat.Users.Where(x=>x.Name != autohostName)) tas.ForceJoinBattle(b.Name, PwSpecHost);
+                foreach (var b in bat.Users.Where(x => x.Name != autohostName)) tas.ForceJoinBattle(b.Name, pwSpec);
             }
         }
     }
