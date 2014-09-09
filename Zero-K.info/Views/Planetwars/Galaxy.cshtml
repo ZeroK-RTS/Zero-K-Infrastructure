@@ -128,8 +128,11 @@
 
 	if (artsTaken != null)
 	{
-		var techs = Model.Planets.Where(x => x.OwnerAccountID != null && x.Faction == artsTaken.Faction).SelectMany(y => y.PlanetStructures).Select(y => y.StructureType).Distinct().Count(y => y.EffectUnlockID != null);
-		var owned = artsTaken.Arts;
+        var owned = artsTaken.Arts;
+        
+        
+		@*var techs = Model.Planets.Where(x => x.OwnerAccountID != null && x.Faction == artsTaken.Faction).SelectMany(y => y.PlanetStructures).Select(y => y.StructureType).Distinct().Count(y => y.EffectUnlockID != null);
+		
 		var ratio_struct = techs / (double)db.StructureTypes.Where(x => x.EffectUnlockID != null).Count();
 		<span><b>@Html.PrintFaction(artsTaken.Faction)</b> </span>
 	<br />
@@ -138,7 +141,7 @@
 		<img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300 * ratio_struct))" />
 		<img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(300 * (1 - ratio_struct)))" />
 		<img src="/img/progressr_base.png" height="17" class="fleft" />
-		@*<span class="fleft"> @techs / @db.StructureTypes.Where(x => x.EffectUnlockID != null).Count() techs</span>*@
+		<span class="fleft"> @techs / @db.StructureTypes.Where(x => x.EffectUnlockID != null).Count() techs</span>*@
 		<br class="clearfloat" />
 	<div>
 		@for (int i = 0; i < @owned; i++)
