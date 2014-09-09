@@ -502,5 +502,10 @@ namespace ZeroKWeb
                 }
             }
         }
+
+        public void RemoveFromRunningBattles(string autohostName)
+        {
+            RunningBattles.Remove(autohostName);
+        }
     }
 }

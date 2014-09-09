@@ -135,6 +135,8 @@ namespace ZeroKWeb.SpringieInterface
                             } 
                         }
 
+                        Global.PlanetWarsMatchMaker.RemoveFromRunningBattles(context.AutohostName);
+
                         PlanetWarsTurnHandler.EndTurn(result.Map, extraData, db, winNum, sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).ToList(), text, sb, sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.AllyNumber == 0).Select(x => x.Account).ToList());
                     }
                     else

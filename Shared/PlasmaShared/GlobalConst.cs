@@ -15,7 +15,7 @@
 
         public const int MinDurationForXP = 240;    // seconds
         public const int MinDurationForElo = 60;
-	    public const int MinDurationForPlanetwars = 120;
+	    public const int MinDurationForPlanetwars = 0;
 
 		public const int XpForMissionOrBots = 25;
 		public const int XpForMissionOrBotsVictory = 50;
