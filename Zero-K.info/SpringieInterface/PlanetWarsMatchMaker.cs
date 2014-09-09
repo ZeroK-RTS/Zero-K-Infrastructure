@@ -109,10 +109,22 @@ namespace ZeroKWeb
             {
                 var targetHost = emptyHost.Founder.Name;
                 RunningBattles[targetHost] = Challenge;
+
                 tas.Say(TasClient.SayPlace.User, targetHost, "!map " + Challenge.Map, false);
                 Thread.Sleep(500);
                 foreach (string x in Challenge.Attackers) tas.ForceJoinBattle(x, emptyHost.BattleID);
                 foreach (string x in Challenge.Defenders) tas.ForceJoinBattle(x, emptyHost.BattleID);
+
+                var text = string.Format("Battle for planet {0} starts on spring://@join_player:{1}  Roster: {2} vs {3}",
+                    Challenge.Name,
+                    targetHost,
+                    string.Join(",", Challenge.Attackers),
+                    string.Join(",", Challenge.Defenders));
+
+                foreach (var fac in factions)
+                {
+                    tas.Say(TasClient.SayPlace.Channel, fac.Shortcut, text, true);
+                }
 
                 Utils.StartAsync(() =>
                 {
