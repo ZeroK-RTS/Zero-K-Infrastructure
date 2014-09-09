@@ -217,6 +217,7 @@ namespace ZeroKWeb
                         if (attackOption.Attackers.Count < attackOption.TeamSize)
                         {
                             attackOption.Attackers.Add(user.Name);
+                            tas.Say(TasClient.SayPlace.Channel, user.Faction,string.Format("{0} joins attack on {1}", userName, attackOption.Name),true);
 
                             if (attackOption.Attackers.Count == attackOption.TeamSize) StartChallenge(attackOption);
                             else UpdateLobby();
@@ -240,6 +241,8 @@ namespace ZeroKWeb
                         if (!Challenge.Defenders.Any(y => y == user.Name))
                         {
                             Challenge.Defenders.Add(user.Name);
+                            tas.Say(TasClient.SayPlace.Channel, user.Faction, string.Format("{0} joins defense of {1}", userName, Challenge.Name), true);
+
                             if (Challenge.Defenders.Count == Challenge.TeamSize) AcceptChallenge();
                             else UpdateLobby();
                         }
