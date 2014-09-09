@@ -299,14 +299,14 @@ namespace ZeroKWeb
                     if (cnt == 0) break;
                 }
 
-                if (!AttackOptions.Any(y => y.TeamSize == 1))
-                {
-                    var planet = planets.FirstOrDefault(x => x.TeamSize == 1 && x.CanMatchMakerPlay(attacker));
-                    if (planet != null) InternalAddOption(planet);
-                }
                 if (!AttackOptions.Any(y => y.TeamSize == 2))
                 {
                     var planet = planets.FirstOrDefault(x => x.TeamSize == 2 && x.CanMatchMakerPlay(attacker));
+                    if (planet != null) InternalAddOption(planet);
+                }
+                if (!AttackOptions.Any(y => y.TeamSize == 1))
+                {
+                    var planet = planets.FirstOrDefault(x => x.TeamSize == 1 && x.CanMatchMakerPlay(attacker));
                     if (planet != null) InternalAddOption(planet);
                 }
             }
