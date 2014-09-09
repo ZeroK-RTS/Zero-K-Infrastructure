@@ -498,21 +498,17 @@ namespace ZeroKWeb.Controllers
                     if (newFaction == null)
                     {
                         Account account = planet.Account;
-                        String accountName = "no-one";
                         Clan clan = null;
-                        String clanName = "no clan";
                         if (account != null)
                         {
-                            accountName = account.Name;
                             clan = planet.Account != null ? planet.Account.Clan : null;
-                            if (clan != null) clanName = planet.Account.Clan.ClanName;
                         }
 
                         db.Events.InsertOnSubmit(Global.CreateEvent("{0} planet {1} owned by {2} {3} was abandoned. {4}",
                                                                     planet.Faction,
                                                                     planet,
-                                                                    accountName,
-                                                                    clanName,
+                                                                    account,
+                                                                    clan,
                                                                     sb));
                         if (account != null)
                         {
