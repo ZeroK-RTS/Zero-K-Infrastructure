@@ -370,15 +370,11 @@ namespace ZeroKWeb
         /// <param name="args"></param>
         void TasOnPreviewSaid(object sender, CancelEventArgs<TasSayEventArgs> args)
         {
-            if (args.Data.Text.StartsWith("!") && args.Data.Place == TasSayEventArgs.Places.Channel &&
+            if (args.Data.Text.StartsWith("!") && (args.Data.Place == TasSayEventArgs.Places.Channel || args.Data.Place == TasSayEventArgs.Places.Normal) &&
                 args.Data.Origin == TasSayEventArgs.Origins.Player && args.Data.UserName != GlobalConst.NightwatchName)
             {
-                Faction faction = factions.FirstOrDefault(x => x.Shortcut == args.Data.Channel);
-                if (faction != null)
-                {
-                    int targetPlanetId;
-                    if (int.TryParse(args.Data.Text.Substring(1), out targetPlanetId)) JoinPlanet(args.Data.UserName, faction.Shortcut, targetPlanetId);
-                }
+                int targetPlanetId;
+                if (int.TryParse(args.Data.Text.Substring(1), out targetPlanetId)) JoinPlanet(args.Data.UserName, targetPlanetId);
             }
         }
 
@@ -470,11 +466,17 @@ namespace ZeroKWeb
             }
         }
 
-        public void JoinPlanet(string name, string factionShortcut, int planetId)
+        public void JoinPlanet(string name, int planetId)
         {
             if (tas.ExistingUsers.ContainsKey(name))
             {
-                Faction faction = factions.FirstOrDefault(x => x.Shortcut == factionShortcut);
+                Faction faction = factions.FirstOrDefault(x => x.Shortcut == tas.ExistingUsers[name].Faction);
+                if (faction == null)
+                {
+                    var db = new ZkDataContext(); // this is a fallback, should not be needed
+                    var acc = Account.AccountByName(db,name);
+                    faction = factions.FirstOrDefault(x => x.FactionID == acc.FactionID);
+                }
                 if (faction == AttackingFaction)
                 {
                     JoinPlanetAttack(planetId, name);

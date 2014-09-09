@@ -110,7 +110,7 @@ namespace ZeroKLobby.Notifications
             PwMatchCommand.VoteOption opt1 = opt;
             but.Click += (s2, ev) =>
             {
-                if (Program.SpringScanner.HasResource(opt1.Map)) tas.Say(TasClient.SayPlace.Channel, tas.MyUser.Faction, "!" + opt1.PlanetID, true);
+                if (Program.SpringScanner.HasResource(opt1.Map)) tas.Say(TasClient.SayPlace.User, GlobalConst.NightwatchName, "!" + opt1.PlanetID, true);
                 else tas.Say(TasClient.SayPlace.Channel, tas.MyUser.Faction, string.Format("wants to play {0}, but lacks the map..", opt1.PlanetID), true);
             };
         }
