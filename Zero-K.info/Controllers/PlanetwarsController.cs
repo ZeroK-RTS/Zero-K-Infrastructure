@@ -955,6 +955,7 @@ namespace ZeroKWeb.Controllers
             if (Global.IsAccountAuthorized && Global.Account.CanPlayerPlanetWars() && planet.CanMatchMakerPlay(Global.Account.Faction))
             {
                 Global.PlanetWarsMatchMaker.AddAttackOption(planet);
+                Global.PlanetWarsMatchMaker.JoinPlanet(Global.Account.Name, Global.Account.Faction.Shortcut, planet.PlanetID);
             }
             return RedirectToAction("Planet", new { id = planetID });
         }
