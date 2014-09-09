@@ -231,8 +231,7 @@ public static class PlanetWarsTurnHandler {
                     if (s.StructureType.IsIngameDestructible)
                     {
                         s.IsActive = false;
-                        if (s.ActivatedOnTurn == null) s.ActivatedOnTurn = gal.Turn;
-                        s.ActivatedOnTurn = s.ActivatedOnTurn + (int)(s.StructureType.TurnsToActivate * GlobalConst.StructureIngameDisableTimeMult);
+                        s.ActivatedOnTurn = gal.Turn + (int)(s.StructureType.TurnsToActivate * (GlobalConst.StructureIngameDisableTimeMult-1));
 
                         var ev = Global.CreateEvent("{0} has been disabled on {1} planet {2}. {3}", s.StructureType.Name, defender, planet, sb);
                         db.Events.InsertOnSubmit(ev);
@@ -247,8 +246,7 @@ public static class PlanetWarsTurnHandler {
             foreach (var s in planet.PlanetStructures.Where(x => x.StructureType.IsIngameDestructible))
             {
                 s.IsActive = false;
-                if (s.ActivatedOnTurn == null) s.ActivatedOnTurn = gal.Turn;
-                s.ActivatedOnTurn = s.ActivatedOnTurn + (int)(s.StructureType.TurnsToActivate * GlobalConst.StructureIngameDisableTimeMult);
+                s.ActivatedOnTurn = gal.Turn + (int)(s.StructureType.TurnsToActivate * (GlobalConst.StructureIngameDisableTimeMult-1));
             }
             // destroy structures by battle (usually defenses)
             foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.BattleDeletesThis).ToList()) planet.PlanetStructures.Remove(s);

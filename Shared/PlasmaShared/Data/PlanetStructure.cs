@@ -22,7 +22,7 @@ namespace ZkData
         public void UnpoweredTick(int turn) {
             if ((StructureType.UpkeepEnergy ?? 0) > 0) {
                 IsActive = false;
-                ActivatedOnTurn = null;
+                if (ActivatedOnTurn <= turn) ActivatedOnTurn = turn + 1;
             }
 
         }
