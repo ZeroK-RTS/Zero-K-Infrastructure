@@ -143,15 +143,7 @@ namespace ZeroKWeb
         {
             if (!AttackOptions.Any(x => x.PlanetID == planet.PlanetID) && Challenge == null && planet.OwnerFactionID != AttackingFaction.FactionID)
             {
-                AttackOptions.Add(new AttackOption
-                {
-                    PlanetID = planet.PlanetID,
-                    Map = planet.Resource.InternalName,
-                    OwnerFactionID = planet.OwnerFactionID,
-                    Name = planet.Name,
-                    TeamSize = planet.TeamSize,
-                });
-
+                InternalAddOption(planet);
                 UpdateLobby();
             }
         }
@@ -291,9 +283,9 @@ namespace ZeroKWeb
             using (var db = new ZkDataContext())
             {
                 var gal = db.Galaxies.First(x => x.IsDefault);
-                int cnt = 4;
+                int cnt = 3;
                 var attacker = db.Factions.Single(x => x.FactionID == AttackingFaction.FactionID);
-                var planets = gal.Planets.Where(x => x.OwnerFactionID != AttackingFaction.FactionID).OrderByDescending(x=>x.PlanetFactions.Where(y=>y.FactionID == AttackingFaction.FactionID).Sum(y=>y.Dropships)).ThenByDescending(x => x.PlanetFactions.Where(y => y.FactionID == AttackingFaction.FactionID).Sum(y => y.Influence));
+                var planets = gal.Planets.Where(x => x.OwnerFactionID != AttackingFaction.FactionID).OrderByDescending(x=>x.PlanetFactions.Where(y=>y.FactionID == AttackingFaction.FactionID).Sum(y=>y.Dropships)).ThenByDescending(x => x.PlanetFactions.Where(y => y.FactionID == AttackingFaction.FactionID).Sum(y => y.Influence)).ToList();
                 // list of planets by attacker's influence
 
                 foreach (var planet in planets)
@@ -301,26 +293,39 @@ namespace ZeroKWeb
                     if (planet.CanMatchMakerPlay(attacker))
                     {
                         // pick only those where you can actually attack atm
-
-                        AttackOptions.Add(new AttackOption
-                        {
-                            PlanetID = planet.PlanetID,
-                            Map = planet.Resource.InternalName,
-                            OwnerFactionID = planet.OwnerFactionID,
-                            Name = planet.Name,
-                            TeamSize = planet.TeamSize,
-                        });
-
-                        
+                        InternalAddOption(planet);
                         cnt--;
                     }
                     if (cnt == 0) break;
+                }
+
+                if (!AttackOptions.Any(y => y.TeamSize == 1))
+                {
+                    var planet = planets.FirstOrDefault(x => x.TeamSize == 1 && x.CanMatchMakerPlay(attacker));
+                    if (planet != null) InternalAddOption(planet);
+                }
+                if (!AttackOptions.Any(y => y.TeamSize == 2))
+                {
+                    var planet = planets.FirstOrDefault(x => x.TeamSize == 2 && x.CanMatchMakerPlay(attacker));
+                    if (planet != null) InternalAddOption(planet);
                 }
             }
             
             UpdateLobby();
 
             tas.Say(TasClient.SayPlace.Channel, AttackingFaction.Shortcut, "It's your turn! Select a planet to attack", true);
+        }
+
+        void InternalAddOption(Planet planet)
+        {
+            AttackOptions.Add(new AttackOption
+            {
+                PlanetID = planet.PlanetID,
+                Map = planet.Resource.InternalName,
+                OwnerFactionID = planet.OwnerFactionID,
+                Name = planet.Name,
+                TeamSize = planet.TeamSize,
+            });
         }
 
         void SaveStateToDb()
