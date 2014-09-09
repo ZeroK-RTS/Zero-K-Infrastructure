@@ -213,9 +213,9 @@ namespace Fixer
             foreach (var p in planets)
             {
                 if (num < cnt*0.15) p.TeamSize = 1;
-                else if (num < cnt*0.70) p.TeamSize = 2;
-                else if (num < cnt*0.85) p.TeamSize = 3;
-                else p.TeamSize = 4;
+                else if (num < cnt*0.90) p.TeamSize = 2;
+                //else if (num < cnt*0.85) p.TeamSize = 3;
+                else p.TeamSize = 3;
                 num++;
             }
             db.SubmitAndMergeChanges();
