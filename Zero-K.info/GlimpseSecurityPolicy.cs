@@ -11,7 +11,7 @@ namespace ZeroKWeb
             // You can perform a check like the one below to control Glimpse's permissions within your application.
             // More information about RuntimePolicies can be found at http://getglimpse.com/Help/Custom-Runtime-Policy
             if (Global.Account != null && (Global.IsZeroKAdmin || Global.IsLobbyAdmin)) return RuntimePolicy.On;
-            return RuntimePolicy.On;
+            return RuntimePolicy.Off;
         }
 
         public RuntimeEvent ExecuteOn
