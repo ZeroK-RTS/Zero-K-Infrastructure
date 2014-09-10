@@ -55,7 +55,7 @@ public static class PlanetWarsTurnHandler {
         if (winnerFaction != null)
         {
             // save influence gains
-            if (winnerFaction != attacker)
+            if (winnerFaction == attacker)
             {
                 // give influence to main attackers
                 double planetDropshipDefs = (planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0);
