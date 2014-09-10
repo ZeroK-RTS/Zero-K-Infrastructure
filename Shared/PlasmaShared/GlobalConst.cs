@@ -49,7 +49,7 @@
 	    public const double MetalPerBattlePlayer = 100;
         public const double CcDestroyedMetalMultWinners = 0.75;
         public const double CcDestroyedMetalMultLosers = 1.25;
-        public const int InfluencePerShip = 3;
+        public const int InfluencePerShip = 1;
         public const double InfluencePerTech = 1;
         public const double InfluenceDecay = 1;
 	    public const double InfluenceToCapturePlanet = 50.1;
