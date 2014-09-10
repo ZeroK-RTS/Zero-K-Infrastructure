@@ -113,7 +113,7 @@ public static class PlanetWarsTurnHandler {
                 }
                 catch (Exception ex)
                 {
-                    Global.Nightwatch.Tas.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
+                    Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, "pwdev", ex.ToString(), false);
                 }
             }
         }
@@ -183,7 +183,8 @@ public static class PlanetWarsTurnHandler {
                 sb,
                 winnerFaction == attacker ? "won. " + influenceReport + ". " : "lost. ",
                 metalStringWinner,
-                metalStringLoser
+                metalStringLoser,
+                planet.Faction
                 );
             db.Events.InsertOnSubmit(mainEvent);
             text.AppendLine(mainEvent.PlainText);
@@ -191,7 +192,7 @@ public static class PlanetWarsTurnHandler {
         }
         catch (Exception ex)
         {
-            Global.Nightwatch.Tas.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
+            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, "pwdev", ex.ToString(), false);
         }
 
         // destroy pw structures killed ingame
