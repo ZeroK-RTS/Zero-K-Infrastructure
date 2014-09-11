@@ -753,7 +753,7 @@ namespace Springie.autohost
 
         void CheckForBattleExit() {
             if ((DateTime.Now - spring.GameStarted) > TimeSpan.FromSeconds(20)) {
-                if (spring.IsRunning && !spring.IsBattleOver)
+                /*if (spring.IsRunning && !spring.IsBattleOver)
                 { // don't exit here if game is already over; leave it to the timed exit thread in spring_GameOver
                     Battle b = tas.MyBattle;
                     int count = 0;
@@ -768,7 +768,7 @@ namespace Springie.autohost
                         SayBattle("closing game, " + count + " active player left in game");
                         spring.ExitGame();
                     }
-                }
+                }*/ 
                 // kontrola pro pripad ze by se nevypl spring
                 User us;
                 if (!spring.IsRunning && tas.GetExistingUser(tas.UserName, out us) && us.IsInGame) tas.ChangeMyUserStatus(false, false);
