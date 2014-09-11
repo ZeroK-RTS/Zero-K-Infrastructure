@@ -6,7 +6,6 @@ using System.Text;
 namespace ZkData
 {
   partial class ZkDataContext
- {
- 
+  {
   }
 }

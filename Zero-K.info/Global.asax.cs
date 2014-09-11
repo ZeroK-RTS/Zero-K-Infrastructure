@@ -11,7 +11,6 @@ using PlasmaShared;
 using ServiceStack.Text;
 using ZeroKWeb.Controllers;
 using ZkData;
-using FlexLabs.Glimpse.Linq2Sql;
 
 namespace ZeroKWeb
 {
@@ -26,9 +25,6 @@ namespace ZeroKWeb
         public MvcApplication() {
             ZkDataContext.DataContextCreated += context =>
                 {
-                    context.Log = PluginTextWriter.Instance;
-                    context.Connection.StateChange += StateChangeHandler.OnStateChange;
-
                     if (HttpContext.Current != null) {
                         var dbs = HttpContext.Current.Items[DbListKey] as List<ZkDataContext>;
                         if (dbs != null) dbs.Add(context);
@@ -81,11 +77,11 @@ namespace ZeroKWeb
         protected void Application_Start()
         {
             var nw = new Nightwatch(Server.MapPath("/"));
-#if DEPLOY
             Application["Nightwatch"] = nw;
             Application["PwMatchMaker"] = new PlanetWarsMatchMaker(nw.Tas);
             Global.Nightwatch.Start();
-#endif
+            
+
             AreaRegistration.RegisterAllAreas();
             RegisterRoutes(RouteTable.Routes);
         }
