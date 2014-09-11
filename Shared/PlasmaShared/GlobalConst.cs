@@ -47,7 +47,8 @@
         public const double PlanetWarsEnergyToMetalRatio = 1 / 20.0;
         public const int BaseInfluencePerBattle = 35;
 	    public const double PlanetWarsAttackerMetal = 75;
-        public const double PlanetWarsDefenderMetal = 150;
+        public const double PlanetWarsDefenderWinMetal = 150;
+        public const double PlanetWarsDefenderLoseMetal = 75;
         public const double CcDestroyedMetalMultDefenders = 0.50;
         public const int InfluencePerShip = 1;
         public const double InfluencePerTech = 1;

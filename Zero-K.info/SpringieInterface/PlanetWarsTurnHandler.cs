@@ -40,13 +40,13 @@ public static class PlanetWarsTurnHandler {
         }
 
         Faction winnerFaction = null;
-        bool wasCcDestroyed = false;
+        bool wasWinerCcDestroyed = false;
 
         if (winNum != null)
         {
             if (winNum == 0) winnerFaction = attacker;
             else winnerFaction = planet.Faction;
-            wasCcDestroyed = extraData.Any(x => x.StartsWith("hqkilled," + winNum));
+            wasWinerCcDestroyed = extraData.Any(x => x.StartsWith("hqkilled," + winNum));
         }
         
         int dropshipsSent = (planet.PlanetFactions.Where(x => x.Faction == attacker).Sum(x => (int?)x.Dropships) ?? 0);
@@ -68,7 +68,7 @@ public static class PlanetWarsTurnHandler {
                 double shipBonus = winnerFaction == attacker ? (dropshipsSent - planetDropshipDefs) * GlobalConst.InfluencePerShip : 0;
                 double defenseBonus = winnerFaction == attacker ? -planetIpDefs : 0;
                 double techBonus = winnerFaction.GetFactionUnlocks().Count() * GlobalConst.InfluencePerTech;
-                double ccMalus = wasCcDestroyed ? -(influence + shipBonus + techBonus) * GlobalConst.InfluenceCcKilledAttackerMultiplier : 0;
+                double ccMalus = wasWinerCcDestroyed ? -(influence + shipBonus + techBonus) * GlobalConst.InfluenceCcKilledAttackerMultiplier : 0;
 
                 influence = influence + shipBonus + techBonus + ccMalus + defenseBonus;
                 if (influence < 0) influence = 0;
@@ -121,17 +121,16 @@ public static class PlanetWarsTurnHandler {
 
         // distribute metal
         var attackersTotalMetal = Math.Floor(GlobalConst.PlanetWarsAttackerMetal);
-        var defendersTotalMetal = Math.Floor(GlobalConst.PlanetWarsDefenderMetal * (wasCcDestroyed ? GlobalConst.CcDestroyedMetalMultDefenders : 1.0));
+        var defendersTotalMetal = Math.Floor(((winnerFaction != attacker && winnerFaction != null) ? GlobalConst.PlanetWarsDefenderWinMetal: GlobalConst.PlanetWarsDefenderLoseMetal)  * (wasWinerCcDestroyed ? GlobalConst.CcDestroyedMetalMultDefenders : 1.0));
         var attackerMetal = Math.Floor(attackersTotalMetal/attackers.Count);
         var defenderMetal = Math.Floor(defendersTotalMetal / defenders.Count);
         foreach (Account w in attackers)
         {
             w.ProduceMetal(attackerMetal);
-                var ev = Global.CreateEvent("{3} {0} gained {1} metal from battle {2}",
+                var ev = Global.CreateEvent("{0} gained {1} metal from battle {2}",
                                             w,
                                             attackerMetal,
-                                            sb,
-                                            w.Clan);
+                                            sb);
                 db.Events.InsertOnSubmit(ev);
                 text.AppendLine(ev.PlainText);
         }
@@ -139,11 +138,10 @@ public static class PlanetWarsTurnHandler {
         foreach (Account w in defenders)
         {
             w.ProduceMetal(defenderMetal);
-            var ev = Global.CreateEvent("{3} {0} gained {1} metal from battle {2}",
+            var ev = Global.CreateEvent("{0} gained {1} metal from battle {2}",
                                         w,
                                         defenderMetal,
-                                        sb,
-                                        w.Clan);
+                                        sb);
 
             db.Events.InsertOnSubmit(ev);
             text.AppendLine(ev.PlainText);
@@ -176,7 +174,7 @@ public static class PlanetWarsTurnHandler {
         try
         {
             string metalStringWinner = String.Format("Attackers gained {0} metal.", attackersTotalMetal);
-            string metalStringLoser = defenders.Any() ? String.Format("Defenders gained {0} metal{1}. ", defendersTotalMetal, wasCcDestroyed ? String.Format(" ({0:F0}% because CC was destroyed)", GlobalConst.CcDestroyedMetalMultDefenders * 100) : "") : "";
+            string metalStringLoser = defenders.Any() ? String.Format("Defenders gained {0} metal{1}. ", defendersTotalMetal, wasWinerCcDestroyed ? String.Format(" ({0:F0}% because CC was destroyed)", GlobalConst.CcDestroyedMetalMultDefenders * 100) : "") : "";
             var mainEvent = Global.CreateEvent("{0} attacked {7} {1} with {2} dropships in {3} and {4}{5}{6}",
                 attacker,
                 planet,
