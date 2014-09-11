@@ -53,6 +53,7 @@ namespace ZeroKWeb
         public static void RegisterRoutes(RouteCollection routes) {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
             routes.IgnoreRoute("Resources/{*pathInfo}");
+            routes.IgnoreRoute("img/{*pathInfo}");
             routes.IgnoreRoute("robots.txt");
 
             routes.MapRoute("WikiPage", "Wiki/{node}", new { controller = "Wiki", action = "Index", node = UrlParameter.Optional });
