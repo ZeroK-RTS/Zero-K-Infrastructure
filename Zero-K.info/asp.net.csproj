@@ -247,6 +247,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ContentService.asmx" />
+    <Content Include="favicon.png" />
     <Content Include="Img\abuse.png" />
     <Content Include="Img\artifact_1.png" />
     <Content Include="Img\artifact_2.png" />
