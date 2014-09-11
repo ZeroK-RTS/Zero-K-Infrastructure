@@ -117,7 +117,7 @@ namespace ZeroKWeb
 
                 // move spectators to battle
                 var pwSpec = FindPwSpecHost();
-                var bat = tas.ExistingBattles.Values.First(x => x.Founder.Name == pwSpec);
+                var bat = tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == pwSpec);
                 if (bat != null)
                 {
                     foreach (var b in bat.Users.Where(x => x.Name != pwSpec)) tas.ForceJoinBattle(b.Name, targetHost);
@@ -377,7 +377,7 @@ namespace ZeroKWeb
         {
             string chan = args.ServerParams[0];
             string userName = args.ServerParams[1];
-            Faction faction = factions.First(x => x.Shortcut == chan);
+            Faction faction = factions.FirstOrDefault(x => x.Shortcut == chan);
             if (faction != null)
             {
                 var db = new ZkDataContext();
@@ -523,7 +523,7 @@ namespace ZeroKWeb
             // move spectators out from battle
             var pwSpec = FindPwSpecHost();
 
-            var bat = tas.ExistingBattles.Values.First(x => x.Founder.Name == autohostName);
+            var bat = tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == autohostName);
             if (bat != null && tas.ExistingBattles.Values.Any(x => x.Founder.Name == pwSpec))
             {
                 foreach (var b in bat.Users.Where(x => x.Name != autohostName)) tas.ForceJoinBattle(b.Name, pwSpec);
