@@ -191,7 +191,7 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 }
             } catch (Exception ex) {
-                tas.Say(TasClient.SayPlace.User, "Licho[0K]", ex.ToString(), false);
+                Trace.TraceError(ex.ToString());
             }
         }
 
@@ -348,6 +348,7 @@ namespace ZeroKWeb.SpringieInterface
                                                 sw.ElapsedMilliseconds);
                 }
             } catch (Exception ex) {
+                Trace.TraceError(ex.ToString());
                 ret.Message = ex.ToString();
                 ret.CanStart = false;
             }

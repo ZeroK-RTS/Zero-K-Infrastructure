@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using LobbyClient;
@@ -234,6 +235,7 @@ namespace ZeroKWeb.SpringieInterface
                                             }
                                         }
                                     } catch (Exception ex) {
+                                        Trace.TraceError(ex.ToString());
                                         throw new ApplicationException(
                                             string.Format("Error processing commander: {0} - {1} of player {2} - {3}",
                                                           c.CommanderID,
@@ -273,9 +275,7 @@ namespace ZeroKWeb.SpringieInterface
 
                 return ret;
             } catch (Exception ex) {
-                var db = new ZkDataContext();
-                Account licho = db.Accounts.SingleOrDefault(x => x.AccountID == 5986);
-                if (licho != null) foreach (string line in ex.ToString().Lines()) AuthServiceClient.SendLobbyMessage(licho, line);
+                Trace.TraceError(ex.ToString());
                 throw;
             }
         }

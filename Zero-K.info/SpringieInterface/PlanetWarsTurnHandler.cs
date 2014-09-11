@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using LobbyClient;
@@ -113,7 +114,7 @@ public static class PlanetWarsTurnHandler {
                 }
                 catch (Exception ex)
                 {
-                    Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, "pwdev", ex.ToString(), false);
+                    Trace.TraceError(ex.ToString());
                 }
             }
         }
@@ -192,7 +193,7 @@ public static class PlanetWarsTurnHandler {
         }
         catch (Exception ex)
         {
-            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, "pwdev", ex.ToString(), false);
+            Trace.TraceError(ex.ToString());
         }
 
         // destroy pw structures killed ingame
@@ -307,6 +308,7 @@ public static class PlanetWarsTurnHandler {
         }
         catch (Exception ex)
         {
+            Trace.TraceError(ex.ToString());
             text.AppendLine("error saving history: " + ex);
         }
 

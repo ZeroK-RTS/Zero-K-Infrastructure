@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Transactions;
 using System.Windows;
@@ -202,6 +203,7 @@ namespace GalaxyDesigner
 			}
 			catch (Exception ex)
 			{
+                Trace.TraceError(ex.ToString());
 				Console.WriteLine(ex);
                 throw ex;
 			}

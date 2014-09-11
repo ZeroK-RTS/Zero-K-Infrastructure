@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.Web;
 using System.Web.Caching;
@@ -194,6 +195,7 @@ namespace ZeroKWeb
             }
             catch (System.Exception ex)
             {
+                Trace.TraceWarning("Error loading {0} : {1}", node, ex.Message);
                 return string.Format("Error loading {0} : {1}", node, ex.Message);
             }
         }

@@ -19,6 +19,8 @@ using ZkData;
 
 namespace CaTracker
 {
+
+
     public class Nightwatch
     {
         DateTime lastStatsSave;
@@ -60,8 +62,8 @@ namespace CaTracker
 			statsTimer.Elapsed += statsTimer_Elapsed;
 			statsTimer.AutoReset = true;
 			statsTimer.Start();
-			
-		}
+            Trace.Listeners.Add(new NightwatchTraceListener(tas));
+        }
 
 
 		public bool Start()

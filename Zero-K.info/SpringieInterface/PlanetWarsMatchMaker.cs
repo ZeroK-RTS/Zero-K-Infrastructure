@@ -290,6 +290,7 @@ namespace ZeroKWeb
             }
             catch (Exception ex)
             {
+                Trace.TraceError(ex.ToString());
                 text.Append(ex);
             }
 

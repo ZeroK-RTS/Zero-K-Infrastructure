@@ -153,7 +153,7 @@ namespace ZeroKWeb.SpringieInterface
                 }
                 catch (System.Data.Linq.DuplicateKeyException ex)
                 {
-                    Global.Nightwatch.Tas.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
+                    Trace.TraceError(ex.ToString());
                 }
 
                 Dictionary<int, int> orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
@@ -216,36 +216,10 @@ namespace ZeroKWeb.SpringieInterface
             }
             catch (Exception ex)
             {
+                Trace.TraceError(ex.ToString());
                 return ex.ToString();
             }
         }
-
-        static double GetEloDiff(SpringBattle sb)
-        {
-            double winnerElo = 0;
-            double loserElo = 0;
-
-            var losers = sb.SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam).Select(x => new { Player = x, x.Account }).ToList();
-            var winners = sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam).Select(x => new { Player = x, x.Account }).ToList();
-
-            if (losers.Count == 0 || winners.Count == 0)
-            {
-                return 1;
-            }
-
-            foreach (var r in winners)
-            {
-                winnerElo += r.Account.EffectiveElo;
-            }
-            foreach (var r in losers)
-            {
-                loserElo += r.Account.EffectiveElo;
-            }
-
-            winnerElo = winnerElo / winners.Count;
-            loserElo = loserElo / losers.Count;
-
-            return loserElo - winnerElo;
-        }
+        
     }
 }

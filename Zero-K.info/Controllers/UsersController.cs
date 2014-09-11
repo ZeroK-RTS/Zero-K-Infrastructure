@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -221,6 +222,7 @@ namespace ZeroKWeb.Controllers
             }
             catch (Exception ex)
             {
+                Trace.TraceError(ex.ToString());
                 Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, ex.ToString(), false);
             }
             return RedirectToAction("Detail", new { id = accountID });
@@ -348,7 +350,7 @@ namespace ZeroKWeb.Controllers
                     }
                     catch (Exception ex)
                     {
-                        Global.Nightwatch.Tas.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
+                        Trace.TraceError(ex.ToString());
                     }
                 }
             }
