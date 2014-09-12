@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -81,8 +83,10 @@ namespace ZeroKWeb
         {
             var nw = new Nightwatch(Server.MapPath("/"));
             Application["Nightwatch"] = nw;
+#if DEPLOY
             Application["PwMatchMaker"] = new PlanetWarsMatchMaker(nw.Tas);
             Global.Nightwatch.Start();
+#endif
             
 
             AreaRegistration.RegisterAllAreas();
@@ -96,7 +100,7 @@ namespace ZeroKWeb
 
         void MvcApplication_Error(object sender, EventArgs e) {
             Exception ex = Context.Server.GetLastError();
-            Trace.TraceError(ex.ToString());
+            if (!ex.Message.Contains("was not found or does not implement IController")) Trace.TraceError(ex.ToString());
             var context = HttpContext.Current;
             context.Server.ClearError();
         }
