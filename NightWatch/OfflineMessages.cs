@@ -68,9 +68,10 @@ namespace NightWatch
 
 		void client_Said(object sender, TasSayEventArgs e)
 		{
+		    User user;
+		    if (!client.ExistingUsers.TryGetValue(e.UserName, out user)) return;
 			if (e.Place == TasSayEventArgs.Places.Channel && e.Channel != "main")
 			{
-				var user = client.ExistingUsers[e.UserName];
 				Task.Factory.StartNew(() =>
 					{
 						try
@@ -110,7 +111,6 @@ namespace NightWatch
 			}
 			else if (e.Place == TasSayEventArgs.Places.Normal && e.Origin == TasSayEventArgs.Origins.Player)
 			{
-				var user = client.ExistingUsers[e.UserName];
 				Task.Factory.StartNew(() =>
 					{
 						try
