@@ -48,6 +48,20 @@ namespace ZeroKWeb
         public Faction AttackingFaction { get { return factions[AttackerSideCounter % factions.Count]; } }
 
 
+        int missedDefenseCount = 0;
+        int missedDefenseFactionID = 0;
+        private DateTime GetAttackDeadline()
+        {
+            int extra = 0;
+            if (missedDefenseFactionID == AttackingFaction.FactionID) extra = Math.Min(missedDefenseCount*GlobalConst.PlanetWarsMinutesToAttack, 120);
+            return AttackerSideChangeTime.AddMinutes(GlobalConst.PlanetWarsMinutesToAttack + extra);
+        }
+
+        private DateTime GetAcceptDeadline()
+        {
+            return ChallengeTime.Value.AddMinutes(GlobalConst.PlanetWarsMinutesToAccept);
+        }
+
         public PlanetWarsMatchMaker(TasClient tas)
         {
             AttackOptions = new List<AttackOption>();
@@ -101,6 +115,12 @@ namespace ZeroKWeb
 
         public void AcceptChallenge()
         {
+            if (missedDefenseFactionID == Challenge.OwnerFactionID)
+            {
+                missedDefenseCount = 0;
+                missedDefenseFactionID = 0;
+            }
+
             Battle emptyHost =
                 tas.ExistingBattles.Values.FirstOrDefault(
                     x => !x.IsInGame && x.Founder.Name.TrimNumbers() == pwHostName && x.Users.All(y => y.IsSpectator || y.Name == x.Founder.Name));
@@ -176,7 +196,7 @@ namespace ZeroKWeb
                 command = new PwMatchCommand(PwMatchCommand.ModeType.Attack)
                 {
                     Options = AttackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList(),
-                    DeadlineSeconds = GlobalConst.PlanetWarsMinutesToAttack * 60 - (int)DateTime.UtcNow.Subtract(AttackerSideChangeTime).TotalSeconds,
+                    DeadlineSeconds = (int)GetAttackDeadline().Subtract(DateTime.UtcNow).TotalSeconds,
                     AttackerFaction = AttackingFaction.Shortcut
                 };
             }
@@ -185,8 +205,7 @@ namespace ZeroKWeb
                 command = new PwMatchCommand(PwMatchCommand.ModeType.Defend)
                 {
                     Options = new List<PwMatchCommand.VoteOption> { Challenge.ToVoteOption(PwMatchCommand.ModeType.Defend) },
-                    DeadlineSeconds =
-                        GlobalConst.PlanetWarsMinutesToAccept * 60 - (int)DateTime.UtcNow.Subtract(ChallengeTime ?? DateTime.UtcNow).TotalSeconds,
+                    DeadlineSeconds = (int)GetAcceptDeadline().Subtract(DateTime.UtcNow).TotalSeconds,
                     AttackerFaction = AttackingFaction.Shortcut,
                     DefenderFactions = GetDefendingFactions(Challenge).Select(x => x.Shortcut).ToList()
                 };
@@ -273,6 +292,21 @@ namespace ZeroKWeb
 
         void RecordPlanetwarsLoss(AttackOption option)
         {
+            if (option.OwnerFactionID != null)
+            {
+                if (option.OwnerFactionID == missedDefenseFactionID)
+                {
+                    missedDefenseCount++;
+                }
+                else
+                {
+                    missedDefenseCount = 0;
+                    missedDefenseFactionID = option.OwnerFactionID.Value;
+                }
+                
+            }
+
+
             var message = string.Format("{0} won because nobody tried to defend", AttackingFaction.Name);
             foreach (var fac in factions)
             {
@@ -427,7 +461,7 @@ namespace ZeroKWeb
                 if (Challenge == null)
                 {
                     // attack timer
-                    if (DateTime.UtcNow.Subtract(AttackerSideChangeTime).TotalMinutes > GlobalConst.PlanetWarsMinutesToAttack)
+                    if (DateTime.UtcNow > GetAttackDeadline())
                     {
                         AttackerSideCounter++;
                         ResetAttackOptions();
@@ -436,7 +470,7 @@ namespace ZeroKWeb
                 else
                 {
                     // accept timer
-                    if (DateTime.UtcNow.Subtract(ChallengeTime.Value).TotalMinutes > GlobalConst.PlanetWarsMinutesToAccept)
+                    if (DateTime.UtcNow > GetAcceptDeadline())
                     {
                         if (Challenge.Defenders.Count >= Challenge.Attackers.Count - 1 && Challenge.Defenders.Count > 0) AcceptChallenge();
                         else
