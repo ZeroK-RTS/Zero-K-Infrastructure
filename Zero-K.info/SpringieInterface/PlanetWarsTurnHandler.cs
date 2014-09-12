@@ -9,7 +9,8 @@ using ZeroKWeb.Controllers;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
 
-public static class PlanetWarsTurnHandler {
+public static class PlanetWarsTurnHandler
+{
 
     /// <summary>
     /// Process planet wars turn
@@ -32,109 +33,133 @@ public static class PlanetWarsTurnHandler {
 
         Faction attacker = attackers.Where(x => x.Faction != null).Select(x => x.Faction).First();
         var defenders = players.Where(x => x.FactionID != attacker.FactionID && x.FactionID != null).ToList();
-
-        if (attacker == null)
-        {
-            text.AppendLine("ERROR: Invalid attacker");
-            return;
-        }
-
-        Faction winnerFaction = null;
-        bool wasWinerCcDestroyed = false;
+        bool isAttackerWinner;
+        bool wasAttackerCcDestroyed = false;
+        bool wasDefenderCcDestroyed = false;
 
         if (winNum != null)
         {
-            if (winNum == 0) winnerFaction = attacker;
-            else winnerFaction = planet.Faction;
-            wasWinerCcDestroyed = extraData.Any(x => x.StartsWith("hqkilled," + winNum));
+            if (winNum == 0) isAttackerWinner = true;
+            else isAttackerWinner = false;
+
+            wasAttackerCcDestroyed = extraData.Any(x => x.StartsWith("hqkilled,0"));
+            wasDefenderCcDestroyed = extraData.Any(x => x.StartsWith("hqkilled,1"));
         }
-        
+        else
+        {
+            text.AppendFormat("No winner on this battle!");
+            Trace.TraceError("PW battle without a winner {0}", sb != null ? sb.SpringBattleID : (int?)null);
+            return;
+        }
+
         int dropshipsSent = (planet.PlanetFactions.Where(x => x.Faction == attacker).Sum(x => (int?)x.Dropships) ?? 0);
         string influenceReport = "";
 
         // distribute influence
-        if (winnerFaction != null)
+        // save influence gains
+        // give influence to main attackers
+        double planetDropshipDefs = (planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0);
+        double planetIpDefs = (planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectReduceBattleInfluenceGain) ?? 0);
+
+        double baseInfluence = GlobalConst.BaseInfluencePerBattle;
+        double influence = baseInfluence;
+
+        double shipBonus = (dropshipsSent - planetDropshipDefs) * GlobalConst.InfluencePerShip;
+        double defenseBonus = -planetIpDefs;
+        double techBonus = attacker.GetFactionUnlocks().Count() * GlobalConst.InfluencePerTech;
+        double ipMultiplier = 1;
+        string ipReason;
+        if (!isAttackerWinner)
         {
-            // save influence gains
-            if (winnerFaction == attacker)
+            if (wasDefenderCcDestroyed)
             {
-                // give influence to main attackers
-                double planetDropshipDefs = (planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0);
-                double planetIpDefs = (planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectReduceBattleInfluenceGain) ?? 0);
-
-                double baseInfluence = GlobalConst.BaseInfluencePerBattle;
-                double influence = baseInfluence;
-
-                double shipBonus = winnerFaction == attacker ? (dropshipsSent - planetDropshipDefs) * GlobalConst.InfluencePerShip : 0;
-                double defenseBonus = winnerFaction == attacker ? -planetIpDefs : 0;
-                double techBonus = winnerFaction.GetFactionUnlocks().Count() * GlobalConst.InfluencePerTech;
-                double ccMalus = wasWinerCcDestroyed ? -(influence + shipBonus + techBonus) * GlobalConst.InfluenceCcKilledAttackerMultiplier : 0;
-
-                influence = influence + shipBonus + techBonus + ccMalus + defenseBonus;
-                if (influence < 0) influence = 0;
-                influence = Math.Floor(influence * 100) / 100;
-
-                // main winner influence 
-                PlanetFaction entry = planet.PlanetFactions.FirstOrDefault(x => x.Faction == winnerFaction);
-                if (entry == null)
-                {
-                    entry = new PlanetFaction { Faction = winnerFaction, Planet = planet, };
-                    planet.PlanetFactions.Add(entry);
-                }
-
-                entry.Influence += influence;
-
-
-                // clamping of influence
-                // gained over 100, sole owner
-                if (entry.Influence >= 100)
-                {
-                    entry.Influence = 100;
-                    foreach (var pf in planet.PlanetFactions.Where(x => x.Faction != winnerFaction)) pf.Influence = 0;
-                }
-                else
-                {
-                    var sumOthers = planet.PlanetFactions.Where(x => x.Faction != winnerFaction).Sum(x => (double?)x.Influence) ?? 0;
-                    if (sumOthers + entry.Influence > 100)
-                    {
-                        var excess = sumOthers + entry.Influence - 100;
-                        foreach (var pf in planet.PlanetFactions.Where(x => x.Faction != winnerFaction)) pf.Influence -= pf.Influence / sumOthers * excess;
-                    }
-                }
-                try
-                {
-                    influenceReport = String.Format("{0} gained {1} influence ({2}{3}{4}{5}{6})",
-                        winnerFaction.Shortcut,
-                        influence,
-                        baseInfluence + " base",
-                        defenseBonus != 0 ? " -" + -defenseBonus + " from defenses" : "",
-                        techBonus > 0 ? " +" + techBonus + " from techs" : "",
-                        shipBonus > 0 ? " +" + shipBonus + " from ships" : "",
-                        ccMalus != 0 ? " " + ccMalus + " from destroyed CC" : "");
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceError(ex.ToString());
-                }
+                ipMultiplier = 0.2;
+                ipReason = "from losing but killing defender's CC";
+            }
+            else
+            {
+                ipMultiplier = 0;
+                ipReason = "from losing horribly";
+            }
+        }
+        else
+        {
+            if (wasAttackerCcDestroyed)
+            {
+                ipReason = "from losing own CC";
+                ipMultiplier = 0.5;
+            }
+            else
+            {
+                ipReason = "from winning flawlessly";
             }
         }
 
+        influence = (influence + shipBonus + techBonus) * ipMultiplier + defenseBonus;
+        if (influence < 0) influence = 0;
+        influence = Math.Floor(influence * 100) / 100;
+
+        // main winner influence 
+        PlanetFaction entry = planet.PlanetFactions.FirstOrDefault(x => x.Faction == attacker);
+        if (entry == null)
+        {
+            entry = new PlanetFaction { Faction = attacker, Planet = planet, };
+            planet.PlanetFactions.Add(entry);
+        }
+
+        entry.Influence += influence;
+
+
+        // clamping of influence
+        // gained over 100, sole owner
+        if (entry.Influence >= 100)
+        {
+            entry.Influence = 100;
+            foreach (var pf in planet.PlanetFactions.Where(x => x.Faction != attacker)) pf.Influence = 0;
+        }
+        else
+        {
+            var sumOthers = planet.PlanetFactions.Where(x => x.Faction != attacker).Sum(x => (double?)x.Influence) ?? 0;
+            if (sumOthers + entry.Influence > 100)
+            {
+                var excess = sumOthers + entry.Influence - 100;
+                foreach (var pf in planet.PlanetFactions.Where(x => x.Faction != attacker)) pf.Influence -= pf.Influence / sumOthers * excess;
+            }
+        }
+        try
+        {
+            influenceReport = String.Format("{0} gained {1} influence ({2}% {3} of {4}{5}{6}{7})",
+                attacker.Shortcut,
+                influence,
+                (int)(ipMultiplier * 100.0),
+                ipReason,
+                baseInfluence + " base",
+                techBonus > 0 ? " +" + techBonus + " from techs" : "",
+                shipBonus > 0 ? " +" + shipBonus + " from dropships" : "",
+                defenseBonus != 0 ? " -" + -defenseBonus + " from defenses" : "");
+        }
+        catch (Exception ex)
+        {
+            Trace.TraceError(ex.ToString());
+        }
+
+
         // distribute metal
         var attackersTotalMetal = Math.Floor(GlobalConst.PlanetWarsAttackerMetal);
-        var defendersTotalMetal = Math.Floor(((winnerFaction != attacker && winnerFaction != null) ? GlobalConst.PlanetWarsDefenderWinMetal: GlobalConst.PlanetWarsDefenderLoseMetal)  * (wasWinerCcDestroyed ? GlobalConst.CcDestroyedMetalMultDefenders : 1.0));
-        var attackerMetal = Math.Floor(attackersTotalMetal/attackers.Count);
+        var defendersTotalMetal = Math.Floor(GlobalConst.PlanetWarsDefenderMetal);
+        var attackerMetal = Math.Floor(attackersTotalMetal / attackers.Count);
         var defenderMetal = Math.Floor(defendersTotalMetal / defenders.Count);
         foreach (Account w in attackers)
         {
             w.ProduceMetal(attackerMetal);
-                var ev = Global.CreateEvent("{0} gained {1} metal from battle {2}",
-                                            w,
-                                            attackerMetal,
-                                            sb);
-                db.Events.InsertOnSubmit(ev);
-                text.AppendLine(ev.PlainText);
+            var ev = Global.CreateEvent("{0} gained {1} metal from battle {2}",
+                                        w,
+                                        attackerMetal,
+                                        sb);
+            db.Events.InsertOnSubmit(ev);
+            text.AppendLine(ev.PlainText);
         }
-        
+
         foreach (Account w in defenders)
         {
             w.ProduceMetal(defenderMetal);
@@ -155,17 +180,17 @@ public static class PlanetWarsTurnHandler {
         // add attack points
         foreach (Account acc in players)
         {
-            int ap = acc.Faction == winnerFaction ? GlobalConst.AttackPointsForVictory : GlobalConst.AttackPointsForDefeat;
+            int ap = acc.Faction == attacker ? GlobalConst.AttackPointsForVictory : GlobalConst.AttackPointsForDefeat;
             if (acc.Faction != null)
             {
-                AccountPlanet entry = planet.AccountPlanets.SingleOrDefault(x => x.AccountID == acc.AccountID);
-                if (entry == null)
+                AccountPlanet apentry = planet.AccountPlanets.SingleOrDefault(x => x.AccountID == acc.AccountID);
+                if (apentry == null)
                 {
-                    entry = new AccountPlanet { AccountID = acc.AccountID, PlanetID = planet.PlanetID };
-                    db.AccountPlanets.InsertOnSubmit(entry);
+                    apentry = new AccountPlanet { AccountID = acc.AccountID, PlanetID = planet.PlanetID };
+                    db.AccountPlanets.InsertOnSubmit(apentry);
                 }
 
-                entry.AttackPoints += ap;
+                apentry.AttackPoints += ap;
             }
             acc.PwAttackPoints += ap;
         }
@@ -173,17 +198,13 @@ public static class PlanetWarsTurnHandler {
         // paranoia!
         try
         {
-            string metalStringWinner = String.Format("Attackers gained {0} metal.", attackersTotalMetal);
-            string metalStringLoser = defenders.Any() ? String.Format("Defenders gained {0} metal{1}. ", defendersTotalMetal, wasWinerCcDestroyed ? String.Format(" ({0:F0}% because CC was destroyed)", GlobalConst.CcDestroyedMetalMultDefenders * 100) : "") : "";
-            var mainEvent = Global.CreateEvent("{0} attacked {7} {1} with {2} dropships in {3} and {4}{5}{6}",
+            var mainEvent = Global.CreateEvent("{0} attacked {1} {2} in {3} and {4}. {5}",
                 attacker,
+                planet.Faction,
                 planet,
-                dropshipsSent,
                 sb,
-                winnerFaction == attacker ? "won. " + influenceReport + ". " : "lost. ",
-                metalStringWinner,
-                metalStringLoser,
-                planet.Faction
+                isAttackerWinner ? "won. " : "lost. ",
+                influenceReport
                 );
             db.Events.InsertOnSubmit(mainEvent);
             text.AppendLine(mainEvent.PlainText);
@@ -195,7 +216,7 @@ public static class PlanetWarsTurnHandler {
         }
 
         // destroy pw structures killed ingame
-        if (winnerFaction != attacker)
+        if (!isAttackerWinner)
         {
             var handled = new List<string>();
             foreach (string line in extraData.Where(x => x.StartsWith("structurekilled")))
@@ -209,9 +230,9 @@ public static class PlanetWarsTurnHandler {
                     if (s.StructureType.IsIngameDestructible)
                     {
                         s.IsActive = false;
-                        s.ActivatedOnTurn = gal.Turn + (int)(s.StructureType.TurnsToActivate * (GlobalConst.StructureIngameDisableTimeMult-1));
+                        s.ActivatedOnTurn = gal.Turn + (int)(s.StructureType.TurnsToActivate * (GlobalConst.StructureIngameDisableTimeMult - 1));
 
-                        var ev = Global.CreateEvent("{0} has been disabled on {1} planet {2}. {3}", s.StructureType.Name, planet.Faction , planet, sb);
+                        var ev = Global.CreateEvent("{0} has been disabled on {1} planet {2}. {3}", s.StructureType.Name, planet.Faction, planet, sb);
                         db.Events.InsertOnSubmit(ev);
                         text.AppendLine(ev.PlainText);
                     }
@@ -224,7 +245,7 @@ public static class PlanetWarsTurnHandler {
             foreach (var s in planet.PlanetStructures.Where(x => x.StructureType.IsIngameDestructible))
             {
                 s.IsActive = false;
-                s.ActivatedOnTurn = gal.Turn + (int)(s.StructureType.TurnsToActivate * (GlobalConst.StructureIngameDisableTimeMult-1));
+                s.ActivatedOnTurn = gal.Turn + (int)(s.StructureType.TurnsToActivate * (GlobalConst.StructureIngameDisableTimeMult - 1));
             }
             // destroy structures by battle (usually defenses)
             foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.BattleDeletesThis).ToList()) planet.PlanetStructures.Remove(s);

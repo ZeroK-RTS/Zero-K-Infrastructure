@@ -205,7 +205,7 @@ namespace Fixer
 
         static void SetPlanetTeamSizes()
         {
-            var db = new ZkDataContext();
+            var db = new ZkDataContext(true);
             var gal = db.Galaxies.First(x => x.IsDefault);
             var planets = gal.Planets.ToList().OrderBy(x=>x.Resource.MapDiagonal).ToList();
             var cnt = planets.Count;
