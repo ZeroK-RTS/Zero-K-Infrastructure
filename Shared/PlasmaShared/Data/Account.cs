@@ -91,7 +91,7 @@ namespace ZkData
 
         public bool CanPlayerPlanetWars()
         {
-            return FactionID != null && Level >= GlobalConst.MinPlanetWarsLevel;
+            return FactionID != null && Level >= GlobalConst.MinPlanetWarsLevel && EffectiveElo > GlobalConst.MinPlanetWarsElo;
         }
 
 

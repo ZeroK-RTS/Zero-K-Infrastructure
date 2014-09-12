@@ -72,7 +72,7 @@ namespace NightWatch
                             if (acc.SpringieLevel > 2 || acc.IsZeroKAdmin) client.ForceJoinChannel(e.Data.Name, ModeratorChannel);
                             if (topPlayers.IsTop20(e.Data.LobbyID)) client.ForceJoinChannel(e.Data.Name, Top20Channel);
                             if (acc.Clan != null) client.ForceJoinChannel(e.Data.Name, acc.Clan.GetClanChannel(), acc.Clan.Password);
-                            if (acc.Faction != null && acc.Level >= GlobalConst.FactionChannelMinLevel) client.ForceJoinChannel(e.Data.Name, acc.Faction.Shortcut);
+                            if (acc.Faction != null && acc.Level >= GlobalConst.FactionChannelMinLevel && acc.CanPlayerPlanetWars()) client.ForceJoinChannel(e.Data.Name, acc.Faction.Shortcut);
                         }
                         client.RequestUserIP(e.Data.Name);
                         client.RequestUserID(e.Data.Name);
