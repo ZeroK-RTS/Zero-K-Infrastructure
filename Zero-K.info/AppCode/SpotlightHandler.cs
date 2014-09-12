@@ -26,7 +26,7 @@ namespace ZeroKWeb
 					    {
 					        var spotlight = new UnitSpotlight() { Unitname = parts[0], Name = parts[1], Title = parts[2], Description = parts[3] };
 					        spotlights.Add(spotlight);
-					    } else Trace.TraceInformation("Invalid spotlight entry: {0}", line);
+					    } 
 					}
 				}
 				catch (Exception ex)
