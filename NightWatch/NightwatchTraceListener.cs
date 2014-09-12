@@ -24,10 +24,10 @@ namespace NightWatch
         {
             if (tas.IsConnected && tas.IsLoggedIn)
             {
-                tas.JoinChannel("zkerror");
+                //tas.JoinChannel("zkerror");
                 string history;
-                while (queue.TryDequeue(out history)) tas.Say(TasClient.SayPlace.Channel, "zkerror", history, true);
-                tas.Say(TasClient.SayPlace.Channel, "zkerror", text, true);
+                while (queue.TryDequeue(out history)) tas.Say(TasClient.SayPlace.Channel, "zkdev", history, true);
+                tas.Say(TasClient.SayPlace.Channel, "zkdev", text, true);
             }
             else queue.Enqueue(text); 
 
