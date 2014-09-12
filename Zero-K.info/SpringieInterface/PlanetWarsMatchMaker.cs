@@ -286,7 +286,8 @@ namespace ZeroKWeb
                 var db = new ZkDataContext();
                 List<string> playerIds = option.Attackers.Select(x => x).Union(option.Defenders.Select(x => x)).ToList();
 
-                PlanetWarsTurnHandler.EndTurn(option.Map, null, db, 0, db.Accounts.Where(x => playerIds.Contains(x.Name)).ToList(), text, null, db.Accounts.Where(x => option.Attackers.Contains(x.Name)).ToList());
+                
+                PlanetWarsTurnHandler.EndTurn(option.Map, null, db, 0, db.Accounts.Where(x => playerIds.Contains(x.Name) && x.Faction != null).ToList(), text, null, db.Accounts.Where(x => option.Attackers.Contains(x.Name) && x.Faction != null).ToList());
             }
             catch (Exception ex)
             {
