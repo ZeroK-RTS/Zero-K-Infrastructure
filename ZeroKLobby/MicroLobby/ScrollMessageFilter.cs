@@ -3,7 +3,13 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using mshtml;
+#if (!LINUX)
+using mshtml; 
+//will not compile in MonoDevelop
+//using preprocessor directive to skip. reference: http://msdn.microsoft.com/en-us/library/yt3yck0x.aspx
+//"LINUX" symbol is defined in LinuxDebug Project-option
+#endif
+
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -20,17 +26,20 @@ namespace ZeroKLobby.MicroLobby
 
         public bool PreFilterMessage(ref Message m) {
             if (m.Msg == WM_MOUSEWHEEL) {
-                var delta = ((int)m.WParam >> 16);
                 var control = MainWindow.Instance.GetHoveredControl();
                 if (control != null) {
 
                     if (control is WebBrowser) {
-                        var brows = control as WebBrowser;
+						#if (!LINUX)
+						var brows = control as WebBrowser;
                         if (brows.Document != null) //check whether the page exist before adding a scroll bar
                         {
+
+						    var delta = ((int)m.WParam >> 16);
                             var htmlDoc = brows.Document.DomDocument as HTMLDocument;
                             if (htmlDoc != null) htmlDoc.parentWindow.scrollBy(0, -delta);
-                        }
+						}
+						#endif
                     }
                     else {
                         if (Environment.OSVersion.Platform == PlatformID.Unix) {
