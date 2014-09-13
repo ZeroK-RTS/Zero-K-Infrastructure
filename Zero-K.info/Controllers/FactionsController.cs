@@ -32,14 +32,14 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index", "Factions");
         }
 
-        public static Faction PerformLeaveFaction(int accountID, ZkDataContext db = null)
+        public static Faction PerformLeaveFaction(int accountID, bool keepClan = false, ZkDataContext db = null)
         {
             if (db == null) db = new ZkDataContext();
             Account acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             Faction faction = acc.Faction;
 
-            if (acc.Clan != null) ClansController.PerformLeaveClan(Global.AccountID);
-            db.AccountRoles.DeleteAllOnSubmit(acc.AccountRolesByAccountID);
+            if (!keepClan && acc.Clan != null) ClansController.PerformLeaveClan(Global.AccountID);
+            db.AccountRoles.DeleteAllOnSubmit(acc.AccountRolesByAccountID.Where(x => !keepClan || x.ClanID == null));
             acc.ResetQuotas();
 
             foreach (var ps in acc.PlanetStructures)
