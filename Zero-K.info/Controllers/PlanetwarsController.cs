@@ -292,6 +292,9 @@ namespace ZeroKWeb.Controllers
 
         public ActionResult Index(int? galaxyID = null)
         {
+            return View("GalaxyOffline");
+
+
             var db = new ZkDataContext();
 
             Galaxy gal;
@@ -310,6 +313,7 @@ namespace ZeroKWeb.Controllers
                     db.SubmitChanges();
                 }
             }
+            
             return View("Galaxy", gal);
         }
 
