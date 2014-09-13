@@ -300,7 +300,7 @@ namespace ZeroKWeb
                 }
                 else
                 {
-                    missedDefenseCount = 0;
+                    missedDefenseCount = 1;
                     missedDefenseFactionID = option.OwnerFactionID.Value;
                 }
                 
