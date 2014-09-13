@@ -142,9 +142,23 @@ namespace LobbyClient
 
                 Type type;
                 if (!typeCache.TryGetValue(tname, out type)) {
-                    type = Type.GetType(tname) ??
-                           Assembly.GetExecutingAssembly().GetTypes().FirstOrDefault(x => x.Name == tname) ??
-                           AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).FirstOrDefault(x => x.Name == tname);
+                    
+                    type = Type.GetType(tname);
+                    if (type == null) {
+                        //We going to check if current application have the Class that we need. Reference: http://www.codeproject.com/Articles/38870/Examining-an-Assembly-at-Runtime
+                        //If we do: "type = Assembly.GetExecutingAssembly().GetTypes().FirstOrDefault(x => x.Name == tname)"
+                        //it will return exception "ReflectionTypeLoadException" in ZKL Linux because it doesn't like when
+                        //referenced module (like TextToSpeech) is mentioned but not loaded.
+                        foreach (Module namespace_obj in Assembly.GetExecutingAssembly().GetModules(false)) {
+                            Type[] class_obj = namespace_obj.FindTypes(Module.FilterTypeName, tname);
+                            if (class_obj[0] != null) {
+                                type = class_obj[0];
+                                break;
+                            }
+                        }
+                    }
+                    if (type == null) type = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).FirstOrDefault(x => x.Name == tname);
+
                     typeCache[tname] = type;
                 }
 
