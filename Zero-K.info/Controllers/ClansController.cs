@@ -162,8 +162,8 @@ namespace ZeroKWeb.Controllers
                             if (member.FactionID != clan.FactionID && member.FactionID != null)
                             {
                                 FactionsController.PerformLeaveFaction(member.AccountID, true, db);
-                                member.FactionID = clan.FactionID;
                             }
+                            member.FactionID = clan.FactionID;
                         }
                         orgClan.FactionID = clan.FactionID;     // <- not possible to change faction // now it is!
                         db.Events.InsertOnSubmit(Global.CreateEvent("Clan {0} moved to faction {1}", clan, clan.Faction));
