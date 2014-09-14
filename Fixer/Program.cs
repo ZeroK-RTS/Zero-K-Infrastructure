@@ -150,9 +150,36 @@ namespace Fixer
             }
         }
 
+        public static void AddClanLeader()
+        {
+            var db = new ZkDataContext();
+            var role = db.RoleTypes.First(x => x.IsClanOnly);
+            foreach (var clan in db.Clans.Where(x => !x.IsDeleted))
+            {
+                if (!clan.AccountRoles.Any(y => y.RoleType.IsClanOnly))
+                {
+                    var picked = clan.Accounts.Where(x => x.LastLogin >= DateTime.UtcNow.AddDays(-7)).OrderByDescending(x => x.Level).FirstOrDefault();
+                    if (picked == null) clan.Accounts.OrderByDescending(x => x.LastLogin).FirstOrDefault();
+                    if (picked != null)
+                    {
+                        clan.AccountRoles.Add(new AccountRole()
+                        {
+                            AccountID = picked.AccountID,
+                            ClanID = clan.ClanID,
+                            Inauguration = DateTime.UtcNow,
+                            RoleTypeID = role.RoleTypeID
+                        });
+                    }
+                }
+            }
+            db.SubmitAndMergeChanges();
+        }
+
         [STAThread]
         static void Main(string[] args)
         {
+            AddClanLeader();
+            return;
             //TestPwMatch();
             //FixStuff();
 

@@ -21,7 +21,7 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
 
-            return View(db.Clans.Where(x => !x.IsDeleted && (x.Faction == null || !x.Faction.IsDeleted)));
+            return View(db.Clans.Where(x => !x.IsDeleted && (x.Faction != null && !x.Faction.IsDeleted)));
         }
 
 
