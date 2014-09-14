@@ -81,7 +81,7 @@ namespace Fixer
                 }
                 db.SubmitChanges();
 
-                db.ExecuteCommand("update account set pwbombersproduced=0, pwbombersused=0, pwdropshipsproduced=0, pwdropshipsused=0, pwmetalproduced=0, pwmetalused=0, pwattackpoints=0");
+                db.ExecuteCommand("update account set pwbombersproduced=0, pwbombersused=0, pwdropshipsproduced=0, pwdropshipsused=0, pwmetalproduced=0, pwmetalused=0, pwattackpoints=0, pwwarpproduced=0, pwwarpused=0");
                 if (resetclans) db.ExecuteCommand("update account set clanid=null");
                 db.ExecuteCommand("delete from event");
                 db.ExecuteCommand("delete from planetownerhistory");
