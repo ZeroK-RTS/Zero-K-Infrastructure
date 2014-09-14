@@ -144,7 +144,7 @@ namespace ZeroKWeb.Controllers
                 bool created = clan.ClanID == 0; // existing clan vs creation
 
                 //return Content(noFaction ? "true":"false");
-
+                int? lastFactionID = clan.FactionID;
                 if (noFaction) clan.FactionID = null;
 
                 if (!created)
@@ -162,6 +162,7 @@ namespace ZeroKWeb.Controllers
                 else
                 {
                     if (Global.Clan != null) return Content("You already have a clan");
+                    // should just change their faction for them?
                     if (Global.FactionID != 0 && Global.FactionID != clan.FactionID) return Content("Clan must belong to same faction you are in");
                 }
                 if (string.IsNullOrEmpty(clan.ClanName) || string.IsNullOrEmpty(clan.Shortcut)) return Content("Name and shortcut cannot be empty!");
@@ -199,22 +200,30 @@ namespace ZeroKWeb.Controllers
                     im.Save(Server.MapPath(clan.GetBGImageUrl()));
                 }
                 db.SubmitChanges();
-
+                
                 if (created) // we created a new clan, set self as founder and rights
                 {
                     var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
                     acc.ClanID = clan.ClanID;
-                    if (acc.FactionID != clan.FactionID)
-                    {
-                        //FactionsController.PerformLeaveFaction(Global.AccountID);
-                        acc.FactionID = clan.FactionID;
-                    }
+                    
                     var leader = db.RoleTypes.FirstOrDefault(x => x.RightKickPeople && x.IsClanOnly);
                     if (leader != null) db.AccountRoles.InsertOnSubmit(new AccountRole(){AccountID =  acc.AccountID, Clan = clan, RoleType = leader, Inauguration = DateTime.UtcNow});
 
                     db.Events.InsertOnSubmit(Global.CreateEvent("New clan {0} formed by {1}", clan, acc));
-                    db.SubmitChanges();
                 }
+                else if (clan.FactionID != lastFactionID)   // set factions of members
+                {
+                    foreach (Account member in clan.Accounts)
+                    {
+                        if (member.FactionID != clan.FactionID)
+                        {
+                            FactionsController.PerformLeaveFaction(member.AccountID, true, db);
+                            member.FactionID = clan.FactionID;
+                        }
+                    }
+                    db.Events.InsertOnSubmit(Global.CreateEvent("Clan {0} moved to faction {1}", clan, clan.Faction));
+                }
+                db.SubmitChanges();
                 //scope.Complete();
                 Global.Nightwatch.Tas.AdminSetTopic(clan.GetClanChannel(), clan.SecretTopic);
                 Global.Nightwatch.Tas.AdminSetChannelPassword(clan.GetClanChannel(), clan.Password);

@@ -68,7 +68,7 @@
         public const int RoundTimeLimitInDays = 30;
         public const bool RotatePWMaps = false;
         public const bool RequireWormholeToTravel = true;
-        public const bool CanChangeClanFaction = false;
+        public const bool CanChangeClanFaction = true;
         public const double MaxPwEloDifference = 120;
 
 	    public const string MetalIcon = "/img/luaui/ibeam.png";
