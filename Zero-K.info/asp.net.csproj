@@ -270,11 +270,15 @@
     <Content Include="Img\factions\Dynasty_ship.png" />
     <Content Include="Img\factions\Empire.png" />
     <Content Include="Img\factions\Empire_ship.png" />
+    <Content Include="Img\factions\Hegemony.png" />
+    <Content Include="Img\factions\Hegemony_ship.png" />
     <Content Include="Img\factions\Liberty.png" />
     <Content Include="Img\factions\Liberty_ship.png" />
     <Content Include="Img\factions\Machines.png" />
     <Content Include="Img\factions\Machines_ship.png" />
     <Content Include="Img\factions\Mercenary.png" />
+    <Content Include="Img\factions\Rising.png" />
+    <Content Include="Img\factions\Rising_ship.png" />
     <Content Include="Img\factions\SynPact.png" />
     <Content Include="Img\factions\Synpact_ship.png" />
     <Content Include="Img\factions\Trueborn.png" />
