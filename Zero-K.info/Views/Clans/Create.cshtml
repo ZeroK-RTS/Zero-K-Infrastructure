@@ -3,9 +3,7 @@
 @model ZkData.Clan
 <form method="post" action="@Url.Action("SubmitCreate")" enctype="multipart/form-data">
     @Html.HiddenFor(x => x.ClanID)
-    @if (Model.ClanID > 0) {
-        @Html.HiddenFor(x => x.FactionID)
-    }
+  
     <table>
         <tr>
             <td>
@@ -25,12 +23,17 @@
             </td>
         </tr>
   
-        @if (GlobalConst.CanChangeClanFaction || Model.ClanID == 0) {
+        @if (GlobalConst.CanChangeClanFaction || Model.ClanID == 0)
+        {
             <tr><td>Faction:</td>
                 <td>@Html.DropDownListFor(x => x.FactionID, new ZkDataContext().Factions.Where(x => !x.IsDeleted).Shuffle().Select(x => new SelectListItem { Text = x.Name, Value = x.FactionID.ToString(), Selected = x.FactionID == Model.FactionID }))  <a href='http://zero-k.info/Wiki/PlanetWarsFactions'>read more</a>
-                <br />No faction? @Html.CheckBox("noFaction")
+                    <br />No faction? @Html.CheckBox("noFaction")
                 </td>
             </tr>
+        }
+        else
+        {
+            @Html.HiddenFor(x => x.FactionID)
         }
       
 

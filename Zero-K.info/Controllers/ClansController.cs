@@ -157,7 +157,7 @@ namespace ZeroKWeb.Controllers
                     orgClan.Password = clan.Password;
                     if (clan.FactionID != orgClan.FactionID)   // set factions of members
                     {
-                        foreach (Account member in clan.Accounts)
+                        foreach (Account member in orgClan.Accounts)
                         {
                             if (member.FactionID != clan.FactionID && member.FactionID != null)
                             {
