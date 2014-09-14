@@ -168,6 +168,7 @@ namespace ZeroKWeb.Controllers
                         member.FactionID = clan.FactionID;
                     }
                     orgClan.FactionID = clan.FactionID;     // <- not possible to change faction // now it is!
+                    if (orgClan.Faction.IsDeleted) throw new ApplicationException("You cannot join deleted faction");
                     db.Events.InsertOnSubmit(Global.CreateEvent("Clan {0} moved to faction {1}", clan, orgClan.Faction));
                 }
             }
