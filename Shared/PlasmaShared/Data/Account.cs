@@ -152,7 +152,6 @@ namespace ZkData
         public double GetDropshipsAvailable() {
             if (Faction != null) {
                 var q = GetDropshipQuota();
-                if (q < 1 && !Faction.PlanetFactions.Any(x => x.Dropships > 0)) q = 1;
                 return Math.Min(q, Faction.Dropships);
             }
             else return 0;
