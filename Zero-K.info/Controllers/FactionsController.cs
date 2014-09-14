@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Web.Mvc;
 using LobbyClient;
 using ZkData;
@@ -27,6 +28,7 @@ namespace ZeroKWeb.Controllers
             acc.FactionID = id;
 
             Faction faction = db.Factions.Single(x => x.FactionID == id);
+            if (faction.IsDeleted) throw new ApplicationException("Cannoy join deleted faction");
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} joins {1}", acc, faction));
             db.SubmitChanges();
             return RedirectToAction("Index", "Factions");
