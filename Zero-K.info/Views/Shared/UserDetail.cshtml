@@ -250,7 +250,7 @@
             <h3>@Html.ActionLink("Posted threads", "Index", "Forum")</h3>
             <span>@Model.ForumPosts.Count() posts in @Model.ForumThreadsByLastPostAccountID.Count threads</span>
             <br />
-            @foreach (ForumThread t in Model.ForumPosts.OrderByDescending(x => x.ForumPostID).Select(x => x.ForumThread).Distinct().Take(10)) {
+            @foreach (ForumThread t in Model.ForumPosts.OrderByDescending(x => x.ForumPostID).Select(x => x.ForumThread).Where(x=>x != null).Distinct().Take(10)) {
                 <small>@Html.Print(t)</small>
                 <br />
             }
