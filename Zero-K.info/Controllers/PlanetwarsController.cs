@@ -292,9 +292,8 @@ namespace ZeroKWeb.Controllers
 
         public ActionResult Index(int? galaxyID = null)
         {
-            return View("GalaxyOffline");
-
-
+            if (galaxyID == null) return View("GalaxyOffline");
+            
             var db = new ZkDataContext();
 
             Galaxy gal;
