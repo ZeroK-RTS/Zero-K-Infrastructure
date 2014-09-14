@@ -365,7 +365,7 @@ namespace ZeroKWeb.Controllers
         {
             ZkDataContext db = new ZkDataContext();
             if (banHours > MaxBanHours) banHours = MaxBanHours;
-            DateTime firstLoginAfter = maxAge != null? DateTime.UtcNow.AddHours((double)maxAge) : DateTime.MinValue; 
+            DateTime firstLoginAfter = maxAge != null? DateTime.UtcNow.AddHours(-(double)maxAge) : DateTime.MinValue; 
             foreach (Account acc in db.Accounts.Where(x => x.AccountUserIDS.Any(y => y.UserID == userID) && (maxAge == null || x.FirstLogin > firstLoginAfter) ))
             {
                 uint? punishmentUserID = banID ? (uint?)acc.AccountUserIDS.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
