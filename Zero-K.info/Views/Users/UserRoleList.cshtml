@@ -5,9 +5,6 @@
 @{
     var db = new ZkDataContext();
     Galaxy gal = db.Galaxies.Single(x => x.IsDefault);
-    DateTime started = gal.Started ?? DateTime.UtcNow;
-    TimeSpan limit = TimeSpan.FromDays(GlobalConst.RoundTimeLimitInDays);
-    bool roundOver = (DateTime.UtcNow - started > limit);
     int index = 0;
 }
 
@@ -34,7 +31,7 @@
         {
             @Html.PrintRoleType(role)
 
-            if (role.IsVoteable && Global.AccountID == Model.AccountID && !roundOver) {
+            if (role.IsVoteable && Global.AccountID == Model.AccountID && gal.Started != null) {
                 <a href="@Url.Action("NominateRole", "Poll", new { roleTypeID = role.RoleTypeID })" onclick="var text = prompt('What is your slogan?', 'vote me!'); $(this).attr('href', $(this).attr('href') + '&text=' + text);">(nominate)</a>    
             }
             if (Global.Account.CanAppoint(Model, role)) {

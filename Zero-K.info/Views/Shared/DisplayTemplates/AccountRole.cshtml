@@ -6,10 +6,8 @@
     var db = new ZkDataContext();
     Galaxy gal = db.Galaxies.Single(x => x.IsDefault);
     DateTime started = gal.Started ?? DateTime.UtcNow;
-    TimeSpan limit = TimeSpan.FromDays(GlobalConst.RoundTimeLimitInDays);
-    bool roundOver = (DateTime.UtcNow - started > limit);
 }
-@if (!roundOver)
+@if (gal.Started != null)
 {
     if (Global.Account != null && Global.Account.CanVoteRecall(entry.AccountByAccountID, entry.RoleType))
     {

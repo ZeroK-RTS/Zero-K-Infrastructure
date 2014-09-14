@@ -65,7 +65,6 @@
         public const int MaxClanSkilledSize = 16;
         public const int ClanLeaveLimit = 100;
         public const int FactionChannelMinLevel = 10;
-        public const int RoundTimeLimitInDays = 30;
         public const bool RotatePWMaps = false;
         public const bool RequireWormholeToTravel = true;
         public const bool CanChangeClanFaction = true;

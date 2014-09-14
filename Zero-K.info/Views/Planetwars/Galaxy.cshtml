@@ -64,22 +64,19 @@
 
 @{
     DateTime started = Model.Started ?? DateTime.UtcNow;
-    TimeSpan limit = TimeSpan.FromDays(GlobalConst.RoundTimeLimitInDays);
-    TimeSpan remaining = (Model.Started + limit - DateTime.UtcNow) ?? limit;
-    int daysRemain = (int)remaining.TotalDays;
-    int hoursRemain = Math.Abs(remaining.Hours);
+
 }
 
 <div class="">
     <center>
         @Html.ActionLink("Factions","Index","Factions") | @Html.ActionLink("Clans", "Index", "Clans") | @Html.ActionLink("Events", "Events")
-         | @Html.ActionLink("Ladder", "Ladder") | turn: @Model.Turn | galaxy started: @Model.Started.ToAgoString() (@(daysRemain)d @(hoursRemain)h remaining)
+         | @Html.ActionLink("Ladder", "Ladder") | turn: @Model.Turn | galaxy started: @Model.Started.ToAgoString()
          | <a href='/Wiki/PlanetWarsDesign'>Help/info</a> | <a href='/Forum?categoryID=9'>Forums</a> | <a href='/Forum/Thread/314'>Hall Of Fame</a>
     </center>
 </div>
 <br />
 
-@if(Model.Started == null || remaining < TimeSpan.Zero)
+@if(Model.Started == null)
 {
     <h1 style="color:Red">Alpha mode testing in progress :)</h1>
 }
