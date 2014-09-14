@@ -73,7 +73,7 @@ namespace ZeroKWeb.Controllers
 
 			//if (res.CurrentCategory != null && res.CurrentCategory.IsMissions) res.Threads = db.ForumThreads.Where(x => Equals(x.ForumCategoryID, categoryID) && !Global.IsLimitedMode || x.Missions.ModRapidTag.StartsWith("zk:")).OrderByDescending(x => x.LastPost);
 			//else
-			res.Threads = db.ForumThreads.Where(x => Equals(x.ForumCategoryID, categoryID)).OrderByDescending(x=>x.IsPinned).ThenByDescending(x => x.LastPost);
+            res.Threads = db.ForumThreads.Where(x => Equals(x.ForumCategoryID, categoryID)).OrderByDescending(x => x.IsPinned).ThenByDescending(x => x.LastPost).Take(50); // TODO HACK limits only to first 50 posts without paging
 
 			return View(res);
 		}

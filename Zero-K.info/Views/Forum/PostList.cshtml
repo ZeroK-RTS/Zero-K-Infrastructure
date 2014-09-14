@@ -13,7 +13,7 @@
     });
 </script>
 
-@foreach (var p in Model)
+@foreach (var p in Model.Take(50)) // TODO HACK limits only to first 50 posts without paging
 {
     string linkURL = Url.Action("Post", "Forum", new { id = p.ForumPostID }) + "#" + p.ForumPostID;
 
