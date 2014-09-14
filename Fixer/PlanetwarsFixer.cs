@@ -92,7 +92,7 @@ namespace Fixer
                 db.ExecuteCommand("delete from factiontreaty");
                 db.ExecuteCommand("delete from treatyeffect");
 
-                //db.ExecuteCommand("delete from forumthread where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsPlanets).ForumCategoryID);
+                db.ExecuteCommand("delete from forumthread where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsPlanets).ForumCategoryID);
 
                 if (resetclans)
                 {
@@ -102,7 +102,7 @@ namespace Fixer
             }
         }
 
-        static void RandomizeMaps(int galaxyID)
+        public static void RandomizeMaps(int galaxyID)
         {
             using (var db = new ZkDataContext())
             {

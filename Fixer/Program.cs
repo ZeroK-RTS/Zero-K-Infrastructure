@@ -153,7 +153,6 @@ namespace Fixer
         [STAThread]
         static void Main(string[] args)
         {
-            SetPlanetTeamSizes();
             //TestPwMatch();
             //FixStuff();
 
@@ -173,14 +172,17 @@ namespace Fixer
 
             //PickHomworldOwners();
 
-            //PurgeGalaxy(24, false);
-            //RandomizeMaps(9);
+            PlanetwarsFixer.PurgeGalaxy(24, false, true);
+            PlanetwarsFixer.RandomizeMaps(24);
+            SetPlanetTeamSizes();
+            
             //RandomizePlanetOwners(24);
             //GenerateStructures(24);
-            //GenerateArtefacts(24, new int[] {3923, 3930, 3964, 3973});
+            //PlanetwarsFixer.GenerateArtefacts(24, new int[] {3923, 3930, 3964, 3973});
+
             //SwapPlanetOwners(3948, 3955);
             //SwapPlanetOwners(3973, 3932);
-            //AddWormholes();
+            PlanetwarsFixer.AddWormholes();
             //PlanetwarsFixer.RemoveTechStructures(true, true);
             //StartGalaxy(24);
 

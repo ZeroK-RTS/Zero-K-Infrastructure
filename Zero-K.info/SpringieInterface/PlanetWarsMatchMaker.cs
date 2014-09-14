@@ -53,7 +53,7 @@ namespace ZeroKWeb
         private DateTime GetAttackDeadline()
         {
             int extra = 0;
-            if (missedDefenseFactionID == AttackingFaction.FactionID) extra = Math.Min(missedDefenseCount*GlobalConst.PlanetWarsMinutesToAttack, 120);
+            if (missedDefenseFactionID == AttackingFaction.FactionID) extra = Math.Min(missedDefenseCount*GlobalConst.PlanetWarsMinutesToAttack, 60);
             return AttackerSideChangeTime.AddMinutes(GlobalConst.PlanetWarsMinutesToAttack + extra);
         }
 
@@ -299,7 +299,7 @@ namespace ZeroKWeb
                 }
                 else
                 {
-                    missedDefenseCount = 1;
+                    missedDefenseCount = 0;
                     missedDefenseFactionID = option.OwnerFactionID.Value;
                 }
                 
