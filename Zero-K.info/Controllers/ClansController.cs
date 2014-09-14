@@ -147,30 +147,16 @@ namespace ZeroKWeb.Controllers
 
             //return Content(noFaction ? "true":"false");
             if (noFaction) clan.FactionID = null;
-
+            Clan orgClan = null;
             if (!created)
             {
                 if (!Global.Account.HasClanRight(x => x.RightEditTexts) || clan.ClanID != Global.Account.ClanID) return Content("Unauthorized");
-                var orgClan = db.Clans.Single(x => x.ClanID == clan.ClanID);
+                orgClan = db.Clans.Single(x => x.ClanID == clan.ClanID);
                 orgClan.ClanName = clan.ClanName;
                 orgClan.Shortcut = clan.Shortcut;
                 orgClan.Description = clan.Description;
                 orgClan.SecretTopic = clan.SecretTopic;
                 orgClan.Password = clan.Password;
-                if (clan.FactionID != orgClan.FactionID)   // set factions of members
-                {
-                    foreach (Account member in orgClan.Accounts)
-                    {
-                        if (member.FactionID != clan.FactionID && member.FactionID != null)
-                        {
-                            FactionsController.PerformLeaveFaction(member.AccountID, true, db);
-                        }
-                        member.FactionID = clan.FactionID;
-                    }
-                    orgClan.FactionID = clan.FactionID;     // <- not possible to change faction // now it is!
-                    if (orgClan.Faction.IsDeleted) throw new ApplicationException("You cannot join deleted faction");
-                    db.Events.InsertOnSubmit(Global.CreateEvent("Clan {0} moved to faction {1}", clan, orgClan.Faction));
-                }
             }
             else
             {
@@ -230,6 +216,26 @@ namespace ZeroKWeb.Controllers
                     });
 
                 db.Events.InsertOnSubmit(Global.CreateEvent("New clan {0} formed by {1}", clan, acc));
+            }
+            else
+            {
+                if (clan.FactionID != orgClan.FactionID)   // set factions of members
+                {
+                    orgClan.FactionID = clan.FactionID;     // <- not possible to change faction // now it is!
+                    if (orgClan.Faction.IsDeleted) throw new ApplicationException("You cannot join deleted faction");
+                    db.Events.InsertOnSubmit(Global.CreateEvent("Clan {0} moved to faction {1}", clan, orgClan.Faction));
+
+                    db.SubmitAndMergeChanges();
+
+                    foreach (Account member in orgClan.Accounts)
+                    {
+                        if (member.FactionID != clan.FactionID && member.FactionID != null)
+                        {
+                            FactionsController.PerformLeaveFaction(member.AccountID, true, db);
+                        }
+                        member.Faction = orgClan.Faction;
+                    }
+                }
             }
 
             db.SubmitChanges();

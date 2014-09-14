@@ -56,13 +56,15 @@ namespace ZeroKWeb.Controllers
             db.SubmitChanges();
             PlanetwarsController.SetPlanetOwners(db);
 
-            db.Dispose();
-            db = new ZkDataContext();
-            Account acc2 = db.Accounts.Single(x => x.AccountID == Global.AccountID);
-            acc2.FactionID = null;
-            db.SubmitChanges();
 
-            PlanetwarsController.SetPlanetOwners();
+            using (var db2 = new ZkDataContext())
+            {
+                Account acc2 = db2.Accounts.Single(x => x.AccountID == Global.AccountID);
+                acc2.FactionID = null;
+                db2.SubmitAndMergeChanges();
+
+                PlanetwarsController.SetPlanetOwners(db2);
+            }
             return faction;
         }
 
