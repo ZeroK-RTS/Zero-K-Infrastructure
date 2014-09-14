@@ -178,7 +178,7 @@ namespace Fixer
             
             //RandomizePlanetOwners(24);
             //GenerateStructures(24);
-            PlanetwarsFixer.GenerateArtefacts(24, new int[] {3923, 3930, 3964, 3973});
+            PlanetwarsFixer.GenerateArtefacts(24, new int[] { 3940, 3949, 3954, 3929, 3956 });
 
             //SwapPlanetOwners(3948, 3955);
             //SwapPlanetOwners(3973, 3932);
