@@ -309,7 +309,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth(Role = AuthRole.LobbyAdmin|AuthRole.ZkAdmin)]
-        public ActionResult MassBanSubmit(int accountID, string name, int startIndex, int endIndex, string reason, int banHours, bool banSite = false, bool banLobby = true, bool banIP = false, bool banID = false)
+        public ActionResult MassBanSubmit(string name, int startIndex, int endIndex, string reason, int banHours, bool banSite = false, bool banLobby = true, bool banIP = false, bool banID = false)
         {
             ZkDataContext db = new ZkDataContext();
             int? firstAccID = null;
@@ -331,7 +331,7 @@ namespace ZeroKWeb.Controllers
                         BanLobby = banLobby,
                         BanExpires = DateTime.UtcNow.AddHours(banHours),
                         BanIP = userIP,
-                        CreatedAccountID = accountID,
+                        CreatedAccountID = Global.AccountID,
                         UserID = userID,
                     };
                     acc.PunishmentsByAccountID.Add(punishment);
@@ -355,10 +355,57 @@ namespace ZeroKWeb.Controllers
                 }
             }
             db.SubmitChanges();
-            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Mass ban executed for user series {0} ({1} - {2}): {3}",
-                name, startIndex, endIndex, Url.Action("Detail", "Users", new { id = firstAccID }, "http")), true);
+            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Mass ban executed by {4} for user series {0} ({1} - {2}): {3}",
+                name, startIndex, endIndex, Url.Action("Detail", "Users", new { id = firstAccID }, "http"), Global.Account.Name), true);
 
             return Index(name, null, null);
+        }
+
+        public ActionResult MassBanByUserIDSubmit(int userID, double? maxAge, string reason, int banHours, bool banSite = false, bool banLobby = true, bool banIP = false, bool banID = false)
+        {
+            ZkDataContext db = new ZkDataContext();
+            if (banHours > MaxBanHours) banHours = MaxBanHours;
+            DateTime firstLoginAfter = maxAge != null? DateTime.UtcNow.AddHours((double)maxAge) : DateTime.MinValue; 
+            foreach (Account acc in db.Accounts.Where(x => x.AccountUserIDS.Any(y => y.UserID == userID) && (maxAge == null || x.FirstLogin > firstLoginAfter) ))
+            {
+                uint? punishmentUserID = banID ? (uint?)acc.AccountUserIDS.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
+                string userIP = banIP ? acc.AccountIPS.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
+                System.Console.WriteLine(acc.Name, userID, userIP);
+                Punishment punishment = new Punishment
+                {
+                    Time = DateTime.UtcNow,
+                    Reason = reason,
+                    BanSite = banSite,
+                    BanLobby = banLobby,
+                    BanExpires = DateTime.UtcNow.AddHours(banHours),
+                    BanIP = userIP,
+                    CreatedAccountID = Global.AccountID,
+                    UserID = punishmentUserID,
+                };
+                acc.PunishmentsByAccountID.Add(punishment);
+
+                try
+                {
+                    Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);
+                    if (banLobby)
+                    {
+                        Global.Nightwatch.Tas.AdminBan(acc.Name, banHours / 24, reason);
+                        if (banIP)
+                        {
+                            Global.Nightwatch.Tas.AdminBanIP(userIP, banHours / 24, reason);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError(ex.ToString());
+                }
+            }
+            db.SubmitChanges();
+            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Mass ban executed by {2} for userID {0} (max age {1})",
+                userID, maxAge, Global.Account.Name), true);
+
+            return NewUsers(null, null, userID);
         }
     }
 }

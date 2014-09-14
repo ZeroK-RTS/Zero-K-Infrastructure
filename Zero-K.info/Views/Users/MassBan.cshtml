@@ -23,4 +23,21 @@
 
         <input type="submit" value="BAN" class="delete" />
     </form>
+
+    <h1>Mass ban by userID</h1>
+    This applies a lobby ban to all accounts with the specified userID.
+    <br />
+ 
+    <form action="@Url.Action("MassBanByUserIDSubmit", "Users", new { })" method="post">
+        UserID: @Html.TextBox("userID")<br />
+        Max account age (hours): @Html.TextBox("maxAge")<br />
+        Reason: @Html.TextBox("reason")<br />
+        Ban lobby: @Html.CheckBox("banLobby", true)<br />
+        Ban site: @Html.CheckBox("banSite")<br />
+        Ban most recent IP: @Html.CheckBox("banIP", false)<br />
+        Ban userID: @Html.CheckBox("banID", false)<br />
+        Ban hours: @Html.TextBox("banHours",999999)<br />
+
+        <input type="submit" value="BAN" class="delete" />
+    </form>
 </div>
