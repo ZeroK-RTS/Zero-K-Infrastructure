@@ -963,8 +963,13 @@ namespace ZeroKWeb.Controllers
         [Auth]
         public ActionResult MatchMaker()
         {
-            var state = Global.PlanetWarsMatchMaker.GenerateLobbyCommand();
-            return View("PwMatchMaker", state);
+            var pwm = Global.PlanetWarsMatchMaker;
+            if (pwm != null)
+            {
+                var state = Global.PlanetWarsMatchMaker.GenerateLobbyCommand();
+                if (state != null) return View("PwMatchMaker", state);
+            }
+            return Content("Match maker offline");
         }
 
         [Auth]
