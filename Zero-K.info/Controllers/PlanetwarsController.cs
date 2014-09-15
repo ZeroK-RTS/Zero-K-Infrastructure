@@ -292,7 +292,7 @@ namespace ZeroKWeb.Controllers
 
         public ActionResult Index(int? galaxyID = null)
         {
-            if (galaxyID == null) return View("GalaxyOffline");
+            //if (galaxyID == null) return View("GalaxyOffline");
             
             var db = new ZkDataContext();
 
@@ -301,7 +301,7 @@ namespace ZeroKWeb.Controllers
             else gal = db.Galaxies.Single(x => x.IsDefault);
 
             string cachePath = Server.MapPath(string.Format("/img/galaxies/render_{0}.jpg", gal.GalaxyID));
-            if (true || gal.IsDirty || !System.IO.File.Exists(cachePath))
+            if (gal.IsDirty || !System.IO.File.Exists(cachePath))
             {
                 using (Bitmap im = GenerateGalaxyImage(gal.GalaxyID))
                 {
