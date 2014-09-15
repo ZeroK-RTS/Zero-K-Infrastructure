@@ -221,8 +221,13 @@ namespace ZeroKWeb.Controllers
             {
                 if (clan.FactionID != orgClan.FactionID)   // set factions of members
                 {
+                    var originalID = orgClan.FactionID;
                     orgClan.FactionID = clan.FactionID;     // <- not possible to change faction // now it is!
-                    if (orgClan.Faction.IsDeleted) throw new ApplicationException("You cannot join deleted faction");
+                    if (orgClan.Faction.IsDeleted)
+                    {
+                        orgClan.FactionID = originalID;
+                        throw new ApplicationException("You cannot join deleted faction");
+                    }
                     db.Events.InsertOnSubmit(Global.CreateEvent("Clan {0} moved to faction {1}", clan, orgClan.Faction));
 
                     db.SubmitAndMergeChanges();
