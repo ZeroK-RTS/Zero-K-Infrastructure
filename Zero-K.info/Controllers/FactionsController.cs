@@ -28,7 +28,7 @@ namespace ZeroKWeb.Controllers
             acc.FactionID = id;
 
             Faction faction = db.Factions.Single(x => x.FactionID == id);
-            if (faction.IsDeleted) throw new ApplicationException("Cannoy join deleted faction");
+            if (faction.IsDeleted && !(Global.Account.Clan != null && Global.Account.Clan.FactionID == id)) throw new ApplicationException("Cannot join deleted faction");
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} joins {1}", acc, faction));
             db.SubmitChanges();
             return RedirectToAction("Index", "Factions");
