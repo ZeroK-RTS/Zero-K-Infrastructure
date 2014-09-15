@@ -178,7 +178,9 @@ namespace Fixer
         [STAThread]
         static void Main(string[] args)
         {
-            AddClanLeader();
+            
+            PlanetwarsFixer.StartGalaxy(24,3919,3925);
+            //AddClanLeader();
             return;
             //TestPwMatch();
             //FixStuff();

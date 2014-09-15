@@ -226,10 +226,27 @@ namespace Fixer
             db.SubmitChanges();
         }
 
-        public static void StartGalaxy(int galaxyID)
+        public static void StartGalaxy(int galaxyID, params int[] startingPlanets)
         {
             using (var db = new ZkDataContext())
             {
+                var facs = db.Factions.Where(x => !x.IsDeleted).ToList();
+                for (int i = 0; i < facs.Count; i++)
+                {
+                    var planet = db.Planets.First(x => x.PlanetID == startingPlanets[i]);
+                    var faction = facs[i];
+                    planet.PlanetFactions.Add(new PlanetFaction()
+                    {
+                        Faction = faction,
+                        Influence = 100
+                    });
+                    planet.Faction = faction;
+                }
+
+                db.SubmitAndMergeChanges();
+                
+
+
                 /*foreach (Account acc in db.Accounts)
                 {
                     double elo = acc.Elo;
