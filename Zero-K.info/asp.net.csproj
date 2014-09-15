@@ -303,6 +303,10 @@
     <Content Include="Img\steam_20p.png" />
     <Content Include="Img\warpcore.png" />
     <Content Include="Img\zk_logo_miniature.png" />
+    <Content Include="Img\smurf.png" />
+    <Content Include="Img\user.png" />
+    <Content Include="Img\soldier.png" />
+    <Content Include="Img\napoleon.png" />
     <Content Include="LobbyStart.inc" />
     <Content Include="ResourceList.aspx" />
     <Content Include="ErrorReports.aspx" />
