@@ -27,22 +27,27 @@
             <span>Possible clan roles: </span>
         }
         <small>
-        @foreach (var role in grp)
-        {
-            @Html.PrintRoleType(role)
-
-            if (role.IsVoteable && Global.AccountID == Model.AccountID && gal.Started != null) {
-                <a href="@Url.Action("NominateRole", "Poll", new { roleTypeID = role.RoleTypeID })" onclick="var text = prompt('What is your slogan?', 'vote me!'); $(this).attr('href', $(this).attr('href') + '&text=' + text);">(nominate)</a>    
-            }
-            if (Global.Account.CanAppoint(Model, role)) {
-                <a href="@Url.Action("AppointRole","Planetwars", new {accountID = Model.AccountID, roleTypeID = role.RoleTypeID})">(appoint)</a>
-            }
-            index++;
-            if(index < grp.ToList().Count)
+            @if (grp.Key || gal.Started != null)
             {
-                <span>,&nbsp;</span>
+                foreach (var role in grp)
+                 {
+                     @Html.PrintRoleType(role)
+
+                     if (role.IsVoteable && Global.AccountID == Model.AccountID)
+                     {
+                         <a href="@Url.Action("NominateRole", "Poll", new { roleTypeID = role.RoleTypeID })" onclick=" var text = prompt('What is your slogan?', 'vote me!'); $(this).attr('href', $(this).attr('href') + '&text=' + text); ">(nominate)</a>
+                     }
+                     if (Global.Account.CanAppoint(Model, role))
+                     {
+                         <a href="@Url.Action("AppointRole", "Planetwars", new { accountID = Model.AccountID, roleTypeID = role.RoleTypeID })">(appoint)</a>
+                     }
+                     index++;
+                     if (index < grp.ToList().Count)
+                     {
+                         <span>,&nbsp;</span>
+                     }
+                 }
             }
-        }
-       </small><br/>
+        </small><br/>
     }
 }

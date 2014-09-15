@@ -5,7 +5,6 @@
     AccountRole entry = Model;
     var db = new ZkDataContext();
     Galaxy gal = db.Galaxies.Single(x => x.IsDefault);
-    DateTime started = gal.Started ?? DateTime.UtcNow;
 }
 @if (gal.Started != null)
 {
