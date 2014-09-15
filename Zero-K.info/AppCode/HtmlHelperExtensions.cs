@@ -187,10 +187,10 @@ namespace System.Web.Mvc
                 
                 var dudeStr = "";
                 if (account.IsZeroKAdmin) dudeStr = "<img src='/img/police.png'  class='icon16' alt='Admin' />";
-                else if (account.EffectiveElo < 1400) dudeStr = "<img src='/img/smurf.png'  class='icon16' alt='Newbie' />";
-                else if (account.EffectiveElo < 1600) dudeStr = "<img src='/img/user.png'  class='icon16' alt='Dude' />";
-                else if (account.EffectiveElo < 1800) dudeStr = "<img src='/img/soldier.png'  class='icon16' alt='Soldier' />";
-                else                                  dudeStr = "<img src='/img/napoleon.png'  class='icon16' alt='Napoleon' />";
+                else if (account.EffectiveElo < 1400) dudeStr = "<img src='https://raw.githubusercontent.com/ZeroK-RTS/Zero-K-Infrastructure/master/ZeroKLobby/Resources/smurf.png'  class='icon16' alt='Newbie' />";
+                else if (account.EffectiveElo < 1600) dudeStr = "<img src='https://raw.githubusercontent.com/ZeroK-RTS/Zero-K-Infrastructure/master/ZeroKLobby/Resources/user.png'  class='icon16' alt='Dude' />";
+                else if (account.EffectiveElo < 1800) dudeStr = "<img src='https://raw.githubusercontent.com/ZeroK-RTS/Zero-K-Infrastructure/master/ZeroKLobby/Resources/soldier.png'  class='icon16' alt='Soldier' />";
+                else                                  dudeStr = "<img src='https://raw.githubusercontent.com/ZeroK-RTS/Zero-K-Infrastructure/master/ZeroKLobby/Resources/napoleon.png'  class='icon16' alt='Napoleon' />";
 
                 var clampedLevel = account.Level/10 + 1;
                 if (clampedLevel < 1) clampedLevel = 1;
