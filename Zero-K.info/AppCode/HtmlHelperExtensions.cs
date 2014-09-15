@@ -184,8 +184,13 @@ namespace System.Web.Mvc
                                             account.ClanID);
                 }
                 else if (account.Faction != null) clanStr = string.Format("<img src='{0}' width='16'/>", account.Faction.GetImageUrl());
-                var adminStr = "";
-                if (account.IsZeroKAdmin) adminStr = "<img src='/img/police.png'  class='icon16' alt='Admin' />";
+                
+                var dudeStr = "";
+                if (account.IsZeroKAdmin) dudeStr = "<img src='/img/police.png'  class='icon16' alt='Admin' />";
+                else if (account.EffectiveElo < 1400) dudeStr = "<img src='/img/smurf.png'  class='icon16' alt='Newbie' />";
+                else if (account.EffectiveElo < 1600) dudeStr = "<img src='/img/user.png'  class='icon16' alt='Dude' />";
+                else if (account.EffectiveElo < 1800) dudeStr = "<img src='/img/soldier.png'  class='icon16' alt='Soldier' />";
+                else                                  dudeStr = "<img src='/img/napoleon.png'  class='icon16' alt='Napoleon' />";
 
                 var clampedLevel = account.Level/10 + 1;
                 if (clampedLevel < 1) clampedLevel = 1;
@@ -204,7 +209,7 @@ namespace System.Web.Mvc
                             colorize ? color : "",
                             account.Name,
                             clanStr,
-                            adminStr));
+                            dudeStr));
             }
         }
 

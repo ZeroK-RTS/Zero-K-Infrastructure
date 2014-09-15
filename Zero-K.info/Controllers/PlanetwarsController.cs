@@ -89,7 +89,7 @@ namespace ZeroKWeb.Controllers
                 string str;
                 if (selfbomb) str = "{0} of {1} bombed own planet {3} using {4} bombers against {5} defenses. {6}Ground armies lost {7} influence";
                 else str = "{0} of {1} bombed {2} planet {3} using {4} bombers against {5} defenses. {6}Ground armies lost {7} influence";
-                if (bombed.Count > 0)
+                if (bombed.Count > 1)
                 {
                     str += " and ";
                     int counter = 8;
@@ -99,6 +99,10 @@ namespace ZeroKWeb.Controllers
                         counter++;
                     }
                     str += " were destroyed.";
+                }
+                else if (bombed.Count == 1)
+                {
+                    str += " and {8} was destroyed.";
                 }
                 else str += ".";
 
