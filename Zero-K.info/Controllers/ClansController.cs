@@ -147,7 +147,12 @@ namespace ZeroKWeb.Controllers
 
             //return Content(noFaction ? "true":"false");
             if (noFaction) clan.FactionID = null;
+
+            var new_faction = db.Factions.SingleOrDefault(x => x.FactionID == clan.FactionID);
+            if ((new_faction != null) && new_faction.IsDeleted) return Content("Cannot create clans in deleted factions");
+
             Clan orgClan = null;
+
             if (!created)
             {
                 if (!Global.Account.HasClanRight(x => x.RightEditTexts) || clan.ClanID != Global.Account.ClanID) return Content("Unauthorized");
