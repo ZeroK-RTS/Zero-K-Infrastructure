@@ -4,7 +4,6 @@
 
 @{
     var db = new ZkDataContext();
-    Galaxy gal = db.Galaxies.Single(x => x.IsDefault);
     int index = 0;
 }
 
@@ -27,7 +26,7 @@
             <span>Possible clan roles: </span>
         }
         <small>
-            @if (grp.Key || gal.Started != null)
+            @if (grp.Key || GlobalConst.PlanetWarsMode != PlanetWarsModes.AllOffline)
             {
                 foreach (var role in grp)
                  {

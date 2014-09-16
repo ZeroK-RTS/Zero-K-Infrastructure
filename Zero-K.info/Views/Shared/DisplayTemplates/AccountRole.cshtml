@@ -3,10 +3,8 @@
 @model ZkData.AccountRole
 @{
     AccountRole entry = Model;
-    var db = new ZkDataContext();
-    Galaxy gal = db.Galaxies.Single(x => x.IsDefault);
 }
-@if (gal.Started != null)
+@if (GlobalConst.PlanetWarsMode != PlanetWarsModes.AllOffline)
 {
     if (Global.Account != null && Global.Account.CanVoteRecall(entry.AccountByAccountID, entry.RoleType))
     {
