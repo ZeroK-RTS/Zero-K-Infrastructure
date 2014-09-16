@@ -1,4 +1,6 @@
-  namespace ZkData
+  using System.Security.Cryptography.X509Certificates;
+
+namespace ZkData
 {
 	public static class GlobalConst
 	{
@@ -69,6 +71,8 @@
         public const bool RequireWormholeToTravel = true;
         public const bool CanChangeClanFaction = true;
         public const double MaxPwEloDifference = 120;
+	    
+        public const PlanetWarsModes PlanetWarsMode = PlanetWarsModes.PreGame;
 
 	    public const string MetalIcon = "/img/luaui/ibeam.png";
         public const string EnergyIcon = "/img/luaui/energy.png";
@@ -105,5 +109,11 @@
             return name.Contains("Zero-K");
         }
 	}
-  
+
+    public enum PlanetWarsModes
+    {
+        AllOffline = 0,
+        PreGame = 1,
+        Running = 2
+    }
 }

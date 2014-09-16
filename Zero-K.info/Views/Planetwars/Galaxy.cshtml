@@ -62,10 +62,6 @@
 	</script>
 }
 
-@{
-    DateTime started = Model.Started ?? DateTime.UtcNow;
-
-}
 
 <div class="">
     <center>
@@ -76,10 +72,6 @@
 </div>
 <br />
 
-@if(Model.Started == null)
-{
-    <h1 style="color:Red">Alpha mode testing in progress :)</h1>
-}
 
 @Html.Partial("FactionList")
 <br style="clear:both"/>

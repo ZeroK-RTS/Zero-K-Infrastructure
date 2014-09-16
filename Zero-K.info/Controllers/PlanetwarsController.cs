@@ -292,10 +292,13 @@ namespace ZeroKWeb.Controllers
 
         public ActionResult Index(int? galaxyID = null)
         {
-            //if (galaxyID == null) return View("GalaxyOffline");
-            
-            var db = new ZkDataContext();
+            if (GlobalConst.PlanetWarsMode != PlanetWarsModes.Running)
+            {
+                if (galaxyID == null) return View("GalaxyOffline");
+            }
 
+            var db = new ZkDataContext();
+            
             Galaxy gal;
             if (galaxyID != null) gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
             else gal = db.Galaxies.Single(x => x.IsDefault);

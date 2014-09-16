@@ -112,8 +112,7 @@ namespace ZeroKWeb.Controllers
             var pollActive = Global.Account.PollsByRoleTargetAccountID.Any(x => x.ExpireBy > DateTime.UtcNow);
             if (pollActive) return Content("Poll already active, wait until it ends");
 
-            Galaxy gal = db.Galaxies.Single(x => x.IsDefault);
-            if (gal.Started == null) return Content("Round over, no nominations can be made");
+            if (GlobalConst.PlanetWarsMode == PlanetWarsModes.AllOffline) return Content("Round over, no nominations can be made");
 
             var rt = db.RoleTypes.Single(x => x.RoleTypeID == roleTypeID);
             if (rt.RestrictFactionID != null && rt.RestrictFactionID != Global.FactionID) throw new ApplicationException("Invalid faction");

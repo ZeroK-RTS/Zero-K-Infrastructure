@@ -3,9 +3,20 @@
 @model ZkData.Faction
 @{
     Faction f = Model;
-    var accounts = f.Accounts.Where(x => x.PwAttackPoints > 0).ToList();
-    int count = accounts.Count();
-    int skill = accounts.Count > 0 ? (int)Math.Round(accounts.Average(x => x.EffectiveElo)) : 1500;
+    int count;
+    int skill;
+    if (GlobalConst.PlanetWarsMode == PlanetWarsModes.PreGame)
+    {
+        var accounts = f.Accounts.Where(x => x.LastLogin > DateTime.UtcNow.AddDays(-7)).ToList();
+        count = accounts.Count();
+        skill = accounts.Count > 0 ? (int)Math.Round(accounts.Average(x => x.EffectiveElo)) : 1500;
+    }
+    else
+    {
+        var accounts = f.Accounts.Where(x => x.PwAttackPoints > 0).ToList();
+        count = accounts.Count();
+        skill = accounts.Count > 0 ? (int)Math.Round(accounts.Average(x => x.EloPw)) : 1500;
+    }
 }
 <div style="color: @f.Color">
     <a href="@Url.Action("Detail", "Factions", new { id = f.FactionID })" nicetitle="$faction$@f.FactionID">
