@@ -78,8 +78,9 @@ namespace NightWatch
 						{
 							using (var db = new ZkDataContext())
 							{
-                               
-                                var chanusers = client.JoinedChannels[e.Channel].ChannelUsers.ToList();
+							    Channel channel;
+							    if (!client.JoinedChannels.TryGetValue(e.Channel, out channel)) return;
+                                var chanusers = channel.ChannelUsers.ToList();
 								foreach (var s in db.LobbyChannelSubscriptions.Where(x => x.Channel == e.Channel).Select(x=>x.Account))
 								{
 									if (!chanusers.Any(x=>x == s.Name)) {
