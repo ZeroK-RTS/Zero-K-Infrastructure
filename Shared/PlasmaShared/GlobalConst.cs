@@ -55,6 +55,7 @@ namespace ZkData
         public const double InfluenceDecay = 1;
 	    public const double InfluenceToCapturePlanet = 50.1;
         public const double InfluenceToLosePlanet = 10;
+	    public const double DropshipsForFullWarpIPGain = 10;
 	    public const double SelfDestructRefund = 0.5;
 	    public const double BomberKillStructureChance = 0.1;
         public const double BomberKillIpChance = 1.2;

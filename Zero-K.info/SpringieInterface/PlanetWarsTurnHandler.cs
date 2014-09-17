@@ -53,6 +53,7 @@ public static class PlanetWarsTurnHandler
         }
 
         int dropshipsSent = (planet.PlanetFactions.Where(x => x.Faction == attacker).Sum(x => (int?)x.Dropships) ?? 0);
+        bool isLinked = planet.CanDropshipsAttack(attacker);
         string influenceReport = "";
 
         // distribute influence
@@ -64,7 +65,10 @@ public static class PlanetWarsTurnHandler
         double baseInfluence = GlobalConst.BaseInfluencePerBattle;
         double influence = baseInfluence;
 
-        double shipBonus = (dropshipsSent - planetDropshipDefs) * GlobalConst.InfluencePerShip;
+
+        double effectiveShips = Math.Max(0, (dropshipsSent - planetDropshipDefs));
+        double shipBonus = effectiveShips*GlobalConst.InfluencePerShip;
+
         double defenseBonus = -planetIpDefs;
         double techBonus = attacker.GetFactionUnlocks().Count() * GlobalConst.InfluencePerTech;
         double ipMultiplier = 1;
@@ -94,6 +98,13 @@ public static class PlanetWarsTurnHandler
                 ipReason = "from winning flawlessly";
             }
         }
+        if (!isLinked && effectiveShips < GlobalConst.DropshipsForFullWarpIPGain)
+        {
+            var newMult = effectiveShips/GlobalConst.DropshipsForFullWarpIPGain;
+            ipMultiplier *= newMult ;
+            ipReason = ipReason + string.Format(" and reduced to {0}% because only {1} of {2} ships needed for warp attack got past defenses", (int)(newMult*100.0), (int)effectiveShips, GlobalConst.DropshipsForFullWarpIPGain);
+        }
+
 
         influence = (influence + shipBonus + techBonus) * ipMultiplier + defenseBonus;
         if (influence < 0) influence = 0;
