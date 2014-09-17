@@ -116,7 +116,7 @@ namespace ZeroKWeb.SpringieInterface
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair
                                        { Key = "clan", Value = user.Clan != null ? user.Clan.Shortcut : "" });
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "level", Value = user.Level.ToString() });
-                        double elo = is1v1 ? user.Effective1v1Elo : user.EffectiveElo;
+                        double elo =  mode == AutohostMode.Planetwars ? user.EffectivePwElo : (is1v1 ? user.Effective1v1Elo : user.EffectiveElo);
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "elo", Value = Math.Round(elo).ToString() }); // elo for ingame is just ordering for auto /take
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "avatar", Value = user.Avatar });
 
