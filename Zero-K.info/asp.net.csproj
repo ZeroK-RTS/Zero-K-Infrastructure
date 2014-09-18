@@ -467,6 +467,7 @@
     <Content Include="Views\Forum\Search.cshtml" />
     <Content Include="Views\Planetwars\PwMatchMaker.cshtml" />
     <Content Include="Views\Planetwars\GalaxyOffline.cshtml" />
+    <Content Include="Views\Planetwars\GalaxyOfflinePW12.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
