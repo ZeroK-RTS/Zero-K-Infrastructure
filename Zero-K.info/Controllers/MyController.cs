@@ -324,24 +324,6 @@ namespace ZeroKWeb.Controllers
 			public IEnumerable<Unlock> Unlocks;
 		}
 
-        [Auth]
-	    public ActionResult GamePreferences(List<GamePreference> preference, string active)
-	    {
-
-	        var db = new ZkDataContext();
-            var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
-            
-            var keys= acc.Preferences.Where(x=>x.Key != AutohostMode.None).OrderBy(x=>x.Key).Select(x=>x.Key).ToList();
-            for (int i = 0; i < keys.Count(); i++) {
-                acc.Preferences[keys[i]] = preference[i];
-            }
-            acc.MatchMakingActive = !string.IsNullOrEmpty(active);
-            acc.SetPreferences(acc.Preferences);
-            db.SubmitChanges();
-            PlayerJuggler.SendAccountConfig(acc);
-            return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
-
-	    }
 				
 		[Auth]
 	    public ActionResult LanguageChange(string language)

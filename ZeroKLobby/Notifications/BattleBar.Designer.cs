@@ -41,11 +41,12 @@ namespace ZeroKLobby.Notifications
             this.gameBox = new System.Windows.Forms.PictureBox();
             this.radioPlay = new System.Windows.Forms.RadioButton();
             this.radioSpec = new System.Windows.Forms.RadioButton();
-            this.cbQm = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.zkSplitContainer1)).BeginInit();
             this.zkSplitContainer1.Panel1.SuspendLayout();
             this.zkSplitContainer1.Panel2.SuspendLayout();
             this.zkSplitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gameBox)).BeginInit();
             this.SuspendLayout();
             // 
             // cbSide
@@ -83,7 +84,6 @@ namespace ZeroKLobby.Notifications
             this.panel1.Controls.Add(this.zkSplitContainer1);
             this.panel1.Controls.Add(this.radioPlay);
             this.panel1.Controls.Add(this.radioSpec);
-            this.panel1.Controls.Add(this.cbQm);
             this.panel1.Controls.Add(this.cbSide);
             this.panel1.Controls.Add(this.lbPlayers);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -177,20 +177,6 @@ namespace ZeroKLobby.Notifications
             this.radioSpec.UseVisualStyleBackColor = true;
             this.radioSpec.CheckedChanged += new System.EventHandler(this.radioSpec_CheckedChanged);
             // 
-            // cbQm
-            // 
-            this.cbQm.ImageIndex = 4;
-            this.cbQm.ImageList = this.imageList1;
-            this.cbQm.Location = new System.Drawing.Point(2, 51);
-            this.cbQm.Margin = new System.Windows.Forms.Padding(0);
-            this.cbQm.Name = "cbQm";
-            this.cbQm.Size = new System.Drawing.Size(61, 24);
-            this.cbQm.TabIndex = 15;
-            this.cbQm.Text = "QM";
-            this.cbQm.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.cbQm.UseVisualStyleBackColor = true;
-            this.cbQm.CheckedChanged += new System.EventHandler(this.cbQm_CheckedChanged);
-            // 
             // BattleBar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -201,12 +187,13 @@ namespace ZeroKLobby.Notifications
             this.MinimumSize = new System.Drawing.Size(492, 76);
             this.Name = "BattleBar";
             this.Size = new System.Drawing.Size(888, 76);
-            this.Load += new System.EventHandler(this.QuickMatchControl_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.zkSplitContainer1.Panel1.ResumeLayout(false);
             this.zkSplitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.zkSplitContainer1)).EndInit();
             this.zkSplitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gameBox)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -219,7 +206,6 @@ namespace ZeroKLobby.Notifications
         private ChatBox picoChat;
 				private System.Windows.Forms.ImageList imageList1;
                 private System.Windows.Forms.Panel panel1;
-                private System.Windows.Forms.CheckBox cbQm;
                 private System.Windows.Forms.RadioButton radioPlay;
                 private System.Windows.Forms.RadioButton radioSpec;
                 private ZkSplitContainer zkSplitContainer1;

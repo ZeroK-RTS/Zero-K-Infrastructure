@@ -22,13 +22,10 @@ namespace Springie
     {
         public const string ConfigMain = "main.xml";
         const int ConfigUpdatePeriod = 60;
-        const int JugglePeriod = 61;
-        const int MinJuggleDelay = 5;
 
         readonly List<AutoHost> autoHosts = new List<AutoHost>();
         List<AutoHost> deletionCandidate = new List<AutoHost>();
         DateTime lastConfigUpdate = DateTime.Now;
-        DateTime lastJuggle = DateTime.Now;
         readonly Timer timer;
 
         public MainConfig Config;
@@ -37,7 +34,6 @@ namespace Springie
         public MetaDataCache MetaCache;
         public string RootWorkPath { get; private set; }
         public readonly SpringPaths paths;
-        private bool forceJuggleNext;
 
         public Main(string path)
         {
@@ -72,62 +68,6 @@ namespace Springie
         }
 
 
-        public string JuggleNow()
-        {
-            try
-            {
-                lastJuggle = DateTime.Now;
-                forceJuggleNext = false;
-                using (var serv = new SpringieService())
-                {
-                    serv.Timeout = 8000;
-                    JugglerAutohost[] data;
-                    lock (autoHosts)
-                    {
-                        data =
-                            autoHosts.Where(x => x.tas.MyBattle != null && x.SpawnConfig == null && x.config.Mode != AutohostMode.None).Select(
-                                x =>
-                                new JugglerAutohost()
-                                {
-                                    LobbyContext = x.tas.MyBattle.GetContext(),
-                                    RunningGameStartContext = (x.spring.IsRunning && !x.spring.IsBattleOver) ? x.spring.StartContext : null
-                                }).ToArray();
-                    }
-                    var ret = serv.JugglePlayers(data);
-                    if (ret != null)
-                    {
-                        if (ret.PlayerMoves != null)
-                        {
-                            /*
-                            foreach (var playermove in ret.PlayerMoves)
-                            {
-                                var ah =
-                                    autoHosts.FirstOrDefault(x => x.tas.MyBattle != null && x.tas.MyBattle.Users.Any(y => y.Name == playermove.Name));
-                                if (ah != null) ah.ComMove(TasSayEventArgs.Default, new[] { playermove.Name, playermove.TargetAutohost });
-                            }
-                             */
-                        }
-                        if (ret.AutohostsToClose != null)
-                        {
-                            foreach (var ahToKill in ret.AutohostsToClose)
-                            {
-                                var ah = autoHosts.FirstOrDefault(x => x.tas.UserName == ahToKill);
-                                if (ah != null) StopAutohost(ah);
-                            }
-                        }
-                        return ret.Message;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError("Error juggling: {0}", ex);
-                return ex.ToString();
-            }
-            return null;
-        }
-
-
         public void LoadConfig()
         {
             Config = new MainConfig();
@@ -147,18 +87,7 @@ namespace Springie
                 UpdateAll();
                 lastConfigUpdate = DateTime.Now;
             }
-            if (DateTime.Now.Subtract(lastJuggle).TotalSeconds > JugglePeriod || forceJuggleNext)
-            {
-                JuggleNow();
-            }
         }
-
-        public void RequestJuggle()
-        {
-            lastJuggle = DateTime.MinValue;
-            forceJuggleNext = true;
-        }
-
 
         public void SaveConfig()
         {

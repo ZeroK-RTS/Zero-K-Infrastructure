@@ -88,16 +88,12 @@ namespace ZeroKWeb
             if (entry == null) throw new Exception("Not an autohost");
 
             try {
-                PlayerJuggler.SuppressJuggler = true;
                 foreach (var m in moves) {
                     Global.Nightwatch.Tas.ForceJoinBattle(m.PlayerName, m.BattleHost);
                 }
             } catch (Exception ex) {
                 Trace.TraceError("Error while moving players: {0}", ex);
-            } finally {
-                PlayerJuggler.SuppressJuggler = false;
-            }
-
+            } 
         }
 
         [WebMethod]
@@ -107,12 +103,6 @@ namespace ZeroKWeb
             Balancer.SplitAutohost(context);
         }
 
-
-        [WebMethod]
-        public JugglerResult JugglePlayers(List<JugglerAutohost> autohosts)
-        {
-            return PlayerJuggler.JugglePlayers(autohosts);
-        }
 
 
         public class RectInfo {

@@ -224,7 +224,6 @@
     <Compile Include="SpringieInterface\PlanetWarsMatchMaker.cs" />
     <Compile Include="SpringieInterface\PlanetWarsTurnHandler.cs" />
     <Compile Include="SpringieInterface\PlayerJoinHandler.cs" />
-    <Compile Include="SpringieInterface\PlayerJuggler.cs" />
     <Compile Include="SpringieInterface\StartSetup.cs" />
     <Compile Include="SpringieService.asmx.cs">
       <DependentUpon>SpringieService.asmx</DependentUpon>

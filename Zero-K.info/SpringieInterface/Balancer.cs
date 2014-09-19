@@ -161,7 +161,6 @@ namespace ZeroKWeb.SpringieInterface
                     }
 
                     try {
-                        PlayerJuggler.SuppressJuggler = true;
                         foreach (var m in toMove) tas.ForceJoinBattle(m.Name, splitTo.BattleID);
                         Thread.Sleep(5000);
                         tas.Say(TasClient.SayPlace.User, context.AutohostName, "!lock 180", false);
@@ -186,9 +185,7 @@ namespace ZeroKWeb.SpringieInterface
                         tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!start", false);
                     } catch (Exception ex) {
                         Trace.TraceError("Error when splitting: {0}", ex);
-                    } finally {
-                        PlayerJuggler.SuppressJuggler = false;
-                    }
+                    } 
                 }
             } catch (Exception ex) {
                 Trace.TraceError(ex.ToString());

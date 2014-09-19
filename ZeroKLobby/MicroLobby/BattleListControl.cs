@@ -135,7 +135,6 @@ namespace ZeroKLobby.MicroLobby
                     else ActionHandler.JoinBattle(battle.BattleID, null);
                 }
                 else if (OpenGameButtonHitTest(e.X, e.Y)) ShowHostDialog(KnownGames.GetDefaultGame());
-                else if (QuickMatchButtonHitTest(e.X,e.Y)) ActionHandler.StartQuickMatch();
             }
             else if (e.Button == MouseButtons.Right)
             {
@@ -149,14 +148,12 @@ namespace ZeroKLobby.MicroLobby
             base.OnMouseMove(e);
             var battle = GetBattle(e.X, e.Y);
             var openBattleButtonHit = OpenGameButtonHitTest(e.X, e.Y);
-            var quickMatchButtonHit = QuickMatchButtonHitTest(e.X, e.Y);
-            Cursor = battle != null || openBattleButtonHit || quickMatchButtonHit ? Cursors.Hand : Cursors.Default;
+            Cursor = battle != null || openBattleButtonHit ? Cursors.Hand : Cursors.Default;
             var cursorPoint = new Point(e.X, e.Y);
             if (cursorPoint == previousLocation) return;
             previousLocation = cursorPoint;
 
             if (openBattleButtonHit) UpdateTooltip("Host your own battle room\nBest for private games with friends");
-            else if (quickMatchButtonHit) UpdateTooltip("Start QuickMatch - automatically find or create game\nLets you sit back and relax while enough people gather for a game");
             else UpdateTooltip(battle);
         }
 
@@ -175,12 +172,6 @@ namespace ZeroKLobby.MicroLobby
                 battleIconPositions.Clear();
                 var x = 0;
                 var y = 0;
-
-                g.DrawImage(ZklResources.spec, x + DpiMeasurement.ScaleValueX(8), DpiMeasurement.ScaleValueY(8), DpiMeasurement.ScaleValueX(60), DpiMeasurement.ScaleValueY(60));
-                g.DrawImage(ZklResources.border, x + DpiMeasurement.ScaleValueX(3), DpiMeasurement.ScaleValueY(3), DpiMeasurement.ScaleValueX(70), DpiMeasurement.ScaleValueY(70));
-                g.DrawString("QuickMatch", BattleIcon.TitleFont, BattleIcon.TextBrush, x + scaledMapCellWidth, y + DpiMeasurement.ScaleValueY(3));
-
-                x += scaledIconWidth;
 
 
                 g.DrawImage(ZklResources.border, x + DpiMeasurement.ScaleValueX(3), DpiMeasurement.ScaleValueY(3), DpiMeasurement.ScaleValueX(70), DpiMeasurement.ScaleValueY(70));
@@ -341,18 +332,10 @@ namespace ZeroKLobby.MicroLobby
             x -= AutoScrollPosition.X;
             y -= AutoScrollPosition.Y;
             DpiMeasurement.DpiXYMeasurement(this);
-            int scaledIconWidth = DpiMeasurement.ScaleValueX(BattleIcon.Width);
-            return x > scaledIconWidth + DpiMeasurement.ScaleValueX(3) && x < scaledIconWidth + DpiMeasurement.ScaleValueX(71) && y > DpiMeasurement.ScaleValueY(3) && y < DpiMeasurement.ScaleValueX(71);
+            return x >  DpiMeasurement.ScaleValueX(3) && x <  DpiMeasurement.ScaleValueX(71) && y > DpiMeasurement.ScaleValueY(3) && y < DpiMeasurement.ScaleValueX(71);
         }
 
-        bool QuickMatchButtonHitTest(int x, int y)
-        {
-            x -= AutoScrollPosition.X;
-            y -= AutoScrollPosition.Y;
-            DpiMeasurement.DpiXYMeasurement(this);
-            return x > DpiMeasurement.ScaleValueX(3) && x <  DpiMeasurement.ScaleValueX(71) && y > DpiMeasurement.ScaleValueY(3) && y < DpiMeasurement.ScaleValueX(71);
-        }
-
+        
 
         public void ShowHostDialog(GameInfo filter)
         {

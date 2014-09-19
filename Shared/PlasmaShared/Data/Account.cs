@@ -37,27 +37,6 @@ namespace ZkData
         public int KudosSpent { get { return KudosPurchases.Sum(x => x.KudosValue); } }
 
 
-        public Dictionary<AutohostMode, GamePreference> Preferences {
-            get {
-                if (preferences != null) return preferences;
-                else {
-                    preferences = new Dictionary<AutohostMode, GamePreference>();
-                    if (!string.IsNullOrEmpty(GamePreferences)) {
-                        foreach (var line in GamePreferences.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)) {
-                            var parts = line.Split('=');
-
-                            var mode = (AutohostMode)int.Parse(parts[0]);
-                            var preference = (GamePreference)int.Parse(parts[1]);
-                            if (Enum.IsDefined(typeof(AutohostMode), mode) && Enum.IsDefined(typeof(GamePreference), preference)) preferences[mode] = preference;
-                        }
-                    }
-                    foreach (AutohostMode v in Enum.GetValues(typeof(AutohostMode))) if (!preferences.ContainsKey(v)) preferences[v] = v != AutohostMode.Game1v1 ? GamePreference.Like : GamePreference.Ok;
-                    if (preferences.Where(x => x.Key != AutohostMode.None).All(x => x.Value == GamePreference.Never)) foreach (var p in preferences.ToList()) preferences[p.Key] = p.Key != AutohostMode.Game1v1 ? GamePreference.Like : GamePreference.Ok;
-                    ;
-                }
-                return preferences;
-            }
-        }
 
         public static double AdjustEloWeight(double currentWeight, double sumWeight, int sumCount) {
             if (currentWeight < GlobalConst.EloWeightMax) {

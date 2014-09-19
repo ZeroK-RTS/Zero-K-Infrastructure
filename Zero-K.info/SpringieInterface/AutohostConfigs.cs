@@ -23,8 +23,6 @@ namespace ZeroKWeb.SpringieInterface
         public string BattlePassword;
         public AutohostMode Mode;
         public CommandLevel[] CommandLevels;
-        public int? MinToJuggle;
-        public int? MergeSmallerThan;
         public AhConfig() {}
 
 
@@ -44,8 +42,6 @@ namespace ZeroKWeb.SpringieInterface
             AutoUpdateSpringBranch = db.AutoUpdateSpringBranch;
             Mode = db.AutohostMode;
             BattlePassword = db.BattlePassword;
-            MinToJuggle = db.MinToJuggle;
-            MergeSmallerThan = db.MergeSmallerThan;
             CommandLevels = (db.CommandLevels + "").Split('\n').Where(x => !string.IsNullOrEmpty(x)).Select(x =>
                 { 
                     var parts = x.Split('=');

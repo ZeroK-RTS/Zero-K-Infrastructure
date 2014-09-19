@@ -257,12 +257,6 @@
     <Compile Include="NavigationControl.Designer.cs">
       <DependentUpon>NavigationControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Notifications\JugglerBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Notifications\JugglerBar.Designer.cs">
-      <DependentUpon>JugglerBar.cs</DependentUpon>
-    </Compile>
     <Compile Include="Notifications\MissionBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -568,9 +562,6 @@
     <EmbeddedResource Include="MicroLobby\DownloaderTab.resx">
       <DependentUpon>DownloaderTab.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Notifications\JugglerBar.resx">
-      <DependentUpon>JugglerBar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\MissionBar.resx">
       <DependentUpon>MissionBar.cs</DependentUpon>

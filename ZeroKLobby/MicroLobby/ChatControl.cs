@@ -272,9 +272,6 @@ namespace ZeroKLobby.MicroLobby
             return false;
         }
 
-        void QuickMatchTracker_PlayerQuickMatchChanged(object sender, EventArgs<string> e) {
-            RefreshUser(e.Data);
-        }
 
         protected void RemoveUser(string userName) {
             var item = playerListItems.SingleOrDefault(u => u.UserName == userName);

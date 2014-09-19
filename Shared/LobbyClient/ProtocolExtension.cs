@@ -33,22 +33,17 @@ namespace LobbyClient
         readonly Action<string, Dictionary<string, string>> notifyUserExtensionChange = (s, dictionary) => { };
 
 
-        readonly Dictionary<string, JugglerConfig> publishedJugglerConfigs = new Dictionary<string, JugglerConfig>();
         readonly Dictionary<string, Dictionary<string, string>> publishedUserAttributes = new Dictionary<string, Dictionary<string, string>>();
 
         readonly TasClient tas;
         readonly Dictionary<string, Type> typeCache = new Dictionary<string, Type>()
         {
-            { typeof(JugglerConfig).Name, typeof(JugglerConfig) },
-            { typeof(JugglerState).Name, typeof(JugglerState) },
             { typeof(SiteToLobbyCommand).Name, typeof(SiteToLobbyCommand) },
         };
 
 
         readonly Dictionary<string, Dictionary<string, string>> userAttributes = new Dictionary<string, Dictionary<string, string>>();
         public Action<TasSayEventArgs, object> JsonDataReceived = (args, state) => { };
-        public Action<TasSayEventArgs, JugglerConfig> JugglerConfigReceived = (args, config) => { };
-        public Action<TasSayEventArgs, JugglerState> JugglerStateReceived = (args, state) => { };
 
 
         public ProtocolExtension(TasClient tas, Action<string, Dictionary<string, string>> notifyUserExtensionChange) {
@@ -64,12 +59,6 @@ namespace LobbyClient
             Dictionary<string, string> dict;
             userAttributes.TryGetValue(name, out dict);
             return dict ?? new Dictionary<string, string>();
-        }
-
-        public JugglerConfig GetPublishedConfig(string name) {
-            JugglerConfig conf;
-            publishedJugglerConfigs.TryGetValue(name, out conf);
-            return conf;
         }
 
 
@@ -103,14 +92,6 @@ namespace LobbyClient
 				}
         }
 
-        public void PublishJugglerState(JugglerState state) {
-            tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, EncodeJson(state), false);
-        }
-
-        public void PublishPlayerJugglerConfig(JugglerConfig config, string name) {
-            publishedJugglerConfigs[name] = config;
-            tas.Say(TasClient.SayPlace.User, name, EncodeJson(config), false);
-        }
 
         public void SendJsonData(object data)
         {
@@ -127,10 +108,6 @@ namespace LobbyClient
             tas.Say(TasClient.SayPlace.Channel, channel, EncodeJson(data), false);
         }
 
-
-        public void SendMyJugglerConfig(JugglerConfig config) {
-            tas.Say(TasClient.SayPlace.User, GlobalConst.NightwatchName, EncodeJson(config), false);
-        }
 
 
         object DecodeJson(string data, TasSayEventArgs e) {
@@ -164,11 +141,7 @@ namespace LobbyClient
 
                 if (type != null) {
                     var decoded = JsonSerializer.DeserializeFromString(payload, type);
-                    var state = decoded as JugglerState;
-                    if (state != null) JugglerStateReceived(e, state);
-                    var config = decoded as JugglerConfig;
-                    if (config != null) JugglerConfigReceived(e, config);
-                    JsonDataReceived(e, decoded);
+                    if (decoded != null) JsonDataReceived(e, decoded);
                 }
             } catch (Exception ex) {
                 Trace.TraceError(ex.ToString());
@@ -209,9 +182,6 @@ namespace LobbyClient
         void tas_ChannelUserAdded(object sender, TasEventArgs e) {
             if (e.ServerParams[0] == ExtensionChannelName && e.ServerParams[1] != tas.UserName) {
                 foreach (var kvp in publishedUserAttributes) tas.Say(TasClient.SayPlace.User, e.ServerParams[1], FormatMessage(kvp.Key, kvp.Value), false);
-
-                JugglerConfig config;
-                if (publishedJugglerConfigs.TryGetValue(e.ServerParams[1], out config)) tas.Say(TasClient.SayPlace.User, e.ServerParams[1], EncodeJson(config), false);
             }
         }
 
@@ -219,7 +189,6 @@ namespace LobbyClient
             if (e.Data.ServerParams[0] == ExtensionChannelName) {
                 e.Cancel = true;
                 foreach (var kvp in publishedUserAttributes) tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, FormatMessage(kvp.Key, kvp.Value), false);
-                foreach (var kvp in publishedJugglerConfigs) tas.Say(TasClient.SayPlace.User, kvp.Key, EncodeJson(kvp.Value), false);
             }
         }
 
@@ -248,44 +217,7 @@ namespace LobbyClient
             }
         }
 
-        public class JugglerConfig
-        {
-            public bool Active { get; set; }
-            public List<PreferencePair> Preferences { get; set; }
-
-            public JugglerConfig(Account acc): this() {
-                Active = acc.MatchMakingActive;
-                foreach (var item in acc.Preferences) Preferences.Add(new PreferencePair { Mode = item.Key, Preference = item.Value });
-            }
-
-            public JugglerConfig() {
-                Preferences = new List<PreferencePair>();
-            }
-
-            public class PreferencePair
-            {
-                public AutohostMode Mode { get; set; }
-                public GamePreference Preference { get; set; }
-            }
-        }
-
-        public class JugglerState
-        {
-            public List<ModePair> ModeCounts { get; set; }
-            public int TotalPlayers { get; set; }
-
-            public JugglerState() {
-                ModeCounts = new List<ModePair>();
-            }
-
-            public class ModePair
-            {
-                public int Count { get; set; }
-                public AutohostMode Mode { get; set; }
-                public int Playing { get; set; }
-            }
-        }
-
+   
         public class SiteToLobbyCommand
         {
             public string SpringLink { get; set; }

@@ -34,7 +34,6 @@ namespace ZeroKLobby
         public static PlasmaDownloader.PlasmaDownloader Downloader { get; private set; }
         public static EngineConfigurator EngineConfigurator { get; set; }
         public static FriendManager FriendManager;
-        public static JugglerBar JugglerBar { get; private set; }
         public static MainWindow MainWindow { get; private set; }
         public static ModStore ModStore { get; private set; }
         public static NotifySection NotifySection { get { return MainWindow.NotifySection; } }
@@ -233,7 +232,6 @@ namespace ZeroKLobby
                 ConnectBar = new ConnectBar(TasClient);
                 ModStore = new ModStore();
                 ToolTip = new ToolTipHandler();
-                JugglerBar = new JugglerBar(TasClient);
                 BrowserInterop = new BrowserInterop(TasClient, Conf);
                 BattleIconManager = new BattleIconManager();
 
@@ -262,7 +260,6 @@ namespace ZeroKLobby
                 var newversionbarSize = new Size(0, NewVersionBar.Height);
                 var battlebarSize = new Size(0, BattleBar.Height);
                 var connectbarSize = new Size(0, ConnectBar.Height);
-                var jugglerbarSize = new Size(0, JugglerBar.Height);
 
                 VoteBar.MinimumSize = votebarSize; //fix minimum size forever
                 VoteBar.MaximumSize = votebarSize; //fix maximum size forever
@@ -272,8 +269,6 @@ namespace ZeroKLobby
                 BattleBar.MaximumSize = battlebarSize;
                 ConnectBar.MinimumSize = connectbarSize;
                 ConnectBar.MaximumSize = connectbarSize;
-                JugglerBar.MinimumSize = jugglerbarSize;
-                JugglerBar.MaximumSize = jugglerbarSize;
                 //End battlebar size hax
 
                 if (!Debugger.IsAttached && !Conf.DisableAutoUpdate) Program.SelfUpdater.StartChecking();

@@ -16,7 +16,6 @@ namespace ZeroKLobby.Notifications
     {
         NotifyBarContainer barContainer;
         readonly TasClient client;
-        bool desiredQmState = false;
         bool desiredSpectatorState = false;
         string engineVersionNeeded;
 
@@ -29,7 +28,6 @@ namespace ZeroKLobby.Notifications
         readonly Random random = new Random();
         object speech;
         readonly Spring spring;
-        bool suppressQmChangeEvent;
         bool suppressSideChangeEvent;
         bool suppressSpecChange = false;
         readonly Timer timer = new Timer();
@@ -45,7 +43,6 @@ namespace ZeroKLobby.Notifications
             picoChat.ChatBackgroundColor = TextColor.background; //same color as Program.Conf.BgColor
             picoChat.IRCForeColor = 14; //mirc grey. Unknown use
 
-            Program.ToolTip.SetText(cbQm, "Enable or disable QuickMatch");
             Program.ToolTip.SetText(cbSide, "Choose the faction you wish to play.");
 
             client = Program.TasClient;
@@ -202,7 +199,6 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
                         IsReady = true,
                     };
                     client.SendMyBattleStatus(status);
-                    if (battle.Founder.IsSpringieManaged && battle.IsOfficial() && desiredQmState) ActionHandler.StartQuickMatch();
                 };
 
             client.MyBattleStarted += (s, e) =>
@@ -270,14 +266,6 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
                     Stop();
                 };
 
-            client.Extensions.JugglerConfigReceived += (args, config) =>
-                {
-                    if (args.UserName == GlobalConst.NightwatchName) {
-                        suppressQmChangeEvent = true;
-                        cbQm.Checked = config.Active;
-                        suppressQmChangeEvent = false;
-                    }
-                };
 
             timer.Tick += (s, e) =>
                 {
@@ -438,9 +426,6 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
             else Program.ToolTip.SetText(gameBox, null);
         }
 
-        void btnQuickMatch_Click(object sender, EventArgs e) {
-            Program.JugglerBar.SwitchState();
-        }
 
 
         public Control GetControl() {
@@ -479,17 +464,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
             }
         }
 
-        void QuickMatchControl_Load(object sender, EventArgs e) {}
-
-        void cbQm_CheckedChanged(object sender, EventArgs e) {
-            cbQm.ImageIndex = cbQm.Checked ? 3 : 4;
-            if (!suppressQmChangeEvent) {
-                if (cbQm.Checked) ActionHandler.StartQuickMatch();
-                else ActionHandler.StopQuickMatch();
-                desiredQmState = cbQm.Checked;
-            }
-        }
-
+        
         void cbSide_DrawItem(object sender, DrawItemEventArgs e) {
             e.DrawBackground();
             e.DrawFocusRectangle();
