@@ -67,25 +67,23 @@
       <Column Name="AccountID" Storage="_Id" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Name" Type="System.String" DbType="varchar(200) NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="Email" Type="System.String" DbType="nvarchar(max)" CanBeNull="true" />
-      <Column Name="VotesAvailable" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="MatchMakingActive" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="[Language]" Member="Language" Type="System.String" DbType="nvarchar(2)" CanBeNull="true" />
       <Column Name="HasVpnException" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="Kudos" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="ForumTotalUpvotes" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="ForumTotalDownvotes" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="PwMetalProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="VotesAvailable" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="PwMetalUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="PwWarpProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="PwWarpUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="PwAttackPoints" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="LastLobbyVersionCheck" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
-      <Column Name="GamePreferences" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
+      <Column Name="[Language]" Member="Language" Type="System.String" DbType="nvarchar(2)" CanBeNull="true" />
       <Column Name="LobbyVersion" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
       <Column Name="PwDropshipsProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="PwDropshipsUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="PwBombersProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="PwBombersUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="PwMetalProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="LastNewsRead" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Column Name="FactionID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="LobbyID" Type="System.Int32" DbType="int" CanBeNull="true" />

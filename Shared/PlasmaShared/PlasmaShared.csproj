@@ -310,9 +310,6 @@
     <None Include="Web References\SpringieInterfaceReference\BalanceTeamsResult.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
-    <None Include="Web References\SpringieInterfaceReference\JugglerResult.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
     <None Include="Web References\SpringieInterfaceReference\PlayerJoinResult.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>

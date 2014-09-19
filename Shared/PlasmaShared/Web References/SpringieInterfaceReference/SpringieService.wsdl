@@ -246,8 +246,6 @@
           <s:element minOccurs="0" maxOccurs="1" name="BattlePassword" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="Mode" type="tns:AutohostMode" />
           <s:element minOccurs="0" maxOccurs="1" name="CommandLevels" type="tns:ArrayOfCommandLevel" />
-          <s:element minOccurs="1" maxOccurs="1" name="MinToJuggle" nillable="true" type="s:int" />
-          <s:element minOccurs="1" maxOccurs="1" name="MergeSmallerThan" nillable="true" type="s:int" />
         </s:sequence>
       </s:complexType>
       <s:simpleType name="AutohostMode">
@@ -322,50 +320,6 @@
       <s:element name="SplitAutohostResponse">
         <s:complexType />
       </s:element>
-      <s:element name="JugglePlayers">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="autohosts" type="tns:ArrayOfJugglerAutohost" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:complexType name="ArrayOfJugglerAutohost">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="unbounded" name="JugglerAutohost" nillable="true" type="tns:JugglerAutohost" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="JugglerAutohost">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="LobbyContext" type="tns:BattleContext" />
-          <s:element minOccurs="0" maxOccurs="1" name="RunningGameStartContext" type="tns:BattleContext" />
-        </s:sequence>
-      </s:complexType>
-      <s:element name="JugglePlayersResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="JugglePlayersResult" type="tns:JugglerResult" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:complexType name="JugglerResult">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="AutohostsToClose" type="tns:ArrayOfString" />
-          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="PlayerMoves" type="tns:ArrayOfJugglerMove" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="ArrayOfJugglerMove">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="unbounded" name="JugglerMove" nillable="true" type="tns:JugglerMove" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="JugglerMove">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="OriginalAutohost" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="TargetAutohost" type="s:string" />
-        </s:sequence>
-      </s:complexType>
       <s:element name="StoreBoxes">
         <s:complexType>
           <s:sequence>
@@ -447,12 +401,6 @@
   <wsdl:message name="SplitAutohostSoapOut">
     <wsdl:part name="parameters" element="tns:SplitAutohostResponse" />
   </wsdl:message>
-  <wsdl:message name="JugglePlayersSoapIn">
-    <wsdl:part name="parameters" element="tns:JugglePlayers" />
-  </wsdl:message>
-  <wsdl:message name="JugglePlayersSoapOut">
-    <wsdl:part name="parameters" element="tns:JugglePlayersResponse" />
-  </wsdl:message>
   <wsdl:message name="StoreBoxesSoapIn">
     <wsdl:part name="parameters" element="tns:StoreBoxes" />
   </wsdl:message>
@@ -495,10 +443,6 @@
     <wsdl:operation name="SplitAutohost">
       <wsdl:input message="tns:SplitAutohostSoapIn" />
       <wsdl:output message="tns:SplitAutohostSoapOut" />
-    </wsdl:operation>
-    <wsdl:operation name="JugglePlayers">
-      <wsdl:input message="tns:JugglePlayersSoapIn" />
-      <wsdl:output message="tns:JugglePlayersSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="StoreBoxes">
       <wsdl:input message="tns:StoreBoxesSoapIn" />
@@ -581,15 +525,6 @@
     </wsdl:operation>
     <wsdl:operation name="SplitAutohost">
       <soap:operation soapAction="http://tempuri.org/SplitAutohost" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="JugglePlayers">
-      <soap:operation soapAction="http://tempuri.org/JugglePlayers" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -683,15 +618,6 @@
     </wsdl:operation>
     <wsdl:operation name="SplitAutohost">
       <soap12:operation soapAction="http://tempuri.org/SplitAutohost" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="JugglePlayers">
-      <soap12:operation soapAction="http://tempuri.org/JugglePlayers" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

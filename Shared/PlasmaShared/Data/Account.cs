@@ -243,12 +243,6 @@ namespace ZkData
         }
 
 
-        public void SetPreferences(Dictionary<AutohostMode, GamePreference> data) {
-            var str = "";
-            foreach (var kvp in data) str += string.Format("{0}={1}\n", (int)kvp.Key, (int)kvp.Value);
-            GamePreferences = str;
-            preferences = null;
-        }
 
         public void SpendBombers(double count) {
             PwBombersUsed += count;
@@ -304,9 +298,6 @@ namespace ZkData
         }
 
 
-        partial void OnGamePreferencesChanged() {
-            preferences = null;
-        }
 
         partial void OnNameChanging(string value) {
             if (!string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(value)) {
