@@ -128,7 +128,7 @@ namespace LobbyClient
                         //referenced module (like TextToSpeech) is mentioned but not loaded.
                         foreach (Module namespace_obj in Assembly.GetExecutingAssembly().GetModules(false)) {
                             Type[] class_obj = namespace_obj.FindTypes(Module.FilterTypeName, tname);
-                            if (class_obj[0] != null) {
+                            if (class_obj != null && class_obj.Length > 0 && class_obj[0] != null) {
                                 type = class_obj[0];
                                 break;
                             }
