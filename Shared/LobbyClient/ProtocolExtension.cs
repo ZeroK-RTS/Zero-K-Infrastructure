@@ -39,6 +39,7 @@ namespace LobbyClient
         readonly Dictionary<string, Type> typeCache = new Dictionary<string, Type>()
         {
             { typeof(SiteToLobbyCommand).Name, typeof(SiteToLobbyCommand) },
+            { typeof(PwMatchCommand).Name, typeof(PwMatchCommand) },
         };
 
 
