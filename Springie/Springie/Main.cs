@@ -235,6 +235,8 @@ namespace Springie
         public string Password;
         public string Title;
         public string Engine;
+        public string Handle;
+        public string Map;
 
         public SpawnConfig(string owner, Dictionary<string, string> config)
         {
@@ -243,6 +245,10 @@ namespace Springie
             config.TryGetValue("mod", out Mod);
             config.TryGetValue("title", out Title);
             config.TryGetValue("engine", out Engine);
+            config.TryGetValue("handle", out Handle);
+            config.TryGetValue("map", out Map);
         }
+
+
     }
 }

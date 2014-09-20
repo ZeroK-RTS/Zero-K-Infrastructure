@@ -645,6 +645,7 @@ namespace Springie.autohost
 
             if (SpawnConfig != null) {
                 modname = SpawnConfig.Mod;
+                mapname = SpawnConfig.Map;
                 title = SpawnConfig.Title;
                 if (!String.IsNullOrEmpty(SpawnConfig.Password)) password = SpawnConfig.Password;
                 if (!String.IsNullOrEmpty(SpawnConfig.Engine))
@@ -886,7 +887,11 @@ namespace Springie.autohost
                     tas.AddBot(slot.TeamName, ubs, slot.Color, slot.AiShortName);
                 }
             }
-            if (SpawnConfig != null) tas.Say(TasClient.SayPlace.User, SpawnConfig.Owner, "I'm here! Ready to serve you! Join me!", false);
+            if (SpawnConfig != null)
+            {
+                if (!string.IsNullOrEmpty(SpawnConfig.Handle)) tas.Say(TasClient.SayPlace.User, SpawnConfig.Owner, SpawnConfig.Handle, true);
+                    tas.Say(TasClient.SayPlace.User, SpawnConfig.Owner, "I'm here! Ready to serve you! Join me!", true);
+            }
             else ServerVerifyMap(true);
         }
 
