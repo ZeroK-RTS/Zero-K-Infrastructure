@@ -37,8 +37,8 @@ namespace PlanetWarsReplayCreator
 
 		private void mapCanvas_Loaded(object sender, RoutedEventArgs e)
 		{
-
-				foreach (var link in db.Links)
+		    var gal = db.Galaxies.First(x => x.IsDefault);
+				foreach (var link in gal.Links)
 				{
 					var line = new Line
 					{
@@ -51,7 +51,7 @@ namespace PlanetWarsReplayCreator
 					};
 					mapCanvas.Children.Add(line);
 				}
-				foreach (var planet in db.Planets)
+				foreach (var planet in gal.Planets)
 				{
 					planetIconSize = 0.03;
 					var planetIcon = new Ellipse { Width = planetIconSize, Height = planetIconSize, Fill = Brushes.White };
@@ -132,7 +132,7 @@ namespace PlanetWarsReplayCreator
                 anim.SetSize(512, 512);
                 anim.SetDelay(200);
                 anim.Start(File.OpenWrite(@"c:\temp\pw_replay.gif"));    
-            foreach (var chapters in db.PlanetOwnerHistories.GroupBy(x=>x.Turn).OrderBy(x=>x.Key))
+            foreach (var chapters in db.PlanetOwnerHistories.Where(x=>x.Planet.Galaxy.IsDefault).GroupBy(x=>x.Turn).OrderBy(x=>x.Key))
 			    {
                     foreach (var chapter in chapters) ApplyHistoryItem(chapter);
 			        mapCanvas.UpdateLayout();
