@@ -165,7 +165,7 @@ namespace ZeroKLobby.MicroLobby
             InitializeDisplayLines();
 
             TotalDisplayLines = FormatLines(totalLines, 1, 0);
-            UpdateScrollBar(TotalDisplayLines);
+            UpdateScrollBar(TotalDisplayLines,0);
         }
 
         public void ResetUnread()
@@ -495,7 +495,7 @@ namespace ZeroKLobby.MicroLobby
                     if (Height != 0)
                     {
                         TotalDisplayLines = FormatLines(totalLines, 1, 0);
-                        UpdateScrollBar(TotalDisplayLines);
+                        UpdateScrollBar(TotalDisplayLines, toRemove*-1);
                         Invalidate();
                     }
 
@@ -534,7 +534,7 @@ namespace ZeroKLobby.MicroLobby
                     textLines[1].TotalLines = 1;
                 }
 
-                UpdateScrollBar(TotalDisplayLines);
+                UpdateScrollBar(TotalDisplayLines,0);
 
                 Invalidate();
             }
@@ -711,7 +711,7 @@ namespace ZeroKLobby.MicroLobby
             {
                 InitializeDisplayLines();
                 TotalDisplayLines = FormatLines(totalLines, 1, 0);
-                UpdateScrollBar(TotalDisplayLines);
+                UpdateScrollBar(TotalDisplayLines,0);
                 reformatLines = false;
             }
 
@@ -1402,17 +1402,19 @@ namespace ZeroKLobby.MicroLobby
         }
 
         /// <summary>
-        /// Updates the scrollbar to the given line. 
+        /// Updates the scrollbar to the "newValue" when scrollbar is at bottom,
+        /// or offset the scrollbar position by the "offsetValue" if its not at bottom.
         /// </summary>
-        /// <param name="newValue">Line number to be displayed</param>
+        /// <param name="newValue">New line number to be displayed</param>
+        /// <param name="offsetValue">Offset to the current line number</param>
         /// <returns></returns>
-        void UpdateScrollBar(int newValue)
+        void UpdateScrollBar(int newValue, int offsetValue)
         {
             showMaxLines = (Height/LineSize) + 1;
             if (InvokeRequired)
             {
                 ScrollValueDelegate s = UpdateScrollBar;
-                Invoke(s, new object[] { newValue });
+                Invoke(s, new object[] { newValue, offsetValue });
             }
             else
             {
@@ -1436,7 +1438,8 @@ namespace ZeroKLobby.MicroLobby
                     vScrollBar.Maximum = Math.Max(TotalDisplayLines + vScrollBar.LargeChange - 1,1); // maximum value that can be reached through UI is: 1 + Maximum - LargeChange. Ref: http://msdn.microsoft.com/en-us/library/system.windows.forms.scrollbar.maximum(v=vs.110).aspx
 
                     if (!vScrollBar.Enabled || !vScrollBar.Visible) isBottom = true;
-                    if (isBottom || hideScroll || nearBottom) vScrollBar.Value = newValue;
+                    if (isBottom || hideScroll || nearBottom) vScrollBar.Value = newValue; //always set to TotalDisplayLines to make scrollbar follow new chat message feed 
+                    else vScrollBar.Value = vScrollBar.Value + offsetValue; //this fix scrollbar lost user's position when all text is being shifted upward to make room for new chat message
                 }
             }
         }
@@ -1469,7 +1472,7 @@ namespace ZeroKLobby.MicroLobby
             public bool Wrapped { get; set; }
         }
 
-        delegate void ScrollValueDelegate(int value);
+        delegate void ScrollValueDelegate(int value,int offset);
 
         private class TextLine
         {
