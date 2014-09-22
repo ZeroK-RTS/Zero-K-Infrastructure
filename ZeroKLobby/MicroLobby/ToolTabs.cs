@@ -24,7 +24,7 @@ namespace ZeroKLobby.MicroLobby
                                         RenderMode = ToolStripRenderMode.System,
                                         //AutoSize = false,
                                         //Width = 155,
-                                        AutoSize = true, //auto save space
+                                        AutoSize = true, //auto reduce space usage
                                         MaximumSize = new Size(155,4000),
                                         MinimumSize = new Size(100,0),
                                        };
@@ -111,7 +111,7 @@ namespace ZeroKLobby.MicroLobby
                         if (control is ChatControl)
                         {
                             var chatControl = (ChatControl)control;
-                            if (chatControl.CanLeave) ActionHandler.CloseChannel(chatControl.ChannelName);
+                            if (chatControl.CanLeave) Program.TasClient.LeaveChannel(chatControl.ChannelName);
                         }
                         else if (control is PrivateMessageControl)
                         {
