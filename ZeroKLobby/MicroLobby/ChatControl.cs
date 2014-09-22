@@ -329,8 +329,7 @@ namespace ZeroKLobby.MicroLobby
         void TasClient_ChannelUsersAdded(object sender, TasEventArgs e) {
             if (e.ServerParams[0] != ChannelName) return;
             
-            String[] invalidName = new String[32];
-            int invalidNameIndex = 0;
+            List<string> invalidName = new List<string>();
             foreach (var username in Program.TasClient.JoinedChannels[ChannelName].ChannelUsers)
             {
                 try
@@ -340,12 +339,10 @@ namespace ZeroKLobby.MicroLobby
                 catch (System.Collections.Generic.KeyNotFoundException)
                 {
                     Trace.TraceInformation("ChatControl ERROR: player \"{0}\" did not exist or wasn't notified using ADDUSER command. Ignoring this username.", username);
-                    invalidName[invalidNameIndex] = username;
-                    if (invalidNameIndex < 32) invalidNameIndex = invalidNameIndex + 1;
+                    invalidName.Add(username);
                 }
             }
-            for (int i = 0; i <= invalidNameIndex; i++)
-            {
+            for (int i = 0; i < invalidName.Count; i++) {
                 Program.TasClient.JoinedChannels[ChannelName].ChannelUsers.Remove(invalidName[i]);
             }
             
