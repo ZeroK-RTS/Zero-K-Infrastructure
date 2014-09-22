@@ -31,7 +31,11 @@ namespace ZeroKLobby.MicroLobby
         ChatBox.ChatBackgroundColor = TextColor.background; //same as Program.Conf.BgColor but TextWindow.cs need this.
         ChatBox.IRCForeColor = 14; //mirc grey. Unknown use
 
-        HistoryManager.InsertLastLines(UserName, ChatBox);
+        PlasmaShared.Utils.SafeThread(() =>
+        { //using thread for better handling of "lock" & less time for initialization
+            HistoryManager.InsertLastLines(UserName, ChatBox);
+        }).Start();
+        
         VisibleChanged += PrivateMessageControl_VisibleChanged;
         Program.TasClient.BattleUserJoined += TasClient_BattleUserJoined;
         Program.TasClient.UserAdded += TasClient_UserAdded;
@@ -72,7 +76,10 @@ namespace ZeroKLobby.MicroLobby
           (line is SaidExLine && Program.Conf.IgnoredUsers.Contains(((SaidExLine)line).AuthorName))) return;
 
       ChatBox.AddLine(line);
-      HistoryManager.LogLine(UserName, line);
+      PlasmaShared.Utils.SafeThread(() =>
+      {
+          HistoryManager.LogLine(UserName, line);
+      }).Start();
       var saidLine = line as SaidLine;
       if (saidLine != null && WindowsApi.IdleTime.TotalMinutes > Program.Conf.IdleTime &&
           (DateTime.Now - lastAnsweringMessageTime).TotalMinutes > Program.Conf.IdleTime)

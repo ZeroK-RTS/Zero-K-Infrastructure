@@ -30,11 +30,11 @@ namespace ZeroKLobby
     }
 
     /// <summary>
-    /// Closes a channel in the chat tab (any tab on the left)
+    /// Closes a channel tab in the chat tab
     /// </summary>
     public static void CloseChannel(string key)
     {
-      Program.MainWindow.ChatTab.CloseTab(key);
+      Program.MainWindow.ChatTab.CloseChannelTab(key);
     }
 
 

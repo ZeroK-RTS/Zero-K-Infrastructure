@@ -70,7 +70,14 @@ namespace ZeroKLobby.MicroLobby
 
             Name = name;
             ChannelName = name;
-            if (!DesignMode) HistoryManager.InsertLastLines(ChannelName, ChatBox);
+            if (!DesignMode)
+            { //using thread for better handling of "lock" & less time for initialization
+                PlasmaShared.Utils.SafeThread(() =>
+                {
+                    HistoryManager.InsertLastLines(ChannelName, ChatBox);
+                }).Start();
+            }
+
             playerBox.Sorted = true;
             var lookingGlass = new PictureBox { Width = 20, Height = 20, Image = ZklResources.search, SizeMode = PictureBoxSizeMode.CenterImage };
             searchBarContainer.Controls.Add(lookingGlass);
@@ -145,7 +152,10 @@ namespace ZeroKLobby.MicroLobby
                  (line is SaidExLine && Program.Conf.IgnoredUsers.Contains(((SaidExLine)line).AuthorName)))) return;
             ChatBox.AddLine(line);
             ChannelLineAdded(this, new ChannelLineArgs() { Channel = ChannelName, Line = line });
-            HistoryManager.LogLine(ChannelName, line);
+            PlasmaShared.Utils.SafeThread(() =>
+            {
+                HistoryManager.LogLine(ChannelName, line);
+            }).Start();
         }
 
         public void GoToSendBox() {
