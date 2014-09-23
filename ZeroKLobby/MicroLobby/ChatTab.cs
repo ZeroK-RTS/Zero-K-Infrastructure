@@ -13,7 +13,12 @@ using ZkData;
 
 namespace ZeroKLobby.MicroLobby
 {
-    // fixme: what if a channel and a player have the same name
+    // fixme: 
+    // 1) if a channel and a player name have the same name, then PrivateMessageControl.cs & ChatControl.cs will
+    // simultaneously wanted to read/write same History file at same time and 1 control will wait indefinitely.
+
+    // 2) file write is a bottleneck. Writing/reading file make UI look laggy than it actually is.
+
     public partial class ChatTab: UserControl, INavigatable
     {
         BattleChatControl battleChatControl;
