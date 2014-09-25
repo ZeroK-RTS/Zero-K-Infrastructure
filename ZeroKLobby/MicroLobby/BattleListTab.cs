@@ -10,6 +10,11 @@ namespace ZeroKLobby.MicroLobby
         BattleListControl battleListControl;
 
         public BattleListTab() {
+            Enter += BattleListTab_Enter;
+        }
+
+        void BattleListTab_Enter(object sender, EventArgs e)
+        {
             SuspendLayout(); //pause
             InitializeComponent();
 
@@ -34,6 +39,8 @@ namespace ZeroKLobby.MicroLobby
             battleListControl = new BattleListControl() { Dock = DockStyle.Fill };
             battlePanel.Controls.Add(battleListControl);
             ResumeLayout();
+
+            Enter -= BattleListTab_Enter;
         }
 
         public bool TryNavigate(params string[] path) {
