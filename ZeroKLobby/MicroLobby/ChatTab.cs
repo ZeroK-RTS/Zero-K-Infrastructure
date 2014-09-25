@@ -407,10 +407,5 @@ namespace ZeroKLobby.MicroLobby
         public bool CanReload { get { return false; } }
 
         public bool IsBusy { get { return false; } }
-
-        private void ChatTab_Load(object sender, EventArgs e)
-        {
- 
-        }
     }
 }

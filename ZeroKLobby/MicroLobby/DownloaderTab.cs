@@ -11,11 +11,23 @@ namespace ZeroKLobby.MapDownloader
   {
     public DownloaderTab()
     {
-      InitializeComponent();
+      Enter += DownloaderTab_Enter;   
       if (Process.GetCurrentProcess().ProcessName == "devenv") return; // detect design mode, workaround for non-working this.DesignMode 
 
-      Load += Rapid_Load;
       Disposed += DownloaderTab_Disposed;
+    }
+
+    private void DownloaderTab_Enter(object sender, EventArgs e)
+    {
+        MainWindow.Instance.NotifyUser("rapid", "Initializing rapid UI.\nThis might take few moments...",false,false);
+        InitializeComponent();
+
+        Program.Downloader.PackagesChanged += Downloader_PackagesChanged;
+        Program.Downloader.SelectedPackagesChanged += Downloader_SelectedPackagesChanged;
+        UpdateAvailablePackages();
+        UpdateSelectedPackages();
+
+        Enter -= DownloaderTab_Enter;
     }
 
     void DownloaderTab_Disposed(object sender, EventArgs e)
@@ -107,15 +119,6 @@ namespace ZeroKLobby.MapDownloader
         Trace.TraceInformation("Selected packages changed");
         UpdateSelectedPackages();
       }
-    }
-
-    void Rapid_Load(object sender, EventArgs e)
-    {
-      Program.Downloader.PackagesChanged += Downloader_PackagesChanged;
-      Program.Downloader.SelectedPackagesChanged += Downloader_SelectedPackagesChanged;
-
-      UpdateAvailablePackages();
-      UpdateSelectedPackages();
     }
 
     void btnReload_Click(object sender, EventArgs e)

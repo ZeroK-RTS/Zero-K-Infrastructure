@@ -128,7 +128,6 @@
             this.Controls.Add(this.cbActive);
             this.Name = "AdvertiserWindow";
             this.Size = new System.Drawing.Size(644, 443);
-            this.Load += new System.EventHandler(this.AdvertiserWindow_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

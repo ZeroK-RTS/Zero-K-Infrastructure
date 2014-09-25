@@ -37,7 +37,6 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.Name = "ChatTab";
             this.Size = new System.Drawing.Size(596, 444);
-            this.Load += new System.EventHandler(this.ChatTab_Load);
             this.ResumeLayout(false);
 
         }
