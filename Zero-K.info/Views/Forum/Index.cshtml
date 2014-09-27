@@ -7,42 +7,45 @@
 
 <h2>Zero-K forums</h2>
 
-@{Html.RenderPartial
-("ForumPath", Model.Path);}
-
+@{Html.RenderPartial("ForumPath", Model.Path);}
+@if(Global.Account != null)
+{
+    <span class="textbutton" style="float:right">@Html.ActionLink("Mark all as read", "MarkAllAsRead", new {categoryID = (Model.CurrentCategory != null) ? Model.CurrentCategory.ForumCategoryID : null as int?})</span><br />
+}
 @if (Model.Categories.Any()) {
 	// forum index
     <table><tr><td style="vertical-align: top">
-    <table>
-        <tr><td>Forum</td><td>Threads</td></tr>
-        @foreach (var cat in Model.Categories) {
-            <tr>
-                <td><h3>@Html.ActionLink(cat.Title, "Index", new { categoryID = cat.ForumCategoryID })</h3></td>
-                <td>@cat.ForumThreads.Count()</td>
-            </tr>
-        }
-    </table>
-                   </td><td  style="vertical-align: top">
-                   <h3>Latest posts</h3>
-                            <small>
-                                <table>
-                                @foreach (var t in new ZkDataContext().ForumThreads.Where(x => x.RestrictedClanID == null || x.RestrictedClanID == Global.ClanID).OrderByDescending(x => x.LastPost).Take(40)) {
-                                    <tr><td>@Html.Print(t)</td><td>@t.LastPost.ToAgoString()</td></tr>
-                                }
-                                </table>
-                            </small>
-               
-               </td></tr>
+        <table>
+            <tr><td>Forum</td><td>Threads</td></tr>
+            @foreach (var cat in Model.Categories) {
+                <tr>
+                    <td><h3>@Html.ActionLink(cat.Title, "Index", new { categoryID = cat.ForumCategoryID })</h3></td>
+                    <td>@cat.ForumThreads.Count()</td>
+                </tr>
+            }
+        </table></td>
+        <td style="vertical-align: top">
+            <h3>Latest posts</h3>
+                <small>
+                    <table>
+                    @foreach (var t in new ZkDataContext().ForumThreads.Where(x => x.RestrictedClanID == null || x.RestrictedClanID == Global.ClanID).OrderByDescending(x => x.LastPost).Take(40)) {
+                        <tr><td>@Html.Print(t)</td><td>@t.LastPost.ToAgoString()</td></tr>
+                    }
+                    </table>
+                </small>
+        </td></tr>
     </table>
 }
 
 @if (Model.CurrentCategory != null && !Model.CurrentCategory.IsLocked) {
-	<h3 class="textbutton">@Html.ActionLink("Post new topic", "NewPost", new {categoryID= Model.CurrentCategory.ForumCategoryID})</h3><br />
+    <h3 class="textbutton">@Html.ActionLink("Post new topic", "NewPost", new {categoryID= Model.CurrentCategory.ForumCategoryID})</h3><br />
 }
 
 @if (Model.Threads.Any())
 {
 	var tog = true;
+    <div>@Html.Partial("~/Views/Forum/ForumPaginator.cshtml", Model)</div>
+
 	<table border="0" cellspacing="0" width="100%" >
 	<tr class="forum_row toggleFalse" >
 		<td title="status">S</td>
@@ -77,4 +80,5 @@
 			tog = !tog;
 		}
 	</table>
+    Html.Partial("~/Views/Forum/ForumPaginator.cshtml", Model);
 }

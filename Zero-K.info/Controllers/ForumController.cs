@@ -9,7 +9,7 @@ namespace ZeroKWeb.Controllers
 {
 	public class ForumController: Controller
 	{
-        const int PageSize = GlobalConst.ForumPostsPerPage;
+        public const int PageSize = GlobalConst.ForumPostsPerPage;
 
         void ResetThreadLastPostTime(int threadID)
         {
@@ -61,7 +61,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index");
         }
 
-		public ActionResult Index(int? categoryID)
+		public ActionResult Index(int? categoryID, int? page = null)
 		{
 			var db = new ZkDataContext();
 			var res = new IndexResult();
@@ -73,7 +73,10 @@ namespace ZeroKWeb.Controllers
 
 			//if (res.CurrentCategory != null && res.CurrentCategory.IsMissions) res.Threads = db.ForumThreads.Where(x => Equals(x.ForumCategoryID, categoryID) && !Global.IsLimitedMode || x.Missions.ModRapidTag.StartsWith("zk:")).OrderByDescending(x => x.LastPost);
 			//else
-            res.Threads = db.ForumThreads.Where(x => Equals(x.ForumCategoryID, categoryID)).OrderByDescending(x => x.IsPinned).ThenByDescending(x => x.LastPost).Take(50); // TODO HACK limits only to first 50 posts without paging
+            var threads = db.ForumThreads.Where(x => Equals(x.ForumCategoryID, categoryID)).OrderByDescending(x => x.IsPinned).ThenByDescending(x => x.LastPost);
+            res.Page = page ?? 0;
+            res.PageCount = ((threads.Count() - 1) / PageSize) + 1;
+            res.Threads = threads.Skip((page ?? 0) * PageSize).Take(PageSize).ToList();
 
 			return View(res);
 		}
@@ -308,6 +311,7 @@ namespace ZeroKWeb.Controllers
 			res.Path = GetCategoryPath(t.ForumCategoryID, db);
 			res.CurrentThread = t;
 			res.PageCount = ((t.PostCount-1)/PageSize) + 1;
+            res.Page = page;
 			res.Posts = t.ForumPosts.AsQueryable().Skip((page ?? 0)*PageSize).Take(PageSize).ToList();
 
 			return View(res);
@@ -331,6 +335,8 @@ namespace ZeroKWeb.Controllers
 		{
 			public IEnumerable<ForumCategory> Categories;
 			public ForumCategory CurrentCategory;
+            public int? Page;
+            public int PageCount;
 			public IEnumerable<ForumCategory> Path;
 			public IEnumerable<ForumThread> Threads;
 		}
@@ -349,6 +355,7 @@ namespace ZeroKWeb.Controllers
 		{
 			public ForumThread CurrentThread;
 			public int GoToPost;
+            public int? Page;
 			public int PageCount;
 			public IEnumerable<ForumCategory> Path;
 			public List<ForumPost> Posts;
@@ -525,6 +532,21 @@ namespace ZeroKWeb.Controllers
             }
             posts = posts.Where(x => !invalidResults.Contains(x)).ToList();
             return View("SearchResults", new SearchResult {Posts = posts.Take(100).ToList(), DisplayAsPosts = resultsAsPosts});
+        }
+
+        [Auth]
+        public ActionResult MarkAllAsRead(int? forumCategoryID)
+        {
+            if (Global.Account == null) return Content("Must be logged in");
+            ZkDataContext db = new ZkDataContext();
+            var threads = db.ForumThreads.Where(x => x.ForumCategoryID == forumCategoryID || forumCategoryID == null);
+            foreach (ForumThread thread in threads)
+            {
+                ForumThreadLastRead lastRead = Global.Account.ForumThreadLastReads.FirstOrDefault(x => x.ForumThreadID == thread.ForumThreadID);
+                if(lastRead.LastRead < thread.LastPost) thread.UpdateLastRead(Global.AccountID, false, DateTime.UtcNow);
+            }
+            db.SubmitChanges();
+            return RedirectToAction("Index", new { categoryID = forumCategoryID });
         }
 	}
 }

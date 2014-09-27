@@ -51,10 +51,10 @@
         </form>
     </div>
 }
-@Html.Partial("~/Views/Forum/Paginator.cshtml", Model)
+@Html.Partial("~/Views/Forum/ThreadPaginator.cshtml", Model)
 <div style="float:right">@string.Format("{0} posts, {1} views", Model.CurrentThread.PostCount, Model.CurrentThread.ViewCount)</div>
 @Html.Partial("~/Views/Forum/PostList.cshtml", Model.Posts)
-@Html.Partial("~/Views/Forum/Paginator.cshtml", Model)
+@Html.Partial("~/Views/Forum/ThreadPaginator.cshtml", Model)
 @if (!Model.CurrentThread.IsLocked)
 {   
     <br />

@@ -1,17 +1,13 @@
 ﻿@using ZeroKWeb
 @model ZeroKWeb.Controllers.ForumController.ThreadResult
 
-@{
-    int currentPage = ZeroKWeb.Controllers.ForumController.GetPostPage(Model.Posts[0].ForumPostID);
-}
-
 @if (Model.PageCount > 1)
 {
     <span>
     Pages: 
     @for (int i = 0; i < Model.PageCount; i++)
     {
-        if(i == currentPage)
+        if(i == Model.Page)
         {
             <b>@(i+1)</b>
         }
