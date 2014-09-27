@@ -167,7 +167,7 @@ namespace NightWatch
                                         {
                                             // check user IP against http://dnsbl.tornevall.org
                                             // does not catch all smurfs
-                                            // note: false positives reported for russians using mobilke connections
+                                            // mostly false positives, do not use
                                             var reversedIP = string.Join(".", args.IP.Split('.').Reverse().ToArray());
                                             try
                                             {
@@ -244,6 +244,7 @@ namespace NightWatch
                                 }
                                 catch (Exception ex)
                                 {
+                                    Trace.TraceError("VPN check error: {0}", ex);
                                     //client.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
                                 }
                             }
