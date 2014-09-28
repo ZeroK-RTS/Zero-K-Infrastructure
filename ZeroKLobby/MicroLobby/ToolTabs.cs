@@ -79,7 +79,7 @@ namespace ZeroKLobby.MicroLobby
         public void AddTab(string name, string title, Control control, Image icon, string tooltip, int sortImportance)
         {
             bool isPrivateTab = control is PrivateMessageControl;
-            name = isPrivateTab ? (name + "_pm") : name;
+            name = isPrivateTab ? (name + "_pm") : (name + "_chan");
             var button = new ToolStripButton(name, icon)
                          {
                             Name = name,
@@ -178,7 +178,7 @@ namespace ZeroKLobby.MicroLobby
 
         public bool SetHilite(string tabName, HiliteLevel level, bool isPrivateTab)
         {
-            tabName = isPrivateTab ? (tabName + "_pm") : tabName;
+            tabName = isPrivateTab ? (tabName + "_pm") : (tabName + "_chan");
             if (!toolStrip.Items.ContainsKey(tabName)) return false;
             var button = (ToolStripButton)toolStrip.Items[tabName];
             HiliteLevel? current = button.Tag as HiliteLevel?;
@@ -209,7 +209,7 @@ namespace ZeroKLobby.MicroLobby
         public ChatControl GetChannelTab(string name)
         {
             Control control;
-            controls.TryGetValue(name, out control);
+            controls.TryGetValue(name + "_chan", out control);
             return control as ChatControl;
         }
 
@@ -222,9 +222,9 @@ namespace ZeroKLobby.MicroLobby
 
         public void RemoveChannelTab(string key)
         {
-            panel.Controls.RemoveByKey(key);
-            controls.Remove(key);
-            toolStrip.Items.RemoveByKey(key);
+            panel.Controls.RemoveByKey(key + "_chan");
+            controls.Remove(key + "_chan");
+            toolStrip.Items.RemoveByKey(key + "_chan");
         }
 
         public void RemovePrivateTab(string key)
@@ -236,7 +236,7 @@ namespace ZeroKLobby.MicroLobby
 
         public void SelectChannelTab(string name)
         {
-            ActiveButton = (ToolStripButton)toolStrip.Items[name];
+            ActiveButton = (ToolStripButton)toolStrip.Items[name + "_chan"];
         }
 
         public void SelectPrivateTab(string name)
@@ -280,7 +280,7 @@ namespace ZeroKLobby.MicroLobby
 
         public void SetIcon(string tabName, Image icon, bool isPrivateTab)
         {
-            tabName = isPrivateTab ? (tabName + "_pm") : tabName;
+            tabName = isPrivateTab ? (tabName + "_pm") : (tabName + "_chan");
             var button = (ToolStripButton)toolStrip.Items[tabName];
             button.Image = icon;
         }
