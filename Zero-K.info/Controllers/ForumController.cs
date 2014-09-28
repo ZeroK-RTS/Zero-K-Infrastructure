@@ -112,7 +112,7 @@ namespace ZeroKWeb.Controllers
 			res.CurrentCategory = category;
             if (forumPostID != null) {
                 ForumPost post = db.ForumPosts.Single(x=>x.ForumPostID == forumPostID);
-                if (!Global.IsZeroKAdmin && Global.AccountID != post.AuthorAccountID)
+                if (!Global.IsZeroKAdmin && !Global.IsLobbyAdmin && Global.AccountID != post.AuthorAccountID)
                 {
                     return Content("You cannot edit this post");
                 }
@@ -235,7 +235,7 @@ namespace ZeroKWeb.Controllers
 				{
                     if (forumPostID != null) {
                         var post = thread.ForumPosts.Single(x => x.ForumPostID == forumPostID);
-                        if (post.AuthorAccountID != Global.AccountID && !Global.Account.IsZeroKAdmin) throw new ApplicationException("Not authorized to edit the post");
+                        if (post.AuthorAccountID != Global.AccountID && !Global.Account.IsZeroKAdmin && !Global.Account.IsLobbyAdministrator) throw new ApplicationException("Not authorized to edit the post");
                         post.ForumPostEdits.Add(new ForumPostEdit() { 
                                 EditorAccountID = Global.AccountID,
                                 EditTime = DateTime.UtcNow,

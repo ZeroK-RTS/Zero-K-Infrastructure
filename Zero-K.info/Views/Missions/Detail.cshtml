@@ -155,7 +155,7 @@ $(function() {
     </table>
  </div>
   <!close votes>
-  @if (Global.IsZeroKAdmin) {
+  @if (Global.IsZeroKAdmin || Global.IsLobbyAdmin) {
     <form action='@Url.Action("ChangeFeaturedOrder", "Missions", new { id = m.MissionID })' method="post">
     Featured order: @Html.TextBox("featuredOrder", Model.Mission.FeaturedOrder)
     @if (m.IsScriptMission) {

@@ -236,7 +236,7 @@ namespace ZeroKWeb.Controllers
             r.MapIs1v1 = is1v1;
             r.MapIsFfa = ffa;
             r.MapIsChickens = chickens;
-            if (Global.Account.IsZeroKAdmin) {
+            if (Global.Account.IsZeroKAdmin || Global.Account.IsLobbyAdministrator) {
                 r.FeaturedOrder = featuredOrder;
                 r.MapFFAMaxTeams = ffaTeams;
                 r.MapSpringieCommands = springieCommands;

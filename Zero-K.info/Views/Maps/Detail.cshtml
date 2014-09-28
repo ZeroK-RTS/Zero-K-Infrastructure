@@ -157,7 +157,7 @@
                         <tr>
                             <td>Author:</td><td>@Html.TextBox("author", m.AuthorName)</td>
                         </tr>
-                        @if (ZeroKWeb.Global.IsZeroKAdmin)
+                        @if (ZeroKWeb.Global.IsZeroKAdmin || ZeroKWeb.Global.IsLobbyAdmin)
                         {
                             <tr>
                                 <td>Featured order:</td><td>@Html.TextBox("featuredOrder", Model.Resource.FeaturedOrder)</td>

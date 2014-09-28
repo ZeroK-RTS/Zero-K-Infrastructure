@@ -98,14 +98,14 @@ You can even select where your donation goes! :-)<br/>
 
             </td>
             <td>€@c.Euros.Value.ToString("F2")</td>
-            @if (Global.IsZeroKAdmin) {
+            @if (Global.IsZeroKAdmin || Global.IsLobbyAdmin) {
                 <td>@Html.ActionLink("resend email", "ResendEmail", new {contributionID = @c.ContributionID})</td>
             }
         </tr>
     }
 </table>
 
-@if (Global.IsZeroKAdmin) {
+@if (Global.IsZeroKAdmin || Global.IsLobbyAdmin) {
     <div class="admin">
         <h3>Add a manual contribution</h3>
         <form action="@Url.Action("AddContribution")" method="POST">

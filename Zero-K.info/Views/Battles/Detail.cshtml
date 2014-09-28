@@ -110,7 +110,7 @@
                 <span>
                     @Html.PrintAccount(u.Account)
                     @(u.LoseTime.HasValue ? "died in " + TimeSpan.FromSeconds(u.LoseTime.Value).ToNiceString() : "")
-                    @if (u.EloChange.HasValue && Global.IsZeroKAdmin)
+                    @if (u.EloChange.HasValue && (Global.IsZeroKAdmin || Global.IsLobbyAdmin))
                     {
                         @:Elo: @u.EloChange.Value.ToString("F1")
                     		}
@@ -134,7 +134,7 @@
 </div>
 <br />
 
-@if (Global.IsZeroKAdmin)
+@if (Global.IsZeroKAdmin || Global.IsLobbyAdmin)
 {
     <div class="admin" >
         Logs: @Html.ActionLink("Logs", "Logs", "Battles", new { id = Model.SpringBattleID }, null)

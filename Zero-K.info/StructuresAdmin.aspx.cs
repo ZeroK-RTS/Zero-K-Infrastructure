@@ -56,7 +56,7 @@ namespace ZeroKWeb
 
 		protected void btnUpdateClick(object sender, EventArgs e)
 		{
-			if (!Global.Account.IsZeroKAdmin) throw new ApplicationException("You are not an admin!");
+			if (!Global.Account.IsZeroKAdmin && !Global.Account.IsLobbyAdministrator) throw new ApplicationException("You are not an admin!");
 			var data = (List<StructureType>)new DataContractSerializer(typeof(List<StructureType>)).ReadObject(XmlReader.Create(new StringReader(tbData.Text)));
 
 			var db2 = new ZkDataContext();
