@@ -458,7 +458,6 @@
     <Content Include="Views\Forum\ForumVotesForPost.cshtml" />
     <Content Include="Views\Planetwars\Ladder.cshtml" />
     <Content Include="Views\Campaign\Journals.cshtml" />
-    <Content Include="Views\Forum\Paginator.cshtml" />
     <Content Include="Views\Users\NewUsers.cshtml" />
     <Content Include="Views\Users\MassBan.cshtml" />
     <Content Include="Views\Lobby\BlockedVPNs.cshtml" />
@@ -467,6 +466,8 @@
     <Content Include="Views\Planetwars\PwMatchMaker.cshtml" />
     <Content Include="Views\Planetwars\GalaxyOffline.cshtml" />
     <Content Include="Views\Planetwars\GalaxyOfflinePW12.cshtml" />
+    <Content Include="Views\Forum\ForumPaginator.cshtml" />
+    <Content Include="Views\Forum\ThreadPaginator.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
