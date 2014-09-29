@@ -11,7 +11,7 @@ namespace ZeroKLobby.MapDownloader
   {
     public DownloaderTab()
     {
-      Enter += DownloaderTab_Enter;   
+        Paint += DownloaderTab_Enter;
       if (Process.GetCurrentProcess().ProcessName == "devenv") return; // detect design mode, workaround for non-working this.DesignMode 
 
       Disposed += DownloaderTab_Disposed;
@@ -19,6 +19,7 @@ namespace ZeroKLobby.MapDownloader
 
     private void DownloaderTab_Enter(object sender, EventArgs e)
     {
+        Paint -= DownloaderTab_Enter;
         MainWindow.Instance.NotifyUser("rapid", "Initializing rapid UI.\nThis might take few moments...",false,false);
         InitializeComponent();
 
@@ -26,8 +27,6 @@ namespace ZeroKLobby.MapDownloader
         Program.Downloader.SelectedPackagesChanged += Downloader_SelectedPackagesChanged;
         UpdateAvailablePackages();
         UpdateSelectedPackages();
-
-        Enter -= DownloaderTab_Enter;
     }
 
     void DownloaderTab_Disposed(object sender, EventArgs e)

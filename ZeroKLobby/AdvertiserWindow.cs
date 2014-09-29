@@ -17,14 +17,14 @@ namespace ZeroKLobby
 
         public AdvertiserWindow()
         {
-            Enter +=AdvertiserWindow_Enter;
+            Paint += AdvertiserWindow_Enter;
         }
 
         private void AdvertiserWindow_Enter(object sender, EventArgs e)
         {
+            Paint -= AdvertiserWindow_Enter;
             InitializeComponent();
             Start();
-            Enter -= AdvertiserWindow_Enter;
         }
 
         void GetBestBattle(out Battle bestBattle, out int battleSize)
