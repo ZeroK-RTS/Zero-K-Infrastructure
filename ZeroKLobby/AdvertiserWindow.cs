@@ -17,9 +17,15 @@ namespace ZeroKLobby
 
         public AdvertiserWindow()
         {
-            InitializeComponent();
+            Paint += AdvertiserWindow_Enter;
         }
 
+        private void AdvertiserWindow_Enter(object sender, EventArgs e)
+        {
+            Paint -= AdvertiserWindow_Enter;
+            InitializeComponent();
+            Start();
+        }
 
         void GetBestBattle(out Battle bestBattle, out int battleSize)
         {
@@ -160,11 +166,6 @@ namespace ZeroKLobby
         public bool CanReload { get { return false; } }
 
         public bool IsBusy { get { return false; } }
-
-        void AdvertiserWindow_Load(object sender, EventArgs e)
-        {
-            Start();
-        }
 
         void btnNow_Click(object sender, EventArgs e)
         {

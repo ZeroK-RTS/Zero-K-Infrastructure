@@ -32,6 +32,7 @@ namespace ZeroKLobby.MicroLobby
         ChatBox.IRCForeColor = 14; //mirc grey. Unknown use
 
         HistoryManager.InsertLastLines(UserName, ChatBox);
+        
         VisibleChanged += PrivateMessageControl_VisibleChanged;
         Program.TasClient.BattleUserJoined += TasClient_BattleUserJoined;
         Program.TasClient.UserAdded += TasClient_UserAdded;

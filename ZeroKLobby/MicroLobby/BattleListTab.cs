@@ -9,7 +9,14 @@ namespace ZeroKLobby.MicroLobby
     {
         BattleListControl battleListControl;
 
-        public BattleListTab() {
+        public BattleListTab() 
+        {
+            Paint += BattleListTab_Enter; 
+        }
+
+        void BattleListTab_Enter(object sender, EventArgs e)
+        {
+            Paint -= BattleListTab_Enter;
             SuspendLayout(); //pause
             InitializeComponent();
 
