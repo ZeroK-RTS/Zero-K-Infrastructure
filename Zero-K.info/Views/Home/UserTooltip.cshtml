@@ -23,11 +23,10 @@
         @Html.PrintRoleType(entry.RoleType) of @(entry.RoleType.IsClanOnly ? Html.PrintClan(entry.Clan) : Html.PrintFaction(entry.Faction,false))
     </span><br/>
 }<br/>
-@if (Model.IsLobbyAdministrator || Model.IsZeroKAdmin)
+@if (Model.IsZeroKAdmin)
  {
 			<span>
-				<b> @Model.Name </b> is an <b>Administrator</b> for: 
-				@(Model.IsLobbyAdministrator ? "Lobby" : "Zero-K")
+				<b> @Model.Name </b> is a <b>Zero-K Administrator</b><br/>
 			</span>
  }
 
