@@ -537,7 +537,6 @@ namespace ZeroKWeb.Controllers
         [Auth]
         public ActionResult MarkAllAsRead(int? forumCategoryID)
         {
-            if (Global.Account == null) return Content("Must be logged in");
             ZkDataContext db = new ZkDataContext();
             var threads = db.ForumThreads.Where(x => x.ForumCategoryID == forumCategoryID || forumCategoryID == null);
             foreach (ForumThread thread in threads)

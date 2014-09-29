@@ -13,6 +13,8 @@ namespace ZeroKWeb.Controllers
     {
         //
         // GET: /Lobby/
+
+        // should this use [Auth] as well?
         public ActionResult SendCommand(string link) {
             if (Global.Account == null) return Content("You must be logged in to the site");
             var name = Global.Account.Name;

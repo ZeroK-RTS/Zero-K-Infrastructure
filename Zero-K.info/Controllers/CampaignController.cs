@@ -55,10 +55,9 @@ namespace ZeroKWeb.Controllers
             }
         }
 
+        [Auth]
         public ActionResult Index(int? campaignID = null)
         {
-            if (Global.Account == null) return Content("You must be logged in to view campaign info");
-
             var db = new ZkDataContext();
 
             Campaign camp;
@@ -135,9 +134,8 @@ namespace ZeroKWeb.Controllers
         }
          */
 
-
+        [Auth]
         public ActionResult Planet(int id) {
-            if (Global.Account == null) return Content("You must be logged in to view campaign planet");
             var db = new ZkDataContext();
             CampaignPlanet planet = db.CampaignPlanets.Single(x => x.PlanetID == id);
             return View(planet);
