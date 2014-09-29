@@ -103,14 +103,9 @@
         
 
             <a href="@Html.PrintSpringLink("chat/user/" + Model.Name)"> Chat with @Model.Name in the lobby </a><br />
-            @if (Model.IsLobbyAdministrator) {
-                <div>
-                    <b> @Model.Name </b> is a <b>Lobby Moderator</b>
-                </div>
-            }
             @if (Model.IsZeroKAdmin) {
                 <div>
-                    <b> @Model.Name </b> is a <b>ZK Administrator</b>
+                    <b> @Model.Name </b> is a <b>Zero-K Administrator</b>
                 </div>
             }
  
