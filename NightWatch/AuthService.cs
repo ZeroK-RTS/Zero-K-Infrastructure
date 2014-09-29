@@ -245,7 +245,7 @@ namespace NightWatch
                                 catch (Exception ex)
                                 {
                                     Trace.TraceError("VPN check error: {0}", ex);
-                                    //client.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
+                                    client.Say(TasClient.SayPlace.Channel, ModeratorChannel, ex.ToString(), false);
                                 }
                             }
                             catch (Exception ex)
