@@ -28,9 +28,9 @@ namespace PlasmaDownloader
     {
         private readonly List<Download> downloads = new List<Download>();
 
-        private readonly PackageDownloader packageDownloader;
+        private PackageDownloader packageDownloader;
         private readonly SpringScanner scanner;
-        private readonly TorrentDownloader torrentDownloader;
+        private TorrentDownloader torrentDownloader;
 
         public IPlasmaDownloaderConfig Config { get; private set; }
 
@@ -39,7 +39,10 @@ namespace PlasmaDownloader
         }
 
         public PackageDownloader PackageDownloader {
-            get { return packageDownloader; }
+            get {
+                InitializePackageDownloader();
+                return packageDownloader; 
+            }
         }
 
         public SpringPaths SpringPaths { get; private set; }
@@ -47,25 +50,45 @@ namespace PlasmaDownloader
         public event EventHandler<EventArgs<Download>> DownloadAdded = delegate { };
 
         public event EventHandler PackagesChanged {
-            add { packageDownloader.PackagesChanged += value; }
-            remove { packageDownloader.PackagesChanged -= value; }
+            add {
+                InitializePackageDownloader();
+                packageDownloader.PackagesChanged += value; }
+            remove {
+                InitializePackageDownloader();
+                packageDownloader.PackagesChanged -= value; }
         }
 
         public event EventHandler SelectedPackagesChanged {
-            add { packageDownloader.SelectedPackagesChanged += value; }
-            remove { packageDownloader.SelectedPackagesChanged -= value; }
+            add {
+                InitializePackageDownloader();
+                packageDownloader.SelectedPackagesChanged += value; }
+            remove {
+                InitializePackageDownloader();
+                packageDownloader.SelectedPackagesChanged -= value; }
         }
 
         public PlasmaDownloader(IPlasmaDownloaderConfig config, SpringScanner scanner, SpringPaths springPaths) {
             SpringPaths = springPaths;
             Config = config;
             this.scanner = scanner;
-            torrentDownloader = new TorrentDownloader(this);
-            packageDownloader = new PackageDownloader(this);
+            //torrentDownloader = new TorrentDownloader(this);
+            //packageDownloader = new PackageDownloader(this);
         }
 
         public void Dispose() {
-            packageDownloader.Dispose();
+            if (packageDownloader!=null) packageDownloader.Dispose();
+        }
+
+        private void InitializePackageDownloader() //for lazy initialization (initialize when needed)
+        {
+            if (packageDownloader == null) 
+                packageDownloader = new PackageDownloader(this);
+        }
+
+        private void InitializeTorrentDownloader() //for lazy initialization
+        {
+            if (torrentDownloader == null) 
+                torrentDownloader = new TorrentDownloader(this);
         }
 
 
@@ -115,6 +138,7 @@ namespace PlasmaDownloader
                 }
 
                 if (type == DownloadType.MOD || type == DownloadType.UNKNOWN) {
+                    InitializePackageDownloader();
                     var down = packageDownloader.GetPackageDownload(name);
                     if (down != null) {
                         downloads.Add(down);
@@ -124,6 +148,7 @@ namespace PlasmaDownloader
                 }
 
                 if (type == DownloadType.MAP || type == DownloadType.MOD || type == DownloadType.UNKNOWN || type == DownloadType.MISSION) {
+                    InitializeTorrentDownloader();
                     var down = torrentDownloader.DownloadTorrent(name);
                     if (down != null) {
                         downloads.Add(down);
