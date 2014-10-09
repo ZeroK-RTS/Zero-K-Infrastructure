@@ -54,8 +54,8 @@ namespace PlasmaDownloader
                 InitializePackageDownloader();
                 packageDownloader.PackagesChanged += value; }
             remove {
-                InitializePackageDownloader();
-                packageDownloader.PackagesChanged -= value; }
+                if (packageDownloader != null)
+                    packageDownloader.PackagesChanged -= value; }
         }
 
         public event EventHandler SelectedPackagesChanged {
@@ -63,8 +63,8 @@ namespace PlasmaDownloader
                 InitializePackageDownloader();
                 packageDownloader.SelectedPackagesChanged += value; }
             remove {
-                InitializePackageDownloader();
-                packageDownloader.SelectedPackagesChanged -= value; }
+                if (packageDownloader!=null)
+                    packageDownloader.SelectedPackagesChanged -= value; }
         }
 
         public PlasmaDownloader(IPlasmaDownloaderConfig config, SpringScanner scanner, SpringPaths springPaths) {
@@ -76,7 +76,8 @@ namespace PlasmaDownloader
         }
 
         public void Dispose() {
-            if (packageDownloader!=null) packageDownloader.Dispose();
+            if (packageDownloader!=null) 
+                packageDownloader.Dispose();
         }
 
         private void InitializePackageDownloader() //for lazy initialization (initialize when needed)

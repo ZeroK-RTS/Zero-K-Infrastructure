@@ -46,7 +46,16 @@ namespace PlasmaDownloader.Packages
 			refreshTimer = new Timer(this.plasmaDownloader.Config.RepoMasterRefresh*1000);
 			refreshTimer.AutoReset = true;
 			refreshTimer.Elapsed += RefreshTimerElapsed;
-			Utils.StartAsync(LoadMasterAndVersions);
+			//Utils.StartAsync(LoadMasterAndVersions);
+
+            //Note: We moved away from asynchronous initialization because we need to prepare a 
+            //complete repository list before letting go control (so that external code will work
+            //properly). We are doing an on-demand initialization/lazy-initialization to speedup
+            //startup time, so its important that stuff is finished when we Initialize them.
+            //We used "Task" instead of simply do "LoadMasterAndVersion();" because: http://stackoverflow.com/questions/4192834/waitall-for-multiple-handles-on-a-sta-thread-is-not-supported
+            var task1 = System.Threading.Tasks.Task.Factory.StartNew(() => LoadMasterAndVersions());
+            task1.Wait();
+
 			refreshTimer.Start();
 		}
 
@@ -126,6 +135,7 @@ namespace PlasmaDownloader.Packages
 				byte[] repoList = null;
 				try
 				{
+                    Trace.TraceInformation("PackageDownloader : Downloading master from :" + masterUrl);
 					repoList = wd.DownloadData(masterUrl + "/repos.gz");
 				}
 				catch (Exception ex)
@@ -160,7 +170,7 @@ namespace PlasmaDownloader.Packages
 						Trace.TraceError("Could not refresh repository {0}: {1}", entry.BaseUrl, ex);
 					}
 				}
-				WaitHandle.WaitAll(waitHandles.ToArray());
+                WaitHandle.WaitAll(waitHandles.ToArray());//wait until all "repositories" element finish downloading.
 
 				foreach (var result in results)
 				{
@@ -223,30 +233,36 @@ namespace PlasmaDownloader.Packages
 		{
 			var path = Utils.MakePath(plasmaDownloader.SpringPaths.Cache, "repositories.dat");
 			var bf = new BinaryFormatter();
-			try
-			{
-				lock (repositories)
-				{
-					using (var fs = File.OpenRead(path)) repositories = (List<Repository>)bf.Deserialize(fs);
-				}
-			}
-			catch (Exception ex)
-			{
-				Trace.TraceWarning("Could not load repository cache from {0}: {1}", path, ex);
-			}
+            try
+            {
+                if (File.Exists(path))
+                {
+                    lock (repositories)
+                    {
+                        using (var fs = File.OpenRead(path)) repositories = (List<Repository>)bf.Deserialize(fs);
+                    }
+                }
+                else
+                    Trace.TraceWarning("PackageDownloader : There's no {0}", path);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning("Could not load repository cache from {0}: {1}", path, ex);
+            }
 		}
 
 		void LoadSelectedPackages()
 		{
 			try
 			{
-				var path = Utils.MakePath(plasmaDownloader.SpringPaths.WritableDirectory, "packages", "selected.list");
+                var path = Utils.MakePath(plasmaDownloader.SpringPaths.WritableDirectory, "packages", "selected.list");
 			    if (File.Exists(path)) {
 			        var text = File.ReadAllText(path);
 			        var newPackages = new List<string>();
 			        foreach (var s in text.Split('\n')) if (!string.IsNullOrEmpty(s)) newPackages.Add(s);
 			        lock (selectedPackages) selectedPackages = newPackages;
-			    }
+                } else
+                    Trace.TraceWarning("PackageDownloader : There's no {0}", path);
 			}
 			catch (Exception ex)
 			{
