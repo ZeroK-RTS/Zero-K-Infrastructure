@@ -135,7 +135,6 @@ namespace PlasmaDownloader.Packages
 				byte[] repoList = null;
 				try
 				{
-                    Trace.TraceInformation("PackageDownloader : Downloading master from :" + masterUrl);
 					repoList = wd.DownloadData(masterUrl + "/repos.gz");
 				}
 				catch (Exception ex)
