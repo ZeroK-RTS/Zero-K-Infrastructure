@@ -36,6 +36,7 @@ namespace PlasmaDownloader.Packages
 
 		public event EventHandler PackagesChanged = delegate { };
 		public event EventHandler SelectedPackagesChanged = delegate { };
+		public event EventHandler MasterManifestDownloaded = delegate { };
 
 		public PackageDownloader(PlasmaDownloader plasmaDownloader)
 		{
@@ -160,7 +161,7 @@ namespace PlasmaDownloader.Packages
 						Trace.TraceError("Could not refresh repository {0}: {1}", entry.BaseUrl, ex);
 					}
 				}
-				WaitHandle.WaitAll(waitHandles.ToArray());
+				WaitHandle.WaitAll(waitHandles.ToArray());//wait until all "repositories" element finish downloading.
 
 				foreach (var result in results)
 				{
@@ -176,6 +177,7 @@ namespace PlasmaDownloader.Packages
 			}
 			finally
 			{
+				MasterManifestDownloaded(this, EventArgs.Empty);
 				isRefreshing = false;
 				refreshTimer.Start();
 			}
@@ -225,10 +227,15 @@ namespace PlasmaDownloader.Packages
 			var bf = new BinaryFormatter();
 			try
 			{
-				lock (repositories)
+				if (File.Exists(path))
 				{
-					using (var fs = File.OpenRead(path)) repositories = (List<Repository>)bf.Deserialize(fs);
+					lock (repositories)
+					{
+						using (var fs = File.OpenRead(path)) repositories = (List<Repository>)bf.Deserialize(fs);
+					}
 				}
+				else
+					Trace.TraceWarning("PackageDownloader : File don't exist : {0}", path);
 			}
 			catch (Exception ex)
 			{
@@ -246,7 +253,8 @@ namespace PlasmaDownloader.Packages
 			        var newPackages = new List<string>();
 			        foreach (var s in text.Split('\n')) if (!string.IsNullOrEmpty(s)) newPackages.Add(s);
 			        lock (selectedPackages) selectedPackages = newPackages;
-			    }
+			    } else
+			        Trace.TraceWarning("PackageDownloader : File don't exist : {0}", path);
 			}
 			catch (Exception ex)
 			{
