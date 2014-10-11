@@ -645,7 +645,7 @@ namespace Springie.autohost
 
             if (SpawnConfig != null) {
                 modname = SpawnConfig.Mod;
-                mapname = SpawnConfig.Map;
+                if (!String.IsNullOrEmpty(SpawnConfig.Map)) mapname = SpawnConfig.Map;
                 title = SpawnConfig.Title;
                 if (!String.IsNullOrEmpty(SpawnConfig.Password)) password = SpawnConfig.Password;
                 if (!String.IsNullOrEmpty(SpawnConfig.Engine))

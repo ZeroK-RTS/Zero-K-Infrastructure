@@ -45,6 +45,13 @@ namespace Springie
 		public int RepoMasterRefresh { get { return 120; } }
 		public string PackageMasterUrl { get { return "http://repos.springrts.com/"; } }
 
+        //Note for testing, 
+        //1) Set "ClusterNode" to "alpha"
+        //2) Make sure AutoUpdater() wasn't run (in Program.cs),
+        //3) Compile Springie & run Springie.exe
+        //4) Login to server (as player) using Lobby, 
+        //5) Join a room called "KingRaptor Secret Clubhouse",
+        //6) Use "magic" for password.
 	    public MainConfig() {
             ClusterNode = "omega";
         }
