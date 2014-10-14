@@ -46,11 +46,14 @@ namespace System.Web.Mvc
             exp = new Regex(@"\[b\]((.|\n)+?)\[/b\]", RegexOptions.IgnoreCase);
             str = exp.Replace(str, "<strong>$1</strong>");
 
-            // format the quote tags: [quote][/quote]
+            // format the quote tags: [quote][/quote] and [q][/q]
             // becomes: stuff
             exp = new Regex(@"\[quote\]((.|\n)+?)\[/quote\]", RegexOptions.IgnoreCase);
             str = exp.Replace(str,
-                              "<table border=\"0\" cellpadding=\"6\" cellspacing=\"0\" width=\"100%\"><tbody><tr><td style=\"border: 1px inset;\"><em>quote:<br>$1</em></td></tr></tbody></table>");
+            "<table border=\"0\" cellpadding=\"6\" cellspacing=\"0\" width=\"100%\"><tbody><tr><td style=\"border: 1px inset;\"><em>quote:<br>$1</em></td></tr></tbody></table>");
+            exp = new Regex(@"\[q\]((.|\n)+?)\[/q\]", RegexOptions.IgnoreCase);
+            str = exp.Replace(str,
+            "<table border=\"0\" cellpadding=\"6\" cellspacing=\"0\" width=\"100%\"><tbody><tr><td style=\"border: 1px inset;\"><em>quote:<br>$1</em></td></tr></tbody></table>");
 
             // format the italic tags: [i][/i]
             // becomes: <em></em>
@@ -99,7 +102,12 @@ namespace System.Web.Mvc
 
             // lastly, replace any new line characters with <br />
             str = str.Replace("\r\n", "<br />\r\n");
-
+            
+            // embed player to display gifv format (mp4, limited (for now) to be hosted on imgur)
+            exp = new Regex(@"\[gifv\]https?\://i\.imgur\.com/([a-z0-9]+)\.gifv\[/gifv\]", RegexOptions.IgnoreCase);
+            str = exp.Replace(str, 
+			"<center> <div style=\"width: auto; height: auto; text-align:center; line-height:0;\"><video webkit-playsinline=\"\" poster=\"https://i.imgur.com/$1h.jpg\" preload=\"auto\" autoplay=\"autoplay\" muted=\"muted\" loop=\"loop\"width=\"auto\" height=\"auto\"><source src=\"https://i.imgur.com/$1.mp4\" type=\"video/mp4\"><object type=\"application/x-shockwave-flash\" height=\"auto\" width=\"auto\" data=\"https://s.imgur.com/include/flash/gifplayer.swf?imgur_video=https://i.imgur.com/$1.mp4&imgur_width=auto&imgur_height=auto\"></video></div></center>");
+            			
             if (helper != null) {
                 // todo remove condition in the future
                 exp = new Regex(@"\[poll\]([0-9]+)\[/poll\]", RegexOptions.IgnoreCase);
