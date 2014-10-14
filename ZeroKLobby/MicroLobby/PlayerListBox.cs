@@ -131,7 +131,9 @@ namespace ZeroKLobby.MicroLobby
 		{
 			base.OnMeasureItem(e);
             DpiMeasurement.DpiXYMeasurement(this);
-            e.ItemHeight = DpiMeasurement.ScaleValueY(((PlayerListItem)base.Items[e.Index]).Height); //GetItemRectangle() will measure the size of item (for drawing). We return a custom Height defined in PlayerListItems.cs
+            if (DesignMode) return;
+            if (e.Index > -1 && e.Index < base.Items.Count)
+                e.ItemHeight = DpiMeasurement.ScaleValueY(((PlayerListItem)base.Items[e.Index]).Height); //GetItemRectangle() will measure the size of item (for drawing). We return a custom Height defined in PlayerListItems.cs
 		}
 
 

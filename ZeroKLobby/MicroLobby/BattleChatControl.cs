@@ -348,14 +348,14 @@ namespace ZeroKLobby.MicroLobby
 				{
 					if (playerBox.HoverItem.IsSpectatorsTitle) ActionHandler.Spectate();
 					else if (playerBox.HoverItem.SlotButton != null) ActionHandler.JoinSlot(playerBox.HoverItem.MissionSlot);
-					else if (playerBox.HoverItem.AllyTeam.HasValue) ActionHandler.JoinAllyTeam(playerBox.HoverItem.AllyTeam.Value);
+					else if (playerBox.HoverItem.Button!=null) ActionHandler.JoinAllyTeam(playerBox.HoverItem.AllyTeam.Value);
 				}
 			}
 
 			if (mea.Button == MouseButtons.Right || !Program.Conf.LeftClickSelectsPlayer)
 			{
 				if (playerBox.HoverItem == null && mea.Button == MouseButtons.Right)
-				{
+				{ //right click on empty space
 					var cm = ContextMenus.GetPlayerContextMenu(Program.TasClient.MyUser, true);
 					Program.ToolTip.Visible = false;
 				    try {
@@ -366,6 +366,7 @@ namespace ZeroKLobby.MicroLobby
 				        Program.ToolTip.Visible = true;
 				    }
 				}
+                //NOTE: code that display player's context menu on Left-mouse-click is in ChatControl.playerBox_MouseClick();
 			}
 			if (playerBox.HoverItem != null)
 			{
