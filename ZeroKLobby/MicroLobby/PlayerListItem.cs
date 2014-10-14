@@ -19,6 +19,10 @@ namespace ZeroKLobby.MicroLobby
         Font font = new Font(Program.Conf.ChatFont.FontFamily, Program.Conf.ChatFont.Size - 2, FontStyle.Regular);
 
         int height = 16;
+        public bool isOfflineMode = false;
+        public bool isOfflineZK = false;
+        public UserBattleStatus offlineUserBattleStatus;
+        public User offlineUserInfo;
         public int? AllyTeam { get; set; }
         public BotBattleStatus BotBattleStatus { get; set; }
         public string Button { get; set; }
@@ -30,9 +34,13 @@ namespace ZeroKLobby.MicroLobby
         public int SortCategory { get; set; }
         public string Title { get; set; }
         public bool IsZeroKBattle 
-        { get 
-            { return Program.TasClient.MyBattle != null && KnownGames.GetGame(Program.TasClient.MyBattle.ModName) != null 
-                && KnownGames.GetGame(Program.TasClient.MyBattle.ModName).IsPrimary; } 
+        {
+            get
+            {
+                if (isOfflineMode) return isOfflineZK;
+                return Program.TasClient.MyBattle != null && KnownGames.GetGame(Program.TasClient.MyBattle.ModName) != null 
+                    && KnownGames.GetGame(Program.TasClient.MyBattle.ModName).IsPrimary;
+            } 
         }
         public bool IsSpringieBattle { get { return Program.TasClient.MyBattle != null && Program.TasClient.MyBattle.Founder.IsZkLobbyUser; } }
         public User User
@@ -40,12 +48,20 @@ namespace ZeroKLobby.MicroLobby
             get
             {
                 if (UserName == null) return null;
+                if (isOfflineMode) return offlineUserInfo;
                 User user;
                 Program.TasClient.ExistingUsers.TryGetValue(UserName, out user);
                 return user;
             }
         }
-        public UserBattleStatus UserBattleStatus { get { return Program.TasClient.MyBattle == null ? null : Program.TasClient.MyBattle.Users.SingleOrDefault(u => u.Name == UserName); } }
+        public UserBattleStatus UserBattleStatus
+        {
+            get 
+            {
+                if (isOfflineMode) return offlineUserBattleStatus;
+                return Program.TasClient.MyBattle == null ? null : Program.TasClient.MyBattle.Users.SingleOrDefault(u => u.Name == UserName);
+            }
+        }
 
         public string UserName { get; set; }
 
@@ -162,9 +178,9 @@ namespace ZeroKLobby.MicroLobby
 
                 if (!userStatus.IsSpectator)
                 {
-                    var userColor = userStatus.TeamColorRGB;
                     if (!IsZeroKBattle)
                     {
+                        var userColor = userStatus.TeamColorRGB;
                         using (var brush = new SolidBrush(Color.FromArgb(userColor[0], userColor[1], userColor[2])))
                         {
                             g.SmoothingMode = SmoothingMode.AntiAlias;
