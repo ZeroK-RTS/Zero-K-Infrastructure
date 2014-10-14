@@ -5,6 +5,7 @@ using ZeroKLobby;
 using ZeroKLobby.Lines;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Text;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -62,7 +63,7 @@ namespace ZeroKLobby.MicroLobby
         /// <summary>
         /// Write all chat-lines to text file in ChatHistory folder. 
         /// Is automatically done every 30th line and every 30 second, 
-        /// but should also be called when ZKL exit.
+        /// but also called when ZKL exit (at Program.cs).
         /// </summary>
         public static void FlushBuffer()
         {
@@ -102,7 +103,24 @@ namespace ZeroKLobby.MicroLobby
 
         static string[] GetLines(string fileName)
         {
-            lock (locker) return File.ReadAllLines(Path.Combine(historyFolder, fileName));
+            //lock (locker) return File.ReadAllLines(Path.Combine(historyFolder, fileName));
+            lock (locker)
+            {
+                //Open the stream and read it from back. 
+                using (FileStream fileStream = new FileStream(Path.Combine(historyFolder, fileName), FileMode.Open))
+                {
+                    var fileLen = fileStream.Length;
+                    var lenToRead = (int)Math.Min(fileLen, 3990);
+                    fileStream.Seek(-lenToRead, SeekOrigin.End);
+                    byte[] buffer = new byte[lenToRead];
+                    fileStream.Read(buffer, 0,lenToRead);
+                    UTF8Encoding temp = new UTF8Encoding(true);
+                    string texts = temp.GetString(buffer);
+                    string[] lines = texts.Split(new string[1] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                    fileStream.Close();
+                    return lines;
+                }
+            }
         }
     }
 }
