@@ -274,7 +274,7 @@ namespace LobbyClient
                     ScriptAddUser(script, i, playersExport, startSetup, u.TeamNumber, u);
                     if (!u.IsSpectator && !declaredTeams.Contains(u.TeamNumber))
                     {
-                        ScriptAddTeam(script, u.TeamNumber, positions, i, u);
+                        ScriptAddTeam(script, u.TeamNumber, positions, i, u,mod,Details);
                         declaredTeams.Add(u.TeamNumber);
                     }
                 }
@@ -287,7 +287,7 @@ namespace LobbyClient
                         ScriptAddBot(script, aiNum++, b.TeamNumber, i, b);
                         if (!declaredTeams.Contains(b.TeamNumber))
                         {
-                            ScriptAddTeam(script, b.TeamNumber, positions, i, b);
+                            ScriptAddTeam(script, b.TeamNumber, positions, i, b,mod,Details);
                             declaredTeams.Add(b.TeamNumber);
                         }
                     }
@@ -300,13 +300,14 @@ namespace LobbyClient
                 var userNum = 0;
                 var teamNum = 0;
                 var aiNum = 0;
-                foreach (var u in users.OrderBy(x => x.TeamNumber).Where(x => x.Name != localUser.Name))
+                //players is excluding self (so "springie doesn't appear as spec ingame") & excluding bots (bots is added later for each owner)
+                foreach (var u in users.Where(u => !bots.Any(b => b.Name == u.Name)).OrderBy(x => x.TeamNumber).Where(x => x.Name != localUser.Name)) 
                 {
                     ScriptAddUser(script, userNum, playersExport, startSetup, teamNum, u);
 
                     if (!u.IsSpectator)
                     {
-                        ScriptAddTeam(script, teamNum, positions, userNum, u);
+                        ScriptAddTeam(script, teamNum, positions, userNum, u,mod,Details);
                         teamNum++;
                     }
 
@@ -314,7 +315,7 @@ namespace LobbyClient
                     {
                         ScriptAddBot(script, aiNum, teamNum, userNum, b);
                         aiNum++;
-                        ScriptAddTeam(script, teamNum, positions, userNum, b);
+                        ScriptAddTeam(script, teamNum, positions, userNum, b,mod,Details);
                         teamNum++;
                     }
                     userNum++;
@@ -424,14 +425,15 @@ namespace LobbyClient
             return String.Format("{0} {1} ({2}+{3}/{4})", ModName, MapName, NonSpectatorCount, SpectatorCount, MaxPlayers);
         }
 
-        static void ScriptAddBot(StringBuilder script, int aiNum, int teamNum, int userNum, BotBattleStatus status)
+        public static void ScriptAddBot(StringBuilder script, int aiNum, int teamNum, int userNum, BotBattleStatus status)
         {
             // AI
             var split = status.aiLib.Split('|');
             script.AppendFormat("  [AI{0}]\n", aiNum);
             script.AppendLine("  {");
+            script.AppendFormat("    Name={0};\n", status.Name);
             script.AppendFormat("    ShortName={0};\n", split[0]);
-            script.AppendFormat("    Version={0};\n", split.Length > 1 ? split[1] : "");
+            script.AppendFormat("    Version={0};\n", split.Length > 1 ? split[1] : ""); //having no value is better. Related file: ResolveSkirmishAIKey() at Spring/ExternalAI/IAILibraryManager.cpp 
             script.AppendFormat("    Team={0};\n", teamNum);
             script.AppendFormat("    Host={0};\n", userNum);
             script.AppendLine("    IsFromDemo=0;");
@@ -441,7 +443,7 @@ namespace LobbyClient
             script.AppendLine("  }\n");
         }
 
-        void ScriptAddTeam(StringBuilder script, int teamNum, List<StartPos> positions, int userNum, UserBattleStatus status)
+        public static void ScriptAddTeam(StringBuilder script, int teamNum, List<StartPos> positions, int userNum, UserBattleStatus status, Mod mod, BattleDetails Details)
         {
             // BOT TEAM
             script.AppendFormat("  [TEAM{0}]\n", teamNum);
@@ -474,7 +476,7 @@ namespace LobbyClient
             script.AppendLine("  }");
         }
 
-        static void ScriptAddUser(StringBuilder script, int userNum, List<UserBattleStatus> playersExport, SpringBattleStartSetup startSetup, int teamNum, UserBattleStatus status)
+        public static void ScriptAddUser(StringBuilder script, int userNum, List<UserBattleStatus> playersExport, SpringBattleStartSetup startSetup, int teamNum, UserBattleStatus status)
         {
             var export = status.Clone();
             export.TeamNumber = teamNum;
@@ -483,10 +485,10 @@ namespace LobbyClient
             // PLAYERS
             script.AppendFormat("  [PLAYER{0}]\n", userNum);
             script.AppendLine("  {");
-            script.AppendFormat("     name={0};\n", status.Name);
+            script.AppendFormat("     Name={0};\n", status.Name);
 
             script.AppendFormat("     Spectator={0};\n", status.IsSpectator ? 1 : 0);
-            if (!status.IsSpectator) script.AppendFormat("     team={0};\n", teamNum);
+            if (!status.IsSpectator) script.AppendFormat("     Team={0};\n", teamNum);
 
             if (status.LobbyUser != null)
             {
