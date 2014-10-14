@@ -1,0 +1,1616 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Text;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using System.Diagnostics;
+using PlasmaDownloader;
+using PlasmaShared;
+using PlasmaShared.UnitSyncLib;
+using LobbyClient;
+using System.Threading;
+using System.Threading.Tasks;
+using JetBrains.Annotations;
+using ZkData;
+
+namespace ZeroKLobby.MicroLobby.ExtrasTab
+{
+    public partial class SkirmishControl : UserControl
+    { //Mix match from BattleChatControl.cs, Benchmarker/MainForm.cs, Springie/AutoHost_commands.cs
+        private SpringPaths springPaths;
+        private PictureBox minimapBox;
+        Image minimap;
+        Size minimapSize;
+        private Spring spring;
+        List<SpringScanner.CacheItem> modCache = new List<SpringScanner.CacheItem>();
+        List<SpringScanner.CacheItem> mapCache = new List<SpringScanner.CacheItem>();
+        private List<BotBattleStatus> Bots = new List<BotBattleStatus>();
+        PlasmaShared.UnitSyncLib.Map currentMap;
+        private List<UserBattleStatus> allUser = new List<UserBattleStatus>();
+        private PlayerListItem myItem;
+        private Ai[] aiList;
+        private Mod currentMod;
+        private BattleDetails currentBattleDetail;
+        private Dictionary<int, BattleRect> Rectangles;
+        private List<string> DisabledUnits;
+        private Dictionary<string, string> ModOptions;
+        private List<MissionSlot> missionSlots;
+        private List<MissionSlot> botsMissionSlot;
+        private float[,] presetStartPos;
+        private Dictionary<string, List<PlasmaShared.UnitSyncLib.Ai>> springAi;
+        private System.Windows.Forms.Timer timer_delayUpdate;
+
+        public SkirmishControl()
+        {
+            Paint += Event_SkirmishControl_Enter;
+        }
+
+        private void Event_SkirmishControl_Enter(object sender, EventArgs e)
+        {
+            //MessageBox.Show("Work in progress");
+            //Note: always manually remove "((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();" from
+            //splitcontainer, it have history to cause crash in Linux. Unknown reason.
+            InitializeComponent();
+            minimapBox = new PictureBox { Dock = DockStyle.Fill, SizeMode = PictureBoxSizeMode.CenterImage };
+            minimapPanel.Controls.Add(minimapBox);
+            minimapBox.MouseDown += Event_MinimapBox_MouseDown;
+            minimapBox.MouseMove += Event_MinimapBox_MouseMove;
+            minimapBox.MouseUp += Event_MinimapBox_MouseUp;
+            minimapBox.Paint += Event_MinimapBox_Paint;
+            skirmPlayerBox.IsBattle = true;
+            skirmPlayerBox.MouseDown += Event_PlayerBox_MouseDown;
+
+            Program.SpringScanner.LocalResourceAdded += Event_SpringScanner_LocalResourceAdded;
+            Program.SpringScanner.LocalResourceRemoved += Event_SpringScanner_LocalResourceAdded;
+
+            Setup_MyInfo();
+            DisabledUnits = new List<string>();
+            currentBattleDetail = new BattleDetails();
+            ModOptions = new Dictionary<string, string>();
+            Rectangles = new Dictionary<int, BattleRect>();
+            springAi = new Dictionary<string, List<PlasmaShared.UnitSyncLib.Ai>>();
+            presetStartPos = new float[25, 4]{
+            //  left    right   bottom  top
+                {0,     0.1f,   0,      0.1f},
+                {0.9f,  1,      0.9f,   1},
+                {0.9f,  1,      0,      0.1f},
+                {0,     0.1f,   0.9f,    1}, //corners
+                {0.45f, 0.55f,  0,      0.1f},
+                {0.45f, 0.55f,  0.9f,   1},
+                {0,     0.1f,   0.45f,  0.55f},
+                {0.9f,  1f,     0.45f,  0.55f},//half corner
+                {0.20f, 0.30f,  0,      0.1f},
+                {0.20f, 0.30f,  0.9f,   1},
+                {0.70f, 0.80f,  0,      0.1f},
+                {0.70f, 0.80f,  0.9f,   1}, //quarter corner
+                {0,     0.1f,   0.20f,  0.30f},
+                {0.9f,  1,      0.20f,  0.30f},
+                {0,     0.1f,   0.70f,  0.80f},
+                {0.9f,  1,      0.70f,  0.80f},//quarter corner
+                {0.20f, 0.30f,  0.20f,  0.30f},
+                {0.70f, 0.80f,  0.70f,  0.80f},
+                {0.70f, 0.80f,  0.20f,  0.30f},
+                {0.20f, 0.30f,  0.70f,  0.80f},//inner corner
+                {0.40f, 0.50f,  0.20f,  0.30f},
+                {0.40f, 0.50f,  0.70f,  0.80f},
+                {0.20f, 0.30f,  0.40f,  0.50f},
+                {0.70f, 0.80f,  0.40f,  0.50f},//inner half
+                {0.40f, 0.50f,  0.40f,  0.50f},//center
+            };
+
+            Rectangles.Add(0, new BattleRect(presetStartPos[0, 0], presetStartPos[0, 2], presetStartPos[0, 1], presetStartPos[0, 3]));
+            infoLabel.Text = "";
+            Refresh_PlayerBox(); //initialize playerlist window
+
+            lblSide.Visible = false;
+            sideCB.VisibleChanged += (s, e2) =>
+            {
+                lblSide.Visible = (s as ComboBox).Visible;
+            };
+            sideCB.Visible = false;
+            sideCB.DrawMode = DrawMode.OwnerDrawFixed;
+            sideCB.DrawItem += Event_SideCB_DrawItem;
+
+            timer_delayUpdate = new System.Windows.Forms.Timer();
+            timer_delayUpdate.Interval = 1000*30; //timer tick to add micro delay to Layout update.
+            timer_delayUpdate.Tick += Event_timerUpdate_Tick;
+
+            this.OnResize(new EventArgs()); //to fix control not filling the whole window at start
+            Paint -= Event_SkirmishControl_Enter;
+
+            Setup_ComboBox();
+        }
+
+        private void Setup_MyInfo()
+        {
+            string myName = Program.Conf.LobbyPlayerName == null ? "unnamed" : Program.Conf.LobbyPlayerName;
+            User myUser = User.Create(myName);
+            myUser.Country = "Unknown";
+            UserBattleStatus myBattleStatus = new UserBattleStatus(myName, myUser) { IsReady = true, AllyNumber = 0, SyncStatus = SyncStatuses.Unknown, IsSpectator = spectateCheckBox.Checked };
+            myBattleStatus.TeamColor = Program.Conf.DefaultPlayerColorInt;
+            myItem = new PlayerListItem
+            {
+                UserName = myBattleStatus.Name,
+                AllyTeam = myBattleStatus.AllyNumber,
+                isOfflineMode = true,
+                isOfflineZK = false,
+            };
+            myItem.offlineUserInfo = myUser;
+            myItem.offlineUserBattleStatus = myBattleStatus;
+
+            botsMissionSlot = new List<MissionSlot>();
+        }
+
+        void Event_SpringScanner_LocalResourceAdded(object sender, SpringScanner.ResourceChangedEventArgs e)
+        {
+            timer_delayUpdate.Start(); //collect multiple update and Setup_ComboBox() only once to avoid flicker
+        }
+
+        void Event_timerUpdate_Tick(object sender, EventArgs e)
+        {
+            Setup_ComboBox();
+            timer_delayUpdate.Stop();
+        }
+
+        private void Setup_ComboBox() //code from Benchmarker.MainForm.cs
+        {
+            try
+            {
+                List<string> engineList = new List<string>();
+                List<string> modList = new List<string>();
+                List<string> mapList = new List<string>();
+                try
+                {
+                    string engineFolder = PlasmaShared.Utils.MakePath(Program.SpringPaths.WritableDirectory, "engine");
+                    engineList = System.IO.Directory.EnumerateDirectories(engineFolder, "*").ToList<string>();
+                    for (int i = 0; i < engineList.Count; i++)
+                    {
+                        if (Environment.OSVersion.Platform == PlatformID.Unix)
+                            engineList[i] = engineList[i].Substring(engineList[i].LastIndexOf("/") + 1); //remove full path, leave only folder name
+                        else
+                            engineList[i] = engineList[i].Substring(engineList[i].LastIndexOf("\\") + 1); //remove full path, leave only folder name
+                    }
+                    engineList = SortListByName(engineList);
+
+                    modCache = Program.SpringScanner.GetAllModResource();
+                    for (int i = 0; i < modCache.Count; i++) modList.Add(modCache[i].InternalName);
+                    modList = SortListByName(modList);
+
+                    mapCache = Program.SpringScanner.GetAllMapResource();
+                    for (int i = 0; i < mapCache.Count; i++) mapList.Add(mapCache[i].InternalName);
+                    mapList = SortListByName(mapList);
+
+                    engine_comboBox.Items.Clear();
+                    game_comboBox.Items.Clear();
+                    map_comboBox.Items.Clear();
+                    engine_comboBox.AutoCompleteCustomSource.Clear();
+                    game_comboBox.AutoCompleteCustomSource.Clear();
+                    map_comboBox.AutoCompleteCustomSource.Clear();
+                    engine_comboBox.Items.AddRange(engineList.ToArray());
+                    game_comboBox.Items.AddRange(modList.ToArray());
+                    map_comboBox.Items.AddRange(mapList.ToArray());
+                    engine_comboBox.AutoCompleteCustomSource.AddRange(engineList.ToArray());
+                    game_comboBox.AutoCompleteCustomSource.AddRange(modList.ToArray());
+                    map_comboBox.AutoCompleteCustomSource.AddRange(mapList.ToArray());
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError(ex.ToString());
+                }
+
+                InvokeIfNeeded(() =>
+                { //for multithreading stuff?
+                    engine_comboBox.Items.AddRange(engineList.ToArray());
+                    game_comboBox.Items.AddRange(modList.ToArray());
+                    map_comboBox.Items.AddRange(mapList.ToArray());
+                    engine_comboBox.AutoCompleteCustomSource.AddRange(engineList.ToArray());
+                    game_comboBox.AutoCompleteCustomSource.AddRange(modList.ToArray());
+                    map_comboBox.AutoCompleteCustomSource.AddRange(mapList.ToArray());
+                });
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.ToString());
+            }
+        }
+
+        public void InvokeIfNeeded(Action acc) // come with Setup_ComboBox() (originally called SetupAutoComplete()), code from Benchmarker.MainForm.cs 
+        {
+            try
+            {
+                if (InvokeRequired) Invoke(acc);
+                else acc();
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// This function sort the content of a List<string> table
+        /// using the first character (a-z) of the first 3 word
+        /// and the 4 first numbers (0-50000) as versions.
+        /// 
+        /// The words (and numbers) are assumed to be separated by
+        /// character such as ".", "-", "_", and " "
+        /// </summary>
+        /// <param name="nameList"></param>
+        /// <returns></returns>
+        private List<string> SortListByName(List<string> nameList)
+        {
+            char[] charIndex = new char[36]
+            {
+                '0','1','2','3','4',
+                '5','6','7','8','9',
+                'a','b','c','d','e',
+                'f','g','h','i','j',
+                'k','l','m','n','o',
+                'p','q','r','s','t',
+                'u','v','w',
+                'x','y','z',
+            };
+            //initialize score table
+            List<object[]> scoredItem = new List<object[]>(nameList.Count);
+            for (int i = 0; i < nameList.Count; i++)
+                scoredItem.Add(new object[2] { 0, nameList[i] });
+
+
+            //score each entry
+            for (int i = 0; i < scoredItem.Count; i++)
+            {
+                string[] textComponent = nameList[i].ToLower().Split(new char[4] { ' ', '.', '-', '_' }, StringSplitOptions.RemoveEmptyEntries);
+                double scoreMultiplier = 0.01;
+                double score = 0;
+                // score for 1st,2nd,3rd & 4th integer mapped this way: 0.11223344
+                int maxOperation = Math.Min(textComponent.Length, 4);
+                int j = 0;
+                int count = 0;
+                while (j < textComponent.Length && count < maxOperation)
+                {
+                    int isInteger = -1;
+                    int.TryParse(textComponent[j], out isInteger);
+                    if (isInteger != 0 || textComponent[j] == "0") //score integer
+                    {
+                        score = score + (1 - 1 * Math.Exp(-isInteger / 130.0) + 0.00002 * isInteger) * 99 * scoreMultiplier;
+                        scoreMultiplier = scoreMultiplier / 100; //go to next lower significant integer
+                        count = count + 1;
+                    }
+                    else if (textComponent[j].Length >= 2) //text, but probably versioning char (like 'v' or 'r')
+                    {
+                        int.TryParse(textComponent[j].Substring(1), out isInteger);
+                        if (isInteger != 0 || textComponent[j].Substring(1) == "0")  //trailing integer is probably version number
+                        {
+                            score = score + (1 - 1 * Math.Exp(-isInteger / 130.0) + 0.00002 * isInteger) * 99 * scoreMultiplier;
+                            scoreMultiplier = scoreMultiplier / 100; //go to next lower significant integer
+                            count = count + 1;
+
+                            // For reference, equation:
+                            // (1 - 1 * Math.Exp(-isInteger / 140.0) + 0.00002 * isInteger) 
+                            // behave as following:
+                            //   ^
+                            //  2|                                     x 
+                            //   |                                x  
+                            //   |                          x  
+                            //   |                    x   
+                            //   |              x  
+                            //  1|        x  
+                            //   |    x
+                            //   |   x                                    
+                            //   |  x                                      
+                            //   | x                                       
+                            //   |x                                       
+                            // 0 ----------------------------------------> isInteger
+                            //   0   600                               50000
+                            //
+                            //  Targeted properties:
+                            //  1) have exaggerated sensitivity for isInteger <600 (to avoid small value like 1 or 2 approaching 0)
+                            //  2) low sensitivity for higher isInteger (to avoid big value like 50000 from filling up all the score's digit)
+                            //
+                            // "Score Digit":
+                            // If we have "Zero-K v1.10.0.500"
+                            // then we will use the following digit to score the numbers:
+                            // v1 --> 0.xx
+                            // .10 --> 0.00xx
+                            // .0 ---> 0.0000xx
+                            // .500 ---> 0.000000xx
+                            // If we literally translate versioning number digit by digit, then:
+                            // v1.10.0.500 --> 0.01100500
+                            // v1.10.1.0 --> 0.01100100 (notice that previous version yield a bigger score-digit than current version)
+                            //
+                            // So we have to scale down the "500" to fit its score digit, 
+                            // but can't scale down "1" using the same amount because it will reach 0.
+                            // So we use this equation: "(1 - 1 * Math.Exp(-isInteger / 140.0) + 0.00002 * isInteger)"
+                        }
+                    }
+                    j = j + 1;
+                }
+
+                scoreMultiplier = 01000000;
+                // score for 1st,2nd & 3rd word mapped this way: 11112233
+                maxOperation = Math.Min(textComponent.Length, 3);
+                j = 0;
+                while (j < maxOperation)
+                {
+                    int isInteger = -1;
+                    int.TryParse(textComponent[j], out isInteger);
+                    if (isInteger == 0 && textComponent[j] != "0") //score text
+                    {
+                        int letterToCheck = Math.Min(textComponent[j].Length, 2);
+                        char[] letters = textComponent[j].Substring(0, letterToCheck).ToCharArray();
+
+                        if (j >= 1)
+                        { //for next 2 word, score only first character
+                            for (int k = 0; k < charIndex.Length; k++)
+                                if (charIndex[k] == letters[0])
+                                {
+                                    score = score + k * scoreMultiplier;
+                                    break;
+                                }
+                            scoreMultiplier = scoreMultiplier / 100; //go to next lower significant digit
+                        }
+                        else
+                        { //for first word, score 2 character at once
+                            double tempScoreMultiplier = scoreMultiplier;
+                            for (int L = 0; L < letters.Length; L++)
+                            {
+                                for (int k = 0; k < charIndex.Length; k++)
+                                    if (charIndex[k] == letters[L])
+                                    {
+                                        score = score + k * tempScoreMultiplier;
+                                        tempScoreMultiplier = tempScoreMultiplier / 100;
+                                        break;
+                                    }
+                            }
+                            scoreMultiplier = scoreMultiplier / 10000; //go to next lower significant digit
+                        }
+                    }
+                    j = j + 1;
+                }
+                scoredItem[i][0] = score;
+            }
+
+            scoredItem.Sort(delegate(object[] x, object[] y) //Reference: http://msdn.microsoft.com/en-us/library/b0zbh7b6(v=vs.110).aspx
+            {
+                if ((double)x[0] < (double)y[0]) return -1;
+                else if ((double)x[0] == (double)y[0]) return 0;
+                else return 1;
+            });
+            for (int i = 0; i < nameList.Count; i++)
+                nameList[i] = (string)scoredItem[i][1];// +" " + ((double)scoredItem[i][0]).ToString();
+
+            return nameList;
+        }
+
+        private bool suppressEvent_minimapRadiobutton = false;
+        private void Event_MinimapRadioButton_CheckedChanged(object sender, EventArgs e) //shared by all 3 minimap radiobutton
+        {
+            if (!suppressEvent_minimapRadiobutton)
+            {
+                suppressEvent_minimapRadiobutton = true;
+                elevationRadioButton.Checked = false;
+                metalmapRadioButton.Checked = false;
+                normalRadioButton.Checked = false;
+                if ((sender as Control).Name == "normalRadioButton") normalRadioButton.Checked = true;
+                else if ((sender as Control).Name == "metalmapRadioButton") metalmapRadioButton.Checked = true;
+                else if ((sender as Control).Name == "elevationRadioButton") elevationRadioButton.Checked = true;
+                suppressEvent_minimapRadiobutton = false;
+
+                if (map_comboBox.SelectedItem != null)
+                {
+                    int selectedView = normalRadioButton.Checked ? 0 : (elevationRadioButton.Checked ? 1 : 2);
+                    Set_MapImages((string)map_comboBox.SelectedItem, selectedView);
+                }
+                else
+                {
+                    Set_InfoLabel();
+                }
+            }
+        }
+
+        private void Event_SkirmishControl_Resize(object sender, EventArgs e)
+        {
+            if (map_comboBox.SelectedItem != null)
+            {
+                int selectedView = normalRadioButton.Checked ? 0 : (elevationRadioButton.Checked ? 1 : 2);
+                Set_MapImages((string)map_comboBox.SelectedItem, selectedView);
+            }
+        }
+
+        private void Set_MapImages(string mapName, int mapView)
+        {
+            Program.ToolTip.SetMap(minimapBox, mapName);
+            string springVersion = (engine_comboBox.SelectedItem != null) ? (string)engine_comboBox.SelectedItem : null;
+            // todo add check before calling invoke invokes!!!
+            Program.SpringScanner.MetaData.GetMapAsync(mapName,
+                                                       (map, minimap, heightmap, metalmap) => Program.MainWindow.InvokeFunc(() =>
+                                                       {
+                                                           if (map == null) return;
+                                                           currentMap = map;
+                                                           if (mapView == 1) minimap = heightmap;
+                                                           else if (mapView == 2) minimap = metalmap;
+                                                           if (minimap == null || minimap.Length == 0)
+                                                           {
+                                                                minimapBox.Image = null;
+                                                               this.minimap = null;
+                                                           }
+                                                           else
+                                                           {
+                                                               this.minimap = Image.FromStream(new MemoryStream(minimap));
+                                                               minimapSize = map.Size;
+                                                               Refresh_MinimapImage();
+                                                           }
+                                                       }),
+                                                       a => Program.MainWindow.InvokeFunc(() =>
+                                                       { //exceptions
+                                                           minimapBox.Image = null;
+                                                           minimap = null;
+                                                       }), springVersion);
+        }
+
+        private void Refresh_MinimapImage()
+        {
+            try
+            {
+                if (minimap == null) return;
+                var boxColors = new[]
+		                        {
+		                            Color.Green, Color.Red, Color.Blue, Color.Cyan, Color.Yellow, Color.Magenta, Color.Gray, Color.Lime, Color.Maroon,
+		                            Color.Navy, Color.Olive, Color.Purple, Color.Silver, Color.Teal, Color.White,
+		                        };
+                var xScale = (double)minimapBox.Width / minimapSize.Width;
+                // todo remove minimapSize and use minimap image directly when plasmaserver stuff fixed
+                var yScale = (double)minimapBox.Height / minimapSize.Height;
+                var scale = Math.Min(xScale, yScale);
+                minimapBox.Image = minimap.GetResized((int)(scale * minimapSize.Width), (int)(scale * minimapSize.Height), InterpolationMode.HighQualityBicubic);
+
+                if (currentMod != null && currentMod.IsMission)
+                { //skip drawing startbox for Mission Mod (also, we didn't read their startbox). Also disabled startbox drag in Event_MinimapBox_MouseMove().
+                    minimapBox.Invalidate();
+                    return;
+                }
+                
+                using (var g = Graphics.FromImage(minimapBox.Image))
+                {
+                    g.TextRenderingHint = TextRenderingHint.AntiAlias;
+                    g.SmoothingMode = SmoothingMode.HighQuality;
+                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    //var positions = currentMap.Positions != null ? currentMap.Positions.ToList() : new List<PlasmaShared.UnitSyncLib.StartPos>();
+                    //foreach (var pos in positions)
+                    //{
+                    //    var left = ((pos.z - 1000)/currentMap.Size.Width) * minimapBox.Image.Width / BattleRect.Max;
+                    //    var top = ((pos.x - 1000) / currentMap.Size.Height) * minimapBox.Image.Height / BattleRect.Max;
+                    //    var right = ((pos.z + 1000) / currentMap.Size.Width) * minimapBox.Image.Width / BattleRect.Max;
+                    //    var bottom = ((pos.z + 1000) / currentMap.Size.Height) * minimapBox.Image.Height / BattleRect.Max;
+                    //    var width = right - left;
+                    //    var height = bottom - top;
+                    //    if (width < 1 || height < 1) continue;
+                    //    var drawRect = new Rectangle(left, top, width, height);
+                    //    var color =  Color.Black;
+                    //    using (var brush = new SolidBrush(color)) g.FillRectangle(brush, drawRect);
+
+                    //}
+                    foreach (var kvp in Rectangles)
+                    {
+                        BattleRect startRect = kvp.Value;
+                        var allyTeam = kvp.Key;
+                        var left = startRect.Left * minimapBox.Image.Width / BattleRect.Max;
+                        var top = startRect.Top * minimapBox.Image.Height / BattleRect.Max;
+                        var right = startRect.Right * minimapBox.Image.Width / BattleRect.Max;
+                        var bottom = startRect.Bottom * minimapBox.Image.Height / BattleRect.Max;
+                        var width = right - left;
+                        var height = bottom - top;
+                        if (width < 1 || height < 1) continue;
+                        var drawRect = new Rectangle(left, top, width, height);
+                        var color = allyTeam < boxColors.Length
+                                        ? Color.FromArgb(255 / 2, boxColors[allyTeam].R, boxColors[allyTeam].G, boxColors[allyTeam].B)
+                                        : Color.Black;
+                        using (var brush = new SolidBrush(color)) g.FillRectangle(brush, drawRect);
+                        var middleX = left + width / 2;
+                        var middleY = top + height / 2;
+                        const int numberSize = 40;
+                        var numberRect = new Rectangle(middleX - numberSize / 2, middleY - numberSize / 2, numberSize, numberSize);
+                        using (var format = new StringFormat())
+                        {
+                            format.Alignment = StringAlignment.Center;
+                            format.LineAlignment = StringAlignment.Center;
+
+                            using (var font = new Font("Arial", 13f, FontStyle.Bold)) g.DrawStringWithOutline((allyTeam + 1).ToString(), font, Brushes.White, Brushes.Black, numberRect, format, 5);
+                        }
+                    }
+                }
+                minimapBox.Invalidate();
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error updating minimap: {0}", ex);
+            }
+        }
+
+        private void Refresh_PlayerBox() //from BattleChatControl.SortByTeam()
+        {
+            SyncStatuses iamSynced = ((game_comboBox.SelectedItem != null && engine_comboBox.SelectedItem != null && map_comboBox.SelectedItem != null) ? SyncStatuses.Synced : SyncStatuses.Unsynced);
+            bool gameIsZK = game_comboBox.SelectedItem != null ? ((string)game_comboBox.SelectedItem).Contains("Zero-K") : false;
+
+            myItem.offlineUserBattleStatus.SyncStatus = iamSynced;
+            myItem.isOfflineZK = gameIsZK;
+            myItem.offlineUserBattleStatus.Side = sideCB.SelectedIndex >= 0 ? sideCB.SelectedIndex : 0;
+
+            var newList = new List<PlayerListItem>();
+            newList.Add(myItem);
+            List<PlayerListItem> playerListItems = new List<PlayerListItem>();
+
+            if (!myItem.UserBattleStatus.IsSpectator || Bots.Count > 0) playerListItems.Add(myItem);
+            var existingTeams = playerListItems.GroupBy(i => i.UserBattleStatus.AllyNumber).Select(team => team.Key).ToList();
+
+            if (botsMissionSlot.Count > 0)
+            {
+                for (int i = 0; i < botsMissionSlot.Count; i++)
+                {
+                    BotBattleStatus bot = Bots[i];
+                    newList.Add(new PlayerListItem { BotBattleStatus = bot, SortCategory = bot.AllyNumber * 2 + 1, AllyTeam = bot.AllyNumber, MissionSlot = botsMissionSlot[i] });
+                    existingTeams.Add(bot.AllyNumber);
+                }
+                for (int i = botsMissionSlot.Count; i < Bots.Count; i++) //include any extra bots added by user
+                {
+                    BotBattleStatus bot = Bots[i];
+                    newList.Add(new PlayerListItem { BotBattleStatus = bot, SortCategory = bot.AllyNumber * 2 + 1, AllyTeam = bot.AllyNumber, MissionSlot = null });
+                    existingTeams.Add(bot.AllyNumber);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < Bots.Count; i++)
+                {
+                    BotBattleStatus bot = Bots[i];
+                    newList.Add(new PlayerListItem { BotBattleStatus = bot, SortCategory = bot.AllyNumber * 2 + 1, AllyTeam = bot.AllyNumber, MissionSlot = null });
+                    existingTeams.Add(bot.AllyNumber);
+                }
+            }
+
+            // add section headers
+            if (playerListItems.Any(i => i.UserBattleStatus != null && i.UserBattleStatus.IsSpectator)) newList.Add(new PlayerListItem { Button = "Spectators", SortCategory = 100, IsSpectatorsTitle = true, Height = 25 });
+
+            var rectangles2 = new Dictionary<int, BattleRect>();
+
+            var buttonTeams = existingTeams.Distinct();
+            if (missionSlots != null) buttonTeams = buttonTeams.Concat(missionSlots.Select(s => s.AllyID)).Distinct();
+            foreach (var team in buttonTeams)
+            {
+                int numPlayers = myItem.UserBattleStatus.IsSpectator ? 0 : 1;
+                int numBots = Bots.Where(p => p.AllyNumber == team).Count();
+                int numTotal = numPlayers + numBots;
+
+                rectangles2.Add(team, new BattleRect(presetStartPos[team % 25, 0], presetStartPos[team % 25, 2], presetStartPos[team % 25, 1], presetStartPos[team % 25, 3]));
+
+                var allianceName = "Team " + (team + 1) + (numTotal > 3 ? "  (" + numTotal + ")" : "");
+                if (missionSlots != null)
+                {
+                    var slot = missionSlots.FirstOrDefault(s => s.AllyID == team);
+                    if (slot != null) allianceName = slot.AllyName;
+                }
+                newList.Add(new PlayerListItem { Button = allianceName, SortCategory = team * 2, AllyTeam = team, Height = 25 });
+            }
+
+            //copy new start position, but keep old one and remove any extras
+            {
+                bool haveChanges = false;
+                List<int> toRemove = new List<int>();
+                foreach (var battleRect in Rectangles)
+                {
+                    if (!rectangles2.ContainsKey(battleRect.Key)) toRemove.Add(battleRect.Key); //remove extra entry
+                    else rectangles2.Remove(battleRect.Key); //keep current entry
+                }
+                for (int i = 0; i < toRemove.Count; i++)
+                {
+                    Rectangles.Remove(toRemove[i]);
+                    haveChanges = true;
+                }
+                foreach (var battleRect in rectangles2)
+                {
+                    Rectangles.Add(battleRect.Key, battleRect.Value); //add missing entry
+                    haveChanges = true;
+                }
+                toRemove = null;
+                if (haveChanges) Refresh_MinimapImage();
+            }
+
+            newList = newList.OrderBy(x => x.ToString()).ToList();
+
+            allUser.Clear();
+            allUser.Add(myItem.offlineUserBattleStatus);
+            foreach (var bot in Bots)
+                allUser.Add(bot);
+
+            if (Bots.Count > 0 && infoLabel.Text.StartsWith("Add bot"))
+                infoLabel.Text = "";
+
+            skirmPlayerBox.BeginUpdate();
+            skirmPlayerBox.Items.Clear();
+            foreach (var item in newList) skirmPlayerBox.Items.Add(item);
+            skirmPlayerBox.EndUpdate();
+        }
+
+        bool suppressEvent_spectateCheckBox = false;
+        private void Event_SpectateCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (suppressEvent_spectateCheckBox) return;
+            myItem.offlineUserBattleStatus.IsSpectator = spectateCheckBox.Checked;
+            Refresh_PlayerBox();
+        }
+
+        private MissionSlot Get_SlotByTeamID(int teamID)
+        {
+            if (missionSlots != null) return missionSlots.SingleOrDefault(s => s.TeamID == teamID);
+            return null;
+        }
+
+        private int Get_FreeTeamID(string exceptUser) //from LobbyClient/Battle
+        {
+            return Enumerable.Range(0, TasClient.MaxTeams - 1).FirstOrDefault(teamID => myItem.offlineUserBattleStatus.TeamNumber != teamID && !Bots.Any(x => x.TeamNumber == teamID));
+        }
+
+        private void Set_MyBattleStatus(int? allyNumber, int? teamNumber, int? teamColor, bool? isSpectator)
+        {
+            if (allyNumber.HasValue)
+            {
+                myItem.AllyTeam = allyNumber.Value;
+                myItem.offlineUserBattleStatus.AllyNumber = allyNumber.Value;
+            }
+            if (teamNumber.HasValue) myItem.offlineUserBattleStatus.TeamNumber = teamNumber.Value;
+            if (teamColor.HasValue) myItem.offlineUserBattleStatus.TeamColor = teamColor.Value;
+            if (isSpectator.HasValue)
+            {
+                myItem.offlineUserBattleStatus.IsSpectator = isSpectator.Value;
+                suppressEvent_spectateCheckBox = true;
+                spectateCheckBox.Checked = isSpectator.Value;
+                suppressEvent_spectateCheckBox = false;
+            }
+            Refresh_PlayerBox();
+        }
+
+        private void Event_PlayerBox_MouseDown(object sender, MouseEventArgs mea) //from BattleChatControl
+        {
+            if (currentMod != null && currentMod.IsMission) return; //disable shorcuts for mission mod
+
+            if (mea.Button == MouseButtons.Left)
+            {
+                if (skirmPlayerBox.HoverItem != null)
+                {
+                    if (skirmPlayerBox.HoverItem.IsSpectatorsTitle)
+                        Set_MyBattleStatus(null, null, null, true); //spectator
+                    else if (skirmPlayerBox.HoverItem.SlotButton != null) //mission
+                    {
+                        MissionSlot slot = skirmPlayerBox.HoverItem.MissionSlot;
+                        Set_MyBattleStatus(slot.AllyID, slot.TeamID, slot.Color, false);
+                        return;
+                    }
+                    else if (skirmPlayerBox.HoverItem.Button!=null) //alliance
+                        Set_MyBattleStatus(skirmPlayerBox.HoverItem.AllyTeam.Value, Get_FreeTeamID(myItem.UserName), null, false);
+                }
+            }
+
+            if (mea.Button == MouseButtons.Right || !Program.Conf.LeftClickSelectsPlayer)
+            {
+                if (skirmPlayerBox.HoverItem == null && mea.Button == MouseButtons.Right)
+                { //right click on empty space
+                    var cm = Get_PlayerContextMenu(myItem.User);
+                    Program.ToolTip.Visible = false;
+                    try
+                    {
+                        cm.Show(skirmPlayerBox, mea.Location);
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceError("Error displaying tooltip: {0}", ex);
+                    }
+                    finally
+                    {
+                        Program.ToolTip.Visible = true;
+                    }
+                }
+                if (skirmPlayerBox.HoverItem != null)
+                {
+                    if (skirmPlayerBox.HoverItem.BotBattleStatus != null)
+                    {
+                        skirmPlayerBox.SelectedItem = skirmPlayerBox.HoverItem;
+                        var cm = Get_BotContextMenu(skirmPlayerBox.HoverItem.BotBattleStatus.Name);
+                        Program.ToolTip.Visible = false;
+                        try
+                        {
+                            cm.Show(skirmPlayerBox, mea.Location);
+                        }
+                        catch (Exception ex)
+                        {
+                            Trace.TraceError("Error displaying tooltip: {0}", ex);
+                        }
+                        finally
+                        {
+                            Program.ToolTip.Visible = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        private List<int> Get_ExistingTeams(out int freeAllyTeam)
+        {
+            var existingTeams = allUser.GroupBy(p => p.AllyNumber).Select(team => team.Key).ToList();
+            freeAllyTeam = Enumerable.Range(0, 100).First(allyTeam => !existingTeams.Contains(allyTeam));
+            return existingTeams;
+        }
+
+        private ContextMenu Get_BotContextMenu(string botName)
+        {
+            var contextMenu = new ContextMenu();
+            try
+            {
+                var botStatus = Enumerable.Single<BotBattleStatus>(Bots, b => b.Name == botName);
+
+                {
+                    var item = new System.Windows.Forms.MenuItem("Remove") { Enabled = botStatus.owner == myItem.UserName };
+                    item.Click += (s, e) =>
+                    {
+                        Bots.RemoveAll(b=> b.Name == botName);
+                        Refresh_PlayerBox();
+                    };
+                    contextMenu.MenuItems.Add(item);
+                }
+                {
+                    var item = new System.Windows.Forms.MenuItem("Set Color") { Enabled = botStatus.owner == myItem.UserName };
+                    item.Click += (s, e) =>
+                    {
+                        var botColor = botStatus.TeamColorRGB;
+                        var colorDialog = new ColorDialog { Color = Color.FromArgb(botColor[0], botColor[1], botColor[2]) };
+                        if (colorDialog.ShowDialog() == DialogResult.OK)
+                        {
+                            var newColor = (int)(MyCol)colorDialog.Color;
+                            Bots.FirstOrDefault(b => b.Name == botName).TeamColor = newColor;
+                        }
+                        Refresh_PlayerBox();
+                    };
+                    contextMenu.MenuItems.Add(item);
+                }
+                {
+                    var item = new System.Windows.Forms.MenuItem("Ally With") { Enabled = botStatus.owner == myItem.UserName };
+                    int freeAllyTeam;
+
+                    var existingTeams = Get_ExistingTeams(out freeAllyTeam).Where(t => t != botStatus.AllyNumber).Distinct();
+                    if (existingTeams.Any())
+                    {
+                        foreach (var allyTeam in existingTeams)
+                        {
+                            var at = allyTeam;
+                            if (allyTeam != botStatus.AllyNumber)
+                            {
+                                var subItem = new System.Windows.Forms.MenuItem("Join Team " + (allyTeam + 1));
+                                subItem.Click += (s, e) =>
+                                {
+                                    botStatus.AllyNumber = at;
+                                    Bots.RemoveAll(u => u.Name == botName);
+                                    Bots.Add(botStatus);
+                                    Refresh_PlayerBox();
+                                };
+                                item.MenuItems.Add(subItem);
+                            }
+                        }
+                        item.MenuItems.Add("-");
+                    }
+                    var newTeamItem = new System.Windows.Forms.MenuItem("New Team");
+                    newTeamItem.Click += (s, e) =>
+                    {
+                        botStatus.AllyNumber = freeAllyTeam;
+                        Bots.RemoveAll(u => u.Name == botName);
+                        Bots.Add(botStatus);
+                        Refresh_PlayerBox();
+                        //Program.TasClient.UpdateBot(botName, newStatus, botStatus.TeamColor);
+                    };
+                    item.MenuItems.Add(newTeamItem);
+                    contextMenu.MenuItems.Add(item);
+                }
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine("Error generating bot context menu: " + e);
+            }
+            return contextMenu;
+        }
+
+        private ContextMenu Get_PlayerContextMenu(User user) //from ContextMenu.cs
+        {
+            var contextMenu = new ContextMenu();
+            try
+            {
+                var headerItem = new MenuItem("Player - " + user.Name) { Enabled = false, DefaultItem = true };
+                // default is to make it appear bold
+                contextMenu.MenuItems.Add(headerItem);
+
+                var battleStatus = allUser.SingleOrDefault(u => u.Name == user.Name);
+
+                contextMenu.MenuItems.Add("-");
+
+                if (user.Name != myItem.UserName)
+                {
+                    var allyWith = new MenuItem("Ally")
+                    {
+                        Enabled =
+                            !battleStatus.IsSpectator &&
+                            (battleStatus.AllyNumber != myItem.AllyTeam || myItem.offlineUserBattleStatus.IsSpectator)
+                    };
+                    allyWith.Click += (s, e) =>
+                        {
+                            myItem.AllyTeam = battleStatus.AllyNumber;
+                            myItem.offlineUserBattleStatus.AllyNumber = battleStatus.AllyNumber;
+                            spectateCheckBox.Checked = false;
+                            myItem.offlineUserBattleStatus.TeamNumber = Get_FreeTeamID(myItem.UserName);
+                            Refresh_PlayerBox();
+
+                        };
+
+                    contextMenu.MenuItems.Add(allyWith);
+                }
+
+                var colorItem = new System.Windows.Forms.MenuItem("Select Color") { Enabled = myItem.UserName == user.Name && !myItem.offlineUserBattleStatus.IsSpectator };
+                colorItem.Click += (s, e) =>
+                {
+                    var myColor = myItem.offlineUserBattleStatus.TeamColorRGB;
+                    var colorDialog = new ColorDialog { Color = Color.FromArgb(myColor[0], myColor[1], myColor[2]) };
+                    if (colorDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        var newColor = (int)(MyCol)colorDialog.Color;
+                        myItem.offlineUserBattleStatus.TeamColor = newColor;
+                        Program.Conf.DefaultPlayerColorInt = newColor;
+                        Program.SaveConfig();
+                        Refresh_PlayerBox();
+                    }
+                };
+                contextMenu.MenuItems.Add(colorItem);
+
+                contextMenu.MenuItems.Add(Get_SetAllyTeamItem(user));
+
+                contextMenu.MenuItems.Add("-");
+                contextMenu.MenuItems.Add(Get_ShowOptions());
+                contextMenu.MenuItems.Add(Get_ModBotItem());
+                contextMenu.MenuItems.Add(Get_SpringBotItem());
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine("Error generating player context menu: " + e);
+            }
+            return contextMenu;
+        }
+
+        private void Event_GameOptionButton_Click(object sender, EventArgs e)
+        {
+            ContextMenu menu = new ContextMenu();
+            menu.MenuItems.Add(Get_ShowOptions());
+            menu.Show(gameOptionButton, new Point(0, 0));
+        }
+
+        private MenuItem Get_ShowOptions()
+        {
+            bool enabled = (game_comboBox.SelectedItem!=null);
+            var modOptions = new System.Windows.Forms.MenuItem("Change Game Options " + (enabled ? String.Empty : " (Not available)")) { Enabled = true };
+            if (enabled)
+            {
+                modOptions.Click += (s, e) =>
+                {
+                    var form = new Form { Width = 1000, Height = 300, Icon = ZklResources.ZkIcon, Text = "Game options" };
+                    var optionsControl = new ModOptionsControl(currentMod,ModOptions) { Dock = DockStyle.Fill };
+                    form.Controls.Add(optionsControl);
+                    this.Leave += (s2, e2) =>
+                    {
+                        form.Close();
+                        form.Dispose();
+                        optionsControl.Dispose();
+                    };
+                    if (!currentMod.IsMission) //disable option changing for Mission Mod
+                        optionsControl.ChangeApplied += (s3, e3) =>
+                            {
+                                ModOptions.Clear();
+                                foreach (var option in (s3 as System.Collections.Generic.IEnumerable<KeyValuePair<string, string>>)) //IEnumberable can't be serialized, so convert to List.
+                                    ModOptions.Add(option.Key,option.Value);
+                            };
+                    form.Show(); //hack show Program.FormMain
+                };
+            }
+            return modOptions;
+        }
+
+        private void Set_BotBattleStatus(string shortname,string ownerName, int? teamNumber, int? allyNumber,int? botColor)
+        {
+            var aiLib = shortname;
+            var botNumber = Enumerable.Range(1, 9000).First(j => !Bots.Any(bt => bt.Name == "Bot_" + j));
+            BotBattleStatus botStatus = new BotBattleStatus("Bot_" + botNumber,ownerName, aiLib);
+            
+            if (teamNumber.HasValue) botStatus.TeamNumber = teamNumber.Value;
+            else botStatus.TeamNumber = Enumerable.Range(0, TasClient.MaxTeams - 1).FirstOrDefault(x => !allUser.Any(y => y.TeamNumber == x));
+            
+            if (allyNumber.HasValue) botStatus.TeamNumber = allyNumber.Value;
+            else botStatus.AllyNumber = Enumerable.Range(0, TasClient.MaxAlliances - 1).FirstOrDefault(x => x != botStatus.AllyNumber);
+            
+            if (botColor.HasValue) botStatus.TeamColor = botColor.Value;
+            else
+            {
+                var boxColors = new[] { Color.Green, Color.Red, Color.Blue, Color.Cyan, Color.Yellow, Color.Magenta,
+                                        Color.Gray, Color.Lime, Color.Maroon, Color.Navy, Color.Olive, Color.Purple, Color.Silver,
+                                        Color.Teal, Color.White,Color.Black,};
+                botStatus.TeamColor = (int)(MyCol)boxColors[botStatus.TeamNumber % 16]; //cyclic 0-16
+            }
+
+            Bots.Add(botStatus);
+            Refresh_PlayerBox();
+        }
+
+        private void Event_AddAIButton_Click(object sender, EventArgs e)
+        {
+            ContextMenu menu = new ContextMenu();
+            menu.MenuItems.Add(Get_ModBotItem());
+            menu.MenuItems.Add(Get_SpringBotItem());
+            menu.Show(addAIButton, new Point(0, 0));
+        }
+
+        private MenuItem Get_SpringBotItem()
+        {
+            var addSpringBot = new MenuItem("Add spring's AI (Bot)" + ((engine_comboBox.SelectedItem != null) ? String.Empty : " (Not available)")) { Visible = true };
+            if (engine_comboBox.SelectedItem != null && springAi.ContainsKey((string)engine_comboBox.SelectedItem))
+            {
+                var ais = springAi[(string)engine_comboBox.SelectedItem];
+                MenuItem item; string description; int descLength;
+                for (int i = 0; i < ais.Count; i++)
+                {
+                    description = ais[i].Description;
+                    string shortName = ais[i].ShortName;
+                    //descLength = 65 - shortName.Length;
+                    //item = new System.Windows.Forms.MenuItem(string.Format("{0} ({1}" + (description.Length > descLength ? "..." : ")"), shortName, description.Substring(0, Math.Min(descLength, description.Length)))); //description too long 
+                    item = new System.Windows.Forms.MenuItem(string.Format("{0} ({1})", shortName, description)); //description too long 
+                    item.Click += (s, e2) =>
+                    {
+                        Set_BotBattleStatus(shortName, myItem.UserName, null, null,null);
+                    };
+                    addSpringBot.MenuItems.Add(item);
+                }
+            }
+            return addSpringBot;
+        }
+
+        private MenuItem Get_ModBotItem()
+        {
+            var enabled = true && aiList != null && aiList.Any();
+            var addBotItem = new MenuItem("Add mod's AI (Bot)" + (enabled ? String.Empty : " (Not available)")) { Visible = true };
+            if (aiList != null)
+            {
+                foreach (var bot in aiList)
+                {
+                    var item = new MenuItem(string.Format("{0} ({1})", bot.ShortName, bot.Description));
+                    var b = bot; //to maintain reference to object
+                    item.Click += (s, e) =>
+                    {
+                        Set_BotBattleStatus(b.ShortName, myItem.UserName, null, null, null);
+                    };
+                    addBotItem.MenuItems.Add(item);
+                }
+            }
+            return addBotItem;
+        }
+
+        private MenuItem Get_SetAllyTeamItem(User user)
+        {
+            var setAllyTeamItem = new System.Windows.Forms.MenuItem("Select Team");
+
+            if (user.Name != myItem.UserName) setAllyTeamItem.Enabled = false;
+            else
+            {
+                int freeAllyTeam;
+
+                foreach (var allyTeam in Get_ExistingTeams(out freeAllyTeam).Distinct())
+                {
+                    var at = allyTeam; //to maintain reference to this object
+                    if (allyTeam != myItem.offlineUserBattleStatus.AllyNumber)
+                    {
+                        var item = new MenuItem("Join Team " + (allyTeam + 1));
+                        item.Click += (s, e) =>
+                            {
+                                Set_MyBattleStatus(at, Get_FreeTeamID(user.Name), null, false);
+                            };
+                        setAllyTeamItem.MenuItems.Add(item);
+                    }
+                }
+
+                setAllyTeamItem.MenuItems.Add("-");
+
+                var newTeamItem = new System.Windows.Forms.MenuItem("Start New Team");
+                newTeamItem.Click += (s, e) =>
+                    {
+                        Set_MyBattleStatus(freeAllyTeam, Get_FreeTeamID(myItem.UserName), null, false);
+                    };
+                setAllyTeamItem.MenuItems.Add(newTeamItem);
+
+                if (!myItem.offlineUserBattleStatus.IsSpectator)
+                {
+                    var specItem = new System.Windows.Forms.MenuItem("Spectate");
+                    specItem.Click += (s, e) =>
+                        {
+                            Set_MyBattleStatus(null,null, null, true);
+                        };
+                    setAllyTeamItem.MenuItems.Add(specItem);
+                }
+            }
+
+            return setAllyTeamItem;
+        }
+
+        private bool wasMissingEntry = true;
+        private bool suppressEvent_ComboboxSelectionChangeCommited = false;
+        private void Event_ComboBox_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            if (suppressEvent_ComboboxSelectionChangeCommited) return;
+            if ((sender as Control).Name == "map_comboBox" && map_comboBox.SelectedItem!= null)
+            {
+                int selectedView = normalRadioButton.Checked ? 0 : (elevationRadioButton.Checked ? 1 : 2);
+                Set_MapImages((string)map_comboBox.SelectedItem, selectedView);
+                
+                if (infoLabel.Text.StartsWith("Select map"))
+                    infoLabel.Text = "";
+
+                Set_InfoLabel();
+            }
+            else if ((sender as Control).Name == "game_comboBox" && game_comboBox.SelectedItem != null)
+            {
+                //run GetMod() in new thread, then call "CallBack_Mod()" in current thread when finish(?). 
+                Program.SpringScanner.MetaData.GetModAsync(
+                    (string)game_comboBox.SelectedItem,
+                    mod =>
+                    {
+                        Invoke(new Action(() =>
+                        {
+                            try { CallBack_Mod(mod); }
+                            catch (Exception ex) { Trace.TraceError("CallBack_Mod(mod) error: {0}", ex.ToString()); }
+                        })
+                        );
+                    }, 
+                    exception => { Trace.TraceError("CallBack_Mod(mod) error: {0}", exception.ToString()); },
+                    (string)engine_comboBox.SelectedItem);
+                //Program.SpringScanner.MetaData.GetModAsync(
+                //   (string)game_comboBox.SelectedItem,
+                //   mod=>{
+                //       try { CallBack_Mod(mod); }
+                //       catch (Exception ex) { Trace.TraceError("CallBack_Mod(mod) error: {0}", ex.ToString()); }
+                //       },
+                //   exception => { Trace.TraceError("CallBack_Mod(mod) error: {0}", exception.ToString()); },
+                //   (string)engine_comboBox.SelectedItem);
+
+                if (infoLabel.Text.StartsWith("Select game"))
+                    infoLabel.Text = "";
+
+                Set_InfoLabel();
+
+            }
+            else if ((sender as Control).Name == "engine_comboBox" && engine_comboBox.SelectedItem != null)
+            {
+                string springVersion = (string)engine_comboBox.SelectedItem;
+                string engineFolder = PlasmaShared.Utils.MakePath(Program.SpringPaths.WritableDirectory, "engine");
+                if (Environment.OSVersion.Platform != PlatformID.Unix)
+                    engineFolder = engineFolder + "\\" + springVersion;
+                else
+                    engineFolder = engineFolder + "/" + springVersion;
+                springPaths = new SpringPaths(engineFolder);
+                spring = new Spring(springPaths);
+                
+
+                if (infoLabel.Text.StartsWith("Select engine"))
+                    infoLabel.Text = "";
+
+                Set_InfoLabel();
+
+                if (!springAi.ContainsKey(springVersion))
+                {
+                    var aI = new List<PlasmaShared.UnitSyncLib.Ai>(10);
+
+                    Program.SpringScanner.VerifyUnitSync();
+                    if (Program.SpringScanner.unitSync != null)
+                    {
+                        foreach (var bot in Program.SpringScanner.unitSync.GetAis()) //IEnumberable can't be serialized, so convert to List. Ref: http://stackoverflow.com/questions/9102234/xmlserializer-in-c-sharp-wont-serialize-ienumerable 
+                            aI.Add(bot);
+                        Program.SpringScanner.UnInitUnitsync();
+                    }
+                    springAi.Add(springVersion, aI);
+                }
+            }
+            //check if we have entered game, map and engine value so that we can update the Sync icon.
+            bool missingEntry = (game_comboBox.SelectedItem == null || engine_comboBox.SelectedItem == null || map_comboBox.SelectedItem == null);
+            if (missingEntry != wasMissingEntry) Refresh_PlayerBox();
+            wasMissingEntry = missingEntry;
+        }
+
+        private void CallBack_Mod(Mod mod)
+        {
+            if (mod != null)
+            {
+                //Initialize "side" (faction) dropdown list. copied from Notification.BattleBar.cs
+                {
+                    sideCB.Visible = mod.Sides.Length > 1;
+                    if (sideCB.Visible)
+                    {
+                        var previousSide = sideCB.SelectedItem != null ? sideCB.SelectedItem.ToString() : null;
+                        sideCB.Items.Clear();
+                        var cnt = 0;
+                        foreach (var side in mod.Sides) sideCB.Items.Add(new ZeroKLobby.Notifications.SideItem(side, mod.SideIcons[cnt++]));
+                        var pickedItem = sideCB.Items.OfType<ZeroKLobby.Notifications.SideItem>()
+                              .FirstOrDefault(x => x.Side == previousSide);
+                        if (pickedItem != null) sideCB.SelectedItem = pickedItem;
+                        else if (sideCB.Items.Count > 0) sideCB.SelectedIndex = sideCB.Items.Count-1; // random.Next(sideCB.Items.Count);
+                    }
+                }
+                //end "side" (faction) dropdown list
+
+                ModOptions.Clear();
+                currentMod = mod;
+                aiList = mod.ModAis;
+                missionSlots = mod.MissionSlots;
+                Setup_MissionModInfo(mod);
+                Set_InfoLabel();
+            }
+            else
+            {
+                sideCB.Visible = false;
+                currentMod = null;
+                aiList = null;
+                missionSlots = null;
+                myItem.MissionSlot = null;
+                botsMissionSlot.Clear();
+                if (currentMod != null) Refresh_PlayerBox();
+            }
+        }
+
+        private void Setup_MissionModInfo(Mod mod)
+        {
+            myItem.MissionSlot = null;
+            if (missionSlots.Count == 0) missionSlots = null;
+            if (missionSlots != null)
+            {
+                foreach (PlasmaShared.UnitSyncLib.MissionSlot slot in missionSlots.Where(s => s.IsHuman))
+                {
+                    myItem.MissionSlot = slot;
+                    Set_MyBattleStatus(slot.AllyID, slot.TeamID, (int)(MyCol)slot.Color, false);
+                    break;
+                }
+
+                botsMissionSlot.Clear();
+                Bots.Clear(); 
+                foreach (var slot in missionSlots.Where(s => s.AiShortName != null))
+                {
+                    botsMissionSlot.Add(slot);
+                    Set_BotBattleStatus(slot.AiShortName, myItem.UserName, slot.TeamID, slot.AllyID, (int)(MyCol)slot.Color);
+                }
+            }
+            else
+            {
+                if (botsMissionSlot.Count > 0)
+                {
+                    Bots.Clear();
+                    botsMissionSlot.Clear();
+                }
+            }
+            if (currentMod.IsMission)
+            {
+                //disable some button for mission mod. playerBox shortcut is disabled in Event_PlayerBox_MouseDown()
+                spectateCheckBox.Enabled = false;
+                addAIButton.Enabled = false;
+                editTeamButton.Enabled = false;
+
+                //get targeted map for mission mod
+                string mapname;
+                var script = mod.MissionScript;
+                if (mod.MissionMap != null)
+                    mapname = mod.MissionMap;
+                else
+                {
+                    var open = script.IndexOf("mapname", 7, script.Length - 8, StringComparison.InvariantCultureIgnoreCase) + 8;
+                    var close = script.IndexOf(';', open);
+                    mapname = script.Substring(open, close - open);
+                    mapname = mapname.Trim(new char[3]{' ','=','\t'});
+                }
+                suppressEvent_ComboboxSelectionChangeCommited = true;
+                map_comboBox.SelectedItem = mapname;
+                suppressEvent_ComboboxSelectionChangeCommited = false;
+                int selectedView = normalRadioButton.Checked ? 0 : (elevationRadioButton.Checked ? 1 : 2);
+                Set_MapImages(mapname, selectedView);
+
+                //get customized modoptions
+                {
+                    var open = script.IndexOf("[MODOPTIONS]", 7, script.Length - 8, StringComparison.InvariantCultureIgnoreCase) + 12;
+                    open = script.IndexOf("{", open) + 1;
+                    var close = script.IndexOf("}", open);
+                    var options = script.Substring(open, close - open);
+                    options = options.Trim();
+                    string[] optionList = options.Split(new char[1]{';'}, StringSplitOptions.RemoveEmptyEntries);
+                    string[] keypair;
+                    for (int i = 0; i < optionList.Length; i++)
+                    {
+                        optionList[i] = optionList[i].Trim();
+                        keypair = optionList[i].Split(new char[1] { '=' });
+                        if (keypair[1] != null)
+                            ModOptions.Add(keypair[0], keypair[1]);
+                    }
+                }
+            }
+            else
+            {
+                spectateCheckBox.Enabled = true;
+                addAIButton.Enabled = true;
+                editTeamButton.Enabled = true;
+            }
+            Refresh_PlayerBox();//update playerbox (in case there's mission slot, or when there was mission slot but no longer, or to update some related icons)
+        }
+
+        private void Event_SideCB_DrawItem(object sender, DrawItemEventArgs e) //copied from Notification.BattleBar.cs
+        {
+            e.DrawBackground();
+            e.DrawFocusRectangle();
+            if (e.Index < 0 || e.Index >= sideCB.Items.Count) return;
+            var item = sideCB.Items[e.Index] as ZeroKLobby.Notifications.SideItem;
+            if (item != null)
+            {
+                if (item.Image != null) e.Graphics.DrawImage(item.Image, e.Bounds.Left, e.Bounds.Top, 16, 16);
+                TextRenderer.DrawText(e.Graphics, item.Side, sideCB.Font, new Point(e.Bounds.Left + 16, e.Bounds.Top), sideCB.ForeColor);
+            }
+            else
+                TextRenderer.DrawText(e.Graphics,
+                                      sideCB.Items[e.Index].ToString(),
+                                      sideCB.Font,
+                                      new Point(e.Bounds.Left, e.Bounds.Top),
+                                      sideCB.ForeColor);
+        }
+
+        private void Set_InfoLabel()
+        { 
+            if (engine_comboBox.SelectedItem == null)
+                infoLabel.Text = "Select engine";
+            else if (currentMod!=null && currentMod.IsMission) 
+                infoLabel.Text = "Start Mission!";
+            else if (map_comboBox.SelectedItem == null)
+                infoLabel.Text = "Select map";
+            else if (game_comboBox.SelectedItem == null)
+                infoLabel.Text = "Select game";
+            else if (Bots.Count == 0)
+                infoLabel.Text = "Add bots";
+        }
+
+        private string Get_Startscript() //From LobbyClient/Battle.cs
+        {
+            var script = new StringBuilder();
+            //see https://github.com/spring/spring/blob/master/doc/StartScriptFormat.txt
+            //startscript are saved in default data directory as script.txt
+            script.AppendLine("[GAME]");
+            script.AppendLine("{");
+            var mapName = map_comboBox.SelectedItem;
+            var gameName = game_comboBox.SelectedItem;
+            script.AppendFormat("  MapName={0};\n", mapName);
+            script.AppendFormat("  GameType={0};\n", gameName);
+            script.AppendFormat("  GameStartDelay={0};\n", 4);
+            script.AppendFormat("  ScriptName={0};\n", "Commanders");
+            script.AppendFormat("  StartPosType={0};\n", currentMod.IsMission ? 3 : 2);
+            script.AppendLine();
+            script.AppendFormat("  HostIP={0};\n", "127.0.0.1");
+            script.AppendFormat("  HostPort={0};\n", "0"); //0 mean auto. Different value will have problem with AIs
+            script.AppendFormat("  SourcePort={0};\n", 0);
+            script.AppendFormat("  AutohostIP={0};\n", "127.0.0.1");
+            script.AppendFormat("  AutohostPort={0};\n", "0"); //0 mean auto
+            script.AppendLine();
+            script.AppendFormat("  MyPlayerName={0};\n", myItem.UserName);
+            script.AppendFormat("  MyPasswd={0};\n", myItem.UserBattleStatus.ScriptPassword);
+            script.AppendLine();
+            script.AppendFormat("  IsHost={0};\n", 1);
+            script.AppendFormat("  NumPlayers={0};\n", allUser.Count);
+            script.AppendFormat("  NumTeams={0};\n", allUser.Where(u => !u.IsSpectator).ToList().Count);
+            script.AppendFormat("  NumAllyTeams={0};\n", allUser.GroupBy(i => i.AllyNumber).Select(team => team.Key).Distinct().ToList().Count);
+            script.AppendFormat("  ModHash={0};\n", modCache.FirstOrDefault(x => x.InternalName == (string)gameName).Md5.ToString());
+            script.AppendFormat("  MapHash={0};\n", mapCache.FirstOrDefault(x => x.InternalName == (string)mapName).Md5.ToString());
+
+            var positions = currentMap.Positions != null ? currentMap.Positions.ToList() : new List<PlasmaShared.UnitSyncLib.StartPos>();
+
+            Get_PlayerSection(allUser, script, positions);
+            //Clipboard.SetText(script.ToString());
+            return script.ToString();
+        }
+
+        private void Get_PlayerSection(
+                         List<UserBattleStatus> users,
+                         StringBuilder script,
+                         List<StartPos> positions) //code from LobbyClient.Battle.cs
+        {
+            var playersExport = new List<UserBattleStatus>(); //dummy table for maintain compatibility with callins
+            if (currentMod.IsMission) // mission stuff
+            {
+                var aiNum = 0;
+                var declaredTeams = new HashSet<int>();
+                var orderedUsers = users.OrderBy(x => x.TeamNumber).ToList();
+                for (var i = 0; i < orderedUsers.Count; i++)
+                {
+                    var u = orderedUsers[i];
+                    LobbyClient.Battle.ScriptAddUser(script, i, playersExport, null, u.TeamNumber, u);
+                    if (!u.IsSpectator && !declaredTeams.Contains(u.TeamNumber))
+                    {
+                        LobbyClient.Battle.ScriptAddTeam(script, u.TeamNumber, positions, i, u, currentMod, currentBattleDetail);
+                        declaredTeams.Add(u.TeamNumber);
+                    }
+                }
+
+                for (var i = 0; i < orderedUsers.Count; i++)
+                {
+                    var u = orderedUsers[i];
+                    foreach (var b in Bots.Where(x => x.owner == u.Name))
+                    {
+                        LobbyClient.Battle.ScriptAddBot(script, aiNum++, b.TeamNumber, i, b);
+                        if (!declaredTeams.Contains(b.TeamNumber))
+                        {
+                            LobbyClient.Battle.ScriptAddTeam(script, b.TeamNumber, positions, i, b, currentMod, currentBattleDetail);
+                            declaredTeams.Add(b.TeamNumber);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // ordinary battle stuff
+
+                var userNum = 0;
+                var teamNum = 0;
+                var aiNum = 0;
+                foreach (var u in users.Where(u => !Bots.Any(b => b.Name == u.Name)).OrderBy(x => x.TeamNumber)) //.Where(x => x.Name != localUser.Name))
+                {
+                    LobbyClient.Battle.ScriptAddUser(script, userNum, playersExport, null, teamNum, u);
+
+                    if (!u.IsSpectator)
+                    {
+                        LobbyClient.Battle.ScriptAddTeam(script, teamNum, positions, userNum, u, currentMod, currentBattleDetail);
+                        teamNum++;
+                    }
+
+                    foreach (var b in Bots.Where(x => x.owner == u.Name))
+                    {
+                        LobbyClient.Battle.ScriptAddBot(script, aiNum, teamNum, userNum, b);
+                        aiNum++;
+                        LobbyClient.Battle.ScriptAddTeam(script, teamNum, positions, userNum, b, currentMod, currentBattleDetail);
+                        teamNum++;
+                    }
+                    userNum++;
+                }
+            }
+
+            // ALLIANCES
+            script.AppendLine();
+            foreach (var allyNumber in
+                users.Where(x => !x.IsSpectator).Select(x => x.AllyNumber).Union(Bots.Select(x => x.AllyNumber)).Union(Rectangles.Keys).Distinct())
+            {
+                // get allies from each player, bot and rectangles (for koth)
+                script.AppendFormat("[ALLYTEAM{0}]\n", allyNumber);
+                script.AppendLine("{");
+                script.AppendFormat("     NumAllies={0};\n", 0);
+                double left = 0, top = 0, right = 1, bottom = 1;
+                BattleRect rect;
+                if (Rectangles.TryGetValue(allyNumber, out rect)) rect.ToFractions(out left, out top, out right, out bottom);
+                script.AppendFormat("     StartRectLeft={0};\n", left);
+                script.AppendFormat("     StartRectTop={0};\n", top);
+                script.AppendFormat("     StartRectRight={0};\n", right);
+                script.AppendFormat("     StartRectBottom={0};\n", bottom);
+                script.AppendLine("}");
+            }
+
+            script.AppendLine();
+            script.AppendFormat("  NumRestrictions={0};\n", DisabledUnits.Count);
+            script.AppendLine();
+
+            if (!currentMod.IsMission)
+            {
+                script.AppendLine("  [RESTRICT]");
+                script.AppendLine("  {");
+                for (var i = 0; i < DisabledUnits.Count; ++i)
+                {
+                    script.AppendFormat("    Unit{0}={1};\n", i, DisabledUnits[i]);
+                    script.AppendFormat("    Limit{0}=0;\n", i);
+                }
+                script.AppendLine("  }");
+
+                script.AppendLine("  [MODOPTIONS]");
+                script.AppendLine("  {");
+
+                var options = new Dictionary<string, string>();
+
+                // put standard modoptions to options dictionary
+                foreach (var o in currentMod.Options.Where(x => x.Type != OptionType.Section))
+                {
+                    var v = o.Default;
+                    if (ModOptions.ContainsKey(o.Key)) v = ModOptions[o.Key];
+                    options[o.Key] = v;
+                }
+
+                // write final options to script
+                foreach (var kvp in options) script.AppendFormat("    {0}={1};\n", kvp.Key, kvp.Value);
+
+                script.AppendLine("  }");
+            }
+
+            script.AppendLine("}");
+        }
+
+        private void Event_Startbutton_Click(object sender, EventArgs e)
+        {
+            if (map_comboBox.SelectedItem == null || engine_comboBox.SelectedItem == null || game_comboBox.SelectedItem == null)
+                Set_InfoLabel();
+            else
+            {
+                var script = currentMod.IsMission ? currentMod.MissionScript : Get_Startscript();
+                if (spring.IsRunning) spring.ExitGame();
+                TasClient client = new TasClient(null, "SkirmishTab", GlobalConst.ZkLobbyUserCpu, false, "127.0.0.1");
+                spring.SpringExited += Event_SpringExited;
+                infoLabel.Text = "Spring starting ...";
+                spring.StartGame(client, null, null, script, Program.Conf.UseSafeMode, Program.Conf.UseMtEngine);
+            }
+        }
+
+        private void Event_SpringExited(object sender, EventArgs<bool> e)
+        {
+            if (infoLabel.Text.StartsWith("Spring starting"))
+                infoLabel.Text = "";
+            if (e.Data)
+                infoLabel.Text = "Spring crashed"; 
+
+            spring.SpringExited -= Event_SpringExited;
+        }
+
+        private void Event_EditTeamButton_Click(object sender, EventArgs e)
+        {
+            ContextMenu menu = new ContextMenu();
+
+            int freeAllyTeam;
+            bool iAmSpectator = myItem.UserBattleStatus.IsSpectator;
+            foreach (var allyTeam in Get_ExistingTeams(out freeAllyTeam).Distinct())
+            {
+                if (iAmSpectator || allyTeam != myItem.UserBattleStatus.AllyNumber)
+                {
+                    var item = new System.Windows.Forms.MenuItem("Join Team " + (allyTeam + 1));
+                    item.Click += (s, e2) => 
+                        {
+                            Set_MyBattleStatus(allyTeam, Get_FreeTeamID(myItem.UserName), null, false);
+                        };
+                    menu.MenuItems.Add(item);
+                }
+            }
+
+            menu.MenuItems.Add("-");
+
+            var newTeamItem = new System.Windows.Forms.MenuItem("Start New Team");
+            newTeamItem.Click += (s, e2) => 
+                {
+                    myItem.AllyTeam = freeAllyTeam;
+                    myItem.offlineUserBattleStatus.AllyNumber = freeAllyTeam;
+                    spectateCheckBox.Checked = false;
+                    myItem.offlineUserBattleStatus.TeamNumber = Get_FreeTeamID(myItem.UserName);
+                    Refresh_PlayerBox();
+                };
+            menu.MenuItems.Add(newTeamItem);
+
+            if (!myItem.UserBattleStatus.IsSpectator)
+            {
+                var specItem = new System.Windows.Forms.MenuItem("Spectate");
+                specItem.Click += (s, e2) =>
+                {
+                    spectateCheckBox.Checked = true;
+                };
+                menu.MenuItems.Add(specItem);
+            }
+
+            menu.Show(editTeamButton, new Point(0, 0));
+        }
+
+        bool mouseIsDown = false;
+        int mouseOnStartBox = -1;
+        void Event_MinimapBox_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e == null) throw new ArgumentNullException("e");
+            if (e.Button == MouseButtons.Left)
+            {
+                mouseIsDown = true;
+                Program.ToolTip.Clear(minimapBox);
+            }
+        }
+
+        void Event_MinimapBox_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (currentMod!=null && currentMod.IsMission) return;
+
+            if (map_comboBox.SelectedItem == null)
+            {
+                if (!infoLabel.Text.StartsWith("Select map"))
+                    infoLabel.Text = "Select map";
+            }
+            else if (mouseIsDown & mouseOnStartBox > -1)
+            {
+                Cursor = Cursors.Cross;
+                BattleRect startRect = Rectangles[mouseOnStartBox];
+
+                int rectWidth_half = (startRect.Right - startRect.Left)/2;
+                int rectHeight_half = (startRect.Top - startRect.Bottom)/2;
+                float diffWidth_half = (float)(minimapPanel.Width - minimapBox.Image.Width) / 2;
+                float diffHeight_half = (float)(minimapPanel.Height - minimapBox.Image.Height) / 2;
+                float adjustedX = (e.X - diffWidth_half);
+                float adjustedY = (e.Y - diffHeight_half);
+                float rectPerImgWidth = (float)BattleRect.Max / minimapBox.Image.Width;
+                float rectPerImgHeight = (float)BattleRect.Max / minimapBox.Image.Height;
+
+                startRect.Left = (int)(adjustedX * rectPerImgWidth - 10);
+                startRect.Top = (int)(adjustedY * rectPerImgHeight - 10);
+                startRect.Right = (int)(adjustedX * rectPerImgWidth + 10);
+                startRect.Bottom = (int)(adjustedY * rectPerImgHeight + 10);
+
+                Rectangles[mouseOnStartBox] = startRect;
+
+            }
+            else if (mouseOnStartBox > -1)
+            {
+                BattleRect startRect = Rectangles[mouseOnStartBox];
+
+                float imgWidthPerRect = (float)minimapBox.Image.Width / BattleRect.Max;
+                float imgHeightPerRect = (float)minimapBox.Image.Height/BattleRect.Max;
+
+                var left = startRect.Left * imgWidthPerRect;
+                var top = startRect.Top * imgHeightPerRect;
+                var right = startRect.Right * imgWidthPerRect;
+                var bottom = startRect.Bottom * imgHeightPerRect;
+                int diffWidth_half = (minimapPanel.Width - minimapBox.Image.Width)/2;
+                int diffHeight_half = (minimapPanel.Height - minimapBox.Image.Height)/2;
+                if (e.X < left + diffWidth_half || e.X > right + diffWidth_half || e.Y < top + diffHeight_half || e.Y > bottom + diffHeight_half)
+                {
+                    Cursor = Cursors.Default;
+                    mouseOnStartBox = -1;
+                }
+            }
+            else
+            {
+                float imgWidthPerRect = (float)minimapBox.Image.Width / BattleRect.Max;
+                float imgHeightPerRect = (float)minimapBox.Image.Height / BattleRect.Max;
+                int diffWidth_half = (minimapPanel.Width - minimapBox.Image.Width) / 2;
+                int diffHeight_half = (minimapPanel.Height - minimapBox.Image.Height) / 2;
+
+                foreach (var kvp in Rectangles)
+                {
+                    BattleRect startRect = kvp.Value;
+                    var allyTeam = kvp.Key;
+                    var left = startRect.Left * imgWidthPerRect;
+                    var top = startRect.Top * imgHeightPerRect;
+                    var right = startRect.Right * imgWidthPerRect;
+                    var bottom = startRect.Bottom * imgHeightPerRect;
+                    
+                    if (e.X > left + diffWidth_half && e.X < right + diffWidth_half && e.Y > top + diffHeight_half && e.Y < bottom + diffHeight_half)
+                    {
+                        Cursor = Cursors.Hand;
+                        mouseOnStartBox = allyTeam;
+                        break;
+                    }
+                }
+            }
+        }
+
+        void Event_MinimapBox_Paint(object sender, PaintEventArgs e)
+        {
+            //fixme: is this suboptimal? Is the minimap being drawn twice by calling DrawMinimap() here?
+            if (mouseIsDown & mouseOnStartBox > -1)
+                Refresh_MinimapImage();
+        }
+
+        void Event_MinimapBox_MouseUp(object sender, MouseEventArgs e)
+        {
+            mouseIsDown = false;
+            if (map_comboBox.SelectedItem!=null)
+                Program.ToolTip.SetMap(minimapBox, (string)map_comboBox.SelectedItem);
+        }
+    }
+}
