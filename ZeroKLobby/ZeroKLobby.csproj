@@ -165,11 +165,23 @@
     <Compile Include="MicroLobby\HexToUnicodeConverter.Designer.cs">
       <DependentUpon>HexToUnicodeConverter.cs</DependentUpon>
     </Compile>
+    <Compile Include="MicroLobby\ExtrasTab\ExtrasToolTabs.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\ExtrasTab\SkirmishControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\ExtrasTab\SkirmishControl.Designer.cs">
+      <DependentUpon>SkirmishControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="MicroLobby\TextColoringPanel.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MicroLobby\TextColoringPanel.Designer.cs">
       <DependentUpon>TextColoringPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\ExtrasTab\ExtrasTab.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Notifications\PwBar.cs">
       <SubType>UserControl</SubType>
@@ -510,6 +522,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\BattleChatControl.resx">
       <DependentUpon>BattleChatControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\ExtrasTab\SkirmishControl.resx">
+      <DependentUpon>SkirmishControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\PwBar.resx">
       <DependentUpon>PwBar.cs</DependentUpon>

@@ -45,6 +45,7 @@ namespace ZeroKLobby.MicroLobby
             Program.ToolTip.SetText(lobbyLogButton, "Diagnostic log for ZKL lobby client ( Useful to report things such as: download issue or lobby issue)");
             Program.ToolTip.SetText(gameLogButton, "Diagnostic log for Spring engine (Useful to report things such as: ingame graphic bug or game crash)");
             Program.ToolTip.SetText(btnDefaults, "Local data reset?");
+            Program.ToolTip.SetText(btnOfflineSkirmish, "Create custom singleplayer game versus AI");
 		}
 
 
@@ -310,6 +311,11 @@ namespace ZeroKLobby.MicroLobby
             int splitDistance = DpiMeasurement.ScaleValueY(203);//DpiMeasurement is a static class stored in ZeroKLobby\Util.cs
             splitDistance = Math.Min(splitDistance, splitContainerAtMid.Width - splitContainerAtMid.Panel2MinSize);
             splitContainerAtMid.SplitterDistance = splitDistance; //must obey minimum size constraint
+        }
+
+        private void btnOfflineSkirmish_Click(object sender, EventArgs e)
+        {
+            Program.MainWindow.navigationControl.Path = "extra";
         }
 	}
 }

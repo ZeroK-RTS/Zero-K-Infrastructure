@@ -138,6 +138,7 @@ namespace ZeroKLobby
             AddTabPage(new ServerTab(), "Server");
             AddTabPage(new AdvertiserWindow(), "Advertiser");
             AddTabPage(new DownloaderTab(), "Rapid");
+            AddTabPage(new MicroLobby.ExtrasTab.ExtrasTab(), "Extra");
             
             foreach (var but in ButtonList) flowLayoutPanel1.Controls.Add(but.GetButton());
             flowLayoutPanel1.Controls.Add(logoutButton);
