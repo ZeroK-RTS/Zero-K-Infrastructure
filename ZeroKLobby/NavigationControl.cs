@@ -303,7 +303,7 @@ namespace ZeroKLobby
         {
             var navig = CurrentNavigatable;
             string urlString = urlBox.Text;
-            if (navig != null && navig.CanReload && !urlString.ToLower().StartsWith("spring://")) //check if current TAB can handle website
+            if (navig != null && navig.CanReload && (urlString.ToLower().StartsWith("http") || urlString.ToLower().StartsWith("www."))) //!urlString.ToLower().StartsWith("spring://")) //check if current TAB can handle website
             {
                 bool success = navig.TryNavigate(urlString); //check if able to navigate Forward/Backward/Here in current TAB
                 if (!success)
