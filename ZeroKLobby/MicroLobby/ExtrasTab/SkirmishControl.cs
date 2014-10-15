@@ -454,7 +454,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                                                        }), springVersion);
         }
 
-        private void Refresh_MinimapImage()
+        private void Refresh_MinimapImage(bool invalidate= true)
         {
             try
             {
@@ -525,7 +525,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                         }
                     }
                 }
-                minimapBox.Invalidate();
+                if (invalidate) minimapBox.Invalidate();
             }
             catch (Exception ex)
             {
@@ -888,6 +888,12 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
         private void Event_GameOptionButton_Click(object sender, EventArgs e)
         {
+            if (game_comboBox.SelectedItem != null)
+            {
+                Get_ModOptionsControl();
+                return;
+            }
+            //no mods! show "Change Game Options (Not available)"
             ContextMenu menu = new ContextMenu();
             menu.MenuItems.Add(Get_ShowOptions());
             menu.Show(gameOptionButton, new Point(0, 0));
@@ -901,26 +907,31 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             {
                 modOptions.Click += (s, e) =>
                 {
-                    var form = new Form { Width = 1000, Height = 300, Icon = ZklResources.ZkIcon, Text = "Game options" };
-                    var optionsControl = new ModOptionsControl(currentMod,ModOptions) { Dock = DockStyle.Fill };
-                    form.Controls.Add(optionsControl);
-                    this.Leave += (s2, e2) =>
-                    {
-                        form.Close();
-                        form.Dispose();
-                        optionsControl.Dispose();
-                    };
-                    if (!currentMod.IsMission) //disable option changing for Mission Mod
-                        optionsControl.ChangeApplied += (s3, e3) =>
-                            {
-                                ModOptions.Clear();
-                                foreach (var option in (s3 as System.Collections.Generic.IEnumerable<KeyValuePair<string, string>>)) //IEnumberable can't be serialized, so convert to List.
-                                    ModOptions.Add(option.Key,option.Value);
-                            };
-                    form.Show(); //hack show Program.FormMain
+                    Get_ModOptionsControl();
                 };
             }
             return modOptions;
+        }
+
+        private void Get_ModOptionsControl()
+        {
+            var form = new Form { Width = 1000, Height = 300, Icon = ZklResources.ZkIcon, Text = "Game options" };
+            var optionsControl = new ModOptionsControl(currentMod, ModOptions) { Dock = DockStyle.Fill };
+            form.Controls.Add(optionsControl);
+            this.Leave += (s2, e2) =>
+            {
+                form.Close();
+                form.Dispose();
+                optionsControl.Dispose();
+            };
+            if (!currentMod.IsMission) //disable option changing for Mission Mod
+                optionsControl.ChangeApplied += (s3, e3) =>
+                {
+                    ModOptions.Clear();
+                    foreach (var option in (s3 as System.Collections.Generic.IEnumerable<KeyValuePair<string, string>>)) //IEnumberable can't be serialized, so convert to List.
+                        ModOptions.Add(option.Key, option.Value);
+                };
+            form.Show(); //show menu
         }
 
         private void Set_BotBattleStatus(string shortname,string ownerName, int? teamNumber, int? allyNumber,int? botColor)
@@ -983,7 +994,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         private MenuItem Get_ModBotItem()
         {
             var enabled = true && aiList != null && aiList.Any();
-            var addBotItem = new MenuItem("Add mod's AI (Bot)" + (enabled ? String.Empty : " (Not available)")) { Visible = true };
+            var addBotItem = new MenuItem("Add game's AI (Bot)" + (enabled ? String.Empty : " (Not available)")) { Visible = true };
             if (aiList != null)
             {
                 foreach (var bot in aiList)
@@ -1520,6 +1531,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             {
                 mouseIsDown = true;
                 Program.ToolTip.Clear(minimapBox);
+                minimapBox.Invalidate(); //force to refresh (and subsequently it call Event_MinimapBox_Paint() to update startbox position)
             }
         }
 
@@ -1601,16 +1613,18 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
         void Event_MinimapBox_Paint(object sender, PaintEventArgs e)
         {
-            //fixme: is this suboptimal? Is the minimap being drawn twice by calling DrawMinimap() here?
             if (mouseIsDown & mouseOnStartBox > -1)
-                Refresh_MinimapImage();
+                Refresh_MinimapImage(false);
         }
 
         void Event_MinimapBox_MouseUp(object sender, MouseEventArgs e)
         {
-            mouseIsDown = false;
-            if (map_comboBox.SelectedItem!=null)
-                Program.ToolTip.SetMap(minimapBox, (string)map_comboBox.SelectedItem);
+            if (e.Button == MouseButtons.Left)
+            {
+                mouseIsDown = false;
+                if (map_comboBox.SelectedItem != null)
+                    Program.ToolTip.SetMap(minimapBox, (string)map_comboBox.SelectedItem);
+            }
         }
     }
 }

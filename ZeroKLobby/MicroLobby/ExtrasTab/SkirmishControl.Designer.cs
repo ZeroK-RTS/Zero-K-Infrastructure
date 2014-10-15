@@ -35,12 +35,12 @@
             this.normalRadioButton = new System.Windows.Forms.RadioButton();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.sideCB = new System.Windows.Forms.ComboBox();
-            this.gameOptionButton = new System.Windows.Forms.Button();
+            this.gameOptionButton = new ZeroKLobby.BitmapButton();
             this.infoLabel = new System.Windows.Forms.Label();
-            this.editTeamButton = new System.Windows.Forms.Button();
-            this.addAIButton = new System.Windows.Forms.Button();
+            this.editTeamButton = new ZeroKLobby.BitmapButton();
+            this.addAIButton = new ZeroKLobby.BitmapButton();
             this.spectateCheckBox = new System.Windows.Forms.CheckBox();
-            this.startbutton = new System.Windows.Forms.Button();
+            this.startbutton = new ZeroKLobby.BitmapButton();
             this.map_comboBox = new System.Windows.Forms.ComboBox();
             this.lblEngine = new System.Windows.Forms.Label();
             this.game_comboBox = new System.Windows.Forms.ComboBox();
@@ -130,6 +130,8 @@
             // 
             // splitContainer2
             // 
+            this.splitContainer2.BackColor = System.Drawing.Color.DimGray;
+            this.splitContainer2.ForeColor = System.Drawing.Color.White;
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
             this.splitContainer2.Name = "splitContainer2";
@@ -172,6 +174,13 @@
             // 
             // gameOptionButton
             // 
+            this.gameOptionButton.BackColor = System.Drawing.Color.Transparent;
+            this.gameOptionButton.BackgroundImage = global::ZeroKLobby.Buttons.panel;
+            this.gameOptionButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.gameOptionButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.gameOptionButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.gameOptionButton.ForeColor = System.Drawing.Color.White;
+            this.gameOptionButton.Margin = new System.Windows.Forms.Padding(0);
             this.gameOptionButton.Location = new System.Drawing.Point(152, 77);
             this.gameOptionButton.Name = "gameOptionButton";
             this.gameOptionButton.Size = new System.Drawing.Size(78, 23);
@@ -192,6 +201,13 @@
             // 
             // editTeamButton
             // 
+            this.editTeamButton.BackColor = System.Drawing.Color.Transparent;
+            this.editTeamButton.BackgroundImage = global::ZeroKLobby.Buttons.panel;
+            this.editTeamButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.editTeamButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.editTeamButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.editTeamButton.ForeColor = System.Drawing.Color.White;
+            this.editTeamButton.Margin = new System.Windows.Forms.Padding(0);
             this.editTeamButton.Location = new System.Drawing.Point(77, 77);
             this.editTeamButton.Name = "editTeamButton";
             this.editTeamButton.Size = new System.Drawing.Size(75, 23);
@@ -202,6 +218,13 @@
             // 
             // addAIButton
             // 
+            this.addAIButton.BackColor = System.Drawing.Color.Transparent;
+            this.addAIButton.BackgroundImage = global::ZeroKLobby.Buttons.panel;
+            this.addAIButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.addAIButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.addAIButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.addAIButton.ForeColor = System.Drawing.Color.White;
+            this.addAIButton.Margin = new System.Windows.Forms.Padding(0);
             this.addAIButton.Location = new System.Drawing.Point(0, 77);
             this.addAIButton.Name = "addAIButton";
             this.addAIButton.Size = new System.Drawing.Size(75, 23);
@@ -224,12 +247,19 @@
             // 
             // startbutton
             // 
+            this.startbutton.BackColor = System.Drawing.Color.Transparent;
+            this.startbutton.BackgroundImage = global::ZeroKLobby.Buttons.panel;
+            this.startbutton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.startbutton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.startbutton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.startbutton.ForeColor = System.Drawing.Color.White;
+            this.startbutton.Margin = new System.Windows.Forms.Padding(0);
             this.startbutton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.startbutton.Location = new System.Drawing.Point(3, 147);
             this.startbutton.Name = "startbutton";
             this.startbutton.Size = new System.Drawing.Size(75, 23);
             this.startbutton.TabIndex = 21;
-            this.startbutton.Text = "Start Spring";
+            this.startbutton.Text = "Start Game";
             this.startbutton.UseVisualStyleBackColor = true;
             this.startbutton.Click += new System.EventHandler(this.Event_Startbutton_Click);
             // 
@@ -360,17 +390,17 @@
         private System.Windows.Forms.Label lbMap;
         private System.Windows.Forms.Label lblEngine;
         private System.Windows.Forms.Label lblGame;
-        private System.Windows.Forms.Button startbutton;
+        private ZeroKLobby.BitmapButton startbutton;
         private PlayerListBox skirmPlayerBox;
         private System.Windows.Forms.RadioButton normalRadioButton;
         private System.Windows.Forms.RadioButton metalmapRadioButton;
         private System.Windows.Forms.RadioButton elevationRadioButton;
         private System.Windows.Forms.CheckBox spectateCheckBox;
         private System.Windows.Forms.Panel minimapPanel;
-        private System.Windows.Forms.Button addAIButton;
-        private System.Windows.Forms.Button editTeamButton;
+        private ZeroKLobby.BitmapButton addAIButton;
+        private ZeroKLobby.BitmapButton editTeamButton;
         private System.Windows.Forms.Label infoLabel;
-        private System.Windows.Forms.Button gameOptionButton;
+        private ZeroKLobby.BitmapButton gameOptionButton;
         private System.Windows.Forms.ComboBox sideCB;
         private System.Windows.Forms.Label lblSide;
     }
