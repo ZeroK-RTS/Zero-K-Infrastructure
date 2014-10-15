@@ -103,7 +103,7 @@ namespace PlasmaShared
 
         readonly SpringPaths springPaths;
 
-        UnitSync unitSync;
+        public UnitSync unitSync;
 
         /// <summary>
         /// whether an attempt to load unitsync was performed
@@ -233,6 +233,19 @@ namespace PlasmaShared
             }
         }
 
+        public List<CacheItem> GetAllMapResource()
+        {
+            var mapList = new List<CacheItem>();
+            foreach (var map in cache.NameIndex) if (map.Value.ResourceType == ResourceType.Map) mapList.Add(map.Value);
+            return mapList;
+        }
+
+        public List<CacheItem> GetAllModResource()
+        {
+            var modList = new List<CacheItem>();
+            foreach (var mod in cache.NameIndex) if(mod.Value.ResourceType==ResourceType.Mod) modList.Add(mod.Value);
+            return modList;
+        }
 
         public void Start()
         {
@@ -595,19 +608,8 @@ namespace PlasmaShared
             }
 
             var info = GetUnitSyncData(workItem.CacheItem.FileName);
-            //upon completion of any work: dispose unitsync. It can be re-initialize again later by VerifyUnitSync()
-            if (unitSync != null && GetWorkCost()<1)
-            {
-                try
-                {
-                    unitSync.Dispose();
-                    unitSync = null;
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceWarning("Error disposing unitsync: {0}", ex);
-                }
-            }
+            UnInitUnitsync();
+
             if (info != null)
             {
                 workItem.CacheItem.InternalName = info.Name;
@@ -704,7 +706,28 @@ namespace PlasmaShared
             }
         }
 
-        void VerifyUnitSync()
+        /// <summary>UnInitUnitsync() check whether SpringScanner have any more mods/map to Unitsynced and call unitsync's UnInit() when there's no more work.
+        /// </summary>
+        public void UnInitUnitsync()
+        {
+           //upon completion of any work: dispose unitsync. It can be re-initialize again later by VerifyUnitSync()
+            if (unitSync != null && GetWorkCost() < 1)
+            {
+                try
+                {
+                    unitSync.Dispose();
+                    unitSync = null;
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Error disposing unitsync: {0}", ex);
+                }
+            }
+        } 
+
+        /// <summary>VerifyUnitSync() check whether unitSync should be initialized and perform unitSync initialization.
+        /// </summary> 
+        public void VerifyUnitSync()
         {
             if (unitSyncReInitCounter >= UnitSyncReInitFrequency)
             {

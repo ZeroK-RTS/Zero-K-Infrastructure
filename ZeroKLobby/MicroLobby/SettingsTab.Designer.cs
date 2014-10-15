@@ -58,6 +58,7 @@
             this.cbHwCursor = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
+            this.btnOfflineSkirmish = new ZeroKLobby.BitmapButton();
             this.panel1.SuspendLayout();
             this.splitContainerAtMid.Panel1.SuspendLayout();
             this.splitContainerAtMid.Panel2.SuspendLayout();
@@ -90,6 +91,7 @@
             // splitContainerAtMid.Panel1
             // 
             this.splitContainerAtMid.Panel1.AutoScroll = true;
+            this.splitContainerAtMid.Panel1.Controls.Add(this.btnOfflineSkirmish);
             this.splitContainerAtMid.Panel1.Controls.Add(this.btnCustom);
             this.splitContainerAtMid.Panel1.Controls.Add(this.btnBenchmarker);
             this.splitContainerAtMid.Panel1.Controls.Add(this.label1);
@@ -505,6 +507,22 @@
             this.propertyGrid1.TabIndex = 0;
             this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid1_PropertyValueChanged);
             // 
+            // btnOfflineSkirmish
+            // 
+            this.btnOfflineSkirmish.BackColor = System.Drawing.Color.Transparent;
+            this.btnOfflineSkirmish.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnOfflineSkirmish.BackgroundImage")));
+            this.btnOfflineSkirmish.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnOfflineSkirmish.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnOfflineSkirmish.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnOfflineSkirmish.ForeColor = System.Drawing.Color.White;
+            this.btnOfflineSkirmish.Location = new System.Drawing.Point(452, 167);
+            this.btnOfflineSkirmish.Name = "btnOfflineSkirmish";
+            this.btnOfflineSkirmish.Size = new System.Drawing.Size(77, 23);
+            this.btnOfflineSkirmish.TabIndex = 41;
+            this.btnOfflineSkirmish.Text = "Skirmisher";
+            this.btnOfflineSkirmish.UseVisualStyleBackColor = true;
+            this.btnOfflineSkirmish.Click += new System.EventHandler(this.btnOfflineSkirmish_Click);
+            // 
             // SettingsTab
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -554,6 +572,7 @@
         private BitmapButton btnBrowse;
         private BitmapButton btnBenchmarker;
         private BitmapButton btnCustom;
+        private BitmapButton btnOfflineSkirmish;
 
     }
 }

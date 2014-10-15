@@ -20,11 +20,22 @@ namespace ZeroKLobby.MicroLobby
     TabControl tabControl;
     private Button butApplyChanges;
     private Label proposedLabel;
+    private bool offlineMode = false;
+    private Dictionary<string,string> offlineOptions;
+    public event EventHandler ChangeApplied = delegate { };
 
     readonly ToolTip tooltip = new ToolTip();
 
-    public ModOptionsControl()
+    public ModOptionsControl(Mod forOffline = null, Dictionary<string,string> currentOption = null)
     {
+      if (forOffline != null)
+      {
+          offlineMode = true;
+          mod = forOffline;
+          offlineOptions = currentOption;
+          if (currentOption == null)
+              offlineOptions = new Dictionary<string, string>();
+      }
       InitializeComponent();
       changesBox = new TextBox { Multiline = true, ReadOnly = true, BackColor = Color.White, Dock = DockStyle.Fill };
       var changesTab = new TabPage { Text = "Changes" };
@@ -40,7 +51,10 @@ namespace ZeroKLobby.MicroLobby
 
     protected override void Dispose(bool disposing)
     {
-      EventExtensions.UnsubscribeEvents(Program.TasClient, this);
+      if (!offlineMode)
+      {
+          EventExtensions.UnsubscribeEvents(Program.TasClient, this);
+      }
       base.Dispose(disposing);
     }
 
@@ -55,13 +69,24 @@ namespace ZeroKLobby.MicroLobby
         else if (oc.Value is ComboBox) setVals[oc.Key] = opt.ListOptions[((ComboBox)oc.Value).SelectedIndex].Key;
         else setVals[oc.Key] = ((TextBox)oc.Value).Text;
       }
-
-      var mb = Program.TasClient.MyBattle;
-      var changes =
-        setVals.Where(
-          x =>
-          (!mb.ModOptions.ContainsKey(x.Key) && x.Value != mod.Options.First(y => y.Key == x.Key).Default) ||
-          (mb.ModOptions.ContainsKey(x.Key) && x.Value != mb.ModOptions[x.Key]));
+      IEnumerable<KeyValuePair<string,string>> changes;
+      if (offlineMode)
+      {
+          changes =
+            setVals.Where(
+              x =>
+              (!offlineOptions.ContainsKey(x.Key) && x.Value != mod.Options.First(y => y.Key == x.Key).Default) ||
+              (offlineOptions.ContainsKey(x.Key) && x.Value != offlineOptions[x.Key]));
+      }
+      else
+      {
+          var mb = Program.TasClient.MyBattle;
+          changes =
+            setVals.Where(
+              x =>
+              (!mb.ModOptions.ContainsKey(x.Key) && x.Value != mod.Options.First(y => y.Key == x.Key).Default) ||
+              (mb.ModOptions.ContainsKey(x.Key) && x.Value != mb.ModOptions[x.Key]));
+      }
 
       if (changes.Any()) proposedLabel.Text = string.Format(" Change: {0}",
                                            string.Join(", ", changes.Select(x => string.Format("{0}={1}", options[x.Key].Name, x.Value)).ToArray()));
@@ -149,16 +174,43 @@ namespace ZeroKLobby.MicroLobby
         Trace.TraceError("Error in creating mod options controls: " + e);
       }
       ResumeLayout();
-      SetScriptTags(Program.TasClient.MyBattle.ScriptTags);
+      if (offlineMode)
+      {
+          SetScriptTags();
+          return;
+      }
+
+       SetScriptTags(Program.TasClient.MyBattle.ScriptTags); //set all buttons to match options from current battle
     }
 
-    public void SetScriptTags(IEnumerable<string> tags)
+    public void SetScriptTags(IEnumerable<string> tags = null)
     {
-      changesBox.Text = ModStore.GetModOptionSummary(mod, tags, true);
-      if (changesBox.Text.Length == 0) changesBox.Text = "All options are set to their default value.";
+      if (offlineMode)
+      {
+          if (offlineOptions.Count == 0) changesBox.Text = "All options are set to their default value.";
+          else
+          {
+              var optionBuilder = new System.Text.StringBuilder();
+              optionBuilder.AppendLine();
+              foreach (var setOption in offlineOptions)
+                  optionBuilder.AppendLine("\t" + setOption.Key + " = " + setOption.Value);
+              changesBox.Text = optionBuilder.ToString();
+          }
+      }
+      else
+      {
+          changesBox.Text = ModStore.GetModOptionSummary(mod, tags, true);
+          if (changesBox.Text.Length == 0) changesBox.Text = "All options are set to their default value.";
+      }
       try
       {
-        foreach (var setOption in Mod.GetModOptionPairs(tags))
+        Dictionary<string, string> optionPairs;
+        if (offlineMode)
+            optionPairs = offlineOptions;
+        else
+            optionPairs = Mod.GetModOptionPairs(tags);
+
+        foreach (var setOption in optionPairs)
         {
           var control = optionControls[setOption.Key];
           var option = options[setOption.Key];
@@ -197,6 +249,12 @@ namespace ZeroKLobby.MicroLobby
     protected override void OnLoad(EventArgs ea)
     {
       base.OnLoad(ea);
+      if (offlineMode)
+      {
+          HandleMod(mod);
+          return;
+      }
+
       Program.TasClient.BattleDetailsChanged += (s, e) => SetScriptTags(e.ServerParams);
       Program.SpringScanner.MetaData.GetModAsync(Program.TasClient.MyBattle.ModName,
                                                  mod => { if (!Disposing && IsHandleCreated && !IsDisposed) Invoke(new Action(() => HandleMod(mod))); },
@@ -264,6 +322,13 @@ namespace ZeroKLobby.MicroLobby
     private void applyChanges_Click(object sender, EventArgs e)
     {
       var vals = GetProposedChanges();
+      ChangeApplied(vals, EventArgs.Empty);
+      if (offlineMode)
+      {
+          SetScriptTags();
+          return;
+      }
+
       Program.TasClient.Say(TasClient.SayPlace.Battle, "", "!setoptions " + string.Join(",", vals.Select(x => string.Format("{0}={1}", x.Key, x.Value))), false);
     }
   }
