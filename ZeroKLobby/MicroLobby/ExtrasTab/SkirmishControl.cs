@@ -44,7 +44,9 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         private List<MissionSlot> botsMissionSlot;
         private float[,] presetStartPos;
         private Dictionary<string, List<PlasmaShared.UnitSyncLib.Ai>> springAi;
-        private System.Windows.Forms.Timer timer_delayUpdate;
+        private System.Windows.Forms.Timer uiTimer;
+        private const int timerFPS = 60;
+        private bool requestMinimapRefresh = false;
 
         public SkirmishControl()
         {
@@ -62,7 +64,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             minimapBox.MouseDown += Event_MinimapBox_MouseDown;
             minimapBox.MouseMove += Event_MinimapBox_MouseMove;
             minimapBox.MouseUp += Event_MinimapBox_MouseUp;
-            minimapBox.Paint += Event_MinimapBox_Paint;
             skirmPlayerBox.IsBattle = true;
             skirmPlayerBox.MouseDown += Event_PlayerBox_MouseDown;
 
@@ -117,9 +118,18 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             sideCB.DrawMode = DrawMode.OwnerDrawFixed;
             sideCB.DrawItem += Event_SideCB_DrawItem;
 
-            timer_delayUpdate = new System.Windows.Forms.Timer();
-            timer_delayUpdate.Interval = 1000*30; //timer tick to add micro delay to Layout update.
-            timer_delayUpdate.Tick += Event_timerUpdate_Tick;
+            uiTimer = new System.Windows.Forms.Timer();
+            uiTimer.Interval = 1000 / timerFPS; //timer tick to update minimpan & add micro delay to Layout update.
+            uiTimer.Tick += Event_uiTimer_Tick;
+            uiTimer.Start();
+
+            //linux compatibility 
+            //the text color is White on White when parent have DimGrey background
+            engine_comboBox.ForeColor = Color.Black;
+            game_comboBox.ForeColor = Color.Black;
+            map_comboBox.ForeColor = Color.Black;
+            sideCB.ForeColor = Color.Black;
+            skirmPlayerBox.ForeColor = Color.Black;
 
             this.OnResize(new EventArgs()); //to fix control not filling the whole window at start
             Paint -= Event_SkirmishControl_Enter;
@@ -147,15 +157,34 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             botsMissionSlot = new List<MissionSlot>();
         }
 
+        private bool requestComboBoxRefresh = false;
         void Event_SpringScanner_LocalResourceAdded(object sender, SpringScanner.ResourceChangedEventArgs e)
         {
-            timer_delayUpdate.Start(); //collect multiple update and Setup_ComboBox() only once to avoid flicker
+            requestComboBoxRefresh = true;
         }
 
-        void Event_timerUpdate_Tick(object sender, EventArgs e)
+        private int frameCount = 0;
+        void Event_uiTimer_Tick(object sender, EventArgs e)
         {
-            Setup_ComboBox();
-            timer_delayUpdate.Stop();
+            if (!Visible) return;
+
+            //update minimap when startbox changed or when map changed
+            if (requestMinimapRefresh || (mouseIsDown & mouseOnStartBox > -1))
+            {
+                Refresh_MinimapImage();
+                requestMinimapRefresh = false;
+            }
+
+            //update combobox
+            if (requestComboBoxRefresh)
+            {
+                frameCount++;
+                if (frameCount >= timerFPS*30) //collect multiple update for 30 second and call Setup_ComboBox() only once to avoid flicker
+                {
+                    Setup_ComboBox();
+                    requestComboBoxRefresh = false;
+                }
+            }
         }
 
         private void Setup_ComboBox() //code from Benchmarker.MainForm.cs
@@ -444,7 +473,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                                                            {
                                                                this.minimap = Image.FromStream(new MemoryStream(minimap));
                                                                minimapSize = map.Size;
-                                                               Refresh_MinimapImage();
+                                                               requestMinimapRefresh = true; //Refresh_MinimapImage();
                                                            }
                                                        }),
                                                        a => Program.MainWindow.InvokeFunc(() =>
@@ -618,7 +647,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     haveChanges = true;
                 }
                 toRemove = null;
-                if (haveChanges) Refresh_MinimapImage();
+                if (haveChanges) requestMinimapRefresh = true; // Refresh_MinimapImage();
             }
 
             newList = newList.OrderBy(x => x.ToString()).ToList();
@@ -1531,7 +1560,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             {
                 mouseIsDown = true;
                 Program.ToolTip.Clear(minimapBox);
-                minimapBox.Invalidate(); //force to refresh (and subsequently it call Event_MinimapBox_Paint() to update startbox position)
             }
         }
 
@@ -1609,12 +1637,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     }
                 }
             }
-        }
-
-        void Event_MinimapBox_Paint(object sender, PaintEventArgs e)
-        {
-            if (mouseIsDown & mouseOnStartBox > -1)
-                Refresh_MinimapImage(false);
         }
 
         void Event_MinimapBox_MouseUp(object sender, MouseEventArgs e)
