@@ -15,7 +15,8 @@ namespace ZeroKLobby
         private Point lastMousePos;
         private string lastText;
         private bool lastVisible = true;
-        private Timer timer = new Timer();
+        private Timer uiTimer;
+        const int timerFPS = 70;
 
         public DateTime LastUserAction = DateTime.Now;
 
@@ -28,21 +29,23 @@ namespace ZeroKLobby
             get { return visible; }
             set {
                 visible = value;
-                RefreshToolTip(true);
+                requestRefresh = true;// RefreshToolTip(true);
             }
         }
 
         public ToolTipHandler() {
-            timer.Interval = 1000;
-            timer.Tick += timer_Tick;
-            timer.Start();
+            uiTimer = new Timer();
+            uiTimer.Interval = 1000 / timerFPS;
+            uiTimer.Tick += uiTimer_Tick;
+            uiTimer.Start();
         }
 
         public void Dispose() {
             Application.RemoveMessageFilter(this);
-            if (timer != null) {
-                timer.Stop();
-                timer = null;
+            if (uiTimer != null)
+            {
+                uiTimer.Stop();
+                uiTimer = null;
             }
         }
 
@@ -184,11 +187,13 @@ namespace ZeroKLobby
             }
         }
 
+        private bool requestRefresh = false;
         private void UpdateTooltip(object control, string s) {
             tooltips[control] = s;
-            RefreshToolTip(true);
+            requestRefresh = true; //RefreshToolTip(true);
         }
 
+        private bool mouseMoving = false;
         public bool PreFilterMessage(ref Message m) {
             if (m.Msg == WM_KEYDOWN || m.Msg == WM_MOUSEMOVE) LastUserAction = DateTime.Now;
             
@@ -198,16 +203,27 @@ namespace ZeroKLobby
                 //int xp = (int)m.LParam & 0xFFFF;
                 //int yp = (int)m.LParam >> 16;
 
-                if (mp != lastMousePos) RefreshToolTip(false);
+                if (mp != lastMousePos) mouseMoving = true;
+                else mouseMoving = false;
                 lastMousePos = mp;
             }
 
             return false;
         }
 
+        int frameCount = 0;
+        private void uiTimer_Tick(object sender, EventArgs e)
+        {
+            if (!Visible) return;
 
-        private void timer_Tick(object sender, EventArgs e) {
-            if (Visible) RefreshToolTip(true);
+            frameCount++;
+            bool oneSec = (frameCount >= timerFPS);
+            if (mouseMoving || requestRefresh || oneSec)
+            {
+                RefreshToolTip(requestRefresh || oneSec);
+                requestRefresh = false;
+                if (oneSec) frameCount = 0;
+            }
         }
     }
 
