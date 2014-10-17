@@ -12,6 +12,7 @@ namespace ZeroKLobby.MicroLobby
 	public class PlayerListBox: ListBox
 	{
 		Point previousLocation;
+        int previousHoverIndex;
 	    ObservableCollection<PlayerListItem> realItems;
 	    Timer timer;
 	    public PlayerListItem HoverItem { get; set; }
@@ -145,6 +146,9 @@ namespace ZeroKLobby.MicroLobby
 			previousLocation = cursorPoint;
 
 			var hoverIndex = IndexFromPoint(cursorPoint);
+			if (previousHoverIndex == hoverIndex) return;
+			previousHoverIndex = hoverIndex;
+
 			if (hoverIndex < 0 || hoverIndex >= base.Items.Count || !GetItemRectangle(hoverIndex).Contains(cursorPoint))
 			{
 				HoverItem = null;
