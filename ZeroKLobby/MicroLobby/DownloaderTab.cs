@@ -20,11 +20,11 @@ namespace ZeroKLobby.MapDownloader
     private void DownloaderTab_Enter(object sender, EventArgs e)
     {
         Paint -= DownloaderTab_Enter;
-        MainWindow.Instance.NotifyUser("rapid", "Initializing rapid UI.\nThis might take few moments...",false,false);
         InitializeComponent();
 
         Program.Downloader.PackagesChanged += Downloader_PackagesChanged;
         Program.Downloader.SelectedPackagesChanged += Downloader_SelectedPackagesChanged;
+        Program.Downloader.PackageDownloader.MasterManifestDownloaded += PackageDownloader_MasterManifestDownloaded;
         UpdateAvailablePackages();
         UpdateSelectedPackages();
     }
@@ -98,7 +98,13 @@ namespace ZeroKLobby.MapDownloader
 
       public bool CanReload { get { return false; } }
 
-      public bool IsBusy { get { return false; } }
+      bool manifestDownloading = false;
+      public bool IsBusy { get { return manifestDownloading; } }
+
+      void PackageDownloader_MasterManifestDownloaded(object sender, EventArgs e)
+      {
+          manifestDownloading = false;
+      }
 
       void Downloader_PackagesChanged(object sender, EventArgs e)
     {
@@ -122,6 +128,7 @@ namespace ZeroKLobby.MapDownloader
 
     void btnReload_Click(object sender, EventArgs e)
     {
+        manifestDownloading = true;
       PlasmaShared.Utils.StartAsync(Program.Downloader.PackageDownloader.LoadMasterAndVersions);
     }
 

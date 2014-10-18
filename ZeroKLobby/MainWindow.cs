@@ -292,13 +292,6 @@ namespace ZeroKLobby
 
             if (Program.StartupArgs != null && Program.StartupArgs.Length > 0) navigationControl.Path = Program.StartupArgs[0];
 
-            // download primary game 
-            var defaultTag = KnownGames.GetDefaultGame().RapidTag;
-            if (!Program.Downloader.PackageDownloader.SelectedPackages.Contains(defaultTag)) {
-                Program.Downloader.PackageDownloader.SelectPackage(defaultTag);
-                if (Program.Downloader.PackageDownloader.GetByTag(defaultTag) != null) Program.Downloader.GetResource(DownloadType.MOD, defaultTag);
-            }
-
             if (Program.Conf.ConnectOnStartup) Program.ConnectBar.TryToConnectTasClient();
             else NotifySection.AddBar(Program.ConnectBar);
         }

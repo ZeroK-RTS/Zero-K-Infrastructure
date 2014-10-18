@@ -182,7 +182,7 @@ namespace ZeroKLobby
                 SpringScanner.MapRegistered += (s, e) => Trace.TraceInformation("Map registered: {0}", e.MapName);
                 SpringScanner.ModRegistered += (s, e) => Trace.TraceInformation("Mod registered: {0}", e.Data.Name);
 
-                Downloader = new PlasmaDownloader.PlasmaDownloader(Conf, SpringScanner, SpringPaths);
+                Downloader = new PlasmaDownloader.PlasmaDownloader(Conf, SpringScanner, SpringPaths); //rapid
                 Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
 
                 var isLinux = Environment.OSVersion.Platform == PlatformID.Unix;
@@ -281,7 +281,9 @@ namespace ZeroKLobby
 
                 //if (Conf.IsFirstRun) Utils.OpenWeb("http://zero-k.info/Wiki/LobbyStart", false);
 
-                Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion);
+				// download primary engine & game
+				MainWindow.Paint+= GetSpringZK;
+				Downloader.PackageDownloader.MasterManifestDownloaded += GetSpringZK;
 
                     // Format and display the TimeSpan value.
                     //stopWatch.Stop(); TimeSpan ts = stopWatch.Elapsed; string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
@@ -294,6 +296,28 @@ namespace ZeroKLobby
                 ShutDown();
             }
             if (ErrorHandling.HasFatalException && !Program.CloseOnNext) Application.Restart();
+        }
+
+		private static int getSpringZKCount = 0;
+        private static void GetSpringZK(object sender, EventArgs e)
+        {
+			if (sender is PlasmaDownloader.Packages.PackageDownloader)
+				Downloader.PackageDownloader.MasterManifestDownloaded -= GetSpringZK;
+			if (sender is PlasmaDownloader.Packages.PackageDownloader)
+				MainWindow.Paint -= GetSpringZK;
+
+			getSpringZKCount++;
+			if (getSpringZKCount < 2)
+				return;
+
+            // download primary game after rapid list have been downloaded and MainWindow is visible
+			Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion);
+            var defaultTag = KnownGames.GetDefaultGame().RapidTag;
+            if (!Downloader.PackageDownloader.SelectedPackages.Contains(defaultTag))
+            {
+                Downloader.PackageDownloader.SelectPackage(defaultTag);
+                if (Downloader.PackageDownloader.GetByTag(defaultTag) != null) Downloader.GetResource(PlasmaDownloader.DownloadType.MOD, defaultTag);
+            }
         }
 
         public static PwBar PwBar { get; private set; }

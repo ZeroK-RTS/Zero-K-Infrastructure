@@ -30,7 +30,7 @@ namespace PlasmaDownloader
 
         private readonly PackageDownloader packageDownloader;
         private readonly SpringScanner scanner;
-        private readonly TorrentDownloader torrentDownloader;
+        private TorrentDownloader torrentDownloader;
 
         public IPlasmaDownloaderConfig Config { get; private set; }
 
@@ -60,14 +60,13 @@ namespace PlasmaDownloader
             SpringPaths = springPaths;
             Config = config;
             this.scanner = scanner;
-            torrentDownloader = new TorrentDownloader(this);
+            //torrentDownloader = new TorrentDownloader(this);
             packageDownloader = new PackageDownloader(this);
         }
 
         public void Dispose() {
             packageDownloader.Dispose();
         }
-
 
         public Download GetAndSwitchEngine(string version) {
             lock (downloads) {
@@ -124,6 +123,7 @@ namespace PlasmaDownloader
                 }
 
                 if (type == DownloadType.MAP || type == DownloadType.MOD || type == DownloadType.UNKNOWN || type == DownloadType.MISSION) {
+                    if (torrentDownloader == null) torrentDownloader = new TorrentDownloader(this); //lazy initialization
                     var down = torrentDownloader.DownloadTorrent(name);
                     if (down != null) {
                         downloads.Add(down);
