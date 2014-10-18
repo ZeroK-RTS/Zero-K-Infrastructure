@@ -41,7 +41,7 @@ namespace ZeroKLobby.MicroLobby
             Program.ToolTip.SetText(button4, "Springsettings.cfg and Lups.cfg recommended for Ultra settings");
             Program.ToolTip.SetText(btnCustom, "Edit current Springsettings.cfg");
             Program.ToolTip.SetText(btnRapid, "Monitor certain mods for latest version and auto-download them when available.");
-            Program.ToolTip.SetText(problemButton, "Go to Zero-K development page.");
+            Program.ToolTip.SetText(developmentButton, "Go to Zero-K development page.");
             Program.ToolTip.SetText(lobbyLogButton, "Diagnostic log for ZKL lobby client ( Useful to report things such as: download issue or lobby issue)");
             Program.ToolTip.SetText(gameLogButton, "Diagnostic log for Spring engine (Useful to report things such as: ingame graphic bug or game crash)");
             Program.ToolTip.SetText(btnDefaults, "Local data reset?");
@@ -220,14 +220,14 @@ namespace ZeroKLobby.MicroLobby
             Utils.SafeStart("file://" + Utils.MakePath(Program.SpringPaths.WritableDirectory, "infolog.txt"));
         }
 
-		void problemButton_Click(object sender, EventArgs e)
+		void developmentButton_Click(object sender, EventArgs e)
 		{
             //try
             //{
-            //    Process.Start("http://code.google.com/p/zero-k/issues/entry");
+            //    Process.Start("https://github.com/ZeroK-RTS");
             //}
             //catch {}
-            Program.MainWindow.navigationControl.Path = "http://code.google.com/p/zero-k/issues/entry";
+            Program.MainWindow.navigationControl.Path = "https://github.com/ZeroK-RTS";
 		}
 
 		void siteFeatureRequestItem_Click(object sender, EventArgs e)

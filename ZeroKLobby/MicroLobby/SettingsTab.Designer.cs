@@ -31,13 +31,14 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsTab));
             this.panel1 = new System.Windows.Forms.Panel();
             this.splitContainerAtMid = new ZeroKLobby.ZkSplitContainer();
+            this.btnOfflineSkirmish = new ZeroKLobby.BitmapButton();
             this.btnCustom = new ZeroKLobby.BitmapButton();
             this.btnBenchmarker = new ZeroKLobby.BitmapButton();
             this.label1 = new System.Windows.Forms.Label();
             this.cbMtEngine = new System.Windows.Forms.CheckBox();
             this.btnDisplay = new ZeroKLobby.BitmapButton();
             this.cbSafeMode = new System.Windows.Forms.CheckBox();
-            this.problemButton = new ZeroKLobby.BitmapButton();
+            this.developmentButton = new ZeroKLobby.BitmapButton();
             this.btnDefaults = new ZeroKLobby.BitmapButton();
             this.helpButton = new ZeroKLobby.BitmapButton();
             this.btnRestart = new ZeroKLobby.BitmapButton();
@@ -58,8 +59,8 @@
             this.cbHwCursor = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
-            this.btnOfflineSkirmish = new ZeroKLobby.BitmapButton();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerAtMid)).BeginInit();
             this.splitContainerAtMid.Panel1.SuspendLayout();
             this.splitContainerAtMid.Panel2.SuspendLayout();
             this.splitContainerAtMid.SuspendLayout();
@@ -98,7 +99,7 @@
             this.splitContainerAtMid.Panel1.Controls.Add(this.cbMtEngine);
             this.splitContainerAtMid.Panel1.Controls.Add(this.btnDisplay);
             this.splitContainerAtMid.Panel1.Controls.Add(this.cbSafeMode);
-            this.splitContainerAtMid.Panel1.Controls.Add(this.problemButton);
+            this.splitContainerAtMid.Panel1.Controls.Add(this.developmentButton);
             this.splitContainerAtMid.Panel1.Controls.Add(this.btnDefaults);
             this.splitContainerAtMid.Panel1.Controls.Add(this.helpButton);
             this.splitContainerAtMid.Panel1.Controls.Add(this.btnRestart);
@@ -127,6 +128,22 @@
             this.splitContainerAtMid.Size = new System.Drawing.Size(825, 692);
             this.splitContainerAtMid.SplitterDistance = 203;
             this.splitContainerAtMid.TabIndex = 0;
+            // 
+            // btnOfflineSkirmish
+            // 
+            this.btnOfflineSkirmish.BackColor = System.Drawing.Color.Transparent;
+            this.btnOfflineSkirmish.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnOfflineSkirmish.BackgroundImage")));
+            this.btnOfflineSkirmish.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnOfflineSkirmish.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnOfflineSkirmish.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnOfflineSkirmish.ForeColor = System.Drawing.Color.White;
+            this.btnOfflineSkirmish.Location = new System.Drawing.Point(452, 167);
+            this.btnOfflineSkirmish.Name = "btnOfflineSkirmish";
+            this.btnOfflineSkirmish.Size = new System.Drawing.Size(77, 23);
+            this.btnOfflineSkirmish.TabIndex = 41;
+            this.btnOfflineSkirmish.Text = "Skirmisher";
+            this.btnOfflineSkirmish.UseVisualStyleBackColor = true;
+            this.btnOfflineSkirmish.Click += new System.EventHandler(this.btnOfflineSkirmish_Click);
             // 
             // btnCustom
             // 
@@ -175,7 +192,7 @@
             this.cbMtEngine.AutoSize = true;
             this.cbMtEngine.Location = new System.Drawing.Point(350, 75);
             this.cbMtEngine.Name = "cbMtEngine";
-            this.cbMtEngine.Size = new System.Drawing.Size(293, 17);
+            this.cbMtEngine.Size = new System.Drawing.Size(179, 17);
             this.cbMtEngine.TabIndex = 37;
             this.cbMtEngine.Text = "Enable Spring 91 Multi-threading";
             this.cbMtEngine.UseVisualStyleBackColor = true;
@@ -209,21 +226,21 @@
             this.cbSafeMode.UseVisualStyleBackColor = true;
             this.cbSafeMode.CheckedChanged += new System.EventHandler(this.cbSafeMode_CheckedChanged);
             // 
-            // problemButton
+            // developmentButton
             // 
-            this.problemButton.BackColor = System.Drawing.Color.Transparent;
-            this.problemButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("problemButton.BackgroundImage")));
-            this.problemButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.problemButton.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.problemButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.problemButton.ForeColor = System.Drawing.Color.White;
-            this.problemButton.Location = new System.Drawing.Point(135, 138);
-            this.problemButton.Name = "problemButton";
-            this.problemButton.Size = new System.Drawing.Size(103, 23);
-            this.problemButton.TabIndex = 17;
-            this.problemButton.Text = "Report a Problem";
-            this.problemButton.UseVisualStyleBackColor = true;
-            this.problemButton.Click += new System.EventHandler(this.problemButton_Click);
+            this.developmentButton.BackColor = System.Drawing.Color.Transparent;
+            this.developmentButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("developmentButton.BackgroundImage")));
+            this.developmentButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.developmentButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.developmentButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.developmentButton.ForeColor = System.Drawing.Color.White;
+            this.developmentButton.Location = new System.Drawing.Point(135, 138);
+            this.developmentButton.Name = "developmentButton";
+            this.developmentButton.Size = new System.Drawing.Size(103, 23);
+            this.developmentButton.TabIndex = 17;
+            this.developmentButton.Text = "Development Site";
+            this.developmentButton.UseVisualStyleBackColor = true;
+            this.developmentButton.Click += new System.EventHandler(this.developmentButton_Click);
             // 
             // btnDefaults
             // 
@@ -251,9 +268,9 @@
             this.helpButton.ForeColor = System.Drawing.Color.White;
             this.helpButton.Location = new System.Drawing.Point(32, 138);
             this.helpButton.Name = "helpButton";
-            this.helpButton.Size = new System.Drawing.Size(86, 23);
+            this.helpButton.Size = new System.Drawing.Size(89, 23);
             this.helpButton.TabIndex = 15;
-            this.helpButton.Text = "Ask for Help";
+            this.helpButton.Text = "Help and Bugs";
             this.helpButton.UseVisualStyleBackColor = true;
             // 
             // btnRestart
@@ -500,28 +517,12 @@
             // propertyGrid1
             // 
             this.propertyGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.propertyGrid1.HelpForeColor = System.Drawing.SystemColors.WindowText;
             this.propertyGrid1.Location = new System.Drawing.Point(3, 16);
-			this.propertyGrid1.HelpForeColor = System.Drawing.SystemColors.WindowText;
             this.propertyGrid1.Name = "propertyGrid1";
             this.propertyGrid1.Size = new System.Drawing.Size(815, 462);
             this.propertyGrid1.TabIndex = 0;
             this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid1_PropertyValueChanged);
-            // 
-            // btnOfflineSkirmish
-            // 
-            this.btnOfflineSkirmish.BackColor = System.Drawing.Color.Transparent;
-            this.btnOfflineSkirmish.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnOfflineSkirmish.BackgroundImage")));
-            this.btnOfflineSkirmish.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnOfflineSkirmish.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnOfflineSkirmish.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnOfflineSkirmish.ForeColor = System.Drawing.Color.White;
-            this.btnOfflineSkirmish.Location = new System.Drawing.Point(452, 167);
-            this.btnOfflineSkirmish.Name = "btnOfflineSkirmish";
-            this.btnOfflineSkirmish.Size = new System.Drawing.Size(77, 23);
-            this.btnOfflineSkirmish.TabIndex = 41;
-            this.btnOfflineSkirmish.Text = "Skirmisher";
-            this.btnOfflineSkirmish.UseVisualStyleBackColor = true;
-            this.btnOfflineSkirmish.Click += new System.EventHandler(this.btnOfflineSkirmish_Click);
             // 
             // SettingsTab
             // 
@@ -535,6 +536,7 @@
             this.splitContainerAtMid.Panel1.ResumeLayout(false);
             this.splitContainerAtMid.Panel1.PerformLayout();
             this.splitContainerAtMid.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerAtMid)).EndInit();
             this.splitContainerAtMid.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -557,7 +559,6 @@
         private System.Windows.Forms.PropertyGrid propertyGrid1;
         private System.Windows.Forms.Panel panel1;
         private BitmapButton btnDisplay;
-        private BitmapButton problemButton;
         private BitmapButton btnDefaults;
         private BitmapButton helpButton;
         private BitmapButton btnRestart;
@@ -573,6 +574,7 @@
         private BitmapButton btnBenchmarker;
         private BitmapButton btnCustom;
         private BitmapButton btnOfflineSkirmish;
+        private BitmapButton developmentButton;
 
     }
 }
