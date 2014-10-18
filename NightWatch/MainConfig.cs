@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace CaTracker
 {
     public class Config
@@ -7,7 +9,7 @@ namespace CaTracker
 #else 
         string accountName = "Nightwatch";
 #endif
-        string accountPassword = "secret";
+        string accountPassword = new ZkData.ZkDataContext().Accounts.FirstOrDefault(x => x.AccountID == 45679).Password;
         int attemptReconnectInterval = 60;
         bool attemptToRecconnect = true;
         string[] joinChannels = new[] { "main","zk" };
