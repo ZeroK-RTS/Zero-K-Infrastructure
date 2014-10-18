@@ -60,7 +60,7 @@ namespace ZeroKWeb.Controllers
                           where account.Name == user
                            select account.AccountID).FirstOrDefault();
                 if(aid != 0)
-                    q = q.Where(b => b.SpringBattlePlayers.Any(p => p.AccountID == aid));
+                    q = q.Where(b => b.SpringBattlePlayers.Any(p => !p.IsSpectator && p.AccountID == aid));
             }
 
             if (players.HasValue)
