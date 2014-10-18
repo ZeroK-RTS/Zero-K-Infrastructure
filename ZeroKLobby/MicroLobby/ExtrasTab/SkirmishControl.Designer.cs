@@ -276,7 +276,7 @@
             this.map_comboBox.Name = "map_comboBox";
             this.map_comboBox.Size = new System.Drawing.Size(178, 21);
             this.map_comboBox.TabIndex = 20;
-            this.map_comboBox.SelectionChangeCommitted += new System.EventHandler(this.Event_ComboBox_SelectionChangeCommitted);
+            this.map_comboBox.SelectedIndexChanged += new System.EventHandler(this.Event_ComboBox_SelectedIndexChanged);
             // 
             // lblEngine
             // 
@@ -300,7 +300,7 @@
             this.game_comboBox.Name = "game_comboBox";
             this.game_comboBox.Size = new System.Drawing.Size(178, 21);
             this.game_comboBox.TabIndex = 19;
-            this.game_comboBox.SelectionChangeCommitted += new System.EventHandler(this.Event_ComboBox_SelectionChangeCommitted);
+            this.game_comboBox.SelectedIndexChanged += new System.EventHandler(this.Event_ComboBox_SelectedIndexChanged);
             // 
             // lblGame
             // 
@@ -324,7 +324,7 @@
             this.engine_comboBox.Name = "engine_comboBox";
             this.engine_comboBox.Size = new System.Drawing.Size(178, 21);
             this.engine_comboBox.TabIndex = 18;
-            this.engine_comboBox.SelectionChangeCommitted += new System.EventHandler(this.Event_ComboBox_SelectionChangeCommitted);
+            this.engine_comboBox.SelectedIndexChanged += new System.EventHandler(this.Event_ComboBox_SelectedIndexChanged);
             // 
             // lbMap
             // 

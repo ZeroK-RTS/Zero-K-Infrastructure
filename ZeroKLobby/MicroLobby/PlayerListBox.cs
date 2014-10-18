@@ -12,6 +12,7 @@ namespace ZeroKLobby.MicroLobby
 	public class PlayerListBox: ListBox
 	{
 		Point previousLocation;
+        int previousHoverIndex;
 	    ObservableCollection<PlayerListItem> realItems;
 	    Timer timer;
 	    public PlayerListItem HoverItem { get; set; }
@@ -131,7 +132,9 @@ namespace ZeroKLobby.MicroLobby
 		{
 			base.OnMeasureItem(e);
             DpiMeasurement.DpiXYMeasurement(this);
-            e.ItemHeight = DpiMeasurement.ScaleValueY(((PlayerListItem)base.Items[e.Index]).Height); //GetItemRectangle() will measure the size of item (for drawing). We return a custom Height defined in PlayerListItems.cs
+            if (DesignMode) return;
+            if (e.Index > -1 && e.Index < base.Items.Count)
+                e.ItemHeight = DpiMeasurement.ScaleValueY(((PlayerListItem)base.Items[e.Index]).Height); //GetItemRectangle() will measure the size of item (for drawing). We return a custom Height defined in PlayerListItems.cs
 		}
 
 
@@ -143,6 +146,9 @@ namespace ZeroKLobby.MicroLobby
 			previousLocation = cursorPoint;
 
 			var hoverIndex = IndexFromPoint(cursorPoint);
+			if (previousHoverIndex == hoverIndex) return;
+			previousHoverIndex = hoverIndex;
+
 			if (hoverIndex < 0 || hoverIndex >= base.Items.Count || !GetItemRectangle(hoverIndex).Contains(cursorPoint))
 			{
 				HoverItem = null;

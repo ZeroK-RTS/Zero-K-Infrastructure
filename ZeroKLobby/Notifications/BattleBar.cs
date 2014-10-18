@@ -104,23 +104,24 @@ namespace ZeroKLobby.Notifications
                                                                        if (!Program.CloseOnNext) {
                                                                            Program.MainWindow.InvokeFunc(() =>
                                                                                {
-                                                                                   var previousSide = cbSide.SelectedItem != null
-                                                                                                          ? cbSide.SelectedItem.ToString()
-                                                                                                          : null;
-                                                                                   cbSide.Items.Clear();
-                                                                                   var cnt = 0;
-                                                                                   foreach (var side in mod.Sides) cbSide.Items.Add(new SideItem(side, mod.SideIcons[cnt++]));
-                                                                                   var pickedItem =
-                                                                                       cbSide.Items.OfType<SideItem>()
-                                                                                             .FirstOrDefault(x => x.Side == previousSide);
-
-                                                                                   suppressSideChangeEvent = true;
                                                                                    cbSide.Visible = mod.Sides.Length > 1;
                                                                                    if (cbSide.Visible) {
+                                                                                       var previousSide = cbSide.SelectedItem != null
+                                                                                                          ? cbSide.SelectedItem.ToString()
+                                                                                                          : null;
+                                                                                       cbSide.Items.Clear();
+                                                                                       var cnt = 0;
+                                                                                       foreach (var side in mod.Sides) cbSide.Items.Add(new SideItem(side, mod.SideIcons[cnt++]));
+                                                                                       var pickedItem =
+                                                                                           cbSide.Items.OfType<SideItem>()
+                                                                                                 .FirstOrDefault(x => x.Side == previousSide);
+
+                                                                                       suppressSideChangeEvent = true;
                                                                                        if (pickedItem != null) cbSide.SelectedItem = pickedItem;
                                                                                        else cbSide.SelectedIndex = random.Next(cbSide.Items.Count);
+                                                                                       suppressSideChangeEvent = false;
                                                                                    }
-                                                                                   suppressSideChangeEvent = false;
+                                                                                   
                                                                                });
                                                                        }
                                                                    },
