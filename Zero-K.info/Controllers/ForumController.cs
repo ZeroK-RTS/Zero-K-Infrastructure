@@ -542,7 +542,7 @@ namespace ZeroKWeb.Controllers
             foreach (ForumThread thread in threads)
             {
                 ForumThreadLastRead lastRead = Global.Account.ForumThreadLastReads.FirstOrDefault(x => x.ForumThreadID == thread.ForumThreadID);
-                if(lastRead.LastRead < thread.LastPost) thread.UpdateLastRead(Global.AccountID, false, DateTime.UtcNow);
+                if(lastRead == null || lastRead.LastRead < thread.LastPost) thread.UpdateLastRead(Global.AccountID, false, DateTime.UtcNow);
             }
             db.SubmitChanges();
             return RedirectToAction("Index", new { categoryID = forumCategoryID });
