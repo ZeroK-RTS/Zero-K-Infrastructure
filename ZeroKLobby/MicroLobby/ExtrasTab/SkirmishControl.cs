@@ -1088,7 +1088,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
         private bool wasMissingEntry = true;
         private bool suppressEvent_ComboboxSelectionChangeCommited = false;
-        private void Event_ComboBox_SelectionChangeCommitted(object sender, EventArgs e)
+        private void Event_ComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (suppressEvent_ComboboxSelectionChangeCommited) return;
             if ((sender as Control).Name == "map_comboBox" && map_comboBox.SelectedItem!= null)
