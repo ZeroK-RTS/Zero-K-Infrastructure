@@ -9,7 +9,7 @@ namespace CaTracker
 #else 
         string accountName = "Nightwatch";
 #endif
-        string accountPassword = "secret";  //GetPassword();
+        string accountPassword = GetPassword();
         int attemptReconnectInterval = 60;
         bool attemptToRecconnect = true;
         string[] joinChannels = new[] { "main","zk" };
@@ -32,7 +32,7 @@ namespace CaTracker
         static string GetPassword()
         {
             var db = new ZkData.ZkDataContext();
-            return db.Accounts.FirstOrDefault(x => x.AccountID == 45679).Password;
+            return db.MiscVars.FirstOrDefault(x=> x.VarName == "NightwatchPassword").VarValue;
         }
     } ;
 }

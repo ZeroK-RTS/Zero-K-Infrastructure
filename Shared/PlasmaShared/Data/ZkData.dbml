@@ -1307,4 +1307,10 @@
       <Association Name="Account_AutoBanSmurfList" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>
+    <Table Name="dbo.MiscVar" Member="MiscVars">
+    <Type Name="MiscVar">
+      <Column Name="VarName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+	  <Column Name="VarValue" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+    </Type>
+  </Table>
 </Database>
