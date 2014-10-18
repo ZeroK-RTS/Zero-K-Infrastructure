@@ -28,7 +28,6 @@ namespace SpringDownloader.Notifications
 				Controls.Add(new NotifyBarContainer(bar));
 				//Height = Controls.OfType<Control>().Sum(x => x.Height);
                 timedUpdate.Start(); //accumulate update for 50ms because Linux Mono have trouble with multiple add/remove bar spam.
-				if (Environment.OSVersion.Platform != PlatformID.Unix) Program.MainWindow.Invalidate(true);
 			}
 		}
 
@@ -40,7 +39,6 @@ namespace SpringDownloader.Notifications
                 Controls.Remove(container);
                 timedUpdate.Start(); //accumulate update for 50ms because Linux Mono have trouble with multiple add/remove bar spam.
             }
-            if (Environment.OSVersion.Platform != PlatformID.Unix) Program.MainWindow.Invalidate(true);
 		}
 
 		void NotifySection_Load(object sender, EventArgs e)
@@ -55,6 +53,7 @@ namespace SpringDownloader.Notifications
         {
             timedUpdate.Stop(); //finish size update, stop timer.
             Height = Controls.OfType<Control>().Sum(x => x.Height);
+			Program.MainWindow.Invalidate(true);
         }
 	}
 }

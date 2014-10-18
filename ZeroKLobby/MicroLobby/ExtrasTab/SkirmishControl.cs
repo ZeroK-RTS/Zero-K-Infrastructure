@@ -23,7 +23,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 {
     public partial class SkirmishControl : UserControl
     { //Mix match from BattleChatControl.cs, Benchmarker/MainForm.cs, Springie/AutoHost_commands.cs
-        private SpringPaths springPaths;
         private PictureBox minimapBox;
         Image minimap;
         Size minimapSize;
@@ -179,7 +178,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             if (requestComboBoxRefresh)
             {
                 frameCount++;
-                if (frameCount >= timerFPS*30) //collect multiple update for 30 second and call Setup_ComboBox() only once to avoid flicker
+                if (frameCount >= timerFPS*15) //collect multiple update for 30 second and call Setup_ComboBox() only once to avoid flicker
                 {
                     Setup_ComboBox();
                     requestComboBoxRefresh = false;
@@ -1140,8 +1139,9 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     engineFolder = engineFolder + "\\" + springVersion;
                 else
                     engineFolder = engineFolder + "/" + springVersion;
-                springPaths = new SpringPaths(engineFolder);
-                spring = new Spring(springPaths);
+                if (Program.SpringPaths.HasEngineVersion(springVersion))
+                    Program.SpringPaths.SetEnginePath (engineFolder);
+                spring = new Spring(Program.SpringPaths);
                 
 
                 if (infoLabel.Text.StartsWith("Select engine"))
