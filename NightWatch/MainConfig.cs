@@ -9,7 +9,7 @@ namespace CaTracker
 #else 
         string accountName = "Nightwatch";
 #endif
-        string accountPassword = GetPassword();
+        string accountPassword = "secret";  //GetPassword();
         int attemptReconnectInterval = 60;
         bool attemptToRecconnect = true;
         string[] joinChannels = new[] { "main","zk" };
