@@ -107,18 +107,16 @@ namespace ZeroKLobby.MicroLobby
             lock (locker)
             {
                 //Open the stream and read it from back. 
-                using (FileStream fileStream = new FileStream(Path.Combine(historyFolder, fileName), FileMode.Open))
+                using (FileStream fileStream = File.OpenRead(Path.Combine(historyFolder, fileName)))
                 {
                     var fileLen = fileStream.Length;
                     var lenToRead = (int)Math.Min(fileLen, 3990);
                     fileStream.Seek(-lenToRead, SeekOrigin.End);
-                    byte[] buffer = new byte[lenToRead];
-                    fileStream.Read(buffer, 0,lenToRead);
-                    UTF8Encoding temp = new UTF8Encoding(true);
-                    string texts = temp.GetString(buffer);
-                    string[] lines = texts.Split(new string[1] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-                    fileStream.Close();
-                    return lines;
+                    List<string> lines = new List<string>();
+                    using (var stream = new StreamReader(fileStream))
+                        while (!stream.EndOfStream)
+                            lines.Add(stream.ReadLine());
+                    return lines.ToArray();
                 }
             }
         }
