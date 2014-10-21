@@ -14,9 +14,9 @@ namespace ZeroKLobby.MicroLobby
             Paint += BattleListTab_Enter; 
         }
 
-        void BattleListTab_Enter(object sender, EventArgs e)
+        void BattleListTab_Enter(object sender, EventArgs e) //lazy initialization
         {
-            Paint -= BattleListTab_Enter;
+            Paint -= BattleListTab_Enter; //using "Paint" instead of "Enter" event because "Enter" is too lazy in Mono (have to click control)
             SuspendLayout(); //pause
             InitializeComponent();
 
@@ -33,8 +33,8 @@ namespace ZeroKLobby.MicroLobby
             Program.ToolTip.SetText(lookingGlass, "Search game, description, map or player");
             Program.ToolTip.SetText(searchBox, "Search game, description, map or player");
 
-            showEmptyBox.Checked = Program.Conf.ShowEmptyBattles;
-            showFullBox.Checked = Program.Conf.ShowNonJoinableBattles;
+            hideEmptyBox.Checked = Program.Conf.HideEmptyBattles;
+            hideFullBox.Checked = Program.Conf.HideNonJoinableBattles;
             showOfficialBox.Checked = Program.Conf.ShowOfficialBattles;
 
             // battle list
@@ -84,15 +84,20 @@ namespace ZeroKLobby.MicroLobby
         }
 
         void showEmptyBox_CheckedChanged(object sender, EventArgs e) {
-            if (battleListControl != null) battleListControl.ShowEmpty = showEmptyBox.Checked;
+            if (battleListControl != null) battleListControl.HideEmpty = hideEmptyBox.Checked;
         }
 
         void showFullBox_CheckedChanged(object sender, EventArgs e) {
-            if (battleListControl != null) battleListControl.ShowFull = showFullBox.Checked;
+            if (battleListControl != null) battleListControl.HideFull = hideFullBox.Checked;
         }
 
         void showOfficialButton_CheckedChanged(object sender, EventArgs e) {
             if (battleListControl != null) battleListControl.ShowOfficial = showOfficialBox.Checked;
+        }
+
+        private void hidePasswordedBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (battleListControl != null) battleListControl.HidePassworded = hidePasswordedBox.Checked;
         }
 
     }

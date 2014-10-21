@@ -30,20 +30,22 @@
         {
             this.panel1 = new System.Windows.Forms.Panel();
             this.showOfficialBox = new System.Windows.Forms.CheckBox();
-            this.showEmptyBox = new System.Windows.Forms.CheckBox();
-            this.showFullBox = new System.Windows.Forms.CheckBox();
+            this.hideEmptyBox = new System.Windows.Forms.CheckBox();
+            this.hideFullBox = new System.Windows.Forms.CheckBox();
             this.searchLabel = new System.Windows.Forms.Label();
             this.searchBox = new System.Windows.Forms.TextBox();
             this.battlePanel = new System.Windows.Forms.Panel();
+            this.hidePasswordedBox = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.DimGray;
+            this.panel1.Controls.Add(this.hidePasswordedBox);
             this.panel1.Controls.Add(this.showOfficialBox);
-            this.panel1.Controls.Add(this.showEmptyBox);
-            this.panel1.Controls.Add(this.showFullBox);
+            this.panel1.Controls.Add(this.hideEmptyBox);
+            this.panel1.Controls.Add(this.hideFullBox);
             this.panel1.Controls.Add(this.searchLabel);
             this.panel1.Controls.Add(this.searchBox);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
@@ -56,7 +58,7 @@
             // showOfficialBox
             // 
             this.showOfficialBox.AutoSize = true;
-            this.showOfficialBox.Location = new System.Drawing.Point(414, 5);
+            this.showOfficialBox.Location = new System.Drawing.Point(504, 7);
             this.showOfficialBox.Name = "showOfficialBox";
             this.showOfficialBox.Size = new System.Drawing.Size(82, 17);
             this.showOfficialBox.TabIndex = 6;
@@ -64,27 +66,27 @@
             this.showOfficialBox.UseVisualStyleBackColor = true;
             this.showOfficialBox.CheckedChanged += new System.EventHandler(this.showOfficialButton_CheckedChanged);
             // 
-            // showEmptyBox
+            // hideEmptyBox
             // 
-            this.showEmptyBox.AutoSize = true;
-            this.showEmptyBox.Location = new System.Drawing.Point(323, 5);
-            this.showEmptyBox.Name = "showEmptyBox";
-            this.showEmptyBox.Size = new System.Drawing.Size(85, 17);
-            this.showEmptyBox.TabIndex = 5;
-            this.showEmptyBox.Text = "Show Empty";
-            this.showEmptyBox.UseVisualStyleBackColor = true;
-            this.showEmptyBox.CheckedChanged += new System.EventHandler(this.showEmptyBox_CheckedChanged);
+            this.hideEmptyBox.AutoSize = true;
+            this.hideEmptyBox.Location = new System.Drawing.Point(303, 7);
+            this.hideEmptyBox.Name = "hideEmptyBox";
+            this.hideEmptyBox.Size = new System.Drawing.Size(80, 17);
+            this.hideEmptyBox.TabIndex = 5;
+            this.hideEmptyBox.Text = "Hide Empty";
+            this.hideEmptyBox.UseVisualStyleBackColor = true;
+            this.hideEmptyBox.CheckedChanged += new System.EventHandler(this.showEmptyBox_CheckedChanged);
             // 
-            // showFullBox
+            // hideFullBox
             // 
-            this.showFullBox.AutoSize = true;
-            this.showFullBox.Location = new System.Drawing.Point(230, 5);
-            this.showFullBox.Name = "showFullBox";
-            this.showFullBox.Size = new System.Drawing.Size(72, 17);
-            this.showFullBox.TabIndex = 4;
-            this.showFullBox.Text = "Show Full";
-            this.showFullBox.UseVisualStyleBackColor = true;
-            this.showFullBox.CheckedChanged += new System.EventHandler(this.showFullBox_CheckedChanged);
+            this.hideFullBox.AutoSize = true;
+            this.hideFullBox.Location = new System.Drawing.Point(230, 7);
+            this.hideFullBox.Name = "hideFullBox";
+            this.hideFullBox.Size = new System.Drawing.Size(67, 17);
+            this.hideFullBox.TabIndex = 4;
+            this.hideFullBox.Text = "Hide Full";
+            this.hideFullBox.UseVisualStyleBackColor = true;
+            this.hideFullBox.CheckedChanged += new System.EventHandler(this.showFullBox_CheckedChanged);
             // 
             // searchLabel
             // 
@@ -111,6 +113,17 @@
             this.battlePanel.Size = new System.Drawing.Size(731, 432);
             this.battlePanel.TabIndex = 1;
             // 
+            // hidePasswordedBox
+            // 
+            this.hidePasswordedBox.AutoSize = true;
+            this.hidePasswordedBox.Location = new System.Drawing.Point(389, 7);
+            this.hidePasswordedBox.Name = "hidePasswordedBox";
+            this.hidePasswordedBox.Size = new System.Drawing.Size(109, 17);
+            this.hidePasswordedBox.TabIndex = 7;
+            this.hidePasswordedBox.Text = "Hide Passworded";
+            this.hidePasswordedBox.UseVisualStyleBackColor = true;
+            this.hidePasswordedBox.CheckedChanged += new System.EventHandler(this.hidePasswordedBox_CheckedChanged);
+            // 
             // BattleListTab
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -129,11 +142,12 @@
 
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.CheckBox showOfficialBox;
-        private System.Windows.Forms.CheckBox showEmptyBox;
-        private System.Windows.Forms.CheckBox showFullBox;
+        private System.Windows.Forms.CheckBox hideEmptyBox;
+        private System.Windows.Forms.CheckBox hideFullBox;
         private System.Windows.Forms.Label searchLabel;
         private System.Windows.Forms.TextBox searchBox;
         private System.Windows.Forms.Panel battlePanel;
+        private System.Windows.Forms.CheckBox hidePasswordedBox;
 
     }
 }
