@@ -74,7 +74,11 @@ namespace ZeroKLobby.MicroLobby
                 Program.ToolTip.SetText(cancelButton, "Exit, do not commit change");
                 Program.ToolTip.SetText(applyButton, "Write all entries to Springsettings.cfg");
 
-                settingsOptions = new Spring(Program.SpringPaths).GetEngineConfigOptions();
+                var springPath = Program.SpringPaths;
+                if (springPath.UnitSyncDirectory == "") //if never set Spring path yet
+                    Utils.MakePath(springPath.WritableDirectory, "engine", ZkData.GlobalConst.DefaultEngineOverride); //DefaultEngineOverride at PlasmaShared/GlobalConst.cs
+                
+                settingsOptions = new Spring(springPath).GetEngineConfigOptions();
 
                 var location = 0;
                 foreach (var kvp in settingsOptions) //ref: http://www.dotnetperls.com/dictionary, http://stackoverflow.com/questions/10556205/deserializing-a-json-with-variable-name-value-pairs-into-object-in-c-sharp
