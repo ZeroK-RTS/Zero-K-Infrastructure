@@ -137,7 +137,7 @@ namespace ZeroKLobby.MicroLobby
 
 		void btnBrowse_Click(object sender, EventArgs e)
 		{
-			Utils.SafeStart("file://" + Program.SpringPaths.WritableDirectory);
+			Utils.SafeStart(Program.SpringPaths.WritableDirectory);
 		}
 
 		void btnDisplay_Click(object sender, EventArgs e)
@@ -217,7 +217,7 @@ namespace ZeroKLobby.MicroLobby
 
         private void gameLogButton_Click(object sender, EventArgs e)
         {
-            Utils.SafeStart("file://" + Utils.MakePath(Program.SpringPaths.WritableDirectory, "infolog.txt"));
+            Utils.SafeStart(Utils.MakePath (Program.SpringPaths.WritableDirectory, "infolog.txt"));
         }
 
 		void developmentButton_Click(object sender, EventArgs e)
@@ -315,7 +315,7 @@ namespace ZeroKLobby.MicroLobby
 
         private void btnOfflineSkirmish_Click(object sender, EventArgs e)
         {
-            Program.MainWindow.navigationControl.Path = "extra";
+            Program.MainWindow.navigationControl.Path = "spring://extra";
         }
 	}
 }
