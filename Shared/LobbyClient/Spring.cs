@@ -204,7 +204,6 @@ namespace LobbyClient
             return statsPlayers[name].IsIngameReady;
         }
 
-
         public void Kick(string name) {
             SayGame("/kick " + name);
         }
@@ -212,7 +211,6 @@ namespace LobbyClient
         public void ResignPlayer(string name) {
             if (IsRunning) talker.SendText(string.Format("/luarules resignteam {0}", name));
         }
-
 
         public void SayGame(string text) {
             try
