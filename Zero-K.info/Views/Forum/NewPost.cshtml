@@ -1,4 +1,4 @@
-﻿@model ZeroKWeb.Controllers.ForumController.NewPostResult
+@model ZeroKWeb.Controllers.ForumController.NewPostResult
 @{
   Page.Title = "New post";
 }
@@ -11,13 +11,27 @@
   <h3>Post new topic</h3>
 }
 
-
 <form method="post" action="@Url.Action("SubmitPost", "Forum", new { threadID = Model.CurrentThread != null ? (int?)Model.CurrentThread.ForumThreadID : null, categoryID = Model.CurrentCategory.ForumCategoryID, forumPostID = Model.EditedPost != null ? (int?)Model.EditedPost.ForumPostID : null })">
 @if (Model.CanSetTopic) {
   @:Title: <input type="text" name="title" cols="50" value="@(Model.EditedPost != null ? Model.EditedPost.ForumThread.Title:null)"/><br/>
 }
 
-<textarea name="text" rows="8" cols="80">@(Model.EditedPost != null ? Model.EditedPost.Text:null)</textarea><br />
+<div>
+	<a href=\"#\" onClick=\"$('#newPostTextArea').val($('#newPostTextArea').val() + ' [b]bold_text[/b] ');return false;\"><b>bold</b></a> / 
+	<a href=\"#\" onClick=\"$('#newPostTextArea').val($('#newPostTextArea').val() + ' [i]italic_text[/i] ');return false;\"><i>italic</i></a> / 
+	<a href=\"#\" onClick=\"$('#newPostTextArea').val($('#newPostTextArea').val() + ' [u]underlined_text[/u] ');return false;\"><u>strike</u></a> / 
+	<a href=\"#\" onClick=\"$('#newPostTextArea').val($('#newPostTextArea').val() + ' [s]striked_text[/s] ');return false;\"><s>underline></s></a> / 
+	<a href=\"#\" onClick=\"$('#newPostTextArea').val($('#newPostTextArea').val() + ' [url=http://www.zero-k.info]displayed_link_text[/url] ');return false;\">link</a> / 
+	<a href=\"#\" onClick=\"$('#newPostTextArea').val($('#newPostTextArea').val() + ' [q]quote[/q] ');return false;\">quote</a> /
+	<a href=\"#\" onClick=\"$('#newPostTextArea').val($('#newPostTextArea').val() + ' [img]http://your.image.url.png[/img] ');return false;\">image</a> /
+	<a href=\"#\" onClick=\"$('#newPostTextArea').val($('#newPostTextArea').val() + ' [colour=red]your_coloured_text[/colour] ');return false;\">[colour=red]colour[/colour]</a> /
+	<a href=\"#\" onClick=\"$('#newPostTextArea').val($('#newPostTextArea').val() + ' [size=3]your_sized_text[/size]  ');return false;\">sized_text</a> /
+	<a href=\"#\" onClick=\"$('#newPostTextArea').val($('#newPostTextArea').val() + ' @Licho ');return false;\">Player_Reference</a> /
+	<a href=\"#\" onClick=\"$('#newPostTextArea').val($('#newPostTextArea').val() + ' @B12345 ');return false;\">Battle_Reference_Number</a> /
+</div>
+
+
+<textarea id="newPostTextArea" name="text" rows="8" cols="80">@(Model.EditedPost != null ? Model.EditedPost.Text:null)</textarea><br />
 <input  class="textbutton" type="submit" value="Submit Post" />
 </form>
 @if (Model.LastPosts != null && Model.CurrentThread != null) {
