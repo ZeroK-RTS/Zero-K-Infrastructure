@@ -11,6 +11,15 @@ namespace ZeroKLobby
         const int WS_EX_NOACTIVATE = 0x08000000;
         const int WS_EX_TOOLWINDOW = 0x80;
         const int WS_EX_APPWINDOW = 0x00040000;
+        const int WS_EX_TOPMOST = 0x00000008;
+        const int WS_EX_TRANSPARENT = 0x00000020;
+        const int WS_DISABLED = 0x08000000;
+
+        private static PlayerTooltipRenderer playerTooltipRenderer;
+        private static BattleTooltipRenderer battleTooltipRenderer;
+        private static MapTooltipRenderer mapTooltipRenderer;
+        private static TextTooltipRenderer textTooltipRenderer;
+        private static ToolTipForm nt;
 
         protected override CreateParams CreateParams
         {
@@ -18,15 +27,22 @@ namespace ZeroKLobby
             {
                 var baseParams = base.CreateParams;
                 baseParams.ExStyle &= ~WS_EX_APPWINDOW;
-                baseParams.ExStyle |= WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW;
-				baseParams.Style &= ~WS_EX_APPWINDOW; //In MONO it seem to needed, not just add to ExtendedStyle
-                baseParams.Style |= WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW;
+                baseParams.ExStyle |= WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW | WS_EX_TOPMOST;
+                baseParams.Style |= WS_DISABLED; //prevent focus
+                //usefull tool to check ExStyle content: Console.WriteLine("0x{0:x8}", baseParams.ExStyle);
                 return baseParams;
             }
         }
 
         protected override bool ShowWithoutActivation { get { return true; } }
-        readonly IToolTipRenderer toolTipRenderer;
+        private IToolTipRenderer toolTipRenderer;
+        private bool active = false;
+        public bool IsActive { get { return active; } 
+            set { 
+                this.Visible = value;
+                active =  value;
+            }
+        }
 
 
         public ToolTipForm(IToolTipRenderer renderer)
@@ -50,19 +66,49 @@ namespace ZeroKLobby
         public static ToolTipForm CreateToolTipForm(string text)
         {
             IToolTipRenderer renderer = null;
-            if (text.StartsWith("#user#")) renderer = new PlayerTooltipRenderer(text.Substring(6));
-            else if (text.StartsWith("#battle#")) renderer = new BattleTooltipRenderer(int.Parse(text.Substring(8)));
-            else if (text.StartsWith("#map#")) renderer = new MapTooltipRenderer(text.Substring(5));
-            else renderer = new TextTooltipRenderer(text);
 
-            var nt = new ToolTipForm(renderer);
-            var size = nt.GetTooltipSize();
-            if (size != null) nt.Size = size.Value;
-            else
+            if (playerTooltipRenderer == null) 
             {
-                nt.Dispose();
-                return null;
+                playerTooltipRenderer = new PlayerTooltipRenderer();
+                battleTooltipRenderer = new BattleTooltipRenderer();
+                mapTooltipRenderer = new MapTooltipRenderer();
+                textTooltipRenderer = new TextTooltipRenderer();
             }
+
+            if (text.StartsWith ("#user#")) 
+            {
+                playerTooltipRenderer.SetPlayerTooltipRenderer (text.Substring (6));
+                renderer = playerTooltipRenderer;
+            } 
+            else if (text.StartsWith ("#battle#")) 
+            {
+                battleTooltipRenderer.SetBattleTooltipRenderer (int.Parse (text.Substring (8)));
+                renderer = battleTooltipRenderer;
+            } 
+            else if (text.StartsWith ("#map#")) 
+            {
+                mapTooltipRenderer.SetMapTooltipRenderer (text.Substring (5));
+                renderer = mapTooltipRenderer;
+            } 
+            else 
+            {
+                textTooltipRenderer.SetTextTooltipRenderer (text);
+                renderer = textTooltipRenderer;
+            }
+
+            if (nt == null)
+                nt = new ToolTipForm (renderer);
+            else
+                nt.toolTipRenderer = renderer;
+
+            var size = nt.GetTooltipSize();
+            if (size != null) 
+            {
+                nt.Size = size.Value;
+                nt.active = true;
+            }
+            else
+                nt.active = false;
 
             return nt;
         }
@@ -78,8 +124,10 @@ namespace ZeroKLobby
         {
             if (e == null) throw new ArgumentNullException("e");
             base.OnPaint(e);
+            if (toolTipRenderer == null)
+                return;
             e.Graphics.DrawRectangle(Pens.Black, 0, 0, Width - 1, Height - 1);
-            if (toolTipRenderer != null) toolTipRenderer.Draw(e.Graphics, Font, ForeColor);
+            toolTipRenderer.Draw(e.Graphics, Font, ForeColor);
         }
     }
 }

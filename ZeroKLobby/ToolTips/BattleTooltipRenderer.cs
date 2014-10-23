@@ -13,7 +13,7 @@ namespace ZeroKLobby
     {
         int battleID;
 
-        public BattleTooltipRenderer(int battleID)
+        public void SetBattleTooltipRenderer(int battleID)
         {
             this.battleID = battleID;
         }

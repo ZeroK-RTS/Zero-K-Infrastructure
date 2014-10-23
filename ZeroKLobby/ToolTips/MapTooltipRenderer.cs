@@ -12,7 +12,7 @@ namespace ZeroKLobby
         Map map;
         string mapName;
 
-        public MapTooltipRenderer(string mapName)
+        public void SetMapTooltipRenderer(string mapName)
         {
             this.mapName = mapName;
             Program.SpringScanner.MetaData.GetMapAsync(mapName, (map, minimap, heightmap, metalmap) => { this.map = map; }, (exc) => { }, Program.SpringPaths.SpringVersion);

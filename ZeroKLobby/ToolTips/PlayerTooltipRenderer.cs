@@ -13,7 +13,7 @@ namespace ZeroKLobby
     {
         string userName;
 
-        public PlayerTooltipRenderer(string name)
+        public void SetPlayerTooltipRenderer(string name)
         {
             userName = name;
         }
