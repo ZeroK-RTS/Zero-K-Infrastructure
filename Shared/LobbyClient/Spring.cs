@@ -153,30 +153,14 @@ namespace LobbyClient
         public void ExitGame() {
             try {
                 if (IsRunning) {
-                    Console.WriteLine("Sending  /kill attempt #1");
                     SayGame("/kill"); // todo dont do this if talker does not work (not a host)
                     process.WaitForExit(5000);
                     if (!IsRunning) return;
-
-                    Console.WriteLine("Sending  /kill attempt #2");
-                    SayGame("/kill"); 
-                    process.WaitForExit(5000);
-                    if (!IsRunning) return;
-
-                    Console.WriteLine("Sending  /kill attempt #3");
-                    SayGame("/kill"); 
-                    process.WaitForExit(5000);
-                    if (!IsRunning) return;
-
-                    Console.WriteLine("Sending  /kill attempt #4");
-                    SayGame("/kill"); 
-                    process.WaitForExit(5000);
-                    if (!IsRunning) return;
                     
-                    Console.WriteLine("Terminating Spring process");
+                    Console.WriteLine("Terminating Spring process due to /kill timeout");
                     wasKilled = true;
                     process.Kill();
-                    ;
+                    
                     process.WaitForExit(1000);
                     if (!IsRunning) return;
                     process.Kill();
@@ -220,7 +204,6 @@ namespace LobbyClient
             return statsPlayers[name].IsIngameReady;
         }
 
-
         public void Kick(string name) {
             SayGame("/kick " + name);
         }
@@ -229,14 +212,14 @@ namespace LobbyClient
             if (IsRunning) talker.SendText(string.Format("/luarules resignteam {0}", name));
         }
 
-
         public void SayGame(string text) {
             try
             {
                 talker.SendText(text);
             }
-            catch (Exception e) {
-                Trace.TraceError("Exception when trying to SayGame " + e.ToString());
+            catch (NullReferenceException e) {
+                // do nothing: null reference is expected when game is not running
+                // the property isRunning would be useful here if it didn't lie so much
             }
         }
 
