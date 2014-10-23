@@ -106,7 +106,24 @@ namespace System.Web.Mvc
             // embed player to display gifv format (mp4, limited (for now) to be hosted on imgur)
             exp = new Regex(@"\[gifv\]\https?\://i\.imgur\.com/(\w+)\.(gifv|mp4)\[/gifv\]", RegexOptions.IgnoreCase);
             str = exp.Replace(str, 
-			"<div style=\"width: auto; height: auto; text-align:center; line-height:0;\"><video webkit-playsinline=\"\" poster=\"https://i.imgur.com/$1h.jpg\" preload=\"auto\" autoplay=\"autoplay\" muted=\"muted\" loop=\"loop\" height=\"auto\" width=\"auto\"><source src=\"https://i.imgur.com/$1.mp4\" type=\"video/mp4\"><object type=\"application/x-shockwave-flash\" height=\"auto\" width=\"auto\" data=\"https://s.imgur.com/include/flash/gifplayer.swf?imgur_video=https://i.imgur.com/$1.mp4&imgur_width=auto&imgur_height=auto\"></video></div>");
+		"<div style=\"width: auto; height: auto; text-align:center; line-height:0;\">" + 
+		"<video webkit-playsinline=\"\" poster=\"https://i.imgur.com/$1h.jpg\" preload=\"auto\" autoplay=\"autoplay\" muted=\"muted\" loop=\"loop\" height=\"auto\" width=\"auto\">"+
+		"<source src=\"https://i.imgur.com/$1.mp4\" type=\"video/mp4\">"+
+		"<object type=\"application/x-shockwave-flash\" height=\"auto\" width=\"auto\" data=\"https://s.imgur.com/include/flash/gifplayer.swf?imgur_video=https://i.imgur.com/$1.mp4&imgur_width=auto&imgur_height=auto\"/>"+
+		"</video>"+
+		"</div>");
+            		
+            // spoiler tags: [spoiler]spoiler_text[/spoiler]
+            // becomes: [Spoiler] and onClick displays the inner Content "spoiler_text" 
+            // (taken from jquery.expand.js -> "post score below threshold")
+            exp = new Regex(@"\[spoiler\]([^\[]+)\[/spoiler\]", RegexOptions.IgnoreCase);
+            str = exp.Replace(str, 
+            	"<div>" + 
+		"<a class=\"\" aria-describedby=\"ui-tooltip-0\" nicetitle-processed=\"Expand/Collapse\" style=\"display:block\" href=\"#\">[Spoiler]</a>" + 
+		"</div>" + 
+		"<div style=\"display: none;\" class=\"collapse\">" +
+                "$1" +
+                "</div>");
             			
             if (helper != null) {
                 // todo remove condition in the future
