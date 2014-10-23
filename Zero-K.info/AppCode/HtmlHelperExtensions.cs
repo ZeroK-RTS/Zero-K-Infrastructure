@@ -48,13 +48,14 @@ namespace System.Web.Mvc
 
             // format the quote tags: [quote][/quote] and [q][/q]
             // becomes: stuff
-            exp = new Regex(@"\[quote\]((.|\n)+?)\[/quote\]", RegexOptions.IgnoreCase);
+            exp = new Regex(@"\[(quote|q)\]((.|\n)+?)\[/(quote|q)\]", RegexOptions.IgnoreCase);
             str = exp.Replace(str,
-            "<table border=\"0\" cellpadding=\"6\" cellspacing=\"0\" width=\"100%\"><tbody><tr><td style=\"border: 1px inset;\"><em>quote:<br>$1</em></td></tr></tbody></table>");
-            exp = new Regex(@"\[q\]((.|\n)+?)\[/q\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str,
-            "<table border=\"0\" cellpadding=\"6\" cellspacing=\"0\" width=\"100%\"><tbody><tr><td style=\"border: 1px inset;\"><em>quote:<br>$1</em></td></tr></tbody></table>");
-
+            	"<table border=\"0\" cellpadding=\"6\" cellspacing=\"0\" width=\"100%\">"+
+            	"<tbody><tr><td style=\"border: 1px inset;\">"+
+            	"<em>quote:<br>$2</em>"+
+            	"</td></tr></tbody>"+
+            	"</table>");
+            
             // format the italic tags: [i][/i]
             // becomes: <em></em>
             exp = new Regex(@"\[i\]((.|\n)+?)\[/i\]", RegexOptions.IgnoreCase);
@@ -88,10 +89,8 @@ namespace System.Web.Mvc
             //format the colour tags: [color=red][/color]
             // becomes: <font color="red"></font>
             // supports UK English and US English spelling of colour/color
-            exp = new Regex(@"\[color\=([^\]]+)\]([^\]]+)\[/color\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<font color=\"$1\">$2</font>");
-            exp = new Regex(@"\[colour\=([^\]]+)\]([^\]]+)\[/colour\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<font color=\"$1\">$2</font>");
+            exp = new Regex(@"\[(color|colour)\=([^\]]+)\]([^\]]+)\[/(color|colour)\]", RegexOptions.IgnoreCase);
+            str = exp.Replace(str, "<font color=\"$2\">$3</font>");
 
             // format the size tags: [size=3][/size]
             // becomes: <font size="+3"></font>
