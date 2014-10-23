@@ -188,7 +188,9 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 timerCount++;
                 if (timerCount >= timerFPS * 3) //wait 3 second after download finish (just in case...)
                 {
-                    Setup_ComboBox();
+                    suppressEvent_SelectedIndexChanged = true;
+                    Setup_ComboBox_AndRestore();
+                    suppressEvent_SelectedIndexChanged = false;
                     download = null;
                 }
             } 
@@ -197,11 +199,24 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 timerCount++;
                 if (timerCount >= timerFPS * 15) //collect multiple update for 15 second and call Setup_ComboBox() only once to avoid flicker
                 {
-                    Setup_ComboBox();
+                    suppressEvent_SelectedIndexChanged = true;
+                    Setup_ComboBox_AndRestore();
+                    suppressEvent_SelectedIndexChanged = false;
                     requestComboBoxRefresh = false;
                     timerCount = 0;
                 }
             }
+        }
+
+        private void Setup_ComboBox_AndRestore()
+        {
+            int gameIndex = game_comboBox.SelectedIndex;
+            int mapIndex = map_comboBox.SelectedIndex;
+            int engineIndex = engine_comboBox.SelectedIndex;
+            Setup_ComboBox();
+            game_comboBox.SelectedIndex = gameIndex;
+            map_comboBox.SelectedIndex = mapIndex;
+            engine_comboBox.SelectedIndex = engineIndex;
         }
 
         private void Setup_ComboBox() //code from Benchmarker.MainForm.cs

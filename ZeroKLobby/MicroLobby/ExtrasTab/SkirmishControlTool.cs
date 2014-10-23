@@ -254,9 +254,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 return springAis;
 
             var aiName = System.IO.Directory.EnumerateDirectories(aiSkirmishFolder, "*").ToList<string>();
-            for (int i = 0; i < aiName.Count; i++)
-                aiName[i] = GetFolderName(aiName[i]);
-
             string aiFolder;
             string aiLibFolder;
             string aiVerFolder;
@@ -264,7 +261,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             string aiInfoFile;
             for (int i = 0; i < aiName.Count; i++)
             {
-                aiFolder = PlasmaShared.Utils.MakePath(aiSkirmishFolder, aiName[i]); //eg: Spring/engine/98.0/AI/Skirmish/AAI
+                aiFolder = aiName[i]; //eg: Spring/engine/98.0/AI/Skirmish/AAI
                 aiVerFolderS = System.IO.Directory.EnumerateDirectories(aiFolder, "*").ToList<string>();
                 for (int j = 0; j < aiVerFolderS.Count; j++)
                 {
