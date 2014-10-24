@@ -30,7 +30,7 @@ namespace ZeroKLobby
     }
 
     /// <summary>
-    /// Closes a channel tab in the chat tab
+    /// Closes a channel tab (not PM tab) in the chat tab
     /// </summary>
     public static void CloseChannel(string key)
     {

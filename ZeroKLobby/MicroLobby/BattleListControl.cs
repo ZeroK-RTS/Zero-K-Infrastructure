@@ -18,13 +18,14 @@ namespace ZeroKLobby.MicroLobby
         object lastTooltip;
         readonly IEnumerable<BattleIcon> model;
         Point previousLocation;
-        bool showEmpty;
+        bool hideEmpty;
         bool sortByPlayers;
+        bool hidePassworded;
 
         List<BattleIcon> view = new List<BattleIcon>();
 
         string filterText;
-        bool showFull;
+        bool hideFull;
 
         public string FilterText
         {
@@ -53,8 +54,9 @@ namespace ZeroKLobby.MicroLobby
             Program.BattleIconManager.RemovedBattle += HandleBattle;
             model = Program.BattleIconManager.BattleIcons;
             sortByPlayers = true;
-            showEmpty = Program.Conf.ShowEmptyBattles;
-            showFull = Program.Conf.ShowNonJoinableBattles;
+            hideEmpty = Program.Conf.HideEmptyBattles;
+            hideFull = Program.Conf.HideNonJoinableBattles;
+            hidePassworded = Program.Conf.HidePasswordedBattles;
             showOfficial = Program.Conf.ShowOfficialBattles;
 
             FilterBattles();
@@ -69,15 +71,15 @@ namespace ZeroKLobby.MicroLobby
         }
 
 
-        public bool ShowEmpty
+        public bool HideEmpty
         {
-            get { return showEmpty; }
+            get { return hideEmpty; }
             set
             {
-                if (showEmpty != value)
+                if (hideEmpty != value)
                 {
-                    showEmpty = value;
-                    Program.Conf.ShowEmptyBattles = showEmpty;
+                    hideEmpty = value;
+                    Program.Conf.HideEmptyBattles = hideEmpty;
                     FilterBattles();
                     Sort();
                     Invalidate();
@@ -102,15 +104,31 @@ namespace ZeroKLobby.MicroLobby
         }
 
 
-        public bool ShowFull
+        public bool HideFull
         {
-            get { return showFull; }
+            get { return hideFull; }
             set
             {
-                if (showFull != value)
+                if (hideFull != value)
                 {
-                    showFull = value;
-                    Program.Conf.ShowNonJoinableBattles = showFull;
+                    hideFull = value;
+                    Program.Conf.HideNonJoinableBattles = hideFull;
+                    FilterBattles();
+                    Sort();
+                    Invalidate();
+                }
+            }
+        }
+
+        public bool HidePassworded
+        {
+            get { return hidePassworded; }
+            set
+            {
+                if (hidePassworded != value)
+                {
+                    hidePassworded = value;
+                    Program.Conf.HidePasswordedBattles = hidePassworded;
                     FilterBattles();
                     Sort();
                     Invalidate();
@@ -273,9 +291,10 @@ namespace ZeroKLobby.MicroLobby
                 view = model.Where(icon => orParts.Any(filterPart => BattleWordFilter(icon.Battle, filterPart.Split(' ')))).ToList();
             }
             IEnumerable<BattleIcon> v = view; // speedup to avoid multiple "toList"
-            if (!showEmpty) v = v.Where(bi => bi.Battle.NonSpectatorCount > 0);
-            if (!showFull) v = v.Where(bi => bi.Battle.NonSpectatorCount < bi.Battle.MaxPlayers);
+            if (hideEmpty) v = v.Where(bi => bi.Battle.NonSpectatorCount > 0);
+            if (hideFull) v = v.Where(bi => bi.Battle.NonSpectatorCount < bi.Battle.MaxPlayers);
             if (showOfficial) v = v.Where(bi => bi.Battle.IsOfficial());
+            if (hidePassworded) v = v.Where(bi => !bi.Battle.IsPassworded); 
 
             view = v.ToList();
         }

@@ -29,10 +29,11 @@ namespace ZeroKLobby
         int idleTime = 5;
         StringCollection ignoredUsers = new StringCollection();
         string manualSpringPath = @"C:\Program Files\Spring";
-        bool showEmptyBattles = true;
         bool showHourlyChimes = true;
-        bool showNonJoinableBattles = true;
         bool showOfficialBattles = true;
+        bool hideEmptyBattles = false;
+        bool hideNonJoinableBattles = false;
+        bool hidePasswordedBattles = false;
 
 
         string springServerHost = "lobby.springrts.com";
@@ -149,6 +150,13 @@ namespace ZeroKLobby
         public string HostBattle_SpringieCommands { get; set; }
         [Browsable(false)]
         public string HostBattle_Title { get; set; }
+        [Browsable(false)]
+        public bool HideEmptyBattles { get { return hideEmptyBattles; } set { hideEmptyBattles = value; } }
+        [Browsable(false)]
+        public bool HideNonJoinableBattles { get { return hideNonJoinableBattles; } set { hideNonJoinableBattles = value; } }
+        [Browsable(false)]
+        public bool HidePasswordedBattles { get { return hidePasswordedBattles; } set { hidePasswordedBattles = value; } }
+
         [Category("Quickmatching")]
         [DisplayName("Idle User Time")]
         [Description("Idle minutes after which Zero-K lobby assumes the user is gone and quickmatching is stopped.")]
@@ -242,8 +250,6 @@ namespace ZeroKLobby
         public bool ResetUiKeysHack4 { get; set; }
 
 
-        [Browsable(false)]
-        public bool ShowEmptyBattles { get { return showEmptyBattles; } set { showEmptyBattles = value; } }
         [Category("Chat")]
         [DisplayName("Show Friends Window")]
         [Description("Shows an extra windows for your friends")]
@@ -254,8 +260,7 @@ namespace ZeroKLobby
         [DisplayName("Show Hourly Chat Message")]
         [Description("Show a notification in chat channels every hour.")]
         public bool ShowHourlyChimes { get { return showHourlyChimes; } set { showHourlyChimes = value; } }
-        [Browsable(true)]
-        public bool ShowNonJoinableBattles { get { return showNonJoinableBattles; } set { showNonJoinableBattles = value; } }
+
         [Browsable(false)]
         public bool ShowOfficialBattles { get { return showOfficialBattles; } set { showOfficialBattles = value; } }
 
