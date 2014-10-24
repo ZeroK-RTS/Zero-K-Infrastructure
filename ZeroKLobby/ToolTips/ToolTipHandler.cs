@@ -90,18 +90,15 @@ namespace ZeroKLobby
                 string text = null;
                 if (control != null) tooltips.TryGetValue(control, out text);
                 bool isWindowActive = Form.ActiveForm != null;
-                bool newTooltip = false; //to trigger position update
+                //bool newTooltip = false; //to trigger position update for Method A
 
                 if (lastText != text || lastVisible != Visible || lastActive != isWindowActive) {
-                    if (tooltip != null) {
-                        tooltip.Close();
-                        tooltip.Dispose();
-                        tooltip = null;
-                    }
+                    if (tooltip != null)
+                        tooltip.IsActive = false;
 
                     if (!string.IsNullOrEmpty(text) && Visible && isWindowActive) {
                         tooltip = ToolTipForm.CreateToolTipForm(text);
-                        if (tooltip != null)
+                        if (tooltip.IsActive)
                         {
                             tooltip.ForeColor = Program.Conf.OtherTextColor;
                             tooltip.Visible = true;
@@ -111,10 +108,10 @@ namespace ZeroKLobby
                     lastText = text;
                     lastVisible = visible;
                     lastActive = isWindowActive;
-                    newTooltip = true; //trigger position update
+                    //newTooltip = true; //trigger position update
                 }
 
-                if (tooltip != null) {
+                if (tooltip != null && tooltip.IsActive) {
                     //method B: tooltip remain stationary until user block the vision or when new tooltip is available
                     //var mp = System.Windows.Forms.Control.MousePosition;
                     //int tooltipLocationX = tooltip.Location.X;

@@ -7,7 +7,7 @@ namespace ZeroKLobby
     {
         string text;
 
-        public TextTooltipRenderer(string text)
+        public void SetTextTooltipRenderer(string text)
         {
             this.text = text;
         }
