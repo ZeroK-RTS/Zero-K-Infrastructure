@@ -26,8 +26,8 @@ namespace ZeroKLobby
             get
             {
                 var baseParams = base.CreateParams;
-                baseParams.ExStyle &= ~WS_EX_APPWINDOW;
-                baseParams.ExStyle |= WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW | WS_EX_TOPMOST;
+                //baseParams.ExStyle &= ~WS_EX_APPWINDOW;
+                baseParams.ExStyle |= WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW;
                 baseParams.Style |= WS_DISABLED; //prevent focus
                 //usefull tool to check ExStyle content: Console.WriteLine("0x{0:x8}", baseParams.ExStyle);
                 return baseParams;
@@ -54,7 +54,8 @@ namespace ZeroKLobby
             //BringToFront();
             
 
-
+            this.ShowInTaskbar = false; //hide from taskbar, method 3;
+            this.TopMost = true;
             SetStyle(ControlStyles.UserPaint | ControlStyles.UserMouse | ControlStyles.DoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
             SetStyle(ControlStyles.Selectable, false);
         }
