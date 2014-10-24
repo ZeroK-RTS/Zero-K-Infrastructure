@@ -80,13 +80,25 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             Account acc = db.Accounts.Single(x => x.AccountID == accountID);
             Account adminAcc = db.Accounts.Single(x => x.AccountID == adminAccountID);
-            acc.SpringieLevel = springieLevel;
-            acc.IsZeroKAdmin = zkAdmin;
-            acc.HasVpnException = vpnException;
+            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Permissions changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name), true);
+            if (acc.SpringieLevel != springieLevel)
+            {
+                Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - Springie rights: {0} -> {1}", acc.SpringieLevel, springieLevel), true);
+                acc.SpringieLevel = springieLevel;
+            }
+            if (acc.IsZeroKAdmin != zkAdmin)
+            {
+                Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - Admin status: {0} -> {1}", acc.IsZeroKAdmin, zkAdmin), true);
+                acc.IsZeroKAdmin = zkAdmin;
+            }
+            if (acc.HasVpnException != vpnException)
+            {
+                Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - VPN exception: {0} -> {1}", acc.HasVpnException, vpnException), true);
+                acc.HasVpnException = vpnException;
+            }
             db.SubmitChanges();
             Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);
             
-            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Permissions changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name), true);
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
 
