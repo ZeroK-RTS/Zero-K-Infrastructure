@@ -276,7 +276,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                         if (currentLine.Contains("key    = "))
                         {
                             keyName = GetValue(currentLine);
-                            System.Diagnostics.Trace.TraceError(keyName);
                             currentLine = stream.ReadLine();
                             longValue = currentLine;
                             currentLine = stream.ReadLine();
