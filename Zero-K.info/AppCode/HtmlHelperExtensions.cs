@@ -103,7 +103,7 @@ namespace System.Web.Mvc
             str = str.Replace("\r\n", "<br />\r\n");
             
             // embed player to display gifv format (mp4, limited (for now) to be hosted on imgur)
-            exp = new Regex(@"\[gifv\]\https?\://i\.imgur\.com/(\w+)\.(gifv|mp4)\[/gifv\]", RegexOptions.IgnoreCase);
+            exp = new Regex(@"\[gifv\]https?\://i\.imgur\.com/(\w+)\.(gifv|mp4)\[/gifv\]", RegexOptions.IgnoreCase);
             str = exp.Replace(str, 
 		"<div style=\"width: auto; height: auto; text-align:center; line-height:0;\">" + 
 		"<video webkit-playsinline=\"\" poster=\"https://i.imgur.com/$1h.jpg\" preload=\"auto\" autoplay=\"autoplay\" muted=\"muted\" loop=\"loop\" height=\"auto\" width=\"auto\">"+
