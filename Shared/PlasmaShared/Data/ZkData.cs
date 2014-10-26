@@ -27,7 +27,7 @@ namespace ZkData
         private static string ConnectionStringLocal = @"Data Source=.\SQLEXPRESS;Initial Catalog=zero-k-dev;Integrated Security=True";
         
 #if !DEPLOY
-        private static string ConnectionStringLive = @"Data Source=omeganew.licho.eu,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1";
+        private static string ConnectionStringLive = @"Data Source=omega.licho.eu,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1";
 #else 
         private static string ConnectionStringLive = Settings.Default.zero_kConnectionString;
 #endif 
