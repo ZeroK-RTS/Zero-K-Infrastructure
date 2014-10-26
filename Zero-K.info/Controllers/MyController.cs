@@ -74,7 +74,7 @@ namespace ZeroKWeb.Controllers
 							Unlock unlock = db.Unlocks.Single(x => x.UnlockID == unlockId);
 
 							if (!unlocks.Any(x => x.UnlockID == unlock.UnlockID)) return Content("WTF get lost!");
-							if (slot.MorphLevel < unlock.MorphLevel) return Content(string.Format("WTF cannot use {0} in slot {1}", unlock.Name, slot.CommanderSlotID));
+							if (slot.MorphLevel < unlock.MorphLevel || slot.UnlockType != unlock.UnlockType) return Content(string.Format("WTF cannot use {0} in slot {1}", unlock.Name, slot.CommanderSlotID));
 							if (!string.IsNullOrEmpty(unlock.LimitForChassis))
 							{
 								var validChassis = unlock.LimitForChassis.Split(',');
