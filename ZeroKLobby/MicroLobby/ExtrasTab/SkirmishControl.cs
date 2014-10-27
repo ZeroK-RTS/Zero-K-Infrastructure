@@ -183,25 +183,19 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             }
 
             //update combobox
-            if (download != null && download.IsComplete.GetValueOrDefault())
+            bool downloadFinished = (download != null && download.IsComplete.GetValueOrDefault());
+            if (downloadFinished || requestComboBoxRefresh)
             {
                 timerCount++;
-                if (timerCount >= timerFPS * 3) //wait 3 second after download finish (just in case...)
+                //wait 3 second after LocalResourceAdded() to avoid ComboBox flicker if its called too often, 
+                //and wait 3 second for download finish just in case the file is extracting
+                if (timerCount >= timerFPS * 3)
                 {
                     suppressEvent_SelectedIndexChanged = true;
                     Setup_ComboBox_AndRestore();
                     suppressEvent_SelectedIndexChanged = false;
+                    
                     download = null;
-                }
-            } 
-            else if(requestComboBoxRefresh)
-            {
-                timerCount++;
-                if (timerCount >= timerFPS * 15) //collect multiple update for 15 second and call Setup_ComboBox() only once to avoid flicker
-                {
-                    suppressEvent_SelectedIndexChanged = true;
-                    Setup_ComboBox_AndRestore();
-                    suppressEvent_SelectedIndexChanged = false;
                     requestComboBoxRefresh = false;
                     timerCount = 0;
                 }
