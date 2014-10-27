@@ -363,7 +363,7 @@ namespace ZeroKLobby.MicroLobby
                 if (control.CanClose)
                 {
                     var closeItem = new System.Windows.Forms.MenuItem("Close");
-                    closeItem.Click += (s, e) => Program.MainWindow.ChatTab.ClosePrivateTab(control.UserName);
+                    closeItem.Click += (s, e) => ActionHandler.ClosePrivateChat(control.UserName);
                     contextMenu.MenuItems.Add(closeItem);
                 }
 
