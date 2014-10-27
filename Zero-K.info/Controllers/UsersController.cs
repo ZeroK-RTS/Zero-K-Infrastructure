@@ -231,6 +231,7 @@ namespace ZeroKWeb.Controllers
                 }
 
                 Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("New penalty for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")), true);
+                Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Reason: {0} ", reason), true);
             }
             catch (Exception ex)
             {
