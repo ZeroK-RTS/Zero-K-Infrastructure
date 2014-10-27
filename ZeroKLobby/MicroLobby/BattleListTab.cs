@@ -36,6 +36,7 @@ namespace ZeroKLobby.MicroLobby
             hideEmptyBox.Checked = Program.Conf.HideEmptyBattles;
             hideFullBox.Checked = Program.Conf.HideNonJoinableBattles;
             showOfficialBox.Checked = Program.Conf.ShowOfficialBattles;
+            hidePasswordedBox.Checked = Program.Conf.HidePasswordedBattles;
 
             // battle list
             battleListControl = new BattleListControl() { Dock = DockStyle.Fill };
