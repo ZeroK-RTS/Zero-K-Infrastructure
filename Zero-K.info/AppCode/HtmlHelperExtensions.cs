@@ -118,7 +118,7 @@ namespace System.Web.Mvc
             exp = new Regex(@"\[spoiler\]([^\[]+)\[/spoiler\]", RegexOptions.IgnoreCase);
             str = exp.Replace(str, 
             	"<small class=\"expand\">" + 
-		"<a class=\"\" aria-describedby=\"ui-tooltip-0\" nicetitle-processed=\"Expand/Collapse\" style=\"display:block\" href=\"#\">[Spoiler]</a>" + 
+		"<a nicetitle-processed=\"Expand/Collapse\" style=\"display:block\" href=\"#\">[Spoiler]</a>" + 
 		"</small>" + 
 		"<div style=\"display: none;\" class=\"collapse\">" +
                 "$1" +
