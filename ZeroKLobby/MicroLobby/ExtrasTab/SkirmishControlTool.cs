@@ -60,71 +60,56 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 'x','y','z',
             };
             //initialize score table
-            List<object[]> scoredItem = new List<object[]>(nameList.Count);
+            List<object[]> scoredItem = new List<object[]>();
             for (int i = 0; i < nameList.Count; i++)
             {
                 string[] textComponent = ((string)nameList[i][0]).ToLower().Split(new char[4] { ' ', '.', '-', '_' }, StringSplitOptions.RemoveEmptyEntries);
-                List<object> charList = new List<object>();
-                List<bool> numberList = new List<bool>(); //remember which one is char and which one is integer in "charList"
+                List<int> charScore = new List<int>();
                 for (int j = 0; j < textComponent.Length; j++)
                 {
+                    int charCount = textComponent[j].Length;
                     int isInteger = -1;
                     int.TryParse(textComponent[j], out isInteger);
-                    if (isInteger != 0 || textComponent[j].Length == 1)
+                    if (isInteger != 0 || charCount == 1)
                     {
-                        charList.Add(isInteger);
-                        numberList.Add(true);
+                        charScore.Add(isInteger);
                     }
                     else //text, but probably versioning char (like 'v' or 'r')
                     {
-                        int.TryParse(textComponent[j].Substring(1), out isInteger);
-                        if (isInteger != 0 || textComponent[j][1]=='0')  //trailing integer is probably version number
+                        int.TryParse(textComponent[j].Substring(1), out isInteger); //it return '0' when can't parse or when its really '0'
+                        if (isInteger != 0 || (textComponent[j][1] == '0' && charCount == 2))  //trailing integer is probably version number
                         {
-                            charList.Add(isInteger);
-                            numberList.Add(true);
+                            charScore.Add(isInteger);
                         }
                         else
                         {  // score for 1st,2nd char in a word
-                            charList.Add(textComponent[j][0]);
-                            charList.Add(textComponent[j][1]);
-                            numberList.Add(false);
-                            numberList.Add(false);
+                            int score = GetMatchingCharIndex(charIndex, textComponent[j][0]);
+                            charScore.Add(score);
+                            score = GetMatchingCharIndex(charIndex, textComponent[j][1]);
+                            charScore.Add(score);
                         }
                     }
                 }
-                scoredItem.Add(new object[3] { 
-                    charList.ToArray(),
-                    numberList.ToArray(),
+                scoredItem.Add(new object[2] { 
+                    charScore.ToArray(),
                     nameList[i] });
             }
 
 
             scoredItem.Sort(delegate(object[] x, object[] y) //Reference: http://msdn.microsoft.com/en-us/library/b0zbh7b6(v=vs.110).aspx
             {
-                object[] tableX = (object[])x[0];
-                bool[] tableXnum = (bool[])x[1];
-                object[] tableY = (object[])y[0];
-                bool[] tableYnum = (bool[])y[1];
+                int[] tableX = (int[])x[0];
+                int[] tableY = (int[])y[0];
                 int loopCount = Math.Max(tableX.Length, tableY.Length);
                 for (int i = 0; i < loopCount; i++)
                 {
                     int scoreX = -2;
                     int scoreY = -2;
                     if (i < tableX.Length)
-                    {
-                        if (tableXnum[i]) //a number
-                            scoreX = (int)tableX[i];
-                        else //a char 
-                            scoreX = GetMatchingCharIndex(charIndex, (char)tableX[i]);
-                    }
+                         scoreX = tableX[i];
 
                     if (i < tableY.Length)
-                    {
-                        if (tableYnum[i])
-                            scoreY = (int)tableY[i];
-                        else
-                            scoreY = GetMatchingCharIndex(charIndex, (char)tableY[i]);
-                    }
+                         scoreY = tableY[i];
 
                     if (scoreX > scoreY || scoreY==-2) return 1; //is "1" when X is bigger than Y or when Y is empty
                     if (scoreX == -2 || scoreX < scoreY) return -1; //is "-1" when X is smaller than Y or when X is empty
@@ -133,7 +118,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             });
 
             for (int i = 0; i < nameList.Count; i++)
-                nameList[i] = (object[])scoredItem[i][2];// +" " + ((double)scoredItem[i][0]).ToString();
+                nameList[i] = (object[])scoredItem[i][1];
 
             return nameList;
         }
