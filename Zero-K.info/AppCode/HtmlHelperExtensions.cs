@@ -170,9 +170,15 @@ namespace System.Web.Mvc
             var url = Global.UrlHelper();
 
             ForumThreadLastRead lastRead = null;
+            ForumLastRead lastReadForum = null;
             DateTime? lastTime = null;
-            if (Global.Account != null) lastRead = Global.Account.ForumThreadLastReads.FirstOrDefault(x => x.ForumThreadID == thread.ForumThreadID);
-            if (lastRead != null) lastTime = lastRead.LastRead;
+            if (Global.Account != null)
+            {
+                lastRead = Global.Account.ForumThreadLastReads.FirstOrDefault(x => x.ForumThreadID == thread.ForumThreadID);
+                lastReadForum = Global.Account.ForumLastReads.FirstOrDefault(x => x.ForumCategoryID == thread.ForumCategoryID);
+                if (lastReadForum != null) lastTime = lastReadForum.LastRead;
+            }
+            if (lastRead != null && lastRead.LastRead > lastTime) lastTime = lastRead.LastRead;
             ForumPost post = null;
             if (lastTime != null) post = thread.ForumPosts.FirstOrDefault(x => x.Created > lastTime);
             int page = post != null ? ZeroKWeb.Controllers.ForumController.GetPostPage(post.ForumPostID) : (thread.PostCount-1)/GlobalConst.ForumPostsPerPage;
@@ -184,11 +190,11 @@ namespace System.Web.Mvc
 
             string format;
 
-            if (lastRead == null) format = "<span>{0}<img src='/img/mail/mail-unread.png' height='15' /><i>{1}</i></a></span>";
+            if (lastTime == null) format = "<span>{0}<img src='/img/mail/mail-unread.png' height='15' /><i>{1}</i></a></span>";
             else {
-                if (lastRead.LastRead >= thread.LastPost) format = "<span>{0}<img src='/img/mail/mail-read.png' height='15' />{1}</a></span>";
+                if (lastTime >= thread.LastPost) format = "<span>{0}<img src='/img/mail/mail-read.png' height='15' />{1}</a></span>";
                 else {
-                    if (lastRead.LastPosted != null) format = "<span>{0}<img src='/img/mail/mail-new.png' height='15' /><b>{1}</b></a></span>";
+                    if (lastRead != null && lastRead.LastPosted != null) format = "<span>{0}<img src='/img/mail/mail-new.png' height='15' /><b>{1}</b></a></span>";
                     else format = "<span>{0}<img src='/img/mail/mail-unread.png' height='15' />{1}</a></span>";
                 }
             }

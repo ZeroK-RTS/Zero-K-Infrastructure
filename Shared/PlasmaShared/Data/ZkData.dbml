@@ -119,6 +119,7 @@
       <Association Name="Account_MapRating" Member="MapRatings" ThisKey="AccountID" OtherKey="AccountID" Type="MapRating" />
       <Association Name="Account_SpringBattle" Member="SpringBattles" ThisKey="AccountID" OtherKey="HostAccountID" Type="SpringBattle" />
       <Association Name="Account_SpringBattlePlayer" Member="SpringBattlePlayers" ThisKey="AccountID" OtherKey="AccountID" Type="SpringBattlePlayer" />
+	  <Association Name="Account_ForumLastRead" Member="ForumLastReads" ThisKey="AccountID" OtherKey="AccountID" Type="ForumLastRead" />
       <Association Name="Account_ForumThreadLastRead" Member="ForumThreadLastReads" ThisKey="AccountID" OtherKey="AccountID" Type="ForumThreadLastRead" />
       <Association Name="Account_AccountBattleAward" Member="AccountBattleAwards" ThisKey="AccountID" OtherKey="AccountID" Type="AccountBattleAward" />
       <Association Name="Account_AccountUnlock" Member="AccountUnlocks" ThisKey="AccountID" OtherKey="AccountID" Type="AccountUnlock" />
@@ -402,6 +403,16 @@
       <Association Name="ForumCategory_ForumThread" Member="ForumThreads" ThisKey="ForumCategoryID" OtherKey="ForumCategoryID" Type="ForumThread" />
       <Association Name="ForumCategory_ForumCategory" Member="ChildForumCategories" ThisKey="ForumCategoryID" OtherKey="ParentForumCategoryID" Type="ForumCategory" />
       <Association Name="ForumCategory_ForumCategory" Member="ParentForumCategory" ThisKey="ParentForumCategoryID" OtherKey="ForumCategoryID" Type="ForumCategory" IsForeignKey="true" />
+	  <Association Name="ForumCategory_ForumLastRead" Member="ForumLastReads" ThisKey="ForumCategoryID" OtherKey="ForumCategoryID" Type="ForumLastRead" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ForumLastRead" Member="ForumLastReads">
+    <Type Name="ForumLastRead">
+      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+	  <Column Name="ForumCategoryID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="LastRead" Type="System.DateTime" DbType="datetime" CanBeNull="true" UpdateCheck="Never" />
+	  <Association Name="ForumCategory_ForumLastRead" Member="ForumCategory" ThisKey="ForumCategoryID" OtherKey="ForumCategoryID" Type="ForumCategory" IsForeignKey="true"/>
+      <Association Name="Account_ForumLastRead" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.ForumThreadLastRead" Member="ForumThreadLastReads">

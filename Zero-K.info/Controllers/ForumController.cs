@@ -535,17 +535,26 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
-        public ActionResult MarkAllAsRead(int? forumCategoryID)
+        public ActionResult MarkAllAsRead(int? categoryID)
         {
             ZkDataContext db = new ZkDataContext();
-            var threads = db.ForumThreads.Where(x => x.ForumCategoryID == forumCategoryID || forumCategoryID == null);
-            foreach (ForumThread thread in threads)
+            if (categoryID != null)
             {
-                ForumThreadLastRead lastRead = Global.Account.ForumThreadLastReads.FirstOrDefault(x => x.ForumThreadID == thread.ForumThreadID);
-                if(lastRead == null || lastRead.LastRead < thread.LastPost) thread.UpdateLastRead(Global.AccountID, false, DateTime.UtcNow);
+                var lastRead = db.ForumLastReads.FirstOrDefault(x => x.AccountID == Global.AccountID && x.ForumCategoryID == categoryID);
+                if (lastRead == null) db.ForumLastReads.InsertOnSubmit(new ForumLastRead { AccountID = Global.AccountID, ForumCategoryID = (int)categoryID, LastRead = DateTime.UtcNow });
+                else lastRead.LastRead = DateTime.UtcNow;
+            }
+            else
+            {
+                foreach (int categoryID2 in db.ForumCategories.Select(x=> x.ForumCategoryID))
+                {
+                    var lastRead = db.ForumLastReads.FirstOrDefault(x => x.AccountID == Global.AccountID && x.ForumCategoryID == categoryID2);
+                    if (lastRead == null) db.ForumLastReads.InsertOnSubmit(new ForumLastRead { AccountID = Global.AccountID, ForumCategoryID = categoryID2, LastRead = DateTime.UtcNow });
+                    else lastRead.LastRead = DateTime.UtcNow;
+                }
             }
             db.SubmitChanges();
-            return RedirectToAction("Index", new { categoryID = forumCategoryID });
+            return RedirectToAction("Index", new { categoryID = categoryID });
         }
 	}
 }

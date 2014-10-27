@@ -171,7 +171,8 @@ namespace ZeroKWeb.Controllers
 			{
 				result.NewThreads = (from t in accessibleThreads
 				                     let read = t.ForumThreadLastReads.SingleOrDefault(x => x.AccountID == Global.AccountID)
-				                     where read == null || t.LastPost > read.LastRead
+                                     let readForum = t.ForumCategory.ForumLastReads.FirstOrDefault(x=> x.AccountID == Global.AccountID)
+				                     where (read == null || t.LastPost > read.LastRead) && (readForum == null || t.LastPost > readForum.LastRead)
 				                     orderby t.LastPost descending
 				                     select new NewThreadEntry { ForumThread = t, WasRead = read != null, WasWritten = read != null && read.LastPosted != null }).
 					Take(10);
@@ -282,6 +283,7 @@ namespace ZeroKWeb.Controllers
 			var thread = db.ForumThreads.Single(x => x.ForumThreadID == id);
 			ForumPost post = null;
 			ForumThreadLastRead last;
+            ForumLastRead lastForum;
 
 			if (thread.RestrictedClanID != null && thread.RestrictedClanID != Global.ClanID)
 			{
@@ -289,20 +291,36 @@ namespace ZeroKWeb.Controllers
 			}
 
 			var postTitle = "Starting post ";
-			if (Global.IsAccountAuthorized && (last = thread.ForumThreadLastReads.SingleOrDefault(x => x.AccountID == Global.AccountID)) != null)
-			{
-				if (last.LastRead < thread.LastPost)
-				{
-					postTitle = "First unread post ";
-					post = thread.ForumPosts.Where(x => x.Created > last.LastRead).OrderBy(x => x.ForumPostID).FirstOrDefault();
-				}
-				else
-				{
-					postTitle = "Last post ";
-					post = thread.ForumPosts.OrderByDescending(x => x.ForumPostID).FirstOrDefault();
-				}
-			}
-			else post = thread.ForumPosts.OrderBy(x => x.ForumPostID).FirstOrDefault();
+            if (Global.IsAccountAuthorized)
+            {
+                if ((last = thread.ForumThreadLastReads.SingleOrDefault(x => x.AccountID == Global.AccountID)) != null)
+                {
+                    if (last.LastRead < thread.LastPost)
+                    {
+                        postTitle = "First unread post ";
+                        post = thread.ForumPosts.Where(x => x.Created > last.LastRead).OrderBy(x => x.ForumPostID).FirstOrDefault();
+                    }
+                    else
+                    {
+                        postTitle = "Last post ";
+                        post = thread.ForumPosts.OrderByDescending(x => x.ForumPostID).FirstOrDefault();
+                    }
+                }
+                else if ((lastForum = thread.ForumCategory.ForumLastReads.SingleOrDefault(x => x.AccountID == Global.AccountID)) != null)
+                {
+                    if (lastForum.LastRead < thread.LastPost)
+                    {
+                        postTitle = "First unread post ";
+                        post = thread.ForumPosts.Where(x => x.Created > lastForum.LastRead).OrderBy(x => x.ForumPostID).FirstOrDefault();
+                    }
+                    else
+                    {
+                        postTitle = "Last post ";
+                        post = thread.ForumPosts.OrderByDescending(x => x.ForumPostID).FirstOrDefault();
+                    }
+                }
+            }
+            else post = thread.ForumPosts.OrderBy(x => x.ForumPostID).FirstOrDefault();
 			var sb = new StringBuilder();
 
 			if (post != null)

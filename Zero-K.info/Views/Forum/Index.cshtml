@@ -10,7 +10,7 @@
 @{Html.RenderPartial("ForumPath", Model.Path);}
 @if(Global.Account != null)
 {
-    <span class="textbutton" style="float:right">@Html.ActionLink("Mark all as read", "MarkAllAsRead", new {categoryID = (Model.CurrentCategory != null) ? Model.CurrentCategory.ForumCategoryID : null as int?})</span><br />
+    <span class="textbutton" style="float:right">@Html.ActionLink("Mark all as read", "MarkAllAsRead", new { categoryID = (Model.CurrentCategory != null) ? Model.CurrentCategory.ForumCategoryID : null as int?} )</span><br />
 }
 @if (Model.Categories.Any()) {
 	// forum index
