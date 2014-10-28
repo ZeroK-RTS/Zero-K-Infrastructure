@@ -178,7 +178,7 @@ namespace System.Web.Mvc
                 lastReadForum = Global.Account.ForumLastReads.FirstOrDefault(x => x.ForumCategoryID == thread.ForumCategoryID);
                 if (lastReadForum != null) lastTime = lastReadForum.LastRead;
             }
-            if (lastRead != null && lastRead.LastRead > lastTime) lastTime = lastRead.LastRead;
+            if (lastRead != null && (lastTime == null || lastRead.LastRead > lastTime)) lastTime = lastRead.LastRead;
             ForumPost post = null;
             if (lastTime != null) post = thread.ForumPosts.FirstOrDefault(x => x.Created > lastTime);
             int page = post != null ? ZeroKWeb.Controllers.ForumController.GetPostPage(post.ForumPostID) : (thread.PostCount-1)/GlobalConst.ForumPostsPerPage;
