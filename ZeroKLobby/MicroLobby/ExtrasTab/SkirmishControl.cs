@@ -131,10 +131,16 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             sideCB.ForeColor = Color.Black;
             skirmPlayerBox.ForeColor = Color.Black;
 
+            Setup_ComboBox();
+            if (!string.IsNullOrEmpty(Program.Conf.SkirmisherEngine))
+                engine_comboBox.SelectedItem = Program.Conf.SkirmisherEngine;
+            if (!string.IsNullOrEmpty(Program.Conf.SkirmisherGame))
+                game_comboBox.SelectedItem = Program.Conf.SkirmisherGame;
+            if (!string.IsNullOrEmpty(Program.Conf.SkirmisherMap))
+                map_comboBox.SelectedItem = Program.Conf.SkirmisherMap;
+            
             this.OnResize(new EventArgs()); //to fix control not filling the whole window at start
             Paint -= Event_SkirmishControl_Enter;
-
-            Setup_ComboBox();
         }
 
         private void Setup_MyInfo()
@@ -204,13 +210,13 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
         private void Setup_ComboBox_AndRestore()
         {
-            int gameIndex = game_comboBox.SelectedIndex;
-            int mapIndex = map_comboBox.SelectedIndex;
-            int engineIndex = engine_comboBox.SelectedIndex;
+            string gameName = (string)game_comboBox.SelectedItem;
+            string mapName = (string)map_comboBox.SelectedItem;
+            string engineName = (string)engine_comboBox.SelectedItem;
             Setup_ComboBox();
-            game_comboBox.SelectedIndex = gameIndex;
-            map_comboBox.SelectedIndex = mapIndex;
-            engine_comboBox.SelectedIndex = engineIndex;
+            game_comboBox.SelectedItem = gameName;
+            map_comboBox.SelectedItem = mapName;
+            engine_comboBox.SelectedItem = engineName;
         }
 
         private void Setup_ComboBox() //code from Benchmarker.MainForm.cs
@@ -315,7 +321,8 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
         private void Set_MapImages(string mapName, int mapView)
         {
-            Program.ToolTip.SetMap(minimapBox, mapName);
+            //Program.ToolTip.SetMap(minimapBox, mapName);
+            Program.ToolTip.SetMap(map_comboBox, mapName);
             string springVersion = (engine_comboBox.SelectedItem != null) ? (string)engine_comboBox.SelectedItem : null;
             // todo add check before calling invoke invokes!!!
             Program.SpringScanner.MetaData.GetMapAsync(mapName,
@@ -488,7 +495,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 newList.Add(new PlayerListItem { Button = allianceName, SortCategory = team * 2, AllyTeam = team, Height = 25 });
             }
 
-            //copy new start position, but keep old one and remove any extras
+            //copy new startBox position, but keep old one and remove any extras
             {
                 bool haveChanges = false;
                 List<int> toRemove = new List<int>();
@@ -958,19 +965,22 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             if (suppressEvent_SelectedIndexChanged) return;
             if ((sender as Control).Name == "map_comboBox" && map_comboBox.SelectedItem!= null)
             {
+                string mapName = (string)map_comboBox.SelectedItem;
                 int selectedView = normalRadioButton.Checked ? 0 : (elevationRadioButton.Checked ? 1 : 2);
-                Set_MapImages((string)map_comboBox.SelectedItem, selectedView);
+                Set_MapImages(mapName, selectedView);
                 
                 if (infoLabel.Text.StartsWith("Select map"))
                     infoLabel.Text = "";
 
                 Set_InfoLabel();
+                Program.Conf.SkirmisherMap = mapName;
             }
             else if ((sender as Control).Name == "game_comboBox" && game_comboBox.SelectedItem != null)
             {
+                string gameName = (string)game_comboBox.SelectedItem;
                 //run GetMod() in new thread, then call "CallBack_Mod()" in current thread when finish(?). 
                 Program.SpringScanner.MetaData.GetModAsync(
-                    (string)game_comboBox.SelectedItem,
+                    gameName,
                     mod =>
                     {
                         Invoke(new Action(() =>
@@ -981,7 +991,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                         );
                     }, 
                     exception => { Trace.TraceError("CallBack_Mod(mod) error: {0}", exception.ToString()); },
-                    (string)engine_comboBox.SelectedItem);
+                    gameName);
                 //Program.SpringScanner.MetaData.GetModAsync(
                 //   (string)game_comboBox.SelectedItem,
                 //   mod=>{
@@ -995,6 +1005,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     infoLabel.Text = "";
 
                 Set_InfoLabel();
+                Program.Conf.SkirmisherGame = gameName;
 
             }
             else if ((sender as Control).Name == "engine_comboBox" && engine_comboBox.SelectedItem != null)
@@ -1015,6 +1026,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     infoLabel.Text = "";
 
                 Set_InfoLabel();
+                Program.Conf.SkirmisherEngine = (string)engine_comboBox.SelectedItem;
 
                 if (Program.SpringPaths.HasEngineVersion(springVersion))
                     springAi = SkirmishControlTool.GetSpringAIs(engineFolder);
@@ -1417,7 +1429,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             if (e.Button == MouseButtons.Left)
             {
                 mouseIsDown = true;
-                Program.ToolTip.Clear(minimapBox);
+                //Program.ToolTip.Clear(minimapBox);
             }
         }
 
@@ -1435,19 +1447,22 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 Cursor = Cursors.Cross;
                 BattleRect startRect = Rectangles[mouseOnStartBox];
 
-                int rectWidth_half = (startRect.Right - startRect.Left)/2;
-                int rectHeight_half = (startRect.Top - startRect.Bottom)/2;
+                //undo the offset due to "Centering" (alignment) of the pictureBox relative to minimapPanel
                 float diffWidth_half = (float)(minimapPanel.Width - minimapBox.Image.Width) / 2;
                 float diffHeight_half = (float)(minimapPanel.Height - minimapBox.Image.Height) / 2;
                 float adjustedX = (e.X - diffWidth_half);
                 float adjustedY = (e.Y - diffHeight_half);
+                //convert pixel count to 0-200 standard used in Spring infrastructure
                 float rectPerImgWidth = (float)BattleRect.Max / minimapBox.Image.Width;
                 float rectPerImgHeight = (float)BattleRect.Max / minimapBox.Image.Height;
-
-                startRect.Left = (int)(adjustedX * rectPerImgWidth - 10);
-                startRect.Top = (int)(adjustedY * rectPerImgHeight - 10);
-                startRect.Right = (int)(adjustedX * rectPerImgWidth + 10);
-                startRect.Bottom = (int)(adjustedY * rectPerImgHeight + 10);
+                //clamp position to within map
+                float x = Math.Min(Math.Max (adjustedX * rectPerImgWidth, 10),BattleRect.Max-10);
+                float y = Math.Min(Math.Max (adjustedY * rectPerImgHeight, 10),BattleRect.Max-10);
+                //set our startbox coordinate
+                startRect.Left = (int)(x - 10);
+                startRect.Top = (int)(y - 10);
+                startRect.Right = (int)(x + 10);
+                startRect.Bottom = (int)(y + 10);
 
                 Rectangles[mouseOnStartBox] = startRect;
 
@@ -1502,8 +1517,8 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             if (e.Button == MouseButtons.Left)
             {
                 mouseIsDown = false;
-                if (map_comboBox.SelectedItem != null)
-                    Program.ToolTip.SetMap(minimapBox, (string)map_comboBox.SelectedItem);
+                //if (map_comboBox.SelectedItem != null)
+                    //Program.ToolTip.SetMap(minimapBox, (string)map_comboBox.SelectedItem);
             }
         }
     }
