@@ -117,9 +117,9 @@ namespace System.Web.Mvc
             // (taken from jquery.expand.js -> "post score below threshold")
             exp = new Regex(@"\[spoiler\]([^\[]+)\[/spoiler\]", RegexOptions.IgnoreCase);
             str = exp.Replace(str, 
-            	"<div>" + 
-		"<a class=\"\" aria-describedby=\"ui-tooltip-0\" nicetitle-processed=\"Expand/Collapse\" style=\"display:block\" href=\"#\">[Spoiler]</a>" + 
-		"</div>" + 
+            	"<small class=\"expand\">" + 
+		"<a nicetitle-processed=\"Expand/Collapse\" style=\"display:block\" href=\"#\">[Spoiler]</a>" + 
+		"</small>" + 
 		"<div style=\"display: none;\" class=\"collapse\">" +
                 "$1" +
                 "</div>");
