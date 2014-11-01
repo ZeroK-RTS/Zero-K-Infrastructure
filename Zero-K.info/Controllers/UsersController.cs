@@ -295,8 +295,13 @@ namespace ZeroKWeb.Controllers
             db.SubmitAndMergeChanges();
 
             Account acc = todel.AccountByAccountID;
-            Account adminAcc = Account.AccountByAccountID (db, todel.CreatedAccountID);
-            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("{0} removed a punishment given by {1} ", Global.Account.Name, adminAcc.Name), true);
+            string punisherName = "<unknown>";
+            if (todel.CreatedAccountID != null)
+            {
+                Account adminAcc = Account.AccountByAccountID(db, (int)todel.CreatedAccountID);
+                punisherName = adminAcc.Name;
+            }
+            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("{0} removed a punishment given by {1} ", Global.Account.Name, punisherName), true);
             Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("to {0} for: {1} ", acc.Name, todel.Reason), true);
 
             if (todel.BanLobby)
