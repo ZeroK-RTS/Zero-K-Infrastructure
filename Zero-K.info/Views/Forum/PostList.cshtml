@@ -26,12 +26,12 @@
                         </td>
                         <td valign='top'>
                             @Html.PrintAccount(p.Account)<br />
-                            <small><span nicetitle="@p.Created.ToShortTimeString()">@p.Created.ToAgoString()</span>
+                            <small><span nicetitle="@p.Created.AddTicks(-(p.Created.Ticks % TimeSpan.TicksPerSecond))">@p.Created.ToAgoString()</span>
                                 @if (p.ForumPostEdits.Any())
                                 {
                                     var lastEdit = p.ForumPostEdits.OrderByDescending(x => x.EditTime).First();
                                     <br/>
-                                    <a nicetitle="@lastEdit.EditTime.AddTicks(-(p.Created.Ticks % TimeSpan.TicksPerSecond))" href="@Url.Action("EditHistory", "Forum", new { forumPostID = p.ForumPostID })">
+                                    <a nicetitle="@lastEdit.EditTime.AddTicks(-(lastEdit.EditTime.Ticks % TimeSpan.TicksPerSecond))" href="@Url.Action("EditHistory", "Forum", new { forumPostID = p.ForumPostID })">
                                         (edited @lastEdit.EditTime.ToAgoString())</a>
                                 }
                             </small>
