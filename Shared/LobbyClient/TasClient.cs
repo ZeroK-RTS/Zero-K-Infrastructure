@@ -178,7 +178,6 @@ namespace LobbyClient
         public event EventHandler<CancelEventArgs<TasEventArgs>> PreviewChannelJoined = delegate { };
         public event EventHandler<CancelEventArgs<TasSayEventArgs>> PreviewSaid = delegate { };
         public event EventHandler<EventArgs<string>> Rang = delegate { };
-        public event EventHandler<TasEventArgs> Redirect = delegate { };
         public event EventHandler<TasEventArgs> RegistrationAccepted = delegate { };
         public event EventHandler<TasEventArgs> RegistrationDenied = delegate { };
         public event EventHandler RequestBattleStatus = delegate { };
@@ -1099,8 +1098,10 @@ namespace LobbyClient
                         break;
 
                     case "REDIRECT": // server sends backup IP
-                        // removed due to bugs      
-                        Redirect(this, new TasEventArgs(args));
+                        var address = args[0].Split(':');
+                        var host = address[0];
+                        var port = address.Length > 1 ? int.Parse(address[1]) : serverPort;
+                        Connect(host, port);
                         break;
 
                     case "CLIENTSTATUS": // client's status changed
