@@ -116,8 +116,8 @@ namespace ZeroKLobby
                 if (!SpringPaths.IsDirectoryWritable(StartupPath) || StartupPath.Contains("Local\\Apps")) {
                     MessageBox.Show(
                         string.Format(
-                            "Startup directory is not writable. \r\n Please use the newly created desktop icon to start Zero-K not the old one!\r\n Zero-K.exe will be moved to {0}",
-                            contentDir));
+                            "Please use the newly created desktop icon to start Zero-K not this one.\r\nZero-K.exe will be moved to {0}",
+                            contentDir),"Startup directory is not writable!");
                     var newTarget = Path.Combine(contentDir, "Zero-K.exe");
                     if (SelfUpdater.CheckForUpdate(newTarget, true)) {
                         Conf.Save(Path.Combine(contentDir, Config.ConfigFileName));

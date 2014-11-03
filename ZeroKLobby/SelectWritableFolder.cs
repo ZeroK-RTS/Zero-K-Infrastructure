@@ -57,5 +57,17 @@ namespace ZeroKLobby
                 Close();
             }
         }
+
+        private void browseFolderbutton_Click(object sender, EventArgs e)
+        {
+            //copied from: http://stackoverflow.com/questions/13126008/how-can-i-get-path-folder-browser-dialog
+            using(var dialog = new FolderBrowserDialog())
+            {
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    tbFolder.Text = dialog.SelectedPath;    
+                }
+            }
+        }
     }
 }
