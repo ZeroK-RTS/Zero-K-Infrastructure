@@ -118,7 +118,7 @@ namespace ZeroKLobby.MicroLobby
                         else if (control is PrivateMessageControl)
                         {
                             var chatControl = (PrivateMessageControl)control;
-                            Program.MainWindow.ChatTab.ClosePrivateTab(chatControl.UserName);
+                            ActionHandler.ClosePrivateChat(chatControl.UserName);
                         }
                     }
                 };

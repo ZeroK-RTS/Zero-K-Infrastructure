@@ -37,6 +37,13 @@ namespace ZeroKLobby
       Program.MainWindow.ChatTab.CloseChannelTab(key);
     }
 
+    /// <summary>
+    /// Closes a private message tab in the chat tab
+    /// </summary>
+    public static void ClosePrivateChat(string key)
+    {
+        Program.MainWindow.ChatTab.ClosePrivateTab(key);
+    }
 
 
     /// <summary>
