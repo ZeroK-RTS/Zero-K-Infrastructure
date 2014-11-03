@@ -219,6 +219,7 @@ namespace ZeroKWeb.Controllers
 			return Redirect(referer);
 		}
 
+        [OutputCache(Duration = 3600*24)]
 		public ActionResult Sitemap()
 		{
 			var sb = new StringBuilder();
