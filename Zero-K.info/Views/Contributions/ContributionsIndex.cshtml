@@ -8,7 +8,7 @@ This game is provided to you completely free<br/>
 However, we are a non-profit group of volunteers working on this game in our free time and we could use some help paying our bills :-)<br/>
 If you wish to support us and continued development, you can donate any ammount you want!<br />
 <br/>
-As a reward for your donation, you will get @GlobalConst.EurosToKudos Kudos per 1€ donated.<br/>
+As a reward for your donation, you will get @GlobalConst.EurosToKudos Kudos per 1&euro; donated.<br/>
 <br/>
 Kudos are work in progress, but you will be rewarded with a special ingame and forum icon, instant XP unlocks and you will be able to use Kudos to unlock unique visual game items.
 <br/>
@@ -41,7 +41,7 @@ You can even select where your donation goes! :-)<br/>
         if (ratio > 1) {
             ratio = 1;
         }
-        <tr><td><span nicetitle="@jar.Description">@jar.Name</span></td><td>@Html.PrintAccount(jar.Account)</td><td style="text-align: right;">€@funded</td>
+        <tr><td><span nicetitle="@jar.Description">@jar.Name</span></td><td>@Html.PrintAccount(jar.Account)</td><td style="text-align: right;">&euro;@funded</td>
             <td>
                 <div nicetitle="@jar.Description">
                     <img src="/img/progressl_base.png" height="17" class="fleft" />
@@ -50,7 +50,7 @@ You can even select where your donation goes! :-)<br/>
                     <img src="/img/progressr_base.png" height="17" class="fleft" /> 
                 </div>
             </td>
-            <td>€@jar.TargetGrossEuros.ToString("F0")</td>
+            <td>&euro;@jar.TargetGrossEuros.ToString("F0")</td>
             <td><form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 
                     <input type="hidden" name="business" value="S7LYLK6P63H48">
@@ -97,7 +97,7 @@ You can even select where your donation goes! :-)<br/>
                 }
 
             </td>
-            <td>€@c.Euros.Value.ToString("F2")</td>
+            <td>&euro;@c.Euros.Value.ToString("F2")</td>
             @if (Global.IsZeroKAdmin) {
                 <td>@Html.ActionLink("resend email", "ResendEmail", new {contributionID = @c.ContributionID})</td>
             }
