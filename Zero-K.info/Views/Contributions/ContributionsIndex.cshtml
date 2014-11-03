@@ -85,7 +85,7 @@ You can even select where your donation goes! :-)<br/>
 <h2>Many thanks to those great people!</h2>
 <table>
 
-    @foreach (var c in new ZkDataContext().Contributions.OrderByDescending(x => x.Time)) {
+    @foreach (var c in new ZkDataContext().Contributions.Where(x=>x.EurosNet > 0).OrderByDescending(x => x.Time)) {
         <tr>
             <td>@c.Time.ToString("d")</td>
             <td>
