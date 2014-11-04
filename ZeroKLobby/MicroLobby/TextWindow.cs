@@ -50,7 +50,7 @@ namespace ZeroKLobby.MicroLobby
         //Regex note: [^<>()] : exclude <<< or >>> or ( or ) at end of URL
         //Regex note: [\w\d:#@%/!;$()~_?\+-=\\\.&]* : include any sort of character 1 or more times
         //Reference: http://en.wikipedia.org/wiki/Regular_expression#Basic_concepts
-        public const string WwwMatch = @"(www\.|www\d\.|(https?|ftp|irc|spring|file):((//)|(\\\\)))+[\w\d:#@%/!;$()~_?\+-=\\\.&]*[^<>()]"; //from http://icechat.codeplex.com/SourceControl/latest#532131
+        public const string WwwMatch = @"(www\.|www\d\.|(https?|ftp|irc|spring):((//)|(\\\\)))+[\w\d:#@%/!;$()~_?\+-=\\\.&]*[^<>()]"; //from http://icechat.codeplex.com/SourceControl/latest#532131
         int backColor;
         int curHighChar;
         int curHighLine;
@@ -473,9 +473,22 @@ namespace ZeroKLobby.MicroLobby
                 bool isFull = MaxTextLines >= HardMaximumLines;
                 if (needSpace && !isExpanding && (isFull || !isSpam))
                 { //remove old text, create space for new text (recycle existing row)
-                    var x = 0;
                     int toRemove = (MaxTextLines / 10) + 1; //remove 10% of old text
-                    for (int i = toRemove; i < totalLines; i++) 
+
+                    int lineCount = 0;
+                    int wrapCount = 0;
+                    while (lineCount < toRemove + 1) //calculate scrollbar offset:
+                    {
+                        if (displayLines[wrapCount + lineCount].Previous)
+                            wrapCount++;
+                        else
+                            lineCount++;
+                    }
+                    int vScrollBarOffset = wrapCount + lineCount - 1;
+                    vScrollBarOffset = Math.Min(vScrollBarOffset, vScrollBar.Value - 1);
+
+                    var x = 0;
+                    for (int i = toRemove; i < totalLines; i++) //shift existing texts upward:
                     {
                         textLines[x].TotalLines = textLines[i].TotalLines;
                         textLines[x].Width = textLines[i].Width;
@@ -496,7 +509,7 @@ namespace ZeroKLobby.MicroLobby
                     if (Height != 0)
                     {
                         TotalDisplayLines = FormatLines(totalLines, 1, 0);
-                        UpdateScrollBar(TotalDisplayLines, toRemove*-1);
+                        UpdateScrollBar(TotalDisplayLines, vScrollBarOffset * -1);
                         Invalidate();
                     }
 
@@ -536,7 +549,6 @@ namespace ZeroKLobby.MicroLobby
                 }
 
                 UpdateScrollBar(TotalDisplayLines,0);
-
                 Invalidate();
             }
             catch (Exception e)
@@ -1458,7 +1470,7 @@ namespace ZeroKLobby.MicroLobby
             else
             {
                 bool nearBottom = vScrollBar.Value + 5 >= TotalDisplayLines;
-                bool isBottom = vScrollBar.Value + vScrollBar.LargeChange - 1 >= vScrollBar.Maximum; //exactly at UI's scrollbar bottom
+                bool isBottom = vScrollBar.Value >= (1 + vScrollBar.Maximum - vScrollBar.LargeChange); //exactly at UI's scrollbar bottom
 
                 if (showMaxLines < TotalDisplayLines)
                 {
@@ -1474,7 +1486,7 @@ namespace ZeroKLobby.MicroLobby
                 if (newValue != 0)
                 {
                     vScrollBar.Minimum = 1;
-                    vScrollBar.Maximum = Math.Max(TotalDisplayLines + vScrollBar.LargeChange - 1,1); // maximum value that can be reached through UI is: 1 + Maximum - LargeChange. Ref: http://msdn.microsoft.com/en-us/library/system.windows.forms.scrollbar.maximum(v=vs.110).aspx
+                    vScrollBar.Maximum = Math.Max(-1 + TotalDisplayLines + vScrollBar.LargeChange,1); // maximum value that can be reached through UI is: 1 + Maximum - LargeChange. Ref: http://msdn.microsoft.com/en-us/library/system.windows.forms.scrollbar.maximum(v=vs.110).aspx
 
                     if (!vScrollBar.Enabled || !vScrollBar.Visible) isBottom = true;
                     if (isBottom || hideScroll || nearBottom) vScrollBar.Value = newValue; //always set to TotalDisplayLines to make scrollbar follow new chat message feed 
