@@ -1098,9 +1098,8 @@ namespace LobbyClient
                         break;
 
                     case "REDIRECT": // server sends backup IP
-                        var address = args[0].Split(':');
-                        var host = address[0];
-                        var port = address.Length > 1 ? int.Parse(address[1]) : serverPort;
+                        var host = args[0];
+                        var port = int.Parse(args[1]);
                         Connect(host, port);
                         break;
 
