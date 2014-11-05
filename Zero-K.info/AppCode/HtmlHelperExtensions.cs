@@ -102,15 +102,25 @@ namespace System.Web.Mvc
             // lastly, replace any new line characters with <br />
             str = str.Replace("\r\n", "<br />\r\n");
             
+
             // embed player to display gifv format (mp4, limited (for now) to be hosted on imgur)
             exp = new Regex(@"\[gifv\]https?\://i\.imgur\.com/(\w+)\.(gifv|mp4)\[/gifv\]", RegexOptions.IgnoreCase);
+            /* 
+            temp hotfix - disabled and replaced by default gif - as [gifv] is live and used but bugged 
+            #190 - assigned to me (@mojj) 
+            */
+            /* 
             str = exp.Replace(str, 
-		"<div style=\"width: auto; height: auto; text-align:center; line-height:0;\">" + 
-		"<video webkit-playsinline=\"\" poster=\"https://i.imgur.com/$1h.jpg\" preload=\"auto\" autoplay=\"autoplay\" muted=\"muted\" loop=\"loop\" height=\"auto\" width=\"auto\">"+
-		"<source src=\"https://i.imgur.com/$1.mp4\" type=\"video/mp4\">"+
-		"<object type=\"application/x-shockwave-flash\" height=\"auto\" width=\"auto\" data=\"https://s.imgur.com/include/flash/gifplayer.swf?imgur_video=https://i.imgur.com/$1.mp4&imgur_width=auto&imgur_height=auto\"/>"+
-		"</video>"+
-		"</div>");
+	    "<div style=\"width: auto; height: auto; text-align:center; line-height:0;\">" + 
+	    "<video webkit-playsinline=\"\" poster=\"https://i.imgur.com/$1h.jpg\" preload=\"auto\" autoplay=\"autoplay\" muted=\"muted\" loop=\"loop\" height=\"auto\" width=\"auto\">"+
+	    "<source src=\"https://i.imgur.com/$1.mp4\" type=\"video/mp4\">"+
+	    "<object type=\"application/x-shockwave-flash\" height=\"auto\" width=\"auto\" data=\"https://s.imgur.com/include/flash/gifplayer.swf?imgur_video=https://i.imgur.com/$1.mp4&imgur_width=auto&imgur_height=auto\"/>"+
+	    "</video>"+
+	    "</div>");
+            */
+            str = exp.Replace(str, 
+            	"<img src=\"https://i.imgur.com/$1.gif\" alt=\"https://i.imgur.com/$1.gif\" />"
+            );
             		
             // spoiler tags: [spoiler]spoiler_text[/spoiler]
             // becomes: [Spoiler] and onClick displays the inner Content "spoiler_text" 
