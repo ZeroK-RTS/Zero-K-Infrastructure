@@ -110,7 +110,7 @@ namespace Springie.autohost
 
             tas.RegistrationDenied += (s, e) =>
                 {
-                    ErrorHandling.HandleException(null, "Registration denied: " + e.ServerParams[0]);
+                    Trace.TraceWarning("Registration denied: {0}", e.ServerParams[0]);
                     CloneNumber++;
                     tas.Login(GetAccountName(), config.Password);
                 };
