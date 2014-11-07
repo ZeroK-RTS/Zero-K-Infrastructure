@@ -118,10 +118,9 @@ namespace ZeroKLobby
             if (!parentControl.DisplayRectangle.Contains(parentPoint)) return null;
             Control child;
             while (
-                (child =
-                 parentControl.GetChildAtPoint(parentPoint,
-                                               GetChildAtPointSkip.Disabled | GetChildAtPointSkip.Invisible | GetChildAtPointSkip.Transparent)) !=
-                null) {
+                (child = parentControl.GetChildAtPoint(parentPoint,
+                                               GetChildAtPointSkip.Disabled | GetChildAtPointSkip.Invisible | 
+                                               GetChildAtPointSkip.Transparent)) != null) {
                 parentControl = child;
                 parentPoint = parentControl.PointToClient(screenPoint);
             }

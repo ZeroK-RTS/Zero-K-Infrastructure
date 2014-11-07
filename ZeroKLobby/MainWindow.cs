@@ -141,12 +141,20 @@ namespace ZeroKLobby
         }
 
         public Control GetHoveredControl() {
+            //fore control
             var lastForm = Application.OpenForms.OfType<Form>().LastOrDefault(x => !(x is ToolTipForm) && x.Visible);
             if (lastForm != null) {
                 var hovered = lastForm.GetHoveredControl();
-                if (hovered != null) return hovered;
-            }
+                if (hovered != null) 
+                    return hovered;
 
+                //back control (note: double tries so that tooltip from multiple window layer can be displayed at once)
+                lastForm = Application.OpenForms.OfType<Form>().FirstOrDefault(x => !(x is ToolTipForm) && x.Visible);
+                if (lastForm != null) {
+                    hovered = lastForm.GetHoveredControl();
+                    if (hovered != null) return hovered;
+                }
+            }
             return null;
         }
 
