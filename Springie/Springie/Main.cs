@@ -100,31 +100,24 @@ namespace Springie
 
         public void SpawnAutoHost(AhConfig config, SpawnConfig spawnData)
         {
+            AutoHost ah;
             lock (autoHosts)
             {
-                var ah = new AutoHost(MetaCache, config, GetFreeHostingPort(), spawnData);
+                ah = new AutoHost(MetaCache, config, GetFreeHostingPort(), spawnData);
                 autoHosts.Add(ah);
-                ah.ServerVerifyMap(true);
             }
+            ah.ServerVerifyMap(true);
         }
 
 
-        public void StopAll()
-        {
-            lock (autoHosts)
-            {
-                foreach (var ah in autoHosts) ah.Dispose();
-                autoHosts.Clear();
-            }
-        }
 
         public void StopAutohost(AutoHost ah)
         {
-            ah.Dispose();
             lock (autoHosts)
             {
                 autoHosts.Remove(ah);
             }
+            ah.Dispose();
         }
 
         public void UpdateAll()
@@ -136,20 +129,24 @@ namespace Springie
                     serv.Timeout = 5000;
                     var configs = serv.GetClusterConfigs(Config.ClusterNode);
 
+                    var copy = new List<AutoHost>();
                     lock (autoHosts)
                     {
-                        foreach (var conf in configs)
-                        {
-                            if (!autoHosts.Any(x => x.config.Login == conf.Login)) SpawnAutoHost(conf, null);
-                            else foreach (var ah in autoHosts.Where(x => x.config.Login == conf.Login && x.SpawnConfig == null)) ah.config = conf;
-                        }
-                        var todel = autoHosts.Where(x => !configs.Any(y => y.Login == x.config.Login)).ToList();
-                        foreach (var ah in todel) StopAutohost(ah);
+                        copy = autoHosts.ToList();
                     }
+                    foreach (var conf in configs)
+                    {
+                        if (!copy.Any(x => x.config.Login == conf.Login)) SpawnAutoHost(conf, null);
+                        else foreach (var ah in copy.Where(x => x.config.Login == conf.Login && x.SpawnConfig == null)) ah.config = conf;
+                    }
+                    var todel = copy.Where(x => !configs.Any(y => y.Login == x.config.Login)).ToList();
+                    foreach (var ah in todel) StopAutohost(ah);
                 }
+
             }
-            catch (Exception ex) {
-                Trace.TraceError("Error in periodic updates: {0}",ex);
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error in periodic updates: {0}", ex);
             }
         }
 
@@ -175,14 +172,14 @@ namespace Springie
         {
             try
             {
-                timer.Stop(); ;
+                timer.Stop();
                 lock (autoHosts)
                 {
                     // spawned autohosts
                     var spawnedToDel =
                         autoHosts.Where(
                             x => x.SpawnConfig != null && !x.spring.IsRunning && (x.tas.MyBattle == null || x.tas.MyBattle.Users.Count <= 1)).ToList();
-                    if (spawnedToDel != null)
+                    if (spawnedToDel.Count > 0)
                     {
                         foreach (var ah in spawnedToDel.Where(x => deletionCandidate.Contains(x))) StopAutohost(ah); // delete those who are empty during 2 checks
                         deletionCandidate = spawnedToDel;
@@ -191,7 +188,7 @@ namespace Springie
 
                     // autohosts which have clones
                     var keys = autoHosts.Where(x => x.config.AutoSpawnClones).Select(x => x.config.Login).Distinct().ToList();
-                    if (keys != null)
+                    if (keys.Count > 0)
                     {
                         foreach (var key in keys)
                         {
@@ -206,8 +203,8 @@ namespace Springie
 
                             else if (empty.Count == 0)
                             {
-                                var existing = autoHosts.Where(x => x.config.Login == key).First();
-                                SpawnAutoHost(existing.config, null);
+                                var existing = autoHosts.FirstOrDefault(x => x.config.Login == key);
+                                if (existing != null) SpawnAutoHost(existing.config, null);
                             }
                             else // more than 1 empty running, stop all but 1
                             {
@@ -222,8 +219,9 @@ namespace Springie
             {
                 ErrorHandling.HandleException(ex, "While checking autohosts");
             }
-            finally {
-                timer.Start(); 
+            finally
+            {
+                timer.Start();
             }
         }
     }
