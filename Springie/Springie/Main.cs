@@ -217,7 +217,7 @@ namespace Springie
             }
             catch (Exception ex)
             {
-                ErrorHandling.HandleException(ex, "While checking autohosts");
+                Trace.TraceError("Error while checking autohosts: {0}",ex);
             }
             finally
             {

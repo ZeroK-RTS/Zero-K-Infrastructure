@@ -53,17 +53,20 @@ namespace Springie
         }
 
         static void Application_ThreadException(object sender, ThreadExceptionEventArgs e) {
-            if (!ErrorHandling.HandleException(e.Exception, "Main thread unhandled exception")) throw e.Exception;
+            Trace.TraceError("Main thread unhandled exception: {0}", e.Exception);
+            if (Debugger.IsAttached) throw e.Exception;
         }
 
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) {
             var ex = (Exception)e.ExceptionObject;
-            if (!ErrorHandling.HandleException(ex, "Secondary thread unhandled exception")) throw ex;
+            Trace.TraceError("Secondary thread exception: {0}", ex);
+            if (Debugger.IsAttached) throw ex;
         }
 
         static void Program_UnhandledException(object sender, UnhandledExceptionEventArgs e) {
             var ex = (Exception)e.ExceptionObject;
-            if (!ErrorHandling.HandleException(ex, "Main thread unhandled exception")) throw ex;
+            Trace.TraceError("Main thread unhandled exception: {0}", ex);
+            if (Debugger.IsAttached) throw ex;
         }
     }
 }

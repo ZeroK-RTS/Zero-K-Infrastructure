@@ -213,7 +213,7 @@ namespace Springie.autohost
             }
             catch (Exception ex)
             {
-                ErrorHandling.HandleException(ex, "Error balancing teams");
+                Trace.TraceError("Error balancing teams: {0}",ex);
             }
         }
 
