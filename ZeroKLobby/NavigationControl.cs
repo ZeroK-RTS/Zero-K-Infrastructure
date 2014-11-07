@@ -136,7 +136,6 @@ namespace ZeroKLobby
             AddTabPage(battles, "Battles");
             AddTabPage(new SettingsTab(), "Settings");
             AddTabPage(new ServerTab(), "Server");
-            AddTabPage(new AdvertiserWindow(), "Advertiser");
             AddTabPage(new DownloaderTab(), "Rapid");
             AddTabPage(new MicroLobby.ExtrasTab.ExtrasTab(), "Extra");
             
