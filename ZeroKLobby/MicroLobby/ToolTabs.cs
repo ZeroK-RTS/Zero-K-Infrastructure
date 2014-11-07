@@ -16,6 +16,8 @@ namespace ZeroKLobby.MicroLobby
         readonly Panel panel = new Panel { Dock = DockStyle.Fill };
         readonly ToolStrip toolStrip = new ToolStrip
                                        {
+                                        BackColor = Program.Conf.BgColor,
+                                        ForeColor = Program.Conf.TextColor,
                                         Dock = DockStyle.Left,
                                         Stretch = false,
                                         GripStyle = ToolStripGripStyle.Hidden,
@@ -47,12 +49,8 @@ namespace ZeroKLobby.MicroLobby
 
         public ToolTabs()
         {
-            toolStrip.BackColor = Program.Conf.BgColor; //Color.White;
-            toolStrip.ForeColor = Program.Conf.TextColor;
-            panel.BackColor = Program.Conf.BgColor;
-            panel.ForeColor = Program.Conf.TextColor;
-            BackColor = Program.Conf.BgColor;
-            ForeColor = Program.Conf.TextColor;
+            var ovrflwBtn = toolStrip.OverflowButton;
+            ovrflwBtn.BackColor = Color.DimGray; //note: the colour of arrow on OverFlow button can't be set
             Controls.Add(panel);
             Controls.Add(toolStrip);
 

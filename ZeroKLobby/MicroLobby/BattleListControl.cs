@@ -47,7 +47,6 @@ namespace ZeroKLobby.MicroLobby
             AutoScroll = true;
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
             BackColor = Program.Conf.BgColor;
-            ForeColor = Program.Conf.TextColor;
             FilterText = Program.Conf.BattleFilter;
             Disposed += BattleListControl_Disposed;
             Program.BattleIconManager.BattleAdded += HandleBattle;
@@ -60,7 +59,8 @@ namespace ZeroKLobby.MicroLobby
             hidePassworded = Program.Conf.HidePasswordedBattles;
             showOfficial = Program.Conf.ShowOfficialBattles;
 
-            FilterBattles();
+            FilterBattles(); //get list from BattleIconManager.cs
+            Sort();
             Invalidate();
         }
 

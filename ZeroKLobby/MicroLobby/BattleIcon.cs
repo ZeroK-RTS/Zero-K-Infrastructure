@@ -74,7 +74,8 @@ namespace ZeroKLobby.MicroLobby
     public bool IsServerManaged { get; private set; }
 
 
-      public static Brush TextBrush = new SolidBrush(Color.Black);
+      public static Brush TextBrush = new SolidBrush(Program.Conf.TextColor);
+      public static Brush BackBrush = new SolidBrush(Program.Conf.BgColor);
     public static Font TitleFont = new Font("Segoe UI", 8.25F, FontStyle.Bold);
 
     public BattleIcon(Battle battle)
@@ -193,12 +194,12 @@ namespace ZeroKLobby.MicroLobby
       RenderPlayers();
       int scaledWidth = DpiMeasurement.ScaleValueX(Width);
       int scaledHeight = DpiMeasurement.ScaleValueY(Height);
-      image = MakeSolidColorBitmap(Brushes.White, scaledWidth, scaledHeight);
+      image = MakeSolidColorBitmap(BackBrush, scaledWidth, scaledHeight);
       using (var g = Graphics.FromImage(image))
       {
         if (disposed)
         {
-            image = MakeSolidColorBitmap(Brushes.White, scaledWidth, scaledHeight);
+            image = MakeSolidColorBitmap(BackBrush, scaledWidth, scaledHeight);
           return;
         }
         if (finishedMinimap != null) g.DrawImageUnscaled(finishedMinimap, DpiMeasurement.ScaleValueX(3), DpiMeasurement.ScaleValueY(3));
