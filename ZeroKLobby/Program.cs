@@ -273,13 +273,7 @@ namespace ZeroKLobby
 
                 if (!Debugger.IsAttached && !Conf.DisableAutoUpdate) Program.SelfUpdater.StartChecking();
 
-                if (Conf.ShowFriendsWindow == true) {
-                    MainWindow.frdWindow = new FriendsWindow();
-                    MainWindow.frdWindow.Show();
-                    FriendsWindow.Creatable = false;
-                }
-
-                //if (Conf.IsFirstRun) Utils.OpenWeb("http://zero-k.info/Wiki/LobbyStart", false);
+               //if (Conf.IsFirstRun) Utils.OpenWeb("http://zero-k.info/Wiki/LobbyStart", false);
 
 				// download primary engine & game
 				MainWindow.Paint+= GetSpringZK;
@@ -338,7 +332,6 @@ namespace ZeroKLobby
 
             SaveConfig();
             try {
-                if (!FriendsWindow.Creatable) MainWindow.frdWindow.Close();
                 if (!Debugger.IsAttached) mutex.ReleaseMutex();
             } catch {}
             try {

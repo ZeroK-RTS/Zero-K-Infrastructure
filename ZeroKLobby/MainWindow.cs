@@ -23,8 +23,6 @@ namespace ZeroKLobby
         string baloonTipPath = null;
 
         readonly ToolStripMenuItem btnExit;
-        readonly ToolStripMenuItem btnFriends;
-        readonly ToolStripSeparator btnSepertator;
 
         bool closeForReal;
         FormWindowState lastState = FormWindowState.Normal;
@@ -37,7 +35,6 @@ namespace ZeroKLobby
         public static MainWindow Instance { get; private set; }
 
         public NotifySection NotifySection { get { return notifySection1; } }
-        public static FriendsWindow frdWindow = null;
         
         public enum Platform // Zero-K lobby probably already has some global var like this somewhere
         {
@@ -77,13 +74,9 @@ namespace ZeroKLobby
             btnExit = new ToolStripMenuItem { Name = "btnExit", Size = new Size(92, 22), Text = "Exit" };
             btnExit.Click += btnExit_Click;
 
-            btnFriends = new ToolStripMenuItem { Name = "btnFriends", Size = new Size(92, 22), Text = "Show Friends" };
-            btnFriends.Click += btnFriends_Click;
-
-            btnSepertator = new ToolStripSeparator { Name = "btnSprtr" };
 
             trayStrip = new ContextMenuStrip();
-            trayStrip.Items.AddRange(new ToolStripItem[] { btnFriends, btnSepertator, btnExit });
+            trayStrip.Items.AddRange(new ToolStripItem[] { btnExit });
             trayStrip.Name = "trayStrip";
             trayStrip.Size = new Size(93, 26);
 
@@ -312,13 +305,6 @@ namespace ZeroKLobby
             Exit();
         }
 
-        void btnFriends_Click(object sender, EventArgs e) {
-            if (frdWindow == null && FriendsWindow.Creatable) {
-                frdWindow = new FriendsWindow();
-                frdWindow.Show();
-            }
-            else frdWindow.Activate();
-        }
 
 
         void systrayIcon_BalloonTipClicked(object sender, EventArgs e) {

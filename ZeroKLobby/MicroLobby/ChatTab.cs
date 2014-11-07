@@ -263,21 +263,11 @@ namespace ZeroKLobby.MicroLobby
             toolTabs.RemovePrivateTab(userName);
             var pm = CreatePrivateMessageControl(userName);
             toolTabs.SelectPrivateTab(userName);
-            if (ZeroKLobby.MainWindow.frdWindow != null)
-            {
-                MainWindow.frdWindow.clearItemlist();
-                MainWindow.frdWindow.refreshItems();
-            }
         }
 
         void FriendManager_FriendRemoved(object sender, EventArgs<string> e)
         {
             toolTabs.RemovePrivateTab(e.Data);
-            if (ZeroKLobby.MainWindow.frdWindow != null)
-            {
-                MainWindow.frdWindow.clearItemlist();
-                MainWindow.frdWindow.refreshItems();
-            }
         }
 
         void TasClient_BattleForceQuit(object sender, EventArgs e)

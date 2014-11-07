@@ -134,12 +134,6 @@
       <DependentUpon>AcceptAgreementForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ActionHandler.cs" />
-    <Compile Include="AdvertiserWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="AdvertiserWindow.designer.cs">
-      <DependentUpon>AdvertiserWindow.cs</DependentUpon>
-    </Compile>
     <Compile Include="BrowserInterop.cs" />
     <Compile Include="ButtonInfo.cs" />
     <Compile Include="Buttons.Designer.cs">
@@ -244,18 +238,6 @@
     </Compile>
     <Compile Include="MicroLobby\ChatTab.designer.cs">
       <DependentUpon>ChatTab.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MicroLobby\FriendsWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MicroLobby\FriendsWindow.Designer.cs">
-      <DependentUpon>FriendsWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MicroLobby\FriendsWindowAdd.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MicroLobby\FriendsWindowAdd.Designer.cs">
-      <DependentUpon>FriendsWindowAdd.cs</DependentUpon>
     </Compile>
     <Compile Include="MicroLobby\SpringsettingForm.cs">
       <SubType>Form</SubType>
@@ -498,10 +480,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ZklResources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="AdvertiserWindow.resx">
-      <DependentUpon>AdvertiserWindow.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Buttons.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Buttons.Designer.cs</LastGenOutput>
@@ -544,12 +522,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\ChatTab.resx">
       <DependentUpon>ChatTab.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MicroLobby\FriendsWindow.resx">
-      <DependentUpon>FriendsWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MicroLobby\FriendsWindowAdd.resx">
-      <DependentUpon>FriendsWindowAdd.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\ModOptionsControl.resx">
       <DependentUpon>ModOptionsControl.cs</DependentUpon>

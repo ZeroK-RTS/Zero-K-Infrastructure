@@ -38,16 +38,6 @@ namespace ZeroKLobby
 
         string springServerHost = "lobby.springrts.com";
         int springServerPort = 8200;
-        [Browsable(false)]
-        public string AdChannels = "main,newbies";
-        [Browsable(false)]
-        public int AdDelays = 1;
-        [Browsable(false)]
-        public string AdLines = "Faster, smarter, nicer! \r\n";
-        [Browsable(false)]
-        public string AdPreffix = "Join ZK \r\njoin zero-k. \r\nJoin ZK. \r\n";
-        [Browsable(false)]
-        public string AdSuffix = "\r\n\r\nmodlink: http://zero-k.info/";
 
         string snd_play_cmd = "aplay";
         string snd_play_path = "/usr/share/sounds/alsa/test.wav"; // probably present in other than archlinux distros...
@@ -248,12 +238,6 @@ namespace ZeroKLobby
         public int OtherTextColorInt = Color.Black.ToArgb();
         [Browsable(false)]
         public bool ResetUiKeysHack4 { get; set; }
-
-
-        [Category("Chat")]
-        [DisplayName("Show Friends Window")]
-        [Description("Shows an extra windows for your friends")]
-        public bool ShowFriendsWindow { get; set; }
 
 
         [Category("Chat")]
