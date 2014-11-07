@@ -73,7 +73,7 @@ namespace PlasmaShared
         {
             var path = GetEngineFolderByVersion(version);
             var exec = Path.Combine(path, Environment.OSVersion.Platform == PlatformID.Unix ? "spring" : "spring.exe");
-            if (File.Exists(exec)) return GetSpringVersion(exec) == version;
+            if (File.Exists(exec)) return true;
             return false;
         }
 
@@ -172,7 +172,6 @@ namespace PlasmaShared
         
         static string GetSpringVersion(string executablePath)
         {
-            if (!File.Exists(executablePath)) return null;
             var LastPart =
                 Path.GetDirectoryName(executablePath).Split(new char[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
             return LastPart;

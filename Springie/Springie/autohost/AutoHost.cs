@@ -62,7 +62,7 @@ namespace Springie.autohost
             SpawnConfig = spawn;
             this.hostingPort = hostingPort;
 
-            string version = config.SpringVersion ?? Program.main.Config.SpringVersion ?? tas.ServerSpringVersion; // tas empty at this point! Possible null exception
+            string version = config.SpringVersion ?? Program.main.Config.SpringVersion ?? "91.0";
             springPaths = new SpringPaths(Program.main.paths.GetEngineFolderByVersion(version), writableFolderOverride: Program.main.Config.DataDir);
 
             Program.main.paths.SpringVersionChanged += (s, e) =>
@@ -689,6 +689,7 @@ namespace Springie.autohost
             if (Program.main.Config.UseHolePunching) b.Nat = Battle.NatMode.HolePunching;
             else if (Program.main.Config.GargamelMode) b.Nat = Battle.NatMode.FixedPorts;
             else b.Nat = Battle.NatMode.None; // else either no nat or fixed ports (for gargamel fake - to get client IPs)
+            
 
             tas.OpenBattle(b);
             tas.SetScriptTag("GAME/hosttype=SPRINGIE");
@@ -782,7 +783,7 @@ namespace Springie.autohost
                 delayedModChange = null;
                 config.Mod = latest;
                 SayBattle("Updating to latest mod version: " + latest);
-                ComRehost(TasSayEventArgs.Default, new[] { latest });
+                if (tas.MyBattle != null) ComRehost(TasSayEventArgs.Default, new[] { latest });
             }
             else {
                 PackageDownloader.Version version = Program.main.Downloader.PackageDownloader.GetByTag(tag);
@@ -792,7 +793,7 @@ namespace Springie.autohost
                         if (cache.GetResourceDataByInternalName(latest) != null && !spring.IsRunning) {
                             config.Mod = latest;
                             SayBattle("Updating to latest mod version: " + latest);
-                            ComRehost(TasSayEventArgs.Default, new[] { latest });
+                            if (tas.MyBattle != null) ComRehost(TasSayEventArgs.Default, new[] { latest });
                         }
                         else delayedModChange = latest;
                     }
