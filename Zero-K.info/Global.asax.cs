@@ -101,8 +101,8 @@ namespace ZeroKWeb
         void MvcApplication_Error(object sender, EventArgs e) {
             Exception ex = Context.Server.GetLastError();
             if (!ex.Message.Contains("was not found or does not implement IController")) Trace.TraceError(ex.ToString());
-            var context = HttpContext.Current;
-            context.Server.ClearError();
+            //var context = HttpContext.Current;
+            //context.Server.ClearError();
         }
 
         void MvcApplication_PostAuthenticateRequest(object sender, EventArgs e) {
