@@ -203,8 +203,7 @@ namespace ZeroKLobby
                         Trace.TraceInformation("TASC login accepted");
                         Trace.TraceInformation("Server is using Spring version {0}", TasClient.ServerSpringVersion);
                         if (Environment.OSVersion.Platform == PlatformID.Unix || Conf.UseExternalBrowser)
-                            MainWindow.navigationControl.Path = string.Format("chat/channel/{0}",
-                                                                              Conf.AutoJoinChannels.OfType<string>().FirstOrDefault());
+                            MainWindow.navigationControl.Path = "battles";
                     };
 
                 TasClient.LoginDenied += (s, e) => Trace.TraceInformation("TASC login denied");
