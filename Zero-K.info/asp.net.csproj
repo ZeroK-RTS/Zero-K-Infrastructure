@@ -229,13 +229,6 @@
       <DependentUpon>SpringieService.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="StructuresAdmin.aspx.cs">
-      <DependentUpon>StructuresAdmin.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="StructuresAdmin.aspx.designer.cs">
-      <DependentUpon>StructuresAdmin.aspx</DependentUpon>
-    </Compile>
     <Compile Include="UnlocksAdmin.aspx.cs">
       <DependentUpon>UnlocksAdmin.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -348,7 +341,6 @@
     <Content Include="Scripts\raphael-min.js" />
     <Content Include="Scripts\site_main.js" />
     <Content Include="SpringieService.asmx" />
-    <Content Include="StructuresAdmin.aspx" />
     <Content Include="Styles\base.css" />
     <Content Include="Styles\dark-hive\images\ui-bg_flat_30_cccccc_40x100.png" />
     <Content Include="Styles\dark-hive\images\ui-bg_flat_50_5c5c5c_40x100.png" />
