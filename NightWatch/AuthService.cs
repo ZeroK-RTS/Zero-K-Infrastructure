@@ -476,6 +476,8 @@ namespace NightWatch
 
         public Account VerifyAccount(string login, string hashedPassword)
         {
+            if (login.Any(y => Char.IsWhiteSpace(y) || Char.IsControl(y))) return null;
+            if (hashedPassword.Any(y => Char.IsWhiteSpace(y) || Char.IsControl(y))) return null;
             var info = requests[Interlocked.Increment(ref messageId)] = new RequestInfo();
 
             client.SendRaw(string.Format("#{0} TESTLOGIN {1} {2}", messageId, login, hashedPassword));
