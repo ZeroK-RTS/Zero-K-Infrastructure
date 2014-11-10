@@ -246,12 +246,19 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
                     t.Tick += (s2, e2) =>
                         {
                             tryCount++;
-                            if (tryCount > 15) t.Stop();
-                            else if (client.IsLoggedIn && client.MyBattle == null) {
+                            if (tryCount > 15)
+                            {
+                                t.Stop();
+                                t.Dispose();
+                            }
+                            else if (client.IsLoggedIn && client.MyBattle == null)
+                            {
                                 var bat = client.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == lastBattleFounder && !x.IsPassworded);
-                                if (bat != null) {
+                                if (bat != null)
+                                {
                                     ActionHandler.JoinBattle(bat.BattleID, null);
                                     t.Stop();
+                                    t.Dispose();
                                 }
                             }
                         };

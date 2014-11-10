@@ -20,6 +20,7 @@ namespace Benchmarker
         readonly SpringScanner springScanner;
         Batch testedBatch;
         BatchRunResult batchResult;
+        private Timer timer;
 
         public static void SafeStart(string path, string args = null)
         {
@@ -49,7 +50,7 @@ namespace Benchmarker
             if (downloader != null)  springDownloader = downloader;
             else springDownloader = new PlasmaDownloader.PlasmaDownloader(new PlasmaConfig(), springScanner, springPaths);
 
-            var timer = new Timer();
+            timer = new Timer();
             timer.Tick += (sender, args) =>
                 {
                     tbDownloads.Clear();
@@ -102,6 +103,7 @@ namespace Benchmarker
         void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
             springScanner.Dispose();
             springDownloader.Dispose();
+            timer.Dispose(); //Note! timer will run even when you close the Benchmarker window, so it need to Dispose()
         }
 
         void MainForm_Load(object sender, EventArgs e) {
