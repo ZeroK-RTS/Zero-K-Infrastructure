@@ -9,7 +9,7 @@ namespace ZeroKLobby
         {
             set
             {
-                richTextBox1.Rtf = value;
+                richTextBox1.Text = value;
                 richTextBox1.DeselectAll();
             }
         }

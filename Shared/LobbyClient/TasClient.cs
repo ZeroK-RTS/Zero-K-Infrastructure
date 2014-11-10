@@ -427,17 +427,6 @@ namespace LobbyClient
             con.SendCommand("FORCETEAMCOLOR", username, color);
         }
 
-        public void ForceSide(string user, int side)
-        {
-            var ubs = MyBattle.Users.SingleOrDefault(u => u.Name == user);
-            if (ubs != null)
-            {
-                ubs.Side = side;
-                con.SendCommand("FORGEMSG", user, "CLIENTBATTLESTATUS", ubs.ToInt(), ubs.TeamColor);
-                con.SendCommand("FORGEREVERSEMSG", user, "MYBATTLESTATUS", ubs.ToInt(), ubs.TeamColor);
-            }
-        }
-
         public void ForceSpectator(string username)
         {
             con.SendCommand("FORCESPECTATORMODE", username);
@@ -581,7 +570,7 @@ namespace LobbyClient
 
             UserPassword = password;
 
-            con.SendCommand("LOGIN", userName, Utils.HashLobbyPassword(password), cpu, localIp, appName, "\t" + GetMyUserID(), "\ta sp eb m");
+            con.SendCommand("LOGIN", userName, Utils.HashLobbyPassword(password), cpu, localIp, appName, "\t" + GetMyUserID(), "\ta sp eb m cl p");
         }
 
         int cpu = Environment.OSVersion.Platform == PlatformID.Unix ? GlobalConst.ZkLobbyUserCpuLinux : GlobalConst.ZkLobbyUserCpu;
@@ -618,7 +607,7 @@ namespace LobbyClient
             mapChecksumToChangeTo = MyBattle.MapHash ?? 0;
             lockToChangeTo = false;
 
-            con.SendCommand("OPENBATTLEEX", objList.ToArray());
+            con.SendCommand("OPENBATTLE", objList.ToArray());
 
             lastSpectatorCount = 0;
 
@@ -1320,12 +1309,12 @@ namespace LobbyClient
                     }
                         break;
 
-                    case "BATTLEOPENEDEX":
+                    case "BATTLEOPENED":
                     {
                         var mapHash = args[9];
-                        var rest = Utils.Glue(args, 12).Split('\t');
-                        var mapName = rest[0];
-                        var modName = rest[2];
+                        var rest = Utils.Glue(args, 10).Split('\t');
+                        var mapName = rest[2];
+                        var modName = rest[4];
                         if (!IsBattleVisible(modName)) break;
 
                         var newBattle = new Battle
@@ -1338,8 +1327,8 @@ namespace LobbyClient
                                             MaxPlayers = Int32.Parse(args[6]),
                                             Password = args[7] != "1" ? "*" : "apassword",
                                             Rank = Int32.Parse(args[8]),
-                                            EngineVersion = args[11],
-                                            EngineName = args[10]
+                                            EngineVersion = rest[1],
+                                            EngineName =rest[0]
                                             
                                         };
 
@@ -1348,7 +1337,7 @@ namespace LobbyClient
                         // NatType = Int32.Parse(args[2]); // todo: correctly add nattype
                         newBattle.MapName = mapName;
                         newBattle.MapHash = Int32.Parse(mapHash);
-                        newBattle.Title = rest[1];
+                        newBattle.Title = rest[3];
                         newBattle.ModName = modName;
                         newBattle.Users.Add(new UserBattleStatus(newBattle.Founder.Name, newBattle.Founder));
                         existingBattles[newBattle.BattleID] = newBattle;
@@ -1437,9 +1426,6 @@ namespace LobbyClient
                         RegistrationAccepted(this, new TasEventArgs(args));
                         break;
 
-                    case "ACQUIREUSERID":
-                        con.SendCommand("USERID", GetMyUserID());
-                        break;
                     case "ADDSTARTRECT":
                     {
                         var allyNo = int.Parse(args[0]);
