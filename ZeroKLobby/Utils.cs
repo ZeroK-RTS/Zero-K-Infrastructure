@@ -90,15 +90,33 @@ namespace ZeroKLobby
         public static void CreateDesktopShortcut(string name = "Zero-K") {
             try {
                 var deskDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-
-                using (var writer = new StreamWriter(Path.Combine(deskDir, name + ".url"))) {
-                    var app = Assembly.GetEntryAssembly().Location;
-                    writer.WriteLine("[InternetShortcut]");
-                    writer.WriteLine("URL=file://" + app);
-                    writer.WriteLine("IconIndex=0");
-                    var icon = app.Replace('\\', '/');
-                    writer.WriteLine("IconFile=" + icon);
-                    writer.Flush();
+                if (Environment.OSVersion.Platform == PlatformID.Unix)
+                { //Reference: http://xmodulo.com/create-desktop-shortcut-launcher-linux.html
+                  //"file://" protocol: http://en.wikipedia.org/wiki/File_URI_scheme#Windows_2
+                    using (var writer = new StreamWriter(Path.Combine(deskDir, name + ".desktop"))) {
+                        var app = Assembly.GetEntryAssembly().Location;
+                        writer.WriteLine("[Desktop Entry]");
+                        writer.WriteLine("Version=1.0");
+                        writer.WriteLine("Type=Link");
+                        writer.WriteLine("Name=Zero-K");
+                        writer.WriteLine("URL=file://" + app);
+                        writer.WriteLine("Comment=Zero-K Lobby");
+                        //var icon = app.Replace('\\', '/');
+                        //writer.WriteLine("Icon=" + icon);
+                        writer.Flush();
+                    }
+                }
+                else
+                {
+                    using (var writer = new StreamWriter(Path.Combine(deskDir, name + ".url"))) {
+                        var app = Assembly.GetEntryAssembly().Location;
+                        writer.WriteLine("[InternetShortcut]");
+                        writer.WriteLine("URL=file://" + app);
+                        writer.WriteLine("IconIndex=0");
+                        var icon = app.Replace('\\', '/');
+                        writer.WriteLine("IconFile=" + icon);
+                        writer.Flush();
+                    }
                 }
             } catch (Exception ex) {
                 Trace.TraceWarning("Error creating a desktop shortcut: {0}", ex.Message);

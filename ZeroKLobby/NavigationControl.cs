@@ -63,7 +63,7 @@ namespace ZeroKLobby
                     if (CurrentPage != null && CurrentPage.ToString() != value) backStack.Push(CurrentPage);
                     CurrentPage = step;
                 }
-                else if (value.StartsWith("http://") || value.StartsWith("https://"))
+                else if (value.StartsWith("http://") || value.StartsWith("https://") ||  value.StartsWith("file://"))
                 {
                     Program.BrowserInterop.OpenUrl(value); //this open external browser
                 } 
@@ -302,7 +302,7 @@ namespace ZeroKLobby
         {
             var navig = CurrentNavigatable;
             string urlString = urlBox.Text;
-            if (navig != null && navig.CanReload && (urlString.ToLower().StartsWith("http") || urlString.ToLower().StartsWith("www."))) //!urlString.ToLower().StartsWith("spring://")) //check if current TAB can handle website
+            if (navig != null && navig.CanReload && (urlString.StartsWith("http") || urlString.StartsWith("www.") || urlString.StartsWith("file://"))) //check if current TAB can handle website
             {
                 bool success = navig.TryNavigate(urlString); //check if able to navigate Forward/Backward/Here in current TAB
                 if (!success)

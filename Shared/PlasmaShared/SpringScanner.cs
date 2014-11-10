@@ -346,11 +346,6 @@ namespace PlasmaShared
 
         void GetResourceData(WorkItem work)
         {
-            if (springPaths.SpringVersion == null)
-            {
-                AddWork(work.CacheItem, WorkItem.OperationType.ReAskServer, DateTime.Now.AddSeconds(RescheduleServerQuery), false);
-                return;
-            }
 
             ResourceData result = null;
             try
@@ -366,13 +361,14 @@ namespace PlasmaShared
 
             if (result == null)
             {
-                if (UseUnitSync) {
-                    Trace.WriteLine(String.Format("No server resource data for {0}, queing upload", work.CacheItem.ShortPath));
-                    AddWork(work.CacheItem, WorkItem.OperationType.UnitSync, DateTime.Now, false);
-                }
-                else {
+                if (!UseUnitSync || springPaths.SpringVersion == null)
+                {
                     Trace.WriteLine(String.Format("No server resource data for {0}, asking later", work.CacheItem.ShortPath));
                     AddWork(work.CacheItem, WorkItem.OperationType.ReAskServer, DateTime.Now.AddSeconds(UnitsyncMissingReaskQuery), false);
+                }
+                else {
+                    Trace.WriteLine(String.Format("No server resource data for {0}, queing upload", work.CacheItem.ShortPath));
+                    AddWork(work.CacheItem, WorkItem.OperationType.UnitSync, DateTime.Now, false);
                 }
                 return;
             }

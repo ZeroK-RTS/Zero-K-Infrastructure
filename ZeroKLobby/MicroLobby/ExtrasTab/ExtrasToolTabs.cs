@@ -179,7 +179,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         }
         private string GetAdjTabPath(bool next)
         {
-            var path = "spextended/";
+            var path = "extra/";
 
             var nextControl = this.GetNextControl(controls[activeButton.Name], next);
             var nextButtonName = nextControl.Name;

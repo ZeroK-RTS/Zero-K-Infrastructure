@@ -49,7 +49,8 @@ namespace ZeroKLobby.MicroLobby
         //old URL regex for reference: WwwMatch = @"((https?|www\.|spring://)[^\s,]+)";
         //Regex note: [^<>()] : exclude <<< or >>> or ( or ) at end of URL
         //Regex note: [\w\d:#@%/!;$()~_?\+-=\\\.&]* : include any sort of character 1 or more times
-        public const string WwwMatch = @"((www\.|www\d\.|(https?|ftp|irc|spring):((//)|(\\\\)))+[\w\d:#@%/!;$()~_?\+-=\\\.&]*[^<>()])"; //from http://icechat.codeplex.com/SourceControl/latest#532131
+        //Reference: http://en.wikipedia.org/wiki/Regular_expression#Basic_concepts
+        public const string WwwMatch = @"(www\.|www\d\.|(https?|ftp|irc|spring):((//)|(\\\\)))+[\w\d:#@%/!;$()~_?\+-=\\\.&]*[^<>()]"; //from http://icechat.codeplex.com/SourceControl/latest#532131
         int backColor;
         int curHighChar;
         int curHighLine;
@@ -472,9 +473,22 @@ namespace ZeroKLobby.MicroLobby
                 bool isFull = MaxTextLines >= HardMaximumLines;
                 if (needSpace && !isExpanding && (isFull || !isSpam))
                 { //remove old text, create space for new text (recycle existing row)
-                    var x = 0;
                     int toRemove = (MaxTextLines / 10) + 1; //remove 10% of old text
-                    for (int i = toRemove; i < totalLines; i++) 
+
+                    int lineCount = 0;
+                    int wrapCount = 0;
+                    while (lineCount < toRemove + 1) //calculate scrollbar offset:
+                    {
+                        if (displayLines[wrapCount + lineCount].Previous)
+                            wrapCount++;
+                        else
+                            lineCount++;
+                    }
+                    int vScrollBarOffset = wrapCount + lineCount - 1;
+                    vScrollBarOffset = Math.Min(vScrollBarOffset, vScrollBar.Value - 1);
+
+                    var x = 0;
+                    for (int i = toRemove; i < totalLines; i++) //shift existing texts upward:
                     {
                         textLines[x].TotalLines = textLines[i].TotalLines;
                         textLines[x].Width = textLines[i].Width;
@@ -495,7 +509,7 @@ namespace ZeroKLobby.MicroLobby
                     if (Height != 0)
                     {
                         TotalDisplayLines = FormatLines(totalLines, 1, 0);
-                        UpdateScrollBar(TotalDisplayLines, toRemove*-1);
+                        UpdateScrollBar(TotalDisplayLines, vScrollBarOffset * -1);
                         Invalidate();
                     }
 
@@ -535,7 +549,6 @@ namespace ZeroKLobby.MicroLobby
                 }
 
                 UpdateScrollBar(TotalDisplayLines,0);
-
                 Invalidate();
             }
             catch (Exception e)
@@ -867,8 +880,7 @@ namespace ZeroKLobby.MicroLobby
 
                                                     startX += bm.Width + g.MeasureString(buildString.ToString(), Font, 0, sf).Width;
 
-                                                    buildString = null;
-                                                    buildString = new StringBuilder(); //reset the content (because we already draw it for user)
+                                                    buildString.Clear(); //reset the content (because we already draw it for user)
                                                 }
                                                 break;
                                             case TextColor.UrlStart:
@@ -890,8 +902,7 @@ namespace ZeroKLobby.MicroLobby
 
                                                 startX += g.MeasureString(buildString.ToString(), font, 0, sf).Width; //textSizes[32]
 
-                                                buildString = null;
-                                                buildString = new StringBuilder();
+                                                buildString.Clear();
 
                                                 //remove whats drawn from string
                                                 line.Remove(0, i);
@@ -909,7 +920,7 @@ namespace ZeroKLobby.MicroLobby
                                                     var r = new Rectangle((int)startX, startY, textSize + 1, LineSize + 1);
                                                     g.FillRectangle(backColorBrush, r);
                                                 }
-                                                // TextRenderer.DrawText(g, buildString.ToString(), font, new Point((int)startX, startY), TextColor.GetColor(curForeColor), TextColor.GetColor(curBackColor));
+                                                // TextRenderer.DrawText(g, buildString.ToString(), font, new Point((int)startX, startY), TextColor.GetColor(curForeColor), TextColor.GetColor(curBackColor)); //is slow for slow gpu IMO
                                                 using (var brush = new SolidBrush(TextColor.GetColor(curForeColor))) {
                                                     g.DrawString(buildString.ToString(),
                                                                     font,
@@ -921,8 +932,7 @@ namespace ZeroKLobby.MicroLobby
 
                                                 startX += g.MeasureString(buildString.ToString(), font, 0, sf).Width; //textSizes[32]
 
-                                                buildString = null;
-                                                buildString = new StringBuilder();
+                                                buildString.Clear();
 
                                                 //remove whats drawn from string
                                                 line.Remove(0, i);
@@ -939,7 +949,7 @@ namespace ZeroKLobby.MicroLobby
                                                     var r = new Rectangle((int)startX, startY, textSize + 1, LineSize + 1);
                                                     g.FillRectangle(backColorBrush, r);
                                                 }
-                                                // TextRenderer.DrawText(g, buildString.ToString(), font, new Point((int)startX, startY), TextColor.GetColor(curForeColor), TextColor.GetColor(curBackColor));
+                                                // TextRenderer.DrawText(g, buildString.ToString(), font, new Point((int)startX, startY), TextColor.GetColor(curForeColor), TextColor.GetColor(curBackColor)); //is slow for slow gpu IMO
                                                 using (var brush = new SolidBrush(TextColor.GetColor(curForeColor))) {
                                                     g.DrawString(buildString.ToString(),
                                                                     font,
@@ -951,8 +961,7 @@ namespace ZeroKLobby.MicroLobby
 
                                                 startX += g.MeasureString(buildString.ToString(), font, 0, sf).Width; //textSizes[32]
 
-                                                buildString = null;
-                                                buildString = new StringBuilder();
+                                                buildString.Clear();
 
                                                 //remove whats drawn from string
                                                 line.Remove(0, i);
@@ -972,7 +981,7 @@ namespace ZeroKLobby.MicroLobby
                                                     var r = new Rectangle((int)startX, startY, textSize + 1, LineSize + 1);
                                                     g.FillRectangle(backColorBrush, r);
                                                 }
-                                                // TextRenderer.DrawText(g, buildString.ToString(), font, new Point((int)startX, startY), TextColor.GetColor(curForeColor), TextColor.GetColor(curBackColor));
+                                                // TextRenderer.DrawText(g, buildString.ToString(), font, new Point((int)startX, startY), TextColor.GetColor(curForeColor), TextColor.GetColor(curBackColor)); //is slow for slow gpu IMO
                                                 using (var brush = new SolidBrush(TextColor.GetColor(curForeColor))) {
                                                     g.DrawString(buildString.ToString(),
                                                                     font,
@@ -984,8 +993,7 @@ namespace ZeroKLobby.MicroLobby
 
                                                 startX += g.MeasureString(buildString.ToString(), font, 0, sf).Width; //textSizes[32]
 
-                                                buildString = null;
-                                                buildString = new StringBuilder();
+                                                buildString.Clear();
 
                                                 //remove whats drawn from string
                                                 line.Remove(0, i);
@@ -1014,6 +1022,50 @@ namespace ZeroKLobby.MicroLobby
                                                 break;
 
                                             default:
+                                                //random symbol safety check (symbols to skip drawing)
+                                                if((int)ch[0] > Int16.MaxValue) //random symbol can mess up graphic object "g" in Linux! which cause nothing to be drawn after the symbol
+                                                {
+                                                    if (curBackColor != backColor)
+                                                    {
+                                                        textSize = (int)g.MeasureString(buildString.ToString(), Font, 0, sf).Width + 1;
+                                                        var r = new Rectangle((int)startX, startY, textSize + 1, LineSize + 1);
+                                                        g.FillRectangle(backColorBrush, r);
+                                                    }
+                                                    using (var brush = new SolidBrush(TextColor.GetColor(curForeColor))) {
+                                                        g.DrawString(buildString.ToString(),
+                                                                     font,
+                                                                     brush,
+                                                                     startX,
+                                                                     startY,
+                                                                     sf);
+                                                    }
+                                                    startX += g.MeasureString(buildString.ToString(), font, 0, sf).Width;
+                                                    float symbolWidth;
+                                                    using (var tmpBuffer = new Bitmap(LineSize,LineSize, PixelFormat.Format32bppPArgb))
+                                                    using (var tmpG = Graphics.FromImage(tmpBuffer)) //temporary graphic object that can be messed up independently
+                                                    {
+                                                        var randomChar = ch[0].ToString();
+                                                        symbolWidth = tmpG.MeasureString(randomChar, font, 0, sf).Width;
+                                                        if (symbolWidth>0) //skip when symbol width == 0 (symptom obtained from trial-n-error)
+                                                            using (var brush = new SolidBrush(TextColor.GetColor(curForeColor))) {
+                                                                g.DrawString(randomChar,
+                                                                             font,
+                                                                             brush,
+                                                                             startX,
+                                                                             startY,
+                                                                             sf);
+                                                             }
+                                                    }
+                                                    startX += symbolWidth;
+
+                                                    line.Remove(0, i);
+                                                    line.Remove(0, 1);
+                                                    i= -1;
+
+                                                    buildString.Clear();
+
+                                                    break;
+                                                }
                                                 //curLine is "the line being processed here" (not user's line)
                                                 //startHightLine is "the line where highlight start"
                                                 //curHighLine is "the line where highlight end"
@@ -1052,7 +1104,7 @@ namespace ZeroKLobby.MicroLobby
                                                         var r = new Rectangle((int)startX, startY, textSize + 1, LineSize + 1);
                                                         g.FillRectangle(backColorBrush, r); //draw black (or white) rectangle
                                                     }
-                                                    /*
+                                                    /* //GDI example:
                                                         TextRenderer.DrawText(g,
                                                                         buildString.ToString(),
                                                                         font,
@@ -1071,8 +1123,7 @@ namespace ZeroKLobby.MicroLobby
 
                                                     startX += g.MeasureString(buildString.ToString(), font, 0, sf).Width; //textSizes[32]
 
-                                                    buildString = null; //reset the content (because we already draw it for user)
-                                                    buildString = new StringBuilder();
+                                                    buildString.Clear();//reset the content (because we already draw it for user)
 
                                                     //remove whats drawn from string
                                                     line.Remove(0, i);
@@ -1094,7 +1145,7 @@ namespace ZeroKLobby.MicroLobby
                                         }
                                         i++;
                                     }
-                                } while (line.Length > 0 && i != line.Length);
+                                } while (line.Length > 0 && i != line.Length); //loop character
                             }
 
                             //draw anything that is left over                
@@ -1115,9 +1166,8 @@ namespace ZeroKLobby.MicroLobby
                             startY += LineSize;
                             startX = 0;
                             curLine++;
-                            buildString = null;
-                            buildString = new StringBuilder();
-                        }
+                            buildString.Clear();
+                        } //loop line
                         font.Dispose();
                         e.Graphics.DrawImageUnscaled(buffer, 0, 0);
                     }
@@ -1128,6 +1178,7 @@ namespace ZeroKLobby.MicroLobby
                                               Font,
                                               false,
                                               PushButtonState.Normal);
+                    buildString = null;
                 }
             }
             catch (Exception ee)
@@ -1419,7 +1470,7 @@ namespace ZeroKLobby.MicroLobby
             else
             {
                 bool nearBottom = vScrollBar.Value + 5 >= TotalDisplayLines;
-                bool isBottom = vScrollBar.Value + vScrollBar.LargeChange - 1 >= vScrollBar.Maximum; //exactly at UI's scrollbar bottom
+                bool isBottom = vScrollBar.Value >= (1 + vScrollBar.Maximum - vScrollBar.LargeChange); //exactly at UI's scrollbar bottom
 
                 if (showMaxLines < TotalDisplayLines)
                 {
@@ -1435,7 +1486,7 @@ namespace ZeroKLobby.MicroLobby
                 if (newValue != 0)
                 {
                     vScrollBar.Minimum = 1;
-                    vScrollBar.Maximum = Math.Max(TotalDisplayLines + vScrollBar.LargeChange - 1,1); // maximum value that can be reached through UI is: 1 + Maximum - LargeChange. Ref: http://msdn.microsoft.com/en-us/library/system.windows.forms.scrollbar.maximum(v=vs.110).aspx
+                    vScrollBar.Maximum = Math.Max(-1 + TotalDisplayLines + vScrollBar.LargeChange,1); // maximum value that can be reached through UI is: 1 + Maximum - LargeChange. Ref: http://msdn.microsoft.com/en-us/library/system.windows.forms.scrollbar.maximum(v=vs.110).aspx
 
                     if (!vScrollBar.Enabled || !vScrollBar.Visible) isBottom = true;
                     if (isBottom || hideScroll || nearBottom) vScrollBar.Value = newValue; //always set to TotalDisplayLines to make scrollbar follow new chat message feed 

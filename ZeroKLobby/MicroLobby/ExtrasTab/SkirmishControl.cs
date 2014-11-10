@@ -30,7 +30,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         List<SpringScanner.CacheItem> modCache = new List<SpringScanner.CacheItem>();
         List<SpringScanner.CacheItem> mapCache = new List<SpringScanner.CacheItem>();
         private List<BotBattleStatus> Bots = new List<BotBattleStatus>();
-        PlasmaShared.UnitSyncLib.Map currentMap;
+        Map currentMap;
         private List<UserBattleStatus> allUser = new List<UserBattleStatus>();
         private PlayerListItem myItem;
         private Ai[] aiList;
@@ -42,7 +42,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         private List<MissionSlot> missionSlots;
         private List<MissionSlot> botsMissionSlot;
         private float[,] presetStartPos;
-        private Dictionary<string, List<PlasmaShared.UnitSyncLib.Ai>> springAi;
+        private List<Ai> springAi;
         private System.Windows.Forms.Timer uiTimer;
         private const int timerFPS = 60;
         private bool requestMinimapRefresh = false;
@@ -50,6 +50,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         public SkirmishControl()
         {
             Paint += Event_SkirmishControl_Enter;
+            Program.Downloader.DownloadAdded += Event_Downloader_DownloadAdded;
         }
 
         private void Event_SkirmishControl_Enter(object sender, EventArgs e)
@@ -74,7 +75,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             currentBattleDetail = new BattleDetails();
             ModOptions = new Dictionary<string, string>();
             Rectangles = new Dictionary<int, BattleRect>();
-            springAi = new Dictionary<string, List<PlasmaShared.UnitSyncLib.Ai>>();
+            springAi = new List<Ai>();
             presetStartPos = new float[25, 4]{
             //  left    right   bottom  top
                 {0,     0.1f,   0,      0.1f},
@@ -130,10 +131,16 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             sideCB.ForeColor = Color.Black;
             skirmPlayerBox.ForeColor = Color.Black;
 
+            Setup_ComboBox();
+            if (!string.IsNullOrEmpty(Program.Conf.SkirmisherEngine))
+                engine_comboBox.SelectedItem = Program.Conf.SkirmisherEngine;
+            if (!string.IsNullOrEmpty(Program.Conf.SkirmisherGame))
+                game_comboBox.SelectedItem = Program.Conf.SkirmisherGame;
+            if (!string.IsNullOrEmpty(Program.Conf.SkirmisherMap))
+                map_comboBox.SelectedItem = Program.Conf.SkirmisherMap;
+            
             this.OnResize(new EventArgs()); //to fix control not filling the whole window at start
             Paint -= Event_SkirmishControl_Enter;
-
-            Setup_ComboBox();
         }
 
         private void Setup_MyInfo()
@@ -156,13 +163,20 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             botsMissionSlot = new List<MissionSlot>();
         }
 
+        private Download download;
+        private int timerCount = 0;
+        private void Event_Downloader_DownloadAdded(object sender, EventArgs<Download> e)
+        {
+            download = e.Data;
+            timerCount = 0;
+        }
+
         private bool requestComboBoxRefresh = false;
         void Event_SpringScanner_LocalResourceAdded(object sender, SpringScanner.ResourceChangedEventArgs e)
         {
             requestComboBoxRefresh = true;
         }
 
-        private int frameCount = 0;
         void Event_uiTimer_Tick(object sender, EventArgs e)
         {
             if (!Visible) return;
@@ -175,15 +189,34 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             }
 
             //update combobox
-            if (requestComboBoxRefresh)
+            bool downloadFinished = (download != null && download.IsComplete.GetValueOrDefault());
+            if (downloadFinished || requestComboBoxRefresh)
             {
-                frameCount++;
-                if (frameCount >= timerFPS*15) //collect multiple update for 30 second and call Setup_ComboBox() only once to avoid flicker
+                timerCount++;
+                //wait 3 second after LocalResourceAdded() to avoid ComboBox flicker if its called too often, 
+                //and wait 3 second for download finish just in case the file is extracting
+                if (timerCount >= timerFPS * 3)
                 {
-                    Setup_ComboBox();
+                    suppressEvent_SelectedIndexChanged = true;
+                    Setup_ComboBox_AndRestore();
+                    suppressEvent_SelectedIndexChanged = false;
+                    
+                    download = null;
                     requestComboBoxRefresh = false;
+                    timerCount = 0;
                 }
             }
+        }
+
+        private void Setup_ComboBox_AndRestore()
+        {
+            string gameName = (string)game_comboBox.SelectedItem;
+            string mapName = (string)map_comboBox.SelectedItem;
+            string engineName = (string)engine_comboBox.SelectedItem;
+            Setup_ComboBox();
+            game_comboBox.SelectedItem = gameName;
+            map_comboBox.SelectedItem = mapName;
+            engine_comboBox.SelectedItem = engineName;
         }
 
         private void Setup_ComboBox() //code from Benchmarker.MainForm.cs
@@ -198,34 +231,24 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     string engineFolder = PlasmaShared.Utils.MakePath(Program.SpringPaths.WritableDirectory, "engine");
                     engineList = System.IO.Directory.EnumerateDirectories(engineFolder, "*").ToList<string>();
                     for (int i = 0; i < engineList.Count; i++)
-                    {
-                        if (Environment.OSVersion.Platform == PlatformID.Unix)
-                            engineList[i] = engineList[i].Substring(engineList[i].LastIndexOf("/") + 1); //remove full path, leave only folder name
-                        else
-                            engineList[i] = engineList[i].Substring(engineList[i].LastIndexOf("\\") + 1); //remove full path, leave only folder name
-                    }
-                    engineList = SortListByName(engineList);
+                        engineList[i] = SkirmishControlTool.GetFolderName(engineList[i]);
+
+                    engineList = SkirmishControlTool.SortListByVersionName(engineList);
 
                     modCache = Program.SpringScanner.GetAllModResource();
                     for (int i = 0; i < modCache.Count; i++) modList.Add(modCache[i].InternalName);
-                    modList = SortListByName(modList);
+                    modList = SkirmishControlTool.SortListByVersionName(modList);
 
                     mapCache = Program.SpringScanner.GetAllMapResource();
                     for (int i = 0; i < mapCache.Count; i++) mapList.Add(mapCache[i].InternalName);
-                    mapList = SortListByName(mapList);
+                    mapList = SkirmishControlTool.SortListByVersionName(mapList);
 
                     engine_comboBox.Items.Clear();
                     game_comboBox.Items.Clear();
                     map_comboBox.Items.Clear();
-                    engine_comboBox.AutoCompleteCustomSource.Clear();
-                    game_comboBox.AutoCompleteCustomSource.Clear();
-                    map_comboBox.AutoCompleteCustomSource.Clear();
                     engine_comboBox.Items.AddRange(engineList.ToArray());
                     game_comboBox.Items.AddRange(modList.ToArray());
                     map_comboBox.Items.AddRange(mapList.ToArray());
-                    engine_comboBox.AutoCompleteCustomSource.AddRange(engineList.ToArray());
-                    game_comboBox.AutoCompleteCustomSource.AddRange(modList.ToArray());
-                    map_comboBox.AutoCompleteCustomSource.AddRange(mapList.ToArray());
                 }
                 catch (Exception ex)
                 {
@@ -234,12 +257,12 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
                 InvokeIfNeeded(() =>
                 { //for multithreading stuff?
+                    engine_comboBox.Items.Clear();
+                    game_comboBox.Items.Clear();
+                    map_comboBox.Items.Clear();
                     engine_comboBox.Items.AddRange(engineList.ToArray());
                     game_comboBox.Items.AddRange(modList.ToArray());
                     map_comboBox.Items.AddRange(mapList.ToArray());
-                    engine_comboBox.AutoCompleteCustomSource.AddRange(engineList.ToArray());
-                    game_comboBox.AutoCompleteCustomSource.AddRange(modList.ToArray());
-                    map_comboBox.AutoCompleteCustomSource.AddRange(mapList.ToArray());
                 });
             }
             catch (Exception ex)
@@ -259,161 +282,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             {
                 Trace.TraceError(ex.ToString());
             }
-        }
-
-        /// <summary>
-        /// This function sort the content of a List<string> table
-        /// using the first character (a-z) of the first 3 word
-        /// and the 4 first numbers (0-50000) as versions.
-        /// 
-        /// The words (and numbers) are assumed to be separated by
-        /// character such as ".", "-", "_", and " "
-        /// </summary>
-        /// <param name="nameList"></param>
-        /// <returns></returns>
-        private List<string> SortListByName(List<string> nameList)
-        {
-            char[] charIndex = new char[36]
-            {
-                '0','1','2','3','4',
-                '5','6','7','8','9',
-                'a','b','c','d','e',
-                'f','g','h','i','j',
-                'k','l','m','n','o',
-                'p','q','r','s','t',
-                'u','v','w',
-                'x','y','z',
-            };
-            //initialize score table
-            List<object[]> scoredItem = new List<object[]>(nameList.Count);
-            for (int i = 0; i < nameList.Count; i++)
-                scoredItem.Add(new object[2] { 0, nameList[i] });
-
-
-            //score each entry
-            for (int i = 0; i < scoredItem.Count; i++)
-            {
-                string[] textComponent = nameList[i].ToLower().Split(new char[4] { ' ', '.', '-', '_' }, StringSplitOptions.RemoveEmptyEntries);
-                double scoreMultiplier = 0.01;
-                double score = 0;
-                // score for 1st,2nd,3rd & 4th integer mapped this way: 0.11223344
-                int maxOperation = Math.Min(textComponent.Length, 4);
-                int j = 0;
-                int count = 0;
-                while (j < textComponent.Length && count < maxOperation)
-                {
-                    int isInteger = -1;
-                    int.TryParse(textComponent[j], out isInteger);
-                    if (isInteger != 0 || textComponent[j] == "0") //score integer
-                    {
-                        score = score + (1 - 1 * Math.Exp(-isInteger / 130.0) + 0.00002 * isInteger) * 99 * scoreMultiplier;
-                        scoreMultiplier = scoreMultiplier / 100; //go to next lower significant integer
-                        count = count + 1;
-                    }
-                    else if (textComponent[j].Length >= 2) //text, but probably versioning char (like 'v' or 'r')
-                    {
-                        int.TryParse(textComponent[j].Substring(1), out isInteger);
-                        if (isInteger != 0 || textComponent[j].Substring(1) == "0")  //trailing integer is probably version number
-                        {
-                            score = score + (1 - 1 * Math.Exp(-isInteger / 130.0) + 0.00002 * isInteger) * 99 * scoreMultiplier;
-                            scoreMultiplier = scoreMultiplier / 100; //go to next lower significant integer
-                            count = count + 1;
-
-                            // For reference, equation:
-                            // (1 - 1 * Math.Exp(-isInteger / 140.0) + 0.00002 * isInteger) 
-                            // behave as following:
-                            //   ^
-                            //  2|                                     x 
-                            //   |                                x  
-                            //   |                          x  
-                            //   |                    x   
-                            //   |              x  
-                            //  1|        x  
-                            //   |    x
-                            //   |   x                                    
-                            //   |  x                                      
-                            //   | x                                       
-                            //   |x                                       
-                            // 0 ----------------------------------------> isInteger
-                            //   0   600                               50000
-                            //
-                            //  Targeted properties:
-                            //  1) have exaggerated sensitivity for isInteger <600 (to avoid small value like 1 or 2 approaching 0)
-                            //  2) low sensitivity for higher isInteger (to avoid big value like 50000 from filling up all the score's digit)
-                            //
-                            // "Score Digit":
-                            // If we have "Zero-K v1.10.0.500"
-                            // then we will use the following digit to score the numbers:
-                            // v1 --> 0.xx
-                            // .10 --> 0.00xx
-                            // .0 ---> 0.0000xx
-                            // .500 ---> 0.000000xx
-                            // If we literally translate versioning number digit by digit, then:
-                            // v1.10.0.500 --> 0.01100500
-                            // v1.10.1.0 --> 0.01100100 (notice that previous version yield a bigger score-digit than current version)
-                            //
-                            // So we have to scale down the "500" to fit its score digit, 
-                            // but can't scale down "1" using the same amount because it will reach 0.
-                            // So we use this equation: "(1 - 1 * Math.Exp(-isInteger / 140.0) + 0.00002 * isInteger)"
-                        }
-                    }
-                    j = j + 1;
-                }
-
-                scoreMultiplier = 01000000;
-                // score for 1st,2nd & 3rd word mapped this way: 11112233
-                maxOperation = Math.Min(textComponent.Length, 3);
-                j = 0;
-                while (j < maxOperation)
-                {
-                    int isInteger = -1;
-                    int.TryParse(textComponent[j], out isInteger);
-                    if (isInteger == 0 && textComponent[j] != "0") //score text
-                    {
-                        int letterToCheck = Math.Min(textComponent[j].Length, 2);
-                        char[] letters = textComponent[j].Substring(0, letterToCheck).ToCharArray();
-
-                        if (j >= 1)
-                        { //for next 2 word, score only first character
-                            for (int k = 0; k < charIndex.Length; k++)
-                                if (charIndex[k] == letters[0])
-                                {
-                                    score = score + k * scoreMultiplier;
-                                    break;
-                                }
-                            scoreMultiplier = scoreMultiplier / 100; //go to next lower significant digit
-                        }
-                        else
-                        { //for first word, score 2 character at once
-                            double tempScoreMultiplier = scoreMultiplier;
-                            for (int L = 0; L < letters.Length; L++)
-                            {
-                                for (int k = 0; k < charIndex.Length; k++)
-                                    if (charIndex[k] == letters[L])
-                                    {
-                                        score = score + k * tempScoreMultiplier;
-                                        tempScoreMultiplier = tempScoreMultiplier / 100;
-                                        break;
-                                    }
-                            }
-                            scoreMultiplier = scoreMultiplier / 10000; //go to next lower significant digit
-                        }
-                    }
-                    j = j + 1;
-                }
-                scoredItem[i][0] = score;
-            }
-
-            scoredItem.Sort(delegate(object[] x, object[] y) //Reference: http://msdn.microsoft.com/en-us/library/b0zbh7b6(v=vs.110).aspx
-            {
-                if ((double)x[0] < (double)y[0]) return -1;
-                else if ((double)x[0] == (double)y[0]) return 0;
-                else return 1;
-            });
-            for (int i = 0; i < nameList.Count; i++)
-                nameList[i] = (string)scoredItem[i][1];// +" " + ((double)scoredItem[i][0]).ToString();
-
-            return nameList;
         }
 
         private bool suppressEvent_minimapRadiobutton = false;
@@ -453,7 +321,8 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
         private void Set_MapImages(string mapName, int mapView)
         {
-            Program.ToolTip.SetMap(minimapBox, mapName);
+            //Program.ToolTip.SetMap(minimapBox, mapName);
+            Program.ToolTip.SetMap(map_comboBox, mapName);
             string springVersion = (engine_comboBox.SelectedItem != null) ? (string)engine_comboBox.SelectedItem : null;
             // todo add check before calling invoke invokes!!!
             Program.SpringScanner.MetaData.GetMapAsync(mapName,
@@ -509,7 +378,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     g.TextRenderingHint = TextRenderingHint.AntiAlias;
                     g.SmoothingMode = SmoothingMode.HighQuality;
                     g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    //var positions = currentMap.Positions != null ? currentMap.Positions.ToList() : new List<PlasmaShared.UnitSyncLib.StartPos>();
+                    //var positions = currentMap.Positions != null ? currentMap.Positions.ToList() : new List<StartPos>();
                     //foreach (var pos in positions)
                     //{
                     //    var left = ((pos.z - 1000)/currentMap.Size.Width) * minimapBox.Image.Width / BattleRect.Max;
@@ -626,7 +495,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 newList.Add(new PlayerListItem { Button = allianceName, SortCategory = team * 2, AllyTeam = team, Height = 25 });
             }
 
-            //copy new start position, but keep old one and remove any extras
+            //copy new startBox position, but keep old one and remove any extras
             {
                 bool haveChanges = false;
                 List<int> toRemove = new List<int>();
@@ -962,9 +831,10 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             form.Show(); //show menu
         }
 
-        private void Set_BotBattleStatus(string shortname,string ownerName, int? teamNumber, int? allyNumber,int? botColor)
+        private void Set_BotBattleStatus(string shortname,string ownerName, int? teamNumber, int? allyNumber,int? botColor, string version)
         {
             var aiLib = shortname;
+            if (version != null) aiLib = aiLib + "|" + version; //splitter defined in Battle.cs/ScriptAddBot();
             var botNumber = Enumerable.Range(1, 9000).First(j => !Bots.Any(bt => bt.Name == "Bot_" + j));
             BotBattleStatus botStatus = new BotBattleStatus("Bot_" + botNumber,ownerName, aiLib);
             
@@ -997,21 +867,24 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
         private MenuItem Get_SpringBotItem()
         {
-            var addSpringBot = new MenuItem("Add spring's AI (Bot)" + ((engine_comboBox.SelectedItem != null) ? String.Empty : " (Not available)")) { Visible = true };
-            if (engine_comboBox.SelectedItem != null && springAi.ContainsKey((string)engine_comboBox.SelectedItem))
+            bool msWindows = Environment.OSVersion.Platform != PlatformID.Unix;
+            bool enabled = (engine_comboBox.SelectedItem != null) && (msWindows || (string)engine_comboBox.SelectedItem != "91.0"); //linux don't have static build for Spring 91
+            var addSpringBot = new MenuItem("Add spring's AI (Bot)" + (enabled ? String.Empty : " (Not available)")) { Visible = true };
+            if (engine_comboBox.SelectedItem != null && springAi.Count > 0)
             {
-                var ais = springAi[(string)engine_comboBox.SelectedItem];
-                MenuItem item; string description; int descLength;
+                var ais = springAi;
+                MenuItem item; string description;// int descLength;
                 for (int i = 0; i < ais.Count; i++)
                 {
                     description = ais[i].Description;
                     string shortName = ais[i].ShortName;
+                    string version = ais[i].Version;
                     //descLength = 65 - shortName.Length;
                     //item = new System.Windows.Forms.MenuItem(string.Format("{0} ({1}" + (description.Length > descLength ? "..." : ")"), shortName, description.Substring(0, Math.Min(descLength, description.Length)))); //description too long 
-                    item = new System.Windows.Forms.MenuItem(string.Format("{0} ({1})", shortName, description)); //description too long 
+                    item = new System.Windows.Forms.MenuItem(string.Format("{0} ({1})", shortName, version)); //description too long 
                     item.Click += (s, e2) =>
                     {
-                        Set_BotBattleStatus(shortName, myItem.UserName, null, null,null);
+                        Set_BotBattleStatus(shortName, myItem.UserName, null, null, null, version);
                     };
                     addSpringBot.MenuItems.Add(item);
                 }
@@ -1031,7 +904,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     var b = bot; //to maintain reference to object
                     item.Click += (s, e) =>
                     {
-                        Set_BotBattleStatus(b.ShortName, myItem.UserName, null, null, null);
+                        Set_BotBattleStatus(b.ShortName, myItem.UserName, null, null, null,b.Version);
                     };
                     addBotItem.MenuItems.Add(item);
                 }
@@ -1086,25 +959,28 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         }
 
         private bool wasMissingEntry = true;
-        private bool suppressEvent_ComboboxSelectionChangeCommited = false;
+        private bool suppressEvent_SelectedIndexChanged = false;
         private void Event_ComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (suppressEvent_ComboboxSelectionChangeCommited) return;
+            if (suppressEvent_SelectedIndexChanged) return;
             if ((sender as Control).Name == "map_comboBox" && map_comboBox.SelectedItem!= null)
             {
+                string mapName = (string)map_comboBox.SelectedItem;
                 int selectedView = normalRadioButton.Checked ? 0 : (elevationRadioButton.Checked ? 1 : 2);
-                Set_MapImages((string)map_comboBox.SelectedItem, selectedView);
+                Set_MapImages(mapName, selectedView);
                 
                 if (infoLabel.Text.StartsWith("Select map"))
                     infoLabel.Text = "";
 
                 Set_InfoLabel();
+                Program.Conf.SkirmisherMap = mapName;
             }
             else if ((sender as Control).Name == "game_comboBox" && game_comboBox.SelectedItem != null)
             {
+                string gameName = (string)game_comboBox.SelectedItem;
                 //run GetMod() in new thread, then call "CallBack_Mod()" in current thread when finish(?). 
                 Program.SpringScanner.MetaData.GetModAsync(
-                    (string)game_comboBox.SelectedItem,
+                    gameName,
                     mod =>
                     {
                         Invoke(new Action(() =>
@@ -1115,7 +991,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                         );
                     }, 
                     exception => { Trace.TraceError("CallBack_Mod(mod) error: {0}", exception.ToString()); },
-                    (string)engine_comboBox.SelectedItem);
+                    gameName);
                 //Program.SpringScanner.MetaData.GetModAsync(
                 //   (string)game_comboBox.SelectedItem,
                 //   mod=>{
@@ -1129,6 +1005,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     infoLabel.Text = "";
 
                 Set_InfoLabel();
+                Program.Conf.SkirmisherGame = gameName;
 
             }
             else if ((sender as Control).Name == "engine_comboBox" && engine_comboBox.SelectedItem != null)
@@ -1139,6 +1016,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     engineFolder = engineFolder + "\\" + springVersion;
                 else
                     engineFolder = engineFolder + "/" + springVersion;
+
                 if (Program.SpringPaths.HasEngineVersion(springVersion))
                     Program.SpringPaths.SetEnginePath (engineFolder);
                 spring = new Spring(Program.SpringPaths);
@@ -1148,20 +1026,12 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     infoLabel.Text = "";
 
                 Set_InfoLabel();
+                Program.Conf.SkirmisherEngine = (string)engine_comboBox.SelectedItem;
 
-                if (!springAi.ContainsKey(springVersion))
-                {
-                    var aI = new List<PlasmaShared.UnitSyncLib.Ai>(10);
-
-                    Program.SpringScanner.VerifyUnitSync();
-                    if (Program.SpringScanner.unitSync != null)
-                    {
-                        foreach (var bot in Program.SpringScanner.unitSync.GetAis()) //IEnumberable can't be serialized, so convert to List. Ref: http://stackoverflow.com/questions/9102234/xmlserializer-in-c-sharp-wont-serialize-ienumerable 
-                            aI.Add(bot);
-                        Program.SpringScanner.UnInitUnitsync();
-                    }
-                    springAi.Add(springVersion, aI);
-                }
+                if (Program.SpringPaths.HasEngineVersion(springVersion))
+                    springAi = SkirmishControlTool.GetSpringAIs(engineFolder);
+                else
+                    springAi.Clear();
             }
             //check if we have entered game, map and engine value so that we can update the Sync icon.
             bool missingEntry = (game_comboBox.SelectedItem == null || engine_comboBox.SelectedItem == null || map_comboBox.SelectedItem == null);
@@ -1215,7 +1085,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             if (missionSlots.Count == 0) missionSlots = null;
             if (missionSlots != null)
             {
-                foreach (PlasmaShared.UnitSyncLib.MissionSlot slot in missionSlots.Where(s => s.IsHuman))
+                foreach (MissionSlot slot in missionSlots.Where(s => s.IsHuman))
                 {
                     myItem.MissionSlot = slot;
                     Set_MyBattleStatus(slot.AllyID, slot.TeamID, (int)(MyCol)slot.Color, false);
@@ -1227,7 +1097,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 foreach (var slot in missionSlots.Where(s => s.AiShortName != null))
                 {
                     botsMissionSlot.Add(slot);
-                    Set_BotBattleStatus(slot.AiShortName, myItem.UserName, slot.TeamID, slot.AllyID, (int)(MyCol)slot.Color);
+                    Set_BotBattleStatus(slot.AiShortName, myItem.UserName, slot.TeamID, slot.AllyID, (int)(MyCol)slot.Color,slot.AiVersion);
                 }
             }
             else
@@ -1257,9 +1127,9 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     mapname = script.Substring(open, close - open);
                     mapname = mapname.Trim(new char[3]{' ','=','\t'});
                 }
-                suppressEvent_ComboboxSelectionChangeCommited = true;
+                suppressEvent_SelectedIndexChanged = true;
                 map_comboBox.SelectedItem = mapname;
-                suppressEvent_ComboboxSelectionChangeCommited = false;
+                suppressEvent_SelectedIndexChanged = false;
                 int selectedView = normalRadioButton.Checked ? 0 : (elevationRadioButton.Checked ? 1 : 2);
                 Set_MapImages(mapname, selectedView);
 
@@ -1354,7 +1224,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             script.AppendFormat("  ModHash={0};\n", modCache.FirstOrDefault(x => x.InternalName == (string)gameName).Md5.ToString());
             script.AppendFormat("  MapHash={0};\n", mapCache.FirstOrDefault(x => x.InternalName == (string)mapName).Md5.ToString());
 
-            var positions = currentMap.Positions != null ? currentMap.Positions.ToList() : new List<PlasmaShared.UnitSyncLib.StartPos>();
+            var positions = currentMap.Positions != null ? currentMap.Positions.ToList() : new List<StartPos>();
 
             Get_PlayerSection(allUser, script, positions);
             //Clipboard.SetText(script.ToString());
@@ -1559,7 +1429,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             if (e.Button == MouseButtons.Left)
             {
                 mouseIsDown = true;
-                Program.ToolTip.Clear(minimapBox);
+                //Program.ToolTip.Clear(minimapBox);
             }
         }
 
@@ -1577,19 +1447,22 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 Cursor = Cursors.Cross;
                 BattleRect startRect = Rectangles[mouseOnStartBox];
 
-                int rectWidth_half = (startRect.Right - startRect.Left)/2;
-                int rectHeight_half = (startRect.Top - startRect.Bottom)/2;
+                //undo the offset due to "Centering" (alignment) of the pictureBox relative to minimapPanel
                 float diffWidth_half = (float)(minimapPanel.Width - minimapBox.Image.Width) / 2;
                 float diffHeight_half = (float)(minimapPanel.Height - minimapBox.Image.Height) / 2;
                 float adjustedX = (e.X - diffWidth_half);
                 float adjustedY = (e.Y - diffHeight_half);
+                //convert pixel count to 0-200 standard used in Spring infrastructure
                 float rectPerImgWidth = (float)BattleRect.Max / minimapBox.Image.Width;
                 float rectPerImgHeight = (float)BattleRect.Max / minimapBox.Image.Height;
-
-                startRect.Left = (int)(adjustedX * rectPerImgWidth - 10);
-                startRect.Top = (int)(adjustedY * rectPerImgHeight - 10);
-                startRect.Right = (int)(adjustedX * rectPerImgWidth + 10);
-                startRect.Bottom = (int)(adjustedY * rectPerImgHeight + 10);
+                //clamp position to within map
+                float x = Math.Min(Math.Max (adjustedX * rectPerImgWidth, 10),BattleRect.Max-10);
+                float y = Math.Min(Math.Max (adjustedY * rectPerImgHeight, 10),BattleRect.Max-10);
+                //set our startbox coordinate
+                startRect.Left = (int)(x - 10);
+                startRect.Top = (int)(y - 10);
+                startRect.Right = (int)(x + 10);
+                startRect.Bottom = (int)(y + 10);
 
                 Rectangles[mouseOnStartBox] = startRect;
 
@@ -1644,8 +1517,8 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             if (e.Button == MouseButtons.Left)
             {
                 mouseIsDown = false;
-                if (map_comboBox.SelectedItem != null)
-                    Program.ToolTip.SetMap(minimapBox, (string)map_comboBox.SelectedItem);
+                //if (map_comboBox.SelectedItem != null)
+                    //Program.ToolTip.SetMap(minimapBox, (string)map_comboBox.SelectedItem);
             }
         }
     }

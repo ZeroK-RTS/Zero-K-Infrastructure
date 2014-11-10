@@ -42,11 +42,9 @@ namespace ZeroKLobby.Notifications
             this.radioPlay = new System.Windows.Forms.RadioButton();
             this.radioSpec = new System.Windows.Forms.RadioButton();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.zkSplitContainer1)).BeginInit();
             this.zkSplitContainer1.Panel1.SuspendLayout();
             this.zkSplitContainer1.Panel2.SuspendLayout();
             this.zkSplitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gameBox)).BeginInit();
             this.SuspendLayout();
             // 
             // cbSide
@@ -191,9 +189,7 @@ namespace ZeroKLobby.Notifications
             this.panel1.PerformLayout();
             this.zkSplitContainer1.Panel1.ResumeLayout(false);
             this.zkSplitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.zkSplitContainer1)).EndInit();
             this.zkSplitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.gameBox)).EndInit();
             this.ResumeLayout(false);
 
         }

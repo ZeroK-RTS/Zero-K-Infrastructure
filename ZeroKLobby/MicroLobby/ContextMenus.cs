@@ -8,40 +8,87 @@ using System.Windows;
 using System.Windows.Forms;
 using LobbyClient;
 using ContextMenu = System.Windows.Forms.ContextMenu;
+using PlasmaShared.UnitSyncLib;
+using ZeroKLobby.MicroLobby.ExtrasTab;
 
 namespace ZeroKLobby.MicroLobby
 {
     static class ContextMenus
     {
-        public static System.Windows.Forms.MenuItem GetAddBotItem()
+
+		private static bool refreshSpringAi = true;
+		private static List<Ai> springAi;
+        private static void AddAIToTeam(string botShortName)
+        {
+            var botNumber = Enumerable.Range(1, int.MaxValue).First(i => !Program.TasClient.MyBattle.Bots.Any(
+                                bt => bt.Name == "Bot_" + i));
+            var botStatus = Program.TasClient.MyBattleStatus.Clone();
+            // new team        	
+            botStatus.TeamNumber = Enumerable.Range(0, TasClient.MaxTeams - 1).FirstOrDefault(
+                                    x => !Program.TasClient.MyBattle.Users.Any(y => y.TeamNumber == x));
+            //different alliance than player
+            botStatus.AllyNumber = Enumerable.Range(0, TasClient.MaxAlliances - 1).FirstOrDefault(x => x != botStatus.AllyNumber);
+            Program.TasClient.AddBot("Bot_" + botNumber, botStatus, (int)(ZeroKLobby.MicroLobby.MyCol)Color.White, botShortName);
+        } 
+
+        static MenuItem GetAddBot()
         {
             var enabled = Program.TasClient.MyBattle != null && Program.ModStore.Ais != null && Program.ModStore.Ais.Any();
-            var addBotItem = new System.Windows.Forms.MenuItem("Add computer player (Bot)" + (enabled ? String.Empty : " (Loading)"))
+            var addBotItem = new MenuItem("Add computer player (Bot)" + (enabled ? String.Empty : " (Loading)"))
                              { Visible = enabled };
+
+            addBotItem.MenuItems.AddRange(GetAddBotItems());
+
+            return addBotItem;
+        }
+
+        public static MenuItem[] GetAddBotItems()
+        {
+            var addBotItems = new List<MenuItem>();
             if (Program.ModStore.Ais != null)
             {
                 foreach (var bot in Program.ModStore.Ais)
                 {
-                    var item = new System.Windows.Forms.MenuItem(string.Format("{0} ({1})", bot.ShortName, bot.Description));
+                    var item = new MenuItem(string.Format("{0} ({1})", bot.ShortName, bot.Description));
                     var b = bot;
                     item.Click += (s, e) =>
-                        {
-                            var botNumber =
-                                Enumerable.Range(1, int.MaxValue).First(i => !Program.TasClient.MyBattle.Bots.Any(bt => bt.Name == "Bot_" + i));
-                            var botStatus = Program.TasClient.MyBattleStatus.Clone();
-                            // new team        	
-                            botStatus.TeamNumber =
-                                Enumerable.Range(0, TasClient.MaxTeams - 1).FirstOrDefault(
-                                    x => !Program.TasClient.MyBattle.Users.Any(y => y.TeamNumber == x));
-                            //different alliance than player
-                            botStatus.AllyNumber = Enumerable.Range(0, TasClient.MaxAlliances - 1).FirstOrDefault(x => x != botStatus.AllyNumber);
-
-                            Program.TasClient.AddBot("Bot_" + botNumber, botStatus, (int)(MyCol)Color.White, b.ShortName);
-                        };
-                    addBotItem.MenuItems.Add(item);
+                    {
+                        AddAIToTeam(b.ShortName);
+                    };
+                    addBotItems.Add(item);
                 }
             }
-            return addBotItem;
+
+            addBotItems.Add(new MenuItem("-"));
+            MenuItem item3 = new MenuItem("Spring AI");
+            item3.Select += (s, e2) =>
+            {
+                if (item3.MenuItems.Count == 0)
+                {
+                    if (refreshSpringAi)
+                        springAi = SkirmishControlTool.GetSpringAIs(Program.SpringPaths.UnitSyncDirectory); //note: used UnitSyncDirectory because its just same as Engine folder
+                    refreshSpringAi = false;
+                    MenuItem springAIitem;
+                    for (int i = 0; i < springAi.Count; i++)
+                    {
+                        string version = springAi[i].Version; //for keeping reference of independent value inside item.Click event;
+                        string shortname = springAi[i].ShortName;
+                        springAIitem = new MenuItem(string.Format("{0} ({1})", shortname, version));
+                        springAIitem.Click += (s1, e3) => { AddAIToTeam(shortname + "|" + version); };
+                        item3.MenuItems.Add(springAIitem);
+                    }
+                    item3.MenuItems.Add("-");
+                    springAIitem = new MenuItem("Refresh List");
+                    springAIitem.Click += (s1, e3) =>
+                    {
+                        refreshSpringAi = true;
+                    };
+                    item3.MenuItems.Add(springAIitem);
+                }
+            };
+            addBotItems.Add(item3);
+
+            return addBotItems.ToArray();
         }
 
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
@@ -180,8 +227,8 @@ namespace ZeroKLobby.MicroLobby
                 if (chatControl is BattleChatControl)
                 {
                     contextMenu.MenuItems.Add("-");
-                    contextMenu.MenuItems.Add(GetShowOptions());
-                    contextMenu.MenuItems.Add(GetAddBotItem());
+                    contextMenu.MenuItems.Add(GetShowGameOptionsItem());
+                    contextMenu.MenuItems.Add(GetAddBot());
                 }
             }
             catch (Exception e)
@@ -206,33 +253,33 @@ namespace ZeroKLobby.MicroLobby
                 {
                     contextMenu.MenuItems.Add("-");
 
-                    var details = new System.Windows.Forms.MenuItem("Details");
+                    var details = new MenuItem("Details");
                     details.Click += (s, e) => NavigationControl.Instance.Path = "http://zero-k.info/Users/LobbyDetail/" + user.LobbyID;
                     contextMenu.MenuItems.Add(details);
 
-                    var pmItem = new System.Windows.Forms.MenuItem("Send Message");
+                    var pmItem = new MenuItem("Send Message");
                     pmItem.Click += (s, e) => NavigationControl.Instance.Path = "chat/user/" + user.Name;
                     contextMenu.MenuItems.Add(pmItem);
 
                     if (Program.FriendManager.Friends.Contains(user.Name))
                     {
-                        var pinItem = new System.Windows.Forms.MenuItem("Unfriend");
+                        var pinItem = new MenuItem("Unfriend");
                         pinItem.Click += (s, e) => Program.FriendManager.RemoveFriend(user.Name);
                         contextMenu.MenuItems.Add(pinItem);
                     }
                     else
                     {
-                        var pinItem = new System.Windows.Forms.MenuItem("Friend");
+                        var pinItem = new MenuItem("Friend");
                         pinItem.Click += (s, e) => Program.FriendManager.AddFriend(user.Name);
                         contextMenu.MenuItems.Add(pinItem);
                     }
 
-                    var joinItem = new System.Windows.Forms.MenuItem("Join Same Battle")
+                    var joinItem = new MenuItem("Join Same Battle")
                                    { Enabled = Program.TasClient.ExistingUsers[user.Name].IsInBattleRoom };
                     joinItem.Click += (s, e) => ActionHandler.JoinPlayer(user.Name);
                     contextMenu.MenuItems.Add(joinItem);
 
-                    var ignoreUser = new System.Windows.Forms.MenuItem("Ignore User") { Checked = Program.Conf.IgnoredUsers.Contains(user.Name) };
+                    var ignoreUser = new MenuItem("Ignore User") { Checked = Program.Conf.IgnoredUsers.Contains(user.Name) };
                     ignoreUser.Click += (s, e) =>
                         {
                             ignoreUser.Checked = !ignoreUser.Checked;
@@ -241,7 +288,7 @@ namespace ZeroKLobby.MicroLobby
                         };
                     contextMenu.MenuItems.Add(ignoreUser);
 
-                    var reportUser = new System.Windows.Forms.MenuItem("Report User");
+                    var reportUser = new MenuItem("Report User");
                     reportUser.Click += (s, e) => NavigationControl.Instance.Path = "http://zero-k.info/Users/ReportToAdminFromLobby/" + user.Name;
                     contextMenu.MenuItems.Add(reportUser);
                 }
@@ -257,7 +304,7 @@ namespace ZeroKLobby.MicroLobby
 
                         if (user.Name != Program.TasClient.UserName)
                         {
-                            var allyWith = new System.Windows.Forms.MenuItem("Ally")
+                            var allyWith = new MenuItem("Ally")
                                            {
                                                Enabled =
                                                    !battleStatus.IsSpectator &&
@@ -267,7 +314,7 @@ namespace ZeroKLobby.MicroLobby
                             contextMenu.MenuItems.Add(allyWith);
                         }
 
-                        var colorItem = new System.Windows.Forms.MenuItem("Select Color")
+                        var colorItem = new MenuItem("Select Color")
                                         { Enabled = Program.TasClient.UserName == user.Name && !myStatus.IsSpectator };
                         colorItem.Click += (s, e) =>
                             {
@@ -288,11 +335,11 @@ namespace ZeroKLobby.MicroLobby
                             };
                         contextMenu.MenuItems.Add(colorItem);
 
-                        contextMenu.MenuItems.Add(GetSetAllyTeamItem(user));
+                        contextMenu.MenuItems.Add(GetSetAllyTeam(user));
 
                         contextMenu.MenuItems.Add("-");
-                        contextMenu.MenuItems.Add(GetShowOptions());
-                        contextMenu.MenuItems.Add(GetAddBotItem());
+                        contextMenu.MenuItems.Add(GetShowGameOptionsItem());
+                        contextMenu.MenuItems.Add(GetAddBot());
                     }
                 }
             }
@@ -390,7 +437,7 @@ namespace ZeroKLobby.MicroLobby
             {
                 if (battle.Users.Count <= 1) return contextMenu; // don't display if just 1 player (probably a bot)
 
-                var headerItem = new System.Windows.Forms.MenuItem("Message Player");
+                var headerItem = new MenuItem("Message Player");
                 headerItem.Enabled = false;
                 headerItem.DefaultItem = true; //This is to make it appear bold
                 contextMenu.MenuItems.Add(headerItem);
@@ -414,25 +461,29 @@ namespace ZeroKLobby.MicroLobby
             return contextMenu;
         }
 
-        public static System.Windows.Forms.MenuItem GetShowOptions()
+        public static MenuItem GetShowGameOptionsItem()
         {
             var modOptions = new System.Windows.Forms.MenuItem("Change Game Options") { Enabled = Program.TasClient.MyBattle != null };
             modOptions.Click += (s, e) =>
                 {
-                    var form = new Form { Width = 1000, Height = 300, Icon = ZklResources.ZkIcon, Text = "Game options" };
-                    var optionsControl = new ModOptionsControl { Dock = DockStyle.Fill };
-                    form.Controls.Add(optionsControl);
-                    Program.TasClient.BattleClosed += (s2, e2) =>
-                        {
-                            form.Close();
-                            form.Dispose();
-                            optionsControl.Dispose();
-                        };
-                    form.Show(); //hack show Program.FormMain
+                    ShowGameOptions();
                 };
             return modOptions;
         }
 
+        public static void ShowGameOptions()
+        {
+            var form = new Form { Width = 1000, Height = 300, Icon = ZklResources.ZkIcon, Text = "Game options" };
+            var optionsControl = new ModOptionsControl { Dock = DockStyle.Fill };
+            form.Controls.Add(optionsControl);
+            Program.TasClient.BattleClosed += (s2, e2) =>
+            {
+                form.Close();
+                form.Dispose();
+                optionsControl.Dispose();
+            };
+            form.Show(); //hack show Program.FormMain
+        }
 
         public static List<int> GetExistingTeams(out int freeAllyTeam)
         {
@@ -445,41 +496,49 @@ namespace ZeroKLobby.MicroLobby
         }
 
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        static System.Windows.Forms.MenuItem GetSetAllyTeamItem(User user)
+        static MenuItem GetSetAllyTeam(User user)
         {
-            var setAllyTeamItem = new System.Windows.Forms.MenuItem("Select Team");
+            var setAllyTeamItem = new MenuItem("Select Team");
 
             if (Program.TasClient.MyBattle == null || user.Name != Program.TasClient.UserName) setAllyTeamItem.Enabled = false;
             else if (Program.TasClient.MyBattle != null)
             {
-                int freeAllyTeam;
-
-                foreach (var allyTeam in GetExistingTeams(out freeAllyTeam).Distinct())
-                {
-                    var at = allyTeam;
-                    if (allyTeam != Program.TasClient.MyBattleStatus.AllyNumber)
-                    {
-                        var item = new System.Windows.Forms.MenuItem("Join Team " + (allyTeam + 1));
-                        item.Click += (s, e) => ActionHandler.JoinAllyTeam(at);
-                        setAllyTeamItem.MenuItems.Add(item);
-                    }
-                }
-
-                setAllyTeamItem.MenuItems.Add("-");
-
-                var newTeamItem = new System.Windows.Forms.MenuItem("Start New Team");
-                newTeamItem.Click += (s, e) => ActionHandler.JoinAllyTeam(freeAllyTeam);
-                setAllyTeamItem.MenuItems.Add(newTeamItem);
-
-                if (!Program.TasClient.MyBattleStatus.IsSpectator)
-                {
-                    var specItem = new System.Windows.Forms.MenuItem("Spectate");
-                    specItem.Click += (s, e) => ActionHandler.Spectate();
-                    setAllyTeamItem.MenuItems.Add(specItem);
-                }
+                setAllyTeamItem.MenuItems.AddRange(GetSetAllyItems());
             }
 
             return setAllyTeamItem;
+        }
+
+        public static MenuItem[] GetSetAllyItems()
+        {
+            var setAllyItems = new List<MenuItem>();
+            int freeAllyTeam;
+
+            foreach (var allyTeam in GetExistingTeams(out freeAllyTeam).Distinct())
+            {
+                var at = allyTeam;
+                if (allyTeam != Program.TasClient.MyBattleStatus.AllyNumber)
+                {
+                    var item = new MenuItem("Join Team " + (allyTeam + 1));
+                    item.Click += (s, e) => ActionHandler.JoinAllyTeam(at);
+                    setAllyItems.Add(item);
+                }
+            }
+
+            setAllyItems.Add(new MenuItem("-"));
+
+            var newTeamItem = new MenuItem("Start New Team");
+            newTeamItem.Click += (s, e) => ActionHandler.JoinAllyTeam(freeAllyTeam);
+            setAllyItems.Add(newTeamItem);
+
+            if (!Program.TasClient.MyBattleStatus.IsSpectator)
+            {
+                var specItem = new System.Windows.Forms.MenuItem("Spectate");
+                specItem.Click += (s, e) => ActionHandler.Spectate();
+                setAllyItems.Add(specItem);
+            }
+
+            return setAllyItems.ToArray();
         }
 
     }

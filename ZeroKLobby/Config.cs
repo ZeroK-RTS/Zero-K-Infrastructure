@@ -35,6 +35,9 @@ namespace ZeroKLobby
         bool hideNonJoinableBattles = false;
         bool hidePasswordedBattles = false;
 
+        string skirmisherEngine;
+        string skirmisherGame;
+        string skirmisherMap;
 
         string springServerHost = "lobby.springrts.com";
         int springServerPort = 8200;
@@ -247,6 +250,13 @@ namespace ZeroKLobby
 
         [Browsable(false)]
         public bool ShowOfficialBattles { get { return showOfficialBattles; } set { showOfficialBattles = value; } }
+
+        [Browsable(false)]
+        public string SkirmisherEngine { get { return skirmisherEngine; } set { skirmisherEngine = value; } }
+        [Browsable(false)]
+        public string SkirmisherGame { get { return skirmisherGame; } set { skirmisherGame = value; } }
+        [Browsable(false)]
+        public string SkirmisherMap { get { return skirmisherMap; } set { skirmisherMap = value; } }
 
         [Category("Connection")]
         [DisplayName("Spring Server Address")]
