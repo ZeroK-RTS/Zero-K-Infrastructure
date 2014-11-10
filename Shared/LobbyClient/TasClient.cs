@@ -1199,6 +1199,7 @@ namespace LobbyClient
 
                     case "FORCEJOINBATTLE":
                     {
+                        if (MyBattle != null) LeaveBattle();
                         var battleid = Int32.Parse(args[0]);
                         if (args.Length == 1) JoinBattle(battleid);
                         else JoinBattle(battleid, args[1]);
