@@ -670,18 +670,7 @@ namespace LobbyClient
             Battle battle;
             existingUsers.TryGetValue(name, out user);
             existingBattles.TryGetValue(battleID, out battle);
-            if (user != null && battle != null) {
-                /*if (user.IsZkLobbyUser)
-                {
-                    Say(SayPlace.User, user.Name, "!join " + battle.Founder.Name, false);
-                }
-                else {*/
-                    //con.SendCommand(string.Format("KICKFROMBATTLE {0}", name));
-                    //con.SendCommand(string.Format("FORCEJOINBATTLE {0} {1} {2}", name, battleID, password));
-                    con.SendCommand(string.Format("FORGEREVERSEMSG {0} LEAVEBATTLE", name));
-                    con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOINBATTLE {1}", name, battleID));
-                //}
-            }
+            if (user != null && battle != null) con.SendCommand("FORCEJOINBATTLE", name, battleID, password);
         }
 
         public void ForceJoinChannel(string user, string channel, string password= null) {
