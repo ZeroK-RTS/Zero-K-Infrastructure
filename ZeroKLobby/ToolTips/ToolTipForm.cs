@@ -26,8 +26,9 @@ namespace ZeroKLobby
             get
             {
                 var baseParams = base.CreateParams;
-                //baseParams.ExStyle &= ~WS_EX_APPWINDOW;
+                baseParams.ExStyle &= ~WS_EX_APPWINDOW; //hide from taskbar
                 baseParams.ExStyle |= WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW;
+                baseParams.ExStyle |= WS_EX_TOPMOST; //always on top
                 baseParams.Style |= WS_DISABLED; //prevent focus
                 //usefull tool to check ExStyle content: Console.WriteLine("0x{0:x8}", baseParams.ExStyle);
                 return baseParams;
@@ -54,8 +55,6 @@ namespace ZeroKLobby
             //BringToFront();
             
 
-            this.ShowInTaskbar = false; //hide from taskbar, method 3;
-            this.TopMost = true;
             SetStyle(ControlStyles.UserPaint | ControlStyles.UserMouse | ControlStyles.DoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
             SetStyle(ControlStyles.Selectable, false);
         }
@@ -127,8 +126,15 @@ namespace ZeroKLobby
             base.OnPaint(e);
             if (toolTipRenderer == null)
                 return;
-            e.Graphics.DrawRectangle(Pens.Black, 0, 0, Width - 1, Height - 1);
-            toolTipRenderer.Draw(e.Graphics, Font, ForeColor);
+            try
+            {
+                e.Graphics.DrawRectangle(Pens.Black, 0, 0, Width - 1, Height - 1);
+                toolTipRenderer.Draw(e.Graphics, Font, ForeColor);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("Tooltip paint error: {0}", ex.ToString());
+            }
         }
     }
 }
