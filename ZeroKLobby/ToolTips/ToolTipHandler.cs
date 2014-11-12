@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace ZeroKLobby
 {
@@ -11,6 +12,17 @@ namespace ZeroKLobby
     {
         private const int WM_MOUSEMOVE = 0x200;
         const int WM_KEYDOWN = 0x0100;
+        const Int32 HWND_TOPMOST = -1;
+        const Int32 SWP_NOACTIVATE = 0x0010;
+        const Int32 SWP_NOSIZE = 0x0001;
+        const Int32 SWP_ASYNCWINDOWPOS = 0x4000;
+        const Int32 SWP_NOCOPYBITS = 0x0100;
+        const Int32 SWP_DEFERERASE = 0x2000;
+        const Int32 SWP_NOMOVE = 0x0002;
+        const Int32 SWP_NOREDRAW = 0x0008;
+        const Int32 SWP_NOSENDCHANGING = 0x0400;
+        const Int32 SWP_ToolTipOption = SWP_NOACTIVATE | SWP_NOSIZE | SWP_ASYNCWINDOWPOS | SWP_NOCOPYBITS 
+            | SWP_DEFERERASE | SWP_NOMOVE | SWP_NOREDRAW | SWP_NOSENDCHANGING; //disable all SetWindowPos() function except Z-ordering
         private bool lastActive = true;
         private Point lastMousePos;
         private string lastText;
@@ -83,6 +95,11 @@ namespace ZeroKLobby
             UpdateTooltip(control, GetUserToolTipString(name));
         }
 
+        //Copied from PopupNotify.cs
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool SetWindowPos(IntPtr hWnd, Int32 hWndInsertAfter, Int32 X, Int32 Y, Int32 cx, Int32 cy, uint uFlags);
+
         private void RefreshToolTip(bool invalidate) {
             if (Program.MainWindow != null && Program.MainWindow.IsHandleCreated && !Program.CloseOnNext && Program.MainWindow.Visible && Program.MainWindow.WindowState != FormWindowState.Minimized) {
 
@@ -146,6 +163,7 @@ namespace ZeroKLobby
                     //        ny = mp.Y - tooltip.Height - 8;
                     //    }
 
+                    //    SetWindowPos(tooltip.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_ToolTipOption);
                     //    tooltip.SetDesktopLocation(nx, ny);
 
                     //    var newSize = tooltip.GetTooltipSize();
@@ -173,7 +191,8 @@ namespace ZeroKLobby
                         ny = mp.Y - tooltip.Height - 8;
                     }
 
-                    tooltip.SetDesktopLocation(nx, ny);
+                    SetWindowPos(tooltip.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_ToolTipOption); //refresh tooltip's Z-order to be on top
+                    tooltip.SetDesktopLocation(nx, ny); //note: SetWindowPos() positioning won't work in Linux (so we shouldn't replace this with SetWindowPos)
 
                     var newSize = tooltip.GetTooltipSize();
                     if (newSize.HasValue && newSize.Value != tooltip.Size) tooltip.Size = newSize.Value;
