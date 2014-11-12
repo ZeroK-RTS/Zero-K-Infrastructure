@@ -129,20 +129,21 @@ namespace ZeroKLobby
         }
 
         public static Control GetHoveredControl(this Control parent) {
-            var parentControl = parent;
-            var screenPoint = Control.MousePosition;
-            var parentPoint = parentControl.PointToClient(screenPoint);
+            var thisControl = parent;
+            var globalPos = Control.MousePosition;
+            var relativePos = thisControl.PointToClient(globalPos);
 
-            if (!parentControl.DisplayRectangle.Contains(parentPoint)) return null;
+            if (!thisControl.DisplayRectangle.Contains(relativePos)) return null;
             Control child;
-            while (
-                (child = parentControl.GetChildAtPoint(parentPoint,
-                                               GetChildAtPointSkip.Disabled | GetChildAtPointSkip.Invisible | 
-                                               GetChildAtPointSkip.Transparent)) != null) {
-                parentControl = child;
-                parentPoint = parentControl.PointToClient(screenPoint);
+            while ((child = thisControl.GetChildAtPoint(relativePos,
+                                               GetChildAtPointSkip.Disabled | 
+                                               GetChildAtPointSkip.Invisible)) != null)
+                                               //| GetChildAtPointSkip.Transparent)) != null) //this hide tooltip for BitmapButton on Linux!
+            {
+                thisControl = child;
+                relativePos = thisControl.PointToClient(globalPos);
             }
-            return parentControl;
+            return thisControl;
         }
 
         public static string MakePath(params string[] directories) {
