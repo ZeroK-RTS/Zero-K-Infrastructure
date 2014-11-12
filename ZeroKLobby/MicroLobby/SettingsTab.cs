@@ -45,7 +45,7 @@ namespace ZeroKLobby.MicroLobby
             Program.ToolTip.SetText(lobbyLogButton, "Diagnostic log for ZKL lobby client ( Useful to report things such as: download issue or lobby issue)");
             Program.ToolTip.SetText(gameLogButton, "Diagnostic log for Spring engine (Useful to report things such as: ingame graphic bug or game crash)");
             Program.ToolTip.SetText(btnDefaults, "Local data reset?");
-            Program.ToolTip.SetText(btnOfflineSkirmish, "Create custom singleplayer game versus AI");
+            Program.ToolTip.SetText(btnOfflineSkirmish, "Create custom offline game versus AI");
 		}
 
 
@@ -315,7 +315,7 @@ namespace ZeroKLobby.MicroLobby
 
         private void btnOfflineSkirmish_Click(object sender, EventArgs e)
         {
-            Program.MainWindow.navigationControl.Path = "spring://extra";
+            Program.MainWindow.navigationControl.Path = "spring://extra/skirmish";
         }
 	}
 }
