@@ -210,6 +210,8 @@ namespace ZeroKLobby.MicroLobby
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(0);
+            this.splitContainer1.Padding = new System.Windows.Forms.Padding(0);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -231,6 +233,8 @@ namespace ZeroKLobby.MicroLobby
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
+            this.Margin = new System.Windows.Forms.Padding(0);
+            this.Padding = new System.Windows.Forms.Padding(0);
             this.Name = "ChatControl";
             this.Size = new System.Drawing.Size(1130, 793);
             this.playerListMapSplitContainer.Panel1.ResumeLayout(false);

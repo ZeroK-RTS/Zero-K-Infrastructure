@@ -74,6 +74,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1024, 768);
             this.Controls.Add(this.tableLayoutPanel2);
+            this.Padding = new System.Windows.Forms.Padding(0);
             this.Name = "MainWindow";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainWindow_FormClosing);
             this.Load += new System.EventHandler(this.MainWindow_Load);

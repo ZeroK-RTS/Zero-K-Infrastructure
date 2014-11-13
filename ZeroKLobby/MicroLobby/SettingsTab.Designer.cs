@@ -60,7 +60,6 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainerAtMid)).BeginInit();
             this.splitContainerAtMid.Panel1.SuspendLayout();
             this.splitContainerAtMid.Panel2.SuspendLayout();
             this.splitContainerAtMid.SuspendLayout();
@@ -86,6 +85,8 @@
             this.splitContainerAtMid.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.splitContainerAtMid.ForeColor = System.Drawing.Color.White;
             this.splitContainerAtMid.Location = new System.Drawing.Point(0, 0);
+            this.splitContainerAtMid.Margin = new System.Windows.Forms.Padding(0);
+            this.splitContainerAtMid.Padding = new System.Windows.Forms.Padding(0);
             this.splitContainerAtMid.Name = "splitContainerAtMid";
             this.splitContainerAtMid.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -529,6 +530,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.panel1);
+            this.Margin = new System.Windows.Forms.Padding(0);
+            this.Padding = new System.Windows.Forms.Padding(0);
             this.Name = "SettingsTab";
             this.Size = new System.Drawing.Size(825, 692);
             this.Load += new System.EventHandler(this.SettingsTab_Load);
@@ -536,7 +539,6 @@
             this.splitContainerAtMid.Panel1.ResumeLayout(false);
             this.splitContainerAtMid.Panel1.PerformLayout();
             this.splitContainerAtMid.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainerAtMid)).EndInit();
             this.splitContainerAtMid.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);

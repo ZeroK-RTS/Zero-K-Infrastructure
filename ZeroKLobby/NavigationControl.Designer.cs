@@ -58,6 +58,8 @@
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.MinimumSize = new System.Drawing.Size(300, 28);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
+            this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(703, 28);
             this.flowLayoutPanel1.TabIndex = 5;
@@ -166,6 +168,8 @@
             this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Location = new System.Drawing.Point(0, 42);
+            this.tabControl.Margin = new System.Windows.Forms.Padding(0);
+            this.tabControl.Padding = new System.Drawing.Point(0);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
             this.tabControl.Size = new System.Drawing.Size(703, 185);
@@ -185,6 +189,8 @@
             this.Controls.Add(this.btnBack);
             this.Controls.Add(this.urlBox);
             this.Controls.Add(this.tabControl);
+            this.Margin = new System.Windows.Forms.Padding(0);
+            this.Padding = new System.Windows.Forms.Padding(0);
             this.Name = "NavigationControl";
             this.Size = new System.Drawing.Size(703, 219);
             this.Resize += new System.EventHandler(this.NavigationControl_Resize);
