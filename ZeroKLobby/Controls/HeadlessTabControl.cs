@@ -13,8 +13,8 @@ namespace ZeroKLobby
         {
             base.OnSizeChanged(e);
             DpiMeasurement.DpiXYMeasurement();
-            var y = DpiMeasurement.ScaleValueY(21);
-            Region = new Region(new Rectangle(3, y, Width - 6, Height - y - 3)); //Note: the margin is not effected by DPI scaling
+            var y = DpiMeasurement.ScaleValueY(21); 
+            Region = new Region(new Rectangle(4, y + 1, Width - 8, Height - y - 4)); //Note: margin is not effected by DPI scaling
         }
 
         protected override void OnClick(EventArgs e) {
