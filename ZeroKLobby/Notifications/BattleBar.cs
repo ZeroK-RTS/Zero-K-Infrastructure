@@ -83,8 +83,13 @@ namespace ZeroKLobby.Notifications
 
             client.Rang += (s, e) =>
                 {
-                    MainWindow.Instance.NotifyUser("chat/battle", "Someone demands your attention in battle room!", true, true);
-                    AutoRespond();
+                    if (e.Data == GlobalConst.NightwatchName)
+                        MainWindow.Instance.NotifyUser("chat/zkadmin", "New report arrive at zkadmin channel", true, true);
+                    else
+                    {
+                        MainWindow.Instance.NotifyUser("chat/battle", "Someone demands your attention in battle room!", true, true);
+                        AutoRespond();
+                    }
                 };
 
             client.BattleJoined += (s, e) =>
