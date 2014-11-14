@@ -90,7 +90,8 @@ namespace ZeroKLobby.MicroLobby
                             Text = title,
                          };
             if (control is BattleChatControl) button.Height = button.Height*2;
-            button.MouseHover += button_MouseHover;
+            button.MouseEnter += button_MouseEnter;
+            button.MouseLeave += button_MouseLeave;
             button.MouseDown += (s, e) =>
                 {
                     if (e.Button == MouseButtons.Right)
@@ -222,6 +223,8 @@ namespace ZeroKLobby.MicroLobby
         {
             panel.Controls.RemoveByKey(key + "_chan");
             controls.Remove(key + "_chan");
+            if (Program.ToolTip != null)
+                Program.ToolTip.Clear(toolStrip.Items.Find(key + "_chan",false));
             toolStrip.Items.RemoveByKey(key + "_chan");
         }
 
@@ -229,6 +232,8 @@ namespace ZeroKLobby.MicroLobby
         {
             panel.Controls.RemoveByKey(key + "_pm");
             controls.Remove(key + "_pm");
+            if (Program.ToolTip != null)
+                Program.ToolTip.Clear(toolStrip.Items.Find(key + "_pm", false));
             toolStrip.Items.RemoveByKey(key + "_pm");
         }
 
@@ -283,13 +288,22 @@ namespace ZeroKLobby.MicroLobby
             button.Image = icon;
         }
 
-        void button_MouseHover(object sender, EventArgs e)
+        void button_MouseEnter(object sender, EventArgs e)
         {
             var item = (ToolStripItem)sender;
             if (item != lastHoverItem)
             {
-                lastHoverItem = null;
+                lastHoverItem = item;
                 Program.ToolTip.SetText(toolStrip, item.ToolTipText);
+            }
+        }
+        void button_MouseLeave(object sender, EventArgs e)
+        {
+            var item = (ToolStripItem)sender;
+            if (item == lastHoverItem)
+            {
+                lastHoverItem = null;
+                Program.ToolTip.Clear (toolStrip);
             }
         }
     }

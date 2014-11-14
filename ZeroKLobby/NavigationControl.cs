@@ -270,9 +270,12 @@ namespace ZeroKLobby
         {
             // todo  instead add flowlayoutpanel or tablelayout panel to entire navigation form and let i size elements as needed
 
-            //this make back/forward/reload button follow Nav bar auto resize (in other word: dynamic repositioning)
+            int windowWidth = this.Size.Width;
+            int windowHeight = this.Size.Height;
+
+            //this make back/forward/reload button follow Nav bar's height (this is not really important if Nav bar height remain constant)
             //NOTE: tweak here if not satisfy with Go/Forward/Backward button position. This override designer.
-            flowLayoutPanel1.Width = this.Size.Width; //nav button resize according  to window size
+            flowLayoutPanel1.Width = windowWidth;
             int height = flowLayoutPanel1.Size.Height;
             btnBack.Location = new System.Drawing.Point(btnBack.Location.X, height);
             btnForward.Location = new System.Drawing.Point(btnForward.Location.X, height);
@@ -281,13 +284,12 @@ namespace ZeroKLobby
             goButton1.Location = new System.Drawing.Point(goButton1.Location.X, height);
             isBusyIcon.Location = new System.Drawing.Point(isBusyIcon.Location.X, height);
 
-            //resize the "browser" (that show chat & internal browser) according to Nav bar auto resize (dynamic resizing)
-            int windowHeight = this.Size.Height;
-            int freeHeight = windowHeight - height;
-            int windowWidth = this.Size.Width;
-            tabControl.Location = new System.Drawing.Point(tabControl.Location.X, height);
+            //resize the content area (which show chat & internal browser) according to Nav bar's height
+            int heightPlusButton = height + btnBack.Height - tabControl.ItemSize.Height;
+            int freeHeight = windowHeight - heightPlusButton;
+            tabControl.Location = new System.Drawing.Point(tabControl.Location.X, heightPlusButton);
             tabControl.Height = freeHeight;
-            tabControl.Width = windowWidth; //TAB width is window's width
+            tabControl.Width = windowWidth;
         }
 
         public INavigatable CurrentNavigatable { get { return tabControl.SelectedTab.Controls.OfType<INavigatable>().FirstOrDefault(); } }
