@@ -438,6 +438,7 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             var acc = Account.AccountVerify(db, name, password);
+            if (acc == null) return new JsonResult() {JsonRequestBehavior = JsonRequestBehavior.AllowGet};
             return new JsonResult() { Data = new
             {
                 acc.AccountID,
