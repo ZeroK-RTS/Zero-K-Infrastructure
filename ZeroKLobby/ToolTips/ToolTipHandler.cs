@@ -205,6 +205,10 @@ namespace ZeroKLobby
 
         private bool requestRefresh = false;
         private void UpdateTooltip(object control, string s) {
+            (control as Control).Disposed += (sender, e) => 
+            {
+                Clear(sender); 
+            };
             tooltips[control] = s;
             requestRefresh = true; //RefreshToolTip(true);
         }
