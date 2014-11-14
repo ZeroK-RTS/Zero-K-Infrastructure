@@ -134,19 +134,18 @@ namespace ZeroKLobby
         }
 
         public Control GetHoveredControl() {
-            //fore control
-            var lastForm = Application.OpenForms.OfType<Form>().LastOrDefault(x => !(x is ToolTipForm) && x.Visible);
-            if (lastForm != null) {
-                var hovered = lastForm.GetHoveredControl();
+            Control hovered;
+            if (ActiveForm != null && ActiveForm.Visible && !(ActiveForm is ToolTipForm))
+            {
+                hovered = ActiveForm.GetHoveredControl();
+                if (hovered != null)
+                    return hovered;
+            }
+            foreach (var lastForm in Application.OpenForms.OfType<Form>().Where(x => !(x is ToolTipForm) && x.Visible))
+            {
+                hovered = lastForm.GetHoveredControl();
                 if (hovered != null) 
                     return hovered;
-
-                //back control (note: double tries so that tooltip from multiple window layer can be displayed at once)
-                lastForm = Application.OpenForms.OfType<Form>().FirstOrDefault(x => !(x is ToolTipForm) && x.Visible);
-                if (lastForm != null) {
-                    hovered = lastForm.GetHoveredControl();
-                    if (hovered != null) return hovered;
-                }
             }
             return null;
         }
@@ -178,7 +177,7 @@ namespace ZeroKLobby
             if (isHidden || isPathDifferent) {
                 if (!string.IsNullOrEmpty(message)) {
                     baloonTipPath = navigationPath;
-                    if (showBalloon) systrayIcon.ShowBalloonTip(5000, "Zero-K", message, ToolTipIcon.Info);
+                    if (showBalloon) systrayIcon.ShowBalloonTip(5000, "Zero-K", TextColor.StripCodes(message), ToolTipIcon.Info);
                 }
             }
             if (isHidden && useFlashing) FlashWindow();
