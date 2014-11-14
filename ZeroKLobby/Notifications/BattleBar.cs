@@ -84,6 +84,7 @@ namespace ZeroKLobby.Notifications
             client.Rang += (s, e) =>
                 {
                     if (e.Data == GlobalConst.NightwatchName)
+                        //Nightwatch RING is from UserController.cs (website code)
                         MainWindow.Instance.NotifyUser("chat/zkadmin", "New report arrive at zkadmin channel", true, true);
                     else
                     {
