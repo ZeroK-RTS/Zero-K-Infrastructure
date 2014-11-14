@@ -55,6 +55,7 @@ namespace ZeroKWeb.Controllers
                 if (!string.IsNullOrEmpty(name))
                 {
                     if (name.Length > 50) name = name.Substring(0, 50);
+                    name = Regex.Replace(name, @"[^\u0000-\u007F]", string.Empty); // remove unicode stuff
                     comm.Name = name;
                 }
 
