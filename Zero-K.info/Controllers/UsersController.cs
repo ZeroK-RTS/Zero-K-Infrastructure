@@ -429,5 +429,32 @@ namespace ZeroKWeb.Controllers
 
             return NewUsers(null, null, userID);
         }
+
+
+        /// <summary>
+        /// This is a function requested by Pepe Ampere for NOTA veterans
+        /// </summary>
+        public ActionResult Fetch(string name, string password)
+        {
+            var db = new ZkDataContext();
+            var acc = Account.AccountVerify(db, name, password);
+            return new JsonResult() { Data = new
+            {
+                acc.AccountID,
+                acc.LobbyID,
+                acc.Name,
+                acc.Aliases,
+                acc.FirstLogin,
+                acc.LastLogin,
+                acc.LobbyTimeRank,
+                acc.LobbyVersion,
+                acc.Language,
+                acc.Email,
+                acc.Country,
+                acc.EffectiveElo,
+                acc.IsLobbyAdministrator,
+                acc.IsBot,
+            }, JsonRequestBehavior = JsonRequestBehavior.AllowGet};
+        }
     }
 }
