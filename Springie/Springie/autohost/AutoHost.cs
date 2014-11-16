@@ -917,8 +917,8 @@ namespace Springie.autohost
                 spring.AddUser(e1.UserName, e1.ScriptPassword);
                 TimeSpan started = DateTime.Now.Subtract(spring.GameStarted);
                 started = new TimeSpan((int)started.TotalHours, started.Minutes, started.Seconds);
-                SayBattlePrivate(name, String.Format("GAME IS CURRENTLY IN PROGRESS, PLEASE WAIT TILL IT ENDS! Running for {0}", started));
-                SayBattlePrivate(name, "If you say !notify, I will PM you when game ends.");
+                SayBattlePrivate(name, String.Format("THIS GAME IS CURRENTLY IN PROGRESS, PLEASE WAIT UNTIL IT ENDS! Running for {0}", started));
+                SayBattlePrivate(name, "If you say !notify, I will message you when the current game ends.");
             }
 
             if (SpawnConfig == null) {
@@ -945,7 +945,7 @@ namespace Springie.autohost
             if (e1.BattleID != tas.MyBattleID) return;
             CheckForBattleExit();
 
-            if (spring.IsRunning) spring.SayGame(e1.UserName + " has left lobby");
+            if (spring.IsRunning) spring.SayGame(e1.UserName + " has left the lobby");
 
             if (e1.UserName == bossName) {
                 SayBattle("boss has left the battle");
