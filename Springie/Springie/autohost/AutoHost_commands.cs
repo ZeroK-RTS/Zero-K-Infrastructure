@@ -1302,7 +1302,7 @@ namespace Springie.autohost
         void ComNotify(TasSayEventArgs e, string[] words)
         {
             if (!toNotify.Contains(e.UserName)) toNotify.Add(e.UserName);
-            Respond(e, "I will notify you when game ends");
+            Respond(e, "I will notify you when the game ends.");
         }
 
         void ComSaveBoxes(TasSayEventArgs e, string[] words)
