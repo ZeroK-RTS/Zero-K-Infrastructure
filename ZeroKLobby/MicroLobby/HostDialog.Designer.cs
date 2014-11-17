@@ -46,6 +46,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.advancedOptionsGroup.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -133,9 +134,9 @@
             // 
             // gameBox
             // 
+            this.gameBox.ForeColor = System.Drawing.SystemColors.WindowText;
             this.gameBox.Location = new System.Drawing.Point(144, 114);
             this.gameBox.Name = "gameBox";
-			this.gameBox.ForeColor = System.Drawing.SystemColors.WindowText;
             this.gameBox.Size = new System.Drawing.Size(380, 21);
             this.gameBox.TabIndex = 11;
             // 
@@ -213,9 +214,10 @@
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(18, 9);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(394, 39);
+            this.label6.Size = new System.Drawing.Size(394, 26);
             this.label6.TabIndex = 14;
-            this.label6.Text = resources.GetString("label6.Text");
+            this.label6.Text = "For open public games, it is best to use managed autohosts (with stars).\r\nTick \"s" +
+    "how empty\" if you dont see any. There is always one empty waiting for you.";
             // 
             // pictureBox1
             // 
@@ -254,6 +256,7 @@
             this.Load += new System.EventHandler(this.HostDialog_Load);
             this.advancedOptionsGroup.ResumeLayout(false);
             this.advancedOptionsGroup.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
