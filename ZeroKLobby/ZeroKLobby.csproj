@@ -683,21 +683,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\DownloadBar.resx">
     </EmbeddedResource>
-    <None Include="Resources\Conf\lups.cfg" />
-    <None Include="Resources\Conf\lups.cfg0" />
-    <None Include="Resources\Conf\lups.cfg1" />
-    <None Include="Resources\Conf\lups.cfg2" />
-    <None Include="Resources\Conf\lups.cfg4" />
     <None Include="Resources\Conf\lups0.cfg" />
     <None Include="Resources\Conf\lups1.cfg" />
     <None Include="Resources\Conf\lups2.cfg" />
     <None Include="Resources\Conf\lups3.cfg" />
     <None Include="Resources\Conf\lups4.cfg" />
-    <None Include="Resources\Conf\springsettings.cfg0" />
-    <None Include="Resources\Conf\springsettings.cfg1" />
-    <None Include="Resources\Conf\springsettings.cfg2" />
-    <None Include="Resources\Conf\springsettings.cfg3" />
-    <None Include="Resources\Conf\springsettings.cfg4" />
     <None Include="Resources\Conf\springsettings0.cfg" />
     <None Include="Resources\Conf\springsettings1.cfg" />
     <None Include="Resources\Conf\springsettings2.cfg" />

@@ -301,12 +301,12 @@ namespace ZeroKLobby.MicroLobby
         {
             var channelName = e.ServerParams[0];
             var chatControl = GetChannelControl(channelName);
+            toolTabs.RemoveChannelTab(channelName);
             if (chatControl != null)
             {
                 chatControl.Reset();
                 chatControl.Dispose();
             }
-            toolTabs.RemoveChannelTab(channelName);
         }
 
 
