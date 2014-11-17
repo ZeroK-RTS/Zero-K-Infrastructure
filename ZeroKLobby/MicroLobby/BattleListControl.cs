@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
@@ -15,6 +16,7 @@ namespace ZeroKLobby.MicroLobby
     public partial class BattleListControl: ScrollableControl
     {
         readonly Dictionary<BattleIcon, Point> battleIconPositions = new Dictionary<BattleIcon, Point>();
+        Point openBattlePosition;
         readonly Regex filterOrSplit = new Regex(@"\||\bOR\b");
         string filterText;
         bool hideEmpty;
@@ -27,6 +29,10 @@ namespace ZeroKLobby.MicroLobby
         readonly bool sortByPlayers;
 
         List<BattleIcon> view = new List<BattleIcon>();
+        static Pen dividerPen = new Pen(Color.DarkCyan, 3) {DashStyle = DashStyle.Dash};
+        static Font dividerFont = new Font("Segoe UI", 15.25F, FontStyle.Bold);
+        static SolidBrush dividerFontBrush = new SolidBrush(Program.Conf.TextColor);
+
 
         public string FilterText
         {
@@ -244,30 +250,48 @@ namespace ZeroKLobby.MicroLobby
                 int x = 0;
                 int y = 0;
 
-                g.DrawImage(ZklResources.border,
-                    x + DpiMeasurement.ScaleValueX(3),
-                    DpiMeasurement.ScaleValueY(3),
-                    DpiMeasurement.ScaleValueX(70),
-                    DpiMeasurement.ScaleValueY(70));
-                g.DrawString("Open a new battle.",
-                    BattleIcon.TitleFont,
-                    BattleIcon.TextBrush,
-                    x + scaledMapCellWidth,
-                    y + DpiMeasurement.ScaleValueY(3));
-
-                x += scaledIconWidth;
-
-                foreach (BattleIcon t in view)
+                
+                PaintDivider(g, ref x, ref y, "Match maker queues");
+                foreach (BattleIcon t in view.Where(b=>b.IsQueue && !b.IsInGame))
                 {
                     if (x + scaledIconWidth > Width)
                     {
                         x = 0;
                         y += scaledIconHeight;
                     }
-                    battleIconPositions[t] = new Point(x, y);
-                    if (g.VisibleClipBounds.IntersectsWith(new RectangleF(x, y, scaledIconWidth, scaledIconHeight))) g.DrawImageUnscaled(t.Image, x, y);
-                    x += scaledIconWidth;
+                    PainBattle(t, g, ref x, ref y, scaledIconWidth, scaledIconHeight);
                 }
+
+                x = 0;
+                y += scaledIconHeight;
+
+                PaintDivider(g, ref x, ref y, "Custom battles");
+                PainOpenBattleButton(g, ref x, ref y, scaledMapCellWidth, scaledIconWidth);
+
+                foreach (BattleIcon t in view.Where(b => !b.IsQueue && !b.IsInGame))
+                {
+                    if (x + scaledIconWidth > Width)
+                    {
+                        x = 0;
+                        y += scaledIconHeight;
+                    }
+                    PainBattle(t, g, ref x, ref y, scaledIconWidth, scaledIconHeight);
+                }
+                x = 0;
+                y += scaledIconHeight;
+
+                PaintDivider(g, ref x, ref y, "Games in progress");
+
+                foreach (BattleIcon t in view.Where(b => b.IsInGame))
+                {
+                    if (x + scaledIconWidth > Width)
+                    {
+                        x = 0;
+                        y += scaledIconHeight;
+                    }
+                    PainBattle(t, g, ref x, ref y, scaledIconWidth, scaledIconHeight);
+                }
+
 
                 AutoScrollMinSize = new Size(0, y + scaledIconHeight);
             }
@@ -276,6 +300,43 @@ namespace ZeroKLobby.MicroLobby
                 Trace.WriteLine("Error in drawing battles: " + e);
             }
         }
+
+        void PaintDivider(Graphics g, ref int x, ref int y, string text)
+        {
+            y += 3;
+
+            g.DrawLine(dividerPen, 5, y + 2, Width - 10, y + 2);
+            y += 4;
+            g.DrawString(text, dividerFont, dividerFontBrush,new RectangleF(10,y , Width-20,30),new StringFormat()
+            {
+                LineAlignment = StringAlignment.Center,Alignment = StringAlignment.Center
+            }  );
+            y += 24;
+            g.DrawLine(dividerPen, 5, y + 2, Width - 10, y + 2);
+            y += 4;
+        }
+
+        void PainOpenBattleButton(Graphics g, ref int x, ref int y, int scaledMapCellWidth, int scaledIconWidth)
+        {
+            g.DrawImage(ZklResources.border,
+                x + DpiMeasurement.ScaleValueX(3),
+                y + DpiMeasurement.ScaleValueY(3),
+                DpiMeasurement.ScaleValueX(70),
+                DpiMeasurement.ScaleValueY(70));
+            g.DrawString("Open a new battle.", BattleIcon.TitleFont, BattleIcon.TextBrush, x + scaledMapCellWidth, y + DpiMeasurement.ScaleValueY(3));
+            openBattlePosition = new Point(x, y);
+            x += scaledIconWidth;
+        }
+
+        void PainBattle(BattleIcon t, Graphics g, ref int x, ref int y, int scaledIconWidth, int scaledIconHeight)
+        {
+            battleIconPositions[t] = new Point(x, y);
+            if (g.VisibleClipBounds.IntersectsWith(new RectangleF(x, y, scaledIconWidth, scaledIconHeight))) g.DrawImageUnscaled(t.Image, x, y);
+            x += scaledIconWidth;
+        }
+
+
+
 
         void FilterBattles()
         {
@@ -289,7 +350,7 @@ namespace ZeroKLobby.MicroLobby
                 view = model.Where(icon => orParts.Any(filterPart => BattleWordFilter(icon.Battle, filterPart.Split(' ')))).ToList();
             }
             IEnumerable<BattleIcon> v = view; // speedup to avoid multiple "toList"
-            if (hideEmpty) v = v.Where(bi => bi.Battle.NonSpectatorCount > 0);
+            if (hideEmpty) v = v.Where(bi => bi.Battle.NonSpectatorCount > 0 || bi.IsQueue);
             if (hideFull) v = v.Where(bi => bi.Battle.NonSpectatorCount < bi.Battle.MaxPlayers);
             if (showOfficial) v = v.Where(bi => bi.Battle.IsOfficial());
             if (hidePassworded) v = v.Where(bi => !bi.Battle.IsPassworded);
@@ -349,8 +410,8 @@ namespace ZeroKLobby.MicroLobby
             x -= AutoScrollPosition.X;
             y -= AutoScrollPosition.Y;
             DpiMeasurement.DpiXYMeasurement(this);
-            return x > DpiMeasurement.ScaleValueX(3) && x < DpiMeasurement.ScaleValueX(71) && y > DpiMeasurement.ScaleValueY(3) &&
-                   y < DpiMeasurement.ScaleValueX(71);
+            return x > openBattlePosition.X + DpiMeasurement.ScaleValueX(3) && x < openBattlePosition.X + DpiMeasurement.ScaleValueX(71) && y > openBattlePosition.Y + DpiMeasurement.ScaleValueY(3) &&
+                   y < openBattlePosition.Y + DpiMeasurement.ScaleValueX(71);
         }
 
         void Repaint()
@@ -363,8 +424,9 @@ namespace ZeroKLobby.MicroLobby
 
         void Sort()
         {
-            IOrderedEnumerable<BattleIcon> ret = view.OrderByDescending(x => x.IsServerManaged);
+            IOrderedEnumerable<BattleIcon> ret = view.OrderByDescending(x=>x.IsQueue).ThenBy(x=>x.IsInGame).ThenByDescending(x => x.IsServerManaged);
             if (sortByPlayers) ret = ret.ThenByDescending(bi => bi.Battle.NonSpectatorCount);
+            ret = ret.ThenBy(x => x.Battle.Title);
             view = ret.ToList();
         }
 
