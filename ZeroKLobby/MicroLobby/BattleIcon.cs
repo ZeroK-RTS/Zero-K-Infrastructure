@@ -27,6 +27,9 @@ namespace ZeroKLobby.MicroLobby
 
         public Battle Battle { get; private set; }
 
+        public bool IsQueue { get; private set; }
+        public string QueueName { get; private set; }
+
 
         public Bitmap Image
         {
@@ -77,10 +80,19 @@ namespace ZeroKLobby.MicroLobby
         public static Brush TextBrush = new SolidBrush(Program.Conf.TextColor);
         public static Font TitleFont = new Font("Segoe UI", 8.25F, FontStyle.Bold);
 
+        public static Font QueueFont = new Font("Segoe UI", 13.25F, FontStyle.Bold);
+        public static Brush QueueBrush = new SolidBrush(Program.Conf.TextColor);
+        public static Brush QueueBrushOutline = new SolidBrush(Program.Conf.BgColor);
+
         public BattleIcon(Battle battle)
         {
             Battle = battle;
             IsServerManaged = battle.Founder.IsSpringieManaged;
+            IsQueue = IsServerManaged && battle.Title.StartsWith("Queue");
+            if (IsQueue)
+            {
+                QueueName = battle.Title.Substring(6);
+            }
         }
 
         public void Dispose()
@@ -131,7 +143,7 @@ namespace ZeroKLobby.MicroLobby
                         DpiMeasurement.ScaleValueX(50),
                         DpiMeasurement.ScaleValueY(50));
                 }
-                if (Battle.IsOfficial() && Battle.Founder.IsSpringieManaged)
+                if (Battle.IsOfficial() && IsServerManaged && !IsQueue)
                 {
                     g.DrawImage(ZklResources.star,
                         DpiMeasurement.ScaleValueX(48),
@@ -139,6 +151,17 @@ namespace ZeroKLobby.MicroLobby
                         DpiMeasurement.ScaleValueX(15),
                         DpiMeasurement.ScaleValueY(15));
                 }
+                if (Battle.IsOfficial() && IsQueue)
+                {
+                    g.DrawStringWithOutline(QueueName.Replace(' ', '\n'),
+                        QueueFont,
+                        QueueBrush,
+                        QueueBrushOutline,
+                        new Rectangle(4, 4, DpiMeasurement.ScaleValueX(62), DpiMeasurement.ScaleValueY(62)),
+                        new StringFormat() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center},
+                        3);
+                }
+
                 if (Battle.IsPassworded) drawIcon(ZklResources._lock);
                 if (Battle.IsReplay) drawIcon(ZklResources.replay);
                 if (Battle.Rank > 0) drawIcon(Images.GetRank(Battle.Rank));
