@@ -38,12 +38,10 @@ namespace ZeroKLobby
         protected override bool ShowWithoutActivation { get { return true; } }
         private IToolTipRenderer toolTipRenderer;
         private bool active = false;
-        public bool IsActive { get { return active; } 
-            set { 
-                this.Visible = value;
-                active =  value;
-            }
-        }
+        /// <summary>
+        /// Indicate whether tooltip have item to draw. If it have no item to draw it will show empty box
+        /// </summary>
+        public bool IsDrawing { get { return active; } }
 
 
         public ToolTipForm(IToolTipRenderer renderer)
@@ -53,7 +51,7 @@ namespace ZeroKLobby
             toolTipRenderer = renderer;
 
             //BringToFront();
-            
+            ForeColor = Program.Conf.OtherTextColor;
 
             SetStyle(ControlStyles.UserPaint | ControlStyles.UserMouse | ControlStyles.DoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
             SetStyle(ControlStyles.Selectable, false);
@@ -124,7 +122,7 @@ namespace ZeroKLobby
         {
             if (e == null) throw new ArgumentNullException("e");
             base.OnPaint(e);
-            if (toolTipRenderer == null)
+            if (toolTipRenderer == null || !active)
                 return;
             try
             {
