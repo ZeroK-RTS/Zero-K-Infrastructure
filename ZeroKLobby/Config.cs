@@ -127,6 +127,12 @@ namespace ZeroKLobby
         [Description("Control the game using your voice")]
         public bool EnableVoiceCommands { get; set; }
 
+        [Category("Debugging")]
+        [DisplayName("Enable UnitSync Dialog Box")]
+        [Description("Allow offline mod development and testing by providing user the option to skip uploads of mod information, "
+        + "and ability to scan new map/mod without being online. This option is meant to be used with Skirmisher Tab. This option won't work on Linux")]
+        public bool EnableUnitSyncPrompt { get; set; }
+
         [XmlIgnore]
         [Browsable(false)]
         public Color FadeColor { get { return fadeColor; } set { fadeColor = value; } }
