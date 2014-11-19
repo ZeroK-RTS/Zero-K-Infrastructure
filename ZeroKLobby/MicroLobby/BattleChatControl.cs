@@ -180,7 +180,7 @@ namespace ZeroKLobby.MicroLobby
 		void DrawMinimap()
 		{
 		    try {
-		        if (minimap == null) return;
+		        if (minimap == null || Program.TasClient.MyBattle == null) return;
 		        var boxColors = new[]
 		                        {
 		                            Color.Green, Color.Red, Color.Blue, Color.Cyan, Color.Yellow, Color.Magenta, Color.Gray, Color.Lime, Color.Maroon,

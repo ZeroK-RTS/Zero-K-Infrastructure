@@ -25,6 +25,7 @@ namespace ZeroKLobby.Notifications
 		{
 			BarContainer = container;
 			container.btnDetail.Text = DetailButtonLabel;
+		    container.Title = "Notice";
 		}
 
 		public void CloseClicked(NotifyBarContainer container)

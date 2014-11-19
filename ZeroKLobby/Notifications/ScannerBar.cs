@@ -31,6 +31,8 @@ namespace ZeroKLobby.Notifications
 			container.btnDetail.Enabled = false;
 			container.btnDetail.Text = "Scan";
 			this.container = container;
+            container.Title = "Scanning local game content";
+            container.TitleTooltip = "Please wait until local files are verified"; 
 		}
 
 		public void CloseClicked(NotifyBarContainer container) {
@@ -44,8 +46,7 @@ namespace ZeroKLobby.Notifications
 		{
 			return this;
 		}
-
-		void scanner_WorkProgressChanged(object sender, ProgressEventArgs e)
+	    void scanner_WorkProgressChanged(object sender, ProgressEventArgs e)
 		{
             if (ignoreCount <= 0) {
                 if (e.WorkTotal > 1)

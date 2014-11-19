@@ -23,6 +23,7 @@ namespace ZeroKLobby.Notifications
         {
             container.btnDetail.Enabled = false;
             container.btnDetail.BackgroundImage = ZklResources.warning;
+            container.Title = "Warning";
         }
 
         public void CloseClicked(NotifyBarContainer container)
@@ -36,5 +37,6 @@ namespace ZeroKLobby.Notifications
         {
             return this;
         }
+
     }
 }

@@ -123,6 +123,9 @@ namespace ZeroKLobby.Notifications
             container.btnStop.Enabled = false;
             container.btnStop.Visible = false;
             //container.btnDetail.Visible = false;
+            container.Title = "PlanetWars match maker";
+            container.TitleTooltip = "You need at least two people to attack a planet and at least one to defend a planet";
+
         }
 
         public void CloseClicked(NotifyBarContainer container)

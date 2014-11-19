@@ -36,15 +36,17 @@ namespace ZeroKLobby.Notifications
             this.lbPlayers = new System.Windows.Forms.Label();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
+            this.radioPlay = new System.Windows.Forms.RadioButton();
+            this.radioSpec = new System.Windows.Forms.RadioButton();
             this.zkSplitContainer1 = new ZeroKLobby.ZkSplitContainer();
             this.picoChat = new ZeroKLobby.MicroLobby.ChatBox();
             this.gameBox = new System.Windows.Forms.PictureBox();
-            this.radioPlay = new System.Windows.Forms.RadioButton();
-            this.radioSpec = new System.Windows.Forms.RadioButton();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.zkSplitContainer1)).BeginInit();
             this.zkSplitContainer1.Panel1.SuspendLayout();
             this.zkSplitContainer1.Panel2.SuspendLayout();
             this.zkSplitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gameBox)).BeginInit();
             this.SuspendLayout();
             // 
             // cbSide
@@ -89,6 +91,34 @@ namespace ZeroKLobby.Notifications
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(888, 76);
             this.panel1.TabIndex = 15;
+            // 
+            // radioPlay
+            // 
+            this.radioPlay.Checked = true;
+            this.radioPlay.Image = global::ZeroKLobby.ZklResources.game;
+            this.radioPlay.Location = new System.Drawing.Point(2, 3);
+            this.radioPlay.Margin = new System.Windows.Forms.Padding(2);
+            this.radioPlay.Name = "radioPlay";
+            this.radioPlay.Size = new System.Drawing.Size(78, 24);
+            this.radioPlay.TabIndex = 16;
+            this.radioPlay.TabStop = true;
+            this.radioPlay.Text = "Play";
+            this.radioPlay.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.radioPlay.UseVisualStyleBackColor = true;
+            this.radioPlay.CheckedChanged += new System.EventHandler(this.radioPlay_CheckedChanged);
+            // 
+            // radioSpec
+            // 
+            this.radioSpec.Image = global::ZeroKLobby.ZklResources.away1;
+            this.radioSpec.Location = new System.Drawing.Point(2, 25);
+            this.radioSpec.Margin = new System.Windows.Forms.Padding(2);
+            this.radioSpec.Name = "radioSpec";
+            this.radioSpec.Size = new System.Drawing.Size(88, 22);
+            this.radioSpec.TabIndex = 16;
+            this.radioSpec.Text = "Spectate";
+            this.radioSpec.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.radioSpec.UseVisualStyleBackColor = true;
+            this.radioSpec.CheckedChanged += new System.EventHandler(this.radioSpec_CheckedChanged);
             // 
             // zkSplitContainer1
             // 
@@ -147,39 +177,11 @@ namespace ZeroKLobby.Notifications
             this.gameBox.TabIndex = 11;
             this.gameBox.TabStop = false;
             // 
-            // radioPlay
-            // 
-            this.radioPlay.Checked = true;
-            this.radioPlay.Image = global::ZeroKLobby.ZklResources.game;
-            this.radioPlay.Location = new System.Drawing.Point(2, 3);
-            this.radioPlay.Margin = new System.Windows.Forms.Padding(2);
-            this.radioPlay.Name = "radioPlay";
-            this.radioPlay.Size = new System.Drawing.Size(78, 24);
-            this.radioPlay.TabIndex = 16;
-            this.radioPlay.TabStop = true;
-            this.radioPlay.Text = "Play";
-            this.radioPlay.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
-            this.radioPlay.UseVisualStyleBackColor = true;
-            this.radioPlay.CheckedChanged += new System.EventHandler(this.radioPlay_CheckedChanged);
-            // 
-            // radioSpec
-            // 
-            this.radioSpec.Image = global::ZeroKLobby.ZklResources.away1;
-            this.radioSpec.Location = new System.Drawing.Point(2, 25);
-            this.radioSpec.Margin = new System.Windows.Forms.Padding(2);
-            this.radioSpec.Name = "radioSpec";
-            this.radioSpec.Size = new System.Drawing.Size(88, 22);
-            this.radioSpec.TabIndex = 16;
-            this.radioSpec.Text = "Spectate";
-            this.radioSpec.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
-            this.radioSpec.UseVisualStyleBackColor = true;
-            this.radioSpec.CheckedChanged += new System.EventHandler(this.radioSpec_CheckedChanged);
-            // 
             // BattleBar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.DimGray;
+            this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.panel1);
             this.ForeColor = System.Drawing.Color.White;
             this.MinimumSize = new System.Drawing.Size(492, 76);
@@ -189,7 +191,9 @@ namespace ZeroKLobby.Notifications
             this.panel1.PerformLayout();
             this.zkSplitContainer1.Panel1.ResumeLayout(false);
             this.zkSplitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.zkSplitContainer1)).EndInit();
             this.zkSplitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gameBox)).EndInit();
             this.ResumeLayout(false);
 
         }

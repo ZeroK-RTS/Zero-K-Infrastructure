@@ -44,9 +44,11 @@ namespace ZeroKLobby.Notifications
             picoChat.IRCForeColor = 14; //mirc grey. Unknown use
 
             Program.ToolTip.SetText(cbSide, "Choose the faction you wish to play.");
+            picoChat.DefaultTooltip = "Last lines from room chat, click to enter full screen chat";
 
             client = Program.TasClient;
             spring = new Spring(Program.SpringPaths);
+
 
             try {
                 // silly way to create speech and voice engines on runtime - needed due to mono crash
@@ -102,7 +104,19 @@ namespace ZeroKLobby.Notifications
                     var battle = client.MyBattle;
                     lastBattleFounder = battle.Founder.Name;
                     
-                    if (battle.Founder.Name.StartsWith("PlanetWars")) ChangeDesiredSpectatorState(false); // TODO pw unpsec hack, remove later
+                    if (battle.Founder.Name.StartsWith("PlanetWars") || battle.Founder.Name.StartsWith("Zk")) ChangeDesiredSpectatorState(false); // TODO pw unpsec hack, remove later
+
+                    if (battle.IsQueue)
+                    {
+                        barContainer.Title = string.Format("Joined {0} Quick Match Queue", battle.QueueName);
+                        barContainer.TitleTooltip = "Please await people, game will start automatically";
+                    }
+                    else
+                    {
+                        barContainer.Title = string.Format("Joined battle room hosted by {0}", battle.Founder.Name);
+                        barContainer.TitleTooltip = "Use button on the left side to start a game";
+                    }
+
 
                     Program.SpringScanner.MetaData.GetModAsync(battle.ModName,
                                                                (mod) =>
@@ -445,13 +459,14 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
         public Control GetControl() {
             return this;
         }
-
         public void AddedToContainer(NotifyBarContainer container) {
             barContainer = container;
             container.btnDetail.Image = ZklResources.battle;
             container.btnDetail.Text = "Start";
             Program.ToolTip.SetText(container.btnDetail, "Start battle");
             Program.ToolTip.SetText(container.btnStop, "Quit battle");
+            container.Title = "Joined Battle Room";
+            container.TitleTooltip = "Use button on the left side to start a game";
         }
 
         public void CloseClicked(NotifyBarContainer container) {

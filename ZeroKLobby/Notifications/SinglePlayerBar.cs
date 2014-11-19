@@ -80,6 +80,8 @@ namespace ZeroKLobby.Notifications
 		{
 			container.btnDetail.Enabled = false;
 			container.btnDetail.Text = "SinglePlayer";
+		    container.Title = "Loading a single player mission";
+            container.TitleTooltip = "Please await resource download";
 		}
 
 		public void CloseClicked(NotifyBarContainer container)
@@ -94,7 +96,7 @@ namespace ZeroKLobby.Notifications
 			return this;
 		}
 
-		void timer_Tick(object sender, EventArgs e)
+	    void timer_Tick(object sender, EventArgs e)
 		{
 			try
 			{
