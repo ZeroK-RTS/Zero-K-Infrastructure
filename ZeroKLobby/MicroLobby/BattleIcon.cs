@@ -26,11 +26,6 @@ namespace ZeroKLobby.MicroLobby
         public static Brush BackBrush = new SolidBrush(Program.Conf.BgColor);
 
         public Battle Battle { get; private set; }
-
-        public bool IsQueue { get; private set; }
-        public string QueueName { get; private set; }
-
-
         public Bitmap Image
         {
             get
@@ -56,7 +51,6 @@ namespace ZeroKLobby.MicroLobby
                 }
             }
         }
-        public bool IsServerManaged { get; private set; }
         public static Size MapCellSize = new Size(74, 70);
 
         public Image MinimapImage
@@ -87,12 +81,6 @@ namespace ZeroKLobby.MicroLobby
         public BattleIcon(Battle battle)
         {
             Battle = battle;
-            IsServerManaged = battle.Founder.IsSpringieManaged;
-            IsQueue = IsServerManaged && battle.Title.StartsWith("Queue");
-            if (IsQueue)
-            {
-                QueueName = battle.Title.Substring(6);
-            }
         }
 
         public void Dispose()
@@ -143,7 +131,7 @@ namespace ZeroKLobby.MicroLobby
                         DpiMeasurement.ScaleValueX(50),
                         DpiMeasurement.ScaleValueY(50));
                 }
-                if (Battle.IsOfficial() && IsServerManaged && !IsQueue)
+                if (Battle.IsOfficial() && Battle.IsSpringieManaged && !Battle.IsQueue)
                 {
                     g.DrawImage(ZklResources.star,
                         DpiMeasurement.ScaleValueX(48),
@@ -151,9 +139,9 @@ namespace ZeroKLobby.MicroLobby
                         DpiMeasurement.ScaleValueX(15),
                         DpiMeasurement.ScaleValueY(15));
                 }
-                if (Battle.IsOfficial() && IsQueue)
+                if (Battle.IsOfficial() && Battle.IsQueue)
                 {
-                    g.DrawStringWithOutline(QueueName.Replace(' ', '\n'),
+                    g.DrawStringWithOutline(Battle.QueueName.Replace(' ', '\n'),
                         QueueFont,
                         QueueBrush,
                         QueueBrushOutline,

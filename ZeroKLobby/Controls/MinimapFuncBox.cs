@@ -22,6 +22,25 @@ namespace ZeroKLobby.Controls
             Program.ToolTip.SetText(btnAddAI, "Add AI to other team");
         }
 
+        public bool QueueMode
+        {
+            set
+            {
+                if (value)
+                {
+                    btnGameOptions.Visible = false;
+                    btnAddAI.Visible = false;
+                    btnChangeTeam.Visible = false;
+                }
+                else
+                {
+                    btnGameOptions.Visible = true;
+                    btnAddAI.Visible = true;
+                    btnChangeTeam.Visible = true;
+                }
+            }
+        }
+
         private void addAIButton_Click(object sender, EventArgs e)
         {
             var enabled = Program.TasClient.MyBattle != null && Program.ModStore.Ais != null && Program.ModStore.Ais.Any();

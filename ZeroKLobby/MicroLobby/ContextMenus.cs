@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using LobbyClient;
+using ZkData;
 using ContextMenu = System.Windows.Forms.ContextMenu;
 using PlasmaShared.UnitSyncLib;
 using ZeroKLobby.MicroLobby.ExtrasTab;
@@ -16,8 +17,8 @@ namespace ZeroKLobby.MicroLobby
     static class ContextMenus
     {
 
-		private static bool refreshSpringAi = true;
-		private static List<Ai> springAi;
+        private static bool refreshSpringAi = true;
+        private static List<Ai> springAi;
         private static void AddAIToTeam(string botShortName)
         {
             var botNumber = Enumerable.Range(1, int.MaxValue).First(i => !Program.TasClient.MyBattle.Bots.Any(
@@ -29,13 +30,12 @@ namespace ZeroKLobby.MicroLobby
             //different alliance than player
             botStatus.AllyNumber = Enumerable.Range(0, TasClient.MaxAlliances - 1).FirstOrDefault(x => x != botStatus.AllyNumber);
             Program.TasClient.AddBot("Bot_" + botNumber, botStatus, (int)(ZeroKLobby.MicroLobby.MyCol)Color.White, botShortName);
-        } 
+        }
 
         static MenuItem GetAddBot()
         {
             var enabled = Program.TasClient.MyBattle != null && Program.ModStore.Ais != null && Program.ModStore.Ais.Any();
-            var addBotItem = new MenuItem("Add computer player (Bot)" + (enabled ? String.Empty : " (Loading)"))
-                             { Visible = enabled };
+            var addBotItem = new MenuItem("Add computer player (Bot)" + (enabled ? String.Empty : " (Loading)")) { Visible = enabled };
 
             addBotItem.MenuItems.AddRange(GetAddBotItems());
 
@@ -176,7 +176,7 @@ namespace ZeroKLobby.MicroLobby
 
                 if (!(chatControl is BattleChatControl))
                 {
-                    var showTopic = new System.Windows.Forms.MenuItem("Show Topic Header") { Checked = chatControl.IsTopicVisible};
+                    var showTopic = new System.Windows.Forms.MenuItem("Show Topic Header") { Checked = chatControl.IsTopicVisible };
                     showTopic.Click += (s, e) =>
                         {
                             chatControl.IsTopicVisible = !chatControl.IsTopicVisible;
@@ -187,8 +187,7 @@ namespace ZeroKLobby.MicroLobby
 
                 if (chatControl.ChannelName != "Battle")
                 {
-                    var autoJoinItem = new System.Windows.Forms.MenuItem("Automatically Join Channel")
-                                       { Checked = Program.AutoJoinManager.Channels.Contains(chatControl.ChannelName) };
+                    var autoJoinItem = new System.Windows.Forms.MenuItem("Automatically Join Channel") { Checked = Program.AutoJoinManager.Channels.Contains(chatControl.ChannelName) };
                     autoJoinItem.Click += (s, e) =>
                         {
                             if (autoJoinItem.Checked) Program.AutoJoinManager.Remove(chatControl.ChannelName);
@@ -246,7 +245,7 @@ namespace ZeroKLobby.MicroLobby
             try
             {
                 var headerItem = new System.Windows.Forms.MenuItem("Player - " + user.Name) { Enabled = false, DefaultItem = true };
-                    // default is to make it appear bold
+                // default is to make it appear bold
                 contextMenu.MenuItems.Add(headerItem);
 
                 if (user.Name != Program.TasClient.UserName)
@@ -274,8 +273,7 @@ namespace ZeroKLobby.MicroLobby
                         contextMenu.MenuItems.Add(pinItem);
                     }
 
-                    var joinItem = new MenuItem("Join Same Battle")
-                                   { Enabled = Program.TasClient.ExistingUsers[user.Name].IsInBattleRoom };
+                    var joinItem = new MenuItem("Join Same Battle") { Enabled = Program.TasClient.ExistingUsers[user.Name].IsInBattleRoom };
                     joinItem.Click += (s, e) => ActionHandler.JoinPlayer(user.Name);
                     contextMenu.MenuItems.Add(joinItem);
 
@@ -302,44 +300,52 @@ namespace ZeroKLobby.MicroLobby
                     {
                         contextMenu.MenuItems.Add("-");
 
-                        if (user.Name != Program.TasClient.UserName)
+                        if (!Program.TasClient.MyBattle.IsQueue)
                         {
-                            var allyWith = new MenuItem("Ally")
-                                           {
-                                               Enabled =
-                                                   !battleStatus.IsSpectator &&
-                                                   (battleStatus.AllyNumber != myStatus.AllyNumber || myStatus.IsSpectator)
-                                           };
-                            allyWith.Click += (s, e) => ActionHandler.JoinAllyTeam(battleStatus.AllyNumber);
-                            contextMenu.MenuItems.Add(allyWith);
-                        }
-
-                        var colorItem = new MenuItem("Select Color")
-                                        { Enabled = Program.TasClient.UserName == user.Name && !myStatus.IsSpectator };
-                        colorItem.Click += (s, e) =>
+                            if (user.Name != Program.TasClient.UserName)
                             {
-                                if (Program.TasClient.MyBattle == null) return;
-                                var myColor = Program.TasClient.MyBattleStatus.TeamColorRGB;
-                                var colorDialog = new ColorDialog { Color = Color.FromArgb(myColor[0], myColor[1], myColor[2]) };
-                                // fixme: set site
-                                // colorDialog.Site = Program.MainWindow.ChatTab.Site;
-                                if (colorDialog.ShowDialog() == DialogResult.OK)
+                                var allyWith = new MenuItem("Ally")
+                                               {
+                                                   Enabled =
+                                                       !battleStatus.IsSpectator &&
+                                                       (battleStatus.AllyNumber != myStatus.AllyNumber || myStatus.IsSpectator)
+                                               };
+                                allyWith.Click += (s, e) => ActionHandler.JoinAllyTeam(battleStatus.AllyNumber);
+                                contextMenu.MenuItems.Add(allyWith);
+                            }
+
+                            if (!GlobalConst.IsZkMod(Program.TasClient.MyBattle.ModName))
+                            {
+                                var colorItem = new MenuItem("Select Color")
                                 {
-                                    var newColor = (int)(MyCol)colorDialog.Color;
-                                    Program.Conf.DefaultPlayerColorInt = newColor;
-                                    Program.SaveConfig();
-                                    var newStatus = Program.TasClient.MyBattleStatus.Clone();
-                                    newStatus.TeamColor = newColor;
-                                    Program.TasClient.SendMyBattleStatus(newStatus);
-                                }
-                            };
-                        contextMenu.MenuItems.Add(colorItem);
+                                    Enabled = Program.TasClient.UserName == user.Name && !myStatus.IsSpectator
+                                };
+                                colorItem.Click += (s, e) =>
+                                {
+                                    if (Program.TasClient.MyBattle == null) return;
+                                    var myColor = Program.TasClient.MyBattleStatus.TeamColorRGB;
+                                    var colorDialog = new ColorDialog { Color = Color.FromArgb(myColor[0], myColor[1], myColor[2]) };
+                                    // fixme: set site
+                                    // colorDialog.Site = Program.MainWindow.ChatTab.Site;
+                                    if (colorDialog.ShowDialog() == DialogResult.OK)
+                                    {
+                                        var newColor = (int)(MyCol)colorDialog.Color;
+                                        Program.Conf.DefaultPlayerColorInt = newColor;
+                                        Program.SaveConfig();
+                                        var newStatus = Program.TasClient.MyBattleStatus.Clone();
+                                        newStatus.TeamColor = newColor;
+                                        Program.TasClient.SendMyBattleStatus(newStatus);
+                                    }
+                                };
+                                contextMenu.MenuItems.Add(colorItem);
+                            }
 
-                        contextMenu.MenuItems.Add(GetSetAllyTeam(user));
+                            contextMenu.MenuItems.Add(GetSetAllyTeam(user));
 
-                        contextMenu.MenuItems.Add("-");
-                        contextMenu.MenuItems.Add(GetShowGameOptionsItem());
-                        contextMenu.MenuItems.Add(GetAddBot());
+                            contextMenu.MenuItems.Add("-");
+                            contextMenu.MenuItems.Add(GetShowGameOptionsItem());
+                            contextMenu.MenuItems.Add(GetAddBot());
+                        }
                     }
                 }
             }

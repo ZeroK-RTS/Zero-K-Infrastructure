@@ -252,7 +252,7 @@ namespace ZeroKLobby.MicroLobby
 
                 
                 PaintDivider(g, ref x, ref y, "Match maker queues");
-                foreach (BattleIcon t in view.Where(b=>b.IsQueue && !b.IsInGame))
+                foreach (BattleIcon t in view.Where(b=>b.Battle.IsQueue && !b.IsInGame))
                 {
                     if (x + scaledIconWidth > Width)
                     {
@@ -268,7 +268,7 @@ namespace ZeroKLobby.MicroLobby
                 PaintDivider(g, ref x, ref y, "Custom battles");
                 PainOpenBattleButton(g, ref x, ref y, scaledMapCellWidth, scaledIconWidth);
 
-                foreach (BattleIcon t in view.Where(b => !b.IsQueue && !b.IsInGame))
+                foreach (BattleIcon t in view.Where(b => !b.Battle.IsQueue && !b.IsInGame))
                 {
                     if (x + scaledIconWidth > Width)
                     {
@@ -350,7 +350,7 @@ namespace ZeroKLobby.MicroLobby
                 view = model.Where(icon => orParts.Any(filterPart => BattleWordFilter(icon.Battle, filterPart.Split(' ')))).ToList();
             }
             IEnumerable<BattleIcon> v = view; // speedup to avoid multiple "toList"
-            if (hideEmpty) v = v.Where(bi => bi.Battle.NonSpectatorCount > 0 || bi.IsQueue);
+            if (hideEmpty) v = v.Where(bi => bi.Battle.NonSpectatorCount > 0 || bi.Battle.IsQueue);
             if (hideFull) v = v.Where(bi => bi.Battle.NonSpectatorCount < bi.Battle.MaxPlayers);
             if (showOfficial) v = v.Where(bi => bi.Battle.IsOfficial());
             if (hidePassworded) v = v.Where(bi => !bi.Battle.IsPassworded);
@@ -424,7 +424,7 @@ namespace ZeroKLobby.MicroLobby
 
         void Sort()
         {
-            IOrderedEnumerable<BattleIcon> ret = view.OrderByDescending(x=>x.IsQueue).ThenBy(x=>x.IsInGame).ThenByDescending(x => x.IsServerManaged);
+            IOrderedEnumerable<BattleIcon> ret = view.OrderBy(x=>x.Battle.IsInGame);
             if (sortByPlayers) ret = ret.ThenByDescending(bi => bi.Battle.NonSpectatorCount);
             ret = ret.ThenBy(x => x.Battle.Title);
             view = ret.ToList();
