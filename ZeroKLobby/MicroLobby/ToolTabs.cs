@@ -11,6 +11,9 @@ namespace ZeroKLobby.MicroLobby
     public class ToolTabs: UserControl
     {
         ToolStripButton activeButton;
+        /// <summary>
+        /// This dictionary is a map of button Name (toolStrip.Items) to Control (panel.Controls)
+        /// </summary>
         readonly Dictionary<string, Control> controls = new Dictionary<string, Control>();
         ToolStripItem lastHoverItem;
         readonly Panel panel = new Panel { Dock = DockStyle.Fill };
@@ -49,8 +52,10 @@ namespace ZeroKLobby.MicroLobby
 
         public ToolTabs()
         {
+            //set colour for overflow button:
             var ovrflwBtn = toolStrip.OverflowButton;
-            ovrflwBtn.BackColor = Color.DimGray; //note: the colour of arrow on OverFlow button can't be set
+            ovrflwBtn.BackColor = Color.DimGray; //note: the colour of arrow on OverFlow button can't be set, that's why we couldn't use User's theme
+
             Controls.Add(panel);
             Controls.Add(toolStrip);
 
@@ -177,9 +182,14 @@ namespace ZeroKLobby.MicroLobby
 
         public bool SetHilite(string tabName, HiliteLevel level, bool isPrivateTab)
         {
+            //Some complicated sequence of call (for reference):
+            //ChatControl.client_said           -> MainWindow.NotifyUser -> NavigationControl.HilitePath -> ChatTab.Hilite -> this.SetHiLite
+            //BattleChatControl.TasClient_Said  -> MainWindow.NotifyUser -> NavigationControl.HilitePath -> ChatTab.Hilite -> this.SetHiLite
+            //ChatTab.client_said               -> MainWindow.NotifyUser -> NavigationControl.HilitePath -> ChatTab.Hilite -> this.SetHiLite
+
             tabName = isPrivateTab ? (tabName + "_pm") : (tabName + "_chan");
-            if (!toolStrip.Items.ContainsKey(tabName)) return false;
-            var button = (ToolStripButton)toolStrip.Items[tabName];
+            var button = GetItemByName(toolStrip.Items, tabName);
+            if (button == null) return false;
             HiliteLevel? current = button.Tag as HiliteLevel?;
             if (current != null && level == HiliteLevel.Bold && current.Value == HiliteLevel.Flash) return false; // dont change from flash to bold
             button.Tag = level;
@@ -221,30 +231,54 @@ namespace ZeroKLobby.MicroLobby
 
         public void RemoveChannelTab(string key)
         {
-            panel.Controls.RemoveByKey(key + "_chan");
-            controls.Remove(key + "_chan");
-            if (Program.ToolTip != null)
-                Program.ToolTip.Clear(toolStrip.Items.Find(key + "_chan",false));
-            toolStrip.Items.RemoveByKey(key + "_chan");
+            key = key + "_chan";
+            RemoveTab(key);
         }
 
         public void RemovePrivateTab(string key)
         {
-            panel.Controls.RemoveByKey(key + "_pm");
-            controls.Remove(key + "_pm");
+            key = key + "_pm";
+            RemoveTab(key);
+        }
+
+        private void RemoveTab(string key)
+        {   
+            panel.Controls.Remove(controls[key]);
+            controls.Remove(key);
             if (Program.ToolTip != null)
-                Program.ToolTip.Clear(toolStrip.Items.Find(key + "_pm", false));
-            toolStrip.Items.RemoveByKey(key + "_pm");
+                Program.ToolTip.Clear(GetItemByName(toolStrip.Items, key));
+            toolStrip.Items.RemoveAt(FindItemsByExactName(toolStrip.Items,key));
         }
 
         public void SelectChannelTab(string name)
         {
-            ActiveButton = (ToolStripButton)toolStrip.Items[name + "_chan"];
+            ActiveButton = (ToolStripButton)GetItemByName(toolStrip.Items, name + "_chan");
         }
 
         public void SelectPrivateTab(string name)
         {
-            ActiveButton = (ToolStripButton)toolStrip.Items[name + "_pm"];
+            ActiveButton = (ToolStripButton)GetItemByName(toolStrip.Items, name + "_pm");
+        }
+
+        /// <summary>
+        /// Get index of ToolStripItem in ToolStripItemCollection using case-sensitive search.
+        /// </summary>
+        private int FindItemsByExactName(ToolStripItemCollection items, string name)
+        {
+            for (int i = 0; i < items.Count; i++)
+                if (items[i].Name == name)
+                    return i;
+            return -1;
+        }
+
+        /// <summary>
+        /// Get ToolStripItem in ToolStripItemCollection using case-sensitive search.
+        /// </summary>
+        private ToolStripItem GetItemByName(ToolStripItemCollection collectionItem, string name)
+        {
+            int index = FindItemsByExactName(collectionItem, name);
+            if (index == -1) return null;
+            return collectionItem[index];
         }
         
         public string GetNextTabPath()
@@ -284,7 +318,7 @@ namespace ZeroKLobby.MicroLobby
         public void SetIcon(string tabName, Image icon, bool isPrivateTab)
         {
             tabName = isPrivateTab ? (tabName + "_pm") : (tabName + "_chan");
-            var button = (ToolStripButton)toolStrip.Items[tabName];
+            var button = (ToolStripButton)GetItemByName(toolStrip.Items,tabName);
             button.Image = icon;
         }
 
