@@ -110,11 +110,23 @@ namespace ZeroKLobby.Notifications
                     {
                         barContainer.Title = string.Format("Joined {0} Quick Match Queue", battle.QueueName);
                         barContainer.TitleTooltip = "Please await people, game will start automatically";
+                        lbQueue.Visible = true;
+                        radioPlay.Visible = false;
+                        radioSpec.Visible = false;
+                        barContainer.btnDetail.Visible = false;
+                        //lbQueue.Text = "You will play next game\nQueue needs 3 more people";
+                        //lbQueue.Text = "Position 6 of 4, will play next game\nQueue needs 3 more people";
+
+                        //lbQueue.Text = "Queue starting in 120s";
                     }
                     else
                     {
                         barContainer.Title = string.Format("Joined battle room hosted by {0}", battle.Founder.Name);
                         barContainer.TitleTooltip = "Use button on the left side to start a game";
+                        lbQueue.Visible = false;
+                        radioPlay.Visible = true;
+                        radioSpec.Visible = true;
+                        barContainer.btnDetail.Visible = true;
                     }
 
 
