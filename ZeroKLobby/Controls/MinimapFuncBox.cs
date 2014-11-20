@@ -24,7 +24,7 @@ namespace ZeroKLobby.Controls
 
         private void addAIButton_Click(object sender, EventArgs e)
         {
-            var enabled = Program.TasClient.MyBattle != null && Program.ModStore.Ais != null && Program.ModStore.Ais.Any();
+            var enabled = Program.TasClient.MyBattle != null; // && Program.ModStore.Ais != null && Program.ModStore.Ais.Any();
             ContextMenu menu = new ContextMenu();
 
             if (!enabled)
