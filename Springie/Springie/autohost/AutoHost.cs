@@ -108,7 +108,7 @@ namespace Springie.autohost
             tas.MyBattleMapChanged += tas_MyBattleMapChanged;
             tas.BattleLockChanged += tas_BattleLockChanged;
             tas.BattleOpened += tas_BattleOpened;
-            tas.UserAdded += (o, u) => { if (u.Data.Name == GetAccountName()) Start(null, null); };
+            tas.UserAdded += (o, u) => { if (u.Data.Name == GetAccountName()) OpenBattleRoom(null, null); };
 
             tas.RegistrationDenied += (s, e) =>
                 {
@@ -637,7 +637,7 @@ namespace Springie.autohost
             if (!String.IsNullOrEmpty(text)) foreach (string line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)) tas.Say(TasClient.SayPlace.BattlePrivate, user, text, true);
         }
 
-        public void Start(string modname, string mapname, bool now = true) {
+        public void OpenBattleRoom(string modname, string mapname, bool now = true) {
             if (!now && spring.IsRunning) spring.WaitForExit();
             Stop();
 
@@ -701,6 +701,7 @@ namespace Springie.autohost
 
             tas.OpenBattle(b);
             tas.SetScriptTag("GAME/hosttype=SPRINGIE");
+            tas_MyBattleMapChanged(this, null);
         }
 
 

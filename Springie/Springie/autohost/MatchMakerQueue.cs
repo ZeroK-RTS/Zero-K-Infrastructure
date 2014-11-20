@@ -108,7 +108,7 @@ namespace Springie.autohost
             {
                 if (starting && DateTime.Now >= scheduledStart)
                 {
-                    starting = false; 
+                    starting = false;
 
                     var teams = BuildTeams();
                     if (teams == null) tas.Say(TasClient.SayPlace.Battle, "", "Queue cannot start yet because of skill differences", true);
@@ -128,28 +128,32 @@ namespace Springie.autohost
             var eloTopTwo = team.OrderByDescending(x => x.LobbyUser.EffectiveElo).Take(2).ToList();
             var title = string.Format("QuickMatch {0} {1} vs {2}", tas.MyBattle.QueueName, eloTopTwo[0], eloTopTwo[1]);
 
-            var slave = Program.main.SpawnAutoHost(ah.config, new SpawnConfig(tas.UserName)
-            {
-                Engine = tas.MyBattle.EngineVersion,
-                Mod = tas.MyBattle.ModName,
-                Map = tas.MyBattle.MapName,
-                Title = title
-            });
+            var slave = Program.main.SpawnAutoHost(ah.config,
+                new SpawnConfig(tas.UserName)
+                {
+                    Engine = tas.MyBattle.EngineVersion,
+                    Mod = tas.MyBattle.ModName,
+                    Map = tas.MyBattle.MapName,
+                    Title = title
+                });
 
             slave.spring.SpringExited += (sender, args) => Program.main.StopAutohost(slave); // remove after spring exits
             slave.tas.MyBattleStarted += (sender, args) => slave.tas.ChangeLock(true); // lock running game
 
-            slave.tas.BattleOpened += (sender, args) => Task.Factory.StartNew(() =>
+            slave.tas.BattleOpened += (sender, args) =>
             {
-                foreach (var u in team)
+                new Thread(() =>
                 {
-                    tas.ForceJoinBattle(u.Name, slave.tas.MyBattleID);
-                }
-                Thread.Sleep(5000);
-                slave.QuickMatchSlaveStartGame(team);
-                    
-            });
+                    Thread.Sleep(200);
+                    foreach (var u in team)
+                    {
+                        tas.ForceJoinBattle(u.Name, slave.tas.MyBattleID);
+                    }
+                    Thread.Sleep(4000);
+                    slave.QuickMatchSlaveStartGame(team);
 
+                }).Start();
+            };
             slave.Start();
         }
 
@@ -164,7 +168,7 @@ namespace Springie.autohost
                 if (ubs != null) orderedUsers.Add(ubs);
             }
 
-            
+
             var ret = new List<List<UserBattleStatus>>();
 
             if (ah.config.MaxEloDifference > 0) // make groups using available elo matching (used for 1v1)
@@ -195,7 +199,7 @@ namespace Springie.autohost
             {
                 if (count < 10 && count % 2 == 1) // for small teams trim to make even teams
                 {
-                   orderedUsers.Remove(orderedUsers[orderedUsers.Count - 1]);
+                    orderedUsers.Remove(orderedUsers[orderedUsers.Count - 1]);
                 }
 
                 if (orderedUsers.Count > ah.config.MaxToJuggle) // split by elo
@@ -207,13 +211,14 @@ namespace Springie.autohost
                         if (eloOrder.Count < ah.config.MaxToJuggle) toMove = eloOrder.Count; // last group move all
                         else
                         {
-                            if (eloOrder.Count/2.0 < ah.config.MaxPlayers && eloOrder.Count%4 == 0) toMove = eloOrder.Count/2; // split exactly in half if possible
+                            if (eloOrder.Count / 2.0 < ah.config.MaxPlayers && eloOrder.Count % 4 == 0) toMove = eloOrder.Count / 2; // split exactly in half if possible
                         }
                         var group = eloOrder.Take(toMove).ToList();
                         ret.Add(group);
                         foreach (var g in group) eloOrder.Remove(g);
                     }
-                } else ret.Add(orderedUsers);
+                }
+                else ret.Add(orderedUsers);
             }
 
             if (ret.Count == 0) return null; // return null if no groups for consistency

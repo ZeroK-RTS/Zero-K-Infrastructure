@@ -789,13 +789,13 @@ namespace Springie.autohost
                 Respond(e, "Cannot rehost while game is running");
                 return;
             }*/
-            if (words.Length == 0) Start(null, null, false);
+            if (words.Length == 0) OpenBattleRoom(null, null, false);
             else
             {
                 string[] mods;
                 int[] indexes;
                 if (FilterMods(words, out mods, out indexes) == 0) Respond(e, "cannot find such game");
-                else Start(mods[0], null, false);
+                else OpenBattleRoom(mods[0], null, false);
             }
         }
 
