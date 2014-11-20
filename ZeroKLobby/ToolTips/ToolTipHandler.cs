@@ -41,7 +41,7 @@ namespace ZeroKLobby
             get { return visible; }
             set {
                 visible = value;
-                requestRefresh = true;// RefreshToolTip(true);
+                RefreshToolTip(false); //requestRefresh = true;// RefreshToolTip(true); 
             }
         }
 
@@ -111,15 +111,12 @@ namespace ZeroKLobby
 
                 if (lastText != text || lastVisible != Visible || lastActive != isWindowActive) {
                     if (tooltip != null)
-                        tooltip.IsActive = false;
+                        tooltip.Visible = false;
 
                     if (!string.IsNullOrEmpty(text) && Visible && isWindowActive) {
                         tooltip = ToolTipForm.CreateToolTipForm(text);
-                        if (tooltip.IsActive)
-                        {
-                            tooltip.ForeColor = Program.Conf.OtherTextColor;
+                        if (tooltip.IsDrawing)
                             tooltip.Visible = true;
-                        }
                     }
 
                     lastText = text;
@@ -128,7 +125,7 @@ namespace ZeroKLobby
                     //newTooltip = true; //trigger position update
                 }
 
-                if (tooltip != null && tooltip.IsActive) {
+                if (tooltip != null && tooltip.Visible) {
                     //method B: tooltip remain stationary until user block the vision or when new tooltip is available
                     //var mp = System.Windows.Forms.Control.MousePosition;
                     //int tooltipLocationX = tooltip.Location.X;
@@ -237,12 +234,12 @@ namespace ZeroKLobby
             if (!Visible) return;
 
             frameCount++;
-            bool oneSec = (frameCount >= timerFPS);
-            if (mouseMoving || requestRefresh || oneSec)
+            bool invalidate = (requestRefresh || (frameCount >= timerFPS));
+            if (mouseMoving || invalidate)
             {
-                RefreshToolTip(requestRefresh || oneSec);
+                RefreshToolTip(invalidate);
                 requestRefresh = false;
-                if (oneSec) frameCount = 0;
+                if (invalidate) frameCount = 0;
             }
         }
     }

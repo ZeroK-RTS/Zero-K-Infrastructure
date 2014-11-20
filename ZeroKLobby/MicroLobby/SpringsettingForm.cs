@@ -76,8 +76,11 @@ namespace ZeroKLobby.MicroLobby
 
                 var springPath = Program.SpringPaths;
                 if (springPath.UnitSyncDirectory == "") //if never set Spring path yet
-                    Utils.MakePath(springPath.WritableDirectory, "engine", ZkData.GlobalConst.DefaultEngineOverride); //DefaultEngineOverride at PlasmaShared/GlobalConst.cs
-                
+                {
+                    var defaultEnginePath = Utils.MakePath(springPath.WritableDirectory, "engine", ZkData.GlobalConst.DefaultEngineOverride);
+                    springPath.SetEnginePath(defaultEnginePath); //DefaultEngineOverride at PlasmaShared/GlobalConst.cs
+                }
+
                 settingsOptions = new Spring(springPath).GetEngineConfigOptions();
 
                 var location = 0;
