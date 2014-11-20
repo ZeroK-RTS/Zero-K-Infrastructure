@@ -23,6 +23,10 @@ namespace Springie.autohost
         int lastCount;
         DateTime scheduledStart;
 
+        const int initialDelay = 30;
+        const int newJoinerDelay = 30;
+        const int maxDelay = 120;
+
 
         bool starting;
         DateTime startingFrom;
@@ -76,13 +80,14 @@ namespace Springie.autohost
                             if (!starting) // start fresh
                             {
                                 startingFrom = DateTime.Now;
-                                scheduledStart = startingFrom.AddSeconds(10); // start in one minute
+                                scheduledStart = startingFrom.AddSeconds(initialDelay); // start in one minute
                                 starting = true;
+                                ah.ComRing(TasSayEventArgs.Default, new string[]{});
                             }
                             else // postpone
                             {
-                                DateTime postpone = scheduledStart.AddSeconds(10);
-                                DateTime deadline = startingFrom.AddMinutes(3);
+                                DateTime postpone = scheduledStart.AddSeconds(newJoinerDelay);
+                                DateTime deadline = startingFrom.AddSeconds(maxDelay);
                                 if (postpone > deadline) scheduledStart = deadline;
                                 else scheduledStart = postpone;
                             }
