@@ -23,9 +23,9 @@ namespace ZeroKWeb.SpringieInterface
         public string BattlePassword;
         public AutohostMode Mode;
         public CommandLevel[] CommandLevels;
-        int? MaxEloDifference;
-        int? MinToJuggle;
-        int? MaxToJuggle;
+        public int? MaxEloDifference;
+        public int? MinToJuggle;
+        public int? MaxToJuggle;
         public AhConfig() {}
 
 
