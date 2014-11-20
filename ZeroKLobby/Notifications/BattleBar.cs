@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaDownloader;
@@ -32,6 +33,8 @@ namespace ZeroKLobby.Notifications
         bool suppressSpecChange = false;
         readonly Timer timer = new Timer();
         object voice;
+        string queueLabelFormatter = "";
+        DateTime queueTarget;
 
 
         /// <summary>
@@ -306,6 +309,25 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
                     Stop();
                 };
 
+            
+            // process special queue message to display in label
+            client.Said += (s, e) =>
+            {
+                if (e.Place == TasSayEventArgs.Places.Battle && client.MyBattle != null && client.MyBattle.Founder.Name == e.UserName &&  e.Text.StartsWith("Queue"))
+                {
+                    var t = e.Text.Substring(6);
+                    queueLabelFormatter = Regex.Replace(t,
+                        "([0-9]+)s",
+                        m =>
+                        {
+                            var queueSeconds = int.Parse(m.Groups[1].Value);
+                            queueTarget = DateTime.Now.AddSeconds(queueSeconds);
+                            return "{0}s";
+                        });
+                    lbQueue.Text = string.Format(queueLabelFormatter, Math.Round(queueTarget.Subtract(DateTime.Now).TotalSeconds));
+                }
+            };
+
 
             timer.Tick += (s, e) =>
                 {
@@ -314,8 +336,12 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
                         else client.ChangeMyUserStatus(isAway: false);
                         CheckMyBattle();
                     }
+                    if (client.MyBattle != null && client.MyBattle.IsQueue)
+                    {
+                        lbQueue.Text = string.Format(queueLabelFormatter, Math.Round(queueTarget.Subtract(DateTime.Now).TotalSeconds));
+                    }
                 };
-            timer.Interval = 2500;
+            timer.Interval = 1000;
             timer.Start();
 
             Program.BattleIconManager.BattleChanged += BattleIconManager_BattleChanged;
