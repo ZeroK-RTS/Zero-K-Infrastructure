@@ -28,14 +28,14 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60F));
-            this.tableLayoutPanel1.Controls.Add(this.btnDetail, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.btnStop, 2, 0);
+            this.tableLayoutPanel1.Controls.Add(this.btnDetail, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.btnStop, 2, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
-            this.tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 1;
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(346, 52);
             this.tableLayoutPanel1.TabIndex = 1;
@@ -50,9 +50,9 @@
             this.btnDetail.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.btnDetail.ForeColor = System.Drawing.Color.White;
-            this.btnDetail.Location = new System.Drawing.Point(3, 3);
+            this.btnDetail.Location = new System.Drawing.Point(3, 23);
             this.btnDetail.Name = "btnDetail";
-            this.btnDetail.Size = new System.Drawing.Size(74, 46);
+            this.btnDetail.Size = new System.Drawing.Size(74, 26);
             this.btnDetail.TabIndex = 1;
             this.btnDetail.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnDetail.UseVisualStyleBackColor = false;
@@ -66,21 +66,20 @@
             this.btnStop.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnStop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnStop.ForeColor = System.Drawing.Color.White;
-            this.btnStop.Location = new System.Drawing.Point(289, 3);
+            this.btnStop.Location = new System.Drawing.Point(289, 23);
             this.btnStop.Name = "btnStop";
-            this.btnStop.Size = new System.Drawing.Size(54, 46);
+            this.btnStop.Size = new System.Drawing.Size(54, 26);
             this.btnStop.TabIndex = 0;
             this.btnStop.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnStop.UseVisualStyleBackColor = true;
             // 
             // NotifyBarContainer
             // 
-            this.BackColor = System.Drawing.Color.DimGray;
+            this.BackColor = System.Drawing.Color.Transparent;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Controls.Add(this.tableLayoutPanel1);
             this.ForeColor = System.Drawing.Color.White;
             this.Margin = new System.Windows.Forms.Padding(0);
-            this.Padding = new System.Windows.Forms.Padding(0);
             this.Name = "NotifyBarContainer";
             this.Size = new System.Drawing.Size(346, 52);
             this.tableLayoutPanel1.ResumeLayout(false);

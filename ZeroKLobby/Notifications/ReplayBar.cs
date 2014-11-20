@@ -34,6 +34,8 @@ namespace ZeroKLobby.Notifications
       NotifyBarContainer container;
         public void AddedToContainer(NotifyBarContainer container) {
             this.container = container;
+            container.Title = "Replay preparing";
+            container.TitleTooltip = "Please await downloads";
         }
 
         public void CloseClicked(NotifyBarContainer container) {

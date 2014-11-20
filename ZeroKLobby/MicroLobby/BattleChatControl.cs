@@ -115,6 +115,7 @@ namespace ZeroKLobby.MicroLobby
 
 			foreach (var us in PlayerListItems) newList.Add(us);
 
+            
 			if (missionSlots != null)
 			{
 				foreach (var slot in missionSlots.Where(s => s.IsHuman))
@@ -138,29 +139,35 @@ namespace ZeroKLobby.MicroLobby
 			}
 
 			// add section headers
-			if (PlayerListItems.Any(i => i.UserBattleStatus != null && i.UserBattleStatus.IsSpectator)) newList.Add(new PlayerListItem { Button = "Spectators", SortCategory = 100, IsSpectatorsTitle = true, Height = 25 });
+		    if (Program.TasClient.MyBattle.IsQueue)
+		    {
+		        newList = newList.OrderBy(x => x.UserName).ToList();
+		    }
+		    else
+		    {
+		        if (PlayerListItems.Any(i => i.UserBattleStatus != null && i.UserBattleStatus.IsSpectator)) newList.Add(new PlayerListItem { Button = "Spectators", SortCategory = 100, IsSpectatorsTitle = true, Height = 25 });
 
-			var buttonTeams = existingTeams.Distinct();
-			if (missionSlots != null) buttonTeams = buttonTeams.Concat(missionSlots.Select(s => s.AllyID)).Distinct();
-			foreach (var team in buttonTeams)
-			{
-                int numPlayers = nonSpecs.Where(p => p.UserBattleStatus.AllyNumber == team).Count();
-                int numBots = Program.TasClient.MyBattle.Bots.Where(p => p.AllyNumber == team).Count();
-                int numTotal = numPlayers + numBots;
+		        var buttonTeams = existingTeams.Distinct();
+		        if (missionSlots != null) buttonTeams = buttonTeams.Concat(missionSlots.Select(s => s.AllyID)).Distinct();
+		        foreach (var team in buttonTeams)
+		        {
+		            int numPlayers = nonSpecs.Where(p => p.UserBattleStatus.AllyNumber == team).Count();
+		            int numBots = Program.TasClient.MyBattle.Bots.Where(p => p.AllyNumber == team).Count();
+		            int numTotal = numPlayers + numBots;
 
-                var allianceName = "Team " + (team + 1) + (numTotal>3?"  (" + numTotal + ")":"");
-				if (missionSlots != null)
-				{
-					var slot = missionSlots.FirstOrDefault(s => s.AllyID == team);
-					if (slot != null) allianceName = slot.AllyName;
-				}
-				newList.Add(new PlayerListItem { Button = allianceName, SortCategory = team*2, AllyTeam = team, Height = 25 });
-			}
+		            var allianceName = "Team " + (team + 1) + (numTotal > 3 ? "  (" + numTotal + ")" : "");
+		            if (missionSlots != null)
+		            {
+		                var slot = missionSlots.FirstOrDefault(s => s.AllyID == team);
+		                if (slot != null) allianceName = slot.AllyName;
+		            }
+		            newList.Add(new PlayerListItem { Button = allianceName, SortCategory = team*2, AllyTeam = team, Height = 25 });
+		        }
 
-			newList = newList.OrderBy(x => x.ToString()).ToList();
-
-
-			playerBox.BeginUpdate();
+		        newList = newList.OrderBy(x => x.ToString()).ToList();
+		    }
+            
+		    playerBox.BeginUpdate();
             playerBox.Items.Clear();
             foreach (var item in newList) playerBox.Items.Add(item);
             playerBox.EndUpdate();
@@ -173,7 +180,7 @@ namespace ZeroKLobby.MicroLobby
 		void DrawMinimap()
 		{
 		    try {
-		        if (minimap == null) return;
+		        if (minimap == null || Program.TasClient.MyBattle == null) return;
 		        var boxColors = new[]
 		                        {
 		                            Color.Green, Color.Red, Color.Blue, Color.Cyan, Color.Yellow, Color.Magenta, Color.Gray, Color.Lime, Color.Maroon,
@@ -282,6 +289,7 @@ namespace ZeroKLobby.MicroLobby
 		{
 			Reset();
 			SetMapImages(e.Data.MapName);
+		    minimapFuncBox.QueueMode = e.Data.IsQueue;
 			foreach (var user in Program.TasClient.MyBattle.Users) AddUser(user.Name);
 			base.AddLine(new SelfJoinedBattleLine(e.Data));
 		}

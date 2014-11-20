@@ -123,6 +123,8 @@ namespace ZeroKLobby.MicroLobby
         public int TotalDisplayLines { get; private set; }
         public event EventHandler FocusInputRequested = delegate { };
 
+        public string DefaultTooltip { get; set; }
+
         public TextWindow()
         {
             SuspendLayout();
@@ -330,7 +332,7 @@ namespace ZeroKLobby.MicroLobby
             previousWord = word;
             if (word.Length == 0)
             {
-                Program.ToolTip.SetText(this, null);
+                Program.ToolTip.SetText(this, DefaultTooltip);
                 if (Cursor != Cursors.IBeam) Cursor = Cursors.IBeam;
             }
             else //change mouse cursor
@@ -347,7 +349,7 @@ namespace ZeroKLobby.MicroLobby
                 }
                 else
                 {
-                    Program.ToolTip.SetText(this, null);
+                    Program.ToolTip.SetText(this, DefaultTooltip);
                     if (Cursor != Cursors.IBeam) Cursor = Cursors.IBeam;
                 }
             }

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaDownloader;
@@ -32,6 +33,8 @@ namespace ZeroKLobby.Notifications
         bool suppressSpecChange = false;
         readonly Timer timer = new Timer();
         object voice;
+        string queueLabelFormatter = "";
+        DateTime queueTarget;
 
 
         /// <summary>
@@ -44,9 +47,11 @@ namespace ZeroKLobby.Notifications
             picoChat.IRCForeColor = 14; //mirc grey. Unknown use
 
             Program.ToolTip.SetText(cbSide, "Choose the faction you wish to play.");
+            picoChat.DefaultTooltip = "Last lines from room chat, click to enter full screen chat";
 
             client = Program.TasClient;
             spring = new Spring(Program.SpringPaths);
+
 
             try {
                 // silly way to create speech and voice engines on runtime - needed due to mono crash
@@ -102,7 +107,31 @@ namespace ZeroKLobby.Notifications
                     var battle = client.MyBattle;
                     lastBattleFounder = battle.Founder.Name;
                     
-                    if (battle.Founder.Name.StartsWith("PlanetWars")) ChangeDesiredSpectatorState(false); // TODO pw unpsec hack, remove later
+                    if (battle.Founder.Name.StartsWith("PlanetWars") || battle.Founder.Name.StartsWith("Zk")) ChangeDesiredSpectatorState(false); // TODO pw unpsec hack, remove later
+
+                    if (battle.IsQueue)
+                    {
+                        barContainer.Title = string.Format("Joined {0} Quick Match Queue", battle.QueueName);
+                        barContainer.TitleTooltip = "Please await people, game will start automatically";
+                        lbQueue.Visible = true;
+                        radioPlay.Visible = false;
+                        radioSpec.Visible = false;
+                        barContainer.btnDetail.Visible = false;
+                        //lbQueue.Text = "You will play next game\nQueue needs 3 more people";
+                        //lbQueue.Text = "Position 6 of 4, will play next game\nQueue needs 3 more people";
+
+                        //lbQueue.Text = "Queue starting in 120s";
+                    }
+                    else
+                    {
+                        barContainer.Title = string.Format("Joined battle room hosted by {0}", battle.Founder.Name);
+                        barContainer.TitleTooltip = "Use button on the left side to start a game";
+                        lbQueue.Visible = false;
+                        radioPlay.Visible = true;
+                        radioSpec.Visible = true;
+                        barContainer.btnDetail.Visible = true;
+                    }
+
 
                     Program.SpringScanner.MetaData.GetModAsync(battle.ModName,
                                                                (mod) =>
@@ -280,6 +309,25 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
                     Stop();
                 };
 
+            
+            // process special queue message to display in label
+            client.Said += (s, e) =>
+            {
+                if (e.Place == TasSayEventArgs.Places.Battle && client.MyBattle != null && client.MyBattle.Founder.Name == e.UserName &&  e.Text.StartsWith("Queue"))
+                {
+                    var t = e.Text.Substring(6);
+                    queueLabelFormatter = Regex.Replace(t,
+                        "([0-9]+)s",
+                        m =>
+                        {
+                            var queueSeconds = int.Parse(m.Groups[1].Value);
+                            queueTarget = DateTime.Now.AddSeconds(queueSeconds);
+                            return "{0}s";
+                        });
+                    lbQueue.Text = string.Format(queueLabelFormatter, Math.Round(queueTarget.Subtract(DateTime.Now).TotalSeconds));
+                }
+            };
+
 
             timer.Tick += (s, e) =>
                 {
@@ -288,8 +336,12 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
                         else client.ChangeMyUserStatus(isAway: false);
                         CheckMyBattle();
                     }
+                    if (client.MyBattle != null && client.MyBattle.IsQueue)
+                    {
+                        lbQueue.Text = string.Format(queueLabelFormatter, Math.Round(queueTarget.Subtract(DateTime.Now).TotalSeconds));
+                    }
                 };
-            timer.Interval = 2500;
+            timer.Interval = 1000;
             timer.Start();
 
             Program.BattleIconManager.BattleChanged += BattleIconManager_BattleChanged;
@@ -445,13 +497,14 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
         public Control GetControl() {
             return this;
         }
-
         public void AddedToContainer(NotifyBarContainer container) {
             barContainer = container;
             container.btnDetail.Image = ZklResources.battle;
             container.btnDetail.Text = "Start";
             Program.ToolTip.SetText(container.btnDetail, "Start battle");
             Program.ToolTip.SetText(container.btnStop, "Quit battle");
+            container.Title = "Joined Battle Room";
+            container.TitleTooltip = "Use button on the left side to start a game";
         }
 
         public void CloseClicked(NotifyBarContainer container) {

@@ -100,6 +100,8 @@ namespace ZeroKLobby.Notifications
             container.btnDetail.BackgroundImageLayout = ImageLayout.Center;
             container.btnDetail.BackgroundImage = ZklResources.WebDown;
             container.btnDetail.Enabled = false;
+            container.Title = string.Format("Downloading {0}", Download.Name);
+            container.TitleTooltip = "If download failes you can try closing this bar and rejoining a battle room";
         }
 
         public void CloseClicked(NotifyBarContainer container)

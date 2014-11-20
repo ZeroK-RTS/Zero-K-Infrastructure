@@ -30,6 +30,8 @@ namespace ZeroKLobby.Notifications
 
         public void AddedToContainer(NotifyBarContainer container) {
             this.container = container;
+            container.Title = "Loading a singleplayer mission";
+            container.TitleTooltip = "Please await resource download";
         }
 
         public void CloseClicked(NotifyBarContainer container) {

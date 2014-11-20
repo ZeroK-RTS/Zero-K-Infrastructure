@@ -172,7 +172,7 @@ namespace ZeroKLobby.MicroLobby
 
             if (isBattle)
             {
-                if (userStatus.IsSpectator) drawImage(ZklResources.spec);
+                if (userStatus.IsSpectator && (Program.TasClient.MyBattle == null || !Program.TasClient.MyBattle.IsQueue || Program.TasClient.MyBattle.Founder.Name == userStatus.Name)) drawImage(ZklResources.spec);
                 else if (userStatus.SyncStatus == SyncStatuses.Synced && (IsSpringieBattle || userStatus.IsReady)) drawImage(ZklResources.ready);
                 else drawImage(ZklResources.unready);
 

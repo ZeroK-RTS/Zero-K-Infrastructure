@@ -23,13 +23,17 @@ namespace ZeroKWeb.SpringieInterface
         public string BattlePassword;
         public AutohostMode Mode;
         public CommandLevel[] CommandLevels;
+        int? MaxEloDifference;
+        int? MinToJuggle;
+        int? MaxToJuggle;
         public AhConfig() {}
 
 
-        public AhConfig(AutohostConfig db) {
+        public AhConfig(AutohostConfig db)
+        {
             Login = db.Login;
             Password = db.Password;
-            JoinChannels = (db.JoinChannels + "").Split('\n').Where(x=>!string.IsNullOrEmpty(x)).ToArray();
+            JoinChannels = (db.JoinChannels + "").Split('\n').Where(x => !string.IsNullOrEmpty(x)).ToArray();
             Title = db.Title;
             Welcome = db.Welcome;
             Map = db.Map;
@@ -43,10 +47,13 @@ namespace ZeroKWeb.SpringieInterface
             Mode = db.AutohostMode;
             BattlePassword = db.BattlePassword;
             CommandLevels = (db.CommandLevels + "").Split('\n').Where(x => !string.IsNullOrEmpty(x)).Select(x =>
-                { 
-                    var parts = x.Split('=');
-                    return new CommandLevel() { Command = parts[0], Level = int.Parse(parts[1]) };
-                }).ToArray();
+            {
+                var parts = x.Split('=');
+                return new CommandLevel() { Command = parts[0], Level = int.Parse(parts[1]) };
+            }).ToArray();
+            MaxEloDifference = db.MaxEloDifference;
+            MinToJuggle = db.MinToJuggle;
+            MaxToJuggle = db.MaxToJuggle;
         }
     }
 

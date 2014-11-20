@@ -112,26 +112,27 @@ namespace ZeroKLobby.Notifications
 
 		void InitializeComponent()
 		{
-			this.lbState = new System.Windows.Forms.Label();
-			this.SuspendLayout();
-			// 
-			// lbState
-			// 
-			this.lbState.AutoSize = true;
-			this.lbState.Location = new System.Drawing.Point(14, 19);
-			this.lbState.Name = "lbState";
-			this.lbState.Size = new System.Drawing.Size(225, 13);
-			this.lbState.TabIndex = 0;
-			this.lbState.Text = "Connect to the Spring multiplayer lobby server.";
-			// 
-			// ConnectBar
-			// 
-			this.Controls.Add(this.lbState);
-			this.MinimumSize = new System.Drawing.Size(300, 60);
-			this.Name = "ConnectBar";
-			this.Size = new System.Drawing.Size(364, 60);
-			this.ResumeLayout(false);
-			this.PerformLayout();
+            this.lbState = new System.Windows.Forms.Label();
+            this.SuspendLayout();
+            // 
+            // lbState
+            // 
+            this.lbState.AutoSize = true;
+            this.lbState.Location = new System.Drawing.Point(14, 19);
+            this.lbState.Name = "lbState";
+            this.lbState.Size = new System.Drawing.Size(225, 13);
+            this.lbState.TabIndex = 0;
+            this.lbState.Text = "Connect to the Spring multiplayer lobby server.";
+            // 
+            // ConnectBar
+            // 
+            this.BackColor = System.Drawing.Color.Transparent;
+            this.Controls.Add(this.lbState);
+            this.MinimumSize = new System.Drawing.Size(300, 60);
+            this.Name = "ConnectBar";
+            this.Size = new System.Drawing.Size(364, 60);
+            this.ResumeLayout(false);
+            this.PerformLayout();
 
 		}
 
@@ -178,6 +179,8 @@ namespace ZeroKLobby.Notifications
 			}
 			container.btnDetail.Image = image;
 			container.btnStop.Visible = false;
+		    container.Title = "Connecting to server";
+		    container.TitleTooltip = "Check website for server status";
 		}
 
 

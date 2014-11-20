@@ -41,10 +41,13 @@ namespace ZeroKLobby.Notifications
             this.gameBox = new System.Windows.Forms.PictureBox();
             this.radioPlay = new System.Windows.Forms.RadioButton();
             this.radioSpec = new System.Windows.Forms.RadioButton();
+            this.lbQueue = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.zkSplitContainer1)).BeginInit();
             this.zkSplitContainer1.Panel1.SuspendLayout();
             this.zkSplitContainer1.Panel2.SuspendLayout();
             this.zkSplitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gameBox)).BeginInit();
             this.SuspendLayout();
             // 
             // cbSide
@@ -84,6 +87,7 @@ namespace ZeroKLobby.Notifications
             this.panel1.Controls.Add(this.radioSpec);
             this.panel1.Controls.Add(this.cbSide);
             this.panel1.Controls.Add(this.lbPlayers);
+            this.panel1.Controls.Add(this.lbQueue);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
@@ -119,6 +123,7 @@ namespace ZeroKLobby.Notifications
             this.picoChat.BackColor = System.Drawing.Color.White;
             this.picoChat.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.picoChat.ChatBackgroundColor = 0;
+            this.picoChat.DefaultTooltip = null;
             this.picoChat.Dock = System.Windows.Forms.DockStyle.Fill;
             this.picoChat.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.picoChat.HideScroll = true;
@@ -175,11 +180,21 @@ namespace ZeroKLobby.Notifications
             this.radioSpec.UseVisualStyleBackColor = true;
             this.radioSpec.CheckedChanged += new System.EventHandler(this.radioSpec_CheckedChanged);
             // 
+            // lbQueue
+            // 
+            this.lbQueue.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.lbQueue.Location = new System.Drawing.Point(3, 3);
+            this.lbQueue.Name = "lbQueue";
+            this.lbQueue.Size = new System.Drawing.Size(141, 73);
+            this.lbQueue.TabIndex = 17;
+            this.lbQueue.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbQueue.Visible = false;
+            // 
             // BattleBar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.DimGray;
+            this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.panel1);
             this.ForeColor = System.Drawing.Color.White;
             this.MinimumSize = new System.Drawing.Size(492, 76);
@@ -189,7 +204,9 @@ namespace ZeroKLobby.Notifications
             this.panel1.PerformLayout();
             this.zkSplitContainer1.Panel1.ResumeLayout(false);
             this.zkSplitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.zkSplitContainer1)).EndInit();
             this.zkSplitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gameBox)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -205,5 +222,6 @@ namespace ZeroKLobby.Notifications
                 private System.Windows.Forms.RadioButton radioPlay;
                 private System.Windows.Forms.RadioButton radioSpec;
                 private ZkSplitContainer zkSplitContainer1;
+                private System.Windows.Forms.Label lbQueue;
     }
 }

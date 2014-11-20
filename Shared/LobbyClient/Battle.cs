@@ -71,6 +71,29 @@ namespace LobbyClient
 
         public List<UserBattleStatus> Users { get; set; }
 
+
+        public bool IsSpringieManaged
+        {
+            get { return Founder != null && Founder.IsSpringieManaged;}
+        }
+
+        public bool IsQueue
+        {
+            get { return IsSpringieManaged && Title.StartsWith("Queue"); }
+        }
+
+        public string QueueName
+        {
+            get
+            {
+                if (IsQueue)
+                {
+                    return Title.Substring(6);
+                }
+                else return null;
+            }
+        }
+
         internal Battle()
         {
             Bots = new List<BotBattleStatus>();

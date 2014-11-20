@@ -19,6 +19,7 @@ namespace ZeroKLobby.Notifications
             this.container = container;
             container.btnDetail.Enabled = true;
             container.btnDetail.Text = "Restart";
+            container.Title = "New version";
         }
 
         public void CloseClicked(NotifyBarContainer container) {

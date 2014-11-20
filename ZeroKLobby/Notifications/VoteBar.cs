@@ -139,6 +139,8 @@ namespace ZeroKLobby.Notifications
             this.container = container;
             container.btnDetail.Enabled = false;
             container.btnDetail.Text = "Vote";
+            container.Title = "Battle poll";
+            container.TitleTooltip = "Vote using buttons on the left side";
         }
 
         public void CloseClicked(NotifyBarContainer container) {
@@ -150,7 +152,6 @@ namespace ZeroKLobby.Notifications
         public Control GetControl() {
             return this;
         }
-
         void btnNo_Click(object sender, EventArgs e) {
             if (isSpad) tas.Say(TasClient.SayPlace.Battle, "", "!vote n", false);
             else tas.Say(TasClient.SayPlace.Battle, "", "!n", false);

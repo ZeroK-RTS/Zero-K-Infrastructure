@@ -34,8 +34,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.BackColor = System.Drawing.Color.Transparent;
             this.Margin = new System.Windows.Forms.Padding(0);
-            this.Padding = new System.Windows.Forms.Padding(0);
             this.Name = "NotifySection";
             this.Size = new System.Drawing.Size(418, 10);
             this.Load += new System.EventHandler(this.NotifySection_Load);

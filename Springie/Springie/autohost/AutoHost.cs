@@ -47,6 +47,7 @@ namespace Springie.autohost
         public SpawnConfig SpawnConfig { get; private set; }
         public MetaDataCache cache;
         public AhConfig config;
+        public MatchMakerQueue queue;
 
         public Mod hostedMod;
         public int hostingPort { get; private set; }
@@ -62,6 +63,7 @@ namespace Springie.autohost
             SpawnConfig = spawn;
             this.hostingPort = hostingPort;
 
+            
             string version = config.SpringVersion ?? Program.main.Config.SpringVersion ?? "91.0";
             springPaths = new SpringPaths(Program.main.paths.GetEngineFolderByVersion(version), writableFolderOverride: Program.main.Config.DataDir);
 

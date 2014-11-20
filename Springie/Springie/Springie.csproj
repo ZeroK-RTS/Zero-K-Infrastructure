@@ -156,6 +156,7 @@
     <Compile Include="autohost\AutoHost_commands.cs" />
     <Compile Include="autohost\CommandConfig.cs" />
     <Compile Include="autohost\CommandList.cs" />
+    <Compile Include="autohost\MatchMakerQueue.cs" />
     <Compile Include="autohost\Polls\AbstractPoll.cs" />
     <Compile Include="autohost\Polls\VotePlanet.cs" />
     <Compile Include="autohost\Polls\VoteResetOptions.cs" />

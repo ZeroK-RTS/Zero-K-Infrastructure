@@ -570,7 +570,7 @@ namespace LobbyClient
 
             UserPassword = password;
 
-            con.SendCommand("LOGIN", userName, Utils.HashLobbyPassword(password), cpu, localIp, appName, "\t" + GetMyUserID(), "\ta sp eb m cl p");
+            con.SendCommand("LOGIN", userName, Utils.HashLobbyPassword(password), cpu, localIp, appName, "\t" + GetMyUserID(), "\ta sp m cl p");
         }
 
         int cpu = Environment.OSVersion.Platform == PlatformID.Unix ? GlobalConst.ZkLobbyUserCpuLinux : GlobalConst.ZkLobbyUserCpu;
