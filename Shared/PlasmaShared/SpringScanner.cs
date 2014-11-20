@@ -357,7 +357,7 @@ namespace PlasmaShared
             catch (Exception ex)
             {
                 var args = new CancelEventArgs<CacheItem>(work.CacheItem);
-                RetryResourceCheck(this, args);
+                RetryResourceCheck.DynamicInvoke(new object[] {this, args});
                 if (!args.Cancel)
                 {
                     Trace.TraceError("Error getting resource data: {0}", ex);
@@ -625,7 +625,8 @@ namespace PlasmaShared
                 CacheItemAdd(workItem.CacheItem);
 
                 var args = new CancelEventArgs<IResourceInfo>(info);
-                UploadUnitsyncData(this,args);
+                //uses DynamicInvoke as shown in http://stackoverflow.com/questions/2366684/how-to-implement-a-cancel-event-in-c-sharp
+                UploadUnitsyncData.DynamicInvoke(new object[]{this,args});
                 if (args.Cancel) return;
 
                 var serializedData = MetaDataCache.SerializeAndCompressMetaData(info);
