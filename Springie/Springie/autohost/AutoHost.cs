@@ -134,6 +134,12 @@ namespace Springie.autohost
 
             linkProvider = new ResourceLinkProvider(this);
 
+            // queue autohost
+            if (config != null && config.MinToJuggle != null && SpawnConfig == null)
+            {
+                queue = new MatchMakerQueue(this);
+            }
+
             tas.Connect(Program.main.Config.ServerHost, Program.main.Config.ServerPort);
 
             Program.main.Downloader.PackagesChanged += Downloader_PackagesChanged;
@@ -179,11 +185,6 @@ namespace Springie.autohost
             timer.Start();
 
 
-            // queue autohost
-            if (config != null && config.MinToJuggle != null && SpawnConfig == null) 
-            {
-                queue = new MatchMakerQueue(this);
-            }
             
         }
 
