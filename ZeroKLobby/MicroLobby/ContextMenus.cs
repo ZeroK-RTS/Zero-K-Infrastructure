@@ -33,8 +33,8 @@ namespace ZeroKLobby.MicroLobby
 
         static MenuItem GetAddBot()
         {
-            var enabled = Program.TasClient.MyBattle != null && Program.ModStore.Ais != null && Program.ModStore.Ais.Any();
-            var addBotItem = new MenuItem("Add computer player (Bot)" + (enabled ? String.Empty : " (Loading)"))
+            var enabled = Program.TasClient.MyBattle != null; // && Program.ModStore.Ais != null && Program.ModStore.Ais.Any();
+            var addBotItem = new MenuItem("Add computer player (Bot)" + (enabled ? String.Empty : " (Loading)")) 
                              { Visible = enabled };
 
             addBotItem.MenuItems.AddRange(GetAddBotItems());
@@ -60,7 +60,8 @@ namespace ZeroKLobby.MicroLobby
             }
 
             addBotItems.Add(new MenuItem("-"));
-            MenuItem item3 = new MenuItem("Spring AI");
+            bool enabled = (Environment.OSVersion.Platform != PlatformID.Unix || Program.SpringPaths.SpringVersion != "91.0"); //linux don't have static build for Spring 91
+            MenuItem item3 = new MenuItem("Spring AI" + (enabled ? String.Empty : " (Not available)"));
             item3.Select += (s, e2) =>
             {
                 if (item3.MenuItems.Count == 0)

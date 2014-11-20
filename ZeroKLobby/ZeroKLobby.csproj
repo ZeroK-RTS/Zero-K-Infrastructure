@@ -153,7 +153,15 @@
     <Compile Include="Controls\ZkSplitContainer.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="MicroForms\PromptForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MicroForms\PromptForm.Designer.cs">
+      <DependentUpon>PromptForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroForms\UnitSyncRetryPrompt.cs" />
     <Compile Include="MicroLobby\ExtrasTab\SkirmishControlTool.cs" />
+    <Compile Include="MicroForms\UnitSyncUploadPrompt.cs" />
     <Compile Include="MicroLobby\HexToUnicodeConverter.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -498,6 +506,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Flags.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroForms\PromptForm.resx">
+      <DependentUpon>PromptForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\BattleChatControl.resx">
       <DependentUpon>BattleChatControl.cs</DependentUpon>
@@ -1645,6 +1656,7 @@
   <ItemGroup>
     <None Include="Resources\Buttons\video-icon.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">
   </Target>
