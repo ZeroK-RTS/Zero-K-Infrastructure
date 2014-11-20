@@ -92,7 +92,7 @@ namespace ZeroKLobby
         {
           Program.TasClient.BattleJoined -= battleJoinHandler;
           Program.TasClient.JoinBattleFailed -= battleJoinFailedHandler;
-          NavigationControl.Instance.Path = "chat/battle";
+          //NavigationControl.Instance.Path = "chat/battle";
         });
 
       battleJoinFailedHandler = ((s, e) =>
