@@ -201,7 +201,9 @@ namespace ZeroKWeb.SpringieInterface
                 TasClient tas = Global.Nightwatch.Tas;
                 Battle bat = tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == context.AutohostName); // add those in lobby atm
 
-                if (bat != null)
+
+                var conf = context.GetConfig();
+                if (bat != null && (conf == null || context.GetConfig().MinToJuggle == null)) // if not qm room do not join those who are in battle
                 {
                     List<string> inbatPlayers = bat.Users.Select(x => x.Name).ToList();
                     joinplayers.RemoveAll(x => inbatPlayers.Contains(x));

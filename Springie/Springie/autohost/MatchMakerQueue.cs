@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
+using System.Threading;
+using System.Threading.Tasks;
 using LobbyClient;
 using PlasmaShared.SpringieInterfaceReference;
+using Timer = System.Timers.Timer;
 
 namespace Springie.autohost
 {
@@ -34,10 +36,12 @@ namespace Springie.autohost
 
             tas = ah.tas;
 
-            tas.BattleJoined += (sender, args) =>
+            tas.BattleOpened += (sender, args) =>
             {
+                starting = false;
                 UpdateCount();
                 StopIfCountLow();
+                lastCount = count;
             };
 
             tas.BattleUserJoined += (sender, args) =>
@@ -57,6 +61,7 @@ namespace Springie.autohost
 
                 UpdateCount();
                 StopIfCountLow();
+                lastCount = count;
             };
 
             tas.BattleUserStatusChanged += (sender, args) =>
@@ -71,12 +76,12 @@ namespace Springie.autohost
                             if (!starting) // start fresh
                             {
                                 startingFrom = DateTime.Now;
-                                scheduledStart = startingFrom.AddMinutes(1); // start in one minute
+                                scheduledStart = startingFrom.AddSeconds(10); // start in one minute
                                 starting = true;
                             }
                             else // postpone
                             {
-                                DateTime postpone = scheduledStart.AddMinutes(1);
+                                DateTime postpone = scheduledStart.AddSeconds(10);
                                 DateTime deadline = startingFrom.AddMinutes(3);
                                 if (postpone > deadline) scheduledStart = deadline;
                                 else scheduledStart = postpone;
@@ -98,7 +103,8 @@ namespace Springie.autohost
 
             var timer = new Timer();
             timer.Interval = 1000;
-            timer.Tick += (sender, args) =>
+            timer.AutoReset = true;
+            timer.Elapsed += (sender, args) =>
             {
                 if (starting && DateTime.Now >= scheduledStart)
                 {
@@ -133,14 +139,16 @@ namespace Springie.autohost
             slave.spring.SpringExited += (sender, args) => Program.main.StopAutohost(slave); // remove after spring exits
             slave.tas.MyBattleStarted += (sender, args) => slave.tas.ChangeLock(true); // lock running game
 
-            slave.tas.BattleJoined += (sender, args) =>
+            slave.tas.BattleOpened += (sender, args) => Task.Factory.StartNew(() =>
             {
                 foreach (var u in team)
                 {
                     tas.ForceJoinBattle(u.Name, slave.tas.MyBattleID);
                 }
+                Thread.Sleep(5000);
                 slave.QuickMatchSlaveStartGame(team);
-            };
+                    
+            });
 
             slave.Start();
         }
@@ -214,8 +222,11 @@ namespace Springie.autohost
 
         void StopIfCountLow()
         {
-            if (count < ah.config.MinToJuggle) starting = false;
-            tas.Say(TasClient.SayPlace.Battle, "", string.Format("Queue needs {0} more people", ah.config.MinToJuggle - count), true);
+            if (count < ah.config.MinToJuggle)
+            {
+                starting = false;
+                tas.Say(TasClient.SayPlace.Battle, "", string.Format("Queue needs {0} more people", ah.config.MinToJuggle - count), true);
+            }
         }
 
         void UpdateCount()

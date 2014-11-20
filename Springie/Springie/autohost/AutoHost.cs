@@ -140,8 +140,7 @@ namespace Springie.autohost
                 queue = new MatchMakerQueue(this);
             }
 
-            tas.Connect(Program.main.Config.ServerHost, Program.main.Config.ServerPort);
-
+            
             Program.main.Downloader.PackagesChanged += Downloader_PackagesChanged;
 
             timer = new Timer(15000);
@@ -183,9 +182,12 @@ namespace Springie.autohost
                     }
                 };
             timer.Start();
+           
+        }
 
-
-            
+        public void Start()
+        {
+            tas.Connect(Program.main.Config.ServerHost, Program.main.Config.ServerPort);
         }
 
         void TasOnBattleUserStatusChanged(object sender, TasEventArgs tasEventArgs) {
@@ -610,7 +612,7 @@ namespace Springie.autohost
                         Respond(e, "Please specify at least mod name: !spawn mod=zk:stable");
                         return;
                     }
-                    Program.main.SpawnAutoHost(config, sc);
+                    Program.main.SpawnAutoHost(config, sc).Start();
                 }
                     break;
             }
@@ -1018,8 +1020,10 @@ namespace Springie.autohost
             }
         }
 
+        BattleContext slaveContextOverride;
+
         void tas_MyStatusChangedToInGame(object sender, TasEventArgs e) {
-            spring.StartGame(tas, Program.main.Config.HostingProcessPriority, null, null);
+            spring.StartGame(tas, Program.main.Config.HostingProcessPriority, null, null, contextOverride:slaveContextOverride);
         }
 
         void tas_Said(object sender, TasSayEventArgs e) {

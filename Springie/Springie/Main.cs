@@ -98,7 +98,7 @@ namespace Springie
             f.Close();
         }
 
-        public void SpawnAutoHost(AhConfig config, SpawnConfig spawnData)
+        public AutoHost SpawnAutoHost(AhConfig config, SpawnConfig spawnData)
         {
             AutoHost ah;
             lock (autoHosts)
@@ -106,7 +106,7 @@ namespace Springie
                 ah = new AutoHost(MetaCache, config, GetFreeHostingPort(), spawnData);
                 autoHosts.Add(ah);
             }
-            ah.ServerVerifyMap(true);
+            return ah;
         }
 
 
@@ -136,7 +136,7 @@ namespace Springie
                     }
                     foreach (var conf in configs)
                     {
-                        if (!copy.Any(x => x.config.Login == conf.Login)) SpawnAutoHost(conf, null);
+                        if (!copy.Any(x => x.config.Login == conf.Login)) SpawnAutoHost(conf, null).Start();
                         else foreach (var ah in copy.Where(x => x.config.Login == conf.Login && x.SpawnConfig == null)) ah.config = conf;
                     }
                     var todel = copy.Where(x => !configs.Any(y => y.Login == x.config.Login)).ToList();
@@ -204,7 +204,7 @@ namespace Springie
                             else if (empty.Count == 0)
                             {
                                 var existing = autoHosts.FirstOrDefault(x => x.config.Login == key);
-                                if (existing != null) SpawnAutoHost(existing.config, null);
+                                if (existing != null) SpawnAutoHost(existing.config, null).Start();
                             }
                             else // more than 1 empty running, stop all but 1
                             {
@@ -236,15 +236,18 @@ namespace Springie
         public string Handle;
         public string Map;
 
-        public SpawnConfig(string owner, Dictionary<string, string> config)
+        public SpawnConfig(string owner, Dictionary<string, string> config = null)
         {
             Owner = owner;
-            config.TryGetValue("password", out Password);
-            config.TryGetValue("mod", out Mod);
-            config.TryGetValue("title", out Title);
-            config.TryGetValue("engine", out Engine);
-            config.TryGetValue("handle", out Handle);
-            config.TryGetValue("map", out Map);
+            if (config != null)
+            {
+                config.TryGetValue("password", out Password);
+                config.TryGetValue("mod", out Mod);
+                config.TryGetValue("title", out Title);
+                config.TryGetValue("engine", out Engine);
+                config.TryGetValue("handle", out Handle);
+                config.TryGetValue("map", out Map);
+            }
         }
 
 

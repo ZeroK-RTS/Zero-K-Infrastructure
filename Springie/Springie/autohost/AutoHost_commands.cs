@@ -1176,42 +1176,8 @@ namespace Springie.autohost
 
                 serv.Timeout = 10000;
                 var balance = serv.BalanceTeams(tas.MyBattle.GetContext(), isGameStart, allyTeams, clanWise);
-                if (!string.IsNullOrEmpty(balance.Message)) SayBattle(balance.Message, false);
-                if (balance.Players != null && balance.Players.Length > 0)
-                {
-                    foreach (var user in tas.MyBattle.Users.Where(x => !x.IsSpectator && !balance.Players.Any(y => y.Name == x.Name))) tas.ForceSpectator(user.Name); // spec those that werent in response
-                    foreach (var user in balance.Players.Where(x => x.IsSpectator)) tas.ForceSpectator(user.Name);
-                    foreach (var user in balance.Players.Where(x => !x.IsSpectator))
-                    {
-                        tas.ForceTeam(user.Name, user.TeamID);
-                        tas.ForceAlly(user.Name, user.AllyID);
-                    }
-                }
-
-                if (balance.DeleteBots) foreach (var b in tas.MyBattle.Bots) tas.RemoveBot(b.Name);
-                if (balance.Bots != null && balance.Bots.Length > 0)
-                {
-                    foreach (var b in tas.MyBattle.Bots.Where(x => !balance.Bots.Any(y => y.BotName == x.Name && y.Owner == x.owner))) tas.RemoveBot(b.Name);
-
-                    foreach (var b in balance.Bots)
-                    {
-                        var existing = tas.MyBattle.Bots.FirstOrDefault(x => x.owner == b.Owner && x.Name == b.BotName);
-                        if (existing != null)
-                        {
-                            var upd = existing.Clone();
-                            upd.AllyNumber = b.AllyID;
-                            upd.TeamNumber = b.TeamID;
-                            tas.UpdateBot(existing.Name, upd, existing.TeamColor);
-                        }
-                        else
-                        {
-                            var botStatus = tas.MyBattleStatus.Clone();
-                            botStatus.TeamNumber = b.TeamID;
-                            botStatus.AllyNumber = b.AllyID;
-                            tas.AddBot(b.BotName.Replace(" ", "_"), botStatus, botStatus.TeamColor, b.BotAI);
-                        }
-                    }
-                }
+                
+                ApplyBalanceResults(balance);
 
                 return balance.CanStart;
             }
@@ -1219,6 +1185,46 @@ namespace Springie.autohost
             {
                 Trace.TraceError(ex.ToString());
                 return false;
+            }
+        }
+
+        void ApplyBalanceResults(BalanceTeamsResult balance)
+        {
+            if (!string.IsNullOrEmpty(balance.Message)) SayBattle(balance.Message, false);
+            if (balance.Players != null && balance.Players.Length > 0)
+            {
+                foreach (var user in tas.MyBattle.Users.Where(x => !x.IsSpectator && !balance.Players.Any(y => y.Name == x.Name))) tas.ForceSpectator(user.Name); // spec those that werent in response
+                foreach (var user in balance.Players.Where(x => x.IsSpectator)) tas.ForceSpectator(user.Name);
+                foreach (var user in balance.Players.Where(x => !x.IsSpectator))
+                {
+                    tas.ForceTeam(user.Name, user.TeamID);
+                    tas.ForceAlly(user.Name, user.AllyID);
+                }
+            }
+
+            if (balance.DeleteBots) foreach (var b in tas.MyBattle.Bots) tas.RemoveBot(b.Name);
+            if (balance.Bots != null && balance.Bots.Length > 0)
+            {
+                foreach (var b in tas.MyBattle.Bots.Where(x => !balance.Bots.Any(y => y.BotName == x.Name && y.Owner == x.owner))) tas.RemoveBot(b.Name);
+
+                foreach (var b in balance.Bots)
+                {
+                    var existing = tas.MyBattle.Bots.FirstOrDefault(x => x.owner == b.Owner && x.Name == b.BotName);
+                    if (existing != null)
+                    {
+                        var upd = existing.Clone();
+                        upd.AllyNumber = b.AllyID;
+                        upd.TeamNumber = b.TeamID;
+                        tas.UpdateBot(existing.Name, upd, existing.TeamColor);
+                    }
+                    else
+                    {
+                        var botStatus = tas.MyBattleStatus.Clone();
+                        botStatus.TeamNumber = b.TeamID;
+                        botStatus.AllyNumber = b.AllyID;
+                        tas.AddBot(b.BotName.Replace(" ", "_"), botStatus, botStatus.TeamColor, b.BotAI);
+                    }
+                }
             }
         }
 
@@ -1753,5 +1759,26 @@ namespace Springie.autohost
             return differencingResult;
         }
         /////-------------END PARTITION ALGORITHM---------------/////
+
+        
+
+        public void QuickMatchSlaveStartGame(List<UserBattleStatus> team)
+        {
+            var serv = new SpringieService();
+
+            serv.Timeout = 10000;
+            var context = tas.MyBattle.GetContext();
+            context.Players = team.Select(x => new PlayerTeam() { AllyID = x.AllyNumber, Name = x.Name, LobbyID = x.LobbyUser.LobbyID, TeamID = x.TeamNumber, IsSpectator = false }).ToArray();
+
+            var balance = serv.BalanceTeams(context, true, null, null);
+            ApplyBalanceResults(balance);
+            context.Players = balance.Players;
+            context.Bots = balance.Bots;
+
+            SayBattle("please wait, game is about to start");
+            StopVote();
+            slaveContextOverride = context;
+            tas.StartGame();
+        }
     }
 }

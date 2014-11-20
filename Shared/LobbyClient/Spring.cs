@@ -234,7 +234,7 @@ namespace LobbyClient
         /// <param name="userName">lobby user name - used to submit score</param>
         /// <param name="passwordHash">lobby password hash - used to submit score</param>
         /// <returns>generates script</returns>
-        public string StartGame(TasClient client, ProcessPriorityClass? priority, int? affinity, string scriptOverride, bool useSafeMode = false, bool useMultithreaded=false) {
+        public string StartGame(TasClient client, ProcessPriorityClass? priority, int? affinity, string scriptOverride, bool useSafeMode = false, bool useMultithreaded=false, BattleContext contextOverride = null) {
             if (!File.Exists(paths.Executable) && !File.Exists(paths.DedicatedServer)) throw new ApplicationException(string.Format("Spring or dedicated server executable not found: {0}, {1}", paths.Executable, paths.DedicatedServer));
 
             this.client = client;
@@ -271,7 +271,7 @@ namespace LobbyClient
                     SpringBattleStartSetup startSetup = null;
                     if (isHosting && GlobalConst.IsZkMod(client.MyBattle.ModName)) {
                         try {
-                            StartContext = client.MyBattle.GetContext();
+                            StartContext = contextOverride ?? client.MyBattle.GetContext();
                             startSetup = service.GetSpringBattleStartSetup(StartContext);
                             if (startSetup.BalanceTeamsResult != null)
                             {
