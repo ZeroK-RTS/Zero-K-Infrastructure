@@ -5,7 +5,7 @@ using PlasmaShared.SpringieInterfaceReference;
 
 namespace Springie.autohost
 {
-    class CommandList
+    public class CommandList
     {
         public List<CommandConfig> Commands = new List<CommandConfig>();
 

@@ -53,7 +53,11 @@ namespace Springie
         //5) Join a room called "KingRaptor Secret Clubhouse",
         //6) Use "magic" for password.
 	    public MainConfig() {
+#if DEBUG
+	        ClusterNode = "alpha";
+#else 
             ClusterNode = "omega";
+#endif
         }
 	} ;
 }

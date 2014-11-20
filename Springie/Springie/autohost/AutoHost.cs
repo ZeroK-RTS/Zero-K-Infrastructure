@@ -26,7 +26,7 @@ namespace Springie.autohost
     {
         public const int PollTimeout = 60;
         const int GameExitSplitDelay = 120;
-        readonly CommandList Commands;
+        public readonly CommandList Commands;
 
         IVotable activePoll;
         string bossName = "";
@@ -122,12 +122,7 @@ namespace Springie.autohost
             tas.AgreementRecieved += (s, e) =>
                 {
                     tas.AcceptAgreement();
-
-                    PlasmaShared.Utils.SafeThread(() =>
-                        {
-                            Thread.Sleep(7000);
-                            tas.Login(GetAccountName(), config.Password);
-                        }).Start();
+                    tas.Login(GetAccountName(), config.Password);
                 };
 
             tas.ConnectionLost += tas_ConnectionLost;
@@ -182,6 +177,14 @@ namespace Springie.autohost
                     }
                 };
             timer.Start();
+
+
+            // queue autohost
+            if (config != null && config.MinToJuggle != null && SpawnConfig == null) 
+            {
+                queue = new MatchMakerQueue(this);
+            }
+            
         }
 
         void TasOnBattleUserStatusChanged(object sender, TasEventArgs tasEventArgs) {

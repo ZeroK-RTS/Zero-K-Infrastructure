@@ -246,6 +246,9 @@
           <s:element minOccurs="0" maxOccurs="1" name="BattlePassword" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="Mode" type="tns:AutohostMode" />
           <s:element minOccurs="0" maxOccurs="1" name="CommandLevels" type="tns:ArrayOfCommandLevel" />
+          <s:element minOccurs="1" maxOccurs="1" name="MaxEloDifference" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="MinToJuggle" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="MaxToJuggle" nillable="true" type="s:int" />
         </s:sequence>
       </s:complexType>
       <s:simpleType name="AutohostMode">

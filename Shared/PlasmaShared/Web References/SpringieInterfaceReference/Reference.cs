@@ -786,6 +786,12 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         private CommandLevel[] commandLevelsField;
         
+        private System.Nullable<int> maxEloDifferenceField;
+        
+        private System.Nullable<int> minToJuggleField;
+        
+        private System.Nullable<int> maxToJuggleField;
+        
         /// <remarks/>
         public string Login {
             get {
@@ -944,6 +950,39 @@ namespace PlasmaShared.SpringieInterfaceReference {
             }
             set {
                 this.commandLevelsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public System.Nullable<int> MaxEloDifference {
+            get {
+                return this.maxEloDifferenceField;
+            }
+            set {
+                this.maxEloDifferenceField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public System.Nullable<int> MinToJuggle {
+            get {
+                return this.minToJuggleField;
+            }
+            set {
+                this.minToJuggleField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public System.Nullable<int> MaxToJuggle {
+            get {
+                return this.maxToJuggleField;
+            }
+            set {
+                this.maxToJuggleField = value;
             }
         }
     }

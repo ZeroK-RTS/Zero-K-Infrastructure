@@ -594,8 +594,8 @@ namespace LobbyClient
                               MyBattle.Rank,
                               MyBattle.MapHash,
                               MyBattle.EngineName,
-                              MyBattle.EngineVersion,
-                              MyBattle.MapName,
+                              '\t' +MyBattle.EngineVersion,
+                              '\t' +MyBattle.MapName,
                               '\t' + MyBattle.Title,
                               '\t' + MyBattle.ModName
                           };
