@@ -31,7 +31,6 @@ namespace Springie.autohost
         bool starting;
         DateTime startingFrom;
         readonly TasClient tas;
-        readonly List<string> userOrder = new List<string>();
 
         public MatchMakerQueue(AutoHost ah)
         {
@@ -51,17 +50,21 @@ namespace Springie.autohost
             tas.BattleUserJoined += (sender, args) =>
             {
                 if (tas.MyBattleID != args.BattleID) return;
-                userOrder.Add(args.UserName);
                 tas.Say(TasClient.SayPlace.BattlePrivate,
                     args.UserName,
-                    string.Format("Hi {0}, you are {1}. in the queue", args.UserName, userOrder.Count),
+                    string.Format("Hi {0}, you are {1}. in the queue", args.UserName, tas.MyBattle.NonSpectatorCount),
                     true);
+                User user;
+                if (!tas.ExistingUsers.TryGetValue(args.UserName, out user) || !user.IsZkLobbyUser)
+                {
+                    tas.Say(TasClient.SayPlace.Battle, "", "Hi {0}, sorry you need compatible lobby to play here (Zero-K lobby). See https://github.com/spring/uberserver/issues/121",true);
+                    tas.Kick(args.UserName);
+                }
             };
 
             tas.BattleUserLeft += (sender, args) =>
             {
                 if (tas.MyBattleID != args.BattleID) return;
-                userOrder.Remove(args.UserName);
 
                 UpdateCount();
                 StopIfCountLow();
@@ -167,14 +170,8 @@ namespace Springie.autohost
 
         List<List<UserBattleStatus>> BuildTeams()
         {
-            var orderedUsers = new List<UserBattleStatus>();
+            var orderedUsers = tas.MyBattle.Users.Where(x => x.SyncStatus == SyncStatuses.Synced).OrderBy(x=>x.JoinTime).ToList();
             if (count < ah.config.MinToJuggle) return null; // not enough people
-
-            foreach (var u in userOrder)
-            {
-                var ubs = tas.MyBattle.Users.FirstOrDefault(x => x.Name == u && x.SyncStatus == SyncStatuses.Synced);
-                if (ubs != null) orderedUsers.Add(ubs);
-            }
 
 
             var ret = new List<List<UserBattleStatus>>();
