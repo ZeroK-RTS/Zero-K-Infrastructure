@@ -170,7 +170,7 @@ namespace Springie.autohost
 
         List<List<UserBattleStatus>> BuildTeams()
         {
-            var orderedUsers = tas.MyBattle.Users.Where(x => x.SyncStatus == SyncStatuses.Synced).OrderBy(x=>x.JoinTime).ToList();
+            var orderedUsers = tas.MyBattle.Users.Where(x => x.SyncStatus == SyncStatuses.Synced && x.Name != tas.MyBattle.Founder.Name).OrderBy(x=>x.JoinTime).ToList();
             if (count < ah.config.MinToJuggle) return null; // not enough people
 
 
