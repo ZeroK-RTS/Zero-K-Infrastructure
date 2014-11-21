@@ -157,7 +157,10 @@ namespace Springie.autohost
                     Thread.Sleep(4000);
                     slave.QuickMatchSlaveStartGame(team);
 
+                    ah.ComMap(TasSayEventArgs.Default, new string[] { });
                 }).Start();
+
+
             };
             slave.Start();
         }
