@@ -234,7 +234,7 @@ namespace LobbyClient
         /// <param name="userName">lobby user name - used to submit score</param>
         /// <param name="passwordHash">lobby password hash - used to submit score</param>
         /// <returns>generates script</returns>
-        public string StartGame(TasClient client, ProcessPriorityClass? priority, int? affinity, string scriptOverride, bool useSafeMode = false, bool useMultithreaded=false, BattleContext contextOverride = null) {
+        public string StartGame(TasClient client, ProcessPriorityClass? priority, int? affinity, string scriptOverride, bool useSafeMode = false, bool useMultithreaded=false, BattleContext contextOverride = null, Battle battleOverride = null) {
             if (!File.Exists(paths.Executable) && !File.Exists(paths.DedicatedServer)) throw new ApplicationException(string.Format("Spring or dedicated server executable not found: {0}, {1}", paths.Executable, paths.DedicatedServer));
 
             this.client = client;
@@ -249,9 +249,10 @@ namespace LobbyClient
 
                 talker = new Talker();
                 talker.SpringEvent += talker_SpringEvent;
-                isHosting = client != null && client.MyBattle != null && client.MyBattle.Founder.Name == client.MyUser.Name;
+                var battle = battleOverride ?? client.MyBattle;
+                isHosting = client != null && battle != null && battle.Founder.Name == client.MyUser.Name;
 
-                if (isHosting) scriptPath = Utils.MakePath(paths.WritableDirectory, "script_" + client.MyBattle.Founder + ".txt").Replace('\\', '/');
+                if (isHosting) scriptPath = Utils.MakePath(paths.WritableDirectory, "script_" + battle.Founder + ".txt").Replace('\\', '/');
                 else scriptPath = Utils.MakePath(paths.WritableDirectory, "script.txt").Replace('\\', '/');
 
                 statsPlayers.Clear();
@@ -269,9 +270,9 @@ namespace LobbyClient
                     battleGuid = Guid.NewGuid();
                     var service = new SpringieService() { Proxy = null };
                     SpringBattleStartSetup startSetup = null;
-                    if (isHosting && GlobalConst.IsZkMod(client.MyBattle.ModName)) {
+                    if (isHosting && GlobalConst.IsZkMod(battle.ModName)) {
                         try {
-                            StartContext = contextOverride ?? client.MyBattle.GetContext();
+                            StartContext = contextOverride ?? battle.GetContext();
                             startSetup = service.GetSpringBattleStartSetup(StartContext);
                             if (startSetup.BalanceTeamsResult != null)
                             {
@@ -288,12 +289,12 @@ namespace LobbyClient
                         }
                     }
 
-                    script = client.MyBattle.GenerateScript(out players, client.MyUser, talker.LoopbackPort, battleGuid.ToString(), startSetup);
-                    battleResult.IsMission = client.MyBattle.IsMission;
-                    battleResult.IsBots = client.MyBattle.Bots.Any();
-                    battleResult.Title = client.MyBattle.Title;
-                    battleResult.Mod = client.MyBattle.ModName;
-                    battleResult.Map = client.MyBattle.MapName;
+                    script = battle.GenerateScript(out players, client.MyUser, talker.LoopbackPort, battleGuid.ToString(), startSetup);
+                    battleResult.IsMission = battle.IsMission;
+                    battleResult.IsBots = battle.Bots.Any();
+                    battleResult.Title = battle.Title;
+                    battleResult.Mod = battle.ModName;
+                    battleResult.Map = battle.MapName;
                     battleResult.EngineVersion = paths.SpringVersion;
                     talker.SetPlayers(players);
                     statsPlayers = players.ToDictionary(x => x.Name,

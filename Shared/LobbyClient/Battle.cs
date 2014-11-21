@@ -170,7 +170,7 @@ namespace LobbyClient
 
                 playersExport = new List<UserBattleStatus>();
                 var isHost = localUser.Name == Founder.Name;
-                var myUbs = Users.Single(x => x.Name == localUser.Name);
+                var myUbs = Users.SingleOrDefault(x => x.Name == localUser.Name);
                 if (!isHost)
                 {
                     var sb = new StringBuilder();
@@ -180,7 +180,7 @@ namespace LobbyClient
                     sb.AppendFormat("HostPort={0};\n", HostPort);
                     sb.AppendLine("IsHost=0;");
                     sb.AppendFormat("MyPlayerName={0};\n", localUser.Name);
-                    if (myUbs.ScriptPassword != null) sb.AppendFormat("MyPasswd={0};\n", myUbs.ScriptPassword);
+                    if (myUbs != null && myUbs.ScriptPassword != null) sb.AppendFormat("MyPasswd={0};\n", myUbs.ScriptPassword);
                     sb.AppendLine("}");
                     return sb.ToString();
                 }

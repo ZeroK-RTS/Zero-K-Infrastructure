@@ -207,8 +207,13 @@ namespace ZeroKLobby.MicroLobby
                     {
                         // hack dialog Program.FormMain
                         using (var form = new AskBattlePasswordForm(battle.Founder.Name)) if (form.ShowDialog() == DialogResult.OK) ActionHandler.JoinBattle(battle.BattleID, form.Password);
+                    } else 
+                    {
+                        if (battle.IsLocked) ActionHandler.JoinBattleSpec(battle.BattleID);
+                        else ActionHandler.JoinBattle(battle.BattleID, null);    
+
                     }
-                    else ActionHandler.JoinBattle(battle.BattleID, null);
+                    
                 }
                 else if (OpenGameButtonHitTest(e.X, e.Y)) ShowHostDialog(KnownGames.GetDefaultGame());
             }
