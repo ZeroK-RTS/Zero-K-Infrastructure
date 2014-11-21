@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -47,7 +48,14 @@ namespace ZeroKLobby.Notifications
         protected override void OnPaintBackground(PaintEventArgs e)
         {
             base.OnPaintBackground(e);
-            using (var brush = new LinearGradientBrush(ClientRectangle, Color.WhiteSmoke, Color.SteelBlue, 90F)) e.Graphics.FillRectangle(brush, ClientRectangle);
+            try
+            {
+                if (ClientRectangle.Width > 0 && ClientRectangle.Height > 0) using (var brush = new LinearGradientBrush(ClientRectangle, Color.WhiteSmoke, Color.SteelBlue, 90F)) e.Graphics.FillRectangle(brush, ClientRectangle);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error rendering bar background: {0}",ex);
+            }
         }
 
 
