@@ -393,7 +393,7 @@ namespace ZeroKLobby
         {
             Battle bat;
             if (!Program.TasClient.ExistingBattles.TryGetValue(battleId, out bat)) return;
-            Program.TasClient.Say(TasClient.SayPlace.User, bat.Founder.Name, string.Format("adduser {0}", Program.TasClient.UserName),false);
+            Program.TasClient.Say(TasClient.SayPlace.User, bat.Founder.Name, string.Format("!adduser {0}", Program.TasClient.UserName),false);
 
             var de = Program.Downloader.GetAndSwitchEngine(bat.EngineVersion);
             var dm = Program.Downloader.GetResource(DownloadType.MAP, bat.MapName);
