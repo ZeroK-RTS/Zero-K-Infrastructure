@@ -594,6 +594,10 @@ namespace Springie.autohost
                     StartVote(new VoteMove(tas, spring, this), e, words);
                     break;
 
+                case "adduser":
+                    ComAddUser(e,words);
+                    break;
+
 
                 case "spawn":
                 {

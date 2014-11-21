@@ -180,7 +180,14 @@ namespace LobbyClient
                     sb.AppendFormat("HostPort={0};\n", HostPort);
                     sb.AppendLine("IsHost=0;");
                     sb.AppendFormat("MyPlayerName={0};\n", localUser.Name);
-                    if (myUbs != null && myUbs.ScriptPassword != null) sb.AppendFormat("MyPasswd={0};\n", myUbs.ScriptPassword);
+                    if (myUbs != null)
+                    {
+                        if (myUbs.ScriptPassword != null) sb.AppendFormat("MyPasswd={0};\n", myUbs.ScriptPassword);
+                    }
+                    else
+                    {
+                        sb.AppendFormat("MyPasswd={0};\n", localUser.Name); // used for mid-game join .. if no userbattlestatus, use own name
+                    }
                     sb.AppendLine("}");
                     return sb.ToString();
                 }

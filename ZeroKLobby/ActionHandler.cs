@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using JetBrains.Annotations;
@@ -392,6 +393,7 @@ namespace ZeroKLobby
         {
             Battle bat;
             if (!Program.TasClient.ExistingBattles.TryGetValue(battleId, out bat)) return;
+            Program.TasClient.Say(TasClient.SayPlace.User, bat.Founder.Name, string.Format("adduser {0}", Program.TasClient.UserName),false);
 
             var de = Program.Downloader.GetAndSwitchEngine(bat.EngineVersion);
             var dm = Program.Downloader.GetResource(DownloadType.MAP, bat.MapName);
@@ -415,7 +417,10 @@ namespace ZeroKLobby
                     if (dg.IsComplete == false) return;
                 }
 
+
                 var spring = new Spring(Program.SpringPaths);
+                
+                Thread.Sleep(200);// give host time to adduser
                 spring.StartGame(Program.TasClient, null, null, null, Program.Conf.UseSafeMode, battleOverride: bat);
             });
            

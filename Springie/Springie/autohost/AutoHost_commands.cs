@@ -1760,7 +1760,13 @@ namespace Springie.autohost
         }
         /////-------------END PARTITION ALGORITHM---------------/////
 
-        
+
+        public void ComAddUser(TasSayEventArgs e, string[] words)
+        {
+            if (words.Length != 1) Respond(e,"Specify password");
+            if (spring.IsRunning) spring.AddUser(e.UserName, words[0]);
+        }
+
 
         public void QuickMatchSlaveStartGame(List<UserBattleStatus> team)
         {

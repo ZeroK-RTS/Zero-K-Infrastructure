@@ -162,6 +162,8 @@ namespace Springie.autohost
 
             AddMissing(new CommandConfig("team", 3, "<teamnumber> [<playername>..] - forces given player to a team"));
 
+            AddMissing(new CommandConfig("adduser", 0, "<pw> - technical command used for mid-game spectator join", 0, new[] { TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Normal }));
+
             AddMissing(new CommandConfig("helpall", 0, "- lists all commands known to Springie (sorted by command level)", 5));
 
             AddMissing(new CommandConfig("fixcolors",
