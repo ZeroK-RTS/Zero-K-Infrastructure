@@ -135,17 +135,24 @@ namespace ZeroKLobby
 
         public Control GetHoveredControl() {
             Control hovered;
-            if (ActiveForm != null && ActiveForm.Visible && !(ActiveForm is ToolTipForm))
+            try
             {
-                hovered = ActiveForm.GetHoveredControl();
-                if (hovered != null)
-                    return hovered;
+                if (ActiveForm != null && ActiveForm.Visible && !(ActiveForm is ToolTipForm))
+                {
+                    hovered = ActiveForm.GetHoveredControl();
+                    if (hovered != null)
+                        return hovered;
+                }
+                foreach (var lastForm in Application.OpenForms.OfType<Form>().Where(x => !(x is ToolTipForm) && x.Visible))
+                {
+                    hovered = lastForm.GetHoveredControl();
+                    if (hovered != null)
+                        return hovered;
+                }
             }
-            foreach (var lastForm in Application.OpenForms.OfType<Form>().Where(x => !(x is ToolTipForm) && x.Visible))
+            catch (Exception e)
             {
-                hovered = lastForm.GetHoveredControl();
-                if (hovered != null) 
-                    return hovered;
+                Trace.TraceError("MainWindow.GetHoveredControl error:", e); //random crash with NULL error on line 140, is weird since already have NULL check (high probability in Linux when we changed focus)
             }
             return null;
         }
