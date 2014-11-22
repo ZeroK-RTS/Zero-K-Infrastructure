@@ -74,6 +74,8 @@ namespace LobbyClient
         public bool IsZkLobbyUser { get { return Cpu == GlobalConst.ZkLobbyUserCpu || Cpu == GlobalConst.ZkSpringieManagedCpu || Cpu == GlobalConst.ZkLobbyUserCpuLinux; } }
         public bool IsZkLinuxUser { get { return Cpu == GlobalConst.ZkLobbyUserCpuLinux; } }
         public bool IsSpringieManaged { get { return Cpu == GlobalConst.ZkSpringieManagedCpu; } }
+
+        public bool ISSwlUser { get { return Cpu == 7777 || Cpu == 7778 || Cpu == 7779; } }
         public bool IsNotaLobby { get { return Cpu == GlobalConst.NotaLobbyLinuxCpu || Cpu == GlobalConst.NotaLobbyWindowsCpu || Cpu == GlobalConst.NotaLobbyMacCpu; } }
         public string Name { get; protected set; }
         public int Rank { get; protected set; }

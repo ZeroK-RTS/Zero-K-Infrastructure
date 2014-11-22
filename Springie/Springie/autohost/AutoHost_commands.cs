@@ -1188,7 +1188,7 @@ namespace Springie.autohost
             }
         }
 
-        void ApplyBalanceResults(BalanceTeamsResult balance)
+        public void ApplyBalanceResults(BalanceTeamsResult balance)
         {
             if (!string.IsNullOrEmpty(balance.Message)) SayBattle(balance.Message, false);
             if (balance.Players != null && balance.Players.Length > 0)
@@ -1767,24 +1767,5 @@ namespace Springie.autohost
             if (spring.IsRunning) spring.AddUser(e.UserName, words[0]);
         }
 
-
-        public void QuickMatchSlaveStartGame(List<UserBattleStatus> team)
-        {
-            var serv = new SpringieService();
-
-            serv.Timeout = 10000;
-            var context = tas.MyBattle.GetContext();
-            context.Players = team.Select(x => new PlayerTeam() { AllyID = x.AllyNumber, Name = x.Name, LobbyID = x.LobbyUser.LobbyID, TeamID = x.TeamNumber, IsSpectator = false }).ToArray();
-
-            var balance = serv.BalanceTeams(context, true, null, null);
-            ApplyBalanceResults(balance);
-            context.Players = balance.Players;
-            context.Bots = balance.Bots;
-
-            SayBattle("please wait, game is about to start");
-            StopVote();
-            slaveContextOverride = context;
-            tas.StartGame();
-        }
     }
 }

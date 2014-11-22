@@ -1025,7 +1025,7 @@ namespace Springie.autohost
             }
         }
 
-        BattleContext slaveContextOverride;
+        public BattleContext slaveContextOverride;
 
         void tas_MyStatusChangedToInGame(object sender, TasEventArgs e) {
             spring.StartGame(tas, Program.main.Config.HostingProcessPriority, null, null, contextOverride:slaveContextOverride);
