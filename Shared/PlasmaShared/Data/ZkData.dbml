@@ -67,47 +67,48 @@
       <Column Name="AccountID" Storage="_Id" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Name" Type="System.String" DbType="varchar(200) NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="Email" Type="System.String" DbType="nvarchar(max)" CanBeNull="true" />
-      <Column Name="HasVpnException" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="Kudos" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="ForumTotalUpvotes" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="ForumTotalDownvotes" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="VotesAvailable" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="PwMetalUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
-      <Column Name="PwWarpProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
-      <Column Name="PwWarpUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
-      <Column Name="PwAttackPoints" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
-      <Column Name="LastLobbyVersionCheck" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
-      <Column Name="[Language]" Member="Language" Type="System.String" DbType="nvarchar(2)" CanBeNull="true" />
-      <Column Name="LobbyVersion" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
-      <Column Name="PwDropshipsProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
-      <Column Name="PwDropshipsUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
-      <Column Name="PwBombersProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
-      <Column Name="PwBombersUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
-      <Column Name="PwMetalProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
-      <Column Name="LastNewsRead" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
-      <Column Name="FactionID" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="LobbyID" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="IsDeleted" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="Avatar" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
-      <Column Name="SpringieLevel" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="LobbyTimeRank" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
-      <Column Name="MissionRunCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
-      <Column Name="IsZeroKAdmin" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
-      <Column Name="Xp" Member="XP" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
-      <Column Name="[Level]" Member="Level" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
-      <Column Name="ClanID" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="Elo1v1Weight" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
-      <Column Name="EloPw" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
-      <Column Name="IsLobbyAdministrator" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
-      <Column Name="IsBot" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
-      <Column Name="Password" Type="System.String" DbType="varchar(100)" CanBeNull="true" UpdateCheck="WhenChanged" />
-      <Column Name="Country" Type="System.String" DbType="varchar(5)" CanBeNull="true" UpdateCheck="WhenChanged" />
       <Column Name="FirstLogin" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="LastLogin" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="Aliases" Type="System.String" DbType="varchar(max)" CanBeNull="true" UpdateCheck="WhenChanged" />
+      <Column Name="ForumTotalDownvotes" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="VotesAvailable" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="SteamID" Type="System.Decimal" DbType="decimal" CanBeNull="true" />
+      <Column Name="PwAttackPoints" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="LastLobbyVersionCheck" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
+      <Column Name="[Language]" Member="Language" Type="System.String" DbType="nvarchar(2)" CanBeNull="true" />
+      <Column Name="HasVpnException" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="Kudos" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="ForumTotalUpvotes" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="PwBombersProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="PwBombersUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="PwMetalProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="PwMetalUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="PwWarpProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="PwWarpUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="Avatar" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
+      <Column Name="SpringieLevel" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="LobbyVersion" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
+      <Column Name="PwDropshipsProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="PwDropshipsUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="Xp" Member="XP" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="[Level]" Member="Level" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="ClanID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="LastNewsRead" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
+      <Column Name="FactionID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="LobbyID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="IsBot" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="Password" Type="System.String" DbType="varchar(100)" CanBeNull="true" UpdateCheck="WhenChanged" />
+      <Column Name="Country" Type="System.String" DbType="varchar(5)" CanBeNull="true" UpdateCheck="WhenChanged" />
+      <Column Name="LobbyTimeRank" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="MissionRunCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="IsZeroKAdmin" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="Elo" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="EloWeight" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="Elo1v1" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="Elo1v1Weight" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="EloPw" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="IsLobbyAdministrator" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
       <Association Name="Account_LobbyChannelSubscription" Member="LobbyChannelSubscriptions" ThisKey="AccountID" OtherKey="AccountID" Type="LobbyChannelSubscription" />
       <Association Name="Account_ForumThread" Member="ForumThreadsByCreatedAccountID" ThisKey="AccountID" OtherKey="CreatedAccountID" Type="ForumThread" />
@@ -119,7 +120,7 @@
       <Association Name="Account_MapRating" Member="MapRatings" ThisKey="AccountID" OtherKey="AccountID" Type="MapRating" />
       <Association Name="Account_SpringBattle" Member="SpringBattles" ThisKey="AccountID" OtherKey="HostAccountID" Type="SpringBattle" />
       <Association Name="Account_SpringBattlePlayer" Member="SpringBattlePlayers" ThisKey="AccountID" OtherKey="AccountID" Type="SpringBattlePlayer" />
-	  <Association Name="Account_ForumLastRead" Member="ForumLastReads" ThisKey="AccountID" OtherKey="AccountID" Type="ForumLastRead" />
+      <Association Name="Account_ForumLastRead" Member="ForumLastReads" ThisKey="AccountID" OtherKey="AccountID" Type="ForumLastRead" />
       <Association Name="Account_ForumThreadLastRead" Member="ForumThreadLastReads" ThisKey="AccountID" OtherKey="AccountID" Type="ForumThreadLastRead" />
       <Association Name="Account_AccountBattleAward" Member="AccountBattleAwards" ThisKey="AccountID" OtherKey="AccountID" Type="AccountBattleAward" />
       <Association Name="Account_AccountUnlock" Member="AccountUnlocks" ThisKey="AccountID" OtherKey="AccountID" Type="AccountUnlock" />
@@ -402,16 +403,16 @@
       <Column Name="IsNews" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Association Name="ForumCategory_ForumThread" Member="ForumThreads" ThisKey="ForumCategoryID" OtherKey="ForumCategoryID" Type="ForumThread" />
       <Association Name="ForumCategory_ForumCategory" Member="ChildForumCategories" ThisKey="ForumCategoryID" OtherKey="ParentForumCategoryID" Type="ForumCategory" />
+      <Association Name="ForumCategory_ForumLastRead" Member="ForumLastReads" ThisKey="ForumCategoryID" OtherKey="ForumCategoryID" Type="ForumLastRead" />
       <Association Name="ForumCategory_ForumCategory" Member="ParentForumCategory" ThisKey="ParentForumCategoryID" OtherKey="ForumCategoryID" Type="ForumCategory" IsForeignKey="true" />
-	  <Association Name="ForumCategory_ForumLastRead" Member="ForumLastReads" ThisKey="ForumCategoryID" OtherKey="ForumCategoryID" Type="ForumLastRead" />
     </Type>
   </Table>
   <Table Name="dbo.ForumLastRead" Member="ForumLastReads">
     <Type Name="ForumLastRead">
-      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-	  <Column Name="ForumCategoryID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="LastRead" Type="System.DateTime" DbType="datetime" CanBeNull="true" UpdateCheck="Never" />
-	  <Association Name="ForumCategory_ForumLastRead" Member="ForumCategory" ThisKey="ForumCategoryID" OtherKey="ForumCategoryID" Type="ForumCategory" IsForeignKey="true"/>
+      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ForumCategoryID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="ForumCategory_ForumLastRead" Member="ForumCategory" ThisKey="ForumCategoryID" OtherKey="ForumCategoryID" Type="ForumCategory" IsForeignKey="true" />
       <Association Name="Account_ForumLastRead" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>
@@ -1045,11 +1046,11 @@
   </Table>
   <Table Name="dbo.AbuseReport" Member="AbuseReports">
     <Type Name="AbuseReport">
+      <Column Name="[Time]" Member="Time" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
+      <Column Name="Text" Type="System.String" DbType="nvarchar(max) NOT NULL" CanBeNull="false" />
       <Column Name="AbuseReportID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="ReporterAccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="[Time]" Member="Time" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
-      <Column Name="Text" Type="System.String" DbType="nvarchar(max) NOT NULL" CanBeNull="false" />
       <Association Name="Account_AbuseReport" Member="AccountByAccountID" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
       <Association Name="Account_AbuseReport1" Member="AccountByReporterAccountID" ThisKey="ReporterAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
@@ -1318,10 +1319,10 @@
       <Association Name="Account_AutoBanSmurfList" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>
-    <Table Name="dbo.MiscVar" Member="MiscVars">
+  <Table Name="dbo.MiscVar" Member="MiscVars">
     <Type Name="MiscVar">
       <Column Name="VarName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
-	  <Column Name="VarValue" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="VarValue" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
     </Type>
   </Table>
 </Database>
