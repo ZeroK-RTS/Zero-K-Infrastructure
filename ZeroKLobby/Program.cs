@@ -13,6 +13,7 @@ using System.Xml.Serialization;
 using LobbyClient;
 using PlasmaShared;
 using SpringDownloader.Notifications;
+using Steamworks;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 using ZkData;
@@ -287,6 +288,26 @@ namespace ZeroKLobby
                     // Format and display the TimeSpan value.
                     //stopWatch.Stop(); TimeSpan ts = stopWatch.Elapsed; string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
                     //Trace.TraceInformation("1 Runtime {0}", elapsedTime);
+
+               /* if (SteamAPI.Init())
+                {
+                    byte[] buf = new byte[8000];
+
+                    uint writ;
+                    uint ucb;
+                    SteamUser.StartVoiceRecording();
+                    while (true)
+                    {
+                        var ret = SteamUser.GetVoice(true, buf, 8000, out writ, false, null, 0, out ucb, 0);
+                        Thread.Sleep(50);
+                        if (ret != EVoiceResult.k_EVoiceResultNoData)
+                        {
+                            
+                        }
+
+                    }
+                }*/
+
                 Application.Run(MainWindow);
                 ShutDown();
             } catch (Exception ex) {
