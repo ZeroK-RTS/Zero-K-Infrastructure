@@ -308,6 +308,35 @@ namespace ZeroKLobby
                     }
                 }*/
 
+                /*if (SteamAPI.Init())
+                {
+                    var needPaint = Callback<HTML_NeedsPaint_t>.Create(((t) =>
+                    {
+                        var toRender = t.pBGRA;
+                        // lockbits, render to some surface/control
+
+                    }));
+
+                    var ready = CallResult<HTML_BrowserReady_t>.Create((t,b) =>
+                    {
+                        var browser = t.unBrowserHandle;
+                        SteamHTMLSurface.SetSize(browser,800,600);
+                        SteamHTMLSurface.LoadURL(browser, "http://www.google.com/", null);
+                    });
+
+                    SteamHTMLSurface.Init();
+                    var handle = SteamHTMLSurface.CreateBrowser(null, null);
+                    ready.Set(handle);
+
+                    while (true)
+                    {
+                        SteamAPI.RunCallbacks();
+                        Thread.Sleep(50);
+                    }
+
+                }*/
+
+
                 Application.Run(MainWindow);
                 ShutDown();
             } catch (Exception ex) {
