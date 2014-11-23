@@ -87,9 +87,6 @@ namespace ZeroKLobby
                     return;
                 }
                 
-
-
-
                 if (Process.GetProcesses().Any(x => x.ProcessName.StartsWith("spring_"))) return; // dont start if started from installer
                 StartupArgs = args;
 
@@ -140,6 +137,7 @@ namespace ZeroKLobby
                     }
                     MessageBox.Show("Move failed, please copy Zero-K.exe to a writable folder");
                 }
+
 
                 if (Conf.IsFirstRun) {
                     Utils.CreateDesktopShortcut();
