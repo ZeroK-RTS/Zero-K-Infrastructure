@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
@@ -77,10 +78,22 @@ namespace ZeroKLobby
                 Trace.Listeners.Add(new ConsoleTraceListener());
                 Trace.Listeners.Add(new LogTraceListener());
 
+                Directory.SetCurrentDirectory(StartupPath);
+
+                SelfUpdater = new SelfUpdater("Zero-K");
+                if (args != null && args.Length > 0 && args.Contains("manifest"))
+                {
+                    SelfUpdater.GenerateManifest("steam_api.dll", "CSteamworks.dll");
+                    return;
+                }
+                
+
+
+
                 if (Process.GetProcesses().Any(x => x.ProcessName.StartsWith("spring_"))) return; // dont start if started from installer
                 StartupArgs = args;
 
-                Directory.SetCurrentDirectory(StartupPath);
+
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
 
@@ -93,7 +106,7 @@ namespace ZeroKLobby
 
                 //HttpWebRequest.DefaultCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
 
-                SelfUpdater = new SelfUpdater("Zero-K");
+
 
                 Trace.TraceInformation("Starting with version {0}", SelfUpdater.CurrentVersion);
 
@@ -285,29 +298,30 @@ namespace ZeroKLobby
 				MainWindow.Paint+= GetSpringZK;
 				Downloader.PackageDownloader.MasterManifestDownloaded += GetSpringZK;
 
+
                     // Format and display the TimeSpan value.
                     //stopWatch.Stop(); TimeSpan ts = stopWatch.Elapsed; string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
                     //Trace.TraceInformation("1 Runtime {0}", elapsedTime);
-
-                /*if (SteamAPI.Init())
+                /*new Thread(() =>
                 {
-                    byte[] buf = new byte[8000];
-
-                    var sid= SteamUser.GetSteamID();
-                    uint writ;
-                    uint ucb;
-                    SteamUser.StartVoiceRecording();
-                    while (true)
+                    if (SteamAPI.Init())
                     {
-                        var ret = SteamUser.GetVoice(true, buf, 8000, out writ, false, null, 0, out ucb, 0);
-                        Thread.Sleep(50);
-                        if (ret != EVoiceResult.k_EVoiceResultNoData)
-                        {
-                            
-                        }
+                        byte[] buf = new byte[8000];
 
+                        var sid = SteamUser.GetSteamID();
+                        uint writ;
+                        uint ucb;
+                        SteamUser.StartVoiceRecording();
+                        //SteamFriends.ActivateGameOverlayToUser("steamid", SteamUser.GetSteamID());
+                        while (true)
+                        {
+                            var ret = SteamUser.GetVoice(true, buf, 8000, out writ, false, null, 0, out ucb, 0);
+                            Thread.Sleep(50);
+                            if (ret != EVoiceResult.k_EVoiceResultNoData) {}
+
+                        }
                     }
-                }*/
+                }).Start();*/
 
                 /*if (SteamAPI.Init())
                 {

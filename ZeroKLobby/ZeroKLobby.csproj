@@ -207,6 +207,7 @@
     <Compile Include="SelectWritableFolder.Designer.cs">
       <DependentUpon>SelectWritableFolder.cs</DependentUpon>
     </Compile>
+    <Compile Include="Steam\Steam.cs" />
     <Compile Include="VoiceCommand\ChatToSpeech.cs" />
     <Compile Include="Configs.Designer.cs">
       <AutoGen>True</AutoGen>
