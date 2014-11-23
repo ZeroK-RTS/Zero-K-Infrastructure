@@ -14,7 +14,6 @@ using System.Xml.Serialization;
 using LobbyClient;
 using PlasmaShared;
 using SpringDownloader.Notifications;
-using Steamworks;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 using ZkData;
@@ -81,11 +80,6 @@ namespace ZeroKLobby
                 Directory.SetCurrentDirectory(StartupPath);
 
                 SelfUpdater = new SelfUpdater("Zero-K");
-                if (args != null && args.Length > 0 && args.Contains("manifest"))
-                {
-                    SelfUpdater.GenerateManifest("steam_api.dll", "CSteamworks.dll");
-                    return;
-                }
                 
                 if (Process.GetProcesses().Any(x => x.ProcessName.StartsWith("spring_"))) return; // dont start if started from installer
                 StartupArgs = args;
@@ -137,6 +131,10 @@ namespace ZeroKLobby
                     }
                     MessageBox.Show("Move failed, please copy Zero-K.exe to a writable folder");
                 }
+
+                EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.CSteamworks.dll", "CSteamworks.dll");
+                EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.steam_api.dll", "steam_api.dll");
+                EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.steam_appid.txt", "steam_appid.txt");
 
 
                 if (Conf.IsFirstRun) {
@@ -300,56 +298,7 @@ namespace ZeroKLobby
                     // Format and display the TimeSpan value.
                     //stopWatch.Stop(); TimeSpan ts = stopWatch.Elapsed; string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
                     //Trace.TraceInformation("1 Runtime {0}", elapsedTime);
-                /*new Thread(() =>
-                {
-                    if (SteamAPI.Init())
-                    {
-                        byte[] buf = new byte[8000];
-
-                        var sid = SteamUser.GetSteamID();
-                        uint writ;
-                        uint ucb;
-                        SteamUser.StartVoiceRecording();
-                        //SteamFriends.ActivateGameOverlayToUser("steamid", SteamUser.GetSteamID());
-                        while (true)
-                        {
-                            var ret = SteamUser.GetVoice(true, buf, 8000, out writ, false, null, 0, out ucb, 0);
-                            Thread.Sleep(50);
-                            if (ret != EVoiceResult.k_EVoiceResultNoData) {}
-
-                        }
-                    }
-                }).Start();*/
-
-                /*if (SteamAPI.Init())
-                {
-                    var needPaint = Callback<HTML_NeedsPaint_t>.Create(((t) =>
-                    {
-                        var toRender = t.pBGRA;
-                        // lockbits, render to some surface/control
-
-                    }));
-
-                    var ready = CallResult<HTML_BrowserReady_t>.Create((t,b) =>
-                    {
-                        var browser = t.unBrowserHandle;
-                        SteamHTMLSurface.SetSize(browser,800,600);
-                        SteamHTMLSurface.LoadURL(browser, "http://www.google.com/", null);
-                    });
-
-                    SteamHTMLSurface.Init();
-                    var handle = SteamHTMLSurface.CreateBrowser(null, null);
-                    ready.Set(handle);
-
-                    while (true)
-                    {
-                        SteamAPI.RunCallbacks();
-                        Thread.Sleep(50);
-                    }
-
-                }*/
-
-
+                
                 Application.Run(MainWindow);
                 ShutDown();
             } catch (Exception ex) {
