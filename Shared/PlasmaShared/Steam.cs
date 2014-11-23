@@ -5,42 +5,46 @@ using System.Timers;
 using ServiceStack.Text;
 using Steamworks;
 using ZkData;
+using Timer = System.Threading.Timer;
 
 namespace PlasmaShared
 {
     public class Steam
     {
-        static Steam()
-        {
-        }
-
+        int tickCounter;
         bool isOnline;
-        Timer timer = new Timer();
+        Timer timer;
 
         string webApiKey;
         int steamAppID;
         public Steam(int appID, string webApiKey = null)
         {
             steamAppID = appID;
+            this.webApiKey = webApiKey;
+        }
+
+        public void ConnectToSteam()
+        {
             if (SteamAPI.Init() && SteamAPI.IsSteamRunning())
             {
                 isOnline = true;
             }
 
-            timer.Interval = 60000;
-            timer.AutoReset = true;
-            timer.Elapsed += TimerOnElapsed;
-            timer.Start();
-            this.webApiKey = webApiKey;
+            timer = new Timer(TimerOnElapsed, null, 100, 100);
         }
 
-        void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+
+        void TimerOnElapsed(object sender)
         {
-            if (!isOnline)
+            if (tickCounter % 600 == 0)
             {
-                if (SteamAPI.Init() && SteamAPI.IsSteamRunning()) isOnline = true;
-                else isOnline = false;
+                if (!isOnline)
+                {
+                    if (SteamAPI.Init() && SteamAPI.IsSteamRunning()) isOnline = true;
+                    else isOnline = false;
+                }
             }
+            if (isOnline) SteamAPI.RunCallbacks();
         }
 
         public byte[] GetClientAuthToken()
@@ -49,7 +53,7 @@ namespace PlasmaShared
             uint ticketSize;
             SteamUser.GetAuthSessionTicket(buf, buf.Length, out ticketSize);
             var truncArray = new byte[ticketSize];
-            Array.Copy(buf , truncArray , truncArray.Length);
+            Array.Copy(buf, truncArray, truncArray.Length);
             return truncArray;
         }
 
@@ -58,7 +62,7 @@ namespace PlasmaShared
             return SteamUser.GetSteamID().m_SteamID;
         }
 
-        public void SetRichPresence(string status, string myLobbyUserName, Dictionary<string,string>  extras = null)
+        public void SetRichPresence(string status, string myLobbyUserName, Dictionary<string, string> extras = null)
         {
             SteamFriends.SetRichPresence("status", status);
             SteamFriends.SetRichPresence("connect", string.Format("Zero-K.exe spring://@join_user:{0}", myLobbyUserName));
@@ -66,6 +70,20 @@ namespace PlasmaShared
             {
                 foreach (var kvp in extras) SteamFriends.SetRichPresence(kvp.Key, kvp.Value);
             }
+        }
+
+
+        public string GetMyName()
+        {
+            return SteamFriends.GetPersonaName();
+        }
+
+
+
+        public void AdvertiseGame(string ip, ushort port)
+        {
+            var ipint = (uint)IPAddress.NetworkToHostOrder((int)IPAddress.Parse(ip).Address);
+            SteamUser.AdvertiseGame(SteamUser.GetSteamID(), ipint, port);
         }
 
         public List<ulong> GetFriends()
@@ -112,59 +130,58 @@ namespace PlasmaShared
                     public ulong steamid { get; set; }
                     public ulong ownersteamid { get; set; }
                 }
-            }   
+            }
         }
-	}
+    }
 }
 
-        //public class 
+//public class 
 
-        /*new Thread(() =>
+/*new Thread(() =>
+                {
+                    if (SteamAPI.Init())
+                    {
+                        byte[] buf = new byte[8000];
+
+                        var sid = SteamUser.GetSteamID();
+                        uint writ;
+                        uint ucb;
+                        SteamUser.StartVoiceRecording();
+                        //SteamFriends.ActivateGameOverlayToUser("steamid", SteamUser.GetSteamID());
+                        while (true)
                         {
-                            if (SteamAPI.Init())
-                            {
-                                byte[] buf = new byte[8000];
+                            var ret = SteamUser.GetVoice(true, buf, 8000, out writ, false, null, 0, out ucb, 0);
+                            Thread.Sleep(50);
+                            if (ret != EVoiceResult.k_EVoiceResultNoData) {}
 
-                                var sid = SteamUser.GetSteamID();
-                                uint writ;
-                                uint ucb;
-                                SteamUser.StartVoiceRecording();
-                                //SteamFriends.ActivateGameOverlayToUser("steamid", SteamUser.GetSteamID());
-                                while (true)
-                                {
-                                    var ret = SteamUser.GetVoice(true, buf, 8000, out writ, false, null, 0, out ucb, 0);
-                                    Thread.Sleep(50);
-                                    if (ret != EVoiceResult.k_EVoiceResultNoData) {}
+                        }
+                    }
+                }).Start();*/
 
-                                }
-                            }
-                        }).Start();*/
+/*if (SteamAPI.Init())
+{
+    var needPaint = Callback<HTML_NeedsPaint_t>.Create(((t) =>
+    {
+        var toRender = t.pBGRA;
+        // lockbits, render to some surface/control
 
-        /*if (SteamAPI.Init())
-        {
-            var needPaint = Callback<HTML_NeedsPaint_t>.Create(((t) =>
-            {
-                var toRender = t.pBGRA;
-                // lockbits, render to some surface/control
+    }));
 
-            }));
+    var ready = CallResult<HTML_BrowserReady_t>.Create((t,b) =>
+    {
+        var browser = t.unBrowserHandle;
+        SteamHTMLSurface.SetSize(browser,800,600);
+        SteamHTMLSurface.LoadURL(browser, "http://www.google.com/", null);
+    });
 
-            var ready = CallResult<HTML_BrowserReady_t>.Create((t,b) =>
-            {
-                var browser = t.unBrowserHandle;
-                SteamHTMLSurface.SetSize(browser,800,600);
-                SteamHTMLSurface.LoadURL(browser, "http://www.google.com/", null);
-            });
+    SteamHTMLSurface.Init();
+    var handle = SteamHTMLSurface.CreateBrowser(null, null);
+    ready.Set(handle);
 
-            SteamHTMLSurface.Init();
-            var handle = SteamHTMLSurface.CreateBrowser(null, null);
-            ready.Set(handle);
+    while (true)
+    {
+        SteamAPI.RunCallbacks();
+        Thread.Sleep(50);
+    }
 
-            while (true)
-            {
-                SteamAPI.RunCallbacks();
-                Thread.Sleep(50);
-            }
-
-        }*/
-    
+}*/
