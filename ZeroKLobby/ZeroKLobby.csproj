@@ -22,7 +22,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <TargetZone>Custom</TargetZone>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>
@@ -1656,7 +1656,14 @@
   <ItemGroup>
     <None Include="Resources\Buttons\video-icon.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="NativeLibs\CSteamworks.dll" />
+    <EmbeddedResource Include="NativeLibs\steam_api.dll" />
+    <EmbeddedResource Include="NativeLibs\steam_appid.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Steam\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">
   </Target>

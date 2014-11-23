@@ -4,6 +4,7 @@ namespace ZkData
 {
 	public static class GlobalConst
 	{
+        public const int SteamAppID = 334920;
 	    public const string InfologPathFormat=@"C:\projekty\springie_spring\infolog_{0}.txt";
 	    public const int ZkSpringieManagedCpu = 6666;
         public const int ZkLobbyUserCpu = 6667;
