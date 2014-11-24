@@ -958,7 +958,7 @@ namespace Springie.autohost
             if (e1.BattleID != tas.MyBattleID) return;
             CheckForBattleExit();
 
-            if (spring.IsRunning) spring.SayGame(e1.UserName + " has left the lobby");
+            if (spring.IsRunning) spring.SayGame(e1.UserName + " has left the room");
 
             if (e1.UserName == bossName) {
                 SayBattle("boss has left the battle");
