@@ -141,6 +141,8 @@ namespace ZeroKLobby.MicroLobby
 			// add section headers
 		    if (Program.TasClient.MyBattle.IsQueue)
 		    {
+                newList.Add(new PlayerListItem { Button = "Spectators", SortCategory = 100, IsSpectatorsTitle = true, Height = 25 });
+                newList.Add(new PlayerListItem { Button = "Queued players", SortCategory = 0, AllyTeam = 0, IsSpectatorsTitle = false, Height = 25 });
 		        newList = newList.OrderBy(x => x.UserName).ToList();
 		    }
 		    else

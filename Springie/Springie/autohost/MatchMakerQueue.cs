@@ -122,7 +122,14 @@ namespace Springie.autohost
                     if (teams == null) tas.Say(TasClient.SayPlace.Battle, "", "Queue cannot start yet because of skill differences", true);
                     else
                     {
-                        foreach (var t in teams) StartSlave(t, tas.MyBattle.MapName);
+                        var spectators =
+                            tas.MyBattle.Users.Where(x => x.IsSpectator && x.Name != tas.MyBattle.Founder.Name && x.SyncStatus == SyncStatuses.Synced).ToList();
+
+                        foreach (var t in teams)
+                        {
+                            StartSlave(t, spectators);
+                            spectators = null;
+                        }
                     }
                 }
 
@@ -131,7 +138,7 @@ namespace Springie.autohost
             timer.Start();
         }
 
-        void StartSlave(List<UserBattleStatus> team, string map)
+        void StartSlave(List<UserBattleStatus> team, List<UserBattleStatus>  spectators)
         {
             var eloTopTwo = team.OrderByDescending(x => x.LobbyUser.EffectiveElo).Take(2).ToList();
             var title = string.Format("QuickMatch {0} {1} vs {2}", tas.MyBattle.QueueName, eloTopTwo[0], eloTopTwo[1]);
@@ -148,29 +155,31 @@ namespace Springie.autohost
             slave.spring.SpringExited += (sender, args) => Program.main.StopAutohost(slave); // remove after spring exits
             slave.tas.MyBattleStarted += (sender, args) => slave.tas.ChangeLock(true); // lock running game
 
-            slave.tas.BattleOpened += (sender, args) =>
+            slave.tas.BattleOpened += (sender, args) => new Thread(() =>
             {
-                new Thread(() =>
+                Thread.Sleep(200);
+                foreach (var u in team)
                 {
-                    Thread.Sleep(200);
-                    foreach (var u in team)
+                    tas.ForceJoinBattle(u.Name, slave.tas.MyBattleID);
+                }
+                if (spectators != null)
+                {
+                    foreach (var s in spectators)
                     {
-                        tas.ForceJoinBattle(u.Name, slave.tas.MyBattleID);
+                        tas.ForceJoinBattle(s.Name, slave.tas.MyBattleID);
                     }
-                    Thread.Sleep(4000);
-                    QuickMatchSlaveStartGame(slave, team);
+                }
+                Thread.Sleep(4000);
+                QuickMatchSlaveStartGame(slave, team);
 
-                    ah.ComMap(TasSayEventArgs.Default, new string[] { });
-                }).Start();
-
-
-            };
+                ah.ComMap(TasSayEventArgs.Default, new string[] { });
+            }).Start();
             slave.Start();
         }
 
         List<List<UserBattleStatus>> BuildTeams()
         {
-            var orderedUsers = tas.MyBattle.Users.Where(x => x.SyncStatus == SyncStatuses.Synced && x.Name != tas.MyBattle.Founder.Name).OrderBy(x => x.JoinTime).ToList();
+            var orderedUsers = tas.MyBattle.Users.Where(x => x.SyncStatus == SyncStatuses.Synced && x.Name != tas.MyBattle.Founder.Name && !x.IsSpectator).OrderBy(x => x.JoinTime).ToList();
             if (count < ah.config.MinToJuggle) return null; // not enough people
 
 
@@ -241,7 +250,7 @@ namespace Springie.autohost
 
         void UpdateCount()
         {
-            count = tas.MyBattle.Users.Count(x => x.SyncStatus == SyncStatuses.Synced && x.Name != tas.MyBattle.Founder.Name);
+            count = tas.MyBattle.Users.Count(x => x.SyncStatus == SyncStatuses.Synced && x.Name != tas.MyBattle.Founder.Name && !x.IsSpectator);
         }
 
         public static void QuickMatchSlaveStartGame(AutoHost ah, List<UserBattleStatus> team)

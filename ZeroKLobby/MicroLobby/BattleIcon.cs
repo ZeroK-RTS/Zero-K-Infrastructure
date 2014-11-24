@@ -191,7 +191,6 @@ namespace ZeroKLobby.MicroLobby
         void RenderPlayers()
         {
             int currentPlayers = Battle.NonSpectatorCount;
-            if (Battle.IsQueue) currentPlayers = Battle.Users.Count - 1; 
             int maxPlayers = Battle.MaxPlayers;
 
             int friends = 0;

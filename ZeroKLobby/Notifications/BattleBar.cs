@@ -117,10 +117,6 @@ namespace ZeroKLobby.Notifications
                         radioPlay.Visible = false;
                         radioSpec.Visible = false;
                         barContainer.btnDetail.Visible = false;
-                        //lbQueue.Text = "You will play next game\nQueue needs 3 more people";
-                        //lbQueue.Text = "Position 6 of 4, will play next game\nQueue needs 3 more people";
-
-                        //lbQueue.Text = "Queue starting in 120s";
                     }
                     else
                     {
