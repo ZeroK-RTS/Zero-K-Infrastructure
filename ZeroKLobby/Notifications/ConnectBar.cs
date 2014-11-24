@@ -43,7 +43,7 @@ namespace ZeroKLobby.Notifications
 					canRegister = false;
 					Program.NotifySection.AddBar(this);
 					lbState.Text = "Connected, logging in ...";
-					if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) LoginWithDialog("Please enter your name and password", false);
+                    if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) LoginWithDialog("Please enter your name and password", true);
 					else client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
 				};
 

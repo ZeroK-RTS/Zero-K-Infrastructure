@@ -27,7 +27,9 @@ namespace LobbyClient
             SpringieLevel,
             ZkAdmin,
             BanMute,
-            BanLobby
+            BanLobby,
+            SteamID,
+            DisplayName
         }
 
         readonly Action<string, Dictionary<string, string>> notifyUserExtensionChange = (s, dictionary) => { };

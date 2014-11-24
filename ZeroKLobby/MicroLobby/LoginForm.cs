@@ -26,13 +26,24 @@ namespace ZeroKLobby.MicroLobby
 
 		public LoginForm(bool register = false)
 		{
-			InitializeComponent();
-            if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) && string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword) || register) tabControl1.SelectedTab = tabPage2; // register as primary no data about pass and name
-			tbLogin.Text = Program.Conf.LobbyPlayerName;
+            InitializeComponent();
+            if ((string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) && string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) || register) tabControl1.SelectedTab = tabPage2; // register as primary no data about pass and name
+            tbLogin.Text = Program.Conf.LobbyPlayerName;
+		    Program.SteamHandler.SteamApi.SteamOnline += SteamApiOnSteamOnline;
+            rgName.Text = Program.SteamHandler.SteamName;
 			tbPassword.Text = Program.Conf.LobbyPlayerPassword;
 		}
 
-		void btnCancel_Click(object sender, EventArgs e)
+	    void SteamApiOnSteamOnline()
+	    {
+	        Program.MainWindow.InvokeFunc(() =>
+	        {
+	            rgName.Text = Program.SteamHandler.SteamName;
+	            Program.SteamHandler.SteamApi.SteamOnline -= SteamApiOnSteamOnline;
+	        });
+	    }
+
+	    void btnCancel_Click(object sender, EventArgs e)
 		{
 			DialogResult = DialogResult.Cancel;
 			Close();

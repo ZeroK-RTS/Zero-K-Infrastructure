@@ -73,6 +73,7 @@
       <Column Name="ForumTotalDownvotes" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="VotesAvailable" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="SteamID" Type="System.Decimal" DbType="decimal" CanBeNull="true" />
+      <Column Name="SteamName" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
       <Column Name="PwAttackPoints" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="LastLobbyVersionCheck" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Column Name="[Language]" Member="Language" Type="System.String" DbType="nvarchar(2)" CanBeNull="true" />
@@ -1046,11 +1047,11 @@
   </Table>
   <Table Name="dbo.AbuseReport" Member="AbuseReports">
     <Type Name="AbuseReport">
+      <Column Name="ReporterAccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="[Time]" Member="Time" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
       <Column Name="Text" Type="System.String" DbType="nvarchar(max) NOT NULL" CanBeNull="false" />
       <Column Name="AbuseReportID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="ReporterAccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Account_AbuseReport" Member="AccountByAccountID" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
       <Association Name="Account_AbuseReport1" Member="AccountByReporterAccountID" ThisKey="ReporterAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>

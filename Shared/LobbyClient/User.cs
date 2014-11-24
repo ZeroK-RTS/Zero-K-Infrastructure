@@ -24,6 +24,8 @@ namespace LobbyClient
         public int LobbyID;
         public int SpringieLevel = 1;
 
+        public ulong? SteamID;
+
         string country;
 		
 		//This is only called once
@@ -81,6 +83,8 @@ namespace LobbyClient
         public int Rank { get; protected set; }
         public bool IsZeroKAdmin { get; protected set; }
 
+        public string DisplayName { get; protected set; }
+
         public User Clone() {
             return (User)MemberwiseClone();
         }
@@ -121,6 +125,10 @@ namespace LobbyClient
             if (GetExtension(ProtocolExtension.Keys.ZkAdmin) == "1") IsZeroKAdmin = true;
             if (GetExtension(ProtocolExtension.Keys.BanMute) == "1") BanMute = true;
             if (GetExtension(ProtocolExtension.Keys.BanLobby) == "1") BanLobby = true;
+
+            if (!string.IsNullOrEmpty(GetExtension(ProtocolExtension.Keys.SteamID))) SteamID = ulong.Parse(GetExtension(ProtocolExtension.Keys.SteamID));
+            DisplayName = GetExtension(ProtocolExtension.Keys.DisplayName);
+
         }
 
         public int ToInt() {

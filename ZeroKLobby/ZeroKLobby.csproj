@@ -489,6 +489,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ZklResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ZklSteamHandler.cs" />
     <EmbeddedResource Include="Buttons.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Buttons.Designer.cs</LastGenOutput>
@@ -1661,9 +1662,7 @@
     <EmbeddedResource Include="NativeLibs\steam_api.dll" />
     <EmbeddedResource Include="NativeLibs\steam_appid.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Steam\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">
   </Target>

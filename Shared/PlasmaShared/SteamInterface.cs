@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Timers;
 using ServiceStack.Text;
@@ -9,15 +10,20 @@ using Timer = System.Threading.Timer;
 
 namespace PlasmaShared
 {
-    public class Steam
+    public class SteamInterface: IDisposable
     {
         int tickCounter;
-        bool isOnline;
+        public bool IsOnline { get; private set; }
         Timer timer;
 
         string webApiKey;
         int steamAppID;
-        public Steam(int appID, string webApiKey = null)
+
+        public event Action SteamOnline = () => { };
+        public event Action SteamOffline = () => { };
+
+
+        public SteamInterface(int appID, string webApiKey = null)
         {
             steamAppID = appID;
             this.webApiKey = webApiKey;
@@ -25,26 +31,39 @@ namespace PlasmaShared
 
         public void ConnectToSteam()
         {
-            if (SteamAPI.Init() && SteamAPI.IsSteamRunning())
-            {
-                isOnline = true;
-            }
-
+            TimerOnElapsed(this);
             timer = new Timer(TimerOnElapsed, null, 100, 100);
         }
 
 
         void TimerOnElapsed(object sender)
         {
-            if (tickCounter % 600 == 0)
+            try
             {
-                if (!isOnline)
+                if (tickCounter%600 == 0)
                 {
-                    if (SteamAPI.Init() && SteamAPI.IsSteamRunning()) isOnline = true;
-                    else isOnline = false;
+                    if (!IsOnline)
+                    {
+                        if (SteamAPI.Init() && SteamAPI.IsSteamRunning())
+                        {
+                            IsOnline = true;
+                            SteamOnline();
+                        }
+                        else
+                        {
+                            IsOnline = false;
+                            SteamOffline();
+                        }
+                    }
                 }
+                if (IsOnline) SteamAPI.RunCallbacks();
             }
-            if (isOnline) SteamAPI.RunCallbacks();
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.ToString());
+            }
+
+            tickCounter++;
         }
 
         public byte[] GetClientAuthToken()
@@ -131,6 +150,12 @@ namespace PlasmaShared
                     public ulong ownersteamid { get; set; }
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            if (timer != null) timer.Dispose();
+            if (IsOnline) SteamAPI.Shutdown();
         }
     }
 }

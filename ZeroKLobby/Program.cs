@@ -42,6 +42,8 @@ namespace ZeroKLobby
         public static SelfUpdater SelfUpdater { get; set; }
         public static ServerImagesHandler ServerImages { get; private set; }
         public static SpringPaths SpringPaths { get; private set; }
+
+        public static ZklSteamHandler SteamHandler { get; private set; }
         public static SpringScanner SpringScanner { get; private set; }
         public static SpringieServer SpringieServer = new SpringieServer();
         public static string[] StartupArgs;
@@ -132,9 +134,7 @@ namespace ZeroKLobby
                     MessageBox.Show("Move failed, please copy Zero-K.exe to a writable folder");
                 }
 
-                EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.CSteamworks.dll", "CSteamworks.dll");
-                EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.steam_api.dll", "steam_api.dll");
-                EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.steam_appid.txt", "steam_appid.txt");
+                
 
 
                 if (Conf.IsFirstRun) {
@@ -299,6 +299,10 @@ namespace ZeroKLobby
                     //stopWatch.Stop(); TimeSpan ts = stopWatch.Elapsed; string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
                     //Trace.TraceInformation("1 Runtime {0}", elapsedTime);
                 
+
+                SteamHandler = new ZklSteamHandler(TasClient);
+                SteamHandler.Connect();
+
                 Application.Run(MainWindow);
                 ShutDown();
             } catch (Exception ex) {

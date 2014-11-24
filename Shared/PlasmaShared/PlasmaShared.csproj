@@ -199,7 +199,7 @@
     <Compile Include="SpringPaths.cs" />
     <Compile Include="SpringScanner.cs" />
     <Compile Include="CsvTable.cs" />
-    <Compile Include="Steam.cs" />
+    <Compile Include="SteamInterface.cs" />
     <Compile Include="UnitSyncLib\Ai.cs" />
     <Compile Include="UnitSyncLib\AiInfoPair.cs" />
     <Compile Include="UnitSyncLib\DependencyMissingException.cs" />
