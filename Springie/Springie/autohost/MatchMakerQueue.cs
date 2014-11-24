@@ -127,7 +127,7 @@ namespace Springie.autohost
 
                         foreach (var t in teams)
                         {
-                            StartSlave(t, spectators);
+                            CreateSlave(t, spectators);
                             spectators = null;
                         }
                     }
@@ -138,7 +138,7 @@ namespace Springie.autohost
             timer.Start();
         }
 
-        void StartSlave(List<UserBattleStatus> team, List<UserBattleStatus>  spectators)
+        void CreateSlave(List<UserBattleStatus> team, List<UserBattleStatus> spectators)
         {
             var eloTopTwo = team.OrderByDescending(x => x.LobbyUser.EffectiveElo).Take(2).ToList();
             var title = string.Format("QuickMatch {0} {1} vs {2}", tas.MyBattle.QueueName, eloTopTwo[0], eloTopTwo[1]);
@@ -170,7 +170,7 @@ namespace Springie.autohost
                     }
                 }
                 Thread.Sleep(4000);
-                QuickMatchSlaveStartGame(slave, team);
+                SlaveStartSpring(slave, team);
 
                 ah.ComMap(TasSayEventArgs.Default, new string[] { });
             }).Start();
@@ -193,14 +193,16 @@ namespace Springie.autohost
                     var group = new List<UserBattleStatus>();
                     group.Add(pivot);
                     foreach (var candidate in
+
                         orderedUsers.Where(
-                            x => !group.Contains(x) && Math.Abs(pivot.LobbyUser.EffectiveElo - x.LobbyUser.EffectiveElo) <= ah.config.MaxEloDifference)
+                            x => !group.Contains(x) && Math.Abs(pivot.LobbyUser.EffectiveElo - x.LobbyUser.EffectiveElo) <= ah.config.MaxEloDifference).OrderBy(x => Math.Abs(pivot.LobbyUser.EffectiveElo - x.LobbyUser.EffectiveElo))
                         )
                     {
                         group.Add(candidate);
                         if (group.Count >= ah.config.MaxToJuggle) break;
                     }
 
+                    
                     if (group.Count >= ah.config.MinToJuggle)
                     {
                         ret.Add(group);
@@ -253,7 +255,7 @@ namespace Springie.autohost
             count = tas.MyBattle.Users.Count(x => x.SyncStatus == SyncStatuses.Synced && x.Name != tas.MyBattle.Founder.Name && !x.IsSpectator);
         }
 
-        public static void QuickMatchSlaveStartGame(AutoHost ah, List<UserBattleStatus> team)
+        static void SlaveStartSpring(AutoHost ah, List<UserBattleStatus> team)
         {
             var serv = new SpringieService();
 
