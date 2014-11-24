@@ -80,8 +80,11 @@ namespace LobbyClient
                     { Keys.Faction.ToString(), acc.Faction != null ? acc.Faction.Shortcut : "" },
                     { Keys.Clan.ToString(), acc.Clan != null ? acc.Clan.Shortcut : "" },
                     { Keys.Avatar.ToString(), acc.Avatar },
-                    { Keys.SpringieLevel.ToString(), acc.GetEffectiveSpringieLevel().ToString() }
+                    { Keys.SpringieLevel.ToString(), acc.GetEffectiveSpringieLevel().ToString() },
                 };
+                if (acc.SteamID != null) data.Add(Keys.SteamID.ToString(), acc.SteamID.ToString());
+                if (!string.IsNullOrEmpty(acc.SteamName) && acc.SteamName != acc.Name) data.Add(Keys.DisplayName.ToString(), acc.SteamName);
+
                 if (acc.IsZeroKAdmin) data.Add(Keys.ZkAdmin.ToString(), "1");
 
                 if (acc.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanMute)) data.Add(Keys.BanMute.ToString(), "1");

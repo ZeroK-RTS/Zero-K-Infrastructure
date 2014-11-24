@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Timers;
+using PlasmaShared.ContentService;
 using ServiceStack.Text;
 using Steamworks;
 using ZkData;
@@ -10,7 +12,7 @@ using Timer = System.Threading.Timer;
 
 namespace PlasmaShared
 {
-    public class SteamInterface: IDisposable
+    public class SteamInterface : IDisposable
     {
         int tickCounter;
         public bool IsOnline { get; private set; }
@@ -40,7 +42,7 @@ namespace PlasmaShared
         {
             try
             {
-                if (tickCounter%600 == 0)
+                if (tickCounter % 600 == 0)
                 {
                     if (!IsOnline)
                     {
@@ -120,6 +122,40 @@ namespace PlasmaShared
         public string GetClientAuthTokenHex()
         {
             return GetClientAuthToken().ToHex();
+        }
+
+
+        public PlayerInfo WebGetPlayerInfo(ulong steamID)
+        {
+            var wc = new WebClient();
+            var ret =
+                wc.DownloadString(
+                    string.Format("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={0}&steamids={1}", webApiKey, steamID));
+
+            var response = JsonSerializer.DeserializeFromString<PlayerSummariesResposne>(ret);
+            return response.response.players.FirstOrDefault();
+        }
+
+        protected class PlayerSummariesResposne
+        {
+            public Response response { get; set; }
+
+            public class Response
+            {
+                public List<PlayerInfo> players { get; set; }
+            }
+        }
+
+        public class PlayerInfo
+        {
+            public long steamid { get; set; }
+            public string personaname { get; set; }
+            public long lastlogoff { get; set; }
+            public string profileurl { get; set; }
+            public string avatar { get; set; }
+            public string avatarmedium { get; set; }
+            public string avatarfull { get; set; }
+            public long primaryclanid { get; set; }
         }
 
         public ulong WebValidateAuthToken(string hexToken)

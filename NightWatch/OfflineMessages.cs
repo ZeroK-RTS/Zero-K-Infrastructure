@@ -25,11 +25,17 @@ namespace NightWatch
 			client.Said += client_Said;
 			client.LoginAccepted += client_LoginAccepted;
 			client.ChannelUserAdded += client_ChannelUserAdded;
-                using (var db = new ZkDataContext())
-                {
-                    db.LobbyMessages.DeleteAllOnSubmit(db.LobbyMessages.Where(x => x.Created < DateTime.UtcNow.AddDays(-14)).ToList());
-                    db.SubmitChanges();
-                }
+		    try
+		    {
+		        using (var db = new ZkDataContext())
+		        {
+		            db.ExecuteCommand("DELETE FROM LobbyMessages WHERE Created < {0}", DateTime.UtcNow.AddDays(-14));
+		        }
+		    }
+		    catch (Exception ex)
+		    {
+		        Trace.TraceError(ex.ToString());
+		    }
 		}
 
 		void client_ChannelUserAdded(object sender, TasEventArgs e)

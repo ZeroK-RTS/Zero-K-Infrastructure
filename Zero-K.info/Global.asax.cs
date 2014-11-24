@@ -88,7 +88,6 @@ namespace ZeroKWeb
             Global.Nightwatch.Start();
 #endif
 
-
             AreaRegistration.RegisterAllAreas();
             RegisterRoutes(RouteTable.Routes);
         }

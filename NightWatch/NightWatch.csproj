@@ -82,6 +82,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
@@ -92,6 +93,7 @@
     <Compile Include="AuthService.cs" />
     <Compile Include="AdminCommands.cs" />
     <Compile Include="NightwatchTraceListener.cs" />
+    <Compile Include="NwSteamHandler.cs" />
     <Compile Include="ScheduledEvents.cs" />
     <Compile Include="MumbleMover.cs" />
     <Compile Include="Nightwatch.cs" />

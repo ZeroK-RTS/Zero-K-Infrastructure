@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -43,6 +44,8 @@ namespace CaTracker
         public AuthService Auth { get; private set; }
 
         public MumbleMover MumbleMover { get; private set; }
+
+        public NwSteamHandler SteamHandler { get; private set; }
 
         public List<Battle> GetPlanetWarsBattles() {
             if (tas==null || tas.ExistingBattles == null) return new List<Battle>();
@@ -88,6 +91,7 @@ namespace CaTracker
             offlineMessages = new OfflineMessages(tas);
             playerMover = new PlayerMover(tas);
             MumbleMover = new MumbleMover(tas);
+            SteamHandler = new NwSteamHandler(tas, ConfigurationManager.AppSettings["SteamWebApiKey"]);
 
 		    PayPalInterface = new PayPalInterface();
 		    PayPalInterface.Error += (e) =>
