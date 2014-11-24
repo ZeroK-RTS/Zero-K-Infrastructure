@@ -142,6 +142,7 @@ namespace Springie.autohost
         {
             var eloTopTwo = team.OrderByDescending(x => x.LobbyUser.EffectiveElo).Take(2).ToList();
             var title = string.Format("QuickMatch {0} {1} vs {2}", tas.MyBattle.QueueName, eloTopTwo[0], eloTopTwo[1]);
+            var exited = false;
 
             var slave = Program.main.SpawnAutoHost(ah.config,
                 new SpawnConfig(tas.UserName)
@@ -149,11 +150,23 @@ namespace Springie.autohost
                     Engine = tas.MyBattle.EngineVersion,
                     Mod = tas.MyBattle.ModName,
                     Map = tas.MyBattle.MapName,
-                    Title = title
+                    Title = title,
+                    MaxPlayers = ah.config.MaxPlayers
                 });
 
-            slave.spring.SpringExited += (sender, args) => Program.main.StopAutohost(slave); // remove after spring exits
+            slave.spring.SpringExited += (sender, args) =>
+            {
+                exited = true;
+                CheckAutoCloseSlave(exited, slave);
+            }; // remove after spring exits
             slave.tas.MyBattleStarted += (sender, args) => slave.tas.ChangeLock(true); // lock running game
+
+            slave.tas.BattleUserLeft += (sender, args) =>
+            {
+                if (args.BattleID == slave.tas.MyBattleID) CheckAutoCloseSlave(exited, slave);
+            };
+
+            slave.tas.BattleUserStatusChanged += (sender, args) => CheckAutoCloseSlave(exited, slave);
 
             slave.tas.BattleOpened += (sender, args) => new Thread(() =>
             {
@@ -176,6 +189,16 @@ namespace Springie.autohost
             }).Start();
             slave.Start();
         }
+
+        void CheckAutoCloseSlave(bool exited, AutoHost slave)
+        {
+            if (exited && slave.tas.MyBattle.NonSpectatorCount < ah.config.MinToJuggle)
+            {
+                foreach (var p in slave.tas.MyBattle.Users.Where(x => !x.IsSpectator && x.Name != slave.tas.MyBattle.Founder.Name)) slave.tas.ForceJoinBattle(p.Name, tas.MyBattleID);
+                Program.main.StopAutohost(slave);
+            }
+        }
+
 
         List<List<UserBattleStatus>> BuildTeams()
         {

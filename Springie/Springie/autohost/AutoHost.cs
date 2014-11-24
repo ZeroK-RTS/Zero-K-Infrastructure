@@ -655,8 +655,11 @@ namespace Springie.autohost
             
             if (!string.IsNullOrEmpty(config.BattlePassword)) password = config.BattlePassword;
 
+            int maxPlayers = config.MaxPlayers;
+
             if (SpawnConfig != null) {
                 modname = SpawnConfig.Mod;
+                if (SpawnConfig.MaxPlayers > 0) maxPlayers = SpawnConfig.MaxPlayers;
                 if (!String.IsNullOrEmpty(SpawnConfig.Map)) mapname = SpawnConfig.Map;
                 title = SpawnConfig.Title;
                 if (!String.IsNullOrEmpty(SpawnConfig.Password)) password = SpawnConfig.Password;
@@ -696,7 +699,7 @@ namespace Springie.autohost
             Map mapi = null;
             cache.GetMap(mapname, (m, x, y, z) => { mapi = m; }, (e) => { }, springPaths.SpringVersion);
             //int mint, maxt;
-            var b = new Battle(springPaths.SpringVersion, password, hostingPort, config.MaxPlayers, 0, mapi, title, hostedMod, new BattleDetails());
+            var b = new Battle(springPaths.SpringVersion, password, hostingPort, maxPlayers, 0, mapi, title, hostedMod, new BattleDetails());
             // if hole punching enabled then we use it
             if (Program.main.Config.UseHolePunching) b.Nat = Battle.NatMode.HolePunching;
             else if (Program.main.Config.GargamelMode) b.Nat = Battle.NatMode.FixedPorts;

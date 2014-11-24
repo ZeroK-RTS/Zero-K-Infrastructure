@@ -235,6 +235,7 @@ namespace Springie
         public string Engine;
         public string Handle;
         public string Map;
+        public int MaxPlayers;
 
         public SpawnConfig(string owner, Dictionary<string, string> config = null)
         {
@@ -247,6 +248,11 @@ namespace Springie
                 config.TryGetValue("engine", out Engine);
                 config.TryGetValue("handle", out Handle);
                 config.TryGetValue("map", out Map);
+                string mp;
+                if (config.TryGetValue("maxplayers", out mp))
+                {
+                    int.TryParse(mp, out MaxPlayers);
+                }
             }
         }
 
