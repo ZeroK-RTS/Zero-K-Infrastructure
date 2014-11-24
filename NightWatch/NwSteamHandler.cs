@@ -28,14 +28,17 @@ namespace NightWatch
                         {
                             var steamID = steamApi.WebValidateAuthToken(token);
                             var info = steamApi.WebGetPlayerInfo(steamID);
-                            
+
                             using (var db = new ZkDataContext())
                             {
                                 var acc = Account.AccountByLobbyID(db, user.LobbyID);
                                 acc.SteamID = steamID;
                                 acc.SteamName = info.personaname;
                                 db.SubmitAndMergeChanges();
+                                tas.Extensions.PublishAccountData(acc);
                             }
+
+                            
 
 
                         });

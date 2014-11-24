@@ -16,6 +16,8 @@ namespace ZeroKLobby
         public string SteamName { get; private set; }
         public ulong SteamID { get; private set; }
 
+        List<ulong> friends = new List<ulong>();
+
         public ZklSteamHandler(TasClient tas)
         {
             this.tas = tas;
@@ -26,14 +28,33 @@ namespace ZeroKLobby
             SteamApi.SteamOnline += () =>
             {
                 SteamName = SteamApi.GetMyName();
+                friends = SteamApi.GetFriends();
                 SteamID = SteamApi.GetSteamID();
-                if (tas.IsLoggedIn && tas.MyUser.EffectiveElo != 0 && tas.MyUser.SteamID == null) tas.Say(TasClient.SayPlace.User, GlobalConst.NightwatchName, string.Format("!linksteam {0}", SteamApi.GetClientAuthTokenHex()), false);
+                if (tas.IsLoggedIn && tas.MyUser!=null && tas.MyUser.EffectiveElo != 0) OnLoggedToBothSteamAndTas();
             };
 
-            tas.MyExtensionsChanged += (sender, args) =>
+            tas.MyExtensionsChanged += (sender, args) => { if (SteamApi.IsOnline && SteamID != 0) OnLoggedToBothSteamAndTas(); };
+            tas.UserExtensionsChanged += (sender, args) =>
             {
-                if (SteamApi.IsOnline && args.Data.SteamID == null) tas.Say(TasClient.SayPlace.User, GlobalConst.NightwatchName, string.Format("!linksteam {0}", SteamApi.GetClientAuthTokenHex()), false);
+                if (args.Data.SteamID != null && SteamID != 0 &&  friends.Contains(args.Data.SteamID.Value))
+                {
+                    AddFriend(args.Data.Name);
+                }
             };
+        }
+
+        static void AddFriend(string name)
+        {
+            Program.MainWindow.InvokeFunc(() => Program.FriendManager.AddFriend(name));
+        }
+
+        void OnLoggedToBothSteamAndTas()
+        {
+            if (tas.MyUser.SteamID == null) tas.Say(TasClient.SayPlace.User, GlobalConst.NightwatchName, string.Format("!linksteam {0}", SteamApi.GetClientAuthTokenHex()), false);
+            foreach (var u in tas.ExistingUsers.Values.ToList().Where(x => x.SteamID != null && friends.Contains(x.SteamID.Value)))
+            {
+                AddFriend(u.Name);
+            }
         }
 
         public void Connect()
