@@ -361,6 +361,7 @@ namespace ZeroKLobby
                 if (ToolTip != null) ToolTip.Dispose();
                 if (Downloader != null) Downloader.Dispose();
                 if (SpringScanner != null) SpringScanner.Dispose();
+                if (SteamHandler != null) SteamHandler.Dispose();
             } catch {}
         }
 

@@ -656,6 +656,8 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\add.png" />
+    <EmbeddedResource Include="NativeLibs\libCSteamworks.so" />
+    <EmbeddedResource Include="NativeLibs\libsteam_api.so" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest">
       <SubType>Designer</SubType>

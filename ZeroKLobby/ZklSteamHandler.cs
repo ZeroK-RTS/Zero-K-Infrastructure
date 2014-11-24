@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using LobbyClient;
@@ -8,7 +9,7 @@ using ZkData;
 
 namespace ZeroKLobby
 {
-    public class ZklSteamHandler
+    public class ZklSteamHandler:IDisposable
     {
         TasClient tas;
         public SteamInterface SteamApi { get; private set; }
@@ -21,9 +22,18 @@ namespace ZeroKLobby
         public ZklSteamHandler(TasClient tas)
         {
             this.tas = tas;
-            EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.CSteamworks.dll", "CSteamworks.dll");
-            EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.steam_api.dll", "steam_api.dll");
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+            {
+                EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.libCSteamworks.so", "libCSteamworks.so");
+                EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.libsteam_api.so", "libsteam_api.so");
+            }
+            else
+            {
+                EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.CSteamworks.dll", "CSteamworks.dll");
+                EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.steam_api.dll", "steam_api.dll");
+            }
             EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.steam_appid.txt", "steam_appid.txt");
+
             SteamApi = new SteamInterface(GlobalConst.SteamAppID);
             SteamApi.SteamOnline += () =>
             {
@@ -59,7 +69,27 @@ namespace ZeroKLobby
 
         public void Connect()
         {
-            SteamApi.ConnectToSteam();
+            try
+            {
+                SteamApi.ConnectToSteam();
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.ToString());
+            }
+        }
+
+        public void Dispose()
+        {
+            if (SteamApi != null)
+                try
+                {
+                    SteamApi.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError(ex.ToString());
+                }
         }
     }
 }
