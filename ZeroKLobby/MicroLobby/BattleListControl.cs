@@ -430,6 +430,7 @@ namespace ZeroKLobby.MicroLobby
         void Sort()
         {
             IOrderedEnumerable<BattleIcon> ret = view.OrderBy(x=>x.Battle.IsInGame);
+            ret = ret.OrderByDescending(x => x.Battle.IsSpringieManaged);
             if (sortByPlayers) ret = ret.ThenByDescending(bi => bi.Battle.NonSpectatorCount);
             ret = ret.ThenBy(x => x.Battle.Title);
             view = ret.ToList();
