@@ -259,9 +259,7 @@
           <s:enumeration value="GameFFA" />
           <s:enumeration value="GameChickens" />
           <s:enumeration value="Teams" />
-          <s:enumeration value="SmallTeams" />
-          <s:enumeration value="LowSkill" />
-          <s:enumeration value="HighSkill" />
+          <s:enumeration value="Generic" />
         </s:restriction>
       </s:simpleType>
       <s:complexType name="ArrayOfCommandLevel">

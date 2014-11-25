@@ -1012,13 +1012,7 @@ namespace PlasmaShared.SpringieInterfaceReference {
         Teams,
         
         /// <remarks/>
-        SmallTeams,
-        
-        /// <remarks/>
-        LowSkill,
-        
-        /// <remarks/>
-        HighSkill,
+        Generic,
     }
     
     /// <remarks/>
