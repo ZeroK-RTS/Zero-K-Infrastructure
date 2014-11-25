@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using LobbyClient;
 using PlasmaShared;
 using ZkData;
@@ -26,6 +27,7 @@ namespace NightWatch
 
                         Utils.StartAsync(() =>
                         {
+                            Thread.Sleep(2000); // steam is slow to get the ticket from client .. wont verify if its checked too soon
                             var steamID = steamApi.WebValidateAuthToken(token);
                             var info = steamApi.WebGetPlayerInfo(steamID);
 
@@ -37,10 +39,6 @@ namespace NightWatch
                                 db.SubmitAndMergeChanges();
                                 tas.Extensions.PublishAccountData(acc);
                             }
-
-                            
-
-
                         });
                     }
 
