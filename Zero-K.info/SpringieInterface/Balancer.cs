@@ -63,7 +63,7 @@ namespace ZeroKWeb.SpringieInterface
             }
 
             
-            if (clanWise == null && (config.AutohostMode == AutohostMode.SmallTeams || config.AutohostMode == AutohostMode.Teams || config.AutohostMode == AutohostMode.LowSkill || config.AutohostMode == AutohostMode.HighSkill)) clanWise = true;
+            if (clanWise == null && (config.AutohostMode == AutohostMode.Generic || config.AutohostMode == AutohostMode.Teams)) clanWise = true;
 
             var res = PerformBalance(context, isGameStart, allyCount, clanWise, config, playerCount);
 
@@ -373,14 +373,12 @@ namespace ZeroKWeb.SpringieInterface
                         if (!isGameStart) res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == true ? BalanceMode.ClanWise : BalanceMode.Normal, context);
                     }
                         break;
-                    case AutohostMode.HighSkill:
-                    case AutohostMode.LowSkill:
+                    case AutohostMode.Generic:
                     case AutohostMode.Teams:
-                    case AutohostMode.SmallTeams:
                     {
                         var map = db.Resources.Single(x => x.InternalName == context.Map);
-                        res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
-                        res.DeleteBots = mode == AutohostMode.SmallTeams || mode == AutohostMode.Teams;
+                        res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams ?? 2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
+                        res.DeleteBots = mode == AutohostMode.Teams;
                         return res;
                     }
                     case AutohostMode.Game1v1:
