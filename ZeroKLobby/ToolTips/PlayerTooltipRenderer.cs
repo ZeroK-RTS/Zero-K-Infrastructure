@@ -90,6 +90,12 @@ namespace ZeroKLobby
                 drawString("Friend");
                 newLine();
             }
+            if (user.SteamID != null)
+            {
+                drawImage(ZklResources.steam, 16, 16);
+                drawString(string.Format("Steam name: {0}", user.DisplayName ?? user.Name));
+                newLine();
+            }
             if (user.IsZkLobbyUser)
             {
                 drawImage(ZklResources.ZK_logo_square, 16, 16);

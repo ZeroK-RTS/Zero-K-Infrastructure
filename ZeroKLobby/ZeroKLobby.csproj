@@ -1664,7 +1664,9 @@
     <EmbeddedResource Include="NativeLibs\steam_api.dll" />
     <EmbeddedResource Include="NativeLibs\steam_appid.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\steam.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">
   </Target>
