@@ -41,6 +41,7 @@ namespace ZeroKLobby
                 friends = SteamApi.GetFriends();
                 SteamID = SteamApi.GetSteamID();
                 if (tas.IsLoggedIn && tas.MyUser!=null && tas.MyUser.EffectiveElo != 0) OnLoggedToBothSteamAndTas();
+
             };
 
             tas.MyExtensionsChanged += (sender, args) => { if (SteamApi.IsOnline && SteamID != 0) OnLoggedToBothSteamAndTas(); };

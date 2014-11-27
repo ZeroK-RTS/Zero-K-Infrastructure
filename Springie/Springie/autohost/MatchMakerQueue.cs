@@ -192,7 +192,7 @@ namespace Springie.autohost
 
         void CheckAutoCloseSlave(bool exited, AutoHost slave)
         {
-            if (exited && slave.tas.MyBattle.NonSpectatorCount < ah.config.MinToJuggle)
+            if (exited && slave.tas.MyBattle.NonSpectatorCount < ah.config.MinToJuggle && !slave.spring.IsRunning)
             {
                 foreach (var p in slave.tas.MyBattle.Users.Where(x => !x.IsSpectator && x.Name != slave.tas.MyBattle.Founder.Name)) slave.tas.ForceJoinBattle(p.Name, tas.MyBattleID);
                 Program.main.StopAutohost(slave);
