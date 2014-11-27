@@ -22,9 +22,12 @@ namespace ZeroKLobby.MicroLobby
 
         public void AddFriend(string userName)
         {
-            if (!Friends.Contains(userName)) Program.Conf.Friends.Add(userName);
-            SaveFriends();
-            FriendAdded(this, new EventArgs<string>(userName));
+            if (!Friends.Contains(userName))
+            {
+                Program.Conf.Friends.Add(userName);
+                SaveFriends();
+                FriendAdded(this, new EventArgs<string>(userName));
+            }
         }
 
         public void RemoveFriend(string userName)
