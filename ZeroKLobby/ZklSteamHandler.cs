@@ -61,7 +61,16 @@ namespace ZeroKLobby
 
         void OnLoggedToBothSteamAndTas()
         {
-            if (tas.MyUser.SteamID == null) tas.Say(TasClient.SayPlace.User, GlobalConst.NightwatchName, string.Format("!linksteam {0}", SteamApi.GetClientAuthTokenHex()), false);
+            if (tas.MyUser.SteamID == null)
+            {
+                var token = SteamApi.GetClientAuthTokenHex();
+                if (!string.IsNullOrEmpty(token)) tas.Say(TasClient.SayPlace.User, GlobalConst.NightwatchName, string.Format("!linksteam {0}", token), false);
+                else
+                {
+                    // TODO steam running but not "purchased" -> notify user to register in steam
+
+                }
+            }
             foreach (var u in tas.ExistingUsers.Values.ToList().Where(x => x.SteamID != null && friends.Contains(x.SteamID.Value)))
             {
                 AddFriend(u.Name);
