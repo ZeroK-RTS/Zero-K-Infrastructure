@@ -85,7 +85,7 @@ namespace Springie.autohost
                                 startingFrom = DateTime.Now;
                                 scheduledStart = startingFrom.AddSeconds(initialDelay); // start in one minute
                                 starting = true;
-                                ah.ComRing(TasSayEventArgs.Default, new string[] { });
+                                foreach (var user in tas.MyBattle.Users) tas.Ring(user.Name);
                             }
                             else // postpone
                             {
