@@ -193,6 +193,32 @@ namespace PlasmaShared
             if (timer != null) timer.Dispose();
             if (IsOnline) SteamAPI.Shutdown();
         }
+
+        public void StartVoiceRecording()
+        {
+            SteamUser.StartVoiceRecording();
+        }
+
+        public bool GetVoice(bool wantCompressed, byte[] compressedBuffer,uint compressedBufferSize, out uint compressedBufferWritten, bool wantUncompressed, byte[] uncompressedBuffer, uint uncompressedBufferSize, out uint uncompressedBufferWritten, uint sampleRate)
+        {
+            if (
+                SteamUser.GetVoice(wantCompressed,
+                    compressedBuffer,
+                    compressedBufferSize,
+                    out compressedBufferWritten,
+                    wantUncompressed,
+                    uncompressedBuffer,
+                    uncompressedBufferSize,
+                    out uncompressedBufferWritten,
+                    sampleRate) == EVoiceResult.k_EVoiceResultOK) return true;
+            else return false;
+
+        }
+
+        public bool DecompressVoice(byte[] compressed, uint cbCompressed, byte[] dest, uint cbDest, out uint written, uint sampleRate)
+        {
+            return SteamUser.DecompressVoice(compressed, cbCompressed, dest, cbDest, out written, sampleRate) == EVoiceResult.k_EVoiceResultOK;
+        }
     }
 }
 
@@ -202,16 +228,16 @@ namespace PlasmaShared
                 {
                     if (SteamAPI.Init())
                     {
-                        byte[] buf = new byte[8000];
+                        byte[] compressedBuffer = new byte[8000];
 
                         var sid = SteamUser.GetSteamID();
-                        uint writ;
-                        uint ucb;
+                        uint compressedBufferWritten;
+                        uint uncompressedBufferWritten;
                         SteamUser.StartVoiceRecording();
                         //SteamFriends.ActivateGameOverlayToUser("steamid", SteamUser.GetSteamID());
                         while (true)
                         {
-                            var ret = SteamUser.GetVoice(true, buf, 8000, out writ, false, null, 0, out ucb, 0);
+                            var ret = SteamUser.GetVoice(true, compressedBuffer, 8000, out compressedBufferWritten, false, null, 0, out uncompressedBufferWritten, 0);
                             Thread.Sleep(50);
                             if (ret != EVoiceResult.k_EVoiceResultNoData) {}
 
@@ -228,7 +254,7 @@ namespace PlasmaShared
 
     }));
 
-    var ready = CallResult<HTML_BrowserReady_t>.Create((t,b) =>
+    var ready = CallResult<HTML_BrowserReady_t>.Create((t,wantCompressed) =>
     {
         var browser = t.unBrowserHandle;
         SteamHTMLSurface.SetSize(browser,800,600);
@@ -246,3 +272,49 @@ namespace PlasmaShared
     }
 
 }*/
+
+
+/*
+ * ISteamUserStats
+ * 
+name: "SetUserStatsForGame",
+version: 1,
+httpmethod: "POST",
+parameters: [
+{
+name: "key",
+type: "string",
+optional: false,
+description: "access key"
+},
+{
+name: "steamid",
+type: "uint64",
+optional: false,
+description: "SteamID of user"
+},
+{
+name: "appid",
+type: "uint32",
+optional: false,
+description: "appid of game"
+},
+{
+name: "count",
+type: "uint32",
+optional: false,
+description: "Number of stats and achievements to set a value for (name/value param pairs)"
+},
+{
+name: "name[0]",
+type: "string",
+optional: false,
+description: "Name of stat or achievement to set"
+},
+{
+name: "value[0]",
+type: "uint32",
+optional: false,
+description: "Value to set"
+}
+]*/

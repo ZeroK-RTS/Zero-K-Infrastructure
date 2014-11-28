@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using LobbyClient;
+using NAudio.Wave;
 using PlasmaShared;
 using ZkData;
 
@@ -42,6 +45,37 @@ namespace ZeroKLobby
                 SteamID = SteamApi.GetSteamID();
                 if (tas.IsLoggedIn && tas.MyUser!=null && tas.MyUser.EffectiveElo != 0) OnLoggedToBothSteamAndTas();
 
+                var na = new DirectSoundOut();
+                var prov = new BufferedWaveProvider(new WaveFormat(44100,1));
+                
+                //prov.BufferDuration = TimeSpan.FromMilliseconds(1000);
+
+                
+                na.Init(prov);
+                na.Play();
+
+                new Thread(() =>
+                {
+                    SteamApi.StartVoiceRecording();
+                    var buf = new byte[65535];
+                    var dest = new byte[65535];
+                    //SteamFriends.ActivateGameOverlayToUser("steamid", SteamUser.GetSteamID());
+                    while (true)
+                    {
+                        uint cbs;
+                        uint ubs;
+                        Thread.Sleep(100);
+                        var ret = SteamApi.GetVoice(true, buf, (uint)buf.Length, out cbs, false, null, 0, out ubs, 44100);
+                        if (ret)
+                        {
+                            uint writ;
+                            SteamApi.DecompressVoice(buf, cbs, dest, (uint)dest.Length, out writ, 44100);
+                            prov.AddSamples(dest,0,(int)writ);
+                        }
+                        
+                    }
+                    
+                }).Start();
             };
 
             tas.MyExtensionsChanged += (sender, args) => { if (SteamApi.IsOnline && SteamID != 0) OnLoggedToBothSteamAndTas(); };
@@ -52,7 +86,10 @@ namespace ZeroKLobby
                     AddFriend(args.Data.Name);
                 }
             };
+
+
         }
+
 
         static void AddFriend(string name)
         {
