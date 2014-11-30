@@ -11,11 +11,11 @@ namespace NightWatch
 {
     public class NwSteamHandler
     {
-        SteamInterface steamApi;
+        SteamWebApi steamApi;
 
         public NwSteamHandler(TasClient tas, string webApiKey)
         {
-            steamApi = new SteamInterface(GlobalConst.SteamAppID, webApiKey);
+            steamApi = new SteamWebApi(GlobalConst.SteamAppID, webApiKey);
             tas.Said += (sender, args) =>
             {
                 if (args.Place == TasSayEventArgs.Places.Normal && args.UserName != tas.UserName && args.Text.StartsWith("!linksteam"))

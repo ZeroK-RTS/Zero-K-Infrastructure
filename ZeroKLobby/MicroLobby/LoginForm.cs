@@ -29,7 +29,7 @@ namespace ZeroKLobby.MicroLobby
             InitializeComponent();
             if ((string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) && string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) || register) tabControl1.SelectedTab = tabPage2; // register as primary no data about pass and name
             tbLogin.Text = Program.Conf.LobbyPlayerName;
-		    Program.SteamHandler.SteamApi.SteamOnline += SteamApiOnSteamOnline;
+		    Program.SteamHandler.SteamHelper.SteamOnline += SteamApiOnSteamOnline;
             rgName.Text = Program.SteamHandler.SteamName;
 			tbPassword.Text = Program.Conf.LobbyPlayerPassword;
 		}
@@ -39,7 +39,7 @@ namespace ZeroKLobby.MicroLobby
 	        Program.MainWindow.InvokeFunc(() =>
 	        {
 	            rgName.Text = Program.SteamHandler.SteamName;
-	            Program.SteamHandler.SteamApi.SteamOnline -= SteamApiOnSteamOnline;
+	            Program.SteamHandler.SteamHelper.SteamOnline -= SteamApiOnSteamOnline;
 	        });
 	    }
 

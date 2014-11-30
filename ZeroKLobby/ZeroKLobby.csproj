@@ -119,6 +119,10 @@
     <Reference Include="NAudio">
       <HintPath>..\packages\NAudio.1.7.2\lib\net35\NAudio.dll</HintPath>
     </Reference>
+    <Reference Include="Steamworks.NET, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libs\Steamworks.NET.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -207,6 +211,7 @@
     <Compile Include="SelectWritableFolder.Designer.cs">
       <DependentUpon>SelectWritableFolder.cs</DependentUpon>
     </Compile>
+    <Compile Include="Steam\SteamInterface.cs" />
     <Compile Include="VoiceCommand\ChatToSpeech.cs" />
     <Compile Include="Configs.Designer.cs">
       <AutoGen>True</AutoGen>

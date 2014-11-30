@@ -8,6 +8,8 @@ using System.Threading;
 using LobbyClient;
 using NAudio.Wave;
 using PlasmaShared;
+using Steamworks;
+using ZeroKLobby.Steam;
 using ZkData;
 
 namespace ZeroKLobby
@@ -15,7 +17,7 @@ namespace ZeroKLobby
     public class ZklSteamHandler:IDisposable
     {
         TasClient tas;
-        public SteamInterface SteamApi { get; private set; }
+        public SteamClientHelper SteamHelper { get; private set; }
 
         public string SteamName { get; private set; }
         public ulong SteamID { get; private set; }
@@ -37,12 +39,12 @@ namespace ZeroKLobby
             }
             EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.steam_appid.txt", "steam_appid.txt");
 
-            SteamApi = new SteamInterface(GlobalConst.SteamAppID);
-            SteamApi.SteamOnline += () =>
+            SteamHelper = new SteamClientHelper();
+            SteamHelper.SteamOnline += () =>
             {
-                SteamName = SteamApi.GetMyName();
-                friends = SteamApi.GetFriends();
-                SteamID = SteamApi.GetSteamID();
+                SteamName = SteamHelper.GetMyName();
+                friends = SteamHelper.GetFriends();
+                SteamID = SteamHelper.GetSteamID();
                 if (tas.IsLoggedIn && tas.MyUser!=null && tas.MyUser.EffectiveElo != 0) OnLoggedToBothSteamAndTas();
 
                 var na = new DirectSoundOut();
@@ -56,7 +58,7 @@ namespace ZeroKLobby
 
                 new Thread(() =>
                 {
-                    SteamApi.StartVoiceRecording();
+                    SteamUser.StartVoiceRecording();
                     var buf = new byte[65535];
                     var dest = new byte[65535];
                     //SteamFriends.ActivateGameOverlayToUser("steamid", SteamUser.GetSteamID());
@@ -65,11 +67,23 @@ namespace ZeroKLobby
                         uint cbs;
                         uint ubs;
                         Thread.Sleep(100);
-                        var ret = SteamApi.GetVoice(true, buf, (uint)buf.Length, out cbs, false, null, 0, out ubs, 44100);
+                        bool ret1;
+                        if (
+                            SteamUser.GetVoice(true,
+                                buf,
+                                (uint)buf.Length,
+                                out cbs,
+                                false,
+                                null,
+                                0,
+                                out ubs,
+                                44100) == EVoiceResult.k_EVoiceResultOK) ret1 = true;
+                        else ret1 = false;
+                        var ret = ret1;
                         if (ret)
                         {
                             uint writ;
-                            SteamApi.DecompressVoice(buf, cbs, dest, (uint)dest.Length, out writ, 44100);
+                            bool temp = SteamUser.DecompressVoice(buf, cbs, dest, (uint)dest.Length, out writ, 44100) == EVoiceResult.k_EVoiceResultOK;
                             prov.AddSamples(dest,0,(int)writ);
                         }
                         
@@ -78,7 +92,7 @@ namespace ZeroKLobby
                 }).Start();
             };
 
-            tas.MyExtensionsChanged += (sender, args) => { if (SteamApi.IsOnline && SteamID != 0) OnLoggedToBothSteamAndTas(); };
+            tas.MyExtensionsChanged += (sender, args) => { if (SteamHelper.IsOnline && SteamID != 0) OnLoggedToBothSteamAndTas(); };
             tas.UserExtensionsChanged += (sender, args) =>
             {
                 if (args.Data.SteamID != null && SteamID != 0 &&  friends.Contains(args.Data.SteamID.Value))
@@ -100,7 +114,7 @@ namespace ZeroKLobby
         {
             if (tas.MyUser.SteamID == null)
             {
-                var token = SteamApi.GetClientAuthTokenHex();
+                var token = SteamHelper.GetClientAuthTokenHex();
                 if (!string.IsNullOrEmpty(token)) tas.Say(TasClient.SayPlace.User, GlobalConst.NightwatchName, string.Format("!linksteam {0}", token), false);
                 else
                 {
@@ -118,7 +132,7 @@ namespace ZeroKLobby
         {
             try
             {
-                SteamApi.ConnectToSteam();
+                SteamHelper.ConnectToSteam();
             }
             catch (Exception ex)
             {
@@ -128,10 +142,10 @@ namespace ZeroKLobby
 
         public void Dispose()
         {
-            if (SteamApi != null)
+            if (SteamHelper != null)
                 try
                 {
-                    SteamApi.Dispose();
+                    SteamHelper.Dispose();
                 }
                 catch (Exception ex)
                 {
