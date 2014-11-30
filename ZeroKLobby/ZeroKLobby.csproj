@@ -160,6 +160,7 @@
     <Compile Include="Controls\ZkSplitContainer.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="GlobalHook.cs" />
     <Compile Include="MicroForms\PromptForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -211,7 +212,7 @@
     <Compile Include="SelectWritableFolder.Designer.cs">
       <DependentUpon>SelectWritableFolder.cs</DependentUpon>
     </Compile>
-    <Compile Include="Steam\SteamInterface.cs" />
+    <Compile Include="Steam\SteamClientHelper.cs" />
     <Compile Include="VoiceCommand\ChatToSpeech.cs" />
     <Compile Include="Configs.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -497,7 +498,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ZklResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ZklSteamHandler.cs" />
+    <Compile Include="Steam\ZklSteamHandler.cs" />
     <EmbeddedResource Include="Buttons.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Buttons.Designer.cs</LastGenOutput>

@@ -302,8 +302,7 @@ namespace ZeroKLobby
 
                 SteamHandler = new ZklSteamHandler(TasClient);
                 SteamHandler.Connect();
-
-
+                
 
                 Application.Run(MainWindow);
                 ShutDown();
