@@ -11,7 +11,7 @@ namespace ZeroKLobby
     public static class GlobalHook
     {
         const int WH_KEYBOARD_LL = 13;
-        static readonly IntPtr WM_KEYDOWN = new IntPtr(0x100);
+        static readonly IntPtr WM_KEYDOWN = (IntPtr)0x100;
         static readonly IntPtr WM_KEYUP = (IntPtr)0x101;
 
         static readonly Dictionary<Keys, HookHandler> handlers = new Dictionary<Keys, HookHandler>();

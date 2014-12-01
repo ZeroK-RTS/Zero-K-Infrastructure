@@ -213,6 +213,7 @@
       <DependentUpon>SelectWritableFolder.cs</DependentUpon>
     </Compile>
     <Compile Include="Steam\SteamClientHelper.cs" />
+    <Compile Include="Steam\SteamVoiceSystem.cs" />
     <Compile Include="VoiceCommand\ChatToSpeech.cs" />
     <Compile Include="Configs.Designer.cs">
       <AutoGen>True</AutoGen>
