@@ -22,7 +22,11 @@ namespace ZeroKLobby
         public void AddListenerSteamID(ulong steamID)
         {
             var cSteamId = new CSteamID(steamID);
-            if (cSteamId != mySteamID) targetSteamIDs.TryAdd(cSteamId, true);
+            if (cSteamId != mySteamID)
+            {
+                targetSteamIDs.TryAdd(cSteamId, true);
+                SteamNetworking.AcceptP2PSessionWithUser(cSteamId);
+            }
         }
 
 
@@ -37,6 +41,7 @@ namespace ZeroKLobby
             if (isInitialized) return;
             isInitialized = true;
 
+            SteamNetworking.AllowP2PPacketRelay(true);
             RemoveListenerSteamID(mySteamID);
             this.mySteamID = new CSteamID(mySteamID);
             newConnectionCallback = Callback<P2PSessionRequest_t>.Create(t => SteamNetworking.AcceptP2PSessionWithUser(t.m_steamIDRemote)); // default accept all
@@ -80,13 +85,22 @@ namespace ZeroKLobby
             uint networkSize;
             var networkBuffer = new byte[8000];
             var decompressBuffer = new byte[20000];
-            while (SteamNetworking.IsP2PPacketAvailable(out networkSize))
+            while (true)
             {
-                CSteamID remotUSer;
-                if (SteamNetworking.ReadP2PPacket(networkBuffer, (uint)networkBuffer.Length, out networkSize, out remotUSer))
+                if (SteamNetworking.IsP2PPacketAvailable(out networkSize))
                 {
-                    uint decompressSize;
-                    if (SteamUser.DecompressVoice(networkBuffer, networkSize, decompressBuffer, (uint)decompressBuffer.Length, out decompressSize, 44100) == EVoiceResult.k_EVoiceResultOK) waveProvider.AddSamples(decompressBuffer, 0, (int)decompressSize);
+                    CSteamID remotUSer;
+                    if (SteamNetworking.ReadP2PPacket(networkBuffer, (uint)networkBuffer.Length, out networkSize, out remotUSer))
+                    {
+                        uint decompressSize;
+                        if (
+                            SteamUser.DecompressVoice(networkBuffer,
+                                networkSize,
+                                decompressBuffer,
+                                (uint)decompressBuffer.Length,
+                                out decompressSize,
+                                44100) == EVoiceResult.k_EVoiceResultOK) waveProvider.AddSamples(decompressBuffer, 0, (int)decompressSize);
+                    }
                 }
             }
         }
@@ -106,7 +120,7 @@ namespace ZeroKLobby
                 {
                     foreach (var t in targetSteamIDs)
                     {
-                        SteamNetworking.SendP2PPacket(t.Key, buf, cbs, EP2PSend.k_EP2PSendUnreliableNoDelay);
+                        SteamNetworking.SendP2PPacket(t.Key, buf, cbs, EP2PSend.k_EP2PSendUnreliable);
                     }
 
                 }
