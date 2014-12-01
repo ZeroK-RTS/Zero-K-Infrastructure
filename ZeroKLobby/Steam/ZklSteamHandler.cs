@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using LobbyClient;
 using PlasmaShared;
+using Steamworks;
 using ZeroKLobby.Steam;
 using ZkData;
 
@@ -46,7 +47,17 @@ namespace ZeroKLobby
             tas.MyExtensionsChanged += (sender, args) => { if (SteamHelper.IsOnline && SteamID != 0) OnLoggedToBothSteamAndTas(); };
             tas.UserExtensionsChanged += (sender, args) =>
             {
+                if (args.Data.SteamID != null) steamVoice.AddListenerSteamID(args.Data.SteamID.Value); // todo only for battle in future
                 if (args.Data.SteamID != null && SteamID != 0 && friends.Contains(args.Data.SteamID.Value)) AddFriend(args.Data.Name);
+            };
+
+            tas.UserRemoved += (sender, args) =>
+            {
+                User us;
+                if (tas.ExistingUsers.TryGetValue(args.ServerParams[0], out us) && us.SteamID.HasValue)
+                {
+                    steamVoice.RemoveListenerSteamID(us.SteamID.Value);
+                }
             };
         }
 
