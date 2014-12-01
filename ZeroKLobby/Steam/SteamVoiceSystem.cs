@@ -25,7 +25,8 @@ namespace ZeroKLobby
             if (cSteamId != mySteamID)
             {
                 targetSteamIDs.TryAdd(cSteamId, true);
-                SteamNetworking.AcceptP2PSessionWithUser(cSteamId);
+                var buf = new byte[1];
+                SteamNetworking.SendP2PPacket(cSteamId, buf, 1, EP2PSend.k_EP2PSendUnreliable); // send dummy packet to pre-establish connection
             }
         }
 
@@ -57,6 +58,7 @@ namespace ZeroKLobby
                             isRecording = true;
                             waiter.Set();
                         }
+                        return true;
                     }
                     else
                     {
@@ -66,8 +68,9 @@ namespace ZeroKLobby
                             SteamFriends.SetInGameVoiceSpeaking(new CSteamID(mySteamID), false);
                             isRecording = false;
                         }
+                        return false;
                     }
-                    return true;
+                    
                 });
 
             var na = new DirectSoundOut();
@@ -89,9 +92,11 @@ namespace ZeroKLobby
             {
                 if (SteamNetworking.IsP2PPacketAvailable(out networkSize))
                 {
-                    CSteamID remotUSer;
-                    if (SteamNetworking.ReadP2PPacket(networkBuffer, (uint)networkBuffer.Length, out networkSize, out remotUSer))
+                    CSteamID remotUSer;  
+                    
+                    if (SteamNetworking.ReadP2PPacket(networkBuffer, (uint)networkBuffer.Length, out networkSize, out remotUSer) && networkSize > 1)
                     {
+                        // read packet but process only if its bigger than 1 byte (1 byte is dummy packet)
                         uint decompressSize;
                         if (
                             SteamUser.DecompressVoice(networkBuffer,
