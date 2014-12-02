@@ -11,7 +11,6 @@ using System.Timers;
 using System.Web.Services.Description;
 using System.Xml.Serialization;
 using LobbyClient;
-using MumbleIntegration;
 using NightWatch;
 using PlasmaShared;
 using ZkData;
@@ -42,8 +41,6 @@ namespace CaTracker
         public PayPalInterface PayPalInterface { get; protected set; }
 
         public AuthService Auth { get; private set; }
-
-        public MumbleMover MumbleMover { get; private set; }
 
         public NwSteamHandler SteamHandler { get; private set; }
 
@@ -90,7 +87,6 @@ namespace CaTracker
             adminCommands = new AdminCommands(tas);
             offlineMessages = new OfflineMessages(tas);
             playerMover = new PlayerMover(tas);
-            MumbleMover = new MumbleMover(tas);
             SteamHandler = new NwSteamHandler(tas, ConfigurationManager.AppSettings["SteamWebApiKey"]);
 
 		    PayPalInterface = new PayPalInterface();

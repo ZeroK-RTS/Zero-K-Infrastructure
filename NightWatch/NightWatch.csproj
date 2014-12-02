@@ -95,7 +95,6 @@
     <Compile Include="NightwatchTraceListener.cs" />
     <Compile Include="NwSteamHandler.cs" />
     <Compile Include="ScheduledEvents.cs" />
-    <Compile Include="MumbleMover.cs" />
     <Compile Include="Nightwatch.cs" />
     <Compile Include="MainConfig.cs" />
     <Compile Include="OfflineMessages.cs" />
@@ -104,10 +103,6 @@
     <Compile Include="TopPlayers.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MumbleIntegration\MumbleIntegration.csproj">
-      <Project>{372A18CC-F59E-4720-B344-AF15F0D64B52}</Project>
-      <Name>MumbleIntegration</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Shared\LobbyClient\LobbyClient.csproj">
       <Project>{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}</Project>
       <Name>LobbyClient</Name>

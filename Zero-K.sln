@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlasmaShared", "Shared\PlasmaShared\PlasmaShared.csproj", "{B24E7FB3-A3FB-4B67-A499-721F9B34A404}"
 EndProject
@@ -40,8 +40,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{90D90F08-B8EA-4777-BF68-C3DE8DC27427}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarker", "Benchmarker\Benchmarker.csproj", "{67501A5B-B6BB-467E-85DA-22D81C40829C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MumbleIntegration", "MumbleIntegration\MumbleIntegration.csproj", "{372A18CC-F59E-4720-B344-AF15F0D64B52}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{374FB537-BEAC-4D6C-8465-259062D064D8}"
 	ProjectSection(SolutionItems) = preProject
@@ -243,16 +241,6 @@ Global
 		{67501A5B-B6BB-467E-85DA-22D81C40829C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{67501A5B-B6BB-467E-85DA-22D81C40829C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{67501A5B-B6BB-467E-85DA-22D81C40829C}.Release|x86.ActiveCfg = Release|Any CPU
-		{372A18CC-F59E-4720-B344-AF15F0D64B52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{372A18CC-F59E-4720-B344-AF15F0D64B52}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{372A18CC-F59E-4720-B344-AF15F0D64B52}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{372A18CC-F59E-4720-B344-AF15F0D64B52}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{372A18CC-F59E-4720-B344-AF15F0D64B52}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{372A18CC-F59E-4720-B344-AF15F0D64B52}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{372A18CC-F59E-4720-B344-AF15F0D64B52}.Release|Any CPU.Build.0 = Release|Any CPU
-		{372A18CC-F59E-4720-B344-AF15F0D64B52}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{372A18CC-F59E-4720-B344-AF15F0D64B52}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{372A18CC-F59E-4720-B344-AF15F0D64B52}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
