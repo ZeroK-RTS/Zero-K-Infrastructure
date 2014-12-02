@@ -15,7 +15,7 @@ namespace ZeroKLobby
         List<ulong> friends = new List<ulong>();
         readonly TasClient tas;
         public SteamClientHelper SteamHelper { get; private set; }
-        SteamVoiceSystem steamVoice = new SteamVoiceSystem();
+        public SteamVoiceSystem Voice = new SteamVoiceSystem();
 
         public ulong SteamID { get; private set; }
         public string SteamName { get; private set; }
@@ -48,7 +48,7 @@ namespace ZeroKLobby
             tas.MyExtensionsChanged += (sender, args) => { if (SteamHelper.IsOnline && SteamID != 0) OnLoggedToBothSteamAndTas(); };
             tas.UserExtensionsChanged += (sender, args) =>
             {
-                if (args.Data.SteamID != null) steamVoice.AddListenerSteamID(args.Data.SteamID.Value); // todo only for battle in future
+                if (args.Data.SteamID != null) Voice.AddListenerSteamID(args.Data.SteamID.Value); // todo only for battle in future
                 if (args.Data.SteamID != null && SteamID != 0 && friends.Contains(args.Data.SteamID.Value)) AddFriend(args.Data.Name);
             };
 
@@ -57,7 +57,7 @@ namespace ZeroKLobby
                 User us;
                 if (tas.ExistingUsers.TryGetValue(args.ServerParams[0], out us) && us.SteamID.HasValue)
                 {
-                    steamVoice.RemoveListenerSteamID(us.SteamID.Value);
+                    Voice.RemoveListenerSteamID(us.SteamID.Value);
                 }
             };
         }
@@ -103,7 +103,10 @@ namespace ZeroKLobby
                 if (!string.IsNullOrEmpty(token)) tas.Say(TasClient.SayPlace.User, GlobalConst.NightwatchName, string.Format("!linksteam {0}", token), false);
             }
             foreach (User u in tas.ExistingUsers.Values.ToList().Where(x => x.SteamID != null && friends.Contains(x.SteamID.Value))) AddFriend(u.Name);
-            if (Program.Conf.EnableVoiceChat) steamVoice.Init(SteamID);
+            if (Program.Conf.EnableVoiceChat && Environment.OSVersion.Platform != PlatformID.Unix)
+            {
+                Voice.Init(SteamID);
+            }
         }
     }
 }

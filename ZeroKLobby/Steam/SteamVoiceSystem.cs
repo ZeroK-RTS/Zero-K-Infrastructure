@@ -85,6 +85,20 @@ namespace ZeroKLobby
             }
         }
 
+        public void GetUserVoiceInfo(ulong steamID, out bool isEnabled, out bool isTalking)
+        {
+            DateTime? dt;
+            if (isInitialized && lastPacket.TryGetValue(steamID, out dt))
+            {
+                isEnabled = true;
+                isTalking = dt.HasValue;
+            } else
+            {
+                isEnabled = false;
+                isTalking = false;
+            }
+        }
+
         static void SendDummyP2PPacket(CSteamID cSteamId)
         {
             var buf = new byte[1];
@@ -149,6 +163,8 @@ namespace ZeroKLobby
                         SteamFriends.SetInGameVoiceSpeaking(new CSteamID(mySteamID), true);
                         isRecording = true;
                         talkWaiter.Set();
+                        lastPacket[mySteamID] = DateTime.Now;
+                        UserStartsTalking(mySteamID);
                     }
                     return true;
                 }
@@ -159,6 +175,8 @@ namespace ZeroKLobby
                         SteamUser.StopVoiceRecording();
                         SteamFriends.SetInGameVoiceSpeaking(new CSteamID(mySteamID), false);
                         isRecording = false;
+                        lastPacket[mySteamID] = null;
+                        UserStopsTalking(mySteamID);
                     }
                     return true;
                 }
@@ -182,6 +200,8 @@ namespace ZeroKLobby
             else new Thread(PlayingFunc).Start();
 
             foreach (var t in targetSteamIDs) SendDummyP2PPacket(t.Key);
+            lastPacket[mySteamID] = null;
+            UserVoiceEnabled(mySteamID);
         }
 
         public void RemoveListenerSteamID(ulong steamID)
@@ -226,8 +246,8 @@ namespace ZeroKLobby
                 DateTime? dt;
                 if (!lastPacket.TryGetValue(talkerSteamID, out dt))
                 {
-                    UserVoiceEnabled(talkerSteamID);
                     lastPacket.TryAdd(talkerSteamID, null);
+                    UserVoiceEnabled(talkerSteamID);
                 }
 
                 var flags = (ControlByteFlags)networkBuf[0];
@@ -241,10 +261,10 @@ namespace ZeroKLobby
                         SteamUser.DecompressVoice(inputBuffer, networkSize - 1, decompressBuffer, (uint)decompressBuffer.Length, out decompressSize,
                             sampleRate) == EVoiceResult.k_EVoiceResultOK)
                     {
+                        lastPacket[talkerSteamID] = DateTime.Now;
                         if ((flags & ControlByteFlags.IsFirst) > 0)
                         {
                             waveProvider.AddSamples(silencer, 0, silencer.Length); // add some delay to minimize jitter on first packet
-                            lastPacket[talkerSteamID] = DateTime.Now;
                             UserStartsTalking(talkerSteamID);
                         }
 
@@ -266,7 +286,7 @@ namespace ZeroKLobby
                 if (SteamAPI.IsSteamRunning() && SteamNetworking.IsP2PPacketAvailable(out networkSize))
                 {
                     CSteamID remotUSer;
-                    if (SteamNetworking.ReadP2PPacket(networkBuffer, (uint)networkBuffer.Length, out networkSize, out remotUSer) && networkSize > 1)
+                    if (SteamNetworking.ReadP2PPacket(networkBuffer, (uint)networkBuffer.Length, out networkSize, out remotUSer))
                     {
                         PlaySoundFromNetworkData(remotUSer.m_SteamID, networkBuffer, networkSize, inputBuffer, decompressBuffer);
                     }
@@ -298,6 +318,8 @@ namespace ZeroKLobby
                 uint sendLength;
                 if (SteamAPI.IsSteamRunning() && SteamUser.GetVoice(true, buf, (uint)buf.Length, out cbs, false, null, 0, out ubs, sampleRate) == EVoiceResult.k_EVoiceResultOK)
                 {
+                    lastPacket[mySteamID.m_SteamID] = DateTime.Now;
+
                     Array.Copy(buf, 0, toSend, 1, cbs);
                     sendLength = cbs + 1;
 

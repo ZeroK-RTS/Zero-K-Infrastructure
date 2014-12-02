@@ -44,6 +44,7 @@ namespace ZeroKLobby.MicroLobby
 			Program.TasClient.StartRectRemoved += (s, e) => DrawMinimap();
 			Program.ModStore.ModLoaded += ModStoreModLoaded;
 
+
 			if (Program.TasClient.MyBattle != null) foreach (var user in Program.TasClient.MyBattle.Users) AddUser(user.Name);
 			ChatLine += (s, e) => { if (Program.TasClient.IsLoggedIn) Program.TasClient.Say(TasClient.SayPlace.Battle, null, e.Data, false); };
 			playerBox.IsBattle = true;
@@ -77,8 +78,7 @@ namespace ZeroKLobby.MicroLobby
 			BattleLine(this, new EventArgs<IChatLine>(line));
 		}
 
-
-		protected override void OnLoad(EventArgs ea)
+        protected override void OnLoad(EventArgs ea)
 		{
 			base.OnLoad(ea);
 		}

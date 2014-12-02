@@ -228,6 +228,15 @@ namespace ZeroKLobby.MicroLobby
                         drawText(string.Format("Wrong alliance ({0} instead of {1}).", userStatus.AllyNumber, MissionSlot.AllyID),
                                  Color.Red,
                                  backColor);
+
+            if (user.SteamID != null) {
+                bool isEnabled;
+                bool isTalking;
+                Program.SteamHandler.Voice.GetUserVoiceInfo(user.SteamID.Value, out isEnabled, out isTalking);
+                if (isEnabled) {
+                    drawImage(isTalking ? ZklResources.voice_talking : ZklResources.voice_off);
+                }
+            }
         }
 
         public override string ToString()

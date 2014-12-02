@@ -1677,6 +1677,12 @@
   <ItemGroup>
     <None Include="Resources\steam.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\voice_off.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\voice_talking.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">
   </Target>
