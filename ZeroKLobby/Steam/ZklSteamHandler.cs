@@ -44,6 +44,7 @@ namespace ZeroKLobby
                 if (tas.IsLoggedIn && tas.MyUser != null && tas.MyUser.EffectiveElo != 0) OnLoggedToBothSteamAndTas();
             };
 
+
             tas.MyExtensionsChanged += (sender, args) => { if (SteamHelper.IsOnline && SteamID != 0) OnLoggedToBothSteamAndTas(); };
             tas.UserExtensionsChanged += (sender, args) =>
             {

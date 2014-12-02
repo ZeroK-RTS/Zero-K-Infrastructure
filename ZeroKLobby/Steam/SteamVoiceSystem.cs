@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using NAudio.Wave;
@@ -23,7 +25,12 @@ namespace ZeroKLobby
         /// <summary>
         /// Set to true to test in loopback mode
         /// </summary>
-        const bool testLoopback = false;
+        const bool testLoopback = true;
+
+        /// <summary>
+        /// Sample rate for recording and replaying
+        /// </summary>
+        const int sampleRate = 44100;
 
         /// <summary>
         ///     Control byte added to first position of buffers transmitted over network
@@ -45,16 +52,54 @@ namespace ZeroKLobby
         DirectSoundOut soundOut;
         readonly AutoResetEvent talkWaiter = new AutoResetEvent(false);
         readonly ConcurrentDictionary<CSteamID, bool> targetSteamIDs = new ConcurrentDictionary<CSteamID, bool>();
-        BufferedWaveProvider waveProvider;
+        MixerWrapper<ulong> mixerWrapper;
 
         public void AddListenerSteamID(ulong steamID)
         {
             var cSteamId = new CSteamID(steamID);
             if (cSteamId != mySteamID) {
                 targetSteamIDs.TryAdd(cSteamId, true);
-                var buf = new byte[1];
-                SteamNetworking.SendP2PPacket(cSteamId, buf, 1, EP2PSend.k_EP2PSendUnreliable); // send dummy packet to pre-establish connection
+                if (isInitialized) {
+                    SendDummyP2PPacket(cSteamId);
+                }
             }
+        }
+
+        static void SendDummyP2PPacket(CSteamID cSteamId)
+        {
+            var buf = new byte[1];
+            SteamNetworking.SendP2PPacket(cSteamId, buf, 1, EP2PSend.k_EP2PSendUnreliable); // send dummy packet to pre-establish connection
+        }
+
+        public class MixerWrapper<T>
+        {
+            int maxChannels;
+            MixingSampleProvider mixer;
+            public MixerWrapper(MixingSampleProvider mixer, int maxChannels = 4)
+            {
+                this.mixer = mixer;
+                this.maxChannels = maxChannels;
+            }
+
+            Dictionary<T, Tuple<BufferedWaveProvider,ISampleProvider>>  waveProviders = new Dictionary<T, Tuple<BufferedWaveProvider, ISampleProvider>>();
+            
+            public BufferedWaveProvider GetWaveProvider(T key)
+            {
+                Tuple<BufferedWaveProvider, ISampleProvider> val;
+                if (waveProviders.TryGetValue(key, out val)) return val.Item1;
+                if (waveProviders.Count >= maxChannels) {
+                    var keyToDel = waveProviders.Keys.First();
+                    var todel = waveProviders[keyToDel];
+                    mixer.RemoveMixerInput(todel.Item2);
+                    waveProviders.Remove(keyToDel);
+                }
+                var wave  = new BufferedWaveProvider(new WaveFormat(sampleRate, 1));
+                var sample = new Pcm16BitToSampleProvider(wave);
+                waveProviders.Add(key, Tuple.Create<BufferedWaveProvider,ISampleProvider>(wave,sample));
+                mixer.AddMixerInput(sample);
+                return wave;
+            }
+
         }
 
 
@@ -67,9 +112,13 @@ namespace ZeroKLobby
             this.mySteamID = new CSteamID(mySteamID);
             newConnectionCallback = Callback<P2PSessionRequest_t>.Create(t => SteamNetworking.AcceptP2PSessionWithUser(t.m_steamIDRemote));
             // default accept all
-            GlobalHook.RegisterHandler(Keys.CapsLock, (key, pressed) => {
-                if (pressed) {
-                    if (!isRecording) {
+
+            Program.MainWindow.InvokeFunc(() => GlobalHook.RegisterHandler(Keys.CapsLock, (key, pressed) =>
+            {
+                if (pressed)
+                {
+                    if (!isRecording)
+                    {
                         SteamUser.StartVoiceRecording();
                         SteamFriends.SetInGameVoiceSpeaking(new CSteamID(mySteamID), true);
                         isRecording = true;
@@ -77,22 +126,27 @@ namespace ZeroKLobby
                     }
                     return true;
                 }
-                if (isRecording) {
-                    SteamUser.StopVoiceRecording();
-                    SteamFriends.SetInGameVoiceSpeaking(new CSteamID(mySteamID), false);
-                    isRecording = false;
+                else
+                {
+                    if (isRecording)
+                    {
+                        SteamUser.StopVoiceRecording();
+                        SteamFriends.SetInGameVoiceSpeaking(new CSteamID(mySteamID), false);
+                        isRecording = false;
+                    }
+                    return true;
                 }
-                return false;
-            });
+            }));
 
             soundOut = new DirectSoundOut();
-            waveProvider = new BufferedWaveProvider(new WaveFormat(44100, 1));
 
-            mixer = new MixingSampleProvider(WaveFormat.CreateIeeeFloatWaveFormat(44100, 1));
+            mixer = new MixingSampleProvider(WaveFormat.CreateIeeeFloatWaveFormat(sampleRate, 1));
             mixer.ReadFully = true;
-            mixer.AddMixerInput(new Pcm16BitToSampleProvider(waveProvider));
 
-            silencer = new byte[(int)(waveProvider.WaveFormat.AverageBytesPerSecond*silencerBufferMs/1000.0/2*2)];
+            mixerWrapper = new MixerWrapper<ulong>(mixer);
+
+
+            silencer = new byte[(int)(new WaveFormat(sampleRate,1).AverageBytesPerSecond*silencerBufferMs/1000.0/2*2)];
 
             soundOut.Init(mixer);
             soundOut.Play();
@@ -100,6 +154,8 @@ namespace ZeroKLobby
             new Thread(RecordingFunc).Start();
             if (testLoopback) new Thread(LoopbackFunc).Start();
             else new Thread(PlayingFunc).Start();
+
+            foreach (var t in targetSteamIDs) SendDummyP2PPacket(t.Key);
         }
 
         public void RemoveListenerSteamID(ulong steamID)
@@ -116,22 +172,24 @@ namespace ZeroKLobby
             byte[] networkBuf;
             var rand = new Random();
             while (true) {
+                if (Program.CloseOnNext) return;
                 if (loopbackBufs.TryDequeue(out networkBuf)) {
-                    PlaySoundFromNetworkData(networkBuf, (uint)networkBuf.Length, inputBuffer, decompressBuffer);
+                    var wave = mixerWrapper.GetWaveProvider(0);
+                    PlaySoundFromNetworkData(wave, networkBuf, (uint)networkBuf.Length, inputBuffer, decompressBuffer);
                     Thread.Sleep(rand.Next(200));
                 }
             }
         }
 
-        void PlaySoundFromNetworkData(byte[] networkBuf, uint networkSize, byte[] inputBuffer, byte[] decompressBuffer)
+        void PlaySoundFromNetworkData(BufferedWaveProvider waveProvider, byte[] networkBuf, uint networkSize, byte[] inputBuffer, byte[] decompressBuffer)
         {
             var flags = (ControlByteFlags)networkBuf[0];
             Array.Copy(networkBuf, 1, inputBuffer, 0, networkSize - 1);
 
             uint decompressSize;
-            if (SteamUser.DecompressVoice(inputBuffer, networkSize - 1, decompressBuffer, (uint)decompressBuffer.Length, out decompressSize, 44100) ==
+            if (SteamUser.DecompressVoice(inputBuffer, networkSize - 1, decompressBuffer, (uint)decompressBuffer.Length, out decompressSize, sampleRate) ==
                 EVoiceResult.k_EVoiceResultOK) {
-                if ((flags & ControlByteFlags.IsFirst) > 0) waveProvider.AddSamples(silencer, 0, silencer.Length); // add some delay to minimize jitter on first packet
+                if ((flags & ControlByteFlags.IsFirst) > 0)  waveProvider.AddSamples(silencer, 0, silencer.Length); // add some delay to minimize jitter on first packet
                 waveProvider.AddSamples(decompressBuffer, 0, (int)decompressSize);
             }
         }
@@ -143,10 +201,13 @@ namespace ZeroKLobby
             var inputBuffer = new byte[8000];
             var decompressBuffer = new byte[20000];
             while (true) {
-                if (SteamNetworking.IsP2PPacketAvailable(out networkSize)) {
+                if (Program.CloseOnNext) return;
+                if (SteamAPI.IsSteamRunning() && SteamNetworking.IsP2PPacketAvailable(out networkSize)) {
                     CSteamID remotUSer;
-
-                    if (SteamNetworking.ReadP2PPacket(networkBuffer, (uint)networkBuffer.Length, out networkSize, out remotUSer) && networkSize > 1) PlaySoundFromNetworkData(networkBuffer, networkSize, inputBuffer, decompressBuffer);
+                    if (SteamNetworking.ReadP2PPacket(networkBuffer, (uint)networkBuffer.Length, out networkSize, out remotUSer) && networkSize > 1) {
+                        var wave = mixerWrapper.GetWaveProvider(remotUSer.m_SteamID);
+                        PlaySoundFromNetworkData(wave, networkBuffer, networkSize, inputBuffer, decompressBuffer);
+                    }
                 }
             }
         }
@@ -159,6 +220,7 @@ namespace ZeroKLobby
             int counter = 0;
 
             while (true) {
+                if (Program.CloseOnNext) return;
                 talkWaiter.WaitOne(recordingIntervalMs);
                 if (!isRecording) {
                     counter = 0;
@@ -168,7 +230,7 @@ namespace ZeroKLobby
                 uint cbs;
                 uint ubs;
                 uint sendLength;
-                if (SteamUser.GetVoice(true, buf, (uint)buf.Length, out cbs, false, null, 0, out ubs, 44100) == EVoiceResult.k_EVoiceResultOK) {
+                if (SteamAPI.IsSteamRunning() && SteamUser.GetVoice(true, buf, (uint)buf.Length, out cbs, false, null, 0, out ubs, sampleRate) == EVoiceResult.k_EVoiceResultOK) {
                     Array.Copy(buf, 0, toSend, 1, cbs);
                     sendLength = cbs + 1;
 
@@ -177,7 +239,8 @@ namespace ZeroKLobby
                         var data = new byte[sendLength];
                         Array.Copy(toSend, data, sendLength);
                         loopbackBufs.Enqueue(data);
-                    } else foreach (var t in targetSteamIDs) SteamNetworking.SendP2PPacket(t.Key, toSend, sendLength, EP2PSend.k_EP2PSendUnreliable);
+                    } else 
+                        foreach (var t in targetSteamIDs) SteamNetworking.SendP2PPacket(t.Key, toSend, sendLength, EP2PSend.k_EP2PSendUnreliable);
                 }
             }
         }

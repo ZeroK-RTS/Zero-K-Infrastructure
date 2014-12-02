@@ -35,6 +35,12 @@ namespace ZeroKLobby
             hhook = SetWindowsHookEx(WH_KEYBOARD_LL, lowLevelKeyboardProc, hInstance, 0);
         }
 
+
+        /// <summary>
+        /// Warning, call on main GUI thread
+        /// </summary>
+        /// <param name="keys"></param>
+        /// <param name="handler"></param>
         public static void RegisterHandler(Keys keys, HookHandler handler)
         {
             handlers[keys] = handler;

@@ -364,8 +364,9 @@ namespace ZeroKLobby
             } catch {}
         }
 
-        public static void ShutDown() 
+        public static void ShutDown()
         {
+            CloseOnNext = true;
             FinalizeShutdown();
             //Thread.Sleep(5000);
             Application.Exit();
@@ -373,6 +374,7 @@ namespace ZeroKLobby
 
         public static void Restart()
         {
+            CloseOnNext = true;
             FinalizeShutdown();
             //Thread.Sleep(5000);
             Application.Restart();
