@@ -333,7 +333,7 @@ namespace ZeroKLobby
         {
             Program.CloseOnNext = true;
             if (Program.TasClient != null) Program.TasClient.Disconnect();
-            Program.Conf.LastWindowState = WindowState;
+            if (WindowState != FormWindowState.Minimized) Program.Conf.LastWindowState = WindowState;
             if (WindowState == FormWindowState.Normal) SavePosition();
             Program.SaveConfig();
             WindowState = FormWindowState.Minimized;
