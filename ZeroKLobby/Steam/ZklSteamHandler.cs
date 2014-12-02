@@ -103,7 +103,7 @@ namespace ZeroKLobby
                 if (!string.IsNullOrEmpty(token)) tas.Say(TasClient.SayPlace.User, GlobalConst.NightwatchName, string.Format("!linksteam {0}", token), false);
             }
             foreach (User u in tas.ExistingUsers.Values.ToList().Where(x => x.SteamID != null && friends.Contains(x.SteamID.Value))) AddFriend(u.Name);
-            steamVoice.Init(SteamID);
+            if (Program.Conf.EnableVoiceChat) steamVoice.Init(SteamID);
         }
     }
 }

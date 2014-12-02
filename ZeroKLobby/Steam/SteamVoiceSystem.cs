@@ -25,12 +25,17 @@ namespace ZeroKLobby
         /// <summary>
         /// Set to true to test in loopback mode
         /// </summary>
-        const bool testLoopback = true;
+        const bool testLoopback = false;
 
         /// <summary>
         /// Sample rate for recording and replaying
         /// </summary>
         const int sampleRate = 44100;
+
+        /// <summary>
+        /// How often to ask steam for data
+        /// </summary>
+        const int networkCheckIntervalMs = 50;
 
         /// <summary>
         ///     Control byte added to first position of buffers transmitted over network
@@ -71,6 +76,11 @@ namespace ZeroKLobby
             SteamNetworking.SendP2PPacket(cSteamId, buf, 1, EP2PSend.k_EP2PSendUnreliable); // send dummy packet to pre-establish connection
         }
 
+
+        /// <summary>
+        /// Maintains set number of channels for mixing
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
         public class MixerWrapper<T>
         {
             int maxChannels;
@@ -208,7 +218,7 @@ namespace ZeroKLobby
                         var wave = mixerWrapper.GetWaveProvider(remotUSer.m_SteamID);
                         PlaySoundFromNetworkData(wave, networkBuffer, networkSize, inputBuffer, decompressBuffer);
                     }
-                }
+                } else Thread.Sleep(networkCheckIntervalMs);
             }
         }
 
