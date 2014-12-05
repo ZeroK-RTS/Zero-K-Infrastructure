@@ -228,7 +228,7 @@ namespace ZeroKWeb.Controllers
                 {
                     var originalID = orgClan.FactionID;
                     orgClan.FactionID = clan.FactionID;     // <- not possible to change faction // now it is!
-                    if (orgClan.Faction.IsDeleted)
+                    if (orgClan.Faction != null && orgClan.Faction.IsDeleted)
                     {
                         orgClan.FactionID = originalID;
                         throw new ApplicationException("You cannot join deleted faction");

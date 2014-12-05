@@ -41,7 +41,7 @@
             <td>
                 Password (leave blank to allow any to join):
             </td>
-            <td>@Html.TextBoxFor(x => x.Password)
+            <td>@Html.TextBoxFor(x => x.Password, new { maxlength = 20 })
             </td>
         </tr>
         <tr>
@@ -68,7 +68,7 @@
                 Topic (internal info):
             </td>
             <td>
-                @Html.TextAreaFor(x => x.SecretTopic, 4, 40, null)
+                @Html.TextAreaFor(x => x.SecretTopic, 4, 40, new { maxlength = 500 })
             </td>
         </tr>
         <tr>
@@ -76,7 +76,7 @@
                 Description (public):
             </td>
             <td>
-                @Html.TextAreaFor(x => x.Description, 4, 40, null)
+                @Html.TextAreaFor(x => x.Description, 4, 40, new { maxlength = 500 })
             </td>
         </tr>
         <tr>
