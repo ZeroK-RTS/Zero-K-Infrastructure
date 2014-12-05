@@ -127,6 +127,11 @@ namespace ZeroKLobby
         [Description("Control the game using your voice")]
         public bool EnableVoiceCommands { get; set; }
 
+        [Category("General")]
+        [DisplayName("Enable voice chat (push to talk)")]
+        [Description("Needs steam running")]
+        public bool EnableVoiceChat { get; set; }
+
         [Category("Devving")]
         [DisplayName("Enable UnitSync Dialog Box")]
         [Description("Allow ZKL to process new mod/map information without connecting to server, "
@@ -319,7 +324,11 @@ namespace ZeroKLobby
         public Point windowLocation { get; set; }
         [Browsable(false)]
         public Size windowSize { get; set; }
-        public Config() {}
+
+        public Config()
+        {
+            EnableVoiceChat = true;
+        }
 
         public static Config Load(string path) {
             Config conf;

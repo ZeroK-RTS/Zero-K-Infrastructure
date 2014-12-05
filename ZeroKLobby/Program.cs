@@ -252,6 +252,11 @@ namespace ZeroKLobby
 
                 Application.AddMessageFilter(ToolTip);
 
+
+                SteamHandler = new ZklSteamHandler(TasClient);
+                SteamHandler.Connect();
+
+
                 MainWindow = new MainWindow();
 
                 Application.AddMessageFilter(new ScrollMessageFilter());
@@ -300,10 +305,7 @@ namespace ZeroKLobby
                     //Trace.TraceInformation("1 Runtime {0}", elapsedTime);
 
 
-                SteamHandler = new ZklSteamHandler(TasClient);
-                SteamHandler.Connect();
-
-
+                
 
                 Application.Run(MainWindow);
                 ShutDown();
@@ -365,8 +367,9 @@ namespace ZeroKLobby
             } catch {}
         }
 
-        public static void ShutDown() 
+        public static void ShutDown()
         {
+            CloseOnNext = true;
             FinalizeShutdown();
             //Thread.Sleep(5000);
             Application.Exit();
@@ -374,6 +377,7 @@ namespace ZeroKLobby
 
         public static void Restart()
         {
+            CloseOnNext = true;
             FinalizeShutdown();
             //Thread.Sleep(5000);
             Application.Restart();

@@ -116,6 +116,13 @@
     <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="NAudio">
+      <HintPath>..\packages\NAudio.1.7.2\lib\net35\NAudio.dll</HintPath>
+    </Reference>
+    <Reference Include="Steamworks.NET, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libs\Steamworks.NET.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -153,6 +160,7 @@
     <Compile Include="Controls\ZkSplitContainer.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="GlobalHook.cs" />
     <Compile Include="MicroForms\PromptForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -204,6 +212,8 @@
     <Compile Include="SelectWritableFolder.Designer.cs">
       <DependentUpon>SelectWritableFolder.cs</DependentUpon>
     </Compile>
+    <Compile Include="Steam\SteamClientHelper.cs" />
+    <Compile Include="Steam\SteamVoiceSystem.cs" />
     <Compile Include="VoiceCommand\ChatToSpeech.cs" />
     <Compile Include="Configs.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -489,7 +499,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ZklResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ZklSteamHandler.cs" />
+    <Compile Include="Steam\ZklSteamHandler.cs" />
     <EmbeddedResource Include="Buttons.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Buttons.Designer.cs</LastGenOutput>
@@ -1666,6 +1676,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\steam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\voice_off.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\voice_talking.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">

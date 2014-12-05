@@ -97,6 +97,10 @@ namespace ZeroKLobby.MicroLobby
             Program.TasClient.ChannelTopicChanged += TasClient_ChannelTopicChanged;
             Program.TasClient.HourChime += client_HourChime;
 
+            Program.SteamHandler.Voice.UserStartsTalking += VoiceOnUserChanged;
+            Program.SteamHandler.Voice.UserStopsTalking += VoiceOnUserChanged;
+            Program.SteamHandler.Voice.UserVoiceEnabled += VoiceOnUserChanged;
+
             Channel channel;
             Program.TasClient.JoinedChannels.TryGetValue(ChannelName, out channel);
 
@@ -140,6 +144,14 @@ namespace ZeroKLobby.MicroLobby
             if (channel != null) foreach (var userName in Program.TasClient.JoinedChannels[ChannelName].ChannelUsers) AddUser(userName);
         }
 
+        void VoiceOnUserChanged(ulong steamID)
+        {
+            Program.MainWindow.InvokeFunc(() => {
+                var user = Program.TasClient.ExistingUsers.Values.FirstOrDefault(x => x.SteamID == steamID);
+                if (user != null) RefreshUser(user.Name);    
+            });
+        }
+
         public virtual void AddLine(IChatLine line) {
             if (ChannelName != "zkadmin" &&
                 ((line is SaidLine && Program.Conf.IgnoredUsers.Contains(((SaidLine)line).AuthorName)) ||
@@ -157,7 +169,7 @@ namespace ZeroKLobby.MicroLobby
         public void RefreshUser(string userName) {
             if (PlayerListItems.Any(i => i.UserName == userName)) {
                 SortByTeam();
-                if (filtering) FilterPlayers();
+                if (filtering) FilterPlayers(); else playerBox.Invalidate();
             }
         }
 

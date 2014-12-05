@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using LobbyClient;
-using MumbleIntegration;
 using PlasmaShared;
 using ZkData;
 
@@ -66,8 +65,6 @@ namespace ZeroKWeb.SpringieInterface
             if (clanWise == null && (config.AutohostMode == AutohostMode.Generic || config.AutohostMode == AutohostMode.Teams)) clanWise = true;
 
             var res = PerformBalance(context, isGameStart, allyCount, clanWise, config, playerCount);
-
-            Global.Nightwatch.MumbleMover.OnBalance(context.AutohostName, isGameStart, res.Players.Select(x=>new MumbleMover.PlayerInfo() {AllyID = x.AllyID, IsSpectator = x.IsSpectator, Name = x.Name}).ToList());
 
             if (context.GetMode() != AutohostMode.Planetwars) // planetwars skip other checks
             {

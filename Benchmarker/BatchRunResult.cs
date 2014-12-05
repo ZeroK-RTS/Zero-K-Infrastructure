@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -103,7 +104,14 @@ namespace Benchmarker
             var now = DateTime.Now;
             if (string.IsNullOrEmpty(folder)) folder = Directory.GetCurrentDirectory();
             batchFileName = Path.Combine(folder, string.Format("batchResult_{0:yyyy-MM-dd_HH-mm-ss}.json", now));
-            File.WriteAllText(batchFileName, JsonSerializer.SerializeToString(this));
+            try
+            {
+                File.WriteAllText(batchFileName, JsonSerializer.SerializeToString(this));
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.ToString());
+            }
             SaveAndGetCsvFileName();
         }
 
@@ -166,7 +174,7 @@ namespace Benchmarker
             public Benchmark Benchmark { get; set; }
             public List<ValueEntry> GroupedValues { get; set; }
             public string RawLog { get; set; }
-            public List<ValueEntry> RawValues { get; set; }
+            public List<ValueEntry> RawValues;
             public TestCase TestCase { get; set; }
 
             public RunEntry() {

@@ -29,8 +29,9 @@ namespace LobbyClient
             BanMute,
             BanLobby,
             SteamID,
-            DisplayName
+            DisplayName,
         }
+
 
         readonly Action<string, Dictionary<string, string>> notifyUserExtensionChange = (s, dictionary) => { };
 
@@ -220,7 +221,7 @@ namespace LobbyClient
                     e.Cancel = true;
                     DecodeJson(e.Data.Text, e.Data);
                 }
-            }
+            } 
         }
 
    

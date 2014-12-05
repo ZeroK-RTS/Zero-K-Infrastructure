@@ -199,7 +199,7 @@
     <Compile Include="SpringPaths.cs" />
     <Compile Include="SpringScanner.cs" />
     <Compile Include="CsvTable.cs" />
-    <Compile Include="SteamInterface.cs" />
+    <Compile Include="SteamWebApi.cs" />
     <Compile Include="UnitSyncLib\Ai.cs" />
     <Compile Include="UnitSyncLib\AiInfoPair.cs" />
     <Compile Include="UnitSyncLib\DependencyMissingException.cs" />
@@ -246,9 +246,6 @@
     </Reference>
     <Reference Include="SharpCompress">
       <HintPath>..\..\packages\sharpcompress.0.9\lib\net40\SharpCompress.dll</HintPath>
-    </Reference>
-    <Reference Include="Steamworks.NET">
-      <HintPath>..\..\Libs\Steamworks.NET.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
