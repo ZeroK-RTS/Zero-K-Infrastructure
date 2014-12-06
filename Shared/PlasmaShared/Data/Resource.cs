@@ -92,7 +92,6 @@ namespace ZkData
       get { return string.Concat(InternalName.EscapePath(), ".metalmap.jpg"); }
     }
 
-    // TODO
     public string GetTagSubstring(string tagName)
     {
         if (MapTags == null) return null as string;
@@ -120,8 +119,6 @@ namespace ZkData
     {
         return GetTagSubstring("gametypes").Contains(tag);
     }
-
-    // FIXME: DB columns must be removed or renamed, or these auto properties renamed
 
     public bool MapIsSupported
     {
