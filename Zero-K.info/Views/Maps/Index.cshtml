@@ -84,8 +84,11 @@ Download: <select name="isDownloadable">
     <option value='0'>Not verified</option>
   </select>
   <br />
-<span title="Search for official maps">
-  Official: @Html.CheckBox("featured", true)
+<span title="Search for supported maps">
+  Supported: @Html.CheckBox("supported", true)
+</span>
+<span title="Search for featured maps">
+  Featured: @Html.CheckBox("featured", false)
 </span>
 <span title='Show maps that need to be manually tagged (sea, terrain, FFA etc diagnosed)' style='white-space:nowrap'>
   Needs tagging: @Html.CheckBox("needsTagging")

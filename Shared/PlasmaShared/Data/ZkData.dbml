@@ -254,24 +254,27 @@
       <Column Name="MapPlanetWarsIcon" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
       <Column Name="RatingPollID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="MapSpringieCommands" Type="System.String" DbType="nvarchar(2000)" CanBeNull="true" />
-      <Column Name="MapIsSpecial" Type="System.Boolean" DbType="bit" CanBeNull="true" />
-      <Column Name="MapFFAMaxTeams" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="MapRatingCount" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="MapRatingSum" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="TaggedByAccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="ForumThreadID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="MapWidth" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="MapHeight" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="MapSizeSquared" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="MapSizeRatio" Type="System.Single" DbType="real" CanBeNull="true" />
+      <Column Name="AuthorName" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
+      <Column Name="MapTags" Type="System.String" DbType="nvarchar(max)" CanBeNull="true" />
+      <!--
       <Column Name="MapHills" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="MapWaterLevel" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="MapIs1v1" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="MapIsTeams" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="MapIsFfa" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="MapIsChickens" Type="System.Boolean" DbType="bit" CanBeNull="true" />
-      <Column Name="AuthorName" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
-      <Column Name="MapWidth" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="MapHeight" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="MapSizeSquared" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="MapSizeRatio" Type="System.Single" DbType="real" CanBeNull="true" />
       <Column Name="MapIsAssymetrical" Type="System.Boolean" DbType="bit" CanBeNull="true" />
+      <Column Name="MapIsSpecial" Type="System.Boolean" DbType="bit" CanBeNull="true" />
+      <Column Name="MapFFAMaxTeams" Type="System.Int32" DbType="int" CanBeNull="true" />
+      -->
       <Column Name="TypeID" Type="global::ZkData.ResourceType" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="LastLinkCheck" Type="System.DateTime" DbType="datetime" CanBeNull="true" UpdateCheck="Never" />
       <Column Name="DownloadCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="Never" />
