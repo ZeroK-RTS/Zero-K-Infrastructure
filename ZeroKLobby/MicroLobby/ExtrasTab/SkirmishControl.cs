@@ -155,7 +155,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 UserName = myBattleStatus.Name,
                 AllyTeam = myBattleStatus.AllyNumber,
                 isOfflineMode = true,
-                isOfflineZK = false,
+                isZK = false,
             };
             myItem.offlineUserInfo = myUser;
             myItem.offlineUserBattleStatus = myBattleStatus;
@@ -436,7 +436,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             bool gameIsZK = game_comboBox.SelectedItem != null ? ((string)game_comboBox.SelectedItem).Contains("Zero-K") : false;
 
             myItem.offlineUserBattleStatus.SyncStatus = iamSynced;
-            myItem.isOfflineZK = gameIsZK;
+            myItem.isZK = gameIsZK;
             myItem.offlineUserBattleStatus.Side = sideCB.SelectedIndex >= 0 ? sideCB.SelectedIndex : 0;
 
             var newList = new List<PlayerListItem>();

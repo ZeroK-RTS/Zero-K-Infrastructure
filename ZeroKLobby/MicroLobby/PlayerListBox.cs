@@ -42,6 +42,17 @@ namespace ZeroKLobby.MicroLobby
 		                Trace.TraceError("Error updating list: {0}",ex);
 		            }
 		        };
+		    IntegralHeight = false; //so that the playerlistBox completely fill the edge (not snap to some item size)
+
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+            {
+                PlayerListItem dummyItem = new PlayerListItem() { isOfflineMode = true, isDummy = true, Height = 1, UserName = "ZZ 79 Dummy item to workaround MONO" };
+                PlayerListItem dummyItem2 = new PlayerListItem() { isOfflineMode = true, isDummy = true, Height = 1, UserName = "ZZ 89 scrollbar always cut last 3 line," };
+                PlayerListItem dummyItem3 = new PlayerListItem() { isOfflineMode = true, isDummy = true, Height = 1, UserName = "ZZ 99 https://bugzilla.novell.com/show_bug.cgi?id=475581" };
+                realItems.Add(dummyItem);
+                realItems.Add(dummyItem2);
+                realItems.Add(dummyItem3);
+            }
 		}
 
 	    void RealItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args) {
