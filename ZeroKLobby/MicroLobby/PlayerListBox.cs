@@ -46,12 +46,15 @@ namespace ZeroKLobby.MicroLobby
 
             if (Environment.OSVersion.Platform == PlatformID.Unix)
             {
-                PlayerListItem dummyItem = new PlayerListItem() { isOfflineMode = true, isDummy = true, Height = 1, UserName = "ZZ 79 Dummy item to workaround MONO" };
-                PlayerListItem dummyItem2 = new PlayerListItem() { isOfflineMode = true, isDummy = true, Height = 1, UserName = "ZZ 89 scrollbar always cut last 3 line," };
-                PlayerListItem dummyItem3 = new PlayerListItem() { isOfflineMode = true, isDummy = true, Height = 1, UserName = "ZZ 99 https://bugzilla.novell.com/show_bug.cgi?id=475581" };
-                realItems.Add(dummyItem);
-                realItems.Add(dummyItem2);
-                realItems.Add(dummyItem3);
+                //dummy item to fix Mono scrollbar always cutout last 3 line
+                //https://bugzilla.novell.com/show_bug.cgi?id=475581
+                DpiMeasurement.DpiXYMeasurement (this);
+                int numberOfDummy = (int)(DpiMeasurement.scaleUpRatioY*3 + 0.9d); //is Math.Ceiling
+
+                for (int i=0; i<numberOfDummy; i++) {
+                    PlayerListItem dummyItem = new PlayerListItem () { isOfflineMode = true, isDummy = true, Height = 1, UserName = "ZZ 99 dummy "+i.ToString() }; //sorted to be last
+                    realItems.Add (dummyItem);
+                }
             }
 		}
 

@@ -356,29 +356,36 @@ namespace ZeroKLobby
 			}
         }
 
+        /// <summary>
+        /// Reverse DPI scaling
+        /// </summary>
         public static int ReverseScaleValueX(double designHeight) {
             var output = designHeight*scaleDownRatioX;
-            output = Math.Round(output, 0, MidpointRounding.AwayFromZero);
-            return ((int)output); //multiply the scaleDOWN ratio to the original design height, then change type to integer, then return value;
+            return (int)(output + 0.5d); //Round
         }
 
+        /// <summary>
+        /// Reverse DPI scaling
+        /// </summary>
         public static int ReverseScaleValueY(double designHeight) {
             var output = designHeight*scaleDownRatioY;
-            output = Math.Round(output, 0, MidpointRounding.AwayFromZero);
-            return ((int)output); //multiply the scaleDOWN ratio to the original design height, then change type to integer, then return value;
+            return (int)(output + 0.5d); //Round
         }
 
+        /// <summary>
+        /// Apply DPI scaling
+        /// </summary>
         public static int ScaleValueX(double designWidth) {
             var output = designWidth*scaleUpRatioX;
-            output = Math.Round(output, 0, MidpointRounding.AwayFromZero);
-                //Reference: http://stackoverflow.com/questions/8844674/how-to-round-up-to-the-nearest-whole-number-in-c-sharp
-            return ((int)output); //multiply the scaleUP ratio to the original design height, then change type to integer, then return value;
+            return (int)(output + 0.5d); //Round
         }
 
+        /// <summary>
+        /// Apply DPI scaling
+        /// </summary>
         public static int ScaleValueY(double designHeight) {
             var output = designHeight*scaleUpRatioY;
-            output = Math.Round(output, 0, MidpointRounding.AwayFromZero);
-            return ((int)output); //multiply the scaleUP ratio to the original design height, then change type to integer, then return value;
+            return (int)(output + 0.5d); //Round
         }
     }
 }
