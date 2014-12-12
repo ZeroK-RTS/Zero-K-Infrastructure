@@ -136,7 +136,7 @@
                             <td>Hills:</td><td>@Html.Select("hills", typeof(Resource.Hill), m.MapHills, "?")</td>
                         </tr>
                         <tr>
-                            <td>Asymmetrical:</td><td>@Html.BoolSelect("assymetrical", m.MapIsAssymetrical, "?")</td>
+                            <td>Asymmetrical:</td><td>@Html.BoolSelect("assymetrical", m.MapIsAsymmetrical, "?")</td>
                         </tr>
                         <tr>
                             <td title='Maps with special features, speedmetal, duck, greenfields etc.'>Special:</td><td>@Html.BoolSelect("special", m.MapIsSpecial, "?")</td>
@@ -159,6 +159,9 @@
                         </tr>
                         @if (ZeroKWeb.Global.IsZeroKAdmin)
                         {
+                            <tr>
+                                <td>Supported:</td><td>@Html.BoolSelect("supported", m.MapIsSupported, "?")</td>
+                            </tr>
                             <tr>
                                 <td>Featured order:</td><td>@Html.TextBox("featuredOrder", Model.Resource.FeaturedOrder)</td>
                             </tr>

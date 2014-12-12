@@ -43,7 +43,7 @@ namespace ZeroKWeb.SpringieInterface
                         case AutohostMode.Generic:
                         case AutohostMode.Teams:
                         case AutohostMode.None:
-							var ret = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsTeams != false && x.MapIsSpecial != true);
+							var ret = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null).Where(x=> x.MapIsTeams != false && x.MapIsSpecial != true);
 							if (players > 11) ret = ret.Where(x => (x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) > 16*16);
 							else if (players > 8) ret = ret.Where(x => (x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) > 16*16 && (x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) <= 24*24);
                             else if (players > 5) ret = ret.Where(x => (x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth) <= 24 * 24 || x.MapIs1v1 == true);
@@ -52,10 +52,10 @@ namespace ZeroKWeb.SpringieInterface
 
 							break;
 						case AutohostMode.Game1v1:
-							list = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIs1v1 == true && x.MapIsSpecial != true).ToList();
+							list = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null).Where(x => x.MapIs1v1 == true && x.MapIsSpecial != true).ToList();
 							break;
 						case AutohostMode.GameChickens:
-							ret = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsSpecial != true && (x.MapIsChickens == true || x.MapWaterLevel == 1));
+							ret = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null).Where(x => x.MapIsSpecial != true && (x.MapIsChickens == true || x.MapWaterLevel == 1));
                             if (players > 5) ret = ret.Where(x => (x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth) > 16 * 16);
                             else if (players > 4) ret = ret.Where(x => (x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth) > 16 * 16 && (x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth) <= 24 * 24);
                             else if (players > 2) ret = ret.Where(x => (x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth) <= 24 * 24 || x.MapIs1v1 == true);

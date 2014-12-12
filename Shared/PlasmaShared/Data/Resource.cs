@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using PlasmaShared;
+using System.Text.RegularExpressions;
 
 namespace ZkData
 {
@@ -90,6 +91,89 @@ namespace ZkData
     {
       get { return string.Concat(InternalName.EscapePath(), ".metalmap.jpg"); }
     }
+
+    public string GetTagSubstring(string tagName)
+    {
+        if (MapTags == null) return null as string;
+        Regex rex = new Regex(tagName + ":?" + "[^;]*;", RegexOptions.IgnoreCase);
+        Match match = rex.Match(MapTags);
+        String result = match.Value;
+        if (!String.IsNullOrEmpty(result)) return result;
+        return null as string;
+    }
+
+    public bool GetBooleanTag(string tagName)
+    {
+        return !String.IsNullOrEmpty(GetTagSubstring(tagName));
+    }
+
+    public int? GetIntTag(string tagName)
+    {
+        String substr = GetTagSubstring(tagName);
+        if (String.IsNullOrEmpty(substr)) return null;
+        string[] result = substr.Split(':');
+        return int.Parse(result[1].Trim(';'));
+    }
+
+    public bool GetMapSupportedGameTypes(string tag)
+    {
+        return GetTagSubstring("gametypes").Contains(tag);
+    }
+
+    public bool MapIsSupported
+    {
+        get { return GetBooleanTag("supported"); }
+    }
+    public bool MapIs1v1
+    {
+        get { return GetMapSupportedGameTypes("1v1"); }
+    }
+    public bool MapIsTeams
+    {
+        get
+        { return GetMapSupportedGameTypes("teams"); }
+    }
+    public bool MapIsFfa
+    {
+        get { return GetMapSupportedGameTypes("ffa"); }
+    }
+    public bool MapIsChickens
+    {
+        get { return GetMapSupportedGameTypes("chickens"); }
+    }
+    public bool MapIsSpecial
+    {
+        get { return GetBooleanTag("special"); }
+    }
+    public bool MapIsAsymmetrical
+    {
+        get { return GetBooleanTag("asymmetrical"); }
+    }
+    public int? MapFFAMaxTeams
+    {
+        get { return GetIntTag("ffaTeams"); }
+    }
+    public int? MapWaterLevel
+    {
+        get { return GetIntTag("water"); }
+    }
+    public int? MapHills
+    {
+        get { return GetIntTag("hills"); }
+    }
+
+    /*  // leave as its own DB column?
+    public float? FeaturedOrder
+    {
+        get {
+            String substr = GetTagSubstring("featuredOrder");
+            if (String.IsNullOrEmpty(substr)) return null;
+            string[] result = substr.Split(':');
+            return float.Parse(result[1].Trim(';'));
+        }
+    }
+    */
+
 
 
   }

@@ -48,7 +48,7 @@ namespace ZeroKWeb.Controllers
                                   bool? chicken,
                                   int? isDownloadable = 1,
                                   int? special = 0) {
-            IQueryable<Resource> ret;
+            IEnumerable<Resource> ret;
             var db = FilterMaps(search,
                                 featured,
                                 offset,
@@ -71,14 +71,14 @@ namespace ZeroKWeb.Controllers
                     View(new MapIndexData
                     {
                         Title = "Latest maps",
-                        Latest = ret,
+                        Latest = ret.ToList(),
                         LastComments =
                             db.Resources.Where(x => x.TypeID == ResourceType.Map && x.ForumThreadID != null)
-                              .OrderByDescending(x => x.ForumThread.LastPost),
+                              .OrderByDescending(x => x.ForumThread.LastPost).ToList(),
                         TopRated =
                             db.Resources.Where(x => x.TypeID == ResourceType.Map && x.MapRatingCount > 0)
-                              .OrderByDescending(x => x.MapRatingSum/x.MapRatingCount),
-                        MostDownloads = db.Resources.Where(x => x.TypeID == ResourceType.Map).OrderByDescending(x => x.DownloadCount)
+                              .OrderByDescending(x => x.MapRatingSum / x.MapRatingCount).ToList(),
+                        MostDownloads = db.Resources.Where(x => x.TypeID == ResourceType.Map).OrderByDescending(x => x.DownloadCount).ToList()
                     });
             }
 
@@ -104,7 +104,7 @@ namespace ZeroKWeb.Controllers
                                        bool? chicken,
                                        int? isDownloadable = 1,
                                        int? special = 0) {
-            IQueryable<Resource> ret;
+            IEnumerable<Resource> ret;
             var db = FilterMaps(search,
                                 featured,
                                 offset,
@@ -139,7 +139,7 @@ namespace ZeroKWeb.Controllers
                         x.MapHeight,
                         x.MapHills,
                         x.MapIs1v1,
-                        x.MapIsAssymetrical,
+                        x.MapIsAsymmetrical,
                         x.MapIsChickens,
                         x.MapIsFfa,
                         x.MapIsSpecial,
@@ -216,6 +216,7 @@ namespace ZeroKWeb.Controllers
                                 int? hills,
                                 bool? assymetrical,
                                 string author,
+                                bool? supported,
                                 float? featuredOrder,
                                 bool? isTeams,
                                 bool? is1v1,
@@ -226,21 +227,39 @@ namespace ZeroKWeb.Controllers
                                 string springieCommands) {
             var db = new ZkDataContext();
             var r = db.Resources.Single(x => x.ResourceID == id);
-            r.TaggedByAccountID = Global.AccountID;
-            r.MapIsSpecial = special;
-            r.MapWaterLevel = sea;
-            r.MapHills = hills;
-            r.MapIsAssymetrical = assymetrical;
-            r.AuthorName = author;
-            r.MapIsTeams = isTeams;
-            r.MapIs1v1 = is1v1;
-            r.MapIsFfa = ffa;
-            r.MapIsChickens = chickens;
-            if (Global.Account.IsZeroKAdmin) {
-                r.FeaturedOrder = featuredOrder;
-                r.MapFFAMaxTeams = ffaTeams;
-                r.MapSpringieCommands = springieCommands;
+
+            if (!Global.Account.IsZeroKAdmin)
+            {
+                springieCommands = r.MapSpringieCommands;
+                ffaTeams = r.MapFFAMaxTeams;
+                featuredOrder = r.FeaturedOrder;
             }
+
+            List<string> tags = new List<string>();
+            if (sea != null) tags.Add("water:" + sea);
+            if (hills != null) tags.Add("hills:" + hills);
+            if (assymetrical == true) tags.Add("asymmetrical");
+
+            List<string> gameTypeTags = new List<string>();
+            if (is1v1 == true) gameTypeTags.Add("1v1");
+            if (isTeams == true) gameTypeTags.Add("teams");
+            if (chickens == true) gameTypeTags.Add("chickens");
+            if (ffa == true) gameTypeTags.Add("ffa");
+            if(gameTypeTags.Count > 0) tags.Add("gametypes:" + String.Join(",",gameTypeTags));
+
+            if (ffaTeams != null) tags.Add("ffaTeams:" + ffaTeams);
+            if (supported == true) tags.Add("supported");
+            //if (featuredOrder != null) tags.Add("featured:" + featuredOrder);
+            if (special == true) tags.Add("special");
+
+            //if (!string.IsNullOrWhiteSpace(springieCommands)) tags.Add("springieCommands:" + springieCommands);
+
+            if (tags.Count > 0)
+            {
+                string mapTags = String.Join(";", tags) + ";";
+                r.MapTags = mapTags;
+            }
+
             db.SubmitChanges();
             var order = 1;
             if (featuredOrder.HasValue) foreach (var map in db.Resources.Where(x => x.FeaturedOrder != null).OrderBy(x => x.FeaturedOrder)) map.FeaturedOrder = order++;
@@ -263,15 +282,15 @@ namespace ZeroKWeb.Controllers
                                         bool? chicken,
                                         int? isDownloadable,
                                         int? special,
-                                        out IQueryable<Resource> ret) {
+                                        out IEnumerable<Resource> ret) {
             var db = new ZkDataContext();
             if (featured == null) featured = true;
 
-            ret = db.Resources.Where(x => x.TypeID == ResourceType.Map);
+            ret = db.Resources.Where(x => x.TypeID == ResourceType.Map).ToList();
             if (!string.IsNullOrEmpty(search)) {
                 foreach (var word in search.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)) {
                     var w = word;
-                    ret = ret.Where(x => x.InternalName.Contains(w) || x.AuthorName.Contains(w));
+                    ret = ret.Where(x => x.InternalName.Contains(w) || x.AuthorName.Contains(w)).ToList();
                 }
             }
 
@@ -279,18 +298,18 @@ namespace ZeroKWeb.Controllers
                 ret =
                     ret.Where(
                         x =>
-                        x.MapIsFfa == null || x.MapIsAssymetrical == null || x.MapIsSpecial == null || x.AuthorName == null || x.MapHills == null ||
+                        x.MapIsFfa == null || x.MapIsAsymmetrical == null || x.MapIsSpecial == null || x.AuthorName == null || x.MapHills == null ||
                         x.MapWaterLevel == null);
             }
 
-            if (featured == true) ret = ret.Where(x => x.FeaturedOrder > 0);
+            if (featured == true) ret = ret.Where(x => x.FeaturedOrder > 0).ToList();
             if (isDownloadable == 1) ret = ret.Where(x => x.ResourceContentFiles.Any(y => y.LinkCount > 0));
             else if (isDownloadable == 0) ret = ret.Where(x => x.ResourceContentFiles.All(y => y.LinkCount <= 0));
-            if (special != -1) ret = ret.Where(x => x.MapIsSpecial == (special == 1));
+            if (special != -1) ret = ret.Where(x => x.MapIsSpecial == (special == 1)).ToList();
             
             if (sea.HasValue) ret = ret.Where(x => x.MapWaterLevel == sea);
             if (hills.HasValue) ret = ret.Where(x => x.MapHills == hills);
-            if (assymetrical.HasValue) ret = ret.Where(x => x.MapIsAssymetrical == assymetrical);
+            if (assymetrical.HasValue) ret = ret.Where(x => x.MapIsAsymmetrical == assymetrical);
             if (elongated == true) ret = ret.Where(x => x.MapSizeRatio <= 0.5 || x.MapSizeRatio >= 2);
             else if (elongated == false) ret = ret.Where(x => x.MapSizeRatio > 0.5 && x.MapSizeRatio < 2);
             // Diagonal of a map used to determine size; 16 and below are considered small, bigger than 24 is large
@@ -357,11 +376,11 @@ namespace ZeroKWeb.Controllers
 
         public class MapIndexData
         {
-            public IQueryable<Resource> LastComments;
-            public IQueryable<Resource> Latest;
-            public IQueryable<Resource> MostDownloads;
+            public List<Resource> LastComments;
+            public List<Resource> Latest;
+            public List<Resource> MostDownloads;
             public string Title;
-            public IQueryable<Resource> TopRated;
+            public List<Resource> TopRated;
         }
 
         public class PlanetImageSelectData
