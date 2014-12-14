@@ -50,9 +50,9 @@
     @foreach (var n in Model.News.Take(4))
     {
 		<h1>@n.Title</h1>	
-        if (n.ImageRelativeUrl != null)
+        if (n.ThumbRelativeUrl != null)
         {
-			<img src="@n.ThumbRelativeUrl" style="float:left; width:120px; margin: 6px;"/>
+			<a href="@n.ImageRelativeUrl"><img src="@n.ThumbRelativeUrl" style="float:left; width:120px; margin: 6px;"/></a>
         }
 		<p>@Html.BBCode(n.Text)</p>
 		<small>Posted by @Html.PrintAccount(n.Account) @n.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new { id = n.ForumThreadID }, null)
