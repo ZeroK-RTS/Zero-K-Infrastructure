@@ -11,6 +11,10 @@
 }
 
 @{
+    int normalLevel = Model.Level >= GlobalConst.LevelForElevatedSpringieRights ? 2 : 1;
+}
+
+@{
     int badge_width = 60;
     int padding = 5;
     <style>
@@ -108,9 +112,14 @@
                     <b> @Model.Name </b> is a <b>Zero-K Administrator</b>
                 </div>
             }
- 
+            @if ( Model.SpringieLevel != normalLevel ) {
+                <b>Springie rights level:</b> @Model.SpringieLevel
+                <br />
+            }
+
             <b>First Login:</b> @Model.FirstLogin.ToAgoString(), <b>Last Login:</b> @Model.LastLogin.ToAgoString()
             <br />
+            
             @if (Global.IsZeroKAdmin) {
                 <div class="admin">
                     <b>Elo (all):</b> @Math.Round(@Model.EffectiveElo)
