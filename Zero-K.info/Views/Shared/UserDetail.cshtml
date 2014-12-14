@@ -11,7 +11,7 @@
 }
 
 @{
-    int normalLevel = Model.Level >= GlobalConst.LevelForElevatedSpringieRights ? 2 : 1;
+    int normalLevel = Model.IsZeroKAdmin ? 4 : (Model.Level >= GlobalConst.LevelForElevatedSpringieRights ? 2 : 1);
 }
 
 @{
