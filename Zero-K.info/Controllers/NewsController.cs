@@ -86,7 +86,8 @@ namespace ZeroKWeb.Controllers
                                      ForumCategoryID = db.ForumCategories.Single(x => x.IsNews).ForumCategoryID
                                  };
 
-                    thread.ForumPosts.Add(new ForumPost() { Created = news.Created, Text = news.Text, AuthorAccountID = news.AuthorAccountID });
+                    string postText = "[img]" + news.ImageRelativeUrl + "[/img]" + Environment.NewLine + news.Text;
+                    thread.ForumPosts.Add(new ForumPost() { Created = news.Created, Text = postText, AuthorAccountID = news.AuthorAccountID });
                     db.ForumThreads.InsertOnSubmit(thread);
                     db.SubmitChanges();
                     news.ForumThreadID = thread.ForumThreadID;
