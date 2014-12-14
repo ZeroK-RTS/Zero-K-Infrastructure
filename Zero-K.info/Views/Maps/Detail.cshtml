@@ -160,6 +160,9 @@
                         @if (ZeroKWeb.Global.IsZeroKAdmin)
                         {
                             <tr>
+                                <td>Supported:</td><td>@Html.BoolSelect("supported", m.MapIsSupported, "?")</td>
+                            </tr>
+                            <tr>
                                 <td>Featured order:</td><td>@Html.TextBox("featuredOrder", Model.Resource.FeaturedOrder)</td>
                             </tr>
                             <tr><td>Springie commands</td><td>

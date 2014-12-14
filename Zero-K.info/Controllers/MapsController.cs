@@ -34,6 +34,7 @@ namespace ZeroKWeb.Controllers
 
 
         public ActionResult Index(string search,
+                                  bool? supported,                               
                                   bool? featured,
                                   int? offset,
                                   bool? assymetrical,
@@ -50,6 +51,7 @@ namespace ZeroKWeb.Controllers
                                   int? special = 0) {
             IQueryable<Resource> ret;
             var db = FilterMaps(search,
+                                supported,
                                 featured,
                                 offset,
                                 assymetrical,
@@ -91,7 +93,6 @@ namespace ZeroKWeb.Controllers
         public ContentResult JsonSearch(string callback, string search,
                                        bool? featured,
                                        int? offset,
-                                       
                                        bool? assymetrical,
                                        int? sea,
                                        int? hills,
@@ -106,6 +107,7 @@ namespace ZeroKWeb.Controllers
                                        int? special = 0) {
             IQueryable<Resource> ret;
             var db = FilterMaps(search,
+                                null,  // bool supported
                                 featured,
                                 offset,
                                 assymetrical,
@@ -216,6 +218,7 @@ namespace ZeroKWeb.Controllers
                                 int? hills,
                                 bool? assymetrical,
                                 string author,
+                                bool? supported,
                                 float? featuredOrder,
                                 bool? isTeams,
                                 bool? is1v1,
@@ -237,6 +240,7 @@ namespace ZeroKWeb.Controllers
             r.MapIsFfa = ffa;
             r.MapIsChickens = chickens;
             if (Global.Account.IsZeroKAdmin) {
+                r.MapIsSupported = supported;
                 r.FeaturedOrder = featuredOrder;
                 r.MapFFAMaxTeams = ffaTeams;
                 r.MapSpringieCommands = springieCommands;
@@ -249,6 +253,7 @@ namespace ZeroKWeb.Controllers
         }
 
         static ZkDataContext FilterMaps(string search,
+                                        bool? supported,
                                         bool? featured,
                                         int? offset,
                                         bool? assymetrical,
@@ -283,6 +288,7 @@ namespace ZeroKWeb.Controllers
                         x.MapWaterLevel == null);
             }
 
+            if (supported == true) ret = ret.Where(x => x.MapIsSupported == true);
             if (featured == true) ret = ret.Where(x => x.FeaturedOrder > 0);
             if (isDownloadable == 1) ret = ret.Where(x => x.ResourceContentFiles.Any(y => y.LinkCount > 0));
             else if (isDownloadable == 0) ret = ret.Where(x => x.ResourceContentFiles.All(y => y.LinkCount <= 0));
