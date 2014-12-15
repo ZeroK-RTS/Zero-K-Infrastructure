@@ -71,20 +71,20 @@ namespace System.Web.Mvc
             exp = new Regex(@"\[s\]((.|\n)+?)\[/s\]", RegexOptions.IgnoreCase);
             str = exp.Replace(str, "<strike>$1</strike>");
 
-            // format the url tags: [url=www.website.com]my site[/url]
+                        // format the url tags: [url=www.website.com]my site[/url]
             // becomes: <a href="www.website.com">my site</a>
             exp = new Regex(@"\[url\=([^\]]+)\]([^\]]+)\[/url\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<a href=\"$1\">$2</a>");
+            str = exp.Replace(str, "<a href=\"$1\" target=\"_blank\">$2</a>");
 
             // format the img tags: [img]www.website.com/img/image.jpeg[/img]
             // becomes: <img src="www.website.com/img/image.jpeg" />
             exp = new Regex(@"\[img\]([^\[]+)\[/img\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<img src=\"$1\" />");
+            str = exp.Replace(str, "<a href=\"$1\" target=\"_blank\"><img src=\"$1\" max-width=100% /></a>");
 
             // format img tags with alt: [img=www.website.com/img/image.jpeg]this is the alt text[/img]
             // becomes: <img src="www.website.com/img/image.jpeg" alt="this is the alt text" />
             exp = new Regex(@"\[img\=([^\]]+)\]([^\]]+)\[/img\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<img src=\"$1\" alt=\"$2\" />");
+            str = exp.Replace(str, "<a href=\"$1\" target=\"_blank\"><img src=\"$1\" alt=\"$2\" max-width=100% />");
 
             //format the colour tags: [color=red][/color]
             // becomes: <font color="red"></font>
@@ -108,11 +108,11 @@ namespace System.Web.Mvc
             str = exp.Replace(str, 
                 "<div class=\"video-container\">"+
                     "<video preload=\"auto\" height=\"auto\" width=\"auto\" controls=\"controls\">" +
-                        "<source type=\"video/webm\" src=\"$1$2webm\">"+
-                        "<source type=\"video/mp4\" src=\"$1$2mp4\">" +
-                        "<source type=\"video/ogg\" src=\"$1$2ogg\">" +
-                        "<source type=\"video/ogv\" src=\"$1$2ogv\">" +
-                        "<source type=\"video/3gp\" src=\"$1$23gp\">" +
+                        "<source type=\"video/webm\" src=\"$1$2" + "webm\">"+
+                        "<source type=\"video/mp4\" src=\"$1$2" + "mp4\">" +
+                        "<source type=\"video/ogg\" src=\"$1$2" + "ogg\">" +
+                        "<source type=\"video/ogv\" src=\"$1$2" + "ogv\">" +
+                        "<source type=\"video/3gp\" src=\"$1$2" +"3gp\">" +
                         "Your browser does not support the video tag. Find out if your Browser is supported at www.w3schools.com/tags/tag_video.asp" +
                     "</video>"+
                 "</div>");
