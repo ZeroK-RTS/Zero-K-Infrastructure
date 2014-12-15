@@ -73,15 +73,15 @@ namespace ZeroKLobby.MicroLobby
                 Program.ToolTip.SetText(engineDefaultButton, "Replace all entries with Spring's default values");
                 Program.ToolTip.SetText(cancelButton, "Exit, do not commit change");
                 Program.ToolTip.SetText(applyButton, "Write all entries to Springsettings.cfg");
-
-                var springPath = Program.SpringPaths;
-                if (springPath.UnitSyncDirectory == "") //if never set Spring path yet
+                
+                if(!Utils.VerifySpringInstalled())
                 {
-                    var defaultEnginePath = Utils.MakePath(springPath.WritableDirectory, "engine", ZkData.GlobalConst.DefaultEngineOverride);
-                    springPath.SetEnginePath(defaultEnginePath); //DefaultEngineOverride at PlasmaShared/GlobalConst.cs
+                	Program.Downloader.GetAndSwitchEngine(Program.SpringPaths.SpringVersion);
+                	this.Close();
+                    return;
                 }
 
-                settingsOptions = new Spring(springPath).GetEngineConfigOptions();
+                settingsOptions = new Spring(Program.SpringPaths).GetEngineConfigOptions();
 
                 var location = 0;
                 foreach (var kvp in settingsOptions) //ref: http://www.dotnetperls.com/dictionary, http://stackoverflow.com/questions/10556205/deserializing-a-json-with-variable-name-value-pairs-into-object-in-c-sharp

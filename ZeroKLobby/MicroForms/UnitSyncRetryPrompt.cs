@@ -27,13 +27,6 @@ namespace ZeroKLobby.MicroForms
                 return;
             }
 
-            var springPath = Program.SpringPaths;
-            if (springPath.UnitSyncDirectory == "") //if never set Spring path yet
-            {
-                var defaultEnginePath = Utils.MakePath(springPath.WritableDirectory, "engine", ZkData.GlobalConst.DefaultEngineOverride);
-                springPath.SetEnginePath(defaultEnginePath); //DefaultEngineOverride at PlasmaShared/GlobalConst.cs
-            }
-
             thisInstance = new PromptForm();
             countDown = new Timer();
             countDown.Tick += (s, e1) => { 
