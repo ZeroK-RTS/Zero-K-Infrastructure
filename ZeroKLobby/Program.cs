@@ -145,6 +145,7 @@ namespace ZeroKLobby
 
                 SpringPaths = new SpringPaths(null, writableFolderOverride: contentDir);
                 SpringPaths.MakeFolders();
+                SpringPaths.SetEnginePath(Utils.MakePath(SpringPaths.WritableDirectory, "engine", ZkData.GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion));
 
                 // run unitsync as soon as possible so we don't have to spend several minutes doing it on game start
                 // two problems:
