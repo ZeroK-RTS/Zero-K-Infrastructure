@@ -302,7 +302,7 @@ namespace ZeroKLobby
 
 
         public static bool VerifySpringInstalled() {
-            if (Program.SpringPaths.SpringVersion == null) {
+            if (Program.SpringPaths.SpringVersion == null || !Program.SpringPaths.HasEngineVersion(Program.SpringPaths.SpringVersion)) {
                 MessageBox.Show("Cannot start yet, please wait until engine downloads",
                                 "Engine not prepared yet",
                                 MessageBoxButtons.OK,
@@ -361,7 +361,7 @@ namespace ZeroKLobby
         /// </summary>
         public static int ReverseScaleValueX(double designHeight) {
             var output = designHeight*scaleDownRatioX;
-            return (int)(output + 0.5d); //Round
+            return (int)(output + 0.5d); //equivalent to Round(output)
         }
 
         /// <summary>
@@ -369,7 +369,7 @@ namespace ZeroKLobby
         /// </summary>
         public static int ReverseScaleValueY(double designHeight) {
             var output = designHeight*scaleDownRatioY;
-            return (int)(output + 0.5d); //Round
+            return (int)(output + 0.5d); //equivalent to Round(output)
         }
 
         /// <summary>
@@ -377,7 +377,7 @@ namespace ZeroKLobby
         /// </summary>
         public static int ScaleValueX(double designWidth) {
             var output = designWidth*scaleUpRatioX;
-            return (int)(output + 0.5d); //Round
+            return (int)(output + 0.5d); //equivalent to Round(output)
         }
 
         /// <summary>
@@ -385,7 +385,7 @@ namespace ZeroKLobby
         /// </summary>
         public static int ScaleValueY(double designHeight) {
             var output = designHeight*scaleUpRatioY;
-            return (int)(output + 0.5d); //Round
+            return (int)(output + 0.5d); //equivalent to Round(output)
         }
     }
 }
