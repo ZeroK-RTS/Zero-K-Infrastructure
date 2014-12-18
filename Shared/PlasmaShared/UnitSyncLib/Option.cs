@@ -65,7 +65,15 @@ namespace PlasmaShared.UnitSyncLib
 
                 case OptionType.Number:
                     double d;
-                    if (!double.TryParse(Value, out d)) return false;
+                    //Note: Be aware of culture & places where server is located. It effect how number are read.
+                    //useful reference:
+                    //http://stackoverflow.com/questions/4974887/problem-with-double-tryparse-when-i-do-not-know-the-culture
+                    //http://stackoverflow.com/questions/5060446/difference-between-currentculture-invariantculture-currentuiculture-and-instal
+
+                    //var culture = System.Globalization.CultureInfo.GetCultureInfo("cs"); //czech culture
+                    var culture = System.Globalization.CultureInfo.InvariantCulture;
+                    var style = System.Globalization.NumberStyles.Any;
+                    if (!double.TryParse(Value,style,culture, out d)) return false;
                     if (d < min || d > max) return false;
                     result = ConstructLine(Value);
                     return true;
