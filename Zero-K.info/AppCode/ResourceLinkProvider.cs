@@ -49,37 +49,6 @@ namespace ZeroKWeb
             }
             return ret;
 
-            /*var result = new List<string>();
-
-      result.Add(string.Format("http://www.springfiles.com/download.php?maincategory=1&subcategory={0}&file={1}",
-                               type == ZkData.ResourceType.Map ? 2 : 5,
-                               fileName));
-      try
-      {
-        using (var wc = new WebClient())
-        {
-          var pom = string.Format("http://www.springfiles.com/checkmirror.php?q={0}&c={1}",
-                                  Uri.EscapeDataString(fileName),
-                                  type == ZkData.ResourceType.Mod ? "games" : "maps");
-
-          var ret = wc.DownloadString(pom);
-
-          var matches = Regex.Matches(ret, "\\&mirror=([^\\&]+)");
-          foreach (Match match in matches)
-          {
-            if (match.Success && match.Groups.Count > 1)
-            {
-              var mirror = Uri.UnescapeDataString(match.Groups[1].Value);
-              result.Add(mirror);
-            }
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Console.Error.WriteLine("Error getting jobjol mirrors " + ex);
-      }
-      return result;*/
         }
 
         public static bool GetLinksAndTorrent(string internalName,
@@ -202,7 +171,7 @@ namespace ZeroKWeb
             {
                 var wr = (HttpWebRequest)WebRequest.Create(url);
                 wr.Timeout = 3000;
-                wr.Method = "GET";
+                wr.Method = "HEAD";
                 var res = wr.GetResponse();
                 redirectUrl = res.ResponseUri.ToString();
                 var cl = res.ContentLength;
