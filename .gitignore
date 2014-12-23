@@ -174,3 +174,4 @@ UpgradeLog*.htm
 FakesAssemblies/
 *.maps
 *.mods
+!local/
