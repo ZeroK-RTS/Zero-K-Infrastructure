@@ -166,7 +166,6 @@ namespace ZeroKLobby
                         lastPacket[mySteamID] = DateTime.Now;
                         UserStartsTalking(mySteamID);
                     }
-                    return true;
                 }
                 else
                 {
@@ -178,8 +177,8 @@ namespace ZeroKLobby
                         lastPacket[mySteamID] = null;
                         UserStopsTalking(mySteamID);
                     }
-                    return true;
                 }
+                return false;
             }));
 
             soundOut = new DirectSoundOut();
