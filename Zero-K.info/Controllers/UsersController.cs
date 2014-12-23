@@ -86,10 +86,17 @@ namespace ZeroKWeb.Controllers
                 Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - Springie rights: {0} -> {1}", acc.SpringieLevel, springieLevel), true);
                 acc.SpringieLevel = springieLevel;
             }
-            if (acc.IsZeroKAdmin != zkAdmin)
+           if (acc.IsZeroKAdmin != zkAdmin)
             {
+                //reset chat priviledges to 2 if removing adminhood
+                if (zkAdmin == false)
+                {
+                    Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - Springie rights: {0} -> {1}", acc.SpringieLevel, 2), true);
+                    acc.SpringieLevel = 2;
+                }
                 Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - Admin status: {0} -> {1}", acc.IsZeroKAdmin, zkAdmin), true);
                 acc.IsZeroKAdmin = zkAdmin;
+                
             }
             if (acc.HasVpnException != vpnException)
             {
