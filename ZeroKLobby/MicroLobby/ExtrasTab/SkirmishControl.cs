@@ -27,11 +27,12 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         Image minimap;
         Size minimapSize;
         private Spring spring;
-        List<SpringScanner.CacheItem> modCache = new List<SpringScanner.CacheItem>();
-        List<SpringScanner.CacheItem> mapCache = new List<SpringScanner.CacheItem>();
-        private List<BotBattleStatus> Bots = new List<BotBattleStatus>();
+        List<SpringScanner.CacheItem> modCache;
+        List<SpringScanner.CacheItem> mapCache;
+        List<Mod> modCache_folder; //mods in *.sdd folder located in datadir/games
+        private List<BotBattleStatus> Bots;
         Map currentMap;
-        private List<UserBattleStatus> allUser = new List<UserBattleStatus>();
+        private List<UserBattleStatus> allUser;
         private PlayerListItem myItem;
         private Ai[] aiList;
         private Mod currentMod;
@@ -55,6 +56,12 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
         private void Event_SkirmishControl_Enter(object sender, EventArgs e)
         {
+            modCache = new List<SpringScanner.CacheItem>();
+            mapCache = new List<SpringScanner.CacheItem>();
+            modCache_folder = new List<Mod>();
+            Bots = new List<BotBattleStatus>();
+            allUser = new List<UserBattleStatus>();
+        	
             //MessageBox.Show("Work in progress");
             //Note: always manually remove "((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();" from
             //splitcontainer, it have history to cause crash in Linux. Unknown reason.
@@ -237,6 +244,8 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
                     modCache = Program.SpringScanner.GetAllModResource();
                     for (int i = 0; i < modCache.Count; i++) modList.Add(modCache[i].InternalName);
+                    modCache_folder = SkirmishControlTool.GetSddMods();
+                    for (int i = 0; i < modCache_folder.Count; i++) modList.Add(modCache_folder[i].Name + " " + modCache_folder[i].PrimaryModVersion);
                     modList = SkirmishControlTool.SortListByVersionName(modList);
 
                     mapCache = Program.SpringScanner.GetAllMapResource();
@@ -978,29 +987,42 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             else if ((sender as Control).Name == "game_comboBox" && game_comboBox.SelectedItem != null)
             {
                 string gameName = (string)game_comboBox.SelectedItem;
-                //run GetMod() in new thread, then call "CallBack_Mod()" in current thread when finish(?). 
-                Program.SpringScanner.MetaData.GetModAsync(
-                    gameName,
-                    mod =>
-                    {
-                        Invoke(new Action(() =>
-                        {
-                            try { CallBack_Mod(mod); }
-                            catch (Exception ex) { Trace.TraceError("CallBack_Mod(mod) error: {0}", ex.ToString()); }
-                        })
-                        );
-                    }, 
-                    exception => { Trace.TraceError("CallBack_Mod(mod) error: {0}", exception.ToString()); },
-                    gameName);
-                //Program.SpringScanner.MetaData.GetModAsync(
-                //   (string)game_comboBox.SelectedItem,
-                //   mod=>{
-                //       try { CallBack_Mod(mod); }
-                //       catch (Exception ex) { Trace.TraceError("CallBack_Mod(mod) error: {0}", ex.ToString()); }
-                //       },
-                //   exception => { Trace.TraceError("CallBack_Mod(mod) error: {0}", exception.ToString()); },
-                //   (string)engine_comboBox.SelectedItem);
+                
+                bool foundLocally=false;
 
+                foreach (Mod mods in modCache_folder)
+                {
+                    if (gameName == mods.Name + " " + mods.PrimaryModVersion)
+                    {
+                        CallBack_Mod(mods);
+                        foundLocally = true;
+                    }
+                }
+                if (!foundLocally)
+                {
+                    //run GetMod() in new thread, then call "CallBack_Mod()" in current thread when finish(?). 
+                    Program.SpringScanner.MetaData.GetModAsync(
+                        gameName,
+                        mod =>
+                        Invoke(new Action(() => {
+                            try {
+                                CallBack_Mod(mod);
+                            } catch (Exception ex) {
+                                Trace.TraceError("CallBack_Mod(mod) error: {0}", ex.ToString());
+                            }
+                        })), 
+                        exception => Trace.TraceError("CallBack_Mod(mod) error: {0}", exception.ToString()),
+                        gameName);
+                    //Program.SpringScanner.MetaData.GetModAsync(
+                    //   (string)game_comboBox.SelectedItem,
+                    //   mod=>{
+                    //       try { CallBack_Mod(mod); }
+                    //       catch (Exception ex) { Trace.TraceError("CallBack_Mod(mod) error: {0}", ex.ToString()); }
+                    //       },
+                    //   exception => { Trace.TraceError("CallBack_Mod(mod) error: {0}", exception.ToString()); },
+                    //   (string)engine_comboBox.SelectedItem);
+                }
+                
                 if (infoLabel.Text.StartsWith("Select game"))
                     infoLabel.Text = "";
 
@@ -1221,7 +1243,11 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             script.AppendFormat("  NumPlayers={0};\n", allUser.Count);
             script.AppendFormat("  NumTeams={0};\n", allUser.Where(u => !u.IsSpectator).ToList().Count);
             script.AppendFormat("  NumAllyTeams={0};\n", allUser.GroupBy(i => i.AllyNumber).Select(team => team.Key).Distinct().ToList().Count);
-            script.AppendFormat("  ModHash={0};\n", modCache.FirstOrDefault(x => x.InternalName == (string)gameName).Md5.ToString());
+            var modCacheItem = modCache.FirstOrDefault(x => x.InternalName == (string)gameName);
+            string modHash = "0";
+            if (modCacheItem!=null)
+                modHash = modCacheItem.Md5.ToString();
+            script.AppendFormat("  ModHash={0};\n", modHash);
             script.AppendFormat("  MapHash={0};\n", mapCache.FirstOrDefault(x => x.InternalName == (string)mapName).Md5.ToString());
 
             var positions = currentMap.Positions != null ? currentMap.Positions.ToList() : new List<StartPos>();
@@ -1488,6 +1514,8 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             }
             else
             {
+                if (minimapBox == null || minimapBox.Image == null) 
+                    return;
                 float imgWidthPerRect = (float)minimapBox.Image.Width / BattleRect.Max;
                 float imgHeightPerRect = (float)minimapBox.Image.Height / BattleRect.Max;
                 int diffWidth_half = (minimapPanel.Width - minimapBox.Image.Width) / 2;

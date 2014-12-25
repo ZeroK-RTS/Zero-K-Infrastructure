@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using PlasmaShared.UnitSyncLib;
 using System.IO;
+using System.Globalization;
 
 namespace ZeroKLobby.MicroLobby.ExtrasTab
 {
@@ -12,8 +13,8 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
         /// <summary>
         /// This function sort the content of a List<string>
-        /// using the first character (a-z) of the first 3 word 
-        /// and the 4 first numbers (0-50000) as versions.
+        /// using the first 2 character of every word 
+        /// and numbers as versions.
         /// 
         /// The words (and numbers) are assumed to be separated by
         /// character such as ".", "-", "_", and " "
@@ -209,20 +210,9 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     aiVerFolder = GetFolderName(aiVerFolderS[j]);
                     aiLibFolder = PlasmaShared.Utils.MakePath(aiFolder, aiVerFolder); //eg: Spring/engine/98.0/AI/Skirmish/AAI/0.9
                     aiInfoFile = PlasmaShared.Utils.MakePath(aiLibFolder, "AIInfo.lua"); //eg: Spring/engine/98.0/AI/Skirmish/AAI/0.9/AIInfo.lua
-                    var info = GetAIInfo(aiInfoFile);
-                    if (info.ContainsKey("shortName") && info.ContainsKey("version"))
-                    {
-                        var bot = new Ai()
-                        {
-                            Info = new AiInfoPair[3] 
-                        { 
-                            new AiInfoPair { Key = "shortName", Value = info.ContainsKey("shortName")?info["shortName"]:"" } , //usually equivalent to AI folder name (aiName[i])
-                            new AiInfoPair { Key = "version", Value = info.ContainsKey("version")?info["version"]:"" } , //usually equivalent to sub- AI folder name (aiVerFolder)
-                            new AiInfoPair { Key = "description", Value = info.ContainsKey("description")?info["description"]:"" } ,
-                        }
-                        };
+                    var bot = CrudeLUAReader.GetAIInfo(aiInfoFile);
+                    if (bot!=null)
                         springAis.Add(bot);
-                    }
                 }
             }
             return springAis;
@@ -238,54 +228,796 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             else
                 return input.Substring(input.LastIndexOf("\\") + 1); //remove full path, leave only folder name
         }
-
+        
+        public static List<Mod> GetSddMods()
+        {
+            var sddMods = new List<Mod>();
+            var modFolder = Utils.MakePath(Program.SpringPaths.DataDirectories.First(), "games");
+            var sddFolder = System.IO.Directory.EnumerateDirectories(modFolder, "*.sdd"); //.ToList<string>();
+            foreach (string path in sddFolder)
+            {
+                var modinfo = Utils.MakePath(path,"modinfo.lua");
+                if (File.Exists(modinfo))
+                {
+                    var mod = new Mod();
+                
+                    mod.ArchiveName = GetFolderName(path);
+                    mod.Checksum = 0;
+                    
+                    CrudeLUAReader.ParseModInfo(modinfo,ref mod);
+       
+                    String engineOptions = null;
+                    String modOptions = null;
+                    String luaAI = null;
+                    
+                    var rootFiles = Directory.EnumerateFiles(path);
+                    foreach(var pathOfFile in rootFiles)
+                    {
+                        var fileName = GetFolderName(pathOfFile);
+                        if(fileName.StartsWith("EngineOptions.lua",StringComparison.InvariantCultureIgnoreCase))
+                            engineOptions = pathOfFile;
+                        else if(fileName.StartsWith("ModOptions.lua",StringComparison.InvariantCultureIgnoreCase))
+                            modOptions = pathOfFile;
+                        else if(fileName.StartsWith("LuaAI.lua",StringComparison.InvariantCultureIgnoreCase))
+                            luaAI = pathOfFile;
+                    }
+                    
+                    if (modOptions!=null)
+                        CrudeLUAReader.ReadOptionsTable(modOptions, ref mod);
+                    if (engineOptions!=null)
+                        CrudeLUAReader.ReadOptionsTable(engineOptions, ref mod);
+                    if (luaAI!=null)
+                        CrudeLUAReader.ParseLuaAI(luaAI,ref mod);
+                    
+                    var sideData = Utils.MakePath(path,"gamedata","sidedata.lua");
+                    var picPath = Utils.MakePath(path,"sidepics");
+                    CrudeLUAReader.GetSideInfo(sideData,picPath,ref mod);
+                    
+                    sddMods.Add(mod);
+                }
+            }
+            return sddMods;
+        }
+    }
+    static class CrudeLUAReader
+    {
+        /// <summary>
+        /// Parse sides name from gamedata/sidedata.lua and side icon (.bmp format with same name as side name) from sidepics/
+        /// </summary>
+        public static void GetSideInfo(string sidedataluaPath, string picPath, ref Mod modInfo)
+        {
+            if (!File.Exists(sidedataluaPath))
+            {
+                modInfo.Sides = new string[0];
+                modInfo.SideIcons = (new List<Byte[]>()).ToArray();
+                return;
+            }
+            
+            using (FileStream fileStream = File.OpenRead(sidedataluaPath))
+            using (var stream = new StreamReader(fileStream))
+            {
+                var allText = stream.ReadToEnd();
+                int offset =0;
+                var table = ReadLUATable(0,allText,out offset);
+                
+                List<String> sides = new List<String>();
+                List<byte[]> sideIcons = new List<byte[]>();
+                
+                foreach (var kvp in table)
+                {
+                    String name = "";
+                    foreach (var kvp2 in (kvp.Value as Dictionary<String,Object>))
+                    {
+                        var value = (kvp2.Value as String);
+                        
+                        switch(kvp2.Key)
+                        {
+                            case "name":
+                                name = value;
+                                break;
+                            case "startunit":
+                                break;
+                        }
+                    }
+                    if (name!="")
+                    {
+                        var picBytes = new Byte[0];
+                        try{
+                        var picList = Directory.EnumerateFiles(picPath);
+                        using(FileStream fileStream2 = File.OpenRead(picList.First(x => SkirmishControlTool.GetFolderName(x).StartsWith(name,StringComparison.InvariantCultureIgnoreCase))))
+                        {
+                            picBytes = new Byte[fileStream2.Length];
+                            fileStream2.Read(picBytes,0,picBytes.Length);
+                        }
+                        }catch(Exception e) {System.Diagnostics.Trace.TraceError(e.ToString());}
+                        sides.Add(name);
+                        sideIcons.Add(picBytes);
+                    }
+                }
+                modInfo.Sides = sides.ToArray();
+                modInfo.SideIcons = sideIcons.ToArray();
+            }
+        }
+        
         /// <summary>
         /// Get AI description from AIInfo.lua
         /// </summary>
-        private static Dictionary<string, string> GetAIInfo(string filePath)
+        public static Ai GetAIInfo(string filePath)
         {
-            Dictionary<string, string> info = new Dictionary<string, string>();
-            if (!File.Exists(filePath)) return info;
-
-            //Open the stream and read
-            using (FileStream fileStream = File.OpenRead(filePath))
+            if (!File.Exists(filePath)) 
             {
-                string currentLine;
-                string longValue;
-                string shortValue;
-                string keyName;
-                using (var stream = new StreamReader(fileStream))
-                    while (!stream.EndOfStream)
+                return null;
+            }
+            
+            var aiInfoList = new List<AiInfoPair>();
+            
+            using (FileStream fileStream = File.OpenRead(filePath))
+            using (var stream = new StreamReader(fileStream))
+            {
+                var allText = stream.ReadToEnd();
+                int offset =0;
+                var table = ReadLUATable(0,allText,out offset);
+                
+                foreach (var kvp in table)
+                {
+                    String key="";
+                       String valueIn="";
+                       String desc="";
+                       var aiInfoOne =  new AiInfoPair();
+                    foreach (var kvp2 in (kvp.Value as Dictionary<String,Object>))
                     {
-                        currentLine = stream.ReadLine();
-                        if (currentLine.Contains("key    = "))
+                        var value = (kvp2.Value as String);
+                        switch(kvp2.Key)
                         {
-                            keyName = GetValue(currentLine);
-                            currentLine = stream.ReadLine();
-                            longValue = currentLine;
-                            currentLine = stream.ReadLine();
-                            while (!currentLine.Contains("desc   = "))
-                            {
-                                longValue = longValue + currentLine; //can contain multiple line, such as RAI's description, so we append line until some sign that tell us to stop
-                                currentLine = stream.ReadLine();
-                            }
-                            shortValue = GetValue(longValue).Trim(new char[5] { ' ', '\t', '[', ']', '\'' });
-                            info.Add(keyName, shortValue);
+                            case "key":
+                                key = value;
+                                break;
+                            case "value":
+                                valueIn= value;
+                                break;
+                            case "desc":
+                                desc = value;
+                                break;
                         }
                     }
+                    if (key!="" && valueIn!="")
+                    {
+                        aiInfoOne.Key = key;
+                        aiInfoOne.Value = valueIn;
+                        aiInfoOne.Description = desc;
+                        aiInfoList.Add(aiInfoOne);
+                    }
+                }
             }
-            return info;
+            return new Ai(){
+                Info= aiInfoList.ToArray()
+            };
         }
-
-        private static string GetValue(string line)
+        
+        /// <summary>
+        /// Read mod luaAI from LuaAI.lua
+        /// </summary>
+        public static void ParseLuaAI(string filePath, ref Mod modInfo)
         {
-            //eg1: "		value  = 'KAIK',"
-            //eg2: "		value  = '0.13', -- AI version - !This comment is used for parsing!"
-            //eg3: "		value  = [[Plays a nice, slow game, concentrating on base building.\nUses ground, air, hovercrafts and water well.\nDoes some smart moves and handles T2+ well.\n
-            //                       Realtive CPU usage: 1.0\nScales well with growing unit numbers.\nKnown to Support: BA, SA, XTA, NOTA]],"
-            int open = line.IndexOf("= ", 0, line.Length) + 2 + 1;
-            int close = line.IndexOf(',', open) - 1;
-            return line.Substring(open, close - open); 
+            if (!File.Exists(filePath)) 
+            {
+                modInfo.ModAis = new Ai[0];
+                return;
+            }
+               
+            using (FileStream fileStream = File.OpenRead(filePath))
+            using (var stream = new StreamReader(fileStream))
+            {
+                var allText = stream.ReadToEnd();
+                int offset =0;
+                var table = ReadLUATable(0,allText,out offset);
+                
+                List<Ai> modAis = new List<Ai>();
+                
+                foreach (var kvp in table)
+                {
+                    String name = "";
+                    String desc = "";
+                    foreach (var kvp2 in (kvp.Value as Dictionary<String,Object>))
+                    {
+                        var value = (kvp2.Value as String);
+                        
+                        switch(kvp2.Key)
+                        {
+                            case "name":
+                                name = value;
+                                break;
+                            case "desc":
+                                desc = value;
+                                break;
+                        }
+                    }
+                    if (name!="" && desc!="")
+                    {
+                        var bot = new Ai()
+                        {
+                            Info = new AiInfoPair[2] 
+                        { 
+                            new AiInfoPair { Key = "shortName", Value = name } , //usually equivalent to AI folder name (aiName[i])
+                            new AiInfoPair { Key = "description", Value = desc } ,
+                        }
+                        };
+                        modAis.Add(bot);
+                    }
+                }
+                modInfo.ModAis = modAis.ToArray();
+            }
         }
+    
+        /// <summary>
+        /// Read mod information from modInfo.lua
+        /// </summary>
+        public static void ParseModInfo(string filePath, ref Mod modInfo)
+        {
+            if (!File.Exists(filePath))
+            {
+                return;
+            }
+            
+            using (FileStream fileStream = File.OpenRead(filePath))
+            using (var stream = new StreamReader(fileStream))
+            {
+                var allText = stream.ReadToEnd();
+                int offset =0;
+                var table = ReadLUATable(0,allText,out offset);
+                
+                foreach (var kvp in table)
+                {
+                    var value = (kvp.Value as String);
+                    switch(kvp.Key)
+                    {
+                        case "name":
+                            modInfo.Name = value;
+                            break;
+                        case "description":
+                            modInfo.Description = value;
+                            break;
+                        case "shortname":
+                            modInfo.ShortName = value;
+                            break;
+                        case "version":
+                            modInfo.PrimaryModVersion = value;
+                            break;
+                        case "mutator":
+                            modInfo.Mutator = value;
+                            break;
+                        case "game":
+                            modInfo.Game = value;
+                            break;
+                        case "shortGame":
+                            modInfo.ShortGame = value;
+                            break;
+                        case "modtype":
+                            //TODO modtype??
+                            break;
+                        case "depend":
+                            var listDepend = new List<string>();
+                            foreach (var kvp2 in (kvp.Value as Dictionary<String,Object>))
+                            {
+                                var value2 = (kvp2.Value as String);
+                                listDepend.Add(value2);
+                            }
+                            
+                            modInfo.Dependencies = listDepend.ToArray();
+                            break;
+                    }
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Read options from EngineOptions.lua or ModOptions.lua
+        /// </summary>
+        public static void ReadOptionsTable(String filePath, ref Mod modInfo)
+        {
+            if (!File.Exists(filePath)) 
+            {
+                modInfo.Options = new Option[0];
+                return;
+            }
+            
+            var allOptions = new List<Option>();
+            using (FileStream fileStream = File.OpenRead(filePath))
+            using (var stream = new StreamReader(fileStream))
+            {
+                var allText = stream.ReadToEnd();
+                int offset =0;
+                var table = ReadLUATable(0,allText,out offset);
+                
+                foreach (var kvp in table)
+                {
+                    var anOption = new Option();
+                    bool isBoolOption = false;
+                    foreach(var kvp2 in (kvp.Value as Dictionary<String,Object>))
+                    {
+                        var value = (kvp2.Value as String);
+                        float numbers;
+                        //uncomment to take a peek on what it read!: System.Diagnostics.Trace.TraceWarning("key: " + kvp2.Key + " value:" + value);
+                        switch(kvp2.Key)
+                        {
+                            case "key":
+                                anOption.Key = value;
+                                break;
+                            case "name":
+                                anOption.Name = value;
+                                break;
+                            case "desc":
+                                anOption.Description = value;
+                                break;
+                            case "type":
+                                switch(value)
+                                {
+                                    case "bool":
+                                        anOption.Type = OptionType.Bool;
+                                        isBoolOption = true;
+                                        break;
+                                    case "list":
+                                        anOption.Type = OptionType.List;
+                                        break;
+                                    case "number":
+                                        anOption.Type = OptionType.Number;
+                                        break;
+                                    case "string":
+                                        anOption.Type = OptionType.String;
+                                        break;
+                                    case "section":
+                                        anOption.Type = OptionType.Section;
+                                        continue;
+                                    default:
+                                        anOption.Type = OptionType.Undefined;
+                                        break;
+                                }
+                                break;
+                            case "def":
+                                anOption.Default = value;
+                                if (isBoolOption)
+                                {
+                                    if (value=="false")
+                                        anOption.Default = "0";
+                                    else
+                                        anOption.Default = "1";
+                                }
+                                break;
+                            case "min":
+                                float.TryParse(value,NumberStyles.Float,CultureInfo.InvariantCulture,out numbers);
+                                anOption.Min = numbers;
+                                break;
+                            case "max":
+                                float.TryParse(value,NumberStyles.Float,CultureInfo.InvariantCulture,out numbers);
+                                anOption.Max = numbers;
+                                break;
+                            case "step":
+                                float.TryParse(value,NumberStyles.Float,CultureInfo.InvariantCulture,out numbers);
+                                anOption.Step = numbers;
+                                break;
+                            case "maxlen":
+                                float.TryParse(value,NumberStyles.Float,CultureInfo.InvariantCulture,out numbers);
+                                anOption.StrMaxLen = numbers;
+                                break;
+                            case "items":
+                                var listOptions = new List<ListOption>();
+                                foreach(var kvp3 in (kvp2.Value as Dictionary<String,Object>))
+                                {
+                                    var listOption = new ListOption();
+                                    foreach(var kvp4 in (kvp3.Value as Dictionary<String,Object>))
+                                    {
+                                        var value2 = (kvp4.Value as String);
+                                        switch(kvp4.Key)
+                                        {
+                                            case "key":
+                                                listOption.Key = value2;
+                                                break;
+                                            case "name":
+                                                listOption.Name = value2;
+                                                break;
+                                            case "desc":
+                                                listOption.Description = value2;
+                                                break;
+                                        }
+                                    }
+
+                                    if (listOption.Key!=null)
+                                        listOptions.Add(listOption);
+                                }
+                                anOption.ListOptions = listOptions;
+                                break;
+                            case "scope":
+                                anOption.Scope = value;
+                                break;
+                               case "section":
+                                anOption.Section = value;
+                                break;
+                        }     
+                    }
+
+                    if (anOption.Key!=null)
+                        allOptions.Add(anOption);   
+                }
+            }
+            if (modInfo.Options!=null)
+                modInfo.Options = modInfo.Options.ToList().Concat(allOptions).ToArray();
+            else 
+                modInfo.Options = allOptions.ToArray();
+        }
+        
+        /// <summary>
+        /// Search the first bracket pairs "{}" in text file starting from startIndex, and then 
+        /// parse the content as Dictionary, then output the index of closing bracket "}" as offset.
+        /// Any syntax outside these bracket except comment syntax is ignored, 
+        /// and any logic syntax outside or inside the bracket is ignored.
+        /// </summary>
+        private static Dictionary<String,Object> ReadLUATable(int startIndex, string file, out int offset)
+        {
+            var contentList =new Dictionary<String,Object>();
+            string prefix="id_";
+            
+            string stringGlue = "...";
+            
+            int stringCharType = 0;
+            char[] stringChars = new char[2]{'\'','"'};
+            bool blockStringChar = false;
+            
+            int blockStringCount = 0;
+            string blockStringOpen = "[[";
+            string blockStringClose = "]]";
+            bool blockStringString = false;
+            
+            int blockCommentCount = 0;
+            string blockCommentOpen = "--[[";
+            string blockCommentClose = "--]]";
+            bool blockComment = false;
+            
+            int commentCharCount = 0;
+            string commentString = "--";
+            bool lineComment = false;
+            
+            bool inTable = false;
+            char tableOpen = '{';
+            char tableClose = '}';
+            
+            char contentSeparator = ',';
+            int contentIndex = 0;
+            
+            char[] newLineChar = {'\n','\r'};
+            char whitespaceA = ' ';
+            char whitespaceB = '\t';
+            
+            string capturedValue1 = "";
+            string capturedValue2 = "";
+            object capturedObject1 = null;
+            char badFirstCharCap = '-';
+            char escapeCharSign = '\\';
+            bool isEscapeCharNow = false;
+            bool detectedUnspacedChar = false;
+            
+            bool detectedEqualSign = false;
+            char equalSign = '=';
+            
+            int i=startIndex;
+            while(i<file.Length)
+            {
+                //escape char for displaying " and ' char in string area
+                if(file[i]==escapeCharSign)
+                {
+                    if (!isEscapeCharNow)
+                    {
+                        blockStringCount = 0;
+                        
+                        isEscapeCharNow=true;
+                        
+                        i++;
+                        continue;
+                    }
+                    isEscapeCharNow=false;
+                }
+                
+                //avoid "--" being read as variable name
+                var badCapture=false;
+                if(file[i]==badFirstCharCap)
+                    badCapture = (!detectedEqualSign && capturedValue1.Length==0);
+                
+                //string block, [[ ]] " '
+                if (!lineComment && !blockComment)
+                {
+                    if (!isEscapeCharNow && !blockStringChar)
+                    {
+                        if (blockStringString)
+                        {
+                            if (file[i]==blockStringOpen[0])
+                            {                                
+                                blockStringCount++;
+                                if (blockStringCount==blockStringOpen.Length)
+                                {
+                                    blockStringString=true;
+                                    blockStringCount=0;
+                                    
+                                    i++;
+                                    continue;
+                                }
+                            }else
+                                blockStringCount=0;
+                        }else
+                        {
+                            if (file[i]==blockStringClose[0])
+                            {    
+                                blockStringCount++;
+                                if (blockStringCount==blockStringOpen.Length)
+                                {
+                                    blockStringString=false;
+                                    blockStringCount=0;
+                                    
+                                    i++;
+                                    continue;
+                                }
+                            }else
+                                blockStringCount=0;
+                        }
+                    }
+                    
+                    if (!isEscapeCharNow && !blockStringString)
+                    {
+                        if(blockStringChar)
+                        {
+                            if (file[i]==stringChars[stringCharType])
+                            {
+                                blockStringChar=false;
+                                
+                                i++;
+                                continue;
+                            }
+                        }else
+                        {
+                            if (file[i]==stringChars[0])
+                            {
+                                blockStringChar=true;
+                                stringCharType = 0;
+                                
+                                i++;
+                                continue;
+                            }else if (file[i]==stringChars[1])
+                            {
+                                blockStringChar=true;
+                                stringCharType = 1;
+                                
+                                i++;
+                                continue;
+                            }
+                        }
+                    }
+                    
+                    if (blockStringString || blockStringChar)
+                    {
+                        char newChar = file[i];
+                        
+                        if (isEscapeCharNow && file[i]=='n') //newline
+                            newChar = '\n';
+                        isEscapeCharNow = false;
+                        
+                        if (detectedEqualSign)
+                            capturedValue2 = capturedValue2 + newChar;
+                        else
+                            capturedValue1 = capturedValue1 + newChar;
+                        
+                        i++;
+                        continue;
+                    }
+                }
+                
+                //connector between string value, "..."
+                if (!detectedUnspacedChar && file[i]==stringGlue[0])
+                {
+                    i++;
+                    continue;
+                }
+                
+                //Whitespace
+                if (file[i]==whitespaceA || file[i]==whitespaceB)
+                {
+                    detectedUnspacedChar = false;
+                    
+                    i++;
+                    continue;
+                }
+                
+                //Newline
+                if (file[i]==newLineChar[0] || file[i]==newLineChar[1])
+                {
+                    lineComment = false;
+                    
+                    i++;
+                    continue;
+                }
+                
+                //Block comment
+                if (!blockComment)
+                {    
+                    if (file[i]==blockCommentOpen[blockCommentCount])
+                    {
+                        blockCommentCount++;
+                        if (blockCommentCount==blockCommentOpen.Length)
+                        {
+                            blockComment=true;
+                            blockCommentCount=0;
+                            
+                            i++;
+                            continue;
+                        }
+                    }else
+                        blockCommentCount=0;
+                }else
+                {
+                    if (file[i]==blockCommentClose[blockCommentCount])
+                    {
+                        blockCommentCount++;
+                        if (blockCommentCount==blockCommentClose.Length)
+                        {
+                            blockComment=false;
+                            blockCommentCount=0;
+                            
+                            i++;
+                            continue;
+                        }
+                    }else
+                        blockCommentCount=0;
+                    
+                    i++;
+                    continue;
+                }
+                
+                //Line comment, --
+                if(!lineComment)
+                {
+                    if (file[i]==commentString[commentCharCount])
+                    {
+                        commentCharCount++;
+                        if (commentCharCount==commentString.Length)
+                        {
+                            lineComment=true;
+                            commentCharCount=0;
+                            
+                            i++;
+                            continue;
+                        }
+                    }else
+                        commentCharCount=0;
+                }else
+                {
+                    i++;
+                    continue;
+                }
+                
+                //{ and }
+                if (!inTable && file[i]==tableOpen)
+                {
+                    inTable = true;
+                    
+                    i++;
+                    continue;
+                }
+                else if (file[i]==tableOpen)
+                {
+                    int offsetIn = 0;
+                    var list = ReadLUATable(i,file,out offsetIn);
+                    capturedObject1=list;
+                    
+                    i = i+offsetIn;
+                    continue;
+                }
+                else if (file[i]==tableClose)
+                {
+                    if (!detectedEqualSign)
+                    {
+                        capturedValue2 = capturedValue1;
+                        capturedValue1 = prefix + contentIndex;
+                    }
+                    
+                    if (capturedValue2!="" || capturedObject1!=null)
+                    {
+                        bool duplicate = false;
+                        if(contentList.ContainsKey(capturedValue1))
+                        {
+                            duplicate = true;
+                            System.Diagnostics.Trace.TraceWarning("CrudeLUAReader: detected duplicate value: " + capturedValue1 + "="+ contentList[capturedValue1]);
+                        }
+                        
+                        if (capturedObject1==null)
+                        {
+                            if(duplicate) 
+                                contentList[capturedValue1] = capturedValue2;
+                            else
+                                contentList.Add(capturedValue1,capturedValue2);
+                        }
+                        else
+                        {
+                            if(duplicate)
+                                contentList[capturedValue1]=capturedObject1;
+                            else
+                                contentList.Add(capturedValue1,capturedObject1);
+                        }
+                    }
+                    
+                    inTable = false;
+                    offset = (i-startIndex)+1; //is out
+                    return contentList;
+                }
+                if (!inTable)
+                {
+                    i++;
+                    continue;
+                }
+                
+                //content separator, ","
+                if (file[i]==contentSeparator)
+                {
+                    if (!detectedEqualSign)
+                    {
+                        capturedValue2 = capturedValue1;
+                        capturedValue1 = prefix + contentIndex;
+                    }
+                    
+                    if (capturedValue2!="" || capturedObject1!=null)
+                    {
+                        bool duplicate = false;
+                        if(contentList.ContainsKey(capturedValue1))
+                        {
+                            duplicate = true;
+                            System.Diagnostics.Trace.TraceWarning("CrudeLUAReader: detected duplicate value: " + capturedValue1 + "="+ contentList[capturedValue1]);
+                        }
+                        
+                        if (capturedObject1==null)
+                        {
+                            if(duplicate) 
+                                contentList[capturedValue1] = capturedValue2;
+                            else
+                                contentList.Add(capturedValue1,capturedValue2);
+                        }
+                        else
+                        {
+                            if(duplicate)
+                                contentList[capturedValue1]=capturedObject1;
+                            else
+                                contentList.Add(capturedValue1,capturedObject1);
+                        }
+                    }
+                    
+                    capturedValue1 = "";
+                    capturedValue2 = "";
+                    capturedObject1 = null;
+                    detectedEqualSign = false;
+                    
+                    contentIndex++;
+                    
+                    i++;
+                    continue;
+                }
+                
+                //key value separator, =
+                if (file[i]==equalSign)
+                {
+                    detectedEqualSign = true;
+                    
+                    i++;
+                    continue;
+                }
+                
+                if (!badCapture)
+                {
+                    detectedUnspacedChar = true;
+                    
+                    if (detectedEqualSign)
+                        capturedValue2 = capturedValue2 + file[i];
+                    else
+                        capturedValue1 = capturedValue1 + file[i];
+                }
+                i++;
+            }
+            offset = file.Length;
+            return contentList;
+        }      
     }
 }
