@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using PlasmaShared.UnitSyncLib;
+using ZkData.UnitSyncLib;
 using System.IO;
 
 namespace ZeroKLobby.MicroLobby.ExtrasTab
@@ -189,7 +189,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             //}
 
             var springAis = new List<Ai>();
-            string aiSkirmishFolder = PlasmaShared.Utils.MakePath(engineFolder, "AI", "Skirmish"); //eg: Spring/engine/98.0/AI/Skirmish
+            string aiSkirmishFolder = ZkData.Utils.MakePath(engineFolder, "AI", "Skirmish"); //eg: Spring/engine/98.0/AI/Skirmish
 
             if (!Directory.Exists(aiSkirmishFolder))
                 return springAis;
@@ -207,8 +207,8 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 for (int j = 0; j < aiVerFolderS.Count; j++)
                 {
                     aiVerFolder = GetFolderName(aiVerFolderS[j]);
-                    aiLibFolder = PlasmaShared.Utils.MakePath(aiFolder, aiVerFolder); //eg: Spring/engine/98.0/AI/Skirmish/AAI/0.9
-                    aiInfoFile = PlasmaShared.Utils.MakePath(aiLibFolder, "AIInfo.lua"); //eg: Spring/engine/98.0/AI/Skirmish/AAI/0.9/AIInfo.lua
+                    aiLibFolder = ZkData.Utils.MakePath(aiFolder, aiVerFolder); //eg: Spring/engine/98.0/AI/Skirmish/AAI/0.9
+                    aiInfoFile = ZkData.Utils.MakePath(aiLibFolder, "AIInfo.lua"); //eg: Spring/engine/98.0/AI/Skirmish/AAI/0.9/AIInfo.lua
                     var info = GetAIInfo(aiInfoFile);
                     if (info.ContainsKey("shortName") && info.ContainsKey("version"))
                     {

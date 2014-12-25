@@ -13,7 +13,7 @@
 // 
 #pragma warning disable 1591
 
-namespace PlasmaShared.SpringieInterfaceReference {
+namespace ZkData.SpringieInterfaceReference {
     using System;
     using System.Web.Services;
     using System.Diagnostics;
@@ -24,9 +24,9 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.19462")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Web.Services.WebServiceBindingAttribute(Name="SpringieServiceSoap", Namespace="http://tempuri.org/")]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
+    [WebServiceBinding(Name="SpringieServiceSoap", Namespace="http://tempuri.org/")]
     public partial class SpringieService : System.Web.Services.Protocols.SoapHttpClientProtocol {
         
         private System.Threading.SendOrPostCallback AutohostPlayerJoinedOperationCompleted;
@@ -53,7 +53,7 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         /// <remarks/>
         public SpringieService() {
-            this.Url = global::PlasmaShared.Properties.Settings.Default.PlasmaShared_SpringieInterfaceReference_SpringieService;
+            this.Url = global::ZkData.Properties.Settings.Default.PlasmaShared_SpringieInterfaceReference_SpringieService;
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;
@@ -118,7 +118,7 @@ namespace PlasmaShared.SpringieInterfaceReference {
         public event StoreBoxesCompletedEventHandler StoreBoxesCompleted;
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/AutohostPlayerJoined", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [SoapDocumentMethod("http://tempuri.org/AutohostPlayerJoined", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public PlayerJoinResult AutohostPlayerJoined(BattleContext context, int accountID) {
             object[] results = this.Invoke("AutohostPlayerJoined", new object[] {
                         context,
@@ -149,8 +149,8 @@ namespace PlasmaShared.SpringieInterfaceReference {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/BalanceTeams", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public BalanceTeamsResult BalanceTeams(BattleContext context, bool isGameStart, [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)] System.Nullable<int> allyCount, [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)] System.Nullable<bool> clanWise) {
+        [SoapDocumentMethod("http://tempuri.org/BalanceTeams", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public BalanceTeamsResult BalanceTeams(BattleContext context, bool isGameStart, [XmlElement(IsNullable=true)] System.Nullable<int> allyCount, [XmlElement(IsNullable=true)] System.Nullable<bool> clanWise) {
             object[] results = this.Invoke("BalanceTeams", new object[] {
                         context,
                         isGameStart,
@@ -184,7 +184,7 @@ namespace PlasmaShared.SpringieInterfaceReference {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetRecommendedMap", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [SoapDocumentMethod("http://tempuri.org/GetRecommendedMap", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public RecommendedMapResult GetRecommendedMap(BattleContext context, bool pickNew) {
             object[] results = this.Invoke("GetRecommendedMap", new object[] {
                         context,
@@ -215,7 +215,7 @@ namespace PlasmaShared.SpringieInterfaceReference {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetSpringBattleStartSetup", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [SoapDocumentMethod("http://tempuri.org/GetSpringBattleStartSetup", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public SpringBattleStartSetup GetSpringBattleStartSetup(BattleContext context) {
             object[] results = this.Invoke("GetSpringBattleStartSetup", new object[] {
                         context});
@@ -244,7 +244,7 @@ namespace PlasmaShared.SpringieInterfaceReference {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SubmitSpringBattleResult", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [SoapDocumentMethod("http://tempuri.org/SubmitSpringBattleResult", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string SubmitSpringBattleResult(BattleContext context, string password, BattleResult result, BattlePlayerResult[] players, string[] extraData) {
             object[] results = this.Invoke("SubmitSpringBattleResult", new object[] {
                         context,
@@ -281,7 +281,7 @@ namespace PlasmaShared.SpringieInterfaceReference {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetClusterConfigs", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [SoapDocumentMethod("http://tempuri.org/GetClusterConfigs", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public AhConfig[] GetClusterConfigs(string clusterNode) {
             object[] results = this.Invoke("GetClusterConfigs", new object[] {
                         clusterNode});
@@ -310,7 +310,7 @@ namespace PlasmaShared.SpringieInterfaceReference {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetMapCommands", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [SoapDocumentMethod("http://tempuri.org/GetMapCommands", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string GetMapCommands(string mapName) {
             object[] results = this.Invoke("GetMapCommands", new object[] {
                         mapName});
@@ -339,7 +339,7 @@ namespace PlasmaShared.SpringieInterfaceReference {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/MovePlayers", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [SoapDocumentMethod("http://tempuri.org/MovePlayers", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public void MovePlayers(string autohostName, string autohostPassword, MovePlayerEntry[] moves) {
             this.Invoke("MovePlayers", new object[] {
                         autohostName,
@@ -371,7 +371,7 @@ namespace PlasmaShared.SpringieInterfaceReference {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SplitAutohost", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [SoapDocumentMethod("http://tempuri.org/SplitAutohost", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public void SplitAutohost(BattleContext context, string password) {
             this.Invoke("SplitAutohost", new object[] {
                         context,
@@ -401,7 +401,7 @@ namespace PlasmaShared.SpringieInterfaceReference {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/StoreBoxes", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [SoapDocumentMethod("http://tempuri.org/StoreBoxes", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public void StoreBoxes(BattleContext context, RectInfo[] rects) {
             this.Invoke("StoreBoxes", new object[] {
                         context,
@@ -451,10 +451,10 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.36246")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    [Serializable()]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
+    [XmlType(Namespace="http://tempuri.org/")]
     public partial class BattleContext {
         
         private string autohostNameField;
@@ -532,10 +532,10 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.36246")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    [Serializable()]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
+    [XmlType(Namespace="http://tempuri.org/")]
     public partial class PlayerTeam {
         
         private int lobbyIDField;
@@ -613,10 +613,10 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.36246")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    [Serializable()]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
+    [XmlType(Namespace="http://tempuri.org/")]
     public partial class RectInfo {
         
         private int xField;
@@ -682,10 +682,10 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.36246")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    [Serializable()]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
+    [XmlType(Namespace="http://tempuri.org/")]
     public partial class MovePlayerEntry {
         
         private string playerNameField;
@@ -715,10 +715,10 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.36246")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    [Serializable()]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
+    [XmlType(Namespace="http://tempuri.org/")]
     public partial class CommandLevel {
         
         private string commandField;
@@ -748,10 +748,10 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.36246")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    [Serializable()]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
+    [XmlType(Namespace="http://tempuri.org/")]
     public partial class AhConfig {
         
         private string loginField;
@@ -873,7 +873,7 @@ namespace PlasmaShared.SpringieInterfaceReference {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        [XmlElement(IsNullable=true)]
         public System.Nullable<int> SplitBiggerThan {
             get {
                 return this.splitBiggerThanField;
@@ -954,7 +954,7 @@ namespace PlasmaShared.SpringieInterfaceReference {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        [XmlElement(IsNullable=true)]
         public System.Nullable<int> MaxEloDifference {
             get {
                 return this.maxEloDifferenceField;
@@ -965,7 +965,7 @@ namespace PlasmaShared.SpringieInterfaceReference {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        [XmlElement(IsNullable=true)]
         public System.Nullable<int> MinToJuggle {
             get {
                 return this.minToJuggleField;
@@ -976,7 +976,7 @@ namespace PlasmaShared.SpringieInterfaceReference {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        [XmlElement(IsNullable=true)]
         public System.Nullable<int> MaxToJuggle {
             get {
                 return this.maxToJuggleField;
@@ -989,8 +989,8 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.36246")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    [Serializable()]
+    [XmlType(Namespace="http://tempuri.org/")]
     public enum AutohostMode {
         
         /// <remarks/>
@@ -1017,10 +1017,10 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.36246")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    [Serializable()]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
+    [XmlType(Namespace="http://tempuri.org/")]
     public partial class BattlePlayerResult {
         
         private int allyNumberField;
@@ -1100,7 +1100,7 @@ namespace PlasmaShared.SpringieInterfaceReference {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        [XmlElement(IsNullable=true)]
         public System.Nullable<int> LoseTime {
             get {
                 return this.loseTimeField;
@@ -1123,10 +1123,10 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.36246")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    [Serializable()]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
+    [XmlType(Namespace="http://tempuri.org/")]
     public partial class BattleResult {
         
         private int durationField;
@@ -1182,7 +1182,7 @@ namespace PlasmaShared.SpringieInterfaceReference {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        [XmlElement(IsNullable=true)]
         public System.Nullable<System.DateTime> IngameStartTime {
             get {
                 return this.ingameStartTimeField;
@@ -1265,10 +1265,10 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.36246")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    [Serializable()]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
+    [XmlType(Namespace="http://tempuri.org/")]
     public partial class UserCustomParameters {
         
         private int lobbyIDField;
@@ -1298,10 +1298,10 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.36246")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    [Serializable()]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
+    [XmlType(Namespace="http://tempuri.org/")]
     public partial class ScriptKeyValuePair {
         
         private string keyField;
@@ -1331,10 +1331,10 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.36246")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    [Serializable()]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
+    [XmlType(Namespace="http://tempuri.org/")]
     public partial class SpringBattleStartSetup {
         
         private ScriptKeyValuePair[] modOptionsField;
@@ -1376,10 +1376,10 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.36246")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    [Serializable()]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
+    [XmlType(Namespace="http://tempuri.org/")]
     public partial class BalanceTeamsResult {
         
         private BotTeam[] botsField;
@@ -1445,10 +1445,10 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.36246")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    [Serializable()]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
+    [XmlType(Namespace="http://tempuri.org/")]
     public partial class BotTeam {
         
         private int allyIDField;
@@ -1514,10 +1514,10 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.36246")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    [Serializable()]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
+    [XmlType(Namespace="http://tempuri.org/")]
     public partial class RecommendedMapResult {
         
         private string mapNameField;
@@ -1547,10 +1547,10 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.36246")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    [Serializable()]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
+    [XmlType(Namespace="http://tempuri.org/")]
     public partial class PlayerJoinResult {
         
         private bool forceSpecField;
@@ -1608,8 +1608,8 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.19462")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
     public partial class AutohostPlayerJoinedCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
         private object[] results;
@@ -1634,8 +1634,8 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.19462")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
     public partial class BalanceTeamsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
         private object[] results;
@@ -1660,8 +1660,8 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.19462")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
     public partial class GetRecommendedMapCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
         private object[] results;
@@ -1686,8 +1686,8 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.19462")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
     public partial class GetSpringBattleStartSetupCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
         private object[] results;
@@ -1712,8 +1712,8 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.19462")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
     public partial class SubmitSpringBattleResultCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
         private object[] results;
@@ -1738,8 +1738,8 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.19462")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
     public partial class GetClusterConfigsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
         private object[] results;
@@ -1764,8 +1764,8 @@ namespace PlasmaShared.SpringieInterfaceReference {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.19462")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
     public partial class GetMapCommandsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
         private object[] results;

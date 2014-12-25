@@ -15,7 +15,7 @@ using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration;
 //using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
 
-namespace PlasmaShared.Ef
+namespace ZkData
 {
     // Account
     internal partial class AccountMapping : EntityTypeConfiguration<Account>
@@ -43,7 +43,7 @@ namespace PlasmaShared.Ef
             Property(x => x.LobbyTimeRank).HasColumnName("LobbyTimeRank").IsRequired();
             Property(x => x.MissionRunCount).HasColumnName("MissionRunCount").IsRequired();
             Property(x => x.IsZeroKAdmin).HasColumnName("IsZeroKAdmin").IsRequired();
-            Property(x => x.Xp).HasColumnName("Xp").IsRequired();
+            Property(x => x.XP).HasColumnName("XP").IsRequired();
             Property(x => x.Level).HasColumnName("Level").IsRequired();
             Property(x => x.ClanID).HasColumnName("ClanID").IsOptional();
             Property(x => x.LastNewsRead).HasColumnName("LastNewsRead").IsOptional();

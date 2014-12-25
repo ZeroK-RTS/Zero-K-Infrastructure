@@ -129,7 +129,7 @@ namespace ZeroKLobby.MapDownloader
     void btnReload_Click(object sender, EventArgs e)
     {
         manifestDownloading = true;
-      PlasmaShared.Utils.StartAsync(Program.Downloader.PackageDownloader.LoadMasterAndVersions);
+      ZkData.Utils.StartAsync(Program.Downloader.PackageDownloader.LoadMasterAndVersions);
     }
 
     void lbInstalled_DoubleClick(object sender, EventArgs e)

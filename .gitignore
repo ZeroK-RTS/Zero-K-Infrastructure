@@ -175,3 +175,4 @@ FakesAssemblies/
 *.maps
 *.mods
 !local/
+!local/ZERO-K_MOCKUP.pdf

@@ -15,14 +15,14 @@ using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration;
 //using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
 
-namespace PlasmaShared.Ef
+namespace ZkData
 {
     // Resource
     public partial class Resource
     {
         public int ResourceID { get; set; } // ResourceID (Primary key)
         public string InternalName { get; set; } // InternalName
-        public int TypeID { get; set; } // TypeID
+        public ResourceType TypeID { get; set; } // TypeID
         public DateTime? LastLinkCheck { get; set; } // LastLinkCheck
         public int DownloadCount { get; set; } // DownloadCount
         public int NoLinkDownloadCount { get; set; } // NoLinkDownloadCount

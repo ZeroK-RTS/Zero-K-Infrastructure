@@ -15,9 +15,9 @@ using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration;
 //using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
 
-namespace PlasmaShared.Ef
+namespace ZkData
 {
-    public partial class ZkEfDb : DbContext, IZkEfDb
+    public partial class ZkDataContext : DbContext, IZkDataContext
     {
         public IDbSet<AbuseReport> AbuseReports { get; set; } // AbuseReport
         public IDbSet<Account> Accounts { get; set; } // Account
@@ -99,23 +99,23 @@ namespace PlasmaShared.Ef
         public IDbSet<TreatyEffectType> TreatyEffectTypes { get; set; } // TreatyEffectType
         public IDbSet<Unlock> Unlocks { get; set; } // Unlock
 
-        static ZkEfDb()
+        static ZkDataContext()
         {
-            Database.SetInitializer<ZkEfDb>(null);
+            Database.SetInitializer<ZkDataContext>(null);
         }
 
-        public ZkEfDb()
+        public ZkDataContext()
             : base("Name=PlasmaShared.Properties.Settings.zero_kConnectionString1")
         {
         InitializePartial();
         }
 
-        public ZkEfDb(string connectionString) : base(connectionString)
+        public ZkDataContext(string connectionString) : base(connectionString)
         {
         InitializePartial();
         }
 
-        public ZkEfDb(string connectionString, System.Data.Entity.Infrastructure.DbCompiledModel model) : base(connectionString, model)
+        public ZkDataContext(string connectionString, System.Data.Entity.Infrastructure.DbCompiledModel model) : base(connectionString, model)
         {
         InitializePartial();
         }
@@ -292,5 +292,15 @@ namespace PlasmaShared.Ef
 
         partial void InitializePartial();
         partial void OnModelCreatingPartial(DbModelBuilder modelBuilder);
+
+        public void SubmitChanges()
+        {
+            SubmitAndMergeChanges();
+        }
+        
+        public void SubmitAndMergeChanges()
+        {
+            SaveChanges();
+        }
     }
 }

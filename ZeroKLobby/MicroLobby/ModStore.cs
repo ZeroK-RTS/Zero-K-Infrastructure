@@ -5,8 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using PlasmaDownloader;
-using PlasmaShared;
-using PlasmaShared.UnitSyncLib;
+using ZkData;
+using ZkData.UnitSyncLib;
 
 namespace ZeroKLobby.MicroLobby
 {

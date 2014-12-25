@@ -15,7 +15,7 @@ using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration;
 //using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
 
-namespace PlasmaShared.Ef
+namespace ZkData
 {
     // RoleTypeHierarchy
     internal partial class RoleTypeHierarchyMapping : EntityTypeConfiguration<RoleTypeHierarchy>
@@ -31,7 +31,7 @@ namespace PlasmaShared.Ef
             Property(x => x.CanRecall).HasColumnName("CanRecall").IsRequired();
 
             // Foreign keys
-            HasRequired(a => a.RoleType_MasterRoleTypeID).WithMany(b => b.RoleTypeHierarchies_MasterRoleTypeID).HasForeignKey(c => c.MasterRoleTypeID); // FK_RoleTypeHierarchy_RoleType
+            HasRequired(a => a.RoleType_MasterRoleTypeID).WithMany(b => b.RoleTypeHierarchiesByMasterRoleTypeID).HasForeignKey(c => c.MasterRoleTypeID); // FK_RoleTypeHierarchy_RoleType
             HasRequired(a => a.RoleType_SlaveRoleTypeID).WithMany(b => b.RoleTypeHierarchies_SlaveRoleTypeID).HasForeignKey(c => c.SlaveRoleTypeID); // FK_RoleTypeHierarchy_RoleType1
             InitializePartial();
         }

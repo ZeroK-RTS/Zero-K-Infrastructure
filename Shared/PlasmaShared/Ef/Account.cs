@@ -15,7 +15,7 @@ using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration;
 //using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
 
-namespace PlasmaShared.Ef
+namespace ZkData
 {
     // Account
     public partial class Account
@@ -38,7 +38,7 @@ namespace PlasmaShared.Ef
         public int LobbyTimeRank { get; set; } // LobbyTimeRank
         public int MissionRunCount { get; set; } // MissionRunCount
         public bool IsZeroKAdmin { get; set; } // IsZeroKAdmin
-        public int Xp { get; set; } // Xp
+        public int XP { get; set; } // XP
         public int Level { get; set; } // Level
         public int? ClanID { get; set; } // ClanID
         public DateTime? LastNewsRead { get; set; } // LastNewsRead
@@ -79,7 +79,7 @@ namespace PlasmaShared.Ef
         public virtual ICollection<AccountIP> AccountIPs { get; set; } // Many to many mapping
         public virtual ICollection<AccountPlanet> AccountPlanets { get; set; } // Many to many mapping
         public virtual ICollection<AccountRatingVote> AccountRatingVotes { get; set; } // Many to many mapping
-        public virtual ICollection<AccountRole> AccountRoles { get; set; } // Many to many mapping
+        public virtual ICollection<AccountRole> AccountRolesByAccountID { get; set; } // Many to many mapping
         public virtual ICollection<AccountUnlock> AccountUnlocks { get; set; } // Many to many mapping
         public virtual ICollection<AccountUserID> AccountUserIDs { get; set; } // Many to many mapping
         public virtual ICollection<CampaignEvent> CampaignEvents { get; set; } // CampaignEvent.FK_CampaignEvent_Account
@@ -107,7 +107,7 @@ namespace PlasmaShared.Ef
         public virtual ICollection<PlanetOwnerHistory> PlanetOwnerHistories { get; set; } // PlanetOwnerHistory.FK_PlanetOwnerHistory_Account
         public virtual ICollection<PlanetStructure> PlanetStructures { get; set; } // PlanetStructure.FK_PlanetStructure_Account
         public virtual ICollection<Poll> Polls_CreatedAccountID { get; set; } // Poll.FK_Poll_Account1
-        public virtual ICollection<Poll> Polls_RoleTargetAccountID { get; set; } // Poll.FK_Poll_Account
+        public virtual ICollection<Poll> PollsByRoleTargetAccountID { get; set; } // Poll.FK_Poll_Account
         public virtual ICollection<PollVote> PollVotes { get; set; } // Many to many mapping
         public virtual ICollection<Punishment> Punishments_AccountID { get; set; } // Punishment.FK_Punishment_Account
         public virtual ICollection<Punishment> Punishments_CreatedAccountID { get; set; } // Punishment.FK_Punishment_Account1
@@ -118,6 +118,9 @@ namespace PlasmaShared.Ef
 
         // Foreign keys
         public virtual Faction Faction { get; set; } // FK_Account_Faction
+        [ForeignKey("ClanID")]
+        public virtual Clan Clan { get; set; }
+
 
         public Account()
         {
@@ -131,7 +134,7 @@ namespace PlasmaShared.Ef
             LobbyTimeRank = 0;
             MissionRunCount = 0;
             IsZeroKAdmin = false;
-            Xp = 0;
+            XP = 0;
             Level = 0;
             IsDeleted = false;
             SpringieLevel = 1;
@@ -158,7 +161,7 @@ namespace PlasmaShared.Ef
             AccountIPs = new List<AccountIP>();
             AccountPlanets = new List<AccountPlanet>();
             AccountRatingVotes = new List<AccountRatingVote>();
-            AccountRoles = new List<AccountRole>();
+            AccountRolesByAccountID = new List<AccountRole>();
             AccountUnlocks = new List<AccountUnlock>();
             AccountUserIDs = new List<AccountUserID>();
             CampaignEvents = new List<CampaignEvent>();
@@ -185,7 +188,7 @@ namespace PlasmaShared.Ef
             PlanetOwnerHistories = new List<PlanetOwnerHistory>();
             PlanetStructures = new List<PlanetStructure>();
             Polls_CreatedAccountID = new List<Poll>();
-            Polls_RoleTargetAccountID = new List<Poll>();
+            PollsByRoleTargetAccountID = new List<Poll>();
             PollVotes = new List<PollVote>();
             Punishments_AccountID = new List<Punishment>();
             Punishments_CreatedAccountID = new List<Punishment>();

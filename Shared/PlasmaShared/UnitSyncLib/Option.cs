@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace PlasmaShared.UnitSyncLib
+namespace ZkData.UnitSyncLib
 {
     public enum OptionType
     {

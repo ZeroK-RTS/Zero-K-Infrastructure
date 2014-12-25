@@ -15,7 +15,7 @@ using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration;
 //using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
 
-namespace PlasmaShared.Ef
+namespace ZkData
 {
     // SpringBattle
     public partial class SpringBattle
@@ -50,7 +50,12 @@ namespace PlasmaShared.Ef
         public virtual Account Account { get; set; } // FK_SpringBattle_Account
         public virtual ForumThread ForumThread { get; set; } // FK_SpringBattle_ForumThread
         public virtual RatingPoll RatingPoll { get; set; } // FK_SpringBattle_RatingPoll
-        public virtual Resource Resource { get; set; } // FK_SpringBattle_Resource1
+
+        [ForeignKey("MapResourceID")]
+        public virtual Resource ResourceByMapResourceID { get; set; }
+        
+        [ForeignKey("ModResourceID")]
+        public virtual Resource ResourceByModResourceID { get; set; }
 
         public SpringBattle()
         {

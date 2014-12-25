@@ -6,7 +6,6 @@ using System.Drawing;
 using System.Linq;
 using System.Web.Services;
 using LobbyClient;
-using PlasmaShared;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
 

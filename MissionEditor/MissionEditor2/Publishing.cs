@@ -10,8 +10,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using CMissionLib;
 using MissionEditor2.Properties;
-using PlasmaShared;
-using PlasmaShared.UnitSyncLib;
+using ZkData.UnitSyncLib;
 using ZkData;
 using Binary = System.Data.Linq.Binary;
 using Mission = CMissionLib.Mission;
@@ -74,7 +73,7 @@ namespace MissionEditor2
 				try
 				{
                     var paths = new SpringPaths(Settings.Default.SpringPath);
-                    using (var unitSync = new PlasmaShared.UnitSyncLib.UnitSync(paths))
+                    using (var unitSync = new ZkData.UnitSyncLib.UnitSync(paths))
 					{
 						var modPath = Path.Combine(paths.WritableDirectory, "games");
 						tempPath = Path.Combine(modPath, missionFileName);
@@ -82,8 +81,8 @@ namespace MissionEditor2
 					if (File.Exists(tempPath)) File.Delete(tempPath);
 					mission.CreateArchive(tempPath);
 
-					PlasmaShared.UnitSyncLib.Mod mod;
-					using (var unitSync = new PlasmaShared.UnitSyncLib.UnitSync(paths))
+					ZkData.UnitSyncLib.Mod mod;
+					using (var unitSync = new ZkData.UnitSyncLib.UnitSync(paths))
 					{
 						mod = unitSync.GetModFromArchive(mission.Mod.ArchiveName);
 						if (mod == null) throw new Exception("Mod metadata not extracted: mod not found");

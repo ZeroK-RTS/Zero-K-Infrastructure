@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using LobbyClient;
-using PlasmaShared;
 using Steamworks;
 using ZeroKLobby.Steam;
 using ZkData;

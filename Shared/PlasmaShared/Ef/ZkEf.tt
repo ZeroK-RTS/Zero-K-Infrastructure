@@ -5,8 +5,8 @@
     // All you have to do is save this file, and the output file(s) is/are generated. Compiling does not regenerate the file(s).
 
     // Misc settings **********************************************************************************************************************
-    // Namespace = ""; // Override the default namespace here
-    DbContextName = "ZkEfDb";
+    Namespace = "ZkData"; // Override the default namespace here
+    DbContextName = "ZkDataContext";
     DbContextBaseClass = "DbContext";   // Specify what the base class is for your DbContext. For ASP.NET Identity use "IdentityDbContext<ApplicationUser>"
     ConnectionStringName = "PlasmaShared.Properties.Settings.zero_kConnectionString1";   // Searches for this connection string in config files listed below
     ConfigurationClassName = "Mapping"; // Configuration, Mapping, Map, etc. This is appended to the Poco class name to configure the mappings.

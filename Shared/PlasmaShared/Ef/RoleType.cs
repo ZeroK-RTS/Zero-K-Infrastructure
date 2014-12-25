@@ -15,7 +15,7 @@ using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration;
 //using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
 
-namespace PlasmaShared.Ef
+namespace ZkData
 {
     // RoleType
     public partial class RoleType
@@ -41,7 +41,7 @@ namespace PlasmaShared.Ef
         // Reverse navigation
         public virtual ICollection<AccountRole> AccountRoles { get; set; } // Many to many mapping
         public virtual ICollection<Poll> Polls { get; set; } // Poll.FK_Poll_RoleType
-        public virtual ICollection<RoleTypeHierarchy> RoleTypeHierarchies_MasterRoleTypeID { get; set; } // Many to many mapping
+        public virtual ICollection<RoleTypeHierarchy> RoleTypeHierarchiesByMasterRoleTypeID { get; set; } // Many to many mapping
         public virtual ICollection<RoleTypeHierarchy> RoleTypeHierarchies_SlaveRoleTypeID { get; set; } // Many to many mapping
 
         // Foreign keys
@@ -64,7 +64,7 @@ namespace PlasmaShared.Ef
             DisplayOrder = 0;
             AccountRoles = new List<AccountRole>();
             Polls = new List<Poll>();
-            RoleTypeHierarchies_MasterRoleTypeID = new List<RoleTypeHierarchy>();
+            RoleTypeHierarchiesByMasterRoleTypeID = new List<RoleTypeHierarchy>();
             RoleTypeHierarchies_SlaveRoleTypeID = new List<RoleTypeHierarchy>();
             InitializePartial();
         }

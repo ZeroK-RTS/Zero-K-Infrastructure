@@ -15,9 +15,9 @@ using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration;
 //using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
 
-namespace PlasmaShared.Ef
+namespace ZkData
 {
-    public class FakeZkEfDb : IZkEfDb
+    public class FakeZkDataContext : IZkDataContext
     {
         public IDbSet<AbuseReport> AbuseReports { get; set; }
         public IDbSet<Account> Accounts { get; set; }
@@ -99,7 +99,7 @@ namespace PlasmaShared.Ef
         public IDbSet<TreatyEffectType> TreatyEffectTypes { get; set; }
         public IDbSet<Unlock> Unlocks { get; set; }
 
-        public FakeZkEfDb()
+        public FakeZkDataContext()
         {
             AbuseReports = new FakeDbSet<AbuseReport>();
             Accounts = new FakeDbSet<Account>();

@@ -15,7 +15,7 @@ using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration;
 //using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
 
-namespace PlasmaShared.Ef
+namespace ZkData
 {
     // FactionTreaty
     internal partial class FactionTreatyMapping : EntityTypeConfiguration<FactionTreaty>
@@ -36,9 +36,9 @@ namespace PlasmaShared.Ef
             Property(x => x.TreatyNote).HasColumnName("TreatyNote").IsOptional();
 
             // Foreign keys
-            HasRequired(a => a.Faction_ProposingFactionID).WithMany(b => b.FactionTreaties_ProposingFactionID).HasForeignKey(c => c.ProposingFactionID); // FK_FactionTreaty_Faction
-            HasRequired(a => a.Account_ProposingAccountID).WithMany(b => b.FactionTreaties_ProposingAccountID).HasForeignKey(c => c.ProposingAccountID); // FK_FactionTreaty_Account
-            HasRequired(a => a.Faction_AcceptingFactionID).WithMany(b => b.FactionTreaties_AcceptingFactionID).HasForeignKey(c => c.AcceptingFactionID); // FK_FactionTreaty_Faction1
+            HasRequired(a => a.FactionByProposingFactionID).WithMany(b => b.FactionTreaties_ProposingFactionID).HasForeignKey(c => c.ProposingFactionID); // FK_FactionTreaty_Faction
+            HasRequired(a => a.AccountByProposingAccountID).WithMany(b => b.FactionTreaties_ProposingAccountID).HasForeignKey(c => c.ProposingAccountID); // FK_FactionTreaty_Account
+            HasRequired(a => a.FactionByAcceptingFactionID).WithMany(b => b.FactionTreaties_AcceptingFactionID).HasForeignKey(c => c.AcceptingFactionID); // FK_FactionTreaty_Faction1
             HasOptional(a => a.Account_AcceptedAccountID).WithMany(b => b.FactionTreaties_AcceptedAccountID).HasForeignKey(c => c.AcceptedAccountID); // FK_FactionTreaty_Account1
             InitializePartial();
         }

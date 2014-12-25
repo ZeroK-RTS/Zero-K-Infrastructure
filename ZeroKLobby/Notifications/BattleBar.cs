@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaDownloader;
-using PlasmaShared;
 using ZeroKLobby.MicroLobby;
 using ZkData;
 

@@ -16,8 +16,7 @@ using System.Threading;
 using System.Xml.Serialization;
 using LobbyClient;
 using NightWatch;
-using PlasmaShared;
-using PlasmaShared.UnitSyncLib;
+using ZkData.UnitSyncLib;
 using ZkData;
 using Encoder = System.Drawing.Imaging.Encoder;
 

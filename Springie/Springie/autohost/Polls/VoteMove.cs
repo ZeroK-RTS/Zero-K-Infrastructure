@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using LobbyClient;
-using PlasmaShared.SpringieInterfaceReference;
+using ZkData.SpringieInterfaceReference;
 
 namespace Springie.autohost.Polls
 {

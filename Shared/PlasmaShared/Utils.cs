@@ -16,7 +16,7 @@ using Encoder = System.Drawing.Imaging.Encoder;
 
 #endregion
 
-namespace PlasmaShared
+namespace ZkData
 {
     /// <summary>
     /// General purpose static functions here

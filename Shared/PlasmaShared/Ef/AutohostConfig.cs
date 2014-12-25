@@ -15,7 +15,7 @@ using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration;
 //using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
 
-namespace PlasmaShared.Ef
+namespace ZkData
 {
     // AutohostConfig
     public partial class AutohostConfig
@@ -36,7 +36,7 @@ namespace PlasmaShared.Ef
         public string Title { get; set; } // Title
         public string JoinChannels { get; set; } // JoinChannels
         public string BattlePassword { get; set; } // BattlePassword
-        public int AutohostMode { get; set; } // AutohostMode
+        public AutohostMode AutohostMode { get; set; } // AutohostMode
         public int? MinToStart { get; set; } // MinToStart
         public int? MaxToStart { get; set; } // MaxToStart
         public int? MinToJuggle { get; set; } // MinToJuggle

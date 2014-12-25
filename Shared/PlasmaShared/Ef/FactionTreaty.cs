@@ -15,7 +15,7 @@ using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration;
 //using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
 
-namespace PlasmaShared.Ef
+namespace ZkData
 {
     // FactionTreaty
     public partial class FactionTreaty
@@ -26,7 +26,7 @@ namespace PlasmaShared.Ef
         public int AcceptingFactionID { get; set; } // AcceptingFactionID
         public int? AcceptedAccountID { get; set; } // AcceptedAccountID
         public int? TurnsRemaining { get; set; } // TurnsRemaining
-        public int TreatyState { get; set; } // TreatyState
+        public TreatyState TreatyState { get; set; } // TreatyState
         public int? TurnsTotal { get; set; } // TurnsTotal
         public string TreatyNote { get; set; } // TreatyNote
 
@@ -35,9 +35,9 @@ namespace PlasmaShared.Ef
 
         // Foreign keys
         public virtual Account Account_AcceptedAccountID { get; set; } // FK_FactionTreaty_Account1
-        public virtual Account Account_ProposingAccountID { get; set; } // FK_FactionTreaty_Account
-        public virtual Faction Faction_AcceptingFactionID { get; set; } // FK_FactionTreaty_Faction1
-        public virtual Faction Faction_ProposingFactionID { get; set; } // FK_FactionTreaty_Faction
+        public virtual Account AccountByProposingAccountID { get; set; } // FK_FactionTreaty_Account
+        public virtual Faction FactionByAcceptingFactionID { get; set; } // FK_FactionTreaty_Faction1
+        public virtual Faction FactionByProposingFactionID { get; set; } // FK_FactionTreaty_Faction
 
         public FactionTreaty()
         {

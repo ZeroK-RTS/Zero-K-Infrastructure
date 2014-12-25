@@ -10,8 +10,8 @@ using System.Windows;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaDownloader;
-using PlasmaShared.ContentService;
-using PlasmaShared.UnitSyncLib;
+using ZkData.ContentService;
+using ZkData.UnitSyncLib;
 
 namespace ZeroKLobby.Notifications
 {
@@ -52,7 +52,7 @@ namespace ZeroKLobby.Notifications
             var down = Program.Downloader.GetResource(DownloadType.MOD, missionName);
             var engine = Program.Downloader.GetAndSwitchEngine(Program.SpringPaths.SpringVersion);
 
-            PlasmaShared.Utils.StartAsync(() =>
+            ZkData.Utils.StartAsync(() =>
             {
                 var metaWait = new EventWaitHandle(false, EventResetMode.ManualReset);
                 Mod modInfo = null;

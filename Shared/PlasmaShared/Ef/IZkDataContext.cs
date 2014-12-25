@@ -15,9 +15,9 @@ using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration;
 //using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
 
-namespace PlasmaShared.Ef
+namespace ZkData
 {
-    public interface IZkEfDb : IDisposable
+    public interface IZkDataContext : IDisposable
     {
         IDbSet<AbuseReport> AbuseReports { get; set; } // AbuseReport
         IDbSet<Account> Accounts { get; set; } // Account

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PlasmaShared.Properties {
+namespace ZkData.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

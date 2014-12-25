@@ -15,7 +15,7 @@ using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration;
 //using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
 
-namespace PlasmaShared.Ef
+namespace ZkData
 {
     // SpringBattle
     internal partial class SpringBattleMapping : EntityTypeConfiguration<SpringBattle>
@@ -48,7 +48,6 @@ namespace PlasmaShared.Ef
 
             // Foreign keys
             HasRequired(a => a.Account).WithMany(b => b.SpringBattles).HasForeignKey(c => c.HostAccountID); // FK_SpringBattle_Account
-            HasRequired(a => a.Resource).WithMany(b => b.SpringBattles).HasForeignKey(c => c.ModResourceID); // FK_SpringBattle_Resource1
             HasOptional(a => a.ForumThread).WithMany(b => b.SpringBattles).HasForeignKey(c => c.ForumThreadID); // FK_SpringBattle_ForumThread
             HasOptional(a => a.RatingPoll).WithMany(b => b.SpringBattles).HasForeignKey(c => c.RatingPollID); // FK_SpringBattle_RatingPoll
             InitializePartial();

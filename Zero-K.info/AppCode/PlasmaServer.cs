@@ -8,8 +8,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml.Serialization;
-using PlasmaShared;
-using PlasmaShared.UnitSyncLib;
+using ZkData.UnitSyncLib;
 using ZkData;
 
 namespace ZeroKWeb
@@ -36,7 +35,7 @@ namespace ZeroKWeb
             if (todel == null) return ReturnValue.ResourceNotFound;
             RemoveResourceFiles(todel);
 
-            db.Resources.DeleteOnSubmit(todel);
+            db.Resources.Remove(todel);
             db.SubmitChanges();
             return ReturnValue.Ok;
         }
@@ -153,7 +152,7 @@ namespace ZeroKWeb
             if (resource == null)
             {
                 resource = new Resource { InternalName = internalName, TypeID = resourceType };
-                db.Resources.InsertOnSubmit(resource);
+                db.Resources.Add(resource);
                 StoreMetadata(md5, resource, serializedData, torrentData, minimap, metalMap, heightMap);
             }
 

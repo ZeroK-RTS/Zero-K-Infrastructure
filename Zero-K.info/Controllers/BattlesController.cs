@@ -1,6 +1,7 @@
  using System;
 using System.Collections.Generic;
-using System.Linq;
+ using System.Data.Entity;
+ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using ZkData;
@@ -38,11 +39,8 @@ namespace ZeroKWeb.Controllers
                                   bool? bots,
                                   int? offset) {
             var db = new ZkDataContext();
-            DataLoadOptions opt = new DataLoadOptions();
-            opt.LoadWith<BattleQuickInfo>(b => b.Players);
-            db.LoadOptions = opt;
 
-            IQueryable<SpringBattle> q = db.SpringBattles;
+            IQueryable<SpringBattle> q = db.SpringBattles.Include(x=>x.SpringBattlePlayers);
             
             if (!string.IsNullOrEmpty(battleTitle))
                 q = q.Where(b => b.Title.Contains(battleTitle));

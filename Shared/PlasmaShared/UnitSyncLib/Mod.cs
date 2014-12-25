@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 
-namespace PlasmaShared.UnitSyncLib
+namespace ZkData.UnitSyncLib
 {
 	[Serializable]
 	public class Mod: IResourceInfo

@@ -11,8 +11,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using PlasmaDownloader;
-using PlasmaShared;
-using PlasmaShared.UnitSyncLib;
+using ZkData.UnitSyncLib;
 using LobbyClient;
 using System.Threading;
 using System.Threading.Tasks;
@@ -228,7 +227,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 List<string> mapList = new List<string>();
                 try
                 {
-                    string engineFolder = PlasmaShared.Utils.MakePath(Program.SpringPaths.WritableDirectory, "engine");
+                    string engineFolder = ZkData.Utils.MakePath(Program.SpringPaths.WritableDirectory, "engine");
                     engineList = System.IO.Directory.EnumerateDirectories(engineFolder, "*").ToList<string>();
                     for (int i = 0; i < engineList.Count; i++)
                         engineList[i] = SkirmishControlTool.GetFolderName(engineList[i]);
@@ -1011,7 +1010,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             else if ((sender as Control).Name == "engine_comboBox" && engine_comboBox.SelectedItem != null)
             {
                 string springVersion = (string)engine_comboBox.SelectedItem;
-                string engineFolder = PlasmaShared.Utils.MakePath(Program.SpringPaths.WritableDirectory, "engine");
+                string engineFolder = ZkData.Utils.MakePath(Program.SpringPaths.WritableDirectory, "engine");
                 if (Environment.OSVersion.Platform != PlatformID.Unix)
                     engineFolder = engineFolder + "\\" + springVersion;
                 else

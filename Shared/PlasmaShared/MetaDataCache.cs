@@ -7,12 +7,12 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Xml.Serialization;
-using PlasmaShared.ContentService;
-using PlasmaShared.UnitSyncLib;
+using ZkData.ContentService;
+using ZkData.UnitSyncLib;
 
 #endregion
 
-namespace PlasmaShared
+namespace ZkData
 {
     public class MetaDataCache
     {
@@ -42,7 +42,7 @@ namespace PlasmaShared
             Utils.CheckPath(resourceFolder);
         }
 
-        public ResourceData[] FindResourceData(string[] words, ResourceType? type)
+        public ResourceData[] FindResourceData(string[] words, ContentService.ResourceType? type)
         {
             var cs = new ContentService.ContentService();
             return cs.FindResourceData(words, type);

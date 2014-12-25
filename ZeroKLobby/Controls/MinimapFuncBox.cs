@@ -6,7 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using ZeroKLobby;
 using ZeroKLobby.Lines;
-using PlasmaShared.UnitSyncLib;
+using ZkData.UnitSyncLib;
 using ZeroKLobby.MicroLobby.ExtrasTab;
 
 namespace ZeroKLobby.Controls

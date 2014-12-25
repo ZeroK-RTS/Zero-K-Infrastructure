@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using PlasmaDownloader;
-using PlasmaShared;
+using ZkData;
 using SpringDownloader.Notifications;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;

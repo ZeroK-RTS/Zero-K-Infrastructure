@@ -15,7 +15,7 @@ using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration;
 //using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
 
-namespace PlasmaShared.Ef
+namespace ZkData
 {
     // Poll
     internal partial class PollMapping : EntityTypeConfiguration<Poll>
@@ -39,7 +39,7 @@ namespace PlasmaShared.Ef
 
             // Foreign keys
             HasOptional(a => a.RoleType).WithMany(b => b.Polls).HasForeignKey(c => c.RoleTypeID); // FK_Poll_RoleType
-            HasOptional(a => a.Account_RoleTargetAccountID).WithMany(b => b.Polls_RoleTargetAccountID).HasForeignKey(c => c.RoleTargetAccountID); // FK_Poll_Account
+            HasOptional(a => a.Account_RoleTargetAccountID).WithMany(b => b.PollsByRoleTargetAccountID).HasForeignKey(c => c.RoleTargetAccountID); // FK_Poll_Account
             HasOptional(a => a.Faction).WithMany(b => b.Polls).HasForeignKey(c => c.RestrictFactionID); // FK_Poll_Faction
             HasOptional(a => a.Account_CreatedAccountID).WithMany(b => b.Polls_CreatedAccountID).HasForeignKey(c => c.CreatedAccountID); // FK_Poll_Account1
             InitializePartial();

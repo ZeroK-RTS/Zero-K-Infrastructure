@@ -138,7 +138,6 @@
     <Compile Include="Data\Event.cs" />
     <Compile Include="Data\Faction.cs" />
     <Compile Include="Data\FactionTreaty.cs" />
-    <Compile Include="Data\ForumPost.cs" />
     <Compile Include="Data\ForumThread.cs" />
     <Compile Include="Data\Galaxy.cs" />
     <Compile Include="Data\IAuthService.cs" />
@@ -160,15 +159,6 @@
     <Compile Include="Data\TreatyState.cs" />
     <Compile Include="Data\Unlock.cs" />
     <Compile Include="Data\UnlockType.cs" />
-    <Compile Include="Data\ZkData.cs">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </Compile>
-    <Compile Include="Data\ZkData.designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </Compile>
-    <Compile Include="Data\ZkDataContext.cs" />
     <Compile Include="DbExtensions.cs" />
     <Compile Include="Diagrams\Diagram.cs" />
     <Compile Include="Diagrams\Node.cs" />
@@ -410,7 +400,7 @@
     <Compile Include="Ef\FakeDbSet.cs">
       <DependentUpon>ZkEf.tt</DependentUpon>
     </Compile>
-    <Compile Include="Ef\FakeZkEfDb.cs">
+    <Compile Include="Ef\FakeZkDataContext.cs">
       <DependentUpon>ZkEf.tt</DependentUpon>
     </Compile>
     <Compile Include="Ef\ForumCategory.cs">
@@ -455,7 +445,7 @@
     <Compile Include="Ef\GalaxyMapping.cs">
       <DependentUpon>ZkEf.tt</DependentUpon>
     </Compile>
-    <Compile Include="Ef\IZkEfDb.cs">
+    <Compile Include="Ef\IZkDataContext.cs">
       <DependentUpon>ZkEf.tt</DependentUpon>
     </Compile>
     <Compile Include="Ef\KudosPurchase.cs">
@@ -656,12 +646,12 @@
     <Compile Include="Ef\UnlockMapping.cs">
       <DependentUpon>ZkEf.tt</DependentUpon>
     </Compile>
+    <Compile Include="Ef\ZkDataContext.cs">
+      <DependentUpon>ZkEf.tt</DependentUpon>
+    </Compile>
     <Compile Include="Ef\ZkEf.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ZkEfDb.cs">
       <DependentUpon>ZkEf.tt</DependentUpon>
     </Compile>
     <Compile Include="EmbeddedResourceExtractor.cs" />
@@ -711,16 +701,19 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Web References\ModStats\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Web References\SpringieInterfaceReference\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="WebReferences\StatsCollector.cs">
       <SubType>Component</SubType>
@@ -760,20 +753,6 @@
   <ItemGroup>
     <None Include="app.config">
       <SubType>Designer</SubType>
-    </None>
-    <None Include="Data\ZkData.dbml">
-      <Generator>MSLinqToSQLGenerator</Generator>
-      <SubType>Designer</SubType>
-      <LastGenOutput>ZkData.designer.cs</LastGenOutput>
-    </None>
-    <None Include="Data\ZkData.dbml.namePrefs">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </None>
-    <None Include="Data\ZkData.dbml.syncPrefs">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </None>
-    <None Include="Data\ZkData.dbml.views">
-      <DependentUpon>ZkData.dbml</DependentUpon>
     </None>
     <None Include="Ef\EF.Reverse.POCO.Core.ttinclude" />
     <None Include="Ef\EF.Reverse.POCO.ttinclude" />
@@ -900,30 +879,11 @@
     <None Include="Web References\ContentService\ContentService.disco" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\ZkData.dbml.layout">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Web References\SpringieInterfaceReference\SpringieService.disco" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Data\ZkData.dbml.views_001.layout">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Data\ZkData.dbml.views_002.layout">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Data\ZkData.dbml.views_003.layout">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Data\ZkData.dbml.views_def.layout">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Web References\ModStats\StatsCollector.disco" />

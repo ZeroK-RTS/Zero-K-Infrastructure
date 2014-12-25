@@ -15,7 +15,7 @@ using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration;
 //using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
 
-namespace PlasmaShared.Ef
+namespace ZkData
 {
     // ForumThread
     public partial class ForumThread
@@ -41,6 +41,7 @@ namespace PlasmaShared.Ef
         public virtual ICollection<Planet> Planets { get; set; } // Planet.FK_Planet_ForumThread
         public virtual ICollection<Resource> Resources { get; set; } // Resource.FK_Resource_ForumThread
         public virtual ICollection<SpringBattle> SpringBattles { get; set; } // SpringBattle.FK_SpringBattle_ForumThread
+        public virtual ICollection<ForumPost> ForumPosts { get; set; }
 
         // Foreign keys
         public virtual Account Account_CreatedAccountID { get; set; } // FK_ForumThread_Account
@@ -61,6 +62,7 @@ namespace PlasmaShared.Ef
             Planets = new List<Planet>();
             Resources = new List<Resource>();
             SpringBattles = new List<SpringBattle>();
+            ForumPosts = new List<ForumPost>();
             InitializePartial();
         }
         partial void InitializePartial();

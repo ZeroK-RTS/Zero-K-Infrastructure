@@ -33,7 +33,7 @@ namespace ZkData
         public double EffectivePwElo { get { return EloPw + (GlobalConst.EloWeightMax - EloWeight) * GlobalConst.EloWeightMalusFactor; } }
 
         public double EloInvWeight { get { return GlobalConst.EloWeightMax + 1 - EloWeight; } }
-        public int KudosGained { get { return ContributionsByAccountID.Sum(x => x.KudosValue); } }
+        public int KudosGained { get { return Contributions_AccountID.Sum(x => x.KudosValue); } }
         public int KudosSpent { get { return KudosPurchases.Sum(x => x.KudosValue); } }
 
 
@@ -50,8 +50,7 @@ namespace ZkData
             if (targetAccount.AccountID != AccountID && targetAccount.FactionID == FactionID &&
                 (!roleType.IsClanOnly || targetAccount.ClanID == ClanID) &&
                 (roleType.RestrictFactionID == null || roleType.RestrictFactionID == FactionID)) {
-                return
-                    AccountRolesByAccountID.Any(
+                return AccountRolesByAccountID.Any(
                         x => x.RoleType.RoleTypeHierarchiesByMasterRoleTypeID.Any(y => y.CanAppoint && y.SlaveRoleTypeID == roleType.RoleTypeID));
             }
             else return false;
@@ -76,15 +75,15 @@ namespace ZkData
 
         public bool CanSetPriority(PlanetStructure ps) {
             if (Faction == null) return false;
-            if (ps.Planet.OwnerFactionID == FactionID && HasFactionRight(x => x.RightSetEnergyPriority)) return true;
+            if (ps.Planet_PlanetID.OwnerFactionID == FactionID && HasFactionRight(x => x.RightSetEnergyPriority)) return true;
             if (ClanID != null && ps.Account != null && ps.Account.ClanID == ClanID && HasClanRight(x => x.RightSetEnergyPriority)) return true;
             return false;
         }
 
         public bool CanSetStructureTarget(PlanetStructure ps) {
             if (Faction == null) return false;
-            if (ps.OwnerAccountID == AccountID || ps.Planet.OwnerAccountID == AccountID) return true; // owner of planet or owner of structure
-            if (ps.Planet.OwnerFactionID == FactionID && HasFactionRight(x => x.RightDropshipQuota > 0)) return true;
+            if (ps.OwnerAccountID == AccountID || ps.Planet_PlanetID.OwnerAccountID == AccountID) return true; // owner of planet or owner of structure
+            if (ps.Planet_PlanetID.OwnerFactionID == FactionID && HasFactionRight(x => x.RightDropshipQuota > 0)) return true;
             return false;
         }
 
@@ -101,7 +100,7 @@ namespace ZkData
         public int GetBomberCapacity() {
             if (Faction == null) return 0;
             return GlobalConst.DefaultBomberCapacity +
-                   (Faction.Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive).Sum(x => x.StructureType.EffectBomberCapacity) ?? 0);
+                   (Faction.Planets.SelectMany(x => x.PlanetStructures_PlanetID).Where(x => x.IsActive).Sum(x => x.StructureType.EffectBomberCapacity) ?? 0);
         }
 
         public double GetBomberQuota() {
@@ -118,7 +117,7 @@ namespace ZkData
         public int GetDropshipCapacity() {
             if (Faction == null) return 0;
             return GlobalConst.DefaultDropshipCapacity +
-                   (Faction.Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipCapacity) ?? 0);
+                   (Faction.Planets.SelectMany(x => x.PlanetStructures_PlanetID).Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipCapacity) ?? 0);
         }
 
 

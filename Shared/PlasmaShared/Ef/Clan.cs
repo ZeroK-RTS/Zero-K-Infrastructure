@@ -1,10 +1,10 @@
+using System.ComponentModel.DataAnnotations;
 // ReSharper disable RedundantUsingDirective
 // ReSharper disable DoNotCallOverridableMethodsInConstructor
 // ReSharper disable InconsistentNaming
 // ReSharper disable PartialTypeWithSinglePart
 // ReSharper disable PartialMethodWithSinglePart
 // ReSharper disable RedundantNameQualifier
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,10 +15,10 @@ using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration;
 //using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
 
-namespace PlasmaShared.Ef
+namespace ZkData
 {
     // Clan
-    public partial class Clan
+    public partial class Clan:IValidatableObject
     {
         public int ClanID { get; set; } // ClanID (Primary key)
         public string ClanName { get; set; } // ClanName
@@ -35,6 +35,7 @@ namespace PlasmaShared.Ef
         public virtual ICollection<Event> Events { get; set; } // Many to many mapping
         public virtual ICollection<ForumThread> ForumThreads { get; set; } // ForumThread.FK_ForumThread_Clan
         public virtual ICollection<PlanetOwnerHistory> PlanetOwnerHistories { get; set; } // PlanetOwnerHistory.FK_PlanetOwnerHistory_Clan
+        public virtual ICollection<Account> Accounts { get; set; } 
 
         // Foreign keys
         public virtual Faction Faction { get; set; } // FK_Clan_Faction
@@ -48,9 +49,13 @@ namespace PlasmaShared.Ef
             ForumThreads = new List<ForumThread>();
             PlanetOwnerHistories = new List<PlanetOwnerHistory>();
             Events = new List<Event>();
+            Accounts = new List<Account>();
             InitializePartial();
         }
         partial void InitializePartial();
+        
+        
+        
     }
 
 }

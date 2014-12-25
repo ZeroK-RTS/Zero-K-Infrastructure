@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 using LobbyClient;
-using PlasmaShared.ContentService;
+using ZkData.ContentService;
 using Springie.autohost;
 
 #endregion

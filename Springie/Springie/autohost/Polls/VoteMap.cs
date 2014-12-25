@@ -1,5 +1,5 @@
 using LobbyClient;
-using PlasmaShared.ContentService;
+using ZkData.ContentService;
 
 namespace Springie.autohost.Polls
 {
@@ -44,7 +44,7 @@ namespace Springie.autohost.Polls
                     {
                         if (tas.MyBattle != null && !spring.IsRunning)
                         {
-                            var serv = new PlasmaShared.SpringieInterfaceReference.SpringieService();
+                            var serv = new ZkData.SpringieInterfaceReference.SpringieService();
                             serv.Timeout = 15000;
                             serv.GetRecommendedMapCompleted += (sender, args) =>
                             {

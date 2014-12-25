@@ -8,8 +8,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Ionic.Zlib;
 using PlasmaDownloader;
-using PlasmaShared;
-using PlasmaShared.UnitSyncLib;
+using ZkData.UnitSyncLib;
 using ZkData;
 
 namespace AutoRegistrator

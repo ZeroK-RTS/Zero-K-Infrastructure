@@ -6,8 +6,8 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
-using PlasmaShared;
-using PlasmaShared.UnitSyncLib;
+using ZkData;
+using ZkData.UnitSyncLib;
 
 namespace ZeroKLobby.MicroLobby
 {

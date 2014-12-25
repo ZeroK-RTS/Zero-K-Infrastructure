@@ -8,11 +8,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Ionic.Zip;    //because SharpCompress fails here for some reason
 using MonoTorrent.Common;
-using PlasmaShared;
-using PlasmaShared.UnitSyncLib;
 using ZkData;
+using ZkData.UnitSyncLib;
 
-namespace PlasmaShared
+namespace ZkData
 {
     public class MissionUpdater
     {
@@ -52,7 +51,7 @@ namespace PlasmaShared
                 modInfo.Name = mission.NameWithVersion;
                 zf.Save();
             }
-            mission.Mutator = new Binary(File.ReadAllBytes(tempName));
+            mission.Mutator = File.ReadAllBytes(tempName);
             mission.Script = Regex.Replace(mission.Script, "GameType=([^;]+);", (m) => { return string.Format("GameType={0};", mission.NameWithVersion); });
             
             File.Delete(tempName);
@@ -61,7 +60,7 @@ namespace PlasmaShared
             if (resource == null)
             {
                 resource = new Resource() { DownloadCount = 0, TypeID = ZkData.ResourceType.Mod };
-                db.Resources.InsertOnSubmit(resource);
+                db.Resources.Add(resource);
             }
             resource.InternalName = mission.NameWithVersion;
             resource.MissionID = mission.MissionID;

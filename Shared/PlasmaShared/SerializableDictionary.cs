@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 
 #endregion
 
-namespace PlasmaShared
+namespace ZkData
 {
     [Serializable]
     [XmlRoot("dictionary")]
