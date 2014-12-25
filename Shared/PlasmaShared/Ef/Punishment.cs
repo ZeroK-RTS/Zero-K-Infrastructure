@@ -40,8 +40,8 @@ namespace ZkData
         public bool SetRightsToZero { get; set; } // SetRightsToZero
 
         // Foreign keys
-        public virtual Account Account_AccountID { get; set; } // FK_Punishment_Account
-        public virtual Account Account_CreatedAccountID { get; set; } // FK_Punishment_Account1
+        public virtual Account AccountByAccountID { get; set; } // FK_Punishment_Account
+        public virtual Account AccountByCreatedAccountID { get; set; } // FK_Punishment_Account1
 
         public Punishment()
         {

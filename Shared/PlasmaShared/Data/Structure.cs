@@ -11,12 +11,6 @@ namespace ZkData
 {
 	partial class PlanetStructure
 	{
-        partial void OnIsActiveChanged()
-        {
-            if (!IsActive) ActivatedOnTurn = null;
-        }
-        
-
 		public string GetImageUrl()
 		{
 			if (!IsActive) return string.Format("/img/structures/{0}", StructureType.DisabledMapIcon); 

@@ -31,7 +31,7 @@ namespace ZkData
         public virtual ICollection<CommanderModule> CommanderModules { get; set; } // Many to many mapping
 
         // Foreign keys
-        public virtual Account Account { get; set; } // FK_Commander_Account
+        public virtual Account AccountByAccountID { get; set; } // FK_Commander_Account
         public virtual Unlock Unlock { get; set; } // FK_Commander_Unlock
 
         public Commander()

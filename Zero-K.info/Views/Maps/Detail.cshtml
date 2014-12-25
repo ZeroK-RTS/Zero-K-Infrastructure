@@ -104,11 +104,11 @@
         </div>
     }
     
-    @if (Model.Resource.SpringBattles.SpringBattlesByResourceByMapResourceIDID.Any())
+    @if (Model.Resource.SpringBattlesByMapResourceID.Any())
     {
         <div class="fleft border">
             <h3>@Html.ActionLink("Last battles","Index","Battles")</h3>
-            @foreach (var b in Model.Resource.SpringBattlesByResourceByMapResourceIDID.OrderByDescending(x => x.SpringBattleID).Take(10))
+            @foreach (var b in Model.Resource.SpringBattlesByMapResourceID.OrderByDescending(x => x.SpringBattleID).Take(10))
             {
                 <small>@Html.PrintBattle(b)</small><br />
             }

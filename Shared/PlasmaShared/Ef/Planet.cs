@@ -34,13 +34,13 @@ namespace ZkData
         // Reverse navigation
         public virtual ICollection<AccountPlanet> AccountPlanets { get; set; } // Many to many mapping
         public virtual ICollection<Event> Events { get; set; } // Many to many mapping
-        public virtual ICollection<Link> Links_PlanetID1 { get; set; } // Many to many mapping
-        public virtual ICollection<Link> Links_PlanetID2 { get; set; } // Many to many mapping
+        public virtual ICollection<Link> LinksByPlanetID1 { get; set; } // Many to many mapping
+        public virtual ICollection<Link> LinksByPlanetID2 { get; set; } // Many to many mapping
         public virtual ICollection<MarketOffer> MarketOffers { get; set; } // MarketOffer.FK_MarketOffer_Planet
         public virtual ICollection<PlanetFaction> PlanetFactions { get; set; } // Many to many mapping
         public virtual ICollection<PlanetOwnerHistory> PlanetOwnerHistories { get; set; } // Many to many mapping
         public virtual ICollection<PlanetStructure> PlanetStructures { get; set; } // Many to many mapping
-        public virtual ICollection<PlanetStructure> PlanetStructures_TargetPlanetID { get; set; } // PlanetStructure.FK_PlanetStructure_Planet1
+        public virtual ICollection<PlanetStructure> PlanetStructuresByTargetPlanetID { get; set; } // PlanetStructure.FK_PlanetStructure_Planet1
         public virtual ICollection<TreatyEffect> TreatyEffects { get; set; } // TreatyEffect.FK_TreatyEffect_Planet
 
         // Foreign keys
@@ -54,13 +54,13 @@ namespace ZkData
         {
             TeamSize = 2;
             AccountPlanets = new List<AccountPlanet>();
-            Links_PlanetID1 = new List<Link>();
-            Links_PlanetID2 = new List<Link>();
+            LinksByPlanetID1 = new List<Link>();
+            LinksByPlanetID2 = new List<Link>();
             MarketOffers = new List<MarketOffer>();
             PlanetFactions = new List<PlanetFaction>();
             PlanetOwnerHistories = new List<PlanetOwnerHistory>();
             PlanetStructures = new List<PlanetStructure>();
-            PlanetStructures_TargetPlanetID = new List<PlanetStructure>();
+            PlanetStructuresByTargetPlanetID = new List<PlanetStructure>();
             TreatyEffects = new List<TreatyEffect>();
             Events = new List<Event>();
             InitializePartial();

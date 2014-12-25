@@ -139,11 +139,12 @@ namespace ZeroKWeb.Controllers
             }
 			var db = new ZkDataContext();
 
+		    var prevMonth = DateTime.UtcNow.AddMonths(-1);
 			var result = new IndexResult()
 			             {
 			             	Spotlight = SpotlightHandler.GetRandom(),
 			             	Top10Players =
-			             		db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).OrderByDescending(
+			             		db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > prevMonth)).OrderByDescending(
 			             			x => x.Elo1v1).Take(10)
 			             };
 

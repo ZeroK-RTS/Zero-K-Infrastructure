@@ -24,7 +24,7 @@ namespace ZkData
         public string Name { get; set; } // Name
         public string Mod { get; set; } // Mod
         public string Map { get; set; } // Map
-        public byte[] Mutator { get; set; } // Mutator
+        public virtual byte[] Mutator { get; set; } // Mutator
         public byte[] Image { get; set; } // Image
         public string Description { get; set; } // Description
         public string DescriptionStory { get; set; } // DescriptionStory
@@ -78,6 +78,8 @@ namespace ZkData
             MissionRunCount = 0;
             IsDeleted = false;
             IsCoop = false;
+            ModifiedTime = DateTime.UtcNow;
+            CreatedTime = DateTime.UtcNow;
             CampaignPlanets = new List<CampaignPlanet>();
             MissionScores = new List<MissionScore>();
             Ratings = new List<Rating>();

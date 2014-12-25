@@ -32,7 +32,7 @@ namespace ZkData
             Property(x => x.ChassisUnlockID).HasColumnName("ChassisUnlockID").IsRequired();
 
             // Foreign keys
-            HasRequired(a => a.Account).WithMany(b => b.Commanders).HasForeignKey(c => c.AccountID); // FK_Commander_Account
+            HasRequired(a => a.AccountByAccountID).WithMany(b => b.Commanders).HasForeignKey(c => c.AccountID); // FK_Commander_Account
             HasRequired(a => a.Unlock).WithMany(b => b.Commanders).HasForeignKey(c => c.ChassisUnlockID); // FK_Commander_Unlock
             InitializePartial();
         }

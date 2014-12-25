@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Linq;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -262,10 +263,7 @@ namespace Fixer
         public static void FixHashes()
         {
             var db = new ZkDataContext();
-            var lo = new DataLoadOptions();
-            lo.LoadWith<Resource>(x => x.ResourceSpringHashes);
-            db.LoadOptions = lo;
-            foreach (var r in db.Resources)
+            foreach (var r in db.Resources.Include(x=>x.ResourceSpringHashes))
             {
                 var h84 = r.ResourceSpringHashes.Where(x => x.SpringVersion == "84").Select(x => x.SpringHash).SingleOrDefault();
                 var h840 = r.ResourceSpringHashes.Where(x => x.SpringVersion == "84.0").Select(x => x.SpringHash).SingleOrDefault();
@@ -761,7 +759,7 @@ namespace Fixer
             var winPredicted = 0;
 
 
-            foreach (var sb in db.SpringBattles.Where(x => !x.IsMission && !x.HasBots && !x.IsFfa && x.IsEloProcessed && x.PlayerCount >= 8 && !x.EventSpringBattles.Any()).OrderByDescending(x => x.SpringBattleID))
+            foreach (var sb in db.SpringBattles.Where(x => !x.IsMission && !x.HasBots && !x.IsFfa && x.IsEloProcessed && x.PlayerCount >= 8 && !x.Events.Any()).OrderByDescending(x => x.SpringBattleID))
             {
 
                 var losers = sb.SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam).Select(x => new { Player = x, x.Account }).ToList();

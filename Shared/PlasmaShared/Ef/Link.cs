@@ -26,8 +26,8 @@ namespace ZkData
 
         // Foreign keys
         public virtual Galaxy Galaxy { get; set; } // FK_Link_Galaxy
-        public virtual Planet Planet_PlanetID1 { get; set; } // FK_Link_Planet
-        public virtual Planet Planet_PlanetID2 { get; set; } // FK_Link_Planet1
+        public virtual Planet PlanetByPlanetID1 { get; set; } // FK_Link_Planet
+        public virtual Planet PlanetByPlanetID2 { get; set; } // FK_Link_Planet1
     }
 
 }

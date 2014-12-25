@@ -423,6 +423,7 @@ namespace ZeroKWeb.Controllers
                     {
                         ps.OwnerAccountID = planet.OwnerAccountID;
                         ps.IsActive = false;
+                        ps.ActivatedOnTurn = null;
                     }
 
 
@@ -494,6 +495,7 @@ namespace ZeroKWeb.Controllers
                     foreach (PlanetStructure structure in planet.PlanetStructures.Where(x => x.StructureType.OwnerChangeDisablesThis))
                     {
                         structure.IsActive = false;
+                        structure.ActivatedOnTurn = null;
                         structure.Account = newAccount;
                     }
 
@@ -871,7 +873,7 @@ namespace ZeroKWeb.Controllers
             db.SubmitAndMergeChanges();
 
             var residue = db.StructureTypes.First(x => x.Name == "Residue"); // todo not nice use constant instead
-            target.PlanetStructures.Add(new PlanetStructure() { StructureType = residue, IsActive = true });
+            target.PlanetStructures.Add(new PlanetStructure() { StructureType = residue, IsActive = true, ActivatedOnTurn = null});
             db.SubmitAndMergeChanges();
 
 

@@ -26,12 +26,12 @@ namespace ZkData
         public IDbSet<AccountCampaignProgress> AccountCampaignProgress { get; set; }
         public IDbSet<AccountCampaignVar> AccountCampaignVars { get; set; }
         public IDbSet<AccountForumVote> AccountForumVotes { get; set; }
-        public IDbSet<AccountIP> AccountIPs { get; set; }
+        public IDbSet<AccountIP> AccountIPS { get; set; }
         public IDbSet<AccountPlanet> AccountPlanets { get; set; }
         public IDbSet<AccountRatingVote> AccountRatingVotes { get; set; }
         public IDbSet<AccountRole> AccountRoles { get; set; }
         public IDbSet<AccountUnlock> AccountUnlocks { get; set; }
-        public IDbSet<AccountUserID> AccountUserIDs { get; set; }
+        public IDbSet<AccountUserID> AccountUserIDS { get; set; }
         public IDbSet<AutoBanSmurfList> AutoBanSmurfLists { get; set; }
         public IDbSet<AutohostConfig> AutohostConfigs { get; set; }
         public IDbSet<Avatar> Avatars { get; set; }
@@ -108,12 +108,12 @@ namespace ZkData
             AccountCampaignProgress = new FakeDbSet<AccountCampaignProgress>();
             AccountCampaignVars = new FakeDbSet<AccountCampaignVar>();
             AccountForumVotes = new FakeDbSet<AccountForumVote>();
-            AccountIPs = new FakeDbSet<AccountIP>();
+            AccountIPS = new FakeDbSet<AccountIP>();
             AccountPlanets = new FakeDbSet<AccountPlanet>();
             AccountRatingVotes = new FakeDbSet<AccountRatingVote>();
             AccountRoles = new FakeDbSet<AccountRole>();
             AccountUnlocks = new FakeDbSet<AccountUnlock>();
-            AccountUserIDs = new FakeDbSet<AccountUserID>();
+            AccountUserIDS = new FakeDbSet<AccountUserID>();
             AutoBanSmurfLists = new FakeDbSet<AutoBanSmurfList>();
             AutohostConfigs = new FakeDbSet<AutohostConfig>();
             Avatars = new FakeDbSet<Avatar>();

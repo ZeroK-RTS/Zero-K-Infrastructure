@@ -35,7 +35,7 @@ namespace ZkData
         public virtual ICollection<CampaignJournalVar> CampaignJournalVars { get; set; } // Many to many mapping
 
         // Foreign keys
-        public virtual CampaignPlanet CampaignPlanet { get; set; } // FK_CampaignJournal_CampaignPlanet
+        public virtual CampaignPlanet Planet { get; set; } // FK_CampaignJournal_CampaignPlanet
 
         public CampaignJournal()
         {

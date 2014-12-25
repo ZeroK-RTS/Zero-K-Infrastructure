@@ -10,18 +10,13 @@ namespace ZkData
     partial class Account: IPrincipal, IIdentity
     {
         Dictionary<AutohostMode, GamePreference> preferences;
-        public static Func<ZkDataContext, int, Account> AccountByAccountID =
-            CompiledQuery.Compile<ZkDataContext, int, Account>((db, accountID) => db.Accounts.SingleOrDefault(x => x.AccountID == accountID));
+        public static Func<ZkDataContext, int, Account> AccountByAccountID = (db, accountID) => db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
 
-        public static Func<ZkDataContext, int, Account> AccountByLobbyID =
-            CompiledQuery.Compile<ZkDataContext, int, Account>((db, lobbyID) => db.Accounts.FirstOrDefault(x => x.LobbyID == lobbyID));
+        public static Func<ZkDataContext, int, Account> AccountByLobbyID = (db, lobbyID) => db.Accounts.FirstOrDefault(x => x.LobbyID == lobbyID);
 
-        public static Func<ZkDataContext, string, Account> AccountByName =
-            CompiledQuery.Compile<ZkDataContext, string, Account>((db, name) => db.Accounts.FirstOrDefault(x => x.Name == name && x.LobbyID != null));
+        public static Func<ZkDataContext, string, Account> AccountByName = (db, name) => db.Accounts.FirstOrDefault(x => x.Name == name && x.LobbyID != null);
 
-        public static Func<ZkDataContext, string, string, Account> AccountVerify =
-            CompiledQuery.Compile<ZkDataContext, string, string, Account>(
-                (db, login, passwordHash) => db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == passwordHash && x.LobbyID != null));
+        public static Func<ZkDataContext, string, string, Account> AccountVerify = (db, login, passwordHash) => db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == passwordHash && x.LobbyID != null);
 
         public int AvailableXP { get {
             return GetXpForLevel(Level) -
@@ -286,19 +281,7 @@ namespace ZkData
         }
 
 
-        partial void OnCreated() {
-            FirstLogin = DateTime.UtcNow;
-            Elo = 1500;
-            Elo1v1 = 1500;
-            EloPw = 1500;
-            EloWeight = 1;
-            Elo1v1Weight = 1;
-            SpringieLevel = 1;
-        }
-
-
-
-        partial void OnNameChanging(string value) {
+        public void SetName(string value) { 
             if (!string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(value)) {
                 List<string> aliases = null;
                 if (!string.IsNullOrEmpty(Aliases)) aliases = new List<string>(Aliases.Split(','));
@@ -309,8 +292,8 @@ namespace ZkData
             }
         }
 
-
-        partial void OnValidate(ChangeAction action) {
+        // HACK implement these
+        /*partial void OnValidate(ChangeAction action) {
             if (action == ChangeAction.Update || action == ChangeAction.Insert) {
                 if (string.IsNullOrEmpty(Avatar)) {
                     var rand = new Random();
@@ -322,7 +305,7 @@ namespace ZkData
 
         partial void OnXPChanged() {
             CheckLevelUp();
-        }
+        }*/
 
         public string AuthenticationType { get { return "LobbyServer"; } }
         public bool IsAuthenticated { get { return true; } }

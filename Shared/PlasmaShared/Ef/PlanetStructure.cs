@@ -25,13 +25,13 @@ namespace ZkData
         public int? OwnerAccountID { get; set; } // OwnerAccountID
         public int? ActivatedOnTurn { get; set; } // ActivatedOnTurn
         public EnergyPriority EnergyPriority { get; set; } // EnergyPriority
-        public bool IsActive { get; set; } // IsActive
+        public virtual bool IsActive { get; set; } // IsActive
         public int? TargetPlanetID { get; set; } // TargetPlanetID
 
         // Foreign keys
         public virtual Account Account { get; set; } // FK_PlanetStructure_Account
         public virtual Planet Planet { get; set; } // FK_PlanetStructure_Planet
-        public virtual Planet Planet_TargetPlanetID { get; set; } // FK_PlanetStructure_Planet1
+        public virtual Planet PlanetByTargetPlanetID { get; set; } // FK_PlanetStructure_Planet1
         public virtual StructureType StructureType { get; set; } // FK_PlanetStructure_StructureType
 
         public PlanetStructure()

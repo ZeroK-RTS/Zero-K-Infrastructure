@@ -43,6 +43,17 @@ namespace ZkData
 	        foreach (var t in toDel) dbSet.Remove(t);
 	    }
 
+        public static void AddRange<T>(this ICollection<T> dbSet, IEnumerable<T> toAdd) where T : class
+        {
+            foreach (var a in toAdd) dbSet.Add(a);
+        }
+
+        public static void InsertAllOnSubmit<T>(this IDbSet<T> dbSet, IEnumerable<T> toAdd) where T : class
+        {
+            foreach (var a in toAdd) dbSet.Add(a);
+        }
+
+
         public static void InsertOnSubmit<T>(this IDbSet<T> dbSet, T target) where T : class
         {
             dbSet.Add(target);

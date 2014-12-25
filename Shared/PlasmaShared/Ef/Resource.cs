@@ -1,10 +1,10 @@
+using System.Security.Cryptography.X509Certificates;
 // ReSharper disable RedundantUsingDirective
 // ReSharper disable DoNotCallOverridableMethodsInConstructor
 // ReSharper disable InconsistentNaming
 // ReSharper disable PartialTypeWithSinglePart
 // ReSharper disable PartialMethodWithSinglePart
 // ReSharper disable RedundantNameQualifier
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -59,7 +59,9 @@ namespace ZkData
         public virtual ICollection<ResourceContentFile> ResourceContentFiles { get; set; } // Many to many mapping
         public virtual ICollection<ResourceDependency> ResourceDependencies { get; set; } // Many to many mapping
         public virtual ICollection<ResourceSpringHash> ResourceSpringHashes { get; set; } // Many to many mapping
-        public virtual ICollection<SpringBattle> SpringBattles { get; set; } // SpringBattle.FK_SpringBattle_Resource1
+
+        [InverseProperty("ResourceByMapResourceID")]
+        public virtual ICollection<SpringBattle> SpringBattlesByMapResourceID { get; set; } // SpringBattle.FK_SpringBattle_Resource1
 
         // Foreign keys
         public virtual Account Account { get; set; } // FK_Resource_Account
@@ -74,7 +76,8 @@ namespace ZkData
             ResourceContentFiles = new List<ResourceContentFile>();
             ResourceDependencies = new List<ResourceDependency>();
             ResourceSpringHashes = new List<ResourceSpringHash>();
-            SpringBattles = new List<SpringBattle>();
+            SpringBattlesByMapResourceID = new List<SpringBattle>();
+            LastChange = DateTime.UtcNow;
             InitializePartial();
         }
         partial void InitializePartial();

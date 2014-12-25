@@ -28,10 +28,6 @@ namespace ZkData
       Mountains = 3
     }
 
-    partial void OnCreated()
-    {
-      LastChange = DateTime.UtcNow;
-    }
     public double? MapRating
     {
       get

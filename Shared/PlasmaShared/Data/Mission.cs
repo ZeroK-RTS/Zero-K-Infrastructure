@@ -59,11 +59,6 @@ namespace ZkData
             return tags;
         }
 
-        partial void OnCreated()
-        {
-            ModifiedTime = DateTime.UtcNow;
-            CreatedTime = DateTime.UtcNow;
-        }
 
         public static string GetNameWithoutVersion(string missionName)
         {

@@ -31,7 +31,9 @@ namespace ZkData
         // Reverse navigation
         public virtual ICollection<AccountForumVote> AccountForumVotes { get; set; } // Many to many mapping
         public virtual ICollection<ForumPostEdit> ForumPostEdits { get; set; } // ForumPostEdit.FK_ForumPostEdit_ForumPost
+        [ForeignKey("ForumThreadID")]
         public virtual ForumThread ForumThread { get; set; }
+        [ForeignKey("AuthorAccountID")]
         public virtual Account Account { get; set; }
 
 

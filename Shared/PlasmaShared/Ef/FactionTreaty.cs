@@ -34,7 +34,7 @@ namespace ZkData
         public virtual ICollection<TreatyEffect> TreatyEffects { get; set; } // TreatyEffect.FK_TreatyEffect_FactionTreaty
 
         // Foreign keys
-        public virtual Account Account_AcceptedAccountID { get; set; } // FK_FactionTreaty_Account1
+        public virtual Account AccountByAcceptedAccountID { get; set; } // FK_FactionTreaty_Account1
         public virtual Account AccountByProposingAccountID { get; set; } // FK_FactionTreaty_Account
         public virtual Faction FactionByAcceptingFactionID { get; set; } // FK_FactionTreaty_Faction1
         public virtual Faction FactionByProposingFactionID { get; set; } // FK_FactionTreaty_Faction

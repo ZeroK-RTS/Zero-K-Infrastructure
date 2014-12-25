@@ -69,7 +69,7 @@ namespace ZkData
 
         // Reverse navigation
         public virtual AutoBanSmurfList AutoBanSmurfList { get; set; } // AutoBanSmurfList.FK_AutoBanSmurfList_Account
-        public virtual ICollection<AbuseReport> AbuseReports_AccountID { get; set; } // AbuseReport.FK_AbuseReport_Account
+        public virtual ICollection<AbuseReport> AbuseReportsByAccountID { get; set; } // AbuseReport.FK_AbuseReport_Account
         public virtual ICollection<AbuseReport> AbuseReports_ReporterAccountID { get; set; } // AbuseReport.FK_AbuseReport_Account1
         public virtual ICollection<AccountBattleAward> AccountBattleAwards { get; set; } // Many to many mapping
         public virtual ICollection<AccountCampaignJournalProgress> AccountCampaignJournalProgresses { get; set; } // Many to many mapping
@@ -93,7 +93,7 @@ namespace ZkData
         public virtual ICollection<ForumLastRead> ForumLastReads { get; set; } // Many to many mapping
         public virtual ICollection<ForumPostEdit> ForumPostEdits { get; set; } // ForumPostEdit.FK_ForumPostEdit_Account
         public virtual ICollection<ForumThread> ForumThreads_CreatedAccountID { get; set; } // ForumThread.FK_ForumThread_Account
-        public virtual ICollection<ForumThread> ForumThreads_LastPostAccountID { get; set; } // ForumThread.FK_ForumThread_Account1
+        public virtual ICollection<ForumThread> ForumThreadsByLastPostAccountID { get; set; } // ForumThread.FK_ForumThread_Account1
         public virtual ICollection<ForumThreadLastRead> ForumThreadLastReads { get; set; } // Many to many mapping
         public virtual ICollection<KudosPurchase> KudosPurchases { get; set; } // KudosPurchase.FK_KudosChange_Account
         public virtual ICollection<LobbyChannelSubscription> LobbyChannelSubscriptions { get; set; } // Many to many mapping
@@ -109,7 +109,7 @@ namespace ZkData
         public virtual ICollection<Poll> Polls_CreatedAccountID { get; set; } // Poll.FK_Poll_Account1
         public virtual ICollection<Poll> PollsByRoleTargetAccountID { get; set; } // Poll.FK_Poll_Account
         public virtual ICollection<PollVote> PollVotes { get; set; } // Many to many mapping
-        public virtual ICollection<Punishment> Punishments_AccountID { get; set; } // Punishment.FK_Punishment_Account
+        public virtual ICollection<Punishment> PunishmentsByAccountID { get; set; } // Punishment.FK_Punishment_Account
         public virtual ICollection<Punishment> Punishments_CreatedAccountID { get; set; } // Punishment.FK_Punishment_Account1
         public virtual ICollection<Rating> Ratings { get; set; } // Rating.FK_Rating_Account
         public virtual ICollection<Resource> Resources { get; set; } // Resource.FK_Resource_Account
@@ -152,7 +152,9 @@ namespace ZkData
             Kudos = 0;
             ForumTotalUpvotes = 0;
             ForumTotalDownvotes = 0;
-            AbuseReports_AccountID = new List<AbuseReport>();
+            FirstLogin = DateTime.UtcNow;
+
+            AbuseReportsByAccountID = new List<AbuseReport>();
             AbuseReports_ReporterAccountID = new List<AbuseReport>();
             AccountBattleAwards = new List<AccountBattleAward>();
             AccountCampaignJournalProgresses = new List<AccountCampaignJournalProgress>();
@@ -175,7 +177,7 @@ namespace ZkData
             ForumLastReads = new List<ForumLastRead>();
             ForumPostEdits = new List<ForumPostEdit>();
             ForumThreads_CreatedAccountID = new List<ForumThread>();
-            ForumThreads_LastPostAccountID = new List<ForumThread>();
+            ForumThreadsByLastPostAccountID = new List<ForumThread>();
             ForumThreadLastReads = new List<ForumThreadLastRead>();
             KudosPurchases = new List<KudosPurchase>();
             LobbyChannelSubscriptions = new List<LobbyChannelSubscription>();
@@ -191,7 +193,7 @@ namespace ZkData
             Polls_CreatedAccountID = new List<Poll>();
             PollsByRoleTargetAccountID = new List<Poll>();
             PollVotes = new List<PollVote>();
-            Punishments_AccountID = new List<Punishment>();
+            PunishmentsByAccountID = new List<Punishment>();
             Punishments_CreatedAccountID = new List<Punishment>();
             Ratings = new List<Rating>();
             Resources = new List<Resource>();

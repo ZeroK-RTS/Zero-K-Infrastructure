@@ -432,7 +432,7 @@ namespace NightWatch
             }
 
             acc.LobbyID = lobbyID;
-            acc.Name = name;
+            acc.SetName(name);
             if (!string.IsNullOrEmpty(hashedPassword)) acc.Password = hashedPassword;
             acc.LastLogin = DateTime.UtcNow;
 

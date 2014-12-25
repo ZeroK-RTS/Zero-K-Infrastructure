@@ -45,7 +45,7 @@ namespace ZkData
 
         // Foreign keys
         public virtual Account AccountByCreatedAccountID { get; set; } // FK_ForumThread_Account
-        public virtual Account Account_LastPostAccountID { get; set; } // FK_ForumThread_Account1
+        public virtual Account AccountByLastPostAccountID { get; set; } // FK_ForumThread_Account1
         public virtual Clan Clan { get; set; } // FK_ForumThread_Clan
         public virtual ForumCategory ForumCategory { get; set; } // FK_ForumThread_ForumCategory
 
@@ -55,6 +55,9 @@ namespace ZkData
             ViewCount = 0;
             IsLocked = false;
             IsPinned = false;
+            Created = DateTime.UtcNow;
+            LastPost = DateTime.UtcNow;
+
             Clans = new List<Clan>();
             ForumThreadLastReads = new List<ForumThreadLastRead>();
             Missions = new List<Mission>();

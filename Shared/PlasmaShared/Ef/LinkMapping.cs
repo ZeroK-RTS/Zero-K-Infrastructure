@@ -30,8 +30,8 @@ namespace ZkData
             Property(x => x.GalaxyID).HasColumnName("GalaxyID").IsRequired();
 
             // Foreign keys
-            HasRequired(a => a.Planet_PlanetID1).WithMany(b => b.Links_PlanetID1).HasForeignKey(c => c.PlanetID1); // FK_Link_Planet
-            HasRequired(a => a.Planet_PlanetID2).WithMany(b => b.Links_PlanetID2).HasForeignKey(c => c.PlanetID2); // FK_Link_Planet1
+            HasRequired(a => a.PlanetByPlanetID1).WithMany(b => b.LinksByPlanetID1).HasForeignKey(c => c.PlanetID1); // FK_Link_Planet
+            HasRequired(a => a.PlanetByPlanetID2).WithMany(b => b.LinksByPlanetID2).HasForeignKey(c => c.PlanetID2); // FK_Link_Planet1
             HasRequired(a => a.Galaxy).WithMany(b => b.Links).HasForeignKey(c => c.GalaxyID); // FK_Link_Galaxy
             InitializePartial();
         }

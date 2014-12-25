@@ -28,6 +28,11 @@ namespace ZkData
         public DateTime Created { get; set; } // Created
         public int? TargetLobbyID { get; set; } // TargetLobbyID
         public string Channel { get; set; } // Channel
+
+        public LobbyMessage()
+        {
+            Created = DateTime.UtcNow;
+        }
     }
 
 }

@@ -61,7 +61,7 @@ namespace MissionEditor2
 				var imageStream = new MemoryStream();
 				pngEncoder.Save(imageStream);
 				imageStream.Position = 0;
-				info.Image = new Binary(imageStream.ToArray());
+				info.Image = imageStream.ToArray();
 
 				if (ApplicationDeployment.IsNetworkDeployed) info.MissionEditorVersion = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
 				using (var unitSync = new UnitSync(Settings.Default.SpringPath)) info.SpringVersion = unitSync.Version;
@@ -87,7 +87,7 @@ namespace MissionEditor2
 						mod = unitSync.GetModFromArchive(mission.Mod.ArchiveName);
 						if (mod == null) throw new Exception("Mod metadata not extracted: mod not found");
 					}
-					info.Mutator = new Binary(File.ReadAllBytes(tempPath));
+					info.Mutator = File.ReadAllBytes(tempPath);
 					var client = MissionServiceClientFactory.MakeClient();
 					client.SendMission(info, slots, mission.Author, password, mod);
 					MessageBox.Show("Mission successfully uploaded.\n\rIt is now accessible from the lobby.\r\nPlease make sure it works!");

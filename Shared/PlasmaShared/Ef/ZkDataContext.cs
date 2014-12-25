@@ -26,12 +26,12 @@ namespace ZkData
         public IDbSet<AccountCampaignProgress> AccountCampaignProgress { get; set; } // AccountCampaignProgress
         public IDbSet<AccountCampaignVar> AccountCampaignVars { get; set; } // AccountCampaignVar
         public IDbSet<AccountForumVote> AccountForumVotes { get; set; } // AccountForumVote
-        public IDbSet<AccountIP> AccountIPs { get; set; } // AccountIP
+        public IDbSet<AccountIP> AccountIPS { get; set; } // AccountIP
         public IDbSet<AccountPlanet> AccountPlanets { get; set; } // AccountPlanet
         public IDbSet<AccountRatingVote> AccountRatingVotes { get; set; } // AccountRatingVote
         public IDbSet<AccountRole> AccountRoles { get; set; } // AccountRole
         public IDbSet<AccountUnlock> AccountUnlocks { get; set; } // AccountUnlock
-        public IDbSet<AccountUserID> AccountUserIDs { get; set; } // AccountUserID
+        public IDbSet<AccountUserID> AccountUserIDS { get; set; } // AccountUserID
         public IDbSet<AutoBanSmurfList> AutoBanSmurfLists { get; set; } // AutoBanSmurfList
         public IDbSet<AutohostConfig> AutohostConfigs { get; set; } // AutohostConfig
         public IDbSet<Avatar> Avatars { get; set; } // Avatar
@@ -105,19 +105,21 @@ namespace ZkData
         }
 
         public ZkDataContext()
-            : base("Name=PlasmaShared.Properties.Settings.zero_kConnectionString1")
+            : this(UseLiveDb)
         {
-        InitializePartial();
+            InitializePartial();
         }
 
-        public ZkDataContext(string connectionString) : base(connectionString)
+        public ZkDataContext(string connectionString)
+            : base(connectionString)
         {
-        InitializePartial();
+            InitializePartial();
         }
 
-        public ZkDataContext(string connectionString, System.Data.Entity.Infrastructure.DbCompiledModel model) : base(connectionString, model)
+        public ZkDataContext(string connectionString, System.Data.Entity.Infrastructure.DbCompiledModel model)
+            : base(connectionString, model)
         {
-        InitializePartial();
+            InitializePartial();
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -203,7 +205,7 @@ namespace ZkData
             modelBuilder.Configurations.Add(new TreatyEffectMapping());
             modelBuilder.Configurations.Add(new TreatyEffectTypeMapping());
             modelBuilder.Configurations.Add(new UnlockMapping());
-        OnModelCreatingPartial(modelBuilder);
+            OnModelCreatingPartial(modelBuilder);
         }
 
         public static DbModelBuilder CreateModel(DbModelBuilder modelBuilder, string schema)
@@ -297,10 +299,70 @@ namespace ZkData
         {
             SubmitAndMergeChanges();
         }
-        
+
         public void SubmitAndMergeChanges()
         {
             SaveChanges();
+            // HACK reimplement this
+
+/*            try
+            {
+                SubmitChanges(ConflictMode.ContinueOnConflict);
+            }
+
+            catch (ChangeConflictException)
+            {
+                // Automerge database values for members that client has modified
+                ChangeConflicts.ResolveAll(RefreshMode.KeepChanges);
+
+                // Submit succeeds on second try.
+                SubmitChanges();
+            }*/
+
         }
+
+        private static string ConnectionStringLocal = @"Data Source=.\SQLEXPRESS;Initial Catalog=zero-k-dev;Integrated Security=True;MultipleActiveResultSets=true";
+
+#if !DEPLOY
+        private static string ConnectionStringLive = @"Data Source=omega.licho.eu,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
+#else 
+        private static string ConnectionStringLive = Settings.Default.zero_kConnectionString;
+#endif
+
+
+        private static bool wasDbChecked = false;
+        private static object locker = new object();
+
+#if DEBUG
+        //public static bool UseLiveDb = false;
+        public static bool UseLiveDb = true;
+#else 
+        public static bool UseLiveDb = true;
+#endif
+
+
+
+        public static Action<ZkDataContext> DataContextCreated = context => { };
+
+
+
+        public ZkDataContext(bool? useLiveDb)
+            : base(useLiveDb != null ? (useLiveDb.Value ? ConnectionStringLive : ConnectionStringLocal) : (UseLiveDb ? ConnectionStringLive : ConnectionStringLocal))
+        {
+#if DEBUG
+            if (!wasDbChecked)
+            {
+                lock (locker)
+                {
+                    Database.CreateIfNotExists();
+                    wasDbChecked = true;
+                }
+            }
+#endif
+            DataContextCreated(this);
+        }
+
+
     }
 }
+

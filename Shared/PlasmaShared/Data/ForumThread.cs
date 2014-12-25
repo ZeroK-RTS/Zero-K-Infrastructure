@@ -7,11 +7,6 @@ namespace ZkData
 {
 	partial class ForumThread
 	{
-		partial void OnCreated()
-		{
-			Created = DateTime.UtcNow;
-		  LastPost = DateTime.UtcNow;
-		}
 
         public int UpdateLastRead(int accountID, bool isPost, DateTime? time = null)
         {

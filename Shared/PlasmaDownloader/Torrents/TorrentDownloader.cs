@@ -6,6 +6,7 @@ using System.Linq;
 using MonoTorrent.Common;
 using ZkData;
 using ZkData.ContentService;
+using ResourceType = ZkData.ContentService.ResourceType;
 
 #endregion
 

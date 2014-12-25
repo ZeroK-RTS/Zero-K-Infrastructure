@@ -37,7 +37,7 @@ namespace ZkData
         public virtual ICollection<AccountCampaignProgress> AccountCampaignProgress { get; set; } // Many to many mapping
         public virtual ICollection<CampaignEvent> CampaignEvents { get; set; } // Many to many mapping
         public virtual ICollection<CampaignJournal> CampaignJournals { get; set; } // Many to many mapping
-        public virtual ICollection<CampaignLink> CampaignLinks_CampaignID { get; set; } // Many to many mapping
+        public virtual ICollection<CampaignLink> CampaignLinks { get; set; } // Many to many mapping
         public virtual ICollection<CampaignLink> CampaignLinks1 { get; set; } // Many to many mapping
         public virtual ICollection<CampaignPlanetVar> CampaignPlanetVars { get; set; } // Many to many mapping
 
@@ -50,7 +50,7 @@ namespace ZkData
             AccountCampaignProgress = new List<AccountCampaignProgress>();
             CampaignEvents = new List<CampaignEvent>();
             CampaignJournals = new List<CampaignJournal>();
-            CampaignLinks_CampaignID = new List<CampaignLink>();
+            CampaignLinks = new List<CampaignLink>();
             CampaignLinks1 = new List<CampaignLink>();
             CampaignPlanetVars = new List<CampaignPlanetVar>();
             InitializePartial();

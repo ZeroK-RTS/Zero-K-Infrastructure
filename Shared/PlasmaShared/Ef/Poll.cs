@@ -41,6 +41,8 @@ namespace ZkData
         public virtual Account AccountByRoleTargetAccountID { get; set; } // FK_Poll_Account
         public virtual Faction Faction { get; set; } // FK_Poll_Faction
         public virtual RoleType RoleType { get; set; } // FK_Poll_RoleType
+        [ForeignKey("RestrictClanID")]
+        public virtual Clan Clan { get; set; }
 
         public Poll()
         {

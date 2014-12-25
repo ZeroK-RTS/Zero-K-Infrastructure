@@ -28,7 +28,7 @@ namespace NightWatch
 		    {
 		        using (var db = new ZkDataContext())
 		        {
-		            db.ExecuteCommand("DELETE FROM LobbyMessages WHERE Created < {0}", DateTime.UtcNow.AddDays(-14));
+		            db.Database.ExecuteSqlCommand("DELETE FROM LobbyMessages WHERE Created < {0}", DateTime.UtcNow.AddDays(-14));
 		        }
 		    }
 		    catch (Exception ex)

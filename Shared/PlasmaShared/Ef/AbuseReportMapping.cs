@@ -32,8 +32,8 @@ namespace ZkData
             Property(x => x.Text).HasColumnName("Text").IsRequired();
 
             // Foreign keys
-            HasRequired(a => a.Account_AccountID).WithMany(b => b.AbuseReports_AccountID).HasForeignKey(c => c.AccountID); // FK_AbuseReport_Account
-            HasRequired(a => a.Account_ReporterAccountID).WithMany(b => b.AbuseReports_ReporterAccountID).HasForeignKey(c => c.ReporterAccountID); // FK_AbuseReport_Account1
+            HasRequired(a => a.Account_AccountID).WithMany(b => b.AbuseReportsByAccountID).HasForeignKey(c => c.AccountID); // FK_AbuseReport_Account
+            HasRequired(a => a.AccountByReporterAccountID).WithMany(b => b.AbuseReports_ReporterAccountID).HasForeignKey(c => c.ReporterAccountID); // FK_AbuseReport_Account1
             InitializePartial();
         }
         partial void InitializePartial();

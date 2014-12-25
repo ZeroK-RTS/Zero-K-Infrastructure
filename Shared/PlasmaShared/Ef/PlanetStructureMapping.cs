@@ -37,7 +37,7 @@ namespace ZkData
             HasRequired(a => a.Planet).WithMany(b => b.PlanetStructures).HasForeignKey(c => c.PlanetID); // FK_PlanetStructure_Planet
             HasRequired(a => a.StructureType).WithMany(b => b.PlanetStructures).HasForeignKey(c => c.StructureTypeID); // FK_PlanetStructure_StructureType
             HasOptional(a => a.Account).WithMany(b => b.PlanetStructures).HasForeignKey(c => c.OwnerAccountID); // FK_PlanetStructure_Account
-            HasOptional(a => a.Planet_TargetPlanetID).WithMany(b => b.PlanetStructures_TargetPlanetID).HasForeignKey(c => c.TargetPlanetID); // FK_PlanetStructure_Planet1
+            HasOptional(a => a.PlanetByTargetPlanetID).WithMany(b => b.PlanetStructuresByTargetPlanetID).HasForeignKey(c => c.TargetPlanetID); // FK_PlanetStructure_Planet1
             InitializePartial();
         }
         partial void InitializePartial();

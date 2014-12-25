@@ -36,7 +36,7 @@ namespace ZkData
             Property(x => x.Category).HasColumnName("Category").IsOptional();
 
             // Foreign keys
-            HasRequired(a => a.CampaignPlanet).WithMany(b => b.CampaignJournals).HasForeignKey(c => new { c.CampaignID, c.PlanetID }); // FK_CampaignJournal_CampaignPlanet
+            HasRequired(a => a.Planet).WithMany(b => b.CampaignJournals).HasForeignKey(c => new { c.CampaignID, c.PlanetID }); // FK_CampaignJournal_CampaignPlanet
             InitializePartial();
         }
         partial void InitializePartial();

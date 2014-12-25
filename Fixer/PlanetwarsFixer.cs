@@ -59,7 +59,7 @@ namespace Fixer
             System.Console.WriteLine("Purging galaxy " + galaxyID);
             using (var db = new ZkDataContext())
             {
-                db.CommandTimeout = 300;
+                db.Database.CommandTimeout = 300;
 
                 var gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
                 foreach (var p in gal.Planets)
@@ -80,23 +80,23 @@ namespace Fixer
                 }
                 db.SubmitChanges();
 
-                db.ExecuteCommand("update account set pwbombersproduced=0, pwbombersused=0, pwdropshipsproduced=0, pwdropshipsused=0, pwmetalproduced=0, pwmetalused=0, pwattackpoints=0, pwwarpproduced=0, pwwarpused=0, elopw=1500");
-                if (resetclans) db.ExecuteCommand("update account set clanid=null");
-                db.ExecuteCommand("delete from event");
-                db.ExecuteCommand("delete from planetownerhistory");
-                db.ExecuteCommand("delete from planetstructure");
-                db.ExecuteCommand("delete from planetfaction");
-                db.ExecuteCommand("delete from accountplanet");
-                if (resetroles) db.ExecuteCommand("delete from accountrole where clanID is null");
-                db.ExecuteCommand("delete from factiontreaty");
-                db.ExecuteCommand("delete from treatyeffect");
+                db.Database.ExecuteSqlCommand("update account set pwbombersproduced=0, pwbombersused=0, pwdropshipsproduced=0, pwdropshipsused=0, pwmetalproduced=0, pwmetalused=0, pwattackpoints=0, pwwarpproduced=0, pwwarpused=0, elopw=1500");
+                if (resetclans) db.Database.ExecuteSqlCommand("update account set clanid=null");
+                db.Database.ExecuteSqlCommand("delete from event");
+                db.Database.ExecuteSqlCommand("delete from planetownerhistory");
+                db.Database.ExecuteSqlCommand("delete from planetstructure");
+                db.Database.ExecuteSqlCommand("delete from planetfaction");
+                db.Database.ExecuteSqlCommand("delete from accountplanet");
+                if (resetroles) db.Database.ExecuteSqlCommand("delete from accountrole where clanID is null");
+                db.Database.ExecuteSqlCommand("delete from factiontreaty");
+                db.Database.ExecuteSqlCommand("delete from treatyeffect");
 
-                db.ExecuteCommand("delete from forumthread where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsPlanets).ForumCategoryID);
+                db.Database.ExecuteSqlCommand("delete from forumthread where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsPlanets).ForumCategoryID);
 
                 if (resetclans)
                 {
-                    db.ExecuteCommand("delete from clan");
-                    db.ExecuteCommand("delete from forumthread where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsClans).ForumCategoryID);
+                    db.Database.ExecuteSqlCommand("delete from clan");
+                    db.Database.ExecuteSqlCommand("delete from forumthread where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsClans).ForumCategoryID);
                 }
             }
         }
@@ -280,6 +280,7 @@ namespace Fixer
                         foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.EffectIsVictoryPlanet != true))
                         {
                             s.IsActive = false;
+                            s.ActivatedOnTurn = null;
                         }
                     }
                 }

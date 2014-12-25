@@ -28,7 +28,7 @@ namespace ZkData
 
         // Foreign keys
         public virtual Account Account_AccountID { get; set; } // FK_AbuseReport_Account
-        public virtual Account Account_ReporterAccountID { get; set; } // FK_AbuseReport_Account1
+        public virtual Account AccountByReporterAccountID { get; set; } // FK_AbuseReport_Account1
     }
 
 }

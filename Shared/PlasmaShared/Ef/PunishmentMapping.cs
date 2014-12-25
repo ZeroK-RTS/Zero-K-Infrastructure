@@ -45,8 +45,8 @@ namespace ZkData
             Property(x => x.SetRightsToZero).HasColumnName("SetRightsToZero").IsRequired();
 
             // Foreign keys
-            HasRequired(a => a.Account_AccountID).WithMany(b => b.Punishments_AccountID).HasForeignKey(c => c.AccountID); // FK_Punishment_Account
-            HasOptional(a => a.Account_CreatedAccountID).WithMany(b => b.Punishments_CreatedAccountID).HasForeignKey(c => c.CreatedAccountID); // FK_Punishment_Account1
+            HasRequired(a => a.AccountByAccountID).WithMany(b => b.PunishmentsByAccountID).HasForeignKey(c => c.AccountID); // FK_Punishment_Account
+            HasOptional(a => a.AccountByCreatedAccountID).WithMany(b => b.Punishments_CreatedAccountID).HasForeignKey(c => c.CreatedAccountID); // FK_Punishment_Account1
             InitializePartial();
         }
         partial void InitializePartial();

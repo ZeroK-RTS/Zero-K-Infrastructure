@@ -26,12 +26,12 @@ namespace ZkData
         IDbSet<AccountCampaignProgress> AccountCampaignProgress { get; set; } // AccountCampaignProgress
         IDbSet<AccountCampaignVar> AccountCampaignVars { get; set; } // AccountCampaignVar
         IDbSet<AccountForumVote> AccountForumVotes { get; set; } // AccountForumVote
-        IDbSet<AccountIP> AccountIPs { get; set; } // AccountIP
+        IDbSet<AccountIP> AccountIPS { get; set; } // AccountIP
         IDbSet<AccountPlanet> AccountPlanets { get; set; } // AccountPlanet
         IDbSet<AccountRatingVote> AccountRatingVotes { get; set; } // AccountRatingVote
         IDbSet<AccountRole> AccountRoles { get; set; } // AccountRole
         IDbSet<AccountUnlock> AccountUnlocks { get; set; } // AccountUnlock
-        IDbSet<AccountUserID> AccountUserIDs { get; set; } // AccountUserID
+        IDbSet<AccountUserID> AccountUserIDS { get; set; } // AccountUserID
         IDbSet<AutoBanSmurfList> AutoBanSmurfLists { get; set; } // AutoBanSmurfList
         IDbSet<AutohostConfig> AutohostConfigs { get; set; } // AutohostConfig
         IDbSet<Avatar> Avatars { get; set; } // Avatar
