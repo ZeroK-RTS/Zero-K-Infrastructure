@@ -27,7 +27,7 @@ namespace ZkData
         public int? ClanID { get; set; } // ClanID
 
         // Foreign keys
-        public virtual Account Account { get; set; } // FK_AccountRole_Account
+        public virtual Account AccountByAccountID { get; set; } // FK_AccountRole_Account
         public virtual Clan Clan { get; set; } // FK_AccountRole_Clan
         public virtual Faction Faction { get; set; } // FK_AccountRole_Faction
         public virtual RoleType RoleType { get; set; } // FK_AccountRole_RoleType

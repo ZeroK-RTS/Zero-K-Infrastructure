@@ -22,7 +22,7 @@ namespace ZkData
     {
         public int CommanderSlotID { get; set; } // CommanderSlotID (Primary key)
         public int MorphLevel { get; set; } // MorphLevel
-        public int UnlockType { get; set; } // UnlockType
+        public UnlockTypes UnlockType { get; set; } // UnlockType
 
         // Reverse navigation
         public virtual ICollection<CommanderModule> CommanderModules { get; set; } // Many to many mapping

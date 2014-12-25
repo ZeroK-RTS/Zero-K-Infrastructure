@@ -21,7 +21,7 @@ namespace ZkData
     public partial class ExceptionLog
     {
         public int ExceptionLogID { get; set; } // ExceptionLogID (Primary key)
-        public int ProgramID { get; set; } // ProgramID
+        public ProgramType ProgramID { get; set; } // ProgramID
         public string Exception { get; set; } // Exception
         public string ExtraData { get; set; } // ExtraData
         public string RemoteIP { get; set; } // RemoteIP

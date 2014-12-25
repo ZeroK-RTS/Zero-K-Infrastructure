@@ -41,7 +41,7 @@ namespace ZkData
         public int? ContributionJarID { get; set; } // ContributionJarID
 
         // Foreign keys
-        public virtual Account Account_AccountID { get; set; } // FK_Contribution_Account
+        public virtual Account AccountByAccountID { get; set; } // FK_Contribution_Account
         public virtual Account Account_ManuallyAddedAccountID { get; set; } // FK_Contribution_Account1
         public virtual ContributionJar ContributionJar { get; set; } // FK_Contribution_ContributionJar
 

@@ -45,7 +45,7 @@ namespace ZkData
             Property(x => x.IsKudosOnly).HasColumnName("IsKudosOnly").IsOptional();
 
             // Foreign keys
-            HasOptional(a => a.Unlock_RequiredUnlockID).WithMany(b => b.Unlocks).HasForeignKey(c => c.RequiredUnlockID); // FK_Unlock_Unlock
+            HasOptional(a => a.ParentUnlock).WithMany(b => b.Unlocks).HasForeignKey(c => c.RequiredUnlockID); // FK_Unlock_Unlock
             InitializePartial();
         }
         partial void InitializePartial();

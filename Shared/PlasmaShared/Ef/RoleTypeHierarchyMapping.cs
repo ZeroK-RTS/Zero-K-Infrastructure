@@ -32,7 +32,7 @@ namespace ZkData
 
             // Foreign keys
             HasRequired(a => a.RoleType_MasterRoleTypeID).WithMany(b => b.RoleTypeHierarchiesByMasterRoleTypeID).HasForeignKey(c => c.MasterRoleTypeID); // FK_RoleTypeHierarchy_RoleType
-            HasRequired(a => a.RoleType_SlaveRoleTypeID).WithMany(b => b.RoleTypeHierarchies_SlaveRoleTypeID).HasForeignKey(c => c.SlaveRoleTypeID); // FK_RoleTypeHierarchy_RoleType1
+            HasRequired(a => a.RoleTypeBySlaveRoleTypeID).WithMany(b => b.RoleTypeHierarchies_SlaveRoleTypeID).HasForeignKey(c => c.SlaveRoleTypeID); // FK_RoleTypeHierarchy_RoleType1
             InitializePartial();
         }
         partial void InitializePartial();

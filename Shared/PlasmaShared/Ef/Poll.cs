@@ -38,7 +38,7 @@ namespace ZkData
 
         // Foreign keys
         public virtual Account Account_CreatedAccountID { get; set; } // FK_Poll_Account1
-        public virtual Account Account_RoleTargetAccountID { get; set; } // FK_Poll_Account
+        public virtual Account AccountByRoleTargetAccountID { get; set; } // FK_Poll_Account
         public virtual Faction Faction { get; set; } // FK_Poll_Faction
         public virtual RoleType RoleType { get; set; } // FK_Poll_RoleType
 

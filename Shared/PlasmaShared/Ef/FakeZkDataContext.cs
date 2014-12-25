@@ -22,8 +22,8 @@ namespace ZkData
         public IDbSet<AbuseReport> AbuseReports { get; set; }
         public IDbSet<Account> Accounts { get; set; }
         public IDbSet<AccountBattleAward> AccountBattleAwards { get; set; }
-        public IDbSet<AccountCampaignJournalProgress> AccountCampaignJournalProgresses { get; set; }
-        public IDbSet<AccountCampaignProgress> AccountCampaignProgresses { get; set; }
+        public IDbSet<AccountCampaignJournalProgress> AccountCampaignJournalProgress { get; set; }
+        public IDbSet<AccountCampaignProgress> AccountCampaignProgress { get; set; }
         public IDbSet<AccountCampaignVar> AccountCampaignVars { get; set; }
         public IDbSet<AccountForumVote> AccountForumVotes { get; set; }
         public IDbSet<AccountIP> AccountIPs { get; set; }
@@ -104,8 +104,8 @@ namespace ZkData
             AbuseReports = new FakeDbSet<AbuseReport>();
             Accounts = new FakeDbSet<Account>();
             AccountBattleAwards = new FakeDbSet<AccountBattleAward>();
-            AccountCampaignJournalProgresses = new FakeDbSet<AccountCampaignJournalProgress>();
-            AccountCampaignProgresses = new FakeDbSet<AccountCampaignProgress>();
+            AccountCampaignJournalProgress = new FakeDbSet<AccountCampaignJournalProgress>();
+            AccountCampaignProgress = new FakeDbSet<AccountCampaignProgress>();
             AccountCampaignVars = new FakeDbSet<AccountCampaignVar>();
             AccountForumVotes = new FakeDbSet<AccountForumVote>();
             AccountIPs = new FakeDbSet<AccountIP>();

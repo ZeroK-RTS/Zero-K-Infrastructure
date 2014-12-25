@@ -32,8 +32,8 @@ namespace ZkData
             Property(x => x.IsCompleted).HasColumnName("IsCompleted").IsRequired();
 
             // Foreign keys
-            HasRequired(a => a.Account).WithMany(b => b.AccountCampaignProgresses).HasForeignKey(c => c.AccountID); // FK_AccountCampaignProgress_Account
-            HasRequired(a => a.CampaignPlanet).WithMany(b => b.AccountCampaignProgresses).HasForeignKey(c => new { c.CampaignID, c.PlanetID }); // FK_AccountCampaignProgress_CampaignPlanet
+            HasRequired(a => a.Account).WithMany(b => b.AccountCampaignProgress).HasForeignKey(c => c.AccountID); // FK_AccountCampaignProgress_Account
+            HasRequired(a => a.CampaignPlanet).WithMany(b => b.AccountCampaignProgress).HasForeignKey(c => new { c.CampaignID, c.PlanetID }); // FK_AccountCampaignProgress_CampaignPlanet
             InitializePartial();
         }
         partial void InitializePartial();

@@ -28,7 +28,7 @@ namespace ZkData
             Property(x => x.RatingID).HasColumnName("RatingID").IsRequired().HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
             Property(x => x.AccountID).HasColumnName("AccountID").IsRequired();
             Property(x => x.MissionID).HasColumnName("MissionID").IsOptional();
-            Property(x => x.Rating_).HasColumnName("Rating").IsOptional();
+            Property(x => x.Rating1).HasColumnName("Rating").IsOptional();
             Property(x => x.Difficulty).HasColumnName("Difficulty").IsOptional();
 
             // Foreign keys

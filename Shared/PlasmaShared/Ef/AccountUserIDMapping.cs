@@ -32,7 +32,7 @@ namespace ZkData
             Property(x => x.LastLogin).HasColumnName("LastLogin").IsRequired();
 
             // Foreign keys
-            HasRequired(a => a.Account).WithMany(b => b.AccountUserIDs).HasForeignKey(c => c.AccountID); // FK_AccountUserID_Account
+            HasRequired(a => a.Account).WithMany(b => b.AccountUserIDS).HasForeignKey(c => c.AccountID); // FK_AccountUserID_Account
             InitializePartial();
         }
         partial void InitializePartial();

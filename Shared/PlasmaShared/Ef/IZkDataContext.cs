@@ -22,8 +22,8 @@ namespace ZkData
         IDbSet<AbuseReport> AbuseReports { get; set; } // AbuseReport
         IDbSet<Account> Accounts { get; set; } // Account
         IDbSet<AccountBattleAward> AccountBattleAwards { get; set; } // AccountBattleAward
-        IDbSet<AccountCampaignJournalProgress> AccountCampaignJournalProgresses { get; set; } // AccountCampaignJournalProgress
-        IDbSet<AccountCampaignProgress> AccountCampaignProgresses { get; set; } // AccountCampaignProgress
+        IDbSet<AccountCampaignJournalProgress> AccountCampaignJournalProgress { get; set; } // AccountCampaignJournalProgress
+        IDbSet<AccountCampaignProgress> AccountCampaignProgress { get; set; } // AccountCampaignProgress
         IDbSet<AccountCampaignVar> AccountCampaignVars { get; set; } // AccountCampaignVar
         IDbSet<AccountForumVote> AccountForumVotes { get; set; } // AccountForumVote
         IDbSet<AccountIP> AccountIPs { get; set; } // AccountIP

@@ -23,7 +23,7 @@ namespace ZkData
         public int RatingID { get; set; } // RatingID (Primary key)
         public int AccountID { get; set; } // AccountID
         public int? MissionID { get; set; } // MissionID
-        public int? Rating_ { get; set; } // Rating
+        public int? Rating1 { get; set; } // Rating
         public int? Difficulty { get; set; } // Difficulty
 
         // Foreign keys

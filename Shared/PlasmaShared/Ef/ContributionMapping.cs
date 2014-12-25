@@ -46,7 +46,7 @@ namespace ZkData
             Property(x => x.ContributionJarID).HasColumnName("ContributionJarID").IsOptional();
 
             // Foreign keys
-            HasOptional(a => a.Account_AccountID).WithMany(b => b.Contributions_AccountID).HasForeignKey(c => c.AccountID); // FK_Contribution_Account
+            HasOptional(a => a.AccountByAccountID).WithMany(b => b.ContributionsByAccountID).HasForeignKey(c => c.AccountID); // FK_Contribution_Account
             HasOptional(a => a.Account_ManuallyAddedAccountID).WithMany(b => b.Contributions_ManuallyAddedAccountID).HasForeignKey(c => c.ManuallyAddedAccountID); // FK_Contribution_Account1
             HasOptional(a => a.ContributionJar).WithMany(b => b.Contributions).HasForeignKey(c => c.ContributionJarID); // FK_Contribution_ContributionJar
             InitializePartial();

@@ -31,7 +31,7 @@ namespace ZkData
         public string Category { get; set; } // Category
 
         // Reverse navigation
-        public virtual ICollection<AccountCampaignJournalProgress> AccountCampaignJournalProgresses { get; set; } // Many to many mapping
+        public virtual ICollection<AccountCampaignJournalProgress> AccountCampaignJournalProgress { get; set; } // Many to many mapping
         public virtual ICollection<CampaignJournalVar> CampaignJournalVars { get; set; } // Many to many mapping
 
         // Foreign keys
@@ -39,7 +39,7 @@ namespace ZkData
 
         public CampaignJournal()
         {
-            AccountCampaignJournalProgresses = new List<AccountCampaignJournalProgress>();
+            AccountCampaignJournalProgress = new List<AccountCampaignJournalProgress>();
             CampaignJournalVars = new List<CampaignJournalVar>();
             InitializePartial();
         }

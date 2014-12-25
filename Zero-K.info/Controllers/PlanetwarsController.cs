@@ -203,11 +203,11 @@ namespace ZeroKWeb.Controllers
                 else pageSize = 10;
             }
             IQueryable<Event> res = db.Events.AsQueryable();
-            if (planetID.HasValue) res = res.Where(x => x.EventPlanets.Any(y => y.PlanetID == planetID));
-            if (accountID.HasValue) res = res.Where(x => x.EventAccounts.Any(y => y.AccountID == accountID));
-            if (clanID.HasValue) res = res.Where(x => x.EventClans.Any(y => y.ClanID == clanID));
-            if (springBattleID.HasValue) res = res.Where(x => x.EventSpringBattles.Any(y => y.SpringBattleID == springBattleID));
-            if (factionID.HasValue) res = res.Where(x => x.EventFactions.Any(y => y.FactionID == factionID));
+            if (planetID.HasValue) res = res.Where(x => x.Planets.Any(y => y.PlanetID == planetID));
+            if (accountID.HasValue) res = res.Where(x => x.Accounts.Any(y => y.AccountID == accountID));
+            if (clanID.HasValue) res = res.Where(x => x.Clans.Any(y => y.ClanID == clanID));
+            if (springBattleID.HasValue) res = res.Where(x => x.SpringBattles.Any(y => y.SpringBattleID == springBattleID));
+            if (factionID.HasValue) res = res.Where(x => x.Factions.Any(y => y.FactionID == factionID));
             if (!string.IsNullOrEmpty(filter)) res = res.Where(x => x.Text.Contains(filter));
             res = res.OrderByDescending(x => x.EventID);
 

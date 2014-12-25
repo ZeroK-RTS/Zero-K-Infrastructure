@@ -316,7 +316,7 @@ namespace System.Web.Mvc
 
         public static MvcHtmlString PrintContributorStar(this HtmlHelper helper, Account account, bool large = false) {
             var star = "";
-            var contribs = account.Contributions_AccountID.ToList();
+            var contribs = account.ContributionsByAccountID.ToList();
             var total = 0;
             foreach (var contrib in contribs) total += contrib.KudosValue;
             if (total >= GlobalConst.KudosForGold) star = "star_yellow";

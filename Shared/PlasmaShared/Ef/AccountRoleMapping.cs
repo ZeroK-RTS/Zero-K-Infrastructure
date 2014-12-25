@@ -32,7 +32,7 @@ namespace ZkData
             Property(x => x.ClanID).HasColumnName("ClanID").IsOptional();
 
             // Foreign keys
-            HasRequired(a => a.Account).WithMany(b => b.AccountRolesByAccountID).HasForeignKey(c => c.AccountID); // FK_AccountRole_Account
+            HasRequired(a => a.AccountByAccountID).WithMany(b => b.AccountRolesByAccountID).HasForeignKey(c => c.AccountID); // FK_AccountRole_Account
             HasRequired(a => a.RoleType).WithMany(b => b.AccountRoles).HasForeignKey(c => c.RoleTypeID); // FK_AccountRole_RoleType
             HasOptional(a => a.Faction).WithMany(b => b.AccountRoles).HasForeignKey(c => c.FactionID); // FK_AccountRole_Faction
             HasOptional(a => a.Clan).WithMany(b => b.AccountRoles).HasForeignKey(c => c.ClanID); // FK_AccountRole_Clan

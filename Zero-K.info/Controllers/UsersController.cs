@@ -135,11 +135,11 @@ namespace ZeroKWeb.Controllers
 
             var db = new ZkDataContext();
             ret =
-                db.ExecuteQuery<Account>(
+                db.Database.SqlQuery<Account>(
                     "select  * from account where lobbyid in (select lobbyid from (select lobbyid, count(*)  as cnt from account group by (lobbyid)) as lc where cnt > 1) and LobbyID is not null order by lobbyid");
             ret =
                 ret.Union(
-                    db.ExecuteQuery<Account>(
+                    db.Database.SqlQuery<Account>(
                         "select * from account where name in (select name from (select name, count(*)  as cnt from account where lobbyid is not null group by (name)) as lc where cnt > 1) order by name"));
             return View(ret);
         }

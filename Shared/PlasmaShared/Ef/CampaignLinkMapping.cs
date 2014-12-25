@@ -30,8 +30,8 @@ namespace ZkData
             Property(x => x.CampaignID).HasColumnName("CampaignID").IsRequired();
 
             // Foreign keys
-            HasRequired(a => a.CampaignPlanet_CampaignID).WithMany(b => b.CampaignLinks_CampaignID).HasForeignKey(c => new { c.PlanetToUnlockID, c.CampaignID }); // FK_CampaignLink_CampaignPlanet
-            HasRequired(a => a.CampaignPlanet1).WithMany(b => b.CampaignLinks1).HasForeignKey(c => new { c.UnlockingPlanetID, c.CampaignID }); // FK_CampaignLink_CampaignPlanet1
+            HasRequired(a => a.PlanetToUnlock).WithMany(b => b.CampaignLinks_CampaignID).HasForeignKey(c => new { c.PlanetToUnlockID, c.CampaignID }); // FK_CampaignLink_CampaignPlanet
+            HasRequired(a => a.UnlockingPlanet).WithMany(b => b.CampaignLinks1).HasForeignKey(c => new { c.UnlockingPlanetID, c.CampaignID }); // FK_CampaignLink_CampaignPlanet1
             HasRequired(a => a.Campaign).WithMany(b => b.CampaignLinks).HasForeignKey(c => c.CampaignID); // FK_CampaignLink_Campaign
             InitializePartial();
         }

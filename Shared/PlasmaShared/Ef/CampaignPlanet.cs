@@ -34,7 +34,7 @@ namespace ZkData
         public string DisplayedMap { get; set; } // DisplayedMap
 
         // Reverse navigation
-        public virtual ICollection<AccountCampaignProgress> AccountCampaignProgresses { get; set; } // Many to many mapping
+        public virtual ICollection<AccountCampaignProgress> AccountCampaignProgress { get; set; } // Many to many mapping
         public virtual ICollection<CampaignEvent> CampaignEvents { get; set; } // Many to many mapping
         public virtual ICollection<CampaignJournal> CampaignJournals { get; set; } // Many to many mapping
         public virtual ICollection<CampaignLink> CampaignLinks_CampaignID { get; set; } // Many to many mapping
@@ -47,7 +47,7 @@ namespace ZkData
 
         public CampaignPlanet()
         {
-            AccountCampaignProgresses = new List<AccountCampaignProgress>();
+            AccountCampaignProgress = new List<AccountCampaignProgress>();
             CampaignEvents = new List<CampaignEvent>();
             CampaignJournals = new List<CampaignJournal>();
             CampaignLinks_CampaignID = new List<CampaignLink>();

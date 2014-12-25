@@ -27,7 +27,7 @@ namespace ZkData
 
         // Foreign keys
         public virtual RoleType RoleType_MasterRoleTypeID { get; set; } // FK_RoleTypeHierarchy_RoleType
-        public virtual RoleType RoleType_SlaveRoleTypeID { get; set; } // FK_RoleTypeHierarchy_RoleType1
+        public virtual RoleType RoleTypeBySlaveRoleTypeID { get; set; } // FK_RoleTypeHierarchy_RoleType1
 
         public RoleTypeHierarchy()
         {

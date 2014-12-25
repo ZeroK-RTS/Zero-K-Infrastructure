@@ -26,7 +26,7 @@ namespace ZkData
         public string Description { get; set; } // Description
         public int NeededLevel { get; set; } // NeededLevel
         public string LimitForChassis { get; set; } // LimitForChassis
-        public int UnlockType { get; set; } // UnlockType
+        public UnlockTypes UnlockType { get; set; } // UnlockType
         public int? RequiredUnlockID { get; set; } // RequiredUnlockID
         public int MorphLevel { get; set; } // MorphLevel
         public int MaxModuleCount { get; set; } // MaxModuleCount
@@ -50,7 +50,7 @@ namespace ZkData
         public virtual ICollection<Unlock> Unlocks { get; set; } // Unlock.FK_Unlock_Unlock
 
         // Foreign keys
-        public virtual Unlock Unlock_RequiredUnlockID { get; set; } // FK_Unlock_Unlock
+        public virtual Unlock ParentUnlock { get; set; } // FK_Unlock_Unlock
 
         public Unlock()
         {

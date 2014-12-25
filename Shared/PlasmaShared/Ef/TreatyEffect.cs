@@ -29,8 +29,8 @@ namespace ZkData
         public int? PlanetID { get; set; } // PlanetID
 
         // Foreign keys
-        public virtual Faction Faction_GivingFactionID { get; set; } // FK_TreatyEffect_Faction
-        public virtual Faction Faction_ReceivingFactionID { get; set; } // FK_TreatyEffect_Faction1
+        public virtual Faction FactionByGivingFactionID { get; set; } // FK_TreatyEffect_Faction
+        public virtual Faction FactionByReceivingFactionID { get; set; } // FK_TreatyEffect_Faction1
         public virtual FactionTreaty FactionTreaty { get; set; } // FK_TreatyEffect_FactionTreaty
         public virtual Planet Planet { get; set; } // FK_TreatyEffect_Planet
         public virtual TreatyEffectType TreatyEffectType { get; set; } // FK_TreatyEffect_EffectType

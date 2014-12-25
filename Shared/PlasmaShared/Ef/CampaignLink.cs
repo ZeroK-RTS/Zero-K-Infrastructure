@@ -26,8 +26,8 @@ namespace ZkData
 
         // Foreign keys
         public virtual Campaign Campaign { get; set; } // FK_CampaignLink_Campaign
-        public virtual CampaignPlanet CampaignPlanet_CampaignID { get; set; } // FK_CampaignLink_CampaignPlanet
-        public virtual CampaignPlanet CampaignPlanet1 { get; set; } // FK_CampaignLink_CampaignPlanet1
+        public virtual CampaignPlanet PlanetToUnlock { get; set; } // FK_CampaignLink_CampaignPlanet
+        public virtual CampaignPlanet UnlockingPlanet { get; set; } // FK_CampaignLink_CampaignPlanet1
     }
 
 }

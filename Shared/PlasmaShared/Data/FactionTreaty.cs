@@ -42,31 +42,31 @@ namespace ZkData
             foreach (var te in TreatyEffects.Where(x=>x.TreatyEffectType.IsOneTimeOnly == oneTimeOnly)) {
                 var tr = te.TreatyEffectType;
                 if (tr.EffectGiveMetal == true) {
-                    if (fac1 == te.Faction_GivingFactionID) metalFac1toFac2 += te.Value??0;
+                    if (fac1 == te.FactionByGivingFactionID) metalFac1toFac2 += te.Value??0;
                     else metalFac1toFac2 -= te.Value??0;
                 }
 
                 if (tr.EffectGiveEnergy == true)
                 {
-                    if (fac1 == te.Faction_GivingFactionID) energyFac1toFac2 += te.Value ?? 0;
+                    if (fac1 == te.FactionByGivingFactionID) energyFac1toFac2 += te.Value ?? 0;
                     else energyFac1toFac2 -= te.Value ?? 0;
                 }
 
                 if (tr.EffectGiveDropships == true)
                 {
-                    if (fac1 == te.Faction_GivingFactionID) dropshipsFac1toFac2 += te.Value ?? 0;
+                    if (fac1 == te.FactionByGivingFactionID) dropshipsFac1toFac2 += te.Value ?? 0;
                     else dropshipsFac1toFac2 -= te.Value ?? 0;
                 }
 
                 if (tr.EffectGiveBombers == true)
                 {
-                    if (fac1 == te.Faction_GivingFactionID) bombersFac1toFac2 += te.Value ?? 0;
+                    if (fac1 == te.FactionByGivingFactionID) bombersFac1toFac2 += te.Value ?? 0;
                     else bombersFac1toFac2 -= te.Value ?? 0;
                 }
                 
                 if (tr.EffectGiveWarps == true)
                 {
-                    if (fac1 == te.Faction_GivingFactionID) warpsFac1toFac2 += te.Value ?? 0;
+                    if (fac1 == te.FactionByGivingFactionID) warpsFac1toFac2 += te.Value ?? 0;
                     else warpsFac1toFac2 -= te.Value ?? 0;
                 }
 

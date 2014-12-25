@@ -73,18 +73,18 @@ namespace ZkData
         public virtual ICollection<AbuseReport> AbuseReports_ReporterAccountID { get; set; } // AbuseReport.FK_AbuseReport_Account1
         public virtual ICollection<AccountBattleAward> AccountBattleAwards { get; set; } // Many to many mapping
         public virtual ICollection<AccountCampaignJournalProgress> AccountCampaignJournalProgresses { get; set; } // Many to many mapping
-        public virtual ICollection<AccountCampaignProgress> AccountCampaignProgresses { get; set; } // Many to many mapping
+        public virtual ICollection<AccountCampaignProgress> AccountCampaignProgress { get; set; } // Many to many mapping
         public virtual ICollection<AccountCampaignVar> AccountCampaignVars { get; set; } // Many to many mapping
         public virtual ICollection<AccountForumVote> AccountForumVotes { get; set; } // Many to many mapping
-        public virtual ICollection<AccountIP> AccountIPs { get; set; } // Many to many mapping
+        public virtual ICollection<AccountIP> AccountIPS { get; set; } // Many to many mapping
         public virtual ICollection<AccountPlanet> AccountPlanets { get; set; } // Many to many mapping
         public virtual ICollection<AccountRatingVote> AccountRatingVotes { get; set; } // Many to many mapping
         public virtual ICollection<AccountRole> AccountRolesByAccountID { get; set; } // Many to many mapping
         public virtual ICollection<AccountUnlock> AccountUnlocks { get; set; } // Many to many mapping
-        public virtual ICollection<AccountUserID> AccountUserIDs { get; set; } // Many to many mapping
+        public virtual ICollection<AccountUserID> AccountUserIDS { get; set; } // Many to many mapping
         public virtual ICollection<CampaignEvent> CampaignEvents { get; set; } // CampaignEvent.FK_CampaignEvent_Account
         public virtual ICollection<Commander> Commanders { get; set; } // Commander.FK_Commander_Account
-        public virtual ICollection<Contribution> Contributions_AccountID { get; set; } // Contribution.FK_Contribution_Account
+        public virtual ICollection<Contribution> ContributionsByAccountID { get; set; } // Contribution.FK_Contribution_Account
         public virtual ICollection<Contribution> Contributions_ManuallyAddedAccountID { get; set; } // Contribution.FK_Contribution_Account1
         public virtual ICollection<ContributionJar> ContributionJars { get; set; } // ContributionJar.FK_ContributionJar_Account
         public virtual ICollection<Event> Events { get; set; } // Many to many mapping
@@ -115,6 +115,7 @@ namespace ZkData
         public virtual ICollection<Resource> Resources { get; set; } // Resource.FK_Resource_Account
         public virtual ICollection<SpringBattle> SpringBattles { get; set; } // SpringBattle.FK_SpringBattle_Account
         public virtual ICollection<SpringBattlePlayer> SpringBattlePlayers { get; set; } // Many to many mapping
+        public virtual ICollection<ForumPost> ForumPosts { get; set; }
 
         // Foreign keys
         public virtual Faction Faction { get; set; } // FK_Account_Faction
@@ -155,18 +156,18 @@ namespace ZkData
             AbuseReports_ReporterAccountID = new List<AbuseReport>();
             AccountBattleAwards = new List<AccountBattleAward>();
             AccountCampaignJournalProgresses = new List<AccountCampaignJournalProgress>();
-            AccountCampaignProgresses = new List<AccountCampaignProgress>();
+            AccountCampaignProgress = new List<AccountCampaignProgress>();
             AccountCampaignVars = new List<AccountCampaignVar>();
             AccountForumVotes = new List<AccountForumVote>();
-            AccountIPs = new List<AccountIP>();
+            AccountIPS = new List<AccountIP>();
             AccountPlanets = new List<AccountPlanet>();
             AccountRatingVotes = new List<AccountRatingVote>();
             AccountRolesByAccountID = new List<AccountRole>();
             AccountUnlocks = new List<AccountUnlock>();
-            AccountUserIDs = new List<AccountUserID>();
+            AccountUserIDS = new List<AccountUserID>();
             CampaignEvents = new List<CampaignEvent>();
             Commanders = new List<Commander>();
-            Contributions_AccountID = new List<Contribution>();
+            ContributionsByAccountID = new List<Contribution>();
             Contributions_ManuallyAddedAccountID = new List<Contribution>();
             ContributionJars = new List<ContributionJar>();
             FactionTreaties_AcceptedAccountID = new List<FactionTreaty>();
@@ -197,6 +198,7 @@ namespace ZkData
             SpringBattles = new List<SpringBattle>();
             SpringBattlePlayers = new List<SpringBattlePlayer>();
             Events = new List<Event>();
+            ForumPosts = new List<ForumPost>();
             InitializePartial();
         }
         partial void InitializePartial();

@@ -34,7 +34,7 @@ namespace ZkData
             Property(x => x.TargetPlanetID).HasColumnName("TargetPlanetID").IsOptional();
 
             // Foreign keys
-            HasRequired(a => a.Planet_PlanetID).WithMany(b => b.PlanetStructures_PlanetID).HasForeignKey(c => c.PlanetID); // FK_PlanetStructure_Planet
+            HasRequired(a => a.Planet).WithMany(b => b.PlanetStructures).HasForeignKey(c => c.PlanetID); // FK_PlanetStructure_Planet
             HasRequired(a => a.StructureType).WithMany(b => b.PlanetStructures).HasForeignKey(c => c.StructureTypeID); // FK_PlanetStructure_StructureType
             HasOptional(a => a.Account).WithMany(b => b.PlanetStructures).HasForeignKey(c => c.OwnerAccountID); // FK_PlanetStructure_Account
             HasOptional(a => a.Planet_TargetPlanetID).WithMany(b => b.PlanetStructures_TargetPlanetID).HasForeignKey(c => c.TargetPlanetID); // FK_PlanetStructure_Planet1

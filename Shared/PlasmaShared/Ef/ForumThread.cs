@@ -44,7 +44,7 @@ namespace ZkData
         public virtual ICollection<ForumPost> ForumPosts { get; set; }
 
         // Foreign keys
-        public virtual Account Account_CreatedAccountID { get; set; } // FK_ForumThread_Account
+        public virtual Account AccountByCreatedAccountID { get; set; } // FK_ForumThread_Account
         public virtual Account Account_LastPostAccountID { get; set; } // FK_ForumThread_Account1
         public virtual Clan Clan { get; set; } // FK_ForumThread_Clan
         public virtual ForumCategory ForumCategory { get; set; } // FK_ForumThread_ForumCategory

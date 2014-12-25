@@ -93,12 +93,12 @@ namespace ZkData
 
         public List<FactionUnlockEntry>  GetFactionUnlocks() {
             
-            var ret = Planets.SelectMany(y => y.PlanetStructures_PlanetID).Where(x => x.IsActive && x.StructureType.EffectUnlockID != null).GroupBy(x=>x.StructureType.Unlock).Select(x =>
+            var ret = Planets.SelectMany(y => y.PlanetStructures).Where(x => x.IsActive && x.StructureType.EffectUnlockID != null).GroupBy(x=>x.StructureType.Unlock).Select(x =>
                         new FactionUnlockEntry() { Unlock = x.Key, Faction = this })
                     .ToList();
-            foreach (var provider in TreatyEffects_ReceivingFactionID.Where(x=>x.FactionTreaty.TreatyState == TreatyState.Accepted && x.TreatyEffectType.EffectShareTechs == true).GroupBy(x=>x.Faction_GivingFactionID).Select(x=>x.Key)) {
+            foreach (var provider in TreatyEffects_ReceivingFactionID.Where(x=>x.FactionTreaty.TreatyState == TreatyState.Accepted && x.TreatyEffectType.EffectShareTechs == true).GroupBy(x=>x.FactionByGivingFactionID).Select(x=>x.Key)) {
 
-                foreach (var tech in Planets.SelectMany(y => y.PlanetStructures_PlanetID).Where(x => x.IsActive && x.StructureType.EffectUnlockID != null).GroupBy(x=>x.StructureType.Unlock).Select(x=>x.Key)) {
+                foreach (var tech in Planets.SelectMany(y => y.PlanetStructures).Where(x => x.IsActive && x.StructureType.EffectUnlockID != null).GroupBy(x=>x.StructureType.Unlock).Select(x=>x.Key)) {
                     if (!ret.Any(x=>x.Unlock == tech)) ret.Add(new FactionUnlockEntry(){Unlock = tech, Faction = provider});
                 }
             }
@@ -108,7 +108,7 @@ namespace ZkData
 
         public void ProcessEnergy(int turn) {
             var energy = EnergyProducedLastTurn;
-            var structs = Planets.SelectMany(x => x.PlanetStructures_PlanetID).ToList();
+            var structs = Planets.SelectMany(x => x.PlanetStructures).ToList();
             var demand = structs.Sum(x => (double?)(x.StructureType.UpkeepEnergy??0)) ?? 0;
             
             if (energy >= demand) {
@@ -130,7 +130,7 @@ namespace ZkData
 
             EnergyDemandLastTurn = demand;
             EnergyProducedLastTurn =
-                Planets.SelectMany(x => x.PlanetStructures_PlanetID).Where(x => x.IsActive && x.StructureType.EffectEnergyPerTurn > 0).Sum(
+                Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive && x.StructureType.EffectEnergyPerTurn > 0).Sum(
                     x => x.StructureType.EffectEnergyPerTurn) ?? 0;
 
         }
@@ -161,7 +161,7 @@ namespace ZkData
             var metal = GetEnergyToMetalConversion();
             if (metal > 0) {
                 var productions =
-                    Planets.SelectMany(x => x.PlanetStructures_PlanetID).Where(x => x.IsActive && x.StructureType.EffectEnergyPerTurn > 0 && x.Account != null).GroupBy(
+                    Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive && x.StructureType.EffectEnergyPerTurn > 0 && x.Account != null).GroupBy(
                         x => x.Account).Select(x=>new {Account = x.Key, Energy = x.Sum(y=>y.StructureType.EffectEnergyPerTurn) ?? 0}).ToDictionary(x=>x.Account, x=>x.Energy);
                 var totalEnergy = productions.Sum(x => x.Value);
 

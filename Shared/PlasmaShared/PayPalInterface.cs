@@ -198,7 +198,7 @@ namespace ZkData
 
                     contrib = new Contribution()
                               {
-                                  Account_AccountID = acc,
+                                  AccountByAccountID = acc,
                                   Name = parsed.Name,
                                   Euros = grossEur,
                                   KudosValue = (int)Math.Round(grossEur*GlobalConst.EurosToKudos),

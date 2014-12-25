@@ -32,6 +32,8 @@ namespace ZkData
         public virtual ICollection<AccountForumVote> AccountForumVotes { get; set; } // Many to many mapping
         public virtual ICollection<ForumPostEdit> ForumPostEdits { get; set; } // ForumPostEdit.FK_ForumPostEdit_ForumPost
         public virtual ForumThread ForumThread { get; set; }
+        public virtual Account Account { get; set; }
+
 
         public ForumPost()
         {
