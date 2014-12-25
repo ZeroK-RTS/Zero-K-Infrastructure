@@ -94,7 +94,6 @@ namespace ZkData
         IDbSet<SpringBattle> SpringBattles { get; set; } // SpringBattle
         IDbSet<SpringBattlePlayer> SpringBattlePlayers { get; set; } // SpringBattlePlayer
         IDbSet<StructureType> StructureTypes { get; set; } // StructureType
-        IDbSet<sysdiagram> sysdiagrams { get; set; } // sysdiagrams
         IDbSet<TreatyEffect> TreatyEffects { get; set; } // TreatyEffect
         IDbSet<TreatyEffectType> TreatyEffectTypes { get; set; } // TreatyEffectType
         IDbSet<Unlock> Unlocks { get; set; } // Unlock

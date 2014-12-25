@@ -94,7 +94,6 @@ namespace ZkData
         public IDbSet<SpringBattle> SpringBattles { get; set; }
         public IDbSet<SpringBattlePlayer> SpringBattlePlayers { get; set; }
         public IDbSet<StructureType> StructureTypes { get; set; }
-        public IDbSet<sysdiagram> sysdiagrams { get; set; }
         public IDbSet<TreatyEffect> TreatyEffects { get; set; }
         public IDbSet<TreatyEffectType> TreatyEffectTypes { get; set; }
         public IDbSet<Unlock> Unlocks { get; set; }
@@ -176,7 +175,6 @@ namespace ZkData
             SpringBattles = new FakeDbSet<SpringBattle>();
             SpringBattlePlayers = new FakeDbSet<SpringBattlePlayer>();
             StructureTypes = new FakeDbSet<StructureType>();
-            sysdiagrams = new FakeDbSet<sysdiagram>();
             TreatyEffects = new FakeDbSet<TreatyEffect>();
             TreatyEffectTypes = new FakeDbSet<TreatyEffectType>();
             Unlocks = new FakeDbSet<Unlock>();

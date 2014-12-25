@@ -94,7 +94,6 @@ namespace ZkData
         public IDbSet<SpringBattle> SpringBattles { get; set; } // SpringBattle
         public IDbSet<SpringBattlePlayer> SpringBattlePlayers { get; set; } // SpringBattlePlayer
         public IDbSet<StructureType> StructureTypes { get; set; } // StructureType
-        public IDbSet<sysdiagram> sysdiagrams { get; set; } // sysdiagrams
         public IDbSet<TreatyEffect> TreatyEffects { get; set; } // TreatyEffect
         public IDbSet<TreatyEffectType> TreatyEffectTypes { get; set; } // TreatyEffectType
         public IDbSet<Unlock> Unlocks { get; set; } // Unlock
@@ -201,7 +200,6 @@ namespace ZkData
             modelBuilder.Configurations.Add(new SpringBattleMapping());
             modelBuilder.Configurations.Add(new SpringBattlePlayerMapping());
             modelBuilder.Configurations.Add(new StructureTypeMapping());
-            modelBuilder.Configurations.Add(new sysdiagramMapping());
             modelBuilder.Configurations.Add(new TreatyEffectMapping());
             modelBuilder.Configurations.Add(new TreatyEffectTypeMapping());
             modelBuilder.Configurations.Add(new UnlockMapping());
@@ -285,7 +283,6 @@ namespace ZkData
             modelBuilder.Configurations.Add(new SpringBattleMapping(schema));
             modelBuilder.Configurations.Add(new SpringBattlePlayerMapping(schema));
             modelBuilder.Configurations.Add(new StructureTypeMapping(schema));
-            modelBuilder.Configurations.Add(new sysdiagramMapping(schema));
             modelBuilder.Configurations.Add(new TreatyEffectMapping(schema));
             modelBuilder.Configurations.Add(new TreatyEffectTypeMapping(schema));
             modelBuilder.Configurations.Add(new UnlockMapping(schema));

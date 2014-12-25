@@ -622,12 +622,6 @@
     <Compile Include="Ef\StructureTypeMapping.cs">
       <DependentUpon>ZkEf.tt</DependentUpon>
     </Compile>
-    <Compile Include="Ef\sysdiagram.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\sysdiagramMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
     <Compile Include="Ef\TreatyEffect.cs">
       <DependentUpon>ZkEf.tt</DependentUpon>
     </Compile>
