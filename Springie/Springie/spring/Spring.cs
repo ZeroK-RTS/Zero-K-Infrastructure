@@ -191,11 +191,7 @@ namespace Springie.SpringNamespace
 
 		public void ForceStart()
 		{
-			if (IsRunning)
-			{
-				talker.SendText("/forcestart");
-				isPreGame = false;
-			}
+			if (IsRunning) talker.SendText("/forcestart");
 		}
 
 		public bool IsPlayerReady(string name)
@@ -278,6 +274,10 @@ namespace Springie.SpringNamespace
 		private void talker_SpringEvent(object sender, Talker.SpringEventArgs e)
 		{
 			switch (e.EventType) {
+				case Talker.SpringEventType.SERVER_STARTPLAYING:
+					isPreGame = false;
+					break;
+
 				case Talker.SpringEventType.PLAYER_JOINED:
 					//Program.main.AutoHost.SayBattle("dbg joined " + e.PlayerName);
 					if (PlayerJoined != null) PlayerJoined(this, new SpringLogEventArgs(e.PlayerName));
