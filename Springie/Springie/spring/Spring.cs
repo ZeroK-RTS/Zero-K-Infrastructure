@@ -77,6 +77,7 @@ namespace Springie.SpringNamespace
 		private Process process;
 		private List<string> readyPlayers = new List<string>();
 		private Talker talker;
+		private bool isPreGame = true;
 
 
 		private UnitSyncWrapper unitSyncWrapper;
@@ -93,6 +94,11 @@ namespace Springie.SpringNamespace
 		public DateTime GameStarted
 		{
 			get { return gameStarted; }
+		}
+
+		public bool IsPreGame
+		{
+			get { return isPreGame; }
 		}
 
 		public bool IsRunning
@@ -185,7 +191,11 @@ namespace Springie.SpringNamespace
 
 		public void ForceStart()
 		{
-			if (IsRunning) talker.SendText("/forcestart");
+			if (IsRunning)
+			{
+				talker.SendText("/forcestart");
+				isPreGame = false;
+			}
 		}
 
 		public bool IsPlayerReady(string name)
