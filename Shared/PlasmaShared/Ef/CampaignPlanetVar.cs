@@ -27,6 +27,8 @@ namespace ZkData
 
         // Foreign keys
         public virtual CampaignVar CampaignVar { get; set; } // FK_CampaignPlanetVar_CampaignVar
+        public virtual Campaign Campaign { get; set; }
+
     }
 
 }

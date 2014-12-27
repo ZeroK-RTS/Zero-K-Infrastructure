@@ -37,9 +37,9 @@ namespace ZkData
 
             // Foreign keys
             HasRequired(a => a.FactionByProposingFactionID).WithMany(b => b.FactionTreaties_ProposingFactionID).HasForeignKey(c => c.ProposingFactionID); // FK_FactionTreaty_Faction
-            HasRequired(a => a.AccountByProposingAccountID).WithMany(b => b.FactionTreaties_ProposingAccountID).HasForeignKey(c => c.ProposingAccountID); // FK_FactionTreaty_Account
-            HasRequired(a => a.FactionByAcceptingFactionID).WithMany(b => b.FactionTreaties_AcceptingFactionID).HasForeignKey(c => c.AcceptingFactionID); // FK_FactionTreaty_Faction1
-            HasOptional(a => a.AccountByAcceptedAccountID).WithMany(b => b.FactionTreaties_AcceptedAccountID).HasForeignKey(c => c.AcceptedAccountID); // FK_FactionTreaty_Account1
+            HasRequired(a => a.AccountByProposingAccountID).WithMany(b => b.FactionTreaties_ProposingAccountID).HasForeignKey(c => c.ProposingAccountID).WillCascadeOnDelete(false); // FK_FactionTreaty_Account
+            HasRequired(a => a.FactionByAcceptingFactionID).WithMany(b => b.FactionTreaties_AcceptingFactionID).HasForeignKey(c => c.AcceptingFactionID).WillCascadeOnDelete(false); // FK_FactionTreaty_Faction1
+            HasOptional(a => a.AccountByAcceptedAccountID).WithMany(b => b.FactionTreaties_AcceptedAccountID).HasForeignKey(c => c.AcceptedAccountID).WillCascadeOnDelete(false); // FK_FactionTreaty_Account1
             InitializePartial();
         }
         partial void InitializePartial();

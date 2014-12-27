@@ -178,8 +178,11 @@ namespace Fixer
         [STAThread]
         static void Main(string[] args)
         {
-            
-            PlanetwarsFixer.StartGalaxy(24,3919,3925);
+
+            var db = new ZkDataContext(false);
+            db.Database.CreateIfNotExists();
+
+            //PlanetwarsFixer.StartGalaxy(24,3919,3925);
             //AddClanLeader();
             return;
             //TestPwMatch();

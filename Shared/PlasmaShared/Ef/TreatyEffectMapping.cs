@@ -35,10 +35,10 @@ namespace ZkData
 
             // Foreign keys
             HasRequired(a => a.FactionTreaty).WithMany(b => b.TreatyEffects).HasForeignKey(c => c.FactionTreatyID); // FK_TreatyEffect_FactionTreaty
-            HasRequired(a => a.TreatyEffectType).WithMany(b => b.TreatyEffects).HasForeignKey(c => c.EffectTypeID); // FK_TreatyEffect_EffectType
-            HasRequired(a => a.FactionByGivingFactionID).WithMany(b => b.TreatyEffects_GivingFactionID).HasForeignKey(c => c.GivingFactionID); // FK_TreatyEffect_Faction
-            HasRequired(a => a.FactionByReceivingFactionID).WithMany(b => b.TreatyEffects_ReceivingFactionID).HasForeignKey(c => c.ReceivingFactionID); // FK_TreatyEffect_Faction1
-            HasOptional(a => a.Planet).WithMany(b => b.TreatyEffects).HasForeignKey(c => c.PlanetID); // FK_TreatyEffect_Planet
+            HasRequired(a => a.TreatyEffectType).WithMany(b => b.TreatyEffects).HasForeignKey(c => c.EffectTypeID).WillCascadeOnDelete(false); // FK_TreatyEffect_EffectType
+            HasRequired(a => a.FactionByGivingFactionID).WithMany(b => b.TreatyEffects_GivingFactionID).HasForeignKey(c => c.GivingFactionID).WillCascadeOnDelete(false); // FK_TreatyEffect_Faction
+            HasRequired(a => a.FactionByReceivingFactionID).WithMany(b => b.TreatyEffects_ReceivingFactionID).HasForeignKey(c => c.ReceivingFactionID).WillCascadeOnDelete(false); // FK_TreatyEffect_Faction1
+            HasOptional(a => a.Planet).WithMany(b => b.TreatyEffects).HasForeignKey(c => c.PlanetID).WillCascadeOnDelete(false); // FK_TreatyEffect_Planet
             InitializePartial();
         }
         partial void InitializePartial();

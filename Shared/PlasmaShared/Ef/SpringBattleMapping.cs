@@ -47,7 +47,13 @@ namespace ZkData
             Property(x => x.RatingPollID).HasColumnName("RatingPollID").IsOptional();
 
             // Foreign keys
-            HasRequired(a => a.Account).WithMany(b => b.SpringBattles).HasForeignKey(c => c.HostAccountID); // FK_SpringBattle_Account
+            HasRequired(a => a.Account).WithMany(b => b.SpringBattles).HasForeignKey(c => c.HostAccountID).WillCascadeOnDelete(false); // FK_SpringBattle_Account
+
+            HasRequired(a=>a.ResourceByModResourceID).WithMany(b=>b.SpringBattlesByModResourceID).HasForeignKey(x=>x.ModResourceID).WillCascadeOnDelete(false);
+
+            HasRequired(a => a.ResourceByMapResourceID).WithMany(b => b.SpringBattlesByMapResourceID).HasForeignKey(x => x.MapResourceID).WillCascadeOnDelete(false);
+
+
             HasOptional(a => a.ForumThread).WithMany(b => b.SpringBattles).HasForeignKey(c => c.ForumThreadID); // FK_SpringBattle_ForumThread
             HasOptional(a => a.RatingPoll).WithMany(b => b.SpringBattles).HasForeignKey(c => c.RatingPollID); // FK_SpringBattle_RatingPoll
             InitializePartial();

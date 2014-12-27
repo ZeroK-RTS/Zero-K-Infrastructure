@@ -33,6 +33,7 @@ namespace ZkData
         // Reverse navigation
         public virtual ICollection<AccountCampaignJournalProgress> AccountCampaignJournalProgress { get; set; } // Many to many mapping
         public virtual ICollection<CampaignJournalVar> CampaignJournalVars { get; set; } // Many to many mapping
+        public virtual Campaign Campaign { get; set; }
 
         // Foreign keys
         public virtual CampaignPlanet Planet { get; set; } // FK_CampaignJournal_CampaignPlanet

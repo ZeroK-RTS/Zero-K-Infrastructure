@@ -657,6 +657,11 @@
     <Compile Include="IResourceInfo.cs" />
     <Compile Include="LuaTable.cs" />
     <Compile Include="MetaDataCache.cs" />
+    <Compile Include="Migrations\201412272329222_Init.cs" />
+    <Compile Include="Migrations\201412272329222_Init.Designer.cs">
+      <DependentUpon>201412272329222_Init.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MissionUpdater.cs" />
     <Compile Include="PayPalInterface.cs" />
     <Compile Include="Pool.cs" />
@@ -882,6 +887,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Web References\ModStats\StatsCollector.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201412272329222_Init.resx">
+      <DependentUpon>201412272329222_Init.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>

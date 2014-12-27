@@ -32,6 +32,9 @@ namespace ZkData
 
             // Foreign keys
             HasRequired(a => a.CampaignVar).WithMany(b => b.CampaignPlanetVars).HasForeignKey(c => new { c.CampaignID, c.RequiredVarID }); // FK_CampaignPlanetVar_CampaignVar
+
+            HasRequired(x=>x.Campaign).WithMany(x=>x.CampaignPlanetVars).HasForeignKey(x=>x.CampaignID).WillCascadeOnDelete(false);
+            
             InitializePartial();
         }
         partial void InitializePartial();

@@ -63,6 +63,10 @@ namespace ZkData
         [InverseProperty("ResourceByMapResourceID")]
         public virtual ICollection<SpringBattle> SpringBattlesByMapResourceID { get; set; } // SpringBattle.FK_SpringBattle_Resource1
 
+        [InverseProperty("ResourceByModResourceID")]
+        public virtual ICollection<SpringBattle> SpringBattlesByModResourceID { get; set; } // SpringBattle.FK_SpringBattle_Resource1
+
+
         // Foreign keys
         public virtual Account Account { get; set; } // FK_Resource_Account
         public virtual ForumThread ForumThread { get; set; } // FK_Resource_ForumThread
@@ -77,6 +81,7 @@ namespace ZkData
             ResourceDependencies = new List<ResourceDependency>();
             ResourceSpringHashes = new List<ResourceSpringHash>();
             SpringBattlesByMapResourceID = new List<SpringBattle>();
+            SpringBattlesByModResourceID = new List<SpringBattle>();
             LastChange = DateTime.UtcNow;
             InitializePartial();
         }

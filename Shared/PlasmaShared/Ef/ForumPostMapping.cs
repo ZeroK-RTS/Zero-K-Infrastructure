@@ -32,6 +32,9 @@ namespace ZkData
             Property(x => x.ForumThreadID).HasColumnName("ForumThreadID").IsRequired();
             Property(x => x.Upvotes).HasColumnName("Upvotes").IsRequired();
             Property(x => x.Downvotes).HasColumnName("Downvotes").IsRequired();
+
+            HasRequired(x=>x.Account).WithMany(x=>x.ForumPosts).HasForeignKey(x=>x.AuthorAccountID).WillCascadeOnDelete(false);
+
             InitializePartial();
         }
         partial void InitializePartial();

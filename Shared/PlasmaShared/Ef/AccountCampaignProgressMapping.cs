@@ -33,7 +33,7 @@ namespace ZkData
 
             // Foreign keys
             HasRequired(a => a.Account).WithMany(b => b.AccountCampaignProgress).HasForeignKey(c => c.AccountID); // FK_AccountCampaignProgress_Account
-            HasRequired(a => a.CampaignPlanet).WithMany(b => b.AccountCampaignProgress).HasForeignKey(c => new { c.CampaignID, c.PlanetID }); // FK_AccountCampaignProgress_CampaignPlanet
+            HasRequired(a => a.CampaignPlanet).WithMany(b => b.AccountCampaignProgress).HasForeignKey(c => new { c.CampaignID, c.PlanetID }).WillCascadeOnDelete(false); // FK_AccountCampaignProgress_CampaignPlanet
             InitializePartial();
         }
         partial void InitializePartial();
