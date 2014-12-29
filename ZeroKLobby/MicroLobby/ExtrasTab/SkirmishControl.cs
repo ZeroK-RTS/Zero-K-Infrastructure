@@ -244,7 +244,8 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
                     modCache = Program.SpringScanner.GetAllModResource();
                     for (int i = 0; i < modCache.Count; i++) modList.Add(modCache[i].InternalName);
-                    modCache_folder = SkirmishControlTool.GetSddMods();
+                    modCache_folder.Clear();
+                    modCache_folder = SkirmishControlTool.GetPartialSddMods();
                     for (int i = 0; i < modCache_folder.Count; i++) modList.Add(modCache_folder[i].Name + " " + modCache_folder[i].PrimaryModVersion);
                     modList = SkirmishControlTool.SortListByVersionName(modList);
 
@@ -989,18 +990,24 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 string gameName = (string)game_comboBox.SelectedItem;
                 
                 bool foundLocally=false;
-
-                foreach (Mod mods in modCache_folder)
+                for(int i=0; i<modCache_folder.Count;i++)
                 {
-                    if (gameName == mods.Name + " " + mods.PrimaryModVersion)
+                    var mod = modCache_folder[i];
+                    var modName = mod.Name + " " + mod.PrimaryModVersion;
+                    if (gameName == modName)
                     {
-                        CallBack_Mod(mods);
+
+                        modCache_folder[i] = SkirmishControlTool.GetOneSddMod(mod);
+                        CallBack_Mod(modCache_folder[i]);
                         foundLocally = true;
+                        break;
                     }
                 }
+
                 if (!foundLocally)
                 {
                     //run GetMod() in new thread, then call "CallBack_Mod()" in current thread when finish(?). 
+                    //TODO: GetModAsync() is not an offline method, it rely on downloading server generated mod/map information to work. This can cause (minor) error if user downloaded a unique map or mod that server haven't process yet!
                     Program.SpringScanner.MetaData.GetModAsync(
                         gameName,
                         mod =>
