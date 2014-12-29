@@ -12,6 +12,9 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
     public class ExtrasToolTabs : UserControl
     {
         ToolStripButton activeButton;
+        /// <summary>
+        /// This dictionary is a map of button Name (toolStrip.Items) to Control (panel.Controls)
+        /// </summary>
         readonly Dictionary<string, Control> controls = new Dictionary<string, Control>();
         ToolStripItem lastHoverItem;
         readonly Panel panel = new Panel { Dock = DockStyle.Fill };
@@ -48,12 +51,15 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
         public ExtrasToolTabs()
         {
-            toolStrip.BackColor = Program.Conf.BgColor; //Color.White;
+            toolStrip.BackColor = Program.Conf.BgColor;
             toolStrip.ForeColor = Program.Conf.TextColor;
-            panel.BackColor = Program.Conf.BgColor;
-            panel.ForeColor = Program.Conf.TextColor;
             BackColor = Program.Conf.BgColor;
             ForeColor = Program.Conf.TextColor;
+
+            //set colour for overflow button:
+            var ovrflwBtn = toolStrip.OverflowButton;
+            ovrflwBtn.BackColor = Color.DimGray; //note: the colour of arrow on OverFlow button can't be set, that's why we couldn't use User's theme
+
             Controls.Add(panel);
             Controls.Add(toolStrip);
 
@@ -91,7 +97,8 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                             Text = title,
                          };
             if (control is SkirmishControl) button.Height = button.Height*2;
-            button.MouseHover += button_MouseHover;
+            button.MouseEnter += button_MouseEnter;
+            button.MouseLeave += button_MouseLeave;
             button.MouseDown += (s, e) =>
                 {
                    
@@ -115,7 +122,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 {
                     try
                     {
-                        NavigationControl.Instance.Path = "spextended/" + name;
+                        NavigationControl.Instance.Path = "extra/" + name;
                     } catch(Exception ex)
                     {
                         MessageBox.Show(ex.ToString());
@@ -137,8 +144,8 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
         public bool SetHilite(string tabName, HiliteLevel level)
         {
-            if (!toolStrip.Items.ContainsKey(tabName)) return false;
-            var button = (ToolStripButton)toolStrip.Items[tabName];
+            var button = GetItemByName(toolStrip.Items, tabName);
+            if (button == null) return false;
             HiliteLevel? current = button.Tag as HiliteLevel?;
             if (current != null && level == HiliteLevel.Bold && current.Value == HiliteLevel.Flash) return false; // dont change from flash to bold
             button.Tag = level;
@@ -166,7 +173,28 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
         public void SelectTab(string name)
         {
-            ActiveButton = (ToolStripButton)toolStrip.Items[name];
+            ActiveButton = (ToolStripButton)GetItemByName(toolStrip.Items,name);
+        }
+
+        /// <summary>
+        /// Get index of ToolStripItem in ToolStripItemCollection using case-sensitive search.
+        /// </summary>
+        private int FindItemsByExactName(ToolStripItemCollection items, string name)
+        {
+            for (int i = 0; i < items.Count; i++)
+                if (items[i].Name == name)
+                    return i;
+            return -1;
+        }
+        
+        /// <summary>
+        /// Get ToolStripItem in ToolStripItemCollection using case-sensitive search.
+        /// </summary>
+        private ToolStripItem GetItemByName(ToolStripItemCollection collectionItem, string name)
+        {
+            int index = FindItemsByExactName(collectionItem, name);
+            if (index == -1) return null;
+            return collectionItem[index];
         }
 
         public string GetNextTabPath()
@@ -192,17 +220,27 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
         public void SetIcon(string tabName, Image icon)
         {
-            var button = (ToolStripButton)toolStrip.Items[tabName];
+            var button = (ToolStripButton)GetItemByName(toolStrip.Items,tabName);
             button.Image = icon;
         }
 
-        void button_MouseHover(object sender, EventArgs e)
+        void button_MouseEnter(object sender, EventArgs e)
         {
             var item = (ToolStripItem)sender;
             if (item != lastHoverItem)
             {
-                lastHoverItem = null;
+                lastHoverItem = item;
                 Program.ToolTip.SetText(toolStrip, item.ToolTipText);
+            }
+        }
+
+        void button_MouseLeave(object sender, EventArgs e)
+        {
+            var item = (ToolStripItem)sender;
+            if (item == lastHoverItem)
+            {
+                lastHoverItem = null;
+                Program.ToolTip.Clear (toolStrip);
             }
         }
     }
