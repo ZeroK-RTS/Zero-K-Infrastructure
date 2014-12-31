@@ -181,9 +181,9 @@ namespace Fixer
         {
 
             var cloner = new DbCloner("zero-k", "zero-k-mig", "Data Source=omega.licho.eu,100;Initial Catalog=zero-k-mig;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true");
-            var order = cloner.GetOrderedTables();
+            //var order = cloner.GetOrderedTables();
             //var cols = cloner.GetTableColumns("AutohostConfig");
-            //cloner.CloneAllTables();
+            cloner.CloneAllTables();
 
 
             //var db = new ZkDataContext(false);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Linq;
 using System.Linq;
 using System.Security.Principal;
@@ -17,17 +18,28 @@ namespace ZkData
 
         public static Func<ZkDataContext, string, string, Account> AccountVerify = (db, login, passwordHash) => db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == passwordHash && x.LobbyID != null);
 
+        [NotMapped]
         public int AvailableXP { get {
             return GetXpForLevel(Level) -
                    AccountUnlocks.Sum(x => (int?)(x.Unlock.XpCost*(x.Count - KudosPurchases.Count(y => y.UnlockID == x.UnlockID)))) ?? 0;
         } }
 
+        [NotMapped]
         public double Effective1v1Elo { get { return Elo1v1Weight > 1 ? Elo1v1 + (GlobalConst.EloWeightMax - Elo1v1Weight)*GlobalConst.EloWeightMalusFactor : 0; } }
+
+        [NotMapped]
         public double EffectiveElo { get { return Elo + (GlobalConst.EloWeightMax - EloWeight)*GlobalConst.EloWeightMalusFactor; } }
+
+        [NotMapped]
         public double EffectivePwElo { get { return EloPw + (GlobalConst.EloWeightMax - EloWeight) * GlobalConst.EloWeightMalusFactor; } }
 
+        [NotMapped]
         public double EloInvWeight { get { return GlobalConst.EloWeightMax + 1 - EloWeight; } }
+
+        [NotMapped]
         public int KudosGained { get { return ContributionsByAccountID.Sum(x => x.KudosValue); } }
+
+        [NotMapped]
         public int KudosSpent { get { return KudosPurchases.Sum(x => x.KudosValue); } }
 
 
@@ -306,7 +318,10 @@ namespace ZkData
             CheckLevelUp();
         }*/
 
+        [NotMapped]
         public string AuthenticationType { get { return "LobbyServer"; } }
+
+        [NotMapped]
         public bool IsAuthenticated { get { return true; } }
 
         public bool IsInRole(string role) {
@@ -315,6 +330,7 @@ namespace ZkData
             else return string.IsNullOrEmpty(role);
         }
 
+        [NotMapped]
         public IIdentity Identity { get { return this; } }
 
         public int GetEffectiveSpringieLevel()

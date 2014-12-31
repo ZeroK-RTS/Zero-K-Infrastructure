@@ -423,7 +423,6 @@ namespace PlasmaShared.Migrations
                 c => new
                     {
                         MissionID = c.Int(nullable: false, identity: true),
-                        AuthorName = c.String(),
                         Name = c.String(nullable: false, maxLength: 200),
                         Mod = c.String(maxLength: 100),
                         Map = c.String(maxLength: 100),

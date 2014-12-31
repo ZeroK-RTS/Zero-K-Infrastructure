@@ -246,9 +246,9 @@
     <Compile Include="IResourceInfo.cs" />
     <Compile Include="LuaTable.cs" />
     <Compile Include="MetaDataCache.cs" />
-    <Compile Include="Migrations\201412311547353_Init.cs" />
-    <Compile Include="Migrations\201412311547353_Init.Designer.cs">
-      <DependentUpon>201412311547353_Init.cs</DependentUpon>
+    <Compile Include="Migrations\201412311813328_Init.cs" />
+    <Compile Include="Migrations\201412311813328_Init.Designer.cs">
+      <DependentUpon>201412311813328_Init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MissionUpdater.cs" />
@@ -473,8 +473,8 @@
     <None Include="Web References\ModStats\StatsCollector.disco" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201412311547353_Init.resx">
-      <DependentUpon>201412311547353_Init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201412311813328_Init.resx">
+      <DependentUpon>201412311813328_Init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

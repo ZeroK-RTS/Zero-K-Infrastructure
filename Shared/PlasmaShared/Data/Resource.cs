@@ -1,6 +1,7 @@
  using System;
 using System.Collections.Generic;
-using System.Drawing;
+ using System.ComponentModel.DataAnnotations.Schema;
+ using System.Drawing;
 using System.Linq;
 using System.Text;
 using ZkData;
@@ -28,6 +29,7 @@ namespace ZkData
       Mountains = 3
     }
 
+      [NotMapped]
     public double? MapRating
     {
       get
@@ -38,6 +40,7 @@ namespace ZkData
     }
 
 
+      [NotMapped]
   	public int PlanetWarsIconSize
   	{
 			get { return (int)(25 + MapDiagonal); } }
@@ -62,26 +65,31 @@ namespace ZkData
       return s;
     }
 
+      [NotMapped]
     public string ThumbnailName
     {
       get { return string.Concat(InternalName.EscapePath() , ".thumbnail.jpg"); }
     }
 
+      [NotMapped]
     public string MinimapName
     {
       get { return string.Concat(InternalName.EscapePath(), ".minimap.jpg"); }
     }
 
+      [NotMapped]
     public string MetadataName
     {
       get { return string.Concat(InternalName.EscapePath(), ".metadata.xml.gz"); }
     }
 
+      [NotMapped]
     public string HeightmapName
     {
       get { return string.Concat(InternalName.EscapePath(), ".heightmap.jpg"); }
     }
 
+      [NotMapped]
     public string MetalmapName
     {
       get { return string.Concat(InternalName.EscapePath(), ".metalmap.jpg"); }
