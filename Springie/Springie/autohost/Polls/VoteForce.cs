@@ -12,20 +12,12 @@ namespace Springie.autohost.Polls
             question = null;
             if (spring.IsRunning)
             {
-                if (spring.IsPreGame)
-                {
-                    question = "Force game?";
-                    return true;
-                }
-                else
-                {
-                    AutoHost.Respond(tas, spring, e, "Battle is already ongoing");
-                    return false;
-                }
+                question = "Force game?";
+                return true;
             }
             else
             {
-                AutoHost.Respond(tas, spring, e, "Battle has not started yet");
+                AutoHost.Respond(tas, spring, e, "battle not started yet");
                 return false;
             }
         }
