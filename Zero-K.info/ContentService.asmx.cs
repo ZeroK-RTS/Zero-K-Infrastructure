@@ -227,27 +227,6 @@ namespace ZeroKWeb
 
      
 
-        [WebMethod]
-        public void SubmitStackTrace(ProgramType programType, string playerName, string exception, string extraData, string programVersion)
-        {
-            using (var db = new ZkDataContext())
-            {
-                var exceptionLog = new ExceptionLog
-                                   {
-                                       ProgramID = programType,
-                                       Time = DateTime.UtcNow,
-                                       PlayerName = playerName,
-                                       ExtraData = extraData,
-                                       Exception = exception,
-                                       ExceptionHash = new Hash(exception).ToString(),
-                                       ProgramVersion = programVersion,
-                                       RemoteIP = GetUserIP()
-                                   };
-                db.ExceptionLogs.InsertOnSubmit(exceptionLog);
-                db.SubmitChanges();
-            }
-        }
-
 
         [WebMethod]
         public bool VerifyAccountData(string login, string password)

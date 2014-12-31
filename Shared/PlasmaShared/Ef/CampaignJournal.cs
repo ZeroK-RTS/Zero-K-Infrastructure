@@ -39,8 +39,10 @@ namespace ZkData
         public string Title { get; set; }
 
         [Required]
+        [StringLength(5000)]
         public string Text { get; set; }
 
+        [StringLength(1000)]
         public string Category { get; set; }
 
         

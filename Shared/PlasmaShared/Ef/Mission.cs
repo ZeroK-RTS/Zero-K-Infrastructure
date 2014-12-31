@@ -30,7 +30,8 @@ namespace ZkData
         [StringLength(100)]
         public string Map { get; set; }
 
-        public byte[] Mutator { get; set; }
+        
+        public virtual byte[] Mutator { get; set; }
 
         [Required]
         public byte[] Image { get; set; }
@@ -69,6 +70,7 @@ namespace ZkData
 
         public int AccountID { get; set; }
 
+        [StringLength(4000)]
         public string ModOptions { get; set; }
 
         [StringLength(100)]
@@ -84,6 +86,7 @@ namespace ZkData
 
         public bool IsDeleted { get; set; }
 
+        [StringLength(1000)]
         public string ManualDependencies { get; set; }
 
         public float? Rating { get; set; }
@@ -107,21 +110,11 @@ namespace ZkData
 
         public virtual ForumThread ForumThread { get; set; }
 
-        public virtual Mission Mission1 { get; set; }
-
-        public virtual Mission Mission2 { get; set; }
-
-        public virtual RatingPoll RatingPoll { get; set; }
-
-        public virtual RatingPoll RatingPoll1 { get; set; }
-
-        
         public virtual ICollection<MissionScore> MissionScores { get; set; }
-
         
         public virtual ICollection<Rating> Ratings { get; set; }
 
-        
+       
         public virtual ICollection<Resource> Resources { get; set; }
     }
 }

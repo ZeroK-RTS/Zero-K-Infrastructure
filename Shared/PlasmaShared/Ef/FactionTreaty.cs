@@ -31,6 +31,7 @@ namespace ZkData
 
         public int? TurnsTotal { get; set; }
 
+        [StringLength(1000)]
         public string TreatyNote { get; set; }
 
         public virtual Account AccountByProposingAccountID { get; set; }

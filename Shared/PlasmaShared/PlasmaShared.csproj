@@ -172,11 +172,9 @@
     <Compile Include="Ef\AccountForumVote.cs" />
     <Compile Include="Ef\AccountIP.cs" />
     <Compile Include="Ef\AccountPlanet.cs" />
-    <Compile Include="Ef\AccountRatingVote.cs" />
     <Compile Include="Ef\AccountRole.cs" />
     <Compile Include="Ef\AccountUnlock.cs" />
     <Compile Include="Ef\AccountUserID.cs" />
-    <Compile Include="Ef\AutoBanSmurfList.cs" />
     <Compile Include="Ef\AutohostConfig.cs" />
     <Compile Include="Ef\Avatar.cs" />
     <Compile Include="Ef\BlockedCompany.cs" />
@@ -199,7 +197,6 @@
     <Compile Include="Ef\Contribution.cs" />
     <Compile Include="Ef\ContributionJar.cs" />
     <Compile Include="Ef\Event.cs" />
-    <Compile Include="Ef\ExceptionLog.cs" />
     <Compile Include="Ef\Faction.cs" />
     <Compile Include="Ef\FactionTreaty.cs" />
     <Compile Include="Ef\ForumCategory.cs" />
@@ -214,7 +211,6 @@
     <Compile Include="Ef\LobbyChannelSubscription.cs" />
     <Compile Include="Ef\LobbyMessage.cs" />
     <Compile Include="Ef\MapRating.cs" />
-    <Compile Include="Ef\MarketOffer.cs" />
     <Compile Include="Ef\MiscVar.cs" />
     <Compile Include="Ef\Mission.cs" />
     <Compile Include="Ef\MissionScore.cs" />
@@ -228,7 +224,6 @@
     <Compile Include="Ef\PollVote.cs" />
     <Compile Include="Ef\Punishment.cs" />
     <Compile Include="Ef\Rating.cs" />
-    <Compile Include="Ef\RatingPoll.cs" />
     <Compile Include="Ef\Resource.cs" />
     <Compile Include="Ef\ResourceContentFile.cs" />
     <Compile Include="Ef\ResourceDependency.cs" />

@@ -12,7 +12,7 @@ namespace ZkData
         
         public ForumCategory()
         {
-            ForumCategory1 = new HashSet<ForumCategory>();
+            ChildForumCategories = new HashSet<ForumCategory>();
             ForumLastReads = new HashSet<ForumLastRead>();
             ForumThreads = new HashSet<ForumThread>();
         }
@@ -42,9 +42,9 @@ namespace ZkData
         public bool IsNews { get; set; }
 
         
-        public virtual ICollection<ForumCategory> ForumCategory1 { get; set; }
+        public virtual ICollection<ForumCategory> ChildForumCategories { get; set; }
 
-        public virtual ForumCategory ForumCategory2 { get; set; }
+        public virtual ForumCategory ParentForumCategory { get; set; }
 
         
         public virtual ICollection<ForumLastRead> ForumLastReads { get; set; }

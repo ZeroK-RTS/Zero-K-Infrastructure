@@ -42,8 +42,10 @@ namespace ZkData
 
         public bool IsSkirmish { get; set; }
 
+        [StringLength(4000)]
         public string Description { get; set; }
 
+        [StringLength(4000)]
         public string DescriptionStory { get; set; }
 
         public bool StartsUnlocked { get; set; }

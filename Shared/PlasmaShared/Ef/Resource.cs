@@ -102,8 +102,6 @@ namespace ZkData
         
         public virtual ICollection<Planet> Planets { get; set; }
 
-        public virtual RatingPoll RatingPoll { get; set; }
-
         
         public virtual ICollection<ResourceContentFile> ResourceContentFiles { get; set; }
 

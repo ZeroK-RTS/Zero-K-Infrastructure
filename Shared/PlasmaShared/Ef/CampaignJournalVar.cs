@@ -25,6 +25,7 @@ namespace ZkData
         public int RequiredVarID { get; set; }
 
         [Required]
+        [StringLength(500)]
         public string RequiredValue { get; set; }
 
         public virtual Campaign Campaign { get; set; }

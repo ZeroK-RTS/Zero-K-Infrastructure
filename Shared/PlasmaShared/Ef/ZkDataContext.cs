@@ -16,11 +16,9 @@ namespace ZkData
         public virtual DbSet<AccountForumVote> AccountForumVotes { get; set; }
         public virtual DbSet<AccountIP> AccountIPs { get; set; }
         public virtual DbSet<AccountPlanet> AccountPlanets { get; set; }
-        public virtual DbSet<AccountRatingVote> AccountRatingVotes { get; set; }
         public virtual DbSet<AccountRole> AccountRoles { get; set; }
         public virtual DbSet<AccountUnlock> AccountUnlocks { get; set; }
         public virtual DbSet<AccountUserID> AccountUserIDs { get; set; }
-        public virtual DbSet<AutoBanSmurfList> AutoBanSmurfLists { get; set; }
         public virtual DbSet<AutohostConfig> AutohostConfigs { get; set; }
         public virtual DbSet<Avatar> Avatars { get; set; }
         public virtual DbSet<BlockedCompany> BlockedCompanies { get; set; }
@@ -43,7 +41,6 @@ namespace ZkData
         public virtual DbSet<Contribution> Contributions { get; set; }
         public virtual DbSet<ContributionJar> ContributionJars { get; set; }
         public virtual DbSet<Event> Events { get; set; }
-        public virtual DbSet<ExceptionLog> ExceptionLogs { get; set; }
         public virtual DbSet<Faction> Factions { get; set; }
         public virtual DbSet<FactionTreaty> FactionTreaties { get; set; }
         public virtual DbSet<ForumCategory> ForumCategories { get; set; }
@@ -58,7 +55,6 @@ namespace ZkData
         public virtual DbSet<LobbyChannelSubscription> LobbyChannelSubscriptions { get; set; }
         public virtual DbSet<LobbyMessage> LobbyMessages { get; set; }
         public virtual DbSet<MapRating> MapRatings { get; set; }
-        public virtual DbSet<MarketOffer> MarketOffers { get; set; }
         public virtual DbSet<Mission> Missions { get; set; }
         public virtual DbSet<MissionScore> MissionScores { get; set; }
         public virtual DbSet<News> News { get; set; }
@@ -71,7 +67,6 @@ namespace ZkData
         public virtual DbSet<PollVote> PollVotes { get; set; }
         public virtual DbSet<Punishment> Punishments { get; set; }
         public virtual DbSet<Rating> Ratings { get; set; }
-        public virtual DbSet<RatingPoll> RatingPolls { get; set; }
         public virtual DbSet<Resource> Resources { get; set; }
         public virtual DbSet<ResourceContentFile> ResourceContentFiles { get; set; }
         public virtual DbSet<ResourceDependency> ResourceDependencies { get; set; }
@@ -135,10 +130,6 @@ namespace ZkData
                 .WithRequired(e => e.Account)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<Account>()
-                .HasMany(e => e.AccountRatingVotes)
-                .WithRequired(e => e.Account)
-                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Account>()
                 .HasMany(e => e.AccountRolesByAccountID)
@@ -150,10 +141,6 @@ namespace ZkData
                 .HasMany(e => e.AccountUnlocks)
                 .WithRequired(e => e.Account)
                 .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<Account>()
-                .HasOptional(e => e.AutoBanSmurfList)
-                .WithRequired(e => e.Account);
 
             modelBuilder.Entity<Account>()
                 .HasMany(e => e.CampaignEvents)
@@ -173,7 +160,7 @@ namespace ZkData
                 .HasForeignKey(e => e.AccountID);
 
             modelBuilder.Entity<Account>()
-                .HasMany(e => e.Contributions1)
+                .HasMany(e => e.ContributionsByManuallyAddedAccountID)
                 .WithOptional(e => e.AccountByManuallyAddedID)
                 .HasForeignKey(e => e.ManuallyAddedAccountID);
 
@@ -224,17 +211,6 @@ namespace ZkData
                 .HasMany(e => e.KudosPurchases)
                 .WithRequired(e => e.Account)
                 .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<Account>()
-                .HasMany(e => e.MarketOffers)
-                .WithRequired(e => e.Account)
-                .HasForeignKey(e => e.AccountID)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<Account>()
-                .HasMany(e => e.MarketOffers1)
-                .WithOptional(e => e.Account1)
-                .HasForeignKey(e => e.AcceptedAccountID);
 
             modelBuilder.Entity<Account>()
                 .HasMany(e => e.Missions)
@@ -519,11 +495,6 @@ namespace ZkData
                 .WithMany(e => e.Events)
                 .Map(m => m.ToTable("EventSpringBattle").MapLeftKey("EventID").MapRightKey("SpringBattleID"));
 
-            modelBuilder.Entity<ExceptionLog>()
-                .Property(e => e.ExceptionHash)
-                .IsFixedLength()
-                .IsUnicode(false);
-
             modelBuilder.Entity<Faction>()
                 .Property(e => e.Color)
                 .IsUnicode(false);
@@ -578,8 +549,8 @@ namespace ZkData
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<ForumCategory>()
-                .HasMany(e => e.ForumCategory1)
-                .WithOptional(e => e.ForumCategory2)
+                .HasMany(e => e.ChildForumCategories)
+                .WithOptional(e => e.ParentForumCategory)
                 .HasForeignKey(e => e.ParentForumCategoryID);
 
             modelBuilder.Entity<ForumCategory>()
@@ -635,10 +606,6 @@ namespace ZkData
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Mission>()
-                .HasOptional(e => e.Mission1)
-                .WithRequired(e => e.Mission2);
-
-            modelBuilder.Entity<Mission>()
                 .HasMany(e => e.Ratings)
                 .WithOptional(e => e.Mission)
                 .WillCascadeOnDelete();
@@ -674,11 +641,6 @@ namespace ZkData
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Planet>()
-                .HasMany(e => e.MarketOffers)
-                .WithRequired(e => e.Planet)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<Planet>()
                 .HasMany(e => e.PlanetFactions)
                 .WithRequired(e => e.Planet)
                 .WillCascadeOnDelete(false);
@@ -698,20 +660,6 @@ namespace ZkData
                 .WithRequired(e => e.PollOption)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<RatingPoll>()
-                .HasMany(e => e.Missions)
-                .WithOptional(e => e.RatingPoll)
-                .HasForeignKey(e => e.RatingPollID);
-
-            modelBuilder.Entity<RatingPoll>()
-                .HasMany(e => e.Missions1)
-                .WithOptional(e => e.RatingPoll1)
-                .HasForeignKey(e => e.DifficultyRatingPollID);
-
-            modelBuilder.Entity<RatingPoll>()
-                .HasMany(e => e.Resources)
-                .WithOptional(e => e.RatingPoll)
-                .WillCascadeOnDelete();
 
             modelBuilder.Entity<Resource>()
                 .HasMany(e => e.Planets)

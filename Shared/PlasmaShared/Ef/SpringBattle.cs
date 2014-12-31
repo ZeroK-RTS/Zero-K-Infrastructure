@@ -69,8 +69,6 @@ namespace ZkData
 
         public virtual ForumThread ForumThread { get; set; }
 
-        public virtual RatingPoll RatingPoll { get; set; }
-
         public virtual Resource ResourceByModResourceID { get; set; }
 
         public virtual Resource ResourceByMapResourceID { get; set; }

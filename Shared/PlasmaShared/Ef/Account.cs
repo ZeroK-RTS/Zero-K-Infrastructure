@@ -22,14 +22,13 @@ namespace ZkData
             AccountCampaignVars = new HashSet<AccountCampaignVar>();
             AccountForumVotes = new HashSet<AccountForumVote>();
             AccountIPs = new HashSet<AccountIP>();
-            AccountRatingVotes = new HashSet<AccountRatingVote>();
             AccountRolesByAccountID = new HashSet<AccountRole>();
             AccountUnlocks = new HashSet<AccountUnlock>();
             AccountUserIDs = new HashSet<AccountUserID>();
             CampaignEvents = new HashSet<CampaignEvent>();
             Commanders = new HashSet<Commander>();
             ContributionsByAccountID = new HashSet<Contribution>();
-            Contributions1 = new HashSet<Contribution>();
+            ContributionsByManuallyAddedAccountID = new HashSet<Contribution>();
             ContributionJars = new HashSet<ContributionJar>();
             FactionTreatiesByProposingAccount = new HashSet<FactionTreaty>();
             FactionTreatiesByAcceptedAccountID = new HashSet<FactionTreaty>();
@@ -41,8 +40,6 @@ namespace ZkData
             ForumThreadLastReads = new HashSet<ForumThreadLastRead>();
             KudosPurchases = new HashSet<KudosPurchase>();
             LobbyChannelSubscriptions = new HashSet<LobbyChannelSubscription>();
-            MarketOffers = new HashSet<MarketOffer>();
-            MarketOffers1 = new HashSet<MarketOffer>();
             Missions = new HashSet<Mission>();
             MissionScores = new HashSet<MissionScore>();
             News = new HashSet<News>();
@@ -70,12 +67,14 @@ namespace ZkData
         [Index]
         public string Name { get; set; }
 
+        [StringLength(200)]
         public string Email { get; set; }
 
         public DateTime FirstLogin { get; set; }
 
         public DateTime LastLogin { get; set; }
 
+        [StringLength(8000)]
         public string Aliases { get; set; }
 
         public double Elo { get; set; }
@@ -183,15 +182,11 @@ namespace ZkData
 
         public virtual ICollection<AccountIP> AccountIPs { get; set; }
 
-        public virtual ICollection<AccountRatingVote> AccountRatingVotes { get; set; }
-
         public virtual ICollection<AccountRole> AccountRolesByAccountID { get; set; }
 
         public virtual ICollection<AccountUnlock> AccountUnlocks { get; set; }
 
         public virtual ICollection<AccountUserID> AccountUserIDs { get; set; }
-
-        public virtual AutoBanSmurfList AutoBanSmurfList { get; set; }
 
         public virtual ICollection<CampaignEvent> CampaignEvents { get; set; }
 
@@ -199,7 +194,7 @@ namespace ZkData
 
         public virtual ICollection<Contribution> ContributionsByAccountID { get; set; }
 
-        public virtual ICollection<Contribution> Contributions1 { get; set; }
+        public virtual ICollection<Contribution> ContributionsByManuallyAddedAccountID { get; set; }
 
         public virtual ICollection<ContributionJar> ContributionJars { get; set; }
 
@@ -222,10 +217,6 @@ namespace ZkData
         public virtual ICollection<KudosPurchase> KudosPurchases { get; set; }
 
         public virtual ICollection<LobbyChannelSubscription> LobbyChannelSubscriptions { get; set; }
-
-        public virtual ICollection<MarketOffer> MarketOffers { get; set; }
-
-        public virtual ICollection<MarketOffer> MarketOffers1 { get; set; }
 
         public virtual ICollection<Mission> Missions { get; set; }
 

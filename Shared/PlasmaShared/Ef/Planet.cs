@@ -15,7 +15,6 @@ namespace ZkData
             AccountPlanets = new HashSet<AccountPlanet>();
             LinksByPlanetID1 = new HashSet<Link>();
             LinksByPlanetID2 = new HashSet<Link>();
-            MarketOffers = new HashSet<MarketOffer>();
             PlanetFactions = new HashSet<PlanetFaction>();
             PlanetOwnerHistories = new HashSet<PlanetOwnerHistory>();
             PlanetStructures = new HashSet<PlanetStructure>();
@@ -64,8 +63,6 @@ namespace ZkData
         public virtual ICollection<Link> LinksByPlanetID2 { get; set; }
 
         
-        public virtual ICollection<MarketOffer> MarketOffers { get; set; }
-
         public virtual Resource Resource { get; set; }
 
         
