@@ -9,7 +9,7 @@ namespace ZkData
     {
         private static string ConnectionStringLocal = @"Data Source=.\SQLEXPRESS;Initial Catalog=zero-k-mig;Integrated Security=True;MultipleActiveResultSets=true";
 
-        private static string ConnectionStringLive = @"Data Source=omega.licho.eu,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
+        private static string ConnectionStringLive = @"Data Source=omega.licho.eu,100;Initial Catalog=zero-k-mig;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
 
 
 

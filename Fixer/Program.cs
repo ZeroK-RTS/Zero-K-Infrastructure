@@ -18,6 +18,7 @@ using System.Xml.Serialization;
 //using LobbyClient;
 //using NightWatch;
 using CaTracker;
+using PlasmaShared;
 using ZkData.UnitSyncLib;
 using ZeroKWeb;
 using ZkData;
@@ -179,8 +180,14 @@ namespace Fixer
         static void Main(string[] args)
         {
 
-            var db = new ZkDataContext(false);
-            db.Database.CreateIfNotExists();
+            var cloner = new DbCloner("zero-k", "zero-k-mig", "Data Source=omega.licho.eu,100;Initial Catalog=zero-k-mig;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true");
+            var order = cloner.GetOrderedTables();
+            //var cols = cloner.GetTableColumns("AutohostConfig");
+            //cloner.CloneAllTables();
+
+
+            //var db = new ZkDataContext(false);
+            //db.Database.CreateIfNotExists();
 
             //PlanetwarsFixer.StartGalaxy(24,3919,3925);
             //AddClanLeader();
