@@ -371,6 +371,7 @@ namespace ZkData
                 .WithRequired(e => e.CampaignJournal)
                 .HasForeignKey(e => new { e.CampaignID, e.JournalID });
 
+
             modelBuilder.Entity<CampaignPlanet>()
                 .Property(e => e.Name)
                 .IsUnicode(false);
@@ -378,7 +379,6 @@ namespace ZkData
             modelBuilder.Entity<CampaignPlanet>()
                 .HasMany(e => e.AccountCampaignProgress)
                 .WithRequired(e => e.CampaignPlanet)
-                .HasForeignKey(e => new { e.PlanetID, e.CampaignID })
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<CampaignPlanet>()
@@ -387,10 +387,7 @@ namespace ZkData
                 .HasForeignKey(e => new { e.PlanetID, e.CampaignID })
                 .WillCascadeOnDelete();
 
-            modelBuilder.Entity<CampaignPlanet>()
-                .HasMany(e => e.CampaignJournals)
-                .WithOptional(e => e.CampaignPlanet)
-                .HasForeignKey(e => new { e.PlanetID, e.CampaignID });
+            modelBuilder.Entity<CampaignPlanet>().HasMany(e => e.CampaignJournals).WithOptional(e => e.CampaignPlanet);
 
             modelBuilder.Entity<CampaignPlanet>()
                 .HasMany(e => e.CampaignLinksByPlanetToUnlock)
@@ -407,7 +404,6 @@ namespace ZkData
             modelBuilder.Entity<CampaignPlanet>()
                 .HasMany(e => e.CampaignPlanetVars)
                 .WithRequired(e => e.CampaignPlanet)
-                .HasForeignKey(e => new { e.PlanetID, e.CampaignID })
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<CampaignVar>()

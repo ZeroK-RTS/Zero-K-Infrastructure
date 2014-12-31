@@ -467,8 +467,8 @@ namespace PlasmaShared.Migrations
                 "dbo.CampaignPlanet",
                 c => new
                     {
-                        PlanetID = c.Int(nullable: false),
                         CampaignID = c.Int(nullable: false),
+                        PlanetID = c.Int(nullable: false),
                         Name = c.String(nullable: false, maxLength: 50, unicode: false),
                         MissionID = c.Int(nullable: false),
                         X = c.Double(nullable: false),
@@ -480,7 +480,7 @@ namespace PlasmaShared.Migrations
                         HideIfLocked = c.Boolean(nullable: false),
                         DisplayedMap = c.String(maxLength: 100),
                     })
-                .PrimaryKey(t => new { t.PlanetID, t.CampaignID })
+                .PrimaryKey(t => new { t.CampaignID, t.PlanetID })
                 .ForeignKey("dbo.Campaign", t => t.CampaignID, cascadeDelete: true)
                 .ForeignKey("dbo.Mission", t => t.MissionID)
                 .Index(t => t.CampaignID)
@@ -490,19 +490,19 @@ namespace PlasmaShared.Migrations
                 "dbo.AccountCampaignProgress",
                 c => new
                     {
-                        AccountID = c.Int(nullable: false),
                         CampaignID = c.Int(nullable: false),
                         PlanetID = c.Int(nullable: false),
+                        AccountID = c.Int(nullable: false),
                         IsUnlocked = c.Boolean(nullable: false),
                         IsCompleted = c.Boolean(nullable: false),
                     })
-                .PrimaryKey(t => new { t.AccountID, t.CampaignID, t.PlanetID })
+                .PrimaryKey(t => new { t.CampaignID, t.PlanetID, t.AccountID })
                 .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
                 .ForeignKey("dbo.Campaign", t => t.CampaignID)
                 .ForeignKey("dbo.CampaignPlanet", t => new { t.CampaignID, t.PlanetID })
-                .Index(t => t.AccountID)
                 .Index(t => t.CampaignID)
-                .Index(t => new { t.CampaignID, t.PlanetID });
+                .Index(t => new { t.CampaignID, t.PlanetID })
+                .Index(t => t.AccountID);
             
             CreateTable(
                 "dbo.Campaign",
@@ -1742,9 +1742,9 @@ namespace PlasmaShared.Migrations
             DropIndex("dbo.CampaignJournal", new[] { "CampaignID" });
             DropIndex("dbo.AccountCampaignJournalProgress", new[] { "CampaignID", "JournalID" });
             DropIndex("dbo.AccountCampaignJournalProgress", new[] { "AccountID" });
+            DropIndex("dbo.AccountCampaignProgress", new[] { "AccountID" });
             DropIndex("dbo.AccountCampaignProgress", new[] { "CampaignID", "PlanetID" });
             DropIndex("dbo.AccountCampaignProgress", new[] { "CampaignID" });
-            DropIndex("dbo.AccountCampaignProgress", new[] { "AccountID" });
             DropIndex("dbo.CampaignPlanet", new[] { "MissionID" });
             DropIndex("dbo.CampaignPlanet", new[] { "CampaignID" });
             DropIndex("dbo.Mission", new[] { "ForumThreadID" });

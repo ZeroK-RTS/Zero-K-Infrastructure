@@ -9,19 +9,14 @@ namespace ZkData
     [Table("CampaignPlanet")]
     public partial class CampaignPlanet
     {
-        
-        public CampaignPlanet()
-        {
-            AccountCampaignProgress = new HashSet<AccountCampaignProgress>();
-            CampaignEvents = new HashSet<CampaignEvent>();
-            CampaignJournals = new HashSet<CampaignJournal>();
-            CampaignLinksByPlanetToUnlock = new HashSet<CampaignLink>();
-            CampaignLinksByUnlockingPlanet = new HashSet<CampaignLink>();
-            CampaignPlanetVars = new HashSet<CampaignPlanetVar>();
-        }
 
         [Key]
         [Column(Order = 0)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int CampaignID { get; set; }
+
+        [Key]
+        [Column(Order = 1)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int PlanetID { get; set; }
 
@@ -30,11 +25,6 @@ namespace ZkData
         public string Name { get; set; }
 
         public int MissionID { get; set; }
-
-        [Key]
-        [Column(Order = 1)]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int CampaignID { get; set; }
 
         public double X { get; set; }
 
@@ -55,26 +45,25 @@ namespace ZkData
         [StringLength(100)]
         public string DisplayedMap { get; set; }
 
-        
+
         public virtual ICollection<AccountCampaignProgress> AccountCampaignProgress { get; set; }
-
         public virtual Campaign Campaign { get; set; }
-
-        
         public virtual ICollection<CampaignEvent> CampaignEvents { get; set; }
-
-        
         public virtual ICollection<CampaignJournal> CampaignJournals { get; set; }
-
-        
         public virtual ICollection<CampaignLink> CampaignLinksByPlanetToUnlock { get; set; }
-
-        
         public virtual ICollection<CampaignLink> CampaignLinksByUnlockingPlanet { get; set; }
-
         public virtual Mission Mission { get; set; }
-
-        
         public virtual ICollection<CampaignPlanetVar> CampaignPlanetVars { get; set; }
+
+        public CampaignPlanet()
+        {
+            AccountCampaignProgress = new HashSet<AccountCampaignProgress>();
+            CampaignEvents = new HashSet<CampaignEvent>();
+            CampaignJournals = new HashSet<CampaignJournal>();
+            CampaignLinksByPlanetToUnlock = new HashSet<CampaignLink>();
+            CampaignLinksByUnlockingPlanet = new HashSet<CampaignLink>();
+            CampaignPlanetVars = new HashSet<CampaignPlanetVar>();
+        }
+
     }
 }

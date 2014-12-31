@@ -13,7 +13,7 @@ namespace PlasmaShared.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201412311813328_Init"; }
+            get { return "201412312111372_Init"; }
         }
         
         string IMigrationMetadata.Source
