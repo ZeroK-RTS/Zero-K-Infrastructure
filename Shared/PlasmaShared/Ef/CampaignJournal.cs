@@ -9,10 +9,10 @@ namespace ZkData
     [Table("CampaignJournal")]
     public partial class CampaignJournal
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        
         public CampaignJournal()
         {
-            AccountCampaignJournalProgresses = new HashSet<AccountCampaignJournalProgress>();
+            AccountCampaignJournalProgress = new HashSet<AccountCampaignJournalProgress>();
             CampaignJournalVars = new HashSet<CampaignJournalVar>();
         }
 
@@ -43,14 +43,14 @@ namespace ZkData
 
         public string Category { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AccountCampaignJournalProgress> AccountCampaignJournalProgresses { get; set; }
+        
+        public virtual ICollection<AccountCampaignJournalProgress> AccountCampaignJournalProgress { get; set; }
 
         public virtual Campaign Campaign { get; set; }
 
         public virtual CampaignPlanet CampaignPlanet { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<CampaignJournalVar> CampaignJournalVars { get; set; }
     }
 }

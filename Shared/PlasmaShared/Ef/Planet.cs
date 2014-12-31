@@ -9,17 +9,17 @@ namespace ZkData
     [Table("Planet")]
     public partial class Planet
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        
         public Planet()
         {
             AccountPlanets = new HashSet<AccountPlanet>();
-            Links = new HashSet<Link>();
-            Links1 = new HashSet<Link>();
+            LinksByPlanetID1 = new HashSet<Link>();
+            LinksByPlanetID2 = new HashSet<Link>();
             MarketOffers = new HashSet<MarketOffer>();
             PlanetFactions = new HashSet<PlanetFaction>();
             PlanetOwnerHistories = new HashSet<PlanetOwnerHistory>();
             PlanetStructures = new HashSet<PlanetStructure>();
-            PlanetStructures1 = new HashSet<PlanetStructure>();
+            PlanetStructuresByTargetPlanetID = new HashSet<PlanetStructure>();
             TreatyEffects = new HashSet<TreatyEffect>();
             Events = new HashSet<Event>();
         }
@@ -48,7 +48,7 @@ namespace ZkData
 
         public virtual Account Account { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<AccountPlanet> AccountPlanets { get; set; }
 
         public virtual Faction Faction { get; set; }
@@ -57,33 +57,33 @@ namespace ZkData
 
         public virtual Galaxy Galaxy { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Link> Links { get; set; }
+        
+        public virtual ICollection<Link> LinksByPlanetID1 { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Link> Links1 { get; set; }
+        
+        public virtual ICollection<Link> LinksByPlanetID2 { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<MarketOffer> MarketOffers { get; set; }
 
         public virtual Resource Resource { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<PlanetFaction> PlanetFactions { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<PlanetOwnerHistory> PlanetOwnerHistories { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<PlanetStructure> PlanetStructures { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PlanetStructure> PlanetStructures1 { get; set; }
+        
+        public virtual ICollection<PlanetStructure> PlanetStructuresByTargetPlanetID { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<TreatyEffect> TreatyEffects { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<Event> Events { get; set; }
     }
 }

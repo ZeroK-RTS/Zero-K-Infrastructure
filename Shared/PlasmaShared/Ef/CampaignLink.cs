@@ -23,8 +23,8 @@ namespace ZkData
 
         public virtual Campaign Campaign { get; set; }
 
-        public virtual CampaignPlanet CampaignPlanet { get; set; }
+        public virtual CampaignPlanet PlanetToUnlock { get; set; }
 
-        public virtual CampaignPlanet CampaignPlanet1 { get; set; }
+        public virtual CampaignPlanet UnlockingPlanet { get; set; }
     }
 }

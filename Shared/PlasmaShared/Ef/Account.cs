@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace ZkData
 {
     using System;
@@ -9,32 +11,33 @@ namespace ZkData
     [Table("Account")]
     public partial class Account
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+
         public Account()
         {
-            AbuseReports = new HashSet<AbuseReport>();
-            AbuseReports1 = new HashSet<AbuseReport>();
+            AbuseReportsByAccountID = new HashSet<AbuseReport>();
+            AbuseReportsByReporterAccountID = new HashSet<AbuseReport>();
             AccountBattleAwards = new HashSet<AccountBattleAward>();
             AccountCampaignJournalProgresses = new HashSet<AccountCampaignJournalProgress>();
-            AccountCampaignProgresses = new HashSet<AccountCampaignProgress>();
+            AccountCampaignProgress = new HashSet<AccountCampaignProgress>();
             AccountCampaignVars = new HashSet<AccountCampaignVar>();
             AccountForumVotes = new HashSet<AccountForumVote>();
             AccountIPs = new HashSet<AccountIP>();
             AccountRatingVotes = new HashSet<AccountRatingVote>();
-            AccountRoles = new HashSet<AccountRole>();
+            AccountRolesByAccountID = new HashSet<AccountRole>();
             AccountUnlocks = new HashSet<AccountUnlock>();
             AccountUserIDs = new HashSet<AccountUserID>();
             CampaignEvents = new HashSet<CampaignEvent>();
             Commanders = new HashSet<Commander>();
-            Contributions = new HashSet<Contribution>();
+            ContributionsByAccountID = new HashSet<Contribution>();
             Contributions1 = new HashSet<Contribution>();
             ContributionJars = new HashSet<ContributionJar>();
-            FactionTreaties = new HashSet<FactionTreaty>();
-            FactionTreaties1 = new HashSet<FactionTreaty>();
+            FactionTreatiesByProposingAccount = new HashSet<FactionTreaty>();
+            FactionTreatiesByAcceptedAccountID = new HashSet<FactionTreaty>();
             ForumLastReads = new HashSet<ForumLastRead>();
+            ForumPosts = new HashSet<ForumPost>();
             ForumPostEdits = new HashSet<ForumPostEdit>();
             ForumThreads = new HashSet<ForumThread>();
-            ForumThreads1 = new HashSet<ForumThread>();
+            ForumThreadsByLastPostAccountID = new HashSet<ForumThread>();
             ForumThreadLastReads = new HashSet<ForumThreadLastRead>();
             KudosPurchases = new HashSet<KudosPurchase>();
             LobbyChannelSubscriptions = new HashSet<LobbyChannelSubscription>();
@@ -47,11 +50,11 @@ namespace ZkData
             PlanetOwnerHistories = new HashSet<PlanetOwnerHistory>();
             PlanetStructures = new HashSet<PlanetStructure>();
             AccountPlanets = new HashSet<AccountPlanet>();
-            Polls = new HashSet<Poll>();
-            Polls1 = new HashSet<Poll>();
+            PollsByRoleTargetAccountID = new HashSet<Poll>();
+            PollsByCreatedAccountID = new HashSet<Poll>();
             PollVotes = new HashSet<PollVote>();
-            Punishments = new HashSet<Punishment>();
-            Punishments1 = new HashSet<Punishment>();
+            PunishmentsByAccountID = new HashSet<Punishment>();
+            PunishmentsByCreatedAccountID = new HashSet<Punishment>();
             Ratings = new HashSet<Rating>();
             Resources = new HashSet<Resource>();
             MapRatings = new HashSet<MapRating>();
@@ -64,6 +67,7 @@ namespace ZkData
 
         [Required]
         [StringLength(200)]
+        [Index]
         public string Name { get; set; }
 
         public string Email { get; set; }
@@ -110,6 +114,7 @@ namespace ZkData
 
         public int? FactionID { get; set; }
 
+        [Index]
         public int? LobbyID { get; set; }
 
         public bool IsDeleted { get; set; }
@@ -160,146 +165,104 @@ namespace ZkData
         [StringLength(200)]
         public string SteamName { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AbuseReport> AbuseReports { get; set; }
+        public virtual ICollection<AbuseReport> AbuseReportsByAccountID { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AbuseReport> AbuseReports1 { get; set; }
+        public virtual ICollection<AbuseReport> AbuseReportsByReporterAccountID { get; set; }
 
         public virtual Faction Faction { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AccountBattleAward> AccountBattleAwards { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AccountCampaignJournalProgress> AccountCampaignJournalProgresses { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AccountCampaignProgress> AccountCampaignProgresses { get; set; }
+        public virtual ICollection<AccountCampaignProgress> AccountCampaignProgress { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AccountCampaignVar> AccountCampaignVars { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AccountForumVote> AccountForumVotes { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AccountIP> AccountIPs { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AccountRatingVote> AccountRatingVotes { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AccountRole> AccountRoles { get; set; }
+        public virtual ICollection<AccountRole> AccountRolesByAccountID { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AccountUnlock> AccountUnlocks { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AccountUserID> AccountUserIDs { get; set; }
 
         public virtual AutoBanSmurfList AutoBanSmurfList { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CampaignEvent> CampaignEvents { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Commander> Commanders { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Contribution> Contributions { get; set; }
+        public virtual ICollection<Contribution> ContributionsByAccountID { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Contribution> Contributions1 { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ContributionJar> ContributionJars { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<FactionTreaty> FactionTreaties { get; set; }
+        public virtual ICollection<FactionTreaty> FactionTreatiesByProposingAccount { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<FactionTreaty> FactionTreaties1 { get; set; }
+        public virtual ICollection<FactionTreaty> FactionTreatiesByAcceptedAccountID { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ForumLastRead> ForumLastReads { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ForumPostEdit> ForumPostEdits { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ForumPost> ForumPosts { get; set; }
+
         public virtual ICollection<ForumThread> ForumThreads { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ForumThread> ForumThreads1 { get; set; }
+        public virtual ICollection<ForumThread> ForumThreadsByLastPostAccountID { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ForumThreadLastRead> ForumThreadLastReads { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<KudosPurchase> KudosPurchases { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<LobbyChannelSubscription> LobbyChannelSubscriptions { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MarketOffer> MarketOffers { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MarketOffer> MarketOffers1 { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Mission> Missions { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MissionScore> MissionScores { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<News> News { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Planet> Planets { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PlanetOwnerHistory> PlanetOwnerHistories { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PlanetStructure> PlanetStructures { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AccountPlanet> AccountPlanets { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Poll> Polls { get; set; }
+        public virtual ICollection<Poll> PollsByRoleTargetAccountID { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Poll> Polls1 { get; set; }
+        public virtual ICollection<Poll> PollsByCreatedAccountID { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PollVote> PollVotes { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Punishment> Punishments { get; set; }
+        public virtual ICollection<Punishment> PunishmentsByAccountID { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Punishment> Punishments1 { get; set; }
+        public virtual ICollection<Punishment> PunishmentsByCreatedAccountID { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Rating> Ratings { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Resource> Resources { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MapRating> MapRatings { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SpringBattle> SpringBattles { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SpringBattlePlayer> SpringBattlePlayers { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Event> Events { get; set; }
+
+        public virtual Clan Clan { get; set; }
     }
 }

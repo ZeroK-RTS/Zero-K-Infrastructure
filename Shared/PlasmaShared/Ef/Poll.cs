@@ -9,7 +9,7 @@ namespace ZkData
     [Table("Poll")]
     public partial class Poll
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        
         public Poll()
         {
             PollOptions = new HashSet<PollOption>();
@@ -40,18 +40,19 @@ namespace ZkData
 
         public bool IsHeadline { get; set; }
 
-        public virtual Account Account { get; set; }
+        public virtual Account AccountByRoleTargetAccountID { get; set; }
 
-        public virtual Account Account1 { get; set; }
+        public virtual Account CreatedAccount { get; set; }
 
         public virtual Faction Faction { get; set; }
 
-        public virtual RoleType RoleType { get; set; }
+        public virtual Clan Clan { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual RoleType RoleType { get; set; }
+        
         public virtual ICollection<PollOption> PollOptions { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<PollVote> PollVotes { get; set; }
     }
 }

@@ -131,8 +131,8 @@
             }
             <a href="@Url.Action("SubmitSearch", "Forum", new { username = Model.Name })">Find all posts by this user</a>
              
-            @{ double ratio = (Model.XP - Account.GetXpForLevel(Model.Level))/(double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)); }
-            <div title='Your XP: @Model.XP (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio*100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
+            @{ double ratio = (Model.Xp - Account.GetXpForLevel(Model.Level))/(double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)); }
+            <div title='Your XP: @Model.Xp (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio*100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
                 <b class="fleft"> Level @Model.Level </b> 
                 <img src="/img/progressl_base.png" height="17" class="fleft" />
                 <img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300*ratio))" />

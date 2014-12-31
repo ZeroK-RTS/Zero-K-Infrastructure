@@ -9,13 +9,13 @@ namespace ZkData
     [Table("RoleType")]
     public partial class RoleType
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        
         public RoleType()
         {
             AccountRoles = new HashSet<AccountRole>();
             Polls = new HashSet<Poll>();
-            RoleTypeHierarchies = new HashSet<RoleTypeHierarchy>();
-            RoleTypeHierarchies1 = new HashSet<RoleTypeHierarchy>();
+            RoleTypeHierarchiesByMasterRoleTypeID = new HashSet<RoleTypeHierarchy>();
+            RoleTypeHierarchiesBySlaveRoleTypeID = new HashSet<RoleTypeHierarchy>();
         }
 
         public int RoleTypeID { get; set; }
@@ -56,18 +56,18 @@ namespace ZkData
 
         public int DisplayOrder { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<AccountRole> AccountRoles { get; set; }
 
         public virtual Faction Faction { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<Poll> Polls { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RoleTypeHierarchy> RoleTypeHierarchies { get; set; }
+        
+        public virtual ICollection<RoleTypeHierarchy> RoleTypeHierarchiesByMasterRoleTypeID { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RoleTypeHierarchy> RoleTypeHierarchies1 { get; set; }
+        
+        public virtual ICollection<RoleTypeHierarchy> RoleTypeHierarchiesBySlaveRoleTypeID { get; set; }
     }
 }

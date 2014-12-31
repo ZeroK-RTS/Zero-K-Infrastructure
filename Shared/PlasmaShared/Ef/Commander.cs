@@ -9,7 +9,7 @@ namespace ZkData
     [Table("Commander")]
     public partial class Commander
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        
         public Commander()
         {
             CommanderDecorations = new HashSet<CommanderDecoration>();
@@ -27,14 +27,14 @@ namespace ZkData
 
         public int ChassisUnlockID { get; set; }
 
-        public virtual Account Account { get; set; }
+        public virtual Account AccountByAccountID { get; set; }
 
         public virtual Unlock Unlock { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<CommanderDecoration> CommanderDecorations { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<CommanderModule> CommanderModules { get; set; }
     }
 }

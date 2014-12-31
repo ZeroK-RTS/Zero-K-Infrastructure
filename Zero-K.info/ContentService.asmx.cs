@@ -189,7 +189,7 @@ namespace ZeroKWeb
                 var acc = AuthServiceClient.VerifyAccountHashed(login, passwordHash);
                 if (acc == null) throw new ApplicationException("Invalid login or password");
 
-                acc.XP += GlobalConst.XpForMissionOrBots;
+                acc.Xp += GlobalConst.XpForMissionOrBots;
 
                 var mission = db.Missions.Single(x => x.Name == missionName);
 
@@ -208,7 +208,7 @@ namespace ZeroKWeb
                         if (max == null || max <= score)
                         {
                             mission.TopScoreLine = login;
-                            acc.XP += 150; // 150 for getting top score
+                            acc.Xp += 150; // 150 for getting top score
                         }
                         scoreEntry.Score = score;
                         scoreEntry.Time = DateTime.UtcNow;
@@ -471,7 +471,7 @@ namespace ZeroKWeb
                 }
                 foreach (CampaignJournal uj in unlockedJournals)
                 {
-                    db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "{1} - Journal entry unlocked: {0}", uj, uj.Planet));
+                    db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "{1} - Journal entry unlocked: {0}", uj, uj.CampaignPlanet));
                 }
             }
             db.SubmitChanges();

@@ -23,7 +23,7 @@ namespace ZkData
 
         public int? ActivatedOnTurn { get; set; }
 
-        public int EnergyPriority { get; set; }
+        public EnergyPriority EnergyPriority { get; set; }
 
         public bool IsActive { get; set; }
 
@@ -33,7 +33,7 @@ namespace ZkData
 
         public virtual Planet Planet { get; set; }
 
-        public virtual Planet Planet1 { get; set; }
+        public virtual Planet PlanetByTargetPlanetID { get; set; }
 
         public virtual StructureType StructureType { get; set; }
     }

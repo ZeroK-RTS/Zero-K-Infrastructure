@@ -11,7 +11,7 @@ namespace ZkData
     {
         public int ExceptionLogID { get; set; }
 
-        public int ProgramID { get; set; }
+        public ProgramType ProgramID { get; set; }
 
         [Required]
         public string Exception { get; set; }

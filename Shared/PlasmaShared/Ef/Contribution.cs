@@ -55,9 +55,9 @@ namespace ZkData
 
         public int? ContributionJarID { get; set; }
 
-        public virtual Account Account { get; set; }
+        public virtual Account AccountByAccountID { get; set; }
 
-        public virtual Account Account1 { get; set; }
+        public virtual Account AccountByManuallyAddedID { get; set; }
 
         public virtual ContributionJar ContributionJar { get; set; }
     }

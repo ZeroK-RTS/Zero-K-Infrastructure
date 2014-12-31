@@ -9,7 +9,7 @@ namespace ZkData
     [Table("TreatyEffectType")]
     public partial class TreatyEffectType
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        
         public TreatyEffectType()
         {
             TreatyEffects = new HashSet<TreatyEffect>();
@@ -64,7 +64,7 @@ namespace ZkData
 
         public bool? EffectGiveInfluence { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<TreatyEffect> TreatyEffects { get; set; }
     }
 }

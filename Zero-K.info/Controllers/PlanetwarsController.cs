@@ -662,7 +662,7 @@ namespace ZeroKWeb.Controllers
                         x => x.RoleTypeID == role.RoleTypeID && (role.IsClanOnly ? x.ClanID == myAccount.ClanID : x.FactionID == myAccount.FactionID)).ToList();
                     if (entries.Any())
                     {
-                        previous = entries.First().AccountByAccountID;
+                        previous = entries.First().Account;
                         db.AccountRoles.DeleteAllOnSubmit(entries);
                     }
                 }

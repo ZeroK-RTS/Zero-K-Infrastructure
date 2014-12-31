@@ -9,7 +9,7 @@ namespace ZkData
     [Table("ContributionJar")]
     public partial class ContributionJar
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        
         public ContributionJar()
         {
             Contributions = new HashSet<Contribution>();
@@ -32,7 +32,7 @@ namespace ZkData
 
         public virtual Account Account { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<Contribution> Contributions { get; set; }
     }
 }

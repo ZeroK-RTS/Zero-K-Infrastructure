@@ -23,14 +23,14 @@ namespace ZkData
         }
 
         public bool HasTreatyRight(Faction giverFaction, Func<TreatyEffectType, bool> test, Planet planet = null) {
-            var effects = TreatyEffects_ReceivingFactionID.Where(x => x.FactionTreaty.TreatyState == TreatyState.Accepted && x.GivingFactionID == giverFaction.FactionID && (x.Planet == null || x.Planet == planet));
+            var effects = TreatyEffectsByReceivingFactionID.Where(x => x.FactionTreaty.TreatyState == TreatyState.Accepted && x.GivingFactionID == giverFaction.FactionID && (x.Planet == null || x.Planet == planet));
             return effects.Any(x=>test(x.TreatyEffectType));
         }
 
         public bool GaveTreatyRight(Planet planet, Func<TreatyEffectType, bool> test)
         {
             if (planet == null) return false; // not targeted, must be either planet or faction or both
-            var effects = TreatyEffects_GivingFactionID.Where(x => x.FactionTreaty.TreatyState == TreatyState.Accepted  && ((x.PlanetID == planet.PlanetID && (planet.OwnerFactionID == null|| planet.OwnerFactionID == x.ReceivingFactionID))||(x.PlanetID ==null&& x.ReceivingFactionID == planet.OwnerFactionID)));
+            var effects = TreatyEffectsByGivingFactionID.Where(x => x.FactionTreaty.TreatyState == TreatyState.Accepted  && ((x.PlanetID == planet.PlanetID && (planet.OwnerFactionID == null|| planet.OwnerFactionID == x.ReceivingFactionID))||(x.PlanetID ==null&& x.ReceivingFactionID == planet.OwnerFactionID)));
             return effects.Any(x => test(x.TreatyEffectType));
         }
 
@@ -96,7 +96,7 @@ namespace ZkData
             var ret = Planets.SelectMany(y => y.PlanetStructures).Where(x => x.IsActive && x.StructureType.EffectUnlockID != null).GroupBy(x=>x.StructureType.Unlock).Select(x =>
                         new FactionUnlockEntry() { Unlock = x.Key, Faction = this })
                     .ToList();
-            foreach (var provider in TreatyEffects_ReceivingFactionID.Where(x=>x.FactionTreaty.TreatyState == TreatyState.Accepted && x.TreatyEffectType.EffectShareTechs == true).GroupBy(x=>x.FactionByGivingFactionID).Select(x=>x.Key)) {
+            foreach (var provider in TreatyEffectsByReceivingFactionID.Where(x=>x.FactionTreaty.TreatyState == TreatyState.Accepted && x.TreatyEffectType.EffectShareTechs == true).GroupBy(x=>x.FactionByGivingFactionID).Select(x=>x.Key)) {
 
                 foreach (var tech in Planets.SelectMany(y => y.PlanetStructures).Where(x => x.IsActive && x.StructureType.EffectUnlockID != null).GroupBy(x=>x.StructureType.Unlock).Select(x=>x.Key)) {
                     if (!ret.Any(x=>x.Unlock == tech)) ret.Add(new FactionUnlockEntry(){Unlock = tech, Faction = provider});

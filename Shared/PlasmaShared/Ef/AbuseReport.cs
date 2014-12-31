@@ -20,8 +20,8 @@ namespace ZkData
         [Required]
         public string Text { get; set; }
 
-        public virtual Account Account { get; set; }
+        public virtual Account AccountByAccountID { get; set; }
 
-        public virtual Account Account1 { get; set; }
+        public virtual Account AccountByReporterAccountID { get; set; }
     }
 }

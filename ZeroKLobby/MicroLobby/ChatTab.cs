@@ -21,7 +21,7 @@ namespace ZeroKLobby.MicroLobby
 
   
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        
         public ChatTab()
         {
             SuspendLayout();
@@ -59,7 +59,7 @@ namespace ZeroKLobby.MicroLobby
             toolTabs.RemovePrivateTab(key);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        
         public PrivateMessageControl CreatePrivateMessageControl(string userName)
         {
             var pmControl = new PrivateMessageControl(userName) { Dock = DockStyle.Fill };
@@ -116,14 +116,14 @@ namespace ZeroKLobby.MicroLobby
 
         
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        
         void AddBattleControl()
         {
             if (battleChatControl == null || battleChatControl.IsDisposed) battleChatControl = new BattleChatControl { Dock = DockStyle.Fill };
             if (toolTabs.GetChannelTab("Battle") == null) toolTabs.AddTab("Battle", "Battle", battleChatControl, ZklResources.battle, "Current battle room", 3);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        
         ChatControl CreateChannelControl(string channelName)
         {
             if (IsIgnoredChannel(channelName)) return null;

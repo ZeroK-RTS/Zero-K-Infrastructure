@@ -23,9 +23,9 @@ namespace ZkData
 
         public int? PlanetID { get; set; }
 
-        public virtual Faction Faction { get; set; }
+        public virtual Faction FactionByGivingFactionID { get; set; }
 
-        public virtual Faction Faction1 { get; set; }
+        public virtual Faction FactionByReceivingFactionID { get; set; }
 
         public virtual FactionTreaty FactionTreaty { get; set; }
 

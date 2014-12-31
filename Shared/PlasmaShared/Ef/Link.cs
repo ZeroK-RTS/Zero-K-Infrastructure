@@ -23,8 +23,8 @@ namespace ZkData
 
         public virtual Galaxy Galaxy { get; set; }
 
-        public virtual Planet Planet { get; set; }
+        public virtual Planet PlanetByPlanetID1 { get; set; }
 
-        public virtual Planet Planet1 { get; set; }
+        public virtual Planet PlanetByPlanetID2 { get; set; }
     }
 }

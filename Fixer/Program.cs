@@ -295,7 +295,7 @@ namespace Fixer
         public static void CountUserIDs()
         {
             var db = new ZkDataContext();
-            var userIDs = db.AccountUserIDS.ToList();
+            var userIDs = db.AccountUserIDs.ToList();
             var uniqueIDs = userIDs.Select(x => x.UserID).Distinct().ToList();
             Dictionary<long, int> userIDCounts = new Dictionary<long, int>();
             System.Console.WriteLine("{0} userIDs, {1} uniques", userIDs.Count, uniqueIDs.Count);
@@ -558,7 +558,7 @@ namespace Fixer
                 if (!alreadyCompleted)
                 {
                     System.Console.WriteLine("Planet completed: {0}", planet);
-                    foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.Planet == planet && x.UnlockOnPlanetCompletion))
+                    foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.CampaignPlanet == planet && x.UnlockOnPlanetCompletion))
                     {
                         unlockedJournals.Add(journal);
                     }
@@ -566,14 +566,14 @@ namespace Fixer
                 foreach (CampaignPlanet unlocked in unlockedPlanets)
                 {
                     System.Console.WriteLine("Planet unlocked: {0}", unlocked);
-                    foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.Planet == unlocked && x.UnlockOnPlanetUnlock))
+                    foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.CampaignPlanet == unlocked && x.UnlockOnPlanetUnlock))
                     {
                         unlockedJournals.Add(journal);
                     }
                 }
                 foreach (CampaignJournal uj in unlockedJournals)
                 {
-                    System.Console.WriteLine("{1} - Journal entry unlocked: {0}", uj, uj.Planet);
+                    System.Console.WriteLine("{1} - Journal entry unlocked: {0}", uj, uj.CampaignPlanet);
                 }
                 db.SubmitChanges();
             }
@@ -915,8 +915,8 @@ namespace Fixer
                 Account acc = db.Accounts.FirstOrDefault(x => x.Name == name + i);
                 if (acc != null)
                 {
-                    int? userID = banID ? (int?)acc.AccountUserIDS.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
-                    string userIP = banIP ? acc.AccountIPS.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
+                    int? userID = banID ? (int?)acc.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
+                    string userIP = banIP ? acc.AccountIPs.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
                     System.Console.WriteLine(acc.Name, userID, userIP);
                     Punishment punishment = new Punishment
                     {

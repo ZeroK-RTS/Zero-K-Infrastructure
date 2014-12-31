@@ -9,7 +9,7 @@ namespace ZkData
     [Table("FactionTreaty")]
     public partial class FactionTreaty
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        
         public FactionTreaty()
         {
             TreatyEffects = new HashSet<TreatyEffect>();
@@ -27,21 +27,21 @@ namespace ZkData
 
         public int? TurnsRemaining { get; set; }
 
-        public int TreatyState { get; set; }
+        public TreatyState TreatyState { get; set; }
 
         public int? TurnsTotal { get; set; }
 
         public string TreatyNote { get; set; }
 
-        public virtual Account Account { get; set; }
+        public virtual Account AccountByProposingAccountID { get; set; }
 
-        public virtual Account Account1 { get; set; }
+        public virtual Account AccountByAcceptedAccountID { get; set; }
 
-        public virtual Faction Faction { get; set; }
+        public virtual Faction FactionByProposingFactionID { get; set; }
 
-        public virtual Faction Faction1 { get; set; }
+        public virtual Faction FactionByAcceptingFactionID { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<TreatyEffect> TreatyEffects { get; set; }
     }
 }

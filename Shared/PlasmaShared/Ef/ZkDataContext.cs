@@ -10,8 +10,8 @@ namespace ZkData
         public virtual DbSet<AbuseReport> AbuseReports { get; set; }
         public virtual DbSet<Account> Accounts { get; set; }
         public virtual DbSet<AccountBattleAward> AccountBattleAwards { get; set; }
-        public virtual DbSet<AccountCampaignJournalProgress> AccountCampaignJournalProgresses { get; set; }
-        public virtual DbSet<AccountCampaignProgress> AccountCampaignProgresses { get; set; }
+        public virtual DbSet<AccountCampaignJournalProgress> AccountCampaignJournalProgress { get; set; }
+        public virtual DbSet<AccountCampaignProgress> AccountCampaignProgress { get; set; }
         public virtual DbSet<AccountCampaignVar> AccountCampaignVars { get; set; }
         public virtual DbSet<AccountForumVote> AccountForumVotes { get; set; }
         public virtual DbSet<AccountIP> AccountIPs { get; set; }
@@ -109,14 +109,14 @@ namespace ZkData
                 .HasPrecision(38, 0);
 
             modelBuilder.Entity<Account>()
-                .HasMany(e => e.AbuseReports)
-                .WithRequired(e => e.Account)
+                .HasMany(e => e.AbuseReportsByAccountID)
+                .WithRequired(e => e.AccountByAccountID)
                 .HasForeignKey(e => e.AccountID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Account>()
-                .HasMany(e => e.AbuseReports1)
-                .WithRequired(e => e.Account1)
+                .HasMany(e => e.AbuseReportsByReporterAccountID)
+                .WithRequired(e => e.AccountByReporterAccountID)
                 .HasForeignKey(e => e.ReporterAccountID)
                 .WillCascadeOnDelete(false);
 
@@ -141,8 +141,9 @@ namespace ZkData
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Account>()
-                .HasMany(e => e.AccountRoles)
+                .HasMany(e => e.AccountRolesByAccountID)
                 .WithRequired(e => e.Account)
+                .HasForeignKey(e=>e.AccountID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Account>()
@@ -157,21 +158,23 @@ namespace ZkData
             modelBuilder.Entity<Account>()
                 .HasMany(e => e.CampaignEvents)
                 .WithRequired(e => e.Account)
+                .HasForeignKey(e=>e.AccountID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Account>()
                 .HasMany(e => e.Commanders)
-                .WithRequired(e => e.Account)
+                .WithRequired(e => e.AccountByAccountID)
+                .HasForeignKey(e=>e.AccountID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Account>()
-                .HasMany(e => e.Contributions)
-                .WithOptional(e => e.Account)
+                .HasMany(e => e.ContributionsByAccountID)
+                .WithOptional(e => e.AccountByAccountID)
                 .HasForeignKey(e => e.AccountID);
 
             modelBuilder.Entity<Account>()
                 .HasMany(e => e.Contributions1)
-                .WithOptional(e => e.Account1)
+                .WithOptional(e => e.AccountByManuallyAddedID)
                 .HasForeignKey(e => e.ManuallyAddedAccountID);
 
             modelBuilder.Entity<Account>()
@@ -181,14 +184,14 @@ namespace ZkData
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Account>()
-                .HasMany(e => e.FactionTreaties)
-                .WithRequired(e => e.Account)
+                .HasMany(e => e.FactionTreatiesByProposingAccount)
+                .WithRequired(e => e.AccountByProposingAccountID)
                 .HasForeignKey(e => e.ProposingAccountID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Account>()
-                .HasMany(e => e.FactionTreaties1)
-                .WithOptional(e => e.Account1)
+                .HasMany(e => e.FactionTreatiesByAcceptedAccountID)
+                .WithOptional(e => e.AccountByAcceptedAccountID)
                 .HasForeignKey(e => e.AcceptedAccountID);
 
             modelBuilder.Entity<Account>()
@@ -204,12 +207,12 @@ namespace ZkData
 
             modelBuilder.Entity<Account>()
                 .HasMany(e => e.ForumThreads)
-                .WithOptional(e => e.Account)
+                .WithOptional(e => e.AccountByCreatedAccountID)
                 .HasForeignKey(e => e.CreatedAccountID);
 
             modelBuilder.Entity<Account>()
-                .HasMany(e => e.ForumThreads1)
-                .WithOptional(e => e.Account1)
+                .HasMany(e => e.ForumThreadsByLastPostAccountID)
+                .WithOptional(e => e.AccountByLastPostAccountID)
                 .HasForeignKey(e => e.LastPostAccountID);
 
             modelBuilder.Entity<Account>()
@@ -270,13 +273,13 @@ namespace ZkData
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Account>()
-                .HasMany(e => e.Polls)
-                .WithOptional(e => e.Account)
+                .HasMany(e => e.PollsByRoleTargetAccountID)
+                .WithOptional(e => e.AccountByRoleTargetAccountID)
                 .HasForeignKey(e => e.RoleTargetAccountID);
 
             modelBuilder.Entity<Account>()
-                .HasMany(e => e.Polls1)
-                .WithOptional(e => e.Account1)
+                .HasMany(e => e.PollsByCreatedAccountID)
+                .WithOptional(e => e.CreatedAccount)
                 .HasForeignKey(e => e.CreatedAccountID);
 
             modelBuilder.Entity<Account>()
@@ -285,13 +288,13 @@ namespace ZkData
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Account>()
-                .HasMany(e => e.Punishments)
-                .WithRequired(e => e.Account)
+                .HasMany(e => e.PunishmentsByAccountID)
+                .WithRequired(e => e.AccountByAccountID)
                 .HasForeignKey(e => e.AccountID);
 
             modelBuilder.Entity<Account>()
-                .HasMany(e => e.Punishments1)
-                .WithOptional(e => e.Account1)
+                .HasMany(e => e.PunishmentsByCreatedAccountID)
+                .WithOptional(e => e.AccountByCreatedAccountID)
                 .HasForeignKey(e => e.CreatedAccountID);
 
             modelBuilder.Entity<Account>()
@@ -318,6 +321,18 @@ namespace ZkData
             modelBuilder.Entity<Account>()
                 .HasMany(e => e.SpringBattlePlayers)
                 .WithRequired(e => e.Account)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasOptional(e=>e.Clan)
+                .WithMany(e=>e.Accounts)
+                .HasForeignKey(e=>e.ClanID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e=>e.ForumPosts)
+                .WithRequired(e=>e.Account)
+                .HasForeignKey(e=>e.AuthorAccountID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<AccountBattleAward>()
@@ -365,7 +380,7 @@ namespace ZkData
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<CampaignJournal>()
-                .HasMany(e => e.AccountCampaignJournalProgresses)
+                .HasMany(e => e.AccountCampaignJournalProgress)
                 .WithRequired(e => e.CampaignJournal)
                 .HasForeignKey(e => new { e.CampaignID, e.JournalID });
 
@@ -379,7 +394,7 @@ namespace ZkData
                 .IsUnicode(false);
 
             modelBuilder.Entity<CampaignPlanet>()
-                .HasMany(e => e.AccountCampaignProgresses)
+                .HasMany(e => e.AccountCampaignProgress)
                 .WithRequired(e => e.CampaignPlanet)
                 .HasForeignKey(e => new { e.PlanetID, e.CampaignID })
                 .WillCascadeOnDelete(false);
@@ -396,14 +411,14 @@ namespace ZkData
                 .HasForeignKey(e => new { e.PlanetID, e.CampaignID });
 
             modelBuilder.Entity<CampaignPlanet>()
-                .HasMany(e => e.CampaignLinks)
-                .WithRequired(e => e.CampaignPlanet)
+                .HasMany(e => e.CampaignLinksByPlanetToUnlock)
+                .WithRequired(e => e.PlanetToUnlock)
                 .HasForeignKey(e => new { e.PlanetToUnlockID, e.CampaignID })
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<CampaignPlanet>()
-                .HasMany(e => e.CampaignLinks1)
-                .WithRequired(e => e.CampaignPlanet1)
+                .HasMany(e => e.CampaignLinksByUnlockingPlanet)
+                .WithRequired(e => e.UnlockingPlanet)
                 .HasForeignKey(e => new { e.UnlockingPlanetID, e.CampaignID })
                 .WillCascadeOnDelete(false);
 
@@ -468,6 +483,12 @@ namespace ZkData
                 .WithMany(e => e.Clans)
                 .Map(m => m.ToTable("EventClan").MapLeftKey("ClanID").MapRightKey("EventID"));
 
+            modelBuilder.Entity<Clan>()
+                .HasMany(e=>e.Polls)
+                .WithOptional(e=>e.Clan)
+                .HasForeignKey(e=>e.RestrictClanID)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<CommanderDecorationSlot>()
                 .HasMany(e => e.CommanderDecorations)
                 .WithRequired(e => e.CommanderDecorationSlot)
@@ -508,14 +529,14 @@ namespace ZkData
                 .IsUnicode(false);
 
             modelBuilder.Entity<Faction>()
-                .HasMany(e => e.FactionTreaties)
-                .WithRequired(e => e.Faction)
+                .HasMany(e => e.FactionTreatiesByProposingFaction)
+                .WithRequired(e => e.FactionByProposingFactionID)
                 .HasForeignKey(e => e.ProposingFactionID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Faction>()
-                .HasMany(e => e.FactionTreaties1)
-                .WithRequired(e => e.Faction1)
+                .HasMany(e => e.FactionTreatiesByAcceptingFaction)
+                .WithRequired(e => e.FactionByAcceptingFactionID)
                 .HasForeignKey(e => e.AcceptingFactionID)
                 .WillCascadeOnDelete(false);
 
@@ -545,14 +566,14 @@ namespace ZkData
                 .HasForeignKey(e => e.RestrictFactionID);
 
             modelBuilder.Entity<Faction>()
-                .HasMany(e => e.TreatyEffects)
-                .WithRequired(e => e.Faction)
+                .HasMany(e => e.TreatyEffectsByGivingFactionID)
+                .WithRequired(e => e.FactionByGivingFactionID)
                 .HasForeignKey(e => e.GivingFactionID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Faction>()
-                .HasMany(e => e.TreatyEffects1)
-                .WithRequired(e => e.Faction1)
+                .HasMany(e => e.TreatyEffectsByReceivingFactionID)
+                .WithRequired(e => e.FactionByReceivingFactionID)
                 .HasForeignKey(e => e.ReceivingFactionID)
                 .WillCascadeOnDelete(false);
 
@@ -585,6 +606,12 @@ namespace ZkData
                 .HasMany(e => e.News)
                 .WithRequired(e => e.ForumThread)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<ForumThread>()
+                .HasMany(e=>e.ForumPosts)
+                .WithRequired(e=>e.ForumThread)
+                .HasForeignKey(e=>e.ForumThreadID)
+                .WillCascadeOnDelete(true);
 
             modelBuilder.Entity<Galaxy>()
                 .Property(e => e.MatchMakerState)
@@ -635,14 +662,14 @@ namespace ZkData
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Planet>()
-                .HasMany(e => e.Links)
-                .WithRequired(e => e.Planet)
+                .HasMany(e => e.LinksByPlanetID1)
+                .WithRequired(e => e.PlanetByPlanetID1)
                 .HasForeignKey(e => e.PlanetID1)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Planet>()
-                .HasMany(e => e.Links1)
-                .WithRequired(e => e.Planet1)
+                .HasMany(e => e.LinksByPlanetID2)
+                .WithRequired(e => e.PlanetByPlanetID2)
                 .HasForeignKey(e => e.PlanetID2)
                 .WillCascadeOnDelete(false);
 
@@ -662,8 +689,8 @@ namespace ZkData
                 .HasForeignKey(e => e.PlanetID);
 
             modelBuilder.Entity<Planet>()
-                .HasMany(e => e.PlanetStructures1)
-                .WithOptional(e => e.Planet1)
+                .HasMany(e => e.PlanetStructuresByTargetPlanetID)
+                .WithOptional(e => e.PlanetByTargetPlanetID)
                 .HasForeignKey(e => e.TargetPlanetID);
 
             modelBuilder.Entity<PollOption>()
@@ -692,10 +719,17 @@ namespace ZkData
                 .HasForeignKey(e => e.MapResourceID);
 
             modelBuilder.Entity<Resource>()
-                .HasMany(e => e.SpringBattles)
-                .WithRequired(e => e.Resource)
+                .HasMany(e => e.SpringBattlesByModID)
+                .WithRequired(e => e.ResourceByModResourceID)
                 .HasForeignKey(e => e.ModResourceID)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Resource>()
+                .HasMany(e => e.SpringBattlesByMapResourceID)
+                .WithRequired(e => e.ResourceByMapResourceID)
+                .HasForeignKey(e => e.MapResourceID)
+                .WillCascadeOnDelete(false);
+
 
             modelBuilder.Entity<ResourceContentFile>()
                 .Property(e => e.Md5)
@@ -716,13 +750,13 @@ namespace ZkData
                 .WillCascadeOnDelete();
 
             modelBuilder.Entity<RoleType>()
-                .HasMany(e => e.RoleTypeHierarchies)
-                .WithRequired(e => e.RoleType)
+                .HasMany(e => e.RoleTypeHierarchiesByMasterRoleTypeID)
+                .WithRequired(e => e.MasterRoleType)
                 .HasForeignKey(e => e.MasterRoleTypeID);
 
             modelBuilder.Entity<RoleType>()
-                .HasMany(e => e.RoleTypeHierarchies1)
-                .WithRequired(e => e.RoleType1)
+                .HasMany(e => e.RoleTypeHierarchiesBySlaveRoleTypeID)
+                .WithRequired(e => e.SlaveRoleType)
                 .HasForeignKey(e => e.SlaveRoleTypeID)
                 .WillCascadeOnDelete(false);
 
@@ -773,8 +807,8 @@ namespace ZkData
                 .WillCascadeOnDelete();
 
             modelBuilder.Entity<Unlock>()
-                .HasMany(e => e.Unlock1)
-                .WithOptional(e => e.Unlock2)
+                .HasMany(e => e.ChildUnlocks)
+                .WithOptional(e => e.ParentUnlock)
                 .HasForeignKey(e => e.RequiredUnlockID);
         }
 

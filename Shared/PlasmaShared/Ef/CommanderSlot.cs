@@ -9,7 +9,7 @@ namespace ZkData
     [Table("CommanderSlot")]
     public partial class CommanderSlot
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        
         public CommanderSlot()
         {
             CommanderModules = new HashSet<CommanderModule>();
@@ -19,9 +19,9 @@ namespace ZkData
 
         public int MorphLevel { get; set; }
 
-        public int UnlockType { get; set; }
+        public UnlockTypes UnlockType { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<CommanderModule> CommanderModules { get; set; }
     }
 }

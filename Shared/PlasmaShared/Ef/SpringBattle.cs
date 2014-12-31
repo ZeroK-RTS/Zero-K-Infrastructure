@@ -9,7 +9,7 @@ namespace ZkData
     [Table("SpringBattle")]
     public partial class SpringBattle
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+
         public SpringBattle()
         {
             AccountBattleAwards = new HashSet<AccountBattleAward>();
@@ -64,19 +64,20 @@ namespace ZkData
 
         public virtual Account Account { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<AccountBattleAward> AccountBattleAwards { get; set; }
 
         public virtual ForumThread ForumThread { get; set; }
 
         public virtual RatingPoll RatingPoll { get; set; }
 
-        public virtual Resource Resource { get; set; }
+        public virtual Resource ResourceByModResourceID { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual Resource ResourceByMapResourceID { get; set; }
+        
         public virtual ICollection<SpringBattlePlayer> SpringBattlePlayers { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<Event> Events { get; set; }
     }
 }

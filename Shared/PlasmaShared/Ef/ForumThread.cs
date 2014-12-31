@@ -9,7 +9,7 @@ namespace ZkData
     [Table("ForumThread")]
     public partial class ForumThread
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        
         public ForumThread()
         {
             Clans = new HashSet<Clan>();
@@ -19,6 +19,7 @@ namespace ZkData
             Planets = new HashSet<Planet>();
             Resources = new HashSet<Resource>();
             SpringBattles = new HashSet<SpringBattle>();
+            ForumPosts = new HashSet<ForumPost>();
         }
 
         public int ForumThreadID { get; set; }
@@ -47,33 +48,19 @@ namespace ZkData
 
         public int? RestrictedClanID { get; set; }
 
-        public virtual Account Account { get; set; }
+        public virtual Account AccountByCreatedAccountID { get; set; }
 
-        public virtual Account Account1 { get; set; }
+        public virtual Account AccountByLastPostAccountID { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Clan> Clans { get; set; }
-
         public virtual Clan Clan { get; set; }
-
         public virtual ForumCategory ForumCategory { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ForumThreadLastRead> ForumThreadLastReads { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Mission> Missions { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<News> News { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Planet> Planets { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Resource> Resources { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SpringBattle> SpringBattles { get; set; }
+        public virtual ICollection<ForumPost> ForumPosts { get; set; }
     }
 }

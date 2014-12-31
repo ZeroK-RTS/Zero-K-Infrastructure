@@ -9,7 +9,7 @@ namespace ZkData
     [Table("Resource")]
     public partial class Resource
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        
         public Resource()
         {
             MapRatings = new HashSet<MapRating>();
@@ -17,7 +17,8 @@ namespace ZkData
             ResourceContentFiles = new HashSet<ResourceContentFile>();
             ResourceDependencies = new HashSet<ResourceDependency>();
             ResourceSpringHashes = new HashSet<ResourceSpringHash>();
-            SpringBattles = new HashSet<SpringBattle>();
+            SpringBattlesByMapResourceID = new HashSet<SpringBattle>();
+            SpringBattlesByModID = new HashSet<SpringBattle>();
         }
 
         public int ResourceID { get; set; }
@@ -26,7 +27,7 @@ namespace ZkData
         [StringLength(255)]
         public string InternalName { get; set; }
 
-        public int TypeID { get; set; }
+        public ResourceType TypeID { get; set; }
 
         public DateTime? LastLinkCheck { get; set; }
 
@@ -93,26 +94,28 @@ namespace ZkData
 
         public virtual ForumThread ForumThread { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<MapRating> MapRatings { get; set; }
 
         public virtual Mission Mission { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<Planet> Planets { get; set; }
 
         public virtual RatingPoll RatingPoll { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<ResourceContentFile> ResourceContentFiles { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<ResourceDependency> ResourceDependencies { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<ResourceSpringHash> ResourceSpringHashes { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SpringBattle> SpringBattles { get; set; }
+        
+        public virtual ICollection<SpringBattle> SpringBattlesByModID { get; set; }
+
+        public virtual ICollection<SpringBattle> SpringBattlesByMapResourceID { get; set; }
     }
 }

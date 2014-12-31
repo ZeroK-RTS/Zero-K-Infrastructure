@@ -9,21 +9,21 @@ namespace ZkData
     [Table("Faction")]
     public partial class Faction
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        
         public Faction()
         {
             Accounts = new HashSet<Account>();
             AccountRoles = new HashSet<AccountRole>();
             Clans = new HashSet<Clan>();
-            FactionTreaties = new HashSet<FactionTreaty>();
-            FactionTreaties1 = new HashSet<FactionTreaty>();
+            FactionTreatiesByProposingFaction = new HashSet<FactionTreaty>();
+            FactionTreatiesByAcceptingFaction = new HashSet<FactionTreaty>();
             Planets = new HashSet<Planet>();
             PlanetFactions = new HashSet<PlanetFaction>();
             PlanetOwnerHistories = new HashSet<PlanetOwnerHistory>();
             Polls = new HashSet<Poll>();
             RoleTypes = new HashSet<RoleType>();
-            TreatyEffects = new HashSet<TreatyEffect>();
-            TreatyEffects1 = new HashSet<TreatyEffect>();
+            TreatyEffectsByGivingFactionID = new HashSet<TreatyEffect>();
+            TreatyEffectsByReceivingFactionID = new HashSet<TreatyEffect>();
             Events = new HashSet<Event>();
         }
 
@@ -58,43 +58,43 @@ namespace ZkData
 
         public double Warps { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<Account> Accounts { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<AccountRole> AccountRoles { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<Clan> Clans { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<FactionTreaty> FactionTreaties { get; set; }
+        
+        public virtual ICollection<FactionTreaty> FactionTreatiesByProposingFaction { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<FactionTreaty> FactionTreaties1 { get; set; }
+        
+        public virtual ICollection<FactionTreaty> FactionTreatiesByAcceptingFaction { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<Planet> Planets { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<PlanetFaction> PlanetFactions { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<PlanetOwnerHistory> PlanetOwnerHistories { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<Poll> Polls { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<RoleType> RoleTypes { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TreatyEffect> TreatyEffects { get; set; }
+        
+        public virtual ICollection<TreatyEffect> TreatyEffectsByGivingFactionID { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TreatyEffect> TreatyEffects1 { get; set; }
+        
+        public virtual ICollection<TreatyEffect> TreatyEffectsByReceivingFactionID { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<Event> Events { get; set; }
     }
 }

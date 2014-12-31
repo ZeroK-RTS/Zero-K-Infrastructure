@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+
 namespace ZkData
 {
     using System;
@@ -9,13 +11,15 @@ namespace ZkData
     [Table("Clan")]
     public partial class Clan
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        
         public Clan()
         {
             AccountRoles = new HashSet<AccountRole>();
             ForumThreads = new HashSet<ForumThread>();
             PlanetOwnerHistories = new HashSet<PlanetOwnerHistory>();
             Events = new HashSet<Event>();
+            Accounts = new HashSet<Account>();
+            Polls = new HashSet<Poll>();
         }
 
         public int ClanID { get; set; }
@@ -43,20 +47,14 @@ namespace ZkData
 
         public int? FactionID { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+
+        public virtual ICollection<Account> Accounts { get; set; }
         public virtual ICollection<AccountRole> AccountRoles { get; set; }
-
         public virtual Faction Faction { get; set; }
-
         public virtual ForumThread ForumThread { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ForumThread> ForumThreads { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PlanetOwnerHistory> PlanetOwnerHistories { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Event> Events { get; set; }
+        public virtual ICollection<Poll> Polls { get; set; }
     }
 }

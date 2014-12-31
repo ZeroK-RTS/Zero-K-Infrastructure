@@ -9,7 +9,7 @@ namespace ZkData
     [Table("PollOption")]
     public partial class PollOption
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        
         public PollOption()
         {
             PollVotes = new HashSet<PollVote>();
@@ -28,7 +28,7 @@ namespace ZkData
 
         public virtual Poll Poll { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<PollVote> PollVotes { get; set; }
     }
 }

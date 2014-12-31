@@ -9,7 +9,7 @@ namespace ZkData
     [Table("Galaxy")]
     public partial class Galaxy
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        
         public Galaxy()
         {
             Links = new HashSet<Link>();
@@ -42,10 +42,10 @@ namespace ZkData
         [Column(TypeName = "text")]
         public string MatchMakerState { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<Link> Links { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<Planet> Planets { get; set; }
     }
 }

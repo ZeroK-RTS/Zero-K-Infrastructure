@@ -9,7 +9,7 @@ namespace ZkData
     [Table("ForumCategory")]
     public partial class ForumCategory
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        
         public ForumCategory()
         {
             ForumCategory1 = new HashSet<ForumCategory>();
@@ -41,15 +41,15 @@ namespace ZkData
 
         public bool IsNews { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<ForumCategory> ForumCategory1 { get; set; }
 
         public virtual ForumCategory ForumCategory2 { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<ForumLastRead> ForumLastReads { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<ForumThread> ForumThreads { get; set; }
     }
 }

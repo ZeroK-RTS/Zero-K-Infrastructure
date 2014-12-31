@@ -88,7 +88,7 @@ namespace ZkData
         }
 
         public void CheckLevelUp() {
-            if (XP > GetXpForLevel(Level + 1)) Level++;
+            if (Xp > GetXpForLevel(Level + 1)) Level++;
             if (Level == GlobalConst.LevelForElevatedSpringieRights && SpringieLevel == 1) SpringieLevel = 2;
         }
 

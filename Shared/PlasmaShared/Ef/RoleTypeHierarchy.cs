@@ -23,8 +23,8 @@ namespace ZkData
 
         public bool CanRecall { get; set; }
 
-        public virtual RoleType RoleType { get; set; }
+        public virtual RoleType MasterRoleType { get; set; }
 
-        public virtual RoleType RoleType1 { get; set; }
+        public virtual RoleType SlaveRoleType { get; set; }
     }
 }

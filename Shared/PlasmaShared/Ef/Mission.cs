@@ -9,7 +9,7 @@ namespace ZkData
     [Table("Mission")]
     public partial class Mission
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        
         public Mission()
         {
             CampaignPlanets = new HashSet<CampaignPlanet>();
@@ -102,7 +102,7 @@ namespace ZkData
 
         public virtual Account Account { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<CampaignPlanet> CampaignPlanets { get; set; }
 
         public virtual ForumThread ForumThread { get; set; }
@@ -115,13 +115,13 @@ namespace ZkData
 
         public virtual RatingPoll RatingPoll1 { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<MissionScore> MissionScores { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<Rating> Ratings { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<Resource> Resources { get; set; }
     }
 }

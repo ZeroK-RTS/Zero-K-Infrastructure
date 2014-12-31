@@ -9,7 +9,7 @@ namespace ZkData
     [Table("ForumPost")]
     public partial class ForumPost
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        
         public ForumPost()
         {
             AccountForumVotes = new HashSet<AccountForumVote>();
@@ -31,10 +31,10 @@ namespace ZkData
 
         public int Downvotes { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<AccountForumVote> AccountForumVotes { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ForumPostEdit> ForumPostEdits { get; set; }
+        public virtual ForumThread ForumThread { get; set; }
+        public virtual Account Account { get; set; }
     }
 }

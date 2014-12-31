@@ -57,7 +57,7 @@ namespace ZkData
         [StringLength(50)]
         public string BattlePassword { get; set; }
 
-        public int AutohostMode { get; set; }
+        public AutohostMode AutohostMode { get; set; }
 
         public int? MinToStart { get; set; }
 

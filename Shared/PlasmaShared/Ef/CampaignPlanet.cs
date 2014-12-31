@@ -9,14 +9,14 @@ namespace ZkData
     [Table("CampaignPlanet")]
     public partial class CampaignPlanet
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        
         public CampaignPlanet()
         {
-            AccountCampaignProgresses = new HashSet<AccountCampaignProgress>();
+            AccountCampaignProgress = new HashSet<AccountCampaignProgress>();
             CampaignEvents = new HashSet<CampaignEvent>();
             CampaignJournals = new HashSet<CampaignJournal>();
-            CampaignLinks = new HashSet<CampaignLink>();
-            CampaignLinks1 = new HashSet<CampaignLink>();
+            CampaignLinksByPlanetToUnlock = new HashSet<CampaignLink>();
+            CampaignLinksByUnlockingPlanet = new HashSet<CampaignLink>();
             CampaignPlanetVars = new HashSet<CampaignPlanetVar>();
         }
 
@@ -53,26 +53,26 @@ namespace ZkData
         [StringLength(100)]
         public string DisplayedMap { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AccountCampaignProgress> AccountCampaignProgresses { get; set; }
+        
+        public virtual ICollection<AccountCampaignProgress> AccountCampaignProgress { get; set; }
 
         public virtual Campaign Campaign { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<CampaignEvent> CampaignEvents { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<CampaignJournal> CampaignJournals { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<CampaignLink> CampaignLinks { get; set; }
+        
+        public virtual ICollection<CampaignLink> CampaignLinksByPlanetToUnlock { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<CampaignLink> CampaignLinks1 { get; set; }
+        
+        public virtual ICollection<CampaignLink> CampaignLinksByUnlockingPlanet { get; set; }
 
         public virtual Mission Mission { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<CampaignPlanetVar> CampaignPlanetVars { get; set; }
     }
 }

@@ -9,7 +9,7 @@ namespace ZkData
     [Table("StructureType")]
     public partial class StructureType
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        
         public StructureType()
         {
             PlanetStructures = new HashSet<PlanetStructure>();
@@ -96,7 +96,7 @@ namespace ZkData
 
         public double? EffectReduceBattleInfluenceGain { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        
         public virtual ICollection<PlanetStructure> PlanetStructures { get; set; }
 
         public virtual Unlock Unlock { get; set; }
