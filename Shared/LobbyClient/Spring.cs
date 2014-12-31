@@ -86,6 +86,7 @@ namespace LobbyClient
         private readonly List<string> statsData = new List<string>();
         private Dictionary<string, BattlePlayerResult> statsPlayers = new Dictionary<string, BattlePlayerResult>();
         private Talker talker;
+        private bool isPreGame = true;
         private readonly Timer timer = new Timer(20000);
         private bool wasKilled = false;
         public int Duration {
@@ -99,6 +100,10 @@ namespace LobbyClient
 
         public DateTime GameStarted {
             get { return battleResult.StartTime.ToLocalTime(); }
+        }
+
+        public bool IsPreGame {
+            get { return isPreGame; }
         }
 
         public bool IsRunning {
@@ -598,6 +603,10 @@ namespace LobbyClient
             //this.client.Say(TasClient.SayPlace.Battle, "",string.Format("type:{0} param:{1} player:{2}-{3} text:{4}",e.EventType.ToString(), e.Param,e.PlayerNumber, e.PlayerName, e.Text),false);
             try {
                 switch (e.EventType) {
+                    case Talker.SpringEventType.SERVER_STARTPLAYING:
+                        isPreGame = false;
+                        break;
+
                     case Talker.SpringEventType.PLAYER_JOINED:
                         if (StartContext != null) {
                             foreach (var p in StartContext.Players.Where(x => x.Name == e.PlayerName)) {
