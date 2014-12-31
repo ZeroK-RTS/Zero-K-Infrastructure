@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ZkData;
 using ZkData.UnitSyncLib;
 using System.IO;
 using System.Globalization;
@@ -377,7 +378,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 }
                 modInfo.Sides = sides.ToArray();
                 modInfo.SideIcons = sideIcons.ToArray();
-                modInfo.StartUnits = new PlasmaShared.SerializableDictionary<string, string>(startUnits);
+                modInfo.StartUnits = new SerializableDictionary<string, string>(startUnits);
             }
         }
         

@@ -9,7 +9,6 @@ namespace ZkData
 {
     partial class Account: IPrincipal, IIdentity
     {
-        Dictionary<AutohostMode, GamePreference> preferences;
         public static Func<ZkDataContext, int, Account> AccountByAccountID = (db, accountID) => db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
 
         public static Func<ZkDataContext, int, Account> AccountByLobbyID = (db, lobbyID) => db.Accounts.FirstOrDefault(x => x.LobbyID == lobbyID);
@@ -323,18 +322,6 @@ namespace ZkData
             if (PunishmentsByAccountID.Any(x => x.SetRightsToZero && !x.IsExpired)) return 0;
             return SpringieLevel;
         }
-    }
-
-    public enum GamePreference
-    {
-        [Description("Never")]
-        Never = -2,
-        [Description("Ok")]
-        Ok = -1,
-        [Description("Like")]
-        Like = 0,
-        [Description("Best")]
-        Best = 1
     }
 
     public class UserLanguageNoteAttribute: Attribute
