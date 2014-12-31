@@ -1,60 +1,70 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // TreatyEffectType
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("TreatyEffectType")]
     public partial class TreatyEffectType
     {
-        public int EffectTypeID { get; set; } // EffectTypeID (Primary key)
-        public string Name { get; set; } // Name
-        public string Description { get; set; } // Description
-        public bool HasValue { get; set; } // HasValue
-        public double? MinValue { get; set; } // MinValue
-        public double? MaxValue { get; set; } // MaxValue
-        public bool IsPlanetBased { get; set; } // IsPlanetBased
-        public bool IsOneTimeOnly { get; set; } // IsOneTimeOnly
-        public bool? EffectBalanceSameSide { get; set; } // EffectBalanceSameSide
-        public bool? EffectPreventInfluenceSpread { get; set; } // EffectPreventInfluenceSpread
-        public bool? EffectPreventDropshipAttack { get; set; } // EffectPreventDropshipAttack
-        public bool? EffectPreventBomberAttack { get; set; } // EffectPreventBomberAttack
-        public bool? EffectAllowDropshipPass { get; set; } // EffectAllowDropshipPass
-        public bool? EffectAllowBomberPass { get; set; } // EffectAllowBomberPass
-        public bool? EffectGiveMetal { get; set; } // EffectGiveMetal
-        public bool? EffectGiveDropships { get; set; } // EffectGiveDropships
-        public bool? EffectGiveBombers { get; set; } // EffectGiveBombers
-        public bool? EffectGiveEnergy { get; set; } // EffectGiveEnergy
-        public bool? EffectShareTechs { get; set; } // EffectShareTechs
-        public bool? EffectGiveWarps { get; set; } // EffectGiveWarps
-        public bool? EffectPreventIngamePwStructureDestruction { get; set; } // EffectPreventIngamePwStructureDestruction
-        public bool? EffectGiveInfluence { get; set; } // EffectGiveInfluence
-
-        // Reverse navigation
-        public virtual ICollection<TreatyEffect> TreatyEffects { get; set; } // TreatyEffect.FK_TreatyEffect_EffectType
-
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public TreatyEffectType()
         {
-            HasValue = false;
-            IsPlanetBased = false;
-            IsOneTimeOnly = false;
-            TreatyEffects = new List<TreatyEffect>();
-            InitializePartial();
+            TreatyEffects = new HashSet<TreatyEffect>();
         }
-        partial void InitializePartial();
-    }
 
+        [Key]
+        public int EffectTypeID { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string Name { get; set; }
+
+        [Required]
+        [StringLength(200)]
+        public string Description { get; set; }
+
+        public bool HasValue { get; set; }
+
+        public double? MinValue { get; set; }
+
+        public double? MaxValue { get; set; }
+
+        public bool IsPlanetBased { get; set; }
+
+        public bool IsOneTimeOnly { get; set; }
+
+        public bool? EffectBalanceSameSide { get; set; }
+
+        public bool? EffectPreventInfluenceSpread { get; set; }
+
+        public bool? EffectPreventDropshipAttack { get; set; }
+
+        public bool? EffectPreventBomberAttack { get; set; }
+
+        public bool? EffectAllowDropshipPass { get; set; }
+
+        public bool? EffectAllowBomberPass { get; set; }
+
+        public bool? EffectGiveMetal { get; set; }
+
+        public bool? EffectGiveDropships { get; set; }
+
+        public bool? EffectGiveBombers { get; set; }
+
+        public bool? EffectGiveEnergy { get; set; }
+
+        public bool? EffectShareTechs { get; set; }
+
+        public bool? EffectGiveWarps { get; set; }
+
+        public bool? EffectPreventIngamePwStructureDestruction { get; set; }
+
+        public bool? EffectGiveInfluence { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TreatyEffect> TreatyEffects { get; set; }
+    }
 }

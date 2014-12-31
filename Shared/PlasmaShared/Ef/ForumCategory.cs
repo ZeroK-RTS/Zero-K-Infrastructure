@@ -1,61 +1,55 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // ForumCategory
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("ForumCategory")]
     public partial class ForumCategory
     {
-        public int ForumCategoryID { get; set; } // ForumCategoryID (Primary key)
-        public string Title { get; set; } // Title
-        public int? ParentForumCategoryID { get; set; } // ParentForumCategoryID
-        public bool IsLocked { get; set; } // IsLocked
-        public bool IsMissions { get; set; } // IsMissions
-        public bool IsMaps { get; set; } // IsMaps
-        public int SortOrder { get; set; } // SortOrder
-        public bool IsSpringBattles { get; set; } // IsSpringBattles
-        public bool IsClans { get; set; } // IsClans
-        public bool IsPlanets { get; set; } // IsPlanets
-        public bool IsNews { get; set; } // IsNews
-
-        // Reverse navigation
-        public virtual ICollection<ForumCategory> ForumCategories { get; set; } // ForumCategory.FK_ForumCategory_ForumCategory
-        public virtual ICollection<ForumLastRead> ForumLastReads { get; set; } // Many to many mapping
-        public virtual ICollection<ForumThread> ForumThreads { get; set; } // ForumThread.FK_ForumThread_ForumCategory
-
-        // Foreign keys
-        public virtual ForumCategory ForumCategory_ParentForumCategoryID { get; set; } // FK_ForumCategory_ForumCategory
-
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public ForumCategory()
         {
-            IsLocked = false;
-            IsMissions = false;
-            IsMaps = false;
-            SortOrder = 0;
-            IsSpringBattles = false;
-            IsClans = false;
-            IsPlanets = false;
-            IsNews = false;
-            ForumCategories = new List<ForumCategory>();
-            ForumLastReads = new List<ForumLastRead>();
-            ForumThreads = new List<ForumThread>();
-            InitializePartial();
+            ForumCategory1 = new HashSet<ForumCategory>();
+            ForumLastReads = new HashSet<ForumLastRead>();
+            ForumThreads = new HashSet<ForumThread>();
         }
-        partial void InitializePartial();
-    }
 
+        public int ForumCategoryID { get; set; }
+
+        [Required]
+        [StringLength(500)]
+        public string Title { get; set; }
+
+        public int? ParentForumCategoryID { get; set; }
+
+        public bool IsLocked { get; set; }
+
+        public bool IsMissions { get; set; }
+
+        public bool IsMaps { get; set; }
+
+        public int SortOrder { get; set; }
+
+        public bool IsSpringBattles { get; set; }
+
+        public bool IsClans { get; set; }
+
+        public bool IsPlanets { get; set; }
+
+        public bool IsNews { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ForumCategory> ForumCategory1 { get; set; }
+
+        public virtual ForumCategory ForumCategory2 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ForumLastRead> ForumLastReads { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ForumThread> ForumThreads { get; set; }
+    }
 }

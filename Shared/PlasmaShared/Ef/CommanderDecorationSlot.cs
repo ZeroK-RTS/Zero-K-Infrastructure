@@ -1,36 +1,24 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // CommanderDecorationSlot
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("CommanderDecorationSlot")]
     public partial class CommanderDecorationSlot
     {
-        public int CommanderDecorationSlotID { get; set; } // CommanderDecorationSlotID (Primary key)
-
-        // Reverse navigation
-        public virtual ICollection<CommanderDecoration> CommanderDecorations { get; set; } // Many to many mapping
-
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public CommanderDecorationSlot()
         {
-            CommanderDecorations = new List<CommanderDecoration>();
-            InitializePartial();
+            CommanderDecorations = new HashSet<CommanderDecoration>();
         }
-        partial void InitializePartial();
-    }
 
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int CommanderDecorationSlotID { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CommanderDecoration> CommanderDecorations { get; set; }
+    }
 }

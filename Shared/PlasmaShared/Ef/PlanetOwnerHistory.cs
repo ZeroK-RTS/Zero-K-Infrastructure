@@ -1,36 +1,36 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // PlanetOwnerHistory
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("PlanetOwnerHistory")]
     public partial class PlanetOwnerHistory
     {
-        public int PlanetID { get; set; } // PlanetID (Primary key)
-        public int Turn { get; set; } // Turn (Primary key)
-        public int? OwnerAccountID { get; set; } // OwnerAccountID
-        public int? OwnerClanID { get; set; } // OwnerClanID
-        public int? OwnerFactionID { get; set; } // OwnerFactionID
+        [Key]
+        [Column(Order = 0)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int PlanetID { get; set; }
 
-        // Foreign keys
-        public virtual Account Account { get; set; } // FK_PlanetOwnerHistory_Account
-        public virtual Clan Clan { get; set; } // FK_PlanetOwnerHistory_Clan
-        public virtual Faction Faction { get; set; } // FK_PlanetOwnerHistory_Faction
-        public virtual Planet Planet { get; set; } // FK_PlanetOwnerHistory_Planet
+        [Key]
+        [Column(Order = 1)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int Turn { get; set; }
+
+        public int? OwnerAccountID { get; set; }
+
+        public int? OwnerClanID { get; set; }
+
+        public int? OwnerFactionID { get; set; }
+
+        public virtual Account Account { get; set; }
+
+        public virtual Clan Clan { get; set; }
+
+        public virtual Faction Faction { get; set; }
+
+        public virtual Planet Planet { get; set; }
     }
-
 }

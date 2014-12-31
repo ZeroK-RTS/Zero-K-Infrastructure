@@ -1,84 +1,104 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // StructureType
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("StructureType")]
     public partial class StructureType
     {
-        public int StructureTypeID { get; set; } // StructureTypeID (Primary key)
-        public string Name { get; set; } // Name
-        public string Description { get; set; } // Description
-        public string IngameUnitName { get; set; } // IngameUnitName
-        public string MapIcon { get; set; } // MapIcon
-        public string DisabledMapIcon { get; set; } // DisabledMapIcon
-        public double? UpkeepEnergy { get; set; } // UpkeepEnergy
-        public int? TurnsToActivate { get; set; } // TurnsToActivate
-        public double? EffectDropshipProduction { get; set; } // EffectDropshipProduction
-        public int? EffectDropshipCapacity { get; set; } // EffectDropshipCapacity
-        public double? EffectBomberProduction { get; set; } // EffectBomberProduction
-        public int? EffectBomberCapacity { get; set; } // EffectBomberCapacity
-        public double? EffectInfluenceSpread { get; set; } // EffectInfluenceSpread
-        public int? EffectUnlockID { get; set; } // EffectUnlockID
-        public double? EffectEnergyPerTurn { get; set; } // EffectEnergyPerTurn
-        public bool? EffectIsVictoryPlanet { get; set; } // EffectIsVictoryPlanet
-        public double? EffectWarpProduction { get; set; } // EffectWarpProduction
-        public bool? EffectAllowShipTraversal { get; set; } // EffectAllowShipTraversal
-        public double? EffectDropshipDefense { get; set; } // EffectDropshipDefense
-        public double? EffectBomberDefense { get; set; } // EffectBomberDefense
-        public string EffectBots { get; set; } // EffectBots
-        public bool? EffectBlocksInfluenceSpread { get; set; } // EffectBlocksInfluenceSpread
-        public bool? EffectBlocksJumpgate { get; set; } // EffectBlocksJumpgate
-        public double? EffectRemoteInfluenceSpread { get; set; } // EffectRemoteInfluenceSpread
-        public bool? EffectCreateLink { get; set; } // EffectCreateLink
-        public bool? EffectChangePlanetMap { get; set; } // EffectChangePlanetMap
-        public bool? EffectPlanetBuster { get; set; } // EffectPlanetBuster
-        public double Cost { get; set; } // Cost
-        public bool IsBuildable { get; set; } // IsBuildable
-        public bool IsIngameDestructible { get; set; } // IsIngameDestructible
-        public bool IsBomberDestructible { get; set; } // IsBomberDestructible
-        public bool OwnerChangeDeletesThis { get; set; } // OwnerChangeDeletesThis
-        public bool OwnerChangeDisablesThis { get; set; } // OwnerChangeDisablesThis
-        public bool BattleDeletesThis { get; set; } // BattleDeletesThis
-        public bool IsSingleUse { get; set; } // IsSingleUse
-        public bool RequiresPlanetTarget { get; set; } // RequiresPlanetTarget
-        public double? EffectReduceBattleInfluenceGain { get; set; } // EffectReduceBattleInfluenceGain
-
-        // Reverse navigation
-        public virtual ICollection<PlanetStructure> PlanetStructures { get; set; } // Many to many mapping
-
-        // Foreign keys
-        public virtual Unlock Unlock { get; set; } // FK_StructureType_Unlock
-
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public StructureType()
         {
-            UpkeepEnergy = 0;
-            IsBuildable = false;
-            IsIngameDestructible = true;
-            IsBomberDestructible = true;
-            OwnerChangeDeletesThis = false;
-            OwnerChangeDisablesThis = true;
-            BattleDeletesThis = false;
-            IsSingleUse = false;
-            RequiresPlanetTarget = false;
-            PlanetStructures = new List<PlanetStructure>();
-            InitializePartial();
+            PlanetStructures = new HashSet<PlanetStructure>();
         }
-        partial void InitializePartial();
-    }
 
+        public int StructureTypeID { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string Name { get; set; }
+
+        [StringLength(250)]
+        public string Description { get; set; }
+
+        [StringLength(50)]
+        public string IngameUnitName { get; set; }
+
+        [StringLength(50)]
+        public string MapIcon { get; set; }
+
+        [StringLength(50)]
+        public string DisabledMapIcon { get; set; }
+
+        public double? UpkeepEnergy { get; set; }
+
+        public int? TurnsToActivate { get; set; }
+
+        public double? EffectDropshipProduction { get; set; }
+
+        public int? EffectDropshipCapacity { get; set; }
+
+        public double? EffectBomberProduction { get; set; }
+
+        public int? EffectBomberCapacity { get; set; }
+
+        public double? EffectInfluenceSpread { get; set; }
+
+        public int? EffectUnlockID { get; set; }
+
+        public double? EffectEnergyPerTurn { get; set; }
+
+        public bool? EffectIsVictoryPlanet { get; set; }
+
+        public double? EffectWarpProduction { get; set; }
+
+        public bool? EffectAllowShipTraversal { get; set; }
+
+        public double? EffectDropshipDefense { get; set; }
+
+        public double? EffectBomberDefense { get; set; }
+
+        [StringLength(100)]
+        public string EffectBots { get; set; }
+
+        public bool? EffectBlocksInfluenceSpread { get; set; }
+
+        public bool? EffectBlocksJumpgate { get; set; }
+
+        public double? EffectRemoteInfluenceSpread { get; set; }
+
+        public bool? EffectCreateLink { get; set; }
+
+        public bool? EffectChangePlanetMap { get; set; }
+
+        public bool? EffectPlanetBuster { get; set; }
+
+        public double Cost { get; set; }
+
+        public bool IsBuildable { get; set; }
+
+        public bool IsIngameDestructible { get; set; }
+
+        public bool IsBomberDestructible { get; set; }
+
+        public bool OwnerChangeDeletesThis { get; set; }
+
+        public bool OwnerChangeDisablesThis { get; set; }
+
+        public bool BattleDeletesThis { get; set; }
+
+        public bool IsSingleUse { get; set; }
+
+        public bool RequiresPlanetTarget { get; set; }
+
+        public double? EffectReduceBattleInfluenceGain { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PlanetStructure> PlanetStructures { get; set; }
+
+        public virtual Unlock Unlock { get; set; }
+    }
 }

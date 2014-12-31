@@ -1,32 +1,36 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // CampaignJournalVar
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("CampaignJournalVar")]
     public partial class CampaignJournalVar
     {
-        public int CampaignID { get; set; } // CampaignID (Primary key)
-        public int JournalID { get; set; } // JournalID (Primary key)
-        public int RequiredVarID { get; set; } // RequiredVarID (Primary key)
-        public string RequiredValue { get; set; } // RequiredValue
+        [Key]
+        [Column(Order = 0)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int CampaignID { get; set; }
 
-        // Foreign keys
-        public virtual CampaignVar CampaignVar { get; set; } // FK_CampaignJournalVar_CampaignVar
+        [Key]
+        [Column(Order = 1)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int JournalID { get; set; }
+
+        [Key]
+        [Column(Order = 2)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int RequiredVarID { get; set; }
+
+        [Required]
+        public string RequiredValue { get; set; }
+
+        public virtual Campaign Campaign { get; set; }
+
+        public virtual CampaignJournal CampaignJournal { get; set; }
+
+        public virtual CampaignVar CampaignVar { get; set; }
     }
-
 }

@@ -1,51 +1,47 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // FactionTreaty
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("FactionTreaty")]
     public partial class FactionTreaty
     {
-        public int FactionTreatyID { get; set; } // FactionTreatyID (Primary key)
-        public int ProposingFactionID { get; set; } // ProposingFactionID
-        public int ProposingAccountID { get; set; } // ProposingAccountID
-        public int AcceptingFactionID { get; set; } // AcceptingFactionID
-        public int? AcceptedAccountID { get; set; } // AcceptedAccountID
-        public int? TurnsRemaining { get; set; } // TurnsRemaining
-        public TreatyState TreatyState { get; set; } // TreatyState
-        public int? TurnsTotal { get; set; } // TurnsTotal
-        public string TreatyNote { get; set; } // TreatyNote
-
-        // Reverse navigation
-        public virtual ICollection<TreatyEffect> TreatyEffects { get; set; } // TreatyEffect.FK_TreatyEffect_FactionTreaty
-
-        // Foreign keys
-        public virtual Account AccountByAcceptedAccountID { get; set; } // FK_FactionTreaty_Account1
-        public virtual Account AccountByProposingAccountID { get; set; } // FK_FactionTreaty_Account
-        public virtual Faction FactionByAcceptingFactionID { get; set; } // FK_FactionTreaty_Faction1
-        public virtual Faction FactionByProposingFactionID { get; set; } // FK_FactionTreaty_Faction
-
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public FactionTreaty()
         {
-            TreatyState = 0;
-            TreatyEffects = new List<TreatyEffect>();
-            InitializePartial();
+            TreatyEffects = new HashSet<TreatyEffect>();
         }
-        partial void InitializePartial();
-    }
 
+        public int FactionTreatyID { get; set; }
+
+        public int ProposingFactionID { get; set; }
+
+        public int ProposingAccountID { get; set; }
+
+        public int AcceptingFactionID { get; set; }
+
+        public int? AcceptedAccountID { get; set; }
+
+        public int? TurnsRemaining { get; set; }
+
+        public int TreatyState { get; set; }
+
+        public int? TurnsTotal { get; set; }
+
+        public string TreatyNote { get; set; }
+
+        public virtual Account Account { get; set; }
+
+        public virtual Account Account1 { get; set; }
+
+        public virtual Faction Faction { get; set; }
+
+        public virtual Faction Faction1 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TreatyEffect> TreatyEffects { get; set; }
+    }
 }

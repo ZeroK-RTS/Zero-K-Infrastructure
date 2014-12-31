@@ -1,33 +1,35 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // AccountCampaignJournalProgress
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("AccountCampaignJournalProgress")]
     public partial class AccountCampaignJournalProgress
     {
-        public int AccountID { get; set; } // AccountID (Primary key)
-        public int CampaignID { get; set; } // CampaignID (Primary key)
-        public int JournalID { get; set; } // JournalID (Primary key)
-        public bool IsUnlocked { get; set; } // IsUnlocked
+        [Key]
+        [Column(Order = 0)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int AccountID { get; set; }
 
-        // Foreign keys
-        public virtual Account Account { get; set; } // FK_AccountCampaignJournalProgress_Account
-        public virtual CampaignJournal CampaignJournal { get; set; } // FK_AccountCampaignJournalProgress_CampaignJournal
+        [Key]
+        [Column(Order = 1)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int CampaignID { get; set; }
+
+        [Key]
+        [Column(Order = 2)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int JournalID { get; set; }
+
+        public bool IsUnlocked { get; set; }
+
+        public virtual Account Account { get; set; }
+
+        public virtual Campaign Campaign { get; set; }
+
+        public virtual CampaignJournal CampaignJournal { get; set; }
     }
-
 }

@@ -163,491 +163,85 @@
     <Compile Include="Diagrams\Diagram.cs" />
     <Compile Include="Diagrams\Node.cs" />
     <Compile Include="Diagrams\Vector.cs" />
-    <Compile Include="Ef\AbuseReport.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AbuseReportMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\Account.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AccountBattleAward.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AccountBattleAwardMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AccountCampaignJournalProgress.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AccountCampaignJournalProgressMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AccountCampaignProgress.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AccountCampaignProgressMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AccountCampaignVar.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AccountCampaignVarMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AccountForumVote.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AccountForumVoteMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AccountIP.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AccountIPMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AccountMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AccountPlanet.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AccountPlanetMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AccountRatingVote.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AccountRatingVoteMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AccountRole.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AccountRoleMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AccountUnlock.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AccountUnlockMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AccountUserID.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AccountUserIDMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AutoBanSmurfList.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AutoBanSmurfListMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AutohostConfig.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AutohostConfigMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\Avatar.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\AvatarMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\BlockedCompany.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\BlockedCompanyMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\BlockedHost.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\BlockedHostMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\Campaign.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CampaignEvent.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CampaignEventMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CampaignJournal.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CampaignJournalMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CampaignJournalVar.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CampaignJournalVarMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CampaignLink.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CampaignLinkMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CampaignMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CampaignPlanet.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CampaignPlanetMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CampaignPlanetVar.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CampaignPlanetVarMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CampaignVar.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CampaignVarMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\Clan.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ClanMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\Commander.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CommanderDecoration.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CommanderDecorationIcon.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CommanderDecorationIconMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CommanderDecorationMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CommanderDecorationSlot.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CommanderDecorationSlotMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CommanderMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CommanderModule.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CommanderModuleMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CommanderSlot.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\CommanderSlotMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\Contribution.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ContributionJar.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ContributionJarMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ContributionMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\Event.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\EventMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ExceptionLog.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ExceptionLogMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\Faction.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\FactionMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\FactionTreaty.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\FactionTreatyMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\FakeDbSet.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\FakeZkDataContext.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ForumCategory.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ForumCategoryMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ForumLastRead.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ForumLastReadMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ForumPost.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ForumPostEdit.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ForumPostEditMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ForumPostMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ForumThread.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ForumThreadLastRead.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ForumThreadLastReadMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ForumThreadMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\Galaxy.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\GalaxyMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\IZkDataContext.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\KudosPurchase.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\KudosPurchaseMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\Link.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\LinkMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\LobbyChannelSubscription.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\LobbyChannelSubscriptionMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\LobbyMessage.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\LobbyMessageMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\MapRating.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\MapRatingMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\MarketOffer.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\MarketOfferMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\MiscVar.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\MiscVarMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\Mission.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\MissionMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\MissionScore.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\MissionScoreMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\News.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\NewsMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\Planet.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\PlanetFaction.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\PlanetFactionMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\PlanetMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\PlanetOwnerHistory.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\PlanetOwnerHistoryMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\PlanetStructure.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\PlanetStructureMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\Poll.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\PollMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\PollOption.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\PollOptionMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\PollVote.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\PollVoteMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\Punishment.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\PunishmentMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\Rating.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\RatingMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\RatingPoll.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\RatingPollMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\Resource.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ResourceContentFile.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ResourceContentFileMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ResourceDependency.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ResourceDependencyMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ResourceMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ResourceSpringHash.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ResourceSpringHashMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\RoleType.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\RoleTypeHierarchy.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\RoleTypeHierarchyMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\RoleTypeMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\SpringBattle.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\SpringBattleMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\SpringBattlePlayer.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\SpringBattlePlayerMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\StructureType.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\StructureTypeMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\TreatyEffect.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\TreatyEffectMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\TreatyEffectType.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\TreatyEffectTypeMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\Unlock.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\UnlockMapping.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ZkDataContext.cs">
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Ef\ZkEf.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ZkEf.tt</DependentUpon>
-    </Compile>
+    <Compile Include="Ef\AbuseReport.cs" />
+    <Compile Include="Ef\Account.cs" />
+    <Compile Include="Ef\AccountBattleAward.cs" />
+    <Compile Include="Ef\AccountCampaignJournalProgress.cs" />
+    <Compile Include="Ef\AccountCampaignProgress.cs" />
+    <Compile Include="Ef\AccountCampaignVar.cs" />
+    <Compile Include="Ef\AccountForumVote.cs" />
+    <Compile Include="Ef\AccountIP.cs" />
+    <Compile Include="Ef\AccountPlanet.cs" />
+    <Compile Include="Ef\AccountRatingVote.cs" />
+    <Compile Include="Ef\AccountRole.cs" />
+    <Compile Include="Ef\AccountUnlock.cs" />
+    <Compile Include="Ef\AccountUserID.cs" />
+    <Compile Include="Ef\AutoBanSmurfList.cs" />
+    <Compile Include="Ef\AutohostConfig.cs" />
+    <Compile Include="Ef\Avatar.cs" />
+    <Compile Include="Ef\BlockedCompany.cs" />
+    <Compile Include="Ef\BlockedHost.cs" />
+    <Compile Include="Ef\Campaign.cs" />
+    <Compile Include="Ef\CampaignEvent.cs" />
+    <Compile Include="Ef\CampaignJournal.cs" />
+    <Compile Include="Ef\CampaignJournalVar.cs" />
+    <Compile Include="Ef\CampaignLink.cs" />
+    <Compile Include="Ef\CampaignPlanet.cs" />
+    <Compile Include="Ef\CampaignPlanetVar.cs" />
+    <Compile Include="Ef\CampaignVar.cs" />
+    <Compile Include="Ef\Clan.cs" />
+    <Compile Include="Ef\Commander.cs" />
+    <Compile Include="Ef\CommanderDecoration.cs" />
+    <Compile Include="Ef\CommanderDecorationIcon.cs" />
+    <Compile Include="Ef\CommanderDecorationSlot.cs" />
+    <Compile Include="Ef\CommanderModule.cs" />
+    <Compile Include="Ef\CommanderSlot.cs" />
+    <Compile Include="Ef\Contribution.cs" />
+    <Compile Include="Ef\ContributionJar.cs" />
+    <Compile Include="Ef\Event.cs" />
+    <Compile Include="Ef\ExceptionLog.cs" />
+    <Compile Include="Ef\Faction.cs" />
+    <Compile Include="Ef\FactionTreaty.cs" />
+    <Compile Include="Ef\ForumCategory.cs" />
+    <Compile Include="Ef\ForumLastRead.cs" />
+    <Compile Include="Ef\ForumPost.cs" />
+    <Compile Include="Ef\ForumPostEdit.cs" />
+    <Compile Include="Ef\ForumThread.cs" />
+    <Compile Include="Ef\ForumThreadLastRead.cs" />
+    <Compile Include="Ef\Galaxy.cs" />
+    <Compile Include="Ef\KudosPurchase.cs" />
+    <Compile Include="Ef\Link.cs" />
+    <Compile Include="Ef\LobbyChannelSubscription.cs" />
+    <Compile Include="Ef\LobbyMessage.cs" />
+    <Compile Include="Ef\MapRating.cs" />
+    <Compile Include="Ef\MarketOffer.cs" />
+    <Compile Include="Ef\MiscVar.cs" />
+    <Compile Include="Ef\Mission.cs" />
+    <Compile Include="Ef\MissionScore.cs" />
+    <Compile Include="Ef\News.cs" />
+    <Compile Include="Ef\Planet.cs" />
+    <Compile Include="Ef\PlanetFaction.cs" />
+    <Compile Include="Ef\PlanetOwnerHistory.cs" />
+    <Compile Include="Ef\PlanetStructure.cs" />
+    <Compile Include="Ef\Poll.cs" />
+    <Compile Include="Ef\PollOption.cs" />
+    <Compile Include="Ef\PollVote.cs" />
+    <Compile Include="Ef\Punishment.cs" />
+    <Compile Include="Ef\Rating.cs" />
+    <Compile Include="Ef\RatingPoll.cs" />
+    <Compile Include="Ef\Resource.cs" />
+    <Compile Include="Ef\ResourceContentFile.cs" />
+    <Compile Include="Ef\ResourceDependency.cs" />
+    <Compile Include="Ef\ResourceSpringHash.cs" />
+    <Compile Include="Ef\RoleType.cs" />
+    <Compile Include="Ef\RoleTypeHierarchy.cs" />
+    <Compile Include="Ef\SpringBattle.cs" />
+    <Compile Include="Ef\SpringBattlePlayer.cs" />
+    <Compile Include="Ef\StructureType.cs" />
+    <Compile Include="Ef\TreatyEffect.cs" />
+    <Compile Include="Ef\TreatyEffectType.cs" />
+    <Compile Include="Ef\Unlock.cs" />
+    <Compile Include="Ef\ZkDataContext.cs" />
     <Compile Include="EmbeddedResourceExtractor.cs" />
     <Compile Include="EventArgs.cs" />
     <Compile Include="EventExtensions.cs" />
@@ -657,9 +251,9 @@
     <Compile Include="IResourceInfo.cs" />
     <Compile Include="LuaTable.cs" />
     <Compile Include="MetaDataCache.cs" />
-    <Compile Include="Migrations\201412272329222_Init.cs" />
-    <Compile Include="Migrations\201412272329222_Init.Designer.cs">
-      <DependentUpon>201412272329222_Init.cs</DependentUpon>
+    <Compile Include="Migrations\201412272337076_Init.cs" />
+    <Compile Include="Migrations\201412272337076_Init.Designer.cs">
+      <DependentUpon>201412272337076_Init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MissionUpdater.cs" />
@@ -753,12 +347,6 @@
   <ItemGroup>
     <None Include="app.config">
       <SubType>Designer</SubType>
-    </None>
-    <None Include="Ef\EF.Reverse.POCO.Core.ttinclude" />
-    <None Include="Ef\EF.Reverse.POCO.ttinclude" />
-    <None Include="Ef\ZkEf.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ZkEf.cs</LastGenOutput>
     </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -889,8 +477,8 @@
     <None Include="Web References\ModStats\StatsCollector.disco" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201412272329222_Init.resx">
-      <DependentUpon>201412272329222_Init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201412272337076_Init.resx">
+      <DependentUpon>201412272337076_Init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

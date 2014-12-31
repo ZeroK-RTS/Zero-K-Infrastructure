@@ -1,39 +1,27 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // CommanderSlot
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("CommanderSlot")]
     public partial class CommanderSlot
     {
-        public int CommanderSlotID { get; set; } // CommanderSlotID (Primary key)
-        public int MorphLevel { get; set; } // MorphLevel
-        public UnlockTypes UnlockType { get; set; } // UnlockType
-
-        // Reverse navigation
-        public virtual ICollection<CommanderModule> CommanderModules { get; set; } // Many to many mapping
-
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public CommanderSlot()
         {
-            MorphLevel = 1;
-            CommanderModules = new List<CommanderModule>();
-            InitializePartial();
+            CommanderModules = new HashSet<CommanderModule>();
         }
-        partial void InitializePartial();
-    }
 
+        public int CommanderSlotID { get; set; }
+
+        public int MorphLevel { get; set; }
+
+        public int UnlockType { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CommanderModule> CommanderModules { get; set; }
+    }
 }

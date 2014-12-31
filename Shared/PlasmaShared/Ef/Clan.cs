@@ -1,61 +1,62 @@
-using System.ComponentModel.DataAnnotations;
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // Clan
-    public partial class Clan:IValidatableObject
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("Clan")]
+    public partial class Clan
     {
-        public int ClanID { get; set; } // ClanID (Primary key)
-        public string ClanName { get; set; } // ClanName
-        public string Description { get; set; } // Description
-        public string Password { get; set; } // Password
-        public string SecretTopic { get; set; } // SecretTopic
-        public string Shortcut { get; set; } // Shortcut
-        public int? ForumThreadID { get; set; } // ForumThreadID
-        public bool IsDeleted { get; set; } // IsDeleted
-        public int? FactionID { get; set; } // FactionID
-
-        // Reverse navigation
-        public virtual ICollection<AccountRole> AccountRoles { get; set; } // AccountRole.FK_AccountRole_Clan
-        public virtual ICollection<Event> Events { get; set; } // Many to many mapping
-        public virtual ICollection<ForumThread> ForumThreads { get; set; } // ForumThread.FK_ForumThread_Clan
-        public virtual ICollection<PlanetOwnerHistory> PlanetOwnerHistories { get; set; } // PlanetOwnerHistory.FK_PlanetOwnerHistory_Clan
-        public virtual ICollection<Account> Accounts { get; set; } 
-
-        // Foreign keys
-        public virtual Faction Faction { get; set; } // FK_Clan_Faction
-        public virtual ForumThread ForumThread { get; set; } // FK_Clan_ForumThread
-
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Clan()
         {
-            IsDeleted = false;
-            FactionID = 6;
-            AccountRoles = new List<AccountRole>();
-            ForumThreads = new List<ForumThread>();
-            PlanetOwnerHistories = new List<PlanetOwnerHistory>();
-            Events = new List<Event>();
-            Accounts = new List<Account>();
-            InitializePartial();
+            AccountRoles = new HashSet<AccountRole>();
+            ForumThreads = new HashSet<ForumThread>();
+            PlanetOwnerHistories = new HashSet<PlanetOwnerHistory>();
+            Events = new HashSet<Event>();
         }
-        partial void InitializePartial();
-        
-        
-        
-    }
 
+        public int ClanID { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string ClanName { get; set; }
+
+        [StringLength(500)]
+        public string Description { get; set; }
+
+        [StringLength(20)]
+        public string Password { get; set; }
+
+        [StringLength(500)]
+        public string SecretTopic { get; set; }
+
+        [Required]
+        [StringLength(6)]
+        public string Shortcut { get; set; }
+
+        public int? ForumThreadID { get; set; }
+
+        public bool IsDeleted { get; set; }
+
+        public int? FactionID { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AccountRole> AccountRoles { get; set; }
+
+        public virtual Faction Faction { get; set; }
+
+        public virtual ForumThread ForumThread { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ForumThread> ForumThreads { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PlanetOwnerHistory> PlanetOwnerHistories { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Event> Events { get; set; }
+    }
 }

@@ -1,41 +1,30 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // RoleTypeHierarchy
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("RoleTypeHierarchy")]
     public partial class RoleTypeHierarchy
     {
-        public int MasterRoleTypeID { get; set; } // MasterRoleTypeID (Primary key)
-        public int SlaveRoleTypeID { get; set; } // SlaveRoleTypeID (Primary key)
-        public bool CanAppoint { get; set; } // CanAppoint
-        public bool CanRecall { get; set; } // CanRecall
+        [Key]
+        [Column(Order = 0)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int MasterRoleTypeID { get; set; }
 
-        // Foreign keys
-        public virtual RoleType RoleType_MasterRoleTypeID { get; set; } // FK_RoleTypeHierarchy_RoleType
-        public virtual RoleType RoleTypeBySlaveRoleTypeID { get; set; } // FK_RoleTypeHierarchy_RoleType1
+        [Key]
+        [Column(Order = 1)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int SlaveRoleTypeID { get; set; }
 
-        public RoleTypeHierarchy()
-        {
-            CanAppoint = true;
-            CanRecall = true;
-            InitializePartial();
-        }
-        partial void InitializePartial();
+        public bool CanAppoint { get; set; }
+
+        public bool CanRecall { get; set; }
+
+        public virtual RoleType RoleType { get; set; }
+
+        public virtual RoleType RoleType1 { get; set; }
     }
-
 }

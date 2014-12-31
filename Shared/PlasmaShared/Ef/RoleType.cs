@@ -1,74 +1,73 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // RoleType
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("RoleType")]
     public partial class RoleType
     {
-        public int RoleTypeID { get; set; } // RoleTypeID (Primary key)
-        public string Name { get; set; } // Name
-        public string Description { get; set; } // Description
-        public bool IsClanOnly { get; set; } // IsClanOnly
-        public bool IsOnePersonOnly { get; set; } // IsOnePersonOnly
-        public int? RestrictFactionID { get; set; } // RestrictFactionID
-        public bool IsVoteable { get; set; } // IsVoteable
-        public int PollDurationDays { get; set; } // PollDurationDays
-        public double RightDropshipQuota { get; set; } // RightDropshipQuota
-        public double RightBomberQuota { get; set; } // RightBomberQuota
-        public double RightMetalQuota { get; set; } // RightMetalQuota
-        public double RightWarpQuota { get; set; } // RightWarpQuota
-        public bool RightDiplomacy { get; set; } // RightDiplomacy
-        public bool RightEditTexts { get; set; } // RightEditTexts
-        public bool RightSetEnergyPriority { get; set; } // RightSetEnergyPriority
-        public bool RightKickPeople { get; set; } // RightKickPeople
-        public int DisplayOrder { get; set; } // DisplayOrder
-
-        // Reverse navigation
-        public virtual ICollection<AccountRole> AccountRoles { get; set; } // Many to many mapping
-        public virtual ICollection<Poll> Polls { get; set; } // Poll.FK_Poll_RoleType
-        public virtual ICollection<RoleTypeHierarchy> RoleTypeHierarchiesByMasterRoleTypeID { get; set; } // Many to many mapping
-        public virtual ICollection<RoleTypeHierarchy> RoleTypeHierarchies_SlaveRoleTypeID { get; set; } // Many to many mapping
-
-        // Foreign keys
-        public virtual Faction Faction { get; set; } // FK_RoleType_Faction
-
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public RoleType()
         {
-            IsClanOnly = false;
-            IsOnePersonOnly = false;
-            IsVoteable = true;
-            PollDurationDays = 1;
-            RightDropshipQuota = 0;
-            RightBomberQuota = 0;
-            RightMetalQuota = 0;
-            RightWarpQuota = 0;
-            RightDiplomacy = false;
-            RightEditTexts = false;
-            RightSetEnergyPriority = false;
-            RightKickPeople = false;
-            DisplayOrder = 0;
-            AccountRoles = new List<AccountRole>();
-            Polls = new List<Poll>();
-            RoleTypeHierarchiesByMasterRoleTypeID = new List<RoleTypeHierarchy>();
-            RoleTypeHierarchies_SlaveRoleTypeID = new List<RoleTypeHierarchy>();
-            InitializePartial();
+            AccountRoles = new HashSet<AccountRole>();
+            Polls = new HashSet<Poll>();
+            RoleTypeHierarchies = new HashSet<RoleTypeHierarchy>();
+            RoleTypeHierarchies1 = new HashSet<RoleTypeHierarchy>();
         }
-        partial void InitializePartial();
-    }
 
+        public int RoleTypeID { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string Name { get; set; }
+
+        [Required]
+        [StringLength(500)]
+        public string Description { get; set; }
+
+        public bool IsClanOnly { get; set; }
+
+        public bool IsOnePersonOnly { get; set; }
+
+        public int? RestrictFactionID { get; set; }
+
+        public bool IsVoteable { get; set; }
+
+        public int PollDurationDays { get; set; }
+
+        public double RightDropshipQuota { get; set; }
+
+        public double RightBomberQuota { get; set; }
+
+        public double RightMetalQuota { get; set; }
+
+        public double RightWarpQuota { get; set; }
+
+        public bool RightDiplomacy { get; set; }
+
+        public bool RightEditTexts { get; set; }
+
+        public bool RightSetEnergyPriority { get; set; }
+
+        public bool RightKickPeople { get; set; }
+
+        public int DisplayOrder { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AccountRole> AccountRoles { get; set; }
+
+        public virtual Faction Faction { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Poll> Polls { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<RoleTypeHierarchy> RoleTypeHierarchies { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<RoleTypeHierarchy> RoleTypeHierarchies1 { get; set; }
+    }
 }

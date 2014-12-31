@@ -1,39 +1,36 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // TreatyEffect
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("TreatyEffect")]
     public partial class TreatyEffect
     {
-        public int TreatyEffectID { get; set; } // TreatyEffectID (Primary key)
-        public int FactionTreatyID { get; set; } // FactionTreatyID
-        public int EffectTypeID { get; set; } // EffectTypeID
-        public int GivingFactionID { get; set; } // GivingFactionID
-        public int ReceivingFactionID { get; set; } // ReceivingFactionID
-        public double? Value { get; set; } // Value
-        public int? PlanetID { get; set; } // PlanetID
+        public int TreatyEffectID { get; set; }
 
-        // Foreign keys
-        public virtual Faction FactionByGivingFactionID { get; set; } // FK_TreatyEffect_Faction
-        public virtual Faction FactionByReceivingFactionID { get; set; } // FK_TreatyEffect_Faction1
-        public virtual FactionTreaty FactionTreaty { get; set; } // FK_TreatyEffect_FactionTreaty
-        public virtual Planet Planet { get; set; } // FK_TreatyEffect_Planet
-        public virtual TreatyEffectType TreatyEffectType { get; set; } // FK_TreatyEffect_EffectType
+        public int FactionTreatyID { get; set; }
+
+        public int EffectTypeID { get; set; }
+
+        public int GivingFactionID { get; set; }
+
+        public int ReceivingFactionID { get; set; }
+
+        public double? Value { get; set; }
+
+        public int? PlanetID { get; set; }
+
+        public virtual Faction Faction { get; set; }
+
+        public virtual Faction Faction1 { get; set; }
+
+        public virtual FactionTreaty FactionTreaty { get; set; }
+
+        public virtual Planet Planet { get; set; }
+
+        public virtual TreatyEffectType TreatyEffectType { get; set; }
     }
-
 }

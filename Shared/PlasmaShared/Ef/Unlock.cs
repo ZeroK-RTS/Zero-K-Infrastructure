@@ -1,74 +1,90 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // Unlock
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("Unlock")]
     public partial class Unlock
     {
-        public int UnlockID { get; set; } // UnlockID (Primary key)
-        public string Code { get; set; } // Code
-        public string Name { get; set; } // Name
-        public string Description { get; set; } // Description
-        public int NeededLevel { get; set; } // NeededLevel
-        public string LimitForChassis { get; set; } // LimitForChassis
-        public UnlockTypes UnlockType { get; set; } // UnlockType
-        public int? RequiredUnlockID { get; set; } // RequiredUnlockID
-        public int MorphLevel { get; set; } // MorphLevel
-        public int MaxModuleCount { get; set; } // MaxModuleCount
-        public int? MetalCost { get; set; } // MetalCost
-        public int XpCost { get; set; } // XpCost
-        public int? MetalCostMorph2 { get; set; } // MetalCostMorph2
-        public int? MetalCostMorph3 { get; set; } // MetalCostMorph3
-        public int? MetalCostMorph4 { get; set; } // MetalCostMorph4
-        public int? MetalCostMorph5 { get; set; } // MetalCostMorph5
-        public int? KudosCost { get; set; } // KudosCost
-        public bool? IsKudosOnly { get; set; } // IsKudosOnly
-
-        // Reverse navigation
-        public virtual CommanderDecorationIcon CommanderDecorationIcon { get; set; } // CommanderDecorationIcon.FK_CommanderDecorationIcon_Unlock
-        public virtual ICollection<AccountUnlock> AccountUnlocks { get; set; } // Many to many mapping
-        public virtual ICollection<Commander> Commanders { get; set; } // Commander.FK_Commander_Unlock
-        public virtual ICollection<CommanderDecoration> CommanderDecorations { get; set; } // CommanderDecoration.FK_CommanderDecoration_Unlock
-        public virtual ICollection<CommanderModule> CommanderModules { get; set; } // CommanderModule.FK_CommanderModule_Unlock
-        public virtual ICollection<KudosPurchase> KudosPurchases { get; set; } // KudosPurchase.FK_KudosChange_Unlock
-        public virtual ICollection<StructureType> StructureTypes { get; set; } // StructureType.FK_StructureType_Unlock
-        public virtual ICollection<Unlock> Unlocks { get; set; } // Unlock.FK_Unlock_Unlock
-
-        // Foreign keys
-        public virtual Unlock ParentUnlock { get; set; } // FK_Unlock_Unlock
-
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Unlock()
         {
-            NeededLevel = 0;
-            UnlockType = 0;
-            MorphLevel = 0;
-            MaxModuleCount = 1;
-            XpCost = 200;
-            AccountUnlocks = new List<AccountUnlock>();
-            Commanders = new List<Commander>();
-            CommanderDecorations = new List<CommanderDecoration>();
-            CommanderModules = new List<CommanderModule>();
-            KudosPurchases = new List<KudosPurchase>();
-            StructureTypes = new List<StructureType>();
-            Unlocks = new List<Unlock>();
-            InitializePartial();
+            AccountUnlocks = new HashSet<AccountUnlock>();
+            Commanders = new HashSet<Commander>();
+            CommanderDecorations = new HashSet<CommanderDecoration>();
+            CommanderModules = new HashSet<CommanderModule>();
+            KudosPurchases = new HashSet<KudosPurchase>();
+            StructureTypes = new HashSet<StructureType>();
+            Unlock1 = new HashSet<Unlock>();
         }
-        partial void InitializePartial();
-    }
 
+        public int UnlockID { get; set; }
+
+        [Required]
+        [StringLength(100)]
+        public string Code { get; set; }
+
+        [StringLength(200)]
+        public string Name { get; set; }
+
+        [StringLength(1000)]
+        public string Description { get; set; }
+
+        public int NeededLevel { get; set; }
+
+        [StringLength(500)]
+        public string LimitForChassis { get; set; }
+
+        public int UnlockType { get; set; }
+
+        public int? RequiredUnlockID { get; set; }
+
+        public int MorphLevel { get; set; }
+
+        public int MaxModuleCount { get; set; }
+
+        public int? MetalCost { get; set; }
+
+        public int XpCost { get; set; }
+
+        public int? MetalCostMorph2 { get; set; }
+
+        public int? MetalCostMorph3 { get; set; }
+
+        public int? MetalCostMorph4 { get; set; }
+
+        public int? MetalCostMorph5 { get; set; }
+
+        public int? KudosCost { get; set; }
+
+        public bool? IsKudosOnly { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AccountUnlock> AccountUnlocks { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Commander> Commanders { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CommanderDecoration> CommanderDecorations { get; set; }
+
+        public virtual CommanderDecorationIcon CommanderDecorationIcon { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CommanderModule> CommanderModules { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<KudosPurchase> KudosPurchases { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StructureType> StructureTypes { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Unlock> Unlock1 { get; set; }
+
+        public virtual Unlock Unlock2 { get; set; }
+    }
 }

@@ -1,4 +1,4 @@
-namespace PlasmaShared.Migrations
+namespace ZkData.Migrations
 {
     using System;
     using System.Data.Entity.Migrations;
@@ -18,7 +18,7 @@ namespace PlasmaShared.Migrations
                         Text = c.String(nullable: false),
                     })
                 .PrimaryKey(t => t.AbuseReportID)
-                .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
+                .ForeignKey("dbo.Account", t => t.AccountID)
                 .ForeignKey("dbo.Account", t => t.ReporterAccountID)
                 .Index(t => t.AccountID)
                 .Index(t => t.ReporterAccountID);
@@ -32,7 +32,7 @@ namespace PlasmaShared.Migrations
                         Email = c.String(),
                         FirstLogin = c.DateTime(nullable: false),
                         LastLogin = c.DateTime(nullable: false),
-                        Aliases = c.String(),
+                        Aliases = c.String(unicode: false),
                         Elo = c.Double(nullable: false),
                         EloWeight = c.Double(nullable: false),
                         Elo1v1 = c.Double(nullable: false),
@@ -45,7 +45,7 @@ namespace PlasmaShared.Migrations
                         LobbyTimeRank = c.Int(nullable: false),
                         MissionRunCount = c.Int(nullable: false),
                         IsZeroKAdmin = c.Boolean(nullable: false),
-                        XP = c.Int(nullable: false),
+                        Xp = c.Int(nullable: false),
                         Level = c.Int(nullable: false),
                         ClanID = c.Int(),
                         LastNewsRead = c.DateTime(),
@@ -71,13 +71,11 @@ namespace PlasmaShared.Migrations
                         ForumTotalUpvotes = c.Int(nullable: false),
                         ForumTotalDownvotes = c.Int(nullable: false),
                         VotesAvailable = c.Int(),
-                        SteamID = c.Decimal(precision: 18, scale: 2),
+                        SteamID = c.Decimal(precision: 38, scale: 0),
                         SteamName = c.String(maxLength: 200),
                     })
                 .PrimaryKey(t => t.AccountID)
-                .ForeignKey("dbo.Clan", t => t.ClanID)
                 .ForeignKey("dbo.Faction", t => t.FactionID)
-                .Index(t => t.ClanID)
                 .Index(t => t.FactionID);
             
             CreateTable(
@@ -91,8 +89,8 @@ namespace PlasmaShared.Migrations
                         Value = c.Double(),
                     })
                 .PrimaryKey(t => new { t.AccountID, t.SpringBattleID, t.AwardKey })
-                .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
                 .ForeignKey("dbo.SpringBattle", t => t.SpringBattleID, cascadeDelete: true)
+                .ForeignKey("dbo.Account", t => t.AccountID)
                 .Index(t => t.AccountID)
                 .Index(t => t.SpringBattleID);
             
@@ -122,13 +120,11 @@ namespace PlasmaShared.Migrations
                         RatingPollID = c.Int(),
                     })
                 .PrimaryKey(t => t.SpringBattleID)
-                .ForeignKey("dbo.Account", t => t.HostAccountID)
-                .ForeignKey("dbo.Resource", t => t.MapResourceID)
                 .ForeignKey("dbo.Resource", t => t.ModResourceID)
-                .ForeignKey("dbo.ForumThread", t => t.ForumThreadID)
                 .ForeignKey("dbo.RatingPoll", t => t.RatingPollID)
+                .ForeignKey("dbo.ForumThread", t => t.ForumThreadID)
+                .ForeignKey("dbo.Account", t => t.HostAccountID)
                 .Index(t => t.HostAccountID)
-                .Index(t => t.MapResourceID)
                 .Index(t => t.ModResourceID)
                 .Index(t => t.ForumThreadID)
                 .Index(t => t.RatingPollID);
@@ -176,10 +172,10 @@ namespace PlasmaShared.Migrations
                         ClanID = c.Int(),
                     })
                 .PrimaryKey(t => new { t.AccountID, t.RoleTypeID })
-                .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
-                .ForeignKey("dbo.Clan", t => t.ClanID)
                 .ForeignKey("dbo.Faction", t => t.FactionID)
                 .ForeignKey("dbo.RoleType", t => t.RoleTypeID, cascadeDelete: true)
+                .ForeignKey("dbo.Clan", t => t.ClanID, cascadeDelete: true)
+                .ForeignKey("dbo.Account", t => t.AccountID)
                 .Index(t => t.AccountID)
                 .Index(t => t.RoleTypeID)
                 .Index(t => t.FactionID)
@@ -219,10 +215,10 @@ namespace PlasmaShared.Migrations
                         TreatyNote = c.String(),
                     })
                 .PrimaryKey(t => t.FactionTreatyID)
-                .ForeignKey("dbo.Account", t => t.AcceptedAccountID)
-                .ForeignKey("dbo.Account", t => t.ProposingAccountID)
+                .ForeignKey("dbo.Faction", t => t.ProposingFactionID)
                 .ForeignKey("dbo.Faction", t => t.AcceptingFactionID)
-                .ForeignKey("dbo.Faction", t => t.ProposingFactionID, cascadeDelete: true)
+                .ForeignKey("dbo.Account", t => t.ProposingAccountID)
+                .ForeignKey("dbo.Account", t => t.AcceptedAccountID)
                 .Index(t => t.ProposingFactionID)
                 .Index(t => t.ProposingAccountID)
                 .Index(t => t.AcceptingFactionID)
@@ -241,11 +237,11 @@ namespace PlasmaShared.Migrations
                         PlanetID = c.Int(),
                     })
                 .PrimaryKey(t => t.TreatyEffectID)
-                .ForeignKey("dbo.Faction", t => t.GivingFactionID)
-                .ForeignKey("dbo.Faction", t => t.ReceivingFactionID)
                 .ForeignKey("dbo.FactionTreaty", t => t.FactionTreatyID, cascadeDelete: true)
                 .ForeignKey("dbo.Planet", t => t.PlanetID)
                 .ForeignKey("dbo.TreatyEffectType", t => t.EffectTypeID)
+                .ForeignKey("dbo.Faction", t => t.GivingFactionID)
+                .ForeignKey("dbo.Faction", t => t.ReceivingFactionID)
                 .Index(t => t.FactionTreatyID)
                 .Index(t => t.EffectTypeID)
                 .Index(t => t.GivingFactionID)
@@ -268,11 +264,11 @@ namespace PlasmaShared.Migrations
                         TeamSize = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.PlanetID)
-                .ForeignKey("dbo.Account", t => t.OwnerAccountID)
-                .ForeignKey("dbo.Faction", t => t.OwnerFactionID)
+                .ForeignKey("dbo.Resource", t => t.MapResourceID)
                 .ForeignKey("dbo.ForumThread", t => t.ForumThreadID)
                 .ForeignKey("dbo.Galaxy", t => t.GalaxyID, cascadeDelete: true)
-                .ForeignKey("dbo.Resource", t => t.MapResourceID)
+                .ForeignKey("dbo.Faction", t => t.OwnerFactionID)
+                .ForeignKey("dbo.Account", t => t.OwnerAccountID)
                 .Index(t => t.MapResourceID)
                 .Index(t => t.OwnerAccountID)
                 .Index(t => t.GalaxyID)
@@ -288,8 +284,8 @@ namespace PlasmaShared.Migrations
                         AttackPoints = c.Double(nullable: false),
                     })
                 .PrimaryKey(t => new { t.PlanetID, t.AccountID })
-                .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
-                .ForeignKey("dbo.Planet", t => t.PlanetID, cascadeDelete: true)
+                .ForeignKey("dbo.Planet", t => t.PlanetID)
+                .ForeignKey("dbo.Account", t => t.AccountID)
                 .Index(t => t.PlanetID)
                 .Index(t => t.AccountID);
             
@@ -311,10 +307,10 @@ namespace PlasmaShared.Migrations
                         RestrictedClanID = c.Int(),
                     })
                 .PrimaryKey(t => t.ForumThreadID)
+                .ForeignKey("dbo.ForumCategory", t => t.ForumCategoryID, cascadeDelete: true)
+                .ForeignKey("dbo.Clan", t => t.RestrictedClanID, cascadeDelete: true)
                 .ForeignKey("dbo.Account", t => t.CreatedAccountID)
                 .ForeignKey("dbo.Account", t => t.LastPostAccountID)
-                .ForeignKey("dbo.Clan", t => t.RestrictedClanID)
-                .ForeignKey("dbo.ForumCategory", t => t.ForumCategoryID)
                 .Index(t => t.CreatedAccountID)
                 .Index(t => t.LastPostAccountID)
                 .Index(t => t.ForumCategoryID)
@@ -349,59 +345,10 @@ namespace PlasmaShared.Migrations
                         LastRead = c.DateTime(),
                     })
                 .PrimaryKey(t => new { t.AccountID, t.ForumCategoryID })
-                .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
-                .ForeignKey("dbo.ForumCategory", t => t.ForumCategoryID, cascadeDelete: true)
+                .ForeignKey("dbo.ForumCategory", t => t.ForumCategoryID)
+                .ForeignKey("dbo.Account", t => t.AccountID)
                 .Index(t => t.AccountID)
                 .Index(t => t.ForumCategoryID);
-            
-            CreateTable(
-                "dbo.ForumPost",
-                c => new
-                    {
-                        ForumPostID = c.Int(nullable: false, identity: true),
-                        AuthorAccountID = c.Int(nullable: false),
-                        Created = c.DateTime(nullable: false),
-                        Text = c.String(nullable: false),
-                        ForumThreadID = c.Int(nullable: false),
-                        Upvotes = c.Int(nullable: false),
-                        Downvotes = c.Int(nullable: false),
-                    })
-                .PrimaryKey(t => t.ForumPostID)
-                .ForeignKey("dbo.Account", t => t.AuthorAccountID)
-                .ForeignKey("dbo.ForumThread", t => t.ForumThreadID, cascadeDelete: true)
-                .Index(t => t.AuthorAccountID)
-                .Index(t => t.ForumThreadID);
-            
-            CreateTable(
-                "dbo.AccountForumVote",
-                c => new
-                    {
-                        AccountID = c.Int(nullable: false),
-                        ForumPostID = c.Int(nullable: false),
-                        Vote = c.Int(nullable: false),
-                    })
-                .PrimaryKey(t => new { t.AccountID, t.ForumPostID })
-                .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
-                .ForeignKey("dbo.ForumPost", t => t.ForumPostID, cascadeDelete: true)
-                .Index(t => t.AccountID)
-                .Index(t => t.ForumPostID);
-            
-            CreateTable(
-                "dbo.ForumPostEdit",
-                c => new
-                    {
-                        ForumPostEditID = c.Int(nullable: false, identity: true),
-                        ForumPostID = c.Int(nullable: false),
-                        EditorAccountID = c.Int(nullable: false),
-                        OriginalText = c.String(),
-                        NewText = c.String(),
-                        EditTime = c.DateTime(nullable: false),
-                    })
-                .PrimaryKey(t => t.ForumPostEditID)
-                .ForeignKey("dbo.Account", t => t.EditorAccountID, cascadeDelete: true)
-                .ForeignKey("dbo.ForumPost", t => t.ForumPostID, cascadeDelete: true)
-                .Index(t => t.ForumPostID)
-                .Index(t => t.EditorAccountID);
             
             CreateTable(
                 "dbo.ForumThreadLastRead",
@@ -413,8 +360,8 @@ namespace PlasmaShared.Migrations
                         LastPosted = c.DateTime(),
                     })
                 .PrimaryKey(t => new { t.ForumThreadID, t.AccountID })
-                .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
                 .ForeignKey("dbo.ForumThread", t => t.ForumThreadID, cascadeDelete: true)
+                .ForeignKey("dbo.Account", t => t.AccountID)
                 .Index(t => t.ForumThreadID)
                 .Index(t => t.AccountID);
             
@@ -423,14 +370,13 @@ namespace PlasmaShared.Migrations
                 c => new
                     {
                         MissionID = c.Int(nullable: false, identity: true),
-                        AuthorName = c.String(),
                         Name = c.String(nullable: false, maxLength: 200),
                         Mod = c.String(maxLength: 100),
                         Map = c.String(maxLength: 100),
                         Mutator = c.Binary(),
                         Image = c.Binary(nullable: false),
-                        Description = c.String(unicode: false),
-                        DescriptionStory = c.String(unicode: false),
+                        Description = c.String(unicode: false, storeType: "text"),
+                        DescriptionStory = c.String(unicode: false, storeType: "text"),
                         CreatedTime = c.DateTime(nullable: false),
                         ModifiedTime = c.DateTime(nullable: false),
                         ScoringMethod = c.String(maxLength: 500),
@@ -457,19 +403,19 @@ namespace PlasmaShared.Migrations
                         FeaturedOrder = c.Single(),
                         RatingPollID = c.Int(),
                         DifficultyRatingPollID = c.Int(),
-                        Mission1_MissionID = c.Int(nullable: false),
+                        Mission2_MissionID = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.MissionID)
-                .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
-                .ForeignKey("dbo.ForumThread", t => t.ForumThreadID, cascadeDelete: true)
-                .ForeignKey("dbo.Mission", t => t.Mission1_MissionID)
-                .ForeignKey("dbo.RatingPoll", t => t.DifficultyRatingPollID)
+                .ForeignKey("dbo.Mission", t => t.Mission2_MissionID)
                 .ForeignKey("dbo.RatingPoll", t => t.RatingPollID)
+                .ForeignKey("dbo.RatingPoll", t => t.DifficultyRatingPollID)
+                .ForeignKey("dbo.ForumThread", t => t.ForumThreadID)
+                .ForeignKey("dbo.Account", t => t.AccountID)
                 .Index(t => t.AccountID)
                 .Index(t => t.ForumThreadID)
                 .Index(t => t.RatingPollID)
                 .Index(t => t.DifficultyRatingPollID)
-                .Index(t => t.Mission1_MissionID);
+                .Index(t => t.Mission2_MissionID);
             
             CreateTable(
                 "dbo.CampaignPlanet",
@@ -490,7 +436,7 @@ namespace PlasmaShared.Migrations
                     })
                 .PrimaryKey(t => new { t.PlanetID, t.CampaignID })
                 .ForeignKey("dbo.Campaign", t => t.CampaignID, cascadeDelete: true)
-                .ForeignKey("dbo.Mission", t => t.MissionID, cascadeDelete: true)
+                .ForeignKey("dbo.Mission", t => t.MissionID)
                 .Index(t => t.CampaignID)
                 .Index(t => t.MissionID);
             
@@ -506,9 +452,10 @@ namespace PlasmaShared.Migrations
                     })
                 .PrimaryKey(t => new { t.AccountID, t.CampaignID, t.PlanetID })
                 .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
+                .ForeignKey("dbo.Campaign", t => t.CampaignID)
                 .ForeignKey("dbo.CampaignPlanet", t => new { t.CampaignID, t.PlanetID })
-                .ForeignKey("dbo.Campaign", t => t.CampaignID, cascadeDelete: true)
                 .Index(t => t.AccountID)
+                .Index(t => t.CampaignID)
                 .Index(t => new { t.CampaignID, t.PlanetID });
             
             CreateTable(
@@ -536,9 +483,9 @@ namespace PlasmaShared.Migrations
                         IsUnlocked = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => new { t.AccountID, t.CampaignID, t.JournalID })
-                .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
                 .ForeignKey("dbo.CampaignJournal", t => new { t.CampaignID, t.JournalID }, cascadeDelete: true)
-                .ForeignKey("dbo.Campaign", t => t.CampaignID, cascadeDelete: true)
+                .ForeignKey("dbo.Campaign", t => t.CampaignID)
+                .ForeignKey("dbo.Account", t => t.AccountID)
                 .Index(t => t.AccountID)
                 .Index(t => new { t.CampaignID, t.JournalID });
             
@@ -548,7 +495,7 @@ namespace PlasmaShared.Migrations
                     {
                         CampaignID = c.Int(nullable: false),
                         JournalID = c.Int(nullable: false),
-                        PlanetID = c.Int(nullable: false),
+                        PlanetID = c.Int(),
                         UnlockOnPlanetUnlock = c.Boolean(nullable: false),
                         UnlockOnPlanetCompletion = c.Boolean(nullable: false),
                         StartsUnlocked = c.Boolean(nullable: false),
@@ -557,7 +504,7 @@ namespace PlasmaShared.Migrations
                         Category = c.String(),
                     })
                 .PrimaryKey(t => new { t.CampaignID, t.JournalID })
-                .ForeignKey("dbo.Campaign", t => t.CampaignID)
+                .ForeignKey("dbo.Campaign", t => t.CampaignID, cascadeDelete: true)
                 .ForeignKey("dbo.CampaignPlanet", t => new { t.CampaignID, t.PlanetID })
                 .Index(t => t.CampaignID)
                 .Index(t => new { t.CampaignID, t.PlanetID });
@@ -572,9 +519,9 @@ namespace PlasmaShared.Migrations
                         RequiredValue = c.String(nullable: false),
                     })
                 .PrimaryKey(t => new { t.CampaignID, t.JournalID, t.RequiredVarID })
-                .ForeignKey("dbo.CampaignVar", t => new { t.CampaignID, t.RequiredVarID }, cascadeDelete: true)
+                .ForeignKey("dbo.CampaignVar", t => new { t.CampaignID, t.RequiredVarID })
                 .ForeignKey("dbo.CampaignJournal", t => new { t.CampaignID, t.JournalID }, cascadeDelete: true)
-                .ForeignKey("dbo.Campaign", t => t.CampaignID, cascadeDelete: true)
+                .ForeignKey("dbo.Campaign", t => t.CampaignID)
                 .Index(t => new { t.CampaignID, t.RequiredVarID })
                 .Index(t => new { t.CampaignID, t.JournalID });
             
@@ -602,8 +549,8 @@ namespace PlasmaShared.Migrations
                     })
                 .PrimaryKey(t => new { t.AccountID, t.CampaignID, t.VarID })
                 .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
-                .ForeignKey("dbo.CampaignVar", t => new { t.CampaignID, t.VarID }, cascadeDelete: true)
-                .ForeignKey("dbo.Campaign", t => t.CampaignID, cascadeDelete: true)
+                .ForeignKey("dbo.CampaignVar", t => new { t.CampaignID, t.VarID })
+                .ForeignKey("dbo.Campaign", t => t.CampaignID)
                 .Index(t => t.AccountID)
                 .Index(t => new { t.CampaignID, t.VarID });
             
@@ -617,12 +564,11 @@ namespace PlasmaShared.Migrations
                         RequiredValue = c.String(nullable: false),
                     })
                 .PrimaryKey(t => new { t.CampaignID, t.PlanetID, t.RequiredVarID })
+                .ForeignKey("dbo.CampaignVar", t => new { t.CampaignID, t.RequiredVarID })
                 .ForeignKey("dbo.Campaign", t => t.CampaignID)
-                .ForeignKey("dbo.CampaignVar", t => new { t.CampaignID, t.RequiredVarID }, cascadeDelete: true)
-                .ForeignKey("dbo.CampaignPlanet", t => new { t.PlanetID, t.CampaignID }, cascadeDelete: true)
-                .Index(t => t.CampaignID)
+                .ForeignKey("dbo.CampaignPlanet", t => new { t.CampaignID, t.PlanetID })
                 .Index(t => new { t.CampaignID, t.RequiredVarID })
-                .Index(t => new { t.PlanetID, t.CampaignID });
+                .Index(t => new { t.CampaignID, t.PlanetID });
             
             CreateTable(
                 "dbo.CampaignEvent",
@@ -631,17 +577,18 @@ namespace PlasmaShared.Migrations
                         EventID = c.Int(nullable: false, identity: true),
                         AccountID = c.Int(nullable: false),
                         CampaignID = c.Int(nullable: false),
-                        PlanetID = c.Int(nullable: false),
+                        PlanetID = c.Int(),
                         Text = c.String(nullable: false, maxLength: 4000),
                         Time = c.DateTime(nullable: false),
                         PlainText = c.String(maxLength: 4000),
                     })
                 .PrimaryKey(t => t.EventID)
-                .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
-                .ForeignKey("dbo.CampaignPlanet", t => new { t.CampaignID, t.PlanetID })
-                .ForeignKey("dbo.Campaign", t => t.CampaignID, cascadeDelete: true)
+                .ForeignKey("dbo.Campaign", t => t.CampaignID)
+                .ForeignKey("dbo.CampaignPlanet", t => new { t.PlanetID, t.CampaignID }, cascadeDelete: true)
+                .ForeignKey("dbo.Account", t => t.AccountID)
                 .Index(t => t.AccountID)
-                .Index(t => new { t.CampaignID, t.PlanetID });
+                .Index(t => t.CampaignID)
+                .Index(t => new { t.PlanetID, t.CampaignID });
             
             CreateTable(
                 "dbo.CampaignLink",
@@ -652,9 +599,9 @@ namespace PlasmaShared.Migrations
                         CampaignID = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => new { t.PlanetToUnlockID, t.UnlockingPlanetID })
-                .ForeignKey("dbo.Campaign", t => t.CampaignID, cascadeDelete: true)
-                .ForeignKey("dbo.CampaignPlanet", t => new { t.PlanetToUnlockID, t.CampaignID }, cascadeDelete: true)
-                .ForeignKey("dbo.CampaignPlanet", t => new { t.UnlockingPlanetID, t.CampaignID }, cascadeDelete: true)
+                .ForeignKey("dbo.Campaign", t => t.CampaignID)
+                .ForeignKey("dbo.CampaignPlanet", t => new { t.PlanetToUnlockID, t.CampaignID })
+                .ForeignKey("dbo.CampaignPlanet", t => new { t.UnlockingPlanetID, t.CampaignID })
                 .Index(t => new { t.PlanetToUnlockID, t.CampaignID })
                 .Index(t => new { t.UnlockingPlanetID, t.CampaignID })
                 .Index(t => t.CampaignID);
@@ -671,10 +618,26 @@ namespace PlasmaShared.Migrations
                         GameSeconds = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => new { t.MissionID, t.AccountID })
-                .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
                 .ForeignKey("dbo.Mission", t => t.MissionID, cascadeDelete: true)
+                .ForeignKey("dbo.Account", t => t.AccountID)
                 .Index(t => t.MissionID)
                 .Index(t => t.AccountID);
+            
+            CreateTable(
+                "dbo.Rating",
+                c => new
+                    {
+                        RatingID = c.Int(nullable: false, identity: true),
+                        AccountID = c.Int(nullable: false),
+                        MissionID = c.Int(),
+                        Rating = c.Int(),
+                        Difficulty = c.Int(),
+                    })
+                .PrimaryKey(t => t.RatingID)
+                .ForeignKey("dbo.Mission", t => t.MissionID, cascadeDelete: true)
+                .ForeignKey("dbo.Account", t => t.AccountID)
+                .Index(t => t.AccountID)
+                .Index(t => t.MissionID);
             
             CreateTable(
                 "dbo.RatingPoll",
@@ -695,8 +658,8 @@ namespace PlasmaShared.Migrations
                         Vote = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => new { t.RatingPollID, t.AccountID })
-                .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
                 .ForeignKey("dbo.RatingPoll", t => t.RatingPollID, cascadeDelete: true)
+                .ForeignKey("dbo.Account", t => t.AccountID)
                 .Index(t => t.RatingPollID)
                 .Index(t => t.AccountID);
             
@@ -738,10 +701,10 @@ namespace PlasmaShared.Migrations
                         MapSpringieCommands = c.String(maxLength: 2000),
                     })
                 .PrimaryKey(t => t.ResourceID)
-                .ForeignKey("dbo.Account", t => t.TaggedByAccountID)
                 .ForeignKey("dbo.ForumThread", t => t.ForumThreadID)
-                .ForeignKey("dbo.Mission", t => t.MissionID)
-                .ForeignKey("dbo.RatingPoll", t => t.RatingPollID)
+                .ForeignKey("dbo.RatingPoll", t => t.RatingPollID, cascadeDelete: true)
+                .ForeignKey("dbo.Mission", t => t.MissionID, cascadeDelete: true)
+                .ForeignKey("dbo.Account", t => t.TaggedByAccountID)
                 .Index(t => t.MissionID)
                 .Index(t => t.TaggedByAccountID)
                 .Index(t => t.ForumThreadID)
@@ -756,8 +719,8 @@ namespace PlasmaShared.Migrations
                         Rating = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => new { t.ResourceID, t.AccountID })
-                .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
                 .ForeignKey("dbo.Resource", t => t.ResourceID, cascadeDelete: true)
+                .ForeignKey("dbo.Account", t => t.AccountID)
                 .Index(t => t.ResourceID)
                 .Index(t => t.AccountID);
             
@@ -769,7 +732,7 @@ namespace PlasmaShared.Migrations
                         Md5 = c.String(nullable: false, maxLength: 32, fixedLength: true, unicode: false),
                         Length = c.Int(nullable: false),
                         FileName = c.String(nullable: false, maxLength: 255),
-                        Links = c.String(unicode: false),
+                        Links = c.String(unicode: false, storeType: "text"),
                         LinkCount = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => new { t.ResourceID, t.Md5 })
@@ -800,29 +763,13 @@ namespace PlasmaShared.Migrations
                 .Index(t => t.ResourceID);
             
             CreateTable(
-                "dbo.Rating",
-                c => new
-                    {
-                        RatingID = c.Int(nullable: false, identity: true),
-                        AccountID = c.Int(nullable: false),
-                        MissionID = c.Int(),
-                        Rating = c.Int(),
-                        Difficulty = c.Int(),
-                    })
-                .PrimaryKey(t => t.RatingID)
-                .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
-                .ForeignKey("dbo.Mission", t => t.MissionID)
-                .Index(t => t.AccountID)
-                .Index(t => t.MissionID);
-            
-            CreateTable(
                 "dbo.News",
                 c => new
                     {
                         NewsID = c.Int(nullable: false, identity: true),
                         Created = c.DateTime(nullable: false),
                         Title = c.String(nullable: false, maxLength: 200),
-                        Text = c.String(nullable: false, unicode: false),
+                        Text = c.String(nullable: false, unicode: false, storeType: "text"),
                         AuthorAccountID = c.Int(nullable: false),
                         HeadlineUntil = c.DateTime(nullable: false),
                         ForumThreadID = c.Int(nullable: false),
@@ -832,8 +779,8 @@ namespace PlasmaShared.Migrations
                         ImageLength = c.Int(),
                     })
                 .PrimaryKey(t => t.NewsID)
-                .ForeignKey("dbo.Account", t => t.AuthorAccountID, cascadeDelete: true)
-                .ForeignKey("dbo.ForumThread", t => t.ForumThreadID, cascadeDelete: true)
+                .ForeignKey("dbo.ForumThread", t => t.ForumThreadID)
+                .ForeignKey("dbo.Account", t => t.AuthorAccountID)
                 .Index(t => t.AuthorAccountID)
                 .Index(t => t.ForumThreadID);
             
@@ -852,7 +799,7 @@ namespace PlasmaShared.Migrations
                         IsDefault = c.Boolean(nullable: false),
                         AttackerSideCounter = c.Int(nullable: false),
                         AttackerSideChangeTime = c.DateTime(),
-                        MatchMakerState = c.String(unicode: false),
+                        MatchMakerState = c.String(unicode: false, storeType: "text"),
                     })
                 .PrimaryKey(t => t.GalaxyID);
             
@@ -866,8 +813,8 @@ namespace PlasmaShared.Migrations
                     })
                 .PrimaryKey(t => new { t.PlanetID1, t.PlanetID2 })
                 .ForeignKey("dbo.Galaxy", t => t.GalaxyID, cascadeDelete: true)
-                .ForeignKey("dbo.Planet", t => t.PlanetID1, cascadeDelete: true)
-                .ForeignKey("dbo.Planet", t => t.PlanetID2, cascadeDelete: true)
+                .ForeignKey("dbo.Planet", t => t.PlanetID1)
+                .ForeignKey("dbo.Planet", t => t.PlanetID2)
                 .Index(t => t.PlanetID1)
                 .Index(t => t.PlanetID2)
                 .Index(t => t.GalaxyID);
@@ -887,9 +834,9 @@ namespace PlasmaShared.Migrations
                         AcceptedAccountID = c.Int(),
                     })
                 .PrimaryKey(t => t.OfferID)
+                .ForeignKey("dbo.Planet", t => t.PlanetID)
+                .ForeignKey("dbo.Account", t => t.AccountID)
                 .ForeignKey("dbo.Account", t => t.AcceptedAccountID)
-                .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
-                .ForeignKey("dbo.Planet", t => t.PlanetID, cascadeDelete: true)
                 .Index(t => t.AccountID)
                 .Index(t => t.PlanetID)
                 .Index(t => t.AcceptedAccountID);
@@ -905,8 +852,8 @@ namespace PlasmaShared.Migrations
                         DropshipsLastAdded = c.DateTime(),
                     })
                 .PrimaryKey(t => new { t.PlanetID, t.FactionID })
-                .ForeignKey("dbo.Faction", t => t.FactionID, cascadeDelete: true)
-                .ForeignKey("dbo.Planet", t => t.PlanetID, cascadeDelete: true)
+                .ForeignKey("dbo.Planet", t => t.PlanetID)
+                .ForeignKey("dbo.Faction", t => t.FactionID)
                 .Index(t => t.PlanetID)
                 .Index(t => t.FactionID);
             
@@ -921,10 +868,10 @@ namespace PlasmaShared.Migrations
                         OwnerFactionID = c.Int(),
                     })
                 .PrimaryKey(t => new { t.PlanetID, t.Turn })
-                .ForeignKey("dbo.Account", t => t.OwnerAccountID)
-                .ForeignKey("dbo.Clan", t => t.OwnerClanID)
-                .ForeignKey("dbo.Faction", t => t.OwnerFactionID)
                 .ForeignKey("dbo.Planet", t => t.PlanetID, cascadeDelete: true)
+                .ForeignKey("dbo.Faction", t => t.OwnerFactionID)
+                .ForeignKey("dbo.Clan", t => t.OwnerClanID)
+                .ForeignKey("dbo.Account", t => t.OwnerAccountID)
                 .Index(t => t.PlanetID)
                 .Index(t => t.OwnerAccountID)
                 .Index(t => t.OwnerClanID)
@@ -943,10 +890,10 @@ namespace PlasmaShared.Migrations
                         TargetPlanetID = c.Int(),
                     })
                 .PrimaryKey(t => new { t.PlanetID, t.StructureTypeID })
-                .ForeignKey("dbo.Account", t => t.OwnerAccountID)
+                .ForeignKey("dbo.StructureType", t => t.StructureTypeID)
                 .ForeignKey("dbo.Planet", t => t.PlanetID, cascadeDelete: true)
                 .ForeignKey("dbo.Planet", t => t.TargetPlanetID)
-                .ForeignKey("dbo.StructureType", t => t.StructureTypeID, cascadeDelete: true)
+                .ForeignKey("dbo.Account", t => t.OwnerAccountID)
                 .Index(t => t.PlanetID)
                 .Index(t => t.StructureTypeID)
                 .Index(t => t.OwnerAccountID)
@@ -995,7 +942,7 @@ namespace PlasmaShared.Migrations
                         EffectReduceBattleInfluenceGain = c.Double(),
                     })
                 .PrimaryKey(t => t.StructureTypeID)
-                .ForeignKey("dbo.Unlock", t => t.EffectUnlockID)
+                .ForeignKey("dbo.Unlock", t => t.EffectUnlockID, cascadeDelete: true)
                 .Index(t => t.EffectUnlockID);
             
             CreateTable(
@@ -1034,38 +981,10 @@ namespace PlasmaShared.Migrations
                         Count = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => new { t.AccountID, t.UnlockID })
-                .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
                 .ForeignKey("dbo.Unlock", t => t.UnlockID, cascadeDelete: true)
+                .ForeignKey("dbo.Account", t => t.AccountID)
                 .Index(t => t.AccountID)
                 .Index(t => t.UnlockID);
-            
-            CreateTable(
-                "dbo.CommanderDecorationIcon",
-                c => new
-                    {
-                        DecorationUnlockID = c.Int(nullable: false),
-                        IconPosition = c.Int(nullable: false),
-                        IconType = c.Int(nullable: false),
-                    })
-                .PrimaryKey(t => t.DecorationUnlockID)
-                .ForeignKey("dbo.Unlock", t => t.DecorationUnlockID)
-                .Index(t => t.DecorationUnlockID);
-            
-            CreateTable(
-                "dbo.CommanderDecoration",
-                c => new
-                    {
-                        CommanderID = c.Int(nullable: false),
-                        SlotID = c.Int(nullable: false),
-                        DecorationUnlockID = c.Int(nullable: false),
-                    })
-                .PrimaryKey(t => new { t.CommanderID, t.SlotID })
-                .ForeignKey("dbo.Commander", t => t.CommanderID, cascadeDelete: true)
-                .ForeignKey("dbo.CommanderDecorationSlot", t => t.SlotID, cascadeDelete: true)
-                .ForeignKey("dbo.Unlock", t => t.DecorationUnlockID, cascadeDelete: true)
-                .Index(t => t.CommanderID)
-                .Index(t => t.SlotID)
-                .Index(t => t.DecorationUnlockID);
             
             CreateTable(
                 "dbo.Commander",
@@ -1078,10 +997,34 @@ namespace PlasmaShared.Migrations
                         ChassisUnlockID = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.CommanderID)
-                .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
                 .ForeignKey("dbo.Unlock", t => t.ChassisUnlockID, cascadeDelete: true)
+                .ForeignKey("dbo.Account", t => t.AccountID)
                 .Index(t => t.AccountID)
                 .Index(t => t.ChassisUnlockID);
+            
+            CreateTable(
+                "dbo.CommanderDecoration",
+                c => new
+                    {
+                        CommanderID = c.Int(nullable: false),
+                        SlotID = c.Int(nullable: false),
+                        DecorationUnlockID = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => new { t.CommanderID, t.SlotID })
+                .ForeignKey("dbo.Commander", t => t.CommanderID, cascadeDelete: true)
+                .ForeignKey("dbo.CommanderDecorationSlot", t => t.SlotID, cascadeDelete: true)
+                .ForeignKey("dbo.Unlock", t => t.DecorationUnlockID)
+                .Index(t => t.CommanderID)
+                .Index(t => t.SlotID)
+                .Index(t => t.DecorationUnlockID);
+            
+            CreateTable(
+                "dbo.CommanderDecorationSlot",
+                c => new
+                    {
+                        CommanderDecorationSlotID = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => t.CommanderDecorationSlotID);
             
             CreateTable(
                 "dbo.CommanderModule",
@@ -1094,7 +1037,7 @@ namespace PlasmaShared.Migrations
                 .PrimaryKey(t => new { t.CommanderID, t.SlotID })
                 .ForeignKey("dbo.Commander", t => t.CommanderID, cascadeDelete: true)
                 .ForeignKey("dbo.CommanderSlot", t => t.SlotID, cascadeDelete: true)
-                .ForeignKey("dbo.Unlock", t => t.ModuleUnlockID, cascadeDelete: true)
+                .ForeignKey("dbo.Unlock", t => t.ModuleUnlockID)
                 .Index(t => t.CommanderID)
                 .Index(t => t.SlotID)
                 .Index(t => t.ModuleUnlockID);
@@ -1110,12 +1053,16 @@ namespace PlasmaShared.Migrations
                 .PrimaryKey(t => t.CommanderSlotID);
             
             CreateTable(
-                "dbo.CommanderDecorationSlot",
+                "dbo.CommanderDecorationIcon",
                 c => new
                     {
-                        CommanderDecorationSlotID = c.Int(nullable: false),
+                        DecorationUnlockID = c.Int(nullable: false),
+                        IconPosition = c.Int(nullable: false),
+                        IconType = c.Int(nullable: false),
                     })
-                .PrimaryKey(t => t.CommanderDecorationSlotID);
+                .PrimaryKey(t => t.DecorationUnlockID)
+                .ForeignKey("dbo.Unlock", t => t.DecorationUnlockID)
+                .Index(t => t.DecorationUnlockID);
             
             CreateTable(
                 "dbo.KudosPurchase",
@@ -1128,8 +1075,8 @@ namespace PlasmaShared.Migrations
                         UnlockID = c.Int(),
                     })
                 .PrimaryKey(t => t.KudosPurchaseID)
-                .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
-                .ForeignKey("dbo.Unlock", t => t.UnlockID)
+                .ForeignKey("dbo.Unlock", t => t.UnlockID, cascadeDelete: true)
+                .ForeignKey("dbo.Account", t => t.AccountID)
                 .Index(t => t.AccountID)
                 .Index(t => t.UnlockID);
             
@@ -1179,15 +1126,13 @@ namespace PlasmaShared.Migrations
                         IsHeadline = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.PollID)
-                .ForeignKey("dbo.Account", t => t.CreatedAccountID)
-                .ForeignKey("dbo.Account", t => t.RoleTargetAccountID)
-                .ForeignKey("dbo.Clan", t => t.RestrictClanID)
+                .ForeignKey("dbo.RoleType", t => t.RoleTypeID, cascadeDelete: true)
                 .ForeignKey("dbo.Faction", t => t.RestrictFactionID)
-                .ForeignKey("dbo.RoleType", t => t.RoleTypeID)
+                .ForeignKey("dbo.Account", t => t.RoleTargetAccountID)
+                .ForeignKey("dbo.Account", t => t.CreatedAccountID)
                 .Index(t => t.RoleTypeID)
                 .Index(t => t.RoleTargetAccountID)
                 .Index(t => t.RestrictFactionID)
-                .Index(t => t.RestrictClanID)
                 .Index(t => t.CreatedAccountID);
             
             CreateTable(
@@ -1212,9 +1157,9 @@ namespace PlasmaShared.Migrations
                         OptionID = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => new { t.AccountID, t.PollID })
-                .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
                 .ForeignKey("dbo.Poll", t => t.PollID, cascadeDelete: true)
-                .ForeignKey("dbo.PollOption", t => t.OptionID, cascadeDelete: true)
+                .ForeignKey("dbo.PollOption", t => t.OptionID)
+                .ForeignKey("dbo.Account", t => t.AccountID)
                 .Index(t => t.AccountID)
                 .Index(t => t.PollID)
                 .Index(t => t.OptionID);
@@ -1256,7 +1201,7 @@ namespace PlasmaShared.Migrations
                     })
                 .PrimaryKey(t => new { t.MasterRoleTypeID, t.SlaveRoleTypeID })
                 .ForeignKey("dbo.RoleType", t => t.MasterRoleTypeID, cascadeDelete: true)
-                .ForeignKey("dbo.RoleType", t => t.SlaveRoleTypeID, cascadeDelete: true)
+                .ForeignKey("dbo.RoleType", t => t.SlaveRoleTypeID)
                 .Index(t => t.MasterRoleTypeID)
                 .Index(t => t.SlaveRoleTypeID);
             
@@ -1277,10 +1222,55 @@ namespace PlasmaShared.Migrations
                         Influence = c.Int(),
                     })
                 .PrimaryKey(t => new { t.SpringBattleID, t.AccountID })
-                .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
                 .ForeignKey("dbo.SpringBattle", t => t.SpringBattleID, cascadeDelete: true)
+                .ForeignKey("dbo.Account", t => t.AccountID)
                 .Index(t => t.SpringBattleID)
                 .Index(t => t.AccountID);
+            
+            CreateTable(
+                "dbo.AccountForumVote",
+                c => new
+                    {
+                        AccountID = c.Int(nullable: false),
+                        ForumPostID = c.Int(nullable: false),
+                        Vote = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => new { t.AccountID, t.ForumPostID })
+                .ForeignKey("dbo.ForumPost", t => t.ForumPostID, cascadeDelete: true)
+                .ForeignKey("dbo.Account", t => t.AccountID)
+                .Index(t => t.AccountID)
+                .Index(t => t.ForumPostID);
+            
+            CreateTable(
+                "dbo.ForumPost",
+                c => new
+                    {
+                        ForumPostID = c.Int(nullable: false, identity: true),
+                        AuthorAccountID = c.Int(nullable: false),
+                        Created = c.DateTime(nullable: false),
+                        Text = c.String(nullable: false),
+                        ForumThreadID = c.Int(nullable: false),
+                        Upvotes = c.Int(nullable: false),
+                        Downvotes = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => t.ForumPostID);
+            
+            CreateTable(
+                "dbo.ForumPostEdit",
+                c => new
+                    {
+                        ForumPostEditID = c.Int(nullable: false, identity: true),
+                        ForumPostID = c.Int(nullable: false),
+                        EditorAccountID = c.Int(nullable: false),
+                        OriginalText = c.String(),
+                        NewText = c.String(),
+                        EditTime = c.DateTime(nullable: false),
+                    })
+                .PrimaryKey(t => t.ForumPostEditID)
+                .ForeignKey("dbo.ForumPost", t => t.ForumPostID, cascadeDelete: true)
+                .ForeignKey("dbo.Account", t => t.EditorAccountID)
+                .Index(t => t.ForumPostID)
+                .Index(t => t.EditorAccountID);
             
             CreateTable(
                 "dbo.AccountIP",
@@ -1325,21 +1315,6 @@ namespace PlasmaShared.Migrations
                 .Index(t => t.AccountID);
             
             CreateTable(
-                "dbo.ContributionJar",
-                c => new
-                    {
-                        ContributionJarID = c.Int(nullable: false, identity: true),
-                        Name = c.String(nullable: false, maxLength: 100),
-                        GuarantorAccountID = c.Int(nullable: false),
-                        Description = c.String(maxLength: 500),
-                        TargetGrossEuros = c.Double(nullable: false),
-                        IsDefault = c.Boolean(nullable: false),
-                    })
-                .PrimaryKey(t => t.ContributionJarID)
-                .ForeignKey("dbo.Account", t => t.GuarantorAccountID, cascadeDelete: true)
-                .Index(t => t.GuarantorAccountID);
-            
-            CreateTable(
                 "dbo.Contribution",
                 c => new
                     {
@@ -1364,12 +1339,27 @@ namespace PlasmaShared.Migrations
                         ContributionJarID = c.Int(),
                     })
                 .PrimaryKey(t => t.ContributionID)
-                .ForeignKey("dbo.Account", t => t.ManuallyAddedAccountID)
-                .ForeignKey("dbo.Account", t => t.AccountID)
                 .ForeignKey("dbo.ContributionJar", t => t.ContributionJarID)
+                .ForeignKey("dbo.Account", t => t.AccountID)
+                .ForeignKey("dbo.Account", t => t.ManuallyAddedAccountID)
                 .Index(t => t.AccountID)
                 .Index(t => t.ManuallyAddedAccountID)
                 .Index(t => t.ContributionJarID);
+            
+            CreateTable(
+                "dbo.ContributionJar",
+                c => new
+                    {
+                        ContributionJarID = c.Int(nullable: false, identity: true),
+                        Name = c.String(nullable: false, maxLength: 100),
+                        GuarantorAccountID = c.Int(nullable: false),
+                        Description = c.String(maxLength: 500),
+                        TargetGrossEuros = c.Double(nullable: false),
+                        IsDefault = c.Boolean(nullable: false),
+                    })
+                .PrimaryKey(t => t.ContributionJarID)
+                .ForeignKey("dbo.Account", t => t.GuarantorAccountID)
+                .Index(t => t.GuarantorAccountID);
             
             CreateTable(
                 "dbo.LobbyChannelSubscription",
@@ -1517,6 +1507,19 @@ namespace PlasmaShared.Migrations
                 .PrimaryKey(t => t.VarName);
             
             CreateTable(
+                "dbo.EventAccount",
+                c => new
+                    {
+                        EventID = c.Int(nullable: false),
+                        AccountID = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => new { t.EventID, t.AccountID })
+                .ForeignKey("dbo.Event", t => t.EventID, cascadeDelete: true)
+                .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
+                .Index(t => t.EventID)
+                .Index(t => t.AccountID);
+            
+            CreateTable(
                 "dbo.EventClan",
                 c => new
                     {
@@ -1568,186 +1571,166 @@ namespace PlasmaShared.Migrations
                 .Index(t => t.EventID)
                 .Index(t => t.SpringBattleID);
             
-            CreateTable(
-                "dbo.EventAccount",
-                c => new
-                    {
-                        AccountID = c.Int(nullable: false),
-                        EventID = c.Int(nullable: false),
-                    })
-                .PrimaryKey(t => new { t.AccountID, t.EventID })
-                .ForeignKey("dbo.Account", t => t.AccountID, cascadeDelete: true)
-                .ForeignKey("dbo.Event", t => t.EventID, cascadeDelete: true)
-                .Index(t => t.AccountID)
-                .Index(t => t.EventID);
-            
         }
         
         public override void Down()
         {
-            DropForeignKey("dbo.AbuseReport", "ReporterAccountID", "dbo.Account");
-            DropForeignKey("dbo.AbuseReport", "AccountID", "dbo.Account");
+            DropForeignKey("dbo.SpringBattlePlayer", "AccountID", "dbo.Account");
+            DropForeignKey("dbo.SpringBattle", "HostAccountID", "dbo.Account");
+            DropForeignKey("dbo.Resource", "TaggedByAccountID", "dbo.Account");
+            DropForeignKey("dbo.Rating", "AccountID", "dbo.Account");
             DropForeignKey("dbo.Punishment", "CreatedAccountID", "dbo.Account");
             DropForeignKey("dbo.Punishment", "AccountID", "dbo.Account");
+            DropForeignKey("dbo.PollVote", "AccountID", "dbo.Account");
+            DropForeignKey("dbo.Poll", "CreatedAccountID", "dbo.Account");
+            DropForeignKey("dbo.Poll", "RoleTargetAccountID", "dbo.Account");
+            DropForeignKey("dbo.PlanetStructure", "OwnerAccountID", "dbo.Account");
+            DropForeignKey("dbo.PlanetOwnerHistory", "OwnerAccountID", "dbo.Account");
+            DropForeignKey("dbo.Planet", "OwnerAccountID", "dbo.Account");
+            DropForeignKey("dbo.News", "AuthorAccountID", "dbo.Account");
+            DropForeignKey("dbo.MissionScore", "AccountID", "dbo.Account");
+            DropForeignKey("dbo.Mission", "AccountID", "dbo.Account");
+            DropForeignKey("dbo.MarketOffer", "AcceptedAccountID", "dbo.Account");
+            DropForeignKey("dbo.MarketOffer", "AccountID", "dbo.Account");
+            DropForeignKey("dbo.MapRating", "AccountID", "dbo.Account");
             DropForeignKey("dbo.LobbyChannelSubscription", "AccountID", "dbo.Account");
-            DropForeignKey("dbo.Account", "FactionID", "dbo.Faction");
-            DropForeignKey("dbo.EventAccount", "EventID", "dbo.Event");
-            DropForeignKey("dbo.EventAccount", "AccountID", "dbo.Account");
-            DropForeignKey("dbo.Contribution", "ContributionJarID", "dbo.ContributionJar");
-            DropForeignKey("dbo.Contribution", "AccountID", "dbo.Account");
-            DropForeignKey("dbo.Contribution", "ManuallyAddedAccountID", "dbo.Account");
+            DropForeignKey("dbo.KudosPurchase", "AccountID", "dbo.Account");
+            DropForeignKey("dbo.ForumThreadLastRead", "AccountID", "dbo.Account");
+            DropForeignKey("dbo.ForumThread", "LastPostAccountID", "dbo.Account");
+            DropForeignKey("dbo.ForumThread", "CreatedAccountID", "dbo.Account");
+            DropForeignKey("dbo.ForumPostEdit", "EditorAccountID", "dbo.Account");
+            DropForeignKey("dbo.ForumLastRead", "AccountID", "dbo.Account");
+            DropForeignKey("dbo.FactionTreaty", "AcceptedAccountID", "dbo.Account");
+            DropForeignKey("dbo.FactionTreaty", "ProposingAccountID", "dbo.Account");
             DropForeignKey("dbo.ContributionJar", "GuarantorAccountID", "dbo.Account");
+            DropForeignKey("dbo.Contribution", "ManuallyAddedAccountID", "dbo.Account");
+            DropForeignKey("dbo.Contribution", "AccountID", "dbo.Account");
+            DropForeignKey("dbo.Contribution", "ContributionJarID", "dbo.ContributionJar");
+            DropForeignKey("dbo.Commander", "AccountID", "dbo.Account");
+            DropForeignKey("dbo.CampaignEvent", "AccountID", "dbo.Account");
             DropForeignKey("dbo.AutoBanSmurfList", "AccountID", "dbo.Account");
             DropForeignKey("dbo.AccountUserID", "AccountID", "dbo.Account");
+            DropForeignKey("dbo.AccountUnlock", "AccountID", "dbo.Account");
+            DropForeignKey("dbo.AccountRole", "AccountID", "dbo.Account");
+            DropForeignKey("dbo.AccountRatingVote", "AccountID", "dbo.Account");
+            DropForeignKey("dbo.AccountPlanet", "AccountID", "dbo.Account");
             DropForeignKey("dbo.AccountIP", "AccountID", "dbo.Account");
-            DropForeignKey("dbo.AccountBattleAward", "SpringBattleID", "dbo.SpringBattle");
+            DropForeignKey("dbo.AccountForumVote", "AccountID", "dbo.Account");
+            DropForeignKey("dbo.ForumPostEdit", "ForumPostID", "dbo.ForumPost");
+            DropForeignKey("dbo.AccountForumVote", "ForumPostID", "dbo.ForumPost");
+            DropForeignKey("dbo.AccountCampaignJournalProgress", "AccountID", "dbo.Account");
+            DropForeignKey("dbo.AccountBattleAward", "AccountID", "dbo.Account");
             DropForeignKey("dbo.SpringBattlePlayer", "SpringBattleID", "dbo.SpringBattle");
-            DropForeignKey("dbo.SpringBattlePlayer", "AccountID", "dbo.Account");
-            DropForeignKey("dbo.SpringBattle", "RatingPollID", "dbo.RatingPoll");
-            DropForeignKey("dbo.SpringBattle", "ForumThreadID", "dbo.ForumThread");
             DropForeignKey("dbo.EventSpringBattle", "SpringBattleID", "dbo.SpringBattle");
             DropForeignKey("dbo.EventSpringBattle", "EventID", "dbo.Event");
             DropForeignKey("dbo.EventPlanet", "PlanetID", "dbo.Planet");
             DropForeignKey("dbo.EventPlanet", "EventID", "dbo.Event");
             DropForeignKey("dbo.EventFaction", "FactionID", "dbo.Faction");
             DropForeignKey("dbo.EventFaction", "EventID", "dbo.Event");
-            DropForeignKey("dbo.Clan", "ForumThreadID", "dbo.ForumThread");
-            DropForeignKey("dbo.Clan", "FactionID", "dbo.Faction");
+            DropForeignKey("dbo.PlanetOwnerHistory", "OwnerClanID", "dbo.Clan");
+            DropForeignKey("dbo.ForumThread", "RestrictedClanID", "dbo.Clan");
             DropForeignKey("dbo.EventClan", "EventID", "dbo.Event");
             DropForeignKey("dbo.EventClan", "ClanID", "dbo.Clan");
-            DropForeignKey("dbo.Account", "ClanID", "dbo.Clan");
-            DropForeignKey("dbo.AccountRole", "RoleTypeID", "dbo.RoleType");
-            DropForeignKey("dbo.AccountRole", "FactionID", "dbo.Faction");
-            DropForeignKey("dbo.Poll", "RoleTypeID", "dbo.RoleType");
+            DropForeignKey("dbo.AccountRole", "ClanID", "dbo.Clan");
+            DropForeignKey("dbo.TreatyEffect", "ReceivingFactionID", "dbo.Faction");
+            DropForeignKey("dbo.TreatyEffect", "GivingFactionID", "dbo.Faction");
+            DropForeignKey("dbo.RoleType", "RestrictFactionID", "dbo.Faction");
+            DropForeignKey("dbo.Poll", "RestrictFactionID", "dbo.Faction");
             DropForeignKey("dbo.RoleTypeHierarchy", "SlaveRoleTypeID", "dbo.RoleType");
             DropForeignKey("dbo.RoleTypeHierarchy", "MasterRoleTypeID", "dbo.RoleType");
-            DropForeignKey("dbo.RoleType", "RestrictFactionID", "dbo.Faction");
+            DropForeignKey("dbo.Poll", "RoleTypeID", "dbo.RoleType");
+            DropForeignKey("dbo.AccountRole", "RoleTypeID", "dbo.RoleType");
             DropForeignKey("dbo.PollVote", "OptionID", "dbo.PollOption");
             DropForeignKey("dbo.PollVote", "PollID", "dbo.Poll");
-            DropForeignKey("dbo.PollVote", "AccountID", "dbo.Account");
             DropForeignKey("dbo.PollOption", "PollID", "dbo.Poll");
-            DropForeignKey("dbo.Poll", "RestrictFactionID", "dbo.Faction");
-            DropForeignKey("dbo.Poll", "RestrictClanID", "dbo.Clan");
-            DropForeignKey("dbo.Poll", "RoleTargetAccountID", "dbo.Account");
-            DropForeignKey("dbo.Poll", "CreatedAccountID", "dbo.Account");
+            DropForeignKey("dbo.PlanetOwnerHistory", "OwnerFactionID", "dbo.Faction");
+            DropForeignKey("dbo.PlanetFaction", "FactionID", "dbo.Faction");
+            DropForeignKey("dbo.Planet", "OwnerFactionID", "dbo.Faction");
+            DropForeignKey("dbo.FactionTreaty", "AcceptingFactionID", "dbo.Faction");
+            DropForeignKey("dbo.FactionTreaty", "ProposingFactionID", "dbo.Faction");
             DropForeignKey("dbo.TreatyEffect", "EffectTypeID", "dbo.TreatyEffectType");
             DropForeignKey("dbo.TreatyEffect", "PlanetID", "dbo.Planet");
-            DropForeignKey("dbo.Planet", "MapResourceID", "dbo.Resource");
-            DropForeignKey("dbo.PlanetStructure", "StructureTypeID", "dbo.StructureType");
-            DropForeignKey("dbo.StructureType", "EffectUnlockID", "dbo.Unlock");
-            DropForeignKey("dbo.Unlock", "RequiredUnlockID", "dbo.Unlock");
-            DropForeignKey("dbo.KudosPurchase", "UnlockID", "dbo.Unlock");
-            DropForeignKey("dbo.KudosPurchase", "AccountID", "dbo.Account");
-            DropForeignKey("dbo.CommanderDecoration", "DecorationUnlockID", "dbo.Unlock");
-            DropForeignKey("dbo.CommanderDecoration", "SlotID", "dbo.CommanderDecorationSlot");
-            DropForeignKey("dbo.CommanderDecoration", "CommanderID", "dbo.Commander");
-            DropForeignKey("dbo.Commander", "ChassisUnlockID", "dbo.Unlock");
-            DropForeignKey("dbo.CommanderModule", "ModuleUnlockID", "dbo.Unlock");
-            DropForeignKey("dbo.CommanderModule", "SlotID", "dbo.CommanderSlot");
-            DropForeignKey("dbo.CommanderModule", "CommanderID", "dbo.Commander");
-            DropForeignKey("dbo.Commander", "AccountID", "dbo.Account");
-            DropForeignKey("dbo.CommanderDecorationIcon", "DecorationUnlockID", "dbo.Unlock");
-            DropForeignKey("dbo.AccountUnlock", "UnlockID", "dbo.Unlock");
-            DropForeignKey("dbo.AccountUnlock", "AccountID", "dbo.Account");
             DropForeignKey("dbo.PlanetStructure", "TargetPlanetID", "dbo.Planet");
             DropForeignKey("dbo.PlanetStructure", "PlanetID", "dbo.Planet");
-            DropForeignKey("dbo.PlanetStructure", "OwnerAccountID", "dbo.Account");
+            DropForeignKey("dbo.Unlock", "RequiredUnlockID", "dbo.Unlock");
+            DropForeignKey("dbo.StructureType", "EffectUnlockID", "dbo.Unlock");
+            DropForeignKey("dbo.KudosPurchase", "UnlockID", "dbo.Unlock");
+            DropForeignKey("dbo.CommanderModule", "ModuleUnlockID", "dbo.Unlock");
+            DropForeignKey("dbo.CommanderDecorationIcon", "DecorationUnlockID", "dbo.Unlock");
+            DropForeignKey("dbo.CommanderDecoration", "DecorationUnlockID", "dbo.Unlock");
+            DropForeignKey("dbo.Commander", "ChassisUnlockID", "dbo.Unlock");
+            DropForeignKey("dbo.CommanderModule", "SlotID", "dbo.CommanderSlot");
+            DropForeignKey("dbo.CommanderModule", "CommanderID", "dbo.Commander");
+            DropForeignKey("dbo.CommanderDecoration", "SlotID", "dbo.CommanderDecorationSlot");
+            DropForeignKey("dbo.CommanderDecoration", "CommanderID", "dbo.Commander");
+            DropForeignKey("dbo.AccountUnlock", "UnlockID", "dbo.Unlock");
+            DropForeignKey("dbo.PlanetStructure", "StructureTypeID", "dbo.StructureType");
             DropForeignKey("dbo.PlanetOwnerHistory", "PlanetID", "dbo.Planet");
-            DropForeignKey("dbo.PlanetOwnerHistory", "OwnerFactionID", "dbo.Faction");
-            DropForeignKey("dbo.PlanetOwnerHistory", "OwnerClanID", "dbo.Clan");
-            DropForeignKey("dbo.PlanetOwnerHistory", "OwnerAccountID", "dbo.Account");
             DropForeignKey("dbo.PlanetFaction", "PlanetID", "dbo.Planet");
-            DropForeignKey("dbo.PlanetFaction", "FactionID", "dbo.Faction");
             DropForeignKey("dbo.MarketOffer", "PlanetID", "dbo.Planet");
-            DropForeignKey("dbo.MarketOffer", "AccountID", "dbo.Account");
-            DropForeignKey("dbo.MarketOffer", "AcceptedAccountID", "dbo.Account");
-            DropForeignKey("dbo.Planet", "GalaxyID", "dbo.Galaxy");
             DropForeignKey("dbo.Link", "PlanetID2", "dbo.Planet");
             DropForeignKey("dbo.Link", "PlanetID1", "dbo.Planet");
+            DropForeignKey("dbo.Planet", "GalaxyID", "dbo.Galaxy");
             DropForeignKey("dbo.Link", "GalaxyID", "dbo.Galaxy");
+            DropForeignKey("dbo.SpringBattle", "ForumThreadID", "dbo.ForumThread");
             DropForeignKey("dbo.Planet", "ForumThreadID", "dbo.ForumThread");
             DropForeignKey("dbo.News", "ForumThreadID", "dbo.ForumThread");
-            DropForeignKey("dbo.News", "AuthorAccountID", "dbo.Account");
-            DropForeignKey("dbo.Rating", "MissionID", "dbo.Mission");
-            DropForeignKey("dbo.Rating", "AccountID", "dbo.Account");
-            DropForeignKey("dbo.Mission", "RatingPollID", "dbo.RatingPoll");
-            DropForeignKey("dbo.Mission", "DifficultyRatingPollID", "dbo.RatingPoll");
+            DropForeignKey("dbo.Mission", "ForumThreadID", "dbo.ForumThread");
+            DropForeignKey("dbo.Resource", "MissionID", "dbo.Mission");
+            DropForeignKey("dbo.SpringBattle", "RatingPollID", "dbo.RatingPoll");
+            DropForeignKey("dbo.Resource", "RatingPollID", "dbo.RatingPoll");
             DropForeignKey("dbo.SpringBattle", "ModResourceID", "dbo.Resource");
-            DropForeignKey("dbo.SpringBattle", "MapResourceID", "dbo.Resource");
             DropForeignKey("dbo.ResourceSpringHash", "ResourceID", "dbo.Resource");
             DropForeignKey("dbo.ResourceDependency", "ResourceID", "dbo.Resource");
             DropForeignKey("dbo.ResourceContentFile", "ResourceID", "dbo.Resource");
-            DropForeignKey("dbo.Resource", "RatingPollID", "dbo.RatingPoll");
-            DropForeignKey("dbo.Resource", "MissionID", "dbo.Mission");
+            DropForeignKey("dbo.Planet", "MapResourceID", "dbo.Resource");
             DropForeignKey("dbo.MapRating", "ResourceID", "dbo.Resource");
-            DropForeignKey("dbo.MapRating", "AccountID", "dbo.Account");
             DropForeignKey("dbo.Resource", "ForumThreadID", "dbo.ForumThread");
-            DropForeignKey("dbo.Resource", "TaggedByAccountID", "dbo.Account");
+            DropForeignKey("dbo.Mission", "DifficultyRatingPollID", "dbo.RatingPoll");
+            DropForeignKey("dbo.Mission", "RatingPollID", "dbo.RatingPoll");
             DropForeignKey("dbo.AccountRatingVote", "RatingPollID", "dbo.RatingPoll");
-            DropForeignKey("dbo.AccountRatingVote", "AccountID", "dbo.Account");
+            DropForeignKey("dbo.Rating", "MissionID", "dbo.Mission");
             DropForeignKey("dbo.MissionScore", "MissionID", "dbo.Mission");
-            DropForeignKey("dbo.MissionScore", "AccountID", "dbo.Account");
-            DropForeignKey("dbo.Mission", "Mission1_MissionID", "dbo.Mission");
-            DropForeignKey("dbo.Mission", "ForumThreadID", "dbo.ForumThread");
+            DropForeignKey("dbo.Mission", "Mission2_MissionID", "dbo.Mission");
             DropForeignKey("dbo.CampaignPlanet", "MissionID", "dbo.Mission");
-            DropForeignKey("dbo.CampaignPlanetVar", new[] { "PlanetID", "CampaignID" }, "dbo.CampaignPlanet");
-            DropForeignKey("dbo.CampaignPlanet", "CampaignID", "dbo.Campaign");
+            DropForeignKey("dbo.CampaignPlanetVar", new[] { "CampaignID", "PlanetID" }, "dbo.CampaignPlanet");
             DropForeignKey("dbo.CampaignLink", new[] { "UnlockingPlanetID", "CampaignID" }, "dbo.CampaignPlanet");
             DropForeignKey("dbo.CampaignLink", new[] { "PlanetToUnlockID", "CampaignID" }, "dbo.CampaignPlanet");
+            DropForeignKey("dbo.CampaignJournal", new[] { "CampaignID", "PlanetID" }, "dbo.CampaignPlanet");
+            DropForeignKey("dbo.CampaignEvent", new[] { "PlanetID", "CampaignID" }, "dbo.CampaignPlanet");
+            DropForeignKey("dbo.AccountCampaignProgress", new[] { "CampaignID", "PlanetID" }, "dbo.CampaignPlanet");
+            DropForeignKey("dbo.CampaignVar", "CampaignID", "dbo.Campaign");
+            DropForeignKey("dbo.CampaignPlanetVar", "CampaignID", "dbo.Campaign");
+            DropForeignKey("dbo.CampaignPlanet", "CampaignID", "dbo.Campaign");
             DropForeignKey("dbo.CampaignLink", "CampaignID", "dbo.Campaign");
             DropForeignKey("dbo.CampaignJournalVar", "CampaignID", "dbo.Campaign");
             DropForeignKey("dbo.CampaignEvent", "CampaignID", "dbo.Campaign");
-            DropForeignKey("dbo.CampaignEvent", new[] { "CampaignID", "PlanetID" }, "dbo.CampaignPlanet");
-            DropForeignKey("dbo.CampaignEvent", "AccountID", "dbo.Account");
             DropForeignKey("dbo.AccountCampaignVar", "CampaignID", "dbo.Campaign");
             DropForeignKey("dbo.AccountCampaignProgress", "CampaignID", "dbo.Campaign");
             DropForeignKey("dbo.AccountCampaignJournalProgress", "CampaignID", "dbo.Campaign");
-            DropForeignKey("dbo.AccountCampaignJournalProgress", new[] { "CampaignID", "JournalID" }, "dbo.CampaignJournal");
-            DropForeignKey("dbo.CampaignJournal", new[] { "CampaignID", "PlanetID" }, "dbo.CampaignPlanet");
             DropForeignKey("dbo.CampaignJournalVar", new[] { "CampaignID", "JournalID" }, "dbo.CampaignJournal");
-            DropForeignKey("dbo.CampaignJournalVar", new[] { "CampaignID", "RequiredVarID" }, "dbo.CampaignVar");
             DropForeignKey("dbo.CampaignPlanetVar", new[] { "CampaignID", "RequiredVarID" }, "dbo.CampaignVar");
-            DropForeignKey("dbo.CampaignPlanetVar", "CampaignID", "dbo.Campaign");
-            DropForeignKey("dbo.CampaignVar", "CampaignID", "dbo.Campaign");
+            DropForeignKey("dbo.CampaignJournalVar", new[] { "CampaignID", "RequiredVarID" }, "dbo.CampaignVar");
             DropForeignKey("dbo.AccountCampaignVar", new[] { "CampaignID", "VarID" }, "dbo.CampaignVar");
             DropForeignKey("dbo.AccountCampaignVar", "AccountID", "dbo.Account");
             DropForeignKey("dbo.CampaignJournal", "CampaignID", "dbo.Campaign");
-            DropForeignKey("dbo.AccountCampaignJournalProgress", "AccountID", "dbo.Account");
-            DropForeignKey("dbo.AccountCampaignProgress", new[] { "CampaignID", "PlanetID" }, "dbo.CampaignPlanet");
+            DropForeignKey("dbo.AccountCampaignJournalProgress", new[] { "CampaignID", "JournalID" }, "dbo.CampaignJournal");
             DropForeignKey("dbo.AccountCampaignProgress", "AccountID", "dbo.Account");
-            DropForeignKey("dbo.Mission", "AccountID", "dbo.Account");
             DropForeignKey("dbo.ForumThreadLastRead", "ForumThreadID", "dbo.ForumThread");
-            DropForeignKey("dbo.ForumThreadLastRead", "AccountID", "dbo.Account");
-            DropForeignKey("dbo.ForumPost", "ForumThreadID", "dbo.ForumThread");
-            DropForeignKey("dbo.ForumPostEdit", "ForumPostID", "dbo.ForumPost");
-            DropForeignKey("dbo.ForumPostEdit", "EditorAccountID", "dbo.Account");
-            DropForeignKey("dbo.AccountForumVote", "ForumPostID", "dbo.ForumPost");
-            DropForeignKey("dbo.AccountForumVote", "AccountID", "dbo.Account");
-            DropForeignKey("dbo.ForumPost", "AuthorAccountID", "dbo.Account");
             DropForeignKey("dbo.ForumThread", "ForumCategoryID", "dbo.ForumCategory");
             DropForeignKey("dbo.ForumLastRead", "ForumCategoryID", "dbo.ForumCategory");
-            DropForeignKey("dbo.ForumLastRead", "AccountID", "dbo.Account");
             DropForeignKey("dbo.ForumCategory", "ParentForumCategoryID", "dbo.ForumCategory");
-            DropForeignKey("dbo.ForumThread", "RestrictedClanID", "dbo.Clan");
-            DropForeignKey("dbo.ForumThread", "LastPostAccountID", "dbo.Account");
-            DropForeignKey("dbo.ForumThread", "CreatedAccountID", "dbo.Account");
-            DropForeignKey("dbo.Planet", "OwnerFactionID", "dbo.Faction");
+            DropForeignKey("dbo.Clan", "ForumThreadID", "dbo.ForumThread");
             DropForeignKey("dbo.AccountPlanet", "PlanetID", "dbo.Planet");
-            DropForeignKey("dbo.AccountPlanet", "AccountID", "dbo.Account");
-            DropForeignKey("dbo.Planet", "OwnerAccountID", "dbo.Account");
             DropForeignKey("dbo.TreatyEffect", "FactionTreatyID", "dbo.FactionTreaty");
-            DropForeignKey("dbo.TreatyEffect", "ReceivingFactionID", "dbo.Faction");
-            DropForeignKey("dbo.TreatyEffect", "GivingFactionID", "dbo.Faction");
-            DropForeignKey("dbo.FactionTreaty", "ProposingFactionID", "dbo.Faction");
-            DropForeignKey("dbo.FactionTreaty", "AcceptingFactionID", "dbo.Faction");
-            DropForeignKey("dbo.FactionTreaty", "ProposingAccountID", "dbo.Account");
-            DropForeignKey("dbo.FactionTreaty", "AcceptedAccountID", "dbo.Account");
-            DropForeignKey("dbo.AccountRole", "ClanID", "dbo.Clan");
-            DropForeignKey("dbo.AccountRole", "AccountID", "dbo.Account");
-            DropForeignKey("dbo.SpringBattle", "HostAccountID", "dbo.Account");
-            DropForeignKey("dbo.AccountBattleAward", "AccountID", "dbo.Account");
-            DropIndex("dbo.EventAccount", new[] { "EventID" });
-            DropIndex("dbo.EventAccount", new[] { "AccountID" });
+            DropForeignKey("dbo.Clan", "FactionID", "dbo.Faction");
+            DropForeignKey("dbo.AccountRole", "FactionID", "dbo.Faction");
+            DropForeignKey("dbo.Account", "FactionID", "dbo.Faction");
+            DropForeignKey("dbo.EventAccount", "AccountID", "dbo.Account");
+            DropForeignKey("dbo.EventAccount", "EventID", "dbo.Event");
+            DropForeignKey("dbo.AccountBattleAward", "SpringBattleID", "dbo.SpringBattle");
+            DropForeignKey("dbo.AbuseReport", "ReporterAccountID", "dbo.Account");
+            DropForeignKey("dbo.AbuseReport", "AccountID", "dbo.Account");
             DropIndex("dbo.EventSpringBattle", new[] { "SpringBattleID" });
             DropIndex("dbo.EventSpringBattle", new[] { "EventID" });
             DropIndex("dbo.EventPlanet", new[] { "PlanetID" });
@@ -1756,16 +1739,22 @@ namespace PlasmaShared.Migrations
             DropIndex("dbo.EventFaction", new[] { "EventID" });
             DropIndex("dbo.EventClan", new[] { "EventID" });
             DropIndex("dbo.EventClan", new[] { "ClanID" });
+            DropIndex("dbo.EventAccount", new[] { "AccountID" });
+            DropIndex("dbo.EventAccount", new[] { "EventID" });
             DropIndex("dbo.Punishment", new[] { "CreatedAccountID" });
             DropIndex("dbo.Punishment", new[] { "AccountID" });
             DropIndex("dbo.LobbyChannelSubscription", new[] { "AccountID" });
+            DropIndex("dbo.ContributionJar", new[] { "GuarantorAccountID" });
             DropIndex("dbo.Contribution", new[] { "ContributionJarID" });
             DropIndex("dbo.Contribution", new[] { "ManuallyAddedAccountID" });
             DropIndex("dbo.Contribution", new[] { "AccountID" });
-            DropIndex("dbo.ContributionJar", new[] { "GuarantorAccountID" });
             DropIndex("dbo.AutoBanSmurfList", new[] { "AccountID" });
             DropIndex("dbo.AccountUserID", new[] { "AccountID" });
             DropIndex("dbo.AccountIP", new[] { "AccountID" });
+            DropIndex("dbo.ForumPostEdit", new[] { "EditorAccountID" });
+            DropIndex("dbo.ForumPostEdit", new[] { "ForumPostID" });
+            DropIndex("dbo.AccountForumVote", new[] { "ForumPostID" });
+            DropIndex("dbo.AccountForumVote", new[] { "AccountID" });
             DropIndex("dbo.SpringBattlePlayer", new[] { "AccountID" });
             DropIndex("dbo.SpringBattlePlayer", new[] { "SpringBattleID" });
             DropIndex("dbo.RoleTypeHierarchy", new[] { "SlaveRoleTypeID" });
@@ -1776,21 +1765,20 @@ namespace PlasmaShared.Migrations
             DropIndex("dbo.PollVote", new[] { "AccountID" });
             DropIndex("dbo.PollOption", new[] { "PollID" });
             DropIndex("dbo.Poll", new[] { "CreatedAccountID" });
-            DropIndex("dbo.Poll", new[] { "RestrictClanID" });
             DropIndex("dbo.Poll", new[] { "RestrictFactionID" });
             DropIndex("dbo.Poll", new[] { "RoleTargetAccountID" });
             DropIndex("dbo.Poll", new[] { "RoleTypeID" });
             DropIndex("dbo.KudosPurchase", new[] { "UnlockID" });
             DropIndex("dbo.KudosPurchase", new[] { "AccountID" });
+            DropIndex("dbo.CommanderDecorationIcon", new[] { "DecorationUnlockID" });
             DropIndex("dbo.CommanderModule", new[] { "ModuleUnlockID" });
             DropIndex("dbo.CommanderModule", new[] { "SlotID" });
             DropIndex("dbo.CommanderModule", new[] { "CommanderID" });
-            DropIndex("dbo.Commander", new[] { "ChassisUnlockID" });
-            DropIndex("dbo.Commander", new[] { "AccountID" });
             DropIndex("dbo.CommanderDecoration", new[] { "DecorationUnlockID" });
             DropIndex("dbo.CommanderDecoration", new[] { "SlotID" });
             DropIndex("dbo.CommanderDecoration", new[] { "CommanderID" });
-            DropIndex("dbo.CommanderDecorationIcon", new[] { "DecorationUnlockID" });
+            DropIndex("dbo.Commander", new[] { "ChassisUnlockID" });
+            DropIndex("dbo.Commander", new[] { "AccountID" });
             DropIndex("dbo.AccountUnlock", new[] { "UnlockID" });
             DropIndex("dbo.AccountUnlock", new[] { "AccountID" });
             DropIndex("dbo.Unlock", new[] { "RequiredUnlockID" });
@@ -1813,8 +1801,6 @@ namespace PlasmaShared.Migrations
             DropIndex("dbo.Link", new[] { "PlanetID1" });
             DropIndex("dbo.News", new[] { "ForumThreadID" });
             DropIndex("dbo.News", new[] { "AuthorAccountID" });
-            DropIndex("dbo.Rating", new[] { "MissionID" });
-            DropIndex("dbo.Rating", new[] { "AccountID" });
             DropIndex("dbo.ResourceSpringHash", new[] { "ResourceID" });
             DropIndex("dbo.ResourceDependency", new[] { "ResourceID" });
             DropIndex("dbo.ResourceContentFile", new[] { "ResourceID" });
@@ -1826,16 +1812,18 @@ namespace PlasmaShared.Migrations
             DropIndex("dbo.Resource", new[] { "MissionID" });
             DropIndex("dbo.AccountRatingVote", new[] { "AccountID" });
             DropIndex("dbo.AccountRatingVote", new[] { "RatingPollID" });
+            DropIndex("dbo.Rating", new[] { "MissionID" });
+            DropIndex("dbo.Rating", new[] { "AccountID" });
             DropIndex("dbo.MissionScore", new[] { "AccountID" });
             DropIndex("dbo.MissionScore", new[] { "MissionID" });
             DropIndex("dbo.CampaignLink", new[] { "CampaignID" });
             DropIndex("dbo.CampaignLink", new[] { "UnlockingPlanetID", "CampaignID" });
             DropIndex("dbo.CampaignLink", new[] { "PlanetToUnlockID", "CampaignID" });
-            DropIndex("dbo.CampaignEvent", new[] { "CampaignID", "PlanetID" });
+            DropIndex("dbo.CampaignEvent", new[] { "PlanetID", "CampaignID" });
+            DropIndex("dbo.CampaignEvent", new[] { "CampaignID" });
             DropIndex("dbo.CampaignEvent", new[] { "AccountID" });
-            DropIndex("dbo.CampaignPlanetVar", new[] { "PlanetID", "CampaignID" });
+            DropIndex("dbo.CampaignPlanetVar", new[] { "CampaignID", "PlanetID" });
             DropIndex("dbo.CampaignPlanetVar", new[] { "CampaignID", "RequiredVarID" });
-            DropIndex("dbo.CampaignPlanetVar", new[] { "CampaignID" });
             DropIndex("dbo.AccountCampaignVar", new[] { "CampaignID", "VarID" });
             DropIndex("dbo.AccountCampaignVar", new[] { "AccountID" });
             DropIndex("dbo.CampaignVar", new[] { "CampaignID" });
@@ -1846,22 +1834,17 @@ namespace PlasmaShared.Migrations
             DropIndex("dbo.AccountCampaignJournalProgress", new[] { "CampaignID", "JournalID" });
             DropIndex("dbo.AccountCampaignJournalProgress", new[] { "AccountID" });
             DropIndex("dbo.AccountCampaignProgress", new[] { "CampaignID", "PlanetID" });
+            DropIndex("dbo.AccountCampaignProgress", new[] { "CampaignID" });
             DropIndex("dbo.AccountCampaignProgress", new[] { "AccountID" });
             DropIndex("dbo.CampaignPlanet", new[] { "MissionID" });
             DropIndex("dbo.CampaignPlanet", new[] { "CampaignID" });
-            DropIndex("dbo.Mission", new[] { "Mission1_MissionID" });
+            DropIndex("dbo.Mission", new[] { "Mission2_MissionID" });
             DropIndex("dbo.Mission", new[] { "DifficultyRatingPollID" });
             DropIndex("dbo.Mission", new[] { "RatingPollID" });
             DropIndex("dbo.Mission", new[] { "ForumThreadID" });
             DropIndex("dbo.Mission", new[] { "AccountID" });
             DropIndex("dbo.ForumThreadLastRead", new[] { "AccountID" });
             DropIndex("dbo.ForumThreadLastRead", new[] { "ForumThreadID" });
-            DropIndex("dbo.ForumPostEdit", new[] { "EditorAccountID" });
-            DropIndex("dbo.ForumPostEdit", new[] { "ForumPostID" });
-            DropIndex("dbo.AccountForumVote", new[] { "ForumPostID" });
-            DropIndex("dbo.AccountForumVote", new[] { "AccountID" });
-            DropIndex("dbo.ForumPost", new[] { "ForumThreadID" });
-            DropIndex("dbo.ForumPost", new[] { "AuthorAccountID" });
             DropIndex("dbo.ForumLastRead", new[] { "ForumCategoryID" });
             DropIndex("dbo.ForumLastRead", new[] { "AccountID" });
             DropIndex("dbo.ForumCategory", new[] { "ParentForumCategoryID" });
@@ -1894,19 +1877,17 @@ namespace PlasmaShared.Migrations
             DropIndex("dbo.SpringBattle", new[] { "RatingPollID" });
             DropIndex("dbo.SpringBattle", new[] { "ForumThreadID" });
             DropIndex("dbo.SpringBattle", new[] { "ModResourceID" });
-            DropIndex("dbo.SpringBattle", new[] { "MapResourceID" });
             DropIndex("dbo.SpringBattle", new[] { "HostAccountID" });
             DropIndex("dbo.AccountBattleAward", new[] { "SpringBattleID" });
             DropIndex("dbo.AccountBattleAward", new[] { "AccountID" });
             DropIndex("dbo.Account", new[] { "FactionID" });
-            DropIndex("dbo.Account", new[] { "ClanID" });
             DropIndex("dbo.AbuseReport", new[] { "ReporterAccountID" });
             DropIndex("dbo.AbuseReport", new[] { "AccountID" });
-            DropTable("dbo.EventAccount");
             DropTable("dbo.EventSpringBattle");
             DropTable("dbo.EventPlanet");
             DropTable("dbo.EventFaction");
             DropTable("dbo.EventClan");
+            DropTable("dbo.EventAccount");
             DropTable("dbo.MiscVar");
             DropTable("dbo.LobbyMessage");
             DropTable("dbo.ExceptionLog");
@@ -1916,11 +1897,14 @@ namespace PlasmaShared.Migrations
             DropTable("dbo.AutohostConfig");
             DropTable("dbo.Punishment");
             DropTable("dbo.LobbyChannelSubscription");
-            DropTable("dbo.Contribution");
             DropTable("dbo.ContributionJar");
+            DropTable("dbo.Contribution");
             DropTable("dbo.AutoBanSmurfList");
             DropTable("dbo.AccountUserID");
             DropTable("dbo.AccountIP");
+            DropTable("dbo.ForumPostEdit");
+            DropTable("dbo.ForumPost");
+            DropTable("dbo.AccountForumVote");
             DropTable("dbo.SpringBattlePlayer");
             DropTable("dbo.RoleTypeHierarchy");
             DropTable("dbo.RoleType");
@@ -1929,12 +1913,12 @@ namespace PlasmaShared.Migrations
             DropTable("dbo.Poll");
             DropTable("dbo.TreatyEffectType");
             DropTable("dbo.KudosPurchase");
-            DropTable("dbo.CommanderDecorationSlot");
+            DropTable("dbo.CommanderDecorationIcon");
             DropTable("dbo.CommanderSlot");
             DropTable("dbo.CommanderModule");
-            DropTable("dbo.Commander");
+            DropTable("dbo.CommanderDecorationSlot");
             DropTable("dbo.CommanderDecoration");
-            DropTable("dbo.CommanderDecorationIcon");
+            DropTable("dbo.Commander");
             DropTable("dbo.AccountUnlock");
             DropTable("dbo.Unlock");
             DropTable("dbo.StructureType");
@@ -1945,7 +1929,6 @@ namespace PlasmaShared.Migrations
             DropTable("dbo.Link");
             DropTable("dbo.Galaxy");
             DropTable("dbo.News");
-            DropTable("dbo.Rating");
             DropTable("dbo.ResourceSpringHash");
             DropTable("dbo.ResourceDependency");
             DropTable("dbo.ResourceContentFile");
@@ -1953,6 +1936,7 @@ namespace PlasmaShared.Migrations
             DropTable("dbo.Resource");
             DropTable("dbo.AccountRatingVote");
             DropTable("dbo.RatingPoll");
+            DropTable("dbo.Rating");
             DropTable("dbo.MissionScore");
             DropTable("dbo.CampaignLink");
             DropTable("dbo.CampaignEvent");
@@ -1967,9 +1951,6 @@ namespace PlasmaShared.Migrations
             DropTable("dbo.CampaignPlanet");
             DropTable("dbo.Mission");
             DropTable("dbo.ForumThreadLastRead");
-            DropTable("dbo.ForumPostEdit");
-            DropTable("dbo.AccountForumVote");
-            DropTable("dbo.ForumPost");
             DropTable("dbo.ForumLastRead");
             DropTable("dbo.ForumCategory");
             DropTable("dbo.ForumThread");

@@ -1,31 +1,22 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // CommanderDecorationIcon
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("CommanderDecorationIcon")]
     public partial class CommanderDecorationIcon
     {
-        public int DecorationUnlockID { get; set; } // DecorationUnlockID (Primary key)
-        public int IconPosition { get; set; } // IconPosition
-        public int IconType { get; set; } // IconType
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int DecorationUnlockID { get; set; }
 
-        // Foreign keys
-        public virtual Unlock Unlock { get; set; } // FK_CommanderDecorationIcon_Unlock
+        public int IconPosition { get; set; }
+
+        public int IconType { get; set; }
+
+        public virtual Unlock Unlock { get; set; }
     }
-
 }

@@ -1,47 +1,43 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // RatingPoll
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("RatingPoll")]
     public partial class RatingPoll
     {
-        public int RatingPollID { get; set; } // RatingPollID (Primary key)
-        public double? Average { get; set; } // Average
-        public int Count { get; set; } // Count
-
-        // Reverse navigation
-        public virtual ICollection<AccountRatingVote> AccountRatingVotes { get; set; } // Many to many mapping
-        public virtual ICollection<Mission> Missions_DifficultyRatingPollID { get; set; } // Mission.FK_Mission_RatingPoll1
-        public virtual ICollection<Mission> Missions_RatingPollID { get; set; } // Mission.FK_Mission_RatingPoll
-        public virtual ICollection<Resource> Resources { get; set; } // Resource.FK_Resource_RatingPoll
-        public virtual ICollection<SpringBattle> SpringBattles { get; set; } // SpringBattle.FK_SpringBattle_RatingPoll
-
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public RatingPoll()
         {
-            Count = 0;
-            AccountRatingVotes = new List<AccountRatingVote>();
-            Missions_DifficultyRatingPollID = new List<Mission>();
-            Missions_RatingPollID = new List<Mission>();
-            Resources = new List<Resource>();
-            SpringBattles = new List<SpringBattle>();
-            InitializePartial();
+            AccountRatingVotes = new HashSet<AccountRatingVote>();
+            Missions = new HashSet<Mission>();
+            Missions1 = new HashSet<Mission>();
+            Resources = new HashSet<Resource>();
+            SpringBattles = new HashSet<SpringBattle>();
         }
-        partial void InitializePartial();
-    }
 
+        public int RatingPollID { get; set; }
+
+        public double? Average { get; set; }
+
+        public int Count { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AccountRatingVote> AccountRatingVotes { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Mission> Missions { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Mission> Missions1 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Resource> Resources { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SpringBattle> SpringBattles { get; set; }
+    }
 }

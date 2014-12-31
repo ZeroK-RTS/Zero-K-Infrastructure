@@ -1,34 +1,36 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // CampaignPlanetVar
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("CampaignPlanetVar")]
     public partial class CampaignPlanetVar
     {
-        public int CampaignID { get; set; } // CampaignID (Primary key)
-        public int PlanetID { get; set; } // PlanetID (Primary key)
-        public int RequiredVarID { get; set; } // RequiredVarID (Primary key)
-        public string RequiredValue { get; set; } // RequiredValue
+        [Key]
+        [Column(Order = 0)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int CampaignID { get; set; }
 
-        // Foreign keys
-        public virtual CampaignVar CampaignVar { get; set; } // FK_CampaignPlanetVar_CampaignVar
+        [Key]
+        [Column(Order = 1)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int PlanetID { get; set; }
+
+        [Key]
+        [Column(Order = 2)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int RequiredVarID { get; set; }
+
+        [Required]
+        public string RequiredValue { get; set; }
+
         public virtual Campaign Campaign { get; set; }
 
-    }
+        public virtual CampaignPlanet CampaignPlanet { get; set; }
 
+        public virtual CampaignVar CampaignVar { get; set; }
+    }
 }

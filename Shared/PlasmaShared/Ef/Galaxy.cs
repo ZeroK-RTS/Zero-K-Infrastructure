@@ -1,55 +1,51 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // Galaxy
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("Galaxy")]
     public partial class Galaxy
     {
-        public int GalaxyID { get; set; } // GalaxyID (Primary key)
-        public DateTime? Started { get; set; } // Started
-        public int Turn { get; set; } // Turn
-        public DateTime? TurnStarted { get; set; } // TurnStarted
-        public string ImageName { get; set; } // ImageName
-        public bool IsDirty { get; set; } // IsDirty
-        public int Width { get; set; } // Width
-        public int Height { get; set; } // Height
-        public bool IsDefault { get; set; } // IsDefault
-        public int AttackerSideCounter { get; set; } // AttackerSideCounter
-        public DateTime? AttackerSideChangeTime { get; set; } // AttackerSideChangeTime
-        public string MatchMakerState { get; set; } // MatchMakerState
-
-        // Reverse navigation
-        public virtual ICollection<Link> Links { get; set; } // Link.FK_Link_Galaxy
-        public virtual ICollection<Planet> Planets { get; set; } // Planet.FK_Planet_Galaxy
-
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Galaxy()
         {
-            ImageName = "N'galaxy1.jpg'";
-            IsDirty = true;
-            Width = 100;
-            Height = 100;
-            IsDefault = false;
-            AttackerSideCounter = 0;
-            Links = new List<Link>();
-            Planets = new List<Planet>();
-            InitializePartial();
+            Links = new HashSet<Link>();
+            Planets = new HashSet<Planet>();
         }
-        partial void InitializePartial();
-    }
 
+        public int GalaxyID { get; set; }
+
+        public DateTime? Started { get; set; }
+
+        public int Turn { get; set; }
+
+        public DateTime? TurnStarted { get; set; }
+
+        [StringLength(100)]
+        public string ImageName { get; set; }
+
+        public bool IsDirty { get; set; }
+
+        public int Width { get; set; }
+
+        public int Height { get; set; }
+
+        public bool IsDefault { get; set; }
+
+        public int AttackerSideCounter { get; set; }
+
+        public DateTime? AttackerSideChangeTime { get; set; }
+
+        [Column(TypeName = "text")]
+        public string MatchMakerState { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Link> Links { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Planet> Planets { get; set; }
+    }
 }

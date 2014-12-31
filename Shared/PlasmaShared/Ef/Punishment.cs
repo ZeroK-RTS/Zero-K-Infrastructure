@@ -1,62 +1,55 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // Punishment
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("Punishment")]
     public partial class Punishment
     {
-        public int PunishmentID { get; set; } // PunishmentID (Primary key)
-        public int AccountID { get; set; } // AccountID
-        public string Reason { get; set; } // Reason
-        public DateTime Time { get; set; } // Time
-        public DateTime? BanExpires { get; set; } // BanExpires
-        public bool BanMute { get; set; } // BanMute
-        public bool BanCommanders { get; set; } // BanCommanders
-        public bool BanUnlocks { get; set; } // BanUnlocks
-        public bool BanSite { get; set; } // BanSite
-        public bool BanLobby { get; set; } // BanLobby
-        public string BanIP { get; set; } // BanIP
-        public bool BanForum { get; set; } // BanForum
-        public long? UserID { get; set; } // UserID
-        public int? CreatedAccountID { get; set; } // CreatedAccountID
-        public bool DeleteInfluence { get; set; } // DeleteInfluence
-        public bool DeleteXP { get; set; } // DeleteXP
-        public bool SegregateHost { get; set; } // SegregateHost
-        public bool SetRightsToZero { get; set; } // SetRightsToZero
+        public int PunishmentID { get; set; }
 
-        // Foreign keys
-        public virtual Account AccountByAccountID { get; set; } // FK_Punishment_Account
-        public virtual Account AccountByCreatedAccountID { get; set; } // FK_Punishment_Account1
+        public int AccountID { get; set; }
 
-        public Punishment()
-        {
-            BanMute = false;
-            BanCommanders = false;
-            BanUnlocks = false;
-            BanSite = false;
-            BanLobby = false;
-            DeleteInfluence = false;
-            DeleteXP = false;
-            SegregateHost = false;
-            SetRightsToZero = false;
-            InitializePartial();
-        }
-        partial void InitializePartial();
+        [Required]
+        [StringLength(1000)]
+        public string Reason { get; set; }
+
+        public DateTime Time { get; set; }
+
+        public DateTime? BanExpires { get; set; }
+
+        public bool BanMute { get; set; }
+
+        public bool BanCommanders { get; set; }
+
+        public bool BanUnlocks { get; set; }
+
+        public bool BanSite { get; set; }
+
+        public bool BanLobby { get; set; }
+
+        [StringLength(1000)]
+        public string BanIP { get; set; }
+
+        public bool BanForum { get; set; }
+
+        public long? UserID { get; set; }
+
+        public int? CreatedAccountID { get; set; }
+
+        public bool DeleteInfluence { get; set; }
+
+        public bool DeleteXP { get; set; }
+
+        public bool SegregateHost { get; set; }
+
+        public bool SetRightsToZero { get; set; }
+
+        public virtual Account Account { get; set; }
+
+        public virtual Account Account1 { get; set; }
     }
-
 }

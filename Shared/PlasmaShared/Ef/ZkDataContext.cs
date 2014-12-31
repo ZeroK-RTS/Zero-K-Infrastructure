@@ -1,102 +1,782 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    public partial class ZkDataContext : DbContext, IZkDataContext
+    using System;
+    using System.Data.Entity;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Linq;
+
+    public partial class ZkDataContext : DbContext
     {
-        public IDbSet<AbuseReport> AbuseReports { get; set; } // AbuseReport
-        public IDbSet<Account> Accounts { get; set; } // Account
-        public IDbSet<AccountBattleAward> AccountBattleAwards { get; set; } // AccountBattleAward
-        public IDbSet<AccountCampaignJournalProgress> AccountCampaignJournalProgress { get; set; } // AccountCampaignJournalProgress
-        public IDbSet<AccountCampaignProgress> AccountCampaignProgress { get; set; } // AccountCampaignProgress
-        public IDbSet<AccountCampaignVar> AccountCampaignVars { get; set; } // AccountCampaignVar
-        public IDbSet<AccountForumVote> AccountForumVotes { get; set; } // AccountForumVote
-        public IDbSet<AccountIP> AccountIPS { get; set; } // AccountIP
-        public IDbSet<AccountPlanet> AccountPlanets { get; set; } // AccountPlanet
-        public IDbSet<AccountRatingVote> AccountRatingVotes { get; set; } // AccountRatingVote
-        public IDbSet<AccountRole> AccountRoles { get; set; } // AccountRole
-        public IDbSet<AccountUnlock> AccountUnlocks { get; set; } // AccountUnlock
-        public IDbSet<AccountUserID> AccountUserIDS { get; set; } // AccountUserID
-        public IDbSet<AutoBanSmurfList> AutoBanSmurfLists { get; set; } // AutoBanSmurfList
-        public IDbSet<AutohostConfig> AutohostConfigs { get; set; } // AutohostConfig
-        public IDbSet<Avatar> Avatars { get; set; } // Avatar
-        public IDbSet<BlockedCompany> BlockedCompanies { get; set; } // BlockedCompany
-        public IDbSet<BlockedHost> BlockedHosts { get; set; } // BlockedHost
-        public IDbSet<Campaign> Campaigns { get; set; } // Campaign
-        public IDbSet<CampaignEvent> CampaignEvents { get; set; } // CampaignEvent
-        public IDbSet<CampaignJournal> CampaignJournals { get; set; } // CampaignJournal
-        public IDbSet<CampaignJournalVar> CampaignJournalVars { get; set; } // CampaignJournalVar
-        public IDbSet<CampaignLink> CampaignLinks { get; set; } // CampaignLink
-        public IDbSet<CampaignPlanet> CampaignPlanets { get; set; } // CampaignPlanet
-        public IDbSet<CampaignPlanetVar> CampaignPlanetVars { get; set; } // CampaignPlanetVar
-        public IDbSet<CampaignVar> CampaignVars { get; set; } // CampaignVar
-        public IDbSet<Clan> Clans { get; set; } // Clan
-        public IDbSet<Commander> Commanders { get; set; } // Commander
-        public IDbSet<CommanderDecoration> CommanderDecorations { get; set; } // CommanderDecoration
-        public IDbSet<CommanderDecorationIcon> CommanderDecorationIcons { get; set; } // CommanderDecorationIcon
-        public IDbSet<CommanderDecorationSlot> CommanderDecorationSlots { get; set; } // CommanderDecorationSlot
-        public IDbSet<CommanderModule> CommanderModules { get; set; } // CommanderModule
-        public IDbSet<CommanderSlot> CommanderSlots { get; set; } // CommanderSlot
-        public IDbSet<Contribution> Contributions { get; set; } // Contribution
-        public IDbSet<ContributionJar> ContributionJars { get; set; } // ContributionJar
-        public IDbSet<Event> Events { get; set; } // Event
-        public IDbSet<ExceptionLog> ExceptionLogs { get; set; } // ExceptionLog
-        public IDbSet<Faction> Factions { get; set; } // Faction
-        public IDbSet<FactionTreaty> FactionTreaties { get; set; } // FactionTreaty
-        public IDbSet<ForumCategory> ForumCategories { get; set; } // ForumCategory
-        public IDbSet<ForumLastRead> ForumLastReads { get; set; } // ForumLastRead
-        public IDbSet<ForumPost> ForumPosts { get; set; } // ForumPost
-        public IDbSet<ForumPostEdit> ForumPostEdits { get; set; } // ForumPostEdit
-        public IDbSet<ForumThread> ForumThreads { get; set; } // ForumThread
-        public IDbSet<ForumThreadLastRead> ForumThreadLastReads { get; set; } // ForumThreadLastRead
-        public IDbSet<Galaxy> Galaxies { get; set; } // Galaxy
-        public IDbSet<KudosPurchase> KudosPurchases { get; set; } // KudosPurchase
-        public IDbSet<Link> Links { get; set; } // Link
-        public IDbSet<LobbyChannelSubscription> LobbyChannelSubscriptions { get; set; } // LobbyChannelSubscription
-        public IDbSet<LobbyMessage> LobbyMessages { get; set; } // LobbyMessage
-        public IDbSet<MapRating> MapRatings { get; set; } // MapRating
-        public IDbSet<MarketOffer> MarketOffers { get; set; } // MarketOffer
-        public IDbSet<MiscVar> MiscVars { get; set; } // MiscVar
-        public IDbSet<Mission> Missions { get; set; } // Mission
-        public IDbSet<MissionScore> MissionScores { get; set; } // MissionScore
-        public IDbSet<News> News { get; set; } // News
-        public IDbSet<Planet> Planets { get; set; } // Planet
-        public IDbSet<PlanetFaction> PlanetFactions { get; set; } // PlanetFaction
-        public IDbSet<PlanetOwnerHistory> PlanetOwnerHistories { get; set; } // PlanetOwnerHistory
-        public IDbSet<PlanetStructure> PlanetStructures { get; set; } // PlanetStructure
-        public IDbSet<Poll> Polls { get; set; } // Poll
-        public IDbSet<PollOption> PollOptions { get; set; } // PollOption
-        public IDbSet<PollVote> PollVotes { get; set; } // PollVote
-        public IDbSet<Punishment> Punishments { get; set; } // Punishment
-        public IDbSet<Rating> Ratings { get; set; } // Rating
-        public IDbSet<RatingPoll> RatingPolls { get; set; } // RatingPoll
-        public IDbSet<Resource> Resources { get; set; } // Resource
-        public IDbSet<ResourceContentFile> ResourceContentFiles { get; set; } // ResourceContentFile
-        public IDbSet<ResourceDependency> ResourceDependencies { get; set; } // ResourceDependency
-        public IDbSet<ResourceSpringHash> ResourceSpringHashes { get; set; } // ResourceSpringHash
-        public IDbSet<RoleType> RoleTypes { get; set; } // RoleType
-        public IDbSet<RoleTypeHierarchy> RoleTypeHierarchies { get; set; } // RoleTypeHierarchy
-        public IDbSet<SpringBattle> SpringBattles { get; set; } // SpringBattle
-        public IDbSet<SpringBattlePlayer> SpringBattlePlayers { get; set; } // SpringBattlePlayer
-        public IDbSet<StructureType> StructureTypes { get; set; } // StructureType
-        public IDbSet<TreatyEffect> TreatyEffects { get; set; } // TreatyEffect
-        public IDbSet<TreatyEffectType> TreatyEffectTypes { get; set; } // TreatyEffectType
-        public IDbSet<Unlock> Unlocks { get; set; } // Unlock
+        public virtual DbSet<AbuseReport> AbuseReports { get; set; }
+        public virtual DbSet<Account> Accounts { get; set; }
+        public virtual DbSet<AccountBattleAward> AccountBattleAwards { get; set; }
+        public virtual DbSet<AccountCampaignJournalProgress> AccountCampaignJournalProgresses { get; set; }
+        public virtual DbSet<AccountCampaignProgress> AccountCampaignProgresses { get; set; }
+        public virtual DbSet<AccountCampaignVar> AccountCampaignVars { get; set; }
+        public virtual DbSet<AccountForumVote> AccountForumVotes { get; set; }
+        public virtual DbSet<AccountIP> AccountIPs { get; set; }
+        public virtual DbSet<AccountPlanet> AccountPlanets { get; set; }
+        public virtual DbSet<AccountRatingVote> AccountRatingVotes { get; set; }
+        public virtual DbSet<AccountRole> AccountRoles { get; set; }
+        public virtual DbSet<AccountUnlock> AccountUnlocks { get; set; }
+        public virtual DbSet<AccountUserID> AccountUserIDs { get; set; }
+        public virtual DbSet<AutoBanSmurfList> AutoBanSmurfLists { get; set; }
+        public virtual DbSet<AutohostConfig> AutohostConfigs { get; set; }
+        public virtual DbSet<Avatar> Avatars { get; set; }
+        public virtual DbSet<BlockedCompany> BlockedCompanies { get; set; }
+        public virtual DbSet<BlockedHost> BlockedHosts { get; set; }
+        public virtual DbSet<Campaign> Campaigns { get; set; }
+        public virtual DbSet<CampaignEvent> CampaignEvents { get; set; }
+        public virtual DbSet<CampaignJournal> CampaignJournals { get; set; }
+        public virtual DbSet<CampaignJournalVar> CampaignJournalVars { get; set; }
+        public virtual DbSet<CampaignLink> CampaignLinks { get; set; }
+        public virtual DbSet<CampaignPlanet> CampaignPlanets { get; set; }
+        public virtual DbSet<CampaignPlanetVar> CampaignPlanetVars { get; set; }
+        public virtual DbSet<CampaignVar> CampaignVars { get; set; }
+        public virtual DbSet<Clan> Clans { get; set; }
+        public virtual DbSet<Commander> Commanders { get; set; }
+        public virtual DbSet<CommanderDecoration> CommanderDecorations { get; set; }
+        public virtual DbSet<CommanderDecorationIcon> CommanderDecorationIcons { get; set; }
+        public virtual DbSet<CommanderDecorationSlot> CommanderDecorationSlots { get; set; }
+        public virtual DbSet<CommanderModule> CommanderModules { get; set; }
+        public virtual DbSet<CommanderSlot> CommanderSlots { get; set; }
+        public virtual DbSet<Contribution> Contributions { get; set; }
+        public virtual DbSet<ContributionJar> ContributionJars { get; set; }
+        public virtual DbSet<Event> Events { get; set; }
+        public virtual DbSet<ExceptionLog> ExceptionLogs { get; set; }
+        public virtual DbSet<Faction> Factions { get; set; }
+        public virtual DbSet<FactionTreaty> FactionTreaties { get; set; }
+        public virtual DbSet<ForumCategory> ForumCategories { get; set; }
+        public virtual DbSet<ForumLastRead> ForumLastReads { get; set; }
+        public virtual DbSet<ForumPost> ForumPosts { get; set; }
+        public virtual DbSet<ForumPostEdit> ForumPostEdits { get; set; }
+        public virtual DbSet<ForumThread> ForumThreads { get; set; }
+        public virtual DbSet<ForumThreadLastRead> ForumThreadLastReads { get; set; }
+        public virtual DbSet<Galaxy> Galaxies { get; set; }
+        public virtual DbSet<KudosPurchase> KudosPurchases { get; set; }
+        public virtual DbSet<Link> Links { get; set; }
+        public virtual DbSet<LobbyChannelSubscription> LobbyChannelSubscriptions { get; set; }
+        public virtual DbSet<LobbyMessage> LobbyMessages { get; set; }
+        public virtual DbSet<MapRating> MapRatings { get; set; }
+        public virtual DbSet<MarketOffer> MarketOffers { get; set; }
+        public virtual DbSet<Mission> Missions { get; set; }
+        public virtual DbSet<MissionScore> MissionScores { get; set; }
+        public virtual DbSet<News> News { get; set; }
+        public virtual DbSet<Planet> Planets { get; set; }
+        public virtual DbSet<PlanetFaction> PlanetFactions { get; set; }
+        public virtual DbSet<PlanetOwnerHistory> PlanetOwnerHistories { get; set; }
+        public virtual DbSet<PlanetStructure> PlanetStructures { get; set; }
+        public virtual DbSet<Poll> Polls { get; set; }
+        public virtual DbSet<PollOption> PollOptions { get; set; }
+        public virtual DbSet<PollVote> PollVotes { get; set; }
+        public virtual DbSet<Punishment> Punishments { get; set; }
+        public virtual DbSet<Rating> Ratings { get; set; }
+        public virtual DbSet<RatingPoll> RatingPolls { get; set; }
+        public virtual DbSet<Resource> Resources { get; set; }
+        public virtual DbSet<ResourceContentFile> ResourceContentFiles { get; set; }
+        public virtual DbSet<ResourceDependency> ResourceDependencies { get; set; }
+        public virtual DbSet<ResourceSpringHash> ResourceSpringHashes { get; set; }
+        public virtual DbSet<RoleType> RoleTypes { get; set; }
+        public virtual DbSet<RoleTypeHierarchy> RoleTypeHierarchies { get; set; }
+        public virtual DbSet<SpringBattle> SpringBattles { get; set; }
+        public virtual DbSet<SpringBattlePlayer> SpringBattlePlayers { get; set; }
+        public virtual DbSet<StructureType> StructureTypes { get; set; }
+        public virtual DbSet<TreatyEffect> TreatyEffects { get; set; }
+        public virtual DbSet<TreatyEffectType> TreatyEffectTypes { get; set; }
+        public virtual DbSet<Unlock> Unlocks { get; set; }
+        public virtual DbSet<MiscVar> MiscVars { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Account>()
+                .Property(e => e.Name)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Account>()
+                .Property(e => e.Aliases)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Account>()
+                .Property(e => e.Password)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Account>()
+                .Property(e => e.Country)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Account>()
+                .Property(e => e.SteamID)
+                .HasPrecision(38, 0);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.AbuseReports)
+                .WithRequired(e => e.Account)
+                .HasForeignKey(e => e.AccountID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.AbuseReports1)
+                .WithRequired(e => e.Account1)
+                .HasForeignKey(e => e.ReporterAccountID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.AccountBattleAwards)
+                .WithRequired(e => e.Account)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.AccountCampaignJournalProgresses)
+                .WithRequired(e => e.Account)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.AccountForumVotes)
+                .WithRequired(e => e.Account)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.AccountRatingVotes)
+                .WithRequired(e => e.Account)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.AccountRoles)
+                .WithRequired(e => e.Account)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.AccountUnlocks)
+                .WithRequired(e => e.Account)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasOptional(e => e.AutoBanSmurfList)
+                .WithRequired(e => e.Account);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.CampaignEvents)
+                .WithRequired(e => e.Account)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.Commanders)
+                .WithRequired(e => e.Account)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.Contributions)
+                .WithOptional(e => e.Account)
+                .HasForeignKey(e => e.AccountID);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.Contributions1)
+                .WithOptional(e => e.Account1)
+                .HasForeignKey(e => e.ManuallyAddedAccountID);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.ContributionJars)
+                .WithRequired(e => e.Account)
+                .HasForeignKey(e => e.GuarantorAccountID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.FactionTreaties)
+                .WithRequired(e => e.Account)
+                .HasForeignKey(e => e.ProposingAccountID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.FactionTreaties1)
+                .WithOptional(e => e.Account1)
+                .HasForeignKey(e => e.AcceptedAccountID);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.ForumLastReads)
+                .WithRequired(e => e.Account)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.ForumPostEdits)
+                .WithRequired(e => e.Account)
+                .HasForeignKey(e => e.EditorAccountID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.ForumThreads)
+                .WithOptional(e => e.Account)
+                .HasForeignKey(e => e.CreatedAccountID);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.ForumThreads1)
+                .WithOptional(e => e.Account1)
+                .HasForeignKey(e => e.LastPostAccountID);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.ForumThreadLastReads)
+                .WithRequired(e => e.Account)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.KudosPurchases)
+                .WithRequired(e => e.Account)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.MarketOffers)
+                .WithRequired(e => e.Account)
+                .HasForeignKey(e => e.AccountID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.MarketOffers1)
+                .WithOptional(e => e.Account1)
+                .HasForeignKey(e => e.AcceptedAccountID);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.Missions)
+                .WithRequired(e => e.Account)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.MissionScores)
+                .WithRequired(e => e.Account)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.News)
+                .WithRequired(e => e.Account)
+                .HasForeignKey(e => e.AuthorAccountID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.Planets)
+                .WithOptional(e => e.Account)
+                .HasForeignKey(e => e.OwnerAccountID);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.PlanetOwnerHistories)
+                .WithOptional(e => e.Account)
+                .HasForeignKey(e => e.OwnerAccountID);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.PlanetStructures)
+                .WithOptional(e => e.Account)
+                .HasForeignKey(e => e.OwnerAccountID);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.AccountPlanets)
+                .WithRequired(e => e.Account)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.Polls)
+                .WithOptional(e => e.Account)
+                .HasForeignKey(e => e.RoleTargetAccountID);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.Polls1)
+                .WithOptional(e => e.Account1)
+                .HasForeignKey(e => e.CreatedAccountID);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.PollVotes)
+                .WithRequired(e => e.Account)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.Punishments)
+                .WithRequired(e => e.Account)
+                .HasForeignKey(e => e.AccountID);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.Punishments1)
+                .WithOptional(e => e.Account1)
+                .HasForeignKey(e => e.CreatedAccountID);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.Ratings)
+                .WithRequired(e => e.Account)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.Resources)
+                .WithOptional(e => e.Account)
+                .HasForeignKey(e => e.TaggedByAccountID);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.MapRatings)
+                .WithRequired(e => e.Account)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.SpringBattles)
+                .WithRequired(e => e.Account)
+                .HasForeignKey(e => e.HostAccountID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.SpringBattlePlayers)
+                .WithRequired(e => e.Account)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<AccountBattleAward>()
+                .Property(e => e.AwardKey)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Campaign>()
+                .HasMany(e => e.AccountCampaignJournalProgresses)
+                .WithRequired(e => e.Campaign)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Campaign>()
+                .HasMany(e => e.AccountCampaignProgresses)
+                .WithRequired(e => e.Campaign)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Campaign>()
+                .HasMany(e => e.AccountCampaignVars)
+                .WithRequired(e => e.Campaign)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Campaign>()
+                .HasMany(e => e.CampaignEvents)
+                .WithRequired(e => e.Campaign)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Campaign>()
+                .HasMany(e => e.CampaignJournalVars)
+                .WithRequired(e => e.Campaign)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Campaign>()
+                .HasMany(e => e.CampaignLinks)
+                .WithRequired(e => e.Campaign)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Campaign>()
+                .HasMany(e => e.CampaignPlanetVars)
+                .WithRequired(e => e.Campaign)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Campaign>()
+                .HasMany(e => e.CampaignVars)
+                .WithRequired(e => e.Campaign)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<CampaignJournal>()
+                .HasMany(e => e.AccountCampaignJournalProgresses)
+                .WithRequired(e => e.CampaignJournal)
+                .HasForeignKey(e => new { e.CampaignID, e.JournalID });
+
+            modelBuilder.Entity<CampaignJournal>()
+                .HasMany(e => e.CampaignJournalVars)
+                .WithRequired(e => e.CampaignJournal)
+                .HasForeignKey(e => new { e.CampaignID, e.JournalID });
+
+            modelBuilder.Entity<CampaignPlanet>()
+                .Property(e => e.Name)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CampaignPlanet>()
+                .HasMany(e => e.AccountCampaignProgresses)
+                .WithRequired(e => e.CampaignPlanet)
+                .HasForeignKey(e => new { e.PlanetID, e.CampaignID })
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<CampaignPlanet>()
+                .HasMany(e => e.CampaignEvents)
+                .WithOptional(e => e.CampaignPlanet)
+                .HasForeignKey(e => new { e.PlanetID, e.CampaignID })
+                .WillCascadeOnDelete();
+
+            modelBuilder.Entity<CampaignPlanet>()
+                .HasMany(e => e.CampaignJournals)
+                .WithOptional(e => e.CampaignPlanet)
+                .HasForeignKey(e => new { e.PlanetID, e.CampaignID });
+
+            modelBuilder.Entity<CampaignPlanet>()
+                .HasMany(e => e.CampaignLinks)
+                .WithRequired(e => e.CampaignPlanet)
+                .HasForeignKey(e => new { e.PlanetToUnlockID, e.CampaignID })
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<CampaignPlanet>()
+                .HasMany(e => e.CampaignLinks1)
+                .WithRequired(e => e.CampaignPlanet1)
+                .HasForeignKey(e => new { e.UnlockingPlanetID, e.CampaignID })
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<CampaignPlanet>()
+                .HasMany(e => e.CampaignPlanetVars)
+                .WithRequired(e => e.CampaignPlanet)
+                .HasForeignKey(e => new { e.PlanetID, e.CampaignID })
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<CampaignVar>()
+                .HasMany(e => e.AccountCampaignVars)
+                .WithRequired(e => e.CampaignVar)
+                .HasForeignKey(e => new { e.CampaignID, e.VarID })
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<CampaignVar>()
+                .HasMany(e => e.CampaignJournalVars)
+                .WithRequired(e => e.CampaignVar)
+                .HasForeignKey(e => new { e.CampaignID, e.RequiredVarID })
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<CampaignVar>()
+                .HasMany(e => e.CampaignPlanetVars)
+                .WithRequired(e => e.CampaignVar)
+                .HasForeignKey(e => new { e.CampaignID, e.RequiredVarID })
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Clan>()
+                .Property(e => e.ClanName)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Clan>()
+                .Property(e => e.Description)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Clan>()
+                .Property(e => e.Password)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Clan>()
+                .Property(e => e.Shortcut)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Clan>()
+                .HasMany(e => e.AccountRoles)
+                .WithOptional(e => e.Clan)
+                .WillCascadeOnDelete();
+
+            modelBuilder.Entity<Clan>()
+                .HasMany(e => e.ForumThreads)
+                .WithOptional(e => e.Clan)
+                .HasForeignKey(e => e.RestrictedClanID)
+                .WillCascadeOnDelete();
+
+            modelBuilder.Entity<Clan>()
+                .HasMany(e => e.PlanetOwnerHistories)
+                .WithOptional(e => e.Clan)
+                .HasForeignKey(e => e.OwnerClanID);
+
+            modelBuilder.Entity<Clan>()
+                .HasMany(e => e.Events)
+                .WithMany(e => e.Clans)
+                .Map(m => m.ToTable("EventClan").MapLeftKey("ClanID").MapRightKey("EventID"));
+
+            modelBuilder.Entity<CommanderDecorationSlot>()
+                .HasMany(e => e.CommanderDecorations)
+                .WithRequired(e => e.CommanderDecorationSlot)
+                .HasForeignKey(e => e.SlotID);
+
+            modelBuilder.Entity<CommanderSlot>()
+                .HasMany(e => e.CommanderModules)
+                .WithRequired(e => e.CommanderSlot)
+                .HasForeignKey(e => e.SlotID);
+
+            modelBuilder.Entity<Event>()
+                .HasMany(e => e.Accounts)
+                .WithMany(e => e.Events)
+                .Map(m => m.ToTable("EventAccount").MapLeftKey("EventID").MapRightKey("AccountID"));
+
+            modelBuilder.Entity<Event>()
+                .HasMany(e => e.Factions)
+                .WithMany(e => e.Events)
+                .Map(m => m.ToTable("EventFaction").MapLeftKey("EventID").MapRightKey("FactionID"));
+
+            modelBuilder.Entity<Event>()
+                .HasMany(e => e.Planets)
+                .WithMany(e => e.Events)
+                .Map(m => m.ToTable("EventPlanet").MapLeftKey("EventID").MapRightKey("PlanetID"));
+
+            modelBuilder.Entity<Event>()
+                .HasMany(e => e.SpringBattles)
+                .WithMany(e => e.Events)
+                .Map(m => m.ToTable("EventSpringBattle").MapLeftKey("EventID").MapRightKey("SpringBattleID"));
+
+            modelBuilder.Entity<ExceptionLog>()
+                .Property(e => e.ExceptionHash)
+                .IsFixedLength()
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Faction>()
+                .Property(e => e.Color)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Faction>()
+                .HasMany(e => e.FactionTreaties)
+                .WithRequired(e => e.Faction)
+                .HasForeignKey(e => e.ProposingFactionID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Faction>()
+                .HasMany(e => e.FactionTreaties1)
+                .WithRequired(e => e.Faction1)
+                .HasForeignKey(e => e.AcceptingFactionID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Faction>()
+                .HasMany(e => e.Planets)
+                .WithOptional(e => e.Faction)
+                .HasForeignKey(e => e.OwnerFactionID);
+
+            modelBuilder.Entity<Faction>()
+                .HasMany(e => e.PlanetFactions)
+                .WithRequired(e => e.Faction)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Faction>()
+                .HasMany(e => e.PlanetOwnerHistories)
+                .WithOptional(e => e.Faction)
+                .HasForeignKey(e => e.OwnerFactionID);
+
+            modelBuilder.Entity<Faction>()
+                .HasMany(e => e.Polls)
+                .WithOptional(e => e.Faction)
+                .HasForeignKey(e => e.RestrictFactionID);
+
+            modelBuilder.Entity<Faction>()
+                .HasMany(e => e.RoleTypes)
+                .WithOptional(e => e.Faction)
+                .HasForeignKey(e => e.RestrictFactionID);
+
+            modelBuilder.Entity<Faction>()
+                .HasMany(e => e.TreatyEffects)
+                .WithRequired(e => e.Faction)
+                .HasForeignKey(e => e.GivingFactionID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Faction>()
+                .HasMany(e => e.TreatyEffects1)
+                .WithRequired(e => e.Faction1)
+                .HasForeignKey(e => e.ReceivingFactionID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<ForumCategory>()
+                .HasMany(e => e.ForumCategory1)
+                .WithOptional(e => e.ForumCategory2)
+                .HasForeignKey(e => e.ParentForumCategoryID);
+
+            modelBuilder.Entity<ForumCategory>()
+                .HasMany(e => e.ForumLastReads)
+                .WithRequired(e => e.ForumCategory)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<ForumCategory>()
+                .HasMany(e => e.ForumThreads)
+                .WithOptional(e => e.ForumCategory)
+                .WillCascadeOnDelete();
+
+            modelBuilder.Entity<ForumThread>()
+                .HasMany(e => e.Clans)
+                .WithOptional(e => e.ForumThread)
+                .HasForeignKey(e => e.ForumThreadID);
+
+            modelBuilder.Entity<ForumThread>()
+                .HasMany(e => e.Missions)
+                .WithRequired(e => e.ForumThread)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<ForumThread>()
+                .HasMany(e => e.News)
+                .WithRequired(e => e.ForumThread)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Galaxy>()
+                .Property(e => e.MatchMakerState)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Mission>()
+                .Property(e => e.Description)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Mission>()
+                .Property(e => e.DescriptionStory)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Mission>()
+                .Property(e => e.TokenCondition)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Mission>()
+                .HasMany(e => e.CampaignPlanets)
+                .WithRequired(e => e.Mission)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Mission>()
+                .HasOptional(e => e.Mission1)
+                .WithRequired(e => e.Mission2);
+
+            modelBuilder.Entity<Mission>()
+                .HasMany(e => e.Ratings)
+                .WithOptional(e => e.Mission)
+                .WillCascadeOnDelete();
+
+            modelBuilder.Entity<Mission>()
+                .HasMany(e => e.Resources)
+                .WithOptional(e => e.Mission)
+                .WillCascadeOnDelete();
+
+            modelBuilder.Entity<News>()
+                .Property(e => e.Text)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Planet>()
+                .Property(e => e.Name)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Planet>()
+                .HasMany(e => e.AccountPlanets)
+                .WithRequired(e => e.Planet)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Planet>()
+                .HasMany(e => e.Links)
+                .WithRequired(e => e.Planet)
+                .HasForeignKey(e => e.PlanetID1)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Planet>()
+                .HasMany(e => e.Links1)
+                .WithRequired(e => e.Planet1)
+                .HasForeignKey(e => e.PlanetID2)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Planet>()
+                .HasMany(e => e.MarketOffers)
+                .WithRequired(e => e.Planet)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Planet>()
+                .HasMany(e => e.PlanetFactions)
+                .WithRequired(e => e.Planet)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Planet>()
+                .HasMany(e => e.PlanetStructures)
+                .WithRequired(e => e.Planet)
+                .HasForeignKey(e => e.PlanetID);
+
+            modelBuilder.Entity<Planet>()
+                .HasMany(e => e.PlanetStructures1)
+                .WithOptional(e => e.Planet1)
+                .HasForeignKey(e => e.TargetPlanetID);
+
+            modelBuilder.Entity<PollOption>()
+                .HasMany(e => e.PollVotes)
+                .WithRequired(e => e.PollOption)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<RatingPoll>()
+                .HasMany(e => e.Missions)
+                .WithOptional(e => e.RatingPoll)
+                .HasForeignKey(e => e.RatingPollID);
+
+            modelBuilder.Entity<RatingPoll>()
+                .HasMany(e => e.Missions1)
+                .WithOptional(e => e.RatingPoll1)
+                .HasForeignKey(e => e.DifficultyRatingPollID);
+
+            modelBuilder.Entity<RatingPoll>()
+                .HasMany(e => e.Resources)
+                .WithOptional(e => e.RatingPoll)
+                .WillCascadeOnDelete();
+
+            modelBuilder.Entity<Resource>()
+                .HasMany(e => e.Planets)
+                .WithOptional(e => e.Resource)
+                .HasForeignKey(e => e.MapResourceID);
+
+            modelBuilder.Entity<Resource>()
+                .HasMany(e => e.SpringBattles)
+                .WithRequired(e => e.Resource)
+                .HasForeignKey(e => e.ModResourceID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<ResourceContentFile>()
+                .Property(e => e.Md5)
+                .IsFixedLength()
+                .IsUnicode(false);
+
+            modelBuilder.Entity<ResourceContentFile>()
+                .Property(e => e.Links)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<ResourceDependency>()
+                .Property(e => e.NeedsInternalName)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<RoleType>()
+                .HasMany(e => e.Polls)
+                .WithOptional(e => e.RoleType)
+                .WillCascadeOnDelete();
+
+            modelBuilder.Entity<RoleType>()
+                .HasMany(e => e.RoleTypeHierarchies)
+                .WithRequired(e => e.RoleType)
+                .HasForeignKey(e => e.MasterRoleTypeID);
+
+            modelBuilder.Entity<RoleType>()
+                .HasMany(e => e.RoleTypeHierarchies1)
+                .WithRequired(e => e.RoleType1)
+                .HasForeignKey(e => e.SlaveRoleTypeID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<SpringBattle>()
+                .Property(e => e.EngineGameID)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<StructureType>()
+                .HasMany(e => e.PlanetStructures)
+                .WithRequired(e => e.StructureType)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TreatyEffectType>()
+                .HasMany(e => e.TreatyEffects)
+                .WithRequired(e => e.TreatyEffectType)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Unlock>()
+                .HasMany(e => e.Commanders)
+                .WithRequired(e => e.Unlock)
+                .HasForeignKey(e => e.ChassisUnlockID);
+
+            modelBuilder.Entity<Unlock>()
+                .HasMany(e => e.CommanderDecorations)
+                .WithRequired(e => e.Unlock)
+                .HasForeignKey(e => e.DecorationUnlockID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Unlock>()
+                .HasOptional(e => e.CommanderDecorationIcon)
+                .WithRequired(e => e.Unlock);
+
+            modelBuilder.Entity<Unlock>()
+                .HasMany(e => e.CommanderModules)
+                .WithRequired(e => e.Unlock)
+                .HasForeignKey(e => e.ModuleUnlockID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Unlock>()
+                .HasMany(e => e.KudosPurchases)
+                .WithOptional(e => e.Unlock)
+                .WillCascadeOnDelete();
+
+            modelBuilder.Entity<Unlock>()
+                .HasMany(e => e.StructureTypes)
+                .WithOptional(e => e.Unlock)
+                .HasForeignKey(e => e.EffectUnlockID)
+                .WillCascadeOnDelete();
+
+            modelBuilder.Entity<Unlock>()
+                .HasMany(e => e.Unlock1)
+                .WithOptional(e => e.Unlock2)
+                .HasForeignKey(e => e.RequiredUnlockID);
+        }
 
         static ZkDataContext()
         {
@@ -106,187 +786,16 @@ namespace ZkData
         public ZkDataContext()
             : this(UseLiveDb)
         {
-            InitializePartial();
         }
 
         public ZkDataContext(string connectionString)
             : base(connectionString)
         {
-            InitializePartial();
         }
 
         public ZkDataContext(string connectionString, System.Data.Entity.Infrastructure.DbCompiledModel model)
             : base(connectionString, model)
         {
-            InitializePartial();
-        }
-
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Configurations.Add(new AbuseReportMapping());
-            modelBuilder.Configurations.Add(new AccountMapping());
-            modelBuilder.Configurations.Add(new AccountBattleAwardMapping());
-            modelBuilder.Configurations.Add(new AccountCampaignJournalProgressMapping());
-            modelBuilder.Configurations.Add(new AccountCampaignProgressMapping());
-            modelBuilder.Configurations.Add(new AccountCampaignVarMapping());
-            modelBuilder.Configurations.Add(new AccountForumVoteMapping());
-            modelBuilder.Configurations.Add(new AccountIPMapping());
-            modelBuilder.Configurations.Add(new AccountPlanetMapping());
-            modelBuilder.Configurations.Add(new AccountRatingVoteMapping());
-            modelBuilder.Configurations.Add(new AccountRoleMapping());
-            modelBuilder.Configurations.Add(new AccountUnlockMapping());
-            modelBuilder.Configurations.Add(new AccountUserIDMapping());
-            modelBuilder.Configurations.Add(new AutoBanSmurfListMapping());
-            modelBuilder.Configurations.Add(new AutohostConfigMapping());
-            modelBuilder.Configurations.Add(new AvatarMapping());
-            modelBuilder.Configurations.Add(new BlockedCompanyMapping());
-            modelBuilder.Configurations.Add(new BlockedHostMapping());
-            modelBuilder.Configurations.Add(new CampaignMapping());
-            modelBuilder.Configurations.Add(new CampaignEventMapping());
-            modelBuilder.Configurations.Add(new CampaignJournalMapping());
-            modelBuilder.Configurations.Add(new CampaignJournalVarMapping());
-            modelBuilder.Configurations.Add(new CampaignLinkMapping());
-            modelBuilder.Configurations.Add(new CampaignPlanetMapping());
-            modelBuilder.Configurations.Add(new CampaignPlanetVarMapping());
-            modelBuilder.Configurations.Add(new CampaignVarMapping());
-            modelBuilder.Configurations.Add(new ClanMapping());
-            modelBuilder.Configurations.Add(new CommanderMapping());
-            modelBuilder.Configurations.Add(new CommanderDecorationMapping());
-            modelBuilder.Configurations.Add(new CommanderDecorationIconMapping());
-            modelBuilder.Configurations.Add(new CommanderDecorationSlotMapping());
-            modelBuilder.Configurations.Add(new CommanderModuleMapping());
-            modelBuilder.Configurations.Add(new CommanderSlotMapping());
-            modelBuilder.Configurations.Add(new ContributionMapping());
-            modelBuilder.Configurations.Add(new ContributionJarMapping());
-            modelBuilder.Configurations.Add(new EventMapping());
-            modelBuilder.Configurations.Add(new ExceptionLogMapping());
-            modelBuilder.Configurations.Add(new FactionMapping());
-            modelBuilder.Configurations.Add(new FactionTreatyMapping());
-            modelBuilder.Configurations.Add(new ForumCategoryMapping());
-            modelBuilder.Configurations.Add(new ForumLastReadMapping());
-            modelBuilder.Configurations.Add(new ForumPostMapping());
-            modelBuilder.Configurations.Add(new ForumPostEditMapping());
-            modelBuilder.Configurations.Add(new ForumThreadMapping());
-            modelBuilder.Configurations.Add(new ForumThreadLastReadMapping());
-            modelBuilder.Configurations.Add(new GalaxyMapping());
-            modelBuilder.Configurations.Add(new KudosPurchaseMapping());
-            modelBuilder.Configurations.Add(new LinkMapping());
-            modelBuilder.Configurations.Add(new LobbyChannelSubscriptionMapping());
-            modelBuilder.Configurations.Add(new LobbyMessageMapping());
-            modelBuilder.Configurations.Add(new MapRatingMapping());
-            modelBuilder.Configurations.Add(new MarketOfferMapping());
-            modelBuilder.Configurations.Add(new MiscVarMapping());
-            modelBuilder.Configurations.Add(new MissionMapping());
-            modelBuilder.Configurations.Add(new MissionScoreMapping());
-            modelBuilder.Configurations.Add(new NewsMapping());
-            modelBuilder.Configurations.Add(new PlanetMapping());
-            modelBuilder.Configurations.Add(new PlanetFactionMapping());
-            modelBuilder.Configurations.Add(new PlanetOwnerHistoryMapping());
-            modelBuilder.Configurations.Add(new PlanetStructureMapping());
-            modelBuilder.Configurations.Add(new PollMapping());
-            modelBuilder.Configurations.Add(new PollOptionMapping());
-            modelBuilder.Configurations.Add(new PollVoteMapping());
-            modelBuilder.Configurations.Add(new PunishmentMapping());
-            modelBuilder.Configurations.Add(new RatingMapping());
-            modelBuilder.Configurations.Add(new RatingPollMapping());
-            modelBuilder.Configurations.Add(new ResourceMapping());
-            modelBuilder.Configurations.Add(new ResourceContentFileMapping());
-            modelBuilder.Configurations.Add(new ResourceDependencyMapping());
-            modelBuilder.Configurations.Add(new ResourceSpringHashMapping());
-            modelBuilder.Configurations.Add(new RoleTypeMapping());
-            modelBuilder.Configurations.Add(new RoleTypeHierarchyMapping());
-            modelBuilder.Configurations.Add(new SpringBattleMapping());
-            modelBuilder.Configurations.Add(new SpringBattlePlayerMapping());
-            modelBuilder.Configurations.Add(new StructureTypeMapping());
-            modelBuilder.Configurations.Add(new TreatyEffectMapping());
-            modelBuilder.Configurations.Add(new TreatyEffectTypeMapping());
-            modelBuilder.Configurations.Add(new UnlockMapping());
-            OnModelCreatingPartial(modelBuilder);
-        }
-
-        public static DbModelBuilder CreateModel(DbModelBuilder modelBuilder, string schema)
-        {
-            modelBuilder.Configurations.Add(new AbuseReportMapping(schema));
-            modelBuilder.Configurations.Add(new AccountMapping(schema));
-            modelBuilder.Configurations.Add(new AccountBattleAwardMapping(schema));
-            modelBuilder.Configurations.Add(new AccountCampaignJournalProgressMapping(schema));
-            modelBuilder.Configurations.Add(new AccountCampaignProgressMapping(schema));
-            modelBuilder.Configurations.Add(new AccountCampaignVarMapping(schema));
-            modelBuilder.Configurations.Add(new AccountForumVoteMapping(schema));
-            modelBuilder.Configurations.Add(new AccountIPMapping(schema));
-            modelBuilder.Configurations.Add(new AccountPlanetMapping(schema));
-            modelBuilder.Configurations.Add(new AccountRatingVoteMapping(schema));
-            modelBuilder.Configurations.Add(new AccountRoleMapping(schema));
-            modelBuilder.Configurations.Add(new AccountUnlockMapping(schema));
-            modelBuilder.Configurations.Add(new AccountUserIDMapping(schema));
-            modelBuilder.Configurations.Add(new AutoBanSmurfListMapping(schema));
-            modelBuilder.Configurations.Add(new AutohostConfigMapping(schema));
-            modelBuilder.Configurations.Add(new AvatarMapping(schema));
-            modelBuilder.Configurations.Add(new BlockedCompanyMapping(schema));
-            modelBuilder.Configurations.Add(new BlockedHostMapping(schema));
-            modelBuilder.Configurations.Add(new CampaignMapping(schema));
-            modelBuilder.Configurations.Add(new CampaignEventMapping(schema));
-            modelBuilder.Configurations.Add(new CampaignJournalMapping(schema));
-            modelBuilder.Configurations.Add(new CampaignJournalVarMapping(schema));
-            modelBuilder.Configurations.Add(new CampaignLinkMapping(schema));
-            modelBuilder.Configurations.Add(new CampaignPlanetMapping(schema));
-            modelBuilder.Configurations.Add(new CampaignPlanetVarMapping(schema));
-            modelBuilder.Configurations.Add(new CampaignVarMapping(schema));
-            modelBuilder.Configurations.Add(new ClanMapping(schema));
-            modelBuilder.Configurations.Add(new CommanderMapping(schema));
-            modelBuilder.Configurations.Add(new CommanderDecorationMapping(schema));
-            modelBuilder.Configurations.Add(new CommanderDecorationIconMapping(schema));
-            modelBuilder.Configurations.Add(new CommanderDecorationSlotMapping(schema));
-            modelBuilder.Configurations.Add(new CommanderModuleMapping(schema));
-            modelBuilder.Configurations.Add(new CommanderSlotMapping(schema));
-            modelBuilder.Configurations.Add(new ContributionMapping(schema));
-            modelBuilder.Configurations.Add(new ContributionJarMapping(schema));
-            modelBuilder.Configurations.Add(new EventMapping(schema));
-            modelBuilder.Configurations.Add(new ExceptionLogMapping(schema));
-            modelBuilder.Configurations.Add(new FactionMapping(schema));
-            modelBuilder.Configurations.Add(new FactionTreatyMapping(schema));
-            modelBuilder.Configurations.Add(new ForumCategoryMapping(schema));
-            modelBuilder.Configurations.Add(new ForumLastReadMapping(schema));
-            modelBuilder.Configurations.Add(new ForumPostMapping(schema));
-            modelBuilder.Configurations.Add(new ForumPostEditMapping(schema));
-            modelBuilder.Configurations.Add(new ForumThreadMapping(schema));
-            modelBuilder.Configurations.Add(new ForumThreadLastReadMapping(schema));
-            modelBuilder.Configurations.Add(new GalaxyMapping(schema));
-            modelBuilder.Configurations.Add(new KudosPurchaseMapping(schema));
-            modelBuilder.Configurations.Add(new LinkMapping(schema));
-            modelBuilder.Configurations.Add(new LobbyChannelSubscriptionMapping(schema));
-            modelBuilder.Configurations.Add(new LobbyMessageMapping(schema));
-            modelBuilder.Configurations.Add(new MapRatingMapping(schema));
-            modelBuilder.Configurations.Add(new MarketOfferMapping(schema));
-            modelBuilder.Configurations.Add(new MiscVarMapping(schema));
-            modelBuilder.Configurations.Add(new MissionMapping(schema));
-            modelBuilder.Configurations.Add(new MissionScoreMapping(schema));
-            modelBuilder.Configurations.Add(new NewsMapping(schema));
-            modelBuilder.Configurations.Add(new PlanetMapping(schema));
-            modelBuilder.Configurations.Add(new PlanetFactionMapping(schema));
-            modelBuilder.Configurations.Add(new PlanetOwnerHistoryMapping(schema));
-            modelBuilder.Configurations.Add(new PlanetStructureMapping(schema));
-            modelBuilder.Configurations.Add(new PollMapping(schema));
-            modelBuilder.Configurations.Add(new PollOptionMapping(schema));
-            modelBuilder.Configurations.Add(new PollVoteMapping(schema));
-            modelBuilder.Configurations.Add(new PunishmentMapping(schema));
-            modelBuilder.Configurations.Add(new RatingMapping(schema));
-            modelBuilder.Configurations.Add(new RatingPollMapping(schema));
-            modelBuilder.Configurations.Add(new ResourceMapping(schema));
-            modelBuilder.Configurations.Add(new ResourceContentFileMapping(schema));
-            modelBuilder.Configurations.Add(new ResourceDependencyMapping(schema));
-            modelBuilder.Configurations.Add(new ResourceSpringHashMapping(schema));
-            modelBuilder.Configurations.Add(new RoleTypeMapping(schema));
-            modelBuilder.Configurations.Add(new RoleTypeHierarchyMapping(schema));
-            modelBuilder.Configurations.Add(new SpringBattleMapping(schema));
-            modelBuilder.Configurations.Add(new SpringBattlePlayerMapping(schema));
-            modelBuilder.Configurations.Add(new StructureTypeMapping(schema));
-            modelBuilder.Configurations.Add(new TreatyEffectMapping(schema));
-            modelBuilder.Configurations.Add(new TreatyEffectTypeMapping(schema));
-            modelBuilder.Configurations.Add(new UnlockMapping(schema));
-            return modelBuilder;
         }
 
         partial void InitializePartial();
@@ -302,19 +811,19 @@ namespace ZkData
             SaveChanges();
             // HACK reimplement this
 
-/*            try
-            {
-                SubmitChanges(ConflictMode.ContinueOnConflict);
-            }
+            /*            try
+                        {
+                            SubmitChanges(ConflictMode.ContinueOnConflict);
+                        }
 
-            catch (ChangeConflictException)
-            {
-                // Automerge database values for members that client has modified
-                ChangeConflicts.ResolveAll(RefreshMode.KeepChanges);
+                        catch (ChangeConflictException)
+                        {
+                            // Automerge database values for members that client has modified
+                            ChangeConflicts.ResolveAll(RefreshMode.KeepChanges);
 
-                // Submit succeeds on second try.
-                SubmitChanges();
-            }*/
+                            // Submit succeeds on second try.
+                            SubmitChanges();
+                        }*/
 
         }
 
@@ -359,7 +868,5 @@ namespace ZkData
             DataContextCreated(this);
         }
 
-
     }
 }
-

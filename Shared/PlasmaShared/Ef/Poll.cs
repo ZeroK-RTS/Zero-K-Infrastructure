@@ -1,59 +1,57 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // Poll
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("Poll")]
     public partial class Poll
     {
-        public int PollID { get; set; } // PollID (Primary key)
-        public string QuestionText { get; set; } // QuestionText
-        public bool IsAnonymous { get; set; } // IsAnonymous
-        public int? RoleTypeID { get; set; } // RoleTypeID
-        public int? RoleTargetAccountID { get; set; } // RoleTargetAccountID
-        public bool RoleIsRemoval { get; set; } // RoleIsRemoval
-        public int? RestrictFactionID { get; set; } // RestrictFactionID
-        public int? RestrictClanID { get; set; } // RestrictClanID
-        public int? CreatedAccountID { get; set; } // CreatedAccountID
-        public DateTime? ExpireBy { get; set; } // ExpireBy
-        public bool IsHeadline { get; set; } // IsHeadline
-
-        // Reverse navigation
-        public virtual ICollection<PollOption> PollOptions { get; set; } // PollOption.FK_PollOption_Poll
-        public virtual ICollection<PollVote> PollVotes { get; set; } // Many to many mapping
-
-        // Foreign keys
-        public virtual Account Account_CreatedAccountID { get; set; } // FK_Poll_Account1
-        public virtual Account AccountByRoleTargetAccountID { get; set; } // FK_Poll_Account
-        public virtual Faction Faction { get; set; } // FK_Poll_Faction
-        public virtual RoleType RoleType { get; set; } // FK_Poll_RoleType
-        [ForeignKey("RestrictClanID")]
-        public virtual Clan Clan { get; set; }
-
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Poll()
         {
-            IsAnonymous = false;
-            RoleIsRemoval = false;
-            IsHeadline = false;
-            PollOptions = new List<PollOption>();
-            PollVotes = new List<PollVote>();
-            InitializePartial();
+            PollOptions = new HashSet<PollOption>();
+            PollVotes = new HashSet<PollVote>();
         }
-        partial void InitializePartial();
-    }
 
+        public int PollID { get; set; }
+
+        [Required]
+        [StringLength(500)]
+        public string QuestionText { get; set; }
+
+        public bool IsAnonymous { get; set; }
+
+        public int? RoleTypeID { get; set; }
+
+        public int? RoleTargetAccountID { get; set; }
+
+        public bool RoleIsRemoval { get; set; }
+
+        public int? RestrictFactionID { get; set; }
+
+        public int? RestrictClanID { get; set; }
+
+        public int? CreatedAccountID { get; set; }
+
+        public DateTime? ExpireBy { get; set; }
+
+        public bool IsHeadline { get; set; }
+
+        public virtual Account Account { get; set; }
+
+        public virtual Account Account1 { get; set; }
+
+        public virtual Faction Faction { get; set; }
+
+        public virtual RoleType RoleType { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PollOption> PollOptions { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PollVote> PollVotes { get; set; }
+    }
 }

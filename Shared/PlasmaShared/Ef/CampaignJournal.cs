@@ -1,50 +1,56 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // CampaignJournal
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("CampaignJournal")]
     public partial class CampaignJournal
     {
-        public int CampaignID { get; set; } // CampaignID (Primary key)
-        public int JournalID { get; set; } // JournalID (Primary key)
-        public int? PlanetID { get; set; } // PlanetID
-        public bool UnlockOnPlanetUnlock { get; set; } // UnlockOnPlanetUnlock
-        public bool UnlockOnPlanetCompletion { get; set; } // UnlockOnPlanetCompletion
-        public bool StartsUnlocked { get; set; } // StartsUnlocked
-        public string Title { get; set; } // Title
-        public string Text { get; set; } // Text
-        public string Category { get; set; } // Category
-
-        // Reverse navigation
-        public virtual ICollection<AccountCampaignJournalProgress> AccountCampaignJournalProgress { get; set; } // Many to many mapping
-        public virtual ICollection<CampaignJournalVar> CampaignJournalVars { get; set; } // Many to many mapping
-        public virtual Campaign Campaign { get; set; }
-
-        // Foreign keys
-        public virtual CampaignPlanet Planet { get; set; } // FK_CampaignJournal_CampaignPlanet
-
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public CampaignJournal()
         {
-            AccountCampaignJournalProgress = new List<AccountCampaignJournalProgress>();
-            CampaignJournalVars = new List<CampaignJournalVar>();
-            InitializePartial();
+            AccountCampaignJournalProgresses = new HashSet<AccountCampaignJournalProgress>();
+            CampaignJournalVars = new HashSet<CampaignJournalVar>();
         }
-        partial void InitializePartial();
-    }
 
+        [Key]
+        [Column(Order = 0)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int CampaignID { get; set; }
+
+        [Key]
+        [Column(Order = 1)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int JournalID { get; set; }
+
+        public int? PlanetID { get; set; }
+
+        public bool UnlockOnPlanetUnlock { get; set; }
+
+        public bool UnlockOnPlanetCompletion { get; set; }
+
+        public bool StartsUnlocked { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string Title { get; set; }
+
+        [Required]
+        public string Text { get; set; }
+
+        public string Category { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AccountCampaignJournalProgress> AccountCampaignJournalProgresses { get; set; }
+
+        public virtual Campaign Campaign { get; set; }
+
+        public virtual CampaignPlanet CampaignPlanet { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CampaignJournalVar> CampaignJournalVars { get; set; }
+    }
 }

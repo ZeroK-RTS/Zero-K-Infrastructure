@@ -1,92 +1,127 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // Mission
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("Mission")]
     public partial class Mission
     {
-        public int MissionID { get; set; } // MissionID (Primary key)
-        public string Name { get; set; } // Name
-        public string Mod { get; set; } // Mod
-        public string Map { get; set; } // Map
-        public virtual byte[] Mutator { get; set; } // Mutator
-        public byte[] Image { get; set; } // Image
-        public string Description { get; set; } // Description
-        public string DescriptionStory { get; set; } // DescriptionStory
-        public DateTime CreatedTime { get; set; } // CreatedTime
-        public DateTime ModifiedTime { get; set; } // ModifiedTime
-        public string ScoringMethod { get; set; } // ScoringMethod
-        public string TopScoreLine { get; set; } // TopScoreLine
-        public string MissionEditorVersion { get; set; } // MissionEditorVersion
-        public string SpringVersion { get; set; } // SpringVersion
-        public int Revision { get; set; } // Revision
-        public string Script { get; set; } // Script
-        public string TokenCondition { get; set; } // TokenCondition
-        public int? CampaignID { get; set; } // CampaignID
-        public int AccountID { get; set; } // AccountID
-        public string ModOptions { get; set; } // ModOptions
-        public string ModRapidTag { get; set; } // ModRapidTag
-        public int MinHumans { get; set; } // MinHumans
-        public int MaxHumans { get; set; } // MaxHumans
-        public bool IsScriptMission { get; set; } // IsScriptMission
-        public int MissionRunCount { get; set; } // MissionRunCount
-        public bool IsDeleted { get; set; } // IsDeleted
-        public string ManualDependencies { get; set; } // ManualDependencies
-        public float? Rating { get; set; } // Rating
-        public float? Difficulty { get; set; } // Difficulty
-        public bool IsCoop { get; set; } // IsCoop
-        public int ForumThreadID { get; set; } // ForumThreadID
-        public float? FeaturedOrder { get; set; } // FeaturedOrder
-        public int? RatingPollID { get; set; } // RatingPollID
-        public int? DifficultyRatingPollID { get; set; } // DifficultyRatingPollID
-
-        // Reverse navigation
-        public virtual ICollection<CampaignPlanet> CampaignPlanets { get; set; } // CampaignPlanet.FK_CampaignPlanet_Mission
-        public virtual ICollection<MissionScore> MissionScores { get; set; } // Many to many mapping
-        public virtual ICollection<Rating> Ratings { get; set; } // Rating.FK_Rating_Mission
-        public virtual ICollection<Resource> Resources { get; set; } // Resource.FK_Resource_Mission
-        public virtual Mission Mission2 { get; set; } // Mission.FK_Mission_Mission
-
-        // Foreign keys
-        public virtual Account Account { get; set; } // FK_Mission_Account
-        public virtual ForumThread ForumThread { get; set; } // FK_Mission_ForumThread
-        public virtual Mission Mission1 { get; set; } // FK_Mission_Mission
-        public virtual RatingPoll RatingPoll_DifficultyRatingPollID { get; set; } // FK_Mission_RatingPoll1
-        public virtual RatingPoll RatingPoll_RatingPollID { get; set; } // FK_Mission_RatingPoll
-
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Mission()
         {
-            Revision = 1;
-            MinHumans = 1;
-            MaxHumans = 1;
-            IsScriptMission = false;
-            MissionRunCount = 0;
-            IsDeleted = false;
-            IsCoop = false;
-            ModifiedTime = DateTime.UtcNow;
-            CreatedTime = DateTime.UtcNow;
-            CampaignPlanets = new List<CampaignPlanet>();
-            MissionScores = new List<MissionScore>();
-            Ratings = new List<Rating>();
-            Resources = new List<Resource>();
-            InitializePartial();
+            CampaignPlanets = new HashSet<CampaignPlanet>();
+            MissionScores = new HashSet<MissionScore>();
+            Ratings = new HashSet<Rating>();
+            Resources = new HashSet<Resource>();
         }
-        partial void InitializePartial();
-    }
 
+        public int MissionID { get; set; }
+
+        [Required]
+        [StringLength(200)]
+        public string Name { get; set; }
+
+        [StringLength(100)]
+        public string Mod { get; set; }
+
+        [StringLength(100)]
+        public string Map { get; set; }
+
+        public byte[] Mutator { get; set; }
+
+        [Required]
+        public byte[] Image { get; set; }
+
+        [Column(TypeName = "text")]
+        public string Description { get; set; }
+
+        [Column(TypeName = "text")]
+        public string DescriptionStory { get; set; }
+
+        public DateTime CreatedTime { get; set; }
+
+        public DateTime ModifiedTime { get; set; }
+
+        [StringLength(500)]
+        public string ScoringMethod { get; set; }
+
+        [StringLength(100)]
+        public string TopScoreLine { get; set; }
+
+        [StringLength(20)]
+        public string MissionEditorVersion { get; set; }
+
+        [StringLength(100)]
+        public string SpringVersion { get; set; }
+
+        public int Revision { get; set; }
+
+        [Required]
+        public string Script { get; set; }
+
+        [StringLength(500)]
+        public string TokenCondition { get; set; }
+
+        public int? CampaignID { get; set; }
+
+        public int AccountID { get; set; }
+
+        public string ModOptions { get; set; }
+
+        [StringLength(100)]
+        public string ModRapidTag { get; set; }
+
+        public int MinHumans { get; set; }
+
+        public int MaxHumans { get; set; }
+
+        public bool IsScriptMission { get; set; }
+
+        public int MissionRunCount { get; set; }
+
+        public bool IsDeleted { get; set; }
+
+        public string ManualDependencies { get; set; }
+
+        public float? Rating { get; set; }
+
+        public float? Difficulty { get; set; }
+
+        public bool IsCoop { get; set; }
+
+        public int ForumThreadID { get; set; }
+
+        public float? FeaturedOrder { get; set; }
+
+        public int? RatingPollID { get; set; }
+
+        public int? DifficultyRatingPollID { get; set; }
+
+        public virtual Account Account { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CampaignPlanet> CampaignPlanets { get; set; }
+
+        public virtual ForumThread ForumThread { get; set; }
+
+        public virtual Mission Mission1 { get; set; }
+
+        public virtual Mission Mission2 { get; set; }
+
+        public virtual RatingPoll RatingPoll { get; set; }
+
+        public virtual RatingPoll RatingPoll1 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MissionScore> MissionScores { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Rating> Ratings { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Resource> Resources { get; set; }
+    }
 }

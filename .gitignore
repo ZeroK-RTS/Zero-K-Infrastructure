@@ -174,5 +174,6 @@ UpgradeLog*.htm
 FakesAssemblies/
 *.maps
 *.mods
-!local/
-!local/ZERO-K_MOCKUP.pdf
+\!local/*.*
+Zero-K.info/img/galaxies/*.*
+Zero-K.info/img/structures/*.*

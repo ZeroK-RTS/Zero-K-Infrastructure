@@ -1,34 +1,36 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // ExceptionLog
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("ExceptionLog")]
     public partial class ExceptionLog
     {
-        public int ExceptionLogID { get; set; } // ExceptionLogID (Primary key)
-        public ProgramType ProgramID { get; set; } // ProgramID
-        public string Exception { get; set; } // Exception
-        public string ExtraData { get; set; } // ExtraData
-        public string RemoteIP { get; set; } // RemoteIP
-        public string PlayerName { get; set; } // PlayerName
-        public DateTime Time { get; set; } // Time
-        public string ProgramVersion { get; set; } // ProgramVersion
-        public string ExceptionHash { get; set; } // ExceptionHash
-    }
+        public int ExceptionLogID { get; set; }
 
+        public int ProgramID { get; set; }
+
+        [Required]
+        public string Exception { get; set; }
+
+        public string ExtraData { get; set; }
+
+        [StringLength(50)]
+        public string RemoteIP { get; set; }
+
+        [StringLength(200)]
+        public string PlayerName { get; set; }
+
+        public DateTime Time { get; set; }
+
+        [StringLength(100)]
+        public string ProgramVersion { get; set; }
+
+        [Required]
+        [StringLength(32)]
+        public string ExceptionHash { get; set; }
+    }
 }

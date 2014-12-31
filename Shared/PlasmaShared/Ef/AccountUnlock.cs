@@ -1,39 +1,28 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // AccountUnlock
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("AccountUnlock")]
     public partial class AccountUnlock
     {
-        public int AccountID { get; set; } // AccountID (Primary key)
-        public int UnlockID { get; set; } // UnlockID (Primary key)
-        public int Count { get; set; } // Count
+        [Key]
+        [Column(Order = 0)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int AccountID { get; set; }
 
-        // Foreign keys
-        public virtual Account Account { get; set; } // FK_AccountUnlock_Account
-        public virtual Unlock Unlock { get; set; } // FK_AccountUnlock_Unlock
+        [Key]
+        [Column(Order = 1)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int UnlockID { get; set; }
 
-        public AccountUnlock()
-        {
-            Count = 1;
-            InitializePartial();
-        }
-        partial void InitializePartial();
+        public int Count { get; set; }
+
+        public virtual Account Account { get; set; }
+
+        public virtual Unlock Unlock { get; set; }
     }
-
 }

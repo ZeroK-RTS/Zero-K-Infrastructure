@@ -1,78 +1,100 @@
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable DoNotCallOverridableMethodsInConstructor
-// ReSharper disable InconsistentNaming
-// ReSharper disable PartialTypeWithSinglePart
-// ReSharper disable PartialMethodWithSinglePart
-// ReSharper disable RedundantNameQualifier
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
-//using DatabaseGeneratedOption = System.ComponentModel.DataAnnotations.DatabaseGeneratedOption;
-
 namespace ZkData
 {
-    // Faction
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("Faction")]
     public partial class Faction
     {
-        public int FactionID { get; set; } // FactionID (Primary key)
-        public string Name { get; set; } // Name
-        public string Shortcut { get; set; } // Shortcut
-        public string Color { get; set; } // Color
-        public bool IsDeleted { get; set; } // IsDeleted
-        public double Metal { get; set; } // Metal
-        public double Dropships { get; set; } // Dropships
-        public double Bombers { get; set; } // Bombers
-        public string SecretTopic { get; set; } // SecretTopic
-        public double EnergyProducedLastTurn { get; set; } // EnergyProducedLastTurn
-        public double EnergyDemandLastTurn { get; set; } // EnergyDemandLastTurn
-        public double Warps { get; set; } // Warps
-
-        // Reverse navigation
-        public virtual ICollection<Account> Accounts { get; set; } // Account.FK_Account_Faction
-        public virtual ICollection<AccountRole> AccountRoles { get; set; } // AccountRole.FK_AccountRole_Faction
-        public virtual ICollection<Clan> Clans { get; set; } // Clan.FK_Clan_Faction
-        public virtual ICollection<Event> Events { get; set; } // Many to many mapping
-        public virtual ICollection<FactionTreaty> FactionTreaties_AcceptingFactionID { get; set; } // FactionTreaty.FK_FactionTreaty_Faction1
-        public virtual ICollection<FactionTreaty> FactionTreaties_ProposingFactionID { get; set; } // FactionTreaty.FK_FactionTreaty_Faction
-        public virtual ICollection<Planet> Planets { get; set; } // Planet.FK_Planet_Faction
-        public virtual ICollection<PlanetFaction> PlanetFactions { get; set; } // Many to many mapping
-        public virtual ICollection<PlanetOwnerHistory> PlanetOwnerHistories { get; set; } // PlanetOwnerHistory.FK_PlanetOwnerHistory_Faction
-        public virtual ICollection<Poll> Polls { get; set; } // Poll.FK_Poll_Faction
-        public virtual ICollection<RoleType> RoleTypes { get; set; } // RoleType.FK_RoleType_Faction
-        public virtual ICollection<TreatyEffect> TreatyEffects_GivingFactionID { get; set; } // TreatyEffect.FK_TreatyEffect_Faction
-        public virtual ICollection<TreatyEffect> TreatyEffects_ReceivingFactionID { get; set; } // TreatyEffect.FK_TreatyEffect_Faction1
-
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Faction()
         {
-            IsDeleted = false;
-            Metal = 0;
-            Dropships = 1;
-            Bombers = 0;
-            EnergyProducedLastTurn = 0;
-            EnergyDemandLastTurn = 0;
-            Warps = 0;
-            Accounts = new List<Account>();
-            AccountRoles = new List<AccountRole>();
-            Clans = new List<Clan>();
-            FactionTreaties_AcceptingFactionID = new List<FactionTreaty>();
-            FactionTreaties_ProposingFactionID = new List<FactionTreaty>();
-            Planets = new List<Planet>();
-            PlanetFactions = new List<PlanetFaction>();
-            PlanetOwnerHistories = new List<PlanetOwnerHistory>();
-            Polls = new List<Poll>();
-            RoleTypes = new List<RoleType>();
-            TreatyEffects_GivingFactionID = new List<TreatyEffect>();
-            TreatyEffects_ReceivingFactionID = new List<TreatyEffect>();
-            Events = new List<Event>();
-            InitializePartial();
+            Accounts = new HashSet<Account>();
+            AccountRoles = new HashSet<AccountRole>();
+            Clans = new HashSet<Clan>();
+            FactionTreaties = new HashSet<FactionTreaty>();
+            FactionTreaties1 = new HashSet<FactionTreaty>();
+            Planets = new HashSet<Planet>();
+            PlanetFactions = new HashSet<PlanetFaction>();
+            PlanetOwnerHistories = new HashSet<PlanetOwnerHistory>();
+            Polls = new HashSet<Poll>();
+            RoleTypes = new HashSet<RoleType>();
+            TreatyEffects = new HashSet<TreatyEffect>();
+            TreatyEffects1 = new HashSet<TreatyEffect>();
+            Events = new HashSet<Event>();
         }
-        partial void InitializePartial();
-    }
 
+        public int FactionID { get; set; }
+
+        [Required]
+        [StringLength(200)]
+        public string Name { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string Shortcut { get; set; }
+
+        [Required]
+        [StringLength(20)]
+        public string Color { get; set; }
+
+        public bool IsDeleted { get; set; }
+
+        public double Metal { get; set; }
+
+        public double Dropships { get; set; }
+
+        public double Bombers { get; set; }
+
+        [StringLength(500)]
+        public string SecretTopic { get; set; }
+
+        public double EnergyProducedLastTurn { get; set; }
+
+        public double EnergyDemandLastTurn { get; set; }
+
+        public double Warps { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Account> Accounts { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AccountRole> AccountRoles { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Clan> Clans { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<FactionTreaty> FactionTreaties { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<FactionTreaty> FactionTreaties1 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Planet> Planets { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PlanetFaction> PlanetFactions { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PlanetOwnerHistory> PlanetOwnerHistories { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Poll> Polls { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<RoleType> RoleTypes { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TreatyEffect> TreatyEffects { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TreatyEffect> TreatyEffects1 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Event> Events { get; set; }
+    }
 }
