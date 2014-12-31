@@ -77,7 +77,6 @@ namespace Springie.SpringNamespace
 		private Process process;
 		private List<string> readyPlayers = new List<string>();
 		private Talker talker;
-		private bool isPreGame = true;
 
 
 		private UnitSyncWrapper unitSyncWrapper;
@@ -94,11 +93,6 @@ namespace Springie.SpringNamespace
 		public DateTime GameStarted
 		{
 			get { return gameStarted; }
-		}
-
-		public bool IsPreGame
-		{
-			get { return isPreGame; }
 		}
 
 		public bool IsRunning
@@ -274,10 +268,6 @@ namespace Springie.SpringNamespace
 		private void talker_SpringEvent(object sender, Talker.SpringEventArgs e)
 		{
 			switch (e.EventType) {
-				case Talker.SpringEventType.SERVER_STARTPLAYING:
-					isPreGame = false;
-					break;
-
 				case Talker.SpringEventType.PLAYER_JOINED:
 					//Program.main.AutoHost.SayBattle("dbg joined " + e.PlayerName);
 					if (PlayerJoined != null) PlayerJoined(this, new SpringLogEventArgs(e.PlayerName));
