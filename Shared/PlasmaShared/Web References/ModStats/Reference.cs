@@ -37,7 +37,7 @@ namespace ZkData.ModStats {
         
         /// <remarks/>
         public StatsCollector() {
-            this.Url = global::ZkData.Properties.Settings.Default.PlasmaShared_ModStats_StatsCollector;
+            this.Url = global::PlasmaShared.Properties.Settings.Default.PlasmaShared_ModStats_StatsCollector;
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;

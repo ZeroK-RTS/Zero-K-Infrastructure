@@ -7,6 +7,12 @@ namespace ZkData
 
     public partial class ZkDataContext : DbContext
     {
+        private static string ConnectionStringLocal = @"Data Source=.\SQLEXPRESS;Initial Catalog=zero-k-mig;Integrated Security=True;MultipleActiveResultSets=true";
+
+        private static string ConnectionStringLive = @"Data Source=omega.licho.eu,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
+
+
+
         public virtual DbSet<AbuseReport> AbuseReports { get; set; }
         public virtual DbSet<Account> Accounts { get; set; }
         public virtual DbSet<AccountBattleAward> AccountBattleAwards { get; set; }
@@ -809,21 +815,12 @@ namespace ZkData
 
         }
 
-        private static string ConnectionStringLocal = @"Data Source=.\SQLEXPRESS;Initial Catalog=zero-k-dev;Integrated Security=True;MultipleActiveResultSets=true";
-
-#if !DEPLOY
-        private static string ConnectionStringLive = @"Data Source=omega.licho.eu,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
-#else 
-        private static string ConnectionStringLive = Settings.Default.zero_kConnectionString;
-#endif
-
 
         private static bool wasDbChecked = false;
         private static object locker = new object();
 
 #if DEBUG
-        //public static bool UseLiveDb = false;
-        public static bool UseLiveDb = true;
+        public static bool UseLiveDb = false;
 #else 
         public static bool UseLiveDb = true;
 #endif

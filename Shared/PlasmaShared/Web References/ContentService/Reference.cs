@@ -61,7 +61,7 @@ namespace ZkData.ContentService {
         
         /// <remarks/>
         public ContentService() {
-            this.Url = global::ZkData.Properties.Settings.Default.PlasmaShared_ContentService_ContentService;
+            this.Url = global::PlasmaShared.Properties.Settings.Default.PlasmaShared_ContentService_ContentService;
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;

@@ -53,7 +53,7 @@ namespace ZkData.SpringieInterfaceReference {
         
         /// <remarks/>
         public SpringieService() {
-            this.Url = global::ZkData.Properties.Settings.Default.PlasmaShared_SpringieInterfaceReference_SpringieService;
+            this.Url = global::PlasmaShared.Properties.Settings.Default.PlasmaShared_SpringieInterfaceReference_SpringieService;
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;

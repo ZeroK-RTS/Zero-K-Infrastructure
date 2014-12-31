@@ -158,6 +158,7 @@
     <Compile Include="Data\TreatyState.cs" />
     <Compile Include="Data\Unlock.cs" />
     <Compile Include="Data\UnlockType.cs" />
+    <Compile Include="DbCloner.cs" />
     <Compile Include="DbExtensions.cs" />
     <Compile Include="Diagrams\Diagram.cs" />
     <Compile Include="Diagrams\Node.cs" />
@@ -245,6 +246,11 @@
     <Compile Include="IResourceInfo.cs" />
     <Compile Include="LuaTable.cs" />
     <Compile Include="MetaDataCache.cs" />
+    <Compile Include="Migrations\201412311547353_Init.cs" />
+    <Compile Include="Migrations\201412311547353_Init.Designer.cs">
+      <DependentUpon>201412311547353_Init.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MissionUpdater.cs" />
     <Compile Include="PayPalInterface.cs" />
     <Compile Include="Pool.cs" />
@@ -259,6 +265,7 @@
     <Compile Include="SdpArchive.cs" />
     <Compile Include="SelfUpdater.cs" />
     <Compile Include="SerializableDictionary.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="SpringPaths.cs" />
     <Compile Include="SpringScanner.cs" />
     <Compile Include="CsvTable.cs" />
@@ -339,7 +346,7 @@
     </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Include="Web References\ContentService\AccountInfo.datasource">
@@ -464,6 +471,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Web References\ModStats\StatsCollector.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201412311547353_Init.resx">
+      <DependentUpon>201412311547353_Init.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>
