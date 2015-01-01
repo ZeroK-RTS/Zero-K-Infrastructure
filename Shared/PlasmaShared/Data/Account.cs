@@ -5,18 +5,21 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Linq;
 using System.Linq;
 using System.Security.Principal;
+using Microsoft.Linq.Translations;
 
 namespace ZkData
 {
     partial class Account: IPrincipal, IIdentity
     {
-        public static Func<ZkDataContext, int, Account> AccountByAccountID = (db, accountID) => db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
+        private static readonly CompiledExpression<Account, double> effectiveEloExpression = DefaultTranslationOf<Account>.Property(e => e.EffectiveElo).Is(e => e.Elo + (GlobalConst.EloWeightMax - e.EloWeight) * GlobalConst.EloWeightMalusFactor);
+        
+        public double EffectiveElo { get { return effectiveEloExpression.Evaluate(this); }}
 
-        public static Func<ZkDataContext, int, Account> AccountByLobbyID = (db, lobbyID) => db.Accounts.FirstOrDefault(x => x.LobbyID == lobbyID);
 
-        public static Func<ZkDataContext, string, Account> AccountByName = (db, name) => db.Accounts.FirstOrDefault(x => x.Name == name && x.LobbyID != null);
+        private static readonly CompiledExpression<Account, double> effectiveElo1v1Expression = DefaultTranslationOf<Account>.Property(e => e.Effective1v1Elo).Is(e => e.Elo1v1 + (GlobalConst.EloWeightMax - e.Elo1v1Weight) * GlobalConst.EloWeightMalusFactor);
 
-        public static Func<ZkDataContext, string, string, Account> AccountVerify = (db, login, passwordHash) => db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == passwordHash && x.LobbyID != null);
+        public double Effective1v1Elo { get { return effectiveElo1v1Expression.Evaluate(this); } }
+
 
         [NotMapped]
         public int AvailableXP { get {
@@ -24,11 +27,8 @@ namespace ZkData
                    AccountUnlocks.Sum(x => (int?)(x.Unlock.XpCost*(x.Count - KudosPurchases.Count(y => y.UnlockID == x.UnlockID)))) ?? 0;
         } }
 
-        [NotMapped]
-        public double Effective1v1Elo { get { return Elo1v1Weight > 1 ? Elo1v1 + (GlobalConst.EloWeightMax - Elo1v1Weight)*GlobalConst.EloWeightMalusFactor : 0; } }
+        
 
-        [NotMapped]
-        public double EffectiveElo { get { return Elo + (GlobalConst.EloWeightMax - EloWeight)*GlobalConst.EloWeightMalusFactor; } }
 
         [NotMapped]
         public double EffectivePwElo { get { return EloPw + (GlobalConst.EloWeightMax - EloWeight) * GlobalConst.EloWeightMalusFactor; } }
@@ -42,6 +42,15 @@ namespace ZkData
         [NotMapped]
         public int KudosSpent { get { return KudosPurchases.Sum(x => x.KudosValue); } }
 
+
+
+        public static Func<ZkDataContext, int, Account> AccountByAccountID = (db, accountID) => db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
+
+        public static Func<ZkDataContext, int, Account> AccountByLobbyID = (db, lobbyID) => db.Accounts.FirstOrDefault(x => x.LobbyID == lobbyID);
+
+        public static Func<ZkDataContext, string, Account> AccountByName = (db, name) => db.Accounts.FirstOrDefault(x => x.Name == name && x.LobbyID != null);
+
+        public static Func<ZkDataContext, string, string, Account> AccountVerify = (db, login, passwordHash) => db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == passwordHash && x.LobbyID != null);
 
 
         public static double AdjustEloWeight(double currentWeight, double sumWeight, int sumCount) {

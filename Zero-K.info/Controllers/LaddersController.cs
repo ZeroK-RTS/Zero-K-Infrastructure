@@ -7,7 +7,8 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Web.Helpers;
 using System.Web.Mvc;
-using ZkData;
+﻿using Microsoft.Linq.Translations;
+﻿using ZkData;
 
 namespace ZeroKWeb.Controllers
 {
@@ -129,12 +130,10 @@ namespace ZeroKWeb.Controllers
 
             var lastMonth = DateTime.UtcNow.AddMonths(-1);
             var top50Accounts =
-                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > lastMonth) && x.Elo1v1Weight == GlobalConst.EloWeightMax).Include(x=>x.Clan).Include(x=>x.Faction).OrderByDescending(x => x.Elo1v1).
-                    Take(50).ToList();
+                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > lastMonth)).Include(x=>x.Clan).Include(x=>x.Faction).OrderByDescending(x => x.Effective1v1Elo).WithTranslations().Take(50).ToList();
 
             var top50Teams =
-                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > lastMonth) && x.EloWeight == GlobalConst.EloWeightMax).Include(x => x.Clan).Include(x => x.Faction).OrderByDescending(x => x.Elo).
-                    Take(50).ToList();
+                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > lastMonth)).Include(x => x.Clan).Include(x => x.Faction).OrderByDescending(x => x.EffectiveElo).WithTranslations().Take(50).ToList();
 
             LadderModel ladder = new LadderModel { AwardItems = awardItems, Top50Accounts = top50Accounts, Top50Teams = top50Teams };
             HttpContext.Cache.Add("ladderModel", ladder, null, DateTime.Now.AddHours(2), System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.Default, null);

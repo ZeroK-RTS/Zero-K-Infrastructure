@@ -18,6 +18,7 @@ using System.Xml.Serialization;
 //using LobbyClient;
 //using NightWatch;
 using CaTracker;
+using Microsoft.Linq.Translations;
 using PlasmaShared;
 using ZkData.UnitSyncLib;
 using ZeroKWeb;
@@ -179,12 +180,10 @@ namespace Fixer
         [STAThread]
         static void Main(string[] args)
         {
+            //var db = new ZkDataContext(true);
+            //var test = db.Accounts.OrderByDescending(x => x.EffectiveElo).WithTranslations().Take(5).ToList();
 
-            var cloner = new DbCloner("zero-k", "zero-k-mig", "Data Source=omega.licho.eu,100;Initial Catalog=zero-k-mig;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true");
-            //var order = cloner.GetOrderedTables();
-            //var cols = cloner.GetTableColumns("AutohostConfig");
-            cloner.CloneAllTables();
-
+            //MigrateDatabase();
 
             //var db = new ZkDataContext(false);
             //db.Database.CreateIfNotExists();
@@ -242,6 +241,13 @@ namespace Fixer
             //GetClanStackWinRate(465, 2000); //Mean
             //GetForumVotesByUserVoterAgnostic(161294);
             //GetAverageElo();
+        }
+
+        static void MigrateDatabase()
+        {
+            var cloner = new DbCloner("zero-k", "zero-k-mig",
+                "Data Source=omega.licho.eu,100;Initial Catalog=zero-k-mig;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true");
+            cloner.CloneAllTables();
         }
 
         static void SetPlanetTeamSizes()
