@@ -227,6 +227,7 @@
     <Compile Include="Ef\Resource.cs" />
     <Compile Include="Ef\ResourceContentFile.cs" />
     <Compile Include="Ef\ResourceDependency.cs" />
+    <Compile Include="Ef\ResourceSpringHash.cs" />
     <Compile Include="Ef\RoleType.cs" />
     <Compile Include="Ef\RoleTypeHierarchy.cs" />
     <Compile Include="Ef\SpringBattle.cs" />

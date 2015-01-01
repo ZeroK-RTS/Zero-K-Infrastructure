@@ -14,7 +14,7 @@ namespace ZkData
 		Ceasefire = 1,
 		Alliance = 2
 	}
-	partial class Clan:IValidatableObject
+	partial class Clan
 	{
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
