@@ -1,3 +1,5 @@
+using PlasmaShared.Migrations;
+
 namespace ZkData
 {
     using System;
@@ -7,9 +9,9 @@ namespace ZkData
 
     public partial class ZkDataContext : DbContext
     {
-        private static string ConnectionStringLocal = @"Data Source=.\SQLEXPRESS;Initial Catalog=zero-k-mig;Integrated Security=True;MultipleActiveResultSets=true";
+        private static string ConnectionStringLocal = @"Data Source=.\SQLEXPRESS;Initial Catalog=zero-k_ef;Integrated Security=True;MultipleActiveResultSets=true";
 
-        private static string ConnectionStringLive = @"Data Source=omega.licho.eu,100;Initial Catalog=zero-k-mig;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
+        private static string ConnectionStringLive = @"Data Source=omega.licho.eu,100;Initial Catalog=zero-k_ef;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
 
 
 
@@ -764,26 +766,14 @@ namespace ZkData
 
         static ZkDataContext()
         {
-            Database.SetInitializer<ZkDataContext>(null);
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<ZkDataContext,Configuration>());
         }
 
         public ZkDataContext()
             : this(UseLiveDb)
         {
-        }
 
-        public ZkDataContext(string connectionString)
-            : base(connectionString)
-        {
         }
-
-        public ZkDataContext(string connectionString, System.Data.Entity.Infrastructure.DbCompiledModel model)
-            : base(connectionString, model)
-        {
-        }
-
-        partial void InitializePartial();
-        partial void OnModelCreatingPartial(DbModelBuilder modelBuilder);
 
         public void SubmitChanges()
         {
@@ -821,25 +811,20 @@ namespace ZkData
         public static bool UseLiveDb = true;
 #endif
 
-
-
         public static Action<ZkDataContext> DataContextCreated = context => { };
-
-
-
+        
         public ZkDataContext(bool? useLiveDb)
             : base(useLiveDb != null ? (useLiveDb.Value ? ConnectionStringLive : ConnectionStringLocal) : (UseLiveDb ? ConnectionStringLive : ConnectionStringLocal))
         {
-#if DEBUG
             if (!wasDbChecked)
             {
                 lock (locker)
                 {
                     Database.CreateIfNotExists();
+                    Database.Initialize(false);
                     wasDbChecked = true;
                 }
             }
-#endif
             DataContextCreated(this);
         }
 

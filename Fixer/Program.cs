@@ -183,7 +183,7 @@ namespace Fixer
             //var db = new ZkDataContext(true);
             //var test = db.Accounts.OrderByDescending(x => x.EffectiveElo).WithTranslations().Take(5).ToList();
 
-            //MigrateDatabase();
+            MigrateDatabase();
 
             //var db = new ZkDataContext(false);
             //db.Database.CreateIfNotExists();
@@ -245,8 +245,8 @@ namespace Fixer
 
         static void MigrateDatabase()
         {
-            var cloner = new DbCloner("zero-k", "zero-k-mig",
-                "Data Source=omega.licho.eu,100;Initial Catalog=zero-k-mig;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true");
+            var cloner = new DbCloner("zero-k", "zero-k_ef",
+                "Data Source=omega.licho.eu,100;Initial Catalog=zero-k_ef;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true");
             cloner.CloneAllTables();
         }
 
