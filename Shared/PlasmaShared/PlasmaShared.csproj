@@ -149,7 +149,6 @@
     <Compile Include="Data\ProgramID.cs" />
     <Compile Include="Data\Punishment.cs" />
     <Compile Include="Data\Resource.cs" />
-    <Compile Include="Data\ResourceSpringHash.cs" />
     <Compile Include="Data\ResourceType.cs" />
     <Compile Include="Data\RoleType.cs" />
     <Compile Include="Data\SpringBattle.cs" />
