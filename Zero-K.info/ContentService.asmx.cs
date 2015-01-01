@@ -216,6 +216,7 @@ namespace ZeroKWeb
                         scoreEntry.GameSeconds = gameSeconds;
                     }
                 }
+                acc.CheckLevelUp();
                 db.SubmitChanges();
 
                 // ====================

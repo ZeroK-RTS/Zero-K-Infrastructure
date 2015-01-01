@@ -428,6 +428,7 @@ namespace NightWatch
             if (acc == null)
             {
                 acc = new Account();
+                acc.SetAvatar();
                 db.Accounts.InsertOnSubmit(acc);
             }
 

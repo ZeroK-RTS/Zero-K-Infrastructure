@@ -44,7 +44,7 @@ namespace ZkData
 
 
 
-        public static Func<ZkDataContext, int, Account> AccountByAccountID = (db, accountID) => db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
+        public static Func<ZkDataContext, int, Account> AccountByAccountID = (db, accountID) => db.Accounts.FirstOrDefault(x => x.AccountID == accountID);
 
         public static Func<ZkDataContext, int, Account> AccountByLobbyID = (db, lobbyID) => db.Accounts.FirstOrDefault(x => x.LobbyID == lobbyID);
 
@@ -312,20 +312,15 @@ namespace ZkData
             }
         }
 
-        // HACK implement these
-        /*partial void OnValidate(ChangeAction action) {
-            if (action == ChangeAction.Update || action == ChangeAction.Insert) {
-                if (string.IsNullOrEmpty(Avatar)) {
-                    var rand = new Random();
-                    var avatars = ZkData.Avatar.GetCachedList();
-                    if (avatars.Any()) Avatar = avatars[rand.Next(avatars.Count)].AvatarName;
-                }
+        public void SetAvatar()
+        {
+            if (string.IsNullOrEmpty(Avatar))
+            {
+                var rand = new Random();
+                var avatars = ZkData.Avatar.GetCachedList();
+                if (avatars.Any()) Avatar = avatars[rand.Next(avatars.Count)].AvatarName;
             }
         }
-
-        partial void OnXPChanged() {
-            CheckLevelUp();
-        }*/
 
         [NotMapped]
         public string AuthenticationType { get { return "LobbyServer"; } }

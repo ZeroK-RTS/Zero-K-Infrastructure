@@ -124,6 +124,7 @@ namespace ZkData
                     r.Player.XpChange = LoserTeamXpChange.Value;
                 }
                 IsEloProcessed = true;
+
                 return;
             }
 
