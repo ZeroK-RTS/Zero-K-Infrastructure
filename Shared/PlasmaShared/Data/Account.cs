@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Security.Principal;
+using System.Xml.Schema;
 using Microsoft.Linq.Translations;
 
 namespace ZkData
@@ -309,6 +310,7 @@ namespace ZkData
                 if (!aliases.Contains(Name)) aliases.Add(Name);
                 Aliases = string.Join(",", aliases.ToArray());
             }
+            Name = value;
         }
 
         public void SetAvatar()
