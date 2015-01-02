@@ -186,7 +186,7 @@ namespace System.Web.Mvc
             if (lastRead != null && (lastTime == null || lastRead.LastRead > lastTime)) lastTime = lastRead.LastRead;
             ForumPost post = null;
             if (lastTime != null) post = thread.ForumPosts.FirstOrDefault(x => x.Created > lastTime);
-            int page = post != null ? ZeroKWeb.Controllers.ForumController.GetPostPage(post.ForumPostID) : (thread.PostCount-1)/GlobalConst.ForumPostsPerPage;
+            int page = post != null ? ZeroKWeb.Controllers.ForumController.GetPostPage(post) : (thread.PostCount-1)/GlobalConst.ForumPostsPerPage;
 
             string link;
             if (page > 0) link = url.Action("Thread", "Forum", new { id = thread.ForumThreadID, page = page});

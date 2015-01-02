@@ -37,7 +37,7 @@ namespace ZeroKWeb.Controllers
 			var thread = post.ForumThread;
             int threadID = thread.ForumThreadID;
             //int index = post.ForumThread.ForumPosts.IndexOf(post);
-            int page = GetPostPage((int)postID);
+            int page = GetPostPage(post);
 
 			db.ForumPosts.DeleteOnSubmit(post);
 			if (thread.ForumPosts.Count() <= 1) {
@@ -268,7 +268,7 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             ForumPost post = db.ForumPosts.FirstOrDefault(x => x.ForumPostID == id);
-            int? page = GetPostPage((int)id);
+            int? page = GetPostPage(post);
             if (page == 0) page = null;
             ForumThread thread = post.ForumThread;
             return RedirectToAction("Thread", new { id = thread.ForumThreadID, page = page});
@@ -283,11 +283,14 @@ namespace ZeroKWeb.Controllers
             // TODO - indicate thread has been deleted
             if (t == null) return RedirectToAction("Index");
 
-            if (page == null)
-            {
-                if (postID == null) page = 0;
-                else page = GetPostPage((int)postID);
-            }
+		    if (page == null) {
+		        if (postID == null) page = 0;
+		        else {
+		            var post = t.ForumPosts.FirstOrDefault(x => x.ForumPostID == postID);
+		            page = GetPostPage(post);
+		        }
+		    }
+		
 
 			var cat = t.ForumCategory;
 			if (cat != null)
@@ -473,11 +476,10 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Thread", new { id = post.ForumThreadID, postID = forumPostID });
         }
 
-        public static int GetPostPage(int forumPostID)
+        public static int GetPostPage(ForumPost post)
         {
-            if (forumPostID == null) return 0;
-            var db = new ZkDataContext();
-            var index = db.ForumPosts.Count(x=>x.ForumPostID <= forumPostID);
+            if (post == null) return 0;
+            var index = post.ForumThread.ForumPosts.Count(x=>x.ForumPostID <= post.ForumPostID);
             return index / PageSize;
         }
 
