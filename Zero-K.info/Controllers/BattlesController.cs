@@ -65,18 +65,21 @@ namespace ZeroKWeb.Controllers
             if (players.HasValue)
                 q = q.Where(b => b.SpringBattlePlayers.Where(p => !p.IsSpectator).Count() == players.Value);
 
-            if (age.HasValue)
+            if (age.HasValue) {
+                DateTime limit = DateTime.UtcNow;
                 switch (age) {
                     case 1:
-                        q = q.Where(b => SqlMethods.DateDiffHour(b.StartTime, DateTime.UtcNow) < 24);
+                        limit = DateTime.Now.AddHours(-1);
                         break;
                     case 2:
-                        q = q.Where(b => SqlMethods.DateDiffHour(b.StartTime, DateTime.UtcNow) < 24 * 7);
+                        limit = DateTime.UtcNow.AddDays(-7);
                         break;
                     case 3:
-                        q = q.Where(b => SqlMethods.DateDiffHour(b.StartTime, DateTime.UtcNow) < 24 * 31);
+                        limit = DateTime.UtcNow.AddDays(-31);
                         break;
                 }
+                q = q.Where(b => b.StartTime >= limit);
+            }
 
             if (duration.HasValue)
                 q = q.Where(b => Math.Abs(b.Duration - duration.Value * 60) < 300);
