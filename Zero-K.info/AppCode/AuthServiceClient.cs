@@ -23,7 +23,8 @@ namespace ZkData
                 try
                 {
                     cachedStats = Global.Nightwatch.Auth.GetCurrentStats();
-                    cachedStats.UsersLastMonth = new ZkDataContext().SpringBattlePlayers.Where(x=>x.SpringBattle.StartTime > DateTime.Now.AddDays(-31)).GroupBy(x=>x.AccountID).Count();
+                    var lastMonth = DateTime.Now.AddDays(-31);
+                    cachedStats.UsersLastMonth = new ZkDataContext().SpringBattlePlayers.Where(x=>x.SpringBattle.StartTime > lastMonth).GroupBy(x=>x.AccountID).Count();
                 }
                 catch (Exception ex)
                 {
