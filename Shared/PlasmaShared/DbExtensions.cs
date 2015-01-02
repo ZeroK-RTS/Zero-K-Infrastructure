@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
-using System.Data.Linq.Mapping;
 using System.Linq;
 using System.Text;
 
@@ -15,8 +15,8 @@ namespace ZkData
 			var clone = (T)Activator.CreateInstance(typeof(T));
 			var cols =
 				typeof(T).GetProperties().Select(
-					p => new { Prop = p, Attr = (ColumnAttribute)p.GetCustomAttributes(typeof(ColumnAttribute), true).SingleOrDefault() }).Where(
-						p => p.Attr != null && !p.Attr.IsDbGenerated);
+					p => new { Prop = p, Attr = p.GetCustomAttributes(typeof(NotMappedAttribute), true).SingleOrDefault() }).Where(
+						p => p.Attr == null);
 			foreach (var col in cols) col.Prop.SetValue(clone, col.Prop.GetValue(source, null), null);
 			return clone;
 		}
@@ -26,8 +26,8 @@ namespace ZkData
 			var clone = target;
 			var cols =
 				typeof(T).GetProperties().Select(
-					p => new { Prop = p, Attr = (ColumnAttribute)p.GetCustomAttributes(typeof(ColumnAttribute), true).SingleOrDefault() }).Where(
-						p => p.Attr != null && !p.Attr.IsDbGenerated);
+					p => new { Prop = p, Attr = p.GetCustomAttributes(typeof(NotMappedAttribute), true).SingleOrDefault() }).Where(
+						p => p.Attr != null);
 			foreach (var col in cols) col.Prop.SetValue(clone, col.Prop.GetValue(source, null), null);
 		}
 

@@ -141,12 +141,10 @@
     <Compile Include="Data\Galaxy.cs" />
     <Compile Include="Data\IAuthService.cs" />
     <Compile Include="Data\LobbyMessage.cs" />
-    <Compile Include="Data\MapRating.cs" />
     <Compile Include="Data\Mission.cs" />
     <Compile Include="Data\News.cs" />
     <Compile Include="Data\Planet.cs" />
     <Compile Include="Data\PlanetStructure.cs" />
-    <Compile Include="Data\ProgramID.cs" />
     <Compile Include="Data\Punishment.cs" />
     <Compile Include="Data\Resource.cs" />
     <Compile Include="Data\ResourceType.cs" />
@@ -301,7 +299,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="WebReferences\StatsCollector.cs">
       <SubType>Component</SubType>
@@ -334,7 +331,6 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.Linq" />
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />

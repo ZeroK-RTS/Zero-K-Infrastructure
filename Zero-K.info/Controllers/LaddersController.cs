@@ -1,9 +1,7 @@
 ﻿﻿using System;
 using System.Collections.Generic;
 ﻿using System.Data.Entity;
-﻿using System.Data.Linq;
-﻿using System.Data.Linq.SqlClient;
-﻿using System.Linq;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.Helpers;
 using System.Web.Mvc;

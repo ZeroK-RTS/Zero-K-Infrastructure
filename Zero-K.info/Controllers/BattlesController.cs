@@ -6,8 +6,6 @@ using System.Web;
 using System.Web.Mvc;
 using ZkData;
 using ZeroKWeb.Models;
-using System.Data.Linq.SqlClient;
-using System.Data.Linq;
 
 namespace ZeroKWeb.Controllers
 {
