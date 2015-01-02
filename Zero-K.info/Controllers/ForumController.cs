@@ -73,7 +73,7 @@ namespace ZeroKWeb.Controllers
 
 			//if (res.CurrentCategory != null && res.CurrentCategory.IsMissions) res.Threads = db.ForumThreads.Where(x => Equals(x.ForumCategoryID, categoryID) && !Global.IsLimitedMode || x.Missions.ModRapidTag.StartsWith("zk:")).OrderByDescending(x => x.LastPost);
 			//else
-            var threads = db.ForumThreads.Where(x => Equals(x.ForumCategoryID, categoryID)).OrderByDescending(x => x.IsPinned).ThenByDescending(x => x.LastPost);
+            var threads = db.ForumThreads.Where(x => x.ForumCategoryID == categoryID).OrderByDescending(x => x.IsPinned).ThenByDescending(x => x.LastPost);
             res.Page = page ?? 0;
             res.PageCount = ((threads.Count() - 1) / PageSize) + 1;
             res.Threads = threads.Skip((page ?? 0) * PageSize).Take(PageSize).ToList();
