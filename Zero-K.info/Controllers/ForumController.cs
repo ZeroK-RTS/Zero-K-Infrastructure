@@ -241,7 +241,7 @@ namespace ZeroKWeb.Controllers
                         post.Text = text;
 
 
-                    } else thread.ForumPosts.Add(new ForumPost() { AuthorAccountID = Global.AccountID, Text = text });
+                    } else thread.ForumPosts.Add(new ForumPost() { AuthorAccountID = Global.AccountID, Text = text, Created = DateTime.UtcNow});
 
 					
                     thread.LastPost = DateTime.UtcNow;
