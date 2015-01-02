@@ -16,7 +16,7 @@ namespace ZkData
         [NotMapped]
         public string ThumbRelativeUrl
         {
-            get { if (ImageExtension == null) return null; return string.Format("/img/news/{0}{1}_thumb", NewsID, ImageExtension); }
+            get { if (ImageExtension == null) return null; return string.Format("/img/news/{0}_thumb{1}", NewsID, ImageExtension); }
         }
 	}
 }
