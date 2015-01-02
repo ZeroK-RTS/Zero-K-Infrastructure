@@ -31,15 +31,18 @@ namespace NightWatch
             else return false;
         }
 
-        public void Refresh() {
+        public void Refresh()
+        {
+            var lastMonth = DateTime.UtcNow.AddMonths(-1);
             using (var db = new ZkDataContext()) {
+                 
                 topTeam =
-                    db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1)))
+                    db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > lastMonth))
                       .OrderByDescending(x => x.Elo)
                       .Take(TakeCount)
                       .ToList();
                 top1v1 =
-                    db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1)))
+                    db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > lastMonth))
                       .OrderByDescending(x => x.Elo1v1)
                       .Take(TakeCount)
                       .ToList();
