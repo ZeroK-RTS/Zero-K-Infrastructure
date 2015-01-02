@@ -13,7 +13,7 @@ using System.Threading;
 using ServiceStack.Text;
 using ZkData;
 
-namespace PlasmaShared
+namespace ZkData
 {
     public class PayPalInterface
     {
@@ -214,9 +214,9 @@ namespace PlasmaShared
                                   IsSpringContribution = isSpring,
                                   ContributionJar = jar
                               };
-                    db.Contributions.InsertOnSubmit(contrib);
+                    db.Contributions.Add(contrib);
                     
-                    db.SubmitChanges();
+                    db.SubmitAndMergeChanges();
 
                     if (acc != null) acc.Kudos = acc.KudosGained - acc.KudosSpent;
                     db.SubmitAndMergeChanges();

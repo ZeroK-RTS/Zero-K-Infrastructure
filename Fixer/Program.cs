@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Linq;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -17,8 +18,9 @@ using System.Xml.Serialization;
 //using LobbyClient;
 //using NightWatch;
 using CaTracker;
+using Microsoft.Linq.Translations;
 using PlasmaShared;
-using PlasmaShared.UnitSyncLib;
+using ZkData.UnitSyncLib;
 using ZeroKWeb;
 using ZkData;
 using Encoder = System.Drawing.Imaging.Encoder;
@@ -178,8 +180,15 @@ namespace Fixer
         [STAThread]
         static void Main(string[] args)
         {
-            
-            PlanetwarsFixer.StartGalaxy(24,3919,3925);
+            //var db = new ZkDataContext(true);
+            //var test = db.Accounts.OrderByDescending(x => x.EffectiveElo).WithTranslations().Take(5).ToList();
+
+            MigrateDatabase();
+
+            //var db = new ZkDataContext(false);
+            //db.Database.CreateIfNotExists();
+
+            //PlanetwarsFixer.StartGalaxy(24,3919,3925);
             //AddClanLeader();
             return;
             //TestPwMatch();
@@ -234,6 +243,13 @@ namespace Fixer
             //GetAverageElo();
         }
 
+        static void MigrateDatabase()
+        {
+            var cloner = new DbCloner("zero-k", "zero-k_ef",
+                "Data Source=omega.licho.eu,100;Initial Catalog=zero-k_ef;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true");
+            cloner.CloneAllTables();
+        }
+
         static void SetPlanetTeamSizes()
         {
             var db = new ZkDataContext(true);
@@ -263,10 +279,7 @@ namespace Fixer
         public static void FixHashes()
         {
             var db = new ZkDataContext();
-            var lo = new DataLoadOptions();
-            lo.LoadWith<Resource>(x => x.ResourceSpringHashes);
-            db.LoadOptions = lo;
-            foreach (var r in db.Resources)
+            foreach (var r in db.Resources.Include(x=>x.ResourceSpringHashes))
             {
                 var h84 = r.ResourceSpringHashes.Where(x => x.SpringVersion == "84").Select(x => x.SpringHash).SingleOrDefault();
                 var h840 = r.ResourceSpringHashes.Where(x => x.SpringVersion == "84.0").Select(x => x.SpringHash).SingleOrDefault();
@@ -295,7 +308,7 @@ namespace Fixer
         public static void CountUserIDs()
         {
             var db = new ZkDataContext();
-            var userIDs = db.AccountUserIDS.ToList();
+            var userIDs = db.AccountUserIDs.ToList();
             var uniqueIDs = userIDs.Select(x => x.UserID).Distinct().ToList();
             Dictionary<long, int> userIDCounts = new Dictionary<long, int>();
             System.Console.WriteLine("{0} userIDs, {1} uniques", userIDs.Count, uniqueIDs.Count);
@@ -558,7 +571,7 @@ namespace Fixer
                 if (!alreadyCompleted)
                 {
                     System.Console.WriteLine("Planet completed: {0}", planet);
-                    foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.Planet == planet && x.UnlockOnPlanetCompletion))
+                    foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.CampaignPlanet == planet && x.UnlockOnPlanetCompletion))
                     {
                         unlockedJournals.Add(journal);
                     }
@@ -566,14 +579,14 @@ namespace Fixer
                 foreach (CampaignPlanet unlocked in unlockedPlanets)
                 {
                     System.Console.WriteLine("Planet unlocked: {0}", unlocked);
-                    foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.Planet == unlocked && x.UnlockOnPlanetUnlock))
+                    foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.CampaignPlanet == unlocked && x.UnlockOnPlanetUnlock))
                     {
                         unlockedJournals.Add(journal);
                     }
                 }
                 foreach (CampaignJournal uj in unlockedJournals)
                 {
-                    System.Console.WriteLine("{1} - Journal entry unlocked: {0}", uj, uj.Planet);
+                    System.Console.WriteLine("{1} - Journal entry unlocked: {0}", uj, uj.CampaignPlanet);
                 }
                 db.SubmitChanges();
             }
@@ -762,7 +775,7 @@ namespace Fixer
             var winPredicted = 0;
 
 
-            foreach (var sb in db.SpringBattles.Where(x => !x.IsMission && !x.HasBots && !x.IsFfa && x.IsEloProcessed && x.PlayerCount >= 8 && !x.EventSpringBattles.Any()).OrderByDescending(x => x.SpringBattleID))
+            foreach (var sb in db.SpringBattles.Where(x => !x.IsMission && !x.HasBots && !x.IsFfa && x.IsEloProcessed && x.PlayerCount >= 8 && !x.Events.Any()).OrderByDescending(x => x.SpringBattleID))
             {
 
                 var losers = sb.SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam).Select(x => new { Player = x, x.Account }).ToList();
@@ -915,8 +928,8 @@ namespace Fixer
                 Account acc = db.Accounts.FirstOrDefault(x => x.Name == name + i);
                 if (acc != null)
                 {
-                    int? userID = banID ? (int?)acc.AccountUserIDS.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
-                    string userIP = banIP ? acc.AccountIPS.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
+                    int? userID = banID ? (int?)acc.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
+                    string userIP = banIP ? acc.AccountIPs.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
                     System.Console.WriteLine(acc.Name, userID, userIP);
                     Punishment punishment = new Punishment
                     {

@@ -5,7 +5,6 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Transactions;
 using System.Web.Mvc;
-using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.Controllers

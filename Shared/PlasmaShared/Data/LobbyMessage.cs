@@ -8,11 +8,6 @@ namespace ZkData
 {
 	partial class LobbyMessage
 	{
-		partial void OnCreated()
-		{
-			Created = DateTime.UtcNow;
-		}
-
 		public string ToLobbyString()
 		{
 			return string.Format("!pm|{0}|{1}|{2}", SourceName, Created.ToString(CultureInfo.InvariantCulture), Message);

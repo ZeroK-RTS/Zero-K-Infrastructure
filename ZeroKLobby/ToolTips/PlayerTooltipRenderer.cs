@@ -4,7 +4,7 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
-using PlasmaShared;
+using ZkData;
 using ZeroKLobby.MicroLobby;
 
 namespace ZeroKLobby

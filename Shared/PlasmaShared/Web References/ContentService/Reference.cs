@@ -13,7 +13,7 @@
 // 
 #pragma warning disable 1591
 
-namespace PlasmaShared.ContentService {
+namespace ZkData.ContentService {
     using System;
     using System.Web.Services;
     using System.Diagnostics;
@@ -24,9 +24,9 @@ namespace PlasmaShared.ContentService {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Web.Services.WebServiceBindingAttribute(Name="ContentServiceSoap", Namespace="http://tempuri.org/")]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
+    [WebServiceBinding(Name="ContentServiceSoap", Namespace="http://tempuri.org/")]
     public partial class ContentService : System.Web.Services.Protocols.SoapHttpClientProtocol {
         
         private System.Threading.SendOrPostCallback DownloadFileOperationCompleted;
@@ -138,8 +138,8 @@ namespace PlasmaShared.ContentService {
         public event GetAccountInfoCompletedEventHandler GetAccountInfoCompleted;
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/DownloadFile", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public bool DownloadFile(string internalName, out string[] links, [System.Xml.Serialization.XmlElementAttribute(DataType="base64Binary")] out byte[] torrent, out string[] dependencies, out ResourceType resourceType, out string torrentFileName) {
+        [SoapDocumentMethod("http://tempuri.org/DownloadFile", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool DownloadFile(string internalName, out string[] links, [XmlElement(DataType="base64Binary")] out byte[] torrent, out string[] dependencies, out ResourceType resourceType, out string torrentFileName) {
             object[] results = this.Invoke("DownloadFile", new object[] {
                         internalName});
             links = ((string[])(results[1]));
@@ -172,8 +172,8 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/FindResourceData", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public ResourceData[] FindResourceData(string[] words, [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)] System.Nullable<ResourceType> type) {
+        [SoapDocumentMethod("http://tempuri.org/FindResourceData", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ResourceData[] FindResourceData(string[] words, [XmlElement(IsNullable=true)] System.Nullable<ResourceType> type) {
             object[] results = this.Invoke("FindResourceData", new object[] {
                         words,
                         type});
@@ -203,7 +203,7 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetEloTop10", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [SoapDocumentMethod("http://tempuri.org/GetEloTop10", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string[] GetEloTop10() {
             object[] results = this.Invoke("GetEloTop10", new object[0]);
             return ((string[])(results[0]));
@@ -230,7 +230,7 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetResourceData", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [SoapDocumentMethod("http://tempuri.org/GetResourceData", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public ResourceData GetResourceData(string md5, string internalName) {
             object[] results = this.Invoke("GetResourceData", new object[] {
                         md5,
@@ -261,7 +261,7 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetResourceDataByInternalName", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [SoapDocumentMethod("http://tempuri.org/GetResourceDataByInternalName", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public ResourceData GetResourceDataByInternalName(string internalName) {
             object[] results = this.Invoke("GetResourceDataByInternalName", new object[] {
                         internalName});
@@ -290,7 +290,7 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetResourceDataByResourceID", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [SoapDocumentMethod("http://tempuri.org/GetResourceDataByResourceID", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public ResourceData GetResourceDataByResourceID(int resourceID) {
             object[] results = this.Invoke("GetResourceDataByResourceID", new object[] {
                         resourceID});
@@ -319,8 +319,8 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetResourceList", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public ResourceData[] GetResourceList([System.Xml.Serialization.XmlElementAttribute(IsNullable=true)] System.Nullable<System.DateTime> lastChange, out System.DateTime currentTime) {
+        [SoapDocumentMethod("http://tempuri.org/GetResourceList", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ResourceData[] GetResourceList([XmlElement(IsNullable=true)] System.Nullable<System.DateTime> lastChange, out System.DateTime currentTime) {
             object[] results = this.Invoke("GetResourceList", new object[] {
                         lastChange});
             currentTime = ((System.DateTime)(results[1]));
@@ -349,7 +349,7 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetScriptMissionData", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [SoapDocumentMethod("http://tempuri.org/GetScriptMissionData", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public ScriptMissionData GetScriptMissionData(string name) {
             object[] results = this.Invoke("GetScriptMissionData", new object[] {
                         name});
@@ -378,7 +378,7 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/NotifyMissionRun", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [SoapDocumentMethod("http://tempuri.org/NotifyMissionRun", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public void NotifyMissionRun(string login, string missionName) {
             this.Invoke("NotifyMissionRun", new object[] {
                         login,
@@ -408,8 +408,8 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/RegisterResource", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public ReturnValue RegisterResource(int apiVersion, string springVersion, string md5, int length, ResourceType resourceType, string archiveName, string internalName, int springHash, [System.Xml.Serialization.XmlElementAttribute(DataType="base64Binary")] byte[] serializedData, string[] dependencies, [System.Xml.Serialization.XmlElementAttribute(DataType="base64Binary")] byte[] minimap, [System.Xml.Serialization.XmlElementAttribute(DataType="base64Binary")] byte[] metalMap, [System.Xml.Serialization.XmlElementAttribute(DataType="base64Binary")] byte[] heightMap, [System.Xml.Serialization.XmlElementAttribute(DataType="base64Binary")] byte[] torrentData) {
+        [SoapDocumentMethod("http://tempuri.org/RegisterResource", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ReturnValue RegisterResource(int apiVersion, string springVersion, string md5, int length, ResourceType resourceType, string archiveName, string internalName, int springHash, [XmlElement(DataType="base64Binary")] byte[] serializedData, string[] dependencies, [XmlElement(DataType="base64Binary")] byte[] minimap, [XmlElement(DataType="base64Binary")] byte[] metalMap, [XmlElement(DataType="base64Binary")] byte[] heightMap, [XmlElement(DataType="base64Binary")] byte[] torrentData) {
             object[] results = this.Invoke("RegisterResource", new object[] {
                         apiVersion,
                         springVersion,
@@ -463,7 +463,7 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SubmitMissionScore", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [SoapDocumentMethod("http://tempuri.org/SubmitMissionScore", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public void SubmitMissionScore(string login, string passwordHash, string missionName, int score, int gameSeconds, string missionVars) {
             this.Invoke("SubmitMissionScore", new object[] {
                         login,
@@ -507,7 +507,7 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SubmitStackTrace", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [SoapDocumentMethod("http://tempuri.org/SubmitStackTrace", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public void SubmitStackTrace(ProgramType programType, string playerName, string exception, string extraData, string programVersion) {
             this.Invoke("SubmitStackTrace", new object[] {
                         programType,
@@ -543,7 +543,7 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/VerifyAccountData", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [SoapDocumentMethod("http://tempuri.org/VerifyAccountData", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public bool VerifyAccountData(string login, string password) {
             object[] results = this.Invoke("VerifyAccountData", new object[] {
                         login,
@@ -574,7 +574,7 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetAccountInfo", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [SoapDocumentMethod("http://tempuri.org/GetAccountInfo", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public AccountInfo GetAccountInfo(string login, string password) {
             object[] results = this.Invoke("GetAccountInfo", new object[] {
                         login,
@@ -625,8 +625,8 @@ namespace PlasmaShared.ContentService {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18034")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    [Serializable()]
+    [XmlType(Namespace="http://tempuri.org/")]
     public enum ResourceType {
         
         /// <remarks/>
@@ -638,10 +638,10 @@ namespace PlasmaShared.ContentService {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18034")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    [Serializable()]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
+    [XmlType(Namespace="http://tempuri.org/")]
     public partial class ResourceData {
         
         private string[] dependenciesField;
@@ -707,7 +707,7 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        [XmlElement(IsNullable=true)]
         public System.Nullable<float> FeaturedOrder {
             get {
                 return this.featuredOrderField;
@@ -720,10 +720,10 @@ namespace PlasmaShared.ContentService {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18034")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    [Serializable()]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
+    [XmlType(Namespace="http://tempuri.org/")]
     public partial class SpringHashEntry {
         
         private int springHashField;
@@ -753,10 +753,10 @@ namespace PlasmaShared.ContentService {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18034")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    [Serializable()]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
+    [XmlType(Namespace="http://tempuri.org/")]
     public partial class AccountInfo {
         
         private string nameField;
@@ -978,10 +978,10 @@ namespace PlasmaShared.ContentService {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18034")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    [Serializable()]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
+    [XmlType(Namespace="http://tempuri.org/")]
     public partial class ScriptMissionData {
         
         private string[] manualDependenciesField;
@@ -1047,8 +1047,8 @@ namespace PlasmaShared.ContentService {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18034")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    [Serializable()]
+    [XmlType(Namespace="http://tempuri.org/")]
     public enum ReturnValue {
         
         /// <remarks/>
@@ -1072,8 +1072,8 @@ namespace PlasmaShared.ContentService {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18034")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    [Serializable()]
+    [XmlType(Namespace="http://tempuri.org/")]
     public enum ProgramType {
         
         /// <remarks/>
@@ -1086,8 +1086,8 @@ namespace PlasmaShared.ContentService {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
     public partial class DownloadFileCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
         private object[] results;
@@ -1152,8 +1152,8 @@ namespace PlasmaShared.ContentService {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
     public partial class FindResourceDataCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
         private object[] results;
@@ -1178,8 +1178,8 @@ namespace PlasmaShared.ContentService {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
     public partial class GetEloTop10CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
         private object[] results;
@@ -1204,8 +1204,8 @@ namespace PlasmaShared.ContentService {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
     public partial class GetResourceDataCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
         private object[] results;
@@ -1230,8 +1230,8 @@ namespace PlasmaShared.ContentService {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
     public partial class GetResourceDataByInternalNameCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
         private object[] results;
@@ -1256,8 +1256,8 @@ namespace PlasmaShared.ContentService {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
     public partial class GetResourceDataByResourceIDCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
         private object[] results;
@@ -1282,8 +1282,8 @@ namespace PlasmaShared.ContentService {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
     public partial class GetResourceListCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
         private object[] results;
@@ -1316,8 +1316,8 @@ namespace PlasmaShared.ContentService {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
     public partial class GetScriptMissionDataCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
         private object[] results;
@@ -1346,8 +1346,8 @@ namespace PlasmaShared.ContentService {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
     public partial class RegisterResourceCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
         private object[] results;
@@ -1380,8 +1380,8 @@ namespace PlasmaShared.ContentService {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
     public partial class VerifyAccountDataCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
         private object[] results;
@@ -1406,8 +1406,8 @@ namespace PlasmaShared.ContentService {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
     public partial class GetAccountInfoCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
         private object[] results;

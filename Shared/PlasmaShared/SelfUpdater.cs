@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Threading;
 using ServiceStack.Text;
 
-namespace PlasmaShared
+namespace ZkData
 {
     public class SelfUpdater
     {

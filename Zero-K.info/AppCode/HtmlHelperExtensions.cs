@@ -482,13 +482,13 @@ namespace System.Web.Mvc
                 factoids.Add("appoints: " +
                              string.Join(", ",
                                          rt.RoleTypeHierarchiesByMasterRoleTypeID.Where(x => x.CanAppoint)
-                                           .Select(x => x.RoleTypeBySlaveRoleTypeID.Name)));
+                                           .Select(x => x.SlaveRoleType.Name)));
             }
             if (rt.RoleTypeHierarchiesByMasterRoleTypeID.Any(x => x.CanRecall)) {
                 factoids.Add("recalls: " +
                              string.Join(", ",
                                          rt.RoleTypeHierarchiesByMasterRoleTypeID.Where(x => x.CanRecall)
-                                           .Select(x => x.RoleTypeBySlaveRoleTypeID.Name)));
+                                           .Select(x => x.SlaveRoleType.Name)));
             }
             if (rt.RightBomberQuota != 0) factoids.Add(string.Format("bomber quota {0:F0}%", rt.RightBomberQuota*100));
             if (rt.RightDropshipQuota != 0) factoids.Add(string.Format("dropship quota {0:F0}%", rt.RightDropshipQuota*100));
@@ -506,9 +506,9 @@ namespace System.Web.Mvc
 
         public static MvcHtmlString PrintFactionRoleHolders(this HtmlHelper helper, RoleType rt, Faction f) {
             List<MvcHtmlString> holders = new List<MvcHtmlString>();
-            foreach (AccountRole acc in rt.AccountRoles.Where(x=>x.AccountByAccountID.FactionID == f.FactionID)) 
+            foreach (AccountRole acc in rt.AccountRoles.Where(x=>x.Account.FactionID == f.FactionID)) 
             {
-                holders.Add(PrintAccount(helper, acc.AccountByAccountID));
+                holders.Add(PrintAccount(helper, acc.Account));
             }
             return new MvcHtmlString(String.Join(", ", holders));
         }
@@ -516,9 +516,9 @@ namespace System.Web.Mvc
         public static MvcHtmlString PrintClanRoleHolders(this HtmlHelper helper, RoleType rt, Clan c)
         {
             List<MvcHtmlString> holders = new List<MvcHtmlString>();
-            foreach (AccountRole acc in rt.AccountRoles.Where(x => x.AccountByAccountID.ClanID == c.ClanID))
+            foreach (AccountRole acc in rt.AccountRoles.Where(x => x.Account.ClanID == c.ClanID))
             {
-                holders.Add(PrintAccount(helper, acc.AccountByAccountID));
+                holders.Add(PrintAccount(helper, acc.Account));
             }
             return new MvcHtmlString(String.Join(", ", holders));
         }

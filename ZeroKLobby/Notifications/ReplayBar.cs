@@ -67,7 +67,7 @@ namespace ZeroKLobby.Notifications
             var downEngine = Program.Downloader.GetAndSwitchEngine(engineVersion);
             if (downEngine != null) waitHandles.Add(downEngine.WaitHandle);
 
-            PlasmaShared.Utils.StartAsync(() =>
+            ZkData.Utils.StartAsync(() =>
             {
                 if (waitHandles.Any()) WaitHandle.WaitAll(waitHandles.ToArray());
 

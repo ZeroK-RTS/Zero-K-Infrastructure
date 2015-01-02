@@ -5,7 +5,6 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Transactions;
 using System.Web.Mvc;
-using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.Controllers
@@ -204,11 +203,11 @@ namespace ZeroKWeb.Controllers
                 else pageSize = 10;
             }
             IQueryable<Event> res = db.Events.AsQueryable();
-            if (planetID.HasValue) res = res.Where(x => x.EventPlanets.Any(y => y.PlanetID == planetID));
-            if (accountID.HasValue) res = res.Where(x => x.EventAccounts.Any(y => y.AccountID == accountID));
-            if (clanID.HasValue) res = res.Where(x => x.EventClans.Any(y => y.ClanID == clanID));
-            if (springBattleID.HasValue) res = res.Where(x => x.EventSpringBattles.Any(y => y.SpringBattleID == springBattleID));
-            if (factionID.HasValue) res = res.Where(x => x.EventFactions.Any(y => y.FactionID == factionID));
+            if (planetID.HasValue) res = res.Where(x => x.Planets.Any(y => y.PlanetID == planetID));
+            if (accountID.HasValue) res = res.Where(x => x.Accounts.Any(y => y.AccountID == accountID));
+            if (clanID.HasValue) res = res.Where(x => x.Clans.Any(y => y.ClanID == clanID));
+            if (springBattleID.HasValue) res = res.Where(x => x.SpringBattles.Any(y => y.SpringBattleID == springBattleID));
+            if (factionID.HasValue) res = res.Where(x => x.Factions.Any(y => y.FactionID == factionID));
             if (!string.IsNullOrEmpty(filter)) res = res.Where(x => x.Text.Contains(filter));
             res = res.OrderByDescending(x => x.EventID);
 
@@ -424,6 +423,7 @@ namespace ZeroKWeb.Controllers
                     {
                         ps.OwnerAccountID = planet.OwnerAccountID;
                         ps.IsActive = false;
+                        ps.ActivatedOnTurn = null;
                     }
 
 
@@ -495,6 +495,7 @@ namespace ZeroKWeb.Controllers
                     foreach (PlanetStructure structure in planet.PlanetStructures.Where(x => x.StructureType.OwnerChangeDisablesThis))
                     {
                         structure.IsActive = false;
+                        structure.ActivatedOnTurn = null;
                         structure.Account = newAccount;
                     }
 
@@ -661,7 +662,7 @@ namespace ZeroKWeb.Controllers
                         x => x.RoleTypeID == role.RoleTypeID && (role.IsClanOnly ? x.ClanID == myAccount.ClanID : x.FactionID == myAccount.FactionID)).ToList();
                     if (entries.Any())
                     {
-                        previous = entries.First().AccountByAccountID;
+                        previous = entries.First().Account;
                         db.AccountRoles.DeleteAllOnSubmit(entries);
                     }
                 }
@@ -872,7 +873,7 @@ namespace ZeroKWeb.Controllers
             db.SubmitAndMergeChanges();
 
             var residue = db.StructureTypes.First(x => x.Name == "Residue"); // todo not nice use constant instead
-            target.PlanetStructures.Add(new PlanetStructure() { StructureType = residue, IsActive = true });
+            target.PlanetStructures.Add(new PlanetStructure() { StructureType = residue, IsActive = true, ActivatedOnTurn = null});
             db.SubmitAndMergeChanges();
 
 

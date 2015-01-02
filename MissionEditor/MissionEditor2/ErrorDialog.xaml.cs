@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
-using PlasmaShared.ContentService;
+using ZkData.ContentService;
 
 namespace MissionEditor2
 {

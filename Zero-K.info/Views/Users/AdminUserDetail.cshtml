@@ -24,7 +24,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (AccountIP x in Model.AccountIPS.OrderByDescending(x => x.LastLogin))
+            @foreach (AccountIP x in Model.AccountIPs.OrderByDescending(x => x.LastLogin))
             {
                 <tr>
                     <td>@x.IP</td>
@@ -47,7 +47,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (AccountUserID x in Model.AccountUserIDS.OrderByDescending(x => x.LastLogin))
+            @foreach (AccountUserID x in Model.AccountUserIDs.OrderByDescending(x => x.LastLogin))
             {
                 <tr>
                     <td>@x.UserID</td>
@@ -61,15 +61,15 @@
     <br />
     
     @{
-        var myIPs = Model.AccountIPS.Select(x => x.IP).ToList();
-        var myIDs = Model.AccountUserIDS.Select(x => x.UserID).ToList();
+        var myIPs = Model.AccountIPs.Select(x => x.IP).ToList();
+        var myIDs = Model.AccountUserIDs.Select(x => x.UserID).ToList();
         var brokenIDs = new List<Int64>() { 1236934115, 1199297835, -2130083051, 195445522, 1141552226 };
-        var smurfs = new ZkDataContext().Accounts.Where(x => x.AccountID != Model.AccountID && (x.AccountIPS.Any(y => myIPs.Contains(y.IP) && y.IP != "127.0.0.1" && y.IP != "127.0.1.1" && y.IP != "94.23.170.70")
-            || x.AccountUserIDS.Where(id => !brokenIDs.Contains(id.UserID)).Any(y => myIDs.Contains(y.UserID))));
+        var smurfs = new ZkDataContext().Accounts.Where(x => x.AccountID != Model.AccountID && (x.AccountIPs.Any(y => myIPs.Contains(y.IP) && y.IP != "127.0.0.1" && y.IP != "127.0.1.1" && y.IP != "94.23.170.70")
+            || x.AccountUserIDs.Where(id => !brokenIDs.Contains(id.UserID)).Any(y => myIDs.Contains(y.UserID))));
         
         Int64? lastUserID = null;
-        if (Model.AccountUserIDS.Any()) {
-            lastUserID = Model.AccountUserIDS.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID;
+        if (Model.AccountUserIDs.Any()) {
+            lastUserID = Model.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID;
         }
     }
     <h2>Smurfs</h2>
@@ -124,7 +124,7 @@
         Block commanders: @Html.CheckBox("banCommanders")<br />
         Block unlocks: @Html.CheckBox("banUnlocks")<br />
         <br />
-        IP: @Html.TextBox("banIP", Model.AccountIPS.OrderByDescending(x=>x.LastLogin).Select(x=>x.IP).FirstOrDefault())<br />
+        IP: @Html.TextBox("banIP", Model.AccountIPs.OrderByDescending(x=>x.LastLogin).Select(x=>x.IP).FirstOrDefault())<br />
         UserID: @Html.TextBox("banUserID", lastUserID != null && !brokenIDs.Contains((int)lastUserID) ? lastUserID.ToString() : "")<br />
         Ban site: @Html.CheckBox("banSite")<br />
         Ban lobby: @Html.CheckBox("banLobby")<br />

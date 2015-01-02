@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using LobbyClient;
 using ZkData;
 using ContextMenu = System.Windows.Forms.ContextMenu;
-using PlasmaShared.UnitSyncLib;
+using ZkData.UnitSyncLib;
 using ZeroKLobby.MicroLobby.ExtrasTab;
 
 namespace ZeroKLobby.MicroLobby

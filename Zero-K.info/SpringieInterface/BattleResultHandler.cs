@@ -159,6 +159,8 @@ namespace ZeroKWeb.SpringieInterface
                 Dictionary<int, int> orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
 
                 sb.CalculateAllElo(noElo, isPlanetwars);
+                foreach (var u in sb.SpringBattlePlayers.Where(x => !x.IsSpectator)) u.Account.CheckLevelUp();
+                
                 db.SubmitAndMergeChanges();
 
                 try

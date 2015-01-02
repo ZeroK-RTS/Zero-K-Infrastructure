@@ -12,8 +12,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using System.Timers;
-using PlasmaShared;
-using PlasmaShared.UnitSyncLib;
+using ZkData;
+using ZkData.UnitSyncLib;
 using Timer = System.Timers.Timer;
 
 #endregion

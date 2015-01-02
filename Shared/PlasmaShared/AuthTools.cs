@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace PlasmaShared
+namespace ZkData
 {
     public class AuthTools
     {

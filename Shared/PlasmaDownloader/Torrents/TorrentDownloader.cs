@@ -4,8 +4,9 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using MonoTorrent.Common;
-using PlasmaShared;
-using PlasmaShared.ContentService;
+using ZkData;
+using ZkData.ContentService;
+using ResourceType = ZkData.ContentService.ResourceType;
 
 #endregion
 

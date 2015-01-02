@@ -9,7 +9,6 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using CaTracker;
 using NightWatch;
-using PlasmaShared;
 using ServiceStack.Text;
 using ZeroKWeb.Controllers;
 using ZkData;

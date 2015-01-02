@@ -1,41 +1,56 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Linq;
 using System.Linq;
 using System.Security.Principal;
+using Microsoft.Linq.Translations;
 
 namespace ZkData
 {
     partial class Account: IPrincipal, IIdentity
     {
-        Dictionary<AutohostMode, GamePreference> preferences;
-        public static Func<ZkDataContext, int, Account> AccountByAccountID =
-            CompiledQuery.Compile<ZkDataContext, int, Account>((db, accountID) => db.Accounts.SingleOrDefault(x => x.AccountID == accountID));
+        private static readonly CompiledExpression<Account, double> effectiveEloExpression = DefaultTranslationOf<Account>.Property(e => e.EffectiveElo).Is(e => e.Elo + (GlobalConst.EloWeightMax - e.EloWeight) * GlobalConst.EloWeightMalusFactor);
+        
+        public double EffectiveElo { get { return effectiveEloExpression.Evaluate(this); }}
 
-        public static Func<ZkDataContext, int, Account> AccountByLobbyID =
-            CompiledQuery.Compile<ZkDataContext, int, Account>((db, lobbyID) => db.Accounts.FirstOrDefault(x => x.LobbyID == lobbyID));
 
-        public static Func<ZkDataContext, string, Account> AccountByName =
-            CompiledQuery.Compile<ZkDataContext, string, Account>((db, name) => db.Accounts.FirstOrDefault(x => x.Name == name && x.LobbyID != null));
+        private static readonly CompiledExpression<Account, double> effectiveElo1v1Expression = DefaultTranslationOf<Account>.Property(e => e.Effective1v1Elo).Is(e => e.Elo1v1 + (GlobalConst.EloWeightMax - e.Elo1v1Weight) * GlobalConst.EloWeightMalusFactor);
 
-        public static Func<ZkDataContext, string, string, Account> AccountVerify =
-            CompiledQuery.Compile<ZkDataContext, string, string, Account>(
-                (db, login, passwordHash) => db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == passwordHash && x.LobbyID != null));
+        public double Effective1v1Elo { get { return effectiveElo1v1Expression.Evaluate(this); } }
 
+
+        [NotMapped]
         public int AvailableXP { get {
             return GetXpForLevel(Level) -
                    AccountUnlocks.Sum(x => (int?)(x.Unlock.XpCost*(x.Count - KudosPurchases.Count(y => y.UnlockID == x.UnlockID)))) ?? 0;
         } }
 
-        public double Effective1v1Elo { get { return Elo1v1Weight > 1 ? Elo1v1 + (GlobalConst.EloWeightMax - Elo1v1Weight)*GlobalConst.EloWeightMalusFactor : 0; } }
-        public double EffectiveElo { get { return Elo + (GlobalConst.EloWeightMax - EloWeight)*GlobalConst.EloWeightMalusFactor; } }
+        
+
+
+        [NotMapped]
         public double EffectivePwElo { get { return EloPw + (GlobalConst.EloWeightMax - EloWeight) * GlobalConst.EloWeightMalusFactor; } }
 
+        [NotMapped]
         public double EloInvWeight { get { return GlobalConst.EloWeightMax + 1 - EloWeight; } }
+
+        [NotMapped]
         public int KudosGained { get { return ContributionsByAccountID.Sum(x => x.KudosValue); } }
+
+        [NotMapped]
         public int KudosSpent { get { return KudosPurchases.Sum(x => x.KudosValue); } }
 
+
+
+        public static Func<ZkDataContext, int, Account> AccountByAccountID = (db, accountID) => db.Accounts.FirstOrDefault(x => x.AccountID == accountID);
+
+        public static Func<ZkDataContext, int, Account> AccountByLobbyID = (db, lobbyID) => db.Accounts.FirstOrDefault(x => x.LobbyID == lobbyID);
+
+        public static Func<ZkDataContext, string, Account> AccountByName = (db, name) => db.Accounts.FirstOrDefault(x => x.Name == name && x.LobbyID != null);
+
+        public static Func<ZkDataContext, string, string, Account> AccountVerify = (db, login, passwordHash) => db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == passwordHash && x.LobbyID != null);
 
 
         public static double AdjustEloWeight(double currentWeight, double sumWeight, int sumCount) {
@@ -50,8 +65,7 @@ namespace ZkData
             if (targetAccount.AccountID != AccountID && targetAccount.FactionID == FactionID &&
                 (!roleType.IsClanOnly || targetAccount.ClanID == ClanID) &&
                 (roleType.RestrictFactionID == null || roleType.RestrictFactionID == FactionID)) {
-                return
-                    AccountRolesByAccountID.Any(
+                return AccountRolesByAccountID.Any(
                         x => x.RoleType.RoleTypeHierarchiesByMasterRoleTypeID.Any(y => y.CanAppoint && y.SlaveRoleTypeID == roleType.RoleTypeID));
             }
             else return false;
@@ -94,7 +108,7 @@ namespace ZkData
         }
 
         public void CheckLevelUp() {
-            if (XP > GetXpForLevel(Level + 1)) Level++;
+            if (Xp > GetXpForLevel(Level + 1)) Level++;
             if (Level == GlobalConst.LevelForElevatedSpringieRights && SpringieLevel == 1) SpringieLevel = 2;
         }
 
@@ -287,19 +301,7 @@ namespace ZkData
         }
 
 
-        partial void OnCreated() {
-            FirstLogin = DateTime.UtcNow;
-            Elo = 1500;
-            Elo1v1 = 1500;
-            EloPw = 1500;
-            EloWeight = 1;
-            Elo1v1Weight = 1;
-            SpringieLevel = 1;
-        }
-
-
-
-        partial void OnNameChanging(string value) {
+        public void SetName(string value) { 
             if (!string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(value)) {
                 List<string> aliases = null;
                 if (!string.IsNullOrEmpty(Aliases)) aliases = new List<string>(Aliases.Split(','));
@@ -310,22 +312,20 @@ namespace ZkData
             }
         }
 
-
-        partial void OnValidate(ChangeAction action) {
-            if (action == ChangeAction.Update || action == ChangeAction.Insert) {
-                if (string.IsNullOrEmpty(Avatar)) {
-                    var rand = new Random();
-                    var avatars = ZkData.Avatar.GetCachedList();
-                    if (avatars.Any()) Avatar = avatars[rand.Next(avatars.Count)].AvatarName;
-                }
+        public void SetAvatar()
+        {
+            if (string.IsNullOrEmpty(Avatar))
+            {
+                var rand = new Random();
+                var avatars = ZkData.Avatar.GetCachedList();
+                if (avatars.Any()) Avatar = avatars[rand.Next(avatars.Count)].AvatarName;
             }
         }
 
-        partial void OnXPChanged() {
-            CheckLevelUp();
-        }
-
+        [NotMapped]
         public string AuthenticationType { get { return "LobbyServer"; } }
+
+        [NotMapped]
         public bool IsAuthenticated { get { return true; } }
 
         public bool IsInRole(string role) {
@@ -334,6 +334,7 @@ namespace ZkData
             else return string.IsNullOrEmpty(role);
         }
 
+        [NotMapped]
         public IIdentity Identity { get { return this; } }
 
         public int GetEffectiveSpringieLevel()
@@ -341,18 +342,6 @@ namespace ZkData
             if (PunishmentsByAccountID.Any(x => x.SetRightsToZero && !x.IsExpired)) return 0;
             return SpringieLevel;
         }
-    }
-
-    public enum GamePreference
-    {
-        [Description("Never")]
-        Never = -2,
-        [Description("Ok")]
-        Ok = -1,
-        [Description("Like")]
-        Like = 0,
-        [Description("Best")]
-        Best = 1
     }
 
     public class UserLanguageNoteAttribute: Attribute

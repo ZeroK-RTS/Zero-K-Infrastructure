@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace PlasmaShared
+namespace ZkData
 {
 
     public class LuaTable:IEnumerable

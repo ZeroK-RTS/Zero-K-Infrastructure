@@ -16,7 +16,7 @@ namespace ZeroKLobby.MicroForms
         static Timer countDown;
         static int counter = 0;
 
-        public static void SpringScanner_RetryGetResourceInfo(object sender, PlasmaShared.CancelEventArgs<PlasmaShared.SpringScanner.CacheItem> e)
+        public static void SpringScanner_RetryGetResourceInfo(object sender, ZkData.CancelEventArgs<ZkData.SpringScanner.CacheItem> e)
         {
             if (thisInstance != null)
                 thisInstance.Dispose();

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Entity;
 using System.Data.Linq;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using PlasmaShared;
-using PlasmaShared.UnitSyncLib;
+using ZkData.UnitSyncLib;
 using ZkData;
 
 namespace ZeroKWeb
@@ -50,10 +50,7 @@ namespace ZeroKWeb
 		public Mission GetMission(string missionName)
 		{
 			var db = new ZkDataContext();
-			var opt = new DataLoadOptions();
-			opt.LoadWith<Mission>(x => x.Mutator);
-			db.LoadOptions = opt;
-			var prev = db.Missions.Where(x => x.Name == missionName).SingleOrDefault();
+			var prev = db.Missions.Where(x => x.Name == missionName).Include(x=>x.Mutator).SingleOrDefault();
 			db.SubmitChanges();
 			return prev;
 		}
@@ -61,29 +58,25 @@ namespace ZeroKWeb
 		public Mission GetMissionByID(int missionID)
 		{
 			var db = new ZkDataContext();
-			var opt = new DataLoadOptions();
-			opt.LoadWith<Mission>(x => x.Mutator);
-			db.LoadOptions = opt;
-			var prev = db.Missions.Where(x => x.MissionID == missionID).SingleOrDefault();
+			var prev = db.Missions.Where(x => x.MissionID == missionID).Include(x=>x.Mutator).SingleOrDefault();
 			db.SubmitChanges();
 			return prev;
 		}
 
-		public IEnumerable<Mission> ListMissionInfos()
-		{
-			var db = new ZkDataContext();
-			var list = db.Missions.ToList();
-			foreach (var m in list)
-			{
-				m.Mutator = new Binary(new byte[] { });
-				m.Script = null;
-				m.Image = new Binary(new byte[] { });
-			}
-			return list;
-		}
+	    public IEnumerable<Mission> ListMissionInfos()
+	    {
+	        var db = new ZkDataContext();
+	        var list = db.Missions.ToList();
+	        foreach (var m in list) {
+	            m.Mutator = new byte[] { };
+	            m.Script = null;
+	            m.Image = new byte[] { };
+	        }
+	        return list;
+	    }
 
 
-		public void SendMission(Mission mission, List<MissionSlot> slots, string author, string password, Mod modInfo)
+	    public void SendMission(Mission mission, List<MissionSlot> slots, string author, string password, Mod modInfo)
 		{
             if (mission == null) throw new ApplicationException("Mission is null");
 

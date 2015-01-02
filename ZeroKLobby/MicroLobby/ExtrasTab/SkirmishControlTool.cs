@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using PlasmaShared.UnitSyncLib;
+using ZkData;
+using ZkData.UnitSyncLib;
 using System.IO;
 using System.Globalization;
 
@@ -190,7 +191,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             //}
 
             var springAis = new List<Ai>();
-            string aiSkirmishFolder = PlasmaShared.Utils.MakePath(engineFolder, "AI", "Skirmish"); //eg: Spring/engine/98.0/AI/Skirmish
+            string aiSkirmishFolder = ZkData.Utils.MakePath(engineFolder, "AI", "Skirmish"); //eg: Spring/engine/98.0/AI/Skirmish
 
             if (!Directory.Exists(aiSkirmishFolder))
                 return springAis;
@@ -208,8 +209,8 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 for (int j = 0; j < aiVerFolderS.Count; j++)
                 {
                     aiVerFolder = GetFolderName(aiVerFolderS[j]);
-                    aiLibFolder = PlasmaShared.Utils.MakePath(aiFolder, aiVerFolder); //eg: Spring/engine/98.0/AI/Skirmish/AAI/0.9
-                    aiInfoFile = PlasmaShared.Utils.MakePath(aiLibFolder, "AIInfo.lua"); //eg: Spring/engine/98.0/AI/Skirmish/AAI/0.9/AIInfo.lua
+                    aiLibFolder = ZkData.Utils.MakePath(aiFolder, aiVerFolder); //eg: Spring/engine/98.0/AI/Skirmish/AAI/0.9
+                    aiInfoFile = ZkData.Utils.MakePath(aiLibFolder, "AIInfo.lua"); //eg: Spring/engine/98.0/AI/Skirmish/AAI/0.9/AIInfo.lua
                     var bot = CrudeLUAReader.GetAIInfo(aiInfoFile);
                     if (bot!=null)
                         springAis.Add(bot);
@@ -377,7 +378,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 }
                 modInfo.Sides = sides.ToArray();
                 modInfo.SideIcons = sideIcons.ToArray();
-                modInfo.StartUnits = new PlasmaShared.SerializableDictionary<string, string>(startUnits);
+                modInfo.StartUnits = new SerializableDictionary<string, string>(startUnits);
             }
         }
         

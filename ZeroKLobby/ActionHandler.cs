@@ -9,9 +9,9 @@ using System.Windows.Forms;
 using JetBrains.Annotations;
 using LobbyClient;
 using PlasmaDownloader;
-using PlasmaShared;
-using PlasmaShared.ContentService;
-using PlasmaShared.UnitSyncLib;
+using ZkData;
+using ZkData.ContentService;
+using ZkData.UnitSyncLib;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 
@@ -102,7 +102,7 @@ namespace ZeroKLobby
               {
                   Program.TasClient.BattleJoined -= battleJoinHandler;
                   Program.TasClient.JoinBattleFailed -= battleJoinFailedHandler;
-                  MessageBox.Show(PlasmaShared.Utils.Glue(e.ServerParams.ToArray()), "Battle joining failed");
+                  MessageBox.Show(ZkData.Utils.Glue(e.ServerParams.ToArray()), "Battle joining failed");
               });
 
             Program.TasClient.BattleJoined += battleJoinHandler;
@@ -399,7 +399,7 @@ namespace ZeroKLobby
             var dm = Program.Downloader.GetResource(DownloadType.MAP, bat.MapName);
             var dg = Program.Downloader.GetResource(DownloadType.MOD, bat.ModName);
         
-            PlasmaShared.Utils.StartAsync(() =>
+            ZkData.Utils.StartAsync(() =>
             {
                 if (de != null)
                 {

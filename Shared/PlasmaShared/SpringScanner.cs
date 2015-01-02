@@ -8,12 +8,12 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using MonoTorrent.Common;
-using PlasmaShared.ContentService;
-using PlasmaShared.UnitSyncLib;
+using ZkData.ContentService;
+using ZkData.UnitSyncLib;
 
 #endregion
 
-namespace PlasmaShared
+namespace ZkData
 {
     public class SpringScanner: IDisposable
     {
@@ -238,14 +238,14 @@ namespace PlasmaShared
         public List<CacheItem> GetAllMapResource()
         {
             var mapList = new List<CacheItem>();
-            foreach (var map in cache.NameIndex) if (map.Value.ResourceType == ResourceType.Map) mapList.Add(map.Value);
+            foreach (var map in cache.NameIndex) if (map.Value.ResourceType == ContentService.ResourceType.Map) mapList.Add(map.Value);
             return mapList;
         }
 
         public List<CacheItem> GetAllModResource()
         {
             var modList = new List<CacheItem>();
-            foreach (var mod in cache.NameIndex) if(mod.Value.ResourceType==ResourceType.Mod) modList.Add(mod.Value);
+            foreach (var mod in cache.NameIndex) if(mod.Value.ResourceType==ContentService.ResourceType.Mod) modList.Add(mod.Value);
             return modList;
         }
 
@@ -616,7 +616,7 @@ namespace PlasmaShared
             if (info != null)
             {
                 workItem.CacheItem.InternalName = info.Name;
-                workItem.CacheItem.ResourceType = info is Map ? ResourceType.Map : ResourceType.Mod;
+                workItem.CacheItem.ResourceType = info is Map ? ContentService.ResourceType.Map : ContentService.ResourceType.Mod;
                 var hashes = new List<SpringHashEntry>();
                 if (workItem.CacheItem.SpringHash != null) hashes.AddRange(workItem.CacheItem.SpringHash.Where(x => x.SpringVersion != springPaths.SpringVersion));
                 hashes.Add(new SpringHashEntry() { SpringHash = info.Checksum, SpringVersion = springPaths.SpringVersion });
@@ -657,7 +657,7 @@ namespace PlasmaShared
                                                   springPaths.SpringVersion,
                                                   workItem.CacheItem.Md5.ToString(),
                                                   workItem.CacheItem.Length,
-                                                  info is Map ? ResourceType.Map : ResourceType.Mod,
+                                                  info is Map ? ContentService.ResourceType.Map : ContentService.ResourceType.Mod,
                                                   workItem.CacheItem.FileName,
                                                   info.Name,
                                                   info.Checksum,
@@ -845,7 +845,7 @@ namespace PlasmaShared
             public string InternalName;
             public int Length;
             public Hash Md5;
-            public ResourceType ResourceType;
+            public ContentService.ResourceType ResourceType;
 
             public string ShortPath { get { return GetShortPath(Folder, FileName); } }
 

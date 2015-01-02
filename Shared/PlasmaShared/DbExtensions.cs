@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data.Entity;
 using System.Data.Linq.Mapping;
 using System.Linq;
 using System.Text;
 
-namespace PlasmaShared
+namespace ZkData
 {
 	public static class DbExtensions
 	{
@@ -36,6 +37,33 @@ namespace PlasmaShared
             var da = (DescriptionAttribute[])(e.GetType().GetField(e.ToString()).GetCustomAttributes(typeof(DescriptionAttribute), false));
             return da.Length > 0 ? da[0].Description : e.ToString();
         }
+
+	    public static void DeleteAllOnSubmit<T>(this IDbSet<T> dbSet, IEnumerable<T> toDel) where T: class
+	    {
+	        foreach (var t in toDel) dbSet.Remove(t);
+	    }
+
+        public static void AddRange<T>(this ICollection<T> dbSet, IEnumerable<T> toAdd) where T : class
+        {
+            foreach (var a in toAdd) dbSet.Add(a);
+        }
+
+        public static void InsertAllOnSubmit<T>(this IDbSet<T> dbSet, IEnumerable<T> toAdd) where T : class
+        {
+            foreach (var a in toAdd) dbSet.Add(a);
+        }
+
+
+        public static void InsertOnSubmit<T>(this IDbSet<T> dbSet, T target) where T : class
+        {
+            dbSet.Add(target);
+        }
+
+        public static void DeleteOnSubmit<T>(this IDbSet<T> dbSet, T target) where T : class
+        {
+            dbSet.Remove(target);
+        }
+
 
 	}
 }

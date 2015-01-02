@@ -71,7 +71,7 @@ namespace ZeroKLobby.Notifications
 					{
 						lbState.Text = "Sending accept agreement";
 						client.AcceptAgreement();
-						PlasmaShared.Utils.SafeThread(() =>
+						ZkData.Utils.SafeThread(() =>
 						{
 							if (!Program.CloseOnNext) client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
 						}).Start();
@@ -79,7 +79,7 @@ namespace ZeroKLobby.Notifications
 					else
 					{
 						lbState.Text = "did not accept agreement";
-						PlasmaShared.Utils.SafeThread(() =>
+						ZkData.Utils.SafeThread(() =>
 						{
 							if (!Program.CloseOnNext) client.Disconnect(); //server will re-ask AcceptAgreement if we re-connect
 						}).Start();

@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 using LobbyClient;
-using PlasmaShared;
 using ZkData;
 
 namespace NightWatch
@@ -29,7 +28,7 @@ namespace NightWatch
 		    {
 		        using (var db = new ZkDataContext())
 		        {
-		            db.ExecuteCommand("DELETE FROM LobbyMessages WHERE Created < {0}", DateTime.UtcNow.AddDays(-14));
+		            db.Database.ExecuteSqlCommand("DELETE FROM LobbyMessages WHERE Created < {0}", DateTime.UtcNow.AddDays(-14));
 		        }
 		    }
 		    catch (Exception ex)

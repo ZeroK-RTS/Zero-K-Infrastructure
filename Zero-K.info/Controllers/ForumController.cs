@@ -121,7 +121,7 @@ namespace ZeroKWeb.Controllers
             if (threadID != null)
             {
                 var thread = res.CurrentThread;
-                res.CanSetTopic = (thread.ForumPosts.Count > 0 && thread.ForumPosts[0].ForumPostID == forumPostID 
+                res.CanSetTopic = (thread.ForumPosts.Count > 0 && thread.ForumPosts.First().ForumPostID == forumPostID 
                     && !category.IsClans && !category.IsMaps && !category.IsMissions && !category.IsPlanets && !category.IsSpringBattles);
             }
             else res.CanSetTopic = true;
@@ -189,7 +189,6 @@ namespace ZeroKWeb.Controllers
                     thread = new ForumThread() { Title = "Map " +res.InternalName, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
 					thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsMaps);
 					res.ForumThread = thread;
-					thread.Resources = res;
 					db.ForumThreads.InsertOnSubmit(thread);
 				}
 
@@ -199,8 +198,7 @@ namespace ZeroKWeb.Controllers
                     if (bat.ForumThread != null) return Content("Double post");
                     thread = new ForumThread() { Title =  bat.FullTitle, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
 					thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsSpringBattles);
-					thread.SpringBattles = bat;
-					bat.ForumThread = thread;
+				    bat.ForumThread = thread;
 					db.ForumThreads.InsertOnSubmit(thread);
 				}
 
@@ -222,7 +220,6 @@ namespace ZeroKWeb.Controllers
                     thread = new ForumThread() { Title = "Planet " +planet.Name, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
 					thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsPlanets);
 					planet.ForumThread = thread;
-					thread.Planets = planet;
 					db.ForumThreads.InsertOnSubmit(thread);
 				}
 
@@ -297,11 +294,11 @@ namespace ZeroKWeb.Controllers
 			var cat = t.ForumCategory;
 			if (cat != null)
 			{
-				if (cat.IsMissions) return RedirectToAction("Detail", "Missions", new { id = t.Missions.MissionID });
-				if (cat.IsMaps) return RedirectToAction("Detail", "Maps", new { id = t.Resources.ResourceID });
-				if (cat.IsSpringBattles) return RedirectToAction("Detail", "Battles", new { id = t.SpringBattles.SpringBattleID });
+				if (cat.IsMissions) return RedirectToAction("Detail", "Missions", new { id = t.Missions.First().MissionID });
+				if (cat.IsMaps) return RedirectToAction("Detail", "Maps", new { id = t.Resources.First().ResourceID });
+				if (cat.IsSpringBattles) return RedirectToAction("Detail", "Battles", new { id = t.SpringBattles.First().SpringBattleID });
 				if (cat.IsClans) return RedirectToAction("Detail", "Clans", new { id = t.RestrictedClanID});
-				if (cat.IsPlanets) return RedirectToAction("Planet", "Planetwars", new { id = t.Planets.PlanetID});
+				if (cat.IsPlanets) return RedirectToAction("Planet", "Planetwars", new { id = t.Planets.First().PlanetID});
 			}
 
 			var res = new ThreadResult();
@@ -482,8 +479,8 @@ namespace ZeroKWeb.Controllers
         {
             if (forumPostID == null) return 0;
             var db = new ZkDataContext();
-            ForumPost post = db.ForumPosts.First(x => x.ForumPostID == forumPostID);
-            return post.ForumThread.ForumPosts.IndexOf(post) / PageSize;
+            var index = db.ForumPosts.Count(x=>x.ForumPostID <= forumPostID);
+            return index / PageSize;
         }
 
         public ActionResult Search()
@@ -502,7 +499,7 @@ namespace ZeroKWeb.Controllers
                 && (categoryIDs.Count == 0 || categoryIDs.Contains((int)x.ForumThread.ForumCategoryID))
                 && (x.ForumThread.RestrictedClanID == null || x.ForumThread.RestrictedClanID == Global.ClanID)
                 ).OrderByDescending(x=> x.Created).ToList();
-            if (firstPostOnly) posts = posts.Where(x => x.ForumThread.ForumPosts[0] == x).ToList();
+            if (firstPostOnly) posts = posts.Where(x => x.ForumThread.ForumPosts.First() == x).ToList();
             var invalidResults = new List<ForumPost>();
             if (!String.IsNullOrEmpty(keywords))
             {

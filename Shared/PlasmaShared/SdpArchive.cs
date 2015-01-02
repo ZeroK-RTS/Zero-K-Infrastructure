@@ -7,7 +7,7 @@ using System.Text;
 
 #endregion
 
-namespace PlasmaShared
+namespace ZkData
 {
     public class SdpArchive
     {

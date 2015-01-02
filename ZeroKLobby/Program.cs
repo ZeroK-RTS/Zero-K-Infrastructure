@@ -12,7 +12,6 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using LobbyClient;
-using PlasmaShared;
 using SpringDownloader.Notifications;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;

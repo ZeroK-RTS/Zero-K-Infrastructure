@@ -28,7 +28,7 @@ namespace ZeroKLobby.Notifications
             timer.Interval = 1000;
             timer.Tick += (sender, args) =>
             {
-                if (Program.NotifySection.Contains(this)) timerLabel.Text = PlasmaShared.Utils.PrintTimeRemaining((int)deadline.Subtract(DateTime.Now).TotalSeconds);
+                if (Program.NotifySection.Contains(this)) timerLabel.Text = ZkData.Utils.PrintTimeRemaining((int)deadline.Subtract(DateTime.Now).TotalSeconds);
             };
             timer.Start();
 
@@ -56,7 +56,7 @@ namespace ZeroKLobby.Notifications
                 else
                 {
                     deadline = DateTime.Now.AddSeconds(pw.DeadlineSeconds);
-                    timerLabel.Text = PlasmaShared.Utils.PrintTimeRemaining(pw.DeadlineSeconds);
+                    timerLabel.Text = ZkData.Utils.PrintTimeRemaining(pw.DeadlineSeconds);
 
                     if (pw.Mode == PwMatchCommand.ModeType.Attack)
                     {

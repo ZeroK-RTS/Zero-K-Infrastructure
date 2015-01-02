@@ -12,7 +12,7 @@ using System.Text;
 using System.Xml.Serialization;
 using ZkData;
 
-namespace PlasmaShared.UnitSyncLib
+namespace ZkData.UnitSyncLib
 {
 	public partial class UnitSync: IDisposable
 	{
