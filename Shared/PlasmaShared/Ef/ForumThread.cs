@@ -12,6 +12,9 @@ namespace ZkData
         
         public ForumThread()
         {
+            Created = DateTime.UtcNow;
+            LastPost = DateTime.UtcNow;
+
             Clans = new HashSet<Clan>();
             ForumThreadLastReads = new HashSet<ForumThreadLastRead>();
             Missions = new HashSet<Mission>();
@@ -20,6 +23,7 @@ namespace ZkData
             Resources = new HashSet<Resource>();
             SpringBattles = new HashSet<SpringBattle>();
             ForumPosts = new HashSet<ForumPost>();
+            
         }
 
         public int ForumThreadID { get; set; }

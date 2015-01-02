@@ -130,7 +130,7 @@ namespace ZeroKWeb.Controllers
 		[Auth]
 		public ActionResult SubmitPost(int? threadID, int? categoryID, int? resourceID, int? missionID, int? springBattleID, int? clanID, int? planetID, string text, string title, int? forumPostID)
 		{
-            if (threadID == null && string.IsNullOrWhiteSpace(title)) return Content("Cannot post new thread with blank title");
+            if (threadID == null && missionID == null && resourceID == null && springBattleID == null && clanID ==null && planetID == null && forumPostID==null && string.IsNullOrWhiteSpace(title)) return Content("Cannot post new thread with blank title");
 			if (string.IsNullOrWhiteSpace(text)) return Content("Please type some text :)");
 
             var penalty = ZkData.Punishment.GetActivePunishment(Global.AccountID, "", 0, x => x.BanForum);

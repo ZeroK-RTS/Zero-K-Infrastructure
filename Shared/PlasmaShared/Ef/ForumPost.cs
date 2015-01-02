@@ -12,9 +12,10 @@ namespace ZkData
         
         public ForumPost()
         {
+            Created = DateTime.UtcNow;
+            
             AccountForumVotes = new HashSet<AccountForumVote>();
             ForumPostEdits = new HashSet<ForumPostEdit>();
-            Created = DateTime.UtcNow;
         }
 
         public int ForumPostID { get; set; }
