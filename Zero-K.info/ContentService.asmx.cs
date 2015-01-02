@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data.Entity.SqlServer;
 using System.Data.Linq;
 using System.Data.Linq.SqlClient;
 using System.Diagnostics;
@@ -53,7 +54,8 @@ namespace ZeroKWeb
             var ret = db.Resources.AsQueryable();
             if (type == ResourceType.Map) ret = ret.Where(x => x.TypeID == ResourceType.Map);
             if (type == ResourceType.Mod) ret = ret.Where(x => x.TypeID == ResourceType.Mod);
-            var test = ret.Where(x => x.InternalName == string.Join(" ", words));
+            string joinedWords = string.Join(" ", words);
+            var test = ret.Where(x => x.InternalName == joinedWords);
             if (test.Any()) return test.OrderByDescending(x => -x.FeaturedOrder).ToList().Select(x => new PlasmaServer.ResourceData(x)).ToList();
             int i;
             if (words.Length == 1 && int.TryParse(words[0], out i)) ret = ret.Where(x => x.ResourceID == i);
@@ -62,7 +64,7 @@ namespace ZeroKWeb
                 foreach (var w in words)
                 {
                     var w1 = w;
-                    ret = ret.Where(x => SqlMethods.Like(x.InternalName, "%" + w1 + "%"));
+                    ret = ret.Where(x => SqlFunctions.PatIndex("%" + w1 + "%", x.InternalName) > 0);
                 }
             }
             return ret.OrderByDescending(x => -x.FeaturedOrder).Take(400).ToList().Select(x => new PlasmaServer.ResourceData(x)).ToList();
