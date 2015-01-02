@@ -66,13 +66,11 @@ namespace ZeroKWeb.Controllers
 			var db = new ZkDataContext();
 			var res = new IndexResult();
 
-			res.Categories = db.ForumCategories.Where(x => Equals(x.ParentForumCategoryID, categoryID)).OrderBy(x => x.SortOrder);
+			res.Categories = db.ForumCategories.Where(x => x.ParentForumCategoryID == categoryID).OrderBy(x => x.SortOrder);
 
 			res.Path = GetCategoryPath(categoryID, db);
 			res.CurrentCategory = res.Path.LastOrDefault();
 
-			//if (res.CurrentCategory != null && res.CurrentCategory.IsMissions) res.Threads = db.ForumThreads.Where(x => Equals(x.ForumCategoryID, categoryID) && !Global.IsLimitedMode || x.Missions.ModRapidTag.StartsWith("zk:")).OrderByDescending(x => x.LastPost);
-			//else
             var threads = db.ForumThreads.Where(x => x.ForumCategoryID == categoryID).OrderByDescending(x => x.IsPinned).ThenByDescending(x => x.LastPost);
             res.Page = page ?? 0;
             res.PageCount = ((threads.Count() - 1) / PageSize) + 1;
