@@ -14,6 +14,12 @@ namespace ZkData
 
         public Account()
         {
+            Elo = 1500;
+            Elo1v1 = 1500;
+            EloPw = 1500;
+            EloWeight = 1;
+            Elo1v1Weight = 1;
+
             AbuseReportsByAccountID = new HashSet<AbuseReport>();
             AbuseReportsByReporterAccountID = new HashSet<AbuseReport>();
             AccountBattleAwards = new HashSet<AccountBattleAward>();
@@ -58,6 +64,7 @@ namespace ZkData
             SpringBattles = new HashSet<SpringBattle>();
             SpringBattlePlayers = new HashSet<SpringBattlePlayer>();
             Events = new HashSet<Event>();
+
         }
 
         public int AccountID { get; set; }

@@ -247,6 +247,10 @@
     <Compile Include="Migrations\201412312111372_Init.Designer.cs">
       <DependentUpon>201412312111372_Init.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201501021512422_FixElo.cs" />
+    <Compile Include="Migrations\201501021512422_FixElo.Designer.cs">
+      <DependentUpon>201501021512422_FixElo.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MissionUpdater.cs" />
     <Compile Include="PayPalInterface.cs" />
@@ -474,6 +478,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201412312111372_Init.resx">
       <DependentUpon>201412312111372_Init.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501021512422_FixElo.resx">
+      <DependentUpon>201501021512422_FixElo.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
