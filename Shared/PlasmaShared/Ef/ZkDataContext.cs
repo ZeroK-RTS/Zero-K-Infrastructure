@@ -1,3 +1,5 @@
+using System.Data.Entity.Validation;
+using System.Diagnostics;
 using PlasmaShared.Migrations;
 
 namespace ZkData
@@ -778,6 +780,29 @@ namespace ZkData
         public void SubmitChanges()
         {
             SubmitAndMergeChanges();
+        }
+
+        public override int SaveChanges()
+        {
+            try {
+                return base.SaveChanges();
+            } catch (DbEntityValidationException e) {
+
+                foreach (var eve in e.EntityValidationErrors)
+                {
+                    Trace.TraceError("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+            eve.Entry.Entity.GetType().Name, eve.Entry.State);
+
+                    foreach (var ve in eve.ValidationErrors)
+                    {
+                        Trace.TraceError("- Property: \"{0}\", Value: \"{1}\", Error: \"{2}\"",
+                            ve.PropertyName,
+                            eve.Entry.CurrentValues.GetValue<object>(ve.PropertyName),
+                            ve.ErrorMessage);
+                    }
+                }
+                throw;
+            }
         }
 
         public void SubmitAndMergeChanges()
