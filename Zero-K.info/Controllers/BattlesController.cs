@@ -88,9 +88,13 @@ namespace ZeroKWeb.Controllers
             if (bots.HasValue)
                 q = q.Where(b => b.HasBots == bots.Value);
 
-            var q2 = q
-                .OrderByDescending(b => b.StartTime)
-                .Select(b =>
+            q = q.OrderByDescending(b => b.StartTime);
+                
+
+            if (offset.HasValue) q = q.Skip(offset.Value);
+            q = q.Take(Global.AjaxScrollCount);
+
+            var result = q.ToList().Select(b =>
                     new BattleQuickInfo() {
                         Battle = b,
                         Players = b.SpringBattlePlayers,
@@ -98,10 +102,6 @@ namespace ZeroKWeb.Controllers
                         Mod = b.ResourceByModResourceID
                     });
 
-            if (offset.HasValue) q2 = q2.Skip(offset.Value);
-            q2 = q2.Take(Global.AjaxScrollCount);
-
-            var result = q2.ToList();
 
             //if(result.Count == 0)
             //    return Content("");
