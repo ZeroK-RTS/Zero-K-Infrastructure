@@ -100,7 +100,7 @@ namespace ZeroKWeb.Controllers
                         Players = b.SpringBattlePlayers,
                         Map = b.ResourceByMapResourceID,
                         Mod = b.ResourceByModResourceID
-                    });
+                    }).ToList();
 
 
             //if(result.Count == 0)
