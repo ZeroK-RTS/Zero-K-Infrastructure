@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Timers;
 using ZkData.ContentService;
-using ZkData.SpringieInterfaceReference;
+using PlasmaShared.SpringieInterfaceReference;
 using ServiceStack.Text;
 using ZkData;
 using Timer = System.Timers.Timer;

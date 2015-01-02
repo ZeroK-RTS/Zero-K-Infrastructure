@@ -8,8 +8,9 @@ using System.Net.Sockets;
 using System.Timers;
 using System.Xml.Serialization;
 using LobbyClient;
+using PlasmaShared.SpringieInterfaceReference;
 using ZkData;
-using ZkData.SpringieInterfaceReference;
+using PlasmaShared.SpringieInterfaceReference;
 using Springie.autohost;
 
 namespace Springie

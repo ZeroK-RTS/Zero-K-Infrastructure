@@ -44,7 +44,7 @@ namespace Springie.autohost.Polls
                     {
                         if (tas.MyBattle != null && !spring.IsRunning)
                         {
-                            var serv = new ZkData.SpringieInterfaceReference.SpringieService();
+                            var serv = new PlasmaShared.SpringieInterfaceReference.SpringieService();
                             serv.Timeout = 15000;
                             serv.GetRecommendedMapCompleted += (sender, args) =>
                             {

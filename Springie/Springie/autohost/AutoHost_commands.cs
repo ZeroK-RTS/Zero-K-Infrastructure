@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using LobbyClient;
+using PlasmaShared.SpringieInterfaceReference;
 using ZkData.ContentService;
-using ZkData.SpringieInterfaceReference;
-using AutohostMode = ZkData.SpringieInterfaceReference.AutohostMode;
+using AutohostMode = PlasmaShared.SpringieInterfaceReference.AutohostMode;
 #endregion
 
 namespace Springie.autohost

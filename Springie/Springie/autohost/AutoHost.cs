@@ -9,12 +9,12 @@ using System.Threading;
 using System.Timers;
 using LobbyClient;
 using PlasmaDownloader.Packages;
+using PlasmaShared.SpringieInterfaceReference;
 using ZkData.ContentService;
-using ZkData.SpringieInterfaceReference;
 using ZkData.UnitSyncLib;
 using Springie.autohost.Polls;
 using ZkData;
-using AutohostMode = ZkData.SpringieInterfaceReference.AutohostMode;
+using AutohostMode = PlasmaShared.SpringieInterfaceReference.AutohostMode;
 using Timer = System.Timers.Timer;
 
 #endregion

@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using LobbyClient;
-using ZkData.SpringieInterfaceReference;
+using PlasmaShared.SpringieInterfaceReference;
 using Timer = System.Timers.Timer;
 
 namespace Springie.autohost

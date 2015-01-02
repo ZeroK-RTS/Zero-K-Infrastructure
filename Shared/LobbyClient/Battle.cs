@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using ZkData;
 using ZkData.ContentService;
-using ZkData.SpringieInterfaceReference;
+using PlasmaShared.SpringieInterfaceReference;
 using ZkData.UnitSyncLib;
 
 namespace LobbyClient
