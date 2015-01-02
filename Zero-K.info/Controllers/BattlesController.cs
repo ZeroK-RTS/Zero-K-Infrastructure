@@ -19,7 +19,8 @@ namespace ZeroKWeb.Controllers
         public ActionResult Detail(int id)
         {
           var db = new ZkDataContext();
-          var bat = db.SpringBattles.Single(x => x.SpringBattleID == id);
+          var bat = db.SpringBattles.FirstOrDefault(x => x.SpringBattleID == id);
+            if (bat == null) return Content("No such battle exists");
           if (bat.ForumThread != null)
           {
             bat.ForumThread.UpdateLastRead(Global.AccountID, false);

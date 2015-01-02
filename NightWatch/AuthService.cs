@@ -429,6 +429,7 @@ namespace NightWatch
             {
                 acc = new Account();
                 acc.SetAvatar();
+                acc.FirstLogin = DateTime.UtcNow;
                 db.Accounts.InsertOnSubmit(acc);
             }
 
