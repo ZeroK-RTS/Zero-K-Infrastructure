@@ -1193,11 +1193,16 @@ namespace Springie.autohost
             if (!string.IsNullOrEmpty(balance.Message)) SayBattle(balance.Message, false);
             if (balance.Players != null && balance.Players.Length > 0)
             {
+                
                 foreach (var user in tas.MyBattle.Users.Where(x => !x.IsSpectator && !balance.Players.Any(y => y.Name == x.Name))) tas.ForceSpectator(user.Name); // spec those that werent in response
                 foreach (var user in balance.Players.Where(x => x.IsSpectator)) tas.ForceSpectator(user.Name);
+
+                bool comsharing = false;
+                var comsharing_modoption = tas.MyBattle.ModOptions.FirstOrDefault(x => x.Key.ToLower() == "coop");
+                if ((comsharing_modoption != null) && comsharing_modoption.Value) comsharing = true;
                 foreach (var user in balance.Players.Where(x => !x.IsSpectator))
                 {
-                    tas.ForceTeam(user.Name, user.TeamID);
+                    tas.ForceTeam(user.Name, comsharing ? user.AllyID : user.TeamID);
                     tas.ForceAlly(user.Name, user.AllyID);
                 }
             }
