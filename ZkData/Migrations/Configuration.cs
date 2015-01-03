@@ -7,7 +7,7 @@ namespace ZkData.Migrations
     {
         public Configuration()
         {
-            ContextKey = "PlasmaShared.Migrations.Configuration";
+            ContextKey = "PlasmaShared.Migrations.Configuration"; // if you change this, you also ahve to change content of __MigrationHistory table in DB
             AutomaticMigrationsEnabled = false;
         }
 
