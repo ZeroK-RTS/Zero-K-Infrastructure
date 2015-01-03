@@ -41,7 +41,12 @@ namespace ZeroKLobby
         /// <summary>
         /// If no packet is loaded this long, send "not talking" event
         /// </summary>
-        const int stopTalkingMs = 500;
+        const int stopTalkingMs = 1000;
+        
+        /// <summary>
+        /// Hotkey to use
+        /// </summary>
+        const Keys PushToTalkHotkey = Keys.Alt;
 
         /// <summary>
         ///     Control byte added to first position of buffers transmitted over network
@@ -153,7 +158,7 @@ namespace ZeroKLobby
             newConnectionCallback = Callback<P2PSessionRequest_t>.Create(t => SteamNetworking.AcceptP2PSessionWithUser(t.m_steamIDRemote));
             // default accept all
 
-            Program.MainWindow.InvokeFunc(() => GlobalHook.RegisterHandler(Keys.CapsLock, (key, pressed) =>
+            Program.MainWindow.InvokeFunc(() => GlobalHook.RegisterHandler(PushToTalkHotkey, (key, pressed) =>
             {
                 if (pressed)
                 {
@@ -166,7 +171,6 @@ namespace ZeroKLobby
                         lastPacket[mySteamID] = DateTime.Now;
                         UserStartsTalking(mySteamID);
                     }
-                    return true;
                 }
                 else
                 {
@@ -178,8 +182,8 @@ namespace ZeroKLobby
                         lastPacket[mySteamID] = null;
                         UserStopsTalking(mySteamID);
                     }
-                    return true;
                 }
+                return false;
             }));
 
             soundOut = new DirectSoundOut();

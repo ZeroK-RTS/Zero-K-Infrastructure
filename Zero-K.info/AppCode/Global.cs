@@ -181,11 +181,7 @@ namespace ZeroKWeb
                     args[i] = HtmlHelperExtensions.PrintAccount(null, acc);
                     if (!eventAlreadyExists)
                     {
-                        if (acc.AccountID != 0)
-                        {
-                            if (!ev.EventAccounts.Any(x => x.AccountID == acc.AccountID)) ev.EventAccounts.Add(new EventAccount() { AccountID = acc.AccountID });
-                        }
-                        else if (!ev.EventAccounts.Any(x => x.Account == acc)) ev.EventAccounts.Add(new EventAccount() { Account = acc });
+                        if (!ev.Accounts.Any(x => x.AccountID == acc.AccountID)) ev.Accounts.Add(acc);
                         dontDuplicate = true;
                     }
                 }
@@ -195,8 +191,7 @@ namespace ZeroKWeb
                     args[i] = HtmlHelperExtensions.PrintClan(null, clan);
                     if (!eventAlreadyExists)
                     {
-                        if (clan.ClanID != 0) ev.EventClans.Add(new EventClan() { ClanID = clan.ClanID });
-                        else ev.EventClans.Add(new EventClan() { Clan = clan });
+                        ev.Clans.Add(clan);
                         dontDuplicate = true;
                     }
                 }
@@ -206,8 +201,7 @@ namespace ZeroKWeb
                     args[i] = HtmlHelperExtensions.PrintPlanet(null, planet);
                     if (!eventAlreadyExists)
                     {
-                        if (planet.PlanetID != 0) ev.EventPlanets.Add(new EventPlanet() { PlanetID = planet.PlanetID });
-                        else ev.EventPlanets.Add(new EventPlanet() { Planet = planet });
+                        if (planet.PlanetID != 0) ev.Planets.Add(planet);
                         dontDuplicate = true;
                     }
                 }
@@ -219,16 +213,15 @@ namespace ZeroKWeb
                                             bat.SpringBattleID); //todo no proper helper for this
                     if (!eventAlreadyExists)
                     {
-                        if (bat.SpringBattleID != 0) ev.EventSpringBattles.Add(new EventSpringBattle() { SpringBattleID = bat.SpringBattleID });
-                        else ev.EventSpringBattles.Add(new EventSpringBattle() { SpringBattle = bat });
-
-                        foreach (Account acc in bat.SpringBattlePlayers.Where(sb => !sb.IsSpectator).Select(x => x.Account).Where(y => !ev.EventAccounts.Any(z => z.AccountID == y.AccountID)))
+                        ev.SpringBattles.Add(bat);
+                        
+                        foreach (Account acc in bat.SpringBattlePlayers.Where(sb => !sb.IsSpectator).Select(x => x.Account).Where(y => !ev.Accounts.Any(z => z.AccountID == y.AccountID)))
                         {
                             if (acc.AccountID != 0)
                             {
-                                if (!ev.EventAccounts.Any(x => x.AccountID == acc.AccountID)) ev.EventAccounts.Add(new EventAccount() { AccountID = acc.AccountID });
+                                if (!ev.Accounts.Any(x => x.AccountID == acc.AccountID)) ev.Accounts.Add(acc);
                             }
-                            else if (!ev.EventAccounts.Any(x => x.Account == acc)) ev.EventAccounts.Add(new EventAccount() { Account = acc });
+                            else if (!ev.Accounts.Any(x => x == acc)) ev.Accounts.Add(acc);
                         }
                         dontDuplicate = true;
                     }
@@ -239,8 +232,7 @@ namespace ZeroKWeb
                     args[i] = HtmlHelperExtensions.PrintFaction(null, fac, false);
                     if (!eventAlreadyExists)
                     {
-                        if (fac.FactionID != 0) ev.EventFactions.Add(new EventFaction() { FactionID = fac.FactionID });
-                        else ev.EventFactions.Add(new EventFaction() { Faction = fac });
+                        ev.Factions.Add(fac);
                         dontDuplicate = true;
                     }
                 }

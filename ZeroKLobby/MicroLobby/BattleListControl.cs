@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using LobbyClient;
-using PlasmaShared;
+using ZkData;
 
 namespace ZeroKLobby.MicroLobby
 {

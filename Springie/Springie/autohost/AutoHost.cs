@@ -9,10 +9,9 @@ using System.Threading;
 using System.Timers;
 using LobbyClient;
 using PlasmaDownloader.Packages;
-using PlasmaShared;
-using PlasmaShared.ContentService;
 using PlasmaShared.SpringieInterfaceReference;
-using PlasmaShared.UnitSyncLib;
+using ZkData.ContentService;
+using ZkData.UnitSyncLib;
 using Springie.autohost.Polls;
 using ZkData;
 using AutohostMode = PlasmaShared.SpringieInterfaceReference.AutohostMode;
@@ -33,7 +32,7 @@ namespace Springie.autohost
         string delayedModChange;
         int lastSplitPlayersCountCalled;
 
-        ResourceLinkProvider linkProvider;
+        ResourceLinkSpringieClient linkSpringieClient;
 
 
         Timer pollTimer;
@@ -132,7 +131,7 @@ namespace Springie.autohost
             tas.Said += tas_Said;
             tas.MyBattleStarted += tas_MyStatusChangedToInGame;
 
-            linkProvider = new ResourceLinkProvider(this);
+            linkSpringieClient = new ResourceLinkSpringieClient(this);
 
             // queue autohost
             if (config != null && config.MinToJuggle != null && SpawnConfig == null)
@@ -205,7 +204,7 @@ namespace Springie.autohost
             pollTimer.Dispose();
             if (timer != null) timer.Dispose();
             pollTimer = null;
-            linkProvider = null;
+            linkSpringieClient = null;
         }
 
         public string GetAccountName() {
@@ -365,11 +364,11 @@ namespace Springie.autohost
                     break;
 
                 case "maplink":
-                    linkProvider.FindLinks(words, ResourceLinkProvider.FileType.Map, tas, e);
+                    linkSpringieClient.FindLinks(words, ResourceLinkSpringieClient.FileType.Map, tas, e);
                     break;
 
                 case "modlink":
-                    linkProvider.FindLinks(words, ResourceLinkProvider.FileType.Mod, tas, e);
+                    linkSpringieClient.FindLinks(words, ResourceLinkSpringieClient.FileType.Mod, tas, e);
                     break;
 
                 case "ring":
@@ -841,7 +840,7 @@ namespace Springie.autohost
             SayBattle("Game over, exiting");
             // Spring sends GAMEOVER for every player and spec, we only need the first one.
             spring.GameOver -= spring_GameOver;
-            PlasmaShared.Utils.SafeThread(() =>
+            ZkData.Utils.SafeThread(() =>
                 {
                     // Wait for gadgets that send spring autohost messages after gadget:GameOver()
                     // such as awards.lua

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Linq.SqlClient;
+using System.Data.Entity.SqlServer;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
-using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.Controllers
@@ -174,7 +173,7 @@ namespace ZeroKWeb.Controllers
 
             // check if our name or shortcut conflicts with existing clans
             // if so, allow us to create a new clan over it if it's a deleted clan, else block action
-            var existingClans = db.Clans.Where(x => ((SqlMethods.Like(x.Shortcut, clan.Shortcut) || SqlMethods.Like(x.ClanName, clan.ClanName)) && x.ClanID != clan.ClanID));
+            var existingClans = db.Clans.Where(x => ((SqlFunctions.PatIndex(clan.Shortcut,x.Shortcut) > 0 || SqlFunctions.PatIndex(clan.ClanName, x.ClanName) > 0) && x.ClanID != clan.ClanID));
             if (existingClans.Count() > 0)
             {
                 if (existingClans.Any(x => !x.IsDeleted)) return Content("Clan with this shortcut or name already exists");

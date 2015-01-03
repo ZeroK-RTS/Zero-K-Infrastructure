@@ -13,7 +13,7 @@
 // 
 #pragma warning disable 1591
 
-namespace PlasmaShared.ModStats {
+namespace ZkData.ModStats {
     using System;
     using System.Web.Services;
     using System.Diagnostics;
@@ -24,9 +24,9 @@ namespace PlasmaShared.ModStats {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Web.Services.WebServiceBindingAttribute(Name="StatsCollectorSoap", Namespace="http://planet-wars.eu/ModStats")]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
+    [WebServiceBinding(Name="StatsCollectorSoap", Namespace="http://planet-wars.eu/ModStats")]
     public partial class StatsCollector : System.Web.Services.Protocols.SoapHttpClientProtocol {
         
         private System.Threading.SendOrPostCallback SubmitGameOperationCompleted;
@@ -78,7 +78,7 @@ namespace PlasmaShared.ModStats {
         public event SubmitGameExCompletedEventHandler SubmitGameExCompleted;
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://planet-wars.eu/ModStats/SubmitGame", RequestNamespace="http://planet-wars.eu/ModStats", ResponseNamespace="http://planet-wars.eu/ModStats", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [SoapDocumentMethod("http://planet-wars.eu/ModStats/SubmitGame", RequestNamespace="http://planet-wars.eu/ModStats", ResponseNamespace="http://planet-wars.eu/ModStats", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public void SubmitGame(string gameIDString, string mod, string[] data) {
             this.Invoke("SubmitGame", new object[] {
                         gameIDString,
@@ -110,7 +110,7 @@ namespace PlasmaShared.ModStats {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://planet-wars.eu/ModStats/SubmitGameEx", RequestNamespace="http://planet-wars.eu/ModStats", ResponseNamespace="http://planet-wars.eu/ModStats", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [SoapDocumentMethod("http://planet-wars.eu/ModStats/SubmitGameEx", RequestNamespace="http://planet-wars.eu/ModStats", ResponseNamespace="http://planet-wars.eu/ModStats", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public void SubmitGameEx(string gameIDString, string mod, string map, string[] data) {
             this.Invoke("SubmitGameEx", new object[] {
                         gameIDString,

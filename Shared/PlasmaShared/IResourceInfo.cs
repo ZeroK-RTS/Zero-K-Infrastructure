@@ -1,4 +1,4 @@
-﻿namespace PlasmaShared
+﻿namespace ZkData
 {
     public interface IResourceInfo
     {

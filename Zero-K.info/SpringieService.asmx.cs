@@ -6,7 +6,6 @@ using System.Drawing;
 using System.Linq;
 using System.Web.Services;
 using LobbyClient;
-using PlasmaShared;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
 
@@ -62,7 +61,7 @@ namespace ZeroKWeb
         public List<AhConfig> GetClusterConfigs(string clusterNode)
         {
             var db = new ZkDataContext();
-            return db.AutohostConfigs.Where(x => x.ClusterNode == clusterNode).Select(x => new AhConfig(x)).ToList();
+            return db.AutohostConfigs.Where(x => x.ClusterNode == clusterNode).ToList().Select(x => new AhConfig(x)).ToList();
         }
 
         [WebMethod]

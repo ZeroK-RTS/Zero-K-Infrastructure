@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using LobbyClient;
-using PlasmaShared.ContentService;
 using PlasmaShared.SpringieInterfaceReference;
+using ZkData.ContentService;
 using AutohostMode = PlasmaShared.SpringieInterfaceReference.AutohostMode;
 #endregion
 
@@ -732,7 +732,7 @@ namespace Springie.autohost
                     Respond(e,
                             String.Format("team {0} has {1}% chance to win over team {2}",
                                           oldg.Key + 1,
-                                          PlasmaShared.Utils.GetWinChancePercent(t2elo - t1elo),
+                                          ZkData.Utils.GetWinChancePercent(t2elo - t1elo),
                                           g.Key + 1));
                 }
                 oldg = g;
@@ -1352,7 +1352,7 @@ namespace Springie.autohost
             {
                 string partVersion = words[0];
                 string specificVer = null;
-                PlasmaShared.Utils.SafeThread(() =>
+                ZkData.Utils.SafeThread(() =>
                 {
                     specificVer = engineListCache.Find(x => x.StartsWith(partVersion));
                     if (specificVer == null && DateTime.Now.Subtract(engineListDate).TotalSeconds > engineListTimeout) //no result & old list

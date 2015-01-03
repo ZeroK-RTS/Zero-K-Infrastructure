@@ -9,7 +9,7 @@ using System.Text;
 
 #endregion
 
-namespace PlasmaShared
+namespace ZkData
 {
     /// <summary>
     ///     Event arguments used in many Connection events

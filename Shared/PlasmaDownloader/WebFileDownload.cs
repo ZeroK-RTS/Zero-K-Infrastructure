@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
-using PlasmaShared;
+using ZkData;
 
 namespace PlasmaDownloader
 {

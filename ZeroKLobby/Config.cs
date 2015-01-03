@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using JetBrains.Annotations;
 using PlasmaDownloader;
-using PlasmaShared;
+using ZkData;
 
 namespace ZeroKLobby
 {

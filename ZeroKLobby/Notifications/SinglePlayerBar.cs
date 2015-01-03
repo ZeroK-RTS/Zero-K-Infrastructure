@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaDownloader;
-using PlasmaShared.ContentService;
+using ZkData.ContentService;
 
 namespace ZeroKLobby.Notifications
 {
@@ -41,11 +41,11 @@ namespace ZeroKLobby.Notifications
 			var neededDownloads = new List<Download>();
 
 			if (!Program.SpringScanner.HasResource(modName)) neededDownloads.Add(Program.Downloader.GetResource(DownloadType.MOD, modName));
-
 			if (!Program.SpringScanner.HasResource(profile.MapName)) neededDownloads.Add(Program.Downloader.GetResource(DownloadType.MAP, profile.MapName));
-
 			if (profile.ManualDependencies != null) foreach (var entry in profile.ManualDependencies) if (!string.IsNullOrEmpty(entry) && !Program.SpringScanner.HasResource(entry)) neededDownloads.Add(Program.Downloader.GetResource(DownloadType.UNKNOWN, entry));
-
+			var needEngine = Program.Downloader.GetAndSwitchEngine(Program.SpringPaths.SpringVersion);
+			if (needEngine != null) neededDownloads.Add(needEngine);
+				
 			if (neededDownloads.Count > 0) Program.NotifySection.AddBar(new SinglePlayerBar(neededDownloads, profile, modName));
 			else StartDownloadedMission(profile, modName);
 		}
@@ -56,15 +56,15 @@ namespace ZeroKLobby.Notifications
 			var name = Program.Conf.LobbyPlayerName;
 			if (string.IsNullOrEmpty(name)) name = "Player";
 
-      if (Utils.VerifySpringInstalled())
-      {
-        spring.StartGame(Program.TasClient,
-                         null,
-                         null,
-                         profile.StartScript.Replace("%MOD%", modInternalName).Replace("%MAP%", profile.MapName).Replace("%NAME%", name), Program.Conf.UseSafeMode, Program.Conf.UseMtEngine);
-        var serv = new ContentService() { Proxy = null };
-        serv.NotifyMissionRunAsync(Program.Conf.LobbyPlayerName, profile.Name);
-      }
+			if (Utils.VerifySpringInstalled())
+			{
+				spring.StartGame(Program.TasClient,
+								null,
+								null,
+								profile.StartScript.Replace("%MOD%", modInternalName).Replace("%MAP%", profile.MapName).Replace("%NAME%", name), Program.Conf.UseSafeMode, Program.Conf.UseMtEngine);
+				var serv = new ContentService() { Proxy = null };
+				serv.NotifyMissionRunAsync(Program.Conf.LobbyPlayerName, profile.Name);
+			}
 		}
 
 		void CloseBar()
@@ -100,12 +100,12 @@ namespace ZeroKLobby.Notifications
 		{
 			try
 			{
-				if (neededDownloads.All(x => Program.SpringScanner.HasResource(x.Name)))
+				if (neededDownloads.All(x => x.IsComplete == true))
 				{
 					CloseBar();
 					StartDownloadedMission(profile, modInternalName);
 				}
-				else if (neededDownloads.Any(x => BattleBar.DownloadFailed(x.Name)))
+				else if (neededDownloads.Any(x => (x.IsComplete == false || x.IsAborted)))
 				{
 					Trace.TraceWarning("Download failed - cannot start single player mission");
 					CloseBar();

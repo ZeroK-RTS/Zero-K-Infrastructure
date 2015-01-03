@@ -6,10 +6,10 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
-using PlasmaShared;
-using PlasmaShared.ContentService;
+using ZkData;
+using ZkData.ContentService;
 using PlasmaShared.SpringieInterfaceReference;
-using PlasmaShared.UnitSyncLib;
+using ZkData.UnitSyncLib;
 
 namespace LobbyClient
 {

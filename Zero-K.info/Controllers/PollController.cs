@@ -61,7 +61,7 @@ namespace ZeroKWeb.Controllers
 
                                 if (entries.Any())
                                 {
-                                    previous = entries.First().AccountByAccountID;
+                                    previous = entries.First().Account;
                                     db.AccountRoles.DeleteAllOnSubmit(entries);
                                     db.SubmitAndMergeChanges();
                                 }
@@ -69,7 +69,7 @@ namespace ZeroKWeb.Controllers
 
                             var entry = new AccountRole()
                                         {
-                                            AccountByAccountID = acc,
+                                            Account = acc,
                                             Inauguration = DateTime.UtcNow,
                                             Clan = p.Clan,
                                             Faction = p.Faction,

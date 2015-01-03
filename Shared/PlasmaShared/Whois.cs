@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 
-namespace PlasmaShared
+namespace ZkData
 {
     public class Whois
     {

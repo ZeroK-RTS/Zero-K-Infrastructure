@@ -10,8 +10,8 @@ using System.Windows;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaDownloader;
-using PlasmaShared.ContentService;
-using PlasmaShared.UnitSyncLib;
+using ZkData.ContentService;
+using ZkData.UnitSyncLib;
 
 namespace ZeroKLobby.Notifications
 {
@@ -48,9 +48,11 @@ namespace ZeroKLobby.Notifications
         private void MissionBar_Load(object sender, EventArgs e)
         {
             label1.Text = string.Format("Starting mission {0} - please wait", missionName);
-            var down = Program.Downloader.GetResource(DownloadType.MOD, missionName);
 
-            PlasmaShared.Utils.StartAsync(() =>
+            var down = Program.Downloader.GetResource(DownloadType.MOD, missionName);
+            var engine = Program.Downloader.GetAndSwitchEngine(Program.SpringPaths.SpringVersion);
+
+            ZkData.Utils.StartAsync(() =>
             {
                 var metaWait = new EventWaitHandle(false, EventResetMode.ManualReset);
                 Mod modInfo = null;
@@ -79,10 +81,18 @@ namespace ZeroKLobby.Notifications
                                                                });
                                                                metaWait.Set();
                                                            }, Program.SpringPaths.SpringVersion);
-                if (down != null) WaitHandle.WaitAll(new WaitHandle[] { down.WaitHandle, metaWait });
-                else metaWait.WaitOne();
+                //if (down != null) WaitHandle.WaitAll(new WaitHandle[] { down.WaitHandle, metaWait });
+                //else metaWait.WaitOne();
+                
+                var waitHandles = new List<EventWaitHandle>();
+                
+                waitHandles.Add(metaWait);
+                if (down != null)  waitHandles.Add(down.WaitHandle);
+                if (engine != null) waitHandles.Add(engine.WaitHandle);
+                
+                if (waitHandles.Any()) WaitHandle.WaitAll(waitHandles.ToArray());
 
-                if (down != null && down.IsComplete == false)
+                if ((down != null && down.IsComplete == false) || (engine != null && engine.IsComplete == false) || modInfo==null)
                 {
                     Program.MainWindow.InvokeFunc(() =>
                     {
@@ -92,7 +102,7 @@ namespace ZeroKLobby.Notifications
                     });
                 }
 
-                if (modInfo != null && (down == null || down.IsComplete == true))
+                if (modInfo != null && (down == null || down.IsComplete == true) && (engine == null || engine.IsComplete == true))
                 {
                     if (Utils.VerifySpringInstalled())
                     {

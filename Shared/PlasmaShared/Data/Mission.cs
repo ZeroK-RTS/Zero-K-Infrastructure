@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
@@ -13,6 +14,7 @@ namespace ZkData
 
         [Obsolete("Do not ever write to this!")]
         [DataMember]
+        [NotMapped]
         public string AuthorName
         {
             get
@@ -22,6 +24,8 @@ namespace ZkData
             }
             set { authorName = value; }
         }
+
+        [NotMapped]
         public string MinToMaxHumansString
         {
             get
@@ -31,6 +35,7 @@ namespace ZkData
             }
         }
 
+        [NotMapped]
         public string NameWithVersion
         {
             get
@@ -40,6 +45,7 @@ namespace ZkData
             }
         }
 
+        [NotMapped]
         public string SanitizedFileName
         {
             get
@@ -59,11 +65,6 @@ namespace ZkData
             return tags;
         }
 
-        partial void OnCreated()
-        {
-            ModifiedTime = DateTime.UtcNow;
-            CreatedTime = DateTime.UtcNow;
-        }
 
         public static string GetNameWithoutVersion(string missionName)
         {

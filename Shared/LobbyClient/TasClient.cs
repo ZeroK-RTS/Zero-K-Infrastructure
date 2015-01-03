@@ -11,7 +11,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Timers;
-using PlasmaShared;
 using ZkData;
 
 #endregion

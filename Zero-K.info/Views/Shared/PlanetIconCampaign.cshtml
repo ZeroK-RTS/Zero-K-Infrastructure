@@ -6,7 +6,7 @@
     Resource map = db.Resources.FirstOrDefault(m => m.InternalName == mapName);
     var planetIconUrl = "/img/planets/" + map.MapPlanetWarsIcon;
     var size = map.PlanetWarsIconSize * CampaignPlanet.OverlayRatio;
-    var offset = (map.PlanetWarsIconSize * CampaignPlanet.OverlayRatio - Model.Mission.Resources.PlanetWarsIconSize) / 2;
+    var offset = (map.PlanetWarsIconSize * CampaignPlanet.OverlayRatio - Model.Mission.Resources.First().PlanetWarsIconSize) / 2;
 }
 <span style='width: @(size)px; height:@(size)px; display: inline-block;'>
   <img src='@planetIconUrl' width='@(map.PlanetWarsIconSize)' style='position:absolute; padding-left: @(offset)px; padding-top: @(offset)px' />

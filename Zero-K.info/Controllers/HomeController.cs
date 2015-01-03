@@ -7,7 +7,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
-using PlasmaShared;
 using ZeroKWeb;
 using ZkData;
 
@@ -80,54 +79,60 @@ namespace ZeroKWeb.Controllers
 		{
 			var args = key.Split(new char[] { '$' }, StringSplitOptions.RemoveEmptyEntries);
 			var ret = "";
-			int id;
+			int id = 0;
+		    string sid = null;
 			var db = new ZkDataContext();
+		    if (args.Length > 1) {
+		        int.TryParse(args[1], out id);
+		        sid = args[1];
+		    }
+            
 			switch (args[0])
 			{
 				case "mission":
 
-					ret = GetMissionTooltip(int.Parse(args[1]));
+					ret = GetMissionTooltip(id);
 					break;
 				case "map":
-					if (int.TryParse(args[1], out id)) ret = GetMapTooltip(id);
-					else ret = GetMapTooltip(db.Resources.Single(x => x.InternalName == args[1]).ResourceID);
+					if (id > 0) ret = GetMapTooltip(id);
+					else ret = GetMapTooltip(db.Resources.Single(x => x.InternalName == sid).ResourceID);
 					break;
 				case "thread":
-					if (int.TryParse(args[1], out id)) ret = GetThreadTooltip(id);
+					ret = GetThreadTooltip(id);
 					break;
 				case "unlock":
-					return PartialView("UnlockTooltip", db.Unlocks.Single(x => x.UnlockID == int.Parse(args[1])));
+					return PartialView("UnlockTooltip", db.Unlocks.Single(x => x.UnlockID == id));
 
 				case "polloption":
-					return PartialView("~/Views/Poll/PollVoteList.cshtml", db.PollVotes.Where(x => x.OptionID == int.Parse(args[1])).Select(x=>x.Account).OrderByDescending(x=>x.Level).ToList());
+					return PartialView("~/Views/Poll/PollVoteList.cshtml", db.PollVotes.Where(x => x.OptionID == id).Select(x=>x.Account).OrderByDescending(x=>x.Level).ToList());
 				case "commander":
-					ret = GetCommanderTooltip(int.Parse(args[1]));
+					ret = GetCommanderTooltip(id);
 					break;
 
 				case "planet":
-					return PartialView("PlanetTooltip", db.Planets.Single(x => x.PlanetID == int.Parse(args[1])));
+					return PartialView("PlanetTooltip", db.Planets.Single(x => x.PlanetID == id));
                 case "campaignPlanet":
-                    return PartialView("PlanetTooltipCampaign", db.CampaignPlanets.Single(x => x.PlanetID == int.Parse(args[1])));
+                    return PartialView("PlanetTooltipCampaign", db.CampaignPlanets.Single(x => x.PlanetID == id));
 
 				case "planetInfluence":
-					return PartialView("InfluenceListShort", db.Planets.Single(x => x.PlanetID == int.Parse(args[1])).PlanetFactions);
+					return PartialView("InfluenceListShort", db.Planets.Single(x => x.PlanetID == id).PlanetFactions);
 
 				case "planetDropships":
-					return PartialView("PlanetDropships", db.Planets.Single(x => x.PlanetID == int.Parse(args[1])));
+					return PartialView("PlanetDropships", db.Planets.Single(x => x.PlanetID == id));
 
                 case "user":
-                    return PartialView("UserTooltip", db.Accounts.Single(x => x.AccountID == int.Parse(args[1])));
+                    return PartialView("UserTooltip", db.Accounts.Single(x => x.AccountID == id));
                 case "clan":
-			        return PartialView("~/Views/Clans/Tooltip.cshtml", db.Clans.Single(x => x.ClanID == int.Parse(args[1])));
+			        return PartialView("~/Views/Clans/Tooltip.cshtml", db.Clans.Single(x => x.ClanID == id));
                 case "faction":
-			        return PartialView("~/Views/Factions/FactionTooltip.cshtml", db.Factions.Single(x => x.FactionID == int.Parse(args[1])));
+			        return PartialView("~/Views/Factions/FactionTooltip.cshtml", db.Factions.Single(x => x.FactionID == id));
                 case "treaty":
-                    return PartialView("~/Views/Shared/DisplayTemplates/FactionTreaty.cshtml", db.FactionTreaties.Single(x => x.FactionTreatyID == int.Parse(args[1])));
+                    return PartialView("~/Views/Shared/DisplayTemplates/FactionTreaty.cshtml", db.FactionTreaties.Single(x => x.FactionTreatyID == id));
                 case "structuretype":
 			        return PartialView("~/Views/Shared/DisplayTemplates/StructureType.cshtml",
-			                           db.StructureTypes.Single(x => x.StructureTypeID == int.Parse(args[1])));
+			                           db.StructureTypes.Single(x => x.StructureTypeID == id));
                 case "forumVotes":
-                    return PartialView("~/Views/Forum/ForumVotesForPost.cshtml", db.ForumPosts.Single( x => x.ForumPostID == int.Parse(args[1])));
+                    return PartialView("~/Views/Forum/ForumVotesForPost.cshtml", db.ForumPosts.Single( x => x.ForumPostID == id));
 			}
 			return Content(ret);
 		}
@@ -140,11 +145,12 @@ namespace ZeroKWeb.Controllers
             }
 			var db = new ZkDataContext();
 
+		    var prevMonth = DateTime.UtcNow.AddMonths(-1);
 			var result = new IndexResult()
 			             {
 			             	Spotlight = SpotlightHandler.GetRandom(),
 			             	Top10Players =
-			             		db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).OrderByDescending(
+			             		db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > prevMonth)).OrderByDescending(
 			             			x => x.Elo1v1).Take(10)
 			             };
 
@@ -170,7 +176,7 @@ namespace ZeroKWeb.Controllers
 			else
 			{
 				result.NewThreads = (from t in accessibleThreads
-				                     let read = t.ForumThreadLastReads.SingleOrDefault(x => x.AccountID == Global.AccountID)
+				                     let read = t.ForumThreadLastReads.FirstOrDefault(x => x.AccountID == Global.AccountID)
                                      let readForum = t.ForumCategory.ForumLastReads.FirstOrDefault(x=> x.AccountID == Global.AccountID)
 				                     where (read == null || t.LastPost > read.LastRead) && (readForum == null || t.LastPost > readForum.LastRead)
 				                     orderby t.LastPost descending

@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using LobbyClient;
-using PlasmaShared;
 using ZkData;
 
 namespace ZeroKLobby
@@ -17,7 +16,7 @@ namespace ZeroKLobby
             login = conf.LobbyPlayerName;
             password = conf.LobbyPlayerPassword;
             WindowsApi.InternetSetCookiePub(Config.BaseUrl, GlobalConst.LoginCookieName, login);
-            WindowsApi.InternetSetCookiePub(Config.BaseUrl, GlobalConst.PasswordHashCookieName, PlasmaShared.Utils.HashLobbyPassword(password));
+            WindowsApi.InternetSetCookiePub(Config.BaseUrl, GlobalConst.PasswordHashCookieName, ZkData.Utils.HashLobbyPassword(password));
             WindowsApi.InternetSetCookiePub(Config.BaseUrl, GlobalConst.LobbyAccessCookieName, "1");
 
 
@@ -32,7 +31,7 @@ namespace ZeroKLobby
                                               Uri.EscapeDataString(password)));
 
                     WindowsApi.InternetSetCookiePub(Config.BaseUrl, GlobalConst.LoginCookieName, login);
-                    WindowsApi.InternetSetCookiePub(Config.BaseUrl, GlobalConst.PasswordHashCookieName, PlasmaShared.Utils.HashLobbyPassword(password));
+                    WindowsApi.InternetSetCookiePub(Config.BaseUrl, GlobalConst.PasswordHashCookieName, ZkData.Utils.HashLobbyPassword(password));
 
                     if (conf.IsFirstRun) wc.DownloadString(uri);
                     else wc.DownloadStringAsync(uri);
@@ -49,7 +48,7 @@ namespace ZeroKLobby
                     url = url +
                           string.Format("{0}={1}&{2}={3}&{4}=1&zkl=1",
                                         GlobalConst.ASmallCakeCookieName,
-                                        Uri.EscapeDataString(AuthTools.GetSiteAuthToken(login, PlasmaShared.Utils.HashLobbyPassword(password))),
+                                        Uri.EscapeDataString(AuthTools.GetSiteAuthToken(login, ZkData.Utils.HashLobbyPassword(password))),
                                         GlobalConst.ASmallCakeLoginCookieName,
                                         Uri.EscapeDataString(login),
                                         GlobalConst.LobbyAccessCookieName);

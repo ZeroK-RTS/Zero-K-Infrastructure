@@ -3,7 +3,7 @@ using System.Linq;
 using System.Net;
 using ServiceStack.Text;
 
-namespace PlasmaShared
+namespace ZkData
 {
     public class SteamWebApi
     {

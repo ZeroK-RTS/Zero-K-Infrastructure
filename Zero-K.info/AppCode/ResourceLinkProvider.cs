@@ -10,7 +10,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using CookComputing.XmlRpc;
-using PlasmaShared;
 using ZkData;
 
 #endregion
@@ -49,37 +48,6 @@ namespace ZeroKWeb
             }
             return ret;
 
-            /*var result = new List<string>();
-
-      result.Add(string.Format("http://www.springfiles.com/download.php?maincategory=1&subcategory={0}&file={1}",
-                               type == ZkData.ResourceType.Map ? 2 : 5,
-                               fileName));
-      try
-      {
-        using (var wc = new WebClient())
-        {
-          var pom = string.Format("http://www.springfiles.com/checkmirror.php?q={0}&c={1}",
-                                  Uri.EscapeDataString(fileName),
-                                  type == ZkData.ResourceType.Mod ? "games" : "maps");
-
-          var ret = wc.DownloadString(pom);
-
-          var matches = Regex.Matches(ret, "\\&mirror=([^\\&]+)");
-          foreach (Match match in matches)
-          {
-            if (match.Success && match.Groups.Count > 1)
-            {
-              var mirror = Uri.UnescapeDataString(match.Groups[1].Value);
-              result.Add(mirror);
-            }
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Console.Error.WriteLine("Error getting jobjol mirrors " + ex);
-      }
-      return result;*/
         }
 
         public static bool GetLinksAndTorrent(string internalName,
@@ -113,8 +81,8 @@ namespace ZeroKWeb
                 links = PlasmaServer.GetLinkArray(bestOld);
                 torrent = PlasmaServer.GetTorrentData(bestOld);
                 torrentFileName = PlasmaServer.GetTorrentFileName(bestOld);
-                if (links.Count > 0) db.ExecuteCommand("UPDATE Resource SET DownloadCount = DownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
-                else db.ExecuteCommand("UPDATE Resource SET NoLinkDownloadCount = NoLinkDownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
+                if (links.Count > 0) db.Database.ExecuteSqlCommand("UPDATE Resource SET DownloadCount = DownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
+                else db.Database.ExecuteSqlCommand("UPDATE Resource SET NoLinkDownloadCount = NoLinkDownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
 
                 return true;
             }
@@ -138,8 +106,8 @@ namespace ZeroKWeb
                 torrentFileName = PlasmaServer.GetTorrentFileName(data.ContentFile);
                 links = PlasmaServer.GetLinkArray(data.ContentFile);
                 torrent = PlasmaServer.GetTorrentData(data.ContentFile);
-                if (links.Count > 0) db.ExecuteCommand("UPDATE Resource SET DownloadCount = DownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
-                else db.ExecuteCommand("UPDATE Resource SET NoLinkDownloadCount = NoLinkDownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
+                if (links.Count > 0) db.Database.ExecuteSqlCommand("UPDATE Resource SET DownloadCount = DownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
+                else db.Database.ExecuteSqlCommand("UPDATE Resource SET NoLinkDownloadCount = NoLinkDownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
                 return true;
             }
             else
@@ -202,7 +170,7 @@ namespace ZeroKWeb
             {
                 var wr = (HttpWebRequest)WebRequest.Create(url);
                 wr.Timeout = 3000;
-                wr.Method = "GET";
+                wr.Method = "HEAD";
                 var res = wr.GetResponse();
                 redirectUrl = res.ResponseUri.ToString();
                 var cl = res.ContentLength;

@@ -5,7 +5,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace PlasmaShared
+namespace ZkData
 {
     [Serializable]
     public struct Hash: ICloneable

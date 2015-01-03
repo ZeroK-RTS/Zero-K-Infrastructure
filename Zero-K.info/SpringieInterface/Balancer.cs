@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using LobbyClient;
-using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.SpringieInterface
@@ -220,8 +219,9 @@ namespace ZeroKWeb.SpringieInterface
                 ret.Players = b.Players.ToList();
 
                 var db = new ZkDataContext();
+                var nonSpecList = b.Players.Where(y => !y.IsSpectator).Select(y => (int?)y.LobbyID).ToList();
                 var accs =
-                    db.Accounts.Where(x => b.Players.Where(y => !y.IsSpectator).Select(y => (int?)y.LobbyID).ToList().Contains(x.LobbyID)).ToList();
+                    db.Accounts.Where(x => nonSpecList.Contains(x.LobbyID)).ToList();
                 if (accs.Count < 1) {
                     ret.CanStart = false;
                     return ret;
@@ -554,7 +554,7 @@ namespace ZeroKWeb.SpringieInterface
                 using (var db = new ZkDataContext()) {
                     var ids = context.Players.Select(y => (int?)y.LobbyID).ToList();
                     var ipByLobbyID = db.Accounts.Where(x => ids.Contains(x.LobbyID))
-                                        .ToDictionary(x => x.LobbyID, x => x.AccountIPS.OrderByDescending(y => y.LastLogin).Select(y=>y.IP).FirstOrDefault());
+                                        .ToDictionary(x => x.LobbyID, x => x.AccountIPs.OrderByDescending(y => y.LastLogin).Select(y=>y.IP).FirstOrDefault());
                     // lobbyid -> ip mapping
 
                     var mode = context.GetMode();

@@ -15,10 +15,10 @@ namespace ZkData
         {
             if (StartsUnlocked) return true;
 
-            if (Planet != null)
+            if (CampaignPlanet != null)
             {
-                if (Planet.IsCompleted(accountID) && UnlockOnPlanetCompletion) return true;
-                if (Planet.IsUnlocked(accountID) && UnlockOnPlanetUnlock) return true;
+                if (CampaignPlanet.IsCompleted(accountID) && UnlockOnPlanetCompletion) return true;
+                if (CampaignPlanet.IsUnlocked(accountID) && UnlockOnPlanetUnlock) return true;
             }
 
             var db = new ZkDataContext();

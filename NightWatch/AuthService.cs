@@ -7,7 +7,6 @@ using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
 using LobbyClient;
-using PlasmaShared;
 using ZkData;
 
 namespace NightWatch
@@ -96,18 +95,18 @@ namespace NightWatch
 
                                     if (acc != null && args.ID != 0)
                                     {
-                                        var entry = acc.AccountUserIDS.FirstOrDefault(x => x.UserID == args.ID);
+                                        var entry = acc.AccountUserIDs.FirstOrDefault(x => x.UserID == args.ID);
                                         if (entry == null)
                                         {
                                             entry = new AccountUserID { AccountID = acc.AccountID, UserID = args.ID, FirstLogin = DateTime.UtcNow };
-                                            db.AccountUserIDS.InsertOnSubmit(entry);
+                                            db.AccountUserIDs.InsertOnSubmit(entry);
                                         }
                                         entry.LoginCount++;
                                         entry.LastLogin = DateTime.UtcNow;
                                     }
 
                                     Account accAnteep = db.Accounts.FirstOrDefault(x => x.AccountID == 4490);
-                                    bool isAnteepSmurf = accAnteep.AccountUserIDS.Any(x => x.UserID == args.ID);
+                                    bool isAnteepSmurf = accAnteep.AccountUserIDs.Any(x => x.UserID == args.ID);
                                     if (isAnteepSmurf)
                                     {
                                         client.Say(TasClient.SayPlace.Channel, ModeratorChannel, String.Format("Suspected Anteep smurf: {0} (ID match {1}) {2}", args.Name, args.ID,
@@ -147,11 +146,11 @@ namespace NightWatch
                                                                   string.Format("Banned until {0} (IP match to {1}), reason: {2}", penalty.BanExpires, penalty.AccountByAccountID.Name, penalty.Reason));
                                     if (acc != null)
                                     {
-                                        var entry = acc.AccountIPS.FirstOrDefault(x => x.IP == args.IP);
+                                        var entry = acc.AccountIPs.FirstOrDefault(x => x.IP == args.IP);
                                         if (entry == null)
                                         {
                                             entry = new AccountIP { AccountID = acc.AccountID, IP = args.IP, FirstLogin = DateTime.UtcNow };
-                                            db.AccountIPS.InsertOnSubmit(entry);
+                                            db.AccountIPs.InsertOnSubmit(entry);
                                         }
                                         entry.LoginCount++;
                                         entry.LastLogin = DateTime.UtcNow;
@@ -188,7 +187,7 @@ namespace NightWatch
                                         using (var db = new ZkDataContext())
                                         {
                                             Account accAnteep = db.Accounts.FirstOrDefault(x => x.AccountID == 4490);
-                                            bool isAnteepSmurf = accAnteep.AccountIPS.Any(x => x.IP == args.IP);
+                                            bool isAnteepSmurf = accAnteep.AccountIPs.Any(x => x.IP == args.IP);
                                             if (isAnteepSmurf)
                                             {
                                                 client.Say(TasClient.SayPlace.Channel, ModeratorChannel, String.Format("Suspected Anteep smurf: {0} (IP match {1}) {2}", args.Name, args.IP,
@@ -429,11 +428,13 @@ namespace NightWatch
             if (acc == null)
             {
                 acc = new Account();
+                acc.SetAvatar();
+                acc.FirstLogin = DateTime.UtcNow;
                 db.Accounts.InsertOnSubmit(acc);
             }
 
             acc.LobbyID = lobbyID;
-            acc.Name = name;
+            acc.SetName(name);
             if (!string.IsNullOrEmpty(hashedPassword)) acc.Password = hashedPassword;
             acc.LastLogin = DateTime.UtcNow;
 

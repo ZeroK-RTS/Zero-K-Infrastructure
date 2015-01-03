@@ -9,7 +9,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
-using PlasmaShared;
 using ZkData;
 
 namespace GalaxyDesigner

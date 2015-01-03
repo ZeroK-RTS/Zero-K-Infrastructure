@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PlasmaShared
+namespace ZkData
 {
     [Serializable]
     public class PoolFileInfo

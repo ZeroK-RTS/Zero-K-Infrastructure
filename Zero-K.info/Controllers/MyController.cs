@@ -296,9 +296,10 @@ namespace ZeroKWeb.Controllers
                     && (x.RequiredUnlockID == null || anyUnlockList.Contains(x.RequiredUnlockID ?? 0))
                     ).OrderBy(x => x.NeededLevel).ThenBy(x => x.XpCost).ThenBy(x => x.UnlockType).ToList();
 			unlocks = temp;
+		    var tempList = temp.Select(y => y.UnlockID).ToList();
 
 			future =
-				db.Unlocks.Where(x => !maxedUnlockList.Contains(x.UnlockID) && !temp.Select(y => y.UnlockID).Contains(x.UnlockID)).OrderBy(x => x.NeededLevel).
+				db.Unlocks.Where(x => !maxedUnlockList.Contains(x.UnlockID) && !tempList.Contains(x.UnlockID)).OrderBy(x => x.NeededLevel).
 					ThenBy(x => x.XpCost).ThenBy(x => x.Name).ToList();
 		}
 

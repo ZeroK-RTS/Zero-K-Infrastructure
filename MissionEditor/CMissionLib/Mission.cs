@@ -16,7 +16,7 @@ using CMissionLib.Conditions;
 using Ionic.Zip;
 using Microsoft.SqlServer.Server;
 using MissionEditor2;
-using PlasmaShared.UnitSyncLib;
+using ZkData.UnitSyncLib;
 using CMissionLib.UnitSyncLib;
 using ZkData;
 using Map = CMissionLib.UnitSyncLib.Map;

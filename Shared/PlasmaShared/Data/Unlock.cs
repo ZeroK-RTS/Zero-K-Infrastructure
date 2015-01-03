@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ZkData
 {
   partial class Unlock
   {
+      [NotMapped]
     public string LabelColor
     {
       get
@@ -25,6 +27,7 @@ namespace ZkData
       }
     }
 
+      [NotMapped]
     public string ImageUrl
     {
       get { return string.Format("http://zero-k.googlecode.com/svn/trunk/mods/zk/unitpics/{0}.png", Code); }

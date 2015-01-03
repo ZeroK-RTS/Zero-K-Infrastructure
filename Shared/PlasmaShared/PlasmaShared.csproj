@@ -135,23 +135,18 @@
     <Compile Include="Data\CampaignJournal.cs" />
     <Compile Include="Data\Decorations.cs" />
     <Compile Include="Data\EnergyPriority.cs" />
-    <Compile Include="Data\Event.cs" />
     <Compile Include="Data\Faction.cs" />
     <Compile Include="Data\FactionTreaty.cs" />
-    <Compile Include="Data\ForumPost.cs" />
     <Compile Include="Data\ForumThread.cs" />
     <Compile Include="Data\Galaxy.cs" />
     <Compile Include="Data\IAuthService.cs" />
     <Compile Include="Data\LobbyMessage.cs" />
-    <Compile Include="Data\MapRating.cs" />
     <Compile Include="Data\Mission.cs" />
     <Compile Include="Data\News.cs" />
     <Compile Include="Data\Planet.cs" />
     <Compile Include="Data\PlanetStructure.cs" />
-    <Compile Include="Data\ProgramID.cs" />
     <Compile Include="Data\Punishment.cs" />
     <Compile Include="Data\Resource.cs" />
-    <Compile Include="Data\ResourceSpringHash.cs" />
     <Compile Include="Data\ResourceType.cs" />
     <Compile Include="Data\RoleType.cs" />
     <Compile Include="Data\SpringBattle.cs" />
@@ -160,19 +155,85 @@
     <Compile Include="Data\TreatyState.cs" />
     <Compile Include="Data\Unlock.cs" />
     <Compile Include="Data\UnlockType.cs" />
-    <Compile Include="Data\ZkData.cs">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </Compile>
-    <Compile Include="Data\ZkData.designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </Compile>
-    <Compile Include="Data\ZkDataContext.cs" />
+    <Compile Include="DbCloner.cs" />
     <Compile Include="DbExtensions.cs" />
     <Compile Include="Diagrams\Diagram.cs" />
     <Compile Include="Diagrams\Node.cs" />
     <Compile Include="Diagrams\Vector.cs" />
+    <Compile Include="Ef\AbuseReport.cs" />
+    <Compile Include="Ef\Account.cs" />
+    <Compile Include="Ef\AccountBattleAward.cs" />
+    <Compile Include="Ef\AccountCampaignJournalProgress.cs" />
+    <Compile Include="Ef\AccountCampaignProgress.cs" />
+    <Compile Include="Ef\AccountCampaignVar.cs" />
+    <Compile Include="Ef\AccountForumVote.cs" />
+    <Compile Include="Ef\AccountIP.cs" />
+    <Compile Include="Ef\AccountPlanet.cs" />
+    <Compile Include="Ef\AccountRole.cs" />
+    <Compile Include="Ef\AccountUnlock.cs" />
+    <Compile Include="Ef\AccountUserID.cs" />
+    <Compile Include="Ef\AutohostConfig.cs" />
+    <Compile Include="Ef\Avatar.cs" />
+    <Compile Include="Ef\BlockedCompany.cs" />
+    <Compile Include="Ef\BlockedHost.cs" />
+    <Compile Include="Ef\Campaign.cs" />
+    <Compile Include="Ef\CampaignEvent.cs" />
+    <Compile Include="Ef\CampaignJournal.cs" />
+    <Compile Include="Ef\CampaignJournalVar.cs" />
+    <Compile Include="Ef\CampaignLink.cs" />
+    <Compile Include="Ef\CampaignPlanet.cs" />
+    <Compile Include="Ef\CampaignPlanetVar.cs" />
+    <Compile Include="Ef\CampaignVar.cs" />
+    <Compile Include="Ef\Clan.cs" />
+    <Compile Include="Ef\Commander.cs" />
+    <Compile Include="Ef\CommanderDecoration.cs" />
+    <Compile Include="Ef\CommanderDecorationIcon.cs" />
+    <Compile Include="Ef\CommanderDecorationSlot.cs" />
+    <Compile Include="Ef\CommanderModule.cs" />
+    <Compile Include="Ef\CommanderSlot.cs" />
+    <Compile Include="Ef\Contribution.cs" />
+    <Compile Include="Ef\ContributionJar.cs" />
+    <Compile Include="Ef\Event.cs" />
+    <Compile Include="Ef\Faction.cs" />
+    <Compile Include="Ef\FactionTreaty.cs" />
+    <Compile Include="Ef\ForumCategory.cs" />
+    <Compile Include="Ef\ForumLastRead.cs" />
+    <Compile Include="Ef\ForumPost.cs" />
+    <Compile Include="Ef\ForumPostEdit.cs" />
+    <Compile Include="Ef\ForumThread.cs" />
+    <Compile Include="Ef\ForumThreadLastRead.cs" />
+    <Compile Include="Ef\Galaxy.cs" />
+    <Compile Include="Ef\KudosPurchase.cs" />
+    <Compile Include="Ef\Link.cs" />
+    <Compile Include="Ef\LobbyChannelSubscription.cs" />
+    <Compile Include="Ef\LobbyMessage.cs" />
+    <Compile Include="Ef\MapRating.cs" />
+    <Compile Include="Ef\MiscVar.cs" />
+    <Compile Include="Ef\Mission.cs" />
+    <Compile Include="Ef\MissionScore.cs" />
+    <Compile Include="Ef\News.cs" />
+    <Compile Include="Ef\Planet.cs" />
+    <Compile Include="Ef\PlanetFaction.cs" />
+    <Compile Include="Ef\PlanetOwnerHistory.cs" />
+    <Compile Include="Ef\PlanetStructure.cs" />
+    <Compile Include="Ef\Poll.cs" />
+    <Compile Include="Ef\PollOption.cs" />
+    <Compile Include="Ef\PollVote.cs" />
+    <Compile Include="Ef\Punishment.cs" />
+    <Compile Include="Ef\Rating.cs" />
+    <Compile Include="Ef\Resource.cs" />
+    <Compile Include="Ef\ResourceContentFile.cs" />
+    <Compile Include="Ef\ResourceDependency.cs" />
+    <Compile Include="Ef\ResourceSpringHash.cs" />
+    <Compile Include="Ef\RoleType.cs" />
+    <Compile Include="Ef\RoleTypeHierarchy.cs" />
+    <Compile Include="Ef\SpringBattle.cs" />
+    <Compile Include="Ef\SpringBattlePlayer.cs" />
+    <Compile Include="Ef\StructureType.cs" />
+    <Compile Include="Ef\TreatyEffect.cs" />
+    <Compile Include="Ef\TreatyEffectType.cs" />
+    <Compile Include="Ef\Unlock.cs" />
+    <Compile Include="Ef\ZkDataContext.cs" />
     <Compile Include="EmbeddedResourceExtractor.cs" />
     <Compile Include="EventArgs.cs" />
     <Compile Include="EventExtensions.cs" />
@@ -182,6 +243,27 @@
     <Compile Include="IResourceInfo.cs" />
     <Compile Include="LuaTable.cs" />
     <Compile Include="MetaDataCache.cs" />
+    <Compile Include="Migrations\201412312111372_Init.cs" />
+    <Compile Include="Migrations\201412312111372_Init.Designer.cs">
+      <DependentUpon>201412312111372_Init.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501021512422_FixElo.cs" />
+    <Compile Include="Migrations\201501021512422_FixElo.Designer.cs">
+      <DependentUpon>201501021512422_FixElo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501031252225_FixCampaignLinkKey.cs" />
+    <Compile Include="Migrations\201501031252225_FixCampaignLinkKey.Designer.cs">
+      <DependentUpon>201501031252225_FixCampaignLinkKey.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501031335442_CampaignPlanetIndexReorder.cs" />
+    <Compile Include="Migrations\201501031335442_CampaignPlanetIndexReorder.Designer.cs">
+      <DependentUpon>201501031335442_CampaignPlanetIndexReorder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501031338090_CampaignPlanetIndexReorder2.cs" />
+    <Compile Include="Migrations\201501031338090_CampaignPlanetIndexReorder2.Designer.cs">
+      <DependentUpon>201501031338090_CampaignPlanetIndexReorder2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MissionUpdater.cs" />
     <Compile Include="PayPalInterface.cs" />
     <Compile Include="Pool.cs" />
@@ -196,6 +278,7 @@
     <Compile Include="SdpArchive.cs" />
     <Compile Include="SelfUpdater.cs" />
     <Compile Include="SerializableDictionary.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="SpringPaths.cs" />
     <Compile Include="SpringScanner.cs" />
     <Compile Include="CsvTable.cs" />
@@ -220,11 +303,13 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Web References\ModStats\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Web References\SpringieInterfaceReference\Reference.cs">
       <AutoGen>True</AutoGen>
@@ -237,8 +322,18 @@
     <Compile Include="Whois.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\..\packages\EntityFramework.6.1.2\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\..\packages\EntityFramework.6.1.2\lib\net40\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="Ionic.Zip.Reduced">
       <HintPath>..\..\Libs\Ionic.Zip.Reduced.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Linq.Translations, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Microsoft.Linq.Translations.1.0.1\lib\net40\Microsoft.Linq.Translations.dll</HintPath>
     </Reference>
     <Reference Include="ServiceStack.Text, Version=3.9.45.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -248,11 +343,13 @@
       <HintPath>..\..\packages\sharpcompress.0.9\lib\net40\SharpCompress.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.Linq" />
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Drawing" />
@@ -262,23 +359,9 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Data\ZkData.dbml">
-      <Generator>MSLinqToSQLGenerator</Generator>
-      <SubType>Designer</SubType>
-      <LastGenOutput>ZkData.designer.cs</LastGenOutput>
-    </None>
-    <None Include="Data\ZkData.dbml.namePrefs">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </None>
-    <None Include="Data\ZkData.dbml.syncPrefs">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </None>
-    <None Include="Data\ZkData.dbml.views">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Include="Web References\ContentService\AccountInfo.datasource">
@@ -395,32 +478,31 @@
     <None Include="Web References\ContentService\ContentService.disco" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\ZkData.dbml.layout">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Web References\SpringieInterfaceReference\SpringieService.disco" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\ZkData.dbml.views_001.layout">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Data\ZkData.dbml.views_002.layout">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Data\ZkData.dbml.views_003.layout">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Data\ZkData.dbml.views_def.layout">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </EmbeddedResource>
+    <None Include="Web References\ModStats\StatsCollector.disco" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Web References\ModStats\StatsCollector.disco" />
+    <EmbeddedResource Include="Migrations\201412312111372_Init.resx">
+      <DependentUpon>201412312111372_Init.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501021512422_FixElo.resx">
+      <DependentUpon>201501021512422_FixElo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501031252225_FixCampaignLinkKey.resx">
+      <DependentUpon>201501031252225_FixCampaignLinkKey.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501031335442_CampaignPlanetIndexReorder.resx">
+      <DependentUpon>201501031335442_CampaignPlanetIndexReorder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501031338090_CampaignPlanetIndexReorder2.resx">
+      <DependentUpon>201501031338090_CampaignPlanetIndexReorder2.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>

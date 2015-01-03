@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data.Linq;
-using System.Data.Linq.SqlClient;
+using System.Data.Entity.SqlServer;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Transactions;
 using System.Web.Services;
-using PlasmaShared;
-using PlasmaShared.ContentService;
+using ZkData.ContentService;
 using ZeroKWeb;
 using ZeroKWeb.Controllers;
 using ZeroKWeb.SpringieInterface;
@@ -18,7 +16,6 @@ using BalanceTeamsResult = ZeroKWeb.SpringieInterface.BalanceTeamsResult;
 using BattlePlayerResult = ZeroKWeb.SpringieInterface.BattlePlayerResult;
 using BattleResult = ZeroKWeb.SpringieInterface.BattleResult;
 using BotTeam = ZeroKWeb.SpringieInterface.BotTeam;
-using ProgramType = ZkData.ProgramType;
 using RecommendedMapResult = ZeroKWeb.SpringieInterface.RecommendedMapResult;
 using ResourceType = ZkData.ResourceType;
 using SpringBattleStartSetup = ZeroKWeb.SpringieInterface.SpringBattleStartSetup;
@@ -54,8 +51,9 @@ namespace ZeroKWeb
             var ret = db.Resources.AsQueryable();
             if (type == ResourceType.Map) ret = ret.Where(x => x.TypeID == ResourceType.Map);
             if (type == ResourceType.Mod) ret = ret.Where(x => x.TypeID == ResourceType.Mod);
-            var test = ret.Where(x => x.InternalName == string.Join(" ", words));
-            if (test.Any()) return test.OrderByDescending(x => -x.FeaturedOrder).Select(x => new PlasmaServer.ResourceData(x)).ToList();
+            string joinedWords = string.Join(" ", words);
+            var test = ret.Where(x => x.InternalName == joinedWords);
+            if (test.Any()) return test.OrderByDescending(x => -x.FeaturedOrder).ToList().Select(x => new PlasmaServer.ResourceData(x)).ToList();
             int i;
             if (words.Length == 1 && int.TryParse(words[0], out i)) ret = ret.Where(x => x.ResourceID == i);
             else
@@ -63,10 +61,10 @@ namespace ZeroKWeb
                 foreach (var w in words)
                 {
                     var w1 = w;
-                    ret = ret.Where(x => SqlMethods.Like(x.InternalName, "%" + w1 + "%"));
+                    ret = ret.Where(x => SqlFunctions.PatIndex("%" + w1 + "%", x.InternalName) > 0);
                 }
             }
-            return ret.OrderByDescending(x => -x.FeaturedOrder).Take(400).Select(x => new PlasmaServer.ResourceData(x)).ToList();
+            return ret.OrderByDescending(x => -x.FeaturedOrder).Take(400).ToList().Select(x => new PlasmaServer.ResourceData(x)).ToList();
         }
 
        
@@ -190,7 +188,7 @@ namespace ZeroKWeb
                 var acc = AuthServiceClient.VerifyAccountHashed(login, passwordHash);
                 if (acc == null) throw new ApplicationException("Invalid login or password");
 
-                acc.XP += GlobalConst.XpForMissionOrBots;
+                acc.Xp += GlobalConst.XpForMissionOrBots;
 
                 var mission = db.Missions.Single(x => x.Name == missionName);
 
@@ -209,7 +207,7 @@ namespace ZeroKWeb
                         if (max == null || max <= score)
                         {
                             mission.TopScoreLine = login;
-                            acc.XP += 150; // 150 for getting top score
+                            acc.Xp += 150; // 150 for getting top score
                         }
                         scoreEntry.Score = score;
                         scoreEntry.Time = DateTime.UtcNow;
@@ -217,6 +215,7 @@ namespace ZeroKWeb
                         scoreEntry.GameSeconds = gameSeconds;
                     }
                 }
+                acc.CheckLevelUp();
                 db.SubmitChanges();
 
                 // ====================
@@ -227,27 +226,6 @@ namespace ZeroKWeb
 
 
      
-
-        [WebMethod]
-        public void SubmitStackTrace(ProgramType programType, string playerName, string exception, string extraData, string programVersion)
-        {
-            using (var db = new ZkDataContext())
-            {
-                var exceptionLog = new ExceptionLog
-                                   {
-                                       ProgramID = programType,
-                                       Time = DateTime.UtcNow,
-                                       PlayerName = playerName,
-                                       ExtraData = extraData,
-                                       Exception = exception,
-                                       ExceptionHash = new Hash(exception).ToString(),
-                                       ProgramVersion = programVersion,
-                                       RemoteIP = GetUserIP()
-                                   };
-                db.ExceptionLogs.InsertOnSubmit(exceptionLog);
-                db.SubmitChanges();
-            }
-        }
 
 
         [WebMethod]
@@ -472,7 +450,7 @@ namespace ZeroKWeb
                 }
                 foreach (CampaignJournal uj in unlockedJournals)
                 {
-                    db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "{1} - Journal entry unlocked: {0}", uj, uj.Planet));
+                    db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "{1} - Journal entry unlocked: {0}", uj, uj.CampaignPlanet));
                 }
             }
             db.SubmitChanges();

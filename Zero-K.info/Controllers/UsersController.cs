@@ -86,10 +86,17 @@ namespace ZeroKWeb.Controllers
                 Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - Springie rights: {0} -> {1}", acc.SpringieLevel, springieLevel), true);
                 acc.SpringieLevel = springieLevel;
             }
-            if (acc.IsZeroKAdmin != zkAdmin)
+           if (acc.IsZeroKAdmin != zkAdmin)
             {
+                //reset chat priviledges to 2 if removing adminhood
+                if (zkAdmin == false)
+                {
+                    Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - Springie rights: {0} -> {1}", acc.SpringieLevel, 2), true);
+                    acc.SpringieLevel = 2;
+                }
                 Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - Admin status: {0} -> {1}", acc.IsZeroKAdmin, zkAdmin), true);
                 acc.IsZeroKAdmin = zkAdmin;
+                
             }
             if (acc.HasVpnException != vpnException)
             {
@@ -128,11 +135,11 @@ namespace ZeroKWeb.Controllers
 
             var db = new ZkDataContext();
             ret =
-                db.ExecuteQuery<Account>(
+                db.Database.SqlQuery<Account>(
                     "select  * from account where lobbyid in (select lobbyid from (select lobbyid, count(*)  as cnt from account group by (lobbyid)) as lc where cnt > 1) and LobbyID is not null order by lobbyid");
             ret =
                 ret.Union(
-                    db.ExecuteQuery<Account>(
+                    db.Database.SqlQuery<Account>(
                         "select * from account where name in (select name from (select name, count(*)  as cnt from account where lobbyid is not null group by (name)) as lc where cnt > 1) order by name"));
             return View(ret);
         }
@@ -144,8 +151,8 @@ namespace ZeroKWeb.Controllers
 
             if (!string.IsNullOrEmpty(name)) ret = ret.Where(x => x.Name.Contains(name));
             if (!string.IsNullOrEmpty(alias)) ret = ret.Where(x => x.Aliases.Contains(alias));
-            if (!string.IsNullOrEmpty(ip)) ret = ret.Where(x => x.AccountIPS.Any(y => y.IP == ip));
-            if (userID != null && userID != 0) ret = ret.Where(x => x.AccountUserIDS.Any(y => y.UserID == userID));
+            if (!string.IsNullOrEmpty(ip)) ret = ret.Where(x => x.AccountIPs.Any(y => y.IP == ip));
+            if (userID != null && userID != 0) ret = ret.Where(x => x.AccountUserIDs.Any(y => y.UserID == userID));
 
             return View("UserList", ret.Take(100));
         }
@@ -157,8 +164,8 @@ namespace ZeroKWeb.Controllers
             IQueryable<Account> ret = db.Accounts.AsQueryable();
 
             if (!string.IsNullOrEmpty(name)) ret = ret.Where(x => x.Name.Contains(name));
-            if (!string.IsNullOrEmpty(ip)) ret = ret.Where(x => x.AccountIPS.Any(y => y.IP == ip));
-            if (userID != null && userID != 0) ret = ret.Where(x => x.AccountUserIDS.Any(y => y.UserID == userID));
+            if (!string.IsNullOrEmpty(ip)) ret = ret.Where(x => x.AccountIPs.Any(y => y.IP == ip));
+            if (userID != null && userID != 0) ret = ret.Where(x => x.AccountUserIDs.Any(y => y.UserID == userID));
 
             return View("NewUsers", ret.OrderByDescending(x=> x.FirstLogin).Take(200));
         }
@@ -342,8 +349,8 @@ namespace ZeroKWeb.Controllers
                 if (acc != null)
                 {
                     firstAccID = firstAccID ?? acc.AccountID;
-                    uint? userID = banID ? (uint?)acc.AccountUserIDS.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
-                    string userIP = banIP ? acc.AccountIPS.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
+                    uint? userID = banID ? (uint?)acc.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
+                    string userIP = banIP ? acc.AccountIPs.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
                     System.Console.WriteLine(acc.Name, userID, userIP);
                     Punishment punishment = new Punishment
                     {
@@ -388,10 +395,10 @@ namespace ZeroKWeb.Controllers
             ZkDataContext db = new ZkDataContext();
             if (banHours > MaxBanHours) banHours = MaxBanHours;
             DateTime firstLoginAfter = maxAge != null? DateTime.UtcNow.AddHours(-(double)maxAge) : DateTime.MinValue; 
-            foreach (Account acc in db.Accounts.Where(x => x.AccountUserIDS.Any(y => y.UserID == userID) && (maxAge == null || x.FirstLogin > firstLoginAfter) ))
+            foreach (Account acc in db.Accounts.Where(x => x.AccountUserIDs.Any(y => y.UserID == userID) && (maxAge == null || x.FirstLogin > firstLoginAfter) ))
             {
-                uint? punishmentUserID = banID ? (uint?)acc.AccountUserIDS.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
-                string userIP = banIP ? acc.AccountIPS.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
+                uint? punishmentUserID = banID ? (uint?)acc.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
+                string userIP = banIP ? acc.AccountIPs.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
                 System.Console.WriteLine(acc.Name, userID, userIP);
                 Punishment punishment = new Punishment
                 {

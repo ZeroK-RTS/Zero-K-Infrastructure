@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using PlasmaDownloader;
-using PlasmaShared;
+using ZkData;
 using System.Diagnostics;
 
 namespace ZeroKLobby.MicroLobby.ExtrasTab

@@ -1,5 +1,4 @@
-﻿@using PlasmaShared
-@using ZkData
+﻿@using ZkData
 @using ZeroKWeb
 @model CampaignPlanet
 @{
@@ -34,8 +33,7 @@
         window.onload = function () 
         {
             var paper = Raphael(document.getElementById("minimap"), @mapWidth, @mapHeight);
-
-            @foreach (CampaignLink link in Model.CampaignLinks)
+            @foreach (CampaignLink link in Model.CampaignLinksByPlanetToUnlock)
             {
                 CampaignPlanet p1 = link.PlanetToUnlock;
                 CampaignPlanet p2 = link.UnlockingPlanet;

@@ -45,11 +45,11 @@
              SortExpression="Description" />
         </Columns>
       </asp:GridView>
-      <asp:LinqDataSource ID="LinqDataSource1" runat="server" 
+      <asp:EntityDataSource ID="LinqDataSource1" runat="server" 
         ContextTypeName="ZkData.ZkDataContext" EnableDelete="True" EnableInsert="True" 
         EnableUpdate="True" EntityTypeName="" 
-        TableName="Unlocks" ondeleting="LinqDataSource1_Deleting">
-      </asp:LinqDataSource>
+        TableName="Unlocks" ondeleting="DataSource_Deleting">
+      </asp:EntityDataSource>
     </div>
 
     <h3>Insert new</h3>

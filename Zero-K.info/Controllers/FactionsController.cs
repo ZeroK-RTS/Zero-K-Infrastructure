@@ -125,7 +125,7 @@ namespace ZeroKWeb.Controllers
                 var effect = new TreatyEffect
                              {
                                  FactionByGivingFactionID = isReverse == true ? treaty.FactionByAcceptingFactionID : treaty.FactionByProposingFactionID,
-                                 FactionByReceivingFactionID =
+                                 FactionByReceivingFactionID = 
                                      isReverse == true ? treaty.FactionByProposingFactionID : treaty.FactionByAcceptingFactionID,
                                  TreatyEffectType = effectType,
                                  FactionTreaty = treaty

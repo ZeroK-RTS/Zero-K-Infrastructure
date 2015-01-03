@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Forms;
 using LobbyClient;
-using PlasmaShared;
+using ZkData;
 using ZeroKLobby;
 
 namespace ZeroKLobby.MicroLobby

@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 
-namespace PlasmaShared
+namespace ZkData
 {
     public static class EventExtensions
     {
