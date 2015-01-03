@@ -12,7 +12,7 @@ using ZkData;
 namespace NightWatch
 {
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.Single)]
-    public class AuthService : IAuthService
+    public class AuthService
     {
         const int AuthServiceTestLoginWait = 8000;
         public const string ModeratorChannel = "zkadmin";
