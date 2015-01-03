@@ -52,7 +52,7 @@ namespace System.Web.Mvc
             str = exp.Replace(str,
             	"<table border=\"0\" cellpadding=\"6\" cellspacing=\"0\" width=\"100%\">"+
             	"<tbody><tr><td style=\"border: 1px inset;\">"+
-            	"<em>quote:<br>$2</em>"+
+            	"<em>quote:<br/>$2</em>"+
             	"</td></tr></tbody>"+
             	"</table>");
             
@@ -100,7 +100,7 @@ namespace System.Web.Mvc
             str = Regex.Replace(str, @"(^|[\s])((mailto|spring|http|https|ftp|ftps)\://\S+)", @"$1<a href='$2'>$2</a>");
 
             // lastly, replace any new line characters with <br />
-            str = str.Replace("\r\n", "<br />\r\n");
+            str = str.Replace("\r\n", "<br/>\r\n");
             
 
             // embed player to display videos (supported: mp4, 3gp, webm, ogg, ogv, gifv)
@@ -741,7 +741,7 @@ namespace System.Web.Mvc
 //            // becomes: stuff
 //            exp = new Regex(@"\[quote\]((.|\n)+?)\[/quote\]", RegexOptions.IgnoreCase);
 //            str = exp.Replace(str,
-//                              "<table border=\"0\" cellpadding=\"6\" cellspacing=\"0\" width=\"100%\"><tbody><tr><td style=\"border: 1px inset;\"><em>quote:<br>$1</em></td></tr></tbody></table>");
+//                              "<table border=\"0\" cellpadding=\"6\" cellspacing=\"0\" width=\"100%\"><tbody><tr><td style=\"border: 1px inset;\"><em>quote:<br/>$1</em></td></tr></tbody></table>");
 //
 //            // format the italic tags: [i][/i]
 //            // becomes: <em></em>
@@ -822,8 +822,8 @@ namespace System.Web.Mvc
 //
 //            str = Regex.Replace(str, @"(^|[\s])((mailto|spring|http|https|ftp|ftps)\://\S+)", @"$1<a href='$2'>$2</a>");
 //
-//            // lastly, replace any new line characters with <br />
-//            str = str.Replace("\r\n", "<br />\r\n");
+//            // lastly, replace any new line characters with <br/>
+//            str = str.Replace("\r\n", "<br/>\r\n");
 //
 //            if (helper != null) {
 //                // todo remove condition in the future
