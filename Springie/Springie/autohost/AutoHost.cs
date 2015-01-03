@@ -1061,7 +1061,7 @@ namespace Springie.autohost
 
                 if (e.Place == TasSayEventArgs.Places.Normal) {
                     if (com != "say" && com != "admins" && com != "help" && com != "helpall" && com != "springie" && com != "listoptions" &&
-                        com != "spawn" && com != "predict" && com != "notify" && com != "transmit") SayBattle(String.Format("{0} executed by {1}", com, e.UserName));
+                        com != "spawn" && com != "predict" && com != "notify" && com != "transmit" && com != "adduser") SayBattle(String.Format("{0} executed by {1}", com, e.UserName));
                 }
 
                 RunCommand(e, com, words);
