@@ -108,11 +108,11 @@ namespace System.Web.Mvc
             str = exp.Replace(str, 
                 "<div class=\"video-container\">"+
                     "<video preload=\"auto\" height=\"auto\" width=\"auto\" controls=\"controls\">" +
-                        "<source type=\"video/webm\" src=\"$1$2" + "webm\">"+
-                        "<source type=\"video/mp4\" src=\"$1$2" + "mp4\">" +
-                        "<source type=\"video/ogg\" src=\"$1$2" + "ogg\">" +
-                        "<source type=\"video/ogv\" src=\"$1$2" + "ogv\">" +
-                        "<source type=\"video/3gp\" src=\"$1$2" +"3gp\">" +
+                        "<source type=\"video/webm\" src=\"$1$2webm\">"+
+                        "<source type=\"video/mp4\" src=\"$1$2mp4\">" +
+                        "<source type=\"video/ogg\" src=\"$1$2ogg\">" +
+                        "<source type=\"video/ogv\" src=\"$1$2ogv\">" +
+                        "<source type=\"video/3gp\" src=\"$1$23gp\">" +
                         "Your browser does not support the video tag. Find out if your Browser is supported at www.w3schools.com/tags/tag_video.asp" +
                     "</video>"+
                 "</div>");
