@@ -216,7 +216,7 @@ namespace LobbyClient
             {
                 talker.SendText(text);
             }
-            catch (NullReferenceException e) {
+            catch (NullReferenceException) {
                 // do nothing: null reference is expected when game is not running
                 // the property isRunning would be useful here if it didn't lie so much
             }
