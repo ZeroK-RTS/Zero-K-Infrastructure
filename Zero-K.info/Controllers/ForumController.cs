@@ -91,14 +91,14 @@ namespace ZeroKWeb.Controllers
                 return Content(string.Format("You cannot post while banned from forum!\nExpires: {0} UTC\nReason: {1}", penalty.BanExpires, penalty.Reason));
             }
 
-            var clan = db.Clans.FirstOrDefault(x => x.ForumThreadID == threadID);
-            if (clan != null && Global.ClanID != clan.ClanID)
-            {
-                return Content(string.Format("You are not a member of {0}, you cannot post in their clan thread", clan.ClanName));
-            }
-
 			if (threadID.HasValue)
 			{
+                var clan = db.Clans.FirstOrDefault(x => x.ForumThreadID == threadID);
+                if (clan != null && Global.ClanID != clan.ClanID)
+                {
+                    return Content(string.Format("You are not a member of {0}, you cannot post in their clan thread", clan.ClanName));
+                }
+
 				var t = db.ForumThreads.Single(x => x.ForumThreadID == threadID.Value);
 				res.CurrentThread = t;
 				res.LastPosts = res.CurrentThread.ForumPosts.OrderByDescending(x => x.ForumPostID).Take(20);
