@@ -41,7 +41,7 @@ namespace ZeroKWeb.Controllers
 
 			db.ForumPosts.DeleteOnSubmit(post);
 			if (thread.ForumPosts.Count() <= 1) {
-                db.ForumThreadLastReads.DeleteAllOnSubmit(db.ForumThreadLastReads.Where(x => x.ForumThread == thread).ToList());
+                db.ForumThreadLastReads.DeleteAllOnSubmit(db.ForumThreadLastReads.Where(x => x.ForumThreadID == thread.ForumThreadID).ToList());
 				db.ForumThreads.DeleteOnSubmit(thread);
 				db.SubmitChanges();
 				return RedirectToAction("Index");
@@ -91,7 +91,7 @@ namespace ZeroKWeb.Controllers
                 return Content(string.Format("You cannot post while banned from forum!\nExpires: {0} UTC\nReason: {1}", penalty.BanExpires, penalty.Reason));
             }
 
-			if (threadID.HasValue)
+			if (threadID.HasValue && threadID > 0)
 			{
                 var clan = db.Clans.FirstOrDefault(x => x.ForumThreadID == threadID);
                 if (clan != null && Global.ClanID != clan.ClanID)
