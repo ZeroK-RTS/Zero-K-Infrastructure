@@ -185,7 +185,8 @@ namespace Fixer
 
             //MigrateDatabase();
             var db = new ZkDataContext(true);
-            var links = db.CampaignLinks.ToList();
+            var post = db.ForumPosts.First(x => x.ForumPostID == 113893);
+
 
 
 

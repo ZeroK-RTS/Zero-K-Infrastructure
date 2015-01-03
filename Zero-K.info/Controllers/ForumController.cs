@@ -479,7 +479,7 @@ namespace ZeroKWeb.Controllers
         public static int GetPostPage(ForumPost post)
         {
             if (post == null) return 0;
-            var index = post.ForumThread.ForumPosts.Count(x=>x.ForumPostID <= post.ForumPostID);
+            var index = post.ForumThread.ForumPosts.Count(x=>x.ForumPostID < post.ForumPostID);
             return index / PageSize;
         }
 
