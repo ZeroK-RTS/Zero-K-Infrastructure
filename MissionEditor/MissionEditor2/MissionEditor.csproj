@@ -529,6 +529,10 @@
       <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>
       <Name>PlasmaShared</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ZkData\ZkData.csproj">
+      <Project>{61D3BE0A-282D-462C-BA26-06670E5ACB3E}</Project>
+      <Name>ZkData</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CMissionLib\CMissionLib.csproj">
       <Project>{025DB717-770F-4A29-BC33-FFDC3088E25B}</Project>
       <Name>CMissionLib</Name>

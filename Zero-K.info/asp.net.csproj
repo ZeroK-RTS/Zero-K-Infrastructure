@@ -537,6 +537,10 @@
       <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>
       <Name>PlasmaShared</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ZkData\ZkData.csproj">
+      <Project>{61d3be0a-282d-462c-ba26-06670e5acb3e}</Project>
+      <Name>ZkData</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Img\news\" />

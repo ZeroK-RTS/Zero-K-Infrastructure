@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using PlasmaShared;
 using ServiceStack.Text;
 using ZkData;
 
@@ -37,7 +38,7 @@ namespace LobbyClient
 
         readonly Dictionary<string, Dictionary<string, string>> publishedUserAttributes = new Dictionary<string, Dictionary<string, string>>();
 
-        readonly TasClient tas;
+        public TasClient tas { get; private set; }
         readonly Dictionary<string, Type> typeCache = new Dictionary<string, Type>()
         {
             { typeof(SiteToLobbyCommand).Name, typeof(SiteToLobbyCommand) },
@@ -69,33 +70,6 @@ namespace LobbyClient
             var dict = new Dictionary<string, string>(data);
             publishedUserAttributes[name] = dict;
             tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, FormatMessage(name, data), false);
-        }
-
-        public void PublishAccountData(Account acc) {
-            if (acc != null && tas.ExistingUsers.ContainsKey(acc.Name)) {
-                var data = new Dictionary<string, string>
-                {
-                    { Keys.Level.ToString(), acc.Level.ToString() },
-                    { Keys.EffectiveElo.ToString(), ((int)acc.EffectiveElo).ToString() },
-                    { Keys.Faction.ToString(), acc.Faction != null ? acc.Faction.Shortcut : "" },
-                    { Keys.Clan.ToString(), acc.Clan != null ? acc.Clan.Shortcut : "" },
-                    { Keys.Avatar.ToString(), acc.Avatar },
-                    { Keys.SpringieLevel.ToString(), acc.GetEffectiveSpringieLevel().ToString() },
-                };
-                if (acc.SteamID != null) data.Add(Keys.SteamID.ToString(), acc.SteamID.ToString());
-                if (!string.IsNullOrEmpty(acc.SteamName) && acc.SteamName != acc.Name) data.Add(Keys.DisplayName.ToString(), acc.SteamName);
-
-                if (acc.IsZeroKAdmin) data.Add(Keys.ZkAdmin.ToString(), "1");
-
-                if (acc.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanMute)) data.Add(Keys.BanMute.ToString(), "1");
-                if (acc.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanLobby)) data.Add(Keys.BanLobby.ToString(), "1");
-
-                tas.Extensions.Publish(acc.Name, data);
-
-                // if (acc.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby)) tas.AdminKickFromLobby(acc.Name, "Banned");
-                ZkData.Punishment penalty = acc.PunishmentsByAccountID.FirstOrDefault(x => x.BanExpires > DateTime.UtcNow && x.BanLobby);
-                if (penalty != null) tas.AdminKickFromLobby(acc.Name, string.Format("Banned until {0}, reason: {1}", penalty.BanExpires, penalty.Reason));
-				}
         }
 
 

@@ -52,7 +52,6 @@ namespace LobbyClient
         int lastSpectatorCount;
         int lastUdpSourcePort;
         int lastUserBattleStatus;
-        int lastUserColor;
         int lastUserStatus;
         readonly string localIp;
         bool lockToChangeTo;
