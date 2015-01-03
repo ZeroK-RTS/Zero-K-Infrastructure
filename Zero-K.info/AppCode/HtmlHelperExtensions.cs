@@ -84,7 +84,7 @@ namespace System.Web.Mvc
             // format img tags with alt: [img=www.website.com/img/image.jpeg]this is the alt text[/img]
             // becomes: <img src="www.website.com/img/image.jpeg" alt="this is the alt text" />
             exp = new Regex(@"\[img\=([^\]]+)\]([^\]]+)\[/img\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<a href=\"$1\" target=\"_blank\"><img src=\"$1\" alt=\"$2\" max-width=100% />");
+            str = exp.Replace(str, "<a href=\"$1\" target=\"_blank\"><img src=\"$1\" alt=\"$2\" max-width=100% /></a>");
 
             //format the colour tags: [color=red][/color]
             // becomes: <font color="red"></font>
