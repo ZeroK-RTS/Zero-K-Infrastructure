@@ -197,12 +197,6 @@
     <Compile Include="Notifications\PwBar.Designer.cs">
       <DependentUpon>PwBar.cs</DependentUpon>
     </Compile>
-    <Compile Include="SampleForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SampleForm.Designer.cs">
-      <DependentUpon>SampleForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="SelectWritableFolder.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -526,9 +520,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\PwBar.resx">
       <DependentUpon>PwBar.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SampleForm.resx">
-      <DependentUpon>SampleForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
