@@ -33,7 +33,6 @@
         window.onload = function () 
         {
             var paper = Raphael(document.getElementById("minimap"), @mapWidth, @mapHeight);
-
             @foreach (CampaignLink link in Model.CampaignLinksByPlanetToUnlock)
             {
                 CampaignPlanet p1 = link.PlanetToUnlock;

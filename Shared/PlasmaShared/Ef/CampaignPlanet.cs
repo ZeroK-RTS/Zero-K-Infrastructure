@@ -9,15 +9,8 @@ namespace ZkData
     [Table("CampaignPlanet")]
     public partial class CampaignPlanet
     {
-
-        [Key]
-        [Column(Order = 0)]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int CampaignID { get; set; }
 
-        [Key]
-        [Column(Order = 1)]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int PlanetID { get; set; }
 
         [Required]

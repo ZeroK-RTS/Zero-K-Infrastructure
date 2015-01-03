@@ -251,6 +251,18 @@
     <Compile Include="Migrations\201501021512422_FixElo.Designer.cs">
       <DependentUpon>201501021512422_FixElo.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201501031252225_FixCampaignLinkKey.cs" />
+    <Compile Include="Migrations\201501031252225_FixCampaignLinkKey.Designer.cs">
+      <DependentUpon>201501031252225_FixCampaignLinkKey.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501031335442_CampaignPlanetIndexReorder.cs" />
+    <Compile Include="Migrations\201501031335442_CampaignPlanetIndexReorder.Designer.cs">
+      <DependentUpon>201501031335442_CampaignPlanetIndexReorder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501031338090_CampaignPlanetIndexReorder2.cs" />
+    <Compile Include="Migrations\201501031338090_CampaignPlanetIndexReorder2.Designer.cs">
+      <DependentUpon>201501031338090_CampaignPlanetIndexReorder2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MissionUpdater.cs" />
     <Compile Include="PayPalInterface.cs" />
@@ -481,6 +493,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201501021512422_FixElo.resx">
       <DependentUpon>201501021512422_FixElo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501031252225_FixCampaignLinkKey.resx">
+      <DependentUpon>201501031252225_FixCampaignLinkKey.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501031335442_CampaignPlanetIndexReorder.resx">
+      <DependentUpon>201501031335442_CampaignPlanetIndexReorder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501031338090_CampaignPlanetIndexReorder2.resx">
+      <DependentUpon>201501031338090_CampaignPlanetIndexReorder2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

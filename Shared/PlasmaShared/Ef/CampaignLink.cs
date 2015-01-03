@@ -9,14 +9,8 @@ namespace ZkData
     [Table("CampaignLink")]
     public partial class CampaignLink
     {
-        [Key]
-        [Column(Order = 0)]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int PlanetToUnlockID { get; set; }
 
-        [Key]
-        [Column(Order = 1)]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int UnlockingPlanetID { get; set; }
 
         public int CampaignID { get; set; }
