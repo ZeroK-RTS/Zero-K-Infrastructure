@@ -7,6 +7,7 @@ namespace ZkData.Migrations
     {
         public Configuration()
         {
+            ContextKey = "PlasmaShared.Migrations.Configuration";
             AutomaticMigrationsEnabled = false;
         }
 
