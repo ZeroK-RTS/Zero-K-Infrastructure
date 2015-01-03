@@ -15,7 +15,7 @@ namespace ZeroKWeb
 		protected void lqResources_Selecting(object sender, LinqDataSourceSelectEventArgs e)
 		{
 			var db = new ZkDataContext();
-			e.Result = db.Resources.Where(x => x.InternalName.Contains(tbName.Text)).OrderByDescending(x=>x.DownloadCount).Select(x => new
+			e.Result = db.Resources.Where(x => x.InternalName.Contains(tbName.Text)).OrderByDescending(x=>x.DownloadCount).AsEnumerable().Select(x => new
 			                                                                                                         	{
 			                                                                                                         		x.ResourceID,
 																																																									x.InternalName,
