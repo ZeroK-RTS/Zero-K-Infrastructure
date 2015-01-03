@@ -80,23 +80,23 @@ namespace Fixer
                 }
                 db.SubmitChanges();
 
-                db.Database.ExecuteSqlCommand("update account set pwbombersproduced=0, pwbombersused=0, pwdropshipsproduced=0, pwdropshipsused=0, pwmetalproduced=0, pwmetalused=0, pwattackpoints=0, pwwarpproduced=0, pwwarpused=0, elopw=1500");
-                if (resetclans) db.Database.ExecuteSqlCommand("update account set clanid=null");
-                db.Database.ExecuteSqlCommand("delete from event");
-                db.Database.ExecuteSqlCommand("delete from planetownerhistory");
-                db.Database.ExecuteSqlCommand("delete from planetstructure");
-                db.Database.ExecuteSqlCommand("delete from planetfaction");
-                db.Database.ExecuteSqlCommand("delete from accountplanet");
-                if (resetroles) db.Database.ExecuteSqlCommand("delete from accountrole where clanID is null");
-                db.Database.ExecuteSqlCommand("delete from factiontreaty");
-                db.Database.ExecuteSqlCommand("delete from treatyeffect");
+                db.Database.ExecuteSqlCommand("update accounts set pwbombersproduced=0, pwbombersused=0, pwdropshipsproduced=0, pwdropshipsused=0, pwmetalproduced=0, pwmetalused=0, pwattackpoints=0, pwwarpproduced=0, pwwarpused=0, elopw=1500");
+                if (resetclans) db.Database.ExecuteSqlCommand("update accounts set clanid=null");
+                db.Database.ExecuteSqlCommand("delete from events");
+                db.Database.ExecuteSqlCommand("delete from planetownerhistories");
+                db.Database.ExecuteSqlCommand("delete from planetstructures");
+                db.Database.ExecuteSqlCommand("delete from planetfactions");
+                db.Database.ExecuteSqlCommand("delete from accountplanets");
+                if (resetroles) db.Database.ExecuteSqlCommand("delete from accountroles where clanID is null");
+                db.Database.ExecuteSqlCommand("delete from factiontreaties");
+                db.Database.ExecuteSqlCommand("delete from treatyeffects");
 
-                db.Database.ExecuteSqlCommand("delete from forumthread where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsPlanets).ForumCategoryID);
+                db.Database.ExecuteSqlCommand("delete from forumthreads where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsPlanets).ForumCategoryID);
 
                 if (resetclans)
                 {
-                    db.Database.ExecuteSqlCommand("delete from clan");
-                    db.Database.ExecuteSqlCommand("delete from forumthread where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsClans).ForumCategoryID);
+                    db.Database.ExecuteSqlCommand("delete from clans");
+                    db.Database.ExecuteSqlCommand("delete from forumthreads where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsClans).ForumCategoryID);
                 }
             }
         }

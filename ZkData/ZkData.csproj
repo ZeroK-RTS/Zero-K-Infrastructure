@@ -186,6 +186,10 @@
     <Compile Include="Migrations\201501031338090_CampaignPlanetIndexReorder2.Designer.cs">
       <DependentUpon>201501031338090_CampaignPlanetIndexReorder2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201501031843539_PluralizeTablesAccident.cs" />
+    <Compile Include="Migrations\201501031843539_PluralizeTablesAccident.Designer.cs">
+      <DependentUpon>201501031843539_PluralizeTablesAccident.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MissionUpdater.cs" />
     <Compile Include="PayPalInterface.cs" />
@@ -211,6 +215,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201501031338090_CampaignPlanetIndexReorder2.resx">
       <DependentUpon>201501031338090_CampaignPlanetIndexReorder2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501031843539_PluralizeTablesAccident.resx">
+      <DependentUpon>201501031843539_PluralizeTablesAccident.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

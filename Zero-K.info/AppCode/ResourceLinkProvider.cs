@@ -81,8 +81,8 @@ namespace ZeroKWeb
                 links = PlasmaServer.GetLinkArray(bestOld);
                 torrent = PlasmaServer.GetTorrentData(bestOld);
                 torrentFileName = PlasmaServer.GetTorrentFileName(bestOld);
-                if (links.Count > 0) db.Database.ExecuteSqlCommand("UPDATE Resource SET DownloadCount = DownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
-                else db.Database.ExecuteSqlCommand("UPDATE Resource SET NoLinkDownloadCount = NoLinkDownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
+                if (links.Count > 0) db.Database.ExecuteSqlCommand("UPDATE Resources SET DownloadCount = DownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
+                else db.Database.ExecuteSqlCommand("UPDATE Resources SET NoLinkDownloadCount = NoLinkDownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
 
                 return true;
             }
@@ -106,8 +106,8 @@ namespace ZeroKWeb
                 torrentFileName = PlasmaServer.GetTorrentFileName(data.ContentFile);
                 links = PlasmaServer.GetLinkArray(data.ContentFile);
                 torrent = PlasmaServer.GetTorrentData(data.ContentFile);
-                if (links.Count > 0) db.Database.ExecuteSqlCommand("UPDATE Resource SET DownloadCount = DownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
-                else db.Database.ExecuteSqlCommand("UPDATE Resource SET NoLinkDownloadCount = NoLinkDownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
+                if (links.Count > 0) db.Database.ExecuteSqlCommand("UPDATE Resources SET DownloadCount = DownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
+                else db.Database.ExecuteSqlCommand("UPDATE Resources SET NoLinkDownloadCount = NoLinkDownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
                 return true;
             }
             else
