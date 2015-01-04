@@ -3,6 +3,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using PlasmaDownloader;
+using ZkData;
 
 #endregion
 
@@ -52,12 +53,9 @@ namespace Springie
         //4) Login to server (as player) using Lobby, 
         //5) Join a room called "KingRaptor Secret Clubhouse",
         //6) Use "magic" for password.
-	    public MainConfig() {
-#if DEBUG
-	        ClusterNode = "alpha";
-#else 
-            ClusterNode = "omega";
-#endif
-        }
+	    public MainConfig()
+	    {
+	        ClusterNode = GlobalConst.SpringieNode;
+	    }
 	} ;
 }

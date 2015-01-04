@@ -27,7 +27,6 @@ namespace ZeroKLobby
         StringCollection friends = new StringCollection(); // lacks events for adding friends immediatly
         int idleTime = 5;
         StringCollection ignoredUsers = new StringCollection();
-        string manualSpringPath = @"C:\Program Files\Spring";
         bool showHourlyChimes = true;
         bool showOfficialBattles = true;
         bool hideEmptyBattles = false;

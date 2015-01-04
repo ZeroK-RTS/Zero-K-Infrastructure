@@ -39,17 +39,19 @@ namespace ZkData
                 case ModeType.Local:
                     BaseSiteUrl = "http://localhost:9739";
                     ZkDataContextConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=zero-k_ef;Integrated Security=True;MultipleActiveResultSets=true";
+                    SpringieNode = "alpha";
                     break;
                 case ModeType.Test:
                     BaseSiteUrl = "http://test.zero-k.info";
                     ZkDataContextConnectionString =
                         "@Data Source=omega.licho.eu,100;Initial Catalog=zero-k_test;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
-
+                    SpringieNode = "omega";
                     break;
                 case ModeType.Live:
                     BaseSiteUrl = "http://zero-k.info";
                     ZkDataContextConnectionString =
                         "@Data Source=omega.licho.eu,100;Initial Catalog=zero-k_ef;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
+                    SpringieNode = "omega";
                     break;
             }
 
@@ -62,6 +64,8 @@ namespace ZkData
 
         public static readonly string BaseImageUrl;
         public static readonly string BaseSiteUrl;
+        public static readonly string SpringieNode;
+
 
         public const string InfologPathFormat = @"C:\projekty\springie_spring\infolog_{0}.txt";
         public static string SiteDiskPath = @"c:\projekty\zero-k.info\www";
