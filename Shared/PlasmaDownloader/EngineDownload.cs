@@ -14,7 +14,7 @@ namespace PlasmaDownloader
 {
     public class EngineDownload: Download
     {
-        const string EngineDownloadPath = "http://springrts.com/dl/";
+        const string EngineDownloadPath = GlobalConst.EngineDownloadPath;
         readonly SpringPaths springPaths;
 
 

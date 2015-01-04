@@ -12,9 +12,9 @@ namespace CaTracker
         bool attemptToRecconnect = true;
         string[] joinChannels = new[] { "main","zk" };
 
-        string serverHost = "springrts.com";
+        string serverHost = GlobalConst.LobbyServerHost;
 
-        int serverPort = 8200;
+        int serverPort = GlobalConst.LobbyServerPort;
         public string AccountName { get { return accountName; } set { accountName = value; } }
 
         public string AccountPassword { get { return accountPassword; } set { accountPassword = value; } }
