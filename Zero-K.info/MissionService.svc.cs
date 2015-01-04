@@ -14,8 +14,6 @@ namespace ZeroKWeb
 {
 	public class MissionService: IMissionService
 	{
-		const string MissionFileUrl = "http://zero-k.info/Missions/File/{0}";
-
 		public void DeleteMission(int missionID, string author, string password)
 		{
 			var db = new ZkDataContext();

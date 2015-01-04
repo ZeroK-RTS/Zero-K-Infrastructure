@@ -38,15 +38,6 @@ namespace ZeroKWeb.SpringieInterface
                         return res;
                     }
 
-                    /*
-                    if (account.Faction == null)
-                    {
-                        res.PrivateMessage =
-                            string.Format(
-                                "{0} this is competitive PlanetWars campaign server. Join a clan to conquer the galaxy http://zero-k.info/Factions",
-                                account.Name);
-                        return res;
-                    }*/
 
                     string owner = "";
                     if (planet.Account != null) owner = planet.Account.Name;
@@ -58,13 +49,14 @@ namespace ZeroKWeb.SpringieInterface
                                                    account.AccountRolesByAccountID.Where(x => x.RoleType.IsClanOnly).Select(x => x.RoleType.Name).ToList());
                     if (!string.IsNullOrEmpty(clanRoles)) clanRoles += " of " + account.Clan.ClanName;
 
-                    res.PublicMessage = string.Format("Greetings {0} {1}{2}, welcome to {3} planet {4} http://zero-k.info/PlanetWars/Planet/{5}",
+                    res.PublicMessage = string.Format("Greetings {0} {1}{2}, welcome to {3} planet {4} {6}/PlanetWars/Planet/{5}",
                                                       account.Name,
                                                       facRoles,
                                                       clanRoles,
                                                       owner,
                                                       planet.Name,
-                                                      planet.PlanetID);
+                                                      planet.PlanetID,
+                                                      GlobalConst.BaseSiteUrl);
 
                     return res;
                 }

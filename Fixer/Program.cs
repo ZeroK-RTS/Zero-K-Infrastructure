@@ -367,16 +367,6 @@ namespace Fixer
         }
 
 
-        public static void FixDemoFiles()
-        {
-            var db = new ZkDataContext();
-            foreach (var sb in db.SpringBattles)
-            {
-                //sb.ReplayFileName = sb.ReplayFileName.Replace("http://springdemos.licho.eu/","http://zero-k.info/replays/");
-            }
-            //db.SubmitChanges();
-
-        }
 
         public static void FixMissionScripts()
         {
@@ -858,7 +848,7 @@ namespace Fixer
 
                 foreach (var resource in db.Resources.Where(x => x.TypeID == ResourceType.Map))//&&x.MapSizeSquared == null))
                 {
-                    var file = String.Format("{0}/{1}.metadata.xml.gz", @"d:\zero-k.info\www\Resources", resource.InternalName.EscapePath());
+                    var file = String.Format("{0}/{1}.metadata.xml.gz", GlobalConst.SiteDiskPath +  @"\Resources", resource.InternalName.EscapePath());
                     var map = (Map)new XmlSerializer(typeof(Map)).Deserialize(new MemoryStream(File.ReadAllBytes(file).Decompress()));
 
                     resource.MapWidth = map.Size.Width / 512;
@@ -882,7 +872,7 @@ namespace Fixer
                     resource.MapSizeSquared = (map.Size.Width / 512) * (map.Size.Height / 512);
                     resource.MapSizeRatio = (float)map.Size.Width / map.Size.Height;
 
-                    var minimap = String.Format("{0}/{1}.minimap.jpg", @"d:\zero-k.info\www\Resources", resource.InternalName.EscapePath());
+                    var minimap = String.Format("{0}/{1}.minimap.jpg", GlobalConst.SiteDiskPath +  @"\Resources", resource.InternalName.EscapePath());
 
                     using (var im = Image.FromFile(minimap))
                     {
@@ -911,7 +901,7 @@ namespace Fixer
                             var encoderParams = new EncoderParameters(1);
                             encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, 100L);
 
-                            var target = String.Format("{0}/{1}.thumbnail.jpg", @"d:\zero-k.info\www\Resources", resource.InternalName.EscapePath());
+                            var target = String.Format("{0}/{1}.thumbnail.jpg", GlobalConst.SiteDiskPath +  @"\Resources", resource.InternalName.EscapePath());
                             correctMinimap.Save(target, jgpEncoder, encoderParams);
                         }
                     }

@@ -1,4 +1,5 @@
-﻿@model object
+﻿@using ZkData
+@model object
 
 
 <!-- Google Code for Download installer Conversion Page -->
@@ -24,12 +25,12 @@ var google_conversion_value = 1;
 <script type="text/javascript">
     $(document).ready(function () {
         _gaq.push(['_trackEvent', 'Download', 'Download installer']);
-        setTimeout(function () { window.location = "http://zero-k.info/lobby/Zero-K.setup.exe"; }, 500);
+        setTimeout(function () { window.location = "/lobby/Zero-K.setup.exe"; }, 500);
     });
 </script>
 
 <h2>Thank you for downloading Zero-K</h2>
-<b>If your download does not start, please <a href='http://zero-k.info/lobby/Zero-K.setup.exe'>click here</a></b><br />
+<b>If your download does not start, please <a href='/lobby/Zero-K.setup.exe'>click here</a></b><br />
 <br />
 We are looking forward to meet you in game! :)<br />
 

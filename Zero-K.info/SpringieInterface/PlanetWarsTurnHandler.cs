@@ -28,7 +28,7 @@ public static class PlanetWarsTurnHandler
         Galaxy gal = db.Galaxies.Single(x => x.IsDefault);
         Planet planet = gal.Planets.Single(x => x.Resource.InternalName == mapName);
 
-        text.AppendFormat("Battle on http://zero-k.info/PlanetWars/Planet/{0} has ended\n", planet.PlanetID);
+        text.AppendFormat("Battle on {1}/PlanetWars/Planet/{0} has ended\n", planet.PlanetID, GlobalConst.BaseSiteUrl);
 
 
         Faction attacker = attackers.Where(x => x.Faction != null).Select(x => x.Faction).First();
@@ -312,10 +312,11 @@ public static class PlanetWarsTurnHandler
         planet = gal.Planets.Single(x => x.Resource.InternalName == mapName);
         if (planet.OwnerAccountID != oldOwner && planet.OwnerAccountID != null)
         {
-            text.AppendFormat("Congratulations!! Planet {0} was conquered by {1} !!  http://zero-k.info/PlanetWars/Planet/{2}\n",
+            text.AppendFormat("Congratulations!! Planet {0} was conquered by {1} !!  {3}/PlanetWars/Planet/{2}\n",
                 planet.Name,
                 planet.Account.Name,
-                planet.PlanetID);
+                planet.PlanetID,
+                GlobalConst.BaseSiteUrl);
         }
 
         try

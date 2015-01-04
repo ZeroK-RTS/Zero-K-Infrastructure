@@ -27,7 +27,7 @@ namespace ZeroKWeb.SpringieInterface
 				    if (info != null)
 				    {
 				        res.MapName = info.Map;
-                        res.Message = String.Format("Welcome to planet {0} http://zero-k.info/PlanetWars/Planet/{1} attacked", info.Name, info.PlanetID);
+                        res.Message = String.Format("Welcome to planet {0} {2}/PlanetWars/Planet/{1} attacked", info.Name, info.PlanetID, GlobalConst.BaseSiteUrl);
 				    } else res.MapName = context.Map;
 				}
 				else { 
