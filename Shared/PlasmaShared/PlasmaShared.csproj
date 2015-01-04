@@ -186,9 +186,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
-    <Compile Include="WebReferences\StatsCollector.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Whois.cs" />
   </ItemGroup>
   <ItemGroup>

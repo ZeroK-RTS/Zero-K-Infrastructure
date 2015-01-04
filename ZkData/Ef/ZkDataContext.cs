@@ -8,12 +8,6 @@ namespace ZkData
 {
     public partial class ZkDataContext : DbContext
     {
-        private static string ConnectionStringLocal = @"Data Source=.\SQLEXPRESS;Initial Catalog=zero-k_ef;Integrated Security=True;MultipleActiveResultSets=true";
-
-        private static string ConnectionStringLive = @"Data Source=omega.licho.eu,100;Initial Catalog=zero-k_ef;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
-
-
-
         public virtual DbSet<AbuseReport> AbuseReports { get; set; }
         public virtual DbSet<Account> Accounts { get; set; }
         public virtual DbSet<AccountBattleAward> AccountBattleAwards { get; set; }
@@ -141,7 +135,7 @@ namespace ZkData
             modelBuilder.Entity<Account>()
                 .HasMany(e => e.AccountRolesByAccountID)
                 .WithRequired(e => e.Account)
-                .HasForeignKey(e=>e.AccountID)
+                .HasForeignKey(e => e.AccountID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Account>()
@@ -152,13 +146,13 @@ namespace ZkData
             modelBuilder.Entity<Account>()
                 .HasMany(e => e.CampaignEvents)
                 .WithRequired(e => e.Account)
-                .HasForeignKey(e=>e.AccountID)
+                .HasForeignKey(e => e.AccountID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Account>()
                 .HasMany(e => e.Commanders)
                 .WithRequired(e => e.AccountByAccountID)
-                .HasForeignKey(e=>e.AccountID)
+                .HasForeignKey(e => e.AccountID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Account>()
@@ -307,15 +301,15 @@ namespace ZkData
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Account>()
-                .HasOptional(e=>e.Clan)
-                .WithMany(e=>e.Accounts)
-                .HasForeignKey(e=>e.ClanID)
+                .HasOptional(e => e.Clan)
+                .WithMany(e => e.Accounts)
+                .HasForeignKey(e => e.ClanID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Account>()
-                .HasMany(e=>e.ForumPosts)
-                .WithRequired(e=>e.Account)
-                .HasForeignKey(e=>e.AuthorAccountID)
+                .HasMany(e => e.ForumPosts)
+                .WithRequired(e => e.Account)
+                .HasForeignKey(e => e.AuthorAccountID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<AccountBattleAward>()
@@ -468,9 +462,9 @@ namespace ZkData
                 .Map(m => m.ToTable("EventClan").MapLeftKey("ClanID").MapRightKey("EventID"));
 
             modelBuilder.Entity<Clan>()
-                .HasMany(e=>e.Polls)
-                .WithOptional(e=>e.Clan)
-                .HasForeignKey(e=>e.RestrictClanID)
+                .HasMany(e => e.Polls)
+                .WithOptional(e => e.Clan)
+                .HasForeignKey(e => e.RestrictClanID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<CommanderDecorationSlot>()
@@ -587,9 +581,9 @@ namespace ZkData
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<ForumThread>()
-                .HasMany(e=>e.ForumPosts)
-                .WithRequired(e=>e.ForumThread)
-                .HasForeignKey(e=>e.ForumThreadID)
+                .HasMany(e => e.ForumPosts)
+                .WithRequired(e => e.ForumThread)
+                .HasForeignKey(e => e.ForumThreadID)
                 .WillCascadeOnDelete(true);
 
             modelBuilder.Entity<Galaxy>()
@@ -770,13 +764,7 @@ namespace ZkData
 
         static ZkDataContext()
         {
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<ZkDataContext,Configuration>());
-        }
-
-        public ZkDataContext()
-            : this(UseLiveDb)
-        {
-
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<ZkDataContext, Configuration>());
         }
 
         public void SubmitChanges()
@@ -786,9 +774,12 @@ namespace ZkData
 
         public override int SaveChanges()
         {
-            try {
+            try
+            {
                 return base.SaveChanges();
-            } catch (DbEntityValidationException e) {
+            }
+            catch (DbEntityValidationException e)
+            {
 
                 foreach (var eve in e.EntityValidationErrors)
                 {
@@ -832,16 +823,17 @@ namespace ZkData
         private static bool wasDbChecked = false;
         private static object locker = new object();
 
-#if DEBUG
-        public static bool UseLiveDb = false;
-#else 
-        public static bool UseLiveDb = true;
-#endif
 
         public static Action<ZkDataContext> DataContextCreated = context => { };
+
+        public ZkDataContext()
+            : this(GlobalConst.ZkDataContextConnectionString)
+        {
+        }
+
         
-        public ZkDataContext(bool? useLiveDb)
-            : base(useLiveDb != null ? (useLiveDb.Value ? ConnectionStringLive : ConnectionStringLocal) : (UseLiveDb ? ConnectionStringLive : ConnectionStringLocal))
+        public ZkDataContext(string connectionString)
+            : base(connectionString)
         {
             if (!wasDbChecked)
             {
