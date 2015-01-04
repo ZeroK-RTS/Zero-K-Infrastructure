@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaDownloader;
-using ZkData.ContentService;
+using PlasmaShared.ContentService;
 using ZkData.UnitSyncLib;
 
 namespace ZeroKLobby.Notifications

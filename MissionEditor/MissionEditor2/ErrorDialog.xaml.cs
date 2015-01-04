@@ -2,7 +2,8 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
-using ZkData.ContentService;
+using PlasmaShared.ContentService;
+
 
 namespace MissionEditor2
 {
@@ -31,8 +32,9 @@ namespace MissionEditor2
 			{
 				closeButton.IsEnabled = false;
 				var service = new ContentService();
-				service.SubmitStackTraceCompleted += service_SubmitStackTraceCompleted;
-				service.SubmitStackTraceAsync(ProgramType.MissionEditor, nameBox.Text, errorText, descriptionBox.Text, version);
+                // HACK reimplement
+				//service.SubmitStackTraceCompleted += service_SubmitStackTraceCompleted;
+				//service.SubmitStackTraceAsync(ProgramType.MissionEditor, nameBox.Text, errorText, descriptionBox.Text, version);
 				progressBar.Visibility = Visibility.Visible;
 			}
 			else Close();

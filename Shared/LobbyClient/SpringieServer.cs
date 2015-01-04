@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using PlasmaShared.ContentService;
 using ZkData;
-using ZkData.ContentService;
 
 namespace LobbyClient
 {
