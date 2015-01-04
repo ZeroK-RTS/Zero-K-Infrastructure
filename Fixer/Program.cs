@@ -184,8 +184,8 @@ namespace Fixer
             //var test = db.Accounts.OrderByDescending(x => x.EffectiveElo).WithTranslations().Take(5).ToList();
 
             //MigrateDatabase();
-            var db = new ZkDataContext(true);
-            var post = db.ForumPosts.First(x => x.ForumPostID == 113893);
+            //var db = new ZkDataContext();
+            //var post = db.ForumPosts.First(x => x.ForumPostID == 113893);
 
 
 
@@ -257,7 +257,7 @@ namespace Fixer
 
         static void SetPlanetTeamSizes()
         {
-            var db = new ZkDataContext(true);
+            var db = new ZkDataContext();
             var gal = db.Galaxies.First(x => x.IsDefault);
             var planets = gal.Planets.ToList().OrderBy(x=>x.Resource.MapDiagonal).ToList();
             var cnt = planets.Count;
@@ -275,7 +275,7 @@ namespace Fixer
 
         public static void RecalculateKudos()
         {
-            var db = new ZkDataContext(true);
+            var db = new ZkDataContext();
             foreach (var acc in db.Accounts.Where(x => x.KudosPurchases.Any() || x.ContributionsByAccountID.Any())) acc.Kudos = acc.KudosGained - acc.KudosSpent;
             db.SubmitAndMergeChanges();
         }
