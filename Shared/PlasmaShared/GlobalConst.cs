@@ -53,7 +53,9 @@ namespace ZkData
                     break;
             }
 
+            ResourceBaseUrl = string.Format("{0}Resources", BaseSiteUrl);
             BaseImageUrl = string.Format("{0}img/", BaseSiteUrl);
+            SelfUpdaterBaseUrl = string.Format("{0}lobby", BaseSiteUrl);
         }
 
         public static readonly string ZkDataContextConnectionString;
@@ -157,6 +159,8 @@ namespace ZkData
         public const int PlanetWarsMaxTeamsize = 4;
         public const int MinPlanetWarsLevel = 10;
         public const int MinPlanetWarsElo = 1000;
+        public static readonly string ResourceBaseUrl;
+        public static string SelfUpdaterBaseUrl;
 
         public static bool IsZkMod(string name)
         {

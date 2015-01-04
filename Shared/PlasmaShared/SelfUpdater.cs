@@ -46,9 +46,10 @@ namespace ZkData
         /// <param name="updateName">Name of the program "Zero-K" or "Springie"</param>
         /// <param name="targetPath">Override target executable path</param>
         /// <param name="urlBase">Url location</param>
-        public SelfUpdater(string updateName = null, string targetPath = null, string urlBase = "http://zero-k.info/lobby")
+        public SelfUpdater(string updateName = null, string targetPath = null, string urlBase = null)
         {
             this.urlBase = urlBase;
+            if (string.IsNullOrEmpty(this.urlBase)) this.urlBase = GlobalConst.SelfUpdaterBaseUrl;
             var entry = Assembly.GetEntryAssembly();
             TargetExecutablePath = targetPath ?? entry.Location;
             CurrentVersion = entry.GetName().Version.ToString();

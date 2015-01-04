@@ -17,7 +17,6 @@ namespace ZeroKLobby
 {
     public class Config: ICloneable, IPlasmaDownloaderConfig
     {
-        public const string BaseUrl = "http://zero-k.info/";
         public const string ConfigFileName = "ZeroKLobbyConfig.xml";
         public const string LogFile = "ZeroKLobbyErrors.txt";
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using ZeroKLobby.MapDownloader;
 using ZeroKLobby.MicroLobby;
+using ZkData;
 
 namespace ZeroKLobby
 {
@@ -80,12 +81,12 @@ namespace ZeroKLobby
 
             ButtonList = new List<ButtonInfo>() //normal arrangement
             {
-                new ButtonInfo() { Label = "HOME", TargetPath = "http://zero-k.info/", Icon= Buttons.home, Height = 32,Width = 80 },
+                new ButtonInfo() { Label = "HOME", TargetPath = GlobalConst.BaseSiteUrl, Icon= Buttons.home, Height = 32,Width = 80 },
                 new ButtonInfo() { Label = "CHAT", TargetPath = "chat", Icon= ZklResources.chat, Height = 32, Width = 65 },
                 new ButtonInfo()
                 {
                     Label = "SINGLEPLAYER",
-                    TargetPath = "http://zero-k.info/Missions",
+                    TargetPath = string.Format("{0}Missions", GlobalConst.BaseSiteUrl),
                     Icon = Buttons.spherebot,
                     Width = 125,
                     Height = 32,
