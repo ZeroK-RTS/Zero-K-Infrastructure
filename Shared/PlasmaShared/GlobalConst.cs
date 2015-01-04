@@ -37,25 +37,25 @@ namespace ZkData
             switch (Mode)
             {
                 case ModeType.Local:
-                    BaseSiteUrl = "http://localhost:9739/";
+                    BaseSiteUrl = "http://localhost:9739";
                     ZkDataContextConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=zero-k_ef;Integrated Security=True;MultipleActiveResultSets=true";
                     break;
                 case ModeType.Test:
-                    BaseSiteUrl = "http://test.zero-k.info/";
+                    BaseSiteUrl = "http://test.zero-k.info";
                     ZkDataContextConnectionString =
                         "@Data Source=omega.licho.eu,100;Initial Catalog=zero-k_test;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
 
                     break;
                 case ModeType.Live:
-                    BaseSiteUrl = "http://zero-k.info/";
+                    BaseSiteUrl = "http://zero-k.info";
                     ZkDataContextConnectionString =
                         "@Data Source=omega.licho.eu,100;Initial Catalog=zero-k_ef;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
                     break;
             }
 
-            ResourceBaseUrl = string.Format("{0}Resources", BaseSiteUrl);
-            BaseImageUrl = string.Format("{0}img/", BaseSiteUrl);
-            SelfUpdaterBaseUrl = string.Format("{0}lobby", BaseSiteUrl);
+            ResourceBaseUrl = string.Format("{0}/Resources", BaseSiteUrl);
+            BaseImageUrl = string.Format("{0}/img/", BaseSiteUrl);
+            SelfUpdaterBaseUrl = string.Format("{0}/lobby", BaseSiteUrl);
         }
 
         public static readonly string ZkDataContextConnectionString;

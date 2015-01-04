@@ -110,13 +110,13 @@ namespace NightWatch
                                     if (isAnteepSmurf)
                                     {
                                         client.Say(TasClient.SayPlace.Channel, ModeratorChannel, String.Format("Suspected Anteep smurf: {0} (ID match {1}) {2}", args.Name, args.ID,
-                                            acc != null ? string.Format("{1}Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl) : ""), false);
+                                            acc != null ? string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl) : ""), false);
                                     }
 
                                     if (args.ID != 0 && args.ID < 1000)
                                     {
                                         client.Say(TasClient.SayPlace.Channel, ModeratorChannel, String.Format("Suspected Anteep smurf: {0} (too short userID {1}) {2}", args.Name, args.ID,
-                                            acc != null ? string.Format("{1}Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl) : ""), false);
+                                            acc != null ? string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl) : ""), false);
                                     }
 
                                     db.SubmitChanges();
@@ -174,7 +174,7 @@ namespace NightWatch
                                                 if (resolved.Length > 0)
                                                 {
                                                     client.Say(TasClient.SayPlace.Channel, ModeratorChannel, String.Format("User {0} {3} has IP {1} on dnsbl.tornevall.org ({2} result/s)",
-                                                        args.Name, args.IP, resolved.Length, acc != null ? string.Format("{1}Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl) : ""), false);
+                                                        args.Name, args.IP, resolved.Length, acc != null ? string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl) : ""), false);
                                                     //client.AdminKickFromLobby(args.Name,
                                                     //                      "Connection using proxy or VPN is not allowed! (You can ask for exception). See http://dnsbl.tornevall.org/removal.php to get your IP removed from the blacklist.");
                                                 }
@@ -191,7 +191,7 @@ namespace NightWatch
                                             if (isAnteepSmurf)
                                             {
                                                 client.Say(TasClient.SayPlace.Channel, ModeratorChannel, String.Format("Suspected Anteep smurf: {0} (IP match {1}) {2}", args.Name, args.IP,
-                                                acc != null ? string.Format("{1}Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl) : ""), false);
+                                                acc != null ? string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl) : ""), false);
                                             }
                                         }
 

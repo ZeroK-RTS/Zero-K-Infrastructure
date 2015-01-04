@@ -71,7 +71,7 @@ namespace ZeroKLobby.Controls
 
         private void btnMapList_Click(object sender, EventArgs e)
         {
-            Program.MainWindow.navigationControl.Path = string.Format("{0}Maps", GlobalConst.BaseSiteUrl);
+            Program.MainWindow.navigationControl.Path = string.Format("{0}/Maps", GlobalConst.BaseSiteUrl);
         }
 
         private void btnGameOptions_Click(object sender, EventArgs e)

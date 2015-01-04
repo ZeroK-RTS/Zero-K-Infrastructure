@@ -27,7 +27,7 @@ namespace ZeroKLobby
                     password = tas.UserPassword;
                     var wc = new WebClient();
                     var uri =
-                        new Uri(string.Format("{2}Home/Logon?login={0}&password={1}",
+                        new Uri(string.Format("{2}/Home/Logon?login={0}&password={1}",
                                               Uri.EscapeDataString(login),
                                               Uri.EscapeDataString(password), 
                                               GlobalConst.BaseSiteUrl));

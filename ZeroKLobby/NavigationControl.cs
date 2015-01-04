@@ -86,7 +86,7 @@ namespace ZeroKLobby
                 new ButtonInfo()
                 {
                     Label = "SINGLEPLAYER",
-                    TargetPath = string.Format("{0}Missions", GlobalConst.BaseSiteUrl),
+                    TargetPath = string.Format("{0}/Missions", GlobalConst.BaseSiteUrl),
                     Icon = Buttons.spherebot,
                     Width = 125,
                     Height = 32,

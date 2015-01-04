@@ -203,7 +203,7 @@ namespace ZeroKLobby.MicroLobby
 
 		void helpForumItem_Click(object sender, EventArgs e)
 		{
-            Program.MainWindow.navigationControl.Path = string.Format("{0}Forum?categoryID=3", GlobalConst.BaseSiteUrl); //open using Navigation Bar. If internal browser fail, it open external browser.
+            Program.MainWindow.navigationControl.Path = string.Format("{0}/Forum?categoryID=3", GlobalConst.BaseSiteUrl); //open using Navigation Bar. If internal browser fail, it open external browser.
 		}
 
 		void lobbyLogButton_Click(object sender, EventArgs e)

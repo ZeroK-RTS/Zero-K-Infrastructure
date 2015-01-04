@@ -101,11 +101,11 @@ namespace CaTracker
 		            if (c.AccountByAccountID == null)
 		                tas.Say(TasClient.SayPlace.Channel,
 		                        "zkdev",
-                                string.Format("Warning, user account unknown yet, payment remains unassigned. If you know user name, please assign it manually {0}Contributions", GlobalConst.BaseSiteUrl),
+                                string.Format("Warning, user account unknown yet, payment remains unassigned. If you know user name, please assign it manually {0}/Contributions", GlobalConst.BaseSiteUrl),
 		                        true);
                     else tas.Say(TasClient.SayPlace.Channel,
                                 "zkdev",
-                                string.Format("It is {0} {2}Users/Detail/{1}", c.AccountByAccountID.Name, c.AccountID, GlobalConst.BaseSiteUrl),
+                                string.Format("It is {0} {2}/Users/Detail/{1}", c.AccountByAccountID.Name, c.AccountID, GlobalConst.BaseSiteUrl),
                                 true);
 		        };
             
