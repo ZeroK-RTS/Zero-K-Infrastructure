@@ -190,6 +190,10 @@
     <Compile Include="Migrations\201501031843539_PluralizeTablesAccident.Designer.cs">
       <DependentUpon>201501031843539_PluralizeTablesAccident.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201501041114503_FixEventPlanetCampaignRelation.cs" />
+    <Compile Include="Migrations\201501041114503_FixEventPlanetCampaignRelation.Designer.cs">
+      <DependentUpon>201501041114503_FixEventPlanetCampaignRelation.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MissionUpdater.cs" />
     <Compile Include="PayPalInterface.cs" />
@@ -218,6 +222,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201501031843539_PluralizeTablesAccident.resx">
       <DependentUpon>201501031843539_PluralizeTablesAccident.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501041114503_FixEventPlanetCampaignRelation.resx">
+      <DependentUpon>201501041114503_FixEventPlanetCampaignRelation.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

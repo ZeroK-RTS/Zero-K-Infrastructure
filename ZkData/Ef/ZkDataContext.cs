@@ -390,7 +390,7 @@ namespace ZkData
             modelBuilder.Entity<CampaignPlanet>()
                 .HasMany(e => e.CampaignEvents)
                 .WithOptional(e => e.CampaignPlanet)
-                .HasForeignKey(e => new { e.PlanetID, e.CampaignID })
+                .HasForeignKey(e => new { e.CampaignID, e.PlanetID })
                 .WillCascadeOnDelete();
 
             modelBuilder.Entity<CampaignPlanet>().HasMany(e => e.CampaignJournals).WithOptional(e => e.CampaignPlanet);
