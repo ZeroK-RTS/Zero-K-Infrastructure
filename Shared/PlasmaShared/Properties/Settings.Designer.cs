@@ -52,13 +52,5 @@ namespace PlasmaShared.Properties {
                 return ((string)(this["PlasmaShared_ModStats_StatsCollector"]));
             }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::ZkData.ModeType? Mode {
-            get {
-                return ((global::ZkData.ModeType)(this["Mode"]));
-            }
-        }
     }
 }

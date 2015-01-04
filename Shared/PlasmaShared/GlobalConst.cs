@@ -21,18 +21,14 @@ namespace ZkData
 
         static GlobalConst()
         {
-            if (Settings.Default.Mode.HasValue) {
-                Mode = Settings.Default.Mode.Value;
-            } else {
-                Mode = ModeType.Local;
-                #if LIVE
-                    Mode = ModeType.Live;
-                #endif
+            Mode = ModeType.Local;
+            #if LIVE
+                Mode = ModeType.Live;
+            #endif
+            #if TEST
+                Mode = ModeType.Test;
+            #endif
 
-                #if TEST
-                    Mode = ModeType.Test;
-                #endif
-            }
 
             switch (Mode)
             {

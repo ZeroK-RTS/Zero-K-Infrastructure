@@ -11,8 +11,5 @@
     <Setting Name="PlasmaShared_ModStats_StatsCollector" Type="(Web Service URL)" Scope="Application">
       <Value Profile="(Default)">http://planet-wars.eu/ModStats/StatsCollector.asmx</Value>
     </Setting>
-    <Setting Name="Mode" Type="System.Nullable&lt;ZkData.ModeType&gt;" Scope="Application">
-      <Value Profile="(Default)" />
-    </Setting>
   </Settings>
 </SettingsFile>
