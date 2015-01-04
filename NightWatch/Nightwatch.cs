@@ -86,7 +86,7 @@ namespace CaTracker
             adminCommands = new AdminCommands(tas);
             offlineMessages = new OfflineMessages(tas);
             playerMover = new PlayerMover(tas);
-            SteamHandler = new NwSteamHandler(tas, ConfigurationManager.AppSettings["SteamWebApiKey"]);
+            SteamHandler = new NwSteamHandler(tas, new Secrets().GetSteamWebApiKey());
 
 		    PayPalInterface = new PayPalInterface();
 		    PayPalInterface.Error += (e) =>

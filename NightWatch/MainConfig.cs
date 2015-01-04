@@ -7,7 +7,7 @@ namespace CaTracker
     {
         string accountName = GlobalConst.NightwatchName;
 
-        string accountPassword = GetPassword();
+        string accountPassword = new Secrets().GetNightwatchPassword();
         int attemptReconnectInterval = 60;
         bool attemptToRecconnect = true;
         string[] joinChannels = new[] { "main","zk" };
@@ -26,11 +26,5 @@ namespace CaTracker
         public string[] JoinChannels { get { return joinChannels; } set { joinChannels = value; } }
         public string ServerHost { get { return serverHost; } set { serverHost = value; } }
         public int ServerPort { get { return serverPort; } set { serverPort = value; } }
-
-        static string GetPassword()
-        {
-            var db = new ZkData.ZkDataContext();
-            return db.MiscVars.FirstOrDefault(x=> x.VarName == "NightwatchPassword").VarValue;
-        }
     } ;
 }
