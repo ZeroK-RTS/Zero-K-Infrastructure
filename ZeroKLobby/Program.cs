@@ -293,7 +293,7 @@ namespace ZeroKLobby
 
                 if (!Debugger.IsAttached && !Conf.DisableAutoUpdate) Program.SelfUpdater.StartChecking();
 
-               //if (Conf.IsFirstRun) Utils.OpenWeb("http://zero-k.info/Wiki/LobbyStart", false);
+                //if (Conf.IsFirstRun) Utils.OpenWeb(GlobalConst.BaseSiteUrl + "/Wiki/LobbyStart", false);
 
 				// download primary engine & game
 				MainWindow.Paint+= GetSpringZK;

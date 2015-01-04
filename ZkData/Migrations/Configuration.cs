@@ -1,4 +1,5 @@
 using System.Data.Entity.Migrations;
+using System.Linq;
 using ZkData;
 
 namespace ZkData.Migrations
@@ -11,7 +12,7 @@ namespace ZkData.Migrations
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(ZkDataContext context)
+        protected override void Seed(ZkDataContext db)
         {
             //  This method will be called after migrating to the latest version.
 
@@ -25,6 +26,8 @@ namespace ZkData.Migrations
             //      new Person { FullName = "Rowan Miller" }
             //    );
             //
+            
+            if (!db.MiscVars.Any(x => x.VarName == "NightwatchPassword")) db.MiscVars.Add(new MiscVar() { VarName = "NightwatchPassword", VarValue = "dummy" });
         }
     }
 }

@@ -23,14 +23,14 @@
 @Html.ActionLink("Back to List", "Index")
 <div class="">
     <div id="maps" class="relative fleft" style="width: @(size.Width)px; height: @(3*size.Height+10)px; margin: 10px;">
-        <a href='http://zero-k.info/Resources/@(m.MinimapName)' class="">
-            <img src='http://zero-k.info/Resources/@(m.MinimapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
+        <a href='/Resources/@(m.MinimapName)' class="">
+            <img src='/Resources/@(m.MinimapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
         </a>
-        <a href='http://zero-k.info/Resources/@(m.HeightmapName)' class="">
-            <img src='http://zero-k.info/Resources/@(m.HeightmapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
+        <a href='/Resources/@(m.HeightmapName)' class="">
+            <img src='/Resources/@(m.HeightmapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
         </a>
-        <a href='http://zero-k.info/Resources/@(m.MetalmapName)' class="">
-            <img src='http://zero-k.info/Resources/@(m.MetalmapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
+        <a href='/Resources/@(m.MetalmapName)' class="">
+            <img src='/Resources/@(m.MetalmapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
         </a>
     </div>
     <h2>@m.InternalName</h2>

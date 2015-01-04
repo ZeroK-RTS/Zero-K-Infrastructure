@@ -179,10 +179,11 @@ namespace ZeroKWeb.SpringieInterface
                         try
                         {
                             string message =
-                                string.Format("Congratulations {0}! You just leveled up to level {1}. http://zero-k.info/Users/Detail/{2}",
+                                string.Format("Congratulations {0}! You just leveled up to level {1}. {3}/Users/Detail/{2}",
                                               account.Name,
                                               account.Level,
-                                              account.AccountID);
+                                              account.AccountID,
+                                              GlobalConst.BaseSiteUrl);
                             //text.AppendLine(message);
                             AuthServiceClient.SendLobbyMessage(account, message);
                         }
@@ -193,7 +194,7 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 }
 
-                text.AppendLine(string.Format("BATTLE DETAILS AND REPLAY ----> http://zero-k.info/Battles/Detail/{0} <-----", sb.SpringBattleID));
+                text.AppendLine(string.Format("BATTLE DETAILS AND REPLAY ----> {1}/Battles/Detail/{0} <-----", sb.SpringBattleID, GlobalConst.BaseSiteUrl));
 
                 // create debriefing room, join players there and output message
                 string channelName = "B" + sb.SpringBattleID;

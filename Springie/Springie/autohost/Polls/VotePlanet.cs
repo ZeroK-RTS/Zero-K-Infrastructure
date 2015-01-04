@@ -1,5 +1,5 @@
 using LobbyClient;
-using ZkData.ContentService;
+using ZkData;
 
 namespace Springie.autohost.Polls
 {
@@ -31,7 +31,7 @@ namespace Springie.autohost.Polls
                         try
                         {
                             planetID = System.Convert.ToInt32(words[0]);
-                            question = string.Format("Attack planet {0} http://zero-k.info/Planetwars/Planet/{1} ?", planetID, planetID);   // FIXME get planet name
+                            question = string.Format("Attack planet {0} {2}/Planetwars/Planet/{1} ?", planetID, planetID, GlobalConst.BaseSiteUrl);   // FIXME get planet name
                             return true;
                         }
                         catch (System.FormatException ex)

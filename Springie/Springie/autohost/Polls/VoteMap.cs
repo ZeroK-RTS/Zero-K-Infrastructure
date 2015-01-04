@@ -1,5 +1,6 @@
 using LobbyClient;
-using ZkData.ContentService;
+using PlasmaShared.ContentService;
+using ZkData;
 
 namespace Springie.autohost.Polls
 {
@@ -29,7 +30,7 @@ namespace Springie.autohost.Polls
                     {
                         map = vals[0];
                         var resource = ah.cache.FindResourceData(new string[]{map}, ResourceType.Map);
-                        question = string.Format("Change map to {0} http://zero-k.info/Maps/Detail/{1} ?", map, resource[0].ResourceID);
+                        question = string.Format("Change map to {0} {2}/Maps/Detail/{1} ?", map, resource[0].ResourceID, GlobalConst.BaseSiteUrl);
                         return true;
                     }
                     else
@@ -66,7 +67,7 @@ namespace Springie.autohost.Polls
                             ResourceData[] resourceArray = ah.cache.FindResourceData(new string[] { map }, ResourceType.Map);
                             System.Collections.Generic.List<ResourceData> resourceList = new System.Collections.Generic.List<ResourceData>(resourceArray);
                             var resource = resourceList.Find(x => x.InternalName == map);
-                            question = string.Format("Change map to {0} http://zero-k.info/Maps/Detail/{1} ?", map, resource.ResourceID);
+                            question = string.Format("Change map to {0} {2}/Maps/Detail/{1} ?", map, resource.ResourceID, GlobalConst.BaseSiteUrl);
                             return true;
                         }
                     }

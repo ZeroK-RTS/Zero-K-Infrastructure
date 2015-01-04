@@ -371,10 +371,11 @@ namespace ZeroKWeb.Controllers
                 {
                     AuthServiceClient.SendLobbyMessage(planet.Account,
                                                        string.Format(
-                                                           "Warning: long range scanners detected fleet of {0} ships inbound to your planet {1} http://zero-k.info/Planetwars/Planet/{2}",
+                                                           "Warning: long range scanners detected fleet of {0} ships inbound to your planet {1} {3}/Planetwars/Planet/{2}",
                                                            cnt,
                                                            planet.Name,
-                                                           planet.PlanetID));
+                                                           planet.PlanetID,
+                                                           GlobalConst.BaseSiteUrl));
                 }
                 PlanetFaction pac = planet.PlanetFactions.SingleOrDefault(x => x.FactionID == acc.FactionID);
                 if (pac == null)
@@ -525,9 +526,10 @@ namespace ZeroKWeb.Controllers
                         {
                             AuthServiceClient.SendLobbyMessage(planet.Account,
                                                                string.Format(
-                                                                   "Warning, you just lost planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}",
+                                                                   "Warning, you just lost planet {0}!! {2}/PlanetWars/Planet/{1}",
                                                                    planet.Name,
-                                                                   planet.PlanetID));
+                                                                   planet.PlanetID,
+                                                                   GlobalConst.BaseSiteUrl));
                         }
                     }
                     else
@@ -545,9 +547,10 @@ namespace ZeroKWeb.Controllers
                                                                         sb));
                             AuthServiceClient.SendLobbyMessage(newAccount,
                                                                string.Format(
-                                                                   "Congratulations, you now own planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}",
+                                                                   "Congratulations, you now own planet {0}!! {2}/PlanetWars/Planet/{1}",
                                                                    planet.Name,
-                                                                   planet.PlanetID));
+                                                                   planet.PlanetID,
+                                                                   GlobalConst.BaseSiteUrl));
                         }
                         else
                         {
@@ -563,15 +566,17 @@ namespace ZeroKWeb.Controllers
 
                             AuthServiceClient.SendLobbyMessage(newAccount,
                                                                string.Format(
-                                                                   "Congratulations, you now own planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}",
+                                                                   "Congratulations, you now own planet {0}!! {2}/PlanetWars/Planet/{1}",
                                                                    planet.Name,
-                                                                   planet.PlanetID));
+                                                                   planet.PlanetID,
+                                                                   GlobalConst.BaseSiteUrl));
 
                             AuthServiceClient.SendLobbyMessage(planet.Account,
                                                                string.Format(
-                                                                   "Warning, you just lost planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}",
+                                                                   "Warning, you just lost planet {0}!! {2}/PlanetWars/Planet/{1}",
                                                                    planet.Name,
-                                                                   planet.PlanetID));
+                                                                   planet.PlanetID,
+                                                                   GlobalConst.BaseSiteUrl));
                         }
                     }
 

@@ -10,7 +10,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Timers;
-using ZkData.ContentService;
+using PlasmaShared.ContentService;
+using PlasmaShared.ModStats;
 using PlasmaShared.SpringieInterfaceReference;
 using ServiceStack.Text;
 using ZkData;
@@ -511,7 +512,6 @@ namespace LobbyClient
                 if (!isCheating && !isCrash && modOk && gameEndedOk) {
                     if (isHosting) {
                         var service = new SpringieService() { Proxy = null };
-                        var mis = new ContentService() { Proxy = null };
                         try {
                             battleResult.EngineBattleID = gameId;
                             battleResult.ReplayName = demoFileName;

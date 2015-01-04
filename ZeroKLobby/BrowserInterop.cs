@@ -15,9 +15,10 @@ namespace ZeroKLobby
         public BrowserInterop(TasClient tas, Config conf) {
             login = conf.LobbyPlayerName;
             password = conf.LobbyPlayerPassword;
-            WindowsApi.InternetSetCookiePub(Config.BaseUrl, GlobalConst.LoginCookieName, login);
-            WindowsApi.InternetSetCookiePub(Config.BaseUrl, GlobalConst.PasswordHashCookieName, ZkData.Utils.HashLobbyPassword(password));
-            WindowsApi.InternetSetCookiePub(Config.BaseUrl, GlobalConst.LobbyAccessCookieName, "1");
+            var baseUrl = GlobalConst.BaseSiteUrl;
+            WindowsApi.InternetSetCookiePub(baseUrl, GlobalConst.LoginCookieName, login);
+            WindowsApi.InternetSetCookiePub(baseUrl, GlobalConst.PasswordHashCookieName, ZkData.Utils.HashLobbyPassword(password));
+            WindowsApi.InternetSetCookiePub(baseUrl, GlobalConst.LobbyAccessCookieName, "1");
 
 
             tas.LoginAccepted += delegate
@@ -26,12 +27,13 @@ namespace ZeroKLobby
                     password = tas.UserPassword;
                     var wc = new WebClient();
                     var uri =
-                        new Uri(string.Format("http://zero-k.info/Home/Logon?login={0}&password={1}",
+                        new Uri(string.Format("{2}/Home/Logon?login={0}&password={1}",
                                               Uri.EscapeDataString(login),
-                                              Uri.EscapeDataString(password)));
+                                              Uri.EscapeDataString(password), 
+                                              GlobalConst.BaseSiteUrl));
 
-                    WindowsApi.InternetSetCookiePub(Config.BaseUrl, GlobalConst.LoginCookieName, login);
-                    WindowsApi.InternetSetCookiePub(Config.BaseUrl, GlobalConst.PasswordHashCookieName, ZkData.Utils.HashLobbyPassword(password));
+                    WindowsApi.InternetSetCookiePub(baseUrl, GlobalConst.LoginCookieName, login);
+                    WindowsApi.InternetSetCookiePub(baseUrl, GlobalConst.PasswordHashCookieName, ZkData.Utils.HashLobbyPassword(password));
 
                     if (conf.IsFirstRun) wc.DownloadString(uri);
                     else wc.DownloadStringAsync(uri);

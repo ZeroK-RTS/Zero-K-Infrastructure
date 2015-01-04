@@ -184,8 +184,8 @@ namespace Fixer
             //var test = db.Accounts.OrderByDescending(x => x.EffectiveElo).WithTranslations().Take(5).ToList();
 
             //MigrateDatabase();
-            var db = new ZkDataContext(true);
-            var post = db.ForumPosts.First(x => x.ForumPostID == 113893);
+            //var db = new ZkDataContext();
+            //var post = db.ForumPosts.First(x => x.ForumPostID == 113893);
 
 
 
@@ -257,7 +257,7 @@ namespace Fixer
 
         static void SetPlanetTeamSizes()
         {
-            var db = new ZkDataContext(true);
+            var db = new ZkDataContext();
             var gal = db.Galaxies.First(x => x.IsDefault);
             var planets = gal.Planets.ToList().OrderBy(x=>x.Resource.MapDiagonal).ToList();
             var cnt = planets.Count;
@@ -275,7 +275,7 @@ namespace Fixer
 
         public static void RecalculateKudos()
         {
-            var db = new ZkDataContext(true);
+            var db = new ZkDataContext();
             foreach (var acc in db.Accounts.Where(x => x.KudosPurchases.Any() || x.ContributionsByAccountID.Any())) acc.Kudos = acc.KudosGained - acc.KudosSpent;
             db.SubmitAndMergeChanges();
         }
@@ -367,16 +367,6 @@ namespace Fixer
         }
 
 
-        public static void FixDemoFiles()
-        {
-            var db = new ZkDataContext();
-            foreach (var sb in db.SpringBattles)
-            {
-                //sb.ReplayFileName = sb.ReplayFileName.Replace("http://springdemos.licho.eu/","http://zero-k.info/replays/");
-            }
-            //db.SubmitChanges();
-
-        }
 
         public static void FixMissionScripts()
         {
@@ -858,7 +848,7 @@ namespace Fixer
 
                 foreach (var resource in db.Resources.Where(x => x.TypeID == ResourceType.Map))//&&x.MapSizeSquared == null))
                 {
-                    var file = String.Format("{0}/{1}.metadata.xml.gz", @"d:\zero-k.info\www\Resources", resource.InternalName.EscapePath());
+                    var file = String.Format("{0}/{1}.metadata.xml.gz", GlobalConst.SiteDiskPath +  @"\Resources", resource.InternalName.EscapePath());
                     var map = (Map)new XmlSerializer(typeof(Map)).Deserialize(new MemoryStream(File.ReadAllBytes(file).Decompress()));
 
                     resource.MapWidth = map.Size.Width / 512;
@@ -882,7 +872,7 @@ namespace Fixer
                     resource.MapSizeSquared = (map.Size.Width / 512) * (map.Size.Height / 512);
                     resource.MapSizeRatio = (float)map.Size.Width / map.Size.Height;
 
-                    var minimap = String.Format("{0}/{1}.minimap.jpg", @"d:\zero-k.info\www\Resources", resource.InternalName.EscapePath());
+                    var minimap = String.Format("{0}/{1}.minimap.jpg", GlobalConst.SiteDiskPath +  @"\Resources", resource.InternalName.EscapePath());
 
                     using (var im = Image.FromFile(minimap))
                     {
@@ -911,7 +901,7 @@ namespace Fixer
                             var encoderParams = new EncoderParameters(1);
                             encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, 100L);
 
-                            var target = String.Format("{0}/{1}.thumbnail.jpg", @"d:\zero-k.info\www\Resources", resource.InternalName.EscapePath());
+                            var target = String.Format("{0}/{1}.thumbnail.jpg", GlobalConst.SiteDiskPath +  @"\Resources", resource.InternalName.EscapePath());
                             correctMinimap.Save(target, jgpEncoder, encoderParams);
                         }
                     }

@@ -86,7 +86,7 @@ namespace CaTracker
             adminCommands = new AdminCommands(tas);
             offlineMessages = new OfflineMessages(tas);
             playerMover = new PlayerMover(tas);
-            SteamHandler = new NwSteamHandler(tas, ConfigurationManager.AppSettings["SteamWebApiKey"]);
+            SteamHandler = new NwSteamHandler(tas, new Secrets().GetSteamWebApiKey());
 
 		    PayPalInterface = new PayPalInterface();
 		    PayPalInterface.Error += (e) =>
@@ -101,11 +101,11 @@ namespace CaTracker
 		            if (c.AccountByAccountID == null)
 		                tas.Say(TasClient.SayPlace.Channel,
 		                        "zkdev",
-                                "Warning, user account unknown yet, payment remains unassigned. If you know user name, please assign it manually http://zero-k.info/Contributions",
+                                string.Format("Warning, user account unknown yet, payment remains unassigned. If you know user name, please assign it manually {0}/Contributions", GlobalConst.BaseSiteUrl),
 		                        true);
                     else tas.Say(TasClient.SayPlace.Channel,
                                 "zkdev",
-                                string.Format("It is {0} http://zero-k.info/Users/Detail/{1}", c.AccountByAccountID.Name, c.AccountID),
+                                string.Format("It is {0} {2}/Users/Detail/{1}", c.AccountByAccountID.Name, c.AccountID, GlobalConst.BaseSiteUrl),
                                 true);
 		        };
             

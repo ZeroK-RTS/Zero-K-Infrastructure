@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using ZkData;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -202,12 +203,7 @@ namespace ZeroKLobby.MicroLobby
 
 		void helpForumItem_Click(object sender, EventArgs e)
 		{
-            //try
-            //{
-            //    Process.Start("http://zero-k.info/Forum?categoryID=3");
-            //}
-            //catch {}
-            Program.MainWindow.navigationControl.Path = "http://zero-k.info/Forum?categoryID=3"; //open using Navigation Bar. If internal browser fail, it open external browser.
+            Program.MainWindow.navigationControl.Path = string.Format("{0}/Forum?categoryID=3", GlobalConst.BaseSiteUrl); //open using Navigation Bar. If internal browser fail, it open external browser.
 		}
 
 		void lobbyLogButton_Click(object sender, EventArgs e)

@@ -3,6 +3,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using PlasmaDownloader;
+using ZkData;
 
 #endregion
 
@@ -19,8 +20,8 @@ namespace Springie
 		bool gargamelMode = true;
 		ProcessPriorityClass hostingProcessPriority = ProcessPriorityClass.AboveNormal;
 		bool redirectGameChat = true;
-		string serverHost = "lobby.springrts.com";
-		int serverPort = 8200;
+	    string serverHost = GlobalConst.LobbyServerHost;
+	    int serverPort = GlobalConst.LobbyServerPort;
 	    public string ClusterNode { get; set; }
         public string ExecutableName { get { return executableName; } set { executableName = value; } }
 	    public bool UseHolePunching { get; set; }
@@ -52,12 +53,11 @@ namespace Springie
         //4) Login to server (as player) using Lobby, 
         //5) Join a room called "KingRaptor Secret Clubhouse",
         //6) Use "magic" for password.
-	    public MainConfig() {
-#if DEBUG
-	        ClusterNode = "alpha";
-#else 
-            ClusterNode = "omega";
-#endif
-        }
+	    public MainConfig()
+	    {
+	        ClusterNode = GlobalConst.SpringieNode;
+	        serverHost = GlobalConst.LobbyServerHost;
+	        serverPort = GlobalConst.LobbyServerPort;
+	    }
 	} ;
 }

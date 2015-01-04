@@ -62,9 +62,10 @@ namespace ZkData
                 if (contribution != null && !verified) {
                     Error(
                         string.Format(
-                            "Warning, transaction {0} by {1} VERIFICATION FAILED, check that it is not a fake! http://zero-k.info/Contributions ",
+                            "Warning, transaction {0} by {1} VERIFICATION FAILED, check that it is not a fake! {2}/Contributions ",
                             parsed.TransactionID,
-                            parsed.Name));
+                            parsed.Name,
+                            GlobalConst.BaseSiteUrl));
                     using (var db = new ZkDataContext()) {
                         db.Contributions.First(x => x.ContributionID == contribution.ContributionID).Comment = "VERIFICATION FAILED";
                         db.SubmitAndMergeChanges();
@@ -253,7 +254,7 @@ namespace ZkData
         }
 
         static string GetCodeLink(string code) {
-            return string.Format("http://zero-k.info/Contributions/Redeem/{0}", code);
+            return string.Format(GlobalConst.BaseSiteUrl + "/Contributions/Redeem/{0}", code);
         }
 
         class ConvertResponse

@@ -52,7 +52,7 @@ namespace GalaxyDesigner
 		{
 			lbName.Content = planet.Name;
 			img.SnapsToDevicePixels = true;
-			img.Source = new BitmapImage(new Uri(string.Format("http://zero-k.info/img/planets/{0}", planet.Resource.MapPlanetWarsIcon)));
+			img.Source = new BitmapImage(new Uri(string.Format(GlobalConst.BaseSiteUrl + "/img/planets/{0}", planet.Resource.MapPlanetWarsIcon)));
 
 			//Matrix m = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice;
 			//double dpiFactor = 1 / m.M11;

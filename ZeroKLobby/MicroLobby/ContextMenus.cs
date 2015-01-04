@@ -255,7 +255,7 @@ namespace ZeroKLobby.MicroLobby
                     contextMenu.MenuItems.Add("-");
 
                     var details = new MenuItem("Details");
-                    details.Click += (s, e) => NavigationControl.Instance.Path = "http://zero-k.info/Users/LobbyDetail/" + user.LobbyID;
+                    details.Click += (s, e) => NavigationControl.Instance.Path = string.Format("{1}/Users/LobbyDetail/{0}", user.LobbyID, GlobalConst.BaseSiteUrl);
                     contextMenu.MenuItems.Add(details);
 
                     var pmItem = new MenuItem("Send Message");
@@ -289,7 +289,7 @@ namespace ZeroKLobby.MicroLobby
                     contextMenu.MenuItems.Add(ignoreUser);
 
                     var reportUser = new MenuItem("Report User");
-                    reportUser.Click += (s, e) => NavigationControl.Instance.Path = "http://zero-k.info/Users/ReportToAdminFromLobby/" + user.Name;
+                    reportUser.Click += (s, e) => NavigationControl.Instance.Path = string.Format("{1}/Users/ReportToAdminFromLobby/{0}", user.Name, GlobalConst.BaseSiteUrl);
                     contextMenu.MenuItems.Add(reportUser);
                 }
 
@@ -374,7 +374,7 @@ namespace ZeroKLobby.MicroLobby
                 contextMenu.MenuItems.Add("-");
 
                 var details = new System.Windows.Forms.MenuItem("Details");
-                details.Click += (s, e) => NavigationControl.Instance.Path = "http://zero-k.info/Users/LobbyDetail/" + control.UserName;
+                details.Click += (s, e) => NavigationControl.Instance.Path = string.Format("{1}/Users/LobbyDetail/{0}", control.UserName, GlobalConst.BaseSiteUrl);
                 contextMenu.MenuItems.Add(details);
 
                 if (Program.FriendManager.Friends.Contains(control.UserName))
@@ -398,7 +398,7 @@ namespace ZeroKLobby.MicroLobby
                 contextMenu.MenuItems.Add(joinItem);
 
                 var reportUser = new System.Windows.Forms.MenuItem("Report User");
-                reportUser.Click += (s, e) => NavigationControl.Instance.Path = "http://zero-k.info/Users/ReportToAdminFromLobby/" + control.UserName;
+                reportUser.Click += (s, e) => NavigationControl.Instance.Path = string.Format("{1}/Users/ReportToAdminFromLobby/{0}", control.UserName, GlobalConst.BaseSiteUrl);
                 contextMenu.MenuItems.Add(reportUser);
 
                 contextMenu.MenuItems.Add("-");

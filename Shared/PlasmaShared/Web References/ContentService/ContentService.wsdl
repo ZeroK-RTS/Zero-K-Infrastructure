@@ -220,29 +220,11 @@
             <s:element minOccurs="0" maxOccurs="1" name="missionName" type="s:string" />
             <s:element minOccurs="1" maxOccurs="1" name="score" type="s:int" />
             <s:element minOccurs="1" maxOccurs="1" name="gameSeconds" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="missionVars" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
       <s:element name="SubmitMissionScoreResponse">
-        <s:complexType />
-      </s:element>
-      <s:element name="SubmitStackTrace">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="1" maxOccurs="1" name="programType" type="tns:ProgramType" />
-            <s:element minOccurs="0" maxOccurs="1" name="playerName" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="exception" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="extraData" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="programVersion" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:simpleType name="ProgramType">
-        <s:restriction base="s:string">
-          <s:enumeration value="MissionEditor" />
-        </s:restriction>
-      </s:simpleType>
-      <s:element name="SubmitStackTraceResponse">
         <s:complexType />
       </s:element>
       <s:element name="VerifyAccountData">
@@ -365,12 +347,6 @@
   <wsdl:message name="SubmitMissionScoreSoapOut">
     <wsdl:part name="parameters" element="tns:SubmitMissionScoreResponse" />
   </wsdl:message>
-  <wsdl:message name="SubmitStackTraceSoapIn">
-    <wsdl:part name="parameters" element="tns:SubmitStackTrace" />
-  </wsdl:message>
-  <wsdl:message name="SubmitStackTraceSoapOut">
-    <wsdl:part name="parameters" element="tns:SubmitStackTraceResponse" />
-  </wsdl:message>
   <wsdl:message name="VerifyAccountDataSoapIn">
     <wsdl:part name="parameters" element="tns:VerifyAccountData" />
   </wsdl:message>
@@ -427,10 +403,6 @@
     <wsdl:operation name="SubmitMissionScore">
       <wsdl:input message="tns:SubmitMissionScoreSoapIn" />
       <wsdl:output message="tns:SubmitMissionScoreSoapOut" />
-    </wsdl:operation>
-    <wsdl:operation name="SubmitStackTrace">
-      <wsdl:input message="tns:SubmitStackTraceSoapIn" />
-      <wsdl:output message="tns:SubmitStackTraceSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="VerifyAccountData">
       <wsdl:input message="tns:VerifyAccountDataSoapIn" />
@@ -535,15 +507,6 @@
     </wsdl:operation>
     <wsdl:operation name="SubmitMissionScore">
       <soap:operation soapAction="http://tempuri.org/SubmitMissionScore" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="SubmitStackTrace">
-      <soap:operation soapAction="http://tempuri.org/SubmitStackTrace" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -664,15 +627,6 @@
     </wsdl:operation>
     <wsdl:operation name="SubmitMissionScore">
       <soap12:operation soapAction="http://tempuri.org/SubmitMissionScore" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="SubmitStackTrace">
-      <soap12:operation soapAction="http://tempuri.org/SubmitStackTrace" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

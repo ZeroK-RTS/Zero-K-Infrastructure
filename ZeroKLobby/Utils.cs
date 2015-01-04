@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using ZkData;
 
 namespace ZeroKLobby
 {
@@ -158,7 +159,7 @@ namespace ZeroKLobby
         }
 
         public static void OpenWeb(String url, bool openInternal) {
-            if (url.StartsWith("http://zero-k.info")) {
+            if (url.StartsWith(GlobalConst.BaseSiteUrl)) {
                 if (openInternal) Program.MainWindow.navigationControl.Path = url;
                 else Program.BrowserInterop.OpenUrl(url);
                 return;

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using ZeroKLobby;
 using ZeroKLobby.Lines;
+using ZkData;
 using ZkData.UnitSyncLib;
 using ZeroKLobby.MicroLobby.ExtrasTab;
 
@@ -70,7 +71,7 @@ namespace ZeroKLobby.Controls
 
         private void btnMapList_Click(object sender, EventArgs e)
         {
-            Program.MainWindow.navigationControl.Path = "http://zero-k.info/Maps";
+            Program.MainWindow.navigationControl.Path = string.Format("{0}/Maps", GlobalConst.BaseSiteUrl);
         }
 
         private void btnGameOptions_Click(object sender, EventArgs e)

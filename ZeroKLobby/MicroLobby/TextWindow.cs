@@ -281,13 +281,6 @@ namespace ZeroKLobby.MicroLobby
                         try
                         {
                             startHighLine = -1; // reset selection
-                            //if (clickedWord.StartsWith("spring://") || clickedWord.Contains("zero-k.info")) //tab name or zerok (or ZK) website
-                            //{
-                            //  Program.MainWindow.navigationControl.Path = clickedWord;
-                            //} else
-                            //{
-                            //  Utils.OpenWeb(clickedWord, false);
-                            //}
                             Program.MainWindow.navigationControl.Path = clickedWord; //request URL be opened (in internal browser or external depending on which is appropriate)
                         }
                         catch (Win32Exception ex)

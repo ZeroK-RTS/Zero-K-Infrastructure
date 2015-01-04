@@ -22,15 +22,11 @@ namespace ZeroKWeb
         const double CheckPeriodForValidLinks = 60*12; // check links every 12 hours
         static readonly Dictionary<int, RequestData> Requests = new Dictionary<int, RequestData>();
 
-        public static string[] Mirrors = new string[] { };
+        public static string[] Mirrors = GlobalConst.DefaultDownloadMirrors;
 
         static ResourceLinkProvider()
         {
-            var data = ConfigurationManager.AppSettings["Mirrors"];
-            var lines = data.Split('\n');
-            var newMirrors = new List<string>();
-            foreach (var l in lines) newMirrors.Add(l.Trim());
-            Mirrors = newMirrors.ToArray();
+            if (GlobalConst.DefaultDownloadMirrors != null) Mirrors = GlobalConst.DefaultDownloadMirrors;
         }
 
 

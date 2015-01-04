@@ -17,7 +17,6 @@ namespace ZeroKLobby
 {
     public class Config: ICloneable, IPlasmaDownloaderConfig
     {
-        public const string BaseUrl = "http://zero-k.info/";
         public const string ConfigFileName = "ZeroKLobbyConfig.xml";
         public const string LogFile = "ZeroKLobbyErrors.txt";
 
@@ -28,7 +27,6 @@ namespace ZeroKLobby
         StringCollection friends = new StringCollection(); // lacks events for adding friends immediatly
         int idleTime = 5;
         StringCollection ignoredUsers = new StringCollection();
-        string manualSpringPath = @"C:\Program Files\Spring";
         bool showHourlyChimes = true;
         bool showOfficialBattles = true;
         bool hideEmptyBattles = false;
@@ -39,8 +37,8 @@ namespace ZeroKLobby
         string skirmisherGame;
         string skirmisherMap;
 
-        string springServerHost = "lobby.springrts.com";
-        int springServerPort = 8200;
+        string springServerHost = GlobalConst.LobbyServerHost;
+        int springServerPort = GlobalConst.LobbyServerPort;
 
         string snd_play_cmd = "aplay";
         string snd_play_path = "/usr/share/sounds/alsa/test.wav"; // probably present in other than archlinux distros...
@@ -328,6 +326,8 @@ namespace ZeroKLobby
         public Config()
         {
             EnableVoiceChat = true;
+            SpringServerHost = GlobalConst.LobbyServerHost;
+            springServerPort = GlobalConst.LobbyServerPort;
         }
 
         public static Config Load(string path) {

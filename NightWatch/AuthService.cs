@@ -110,13 +110,13 @@ namespace NightWatch
                                     if (isAnteepSmurf)
                                     {
                                         client.Say(TasClient.SayPlace.Channel, ModeratorChannel, String.Format("Suspected Anteep smurf: {0} (ID match {1}) {2}", args.Name, args.ID,
-                                            acc != null ? "http://zero-k.info/Users/Detail/" + acc.AccountID : ""), false);
+                                            acc != null ? string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl) : ""), false);
                                     }
 
                                     if (args.ID != 0 && args.ID < 1000)
                                     {
                                         client.Say(TasClient.SayPlace.Channel, ModeratorChannel, String.Format("Suspected Anteep smurf: {0} (too short userID {1}) {2}", args.Name, args.ID,
-                                            acc != null ? "http://zero-k.info/Users/Detail/" + acc.AccountID : ""), false);
+                                            acc != null ? string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl) : ""), false);
                                     }
 
                                     db.SubmitChanges();
@@ -174,7 +174,7 @@ namespace NightWatch
                                                 if (resolved.Length > 0)
                                                 {
                                                     client.Say(TasClient.SayPlace.Channel, ModeratorChannel, String.Format("User {0} {3} has IP {1} on dnsbl.tornevall.org ({2} result/s)",
-                                                        args.Name, args.IP, resolved.Length, acc != null ? "http://zero-k.info/Users/Detail/" + acc.AccountID : ""), false);
+                                                        args.Name, args.IP, resolved.Length, acc != null ? string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl) : ""), false);
                                                     //client.AdminKickFromLobby(args.Name,
                                                     //                      "Connection using proxy or VPN is not allowed! (You can ask for exception). See http://dnsbl.tornevall.org/removal.php to get your IP removed from the blacklist.");
                                                 }
@@ -191,7 +191,7 @@ namespace NightWatch
                                             if (isAnteepSmurf)
                                             {
                                                 client.Say(TasClient.SayPlace.Channel, ModeratorChannel, String.Format("Suspected Anteep smurf: {0} (IP match {1}) {2}", args.Name, args.IP,
-                                                acc != null ? "http://zero-k.info/Users/Detail/" + acc.AccountID : ""), false);
+                                                acc != null ? string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl) : ""), false);
                                             }
                                         }
 
@@ -281,18 +281,6 @@ namespace NightWatch
                         try
                         {
                             var user = client.ExistingUsers[e.UserName];
-
-                            /*  obsolete; all major lobbies have multiengine support
-                            if (!user.IsZkLobbyUser && !user.IsNotaLobby && battle.EngineVersion != client.ServerSpringVersion &&
-                                battle.EngineVersion != client.ServerSpringVersion + ".0") {
-                                client.Say(TasClient.SayPlace.User,
-                                           user.Name,
-                                           string.Format(
-                                               "ALERT! YOU WILL DESYNC!! You NEED SPRING ENGINE {0} to play here. Simply join the game with Zero-K lobby ( http://zero-k.info/Wiki/Download ) OR get the engine from http://springrts.com/dl/buildbot/default/ OR build it on your Linux: http://springrts.com/wiki/Building_Spring_on_Linux ",
-                                               battle.EngineVersion),
-                                           false);
-                            }
-                             */
                             using (var db = new ZkDataContext())
                             {
                                 var acc = Account.AccountByLobbyID(db, user.LobbyID);
@@ -346,16 +334,6 @@ namespace NightWatch
                             acc.LobbyVersion = e.LobbyVersion;
                             acc.LastLobbyVersionCheck = DateTime.UtcNow;
                             db.SubmitAndMergeChanges();
-                            if (!acc.LobbyVersion.StartsWith("ZK"))
-                            {
-                                // FIXME abma broke this (LobbyVersion is now some huge-ass integer instead)
-                                //client.Say(TasClient.SayPlace.User,
-                                //           e.Name,
-                                //           string.Format(
-                                //               "WARNING: You are connected using {0} which is not fully compatible with this host. Please use Zero-K lobby. Download it from http://zero-k.info   NOTE: to play all Spring games with Zero-K lobby, untick \"Official games\" on its multiplayer tab. Thank you!",
-                                //               e.LobbyVersion),
-                                //           false);
-                            }
                         }
                     }
                 };

@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Xml.Serialization;
-using ZkData.ContentService;
+using PlasmaShared.ContentService;
 using ZkData.UnitSyncLib;
 
 #endregion
@@ -16,8 +16,6 @@ namespace ZkData
 {
     public class MetaDataCache
     {
-        const string ServerResourceUrlBase = "http://zero-k.info/Resources";
-
         public delegate void MapCallback(Map map, byte[] minimap, byte[] heightmap, byte[] metalmap);
 
         readonly Dictionary<string, List<MapRequestCallBacks>> currentMapRequests = new Dictionary<string, List<MapRequestCallBacks>>();
@@ -42,9 +40,9 @@ namespace ZkData
             Utils.CheckPath(resourceFolder);
         }
 
-        public ResourceData[] FindResourceData(string[] words, ContentService.ResourceType? type)
+        public ResourceData[] FindResourceData(string[] words, ResourceType? type)
         {
-            var cs = new ContentService.ContentService();
+            var cs = new ContentService();
             return cs.FindResourceData(words, type);
         }
 
@@ -102,13 +100,14 @@ namespace ZkData
 
                 lock (webClientForMap)
                 {
-                    minimap = webClientForMap.DownloadData(String.Format("{0}/{1}.minimap.jpg", ServerResourceUrlBase, mapName.EscapePath()));
+                    var serverResourceUrlBase = GlobalConst.ResourceBaseUrl;
+                    minimap = webClientForMap.DownloadData(String.Format("{0}/{1}.minimap.jpg", serverResourceUrlBase, mapName.EscapePath()));
 
-                    metalmap = webClientForMap.DownloadData(String.Format("{0}/{1}.metalmap.jpg", ServerResourceUrlBase, mapName.EscapePath()));
+                    metalmap = webClientForMap.DownloadData(String.Format("{0}/{1}.metalmap.jpg", serverResourceUrlBase, mapName.EscapePath()));
 
-                    heightmap = webClientForMap.DownloadData(String.Format("{0}/{1}.heightmap.jpg", ServerResourceUrlBase, mapName.EscapePath()));
+                    heightmap = webClientForMap.DownloadData(String.Format("{0}/{1}.heightmap.jpg", serverResourceUrlBase, mapName.EscapePath()));
 
-                    metadata = webClientForMap.DownloadData(String.Format("{0}/{1}.metadata.xml.gz", ServerResourceUrlBase, mapName.EscapePath()));
+                    metadata = webClientForMap.DownloadData(String.Format("{0}/{1}.metadata.xml.gz", serverResourceUrlBase, mapName.EscapePath()));
                 }
 
                 var map = GetMapMetadata(metadata, springVersion);
@@ -205,7 +204,7 @@ namespace ZkData
                 byte[] modData;
                 lock (webClientForMod)
                 {
-                    modData = webClientForMod.DownloadData(String.Format("{0}/{1}.metadata.xml.gz", ServerResourceUrlBase, modName.EscapePath()));
+                    modData = webClientForMod.DownloadData(String.Format("{0}/{1}.metadata.xml.gz", GlobalConst.ResourceBaseUrl, modName.EscapePath()));
                 }
 
                 var mod = GetModMetadata(modData, springVersion);
@@ -250,7 +249,7 @@ namespace ZkData
         {
             try
             {
-                var cs = new ContentService.ContentService();
+                var cs = new ContentService();
                 return cs.GetResourceDataByInternalName(name);
             }
             catch (Exception ex)
@@ -320,7 +319,7 @@ namespace ZkData
                 }
                 else
                 {
-                    var cs = new ContentService.ContentService();
+                    var cs = new ContentService();
                     try
                     {
                         var rd = cs.GetResourceDataByInternalName(ret.Name);
@@ -351,7 +350,7 @@ namespace ZkData
                 }
                 else
                 {
-                    var cs = new ContentService.ContentService();
+                    var cs = new ContentService();
                     try
                     {
                         var rd = cs.GetResourceDataByInternalName(ret.Name);

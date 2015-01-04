@@ -14,7 +14,6 @@ namespace PlasmaDownloader
 {
     public class EngineDownload: Download
     {
-        const string EngineDownloadPath = "http://springrts.com/dl/";
         readonly SpringPaths springPaths;
 
 
@@ -24,8 +23,9 @@ namespace PlasmaDownloader
         }
 
         public static List<string> GetEngineList() {
-            var data = new WebClient().DownloadString(string.Format("{0}buildbot/default/master/", EngineDownloadPath));
-            data += new WebClient().DownloadString(string.Format("{0}buildbot/default/develop/", EngineDownloadPath));
+            var engineDownloadPath = GlobalConst.EngineDownloadPath;
+            var data = new WebClient().DownloadString(string.Format("{0}buildbot/default/master/", engineDownloadPath));
+            data += new WebClient().DownloadString(string.Format("{0}buildbot/default/develop/", engineDownloadPath));
 
             var comparer = new VersionNumberComparer();
             var list =
@@ -52,24 +52,25 @@ namespace PlasmaDownloader
                     //if (platform == "linux64" && Name == "91.0") paths.Add("http://springrts.com/dl/spring_91.0.amd64.zip");
                     //else if (platform == "linux32" && Name == "91.0") paths.Add("http://springrts.com/dl/spring_91.0_portable_linux_i686.zip");
 
-					paths.Add(string.Format("{0}buildbot/syncdebug/develop/{1}/spring_[syncdebug]{1}_{2}", EngineDownloadPath, Name, archiveName));
-                    paths.Add(string.Format("{0}buildbot/default/master/{1}/spring_{1}_{2}", EngineDownloadPath, Name, archiveName));
-                    paths.Add(string.Format("{0}buildbot/default/develop/{1}/spring_{{develop}}{1}_{2}", EngineDownloadPath, Name, archiveName));
-                    paths.Add(string.Format("{0}buildbot/default/release/{1}/spring_{{release}}{1}_{2}", EngineDownloadPath, Name, archiveName));
-                    paths.Add(string.Format("{0}buildbot/default/MTsim/{1}/spring_{{MTsim}}{1}_{2}", EngineDownloadPath, Name, archiveName));
-                    paths.Add(string.Format("{0}buildbot/default/master/{1}/{3}/spring_{1}_{2}", EngineDownloadPath, Name, archiveName, platform));
+                var engineDownloadPath = GlobalConst.EngineDownloadPath;
+                paths.Add(string.Format("{0}buildbot/syncdebug/develop/{1}/spring_[syncdebug]{1}_{2}", engineDownloadPath, Name, archiveName));
+                    paths.Add(string.Format("{0}buildbot/default/master/{1}/spring_{1}_{2}", engineDownloadPath, Name, archiveName));
+                    paths.Add(string.Format("{0}buildbot/default/develop/{1}/spring_{{develop}}{1}_{2}", engineDownloadPath, Name, archiveName));
+                    paths.Add(string.Format("{0}buildbot/default/release/{1}/spring_{{release}}{1}_{2}", engineDownloadPath, Name, archiveName));
+                    paths.Add(string.Format("{0}buildbot/default/MTsim/{1}/spring_{{MTsim}}{1}_{2}", engineDownloadPath, Name, archiveName));
+                    paths.Add(string.Format("{0}buildbot/default/master/{1}/{3}/spring_{1}_{2}", engineDownloadPath, Name, archiveName, platform));
                     paths.Add(string.Format("{0}buildbot/default/develop/{1}/{3}/spring_{{develop}}{1}_{2}",
-                                            EngineDownloadPath,
+                                            engineDownloadPath,
                                             Name,
                                             archiveName,
                                             platform));
                     paths.Add(string.Format("{0}buildbot/default/release/{1}/{3}/spring_{{release}}{1}_{2}",
-                                            EngineDownloadPath,
+                                            engineDownloadPath,
                                             Name,
                                             archiveName,
                                             platform));
                     paths.Add(string.Format("{0}buildbot/default/MTsim/{1}/{3}/spring_{{MTsim}}{1}_{2}",
-                                            EngineDownloadPath,
+                                            engineDownloadPath,
                                             Name,
                                             archiveName,
                                             platform));
@@ -78,7 +79,7 @@ namespace PlasmaDownloader
                         var version = Name;
                         // if i==-1 we tested without version number
                         if (i >= 0) version = string.Format("{0}.{1}", Name, i);
-                        paths.Add(string.Format("{0}spring_{1}.zip", EngineDownloadPath, version));
+                        paths.Add(string.Format("{0}spring_{1}.zip", engineDownloadPath, version));
                     }
 
                     var source = paths.FirstOrDefault(VerifyFile) ?? paths.FirstOrDefault(VerifyFile);

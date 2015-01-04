@@ -15,12 +15,14 @@ using CMissionLib.Conditions;
 using CMissionLib.UnitSyncLib;
 using Microsoft.Win32;
 using MissionEditor2.Properties;
+using ZkData;
 using Action = CMissionLib.Action;
 using Condition = CMissionLib.Condition;
 using Trigger = CMissionLib.Trigger;
 using System.Reflection;
 using System.Windows.Input;
 using System.Windows.Media;
+using Mission = CMissionLib.Mission;
 
 namespace MissionEditor2
 {
@@ -836,7 +838,7 @@ namespace MissionEditor2
             Assembly assembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
             string version = fileVersionInfo.FileVersion;
-            var aboutString = String.Format("Mission Editor {0}\n\nby Quantum and KingRaptor\n\nFor help with the program, visit {1}", version, "zero-k.info/Wiki/MissionEditorStartPage");
+            var aboutString = String.Format("Mission Editor {0}\n\nby Quantum and KingRaptor\n\nFor help with the program, visit {1}", version, GlobalConst.BaseSiteUrl + "/Wiki/MissionEditorStartPage");
             var help = MainMenu.AddContainer("Help");
             help.AddAction("About", () => MessageBox.Show(aboutString, "About Mission Editor", MessageBoxButton.OK, MessageBoxImage.Information));
 
