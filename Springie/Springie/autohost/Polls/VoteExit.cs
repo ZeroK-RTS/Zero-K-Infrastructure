@@ -1,12 +1,13 @@
 using System.Linq;
 using LobbyClient;
+using PlasmaShared.SpringieInterfaceReference;
 
 namespace Springie.autohost.Polls
 {
     public class VoteExit: AbstractPoll
     {
         public VoteExit(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
-
+        BattleContext context;
 
         protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount) {
             winCount = 0;
@@ -14,6 +15,16 @@ namespace Springie.autohost.Polls
             if (spring.IsRunning)
             {
                 question = "Exit this game?";
+                int cnt = 0;
+                context = spring.StartContext;
+                foreach (var p in context.Players.Where(x => !x.IsSpectator))
+                {
+                    if (p.IsIngame || tas.MyBattle.Users.Any(x => x.Name == p.Name))
+                    {
+                        if (!tas.ExistingUsers[p.Name].IsAway) cnt++;
+                    }
+                }
+                winCount = cnt / 2 + 1;
                 return true;
             }
             else
@@ -27,7 +38,7 @@ namespace Springie.autohost.Polls
         {
             if (spring.IsRunning)
             {
-                var entry = spring.StartContext.Players.FirstOrDefault(x => x.Name == e.UserName);
+                var entry = context.Players.FirstOrDefault(x => x.Name == e.UserName);
                 if (entry == null || entry.IsSpectator)
                 {
                     ah.Respond(e, string.Format("You must be a player in the game"));
