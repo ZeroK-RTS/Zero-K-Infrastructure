@@ -28,7 +28,7 @@ namespace PlasmaShared
                     using (var reader = com.ExecuteReader()) {
                         while (reader.Read()) {
                             var name = reader.GetString(1);
-                            if (!name.StartsWith("__")) yield return reader.GetString(1);
+                            if (!name.StartsWith("__")) yield return name;
                         }
                     }
                 }
@@ -106,7 +106,7 @@ namespace PlasmaShared
             using (var con = new SqlConnection(targetConnectionString))
             {
                 con.Open();
-                using (var com = new SqlCommand(sb.ToString(), con)) {
+                using (var com = new SqlCommand(sb.ToString(), con) {CommandTimeout = 3600}) {
                     com.ExecuteNonQuery();
                 }
             }
