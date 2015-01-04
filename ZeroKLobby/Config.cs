@@ -326,6 +326,8 @@ namespace ZeroKLobby
         public Config()
         {
             EnableVoiceChat = true;
+            SpringServerHost = GlobalConst.LobbyServerHost;
+            springServerPort = GlobalConst.LobbyServerPort;
         }
 
         public static Config Load(string path) {
