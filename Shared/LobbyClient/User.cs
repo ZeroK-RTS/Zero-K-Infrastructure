@@ -79,6 +79,9 @@ namespace LobbyClient
 
         public bool ISSwlUser { get { return Cpu == 7777 || Cpu == 7778 || Cpu == 7779; } }
         public bool IsNotaLobby { get { return Cpu == GlobalConst.NotaLobbyLinuxCpu || Cpu == GlobalConst.NotaLobbyWindowsCpu || Cpu == GlobalConst.NotaLobbyMacCpu; } }
+
+        public bool IsFlobby { get { return Cpu == 4607052 || Cpu == 4607063 || Cpu == 4607053; } }
+
         public string Name { get; protected set; }
         public int Rank { get; protected set; }
         public bool IsZeroKAdmin { get; protected set; }
