@@ -175,13 +175,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Web References\ModStats\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Web References\SpringieInterfaceReference\Reference.cs">
       <AutoGen>True</AutoGen>
@@ -200,6 +198,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.Services" />

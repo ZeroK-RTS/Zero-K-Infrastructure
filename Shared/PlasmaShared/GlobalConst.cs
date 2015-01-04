@@ -1,64 +1,110 @@
-  using System.Security.Cryptography.X509Certificates;
+using System;
+using System.Security.Cryptography.X509Certificates;
+using PlasmaShared.Properties;
+using ZkData.UnitSyncLib;
 
 namespace ZkData
 {
-	public static class GlobalConst
-	{
+    public enum ModeType
+    {
+        Local = 0, // localhost debugging
+        Test = 1, // test.zero-k.info
+        Live = 2, // LIVE 
+    }
+
+    public static class GlobalConst
+    {
+        /// <summary>
+        /// Mode of operation / environment (local/test/live) - determined either by settings or by compile value
+        /// </summary>
+        public static readonly ModeType Mode;
+
+        static GlobalConst()
+        {
+            if (Settings.Default.Mode.HasValue) {
+                Mode = Settings.Default.Mode.Value;
+            } else {
+                Mode = ModeType.Local;
+                #if LIVE
+                    Mode = ModeType.Live;
+                #endif
+
+                #if TEST
+                    Mode = ModeType.Test;
+                #endif
+            }
+
+            switch (Mode)
+            {
+                case ModeType.Local:
+                    BaseSiteUrl = "http://localhost:9739/";
+                    break;
+                case ModeType.Test:
+                    BaseSiteUrl = "http://test.zero-k.info/";
+                    break;
+                case ModeType.Live:
+                    BaseSiteUrl = "http://zero-k.info/";
+                    break;
+            }
+
+            BaseImageUrl = string.Format("{0}img/", BaseSiteUrl);
+        }
+
+        public static readonly string BaseImageUrl;
+        public static readonly string BaseSiteUrl;
+
+        public const string InfologPathFormat = @"C:\projekty\springie_spring\infolog_{0}.txt";
+
+
+
         public const int SteamAppID = 334920;
-	    public const string InfologPathFormat=@"C:\projekty\springie_spring\infolog_{0}.txt";
-	    public const int ZkSpringieManagedCpu = 6666;
+        public const int ZkSpringieManagedCpu = 6666;
         public const int ZkLobbyUserCpu = 6667;
         public const int ZkLobbyUserCpuLinux = 6668;
-	    public const string BaseImageUrl = "http://zero-k.info/img/";
-        public const string BaseSiteUrl = "http://zero-k.info/";
-		public const int CommanderProfileCount = 6;
+        public const int CommanderProfileCount = 6;
         public const int NumCommanderLevels = 5;
 
         public const string DefaultEngineOverride = "91.0"; // hack for ZKL using tasclient's engine - override here for missions etc
 
         public const int MinDurationForXP = 240;    // seconds
         public const int MinDurationForElo = 60;
-	    public const int MinDurationForPlanetwars = 0;
+        public const int MinDurationForPlanetwars = 0;
 
-		public const int XpForMissionOrBots = 25;
-		public const int XpForMissionOrBotsVictory = 50;
+        public const int XpForMissionOrBots = 25;
+        public const int XpForMissionOrBotsVictory = 50;
 
-		public const double EloWeightMax = 6;
-		public const double EloWeightLearnFactor = 30;
+        public const double EloWeightMax = 6;
+        public const double EloWeightLearnFactor = 30;
         public const double EloWeightMalusFactor = -80;
 
         public const int LevelForElevatedSpringieRights = 20;
         public const int SpringieBossEffectiveRights = 3;
 
-		public const string AuthServiceUri = "net.tcp://localhost:8202";
-		public const string LoginCookieName = "zk_login";
+        public const string LoginCookieName = "zk_login";
         public const string ASmallCakeCookieName = "asmallcake";
         public const string ASmallCakeLoginCookieName = "alogin";
 
-		public const string MissionScriptFileName = "_missionScript.txt";
-		public const string MissionServiceUri = "http://zero-k.info/missions/MissionService.svc";
-		public const string MissionSlotsFileName = "_missionSlots.xml"; 
-#if DEPLOY
+        public const string MissionScriptFileName = "_missionScript.txt";
+        public const string MissionSlotsFileName = "_missionSlots.xml";
+
         public const string NightwatchName = "Nightwatch";
-#else 
-        public const string NightwatchName = "Nightwatch";
-#endif
-		public const string PasswordHashCookieName = "zk_passwordHash";
-		public const string LobbyAccessCookieName = "zk_lobby";
+
+        public const string PasswordHashCookieName = "zk_passwordHash";
+        public const string LobbyAccessCookieName = "zk_lobby";
 
         public const double PlanetMetalPerTurn = 1;
         public const double PlanetWarsEnergyToMetalRatio = 1 / 20.0;
         public const int BaseInfluencePerBattle = 35;
-	    public const double PlanetWarsAttackerMetal = 100;
+        public const double PlanetWarsAttackerMetal = 100;
         public const double PlanetWarsDefenderMetal = 100;
         public const int InfluencePerShip = 1;
         public const double InfluencePerTech = 1;
         public const double InfluenceDecay = 1;
-	    public const double InfluenceToCapturePlanet = 50.1;
+        public const double InfluenceToCapturePlanet = 50.1;
         public const double InfluenceToLosePlanet = 10;
-	    public const double DropshipsForFullWarpIPGain = 10;
-	    public const double SelfDestructRefund = 0.5;
-	    public const double BomberKillStructureChance = 0.1;
+        public const double DropshipsForFullWarpIPGain = 10;
+        public const double SelfDestructRefund = 0.5;
+        public const double BomberKillStructureChance = 0.1;
         public const double BomberKillIpChance = 1.2;
         public const double BomberKillIpAmount = 1;
         public const double StructureIngameDisableTimeMult = 2;
@@ -73,19 +119,19 @@ namespace ZkData
         public const bool RequireWormholeToTravel = true;
         public const bool CanChangeClanFaction = true;
         public const double MaxPwEloDifference = 120;
-	    
+
         public const PlanetWarsModes PlanetWarsMode = PlanetWarsModes.AllOffline;
 
-	    public const string MetalIcon = "/img/luaui/ibeam.png";
+        public const string MetalIcon = "/img/luaui/ibeam.png";
         public const string EnergyIcon = "/img/luaui/energy.png";
         public const string BomberIcon = "/img/fleets/neutral.png";
-	    public const string WarpIcon = "/img/warpcore.png";
+        public const string WarpIcon = "/img/warpcore.png";
 
-	    public const bool VpnCheckEnabled = false; // i hope this only turns off NW spam and not VPN blacklist
+        public const bool VpnCheckEnabled = false; // i hope this only turns off NW spam and not VPN blacklist
 
         public const double EurosToKudos = 10.0;
-	    public const string TeamEmail = "Zero-K team <team@zero-k.info>";
-	    public const int NotaLobbyLinuxCpu = 9999;
+        public const string TeamEmail = "Zero-K team <team@zero-k.info>";
+        public const int NotaLobbyLinuxCpu = 9999;
         public const int NotaLobbyWindowsCpu = 9998;
         public const int NotaLobbyMacCpu = 9997;
 
@@ -98,19 +144,18 @@ namespace ZkData
         public const int MinNetKarmaToVote = -30;
         public const int PostVoteHideThreshold = -6;
         public const bool OnlyAdminsSeePostVoters = false;
-        public const int VotesPerDay = 3;
-	    public const int PlanetWarsMinutesToAttack = 30;
+        public const int PlanetWarsMinutesToAttack = 30;
         public const int PlanetWarsMinutesToAccept = 10;
-	    public const int PlanetWarsMaxTeamsize = 4;
-	    public const int MinPlanetWarsLevel = 10;
+        public const int PlanetWarsMaxTeamsize = 4;
+        public const int MinPlanetWarsLevel = 10;
         public const int MinPlanetWarsElo = 1000;
 
-	    public static bool IsZkMod(string name)
+        public static bool IsZkMod(string name)
         {
             if (string.IsNullOrEmpty(name)) return false;
             return name.Contains("Zero-K");
         }
-	}
+    }
 
     public enum PlanetWarsModes
     {
