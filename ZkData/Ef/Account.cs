@@ -17,6 +17,7 @@ namespace ZkData
             EloPw = 1500;
             EloWeight = 1;
             Elo1v1Weight = 1;
+            SpringieLevel = 1;
 
             AbuseReportsByAccountID = new HashSet<AbuseReport>();
             AbuseReportsByReporterAccountID = new HashSet<AbuseReport>();
