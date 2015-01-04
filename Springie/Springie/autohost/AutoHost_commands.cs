@@ -1198,8 +1198,12 @@ namespace Springie.autohost
                 foreach (var user in balance.Players.Where(x => x.IsSpectator)) tas.ForceSpectator(user.Name);
 
                 bool comsharing = false;
-                var comsharing_modoption = tas.MyBattle.ModOptions.FirstOrDefault(x => x.Key.ToLower() == "coop");
-                if ((comsharing_modoption != null) && comsharing_modoption.Value) comsharing = true;
+                bool coopOptExists = tas.MyBattle.ModOptions.Any(x => x.Key.ToLower() == "coop");
+                if (coopOptExists)
+                {
+                    KeyValuePair<string, string> comsharing_modoption = tas.MyBattle.ModOptions.FirstOrDefault(x => x.Key.ToLower() == "coop");
+                    if (comsharing_modoption.Value != "0" && comsharing_modoption.Value != "false") comsharing = true;
+                }
                 foreach (var user in balance.Players.Where(x => !x.IsSpectator))
                 {
                     tas.ForceTeam(user.Name, comsharing ? user.AllyID : user.TeamID);
