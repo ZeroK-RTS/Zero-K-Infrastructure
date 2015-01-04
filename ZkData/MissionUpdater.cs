@@ -13,7 +13,7 @@ namespace ZkData
 {
     public class MissionUpdater
     {
-        const string MissionFileUrl = "http://zero-k.info/Missions/File/{0}";
+        static readonly string MissionFileUrl = GlobalConst.BaseSiteUrl + "/Missions/File/{0}";
 
         string GetModInfo(string missionNameWithVersion, string modName, string nameWithoutVersion, string shortName)
         {
@@ -102,13 +102,13 @@ namespace ZkData
             sh.SpringHash = 0;
             
 
-            var basePath = ConfigurationManager.AppSettings["ResourcePath"] ?? @"c:\projekty\zero-k.info\www\resources\";
+            var basePath = GlobalConst.SiteDiskPath + @"\resources\";
             File.WriteAllBytes(string.Format(@"{2}\{0}_{1}.torrent", resource.InternalName.EscapePath(), md5, basePath), torrentStream.ToArray());
             
             File.WriteAllBytes(string.Format(@"{1}\{0}.metadata.xml.gz", resource.InternalName.EscapePath(), basePath),
                                    MetaDataCache.SerializeAndCompressMetaData(modInfo));
             
-            File.WriteAllBytes(string.Format(@"c:\projekty\zero-k.info\www\img\missions\{0}.png", mission.MissionID, basePath), mission.Image.ToArray());
+            File.WriteAllBytes(string.Format(GlobalConst.SiteDiskPath + @"\img\missions\{0}.png", mission.MissionID, basePath), mission.Image.ToArray());
 
         }
 

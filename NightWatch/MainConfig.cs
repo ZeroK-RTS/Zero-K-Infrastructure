@@ -1,14 +1,12 @@
 using System.Linq;
+using ZkData;
 
 namespace CaTracker
 {
     public class Config
     {
-#if !DEPLOY
-        string accountName = "NightwatchDev";
-#else 
-        string accountName = "Nightwatch";
-#endif
+        string accountName = GlobalConst.NightwatchName;
+
         string accountPassword = GetPassword();
         int attemptReconnectInterval = 60;
         bool attemptToRecconnect = true;

@@ -64,6 +64,7 @@ namespace ZkData
         public static readonly string BaseSiteUrl;
 
         public const string InfologPathFormat = @"C:\projekty\springie_spring\infolog_{0}.txt";
+        public static string SiteDiskPath = @"c:\projekty\zero-k.info\www";
 
 
 
