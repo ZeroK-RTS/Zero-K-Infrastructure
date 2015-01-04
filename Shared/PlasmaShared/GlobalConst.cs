@@ -162,6 +162,7 @@ namespace ZkData
         public const int MinPlanetWarsElo = 1000;
         public static readonly string ResourceBaseUrl;
         public static string SelfUpdaterBaseUrl;
+        public static readonly string[] DefaultDownloadMirrors = {};
 
         public static bool IsZkMod(string name)
         {
