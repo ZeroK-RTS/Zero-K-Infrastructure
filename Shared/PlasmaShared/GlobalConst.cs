@@ -5,6 +5,7 @@ using ZkData.UnitSyncLib;
 
 namespace ZkData
 {
+    TYPO
     public enum ModeType
     {
         Local = 0, // localhost debugging
