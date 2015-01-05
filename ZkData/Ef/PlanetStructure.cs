@@ -7,7 +7,7 @@ using System.IO;
 
 namespace ZkData
 {
-    public partial class PlanetStructure
+    public class PlanetStructure
     {
         [Key]
         [Column(Order = 0)]

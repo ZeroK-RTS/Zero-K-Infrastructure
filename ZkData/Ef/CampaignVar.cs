@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ZkData
 {
-    public partial class CampaignVar
+    public class CampaignVar
     {
         
         public CampaignVar()
@@ -18,28 +18,19 @@ namespace ZkData
         [Column(Order = 0)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int CampaignID { get; set; }
-
         [Key]
         [Column(Order = 1)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int VarID { get; set; }
-
         [Required]
         [StringLength(50)]
         public string KeyString { get; set; }
-
         [StringLength(4000)]
         public string Description { get; set; }
 
-        
         public virtual ICollection<AccountCampaignVar> AccountCampaignVars { get; set; }
-
         public virtual Campaign Campaign { get; set; }
-
-        
         public virtual ICollection<CampaignJournalVar> CampaignJournalVars { get; set; }
-
-        
         public virtual ICollection<CampaignPlanetVar> CampaignPlanetVars { get; set; }
     }
 }

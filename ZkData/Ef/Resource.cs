@@ -6,7 +6,7 @@ using System.Drawing;
 
 namespace ZkData
 {
-    public partial class Resource
+    public class Resource
     {
         
         public Resource()

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ZkData
 {
-    public partial class FactionTreaty
+    public class FactionTreaty
     {
         
         public FactionTreaty()

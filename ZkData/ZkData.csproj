@@ -61,35 +61,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\Account.cs" />
-    <Compile Include="Data\AutohostMode.cs" />
-    <Compile Include="Data\Avatar.cs" />
-    <Compile Include="Data\CampaignJournal.cs" />
-    <Compile Include="Data\CampaignPlanet.cs" />
-    <Compile Include="Data\Clan.cs" />
-    <Compile Include="Data\Commander.cs" />
-    <Compile Include="Data\Decorations.cs" />
-    <Compile Include="Data\EnergyPriority.cs" />
-    <Compile Include="Data\Faction.cs" />
-    <Compile Include="Data\FactionTreaty.cs" />
-    <Compile Include="Data\ForumThread.cs" />
-    <Compile Include="Data\Galaxy.cs" />
-    <Compile Include="Data\IAuthService.cs" />
-    <Compile Include="Data\LobbyMessage.cs" />
-    <Compile Include="Data\Mission.cs" />
-    <Compile Include="Data\News.cs" />
-    <Compile Include="Data\Planet.cs" />
-    <Compile Include="Data\PlanetStructure.cs" />
-    <Compile Include="Data\Punishment.cs" />
-    <Compile Include="Data\Resource.cs" />
-    <Compile Include="Data\ResourceType.cs" />
-    <Compile Include="Data\RoleType.cs" />
-    <Compile Include="Data\SpringBattle.cs" />
-    <Compile Include="Data\Structure.cs" />
-    <Compile Include="Data\StructureType.cs" />
-    <Compile Include="Data\TreatyState.cs" />
-    <Compile Include="Data\Unlock.cs" />
-    <Compile Include="Data\UnlockType.cs" />
+    <Compile Include="Enums\DecorationIconPositions.cs" />
+    <Compile Include="Enums\DecorationIconTypes.cs" />
+    <Compile Include="Enums\UserLanguage.cs" />
+    <Compile Include="UserLanguageNoteAttribute.cs" />
+    <Compile Include="Enums\AutohostMode.cs" />
+    <Compile Include="Enums\EnergyPriority.cs" />
+    <Compile Include="CurrentLobbyStats.cs" />
+    <Compile Include="Enums\ResourceType.cs" />
+    <Compile Include="Enums\TreatyState.cs" />
+    <Compile Include="Enums\UnlockType.cs" />
     <Compile Include="DbExtensions.cs" />
     <Compile Include="Ef\AbuseReport.cs" />
     <Compile Include="Ef\Account.cs" />
@@ -164,7 +145,7 @@
     <Compile Include="Ef\TreatyEffect.cs" />
     <Compile Include="Ef\TreatyEffectType.cs" />
     <Compile Include="Ef\Unlock.cs" />
-    <Compile Include="Ef\ZkDataContext.cs" />
+    <Compile Include="ZkDataContext.cs" />
     <Compile Include="MissionService\IMissionService.cs" />
     <Compile Include="Migrations\201412312111372_Init.cs" />
     <Compile Include="Migrations\201412312111372_Init.Designer.cs">
@@ -198,7 +179,7 @@
     <Compile Include="MissionService\MissionUpdater.cs" />
     <Compile Include="PayPal\PayPalInterface.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ProtocolExtensions.cs" />
+    <Compile Include="LobbyProtocolExtensionsExtensions.cs" />
     <Compile Include="Secrets.cs" />
   </ItemGroup>
   <ItemGroup>

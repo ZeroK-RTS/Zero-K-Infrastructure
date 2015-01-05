@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace ZkData
 {
-    public partial class Avatar
+    public class Avatar
     {
         [Key]
         [StringLength(50)]

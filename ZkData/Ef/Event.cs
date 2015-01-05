@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ZkData
 {
-    public partial class Event
+    public class Event
     {
         
         public Event()
@@ -17,31 +17,18 @@ namespace ZkData
         }
 
         public int EventID { get; set; }
-
         [Required]
         [StringLength(4000)]
         public string Text { get; set; }
-
         public DateTime Time { get; set; }
-
         public int Turn { get; set; }
-
         [StringLength(4000)]
         public string PlainText { get; set; }
 
-        
         public virtual ICollection<Account> Accounts { get; set; }
-
-        
         public virtual ICollection<Clan> Clans { get; set; }
-
-        
         public virtual ICollection<Faction> Factions { get; set; }
-
-        
         public virtual ICollection<Planet> Planets { get; set; }
-
-        
         public virtual ICollection<SpringBattle> SpringBattles { get; set; }
     }
 }

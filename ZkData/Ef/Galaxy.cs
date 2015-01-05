@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace ZkData
 {
-    public partial class Galaxy
+    public class Galaxy
     {
         
         public Galaxy()
@@ -29,7 +29,6 @@ namespace ZkData
         public DateTime? AttackerSideChangeTime { get; set; }
         [Column(TypeName = "text")]
         public string MatchMakerState { get; set; }
-
         
         public virtual ICollection<Link> Links { get; set; }
         public virtual ICollection<Planet> Planets { get; set; }

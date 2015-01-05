@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace ZkData
 {
-    public partial class CommanderSlot
+    public class CommanderSlot
     {
         
         public CommanderSlot()
@@ -11,12 +11,9 @@ namespace ZkData
         }
 
         public int CommanderSlotID { get; set; }
-
         public int MorphLevel { get; set; }
 
         public UnlockTypes UnlockType { get; set; }
-
-        
         public virtual ICollection<CommanderModule> CommanderModules { get; set; }
     }
 }

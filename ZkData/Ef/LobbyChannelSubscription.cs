@@ -3,13 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ZkData
 {
-    public partial class LobbyChannelSubscription
+    public class LobbyChannelSubscription
     {
         [Key]
         [Column(Order = 0)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int AccountID { get; set; }
-
         [Key]
         [Column(Order = 1)]
         [StringLength(100)]

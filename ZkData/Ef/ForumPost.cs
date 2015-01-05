@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ZkData
 {
-    public partial class ForumPost
+    public class ForumPost
     {
         
         public ForumPost()
@@ -16,20 +16,13 @@ namespace ZkData
         }
 
         public int ForumPostID { get; set; }
-
         public int AuthorAccountID { get; set; }
-
         public DateTime Created { get; set; }
-
         [Required]
         public string Text { get; set; }
-
         public int ForumThreadID { get; set; }
-
         public int Upvotes { get; set; }
-
         public int Downvotes { get; set; }
-
         
         public virtual ICollection<AccountForumVote> AccountForumVotes { get; set; }
         public virtual ICollection<ForumPostEdit> ForumPostEdits { get; set; }

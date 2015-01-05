@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ZkData
 {
-    public partial class CommanderDecorationSlot
+    public class CommanderDecorationSlot
     {
         
         public CommanderDecorationSlot()
@@ -13,7 +13,6 @@ namespace ZkData
 
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int CommanderDecorationSlotID { get; set; }
-
         
         public virtual ICollection<CommanderDecoration> CommanderDecorations { get; set; }
     }

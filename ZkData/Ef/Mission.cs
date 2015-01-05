@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 namespace ZkData
 {
     [DataContract]
-    public partial class Mission
+    public class Mission
     {
         
         public Mission()

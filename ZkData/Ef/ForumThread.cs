@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ZkData
 {
-    public partial class ForumThread
+    public class ForumThread
     {
         
         public ForumThread()
@@ -25,35 +25,22 @@ namespace ZkData
         }
 
         public int ForumThreadID { get; set; }
-
         [Required]
         [StringLength(300)]
         public string Title { get; set; }
-
         public DateTime Created { get; set; }
-
         public int? CreatedAccountID { get; set; }
-
         public DateTime? LastPost { get; set; }
-
         public int? LastPostAccountID { get; set; }
-
         public int PostCount { get; set; }
-
         public int ViewCount { get; set; }
-
         public bool IsLocked { get; set; }
-
         public int? ForumCategoryID { get; set; }
-
         public bool IsPinned { get; set; }
-
         public int? RestrictedClanID { get; set; }
 
         public virtual Account AccountByCreatedAccountID { get; set; }
-
         public virtual Account AccountByLastPostAccountID { get; set; }
-
         public virtual ICollection<Clan> Clans { get; set; }
         public virtual Clan Clan { get; set; }
         public virtual ForumCategory ForumCategory { get; set; }

@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace ZkData
 {
-    public partial class Punishment
+    public class Punishment
     {
         public int PunishmentID { get; set; }
         public int AccountID { get; set; }

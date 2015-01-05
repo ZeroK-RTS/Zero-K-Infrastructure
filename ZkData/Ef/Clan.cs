@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ZkData
 {
-    public partial class Clan:IValidatableObject
+    public class Clan:IValidatableObject
     {
         
         public Clan()
@@ -19,30 +19,21 @@ namespace ZkData
         }
 
         public int ClanID { get; set; }
-
         [Required]
         [StringLength(50)]
         public string ClanName { get; set; }
-
         [StringLength(500)]
         public string Description { get; set; }
-
         [StringLength(20)]
         public string Password { get; set; }
-
         [StringLength(500)]
         public string SecretTopic { get; set; }
-
         [Required]
         [StringLength(6)]
         public string Shortcut { get; set; }
-
         public int? ForumThreadID { get; set; }
-
         public bool IsDeleted { get; set; }
-
         public int? FactionID { get; set; }
-
 
         public virtual ICollection<Account> Accounts { get; set; }
         public virtual ICollection<AccountRole> AccountRoles { get; set; }

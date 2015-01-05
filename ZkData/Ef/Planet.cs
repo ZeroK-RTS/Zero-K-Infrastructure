@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace ZkData
 {
-    public partial class Planet
+    public class Planet
     {
         
         public Planet()
