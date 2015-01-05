@@ -4,19 +4,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using LobbyClient;
+using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.SpringieInterface
 {
-    public class BalanceTeamsResult
-    {
-        public List<BotTeam> Bots = new List<BotTeam>();
-        public bool CanStart = true;
-        public bool DeleteBots;
-        public string Message;
-        public List<PlayerTeam> Players = new List<PlayerTeam>();
-    }
-
     public class Balancer
     {
         const double MaxCbalanceDifference = 40;

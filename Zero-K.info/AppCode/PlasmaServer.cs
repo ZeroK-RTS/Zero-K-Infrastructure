@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml.Serialization;
+using PlasmaShared;
 using ZkData.UnitSyncLib;
 using ZkData;
 
@@ -18,16 +19,21 @@ namespace ZeroKWeb
         public const int PlasmaServerApiVersion = 3;
         const int ThumbnailSize = 96;
 
-        public enum ReturnValue
-        {
-            Ok,
-            InvalidLogin,
-            ResourceNotFound,
-            InternalNameAlreadyExistsWithDifferentSpringHash,
-            Md5AlreadyExists,
-            Md5AlreadyExistsWithDifferentName,
-        }
+         public static ResourceData ToResourceData(Resource r)
+         {
+             var ret = new ResourceData() {
+                 ResourceID = r.ResourceID,
+                 InternalName = r.InternalName,
+                 ResourceType = r.TypeID,
+                 Dependencies = r.ResourceDependencies.Select(x => x.NeedsInternalName).ToList(),
+                 SpringHashes =
+                     r.ResourceSpringHashes.Select(x => new SpringHashEntry { SpringHash = x.SpringHash, SpringVersion = x.SpringVersion }).ToList(),
+                 FeaturedOrder = r.FeaturedOrder,
+             };
+             return ret;
+         }
 
+   
         public static ReturnValue DeleteResource(string internalName)
         {
             var db = new ZkDataContext();
@@ -41,19 +47,29 @@ namespace ZeroKWeb
         }
 
 
-        public static bool DownloadFile(string internalName,
-                                        out List<string> links,
-                                        out byte[] torrent,
-                                        out List<string> dependencies,
-                                        out ResourceType resourceType,
-                                        out string torrentFileName)
+        public static DownloadFileResult DownloadFile(string internalName)
         {
-            return ResourceLinkProvider.GetLinksAndTorrent(internalName,
+            List<string> links;
+            byte[] torrent;
+            List<string> dependencies;
+            ResourceType resourceType;
+            string torrentFileName;
+            var ok =  ResourceLinkProvider.GetLinksAndTorrent(internalName,
                                                            out links,
                                                            out torrent,
                                                            out dependencies,
                                                            out resourceType,
                                                            out torrentFileName);
+            if (ok) {
+                return new DownloadFileResult() {
+                    links = links,
+                    torrent = torrent,
+                    dependencies = dependencies,
+                    resourceType = resourceType,
+                    torrentFileName = torrentFileName,
+                };
+            }
+            return null;
         }
 
         public static List<string> GetLinkArray(ResourceContentFile cf)
@@ -66,7 +82,7 @@ namespace ZeroKWeb
         {
             var ret = FindResource(md5, internalName);
             if (ret == null) return null;
-            return new ResourceData(ret);
+            return ToResourceData(ret);
         }
 
         public static List<ResourceData> GetResourceList(DateTime? lastChange, out DateTime currentTime)
@@ -74,7 +90,7 @@ namespace ZeroKWeb
             var ct = DateTime.UtcNow;
             currentTime = ct;
             var db = new ZkDataContext();
-            return db.Resources.Where(x => lastChange == null || x.LastChange > lastChange).Select(r => new ResourceData(r)).ToList();
+            return db.Resources.Where(x => lastChange == null || x.LastChange > lastChange).AsEnumerable().Select(ToResourceData).ToList();
         }
 
 
@@ -285,44 +301,6 @@ namespace ZeroKWeb
             }
         }
 
-        public class ResourceData
-        {
-            public List<string> Dependencies;
-            public string InternalName;
-            public int ResourceID;
-            public ResourceType ResourceType;
-            public List<SpringHashEntry> SpringHashes;
-            public float? FeaturedOrder;
-            private int? MapFFAMaxTeams;
-            private bool? MapIs1v1;
-            private bool? MapIsFfa;
-            private bool? MapIsSpecial;
-            private bool? MapIsChickens;
-
-
-            public ResourceData() {}
-
-            public ResourceData(Resource r)
-            {
-                ResourceID = r.ResourceID;
-                InternalName = r.InternalName;
-                ResourceType = r.TypeID;
-                Dependencies = r.ResourceDependencies.Select(x => x.NeedsInternalName).ToList();
-                SpringHashes =
-                    r.ResourceSpringHashes.Select(x => new SpringHashEntry { SpringHash = x.SpringHash, SpringVersion = x.SpringVersion }).ToList();
-                FeaturedOrder = r.FeaturedOrder;
-                MapFFAMaxTeams = r.MapFFAMaxTeams;
-                MapIs1v1 = r.MapIs1v1;
-                MapIsFfa = r.MapIsFfa;
-                MapIsSpecial = r.MapIsSpecial;
-                MapIsChickens = r.MapIsChickens;
-            }
-        }
-
-        public class SpringHashEntry
-        {
-            public int SpringHash;
-            public string SpringVersion;
-        }
+     
     }
 }

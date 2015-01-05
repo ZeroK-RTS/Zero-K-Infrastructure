@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using JetBrains.Annotations;
 using LobbyClient;
 using PlasmaDownloader;
-using PlasmaShared.ContentService;
 using ZkData;
 using ZkData.UnitSyncLib;
 using ZeroKLobby.MicroLobby;
@@ -354,7 +353,7 @@ namespace ZeroKLobby
         {
             try
             {
-                var serv = new ContentService() { Proxy = null };
+                var serv = GlobalConst.GetContentService();
                 SinglePlayerBar.DownloadAndStartMission(serv.GetScriptMissionData(name));
             }
             catch (WebException ex)

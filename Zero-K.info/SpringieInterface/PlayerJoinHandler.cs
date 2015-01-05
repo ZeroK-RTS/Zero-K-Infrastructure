@@ -1,18 +1,10 @@
 ﻿using System.Linq;
 using LobbyClient;
+using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.SpringieInterface
 {
-    public class PlayerJoinResult
-    {
-        public bool ForceSpec;
-        public bool Kick;
-        public string PrivateMessage;
-        public string PublicMessage;
-    }
-
-
     public class PlayerJoinHandler
     {
         public static PlayerJoinResult AutohostPlayerJoined(BattleContext context, int accountID) {
@@ -28,12 +20,11 @@ namespace ZeroKWeb.SpringieInterface
                 }
                 Account account = Account.AccountByLobbyID(db, accountID); // accountID is in fact lobbyID
 
-                if (account != null)
-                {
-                    if (account.Level < context.GetConfig().MinLevel)
+                if (account != null) {
+                    var config = context.GetConfig();
+                    if (account.Level < config.MinLevel)
                     {
-                        res.PrivateMessage = string.Format("Sorry, PlanetWars is competive online campaign for experienced players. You need to be at least level {0} to play here. To increase your level, play more games on other hosts or open multiplayer game and play against computer AI bots.  You can still spectate this game, however.",
-                                                               context.GetConfig().MinLevel);
+                        res.PrivateMessage = string.Format("Sorry, PlanetWars is competive online campaign for experienced players. You need to be at least level {0} to play here. To increase your level, play more games on other hosts or open multiplayer game and play against computer AI bots.  You can still spectate this game, however.", config.MinLevel);
                         res.ForceSpec = true;
                         return res;
                     }

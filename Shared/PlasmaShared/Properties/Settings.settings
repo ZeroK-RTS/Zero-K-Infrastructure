@@ -2,12 +2,6 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="PlasmaShared.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="PlasmaShared_ContentService_ContentService" Type="(Web Service URL)" Scope="Application">
-      <Value Profile="(Default)">http://zero-k.info/ContentService.asmx</Value>
-    </Setting>
-    <Setting Name="PlasmaShared_SpringieInterfaceReference_SpringieService" Type="(Web Service URL)" Scope="Application">
-      <Value Profile="(Default)">http://zero-k.info/SpringieService.asmx</Value>
-    </Setting>
     <Setting Name="PlasmaShared_ModStats_StatsCollector" Type="(Web Service URL)" Scope="Application">
       <Value Profile="(Default)">http://planet-wars.eu/ModStats/StatsCollector.asmx</Value>
     </Setting>

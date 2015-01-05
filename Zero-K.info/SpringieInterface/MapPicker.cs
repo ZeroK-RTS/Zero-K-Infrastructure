@@ -2,17 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LobbyClient;
+using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.SpringieInterface
 {
-	public class RecommendedMapResult
-	{
-		public string MapName;
-		public string Message;
-	}
-
-	public class MapPicker
+    public class MapPicker
 	{
 
 		public static RecommendedMapResult GetRecommendedMap(BattleContext context, bool pickNew) {

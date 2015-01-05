@@ -8,9 +8,8 @@ using System.Net.Sockets;
 using System.Timers;
 using System.Xml.Serialization;
 using LobbyClient;
-using PlasmaShared.SpringieInterfaceReference;
+using PlasmaShared;
 using ZkData;
-using PlasmaShared.SpringieInterfaceReference;
 using Springie.autohost;
 
 namespace Springie
@@ -125,24 +124,22 @@ namespace Springie
         {
             try
             {
-                using (var serv = new SpringieService())
-                {
-                    serv.Timeout = 5000;
-                    var configs = serv.GetClusterConfigs(Config.ClusterNode);
+                var serv = GlobalConst.GetSpringieService();
+                var configs = serv.GetClusterConfigs(Config.ClusterNode);
 
-                    var copy = new List<AutoHost>();
-                    lock (autoHosts)
-                    {
-                        copy = autoHosts.ToList();
-                    }
-                    foreach (var conf in configs)
-                    {
-                        if (!copy.Any(x => x.config.Login == conf.Login)) SpawnAutoHost(conf, null).Start();
-                        else foreach (var ah in copy.Where(x => x.config.Login == conf.Login && x.SpawnConfig == null)) ah.config = conf;
-                    }
-                    var todel = copy.Where(x => !configs.Any(y => y.Login == x.config.Login)).ToList();
-                    foreach (var ah in todel) StopAutohost(ah);
+                var copy = new List<AutoHost>();
+                lock (autoHosts)
+                {
+                    copy = autoHosts.ToList();
                 }
+                foreach (var conf in configs)
+                {
+                    if (!copy.Any(x => x.config.Login == conf.Login)) SpawnAutoHost(conf, null).Start();
+                    else foreach (var ah in copy.Where(x => x.config.Login == conf.Login && x.SpawnConfig == null)) ah.config = conf;
+                }
+                var todel = copy.Where(x => !configs.Any(y => y.Login == x.config.Login)).ToList();
+                foreach (var ah in todel) StopAutohost(ah);
+
 
             }
             catch (Exception ex)
@@ -218,7 +215,7 @@ namespace Springie
             }
             catch (Exception ex)
             {
-                Trace.TraceError("Error while checking autohosts: {0}",ex);
+                Trace.TraceError("Error while checking autohosts: {0}", ex);
             }
             finally
             {

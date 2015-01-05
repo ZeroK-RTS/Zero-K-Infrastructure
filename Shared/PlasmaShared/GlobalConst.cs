@@ -1,5 +1,7 @@
 using System;
 using System.Security.Cryptography.X509Certificates;
+using System.ServiceModel;
+using PlasmaShared;
 using PlasmaShared.Properties;
 using ZkData.UnitSyncLib;
 
@@ -61,6 +63,26 @@ namespace ZkData
             ResourceBaseUrl = string.Format("{0}/Resources", BaseSiteUrl);
             BaseImageUrl = string.Format("{0}/img/", BaseSiteUrl);
             SelfUpdaterBaseUrl = string.Format("{0}/lobby", BaseSiteUrl);
+
+            contentServiceFactory = new ChannelFactory<IContentService>(CreateBasicHttpBinding(), string.Format("{0}/ContentService.svc", BaseSiteUrl));
+            springieServiceFactory = new ChannelFactory<ISpringieService>(CreateBasicHttpBinding(), string.Format("{0}/SpringieService.svc", BaseSiteUrl));
+        }
+
+        public static BasicHttpBinding CreateBasicHttpBinding()
+        {
+            var binding = new BasicHttpBinding();
+            binding.ReceiveTimeout = TimeSpan.FromHours(1);
+            binding.OpenTimeout = TimeSpan.FromHours(1);
+            binding.CloseTimeout = TimeSpan.FromHours(1);
+            binding.SendTimeout = TimeSpan.FromHours(1);
+            binding.MaxBufferSize = 6553600;
+            binding.MaxBufferPoolSize = 6553600;
+            binding.MaxReceivedMessageSize = 6553600;
+            binding.ReaderQuotas.MaxArrayLength = 1638400;
+            binding.ReaderQuotas.MaxStringContentLength = 819200;
+            binding.ReaderQuotas.MaxBytesPerRead = 409600;
+            binding.Security.Mode = BasicHttpSecurityMode.None;
+            return binding;
         }
 
         public static readonly string ZkDataContextConnectionString;
@@ -179,6 +201,21 @@ namespace ZkData
             if (string.IsNullOrEmpty(name)) return false;
             return name.Contains("Zero-K");
         }
+
+
+        static readonly ChannelFactory<IContentService> contentServiceFactory;
+        static readonly ChannelFactory<ISpringieService> springieServiceFactory;
+
+        public static IContentService GetContentService()
+        {
+            return contentServiceFactory.CreateChannel();
+        }
+
+        public static ISpringieService GetSpringieService()
+        {
+            return springieServiceFactory.CreateChannel();
+        }
+
     }
 
     public enum PlanetWarsModes

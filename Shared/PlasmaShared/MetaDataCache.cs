@@ -3,11 +3,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Xml.Serialization;
-using PlasmaShared.ContentService;
+using PlasmaShared;
 using ZkData.UnitSyncLib;
 
 #endregion
@@ -40,9 +41,9 @@ namespace ZkData
             Utils.CheckPath(resourceFolder);
         }
 
-        public ResourceData[] FindResourceData(string[] words, ResourceType? type)
+        public List<ResourceData> FindResourceData(string[] words, ResourceType? type)
         {
-            var cs = new ContentService();
+            var cs = GlobalConst.GetContentService();
             return cs.FindResourceData(words, type);
         }
 
@@ -247,9 +248,8 @@ namespace ZkData
 
         public ResourceData GetResourceDataByInternalName(string name)
         {
-            try
-            {
-                var cs = new ContentService();
+            try {
+                var cs = GlobalConst.GetContentService();
                 return cs.GetResourceDataByInternalName(name);
             }
             catch (Exception ex)
@@ -317,9 +317,8 @@ namespace ZkData
                     var hash = scanner.GetSpringHash(ret.Name, springVersion);
                     ret.Checksum = hash;
                 }
-                else
-                {
-                    var cs = new ContentService();
+                else {
+                    var cs = GlobalConst.GetContentService();
                     try
                     {
                         var rd = cs.GetResourceDataByInternalName(ret.Name);
@@ -348,9 +347,8 @@ namespace ZkData
                     var hash = scanner.GetSpringHash(ret.Name, springVersion);
                     ret.Checksum = hash;
                 }
-                else
-                {
-                    var cs = new ContentService();
+                else {
+                    var cs = GlobalConst.GetContentService();
                     try
                     {
                         var rd = cs.GetResourceDataByInternalName(ret.Name);

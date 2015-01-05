@@ -4,40 +4,11 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using LobbyClient;
+using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.SpringieInterface
 {
-    public class SpringBattleStartSetup
-    {
-        public List<ScriptKeyValuePair> ModOptions = new List<ScriptKeyValuePair>();
-        public List<UserCustomParameters> UserParameters = new List<UserCustomParameters>();
-        public BalanceTeamsResult BalanceTeamsResult;
-
-        #region Nested type: ScriptKeyValuePair
-
-        public class ScriptKeyValuePair
-        {
-            public string Key;
-            public string Value;
-        }
-
-        #endregion
-
-        #region Nested type: UserCustomParameters
-
-        public class UserCustomParameters
-        {
-            public int LobbyID;
-            public List<ScriptKeyValuePair> Parameters = new List<ScriptKeyValuePair>();
-        }
-
-        
-        #endregion
-    }
-
-    
-
     public class StartSetup
     {
         static bool listOnlyThatLevelsModules = false;  // may cause bugs

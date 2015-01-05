@@ -29,6 +29,7 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
+    <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -103,6 +104,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Entity" />
@@ -141,6 +144,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ModStatsDb.dbml</DependentUpon>
     </Compile>
+    <Compile Include="ContentService.svc.cs">
+      <DependentUpon>ContentService.svc</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\ClansController.cs" />
     <Compile Include="Controllers\CampaignController.cs" />
     <Compile Include="Controllers\FactionsController.cs" />
@@ -149,21 +155,15 @@
     <Compile Include="Controllers\ReplaysController.cs" />
     <Compile Include="Controllers\UnitStatsController.cs" />
     <Compile Include="AppCode\MarkdownHelper.cs" />
-    <Compile Include="SpringieInterface\AutohostConfigs.cs" />
     <Compile Include="SpringieInterface\Balancer.cs" />
     <Compile Include="AppCode\Global.cs" />
     <Compile Include="AppCode\HtmlHelperExtensions.cs" />
     <Compile Include="AppCode\JsonRequest.cs" />
-    <Compile Include="SpringieInterface\BattleContext.cs" />
     <Compile Include="SpringieInterface\BattleResultHandler.cs" />
     <Compile Include="SpringieInterface\MapPicker.cs" />
     <Compile Include="AppCode\NoCache.cs" />
     <Compile Include="AppCode\SpotlightHandler.cs" />
     <Compile Include="AppCode\WikiHandler.cs" />
-    <Compile Include="ContentService.asmx.cs">
-      <DependentUpon>ContentService.asmx</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Controllers\BattlesController.cs" />
     <Compile Include="Controllers\ForumController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -215,9 +215,8 @@
     <Compile Include="SpringieInterface\PlanetWarsTurnHandler.cs" />
     <Compile Include="SpringieInterface\PlayerJoinHandler.cs" />
     <Compile Include="SpringieInterface\StartSetup.cs" />
-    <Compile Include="SpringieService.asmx.cs">
-      <DependentUpon>SpringieService.asmx</DependentUpon>
-      <SubType>Component</SubType>
+    <Compile Include="SpringieService.svc.cs">
+      <DependentUpon>SpringieService.svc</DependentUpon>
     </Compile>
     <Compile Include="UnlocksAdmin.aspx.cs">
       <DependentUpon>UnlocksAdmin.aspx</DependentUpon>
@@ -228,7 +227,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ContentService.asmx" />
+    <Content Include="ContentService.svc" />
     <Content Include="favicon.png" />
     <Content Include="Img\abuse.png" />
     <Content Include="Img\add.png" />
@@ -1252,7 +1251,7 @@
     <Content Include="Scripts\nicetitle.js" />
     <Content Include="Scripts\raphael-min.js" />
     <Content Include="Scripts\site_main.js" />
-    <Content Include="SpringieService.asmx" />
+    <Content Include="SpringieService.svc" />
     <Content Include="Styles\base.css" />
     <Content Include="Styles\dark-hive\images\ui-bg_flat_30_cccccc_40x100.png" />
     <Content Include="Styles\dark-hive\images\ui-bg_flat_50_5c5c5c_40x100.png" />

@@ -183,7 +183,8 @@ namespace Fixer
             //var db = new ZkDataContext(true);
             //var test = db.Accounts.OrderByDescending(x => x.EffectiveElo).WithTranslations().Take(5).ToList();
 
-            MigrateDatabase();
+            //MigrateDatabase();
+            var test = GlobalConst.GetContentService().DownloadFile("Zero-K v1.1.0");
             //var db = new ZkDataContext();
             //var post = db.ForumPosts.First(x => x.ForumPostID == 113893);
 

@@ -1,5 +1,8 @@
+using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using LobbyClient;
-using PlasmaShared.ContentService;
+using PlasmaShared;
 using ZkData;
 
 namespace Springie.autohost.Polls
@@ -45,27 +48,25 @@ namespace Springie.autohost.Polls
                     {
                         if (tas.MyBattle != null && !spring.IsRunning)
                         {
-                            var serv = new PlasmaShared.SpringieInterfaceReference.SpringieService();
-                            serv.Timeout = 15000;
-                            serv.GetRecommendedMapCompleted += (sender, args) =>
-                            {
-                                if (!args.Cancelled && args.Error == null)
-                                {
-                                    var foundMap = args.Result;
-                                    if (foundMap != null && foundMap.MapName != null && tas.MyBattle != null)
-                                    {
-                                        if (tas.MyBattle.MapName != foundMap.MapName)
-                                        {
-                                            map = foundMap.MapName;
-                                        }
-                                    }
-
+                            var serv = GlobalConst.GetSpringieService();
+                            Task.Factory.StartNew(() => {
+                                RecommendedMapResult foundMap;
+                                try {
+                                    foundMap = serv.GetRecommendedMap(tas.MyBattle.GetContext(), true);
+                                } catch (Exception ex) {
+                                    Trace.TraceError(ex.ToString());
+                                    return;
                                 }
-                            };
-                            serv.GetRecommendedMapAsync(tas.MyBattle.GetContext(), true);
+                                if (foundMap != null && foundMap.MapName != null && tas.MyBattle != null) {
+                                    if (tas.MyBattle.MapName != foundMap.MapName) {
+                                        map = foundMap.MapName;
+                                    }
+                                }
+                            });
+
+                            
                             // I have no idea why it can't just work like the above way
-                            ResourceData[] resourceArray = ah.cache.FindResourceData(new string[] { map }, ResourceType.Map);
-                            System.Collections.Generic.List<ResourceData> resourceList = new System.Collections.Generic.List<ResourceData>(resourceArray);
+                            var resourceList = ah.cache.FindResourceData(new string[] { map }, ResourceType.Map);
                             var resource = resourceList.Find(x => x.InternalName == map);
                             question = string.Format("Change map to {0} {2}/Maps/Detail/{1} ?", map, resource.ResourceID, GlobalConst.BaseSiteUrl);
                             return true;

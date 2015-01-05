@@ -9,10 +9,10 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
-using PlasmaShared.ContentService;
+using PlasmaShared;
 using PlasmaShared.ModStats;
-using PlasmaShared.SpringieInterfaceReference;
 using ServiceStack.Text;
 using ZkData;
 using Timer = System.Timers.Timer;
@@ -268,7 +268,7 @@ namespace LobbyClient
                 else {
                     List<UserBattleStatus> players;
                     battleGuid = Guid.NewGuid();
-                    var service = new SpringieService() { Proxy = null };
+                    var service = GlobalConst.GetSpringieService();
                     SpringBattleStartSetup startSetup = null;
                     if (isHosting && GlobalConst.IsZkMod(battle.ModName)) {
                         try {
@@ -491,16 +491,16 @@ namespace LobbyClient
                 {
                     Trace.TraceInformation("Submitting score for mission " + modName);
                     try {
-                        using (var service = new ContentService { Proxy = null }) {
-                            service.SubmitMissionScoreCompleted += (s, e) =>
-                                {
-                                    if (e.Error != null) {
-                                        if (e.Error is WebException) Trace.TraceWarning("Error sending score: {0}", e.Error);
-                                        else Trace.TraceError("Error sending score: {0}", e.Error);
-                                    }
-                                };
-                            service.SubmitMissionScoreAsync(lobbyUserName, Utils.HashLobbyPassword(lobbyPassword), modName, score ?? 0, scoreFrame/30, missionVars);
-                        }
+                        var service = GlobalConst.GetContentService();
+                        Task.Factory.StartNew(() => {
+                            try {
+                                service.SubmitMissionScore(lobbyUserName, Utils.HashLobbyPassword(lobbyPassword), modName, score ?? 0, scoreFrame/30,
+                                    missionVars);
+                            } catch (Exception ex) {
+                                Trace.TraceError("Error sending score: {0}", ex);
+                            }
+                        });
+
                     } catch (Exception ex) {
                         Trace.TraceError(string.Format("Error sending mission score: {0}", ex));
                     }
@@ -511,7 +511,7 @@ namespace LobbyClient
                 // submit main stats
                 if (!isCheating && !isCrash && modOk && gameEndedOk) {
                     if (isHosting) {
-                        var service = new SpringieService() { Proxy = null };
+                        var service = GlobalConst.GetSpringieService();
                         try {
                             battleResult.EngineBattleID = gameId;
                             battleResult.ReplayName = demoFileName;
@@ -524,7 +524,7 @@ namespace LobbyClient
                             }
 
                             if (StartContext != null) {
-                                var result = service.SubmitSpringBattleResult(StartContext, lobbyPassword, battleResult, Enumerable.ToArray(statsPlayers.Values), statsData.ToArray());
+                                var result = service.SubmitSpringBattleResult(StartContext, lobbyPassword, battleResult, statsPlayers.Values.ToList(), statsData);
                                 if (result != null) {
                                     foreach (var line in result.Split('\n')) {
                                         client.Say(TasClient.SayPlace.Battle, "", line, true);

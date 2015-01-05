@@ -4,39 +4,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using LobbyClient;
+using PlasmaShared;
 using ZeroKWeb.Controllers;
 using ZkData;
 
 namespace ZeroKWeb.SpringieInterface
 {
-    public class BattlePlayerResult
-    {
-        public int AllyNumber;
-        public string CommanderType;
-        public bool IsIngameReady;
-        public bool IsSpectator;
-        public bool IsVictoryTeam;
-        public int LobbyID;
-        public int? LoseTime;
-        public int Rank;
-    }
-
-    public class BattleResult
-    {
-        public int Duration;
-        public string EngineBattleID;
-        public string EngineVersion;
-        public DateTime? IngameStartTime;
-        public bool IsBots;
-        public bool IsMission;
-        public string Map;
-        public string Mod;
-        public string ReplayName;
-        public DateTime StartTime;
-        public string Title;
-    }
-
-
     public class BattleResultHandler
     {
         public static string SubmitSpringBattleResult(BattleContext context,
@@ -206,7 +179,7 @@ namespace ZeroKWeb.SpringieInterface
 
 
                 var conf = context.GetConfig();
-                if (bat != null && (conf == null || context.GetConfig().MinToJuggle == null)) // if not qm room do not join those who are in battle
+                if (bat != null && (conf == null || conf.MinToJuggle == null)) // if not qm room do not join those who are in battle
                 {
                     List<string> inbatPlayers = bat.Users.Select(x => x.Name).ToList();
                     joinplayers.RemoveAll(x => inbatPlayers.Contains(x));
