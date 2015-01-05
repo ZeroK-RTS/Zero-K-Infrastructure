@@ -5,9 +5,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using LobbyClient;
-using PlasmaShared.SpringieInterfaceReference;
+using PlasmaShared;
 using ZkData;
-using AutohostMode = PlasmaShared.SpringieInterfaceReference.AutohostMode;
 #endregion
 
 namespace Springie.autohost
@@ -702,7 +701,7 @@ namespace Springie.autohost
                 return;
             }
 
-            var serv = new SpringieService();
+            var serv = GlobalConst.GetSpringieService();
             var moves = new List<MovePlayerEntry>();
             foreach (var u in tas.MyBattle.Users.Where(x => x.LobbyUser.Name != tas.MyBattle.Founder.Name))
             {

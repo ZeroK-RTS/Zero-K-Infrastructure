@@ -7,6 +7,7 @@ using System.Threading;
 using System.Timers;
 using LobbyClient;
 using Newtonsoft.Json;
+using PlasmaShared;
 using ZkData;
 using JsonSerializer = ServiceStack.Text.JsonSerializer;
 using Timer = System.Timers.Timer;

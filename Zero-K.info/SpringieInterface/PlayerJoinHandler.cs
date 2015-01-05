@@ -1,18 +1,10 @@
 ﻿using System.Linq;
 using LobbyClient;
+using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.SpringieInterface
 {
-    public class PlayerJoinResult
-    {
-        public bool ForceSpec;
-        public bool Kick;
-        public string PrivateMessage;
-        public string PublicMessage;
-    }
-
-
     public class PlayerJoinHandler
     {
         public static PlayerJoinResult AutohostPlayerJoined(BattleContext context, int accountID) {

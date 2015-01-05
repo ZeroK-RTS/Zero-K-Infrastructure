@@ -26,16 +26,6 @@ namespace PlasmaShared.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://zero-k.info/SpringieService.asmx")]
-        public string PlasmaShared_SpringieInterfaceReference_SpringieService {
-            get {
-                return ((string)(this["PlasmaShared_SpringieInterfaceReference_SpringieService"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
         [global::System.Configuration.DefaultSettingValueAttribute("http://planet-wars.eu/ModStats/StatsCollector.asmx")]
         public string PlasmaShared_ModStats_StatsCollector {
             get {

@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using PlasmaShared;
 using PlasmaShared.ModStats;
 using PlasmaShared.SpringieInterfaceReference;
 using ServiceStack.Text;
@@ -268,7 +269,7 @@ namespace LobbyClient
                 else {
                     List<UserBattleStatus> players;
                     battleGuid = Guid.NewGuid();
-                    var service = new SpringieService() { Proxy = null };
+                    var service = GlobalConst.GetSpringieService();
                     SpringBattleStartSetup startSetup = null;
                     if (isHosting && GlobalConst.IsZkMod(battle.ModName)) {
                         try {
@@ -511,7 +512,7 @@ namespace LobbyClient
                 // submit main stats
                 if (!isCheating && !isCrash && modOk && gameEndedOk) {
                     if (isHosting) {
-                        var service = new SpringieService() { Proxy = null };
+                        var service = GlobalConst.GetSpringieService();
                         try {
                             battleResult.EngineBattleID = gameId;
                             battleResult.ReplayName = demoFileName;
@@ -524,7 +525,7 @@ namespace LobbyClient
                             }
 
                             if (StartContext != null) {
-                                var result = service.SubmitSpringBattleResult(StartContext, lobbyPassword, battleResult, Enumerable.ToArray(statsPlayers.Values), statsData.ToArray());
+                                var result = service.SubmitSpringBattleResult(StartContext, lobbyPassword, battleResult, statsPlayers.Values.ToList(), statsData);
                                 if (result != null) {
                                     foreach (var line in result.Split('\n')) {
                                         client.Say(TasClient.SayPlace.Battle, "", line, true);

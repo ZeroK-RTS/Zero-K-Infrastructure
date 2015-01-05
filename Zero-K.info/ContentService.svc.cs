@@ -213,8 +213,7 @@ namespace ZeroKWeb
             return true;
         }
 
-
-
+        
         
         public AccountInfo GetAccountInfo(string login, string password)
         {

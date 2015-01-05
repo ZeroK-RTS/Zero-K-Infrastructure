@@ -10,11 +10,9 @@ using System.Timers;
 using LobbyClient;
 using PlasmaDownloader.Packages;
 using PlasmaShared;
-using PlasmaShared.SpringieInterfaceReference;
 using ZkData.UnitSyncLib;
 using Springie.autohost.Polls;
 using ZkData;
-using AutohostMode = PlasmaShared.SpringieInterfaceReference.AutohostMode;
 using Timer = System.Timers.Timer;
 
 #endregion
@@ -943,7 +941,7 @@ namespace Springie.autohost
 
             if (SpawnConfig == null) {
                 try {
-                    var serv = new SpringieService();
+                    var serv = GlobalConst.GetSpringieService();
                     PlayerJoinResult ret = serv.AutohostPlayerJoined(tas.MyBattle.GetContext(), tas.ExistingUsers[name].LobbyID);
                     if (ret != null) {
                         if (!string.IsNullOrEmpty(ret.PrivateMessage)) tas.Say(TasClient.SayPlace.User, name, ret.PrivateMessage, false);
@@ -1024,7 +1022,7 @@ namespace Springie.autohost
             if (SpawnConfig == null) ComResetOptions(TasSayEventArgs.Default, new string[] { });
 
             try {
-                var serv = new SpringieService();
+                var serv = GlobalConst.GetSpringieService();
                 string commands = serv.GetMapCommands(mapName);
                 if (!string.IsNullOrEmpty(commands)) foreach (string c in commands.Split('\n').Where(x => !string.IsNullOrEmpty(x))) RunCommand(c);
             } catch (Exception ex) {

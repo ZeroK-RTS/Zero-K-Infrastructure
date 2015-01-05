@@ -143,6 +143,21 @@
     <Compile Include="IContentService\ScriptMissionData.cs" />
     <Compile Include="IContentService\SpringHashEntry.cs" />
     <Compile Include="IResourceInfo.cs" />
+    <Compile Include="ISpringieService\AhConfig.cs" />
+    <Compile Include="ISpringieService\AutohostMode.cs" />
+    <Compile Include="ISpringieService\BalanceTeamsResult.cs" />
+    <Compile Include="ISpringieService\BattleContext.cs" />
+    <Compile Include="ISpringieService\BattlePlayerResult.cs" />
+    <Compile Include="ISpringieService\BattleResult.cs" />
+    <Compile Include="ISpringieService\BotTeam.cs" />
+    <Compile Include="ISpringieService\CommandLevel.cs" />
+    <Compile Include="ISpringieService\ISpringieService.cs" />
+    <Compile Include="ISpringieService\MovePlayerEntry.cs" />
+    <Compile Include="ISpringieService\PlayerJoinResult.cs" />
+    <Compile Include="ISpringieService\PlayerTeam.cs" />
+    <Compile Include="ISpringieService\RecommendedMapResult.cs" />
+    <Compile Include="ISpringieService\RectInfo.cs" />
+    <Compile Include="ISpringieService\SpringBattleStartSetup.cs" />
     <Compile Include="LuaTable.cs" />
     <Compile Include="MetaDataCache.cs" />
     <Compile Include="Pool.cs" />
@@ -183,11 +198,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
-    <Compile Include="Web References\SpringieInterfaceReference\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
     <Compile Include="Whois.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -218,26 +228,6 @@
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
     <None Include="Web References\ModStats\StatsCollector.wsdl" />
-    <None Include="Web References\SpringieInterfaceReference\AhConfig.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\SpringieInterfaceReference\BalanceTeamsResult.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\SpringieInterfaceReference\PlayerJoinResult.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\SpringieInterfaceReference\RecommendedMapResult.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\SpringieInterfaceReference\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\SpringieInterfaceReference\SpringBattleStartSetup.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\SpringieInterfaceReference\SpringieService.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -280,24 +270,10 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>PlasmaShared_ModStats_StatsCollector</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="http://zero-k.info/SpringieService.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\SpringieInterfaceReference\</RelPath>
-      <UpdateFromURL>http://zero-k.info/SpringieService.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>PlasmaShared_SpringieInterfaceReference_SpringieService</CachedSettingsPropName>
-    </WebReferenceUrl>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\SpringieInterfaceReference\SpringieService.disco" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Web References\ModStats\StatsCollector.disco" />

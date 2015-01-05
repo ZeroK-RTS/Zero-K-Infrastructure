@@ -65,7 +65,6 @@
     <Compile Include="Enums\DecorationIconTypes.cs" />
     <Compile Include="Enums\UserLanguage.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
-    <Compile Include="Enums\AutohostMode.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
     <Compile Include="CurrentLobbyStats.cs" />
     <Compile Include="Enums\TreatyState.cs" />

@@ -65,6 +65,7 @@ namespace ZkData
             SelfUpdaterBaseUrl = string.Format("{0}/lobby", BaseSiteUrl);
 
             contentServiceFactory = new ChannelFactory<IContentService>(CreateBasicHttpBinding(), string.Format("{0}/ContentService.svc", BaseSiteUrl));
+            springieServiceFactory = new ChannelFactory<ISpringieService>(CreateBasicHttpBinding(), string.Format("{0}/SpringieService.svc", BaseSiteUrl));
         }
 
         public static BasicHttpBinding CreateBasicHttpBinding()
@@ -203,11 +204,18 @@ namespace ZkData
 
 
         static readonly ChannelFactory<IContentService> contentServiceFactory;
+        static readonly ChannelFactory<ISpringieService> springieServiceFactory;
 
         public static IContentService GetContentService()
         {
             return contentServiceFactory.CreateChannel();
         }
+
+        public static ISpringieService GetSpringieService()
+        {
+            return springieServiceFactory.CreateChannel();
+        }
+
     }
 
     public enum PlanetWarsModes

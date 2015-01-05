@@ -155,12 +155,10 @@
     <Compile Include="Controllers\ReplaysController.cs" />
     <Compile Include="Controllers\UnitStatsController.cs" />
     <Compile Include="AppCode\MarkdownHelper.cs" />
-    <Compile Include="SpringieInterface\AutohostConfigs.cs" />
     <Compile Include="SpringieInterface\Balancer.cs" />
     <Compile Include="AppCode\Global.cs" />
     <Compile Include="AppCode\HtmlHelperExtensions.cs" />
     <Compile Include="AppCode\JsonRequest.cs" />
-    <Compile Include="SpringieInterface\BattleContext.cs" />
     <Compile Include="SpringieInterface\BattleResultHandler.cs" />
     <Compile Include="SpringieInterface\MapPicker.cs" />
     <Compile Include="AppCode\NoCache.cs" />
@@ -217,9 +215,8 @@
     <Compile Include="SpringieInterface\PlanetWarsTurnHandler.cs" />
     <Compile Include="SpringieInterface\PlayerJoinHandler.cs" />
     <Compile Include="SpringieInterface\StartSetup.cs" />
-    <Compile Include="SpringieService.asmx.cs">
-      <DependentUpon>SpringieService.asmx</DependentUpon>
-      <SubType>Component</SubType>
+    <Compile Include="SpringieService.svc.cs">
+      <DependentUpon>SpringieService.svc</DependentUpon>
     </Compile>
     <Compile Include="UnlocksAdmin.aspx.cs">
       <DependentUpon>UnlocksAdmin.aspx</DependentUpon>
@@ -1254,7 +1251,7 @@
     <Content Include="Scripts\nicetitle.js" />
     <Content Include="Scripts\raphael-min.js" />
     <Content Include="Scripts\site_main.js" />
-    <Content Include="SpringieService.asmx" />
+    <Content Include="SpringieService.svc" />
     <Content Include="Styles\base.css" />
     <Content Include="Styles\dark-hive\images\ui-bg_flat_30_cccccc_40x100.png" />
     <Content Include="Styles\dark-hive\images\ui-bg_flat_50_5c5c5c_40x100.png" />
