@@ -9,6 +9,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using PlasmaShared.ModStats;
 using PlasmaShared.SpringieInterfaceReference;
@@ -490,16 +491,16 @@ namespace LobbyClient
                 {
                     Trace.TraceInformation("Submitting score for mission " + modName);
                     try {
-                        using (var service = new ContentService { Proxy = null }) {
-                            service.SubmitMissionScoreCompleted += (s, e) =>
-                                {
-                                    if (e.Error != null) {
-                                        if (e.Error is WebException) Trace.TraceWarning("Error sending score: {0}", e.Error);
-                                        else Trace.TraceError("Error sending score: {0}", e.Error);
-                                    }
-                                };
-                            service.SubmitMissionScoreAsync(lobbyUserName, Utils.HashLobbyPassword(lobbyPassword), modName, score ?? 0, scoreFrame/30, missionVars);
-                        }
+                        var service = GlobalConst.GetContentService();
+                        Task.Factory.StartNew(() => {
+                            try {
+                                service.SubmitMissionScore(lobbyUserName, Utils.HashLobbyPassword(lobbyPassword), modName, score ?? 0, scoreFrame/30,
+                                    missionVars);
+                            } catch (Exception ex) {
+                                Trace.TraceError("Error sending score: {0}", ex);
+                            }
+                        });
+
                     } catch (Exception ex) {
                         Trace.TraceError(string.Format("Error sending mission score: {0}", ex));
                     }

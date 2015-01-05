@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using ZkData;
 
 namespace LobbyClient
@@ -12,10 +15,15 @@ namespace LobbyClient
 
     public SpringieServer()
     {
-      var wc = new ContentService { Proxy = null };
-      wc.GetEloTop10Completed +=
-        (s, e) => { if (!e.Cancelled && e.Error == null && e.Result != null) for (var i = 0; i < e.Result.Length; i++) top10[e.Result[i]] = i + 1; };
-      wc.GetEloTop10Async();
+      var wc = GlobalConst.GetContentService();
+        Task.Factory.StartNew(() => {
+            try {
+                var res = wc.GetEloTop10();
+                for (var i = 0; i < res.Count; i++) top10[res[i]] = i + 1; 
+            } catch (Exception ex) {
+             Trace.TraceError(ex.ToString());
+            }
+        });
     }
 
 

@@ -19,6 +19,20 @@ namespace ZeroKWeb
         public const int PlasmaServerApiVersion = 3;
         const int ThumbnailSize = 96;
 
+         public static ResourceData ToResourceData(Resource r)
+         {
+             var ret = new ResourceData() {
+                 ResourceID = r.ResourceID,
+                 InternalName = r.InternalName,
+                 ResourceType = r.TypeID,
+                 Dependencies = r.ResourceDependencies.Select(x => x.NeedsInternalName).ToList(),
+                 SpringHashes =
+                     r.ResourceSpringHashes.Select(x => new SpringHashEntry { SpringHash = x.SpringHash, SpringVersion = x.SpringVersion }).ToList(),
+                 FeaturedOrder = r.FeaturedOrder,
+             };
+             return ret;
+         }
+
    
         public static ReturnValue DeleteResource(string internalName)
         {
@@ -33,19 +47,29 @@ namespace ZeroKWeb
         }
 
 
-        public static bool DownloadFile(string internalName,
-                                        out List<string> links,
-                                        out byte[] torrent,
-                                        out List<string> dependencies,
-                                        out ResourceType resourceType,
-                                        out string torrentFileName)
+        public static DownloadFileResult DownloadFile(string internalName)
         {
-            return ResourceLinkProvider.GetLinksAndTorrent(internalName,
+            List<string> links;
+            byte[] torrent;
+            List<string> dependencies;
+            ResourceType resourceType;
+            string torrentFileName;
+            var ok =  ResourceLinkProvider.GetLinksAndTorrent(internalName,
                                                            out links,
                                                            out torrent,
                                                            out dependencies,
                                                            out resourceType,
                                                            out torrentFileName);
+            if (ok) {
+                return new DownloadFileResult() {
+                    links = links,
+                    torrent = torrent,
+                    dependencies = dependencies,
+                    resourceType = resourceType,
+                    torrentFileName = torrentFileName,
+                };
+            }
+            return null;
         }
 
         public static List<string> GetLinkArray(ResourceContentFile cf)
@@ -58,7 +82,7 @@ namespace ZeroKWeb
         {
             var ret = FindResource(md5, internalName);
             if (ret == null) return null;
-            return new ResourceData(ret);
+            return ToResourceData(ret);
         }
 
         public static List<ResourceData> GetResourceList(DateTime? lastChange, out DateTime currentTime)
@@ -66,7 +90,7 @@ namespace ZeroKWeb
             var ct = DateTime.UtcNow;
             currentTime = ct;
             var db = new ZkDataContext();
-            return db.Resources.Where(x => lastChange == null || x.LastChange > lastChange).AsEnumerable().Select(r => new ResourceData(r)).ToList();
+            return db.Resources.Where(x => lastChange == null || x.LastChange > lastChange).AsEnumerable().Select(ToResourceData).ToList();
         }
 
 

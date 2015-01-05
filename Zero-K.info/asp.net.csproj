@@ -29,6 +29,7 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
+    <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -103,6 +104,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Entity" />
@@ -141,6 +144,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ModStatsDb.dbml</DependentUpon>
     </Compile>
+    <Compile Include="ContentService.svc.cs">
+      <DependentUpon>ContentService.svc</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\ClansController.cs" />
     <Compile Include="Controllers\CampaignController.cs" />
     <Compile Include="Controllers\FactionsController.cs" />
@@ -160,10 +166,6 @@
     <Compile Include="AppCode\NoCache.cs" />
     <Compile Include="AppCode\SpotlightHandler.cs" />
     <Compile Include="AppCode\WikiHandler.cs" />
-    <Compile Include="ContentService.asmx.cs">
-      <DependentUpon>ContentService.asmx</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Controllers\BattlesController.cs" />
     <Compile Include="Controllers\ForumController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -228,7 +230,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ContentService.asmx" />
+    <Content Include="ContentService.svc" />
     <Content Include="favicon.png" />
     <Content Include="Img\abuse.png" />
     <Content Include="Img\add.png" />

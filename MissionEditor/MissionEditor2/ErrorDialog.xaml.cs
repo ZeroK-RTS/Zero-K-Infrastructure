@@ -30,8 +30,8 @@ namespace MissionEditor2
 			if (sendReportBox.IsChecked == true)
 			{
 				closeButton.IsEnabled = false;
-				var service = new ContentService();
-                // HACK reimplement
+				// HACK reimplement
+                //var service = new ContentService();
 				//service.SubmitStackTraceCompleted += service_SubmitStackTraceCompleted;
 				//service.SubmitStackTraceAsync(ProgramType.MissionEditor, nameBox.Text, errorText, descriptionBox.Text, version);
 				progressBar.Visibility = Visibility.Visible;

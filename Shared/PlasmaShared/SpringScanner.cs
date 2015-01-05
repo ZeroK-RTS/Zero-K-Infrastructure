@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
+using System.Threading.Tasks;
 using MonoTorrent.Common;
 using PlasmaShared;
 using ZkData.UnitSyncLib;
@@ -159,7 +160,6 @@ namespace ZkData
             SetupWatcherEvents(modsWatchers);
             SetupWatcherEvents(packagesWatchers);
 
-            service.RegisterResourceCompleted += HandleServiceRegisterResourceCompleted;
             Directory.CreateDirectory(springPaths.Cache);
             cachePath = Utils.MakePath(springPaths.Cache, "ScannerCache.dat");
             Directory.CreateDirectory(Utils.MakePath(springPaths.Cache, "Resources"));
@@ -176,7 +176,6 @@ namespace ZkData
             isDisposed = true;
             if (unitSync != null) unitSync.Dispose(); //(visual studio recommend a dispose)
             unitSync = null;
-            service.Dispose();
             if (isCacheDirty) SaveCache();
             GC.SuppressFinalize(this);
         }
@@ -652,21 +651,45 @@ namespace ZkData
                     if (mod != null) userState = new KeyValuePair<Mod, byte[]>(mod, serializedData);
 
                     Trace.TraceInformation("uploading {0} to server", info.Name);
-                    service.RegisterResourceAsync(PlasmaServiceVersion,
-                                                  springPaths.SpringVersion,
-                                                  workItem.CacheItem.Md5.ToString(),
-                                                  workItem.CacheItem.Length,
-                                                  info is Map ? ResourceType.Map : ResourceType.Mod,
-                                                  workItem.CacheItem.FileName,
-                                                  info.Name,
-                                                  info.Checksum,
-                                                  serializedData,
-                                                  mod != null ? mod.Dependencies : null,
-                                                  minimap,
-                                                  metalMap,
-                                                  heightMap,
-                                                  ms.ToArray(),
-                                                  userState);
+                    Task.Factory.StartNew(() => {
+                        ReturnValue e;
+                        try {
+                             e = service.RegisterResource(PlasmaServiceVersion, springPaths.SpringVersion, workItem.CacheItem.Md5.ToString(),
+                                workItem.CacheItem.Length, info is Map ? ResourceType.Map : ResourceType.Mod, workItem.CacheItem.FileName, info.Name,
+                                info.Checksum, serializedData, mod != null ? mod.Dependencies.ToList() : null, minimap, metalMap, heightMap,
+                                ms.ToArray());
+                        } catch (Exception ex) {
+                            Trace.TraceError("Error uploading data to server: {0}", ex);
+                            return;
+                        } finally {
+                            Interlocked.Decrement(ref itemsSending);
+                        }
+                        
+                        if (e != ReturnValue.Ok)
+                        {
+                            Trace.TraceWarning("Resource registering failed: {0}", e);
+                            return;
+                        }
+                        var mapArgs = userState as MapRegisteredEventArgs;
+                        if (mapArgs != null)
+                        {
+                            var mapName = mapArgs.MapName;
+                            MetaData.SaveMinimap(mapName, mapArgs.Minimap);
+                            MetaData.SaveMetalmap(mapName, mapArgs.MetalMap);
+                            MetaData.SaveHeightmap(mapName, mapArgs.HeightMap);
+                            MetaData.SaveMetadata(mapName, mapArgs.SerializedData);
+                            MapRegistered(this, mapArgs);
+                        }
+                        else
+                        {
+                            var kvp = (KeyValuePair<Mod, byte[]>)userState;
+                            var modInfo = kvp.Key;
+                            var serializedDataRet = kvp.Value;
+                            MetaData.SaveMetadata(modInfo.Name, serializedDataRet);
+                            ModRegistered(this, new EventArgs<Mod>(mod));
+                        }
+                    });
+
                     Interlocked.Increment(ref itemsSending);
                 }
                 catch (Exception e)
@@ -763,41 +786,6 @@ namespace ZkData
                 {
                     Trace.TraceWarning("Error initializing unitsync: {0}", ex);
                 }
-            }
-        }
-
-
-        void HandleServiceRegisterResourceCompleted(object sender, RegisterResourceCompletedEventArgs e)
-        {
-            Interlocked.Decrement(ref itemsSending);
-            if (e.Cancelled) return;
-            if (e.Error != null)
-            {
-                Trace.TraceError("Error uploading data to server: {0}", e.Error);
-                return;
-            }
-            if (e.Result != ReturnValue.Ok)
-            {
-                Trace.TraceWarning("Resource registering failed: {0}", e.Result);
-                return;
-            }
-            var mapArgs = e.UserState as MapRegisteredEventArgs;
-            if (mapArgs != null)
-            {
-                var mapName = mapArgs.MapName;
-                MetaData.SaveMinimap(mapName, mapArgs.Minimap);
-                MetaData.SaveMetalmap(mapName, mapArgs.MetalMap);
-                MetaData.SaveHeightmap(mapName, mapArgs.HeightMap);
-                MetaData.SaveMetadata(mapName, mapArgs.SerializedData);
-                MapRegistered(this, mapArgs);
-            }
-            else
-            {
-                var kvp = (KeyValuePair<Mod, byte[]>)e.UserState;
-                var mod = kvp.Key;
-                var serializedData = kvp.Value;
-                MetaData.SaveMetadata(mod.Name, serializedData);
-                ModRegistered(this, new EventArgs<Mod>(mod));
             }
         }
 

@@ -1,6 +1,9 @@
 #region using
 
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using LobbyClient;
 using PlasmaShared;
 using Springie.autohost;
@@ -40,8 +43,27 @@ namespace Springie
         {
             this.ah = ah;
             plasmaService = GlobalConst.ContentServiceFactory.CreateChannel();
-            plasmaService.DownloadFileCompleted += ps_DownloadFileCompleted;
         }
+
+        private void GetLinksAsync(string name, TasSayEventArgs e)
+        {
+            Task.Factory.StartNew(() => {
+                DownloadFileResult ret;
+                try {
+                    ret = plasmaService.DownloadFile(name);
+                } catch (Exception ex) {
+                    Trace.TraceError(ex.ToString());
+                    return;
+                }
+            
+                if (ret.links != null && ret.links.Count > 0) {
+                    foreach (string s in ret.links) ah.Respond(e, s.Replace(" ", "%20"));
+                } else {
+                    ah.Respond(e,"No links found");
+                }
+            });
+        }
+
 
         public void FindLinks(string[] words, FileType type, TasClient tas, TasSayEventArgs e)
         {
@@ -50,8 +72,8 @@ namespace Springie
                 Battle b = tas.MyBattle;
                 if (b == null) return;
                 ah.Respond(e, string.Format("Getting Zero-K mirrors for currently hosted {0}", type));
-                if (type == FileType.Map) plasmaService.DownloadFileAsync(b.MapName, e);
-                else plasmaService.DownloadFileAsync(b.ModName, e);
+                if (type == FileType.Map) GetLinksAsync(b.MapName, e);
+                else GetLinksAsync(b.ModName, e);
             }
             else
             {
@@ -65,16 +87,10 @@ namespace Springie
                 else
                 {
                     ah.Respond(e, string.Format("Getting Zero-K mirrors for {0}, please wait", resultVals[0]));
-                    plasmaService.DownloadFileAsync(resultVals[0], e);
+                    GetLinksAsync(resultVals[0], e);
                 }
             }
         }
 
-        void ps_DownloadFileCompleted(object sender, DownloadFileCompletedEventArgs e)
-        {
-            if (e.Error != null || e.UserState == null) return;
-            var ev = (TasSayEventArgs)e.UserState;
-            foreach (string s in e.links) ah.Respond(ev, s.Replace(" ","%20"));
-        }
     }
 }

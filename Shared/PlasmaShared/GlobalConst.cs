@@ -188,6 +188,11 @@ namespace ZkData
 
 
         public static readonly ChannelFactory<IContentService> ContentServiceFactory;
+
+        public static IContentService GetContentService()
+        {
+            return ContentServiceFactory.CreateChannel();
+        }
     }
 
     public enum PlanetWarsModes
