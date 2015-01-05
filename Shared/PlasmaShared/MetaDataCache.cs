@@ -43,7 +43,7 @@ namespace ZkData
 
         public List<ResourceData> FindResourceData(string[] words, ResourceType? type)
         {
-            var cs = GlobalConst.ContentServiceFactory.CreateChannel();
+            var cs = GlobalConst.GetContentService();
             return cs.FindResourceData(words, type);
         }
 
@@ -249,7 +249,7 @@ namespace ZkData
         public ResourceData GetResourceDataByInternalName(string name)
         {
             try {
-                var cs = GlobalConst.ContentServiceFactory.CreateChannel();
+                var cs = GlobalConst.GetContentService();
                 return cs.GetResourceDataByInternalName(name);
             }
             catch (Exception ex)
@@ -318,7 +318,7 @@ namespace ZkData
                     ret.Checksum = hash;
                 }
                 else {
-                    var cs = GlobalConst.ContentServiceFactory.CreateChannel();
+                    var cs = GlobalConst.GetContentService();
                     try
                     {
                         var rd = cs.GetResourceDataByInternalName(ret.Name);
@@ -348,7 +348,7 @@ namespace ZkData
                     ret.Checksum = hash;
                 }
                 else {
-                    var cs = GlobalConst.ContentServiceFactory.CreateChannel();
+                    var cs = GlobalConst.GetContentService();
                     try
                     {
                         var rd = cs.GetResourceDataByInternalName(ret.Name);

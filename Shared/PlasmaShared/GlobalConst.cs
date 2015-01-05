@@ -66,7 +66,7 @@ namespace ZkData
 
 
             var binding = new WS2007HttpBinding();
-            ContentServiceFactory = new ChannelFactory<IContentService>(binding, string.Format("{0}/ContentService.svc", BaseSiteUrl));
+            contentServiceFactory = new ChannelFactory<IContentService>(binding, string.Format("{0}/ContentService.svc", BaseSiteUrl));
         }
 
         public static readonly string ZkDataContextConnectionString;
@@ -187,11 +187,11 @@ namespace ZkData
         }
 
 
-        public static readonly ChannelFactory<IContentService> ContentServiceFactory;
+        static readonly ChannelFactory<IContentService> contentServiceFactory;
 
         public static IContentService GetContentService()
         {
-            return ContentServiceFactory.CreateChannel();
+            return contentServiceFactory.CreateChannel();
         }
     }
 

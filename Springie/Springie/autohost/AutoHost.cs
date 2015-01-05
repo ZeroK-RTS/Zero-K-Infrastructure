@@ -881,7 +881,7 @@ namespace Springie.autohost
             //lockedUntil = DateTime.MinValue;
             //tas.ChangeLock(false);
             if (hostedMod.IsMission) {
-                var service = GlobalConst.ContentServiceFactory.CreateChannel();
+                var service = GlobalConst.GetContentService();
                 foreach (UserBattleStatus u in tas.MyBattle.Users.Where(x => !x.IsSpectator)) service.NotifyMissionRun(u.Name, hostedMod.ShortName);
             }
         

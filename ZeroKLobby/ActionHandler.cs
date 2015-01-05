@@ -353,7 +353,7 @@ namespace ZeroKLobby
         {
             try
             {
-                var serv = GlobalConst.ContentServiceFactory.CreateChannel();
+                var serv = GlobalConst.GetContentService();
                 SinglePlayerBar.DownloadAndStartMission(serv.GetScriptMissionData(name));
             }
             catch (WebException ex)

@@ -42,7 +42,7 @@ namespace Springie
         public ResourceLinkSpringieClient(AutoHost ah)
         {
             this.ah = ah;
-            plasmaService = GlobalConst.ContentServiceFactory.CreateChannel();
+            plasmaService = GlobalConst.GetContentService();
         }
 
         private void GetLinksAsync(string name, TasSayEventArgs e)

@@ -100,7 +100,7 @@ namespace ZkData
         /// </summary>
         readonly List<FileSystemWatcher> packagesWatchers = new List<FileSystemWatcher>();
 
-        readonly IContentService service = GlobalConst.ContentServiceFactory.CreateChannel();
+        readonly IContentService service = GlobalConst.GetContentService();
 
         readonly SpringPaths springPaths;
 

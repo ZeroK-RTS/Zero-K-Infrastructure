@@ -109,7 +109,7 @@ namespace ZeroKLobby.Notifications
                                          null,
                                          modInfo.MissionScript, Program.Conf.UseSafeMode, Program.Conf.UseMtEngine);
 
-                        var cs = GlobalConst.ContentServiceFactory.CreateChannel();
+                        var cs = GlobalConst.GetContentService();
                         cs.NotifyMissionRun(Program.Conf.LobbyPlayerName, missionName);
                     }
                     Program.MainWindow.InvokeFunc(() => Program.NotifySection.RemoveBar(this));
