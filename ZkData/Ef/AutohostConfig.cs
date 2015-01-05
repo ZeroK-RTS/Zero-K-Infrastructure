@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using PlasmaShared;
 
 namespace ZkData
@@ -51,5 +52,35 @@ namespace ZkData
         public int? MaxLevel { get; set; }
         public int? MaxElo { get; set; }
         public bool? IsTrollHost { get; set; }
+
+        public AhConfig ToAhConfig()
+        {
+            var db = this;
+            return new AhConfig() {
+                Login = db.Login,
+                Password = db.Password,
+                JoinChannels = (db.JoinChannels + "").Split('\n').Where(x => !string.IsNullOrEmpty(x)).ToArray(),
+                Title = db.Title,
+                Welcome = db.Welcome,
+                Map = db.Map,
+                Mod = db.Mod,
+                MaxPlayers = db.MaxPlayers,
+                AutoSpawnClones = db.AutoSpawn,
+                AutoUpdateRapidTag = db.AutoUpdateRapidTag,
+                SpringVersion = db.SpringVersion,
+                SplitBiggerThan = db.SplitBiggerThan,
+                AutoUpdateSpringBranch = db.AutoUpdateSpringBranch,
+                Mode = db.AutohostMode,
+                BattlePassword = db.BattlePassword,
+                CommandLevels = (db.CommandLevels + "").Split('\n').Where(x => !string.IsNullOrEmpty(x)).Select(x => {
+                    var parts = x.Split('=');
+                    return new CommandLevel() { Command = parts[0], Level = int.Parse(parts[1]) };
+                }).ToArray(),
+                MaxEloDifference = db.MaxEloDifference,
+                MinToJuggle = db.MinToJuggle,
+                MaxToJuggle = db.MaxToJuggle
+            };
+        }
+
     }
 }

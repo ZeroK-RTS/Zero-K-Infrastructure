@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using System.Timers;
 using PlasmaShared;
 using PlasmaShared.ModStats;
-using PlasmaShared.SpringieInterfaceReference;
 using ServiceStack.Text;
 using ZkData;
 using Timer = System.Timers.Timer;

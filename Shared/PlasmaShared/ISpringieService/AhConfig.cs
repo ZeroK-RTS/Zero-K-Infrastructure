@@ -23,33 +23,5 @@ namespace PlasmaShared
         public int? MinToJuggle;
         public int? MaxToJuggle;
         public AhConfig() {}
-
-
-        public AhConfig(AutohostConfig db)
-        {
-            Login = db.Login;
-            Password = db.Password;
-            JoinChannels = (db.JoinChannels + "").Split('\n').Where(x => !string.IsNullOrEmpty(x)).ToArray();
-            Title = db.Title;
-            Welcome = db.Welcome;
-            Map = db.Map;
-            Mod = db.Mod;
-            MaxPlayers = db.MaxPlayers;
-            AutoSpawnClones = db.AutoSpawn;
-            AutoUpdateRapidTag = db.AutoUpdateRapidTag;
-            SpringVersion = db.SpringVersion;
-            SplitBiggerThan = db.SplitBiggerThan;
-            AutoUpdateSpringBranch = db.AutoUpdateSpringBranch;
-            Mode = db.AutohostMode;
-            BattlePassword = db.BattlePassword;
-            CommandLevels = (db.CommandLevels + "").Split('\n').Where(x => !string.IsNullOrEmpty(x)).Select(x =>
-            {
-                var parts = x.Split('=');
-                return new CommandLevel() { Command = parts[0], Level = int.Parse(parts[1]) };
-            }).ToArray();
-            MaxEloDifference = db.MaxEloDifference;
-            MinToJuggle = db.MinToJuggle;
-            MaxToJuggle = db.MaxToJuggle;
-        }
     }
 }

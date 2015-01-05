@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using LobbyClient;
 using PlasmaShared;
 using ZkData;
@@ -711,7 +712,7 @@ namespace Springie.autohost
                               BattleHost = host
                           });
             }
-            serv.MovePlayers(tas.UserName, tas.UserPassword, moves.ToArray());
+            serv.MovePlayers(tas.UserName, tas.UserPassword, moves);
         }
 
 
@@ -897,7 +898,7 @@ namespace Springie.autohost
             if (tas.MyBattle != null && !spring.IsRunning)
             {
                 this.SayBattle("Splitting room into two by the skill level, keeping clans together");
-                var serv = new SpringieService();
+                var serv = GlobalConst.GetSpringieService();
                 serv.SplitAutohost(tas.MyBattle.GetContext(), tas.UserPassword);
             }
         }
@@ -1171,9 +1172,8 @@ namespace Springie.autohost
             try
             {
                 if (tas.MyBattle == null) return false;
-                var serv = new SpringieService();
+                var serv = GlobalConst.GetSpringieService();
 
-                serv.Timeout = 10000;
                 var balance = serv.BalanceTeams(tas.MyBattle.GetContext(), isGameStart, allyTeams, clanWise);
                 
                 ApplyBalanceResults(balance);
@@ -1190,7 +1190,7 @@ namespace Springie.autohost
         public void ApplyBalanceResults(BalanceTeamsResult balance)
         {
             if (!string.IsNullOrEmpty(balance.Message)) SayBattle(balance.Message, false);
-            if (balance.Players != null && balance.Players.Length > 0)
+            if (balance.Players != null && balance.Players.Count > 0)
             {
                 
                 foreach (var user in tas.MyBattle.Users.Where(x => !x.IsSpectator && !balance.Players.Any(y => y.Name == x.Name))) tas.ForceSpectator(user.Name); // spec those that werent in response
@@ -1211,7 +1211,7 @@ namespace Springie.autohost
             }
 
             if (balance.DeleteBots) foreach (var b in tas.MyBattle.Bots) tas.RemoveBot(b.Name);
-            if (balance.Bots != null && balance.Bots.Length > 0)
+            if (balance.Bots != null && balance.Bots.Count > 0)
             {
                 foreach (var b in tas.MyBattle.Bots.Where(x => !balance.Bots.Any(y => y.BotName == x.Name && y.Owner == x.owner))) tas.RemoveBot(b.Name);
 
@@ -1323,7 +1323,7 @@ namespace Springie.autohost
         {
             try
             {
-                var serv = new SpringieService();
+                var serv = GlobalConst.GetSpringieService();
                 serv.StoreBoxes(tas.MyBattle.GetContext(),
                                 tas.MyBattle.Rectangles.Select(x =>
                                     {
@@ -1340,7 +1340,7 @@ namespace Springie.autohost
                                                    Width = (int)((right - left) * 100),
                                                    Height = (int)((bottom - top) * 100)
                                                };
-                                    }).ToArray());
+                                    }).ToList());
                 Respond(e, "Saved");
             }
             catch (Exception ex)
@@ -1487,25 +1487,24 @@ namespace Springie.autohost
             {
                 if (tas.MyBattle != null && !spring.IsRunning)
                 {
-                    var serv = new SpringieService();
-                    serv.Timeout = 15000;
-                    serv.GetRecommendedMapCompleted += (sender, args) =>
-                    {
-                        if (!args.Cancelled && args.Error == null)
-                        {
-                            var map = args.Result;
-                            if (map != null && map.MapName != null && tas.MyBattle != null)
-                            {
-                                if (tas.MyBattle.MapName != map.MapName)
-                                {
-                                    ComMap(TasSayEventArgs.Default, map.MapName);
-                                    SayBattle(map.Message);
-                                }
-                            }
+                    var serv = GlobalConst.GetSpringieService();
 
+                    Task.Factory.StartNew(() => {
+                        RecommendedMapResult map;
+                        try {
+                            map = serv.GetRecommendedMap(tas.MyBattle.GetContext(), pickNew);
+                        } catch (Exception ex) {
+                            Trace.TraceError(ex.ToString());
+                            return;
                         }
-                    };
-                    serv.GetRecommendedMapAsync(tas.MyBattle.GetContext(), pickNew);
+                        if (map != null && map.MapName != null && tas.MyBattle != null) {
+                            if (tas.MyBattle.MapName != map.MapName) {
+                                ComMap(TasSayEventArgs.Default, map.MapName);
+                                SayBattle(map.Message);
+                            }
+                        }
+
+                    });
                 }
             }
             catch (Exception ex)

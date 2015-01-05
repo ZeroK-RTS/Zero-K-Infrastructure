@@ -9,9 +9,7 @@ using System.Timers;
 using System.Xml.Serialization;
 using LobbyClient;
 using PlasmaShared;
-using PlasmaShared.SpringieInterfaceReference;
 using ZkData;
-using PlasmaShared.SpringieInterfaceReference;
 using Springie.autohost;
 
 namespace Springie

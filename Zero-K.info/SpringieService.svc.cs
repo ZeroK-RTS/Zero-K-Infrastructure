@@ -54,7 +54,7 @@ namespace ZeroKWeb
         public List<AhConfig> GetClusterConfigs(string clusterNode)
         {
             var db = new ZkDataContext();
-            return db.AutohostConfigs.Where(x => x.ClusterNode == clusterNode).ToList().Select(x => new AhConfig(x)).ToList();
+            return db.AutohostConfigs.Where(x => x.ClusterNode == clusterNode).ToList().Select(x => x.ToAhConfig()).ToList();
         }
 
         
