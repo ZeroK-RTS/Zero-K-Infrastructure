@@ -64,9 +64,24 @@ namespace ZkData
             BaseImageUrl = string.Format("{0}/img/", BaseSiteUrl);
             SelfUpdaterBaseUrl = string.Format("{0}/lobby", BaseSiteUrl);
 
+            contentServiceFactory = new ChannelFactory<IContentService>(CreateBasicHttpBinding(), string.Format("{0}/ContentService.svc", BaseSiteUrl));
+        }
 
-            var binding = new WS2007HttpBinding();
-            contentServiceFactory = new ChannelFactory<IContentService>(binding, string.Format("{0}/ContentService.svc", BaseSiteUrl));
+        public static BasicHttpBinding CreateBasicHttpBinding()
+        {
+            var binding = new BasicHttpBinding();
+            binding.ReceiveTimeout = TimeSpan.FromHours(1);
+            binding.OpenTimeout = TimeSpan.FromHours(1);
+            binding.CloseTimeout = TimeSpan.FromHours(1);
+            binding.SendTimeout = TimeSpan.FromHours(1);
+            binding.MaxBufferSize = 6553600;
+            binding.MaxBufferPoolSize = 6553600;
+            binding.MaxReceivedMessageSize = 6553600;
+            binding.ReaderQuotas.MaxArrayLength = 1638400;
+            binding.ReaderQuotas.MaxStringContentLength = 819200;
+            binding.ReaderQuotas.MaxBytesPerRead = 409600;
+            binding.Security.Mode = BasicHttpSecurityMode.None;
+            return binding;
         }
 
         public static readonly string ZkDataContextConnectionString;
