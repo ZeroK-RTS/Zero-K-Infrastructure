@@ -8,7 +8,7 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using MonoTorrent.Common;
-using PlasmaShared.ContentService;
+using PlasmaShared;
 using ZkData.UnitSyncLib;
 
 #endregion
@@ -99,7 +99,7 @@ namespace ZkData
         /// </summary>
         readonly List<FileSystemWatcher> packagesWatchers = new List<FileSystemWatcher>();
 
-        readonly ContentService service = new ContentService() { Proxy = null };
+        readonly IContentService service = new ContentService() { Proxy = null };
 
         readonly SpringPaths springPaths;
 

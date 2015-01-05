@@ -10,7 +10,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Timers;
-using PlasmaShared.ContentService;
 using PlasmaShared.ModStats;
 using PlasmaShared.SpringieInterfaceReference;
 using ServiceStack.Text;

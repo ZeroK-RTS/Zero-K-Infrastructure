@@ -9,7 +9,7 @@ using System.Threading;
 using System.Timers;
 using LobbyClient;
 using PlasmaDownloader.Packages;
-using PlasmaShared.ContentService;
+using PlasmaShared;
 using PlasmaShared.SpringieInterfaceReference;
 using ZkData.UnitSyncLib;
 using Springie.autohost.Polls;
@@ -879,7 +879,7 @@ namespace Springie.autohost
         void spring_SpringStarted(object sender, EventArgs e) {
             //lockedUntil = DateTime.MinValue;
             //tas.ChangeLock(false);
-            if (hostedMod.IsMission) using (var service = new ContentService { Proxy = null }) foreach (UserBattleStatus u in tas.MyBattle.Users.Where(x => !x.IsSpectator)) service.NotifyMissionRunAsync(u.Name, hostedMod.ShortName);
+            if (hostedMod.IsMission) using (IContentService service = new ContentService { Proxy = null }) foreach (UserBattleStatus u in tas.MyBattle.Users.Where(x => !x.IsSpectator)) service.NotifyMissionRunAsync(u.Name, hostedMod.ShortName);
             StopVote();
         }
 

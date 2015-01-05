@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using LobbyClient;
-using PlasmaShared.ContentService;
 using PlasmaShared.SpringieInterfaceReference;
+using ZkData;
 using AutohostMode = PlasmaShared.SpringieInterfaceReference.AutohostMode;
 #endregion
 

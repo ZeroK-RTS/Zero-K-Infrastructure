@@ -135,6 +135,13 @@
     <Compile Include="EventExtensions.cs" />
     <Compile Include="GlobalConst.cs" />
     <Compile Include="Hash.cs" />
+    <Compile Include="IContentService\AccountInfo.cs" />
+    <Compile Include="IContentService\IContentService.cs" />
+    <Compile Include="IContentService\ResourceData.cs" />
+    <Compile Include="IContentService\ResourceType.cs" />
+    <Compile Include="IContentService\ReturnValue.cs" />
+    <Compile Include="IContentService\ScriptMissionData.cs" />
+    <Compile Include="IContentService\SpringHashEntry.cs" />
     <Compile Include="IResourceInfo.cs" />
     <Compile Include="LuaTable.cs" />
     <Compile Include="MetaDataCache.cs" />
@@ -171,11 +178,6 @@
     <Compile Include="UnitSyncLib\UnitSync.cs" />
     <Compile Include="UnitSyncLib\UnitSyncException.cs" />
     <Compile Include="UnitSyncLib\VfsMode.cs" />
-    <Compile Include="Web References\ContentService\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
     <Compile Include="Web References\ModStats\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -196,6 +198,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.Services" />
@@ -208,26 +211,6 @@
     <None Include="Properties\Settings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\ContentService\AccountInfo.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\ContentService\ContentService.wsdl" />
-    <None Include="Web References\ContentService\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\ContentService\ResourceData.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\ContentService\ResourceType.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\ContentService\ReturnValue.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\ContentService\ScriptMissionData.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
     </None>
     <None Include="Web References\ModStats\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
@@ -296,17 +279,6 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>PlasmaShared_ModStats_StatsCollector</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="http://zero-k.info/ContentService.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\ContentService\</RelPath>
-      <UpdateFromURL>http://zero-k.info/ContentService.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>PlasmaShared_ContentService_ContentService</CachedSettingsPropName>
-    </WebReferenceUrl>
     <WebReferenceUrl Include="http://zero-k.info/SpringieService.asmx">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\SpringieInterfaceReference\</RelPath>
@@ -320,9 +292,6 @@
     </WebReferenceUrl>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Web References\ContentService\ContentService.disco" />
-  </ItemGroup>
-  <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
@@ -332,5 +301,6 @@
   <ItemGroup>
     <None Include="Web References\ModStats\StatsCollector.disco" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>

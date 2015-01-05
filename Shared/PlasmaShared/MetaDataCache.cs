@@ -3,11 +3,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Xml.Serialization;
-using PlasmaShared.ContentService;
+using PlasmaShared;
 using ZkData.UnitSyncLib;
 
 #endregion
@@ -40,9 +41,9 @@ namespace ZkData
             Utils.CheckPath(resourceFolder);
         }
 
-        public ResourceData[] FindResourceData(string[] words, ResourceType? type)
+        public List<ResourceData> FindResourceData(string[] words, ResourceType? type)
         {
-            var cs = new ContentService();
+            IContentService cs = new ContentService();
             return cs.FindResourceData(words, type);
         }
 
@@ -249,7 +250,7 @@ namespace ZkData
         {
             try
             {
-                var cs = new ContentService();
+                IContentService cs = new ContentService();
                 return cs.GetResourceDataByInternalName(name);
             }
             catch (Exception ex)
@@ -319,7 +320,7 @@ namespace ZkData
                 }
                 else
                 {
-                    var cs = new ContentService();
+                    IContentService cs = new ContentService();
                     try
                     {
                         var rd = cs.GetResourceDataByInternalName(ret.Name);
@@ -350,7 +351,7 @@ namespace ZkData
                 }
                 else
                 {
-                    var cs = new ContentService();
+                    IContentService cs = new ContentService();
                     try
                     {
                         var rd = cs.GetResourceDataByInternalName(ret.Name);

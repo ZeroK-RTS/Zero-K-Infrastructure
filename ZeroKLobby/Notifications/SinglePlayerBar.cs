@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaDownloader;
-using PlasmaShared.ContentService;
+using PlasmaShared;
 
 namespace ZeroKLobby.Notifications
 {

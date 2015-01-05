@@ -8,6 +8,7 @@ using System.Text;
 using System.Transactions;
 using System.Web.Services;
 using Microsoft.Linq.Translations;
+using PlasmaShared;
 using ZeroKWeb;
 using ZeroKWeb.Controllers;
 using ZeroKWeb.SpringieInterface;
@@ -22,6 +23,8 @@ using SpringBattleStartSetup = ZeroKWeb.SpringieInterface.SpringBattleStartSetup
 
 namespace ZeroKWeb
 {
+
+
     /// <summary>
     /// Summary description for ContentService
     /// </summary>
@@ -30,7 +33,7 @@ namespace ZeroKWeb
     [ToolboxItem(false)]
     // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
         // [System.Web.Script.Services.ScriptService]
-    public class ContentService: WebService
+    public class ContentService: IContentService
     {
 
         [WebMethod]
@@ -45,7 +48,7 @@ namespace ZeroKWeb
         }
 
         [WebMethod]
-        public List<PlasmaServer.ResourceData> FindResourceData(string[] words, ResourceType? type = null)
+        public List<ResourceData> FindResourceData(string[] words, ResourceType? type = null)
         {
             var db = new ZkDataContext();
             var ret = db.Resources.AsQueryable();
@@ -89,30 +92,30 @@ namespace ZeroKWeb
         /// <param name="internalName"></param>
         /// <returns></returns>
         [WebMethod]
-        public PlasmaServer.ResourceData GetResourceData(string md5, string internalName)
+        public ResourceData GetResourceData(string md5, string internalName)
         {
             return PlasmaServer.GetResourceData(md5, internalName);
         }
 
         [WebMethod]
-        public PlasmaServer.ResourceData GetResourceDataByInternalName(string internalName)
+        public ResourceData GetResourceDataByInternalName(string internalName)
         {
             var db = new ZkDataContext();
             var entry = db.Resources.SingleOrDefault(x => x.InternalName == internalName);
-            if (entry != null) return new PlasmaServer.ResourceData(entry);
+            if (entry != null) return new ResourceData(entry);
             else return null;
         }
 
         [WebMethod]
-        public PlasmaServer.ResourceData GetResourceDataByResourceID(int resourceID)
+        public ResourceData GetResourceDataByResourceID(int resourceID)
         {
             var db = new ZkDataContext();
-            return new PlasmaServer.ResourceData(db.Resources.Single(x => x.ResourceID == resourceID));
+            return new ResourceData(db.Resources.Single(x => x.ResourceID == resourceID));
         }
 
 
         [WebMethod]
-        public List<PlasmaServer.ResourceData> GetResourceList(DateTime? lastChange, out DateTime currentTime)
+        public List<ResourceData> GetResourceList(DateTime? lastChange, out DateTime currentTime)
         {
             return PlasmaServer.GetResourceList(lastChange, out currentTime);
         }
@@ -149,7 +152,7 @@ namespace ZeroKWeb
 
 
         [WebMethod]
-        public PlasmaServer.ReturnValue RegisterResource(int apiVersion,
+        public ReturnValue RegisterResource(int apiVersion,
                                                          string springVersion,
                                                          string md5,
                                                          int length,
@@ -238,26 +241,7 @@ namespace ZeroKWeb
             return true;
         }
 
-        public class AccountInfo {
-            public string Name;
-            public int LobbyID;
-            public int ZeroKAccountID;
-            public int ZeroKLevel;
-            public int ClanID;
-            public string ClanName;
-            public string Country;
-            public string Aliases;
-            public int LobbyTimeRank;
-            public bool IsLobbyAdmin;
-            public bool IsZeroKAdmin;
-            public string Avatar;
-            public float Elo;
-            public double EffectiveElo;
-            public float EloWeight;
-            public string FactionName;
-            public int FactionID;
-            public int SpringieLevel;
-        }
+
 
         [WebMethod]
         public AccountInfo GetAccountInfo(string login, string password) {
@@ -461,14 +445,6 @@ namespace ZeroKWeb
    
 
 
-        public class ScriptMissionData
-        {
-            public List<string> ManualDependencies;
-            public string MapName;
-            public string ModTag;
-            public string Name;
-            public string StartScript;
-        }
 
     }
 

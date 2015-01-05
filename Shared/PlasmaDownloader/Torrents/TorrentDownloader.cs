@@ -4,7 +4,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using MonoTorrent.Common;
-using PlasmaShared.ContentService;
+using PlasmaShared;
 using ZkData;
 
 #endregion
@@ -15,7 +15,7 @@ namespace PlasmaDownloader.Torrents
     {
         readonly string incomingFolder;
         PlasmaDownloader plasmaDownloader;
-        readonly ContentService plasmaService = new ContentService() { Proxy = null };
+        readonly IContentService plasmaService = new ContentService() { Proxy = null };
 
         public TorrentDownloader(PlasmaDownloader plasmaDownloader)
         {
@@ -25,7 +25,6 @@ namespace PlasmaDownloader.Torrents
             incomingFolder = Utils.MakePath(this.plasmaDownloader.SpringPaths.Cache, "Incoming");
             Utils.CheckPath(incomingFolder);
 
-            plasmaService.DownloadFileCompleted += HandlePlasmaServiceDownloadFileCompleted;
         }
 
 
@@ -33,6 +32,9 @@ namespace PlasmaDownloader.Torrents
         {
             Trace.TraceInformation("starting download {0}", name);
             var down = new TorrentDownload(name);
+            
+            plasmaService.DownloadFile(name)
+            
             plasmaService.DownloadFileAsync(name, down);
             return down;
         }
