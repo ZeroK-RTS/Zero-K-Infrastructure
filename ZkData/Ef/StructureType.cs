@@ -96,5 +96,15 @@ namespace ZkData
         public virtual ICollection<PlanetStructure> PlanetStructures { get; set; }
 
         public virtual Unlock Unlock { get; set; }
+
+        public string GetImageUrl()
+        {
+            return string.Format((string)"/img/structures/{0}", (object)MapIcon);
+        }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

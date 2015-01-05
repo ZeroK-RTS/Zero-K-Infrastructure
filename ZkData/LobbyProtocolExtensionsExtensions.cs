@@ -7,7 +7,7 @@ using LobbyClient;
 
 namespace ZkData
 {
-    public static class ProtocolExt
+    public static class LobbyProtocolExtensionsExtensions
     {
         public static void PublishAccountData(this ProtocolExtension proto, Account acc)
         {

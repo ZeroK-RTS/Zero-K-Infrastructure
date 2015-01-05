@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Transactions;
 using System.Web.Services;
+using Microsoft.Linq.Translations;
 using ZeroKWeb;
 using ZeroKWeb.Controllers;
 using ZeroKWeb.SpringieInterface;
@@ -70,10 +71,12 @@ namespace ZeroKWeb
         [WebMethod]
         public List<string> GetEloTop10()
         {
+            DateTime lastMonth = DateTime.UtcNow.AddMonths(-1);
             using (var db = new ZkDataContext())
-            return
-                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).OrderByDescending(
-                    x => x.Elo1v1).Select(x => x.Name).Take(10).ToList();
+
+                return
+                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > lastMonth)).OrderByDescending(
+                    x => x.Effective1v1Elo).WithTranslations().Select(x => x.Name).Take(10).ToList();
         }
 
 
@@ -455,13 +458,7 @@ namespace ZeroKWeb
             db.SubmitChanges();
         }
 
-     
-
-        public class EloInfo
-        {
-            public double Elo = 1500;
-            public double Weight = 1;
-        }
+   
 
 
         public class ScriptMissionData

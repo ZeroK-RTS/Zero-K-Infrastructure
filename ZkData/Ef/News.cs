@@ -37,5 +37,18 @@ namespace ZkData
         public virtual Account Account { get; set; }
 
         public virtual ForumThread ForumThread { get; set; }
+
+        [NotMapped]
+        public string ImageRelativeUrl
+        {
+            get { if (ImageExtension == null) return null; return string.Format("/img/news/{0}{1}", NewsID, ImageExtension); }
+        }
+
+        [NotMapped]
+        public string ThumbRelativeUrl
+        {
+            get { if (ImageExtension == null) return null; return string.Format("/img/news/{0}_thumb{1}", NewsID, ImageExtension); }
+        }
+
     }
 }

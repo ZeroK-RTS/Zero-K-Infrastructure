@@ -165,7 +165,7 @@
     <Compile Include="Ef\TreatyEffectType.cs" />
     <Compile Include="Ef\Unlock.cs" />
     <Compile Include="Ef\ZkDataContext.cs" />
-    <Compile Include="IMissionService.cs" />
+    <Compile Include="MissionService\IMissionService.cs" />
     <Compile Include="Migrations\201412312111372_Init.cs" />
     <Compile Include="Migrations\201412312111372_Init.Designer.cs">
       <DependentUpon>201412312111372_Init.cs</DependentUpon>
@@ -195,8 +195,8 @@
       <DependentUpon>201501041114503_FixEventPlanetCampaignRelation.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="MissionUpdater.cs" />
-    <Compile Include="PayPalInterface.cs" />
+    <Compile Include="MissionService\MissionUpdater.cs" />
+    <Compile Include="PayPal\PayPalInterface.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProtocolExtensions.cs" />
     <Compile Include="Secrets.cs" />
