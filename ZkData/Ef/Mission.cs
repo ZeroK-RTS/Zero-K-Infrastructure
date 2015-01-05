@@ -96,9 +96,13 @@ namespace ZkData
         public float? Difficulty { get; set; }
         [DataMember]
         public bool IsCoop { get; set; }
+        [DataMember]
         public int ForumThreadID { get; set; }
+        [DataMember]
         public float? FeaturedOrder { get; set; }
+        [DataMember]
         public int? RatingPollID { get; set; }
+        [DataMember]
         public int? DifficultyRatingPollID { get; set; }
 
         public virtual Account Account { get; set; }

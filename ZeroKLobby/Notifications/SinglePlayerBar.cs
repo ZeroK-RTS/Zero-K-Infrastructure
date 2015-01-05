@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using LobbyClient;
 using PlasmaDownloader;
 using PlasmaShared;
+using ZkData;
 
 namespace ZeroKLobby.Notifications
 {
@@ -62,8 +63,8 @@ namespace ZeroKLobby.Notifications
 								null,
 								null,
 								profile.StartScript.Replace("%MOD%", modInternalName).Replace("%MAP%", profile.MapName).Replace("%NAME%", name), Program.Conf.UseSafeMode, Program.Conf.UseMtEngine);
-				var serv = new ContentService() { Proxy = null };
-				serv.NotifyMissionRunAsync(Program.Conf.LobbyPlayerName, profile.Name);
+                var serv = GlobalConst.ContentServiceFactory.CreateChannel();
+				serv.NotifyMissionRun(Program.Conf.LobbyPlayerName, profile.Name);
 			}
 		}
 

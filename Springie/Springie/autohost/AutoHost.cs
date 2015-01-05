@@ -876,10 +876,15 @@ namespace Springie.autohost
             if (SpawnConfig == null && DateTime.Now.Subtract(spring.GameStarted).TotalMinutes > 5) ServerVerifyMap(true);
         }
 
-        void spring_SpringStarted(object sender, EventArgs e) {
+        void spring_SpringStarted(object sender, EventArgs e)
+        {
             //lockedUntil = DateTime.MinValue;
             //tas.ChangeLock(false);
-            if (hostedMod.IsMission) using (IContentService service = new ContentService { Proxy = null }) foreach (UserBattleStatus u in tas.MyBattle.Users.Where(x => !x.IsSpectator)) service.NotifyMissionRunAsync(u.Name, hostedMod.ShortName);
+            if (hostedMod.IsMission) {
+                var service = GlobalConst.ContentServiceFactory.CreateChannel();
+                foreach (UserBattleStatus u in tas.MyBattle.Users.Where(x => !x.IsSpectator)) service.NotifyMissionRun(u.Name, hostedMod.ShortName);
+            }
+        
             StopVote();
         }
 

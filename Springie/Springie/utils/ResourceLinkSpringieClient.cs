@@ -2,7 +2,9 @@
 
 using System.Collections.Generic;
 using LobbyClient;
+using PlasmaShared;
 using Springie.autohost;
+using ZkData;
 
 #endregion
 
@@ -31,13 +33,13 @@ namespace Springie
 			}
 		}*/
 
-        readonly ContentService plasmaService;
+        readonly IContentService plasmaService;
 
         AutoHost ah;
         public ResourceLinkSpringieClient(AutoHost ah)
         {
             this.ah = ah;
-            plasmaService = new ContentService();
+            plasmaService = GlobalConst.ContentServiceFactory.CreateChannel();
             plasmaService.DownloadFileCompleted += ps_DownloadFileCompleted;
         }
 

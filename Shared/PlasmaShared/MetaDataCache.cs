@@ -43,7 +43,7 @@ namespace ZkData
 
         public List<ResourceData> FindResourceData(string[] words, ResourceType? type)
         {
-            IContentService cs = new ContentService();
+            var cs = GlobalConst.ContentServiceFactory.CreateChannel();
             return cs.FindResourceData(words, type);
         }
 
@@ -248,9 +248,8 @@ namespace ZkData
 
         public ResourceData GetResourceDataByInternalName(string name)
         {
-            try
-            {
-                IContentService cs = new ContentService();
+            try {
+                var cs = GlobalConst.ContentServiceFactory.CreateChannel();
                 return cs.GetResourceDataByInternalName(name);
             }
             catch (Exception ex)
@@ -318,9 +317,8 @@ namespace ZkData
                     var hash = scanner.GetSpringHash(ret.Name, springVersion);
                     ret.Checksum = hash;
                 }
-                else
-                {
-                    IContentService cs = new ContentService();
+                else {
+                    var cs = GlobalConst.ContentServiceFactory.CreateChannel();
                     try
                     {
                         var rd = cs.GetResourceDataByInternalName(ret.Name);
@@ -349,9 +347,8 @@ namespace ZkData
                     var hash = scanner.GetSpringHash(ret.Name, springVersion);
                     ret.Checksum = hash;
                 }
-                else
-                {
-                    IContentService cs = new ContentService();
+                else {
+                    var cs = GlobalConst.ContentServiceFactory.CreateChannel();
                     try
                     {
                         var rd = cs.GetResourceDataByInternalName(ret.Name);

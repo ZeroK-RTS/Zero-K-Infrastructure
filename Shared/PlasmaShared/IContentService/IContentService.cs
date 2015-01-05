@@ -50,7 +50,7 @@ namespace PlasmaShared
         [OperationContract]
         ScriptMissionData GetScriptMissionData(string name);
 
-        [OperationContract]
+        [OperationContract(IsOneWay = true)]
         void NotifyMissionRun(string login, string missionName);
 
         [OperationContract]

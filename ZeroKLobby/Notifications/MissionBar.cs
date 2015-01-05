@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaDownloader;
-using PlasmaShared.ContentService;
+using ZkData;
 using ZkData.UnitSyncLib;
 
 namespace ZeroKLobby.Notifications
@@ -109,8 +109,8 @@ namespace ZeroKLobby.Notifications
                                          null,
                                          modInfo.MissionScript, Program.Conf.UseSafeMode, Program.Conf.UseMtEngine);
 
-                        var cs = new ContentService() { Proxy = null };
-                        cs.NotifyMissionRunAsync(Program.Conf.LobbyPlayerName, missionName);
+                        var cs = GlobalConst.ContentServiceFactory.CreateChannel();
+                        cs.NotifyMissionRun(Program.Conf.LobbyPlayerName, missionName);
                     }
                     Program.MainWindow.InvokeFunc(() => Program.NotifySection.RemoveBar(this));
                 }

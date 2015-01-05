@@ -99,7 +99,7 @@ namespace ZkData
         /// </summary>
         readonly List<FileSystemWatcher> packagesWatchers = new List<FileSystemWatcher>();
 
-        readonly IContentService service = new ContentService() { Proxy = null };
+        readonly IContentService service = GlobalConst.ContentServiceFactory.CreateChannel();
 
         readonly SpringPaths springPaths;
 
@@ -381,8 +381,7 @@ namespace ZkData
             }
             work.CacheItem.InternalName = result.InternalName;
             work.CacheItem.ResourceType = result.ResourceType;
-
-            work.CacheItem.SpringHash = result.SpringHashes;
+            work.CacheItem.SpringHash = result.SpringHashes.ToArray();
             Trace.WriteLine(string.Format("Adding {0}", work.CacheItem.InternalName));
             CacheItemAdd(work.CacheItem);
         }

@@ -1,5 +1,7 @@
 using System;
 using System.Security.Cryptography.X509Certificates;
+using System.ServiceModel;
+using PlasmaShared;
 using PlasmaShared.Properties;
 using ZkData.UnitSyncLib;
 
@@ -61,6 +63,10 @@ namespace ZkData
             ResourceBaseUrl = string.Format("{0}/Resources", BaseSiteUrl);
             BaseImageUrl = string.Format("{0}/img/", BaseSiteUrl);
             SelfUpdaterBaseUrl = string.Format("{0}/lobby", BaseSiteUrl);
+
+
+            var binding = new WS2007HttpBinding();
+            ContentServiceFactory = new ChannelFactory<IContentService>(binding, string.Format("{0}/ContentService.svc", BaseSiteUrl));
         }
 
         public static readonly string ZkDataContextConnectionString;
@@ -179,6 +185,9 @@ namespace ZkData
             if (string.IsNullOrEmpty(name)) return false;
             return name.Contains("Zero-K");
         }
+
+
+        public static readonly ChannelFactory<IContentService> ContentServiceFactory;
     }
 
     public enum PlanetWarsModes
