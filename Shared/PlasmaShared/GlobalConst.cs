@@ -3,6 +3,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using PlasmaShared;
 using PlasmaShared.Properties;
+using ServiceStack.Text;
 using ZkData.UnitSyncLib;
 
 namespace ZkData
@@ -31,6 +32,7 @@ namespace ZkData
                 Mode = ModeType.Test;
             #endif
 
+            JsConfig.IncludePublicFields = true;
 
             switch (Mode)
             {

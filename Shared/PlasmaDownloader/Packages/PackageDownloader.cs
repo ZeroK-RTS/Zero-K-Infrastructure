@@ -12,6 +12,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using System.Timers;
+using ServiceStack.Text;
 using ZkData;
 using ZkData.UnitSyncLib;
 using Timer = System.Timers.Timer;
@@ -223,15 +224,15 @@ namespace PlasmaDownloader.Packages
 
 		void LoadRepositories()
 		{
-			var path = Utils.MakePath(plasmaDownloader.SpringPaths.Cache, "repositories.dat");
-			var bf = new BinaryFormatter();
+		    JsConfig.IncludePublicFields = true;
+			var path = Utils.MakePath(plasmaDownloader.SpringPaths.Cache, "repositories.json");
 			try
 			{
 				if (File.Exists(path))
 				{
 					lock (repositories)
 					{
-						using (var fs = File.OpenRead(path)) repositories = (List<Repository>)bf.Deserialize(fs);
+						using (var fs = File.OpenRead(path)) repositories = JsonSerializer.DeserializeFromStream<List<Repository>>(fs);
 					}
 				}
 				else
@@ -299,11 +300,10 @@ namespace PlasmaDownloader.Packages
 
 		void SaveRepositories()
 		{
-			var path = Utils.MakePath(plasmaDownloader.SpringPaths.Cache, "repositories.dat");
-			var bf = new BinaryFormatter();
+			var path = Utils.MakePath(plasmaDownloader.SpringPaths.Cache, "repositories.json");
 			lock (repositories)
 			{
-				using (var fs = File.OpenWrite(path)) bf.Serialize(fs, repositories);
+				using (var fs = File.OpenWrite(path)) JsonSerializer.SerializeToStream(repositories,fs);
 			}
 		}
 

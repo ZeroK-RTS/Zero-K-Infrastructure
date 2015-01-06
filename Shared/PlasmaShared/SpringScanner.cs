@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MonoTorrent.Common;
 using PlasmaShared;
+using ServiceStack.Text;
 using ZkData.UnitSyncLib;
 
 #endregion
@@ -161,7 +162,7 @@ namespace ZkData
             SetupWatcherEvents(packagesWatchers);
 
             Directory.CreateDirectory(springPaths.Cache);
-            cachePath = Utils.MakePath(springPaths.Cache, "ScannerCache.dat");
+            cachePath = Utils.MakePath(springPaths.Cache, "ScannerCache.json");
             Directory.CreateDirectory(Utils.MakePath(springPaths.Cache, "Resources"));
         }
 
@@ -479,12 +480,12 @@ namespace ZkData
         void InitialScan()
         {
             CacheFile loadedCache = null;
-            var serializer = new BinaryFormatter();
+            JsConfig.IncludePublicFields = true;
             if (File.Exists(cachePath))
             {
                 try
                 {
-                    using (var fs = File.OpenRead(cachePath)) loadedCache = (CacheFile)serializer.Deserialize(fs);
+                    using (var fs = File.OpenRead(cachePath)) loadedCache = JsonSerializer.DeserializeFromStream<CacheFile>(fs);
                 }
                 catch (Exception ex)
                 {
@@ -708,13 +709,12 @@ namespace ZkData
 
         void SaveCache()
         {
-            lock (cache)
-            {
+            lock (cache) {
+                JsConfig.IncludePublicFields = true;
                 try
                 {
-                    var saver = new BinaryFormatter();
                     Directory.CreateDirectory(Path.GetDirectoryName(cachePath));
-                    using (var fs = File.OpenWrite(cachePath)) saver.Serialize(fs, cache);
+                    using (var fs = File.OpenWrite(cachePath)) JsonSerializer.SerializeToStream(cache, fs);
                 }
                 catch (Exception ex)
                 {
@@ -815,10 +815,10 @@ namespace ZkData
         [Serializable]
         class CacheFile
         {
-            public readonly Dictionary<string, bool> FailedUnitSyncFiles = new Dictionary<string, bool>();
-            public readonly Dictionary<Hash, CacheItem> HashIndex = new Dictionary<Hash, CacheItem>();
-            public readonly Dictionary<string, CacheItem> NameIndex = new Dictionary<string, CacheItem>();
-            public readonly Dictionary<string, CacheItem> ShortPathIndex = new Dictionary<string, CacheItem>();
+            public Dictionary<string, bool> FailedUnitSyncFiles = new Dictionary<string, bool>();
+            public Dictionary<Hash, CacheItem> HashIndex = new Dictionary<Hash, CacheItem>();
+            public Dictionary<string, CacheItem> NameIndex = new Dictionary<string, CacheItem>();
+            public Dictionary<string, CacheItem> ShortPathIndex = new Dictionary<string, CacheItem>();
             public string SpringVersion;
         }
 
