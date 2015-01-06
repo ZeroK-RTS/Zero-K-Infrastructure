@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Web;
+using System.Web.Hosting;
 using System.Web.Mvc;
 using System.Globalization;
 using System.Linq;
@@ -16,6 +17,19 @@ namespace ZeroKWeb
 {
     public static class Global
     {
+        public static string MapPath(string virtualPath)
+        {
+            if (HttpContext.Current != null) return HttpContext.Current.Server.MapPath(virtualPath);
+            else {
+                try {
+                    return HostingEnvironment.MapPath(virtualPath);
+                } catch {
+                    return HttpRuntime.AppDomainAppPath + virtualPath.Replace("~", string.Empty).Replace('/', '\\');
+                }
+            }
+        }
+
+
         static Nightwatch nightwatch;
         public static Nightwatch Nightwatch {
             get {

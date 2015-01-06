@@ -111,7 +111,7 @@ namespace ZeroKWeb
 
         public static string GetTorrentPath(string name, string md5)
         {
-            return HttpContext.Current.Server.MapPath(String.Format("~/Resources/{0}", (object)GetTorrentFileName(name, md5)));
+            return Global.MapPath(String.Format("~/Resources/{0}", (object)GetTorrentFileName(name, md5)));
         }
 
         public static string GetTorrentPath(ResourceContentFile cf)
@@ -204,7 +204,7 @@ namespace ZeroKWeb
 
         public static void RemoveResourceFiles(Resource resource)
         {
-            var file = String.Format("{0}/{1}", HttpContext.Current.Server.MapPath("~/Resources"), resource.InternalName.EscapePath());
+            var file = String.Format("{0}/{1}", Global.MapPath("~/Resources"), resource.InternalName.EscapePath());
             Utils.SafeDelete(String.Format("{0}.minimap.jpg", file));
             Utils.SafeDelete(String.Format("{0}.thumbnail.jpg", file));
             Utils.SafeDelete(String.Format("{0}.heightmap.jpg", file));
@@ -234,7 +234,7 @@ namespace ZeroKWeb
                                   byte[] metalMap,
                                   byte[] heightMap)
         {
-            var file = String.Format("{0}/{1}", HttpContext.Current.Server.MapPath("~/Resources"), resource.InternalName.EscapePath());
+            var file = String.Format("{0}/{1}", Global.MapPath("~/Resources"), resource.InternalName.EscapePath());
 
             resource.LastChange = DateTime.UtcNow;
 
@@ -292,7 +292,7 @@ namespace ZeroKWeb
                             encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, 100L);
 
                             var target = String.Format("{0}/{1}.thumbnail.jpg",
-                                                       HttpContext.Current.Server.MapPath("~/Resources"),
+                                                       Global.MapPath("~/Resources"),
                                                        resource.InternalName.EscapePath());
                             correctMinimap.Save(target, jgpEncoder, encoderParams);
                         }
