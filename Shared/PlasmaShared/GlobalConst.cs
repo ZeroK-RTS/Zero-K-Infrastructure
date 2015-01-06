@@ -38,7 +38,7 @@ namespace ZkData
             {
                 case ModeType.Local:
                     BaseSiteUrl = "http://localhost:9739";
-                    ZkDataContextConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=zero-k_ef;Integrated Security=True;MultipleActiveResultSets=true";
+                    ZkDataContextConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=zero-k_local;Integrated Security=True;MultipleActiveResultSets=true";
                     SpringieNode = "alpha";
 
                     LobbyServerHost = "localhost";

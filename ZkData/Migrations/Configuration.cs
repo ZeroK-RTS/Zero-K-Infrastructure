@@ -15,19 +15,25 @@ namespace ZkData.Migrations
         protected override void Seed(ZkDataContext db)
         {
             //  This method will be called after migrating to the latest version.
+           
+            if (GlobalConst.Mode == ModeType.Local) {
+                // fill local DB with some basic test data
 
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data. E.g.
-            //
-            //    context.People.AddOrUpdate(
-            //      p => p.FullName,
-            //      new Person { FullName = "Andrew Peters" },
-            //      new Person { FullName = "Brice Lambson" },
-            //      new Person { FullName = "Rowan Miller" }
-            //    );
-            //
-            
-            if (!db.MiscVars.Any(x => x.VarName == "NightwatchPassword")) db.MiscVars.Add(new MiscVar() { VarName = "NightwatchPassword", VarValue = "dummy" });
+                db.MiscVars.AddOrUpdate(x => x.VarName, new MiscVar() { VarName = "NightwatchPassword", VarValue = "dummy" });
+
+                db.Accounts.AddOrUpdate(x=>x.Name, new Account() {
+                    Name = "test",
+                    Password = Utils.HashLobbyPassword("test"),
+                    IsZeroKAdmin = true,
+                    Kudos = 200,
+                    Elo = 1700,
+                    EloWeight = 2,
+                    SpringieLevel = 4,
+                    Country = "cz",
+                    LobbyID = 2
+                });
+            }
+
         }
     }
 }

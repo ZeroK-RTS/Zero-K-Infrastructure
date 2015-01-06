@@ -21,6 +21,9 @@ namespace ZkData
             EloWeight = 1;
             Elo1v1Weight = 1;
             SpringieLevel = 1;
+            FirstLogin = DateTime.UtcNow;
+            LastLogin = DateTime.UtcNow;
+            
 
             AbuseReportsByAccountID = new HashSet<AbuseReport>();
             AbuseReportsByReporterAccountID = new HashSet<AbuseReport>();
