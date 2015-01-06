@@ -70,7 +70,11 @@ namespace ZeroKWeb.Controllers
                                      ForumCategoryID = db.ForumCategories.Single(x => x.IsNews).ForumCategoryID
                                  };
 
-                    string postText = "[img]" + news.ImageRelativeUrl + "[/img]" + Environment.NewLine + news.Text;
+                    string postText = news.Text;
+                    if (!String.IsNullOrWhiteSpace(news.ImageRelativeUrl))
+                    {
+                        postText = "[img]" + news.ImageRelativeUrl + "[/img]" + Environment.NewLine + postText;
+                    }
                     thread.ForumPosts.Add(new ForumPost() { Created = news.Created, Text = postText, AuthorAccountID = news.AuthorAccountID });
                     db.ForumThreads.InsertOnSubmit(thread);
                     db.SubmitChanges();
