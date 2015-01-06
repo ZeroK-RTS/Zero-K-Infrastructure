@@ -64,6 +64,10 @@
     <Compile Include="Enums\DecorationIconPositions.cs" />
     <Compile Include="Enums\DecorationIconTypes.cs" />
     <Compile Include="Enums\UserLanguage.cs" />
+    <Compile Include="Migrations\201501061427259_TryToFixCampaign.cs" />
+    <Compile Include="Migrations\201501061427259_TryToFixCampaign.Designer.cs">
+      <DependentUpon>201501061427259_TryToFixCampaign.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
     <Compile Include="CurrentLobbyStats.cs" />
@@ -205,6 +209,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201501041114503_FixEventPlanetCampaignRelation.resx">
       <DependentUpon>201501041114503_FixEventPlanetCampaignRelation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501061427259_TryToFixCampaign.resx">
+      <DependentUpon>201501061427259_TryToFixCampaign.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
