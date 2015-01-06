@@ -621,6 +621,8 @@ namespace ZkData
                 .Property(e => e.Text)
                 .IsUnicode(false);
 
+            modelBuilder.Entity<CampaignEvent>().HasRequired(x => x.Campaign).WithMany(x => x.CampaignEvents).HasForeignKey(x => x.CampaignID);
+
             modelBuilder.Entity<Planet>()
                 .Property(e => e.Name)
                 .IsUnicode(false);
