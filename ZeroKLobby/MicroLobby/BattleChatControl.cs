@@ -170,8 +170,12 @@ namespace ZeroKLobby.MicroLobby
 		    }
             
 		    playerBox.BeginUpdate();
+		    int currentScroll = playerBox.TopIndex;
+
             playerBox.Items.Clear();
             foreach (var item in newList) playerBox.Items.Add(item);
+
+            playerBox.TopIndex = currentScroll;
             playerBox.EndUpdate();
 		}
 
