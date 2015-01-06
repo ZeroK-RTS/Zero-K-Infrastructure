@@ -16,7 +16,7 @@ namespace ZeroKLobby
 
         public AcceptAgreementForm()
         {
-            InitializeComponent();
+            InitializeComponent(); 
         }
 
         void btnAgree_Click(object sender, EventArgs e)
