@@ -172,7 +172,7 @@ namespace System.Web.Mvc
                 return new MvcHtmlString(ret);
             }
             else {
-                var path = HttpContext.Current.Server.MapPath(name);
+                var path = Global.MapPath(name);
                 return new MvcHtmlString(File.ReadAllText(path));
             }
         }
