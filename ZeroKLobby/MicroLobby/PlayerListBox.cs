@@ -34,9 +34,14 @@ namespace ZeroKLobby.MicroLobby
 		        {
 		            try {
 		                BeginUpdate();
+		                int currentScroll = base.TopIndex;
+
 		                base.Items.Clear();
 		                base.Items.AddRange(realItems.ToArray());
+
+		                base.TopIndex = currentScroll;
 		                EndUpdate();
+
 		                timer.Stop();
 		            } catch (Exception ex) {
 		                Trace.TraceError("Error updating list: {0}",ex);
@@ -49,7 +54,7 @@ namespace ZeroKLobby.MicroLobby
                 //dummy item to fix Mono scrollbar always cutout last 3 line
                 //https://bugzilla.novell.com/show_bug.cgi?id=475581
                 DpiMeasurement.DpiXYMeasurement (this);
-                int numberOfDummy = (int)(DpiMeasurement.scaleUpRatioY*3 + 0.9d); //is Math.Ceiling
+                int numberOfDummy = (int)(DpiMeasurement.scaleUpRatioY*3 + 0.9d); //similar to Math.Ceiling(scaleUpRatioY*3)
 
                 for (int i=0; i<numberOfDummy; i++) {
                     PlayerListItem dummyItem = new PlayerListItem () { isOfflineMode = true, isDummy = true, Height = 1, UserName = "ZZ 99 dummy "+i.ToString() }; //sorted to be last
@@ -68,7 +73,10 @@ namespace ZeroKLobby.MicroLobby
 	            else {
 	                timer.Stop();
 	                lastChange = DateTime.UtcNow;
+
 	                BeginUpdate();
+	                int currentScroll = base.TopIndex; //read current scroll index. Ref: http://stackoverflow.com/questions/14318069/setting-the-scrollbar-position-of-listbox
+
 	                if (args.Action == NotifyCollectionChangedAction.Add) {
 	                    foreach (var item in args.NewItems) {
 	                        base.Items.Add(item);
@@ -83,6 +91,8 @@ namespace ZeroKLobby.MicroLobby
 	                    base.Items.Clear();
 	                    base.Items.AddRange(realItems.ToArray());
 	                }
+
+	                base.TopIndex = currentScroll;
 	                EndUpdate();
 	            }
 
@@ -95,10 +105,15 @@ namespace ZeroKLobby.MicroLobby
 	    public new ObservableCollection<PlayerListItem> Items { get { return realItems; } }
 	    public void AddItemRange(IEnumerable<PlayerListItem> items) {
             foreach (var i in items) realItems.Add(i);
-            BeginUpdate();
-            base.Items.Clear();
-            base.Items.AddRange(realItems.ToArray());
-            EndUpdate();
+
+            //BeginUpdate();
+            //int currentScroll = base.TopIndex;
+
+            //base.Items.Clear();
+            //base.Items.AddRange(realItems.ToArray());
+
+            //base.TopIndex = currentScroll;
+            //EndUpdate();
 	    }
 
 	    public string[] GetUserNames()
