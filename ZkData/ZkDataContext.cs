@@ -369,8 +369,6 @@ namespace ZkData
                 .HasForeignKey(e => new { e.CampaignID, e.JournalID });
 
 
-            modelBuilder.Entity<CampaignEvent>().HasRequired(x => x.Campaign).WithMany(x => x.CampaignEvents).HasForeignKey(x => x.CampaignID);
-
             modelBuilder.Entity<CampaignPlanet>().HasKey(x => new { x.CampaignID, x.PlanetID });
 
 

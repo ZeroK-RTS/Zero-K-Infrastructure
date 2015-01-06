@@ -21,6 +21,7 @@ namespace ZkData
             CampaignVars = new HashSet<CampaignVar>();
         }
 
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int CampaignID { get; set; }
         [Required]
         [StringLength(50)]
