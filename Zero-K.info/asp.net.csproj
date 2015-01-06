@@ -1253,6 +1253,7 @@
     <Content Include="Scripts\site_main.js" />
     <Content Include="SpringieService.svc" />
     <Content Include="Styles\base.css" />
+    <Content Include="Styles\dark-hive\images\tech_button.png" />
     <Content Include="Styles\dark-hive\images\ui-bg_flat_30_cccccc_40x100.png" />
     <Content Include="Styles\dark-hive\images\ui-bg_flat_50_5c5c5c_40x100.png" />
     <Content Include="Styles\dark-hive\images\ui-bg_glass_40_ffc73d_1x400.png" />

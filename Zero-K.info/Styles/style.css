@@ -129,11 +129,12 @@ div#ajaxScrollProgress
 
 .border
 {
-	background: #000 url("../img/border-1.png") repeat-x scroll 50% 0;
 	margin: 10px;
 	padding: 5px;
-    border: 1px solid #2a8eaf;
-	border-radius: 3px;
+    border-style: solid;
+	border-radius: 15px;
+	border-image:url("dark-hive/tech_button.png") 24 fill / 15px stretch;
+	background: #333;
     box-shadow: 0 0 3px 3px #000;
 	-moz-box-shadow: 0 0 3px 3px #000;
     -webkit-box-shadow: 0 0 3px 3px #000;
