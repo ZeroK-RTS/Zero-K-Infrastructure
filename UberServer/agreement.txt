@@ -1,0 +1,12 @@
+Terms of Use
+
+While the administrators and moderators of this server will attempt to keep spammers and players violating this agreement off the server, it is impossible for them to maintain order at all times. Therefore you acknowledge that any messages in our channels express the views and opinions of the author and not the administrators or moderators (except for messages by these people) and hence will not be held liable.
+
+As a user you agree, to any information you have entered as part of your registration being stored in a database. Additionally, while you are using our services, you agree to allow the server and its managed game hosts to collect and record information including, but not limited to: history and details of matches played (including a list of participating players, the map and game selected, match length, ingame awards achieved and winning team(s)); text of chat in registered chat channels, IP and MAC address; client software used to connect to server; and history of moderator action. This information is used to provide services such as publically hosted replays, persistent game elements, and following of chat posted while a user was offline; and to facilitate moderator/administrator action in the event of disputes or misconduct. Some of this information will be made publicly visible to other users, while the remainder (except your password) will be visible to our administration team.
+
+While information that is not publicly visible will not otherwise be disclosed to any third party without your consent, administrators and moderators cannot be held responsible for any hacking attempt that may lead to the data being compromised.
+
+You agree not to use any abusive, obscene, vulgar, slanderous, hateful, threatening, sexually-oriented or any other material that may violate any applicable laws. Doing so may lead to you being immediately and permanently banned (and your service provider being informed). You agree that the administrators and moderators of this server have the right to mute, kick or ban you at any time should they see fit.
+
+By using this service you hereby agree to all of the above terms.
+

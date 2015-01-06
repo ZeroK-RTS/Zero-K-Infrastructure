@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>ChanServ command list</title>
+</head>
+<body>
+
+  <table border="3" cellpadding="2" cellspacing="0">
+    <tbody>
+      <tr>
+        <th>Command syntax</th>
+        <th>Access level</th>
+        <th>Description</th>
+      </tr>
+      <tr>
+        <td>HELP</td>
+        <td>Normal</td>
+        <td>Will return basic info</td>
+      </tr>
+      <tr>
+        <td>INFO /&lt;channame&gt;/</td>
+        <td>Normal</td>
+        <td>Will return basic channel information</td>
+      </tr>
+      <tr>
+        <td>REGISTER &lt;channame&gt; &lt;founder&gt;</td>
+        <td>Server moderator</td>
+        <td>Will register channel &lt;channame&gt; to user &lt;founder&gt;</td>
+      </tr>
+      <tr>
+        <td>UNREGISTER &lt;channame&gt;</td>
+        <td>Channel founder</td>
+        <td>Will unregister the channel (ChanServ will no longer monitor this channel)</td>
+      </tr>
+      <tr>
+        <td>CHANGEFOUNDER /&lt;channame&gt;/ &lt;newfounder&gt;</td>
+        <td>Channel founder</td>
+        <td>Will set channel's founder to the specified user</td>
+      </tr>
+      <tr>
+        <td>ADDSTATIC &lt;channame&gt;</td>
+        <td>Server moderator</td>
+        <td>Will add channel &lt;channame&gt; to static channel list</td>
+      </tr>
+      <tr>
+        <td>REMOVESTATIC &lt;channame&gt;</td>
+        <td>Server moderator</td>
+        <td>Will remove channel &lt;channame&gt; from static channel list</td>
+      </tr>
+      <tr>
+        <td>SPAMPROTECTION /&lt;channame&gt;/ &lt;on|off&gt;</td>
+        <td>Channel founder</td>
+        <td>If &lt;on|off&gt; is 'on', anti-spam protection will get enabled, if 'off', it will get disabled. Disabled by default.</td>
+      </tr>
+      <tr>
+        <td>SPAMPROTECTION /&lt;channame&gt;/</td>
+        <td>Normal</td>
+        <td>Will tell if anti-spam protection for this channel is enabled or not.</td>
+      </tr>
+      <tr>
+        <td>SPAMSETTINGS /&lt;channame&gt;/ &#123;settings&#125;</td>
+        <td>Channel founder</td>
+        <td>With this command you can set certain modifiers for the anti-spam protection that is used with your channel. 
+            "settings" argument must contain 4 multipliers separated by space.
+            <ul>
+              <li>First modifier is an unsigned integer which defines the "penalty limit" - when penalty points reach this
+                  limit, user will get muted.</li>
+              <li>Second modifier is an unsigned integer which defines the length (in characters) of a "long message".
+                  Long messages are assigned extra penalty points when issued by the user.</li>
+              <li>The third modifier is unsigned float value telling how much penalty points should be assigned
+                  to normal messages issued by a user. Everytime user says something in the channel, he is assigned
+                  this value.</li>
+              <li>The fourth modifier is an unsigned float value telling how much extra penalty points should
+                  be assigned for long messages (defined by the second modifier).</li>
+              <li>The fifth modifier is an unsigned float
+                  value telling how much extra penalty points should be assigned for "doubled" messages, that is if user
+                  sends message that is same as his previous message, it will get assigned these extra penalty points.</li>
+            </ul>
+
+            Each second 1 penalty point is reduced from every user. If number of penalty points reaches
+            'penality limit' (defined by first modifier), user is automatically muted for 15 minutes.
+            Note that extra penalty points (defined by 4th and 5th modifiers) are added on top of "normal points"
+            (defined by 3rd modifier). For example if normal modifier is 1 and extra modifier for long messages is 0.5
+            and extra modifier for doubled messages is 0.5, user would get assigned 1.5 penalty points in case
+            it sends too long message, and 2.0 in case the message is too long and same as previous message.<br /><br />
+
+            Also note that all float values should use dot (.) as a delimiter, although you can use whole numbers as well.
+            This regex describes the exact format of settings string: <br />
+            <b><pre>"^\d+ \d+ [0-9]*\.?[0-9]+ [0-9]*\.?[0-9]+ [0-9]*\.?[0-9]+$"</pre></b>
+            An example: <br />
+            !spamsettings 5 200 1 0.5 0.5 <br />
+            </td>
+      </tr>
+      <tr>
+        <td>OP /&lt;channame&gt;/ &lt;username&gt;</td>
+        <td>Channel founder</td>
+        <td>Adds &lt;username&gt; to channel's operator list</td>
+      </tr>
+      <tr>
+        <td>DEOP /&lt;channame&gt;/ &lt;username&gt;</td>
+        <td>Channel founder</td>
+        <td>Removes &lt;username&gt; from channel's operator list</td>
+      </tr>
+      <tr>
+        <td>TOPIC /&lt;channame&gt;/ &#123;topic&#125;</td>
+        <td>Channel operator</td>
+        <td>Sets the topic for channel &lt;channame&gt; (use no argument for topic to disable it)</td>
+      </tr>
+      <tr>
+        <td>CHANMSG /&lt;channame&gt;/ &#123;message&#125;</td>
+        <td>Channel founder</td>
+        <td>Prints the message in the channel via CHANNELMESSAGE command.</td>
+      </tr>
+      <tr>
+        <td>LOCK /&lt;channame&gt;/ &lt;key&gt;</td>
+        <td>Channel operator</td>
+        <td>Locks the channel with &lt;key&gt; (only users who supply the correct key can join the channel)</td>
+      </tr>
+      <tr>
+        <td>UNLOCK /&lt;channame&gt;/</td>
+        <td>Channel operator</td>
+        <td>Will unlock previously locked channel</td>
+      </tr>
+      <tr>
+        <td>KICK /&lt;channame&gt;/ &lt;username&gt; &#91;&#123;reason&#125;&#93;</td>
+        <td>Channel operator</td>
+        <td>Will kick &lt;username&gt; from the channel (reason is optional parameter)</td>
+      </tr>
+      <tr>
+        <td>MUTE /&lt;channame&gt;/ &lt;username&gt; &#91;&lt;duration&gt;&#93;</td>
+        <td>Channel operator</td>
+        <td>Will mute &lt;username&gt; in the channel. Duration is in seconds. If no duration is specified, user is muted for indefinite time (i.e. until he is unmuted)</td>
+      </tr>
+      <tr>
+        <td>UNMUTE /&lt;channame&gt;/ &lt;username&gt;</td>
+        <td>Channel operator</td>
+        <td>Will unmute &lt;username&gt; in the channel.</td>
+      </tr>
+      <tr>
+        <td>MUTELIST /&lt;channame&gt;/</td>
+        <td>Channel operator</td>
+        <td>Will list all usernames that are currently muted in this channel.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>Legend:</p>
+  <ul>
+  <li>[] - optional parameters
+  <li>/.../ - this parameter must be ommited if the command is passed to the channel rather than via private message
+  <li>{} - sentence (one or more words separated by spaces)
+  </ul>
+
+  <p>Notes:</p>
+  <ul>
+  <li>Each command must be prefixed with "!" character (see examples)
+  <li>"Access level" tells you the minimum access type that you need to issue the command. Possible access types are (from highest to lowest): Server moderator, Channel founder, Channel operator, Normal user
+  <li>Channel founder is the user who has full control over the channel. He can assign channel operators and unregister the channel, as well as act as a channel operator.
+  </ul>
+
+  <p>Examples:</p>
+  <ul>
+  <li>set topic for #main via private message to ChanServ: !topic #main This is a new topic
+  <li>disable topic for #main via PM: !topic #main
+  <li>add someone to #main's operator list by giving the command in #main: !op someone
+  </ul>
+
+</body>
+</html>

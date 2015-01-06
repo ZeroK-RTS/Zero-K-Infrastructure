@@ -1,0 +1,9 @@
+Welcome, {USERNAME}!
+There are currently {CLIENTS} clients connected
+to the server talking in {CHANNELS} open channels
+and participating in {BATTLES} battles.
+Server's uptime is {UPTIME}
+You've successfully connected to uberserver.
+Please report lobby server bugs to the bugtracker:
+https://github.com/spring/uberserver/issues
+
