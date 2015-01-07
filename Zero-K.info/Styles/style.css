@@ -510,13 +510,17 @@ span.button_2text
 .forumPostHead 
 {
   width:222px;
-  border: 1px solid teal;  
+  border-style: solid;
+  border-image: url("dark-hive/images/tech_button.png") 24 24 24 24 fill / 15px 15px 15px 15px;
+  padding:10px;
 }
 
 .forumPostText
 {
   background-color:#102020;
-  border: 1px solid teal;
+  border-style: solid;
+  border-image: url("dark-hive/images/tech_button.png") 24 24 24 24 fill / 15px 15px 15px 15px;
+  border-radius: 10px;
   max-width: 700px;
   overflow: hidden;
   white-space:normal;
