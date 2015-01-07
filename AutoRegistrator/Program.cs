@@ -47,7 +47,7 @@ namespace AutoRegistrator
             Scanner.Start();
             Downloader = new PlasmaDownloader.PlasmaDownloader(new Config(), Scanner, Paths);
             Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
-            Downloader.GetAndSwitchEngine("97.0.1-18-gf1dd749"); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
+            Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
             Downloader.PackagesChanged += Downloader_PackagesChanged;
 
             while (true) {Thread.Sleep(10000);}
