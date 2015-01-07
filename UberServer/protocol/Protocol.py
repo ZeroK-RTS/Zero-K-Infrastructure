@@ -84,7 +84,6 @@ restricted = {
 	'GETREGISTRATIONDATE',
 	'MYSTATUS',
 	'PORTTEST',
-	'RENAMEACCOUNT',
 	'SETBATTLE'
 	],
 'mod':[
@@ -2193,27 +2192,6 @@ class Protocol:
 		if ip:
 			self.out_SERVERMSG(client, '<%s> was recently bound to %s' % (username, ip))
 
-	def in_RENAMEACCOUNT(self, client, newname):
-		'''
-		Change the name of current user.
-
-		@required.str username: The new username to apply.
-		'''
-		good, reason = self._validUsernameSyntax(newname)
-		if not good:
-			self.out_SERVERMSG(client, '%s' %(reason))
-			return
-
-		user = client.username
-		if user == newname:
-			self.out_SERVERMSG(client, 'You already have that username.')
-			return
-		good, reason = self.userdb.rename_user(user, newname)
-		if good:
-			self.out_SERVERMSG(client, 'Your account has been renamed to <%s>. Reconnect with the new username (you will now be automatically disconnected).' % newname)
-			client.Remove('renaming')
-		else:
-			self.out_SERVERMSG(client, 'Failed to rename to <%s>: %s' % (newname, reason))
 
 	def in_CHANGEPASSWORD(self, client, oldpassword, newpassword):
 		'''

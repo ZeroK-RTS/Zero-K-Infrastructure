@@ -56,26 +56,7 @@ class Login(object):
 	def __repr__(self):
 		return "<Login('%s', '%s')>" % (self.ip_address, self.time)
 ##########################################
-renames_table = Table('renames', metadata,
-	Column('id', Integer, primary_key=True),
-	Column('user_id', Integer, ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE')),
-	Column('original', String(40)),
-	Column('new', String(40)), # FIXME: not needed
-	Column('time', DateTime),
-	)
-class Rename(object):
-	def __init__(self, original, new):
-		self.original = original
-		self.new = new
-		self.time = datetime.now()
-		
-	def __repr__(self):
-		return "<Rename('%s')>" % self.ip_address
-mapper(Rename, renames_table)
-##########################################
 mapper(User, users_table, properties={
-	#'logins':relation(Login, backref='user', cascade="all, delete, delete-orphan"),
-	'renames':relation(Rename, backref='user', cascade="all, delete, delete-orphan"),
 	})
 
 ##########################################
@@ -326,25 +307,6 @@ class UsersHandler:
 		session.close()
 		return banlist
 
-	def rename_user(self, user, newname):
-		if len(newname)>20: return False, 'Username too long'
-		session = self.sessionmaker()
-		if self._root.censor:
-			if not self._root.SayHooks._nasty_word_censor(user):
-				return False, 'New username failed to pass profanity filter.'
-		if not newname == user:
-			results = session.query(User).filter(User.username==newname).first()
-			if results:
-				return False, 'Username already exists.'
-		entry = session.query(User).filter(User.username==user).first()
-		if not entry: return False, 'You don\'t seem to exist anymore. Contact an admin or moderator.'
-		entry.renames.append(Rename(user, newname))
-		entry.username = newname
-		session.commit()
-		session.close()
-		# need to iterate through channels and rename junk there...
-		# it might actually be a lot easier to use userids in the server... # later.
-		return True, 'Account renamed successfully.'
 
 	def save_user(self, client):
 		session = self.sessionmaker()
