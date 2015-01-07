@@ -42,18 +42,6 @@ class User(object):
 	def __repr__(self):
 		return "<User('%s', '%s')>" % (self.username, self.password)
 ##########################################
-logins_table = Table('logins', metadata,
-	Column('id', Integer, primary_key=True),
-	Column('user_dbid', Integer, ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE')),
-	Column('ip_address', String(15), nullable=False),
-	Column('time', DateTime),
-	Column('lobby_id', String(128)),
-	Column('cpu', Integer),
-	Column('local_ip', String(15)), # needs update for ipv6
-	Column('country', String(4)),
-	Column('end', DateTime),
-	Column('user_id', String(128)),
-	)
 class Login(object):
 	def __init__(self, now, ip_address, lobby_id, user_id, cpu, local_ip, country):
 		self.time = now
@@ -67,7 +55,6 @@ class Login(object):
 
 	def __repr__(self):
 		return "<Login('%s', '%s')>" % (self.ip_address, self.time)
-mapper(Login, logins_table)
 ##########################################
 renames_table = Table('renames', metadata,
 	Column('id', Integer, primary_key=True),
@@ -86,66 +73,9 @@ class Rename(object):
 		return "<Rename('%s')>" % self.ip_address
 mapper(Rename, renames_table)
 ##########################################
-ignores_table = Table('ignores', metadata,
-	Column('id', Integer, primary_key=True),
-	Column('user_id', Integer, ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE')),
-	Column('ignored_user_id', Integer, ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE')),
-	Column('reason', String(128)),
-	Column('time', DateTime),
-	)
-class Ignore(object):
-	def __init__(self, user_id, ignored_user_id, reason):
-		self.user_id = user_id
-		self.ignored_user_id = ignored_user_id
-		self.reason = reason
-		self.time = datetime.now()
-
-	def __repr__(self):
-		return "<Ignore('%s', '%s', '%s', '%s')>" % (self.user_id, self.ignored_user_id, self.reason, self.time)
-mapper(Ignore, ignores_table)
-##########################################
-friends_table = Table('friends', metadata,
-	Column('id', Integer, primary_key=True),
-	Column('first_user_id', Integer, ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE')),
-	Column('second_user_id', Integer, ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE')),
-	Column('time', DateTime),
-	)
-class Friend(object):
-	def __init__(self, first_user_id, second_user_id):
-		self.first_user_id = first_user_id
-		self.second_user_id = second_user_id
-		self.time = datetime.now()
-
-	def __repr__(self):
-		return "<Friends('%s', '%s')>" % self.first_user_id, self.second_user_id
-mapper(Friend, friends_table)
-##########################################
-friendRequests_table = Table('friendRequests', metadata,
-	Column('id', Integer, primary_key=True),
-	Column('user_id', Integer, ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE')),
-	Column('friend_user_id', Integer, ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE')),
-	Column('msg', String(128)),
-	Column('time', DateTime),
-	)
-class FriendRequest(object):
-	def __init__(self, user_id, friend_user_id, msg):
-		self.user_id = user_id
-		self.friend_user_id = friend_user_id
-		self.msg = msg
-		self.time = datetime.now()
-
-	def __repr__(self):
-		return "<FriendRequest('%s', '%s', '%s')>" % self.user_id, self.friend_user_id, self.msg
-mapper(FriendRequest, friendRequests_table)
-##########################################
 mapper(User, users_table, properties={
-	'logins':relation(Login, backref='user', cascade="all, delete, delete-orphan"),
+	#'logins':relation(Login, backref='user', cascade="all, delete, delete-orphan"),
 	'renames':relation(Rename, backref='user', cascade="all, delete, delete-orphan"),
-	'ignores':relation(Ignore, cascade="all, delete, delete-orphan", foreign_keys=[Ignore.user_id]),
-	'friends1':relation(Friend, cascade="all, delete, delete-orphan", foreign_keys=[Friend.first_user_id]),
-	'friends2':relation(Friend, cascade="all, delete, delete-orphan", foreign_keys=[Friend.second_user_id]),
-	'friend-requests-by-me':relation(FriendRequest, cascade="all, delete, delete-orphan", foreign_keys=[FriendRequest.user_id]),
-	'friend-requests-for-me':relation(FriendRequest, cascade="all, delete, delete-orphan", foreign_keys=[FriendRequest.friend_user_id]),
 	})
 
 ##########################################
@@ -288,11 +218,12 @@ class UsersHandler:
 				reason += 'days remaining: %s' % (timeleft / (60 * 60 * 24))
 			else:
 				reason += 'hours remaining: %s' % (timeleft / (60 * 60))
-		dbuser.logins.append(Login(now, ip, lobby_id, user_id, cpu, local_ip, country))
-		dbuser.last_login = now
-		dbuser.time = now
-		dbuser.last_ip = ip
-		dbuser.last_id = user_id
+		#licho removing login tracking
+        #dbuser.logins.append(Login(now, ip, lobby_id, user_id, cpu, local_ip, country))
+		#dbuser.last_login = now
+		#dbuser.time = now
+		#dbuser.last_ip = ip
+		#dbuser.last_id = user_id
 		if good:
 			reason = User(dbuser.username, password, ip, now)
 			reason.access = dbuser.access
@@ -308,13 +239,14 @@ class UsersHandler:
 		return good, reason
 	
 	def end_session(self, db_id):
-		session = self.sessionmaker()
-		entry = session.query(User).filter(User.id==db_id).first()
-		if entry and not entry.logins[-1].end:
-			entry.logins[-1].end = datetime.now()
-			session.commit()
-		
-		session.close()
+        #licho removing login tracking
+		#session = self.sessionmaker()
+		#entry = session.query(User).filter(User.id==db_id).first()
+		#if entry and not entry.logins[-1].end:
+		#	entry.logins[-1].end = datetime.now()
+		#	session.commit()
+		#session.close()
+         return
 
 	def register_user(self, user, password, ip, country): # need to add better ban checks so it can check if an ip address is banned when registering an account :)
 		if len(user)>20: return False, 'Username too long'
@@ -530,110 +462,6 @@ class UsersHandler:
 
 		session.commit()
 		session.close()
-
-	def ignore_user(self, user_id, ignore_user_id, reason=None):
-		session = self.sessionmaker()
-		entry = Ignore(user_id, ignore_user_id, reason)
-		session.add(entry)
-		session.commit()
-		session.close()
-
-	def unignore_user(self, user_id, unignore_user_id):
-		session = self.sessionmaker()
-		entry = session.query(Ignore).filter(Ignore.user_id == user_id).filter(Ignore.ignored_user_id == unignore_user_id).one()
-		session.delete(entry)
-		session.commit()
-		session.close()
-
-	# returns id-s of users who had their ignore removed
-	def globally_unignore_user(self, unignore_user_id):
-		session = self.sessionmaker()
-		q = session.query(Ignore).filter(Ignore.ignored_user_id == unignore_user_id)
-		userids = [ignore.user_id for ignore in q.all()]
-		# could be done in one query + hook, fix if bored
-		session.query(Ignore).filter(Ignore.ignored_user_id == unignore_user_id).delete()
-		session.commit()
-		session.close()
-		return userids
-
-	def is_ignored(self, user_id, ignore_user_id):
-		session = self.sessionmaker()
-		exists = session.query(Ignore).filter(Ignore.user_id == user_id).filter(Ignore.ignored_user_id == ignore_user_id).count() > 0
-		session.close()
-		return exists
-
-	def get_ignore_list(self, user_id):
-		session = self.sessionmaker()
-		users = session.query(Ignore).filter(Ignore.user_id == user_id).all()
-		users = [(user.ignored_user_id, user.reason) for user in users]
-		session.close()
-		return users
-
-	def get_ignored_user_ids(self, user_id):
-		session = self.sessionmaker()
-		user_ids = session.query(Ignore.ignored_user_id).filter(Ignore.user_id == user_id).all()
-		user_ids = [user_id for user_id, in user_ids]
-		session.close()
-		return user_ids
-
-	def friend_users(self, user_id, friend_user_id):
-		session = self.sessionmaker()
-		entry = Friend(user_id, friend_user_id)
-		session.add(entry)
-		session.commit()
-		session.close()
-
-	def unfriend_users(self, first_user_id, second_user_id):
-		session = self.sessionmaker()
-		session.query(Friend).filter(Friend.first_user_id == first_user_id).filter(Friend.second_user_id == second_user_id).delete()
-		session.query(Friend).filter(Friend.second_user_id == first_user_id).filter(Friend.first_user_id == second_user_id).delete()
-		session.commit()
-		session.close()
-
-	def are_friends(self, first_user_id, second_user_id):
-		session = self.sessionmaker()
-		q1 = session.query(Friend).filter(Friend.first_user_id == first_user_id)
-		q2 = session.query(Friend).filter(Friend.second_user_id == second_user_id)
-		exists = q1.union(q2).count() > 0
-		session.close()
-		return exists
-
-	def get_friend_user_ids(self, user_id):
-		session = self.sessionmaker()
-		q1 = session.query(Friend.second_user_id).filter(Friend.first_user_id == user_id)
-		q2 = session.query(Friend.first_user_id).filter(Friend.second_user_id == user_id)
-		user_ids = q1.union(q2).all()
-		user_ids = [user_id for user_id, in user_ids]
-		session.close()
-		return user_ids
-
-	def has_friend_request(self, user_id, friend_user_id):
-		session = self.sessionmaker()
-		request = session.query(FriendRequest).filter(FriendRequest.user_id == user_id).filter(FriendRequest.friend_user_id == friend_user_id)
-		exists = request.count() > 0
-		session.close()
-		return exists
-
-	def add_friend_request(self, user_id, friend_user_id, msg=None):
-		session = self.sessionmaker()
-		entry = FriendRequest(user_id, friend_user_id, msg)
-		session.add(entry)
-		session.commit()
-		session.close()
-
-	def remove_friend_request(self, user_id, friend_user_id):
-		session = self.sessionmaker()
-		session.query(FriendRequest).filter(FriendRequest.user_id == user_id).filter(FriendRequest.friend_user_id == friend_user_id).delete()
-		session.commit()
-		session.close()
-
-	# this returns all friend requests sent _to_ user_id
-	def get_friend_request_list(self, user_id):
-		session = self.sessionmaker()
-		reqs = session.query(FriendRequest).filter(FriendRequest.friend_user_id == user_id).all()
-		users = [(req.user_id, req.msg) for req in reqs]
-		session.close()
-		return users
 
 
 class ChannelsHandler:

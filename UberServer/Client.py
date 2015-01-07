@@ -86,8 +86,6 @@ class Client:
 		self.users = set([]) # session_id
 		self.battles = set([]) # [battle_id] = [user1, user2, user3, etc]
 
-		self.ignored = {}
-		
 		self._root.console_write('Client connected from %s:%s, session ID %s.' % (self.ip_address, self.port, session_id))
 	
 	def setFlagByIP(self, ip, force=True):

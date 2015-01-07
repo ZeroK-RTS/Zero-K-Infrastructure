@@ -78,19 +78,6 @@ restricted = {
 	'SETCHANNELKEY',
 	'UNMUTE',
 	########
-	# ignore
-	'IGNORE',
-	'UNIGNORE',
-	'IGNORELIST',
-	########
-	# friend
-	'FRIENDREQUEST',
-	'ACCEPTFRIENDREQUEST',
-	'DECLINEFRIENDREQUEST',
-	'UNFRIEND',
-	'FRIENDLIST',
-	'FRIENDREQUESTLIST',
-	########
 	# meta
 	'CHANGEPASSWORD',
 	'GETINGAMETIME',
@@ -578,7 +565,7 @@ class Protocol:
 		users = list(battle.users)
 		for username in users:
 			client = self.clientFromUsername(username)
-			if client and (sourceClient == None or not sourceClient.db_id in client.ignored):
+			if client:
 				client.SendBattle(battle, data)
 
 	def broadcast_AddUser(self, user):
@@ -642,20 +629,6 @@ class Protocol:
 		'sends the protocol for removing a battle'
 		client.Send('BATTLECLOSED %s' % battle.id)
 
-	def is_ignored(self, client, ignoredClient):
-		# verify that this is an online client (only those have an .ignored attr)
-		if self.clientFromID(client.db_id):
-			return ignoredClient.db_id in client.ignored
-		else:
-			return self.userdb.is_ignored(client.db_id, ignoredClient.db_id)
-
-	def ignore_user(self, client, ignoreClient, reason=None):
-		self.userdb.ignore_user(client.db_id, ignoreClient.db_id, reason)
-		client.ignored[ignoreClient.db_id] = True
-
-	def unignore_user(self, client, unignoreClient):
-		self.userdb.unignore_user(client.db_id, unignoreClient.db_id)
-		client.ignored.pop(unignoreClient.db_id)
 
 	# Begin incoming protocol section #
 	#
@@ -882,8 +855,6 @@ class Protocol:
 		self._root.usernames[username] = client
 		client.status = self._calc_status(client, 0)
 
-		ignoreList = self.userdb.get_ignored_user_ids(client.db_id)
-		client.ignored = {ignoredUserId:True for ignoredUserId in ignoreList}
 
 		client.Send('ACCEPTED %s'%username)
 
@@ -976,8 +947,7 @@ class Protocol:
 				msg = self.SayHooks.hook_SAYPRIVATE(self, client, user, msg) # comment out to remove sayhook
 				if not msg or not msg.strip(): return
 			client.Send('SAYPRIVATE %s %s'%(user, msg), self.binary)
-			if not self.is_ignored(receiver, client):
-				receiver.Send('SAIDPRIVATE %s %s' %(client.username, msg), self.binary)
+			receiver.Send('SAIDPRIVATE %s %s' %(client.username, msg), self.binary)
 
 	def in_SAYPRIVATEEX(self, client, user, msg):
 		'''
@@ -992,8 +962,7 @@ class Protocol:
 			msg = self.SayHooks.hook_SAYPRIVATE(self, client, user, msg) # comment out to remove sayhook
 			if not msg or not msg.strip(): return
 			client.Send('SAYPRIVATEEX %s %s'%(user, msg))
-			if not self.is_ignored(receiver, client):
-				receiver.Send('SAIDPRIVATEEX %s %s'%(client.username, msg))
+			receiver.Send('SAIDPRIVATEEX %s %s'%(client.username, msg))
 
 	def in_MUTE(self, client, chan, user, duration=None, args=''):
 		'''
@@ -1057,208 +1026,6 @@ class Protocol:
 				if user:
 					client.Send('MUTELIST %s, %s' % (user.username, message))
 			client.Send('MUTELISTEND')
-
-	def in_IGNORE(self, client, tags):
-		'''
-		Tells the server to add the user to the client's ignore list. Doing this will prevent any SAID*, SAYPRIVATE and RING commands to be received from the ignored user.
-
-		@required.str username: The target user to ignore.
-		@required.str reason: Reason for the ignore.
-		'''
-		tags = self._parseTags(tags)
-		# should write a helper function for mandatory args..?
-		username = tags.get("userName")
-		if not username:
-			self.out_SERVERMSG(client, "Missing userName argument.")
-			return
-		reason = tags.get("reason")
-
-		ok, failReason = self._validUsernameSyntax(username)
-		if not ok:
-			self.out_SERVERMSG(client, "Invalid userName format.")
-			return
-		ignoreClient = self.clientFromUsername(username, True)
-		if not ignoreClient:
-			self.out_SERVERMSG(client, "No such user.")
-			return
-		if ignoreClient.access in ('mod', 'admin'):
-			self.out_SERVERMSG(client, "Can't ignore a moderator.")
-			return
-		if username == client.username:
-			self.out_SERVERMSG(client, "Can't ignore self.")
-			return
-		if self.is_ignored(client, ignoreClient):
-			self.out_SERVERMSG(client, "User is already ignored.")
-			return
-		if len(client.ignored) >= 50:
-			self.out_SERVERMSG(client, "Ignore list full (50 users).")
-			return
-
-		self.ignore_user(client, ignoreClient, reason)
-		if not reason or not reason.strip(): 
-			client.Send('IGNORE userName=%s' % (username))
-		else:
-			client.Send('IGNORE userName=%s\treason=%s' % (username, reason))
-
-	def in_UNIGNORE(self, client, tags):
-		'''
-		Tells the server to add the user to the client's ignore list. Doing this will prevent any SAID*, SAYPRIVATE and RING commands to be received from the ignored user.
-
-		@required.str username: The target user to unignore.
-		'''
-		tags = self._parseTags(tags)
-		# should write a helper function for mandatory args..?
-		username = tags.get("userName")
-		if not username:
-			self.out_SERVERMSG(client, "Missing userName argument.")
-			return
-		ok, reason = self._validUsernameSyntax(username)
-		if not ok:
-			self.out_SERVERMSG(client, "Invalid userName format.")
-			return
-		unignoreClient = self.clientFromUsername(username, True)
-		if not unignoreClient:
-			self.out_SERVERMSG(client, "No such user.")
-			return
-		if not self.is_ignored(client, unignoreClient):
-			self.out_SERVERMSG(client, "User is not ignored.")
-			return
-
-		self.unignore_user(client, unignoreClient)
-		client.Send('UNIGNORE userName=%s' % (username))
-
-	def in_IGNORELIST(self, client):
-		client.Send('IGNORELISTBEGIN')
-		for (userId, reason) in self.userdb.get_ignore_list(client.db_id):
-			ignoredClient = self.clientFromID(userId, True)
-			username = ignoredClient.username
-			if reason:
-				client.Send('IGNORELIST userName=%s\treason=%s' % (username, reason))
-			else:
-				client.Send('IGNORELIST userName=%s' % (username))
-		client.Send('IGNORELISTEND')
-
-	# FIXME: there is currently no limit to the number of friend requests one user can send
-	def in_FRIENDREQUEST(self, client, tags):
-		tags = self._parseTags(tags)
-		# should write a helper function for mandatory args..?
-		username = tags.get("userName")
-		if not username:
-			self.out_SERVERMSG(client, "Missing userName argument.")
-			return
-		msg = tags.get("msg")
-
-		ok, failReason = self._validUsernameSyntax(username)
-		if not ok:
-			self.out_SERVERMSG(client, "Invalid userName format.")
-			return
-
-		friendRequestClient = self.clientFromUsername(username, True)
-		if not friendRequestClient:
-			self.out_SERVERMSG(client, "No such user.")
-			return
-		if username == client.username:
-			self.out_SERVERMSG(client, "Can't send friend request to self. Sorry :(")
-			return
-		if self.userdb.are_friends(client.db_id, friendRequestClient.db_id):
-			self.out_SERVERMSG(client, "Already friends with user.")
-			return
-		if self.is_ignored(friendRequestClient, client):
-			# don't send friend request if ignored
-			return
-		if self.userdb.has_friend_request(client.db_id, friendRequestClient.db_id):
-			# don't inform the user that there is already a friend request (so they won't be able to tell if they are being ignored or not)
-			return
-
-		self.userdb.add_friend_request(client.db_id, friendRequestClient.db_id, msg)
-		if self.clientFromID(friendRequestClient.db_id):
-			if msg:
-				friendRequestClient.Send('FRIENDREQUEST userName=%s\tmsg=%s' % (client.username, msg))
-			else:
-				friendRequestClient.Send('FRIENDREQUEST userName=%s' % client.username)
-
-
-	def in_ACCEPTFRIENDREQUEST(self, client, tags):
-		tags = self._parseTags(tags)
-		# should write a helper function for mandatory args..?
-		username = tags.get("userName")
-		if not username:
-			self.out_SERVERMSG(client, "Missing userName argument.")
-			return
-
-		ok, failReason = self._validUsernameSyntax(username)
-		if not ok:
-			self.out_SERVERMSG(client, "Invalid userName format.")
-			return
-
-		friendRequestClient = self.clientFromUsername(username, True)
-		if not self.userdb.has_friend_request(friendRequestClient.db_id, client.db_id):
-			self.out_SERVERMSG(client, "No such friend request.")
-			return
-
-		self.userdb.friend_users(client.db_id, friendRequestClient.db_id)
-		self.userdb.remove_friend_request(friendRequestClient.db_id, client.db_id)
-
-		client.Send('FRIEND userName=%s' % username)
-		if self.clientFromID(friendRequestClient.db_id):
-			friendRequestClient.Send('FRIEND userName=%s' % client.username)
-
-	def in_DECLINEFRIENDREQUEST(self, client, tags):
-		tags = self._parseTags(tags)
-		# should write a helper function for mandatory args..?
-		username = tags.get("userName")
-		if not username:
-			self.out_SERVERMSG(client, "Missing userName argument.")
-			return
-		ok, failReason = self._validUsernameSyntax(username)
-		if not ok:
-			self.out_SERVERMSG(client, "Invalid userName format.")
-			return
-
-		friendRequestClient = self.clientFromUsername(username, True)
-		if not self.userdb.has_friend_request(friendRequestClient.db_id, client.db_id):
-			self.out_SERVERMSG(client, "No such friend request.")
-			return
-		self.userdb.remove_friend_request(friendRequestClient.db_id, client.db_id)
-
-	def in_UNFRIEND(self, client, tags):
-		tags = self._parseTags(tags)
-		# should write a helper function for mandatory args..?
-		username = tags.get("userName")
-		if not username:
-			self.out_SERVERMSG(client, "Missing userName argument.")
-			return
-		ok, failReason = self._validUsernameSyntax(username)
-		if not ok:
-			self.out_SERVERMSG(client, "Invalid userName format.")
-			return
-
-		friendRequestClient = self.clientFromUsername(username, True)
-
-		self.userdb.unfriend_users(client.db_id, friendRequestClient.db_id)
-
-		client.Send('UNFRIEND userName=%s' % username)
-		if self.clientFromID(friendRequestClient.db_id):
-			friendRequestClient.Send('UNFRIEND userName=%s' % client.username)
-
-	def in_FRIENDREQUESTLIST(self, client):
-		client.Send('FRIENDREQUESTLISTBEGIN')
-		for (userId, msg) in self.userdb.get_friend_request_list(client.db_id):
-			friendRequestClient = self.clientFromID(userId, True)
-			username = friendRequestClient.username
-			if msg:
-				client.Send('FRIENDREQUESTLIST userName=%s\tmsg=%s' % (username, msg))
-			else:
-				client.Send('FRIENDREQUESTLIST userName=%s' % (username))
-		client.Send('FRIENDREQUESTLISTEND')
-
-	def in_FRIENDLIST(self, client):
-		client.Send('FRIENDLISTBEGIN')
-		for userId in self.userdb.get_friend_user_ids(client.db_id):
-			friendClient = self.clientFromID(userId, True)
-			username = friendClient.username
-			client.Send('FRIENDLIST userName=%s' % (username))
-		client.Send('FRIENDLISTEND')
 
 
 	def in_FORCEJOIN(self, client, user, chan, key=None):
@@ -1584,8 +1351,7 @@ class Protocol:
 			if client.username == battle.host and username in battle.users:
 				user = self.clientFromUsername(username)
 				if user:
-					if not self.is_ignored(user, client):
-						user.Send('SAIDBATTLE %s %s' % (client.username, msg))
+					user.Send('SAIDBATTLE %s %s' % (client.username, msg))
 
 	def in_SAYBATTLEPRIVATEEX(self, client, username, msg):
 		'''
@@ -1601,8 +1367,7 @@ class Protocol:
 			if client.username == battle.host and username in battle.users:
 				user = self.clientFromUsername(username)
 				if user:
-					if not self.is_ignored(user, client):
-						user.Send('SAIDBATTLEEX %s %s' % (client.username, msg))
+					user.Send('SAIDBATTLEEX %s %s' % (client.username, msg))
 
 	def in_FORCEJOINBATTLE(self, client, username, target_battle, password=None):
 		'''
@@ -2068,8 +1833,7 @@ class Protocol:
 			else:
 				return
 
-		if not self.is_ignored(user, client):
-			user.Send('RING %s' % (client.username))
+		user.Send('RING %s' % (client.username))
 
 
 	def in_ADDSTARTRECT(self, client, allyno, left, top, right, bottom):
@@ -2704,15 +2468,6 @@ class Protocol:
 			self._calc_access_status(user)
 			self._root.broadcast('CLIENTSTATUS %s %s'%(username, user.status))
 		self.userdb.save_user(user)
-		# remove the new mod/admin from everyones ignore list and notify affected users
-		if access in ('mod', 'admin'):
-			userIds = self.userdb.globally_unignore_user(user.db_id)
-			for userId in userIds:
-				userThatIgnored = self.clientFromID(userId)
-				if userThatIgnored:
-					userThatIgnored.ignored.pop(user.db_id)
-					userThatIgnored.Send('UNIGNORE userName=%s' % (username))
-
 
 	def in_RELOAD(self, client):
 		'''

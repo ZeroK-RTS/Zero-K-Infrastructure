@@ -45,6 +45,7 @@
     <Compile Include="scripts\build_exe.py" />
     <Compile Include="scripts\fetch_deps.py" />
     <Compile Include="server.py" />
+    <Compile Include="SQLUsers.py" />
     <Compile Include="stacktracer.py" />
     <Compile Include="TestLobbyClient.py" />
   </ItemGroup>
