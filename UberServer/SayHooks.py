@@ -35,16 +35,16 @@ def _update_lists():
 				sline = line.strip().split(' ', 1)
 				bad_word_dict[sline[0]] = ' '.join(sline[1:])
 		f.close()
-	except Exception as e:
-		print('Error parsing profanity list: %s' %(e))
+	except Exception, e:
+		print 'Error parsing profanity list: %s' %(e)
 	try:
 		f = open('bad_sites.txt', 'r')
 		for line in f.readlines():
 			line = line.strip()
 			if line and not line in bad_site_list: bad_site_list.append(line)
 		f.close()
-	except Exception as e:
-		print('Error parsing shock site list: %s' %(e))
+	except Exception, e:
+		print 'Error parsing shock site list: %s' %(e)
 				
 def _clear_lists():
 	global bad_word_dict

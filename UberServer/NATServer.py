@@ -1,11 +1,6 @@
-try:
-	from SocketServer import UDPServer,DatagramRequestHandler
-except:
-	# renamed in python 3
-	from socketserver import UDPServer,DatagramRequestHandler
-import sys
+import SocketServer, sys
 
-class CustomUDPServer(UDPServer):
+class CustomUDPServer(SocketServer.UDPServer):
 	def Bind(self, root):
 		self._root = root
 
@@ -15,7 +10,7 @@ class CustomUDPServer(UDPServer):
 		else:
 			pass # not bound to _root yet, no point in handling UDP
 
-class handler(DatagramRequestHandler):
+class handler(SocketServer.DatagramRequestHandler):
 	def __init__(self, request, client_address, server, root):
 		self._root = root
 		self.request = request
@@ -39,7 +34,7 @@ class handler(DatagramRequestHandler):
 class NATServer:
 	def __init__(self, port):
 		self.s = CustomUDPServer(('',port), handler)
-		print("Awaiting UDP messages on port %d" % port)
+		print "Awaiting UDP messages on port %d" % port
 
 	def bind(self, root):
 		self.s.Bind(root)

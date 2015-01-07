@@ -1,6 +1,5 @@
 import time, traceback
 from Client import Client
-from CryptoHandler import UNICODE_ENCODING
 
 class ChanServ:
 	def __init__(self, client, root):
@@ -30,7 +29,7 @@ class ChanServ:
 	def HandleMessage(self, chan, user, msg):
 		if len(msg) <= 0:
 			return
-		if msg[0] != "!":
+ 		if msg[0] != "!":
 			return
 		msg = msg.lstrip('!')
 		args = None
@@ -199,9 +198,9 @@ class ChanServ:
 	def Send(self, msg):
 		if type(msg) == list or type(msg) == tuple:
 			for s in msg:
-				self.client.HandleProtocolCommand(s.encode(UNICODE_ENCODING))
+				self.client._protocol._handle( self.client, s.encode("utf-8") )
 		else:
-			self.client.HandleProtocolCommand(msg.encode(UNICODE_ENCODING))
+			self.client._protocol._handle( self.client, msg.encode("utf-8") )
 
 class ChanServClient(Client):
 	'this object is chanserv implemented through the standard client interface'

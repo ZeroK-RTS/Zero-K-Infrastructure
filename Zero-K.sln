@@ -50,6 +50,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{374FB5
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZkData", "ZkData\ZkData.csproj", "{61D3BE0A-282D-462C-BA26-06670E5ACB3E}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "UberServer", "UberServer\UberServer.pyproj", "{07584605-2ACD-4F3B-80D8-FFA6F877D0F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -253,6 +255,12 @@ Global
 		{61D3BE0A-282D-462C-BA26-06670E5ACB3E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{61D3BE0A-282D-462C-BA26-06670E5ACB3E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{61D3BE0A-282D-462C-BA26-06670E5ACB3E}.Release|x86.ActiveCfg = Release|Any CPU
+		{07584605-2ACD-4F3B-80D8-FFA6F877D0F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07584605-2ACD-4F3B-80D8-FFA6F877D0F7}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{07584605-2ACD-4F3B-80D8-FFA6F877D0F7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{07584605-2ACD-4F3B-80D8-FFA6F877D0F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07584605-2ACD-4F3B-80D8-FFA6F877D0F7}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{07584605-2ACD-4F3B-80D8-FFA6F877D0F7}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

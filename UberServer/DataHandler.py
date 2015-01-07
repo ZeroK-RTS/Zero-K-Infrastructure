@@ -1,10 +1,13 @@
 import thread, time, sys, os, socket
 
+import base64
+try: from hashlib import md5
+except: md5 = __import__('md5').new
+
 import traceback
 from protocol.Channel import Channel
 from protocol.Protocol import Protocol
 from SQLUsers import UsersHandler, ChannelsHandler
-from CryptoHandler import UNICODE_ENCODING
 import ip2country
 import datetime
 
@@ -19,7 +22,7 @@ class DataHandler:
 		self.dispatcher = None
 		self.console_buffer = []
 		self.port = 8200
-		self.natport = self.port + 1
+		self.natport = self.port+1
 		self.latestspringversion = '*'
 		self.log = False
 		self.logfile = None
@@ -31,12 +34,7 @@ class DataHandler:
 		self.server = 'TASServer'
 		self.server_version = 0.36
 		self.sighup = False
-		self.crypto_key_dir = "server-rsa-keys/"
-
-		self.force_secure_client_auths =  False ## if true, LOGIN and REGISTER must be encrypted
-		self.force_secure_client_comms =  False ## if true, ALL commands must be encrypted
-		self.use_message_authent_codes = False ## if true, all messages must include (H)MACs
-
+		
 		self.chanserv = None
 		self.userdb = None
 		self.channeldb = None
@@ -147,7 +145,6 @@ class DataHandler:
 
 		for arg in args:
 			argp = args[arg]
-
 			if arg in ['r', 'redirect']:
 				self.redirect = argp[0]
 			if arg in ['h', 'help']:
@@ -194,17 +191,6 @@ class DataHandler:
 				except:
 					print('Error opening trusted proxy file.')
 					self.trusted_proxyfile = None
-
-			elif arg == 'sec_auths':
-				try: self.force_secure_client_auths = (int(argp[0]) != 0)
-				except: pass
-			elif arg == 'sec_comms':
-				try: self.force_secure_client_comms = (int(argp[0]) != 0)
-				except: pass
-			elif arg == 'msg_hmacs':
-				try: self.use_message_authent_codes = (int(argp[0]) != 0)
-				except: pass
-
 		sqlalchemy = __import__('sqlalchemy')
 		if self.sqlurl.startswith('sqlite'):
 			print('Multiple threads are not supported with sqlite, forcing a single thread')
@@ -216,7 +202,6 @@ class DataHandler:
 			def _fk_pragma_on_connect(dbapi_con, con_record):
 				dbapi_con.execute('PRAGMA journal_mode = MEMORY')
 				dbapi_con.execute('PRAGMA synchronous = OFF')
-			## FIXME: "ImportError: cannot import name event"
 			from sqlalchemy import event
 			event.listen(self.engine, 'connect', _fk_pragma_on_connect)
 		else:
@@ -243,7 +228,7 @@ class DataHandler:
 			
 		if self.chanserv:
 			for name in channels:
-				self.chanserv.client.HandleProtocolCommand('JOIN %s' % name)
+				self.chanserv.client._protocol._handle(self.chanserv.client, 'JOIN %s' % name)
 		
 		if not self.log:
 			self.rotatelogfile()
@@ -350,7 +335,7 @@ class DataHandler:
 	def console_print_step(self):
 		try:
 			while self.console_buffer:
-				line = self.console_buffer.pop(0).encode(UNICODE_ENCODING)
+				line = self.console_buffer.pop(0).encode("utf-8")
 				print line
 				if self.log:
 					self.logfile.write(line+'\n')
@@ -427,6 +412,11 @@ class DataHandler:
 
 	def _rebind_slow(self):
 		try:
+			self.parseFiles()
+		except:
+			self.error(traceback.format_exc())
+		
+		try:
 			self.dispatcher.rebind()
 				
 			for channel in dict(self.channels): # hack, but I guess reloading is all a hack :P
@@ -447,16 +437,14 @@ class DataHandler:
 		self.rotatelogfile()
 		self.parseFiles()
 		reload(sys.modules['SayHooks'])
-		reload(sys.modules['ChanServ'])
-		reload(sys.modules['BaseClient'])
-		reload(sys.modules['SQLUsers'])
-		reload(sys.modules['Client'])
-		reload(sys.modules['CryptoHandler'])
 		reload(sys.modules['protocol.AutoDict'])
 		reload(sys.modules['protocol.Channel'])
 		reload(sys.modules['protocol.Battle'])
 		reload(sys.modules['protocol.Protocol'])
 		reload(sys.modules['protocol'])
+		reload(sys.modules['ChanServ'])
+		reload(sys.modules['Client'])
+		reload(sys.modules['SQLUsers'])
 		self.SayHooks = __import__('SayHooks')
 		ip2country.reloaddb()
 		thread.start_new_thread(self._rebind_slow, ()) # why should reloading block the thread? :)
