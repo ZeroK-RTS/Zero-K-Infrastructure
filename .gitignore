@@ -182,3 +182,4 @@ Zero-K.info/img/news/*.*
 
 *.pyc
 UberServer/server.db
+UberServer/server.log.old
