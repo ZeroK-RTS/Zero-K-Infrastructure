@@ -179,3 +179,6 @@ Zero-K.info/img/galaxies/*.*
 Zero-K.info/img/structures/*.*
 Zero-K.info/Resources/*.*
 Zero-K.info/img/news/*.*
+
+*.pyc
+UberServer/server.db
