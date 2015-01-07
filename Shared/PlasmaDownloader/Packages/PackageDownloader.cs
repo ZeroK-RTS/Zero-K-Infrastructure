@@ -12,7 +12,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using System.Timers;
-using ServiceStack.Text;
+using Newtonsoft.Json;
 using ZkData;
 using ZkData.UnitSyncLib;
 using Timer = System.Timers.Timer;
@@ -21,7 +21,12 @@ using Timer = System.Timers.Timer;
 
 namespace PlasmaDownloader.Packages
 {
-	public class PackageDownloader: IDisposable
+    public class RepositoryCache
+    {
+        public List<PackageDownloader.Repository> Repositories = new List<PackageDownloader.Repository>();
+    }
+
+    public class PackageDownloader: IDisposable
 	{
 		bool isRefreshing;
 		string masterContent;
@@ -224,16 +229,14 @@ namespace PlasmaDownloader.Packages
 
 		void LoadRepositories()
 		{
-		    JsConfig.IncludePublicFields = true;
 			var path = Utils.MakePath(plasmaDownloader.SpringPaths.Cache, "repositories.json");
 			try
 			{
 				if (File.Exists(path))
 				{
-					lock (repositories)
-					{
-						using (var fs = File.OpenRead(path)) repositories = JsonSerializer.DeserializeFromStream<List<Repository>>(fs);
-					}
+				    lock (repositories) {
+				        repositories = JsonConvert.DeserializeObject<RepositoryCache>(File.ReadAllText(path)).Repositories;
+				    }
 				}
 				else
 					Trace.TraceWarning("PackageDownloader : File don't exist : {0}", path);
@@ -303,7 +306,7 @@ namespace PlasmaDownloader.Packages
 			var path = Utils.MakePath(plasmaDownloader.SpringPaths.Cache, "repositories.json");
 			lock (repositories)
 			{
-				using (var fs = File.OpenWrite(path)) JsonSerializer.SerializeToStream(repositories,fs);
+                File.WriteAllText(path, JsonConvert.SerializeObject(new RepositoryCache() { Repositories = repositories }));
 			}
 		}
 

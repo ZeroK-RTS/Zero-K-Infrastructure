@@ -41,6 +41,20 @@ namespace ZkData.Migrations
                     new ForumCategory { Title = "Missions", IsMissions = true },
                     new ForumCategory { Title = "Clans", IsClans = true }, 
                     new ForumCategory { Title = "Planets", IsPlanets = true });
+
+                db.AutohostConfigs.AddOrUpdate(x=>x.Login, new AutohostConfig() {
+                    Login = "Springie",
+                    Title = "Local springie test",
+                    Password = "dummy",
+                    AutoSpawn = true,
+                    AutoUpdateRapidTag = "zk:stable",
+                    Mod="zk:stable",
+                    ClusterNode = "alpha",
+                    JoinChannels = "bots",
+                    SpringVersion = GlobalConst.DefaultEngineOverride,
+
+                });
+
             }
         }
     }
