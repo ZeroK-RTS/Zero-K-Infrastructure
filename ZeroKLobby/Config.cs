@@ -337,6 +337,9 @@ namespace ZeroKLobby
                 try {
                     conf = (Config)xs.Deserialize(new StringReader(File.ReadAllText(path)));
                     conf.UpdateFadeColor();
+                    conf.SpringServerHost = GlobalConst.LobbyServerHost;
+                    conf.springServerPort = GlobalConst.LobbyServerPort;
+
                     return conf;
                 } catch (Exception ex) {
                     Trace.TraceError("Error reading config file: {0}", ex);

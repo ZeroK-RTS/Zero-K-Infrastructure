@@ -76,6 +76,10 @@ namespace Springie
                 var s = new XmlSerializer(Config.GetType());
                 var r = File.OpenText(RootWorkPath + '/' + ConfigMain);
                 Config = (MainConfig)s.Deserialize(r);
+                Config.ServerHost = GlobalConst.LobbyServerHost;
+                Config.ServerPort = GlobalConst.LobbyServerPort;
+
+
                 r.Close();
             }
         }
