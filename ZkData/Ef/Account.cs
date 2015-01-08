@@ -10,7 +10,7 @@ using ZkData;
 
 namespace ZkData
 {
-    public class Account: IPrincipal, IIdentity
+    public class  Account: IPrincipal, IIdentity
     {
 
         public Account()

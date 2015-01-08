@@ -30,7 +30,14 @@ namespace ZkData.Migrations
                         EloWeight = 2,
                         SpringieLevel = 4,
                         Country = "cz",
-                    });
+                    },
+                    new Account() {
+                        Name = GlobalConst.NightwatchName,
+                        Password = Utils.HashLobbyPassword("dummy"),
+                        IsBot = true,
+                        IsZeroKAdmin = true,
+                    }
+                 );
 
                 db.ForumCategories.AddOrUpdate(x => x.Title, 
                     new ForumCategory { Title = "General discussion", },

@@ -215,11 +215,17 @@ namespace ZeroKWeb.Controllers
             }
         }
 
-        public JsonResult Register(string login, string password)
+        public JsonResult Register(string login, string password, string country, string ip)
         {
             var db = new ZkDataContext();
-            var acc = Account.AccountVerify(db, login, password);
-            return new JsonResult() { Data = new LoginResponse(acc), JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+            if (db.Accounts.Any(y=>y.Name == login)) return new JsonResult() {
+                Data = new LoginResponse("Username already exists."), JsonRequestBehavior = JsonRequestBehavior.AllowGet
+            };
+            var acc = new Account() { Name = login, Password = password, Country = country, };
+            db.Accounts.Add(acc);
+            db.SaveChanges();
+
+            return new JsonResult() { Data = new LoginResponse("Account registered successfully.") {Ok = true}, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
         }
 
     }

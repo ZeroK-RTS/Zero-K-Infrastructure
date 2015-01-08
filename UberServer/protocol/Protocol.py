@@ -343,12 +343,8 @@ class Protocol:
 		else:
 			access = 0
 		bot = int(client.bot)
-		ingame_time = int(client.ingame_time)/60 # hours
 
 		rank = 0
-		for t in ranks:
-			if ingame_time >= t:
-				rank += 1
 		rank1 = 0
 		rank2 = 0
 		rank3 = 0
@@ -790,7 +786,6 @@ class Protocol:
 		client.username = reason.username
 		client.password = reason.password
 		client.lobby_id = reason.lobby_id
-		client.last_login = now
 		client.bot = reason.bot
 		client.cpu = cpu
 
@@ -799,8 +794,6 @@ class Protocol:
 			client.local_ip = client.ip_address
 		else:
 			client.local_ip = local_ip
-
-		client.ingame_time = reason.ingame_time
 
 		if reason.id == None:
 			client.db_id = client.session_id
@@ -864,7 +857,6 @@ class Protocol:
 		'Confirm the terms of service as shown with the AGREEMENT commands. Users must accept the terms of service to use their account.'
 		if client.access == 'agreement':
 			client.access = 'user'
-			self.userdb.save_user(client)
 			client.access = 'fresh'
 			self._calc_access_status(client)
 
@@ -1710,11 +1702,6 @@ class Protocol:
 				if client.username == host:
 					if client.hostport:
 						self._root.broadcast_battle('HOSTPORT %i' % client.hostport, battle_id, host)
-		elif was_ingame and not client.is_ingame and client.went_ingame:
-			ingame_time = (time.time() - client.went_ingame) / 60
-			if ingame_time >= 1:
-				client.ingame_time += int(ingame_time)
-				self.userdb.save_user(client)
 		if not client.username in self._root.usernames: return
 		self._root.broadcast('CLIENTSTATUS %s %s'%(client.username, client.status))
 

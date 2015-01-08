@@ -334,8 +334,7 @@ class DataHandler:
 		if type(ignore) in (str, unicode): ignore = [ignore]
 		static = []
 		for client in clients:
-			if client and not client.username in ignore and \
-			    (sourceClient == None or not sourceClient.db_id in client.ignored):
+			if client and not client.username in ignore:
 				if client.static: static.append(client)
 				else: client.Send(msg)
 		

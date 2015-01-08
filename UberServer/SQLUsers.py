@@ -2,14 +2,14 @@ from datetime import datetime, timedelta
 import json, urllib2
 
 
-class OfflineClient:
-	def __init__(self, sqluser):
-		self.id = sqluser.id
-		self.username = sqluser.username
-		self.password = sqluser.password
-		self.bot = sqluser.bot
-		self.last_id = sqluser.last_id
-		self.access = sqluser.access
+class User:
+	def __init__(self, username, password, lobby_id, dbuser):
+		self.username = username
+		self.password = password
+		self.lobby_id = lobby_id
+		self.access = dbuser['Access']
+		self.id = dbuser['AccountID']
+		self.bot = dbuser['IsBot']
 
 class UsersHandler:
 	def __init__(self, root, engine):
@@ -26,44 +26,32 @@ class UsersHandler:
 	
 	
 	def login_user(self, username, password, ip, lobby_id, user_id, cpu, local_ip, country):
-
-		if self._root.censor and not self._root.SayHooks._nasty_word_censor(username):
-			return False, 'Name failed to pass profanity filter.'
-
 		url = "{0}/Login?login={1}&password={2}&lobby_name={3}&user_id={4}&cpu={5}&ip={6}&country={7}".format(self._root.lobby_service_url, username, password,lobby_id,user_id, cpu, ip, country)
 		data = json.load(urllib2.urlopen(url))
 
-		if data.Ok:
-			dbuser = data.Account
-			reason = User(username, password)
-			reason.access = dbuser.Access
-			reason.id = dbuser.AccountID
-			reason.bot = dbuser.IsBot
-			reason.lobby_id = lobby_id
+		if data['Ok']:
+			dbuser = data['Account']
+			reason = User(username, password, lobby_id, dbuser)
 		else:
-			reason = data.Reason
+			reason = data['Reason']
 
-		return good, reason
+		return data['Ok'], reason
 	
 	def end_session(self, db_id):
-		#LICHO todo log logout
+		#possibly log logout here
 		return
 
 	def register_user(self, user, password, ip, country): # need to add better ban checks so it can check if an ip address is banned when registering an account :)
 		if len(user)>20: return False, 'Username too long'
+		
 		if self._root.censor:
 			if not self._root.SayHooks._nasty_word_censor(user):
 				return False, 'Name failed to pass profanity filter.'
-		session = self.sessionmaker()
-		results = session.query(User).filter(User.username==user).first()
-		if results:
-			session.close()
-			return False, 'Username already exists.'
-		entry = User(user, password, ip)
-		session.add(entry)
-		session.commit()
-		session.close()
-		return True, 'Account registered successfully.'
+
+		url = "{0}/Register?login={1}&password={2}&ip={3}&country={4}".format(self._root.lobby_service_url, username, password, ip, country)
+		data = json.load(urllib2.urlopen(url))
+		
+		return data['Ok'], data['Reason']
 
 
 
