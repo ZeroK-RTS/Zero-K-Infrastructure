@@ -63,22 +63,14 @@ class OfflineClient:
 
 class UsersHandler:
 	def __init__(self, root, engine):
-		self._root = root
-		metadata.create_all(engine)
-		self.sessionmaker = sessionmaker(bind=engine, autoflush=True)
+		return
 	
 	def clientFromID(self, db_id):
-		session = self.sessionmaker()
-		entry = session.query(User).filter(User.id==db_id).first()
-		session.close()
-		if not entry: return None
+		#LICHO implement todo
 		return OfflineClient(entry)
 	
 	def clientFromUsername(self, username):
-		session = self.sessionmaker()
-		entry = session.query(User).filter(User.username==username).first()
-		session.close()
-		if not entry: return None
+		#LICHO todo
 		return OfflineClient(entry)
 	
 	
@@ -124,7 +116,7 @@ class UsersHandler:
 		return good, reason
 	
 	def end_session(self, db_id):
-		#licho removing login tracking
+		#LICHO todo log logout
 		return
 
 	def register_user(self, user, password, ip, country): # need to add better ban checks so it can check if an ip address is banned when registering an account :)
@@ -151,24 +143,17 @@ class UsersHandler:
 
 class ChannelsHandler:
 	def __init__(self, root, engine):
-		self._root = root
-		metadata.create_all(engine)
-		self.sessionmaker = sessionmaker(bind=engine, autoflush=True)
+		#LICHO TODO implement
+		return
 	
 	def load_channels(self):
-		session = self.sessionmaker()
-		response = session.query(Channel)
 		channels = {}
+		return channels
+		#LICHO todo implement
 		for chan in response:
 			channels[chan.name] = {'owner':chan.owner, 'key':chan.key, 'topic':chan.topic or '', 'antispam':chan.antispam, 'admins':[]}
-		session.close()
 		return channels
 
-	def inject_channel(self, channel):
-		session = self.sessionmaker()
-		session.add(channel)
-		session.commit()
-		session.close()
 	
 	def save_channel(self, channel):
 
@@ -182,7 +167,6 @@ class ChannelsHandler:
 		else:
 			topic_text, topic_time, topic_owner = ('', 0, '')
 		
-		session = self.sessionmaker()
 		entry = session.query(Channel)
 		entry.name = channel.chan
 		entry.key = channel.key
@@ -196,9 +180,6 @@ class ChannelsHandler:
 		entry.censor = channel.censor
 		entry.antishock = channel.antishock
 
-		session.add(entry)
-		session.commit()
-		session.close()
 
 	def save_channels(self, channels):
 		for channel in channels:

@@ -86,8 +86,6 @@ restricted = {
 	],
 'mod':[
 	'KICKUSER',
-	'SETBOTMODE',
-	'TESTLOGIN',
 	'GETLOBBYVERSION',
 	],
 'admin':[
@@ -520,14 +518,9 @@ class Protocol:
 		if not fromdb: return None
 		return self.userdb.clientFromID(db_id)
 
-	def clientFromUsername(self, username, fromdb = False):
+	def clientFromUsername(self, username):
 		'given a username, returns a client object from memory or the database'
 		client = self._root.clientFromUsername(username)
-		if fromdb and not client:
-			client = self.userdb.clientFromUsername(username)
-			if client:
-				client.db_id = client.id
-				self._calc_access(client)
 		return client
 
 	def broadcast_AddBattle(self, battle):
@@ -2057,25 +2050,6 @@ class Protocol:
 					self._root.broadcast_battle('REMOVEBOT %s %s'%(battle_id, name), battle_id)
 
 
-	def in_CHANGEPASSWORD(self, client, oldpassword, newpassword):
-		'''
-		Change the password of current user.
-
-		@required.str oldpassword: The previous password.
-		@required.str newpassword: The new password.
-		'''
-		good, reason = self._validPasswordSyntax(newpassword)
-		if not good:
-			self.out_SERVERMSG(client, '%s' % (reason))
-			return
-		user = self.clientFromUsername(client.username, True)
-		if user:
-			if user.password == oldpassword:
-				user.password = newpassword
-				self.userdb.save_user(user)
-				self.out_SERVERMSG(client, 'Password changed successfully! It will be used at the next login!')
-			else:
-				self.out_SERVERMSG(client, 'Incorrect old password.')
 
 	def in_FORGEREVERSEMSG(self, client, user, msg):
 		'''
@@ -2104,7 +2078,7 @@ class Protocol:
 
 		@required.str username: The target user.
 		'''
-		user = self.clientFromUsername(username, True)
+		user = self.clientFromUsername(username)
 		if user and 'lobby_id' in dir(user):
 			self.out_SERVERMSG(client, '<%s> is using %s'%(user.username, user.lobby_id))
 
@@ -2150,29 +2124,7 @@ class Protocol:
 			self.out_SERVERMSG(kickeduser, 'You\'ve been kicked from server by <%s>%s' % (client.username, reason))
 			kickeduser.Remove('was kicked from server by <%s>: %s' % (client.username, reason))
 
-	def in_TESTLOGIN(self, client, username, password):
-		'''
-		Test logging in as target user.
-
-		@required.str username: The target user.
-		@required.str password: The password to try.
-		'''
-		good, reason = self._validUsernameSyntax(username)
-		if not good:
-			client.Send('TESTLOGINDENY %s' %(reason))
-			return
-
-		good, reason = self._validPasswordSyntax(password)
-		if not good:
-			client.Send('TESTLOGINDENY %s' %(reason))
-			return
-
-		user = self.clientFromUsername(username, True)
-		if user and user.password == password:
-			client.Send('TESTLOGINACCEPT %s %s' % (user.username, user.db_id))
-		else:
-			client.Send('TESTLOGINDENY')
-
+	
 	def in_EXIT(self, client, reason=('Exiting')):
 		'''
 		Disconnect from the server, with an optional reason.
