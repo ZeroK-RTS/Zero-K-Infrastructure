@@ -131,7 +131,7 @@ namespace ZeroKWeb.SpringieInterface
 
                     var db = new ZkDataContext();
                     var ids = context.Players.Where(y => !y.IsSpectator).Select(x => (int?)x.LobbyID).ToList();
-                    var users = db.Accounts.Where(x => ids.Contains(x.LobbyID)).ToList();
+                    var users = db.Accounts.Where(x => ids.Contains(x.AccountID)).ToList();
                     var toMove = new List<Account>();
 
                     var moveCount = Math.Ceiling(users.Count/2.0);
@@ -143,7 +143,7 @@ namespace ZeroKWeb.SpringieInterface
 
                     // split while keeping clan groups together
                     // note disabled splittinhg by clan - use "x.ClanID ?? x.LobbyID" for clan balance
-                    foreach (var clanGrp in users.GroupBy(x => x.ClanID ?? x.LobbyID).OrderBy(x => x.Average(y => y.EffectiveElo))) {
+                    foreach (var clanGrp in users.GroupBy(x => x.ClanID ?? x.AccountID).OrderBy(x => x.Average(y => y.EffectiveElo))) {
                         toMove.AddRange(clanGrp);
                         if (toMove.Count >= moveCount) break;
                     }
@@ -188,7 +188,7 @@ namespace ZeroKWeb.SpringieInterface
             foreach (
                 var p in
                     battleContext.Players.Where(x => !x.IsSpectator)
-                                 .Select(x => new { player = x, account = dataContext.Accounts.First(y => y.LobbyID == x.LobbyID) })) {
+                                 .Select(x => new { player = x, account = dataContext.Accounts.First(y => y.AccountID == x.LobbyID) })) {
                 if ((config.MinLevel != null && p.account.Level < config.MinLevel) || (config.MaxLevel != null && p.account.Level > config.MaxLevel) ||
                     (config.MinElo != null && p.account.EffectiveElo < config.MinElo) ||
                     (config.MaxElo != null && p.account.EffectiveElo > config.MaxElo)) {
@@ -213,7 +213,7 @@ namespace ZeroKWeb.SpringieInterface
                 var db = new ZkDataContext();
                 var nonSpecList = b.Players.Where(y => !y.IsSpectator).Select(y => (int?)y.LobbyID).ToList();
                 var accs =
-                    db.Accounts.Where(x => nonSpecList.Contains(x.LobbyID)).ToList();
+                    db.Accounts.Where(x => nonSpecList.Contains(x.AccountID)).ToList();
                 if (accs.Count < 1) {
                     ret.CanStart = false;
                     return ret;
@@ -234,19 +234,19 @@ namespace ZeroKWeb.SpringieInterface
                     if (unmovablePlayers != null && unmovablePlayers.Length > i) {
                         var unmovables = unmovablePlayers[i];
                         team.AddItem(new BalanceItem(unmovablePlayers[i].ToArray()) { CanBeMoved = false });
-                        accs.RemoveAll(x => unmovables.Any(y => y.LobbyID == x.LobbyID));
+                        accs.RemoveAll(x => unmovables.Any(y => y.AccountID == x.AccountID));
                     }
                 }
 
                 balanceItems = new List<BalanceItem>();
                 if (mode == BalanceMode.ClanWise) {
-                    var clanGroups = accs.GroupBy(x => x.ClanID ?? x.LobbyID).ToList();
+                    var clanGroups = accs.GroupBy(x => x.ClanID ?? x.AccountID).ToList();
                     if (teamCount > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize)) mode = BalanceMode.Normal;
                     else balanceItems.AddRange(clanGroups.Select(x => new BalanceItem(x.ToArray())));
                 }
                 if (mode == BalanceMode.FactionWise) {
                     balanceItems.Clear();
-                    var factionGroups = accs.GroupBy(x => x.FactionID ?? x.LobbyID).ToList();
+                    var factionGroups = accs.GroupBy(x => x.FactionID ?? x.AccountID).ToList();
                     balanceItems.AddRange(factionGroups.Select(x => new BalanceItem(x.ToArray())));
                 } 
 
@@ -501,7 +501,7 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     var db = new ZkDataContext();
                     var acc = Account.AccountByName(db, matchUser);
-                    if (acc != null && acc.LobbyID.HasValue) player.LobbyID = acc.LobbyID.Value;
+                    if (acc != null) player.LobbyID = acc.AccountID;
                 }
             }
             res.Players.Add(new PlayerTeam { AllyID = allyID , IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID, TeamID = player.TeamID });
@@ -545,8 +545,8 @@ namespace ZeroKWeb.SpringieInterface
                 // find specs with same IP as some player and kick them
                 using (var db = new ZkDataContext()) {
                     var ids = context.Players.Select(y => (int?)y.LobbyID).ToList();
-                    var ipByLobbyID = db.Accounts.Where(x => ids.Contains(x.LobbyID))
-                                        .ToDictionary(x => x.LobbyID, x => x.AccountIPs.OrderByDescending(y => y.LastLogin).Select(y=>y.IP).FirstOrDefault());
+                    var ipByLobbyID = db.Accounts.Where(x => ids.Contains(x.AccountID))
+                                        .ToDictionary(x => x.AccountID, x => x.AccountIPs.OrderByDescending(y => y.LastLogin).Select(y=>y.IP).FirstOrDefault());
                     // lobbyid -> ip mapping
 
                     var mode = context.GetMode();
@@ -574,7 +574,7 @@ namespace ZeroKWeb.SpringieInterface
             public readonly List<int> LobbyId;
 
             public BalanceItem(params Account[] accounts) {
-                LobbyId = accounts.Select(x => x.LobbyID ?? 0).ToList();
+                LobbyId = accounts.Select(x => x.AccountID).ToList();
                 EloSum = accounts.Sum(x => x.EffectiveElo);
                 Count = accounts.Length;
             }

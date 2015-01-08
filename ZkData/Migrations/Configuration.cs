@@ -30,7 +30,6 @@ namespace ZkData.Migrations
                         EloWeight = 2,
                         SpringieLevel = 4,
                         Country = "cz",
-                        LobbyID = 2
                     });
 
                 db.ForumCategories.AddOrUpdate(x => x.Title, 

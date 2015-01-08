@@ -14,34 +14,6 @@ namespace ZeroKWeb.Controllers
     {
         //
         // GET: /Users/
-
-
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
-        public ActionResult AutoResolveDuplicates()
-        {
-            var db = new ZkDataContext();
-
-            // fixes duplicate name by preserving last working lobbyID 
-            foreach (var dupl in db.Accounts.Where(x => x.LobbyID != null).GroupBy(x => x.Name).Where(x => x.Count() > 1))
-            {
-                List<Account> dupAccounts = db.Accounts.Where(x => x.Name == dupl.Key).ToList();
-                Account bestAccount = dupAccounts.OrderByDescending(x => x.LastLogin).First();
-                foreach (Account ac in dupAccounts) if (ac.LobbyID != bestAccount.LobbyID) ac.LobbyID = null;
-            }
-            db.SubmitChanges();
-
-            // fixes duplicate lobbyID by preserving newer account
-            foreach (var dupl in db.Accounts.GroupBy(x => x.LobbyID).Where(x => x.Count() > 1 && x.Key != null))
-            {
-                List<Account> dupAccounts = db.Accounts.Where(x => x.LobbyID == dupl.Key).ToList();
-                Account bestAccount = dupAccounts.OrderByDescending(x => x.Level).First();
-                foreach (Account ac in dupAccounts) if (ac.AccountID != bestAccount.AccountID) ac.LobbyID = null;
-            }
-            db.SubmitChanges();
-
-            return Redirect("Duplicates");
-        }
-
         [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
         public ActionResult ChangeHideCountry(int accountID, bool hideCountry)
         {
@@ -55,24 +27,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
 
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
-        public ActionResult ChangeLobbyID(int accountID, int? newLobbyID)
-        {
-            var db = new ZkDataContext();
-            Account account = db.Accounts.Single(x => x.AccountID == accountID);
-            int? oldLobbyID = account.LobbyID;
-            account.LobbyID = newLobbyID;
-            db.SubmitChanges();
-            string response = string.Format("{0} lobby ID change from {1} -> {2}", account.Name, oldLobbyID, account.LobbyID);
-            foreach (Account duplicate in db.Accounts.Where(x => x.LobbyID == newLobbyID && x.AccountID != accountID))
-            {
-                response += string.Format("\n Duplicate: {0} - {1} {2}",
-                                          duplicate.Name,
-                                          duplicate.AccountID,
-                                          Url.Action("Detail", new { id = duplicate.AccountID }));
-            }
-            return Content(response);
-        }
+     
 
         [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
         public ActionResult ChangePermissions(int accountID, int adminAccountID, int springieLevel, bool zkAdmin, bool vpnException)
@@ -113,7 +68,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult AdminUserDetail(int id)
         {
             var db = new ZkDataContext();
-            var user = Account.AccountByAccountID(db, id);
+            var user = db.Accounts.Find(id);
             return View("AdminUserDetail", user);
         }
 
@@ -124,7 +79,7 @@ namespace ZeroKWeb.Controllers
 
             int idint;
             Account user = null;
-            if (int.TryParse(id, out idint)) user = Account.AccountByAccountID(db, idint);
+            if (int.TryParse(id, out idint)) user = db.Accounts.Find(idint);
             if (user == null) user = Account.AccountByName(db, id);
             return View("UserDetail", user);
         }
@@ -175,7 +130,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             int idint;
             Account user = null;
-            if (int.TryParse(id, out idint)) user = Account.AccountByLobbyID(db, idint);
+            if (int.TryParse(id, out idint)) user = db.Accounts.Find(idint);
             if (user == null) user = Account.AccountByName(db, id);
 
             return View("UserDetail", user);
@@ -252,7 +207,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult ReportToAdmin(int id)
         {
             var db = new ZkDataContext();
-            var acc = Account.AccountByAccountID(db, id);
+            var acc = db.Accounts.Find(id);
             return View("ReportToAdmin", acc);
         }
 
@@ -261,7 +216,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             int idint;
             Account user = null;
-            if (int.TryParse(id, out idint)) user = Account.AccountByLobbyID(db, idint);
+            if (int.TryParse(id, out idint)) user = db.Accounts.Find(idint);
             if (user == null) user = Account.AccountByName(db, id);
 
             return View("ReportToAdmin", user);
@@ -271,7 +226,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult ReportToAdminSubmit(int accountID, string text)
         {
             var db = new ZkDataContext();
-            var acc = Account.AccountByAccountID(db, accountID);
+            var acc = db.Accounts.Find(accountID);
             
             db.AbuseReports.InsertOnSubmit(new AbuseReport()
                                            {
@@ -305,7 +260,7 @@ namespace ZeroKWeb.Controllers
             string punisherName = "<unknown>";
             if (todel.CreatedAccountID != null)
             {
-                Account adminAcc = Account.AccountByAccountID(db, (int)todel.CreatedAccountID);
+                Account adminAcc = db.Accounts.Find((int)todel.CreatedAccountID);
                 punisherName = adminAcc.Name;
             }
             Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("{0} removed a punishment given by {1} ", Global.Account.Name, punisherName), true);
@@ -449,7 +404,6 @@ namespace ZeroKWeb.Controllers
             return new JsonResult() { Data = new
             {
                 acc.AccountID,
-                acc.LobbyID,
                 acc.Name,
                 acc.Aliases,
                 acc.FirstLogin,

@@ -68,6 +68,10 @@
     <Compile Include="Migrations\201501082032419_RemoveLastLobbyVersionCheck.Designer.cs">
       <DependentUpon>201501082032419_RemoveLastLobbyVersionCheck.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201501082101157_RemoveLobbyID.cs" />
+    <Compile Include="Migrations\201501082101157_RemoveLobbyID.Designer.cs">
+      <DependentUpon>201501082101157_RemoveLobbyID.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
     <Compile Include="CurrentLobbyStats.cs" />
@@ -212,6 +216,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201501082032419_RemoveLastLobbyVersionCheck.resx">
       <DependentUpon>201501082032419_RemoveLastLobbyVersionCheck.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501082101157_RemoveLobbyID.resx">
+      <DependentUpon>201501082101157_RemoveLobbyID.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

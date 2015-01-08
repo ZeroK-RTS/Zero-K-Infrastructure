@@ -40,7 +40,7 @@ namespace NightWatch
                 {
                     using (var db = new ZkDataContext())
                     {
-                        var acc = Account.AccountByLobbyID(db, e.Data.LobbyID);
+                        var acc = db.Accounts.Find(e.Data.LobbyID);
                         if (acc != null)
                         {
                             this.client.Extensions.PublishAccountData(acc);
@@ -274,7 +274,7 @@ namespace NightWatch
                                 {
                                     // faction channel
                                     var u = client.ExistingUsers[user];
-                                    var acc = Account.AccountByLobbyID(db, u.LobbyID);
+                                    var acc = db.Accounts.Find(u.LobbyID);
                                     if (acc == null || acc.FactionID != fac.FactionID || acc.Level < GlobalConst.FactionChannelMinLevel) client.ForceLeaveChannel(user, channel);
                                 }
                             }
@@ -321,7 +321,7 @@ namespace NightWatch
                     Created = DateTime.UtcNow,
                     Message = text,
                     TargetName = account.Name,
-                    TargetLobbyID = account.LobbyID
+                    TargetLobbyID = account.AccountID
                 };
                 using (var db = new ZkDataContext())
                 {

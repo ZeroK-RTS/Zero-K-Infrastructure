@@ -18,7 +18,7 @@ namespace ZeroKWeb.SpringieInterface
                     res.PublicMessage = "Invalid map";
                     return res;
                 }
-                Account account = Account.AccountByLobbyID(db, accountID); // accountID is in fact lobbyID
+                Account account = db.Accounts.Find(accountID); // accountID is in fact lobbyID
 
                 if (account != null) {
                     var config = context.GetConfig();
@@ -52,7 +52,7 @@ namespace ZeroKWeb.SpringieInterface
                     return res;
                 }
             }
-            Account acc = Account.AccountByLobbyID(db, accountID); // accountID is in fact lobbyID
+            Account acc = db.Accounts.Find(accountID); // accountID is in fact lobbyID
 
             if (acc != null)
             {

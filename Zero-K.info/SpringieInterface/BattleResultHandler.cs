@@ -49,7 +49,7 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     sb.SpringBattlePlayers.Add(new SpringBattlePlayer
                                                {
-                                                   AccountID = db.Accounts.First(x => x.LobbyID == p.LobbyID).AccountID,
+                                                   AccountID = db.Accounts.First(x => x.AccountID == p.LobbyID).AccountID,
                                                    AllyNumber = p.AllyNumber,
                                                    CommanderType = p.CommanderType,
                                                    IsInVictoryTeam = p.IsVictoryTeam,
@@ -69,7 +69,7 @@ namespace ZeroKWeb.SpringieInterface
                     string awardType = partsSpace[1];
                     string awardText = partsSpace[2];
 
-                    SpringBattlePlayer player = sb.SpringBattlePlayers.FirstOrDefault(x => x.Account.Name == name && x.Account.LobbyID != null);
+                    SpringBattlePlayer player = sb.SpringBattlePlayers.FirstOrDefault(x => x.Account.Name == name);
                     if (player != null)
                     {
                         db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward

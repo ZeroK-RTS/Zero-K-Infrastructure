@@ -1333,7 +1333,6 @@
     <Content Include="Views\Web.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Views\Users\Duplicates.cshtml" />
     <Content Include="Views\Images\Index.cshtml" />
     <Content Include="Views\Home\Download.cshtml" />
     <Content Include="Views\News\NewsDetail.cshtml" />

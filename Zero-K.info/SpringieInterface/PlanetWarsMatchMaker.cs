@@ -245,7 +245,7 @@ namespace ZeroKWeb
                 if (tas.ExistingUsers.TryGetValue(userName, out user))
                 {
                     var db = new ZkDataContext();
-                    Account account = Account.AccountByLobbyID(db, user.LobbyID);
+                    Account account =  db.Accounts.Find(user.LobbyID);
                     if (account != null && account.FactionID == AttackingFaction.FactionID && account.CanPlayerPlanetWars())
                     {
                         // remove existing user from other options
@@ -273,7 +273,7 @@ namespace ZeroKWeb
                 if (tas.ExistingUsers.TryGetValue(userName, out user))
                 {
                     var db = new ZkDataContext();
-                    Account account = Account.AccountByLobbyID(db, user.LobbyID);
+                    Account account = db.Accounts.Find(user.LobbyID);
                     if (account != null && GetDefendingFactions(Challenge).Any(y => y.FactionID == account.FactionID) && account.CanPlayerPlanetWars())
                     {
                         if (!Challenge.Defenders.Any(y => y == user.Name))

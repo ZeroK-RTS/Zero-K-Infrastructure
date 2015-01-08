@@ -222,7 +222,6 @@ namespace ZeroKWeb
             else return new AccountInfo()
             {
                 Name = acc.Name,
-                LobbyID = acc.LobbyID ?? 0,
                 Country = acc.Country,
                 Aliases = acc.Aliases,
                 ZeroKAccountID = acc.AccountID,
