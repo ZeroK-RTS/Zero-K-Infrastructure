@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-import json, urllib2
+import json, requests
 
 
 class User:
@@ -26,8 +26,10 @@ class UsersHandler:
 	
 	
 	def login_user(self, username, password, ip, lobby_id, user_id, cpu, local_ip, country):
-		url = "{0}/Login?login={1}&password={2}&lobby_name={3}&user_id={4}&cpu={5}&ip={6}&country={7}".format(self._root.lobby_service_url, username, password,lobby_id,user_id, cpu, ip, country)
-		data = json.load(urllib2.urlopen(url))
+		payload = {'login':username, 'password':password, 'ip':ip, 'user_id': user_id, 'lobby_name':lobby_id, 'cpu':cpu, 'country':country}
+
+		r = requests.get("{0}/Login".format(self._root.lobby_service_url), params=payload)
+		data = r.json()
 
 		if data['Ok']:
 			dbuser = data['Account']
@@ -48,8 +50,10 @@ class UsersHandler:
 			if not self._root.SayHooks._nasty_word_censor(user):
 				return False, 'Name failed to pass profanity filter.'
 
-		url = "{0}/Register?login={1}&password={2}&ip={3}&country={4}".format(self._root.lobby_service_url, username, password, ip, country)
-		data = json.load(urllib2.urlopen(url))
+		payload = {'login':user, 'password':password, 'ip':ip, 'country':country}
+
+		r = requests.get("{0}/Register".format(self._root.lobby_service_url), params=payload)
+		data = r.json()		
 		
 		return data['Ok'], data['Reason']
 

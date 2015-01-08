@@ -675,7 +675,7 @@ class Protocol:
 		if good:
 			self._root.console_write('Handler %s:%s Successfully registered user <%s>.'%(client.handler.num, client.session_id, username))
 			client.Send('REGISTRATIONACCEPTED')
-			self.clientFromUsername(username, True).access = 'agreement'
+			self.clientFromUsername(username).access = 'agreement'
 		else:
 			self._root.console_write('Handler %s:%s Registration failed for user <%s>.'%(client.handler.num, client.session_id, username))
 			client.Send('REGISTRATIONDENIED %s'%reason)
