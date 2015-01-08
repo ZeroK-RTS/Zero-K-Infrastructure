@@ -951,7 +951,8 @@ namespace ZeroKWeb.Controllers
         {
             ZkDataContext db = new ZkDataContext();
             var factions = db.Factions.Where(x => !x.IsDeleted).ToList();
-            List<PwLadder> items = db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).Where(x => (x.Faction == null || !x.Faction.IsDeleted)).GroupBy(x => x.Faction).Select(x => new PwLadder
+            DateTime minDate = DateTime.UtcNow.AddMonths(-1);
+            List<PwLadder> items = db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > minDate)).Where(x => (x.Faction == null || !x.Faction.IsDeleted)).GroupBy(x => x.Faction).Select(x => new PwLadder
             {
                 Faction = x.Key,
                 Top10 = x.OrderByDescending(y => y.EloWeight).ThenByDescending(y => y.PwAttackPoints).ThenByDescending(y => y.Planets.Count).ThenByDescending(y => y.EloPw).Take(10).ToList()
