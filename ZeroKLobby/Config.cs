@@ -113,6 +113,25 @@ namespace ZeroKLobby
         [DisplayName("Disable Bubble On Private Message")]
         public bool DisablePmBubble { get; set; }
 
+        [Category("Tooltip")]
+        [DisplayName("Disable player tooltip")]
+        [Description("Disable ZKL tooltip that display player status.")]
+        public bool DisablePlayerTooltip { get; set; }
+
+        [Category("Tooltip")]
+        [DisplayName("Disable battle tooltip")]
+        [Description("Disable ZKL tooltip that display room information.")]
+        public bool DisableBattleTooltip { get; set; }
+
+        [Category("Tooltip")]
+        [DisplayName("Disable map tooltip")]
+        [Description("Disable ZKL tooltip that display map and minimap information.")]
+        public bool DisableMapTooltip { get; set; }
+
+        [Category("Tooltip")]
+        [DisplayName("Disable text tooltip")]
+        [Description("Disable ZKL tooltip that display tips on buttons and options.")]
+        public bool DisableTextTooltip { get; set; }
 
         [Category("Chat")]
         [DisplayName("Color: Emote")]
@@ -133,7 +152,7 @@ namespace ZeroKLobby
         [Category("Devving")]
         [DisplayName("Enable UnitSync Dialog Box")]
         [Description("Allow ZKL to process new mod/map information without connecting to server, "
-        + "and give user the choice to keep this information only in local cache rather than sharing it with server. This option is meant to be used with Skirmisher Tab. This option won't work on Linux")]
+        + "and give user the choice to keep this information only in local cache rather than sharing it with server. This option is meant to be used with Skirmisher Tab. This option is force disabled on Linux")]
         public bool EnableUnitSyncPrompt { get; set; }
 
         [XmlIgnore]

@@ -35,6 +35,7 @@ namespace ZeroKLobby
 
         private ToolTipForm tooltip;
         private readonly Dictionary<object, string> tooltips = new Dictionary<object, string>();
+        private readonly List<object> attachedDisposer = new List<object>();
 
         private bool visible = true;
         public bool Visible {
@@ -202,10 +203,26 @@ namespace ZeroKLobby
 
         private bool requestRefresh = false;
         private void UpdateTooltip(object control, string s) {
-            (control as Control).Disposed += (sender, e) => 
+            if (!String.IsNullOrEmpty(s))
             {
-                Clear(sender); 
-            };
+                if (
+                (Program.Conf.DisablePlayerTooltip && s.StartsWith ("#user#"))
+                || (Program.Conf.DisableBattleTooltip && s.StartsWith ("#battle#")) 
+                || (Program.Conf.DisableMapTooltip && s.StartsWith ("#map#")) 
+                || (Program.Conf.DisableTextTooltip && (s[0]!='#' || !(s.StartsWith ("#user#") || s.StartsWith ("#battle#") || s.StartsWith ("#map#"))))
+                )
+                {
+                    return;
+                }
+
+                if (!attachedDisposer.Contains(control))
+                {
+                	System.Diagnostics.Trace.TraceInformation("attachedDisposer");
+                    (control as Control).Disposed += (sender, e) => { Clear(sender); };
+                    attachedDisposer.Add(control);
+                }
+            }
+
             tooltips[control] = s;
             requestRefresh = true; //RefreshToolTip(true);
         }
