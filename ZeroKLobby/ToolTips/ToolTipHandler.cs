@@ -217,7 +217,6 @@ namespace ZeroKLobby
 
                 if (!attachedDisposer.Contains(control))
                 {
-                	System.Diagnostics.Trace.TraceInformation("attachedDisposer");
                     (control as Control).Disposed += (sender, e) => { Clear(sender); };
                     attachedDisposer.Add(control);
                 }
