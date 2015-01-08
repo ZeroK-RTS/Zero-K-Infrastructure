@@ -13,45 +13,6 @@ except ImportError, e:
 	sys.exit(1)
 
 metadata = MetaData()
-##########################################
-users_table = Table('users', metadata,
-	Column('id', Integer, primary_key=True),
-	Column('username', String(40), unique=True),
-	Column('password', String(64)),
-	Column('last_id', String(128)),
-	Column('ingame_time', Integer),
-	Column('access', String(32)),
-	Column('bot', Integer),
-	)
-class User(object):
-	def __init__(self, username, password, access='agreement'):
-		self.username = username
-		self.password = password
-		self.last_login = datetime.now()
-		self.ingame_time = 0
-		self.bot = 0
-		self.access = access # user, moderator, admin, bot, agreement
-		self.last_id = 0
-
-	def __repr__(self):
-		return "<User('%s', '%s')>" % (self.username, self.password)
-##########################################
-class Login(object):
-	def __init__(self, now, ip_address, lobby_id, user_id, cpu, local_ip, country):
-		self.time = now
-		self.ip_address = ip_address
-		self.lobby_id = lobby_id
-		self.user_id = user_id
-		self.cpu = cpu
-		self.local_ip = local_ip
-		self.country = country
-		#self.end = 0
-
-	def __repr__(self):
-		return "<Login('%s', '%s')>" % (self.ip_address, self.time)
-##########################################
-mapper(User, users_table, properties={
-	})
 
 ##########################################
 channels_table = Table('channels', metadata,
@@ -88,40 +49,6 @@ class Channel(object):
 		return "<Channel('%s')>" % self.name
 mapper(Channel, channels_table)
 ##########################################
-banip_table = Table('ban_ip', metadata, # server bans
-	Column('id', Integer, primary_key=True),
-	Column('issuer_id', Integer, ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE')), # user which set ban
-	Column('ip', String(60)), #ip which is banned
-	Column('reason', Text),
-	Column('end_time', DateTime),
-	Column('updated', DateTime),
-	)
-class BanIP(object):
-	def __init__(self, ip = None, issuer_id = None, reason = "", end_time = datetime.now()):
-		self.issuer_id = issuer_id
-		self.ip = ip
-		self.reason = reason
-		self.end_time = end_time
-		self.updated = datetime.now()
-mapper(BanIP, banip_table)
-##########################################
-banuser_table = Table('ban_user', metadata, # server bans
-	Column('id', Integer, primary_key=True),
-	Column('user_id', Integer, ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE')), # user id which is banned
-	Column('issuer_id', Integer, ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE')), # user which set ban
-	Column('reason', Text),
-	Column('end_time', DateTime),
-	Column('updated', DateTime),
-	)
-class BanUser(object):
-	def __init__(self, user_id = None, issuer_id = None, reason = "", end_time = datetime.now()):
-		self.user_id = user_id
-		self.issuer_id = issuer_id
-		self.reason = reason
-		self.end_time = end_time
-		self.updated = datetime.now()
-mapper(BanUser, banuser_table)
-##########################################
 
 #metadata.create_all(engine)
 
@@ -154,15 +81,6 @@ class UsersHandler:
 		if not entry: return None
 		return OfflineClient(entry)
 	
-	def check_ban(self, user, ip, userid, now):
-		session = self.sessionmaker()
-		userban = session.query(BanUser).filter(BanUser.user_id==userid, now <= BanUser.end_time).first()
-		if not userban:
-			ipban = session.query(BanIP).filter(BanIP.ip==ip, now <= BanIP.end_time).first()
-		session.close()
-		if userban: return True, userban
-		if ipban: return True, ipban
-		return False, ""
 	
 	def login_user(self, username, password, ip, lobby_id, user_id, cpu, local_ip, country):
 		        
@@ -194,12 +112,6 @@ class UsersHandler:
 				reason += 'days remaining: %s' % (timeleft / (60 * 60 * 24))
 			else:
 				reason += 'hours remaining: %s' % (timeleft / (60 * 60))
-		#licho removing login tracking
-        #dbuser.logins.append(Login(now, ip, lobby_id, user_id, cpu, local_ip, country))
-		#dbuser.last_login = now
-		#dbuser.time = now
-		#dbuser.last_ip = ip
-		#dbuser.last_id = user_id
 		if good:
 			reason = User(dbuser.username, password)
 			reason.access = dbuser.access
@@ -212,14 +124,8 @@ class UsersHandler:
 		return good, reason
 	
 	def end_session(self, db_id):
-        #licho removing login tracking
-		#session = self.sessionmaker()
-		#entry = session.query(User).filter(User.id==db_id).first()
-		#if entry and not entry.logins[-1].end:
-		#	entry.logins[-1].end = datetime.now()
-		#	session.commit()
-		#session.close()
-         return
+		#licho removing login tracking
+		return
 
 	def register_user(self, user, password, ip, country): # need to add better ban checks so it can check if an ip address is banned when registering an account :)
 		if len(user)>20: return False, 'Username too long'
@@ -237,125 +143,10 @@ class UsersHandler:
 		session.close()
 		return True, 'Account registered successfully.'
 	
-	def ban_user(self, owner, username, duration, reason):
-		session = self.sessionmaker()
-		entry = session.query(User).filter(User.username==username).first()
-		if not entry:
-			session.close()
-			return "Couldn't ban %s, user doesn't exist" % (username)
-		end_time = datetime.now() + timedelta(duration)
-		ban = BanUser(entry.id, owner.db_id, reason, end_time)
-		session.add(ban)
-		session.commit()
-		session.close()
-		return 'Successfully banned %s for %s days.' % (username, duration)
 	
-	def unban_user(self, username):
-		session = self.sessionmaker()
-		client = self.clientFromUsername(username)
-		if not client:
-			return "User %s doesn't exist" % username
-		results = session.query(BanUser).filter(BanUser.user_id==client.id)
-		if results:
-			for result in results:
-				session.delete(result)
-			session.commit()
-			session.close()
-			return 'Successfully unbanned %s.' % username
-		else:
-			session.close()
-			return 'No matching bans for %s.' % username
 
-	def ban_ip(self, owner, ip, duration, reason):
-		# TODO: add owner field to the database for bans
-		session = self.sessionmaker()
-		end_time = datetime.now() + timedelta(duration)
-		ban = BanIP(ip, owner.db_id, reason, end_time)
-		session.add(ban)
-		session.commit()
-		session.close()
-		return 'Successfully banned %s for %s days.' % (ip, duration)
-
-	def unban_ip(self, ip):
-		session = self.sessionmaker()
-		results = session.query(BanIP).filter(BanIP.ip==ip)
-		if results:
-			for result in results:
-				session.delete(result)
-			session.commit()
-			session.close()
-			return 'Successfully unbanned %s.' % ip
-		else:
-			session.close()
-			return 'No matching bans for %s.' % ip
-	
-	def banlist(self):
-		session = self.sessionmaker()
-		banlist = []
-		for ban in session.query(BanIP):
-			banlist.append('ip: %s end: %s reason: %s' % (ban.ip, ban.end_time, ban.reason))
-		for ban in session.query(BanUser):
-			banlist.append('userid: %s end: %s reason: %s' % (ban.user_id, ban.end_time, ban.reason))
-		session.close()
-		return banlist
-
-
-	def save_user(self, client):
-		session = self.sessionmaker()
-		name = client.username
-		entry = session.query(User).filter(User.username==name).first()
-		if entry:
-			entry.ingame_time = client.ingame_time
-			entry.access = client.access
-			entry.bot = client.bot
-			entry.last_id = client.last_id
-			entry.password = client.password
-		session.commit()
-		session.close()
-	
-	def confirm_agreement(self, client):
-		session = self.sessionmaker()
-		entry = session.query(User).filter(User.username==client.username).first()
-		if entry: entry.access = 'user'
-		session.commit()
-		session.close()
-	
-	def get_lastlogin(self, username):
-		session = self.sessionmaker()
-		entry = session.query(User).filter(User.username==username).first()
-		session.close()
-		if entry: return True, entry.last_login
-		else: return False, 'User not found.'
 	
 	
-	def get_ingame_time(self, username):
-		session = self.sessionmaker()
-		entry = session.query(User).filter(User.username==username).first()
-		session.close()
-		if entry: return True, entry.ingame_time
-		else: return False, 'user not found in database'
-	
-	def get_account_access(self, username):
-		session = self.sessionmaker()
-		entry = session.query(User).filter(User.username==username).first()
-		session.close()
-		if entry:
-			return True, entry.access
-		else: return False, 'user not found in database'
-	
-	def find_ip(self, ip):
-		session = self.sessionmaker()
-		results = session.query(User).filter(User.last_ip==ip)
-		session.close()
-		return results
-		
-	def get_ip(self, username):
-		session = self.sessionmaker()
-		entry = session.query(User).filter(User.username==username).first()
-		session.close()
-		if not entry:
-			return None
-		return entry.last_ip
 
 
 class ChannelsHandler:

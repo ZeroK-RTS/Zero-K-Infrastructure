@@ -85,17 +85,7 @@ restricted = {
 	'SETBATTLE'
 	],
 'mod':[
-	'BAN',
-	'BANIP',
-	'UNBAN',
-	'UNBANIP',
-	'BANLIST',
-	'CHANGEACCOUNTPASS',
 	'KICKUSER',
-	'FINDIP',
-	'GETIP',
-	'GETLASTLOGINTIME',
-	'GETUSERID',
 	'SETBOTMODE',
 	'TESTLOGIN',
 	'GETLOBBYVERSION',
@@ -108,14 +98,10 @@ restricted = {
 	'BROADCASTEX',
 	'RELOAD',
 	'CLEANUP',
-	'SETLATESTSPRINGVERSION',
 	#########
 	# users
 	'FORGEREVERSEMSG',
-	'GETLASTLOGINTIME',
-	'GETACCOUNTACCESS',
 	'FORCEJOIN',
-	'SETACCESS',
 	],
 }
 
@@ -2070,101 +2056,6 @@ class Protocol:
 					del battle.bots[name]
 					self._root.broadcast_battle('REMOVEBOT %s %s'%(battle_id, name), battle_id)
 
-	def in_GETINGAMETIME(self, client, username=None):
-		'''
-		Get the ingame time for yourself.
-		[user]
-
-		Get the ingame time for any user.
-		[mod]
-
-		@optional.str username: The target user. Defaults to yourself.
-		'''
-		if username and 'mod' in client.accesslevels:
-			if username in self._root.usernames: # maybe abstract in the datahandler to automatically query SQL for users not logged in.
-				ingame_time = int(self._root.usernames[username].ingame_time)
-				self.out_SERVERMSG(client, '<%s> has an ingame time of %d minutes (%d hours).'%(username, ingame_time, ingame_time / 60))
-			else:
-				good, data = self.userdb.get_ingame_time(username)
-				if good:
-					ingame_time = int(data)
-					self.out_SERVERMSG(client, '<%s> has an ingame time of %d minutes (%d hours).'%(username, ingame_time, ingame_time / 60))
-				else: self.out_SERVERMSG(client, 'Database returned error when retrieving ingame time for <%s> (%s)' % (username, data))
-		elif not username:
-			ingame_time = int(client.ingame_time)
-			self.out_SERVERMSG(client, 'Your ingame time is %d minutes (%d hours).'%(ingame_time, ingame_time / 60))
-		else:
-			self.out_SERVERMSG(client, 'You can\'t get the ingame time of other users.')
-
-	def in_GETLASTLOGINTIME(self, client, username):
-		'''
-		Get the last login time of target user.
-
-		@required.str username: The target user.
-		'''
-		if username:
-			good, data = self.userdb.get_lastlogin(username)
-			if good: self.out_SERVERMSG(client, '<%s> last logged in on %s.' % (username, data.isoformat()))
-			else: self.out_SERVERMSG(client, 'Database returned error when retrieving last login time for <%s> (%s)' % (username, data))
-
-	
-	def in_GETUSERID(self, client, username):
-		user = self.clientFromUsername(username, True)
-		if user:
-			self.out_SERVERMSG(client, 'The ID for <%s> is %s' % (username, user.last_id))
-		else:
-			self.out_SERVERMSG(client, 'User not found.')
-
-	def in_GETACCOUNTACCESS(self, client, username):
-		'''
-		Get the account access bitfield for target user.
-		[mod]
-
-		@required.str username: The target user.
-		'''
-		good, data = self.userdb.get_account_access(username)
-		if good:
-			self.out_SERVERMSG(client, 'Account access for <%s>: %s' % (username, data))
-		else:
-			self.out_SERVERMSG(client, 'Database returned error when retrieving account access for <%s> (%s)' % (username, data))
-
-	def in_FINDIP(self, client, address):
-		'''
-		Get all usernames associated with target IP address.
-
-		@required.str address: The target IP address.
-		'''
-		results = self.userdb.find_ip(address)
-		for entry in results:
-			if entry.username in self._root.usernames:
-				self.out_SERVERMSG(client, '<%s> is currently bound to %s.' % (entry.username, address))
-			else:
-				if entry.last_login:
-					lastlogin = entry.last_login.isoformat()
-				else:
-					lastlogin = "Unknown"
-				self.out_SERVERMSG(client, '<%s> was recently bound to %s at %s' % (entry.username, address, lastlogin))
-
-	def in_GETLASTIP(self, client, username):
-		'''
-		An alias for GETIP.
-		'''
-		return self.in_GETIP(client, username)
-
-	def in_GETIP(self, client, username):
-		'''
-		Get the current or last IP address for target user.
-
-		@required.str username: The target user.
-		'''
-		if username in self._root.usernames:
-			self.out_SERVERMSG(client, '<%s> is currently bound to %s' % (username, self._root.usernames[username].ip_address))
-			return
-
-		ip = self.userdb.get_ip(username)
-		if ip:
-			self.out_SERVERMSG(client, '<%s> was recently bound to %s' % (username, ip))
-
 
 	def in_CHANGEPASSWORD(self, client, oldpassword, newpassword):
 		'''
@@ -2217,41 +2108,6 @@ class Protocol:
 		if user and 'lobby_id' in dir(user):
 			self.out_SERVERMSG(client, '<%s> is using %s'%(user.username, user.lobby_id))
 
-	def in_SETBOTMODE(self, client, username, mode):
-		'''
-		Set the bot flag of target user.
-
-		@required.str username: The target user.
-		@required.bool mode: The resulting bot mode.
-		'''
-		user = self.clientFromUsername(username, True)
-		if user:
-			bot = (mode.lower() in ('true', 'yes', '1'))
-			user.bot = bot
-			self.userdb.save_user(user)
-			self.out_SERVERMSG(client, 'Botmode for <%s> successfully changed to %s' % (username, bot))
-
-	def in_CHANGEACCOUNTPASS(self, client, username, newpass):
-		'''
-		Set the password for target user.
-		[mod]
-
-		@required.str username: The target user.
-		@required.str password: The new password.
-		'''
-		user = self.clientFromUsername(username, True)
-		if user:
-			if user.access in ('mod', 'admin') and not client.access == 'admin':
-				self.out_SERVERMSG(client, 'You have insufficient access to change moderator passwords.')
-			else:
-				res, reason = self._validPasswordSyntax(newpass)
-				if not res:
-					self.out_SERVERMSG(client, "invalid password specified: %s" %(reason))
-					return
-				self._root.console_write('Handler %s: <%s> changed password of <%s>.' % (client.handler.num, client.username, username))
-				user.password = newpass
-				self.userdb.save_user(user)
-				self.out_SERVERMSG(client, 'Password for <%s> successfully changed to %s' % (username, newpass))
 
 	def in_BROADCAST(self, client, msg):
 		'''
@@ -2277,14 +2133,6 @@ class Protocol:
 		'''
 		self._root.admin_broadcast(msg)
 
-	def in_SETLATESTSPRINGVERSION(self, client, version):
-		'''
-		Set a new version of Spring as the latest.
-
-		@required.str version: The new version to apply.
-		'''
-		self._root.latestspringversion = version
-		self.out_SERVERMSG(client, 'Latest spring version is now set to: %s' % version)
 
 	def in_KICKUSER(self, client, user, reason=''):
 		'''
@@ -2344,81 +2192,6 @@ class Protocol:
 				flags = flag
 		client.Send("COMPFLAGS %s" %(flags))
 
-	def in_BAN(self, client, username, duration, reason):
-		'''
-		Ban target user from the server.
-
-		@required.str username: The target user.
-		@required.float duration: The duration in days.
-		@required.str reason: The reason to be shown.
-		'''
-		try: duration = float(duration)
-		except:
-			self.out_SERVERMSG(client, 'Duration must be a float (the ban duration in days)')
-			return
-		response = self.userdb.ban_user(client, username, duration, reason)
-		if response: self.out_SERVERMSG(client, '%s' % response)
-
-	def in_UNBAN(self, client, username):
-		'''
-		Remove all bans for target user from the server.
-
-		@required.str username: The target user.
-		'''
-		response = self.userdb.unban_user(username)
-		if response: self.out_SERVERMSG(client, '%s' % response)
-
-	def in_BANIP(self, client, ip, duration, reason):
-		'''
-		Ban an IP address from the server.
-
-		@required.str ip: The IP address to ban.
-		@required.float duration: The duration in days.
-		@required.str reason: The reason to show.
-		'''
-		try: duration = float(duration)
-		except:
-			self.out_SERVERMSG(client, 'Duration must be a float (the ban duration in days)')
-			return
-		response = self.userdb.ban_ip(client, ip, duration, reason)
-		if response: self.out_SERVERMSG(client, '%s' % response)
-
-	def in_UNBANIP(self, client, ip):
-		'''
-		Remove all bans for target IP from the server.
-
-		@required.str ip: The target IP.
-		'''
-		response = self.userdb.unban_ip(ip)
-		if response: self.out_SERVERMSG(client, '%s' % response)
-
-	def in_BANLIST(self, client):
-		'''
-		Retrieve a list of all bans currently active on the server.
-		'''
-		for entry in self.userdb.banlist():
-			self.out_SERVERMSG(client, '%s' % entry)
-
-	def in_SETACCESS(self, client, username, access):
-		'''
-		Set the access level of target user.
-
-		@required.str username: The target user.
-		@required.str access: The new access to apply.
-		Access levels: user, mod, admin
-		'''
-		user = self.clientFromUsername(username, True)
-		if not user:
-			self.out_SERVERMSG(client, "User not found.")
-			return
-		if not access in ('user', 'mod', 'admin'):
-			self.out_SERVERMSG(client, "Invalid access mode, only user, mod, admin is valid.")
-			return
-		user.access = access
-		if username in self._root.usernames:
-			self._calc_access_status(user)
-			self._root.broadcast('CLIENTSTATUS %s %s'%(username, user.status))
-		self.userdb.save_user(user)
 
 	def in_RELOAD(self, client):
 		'''
