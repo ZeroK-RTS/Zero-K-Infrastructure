@@ -162,6 +162,7 @@ namespace ZeroKLobby
                 if (user.IsInGame) h += 16; // ingame icon
                 h += 16; // skill text
             }
+            if (user.SteamID!=null) h += 16; //steam icon
             if (Program.SpringieServer.GetTop10Rank(user.Name) > 0) h += 16; // top 10
             if (user.IsInBattleRoom) h += 76; // battle icon
 
