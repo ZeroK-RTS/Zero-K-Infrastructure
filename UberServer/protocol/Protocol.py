@@ -32,7 +32,6 @@ restricted = {
 	# battle
 	'ADDBOT',
 	'ADDSTARTRECT',
-	'CHANGEEMAIL',
 	'DISABLEUNITS',
 	'ENABLEUNITS',
 	'ENABLEALLUNITS',
@@ -81,7 +80,6 @@ restricted = {
 	# meta
 	'CHANGEPASSWORD',
 	'GETINGAMETIME',
-	'GETREGISTRATIONDATE',
 	'MYSTATUS',
 	'PORTTEST',
 	'SETBATTLE'
@@ -814,8 +812,6 @@ class Protocol:
 		client.password = reason.password
 		client.lobby_id = reason.lobby_id
 		client.bot = reason.bot
-		client.register_date = reason.register_date
-		client.last_login = reason.last_login
 		client.cpu = cpu
 
 		client.local_ip = None
@@ -2111,30 +2107,7 @@ class Protocol:
 			if good: self.out_SERVERMSG(client, '<%s> last logged in on %s.' % (username, data.isoformat()))
 			else: self.out_SERVERMSG(client, 'Database returned error when retrieving last login time for <%s> (%s)' % (username, data))
 
-	def in_GETREGISTRATIONDATE(self, client, username=None):
-		'''
-		Get the registration date of yourself.
-		[user]
-
-		Get the registration date of target user.
-		[mod]
-
-		@optional.str username: The target user. Defaults to yourself.
-		'''
-		if username and 'mod' in client.accesslevels:
-			if username in self._root.usernames:
-				reason = self._root.usernames[username].register_date
-				good = True
-			else: good, reason = self.userdb.get_registration_date(username)
-		else:
-			good = True
-			username = client.username
-			reason = client.register_date
-		if good and reason:
-			self.out_SERVERMSG(client, '<%s> registered on %s.' % (username, reason.isoformat()))
-			return
-		self.out_SERVERMSG(client, "Couldn't retrieve registration date for <%s> (%s)" % (username, reason))
-
+	
 	def in_GETUSERID(self, client, username):
 		user = self.clientFromUsername(username, True)
 		if user:
@@ -2498,36 +2471,8 @@ class Protocol:
 				self._root.console_write("deleting empty channel %s" % channel)
 				nchan = nchan + 1
 
-		self.userdb.clean_users()
-
 		self.out_SERVERMSG(client, "deleted channels: %d battles: %d users: %d" %(nchan, nbattle, nuser))
 
-	def in_CHANGEEMAIL(self, client, newmail = None, username = None):
-		'''
-		Set the email address of target user.
-
-		@optional.str email: Email address to set. if empty current email address will be shown
-		@optional.str username: username to set the email address
-		'''
-		if not client.compat['cl']:
-			self.out_SERVERMSG(client, "compatibility flag cl needed")
-			return
-
-		if not newmail:
-			self.out_SERVERMSG(client,"current email is %s" %(client.email))
-			return
-		if not username:
-			client.email = newmail
-			self.userdb.save_user(client)
-			self.out_SERVERMSG(client,"changed email to %s"%(client.email))
-			return
-		user = self.clientFromUsername(username, True)
-		if user.access in ('mod', 'admin') and not client.access == 'admin': #disallow mods to change other mods / admins email
-			self.out_SERVERMSG(client,"access denied")
-			return
-		user.email = newmail
-		self.userdb.save_user(user)
-		self.out_SERVERMSG(client,"changed email to %s"%(user.email))
 
 	def in_SETBATTLE(self, client, tags):
 		'''

@@ -51,6 +51,8 @@ class DataHandler:
 		self.motd = None
 		self.running = True
 		self.redirect = None
+
+		self.lobby_service_url = 'http://localhost:9739/LobbyService'
 		
 		self.trusted_proxies = []
 		

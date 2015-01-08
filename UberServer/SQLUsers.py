@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import json, urllib2
 
 try:
 	from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData, ForeignKey, Boolean, Text, DateTime
@@ -17,27 +18,20 @@ users_table = Table('users', metadata,
 	Column('id', Integer, primary_key=True),
 	Column('username', String(40), unique=True),
 	Column('password', String(64)),
-	Column('register_date', DateTime),
-	Column('last_login', DateTime),
-	Column('last_ip', String(15)), # would need update for ipv6
 	Column('last_id', String(128)),
 	Column('ingame_time', Integer),
 	Column('access', String(32)),
-	Column('email', String(254)), # http://www.rfc-editor.org/errata_search.php?rfc=3696&eid=1690
 	Column('bot', Integer),
 	)
 class User(object):
-	def __init__(self, username, password, last_ip, access='agreement'):
+	def __init__(self, username, password, access='agreement'):
 		self.username = username
 		self.password = password
 		self.last_login = datetime.now()
-		self.register_date = datetime.now()
-		self.last_ip = last_ip
 		self.ingame_time = 0
 		self.bot = 0
 		self.access = access # user, moderator, admin, bot, agreement
 		self.last_id = 0
-		self.email = ""
 
 	def __repr__(self):
 		return "<User('%s', '%s')>" % (self.username, self.password)
@@ -136,13 +130,9 @@ class OfflineClient:
 		self.id = sqluser.id
 		self.username = sqluser.username
 		self.password = sqluser.password
-		self.ingame_time = sqluser.ingame_time
 		self.bot = sqluser.bot
-		self.last_login = sqluser.last_login
-		self.register_date = sqluser.register_date
 		self.last_id = sqluser.last_id
 		self.access = sqluser.access
-		self.email = sqluser.email
 
 class UsersHandler:
 	def __init__(self, root, engine):
@@ -173,8 +163,13 @@ class UsersHandler:
 		if userban: return True, userban
 		if ipban: return True, ipban
 		return False, ""
-		
+	
 	def login_user(self, username, password, ip, lobby_id, user_id, cpu, local_ip, country):
+		        
+		url = "{0}/Login?login={1}&password={2}".format(self._root.lobby_service_url, username, password)
+		data = json.load(urllib2.urlopen(url))
+		print json.dumps(data)
+
 
 		if self._root.censor and not self._root.SayHooks._nasty_word_censor(username):
 			return False, 'Name failed to pass profanity filter.'
@@ -206,13 +201,10 @@ class UsersHandler:
 		#dbuser.last_ip = ip
 		#dbuser.last_id = user_id
 		if good:
-			reason = User(dbuser.username, password, ip, now)
+			reason = User(dbuser.username, password)
 			reason.access = dbuser.access
 			reason.id = dbuser.id
-			reason.ingame_time = dbuser.ingame_time
 			reason.bot = dbuser.bot
-			reason.last_login = dbuser.last_login
-			reason.register_date = dbuser.register_date
 			reason.lobby_id = lobby_id
 
 		session.commit()
@@ -318,7 +310,6 @@ class UsersHandler:
 			entry.bot = client.bot
 			entry.last_id = client.last_id
 			entry.password = client.password
-			entry.email = client.email
 		session.commit()
 		session.close()
 	
@@ -336,12 +327,6 @@ class UsersHandler:
 		if entry: return True, entry.last_login
 		else: return False, 'User not found.'
 	
-	def get_registration_date(self, username):
-		session = self.sessionmaker()
-		entry = session.query(User).filter(User.username==username).first()
-		session.close()
-		if entry and entry.register_date: return True, entry.register_date
-		else: return False, 'user or date not found in database'
 	
 	def get_ingame_time(self, username):
 		session = self.sessionmaker()
@@ -371,59 +356,6 @@ class UsersHandler:
 		if not entry:
 			return None
 		return entry.last_ip
-
-	def remove_user(self, user):
-		session = self.sessionmaker()
-		entry = session.query(User).filter(User.username==user).first()
-		if not entry:
-			return False, 'User not found.'
-		session.delete(entry)
-		session.commit()
-		session.close()
-		return True, 'Success.'
-
-	def inject_user(self, user, password, ip, last_login, register_date, uid, ingame, country, bot, access, id):
-		entry = User(user, password, ip)
-		entry.last_login = last_login
-		entry.last_id = uid
-		entry.ingame_time = ingame
-		entry.register_date = register_date
-		entry.access = access
-		entry.bot = bot
-		entry.id = id
-		return entry
-	
-	def inject_users(self, accounts):
-		session = self.sessionmaker()
-		for user in accounts:
-			try:
-				entry = self.inject_user(user['user'], user['pass'], user['last_ip'], user['last_login'], user['register_date'],
-							user['uid'], user['ingame'], user['country'], user['bot'], user['access'], user['id'])
-				session.add(entry)
-				session.commit()
-				print("Inserted: " + user['user'])
-			except IntegrityError:
-				session.rollback()
-				#print("Duplicate Entry: " + user['user'])
-		session.commit()
-		session.close()
-
-	def clean_users(self):
-		''' delete old user accounts (very likely unused) '''
-		session = self.sessionmaker()
-		now = datetime.now()
-		#delete users:
-		# which didn't accept aggreement after one day
-		session.query(User).filter(User.register_date < now - timedelta(hours=1)).filter(User.access == "agreement").delete()
-
-		# which have no ingame time, last login > 90 days and no bot
-		session.query(User).filter(User.ingame_time == 0).filter(User.last_login < now - timedelta(days=90)).filter(User.bot == 0).filter(User.access == "user").delete()
-
-		# last login > 3 years
-		session.query(User).filter(User.last_login < now - timedelta(days=1095)).delete()
-
-		session.commit()
-		session.close()
 
 
 class ChannelsHandler:

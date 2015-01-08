@@ -152,6 +152,7 @@
     <Compile Include="Controllers\FactionsController.cs" />
     <Compile Include="Controllers\ContributionsController.cs" />
     <Compile Include="Controllers\LobbyController.cs" />
+    <Compile Include="Controllers\LobbyServiceController.cs" />
     <Compile Include="Controllers\ReplaysController.cs" />
     <Compile Include="Controllers\UnitStatsController.cs" />
     <Compile Include="AppCode\MarkdownHelper.cs" />
@@ -1452,6 +1453,7 @@
   <ItemGroup>
     <Folder Include="Img\news\" />
     <Folder Include="Resources\" />
+    <Folder Include="Views\LobbyService\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\News\Index.cshtml" />

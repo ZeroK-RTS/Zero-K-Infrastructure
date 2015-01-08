@@ -53,7 +53,6 @@ class Client:
 		
 		self.username = ''
 		self.password = ''
-		self.email = ''
 		self.hostport = None
 		self.udpport = 0
 		self.bot = 0
@@ -77,9 +76,7 @@ class Client:
 		self.scriptPassword = None
 		
 		now = time.time()
-		self.last_login = now
 		self.failed_logins = 0
-		self.register_date = now
 		self.lastdata = now
 		self.last_id = 0
 		
