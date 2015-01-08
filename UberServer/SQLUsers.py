@@ -1,56 +1,6 @@
 from datetime import datetime, timedelta
 import json, urllib2
 
-try:
-	from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData, ForeignKey, Boolean, Text, DateTime
-	from sqlalchemy.orm import mapper, sessionmaker, relation
-	from sqlalchemy.exc import IntegrityError
-except ImportError, e:
-	print("ERROR: sqlalchemy isn't installed: " + str(e))
-	print("ERROR: please install sqlalchemy, on debian the command is sth. like: ")
-	print("sudo apt-get install python-sqlalchemy")
-	import sys
-	sys.exit(1)
-
-metadata = MetaData()
-
-##########################################
-channels_table = Table('channels', metadata,
-	Column('id', Integer, primary_key=True),
-	Column('name', String(40), unique=True),
-	Column('key', String(32)),
-	Column('owner', String(40)), #FIXME: delete, use owner_userid
-	Column('owner_userid', Integer, ForeignKey('users.id', onupdate='CASCADE', ondelete='SET NULL')), # user owner id
-	Column('topic', Text),
-	Column('topic_time', DateTime),
-	Column('topic_owner', String(40)), #FIXME: delete, use topic_userid
-	Column('topic_userid', Integer, ForeignKey('users.id', onupdate='CASCADE', ondelete='SET NULL')), # topic owner id
-	Column('antispam', Boolean),
-	Column('autokick', String(5)),
-	Column('censor', Boolean),
-	Column('antishock', Boolean),
-	)
-class Channel(object):
-	def __init__(self, name, key='', chanserv=False, owner='', topic='', topic_time=0, topic_owner='', antispam=False, admins='', autokick='ban', censor=False, antishock=False):
-		self.name = name
-		self.key = key
-		self.chanserv = chanserv
-		self.owner = owner
-		self.topic = topic
-		self.topic_time = topic_time
-		self.topic_owner = topic_owner
-		self.antispam = antispam
-		self.admins = admins
-		self.autokick = autokick
-		self.censor = censor
-		self.antishock = antishock
-
-	def __repr__(self):
-		return "<Channel('%s')>" % self.name
-mapper(Channel, channels_table)
-##########################################
-
-#metadata.create_all(engine)
 
 class OfflineClient:
 	def __init__(self, sqluser):

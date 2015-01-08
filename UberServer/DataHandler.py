@@ -44,7 +44,6 @@ class DataHandler:
 		self.trusted_proxyfile = None
 		
 		self.max_threads = 25
-		self.sqlurl = 'sqlite:///server.db'
 		self.nextbattle = 0
 		self.SayHooks = __import__('SayHooks')
 		self.censor = True
@@ -85,8 +84,6 @@ class DataHandler:
 		print('      { Sets latest Spring version to this string. Defaults to "*" }')
 		print('  -m, --maxthreads number')
 		print('      { Uses the specified number of threads for handling clients }')
-		print('  -s, --sqlurl SQLURL')
-		print('      { Uses SQL database at the specified sqlurl for user, channel, and ban storage. }')
 		print('  -c, --no-censor')
 		print('      { Disables censoring of #main, #newbies, and usernames (default is to censor) }')
 		print('  --proxies /path/to/proxies.txt')
@@ -95,24 +92,6 @@ class DataHandler:
 		print('     { sets the pat to the agreement file which is sent to a client registering at the server }')
 		print('   -r --redirect "hostname/ip port"')
 		print('     { redirects connecting clients to the given ip and port')
-		print('SQLURL Examples:')
-		#print('  "sqlite:///:memory:" or "sqlite:///"')
-		#print('     { both make a temporary database in memory }')
-		print('  "sqlite:////absolute/path/to/database.txt"')
-		print('     { uses a database in the file specified }')
-		print('  "sqlite:///relative/path/to/database.txt"')
-		print('     { note sqlite is slower than a real SQL server }')
-		print('  "mysql://user:password@server:port/database?charset=utf8&use_unicode=0"')
-		print('     { requires the MySQLdb module }')
-		print('  "oracle://user:password@server:port/database"')
-		print('     { requires the cx_Oracle module }')
-		print('  "postgres://user:password@server:port/database"')
-		print('     { requires the psycopg2 module }')
-		print('  "mssql://user:password@server:port/database"')
-		print('     { requires pyodbc (recommended) or adodbapi or pymssql }')
-		print('  "firebird://user:password@server:port/database"')
-		print('     { requires the kinterbasdb module }')
-		print()
 		print('Usage example (this is what the test server uses at the moment):')
 		print(' server.py -p 8300 -n 8301')
 		print()
@@ -169,11 +148,6 @@ class DataHandler:
 			elif arg in ['m', 'maxthreads']:
 				try: self.max_threads = int(argp[0])
 				except: print('Error specifing max threads')
-			elif arg in ['s', 'sqlurl']:
-				try:
-					self.sqlurl = argp[0]
-				except:
-					print('Error specifying SQL URL')
 			elif arg in ['c', 'no-censor']:
 				self.censor = False
 			elif arg in ['a', 'agreement']:
@@ -193,21 +167,6 @@ class DataHandler:
 				except:
 					print('Error opening trusted proxy file.')
 					self.trusted_proxyfile = None
-		sqlalchemy = __import__('sqlalchemy')
-		if self.sqlurl.startswith('sqlite'):
-			print('Multiple threads are not supported with sqlite, forcing a single thread')
-			print('Please note the server performance will not be optimal')
-			print('You might want to install a real database server or use LAN mode')
-			print()
-			self.max_threads = 1
-			self.engine = sqlalchemy.create_engine(self.sqlurl)
-			def _fk_pragma_on_connect(dbapi_con, con_record):
-				dbapi_con.execute('PRAGMA journal_mode = MEMORY')
-				dbapi_con.execute('PRAGMA synchronous = OFF')
-			from sqlalchemy import event
-			event.listen(self.engine, 'connect', _fk_pragma_on_connect)
-		else:
-			self.engine = sqlalchemy.create_engine(self.sqlurl, pool_size=self.max_threads * 2, pool_recycle=300)
 
 		self.userdb = UsersHandler(self, self.engine)
 		self.channeldb = ChannelsHandler(self, self.engine)
