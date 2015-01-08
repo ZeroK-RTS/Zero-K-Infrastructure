@@ -21,44 +21,20 @@ namespace NightWatch
         readonly TasClient client;
 
         int messageId;
-        readonly ConcurrentDictionary<int, RequestInfo> requests = new ConcurrentDictionary<int, RequestInfo>();
         readonly TopPlayers topPlayers = new TopPlayers();
 
         public AuthService(TasClient client)
         {
             this.client = client;
 
-            /*
-        this.client.Input += (s, e) =>
-      {
-          Console.WriteLine(e.Command +" "+ Utils.Glue(e.Args));
-      };
-      this.client.Output += (s, e) =>
-      {
-          Console.WriteLine(e.Data.Key + " " +Utils.Glue(e.Data.Value.Select(x=>x.ToString()).ToArray()));
-      };*/
 
             this.client.LoginAccepted += (s, e) =>
                 {
-                    requests.Clear();
                     client.JoinChannel(ModeratorChannel);
                     client.JoinChannel(Top20Channel);
                     using (var db = new ZkDataContext()) foreach (var fac in db.Factions.Where(x => !x.IsDeleted)) client.JoinChannel(fac.Shortcut);
                 };
 
-            this.client.TestLoginAccepted += (s, e) =>
-                {
-                    RequestInfo entry;
-                    if (requests.TryGetValue(client.MessageID, out entry))
-                    {
-                        entry.CorrectName = e.ServerParams[0];
-                        entry.LobbyID = Convert.ToInt32(e.ServerParams[1]);
-                        if (client.ExistingUsers.ContainsKey(entry.CorrectName)) entry.User = client.ExistingUsers[entry.CorrectName];
-                        entry.WaitHandle.Set();
-                    }
-
-                    requests.TryRemove(client.MessageID, out entry);
-                };
 
             this.client.UserAdded += (s, e) =>
                 {
@@ -255,74 +231,7 @@ namespace NightWatch
                         });
                 };
 
-            this.client.UserStatusChanged += (s, e) =>
-                {
-                    var user = client.ExistingUsers[e.ServerParams[0]];
-                    Task.Factory.StartNew(() =>
-                        {
-                            try
-                            {
-                                using (var db = new ZkDataContext()) UpdateUser(user.LobbyID, user.Name, user, null, db);
-                            }
-                            catch (Exception ex)
-                            {
-                                Trace.TraceError(ex.ToString());
-                            }
-                        },
-                                          TaskCreationOptions.LongRunning);
-                };
 
-            this.client.BattleUserJoined += (s, e) =>
-                {
-                    var battle = client.ExistingBattles[e.BattleID];
-                    var founder = battle.Founder;
-                    if (founder.IsSpringieManaged)
-                    {
-                        try
-                        {
-                            var user = client.ExistingUsers[e.UserName];
-                            using (var db = new ZkDataContext())
-                            {
-                                var acc = Account.AccountByLobbyID(db, user.LobbyID);
-                                var name = founder.Name.TrimNumbers();
-                                var aconf = db.AutohostConfigs.FirstOrDefault(x => x.Login == name);
-                                if (acc != null && user != null && aconf != null &&
-                                    (acc.LastLobbyVersionCheck == null || DateTime.UtcNow.Subtract(acc.LastLobbyVersionCheck.Value).TotalDays > 3) &&
-                                    aconf.AutohostMode != 0) client.RequestLobbyVersion(user.Name);
-                                /*
-                                if (acc != null)
-                                {
-                                    int numIDs = acc.AccountUserIDS != null ? acc.AccountUserIDS.Count : 0;
-                                    if (numIDs == 0) client.Say(TasClient.SayPlace.User, "KingRaptor", string.Format("USER {0} joined battle {1}; has {2} userIDs; lobby version {3}", acc.Name, founder.Name, numIDs, acc.LobbyVersion), false);
-                                }
-                                else
-                                    client.Say(TasClient.SayPlace.User, "KingRaptor", string.Format("USER {0} joined battle {1}", e.UserName + " (NO ACCOUNT)", founder.Name), false);
-                                
-                                if (acc != null)
-                                {
-                                    if (!acc.AccountUserIDS.Any())
-                                    {
-                                        string reason = string.Format("Sorry you are using unsupported lobby ({0}), please upgrade or use Zero-K Lobby, Weblobby or SpringLobby", acc.LobbyVersion);
-                                        client.Say(TasClient.SayPlace.User, user.Name, reason, false);
-                                        client.Say(TasClient.SayPlace.User, founder.Name, string.Format("!kick {0} {1}", acc.LobbyVersion, reason), false);
-                                    }
-                                }*/
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            //client.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
-                            Trace.TraceError("Error procesisng battle user joined: {0}", ex);
-                        }
-                    }
-                };
-
-            this.client.TestLoginDenied += (s, e) =>
-                {
-                    RequestInfo entry;
-                    if (requests.TryGetValue(client.MessageID, out entry)) entry.WaitHandle.Set();
-                    requests.TryRemove(client.MessageID, out entry);
-                };
 
             this.client.UserLobbyVersionRecieved += (s, e) =>
                 {
@@ -332,7 +241,6 @@ namespace NightWatch
                         if (acc != null)
                         {
                             acc.LobbyVersion = e.LobbyVersion;
-                            acc.LastLobbyVersionCheck = DateTime.UtcNow;
                             db.SubmitAndMergeChanges();
                         }
                     }
@@ -397,37 +305,7 @@ namespace NightWatch
         }
 
 
-        Account UpdateUser(int lobbyID, string name, User user, string hashedPassword, ZkDataContext db = null)
-        {
-            Account acc = null;
-            if (db == null) db = new ZkDataContext();
-
-            acc = Account.AccountByLobbyID(db, lobbyID);
-            if (acc == null)
-            {
-                acc = new Account();
-                acc.SetAvatar();
-                acc.FirstLogin = DateTime.UtcNow;
-                db.Accounts.InsertOnSubmit(acc);
-            }
-
-            acc.LobbyID = lobbyID;
-            acc.SetName(name);
-            if (!string.IsNullOrEmpty(hashedPassword)) acc.Password = hashedPassword;
-            acc.LastLogin = DateTime.UtcNow;
-
-            if (user != null) // user was online, we can update his data
-            {
-                acc.IsBot = user.IsBot;
-                acc.IsLobbyAdministrator = user.IsAdmin;
-                acc.Country = user.Country;
-                acc.LobbyTimeRank = user.Rank;
-            }
-
-            db.SubmitAndMergeChanges();
-
-            return acc;
-        }
+  
 
 
         public void SendLobbyMessage(Account account, string text)
@@ -453,24 +331,6 @@ namespace NightWatch
             }
         }
 
-        public Account VerifyAccount(string login, string hashedPassword)
-        {
-            if (login.Any(y => Char.IsWhiteSpace(y) || Char.IsControl(y))) return null;
-            if (hashedPassword.Any(y => Char.IsWhiteSpace(y) || Char.IsControl(y))) return null;
-            var info = requests[Interlocked.Increment(ref messageId)] = new RequestInfo();
-
-            client.SendRaw(string.Format("#{0} TESTLOGIN {1} {2}", messageId, login, hashedPassword));
-            if (info.WaitHandle.WaitOne(AuthServiceTestLoginWait))
-            {
-                if (info.LobbyID == 0) return null; // not verified/invalid login or password
-                else
-                {
-                    var acc = UpdateUser(info.LobbyID, info.CorrectName, info.User, hashedPassword);
-                    return acc;
-                }
-            }
-            return null; // timeout
-        }
 
         public CurrentLobbyStats GetCurrentStats()
         {

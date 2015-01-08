@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using NightWatch;
 using ZkData;
 
 namespace ZeroKWeb.Controllers
@@ -10,7 +11,7 @@ namespace ZeroKWeb.Controllers
     public class LobbyServiceController : Controller
     {
         // GET: LobbyServer
-        public JsonResult Login(string login, string password)
+        public JsonResult Login(string login, string password, string lobby_name, string user_id, int cpu, string ip,string country)
         {
             var db = new ZkDataContext();
             var acc = Account.AccountVerify(db, login, password);

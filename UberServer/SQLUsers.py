@@ -26,7 +26,7 @@ class UsersHandler:
 	
 	def login_user(self, username, password, ip, lobby_id, user_id, cpu, local_ip, country):
 		        
-		url = "{0}/Login?login={1}&password={2}".format(self._root.lobby_service_url, username, password)
+		url = "{0}/Login?login={1}&password={2}&lobby_name={3}&user_id={4}&cpu={5}&ip={6}&country={7}".format(self._root.lobby_service_url, username, password,lobby_id,user_id, cpu, ip, country)
 		data = json.load(urllib2.urlopen(url))
 		print json.dumps(data)
 
@@ -54,15 +54,13 @@ class UsersHandler:
 				reason += 'days remaining: %s' % (timeleft / (60 * 60 * 24))
 			else:
 				reason += 'hours remaining: %s' % (timeleft / (60 * 60))
-		if good:
-			reason = User(dbuser.username, password)
-			reason.access = dbuser.access
-			reason.id = dbuser.id
-			reason.bot = dbuser.bot
-			reason.lobby_id = lobby_id
 
-		session.commit()
-		session.close()
+		reason = User(dbuser.username, password)
+		reason.access = dbuser.access
+		reason.id = dbuser.id
+		reason.bot = dbuser.bot
+		reason.lobby_id = lobby_id
+
 		return good, reason
 	
 	def end_session(self, db_id):
@@ -84,11 +82,7 @@ class UsersHandler:
 		session.commit()
 		session.close()
 		return True, 'Account registered successfully.'
-	
-	
 
-	
-	
 
 
 class ChannelsHandler:

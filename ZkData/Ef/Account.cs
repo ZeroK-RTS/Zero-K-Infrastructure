@@ -119,7 +119,6 @@ namespace ZkData
         public double PwWarpProduced { get; set; }
         public double PwWarpUsed { get; set; }
         public double PwAttackPoints { get; set; }
-        public DateTime? LastLobbyVersionCheck { get; set; }
         [StringLength(2)]
         public string Language { get; set; }
         public bool HasVpnException { get; set; }
