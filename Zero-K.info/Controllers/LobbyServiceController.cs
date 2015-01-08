@@ -21,7 +21,6 @@ namespace ZeroKWeb.Controllers
         {
             public bool Ok;
             public string Reason;
-            public int 
             public Account Account;
         }
 
