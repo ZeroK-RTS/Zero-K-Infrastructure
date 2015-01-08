@@ -169,7 +169,7 @@ namespace ZkData
         public const string BomberIcon = "/img/fleets/neutral.png";
         public const string WarpIcon = "/img/warpcore.png";
 
-        public const bool VpnCheckEnabled = false; // i hope this only turns off NW spam and not VPN blacklist
+        public const bool VpnCheckEnabled = true; 
 
         public const double EurosToKudos = 10.0;
         public const string TeamEmail = "Zero-K team <team@zero-k.info>";

@@ -94,7 +94,6 @@ namespace ZkData
         public string Password { get; set; }
         [StringLength(5)]
         public string Country { get; set; }
-        public int LobbyTimeRank { get; set; }
         public int MissionRunCount { get; set; }
         public bool IsZeroKAdmin { get; set; }
         public int Xp { get; set; }
@@ -127,6 +126,7 @@ namespace ZkData
         public decimal? SteamID { get; set; }
         [StringLength(200)]
         public string SteamName { get; set; }
+        public int Cpu { get; set; }
 
         public virtual ICollection<AbuseReport> AbuseReportsByAccountID { get; set; }
         public virtual ICollection<AbuseReport> AbuseReportsByReporterAccountID { get; set; }

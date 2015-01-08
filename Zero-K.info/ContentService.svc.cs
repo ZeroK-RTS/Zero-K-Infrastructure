@@ -228,7 +228,6 @@ namespace ZeroKWeb
                 ZeroKLevel = acc.Level,
                 ClanID = acc.ClanID ?? 0,
                 ClanName = acc.Clan != null ? acc.Clan.ClanName : null,
-                LobbyTimeRank = acc.LobbyTimeRank,
                 IsLobbyAdmin = acc.IsLobbyAdministrator,
                 IsZeroKAdmin = acc.IsZeroKAdmin,
                 Avatar = acc.Avatar,

@@ -790,6 +790,7 @@ class Protocol:
 		client.username = reason.username
 		client.password = reason.password
 		client.lobby_id = reason.lobby_id
+		client.last_login = now
 		client.bot = reason.bot
 		client.cpu = cpu
 

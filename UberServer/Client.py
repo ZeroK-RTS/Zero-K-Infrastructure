@@ -79,6 +79,8 @@ class Client:
 		self.failed_logins = 0
 		self.lastdata = now
 		self.last_id = 0
+
+		self.last_login = now
 		
 		self.users = set([]) # session_id
 		self.battles = set([]) # [battle_id] = [user1, user2, user3, etc]

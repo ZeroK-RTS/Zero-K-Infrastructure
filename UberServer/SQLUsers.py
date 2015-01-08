@@ -13,6 +13,7 @@ class OfflineClient:
 
 class UsersHandler:
 	def __init__(self, root, engine):
+		self._root = root
 		return
 	
 	def clientFromID(self, db_id):
@@ -25,41 +26,22 @@ class UsersHandler:
 	
 	
 	def login_user(self, username, password, ip, lobby_id, user_id, cpu, local_ip, country):
-		        
-		url = "{0}/Login?login={1}&password={2}&lobby_name={3}&user_id={4}&cpu={5}&ip={6}&country={7}".format(self._root.lobby_service_url, username, password,lobby_id,user_id, cpu, ip, country)
-		data = json.load(urllib2.urlopen(url))
-		print json.dumps(data)
-
 
 		if self._root.censor and not self._root.SayHooks._nasty_word_censor(username):
 			return False, 'Name failed to pass profanity filter.'
 
-		session = self.sessionmaker()
-		good = True
-		dbuser = session.query(User).filter(User.username==username, User.password == password).first() # should only ever be one user with each name so we can just grab the first one :)
-		if not dbuser:
-			session.close()
-			return False, 'Invalid username or password'
+		url = "{0}/Login?login={1}&password={2}&lobby_name={3}&user_id={4}&cpu={5}&ip={6}&country={7}".format(self._root.lobby_service_url, username, password,lobby_id,user_id, cpu, ip, country)
+		data = json.load(urllib2.urlopen(url))
 
-
-		now = datetime.now()
-		banned, dbban = self.check_ban(username, ip, dbuser.id, now)
-		if banned:
-			good = False
-			timeleft = int((dbban.end_time - now).total_seconds())
-			reason = 'You are banned: (%s) ' %(dbban.reason)
-			if timeleft > 60 * 60 * 24 * 1000:
-				reason += 'forever!'
-			elif timeleft > 60 * 60 * 24:
-				reason += 'days remaining: %s' % (timeleft / (60 * 60 * 24))
-			else:
-				reason += 'hours remaining: %s' % (timeleft / (60 * 60))
-
-		reason = User(dbuser.username, password)
-		reason.access = dbuser.access
-		reason.id = dbuser.id
-		reason.bot = dbuser.bot
-		reason.lobby_id = lobby_id
+		if data.Ok:
+			dbuser = data.Account
+			reason = User(username, password)
+			reason.access = dbuser.Access
+			reason.id = dbuser.AccountID
+			reason.bot = dbuser.IsBot
+			reason.lobby_id = lobby_id
+		else:
+			reason = data.Reason
 
 		return good, reason
 	
@@ -87,6 +69,7 @@ class UsersHandler:
 
 class ChannelsHandler:
 	def __init__(self, root, engine):
+		self._root = root
 		#LICHO TODO implement
 		return
 	
