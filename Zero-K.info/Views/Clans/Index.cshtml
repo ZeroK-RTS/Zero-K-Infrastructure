@@ -54,7 +54,7 @@ Clan size is normally limited to @GlobalConst.MaxClanSkilledSize people.
 	  <td>@Html.PrintClan(c)</td>
       <td>@c.Accounts.Sum(x=>x.Planets.Count())</td>
       <td>@c.Accounts.Count()</td>
-      <td>@c.Accounts.OrderBy(x=>x.Level).Skip(c.Accounts.Count()/2).First().Level</td>
+      <td>@c.Accounts.OrderBy(x=>x.Level).Skip(c.Accounts.Count()/2).Select(x=>x.Level).FirstOrDefault()</td>
       
       @if (Global.Clan == null) {
         if (c.CanJoin(Global.Account)) {
