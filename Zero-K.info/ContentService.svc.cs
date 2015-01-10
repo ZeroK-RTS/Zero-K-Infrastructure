@@ -383,6 +383,7 @@ namespace ZeroKWeb
                     }
                 }
 
+                throw new Exception("DEBUG: Campaign " + campID + ", planet " + planet.PlanetID);
                 if (!alreadyCompleted)
                 {
                     db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "Planet completed: {0}", planet));
