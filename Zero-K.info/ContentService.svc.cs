@@ -289,9 +289,8 @@ namespace ZeroKWeb
                 db.SubmitChanges();
                 db = new ZkDataContext();
                 acc = db.Accounts.First(x => x.AccountID == accountID);
-                camp = planet.Campaign;
                 planet = db.CampaignPlanets.FirstOrDefault(p => p.MissionID == missionID);
-
+                camp = planet.Campaign;
 
                 // now we unlock planets and journal entries
                 // first mark this planet as completed - but only if it's already unlocked
