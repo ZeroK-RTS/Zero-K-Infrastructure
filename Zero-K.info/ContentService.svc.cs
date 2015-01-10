@@ -383,10 +383,10 @@ namespace ZeroKWeb
                     }
                 }
 
-                throw new Exception("DEBUG: Campaign " + campID + ", planet " + planet.PlanetID);
+                //throw new Exception("DEBUG: Campaign " + campID + ", planet " + planet.PlanetID);
                 if (!alreadyCompleted)
                 {
-                    db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "Planet completed: {0}", planet));
+                    //db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "Planet completed: {0}", planet));
                     foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.PlanetID == planet.PlanetID && x.UnlockOnPlanetCompletion))
                     {
                         unlockedJournals.Add(journal);
@@ -394,7 +394,7 @@ namespace ZeroKWeb
                 }
                 foreach (CampaignPlanet unlocked in unlockedPlanets)
                 {
-                    db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "Planet unlocked: {0}", unlocked));
+                    //db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "Planet unlocked: {0}", unlocked));
                     foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.PlanetID == unlocked.PlanetID && x.UnlockOnPlanetUnlock))
                     {
                         unlockedJournals.Add(journal);
@@ -402,7 +402,7 @@ namespace ZeroKWeb
                 }
                 foreach (CampaignJournal uj in unlockedJournals)
                 {
-                    db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "{1} - Journal entry unlocked: {0}", uj, uj.CampaignPlanet));
+                    //db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "{1} - Journal entry unlocked: {0}", uj, uj.CampaignPlanet));
                 }
             }
             db.SubmitChanges();
