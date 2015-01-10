@@ -11,6 +11,16 @@ namespace ZeroKWeb.Controllers
 	{
         public const int PageSize = GlobalConst.ForumPostsPerPage;
 
+        bool IsNormalThread(ForumThread thread)
+        {
+            if (thread.Clans != null && thread.Clans.Count > 0) return false;
+            if (thread.Missions != null && thread.Missions.Count > 0) return false;
+            if (thread.Planets != null && thread.Planets.Count > 0) return false;
+            if (thread.SpringBattles != null && thread.SpringBattles.Count > 0) return false;
+            if (thread.News != null && thread.News.Count > 0) return false;
+            return true;
+        }
+
         void ResetThreadLastPostTime(int threadID)
         {
             var db = new ZkDataContext();
@@ -40,7 +50,7 @@ namespace ZeroKWeb.Controllers
             int page = GetPostPage(post);
 
 			db.ForumPosts.DeleteOnSubmit(post);
-			if (thread.ForumPosts.Count() <= 1) {
+			if (thread.ForumPosts.Count() <= 1  && !IsNormalThread(thread)) {
                 db.ForumThreadLastReads.DeleteAllOnSubmit(db.ForumThreadLastReads.Where(x => x.ForumThreadID == thread.ForumThreadID).ToList());
 				db.ForumThreads.DeleteOnSubmit(thread);
 				db.SubmitChanges();
