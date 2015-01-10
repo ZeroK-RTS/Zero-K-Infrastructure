@@ -358,7 +358,7 @@ namespace ZeroKLobby
         }
 
         /// <summary>
-        /// Reverse DPI scaling
+        /// Calculate reverse DPI scaling
         /// </summary>
         public static int ReverseScaleValueX(double designHeight) {
             var output = designHeight*scaleDownRatioX;
@@ -366,7 +366,7 @@ namespace ZeroKLobby
         }
 
         /// <summary>
-        /// Reverse DPI scaling
+        /// Calculate reverse DPI scaling
         /// </summary>
         public static int ReverseScaleValueY(double designHeight) {
             var output = designHeight*scaleDownRatioY;
@@ -374,7 +374,7 @@ namespace ZeroKLobby
         }
 
         /// <summary>
-        /// Apply DPI scaling
+        /// Calculate DPI scaling
         /// </summary>
         public static int ScaleValueX(double designWidth) {
             var output = designWidth*scaleUpRatioX;
@@ -382,7 +382,7 @@ namespace ZeroKLobby
         }
 
         /// <summary>
-        /// Apply DPI scaling
+        /// Calculate DPI scaling
         /// </summary>
         public static int ScaleValueY(double designHeight) {
             var output = designHeight*scaleUpRatioY;
