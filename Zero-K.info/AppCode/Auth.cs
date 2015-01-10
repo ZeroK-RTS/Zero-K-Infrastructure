@@ -17,6 +17,7 @@ public class AuthAttribute: AuthorizeAttribute
 
     public override void OnAuthorization(AuthorizationContext filterContext)
     {
+        base.OnAuthorization(filterContext);
         var httpContext = filterContext.HttpContext;
         //redirect if the user is not authenticated
         if (!httpContext.User.Identity.IsAuthenticated || !(httpContext.User is Account))
@@ -41,6 +42,5 @@ public class AuthAttribute: AuthorizeAttribute
                     filterContext.Result = new HttpStatusCodeResult(HttpStatusCode.Forbidden, "You are not authorized to view this page");
             }
         }
-        base.OnAuthorization(filterContext);
     }
 }

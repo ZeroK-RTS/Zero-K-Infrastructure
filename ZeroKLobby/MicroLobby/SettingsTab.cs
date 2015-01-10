@@ -14,7 +14,7 @@ namespace ZeroKLobby.MicroLobby
 
 		public SettingsTab()
 		{
-			InitializeComponent(); //Fixme: tooltip for button don't appear on Linux. Diagnosis so far: button failed to be the Child of the elements or had "" as name.
+			InitializeComponent();
 
 			helpButton.MouseUp += helpButton_MouseUp;
 

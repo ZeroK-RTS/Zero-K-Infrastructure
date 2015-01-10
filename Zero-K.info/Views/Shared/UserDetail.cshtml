@@ -10,7 +10,7 @@
 }
 
 @{
-    int normalLevel = Model.IsZeroKAdmin ? 4 : (Model.Level >= GlobalConst.LevelForElevatedSpringieRights ? 2 : 1);
+    int normalLevel = Model.Level >= GlobalConst.LevelForElevatedSpringieRights ? 2 : 1;
 }
 
 @{
@@ -111,7 +111,7 @@
                     <b> @Model.Name </b> is a <b>Zero-K Administrator</b>
                 </div>
             }
-            @if ( Model.SpringieLevel != normalLevel ) {
+            @if ( Model.SpringieLevel != normalLevel && !Model.IsZeroKAdmin ) {
                 <b>Springie rights level:</b> @Model.SpringieLevel
                 <br />
             }

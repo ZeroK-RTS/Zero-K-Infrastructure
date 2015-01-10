@@ -13,7 +13,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult Index(int pollID)
         {
             var db = new ZkDataContext();
-            var poll = db.Polls.SingleOrDefault(x => x.PollID == pollID);
+            var poll = db.Polls.FirstOrDefault(x => x.PollID == pollID);
             if (poll != null) return PartialView("PollView", poll);
             return null;
         }

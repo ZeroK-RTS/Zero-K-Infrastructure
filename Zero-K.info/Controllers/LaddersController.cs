@@ -1,7 +1,7 @@
 ﻿﻿using System;
 using System.Collections.Generic;
 ﻿using System.Data.Entity;
-using System.Linq;
+﻿using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.Helpers;
 using System.Web.Mvc;
@@ -27,21 +27,24 @@ namespace ZeroKWeb.Controllers
             
 	        var data = (List<GameStats>)HttpContext.Cache.Get("gameStats");
 	        if (data == null) {
-	            data = (from bat in db.SpringBattles
-	                    where bat.StartTime.Date < DateTime.Now.Date && bat.StartTime.Date > new DateTime(2011, 2, 3)
-	                    group bat by bat.StartTime.Date
+
+	            var start = new DateTime(2011, 2, 3);
+	            var end = DateTime.Now.Date;
+                data = (from bat in db.SpringBattles
+	                    where bat.StartTime < end && bat.StartTime > start
+	                    group bat by DbFunctions.TruncateTime(bat.StartTime)
 	                    into x orderby x.Key
 	                    let players = x.SelectMany(y => y.SpringBattlePlayers.Where(z => !z.IsSpectator)).Select(z => z.AccountID).Distinct().Count()
 	                    select
 	                        new GameStats
 	                        {
-	                            Day = x.Key,
+	                            Day = x.Key.Value, 
 	                            PlayersAndSpecs = x.SelectMany(y => y.SpringBattlePlayers).Select(z => z.AccountID).Distinct().Count(),
 	                            MinutesPerPlayer = x.Sum(y => y.Duration*y.PlayerCount)/60/players,
 	                            FirstGamePlayers =
 	                                x.SelectMany(y => y.SpringBattlePlayers)
 	                                 .GroupBy(y => y.Account)
-	                                 .Count(y => y.Any(z => z == y.Key.SpringBattlePlayers.First()))
+	                                 .Count(y => y.Any(z => z == y.Key.SpringBattlePlayers.FirstOrDefault()))
 	                        }).ToList();
 
                 HttpContext.Cache.Add("gameStats", data, null, DateTime.Now.AddHours(20), System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.Default, null);
