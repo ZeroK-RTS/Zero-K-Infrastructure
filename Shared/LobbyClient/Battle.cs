@@ -363,10 +363,10 @@ namespace LobbyClient
                 double left = 0, top = 0, right = 1, bottom = 1;
                 BattleRect rect;
                 if (Rectangles.TryGetValue(allyNumber, out rect)) rect.ToFractions(out left, out top, out right, out bottom);
-                script.AppendFormat("     StartRectLeft={0};\n", left);
-                script.AppendFormat("     StartRectTop={0};\n", top);
-                script.AppendFormat("     StartRectRight={0};\n", right);
-                script.AppendFormat("     StartRectBottom={0};\n", bottom);
+                script.AppendFormat(CultureInfo.InvariantCulture,"     StartRectLeft={0};\n", left);
+                script.AppendFormat(CultureInfo.InvariantCulture,"     StartRectTop={0};\n", top);
+                script.AppendFormat(CultureInfo.InvariantCulture,"     StartRectRight={0};\n", right);
+                script.AppendFormat(CultureInfo.InvariantCulture,"     StartRectBottom={0};\n", bottom);
                 script.AppendLine("}");
             }
 
@@ -479,7 +479,7 @@ namespace LobbyClient
             script.AppendLine("  {");
             script.AppendFormat("     TeamLeader={0};\n", userNum);
             script.AppendFormat("     AllyTeam={0};\n", status.AllyNumber);
-            script.AppendFormat("     RGBColor={0:F5} {1:F5} {2:F5};\n",
+            script.AppendFormat(CultureInfo.InvariantCulture,"     RGBColor={0:F5} {1:F5} {2:F5};\n",
                                 (status.TeamColor & 255)/255.0,
                                 ((status.TeamColor >> 8) & 255)/255.0,
                                 ((status.TeamColor >> 16) & 255)/255.0);
