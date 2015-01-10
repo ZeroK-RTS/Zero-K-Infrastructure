@@ -12,6 +12,7 @@ using System.Diagnostics;
 using PlasmaDownloader;
 using ZkData.UnitSyncLib;
 using LobbyClient;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
@@ -1338,10 +1339,10 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 double left = 0, top = 0, right = 1, bottom = 1;
                 BattleRect rect;
                 if (Rectangles.TryGetValue(allyNumber, out rect)) rect.ToFractions(out left, out top, out right, out bottom);
-                script.AppendFormat("     StartRectLeft={0};\n", left);
-                script.AppendFormat("     StartRectTop={0};\n", top);
-                script.AppendFormat("     StartRectRight={0};\n", right);
-                script.AppendFormat("     StartRectBottom={0};\n", bottom);
+                script.AppendFormat(CultureInfo.InvariantCulture,"     StartRectLeft={0};\n", left);
+                script.AppendFormat(CultureInfo.InvariantCulture,"     StartRectTop={0};\n", top);
+                script.AppendFormat(CultureInfo.InvariantCulture,"     StartRectRight={0};\n", right);
+                script.AppendFormat(CultureInfo.InvariantCulture,"     StartRectBottom={0};\n", bottom);
                 script.AppendLine("}");
             }
 
