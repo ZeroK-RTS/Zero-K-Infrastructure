@@ -11,7 +11,7 @@ namespace ZkData
     public struct Hash: ICloneable
     {
         public const int Size = 16;
-        readonly byte[] data;
+        public byte[] data;
 
         public Hash(byte[] source)
         {
