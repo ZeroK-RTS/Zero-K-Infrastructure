@@ -26,7 +26,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
         public bool TryNavigate(params string[] path) //called by NavigationControl.cs when user press Navigation button or the URL button
         {
-            if (path.Length == 0) return false;
+            if (path.Length == 0) return false; 
             if (path[0] != PathHead) return false;
             if (path.Length == 2 && !String.IsNullOrEmpty(path[1]))
             {
