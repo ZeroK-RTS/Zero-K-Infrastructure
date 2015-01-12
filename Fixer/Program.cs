@@ -183,8 +183,9 @@ namespace Fixer
             //var db = new ZkDataContext(true);
             //var test = db.Accounts.OrderByDescending(x => x.EffectiveElo).WithTranslations().Take(5).ToList();
 
+
             //MigrateDatabase();
-            var test = GlobalConst.GetContentService().DownloadFile("Zero-K v1.1.0");
+            //var test = GlobalConst.GetContentService().DownloadFile("Zero-K v1.1.0");
             //var db = new ZkDataContext();
             //var post = db.ForumPosts.First(x => x.ForumPostID == 113893);
 
@@ -247,6 +248,26 @@ namespace Fixer
             //GetClanStackWinRate(465, 2000); //Mean
             //GetForumVotesByUserVoterAgnostic(161294);
             //GetAverageElo();
+        }
+
+        static void CountPlayers()
+        {
+            var db = new ZkDataContext();
+            var accs =
+                db.SpringBattles.OrderByDescending(x => x.SpringBattleID)
+                    .Take(5000)
+                    .SelectMany(x => x.SpringBattlePlayers)
+                    .Where(x => !x.IsSpectator)
+                    .Select(x => new { x.Account, x.SpringBattle.Duration })
+                    .GroupBy(x => x.Account)
+                    .Select(x => new { Account = x.Key, Duration = x.Sum(y => y.Duration) })
+                    .ToList();
+
+            var durOther = accs.Where(x => x.Account.LobbyVersion != null && !x.Account.LobbyVersion.StartsWith("ZK")).Sum(x => (long)x.Duration);
+            var durZk = accs.Where(x => x.Account.LobbyVersion != null && x.Account.LobbyVersion.StartsWith("ZK")).Sum(x => (long)x.Duration);
+
+            var cntOther = accs.Where(x => x.Account.LobbyVersion != null && !x.Account.LobbyVersion.StartsWith("ZK")).Count();
+            var cntZk = accs.Where(x => x.Account.LobbyVersion != null && x.Account.LobbyVersion.StartsWith("ZK")).Count();
         }
 
         static void MigrateDatabase()
