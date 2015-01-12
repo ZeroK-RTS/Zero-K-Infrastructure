@@ -7,7 +7,7 @@ except: md5 = __import__('md5').new
 import traceback
 from protocol.Channel import Channel
 from protocol.Protocol import Protocol
-from SQLUsers import UsersHandler, ChannelsHandler
+from SQLUsers import UsersHandler
 import ip2country
 import datetime
 
@@ -37,7 +37,6 @@ class DataHandler:
 		
 		self.chanserv = None
 		self.userdb = None
-		self.channeldb = None
 		self.engine = None
 		self.protocol = None
 		self.updatefile = None
@@ -72,6 +71,8 @@ class DataHandler:
 		print('      { Displays this screen then exits }')
 		print('  -p, --port number')
 		print('      { Server will host on this port (default is 8200) }')
+		print('  -s, --service url')
+		print('      { Url of the authorization service }')
 		print('  -n, --natport number')
 		print('      { Server will use this port for NAT transversal (default is 8201) }')
 		print('  -g, --loadargs filename')
@@ -133,6 +134,8 @@ class DataHandler:
 			if arg in ['p', 'port']:
 				try: self.port = int(argp[0])
 				except: print('Invalid port specification')
+			elif arg in ['s', 'service']:
+				self.lobby_service_url = argp[0]
 			elif arg in ['n', 'natport']:
 				try: self.natport = int(argp[0])
 				except: print('Invalid NAT port specification')
@@ -169,27 +172,7 @@ class DataHandler:
 					self.trusted_proxyfile = None
 
 		self.userdb = UsersHandler(self, self.engine)
-		self.channeldb = ChannelsHandler(self, self.engine)
-		channels = self.channeldb.load_channels()
-		
-		for name in channels:
-			channel = channels[name]
-			
-			owner = None
-			admins = []
-			client = self.userdb.clientFromUsername(channel['owner'])
-			if client and client.id: owner = client.id
-				
-			for user in channel['admins']:
-				client = userdb.clientFromUsername(user)
-				if client and client.id:
-					admins.append(client.id)
-				
-			self.channels[name] = Channel(self, name, chanserv=bool(owner), owner=owner, admins=admins, key=channel['key'], antispam=channel['antispam'], topic={'user':'ChanServ', 'text':channel['topic'], 'time':int(time.time())})
-			
-		if self.chanserv:
-			for name in channels:
-				self.chanserv.client._protocol._handle(self.chanserv.client, 'JOIN %s' % name)
+		channels = []
 		
 		if not self.log:
 			self.rotatelogfile()
@@ -402,7 +385,6 @@ class DataHandler:
 		reload(sys.modules['protocol.Battle'])
 		reload(sys.modules['protocol.Protocol'])
 		reload(sys.modules['protocol'])
-		reload(sys.modules['ChanServ'])
 		reload(sys.modules['Client'])
 		reload(sys.modules['SQLUsers'])
 		self.SayHooks = __import__('SayHooks')

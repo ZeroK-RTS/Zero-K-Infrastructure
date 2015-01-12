@@ -511,8 +511,8 @@ class Protocol:
 		'given a user database id, returns a client object from memory or the database'
 		user = self._root.clientFromID(db_id)
 		if user: return user
-		if not fromdb: return None
-		return self.userdb.clientFromID(db_id)
+		return None
+	
 
 	def clientFromUsername(self, username):
 		'given a username, returns a client object from memory or the database'
@@ -1034,10 +1034,6 @@ class Protocol:
 		user = client.username
 		chan = chan.lstrip('#')
 
-		# FIXME: unhardcode this
-		if client.bot and chan == "newbies" and client.username != "ChanServ":
-			client.Send('JOINFAILED %s No bots allowed in #newbies!' %(chan))
-			return
 
 		if not chan: return
 		if not chan in self._root.channels:
@@ -2139,7 +2135,6 @@ class Protocol:
 		Do not use this for changes unless you are very confident in your ability to recover from a mistake.
 
 		Parts reloaded:
-		ChanServ.py
 		Protocol.py
 		SayHooks.py
 

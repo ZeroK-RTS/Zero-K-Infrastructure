@@ -20,7 +20,6 @@ setup(
 				'_ssl',
 			],
 			'includes': [
-				'ChanServ',
 				'Client',
 				'DataHandler',
 				'Dispatcher',

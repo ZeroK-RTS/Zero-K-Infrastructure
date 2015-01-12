@@ -148,7 +148,6 @@ def _chan_msg_filter(self, client, chan, msg):
 	if channel.antispam and not channel.isOp(client): # don't apply antispam to ops
 		_spam_rec(client, chan, msg)
 		if _spam_enum(client, chan):
-			channel.muteUser(self._root.chanserv, client, 15, ip=True, quiet=True)
 			# this next line is necessary, because users aren't always muted i.e. you can't mute channel founders or moderators
 			if channel.isMuted(client):
 				channel.channelMessage('%s was muted for spamming.' % username)
