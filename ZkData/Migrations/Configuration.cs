@@ -27,6 +27,7 @@ namespace ZkData.Migrations
                         IsZeroKAdmin = true,
                         Kudos = 200,
                         Elo = 1700,
+                        Level = 50,
                         EloWeight = 2,
                         SpringieLevel = 4,
                         Country = "cz",
@@ -57,6 +58,7 @@ namespace ZkData.Migrations
                     Mod="zk:stable",
                     ClusterNode = "alpha",
                     JoinChannels = "bots",
+                    Map = "indonesia_v4",
                     SpringVersion = GlobalConst.DefaultEngineOverride,
 
                 });
