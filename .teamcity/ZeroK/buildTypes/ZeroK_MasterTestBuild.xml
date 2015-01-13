@@ -46,6 +46,20 @@ copy /Y ZeroKLobby\bin\release\Zero-K.version.txt c:\projekty\test.zero-k.info\w
           <param name="use.custom.script" value="true" />
         </parameters>
       </runner>
+      <runner id="RUNNER_34" name="Generate build version" type="jetbrains_powershell">
+        <parameters>
+          <param name="jetbrains_powershell_bitness" value="x86" />
+          <param name="jetbrains_powershell_execution" value="PS1" />
+          <param name="jetbrains_powershell_script_code"><![CDATA[$counter = %build.counter%
+$version = $([String]::Format("1.{0}.{1}.{2}", [DateTime]::Now.Year-2012,[DateTime]::Now.Month, $counter))"
+$Hash = "%build.vcs.number%"
+$ShortHash = $Hash.substring(0,7)
+Write-Host "##teamcity[build.number '$version']"
+Write-Host "##teamcity[build.shorthash '$ShortHash']"]]></param>
+          <param name="jetbrains_powershell_script_mode" value="CODE" />
+          <param name="teamcity.step.mode" value="default" />
+        </parameters>
+      </runner>
     </build-runners>
     <vcs-settings>
       <vcs-entry-ref root-id="Zero_K_infrastructure" />
