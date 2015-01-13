@@ -9,7 +9,6 @@
     <div class="admin">
         <b>Elo (all): </b> @Math.Round(@u.EffectiveElo)
         <b>Elo (1v1): </b> @Math.Round(@u.Effective1v1Elo)
-        <b>Lobby rank: </b> <img src='/img/ranks/@(u.LobbyTimeRank+1).png'  class='icon16'/>
     </div>
 }
 @if (Model.ContributionsByAccountID.Count() > 0)

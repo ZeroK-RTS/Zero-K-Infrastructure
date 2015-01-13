@@ -32,7 +32,7 @@ namespace NightWatch
 
                             using (var db = new ZkDataContext())
                             {
-                                var acc = Account.AccountByLobbyID(db, user.LobbyID);
+                                var acc = db.Accounts.Find(user.LobbyID);
                                 acc.SteamID = steamID;
                                 acc.SteamName = info.personaname;
                                 db.SubmitAndMergeChanges();

@@ -27,7 +27,7 @@ namespace ZeroKWeb.Controllers
             var contrib = db.Contributions.SingleOrDefault(x => x.RedeemCode == code);
             if (contrib == null) return Content("No contribution with that code found");
             if (contrib.AccountByAccountID != null) return Content(string.Format("This contribution has been assigned to {0}, thank you.", contrib.AccountByAccountID.Name));
-            var acc = Account.AccountByAccountID(db, Global.AccountID);
+            var acc = db.Accounts.Find(Global.AccountID);
             contrib.AccountByAccountID = acc;
             db.SubmitAndMergeChanges();
             acc.Kudos = acc.KudosGained - acc.KudosSpent;
@@ -43,7 +43,7 @@ namespace ZeroKWeb.Controllers
         [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult AddContribution(int accountID,int kudos, string item, string currency, double gross, double grossEur, double netEur, string email, string comment, bool isSpring, DateTime date) {
             using (var db = new ZkDataContext()) {
-                var acc = Account.AccountByAccountID(db, accountID);
+                var acc = db.Accounts.Find(accountID);
                 var contrib = new Contribution()
                               {
                                   AccountID = accountID,

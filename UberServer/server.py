@@ -10,7 +10,6 @@ from NATServer import NATServer
 from Dispatcher import Dispatcher
 
 import ip2country # just to make sure it's downloaded
-import ChanServ
 
 # uncomment for debugging deadlocks, creates a stacktrace at the given interval to stdout
 #import stacktracer
@@ -78,13 +77,6 @@ _root.console_write('Using %i client handling thread(s).'%_root.max_threads)
 
 dispatcher = Dispatcher(_root, server)
 _root.dispatcher = dispatcher
-
-chanserv = True
-if chanserv:
-	address = ((web_addr or local_addr), 0)
-	chanserv = ChanServ.ChanServClient(_root, address, _root.session_id)
-	dispatcher.addClient(chanserv)
-	_root.chanserv = chanserv
 
 try:
 	dispatcher.pump()

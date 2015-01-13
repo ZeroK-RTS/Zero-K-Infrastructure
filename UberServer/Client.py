@@ -45,7 +45,6 @@ class Client:
 		self.battle_bots = {}
 		self.current_battle = None
 		self.battle_bans = []
-		self.ingame_time = 0
 		self.went_ingame = 0
 		self.spectator = False
 		self.battlestatus = {'ready':'0', 'id':'0000', 'ally':'0000', 'mode':'0', 'sync':'00', 'side':'00', 'handicap':'0000000'}
@@ -79,6 +78,8 @@ class Client:
 		self.failed_logins = 0
 		self.lastdata = now
 		self.last_id = 0
+
+		self.last_login = now
 		
 		self.users = set([]) # session_id
 		self.battles = set([]) # [battle_id] = [user1, user2, user3, etc]

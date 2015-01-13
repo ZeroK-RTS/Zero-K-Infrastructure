@@ -222,14 +222,12 @@ namespace ZeroKWeb
             else return new AccountInfo()
             {
                 Name = acc.Name,
-                LobbyID = acc.LobbyID ?? 0,
                 Country = acc.Country,
                 Aliases = acc.Aliases,
                 ZeroKAccountID = acc.AccountID,
                 ZeroKLevel = acc.Level,
                 ClanID = acc.ClanID ?? 0,
                 ClanName = acc.Clan != null ? acc.Clan.ClanName : null,
-                LobbyTimeRank = acc.LobbyTimeRank,
                 IsLobbyAdmin = acc.IsLobbyAdministrator,
                 IsZeroKAdmin = acc.IsZeroKAdmin,
                 Avatar = acc.Avatar,

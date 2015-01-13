@@ -10,9 +10,7 @@
     <h1>Administer @Html.PrintAccount(@Model, true, true)</h1>
     AccountID: @Model.AccountID
     <br />
-    LobbyID: @Model.LobbyID
-    <br />
-    Lobby program: @Model.LobbyVersion  (checked @Model.LastLobbyVersionCheck)<br/>
+    Lobby program: @Model.LobbyVersion<br/>
     IP:
     <table>
         <thead>
@@ -97,10 +95,6 @@
 
 
     <h2>Modify user settings</h2>
-    <form method="post" action="@Url.Action("ChangeLobbyID", "Users", new { accountID = Model.AccountID })">
-        Change lobby ID: @Html.TextBox("newLobbyID")
-        <input type="submit" />
-    </form>
     Hide country flag: <form method="post" action="@Url.Action("ChangeHideCountry", "Users", new { accountID = Model.AccountID })">@Html.CheckBox("hideCountry")<input type="submit"/></form>
     <br />
     <h2>Modify user permissions</h2>

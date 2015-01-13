@@ -143,7 +143,9 @@ namespace LobbyClient
             return string.Format("!JSON {0} {1}", data.GetType().Name, payload);
         }
 
-        static string Escape(string input) {
+        static string Escape(string input)
+        {
+            if (string.IsNullOrEmpty(input)) return input;
             return input.Replace("|", "&divider&");
         }
 

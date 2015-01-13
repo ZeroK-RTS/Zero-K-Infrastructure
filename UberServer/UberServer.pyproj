@@ -28,7 +28,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="BaseClient.py" />
-    <Compile Include="ChanServ.py" />
     <Compile Include="Client.py" />
     <Compile Include="DataHandler.py" />
     <Compile Include="Dispatcher.py" />

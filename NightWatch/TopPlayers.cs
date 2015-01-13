@@ -27,7 +27,7 @@ namespace NightWatch
         public bool IsTop20(int lobbyID) {
             if (DateTime.UtcNow.Subtract(lastRefresh).TotalMinutes > RefreshMinutes) Refresh();
 
-            if (topTeam.Take(20).Any(x => x.LobbyID == lobbyID) || top1v1.Take(20).Any(x => x.LobbyID == lobbyID) || exceptions.Contains(lobbyID)) return true;
+            if (topTeam.Take(20).Any(x => x.AccountID == lobbyID) || top1v1.Take(20).Any(x => x.AccountID == lobbyID) || exceptions.Contains(lobbyID)) return true;
             else return false;
         }
 

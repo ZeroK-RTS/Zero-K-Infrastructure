@@ -14,57 +14,32 @@ namespace NightWatch
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.Single)]
     public class AuthService
     {
-        const int AuthServiceTestLoginWait = 8000;
         public const string ModeratorChannel = "zkadmin";
         public const string Top20Channel = "zktop20";
 
         readonly TasClient client;
 
         int messageId;
-        readonly ConcurrentDictionary<int, RequestInfo> requests = new ConcurrentDictionary<int, RequestInfo>();
         readonly TopPlayers topPlayers = new TopPlayers();
 
         public AuthService(TasClient client)
         {
             this.client = client;
 
-            /*
-        this.client.Input += (s, e) =>
-      {
-          Console.WriteLine(e.Command +" "+ Utils.Glue(e.Args));
-      };
-      this.client.Output += (s, e) =>
-      {
-          Console.WriteLine(e.Data.Key + " " +Utils.Glue(e.Data.Value.Select(x=>x.ToString()).ToArray()));
-      };*/
 
             this.client.LoginAccepted += (s, e) =>
                 {
-                    requests.Clear();
                     client.JoinChannel(ModeratorChannel);
                     client.JoinChannel(Top20Channel);
                     using (var db = new ZkDataContext()) foreach (var fac in db.Factions.Where(x => !x.IsDeleted)) client.JoinChannel(fac.Shortcut);
                 };
 
-            this.client.TestLoginAccepted += (s, e) =>
-                {
-                    RequestInfo entry;
-                    if (requests.TryGetValue(client.MessageID, out entry))
-                    {
-                        entry.CorrectName = e.ServerParams[0];
-                        entry.LobbyID = Convert.ToInt32(e.ServerParams[1]);
-                        if (client.ExistingUsers.ContainsKey(entry.CorrectName)) entry.User = client.ExistingUsers[entry.CorrectName];
-                        entry.WaitHandle.Set();
-                    }
-
-                    requests.TryRemove(client.MessageID, out entry);
-                };
 
             this.client.UserAdded += (s, e) =>
                 {
                     using (var db = new ZkDataContext())
                     {
-                        var acc = Account.AccountByLobbyID(db, e.Data.LobbyID);
+                        var acc = db.Accounts.Find(e.Data.LobbyID);
                         if (acc != null)
                         {
                             this.client.Extensions.PublishAccountData(acc);
@@ -73,270 +48,9 @@ namespace NightWatch
                             if (acc.Clan != null) client.ForceJoinChannel(e.Data.Name, acc.Clan.GetClanChannel(), acc.Clan.Password);
                             if (acc.Faction != null && acc.Level >= GlobalConst.FactionChannelMinLevel && acc.CanPlayerPlanetWars()) client.ForceJoinChannel(e.Data.Name, acc.Faction.Shortcut);
                         }
-                        client.RequestUserIP(e.Data.Name);
-                        client.RequestUserID(e.Data.Name);
                     }
                 };
 
-            this.client.UserIDRecieved += (sender, args) =>
-                {
-                    Task.Factory.StartNew(() =>
-                        {
-                            try
-                            {
-                                using (var db = new ZkDataContext())
-                                {
-                                    var acc = Account.AccountByName(db, args.Name);
-                                    var penalty = Punishment.GetActivePunishment(acc != null ? acc.AccountID : 0, null, args.ID, x => x.BanLobby, db);
-
-                                    if (penalty != null)
-                                        client.AdminKickFromLobby(args.Name,
-                                                                  string.Format("Banned until {0} (ID match to {1}), reason: {2}", penalty.BanExpires, penalty.AccountByAccountID.Name, penalty.Reason)); ;
-
-                                    if (acc != null && args.ID != 0)
-                                    {
-                                        var entry = acc.AccountUserIDs.FirstOrDefault(x => x.UserID == args.ID);
-                                        if (entry == null)
-                                        {
-                                            entry = new AccountUserID { AccountID = acc.AccountID, UserID = args.ID, FirstLogin = DateTime.UtcNow };
-                                            db.AccountUserIDs.InsertOnSubmit(entry);
-                                        }
-                                        entry.LoginCount++;
-                                        entry.LastLogin = DateTime.UtcNow;
-                                    }
-
-                                    Account accAnteep = db.Accounts.FirstOrDefault(x => x.AccountID == 4490);
-                                    bool isAnteepSmurf = accAnteep.AccountUserIDs.Any(x => x.UserID == args.ID);
-                                    if (isAnteepSmurf)
-                                    {
-                                        client.Say(TasClient.SayPlace.Channel, ModeratorChannel, String.Format("Suspected Anteep smurf: {0} (ID match {1}) {2}", args.Name, args.ID,
-                                            acc != null ? string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl) : ""), false);
-                                    }
-
-                                    if (args.ID != 0 && args.ID < 1000)
-                                    {
-                                        client.Say(TasClient.SayPlace.Channel, ModeratorChannel, String.Format("Suspected Anteep smurf: {0} (too short userID {1}) {2}", args.Name, args.ID,
-                                            acc != null ? string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl) : ""), false);
-                                    }
-
-                                    db.SubmitChanges();
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Trace.TraceError("Error getting user ID: {0}", ex);
-                            }
-                        });
-                };
-
-            this.client.UserIPRecieved += (sender, args) =>
-                {
-                    Task.Factory.StartNew(() =>
-                        {
-                            try
-                            {
-                                Account acc = null;
-                                using (var db = new ZkDataContext())
-                                {
-                                    acc = Account.AccountByName(db, args.Name);
-
-                                    var penalty = Punishment.GetActivePunishment(acc != null ? acc.AccountID : 0, args.IP, null, x => x.BanLobby, db);
-                                    if (penalty != null)
-                                        client.AdminKickFromLobby(args.Name,
-                                                                  string.Format("Banned until {0} (IP match to {1}), reason: {2}", penalty.BanExpires, penalty.AccountByAccountID.Name, penalty.Reason));
-                                    if (acc != null)
-                                    {
-                                        var entry = acc.AccountIPs.FirstOrDefault(x => x.IP == args.IP);
-                                        if (entry == null)
-                                        {
-                                            entry = new AccountIP { AccountID = acc.AccountID, IP = args.IP, FirstLogin = DateTime.UtcNow };
-                                            db.AccountIPs.InsertOnSubmit(entry);
-                                        }
-                                        entry.LoginCount++;
-                                        entry.LastLogin = DateTime.UtcNow;
-                                    }
-                                    db.SubmitChanges();
-                                }
-
-                                try
-                                {
-                                    if (acc == null || !acc.HasVpnException)
-                                    {
-                                        if (GlobalConst.VpnCheckEnabled)
-                                        {
-                                            // check user IP against http://dnsbl.tornevall.org
-                                            // does not catch all smurfs
-                                            // mostly false positives, do not use
-                                            var reversedIP = string.Join(".", args.IP.Split('.').Reverse().ToArray());
-                                            try
-                                            {
-                                                var resolved = Dns.GetHostEntry(string.Format("{0}.dnsbl.tornevall.org", reversedIP)).AddressList;
-                                                if (resolved.Length > 0)
-                                                {
-                                                    client.Say(TasClient.SayPlace.Channel, ModeratorChannel, String.Format("User {0} {3} has IP {1} on dnsbl.tornevall.org ({2} result/s)",
-                                                        args.Name, args.IP, resolved.Length, acc != null ? string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl) : ""), false);
-                                                    //client.AdminKickFromLobby(args.Name,
-                                                    //                      "Connection using proxy or VPN is not allowed! (You can ask for exception). See http://dnsbl.tornevall.org/removal.php to get your IP removed from the blacklist.");
-                                                }
-                                            }
-                                            catch (System.Net.Sockets.SocketException sockEx)
-                                            {
-                                                // not in database, do nothing
-                                            }
-                                        }
-                                        using (var db = new ZkDataContext())
-                                        {
-                                            Account accAnteep = db.Accounts.FirstOrDefault(x => x.AccountID == 4490);
-                                            bool isAnteepSmurf = accAnteep.AccountIPs.Any(x => x.IP == args.IP);
-                                            if (isAnteepSmurf)
-                                            {
-                                                client.Say(TasClient.SayPlace.Channel, ModeratorChannel, String.Format("Suspected Anteep smurf: {0} (IP match {1}) {2}", args.Name, args.IP,
-                                                acc != null ? string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl) : ""), false);
-                                            }
-                                        }
-
-                                        using (ZkDataContext db = new ZkDataContext())
-                                        {
-                                            for (int i = 0; i <= 1; i++)
-                                            {
-                                                var whois = new Whois();
-                                                var data = whois.QueryByIp(args.IP, i == 1);
-
-                                                if (!data.ContainsKey("netname")) data["netname"] = "UNKNOWN NETNAME";
-                                                if (!data.ContainsKey("org-name")) data["org-name"] = "UNKNOWN ORG";
-                                                if (!data.ContainsKey("abuse-mailbox")) data["abuse-mailbox"] = "no mailbox";
-                                                if (!data.ContainsKey("notify")) data["notify"] = "no notify address";
-                                                if (!data.ContainsKey("role")) data["role"] = "UNKNOWN ROLE";
-                                                if (!data.ContainsKey("descr")) data["descr"] = "no description";
-                                                if (!data.ContainsKey("remarks")) data["remarks"] = "no remarks";
-
-                                                var blockedCompanies = db.BlockedCompanies.Select(x => x.CompanyName.ToLower()).ToList();
-                                                var blockedHosts = db.BlockedHosts.Select(x => x.HostName).ToList();
-                                                /*if (acc.Country == "MY")
-                                                {
-                                                    client.Say(TasClient.SayPlace.User, "KingRaptor", String.Format("USER {0}\nnetname: {1}\norgname: {2}\ndescr: {3}\nabuse-mailbox: {4}",
-                                                        acc.Name, data["netname"], data["org-name"], data["descr"], data["abuse-mailbox"]), false);
-                                                }*/
-                                                if (blockedHosts.Any(x => data["abuse-mailbox"].Contains(x)) || (blockedHosts.Any(x => data["notify"].Contains(x))))
-                                                {
-                                                    client.AdminKickFromLobby(args.Name, "Connection using proxy or VPN is not allowed! (You can ask for exception)");
-                                                }
-                                                foreach (string company in blockedCompanies)
-                                                {
-                                                    if (data["netname"].ToLower().Contains(company) || data["org-name"].ToLower().Contains(company) || data["descr"].ToLower().Contains(company) || data["role"].ToLower().Contains(company) || data["remarks"].ToLower().Contains(company))
-                                                    {
-                                                        client.AdminKickFromLobby(args.Name, "Connection using proxy or VPN is not allowed! (You can ask for exception)");
-                                                        break;
-                                                    }
-                                                }
-
-                                                var hostname = Dns.GetHostEntry(args.IP).HostName;
-                                                if (blockedHosts.Any(hostname.Contains))
-                                                    client.AdminKickFromLobby(args.Name, "Connection using proxy or VPN is not allowed! (You can ask for exception)");
-                                            }
-                                        }
-                                    }
-                                }
-                                catch (System.Net.Sockets.SocketException sockEx)
-                                {
-                                    // do nothing
-                                }
-                                catch (Exception ex)
-                                {
-                                    Trace.TraceError("VPN check error: {0}", ex);
-                                    //client.Say(TasClient.SayPlace.Channel, ModeratorChannel, ex.ToString(), false);
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Trace.TraceError("Error getting user IP: {0}", ex);
-                                //client.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
-                            }
-                        });
-                };
-
-            this.client.UserStatusChanged += (s, e) =>
-                {
-                    var user = client.ExistingUsers[e.ServerParams[0]];
-                    Task.Factory.StartNew(() =>
-                        {
-                            try
-                            {
-                                using (var db = new ZkDataContext()) UpdateUser(user.LobbyID, user.Name, user, null, db);
-                            }
-                            catch (Exception ex)
-                            {
-                                Trace.TraceError(ex.ToString());
-                            }
-                        },
-                                          TaskCreationOptions.LongRunning);
-                };
-
-            this.client.BattleUserJoined += (s, e) =>
-                {
-                    var battle = client.ExistingBattles[e.BattleID];
-                    var founder = battle.Founder;
-                    if (founder.IsSpringieManaged)
-                    {
-                        try
-                        {
-                            var user = client.ExistingUsers[e.UserName];
-                            using (var db = new ZkDataContext())
-                            {
-                                var acc = Account.AccountByLobbyID(db, user.LobbyID);
-                                var name = founder.Name.TrimNumbers();
-                                var aconf = db.AutohostConfigs.FirstOrDefault(x => x.Login == name);
-                                if (acc != null && user != null && aconf != null &&
-                                    (acc.LastLobbyVersionCheck == null || DateTime.UtcNow.Subtract(acc.LastLobbyVersionCheck.Value).TotalDays > 3) &&
-                                    aconf.AutohostMode != 0) client.RequestLobbyVersion(user.Name);
-                                /*
-                                if (acc != null)
-                                {
-                                    int numIDs = acc.AccountUserIDS != null ? acc.AccountUserIDS.Count : 0;
-                                    if (numIDs == 0) client.Say(TasClient.SayPlace.User, "KingRaptor", string.Format("USER {0} joined battle {1}; has {2} userIDs; lobby version {3}", acc.Name, founder.Name, numIDs, acc.LobbyVersion), false);
-                                }
-                                else
-                                    client.Say(TasClient.SayPlace.User, "KingRaptor", string.Format("USER {0} joined battle {1}", e.UserName + " (NO ACCOUNT)", founder.Name), false);
-                                
-                                if (acc != null)
-                                {
-                                    if (!acc.AccountUserIDS.Any())
-                                    {
-                                        string reason = string.Format("Sorry you are using unsupported lobby ({0}), please upgrade or use Zero-K Lobby, Weblobby or SpringLobby", acc.LobbyVersion);
-                                        client.Say(TasClient.SayPlace.User, user.Name, reason, false);
-                                        client.Say(TasClient.SayPlace.User, founder.Name, string.Format("!kick {0} {1}", acc.LobbyVersion, reason), false);
-                                    }
-                                }*/
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            //client.Say(TasClient.SayPlace.User, "KingRaptor", ex.ToString(), false);
-                            Trace.TraceError("Error procesisng battle user joined: {0}", ex);
-                        }
-                    }
-                };
-
-            this.client.TestLoginDenied += (s, e) =>
-                {
-                    RequestInfo entry;
-                    if (requests.TryGetValue(client.MessageID, out entry)) entry.WaitHandle.Set();
-                    requests.TryRemove(client.MessageID, out entry);
-                };
-
-            this.client.UserLobbyVersionRecieved += (s, e) =>
-                {
-                    using (var db = new ZkDataContext())
-                    {
-                        var acc = Account.AccountByName(db, e.Name);
-                        if (acc != null)
-                        {
-                            acc.LobbyVersion = e.LobbyVersion;
-                            acc.LastLobbyVersionCheck = DateTime.UtcNow;
-                            db.SubmitAndMergeChanges();
-                        }
-                    }
-                };
 
             this.client.BattleFound +=
                 (s, e) => { if (e.Data.Founder.IsZkLobbyUser && !e.Data.Founder.IsBot) client.SetBotMode(e.Data.Founder.Name, true); };
@@ -366,7 +80,7 @@ namespace NightWatch
                                 {
                                     // faction channel
                                     var u = client.ExistingUsers[user];
-                                    var acc = Account.AccountByLobbyID(db, u.LobbyID);
+                                    var acc = db.Accounts.Find(u.LobbyID);
                                     if (acc == null || acc.FactionID != fac.FactionID || acc.Level < GlobalConst.FactionChannelMinLevel) client.ForceLeaveChannel(user, channel);
                                 }
                             }
@@ -397,37 +111,7 @@ namespace NightWatch
         }
 
 
-        Account UpdateUser(int lobbyID, string name, User user, string hashedPassword, ZkDataContext db = null)
-        {
-            Account acc = null;
-            if (db == null) db = new ZkDataContext();
-
-            acc = Account.AccountByLobbyID(db, lobbyID);
-            if (acc == null)
-            {
-                acc = new Account();
-                acc.SetAvatar();
-                acc.FirstLogin = DateTime.UtcNow;
-                db.Accounts.InsertOnSubmit(acc);
-            }
-
-            acc.LobbyID = lobbyID;
-            acc.SetName(name);
-            if (!string.IsNullOrEmpty(hashedPassword)) acc.Password = hashedPassword;
-            acc.LastLogin = DateTime.UtcNow;
-
-            if (user != null) // user was online, we can update his data
-            {
-                acc.IsBot = user.IsBot;
-                acc.IsLobbyAdministrator = user.IsAdmin;
-                acc.Country = user.Country;
-                acc.LobbyTimeRank = user.Rank;
-            }
-
-            db.SubmitAndMergeChanges();
-
-            return acc;
-        }
+  
 
 
         public void SendLobbyMessage(Account account, string text)
@@ -443,7 +127,7 @@ namespace NightWatch
                     Created = DateTime.UtcNow,
                     Message = text,
                     TargetName = account.Name,
-                    TargetLobbyID = account.LobbyID
+                    TargetLobbyID = account.AccountID
                 };
                 using (var db = new ZkDataContext())
                 {
@@ -453,24 +137,6 @@ namespace NightWatch
             }
         }
 
-        public Account VerifyAccount(string login, string hashedPassword)
-        {
-            if (login.Any(y => Char.IsWhiteSpace(y) || Char.IsControl(y))) return null;
-            if (hashedPassword.Any(y => Char.IsWhiteSpace(y) || Char.IsControl(y))) return null;
-            var info = requests[Interlocked.Increment(ref messageId)] = new RequestInfo();
-
-            client.SendRaw(string.Format("#{0} TESTLOGIN {1} {2}", messageId, login, hashedPassword));
-            if (info.WaitHandle.WaitOne(AuthServiceTestLoginWait))
-            {
-                if (info.LobbyID == 0) return null; // not verified/invalid login or password
-                else
-                {
-                    var acc = UpdateUser(info.LobbyID, info.CorrectName, info.User, hashedPassword);
-                    return acc;
-                }
-            }
-            return null; // timeout
-        }
 
         public CurrentLobbyStats GetCurrentStats()
         {
@@ -492,12 +158,6 @@ namespace NightWatch
             return ret;
         }
 
-        class RequestInfo
-        {
-            public string CorrectName;
-            public int LobbyID;
-            public User User;
-            public readonly EventWaitHandle WaitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
-        }
+     
     }
 }

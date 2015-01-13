@@ -198,7 +198,7 @@ namespace ZeroKWeb.Controllers
 		{
 			var db = new ZkDataContext();
 
-			var acc = db.Accounts.FirstOrDefault(x => x.Name == login && x.LobbyID != null);    // FIXME: might want to just not allow duplicate names to happen in the first place
+			var acc = db.Accounts.FirstOrDefault(x => x.Name == login);    // FIXME: might want to just not allow duplicate names to happen in the first place
 			if (acc == null) return Content("Invalid login name");
 			var hashed = Utils.HashLobbyPassword(password);
 			acc = AuthServiceClient.VerifyAccountHashed(login, hashed);

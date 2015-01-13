@@ -10,7 +10,7 @@ using ZkData;
 
 namespace ZkData
 {
-    public class Account: IPrincipal, IIdentity
+    public class  Account: IPrincipal, IIdentity
     {
 
         public Account()
@@ -94,7 +94,6 @@ namespace ZkData
         public string Password { get; set; }
         [StringLength(5)]
         public string Country { get; set; }
-        public int LobbyTimeRank { get; set; }
         public int MissionRunCount { get; set; }
         public bool IsZeroKAdmin { get; set; }
         public int Xp { get; set; }
@@ -102,8 +101,6 @@ namespace ZkData
         public int? ClanID { get; set; }
         public DateTime? LastNewsRead { get; set; }
         public int? FactionID { get; set; }
-        [Index]
-        public int? LobbyID { get; set; }
         public bool IsDeleted { get; set; }
         [StringLength(50)]
         public string Avatar { get; set; }
@@ -119,7 +116,6 @@ namespace ZkData
         public double PwWarpProduced { get; set; }
         public double PwWarpUsed { get; set; }
         public double PwAttackPoints { get; set; }
-        public DateTime? LastLobbyVersionCheck { get; set; }
         [StringLength(2)]
         public string Language { get; set; }
         public bool HasVpnException { get; set; }
@@ -130,6 +126,10 @@ namespace ZkData
         public decimal? SteamID { get; set; }
         [StringLength(200)]
         public string SteamName { get; set; }
+        public int Cpu { get; set; }
+        
+        [Obsolete("Do not use")]
+        public int? LobbyID { get; set; }
 
         public virtual ICollection<AbuseReport> AbuseReportsByAccountID { get; set; }
         public virtual ICollection<AbuseReport> AbuseReportsByReporterAccountID { get; set; }
@@ -213,14 +213,9 @@ namespace ZkData
         public int KudosSpent { get { return KudosPurchases.Sum(x => x.KudosValue); } }
 
 
+        public static Func<ZkDataContext, string, Account> AccountByName = (db, name) => db.Accounts.FirstOrDefault(x => x.Name == name);
 
-        public static Func<ZkDataContext, int, Account> AccountByAccountID = (db, accountID) => db.Accounts.FirstOrDefault(x => x.AccountID == accountID);
-
-        public static Func<ZkDataContext, int, Account> AccountByLobbyID = (db, lobbyID) => db.Accounts.FirstOrDefault(x => x.LobbyID == lobbyID);
-
-        public static Func<ZkDataContext, string, Account> AccountByName = (db, name) => db.Accounts.FirstOrDefault(x => x.Name == name && x.LobbyID != null);
-
-        public static Func<ZkDataContext, string, string, Account> AccountVerify = (db, login, passwordHash) => db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == passwordHash && x.LobbyID != null);
+        public static Func<ZkDataContext, string, string, Account> AccountVerify = (db, login, passwordHash) => db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == passwordHash);
 
 
         public static double AdjustEloWeight(double currentWeight, double sumWeight, int sumCount) {
