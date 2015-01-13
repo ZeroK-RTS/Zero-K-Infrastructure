@@ -55,7 +55,7 @@ if errorlevel 1 (
       </runner>
       <runner id="RUNNER_26" name="Build all test" type="MSBuild">
         <parameters>
-          <param name="build-file-path" value="Zero-K.sln" />
+          <param name="build-file-path" value="./Zero-K.sln" />
           <param name="dotNetCoverage.NCover.HTMLReport.File.Sort" value="0" />
           <param name="dotNetCoverage.NCover.HTMLReport.File.Type" value="1" />
           <param name="dotNetCoverage.NCover.Reg" value="selected" />
@@ -71,8 +71,9 @@ if errorlevel 1 (
           <param name="dotNetCoverage.PartCover.platformBitness" value="x86" />
           <param name="dotNetCoverage.PartCover.platformVersion" value="v2.0" />
           <param name="msbuild_version" value="4.5" />
-          <param name="run-platform" value="x64" />
-          <param name="runnerArgs" value="/t:ResolveReferences;_WPPCopyWebApplication /p:Configuration=Release; /p:DefineConstants=&quot;RELEASE;TRACE;TEST&quot;" />
+          <param name="run-platform" value="x86" />
+          <param name="runnerArgs"><![CDATA[/t:ResolveReferences;
+/p:Configuration=Release; /p:DefineConstants="RELEASE;TRACE;TEST"]]></param>
           <param name="teamcity.step.mode" value="default" />
           <param name="toolsVersion" value="4.0" />
         </parameters>
