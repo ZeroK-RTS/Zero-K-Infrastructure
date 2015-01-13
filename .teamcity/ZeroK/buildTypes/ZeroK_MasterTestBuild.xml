@@ -3,9 +3,6 @@
   <name>Master TEST build</name>
   <description>Build master</description>
   <settings>
-    <disabled-settings>
-      <setting-ref ref="RUNNER_34" />
-    </disabled-settings>
     <parameters>
       <param name="build.shorthash" value="" />
     </parameters>
