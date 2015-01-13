@@ -5,80 +5,17 @@
   <settings>
     <parameters />
     <build-runners>
-      <runner id="RUNNER_25" name="Build" type="MSBuild">
+      <runner id="RUNNER_27" name="Rebuild all" type="VS.Solution">
         <parameters>
-          <param name="build-file-path" value=".\Zero-K.info\asp.net.csproj" />
-          <param name="dotNetCoverage.NCover.HTMLReport.File.Sort" value="0" />
-          <param name="dotNetCoverage.NCover.HTMLReport.File.Type" value="1" />
-          <param name="dotNetCoverage.NCover.Reg" value="selected" />
-          <param name="dotNetCoverage.NCover.platformBitness" value="x86" />
-          <param name="dotNetCoverage.NCover.platformVersion" value="v2.0" />
-          <param name="dotNetCoverage.NCover3.Reg" value="selected" />
-          <param name="dotNetCoverage.NCover3.args" value="//ias .*" />
-          <param name="dotNetCoverage.NCover3.platformBitness" value="x86" />
-          <param name="dotNetCoverage.NCover3.platformVersion" value="v2.0" />
-          <param name="dotNetCoverage.NCover3.reporter.executable.args" value="//or FullCoverageReport:Html:{teamcity.report.path}" />
-          <param name="dotNetCoverage.PartCover.Reg" value="selected" />
-          <param name="dotNetCoverage.PartCover.includes" value="[*]*" />
-          <param name="dotNetCoverage.PartCover.platformBitness" value="x86" />
-          <param name="dotNetCoverage.PartCover.platformVersion" value="v2.0" />
-          <param name="msbuild_version" value="4.5" />
+          <param name="build-file-path" value="Zero-K.sln" />
+          <param name="msbuild.prop.Configuration" value="Release" />
+          <param name="msbuild_version" value="12.0" />
           <param name="run-platform" value="x86" />
-          <param name="runnerArgs" value="/t:ResolveReferences;_WPPCopyWebApplication /p:Configuration=Release;WebProjectOutputDir=zkweb /p:DefineConstants=&quot;RELEASE;TRACE;TEST&quot;" />
+          <param name="runnerArgs" value="/p:Configuration=Release;DeployOnBuild=true;PublishProfile=Profile1;DefineConstants=&quot;RELEASE;TRACE;TEST&quot;" />
+          <param name="targets" value="Rebuild" />
           <param name="teamcity.step.mode" value="default" />
-          <param name="toolsVersion" value="4.0" />
-        </parameters>
-      </runner>
-      <runner id="RUNNER_28" name="Build springie" type="MSBuild">
-        <parameters>
-          <param name="build-file-path" value=".\Springie\Springie\Springie.csproj" />
-          <param name="dotNetCoverage.NCover.HTMLReport.File.Sort" value="0" />
-          <param name="dotNetCoverage.NCover.HTMLReport.File.Type" value="1" />
-          <param name="dotNetCoverage.NCover.Reg" value="selected" />
-          <param name="dotNetCoverage.NCover.platformBitness" value="x86" />
-          <param name="dotNetCoverage.NCover.platformVersion" value="v2.0" />
-          <param name="dotNetCoverage.NCover3.Reg" value="selected" />
-          <param name="dotNetCoverage.NCover3.args" value="//ias .*" />
-          <param name="dotNetCoverage.NCover3.platformBitness" value="x86" />
-          <param name="dotNetCoverage.NCover3.platformVersion" value="v2.0" />
-          <param name="dotNetCoverage.NCover3.reporter.executable.args" value="//or FullCoverageReport:Html:{teamcity.report.path}" />
-          <param name="dotNetCoverage.PartCover.Reg" value="selected" />
-          <param name="dotNetCoverage.PartCover.includes" value="[*]*" />
-          <param name="dotNetCoverage.PartCover.platformBitness" value="x86" />
-          <param name="dotNetCoverage.PartCover.platformVersion" value="v2.0" />
-          <param name="msbuild_version" value="4.0" />
-          <param name="run-platform" value="x86" />
-          <param name="runnerArgs"><![CDATA[/t:ResolveReferences
-/p:Configuration=Release
-/p:DefineConstants="RELEASE;TRACE;TEST"]]></param>
-          <param name="teamcity.step.mode" value="default" />
-          <param name="toolsVersion" value="4.0" />
-        </parameters>
-      </runner>
-      <runner id="RUNNER_29" name="Buildzkl (1)" type="MSBuild">
-        <parameters>
-          <param name="build-file-path" value=".\ZeroKLobby\ZeroKLobby.csproj" />
-          <param name="dotNetCoverage.NCover.HTMLReport.File.Sort" value="0" />
-          <param name="dotNetCoverage.NCover.HTMLReport.File.Type" value="1" />
-          <param name="dotNetCoverage.NCover.Reg" value="selected" />
-          <param name="dotNetCoverage.NCover.platformBitness" value="x86" />
-          <param name="dotNetCoverage.NCover.platformVersion" value="v2.0" />
-          <param name="dotNetCoverage.NCover3.Reg" value="selected" />
-          <param name="dotNetCoverage.NCover3.args" value="//ias .*" />
-          <param name="dotNetCoverage.NCover3.platformBitness" value="x86" />
-          <param name="dotNetCoverage.NCover3.platformVersion" value="v2.0" />
-          <param name="dotNetCoverage.NCover3.reporter.executable.args" value="//or FullCoverageReport:Html:{teamcity.report.path}" />
-          <param name="dotNetCoverage.PartCover.Reg" value="selected" />
-          <param name="dotNetCoverage.PartCover.includes" value="[*]*" />
-          <param name="dotNetCoverage.PartCover.platformBitness" value="x86" />
-          <param name="dotNetCoverage.PartCover.platformVersion" value="v2.0" />
-          <param name="msbuild_version" value="4.5" />
-          <param name="run-platform" value="x86" />
-          <param name="runnerArgs"><![CDATA[/t:ResolveReferences
-/p:Configuration=Release
-/p:DefineConstants="RELEASE;TRACE;TEST"]]></param>
-          <param name="teamcity.step.mode" value="default" />
-          <param name="toolsVersion" value="4.0" />
+          <param name="toolsVersion" value="12.0" />
+          <param name="vs.version" value="vs2013" />
         </parameters>
       </runner>
     </build-runners>
