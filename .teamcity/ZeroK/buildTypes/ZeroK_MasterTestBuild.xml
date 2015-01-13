@@ -53,7 +53,7 @@ copy /Y ZeroKLobby\bin\release\Zero-K.version.txt c:\projekty\test.zero-k.info\w
       </runner>
     </build-runners>
     <vcs-settings>
-      <vcs-entry-ref root-id="Zero_K_infrastructure" />
+      <vcs-entry-ref root-id="Zero_K_teamcity" />
     </vcs-settings>
     <requirements />
     <build-triggers>
