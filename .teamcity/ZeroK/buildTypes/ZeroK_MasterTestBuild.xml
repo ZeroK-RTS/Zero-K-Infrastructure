@@ -70,7 +70,7 @@ copy /Y ZeroKLobby\bin\release\Zero-K.version.txt c:\projekty\test.zero-k.info\w
       <extension id="JetBrains.AssemblyInfo" type="JetBrains.AssemblyInfo">
         <parameters>
           <param name="assembly-format" value="%build.number%" />
-          <param name="info-format" value="%build.number%_%build.vcs.number%" />
+          <param name="info-format" value="%build.number%-%build.vcs.number%" />
         </parameters>
       </extension>
     </build-extensions>
