@@ -53,11 +53,7 @@ copy /Y ZeroKLobby\bin\release\Zero-K.version.txt c:\projekty\test.zero-k.info\w
       </runner>
     </build-runners>
     <vcs-settings>
-<<<<<<< HEAD
-      <vcs-entry-ref root-id="Zero_K_infrastructure" />
-=======
-      <vcs-entry-ref root-id="ZeroK_ZeroKInfrastructure" />
->>>>>>> 169b82854244dcccd1e318b766f3263fc8403107
+      <vcs-entry-ref root-id="ZeroK_ZeroKInfrastructure_settings" />
     </vcs-settings>
     <requirements />
     <build-triggers>
@@ -66,10 +62,6 @@ copy /Y ZeroKLobby\bin\release\Zero-K.version.txt c:\projekty\test.zero-k.info\w
           <param name="groupCheckinsByCommitter" value="true" />
           <param name="perCheckinTriggering" value="true" />
           <param name="quietPeriodMode" value="DO_NOT_USE" />
-<<<<<<< HEAD
-          <param name="triggerRules" value="-:.TeamCity/*" />
-=======
->>>>>>> 169b82854244dcccd1e318b766f3263fc8403107
         </parameters>
       </build-trigger>
     </build-triggers>
