@@ -6,7 +6,9 @@
     <disabled-settings>
       <setting-ref ref="RUNNER_34" />
     </disabled-settings>
-    <parameters />
+    <parameters>
+      <param name="build.shorthash" value="" />
+    </parameters>
     <build-runners>
       <runner id="RUNNER_34" name="Generate build version" type="jetbrains_powershell">
         <parameters>
