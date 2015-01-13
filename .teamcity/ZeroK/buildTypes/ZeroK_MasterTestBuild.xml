@@ -3,6 +3,9 @@
   <name>Master TEST build</name>
   <description>Build master</description>
   <settings>
+    <options>
+      <option name="buildNumberPattern" value="1.3.1.%build.counter%" />
+    </options>
     <parameters>
       <param name="env.build.shorthash" value="" />
     </parameters>
