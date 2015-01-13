@@ -3,6 +3,9 @@
   <name>Website - TEST</name>
   <description />
   <settings>
+    <disabled-settings>
+      <setting-ref ref="RUNNER_2" />
+    </disabled-settings>
     <parameters />
     <build-runners>
       <runner id="RUNNER_1" name="Build" type="MSBuild">
