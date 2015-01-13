@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <settings>
+<<<<<<< HEAD
   <versionedSettings rootId="Zero_K_infrastructure" enabled="true" showChanges="false" />
+=======
+  <versionedSettings rootId="ZeroK_ZeroKInfrastructure" enabled="true" showChanges="false" />
+>>>>>>> 169b82854244dcccd1e318b766f3263fc8403107
 </settings>
 
