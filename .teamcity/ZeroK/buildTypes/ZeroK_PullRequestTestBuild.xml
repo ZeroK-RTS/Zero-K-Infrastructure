@@ -29,7 +29,7 @@
           <param name="toolsVersion" value="4.0" />
         </parameters>
       </runner>
-      <runner id="RUNNER_28" name="Buildzkl" type="MSBuild">
+      <runner id="RUNNER_28" name="Build springie" type="MSBuild">
         <parameters>
           <param name="build-file-path" value=".\Springie\Springie\Springie.csproj" />
           <param name="dotNetCoverage.NCover.HTMLReport.File.Sort" value="0" />
