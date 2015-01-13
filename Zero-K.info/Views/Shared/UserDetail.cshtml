@@ -47,250 +47,260 @@
 
 @* User Profile Page! *@
 <div>
-
-    <div id="usr_info" class="">
-
-        @if (!Global.IsLobbyAccess) {
-            int star = 0;
-            int chev = 0;
-            int bars = 0;
-            <div id="badge" class="fleft" >
-                <div id="levelrank" title="This is a graphical representation of your level. Play more games to gain more rank!">
-                    <div id="velvet"><img src="../../img/ranks/level-elo/velvetbacking.jpg" width="100%" height="100%" /></div>
-                    <div id="badge-center">
-                        @if (Model.Level > 125) {
-                            star = 125;
-                            <div id="badge-star">
-                                <img src="../../img/ranks/level-elo/star.png" class="rank star" />
-                            </div>
-                        }
-                        <div id="badge-chevrons">
-                            @for (int i = 0; i < (Model.Level - star)/25; i++) {
-                                <img src="../../img/ranks/level-elo/chevron_gold.png" class="rank chev chev-@(i + 1)" />
-                                chev += 25;
+    @if (Model.IsDeleted)
+    {
+        <h3>Account hidden</h3>
+        <br />
+    }
+    @if (!Model.IsDeleted || Global.IsZeroKAdmin || Global.IsLobbyAdmin)
+    {
+        <div id="usr_info" class="">
+        
+            @if (!Global.IsLobbyAccess) {
+                int star = 0;
+                int chev = 0;
+                int bars = 0;
+                <div id="badge" class="fleft" >
+                    <div id="levelrank" title="This is a graphical representation of your level. Play more games to gain more rank!">
+                        <div id="velvet"><img src="../../img/ranks/level-elo/velvetbacking.jpg" width="100%" height="100%" /></div>
+                        <div id="badge-center">
+                            @if (Model.Level > 125) {
+                                star = 125;
+                                <div id="badge-star">
+                                    <img src="../../img/ranks/level-elo/star.png" class="rank star" />
+                                </div>
                             }
-                        </div>
-                        <div id="badge-bars">
-                            @for (int i = 0; i < (Model.Level - star - chev)/5; i++) {
-                                <img src="../../img/ranks/level-elo/bar_gold.png" class="rank bar bar-@(i + 1)" />
-                                bars += 1;
-                            }
-                            <div class="rank dotline bar-@(bars + 1)">
-                                @for (int i = 0; i < (Model.Level - star - chev)%5; i++) {
-                                    <img src="../../img/ranks/level-elo/dot_gold.png" class="dot" />
+                            <div id="badge-chevrons">
+                                @for (int i = 0; i < (Model.Level - star)/25; i++) {
+                                    <img src="../../img/ranks/level-elo/chevron_gold.png" class="rank chev chev-@(i + 1)" />
+                                    chev += 25;
                                 }
+                            </div>
+                            <div id="badge-bars">
+                                @for (int i = 0; i < (Model.Level - star - chev)/5; i++) {
+                                    <img src="../../img/ranks/level-elo/bar_gold.png" class="rank bar bar-@(i + 1)" />
+                                    bars += 1;
+                                }
+                                <div class="rank dotline bar-@(bars + 1)">
+                                    @for (int i = 0; i < (Model.Level - star - chev)%5; i++) {
+                                        <img src="../../img/ranks/level-elo/dot_gold.png" class="dot" />
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        }
-        <p class="fright" align="right">
-            <a href="@Url.Action("ReportToAdmin", "Users", new { id = Model.AccountID })" nicetitle="Report abuse to administrators">Report this player<img src="/img/abuse.png" height="32"/></a>
-            <br/>
-            <a href="/Wiki/CodeOfConduct" nicetitle="Code of Conduct"><b><img src="/img/conduct.png" height="32"/></b></a>
-        </p>
+            }
+            <p class="fright" align="right">
+                <a href="@Url.Action("ReportToAdmin", "Users", new { id = Model.AccountID })" nicetitle="Report abuse to administrators">Report this player<img src="/img/abuse.png" height="32"/></a>
+                <br/>
+                <a href="/Wiki/CodeOfConduct" nicetitle="Code of Conduct"><b><img src="/img/conduct.png" height="32"/></b></a>
+            </p>
     
-        <p class="fleft"> 
+            <p class="fleft"> 
     
-            <span style="float: left;">@Html.AccountAvatar(Model)</span>
-            <h2>@Html.PrintAccount(Model)</h2>
-            @if (Model.ContributionsByAccountID.Count() > 0)
-            {
-                @Html.PrintContributorStar(Model, true) <br />
-            }
-            @foreach (Punishment p in Model.PunishmentsByAccountID.Where(x => x.BanExpires > DateTime.UtcNow)) {
-                @Html.DisplayFor(x => p)
-            }
-        
-        
-
-            <a href="@Html.PrintSpringLink("chat/user/" + Model.Name)"> Chat with @Model.Name in the lobby </a><br />
-            @if (Model.IsZeroKAdmin) {
-                <div>
-                    <b> @Model.Name </b> is a <b>Zero-K Administrator</b>
-                </div>
-            }
-            @if ( Model.SpringieLevel != normalLevel && !Model.IsZeroKAdmin ) {
-                <b>Springie rights level:</b> @Model.SpringieLevel
-                <br />
-            }
-
-            <b>First Login:</b> @Model.FirstLogin.ToAgoString(), <b>Last Login:</b> @Model.LastLogin.ToAgoString()
-            <br />
+                <span style="float: left;">@Html.AccountAvatar(Model)</span>
+                <h2>@Html.PrintAccount(Model, true, true)</h2>
+                @if (Model.ContributionsByAccountID.Count() > 0)
+                {
+                    @Html.PrintContributorStar(Model, true) <br />
+                }
+                @foreach (Punishment p in Model.PunishmentsByAccountID.Where(x => x.BanExpires > DateTime.UtcNow)) {
+                    @Html.DisplayFor(x => p)
+                }
             
-            @if (Global.IsZeroKAdmin) {
-                <div class="admin">
-                    <b>Elo (all):</b> @Math.Round(@Model.EffectiveElo)
-                    <b>Elo (1v1):</b> @Math.Round(@Model.Effective1v1Elo)
-                    <b>Elo (PW):</b> @Math.Round(@Model.EffectivePwElo)
-                    <br />
-                    <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)
-                </div>
-            }
-            <a href="@Url.Action("SubmitSearch", "Forum", new { username = Model.Name })">Find all posts by this user</a>
-             
-            @{ double ratio = (Model.Xp - Account.GetXpForLevel(Model.Level))/(double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)); }
-            <div title='Your XP: @Model.Xp (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio*100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
-                <b class="fleft"> Level @Model.Level </b> 
-                <img src="/img/progressl_base.png" height="17" class="fleft" />
-                <img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300*ratio))" />
-                <img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(300*(1 - ratio)))" />
-                <img src="/img/progressr_base.png" height="17" class="fleft" /> 
-                <b class="fleft"> Level @(Model.Level + 1) </b>
-            </div>
-            <br class="clearfloat" />
-       
-        </p> 
-        @if (Model.Faction != null) {
-            @:Faction: @Html.PrintFaction(Model.Faction, false)
-        }
-        @if (Model.Clan != null) {
-            @:Clan: @Html.PrintClan(Model.Clan)
-        }
-        @if (Model.Faction != null) {
-            <br/>
-            @Html.Partial("~/Views/Users/UserRoleList.cshtml", Model)
-        }
+            
 
-  
-    </div>	
+                <a href="@Html.PrintSpringLink("chat/user/" + Model.Name)"> Chat with @Model.Name in the lobby </a><br />
+                @if (Model.IsZeroKAdmin) {
+                    <div>
+                        <b> @Model.Name </b> is a <b>Zero-K Administrator</b>
+                    </div>
+                }
+                @if ( Model.SpringieLevel != normalLevel && !Model.IsZeroKAdmin ) {
+                    <b>Springie rights level:</b> @Model.SpringieLevel
+                    <br />
+                }
+
+                <b>First Login:</b> @Model.FirstLogin.ToAgoString(), <b>Last Login:</b> @Model.LastLogin.ToAgoString()
+                <br />
+                
+                @if (Global.IsZeroKAdmin) {
+                    <div class="admin">
+                        <b>Elo (all):</b> @Math.Round(@Model.EffectiveElo)
+                        <b>Elo (1v1):</b> @Math.Round(@Model.Effective1v1Elo)
+                        <b>Elo (PW):</b> @Math.Round(@Model.EffectivePwElo)
+                        <br />
+                        <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)
+                    </div>
+                }
+                <a href="@Url.Action("SubmitSearch", "Forum", new { username = Model.Name })">Find all posts by this user</a>
+                 
+                @{ double ratio = (Model.Xp - Account.GetXpForLevel(Model.Level))/(double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)); }
+                <div title='Your XP: @Model.Xp (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio*100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
+                    <b class="fleft"> Level @Model.Level </b> 
+                    <img src="/img/progressl_base.png" height="17" class="fleft" />
+                    <img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300*ratio))" />
+                    <img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(300*(1 - ratio)))" />
+                    <img src="/img/progressr_base.png" height="17" class="fleft" /> 
+                    <b class="fleft"> Level @(Model.Level + 1) </b>
+                </div>
+                <br class="clearfloat" />
+       
+            </p> 
+            @if (Model.Faction != null) {
+                @:Faction: @Html.PrintFaction(Model.Faction, false)
+            }
+            @if (Model.Clan != null) {
+                @:Clan: @Html.PrintClan(Model.Clan)
+            }
+            @if (Model.Faction != null) {
+                <br/>
+                @Html.Partial("~/Views/Users/UserRoleList.cshtml", Model)
+            }
+        
+        </div>
+    }
+    
+    	
     @if (Global.IsZeroKAdmin) {
         <div class="admin">
             @Html.ActionLink("Admin user", "AdminUserDetail", "Users", new { id = Model.AccountID }, null)
         </div>
     }
 
-    @if (Global.AccountID == Model.AccountID && Model.Level <= 5)
+    @if (Global.AccountID == Model.AccountID && Model.Level <= 5 && !Model.IsDeleted)
     {
         @Html.IncludeWiki("NewbieIntro")
     }
 	
-    <div id="usr_trophies" class="">
-        <h3>Trophies:</h3>
-        @foreach (var award in Model.AccountBattleAwards.GroupBy(x => x.AwardKey).OrderByDescending(x => x.Count())) {
-            <div class="fleft border" style="margin: 3px;">
-                <img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(award.Key).png" height="30" alt="@award.Key" title="@award.First().AwardDescription.Split(',').First()"/>
+    @if (!Model.IsDeleted || Global.IsZeroKAdmin || Global.IsLobbyAdmin)
+    {
+        <div id="usr_trophies" class="">
+            <h3>Trophies:</h3>
+            @foreach (var award in Model.AccountBattleAwards.GroupBy(x => x.AwardKey).OrderByDescending(x => x.Count())) {
+                <div class="fleft border" style="margin: 3px;">
+                    <img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(award.Key).png" height="30" alt="@award.Key" title="@award.First().AwardDescription.Split(',').First()"/>
+                    <br />
+                    <center>@award.Count()</center>
+                </div>
+            }
+            <br class="clearfloat" />
+        </div>
+        
+        
+	    
+        if (!Global.IsLobbyAccess) {
+            <h3><a href="#" onclick=" $('#usr_gamePreferences').toggle() ">Game preferences</a></h3>
+            <div id="usr_gamePreferences" style="display: none">
+                @if (Model.AccountID == Global.AccountID) {
+                    <form action="@Url.Action("LanguageChange", "My")" method="POST">
+                        Select preferrable language:
+                        <select name="language">
+                            @foreach (UserLanguage o in Enum.GetValues(typeof(UserLanguage)).OfType<UserLanguage>().OrderBy(x => x)) {
+                                <option value="@o" @(Model.Language == o.ToString() || (String.IsNullOrEmpty(Model.Language) && o == UserLanguage.auto) ? "selected='selected'" : "")>@o.Description()</option>
+                            }
+                        </select>
+                        <input type="submit"/>
+                    </form>
+
+                    object[] notes = typeof(UserLanguage).GetMember(Global.DisplayLanguageAsEnum.ToString())[0].GetCustomAttributes(typeof(UserLanguageNoteAttribute), false);
+                    if (notes.Length > 0) {
+                        <br />
+                        @Html.Raw(((UserLanguageNoteAttribute)notes[0]).Note)
+                        ;
+                        <br />
+                        <br />
+                    }
+                }
+            </div>
+        }
+
+
+        <div id="usr_commanders" class="">
+            <h3>Commanders: </h3>
+	    	
+            @if (Model.AccountID == Global.AccountID) {
+                <span title="You only get new points for unlocks after reaching the next level (Lvl: @(Model.Level + 1) with @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)) XP)">
+                    <a href='@Url.Action("UnlockList", "My")'>You can unlock technologies worth @Model.AvailableXP points</a>
+                </span>
+            }
+            else {<text>@Model.Name can unlock technologies worth @Model.AvailableXP points</text>
+            }
+            <br />
+            <!--div>
+                @Html.Partial("UnlockedTechnologies", Model.AccountUnlocks)
+            </div-->
+            @if (Model.AccountID == Global.AccountID) {
+                <a href='@Url.Action("Commanders", "My")'>Configure Commanders</a>
+            } 
+            <br />
+            @foreach (Commander comm in Model.Commanders) {
+                <span class="fleft border"><center><img src='@comm.Unlock.ImageUrl' alt="unlock" title='$commander$@comm.CommanderID'/><br />@HttpContext.Current.Server.HtmlEncode(comm.Name)</center></span>
+            }
+            <br class="clearfloat" />
+        </div>
+        
+	    
+        if (Model.SpringBattlePlayers.Any()) {
+            <div id="usr_recentbattles" class="fleft border">
+                <h3>@Html.ActionLink("Last battles", "Index", "Battles")</h3>
+                <span>
+                    @Model.SpringBattlePlayers.Count(x => !x.IsSpectator) played, @Model.SpringBattlePlayers.Count(x => x.IsSpectator)
+                    watched, @Model.MissionRunCount missions 
+                </span>
                 <br />
-                <center>@award.Count()</center>
+                @foreach (SpringBattlePlayer b in Model.SpringBattlePlayers.OrderByDescending(x => x.SpringBattleID).Take(10)) {
+                    <small>@Html.PrintBattle(b)</small>
+                    <br />
+                }
+            </div>
+        }
+	    
+        if (Model.ForumPosts.Any()) {
+            <div id="usr_forumposts" class="fleft border">
+                <h3>@Html.ActionLink("Posted threads", "Index", "Forum")</h3>
+                <span>@Model.ForumPosts.Count() posts in @Model.ForumThreadsByLastPostAccountID.Count threads</span>
+                <br />
+                @foreach (ForumThread t in Model.ForumPosts.OrderByDescending(x => x.ForumPostID).Select(x => x.ForumThread).Where(x=>x != null).Distinct().Take(10)) {
+                    <small>@Html.Print(t)</small>
+                    <br />
+                }
+            </div>
+        }
+        if (Model.PollVotes.Any()) {
+            <div class="fleft border">
+                <h3>@Html.ActionLink("Poll votes", "UserVotes", "Poll", new { id = Model.AccountID }, null)</h3>
+                <ul>
+                    @foreach (PollVote pv in Model.PollVotes.Where(x => !x.Poll.IsAnonymous).OrderByDescending(x => x.PollID).Take(5)) {
+                        <li><small>@pv.Poll.QuestionText : <b>@pv.PollOption.OptionText</b></small></li>
+                    }
+                </ul>
             </div>
         }
         <br class="clearfloat" />
-    </div>
-    
-    
-	
-    @if (!Global.IsLobbyAccess) {
-        <h3><a href="#" onclick=" $('#usr_gamePreferences').toggle() ">Game preferences</a></h3>
-        <div id="usr_gamePreferences" style="display: none">
-            @if (Model.AccountID == Global.AccountID) {
-                <form action="@Url.Action("LanguageChange", "My")" method="POST">
-                    Select preferrable language:
-                    <select name="language">
-                        @foreach (UserLanguage o in Enum.GetValues(typeof(UserLanguage)).OfType<UserLanguage>().OrderBy(x => x)) {
-                            <option value="@o" @(Model.Language == o.ToString() || (String.IsNullOrEmpty(Model.Language) && o == UserLanguage.auto) ? "selected='selected'" : "")>@o.Description()</option>
-                        }
-                    </select>
-                    <input type="submit"/>
-                </form>
 
-                object[] notes = typeof(UserLanguage).GetMember(Global.DisplayLanguageAsEnum.ToString())[0].GetCustomAttributes(typeof(UserLanguageNoteAttribute), false);
-                if (notes.Length > 0) {
-                    <br />
-                    @Html.Raw(((UserLanguageNoteAttribute)notes[0]).Note)
-                    ;
-                    <br />
-                    <br />
-                }
+        <div id="usr_planetwars" class="border relative">
+
+        
+            @if (Model.Planets.Any()) {
+                <h3>Planets owned</h3>
+                <table>
+                    @foreach (Planet p in Model.Planets) {
+                        <tr>
+                            <td>@Html.PrintPlanet(p) </td>
+                        </tr>
+                    }
+                </table>
             }
+	    
+	    
+            <h3>PlanetWars events</h3>
+            @Html.Action("Events", "Planetwars", new { accountID = Model.AccountID, partial = true })
+
+            <span style="color: #222; font-family: Skir; font-size: 500%; opacity: .75; position: absolute; right: 5%; top: 5%; z-index: -20">PlanetWars</span>
         </div>
-    }
-
-
-    <div id="usr_commanders" class="">
-        <h3>Commanders: </h3>
-		
-        @if (Model.AccountID == Global.AccountID) {
-            <span title="You only get new points for unlocks after reaching the next level (Lvl: @(Model.Level + 1) with @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)) XP)">
-                <a href='@Url.Action("UnlockList", "My")'>You can unlock technologies worth @Model.AvailableXP points</a>
-            </span>
-        }
-        else {<text>@Model.Name can unlock technologies worth @Model.AvailableXP points</text>
-        }
-        <br />
-        <!--div>
-            @Html.Partial("UnlockedTechnologies", Model.AccountUnlocks)
-        </div-->
-        @if (Model.AccountID == Global.AccountID) {
-            <a href='@Url.Action("Commanders", "My")'>Configure Commanders</a>
-        } 
-        <br />
-        @foreach (Commander comm in Model.Commanders) {
-            <span class="fleft border"><center><img src='@comm.Unlock.ImageUrl' alt="unlock" title='$commander$@comm.CommanderID'/><br />@HttpContext.Current.Server.HtmlEncode(comm.Name)</center></span>
-        }
-        <br class="clearfloat" />
-    </div>
-    
-	
-    @if (Model.SpringBattlePlayers.Any()) {
-        <div id="usr_recentbattles" class="fleft border">
-            <h3>@Html.ActionLink("Last battles", "Index", "Battles")</h3>
-            <span>
-                @Model.SpringBattlePlayers.Count(x => !x.IsSpectator) played, @Model.SpringBattlePlayers.Count(x => x.IsSpectator)
-                watched, @Model.MissionRunCount missions 
-            </span>
-            <br />
-            @foreach (SpringBattlePlayer b in Model.SpringBattlePlayers.OrderByDescending(x => x.SpringBattleID).Take(10)) {
-                <small>@Html.PrintBattle(b)</small>
-                <br />
-            }
-        </div>
-    }
-	
-    @if (Model.ForumPosts.Any()) {
-        <div id="usr_forumposts" class="fleft border">
-            <h3>@Html.ActionLink("Posted threads", "Index", "Forum")</h3>
-            <span>@Model.ForumPosts.Count() posts in @Model.ForumThreadsByLastPostAccountID.Count threads</span>
-            <br />
-            @foreach (ForumThread t in Model.ForumPosts.OrderByDescending(x => x.ForumPostID).Select(x => x.ForumThread).Where(x=>x != null).Distinct().Take(10)) {
-                <small>@Html.Print(t)</small>
-                <br />
-            }
-        </div>
-    }
-    @if (Model.PollVotes.Any()) {
-        <div class="fleft border">
-            <h3>@Html.ActionLink("Poll votes", "UserVotes", "Poll", new { id = Model.AccountID }, null)</h3>
-            <ul>
-                @foreach (PollVote pv in Model.PollVotes.Where(x => !x.Poll.IsAnonymous).OrderByDescending(x => x.PollID).Take(5)) {
-                    <li><small>@pv.Poll.QuestionText : <b>@pv.PollOption.OptionText</b></small></li>
-                }
-            </ul>
-        </div>
-    }
-    <br class="clearfloat" />
-
-    <div id="usr_planetwars" class="border relative">
-
-    
-        @if (Model.Planets.Any()) {
-            <h3>Planets owned</h3>
-            <table>
-                @foreach (Planet p in Model.Planets) {
-                    <tr>
-                        <td>@Html.PrintPlanet(p) </td>
-                    </tr>
-                }
-            </table>
-        }
-	
-	
-        <h3>PlanetWars events</h3>
-        @Html.Action("Events", "Planetwars", new { accountID = Model.AccountID, partial = true })
-
-        <span style="color: #222; font-family: Skir; font-size: 500%; opacity: .75; position: absolute; right: 5%; top: 5%; z-index: -20">PlanetWars</span>
-    </div>
-	
+	}
 
     @if (Global.IsZeroKAdmin && Global.AccountID == Model.AccountID) {
         <div class="admin">

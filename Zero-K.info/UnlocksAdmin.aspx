@@ -47,8 +47,7 @@
       </asp:GridView>
       <asp:EntityDataSource ID="LinqDataSource1" runat="server" 
         ContextTypeName="ZkData.ZkDataContext" EnableDelete="True" EnableInsert="True" 
-        EnableUpdate="True" EntityTypeName="" 
-        TableName="Unlocks" ondeleting="DataSource_Deleting">
+        EnableUpdate="True"  ondeleting="DataSource_Deleting">
       </asp:EntityDataSource>
     </div>
 
