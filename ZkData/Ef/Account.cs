@@ -127,6 +127,9 @@ namespace ZkData
         [StringLength(200)]
         public string SteamName { get; set; }
         public int Cpu { get; set; }
+        
+        [Obsolete("Do not use")]
+        public int? LobbyID { get; set; }
 
         public virtual ICollection<AbuseReport> AbuseReportsByAccountID { get; set; }
         public virtual ICollection<AbuseReport> AbuseReportsByReporterAccountID { get; set; }

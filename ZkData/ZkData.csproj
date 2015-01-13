@@ -64,17 +64,9 @@
     <Compile Include="Enums\DecorationIconPositions.cs" />
     <Compile Include="Enums\DecorationIconTypes.cs" />
     <Compile Include="Enums\UserLanguage.cs" />
-    <Compile Include="Migrations\201501082032419_RemoveLastLobbyVersionCheck.cs" />
-    <Compile Include="Migrations\201501082032419_RemoveLastLobbyVersionCheck.Designer.cs">
-      <DependentUpon>201501082032419_RemoveLastLobbyVersionCheck.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201501082101157_RemoveLobbyID.cs" />
-    <Compile Include="Migrations\201501082101157_RemoveLobbyID.Designer.cs">
-      <DependentUpon>201501082101157_RemoveLobbyID.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201501082156054_RemoveLobbyTimeRankAddCpu.cs" />
-    <Compile Include="Migrations\201501082156054_RemoveLobbyTimeRankAddCpu.Designer.cs">
-      <DependentUpon>201501082156054_RemoveLobbyTimeRankAddCpu.cs</DependentUpon>
+    <Compile Include="Migrations\201501132318070_UberServerSwap.cs" />
+    <Compile Include="Migrations\201501132318070_UberServerSwap.Designer.cs">
+      <DependentUpon>201501132318070_UberServerSwap.cs</DependentUpon>
     </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
@@ -218,14 +210,8 @@
     <EmbeddedResource Include="Migrations\201501041114503_FixEventPlanetCampaignRelation.resx">
       <DependentUpon>201501041114503_FixEventPlanetCampaignRelation.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201501082032419_RemoveLastLobbyVersionCheck.resx">
-      <DependentUpon>201501082032419_RemoveLastLobbyVersionCheck.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201501082101157_RemoveLobbyID.resx">
-      <DependentUpon>201501082101157_RemoveLobbyID.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201501082156054_RemoveLobbyTimeRankAddCpu.resx">
-      <DependentUpon>201501082156054_RemoveLobbyTimeRankAddCpu.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201501132318070_UberServerSwap.resx">
+      <DependentUpon>201501132318070_UberServerSwap.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
