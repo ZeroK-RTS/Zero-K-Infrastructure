@@ -24,7 +24,7 @@
           <param name="dotNetCoverage.PartCover.platformVersion" value="v2.0" />
           <param name="msbuild_version" value="4.5" />
           <param name="run-platform" value="x86" />
-          <param name="runnerArgs" value="/t:ResolveReferences;_WPPCopyWebApplication /p:Configuration=Debug;WebProjectOutputDir=zkweb /p:DefineConstants=&quot;RELEASE;TRACE;TEST&quot;" />
+          <param name="runnerArgs" value="/t:ResolveReferences;_WPPCopyWebApplication /p:Configuration=Release;WebProjectOutputDir=zkweb /p:DefineConstants=&quot;RELEASE;TRACE;TEST&quot;" />
           <param name="teamcity.step.mode" value="default" />
           <param name="toolsVersion" value="4.0" />
         </parameters>
