@@ -4,7 +4,7 @@
   <description>Build master</description>
   <settings>
     <parameters>
-      <param name="build.shorthash" value="" />
+      <param name="env.build.shorthash" value="" />
     </parameters>
     <build-runners>
       <runner id="RUNNER_34" name="Generate build version" type="jetbrains_powershell">
