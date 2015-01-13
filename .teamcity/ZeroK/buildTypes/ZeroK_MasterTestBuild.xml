@@ -61,6 +61,13 @@ copy /Y ZeroKLobby\bin\release\Zero-K.version.txt c:\projekty\test.zero-k.info\w
         </parameters>
       </build-trigger>
     </build-triggers>
+    <build-extensions>
+      <extension id="JetBrains.AssemblyInfo" type="JetBrains.AssemblyInfo">
+        <parameters>
+          <param name="assembly-format" value="%system.build.number%" />
+        </parameters>
+      </extension>
+    </build-extensions>
     <cleanup />
   </settings>
 </build-type>
