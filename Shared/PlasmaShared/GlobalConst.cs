@@ -1,10 +1,7 @@
 using System;
-using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using PlasmaShared;
-using PlasmaShared.Properties;
 using ServiceStack.Text;
-using ZkData.UnitSyncLib;
 
 namespace ZkData
 {
@@ -17,28 +14,37 @@ namespace ZkData
 
     public static class GlobalConst
     {
+        static ModeType mode;
+
         /// <summary>
         /// Mode of operation / environment (local/test/live) - determined either by settings or by compile value
         /// </summary>
-        public static readonly ModeType Mode;
+        public static ModeType Mode
+        {
+            get { return mode; }
+            set { SetMode(value);}
+        }
 
         static GlobalConst()
         {
-            Mode = ModeType.Local;
             #if LIVE
                 Mode = ModeType.Live;
-            #endif
-            #if TEST
+            #elif TEST
                 Mode = ModeType.Test;
+            #else
+                Mode = ModeType.Local;
             #endif
 
             JsConfig.IncludePublicFields = true;
+        }
 
-            switch (Mode)
-            {
+        static void SetMode(ModeType newMode)
+        {
+            switch (newMode) {
                 case ModeType.Local:
                     BaseSiteUrl = "http://localhost:9739";
-                    ZkDataContextConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=zero-k_local;Integrated Security=True;MultipleActiveResultSets=true";
+                    ZkDataContextConnectionString =
+                        @"Data Source=.\SQLEXPRESS;Initial Catalog=zero-k_local;Integrated Security=True;MultipleActiveResultSets=true";
                     SpringieNode = "alpha";
 
                     LobbyServerHost = "localhost";
@@ -46,7 +52,8 @@ namespace ZkData
                     break;
                 case ModeType.Test:
                     BaseSiteUrl = "http://test.zero-k.info";
-                    ZkDataContextConnectionString = "Data Source=omega.licho.eu,100;Initial Catalog=zero-k_test;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
+                    ZkDataContextConnectionString =
+                        "Data Source=omega.licho.eu,100;Initial Catalog=zero-k_test;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
                     SpringieNode = "omega";
 
                     LobbyServerHost = "lobby.zero-k.info";
@@ -54,7 +61,8 @@ namespace ZkData
                     break;
                 case ModeType.Live:
                     BaseSiteUrl = "http://zero-k.info";
-                    ZkDataContextConnectionString = "Data Source=omega.licho.eu,100;Initial Catalog=zero-k_ef;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
+                    ZkDataContextConnectionString =
+                        "Data Source=omega.licho.eu,100;Initial Catalog=zero-k_ef;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
                     SpringieNode = "omega";
 
                     LobbyServerHost = "lobby.springrts.com";
@@ -68,6 +76,8 @@ namespace ZkData
 
             contentServiceFactory = new ChannelFactory<IContentService>(CreateBasicHttpBinding(), string.Format("{0}/ContentService.svc", BaseSiteUrl));
             springieServiceFactory = new ChannelFactory<ISpringieService>(CreateBasicHttpBinding(), string.Format("{0}/SpringieService.svc", BaseSiteUrl));
+            
+            mode = newMode;
         }
 
         public static BasicHttpBinding CreateBasicHttpBinding()
@@ -87,11 +97,11 @@ namespace ZkData
             return binding;
         }
 
-        public static readonly string ZkDataContextConnectionString;
+        public static string ZkDataContextConnectionString;
 
-        public static readonly string BaseImageUrl;
-        public static readonly string BaseSiteUrl;
-        public static readonly string SpringieNode;
+        public static string BaseImageUrl;
+        public static string BaseSiteUrl;
+        public static string SpringieNode;
 
 
         public const string InfologPathFormat = @"C:\projekty\springie_spring\infolog_{0}.txt";
@@ -191,12 +201,12 @@ namespace ZkData
         public const int PlanetWarsMaxTeamsize = 4;
         public const int MinPlanetWarsLevel = 10;
         public const int MinPlanetWarsElo = 1000;
-        public static readonly string ResourceBaseUrl;
+        public static string ResourceBaseUrl;
         public static string SelfUpdaterBaseUrl;
         public static readonly string[] DefaultDownloadMirrors = {};
         public static readonly string EngineDownloadPath = "http://springrts.com/dl/";
-        public static readonly string LobbyServerHost;
-        public static readonly int LobbyServerPort;
+        public static string LobbyServerHost;
+        public static int LobbyServerPort;
 
         public static bool IsZkMod(string name)
         {
@@ -205,8 +215,8 @@ namespace ZkData
         }
 
 
-        static readonly ChannelFactory<IContentService> contentServiceFactory;
-        static readonly ChannelFactory<ISpringieService> springieServiceFactory;
+        static ChannelFactory<IContentService> contentServiceFactory;
+        static ChannelFactory<ISpringieService> springieServiceFactory;
 
         public static IContentService GetContentService()
         {
