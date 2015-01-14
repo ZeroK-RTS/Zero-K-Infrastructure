@@ -39,7 +39,6 @@ class DataHandler:
 		self.userdb = None
 		self.engine = None
 		self.protocol = None
-		self.updatefile = None
 		self.trusted_proxyfile = None
 		
 		self.max_threads = 25
@@ -215,6 +214,9 @@ class DataHandler:
 			self.agreementplain.append(line.rstrip('\r\n'))
 		ins.close()
 
+		self.server_version = self.read_server_version()
+
+
 	def getUserDB(self):
 		return self.userdb
 	
@@ -226,7 +228,7 @@ class DataHandler:
 
 	def event_loop(self):
 		start = time.time()
-		lastsave = lastmute = lastidle = lastload = start
+		lastsave = lastmute = lastidle = lastload = lastnewversioncheck = start
 		load = 0
 		try:
 			os.getloadavg()
@@ -242,6 +244,9 @@ class DataHandler:
 				elif now - lastidle > 10:
 					lastidle = now
 					self.idle_timeout_step()
+				elif now - lastnewversioncheck > 60:
+					lastnewversioncheck = now
+					self.new_version_step()
 				else:
 					self.console_print_step()
 			except:
@@ -275,6 +280,23 @@ class DataHandler:
 			elif client.lastdata < now - 60:
 				client.Send("SERVERMSG timed out, no data or PING received for >60 seconds, closing connection")
 				client.Remove("Connection timed out")
+
+	def new_version_step(self):
+		new_version = self.read_server_version()
+
+		if self.server_version != new_version:
+			self.server_version = new_version
+			print "Updating to %s" % self.server_version
+			self.reload()
+
+	def read_server_version(self):
+		try:
+			with open ("version.txt", "r") as myfile:
+				return myfile.read().replace('\n', '')
+		except Exception, e:
+			print 'Error parsing version.txt: %s' %(e)
+
+		return self.server_version
 
 	def console_print_step(self):
 		try:

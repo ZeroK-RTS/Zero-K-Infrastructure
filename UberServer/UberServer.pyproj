@@ -66,7 +66,6 @@
     <Content Include="LICENSE" />
     <Content Include="motd.txt" />
     <Content Include="README.md" />
-    <Content Include="updates.txt" />
     <Content Include="www\getip.php" />
   </ItemGroup>
   <ItemGroup>
