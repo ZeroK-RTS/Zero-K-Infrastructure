@@ -57,7 +57,7 @@ namespace ZkData
                     SpringieNode = "omega";
 
                     LobbyServerHost = "lobby.zero-k.info";
-                    LobbyServerPort = 8200;
+                    LobbyServerPort = 8202;
                     break;
                 case ModeType.Live:
                     BaseSiteUrl = "http://zero-k.info";
@@ -65,7 +65,7 @@ namespace ZkData
                         "Data Source=omega.licho.eu,100;Initial Catalog=zero-k_ef;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
                     SpringieNode = "omega";
 
-                    LobbyServerHost = "lobby.springrts.com";
+                    LobbyServerHost = "lobby.zero-k.info";
                     LobbyServerPort = 8200;
                     break;
             }
