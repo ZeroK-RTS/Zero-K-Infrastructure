@@ -58,7 +58,7 @@ namespace ZkData.Migrations
                     Mod="zk:stable",
                     ClusterNode = "alpha",
                     JoinChannels = "bots",
-                    Map = "indonesia_v4",
+                    Map = "dual_icy_run_v3",
                     SpringVersion = GlobalConst.DefaultEngineOverride,
 
                 });
