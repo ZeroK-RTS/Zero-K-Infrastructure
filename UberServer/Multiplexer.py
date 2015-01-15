@@ -1,4 +1,5 @@
 import time
+import copy
 from select import * # eww hack but saves the other hack of selectively importing constants
 
 class BaseMultiplexer:
@@ -56,7 +57,8 @@ class SelectMultiplexer(BaseMultiplexer):
 			r_inputs = []
 			r_outputs = []
 			r_errors = []
-			for s in self.sockets:
+			r_sockets = copy.copy(self.sockets)
+			for s in r_sockets:
 				try: select([s], [s], [], 0.01)
 				except:
 					errors.append(s)
