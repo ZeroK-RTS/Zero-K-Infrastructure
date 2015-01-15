@@ -215,7 +215,7 @@ namespace ZkData
 
         public static Func<ZkDataContext, string, Account> AccountByName = (db, name) => db.Accounts.FirstOrDefault(x => x.Name == name);
 
-        public static Func<ZkDataContext, string, string, Account> AccountVerify = (db, login, passwordHash) => db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == passwordHash);
+        public static Func<ZkDataContext, string, string, Account> AccountVerify = (db, login, passwordHash) => db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == passwordHash && !x.IsDeleted);
 
 
         public static double AdjustEloWeight(double currentWeight, double sumWeight, int sumCount) {
