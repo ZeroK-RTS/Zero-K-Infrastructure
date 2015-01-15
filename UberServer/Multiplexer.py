@@ -52,17 +52,17 @@ class SelectMultiplexer(BaseMultiplexer):
 	def poll(self):
 		if not self.sockets: return ([], [] ,[])
 		try: return select(self.sockets, self.output, [], 0.1)
-		except:
-			inputs = []
-			outputs = []
-			errors = []
+		except error:
+			r_inputs = []
+			r_outputs = []
+			r_errors = []
 			for s in self.sockets:
 				try: select([s], [s], [], 0.01)
 				except:
 					errors.append(s)
 					self.unregister(s)
-			inputs, outputs, _ = select(self.sockets, self.output, [], 0.1)
-			return inputs, outputs, errors
+			r_inputs, r_outputs, _ = select(self.sockets, self.output, [], 0.1)
+			return r_inputs, r_outputs, r_errors
 
 class KqueueMultiplexer(BaseMultiplexer):
 	def __init__(self):
