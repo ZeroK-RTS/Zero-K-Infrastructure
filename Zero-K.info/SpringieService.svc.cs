@@ -61,7 +61,10 @@ namespace ZeroKWeb
         public string GetMapCommands(string mapName)
         {
             var db = new ZkDataContext();
-            return db.Resources.Single(x => x.InternalName == mapName).MapSpringieCommands;
+            var map = db.Resources.FirstOrDefault(x => x.InternalName == mapName);
+            if (map  == null) throw new Exception(string.Format("Map {0} not found in database", mapName));
+            return map.MapSpringieCommands;
+
         }
 
 

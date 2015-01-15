@@ -13,7 +13,6 @@
     <br />
 }
 <br />
-@Html.ActionLink("User duplicates","Duplicates")
 @if (Global.IsZeroKAdmin)
 {
     <div class="admin">
@@ -38,7 +37,6 @@
             <th>Alias</th>
             <th>First login</th>
             <th>Last login</th>
-            <th>Lobby ID</th>
         </tr>
     </thead>
     <tbody>
@@ -49,7 +47,6 @@
             <td>@a.Aliases</td>
             <td>@a.FirstLogin</td>
             <td>@a.LastLogin</td>
-            <td>@a.LobbyID</td>
         </tr>
     }
     </tbody>

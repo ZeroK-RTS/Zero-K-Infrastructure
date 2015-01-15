@@ -30,6 +30,7 @@ namespace System.Web.Mvc
     public static class HtmlHelperExtensions
     {
         public static MvcHtmlString AccountAvatar(this HtmlHelper helper, Account account) {
+            if (account.IsDeleted) return null;
             return new MvcHtmlString(string.Format("<img src='/img/avatars/{0}.png' class='avatar'>", account.Avatar));
         }
 
@@ -218,8 +219,9 @@ namespace System.Web.Mvc
             return new MvcHtmlString(string.Format(format, link, HttpUtility.HtmlEncode(thread.Title)));
         }
 
-        public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account, bool colorize = true) {
+        public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account, bool colorize = true, bool ignoreDeleted = false) {
             if (account == null) return new MvcHtmlString("Nobody");
+            else if (account.IsDeleted && !ignoreDeleted) return new MvcHtmlString("{redacted}");
             else {
                 var clanStr = "";
                 var url = Global.UrlHelper();

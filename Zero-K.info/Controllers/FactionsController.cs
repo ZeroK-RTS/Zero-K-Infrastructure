@@ -113,7 +113,7 @@ namespace ZeroKWeb.Controllers
                 db.FactionTreaties.InsertOnSubmit(treaty);
                 treaty.FactionByAcceptingFactionID = db.Factions.Single(x => x.FactionID == acceptingFactionID);
             }
-            treaty.AccountByProposingAccountID = Account.AccountByAccountID(db, Global.AccountID);
+            treaty.AccountByProposingAccountID = db.Accounts.Find(Global.AccountID);
             treaty.FactionByProposingFactionID = db.Factions.Single(x => x.FactionID == Global.FactionID);
             treaty.TurnsRemaining = turns;
             treaty.TurnsTotal = turns;

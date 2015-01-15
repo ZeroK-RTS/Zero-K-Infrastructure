@@ -27,11 +27,18 @@ namespace ZkData.Migrations
                         IsZeroKAdmin = true,
                         Kudos = 200,
                         Elo = 1700,
+                        Level = 50,
                         EloWeight = 2,
                         SpringieLevel = 4,
                         Country = "cz",
-                        LobbyID = 2
-                    });
+                    },
+                    new Account() {
+                        Name = GlobalConst.NightwatchName,
+                        Password = Utils.HashLobbyPassword("dummy"),
+                        IsBot = true,
+                        IsZeroKAdmin = true,
+                    }
+                 );
 
                 db.ForumCategories.AddOrUpdate(x => x.Title, 
                     new ForumCategory { Title = "General discussion", },
@@ -51,6 +58,7 @@ namespace ZkData.Migrations
                     Mod="zk:stable",
                     ClusterNode = "alpha",
                     JoinChannels = "bots",
+                    Map = "dual_icy_run_v3",
                     SpringVersion = GlobalConst.DefaultEngineOverride,
 
                 });

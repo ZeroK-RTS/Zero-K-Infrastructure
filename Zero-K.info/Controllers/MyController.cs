@@ -225,7 +225,7 @@ namespace ZeroKWeb.Controllers
                     if (!useKudos && unlock.IsKudosOnly == true) return Content("That unlock cannot be bought using XP");
 
                     if (useKudos) {
-                        var acc = Account.AccountByAccountID(db, Global.AccountID);
+                        var acc = db.Accounts.Find(Global.AccountID);
                         if (acc.Kudos < unlock.KudosCost) return Content("Not enough kudos to unlock this");
                         acc.KudosPurchases.Add(new KudosPurchase() {Time = DateTime.UtcNow, Unlock = unlock, Account = acc, KudosValue = unlock.KudosCost??0});
                         db.SubmitAndMergeChanges();

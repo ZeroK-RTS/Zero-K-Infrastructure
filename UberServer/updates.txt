@@ -1,2 +1,0 @@
-#name|version|bits|filename|url|description
-spring|*|7|*|http://springrts.com/dl/buildbot/default/master/95.0/win32/spring_95.0.exe|This will update Spring and SpringLobby. Alternatively you can download it from http://springrts.com

@@ -191,7 +191,7 @@ namespace ZkData
                     if (jarID == null) jar = db.ContributionJars.FirstOrDefault(x => x.IsDefault);
                     else jar = db.ContributionJars.FirstOrDefault(x => x.ContributionJarID == jarID);
 
-                    if (accountID != null) acc = Account.AccountByAccountID(db, accountID.Value);
+                    if (accountID != null) acc = db.Accounts.Find(accountID.Value);
 
                     if (!string.IsNullOrEmpty(parsed.TransactionID) && db.Contributions.Any(x => x.PayPalTransactionID == parsed.TransactionID)) return null; // contribution already exists
                     var isSpring = !parsed.ItemCode.StartsWith("ZK") || jar.IsDefault;

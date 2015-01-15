@@ -149,9 +149,9 @@ namespace ZkData
                 var result = wg.DownloadData(new Uri(url));
                 if (result != null && result.Length > 0) return ReplaceFile(filepath, result);
             }
-            catch
+            catch (Exception ex)
             {
-                Trace.TraceWarning("Download of {0} failed", url);
+                Trace.TraceWarning("Download of {0} failed : {1}", url,ex);
             }
             return false;
         }

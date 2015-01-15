@@ -3,7 +3,7 @@ import time
 
 class Channel(AutoDict):
 	def __init__(self, root, name, users=[], admins=[],
-						ban={}, allow=[], autokick='ban', chanserv=False,
+						ban={}, allow=[], autokick='ban', 
 						owner='', mutelist={}, antispam=False,
 						censor=False, antishock=False, topic=None,
 						key=None, **kwargs):
@@ -14,7 +14,6 @@ class Channel(AutoDict):
 		self.ban = ban
 		self.allow = allow
 		self.autokick = autokick
-		self.nameserv = chanserv
 		self.owner = owner
 		self.mutelist = mutelist
 		self.antispam = antispam
@@ -24,8 +23,6 @@ class Channel(AutoDict):
 		self.key = key
 		self.__AutoDictInit__()
 
-		if self._root and chanserv and self._root.chanserv and not chan in self._root.channels:
-			self._root.chanserv.Send('JOIN %s' % self.name)
 
 	def broadcast(self, message):
 		self._root.broadcast(message, self.name)
