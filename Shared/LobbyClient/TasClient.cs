@@ -62,7 +62,7 @@ namespace LobbyClient
         int pingInterval = 30; // how often to ping server (in seconds)
         readonly Timer pingTimer;
         readonly Random random = new Random();
-        string serverHost;
+        public string serverHost { get; private set; }
 
         int serverPort;
         int serverUdpHolePunchingPort;
