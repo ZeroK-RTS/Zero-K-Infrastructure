@@ -9,7 +9,7 @@ namespace ZkData.Migrations
         {
             DropIndex("Accounts","IX_Name");
             Sql("ALTER TABLE Accounts ALTER COLUMN Name VARCHAR(2000) COLLATE SQL_Latin1_General_CP1_CS_AS NOT NULL");
-            CreateIndex("Accounts", "Name", true,"IX_Name");
+            //CreateIndex("Accounts", "Name", true,"IX_Name");
         }
         
         public override void Down()

@@ -108,6 +108,23 @@ namespace Fixer
             }
         }
 
+        public static void FixDuplicatedAccounts()
+        {
+            GlobalConst.Mode = ModeType.Test;
+            var db = new ZkDataContext();
+            var duplicates = db.Accounts.GroupBy(x => x.Name).Where(x => x.Count() > 1).ToList();
+            foreach (var duplicateGroup in duplicates) {
+                var keep = duplicateGroup.OrderByDescending(x => x.SpringBattlePlayers.Count()).ThenByDescending(x => x.LastLogin).First();
+                foreach (var todel in duplicateGroup)
+                    if (keep != todel) {
+                        db.Accounts.DeleteOnSubmit(todel);
+                    }
+            }
+            db.SubmitChanges();
+            
+
+        }
+
         public enum OptionType
         {
             Undefined = 0,
@@ -180,6 +197,7 @@ namespace Fixer
         [STAThread]
         static void Main(string[] args)
         {
+            FixDuplicatedAccounts();
             //var db = new ZkDataContext(true);
             //var test = db.Accounts.OrderByDescending(x => x.EffectiveElo).WithTranslations().Take(5).ToList();
 
