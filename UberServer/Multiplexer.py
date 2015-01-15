@@ -48,7 +48,7 @@ class SelectMultiplexer(BaseMultiplexer):
 	def poll(self):
 		if not self.sockets: return ([], [] ,[])
 		try: return select(self.sockets, self.output, [], 0.1)
-		except error:
+		except:
 			inputs = []
 			outputs = []
 			errors = []
@@ -95,9 +95,10 @@ class BasePollMultiplexer(BaseMultiplexer):
 		
 	def pollUnregister(self, fd):
 		fileno = self.socketToFileno[fd]
-		self.poller.unregister(fileno)
 		del self.socketToFileno[fd]
 		del self.filenoToSocket[fileno]
+		self.poller.unregister(fileno)
+
 		
 	def pollSetoutput(self, fd, ready):
 		if not fd in self.socketToFileno: return
