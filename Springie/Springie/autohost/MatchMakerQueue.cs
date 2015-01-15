@@ -160,7 +160,7 @@ namespace Springie.autohost
                 exited = true;
                 CheckAutoCloseSlave(exited, slave);
             }; // remove after spring exits
-            slave.tas.MyBattleStarted += (sender, args) => slave.tas.ChangeLock(true); // lock running game
+            //slave.tas.MyBattleStarted += (sender, args) => slave.tas.ChangeLock(true); // lock running game
 
             slave.tas.BattleUserLeft += (sender, args) =>
             {
