@@ -57,8 +57,8 @@ class SelectMultiplexer(BaseMultiplexer):
 			r_inputs = []
 			r_outputs = []
 			r_errors = []
-			r_sockets = copy.copy(self.sockets)
-			for s in r_sockets:
+			#r_sockets = copy.copy(self.sockets)
+			for s in self.sockets.copy():
 				try: select([s], [s], [], 0.01)
 				except:
 					errors.append(s)
