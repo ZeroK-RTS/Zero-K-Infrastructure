@@ -44,7 +44,6 @@ class BaseMultiplexer:
 	def pollUnregister(self, fd): pass
 	def pollSetoutput(self, fd, ready): pass
 
-
 class SelectMultiplexer(BaseMultiplexer):
 	def poll(self):
 		if not self.sockets: return ([], [] ,[])

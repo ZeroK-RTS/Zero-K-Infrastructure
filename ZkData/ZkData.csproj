@@ -69,10 +69,6 @@
     <Compile Include="Migrations\201501132318070_UberServerSwap.Designer.cs">
       <DependentUpon>201501132318070_UberServerSwap.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201501151328048_CaseSensitiveNames.cs" />
-    <Compile Include="Migrations\201501151328048_CaseSensitiveNames.Designer.cs">
-      <DependentUpon>201501151328048_CaseSensitiveNames.cs</DependentUpon>
-    </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
     <Compile Include="CurrentLobbyStats.cs" />
@@ -217,9 +213,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201501132318070_UberServerSwap.resx">
       <DependentUpon>201501132318070_UberServerSwap.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201501151328048_CaseSensitiveNames.resx">
-      <DependentUpon>201501151328048_CaseSensitiveNames.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
