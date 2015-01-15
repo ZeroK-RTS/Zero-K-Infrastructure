@@ -115,14 +115,25 @@ namespace Fixer
             var duplicates = db.Accounts.GroupBy(x => x.Name).Where(x => x.Count() > 1).ToList();
             foreach (var duplicateGroup in duplicates) {
                 var keep = duplicateGroup.OrderByDescending(x => x.SpringBattlePlayers.Count()).ThenByDescending(x => x.LastLogin).First();
-                foreach (var todel in duplicateGroup)
-                    if (keep != todel) {
-                        db.Accounts.DeleteOnSubmit(todel);
+                foreach (var todel in duplicateGroup.ToList())
+                    if (keep.AccountID != todel.AccountID) {
+                        try {
+                            db.ForumThreadLastReads.DeleteAllOnSubmit(todel.ForumThreadLastReads.ToList());
+                            db.AccountBattleAwards.DeleteAllOnSubmit(todel.AccountBattleAwards.ToList());
+                            db.Accounts.DeleteOnSubmit(todel);
+                            db.SubmitChanges();
+                            Console.WriteLine("Deleted {0}", todel.Name);
+                        } catch (Exception ex) {
+                            using (var db2 = new ZkDataContext()) {
+                                var acc = db2.Accounts.Find(todel.AccountID);
+                                acc.IsDeleted = true;
+                                acc.Name = string.Format("___DELETED___{0}", todel.AccountID); // hacky way to avoid duplicates
+                                db2.SubmitChanges();
+                            }
+                            Console.WriteLine("Failed to delete {0}", todel.Name);
+                        }
                     }
             }
-            db.SubmitChanges();
-            
-
         }
 
         public enum OptionType
