@@ -1,4 +1,5 @@
 import time
+import copy
 from select import * # eww hack but saves the other hack of selectively importing constants
 
 class BaseMultiplexer:
@@ -38,7 +39,7 @@ class BaseMultiplexer:
 				inputs, outputs, errors = self.poll()
 				callback(inputs, outputs, errors)
 			except Exception, e:
-				Print("Error processing poll:%s"%e)
+				print("Error processing poll:%s"%e)
 
 	def empty(self):
 		if not self.sockets: return True
@@ -52,17 +53,18 @@ class SelectMultiplexer(BaseMultiplexer):
 	def poll(self):
 		if not self.sockets: return ([], [] ,[])
 		try: return select(self.sockets, self.output, [], 0.1)
-		except:
-			inputs = []
-			outputs = []
-			errors = []
-			for s in self.sockets:
+		except error:
+			r_inputs = []
+			r_outputs = []
+			r_errors = []
+			#r_sockets = copy.copy(self.sockets)
+			for s in self.sockets.copy():
 				try: select([s], [s], [], 0.01)
 				except:
 					errors.append(s)
 					self.unregister(s)
-			inputs, outputs, _ = select(self.sockets, self.output, [], 0.1)
-			return inputs, outputs, errors
+			r_inputs, r_outputs, _ = select(self.sockets, self.output, [], 0.1)
+			return r_inputs, r_outputs, r_errors
 
 class KqueueMultiplexer(BaseMultiplexer):
 	def __init__(self):

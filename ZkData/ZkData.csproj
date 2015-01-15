@@ -73,6 +73,10 @@
     <Compile Include="Migrations\201501151328048_CaseSensitiveNames.Designer.cs">
       <DependentUpon>201501151328048_CaseSensitiveNames.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201501151611400_AddNameIndex.cs" />
+    <Compile Include="Migrations\201501151611400_AddNameIndex.Designer.cs">
+      <DependentUpon>201501151611400_AddNameIndex.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
     <Compile Include="CurrentLobbyStats.cs" />
@@ -220,6 +224,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201501151328048_CaseSensitiveNames.resx">
       <DependentUpon>201501151328048_CaseSensitiveNames.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501151611400_AddNameIndex.resx">
+      <DependentUpon>201501151611400_AddNameIndex.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
