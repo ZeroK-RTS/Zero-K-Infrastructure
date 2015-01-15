@@ -393,11 +393,11 @@ class DataHandler:
 		except:
 			self.error(traceback.format_exc())
 			
-		self.admin_broadcast('Done reloading.')
+		self.admin_broadcast('Lobby server upgraded to %s'%self.server_version)
 		self.console_write('Done reloading.')
 
 	def reload(self):
-		self.admin_broadcast('Reloading...')
+		#self.admin_broadcast('Reloading...')
 		self.console_write('Reloading...')
 		self.rotatelogfile()
 		self.parseFiles()
