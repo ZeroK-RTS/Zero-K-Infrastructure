@@ -23,7 +23,7 @@ class DataHandler:
 		self.console_buffer = []
 		self.port = 8200
 		self.natport = self.port+1
-		self.latestspringversion = '*'
+		self.latestspringversion = '91.0'
 		self.log = False
 		self.logfile = None
 		self.logfilename = 'server.log'
@@ -292,7 +292,7 @@ class DataHandler:
 	def read_server_version(self):
 		try:
 			with open ("version.txt", "r") as myfile:
-				return myfile.read().replace('\n', '')
+				return myfile.read().replace('\n', '').strip()
 		except Exception, e:
 			print 'Error parsing version.txt: %s' %(e)
 
