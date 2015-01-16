@@ -253,7 +253,7 @@ namespace ZeroKLobby.MicroLobby
             else if (e.Origin == TasSayEventArgs.Origins.Server &&
                      (e.Place == TasSayEventArgs.Places.Motd || e.Place == TasSayEventArgs.Places.MessageBox ||
                       e.Place == TasSayEventArgs.Places.Server || e.Place == TasSayEventArgs.Places.Broadcast)) Trace.TraceInformation("TASC: {0}", e.Text);
-            if (e.Place == TasSayEventArgs.Places.Server || e.Place == TasSayEventArgs.Places.MessageBox || e.Place == TasSayEventArgs.Places.Broadcast) WarningBar.DisplayWarning(e.Text);
+            if (e.Place == TasSayEventArgs.Places.Server || e.Place == TasSayEventArgs.Places.MessageBox || e.Place == TasSayEventArgs.Places.Broadcast) WarningBar.DisplayWarning(e.Text,"Message from server");
         }
 
         void FriendManager_FriendAdded(object sender, EventArgs<string> e)
@@ -271,7 +271,7 @@ namespace ZeroKLobby.MicroLobby
 
         void TasClient_BattleForceQuit(object sender, EventArgs e)
         {
-            WarningBar.DisplayWarning("You were kicked from battle");
+            WarningBar.DisplayWarning("You were kicked from battle","Forced leave battle");
         }
 
         void TasClient_ChannelForceLeave(object sender, TasEventArgs e)
@@ -279,7 +279,7 @@ namespace ZeroKLobby.MicroLobby
             var channelName = e.ServerParams[0];
             var userName = e.ServerParams[1];
             var reason = e.ServerParams[2];
-            WarningBar.DisplayWarning("You have been kicked from chat channel " + channelName + " by " + userName + ".\r\nReason: " + reason);
+            WarningBar.DisplayWarning("You have been kicked from chat channel " + channelName + " by " + userName + ".\r\nReason: " + reason,"Forced leave channel");
             var chatControl = GetChannelControl(channelName);
             if (chatControl != null)
             {
@@ -292,7 +292,7 @@ namespace ZeroKLobby.MicroLobby
         void TasClient_ChannelJoinFailed(object sender, TasEventArgs e)
         {
             if (e.ServerParams[0].Contains("Already in the channel!")) return;
-            WarningBar.DisplayWarning("Channel Joining Error - " + e.ServerParams[0]);
+            WarningBar.DisplayWarning("Channel Joining Error - " + e.ServerParams[0],"Cannot join channel");
         }
 
 
