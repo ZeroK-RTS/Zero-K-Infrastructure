@@ -281,7 +281,7 @@ namespace ZeroKLobby
 
             var spawnCommand = SpringieCommand.Spawn(gameName, battleTitle, password);
 
-            var waitingBar = WarningBar.DisplayWarning("Waiting for AutoHost to start");
+            var waitingBar = WarningBar.DisplayWarning("Waiting for AutoHost to start","Waiting for room");
 
             EventHandler<CancelEventArgs<TasSayEventArgs>> joinGame = null;
             joinGame = (s, e) =>
