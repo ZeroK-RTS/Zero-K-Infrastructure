@@ -18,6 +18,7 @@ namespace NightWatch
 
         public ChatRelay(TasClient zkTas, string password, List<string> channels)
         {
+            this.springTas = new TasClient(null, "ChatRelay", GlobalConst.ZkLobbyUserCpu);
             this.channels = channels;
             this.zkTas = zkTas;
             springTas.LoginAccepted += OnLoginAccepted;
@@ -30,7 +31,7 @@ namespace NightWatch
 
         void SetupSpringTasConnection(string password)
         {
-            springTas = new TasClient(null, "ChatRelay", GlobalConst.ZkLobbyUserCpu);
+            
             springTas.Connect("lobby.springrts.com", 8200);
             springTas.Connected += (sender, args) => springTas.Login(GlobalConst.NightwatchName, password);
             reconnect = new Timer(10000);
