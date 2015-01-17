@@ -59,6 +59,7 @@ namespace ZeroKWeb.Controllers
 				}
 
                 news.HeadlineUntil = nn.HeadlineUntil;
+                string postText = news.Text;
 
                 if (nn.NewsID == 0)
                 {
@@ -70,19 +71,23 @@ namespace ZeroKWeb.Controllers
                                      ForumCategoryID = db.ForumCategories.Single(x => x.IsNews).ForumCategoryID
                                  };
 
-                    string postText = news.Text;
-                    if (!String.IsNullOrWhiteSpace(news.ImageRelativeUrl))
-                    {
-                        postText = "[img]" + news.ImageRelativeUrl + "[/img]" + Environment.NewLine + postText;
-                    }
+                    
                     thread.ForumPosts.Add(new ForumPost() { Created = news.Created, Text = postText, AuthorAccountID = news.AuthorAccountID });
                     db.ForumThreads.InsertOnSubmit(thread);
                     db.SubmitChanges();
                     news.ForumThreadID = thread.ForumThreadID;
                     db.News.InsertOnSubmit(news);
                 }
-                
 			    db.SubmitChanges();
+
+                // do it down here so it gets the correct news ID
+                if (!String.IsNullOrWhiteSpace(news.ImageRelativeUrl) && news.ForumThread != null)
+                {
+                    postText = "[img]" + news.ImageRelativeUrl + "[/img]" + Environment.NewLine + postText;
+                    news.ForumThread.ForumPosts.ElementAt(0).Text = postText;
+                    db.SubmitChanges();
+                }
+
 				if (im != null)
 				{
 					im.Save(Server.MapPath(news.ImageRelativeUrl));
