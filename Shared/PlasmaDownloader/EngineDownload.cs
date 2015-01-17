@@ -24,10 +24,19 @@ namespace PlasmaDownloader
 
         public static List<string> GetEngineList() {
             var engineDownloadPath = GlobalConst.EngineDownloadPath;
-            var data = new WebClient().DownloadString(string.Format("{0}buildbot/default/master/", engineDownloadPath));
-            data += new WebClient().DownloadString(string.Format("{0}buildbot/default/develop/", engineDownloadPath));
-
+            var branchData = new WebClient().DownloadString(string.Format("{0}buildbot/default/", engineDownloadPath));
+            
             var comparer = new VersionNumberComparer();
+            
+            var branches = Regex.Matches(branchData,
+                              "<img src=\"/icons/folder.gif\" alt=\"\\[DIR\\]\"></td><td><a href=\"([^\"]+)/\">\\1/</a>",
+                              RegexOptions.IgnoreCase).OfType<Match>().Select(x => x.Groups[1].Value).OrderBy(x => x, comparer).ToList();
+                              
+            string data = "";
+            foreach (string branch in branches) {
+                data += new WebClient().DownloadString(string.Format("{0}buildbot/default/{1}/", engineDownloadPath, branch));
+            }
+
             var list =
                 Regex.Matches(data,
                               "<img src=\"/icons/folder.gif\" alt=\"\\[DIR\\]\"></td><td><a href=\"([^\"]+)/\">\\1/</a>",
