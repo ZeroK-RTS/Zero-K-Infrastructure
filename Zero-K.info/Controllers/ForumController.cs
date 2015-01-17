@@ -505,7 +505,7 @@ namespace ZeroKWeb.Controllers
             ZkDataContext db = new ZkDataContext();
             if (categoryIDs == null) categoryIDs = new List<int>();
 
-            var posts = db.ForumPosts.Where(x=> (String.IsNullOrEmpty(username) || x.Account.Name == username)
+            var posts = db.ForumPosts.Where(x=> (String.IsNullOrEmpty(username) || x.Account.Name == username && !x.Account.IsDeleted)
                 && (categoryIDs.Count == 0 || categoryIDs.Contains((int)x.ForumThread.ForumCategoryID))
                 && (x.ForumThread.RestrictedClanID == null || x.ForumThread.RestrictedClanID == Global.ClanID)
                 ).OrderByDescending(x=> x.Created).ToList();
