@@ -678,7 +678,8 @@ namespace LobbyClient
         /// <param Name="channel">Channel or User Name</param>
         /// <param Name="inputtext">chat text</param>
         /// <param Name="isEmote">is message emote? (channel or battle only)</param>
-        public void Say(SayPlace place, string channel, string inputtext, bool isEmote)
+        /// <param Name="linePrefix">text to be inserted in front of each line (example: "!pm xyz")</param>
+        public void Say(SayPlace place, string channel, string inputtext, bool isEmote, string linePrefix = "")
         {
             if (String.IsNullOrEmpty(inputtext)) return;
             var lines = inputtext.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -687,7 +688,9 @@ namespace LobbyClient
             {
                 if (String.IsNullOrEmpty(text)) continue;
 
-                var args = new SayingEventArgs(place, channel, text, isEmote);
+                var sentText = linePrefix + text;
+
+                var args = new SayingEventArgs(place, channel, sentText, isEmote);
                 Saying(this, args);
                 if (args.Cancel) continue;
 
