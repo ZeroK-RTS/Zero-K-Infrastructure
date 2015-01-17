@@ -20,12 +20,12 @@ namespace NightWatch
         {
             this.channels = channels;
             this.zkTas = zkTas;
-            SetupSpringTasConnection(password);
-
             springTas.LoginAccepted += OnLoginAccepted;
             zkTas.LoginAccepted += OnLoginAccepted;
             springTas.Said += OnSaid;
             zkTas.Said += OnSaid;
+
+            SetupSpringTasConnection(password);
         }
 
         void SetupSpringTasConnection(string password)
