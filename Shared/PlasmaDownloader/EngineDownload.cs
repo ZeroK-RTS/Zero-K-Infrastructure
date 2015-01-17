@@ -83,8 +83,8 @@ namespace PlasmaDownloader
                                             Name,
                                             archiveName,
                                             platform));
-                    paths.Add(string.Format("{0}buildbot/default/LockFreeLua/{1}/spring_{{develop}}{1}_{2}", engineDownloadPath, Name, archiveName));
-                    paths.Add(string.Format("{0}buildbot/default/LockFreeLua/{1}/{3}/spring_{1}_{2}", engineDownloadPath, Name, archiveName, platform));
+                    paths.Add(string.Format("{0}buildbot/default/LockFreeLua/{1}/spring_{{LockFreeLua}}{1}_{2}", engineDownloadPath, Name, archiveName));
+                    paths.Add(string.Format("{0}buildbot/default/LockFreeLua/{1}/{3}/spring_{{LockFreeLua}}{1}_{2}", engineDownloadPath, Name, archiveName, platform));
 
                     for (var i = 9; i >= -1; i--) {
                         var version = Name;
