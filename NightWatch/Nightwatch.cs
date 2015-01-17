@@ -37,6 +37,7 @@ namespace CaTracker
         AdminCommands adminCommands;
         OfflineMessages offlineMessages;
         PlayerMover playerMover;
+        ChatRelay chatRelay;
         public PayPalInterface PayPalInterface { get; protected set; }
 
         public AuthService Auth { get; private set; }
@@ -87,6 +88,7 @@ namespace CaTracker
             offlineMessages = new OfflineMessages(tas);
             playerMover = new PlayerMover(tas);
             SteamHandler = new NwSteamHandler(tas, new Secrets().GetSteamWebApiKey());
+            chatRelay = new ChatRelay(tas, new Secrets().GetNightwatchPassword(), new List<string>() { "zkdev", "sy", "moddev" }); 
 
 		    PayPalInterface = new PayPalInterface();
 		    PayPalInterface.Error += (e) =>
