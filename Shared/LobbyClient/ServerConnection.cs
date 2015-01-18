@@ -41,7 +41,7 @@ namespace LobbyClient
         /// <param Name="command">command</param>
         /// <param Name="pars">command parameters</param>
         /// <returns></returns>
-        protected override byte[] PrepareCommand(string command, object[] pars)
+        protected override string PrepareCommand(string command, object[] pars)
         {
             var prepstring = command;
             for (var i = 0; i < pars.Length; ++i)
@@ -51,8 +51,8 @@ namespace LobbyClient
                 if (ns != null) s = ns.ToString(); else s = "";
                 if (!string.IsNullOrEmpty(s)) prepstring += (s[0] == '\t' ? "" : " ") + s; // if parameter starts with \t it's sentence seperator and we will ommit space
             }
-            prepstring += '\n';
-            return Encoding.UTF8.GetBytes(prepstring);
+            //prepstring += '\n';
+            return prepstring;
         }
     }
 }

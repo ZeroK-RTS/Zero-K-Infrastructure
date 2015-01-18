@@ -27,10 +27,25 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
 
-     
+        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
+        public ActionResult ChangeAccountDeleted(int accountID, bool isDeleted)
+        {
+            var db = new ZkDataContext();
+            Account acc = db.Accounts.Single(x => x.AccountID == accountID);
+
+            if (acc.IsDeleted != isDeleted)
+            {
+                Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Account {0} {1} deletion status changed by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name), true);
+                Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - {0} -> {1}", acc.IsDeleted, isDeleted), true);
+                acc.IsDeleted = isDeleted;
+            }
+            db.SubmitChanges();
+
+            return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
+        }     
 
         [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
-        public ActionResult ChangePermissions(int accountID, int adminAccountID, int springieLevel, bool zkAdmin, bool vpnException)
+        public ActionResult ChangePermissions(int accountID, int adminAccountID, int springieLevel, bool zkAdmin, bool vpnException, bool isDeleted)
         {
             var db = new ZkDataContext();
             Account acc = db.Accounts.Single(x => x.AccountID == accountID);
@@ -88,7 +103,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult Index(string name, string alias, string ip, int? userID = null)
         {
             var db = new ZkDataContext();
-            IQueryable<Account> ret = db.Accounts.AsQueryable();
+            IQueryable<Account> ret = db.Accounts.Where(x=> !x.IsDeleted).AsQueryable();
 
             if (!string.IsNullOrEmpty(name)) ret = ret.Where(x => x.Name.Contains(name));
             if (!string.IsNullOrEmpty(alias)) ret = ret.Where(x => x.Aliases.Contains(alias));
@@ -102,7 +117,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult NewUsers(string name, string ip, int? userID = null)
         {
             var db = new ZkDataContext();
-            IQueryable<Account> ret = db.Accounts.AsQueryable();
+            IQueryable<Account> ret = db.Accounts.Where(x => !x.IsDeleted).AsQueryable();
 
             if (!string.IsNullOrEmpty(name)) ret = ret.Where(x => x.Name.Contains(name));
             if (!string.IsNullOrEmpty(ip)) ret = ret.Where(x => x.AccountIPs.Any(y => y.IP == ip));

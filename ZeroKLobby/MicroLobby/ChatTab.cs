@@ -79,7 +79,7 @@ namespace ZeroKLobby.MicroLobby
                 (s, e) => { if (Program.TasClient.IsLoggedIn)
                 {
                 	if (Program.TasClient.ExistingUsers.ContainsKey(userName)) Program.TasClient.Say(TasClient.SayPlace.User, userName, e.Data, false);
-									else Program.TasClient.Say(TasClient.SayPlace.User, GlobalConst.NightwatchName, string.Format("!pm {0} {1}", userName, e.Data), false ); // send using PM
+                	else Program.TasClient.Say(TasClient.SayPlace.User, GlobalConst.NightwatchName, e.Data, false, string.Format("!pm {0} ", userName)); // send using PM
                 } };
             return pmControl;
         }
