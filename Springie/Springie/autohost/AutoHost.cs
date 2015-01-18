@@ -61,8 +61,8 @@ namespace Springie.autohost
             this.hostingPort = hostingPort;
 
             
-            string version = config.SpringVersion ?? Program.main.Config.SpringVersion ?? "91.0";
-            springPaths = new SpringPaths(Program.main.paths.GetEngineFolderByVersion(version), writableFolderOverride: Program.main.Config.DataDir);
+            string version = config.SpringVersion ?? Program.main.Config.SpringVersion ?? GlobalConst.DefaultEngineOverride;
+            springPaths = new SpringPaths(Program.main.paths.GetEngineFolderByVersion(version), Program.main.Config.DataDir);
 
             Program.main.paths.SpringVersionChanged += (s, e) =>
                 {
