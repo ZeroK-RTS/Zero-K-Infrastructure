@@ -50,7 +50,7 @@ namespace ZkData.Migrations
                     new ForumCategory { Title = "Planets", IsPlanets = true });
 
                 db.AutohostConfigs.AddOrUpdate(x=>x.Login, new AutohostConfig() {
-                    Login = "Springie",
+                    Login = "Springiee",
                     Title = "Local springie test",
                     Password = "dummy",
                     AutoSpawn = true,

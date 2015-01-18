@@ -278,6 +278,11 @@ namespace ZeroKLobby
         public static void SpawnAutohost(string gameName, string battleTitle, string password, IEnumerable<string> springieCommands)
         {
             var hostSpawnerName = SpringieCommand.GetHostSpawnerName(gameName);
+            if (hostSpawnerName == null) {
+                MessageBox.Show("Unable to locate AutoHost for given game type", "Error",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                return;
+            }
+            
 
             var spawnCommand = SpringieCommand.Spawn(gameName, battleTitle, password);
 
