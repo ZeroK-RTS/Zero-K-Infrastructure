@@ -130,7 +130,7 @@ namespace ZeroKWeb.Controllers
                             var hostname = Dns.GetHostEntry(ip).HostName;
                             if (blockedHosts.Any(hostname.Contains)) blockedHost = true;
 
-                            if (blockedHost) BlockLogin("Connection using proxy or VPN is not allowed! (You can ask for exception)", acc, ip, user_id);
+                            if (blockedHost) return BlockLogin("Connection using proxy or VPN is not allowed! (You can ask for exception)", acc, ip, user_id);
                         }
                     }
                 }
