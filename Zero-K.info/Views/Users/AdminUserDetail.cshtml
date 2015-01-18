@@ -75,7 +75,7 @@
     {
         <span>@Html.PrintAccount(ac)  -  @Html.ActionLink("admin", "AdminUserDetail", new{id=ac.AccountID})</span><br />
     }
-    
+    <br />
     <h2>Abuse reports</h2>
     <table>
     @foreach (var a in Model.AbuseReportsByAccountID)
@@ -86,6 +86,7 @@
     
     @if (Model.PunishmentsByAccountID.Any())
     {
+        <br />
         <h2>Old penalties</h2>
         foreach (Punishment p in Model.PunishmentsByAccountID.Where(x => x.IsExpired))
         {
@@ -93,19 +94,19 @@
         }
     }
 
-
+    <br />
     <h2>Modify user settings</h2>
     Hide country flag: <form method="post" action="@Url.Action("ChangeHideCountry", "Users", new { accountID = Model.AccountID })">@Html.CheckBox("hideCountry")<input type="submit"/></form>
     <br />
     <h2>Modify user permissions</h2>
     <form method="post" action="@Url.Action("ChangePermissions", "Users", new { accountID = Model.AccountID, adminAccountID = Global.AccountID })">
         Springie level: @Html.TextBox("springieLevel", Model.SpringieLevel)
-        Zero K admin: @Html.CheckBox("zkAdmin", Model.IsZeroKAdmin)
+        Zero-K admin: @Html.CheckBox("zkAdmin", Model.IsZeroKAdmin)
         VPN exception: @Html.CheckBox("vpnException", Model.HasVpnException)
         <input type="submit" />
     </form>
 
-
+    <br />
     <h2>Issue a penalty</h2>
     <form action="@Url.Action("Punish", "Users", new { accountID = Model.AccountID })" method="post">
         Reason: @Html.TextBox("reason","Smurf")<br />
@@ -129,7 +130,10 @@
         <input type="submit" value="BAN" class="delete" />
     </form>
 
+    <br />
     <h2>Special functions</h2>
+    Hide ("delete") account: <form method="post" action="@Url.Action("ChangeAccountDeleted", "Users", new { accountID = Model.AccountID })">@Html.CheckBox("isDeleted")<input type="submit"/></form>
+    <br />
     <h3>Delete all posts</h3>
     <form action="@Url.Action("DeleteAllPostsByUser", "Forum", new { accountID = Model.AccountID })" method="post">
         This will <b>permanently</b> remove <b>all</b> of the user's posts.<br />

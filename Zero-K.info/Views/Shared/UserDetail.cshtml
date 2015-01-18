@@ -1,7 +1,14 @@
 @using ZeroKWeb
 @using ZkData
 @model ZkData.Account
-@{ Page.Title = Model.Name + " user page"; }
+@{ 
+    if (!Model.IsDeleted) { Page.Title = Model.Name + " user page"; }
+    else
+    {
+        if (Global.IsZeroKAdmin) { Page.Title = Model.Name + " (hidden) user page"; }
+        else { Page.Title = "Redacted user account"; }
+    }
+}
  
 @if (Model.AccountID == Global.AccountID) {
     foreach (Poll p in Global.Account.ValidPolls().Where(x => x.IsHeadline && (x.RoleTargetAccountID == null || !x.PollVotes.Any(y => y.AccountID == Global.AccountID)))) {
@@ -49,7 +56,7 @@
 <div>
     @if (Model.IsDeleted)
     {
-        <h3>Account hidden</h3>
+        <h3>Account redacted</h3>
         <br />
     }
     @if (!Model.IsDeleted || Global.IsZeroKAdmin || Global.IsLobbyAdmin)
