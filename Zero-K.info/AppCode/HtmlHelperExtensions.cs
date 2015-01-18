@@ -338,7 +338,7 @@ namespace System.Web.Mvc
             else return new MvcHtmlString("");
 
             if (large == false) star = star + "_small";
-            return new MvcHtmlString(string.Format("<img src='/img/stars/{0}.png' alt='Donator star'/>", star));
+            return new MvcHtmlString(string.Format("<a href='http://zero-k.info/Forum/Thread/867' target='_blank' ><img src='/img/stars/{0}.png' alt='Donator star'/></a>", star));
         }
 
         public static MvcHtmlString PrintDropships(this HtmlHelper helper, double? count, Faction faction) {
