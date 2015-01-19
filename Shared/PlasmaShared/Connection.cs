@@ -59,6 +59,8 @@ namespace ZkData
 
         public bool IsConnected { get { return isConnected; } }
 
+        public static Encoding Encoding = new UTF8Encoding(false);
+
 
         public event EventHandler<ConnectionEventArgs> CommandRecieved;
         public event EventHandler<EventArgs<KeyValuePair<string, object[]>>> CommandSent = delegate { };
@@ -131,8 +133,8 @@ namespace ZkData
                 isConnecting = true;
                 await tcp.ConnectAsync(host, port);
                 var stream = tcp.GetStream();
-                reader = new StreamReader(stream, new UTF8Encoding(false));
-                writer = new StreamWriter(stream, new UTF8Encoding(false));
+                reader = new StreamReader(stream, Encoding);
+                writer = new StreamWriter(stream, Encoding);
                 isConnected = true;
                 isConnecting = false;
                 if (Connected != null) Connected(this, EventArgs.Empty);
@@ -165,16 +167,35 @@ namespace ZkData
 
 
 
-        public async Task SendCommand(string command, params object[] parameters) {
-            if (IsConnected) {
-                try {
+        public void SendCommand(string command, params object[] parameters)
+        {
+            if (IsConnected)
+            {
+                try
+                {
                     CommandSent(this, new EventArgs<KeyValuePair<string, object[]>>(new KeyValuePair<string, object[]>(command, parameters)));
-                    lock (writer) writer.WriteLine(PrepareCommand(command, parameters));
-                    await writer.FlushAsync();
-                } catch (Exception ex) {
+                    var buffer = Encoding.GetBytes(PrepareCommand(command, parameters));
+                    tcp.GetStream().BeginWrite(buffer, 0, buffer.Length, CommandSentCallback, this);
+                }
+                catch (Exception ex)
+                {
                     Trace.TraceError("Error sending command {0}", ex);
                     RequestClose();
                 }
+            }
+        }
+
+        static void CommandSentCallback(IAsyncResult res)
+        {
+            var serv = res.AsyncState as Connection;
+            try
+            {
+                serv.tcp.GetStream().EndWrite(res);
+            }
+            catch (Exception ex) 
+            {
+                Trace.TraceError("Eror finalizing write: {0}",ex);
+                serv.RequestClose();
             }
         }
 
