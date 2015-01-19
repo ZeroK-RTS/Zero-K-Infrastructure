@@ -391,7 +391,7 @@ namespace LobbyClient
             {
                 con.ConnectionClosed -= OnConnectionClosed;
                 con.CommandRecieved -= OnCommandRecieved;
-                if (con.IsConnected) con.Close();
+                if (con.IsConnected) con.RequestClose();
             }
             isConnected = false;
             ExistingUsers = new Dictionary<string, User>();

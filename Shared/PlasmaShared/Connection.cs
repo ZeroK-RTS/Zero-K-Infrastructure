@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 #endregion
@@ -65,16 +66,23 @@ namespace ZkData
         public event EventHandler ConnectionClosed;
 
         public void Dispose() {
-            Close();
+            InternalClose();
         }
 
         /// <summary>
         ///     Closes connection to remote server
         /// </summary>
-        public void Close() {
+        public void RequestClose() {
+            cancellationTokenSource.Cancel();
+        }
+
+        private void InternalClose()
+        {
             bool callClosing = false;
-            lock (myLock) {
-                if (isConnected || isConnecting) {
+            lock (myLock)
+            {
+                if (isConnected || isConnecting)
+                {
                     callClosing = true;
                     isConnected = false;
                     isConnecting = false;
@@ -83,15 +91,21 @@ namespace ZkData
                 }
             }
 
-            if (callClosing) {
-                try {
+            if (callClosing)
+            {
+                try
+                {
                     tcp.GetStream().Close();
                     tcp.Close();
-                } catch {}
+                }
+                catch { }
 
-                try {
+                try
+                {
                     if (ConnectionClosed != null) ConnectionClosed(this, EventArgs.Empty);
-                } catch (Exception ex) {
+                }
+                catch (Exception ex)
+                {
                     Trace.TraceError("Error procesing connection close {0}", ex);
                 }
                 ConnectionClosed = null;
@@ -100,11 +114,20 @@ namespace ZkData
 
         StreamReader reader;
         StreamWriter writer;
+        CancellationTokenSource cancellationTokenSource;
 
-        public async Task Connect(string host, int port, string bindingIp = null) {
+        public async Task Connect(string host, int port, string bindingIp = null)
+        {
+            cancellationTokenSource = new CancellationTokenSource();
+
+            var token = cancellationTokenSource.Token;
+
             if (bindingIp == null) tcp = new TcpClient();
             else tcp = new TcpClient(new IPEndPoint(IPAddress.Parse(bindingIp), 0));
-            try {
+            try
+            {
+                token.Register(() => tcp.Close());
+
                 isConnecting = true;
                 await tcp.ConnectAsync(host, port);
                 var stream = tcp.GetStream();
@@ -113,7 +136,8 @@ namespace ZkData
                 isConnected = true;
                 isConnecting = false;
                 if (Connected != null) Connected(this, EventArgs.Empty);
-                while (true) {
+                while (!token.IsCancellationRequested)
+                {
                     var line = await reader.ReadLineAsync();
 
                     ConnectionEventArgs command = null;
@@ -128,25 +152,28 @@ namespace ZkData
                     }
 
                     if (command != null) if (CommandRecieved != null) CommandRecieved(this, command);
-
                 }
-
-            } catch (Exception ex) {
-                Trace.TraceWarning("Socket disconnected: {0}",ex);
-                Close();
             }
+            catch (Exception ex)
+            {
+                if (!token.IsCancellationRequested) Trace.TraceWarning("Socket disconnected: {0}", ex);
+
+            }
+            InternalClose();
         }
+
+
 
 
         public async Task SendCommand(string command, params object[] parameters) {
             if (IsConnected) {
                 try {
                     CommandSent(this, new EventArgs<KeyValuePair<string, object[]>>(new KeyValuePair<string, object[]>(command, parameters)));
-                    await writer.WriteLineAsync(PrepareCommand(command, parameters));
+                    lock (writer) writer.WriteLine(PrepareCommand(command, parameters));
                     await writer.FlushAsync();
                 } catch (Exception ex) {
                     Trace.TraceError("Error sending command {0}", ex);
-                    Close();
+                    RequestClose();
                 }
             }
         }
