@@ -1,5 +1,6 @@
 #region using
 
+using System;
 using System.Text;
 using ZkData;
 
@@ -43,16 +44,20 @@ namespace LobbyClient
         /// <returns></returns>
         protected override string PrepareCommand(string command, object[] pars)
         {
-            var prepstring = command;
-            for (var i = 0; i < pars.Length; ++i)
-            {
-                var ns = pars[i];
+            var sb = new StringBuilder();
+            sb.Append(command);
+            foreach (var ns in pars) {
                 string s;
                 if (ns != null) s = ns.ToString(); else s = "";
-                if (!string.IsNullOrEmpty(s)) prepstring += (s[0] == '\t' ? "" : " ") + s; // if parameter starts with \t it's sentence seperator and we will ommit space
+                
+                if (!string.IsNullOrEmpty(s) && s[0] == '\t') sb.Append(s);// if parameter starts with \t it's sentence seperator and we will ommit space
+                else {
+                    sb.Append(' ');
+                    sb.Append(s);
+                }
             }
-            //prepstring += '\n';
-            return prepstring;
+            sb.Append('\n');
+            return sb.ToString();
         }
     }
 }

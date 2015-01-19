@@ -61,20 +61,14 @@ namespace ZkData
         {
             if (targetFile == null) targetFile = TargetExecutablePath;
             LatestVersion = GetLatestVersion();
-            if (forced || (!string.IsNullOrEmpty(LatestVersion) && LatestVersion != CurrentVersion))
-            {
-
-
-
-                if (UpgradeFile(string.Format("{0}/{1}.exe", urlBase, urlUpdateName), targetFile))
-                {
+            if (forced || (!string.IsNullOrEmpty(LatestVersion) && LatestVersion != CurrentVersion)) {
+                if (UpgradeFile(string.Format("{0}/{1}.exe", urlBase, urlUpdateName), targetFile)) {
                     CurrentVersion = LatestVersion;
                     Trace.TraceInformation("{0} updated to {1}", targetFile, LatestVersion);
                     ProgramUpdated(targetFile);
                     return true;
-                }
-            }
-            return false;
+                } else return false; // failure
+            } else return true; // no failure
         }
 
         public static bool ReplaceFile(string filepath, byte[] data)
