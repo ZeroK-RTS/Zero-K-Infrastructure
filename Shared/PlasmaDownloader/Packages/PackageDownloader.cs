@@ -8,9 +8,11 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Cache;
+using System.Net.Http;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using Newtonsoft.Json;
 using ZkData;
@@ -44,6 +46,8 @@ namespace PlasmaDownloader.Packages
 		public event EventHandler SelectedPackagesChanged = delegate { };
 		public event EventHandler MasterManifestDownloaded = delegate { };
 
+        public DateTime MasterLastModified;
+
 		public PackageDownloader(PlasmaDownloader plasmaDownloader)
 		{
 			this.plasmaDownloader = plasmaDownloader;
@@ -53,7 +57,7 @@ namespace PlasmaDownloader.Packages
 			refreshTimer = new Timer(this.plasmaDownloader.Config.RepoMasterRefresh*1000);
 			refreshTimer.AutoReset = true;
 			refreshTimer.Elapsed += RefreshTimerElapsed;
-			Utils.StartAsync(LoadMasterAndVersions);
+		    LoadMasterAndVersions();
 			refreshTimer.Start();
 		}
 
@@ -120,7 +124,7 @@ namespace PlasmaDownloader.Packages
 			return null;
 		}
 
-		public void LoadMasterAndVersions()
+		public async Task LoadMasterAndVersions()
 		{
 			if (isRefreshing) return;
 			isRefreshing = true;
@@ -129,45 +133,43 @@ namespace PlasmaDownloader.Packages
 				refreshTimer.Stop();
 				var hasChanged = false;
 
-				var wd = new WebClient() { Proxy = null };
-				byte[] repoList = null;
-				try
+                try
 				{
-					repoList = wd.DownloadData(masterUrl + "/repos.gz");
+					var repoList = await Utils.DownloadFile(masterUrl + "/repos.gz", MasterLastModified);
+                    try
+                    {
+                        if (repoList.WasModified) {
+                            if (ParseMaster(new GZipStream(new MemoryStream(repoList.Content), CompressionMode.Decompress))) hasChanged = true;
+                            MasterLastModified = repoList.DateModified;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceError("Error parsing package master {0}", ex);
+                    }
+
 				}
 				catch (Exception ex)
 				{
 					Trace.TraceWarning("Error loading package master from " + masterUrl);
 				}
-				if (repoList != null)
-				{
-					try
-					{
-						if (ParseMaster(new GZipStream(new MemoryStream(repoList), CompressionMode.Decompress))) hasChanged = true;
-					}
-					catch (Exception ex)
-					{
-						Trace.TraceError("Error parsing package master {0}", ex);
-					}
-				}
 
 				// update all repositories 
-				var waitHandles = new List<WaitHandle>();
-				var results = new List<Repository.RefreshResponse>();
+				var waiting = new List<Task<Repository.RefreshResponse>>();
 				foreach (var entry in repositories)
 				{
 					try
 					{
 						var r = entry.Refresh();
-						results.Add(r);
-						waitHandles.Add(r.WaitHandle);
+						waiting.Add(r);
 					}
 					catch (Exception ex)
 					{
 						Trace.TraceError("Could not refresh repository {0}: {1}", entry.BaseUrl, ex);
 					}
 				}
-				WaitHandle.WaitAll(waitHandles.ToArray());//wait until all "repositories" element finish downloading.
+
+                var results = await TaskEx.WhenAll(waiting); //wait until all "repositories" element finish downloading.
 
 				foreach (var result in results)
 				{
@@ -344,70 +346,37 @@ namespace PlasmaDownloader.Packages
 			Dictionary<string, Version> versionsByInternalName = new Dictionary<string, Version>();
 			Dictionary<string, Version> versionsByTag = new Dictionary<string, Version>();
 
-			public string BaseUrl { get; internal set; }
-			public byte[] LastDigest { get; protected set; }
+			public string BaseUrl { get; set; }
+            public DateTime LastModified { get; set; }
 
 			public Dictionary<string, Version> VersionsByInternalName { get { return versionsByInternalName; } }
 
 			public Dictionary<string, Version> VersionsByTag { get { return versionsByTag; } }
 
-			public Repository(string baseUrl)
+		    public Repository() {}
+
+		    public Repository(string baseUrl)
 			{
 				BaseUrl = baseUrl;
 			}
 
-			public RefreshResponse Refresh()
+			public async Task<RefreshResponse> Refresh()
 			{
 				var res = new RefreshResponse();
-				res.WaitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
-				var wc = new WebClient() { Proxy = null};
-				wc.DownloadDataCompleted += (s, digestResult) =>
-					{
-						// digest downloaded
-						if (digestResult.Error != null || digestResult.Cancelled)
-						{
-							// digest download failed
-							Trace.TraceError(string.Format("Failed to download digest for {0}: {1}", BaseUrl, digestResult.Error));
-							res.WaitHandle.Set();
-						}
-						else if (Hash.ByteArrayEquals(LastDigest, digestResult.Result)) res.WaitHandle.Set(); // digest same as before
-						else
-						{
-							// digest new
-
-							var wcRevs = new WebClient() { Proxy = null};
-
-							wcRevs.DownloadDataCompleted += (s2, versionsResult) =>
-								{
-									// version list downloaded
-									try
-									{
-										if (versionsResult.Error != null || versionsResult.Cancelled) Trace.TraceError(string.Format("Failed to download versions from {0}: {1}", BaseUrl, versionsResult.Error));
-										else
-										{
-											List<Version> changes;
-											ParseVersionList(versionsResult.Result, out changes);
-											res.ChangedVersions = changes;
-											res.HasChanged = true;
-											LastDigest = digestResult.Result;
-										}
-									}
-									catch (Exception ex)
-									{
-										Trace.TraceError("Error reading version list from {0}: {1}", BaseUrl, ex);
-									}
-									finally
-									{
-										res.WaitHandle.Set();
-									}
-								};
-
-							wcRevs.DownloadDataAsync(new Uri(BaseUrl + "/versions.gz"));
-							// start version list download
-						}
-					};
-				wc.DownloadDataAsync(new Uri(BaseUrl + "/versions.digest"));
-				return res;
+				
+                try {
+			        var file = await Utils.DownloadFile(BaseUrl + "/versions.gz", LastModified);
+			        if (file.WasModified) {
+			            List<Version> changes;
+			            ParseVersionList(file.Content, out changes);
+			            res.ChangedVersions = changes;
+			            res.HasChanged = true;
+			            LastModified = file.DateModified;
+			        }
+			    } catch (Exception ex) {
+                    Trace.TraceError("Error reading version list from {0}: {1}", BaseUrl, ex);
+			    }
+                return res;
 			}
 
 			void ParseVersionList(byte[] input, out List<Version> changedVersions)
@@ -442,7 +411,6 @@ namespace PlasmaDownloader.Packages
 			{
 				public List<Version> ChangedVersions { get; internal set; }
 				public bool HasChanged { get; internal set; }
-				public EventWaitHandle WaitHandle { get; internal set; }
 			}
 		}
 

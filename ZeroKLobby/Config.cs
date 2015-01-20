@@ -398,7 +398,7 @@ namespace ZeroKLobby
 
 
         [Browsable(false)]
-        public string PackageMasterUrl { get { return " http://repos.springrts.com/"; } }
+        public string PackageMasterUrl { get { return "http://repos.springrts.com/"; } }
     }
 
 
