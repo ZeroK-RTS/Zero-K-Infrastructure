@@ -36,7 +36,7 @@ namespace ZeroKLobby.Notifications
             }
             else
             {
-                LoadMinimapImage(Download.Name);
+                if (Download.TypeOfResource == DownloadType.MAP) LoadMinimapImage(Download.Name);
 
                 var dl = (long)(Download.TotalProgress/100.0*Download.TotalLength);
 

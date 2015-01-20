@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Threading;
 
 #endregion
@@ -18,6 +19,7 @@ namespace PlasmaDownloader
         DateTime lastSpeedAsk = DateTime.Now;
         protected List<Download> neededDownloads = new List<Download>();
         readonly List<Download> parents = new List<Download>();
+        public DownloadType TypeOfResource { get; internal set; }
 
         public int AverageSpeed { get { return (int)((TotalProgress/100.0*TotalLength)/DateTime.Now.Subtract(Started).TotalSeconds); } }
         public int CurrentSpeed
