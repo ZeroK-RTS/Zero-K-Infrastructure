@@ -114,6 +114,7 @@ namespace PlasmaDownloader
                 }
 
                 if (type == DownloadType.MOD || type == DownloadType.UNKNOWN) {
+                    packageDownloader.LoadMasterAndVersions().Wait();
                     var down = packageDownloader.GetPackageDownload(name);
                     if (down != null) {
                         downloads.Add(down);

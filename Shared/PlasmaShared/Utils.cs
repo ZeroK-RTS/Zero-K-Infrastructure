@@ -644,7 +644,7 @@ namespace ZkData
             public DateTime DateModified;
         }
 
-        public static async Task<FileResponse<byte[]>> DownloadFile(string url, DateTime? ifModifiedSince = null, bool executeOnCallerThread = true)
+        public static async Task<FileResponse<byte[]>> DownloadFile(string url, DateTime? ifModifiedSince = null)
         {
             var ms = new MemoryStream();
             var wc = (HttpWebRequest)HttpWebRequest.Create(new Uri(url));
@@ -653,12 +653,12 @@ namespace ZkData
             if (ifModifiedSince != null) wc.IfModifiedSince = ifModifiedSince.Value;
 
             try {
-                using (var response = (HttpWebResponse)await wc.GetResponseAsync().ConfigureAwait(executeOnCallerThread)) {
+                using (var response = (HttpWebResponse)await wc.GetResponseAsync().ConfigureAwait(false)) {
                     ret.WasModified = true;
                     ret.DateModified = response.LastModified;
 
                     using (var stream = response.GetResponseStream()) {
-                        await stream.CopyToAsync(ms).ConfigureAwait(executeOnCallerThread);
+                        await stream.CopyToAsync(ms).ConfigureAwait(false);
                         ret.Content = ms.ToArray();
                         return ret;
                     }
@@ -670,9 +670,9 @@ namespace ZkData
             }
         }
 
-        public static async Task<FileResponse<string>> DownloadString(string url, DateTime? ifModifiedSince = null, bool executeOnCallerThread = true)
+        public static async Task<FileResponse<string>> DownloadString(string url, DateTime? ifModifiedSince = null)
         {
-            var file = await DownloadFile(url, ifModifiedSince, executeOnCallerThread).ConfigureAwait(executeOnCallerThread);
+            var file = await DownloadFile(url, ifModifiedSince).ConfigureAwait(false);
             return new FileResponse<string>() {
                 WasModified = file.WasModified,
                 DateModified = file.DateModified,

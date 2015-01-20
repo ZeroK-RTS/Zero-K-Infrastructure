@@ -135,7 +135,7 @@ namespace PlasmaDownloader.Packages
 
                 try
 				{
-					var repoList = await Utils.DownloadFile(masterUrl + "/repos.gz", MasterLastModified);
+					var repoList = await Utils.DownloadFile(masterUrl + "/repos.gz", MasterLastModified).ConfigureAwait(false);
                     try
                     {
                         if (repoList.WasModified) {
@@ -169,7 +169,7 @@ namespace PlasmaDownloader.Packages
 					}
 				}
 
-                var results = await TaskEx.WhenAll(waiting); //wait until all "repositories" element finish downloading.
+                var results = await TaskEx.WhenAll(waiting).ConfigureAwait(false); //wait until all "repositories" element finish downloading.
 
 				foreach (var result in results)
 				{
@@ -365,7 +365,7 @@ namespace PlasmaDownloader.Packages
 				var res = new RefreshResponse();
 				
                 try {
-			        var file = await Utils.DownloadFile(BaseUrl + "/versions.gz", LastModified);
+                    var file = await Utils.DownloadFile(BaseUrl + "/versions.gz", LastModified).ConfigureAwait(false);
 			        if (file.WasModified) {
 			            List<Version> changes;
 			            ParseVersionList(file.Content, out changes);
