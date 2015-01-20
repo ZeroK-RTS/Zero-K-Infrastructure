@@ -115,7 +115,6 @@ namespace ZkData
         }
 
         StreamReader reader;
-        StreamWriter writer;
         CancellationTokenSource cancellationTokenSource;
 
         public async Task Connect(string host, int port, string bindingIp = null)
@@ -134,7 +133,6 @@ namespace ZkData
                 await tcp.ConnectAsync(host, port);
                 var stream = tcp.GetStream();
                 reader = new StreamReader(stream, Encoding);
-                writer = new StreamWriter(stream, Encoding);
                 isConnected = true;
                 isConnecting = false;
                 if (Connected != null) Connected(this, EventArgs.Empty);
