@@ -9,9 +9,11 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Encoder = System.Drawing.Imaging.Encoder;
 
 #endregion
@@ -634,5 +636,48 @@ namespace ZkData
             return sb.ToString();
         }
 
+
+        public class FileResponse<T>
+        {
+            public T Content;
+            public bool WasModified;
+            public DateTime DateModified;
+        }
+
+        public static async Task<FileResponse<byte[]>> DownloadFile(string url, DateTime? ifModifiedSince = null, bool executeOnCallerThread = true)
+        {
+            var ms = new MemoryStream();
+            var wc = (HttpWebRequest)HttpWebRequest.Create(new Uri(url));
+            var ret = new FileResponse<byte[]>();
+            
+            if (ifModifiedSince != null) wc.IfModifiedSince = ifModifiedSince.Value;
+
+            try {
+                using (var response = (HttpWebResponse)await wc.GetResponseAsync().ConfigureAwait(executeOnCallerThread)) {
+                    ret.WasModified = true;
+                    ret.DateModified = response.LastModified;
+
+                    using (var stream = response.GetResponseStream()) {
+                        await stream.CopyToAsync(ms).ConfigureAwait(executeOnCallerThread);
+                        ret.Content = ms.ToArray();
+                        return ret;
+                    }
+                }
+            }
+            catch (WebException e) {
+                if (e.Response != null && ((HttpWebResponse)e.Response).StatusCode == HttpStatusCode.NotModified) return ret;
+                throw;
+            }
+        }
+
+        public static async Task<FileResponse<string>> DownloadString(string url, DateTime? ifModifiedSince = null, bool executeOnCallerThread = true)
+        {
+            var file = await DownloadFile(url, ifModifiedSince, executeOnCallerThread).ConfigureAwait(executeOnCallerThread);
+            return new FileResponse<string>() {
+                WasModified = file.WasModified,
+                DateModified = file.DateModified,
+                Content = file.Content != null ? Encoding.UTF8.GetString(file.Content) : null
+            };
+        }
     }
 }
