@@ -54,17 +54,22 @@ namespace PlasmaDownloader.Packages
 			masterUrl = this.plasmaDownloader.Config.PackageMasterUrl;
 			LoadRepositories();
 			LoadSelectedPackages();
-			refreshTimer = new Timer(this.plasmaDownloader.Config.RepoMasterRefresh*1000);
-			refreshTimer.AutoReset = true;
-			refreshTimer.Elapsed += RefreshTimerElapsed;
+		    if (plasmaDownloader.Config.RepoMasterRefresh > 0) {
+		        refreshTimer = new Timer(this.plasmaDownloader.Config.RepoMasterRefresh*1000);
+		        refreshTimer.AutoReset = true;
+		        refreshTimer.Elapsed += RefreshTimerElapsed;
+                refreshTimer.Start();
+		    }
 		    LoadMasterAndVersions();
-			refreshTimer.Start();
+           
 		}
 
 		public void Dispose()
 		{
-			refreshTimer.Stop();
-			refreshTimer.Elapsed -= RefreshTimerElapsed;
+		    if (refreshTimer != null) {
+		        refreshTimer.Stop();
+		        refreshTimer.Elapsed -= RefreshTimerElapsed;
+		    }
 		}
 
 		public void DeselectPackage(string name)
@@ -130,7 +135,7 @@ namespace PlasmaDownloader.Packages
 			isRefreshing = true;
 			try
 			{
-				refreshTimer.Stop();
+				if (refreshTimer != null) refreshTimer.Stop();
 				var hasChanged = false;
 
                 try
@@ -180,14 +185,13 @@ namespace PlasmaDownloader.Packages
 				if (hasChanged)
 				{
 					SaveRepositories();
-					PackagesChanged(this, EventArgs.Empty);
+				    Utils.StartAsync(() => PackagesChanged(this, EventArgs.Empty));
 				}
 			}
-			finally
-			{
-				MasterManifestDownloaded(this, EventArgs.Empty);
-				isRefreshing = false;
-				refreshTimer.Start();
+			finally {
+                isRefreshing = false;
+                Utils.StartAsync(()=> MasterManifestDownloaded(this, EventArgs.Empty));
+                if (refreshTimer != null) refreshTimer.Start();
 			}
 		}
 

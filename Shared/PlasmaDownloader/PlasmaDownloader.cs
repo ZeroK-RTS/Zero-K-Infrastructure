@@ -91,6 +91,10 @@ namespace PlasmaDownloader
 
         [CanBeNull]
         public Download GetResource(DownloadType type, string name) {
+/*            if (type == DownloadType.MOD || type == DownloadType.UNKNOWN) {
+                packageDownloader.LoadMasterAndVersions().Wait();
+            }*/
+
             lock (downloads) {
                 downloads.RemoveAll(x => x.IsAborted || x.IsComplete != null); // remove already completed downloads from list}
                 var existing = downloads.SingleOrDefault(x => x.Name == name);
@@ -114,7 +118,6 @@ namespace PlasmaDownloader
                 }
 
                 if (type == DownloadType.MOD || type == DownloadType.UNKNOWN) {
-                    packageDownloader.LoadMasterAndVersions().Wait();
                     var down = packageDownloader.GetPackageDownload(name);
                     if (down != null) {
                         downloads.Add(down);
