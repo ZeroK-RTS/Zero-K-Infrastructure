@@ -60,7 +60,7 @@ namespace ZkData.Migrations
                     JoinChannels = "bots",
                     Map = "dual_icy_run_v3",
                     SpringVersion = GlobalConst.DefaultEngineOverride,
-
+                    MaxPlayers = 10,
                 });
 
             }
