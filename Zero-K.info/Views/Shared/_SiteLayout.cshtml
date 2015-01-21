@@ -38,8 +38,22 @@
             })();
         </script>
         <link rel="icon" href='@Href("~/img/favicon.png")'/>
-        @System.Web.Optimization.Styles.Render("~/bundles/maincss")
-        @System.Web.Optimization.Scripts.Render("~/bundles/main")
+        <link rel="Stylesheet" href='@Href("~/Styles/style.css")' type="text/css" />
+        <link rel="Stylesheet" href='@Href("~/Styles/jquery.qtip.min.css")' type="text/css" />
+        <link rel="Stylesheet" href='@Href("~/Styles/dark-hive/jquery-ui-1.8.14.custom.css")' type="text/css" />
+        <link rel="Stylesheet" href='@Href("~/Styles/nicetitle.css")' type="text/css" />
+        <script type="text/javascript" src='@Href("~/Scripts/MicrosoftAjax.js")' > </script>
+        <script type="text/javascript" src='@Href("~/Scripts/MicrosoftMvcAjax.js")' > </script>
+        <script type="text/javascript" src='@Href("~/Scripts/jquery-1.5.2.min.js")' > </script>
+        <script type="text/javascript" src='@Href("~/Scripts/jquery-ui-1.8.14.custom.min.js")' > </script>
+        <script type="text/javascript" src='@Href("~/Scripts/jquery.ui.stars.js")' > </script>
+        <script type="text/javascript" src='@Href("~/Scripts/jquery.tablesorter.min.js")' > </script>
+        <script type="text/javascript" src='@Href("~/Scripts/jquery.qtip.pack.js")' > </script>
+        <script type="text/javascript" src='@Href("~/Scripts/site_main.js")' > </script> 
+        <script type="text/javascript" src='@Href("~/Scripts/base.js")' > </script>
+        <script type="text/javascript" src='@Href("~/Scripts/browser-css.js")' > </script>
+        <script type="text/javascript" src='@Href("~/Scripts/nicetitle.js")' > </script>
+        <script type="text/javascript" src='@Href("~/Scripts/raphael-min.js")' > </script>
         
         @RenderSection("head", false)
         @if (!Global.IsLobbyAccess && ViewBag.Minimal != true && Request["minimalDesign"] != "1" && !Global.IsWebLobbyAccess) {

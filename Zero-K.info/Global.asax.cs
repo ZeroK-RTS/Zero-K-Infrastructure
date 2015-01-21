@@ -12,7 +12,6 @@ using NightWatch;
 using ServiceStack.Text;
 using ZeroKWeb.Controllers;
 using ZkData;
-using System.Web.Optimization;
 
 namespace ZeroKWeb
 {
@@ -81,8 +80,6 @@ namespace ZeroKWeb
 
         protected void Application_Start()
         {
-            BundleConfig.RegisterBundles(BundleTable.Bundles);
-
             var nw = new Nightwatch(Server.MapPath("/"));
             Application["Nightwatch"] = nw;
             if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running) Application["PwMatchMaker"] = new PlanetWarsMatchMaker(nw.Tas);            
