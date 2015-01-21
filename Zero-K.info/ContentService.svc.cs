@@ -252,8 +252,10 @@ namespace ZeroKWeb
                 bool alreadyCompleted = false;
                 int campID = planet.CampaignID;
                 Campaign camp = planet.Campaign;
-                List<CampaignPlanet> unlockedPlanets = new List<CampaignPlanet>();
-                List<CampaignJournal> unlockedJournals = new List<CampaignJournal>();
+                List<int> unlockedPlanetIDs = new List<int>();
+                List<int> unlockedJournalIDs = new List<int>();
+                //List<CampaignPlanet> unlockedPlanets = new List<CampaignPlanet>();
+                //List<CampaignJournal> unlockedJournals = new List<CampaignJournal>();
 
                 // start with processing the mission vars, if there are any
                 byte[] missionVarsAsByteArray = System.Convert.FromBase64String(missionVars);
@@ -337,12 +339,12 @@ namespace ZeroKWeb
                             {
                                 progress2 = new AccountCampaignProgress() { AccountID = accountID, CampaignID = campID, PlanetID = toUnlock.PlanetID, IsCompleted = false, IsUnlocked = true };
                                 db.AccountCampaignProgress.InsertOnSubmit(progress2);
-                                unlockedPlanets.Add(toUnlock);
+                                unlockedPlanetIDs.Add(toUnlock.PlanetID);
                             }
                             else if (!progress2.IsUnlocked)
                             {
                                 progress2.IsUnlocked = true;
-                                unlockedPlanets.Add(toUnlock);
+                                unlockedPlanetIDs.Add(toUnlock.PlanetID);
                             }
                         }
                     }
@@ -372,42 +374,44 @@ namespace ZeroKWeb
                         {
                             jp = new AccountCampaignJournalProgress() { AccountID = accountID, CampaignID = campID, JournalID = journal.JournalID, IsUnlocked = true };
                             db.AccountCampaignJournalProgress.InsertOnSubmit(jp);
-                            unlockedJournals.Add(journal);
+                            unlockedJournalIDs.Add(journal.JournalID);
                         }
                         else if (!jp.IsUnlocked)
                         {
                             jp.IsUnlocked = true;
-                            unlockedJournals.Add(journal);
+                            unlockedJournalIDs.Add(journal.JournalID);
                         }
                     }
                 }
+                db.SubmitChanges();
+                db = new ZkDataContext();
+                planet = db.CampaignPlanets.FirstOrDefault(p => p.MissionID == missionID);
 
                 //throw new Exception("DEBUG: Campaign " + campID + ", planet " + planet.PlanetID);
                 if (!alreadyCompleted)
                 {
-                    //db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "Planet completed: {0}", planet));
+                    db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "Planet completed: {0}", planet));
                     foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.PlanetID == planet.PlanetID && x.UnlockOnPlanetCompletion))
                     {
-                        unlockedJournals.Add(journal);
+                        unlockedJournalIDs.Add(journal.JournalID);
                     }
                 }
-                foreach (CampaignPlanet unlocked in unlockedPlanets)
+                foreach (int unlockedID in unlockedPlanetIDs)
                 {
-                    //db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "Planet unlocked: {0}", unlocked));
+                    CampaignPlanet unlocked = db.CampaignPlanets.FirstOrDefault(x => x.PlanetID == unlockedID && x.CampaignID == campID);
+                    db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "Planet unlocked: {0}", unlocked));
                     foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.PlanetID == unlocked.PlanetID && x.UnlockOnPlanetUnlock))
                     {
-                        unlockedJournals.Add(journal);
+                        unlockedJournalIDs.Add(journal.JournalID);
                     }
                 }
-                foreach (CampaignJournal uj in unlockedJournals)
+                foreach (int ujid in unlockedJournalIDs)
                 {
-                    //db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "{1} - Journal entry unlocked: {0}", uj, uj.CampaignPlanet));
+                    CampaignJournal uj = db.CampaignJournals.FirstOrDefault(x => x.JournalID == ujid && x.CampaignID == campID);
+                    db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "{1} - Journal entry unlocked: {0}", uj, uj.CampaignPlanet));
                 }
+                db.SubmitChanges();
             }
-            db.SubmitChanges();
         }
-
-   
-
     }
 }
