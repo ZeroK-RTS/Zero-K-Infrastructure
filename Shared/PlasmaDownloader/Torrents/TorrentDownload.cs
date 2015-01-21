@@ -10,7 +10,6 @@ namespace PlasmaDownloader.Torrents
     {
         bool isAborting;
         internal string FileName;
-        internal DownloadType TypeOfResource;
 
         internal TorrentDownload(string name)
         {

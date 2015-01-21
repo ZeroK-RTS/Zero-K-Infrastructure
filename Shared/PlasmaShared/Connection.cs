@@ -115,10 +115,10 @@ namespace ZkData
         }
 
         StreamReader reader;
-        StreamWriter writer;
         CancellationTokenSource cancellationTokenSource;
 
-        public async Task Connect(string host, int port, string bindingIp = null)
+
+        public async Task Connect(string host, int port, string bindingIp = null, bool executeOnCallerThread = true)
         {
             cancellationTokenSource = new CancellationTokenSource();
 
@@ -131,16 +131,15 @@ namespace ZkData
                 token.Register(() => tcp.Close());
 
                 isConnecting = true;
-                await tcp.ConnectAsync(host, port);
+                await tcp.ConnectAsync(host, port).ConfigureAwait(executeOnCallerThread); // see http://blog.stephencleary.com/2012/07/dont-block-on-async-code.html
                 var stream = tcp.GetStream();
                 reader = new StreamReader(stream, Encoding);
-                writer = new StreamWriter(stream, Encoding);
                 isConnected = true;
                 isConnecting = false;
                 if (Connected != null) Connected(this, EventArgs.Empty);
                 while (!token.IsCancellationRequested)
                 {
-                    var line = await reader.ReadLineAsync();
+                    var line = await reader.ReadLineAsync().ConfigureAwait(executeOnCallerThread); ;
 
                     ConnectionEventArgs command = null;
                     try

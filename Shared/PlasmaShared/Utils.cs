@@ -9,9 +9,11 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Encoder = System.Drawing.Imaging.Encoder;
 
 #endregion
@@ -634,5 +636,92 @@ namespace ZkData
             return sb.ToString();
         }
 
+
+        public class FileResponse<T>
+        {
+            public T Content;
+            public bool WasModified;
+            public DateTime DateModified;
+        }
+
+
+        public static FileResponse<byte[]> DownloadFile(string url, DateTime? ifModifiedSince = null)
+        {
+            var ms = new MemoryStream();
+            var wc = (HttpWebRequest)HttpWebRequest.Create(new Uri(url));
+            var ret = new FileResponse<byte[]>();
+
+            if (ifModifiedSince != null) wc.IfModifiedSince = ifModifiedSince.Value;
+
+            try
+            {
+                using (var response = (HttpWebResponse)wc.GetResponse())
+                {
+                    ret.WasModified = true;
+                    ret.DateModified = response.LastModified;
+
+                    using (var stream = response.GetResponseStream())
+                    {
+                        stream.CopyTo(ms);
+                        ret.Content = ms.ToArray();
+                        return ret;
+                    }
+                }
+            }
+            catch (WebException e)
+            {
+                if (e.Response != null && ((HttpWebResponse)e.Response).StatusCode == HttpStatusCode.NotModified) return ret;
+                throw;
+            }
+        }
+
+
+        public static FileResponse<string> DownloadString(string url, DateTime? ifModifiedSince = null)
+        {
+            var file = DownloadFile(url, ifModifiedSince);
+            return new FileResponse<string>()
+            {
+                WasModified = file.WasModified,
+                DateModified = file.DateModified,
+                Content = file.Content != null ? Encoding.UTF8.GetString(file.Content) : null
+            };
+        }
+
+
+        public static async Task<FileResponse<byte[]>> DownloadFileAsync(string url, DateTime? ifModifiedSince = null)
+        {
+            var ms = new MemoryStream();
+            var wc = (HttpWebRequest)HttpWebRequest.Create(new Uri(url));
+            var ret = new FileResponse<byte[]>();
+            
+            if (ifModifiedSince != null) wc.IfModifiedSince = ifModifiedSince.Value;
+
+            try {
+                using (var response = (HttpWebResponse)await wc.GetResponseAsync().ConfigureAwait(false)) {
+                    ret.WasModified = true;
+                    ret.DateModified = response.LastModified;
+
+                    using (var stream = response.GetResponseStream()) {
+                        await stream.CopyToAsync(ms).ConfigureAwait(false);
+                        ret.Content = ms.ToArray();
+                        return ret;
+                    }
+                }
+            }
+            catch (WebException e) {
+                if (e.Response != null && ((HttpWebResponse)e.Response).StatusCode == HttpStatusCode.NotModified) return ret;
+                throw;
+            }
+        }
+
+        public static async Task<FileResponse<string>> DownloadStringAsync(string url, DateTime? ifModifiedSince = null)
+        {
+            var file = await DownloadFileAsync(url, ifModifiedSince).ConfigureAwait(false);
+            return new FileResponse<string>() {
+                WasModified = file.WasModified,
+                DateModified = file.DateModified,
+                Content = file.Content != null ? Encoding.UTF8.GetString(file.Content) : null
+            };
+        }
     }
 }

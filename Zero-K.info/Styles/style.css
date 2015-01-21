@@ -1,12 +1,3 @@
-@import url("fonts.css");
-@import url("base.css");
-@import url("menu.css");
-@import url("nicetitle.css");
-@import url("stars.css");
-@import url("levelrank.css");
-@import url("jquery.ui.stars.css");
-@import url(http://www.google.com/cse/api/branding.css);
-
 .js_tabs {}
 
 html
@@ -133,7 +124,7 @@ div#ajaxScrollProgress
 	padding: 5px;
     border-style: solid;
 	border-radius: 15px;
-	border-image:url("dark-hive/images/tech_button.png") 24 fill / 15px stretch;
+	border-image:url("/styles/dark-hive/images/tech_button.png") 24 fill / 15px stretch;
 	background: #333;
     box-shadow: 0 0 3px 3px #000;
 	-moz-box-shadow: 0 0 3px 3px #000;
@@ -514,7 +505,7 @@ span.button_2text
   border-style: solid;
   border-radius:10px;
   border-color:transparent;
-  border-image: url("dark-hive/images/tech_button.png") 24 24 24 24 fill / 15px 15px 15px 15px;
+  border-image: url("/styles/dark-hive/images/tech_button.png") 24 24 24 24 fill / 15px 15px 15px 15px;
   padding:10px;
 }
 
@@ -522,7 +513,7 @@ span.button_2text
 {
   background-color:#204040;
   border-style: solid;
-  border-image: url("dark-hive/images/tech_button.png") 24 24 24 24 fill / 15px 15px 15px 15px;
+  border-image: url("/styles/dark-hive/images/tech_button.png") 24 24 24 24 fill / 15px 15px 15px 15px;
   border-radius: 10px;
   border-color:transparent;
   max-width: 700px;

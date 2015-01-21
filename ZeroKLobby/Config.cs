@@ -394,11 +394,11 @@ namespace ZeroKLobby
         }
 
         [Browsable(false)]
-        public int RepoMasterRefresh { get { return 120; } }
+        public int RepoMasterRefresh { get { return 0; } }
 
 
         [Browsable(false)]
-        public string PackageMasterUrl { get { return " http://repos.springrts.com/"; } }
+        public string PackageMasterUrl { get { return "http://repos.springrts.com/"; } }
     }
 
 
