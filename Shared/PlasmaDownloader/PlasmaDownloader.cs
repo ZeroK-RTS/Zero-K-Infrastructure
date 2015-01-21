@@ -91,14 +91,19 @@ namespace PlasmaDownloader
 
         [CanBeNull]
         public Download GetResource(DownloadType type, string name) {
-/*            if (type == DownloadType.MOD || type == DownloadType.UNKNOWN) {
-                packageDownloader.LoadMasterAndVersions().Wait();
-            }*/
 
             lock (downloads) {
                 downloads.RemoveAll(x => x.IsAborted || x.IsComplete != null); // remove already completed downloads from list}
-                var existing = downloads.SingleOrDefault(x => x.Name == name);
+                var existing = downloads.FirstOrDefault(x => x.Name == name);
                 if (existing != null) return existing;
+            }
+
+            if (type == DownloadType.MOD || type == DownloadType.UNKNOWN)
+            {
+                packageDownloader.LoadMasterAndVersions(false).Wait();
+            }
+            
+            lock (downloads) {
 
                 if (scanner != null && scanner.HasResource(name)) return null;
 

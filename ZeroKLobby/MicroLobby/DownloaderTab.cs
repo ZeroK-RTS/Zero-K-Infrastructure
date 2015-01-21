@@ -129,7 +129,7 @@ namespace ZeroKLobby.MapDownloader
     void btnReload_Click(object sender, EventArgs e)
     {
         manifestDownloading = true;
-        Program.Downloader.PackageDownloader.LoadMasterAndVersions();
+        Program.Downloader.PackageDownloader.LoadMasterAndVersions(true);
     }
 
     void lbInstalled_DoubleClick(object sender, EventArgs e)
