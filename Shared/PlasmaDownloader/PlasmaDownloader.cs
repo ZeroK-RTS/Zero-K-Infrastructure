@@ -98,14 +98,14 @@ namespace PlasmaDownloader
                 if (existing != null) return existing;
             }
 
+            if (scanner != null && scanner.HasResource(name)) return null;
+            
             if (type == DownloadType.MOD || type == DownloadType.UNKNOWN)
             {
                 packageDownloader.LoadMasterAndVersions(false).Wait();
             }
             
             lock (downloads) {
-
-                if (scanner != null && scanner.HasResource(name)) return null;
 
                 if (type == DownloadType.DEMO) {
                     var target = new Uri(name);
