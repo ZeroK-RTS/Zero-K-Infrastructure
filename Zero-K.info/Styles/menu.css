@@ -40,7 +40,7 @@ ul.menu li:hover > ul /*dropdown part*/
 {
 	display:block;
 	position:absolute;
-	background: #000 url("../img/border-1.png") repeat-x scroll 50% 0;
+	background: #000 url("/img/border-1.png") repeat-x scroll 50% 0;
 	padding: 5px;
     margin: 0px;
 	border: 1px solid #2a8eaf;

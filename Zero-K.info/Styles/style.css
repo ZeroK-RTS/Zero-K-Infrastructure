@@ -1,12 +1,3 @@
-@import url("fonts.css");
-@import url("base.css");
-@import url("menu.css");
-@import url("nicetitle.css");
-@import url("stars.css");
-@import url("levelrank.css");
-@import url("jquery.ui.stars.css");
-@import url(http://www.google.com/cse/api/branding.css);
-
 .js_tabs {}
 
 html
@@ -36,7 +27,7 @@ body
 
 #fadetoblack
 {
-	background: url("../img/fade.png") repeat-y 50% 0;
+	background: url("/img/fade.png") repeat-y 50% 0;
     position: fixed;
     top: 0px;
     left: 0px;
@@ -85,13 +76,13 @@ div#footer
 
 ul.forumtab
 {
-    list-style-image: url("../../Img/bullet.png");
+    list-style-image: url("/img/bullet.png");
     padding-left: 15px;
 }
 
 hr.pretty
 {
-	background: url("../../img/hr_img1.png");
+	background: url("/img/hr_img1.png");
 	width: 80%;
 	height: 1px;
 }
@@ -133,18 +124,11 @@ div#ajaxScrollProgress
 	padding: 5px;
     border-style: solid;
 	border-radius: 15px;
-	border-image:url("dark-hive/images/tech_button.png") 24 fill / 15px stretch;
+	border-image:url("/styles/dark-hive/images/tech_button.png") 24 fill / 15px stretch;
 	background: #333;
     box-shadow: 0 0 3px 3px #000;
 	-moz-box-shadow: 0 0 3px 3px #000;
     -webkit-box-shadow: 0 0 3px 3px #000;
-    
-    /* old border image 
-    -moz-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 10px 10px 10px 10px ;
-    -webkit-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 10px 10px 10px 10px ;
-    -border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 10px 10px 10px 10px ;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=88)";
-    /**/
 }
 
 .ie .border
@@ -158,20 +142,20 @@ div#ajaxScrollProgress
 {
     height: 45px;
     width: 45px;
-    background-image: url("../img/downloadBlue45.png");
+    background-image: url("/img/downloadBlue45.png");
     display: inline-block;
     vertical-align:middle;
 }
 
 .buttonSpan:hover
 {
-    background-image: url("../img/downloadBlue45_2.png");
+    background-image: url("/img/downloadBlue45_2.png");
 }
 
 .textbutton
 {
 	display: inline-block;
-	background: #000 url("../Img/download.png") no-repeat center;
+	background: #000 url("/img/download.png") no-repeat center;
 	color: #38bfec;
 	border-radius: 5px;
 	border: 1px solid #2a8eaf;
@@ -196,7 +180,7 @@ div#ajaxScrollProgress
 {
 	position: relative;
 	display: block;
-	background: #000 url("../Img/download.png") no-repeat center;
+	background: #000 url("/img/download.png") no-repeat center;
 	color: #38bfec;
 	border-radius: 5px;
 	border: 1px solid #2a8eaf;
@@ -300,12 +284,12 @@ span.button_2text
 
 .toggleFalse
 {
-	background: url("../img/bg_black_translucent.png");
+	background: url("/img/bg_black_translucent.png");
 }
 
 .toggleTrue
 {
-	background: url("../img/bg_111_translucent.png");
+	background: url("/img/bg_111_translucent.png");
 }
 
 /* Single Player missions
@@ -529,7 +513,7 @@ span.button_2text
   border-style: solid;
   border-radius:10px;
   border-color:transparent;
-  border-image: url("dark-hive/images/tech_button.png") 24 24 24 24 fill / 15px 15px 15px 15px;
+  border-image: url("/styles/dark-hive/images/tech_button.png") 24 24 24 24 fill / 15px 15px 15px 15px;
   padding:10px;
 }
 
@@ -537,7 +521,7 @@ span.button_2text
 {
   background-color:#204040;
   border-style: solid;
-  border-image: url("dark-hive/images/tech_button.png") 24 24 24 24 fill / 15px 15px 15px 15px;
+  border-image: url("/styles/dark-hive/images/tech_button.png") 24 24 24 24 fill / 15px 15px 15px 15px;
   border-radius: 10px;
   border-color:transparent;
   max-width: 700px;
