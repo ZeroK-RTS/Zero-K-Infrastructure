@@ -479,6 +479,21 @@ span.button_2text
 /* Styles for unitguide
 -----------------------------------------------------------*/
 
+.infoCell
+{
+  background-color:#204040;
+  border-style: solid;
+  border-image: url("dark-hive/images/tech_button.png") 24 24 24 24 fill / 15px 15px 15px 15px;
+  border-radius: 10px;
+  border-color:transparent;
+  max-width: 700px;
+  overflow: hidden;
+  padding:10px;
+  white-space:normal;
+}
+.unitCell{
+    margin-left: 30px; 
+}
 .unitname {
     font-weight:bold;
 }
