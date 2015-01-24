@@ -51,7 +51,8 @@ namespace ZeroKLobby.Notifications
 
 			client.LoginDenied += (s, e) =>
 				{
-          if (e.ServerParams[0] == "Bad username/password" && !string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword) && canRegister)
+                    if (e.ServerParams[0] == "Already logged in.") Program.NotifySection.RemoveBar(this);
+                    else if (e.ServerParams[0] == "Bad username/password" && !string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword) && canRegister)
 					{
 						lbState.Text = "Registering new account";
 						client.Register(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
