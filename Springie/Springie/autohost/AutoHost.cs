@@ -1019,7 +1019,10 @@ namespace Springie.autohost
             Battle b = tas.MyBattle;
             string mapName = b.MapName.ToLower();
 
-            if (SpawnConfig == null) ComResetOptions(TasSayEventArgs.Default, new string[] { });
+            if (SpawnConfig == null) {
+                ComResetOptions(TasSayEventArgs.Default, new string[] { });
+                ComClearBox(TasSayEventArgs.Default, new string[]{});
+            }
 
             try {
                 var serv = GlobalConst.GetSpringieService();
