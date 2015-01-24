@@ -387,7 +387,12 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 
         public void StartManualBattle(int battleID, string password) {
             Trace.TraceInformation("Joining battle {0}", battleID);
-            Program.TasClient.LeaveBattle();
+            var tas = Program.TasClient;
+            if (tas.MyBattle != null) {
+                Battle battle;
+                if (tas.ExistingBattles.TryGetValue(battleID, out battle)) tas.Say(TasClient.SayPlace.Battle, "", string.Format("Going to {0} spring://@join_player:{1}", battle.Title, battle.Founder.Name), true);
+                tas.LeaveBattle();
+            }
             if (!string.IsNullOrEmpty(password)) Program.TasClient.JoinBattle(battleID, password);
             else Program.TasClient.JoinBattle(battleID);
         }
