@@ -46,11 +46,11 @@ namespace ZeroKLobby.MicroLobby
         private const int HardMaximumLines = 2995; //absolute maximum to avoid extreme case. around 11 days of chat or 1% of 3 year of chat
         private int MaxTextLines = 1; //this size is not fixed. It expand when detected spam, and maintain size when new line are added at slow interval.
         private int MaxDisplayLines = 1;
-        //old URL regex for reference: WwwMatch = @"((https?|www\.|spring://)[^\s,]+)";
+        //old URL regex for reference: WwwMatch = @"((https?|www\.|zk://)[^\s,]+)";
         //Regex note: [^<>()] : exclude <<< or >>> or ( or ) at end of URL
         //Regex note: [\w\d:#@%/!;$()~_?\+-=\\\.&]* : include any sort of character 1 or more times
         //Reference: http://en.wikipedia.org/wiki/Regular_expression#Basic_concepts
-        public const string WwwMatch = @"(www\.|www\d\.|(https?|ftp|irc|spring):((//)|(\\\\)))+[\w\d:#@%/!;$()~_?\+-=\\\.&]*[^<>()]"; //from http://icechat.codeplex.com/SourceControl/latest#532131
+        public const string WwwMatch = @"(www\.|www\d\.|(https?|ftp|irc|zk):((//)|(\\\\)))+[\w\d:#@%/!;$()~_?\+-=\\\.&]*[^<>()]"; //from http://icechat.codeplex.com/SourceControl/latest#532131
         int backColor;
         int curHighChar;
         int curHighLine;

@@ -390,7 +390,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
             var tas = Program.TasClient;
             if (tas.MyBattle != null) {
                 Battle battle;
-                if (tas.ExistingBattles.TryGetValue(battleID, out battle)) tas.Say(TasClient.SayPlace.Battle, "", string.Format("Going to {0} spring://@join_player:{1}", battle.Title, battle.Founder.Name), true);
+                if (tas.ExistingBattles.TryGetValue(battleID, out battle)) tas.Say(TasClient.SayPlace.Battle, "", string.Format("Going to {0} zk://@join_player:{1}", battle.Title, battle.Founder.Name), true);
                 tas.LeaveBattle();
             }
             if (!string.IsNullOrEmpty(password)) Program.TasClient.JoinBattle(battleID, password);

@@ -142,7 +142,7 @@ namespace ZeroKWeb
                     foreach (var b in bat.Users.Where(x => x.Name != pwSpec)) tas.ForceJoinBattle(b.Name, targetHost);
                 }
 
-                var text = string.Format("Battle for planet {0} starts on spring://@join_player:{1}  Roster: {2} vs {3}",
+                var text = string.Format("Battle for planet {0} starts on zk://@join_player:{1}  Roster: {2} vs {3}",
                     Challenge.Name,
                     targetHost,
                     string.Join(",", Challenge.Attackers),
