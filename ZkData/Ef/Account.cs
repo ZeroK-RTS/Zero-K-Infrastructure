@@ -92,6 +92,10 @@ namespace ZkData
         public bool IsBot { get; set; }
         [StringLength(100)]
         public string Password { get; set; }
+        
+        [StringLength(150)]
+        public string PasswordBcrypt { get; set; }
+
         [StringLength(5)]
         public string Country { get; set; }
         public int MissionRunCount { get; set; }
@@ -216,6 +220,12 @@ namespace ZkData
         public static Func<ZkDataContext, string, Account> AccountByName = (db, name) => db.Accounts.FirstOrDefault(x => x.Name == name);
 
         public static Func<ZkDataContext, string, string, Account> AccountVerify = (db, login, passwordHash) => db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == passwordHash && !x.IsDeleted);
+
+
+        public void SetPassword(string passwordHash)
+        {
+            PasswordBcrypt = BCrypt.Net.BCrypt.HashPassword(passwordHash);
+        }
 
 
         public static double AdjustEloWeight(double currentWeight, double sumWeight, int sumCount) {
