@@ -82,7 +82,7 @@ namespace ZeroKWeb
         {
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            var nw = new Nightwatch();
+            var nw = new Nightwatch(Server.MapPath("/"));
             Application["Nightwatch"] = nw;
             if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running) Application["PwMatchMaker"] = new PlanetWarsMatchMaker(nw.Tas);            
             Global.Nightwatch.Start();
