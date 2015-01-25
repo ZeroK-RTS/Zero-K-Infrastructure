@@ -14,6 +14,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
 //using LobbyClient;
 //using NightWatch;
@@ -113,18 +114,24 @@ namespace Fixer
             GlobalConst.Mode = ModeType.Test;
             var db = new ZkDataContext();
             var duplicates = db.Accounts.GroupBy(x => x.Name).Where(x => x.Count() > 1).ToList();
-            foreach (var duplicateGroup in duplicates) {
+            foreach (var duplicateGroup in duplicates)
+            {
                 var keep = duplicateGroup.OrderByDescending(x => x.SpringBattlePlayers.Count()).ThenByDescending(x => x.LastLogin).First();
                 foreach (var todel in duplicateGroup.ToList())
-                    if (keep.AccountID != todel.AccountID) {
-                        try {
+                    if (keep.AccountID != todel.AccountID)
+                    {
+                        try
+                        {
                             db.ForumThreadLastReads.DeleteAllOnSubmit(todel.ForumThreadLastReads.ToList());
                             db.AccountBattleAwards.DeleteAllOnSubmit(todel.AccountBattleAwards.ToList());
                             db.Accounts.DeleteOnSubmit(todel);
                             db.SubmitChanges();
                             Console.WriteLine("Deleted {0}", todel.Name);
-                        } catch (Exception ex) {
-                            using (var db2 = new ZkDataContext()) {
+                        }
+                        catch (Exception ex)
+                        {
+                            using (var db2 = new ZkDataContext())
+                            {
                                 var acc = db2.Accounts.Find(todel.AccountID);
                                 acc.IsDeleted = true;
                                 acc.Name = string.Format("___DELETED___{0}", todel.AccountID); // hacky way to avoid duplicates
@@ -208,7 +215,8 @@ namespace Fixer
         [STAThread]
         static void Main(string[] args)
         {
-            FixDuplicatedAccounts();
+            //FixDuplicatedAccounts();
+            BcryptPasswords();
             //var db = new ZkDataContext(true);
             //var test = db.Accounts.OrderByDescending(x => x.EffectiveElo).WithTranslations().Take(5).ToList();
 
@@ -249,7 +257,7 @@ namespace Fixer
             //PlanetwarsFixer.PurgeGalaxy(24, false, true);
             //PlanetwarsFixer.RandomizeMaps(24);
             //SetPlanetTeamSizes();
-            
+
             //RandomizePlanetOwners(24);
             //GenerateStructures(24);
             PlanetwarsFixer.GenerateArtefacts(24, new int[] { 3940, 3949, 3954, 3929, 3956 });
@@ -310,13 +318,13 @@ namespace Fixer
         {
             var db = new ZkDataContext();
             var gal = db.Galaxies.First(x => x.IsDefault);
-            var planets = gal.Planets.ToList().OrderBy(x=>x.Resource.MapDiagonal).ToList();
+            var planets = gal.Planets.ToList().OrderBy(x => x.Resource.MapDiagonal).ToList();
             var cnt = planets.Count;
             int num = 0;
             foreach (var p in planets)
             {
                 //if (num < cnt*0.15) p.TeamSize = 1;else 
-                if (num < cnt*0.80) p.TeamSize = 2;
+                if (num < cnt * 0.80) p.TeamSize = 2;
                 //else if (num < cnt*0.85) p.TeamSize = 3;
                 else p.TeamSize = 3;
                 num++;
@@ -331,11 +339,11 @@ namespace Fixer
             db.SubmitAndMergeChanges();
         }
 
-        
+
         public static void FixHashes()
         {
             var db = new ZkDataContext();
-            foreach (var r in db.Resources.Include(x=>x.ResourceSpringHashes))
+            foreach (var r in db.Resources.Include(x => x.ResourceSpringHashes))
             {
                 var h84 = r.ResourceSpringHashes.Where(x => x.SpringVersion == "84").Select(x => x.SpringHash).SingleOrDefault();
                 var h840 = r.ResourceSpringHashes.Where(x => x.SpringVersion == "84.0").Select(x => x.SpringHash).SingleOrDefault();
@@ -899,7 +907,7 @@ namespace Fixer
 
                 foreach (var resource in db.Resources.Where(x => x.TypeID == ResourceType.Map))//&&x.MapSizeSquared == null))
                 {
-                    var file = String.Format("{0}/{1}.metadata.xml.gz", GlobalConst.SiteDiskPath +  @"\Resources", resource.InternalName.EscapePath());
+                    var file = String.Format("{0}/{1}.metadata.xml.gz", GlobalConst.SiteDiskPath + @"\Resources", resource.InternalName.EscapePath());
                     var map = (Map)new XmlSerializer(typeof(Map)).Deserialize(new MemoryStream(File.ReadAllBytes(file).Decompress()));
 
                     resource.MapWidth = map.Size.Width / 512;
@@ -923,7 +931,7 @@ namespace Fixer
                     resource.MapSizeSquared = (map.Size.Width / 512) * (map.Size.Height / 512);
                     resource.MapSizeRatio = (float)map.Size.Width / map.Size.Height;
 
-                    var minimap = String.Format("{0}/{1}.minimap.jpg", GlobalConst.SiteDiskPath +  @"\Resources", resource.InternalName.EscapePath());
+                    var minimap = String.Format("{0}/{1}.minimap.jpg", GlobalConst.SiteDiskPath + @"\Resources", resource.InternalName.EscapePath());
 
                     using (var im = Image.FromFile(minimap))
                     {
@@ -952,7 +960,7 @@ namespace Fixer
                             var encoderParams = new EncoderParameters(1);
                             encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, 100L);
 
-                            var target = String.Format("{0}/{1}.thumbnail.jpg", GlobalConst.SiteDiskPath +  @"\Resources", resource.InternalName.EscapePath());
+                            var target = String.Format("{0}/{1}.thumbnail.jpg", GlobalConst.SiteDiskPath + @"\Resources", resource.InternalName.EscapePath());
                             correctMinimap.Save(target, jgpEncoder, encoderParams);
                         }
                     }
@@ -995,6 +1003,25 @@ namespace Fixer
         }
 
 
+        public static void BcryptPasswords()
+        {
+            GlobalConst.Mode = ModeType.Test;
+            int cnt = 0;
+            List<Account> list;
+            do
+            {
+                using (var db = new ZkDataContext(false)) {
+                    list = db.Accounts.Where(x => x.PasswordBcrypt == null && x.Password != null).Take(1000).ToList();
+                    list.AsParallel().ForAll(x => {
+                        Interlocked.Increment(ref cnt);
+                        x.PasswordBcrypt = BCrypt.Net.BCrypt.HashPassword(x.Password);
+                        Console.WriteLine(cnt);
+                    });
+                    db.SaveChanges();
+                }
+            } while (list.Count > 0);
+        }
+
         public static void TestPwMatch()
         {
             Global.Nightwatch = new Nightwatch();
@@ -1013,7 +1040,7 @@ namespace Fixer
                 AcceptChallenge();
             });*/
 
-            
+
             Console.ReadLine();
 
         }

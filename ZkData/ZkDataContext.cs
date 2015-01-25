@@ -828,16 +828,20 @@ namespace ZkData
 
         public static Action<ZkDataContext> DataContextCreated = context => { };
 
-        public ZkDataContext()
-            : this(GlobalConst.ZkDataContextConnectionString)
+        public ZkDataContext(): this(true)
+        {
+        }
+
+        public ZkDataContext(bool migrateToLatest = true)
+            : this(GlobalConst.ZkDataContextConnectionString, migrateToLatest)
         {
         }
 
         
-        public ZkDataContext(string connectionString)
+        public ZkDataContext(string connectionString, bool migrateToLatest = true)
             : base(connectionString)
         {
-            if (!wasDbChecked)
+            if (!wasDbChecked && migrateToLatest)
             {
                 lock (locker)
                 {

@@ -1042,7 +1042,7 @@ namespace Springie.autohost
         void tas_Said(object sender, TasSayEventArgs e) {
             if (String.IsNullOrEmpty(e.UserName)) return;
             if (Program.main.Config.RedirectGameChat && e.Place == TasSayEventArgs.Places.Battle && e.Origin == TasSayEventArgs.Origins.Player &&
-                e.UserName != tas.UserName && e.IsEmote == false && !tas.ExistingUsers[e.UserName].BanMute) spring.SayGame("<" + e.UserName + ">" + e.Text);
+                e.UserName != tas.UserName && e.IsEmote == false && !tas.ExistingUsers[e.UserName].BanMute) spring.SayGame(string.Format("<{0}>{1}", e.UserName, e.Text));
             
             // check if it's command
             if (e.Origin == TasSayEventArgs.Origins.Player && !e.IsEmote && e.Text.StartsWith("!")) {
