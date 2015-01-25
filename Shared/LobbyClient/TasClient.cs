@@ -848,7 +848,6 @@ namespace LobbyClient
         {
             // is this really needed for the whole thread? it screws with date formatting
             // Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
             try
             {
                 if (command.StartsWith("#"))
@@ -866,6 +865,7 @@ namespace LobbyClient
                         serverVersion = args[0];
                         int.TryParse(args[2], out serverUdpHolePunchingPort);
                         ServerSpringVersion = args[1];
+                        ConnectionFailed = false;
                         isConnected = true;
                         Connected(this, new TasEventArgs());
                         break;
@@ -1415,6 +1415,10 @@ namespace LobbyClient
                         agreementText.AppendLine(Utils.Glue(args));
                         break;
 
+                    case "PONG":
+                        lastPong = DateTime.UtcNow;
+                        break;
+
                     case "AGREEMENTEND":
                         AgreementRecieved(this, new TasEventAgreementRecieved(agreementText));
                         agreementText = null;
@@ -1529,12 +1533,22 @@ namespace LobbyClient
             Disconnect();
         }
 
+        DateTime lastPing;
+        DateTime lastPong;
+
         void OnPingTimer(object sender, EventArgs args)
         {
-            if (isConnected && con != null) con.SendCommand("PING");
-            else if (!isConnected && ConnectionFailed)
+            if (isConnected && con != null) {
+                if (lastPing != DateTime.MinValue && lastPing.Subtract(lastPong).TotalSeconds > pingInterval*2) {
+                    // server didnt respond to ping in 30-60s 
+                    con.RequestClose();
+                } else {
+                    lastPing = DateTime.UtcNow;
+                    con.SendCommand("PING");
+                }
+            }
+            else if (!isConnected && ConnectionFailed && (con == null || !(con.IsConnected || con.IsConnecting)))
             {
-                ConnectionFailed = false;
                 Connect(serverHost, serverPort);
             }
         }
