@@ -27,7 +27,6 @@ namespace CaTracker
         
         public TasClient Tas { get { return tas; } }
         public static Config config;
-        string webRoot;
         AdminCommands adminCommands;
         OfflineMessages offlineMessages;
         PlayerMover playerMover;
@@ -47,11 +46,10 @@ namespace CaTracker
             return GetPlanetWarsBattles().Where(x => x.MapName == planet.Resource.InternalName).ToList();
         }
 
-        public Nightwatch(string webRoot)
+        public Nightwatch()
 		
         {
             tas = new TasClient(null, "NightWatch", GlobalConst.ZkLobbyUserCpu);
-            this.webRoot = webRoot;
 			config = new Config();
             Trace.Listeners.Add(new NightwatchTraceListener(tas));
         }
@@ -59,13 +57,10 @@ namespace CaTracker
 
 		public bool Start()
 		{
-			if (config.AttemptToRecconnect)
-			{
-				recon = new Timer(config.AttemptReconnectInterval*1000);
-				recon.AutoReset = true;
-				recon.Elapsed += recon_Elapsed;
-			}
-
+    		recon = new Timer(config.AttemptReconnectInterval*1000);
+			recon.AutoReset = true;
+			recon.Elapsed += recon_Elapsed;
+	
 			recon.Enabled = false;
 
 
@@ -138,7 +133,7 @@ namespace CaTracker
 
 		void tas_ConnectionLost(object sender, TasEventArgs e)
 		{
-			recon.Start();
+			//recon.Start();
 		}
 
 		void tas_LoginAccepted(object sender, TasEventArgs e)
