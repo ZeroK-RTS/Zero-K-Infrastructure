@@ -52,12 +52,11 @@ namespace ZkData
     /// </summary>
     public abstract class Connection: IDisposable
     {
-        bool isConnected;
-        bool isConnecting;
         readonly object myLock = new object();
         protected TcpClient tcp;
 
-        public bool IsConnected { get { return isConnected; } }
+        public bool IsConnected { get; private set; }
+        public bool IsConnecting { get; private set; }
 
         public static Encoding Encoding = new UTF8Encoding(false);
 
@@ -83,11 +82,11 @@ namespace ZkData
             bool callClosing = false;
             lock (myLock)
             {
-                if (isConnected || isConnecting)
+                if (IsConnected || IsConnecting)
                 {
                     callClosing = true;
-                    isConnected = false;
-                    isConnecting = false;
+                    IsConnected = false;
+                    IsConnecting = false;
                     CommandRecieved = null;
                     Connected = null;
                 }
@@ -130,12 +129,12 @@ namespace ZkData
             {
                 token.Register(() => tcp.Close());
 
-                isConnecting = true;
+                IsConnecting = true;
                 await tcp.ConnectAsync(host, port).ConfigureAwait(executeOnCallerThread); // see http://blog.stephencleary.com/2012/07/dont-block-on-async-code.html
                 var stream = tcp.GetStream();
                 reader = new StreamReader(stream, Encoding);
-                isConnected = true;
-                isConnecting = false;
+                IsConnected = true;
+                IsConnecting = false;
                 if (Connected != null) Connected(this, EventArgs.Empty);
                 while (!token.IsCancellationRequested)
                 {

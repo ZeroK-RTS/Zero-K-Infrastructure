@@ -47,7 +47,7 @@ namespace ZeroKLobby
         public string Path {
             get { return CurrentPage != null ? CurrentPage.ToString() : string.Empty; }
             set {
-                if (value.ToLower().StartsWith("spring://")) value = value.Substring(9);
+                if (value.ToLower().StartsWith("zk://")) value = value.Substring(5);
 
                 var parts = value.Split('@');
                 for (var i = 1; i < parts.Length; i++) {

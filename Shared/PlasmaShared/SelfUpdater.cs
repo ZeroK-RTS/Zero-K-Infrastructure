@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading;
-using ServiceStack.Text;
+using Newtonsoft.Json;
 
 namespace ZkData
 {
@@ -180,7 +180,7 @@ namespace ZkData
                     man.Entries.Add(new ManifestEntry() { Md5 = md5.ToString(), FileName = fileName, Length = new FileInfo(fileName).Length });
                 }
             }
-            var text = JsonSerializer.SerializeToString(man);
+            var text = JsonConvert.SerializeObject(man);
 
             File.WriteAllText(string.Format("{0}.manifest.txt", urlUpdateName), text);
         }

@@ -925,7 +925,7 @@ namespace Springie.autohost
             }
 
             string welc = config.Welcome;
-            if (welc != "") {
+            if (!string.IsNullOrEmpty(welc)) {
                 welc = welc.Replace("%1", name);
                 welc = welc.Replace("%2", GetUserLevel(name).ToString());
                 welc = welc.Replace("%3", MainConfig.SpringieVersion);
@@ -1019,7 +1019,10 @@ namespace Springie.autohost
             Battle b = tas.MyBattle;
             string mapName = b.MapName.ToLower();
 
-            if (SpawnConfig == null) ComResetOptions(TasSayEventArgs.Default, new string[] { });
+            if (SpawnConfig == null) {
+                ComResetOptions(TasSayEventArgs.Default, new string[] { });
+                ComClearBox(TasSayEventArgs.Default, new string[]{});
+            }
 
             try {
                 var serv = GlobalConst.GetSpringieService();

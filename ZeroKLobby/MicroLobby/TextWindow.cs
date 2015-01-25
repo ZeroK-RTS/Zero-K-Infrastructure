@@ -46,11 +46,11 @@ namespace ZeroKLobby.MicroLobby
         private const int HardMaximumLines = 2995; //absolute maximum to avoid extreme case. around 11 days of chat or 1% of 3 year of chat
         private int MaxTextLines = 1; //this size is not fixed. It expand when detected spam, and maintain size when new line are added at slow interval.
         private int MaxDisplayLines = 1;
-        //old URL regex for reference: WwwMatch = @"((https?|www\.|spring://)[^\s,]+)";
+        //old URL regex for reference: WwwMatch = @"((https?|www\.|zk://)[^\s,]+)";
         //Regex note: [^<>()] : exclude <<< or >>> or ( or ) at end of URL
         //Regex note: [\w\d:#@%/!;$()~_?\+-=\\\.&]* : include any sort of character 1 or more times
         //Reference: http://en.wikipedia.org/wiki/Regular_expression#Basic_concepts
-        public const string WwwMatch = @"(www\.|www\d\.|(https?|ftp|irc|spring):((//)|(\\\\)))+[\w\d:#@%/!;$()~_?\+-=\\\.&]*[^<>()]"; //from http://icechat.codeplex.com/SourceControl/latest#532131
+        public const string WwwMatch = @"(www\.|www\d\.|(https?|ftp|irc|zk):((//)|(\\\\)))+[\w\d:#@%/!;$()~_?\+-=\\\.&]*[^<>()]"; //from http://icechat.codeplex.com/SourceControl/latest#532131
         int backColor;
         int curHighChar;
         int curHighLine;
@@ -350,52 +350,52 @@ namespace ZeroKLobby.MicroLobby
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            if (startHighLine > -1 && curHighLine > -1)
-            {
-                if (curHighLine < startHighLine || (curHighLine == startHighLine && curHighChar < startHighChar))
-                {
-                    int sw = startHighLine; //shift up/down role
-                    startHighLine = curHighLine;
-                    curHighLine = sw;
-                    sw = startHighChar;
-                    startHighChar = curHighChar;
-                    curHighChar = sw;
-                }
-
-                var buildString = new StringBuilder();
-                var tl = displayLines[startHighLine].TextLine;
-                for (var curLine = startHighLine; curLine <= curHighLine; ++curLine) //if have selected multiple line
-                {
-                    if (tl != displayLines[curLine].TextLine)
-                    {
-                        buildString.Append("\r\n");
-                        tl = displayLines[curLine].TextLine;
+            try {
+                if (startHighLine > -1 && curHighLine > -1) {
+                    if (curHighLine < startHighLine || (curHighLine == startHighLine && curHighChar < startHighChar)) {
+                        int sw = startHighLine; //shift up/down role
+                        startHighLine = curHighLine;
+                        curHighLine = sw;
+                        sw = startHighChar;
+                        startHighChar = curHighChar;
+                        curHighChar = sw;
                     }
-                    var s = new StringBuilder(displayLines[curLine].Line.StripAllCodes());
 
-                    /* Filter out non-text */
-                    if (curLine == curHighLine) s = s.Remove(curHighChar, s.Length - curHighChar);
-                    if (curLine == startHighLine) s = s.Remove(0, startHighChar);
+                    var buildString = new StringBuilder();
+                    var tl = displayLines[startHighLine].TextLine;
+                    for (var curLine = startHighLine; curLine <= curHighLine; ++curLine) //if have selected multiple line
+                    {
+                        if (tl != displayLines[curLine].TextLine) {
+                            buildString.Append("\r\n");
+                            tl = displayLines[curLine].TextLine;
+                        }
+                        var s = new StringBuilder(displayLines[curLine].Line.StripAllCodes());
 
-                    buildString.Append(s);
+                        /* Filter out non-text */
+                        if (curLine == curHighLine) s = s.Remove(curHighChar, s.Length - curHighChar);
+                        if (curLine == startHighLine) s = s.Remove(0, startHighChar);
+
+                        buildString.Append(s);
+                    }
+
+                    if (buildString.Length > 0) {
+                        Program.ToolTip.SetText(this, "-----COPIED TO CLIPBOARD-----\n" + buildString.ToString());
+                        //notify user that selection is copied
+                        Clipboard.SetText(buildString.ToString());
+                    }
                 }
 
-                if (buildString.Length > 0)
-                {
-                    Program.ToolTip.SetText(this, "-----COPIED TO CLIPBOARD-----\n" + buildString.ToString()); //notify user that selection is copied
-                    Clipboard.SetText(buildString.ToString());
+                // Supress highlighting
+                startHighLine = -1;
+                if (curHighLine != -1) {
+                    curHighLine = -1;
+                    Invalidate();
                 }
-            }
 
-            // Supress highlighting
-            startHighLine = -1;
-            if (curHighLine != -1)
-            {
-                curHighLine = -1;
-                Invalidate();
+                FocusInputRequested(this, EventArgs.Empty);
+            } catch (Exception ex) {
+                Trace.TraceError("{0}",ex);
             }
-
-            FocusInputRequested(this, EventArgs.Empty);
             base.OnMouseUp(e);
         }
 

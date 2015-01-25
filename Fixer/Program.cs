@@ -997,7 +997,7 @@ namespace Fixer
 
         public static void TestPwMatch()
         {
-            Global.Nightwatch = new Nightwatch(Directory.GetCurrentDirectory());
+            Global.Nightwatch = new Nightwatch();
             Global.Nightwatch.Start();
             Global.PlanetWarsMatchMaker = new PlanetWarsMatchMaker(Global.Nightwatch.Tas);
             var db = new ZkDataContext();

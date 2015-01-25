@@ -17,7 +17,7 @@ namespace Springie.autohost
         static readonly string[] allowedCommands =
         {
             "map", "help", "ring", "vote", "saveboxes", "clearbox", "addbox", "endvote", "maplink", "y", "n",
-            "votemap", "votekick", "kick", "corners", "split"
+            "votemap", "votekick", "kick", "corners", "split", "resign","voteresign", "resetoptions"
         };
         readonly AutoHost ah;
         int count;
