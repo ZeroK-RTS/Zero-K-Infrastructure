@@ -925,7 +925,7 @@ namespace Springie.autohost
             }
 
             string welc = config.Welcome;
-            if (welc != "") {
+            if (!string.IsNullOrEmpty(welc)) {
                 welc = welc.Replace("%1", name);
                 welc = welc.Replace("%2", GetUserLevel(name).ToString());
                 welc = welc.Replace("%3", MainConfig.SpringieVersion);
