@@ -41,7 +41,7 @@ namespace ZeroKLobby.Notifications
 			client.Connected += (s, e) =>
 				{
 					canRegister = false;
-					Program.NotifySection.AddBar(this);
+					Program.NotifySection.RemoveBar(this);
 					lbState.Text = "Connected, logging in ...";
                     if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) LoginWithDialog("Please enter your name and password", true);
 					else client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
@@ -51,8 +51,7 @@ namespace ZeroKLobby.Notifications
 
 			client.LoginDenied += (s, e) =>
 				{
-                    if (e.ServerParams[0] == "Already logged in.") Program.NotifySection.RemoveBar(this);
-                    else if (e.ServerParams[0] == "Bad username/password" && !string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword) && canRegister)
+                    if (e.ServerParams[0] == "Bad username/password" && !string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword) && canRegister)
 					{
 						lbState.Text = "Registering new account";
 						client.Register(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
