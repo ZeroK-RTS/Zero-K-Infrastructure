@@ -9,8 +9,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Threading.Tasks;
 using MonoTorrent.Common;
+using Newtonsoft.Json;
 using PlasmaShared;
-using ServiceStack.Text;
 using ZkData.UnitSyncLib;
 
 #endregion
@@ -480,12 +480,11 @@ namespace ZkData
         void InitialScan()
         {
             CacheFile loadedCache = null;
-            JsConfig.IncludePublicFields = true;
             if (File.Exists(cachePath))
             {
                 try
                 {
-                    using (var fs = File.OpenRead(cachePath)) loadedCache = JsonSerializer.DeserializeFromStream<CacheFile>(fs);
+                   loadedCache = JsonConvert.DeserializeObject<CacheFile>(File.ReadAllText(cachePath));
                 }
                 catch (Exception ex)
                 {
@@ -710,11 +709,10 @@ namespace ZkData
         void SaveCache()
         {
             lock (cache) {
-                JsConfig.IncludePublicFields = true;
                 try
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(cachePath));
-                    using (var fs = File.OpenWrite(cachePath)) JsonSerializer.SerializeToStream(cache, fs);
+                    File.WriteAllText(cachePath, JsonConvert.SerializeObject(cache));
                 }
                 catch (Exception ex)
                 {

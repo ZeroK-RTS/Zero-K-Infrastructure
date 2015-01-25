@@ -9,7 +9,6 @@ using LobbyClient;
 using Newtonsoft.Json;
 using PlasmaShared;
 using ZkData;
-using JsonSerializer = ServiceStack.Text.JsonSerializer;
 using Timer = System.Timers.Timer;
 
 namespace ZeroKWeb

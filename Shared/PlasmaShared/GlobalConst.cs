@@ -1,7 +1,6 @@
 using System;
 using System.ServiceModel;
 using PlasmaShared;
-using ServiceStack.Text;
 
 namespace ZkData
 {
@@ -34,8 +33,6 @@ namespace ZkData
             #else
                 Mode = ModeType.Local;
             #endif
-
-            JsConfig.IncludePublicFields = true;
         }
 
         static void SetMode(ModeType newMode)

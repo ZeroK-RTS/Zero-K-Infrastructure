@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using Newtonsoft.Json;
 using PlasmaShared;
-using ServiceStack.Text;
 using ZkData;
 
 namespace LobbyClient
@@ -120,7 +120,7 @@ namespace LobbyClient
                 }
 
                 if (type != null) {
-                    var decoded = JsonSerializer.DeserializeFromString(payload, type);
+                    var decoded = JsonConvert.DeserializeObject(payload, type);
                     if (decoded != null) JsonDataReceived(e, decoded);
                 }
             } catch (Exception ex) {
@@ -139,7 +139,7 @@ namespace LobbyClient
         }
 
         static string EncodeJson(object data) {
-            var payload = JsonSerializer.SerializeToString(data);
+            var payload = JsonConvert.SerializeObject(data, new JsonSerializerSettings() {Formatting = Formatting.None});
             return string.Format("!JSON {0} {1}", data.GetType().Name, payload);
         }
 

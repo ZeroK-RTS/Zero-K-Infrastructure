@@ -10,7 +10,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using ServiceStack.Text;
+using Newtonsoft.Json;
 using ZkData;
 
 namespace ZkData
@@ -45,7 +45,7 @@ namespace ZkData
             using (var wc = new WebClient()) {
                 var response =
                     wc.DownloadString(string.Format("http://rate-exchange.appspot.com/currency?from={0}&to=EUR&q={1}", fromCurrency, fromAmount));
-                var ret = JsonSerializer.DeserializeFromString<ConvertResponse>(response);
+                var ret = JsonConvert.DeserializeObject<ConvertResponse>(response);
                 return ret.v*conversionMultiplier;
             }
         }

@@ -11,9 +11,9 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using Newtonsoft.Json;
 using PlasmaShared;
 using PlasmaShared.ModStats;
-using ServiceStack.Text;
 using ZkData;
 using Timer = System.Timers.Timer;
 
@@ -196,7 +196,7 @@ namespace LobbyClient
             var text = sb.ToString();
             int whereIsTable = text.IndexOf('{');
             text = text.Substring(whereIsTable); // skip empty line or other info (if exist). Compatibility with Spring 94+
-            var data = JsonSerializer.DeserializeFromString<Dictionary<string, EngineConfigEntry>>(text);
+            var data = JsonConvert.DeserializeObject<Dictionary<string, EngineConfigEntry>>(text);
             return data;
         }
 

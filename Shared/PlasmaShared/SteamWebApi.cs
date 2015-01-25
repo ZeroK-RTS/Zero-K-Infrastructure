@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using ServiceStack.Text;
+using Newtonsoft.Json;
 
 namespace ZkData
 {
@@ -49,7 +49,7 @@ namespace ZkData
                 wc.DownloadString(
                     string.Format("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={0}&steamids={1}", webApiKey, steamID));
 
-            var response = JsonSerializer.DeserializeFromString<PlayerSummariesResposne>(ret);
+            var response = JsonConvert.DeserializeObject<PlayerSummariesResposne>(ret);
             return response.response.players.FirstOrDefault();
         }
 
@@ -74,7 +74,7 @@ namespace ZkData
                     webApiKey,
                     steamAppID,
                     hexToken));
-            var response = JsonSerializer.DeserializeFromString<AuthenticateUserTicketResponse>(ret);
+            var response = JsonConvert.DeserializeObject<AuthenticateUserTicketResponse>(ret);
 
             return response.response.@params.steamid;
         }
