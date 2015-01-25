@@ -862,129 +862,59 @@ namespace LobbyClient
                 switch (command)
                 {
                     case "TASServer": // happens after connecting to server
-                        serverVersion = args[0];
-                        int.TryParse(args[2], out serverUdpHolePunchingPort);
-                        ServerSpringVersion = args[1];
-                        ConnectionFailed = false;
-                        isConnected = true;
-                        Connected(this, new TasEventArgs());
+                        OnTasServer(args);
                         break;
 
                     case "ACCEPTED": // Login accepted
-                        username = args[0];
-                        isLoggedIn = true;
-                        if (LoginAccepted != null) LoginAccepted(this, new TasEventArgs());
+                        OnAccepted(args);
                         break;
 
                     case "DENIED": // login denied
-                        isLoggedIn = false;
-                        LoginDenied(this, new TasEventArgs(Utils.Glue(args)));
+                        OnDenied(args);
                         break;
 
                     case "JOIN": // channel joined
-                    {
-                        if (!JoinedChannels.ContainsKey(args[0])) {
-                            JoinedChannels.Add(args[0], Channel.Create(args[0]));
-
-                            var cancelEventArgs = new CancelEventArgs<TasEventArgs>(new TasEventArgs(args));
-                            PreviewChannelJoined(this, cancelEventArgs);
-                            if (!cancelEventArgs.Cancel) {
-                                ChannelJoined(this, new TasEventArgs(args));
-                            }
-                        }
+                        OnJoin(args);
                         break;
-                    }
 
                     case "JOINFAILED": // channel join failed
                         ChannelJoinFailed(this, new TasEventArgs(Utils.Glue(args)));
                         break;
 
                     case "CHANNEL": // iterating channels
-                    {
-                        var c = new ExistingChannel();
-                        c.name = args[0];
-                        int.TryParse(args[1], out c.userCount);
-                        if (args.Length >= 3) c.topic = Utils.Glue(args, 2);
-                        ExistingChannels.Add(c.name, c);
-                    }
+                        OnChannel(args);
                         break;
 
                     case "ENDOFCHANNELS": // end of channel list iteration
-                        isChanScanning = false;
-                        ChannelListDone(this, new TasEventArgs());
+                        OnEndOfChannels();
                         break;
 
                     case "ADDUSER": // new user joined ta server
-                    {
-                        try
-                        {
-                            var u = User.Create(args[0]);
-                            u.Country = args[1];
-                            int cpu;
-                            int.TryParse(args[2], out cpu);
-                            u.Cpu = cpu;
-                            u.LobbyID = Convert.ToInt32(args[3]);
-                            ExistingUsers.Add(u.Name, u);
-                            UserAdded(this, new EventArgs<User>(u));
-                        }
-                        catch (Exception e)
-                        {
-                            //TraceError ensure bright red coloured message (WriteLine looked harmless):
-                            Trace.TraceError("Error was thrown while processing chat command ADDUSER (check if this event trigger faulty code in application): " + e);
-                        }
-                    }
+                        OnAddUser(args);
                         break;
 
                     case "FORCELEAVECHANNEL":
-                    {
-                        var channel = args[0];
-                        JoinedChannels.Remove(channel);
-                        ChannelForceLeave(this, new TasEventArgs(args));
+                        OnForceLeaveChannel(args);
                         break;
-                    }
 
                     case "FORCEQUITBATTLE":
                         BattleForceQuit(this, EventArgs.Empty);
                         break;
 
                     case "KICKUSER":
-                        Trace.TraceInformation(String.Format("User {0} kicked (we are {1})"), args[1], MyUser.Name);
-                        string us = args[1];
-                        if (us == MyUser.Name)
-                        {
-                            string kicker = args[0];
-                            string reason = args.Length > 2 ? string.Join(" ", args, 2) : null;
-                            KickedFromServer(this, new KickedFromServerEventArgs(kicker, reason));
-                        }
+                        OnKickUser(args);
                         break;
 
                     case "REMOVEUSER": // user left ta server
-                    {
-                        var userName = args[0];
-                        var user = ExistingUsers[userName];
-                        UserRemoved(this, new TasEventArgs(args));
-                        ExistingUsers.Remove(userName);
+                        OnRemoveUser(args);
                         break;
-                    }
 
                     case "MOTD": // server motd
-                        if (args.Length > 0)
-                            InvokeSaid(new TasSayEventArgs(TasSayEventArgs.Origins.Server,
-                                                           TasSayEventArgs.Places.Motd,
-                                                           "",
-                                                           "",
-                                                           Utils.Glue(args, 0),
-                                                           false));
+                        OnMotd(args);
                         break;
 
                     case "SERVERMSG": // server message
-                        HandleSpecialServerMessages(args);
-                        InvokeSaid(new TasSayEventArgs(TasSayEventArgs.Origins.Server,
-                                                       TasSayEventArgs.Places.Server,
-                                                       "",
-                                                       "",
-                                                       Utils.Glue(args, 0),
-                                                       false));
+                        OnServerMsg(args);
                         break;
 
                     case "SERVERMSGBOX": // server messagebox
@@ -1015,13 +945,10 @@ namespace LobbyClient
                         break;
 
                     case "RING":
-
                         Rang(this, new EventArgs<string>(args[0]));
-
                         break;
 
                     case "SAIDEX": // someone said something with emote in channel
-
                         InvokeSaid(new TasSayEventArgs(TasSayEventArgs.Origins.Player,
                                                        TasSayEventArgs.Places.Channel,
                                                        args[0],
@@ -1040,7 +967,6 @@ namespace LobbyClient
                         break;
 
                     case "SAIDPRIVATE": // someone said something to me
-
                         InvokeSaid(new TasSayEventArgs(TasSayEventArgs.Origins.Player,
                                                        TasSayEventArgs.Places.Normal,
                                                        args[0],
@@ -1050,7 +976,6 @@ namespace LobbyClient
                         break;
 
                     case "SAIDBATTLE": // someone said something in battle
-
                         InvokeSaid(new TasSayEventArgs(TasSayEventArgs.Origins.Player,
                                                        TasSayEventArgs.Places.Battle,
                                                        "",
@@ -1078,71 +1003,27 @@ namespace LobbyClient
                         break;
 
                     case "REDIRECT": // server sends backup IP
-                        var host = args[0];
-                        var port = int.Parse(args[1]);
-                        Connect(host, port);
+                        OnRedirect(args);
                         break;
 
                     case "CLIENTSTATUS": // client's status changed
-                    {
-                        int status;
-                        int.TryParse(args[1], out status);
-
-                        var u = ExistingUsers[args[0]];
-                        var old = u.Clone();
-                        u.FromInt(status);
-
-                        if (u.Name == username) lastUserStatus = u.ToInt();
-
-                        if (u.IsInGame && old.IsInGame == false) BattleStarted(this, new EventArgs<User>(u));
-
-                        if (MyBattle != null && MyBattle.Founder.Name == u.Name)
-                        {
-                            if (u.IsInGame && old.IsInGame == false) MyBattleStarted(this, new TasEventArgs(args));
-                            if (!u.IsInGame && old.IsInGame == true) MyBattleHostExited(this, new TasEventArgs(args));
-                        }
-
-                        UserStatusChanged(this, new TasEventArgs(args));
-                    }
+                        OnClientStatus(args);
                         break;
 
                     case "CLIENTS": // client list sent after channel join
-                    {
-                        var usrs = Utils.Glue(args, 1).Split(' ');
-                        foreach (var s in usrs) JoinedChannels[args[0]].ChannelUsers.Add(s);
-                        ChannelUsersAdded(this, new TasEventArgs(args));
-                    }
+                        OnClients(args);
                         break;
 
                     case "JOINED": // user joined one of my channels
-                    {
-                        var channelName = args[0];
-                        var userName = args[1];
-                        var channel = JoinedChannels[channelName];
-                        channel.ChannelUsers.Add(userName);
-                        ChannelUserAdded(this, new TasEventArgs(channelName, userName));
-                    }
+                        OnJoined(args);
                         break;
 
                     case "LEFT": // user left one of my channels
-                    {
-                        var channelName = args[0];
-                        var userName = args[1];
-                        var reason = Utils.Glue(args, 2);
-                        var channel = JoinedChannels[channelName];
-                        channel.ChannelUsers.Remove(userName);
-                        ChannelUserRemoved(this, new TasEventArgs(channelName, userName, reason));
+                        OnLeft(args);
                         break;
-                    }
 
                     case "CHANNELTOPIC": // channel topic update (after joining a channel)
-                    {
-                        var c = JoinedChannels[args[0]];
-                        c.TopicSetBy = args[1];
-                        c.TopicSetDate = ConvertMilisecondTime(args[2]);
-                        c.Topic = Utils.Glue(args, 3);
-                        ChannelTopicChanged(this, new TasEventArgs(args[0]));
-                    }
+                        OnChannelTopic(args);
                         break;
 
                     case "OPENBATTLEFAILED": // opening new battle has failed
@@ -1150,16 +1031,7 @@ namespace LobbyClient
                         break;
 
                     case "OPENBATTLE": // openbattle ok
-                    {
-                        MyBattleID = int.Parse(args[0]);
-                        existingBattles[MyBattleID] = MyBattle;
-                        var self = new UserBattleStatus(username, existingUsers[username]);
-                        MyBattle.Users.Add(self); // add self
-                        lastUserBattleStatus = self.ToInt();
-                        UpdateBattleDetails(MyBattle.Details);
-                        // SetScriptTag(MyBattle.Mod.GetDefaultModOptionsTags()); // sends default mod options // enable if tasclient is not fixed
-                        BattleOpened(this, new TasEventArgs(args[0]));
-                    }
+                        OnOpenBattle(args);
                         break;
 
                     case "REQUESTBATTLESTATUS": // ask for status at the beginning of the battle
@@ -1167,252 +1039,67 @@ namespace LobbyClient
                         break;
 
                     case "JOINBATTLE": // we joined the battle
-                    {
-                        var joinedBattleID = Int32.Parse(args[0]);
-                        MyBattleID = joinedBattleID;
-                        var battle = existingBattles[joinedBattleID];
-                        battle.Bots.Clear();
-                        MyBattle = battle;
-                        BattleJoined(this, new EventArgs<Battle>(MyBattle));
-                    }
+                        OnJoinBattle(args);
                         break;
 
                     case "FORCEJOINBATTLE":
-                    {
-                        if (MyBattle != null) LeaveBattle();
-                        var battleid = Int32.Parse(args[0]);
-                        if (args.Length == 1) JoinBattle(battleid);
-                        else JoinBattle(battleid, args[1]);
-                    }
+                        OnForceJoinBattle(args);
                         break;
 
                     case "JOINEDBATTLE": // user joined the battle
-                    {
-                        var joinedBattleID = Int32.Parse(args[0]);
-                        Battle battle;
-                        if (!existingBattles.TryGetValue(joinedBattleID, out battle)) break;
-                        var userName = args[1];
-                        var scriptPassword = args.Length > 2 ? args[2] : null;
-                        var ubs = new UserBattleStatus(userName, existingUsers[userName], scriptPassword);
-                        battle.Users.Add(ubs);
-                        ExistingUsers[userName].IsInBattleRoom = true;
-                        if (userName == username) lastUserBattleStatus = ubs.ToInt();
-                        BattleUserJoined(this, new BattleUserEventArgs(userName, joinedBattleID, scriptPassword));
-                    }
+                        OnJoinedBattle(args);
                         break;
 
                     case "JOINBATTLEFAILED": // user failed to join battle 
-                    {
                         JoinBattleFailed(this, new TasEventArgs(args));
-                    }
                         break;
 
                     case "ADDBOT": // bot added to battle
-                        if (MyBattle != null && int.Parse(args[0]) == MyBattleID)
-                        {
-                            var bs = new BotBattleStatus(args[1], args[2], Utils.Glue(args, 5));
-                            bs.SetFrom(int.Parse(args[3]), int.Parse(args[4]));
-                            MyBattle.Bots.Add(bs);
-                            BattleBotAdded(this, new EventArgs<BotBattleStatus>(bs));
-                        }
+                        OnAddBot(args);
                         break;
 
                     case "REMOVEBOT": // bot removed from battle
-                        if (MyBattle != null && int.Parse(args[0]) == MyBattleID)
-                        {
-                            var toDel = MyBattle.Bots.Single(bot => bot.Name == args[1]);
-                            MyBattle.Bots.Remove(toDel);
-                            BattleBotRemoved(this, new EventArgs<BotBattleStatus>(toDel));
-                        }
+                        OnRemoveBot(args);
                         break;
 
                     case "UPDATEBOT": // bot data changed
-                        if (MyBattle != null && int.Parse(args[0]) == MyBattleID)
-                        {
-                            var st = MyBattle.Bots.Single(bot => bot.Name == args[1]);
-                            st.SetFrom(int.Parse(args[2]), int.Parse(args[3]));
-                            BattleBotUpdated(this, new EventArgs<BotBattleStatus>(st));
-                        }
+                        OnUpdateBot(args);
                         break;
 
                     case "LEFTBATTLE": // user left the battle
-                    {
-                        var battleID = Int32.Parse(args[0]);
-                        var user = args[1];
-                        Battle battle;
-                        if (!existingBattles.TryGetValue(battleID, out battle)) break;
-                        if (!existingUsers.ContainsKey(user)) break;
-                        battle.RemoveUser(user);
-                        battle.ScriptTags.Clear();
-                        var userName = args[1];
-                        ExistingUsers[userName].IsInBattleRoom = false;
-
-                        if (MyBattle != null && battleID == MyBattleID)
-                        {
-                            if (MyBattle.Founder.Name == UserName) UpdateSpectators();
-                            if (user == username)
-                            {
-                                MyBattle = null;
-                                MyBattleID = 0;
-                                BattleClosed(this, new EventArgs<Battle>(battle));
-                            }
-                        }
-                        BattleUserLeft(this, new BattleUserEventArgs(userName, battleID));
-                    }
+                        OnLeftBattle(args);
                         break;
 
                     case "CLIENTBATTLESTATUS": // player battle status has changed
-                    {
-                        var userIndex = MyBattle.GetUserIndex(args[0]);
-                        if (userIndex != -1)
-                        {
-                            var battleStatus = MyBattle.Users[userIndex];
-                            battleStatus.SetFrom(int.Parse(args[1]), int.Parse(args[2]));
-                            MyBattle.Users[userIndex] = battleStatus;
-                            if (MyBattle.Founder.Name == username) UpdateSpectators(); 
-                            if (battleStatus.Name == username)
-                            {
-                                lastUserBattleStatus = battleStatus.ToInt();
-                                BattleMyUserStatusChanged(this, new TasEventArgs(args));
-                            }
-                            BattleUserStatusChanged(this, new TasEventArgs(args));
-                        }
-                    }
+                        OnClientBattleStatus(args);
                         break;
 
                     case "UPDATEBATTLEINFO": // update external battle info (lock and map)
-                    {
-                        var battleID = Int32.Parse(args[0]);
-                        var specCount = Int32.Parse(args[1]);
-                        var mapName = Utils.Glue(args, 4);
-                        var mapHash = Int32.Parse(args[3]);
-                        var isLocked = Int32.Parse(args[2]) > 0;
-
-                        Battle battle;
-                        if (!existingBattles.TryGetValue(battleID, out battle)) break;
-                        battle.SpectatorCount = specCount;
-
-                        var bi = new BattleInfoEventArgs(battleID, specCount, mapName, mapHash, isLocked);
-
-                        if (battle.MapName != mapName || battle.MapHash != mapHash)
-                        {
-                            battle.MapName = mapName;
-                            battle.MapHash = mapHash;
-                            if (battle == MyBattle) MyBattleMapChanged(this, bi);
-                            BattleMapChanged(this, bi);
-                        }
-
-                        if (battle.IsLocked != isLocked)
-                        {
-                            battle.IsLocked = isLocked;
-                            BattleLockChanged(this, bi);
-                        }
-                        BattleInfoChanged(this, bi);
-                    }
+                        OnUpdateBattleInfo(args);
                         break;
 
                     case "BATTLEOPENED":
-                    {
-                        var mapHash = args[9];
-                        var rest = Utils.Glue(args, 10).Split('\t');
-                        var mapName = rest[2];
-                        var modName = rest[4];
-                        if (!IsBattleVisible(modName)) break;
-
-                        var newBattle = new Battle
-                                        {
-                                            BattleID = Int32.Parse(args[0]),
-                                            IsReplay = args[1] != "0",
-                                            Founder = ExistingUsers[args[3]],
-                                            Ip = args[4],
-                                            HostPort = Int32.Parse(args[5]),
-                                            MaxPlayers = Int32.Parse(args[6]),
-                                            Password = args[7] != "1" ? "*" : "apassword",
-                                            Rank = Int32.Parse(args[8]),
-                                            EngineVersion = rest[1],
-                                            EngineName =rest[0]
-                                            
-                                        };
-
-                        if (newBattle.Founder.Name == username) newBattle.Ip = localIp; // lobby can send wahtever, betteroverride here
-
-                        // NatType = Int32.Parse(args[2]); // todo: correctly add nattype
-                        newBattle.MapName = mapName;
-                        newBattle.MapHash = Int32.Parse(mapHash);
-                        newBattle.Title = rest[3];
-                        newBattle.ModName = modName;
-                        newBattle.Users.Add(new UserBattleStatus(newBattle.Founder.Name, newBattle.Founder));
-                        existingBattles[newBattle.BattleID] = newBattle;
-                        newBattle.Founder.IsInBattleRoom = true;
-                        BattleFound(this, new EventArgs<Battle>(newBattle));
+                        OnBattleOpened(args);
                         break;
-                    }
 
                     case "BATTLECLOSED":
-                    {
-                        var battleID = Int32.Parse(args[0]);
-                        Battle battle;
-                        if (!existingBattles.TryGetValue(battleID, out battle)) break;
-                        foreach (var u in battle.Users)
-                        {
-                            User user;
-                            if (ExistingUsers.TryGetValue(u.Name, out user)) user.IsInBattleRoom = false;
-                        }
-                        if (battle == MyBattle)
-                        {
-                            battle.ScriptTags.Clear();
-                            battle.Users.Clear();
-                            BattleClosed(this, new EventArgs<Battle>(battle));
-                            MyBattleEnded(this, new EventArgs<Battle>(battle));
-                        }
-                        BattleEnding(this, new EventArgs<Battle>(battle));
-                        existingBattles.Remove(battleID);
-                        BattleEnded(this, new EventArgs<Battle>(battle));
-                    }
+                        OnBattleClosed(args);
                         break;
 
                     case "CLIENTIPPORT":
-                    {
-                        var idx = MyBattle.GetUserIndex(args[0]);
-                        if (idx != -1)
-                        {
-                            var bs = MyBattle.Users[idx];
-                            bs.ip = IPAddress.Parse(args[1]);
-                            bs.port = int.Parse(args[2]);
-                            MyBattle.Users[idx] = bs;
-                            BattleUserIpRecieved(this, new TasEventArgs(args));
-                        }
-                    }
+                        OnClientIpPort(args);
                         break;
 
                     case "SETSCRIPTTAGS": // updates internal battle details
-                    {
-                        var bd = new BattleDetails();
-                        bd.Parse(Utils.Glue(args), MyBattle.ModOptions);
-                        MyBattle.Details = bd;
-                        MyBattle.ScriptTags.AddRange(args);
-                        BattleDetailsChanged(this, new TasEventArgs(args));
-                    }
+                        OnSetScriptTags(args);
                         break;
 
                     case "UDPSOURCEPORT":
-                        udpPunchingTimer.Stop();
-                        if (startingAfterUdpPunch)
-                        {
-                            startingAfterUdpPunch = false;
-
-                            // send UDP packets to client (2x to be sure)
-                            foreach (var ubs in MyBattle.Users) if (ubs.ip != IPAddress.None && ubs.port != 0) SendUdpPacket(lastUdpSourcePort, ubs.ip.ToString(), ubs.port);
-                            foreach (var ubs in MyBattle.Users) if (ubs.ip != IPAddress.None && ubs.port != 0) SendUdpPacket(lastUdpSourcePort, ubs.ip.ToString(), ubs.port);
-
-                            MyBattle.HostPort = lastUdpSourcePort; // update source port for hosting and start it
-                            ChangeMyUserStatus(false, true);
-                        }
+                        OnUdpSourcePort();
                         break;
 
                     case "AGREEMENT":
-                        if (agreementText == null) agreementText = new StringBuilder();
-                        agreementText.AppendLine(Utils.Glue(args));
+                        OnAgreement(args);
                         break;
 
                     case "PONG":
@@ -1420,8 +1107,7 @@ namespace LobbyClient
                         break;
 
                     case "AGREEMENTEND":
-                        AgreementRecieved(this, new TasEventAgreementRecieved(agreementText));
-                        agreementText = null;
+                        OnAgreementEnd();
                         break;
 
                     case "REGISTRATIONDENIED":
@@ -1433,27 +1119,17 @@ namespace LobbyClient
                         break;
 
                     case "ADDSTARTRECT":
-                    {
-                        var allyNo = int.Parse(args[0]);
-                        var left = int.Parse(args[1]);
-                        var top = int.Parse(args[2]);
-                        var right = int.Parse(args[3]);
-                        var bottom = int.Parse(args[4]);
-                        var rect = new BattleRect(left, top, right, bottom);
-                        MyBattle.Rectangles[allyNo] = rect;
-                        StartRectAdded(this, new TasEventArgs(args));
-                    }
+                        OnAddStartRect(args);
                         break;
+
                     case "REMOVESTARTRECT":
-                    {
-                        var allyNo = int.Parse(args[0]);
-                        MyBattle.Rectangles.Remove(allyNo);
-                        StartRectRemoved(this, new TasEventArgs(args));
-                    }
+                        OnRemoveStartRect(args);
                         break;
+
                     case "TESTLOGINACCEPT":
                         TestLoginAccepted(this, new TasEventArgs(args));
                         break;
+
                     case "TESTLOGINDENY":
                         TestLoginDenied(this, new TasEventArgs(args));
                         break;
@@ -1464,6 +1140,433 @@ namespace LobbyClient
                 //not throwing "ApplicationException" because we can explicitly say its application fault here:
                 Trace.TraceError("TASC error: Error was thrown while processing chat command {0} \"{1}\" (check if chat event trigger faulty code in application): {2}", command, Utils.Glue(args), e);
             }
+        }
+
+        void OnRemoveStartRect(string[] args)
+        {
+            var allyNo = int.Parse(args[0]);
+            MyBattle.Rectangles.Remove(allyNo);
+            StartRectRemoved(this, new TasEventArgs(args));
+        }
+
+        void OnAddStartRect(string[] args)
+        {
+            var allyNo = int.Parse(args[0]);
+            var left = int.Parse(args[1]);
+            var top = int.Parse(args[2]);
+            var right = int.Parse(args[3]);
+            var bottom = int.Parse(args[4]);
+            var rect = new BattleRect(left, top, right, bottom);
+            MyBattle.Rectangles[allyNo] = rect;
+            StartRectAdded(this, new TasEventArgs(args));
+        }
+
+        void OnAgreementEnd()
+        {
+            AgreementRecieved(this, new TasEventAgreementRecieved(agreementText));
+            agreementText = null;
+        }
+
+        void OnAgreement(string[] args)
+        {
+            if (agreementText == null) agreementText = new StringBuilder();
+            agreementText.AppendLine(Utils.Glue(args));
+        }
+
+        void OnUdpSourcePort()
+        {
+            udpPunchingTimer.Stop();
+            if (startingAfterUdpPunch) {
+                startingAfterUdpPunch = false;
+
+                // send UDP packets to client (2x to be sure)
+                foreach (var ubs in MyBattle.Users) if (ubs.ip != IPAddress.None && ubs.port != 0) SendUdpPacket(lastUdpSourcePort, ubs.ip.ToString(), ubs.port);
+                foreach (var ubs in MyBattle.Users) if (ubs.ip != IPAddress.None && ubs.port != 0) SendUdpPacket(lastUdpSourcePort, ubs.ip.ToString(), ubs.port);
+
+                MyBattle.HostPort = lastUdpSourcePort; // update source port for hosting and start it
+                ChangeMyUserStatus(false, true);
+            }
+        }
+
+        void OnSetScriptTags(string[] args)
+        {
+            var bd = new BattleDetails();
+            bd.Parse(Utils.Glue(args), MyBattle.ModOptions);
+            MyBattle.Details = bd;
+            MyBattle.ScriptTags.AddRange(args);
+            BattleDetailsChanged(this, new TasEventArgs(args));
+        }
+
+        void OnClientIpPort(string[] args)
+        {
+            var idx = MyBattle.GetUserIndex(args[0]);
+            if (idx != -1) {
+                var bs = MyBattle.Users[idx];
+                bs.ip = IPAddress.Parse(args[1]);
+                bs.port = int.Parse(args[2]);
+                MyBattle.Users[idx] = bs;
+                BattleUserIpRecieved(this, new TasEventArgs(args));
+            }
+        }
+
+        void OnBattleClosed(string[] args)
+        {
+            var battleID = Int32.Parse(args[0]);
+            Battle battle;
+            if (!existingBattles.TryGetValue(battleID, out battle)) return;
+            foreach (var u in battle.Users) {
+                User user;
+                if (ExistingUsers.TryGetValue(u.Name, out user)) user.IsInBattleRoom = false;
+            }
+            if (battle == MyBattle) {
+                battle.ScriptTags.Clear();
+                battle.Users.Clear();
+                BattleClosed(this, new EventArgs<Battle>(battle));
+                MyBattleEnded(this, new EventArgs<Battle>(battle));
+            }
+            BattleEnding(this, new EventArgs<Battle>(battle));
+            existingBattles.Remove(battleID);
+            BattleEnded(this, new EventArgs<Battle>(battle));
+        }
+
+        void OnBattleOpened(string[] args)
+        {
+            var mapHash = args[9];
+            var rest = Utils.Glue(args, 10).Split('\t');
+            var mapName = rest[2];
+            var modName = rest[4];
+            if (!IsBattleVisible(modName)) return;
+
+            var newBattle = new Battle {
+                BattleID = Int32.Parse(args[0]),
+                IsReplay = args[1] != "0",
+                Founder = ExistingUsers[args[3]],
+                Ip = args[4],
+                HostPort = Int32.Parse(args[5]),
+                MaxPlayers = Int32.Parse(args[6]),
+                Password = args[7] != "1" ? "*" : "apassword",
+                Rank = Int32.Parse(args[8]),
+                EngineVersion = rest[1],
+                EngineName = rest[0]
+            };
+
+            if (newBattle.Founder.Name == username) newBattle.Ip = localIp; // lobby can send wahtever, betteroverride here
+
+            // NatType = Int32.Parse(args[2]); // todo: correctly add nattype
+            newBattle.MapName = mapName;
+            newBattle.MapHash = Int32.Parse(mapHash);
+            newBattle.Title = rest[3];
+            newBattle.ModName = modName;
+            newBattle.Users.Add(new UserBattleStatus(newBattle.Founder.Name, newBattle.Founder));
+            existingBattles[newBattle.BattleID] = newBattle;
+            newBattle.Founder.IsInBattleRoom = true;
+            BattleFound(this, new EventArgs<Battle>(newBattle));
+            return;
+        }
+
+        void OnUpdateBattleInfo(string[] args)
+        {
+            var battleID = Int32.Parse(args[0]);
+            var specCount = Int32.Parse(args[1]);
+            var mapName = Utils.Glue(args, 4);
+            var mapHash = Int32.Parse(args[3]);
+            var isLocked = Int32.Parse(args[2]) > 0;
+
+            Battle battle;
+            if (!existingBattles.TryGetValue(battleID, out battle)) return;
+            battle.SpectatorCount = specCount;
+
+            var bi = new BattleInfoEventArgs(battleID, specCount, mapName, mapHash, isLocked);
+
+            if (battle.MapName != mapName || battle.MapHash != mapHash) {
+                battle.MapName = mapName;
+                battle.MapHash = mapHash;
+                if (battle == MyBattle) MyBattleMapChanged(this, bi);
+                BattleMapChanged(this, bi);
+            }
+
+            if (battle.IsLocked != isLocked) {
+                battle.IsLocked = isLocked;
+                BattleLockChanged(this, bi);
+            }
+            BattleInfoChanged(this, bi);
+        }
+
+        void OnClientBattleStatus(string[] args)
+        {
+            var userIndex = MyBattle.GetUserIndex(args[0]);
+            if (userIndex != -1) {
+                var battleStatus = MyBattle.Users[userIndex];
+                battleStatus.SetFrom(int.Parse(args[1]), int.Parse(args[2]));
+                MyBattle.Users[userIndex] = battleStatus;
+                if (MyBattle.Founder.Name == username) UpdateSpectators();
+                if (battleStatus.Name == username) {
+                    lastUserBattleStatus = battleStatus.ToInt();
+                    BattleMyUserStatusChanged(this, new TasEventArgs(args));
+                }
+                BattleUserStatusChanged(this, new TasEventArgs(args));
+            }
+        }
+
+        void OnLeftBattle(string[] args)
+        {
+            var battleID = Int32.Parse(args[0]);
+            var user = args[1];
+            Battle battle;
+            if (!existingBattles.TryGetValue(battleID, out battle)) return;
+            if (!existingUsers.ContainsKey(user)) return;
+            battle.RemoveUser(user);
+            battle.ScriptTags.Clear();
+            var userName = args[1];
+            ExistingUsers[userName].IsInBattleRoom = false;
+
+            if (MyBattle != null && battleID == MyBattleID) {
+                if (MyBattle.Founder.Name == UserName) UpdateSpectators();
+                if (user == username) {
+                    MyBattle = null;
+                    MyBattleID = 0;
+                    BattleClosed(this, new EventArgs<Battle>(battle));
+                }
+            }
+            BattleUserLeft(this, new BattleUserEventArgs(userName, battleID));
+        }
+
+        void OnUpdateBot(string[] args)
+        {
+            if (MyBattle != null && int.Parse(args[0]) == MyBattleID) {
+                var st = MyBattle.Bots.Single(bot => bot.Name == args[1]);
+                st.SetFrom(int.Parse(args[2]), int.Parse(args[3]));
+                BattleBotUpdated(this, new EventArgs<BotBattleStatus>(st));
+            }
+        }
+
+        void OnRemoveBot(string[] args)
+        {
+            if (MyBattle != null && int.Parse(args[0]) == MyBattleID) {
+                var toDel = MyBattle.Bots.Single(bot => bot.Name == args[1]);
+                MyBattle.Bots.Remove(toDel);
+                BattleBotRemoved(this, new EventArgs<BotBattleStatus>(toDel));
+            }
+        }
+
+        void OnAddBot(string[] args)
+        {
+            if (MyBattle != null && int.Parse(args[0]) == MyBattleID) {
+                var bs = new BotBattleStatus(args[1], args[2], Utils.Glue(args, 5));
+                bs.SetFrom(int.Parse(args[3]), int.Parse(args[4]));
+                MyBattle.Bots.Add(bs);
+                BattleBotAdded(this, new EventArgs<BotBattleStatus>(bs));
+            }
+        }
+
+        void OnJoinedBattle(string[] args)
+        {
+            var joinedBattleID = Int32.Parse(args[0]);
+            Battle battle;
+            if (!existingBattles.TryGetValue(joinedBattleID, out battle)) return;
+            var userName = args[1];
+            var scriptPassword = args.Length > 2 ? args[2] : null;
+            var ubs = new UserBattleStatus(userName, existingUsers[userName], scriptPassword);
+            battle.Users.Add(ubs);
+            ExistingUsers[userName].IsInBattleRoom = true;
+            if (userName == username) lastUserBattleStatus = ubs.ToInt();
+            BattleUserJoined(this, new BattleUserEventArgs(userName, joinedBattleID, scriptPassword));
+        }
+
+        void OnForceJoinBattle(string[] args)
+        {
+            if (MyBattle != null) LeaveBattle();
+            var battleid = Int32.Parse(args[0]);
+            if (args.Length == 1) JoinBattle(battleid);
+            else JoinBattle(battleid, args[1]);
+        }
+
+        void OnJoinBattle(string[] args)
+        {
+            var joinedBattleID = Int32.Parse(args[0]);
+            MyBattleID = joinedBattleID;
+            var battle = existingBattles[joinedBattleID];
+            battle.Bots.Clear();
+            MyBattle = battle;
+            BattleJoined(this, new EventArgs<Battle>(MyBattle));
+        }
+
+        void OnOpenBattle(string[] args)
+        {
+            MyBattleID = int.Parse(args[0]);
+            existingBattles[MyBattleID] = MyBattle;
+            var self = new UserBattleStatus(username, existingUsers[username]);
+            MyBattle.Users.Add(self); // add self
+            lastUserBattleStatus = self.ToInt();
+            UpdateBattleDetails(MyBattle.Details);
+            // SetScriptTag(MyBattle.Mod.GetDefaultModOptionsTags()); // sends default mod options // enable if tasclient is not fixed
+            BattleOpened(this, new TasEventArgs(args[0]));
+        }
+
+        void OnChannelTopic(string[] args)
+        {
+            var c = JoinedChannels[args[0]];
+            c.TopicSetBy = args[1];
+            c.TopicSetDate = ConvertMilisecondTime(args[2]);
+            c.Topic = Utils.Glue(args, 3);
+            ChannelTopicChanged(this, new TasEventArgs(args[0]));
+        }
+
+        void OnLeft(string[] args)
+        {
+            var channelName = args[0];
+            var userName = args[1];
+            var reason = Utils.Glue(args, 2);
+            var channel = JoinedChannels[channelName];
+            channel.ChannelUsers.Remove(userName);
+            ChannelUserRemoved(this, new TasEventArgs(channelName, userName, reason));
+        }
+
+        void OnJoined(string[] args)
+        {
+            var channelName = args[0];
+            var userName = args[1];
+            var channel = JoinedChannels[channelName];
+            channel.ChannelUsers.Add(userName);
+            ChannelUserAdded(this, new TasEventArgs(channelName, userName));
+        }
+
+        void OnClients(string[] args)
+        {
+            var usrs = Utils.Glue(args, 1).Split(' ');
+            foreach (var s in usrs) JoinedChannels[args[0]].ChannelUsers.Add(s);
+            ChannelUsersAdded(this, new TasEventArgs(args));
+        }
+
+        void OnClientStatus(string[] args)
+        {
+            int status;
+            int.TryParse(args[1], out status);
+
+            var u = ExistingUsers[args[0]];
+            var old = u.Clone();
+            u.FromInt(status);
+
+            if (u.Name == username) lastUserStatus = u.ToInt();
+
+            if (u.IsInGame && old.IsInGame == false) BattleStarted(this, new EventArgs<User>(u));
+
+            if (MyBattle != null && MyBattle.Founder.Name == u.Name) {
+                if (u.IsInGame && old.IsInGame == false) MyBattleStarted(this, new TasEventArgs(args));
+                if (!u.IsInGame && old.IsInGame == true) MyBattleHostExited(this, new TasEventArgs(args));
+            }
+
+            UserStatusChanged(this, new TasEventArgs(args));
+        }
+
+        void OnRedirect(string[] args)
+        {
+            var host = args[0];
+            var port = int.Parse(args[1]);
+            Connect(host, port);
+        }
+
+        void OnServerMsg(string[] args)
+        {
+            HandleSpecialServerMessages(args);
+            InvokeSaid(new TasSayEventArgs(TasSayEventArgs.Origins.Server, TasSayEventArgs.Places.Server, "", "", Utils.Glue(args, 0), false));
+        }
+
+        void OnMotd(string[] args)
+        {
+            if (args.Length > 0) InvokeSaid(new TasSayEventArgs(TasSayEventArgs.Origins.Server, TasSayEventArgs.Places.Motd, "", "", Utils.Glue(args, 0), false));
+        }
+
+        void OnRemoveUser(string[] args)
+        {
+            var userName = args[0];
+            var user = ExistingUsers[userName];
+            UserRemoved(this, new TasEventArgs(args));
+            ExistingUsers.Remove(userName);
+        }
+
+        void OnKickUser(string[] args)
+        {
+            Trace.TraceInformation(String.Format("User {0} kicked (we are {1})"), args[1], MyUser.Name);
+            string us = args[1];
+            if (us == MyUser.Name) {
+                string kicker = args[0];
+                string reason = args.Length > 2 ? string.Join(" ", args, 2) : null;
+                KickedFromServer(this, new KickedFromServerEventArgs(kicker, reason));
+            }
+        }
+
+        void OnForceLeaveChannel(string[] args)
+        {
+            var channel = args[0];
+            JoinedChannels.Remove(channel);
+            ChannelForceLeave(this, new TasEventArgs(args));
+        }
+
+        void OnAddUser(string[] args)
+        {
+            try {
+                var u = User.Create(args[0]);
+                u.Country = args[1];
+                int cpu;
+                int.TryParse(args[2], out cpu);
+                u.Cpu = cpu;
+                u.LobbyID = Convert.ToInt32(args[3]);
+                ExistingUsers.Add(u.Name, u);
+                UserAdded(this, new EventArgs<User>(u));
+            } catch (Exception e) {
+                //TraceError ensure bright red coloured message (WriteLine looked harmless):
+                Trace.TraceError("Error was thrown while processing chat command ADDUSER (check if this event trigger faulty code in application): " + e);
+            }
+        }
+
+        void OnEndOfChannels()
+        {
+            isChanScanning = false;
+            ChannelListDone(this, new TasEventArgs());
+        }
+
+        void OnChannel(string[] args)
+        {
+            var c = new ExistingChannel();
+            c.name = args[0];
+            int.TryParse(args[1], out c.userCount);
+            if (args.Length >= 3) c.topic = Utils.Glue(args, 2);
+            ExistingChannels.Add(c.name, c);
+        }
+
+        void OnJoin(string[] args)
+        {
+            if (!JoinedChannels.ContainsKey(args[0])) {
+                JoinedChannels.Add(args[0], Channel.Create(args[0]));
+
+                var cancelEventArgs = new CancelEventArgs<TasEventArgs>(new TasEventArgs(args));
+                PreviewChannelJoined(this, cancelEventArgs);
+                if (!cancelEventArgs.Cancel) ChannelJoined(this, new TasEventArgs(args));
+            }
+        }
+
+        void OnDenied(string[] args)
+        {
+            isLoggedIn = false;
+            LoginDenied(this, new TasEventArgs(Utils.Glue(args)));
+        }
+
+        void OnAccepted(string[] args)
+        {
+            username = args[0];
+            isLoggedIn = true;
+            if (LoginAccepted != null) LoginAccepted(this, new TasEventArgs());
+        }
+
+        void OnTasServer(string[] args)
+        {
+            serverVersion = args[0];
+            int.TryParse(args[2], out serverUdpHolePunchingPort);
+            ServerSpringVersion = args[1];
+            ConnectionFailed = false;
+            isConnected = true;
+            Connected(this, new TasEventArgs());
         }
 
         void InvokeSaid(TasSayEventArgs sayArgs)
