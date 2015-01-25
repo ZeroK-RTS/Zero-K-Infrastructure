@@ -22,12 +22,10 @@ namespace CaTracker
 
     public class Nightwatch
     {
-        Timer recon;
         TasClient tas;
         
         public TasClient Tas { get { return tas; } }
         public static Config config;
-        string webRoot;
         AdminCommands adminCommands;
         OfflineMessages offlineMessages;
         PlayerMover playerMover;
@@ -47,11 +45,10 @@ namespace CaTracker
             return GetPlanetWarsBattles().Where(x => x.MapName == planet.Resource.InternalName).ToList();
         }
 
-        public Nightwatch(string webRoot)
+        public Nightwatch()
 		
         {
             tas = new TasClient(null, "NightWatch", GlobalConst.ZkLobbyUserCpu);
-            this.webRoot = webRoot;
 			config = new Config();
             Trace.Listeners.Add(new NightwatchTraceListener(tas));
         }
@@ -59,19 +56,7 @@ namespace CaTracker
 
 		public bool Start()
 		{
-			if (config.AttemptToRecconnect)
-			{
-				recon = new Timer(config.AttemptReconnectInterval*1000);
-				recon.AutoReset = true;
-				recon.Elapsed += recon_Elapsed;
-			}
-
-			recon.Enabled = false;
-
-
-            tas.ConnectionLost += tas_ConnectionLost;
 			tas.Connected += tas_Connected;
-			tas.LoginDenied += tas_LoginDenied;
 			tas.LoginAccepted += tas_LoginAccepted;
 
             Auth = new AuthService(tas);
@@ -107,9 +92,9 @@ namespace CaTracker
 			{
 				tas.Connect(config.ServerHost, config.ServerPort);
 			}
-			catch
+			catch (Exception ex)
 			{
-				recon.Start();
+                Trace.TraceError("{0}",ex);
 			}
 
 
@@ -117,39 +102,14 @@ namespace CaTracker
 		}
 
        
-		void recon_Elapsed(object sender, ElapsedEventArgs e)
-		{
-			if (tas.IsConnected && tas.IsLoggedIn) return;
-			recon.Stop();
-			try
-			{
-				tas.Connect(config.ServerHost, config.ServerPort);
-			}
-			catch
-			{
-				recon.Start();
-			}
-		}
-
 		void tas_Connected(object sender, TasEventArgs e)
 		{
 			tas.Login(config.AccountName, config.AccountPassword);
 		}
 
-		void tas_ConnectionLost(object sender, TasEventArgs e)
-		{
-			recon.Start();
-		}
-
 		void tas_LoginAccepted(object sender, TasEventArgs e)
 		{
-            recon.Stop();
 			for (var i = 0; i < config.JoinChannels.Length; ++i) tas.JoinChannel(config.JoinChannels[i]);
-		}
-
-		void tas_LoginDenied(object sender, TasEventArgs e)
-		{
-			recon.Start();
 		}
 	}
 }
