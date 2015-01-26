@@ -46,7 +46,6 @@ namespace LobbyClient
         readonly bool forcedLocalIP = false;
         readonly Invoker<Invoker> guiThreadInvoker;
         bool isChanScanning;
-        bool isConnected;
         bool isLoggedIn;
         Dictionary<string, Channel> joinedChannels = new Dictionary<string, Channel>();
         int lastSpectatorCount;
@@ -80,7 +79,7 @@ namespace LobbyClient
 
         public Dictionary<string, User> ExistingUsers { get { return existingUsers; } set { existingUsers = value; } }
 
-        public bool IsConnected { get { return isConnected; } }
+        public bool IsConnected { get { return con != null && con.IsConnected; } }
 
         public bool IsLoggedIn { get { return isLoggedIn; } }
 
@@ -344,13 +343,13 @@ namespace LobbyClient
             serverPort = port;
             MyBattle = null;
             MyBattleID = 0;
+            ConnectionFailed = false;
             ExistingUsers = new Dictionary<string, User>();
             existingChannels = new Dictionary<string, ExistingChannel>();
             joinedChannels = new Dictionary<string, Channel>();
             existingBattles = new Dictionary<int, Battle>();
             isChanScanning = false;
             isLoggedIn = false;
-            isConnected = false;
             username = "";
             if (con != null) Disconnect();
             try
@@ -391,9 +390,9 @@ namespace LobbyClient
             {
                 con.ConnectionClosed -= OnConnectionClosed;
                 con.CommandRecieved -= OnCommandRecieved;
-                if (con.IsConnected) con.RequestClose();
+                con.UnsubscribeEvents(this);
+                con.RequestClose();
             }
-            isConnected = false;
             ExistingUsers = new Dictionary<string, User>();
             existingChannels = new Dictionary<string, ExistingChannel>();
             joinedChannels = new Dictionary<string, Channel>();
@@ -402,7 +401,6 @@ namespace LobbyClient
             MyBattleID = 0;
             username = "";
             isLoggedIn = false;
-            isConnected = false;
             isChanScanning = false;
             if (guiThreadInvoker != null) guiThreadInvoker(() => ConnectionLost(this, new TasEventArgs("Connection was closed")));
             else ConnectionLost(this, new TasEventArgs("Connection was closed"));
@@ -1564,8 +1562,6 @@ namespace LobbyClient
             serverVersion = args[0];
             int.TryParse(args[2], out serverUdpHolePunchingPort);
             ServerSpringVersion = args[1];
-            ConnectionFailed = false;
-            isConnected = true;
             Connected(this, new TasEventArgs());
         }
 
@@ -1641,7 +1637,7 @@ namespace LobbyClient
 
         void OnPingTimer(object sender, EventArgs args)
         {
-            if (isConnected && con != null) {
+            if (con != null && IsConnected) {
                 if (lastPing != DateTime.MinValue && lastPing.Subtract(lastPong).TotalSeconds > pingInterval*2) {
                     // server didnt respond to ping in 30-60s 
                     con.RequestClose();
@@ -1650,7 +1646,7 @@ namespace LobbyClient
                     con.SendCommand("PING");
                 }
             }
-            else if (!isConnected && ConnectionFailed && (con == null || !(con.IsConnected || con.IsConnecting)))
+            else if (ConnectionFailed && !IsConnected)
             {
                 Connect(serverHost, serverPort);
             }

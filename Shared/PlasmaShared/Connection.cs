@@ -18,7 +18,7 @@ namespace ZkData
     /// <summary>
     ///     Event arguments used in many Connection events
     /// </summary>
-    public class ConnectionEventArgs: EventArgs
+    public class ConnectionEventArgs : EventArgs
     {
         public enum ResultTypes
         {
@@ -38,9 +38,10 @@ namespace ZkData
 
         public ResultTypes Result { get { return result; } set { result = value; } }
 
-        public ConnectionEventArgs() {}
+        public ConnectionEventArgs() { }
 
-        public ConnectionEventArgs(Connection connection, string command, string[] parameters) {
+        public ConnectionEventArgs(Connection connection, string command, string[] parameters)
+        {
             Connection = connection;
             this.command = command;
             Parameters = parameters;
@@ -50,67 +51,49 @@ namespace ZkData
     /// <summary>
     ///     Handles communiction with server on low level
     /// </summary>
-    public abstract class Connection: IDisposable
+    public abstract class Connection
     {
-        readonly object myLock = new object();
         protected TcpClient tcp;
 
         public bool IsConnected { get; private set; }
-        public bool IsConnecting { get; private set; }
-
         public static Encoding Encoding = new UTF8Encoding(false);
-
 
         public event EventHandler<ConnectionEventArgs> CommandRecieved;
         public event EventHandler<EventArgs<KeyValuePair<string, object[]>>> CommandSent = delegate { };
         public event EventHandler Connected;
         public event EventHandler ConnectionClosed;
 
-        public void Dispose() {
-            InternalClose();
-        }
-
         /// <summary>
         ///     Closes connection to remote server
         /// </summary>
-        public void RequestClose() {
+        public void RequestClose()
+        {
+            IsConnected = false;
             cancellationTokenSource.Cancel();
         }
 
         private void InternalClose()
         {
-            bool callClosing = false;
-            lock (myLock)
+            try
             {
-                if (IsConnected || IsConnecting)
-                {
-                    callClosing = true;
-                    IsConnected = false;
-                    IsConnecting = false;
-                    CommandRecieved = null;
-                    Connected = null;
-                }
+                tcp.GetStream().Close();
+                tcp.Close();
             }
+            catch { }
 
-            if (callClosing)
+            try
             {
-                try
-                {
-                    tcp.GetStream().Close();
-                    tcp.Close();
-                }
-                catch { }
-
-                try
-                {
-                    if (ConnectionClosed != null) ConnectionClosed(this, EventArgs.Empty);
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceError("Error procesing connection close {0}", ex);
-                }
-                ConnectionClosed = null;
+                if (ConnectionClosed != null) ConnectionClosed(this, EventArgs.Empty);
             }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error procesing connection close {0}", ex);
+            }
+            ConnectionClosed = null;
+            IsConnected = false;
+            CommandRecieved = null;
+            CommandSent = null;
+            Connected = null;
         }
 
         StreamReader reader;
@@ -129,12 +112,10 @@ namespace ZkData
             {
                 token.Register(() => tcp.Close());
 
-                IsConnecting = true;
                 await tcp.ConnectAsync(host, port).ConfigureAwait(executeOnCallerThread); // see http://blog.stephencleary.com/2012/07/dont-block-on-async-code.html
                 var stream = tcp.GetStream();
                 reader = new StreamReader(stream, Encoding);
                 IsConnected = true;
-                IsConnecting = false;
                 if (Connected != null) Connected(this, EventArgs.Empty);
                 while (!token.IsCancellationRequested)
                 {
@@ -190,9 +171,9 @@ namespace ZkData
             {
                 serv.tcp.GetStream().EndWrite(res);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                Trace.TraceError("Eror finalizing write: {0}",ex);
+                Trace.TraceError("Eror finalizing write: {0}", ex);
                 serv.RequestClose();
             }
         }
