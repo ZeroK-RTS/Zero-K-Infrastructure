@@ -5,8 +5,10 @@ using System.Linq;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.Mvc;
 using System.Web.Routing;
+using System.Web.Security;
 using CaTracker;
 using NightWatch;
 using ZeroKWeb.Controllers;
@@ -103,6 +105,13 @@ namespace ZeroKWeb
             //context.Server.ClearError();
         }
 
+
+        private static bool ValidateSiteAuthToken(Account acc, string token)
+        {
+            return acc.VerifyPassword(token);
+        }
+
+
         void MvcApplication_PostAuthenticateRequest(object sender, EventArgs e) {
             if (DateTime.UtcNow.Subtract(lastPollCheck).TotalMinutes > 15) {
                 PollController.AutoClosePolls();
@@ -110,11 +119,15 @@ namespace ZeroKWeb
             }
 
             Account acc = null;
-            if (Request[GlobalConst.ASmallCakeCookieName] != null)
+            if (FormsAuthentication.IsEnabled && User.Identity.IsAuthenticated) {
+                acc = Account.AccountByName(new ZkDataContext(), User.Identity.Name);
+            }
+            else if (Request[GlobalConst.ASmallCakeCookieName] != null)
             {
                 var testAcc = Account.AccountByName(new ZkDataContext(), Request[GlobalConst.ASmallCakeLoginCookieName]);
-                if (testAcc != null) if (AuthTools.ValidateSiteAuthToken(testAcc.Name, testAcc.Password, Request[GlobalConst.ASmallCakeCookieName])) acc = testAcc;
-            }
+                if (testAcc != null) if (ValidateSiteAuthToken(testAcc, Request[GlobalConst.ASmallCakeCookieName])) acc = testAcc;
+            } 
+            
             if (acc == null) if (Request[GlobalConst.LoginCookieName] != null) acc = AuthServiceClient.VerifyAccountHashed(Request[GlobalConst.LoginCookieName], Request[GlobalConst.PasswordHashCookieName]);
 
             if (acc != null) {
@@ -129,9 +142,11 @@ namespace ZeroKWeb
                     }
                     else {
                         HttpContext.Current.User = acc;
+                        FormsAuthentication.SetAuthCookie(acc.Name, false);
+                        
                         // todo replace with safer permanent cookie
-                        Response.SetCookie(new HttpCookie(GlobalConst.LoginCookieName, acc.Name) { Expires = DateTime.Now.AddMonths(12) });
-                        Response.SetCookie(new HttpCookie(GlobalConst.PasswordHashCookieName, acc.Password) { Expires = DateTime.Now.AddMonths(12) });
+                        //Response.SetCookie(new HttpCookie(GlobalConst.LoginCookieName, acc.Name) { Expires = DateTime.Now.AddMonths(12) });
+                        //Response.SetCookie(new HttpCookie(GlobalConst.PasswordHashCookieName, acc.Password) { Expires = DateTime.Now.AddMonths(12) });
                     }
                 }
             }

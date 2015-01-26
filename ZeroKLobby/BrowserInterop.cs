@@ -50,7 +50,7 @@ namespace ZeroKLobby
                     url = url +
                           string.Format("{0}={1}&{2}={3}&{4}=1&zkl=1",
                                         GlobalConst.ASmallCakeCookieName,
-                                        Uri.EscapeDataString(AuthTools.GetSiteAuthToken(login, ZkData.Utils.HashLobbyPassword(password))),
+                                        Uri.EscapeDataString(AuthTools.GetSiteAuthToken(ZkData.Utils.HashLobbyPassword(password))),
                                         GlobalConst.ASmallCakeLoginCookieName,
                                         Uri.EscapeDataString(login),
                                         GlobalConst.LobbyAccessCookieName);

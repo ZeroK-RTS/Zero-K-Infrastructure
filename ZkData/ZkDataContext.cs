@@ -93,10 +93,6 @@ namespace ZkData
                 .IsUnicode(false);
 
             modelBuilder.Entity<Account>()
-                .Property(e => e.Password)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<Account>()
                 .Property(e => e.Country)
                 .IsUnicode(false);
 
