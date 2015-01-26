@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.ServiceModel;
+using System.Threading;
 using System.Timers;
 using System.Web.Services.Description;
 using System.Xml.Serialization;
@@ -22,7 +23,6 @@ namespace CaTracker
 
     public class Nightwatch
     {
-        Timer recon;
         TasClient tas;
         
         public TasClient Tas { get { return tas; } }
@@ -57,14 +57,6 @@ namespace CaTracker
 
 		public bool Start()
 		{
-    		recon = new Timer(config.AttemptReconnectInterval*1000);
-			recon.AutoReset = true;
-			recon.Elapsed += recon_Elapsed;
-	
-			recon.Enabled = false;
-
-
-            tas.ConnectionLost += tas_ConnectionLost;
 			tas.Connected += tas_Connected;
 			tas.LoginDenied += tas_LoginDenied;
 			tas.LoginAccepted += tas_LoginAccepted;
@@ -98,32 +90,9 @@ namespace CaTracker
 		        };
             
 
-			try
-			{
-				tas.Connect(config.ServerHost, config.ServerPort);
-			}
-			catch
-			{
-				recon.Start();
-			}
-
+    		tas.Connect(config.ServerHost, config.ServerPort);
 
 			return true;
-		}
-
-       
-		void recon_Elapsed(object sender, ElapsedEventArgs e)
-		{
-			if (tas.IsConnected && tas.IsLoggedIn) return;
-			recon.Stop();
-			try
-			{
-				tas.Connect(config.ServerHost, config.ServerPort);
-			}
-			catch
-			{
-				recon.Start();
-			}
 		}
 
 		void tas_Connected(object sender, TasEventArgs e)
@@ -131,20 +100,18 @@ namespace CaTracker
 			tas.Login(config.AccountName, config.AccountPassword);
 		}
 
-		void tas_ConnectionLost(object sender, TasEventArgs e)
-		{
-			//recon.Start();
-		}
-
 		void tas_LoginAccepted(object sender, TasEventArgs e)
 		{
-            recon.Stop();
 			for (var i = 0; i < config.JoinChannels.Length; ++i) tas.JoinChannel(config.JoinChannels[i]);
 		}
 
 		void tas_LoginDenied(object sender, TasEventArgs e)
 		{
-			recon.Start();
+            Utils.StartAsync(() =>
+            {
+                Thread.Sleep(5000);
+                tas.Login(config.AccountName, config.AccountPassword);
+            });
 		}
 	}
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using LobbyClient;
@@ -13,7 +14,6 @@ namespace NightWatch
     {
         TasClient zkTas;
         TasClient springTas;
-        Timer reconnect;
         List<string> channels;
 
         public ChatRelay(TasClient zkTas, string password, List<string> channels)
@@ -31,13 +31,12 @@ namespace NightWatch
 
         void SetupSpringTasConnection(string password)
         {
-            
+            springTas.LoginDenied += (sender, args) => Utils.StartAsync(() => {
+                Thread.Sleep(5000);
+                springTas.Login(GlobalConst.NightwatchName, password);
+            });
             springTas.Connect("lobby.springrts.com", 8200);
             springTas.Connected += (sender, args) => springTas.Login(GlobalConst.NightwatchName, password);
-            reconnect = new Timer(10000);
-            reconnect.AutoReset = true;
-            reconnect.Elapsed += (sender, args) => { if (!springTas.IsConnected) springTas.Connect("lobby.springrts.com", 8200); };
-            reconnect.Start();
         }
 
         void OnSaid(object sender, TasSayEventArgs args)

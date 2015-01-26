@@ -19,6 +19,7 @@ using System.Xml.Serialization;
 //using LobbyClient;
 //using NightWatch;
 using CaTracker;
+using LobbyClient;
 using Microsoft.Linq.Translations;
 using PlasmaShared;
 using ZkData.UnitSyncLib;
@@ -212,9 +213,16 @@ namespace Fixer
             db.SubmitAndMergeChanges();
         }
 
+
+
+
         [STAThread]
         static void Main(string[] args)
         {
+            var ns = new NubSimulator();
+            ns.SpawnMany();
+            Console.ReadLine();
+
             //FixDuplicatedAccounts();
             //BcryptPasswords();
             //var db = new ZkDataContext(true);

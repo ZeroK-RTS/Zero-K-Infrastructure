@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Razor.Parser.SyntaxTree;
@@ -12,13 +14,20 @@ using ZkData;
 
 namespace ZeroKWeb.Controllers
 {
-    public class LobbyServiceController : Controller
+    public class LobbyServiceController : AsyncController
     {
+        static Account accAnteep;
+        static LobbyServiceController()
+        {
+            using (var db = new ZkDataContext()) accAnteep = db.Accounts.Include(x => x.AccountUserIDs).Include(x => x.AccountUserIDs).FirstOrDefault(x => x.AccountID == 4490);
+        }
+
         // GET: LobbyServer
-        public JsonResult Login(string login, string password, string lobby_name, long user_id, int cpu, string ip, string country)
+        public async Task<JsonResult> Login(string login, string password, string lobby_name, long user_id, int cpu, string ip, string country)
         {
             var db = new ZkDataContext();
-            var acc = Account.AccountVerify(db, login, password);
+            var acc = await Task.Run(() => Account.AccountVerify(db, login, password));
+            
             if (acc == null)
             {
                 return new JsonResult()
@@ -35,41 +44,22 @@ namespace ZeroKWeb.Controllers
                 acc.Cpu = cpu;
                 acc.LastLogin = DateTime.UtcNow;
 
-                LogIP(db, acc, ip);
-                LogUserID(db, acc, user_id);
+                await Task.Run(() => {
+                    LogIP(db, acc, ip);
+                    LogUserID(db, acc, user_id);
+                });
+                
+                
+                await db.SaveChangesAsync();
 
-                db.SaveChanges();
-
-                var banPenalty = Punishment.GetActivePunishment(acc.AccountID, ip, user_id, x => x.BanLobby, db);
+                var banPenalty = await Task.Run(()=>Punishment.GetActivePunishment(acc.AccountID, ip, user_id, x => x.BanLobby, db));
 
                 if (banPenalty != null)
                 {
                     return BlockLogin(string.Format("Banned until {0} (match to {1}), reason: {2}", banPenalty.BanExpires, banPenalty.AccountByAccountID.Name, banPenalty.Reason), acc, ip,user_id);
                 }
 
-                Account accAnteep = db.Accounts.FirstOrDefault(x => x.AccountID == 4490);
-                if (accAnteep != null)
-                {
-                    if (accAnteep.AccountUserIDs.Any(y => y.UserID == user_id))
-                    {
-                        Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel,
-                            String.Format("Suspected Anteep smurf: {0} (ID match {1}) {2}", acc.Name, user_id,
-                                string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl)), false);
-                    }
-
-                    if (user_id > 0 && user_id < 1000)
-                    {
-                        Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel,
-                            String.Format("Suspected Anteep smurf: {0} (too short userID {1}) {2}", acc.Name, user_id,
-                                string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl)), false);
-                    }
-
-                    if (accAnteep.AccountIPs.Any(y => y.IP == ip))
-                    {
-                        Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, String.Format("Suspected Anteep smurf: {0} (IP match {1}) {2}", acc.Name, ip, string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl)), false);
-                    }
-                }
-
+                WarnAnteepSmurf(user_id, ip, acc);
 
                 if (!acc.HasVpnException && GlobalConst.VpnCheckEnabled)
                 {
@@ -79,7 +69,7 @@ namespace ZeroKWeb.Controllers
                     var reversedIP = string.Join(".", ip.Split('.').Reverse().ToArray());
                     try
                     {
-                        var resolved = Dns.GetHostEntry(string.Format("{0}.dnsbl.tornevall.org", reversedIP)).AddressList;
+                        var resolved = (await Dns.GetHostEntryAsync(string.Format("{0}.dnsbl.tornevall.org", reversedIP))).AddressList;
                         if (resolved.Length > 0)
                         {
                             Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, String.Format("User {0} {3} has IP {1} on dnsbl.tornevall.org ({2} result/s)", acc.Name, ip, resolved.Length, string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl)), false);
@@ -99,7 +89,7 @@ namespace ZeroKWeb.Controllers
                         for (int i = 0; i <= 1; i++)
                         {
                             var whois = new Whois();
-                            var data = whois.QueryByIp(ip, i == 1);
+                            var data = await whois.QueryByIp(ip, i == 1);
 
                             if (!data.ContainsKey("netname")) data["netname"] = "UNKNOWN NETNAME";
                             if (!data.ContainsKey("org-name")) data["org-name"] = "UNKNOWN ORG";
@@ -109,8 +99,8 @@ namespace ZeroKWeb.Controllers
                             if (!data.ContainsKey("descr")) data["descr"] = "no description";
                             if (!data.ContainsKey("remarks")) data["remarks"] = "no remarks";
 
-                            var blockedCompanies = db.BlockedCompanies.Select(x => x.CompanyName.ToLower()).ToList();
-                            var blockedHosts = db.BlockedHosts.Select(x => x.HostName).ToList();
+                            var blockedCompanies = await db.BlockedCompanies.Select(x => x.CompanyName.ToLower()).ToListAsync();
+                            var blockedHosts = await db.BlockedHosts.Select(x => x.HostName).ToListAsync();
                             /*if (acc.Country == "MY")
                             {
                                 client.Say(TasClient.SayPlace.User, "KingRaptor", String.Format("USER {0}\nnetname: {1}\norgname: {2}\ndescr: {3}\nabuse-mailbox: {4}",
@@ -144,6 +134,29 @@ namespace ZeroKWeb.Controllers
                 }
 
                 return new JsonResult() { Data = new LoginResponse(acc), JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+            }
+        }
+
+        static void WarnAnteepSmurf(long user_id, string ip, Account acc)
+        {
+            if (accAnteep != null) {
+                if (accAnteep.AccountUserIDs.Any(y => y.UserID == user_id)) {
+                    Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel,
+                        String.Format("Suspected Anteep smurf: {0} (ID match {1}) {2}", acc.Name, user_id,
+                            string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl)), false);
+                }
+
+                if (user_id > 0 && user_id < 1000) {
+                    Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel,
+                        String.Format("Suspected Anteep smurf: {0} (too short userID {1}) {2}", acc.Name, user_id,
+                            string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl)), false);
+                }
+
+                if (accAnteep.AccountIPs.Any(y => y.IP == ip)) {
+                    Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel,
+                        String.Format("Suspected Anteep smurf: {0} (IP match {1}) {2}", acc.Name, ip,
+                            string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl)), false);
+                }
             }
         }
 

@@ -81,6 +81,8 @@ namespace ZkData
             }
             catch { }
 
+            IsConnected = false;
+
             try
             {
                 if (ConnectionClosed != null) ConnectionClosed(this, EventArgs.Empty);
@@ -89,18 +91,13 @@ namespace ZkData
             {
                 Trace.TraceError("Error procesing connection close {0}", ex);
             }
-            ConnectionClosed = null;
-            IsConnected = false;
-            CommandRecieved = null;
-            CommandSent = null;
-            Connected = null;
         }
 
         StreamReader reader;
         CancellationTokenSource cancellationTokenSource;
 
 
-        public async Task Connect(string host, int port, string bindingIp = null, bool executeOnCallerThread = true)
+        public async Task Connect(string host, int port, string bindingIp = null)
         {
             cancellationTokenSource = new CancellationTokenSource();
 
@@ -112,14 +109,14 @@ namespace ZkData
             {
                 token.Register(() => tcp.Close());
 
-                await tcp.ConnectAsync(host, port).ConfigureAwait(executeOnCallerThread); // see http://blog.stephencleary.com/2012/07/dont-block-on-async-code.html
+                await tcp.ConnectAsync(host, port).ConfigureAwait(false); // see http://blog.stephencleary.com/2012/07/dont-block-on-async-code.html
                 var stream = tcp.GetStream();
                 reader = new StreamReader(stream, Encoding);
                 IsConnected = true;
                 if (Connected != null) Connected(this, EventArgs.Empty);
                 while (!token.IsCancellationRequested)
                 {
-                    var line = await reader.ReadLineAsync().ConfigureAwait(executeOnCallerThread); ;
+                    var line = await reader.ReadLineAsync().ConfigureAwait(false); ;
 
                     ConnectionEventArgs command = null;
                     try

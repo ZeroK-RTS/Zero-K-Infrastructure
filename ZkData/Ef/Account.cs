@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Security.Principal;
+using System.Threading.Tasks;
 using Microsoft.Linq.Translations;
 using PlasmaShared;
 using ZkData;
@@ -233,6 +234,7 @@ namespace ZkData
             if (acc != null && acc.VerifyPassword(passwordHash)) return acc;
             return null;
         }
+
 
         public bool VerifyPassword(string passwordHash)
         {

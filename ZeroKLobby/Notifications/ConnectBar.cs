@@ -81,7 +81,7 @@ namespace ZeroKLobby.Notifications
 						lbState.Text = "did not accept agreement";
 						ZkData.Utils.SafeThread(() =>
 						{
-							if (!Program.CloseOnNext) client.Disconnect(); //server will re-ask AcceptAgreement if we re-connect
+							if (!Program.CloseOnNext) client.RequestDisconnect(); //server will re-ask AcceptAgreement if we re-connect
 						}).Start();
 
 					}
@@ -145,7 +145,7 @@ namespace ZeroKLobby.Notifications
 				if (loginForm.ShowDialog() == DialogResult.Cancel) 
 				{
 					tasClientConnectCalled = false;
-					client.Disconnect();
+					client.RequestDisconnect();
 					lbState.Text = "Login cancelled, press button on left to login again";
 					return;
 				}
