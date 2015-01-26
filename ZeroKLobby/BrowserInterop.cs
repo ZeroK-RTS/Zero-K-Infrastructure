@@ -44,7 +44,7 @@ namespace ZeroKLobby
             try {
                 if (string.IsNullOrEmpty(url)) return "";
                 if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password)) return url;
-                if (url.ToLower().Contains("zero-k") &&  url.EndsWith("/") && !url.ToLower().Contains(string.Format("{0}=", GlobalConst.ASmallCakeCookieName))) {
+                if (url.ToLower().Contains(GlobalConst.BaseSiteUrl) && !url.ToLower().Contains(string.Format("{0}=", GlobalConst.ASmallCakeCookieName))) {
                     if (url.Contains("?")) url = url + "&";
                     else url = url + "?";
                     url = url +

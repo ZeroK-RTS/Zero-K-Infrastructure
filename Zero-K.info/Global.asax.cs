@@ -143,10 +143,6 @@ namespace ZeroKWeb
                     else {
                         HttpContext.Current.User = acc;
                         FormsAuthentication.SetAuthCookie(acc.Name, false);
-                        
-                        // todo replace with safer permanent cookie
-                        //Response.SetCookie(new HttpCookie(GlobalConst.LoginCookieName, acc.Name) { Expires = DateTime.Now.AddMonths(12) });
-                        //Response.SetCookie(new HttpCookie(GlobalConst.PasswordHashCookieName, acc.Password) { Expires = DateTime.Now.AddMonths(12) });
                     }
                 }
             }
