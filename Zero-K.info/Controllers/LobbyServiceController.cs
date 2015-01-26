@@ -33,6 +33,7 @@ namespace ZeroKWeb.Controllers
                 acc.LobbyVersion = lobby_name;
                 acc.Country = country;
                 acc.Cpu = cpu;
+                acc.LastLogin = DateTime.UtcNow;
 
                 LogIP(db, acc, ip);
                 LogUserID(db, acc, user_id);
