@@ -386,6 +386,7 @@ namespace LobbyClient
 
         public void Disconnect()
         {
+            var callEvent = con.IsConnected || ConnectionFailed;
             if (con != null)
             {
                 con.ConnectionClosed -= OnConnectionClosed;
@@ -402,8 +403,10 @@ namespace LobbyClient
             username = "";
             isLoggedIn = false;
             isChanScanning = false;
-            if (guiThreadInvoker != null) guiThreadInvoker(() => ConnectionLost(this, new TasEventArgs("Connection was closed")));
-            else ConnectionLost(this, new TasEventArgs("Connection was closed"));
+            if (callEvent) {
+                if (guiThreadInvoker != null) guiThreadInvoker(() => ConnectionLost(this, new TasEventArgs("Connection was closed")));
+                else ConnectionLost(this, new TasEventArgs("Connection was closed"));
+            }
         }
 
         public void EnableAllUnits()
