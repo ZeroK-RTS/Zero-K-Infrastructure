@@ -44,13 +44,13 @@ namespace ZeroKLobby
             try {
                 if (string.IsNullOrEmpty(url)) return "";
                 if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password)) return url;
-                if (url.ToLower().Contains("zero-k") &&  url.EndsWith("/") && !url.ToLower().Contains(string.Format("{0}=", GlobalConst.ASmallCakeCookieName))) {
+                if (url.ToLower().Contains(GlobalConst.BaseSiteUrl) && !url.ToLower().Contains(string.Format("{0}=", GlobalConst.ASmallCakeCookieName))) {
                     if (url.Contains("?")) url = url + "&";
                     else url = url + "?";
                     url = url +
                           string.Format("{0}={1}&{2}={3}&{4}=1&zkl=1",
                                         GlobalConst.ASmallCakeCookieName,
-                                        Uri.EscapeDataString(AuthTools.GetSiteAuthToken(login, ZkData.Utils.HashLobbyPassword(password))),
+                                        Uri.EscapeDataString(AuthTools.GetSiteAuthToken(ZkData.Utils.HashLobbyPassword(password))),
                                         GlobalConst.ASmallCakeLoginCookieName,
                                         Uri.EscapeDataString(login),
                                         GlobalConst.LobbyAccessCookieName);

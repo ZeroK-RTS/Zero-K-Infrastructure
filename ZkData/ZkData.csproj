@@ -85,6 +85,10 @@
     <Compile Include="Migrations\201501252112416_AddPasswordBcrypt.Designer.cs">
       <DependentUpon>201501252112416_AddPasswordBcrypt.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201501260153434_FinishBcrypt.cs" />
+    <Compile Include="Migrations\201501260153434_FinishBcrypt.Designer.cs">
+      <DependentUpon>201501260153434_FinishBcrypt.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
     <Compile Include="CurrentLobbyStats.cs" />
@@ -238,6 +242,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201501252112416_AddPasswordBcrypt.resx">
       <DependentUpon>201501252112416_AddPasswordBcrypt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501260153434_FinishBcrypt.resx">
+      <DependentUpon>201501260153434_FinishBcrypt.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -33,6 +33,7 @@ namespace ZeroKWeb.Controllers
                 acc.LobbyVersion = lobby_name;
                 acc.Country = country;
                 acc.Cpu = cpu;
+                acc.LastLogin = DateTime.UtcNow;
 
                 LogIP(db, acc, ip);
                 LogUserID(db, acc, user_id);
@@ -221,7 +222,8 @@ namespace ZeroKWeb.Controllers
             if (db.Accounts.Any(y=>y.Name == login)) return new JsonResult() {
                 Data = new LoginResponse("Username already exists."), JsonRequestBehavior = JsonRequestBehavior.AllowGet
             };
-            var acc = new Account() { Name = login, Password = password, Country = country, };
+            var acc = new Account() { Name = login, NewPassword = password, Country = country, };
+            acc.SetPassword(password);
             db.Accounts.Add(acc);
             db.SaveChanges();
 

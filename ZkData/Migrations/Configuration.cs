@@ -23,7 +23,7 @@ namespace ZkData.Migrations
                 db.Accounts.AddOrUpdate(x => x.Name,
                     new Account {
                         Name = "test",
-                        Password = Utils.HashLobbyPassword("test"),
+                        NewPassword = Utils.HashLobbyPassword("test"),
                         IsZeroKAdmin = true,
                         Kudos = 200,
                         Elo = 1700,
@@ -34,7 +34,7 @@ namespace ZkData.Migrations
                     },
                     new Account() {
                         Name = GlobalConst.NightwatchName,
-                        Password = Utils.HashLobbyPassword("dummy"),
+                        NewPassword = Utils.HashLobbyPassword("dummy"),
                         IsBot = true,
                         IsZeroKAdmin = true,
                     }

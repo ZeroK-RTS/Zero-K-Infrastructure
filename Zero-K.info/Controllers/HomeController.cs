@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using ZeroKWeb;
 using ZkData;
 
@@ -209,6 +210,8 @@ namespace ZeroKWeb.Controllers
 				Response.SetCookie(new HttpCookie(GlobalConst.LoginCookieName, login) { Expires = DateTime.Now.AddMonths(12) });
 				Response.SetCookie(new HttpCookie(GlobalConst.PasswordHashCookieName, hashed) { Expires = DateTime.Now.AddMonths(12) });
 
+                FormsAuthentication.SetAuthCookie(acc.Name, false);
+
                 if (string.IsNullOrEmpty(referer)) referer = Url.Action("Index");
 				return Redirect(referer);
 			}
@@ -220,6 +223,7 @@ namespace ZeroKWeb.Controllers
 			{
 				Response.SetCookie(new HttpCookie(GlobalConst.LoginCookieName, "") { Expires = DateTime.Now.AddMinutes(2) });
 				Response.SetCookie(new HttpCookie(GlobalConst.PasswordHashCookieName, "") { Expires = DateTime.Now.AddMinutes(2) });
+                FormsAuthentication.SignOut();
 			}
             if (string.IsNullOrEmpty(referer)) referer = Url.Action("Index");
 			return Redirect(referer);
