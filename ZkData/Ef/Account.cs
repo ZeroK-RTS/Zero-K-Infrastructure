@@ -90,10 +90,7 @@ namespace ZkData
         public double EloPw { get; set; }
         public bool IsLobbyAdministrator { get; set; }
         public bool IsBot { get; set; }
-        
-        [MaxLength(100)]
-        public string Password {get;set;}
-        
+       
         [NotMapped]
         public string NewPassword {set {SetPassword(value);}}
 

@@ -216,7 +216,7 @@ namespace Fixer
         static void Main(string[] args)
         {
             //FixDuplicatedAccounts();
-            BcryptPasswords();
+            //BcryptPasswords();
             //var db = new ZkDataContext(true);
             //var test = db.Accounts.OrderByDescending(x => x.EffectiveElo).WithTranslations().Take(5).ToList();
 
@@ -1002,25 +1002,6 @@ namespace Fixer
             db.SubmitChanges();
         }
 
-
-        public static void BcryptPasswords()
-        {
-            GlobalConst.Mode = ModeType.Test;
-            int cnt = 0;
-            List<Account> list;
-            do
-            {
-                using (var db = new ZkDataContext(false)) {
-                    list = db.Accounts.Where(x => x.PasswordBcrypt == null && x.Password != null).Take(1000).ToList();
-                    list.AsParallel().ForAll(x => {
-                        Interlocked.Increment(ref cnt);
-                        x.PasswordBcrypt = BCrypt.Net.BCrypt.HashPassword(x.Password);
-                        Console.WriteLine(cnt);
-                    });
-                    db.SaveChanges();
-                }
-            } while (list.Count > 0);
-        }
 
         public static void TestPwMatch()
         {
