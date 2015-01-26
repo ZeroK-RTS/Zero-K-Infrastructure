@@ -1550,7 +1550,14 @@ namespace LobbyClient
         void OnDenied(string[] args)
         {
             isLoggedIn = false;
-            LoginDenied(this, new TasEventArgs(Utils.Glue(args)));
+            var reason = Utils.Glue(args);
+            LoginDenied(this, new TasEventArgs(reason));
+            
+            if (reason != "Empty password" && reason != "Invalid username or password") {
+                ConnectionFailed = true;
+                Disconnect();
+            }
+            
         }
 
         void OnAccepted(string[] args)
