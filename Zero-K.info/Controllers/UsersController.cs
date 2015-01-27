@@ -186,11 +186,7 @@ namespace ZeroKWeb.Controllers
                 Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);
                 if (banLobby)
                 {
-                    Global.Nightwatch.Tas.AdminBan(acc.Name, banHours / 24, reason);
-                    if (banIP != null)
-                    {
-                        Global.Nightwatch.Tas.AdminBanIP(banIP, banHours / 24, reason);
-                    }
+                    Global.Nightwatch.Tas.AdminKickFromLobby(acc.Name, reason);
                 }
 
                 Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("New penalty for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")), true);
@@ -267,23 +263,6 @@ namespace ZeroKWeb.Controllers
             Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("{0} removed a punishment given by {1} ", Global.Account.Name, punisherName), true);
             Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("to {0} for: {1} ", acc.Name, todel.Reason), true);
 
-            if (todel.BanLobby)
-            {
-                Global.Nightwatch.Tas.AdminUnban(acc.Name);
-                if(todel.BanIP != null) Global.Nightwatch.Tas.AdminUnban(todel.BanIP);
-                var otherPenalty = Punishment.GetActivePunishment(acc.AccountID, null, null, x => x.BanLobby, db);
-                if (otherPenalty != null)
-                {
-                    var time = otherPenalty.BanExpires - DateTime.Now;
-                    double days = time.Value.TotalDays;
-                    Global.Nightwatch.Tas.AdminBan(acc.Name, days / 24, otherPenalty.Reason);
-                    if (otherPenalty.BanIP != null)
-                    {
-                        Global.Nightwatch.Tas.AdminBanIP(otherPenalty.BanIP, days / 24, otherPenalty.Reason);
-                    }
-                }
-            }
-
             return RedirectToAction("Detail", "Users", new { id = todel.AccountID });
         }
 
@@ -326,11 +305,7 @@ namespace ZeroKWeb.Controllers
                         Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);
                         if (banLobby)
                         {
-                            Global.Nightwatch.Tas.AdminBan(acc.Name, banHours / 24, reason);
-                            if (banIP)
-                            {
-                                Global.Nightwatch.Tas.AdminBanIP(userIP, banHours / 24, reason);
-                            }
+                            Global.Nightwatch.Tas.AdminKickFromLobby(acc.Name, reason);
                         }
                     }
                     catch (Exception ex)
@@ -372,13 +347,8 @@ namespace ZeroKWeb.Controllers
                 try
                 {
                     Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);
-                    if (banLobby)
-                    {
-                        Global.Nightwatch.Tas.AdminBan(acc.Name, banHours / 24, reason);
-                        if (banIP)
-                        {
-                            Global.Nightwatch.Tas.AdminBanIP(userIP, banHours / 24, reason);
-                        }
+                    if (banLobby) {
+                        Global.Nightwatch.Tas.AdminKickFromLobby(acc.Name, reason);
                     }
                 }
                 catch (Exception ex)

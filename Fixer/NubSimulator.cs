@@ -19,15 +19,14 @@ namespace Fixer
             var ord = num / 16;
             var batname = "Test " + ord;
 
+            tas.Input += (sender, args) => { Console.WriteLine(args.Command); };
             tas.Connected += (sender, args) => {
                 Console.WriteLine(name + " connected, will login");
                 tas.Login(name, "dummy");
             };
+            tas.LoginAccepted += (sender, args) => { Console.WriteLine(name + " accepted"); };
+
             tas.LoginDenied += (sender, args) => { tas.Register(name, "dummy"); };
-            tas.AgreementRecieved += (sender, recieved) => {
-                tas.AcceptAgreement();
-                tas.Login(name, "dummy");
-            };
 
             
 
@@ -69,7 +68,7 @@ namespace Fixer
         public async Task SpawnMany()
         {
             ThreadPool.SetMaxThreads(1000, 1000);
-            for (int i = 0; i < 1000; i++) {
+            for (int i = 0; i < 1; i++) {
                 int i1 = i;
                 //Thread.Sleep(100);
                 RunNub(i1);

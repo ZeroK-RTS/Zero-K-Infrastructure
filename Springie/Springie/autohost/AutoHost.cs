@@ -10,6 +10,7 @@ using System.Timers;
 using LobbyClient;
 using PlasmaDownloader.Packages;
 using PlasmaShared;
+using PlasmaShared.LobbyMessages;
 using ZkData.UnitSyncLib;
 using Springie.autohost.Polls;
 using ZkData;
@@ -115,12 +116,6 @@ namespace Springie.autohost
                 };
 
             tas.RegistrationAccepted += (s, e) => tas.Login(GetAccountName(), config.Password);
-
-            tas.AgreementRecieved += (s, e) =>
-                {
-                    tas.AcceptAgreement();
-                    tas.Login(GetAccountName(), config.Password);
-                };
 
             tas.ConnectionLost += tas_ConnectionLost;
             tas.Connected += tas_Connected;
@@ -988,7 +983,7 @@ namespace Springie.autohost
         // login accepted - join channels
 
         // im connected, let's login
-        void tas_Connected(object sender, TasEventArgs e) {
+        void tas_Connected(object sender, Welcome welcome) {
             tas.Login(GetAccountName(), config.Password);
         }
 

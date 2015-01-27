@@ -13,6 +13,7 @@ using System.Web.Services.Description;
 using System.Xml.Serialization;
 using LobbyClient;
 using NightWatch;
+using PlasmaShared.LobbyMessages;
 using ZkData;
 
 #endregion
@@ -95,7 +96,7 @@ namespace CaTracker
 			return true;
 		}
 
-		void tas_Connected(object sender, TasEventArgs e)
+		void tas_Connected(object sender, Welcome welcome)
 		{
 			tas.Login(config.AccountName, config.AccountPassword);
 		}

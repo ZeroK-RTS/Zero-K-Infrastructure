@@ -1,7 +1,6 @@
 ﻿#region using
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -15,7 +14,6 @@ using System.Threading.Tasks;
 
 namespace ZkData
 {
-
     /// <summary>
     ///     Handles communiction with server on low level
     /// </summary>
@@ -38,7 +36,6 @@ namespace ZkData
                 cancellationTokenSource.Cancel();
         }
 
-        public abstract void OnConnectionClosed(bool wasRequested);
 
         private void InternalClose()
         {
@@ -65,9 +62,22 @@ namespace ZkData
         CancellationTokenSource cancellationTokenSource;
         NetworkStream stream;
 
-        public abstract void OnConnected();
+        public abstract Task OnConnected();
+        public abstract Task OnConnectionClosed(bool wasRequested);
+        public abstract Task OnLineReceived(string line);
+        
 
-        public async Task Connect(string host, int port, string bindingIp = null)
+        public Task Connect(string host, int port, string bindingIp = null)
+        {
+            return InternalRun(null, host, port, bindingIp);
+        }
+
+        public Task RunOnExistingTcp(TcpClient tcp)
+        {
+            return InternalRun(tcp);
+        }
+
+        protected async Task InternalRun(TcpClient existingTcp, string host = null, int? port = null, string bindingIp = null)
         {
             closeRequestedExplicitly = false;
 
@@ -75,22 +85,25 @@ namespace ZkData
 
             var token = cancellationTokenSource.Token;
 
-            if (bindingIp == null) tcp = new TcpClient();
-            else tcp = new TcpClient(new IPEndPoint(IPAddress.Parse(bindingIp), 0));
+            if (existingTcp == null) {
+                if (bindingIp == null) tcp = new TcpClient();
+                else tcp = new TcpClient(new IPEndPoint(IPAddress.Parse(bindingIp), 0));
+            } else tcp = existingTcp;
+
             token.Register(() => tcp.Close());
-            
+
 
             try
             {
-                await tcp.ConnectAsync(host, port).ConfigureAwait(false); // see http://blog.stephencleary.com/2012/07/dont-block-on-async-code.html
+                if (existingTcp == null) await tcp.ConnectAsync(host, port.Value); // see http://blog.stephencleary.com/2012/07/dont-block-on-async-code.html
                 stream = tcp.GetStream();
                 reader = new StreamReader(stream, Encoding);
                 IsConnected = true;
-                OnConnected();
+                await OnConnected();
                 while (!token.IsCancellationRequested)
                 {
-                    var line = await reader.ReadLineAsync().ConfigureAwait(false);
-                    OnLineReceived(line);
+                    var line = await reader.ReadLineAsync();
+                    await OnLineReceived(line);
                 }
             }
             catch (Exception ex)
@@ -101,35 +114,7 @@ namespace ZkData
             InternalClose();
         }
 
-        public async Task Accept(TcpClient tcp)
-        {
-            closeRequestedExplicitly = false;
-            cancellationTokenSource = new CancellationTokenSource();
-            var token = cancellationTokenSource.Token;
-            token.Register(() => tcp.Close());
-
-            try
-            {
-                stream = tcp.GetStream();
-                reader = new StreamReader(stream, Encoding);
-                IsConnected = true;
-                OnConnected();
-                while (!token.IsCancellationRequested)
-                {
-                    var line = await reader.ReadLineAsync().ConfigureAwait(false);
-                    OnLineReceived(line);
-                }
-            }
-            catch (Exception ex)
-            {
-                if (!token.IsCancellationRequested) Trace.TraceWarning("Socket disconnected: {0}", ex);
-
-            }
-            InternalClose();
-        }
-
-        public abstract void OnLineReceived(string line);
-
+        
         public async Task SendData(byte[] buffer)
         {
             if (IsConnected)

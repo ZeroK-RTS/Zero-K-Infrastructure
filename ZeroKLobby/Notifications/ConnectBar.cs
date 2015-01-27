@@ -63,31 +63,6 @@ namespace ZeroKLobby.Notifications
 
 			client.RegistrationAccepted += (s, e) => client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
 
-			client.AgreementRecieved += (s, e) =>
-				{
-					lbState.Text = "Waiting to accept agreement";
-					var acceptForm = new AcceptAgreementForm { AgreementText = e.Text };
-					if (acceptForm.ShowDialog() == DialogResult.OK)
-					{
-						lbState.Text = "Sending accept agreement";
-						client.AcceptAgreement();
-						ZkData.Utils.SafeThread(() =>
-						{
-							if (!Program.CloseOnNext) client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
-						}).Start();
-					}
-					else
-					{
-						lbState.Text = "did not accept agreement";
-						ZkData.Utils.SafeThread(() =>
-						{
-							if (!Program.CloseOnNext) client.RequestDisconnect(); //server will re-ask AcceptAgreement if we re-connect
-						}).Start();
-
-					}
-				};
-
-
 		}
 
 
