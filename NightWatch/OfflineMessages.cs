@@ -56,7 +56,7 @@ namespace NightWatch
 						{
 							var text = string.Format("!pm|{0}|{1}|{2}|{3}", m.Channel, m.SourceName, m.Created.ToString(CultureInfo.InvariantCulture), m.Message);
 							await client.Say(TasClient.SayPlace.User, name, text, false);
-							Thread.Sleep(MessageDelay);
+							await Task.Delay(MessageDelay);
 						}
 					}
 					catch (Exception ex)
