@@ -14,10 +14,10 @@ namespace Tests
         [Test]
         public async Task RunQuery() {
             var whois = new Whois();
-            var data = await whois.QueryByIp("31.7.187.232");
+            var data = whois.QueryByIp("31.7.187.232");
             Assert.AreEqual("PRIVAX-LTD", data["netname"]);
 
-            data = await whois.QueryByIp("62.233.34.238");
+            data = whois.QueryByIp("62.233.34.238");
             Assert.AreEqual("info@hidemyass.com", data["abuse-mailbox"]);
         }
 
