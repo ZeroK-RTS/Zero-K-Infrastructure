@@ -82,7 +82,7 @@ namespace ZeroKLobby
 
                 SelfUpdater = new SelfUpdater("Zero-K");
                 
-                if (Process.GetProcesses().Any(x => x.ProcessName.StartsWith("spring_"))) return; // dont start if started from installer
+                // if (Process.GetProcesses().Any(x => x.ProcessName.StartsWith("spring_"))) return; // dont start if started from installer
                 StartupArgs = args;
 
 
