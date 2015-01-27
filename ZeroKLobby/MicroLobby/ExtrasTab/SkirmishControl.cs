@@ -1468,6 +1468,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         void Event_MinimapBox_MouseMove(object sender, MouseEventArgs e)
         {
             if (currentMod!=null && currentMod.IsMission) return;
+            if (minimapPanel == null || minimapBox.Image == null) return;
 
             if (map_comboBox.SelectedItem == null)
             {
@@ -1520,8 +1521,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             }
             else
             {
-                if (minimapBox == null || minimapBox.Image == null) 
-                    return;
                 float imgWidthPerRect = (float)minimapBox.Image.Width / BattleRect.Max;
                 float imgHeightPerRect = (float)minimapBox.Image.Height / BattleRect.Max;
                 int diffWidth_half = (minimapPanel.Width - minimapBox.Image.Width) / 2;

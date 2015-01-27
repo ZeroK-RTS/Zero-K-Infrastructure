@@ -841,9 +841,11 @@ namespace ZkData
             {
                 lock (locker)
                 {
-                    Database.CreateIfNotExists();
-                    Database.Initialize(false);
-                    wasDbChecked = true;
+                    if (!wasDbChecked) {
+                        Database.CreateIfNotExists();
+                        Database.Initialize(false);
+                        wasDbChecked = true;
+                    }
                 }
             }
             DataContextCreated(this);
