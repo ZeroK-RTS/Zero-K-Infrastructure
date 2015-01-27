@@ -19,7 +19,10 @@ namespace Fixer
             var ord = num / 16;
             var batname = "Test " + ord;
 
-            tas.Connected += (sender, args) => { tas.Login(name, "dummy"); };
+            tas.Connected += (sender, args) => {
+                Console.WriteLine(name + " connected, will login");
+                tas.Login(name, "dummy");
+            };
             tas.LoginDenied += (sender, args) => { tas.Register(name, "dummy"); };
             tas.AgreementRecieved += (sender, recieved) => {
                 tas.AcceptAgreement();
@@ -45,26 +48,34 @@ namespace Fixer
                     tas.JoinBattle(args.Data.BattleID);
                 }
             };
-            
-            
-            
-            tas.Connect(GlobalConst.LobbyServerHost, GlobalConst.LobbyServerPort);
 
-            
-            while (true) {
-                Thread.Sleep(5000);
-            }
+            tas.Connect(GlobalConst.LobbyServerHost, GlobalConst.LobbyServerPort);
         }
 
-        public void SpawnMany()
+        public void RunNub2(int num)
         {
-            ThreadPool.SetMaxThreads(500, 500);
-            for (int i = 0; i < 100; i++) {
+            var con = new ServerConnection();
+            con.CommandRecieved += (sender, args) => {
+                if (args.Command == "TASServer") {
+                    con.SendCommand("LOGIN");
+                }
+            };
+
+            con.Connect(GlobalConst.LobbyServerHost, GlobalConst.LobbyServerPort);
+            
+        }
+
+
+        public async Task SpawnMany()
+        {
+            ThreadPool.SetMaxThreads(1000, 1000);
+            for (int i = 0; i < 2000; i++) {
                 int i1 = i;
                 //Thread.Sleep(100);
-                Task.Factory.StartNew(() => { RunNub(i1); });
+                RunNub(i1);
             }
-        }
+
+         }
 
 
     }
