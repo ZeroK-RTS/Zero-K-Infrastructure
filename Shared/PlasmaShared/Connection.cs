@@ -95,6 +95,7 @@ namespace ZkData
 
         StreamReader reader;
         CancellationTokenSource cancellationTokenSource;
+        NetworkStream stream;
 
 
         public async Task Connect(string host, int port, string bindingIp = null)
@@ -110,7 +111,7 @@ namespace ZkData
                 token.Register(() => tcp.Close());
 
                 await tcp.ConnectAsync(host, port).ConfigureAwait(false); // see http://blog.stephencleary.com/2012/07/dont-block-on-async-code.html
-                var stream = tcp.GetStream();
+                stream = tcp.GetStream();
                 reader = new StreamReader(stream, Encoding);
                 IsConnected = true;
                 if (Connected != null) Connected(this, EventArgs.Empty);
@@ -143,7 +144,7 @@ namespace ZkData
 
 
 
-        public void SendCommand(string command, params object[] parameters)
+        public async Task SendCommand(string command, params object[] parameters)
         {
             if (IsConnected)
             {
@@ -151,30 +152,19 @@ namespace ZkData
                 {
                     CommandSent(this, new EventArgs<KeyValuePair<string, object[]>>(new KeyValuePair<string, object[]>(command, parameters)));
                     var buffer = Encoding.GetBytes(PrepareCommand(command, parameters));
-                    tcp.GetStream().BeginWrite(buffer, 0, buffer.Length, CommandSentCallback, this);
+                    await stream.WriteAsync(buffer, 0, buffer.Length);
                 }
                 catch (Exception ex)
                 {
-                    Trace.TraceError("Error sending command {0}", ex);
-                    RequestClose();
+                    if (!cancellationTokenSource.Token.IsCancellationRequested) {
+                        Trace.TraceError("Error sending command {0}", ex);
+                        RequestClose();
+                    }
                 }
             }
         }
 
-        static void CommandSentCallback(IAsyncResult res)
-        {
-            var serv = res.AsyncState as Connection;
-            try
-            {
-                serv.tcp.GetStream().EndWrite(res);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError("Eror finalizing write: {0}", ex);
-                serv.RequestClose();
-            }
-        }
-
+     
         protected abstract ConnectionEventArgs ParseCommand(string line);
         protected abstract string PrepareCommand(string command, object[] pars);
     }
