@@ -1,7 +1,10 @@
 #region using
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
+using System.Threading.Tasks;
 using ZkData;
 
 #endregion
@@ -9,31 +12,98 @@ using ZkData;
 namespace LobbyClient
 {
     /// <summary>
+    ///     Event arguments used in many Connection events
+    /// </summary>
+    public class ConnectionEventArgs : EventArgs
+    {
+        string command = "";
+
+        public string Command { get { return command; } set { command = value; } }
+
+        public Connection Connection { get; set; }
+
+        public string[] Parameters { get; set; }
+
+
+        public ConnectionEventArgs() { }
+
+        public ConnectionEventArgs(Connection connection, string command, string[] parameters)
+        {
+            Connection = connection;
+            this.command = command;
+            Parameters = parameters;
+        }
+    }
+
+
+    /// <summary>
     /// Handles communiction with server on low level
     /// </summary>
     public class ServerConnection: Connection
     {
-        protected override ConnectionEventArgs ParseCommand(string line)
+        public event EventHandler<ConnectionEventArgs> CommandRecieved;
+        public event EventHandler<EventArgs<KeyValuePair<string, object[]>>> CommandSent = delegate { };
+        public event EventHandler Connected;
+        public event EventHandler ConnectionClosed;
+
+
+        public override void OnConnectionClosed(bool wasRequested)
+        {
+            if (ConnectionClosed != null) ConnectionClosed(this, EventArgs.Empty);
+        }
+
+        public override void OnConnected()
+        {
+            if (Connected != null) Connected(this, EventArgs.Empty);
+        }
+
+        public override void OnLineReceived(string line)
+        {
+            ConnectionEventArgs command = null;
+            try
+            {
+                command = ParseCommand(line);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error parsing command {0} {1}", line, ex);
+                throw;
+            }
+
+            if (command != null) if (CommandRecieved != null) CommandRecieved(this, command);
+        }
+
+        public async Task SendCommand(string command, params object[] parameters)
+        {
+            if (IsConnected)
+            {
+                try
+                {
+                    var buffer = Encoding.GetBytes(PrepareCommand(command, parameters));
+                    await SendData(buffer);
+                    CommandSent(this, new EventArgs<KeyValuePair<string, object[]>>(new KeyValuePair<string, object[]>(command, parameters)));
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("Error sending command {0}", ex);
+                }
+            }
+        }
+
+        protected ConnectionEventArgs ParseCommand(string line)
         {
             var command = new ConnectionEventArgs();
-            if (line != null)
-            {
+            if (line != null) {
                 var args = line.Split(' '); // split arguments
 
                 // prepare and send command recieved info
                 command.Connection = this;
                 command.Command = args[0];
-                command.Result = ConnectionEventArgs.ResultTypes.Success;
                 command.Parameters = new string[args.Length - 1];
                 for (var j = 1; j < args.Length; ++j) command.Parameters[j - 1] = args[j];
-            }
-            else
-            {
-                command.Result = ConnectionEventArgs.ResultTypes.NetworkError;
-                command.Parameters = new string[] { };
-                command.Command = "";
-            }
-            return command;
+                return command;
+            } 
+            return null;
         }
 
         /// <summary>
@@ -42,7 +112,7 @@ namespace LobbyClient
         /// <param Name="command">command</param>
         /// <param Name="pars">command parameters</param>
         /// <returns></returns>
-        protected override string PrepareCommand(string command, object[] pars)
+        protected string PrepareCommand(string command, object[] pars)
         {
             var sb = new StringBuilder();
             sb.Append(command);

@@ -93,7 +93,7 @@ namespace ZkData
         public bool IsBot { get; set; }
        
         [NotMapped]
-        public string NewPassword {set {SetPassword(value);}}
+        public string NewPasswordPlain {set {SetPasswordPlain(value);}}
 
         [StringLength(150)]
         public string PasswordBcrypt { get; set; }
@@ -242,10 +242,16 @@ namespace ZkData
         }
 
 
-        public void SetPassword(string passwordHash)
+        public void SetPasswordHashed(string passwordHash)
         {
             PasswordBcrypt = BCrypt.Net.BCrypt.HashPassword(passwordHash);
         }
+
+        public void SetPasswordPlain(string passwordPlain)
+        {
+            SetPasswordHashed(Utils.HashLobbyPassword(passwordPlain));
+        }
+
 
 
         public static double AdjustEloWeight(double currentWeight, double sumWeight, int sumCount)
