@@ -33,8 +33,7 @@ namespace ZkLobbyServer
                 if (listener.Pending()) {
                     var client = await listener.AcceptTcpClientAsync();
                     Console.WriteLine("Accepting conneciton {0}", client);
-                    Task.Run(() => { ProcessClient(client); });
-
+                    ProcessClient(client);
                 }
             }
         }
@@ -54,7 +53,7 @@ namespace ZkLobbyServer
                             using (var db = new ZkDataContext()) {
                                 acc = Account.AccountVerify(db, "test", "test");
                             }
-                            await Write(stream, "LOGINACCEPTED " + acc.Name);
+                            await Write(stream, "LOGINACCEPTED");
                         });
                     }
                 }
