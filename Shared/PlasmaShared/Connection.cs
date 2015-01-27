@@ -118,7 +118,7 @@ namespace ZkData
                 if (Connected != null) Connected(this, EventArgs.Empty);
                 while (!token.IsCancellationRequested)
                 {
-                    var line = await reader.ReadLineAsync().ConfigureAwait(false); ;
+                    var line = await reader.ReadLineAsync().ConfigureAwait(false);
 
                     ConnectionEventArgs command = null;
                     try
@@ -151,13 +151,13 @@ namespace ZkData
             {
                 try
                 {
-                    CommandSent(this, new EventArgs<KeyValuePair<string, object[]>>(new KeyValuePair<string, object[]>(command, parameters)));
                     var buffer = Encoding.GetBytes(PrepareCommand(command, parameters));
-                    await stream.WriteAsync(buffer, 0, buffer.Length);
+                    await stream.WriteAsync(buffer, 0, buffer.Length, cancellationTokenSource.Token);
+                    CommandSent(this, new EventArgs<KeyValuePair<string, object[]>>(new KeyValuePair<string, object[]>(command, parameters)));
                 }
                 catch (Exception ex)
                 {
-                    if (!cancellationTokenSource.Token.IsCancellationRequested) {
+                    if (cancellationTokenSource != null && !cancellationTokenSource.Token.IsCancellationRequested) {
                         Trace.TraceError("Error sending command {0}", ex);
                         RequestClose();
                     }
