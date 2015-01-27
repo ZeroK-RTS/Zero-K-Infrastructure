@@ -69,7 +69,8 @@ namespace ZkData
         public void RequestClose()
         {
             IsConnected = false;
-            cancellationTokenSource.Cancel();
+            if (cancellationTokenSource!=null) //in case never connected yet
+                cancellationTokenSource.Cancel();
         }
 
         private void InternalClose()
