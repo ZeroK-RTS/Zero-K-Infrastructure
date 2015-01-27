@@ -106,7 +106,7 @@ namespace CaTracker
 			for (var i = 0; i < config.JoinChannels.Length; ++i) tas.JoinChannel(config.JoinChannels[i]);
 		}
 
-		void tas_LoginDenied(object sender, TasEventArgs e)
+		void tas_LoginDenied(object sender, LoginResponse loginResponse)
 		{
             Utils.StartAsync(() =>
             {

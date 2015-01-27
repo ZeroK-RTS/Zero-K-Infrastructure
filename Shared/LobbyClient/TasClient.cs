@@ -70,8 +70,6 @@ namespace LobbyClient
         bool startingAfterUdpPunch;
         readonly Timer udpPunchingTimer = new Timer(400);
 
-        // user info 
-        string username = "";
         public bool ConnectionFailed { get; private set; }
 
         public Dictionary<int, Battle> ExistingBattles { get { return existingBattles; } set { existingBattles = value; } }
@@ -92,25 +90,34 @@ namespace LobbyClient
             existingBattles = new Dictionary<int, Battle>();
             isChanScanning = false;
             isLoggedIn = false;
-            username = "";
-
         }
 
         public override async Task OnConnectionClosed(bool wasRequested)
         {
             ConnectionFailed = !wasRequested;
-            if (ConnectionLost != null) ConnectionLost(this, new TasEventArgs()); 
+
+            ExistingUsers = new Dictionary<string, User>();
+            existingChannels = new Dictionary<string, ExistingChannel>();
+            joinedChannels = new Dictionary<string, Channel>();
+            existingBattles = new Dictionary<int, Battle>();
+            MyBattle = null;
+            MyBattleID = 0;
+            isLoggedIn = false;
+            isChanScanning = false;
+            ConnectionLost(this, new TasEventArgs(string.Format("Connection {0}", wasRequested ? "closed on user request" : "disconnected")));
         }
 
         public override async Task OnLineReceived(string line)
         {
-            var obj = CommandJsonSerializer.DeserializeLine(line);
-            await ProcessCommand(obj);
+            dynamic obj = CommandJsonSerializer.DeserializeLine(line);
+            Input(this, obj);
+            await Process(obj);
         }
 
         public async Task SendCommand<T>(T data)
         {
             var line = CommandJsonSerializer.SerializeToLine(data);
+            Output(this, data);
             await SendData(Encoding.GetBytes(line));
         }
 
@@ -129,7 +136,7 @@ namespace LobbyClient
         {
             get
             {
-                if (MyBattle != null) return MyBattle.Users.SingleOrDefault(x => x.Name == username);
+                if (MyBattle != null) return MyBattle.Users.SingleOrDefault(x => x.Name == UserName);
                 else return null;
             }
         }
@@ -139,7 +146,7 @@ namespace LobbyClient
             get
             {
                 User us;
-                ExistingUsers.TryGetValue(username, out us);
+                ExistingUsers.TryGetValue(UserName, out us);
                 return us;
             }
         }
@@ -156,8 +163,8 @@ namespace LobbyClient
         }
         public string ServerSpringVersion { get; private set; }
 
-        public string UserName { get { return username; } }
-        public string UserPassword;
+        public string UserName { get; private set; }
+        public string UserPassword { get; private set; }
 
         public event EventHandler<TasEventAgreementRecieved> AgreementRecieved = delegate { };
         public event EventHandler<EventArgs<BotBattleStatus>> BattleBotAdded = delegate { };
@@ -194,19 +201,18 @@ namespace LobbyClient
         public event EventHandler<TasEventArgs> ChannelUsersAdded = delegate { }; // raised after a group of clients is recieved in a batch
         public event EventHandler<Welcome> Connected = delegate { };
         public event EventHandler<TasEventArgs> ConnectionLost = delegate { };
-        public event EventHandler<TasEventArgs> Failure = delegate { }; //this event is fired whenever any failure events fire
         public event EventHandler<CancelEventArgs<string>> FilterBattleByMod;
         public event EventHandler<EventArgs> HourChime = delegate { };
-        public event EventHandler<TasInputArgs> Input = delegate { };
+        public event EventHandler<object> Input = delegate { };
         public event EventHandler<TasEventArgs> JoinBattleFailed = delegate { };
         public event EventHandler<KickedFromServerEventArgs> KickedFromServer = delegate { };
         public event EventHandler<TasEventArgs> LoginAccepted = delegate { };
-        public event EventHandler<TasEventArgs> LoginDenied = delegate { };
+        public event EventHandler<LoginResponse> LoginDenied = delegate { };
         public event EventHandler<EventArgs<Battle>> MyBattleEnded = delegate { }; // raised just after the battle is removed from the battle list
         public event EventHandler<TasEventArgs> MyBattleHostExited = delegate { };
         public event EventHandler<BattleInfoEventArgs> MyBattleMapChanged = delegate { };
         public event EventHandler<TasEventArgs> MyBattleStarted = delegate { };
-        public event EventHandler<EventArgs<KeyValuePair<string, object[]>>> Output = delegate { }; // outgoing command and arguments
+        public event EventHandler<object> Output = delegate { }; // outgoing command and arguments
         public event EventHandler<CancelEventArgs<TasEventArgs>> PreviewChannelJoined = delegate { };
         public event EventHandler<CancelEventArgs<TasSayEventArgs>> PreviewSaid = delegate { };
         public event EventHandler<EventArgs<string>> Rang = delegate { };
@@ -263,7 +269,7 @@ namespace LobbyClient
                                                                          {
                                                                              u.SetExtension(data);
                                                                              if (invokeUserStatusChangedOnExtensions) UserStatusChanged(this, new TasEventArgs(u.Name, u.ToInt().ToString()));
-                                                                             if (user == username) MyExtensionsChanged(this, new EventArgs<User>(u));
+                                                                             if (user == UserName) MyExtensionsChanged(this, new EventArgs<User>(u));
                                                                              UserExtensionsChanged(this, new EventArgs<User>(u));
                                                                          }
 
@@ -285,11 +291,6 @@ namespace LobbyClient
 
             udpPunchingTimer.Elapsed += udpPunchingTimer_Elapsed;
             udpPunchingTimer.AutoReset = true;
-
-            ConnectionLost += RaiseFailure;
-            LoginDenied += RaiseFailure;
-            ChannelJoinFailed += RaiseFailure;
-            BattleOpenFailed += RaiseFailure;
         }
 
 
@@ -387,20 +388,6 @@ namespace LobbyClient
             RequestClose();
         }
 
-        void OnDisconnected()
-        {
-            ExistingUsers = new Dictionary<string, User>();
-            existingChannels = new Dictionary<string, ExistingChannel>();
-            joinedChannels = new Dictionary<string, Channel>();
-            existingBattles = new Dictionary<int, Battle>();
-            MyBattle = null;
-            MyBattleID = 0;
-            username = "";
-            isLoggedIn = false;
-            isChanScanning = false;
-            if (guiThreadInvoker != null) guiThreadInvoker(() => ConnectionLost(this, new TasEventArgs("Connection was closed")));
-            else ConnectionLost(this, new TasEventArgs("Connection was closed"));
-        }
 
 
         public void ForceAlly(string username, int ally)
@@ -522,6 +509,7 @@ namespace LobbyClient
 
         public Task Login(string userName, string password)
         {
+            UserName = userName;
             UserPassword = password;
             return SendCommand(new Login() { Name = userName, PasswordHash = Utils.HashLobbyPassword(password) });
         }
@@ -553,7 +541,7 @@ namespace LobbyClient
                               '\t' + MyBattle.Title,
                               '\t' + MyBattle.ModName
                           };
-            MyBattle.Founder = ExistingUsers[username];
+            MyBattle.Founder = ExistingUsers[UserName];
             MyBattle.Ip = localIp;
 
             //battle.Details.AddToParamList(objList);
@@ -784,14 +772,6 @@ namespace LobbyClient
             string command = "";
             string[] args = new string[]{};
 
-            if (obj != null) {
-                if (obj is Welcome) {
-                    var welcome = obj as Welcome;
-                    OnTasServer(welcome);
-                }
-
-            }
-
             // is this really needed for the whole thread? it screws with date formatting
             // Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             try
@@ -807,14 +787,6 @@ namespace LobbyClient
 
                 switch (command)
                 {
-
-                    case "ACCEPTED": // Login accepted
-                        OnAccepted(args);
-                        break;
-
-                    case "DENIED": // login denied
-                        OnDenied(args);
-                        break;
 
                     case "JOIN": // channel joined
                         OnJoin(args);
@@ -904,7 +876,7 @@ namespace LobbyClient
                         InvokeSaid(new TasSayEventArgs(TasSayEventArgs.Origins.Player,
                                                        TasSayEventArgs.Places.Normal,
                                                        args[0],
-                                                       username,
+                                                       UserName,
                                                        Utils.Glue(args, 1),
                                                        false));
                         break;
@@ -1189,7 +1161,7 @@ namespace LobbyClient
                 EngineName = rest[0]
             };
 
-            if (newBattle.Founder.Name == username) newBattle.Ip = localIp; // lobby can send wahtever, betteroverride here
+            if (newBattle.Founder.Name == UserName) newBattle.Ip = localIp; // lobby can send wahtever, betteroverride here
 
             // NatType = Int32.Parse(args[2]); // todo: correctly add nattype
             newBattle.MapName = mapName;
@@ -1238,8 +1210,8 @@ namespace LobbyClient
                 var battleStatus = MyBattle.Users[userIndex];
                 battleStatus.SetFrom(int.Parse(args[1]), int.Parse(args[2]));
                 MyBattle.Users[userIndex] = battleStatus;
-                if (MyBattle.Founder.Name == username) UpdateSpectators();
-                if (battleStatus.Name == username) {
+                if (MyBattle.Founder.Name == UserName) UpdateSpectators();
+                if (battleStatus.Name == UserName) {
                     lastUserBattleStatus = battleStatus.ToInt();
                     BattleMyUserStatusChanged(this, new TasEventArgs(args));
                 }
@@ -1261,7 +1233,7 @@ namespace LobbyClient
 
             if (MyBattle != null && battleID == MyBattleID) {
                 if (MyBattle.Founder.Name == UserName) UpdateSpectators();
-                if (user == username) {
+                if (user == UserName) {
                     MyBattle = null;
                     MyBattleID = 0;
                     BattleClosed(this, new EventArgs<Battle>(battle));
@@ -1308,7 +1280,7 @@ namespace LobbyClient
             var ubs = new UserBattleStatus(userName, existingUsers[userName], scriptPassword);
             battle.Users.Add(ubs);
             ExistingUsers[userName].IsInBattleRoom = true;
-            if (userName == username) lastUserBattleStatus = ubs.ToInt();
+            if (userName == UserName) lastUserBattleStatus = ubs.ToInt();
             BattleUserJoined(this, new BattleUserEventArgs(userName, joinedBattleID, scriptPassword));
         }
 
@@ -1334,7 +1306,7 @@ namespace LobbyClient
         {
             MyBattleID = int.Parse(args[0]);
             existingBattles[MyBattleID] = MyBattle;
-            var self = new UserBattleStatus(username, existingUsers[username]);
+            var self = new UserBattleStatus(UserName, existingUsers[UserName]);
             MyBattle.Users.Add(self); // add self
             lastUserBattleStatus = self.ToInt();
             UpdateBattleDetails(MyBattle.Details);
@@ -1386,7 +1358,7 @@ namespace LobbyClient
             var old = u.Clone();
             u.FromInt(status);
 
-            if (u.Name == username) lastUserStatus = u.ToInt();
+            if (u.Name == UserName) lastUserStatus = u.ToInt();
 
             if (u.IsInGame && old.IsInGame == false) BattleStarted(this, new EventArgs<User>(u));
 
@@ -1485,24 +1457,21 @@ namespace LobbyClient
             }
         }
 
-        void OnDenied(string[] args)
+        async Task Process(LoginResponse loginResponse)
         {
-            isLoggedIn = false;
-            var reason = Utils.Glue(args);
-            LoginDenied(this, new TasEventArgs(reason));
-        }
-
-        void OnAccepted(string[] args)
-        {
-            username = args[0];
-            isLoggedIn = true;
-            if (LoginAccepted != null) LoginAccepted(this, new TasEventArgs());
+            if (loginResponse.ResultCode == LoginResponse.Code.Ok) {
+                isLoggedIn = true;
+                LoginAccepted(this, new TasEventArgs());
+            } else {
+                isLoggedIn = false;
+                LoginDenied(this, loginResponse);
+            }
         }
 
         public Welcome ServerWelcome = new Welcome();
 
 
-        void OnTasServer(Welcome welcome)
+        async Task Process(Welcome welcome)
         {
             ServerWelcome = welcome;
             Connected(this, welcome);
@@ -1580,17 +1549,6 @@ namespace LobbyClient
             {
                 Connect(serverHost, serverPort);
             }*/
-        }
-
-        /// <summary>
-        /// purpose of this event handler is to redirect "fail" events to failure event too
-        /// </summary>
-        /// <param Name="sender"></param>
-        /// <param Name="args"></param>
-        void RaiseFailure(object sender, TasEventArgs args)
-        {
-            Failure(this, args);
-            Console.Out.Flush();
         }
 
         void udpPunchingTimer_Elapsed(object sender, ElapsedEventArgs e)

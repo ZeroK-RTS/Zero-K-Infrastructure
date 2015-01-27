@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using LobbyClient;
+using Newtonsoft.Json;
 using ZkData;
 using ZkData.UnitSyncLib;
 
@@ -19,13 +20,17 @@ namespace Fixer
             var ord = num / 16;
             var batname = "Test " + ord;
 
-            tas.Input += (sender, args) => { Console.WriteLine(args.Command); };
+            tas.Input += (sender, args) => { Console.WriteLine(" < " + JsonConvert.SerializeObject(args, new JsonSerializerSettings() { Formatting = Formatting.None })); };
+            tas.Output += (sender, args) => { Console.WriteLine(" > " + JsonConvert.SerializeObject(args, new JsonSerializerSettings(){Formatting = Formatting.None})); };
+
             tas.Connected += (sender, args) => {
-                Console.WriteLine(name + " connected, will login");
                 tas.Login(name, "dummy");
             };
-            tas.LoginAccepted += (sender, args) => { Console.WriteLine(name + " accepted"); };
 
+            tas.ConnectionLost += (sender, args) => { Console.WriteLine("disconnected"); };
+
+
+            tas.LoginAccepted += (sender, args) => { Console.WriteLine(name + " accepted"); };
             tas.LoginDenied += (sender, args) => { tas.Register(name, "dummy"); };
 
             

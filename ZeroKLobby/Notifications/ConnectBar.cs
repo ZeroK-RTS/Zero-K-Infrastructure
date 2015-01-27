@@ -3,6 +3,7 @@ using System.Drawing.Drawing2D;
 using System.Threading;
 using System.Windows.Forms;
 using LobbyClient;
+using PlasmaShared.LobbyMessages;
 using ZeroKLobby.MicroLobby;
 
 namespace ZeroKLobby.Notifications
@@ -51,12 +52,12 @@ namespace ZeroKLobby.Notifications
 
 			client.LoginDenied += (s, e) =>
 				{
-                    if (e.ServerParams[0] == "Bad username/password" && !string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword) && canRegister)
+                    if (e.ResultCode == LoginResponse.Code.InvalidName && !string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword) && canRegister)
 					{
 						lbState.Text = "Registering new account";
 						client.Register(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
 					}
-					else LoginWithDialog("Login denied: " + e.ServerParams[0], false);
+					else LoginWithDialog(string.Format("Login denied: {0} {1}",e.ResultCode, e.Reason), false);
 				};
 
 			client.RegistrationDenied += (s, e) => LoginWithDialog("Registration denied: " + e.ServerParams[0], true);

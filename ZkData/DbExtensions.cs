@@ -33,12 +33,6 @@ namespace ZkData
 		}
 
 
-        public static string Description(this Enum e)
-        {
-            var da = (DescriptionAttribute[])(e.GetType().GetField(e.ToString()).GetCustomAttributes(typeof(DescriptionAttribute), false));
-            return da.Length > 0 ? da[0].Description : e.ToString();
-        }
-
 	    public static void DeleteAllOnSubmit<T>(this IDbSet<T> dbSet, IEnumerable<T> toDel) where T: class
 	    {
 	        foreach (var t in toDel) dbSet.Remove(t);

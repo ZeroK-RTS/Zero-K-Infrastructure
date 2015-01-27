@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Data.Entity;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using PlasmaShared.LobbyMessages;
@@ -27,6 +28,10 @@ namespace ZkLobbyServer
 
         public override async Task OnConnectionClosed(bool wasRequested)
         {
+            if (!string.IsNullOrEmpty(name)) {
+                Client client;
+                state.Clients.TryRemove(name, out client);
+            }
             Trace.TraceInformation("{0} {1}", this, wasRequested ? "quit" : "connection failed");
         }
 
@@ -53,10 +58,30 @@ namespace ZkLobbyServer
         async Task Process(Login login)
         {
             name = login.Name;
-            Trace.TraceInformation("{0} logged in", this);
 
-            await SendCommand(new LoginResponse() { });
+            var response = new LoginResponse();
+            if (!state.Clients.TryAdd(name, this)) {
+                response.ResultCode = LoginResponse.Code.AlreadyConnected;
+            } else {
+                using (var db = new ZkDataContext()) {
+                    var acc = await db.Accounts.FirstOrDefaultAsync(x => x.Name == name);
+                    if (acc == null) {
+                        response.ResultCode = LoginResponse.Code.InvalidName;
+                    } else {
+                        if (!acc.VerifyPassword(login.PasswordHash)) {
+                            response.ResultCode = LoginResponse.Code.InvalidPassword;
+                        } else {
+                            // TODO banhammer check
+                            response.ResultCode = LoginResponse.Code.Ok;
+                        }
+                    }
+                }
+            }
+
+            Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
+            await SendCommand(response);
+            if (response.ResultCode != LoginResponse.Code.Ok) RequestClose();
         }
-
+        
     }
 }

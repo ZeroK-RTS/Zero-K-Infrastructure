@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -723,5 +724,12 @@ namespace ZkData
                 Content = file.Content != null ? Encoding.UTF8.GetString(file.Content) : null
             };
         }
+
+        public static string Description(this Enum e)
+        {
+            var da = (DescriptionAttribute[])(e.GetType().GetField(e.ToString()).GetCustomAttributes(typeof(DescriptionAttribute), false));
+            return da.Length > 0 ? da[0].Description : e.ToString();
+        }
+
     }
 }

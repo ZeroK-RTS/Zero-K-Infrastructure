@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Newtonsoft.Json;
 using ZkData;
 
@@ -66,6 +67,24 @@ namespace PlasmaShared.LobbyMessages
 
     public class LoginResponse
     {
-        
+        public enum Code
+        {
+            Ok = 0,
+            
+            [Description("already connected")]
+            AlreadyConnected = 1,
+            
+            [Description("invalid name")]
+            InvalidName = 2,
+            
+            [Description("invalid password")]
+            InvalidPassword = 3,
+
+            [Description("banned")]
+            Banned = 4
+        }
+
+        public Code ResultCode;
+        public string Reason;
     }
 }

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
+using Newtonsoft.Json;
 using ZkData;
 using ZeroKLobby.Lines;
 
@@ -75,17 +76,17 @@ namespace ZeroKLobby.MicroLobby
 
         public bool IsBusy { get { return false; } }
 
-        void TasClient_Input(object sender, TasInputArgs e) {
-            if (e != null && e.Command != null) {
-                var entry = new FromServerLine(e.Command, e.Args);
+        void TasClient_Input(object sender, object o) {
+            if (o != null) {
+                var entry = new FromServerLine(o);
                 entries.Add(entry);
                 if (prevVis) Program.MainWindow.InvokeFunc(() => textBox.AddLine(entry));
             }
         }
 
-        void TasClient_Output(object sender, EventArgs<KeyValuePair<string, object[]>> e) {
-            if (e != null && e.Data.Value != null) {
-                var entry = new ToServerLine(e.Data.Key, e.Data.Value.Select(a => a.ToString()).ToArray());
+        void TasClient_Output(object sender, object o) {
+            if (o != null) {
+                var entry = new ToServerLine(o);
                 entries.Add(entry);
                 if (prevVis) Program.MainWindow.InvokeFunc(() => textBox.AddLine(entry));
             }

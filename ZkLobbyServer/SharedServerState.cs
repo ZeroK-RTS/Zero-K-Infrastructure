@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.Concurrent;
+using System.Reflection;
 using PlasmaShared.LobbyMessages;
 using ZkData;
 
@@ -11,6 +12,8 @@ namespace ZkLobbyServer
         public string Game { get; set; }
         public int ClientCounter;
         public CommandJsonSerializer Serializer = new CommandJsonSerializer();
+
+        public ConcurrentDictionary<string, Client> Clients = new ConcurrentDictionary<string, Client>();
 
         public SharedServerState()
         {

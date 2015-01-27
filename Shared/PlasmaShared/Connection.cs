@@ -41,7 +41,6 @@ namespace ZkData
         {
             try
             {
-                tcp.GetStream().Close();
                 tcp.Close();
             }
             catch { }
@@ -103,6 +102,7 @@ namespace ZkData
                 while (!token.IsCancellationRequested)
                 {
                     var line = await reader.ReadLineAsync();
+                    if (line == null) break; // disconnected cleanly
                     await OnLineReceived(line);
                 }
             }
