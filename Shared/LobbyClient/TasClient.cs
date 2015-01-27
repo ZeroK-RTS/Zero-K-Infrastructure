@@ -201,6 +201,11 @@ namespace LobbyClient
             this.appName = appName;
             this.guiThreadInvoker = guiThreadInvoker;
 
+            con = new ServerConnection();
+            con.ConnectionClosed += OnConnectionClosed;
+            con.CommandRecieved += OnCommandRecieved;
+            con.CommandSent += (s, e) => Output(this, e);
+
             if (!string.IsNullOrEmpty(ipOverride))
             {
                 localIp = ipOverride;
@@ -351,19 +356,8 @@ namespace LobbyClient
             isChanScanning = false;
             isLoggedIn = false;
             username = "";
-            if (con != null) Disconnect();
-            try
-            {
-                con = new ServerConnection();
-                con.ConnectionClosed += OnConnectionClosed;
-                con.CommandRecieved += OnCommandRecieved;
-                con.CommandSent += (s, e) => Output(this, e);
-                con.Connect(host, port, forcedLocalIP ? localIp : null);
-            }
-            catch
-            {
-                OnConnectionClosed(this, new TasEventArgs("Cannot connect to remote machine"));
-            }
+            if (con.IsConnected) con.RequestClose();
+            con.Connect(host, port, forcedLocalIP ? localIp : null);
         }
 
         public static DateTime ConvertMilisecondTime(string arg)
@@ -384,16 +378,13 @@ namespace LobbyClient
             }
         }
 
-        public void Disconnect()
+        public void RequestDisconnect()
         {
-            var callEvent = con.IsConnected || ConnectionFailed;
-            if (con != null)
-            {
-                con.ConnectionClosed -= OnConnectionClosed;
-                con.CommandRecieved -= OnCommandRecieved;
-                con.UnsubscribeEvents(this);
-                con.RequestClose();
-            }
+            con.RequestClose();
+        }
+
+        void OnDisconnected()
+        {
             ExistingUsers = new Dictionary<string, User>();
             existingChannels = new Dictionary<string, ExistingChannel>();
             joinedChannels = new Dictionary<string, Channel>();
@@ -403,10 +394,8 @@ namespace LobbyClient
             username = "";
             isLoggedIn = false;
             isChanScanning = false;
-            if (callEvent) {
-                if (guiThreadInvoker != null) guiThreadInvoker(() => ConnectionLost(this, new TasEventArgs("Connection was closed")));
-                else ConnectionLost(this, new TasEventArgs("Connection was closed"));
-            }
+            if (guiThreadInvoker != null) guiThreadInvoker(() => ConnectionLost(this, new TasEventArgs("Connection was closed")));
+            else ConnectionLost(this, new TasEventArgs("Connection was closed"));
         }
 
         public void EnableAllUnits()
@@ -1552,12 +1541,6 @@ namespace LobbyClient
             isLoggedIn = false;
             var reason = Utils.Glue(args);
             LoginDenied(this, new TasEventArgs(reason));
-            
-            if (reason != "Empty password" && reason != "Invalid username or password") {
-                ConnectionFailed = true;
-                Disconnect();
-            }
-            
         }
 
         void OnAccepted(string[] args)
@@ -1639,7 +1622,7 @@ namespace LobbyClient
         void OnConnectionClosed(object sender, EventArgs args)
         {
             ConnectionFailed = true;
-            Disconnect();
+            OnDisconnected();
         }
 
         DateTime lastPing;
@@ -1648,13 +1631,13 @@ namespace LobbyClient
         void OnPingTimer(object sender, EventArgs args)
         {
             if (con != null && IsConnected) {
-                if (lastPing != DateTime.MinValue && lastPing.Subtract(lastPong).TotalSeconds > pingInterval*2) {
+                //if (lastPing != DateTime.MinValue && lastPing.Subtract(lastPong).TotalSeconds > pingInterval*2) {
                     // server didnt respond to ping in 30-60s 
-                    con.RequestClose();
-                } else {
+                   // con.RequestClose();
+                //} else {
                     lastPing = DateTime.UtcNow;
                     con.SendCommand("PING");
-                }
+                //}
             }
             else if (ConnectionFailed && !IsConnected)
             {

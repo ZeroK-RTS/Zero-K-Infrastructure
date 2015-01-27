@@ -198,7 +198,7 @@ namespace Springie.autohost
             springPaths.UnsubscribeEvents(this);
             Program.main.Downloader.UnsubscribeEvents(this);
             Program.main.paths.UnsubscribeEvents(this);
-            tas.Disconnect();
+            tas.RequestDisconnect();
             pollTimer.Dispose();
             if (timer != null) timer.Dispose();
             pollTimer = null;

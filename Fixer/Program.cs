@@ -19,6 +19,7 @@ using System.Xml.Serialization;
 //using LobbyClient;
 //using NightWatch;
 using CaTracker;
+using LobbyClient;
 using Microsoft.Linq.Translations;
 using PlasmaShared;
 using ZkData.UnitSyncLib;
@@ -212,11 +213,18 @@ namespace Fixer
             db.SubmitAndMergeChanges();
         }
 
+
+
+
         [STAThread]
         static void Main(string[] args)
         {
+            var ns = new NubSimulator();
+            ns.SpawnMany();
+            Console.ReadLine();
+
             //FixDuplicatedAccounts();
-            BcryptPasswords();
+            //BcryptPasswords();
             //var db = new ZkDataContext(true);
             //var test = db.Accounts.OrderByDescending(x => x.EffectiveElo).WithTranslations().Take(5).ToList();
 
@@ -1002,25 +1010,6 @@ namespace Fixer
             db.SubmitChanges();
         }
 
-
-        public static void BcryptPasswords()
-        {
-            GlobalConst.Mode = ModeType.Test;
-            int cnt = 0;
-            List<Account> list;
-            do
-            {
-                using (var db = new ZkDataContext(false)) {
-                    list = db.Accounts.Where(x => x.PasswordBcrypt == null && x.Password != null).Take(1000).ToList();
-                    list.AsParallel().ForAll(x => {
-                        Interlocked.Increment(ref cnt);
-                        x.PasswordBcrypt = BCrypt.Net.BCrypt.HashPassword(x.Password);
-                        Console.WriteLine(cnt);
-                    });
-                    db.SaveChanges();
-                }
-            } while (list.Count > 0);
-        }
 
         public static void TestPwMatch()
         {

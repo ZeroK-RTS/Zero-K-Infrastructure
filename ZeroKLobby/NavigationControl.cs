@@ -334,7 +334,7 @@ namespace ZeroKLobby
 
         private void logoutButton_Click(object sender, EventArgs e)
         {
-            Program.TasClient.Disconnect();
+            Program.TasClient.RequestDisconnect();
             Program.Conf.LobbyPlayerName = "";
         }
 

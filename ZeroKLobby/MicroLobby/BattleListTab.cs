@@ -106,10 +106,10 @@ namespace ZeroKLobby.MicroLobby
         private void button1_Click(object sender, EventArgs e)
         {
             if (Program.TasClient.serverHost == GlobalConst.LobbyServerHost) {
-                Program.TasClient.Disconnect();
+                Program.TasClient.RequestDisconnect();
                 Program.TasClient.Connect("lobby.springrts.com", 8200);
             } else {
-                Program.TasClient.Disconnect();
+                Program.TasClient.RequestDisconnect();
                 Program.TasClient.Connect(GlobalConst.LobbyServerHost, GlobalConst.LobbyServerPort);
             }
         }
