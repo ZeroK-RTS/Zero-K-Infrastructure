@@ -98,6 +98,9 @@
     <h2>Modify user settings</h2>
     Hide country flag: <form method="post" action="@Url.Action("ChangeHideCountry", "Users", new { accountID = Model.AccountID })">@Html.CheckBox("hideCountry")<input type="submit"/></form>
     <br />
+    Password reset: <form method="post" action="@Url.Action("SetPassword", "Users", new { accountID = Model.AccountID })">@Html.TextBox("newPassword")<input type="submit" /></form>
+    <br/>
+
     <h2>Modify user permissions</h2>
     <form method="post" action="@Url.Action("ChangePermissions", "Users", new { accountID = Model.AccountID, adminAccountID = Global.AccountID })">
         Springie level: @Html.TextBox("springieLevel", Model.SpringieLevel)

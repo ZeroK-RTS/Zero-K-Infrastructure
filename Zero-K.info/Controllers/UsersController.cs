@@ -418,5 +418,15 @@ namespace ZeroKWeb.Controllers
                 acc.IsBot,
             }, JsonRequestBehavior = JsonRequestBehavior.AllowGet};
         }
+
+        [Auth(Role = AuthRole.ZkAdmin)]
+        public ActionResult SetPassword(int accountID, string newPassword)
+        {
+            var db = new ZkDataContext();
+            var acc = db.Accounts.Find(accountID);
+            acc.SetPasswordPlain(newPassword);
+            db.SaveChanges();
+            return Content(string.Format("{0} password set to {1}", acc.Name, newPassword));
+        }
     }
 }

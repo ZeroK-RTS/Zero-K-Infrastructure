@@ -222,8 +222,8 @@ namespace ZeroKWeb.Controllers
             if (db.Accounts.Any(y=>y.Name == login)) return new JsonResult() {
                 Data = new LoginResponse("Username already exists."), JsonRequestBehavior = JsonRequestBehavior.AllowGet
             };
-            var acc = new Account() { Name = login, NewPassword = password, Country = country, };
-            acc.SetPassword(password);
+            var acc = new Account() { Name = login, Country = country, };
+            acc.SetPasswordHashed(password);
             db.Accounts.Add(acc);
             db.SaveChanges();
 
