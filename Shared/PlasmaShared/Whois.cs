@@ -29,12 +29,12 @@ namespace ZkData
 
         public string QueryWhois(string command) {
             var tcp = new TcpClient();
-            tcp.ConnectAsync(whoisServer, 43);
+            tcp.Connect(whoisServer, 43);
             var stream = tcp.GetStream();
 
             var streamWriter = new StreamWriter(stream);
-            streamWriter.WriteLineAsync(command);
-            streamWriter.FlushAsync();
+            streamWriter.WriteLine(command);
+            streamWriter.Flush();
             return new StreamReader(stream).ReadToEnd();
         }
     }
