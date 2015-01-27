@@ -10,6 +10,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Timers;
 using ZkData;
 
@@ -669,7 +670,7 @@ namespace LobbyClient
         /// <param Name="inputtext">chat text</param>
         /// <param Name="isEmote">is message emote? (channel or battle only)</param>
         /// <param Name="linePrefix">text to be inserted in front of each line (example: "!pm xyz")</param>
-        public void Say(SayPlace place, string channel, string inputtext, bool isEmote, string linePrefix = "")
+        public async Task Say(SayPlace place, string channel, string inputtext, bool isEmote, string linePrefix = "")
         {
             if (String.IsNullOrEmpty(inputtext)) return;
             var lines = inputtext.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -688,21 +689,21 @@ namespace LobbyClient
                 {
                     case SayPlace.Channel:
                         if (!JoinedChannels.ContainsKey(args.Channel)) JoinChannel(args.Channel);
-                        if (args.IsEmote) con.SendCommand("SAYEX", args.Channel, args.Text);
-                        else con.SendCommand("SAY", args.Channel, args.Text);
+                        if (args.IsEmote) await con.SendCommand("SAYEX", args.Channel, args.Text);
+                        else await con.SendCommand("SAY", args.Channel, args.Text);
                         break;
 
                     case SayPlace.User:
-                        con.SendCommand("SAYPRIVATE", args.Channel, args.Text);
+                        await con.SendCommand("SAYPRIVATE", args.Channel, args.Text);
                         break;
 
                     case SayPlace.Battle:
-                        if (args.IsEmote) con.SendCommand("SAYBATTLEEX", args.Text);
-                        else con.SendCommand("SAYBATTLE", args.Text);
+                        if (args.IsEmote) await con.SendCommand("SAYBATTLEEX", args.Text);
+                        else await con.SendCommand("SAYBATTLE", args.Text);
                         break;
                     case SayPlace.BattlePrivate:
-                        if (args.IsEmote) con.SendCommand("SAYBATTLEPRIVATEEX", channel, args.Text);
-                        else con.SendCommand("SAYBATTLEPRIVATE", channel, args.Text);
+                        if (args.IsEmote) await con.SendCommand("SAYBATTLEPRIVATEEX", channel, args.Text);
+                        else await con.SendCommand("SAYBATTLEPRIVATE", channel, args.Text);
                         break;
                 }
             }

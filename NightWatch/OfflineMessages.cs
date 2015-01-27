@@ -39,7 +39,7 @@ namespace NightWatch
 
 		void client_ChannelUserAdded(object sender, TasEventArgs e)
 		{
-			Task.Factory.StartNew(() =>
+			Task.Factory.StartNew(async () =>
 				{
 					try
 					{
@@ -55,7 +55,7 @@ namespace NightWatch
 						foreach (var m in messages)
 						{
 							var text = string.Format("!pm|{0}|{1}|{2}|{3}", m.Channel, m.SourceName, m.Created.ToString(CultureInfo.InvariantCulture), m.Message);
-							client.Say(TasClient.SayPlace.User, name, text, false);
+							await client.Say(TasClient.SayPlace.User, name, text, false);
 							Thread.Sleep(MessageDelay);
 						}
 					}
