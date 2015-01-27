@@ -43,7 +43,7 @@ namespace ZeroKLobby.MicroLobby
     public partial class TextWindow: UserControl
     {
         private const int defaultMaxLines = 495; //about 10 pages
-        private const int HardMaximumLines = 2995; //absolute maximum to avoid extreme case. around 11 days of chat or 1% of 3 year of chat
+        private const int HardMaximumLines = 29950; //absolute maximum to avoid extreme case.
         private int MaxTextLines = 1; //this size is not fixed. It expand when detected spam, and maintain size when new line are added at slow interval.
         private int MaxDisplayLines = 1;
         //old URL regex for reference: WwwMatch = @"((https?|www\.|zk://)[^\s,]+)";
