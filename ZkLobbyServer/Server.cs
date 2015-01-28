@@ -9,15 +9,17 @@ namespace ZkLobbyServer
     {
         SharedServerState sharedState = new SharedServerState();
 
-        public async Task Run()
+        public void Run()
         {
             var listener = new TcpListener(IPAddress.Any, GlobalConst.LobbyServerPort);
-            listener.Start();
-            while (true)
-            {
-                var tcp = await listener.AcceptTcpClientAsync();
-                var client = new Client(sharedState);
-                client.RunOnExistingTcp(tcp);
+            listener.Start(1000);
+            while (true) {
+                var tcp = listener.AcceptTcpClient();
+                Task.Run(() => {
+                    var client = new Client(sharedState);
+                    client.RunOnExistingTcp(tcp);
+                });
+                
             }
         }
     }

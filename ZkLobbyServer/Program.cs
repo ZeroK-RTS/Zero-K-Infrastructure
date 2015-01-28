@@ -19,7 +19,6 @@ namespace ZkLobbyServer
             Trace.Listeners.Add(new ColoredConsoleTraceListener() { Template = "{DateTime:HH:mm:ss} {message}" });
             var server = new Server();
             server.Run();
-            Console.ReadLine();
         }
     }
 }

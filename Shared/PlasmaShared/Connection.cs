@@ -94,7 +94,7 @@ namespace ZkData
 
             try
             {
-                if (existingTcp == null) await tcp.ConnectAsync(host, port.Value); // see http://blog.stephencleary.com/2012/07/dont-block-on-async-code.html
+                if (existingTcp == null) await tcp.ConnectAsync(host, port.Value);
                 stream = tcp.GetStream();
                 reader = new StreamReader(stream, Encoding);
                 IsConnected = true;

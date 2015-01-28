@@ -217,7 +217,7 @@ namespace LobbyClient
         public event EventHandler<CancelEventArgs<TasSayEventArgs>> PreviewSaid = delegate { };
         public event EventHandler<EventArgs<string>> Rang = delegate { };
         public event EventHandler<TasEventArgs> RegistrationAccepted = delegate { };
-        public event EventHandler<TasEventArgs> RegistrationDenied = delegate { };
+        public event EventHandler<RegisterResponse> RegistrationDenied = delegate { };
         public event EventHandler RequestBattleStatus = delegate { };
         public event EventHandler<TasSayEventArgs> Said = delegate { }; // this is fired when any kind of say message is recieved
         public event EventHandler<SayingEventArgs> Saying = delegate { }; // this client is trying to say somethign
@@ -560,9 +560,9 @@ namespace LobbyClient
 
 
 
-        public void Register(string username, string password)
+        public Task Register(string username, string password)
         {
-            //con.SendCommand("REGISTER", username, Utils.HashLobbyPassword(password));
+            return SendCommand(new Register() { Name = username, PasswordHash = Utils.HashLobbyPassword(password) });
         }
 
         public void RemoveBattleRectangle(int allyno)
@@ -1021,13 +1021,6 @@ namespace LobbyClient
                         OnAgreementEnd();
                         break;
 
-                    case "REGISTRATIONDENIED":
-                        RegistrationDenied(this, new TasEventArgs(Utils.Glue(args)));
-                        break;
-
-                    case "REGISTRATIONACCEPTED":
-                        RegistrationAccepted(this, new TasEventArgs(args));
-                        break;
 
                     case "ADDSTARTRECT":
                         OnAddStartRect(args);
@@ -1467,6 +1460,19 @@ namespace LobbyClient
                 LoginDenied(this, loginResponse);
             }
         }
+
+        async Task Process(RegisterResponse registerResponse)
+        {
+            if (registerResponse.ResultCode == RegisterResponse.Code.Ok)
+            {
+                RegistrationAccepted(this, new TasEventArgs());
+            }
+            else
+            {
+                RegistrationDenied(this, registerResponse);
+            }
+        }
+
 
         public Welcome ServerWelcome = new Welcome();
 

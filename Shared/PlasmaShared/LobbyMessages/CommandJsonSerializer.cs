@@ -9,12 +9,18 @@ namespace PlasmaShared.LobbyMessages
     public class CommandJsonSerializer
     {
         Dictionary<string, Type> knownTypes = new Dictionary<string, Type>();
+        JsonSerializerSettings settings = new JsonSerializerSettings();
 
         public CommandJsonSerializer()
         {
             RegisterType<Welcome>();
             RegisterType<Login>();
             RegisterType<LoginResponse>();
+            RegisterType<Register>();
+            RegisterType<RegisterResponse>();
+
+            settings.Formatting =Formatting.None;
+            settings.NullValueHandling = NullValueHandling.Ignore;
         }
 
 
@@ -48,7 +54,7 @@ namespace PlasmaShared.LobbyMessages
 
         public string SerializeToLine<T>(T value)
         {
-            return string.Format("{0} {1}\n",typeof(T).Name, JsonConvert.SerializeObject(value, new JsonSerializerSettings() { Formatting = Formatting.None }));
+            return string.Format("{0} {1}\n",typeof(T).Name, JsonConvert.SerializeObject(value, settings));
         }
     }
 
@@ -64,6 +70,37 @@ namespace PlasmaShared.LobbyMessages
         public string Name;
         public string PasswordHash;
     }
+
+    public class Register
+    {
+        public string Name;
+        public string PasswordHash;
+    }
+
+    public class RegisterResponse
+    {
+        public enum Code
+        {
+            Ok = 0,
+
+            [Description("already connected")]
+            AlreadyConnected = 1,
+
+            [Description("name already exists")]
+            InvalidName = 2,
+
+            [Description("invalid password")]
+            InvalidPassword = 3,
+
+            [Description("banned")]
+            Banned = 4
+        }
+
+        public Code ResultCode;
+        public string Reason;
+    }
+
+
 
     public class LoginResponse
     {
@@ -87,4 +124,5 @@ namespace PlasmaShared.LobbyMessages
         public Code ResultCode;
         public string Reason;
     }
+
 }

@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using LobbyClient;
 using PlasmaShared.LobbyMessages;
 using ZeroKLobby.MicroLobby;
+using ZkData;
 
 namespace ZeroKLobby.Notifications
 {
@@ -60,9 +61,9 @@ namespace ZeroKLobby.Notifications
 					else LoginWithDialog(string.Format("Login denied: {0} {1}",e.ResultCode, e.Reason), false);
 				};
 
-			client.RegistrationDenied += (s, e) => LoginWithDialog("Registration denied: " + e.ServerParams[0], true);
+			client.RegistrationDenied += (s, e) => LoginWithDialog(string.Format("Registration denied: {0} {1}", e.ResultCode.Description(), e.Reason), true);
 
-			client.RegistrationAccepted += (s, e) => client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
+            client.RegistrationAccepted += (s, e) => client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
 
 		}
 

@@ -24,6 +24,7 @@ namespace ZkData
             SpringieLevel = 1;
             FirstLogin = DateTime.UtcNow;
             LastLogin = DateTime.UtcNow;
+            Country = "??";
 
 
             AbuseReportsByAccountID = new HashSet<AbuseReport>();

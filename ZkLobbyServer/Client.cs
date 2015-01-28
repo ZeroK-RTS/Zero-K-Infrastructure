@@ -1,5 +1,6 @@
 ﻿using System.Data.Entity;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using PlasmaShared.LobbyMessages;
@@ -7,7 +8,7 @@ using ZkData;
 
 namespace ZkLobbyServer
 {
-    public class Client: Connection
+    public class Client : Connection
     {
         SharedServerState state;
         int number;
@@ -16,7 +17,7 @@ namespace ZkLobbyServer
 
         public override string ToString()
         {
-            return string.Format("[{0}:{1}:{2}]", number, name, accountID);
+            return string.Format("[{0}:{1}]", number, name);
         }
 
         public Client(SharedServerState state)
@@ -28,7 +29,8 @@ namespace ZkLobbyServer
 
         public override async Task OnConnectionClosed(bool wasRequested)
         {
-            if (!string.IsNullOrEmpty(name)) {
+            if (!string.IsNullOrEmpty(name))
+            {
                 Client client;
                 state.Clients.TryRemove(name, out client);
             }
@@ -40,17 +42,17 @@ namespace ZkLobbyServer
             await SendCommand(new Welcome() { Engine = state.Engine, Game = state.Game, Version = state.Version });
         }
 
-        
+
         public override async Task OnLineReceived(string line)
         {
             dynamic obj = state.Serializer.DeserializeLine(line);
             await Process(obj);
         }
 
-        public async Task SendCommand<T>(T data)
+        public Task SendCommand<T>(T data)
         {
             var line = state.Serializer.SerializeToLine(data);
-            await SendData(Encoding.GetBytes(line));
+            return SendData(Encoding.GetBytes(line));
         }
 
 
@@ -60,11 +62,9 @@ namespace ZkLobbyServer
             name = login.Name;
 
             var response = new LoginResponse();
-            if (!state.Clients.TryAdd(name, this)) {
-                response.ResultCode = LoginResponse.Code.AlreadyConnected;
-            } else {
+            await Task.Run(() => {
                 using (var db = new ZkDataContext()) {
-                    var acc = await db.Accounts.FirstOrDefaultAsync(x => x.Name == name);
+                    var acc = db.Accounts.FirstOrDefault(x => x.Name == name);
                     if (acc == null) {
                         response.ResultCode = LoginResponse.Code.InvalidName;
                     } else {
@@ -72,16 +72,54 @@ namespace ZkLobbyServer
                             response.ResultCode = LoginResponse.Code.InvalidPassword;
                         } else {
                             // TODO banhammer check
-                            response.ResultCode = LoginResponse.Code.Ok;
+                            // TODO country check
+                            if (!state.Clients.TryAdd(name, this)) {
+                                response.ResultCode = LoginResponse.Code.AlreadyConnected;
+                            } else {
+                                response.ResultCode = LoginResponse.Code.Ok;
+                            }
                         }
                     }
                 }
+            });
+            
+            Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
+            await SendCommand(response);
+        }
+
+        async Task Process(Register register)
+        {
+            var response = new LoginResponse();
+            if (state.Clients.ContainsKey(name))
+            {
+                response.ResultCode = LoginResponse.Code.AlreadyConnected;
+            }
+            else {
+                await Task.Run(() => {
+                    using (var db = new ZkDataContext()) {
+                        var acc = db.Accounts.FirstOrDefault(x => x.Name == name);
+                        if (acc != null) {
+                            response.ResultCode = LoginResponse.Code.InvalidName;
+                        } else {
+                            if (string.IsNullOrEmpty(register.PasswordHash)) {
+                                response.ResultCode = LoginResponse.Code.InvalidPassword;
+                            } else {
+                                acc = new Account() { Name = register.Name };
+                                acc.SetPasswordHashed(register.PasswordHash);
+                                db.Accounts.Add(acc);
+                                db.SaveChanges();
+
+                                response.ResultCode = LoginResponse.Code.Ok;
+                            }
+                        }
+                    }
+                });
             }
 
             Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
             await SendCommand(response);
-            if (response.ResultCode != LoginResponse.Code.Ok) RequestClose();
         }
-        
+
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,8 +21,8 @@ namespace Fixer
             var ord = num / 16;
             var batname = "Test " + ord;
 
-            tas.Input += (sender, args) => { Console.WriteLine(" < " + JsonConvert.SerializeObject(args, new JsonSerializerSettings() { Formatting = Formatting.None })); };
-            tas.Output += (sender, args) => { Console.WriteLine(" > " + JsonConvert.SerializeObject(args, new JsonSerializerSettings(){Formatting = Formatting.None})); };
+            tas.Input += (sender, args) => { Console.WriteLine(" < {0} {1} {2}", name, args.GetType().Name, JsonConvert.SerializeObject(args, new JsonSerializerSettings() { Formatting = Formatting.None })); };
+            tas.Output += (sender, args) => { Console.WriteLine(" > {0} {1} {2}", name, args.GetType().Name, JsonConvert.SerializeObject(args, new JsonSerializerSettings(){Formatting = Formatting.None})); };
 
             tas.Connected += (sender, args) => {
                 tas.Login(name, "dummy");
@@ -73,7 +74,7 @@ namespace Fixer
         public async Task SpawnMany()
         {
             ThreadPool.SetMaxThreads(1000, 1000);
-            for (int i = 0; i < 1; i++) {
+            for (int i = 0; i < 1000; i++) {
                 int i1 = i;
                 //Thread.Sleep(100);
                 RunNub(i1);
