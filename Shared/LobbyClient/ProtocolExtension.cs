@@ -168,8 +168,8 @@ namespace LobbyClient
             }
         }
 
-        void tas_PreviewChannelJoined(object sender, CancelEventArgs<RoomDetail> e) {
-            if (e.Data.RoomID == ExtensionChannelName) {
+        void tas_PreviewChannelJoined(object sender, CancelEventArgs<PlasmaShared.LobbyMessages.Channel> e) {
+            if (e.Data.Name == ExtensionChannelName) {
                 e.Cancel = true;
                 foreach (var kvp in publishedUserAttributes) tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, FormatMessage(kvp.Key, kvp.Value), false);
             }

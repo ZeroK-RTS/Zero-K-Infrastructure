@@ -10,6 +10,7 @@ using ZeroKLobby;
 using ZeroKLobby.Lines;
 using ZeroKLobby.Notifications;
 using ZkData;
+using Channel = PlasmaShared.LobbyMessages.Channel;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -150,9 +151,9 @@ namespace ZeroKLobby.MicroLobby
         }
 
 
-        void client_ChannelJoined(object sender, RoomDetail roomDetail)
+        void client_ChannelJoined(object sender, Channel channel)
         {
-            var channelName = roomDetail.RoomID;
+            var channelName = channel.Name;
             CreateChannelControl(channelName);
 			if (focusWhenJoin == channelName)
 			{
@@ -290,9 +291,9 @@ namespace ZeroKLobby.MicroLobby
             }
         }
 
-        void TasClient_ChannelJoinFailed(object sender, JoinRoomResponse joinRoomResponse)
+        void TasClient_ChannelJoinFailed(object sender, JoinChannelResponse joinChannelResponse)
         {
-            WarningBar.DisplayWarning("Channel Joining Error - " + joinRoomResponse.Reason,"Cannot join channel");
+            WarningBar.DisplayWarning("Channel Joining Error - " + joinChannelResponse.Reason,"Cannot join channel");
         }
 
 

@@ -15,6 +15,8 @@ namespace ZkLobbyServer
         string name;
         int accountID;
 
+
+
         public override string ToString()
         {
             return string.Format("[{0}:{1}]", number, name);
@@ -121,14 +123,15 @@ namespace ZkLobbyServer
         }
 
 
-        async Task Process(JoinRoom joinRoom)
+        async Task Process(JoinChannel joinChannel)
         {
-            var roomDetail = state.Rooms.GetOrAdd(joinRoom.RoomID, (name) => { return new RoomDetail() { RoomID = joinRoom.RoomID, }; });
-            if (roomDetail.Password != joinRoom.Password) {
-                await SendCommand(new JoinRoomResponse() { Success = false, Reason = "invalid password" });
+            var roomDetail = state.Rooms.GetOrAdd(joinChannel.Name, (n) => { return new Channel() { Name = joinChannel.Name, }; });
+            if (roomDetail.Password != joinChannel.Password) {
+                await SendCommand(new JoinChannelResponse() { Success = false, Reason = "invalid password" });
             }
 
-            await SendCommand(new JoinRoomResponse() { Success = true, RoomID = joinRoom.RoomID, RoomDetail = roomDetail });
+            roomDetail.Users.Add(name);
+            await SendCommand(new JoinChannelResponse() { Success = true, Name = joinChannel.Name, Channel = roomDetail });
         }
 
 

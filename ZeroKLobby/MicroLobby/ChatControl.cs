@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
+using PlasmaShared.LobbyMessages;
 using ZeroKLobby.Lines;
 using ZkData;
 
@@ -23,6 +24,7 @@ namespace ZeroKLobby.MicroLobby
         public static EventHandler<ChannelLineArgs> ChannelLineAdded = (sender, args) => { };
         public string ChannelName { get; set; }
         public GameInfo GameInfo { get; set; }
+        
         public bool IsTopicVisible {
             get { return topicPanel.Visible; }
             set {
@@ -140,7 +142,7 @@ namespace ZeroKLobby.MicroLobby
                         
                 };
 
-            if (channel != null) foreach (var userName in Program.TasClient.JoinedChannels[ChannelName].ChannelUsers) AddUser(userName);
+            if (channel != null) foreach (var userName in Program.TasClient.JoinedChannels[ChannelName].Users) AddUser(userName);
         }
 
         void VoiceOnUserChanged(ulong steamID)
@@ -181,7 +183,7 @@ namespace ZeroKLobby.MicroLobby
         protected void AddUser(string userName) {
             Channel channel;
             if (Program.TasClient.JoinedChannels.TryGetValue(ChannelName, out channel)) {
-                if (!channel.ChannelUsers.Contains(userName)) {
+                if (!channel.Users.Contains(userName)) {
                     Trace.WriteLine("Trying to add a user to a channel he hasn't joined (" + ChannelName + "/" + userName + ").");
                     return;
                 }
@@ -328,7 +330,7 @@ namespace ZeroKLobby.MicroLobby
         void TasClient_ChannelTopicChanged(object sender, TasEventArgs e) {
             if (ChannelName == e.ServerParams[0]) {
                 var channel = Program.TasClient.JoinedChannels[ChannelName];
-                DateTime lastChange;
+                DateTime? lastChange;
                 Program.Conf.Topics.TryGetValue(channel.Name, out lastChange);
                 var topicLine = new TopicLine(channel.Topic, channel.TopicSetBy, channel.TopicSetDate);
                 topicBox.Reset();
@@ -342,7 +344,7 @@ namespace ZeroKLobby.MicroLobby
             if (e.ServerParams[0] != ChannelName) return;
             
             List<string> invalidName = new List<string>();
-            foreach (var username in Program.TasClient.JoinedChannels[ChannelName].ChannelUsers)
+            foreach (var username in Program.TasClient.JoinedChannels[ChannelName].Users)
             {
                 try
                 {
@@ -355,10 +357,10 @@ namespace ZeroKLobby.MicroLobby
                 }
             }
             for (int i = 0; i < invalidName.Count; i++) {
-                Program.TasClient.JoinedChannels[ChannelName].ChannelUsers.Remove(invalidName[i]);
+                Program.TasClient.JoinedChannels[ChannelName].Users.Remove(invalidName[i]);
             }
             
-            playerListItems = (from name in Program.TasClient.JoinedChannels[ChannelName].ChannelUsers
+            playerListItems = (from name in Program.TasClient.JoinedChannels[ChannelName].Users
                                let user = Program.TasClient.ExistingUsers[name]
                                select new PlayerListItem { UserName = user.Name }).ToList();
 

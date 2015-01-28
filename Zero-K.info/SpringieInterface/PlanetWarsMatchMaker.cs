@@ -103,7 +103,7 @@ namespace ZeroKWeb
             tas.PreviewSaid += TasOnPreviewSaid;
             tas.UserRemoved += TasOnUserRemoved;
             tas.ChannelUserAdded += TasOnChannelUserAdded;
-            tas.ChannelJoined += (sender, args) => { if (args.RoomID == "extension") tas.Extensions.SendJsonData(GenerateLobbyCommand()); };
+            tas.ChannelJoined += (sender, args) => { if (args.Name == "extension") tas.Extensions.SendJsonData(GenerateLobbyCommand()); };
 
             timer = new Timer(10000);
             timer.AutoReset = true;

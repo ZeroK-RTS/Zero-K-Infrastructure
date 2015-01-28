@@ -223,7 +223,7 @@ namespace ZeroKLobby
                     };
 
                 TasClient.LoginDenied += (s, e) => Trace.TraceInformation("TASC login denied");
-                TasClient.ChannelJoined += (s, e) => { Trace.TraceInformation("TASC channel joined: " + e.RoomID); };
+                TasClient.ChannelJoined += (s, e) => { Trace.TraceInformation("TASC channel joined: " + e.Name); };
                 TasClient.ConnectionLost += (s, e) => Trace.TraceInformation("Connection lost");
 
                 // special handling

@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 using LobbyClient;
+using PlasmaShared.LobbyMessages;
 using ZkData;
 
 namespace NightWatch
@@ -85,7 +86,7 @@ namespace NightWatch
 							{
 							    Channel channel;
 							    if (!client.JoinedChannels.TryGetValue(e.Channel, out channel)) return;
-                                var chanusers = channel.ChannelUsers.ToList();
+                                var chanusers = channel.Users.ToList();
 								foreach (var s in db.LobbyChannelSubscriptions.Where(x => x.Channel == e.Channel).Select(x=>x.Account))
 								{
 									if (!chanusers.Any(x=>x == s.Name)) {

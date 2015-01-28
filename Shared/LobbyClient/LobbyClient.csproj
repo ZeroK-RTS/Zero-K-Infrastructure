@@ -63,7 +63,6 @@
     <Compile Include="BattleDetails.cs" />
     <Compile Include="BattleRect.cs" />
     <Compile Include="BotBattleStatus.cs" />
-    <Compile Include="Channel.cs" />
     <Compile Include="Crc.cs" />
     <Compile Include="ProtocolExtension.cs" />
     <Compile Include="PwMatchCommand.cs" />

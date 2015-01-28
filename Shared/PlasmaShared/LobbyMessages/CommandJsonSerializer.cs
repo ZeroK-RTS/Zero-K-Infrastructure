@@ -17,9 +17,9 @@ namespace PlasmaShared.LobbyMessages
             RegisterType<LoginResponse>();
             RegisterType<Register>();
             RegisterType<RegisterResponse>();
-            RegisterType<JoinRoom>();
-            RegisterType<JoinRoomResponse>();
-            RegisterType<CreateRoom>();
+            RegisterType<JoinChannel>();
+            RegisterType<JoinChannelResponse>();
+            RegisterType<CreateChannel>();
             RegisterType<CreateRoomResponse>();
 
             settings.Formatting = Formatting.None;

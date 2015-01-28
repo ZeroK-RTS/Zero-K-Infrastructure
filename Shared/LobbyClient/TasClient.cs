@@ -38,15 +38,12 @@ namespace LobbyClient
             BattlePrivate
         };
 
-        StringBuilder agreementText;
-
         readonly string appName = "UnknownClient";
         Dictionary<int, Battle> existingBattles = new Dictionary<int, Battle>();
         Dictionary<string, ExistingChannel> existingChannels = new Dictionary<string, ExistingChannel>();
         Dictionary<string, User> existingUsers = new Dictionary<string, User>();
         readonly bool forcedLocalIP = false;
         readonly Invoker<Invoker> guiThreadInvoker;
-        bool isChanScanning;
         bool isLoggedIn;
         Dictionary<string, Channel> joinedChannels = new Dictionary<string, Channel>();
         int lastSpectatorCount;
@@ -88,7 +85,6 @@ namespace LobbyClient
             existingChannels = new Dictionary<string, ExistingChannel>();
             joinedChannels = new Dictionary<string, Channel>();
             existingBattles = new Dictionary<int, Battle>();
-            isChanScanning = false;
             isLoggedIn = false;
         }
 
@@ -103,7 +99,6 @@ namespace LobbyClient
             MyBattle = null;
             MyBattleID = 0;
             isLoggedIn = false;
-            isChanScanning = false;
             ConnectionLost(this, new TasEventArgs(string.Format("Connection {0}", wasRequested ? "closed on user request" : "disconnected")));
         }
 
@@ -166,13 +161,11 @@ namespace LobbyClient
         public string UserName { get; private set; }
         public string UserPassword { get; private set; }
 
-        public event EventHandler<TasEventAgreementRecieved> AgreementRecieved = delegate { };
         public event EventHandler<EventArgs<BotBattleStatus>> BattleBotAdded = delegate { };
         public event EventHandler<EventArgs<BotBattleStatus>> BattleBotRemoved = delegate { };
         public event EventHandler<EventArgs<BotBattleStatus>> BattleBotUpdated = delegate { };
         public event EventHandler<EventArgs<Battle>> BattleClosed = delegate { };
         public event EventHandler<TasEventArgs> BattleDetailsChanged = delegate { };
-        public event EventHandler<TasEventArgs> BattleDisabledUnitsChanged = delegate { };
         public event EventHandler<EventArgs<Battle>> BattleEnded = delegate { }; // raised just after the battle is removed from the battle list
         public event EventHandler<EventArgs<Battle>> BattleEnding = delegate { }; // raised just before the battle is removed from the battle list
         public event EventHandler BattleForceQuit = delegate { }; // i was kicked from a battle (sent after LEFTBATTLE)
@@ -190,11 +183,10 @@ namespace LobbyClient
         public event EventHandler<BattleUserEventArgs> BattleUserLeft = delegate { };
         public event EventHandler<TasEventArgs> BattleUserStatusChanged = delegate { };
         public event EventHandler<TasEventArgs> ChannelForceLeave = delegate { }; // i was kicked from a channel
-        public event EventHandler<JoinRoomResponse> ChannelJoinFailed = delegate { };
-        public event EventHandler<RoomDetail> ChannelJoined = delegate { };
+        public event EventHandler<JoinChannelResponse> ChannelJoinFailed = delegate { };
+        public event EventHandler<Channel> ChannelJoined = delegate { };
         public event EventHandler<CancelEventArgs<string>> ChannelLeaving = delegate { }; // raised before attempting to leave a channel
         public event EventHandler<TasEventArgs> ChannelLeft = delegate { };
-        public event EventHandler<TasEventArgs> ChannelListDone = delegate { };
         public event EventHandler<TasEventArgs> ChannelTopicChanged = delegate { };
         public event EventHandler<TasEventArgs> ChannelUserAdded = delegate { };
         public event EventHandler<TasEventArgs> ChannelUserRemoved = delegate { };
@@ -213,7 +205,7 @@ namespace LobbyClient
         public event EventHandler<BattleInfoEventArgs> MyBattleMapChanged = delegate { };
         public event EventHandler<TasEventArgs> MyBattleStarted = delegate { };
         public event EventHandler<string> Output = delegate { }; // outgoing command and arguments
-        public event EventHandler<CancelEventArgs<RoomDetail>> PreviewChannelJoined = delegate { };
+        public event EventHandler<CancelEventArgs<PlasmaShared.LobbyMessages.Channel>> PreviewChannelJoined = delegate { };
         public event EventHandler<CancelEventArgs<TasSayEventArgs>> PreviewSaid = delegate { };
         public event EventHandler<EventArgs<string>> Rang = delegate { };
         public event EventHandler<TasEventArgs> RegistrationAccepted = delegate { };
@@ -415,11 +407,6 @@ namespace LobbyClient
             InvokeSaid(new TasSayEventArgs(TasSayEventArgs.Origins.Player, TasSayEventArgs.Places.Game, "", username, text, false));
         }
 
-        public Dictionary<string, ExistingChannel> GetExistingChannels()
-        {
-            if (isChanScanning) throw new TasClientException("Channel scan operation in progress");
-            return new Dictionary<string, ExistingChannel>(ExistingChannels);
-        }
 
         public bool GetExistingUser(string name, out User u)
         {
@@ -441,7 +428,7 @@ namespace LobbyClient
 
         public Task JoinChannel(string channelName, string key=null)
         {
-            return SendCommand(new JoinRoom() { RoomID = channelName, Password = key });
+            return SendCommand(new JoinChannel() { Name = channelName, Password = key });
         }
 
         public void Kick(string username)
@@ -790,10 +777,6 @@ namespace LobbyClient
                         OnChannel(args);
                         break;
 
-                    case "ENDOFCHANNELS": // end of channel list iteration
-                        OnEndOfChannels();
-                        break;
-
                     case "ADDUSER": // new user joined ta server
                         OnAddUser(args);
                         break;
@@ -1003,15 +986,7 @@ namespace LobbyClient
                         OnUdpSourcePort();
                         break;
 
-                    case "AGREEMENT":
-                        OnAgreement(args);
-                        break;
-
-                    case "AGREEMENTEND":
-                        OnAgreementEnd();
-                        break;
-
-
+                    
                     case "ADDSTARTRECT":
                         OnAddStartRect(args);
                         break;
@@ -1053,18 +1028,6 @@ namespace LobbyClient
             var rect = new BattleRect(left, top, right, bottom);
             MyBattle.Rectangles[allyNo] = rect;
             StartRectAdded(this, new TasEventArgs(args));
-        }
-
-        void OnAgreementEnd()
-        {
-            AgreementRecieved(this, new TasEventAgreementRecieved(agreementText));
-            agreementText = null;
-        }
-
-        void OnAgreement(string[] args)
-        {
-            if (agreementText == null) agreementText = new StringBuilder();
-            agreementText.AppendLine(Utils.Glue(args));
         }
 
         void OnUdpSourcePort()
@@ -1312,7 +1275,7 @@ namespace LobbyClient
             var userName = args[1];
             var reason = Utils.Glue(args, 2);
             var channel = JoinedChannels[channelName];
-            channel.ChannelUsers.Remove(userName);
+            channel.Users.Remove(userName);
             ChannelUserRemoved(this, new TasEventArgs(channelName, userName, reason));
         }
 
@@ -1321,14 +1284,14 @@ namespace LobbyClient
             var channelName = args[0];
             var userName = args[1];
             var channel = JoinedChannels[channelName];
-            channel.ChannelUsers.Add(userName);
+            channel.Users.Add(userName);
             ChannelUserAdded(this, new TasEventArgs(channelName, userName));
         }
 
         void OnClients(string[] args)
         {
             var usrs = Utils.Glue(args, 1).Split(' ');
-            foreach (var s in usrs) JoinedChannels[args[0]].ChannelUsers.Add(s);
+            foreach (var s in usrs) JoinedChannels[args[0]].Users.Add(s);
             ChannelUsersAdded(this, new TasEventArgs(args));
         }
 
@@ -1414,12 +1377,6 @@ namespace LobbyClient
             }
         }
 
-        void OnEndOfChannels()
-        {
-            isChanScanning = false;
-            ChannelListDone(this, new TasEventArgs());
-        }
-
         void OnChannel(string[] args)
         {
             var c = new ExistingChannel();
@@ -1464,12 +1421,13 @@ namespace LobbyClient
             Connected(this, welcome);
         }
 
-        async Task Process(JoinRoomResponse response)
+        async Task Process(JoinChannelResponse response)
         {
             if (response.Success) {
-                JoinedChannels.Add(response.RoomID, Channel.Create(response.RoomDetail));
-                PreviewChannelJoined(this, new CancelEventArgs<RoomDetail>(response.RoomDetail));
-                ChannelJoined(this, response.RoomDetail);
+                JoinedChannels.Add(response.Name, response.Channel);
+                var cancelEvent = new CancelEventArgs<Channel>(response.Channel);
+                PreviewChannelJoined(this, cancelEvent);
+                if (!cancelEvent.Cancel) ChannelJoined(this, response.Channel);
             } else {
                 ChannelJoinFailed(this, response);
             }

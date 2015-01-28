@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace PlasmaShared.LobbyMessages
 {
@@ -109,52 +111,41 @@ namespace PlasmaShared.LobbyMessages
 
 
     /// <summary>
-    /// Attempts to create a room
+    /// Attempts to create a channel
     /// </summary>
-    public class CreateRoom
+    public class CreateChannel
     {
-        public RoomDetail RoomDetail;
+        public Channel Channel;
     }
 
 
-    public class RoomDetail
+    public class Channel
     {
-        /// <summary>
-        /// Leave null to have auto assigned
-        /// </summary>
-        public string RoomID;
-        /// <summary>
-        /// Topic or battle title
-        /// </summary>
-        public string Title;
-
-        /// <summary>
-        /// Optional password
-        /// </summary>
+        public List<string> Users = new List<string>();
+        public string Name { get; set; }
+        public string Topic { get; set; }
+        public string TopicSetBy { get; set; }
+        public DateTime? TopicSetDate { get; set; }
         public string Password;
-
-        /// <summary>
-        /// True if its battle capable/has battle data (map, game etc)
-        /// </summary>
-        public bool HasBattle;
     }
 
     /// <summary>
     /// Attempts to join a room
     /// </summary>
-    public class JoinRoom
+    public class JoinChannel
     {
-        public string RoomID;
+        public string Name;
         public string Password;
     }
 
-    public class JoinRoomResponse
+
+    public class JoinChannelResponse
     {
-        public string RoomID;
+        public string Name;
         public bool Success;
         public string Reason;
 
-        public RoomDetail RoomDetail;
+        public Channel Channel;
     }
 
     public class CreateRoomResponse
@@ -163,7 +154,7 @@ namespace PlasmaShared.LobbyMessages
         public bool Success;
         public string Reason;
 
-        public RoomDetail RoomDetail;
+        public Channel Channel;
     }
 
 }
