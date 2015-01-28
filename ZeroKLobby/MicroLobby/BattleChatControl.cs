@@ -45,7 +45,7 @@ namespace ZeroKLobby.MicroLobby
 
 
 			if (Program.TasClient.MyBattle != null) foreach (var user in Program.TasClient.MyBattle.Users) AddUser(user.Name);
-			ChatLine += (s, e) => { if (Program.TasClient.IsLoggedIn) Program.TasClient.Say(TasClient.SayPlace.Battle, null, e.Data, false); };
+			ChatLine += (s, e) => { if (Program.TasClient.IsLoggedIn) Program.TasClient.Say(SayPlace.Battle, null, e.Data, false); };
 			playerBox.IsBattle = true;
 			playerBox.MouseDown += playerBox_MouseDown;
 
@@ -344,7 +344,7 @@ namespace ZeroKLobby.MicroLobby
 
 		void TasClient_Said(object sender, TasSayEventArgs e)
 		{
-			if (e.Place == TasSayEventArgs.Places.Battle && e.Origin == TasSayEventArgs.Origins.Player)
+			if (e.Place == SayPlace.Battle)
 			{
 				if (e.Text.Contains(Program.Conf.LobbyPlayerName) && !Program.TasClient.MyUser.IsInGame && !e.IsEmote && e.UserName != GlobalConst.NightwatchName &&
 				    !e.Text.StartsWith(string.Format("[{0}]", Program.TasClient.UserName))) Program.MainWindow.NotifyUser("chat/battle", string.Format("{0}: {1}", e.UserName, e.Text), false, true);

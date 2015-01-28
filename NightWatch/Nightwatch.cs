@@ -71,20 +71,20 @@ namespace CaTracker
 
 		    PayPalInterface = new PayPalInterface();
 		    PayPalInterface.Error += (e) =>
-		        { tas.Say(TasClient.SayPlace.Channel, "zkdev", "PAYMENT ERROR: " + e.ToString(), true); };
+		        { tas.Say(SayPlace.Channel, "zkdev", "PAYMENT ERROR: " + e.ToString(), true); };
 
 		    PayPalInterface.NewContribution += (c) =>
 		        {
-		            tas.Say(TasClient.SayPlace.Channel,
+		            tas.Say(SayPlace.Channel,
 		                    "zkdev",
 		                    string.Format("WOOHOO! {0:d} New contribution of {1:F2}€ by {2} - for the jar {3}", c.Time, c.Euros, c.Name.Split(new[]{' '},StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(), c.ContributionJar.Name),
 		                    true);
 		            if (c.AccountByAccountID == null)
-		                tas.Say(TasClient.SayPlace.Channel,
+		                tas.Say(SayPlace.Channel,
 		                        "zkdev",
                                 string.Format("Warning, user account unknown yet, payment remains unassigned. If you know user name, please assign it manually {0}/Contributions", GlobalConst.BaseSiteUrl),
 		                        true);
-                    else tas.Say(TasClient.SayPlace.Channel,
+                    else tas.Say(SayPlace.Channel,
                                 "zkdev",
                                 string.Format("It is {0} {2}/Users/Detail/{1}", c.AccountByAccountID.Name, c.AccountID, GlobalConst.BaseSiteUrl),
                                 true);

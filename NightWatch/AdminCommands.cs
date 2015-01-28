@@ -20,7 +20,7 @@ namespace CaTracker
         {
             if (e.UserName.Contains("Nightwatch")) return;
 
-            if (e.Place == TasSayEventArgs.Places.Normal)
+            if (e.Place == SayPlace.User)
             {
                 foreach (string command in adminCommands)
                 {
@@ -36,7 +36,7 @@ namespace CaTracker
                 if (e.Text.StartsWith("!kick"))
                 {
                     var parts = e.Text.Split(' ');
-                    if (!(parts.Length >= 2)) tas.Say(TasClient.SayPlace.User, e.UserName, "!kick [player] [reason]", false);
+                    if (!(parts.Length >= 2)) tas.Say(SayPlace.User, e.UserName, "!kick [player] [reason]", false);
                     else
                     {
                         var player = tas.ExistingUsers.FirstOrDefault(x => x.Key == parts[1]).Key;
@@ -47,40 +47,40 @@ namespace CaTracker
                         {
                             tas.AdminKickFromLobby(player, reason);
                         }
-                        else tas.Say(TasClient.SayPlace.User, e.UserName, "Not a valid player name", false);
+                        else tas.Say(SayPlace.User, e.UserName, "Not a valid player name", false);
                     }
                 }
                 else if (e.Text.StartsWith("!op"))
                 {
                     var parts = e.Text.Split(' ');
-                    if (parts.Length != 3) tas.Say(TasClient.SayPlace.User, e.UserName, "!op [player] [channel]", false);
+                    if (parts.Length != 3) tas.Say(SayPlace.User, e.UserName, "!op [player] [channel]", false);
                     else
                     {
                         var player = tas.ExistingUsers.FirstOrDefault(x => x.Key == parts[1]).Key;
                         var channel = parts[2];
                         if (player != null)
                         {
-                            tas.Say(TasClient.SayPlace.User, "ChanServ", string.Format("!op {0} {1}", channel, player), false);
-                            tas.Say(TasClient.SayPlace.User, e.UserName, string.Format("DEBUG: !op {0} {1}", channel, player), false);
+                            tas.Say(SayPlace.User, "ChanServ", string.Format("!op {0} {1}", channel, player), false);
+                            tas.Say(SayPlace.User, e.UserName, string.Format("DEBUG: !op {0} {1}", channel, player), false);
                         }
-                        else tas.Say(TasClient.SayPlace.User, e.UserName, "Not a valid player name", false);
+                        else tas.Say(SayPlace.User, e.UserName, "Not a valid player name", false);
                     }
                 }
                 else if (e.Text.StartsWith("!changeaccountpass"))
                 {
                     var parts = e.Text.Split(' ');
-                    if (parts.Length != 3) tas.Say(TasClient.SayPlace.User, e.UserName, "!changeaccountpass [player] [password (plaintext)]", false);
+                    if (parts.Length != 3) tas.Say(SayPlace.User, e.UserName, "!changeaccountpass [player] [password (plaintext)]", false);
                     else
                     {
                         var password = ZkData.Utils.HashLobbyPassword(parts[2]);
                         tas.SendRaw(string.Format("CHANGEACCOUNTPASS {0} {1}", parts[1], password));
-                        tas.Say(TasClient.SayPlace.User, e.UserName, string.Format("DEBUG: CHANGEACCOUNTPASS {0} {1}", parts[1], password), false);
+                        tas.Say(SayPlace.User, e.UserName, string.Format("DEBUG: CHANGEACCOUNTPASS {0} {1}", parts[1], password), false);
                     }
                 }
                 else if (e.Text.StartsWith("!chanserv"))
                 {
                     var command = e.Text.Substring(9).TrimStart();
-                    tas.Say(TasClient.SayPlace.User, "ChanServ", "!" + command, false);
+                    tas.Say(SayPlace.User, "ChanServ", "!" + command, false);
                 }
             }
         }

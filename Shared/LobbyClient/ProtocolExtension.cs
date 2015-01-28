@@ -68,23 +68,23 @@ namespace LobbyClient
         public void Publish(string name, Dictionary<string, string> data) {
             var dict = new Dictionary<string, string>(data);
             publishedUserAttributes[name] = dict;
-            tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, FormatMessage(name, data), false);
+            tas.Say(SayPlace.Channel, ExtensionChannelName, FormatMessage(name, data), false);
         }
 
 
         public void SendJsonData(object data)
         {
-            tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, EncodeJson(data), false);
+            tas.Say(SayPlace.Channel, ExtensionChannelName, EncodeJson(data), false);
         }
 
 
         public void SendJsonData(string username, object data) {
-            tas.Say(TasClient.SayPlace.User, username, EncodeJson(data), false);
+            tas.Say(SayPlace.User, username, EncodeJson(data), false);
         }
 
         public void SendJsonDataToChannel(string channel, object data)
         {
-            tas.Say(TasClient.SayPlace.Channel, channel, EncodeJson(data), false);
+            tas.Say(SayPlace.Channel, channel, EncodeJson(data), false);
         }
 
 
@@ -164,7 +164,7 @@ namespace LobbyClient
         void tas_PreviewChannelJoined(object sender, CancelEventArgs<Channel> e) {
             if (e.Data.Name == ExtensionChannelName) {
                 e.Cancel = true;
-                foreach (var kvp in publishedUserAttributes) tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, FormatMessage(kvp.Key, kvp.Value), false);
+                foreach (var kvp in publishedUserAttributes) tas.Say(SayPlace.Channel, ExtensionChannelName, FormatMessage(kvp.Key, kvp.Value), false);
             }
         }
 

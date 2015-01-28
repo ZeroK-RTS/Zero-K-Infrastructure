@@ -57,7 +57,7 @@ namespace ZeroKLobby
             EventHandler<CancelEventArgs<TasSayEventArgs>> hideMessage = null;
             hideMessage = (s, e) =>
               {
-                  if (e.Data.Place == TasSayEventArgs.Places.Normal && e.Data.Text == text)
+                  if (e.Data.Place == SayPlace.User && e.Data.Text == text)
                   {
                       e.Cancel = true;
                       Program.TasClient.PreviewSaid -= hideMessage;
@@ -198,7 +198,7 @@ namespace ZeroKLobby
                         break;
 
                     case "select_map":
-                        if (Program.TasClient.MyBattle != null) Program.TasClient.Say(TasClient.SayPlace.Battle, null, "!map " + arg, false);
+                        if (Program.TasClient.MyBattle != null) Program.TasClient.Say(SayPlace.Battle, null, "!map " + arg, false);
                         else
                         {
                             var name = String.Format("{0}'s game", Program.Conf.LobbyPlayerName);
@@ -292,7 +292,7 @@ namespace ZeroKLobby
             EventHandler<CancelEventArgs<TasSayEventArgs>> joinGame = null;
             joinGame = (s, e) =>
               {
-                  if (e.Data.Place == TasSayEventArgs.Places.Normal && e.Data.Origin == TasSayEventArgs.Origins.Player && (e.Data.Text == spawnCommand.Reply))
+                  if (e.Data.Place == SayPlace.User && (e.Data.Text == spawnCommand.Reply))
                   {
                       e.Cancel = true;
                       Program.NotifySection.RemoveBar(waitingBar);
@@ -310,11 +310,11 @@ namespace ZeroKLobby
                                     foreach (var command in springieCommands)
                                     {
                                         HidePM(command);
-                                        Program.TasClient.Say(TasClient.SayPlace.User, myHostName, command, false);
+                                        Program.TasClient.Say(SayPlace.User, myHostName, command, false);
                                     }
                                 }
                                 HidePM("!map");
-                                Program.TasClient.Say(TasClient.SayPlace.User, myHostName, "!map", false);
+                                Program.TasClient.Say(SayPlace.User, myHostName, "!map", false);
                                 Program.TasClient.BattleJoined -= battleJoined;
                             }
                         };
@@ -327,7 +327,7 @@ namespace ZeroKLobby
 
             Program.TasClient.PreviewSaid += joinGame;
             HidePM(spawnCommand.Command);
-            Program.TasClient.Say(TasClient.SayPlace.User, hostSpawnerName, spawnCommand.Command, false);
+            Program.TasClient.Say(SayPlace.User, hostSpawnerName, spawnCommand.Command, false);
         }
 
 
@@ -398,7 +398,7 @@ namespace ZeroKLobby
         {
             Battle bat;
             if (!Program.TasClient.ExistingBattles.TryGetValue(battleId, out bat)) return;
-            Program.TasClient.Say(TasClient.SayPlace.User, bat.Founder.Name, string.Format("!adduser {0}", Program.TasClient.UserName),false);
+            Program.TasClient.Say(SayPlace.User, bat.Founder.Name, string.Format("!adduser {0}", Program.TasClient.UserName),false);
 
             var de = Program.Downloader.GetAndSwitchEngine(bat.EngineVersion);
             var dm = Program.Downloader.GetResource(DownloadType.MAP, bat.MapName);

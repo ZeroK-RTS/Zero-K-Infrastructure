@@ -308,7 +308,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
             // process special queue message to display in label
             client.Said += (s, e) =>
             {
-                if (e.Place == TasSayEventArgs.Places.Battle && client.MyBattle != null && client.MyBattle.Founder.Name == e.UserName &&  e.Text.StartsWith("Queue"))
+                if (e.Place == SayPlace.Battle && client.MyBattle != null && client.MyBattle.Founder.Name == e.UserName &&  e.Text.StartsWith("Queue"))
                 {
                     var t = e.Text.Substring(6);
                     queueLabelFormatter = Regex.Replace(t,
@@ -390,7 +390,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
             var tas = Program.TasClient;
             if (tas.MyBattle != null) {
                 Battle battle;
-                if (tas.ExistingBattles.TryGetValue(battleID, out battle)) tas.Say(TasClient.SayPlace.Battle, "", string.Format("Going to {0} zk://@join_player:{1}", battle.Title, battle.Founder.Name), true);
+                if (tas.ExistingBattles.TryGetValue(battleID, out battle)) tas.Say(SayPlace.Battle, "", string.Format("Going to {0} zk://@join_player:{1}", battle.Title, battle.Founder.Name), true);
                 tas.LeaveBattle();
             }
             if (!string.IsNullOrEmpty(password)) Program.TasClient.JoinBattle(battleID, password);
@@ -415,13 +415,13 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
                 var moddl = Program.Downloader.Downloads.FirstOrDefault(x => x.Name == client.MyBattle.ModName);
                 var mapdl = Program.Downloader.Downloads.FirstOrDefault(x => x.Name == client.MyBattle.MapName);
                 if (moddl != null && moddl.IsComplete != true) {
-                    client.Say(TasClient.SayPlace.Battle,
+                    client.Say(SayPlace.Battle,
                                "",
                                string.Format("Mod download progress: {0}%, eta: {1}", Math.Round(moddl.TotalProgress), moddl.TimeRemaining),
                                true);
                 }
                 if (mapdl != null && mapdl.IsComplete != true) {
-                    client.Say(TasClient.SayPlace.Battle,
+                    client.Say(SayPlace.Battle,
                                "",
                                string.Format("Map download progress: {0}%, eta: {1}", Math.Round(mapdl.TotalProgress), mapdl.TimeRemaining),
                                true);
@@ -514,7 +514,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
         public void DetailClicked(NotifyBarContainer container) {
             NavigationControl.Instance.Path = "chat/battle";
             if (IsHostGameRunning()) Rejoin();
-            else client.Say(TasClient.SayPlace.Battle, "", "!start", false);
+            else client.Say(SayPlace.Battle, "", "!start", false);
         }
 
         void BattleIconManager_BattleChanged(object sender, EventArgs<BattleIcon> e) {

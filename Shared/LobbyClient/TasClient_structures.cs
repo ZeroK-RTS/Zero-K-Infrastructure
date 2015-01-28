@@ -116,40 +116,20 @@ namespace LobbyClient
 
     public class TasSayEventArgs: EventArgs
 	{
-		public enum Origins
-		{
-			Server,
-			Player
-		}
-
-		public enum Places
-		{
-			Normal,
-			Motd,
-			Channel,
-			Battle,
-			MessageBox,
-			Broadcast,
-			Game,
-			Server
-		}
 
 		public string Channel { get; set; }
-		public static TasSayEventArgs Default = new TasSayEventArgs(Origins.Player, Places.Battle, "", "", "", false);
+		public static TasSayEventArgs Default = new TasSayEventArgs(SayPlace.Battle, "", "", "", false);
 
 		public bool IsEmote { get; set; }
 
-		public Origins Origin { get; set; }
-
-		public Places Place { get; set; }
+		public SayPlace Place { get; set; }
 
 		public string Text { get; set; }
 
 		public string UserName { get; set; }
 
-		public TasSayEventArgs(Origins origin, Places place, string channel, string username, string text, bool isEmote)
+		public TasSayEventArgs(SayPlace place, string channel, string username, string text, bool isEmote)
 		{
-			Origin = origin;
 			Place = place;
 			UserName = username;
 			Text = text;

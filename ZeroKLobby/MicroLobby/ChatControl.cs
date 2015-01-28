@@ -416,15 +416,15 @@ namespace ZeroKLobby.MicroLobby
 
         void client_Said(object sender, TasSayEventArgs e) {
             if (e.Channel != ChannelName) return;
-            if (e.Origin == TasSayEventArgs.Origins.Player) {
-                if (e.Place == TasSayEventArgs.Places.Channel) {
+            if (!string.IsNullOrEmpty(e.UserName)) {
+                if (e.Place == SayPlace.Channel) {
                     if (e.Text.Contains(Program.Conf.LobbyPlayerName) && e.UserName != GlobalConst.NightwatchName) Program.MainWindow.NotifyUser("chat/channel/" + e.Channel, string.Format("{0}: {1}", e.UserName, e.Text), false, true);
 
                     if (!e.IsEmote) AddLine(new SaidLine(e.UserName, e.Text));
                     else AddLine(new SaidExLine(e.UserName, e.Text));
                 }
             }
-            else if (e.Origin == TasSayEventArgs.Origins.Server && e.Place == TasSayEventArgs.Places.Channel) AddLine(new ChannelMessageLine(e.Text));
+            else if (e.Place == SayPlace.Channel) AddLine(new ChannelMessageLine(e.Text));
         }
 
         void hideButton_Click(object sender, EventArgs e) {

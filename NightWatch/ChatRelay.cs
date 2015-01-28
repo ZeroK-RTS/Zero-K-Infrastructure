@@ -42,10 +42,10 @@ namespace NightWatch
         void OnSaid(object sender, TasSayEventArgs args)
         {
             var tas = (TasClient)sender;
-            if (args.Place == TasSayEventArgs.Places.Channel && channels.Contains(args.Channel) && args.UserName != tas.UserName)
+            if (args.Place == SayPlace.Channel && channels.Contains(args.Channel) && args.UserName != tas.UserName)
             {
                 var otherTas = tas == zkTas ? springTas : zkTas;
-                otherTas.Say(TasClient.SayPlace.Channel, args.Channel, string.Format("<{0}> {1}", args.UserName, args.Text), args.IsEmote);
+                otherTas.Say(SayPlace.Channel, args.Channel, string.Format("<{0}> {1}", args.UserName, args.Text), args.IsEmote);
             }
         }
 

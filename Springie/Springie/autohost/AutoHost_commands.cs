@@ -1240,17 +1240,17 @@ namespace Springie.autohost
 
         void ComAdmins(TasSayEventArgs e, string[] words)
         {
-            tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
-            foreach (var u in tas.ExistingUsers.Values.Where(x => x.SpringieLevel >= 3)) tas.Say(TasClient.SayPlace.User, e.UserName, " " + u.Name + " (level " + u.SpringieLevel + ")", false);
-            tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
+            tas.Say(SayPlace.User, e.UserName, "---", false);
+            foreach (var u in tas.ExistingUsers.Values.Where(x => x.SpringieLevel >= 3)) tas.Say(SayPlace.User, e.UserName, " " + u.Name + " (level " + u.SpringieLevel + ")", false);
+            tas.Say(SayPlace.User, e.UserName, "---", false);
         }
 
         void ComHelp(TasSayEventArgs e, string[] words)
         {
             var ulevel = GetUserLevel(e);
-            tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
-            foreach (var c in Commands.Commands) if (c.Level <= ulevel) tas.Say(TasClient.SayPlace.User, e.UserName, " !" + c.Name + " " + c.HelpText, false);
-            tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
+            tas.Say(SayPlace.User, e.UserName, "---", false);
+            foreach (var c in Commands.Commands) if (c.Level <= ulevel) tas.Say(SayPlace.User, e.UserName, " !" + c.Name + " " + c.HelpText, false);
+            tas.Say(SayPlace.User, e.UserName, "---", false);
         }
 
 
@@ -1263,9 +1263,9 @@ namespace Springie.autohost
                     else return a.Name.CompareTo(b.Name);
                 });
 
-            tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
-            foreach (var c in copy) tas.Say(TasClient.SayPlace.User, e.UserName, "Level " + c.Level + " --> !" + c.Name + " " + c.HelpText, false);
-            tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
+            tas.Say(SayPlace.User, e.UserName, "---", false);
+            foreach (var c in copy) tas.Say(SayPlace.User, e.UserName, "Level " + c.Level + " --> !" + c.Name + " " + c.HelpText, false);
+            tas.Say(SayPlace.User, e.UserName, "---", false);
         }
 
         void ComListMaps(TasSayEventArgs e, string[] words)
@@ -1280,9 +1280,9 @@ namespace Springie.autohost
                     Respond(e, String.Format("This has {0} results, please narrow down your search", count));
                     return;
                 }
-                tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
-                for (var i = 0; i < vals.Length; ++i) tas.Say(TasClient.SayPlace.User, e.UserName, indexes[i] + ": " + vals[i], false);
-                tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
+                tas.Say(SayPlace.User, e.UserName, "---", false);
+                for (var i = 0; i < vals.Length; ++i) tas.Say(SayPlace.User, e.UserName, indexes[i] + ": " + vals[i], false);
+                tas.Say(SayPlace.User, e.UserName, "---", false);
             }
             else Respond(e, "no such map found");
         }
@@ -1299,9 +1299,9 @@ namespace Springie.autohost
                     Respond(e, String.Format("This has {0} results, please narrow down your search", count));
                     return;
                 }
-                tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
-                for (var i = 0; i < vals.Length; ++i) tas.Say(TasClient.SayPlace.User, e.UserName, indexes[i] + ": " + vals[i], false);
-                tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
+                tas.Say(SayPlace.User, e.UserName, "---", false);
+                for (var i = 0; i < vals.Length; ++i) tas.Say(SayPlace.User, e.UserName, indexes[i] + ": " + vals[i], false);
+                tas.Say(SayPlace.User, e.UserName, "---", false);
             }
             else Respond(e, "no such mod found");
         }
@@ -1479,7 +1479,7 @@ namespace Springie.autohost
 
         void SayLines(TasSayEventArgs e, string what)
         {
-            foreach (var line in what.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)) tas.Say(TasClient.SayPlace.User, e.UserName, line, false);
+            foreach (var line in what.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)) tas.Say(SayPlace.User, e.UserName, line, false);
         }
 
         public void ServerVerifyMap(bool pickNew)

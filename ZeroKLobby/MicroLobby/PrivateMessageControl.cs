@@ -81,7 +81,7 @@ namespace ZeroKLobby.MicroLobby
       {
         if (saidLine.AuthorName != Program.TasClient.UserName)
         {
-          Program.TasClient.Say(TasClient.SayPlace.User,
+          Program.TasClient.Say(SayPlace.User,
                                 UserName,
                                 String.Format("Answering machine: I have been idle for {0} minutes.", (int)WindowsApi.IdleTime.TotalMinutes),
                                 false);

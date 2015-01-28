@@ -25,6 +25,7 @@ namespace PlasmaShared.LobbyMessages
             RegisterType<User>();
             RegisterType<ChannelUserAdded>();
             RegisterType<ChannelUserRemoved>();
+            RegisterType<Say>();
 
             settings.Formatting = Formatting.None;
             settings.NullValueHandling = NullValueHandling.Ignore;

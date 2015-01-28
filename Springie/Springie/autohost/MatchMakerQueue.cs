@@ -52,7 +52,7 @@ namespace Springie.autohost
             tas.BattleUserJoined += (sender, args) =>
             {
                 if (tas.MyBattleID != args.BattleID) return;
-                tas.Say(TasClient.SayPlace.BattlePrivate,
+                tas.Say(SayPlace.BattlePrivate,
                     args.UserName,
                     string.Format("Hi {0}, you are {1}. in the queue", args.UserName, tas.MyBattle.NonSpectatorCount),
                     true);
@@ -90,13 +90,13 @@ namespace Springie.autohost
                                 if (postpone > deadline) scheduledStart = deadline;
                                 else scheduledStart = postpone;
                             }
-                            tas.Say(TasClient.SayPlace.Battle,
+                            tas.Say(SayPlace.Battle,
                                 "",
                                 string.Format("Queue starting in {0}s", Math.Round(scheduledStart.Subtract(DateTime.Now).TotalSeconds)),
                                 true);
                         }
                         else // not enough to start
-                            tas.Say(TasClient.SayPlace.Battle, "", string.Format("Queue needs {0} more people", ah.config.MinToJuggle - count), true);
+                            tas.Say(SayPlace.Battle, "", string.Format("Queue needs {0} more people", ah.config.MinToJuggle - count), true);
                     }
                     else // users removed
                         StopIfCountLow();
@@ -115,7 +115,7 @@ namespace Springie.autohost
                     starting = false;
 
                     var teams = BuildTeams();
-                    if (teams == null) tas.Say(TasClient.SayPlace.Battle, "", "Queue cannot start yet because of skill differences", true);
+                    if (teams == null) tas.Say(SayPlace.Battle, "", "Queue cannot start yet because of skill differences", true);
                     else
                     {
                         var spectators =
@@ -265,7 +265,7 @@ namespace Springie.autohost
             if (count < ah.config.MinToJuggle)
             {
                 starting = false;
-                tas.Say(TasClient.SayPlace.Battle, "", string.Format("Queue needs {0} more people", ah.config.MinToJuggle - count), true);
+                tas.Say(SayPlace.Battle, "", string.Format("Queue needs {0} more people", ah.config.MinToJuggle - count), true);
             }
         }
 

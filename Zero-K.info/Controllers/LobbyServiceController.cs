@@ -52,21 +52,21 @@ namespace ZeroKWeb.Controllers
                 {
                     if (accAnteep.AccountUserIDs.Any(y => y.UserID == user_id))
                     {
-                        Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel,
+                        Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel,
                             String.Format("Suspected Anteep smurf: {0} (ID match {1}) {2}", acc.Name, user_id,
                                 string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl)), false);
                     }
 
                     if (user_id > 0 && user_id < 1000)
                     {
-                        Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel,
+                        Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel,
                             String.Format("Suspected Anteep smurf: {0} (too short userID {1}) {2}", acc.Name, user_id,
                                 string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl)), false);
                     }
 
                     if (accAnteep.AccountIPs.Any(y => y.IP == ip))
                     {
-                        Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, String.Format("Suspected Anteep smurf: {0} (IP match {1}) {2}", acc.Name, ip, string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl)), false);
+                        Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, String.Format("Suspected Anteep smurf: {0} (IP match {1}) {2}", acc.Name, ip, string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl)), false);
                     }
                 }
 
@@ -82,7 +82,7 @@ namespace ZeroKWeb.Controllers
                         var resolved = Dns.GetHostEntry(string.Format("{0}.dnsbl.tornevall.org", reversedIP)).AddressList;
                         if (resolved.Length > 0)
                         {
-                            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, String.Format("User {0} {3} has IP {1} on dnsbl.tornevall.org ({2} result/s)", acc.Name, ip, resolved.Length, string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl)), false);
+                            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, String.Format("User {0} {3} has IP {1} on dnsbl.tornevall.org ({2} result/s)", acc.Name, ip, resolved.Length, string.Format("{1}/Users/Detail/{0}", acc.AccountID, GlobalConst.BaseSiteUrl)), false);
                         }
                     }
                     catch (System.Net.Sockets.SocketException sockEx)
@@ -113,7 +113,7 @@ namespace ZeroKWeb.Controllers
                             var blockedHosts = db.BlockedHosts.Select(x => x.HostName).ToList();
                             /*if (acc.Country == "MY")
                             {
-                                client.Say(TasClient.SayPlace.User, "KingRaptor", String.Format("USER {0}\nnetname: {1}\norgname: {2}\ndescr: {3}\nabuse-mailbox: {4}",
+                                client.Say(SayPlace.User, "KingRaptor", String.Format("USER {0}\nnetname: {1}\norgname: {2}\ndescr: {3}\nabuse-mailbox: {4}",
                                     acc.Name, data["netname"], data["org-name"], data["descr"], data["abuse-mailbox"]), false);
                             }*/
 
@@ -149,7 +149,7 @@ namespace ZeroKWeb.Controllers
 
         public JsonResult BlockLogin(string reason, Account acc, string ip, long user_id)
         {
-            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Login denied for {0} IP:{1} ID:{2} reason: {3}", acc.Name, ip, user_id, reason), true);
+            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Login denied for {0} IP:{1} ID:{2} reason: {3}", acc.Name, ip, user_id, reason), true);
 
             return new JsonResult() { Data = new LoginResponse(reason), JsonRequestBehavior = JsonRequestBehavior.AllowGet };
         }

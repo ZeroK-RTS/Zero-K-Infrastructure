@@ -116,7 +116,7 @@ namespace NightWatch
         public void SendLobbyMessage(Account account, string text)
         {
             User ex;
-            if (client.ExistingUsers.TryGetValue(account.Name, out ex)) client.Say(TasClient.SayPlace.User, account.Name, text, false);
+            if (client.ExistingUsers.TryGetValue(account.Name, out ex)) client.Say(SayPlace.User, account.Name, text, false);
             else
             {
                 var message = new LobbyMessage

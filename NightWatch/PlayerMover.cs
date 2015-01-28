@@ -18,7 +18,7 @@ namespace CaTracker
         {
             if (e.UserName.Contains("Nightwatch")) return;
 
-            if (e.Place == TasSayEventArgs.Places.Normal)
+            if (e.Place == SayPlace.User)
             {
                 if (e.Text.StartsWith("!move"))
                 {
@@ -27,7 +27,7 @@ namespace CaTracker
                     if (acc.IsZeroKAdmin)
                     {
                         var parts = e.Text.Split(' ');
-                        if (parts.Length != 3) tas.Say(TasClient.SayPlace.User, e.UserName, "!move [from] [to]", false);
+                        if (parts.Length != 3) tas.Say(SayPlace.User, e.UserName, "!move [from] [to]", false);
                         else
                         {
                             var from = tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == parts[1]);
@@ -36,7 +36,7 @@ namespace CaTracker
                             {
                                 foreach (var b in from.Users) if (!b.LobbyUser.IsInGame && b.Name != from.Founder.Name) tas.ForceJoinBattle(b.Name, to.BattleID);
                             }
-                            else tas.Say(TasClient.SayPlace.User, e.UserName, "Not a valid battle host name", false);
+                            else tas.Say(SayPlace.User, e.UserName, "Not a valid battle host name", false);
                         }
                     }
                 }
@@ -49,7 +49,7 @@ namespace CaTracker
                     if (acc.IsZeroKAdmin)
                     {
                         var parts = e.Text.Split(' ');
-                        if (parts.Length != 3) tas.Say(TasClient.SayPlace.User, e.UserName, "!splitplayers [from] [to]", false);
+                        if (parts.Length != 3) tas.Say(SayPlace.User, e.UserName, "!splitplayers [from] [to]", false);
                         else
                         {
                             var from = tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == parts[1]);
@@ -60,7 +60,7 @@ namespace CaTracker
                                 var toMove = list.Take(list.Count() / 2);
                                 foreach (var b in toMove) tas.ForceJoinBattle(b.Name, to.BattleID);
                             }
-                            else tas.Say(TasClient.SayPlace.User, e.UserName, "Not a valid battle host name", false);
+                            else tas.Say(SayPlace.User, e.UserName, "Not a valid battle host name", false);
                         }
                     }
                 }

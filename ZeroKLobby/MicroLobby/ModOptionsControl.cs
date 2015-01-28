@@ -329,7 +329,7 @@ namespace ZeroKLobby.MicroLobby
           return;
       }
 
-      Program.TasClient.Say(TasClient.SayPlace.Battle, "", "!setoptions " + string.Join(",", vals.Select(x => string.Format("{0}={1}", x.Key, x.Value))), false);
+      Program.TasClient.Say(SayPlace.Battle, "", "!setoptions " + string.Join(",", vals.Select(x => string.Format("{0}={1}", x.Key, x.Value))), false);
     }
   }
 }

@@ -129,7 +129,7 @@ namespace ZeroKWeb
                 var targetHost = emptyHost.Founder.Name;
                 RunningBattles[targetHost] = Challenge;
 
-                tas.Say(TasClient.SayPlace.User, targetHost, "!map " + Challenge.Map, false);
+                tas.Say(SayPlace.User, targetHost, "!map " + Challenge.Map, false);
                 Thread.Sleep(500);
                 foreach (string x in Challenge.Attackers) tas.ForceJoinBattle(x, emptyHost.BattleID);
                 foreach (string x in Challenge.Defenders) tas.ForceJoinBattle(x, emptyHost.BattleID);
@@ -150,23 +150,23 @@ namespace ZeroKWeb
 
                 foreach (var fac in factions)
                 {
-                    tas.Say(TasClient.SayPlace.Channel, fac.Shortcut, text, true);
+                    tas.Say(SayPlace.Channel, fac.Shortcut, text, true);
                 }
 
                 Utils.StartAsync(() =>
                 {
                     Thread.Sleep(6000);
-                    tas.Say(TasClient.SayPlace.User, targetHost, "!balance", false);
+                    tas.Say(SayPlace.User, targetHost, "!balance", false);
                     Thread.Sleep(1000);
-                    tas.Say(TasClient.SayPlace.User, targetHost, "!endvote", false);
-                    tas.Say(TasClient.SayPlace.User, targetHost, "!forcestart", false);
+                    tas.Say(SayPlace.User, targetHost, "!endvote", false);
+                    tas.Say(SayPlace.User, targetHost, "!forcestart", false);
                 });
             }
             else
             {
                 foreach (var c in factions)
                 {
-                    tas.Say(TasClient.SayPlace.Channel, c.Shortcut, "Battle could not start - no autohost found", true);
+                    tas.Say(SayPlace.Channel, c.Shortcut, "Battle could not start - no autohost found", true);
                 }
             }
 
@@ -255,7 +255,7 @@ namespace ZeroKWeb
                         if (attackOption.Attackers.Count < attackOption.TeamSize)
                         {
                             attackOption.Attackers.Add(user.Name);
-                            tas.Say(TasClient.SayPlace.Channel, user.Faction, string.Format("{0} joins attack on {1}", userName, attackOption.Name), true);
+                            tas.Say(SayPlace.Channel, user.Faction, string.Format("{0} joins attack on {1}", userName, attackOption.Name), true);
 
                             if (attackOption.Attackers.Count == attackOption.TeamSize) StartChallenge(attackOption);
                             else UpdateLobby();
@@ -279,7 +279,7 @@ namespace ZeroKWeb
                         if (!Challenge.Defenders.Any(y => y == user.Name))
                         {
                             Challenge.Defenders.Add(user.Name);
-                            tas.Say(TasClient.SayPlace.Channel, user.Faction, string.Format("{0} joins defense of {1}", userName, Challenge.Name), true);
+                            tas.Say(SayPlace.Channel, user.Faction, string.Format("{0} joins defense of {1}", userName, Challenge.Name), true);
 
                             if (Challenge.Defenders.Count == Challenge.TeamSize) AcceptChallenge();
                             else UpdateLobby();
@@ -309,7 +309,7 @@ namespace ZeroKWeb
             var message = string.Format("{0} won because nobody tried to defend", AttackingFaction.Name);
             foreach (var fac in factions)
             {
-                tas.Say(TasClient.SayPlace.Channel, fac.Shortcut, message, true);
+                tas.Say(SayPlace.Channel, fac.Shortcut, message, true);
             }
 
 
@@ -366,7 +366,7 @@ namespace ZeroKWeb
 
             UpdateLobby();
 
-            tas.Say(TasClient.SayPlace.Channel, AttackingFaction.Shortcut, "It's your turn! Select a planet to attack", true);
+            tas.Say(SayPlace.Channel, AttackingFaction.Shortcut, "It's your turn! Select a planet to attack", true);
         }
 
         void InternalAddOption(Planet planet)
@@ -423,8 +423,7 @@ namespace ZeroKWeb
         /// <param name="args"></param>
         void TasOnPreviewSaid(object sender, CancelEventArgs<TasSayEventArgs> args)
         {
-            if (args.Data.Text.StartsWith("!") && (args.Data.Place == TasSayEventArgs.Places.Channel || args.Data.Place == TasSayEventArgs.Places.Normal) &&
-                args.Data.Origin == TasSayEventArgs.Origins.Player && args.Data.UserName != GlobalConst.NightwatchName)
+            if (args.Data.Text.StartsWith("!") && (args.Data.Place == SayPlace.Channel || args.Data.Place == SayPlace.User) && args.Data.UserName != GlobalConst.NightwatchName)
             {
                 int targetPlanetId;
                 if (int.TryParse(args.Data.Text.Substring(1), out targetPlanetId)) JoinPlanet(args.Data.UserName, targetPlanetId);

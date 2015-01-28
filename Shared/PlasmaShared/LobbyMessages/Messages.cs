@@ -42,7 +42,7 @@ namespace LobbyClient
         public string PasswordHash;
 
         [Flags]
-        public enum ClientTypes 
+        public enum ClientTypes
         {
             ZeroKLobby = 1,
             Linux = 2,
@@ -89,7 +89,7 @@ namespace LobbyClient
             [Description("banned")]
             Banned = 4
         }
-        
+
         public Code ResultCode;
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace LobbyClient
         public string Password;
     }
 
-    
+
     /// <summary>
     /// Attempts to join a room
     /// </summary>
@@ -226,6 +226,26 @@ namespace LobbyClient
     {
         public string Name;
         public string Reason;
+    }
+
+    public enum SayPlace
+    {
+        Channel,
+        Battle,
+        User,
+        BattlePrivate,
+        Game,
+        MessageBox
+    };
+
+
+    public class Say
+    {
+        public SayPlace Place;
+        public string Target;
+        public string User;
+        public bool IsEmote;
+        public string Text;
     }
 
 

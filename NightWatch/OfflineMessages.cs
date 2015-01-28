@@ -54,7 +54,7 @@ namespace NightWatch
 					        }
 					        foreach (var m in messages) {
 					            var text = string.Format("!pm|{0}|{1}|{2}|{3}", m.Channel, m.SourceName, m.Created.ToString(CultureInfo.InvariantCulture), m.Message);
-					            await client.Say(TasClient.SayPlace.User, user.Name, text, false);
+					            await client.Say(SayPlace.User, user.Name, text, false);
 					            await Task.Delay(MessageDelay);
 					        }
 					    }
@@ -75,7 +75,7 @@ namespace NightWatch
 		{
 		    User user;
 		    if (!client.ExistingUsers.TryGetValue(e.UserName, out user)) return;
-			if (e.Place == TasSayEventArgs.Places.Channel && e.Channel != "main")
+			if (e.Place == SayPlace.Channel && e.Channel != "main")
 			{
 				Task.Factory.StartNew(() =>
 					{
@@ -115,13 +115,13 @@ namespace NightWatch
 						}
 					});
 			}
-			else if (e.Place == TasSayEventArgs.Places.Normal && e.Origin == TasSayEventArgs.Origins.Player)
+			else if (e.Place == SayPlace.User)
 			{
 				Task.Factory.StartNew(() =>
 					{
 						try
 						{
-							if (e.Place == TasSayEventArgs.Places.Normal && e.Origin == TasSayEventArgs.Origins.Player)
+							if (e.Place == SayPlace.User)
 							{
 								if (e.Text.StartsWith("!pm"))
 								{
@@ -152,7 +152,7 @@ namespace NightWatch
                                                 Account account = Account.AccountByName(db, e.UserName);
                                                 if (chan == AuthService.ModeratorChannel && !(account.IsZeroKAdmin))
                                                 {
-                                                    client.Say(TasClient.SayPlace.User, user.Name, "Not authorized to subscribe to this channel", false);
+                                                    client.Say(SayPlace.User, user.Name, "Not authorized to subscribe to this channel", false);
                                                 }
                                                 else
                                                 {
@@ -165,7 +165,7 @@ namespace NightWatch
                                                         db.SubmitChanges();
                                                         client.JoinChannel(chan);
                                                     }
-                                                    client.Say(TasClient.SayPlace.User, user.Name, "Subscribed", false);
+                                                    client.Say(SayPlace.User, user.Name, "Subscribed", false);
                                                 }
 											}
 										}
@@ -186,7 +186,7 @@ namespace NightWatch
 												db.LobbyChannelSubscriptions.DeleteOnSubmit(subs);
 												db.SubmitChanges();
 											}
-											client.Say(TasClient.SayPlace.User, user.Name, "Unsubscribed", false);
+											client.Say(SayPlace.User, user.Name, "Unsubscribed", false);
 										}
 									}
 								}
@@ -201,7 +201,7 @@ namespace NightWatch
                                         {
                                             subscriptionList = "Subscribed to: " + String.Join(", ", subs);
                                         }
-                                        client.Say(TasClient.SayPlace.User, user.Name, subscriptionList, false);
+                                        client.Say(SayPlace.User, user.Name, subscriptionList, false);
                                     }
                                 }
 
@@ -233,7 +233,7 @@ namespace NightWatch
 						foreach (var m in messages)
 						{
 							var text = string.Format("!pm|{0}|{1}|{2}|{3}", m.Channel, m.SourceName, m.Created.ToString(CultureInfo.InvariantCulture), m.Message);
-							client.Say(TasClient.SayPlace.User, user.Name, text, false);
+							client.Say(SayPlace.User, user.Name, text, false);
 							Thread.Sleep(MessageDelay);
 						}
 					}

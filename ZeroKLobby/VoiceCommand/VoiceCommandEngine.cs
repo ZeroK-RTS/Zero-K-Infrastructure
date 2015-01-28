@@ -56,7 +56,7 @@ namespace ZeroKLobby.VoiceCommand
             };
             client.PreviewSaid += (s, e) =>
             {
-                if (client.MyBattle != null && e.Data.Place == TasSayEventArgs.Places.Normal && e.Data.UserName == client.MyBattle.Founder.Name && e.Data.Text.StartsWith("!transmit ")) e.Cancel = true;
+                if (client.MyBattle != null && e.Data.Place == SayPlace.User && e.Data.UserName == client.MyBattle.Founder.Name && e.Data.Text.StartsWith("!transmit ")) e.Cancel = true;
             };
 
         	voiceRules.Add(new BuildUnitRule());
@@ -121,7 +121,7 @@ namespace ZeroKLobby.VoiceCommand
         	if (rule == null) return;
         	rule.Aknowledge(speechSynthesizer, e.Result);
 			var table = rule.ToLua(e.Result);
-			client.Say(TasClient.SayPlace.User, client.MyBattle.Founder.Name, "!transmit voice" + table.Replace("\n", ""), false);
+			client.Say(SayPlace.User, client.MyBattle.Founder.Name, "!transmit voice" + table.Replace("\n", ""), false);
         }
     }
 }

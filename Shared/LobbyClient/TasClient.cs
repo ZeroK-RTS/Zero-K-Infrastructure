@@ -57,13 +57,6 @@ namespace LobbyClient
 
         public delegate void Invoker<TArg>(TArg arg);
 
-        public enum SayPlace
-        {
-            Channel,
-            Battle,
-            User,
-            BattlePrivate
-        };
 
         readonly string appName = "UnknownClient";
         Dictionary<int, Battle> existingBattles = new Dictionary<int, Battle>();
@@ -424,7 +417,7 @@ namespace LobbyClient
 
         public void GameSaid(string username, string text)
         {
-            InvokeSaid(new TasSayEventArgs(TasSayEventArgs.Origins.Player, TasSayEventArgs.Places.Game, "", username, text, false));
+            InvokeSaid(new TasSayEventArgs(SayPlace.Game, "", username, text, false));
         }
 
 
@@ -641,28 +634,14 @@ namespace LobbyClient
                 var args = new SayingEventArgs(place, channel, sentText, isEmote);
                 Saying(this, args);
                 if (args.Cancel) continue;
-                /*
-                switch (place)
-                {
-                    case SayPlace.Channel:
-                        if (!JoinedChannels.ContainsKey(args.Channel)) JoinChannel(args.Channel);
-                        if (args.IsEmote) await con.SendCommand("SAYEX", args.Channel, args.Text);
-                        else await con.SendCommand("SAY", args.Channel, args.Text);
-                        break;
 
-                    case SayPlace.User:
-                        await con.SendCommand("SAYPRIVATE", args.Channel, args.Text);
-                        break;
+                if (args.SayPlace == SayPlace.Channel && !JoinedChannels.ContainsKey(args.Channel)) {
+                    await JoinChannel(args.Channel);
+                }
 
-                    case SayPlace.Battle:
-                        if (args.IsEmote) await con.SendCommand("SAYBATTLEEX", args.Text);
-                        else await con.SendCommand("SAYBATTLE", args.Text);
-                        break;
-                    case SayPlace.BattlePrivate:
-                        if (args.IsEmote) await con.SendCommand("SAYBATTLEPRIVATEEX", channel, args.Text);
-                        else await con.SendCommand("SAYBATTLEPRIVATE", channel, args.Text);
-                        break;
-                }*/
+                var say = new Say() { Target = args.Channel, Place = args.SayPlace, Text = args.Text, IsEmote = args.IsEmote };
+
+                await SendCommand(say);
             }
         }
 
@@ -721,52 +700,7 @@ namespace LobbyClient
             //con.SendCommand("UPDATEBOT", name, battleStatus.ToInt(), teamColor);
         }
 
-        // FIXME: ugh
-        private void HandleSpecialServerMessages(string[] args) {
-            var text = Utils.Glue(args, 0);
-            var match = Regex.Match(text, "<([^>]+)> is using (.+)");
-            if (match.Success)
-            {
-                var name = match.Groups[1].Value;
-                var version = match.Groups[2].Value.Trim();
-                UserLobbyVersionRecieved(this, new UserLobbyVersionEventArgs() { Name = name, LobbyVersion = version});
-            }
-            else
-            {
-                match = Regex.Match(text, "<([^>]+)> is currently bound to (.+)");
-                if (match.Success) {
-                    var name = match.Groups[1].Value;
-                    var ip = match.Groups[2].Value.Trim();
-                    UserIPRecieved(this, new UserIPEventArgs() { Name = name, IP = ip});
-                }
-                else
-                {
-                    match = Regex.Match(text, "<([^>]+)> is (.+)");
-                    if (match.Success)
-                    {
-                        var name = match.Groups[1].Value;
-                        long id;
-                        if (long.TryParse(match.Groups[2].Value.Trim(), out id)) UserIDRecieved(this, new UserIDEventArgs() { Name = name, ID = id });
-                    }
-                    /*
-                    else
-                    {
-                        match = Regex.Match(text, "You've been kicked from server by <([^>]+)> (.+)");
-                        if (match.Success)
-                        {
-                            Trace.TraceWarning(String.Format("User {0} kicked (we are {1})"), args[1], MyUser.Name);
-                            string name = match.Groups[1].Value;
-                            string reason = match.Groups.Count > 2 ? string.Join(" ", match.Groups, 2) : null;
-                            KickedFromServer(this, new KickedFromServerEventArgs(name, ""));
-                        }
-                    }
-                    */
-                }
-            }
-            
-        }
-
-
+       
         /// <summary>
         /// Primary method - processes commands from server
         /// </summary>
@@ -813,17 +747,9 @@ namespace LobbyClient
                         OnRemoveUser(args);
                         break;
 
-                    case "MOTD": // server motd
-                        OnMotd(args);
-                        break;
-
-                    case "SERVERMSG": // server message
-                        OnServerMsg(args);
-                        break;
 
                     case "SERVERMSGBOX": // server messagebox
-                        InvokeSaid(new TasSayEventArgs(TasSayEventArgs.Origins.Server,
-                                                       TasSayEventArgs.Places.MessageBox,
+                        InvokeSaid(new TasSayEventArgs(SayPlace.MessageBox,
                                                        "",
                                                        "",
                                                        Utils.Glue(args, 0),
@@ -831,8 +757,7 @@ namespace LobbyClient
                         break;
 
                     case "CHANNELMESSAGE": // server broadcast to channel
-                        InvokeSaid(new TasSayEventArgs(TasSayEventArgs.Origins.Server,
-                                                       TasSayEventArgs.Places.Channel,
+                        InvokeSaid(new TasSayEventArgs(SayPlace.Channel,
                                                        args[0],
                                                        "",
                                                        Utils.Glue(args, 1),
@@ -840,8 +765,7 @@ namespace LobbyClient
                         break;
 
                     case "SAID": // someone said something in channel
-                        InvokeSaid(new TasSayEventArgs(TasSayEventArgs.Origins.Player,
-                                                       TasSayEventArgs.Places.Channel,
+                        InvokeSaid(new TasSayEventArgs(SayPlace.Channel,
                                                        args[0],
                                                        args[1],
                                                        Utils.Glue(args, 2),
@@ -853,8 +777,7 @@ namespace LobbyClient
                         break;
 
                     case "SAIDEX": // someone said something with emote in channel
-                        InvokeSaid(new TasSayEventArgs(TasSayEventArgs.Origins.Player,
-                                                       TasSayEventArgs.Places.Channel,
+                        InvokeSaid(new TasSayEventArgs(SayPlace.Channel,
                                                        args[0],
                                                        args[1],
                                                        Utils.Glue(args, 2),
@@ -862,8 +785,7 @@ namespace LobbyClient
                         break;
 
                     case "SAYPRIVATE": // sent back from sever when user sends private message
-                        InvokeSaid(new TasSayEventArgs(TasSayEventArgs.Origins.Player,
-                                                       TasSayEventArgs.Places.Normal,
+                        InvokeSaid(new TasSayEventArgs(SayPlace.User,
                                                        args[0],
                                                        UserName,
                                                        Utils.Glue(args, 1),
@@ -871,8 +793,7 @@ namespace LobbyClient
                         break;
 
                     case "SAIDPRIVATE": // someone said something to me
-                        InvokeSaid(new TasSayEventArgs(TasSayEventArgs.Origins.Player,
-                                                       TasSayEventArgs.Places.Normal,
+                        InvokeSaid(new TasSayEventArgs(SayPlace.User,
                                                        args[0],
                                                        args[0],
                                                        Utils.Glue(args, 1),
@@ -880,8 +801,7 @@ namespace LobbyClient
                         break;
 
                     case "SAIDBATTLE": // someone said something in battle
-                        InvokeSaid(new TasSayEventArgs(TasSayEventArgs.Origins.Player,
-                                                       TasSayEventArgs.Places.Battle,
+                        InvokeSaid(new TasSayEventArgs(SayPlace.Battle,
                                                        "",
                                                        args[0],
                                                        Utils.Glue(args, 1),
@@ -890,22 +810,12 @@ namespace LobbyClient
 
                     case "SAIDBATTLEEX": // someone said in battle with emote
 
-                        InvokeSaid(new TasSayEventArgs(TasSayEventArgs.Origins.Player,
-                                                       TasSayEventArgs.Places.Battle,
+                        InvokeSaid(new TasSayEventArgs(SayPlace.Battle,
                                                        "",
                                                        args[0],
                                                        Utils.Glue(args, 1),
                                                        true));
                         break;
-                    case "BROADCAST": // server sends urgent broadcast
-                        InvokeSaid(new TasSayEventArgs(TasSayEventArgs.Origins.Server,
-                                                       TasSayEventArgs.Places.Broadcast,
-                                                       "",
-                                                       "",
-                                                       Utils.Glue(args, 0),
-                                                       false));
-                        break;
-
                     case "REDIRECT": // server sends backup IP
                         OnRedirect(args);
                         break;
@@ -1338,16 +1248,6 @@ namespace LobbyClient
             Connect(host, port);
         }
 
-        void OnServerMsg(string[] args)
-        {
-            HandleSpecialServerMessages(args);
-            InvokeSaid(new TasSayEventArgs(TasSayEventArgs.Origins.Server, TasSayEventArgs.Places.Server, "", "", Utils.Glue(args, 0), false));
-        }
-
-        void OnMotd(string[] args)
-        {
-            if (args.Length > 0) InvokeSaid(new TasSayEventArgs(TasSayEventArgs.Origins.Server, TasSayEventArgs.Places.Motd, "", "", Utils.Glue(args, 0), false));
-        }
 
         void OnRemoveUser(string[] args)
         {
@@ -1427,6 +1327,12 @@ namespace LobbyClient
                 RegistrationDenied(this, registerResponse);
             }
         }
+
+        async Task Process(Say say)
+        {
+            InvokeSaid(new TasSayEventArgs(say.Place, say.Target,say.User, say.Text, say.IsEmote));
+        }
+
 
 
         public Welcome ServerWelcome = new Welcome();

@@ -185,7 +185,7 @@ namespace ZeroKWeb.SpringieInterface
                 }
                 foreach (string jp in joinplayers.Distinct().Where(x => x != context.AutohostName)) tas.ForceJoinChannel(jp, channelName);
                 tas.JoinChannel(channelName); // join nightwatch and say it
-                tas.Say(TasClient.SayPlace.Channel, channelName, text.ToString(), true);
+                tas.Say(SayPlace.Channel, channelName, text.ToString(), true);
                 tas.LeaveChannel(channelName);
 
                 //text.Append(string.Format("Debriefing in #{0} - zk://chat/channel/{0}  ", channelName));
