@@ -82,8 +82,7 @@ namespace Springie.autohost
 
             tas = new TasClient(null,
                                 MainConfig.SpringieVersion,
-                                isManaged ? GlobalConst.ZkSpringieManagedCpu : GlobalConst.ZkLobbyUserCpu,
-                                false,
+                                isManaged ? Login.ClientTypes.SpringieManaged : Login.ClientTypes.Springie,
                                 Program.main.Config.IpOverride);
 
             pollTimer = new Timer(PollTimeout*1000);

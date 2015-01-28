@@ -228,9 +228,9 @@ namespace LobbyClient
 
  
 
-        public TasClient(Invoker<Invoker> guiThreadInvoker, string appName, int cpu, bool invokeUserStatusChangedOnExtensions = false, string ipOverride = null)
+        public TasClient(Invoker<Invoker> guiThreadInvoker, string appName, Login.ClientTypes? clientTypes = null, string ipOverride = null)
         {
-            this.cpu = cpu;
+            if (clientTypes.HasValue) this.clientType = clientTypes.Value;
             this.appName = appName;
             this.guiThreadInvoker = guiThreadInvoker;
 
@@ -493,11 +493,11 @@ namespace LobbyClient
         {
             UserName = userName;
             UserPassword = password;
-            return SendCommand(new Login() { Name = userName, PasswordHash = Utils.HashLobbyPassword(password) });
+            return SendCommand(new Login() { Name = userName, PasswordHash = Utils.HashLobbyPassword(password), ClientType = clientType});
         }
 
 
-        int cpu = Environment.OSVersion.Platform == PlatformID.Unix ? GlobalConst.ZkLobbyUserCpuLinux : GlobalConst.ZkLobbyUserCpu;
+        Login.ClientTypes clientType = LobbyClient.Login.ClientTypes.ZeroKLobby | (Environment.OSVersion.Platform == PlatformID.Unix ? LobbyClient.Login.ClientTypes.Linux : 0);
 
         public void OpenBattle(Battle nbattle)
         {

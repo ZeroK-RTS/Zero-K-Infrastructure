@@ -73,7 +73,7 @@ namespace LobbyClient
 
         public bool IsSpringieManaged
         {
-            get { return Founder != null && Founder.IsSpringieManaged;}
+            get { return Founder != null && Founder.ClientType == Login.ClientTypes.SpringieManaged;}
         }
 
         public bool IsQueue

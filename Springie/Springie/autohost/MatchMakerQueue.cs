@@ -56,12 +56,6 @@ namespace Springie.autohost
                     args.UserName,
                     string.Format("Hi {0}, you are {1}. in the queue", args.UserName, tas.MyBattle.NonSpectatorCount),
                     true);
-                User user;
-                if (!tas.ExistingUsers.TryGetValue(args.UserName, out user) || (!user.IsZkLobbyUser && !user.ISSwlUser && !user.IsFlobby))
-                {
-                    tas.Say(TasClient.SayPlace.User, args.UserName, "Sorry, you need compatible lobby to play here (Zero-K lobby or SWL or FLobby). See https://github.com/spring/uberserver/issues/121", true);
-                    tas.Kick(args.UserName);
-                }
             };
 
             tas.BattleUserLeft += (sender, args) =>

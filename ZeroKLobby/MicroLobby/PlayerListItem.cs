@@ -50,7 +50,7 @@ namespace ZeroKLobby.MicroLobby
                     && KnownGames.GetGame(Program.TasClient.MyBattle.ModName).IsPrimary;
             } 
         }
-        public bool IsSpringieBattle { get { return Program.TasClient.MyBattle != null && Program.TasClient.MyBattle.Founder.IsZkLobbyUser; } }
+
         public User User
         {
             get
@@ -184,7 +184,7 @@ namespace ZeroKLobby.MicroLobby
             if (isBattle)
             {
                 if (userStatus.IsSpectator && (Program.TasClient.MyBattle == null || !Program.TasClient.MyBattle.IsQueue || Program.TasClient.MyBattle.Founder.Name == userStatus.Name)) drawImage(ZklResources.spec);
-                else if (userStatus.SyncStatus == SyncStatuses.Synced && (IsSpringieBattle || userStatus.IsReady)) drawImage(ZklResources.ready);
+                else if (userStatus.SyncStatus == SyncStatuses.Synced && (userStatus.IsReady)) drawImage(ZklResources.ready);
                 else drawImage(ZklResources.unready);
 
                 if (!userStatus.IsSpectator)

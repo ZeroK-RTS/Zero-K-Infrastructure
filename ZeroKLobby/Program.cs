@@ -204,9 +204,7 @@ namespace ZeroKLobby
 
                 var isLinux = Environment.OSVersion.Platform == PlatformID.Unix;
                 TasClient = new TasClient(TasClientInvoker,
-                                          string.Format("ZK {0}{1}", SelfUpdater.CurrentVersion, isLinux ? " linux" : ""),
-                                          isLinux ? GlobalConst.ZkLobbyUserCpuLinux : GlobalConst.ZkLobbyUserCpu,
-                                          true);
+                                          string.Format("ZK {0}{1}", SelfUpdater.CurrentVersion, isLinux ? " linux" : ""));
 
                 SayCommandHandler = new SayCommandHandler(TasClient);
 

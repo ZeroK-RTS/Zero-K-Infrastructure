@@ -50,7 +50,7 @@ namespace CaTracker
         public Nightwatch()
 		
         {
-            tas = new TasClient(null, "NightWatch", GlobalConst.ZkLobbyUserCpu);
+            tas = new TasClient(null, "NightWatch");
 			config = new Config();
             Trace.Listeners.Add(new NightwatchTraceListener(tas));
         }

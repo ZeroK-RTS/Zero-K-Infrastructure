@@ -97,12 +97,6 @@ namespace ZeroKLobby
                 drawString(string.Format("Steam name: {0}", user.DisplayName ?? user.Name));
                 newLine();
             }
-            if (user.IsZkLobbyUser)
-            {
-                drawImage(ZklResources.ZK_logo_square, 16, 16);
-                drawString(string.Format("ZK lobby user ({0})", user.IsZkLinuxUser ? "Linux" : "Windows"));
-                newLine();
-            }
             if (!user.IsBot)
             {
                 drawImage(Images.GetRank(user.Level), 16, 16);
@@ -155,7 +149,6 @@ namespace ZeroKLobby
             if (user.IsBot) h += 16; // bot icon
             if (user.IsAdmin) h += 16; // admin icon
             if (Program.FriendManager.Friends.Contains(user.Name)) h += 16; // friend icon
-            if (user.IsZkLobbyUser) h += 16; // SD icon
             if (!user.IsBot)
             {
                 h += 16; // rank text

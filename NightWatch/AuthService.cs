@@ -52,9 +52,9 @@ namespace NightWatch
                     }
                 };
 
-
-            this.client.BattleFound +=
-                (s, e) => { if (e.Data.Founder.IsZkLobbyUser && !e.Data.Founder.IsBot) client.SetBotMode(e.Data.Founder.Name, true); };
+            // TODO set bot mode
+            //this.client.BattleFound +=
+              //  (s, e) => { if (e.Data.Founder.IsZkLobbyUser && !e.Data.Founder.IsBot) client.SetBotMode(e.Data.Founder.Name, true); };
 
             this.client.ChannelUserAdded += (sender, args) =>
                 {

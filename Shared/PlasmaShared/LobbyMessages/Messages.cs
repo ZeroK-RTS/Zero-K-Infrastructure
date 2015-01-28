@@ -40,6 +40,20 @@ namespace LobbyClient
         /// base64(md5(password))
         /// </summary>
         public string PasswordHash;
+
+        [Flags]
+        public enum ClientTypes 
+        {
+            ZeroKLobby = 1,
+            Linux = 2,
+            SpringieManaged = 4,
+            Springie = 8,
+
+        }
+
+        public ClientTypes ClientType;
+
+
     }
 
     /// <summary>
@@ -183,11 +197,7 @@ namespace LobbyClient
         public bool BanMute;
         public int Level;
 
-        public bool IsZkLobbyUser { get { return Cpu == GlobalConst.ZkLobbyUserCpu || Cpu == GlobalConst.ZkSpringieManagedCpu || Cpu == GlobalConst.ZkLobbyUserCpuLinux; } }
-        public bool IsZkLinuxUser { get { return Cpu == GlobalConst.ZkLobbyUserCpuLinux; } }
-        public bool IsSpringieManaged { get { return Cpu == GlobalConst.ZkSpringieManagedCpu; } }
-        public bool ISSwlUser { get { return Cpu == 7777 || Cpu == 7778 || Cpu == 7779; } }
-        public bool IsFlobby { get { return Cpu == 4607052 || Cpu == 4607063 || Cpu == 4607053; } }
+        public Login.ClientTypes ClientType;
 
         public string Name;
         
