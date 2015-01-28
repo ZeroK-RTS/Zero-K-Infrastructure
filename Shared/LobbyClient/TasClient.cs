@@ -110,14 +110,14 @@ namespace LobbyClient
         public override async Task OnLineReceived(string line)
         {
             dynamic obj = CommandJsonSerializer.DeserializeLine(line);
-            Input(this, obj);
+            Input(this, line);
             await Process(obj);
         }
 
         public async Task SendCommand<T>(T data)
         {
             var line = CommandJsonSerializer.SerializeToLine(data);
-            Output(this, data);
+            Output(this, line.TrimEnd('\n'));
             await SendData(Encoding.GetBytes(line));
         }
 
@@ -203,7 +203,7 @@ namespace LobbyClient
         public event EventHandler<TasEventArgs> ConnectionLost = delegate { };
         public event EventHandler<CancelEventArgs<string>> FilterBattleByMod;
         public event EventHandler<EventArgs> HourChime = delegate { };
-        public event EventHandler<object> Input = delegate { };
+        public event EventHandler<string> Input = delegate { };
         public event EventHandler<TasEventArgs> JoinBattleFailed = delegate { };
         public event EventHandler<KickedFromServerEventArgs> KickedFromServer = delegate { };
         public event EventHandler<TasEventArgs> LoginAccepted = delegate { };
@@ -212,7 +212,7 @@ namespace LobbyClient
         public event EventHandler<TasEventArgs> MyBattleHostExited = delegate { };
         public event EventHandler<BattleInfoEventArgs> MyBattleMapChanged = delegate { };
         public event EventHandler<TasEventArgs> MyBattleStarted = delegate { };
-        public event EventHandler<object> Output = delegate { }; // outgoing command and arguments
+        public event EventHandler<string> Output = delegate { }; // outgoing command and arguments
         public event EventHandler<CancelEventArgs<RoomDetail>> PreviewChannelJoined = delegate { };
         public event EventHandler<CancelEventArgs<TasSayEventArgs>> PreviewSaid = delegate { };
         public event EventHandler<EventArgs<string>> Rang = delegate { };
@@ -782,8 +782,7 @@ namespace LobbyClient
                     args = Utils.ShiftArray(args, -1);
                 }
 
-                Input(this, new TasInputArgs(command, args));
-
+                
                 switch (command)
                 {
 

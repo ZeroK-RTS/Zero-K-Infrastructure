@@ -21,8 +21,8 @@ namespace Fixer
             var ord = num / 16;
             var batname = "Test " + ord;
 
-            tas.Input += (sender, args) => { Console.WriteLine(" < {0} {1} {2}", name, args.GetType().Name, JsonConvert.SerializeObject(args, new JsonSerializerSettings() { Formatting = Formatting.None })); };
-            tas.Output += (sender, args) => { Console.WriteLine(" > {0} {1} {2}", name, args.GetType().Name, JsonConvert.SerializeObject(args, new JsonSerializerSettings(){Formatting = Formatting.None})); };
+            tas.Input += (sender, args) => { Console.WriteLine(" < {0}", args); };
+            tas.Output += (sender, args) => { Console.WriteLine(" > {0}", args); };
 
             tas.Connected += (sender, args) => {
                 tas.Login(name, "dummy");

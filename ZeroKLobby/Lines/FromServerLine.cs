@@ -10,11 +10,16 @@ namespace ZeroKLobby.Lines
         public string Command { get; set; }
         public DateTime Date { get; set; }
 
-        public FromServerLine(object o)
+        public FromServerLine(string line)
         {
-            Command = o.GetType().Name;
+            if (!string.IsNullOrEmpty(line)) {
+                var parts = line.Split(new[] { ' ' }, 2);
+                if (parts.Length == 2) {
+                    Command = parts[0];
+                    Args = parts[1];
+                } else Command = line;
+            }
             Date = DateTime.Now;
-            Args = JsonConvert.SerializeObject(o);
             Text = string.Format("{0}[{1}{2}{0}] {3}{4}{5} {6}", TextColor.Text, TextColor.Date, Date.ToShortTimeString(), TextColor.IncomingCommand, Command, TextColor.Args, Args);
         }
 

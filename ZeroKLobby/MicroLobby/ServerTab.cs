@@ -76,7 +76,7 @@ namespace ZeroKLobby.MicroLobby
 
         public bool IsBusy { get { return false; } }
 
-        void TasClient_Input(object sender, object o) {
+        void TasClient_Input(object sender, string o) {
             if (o != null) {
                 var entry = new FromServerLine(o);
                 entries.Add(entry);
@@ -84,7 +84,7 @@ namespace ZeroKLobby.MicroLobby
             }
         }
 
-        void TasClient_Output(object sender, object o) {
+        void TasClient_Output(object sender, string o) {
             if (o != null) {
                 var entry = new ToServerLine(o);
                 entries.Add(entry);
