@@ -37,13 +37,75 @@ namespace ZkLobbyServer
 
         public override async Task OnConnectionClosed(bool wasRequested)
         {
-            if (!string.IsNullOrEmpty(User.Name))
-            {
+            string reason = wasRequested ? "quit" : "connection failed";
+            if (!string.IsNullOrEmpty(User.Name)) {
+
                 Client client;
+
+                // notify all channels where i am to all users that i left 
+                foreach (var chan in state.Rooms.Values.ToList()) {
+                    List<string> usersToNotify = null;
+                    lock (chan.Users) {
+                        if (chan.Users.Contains(User.Name)) {
+                            chan.Users.Remove(User.Name);
+                            usersToNotify = chan.Users.ToList();
+                        }
+                    }
+                    if (usersToNotify != null) await Broadcast(usersToNotify, new ChannelUserRemoved() { ChannelName = chan.Name, UserName = User.Name });
+                }
+
+                // notify clients which know about me that i left server
+                var knowMe = state.Clients.Values.Where(x => {
+                    int? last;
+                    return x != this && x.LastKnownUserVersions.TryGetValue(User.Name, out last) && last != null;
+                }).ToList();
+
+                await Broadcast(knowMe, new UserDisconnected() { Name = User.Name, Reason = reason });
+
                 state.Clients.TryRemove(User.Name, out client);
             }
-            Trace.TraceInformation("{0} {1}", this, wasRequested ? "quit" : "connection failed");
+            Trace.TraceInformation("{0} {1}", this, reason);
         }
+
+        /// <summary>
+        /// Broadcasts to all targets in paralell
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="targets"></param>
+        /// <param name="data"></param>
+        /// <param name="synchronizeUsers">synchronize these users to targets first</param>
+        /// <returns></returns>
+        public Task Broadcast<T>(IEnumerable<string> targets, T data, params string[] synchronizeUsers)
+        {
+            return Broadcast(targets.Select(x => {
+                Client cli;
+                state.Clients.TryGetValue(x, out cli);
+                return cli;
+            }), data, synchronizeUsers);
+        }
+
+
+        /// <summary>
+        /// Broadcast to all targets in paralell
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="targets"></param>
+        /// <param name="data"></param>
+        /// <param name="synchronizeUsers">synchronize these users first</param>
+        /// <returns></returns>
+        public async Task Broadcast<T>(IEnumerable<Client> targets, T data, params string[] synchronizeUsers)
+        {
+            //send identical command to many clients
+            var bytes = Encoding.GetBytes(state.Serializer.SerializeToLine(data));
+
+            await Task.WhenAll(targets.Where(x => x != null).Select(async (client) =>
+            {
+                if (synchronizeUsers != null) await client.SynchronizeUsers(synchronizeUsers);
+                await client.SendData(bytes);
+            }));
+        }
+
+
 
         public override async Task OnConnected()
         {
@@ -156,10 +218,10 @@ namespace ZkLobbyServer
 
         async Task Process(Register register)
         {
-            var response = new LoginResponse();
+            var response = new RegisterResponse();
             if (state.Clients.ContainsKey(register.Name))
             {
-                response.ResultCode = LoginResponse.Code.AlreadyConnected;
+                response.ResultCode = RegisterResponse.Code.AlreadyConnected;
             }
             else
             {
@@ -170,13 +232,13 @@ namespace ZkLobbyServer
                         var acc = db.Accounts.FirstOrDefault(x => x.Name == register.Name);
                         if (acc != null)
                         {
-                            response.ResultCode = LoginResponse.Code.InvalidName;
+                            response.ResultCode = RegisterResponse.Code.InvalidName;
                         }
                         else
                         {
                             if (string.IsNullOrEmpty(register.PasswordHash))
                             {
-                                response.ResultCode = LoginResponse.Code.InvalidPassword;
+                                response.ResultCode = RegisterResponse.Code.InvalidPassword;
                             }
                             else
                             {
@@ -185,7 +247,7 @@ namespace ZkLobbyServer
                                 db.Accounts.Add(acc);
                                 db.SaveChanges();
 
-                                response.ResultCode = LoginResponse.Code.Ok;
+                                response.ResultCode = RegisterResponse.Code.Ok;
                             }
                         }
                     }
@@ -206,22 +268,29 @@ namespace ZkLobbyServer
                 await SendCommand(new JoinChannelResponse() { Success = false, Reason = "invalid password" });
             }
 
-            var oldChannelUsers = channel.Users.ToList();
-            channel.Users.Add(User.Name);
-
-            await SynchronizeUsers(channel.Users.ToArray());
-            await SendCommand(new JoinChannelResponse() { Success = true, Name = joinChannel.Name, Channel = channel });
-
-            foreach (var u in oldChannelUsers)
-            {
-                Client client;
-                if (state.Clients.TryGetValue(u, out client))
-                {
-                    await client.SynchronizeUsers(User.Name);
-                    await client.SendCommand(new ChannelUserAdded { ChannelName = channel.Name, UserName = User.Name });
-
-                }
+            List<string> users;
+            lock (channel.Users) {
+                channel.Users.Add(User.Name);
+                users = channel.Users.ToList();
             }
+
+            await SynchronizeUsers(users.ToArray());
+            await
+                SendCommand(new JoinChannelResponse() {
+                    Success = true,
+                    Name = joinChannel.Name,
+                    Channel =
+                        new Channel() {
+                            Name = channel.Name,
+                            Password = channel.Password,
+                            Topic = channel.Topic,
+                            TopicSetBy = channel.TopicSetBy,
+                            TopicSetDate = channel.TopicSetDate,
+                            Users = users
+                        }
+                });
+
+            await Broadcast(users.Where(x => x != User.Name), new ChannelUserAdded { ChannelName = channel.Name, UserName = User.Name }, User.Name);
         }
 
 
@@ -237,12 +306,7 @@ namespace ZkLobbyServer
                     Channel channel;
                     if (state.Rooms.TryGetValue(say.Target, out channel))
                     {
-                        var clients = channel.Users.Select(x => state.Clients[x]).ToList();
-                        await Task.WhenAll(clients.Select(c => Task.Run(async () =>
-                        {
-                            await c.SynchronizeUsers(User.Name);
-                            await c.SendCommand(say);
-                        })));
+                        await Broadcast(channel.Users.ToListWithLock(), say, User.Name);
                     }
                     break;
 

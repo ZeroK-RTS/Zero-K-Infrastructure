@@ -433,13 +433,13 @@ namespace ZeroKWeb
         /// <summary>
         ///     Remove/reduce poll count due to lobby quits
         /// </summary>
-        void TasOnUserRemoved(object sender, TasEventArgs args)
+        void TasOnUserRemoved(object sender, UserDisconnected args)
         {
             if (Challenge == null)
             {
                 if (AttackOptions.Count > 0)
                 {
-                    string userName = args.ServerParams[0];
+                    string userName = args.Name;
                     int sumRemoved = 0;
                     foreach (AttackOption aop in AttackOptions) sumRemoved += aop.Attackers.RemoveAll(x => x == userName);
                     if (sumRemoved > 0) UpdateLobby();
@@ -447,7 +447,7 @@ namespace ZeroKWeb
             }
             else
             {
-                string userName = args.ServerParams[0];
+                string userName = args.Name;
                 if (Challenge.Defenders.RemoveAll(x => x == userName) > 0) UpdateLobby();
             }
         }

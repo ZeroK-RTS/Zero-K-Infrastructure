@@ -119,9 +119,9 @@ namespace ZeroKLobby.MicroLobby
       AddLine(new JoinLine(userName));
     }
 
-    void TasClient_UserRemoved(object sender, TasEventArgs e)
+    void TasClient_UserRemoved(object sender, UserDisconnected e)
     {
-      var userName = e.ServerParams[0];
+      var userName = e.Name;
       if (userName != UserName) return;
       AddLine(new LeaveLine(userName));
     }

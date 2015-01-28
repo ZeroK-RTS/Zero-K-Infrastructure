@@ -341,9 +341,9 @@ namespace ZeroKLobby.MicroLobby
         }
 
 
-        void TasClient_UserRemoved(object sender, TasEventArgs e) {
-            var userName = e.ServerParams[0];
-            if (PlayerListItems.Any(u => u.UserName == userName)) AddLine(new LeaveLine(userName, "User has disconnected."));
+        void TasClient_UserRemoved(object sender, UserDisconnected e) {
+            var userName = e.Name;
+            if (PlayerListItems.Any(u => u.UserName == userName)) AddLine(new LeaveLine(userName, string.Format("User has disconnected ({0}).", e.Reason)));
         }
 
         void TasClient_UserStatusChanged(object sender, OldNewPair<User> oldNewPair) {

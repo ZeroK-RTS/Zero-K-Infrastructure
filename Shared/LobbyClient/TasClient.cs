@@ -235,7 +235,7 @@ namespace LobbyClient
         public event EventHandler<TasEventArgs> TestLoginAccepted = delegate { };
         public event EventHandler<TasEventArgs> TestLoginDenied = delegate { };
         public event EventHandler<User> UserAdded = delegate { };
-        public event EventHandler<TasEventArgs> UserRemoved = delegate { };
+        public event EventHandler<UserDisconnected> UserRemoved = delegate { };
         public event EventHandler<OldNewPair<User>> UserStatusChanged = delegate { };
         public event EventHandler<EventArgs<User>> UserExtensionsChanged = delegate { };
         public event EventHandler<EventArgs<User>> MyExtensionsChanged = delegate { };
@@ -743,10 +743,6 @@ namespace LobbyClient
                         OnKickUser(args);
                         break;
 
-                    case "REMOVEUSER": // user left ta server
-                        OnRemoveUser(args);
-                        break;
-
 
                     case "SERVERMSGBOX": // server messagebox
                         InvokeSaid(new TasSayEventArgs(SayPlace.MessageBox,
@@ -1249,14 +1245,6 @@ namespace LobbyClient
         }
 
 
-        void OnRemoveUser(string[] args)
-        {
-            var userName = args[0];
-            var user = ExistingUsers[userName];
-            UserRemoved(this, new TasEventArgs(args));
-            ExistingUsers.Remove(userName);
-        }
-
         void OnKickUser(string[] args)
         {
             Trace.TraceInformation(String.Format("User {0} kicked (we are {1})"), args[1], MyUser.Name);
@@ -1372,7 +1360,24 @@ namespace LobbyClient
             }
         }
 
+        async Task Process(ChannelUserRemoved arg)
+        {
+            Channel chan;
+            if (joinedChannels.TryGetValue(arg.ChannelName, out chan))
+            {
+                if (chan.Users.Contains(arg.UserName))
+                {
+                    chan.Users.Remove(arg.UserName);
+                    ChannelUserRemoved(this, new ChannelUserRemovedInfo() { Channel = chan, User = existingUsers[arg.UserName] });
+                }
+            }
+        }
 
+        async Task Process(UserDisconnected arg)
+        {
+            UserRemoved(this, arg);
+            existingUsers.Remove(arg.Name);
+        }
 
 
         void InvokeSaid(TasSayEventArgs sayArgs)

@@ -328,9 +328,9 @@ namespace ZeroKLobby.MicroLobby
             if (pmControl != null) toolTabs.SetIcon(userName, Program.FriendManager.Friends.Contains(userName) ? ZklResources.friend : TextImage.GetUserImage(userName), true);
         }
 
-        void TasClient_UserRemoved(object sender, TasEventArgs e)
+        void TasClient_UserRemoved(object sender, UserDisconnected e)
         {
-            var userName = e.ServerParams[0];
+            var userName = e.Name;
             var pmControl = GetPrivateMessageControl(userName);
             if (pmControl != null) toolTabs.SetIcon(userName, ZklResources.grayuser, true);
         }
