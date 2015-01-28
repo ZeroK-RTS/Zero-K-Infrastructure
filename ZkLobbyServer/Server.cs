@@ -12,7 +12,7 @@ namespace ZkLobbyServer
         public void Run()
         {
             var listener = new TcpListener(IPAddress.Any, GlobalConst.LobbyServerPort);
-            listener.Start(1000);
+            listener.Start(200);
             while (true) {
                 var tcp = listener.AcceptTcpClient();
                 Task.Run(() => {
