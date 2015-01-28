@@ -380,18 +380,22 @@ namespace ZeroKLobby.MicroLobby
         protected virtual void client_ChannelUserAdded(object sender, ChannelUserInfo e) {
             var channelName = e.Channel.Name;
             if (ChannelName != channelName) return;
-            if (e.Users.Count ==1) AddLine(new JoinLine(e.Users.First().Name));
 
-            foreach (var user in e.Users) {
-                // todo ? AddUser(user);
-                
-                if (!playerListItems.Any(x => x.UserName == user.Name)) {
-                    playerListItems.Add(new PlayerListItem() {UserName = user.Name});
+            // todo fix/simplify code .. does not need separate adduser and mass add
+            if (e.Users.Count == 1) {
+                AddLine(new JoinLine(e.Users.First().Name));
+                AddUser(e.Users.First().Name);
+            } else {
+                foreach (var user in e.Users) {
+                    if (!playerListItems.Any(x => x.UserName == user.Name)) {
+                        playerListItems.Add(new PlayerListItem() { UserName = user.Name });
+                    }
+
                 }
-                
+
                 if (filtering) FilterPlayers();
                 else {
-                    playerBox.AddItemRange(playerListItems);
+                    playerBox.AddItemRange(playerListItems.Where(x => !playerBox.Items.Any(y => y.UserName == x.UserName)).ToList());
                 }
             }
 

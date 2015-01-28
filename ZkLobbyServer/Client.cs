@@ -180,11 +180,13 @@ namespace ZkLobbyServer
                 await SendCommand(new JoinChannelResponse() { Success = false, Reason = "invalid password" });
             }
 
+            var oldChannelUsers = channel.Users.ToList();
             channel.Users.Add(User.Name);
+            
             await SynchronizeUsers(channel.Users.ToArray());
             await SendCommand(new JoinChannelResponse() { Success = true, Name = joinChannel.Name, Channel = channel });
 
-            foreach (var u in channel.Users.Where(x => x != User.Name)) {
+            foreach (var u in oldChannelUsers) {
                 Client client;
                 if (state.Clients.TryGetValue(u, out client)) {
                     await client.SynchronizeUsers(User.Name);
