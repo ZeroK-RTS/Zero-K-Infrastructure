@@ -112,9 +112,9 @@ namespace ZeroKLobby.MicroLobby
       AddLine(new FriendJoinedBattleLine(userName, battle));
     }
 
-    void TasClient_UserAdded(object sender, EventArgs<User> e)
+    void TasClient_UserAdded(object sender, User user)
     {
-      var userName = e.Data.Name;
+      var userName = user.Name;
       if (userName != UserName) return;
       AddLine(new JoinLine(userName));
     }

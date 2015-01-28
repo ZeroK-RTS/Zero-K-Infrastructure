@@ -37,7 +37,7 @@ namespace Fixer
             
 
             tas.UserAdded += (sender, args) => {
-                if (args.Data.Name == name) {
+                if (args.Name == name) {
                     tas.JoinChannel("bots");
                     if (num%16 == 0)
                         tas.OpenBattle(new Battle("91.0", null, 4955, 16, new Map("SmallDivide"), "Test " + ord,

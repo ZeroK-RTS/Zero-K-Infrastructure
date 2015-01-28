@@ -497,7 +497,7 @@ namespace ZeroKWeb.SpringieInterface
             {
                 player = new PlayerTeam() { Name = matchUser };
                 User us;
-                if (Global.Nightwatch.Tas.GetExistingUser(matchUser, out us)) player.LobbyID = us.LobbyID;
+                if (Global.Nightwatch.Tas.GetExistingUser(matchUser, out us)) player.LobbyID = us.AccountID;
                 else
                 {
                     var db = new ZkDataContext();

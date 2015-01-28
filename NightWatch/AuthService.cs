@@ -40,49 +40,48 @@ namespace NightWatch
                 {
                     using (var db = new ZkDataContext())
                     {
-                        var acc = db.Accounts.Find(e.Data.LobbyID);
+                        var acc = db.Accounts.Find(e.AccountID);
                         if (acc != null)
                         {
                             this.client.Extensions.PublishAccountData(acc);
-                            if (acc.SpringieLevel > 2 || acc.IsZeroKAdmin) client.ForceJoinChannel(e.Data.Name, ModeratorChannel);
-                            if (topPlayers.IsTop20(e.Data.LobbyID)) client.ForceJoinChannel(e.Data.Name, Top20Channel);
-                            if (acc.Clan != null) client.ForceJoinChannel(e.Data.Name, acc.Clan.GetClanChannel(), acc.Clan.Password);
-                            if (acc.Faction != null && acc.Level >= GlobalConst.FactionChannelMinLevel && acc.CanPlayerPlanetWars()) client.ForceJoinChannel(e.Data.Name, acc.Faction.Shortcut);
+                            if (acc.SpringieLevel > 2 || acc.IsZeroKAdmin) client.ForceJoinChannel(e.Name, ModeratorChannel);
+                            if (topPlayers.IsTop20(e.AccountID)) client.ForceJoinChannel(e.Name, Top20Channel);
+                            if (acc.Clan != null) client.ForceJoinChannel(e.Name, acc.Clan.GetClanChannel(), acc.Clan.Password);
+                            if (acc.Faction != null && acc.Level >= GlobalConst.FactionChannelMinLevel && acc.CanPlayerPlanetWars()) client.ForceJoinChannel(e.Name, acc.Faction.Shortcut);
                         }
                     }
                 };
 
             // TODO set bot mode
             //this.client.BattleFound +=
-              //  (s, e) => { if (e.Data.Founder.IsZkLobbyUser && !e.Data.Founder.IsBot) client.SetBotMode(e.Data.Founder.Name, true); };
+            //  (s, e) => { if (e.Data.Founder.IsZkLobbyUser && !e.Data.Founder.IsBot) client.SetBotMode(e.Data.Founder.Name, true); };
 
             this.client.ChannelUserAdded += (sender, args) =>
                 {
                     try
                     {
-                        var channel = args.ServerParams[0];
-                        var user = args.ServerParams[1];
-                        if (channel == ModeratorChannel)
+                        var channel = args.Channel.Name;
+                        foreach (var u in args.Users)
                         {
-                            var u = client.ExistingUsers[user];
-                            if (u.SpringieLevel <= 2 && !u.IsAdmin) client.ForceLeaveChannel(user, ModeratorChannel);
-                        }
-                        else if (channel == Top20Channel)
-                        {
-                            var u = client.ExistingUsers[user];
-                            if (!topPlayers.IsTop20(u.LobbyID) && u.Name != client.UserName) client.ForceLeaveChannel(user, Top20Channel);
-                        }
-                        else
-                        {
-                            using (var db = new ZkDataContext())
+                            if (channel == ModeratorChannel)
                             {
-                                var fac = db.Factions.FirstOrDefault(x => x.Shortcut == channel);
-                                if (fac != null)
+                                if (u.SpringieLevel <= 2 && !u.IsAdmin) client.ForceLeaveChannel(u.Name, ModeratorChannel);
+                            }
+                            else if (channel == Top20Channel)
+                            {
+                                if (!topPlayers.IsTop20(u.AccountID) && u.Name != client.UserName) client.ForceLeaveChannel(u.Name, Top20Channel);
+                            }
+                            else
+                            {
+                                using (var db = new ZkDataContext())
                                 {
-                                    // faction channel
-                                    var u = client.ExistingUsers[user];
-                                    var acc = db.Accounts.Find(u.LobbyID);
-                                    if (acc == null || acc.FactionID != fac.FactionID || acc.Level < GlobalConst.FactionChannelMinLevel) client.ForceLeaveChannel(user, channel);
+                                    var fac = db.Factions.FirstOrDefault(x => x.Shortcut == channel);
+                                    if (fac != null)
+                                    {
+                                        // faction channel
+                                        var acc = db.Accounts.Find(u.AccountID);
+                                        if (acc == null || acc.FactionID != fac.FactionID || acc.Level < GlobalConst.FactionChannelMinLevel) client.ForceLeaveChannel(u.Name, channel);
+                                    }
                                 }
                             }
                         }
@@ -96,13 +95,12 @@ namespace NightWatch
                 {
                     try
                     {
-                        var channel = args.ServerParams[0];
-                        var user = args.ServerParams[1];
-                        if (channel == ModeratorChannel)
-                        {
-                            var u = client.ExistingUsers[user];
-                            if (u.SpringieLevel > 2 || u.IsAdmin) client.ForceJoinChannel(user, ModeratorChannel);
+                        var channel = args.Channel.Name;
+                        if (channel == ModeratorChannel) {
+                            var u = args.User;
+                            if (u.SpringieLevel > 2 || u.IsAdmin) client.ForceJoinChannel(u.Name, ModeratorChannel);
                         }
+
                     }
                     catch (Exception ex)
                     {
@@ -112,7 +110,7 @@ namespace NightWatch
         }
 
 
-  
+
 
 
         public void SendLobbyMessage(Account account, string text)
@@ -123,7 +121,7 @@ namespace NightWatch
             {
                 var message = new LobbyMessage
                 {
-                    SourceLobbyID = client.MyUser != null ? client.MyUser.LobbyID : 0,
+                    SourceLobbyID = client.MyUser != null ? client.MyUser.AccountID : 0,
                     SourceName = client.UserName,
                     Created = DateTime.UtcNow,
                     Message = text,
@@ -159,6 +157,6 @@ namespace NightWatch
             return ret;
         }
 
-     
+
     }
 }

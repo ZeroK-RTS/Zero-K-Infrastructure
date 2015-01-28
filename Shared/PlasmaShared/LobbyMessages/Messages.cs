@@ -156,6 +156,18 @@ namespace LobbyClient
         public string Password;
     }
 
+    public class ChannelUserAdded
+    {
+        public string ChannelName;
+        public string UserName;
+    }
+
+    public class ChannelUserRemoved
+    {
+        public string ChannelName;
+        public string UserName;
+    }
+
 
     public class JoinChannelResponse
     {
@@ -177,16 +189,15 @@ namespace LobbyClient
 
     public class User
     {
-        public int LobbyID;
-        public int SpringieLevel = 1;
+        public int AccountID;
+        public int SpringieLevel;
         public ulong? SteamID;
-        //This is only called once
         public DateTime? AwaySince;
         public string Clan;
         public string Avatar;
         public string Country;
-        public int Cpu;
         public int EffectiveElo;
+        public int Effective1v1Elo;
         public string Faction;
         public DateTime? InGameSince;
         public bool IsAdmin;
@@ -196,12 +207,9 @@ namespace LobbyClient
         public bool IsInGame;
         public bool BanMute;
         public int Level;
-
         public Login.ClientTypes ClientType;
-
         public string Name;
-        
-        public string DisplayName { get; protected set; }
+        public string DisplayName;
 
         public User Clone()
         {
@@ -212,7 +220,6 @@ namespace LobbyClient
         {
             return Name;
         }
-
     }
 
     public class UserDisconnected

@@ -38,27 +38,26 @@ namespace NightWatch
 		    }
 		}
 
-		void client_ChannelUserAdded(object sender, TasEventArgs e)
+		void client_ChannelUserAdded(object sender, ChannelUserInfo e)
 		{
-			Task.Factory.StartNew(async () =>
+			Task.Run(async () =>
 				{
 					try
 					{
-						var name = e.ServerParams[1];
-						var chan = e.ServerParams[0];
+						var chan = e.Channel.Name;
 						List<LobbyMessage> messages;
-						using (var db = new ZkDataContext())
-						{
-							messages = db.LobbyMessages.Where(x => x.TargetName == name && x.Channel == chan).ToList();
-							db.LobbyMessages.DeleteAllOnSubmit(messages);
-							db.SubmitChanges();
-						}
-						foreach (var m in messages)
-						{
-							var text = string.Format("!pm|{0}|{1}|{2}|{3}", m.Channel, m.SourceName, m.Created.ToString(CultureInfo.InvariantCulture), m.Message);
-							await client.Say(TasClient.SayPlace.User, name, text, false);
-							await Task.Delay(MessageDelay);
-						}
+					    foreach (var user in e.Users) {
+					        using (var db = new ZkDataContext()) {
+					            messages = db.LobbyMessages.Where(x => x.TargetName == user.Name && x.Channel == chan).ToList();
+					            db.LobbyMessages.DeleteAllOnSubmit(messages);
+					            db.SubmitChanges();
+					        }
+					        foreach (var m in messages) {
+					            var text = string.Format("!pm|{0}|{1}|{2}|{3}", m.Channel, m.SourceName, m.Created.ToString(CultureInfo.InvariantCulture), m.Message);
+					            await client.Say(TasClient.SayPlace.User, user.Name, text, false);
+					            await Task.Delay(MessageDelay);
+					        }
+					    }
 					}
 					catch (Exception ex)
 					{
@@ -96,7 +95,7 @@ namespace NightWatch
 
                                             var message = new LobbyMessage()
                                                           {
-                                                              SourceLobbyID = user.LobbyID,
+                                                              SourceLobbyID = user.AccountID,
                                                               SourceName = e.UserName,
                                                               Created = DateTime.UtcNow,
                                                               Message = e.Text,
@@ -133,7 +132,7 @@ namespace NightWatch
 										var text = regex.Groups[2].Value;
 
 										var message = new LobbyMessage()
-										              { SourceLobbyID = user.LobbyID, SourceName = e.UserName, Created = DateTime.UtcNow, Message = text, TargetName = name };
+										              { SourceLobbyID = user.AccountID, SourceName = e.UserName, Created = DateTime.UtcNow, Message = text, TargetName = name };
 										using (var db = new ZkDataContext())
 										{
 											db.LobbyMessages.InsertOnSubmit(message);
@@ -217,7 +216,7 @@ namespace NightWatch
 		}
 
 
-		void client_UserAdded(object sender, EventArgs<User> e)
+		void client_UserAdded(object sender, User user)
 		{
 			Task.Factory.StartNew(() =>
 				{
@@ -227,14 +226,14 @@ namespace NightWatch
 						using (var db = new ZkDataContext())
 						
 						{
-							messages = db.LobbyMessages.Where(x => (x.TargetLobbyID == e.Data.LobbyID || x.TargetName == e.Data.Name) && x.Channel == null).ToList();
+							messages = db.LobbyMessages.Where(x => (x.TargetLobbyID == user.AccountID || x.TargetName == user.Name) && x.Channel == null).ToList();
 							db.LobbyMessages.DeleteAllOnSubmit(messages);
 							db.SubmitChanges();
 						}
 						foreach (var m in messages)
 						{
 							var text = string.Format("!pm|{0}|{1}|{2}|{3}", m.Channel, m.SourceName, m.Created.ToString(CultureInfo.InvariantCulture), m.Message);
-							client.Say(TasClient.SayPlace.User, e.Data.Name, text, false);
+							client.Say(TasClient.SayPlace.User, user.Name, text, false);
 							Thread.Sleep(MessageDelay);
 						}
 					}

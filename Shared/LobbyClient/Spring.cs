@@ -300,7 +300,7 @@ namespace LobbyClient
                     statsPlayers = players.ToDictionary(x => x.Name,
                                                         x => new BattlePlayerResult
                                                                  {
-                                                                     LobbyID = x.LobbyUser.LobbyID,
+                                                                     LobbyID = x.LobbyUser.AccountID,
                                                                      AllyNumber = x.AllyNumber,
                                                                      CommanderType = null,
                                                                      // todo commandertype

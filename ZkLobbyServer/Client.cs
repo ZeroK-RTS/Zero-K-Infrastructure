@@ -1,4 +1,6 @@
-﻿using System.Data.Entity;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -13,14 +15,16 @@ namespace ZkLobbyServer
     {
         SharedServerState state;
         int number;
-        string name;
-        int accountID;
 
-
+        User User = new User();
+        public int UserVersion; 
+        
+        public ConcurrentDictionary<string, int?> LastKnownUserVersions = new ConcurrentDictionary<string, int?>();
+        
 
         public override string ToString()
         {
-            return string.Format("[{0}:{1}]", number, name);
+            return string.Format("[{0}:{1}]", number, User.Name);
         }
 
         public Client(SharedServerState state)
@@ -32,10 +36,10 @@ namespace ZkLobbyServer
 
         public override async Task OnConnectionClosed(bool wasRequested)
         {
-            if (!string.IsNullOrEmpty(name))
+            if (!string.IsNullOrEmpty(User.Name))
             {
                 Client client;
-                state.Clients.TryRemove(name, out client);
+                state.Clients.TryRemove(User.Name, out client);
             }
             Trace.TraceInformation("{0} {1}", this, wasRequested ? "quit" : "connection failed");
         }
@@ -62,12 +66,10 @@ namespace ZkLobbyServer
 
         async Task Process(Login login)
         {
-            name = login.Name;
-
             var response = new LoginResponse();
-            await Task.Run(() => {
+            await Task.Run(async () => {
                 using (var db = new ZkDataContext()) {
-                    var acc = db.Accounts.FirstOrDefault(x => x.Name == name);
+                    var acc = db.Accounts.Include(x=>x.Clan).Include(x=>x.Faction).FirstOrDefault(x => x.Name == login.Name);
                     if (acc == null) {
                         response.ResultCode = LoginResponse.Code.InvalidName;
                     } else {
@@ -76,10 +78,35 @@ namespace ZkLobbyServer
                         } else {
                             // TODO banhammer check
                             // TODO country check
-                            if (!state.Clients.TryAdd(name, this)) {
+                            if (!state.Clients.TryAdd(login.Name, this)) {
                                 response.ResultCode = LoginResponse.Code.AlreadyConnected;
                             } else {
                                 response.ResultCode = LoginResponse.Code.Ok;
+                                // user.BanMute todo banmute
+
+
+                                User.Name = acc.Name;
+                                User.DisplayName = acc.SteamName;
+                                User.Avatar = acc.Avatar;
+                                User.SpringieLevel = acc.SpringieLevel;
+                                User.Level = acc.Level;
+                                User.EffectiveElo = (int)acc.EffectiveElo;
+                                User.Effective1v1Elo = (int)acc.Effective1v1Elo;
+                                User.SteamID = (ulong?)acc.SteamID;
+                                User.IsAdmin = acc.IsZeroKAdmin;
+                                User.IsBot = acc.IsBot;
+                                User.Country = acc.Country;
+                                User.ClientType = login.ClientType;
+                                User.Faction = acc.Faction != null ? acc.Faction.Shortcut : null;
+                                User.Clan = acc.Clan != null ? acc.Clan.Shortcut : null;
+                                User.AccountID = acc.AccountID;
+
+                                ClearMyLastKnownStateForOtherClients();
+                                
+                                /*foreach (var c in state.Clients.Values.ToList()) {
+                                    await c.SendCommand(User);
+                                    if (c != this) await SendCommand(c.User);
+                                }*/
                             }
                         }
                     }
@@ -90,17 +117,39 @@ namespace ZkLobbyServer
             await SendCommand(response);
         }
 
+        public void ClearMyLastKnownStateForOtherClients()
+        {
+            foreach (var c in state.Clients.Values.ToList()) c.LastKnownUserVersions[User.Name] = null;
+        }
+
+        private async Task SynchronizeUsers(params string[] names)
+        {
+            foreach (var n in names) {
+                Client client;
+                if (state.Clients.TryGetValue(n, out client)) {
+                    int? lastKnownVersion;
+                    LastKnownUserVersions.TryGetValue(n, out lastKnownVersion);
+                    var version = client.UserVersion;
+                    if (lastKnownVersion == null || lastKnownVersion != version) {
+                        await SendCommand(client.User);
+                        LastKnownUserVersions[n] = version;
+                    }
+                }
+            }
+        }
+
+
         async Task Process(Register register)
         {
             var response = new LoginResponse();
-            if (state.Clients.ContainsKey(name))
+            if (state.Clients.ContainsKey(register.Name))
             {
                 response.ResultCode = LoginResponse.Code.AlreadyConnected;
             }
             else {
                 await Task.Run(() => {
                     using (var db = new ZkDataContext()) {
-                        var acc = db.Accounts.FirstOrDefault(x => x.Name == name);
+                        var acc = db.Accounts.FirstOrDefault(x => x.Name == register.Name);
                         if (acc != null) {
                             response.ResultCode = LoginResponse.Code.InvalidName;
                         } else {
@@ -126,13 +175,23 @@ namespace ZkLobbyServer
 
         async Task Process(JoinChannel joinChannel)
         {
-            var roomDetail = state.Rooms.GetOrAdd(joinChannel.Name, (n) => { return new Channel() { Name = joinChannel.Name, }; });
-            if (roomDetail.Password != joinChannel.Password) {
+            var channel = state.Rooms.GetOrAdd(joinChannel.Name, (n) => { return new Channel() { Name = joinChannel.Name, }; });
+            if (channel.Password != joinChannel.Password) {
                 await SendCommand(new JoinChannelResponse() { Success = false, Reason = "invalid password" });
             }
 
-            roomDetail.Users.Add(name);
-            await SendCommand(new JoinChannelResponse() { Success = true, Name = joinChannel.Name, Channel = roomDetail });
+            channel.Users.Add(User.Name);
+            await SynchronizeUsers(channel.Users.ToArray());
+            await SendCommand(new JoinChannelResponse() { Success = true, Name = joinChannel.Name, Channel = channel });
+
+            foreach (var u in channel.Users.Where(x => x != User.Name)) {
+                Client client;
+                if (state.Clients.TryGetValue(u, out client)) {
+                    await client.SynchronizeUsers(User.Name);
+                    await client.SendCommand(new ChannelUserAdded { ChannelName = channel.Name, UserName = User.Name });
+
+                }
+            }
         }
 
 

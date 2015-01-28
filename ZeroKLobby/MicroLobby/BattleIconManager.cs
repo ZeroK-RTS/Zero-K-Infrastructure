@@ -185,10 +185,9 @@ namespace ZeroKLobby.MicroLobby
             Reset();
         }
 
-        void TasClient_UserStatusChanged(object sender, TasEventArgs e)
+        void TasClient_UserStatusChanged(object sender, OldNewPair<User> p)
         {
-            var userName = e.ServerParams[0];
-            var battle = Program.TasClient.ExistingBattles.Values.SingleOrDefault(b => b.Founder.Name == userName);
+            var battle = Program.TasClient.ExistingBattles.Values.SingleOrDefault(b => b.Founder.Name == p.New.Name);
             if (battle == null) return;
             var founder = battle.Founder;
             var battleIcon = GetBattleIcon(battle);

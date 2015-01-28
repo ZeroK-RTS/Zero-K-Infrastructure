@@ -256,7 +256,7 @@ namespace ZeroKLobby.MicroLobby
                     contextMenu.MenuItems.Add("-");
 
                     var details = new MenuItem("Details");
-                    details.Click += (s, e) => NavigationControl.Instance.Path = string.Format("{1}/Users/LobbyDetail/{0}", user.LobbyID, GlobalConst.BaseSiteUrl);
+                    details.Click += (s, e) => NavigationControl.Instance.Path = string.Format("{1}/Users/LobbyDetail/{0}", user.AccountID, GlobalConst.BaseSiteUrl);
                     contextMenu.MenuItems.Add(details);
 
                     var pmItem = new MenuItem("Send Message");

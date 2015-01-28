@@ -105,7 +105,7 @@ namespace Springie.autohost
             tas.MyBattleMapChanged += tas_MyBattleMapChanged;
             tas.BattleLockChanged += tas_BattleLockChanged;
             tas.BattleOpened += tas_BattleOpened;
-            tas.UserAdded += (o, u) => { if (u.Data.Name == GetAccountName()) OpenBattleRoom(null, null); };
+            tas.UserAdded += (o, u) => { if (u.Name == GetAccountName()) OpenBattleRoom(null, null); };
 
             tas.RegistrationDenied += (s, e) =>
                 {
@@ -931,7 +931,7 @@ namespace Springie.autohost
             if (SpawnConfig == null) {
                 try {
                     var serv = GlobalConst.GetSpringieService();
-                    PlayerJoinResult ret = serv.AutohostPlayerJoined(tas.MyBattle.GetContext(), tas.ExistingUsers[name].LobbyID);
+                    PlayerJoinResult ret = serv.AutohostPlayerJoined(tas.MyBattle.GetContext(), tas.ExistingUsers[name].AccountID);
                     if (ret != null) {
                         if (!string.IsNullOrEmpty(ret.PrivateMessage)) tas.Say(TasClient.SayPlace.User, name, ret.PrivateMessage, false);
                         if (!string.IsNullOrEmpty(ret.PublicMessage)) tas.Say(TasClient.SayPlace.Battle, "", ret.PublicMessage, true);
@@ -1063,10 +1063,11 @@ namespace Springie.autohost
         }
 
 
-        void tas_UserStatusChanged(object sender, TasEventArgs e) {
+        void tas_UserStatusChanged(object sender, OldNewPair<User> oldNewPair) {
             if (spring.IsRunning) {
                 Battle b = tas.MyBattle;
-                if (e.ServerParams[0] != tas.UserName && b.Users.Any(x => x.Name == e.ServerParams[0])) CheckForBattleExit();
+                var name = oldNewPair.New.Name;
+                if (name != tas.UserName && b.Users.Any(x => x.Name == name)) CheckForBattleExit();
             }
             
         }

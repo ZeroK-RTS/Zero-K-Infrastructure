@@ -279,7 +279,7 @@ namespace Springie.autohost
             var serv = GlobalConst.GetSpringieService();
 
             var context = ah.tas.MyBattle.GetContext();
-            context.Players = team.Select(x => new PlayerTeam() { AllyID = x.AllyNumber, Name = x.Name, LobbyID = x.LobbyUser.LobbyID, TeamID = x.TeamNumber, IsSpectator = false }).ToList();
+            context.Players = team.Select(x => new PlayerTeam() { AllyID = x.AllyNumber, Name = x.Name, LobbyID = x.LobbyUser.AccountID, TeamID = x.TeamNumber, IsSpectator = false }).ToList();
 
             var balance = serv.BalanceTeams(context, true, null, null);
             ah.ApplyBalanceResults(balance);

@@ -27,7 +27,7 @@ namespace CaTracker
                     if (e.Text.StartsWith("!" + command))
                     {
                         var db = new ZkDataContext();
-                        var acc = db.Accounts.Find(tas.ExistingUsers[e.UserName].LobbyID);
+                        var acc = db.Accounts.Find(tas.ExistingUsers[e.UserName].AccountID);
                         if (!(acc.IsZeroKAdmin)) return;
                         break;
                     }

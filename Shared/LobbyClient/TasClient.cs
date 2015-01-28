@@ -19,6 +19,33 @@ using ZkData;
 
 namespace LobbyClient
 {
+
+    public class OldNewPair<T>
+    {
+        public T Old;
+        public T New;
+
+        public OldNewPair(T old, T @new)
+        {
+            Old = old;
+            New = @new;
+        }
+    }
+
+    public class ChannelUserInfo
+    {
+        public Channel Channel;
+        public List<User> Users;
+    }
+
+    public class ChannelUserRemovedInfo
+    {
+        public Channel Channel;
+        public User User;
+        public string Reason;
+    }
+
+    
     public class TasClient:Connection
     {
         public const int MaxAlliances = 16;
@@ -70,8 +97,6 @@ namespace LobbyClient
         public bool ConnectionFailed { get; private set; }
 
         public Dictionary<int, Battle> ExistingBattles { get { return existingBattles; } set { existingBattles = value; } }
-
-        public Dictionary<string, ExistingChannel> ExistingChannels { get { return existingChannels; } }
 
         public Dictionary<string, User> ExistingUsers { get { return existingUsers; } set { existingUsers = value; } }
 
@@ -188,9 +213,8 @@ namespace LobbyClient
         public event EventHandler<CancelEventArgs<string>> ChannelLeaving = delegate { }; // raised before attempting to leave a channel
         public event EventHandler<TasEventArgs> ChannelLeft = delegate { };
         public event EventHandler<TasEventArgs> ChannelTopicChanged = delegate { };
-        public event EventHandler<TasEventArgs> ChannelUserAdded = delegate { };
-        public event EventHandler<TasEventArgs> ChannelUserRemoved = delegate { };
-        public event EventHandler<TasEventArgs> ChannelUsersAdded = delegate { }; // raised after a group of clients is recieved in a batch
+        public event EventHandler<ChannelUserInfo> ChannelUserAdded = delegate { };
+        public event EventHandler<ChannelUserRemovedInfo> ChannelUserRemoved = delegate { };
         public event EventHandler<Welcome> Connected = delegate { };
         public event EventHandler<TasEventArgs> ConnectionLost = delegate { };
         public event EventHandler<CancelEventArgs<string>> FilterBattleByMod;
@@ -217,9 +241,9 @@ namespace LobbyClient
         public event EventHandler<TasEventArgs> StartRectRemoved = delegate { };
         public event EventHandler<TasEventArgs> TestLoginAccepted = delegate { };
         public event EventHandler<TasEventArgs> TestLoginDenied = delegate { };
-        public event EventHandler<EventArgs<User>> UserAdded = delegate { };
+        public event EventHandler<User> UserAdded = delegate { };
         public event EventHandler<TasEventArgs> UserRemoved = delegate { };
-        public event EventHandler<TasEventArgs> UserStatusChanged = delegate { };
+        public event EventHandler<OldNewPair<User>> UserStatusChanged = delegate { };
         public event EventHandler<EventArgs<User>> UserExtensionsChanged = delegate { };
         public event EventHandler<EventArgs<User>> MyExtensionsChanged = delegate { };
         public event EventHandler<UserLobbyVersionEventArgs> UserLobbyVersionRecieved = delegate { };
@@ -768,9 +792,6 @@ namespace LobbyClient
                 switch (command)
                 {
 
-                    case "CHANNEL": // iterating channels
-                        OnChannel(args);
-                        break;
 
                     case "ADDUSER": // new user joined ta server
                         OnAddUser(args);
@@ -1270,7 +1291,7 @@ namespace LobbyClient
             var reason = Utils.Glue(args, 2);
             var channel = JoinedChannels[channelName];
             channel.Users.Remove(userName);
-            ChannelUserRemoved(this, new TasEventArgs(channelName, userName, reason));
+            //ChannelUserRemoved(this, new TasEventArgs(channelName, userName, reason));
         }
 
         void OnJoined(string[] args)
@@ -1279,14 +1300,14 @@ namespace LobbyClient
             var userName = args[1];
             var channel = JoinedChannels[channelName];
             channel.Users.Add(userName);
-            ChannelUserAdded(this, new TasEventArgs(channelName, userName));
+            //ChannelUserAdded(this, new TasEventArgs(channelName, userName));
         }
 
         void OnClients(string[] args)
         {
             var usrs = Utils.Glue(args, 1).Split(' ');
             foreach (var s in usrs) JoinedChannels[args[0]].Users.Add(s);
-            ChannelUsersAdded(this, new TasEventArgs(args));
+            //ChannelUsersAdded(this, new TasEventArgs(args));
         }
 
         void OnClientStatus(string[] args)
@@ -1307,7 +1328,7 @@ namespace LobbyClient
                 if (!u.IsInGame && old.IsInGame == true) MyBattleHostExited(this, new TasEventArgs(args));
             }
 
-            UserStatusChanged(this, new TasEventArgs(args));
+            //UserStatusChanged(this, new TasEventArgs(args));
         }
 
         void OnRedirect(string[] args)
@@ -1371,14 +1392,6 @@ namespace LobbyClient
             }
         }
 
-        void OnChannel(string[] args)
-        {
-            var c = new ExistingChannel();
-            c.name = args[0];
-            int.TryParse(args[1], out c.userCount);
-            if (args.Length >= 3) c.topic = Utils.Glue(args, 2);
-            ExistingChannels.Add(c.name, c);
-        }
 
         
 
@@ -1392,6 +1405,16 @@ namespace LobbyClient
                 LoginDenied(this, loginResponse);
             }
         }
+
+        async Task Process(User user)
+        {
+            User old;
+            existingUsers.TryGetValue(user.Name, out old);
+            existingUsers[user.Name] = user;
+            if (old == null) UserAdded(this, user);
+            UserStatusChanged(this, new OldNewPair<User>(old, user));
+        }
+
 
         async Task Process(RegisterResponse registerResponse)
         {
@@ -1418,14 +1441,31 @@ namespace LobbyClient
         async Task Process(JoinChannelResponse response)
         {
             if (response.Success) {
-                JoinedChannels.Add(response.Name, response.Channel);
+                JoinedChannels[response.Name] = response.Channel;
                 var cancelEvent = new CancelEventArgs<Channel>(response.Channel);
                 PreviewChannelJoined(this, cancelEvent);
-                if (!cancelEvent.Cancel) ChannelJoined(this, response.Channel);
+                if (!cancelEvent.Cancel) {
+                    ChannelJoined(this, response.Channel);
+                    ChannelUserAdded(this, new ChannelUserInfo() {Channel = response.Channel, Users = response.Channel.Users.Select(x => existingUsers[x]).ToList()}); 
+                }
             } else {
                 ChannelJoinFailed(this, response);
             }
         }
+
+        async Task Process(ChannelUserAdded arg)
+        {
+            Channel chan;
+            if (joinedChannels.TryGetValue(arg.ChannelName, out chan)) {
+                if (!chan.Users.Contains(arg.UserName)) {
+                    chan.Users.Add(arg.UserName);
+                    var users = new List<User>();
+                    users.Add(existingUsers[arg.UserName]);
+                    ChannelUserAdded(this, new ChannelUserInfo() { Channel = chan, Users = users});
+                }
+            }
+        }
+
 
 
 

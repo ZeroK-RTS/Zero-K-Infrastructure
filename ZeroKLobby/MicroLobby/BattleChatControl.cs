@@ -178,9 +178,9 @@ namespace ZeroKLobby.MicroLobby
             playerBox.EndUpdate();
 		}
 
-		protected override void client_ChannelUserAdded(object sender, TasEventArgs e) {}
+		protected override void client_ChannelUserAdded(object sender, ChannelUserInfo e) {}
 
-		protected override void client_ChannelUserRemoved(object sender, TasEventArgs e) {}
+		protected override void client_ChannelUserRemoved(object sender, ChannelUserRemovedInfo e) {}
 
 		void DrawMinimap()
 		{

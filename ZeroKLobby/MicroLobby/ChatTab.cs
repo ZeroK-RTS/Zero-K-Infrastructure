@@ -324,9 +324,9 @@ namespace ZeroKLobby.MicroLobby
             if (!string.IsNullOrEmpty(lang)) Program.TasClient.JoinChannel(lang);
         }
 
-        void TasClient_UserAdded(object sender, EventArgs<User> e)
+        void TasClient_UserAdded(object sender, User user)
         {
-        	var userName = e.Data.Name;
+        	var userName = Name;
             var pmControl = GetPrivateMessageControl(userName);
             if (pmControl != null) toolTabs.SetIcon(userName, Program.FriendManager.Friends.Contains(userName) ? ZklResources.friend : TextImage.GetUserImage(userName), true);
         }

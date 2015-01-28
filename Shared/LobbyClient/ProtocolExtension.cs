@@ -55,7 +55,6 @@ namespace LobbyClient
             this.notifyUserExtensionChange = notifyUserExtensionChange;
             tas.PreviewChannelJoined += tas_PreviewChannelJoined;
             tas.PreviewSaid += tas_PreviewSaid;
-            tas.ChannelUserAdded += tas_ChannelUserAdded;
             tas.LoginAccepted += (s, e) => tas.JoinChannel(ExtensionChannelName);
         }
 
@@ -161,11 +160,6 @@ namespace LobbyClient
             return input.Replace("&divider&", "|");
         }
 
-        void tas_ChannelUserAdded(object sender, TasEventArgs e) {
-            if (e.ServerParams[0] == ExtensionChannelName && e.ServerParams[1] != tas.UserName) {
-                foreach (var kvp in publishedUserAttributes) tas.Say(TasClient.SayPlace.User, e.ServerParams[1], FormatMessage(kvp.Key, kvp.Value), false);
-            }
-        }
 
         void tas_PreviewChannelJoined(object sender, CancelEventArgs<Channel> e) {
             if (e.Data.Name == ExtensionChannelName) {

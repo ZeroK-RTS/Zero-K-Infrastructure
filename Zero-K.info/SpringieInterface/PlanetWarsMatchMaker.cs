@@ -245,7 +245,7 @@ namespace ZeroKWeb
                 if (tas.ExistingUsers.TryGetValue(userName, out user))
                 {
                     var db = new ZkDataContext();
-                    Account account =  db.Accounts.Find(user.LobbyID);
+                    Account account =  db.Accounts.Find(user.AccountID);
                     if (account != null && account.FactionID == AttackingFaction.FactionID && account.CanPlayerPlanetWars())
                     {
                         // remove existing user from other options
@@ -273,7 +273,7 @@ namespace ZeroKWeb
                 if (tas.ExistingUsers.TryGetValue(userName, out user))
                 {
                     var db = new ZkDataContext();
-                    Account account = db.Accounts.Find(user.LobbyID);
+                    Account account = db.Accounts.Find(user.AccountID);
                     if (account != null && GetDefendingFactions(Challenge).Any(y => y.FactionID == account.FactionID) && account.CanPlayerPlanetWars())
                     {
                         if (!Challenge.Defenders.Any(y => y == user.Name))
@@ -403,16 +403,16 @@ namespace ZeroKWeb
         }
 
 
-        void TasOnChannelUserAdded(object sender, TasEventArgs args)
+        void TasOnChannelUserAdded(object sender, ChannelUserInfo e)
         {
-            string chan = args.ServerParams[0];
-            string userName = args.ServerParams[1];
-            Faction faction = factions.FirstOrDefault(x => x.Shortcut == chan);
-            if (faction != null)
-            {
-                var db = new ZkDataContext();
-                var acc = Account.AccountByName(db, userName);
-                if (acc != null && acc.CanPlayerPlanetWars()) UpdateLobby(userName);
+            string chan = e.Channel.Name;
+            foreach (var user in e.Users) {
+             Faction faction = factions.FirstOrDefault(x => x.Shortcut == chan);
+                if (faction != null) {
+                    var db = new ZkDataContext();
+                    var acc = Account.AccountByName(db, user.Name);
+                    if (acc != null && acc.CanPlayerPlanetWars()) UpdateLobby(user.Name);
+                }
             }
         }
 

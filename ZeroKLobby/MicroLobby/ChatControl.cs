@@ -92,7 +92,7 @@ namespace ZeroKLobby.MicroLobby
             Program.TasClient.ChannelUserAdded += client_ChannelUserAdded;
             Program.TasClient.ChannelUserRemoved += client_ChannelUserRemoved;
             Program.TasClient.UserStatusChanged += TasClient_UserStatusChanged;
-            Program.TasClient.ChannelUsersAdded += TasClient_ChannelUsersAdded;
+//            Program.TasClient.ChannelUsersAdded += TasClient_ChannelUsersAdded;
             Program.TasClient.Said += client_Said;
             Program.TasClient.UserRemoved += TasClient_UserRemoved;
             Program.TasClient.ChannelTopicChanged += TasClient_ChannelTopicChanged;
@@ -340,43 +340,14 @@ namespace ZeroKLobby.MicroLobby
             }
         }
 
-        void TasClient_ChannelUsersAdded(object sender, TasEventArgs e) {
-            if (e.ServerParams[0] != ChannelName) return;
-            
-            List<string> invalidName = new List<string>();
-            foreach (var username in Program.TasClient.JoinedChannels[ChannelName].Users)
-            {
-                try
-                {
-                    var user = Program.TasClient.ExistingUsers[username];
-                }
-                catch (System.Collections.Generic.KeyNotFoundException)
-                {
-                    Trace.TraceInformation("ChatControl ERROR: player \"{0}\" did not exist or wasn't notified using ADDUSER command. Ignoring this username.", username);
-                    invalidName.Add(username);
-                }
-            }
-            for (int i = 0; i < invalidName.Count; i++) {
-                Program.TasClient.JoinedChannels[ChannelName].Users.Remove(invalidName[i]);
-            }
-            
-            playerListItems = (from name in Program.TasClient.JoinedChannels[ChannelName].Users
-                               let user = Program.TasClient.ExistingUsers[name]
-                               select new PlayerListItem { UserName = user.Name }).ToList();
-
-            if (filtering) FilterPlayers();
-            else {
-                playerBox.AddItemRange(playerListItems);
-            }
-        }
 
         void TasClient_UserRemoved(object sender, TasEventArgs e) {
             var userName = e.ServerParams[0];
             if (PlayerListItems.Any(u => u.UserName == userName)) AddLine(new LeaveLine(userName, "User has disconnected."));
         }
 
-        void TasClient_UserStatusChanged(object sender, TasEventArgs e) {
-            RefreshUser(e.ServerParams[0]);
+        void TasClient_UserStatusChanged(object sender, OldNewPair<User> oldNewPair) {
+            RefreshUser(oldNewPair.New.Name);
         }
 
         void chatBox_MouseDown(object sender, MouseEventArgs e) {
@@ -406,19 +377,31 @@ namespace ZeroKLobby.MicroLobby
             if (me.Button == MouseButtons.Right) ShowChatContextMenu(me.Location);
         }
 
-        protected virtual void client_ChannelUserAdded(object sender, TasEventArgs e) {
-            var channelName = e.ServerParams[0];
+        protected virtual void client_ChannelUserAdded(object sender, ChannelUserInfo e) {
+            var channelName = e.Channel.Name;
             if (ChannelName != channelName) return;
-            var userName = e.ServerParams[1];
-            AddUser(userName);
-            AddLine(new JoinLine(userName));
+            if (e.Users.Count ==1) AddLine(new JoinLine(e.Users.First().Name));
+
+            foreach (var user in e.Users) {
+                // todo ? AddUser(user);
+                
+                if (!playerListItems.Any(x => x.UserName == user.Name)) {
+                    playerListItems.Add(new PlayerListItem() {UserName = user.Name});
+                }
+                
+                if (filtering) FilterPlayers();
+                else {
+                    playerBox.AddItemRange(playerListItems);
+                }
+            }
+
         }
 
-        protected virtual void client_ChannelUserRemoved(object sender, TasEventArgs e) {
-            var channelName = e.ServerParams[0];
+        protected virtual void client_ChannelUserRemoved(object sender, ChannelUserRemovedInfo e) {
+            var channelName = e.Channel.Name;
             if (ChannelName != channelName) return;
-            var userName = e.ServerParams[1];
-            var reason = e.ServerParams[2];
+            var userName = e.User.Name;
+            var reason = e.Reason;
             RemoveUser(userName);
             AddLine(new LeaveLine(userName, reason));
         }

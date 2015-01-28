@@ -240,7 +240,7 @@ namespace LobbyClient
                             var us = users.FirstOrDefault(x => x.Name == p.Name);
                             if (us == null)
                             {
-                                us = new UserBattleStatus(p.Name, new User() {LobbyID = p.LobbyID}, Password);
+                                us = new UserBattleStatus(p.Name, new User() {AccountID = p.LobbyID}, Password);
                                 users.Add(us);
                             }
                             us.TeamNumber = p.TeamID;
@@ -521,13 +521,13 @@ namespace LobbyClient
             if (status.LobbyUser != null)
             {
                 script.AppendFormat("     CountryCode={0};\n", status.LobbyUser.Country);
-                script.AppendFormat("     LobbyID={0};\n", status.LobbyUser.LobbyID);
+                script.AppendFormat("     LobbyID={0};\n", status.LobbyUser.AccountID);
             }
             if (status.ScriptPassword != null) script.AppendFormat("     Password={0};\n", status.ScriptPassword);
 
             if (startSetup != null)
             {
-                var entry = startSetup.UserParameters.FirstOrDefault(x => x.LobbyID == status.LobbyUser.LobbyID);
+                var entry = startSetup.UserParameters.FirstOrDefault(x => x.LobbyID == status.LobbyUser.AccountID);
                 if (entry != null) foreach (var kvp in entry.Parameters) script.AppendFormat("     {0}={1};\n", kvp.Key, kvp.Value);
             }
             script.AppendLine("  }");
@@ -555,7 +555,7 @@ namespace LobbyClient
             ret.AutohostName = Founder.Name;
             ret.Map = MapName;
             ret.Mod = ModName;
-            ret.Players = Users.Where(x=>x.SyncStatus != SyncStatuses.Unknown).Select(x => new PlayerTeam() { AllyID = x.AllyNumber, Name = x.Name, LobbyID = x.LobbyUser.LobbyID, TeamID = x.TeamNumber, IsSpectator = x.IsSpectator }).ToList();
+            ret.Players = Users.Where(x=>x.SyncStatus != SyncStatuses.Unknown).Select(x => new PlayerTeam() { AllyID = x.AllyNumber, Name = x.Name, LobbyID = x.LobbyUser.AccountID, TeamID = x.TeamNumber, IsSpectator = x.IsSpectator }).ToList();
 
             ret.Bots = Bots.Select(x => new BotTeam() { BotName = x.Name, AllyID = x.AllyNumber, TeamID = x.TeamNumber, Owner = x.owner, BotAI = x.aiLib }).ToList();
             return ret;
