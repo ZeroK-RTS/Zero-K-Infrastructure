@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
 using PlasmaShared;
+using PlasmaShared.LobbyMessages;
 using ZkData;
 
 namespace LobbyClient
@@ -167,8 +168,8 @@ namespace LobbyClient
             }
         }
 
-        void tas_PreviewChannelJoined(object sender, CancelEventArgs<TasEventArgs> e) {
-            if (e.Data.ServerParams[0] == ExtensionChannelName) {
+        void tas_PreviewChannelJoined(object sender, CancelEventArgs<RoomDetail> e) {
+            if (e.Data.RoomID == ExtensionChannelName) {
                 e.Cancel = true;
                 foreach (var kvp in publishedUserAttributes) tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, FormatMessage(kvp.Key, kvp.Value), false);
             }

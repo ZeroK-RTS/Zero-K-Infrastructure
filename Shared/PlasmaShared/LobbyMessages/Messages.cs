@@ -106,4 +106,64 @@ namespace PlasmaShared.LobbyMessages
         /// </summary>
         public string Reason;
     }
+
+
+    /// <summary>
+    /// Attempts to create a room
+    /// </summary>
+    public class CreateRoom
+    {
+        public RoomDetail RoomDetail;
+    }
+
+
+    public class RoomDetail
+    {
+        /// <summary>
+        /// Leave null to have auto assigned
+        /// </summary>
+        public string RoomID;
+        /// <summary>
+        /// Topic or battle title
+        /// </summary>
+        public string Title;
+
+        /// <summary>
+        /// Optional password
+        /// </summary>
+        public string Password;
+
+        /// <summary>
+        /// True if its battle capable/has battle data (map, game etc)
+        /// </summary>
+        public bool HasBattle;
+    }
+
+    /// <summary>
+    /// Attempts to join a room
+    /// </summary>
+    public class JoinRoom
+    {
+        public string RoomID;
+        public string Password;
+    }
+
+    public class JoinRoomResponse
+    {
+        public string RoomID;
+        public bool Success;
+        public string Reason;
+
+        public RoomDetail RoomDetail;
+    }
+
+    public class CreateRoomResponse
+    {
+        public string RoomID;
+        public bool Success;
+        public string Reason;
+
+        public RoomDetail RoomDetail;
+    }
+
 }

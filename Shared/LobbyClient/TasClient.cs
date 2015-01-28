@@ -190,8 +190,8 @@ namespace LobbyClient
         public event EventHandler<BattleUserEventArgs> BattleUserLeft = delegate { };
         public event EventHandler<TasEventArgs> BattleUserStatusChanged = delegate { };
         public event EventHandler<TasEventArgs> ChannelForceLeave = delegate { }; // i was kicked from a channel
-        public event EventHandler<TasEventArgs> ChannelJoinFailed = delegate { };
-        public event EventHandler<TasEventArgs> ChannelJoined = delegate { };
+        public event EventHandler<JoinRoomResponse> ChannelJoinFailed = delegate { };
+        public event EventHandler<RoomDetail> ChannelJoined = delegate { };
         public event EventHandler<CancelEventArgs<string>> ChannelLeaving = delegate { }; // raised before attempting to leave a channel
         public event EventHandler<TasEventArgs> ChannelLeft = delegate { };
         public event EventHandler<TasEventArgs> ChannelListDone = delegate { };
@@ -213,7 +213,7 @@ namespace LobbyClient
         public event EventHandler<BattleInfoEventArgs> MyBattleMapChanged = delegate { };
         public event EventHandler<TasEventArgs> MyBattleStarted = delegate { };
         public event EventHandler<object> Output = delegate { }; // outgoing command and arguments
-        public event EventHandler<CancelEventArgs<TasEventArgs>> PreviewChannelJoined = delegate { };
+        public event EventHandler<CancelEventArgs<RoomDetail>> PreviewChannelJoined = delegate { };
         public event EventHandler<CancelEventArgs<TasSayEventArgs>> PreviewSaid = delegate { };
         public event EventHandler<EventArgs<string>> Rang = delegate { };
         public event EventHandler<TasEventArgs> RegistrationAccepted = delegate { };
@@ -439,10 +439,9 @@ namespace LobbyClient
         }
 
 
-        public void JoinChannel(string channelName, string key=null)
+        public Task JoinChannel(string channelName, string key=null)
         {
-            //if (!String.IsNullOrEmpty(key)) con.SendCommand("JOIN", channelName, key);
-            //else con.SendCommand("JOIN", channelName);
+            return SendCommand(new JoinRoom() { RoomID = channelName, Password = key });
         }
 
         public void Kick(string username)
@@ -787,14 +786,6 @@ namespace LobbyClient
 
                 switch (command)
                 {
-
-                    case "JOIN": // channel joined
-                        OnJoin(args);
-                        break;
-
-                    case "JOINFAILED": // channel join failed
-                        ChannelJoinFailed(this, new TasEventArgs(Utils.Glue(args)));
-                        break;
 
                     case "CHANNEL": // iterating channels
                         OnChannel(args);
@@ -1439,16 +1430,7 @@ namespace LobbyClient
             ExistingChannels.Add(c.name, c);
         }
 
-        void OnJoin(string[] args)
-        {
-            if (!JoinedChannels.ContainsKey(args[0])) {
-                JoinedChannels.Add(args[0], Channel.Create(args[0]));
-
-                var cancelEventArgs = new CancelEventArgs<TasEventArgs>(new TasEventArgs(args));
-                PreviewChannelJoined(this, cancelEventArgs);
-                if (!cancelEventArgs.Cancel) ChannelJoined(this, new TasEventArgs(args));
-            }
-        }
+        
 
         async Task Process(LoginResponse loginResponse)
         {
@@ -1482,6 +1464,19 @@ namespace LobbyClient
             ServerWelcome = welcome;
             Connected(this, welcome);
         }
+
+        async Task Process(JoinRoomResponse response)
+        {
+            if (response.Success) {
+                JoinedChannels.Add(response.RoomID, Channel.Create(response.RoomDetail));
+                PreviewChannelJoined(this, new CancelEventArgs<RoomDetail>(response.RoomDetail));
+                ChannelJoined(this, response.RoomDetail);
+            } else {
+                ChannelJoinFailed(this, response);
+            }
+        }
+
+
 
         void InvokeSaid(TasSayEventArgs sayArgs)
         {

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using LobbyClient;
+using PlasmaShared.LobbyMessages;
 using ZeroKLobby;
 using ZeroKLobby.Lines;
 using ZeroKLobby.Notifications;
@@ -149,9 +150,9 @@ namespace ZeroKLobby.MicroLobby
         }
 
 
-        void client_ChannelJoined(object sender, TasEventArgs e)
+        void client_ChannelJoined(object sender, RoomDetail roomDetail)
         {
-            var channelName = e.ServerParams[0];
+            var channelName = roomDetail.RoomID;
             CreateChannelControl(channelName);
 			if (focusWhenJoin == channelName)
 			{
@@ -289,10 +290,9 @@ namespace ZeroKLobby.MicroLobby
             }
         }
 
-        void TasClient_ChannelJoinFailed(object sender, TasEventArgs e)
+        void TasClient_ChannelJoinFailed(object sender, JoinRoomResponse joinRoomResponse)
         {
-            if (e.ServerParams[0].Contains("Already in the channel!")) return;
-            WarningBar.DisplayWarning("Channel Joining Error - " + e.ServerParams[0],"Cannot join channel");
+            WarningBar.DisplayWarning("Channel Joining Error - " + joinRoomResponse.Reason,"Cannot join channel");
         }
 
 

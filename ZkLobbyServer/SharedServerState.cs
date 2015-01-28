@@ -14,6 +14,8 @@ namespace ZkLobbyServer
         public CommandJsonSerializer Serializer = new CommandJsonSerializer();
 
         public ConcurrentDictionary<string, Client> Clients = new ConcurrentDictionary<string, Client>();
+        public ConcurrentDictionary<string, RoomDetail> Rooms = new ConcurrentDictionary<string, RoomDetail>();
+        
 
         public SharedServerState()
         {

@@ -74,7 +74,7 @@ namespace Fixer
         public async Task SpawnMany()
         {
             ThreadPool.SetMaxThreads(1000, 1000);
-            for (int i = 0; i < 1000; i++) {
+            for (int i = 0; i < 1; i++) {
                 int i1 = i;
                 //Thread.Sleep(100);
                 RunNub(i1);

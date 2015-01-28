@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using PlasmaShared.LobbyMessages;
 
 namespace LobbyClient
 {
@@ -14,10 +15,10 @@ namespace LobbyClient
         public string TopicSetBy { get; set; }
         public DateTime TopicSetDate { get; set; }
 
-        public static Channel Create(string name)
+        public static Channel Create(RoomDetail detail)
         {
             var c = new Channel();
-            c.Name = name;
+            c.Name = detail.RoomID;
             c.ChannelUsers = new List<string>();
             return c;
         }

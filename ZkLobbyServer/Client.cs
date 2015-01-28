@@ -121,5 +121,16 @@ namespace ZkLobbyServer
         }
 
 
+        async Task Process(JoinRoom joinRoom)
+        {
+            var roomDetail = state.Rooms.GetOrAdd(joinRoom.RoomID, (name) => { return new RoomDetail() { RoomID = joinRoom.RoomID, }; });
+            if (roomDetail.Password != joinRoom.Password) {
+                await SendCommand(new JoinRoomResponse() { Success = false, Reason = "invalid password" });
+            }
+
+            await SendCommand(new JoinRoomResponse() { Success = true, RoomID = joinRoom.RoomID, RoomDetail = roomDetail });
+        }
+
+
     }
 }
