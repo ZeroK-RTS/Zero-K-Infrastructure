@@ -316,7 +316,10 @@ namespace ZkLobbyServer
                     {
                         await client.SynchronizeUsers(User.Name);
                         await client.SendCommand(say);
-                    }
+
+                        await SynchronizeUsers(say.Target);
+                        await SendCommand(say);
+                    } // todo else offline message?
                     break;
             }
         }
