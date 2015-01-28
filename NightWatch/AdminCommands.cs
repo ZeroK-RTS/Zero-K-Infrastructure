@@ -28,7 +28,7 @@ namespace CaTracker
                     {
                         var db = new ZkDataContext();
                         var acc = db.Accounts.Find(tas.ExistingUsers[e.UserName].LobbyID);
-                        if (!(acc.IsZeroKAdmin || acc.IsLobbyAdministrator)) return;
+                        if (!(acc.IsZeroKAdmin)) return;
                         break;
                     }
                 }

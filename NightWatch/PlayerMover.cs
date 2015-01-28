@@ -24,7 +24,7 @@ namespace CaTracker
                 {
                     var db = new ZkDataContext();
                     var acc = db.Accounts.Find(tas.ExistingUsers[e.UserName].LobbyID);
-                    if (acc.IsZeroKAdmin || acc.IsLobbyAdministrator)
+                    if (acc.IsZeroKAdmin)
                     {
                         var parts = e.Text.Split(' ');
                         if (parts.Length != 3) tas.Say(TasClient.SayPlace.User, e.UserName, "!move [from] [to]", false);
@@ -46,7 +46,7 @@ namespace CaTracker
                 {
                     var db = new ZkDataContext();
                     var acc = db.Accounts.Find(tas.ExistingUsers[e.UserName].LobbyID);
-                    if (acc.IsZeroKAdmin || acc.IsLobbyAdministrator)
+                    if (acc.IsZeroKAdmin)
                     {
                         var parts = e.Text.Split(' ');
                         if (parts.Length != 3) tas.Say(TasClient.SayPlace.User, e.UserName, "!splitplayers [from] [to]", false);

@@ -205,7 +205,7 @@ namespace LobbyClient
         public event EventHandler<BattleInfoEventArgs> MyBattleMapChanged = delegate { };
         public event EventHandler<TasEventArgs> MyBattleStarted = delegate { };
         public event EventHandler<string> Output = delegate { }; // outgoing command and arguments
-        public event EventHandler<CancelEventArgs<PlasmaShared.LobbyMessages.Channel>> PreviewChannelJoined = delegate { };
+        public event EventHandler<CancelEventArgs<Channel>> PreviewChannelJoined = delegate { };
         public event EventHandler<CancelEventArgs<TasSayEventArgs>> PreviewSaid = delegate { };
         public event EventHandler<EventArgs<string>> Rang = delegate { };
         public event EventHandler<TasEventArgs> RegistrationAccepted = delegate { };
@@ -259,9 +259,6 @@ namespace LobbyClient
                                                                          User u;
                                                                          if (ExistingUsers.TryGetValue(user, out u))
                                                                          {
-                                                                             u.SetExtension(data);
-                                                                             if (invokeUserStatusChangedOnExtensions) UserStatusChanged(this, new TasEventArgs(u.Name, u.ToInt().ToString()));
-                                                                             if (user == UserName) MyExtensionsChanged(this, new EventArgs<User>(u));
                                                                              UserExtensionsChanged(this, new EventArgs<User>(u));
                                                                          }
 
@@ -351,14 +348,13 @@ namespace LobbyClient
             User u;
             if (MyUser != null) u = MyUser.Clone();
             else u = new User();
-            u.FromInt(lastUserStatus);
             if (isAway != null) u.IsAway = isAway.Value;
             if (isInGame != null) u.IsInGame = isInGame.Value;
-            if (MyUser == null || lastUserStatus != u.ToInt())
-            {
+//            if (MyUser == null || lastUserStatus != u.ToInt())
+  //          {
                 //con.SendCommand("MYSTATUS", u.ToInt());
-                lastUserStatus = u.ToInt();
-            }
+      //          lastUserStatus = u.ToInt();
+    //        }
         }
 
 
@@ -519,7 +515,6 @@ namespace LobbyClient
                               MyBattle.HostPort,
                               MyBattle.MaxPlayers,
                               MyBattle.ModHash,
-                              MyBattle.Rank,
                               MyBattle.MapHash,
                               MyBattle.EngineName,
                               '\t' +MyBattle.EngineVersion,
@@ -1102,7 +1097,6 @@ namespace LobbyClient
                 HostPort = Int32.Parse(args[5]),
                 MaxPlayers = Int32.Parse(args[6]),
                 Password = args[7] != "1" ? "*" : "apassword",
-                Rank = Int32.Parse(args[8]),
                 EngineVersion = rest[1],
                 EngineName = rest[0]
             };
@@ -1302,9 +1296,9 @@ namespace LobbyClient
 
             var u = ExistingUsers[args[0]];
             var old = u.Clone();
-            u.FromInt(status);
+            //u.FromInt(status);
 
-            if (u.Name == UserName) lastUserStatus = u.ToInt();
+            //if (u.Name == UserName) lastUserStatus = u.ToInt();
 
             if (u.IsInGame && old.IsInGame == false) BattleStarted(this, new EventArgs<User>(u));
 
@@ -1363,14 +1357,14 @@ namespace LobbyClient
         void OnAddUser(string[] args)
         {
             try {
-                var u = User.Create(args[0]);
-                u.Country = args[1];
-                int cpu;
-                int.TryParse(args[2], out cpu);
-                u.Cpu = cpu;
-                u.LobbyID = Convert.ToInt32(args[3]);
-                ExistingUsers.Add(u.Name, u);
-                UserAdded(this, new EventArgs<User>(u));
+                //var u = User.Create(args[0]);
+                //u.Country = args[1];
+                //int cpu;
+                //int.TryParse(args[2], out cpu);
+                //u.Cpu = cpu;
+                //u.LobbyID = Convert.ToInt32(args[3]);
+                //ExistingUsers.Add(u.Name, u);
+                //UserAdded(this, new EventArgs<User>(u));
             } catch (Exception e) {
                 //TraceError ensure bright red coloured message (WriteLine looked harmless):
                 Trace.TraceError("Error was thrown while processing chat command ADDUSER (check if this event trigger faulty code in application): " + e);

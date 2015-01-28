@@ -28,7 +28,6 @@ namespace LobbyClient
             SpringieLevel,
             ZkAdmin,
             BanMute,
-            BanLobby,
             SteamID,
             DisplayName,
         }
@@ -168,7 +167,7 @@ namespace LobbyClient
             }
         }
 
-        void tas_PreviewChannelJoined(object sender, CancelEventArgs<PlasmaShared.LobbyMessages.Channel> e) {
+        void tas_PreviewChannelJoined(object sender, CancelEventArgs<Channel> e) {
             if (e.Data.Name == ExtensionChannelName) {
                 e.Cancel = true;
                 foreach (var kvp in publishedUserAttributes) tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, FormatMessage(kvp.Key, kvp.Value), false);

@@ -59,7 +59,7 @@
         <h3>Account redacted</h3>
         <br />
     }
-    @if (!Model.IsDeleted || Global.IsZeroKAdmin || Global.IsLobbyAdmin)
+    @if (!Model.IsDeleted || Global.IsZeroKAdmin)
     {
         <div id="usr_info" class="">
         
@@ -181,7 +181,7 @@
         @Html.IncludeWiki("NewbieIntro")
     }
 	
-    @if (!Model.IsDeleted || Global.IsZeroKAdmin || Global.IsLobbyAdmin)
+    @if (!Model.IsDeleted || Global.IsZeroKAdmin)
     {
         <div id="usr_trophies" class="">
             <h3>Trophies:</h3>

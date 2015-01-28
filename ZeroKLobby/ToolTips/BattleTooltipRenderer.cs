@@ -4,6 +4,7 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
+using PlasmaShared.LobbyMessages;
 using ZkData;
 using ZeroKLobby.MicroLobby;
 
@@ -63,13 +64,6 @@ namespace ZeroKLobby
             drawString("Friends: " + battle.Users.Count(u => Program.FriendManager.Friends.Contains(u.Name)));
             newLine();
 
-            if (battle.Rank > 0)
-            {
-                drawImage(Images.GetRank(battle.Rank), 16, 16);
-                var rankText = battle.Rank == 0 ? "Beginner" : string.Format(" > {0} hours", User.RankLimits[battle.Rank]);
-                drawString("Minimum Rank: " + rankText);
-                newLine();
-            }
 
             if (founder.IsInGame)
             {
@@ -170,7 +164,6 @@ namespace ZeroKLobby
             if (battle.IsReplay) h += line;
             if (battle.IsLocked) h += line;
             if (founder.IsInGame) h += line; // "battle has been going on for at least..."
-            if (battle.Rank > 0) h += line;
 
 
             h += line; // blank line

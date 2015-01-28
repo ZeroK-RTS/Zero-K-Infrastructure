@@ -7,6 +7,7 @@ using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
 using LobbyClient;
+using PlasmaShared.LobbyMessages;
 using ZkData;
 
 namespace NightWatch
@@ -64,7 +65,7 @@ namespace NightWatch
                         if (channel == ModeratorChannel)
                         {
                             var u = client.ExistingUsers[user];
-                            if (u.SpringieLevel <= 2 && !u.IsZeroKAdmin) client.ForceLeaveChannel(user, ModeratorChannel);
+                            if (u.SpringieLevel <= 2 && !u.IsAdmin) client.ForceLeaveChannel(user, ModeratorChannel);
                         }
                         else if (channel == Top20Channel)
                         {
@@ -100,7 +101,7 @@ namespace NightWatch
                         if (channel == ModeratorChannel)
                         {
                             var u = client.ExistingUsers[user];
-                            if (u.SpringieLevel > 2 || u.IsZeroKAdmin) client.ForceJoinChannel(user, ModeratorChannel);
+                            if (u.SpringieLevel > 2 || u.IsAdmin) client.ForceJoinChannel(user, ModeratorChannel);
                         }
                     }
                     catch (Exception ex)

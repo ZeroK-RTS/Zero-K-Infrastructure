@@ -29,7 +29,6 @@ namespace ZkData
                 if (acc.IsZeroKAdmin) data.Add(ProtocolExtension.Keys.ZkAdmin.ToString(), "1");
 
                 if (acc.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanMute)) data.Add(ProtocolExtension.Keys.BanMute.ToString(), "1");
-                if (acc.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanLobby)) data.Add(ProtocolExtension.Keys.BanLobby.ToString(), "1");
 
                 tas.Extensions.Publish(acc.Name, data);
 

@@ -10,6 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using PlasmaDownloader;
+using PlasmaShared.LobbyMessages;
 using ZkData.UnitSyncLib;
 using LobbyClient;
 using System.Globalization;
@@ -152,7 +153,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         private void Setup_MyInfo()
         {
             string myName = Program.Conf.LobbyPlayerName == null ? "unnamed" : Program.Conf.LobbyPlayerName;
-            User myUser = User.Create(myName);
+            User myUser = new User { Name = myName };
             myUser.Country = "Unknown";
             UserBattleStatus myBattleStatus = new UserBattleStatus(myName, myUser) { IsReady = true, AllyNumber = 0, SyncStatus = SyncStatuses.Unknown, IsSpectator = spectateCheckBox.Checked };
             myBattleStatus.TeamColor = Program.Conf.DefaultPlayerColorInt;

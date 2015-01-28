@@ -190,7 +190,7 @@ namespace ZeroKLobby.MicroLobby
 			helpForumItem.Click += helpForumItem_Click;
 			menu.MenuItems.Add(helpForumItem);
 			var adminsItem = new MenuItem("Ask an Administrator");
-			foreach (var admin in Program.TasClient.ExistingUsers.Values.Where(u => (u.IsAdmin || u.IsZeroKAdmin)&& !u.IsBot).OrderBy(u => u.IsAway ? 1 : 0))
+			foreach (var admin in Program.TasClient.ExistingUsers.Values.Where(u => (u.IsAdmin)&& !u.IsBot).OrderBy(u => u.IsAway ? 1 : 0))
 			{
 				var item = new MenuItem(admin.Name + (admin.IsAway ? " (Idle)" : String.Empty));
 				var adminName = admin.Name;

@@ -691,7 +691,7 @@ namespace Springie.autohost
             Map mapi = null;
             cache.GetMap(mapname, (m, x, y, z) => { mapi = m; }, (e) => { }, springPaths.SpringVersion);
             //int mint, maxt;
-            var b = new Battle(springPaths.SpringVersion, password, hostingPort, maxPlayers, 0, mapi, title, hostedMod, new BattleDetails());
+            var b = new Battle(springPaths.SpringVersion, password, hostingPort, maxPlayers, mapi, title, hostedMod, new BattleDetails());
             // if hole punching enabled then we use it
             if (Program.main.Config.UseHolePunching) b.Nat = Battle.NatMode.HolePunching;
             else if (Program.main.Config.GargamelMode) b.Nat = Battle.NatMode.FixedPorts;
@@ -913,11 +913,6 @@ namespace Springie.autohost
         void tas_BattleUserJoined(object sender, BattleUserEventArgs e1) {
             if (e1.BattleID != tas.MyBattleID) return;
             string name = e1.UserName;
-
-            if (tas.ExistingUsers[name].BanLobby) {
-                tas.Kick(name);
-                return;
-            }
 
             string welc = config.Welcome;
             if (!string.IsNullOrEmpty(welc)) {

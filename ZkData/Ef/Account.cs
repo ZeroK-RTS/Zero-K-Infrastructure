@@ -90,7 +90,6 @@ namespace ZkData
         public double Elo1v1 { get; set; }
         public double Elo1v1Weight { get; set; }
         public double EloPw { get; set; }
-        public bool IsLobbyAdministrator { get; set; }
         public bool IsBot { get; set; }
        
         [NotMapped]
@@ -575,7 +574,6 @@ namespace ZkData
 
         public bool IsInRole(string role)
         {
-            if (role == "LobbyAdmin") return IsLobbyAdministrator;
             if (role == "ZkAdmin") return IsZeroKAdmin;
             else return string.IsNullOrEmpty(role);
         }

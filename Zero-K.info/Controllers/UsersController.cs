@@ -384,7 +384,6 @@ namespace ZeroKWeb.Controllers
                 acc.Email,
                 acc.Country,
                 acc.EffectiveElo,
-                acc.IsLobbyAdministrator,
                 acc.IsBot,
             }, JsonRequestBehavior = JsonRequestBehavior.AllowGet};
         }

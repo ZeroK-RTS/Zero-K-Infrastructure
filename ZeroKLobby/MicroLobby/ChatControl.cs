@@ -229,7 +229,7 @@ namespace ZeroKLobby.MicroLobby
                     else {
                         var userNameFound = playerListItem.UserName.ToUpper().Contains(word);
                         var countryFound = user.Country.ToUpper() == word;
-                        var countryNameFound = user.CountryName.ToUpper() == word;
+                        var countryNameFound = CountryNames.GetName(user.Country).ToUpper() == word;
                         var clanFound = user.Clan != null && user.Clan.ToUpper() == word;
                         var factionFound = user.Faction != null && user.Faction.ToUpper() == word;
                         if (!negation) {
@@ -269,7 +269,7 @@ namespace ZeroKLobby.MicroLobby
                     isMatch = user.IsAway;
                     return true;
                 case "ADMIN":
-                    isMatch = user.IsAdmin || user.IsZeroKAdmin;
+                    isMatch = user.IsAdmin;
                     return true;
                 case "INGAME":
                     isMatch = user.IsInGame;

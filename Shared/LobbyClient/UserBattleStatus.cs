@@ -2,6 +2,7 @@
 
 using System;
 using System.Net;
+using PlasmaShared.LobbyMessages;
 
 #endregion
 

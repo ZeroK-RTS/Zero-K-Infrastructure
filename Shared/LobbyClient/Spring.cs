@@ -306,7 +306,6 @@ namespace LobbyClient
                                                                      // todo commandertype
                                                                      IsSpectator = x.IsSpectator,
                                                                      IsVictoryTeam = false,
-                                                                     Rank = x.LobbyUser.Rank,
                                                                  });
                 }
                 if (isHosting) timer.Start();

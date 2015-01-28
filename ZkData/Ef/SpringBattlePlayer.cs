@@ -19,7 +19,6 @@ namespace ZkData
         public string CommanderType { get; set; }
         public int? LoseTime { get; set; }
         public int AllyNumber { get; set; }
-        public int Rank { get; set; }
         public float? EloChange { get; set; }
         public int? XpChange { get; set; }
         public int? Influence { get; set; }

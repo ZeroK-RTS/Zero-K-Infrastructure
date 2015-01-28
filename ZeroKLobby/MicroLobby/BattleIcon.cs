@@ -152,7 +152,6 @@ namespace ZeroKLobby.MicroLobby
 
                 if (Battle.IsPassworded) drawIcon(ZklResources._lock);
                 if (Battle.IsReplay) drawIcon(ZklResources.replay);
-                if (Battle.Rank > 0) drawIcon(Images.GetRank(Battle.Rank));
                 if (Battle.IsLocked)
                 {
                     int s = DpiMeasurement.ScaleValueX(20);
@@ -201,7 +200,7 @@ namespace ZeroKLobby.MicroLobby
             {
                 if (user.Name == Program.TasClient.UserName) mes++;
                 if (Program.FriendManager.Friends.Contains(user.Name)) friends++;
-                else if (user.LobbyUser.IsAdmin || user.LobbyUser.IsZeroKAdmin) admins++;
+                else if (user.LobbyUser.IsAdmin) admins++;
             }
 
             // make sure there aren't more little dudes than non-specs in a battle

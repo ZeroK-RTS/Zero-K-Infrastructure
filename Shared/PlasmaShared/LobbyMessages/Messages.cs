@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Reflection;
+using ZkData;
 
-namespace PlasmaShared.LobbyMessages
+namespace LobbyClient
 {
     /// <summary>
     /// Initial message sent by server to client on connect
@@ -129,6 +132,7 @@ namespace PlasmaShared.LobbyMessages
         public string Password;
     }
 
+    
     /// <summary>
     /// Attempts to join a room
     /// </summary>
@@ -156,5 +160,57 @@ namespace PlasmaShared.LobbyMessages
 
         public Channel Channel;
     }
+
+    public class User
+    {
+        public int LobbyID;
+        public int SpringieLevel = 1;
+        public ulong? SteamID;
+        //This is only called once
+        public DateTime? AwaySince;
+        public string Clan;
+        public string Avatar;
+        public string Country;
+        public int Cpu;
+        public int EffectiveElo;
+        public string Faction;
+        public DateTime? InGameSince;
+        public bool IsAdmin;
+        public bool IsAway;
+        public bool IsBot;
+        public bool IsInBattleRoom;
+        public bool IsInGame;
+        public bool BanMute;
+        public int Level;
+
+        public bool IsZkLobbyUser { get { return Cpu == GlobalConst.ZkLobbyUserCpu || Cpu == GlobalConst.ZkSpringieManagedCpu || Cpu == GlobalConst.ZkLobbyUserCpuLinux; } }
+        public bool IsZkLinuxUser { get { return Cpu == GlobalConst.ZkLobbyUserCpuLinux; } }
+        public bool IsSpringieManaged { get { return Cpu == GlobalConst.ZkSpringieManagedCpu; } }
+        public bool ISSwlUser { get { return Cpu == 7777 || Cpu == 7778 || Cpu == 7779; } }
+        public bool IsFlobby { get { return Cpu == 4607052 || Cpu == 4607063 || Cpu == 4607053; } }
+
+        public string Name;
+        
+        public string DisplayName { get; protected set; }
+
+        public User Clone()
+        {
+            return (User)MemberwiseClone();
+        }
+
+        public override string ToString()
+        {
+            return Name;
+        }
+
+    }
+
+    public class UserDisconnected
+    {
+        public string Name;
+        public string Reason;
+    }
+
+
 
 }

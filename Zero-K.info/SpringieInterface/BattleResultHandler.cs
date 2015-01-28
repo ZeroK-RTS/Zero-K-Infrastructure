@@ -54,7 +54,6 @@ namespace ZeroKWeb.SpringieInterface
                                                    CommanderType = p.CommanderType,
                                                    IsInVictoryTeam = p.IsVictoryTeam,
                                                    IsSpectator = p.IsSpectator,
-                                                   Rank = p.Rank,
                                                    LoseTime = p.LoseTime
                                                });
                 }

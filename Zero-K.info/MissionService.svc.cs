@@ -22,7 +22,7 @@ namespace ZeroKWeb
 			{
 				var acc = AuthServiceClient.VerifyAccountPlain(author, password);
 				if (acc == null) throw new ApplicationException("Invalid login name or password");
-				if (acc.AccountID != prev.AccountID && !acc.IsZeroKAdmin && !acc.IsLobbyAdministrator) throw new ApplicationException("You cannot delete a mission from an other user");
+				if (acc.AccountID != prev.AccountID && !acc.IsZeroKAdmin) throw new ApplicationException("You cannot delete a mission from an other user");
 				prev.IsDeleted = true;
 				db.SubmitChanges();
 			}
@@ -37,7 +37,7 @@ namespace ZeroKWeb
 			{
 				var acc = AuthServiceClient.VerifyAccountPlain(author, password);
 				if (acc == null) throw new ApplicationException("Invalid login name or password");
-				if (acc.AccountID != prev.AccountID && !acc.IsZeroKAdmin && !acc.IsLobbyAdministrator) throw new ApplicationException("You cannot undelete a mission from an other user");
+				if (acc.AccountID != prev.AccountID && !acc.IsZeroKAdmin) throw new ApplicationException("You cannot undelete a mission from an other user");
 				prev.IsDeleted = false;
 				db.SubmitChanges();
 			}
@@ -97,7 +97,7 @@ namespace ZeroKWeb
 
 			if (prev != null)
 			{
-				if (prev.AccountID != acc.AccountID && !acc.IsLobbyAdministrator && !acc.IsZeroKAdmin) throw new ApplicationException("Invalid author or password");
+				if (prev.AccountID != acc.AccountID && !acc.IsZeroKAdmin) throw new ApplicationException("Invalid author or password");
 				prev.Description = mission.Description;
                 prev.DescriptionStory = mission.DescriptionStory;
 				prev.Mod = mission.Mod;

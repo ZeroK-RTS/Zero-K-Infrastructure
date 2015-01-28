@@ -40,7 +40,7 @@ namespace Fixer
                 if (args.Data.Name == name) {
                     tas.JoinChannel("bots");
                     if (num%16 == 0)
-                        tas.OpenBattle(new Battle("91.0", null, 4955, 16, 0, new Map("SmallDivide"), "Test " + ord,
+                        tas.OpenBattle(new Battle("91.0", null, 4955, 16, new Map("SmallDivide"), "Test " + ord,
                             new Mod() { Name = "Zero-K v1.3.1.15" }, new BattleDetails()));
                     else {
                         var bat = tas.ExistingBattles.Values.FirstOrDefault(x => x.Title == batname);

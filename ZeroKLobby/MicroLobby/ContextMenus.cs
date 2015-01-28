@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using LobbyClient;
+using PlasmaShared.LobbyMessages;
 using ZkData;
 using ContextMenu = System.Windows.Forms.ContextMenu;
 using ZkData.UnitSyncLib;

@@ -63,6 +63,7 @@
     <Compile Include="BattleDetails.cs" />
     <Compile Include="BattleRect.cs" />
     <Compile Include="BotBattleStatus.cs" />
+    <Compile Include="CountryNames.cs" />
     <Compile Include="Crc.cs" />
     <Compile Include="ProtocolExtension.cs" />
     <Compile Include="PwMatchCommand.cs" />
@@ -73,7 +74,6 @@
     <Compile Include="Talker.cs" />
     <Compile Include="TasClient.cs" />
     <Compile Include="TasClient_structures.cs" />
-    <Compile Include="User.cs" />
     <Compile Include="UserBattleStatus.cs" />
   </ItemGroup>
   <ItemGroup>

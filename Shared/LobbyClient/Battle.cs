@@ -7,6 +7,7 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
 using PlasmaShared;
+using PlasmaShared.LobbyMessages;
 using ZkData;
 using ZkData.UnitSyncLib;
 
@@ -60,7 +61,6 @@ namespace LobbyClient
 
         public string Password = "*";
 
-        public int Rank { get; set; }
         public Dictionary<int, BattleRect> Rectangles { get; set; }
         public List<string> ScriptTags = new List<string>();
         public string EngineName = "spring";
@@ -106,7 +106,7 @@ namespace LobbyClient
         }
 
 
-        public Battle(string engineVersion, string password, int port, int maxplayers, int rank, Map map, string title, Mod mod, BattleDetails details): this()
+        public Battle(string engineVersion, string password, int port, int maxplayers, Map map, string title, Mod mod, BattleDetails details): this()
         {
             if (!String.IsNullOrEmpty(password)) Password = password;
             if (port == 0) HostPort = 8452; else HostPort = port;
@@ -124,7 +124,6 @@ namespace LobbyClient
 
             EngineVersion = engineVersion;
             MaxPlayers = maxplayers;
-            Rank = rank;
             this.map = map;
             MapName = map.Name;
             MapHash = map.Checksum;
@@ -138,7 +137,7 @@ namespace LobbyClient
 
         public bool CanBeJoined(int playerRank)
         {
-            return NonSpectatorCount > 0 && !IsLocked && MaxPlayers > NonSpectatorCount && Password == "*" && Rank >= playerRank;
+            return NonSpectatorCount > 0 && !IsLocked && MaxPlayers > NonSpectatorCount && Password == "*";
         }
 
         public bool ContainsUser(string name, out UserBattleStatus status)
@@ -521,10 +520,8 @@ namespace LobbyClient
 
             if (status.LobbyUser != null)
             {
-                script.AppendFormat("     Rank={0};\n", status.LobbyUser.Rank);
                 script.AppendFormat("     CountryCode={0};\n", status.LobbyUser.Country);
                 script.AppendFormat("     LobbyID={0};\n", status.LobbyUser.LobbyID);
-                script.AppendFormat("     LobbyRank={0};\n", status.LobbyUser.Rank);
             }
             if (status.ScriptPassword != null) script.AppendFormat("     Password={0};\n", status.ScriptPassword);
 

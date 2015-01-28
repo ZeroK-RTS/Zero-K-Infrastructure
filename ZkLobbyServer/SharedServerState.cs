@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Reflection;
+using LobbyClient;
 using PlasmaShared.LobbyMessages;
 using ZkData;
 

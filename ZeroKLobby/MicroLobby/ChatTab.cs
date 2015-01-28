@@ -10,7 +10,6 @@ using ZeroKLobby;
 using ZeroKLobby.Lines;
 using ZeroKLobby.Notifications;
 using ZkData;
-using Channel = PlasmaShared.LobbyMessages.Channel;
 
 namespace ZeroKLobby.MicroLobby
 {

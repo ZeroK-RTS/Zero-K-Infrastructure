@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using LobbyClient;
 using PlasmaShared;
+using PlasmaShared.LobbyMessages;
 using ZkData;
 
 namespace ZeroKWeb.SpringieInterface

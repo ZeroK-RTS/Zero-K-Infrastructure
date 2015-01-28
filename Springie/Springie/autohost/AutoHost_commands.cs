@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
 using PlasmaShared;
+using PlasmaShared.LobbyMessages;
 using ZkData;
 #endregion
 

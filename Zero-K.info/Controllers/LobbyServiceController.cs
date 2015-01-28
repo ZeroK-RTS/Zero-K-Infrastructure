@@ -193,7 +193,7 @@ namespace ZeroKWeb.Controllers
                 IsBot = fromDb.IsBot;
                 Access = "user";
                 if (fromDb.SpringieLevel > 2) Access = "mod";
-                if (fromDb.IsZeroKAdmin || fromDb.IsLobbyAdministrator) Access = "admin";
+                if (fromDb.IsZeroKAdmin) Access = "admin";
             }
         }
 

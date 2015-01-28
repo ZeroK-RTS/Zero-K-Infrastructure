@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using LobbyClient;
+using PlasmaShared.LobbyMessages;
 using ZkData.UnitSyncLib;
 
 namespace ZeroKLobby.MicroLobby
