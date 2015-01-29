@@ -35,7 +35,7 @@ namespace NightWatch
                 Thread.Sleep(5000);
                 springTas.Login(GlobalConst.NightwatchName, password);
             });
-            springTas.Connect("lobby.springrts.com", 8200);
+            springTas.Connect(GlobalConst.OldSpringLobbyHost, GlobalConst.OldSpringLobbyPort);
             springTas.Connected += (sender, args) => springTas.Login(GlobalConst.NightwatchName, password);
         }
 
