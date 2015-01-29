@@ -24,6 +24,7 @@ namespace LobbyClient
 
         public int Top { get { return top; } set { top = LimitByMax(value); } }
 
+        
         public BattleRect(double left, double top, double right, double bottom)
         {
             // convert from percentages

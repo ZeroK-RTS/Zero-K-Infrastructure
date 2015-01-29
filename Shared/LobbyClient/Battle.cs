@@ -216,9 +216,6 @@ namespace LobbyClient
 
                     //script.AppendFormat("  MyPlayerName={0};\n", localUser.Name);
 
-                    var positions = map.Positions != null ? map.Positions.ToList() : new List<StartPos>();
-                    if (Details.StartPos == BattleStartPos.Random) positions = positions.Shuffle();
-
                     List<UserBattleStatus> users;
                     List<BotBattleStatus> bots;
 
@@ -264,7 +261,7 @@ namespace LobbyClient
                     }
 
 
-                    GeneratePlayerSection(playersExport, localUser, startSetup, users, script, positions, bots);
+                    GeneratePlayerSection(playersExport, localUser, startSetup, users, script, bots);
 
                     return script.ToString();
                 }
@@ -280,7 +277,6 @@ namespace LobbyClient
             SpringBattleStartSetup startSetup,
             List<UserBattleStatus> users,
             StringBuilder script,
-            List<StartPos> positions,
             List<BotBattleStatus> bots)
         {
             if (mod != null && mod.IsMission) // mission stuff
@@ -294,7 +290,7 @@ namespace LobbyClient
                     ScriptAddUser(script, i, playersExport, startSetup, u.TeamNumber, u);
                     if (!u.IsSpectator && !declaredTeams.Contains(u.TeamNumber))
                     {
-                        ScriptAddTeam(script, u.TeamNumber, positions, i, u,mod,Details);
+                        ScriptAddTeam(script, u.TeamNumber, i, u,mod,Details);
                         declaredTeams.Add(u.TeamNumber);
                     }
                 }
@@ -307,7 +303,7 @@ namespace LobbyClient
                         ScriptAddBot(script, aiNum++, b.TeamNumber, i, b);
                         if (!declaredTeams.Contains(b.TeamNumber))
                         {
-                            ScriptAddTeam(script, b.TeamNumber, positions, i, b,mod,Details);
+                            ScriptAddTeam(script, b.TeamNumber, i, b,mod,Details);
                             declaredTeams.Add(b.TeamNumber);
                         }
                     }
@@ -327,7 +323,7 @@ namespace LobbyClient
 
                     if (!u.IsSpectator)
                     {
-                        ScriptAddTeam(script, teamNum, positions, userNum, u,mod,Details);
+                        ScriptAddTeam(script, teamNum, userNum, u,mod,Details);
                         teamNum++;
                     }
 
@@ -335,7 +331,7 @@ namespace LobbyClient
                     {
                         ScriptAddBot(script, aiNum, teamNum, userNum, b);
                         aiNum++;
-                        ScriptAddTeam(script, teamNum, positions, userNum, b,mod,Details);
+                        ScriptAddTeam(script, teamNum, userNum, b,mod,Details);
                         teamNum++;
                     }
                     userNum++;
@@ -463,7 +459,7 @@ namespace LobbyClient
             script.AppendLine("  }\n");
         }
 
-        public static void ScriptAddTeam(StringBuilder script, int teamNum, List<StartPos> positions, int userNum, UserBattleStatus status, Mod mod, BattleDetails Details)
+        public static void ScriptAddTeam(StringBuilder script, int teamNum, int userNum, UserBattleStatus status, Mod mod, BattleDetails Details)
         {
             // BOT TEAM
             script.AppendFormat("  [TEAM{0}]\n", teamNum);
@@ -483,15 +479,6 @@ namespace LobbyClient
             {
                 script.AppendFormat("      StartPosX={0};\n", 0);
                 script.AppendFormat("      StartPosZ={0};\n", 0);
-            }
-            else
-            {
-                if ((Details.StartPos == BattleStartPos.Random || Details.StartPos == BattleStartPos.Fixed) && positions.Count > teamNum)
-                {
-                    var pos = positions[teamNum];
-                    script.AppendFormat("      StartPosX={0};\n", pos.x);
-                    script.AppendFormat("      StartPosZ={0};\n", pos.z);
-                }
             }
             script.AppendLine("  }");
         }

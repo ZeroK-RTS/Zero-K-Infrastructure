@@ -1257,17 +1257,15 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             script.AppendFormat("  ModHash={0};\n", modHash);
             script.AppendFormat("  MapHash={0};\n", mapCache.FirstOrDefault(x => x.InternalName == (string)mapName).Md5.ToString());
 
-            var positions = currentMap.Positions != null ? currentMap.Positions.ToList() : new List<StartPos>();
 
-            Get_PlayerSection(allUser, script, positions);
+            Get_PlayerSection(allUser, script);
             //Clipboard.SetText(script.ToString());
             return script.ToString();
         }
 
         private void Get_PlayerSection(
                          List<UserBattleStatus> users,
-                         StringBuilder script,
-                         List<StartPos> positions) //code from LobbyClient.Battle.cs
+                         StringBuilder script) //code from LobbyClient.Battle.cs
         {
             var playersExport = new List<UserBattleStatus>(); //dummy table for maintain compatibility with callins
             if (currentMod.IsMission) // mission stuff
@@ -1281,7 +1279,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     LobbyClient.Battle.ScriptAddUser(script, i, playersExport, null, u.TeamNumber, u);
                     if (!u.IsSpectator && !declaredTeams.Contains(u.TeamNumber))
                     {
-                        LobbyClient.Battle.ScriptAddTeam(script, u.TeamNumber, positions, i, u, currentMod, currentBattleDetail);
+                        LobbyClient.Battle.ScriptAddTeam(script, u.TeamNumber,i, u, currentMod, currentBattleDetail);
                         declaredTeams.Add(u.TeamNumber);
                     }
                 }
@@ -1294,7 +1292,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                         LobbyClient.Battle.ScriptAddBot(script, aiNum++, b.TeamNumber, i, b);
                         if (!declaredTeams.Contains(b.TeamNumber))
                         {
-                            LobbyClient.Battle.ScriptAddTeam(script, b.TeamNumber, positions, i, b, currentMod, currentBattleDetail);
+                            LobbyClient.Battle.ScriptAddTeam(script, b.TeamNumber, i, b, currentMod, currentBattleDetail);
                             declaredTeams.Add(b.TeamNumber);
                         }
                     }
@@ -1313,7 +1311,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
                     if (!u.IsSpectator)
                     {
-                        LobbyClient.Battle.ScriptAddTeam(script, teamNum, positions, userNum, u, currentMod, currentBattleDetail);
+                        LobbyClient.Battle.ScriptAddTeam(script, teamNum, userNum, u, currentMod, currentBattleDetail);
                         teamNum++;
                     }
 
@@ -1321,7 +1319,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     {
                         LobbyClient.Battle.ScriptAddBot(script, aiNum, teamNum, userNum, b);
                         aiNum++;
-                        LobbyClient.Battle.ScriptAddTeam(script, teamNum, positions, userNum, b, currentMod, currentBattleDetail);
+                        LobbyClient.Battle.ScriptAddTeam(script, teamNum, userNum, b, currentMod, currentBattleDetail);
                         teamNum++;
                     }
                     userNum++;

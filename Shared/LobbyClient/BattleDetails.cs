@@ -15,13 +15,6 @@ namespace LobbyClient
         Choose = 2
     }
 
-    public enum BattleEndCondition
-    {
-        Continues = 0,
-        Ends = 1,
-        Lineage = 2
-    }
-
     public class BattleDetails: ICloneable
     {
         BattleStartPos startPos = BattleStartPos.Choose;
