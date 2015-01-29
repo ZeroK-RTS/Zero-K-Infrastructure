@@ -29,7 +29,6 @@ namespace LobbyClient
 
         public int BattleID { get; set; }
         public List<BotBattleStatus> Bots { get; set; }
-        public List<string> DisabledUnits { get; set; }
 
         public User Founder { get; set; }
 
@@ -91,7 +90,6 @@ namespace LobbyClient
             Bots = new List<BotBattleStatus>();
             ModOptions = new Dictionary<string, string>();
             Rectangles = new Dictionary<int, BattleRect>();
-            DisabledUnits = new List<string>();
             Password = "*";
             Nat = NatMode.None;
             Users = new List<UserBattleStatus>();
@@ -348,20 +346,9 @@ namespace LobbyClient
             }
 
             script.AppendLine();
-            script.AppendFormat("  NumRestrictions={0};\n", DisabledUnits.Count);
-            script.AppendLine();
 
             if (!mod.IsMission)
             {
-                script.AppendLine("  [RESTRICT]");
-                script.AppendLine("  {");
-                for (var i = 0; i < DisabledUnits.Count; ++i)
-                {
-                    script.AppendFormat("    Unit{0}={1};\n", i, DisabledUnits[i]);
-                    script.AppendFormat("    Limit{0}=0;\n", i);
-                }
-                script.AppendLine("  }");
-
                 script.AppendLine("  [MODOPTIONS]");
                 script.AppendLine("  {");
 
@@ -513,7 +500,6 @@ namespace LobbyClient
                 foreach (var kvp in Rectangles) b.Rectangles.Add(kvp.Key, kvp.Value);
             }
 
-            if (DisabledUnits != null) b.DisabledUnits = new List<string>(DisabledUnits);
             return b;
         }
 
