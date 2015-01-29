@@ -12,6 +12,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using LobbyClient;
+using Microsoft.Win32;
 using PlasmaShared.LobbyMessages;
 using SpringDownloader.Notifications;
 using ZeroKLobby.MicroLobby;
@@ -71,6 +72,22 @@ namespace ZeroKLobby
             }
         }
 
+        private static int GetNetVersionFromRegistry()
+        {
+            try {
+                using (
+                    RegistryKey ndpKey =
+                        RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32)
+                            .OpenSubKey("SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v4\\Full\\")) {
+                    int releaseKey = Convert.ToInt32(ndpKey.GetValue("Release"));
+                    return releaseKey;
+                }
+            } catch {
+                return 0;
+            }
+        }
+
+
         [STAThread]
         public static void Main(string[] args) {
             try {
@@ -78,6 +95,15 @@ namespace ZeroKLobby
 
                 Trace.Listeners.Add(new ConsoleTraceListener());
                 Trace.Listeners.Add(new LogTraceListener());
+
+                if (Environment.OSVersion.Platform != PlatformID.Unix) {
+                    var ver = GetNetVersionFromRegistry();
+                    if (ver < 378675) {
+                        MessageBox.Show("Zero-K launcher needs Microsoft .NET framework 4.5.1\nPlease download and install it first",
+                            "Program is unable to run", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+
 
                 Directory.SetCurrentDirectory(StartupPath);
 
