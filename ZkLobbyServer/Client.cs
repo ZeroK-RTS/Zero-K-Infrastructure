@@ -130,7 +130,7 @@ namespace ZkLobbyServer
         async Task Process(Login login)
         {
             var response = new LoginResponse();
-            await Task.Run(async () =>
+            await Task.Run(() =>
             {
                 using (var db = new ZkDataContext())
                 {
@@ -270,7 +270,7 @@ namespace ZkLobbyServer
 
             List<string> users;
             lock (channel.Users) {
-                channel.Users.Add(User.Name);
+                if (!channel.Users.Contains(User.Name)) channel.Users.Add(User.Name);
                 users = channel.Users.ToList();
             }
 
@@ -304,9 +304,12 @@ namespace ZkLobbyServer
             {
                 case SayPlace.Channel:
                     Channel channel;
-                    if (state.Rooms.TryGetValue(say.Target, out channel))
-                    {
-                        await Broadcast(channel.Users.ToListWithLock(), say, User.Name);
+                    if (state.Rooms.TryGetValue(say.Target, out channel)) {
+                        bool isJoined;
+                        lock (channel.Users) {
+                            isJoined = channel.Users.Contains(User.Name);
+                        }
+                        if (isJoined) await Broadcast(channel.Users, say, User.Name);
                     }
                     break;
 
