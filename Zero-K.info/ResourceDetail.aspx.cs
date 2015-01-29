@@ -50,7 +50,6 @@ namespace ZeroKWeb
 				lbDetails.Text = string.Format("Download count: {0}<br/>\nFailed downloads (no links): {1}<br/>\n", res.DownloadCount, res.NoLinkDownloadCount);
 				lbName.Text = res.InternalName;
 				litLinks.Text = string.Join("<br/>", res.ResourceDependencies.Select(x => x.NeedsInternalName).ToArray());
-				litHashes.Text = string.Join("<br/>", res.ResourceSpringHashes.Select(x => string.Format("{0}: {1}", x.SpringVersion, x.SpringHash)).ToArray());
 
 				string name = res.InternalName.EscapePath();
 				var sb = new StringBuilder();

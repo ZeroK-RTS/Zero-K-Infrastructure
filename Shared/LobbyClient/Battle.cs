@@ -47,12 +47,10 @@ namespace LobbyClient
         public bool IsPassworded { get { return Password != "*"; } }
         public bool IsReplay { get; set; }
 
-        public int? MapHash { get; set; }
         public string MapName { get; set; }
 
         public int MaxPlayers { get; set; }
 
-        public int? ModHash { get; set; }
         public string ModName { get; set; }
         public Dictionary<string, string> ModOptions { get; private set; }
         public NatMode Nat { get; set; }
@@ -126,11 +124,9 @@ namespace LobbyClient
             MaxPlayers = maxplayers;
             this.map = map;
             MapName = map.Name;
-            MapHash = map.Checksum;
             Title = title;
             this.mod = mod;
             ModName = mod.Name;
-            ModHash = mod.Checksum;
             if (details != null) Details = details;
         }
 
@@ -210,10 +206,6 @@ namespace LobbyClient
                     }
 
                     script.AppendFormat("  GameType={0};\n", ModName);
-                    if (ModHash.HasValue)
-                        script.AppendFormat("  ModHash={0};\n", ModHash.Value != 0 ? (uint)ModHash.Value : 1);
-                            // hack dont set to 1 when dedi srever is patched
-                    if (MapHash.HasValue) script.AppendFormat("  MapHash={0};\n", MapHash.Value != 0 ? (uint)MapHash.Value : 1);
                     script.AppendFormat("  AutohostPort={0};\n", loopbackListenPort);
                     script.AppendLine();
                     script.AppendFormat("  HostIP={0};\n", Ip);

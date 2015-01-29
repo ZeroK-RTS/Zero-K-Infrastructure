@@ -647,8 +647,7 @@ namespace Springie.autohost
                 var mapi = cache.GetResourceDataByInternalName(vals[0]);
                 if (mapi != null)
                 {
-                    tas.ChangeMap(mapi.InternalName,
-                                  mapi.SpringHashes.Where(x => x.SpringVersion == springPaths.SpringVersion).Select(x => x.SpringHash).FirstOrDefault());
+                    tas.ChangeMap(mapi.InternalName);
                 }
             }
             else Respond(e, "Cannot find such map.");

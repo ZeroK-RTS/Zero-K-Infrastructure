@@ -71,7 +71,6 @@ namespace ZkData.UnitSyncLib
 		}
 
 		public string ArchiveName { get; set; }
-		public int Checksum { get; set; }
 
 		public string Name { get { return name; } set { name = value; } }
 	}

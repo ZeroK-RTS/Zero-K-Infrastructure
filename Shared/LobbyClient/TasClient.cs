@@ -72,7 +72,6 @@ namespace LobbyClient
         int lastUserStatus;
         readonly string localIp;
         bool lockToChangeTo;
-        int mapChecksumToChangeTo;
         string mapToChangeTo;
         readonly Timer minuteTimer;
 
@@ -320,16 +319,15 @@ namespace LobbyClient
 
         public void ChangeLock(bool lck)
         {
-            if (lck != lockToChangeTo) UpdateBattleInfo(lck, mapToChangeTo, mapChecksumToChangeTo);
+            if (lck != lockToChangeTo) UpdateBattleInfo(lck, mapToChangeTo);
         }
 
 
-        public void ChangeMap(string name, int checksum)
+        public void ChangeMap(string name)
         {
             {
                 mapToChangeTo = name;
-                mapChecksumToChangeTo = checksum;
-                UpdateBattleInfo(lockToChangeTo, name, checksum);
+                UpdateBattleInfo(lockToChangeTo, name);
             }
         }
 
@@ -531,8 +529,6 @@ namespace LobbyClient
                               MyBattle.Password,
                               MyBattle.HostPort,
                               MyBattle.MaxPlayers,
-                              MyBattle.ModHash,
-                              MyBattle.MapHash,
                               MyBattle.EngineName,
                               '\t' +MyBattle.EngineVersion,
                               '\t' +MyBattle.MapName,
@@ -544,7 +540,6 @@ namespace LobbyClient
 
             //battle.Details.AddToParamList(objList);
             mapToChangeTo = MyBattle.MapName;
-            mapChecksumToChangeTo = MyBattle.MapHash ?? 0;
             lockToChangeTo = false;
 
             //con.SendCommand("OPENBATTLE", objList.ToArray());
@@ -1032,7 +1027,6 @@ namespace LobbyClient
 
             // NatType = Int32.Parse(args[2]); // todo: correctly add nattype
             newBattle.MapName = mapName;
-            newBattle.MapHash = Int32.Parse(mapHash);
             newBattle.Title = rest[3];
             newBattle.ModName = modName;
             newBattle.Users.Add(new UserBattleStatus(newBattle.Founder.Name, newBattle.Founder));
@@ -1056,9 +1050,8 @@ namespace LobbyClient
 
             var bi = new BattleInfoEventArgs(battleID, specCount, mapName, mapHash, isLocked);
 
-            if (battle.MapName != mapName || battle.MapHash != mapHash) {
+            if (battle.MapName != mapName) {
                 battle.MapName = mapName;
-                battle.MapHash = mapHash;
                 if (battle == MyBattle) MyBattleMapChanged(this, bi);
                 BattleMapChanged(this, bi);
             }
@@ -1415,7 +1408,7 @@ namespace LobbyClient
         }
 
 
-        void UpdateBattleInfo(bool lck, string mapname, int checksum)
+        void UpdateBattleInfo(bool lck, string mapname)
         {
             {
                 lockToChangeTo = lck;

@@ -92,15 +92,6 @@ namespace ZkData
                 Md5 = md5
             });
 
-            var sh = resource.ResourceSpringHashes.SingleOrDefault(x => x.SpringVersion == mission.SpringVersion);
-            if (sh == null)
-            {
-                sh = new ResourceSpringHash();
-                resource.ResourceSpringHashes.Add(sh);
-            }
-            sh.SpringVersion = mission.SpringVersion;
-            sh.SpringHash = 0;
-            
 
             var basePath = GlobalConst.SiteDiskPath + @"\resources\";
             File.WriteAllBytes(string.Format(@"{2}\{0}_{1}.torrent", resource.InternalName.EscapePath(), md5, basePath), torrentStream.ToArray());

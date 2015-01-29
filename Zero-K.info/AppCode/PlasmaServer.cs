@@ -26,8 +26,6 @@ namespace ZeroKWeb
                  InternalName = r.InternalName,
                  ResourceType = r.TypeID,
                  Dependencies = r.ResourceDependencies.Select(x => x.NeedsInternalName).ToList(),
-                 SpringHashes =
-                     r.ResourceSpringHashes.Select(x => new SpringHashEntry { SpringHash = x.SpringHash, SpringVersion = x.SpringVersion }).ToList(),
                  FeaturedOrder = r.FeaturedOrder,
              };
              return ret;
@@ -126,7 +124,6 @@ namespace ZeroKWeb
                                                    ResourceType resourceType,
                                                    string archiveName,
                                                    string internalName,
-                                                   int springHash,
                                                    byte[] serializedData,
                                                    List<string> dependencies,
                                                    byte[] minimap,
@@ -144,20 +141,14 @@ namespace ZeroKWeb
 
             var db = new ZkDataContext();
 
-            if (
-                db.Resources.Any(
-                    x =>
-                    x.InternalName == internalName && x.ResourceSpringHashes.Any(y => y.SpringVersion == springVersion && y.SpringHash != springHash))) return ReturnValue.InternalNameAlreadyExistsWithDifferentSpringHash;
 
             var contentFile = db.ResourceContentFiles.FirstOrDefault(x => x.Md5 == md5);
             if (contentFile != null)
             {
                 // content file already stored
                 if (contentFile.Resource.InternalName != internalName) return ReturnValue.Md5AlreadyExistsWithDifferentName;
-                if (contentFile.Resource.ResourceSpringHashes.Any(x => x.SpringVersion == springVersion)) return ReturnValue.Md5AlreadyExists;
 
                 // new spring version we add its hash
-                contentFile.Resource.ResourceSpringHashes.Add(new ResourceSpringHash { SpringVersion = springVersion, SpringHash = springHash });
                 StoreMetadata(md5, contentFile.Resource, serializedData, torrentData, minimap, metalMap, heightMap);
                 db.SubmitChanges();
                 return ReturnValue.Ok;
@@ -191,12 +182,7 @@ namespace ZeroKWeb
 
             resource.ResourceContentFiles.Add(new ResourceContentFile { FileName = archiveName, Length = length, Md5 = md5 });
             File.WriteAllBytes(GetTorrentPath(internalName, md5), torrentData); // add new torrent file
-            if (!resource.ResourceSpringHashes.Any(x => x.SpringVersion == springVersion))
-            {
-                resource.ResourceSpringHashes.Add(new ResourceSpringHash { SpringVersion = springVersion, SpringHash = springHash });
-                StoreMetadata(md5, resource, serializedData, torrentData, minimap, metalMap, heightMap);
-            }
-
+          
             db.SubmitChanges();
 
             return ReturnValue.Ok;

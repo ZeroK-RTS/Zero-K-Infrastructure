@@ -32,7 +32,6 @@ namespace ZkData
         readonly SpringScanner scanner;
         readonly WebClient webClientForMap = new WebClient() { Proxy = null };
         readonly WebClient webClientForMod = new WebClient() { Proxy = null };
-        public bool UseSpringHashes = false;
 
         public MetaDataCache(SpringPaths springPaths, SpringScanner scanner)
         {
@@ -310,58 +309,12 @@ namespace ZkData
             var ret = (Map)new XmlSerializer(typeof(Map)).Deserialize(new MemoryStream(data.Decompress()));
             ret.Name = ret.Name.Replace(".smf", ""); // hack remove this after server data reset
 
-            if (UseSpringHashes)
-            {
-                if (scanner != null)
-                {
-                    var hash = scanner.GetSpringHash(ret.Name, springVersion);
-                    ret.Checksum = hash;
-                }
-                else {
-                    var cs = GlobalConst.GetContentService();
-                    try
-                    {
-                        var rd = cs.GetResourceDataByInternalName(ret.Name);
-                        ret.Checksum = rd.SpringHashes.Single(x => x.SpringVersion == springVersion).SpringHash;
-                    }
-                    catch (Exception ex)
-                    {
-                        ret.Checksum = 0;
-                        Trace.TraceWarning(string.Format("Failed to get ResourcedData for {0}: {1}", ret.Name, ex));
-                    }
-                }
-            }
-            else ret.Checksum = 0;
-
             return ret;
         }
 
         Mod GetModMetadata(byte[] data, string springVersion)
         {
             var ret = (Mod)new XmlSerializer(typeof(Mod)).Deserialize(new MemoryStream(data.Decompress()));
-
-            if (UseSpringHashes)
-            {
-                if (scanner != null)
-                {
-                    var hash = scanner.GetSpringHash(ret.Name, springVersion);
-                    ret.Checksum = hash;
-                }
-                else {
-                    var cs = GlobalConst.GetContentService();
-                    try
-                    {
-                        var rd = cs.GetResourceDataByInternalName(ret.Name);
-                        ret.Checksum = rd.SpringHashes.Single(x => x.SpringVersion == springVersion).SpringHash;
-                    }
-                    catch (Exception ex)
-                    {
-                        ret.Checksum = 0;
-                        Trace.TraceWarning(string.Format("Failed to get ResourcedData for {0}: {1}", ret.Name, ex));
-                    }
-                }
-            }
-            else ret.Checksum = 0;
 
             if (ret.Options != null) foreach (var option in ret.Options) if (option.Type == OptionType.Number) option.Default = option.Default.Replace(",", ".");
             return ret;

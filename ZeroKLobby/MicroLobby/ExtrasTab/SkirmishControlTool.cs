@@ -243,7 +243,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     var mod = new Mod();
                 
                     mod.ArchiveName = GetFolderName(path);
-                    mod.Checksum = 0;
                     
                     CrudeLUAReader.ParseModInfo(modinfo,ref mod);
 
