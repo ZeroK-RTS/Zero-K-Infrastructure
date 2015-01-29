@@ -23,10 +23,6 @@ namespace LobbyClient
         };
 
         /// <summary>
-        /// Full map metadata - loaded only for joined battle
-        /// </summary>
-        readonly Map map;
-        /// <summary>
         /// Full mod metadata - loaded only for joined battle
         /// </summary>
         readonly Mod mod;
@@ -102,7 +98,7 @@ namespace LobbyClient
         }
 
 
-        public Battle(string engineVersion, string password, int port, int maxplayers, Map map, string title, Mod mod): this()
+        public Battle(string engineVersion, string password, int port, int maxplayers, string mapName, string title, Mod mod): this()
         {
             if (!String.IsNullOrEmpty(password)) Password = password;
             if (port == 0) HostPort = 8452; else HostPort = port;
@@ -120,8 +116,7 @@ namespace LobbyClient
 
             EngineVersion = engineVersion;
             MaxPlayers = maxplayers;
-            this.map = map;
-            MapName = map.Name;
+            MapName = mapName;
             Title = title;
             this.mod = mod;
             ModName = mod.Name;
