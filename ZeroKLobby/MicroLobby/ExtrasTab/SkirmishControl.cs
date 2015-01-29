@@ -36,7 +36,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         private PlayerListItem myItem;
         private Ai[] aiList;
         private Mod currentMod;
-        private BattleDetails currentBattleDetail;
         private Dictionary<int, BattleRect> Rectangles;
         private List<string> DisabledUnits;
         private Dictionary<string, string> ModOptions;
@@ -79,7 +78,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
             Setup_MyInfo();
             DisabledUnits = new List<string>();
-            currentBattleDetail = new BattleDetails();
             ModOptions = new Dictionary<string, string>();
             Rectangles = new Dictionary<int, BattleRect>();
             springAi = new List<Ai>();
@@ -1279,7 +1277,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     LobbyClient.Battle.ScriptAddUser(script, i, playersExport, null, u.TeamNumber, u);
                     if (!u.IsSpectator && !declaredTeams.Contains(u.TeamNumber))
                     {
-                        LobbyClient.Battle.ScriptAddTeam(script, u.TeamNumber,i, u, currentMod, currentBattleDetail);
+                        LobbyClient.Battle.ScriptAddTeam(script, u.TeamNumber,i, u, currentMod);
                         declaredTeams.Add(u.TeamNumber);
                     }
                 }
@@ -1292,7 +1290,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                         LobbyClient.Battle.ScriptAddBot(script, aiNum++, b.TeamNumber, i, b);
                         if (!declaredTeams.Contains(b.TeamNumber))
                         {
-                            LobbyClient.Battle.ScriptAddTeam(script, b.TeamNumber, i, b, currentMod, currentBattleDetail);
+                            LobbyClient.Battle.ScriptAddTeam(script, b.TeamNumber, i, b, currentMod);
                             declaredTeams.Add(b.TeamNumber);
                         }
                     }
@@ -1311,7 +1309,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
                     if (!u.IsSpectator)
                     {
-                        LobbyClient.Battle.ScriptAddTeam(script, teamNum, userNum, u, currentMod, currentBattleDetail);
+                        LobbyClient.Battle.ScriptAddTeam(script, teamNum, userNum, u, currentMod);
                         teamNum++;
                     }
 
@@ -1319,7 +1317,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     {
                         LobbyClient.Battle.ScriptAddBot(script, aiNum, teamNum, userNum, b);
                         aiNum++;
-                        LobbyClient.Battle.ScriptAddTeam(script, teamNum, userNum, b, currentMod, currentBattleDetail);
+                        LobbyClient.Battle.ScriptAddTeam(script, teamNum, userNum, b, currentMod);
                         teamNum++;
                     }
                     userNum++;

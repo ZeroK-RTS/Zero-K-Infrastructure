@@ -33,7 +33,6 @@ namespace LobbyClient
 
         public int BattleID { get; set; }
         public List<BotBattleStatus> Bots { get; set; }
-        public BattleDetails Details { get; set; }
         public List<string> DisabledUnits { get; set; }
 
         public User Founder { get; set; }
@@ -94,7 +93,6 @@ namespace LobbyClient
         internal Battle()
         {
             Bots = new List<BotBattleStatus>();
-            Details = new BattleDetails();
             ModOptions = new Dictionary<string, string>();
             Rectangles = new Dictionary<int, BattleRect>();
             DisabledUnits = new List<string>();
@@ -104,7 +102,7 @@ namespace LobbyClient
         }
 
 
-        public Battle(string engineVersion, string password, int port, int maxplayers, Map map, string title, Mod mod, BattleDetails details): this()
+        public Battle(string engineVersion, string password, int port, int maxplayers, Map map, string title, Mod mod): this()
         {
             if (!String.IsNullOrEmpty(password)) Password = password;
             if (port == 0) HostPort = 8452; else HostPort = port;
@@ -127,7 +125,6 @@ namespace LobbyClient
             Title = title;
             this.mod = mod;
             ModName = mod.Name;
-            if (details != null) Details = details;
         }
 
 
@@ -200,9 +197,7 @@ namespace LobbyClient
                     if (mod.IsMission) script.AppendFormat("  StartPosType=3;\n");
                     else
                     {
-                        if (Details.StartPos == BattleStartPos.Choose) script.AppendFormat("  StartPosType=2;\n");
-                        else script.AppendFormat("  StartPosType=3;\n"); // workaround for random/fixed
-                        // script.AppendFormat("  StartPosType={0};\n", (int)Details.StartPos);
+                        script.AppendFormat("  StartPosType=2;\n");
                     }
 
                     script.AppendFormat("  GameType={0};\n", ModName);
@@ -290,7 +285,7 @@ namespace LobbyClient
                     ScriptAddUser(script, i, playersExport, startSetup, u.TeamNumber, u);
                     if (!u.IsSpectator && !declaredTeams.Contains(u.TeamNumber))
                     {
-                        ScriptAddTeam(script, u.TeamNumber, i, u,mod,Details);
+                        ScriptAddTeam(script, u.TeamNumber, i, u,mod);
                         declaredTeams.Add(u.TeamNumber);
                     }
                 }
@@ -303,7 +298,7 @@ namespace LobbyClient
                         ScriptAddBot(script, aiNum++, b.TeamNumber, i, b);
                         if (!declaredTeams.Contains(b.TeamNumber))
                         {
-                            ScriptAddTeam(script, b.TeamNumber, i, b,mod,Details);
+                            ScriptAddTeam(script, b.TeamNumber, i, b,mod);
                             declaredTeams.Add(b.TeamNumber);
                         }
                     }
@@ -323,7 +318,7 @@ namespace LobbyClient
 
                     if (!u.IsSpectator)
                     {
-                        ScriptAddTeam(script, teamNum, userNum, u,mod,Details);
+                        ScriptAddTeam(script, teamNum, userNum, u,mod);
                         teamNum++;
                     }
 
@@ -331,7 +326,7 @@ namespace LobbyClient
                     {
                         ScriptAddBot(script, aiNum, teamNum, userNum, b);
                         aiNum++;
-                        ScriptAddTeam(script, teamNum, userNum, b,mod,Details);
+                        ScriptAddTeam(script, teamNum, userNum, b,mod);
                         teamNum++;
                     }
                     userNum++;
@@ -459,7 +454,7 @@ namespace LobbyClient
             script.AppendLine("  }\n");
         }
 
-        public static void ScriptAddTeam(StringBuilder script, int teamNum, int userNum, UserBattleStatus status, Mod mod, BattleDetails Details)
+        public static void ScriptAddTeam(StringBuilder script, int teamNum, int userNum, UserBattleStatus status, Mod mod)
         {
             // BOT TEAM
             script.AppendFormat("  [TEAM{0}]\n", teamNum);
@@ -515,7 +510,6 @@ namespace LobbyClient
         public object Clone()
         {
             var b = (Battle)MemberwiseClone();
-            if (Details != null) b.Details = (BattleDetails)Details.Clone();
             if (Users != null) b.Users = new List<UserBattleStatus>(Users);
             if (Rectangles != null)
             {

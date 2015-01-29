@@ -60,7 +60,6 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="Battle.cs" />
-    <Compile Include="BattleDetails.cs" />
     <Compile Include="BattleRect.cs" />
     <Compile Include="BotBattleStatus.cs" />
     <Compile Include="CountryNames.cs" />

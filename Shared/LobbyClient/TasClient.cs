@@ -684,12 +684,6 @@ namespace LobbyClient
             else ChangeMyUserStatus(false, true);
         }
 
-        public void UpdateBattleDetails(BattleDetails bd)
-        {
-            var objList = new List<object>();
-            //con.SendCommand("SETSCRIPTTAGS", bd.GetParamList());
-        }
-
         public void UpdateBot(string name, UserBattleStatus battleStatus, int teamColor)
         {
             //con.SendCommand("UPDATEBOT", name, battleStatus.ToInt(), teamColor);
@@ -964,9 +958,9 @@ namespace LobbyClient
 
         void OnSetScriptTags(string[] args)
         {
-            var bd = new BattleDetails();
-            bd.Parse(Utils.Glue(args), MyBattle.ModOptions);
-            MyBattle.Details = bd;
+            //var bd = new BattleDetails();
+            //bd.Parse(Utils.Glue(args), MyBattle.ModOptions);
+            //MyBattle.Details = bd;
             MyBattle.ScriptTags.AddRange(args);
             BattleDetailsChanged(this, new TasEventArgs(args));
         }
@@ -1169,7 +1163,7 @@ namespace LobbyClient
             var self = new UserBattleStatus(UserName, existingUsers[UserName]);
             MyBattle.Users.Add(self); // add self
             lastUserBattleStatus = self.ToInt();
-            UpdateBattleDetails(MyBattle.Details);
+            //UpdateBattleDetails(MyBattle.Details);
             // SetScriptTag(MyBattle.Mod.GetDefaultModOptionsTags()); // sends default mod options // enable if tasclient is not fixed
             BattleOpened(this, new TasEventArgs(args[0]));
         }
