@@ -61,58 +61,6 @@ namespace LobbyClient
 		}
 	}
 
-    public class KickedFromServerEventArgs : EventArgs
-    {
-        //WarningBar.DisplayWarning("You have been kicked server by " + name + ".\r\nReason: " + match.Groups[2].Value)
-        public string UserName { get; private set; }
-        public string Reason { get; private set; }
-
-        public KickedFromServerEventArgs(string userName, string reason = null)
-		{
-			UserName = userName;
-			Reason = reason;
-		}
-    }
-
-
-    public class UserLobbyVersionEventArgs: EventArgs {
-        public string Name;
-        public string LobbyVersion;
-        public UserLobbyVersionEventArgs() {}
-
-        public UserLobbyVersionEventArgs(string name, string lobbyVersion)
-        {
-            Name = name;
-            LobbyVersion = lobbyVersion;
-        }
-    }
-
-    public class UserIPEventArgs: EventArgs {
-        public string Name;
-        public string IP;
-        public UserIPEventArgs() {}
-
-        public UserIPEventArgs(string name, string ip)
-        {
-            Name = name;
-            IP = ip;
-        }
-    }
-
-    public class UserIDEventArgs : EventArgs
-    {
-        public string Name;
-        public long ID;
-        public UserIDEventArgs() { }
-
-        public UserIDEventArgs(string name, long id)
-        {
-            Name = name;
-            ID = id;
-        }
-    }
-
-
 
     public class TasSayEventArgs: EventArgs
 	{

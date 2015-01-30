@@ -37,7 +37,7 @@ namespace LobbyClient
         public bool IsInGame { get { return Founder.IsInGame; } }
         public bool IsLocked { get; set; }
         public bool IsMission { get { return mod != null && mod.IsMission; } }
-        public bool IsPassworded { get { return Password != "*"; } }
+        public bool IsPassworded { get { return Password != null; } }
         public bool IsReplay { get; set; }
 
         public string MapName { get; set; }
@@ -89,7 +89,6 @@ namespace LobbyClient
             Bots = new List<BotBattleStatus>();
             ModOptions = new Dictionary<string, string>();
             Rectangles = new Dictionary<int, BattleRect>();
-            Password = "*";
             Nat = NatMode.None;
             Users = new List<UserBattleStatus>();
         }
@@ -119,17 +118,6 @@ namespace LobbyClient
             ModName = mod.Name;
         }
 
-
-        public bool CanBeJoined(int playerRank)
-        {
-            return NonSpectatorCount > 0 && !IsLocked && MaxPlayers > NonSpectatorCount && Password == "*";
-        }
-
-        public bool ContainsUser(string name, out UserBattleStatus status)
-        {
-            status = Users.SingleOrDefault(x => x.Name == name);
-            return status != null;
-        }
 
         /// <summary>
         /// Generates script

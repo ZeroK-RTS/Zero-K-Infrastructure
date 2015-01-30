@@ -203,7 +203,7 @@ namespace ZeroKLobby.MicroLobby
             {
                 if (battle != null)
                 {
-                    if (battle.Password != "*")
+                    if (battle.IsPassworded)
                     {
                         // hack dialog Program.FormMain
                         using (var form = new AskBattlePasswordForm(battle.Founder.Name)) if (form.ShowDialog() == DialogResult.OK) ActionHandler.JoinBattle(battle.BattleID, form.Password);
@@ -378,7 +378,7 @@ namespace ZeroKLobby.MicroLobby
                     isMatch = battle.IsLocked;
                     return true;
                 case "PASSWORD":
-                    isMatch = battle.Password != "*";
+                    isMatch = battle.IsPassworded;
                     return true;
                 case "INGAME":
                     isMatch = battle.IsInGame;

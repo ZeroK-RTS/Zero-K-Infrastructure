@@ -95,7 +95,6 @@ namespace LobbyClient
         public override async Task OnConnected()
         {
             MyBattle = null;
-            MyBattleID = 0;
             ConnectionFailed = false;
             ExistingUsers = new Dictionary<string, User>();
             existingChannels = new Dictionary<string, ExistingChannel>();
@@ -113,7 +112,6 @@ namespace LobbyClient
             joinedChannels = new Dictionary<string, Channel>();
             existingBattles = new Dictionary<int, Battle>();
             MyBattle = null;
-            MyBattleID = 0;
             isLoggedIn = false;
             ConnectionLost(this, new TasEventArgs(string.Format("Connection {0}", wasRequested ? "closed on user request" : "disconnected")));
         }
@@ -140,7 +138,7 @@ namespace LobbyClient
         public int MessageID { get; private set; }
 
         public Battle MyBattle { get; protected set; }
-        public int MyBattleID { get; private set; }
+        public int MyBattleID { get { return MyBattle != null ? MyBattle.BattleID : 0; } }
 
 
         public UserBattleStatus MyBattleStatus
@@ -222,7 +220,6 @@ namespace LobbyClient
         public event EventHandler<EventArgs> HourChime = delegate { };
         public event EventHandler<string> Input = delegate { };
         public event EventHandler<TasEventArgs> JoinBattleFailed = delegate { };
-        public event EventHandler<KickedFromServerEventArgs> KickedFromServer = delegate { };
 
 
         public event EventHandler<EventArgs<Battle>> MyBattleEnded = delegate { }; // raised just after the battle is removed from the battle list
@@ -431,10 +428,9 @@ namespace LobbyClient
         }
 
 
-        public void JoinBattle(int battleID, string password = "*")
+        public Task JoinBattle(int battleID, string password = null)
         {
-            if (string.IsNullOrEmpty(password)) password = "*";
-            //con.SendCommand("JOINBATTLE", battleID, password, random.Next());
+            return SendCommand(new JoinBattle() { BattleID = battleID, Password = password });
         }
 
 
@@ -458,7 +454,7 @@ namespace LobbyClient
         }
 
         public void AdminSetChannelPassword(string channel, string password) {
-            if (string.IsNullOrEmpty(password) || password=="*") {
+            if (string.IsNullOrEmpty(password)) {
                 Say(SayPlace.User, "ChanServ",string.Format("!lock #{0} {1}", channel, password),false);    
             } else {
                 Say(SayPlace.User, "ChanServ", string.Format("!unlock #{0}", channel), false);
@@ -466,16 +462,14 @@ namespace LobbyClient
         }
 
 
-        public void LeaveBattle()
+        public async Task LeaveBattle()
         {
-            if (MyBattle != null)
-            {
-                //con.SendCommand("LEAVEBATTLE");
+            if (MyBattle != null) {
                 var bat = MyBattle;
+                await SendCommand(new LeaveBattle() { BattleID = MyBattleID });
                 bat.ScriptTags.Clear();
                 MyBattle = null;
-                MyBattleID = 0;
-                BattleClosed(this, new EventArgs<Battle>(bat));
+                //BattleClosed(this, new EventArgs<Battle>(bat));
             }
         }
 
@@ -518,7 +512,6 @@ namespace LobbyClient
         public Task OpenBattle(Battle nbattle)
         {
             LeaveBattle(); // leave current battle
-            MyBattleID = -1;
 
             MyBattle = nbattle;
 
@@ -732,10 +725,6 @@ namespace LobbyClient
                         BattleForceQuit(this, EventArgs.Empty);
                         break;
 
-                    case "KICKUSER":
-                        OnKickUser(args);
-                        break;
-
 
                     case "SERVERMSGBOX": // server messagebox
                         InvokeSaid(new TasSayEventArgs(SayPlace.MessageBox,
@@ -791,24 +780,8 @@ namespace LobbyClient
                         break;
 
 
-                    case "OPENBATTLE": // openbattle ok
-                        OnOpenBattle(args);
-                        break;
-
                     case "REQUESTBATTLESTATUS": // ask for status at the beginning of the battle
                         RequestBattleStatus(this, new EventArgs());
-                        break;
-
-                    case "JOINBATTLE": // we joined the battle
-                        OnJoinBattle(args);
-                        break;
-
-                    case "FORCEJOINBATTLE":
-                        OnForceJoinBattle(args);
-                        break;
-
-                    case "JOINEDBATTLE": // user joined the battle
-                        OnJoinedBattle(args);
                         break;
 
                     case "JOINBATTLEFAILED": // user failed to join battle 
@@ -1014,49 +987,7 @@ namespace LobbyClient
             }
         }
 
-        void OnJoinedBattle(string[] args)
-        {
-            var joinedBattleID = Int32.Parse(args[0]);
-            Battle battle;
-            if (!existingBattles.TryGetValue(joinedBattleID, out battle)) return;
-            var userName = args[1];
-            var scriptPassword = args.Length > 2 ? args[2] : null;
-            var ubs = new UserBattleStatus(userName, existingUsers[userName], scriptPassword);
-            battle.Users.Add(ubs);
-            ExistingUsers[userName].IsInBattleRoom = true;
-            if (userName == UserName) lastUserBattleStatus = ubs.ToInt();
-            BattleUserJoined(this, new BattleUserEventArgs(userName, joinedBattleID, scriptPassword));
-        }
 
-        void OnForceJoinBattle(string[] args)
-        {
-            if (MyBattle != null) LeaveBattle();
-            var battleid = Int32.Parse(args[0]);
-            if (args.Length == 1) JoinBattle(battleid);
-            else JoinBattle(battleid, args[1]);
-        }
-
-        void OnJoinBattle(string[] args)
-        {
-            var joinedBattleID = Int32.Parse(args[0]);
-            MyBattleID = joinedBattleID;
-            var battle = existingBattles[joinedBattleID];
-            battle.Bots.Clear();
-            MyBattle = battle;
-            BattleJoined(this, new EventArgs<Battle>(MyBattle));
-        }
-
-        void OnOpenBattle(string[] args)
-        {
-            MyBattleID = int.Parse(args[0]);
-            existingBattles[MyBattleID] = MyBattle;
-            var self = new UserBattleStatus(UserName, existingUsers[UserName]);
-            MyBattle.Users.Add(self); // add self
-            lastUserBattleStatus = self.ToInt();
-            //UpdateBattleDetails(MyBattle.Details);
-            // SetScriptTag(MyBattle.Mod.GetDefaultModOptionsTags()); // sends default mod options // enable if tasclient is not fixed
-            BattleOpened(this, new TasEventArgs(args[0]));
-        }
 
         void OnChannelTopic(string[] args)
         {
@@ -1122,16 +1053,6 @@ namespace LobbyClient
         }
 
 
-        void OnKickUser(string[] args)
-        {
-            Trace.TraceInformation(String.Format("User {0} kicked (we are {1})"), args[1], MyUser.Name);
-            string us = args[1];
-            if (us == MyUser.Name) {
-                string kicker = args[0];
-                string reason = args.Length > 2 ? string.Join(" ", args, 2) : null;
-                KickedFromServer(this, new KickedFromServerEventArgs(kicker, reason));
-            }
-        }
 
         void OnForceLeaveChannel(string[] args)
         {
@@ -1185,9 +1106,15 @@ namespace LobbyClient
         async Task Process(JoinedBattle bat)
         {
             var user = existingUsers[bat.User];
-            ExistingBattles[bat.BattleID].Users.Add(new UserBattleStatus(user.Name,user));
+            var battle = ExistingBattles[bat.BattleID];
+            battle.Users.Add(new UserBattleStatus(user.Name,user));
             user.IsInBattleRoom = true;
             BattleUserJoined(this, new BattleUserEventArgs(user.Name, bat.BattleID));
+            if (user.Name == UserName) {
+                MyBattle = battle;
+                BattleJoined(this, new EventArgs<Battle>(MyBattle));
+            }
+
         }
 
 
@@ -1197,6 +1124,7 @@ namespace LobbyClient
             var bat = ExistingBattles[left.BattleID];
             bat.Users.RemoveAll(x=>x.Name == left.User);
             bat.ScriptTags.Clear();
+            bat.Bots.Clear();
             user.IsInBattleRoom = false;
 
             if (MyBattle != null && left.BattleID == MyBattleID)
@@ -1204,7 +1132,6 @@ namespace LobbyClient
                 if (UserName == left.User)
                 {
                     MyBattle = null;
-                    MyBattleID = 0;
                     BattleClosed(this, new EventArgs<Battle>(bat));
                 }
             }

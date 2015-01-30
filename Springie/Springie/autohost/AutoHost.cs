@@ -641,8 +641,8 @@ namespace Springie.autohost
             if (String.IsNullOrEmpty(mapname)) mapname = config.Map;
 
             string title = config.Title.Replace("%1", MainConfig.SpringieVersion);
-            string password = "*";
-            
+
+            string password = null;
             if (!string.IsNullOrEmpty(config.BattlePassword)) password = config.BattlePassword;
 
             int maxPlayers = config.MaxPlayers;
