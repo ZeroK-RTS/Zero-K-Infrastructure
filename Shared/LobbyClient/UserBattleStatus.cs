@@ -2,7 +2,6 @@
 
 using System;
 using System.Net;
-using PlasmaShared.LobbyMessages;
 
 #endregion
 
@@ -47,7 +46,7 @@ namespace LobbyClient
 
 		public UserBattleStatus(string name, User lobbyUser, string scriptPassword = null)
 		{
-			Name = name;
+		    Name = name;
 			ScriptPassword = scriptPassword;
 			LobbyUser = lobbyUser;
 		}

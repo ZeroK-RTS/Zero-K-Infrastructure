@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using LobbyClient;
 using Newtonsoft.Json;
 
-namespace PlasmaShared.LobbyMessages
+namespace LobbyClient
 {
     public class CommandJsonSerializer
     {
@@ -27,6 +25,15 @@ namespace PlasmaShared.LobbyMessages
             RegisterType<ChannelUserRemoved>();
             RegisterType<Say>();
             RegisterType<UserDisconnected>();
+            RegisterType<OpenBattle>();
+            RegisterType<BattleOpened>();
+            RegisterType<UserBattleStatus>();
+            RegisterType<LeftBattle>();
+            RegisterType<JoinedBattle>();
+            RegisterType<LeftBattle>();
+            RegisterType<JoinBattle>();
+            RegisterType<LeaveBattle>();
+
 
             settings.Formatting = Formatting.None;
             settings.NullValueHandling = NullValueHandling.Ignore;

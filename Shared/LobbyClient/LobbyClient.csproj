@@ -65,6 +65,8 @@
     <Compile Include="CountryNames.cs" />
     <Compile Include="Crc.cs" />
     <Compile Include="ProtocolExtension.cs" />
+    <Compile Include="Protocol\CommandJsonSerializer.cs" />
+    <Compile Include="Protocol\Messages.cs" />
     <Compile Include="PwMatchCommand.cs" />
     <Compile Include="SayingEventArgs.cs" />
     <Compile Include="ServerConnection.cs" />

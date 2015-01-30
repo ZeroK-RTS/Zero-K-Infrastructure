@@ -13,7 +13,6 @@ using System.Web.Services.Description;
 using System.Xml.Serialization;
 using LobbyClient;
 using NightWatch;
-using PlasmaShared.LobbyMessages;
 using ZkData;
 
 #endregion

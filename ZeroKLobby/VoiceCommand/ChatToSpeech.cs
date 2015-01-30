@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Speech.Synthesis;
 using System.Text.RegularExpressions;
 using LobbyClient;
-using PlasmaShared.LobbyMessages;
 
 namespace ZeroKLobby
 {

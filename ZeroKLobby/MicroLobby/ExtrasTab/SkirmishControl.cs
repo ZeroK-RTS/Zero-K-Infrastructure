@@ -10,7 +10,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using PlasmaDownloader;
-using PlasmaShared.LobbyMessages;
 using ZkData.UnitSyncLib;
 using LobbyClient;
 using System.Globalization;

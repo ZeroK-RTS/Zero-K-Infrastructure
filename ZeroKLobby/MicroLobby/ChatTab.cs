@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using LobbyClient;
-using PlasmaShared.LobbyMessages;
 using ZeroKLobby;
 using ZeroKLobby.Lines;
 using ZeroKLobby.Notifications;

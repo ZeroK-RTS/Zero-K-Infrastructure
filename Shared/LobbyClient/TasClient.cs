@@ -12,7 +12,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
-using PlasmaShared.LobbyMessages;
 using ZkData;
 
 #endregion
@@ -178,6 +177,25 @@ namespace LobbyClient
         public string UserName { get; private set; }
         public string UserPassword { get; private set; }
 
+        public event EventHandler<User> UserAdded = delegate { };
+        public event EventHandler<UserDisconnected> UserRemoved = delegate { };
+        public event EventHandler<OldNewPair<User>> UserStatusChanged = delegate { };
+        public event EventHandler<EventArgs<Battle>> BattleFound = delegate { };
+        public event EventHandler<ChannelUserInfo> ChannelUserAdded = delegate { };
+        public event EventHandler<ChannelUserRemovedInfo> ChannelUserRemoved = delegate { };
+        public event EventHandler<Welcome> Connected = delegate { };
+        public event EventHandler<JoinChannelResponse> ChannelJoinFailed = delegate { };
+        public event EventHandler<TasEventArgs> LoginAccepted = delegate { };
+        public event EventHandler<LoginResponse> LoginDenied = delegate { };
+        public event EventHandler<TasSayEventArgs> Said = delegate { }; // this is fired when any kind of say message is recieved
+        public event EventHandler<SayingEventArgs> Saying = delegate { }; // this client is trying to say somethign
+        
+        public event EventHandler<BattleUserEventArgs> BattleUserJoined = delegate { };
+        public event EventHandler<BattleUserEventArgs> BattleUserLeft = delegate { };
+
+
+        public event EventHandler<CancelEventArgs<Channel>> PreviewChannelJoined = delegate { };
+
         public event EventHandler<EventArgs<BotBattleStatus>> BattleBotAdded = delegate { };
         public event EventHandler<EventArgs<BotBattleStatus>> BattleBotRemoved = delegate { };
         public event EventHandler<EventArgs<BotBattleStatus>> BattleBotUpdated = delegate { };
@@ -186,62 +204,45 @@ namespace LobbyClient
         public event EventHandler<EventArgs<Battle>> BattleEnded = delegate { }; // raised just after the battle is removed from the battle list
         public event EventHandler<EventArgs<Battle>> BattleEnding = delegate { }; // raised just before the battle is removed from the battle list
         public event EventHandler BattleForceQuit = delegate { }; // i was kicked from a battle (sent after LEFTBATTLE)
-        public event EventHandler<EventArgs<Battle>> BattleFound = delegate { };
         public event EventHandler<BattleInfoEventArgs> BattleInfoChanged = delegate { };
         public event EventHandler<EventArgs<Battle>> BattleJoined = delegate { };
         public event EventHandler<BattleInfoEventArgs> BattleLockChanged = delegate { };
         public event EventHandler<BattleInfoEventArgs> BattleMapChanged = delegate { };
         public event EventHandler<TasEventArgs> BattleMyUserStatusChanged = delegate { };
-        public event EventHandler<TasEventArgs> BattleOpenFailed = delegate { };
         public event EventHandler<TasEventArgs> BattleOpened = delegate { };
         public event EventHandler<EventArgs<User>> BattleStarted = delegate { };
         public event EventHandler<TasEventArgs> BattleUserIpRecieved = delegate { };
-        public event EventHandler<BattleUserEventArgs> BattleUserJoined = delegate { };
-        public event EventHandler<BattleUserEventArgs> BattleUserLeft = delegate { };
         public event EventHandler<TasEventArgs> BattleUserStatusChanged = delegate { };
         public event EventHandler<TasEventArgs> ChannelForceLeave = delegate { }; // i was kicked from a channel
-        public event EventHandler<JoinChannelResponse> ChannelJoinFailed = delegate { };
         public event EventHandler<Channel> ChannelJoined = delegate { };
         public event EventHandler<CancelEventArgs<string>> ChannelLeaving = delegate { }; // raised before attempting to leave a channel
         public event EventHandler<TasEventArgs> ChannelLeft = delegate { };
         public event EventHandler<TasEventArgs> ChannelTopicChanged = delegate { };
-        public event EventHandler<ChannelUserInfo> ChannelUserAdded = delegate { };
-        public event EventHandler<ChannelUserRemovedInfo> ChannelUserRemoved = delegate { };
-        public event EventHandler<Welcome> Connected = delegate { };
         public event EventHandler<TasEventArgs> ConnectionLost = delegate { };
-        public event EventHandler<CancelEventArgs<string>> FilterBattleByMod;
         public event EventHandler<EventArgs> HourChime = delegate { };
         public event EventHandler<string> Input = delegate { };
         public event EventHandler<TasEventArgs> JoinBattleFailed = delegate { };
         public event EventHandler<KickedFromServerEventArgs> KickedFromServer = delegate { };
-        public event EventHandler<TasEventArgs> LoginAccepted = delegate { };
-        public event EventHandler<LoginResponse> LoginDenied = delegate { };
+
+
         public event EventHandler<EventArgs<Battle>> MyBattleEnded = delegate { }; // raised just after the battle is removed from the battle list
         public event EventHandler<TasEventArgs> MyBattleHostExited = delegate { };
         public event EventHandler<BattleInfoEventArgs> MyBattleMapChanged = delegate { };
         public event EventHandler<TasEventArgs> MyBattleStarted = delegate { };
         public event EventHandler<string> Output = delegate { }; // outgoing command and arguments
-        public event EventHandler<CancelEventArgs<Channel>> PreviewChannelJoined = delegate { };
+
         public event EventHandler<CancelEventArgs<TasSayEventArgs>> PreviewSaid = delegate { };
         public event EventHandler<EventArgs<string>> Rang = delegate { };
         public event EventHandler<TasEventArgs> RegistrationAccepted = delegate { };
         public event EventHandler<RegisterResponse> RegistrationDenied = delegate { };
         public event EventHandler RequestBattleStatus = delegate { };
-        public event EventHandler<TasSayEventArgs> Said = delegate { }; // this is fired when any kind of say message is recieved
-        public event EventHandler<SayingEventArgs> Saying = delegate { }; // this client is trying to say somethign
         public event EventHandler<TasEventArgs> StartRectAdded = delegate { };
         public event EventHandler<TasEventArgs> StartRectRemoved = delegate { };
-        public event EventHandler<TasEventArgs> TestLoginAccepted = delegate { };
-        public event EventHandler<TasEventArgs> TestLoginDenied = delegate { };
-        public event EventHandler<User> UserAdded = delegate { };
-        public event EventHandler<UserDisconnected> UserRemoved = delegate { };
-        public event EventHandler<OldNewPair<User>> UserStatusChanged = delegate { };
+
+
         public event EventHandler<EventArgs<User>> UserExtensionsChanged = delegate { };
         public event EventHandler<EventArgs<User>> MyExtensionsChanged = delegate { };
-        public event EventHandler<UserLobbyVersionEventArgs> UserLobbyVersionRecieved = delegate { };
-        public event EventHandler<UserIPEventArgs> UserIPRecieved = delegate { };
-        public event EventHandler<UserIDEventArgs> UserIDRecieved = delegate { }; 
-
+        
  
 
         public TasClient(Invoker<Invoker> guiThreadInvoker, string appName, Login.ClientTypes? clientTypes = null, string ipOverride = null)
@@ -514,27 +515,13 @@ namespace LobbyClient
 
         Login.ClientTypes clientType = LobbyClient.Login.ClientTypes.ZeroKLobby | (Environment.OSVersion.Platform == PlatformID.Unix ? LobbyClient.Login.ClientTypes.Linux : 0);
 
-        public void OpenBattle(Battle nbattle)
+        public Task OpenBattle(Battle nbattle)
         {
             LeaveBattle(); // leave current battle
             MyBattleID = -1;
 
             MyBattle = nbattle;
 
-            var objList = new List<object>
-                          {
-                              0,
-                              // type normal
-                              (int)MyBattle.Nat,
-                              MyBattle.Password,
-                              MyBattle.HostPort,
-                              MyBattle.MaxPlayers,
-                              MyBattle.EngineName,
-                              '\t' +MyBattle.EngineVersion,
-                              '\t' +MyBattle.MapName,
-                              '\t' + MyBattle.Title,
-                              '\t' + MyBattle.ModName
-                          };
             MyBattle.Founder = ExistingUsers[UserName];
             MyBattle.Ip = localIp;
 
@@ -548,7 +535,24 @@ namespace LobbyClient
 
             // send predefined starting rectangles
             //foreach (var v in MyBattle.Rectangles) con.SendCommand("ADDSTARTRECT", v.Key, v.Value.Left, v.Value.Top, v.Value.Right, v.Value.Bottom);
+
+
+            return SendCommand(new OpenBattle() {
+                Header =
+                    new BattleHeader() {
+                        Engine = nbattle.EngineVersion,
+                        Game = nbattle.ModName,
+                        Ip = nbattle.Ip,
+                        Port = nbattle.HostPort,
+                        Map = nbattle.MapName,
+                        Password = nbattle.Password,
+                        MaxPlayers = nbattle.MaxPlayers,
+                        Title = nbattle.Title
+                    }
+            });
         }
+
+        
 
 
 
@@ -761,46 +765,7 @@ namespace LobbyClient
                         Rang(this, new EventArgs<string>(args[0]));
                         break;
 
-                    case "SAIDEX": // someone said something with emote in channel
-                        InvokeSaid(new TasSayEventArgs(SayPlace.Channel,
-                                                       args[0],
-                                                       args[1],
-                                                       Utils.Glue(args, 2),
-                                                       true));
-                        break;
 
-                    case "SAYPRIVATE": // sent back from sever when user sends private message
-                        InvokeSaid(new TasSayEventArgs(SayPlace.User,
-                                                       args[0],
-                                                       UserName,
-                                                       Utils.Glue(args, 1),
-                                                       false));
-                        break;
-
-                    case "SAIDPRIVATE": // someone said something to me
-                        InvokeSaid(new TasSayEventArgs(SayPlace.User,
-                                                       args[0],
-                                                       args[0],
-                                                       Utils.Glue(args, 1),
-                                                       false));
-                        break;
-
-                    case "SAIDBATTLE": // someone said something in battle
-                        InvokeSaid(new TasSayEventArgs(SayPlace.Battle,
-                                                       "",
-                                                       args[0],
-                                                       Utils.Glue(args, 1),
-                                                       false));
-                        break;
-
-                    case "SAIDBATTLEEX": // someone said in battle with emote
-
-                        InvokeSaid(new TasSayEventArgs(SayPlace.Battle,
-                                                       "",
-                                                       args[0],
-                                                       Utils.Glue(args, 1),
-                                                       true));
-                        break;
                     case "REDIRECT": // server sends backup IP
                         OnRedirect(args);
                         break;
@@ -825,9 +790,6 @@ namespace LobbyClient
                         OnChannelTopic(args);
                         break;
 
-                    case "OPENBATTLEFAILED": // opening new battle has failed
-                        BattleOpenFailed(this, new TasEventArgs(Utils.Glue(args)));
-                        break;
 
                     case "OPENBATTLE": // openbattle ok
                         OnOpenBattle(args);
@@ -865,9 +827,6 @@ namespace LobbyClient
                         OnUpdateBot(args);
                         break;
 
-                    case "LEFTBATTLE": // user left the battle
-                        OnLeftBattle(args);
-                        break;
 
                     case "CLIENTBATTLESTATUS": // player battle status has changed
                         OnClientBattleStatus(args);
@@ -875,10 +834,6 @@ namespace LobbyClient
 
                     case "UPDATEBATTLEINFO": // update external battle info (lock and map)
                         OnUpdateBattleInfo(args);
-                        break;
-
-                    case "BATTLEOPENED":
-                        OnBattleOpened(args);
                         break;
 
                     case "BATTLECLOSED":
@@ -897,21 +852,12 @@ namespace LobbyClient
                         OnUdpSourcePort();
                         break;
 
-                    
                     case "ADDSTARTRECT":
                         OnAddStartRect(args);
                         break;
 
                     case "REMOVESTARTRECT":
                         OnRemoveStartRect(args);
-                        break;
-
-                    case "TESTLOGINACCEPT":
-                        TestLoginAccepted(this, new TasEventArgs(args));
-                        break;
-
-                    case "TESTLOGINDENY":
-                        TestLoginDenied(this, new TasEventArgs(args));
                         break;
                 }
             }
@@ -997,38 +943,6 @@ namespace LobbyClient
             BattleEnded(this, new EventArgs<Battle>(battle));
         }
 
-        void OnBattleOpened(string[] args)
-        {
-            var mapHash = args[9];
-            var rest = Utils.Glue(args, 10).Split('\t');
-            var mapName = rest[2];
-            var modName = rest[4];
-            if (!IsBattleVisible(modName)) return;
-
-            var newBattle = new Battle {
-                BattleID = Int32.Parse(args[0]),
-                IsReplay = args[1] != "0",
-                Founder = ExistingUsers[args[3]],
-                Ip = args[4],
-                HostPort = Int32.Parse(args[5]),
-                MaxPlayers = Int32.Parse(args[6]),
-                Password = args[7] != "1" ? "*" : "apassword",
-                EngineVersion = rest[1],
-                EngineName = rest[0]
-            };
-
-            if (newBattle.Founder.Name == UserName) newBattle.Ip = localIp; // lobby can send wahtever, betteroverride here
-
-            // NatType = Int32.Parse(args[2]); // todo: correctly add nattype
-            newBattle.MapName = mapName;
-            newBattle.Title = rest[3];
-            newBattle.ModName = modName;
-            newBattle.Users.Add(new UserBattleStatus(newBattle.Founder.Name, newBattle.Founder));
-            existingBattles[newBattle.BattleID] = newBattle;
-            newBattle.Founder.IsInBattleRoom = true;
-            BattleFound(this, new EventArgs<Battle>(newBattle));
-            return;
-        }
 
         void OnUpdateBattleInfo(string[] args)
         {
@@ -1064,36 +978,12 @@ namespace LobbyClient
                 var battleStatus = MyBattle.Users[userIndex];
                 battleStatus.SetFrom(int.Parse(args[1]), int.Parse(args[2]));
                 MyBattle.Users[userIndex] = battleStatus;
-                if (MyBattle.Founder.Name == UserName) UpdateSpectators();
                 if (battleStatus.Name == UserName) {
                     lastUserBattleStatus = battleStatus.ToInt();
                     BattleMyUserStatusChanged(this, new TasEventArgs(args));
                 }
                 BattleUserStatusChanged(this, new TasEventArgs(args));
             }
-        }
-
-        void OnLeftBattle(string[] args)
-        {
-            var battleID = Int32.Parse(args[0]);
-            var user = args[1];
-            Battle battle;
-            if (!existingBattles.TryGetValue(battleID, out battle)) return;
-            if (!existingUsers.ContainsKey(user)) return;
-            battle.RemoveUser(user);
-            battle.ScriptTags.Clear();
-            var userName = args[1];
-            ExistingUsers[userName].IsInBattleRoom = false;
-
-            if (MyBattle != null && battleID == MyBattleID) {
-                if (MyBattle.Founder.Name == UserName) UpdateSpectators();
-                if (user == UserName) {
-                    MyBattle = null;
-                    MyBattleID = 0;
-                    BattleClosed(this, new EventArgs<Battle>(battle));
-                }
-            }
-            BattleUserLeft(this, new BattleUserEventArgs(userName, battleID));
         }
 
         void OnUpdateBot(string[] args)
@@ -1268,7 +1158,59 @@ namespace LobbyClient
         }
 
 
-        
+
+        async Task Process(BattleOpened bat)
+        {
+            var h = bat.Header;
+
+            var newBattle = new Battle
+            {
+                BattleID = h.BattleID.Value,
+                Founder =  existingUsers[h.Founder],
+                Ip = h.Ip,
+                HostPort = h.Port,
+                MaxPlayers = h.MaxPlayers,
+                Password = h.Password,
+                EngineVersion = h.Engine,
+                MapName = h.Map,
+                Title = h.Title,
+                ModName = h.Game,
+            };
+            existingBattles[newBattle.BattleID] = newBattle;
+            newBattle.Founder.IsInBattleRoom = true;
+            
+            BattleFound(this, new EventArgs<Battle>(newBattle));
+        }
+
+        async Task Process(JoinedBattle bat)
+        {
+            var user = existingUsers[bat.User];
+            ExistingBattles[bat.BattleID].Users.Add(new UserBattleStatus(user.Name,user));
+            user.IsInBattleRoom = true;
+            BattleUserJoined(this, new BattleUserEventArgs(user.Name, bat.BattleID));
+        }
+
+
+        async Task Process(LeftBattle left)
+        {
+            var user = existingUsers[left.User];
+            var bat = ExistingBattles[left.BattleID];
+            bat.Users.RemoveAll(x=>x.Name == left.User);
+            bat.ScriptTags.Clear();
+            user.IsInBattleRoom = false;
+
+            if (MyBattle != null && left.BattleID == MyBattleID)
+            {
+                if (UserName == left.User)
+                {
+                    MyBattle = null;
+                    MyBattleID = 0;
+                    BattleClosed(this, new EventArgs<Battle>(bat));
+                }
+            }
+           
+            BattleUserLeft(this, new BattleUserEventArgs(user.Name, left.BattleID));
+        }
 
         async Task Process(LoginResponse loginResponse)
         {
@@ -1374,19 +1316,6 @@ namespace LobbyClient
             if (!previewSaidEventArgs.Cancel) Said(this, sayArgs);
         }
 
-        bool IsBattleVisible(string modname)
-        {
-            if (FilterBattleByMod != null)
-            {
-                var e = new CancelEventArgs<string>(modname);
-                e.Cancel = false;
-                FilterBattleByMod(this, e);
-                return !e.Cancel;
-            }
-            else return true;
-        }
-
-
         void SendUdpPacket(int sourcePort, string targetIp, int targetPort)
         {
             var s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -1410,18 +1339,6 @@ namespace LobbyClient
             }
         }
 
-
-        void UpdateSpectators()
-        {
-            {
-                var n = MyBattle.Users.Count(x => x.IsSpectator);
-                if (n != lastSpectatorCount)
-                {
-                    lastSpectatorCount = n;
-                    //con.SendCommand("UPDATEBATTLEINFO", n, lockToChangeTo ? 1 : 0, mapChecksumToChangeTo,  mapToChangeTo);
-                }
-            }
-        }
 
 
         void OnPingTimer(object sender, EventArgs args)

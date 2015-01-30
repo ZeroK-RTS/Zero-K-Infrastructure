@@ -66,6 +66,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Shared\LobbyClient\LobbyClient.csproj">
+      <Project>{c91cc692-53fc-40b7-8b9a-2a57edee331e}</Project>
+      <Name>LobbyClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Shared\PlasmaShared\PlasmaShared.csproj">
       <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>
       <Name>PlasmaShared</Name>

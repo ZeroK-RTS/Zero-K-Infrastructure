@@ -10,7 +10,6 @@ using System.Timers;
 using LobbyClient;
 using PlasmaDownloader.Packages;
 using PlasmaShared;
-using PlasmaShared.LobbyMessages;
 using ZkData.UnitSyncLib;
 using Springie.autohost.Polls;
 using ZkData;
@@ -681,10 +680,10 @@ namespace Springie.autohost
             }
 
             PackageDownloader.Version version = Program.main.Downloader.PackageDownloader.GetByTag(modname);
-            if (version != null && cache.GetResourceDataByInternalName(version.InternalName) != null) modname = version.InternalName;
+            if (version != null && version.InternalName != null) modname = version.InternalName;
 
-            hostedMod = new Mod();
-            cache.GetMod(modname, (m) => { hostedMod = m; }, (m) => { }, springPaths.SpringVersion);
+            hostedMod = new Mod() {Name = modname};
+            cache.GetMod(modname, (m) => { hostedMod = m; }, (m) => {});
             if (hostedMod.IsMission && !String.IsNullOrEmpty(hostedMod.MissionMap)) mapname = hostedMod.MissionMap;
 
             //Map mapi = null;

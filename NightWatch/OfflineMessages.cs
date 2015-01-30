@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 using LobbyClient;
-using PlasmaShared.LobbyMessages;
 using ZkData;
 
 namespace NightWatch

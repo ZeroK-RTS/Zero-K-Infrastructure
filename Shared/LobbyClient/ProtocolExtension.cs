@@ -5,7 +5,6 @@ using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
 using PlasmaShared;
-using PlasmaShared.LobbyMessages;
 using ZkData;
 
 namespace LobbyClient

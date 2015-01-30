@@ -7,7 +7,6 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
 using PlasmaShared;
-using PlasmaShared.LobbyMessages;
 using ZkData;
 using ZkData.UnitSyncLib;
 
@@ -51,7 +50,7 @@ namespace LobbyClient
 
         public int NonSpectatorCount { get { return Users.Count - SpectatorCount; } }
 
-        public string Password = "*";
+        public string Password;
 
         public Dictionary<int, BattleRect> Rectangles { get; set; }
         public List<string> ScriptTags = new List<string>();
@@ -62,7 +61,7 @@ namespace LobbyClient
 
         public List<UserBattleStatus> Users { get; set; }
 
-
+        
         public bool IsSpringieManaged
         {
             get { return Founder != null && Founder.ClientType == Login.ClientTypes.SpringieManaged;}
@@ -499,6 +498,7 @@ namespace LobbyClient
                 b.Rectangles = new Dictionary<int, BattleRect>();
                 foreach (var kvp in Rectangles) b.Rectangles.Add(kvp.Key, kvp.Value);
             }
+            b.ModOptions = new Dictionary<string, string>(ModOptions);
 
             return b;
         }

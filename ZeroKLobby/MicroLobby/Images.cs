@@ -9,7 +9,6 @@ using System.Net;
 using System.Reflection;
 using System.Windows;
 using LobbyClient;
-using PlasmaShared.LobbyMessages;
 
 namespace ZeroKLobby.MicroLobby
 {

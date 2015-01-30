@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using JetBrains.Annotations;
 using LobbyClient;
 using PlasmaDownloader;
-using PlasmaShared.LobbyMessages;
 using ZkData;
 using ZkData.UnitSyncLib;
 using ZeroKLobby.MicroLobby;

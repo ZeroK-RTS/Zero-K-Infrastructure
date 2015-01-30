@@ -13,7 +13,6 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using LobbyClient;
 using Microsoft.Win32;
-using PlasmaShared.LobbyMessages;
 using SpringDownloader.Notifications;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;

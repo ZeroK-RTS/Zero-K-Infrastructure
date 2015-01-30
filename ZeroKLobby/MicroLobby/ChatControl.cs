@@ -7,7 +7,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
-using PlasmaShared.LobbyMessages;
 using ZeroKLobby.Lines;
 using ZkData;
 

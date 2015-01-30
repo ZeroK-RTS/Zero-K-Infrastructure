@@ -103,8 +103,6 @@
     <Compile Include="ISpringieService\RecommendedMapResult.cs" />
     <Compile Include="ISpringieService\RectInfo.cs" />
     <Compile Include="ISpringieService\SpringBattleStartSetup.cs" />
-    <Compile Include="LobbyMessages\CommandJsonSerializer.cs" />
-    <Compile Include="LobbyMessages\Messages.cs" />
     <Compile Include="LuaTable.cs" />
     <Compile Include="MetaDataCache.cs" />
     <Compile Include="Pool.cs" />

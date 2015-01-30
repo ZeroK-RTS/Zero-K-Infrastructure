@@ -250,5 +250,57 @@ namespace LobbyClient
     }
 
 
+    public class OpenBattle
+    {
+        public BattleHeader Header;
+    }
+
+    public class BattleHeader
+    {
+        public int? BattleID;
+        public string Engine;
+        public string Game;
+        public string Map;
+        public int MaxPlayers;
+        public int PlayerCount;
+        public int SpectatorCount;
+        public string Password;
+        public string Title;
+        public int Port;
+        public string Ip;
+        public string Founder;
+    }
+
+    public class BattleOpened
+    {
+        public BattleHeader Header;
+    }
+
+
+    public class LeftBattle
+    {
+        public int BattleID;
+        public string User;
+    }
+
+    public class JoinBattle
+    {
+        public string Password;
+        public int BattleID;
+    }
+
+    public class LeaveBattle
+    {
+        public int BattleID;
+    }
+
+    public class JoinedBattle
+    {
+        public int BattleID;
+        public string User;
+    }
+
+
+
 
 }

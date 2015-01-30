@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using LobbyClient;
-using PlasmaShared.LobbyMessages;
 using ZkData;
 using ZeroKLobby.Lines;
 
