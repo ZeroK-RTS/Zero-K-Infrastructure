@@ -42,7 +42,6 @@ namespace ZeroKLobby.MicroLobby
             Program.FriendManager.FriendRemoved += FriendManager_FriendRemoved;
             Program.TasClient.ChannelJoinFailed += TasClient_ChannelJoinFailed;
             Program.TasClient.ChannelForceLeave += TasClient_ChannelForceLeave;
-            Program.TasClient.BattleForceQuit += TasClient_BattleForceQuit;
 
             foreach (var channel in Program.TasClient.JoinedChannels.Values.Where(c => !IsIgnoredChannel(c.Name))) CreateChannelControl(channel.Name);
             toolTabs.SelectChannelTab("Battle");

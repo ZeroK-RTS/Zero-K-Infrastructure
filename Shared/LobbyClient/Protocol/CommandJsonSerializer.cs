@@ -26,13 +26,14 @@ namespace LobbyClient
             RegisterType<Say>();
             RegisterType<UserDisconnected>();
             RegisterType<OpenBattle>();
-            RegisterType<BattleOpened>();
+            RegisterType<BattleAdded>();
             RegisterType<UserBattleStatus>();
             RegisterType<LeftBattle>();
             RegisterType<JoinedBattle>();
             RegisterType<LeftBattle>();
             RegisterType<JoinBattle>();
             RegisterType<LeaveBattle>();
+            RegisterType<BattleRemoved>();
 
 
             settings.Formatting = Formatting.None;

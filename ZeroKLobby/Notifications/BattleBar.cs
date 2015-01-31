@@ -228,7 +228,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
                     Stop();
                 };
 
-            client.MyBattleEnded += (s, e) =>
+            client.MyBattleRemoved += (s, e) =>
                 {
                     var t = new Timer();
                     var tryCount = 0;

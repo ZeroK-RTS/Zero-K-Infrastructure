@@ -49,8 +49,8 @@ namespace Fixer
                 }
             };
             tas.BattleFound += (sender, args) => {
-                if (args.Data.Title == batname) {
-                    tas.JoinBattle(args.Data.BattleID);
+                if (args.Title == batname) {
+                    tas.JoinBattle(args.BattleID);
                 }
             };
 

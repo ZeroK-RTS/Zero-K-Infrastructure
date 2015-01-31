@@ -175,7 +175,7 @@ namespace LobbyClient
         public event EventHandler<User> UserAdded = delegate { };
         public event EventHandler<UserDisconnected> UserRemoved = delegate { };
         public event EventHandler<OldNewPair<User>> UserStatusChanged = delegate { };
-        public event EventHandler<EventArgs<Battle>> BattleFound = delegate { };
+        public event EventHandler<Battle> BattleFound = delegate { };
         public event EventHandler<ChannelUserInfo> ChannelUserAdded = delegate { };
         public event EventHandler<ChannelUserRemovedInfo> ChannelUserRemoved = delegate { };
         public event EventHandler<Welcome> Connected = delegate { };
@@ -184,27 +184,31 @@ namespace LobbyClient
         public event EventHandler<LoginResponse> LoginDenied = delegate { };
         public event EventHandler<TasSayEventArgs> Said = delegate { }; // this is fired when any kind of say message is recieved
         public event EventHandler<SayingEventArgs> Saying = delegate { }; // this client is trying to say somethign
-        
         public event EventHandler<BattleUserEventArgs> BattleUserJoined = delegate { };
         public event EventHandler<BattleUserEventArgs> BattleUserLeft = delegate { };
-
-
         public event EventHandler<CancelEventArgs<Channel>> PreviewChannelJoined = delegate { };
+        public event EventHandler<TasEventArgs> RegistrationAccepted = delegate { };
+        public event EventHandler<RegisterResponse> RegistrationDenied = delegate { };
+        public event EventHandler<Battle> BattleRemoved = delegate { }; // raised just after the battle is removed from the battle list
+        public event EventHandler<Battle> MyBattleRemoved = delegate { }; // raised just after the battle is removed from the battle list
+        public event EventHandler<Battle> BattleClosed = delegate { };
+        public event EventHandler<Battle> BattleOpened = delegate { };
+
+
+
+
 
         public event EventHandler<EventArgs<BotBattleStatus>> BattleBotAdded = delegate { };
         public event EventHandler<EventArgs<BotBattleStatus>> BattleBotRemoved = delegate { };
         public event EventHandler<EventArgs<BotBattleStatus>> BattleBotUpdated = delegate { };
-        public event EventHandler<EventArgs<Battle>> BattleClosed = delegate { };
         public event EventHandler<TasEventArgs> BattleDetailsChanged = delegate { };
-        public event EventHandler<EventArgs<Battle>> BattleEnded = delegate { }; // raised just after the battle is removed from the battle list
-        public event EventHandler<EventArgs<Battle>> BattleEnding = delegate { }; // raised just before the battle is removed from the battle list
-        public event EventHandler BattleForceQuit = delegate { }; // i was kicked from a battle (sent after LEFTBATTLE)
+
         public event EventHandler<BattleInfoEventArgs> BattleInfoChanged = delegate { };
         public event EventHandler<EventArgs<Battle>> BattleJoined = delegate { };
         public event EventHandler<BattleInfoEventArgs> BattleLockChanged = delegate { };
         public event EventHandler<BattleInfoEventArgs> BattleMapChanged = delegate { };
         public event EventHandler<TasEventArgs> BattleMyUserStatusChanged = delegate { };
-        public event EventHandler<TasEventArgs> BattleOpened = delegate { };
+        
         public event EventHandler<EventArgs<User>> BattleStarted = delegate { };
         public event EventHandler<TasEventArgs> BattleUserStatusChanged = delegate { };
         public event EventHandler<TasEventArgs> ChannelForceLeave = delegate { }; // i was kicked from a channel
@@ -216,9 +220,8 @@ namespace LobbyClient
         public event EventHandler<EventArgs> HourChime = delegate { };
         public event EventHandler<string> Input = delegate { };
         public event EventHandler<TasEventArgs> JoinBattleFailed = delegate { };
+        
 
-
-        public event EventHandler<EventArgs<Battle>> MyBattleEnded = delegate { }; // raised just after the battle is removed from the battle list
         public event EventHandler<TasEventArgs> MyBattleHostExited = delegate { };
         public event EventHandler<BattleInfoEventArgs> MyBattleMapChanged = delegate { };
         public event EventHandler<TasEventArgs> MyBattleStarted = delegate { };
@@ -226,8 +229,6 @@ namespace LobbyClient
 
         public event EventHandler<CancelEventArgs<TasSayEventArgs>> PreviewSaid = delegate { };
         public event EventHandler<EventArgs<string>> Rang = delegate { };
-        public event EventHandler<TasEventArgs> RegistrationAccepted = delegate { };
-        public event EventHandler<RegisterResponse> RegistrationDenied = delegate { };
         public event EventHandler RequestBattleStatus = delegate { };
         public event EventHandler<TasEventArgs> StartRectAdded = delegate { };
         public event EventHandler<TasEventArgs> StartRectRemoved = delegate { };
@@ -633,10 +634,6 @@ namespace LobbyClient
             //con.SendCommand("MYBATTLESTATUS", status.ToInt(), status.TeamColor);
         }
 
-        public void SendMyBattleStatus(int battleStatus, int color)
-        {
-            //con.SendCommand("MYBATTLESTATUS", battleStatus, color);
-        }
 
         public void SendRaw(string text)
         {
@@ -685,29 +682,15 @@ namespace LobbyClient
             // Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             try
             {
-                if (command.StartsWith("#"))
-                {
-                    MessageID = int.Parse(command.Substring(1));
-                    command = args[0];
-                    args = Utils.ShiftArray(args, -1);
-                }
-
-                
+               
                 switch (command)
                 {
 
-
-                    case "ADDUSER": // new user joined ta server
-                        OnAddUser(args);
-                        break;
 
                     case "FORCELEAVECHANNEL":
                         OnForceLeaveChannel(args);
                         break;
 
-                    case "FORCEQUITBATTLE":
-                        BattleForceQuit(this, EventArgs.Empty);
-                        break;
 
 
                     case "SERVERMSGBOX": // server messagebox
@@ -793,10 +776,6 @@ namespace LobbyClient
                         OnUpdateBattleInfo(args);
                         break;
 
-                    case "BATTLECLOSED":
-                        OnBattleClosed(args);
-                        break;
-
 
                     case "SETSCRIPTTAGS": // updates internal battle details
                         OnSetScriptTags(args);
@@ -846,25 +825,6 @@ namespace LobbyClient
             BattleDetailsChanged(this, new TasEventArgs(args));
         }
 
-        void OnBattleClosed(string[] args)
-        {
-            var battleID = Int32.Parse(args[0]);
-            Battle battle;
-            if (!existingBattles.TryGetValue(battleID, out battle)) return;
-            foreach (var u in battle.Users) {
-                User user;
-                if (ExistingUsers.TryGetValue(u.Name, out user)) user.IsInBattleRoom = false;
-            }
-            if (battle == MyBattle) {
-                battle.ScriptTags.Clear();
-                battle.Users.Clear();
-                BattleClosed(this, new EventArgs<Battle>(battle));
-                MyBattleEnded(this, new EventArgs<Battle>(battle));
-            }
-            BattleEnding(this, new EventArgs<Battle>(battle));
-            existingBattles.Remove(battleID);
-            BattleEnded(this, new EventArgs<Battle>(battle));
-        }
 
 
         void OnUpdateBattleInfo(string[] args)
@@ -1011,26 +971,10 @@ namespace LobbyClient
             ChannelForceLeave(this, new TasEventArgs(args));
         }
 
-        void OnAddUser(string[] args)
-        {
-            try {
-                //var u = User.Create(args[0]);
-                //u.Country = args[1];
-                //int cpu;
-                //int.TryParse(args[2], out cpu);
-                //u.Cpu = cpu;
-                //u.LobbyID = Convert.ToInt32(args[3]);
-                //ExistingUsers.Add(u.Name, u);
-                //UserAdded(this, new EventArgs<User>(u));
-            } catch (Exception e) {
-                //TraceError ensure bright red coloured message (WriteLine looked harmless):
-                Trace.TraceError("Error was thrown while processing chat command ADDUSER (check if this event trigger faulty code in application): " + e);
-            }
-        }
 
 
 
-        async Task Process(BattleOpened bat)
+        async Task Process(BattleAdded bat)
         {
             var h = bat.Header;
 
@@ -1050,7 +994,7 @@ namespace LobbyClient
             existingBattles[newBattle.BattleID] = newBattle;
             newBattle.Founder.IsInBattleRoom = true;
             
-            BattleFound(this, new EventArgs<Battle>(newBattle));
+            BattleFound(this, newBattle);
         }
 
         async Task Process(JoinedBattle bat)
@@ -1062,6 +1006,7 @@ namespace LobbyClient
             BattleUserJoined(this, new BattleUserEventArgs(user.Name, bat.BattleID));
             if (user.Name == UserName) {
                 MyBattle = battle;
+                if (battle.Founder.Name == UserName) BattleOpened(this, battle);
                 BattleJoined(this, new EventArgs<Battle>(MyBattle));
             }
 
@@ -1072,22 +1017,44 @@ namespace LobbyClient
         {
             var user = existingUsers[left.User];
             var bat = ExistingBattles[left.BattleID];
-            bat.Users.RemoveAll(x=>x.Name == left.User);
-            bat.ScriptTags.Clear();
-            bat.Bots.Clear();
             user.IsInBattleRoom = false;
+            bat.Users.RemoveAll(x => x.Name == left.User);
 
             if (MyBattle != null && left.BattleID == MyBattleID)
             {
                 if (UserName == left.User)
                 {
+                    bat.ScriptTags.Clear();
+                    bat.Bots.Clear();
+
                     MyBattle = null;
-                    BattleClosed(this, new EventArgs<Battle>(bat));
+                    BattleClosed(this, bat);
                 }
             }
            
             BattleUserLeft(this, new BattleUserEventArgs(user.Name, left.BattleID));
         }
+
+        async Task Process(BattleRemoved br)
+        {
+            Battle battle;
+            if (!existingBattles.TryGetValue(br.BattleID, out battle)) return;
+            foreach (var u in battle.Users)
+            {
+                User user;
+                if (ExistingUsers.TryGetValue(u.Name, out user)) user.IsInBattleRoom = false;
+            }
+            if (battle == MyBattle)
+            {
+                battle.ScriptTags.Clear();
+                battle.Users.Clear();
+                BattleClosed(this, battle);
+                MyBattleRemoved(this, battle);
+            }
+            existingBattles.Remove(br.BattleID);
+            BattleRemoved(this, battle);
+        }
+
 
         async Task Process(LoginResponse loginResponse)
         {

@@ -19,7 +19,8 @@ namespace LobbyClient
 	{
 		public int AllyNumber;
 		public bool IsSpectator;
-		public DateTime JoinTime = DateTime.Now;
+        
+        public DateTime JoinTime = DateTime.Now;
 		public string Name;
 		public string ScriptPassword;
 		public SyncStatuses SyncStatus = SyncStatuses.Unknown;

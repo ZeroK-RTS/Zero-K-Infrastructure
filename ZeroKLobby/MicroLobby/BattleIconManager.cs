@@ -25,7 +25,7 @@ namespace ZeroKLobby.MicroLobby
         public BattleIconManager()
         {
             Program.TasClient.BattleFound += TasClient_BattleFound;
-            Program.TasClient.BattleEnded += TasClient_BattleEnded;
+            Program.TasClient.BattleRemoved += TasClient_BattleEnded;
             Program.TasClient.BattleMapChanged += TasClient_BattleMapChanged;
             Program.TasClient.BattleInfoChanged += TasClient_BattleInfoChanged;
             Program.TasClient.BattleUserJoined += TasClient_BattleUserJoined;
@@ -130,14 +130,14 @@ namespace ZeroKLobby.MicroLobby
             }
         }
 
-        void TasClient_BattleEnded(object sender, EventArgs<Battle> e)
+        void TasClient_BattleEnded(object sender, Battle battle)
         {
-            RemoveBattleIcon(e.Data);
+            RemoveBattleIcon(battle);
         }
 
-        void TasClient_BattleFound(object sender, EventArgs<Battle> e)
+        void TasClient_BattleFound(object sender, Battle battle)
         {
-            var battleID = e.Data.BattleID;
+            var battleID = battle.BattleID;
             var battleIcon = AddBattle(battleID);
             BattleAdded(this, new EventArgs<BattleIcon>(battleIcon));
         }

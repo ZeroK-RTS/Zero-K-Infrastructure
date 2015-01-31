@@ -271,10 +271,16 @@ namespace LobbyClient
         public string Founder;
     }
 
-    public class BattleOpened
+    public class BattleAdded
     {
         public BattleHeader Header;
     }
+
+    public class BattleRemoved
+    {
+        public int BattleID;
+    }
+
 
 
     public class LeftBattle

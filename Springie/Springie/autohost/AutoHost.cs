@@ -872,7 +872,7 @@ namespace Springie.autohost
             if (e1.BattleID == tas.MyBattleID) SayBattle("game " + (tas.MyBattle.IsLocked ? "locked" : "unlocked"), false);
         }
 
-        void tas_BattleOpened(object sender, TasEventArgs e) {
+        void tas_BattleOpened(object sender, Battle battle) {
             tas.ChangeMyBattleStatus(true, SyncStatuses.Synced);
             if (hostedMod.IsMission) {
                 foreach (MissionSlot slot in hostedMod.MissionSlots.Where(x => !x.IsHuman)) {
