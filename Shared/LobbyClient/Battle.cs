@@ -249,7 +249,7 @@ namespace LobbyClient
                     }
 
 
-                    GeneratePlayerSection(playersExport, localUser, startSetup, users, script, bots);
+                    GeneratePlayerSection(playersExport, users, script, bots,mod,Rectangles,ModOptions,localUser,startSetup);
 
                     return script.ToString();
                 }
@@ -260,14 +260,18 @@ namespace LobbyClient
             }
         }
 
-        void GeneratePlayerSection(List<UserBattleStatus> playersExport,
-            User localUser,
-            SpringBattleStartSetup startSetup,
+        public static void GeneratePlayerSection(List<UserBattleStatus> playersExport,
             List<UserBattleStatus> users,
             StringBuilder script,
-            List<BotBattleStatus> bots)
+            List<BotBattleStatus> bots,
+            Mod _mod,
+            Dictionary<int,BattleRect> _rectangles,
+            Dictionary<string,string> _modOptions,
+            User localUser = null,
+            SpringBattleStartSetup startSetup = null
+           )
         {
-            if (mod != null && mod.IsMission) // mission stuff
+            if (_mod != null && _mod.IsMission) // mission stuff
             {
                 var aiNum = 0;
                 var declaredTeams = new HashSet<int>();
@@ -278,7 +282,7 @@ namespace LobbyClient
                     ScriptAddUser(script, i, playersExport, startSetup, u.TeamNumber, u);
                     if (!u.IsSpectator && !declaredTeams.Contains(u.TeamNumber))
                     {
-                        ScriptAddTeam(script, u.TeamNumber, i, u,mod);
+                        ScriptAddTeam(script, u.TeamNumber, i, u,_mod);
                         declaredTeams.Add(u.TeamNumber);
                     }
                 }
@@ -291,7 +295,7 @@ namespace LobbyClient
                         ScriptAddBot(script, aiNum++, b.TeamNumber, i, b);
                         if (!declaredTeams.Contains(b.TeamNumber))
                         {
-                            ScriptAddTeam(script, b.TeamNumber, i, b,mod);
+                            ScriptAddTeam(script, b.TeamNumber, i, b,_mod);
                             declaredTeams.Add(b.TeamNumber);
                         }
                     }
@@ -304,14 +308,19 @@ namespace LobbyClient
                 var userNum = 0;
                 var teamNum = 0;
                 var aiNum = 0;
+
                 //players is excluding self (so "springie doesn't appear as spec ingame") & excluding bots (bots is added later for each owner)
-                foreach (var u in users.Where(u => !bots.Any(b => b.Name == u.Name)).OrderBy(x => x.TeamNumber).Where(x => x.Name != localUser.Name)) 
+                var non_botUsers = users.Where(u => !bots.Any(b => b.Name == u.Name)); //.OrderBy(x => x.TeamNumber);
+                if (localUser != null) //I am a server
+                    non_botUsers = non_botUsers.Where(x => x.Name != localUser.Name);
+                
+                foreach (var u in non_botUsers.OrderBy(x => x.TeamNumber)) 
                 {
                     ScriptAddUser(script, userNum, playersExport, startSetup, teamNum, u);
 
                     if (!u.IsSpectator)
                     {
-                        ScriptAddTeam(script, teamNum, userNum, u,mod);
+                        ScriptAddTeam(script, teamNum, userNum, u,_mod);
                         teamNum++;
                     }
 
@@ -319,7 +328,7 @@ namespace LobbyClient
                     {
                         ScriptAddBot(script, aiNum, teamNum, userNum, b);
                         aiNum++;
-                        ScriptAddTeam(script, teamNum, userNum, b,mod);
+                        ScriptAddTeam(script, teamNum, userNum, b,_mod);
                         teamNum++;
                     }
                     userNum++;
@@ -329,7 +338,7 @@ namespace LobbyClient
             // ALLIANCES
             script.AppendLine();
             foreach (var allyNumber in
-                users.Where(x => !x.IsSpectator).Select(x => x.AllyNumber).Union(bots.Select(x => x.AllyNumber)).Union(Rectangles.Keys).Distinct())
+                users.Where(x => !x.IsSpectator).Select(x => x.AllyNumber).Union(bots.Select(x => x.AllyNumber)).Union(_rectangles.Keys).Distinct())
             {
                 // get allies from each player, bot and rectangles (for koth)
                 script.AppendFormat("[ALLYTEAM{0}]\n", allyNumber);
@@ -337,7 +346,7 @@ namespace LobbyClient
                 script.AppendFormat("     NumAllies={0};\n", 0);
                 double left = 0, top = 0, right = 1, bottom = 1;
                 BattleRect rect;
-                if (Rectangles.TryGetValue(allyNumber, out rect)) rect.ToFractions(out left, out top, out right, out bottom);
+                if (_rectangles.TryGetValue(allyNumber, out rect)) rect.ToFractions(out left, out top, out right, out bottom);
                 script.AppendFormat(CultureInfo.InvariantCulture,"     StartRectLeft={0};\n", left);
                 script.AppendFormat(CultureInfo.InvariantCulture,"     StartRectTop={0};\n", top);
                 script.AppendFormat(CultureInfo.InvariantCulture,"     StartRectRight={0};\n", right);
@@ -347,7 +356,7 @@ namespace LobbyClient
 
             script.AppendLine();
 
-            if (!mod.IsMission)
+            if (!_mod.IsMission)
             {
                 script.AppendLine("  [MODOPTIONS]");
                 script.AppendLine("  {");
@@ -355,10 +364,10 @@ namespace LobbyClient
                 var options = new Dictionary<string, string>();
 
                 // put standard modoptions to options dictionary
-                foreach (var o in mod.Options.Where(x => x.Type != OptionType.Section))
+                foreach (var o in _mod.Options.Where(x => x.Type != OptionType.Section))
                 {
                     var v = o.Default;
-                    if (ModOptions.ContainsKey(o.Key)) v = ModOptions[o.Key];
+                    if (_modOptions.ContainsKey(o.Key)) v = _modOptions[o.Key];
                     options[o.Key] = v;
                 }
 
@@ -418,7 +427,7 @@ namespace LobbyClient
             return String.Format("{0} {1} ({2}+{3}/{4})", ModName, MapName, NonSpectatorCount, SpectatorCount, MaxPlayers);
         }
 
-        public static void ScriptAddBot(StringBuilder script, int aiNum, int teamNum, int userNum, BotBattleStatus status)
+        static void ScriptAddBot(StringBuilder script, int aiNum, int teamNum, int userNum, BotBattleStatus status)
         {
             // AI
             var split = status.aiLib.Split('|');
@@ -436,7 +445,7 @@ namespace LobbyClient
             script.AppendLine("  }\n");
         }
 
-        public static void ScriptAddTeam(StringBuilder script, int teamNum, int userNum, UserBattleStatus status, Mod mod)
+        static void ScriptAddTeam(StringBuilder script, int teamNum, int userNum, UserBattleStatus status, Mod mod)
         {
             // BOT TEAM
             script.AppendFormat("  [TEAM{0}]\n", teamNum);
@@ -460,7 +469,7 @@ namespace LobbyClient
             script.AppendLine("  }");
         }
 
-        public static void ScriptAddUser(StringBuilder script, int userNum, List<UserBattleStatus> playersExport, SpringBattleStartSetup startSetup, int teamNum, UserBattleStatus status)
+        static void ScriptAddUser(StringBuilder script, int userNum, List<UserBattleStatus> playersExport, SpringBattleStartSetup startSetup, int teamNum, UserBattleStatus status)
         {
             var export = status.Clone();
             export.TeamNumber = teamNum;
