@@ -27,8 +27,6 @@ namespace LobbyClient
 
 		public int TeamNumber;
 		
-        public IPAddress ip = IPAddress.None;
-		public int port;
 
 		public UserBattleStatus() {}
 
@@ -49,8 +47,8 @@ namespace LobbyClient
 		{
 			if (ReferenceEquals(null, other)) return false;
 			if (ReferenceEquals(this, other)) return true;
-			return other.AllyNumber == AllyNumber && Equals(other.ip, ip) && other.IsSpectator.Equals(IsSpectator) &&
-			       other.JoinTime.Equals(JoinTime) && Equals(other.Name, Name) && other.port == port &&
+			return other.AllyNumber == AllyNumber && other.IsSpectator.Equals(IsSpectator) &&
+			       other.JoinTime.Equals(JoinTime) && Equals(other.Name, Name) &&
 			       Equals(other.SyncStatus, SyncStatus) &&  other.TeamNumber == TeamNumber;
 		}
 
@@ -86,11 +84,9 @@ namespace LobbyClient
 			unchecked
 			{
 				var result = AllyNumber;
-				result = (result*397) ^ (ip != null ? ip.GetHashCode() : 0);
 				result = (result*397) ^ IsSpectator.GetHashCode();
 				result = (result*397) ^ JoinTime.GetHashCode();
 				result = (result*397) ^ (Name != null ? Name.GetHashCode() : 0);
-				result = (result*397) ^ port;
 				result = (result*397) ^ SyncStatus.GetHashCode();
 				result = (result*397) ^ TeamNumber;
 				return result;

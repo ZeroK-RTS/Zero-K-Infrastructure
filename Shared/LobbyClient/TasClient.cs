@@ -80,10 +80,7 @@ namespace LobbyClient
         public string serverHost { get; private set; }
 
         int serverPort;
-        int serverUdpHolePunchingPort;
         string serverVersion;
-        bool startingAfterUdpPunch;
-        readonly Timer udpPunchingTimer = new Timer(400);
 
         public bool ConnectionFailed { get; private set; }
 
@@ -209,7 +206,6 @@ namespace LobbyClient
         public event EventHandler<TasEventArgs> BattleMyUserStatusChanged = delegate { };
         public event EventHandler<TasEventArgs> BattleOpened = delegate { };
         public event EventHandler<EventArgs<User>> BattleStarted = delegate { };
-        public event EventHandler<TasEventArgs> BattleUserIpRecieved = delegate { };
         public event EventHandler<TasEventArgs> BattleUserStatusChanged = delegate { };
         public event EventHandler<TasEventArgs> ChannelForceLeave = delegate { }; // i was kicked from a channel
         public event EventHandler<Channel> ChannelJoined = delegate { };
@@ -292,8 +288,6 @@ namespace LobbyClient
                 };
             minuteTimer.Start();
 
-            udpPunchingTimer.Elapsed += udpPunchingTimer_Elapsed;
-            udpPunchingTimer.AutoReset = true;
         }
 
 
@@ -330,7 +324,6 @@ namespace LobbyClient
         }
 
         public void ChangeMyBattleStatus(bool? spectate = null,
-                                         bool? ready = null,
                                          SyncStatuses? syncStatus = null,
                                          int? ally = null,
                                          int? team = null)
@@ -669,13 +662,7 @@ namespace LobbyClient
         /// </summary>
         public void StartGame()
         {
-            if (MyBattle.Nat == Battle.NatMode.HolePunching)
-            {
-                startingAfterUdpPunch = true;
-                SendUdpPacket(0, serverHost, serverUdpHolePunchingPort);
-                udpPunchingTimer.Start();
-            }
-            else ChangeMyUserStatus(false, true);
+            ChangeMyUserStatus(false, true);
         }
 
         public void UpdateBot(string name, UserBattleStatus battleStatus)
@@ -810,16 +797,9 @@ namespace LobbyClient
                         OnBattleClosed(args);
                         break;
 
-                    case "CLIENTIPPORT":
-                        OnClientIpPort(args);
-                        break;
 
                     case "SETSCRIPTTAGS": // updates internal battle details
                         OnSetScriptTags(args);
-                        break;
-
-                    case "UDPSOURCEPORT":
-                        OnUdpSourcePort();
                         break;
 
                     case "ADDSTARTRECT":
@@ -857,21 +837,6 @@ namespace LobbyClient
             StartRectAdded(this, new TasEventArgs(args));
         }
 
-        void OnUdpSourcePort()
-        {
-            udpPunchingTimer.Stop();
-            if (startingAfterUdpPunch) {
-                startingAfterUdpPunch = false;
-
-                // send UDP packets to client (2x to be sure)
-                foreach (var ubs in MyBattle.Users) if (ubs.ip != IPAddress.None && ubs.port != 0) SendUdpPacket(lastUdpSourcePort, ubs.ip.ToString(), ubs.port);
-                foreach (var ubs in MyBattle.Users) if (ubs.ip != IPAddress.None && ubs.port != 0) SendUdpPacket(lastUdpSourcePort, ubs.ip.ToString(), ubs.port);
-
-                MyBattle.HostPort = lastUdpSourcePort; // update source port for hosting and start it
-                ChangeMyUserStatus(false, true);
-            }
-        }
-
         void OnSetScriptTags(string[] args)
         {
             //var bd = new BattleDetails();
@@ -879,18 +844,6 @@ namespace LobbyClient
             //MyBattle.Details = bd;
             MyBattle.ScriptTags.AddRange(args);
             BattleDetailsChanged(this, new TasEventArgs(args));
-        }
-
-        void OnClientIpPort(string[] args)
-        {
-            var idx = MyBattle.GetUserIndex(args[0]);
-            if (idx != -1) {
-                var bs = MyBattle.Users[idx];
-                bs.ip = IPAddress.Parse(args[1]);
-                bs.port = int.Parse(args[2]);
-                MyBattle.Users[idx] = bs;
-                BattleUserIpRecieved(this, new TasEventArgs(args));
-            }
         }
 
         void OnBattleClosed(string[] args)
@@ -1240,20 +1193,6 @@ namespace LobbyClient
             if (!previewSaidEventArgs.Cancel) Said(this, sayArgs);
         }
 
-        void SendUdpPacket(int sourcePort, string targetIp, int targetPort)
-        {
-            var s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-
-            var local = new IPEndPoint(IPAddress.Any, sourcePort);
-            s.Bind(local);
-            //s.ExclusiveAddressUse = false;
-            lastUdpSourcePort = ((IPEndPoint)s.LocalEndPoint).Port;
-
-            s.Connect(targetIp, targetPort);
-            s.Send(Encoding.ASCII.GetBytes(UserName)); // todo: make async?
-            s.Close();
-        }
-
 
         void UpdateBattleInfo(bool lck, string mapname)
         {
@@ -1282,10 +1221,6 @@ namespace LobbyClient
             }*/
         }
 
-        void udpPunchingTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            SendUdpPacket(lastUdpSourcePort, serverHost, serverUdpHolePunchingPort);
-        }
 
     }
 }

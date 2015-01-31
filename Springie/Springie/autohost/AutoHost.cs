@@ -682,10 +682,6 @@ namespace Springie.autohost
             //cache.GetMap(mapname, (m, x, y, z) => { mapi = m; }, (e) => { }, springPaths.SpringVersion);
             //int mint, maxt;
             var b = new Battle(springPaths.SpringVersion, password, hostingPort, maxPlayers, mapname, title, hostedMod);
-            // if hole punching enabled then we use it
-            if (Program.main.Config.UseHolePunching) b.Nat = Battle.NatMode.HolePunching;
-            else if (Program.main.Config.GargamelMode) b.Nat = Battle.NatMode.FixedPorts;
-            else b.Nat = Battle.NatMode.None; // else either no nat or fixed ports (for gargamel fake - to get client IPs)
             
 
             tas.OpenBattle(b);
@@ -877,7 +873,7 @@ namespace Springie.autohost
         }
 
         void tas_BattleOpened(object sender, TasEventArgs e) {
-            tas.ChangeMyBattleStatus(true, false, SyncStatuses.Synced);
+            tas.ChangeMyBattleStatus(true, SyncStatuses.Synced);
             if (hostedMod.IsMission) {
                 foreach (MissionSlot slot in hostedMod.MissionSlots.Where(x => !x.IsHuman)) {
                     var ubs = new UserBattleStatus();

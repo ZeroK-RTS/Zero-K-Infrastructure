@@ -61,7 +61,6 @@ namespace ZeroKLobby.Notifications
             spring.SpringExited += (s, e) =>
                 {
                     client.ChangeMyUserStatus(isInGame: false);
-                    client.ChangeMyBattleStatus(ready: true);
 
                     if (e.Data) {
                         Program.MainWindow.InvokeFunc(() =>

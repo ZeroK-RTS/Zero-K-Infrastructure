@@ -14,12 +14,6 @@ namespace LobbyClient
 {
     public class Battle: ICloneable
     {
-        public enum NatMode
-        {
-            None = 0,
-            HolePunching = 1,
-            FixedPorts = 2
-        };
 
         /// <summary>
         /// Full mod metadata - loaded only for joined battle
@@ -46,7 +40,6 @@ namespace LobbyClient
 
         public string ModName { get; set; }
         public Dictionary<string, string> ModOptions { get; private set; }
-        public NatMode Nat { get; set; }
 
         public int NonSpectatorCount { get { return Users.Count - SpectatorCount; } }
 
@@ -89,7 +82,6 @@ namespace LobbyClient
             Bots = new List<BotBattleStatus>();
             ModOptions = new Dictionary<string, string>();
             Rectangles = new Dictionary<int, BattleRect>();
-            Nat = NatMode.None;
             Users = new List<UserBattleStatus>();
         }
 
