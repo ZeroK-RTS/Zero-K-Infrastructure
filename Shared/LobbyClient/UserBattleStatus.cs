@@ -2,6 +2,7 @@
 
 using System;
 using System.Net;
+using Newtonsoft.Json;
 
 #endregion
 
@@ -17,28 +18,17 @@ namespace LobbyClient
 	public class UserBattleStatus
 	{
 		public int AllyNumber;
-		public bool IsReady;
 		public bool IsSpectator;
 		public DateTime JoinTime = DateTime.Now;
 		public string Name;
 		public string ScriptPassword;
 		public int Side;
 		public SyncStatuses SyncStatus = SyncStatuses.Unknown;
-		public int TeamColor;
 		public User LobbyUser;
-		public int[] TeamColorRGB
-		{
-			get
-			{
-				var r = TeamColor & 255;
-				var g = (TeamColor >> 8) & 255;
-				var b = (TeamColor >> 16) & 255;
-				return new[] { r, g, b };
-			}
-		}
 
 		public int TeamNumber;
-		public IPAddress ip = IPAddress.None;
+		
+        public IPAddress ip = IPAddress.None;
 		public int port;
 
 		public UserBattleStatus() {}
@@ -60,27 +50,24 @@ namespace LobbyClient
 		{
 			if (ReferenceEquals(null, other)) return false;
 			if (ReferenceEquals(this, other)) return true;
-			return other.AllyNumber == AllyNumber && Equals(other.ip, ip) && other.IsReady.Equals(IsReady) && other.IsSpectator.Equals(IsSpectator) &&
+			return other.AllyNumber == AllyNumber && Equals(other.ip, ip) && other.IsSpectator.Equals(IsSpectator) &&
 			       other.JoinTime.Equals(JoinTime) && Equals(other.Name, Name) && other.port == port && other.Side == Side &&
-			       Equals(other.SyncStatus, SyncStatus) && other.TeamColor == TeamColor && other.TeamNumber == TeamNumber;
+			       Equals(other.SyncStatus, SyncStatus) &&  other.TeamNumber == TeamNumber;
 		}
 
 
-		public void SetFrom(int status, int color)
+		public void SetFrom(int status)
 		{
-			IsReady = (status & 2) > 0;
 			TeamNumber = (status >> 2) & 15;
 			AllyNumber = (status >> 6) & 15;
 			IsSpectator = (status & 1024) == 0;
 			SyncStatus = (SyncStatuses)((status >> 22) & 3);
 			Side = (status >> 24) & 15;
-			TeamColor = color;
 		}
 
 		public int ToInt()
 		{
 			var status = 0;
-			if (IsReady) status |= 2;
 			status += (TeamNumber & 15) << 2;
 			status += (AllyNumber & 15) << 6;
 			if (!IsSpectator) status |= 1024;
@@ -103,14 +90,12 @@ namespace LobbyClient
 			{
 				var result = AllyNumber;
 				result = (result*397) ^ (ip != null ? ip.GetHashCode() : 0);
-				result = (result*397) ^ IsReady.GetHashCode();
 				result = (result*397) ^ IsSpectator.GetHashCode();
 				result = (result*397) ^ JoinTime.GetHashCode();
 				result = (result*397) ^ (Name != null ? Name.GetHashCode() : 0);
 				result = (result*397) ^ port;
 				result = (result*397) ^ Side;
 				result = (result*397) ^ SyncStatus.GetHashCode();
-				result = (result*397) ^ TeamColor;
 				result = (result*397) ^ TeamNumber;
 				return result;
 			}

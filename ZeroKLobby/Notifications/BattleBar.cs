@@ -226,8 +226,6 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
                         SyncStatus = HasAllResources() ? SyncStatuses.Synced : SyncStatuses.Unsynced,
                         IsSpectator = desiredSpectatorState,
                         Side = cbSide.SelectedIndex >= 0 ? cbSide.SelectedIndex : 0,
-                        TeamColor = Program.Conf.DefaultPlayerColorInt,
-                        IsReady = true,
                     };
                     client.SendMyBattleStatus(status);
                 };
@@ -455,7 +453,6 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
             if (battle.Users.Count(x => !x.IsSpectator && x.TeamNumber == currentStatus.TeamNumber) > 1) newStatus.TeamNumber = battle.GetFreeTeamID(client.UserName);
 
             newStatus.IsSpectator = radioSpec.Checked;
-            newStatus.IsReady = true;
 
             if (newStatus != currentStatus) client.SendMyBattleStatus(newStatus);
         }

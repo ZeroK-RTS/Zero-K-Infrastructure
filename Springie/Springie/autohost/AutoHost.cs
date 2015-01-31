@@ -470,14 +470,6 @@ namespace Springie.autohost
                     ComHelpAll(e, words);
                     break;
 
-                case "fixcolors":
-                    ComFixColors(e, words);
-                    break;
-
-                case "teamcolors":
-                    ComTeamColors(e, words);
-                    break;
-
                 case "springie":
                     ComSpringie(e, words);
                     break;
@@ -890,13 +882,11 @@ namespace Springie.autohost
                 foreach (MissionSlot slot in hostedMod.MissionSlots.Where(x => !x.IsHuman)) {
                     var ubs = new UserBattleStatus();
                     ubs.SyncStatus = SyncStatuses.Synced;
-                    ubs.TeamColor = slot.Color;
                     ubs.AllyNumber = slot.AllyID;
                     ubs.TeamNumber = slot.TeamID;
-                    ubs.IsReady = true;
                     ubs.IsSpectator = false;
                     ubs.Name = slot.AiShortName;
-                    tas.AddBot(slot.TeamName, ubs, slot.Color, slot.AiShortName);
+                    tas.AddBot(slot.TeamName, ubs, slot.AiShortName);
                 }
             }
             if (SpawnConfig != null)

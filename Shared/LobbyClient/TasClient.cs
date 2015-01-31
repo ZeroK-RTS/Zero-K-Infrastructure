@@ -309,7 +309,7 @@ namespace LobbyClient
             }
         }
 
-        public void AddBot(string name, UserBattleStatus status, int teamColor, string aiDll)
+        public void AddBot(string name, UserBattleStatus status, string aiDll)
         {
             if (name.Contains(" ")) throw new TasClientException("Bot name must not contain spaces. " + name);
             //con.SendCommand("ADDBOT", name, status.ToInt(), teamColor, aiDll);
@@ -340,16 +340,15 @@ namespace LobbyClient
             if (ubs != null)
             {
                 var clone = (UserBattleStatus)ubs.Clone();
-                clone.SetFrom(lastUserBattleStatus, ubs.TeamColor);
+                clone.SetFrom(lastUserBattleStatus);
                 if (spectate.HasValue) clone.IsSpectator = spectate.Value;
-                if (ready.HasValue) clone.IsReady = ready.Value;
                 if (syncStatus.HasValue) clone.SyncStatus = syncStatus.Value;
                 if (side.HasValue) clone.Side = side.Value;
                 if (ally.HasValue) clone.AllyNumber = ally.Value;
                 if (team.HasValue) clone.TeamNumber = team.Value;
                 if (clone.ToInt() != lastUserBattleStatus)
                 {
-                    SendMyBattleStatus(clone.ToInt(), clone.TeamColor);
+                    SendMyBattleStatus(clone);
                     lastUserBattleStatus = clone.ToInt();
                 }
             }
@@ -681,7 +680,7 @@ namespace LobbyClient
             else ChangeMyUserStatus(false, true);
         }
 
-        public void UpdateBot(string name, UserBattleStatus battleStatus, int teamColor)
+        public void UpdateBot(string name, UserBattleStatus battleStatus)
         {
             //con.SendCommand("UPDATEBOT", name, battleStatus.ToInt(), teamColor);
         }
@@ -949,7 +948,7 @@ namespace LobbyClient
             var userIndex = MyBattle.GetUserIndex(args[0]);
             if (userIndex != -1) {
                 var battleStatus = MyBattle.Users[userIndex];
-                battleStatus.SetFrom(int.Parse(args[1]), int.Parse(args[2]));
+                battleStatus.SetFrom(int.Parse(args[1]));
                 MyBattle.Users[userIndex] = battleStatus;
                 if (battleStatus.Name == UserName) {
                     lastUserBattleStatus = battleStatus.ToInt();
@@ -963,7 +962,7 @@ namespace LobbyClient
         {
             if (MyBattle != null && int.Parse(args[0]) == MyBattleID) {
                 var st = MyBattle.Bots.Single(bot => bot.Name == args[1]);
-                st.SetFrom(int.Parse(args[2]), int.Parse(args[3]));
+                st.SetFrom(int.Parse(args[2]));
                 BattleBotUpdated(this, new EventArgs<BotBattleStatus>(st));
             }
         }
@@ -981,7 +980,7 @@ namespace LobbyClient
         {
             if (MyBattle != null && int.Parse(args[0]) == MyBattleID) {
                 var bs = new BotBattleStatus(args[1], args[2], Utils.Glue(args, 5));
-                bs.SetFrom(int.Parse(args[3]), int.Parse(args[4]));
+                bs.SetFrom(int.Parse(args[3]));
                 MyBattle.Bots.Add(bs);
                 BattleBotAdded(this, new EventArgs<BotBattleStatus>(bs));
             }

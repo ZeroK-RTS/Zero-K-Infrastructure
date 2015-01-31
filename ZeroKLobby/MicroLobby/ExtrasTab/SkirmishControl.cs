@@ -152,8 +152,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             string myName = Program.Conf.LobbyPlayerName == null ? "unnamed" : Program.Conf.LobbyPlayerName;
             User myUser = new User { Name = myName };
             myUser.Country = "Unknown";
-            UserBattleStatus myBattleStatus = new UserBattleStatus(myName, myUser) { IsReady = true, AllyNumber = 0, SyncStatus = SyncStatuses.Unknown, IsSpectator = spectateCheckBox.Checked };
-            myBattleStatus.TeamColor = Program.Conf.DefaultPlayerColorInt;
+            UserBattleStatus myBattleStatus = new UserBattleStatus(myName, myUser) { AllyNumber = 0, SyncStatus = SyncStatuses.Unknown, IsSpectator = spectateCheckBox.Checked };
             myItem = new PlayerListItem
             {
                 UserName = myBattleStatus.Name,
@@ -560,7 +559,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             return Enumerable.Range(0, TasClient.MaxTeams - 1).FirstOrDefault(teamID => myItem.offlineUserBattleStatus.TeamNumber != teamID && !Bots.Any(x => x.TeamNumber == teamID));
         }
 
-        private void Set_MyBattleStatus(int? allyNumber, int? teamNumber, int? teamColor, bool? isSpectator)
+        private void Set_MyBattleStatus(int? allyNumber, int? teamNumber, bool? isSpectator)
         {
             if (allyNumber.HasValue)
             {
@@ -568,7 +567,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 myItem.offlineUserBattleStatus.AllyNumber = allyNumber.Value;
             }
             if (teamNumber.HasValue) myItem.offlineUserBattleStatus.TeamNumber = teamNumber.Value;
-            if (teamColor.HasValue) myItem.offlineUserBattleStatus.TeamColor = teamColor.Value;
             if (isSpectator.HasValue)
             {
                 myItem.offlineUserBattleStatus.IsSpectator = isSpectator.Value;
@@ -588,15 +586,15 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 if (skirmPlayerBox.HoverItem != null)
                 {
                     if (skirmPlayerBox.HoverItem.IsSpectatorsTitle)
-                        Set_MyBattleStatus(null, null, null, true); //spectator
+                        Set_MyBattleStatus(null, null, true); //spectator
                     else if (skirmPlayerBox.HoverItem.SlotButton != null) //mission
                     {
                         MissionSlot slot = skirmPlayerBox.HoverItem.MissionSlot;
-                        Set_MyBattleStatus(slot.AllyID, slot.TeamID, slot.Color, false);
+                        Set_MyBattleStatus(slot.AllyID, slot.TeamID, false);
                         return;
                     }
                     else if (skirmPlayerBox.HoverItem.Button!=null) //alliance
-                        Set_MyBattleStatus(skirmPlayerBox.HoverItem.AllyTeam.Value, Get_FreeTeamID(myItem.UserName), null, false);
+                        Set_MyBattleStatus(skirmPlayerBox.HoverItem.AllyTeam.Value, Get_FreeTeamID(myItem.UserName), false);
                 }
             }
 
@@ -662,21 +660,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     item.Click += (s, e) =>
                     {
                         Bots.RemoveAll(b=> b.Name == botName);
-                        Refresh_PlayerBox();
-                    };
-                    contextMenu.MenuItems.Add(item);
-                }
-                {
-                    var item = new System.Windows.Forms.MenuItem("Set Color") { Enabled = botStatus.owner == myItem.UserName };
-                    item.Click += (s, e) =>
-                    {
-                        var botColor = botStatus.TeamColorRGB;
-                        var colorDialog = new ColorDialog { Color = Color.FromArgb(botColor[0], botColor[1], botColor[2]) };
-                        if (colorDialog.ShowDialog() == DialogResult.OK)
-                        {
-                            var newColor = (int)(MyCol)colorDialog.Color;
-                            Bots.FirstOrDefault(b => b.Name == botName).TeamColor = newColor;
-                        }
                         Refresh_PlayerBox();
                     };
                     contextMenu.MenuItems.Add(item);
@@ -760,22 +743,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     contextMenu.MenuItems.Add(allyWith);
                 }
 
-                var colorItem = new System.Windows.Forms.MenuItem("Select Color") { Enabled = myItem.UserName == user.Name && !myItem.offlineUserBattleStatus.IsSpectator };
-                colorItem.Click += (s, e) =>
-                {
-                    var myColor = myItem.offlineUserBattleStatus.TeamColorRGB;
-                    var colorDialog = new ColorDialog { Color = Color.FromArgb(myColor[0], myColor[1], myColor[2]) };
-                    if (colorDialog.ShowDialog() == DialogResult.OK)
-                    {
-                        var newColor = (int)(MyCol)colorDialog.Color;
-                        myItem.offlineUserBattleStatus.TeamColor = newColor;
-                        Program.Conf.DefaultPlayerColorInt = newColor;
-                        Program.SaveConfig();
-                        Refresh_PlayerBox();
-                    }
-                };
-                contextMenu.MenuItems.Add(colorItem);
-
                 contextMenu.MenuItems.Add(Get_SetAllyTeamItem(user));
 
                 contextMenu.MenuItems.Add("-");
@@ -851,15 +818,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             if (allyNumber.HasValue) botStatus.TeamNumber = allyNumber.Value;
             else botStatus.AllyNumber = Enumerable.Range(0, TasClient.MaxAlliances - 1).FirstOrDefault(x => x != botStatus.AllyNumber);
             
-            if (botColor.HasValue) botStatus.TeamColor = botColor.Value;
-            else
-            {
-                var boxColors = new[] { Color.Green, Color.Red, Color.Blue, Color.Cyan, Color.Yellow, Color.Magenta,
-                                        Color.Gray, Color.Lime, Color.Maroon, Color.Navy, Color.Olive, Color.Purple, Color.Silver,
-                                        Color.Teal, Color.White,Color.Black,};
-                botStatus.TeamColor = (int)(MyCol)boxColors[botStatus.TeamNumber % 16]; //cyclic 0-16
-            }
-
             Bots.Add(botStatus);
             Refresh_PlayerBox();
         }
@@ -936,7 +894,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                         var item = new MenuItem("Join Team " + (allyTeam + 1));
                         item.Click += (s, e) =>
                             {
-                                Set_MyBattleStatus(at, Get_FreeTeamID(user.Name), null, false);
+                                Set_MyBattleStatus(at, Get_FreeTeamID(user.Name), false);
                             };
                         setAllyTeamItem.MenuItems.Add(item);
                     }
@@ -947,7 +905,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 var newTeamItem = new System.Windows.Forms.MenuItem("Start New Team");
                 newTeamItem.Click += (s, e) =>
                     {
-                        Set_MyBattleStatus(freeAllyTeam, Get_FreeTeamID(myItem.UserName), null, false);
+                        Set_MyBattleStatus(freeAllyTeam, Get_FreeTeamID(myItem.UserName), false);
                     };
                 setAllyTeamItem.MenuItems.Add(newTeamItem);
 
@@ -956,7 +914,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     var specItem = new System.Windows.Forms.MenuItem("Spectate");
                     specItem.Click += (s, e) =>
                         {
-                            Set_MyBattleStatus(null,null, null, true);
+                            Set_MyBattleStatus(null,null,true);
                         };
                     setAllyTeamItem.MenuItems.Add(specItem);
                 }
@@ -1114,7 +1072,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 foreach (MissionSlot slot in missionSlots.Where(s => s.IsHuman))
                 {
                     myItem.MissionSlot = slot;
-                    Set_MyBattleStatus(slot.AllyID, slot.TeamID, (int)(MyCol)slot.Color, false);
+                    Set_MyBattleStatus(slot.AllyID, slot.TeamID, false);
                     break;
                 }
 
@@ -1298,7 +1256,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     var item = new System.Windows.Forms.MenuItem("Join Team " + (allyTeam + 1));
                     item.Click += (s, e2) => 
                         {
-                            Set_MyBattleStatus(allyTeam, Get_FreeTeamID(myItem.UserName), null, false);
+                            Set_MyBattleStatus(allyTeam, Get_FreeTeamID(myItem.UserName),false);
                         };
                     menu.MenuItems.Add(item);
                 }
