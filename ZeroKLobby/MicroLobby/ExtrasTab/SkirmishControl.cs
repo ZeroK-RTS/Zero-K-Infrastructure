@@ -354,7 +354,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                                                        { //exceptions
                                                            minimapBox.Image = null;
                                                            minimap = null;
-                                                       }), springVersion);
+                                                       }));
         }
 
         private void Refresh_MinimapImage(bool invalidate= true)
@@ -443,7 +443,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
             myItem.offlineUserBattleStatus.SyncStatus = iamSynced;
             myItem.isZK = gameIsZK;
-            myItem.offlineUserBattleStatus.Side = sideCB.SelectedIndex >= 0 ? sideCB.SelectedIndex : 0;
 
             var newList = new List<PlayerListItem>();
             newList.Add(myItem);
@@ -973,8 +972,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                                 Trace.TraceError("CallBack_Mod(mod) error: {0}", ex.ToString());
                             }
                         })), 
-                        exception => Trace.TraceError("CallBack_Mod(mod) error: {0}", exception.ToString()),
-                        gameName);
+                        exception => Trace.TraceError("CallBack_Mod(mod) error: {0}", exception.ToString()));
                     //Program.SpringScanner.MetaData.GetModAsync(
                     //   (string)game_comboBox.SelectedItem,
                     //   mod=>{

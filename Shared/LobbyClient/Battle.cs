@@ -440,8 +440,7 @@ namespace LobbyClient
             script.AppendFormat("     TeamLeader={0};\n", userNum);
             script.AppendFormat("     AllyTeam={0};\n", status.AllyNumber);
             var side = "mission";
-            if (mod.Sides.Length > status.Side) side = mod.Sides[status.Side];
-            script.AppendFormat("     Side={0};\n", side);
+            script.AppendFormat("     Side={0};\n", mod.Sides[0]); // is this use of "mod" needed at all?
 
             script.AppendFormat("     Handicap={0};\n", 0);
             if (mod.IsMission)

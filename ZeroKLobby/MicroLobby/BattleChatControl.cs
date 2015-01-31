@@ -276,7 +276,7 @@ namespace ZeroKLobby.MicroLobby
 			                                           	{
 			                                           		minimapBox.Image = null;
 			                                           		minimap = null;
-			                                           	}), Program.SpringPaths.SpringVersion);
+			                                           	}));
 		}
 
 		void ModStoreModLoaded(object sender, EventArgs<Mod> e)

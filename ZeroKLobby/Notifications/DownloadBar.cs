@@ -83,8 +83,7 @@ namespace ZeroKLobby.Notifications
                                                                    progress.Width = progress.Width - w;
                                                                    label.Width = label.Width - w;
                                                                }),
-                                                           e => { },
-                                                           null);
+                                                           e => { });
             }
             imageLoaded = true;
         }

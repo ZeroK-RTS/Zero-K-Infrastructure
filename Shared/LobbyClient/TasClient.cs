@@ -332,7 +332,6 @@ namespace LobbyClient
         public void ChangeMyBattleStatus(bool? spectate = null,
                                          bool? ready = null,
                                          SyncStatuses? syncStatus = null,
-                                         int? side = null,
                                          int? ally = null,
                                          int? team = null)
         {
@@ -343,7 +342,6 @@ namespace LobbyClient
                 clone.SetFrom(lastUserBattleStatus);
                 if (spectate.HasValue) clone.IsSpectator = spectate.Value;
                 if (syncStatus.HasValue) clone.SyncStatus = syncStatus.Value;
-                if (side.HasValue) clone.Side = side.Value;
                 if (ally.HasValue) clone.AllyNumber = ally.Value;
                 if (team.HasValue) clone.TeamNumber = team.Value;
                 if (clone.ToInt() != lastUserBattleStatus)

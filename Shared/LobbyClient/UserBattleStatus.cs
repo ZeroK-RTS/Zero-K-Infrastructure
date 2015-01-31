@@ -22,7 +22,6 @@ namespace LobbyClient
 		public DateTime JoinTime = DateTime.Now;
 		public string Name;
 		public string ScriptPassword;
-		public int Side;
 		public SyncStatuses SyncStatus = SyncStatuses.Unknown;
 		public User LobbyUser;
 
@@ -51,7 +50,7 @@ namespace LobbyClient
 			if (ReferenceEquals(null, other)) return false;
 			if (ReferenceEquals(this, other)) return true;
 			return other.AllyNumber == AllyNumber && Equals(other.ip, ip) && other.IsSpectator.Equals(IsSpectator) &&
-			       other.JoinTime.Equals(JoinTime) && Equals(other.Name, Name) && other.port == port && other.Side == Side &&
+			       other.JoinTime.Equals(JoinTime) && Equals(other.Name, Name) && other.port == port &&
 			       Equals(other.SyncStatus, SyncStatus) &&  other.TeamNumber == TeamNumber;
 		}
 
@@ -62,7 +61,6 @@ namespace LobbyClient
 			AllyNumber = (status >> 6) & 15;
 			IsSpectator = (status & 1024) == 0;
 			SyncStatus = (SyncStatuses)((status >> 22) & 3);
-			Side = (status >> 24) & 15;
 		}
 
 		public int ToInt()
@@ -72,7 +70,6 @@ namespace LobbyClient
 			status += (AllyNumber & 15) << 6;
 			if (!IsSpectator) status |= 1024;
 			status += ((int)SyncStatus & 3) << 22;
-			status += (Side & 15) << 24;
 			return status;
 		}
 
@@ -94,7 +91,6 @@ namespace LobbyClient
 				result = (result*397) ^ JoinTime.GetHashCode();
 				result = (result*397) ^ (Name != null ? Name.GetHashCode() : 0);
 				result = (result*397) ^ port;
-				result = (result*397) ^ Side;
 				result = (result*397) ^ SyncStatus.GetHashCode();
 				result = (result*397) ^ TeamNumber;
 				return result;

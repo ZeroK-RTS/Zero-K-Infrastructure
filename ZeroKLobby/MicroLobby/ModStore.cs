@@ -31,7 +31,7 @@ namespace ZeroKLobby.MicroLobby
 						Ais = null;
 						mod = null;
 					}
-					Program.SpringScanner.MetaData.GetModAsync(Program.TasClient.MyBattle.ModName, HandleMod, exception => { }, Program.SpringPaths.SpringVersion);
+					Program.SpringScanner.MetaData.GetModAsync(Program.TasClient.MyBattle.ModName, HandleMod, exception => { });
 				};
 		}
 

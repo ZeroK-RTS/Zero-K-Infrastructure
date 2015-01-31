@@ -51,7 +51,7 @@ namespace ZkData
             return string.Format("{0}/{1}.heightmap.jpg", resourceFolder, name.EscapePath());
         }
 
-        public void GetMap(string mapName, MapCallback callback, Action<Exception> errorCallback, string springVersion)
+        public void GetMap(string mapName, MapCallback callback, Action<Exception> errorCallback)
         {
             var metadataPath = GetMetadataPath(mapName);
             var minimapFile = GetMinimapPath(mapName);
@@ -146,9 +146,9 @@ namespace ZkData
             }
         }
 
-        public void GetMapAsync(string mapName, MapCallback callback, Action<Exception> errorCallback, string springVersion)
+        public void GetMapAsync(string mapName, MapCallback callback, Action<Exception> errorCallback)
         {
-            Utils.StartAsync(() => GetMap(mapName, callback, errorCallback, springVersion));
+            Utils.StartAsync(() => GetMap(mapName, callback, errorCallback));
         }
 
 
@@ -240,7 +240,7 @@ namespace ZkData
             }
         }
 
-        public void GetModAsync(string modName, Action<Mod> callback, Action<Exception> errorCallback, string springVersion)
+        public void GetModAsync(string modName, Action<Mod> callback, Action<Exception> errorCallback)
         {
             Utils.StartAsync(() => GetMod(modName, callback, errorCallback));
         }

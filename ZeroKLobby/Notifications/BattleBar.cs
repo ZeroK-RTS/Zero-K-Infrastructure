@@ -28,7 +28,6 @@ namespace ZeroKLobby.Notifications
         readonly Random random = new Random();
         object speech;
         readonly Spring spring;
-        bool suppressSideChangeEvent;
         bool suppressSpecChange = false;
         readonly Timer timer = new Timer();
         object voice;
@@ -45,7 +44,6 @@ namespace ZeroKLobby.Notifications
             picoChat.ChatBackgroundColor = TextColor.background; //same color as Program.Conf.BgColor
             picoChat.IRCForeColor = 14; //mirc grey. Unknown use
 
-            Program.ToolTip.SetText(cbSide, "Choose the faction you wish to play.");
             picoChat.DefaultTooltip = "Last lines from room chat, click to enter full screen chat";
 
             client = Program.TasClient;
@@ -127,37 +125,6 @@ namespace ZeroKLobby.Notifications
                         barContainer.btnDetail.Visible = true;
                     }
 
-
-                    Program.SpringScanner.MetaData.GetModAsync(battle.ModName,
-                                                               (mod) =>
-                                                                   {
-                                                                       if (!Program.CloseOnNext) {
-                                                                           Program.MainWindow.InvokeFunc(() =>
-                                                                               {
-                                                                                   cbSide.Visible = mod.Sides.Length > 1;
-                                                                                   if (cbSide.Visible) {
-                                                                                       var previousSide = cbSide.SelectedItem != null
-                                                                                                          ? cbSide.SelectedItem.ToString()
-                                                                                                          : null;
-                                                                                       cbSide.Items.Clear();
-                                                                                       var cnt = 0;
-                                                                                       foreach (var side in mod.Sides) cbSide.Items.Add(new SideItem(side, mod.SideIcons[cnt++]));
-                                                                                       var pickedItem =
-                                                                                           cbSide.Items.OfType<SideItem>()
-                                                                                                 .FirstOrDefault(x => x.Side == previousSide);
-
-                                                                                       suppressSideChangeEvent = true;
-                                                                                       if (pickedItem != null) cbSide.SelectedItem = pickedItem;
-                                                                                       else cbSide.SelectedIndex = random.Next(cbSide.Items.Count);
-                                                                                       suppressSideChangeEvent = false;
-                                                                                   }
-                                                                                   
-                                                                               });
-                                                                       }
-                                                                   },
-                                                               (ex) => { },
-                                                               Program.SpringPaths.SpringVersion);
-
                     Program.Downloader.GetResource(DownloadType.MAP, battle.MapName);
                     Program.Downloader.GetResource(DownloadType.MOD, battle.ModName);
                     engineVersionNeeded = battle.EngineVersion;
@@ -181,8 +148,6 @@ namespace ZeroKLobby.Notifications
                     RefreshTooltip();
                 };
 
-            cbSide.DrawMode = DrawMode.OwnerDrawFixed;
-            cbSide.DrawItem += cbSide_DrawItem;
 
             client.MyBattleMapChanged += (s, e) =>
                 {
@@ -225,7 +190,6 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
                         TeamNumber = team,
                         SyncStatus = HasAllResources() ? SyncStatuses.Synced : SyncStatuses.Unsynced,
                         IsSpectator = desiredSpectatorState,
-                        Side = cbSide.SelectedIndex >= 0 ? cbSide.SelectedIndex : 0,
                     };
                     client.SendMyBattleStatus(status);
                 };
@@ -261,7 +225,6 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
                     barContainer.btnDetail.Text = "Start";
                     if (gameBox.Image != null) gameBox.Image.Dispose();
                     gameBox.Image = null;
-                    cbSide.Visible = false;
                     RefreshTooltip();
                     Stop();
                 };
@@ -297,7 +260,6 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
                 {
                     if (gameBox.Image != null) gameBox.Image.Dispose();
                     gameBox.Image = null;
-                    cbSide.Visible = false;
                     RefreshTooltip();
                     Stop();
                 };
@@ -529,32 +491,6 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
         }
 
         
-        void cbSide_DrawItem(object sender, DrawItemEventArgs e) {
-            e.DrawBackground();
-            e.DrawFocusRectangle();
-            if (e.Index < 0 || e.Index >= cbSide.Items.Count) return;
-            var item = cbSide.Items[e.Index] as SideItem;
-            if (item != null) {
-                if (item.Image != null) e.Graphics.DrawImage(item.Image, e.Bounds.Left, e.Bounds.Top, 16, 16);
-                TextRenderer.DrawText(e.Graphics, item.Side, cbSide.Font, new Point(e.Bounds.Left + 16, e.Bounds.Top), cbSide.ForeColor);
-            }
-            else
-                TextRenderer.DrawText(e.Graphics,
-                                      cbSide.Items[e.Index].ToString(),
-                                      cbSide.Font,
-                                      new Point(e.Bounds.Left, e.Bounds.Top),
-                                      cbSide.ForeColor);
-        }
-
-        void cbSide_SelectedIndexChanged(object sender, EventArgs e) {
-            if (suppressSideChangeEvent) return;
-            if (!client.IsLoggedIn) return;
-
-            var status = client.MyBattleStatus;
-            if (status == null) return;
-            client.ChangeMyBattleStatus(side: cbSide.SelectedIndex);
-        }
-
         private void zkSplitContainer1_SplitterMoving(object sender, SplitterCancelEventArgs e)
         {
             gameBox.Left = 0; //anchor gameBox to zkSplitContainer slider
