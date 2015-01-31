@@ -166,13 +166,6 @@ namespace Springie.autohost
 
             AddMissing(new CommandConfig("helpall", 0, "- lists all commands known to Springie (sorted by command level)", 5));
 
-            AddMissing(new CommandConfig("fixcolors",
-                                         1,
-                                         "- changes too similar colors to more different (note that color difference is highly subjective and impossible to model mathematically, so it won't always produce results satisfying for all)",
-                                         10));
-
-            AddMissing(new CommandConfig("teamcolors", 1, "- assigns similar colors to allies", 10));
-
             AddMissing(new CommandConfig("setengine", 3, "[version] - sets a new spring version", 2));
 
             AddMissing(new CommandConfig("springie",

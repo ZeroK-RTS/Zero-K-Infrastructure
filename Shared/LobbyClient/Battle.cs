@@ -439,10 +439,6 @@ namespace LobbyClient
             script.AppendLine("  {");
             script.AppendFormat("     TeamLeader={0};\n", userNum);
             script.AppendFormat("     AllyTeam={0};\n", status.AllyNumber);
-            script.AppendFormat(CultureInfo.InvariantCulture,"     RGBColor={0:F5} {1:F5} {2:F5};\n",
-                                (status.TeamColor & 255)/255.0,
-                                ((status.TeamColor >> 8) & 255)/255.0,
-                                ((status.TeamColor >> 16) & 255)/255.0);
             var side = "mission";
             if (mod.Sides.Length > status.Side) side = mod.Sides[status.Side];
             script.AppendFormat("     Side={0};\n", side);

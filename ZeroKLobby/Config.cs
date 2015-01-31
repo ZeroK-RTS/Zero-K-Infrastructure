@@ -99,8 +99,6 @@ namespace ZeroKLobby
         [Description("Path to sound played")]
         public string SndPlayPath { get { return snd_play_path; } set { snd_play_path = value; } }
 
-        [Browsable(false)]
-        public int DefaultPlayerColorInt = 16776960; // default teal color
         [Category("Debugging")]
         [DisplayName("Disable Lobby Auto Update")]
         [Description("Lobby will not update itself to latest release version. Use this if you are compiling your own lobby")]

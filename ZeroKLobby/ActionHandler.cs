@@ -146,7 +146,6 @@ namespace ZeroKLobby
                 newStatus.AllyNumber = slot.AllyID;
                 newStatus.TeamNumber = slot.TeamID;
                 newStatus.IsSpectator = false;
-                newStatus.TeamColor = slot.Color;
                 Program.TasClient.SendMyBattleStatus(newStatus);
             }
         }

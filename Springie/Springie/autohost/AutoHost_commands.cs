@@ -61,7 +61,6 @@ namespace Springie.autohost
                         var curSlot = hostedMod.MissionSlots.FirstOrDefault(x => x.IsHuman && x.TeamID == u.TeamNumber && x.AllyID == u.AllyNumber);
                         if (curSlot != null && curSlot.IsRequired)
                         {
-                            if (u.TeamColor != curSlot.Color) tas.ForceColor(u.Name, curSlot.Color);
                         }
                         else
                         {
@@ -495,40 +494,6 @@ namespace Springie.autohost
                 return false;
             }
             else return true;
-        }
-
-
-        public void ComFixColors(TasSayEventArgs e, string[] words)
-        {
-            var cols = new List<MyCol>();
-
-            if (hostedMod.IsMission)
-            {
-                ForceMissionColors();
-                return;
-            }
-
-            var b = tas.MyBattle;
-            foreach (var u in b.Users) if (!u.IsSpectator) cols.Add((MyCol)u.TeamColor);
-            var arcols = cols.ToArray();
-
-            MyCol.FixColors(arcols, 30000);
-
-            var changed = false;
-            var cnt = 0;
-            foreach (var u in b.Users)
-            {
-                if (!u.IsSpectator)
-                {
-                    if (u.TeamColor != (int)arcols[cnt])
-                    {
-                        tas.ForceColor(u.Name, (int)arcols[cnt]);
-                        changed = true;
-                    }
-                    cnt++;
-                }
-            }
-            if (changed) SayBattle("colors fixed");
         }
 
         public void ComForce(TasSayEventArgs e, string[] words)
@@ -998,33 +963,6 @@ namespace Springie.autohost
             }
         }
 
-        public void ComTeamColors(TasSayEventArgs e, string[] words)
-        {
-            if (hostedMod.IsMission)
-            {
-                ForceMissionColors();
-                return;
-            }
-
-            var players = tas.MyBattle.Users.Where(u => !u.IsSpectator).ToArray();
-            var alliances = players.GroupBy(u => u.AllyNumber).ToArray();
-            var teamCounts = alliances.Select(g => g.Count()).ToArray();
-            var colors = TeamColorMaker.GetTeamColors(teamCounts);
-            var changed = false;
-            for (var allianceIndex = 0; allianceIndex < alliances.Length; allianceIndex++)
-            {
-                var alliance = alliances[allianceIndex].ToArray();
-                for (var teamIndex = 0; teamIndex < alliance.Length; teamIndex++)
-                {
-                    var user = alliance[teamIndex];
-                    var newColor = (int)(MyCol)colors[allianceIndex][teamIndex];
-                    if (user.TeamColor == newColor) continue;
-                    tas.ForceColor(user.Name, newColor);
-                    changed = true;
-                }
-            }
-            if (changed) SayBattle("team colors set");
-        }
 
         internal static int Filter(string[] source, string[] words, out string[] resultVals, out int[] resultIndexes)
         {
@@ -1222,14 +1160,14 @@ namespace Springie.autohost
                         var upd = existing.Clone();
                         upd.AllyNumber = b.AllyID;
                         upd.TeamNumber = b.TeamID;
-                        tas.UpdateBot(existing.Name, upd, existing.TeamColor);
+                        tas.UpdateBot(existing.Name, upd);
                     }
                     else
                     {
                         var botStatus = tas.MyBattleStatus.Clone();
                         botStatus.TeamNumber = b.TeamID;
                         botStatus.AllyNumber = b.AllyID;
-                        tas.AddBot(b.BotName.Replace(" ", "_"), botStatus, botStatus.TeamColor, b.BotAI);
+                        tas.AddBot(b.BotName.Replace(" ", "_"), botStatus, b.BotAI);
                     }
                 }
             }
@@ -1462,16 +1400,6 @@ namespace Springie.autohost
         int FilterUsers(string[] words, out string[] vals, out int[] indexes)
         {
             return FilterUsers(words, tas, spring, out vals, out indexes);
-        }
-
-        void ForceMissionColors()
-        {
-            var b = tas.MyBattle;
-            foreach (var u in b.Users.Where(x => !x.IsSpectator))
-            {
-                var slot = hostedMod.MissionSlots.FirstOrDefault(x => x.IsHuman && x.TeamID == u.TeamNumber && x.AllyID == u.AllyNumber);
-                if (slot != null && slot.Color != u.TeamColor) tas.ForceColor(u.Name, slot.Color);
-            }
         }
 
 
