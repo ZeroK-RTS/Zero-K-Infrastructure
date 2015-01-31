@@ -206,6 +206,10 @@ namespace ZkLobbyServer
                                                         Password = b.Password != null ? "?" : null
                                                     }
                                             });
+                                        foreach (var u in b.Users.ToList()) {
+                                            await SynchronizeUsers(b.Users.Select(x => x.Name).ToArray());
+                                            await SendCommand(new JoinedBattle() { BattleID = b.BattleID, User = u.Name });
+                                        }
                                     }
                                 }
 
@@ -395,7 +399,7 @@ namespace ZkLobbyServer
             state.Battles[battleID] = battle;
             h.Password = h.Password != null ? "?" : null; // dont send pw to client
             await Broadcast(state.Clients.Values, new BattleOpened() { Header = h }, Name);
-            await SendCommand(new JoinedBattle() { BattleID = battleID, User = Name });
+            await Broadcast(state.Clients.Values, new JoinedBattle() { BattleID = battleID, User = Name }, Name);
 
         }
 
@@ -427,7 +431,7 @@ namespace ZkLobbyServer
                     return;
                 }
                 battle.Users.Add(new UserBattleStatus(Name, User));
-                await Broadcast(battle.Users.Select(x => x.Name), new JoinedBattle() { BattleID = battle.BattleID, User = Name }, Name);
+                await Broadcast(state.Clients.Values, new JoinedBattle() { BattleID = battle.BattleID, User = Name }, Name);
             }
         }
 
@@ -442,9 +446,7 @@ namespace ZkLobbyServer
                 var item = battle.Users.FirstOrDefault(x => x.Name == Name);
                 if (item != null) {
                     battle.Users.Remove(item);
-                    await SendCommand(new LeftBattle() { BattleID = battle.BattleID, User = Name });
-                    await Broadcast(battle.Users.Select(x => x.Name), new LeftBattle() { BattleID = battle.BattleID, User = Name });
-                    
+                    await Broadcast(state.Clients.Values, new LeftBattle() { BattleID = battle.BattleID, User = Name });
                 }
             }
         }
