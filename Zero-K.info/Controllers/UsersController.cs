@@ -14,7 +14,7 @@ namespace ZeroKWeb.Controllers
     {
         //
         // GET: /Users/
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]is
         public ActionResult ChangeHideCountry(int accountID, bool hideCountry)
         {
             var db = new ZkDataContext();
@@ -45,7 +45,7 @@ namespace ZeroKWeb.Controllers
         }     
 
         [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
-        public ActionResult ChangePermissions(int accountID, int adminAccountID, int springieLevel, bool zkAdmin, bool vpnException, bool isDeleted)
+        public ActionResult ChangePermissions(int accountID, int adminAccountID, int springieLevel, bool zkAdmin, bool vpnException)
         {
             var db = new ZkDataContext();
             Account acc = db.Accounts.Single(x => x.AccountID == accountID);
