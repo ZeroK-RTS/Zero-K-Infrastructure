@@ -499,21 +499,7 @@ namespace LobbyClient
 
         public Task OpenBattle(Battle nbattle)
         {
-            LeaveBattle(); // leave current battle
-
-            MyBattle = nbattle;
-
-            MyBattle.Founder = ExistingUsers[UserName];
-            MyBattle.Ip = localIp;
-
-            //battle.Details.AddToParamList(objList);
-
-            //con.SendCommand("OPENBATTLE", objList.ToArray());
-
-
-            // send predefined starting rectangles
-            //foreach (var v in MyBattle.Rectangles) con.SendCommand("ADDSTARTRECT", v.Key, v.Value.Left, v.Value.Top, v.Value.Right, v.Value.Bottom);
-
+            if (MyBattle != null) LeaveBattle();
 
             return SendCommand(new OpenBattle() {
                 Header =
@@ -529,10 +515,6 @@ namespace LobbyClient
                     }
             });
         }
-
-      
-
-
 
 
         public Task Register(string username, string password)

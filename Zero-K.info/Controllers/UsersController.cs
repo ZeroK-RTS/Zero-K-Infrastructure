@@ -21,7 +21,7 @@ namespace ZeroKWeb.Controllers
             Account acc = db.Accounts.Single(x => x.AccountID == accountID);
 
             if (hideCountry) acc.Country = "??";
-            Global.Nightwatch.Tas.SetHideCountry(acc.Name, hideCountry);
+            // TODO reimplement ? Global.Nightwatch.Tas.SetHideCountry(acc.Name, hideCountry);
             db.SubmitChanges();
 
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
