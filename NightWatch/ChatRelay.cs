@@ -26,7 +26,7 @@ namespace NightWatch
             springTas.Said += OnSaid;
             zkTas.Said += OnSaid;
 
-            SetupSpringTasConnection(password);
+            // HACK disable relay SetupSpringTasConnection(password);
         }
 
         void SetupSpringTasConnection(string password)

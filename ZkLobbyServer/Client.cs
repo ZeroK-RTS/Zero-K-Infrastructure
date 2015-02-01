@@ -228,9 +228,9 @@ namespace ZkLobbyServer
                                                     }
                                             });
 
-                                        foreach (var u in b.Users.ToList()) {
-                                            await SynchronizeUsers(u.Key);
-                                            await SendCommand(new JoinedBattle() { BattleID = b.BattleID, User = u.Key });
+                                        foreach (var u in b.Users.Values.Select(x=>x.ToUpdateBattleStatus()).ToList()) {
+                                            await SynchronizeUsers(u.Name);
+                                            await SendCommand(new JoinedBattle() { BattleID = b.BattleID, User = u.Name });
                                             await SendCommand(u);
                                         }
                                     }
