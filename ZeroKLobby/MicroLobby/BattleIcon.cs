@@ -151,7 +151,6 @@ namespace ZeroKLobby.MicroLobby
                 }
 
                 if (Battle.IsPassworded) drawIcon(ZklResources._lock);
-                if (Battle.IsReplay) drawIcon(ZklResources.replay);
                 if (Battle.IsLocked)
                 {
                     int s = DpiMeasurement.ScaleValueX(20);

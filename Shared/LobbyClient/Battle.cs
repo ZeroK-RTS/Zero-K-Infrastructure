@@ -34,7 +34,6 @@ namespace LobbyClient
         public bool IsLocked { get; set; }
         public bool IsMission { get { return mod != null && mod.IsMission; } }
         public bool IsPassworded { get { return !string.IsNullOrEmpty(Password); } }
-        public bool IsReplay { get; set; }
 
         public string MapName { get; set; }
 
