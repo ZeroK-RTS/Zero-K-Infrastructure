@@ -200,6 +200,7 @@ namespace LobbyClient
         public event EventHandler<UserBattleStatus> BattleMyUserStatusChanged = delegate { };
 
 
+        
 
         public event EventHandler<EventArgs<BotBattleStatus>> BattleBotAdded = delegate { };
         public event EventHandler<EventArgs<BotBattleStatus>> BattleBotRemoved = delegate { };
@@ -212,11 +213,9 @@ namespace LobbyClient
         public event EventHandler<BattleInfoEventArgs> BattleMapChanged = delegate { };
 
         
-        public event EventHandler<EventArgs<User>> BattleStarted = delegate { };
-
+        
         public event EventHandler<TasEventArgs> ChannelForceLeave = delegate { }; // i was kicked from a channel
         public event EventHandler<Channel> ChannelJoined = delegate { };
-        public event EventHandler<CancelEventArgs<string>> ChannelLeaving = delegate { }; // raised before attempting to leave a channel
         public event EventHandler<TasEventArgs> ChannelLeft = delegate { };
         public event EventHandler<TasEventArgs> ChannelTopicChanged = delegate { };
         public event EventHandler<TasEventArgs> ConnectionLost = delegate { };
@@ -475,8 +474,6 @@ namespace LobbyClient
         public void LeaveChannel(string channelName)
         {
             var args = new CancelEventArgs<string>(channelName);
-            ChannelLeaving(this, args);
-            if (args.Cancel) return;
             //con.SendCommand("LEAVE", channelName);
             JoinedChannels.Remove(channelName);
             ChannelLeft(this, new TasEventArgs(channelName));
@@ -897,9 +894,6 @@ namespace LobbyClient
             //u.FromInt(status);
 
             //if (u.Name == UserName) lastUserStatus = u.ToInt();
-
-            if (u.IsInGame && old.IsInGame == false) BattleStarted(this, new EventArgs<User>(u));
-
             if (MyBattle != null && MyBattle.Founder.Name == u.Name) {
                 if (u.IsInGame && old.IsInGame == false) MyBattleStarted(this, new TasEventArgs(args));
                 if (!u.IsInGame && old.IsInGame == true) MyBattleHostExited(this, new TasEventArgs(args));

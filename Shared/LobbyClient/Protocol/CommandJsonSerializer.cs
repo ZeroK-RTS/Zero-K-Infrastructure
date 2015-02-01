@@ -4,6 +4,30 @@ using Newtonsoft.Json;
 
 namespace LobbyClient
 {
+    [Flags]
+    public enum Origin
+    {
+        Server = 1,
+        Client = 2
+    }
+    
+    [AttributeUsage(AttributeTargets.Class, Inherited = true)]
+    public class MessageAttribute: Attribute
+    {
+        /// <summary>
+        /// Overrides name, if unset, classname is used
+        /// </summary>
+        public string Name { get; set; }
+
+        public Origin Direction { get; set; }
+
+        public MessageAttribute(Origin direction)
+        {
+            Direction = direction;
+        }
+    }
+
+
     public class CommandJsonSerializer
     {
         readonly Dictionary<string, Type> knownTypes = new Dictionary<string, Type>();

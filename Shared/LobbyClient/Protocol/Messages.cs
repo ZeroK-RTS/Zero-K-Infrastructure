@@ -11,6 +11,7 @@ namespace LobbyClient
     /// <summary>
     /// Initial message sent by server to client on connect
     /// </summary>
+    [Message(Origin.Server)]
     public class Welcome
     {
         /// <summary>
@@ -31,6 +32,7 @@ namespace LobbyClient
     /// <summary>
     /// Login request
     /// </summary>
+    [Message(Origin.Client)]
     public class Login
     {
         /// <summary>
@@ -62,6 +64,7 @@ namespace LobbyClient
     /// <summary>
     /// Registration request
     /// </summary>
+    [Message(Origin.Client)]
     public class Register
     {
         /// <summary>
@@ -74,6 +77,7 @@ namespace LobbyClient
         public string PasswordHash;
     }
 
+    [Message(Origin.Server)]
     public class RegisterResponse
     {
         public enum Code
@@ -101,7 +105,7 @@ namespace LobbyClient
         public string Reason;
     }
 
-
+    [Message(Origin.Server)]
     public class LoginResponse
     {
         public enum Code
@@ -133,6 +137,7 @@ namespace LobbyClient
     /// <summary>
     /// Attempts to create a channel
     /// </summary>
+    [Message(Origin.Client)]
     public class CreateChannel
     {
         public Channel Channel;
@@ -153,25 +158,28 @@ namespace LobbyClient
     /// <summary>
     /// Attempts to join a room
     /// </summary>
+    [Message(Origin.Client)]
     public class JoinChannel
     {
         public string Name;
         public string Password;
     }
 
+    [Message(Origin.Server)]
     public class ChannelUserAdded
     {
         public string ChannelName;
         public string UserName;
     }
 
+    [Message(Origin.Server)]
     public class ChannelUserRemoved
     {
         public string ChannelName;
         public string UserName;
     }
 
-
+    [Message(Origin.Server)]
     public class JoinChannelResponse
     {
         public string Name;
@@ -181,6 +189,7 @@ namespace LobbyClient
         public Channel Channel;
     }
 
+    [Message(Origin.Server)]
     public class CreateRoomResponse
     {
         public string RoomID;
@@ -190,6 +199,7 @@ namespace LobbyClient
         public Channel Channel;
     }
 
+    [Message(Origin.Server | Origin.Client)]
     public class User
     {
         public int AccountID;
@@ -225,6 +235,7 @@ namespace LobbyClient
         }
     }
 
+    [Message(Origin.Server)]
     public class UserDisconnected
     {
         public string Name;
@@ -242,6 +253,7 @@ namespace LobbyClient
     };
 
 
+    [Message(Origin.Server | Origin.Client)]
     public class Say
     {
         public SayPlace Place;
@@ -251,7 +263,7 @@ namespace LobbyClient
         public string Text;
     }
 
-
+    [Message(Origin.Client)]
     public class OpenBattle
     {
         public BattleHeader Header;
@@ -273,39 +285,45 @@ namespace LobbyClient
         public string Founder;
     }
 
+    [Message(Origin.Server)]
     public class BattleAdded
     {
         public BattleHeader Header;
     }
 
+    [Message(Origin.Server)]
     public class BattleRemoved
     {
         public int BattleID;
     }
 
 
-
+    [Message(Origin.Server)]
     public class LeftBattle
     {
         public int BattleID;
         public string User;
     }
 
+    [Message(Origin.Server)]
+    public class JoinedBattle
+    {
+        public int BattleID;
+        public string User;
+    }
+
+
+        [Message(Origin.Client)]
     public class JoinBattle
     {
         public string Password;
         public int BattleID;
     }
 
+    [Message(Origin.Client)]
     public class LeaveBattle
     {
         public int BattleID;
-    }
-
-    public class JoinedBattle
-    {
-        public int BattleID;
-        public string User;
     }
 
 
