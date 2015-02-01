@@ -78,12 +78,6 @@ namespace ZeroKLobby
                 newLine();
             }
 
-            if (battle.IsLocked)
-            {
-                drawImage(ZklResources.redlight, 16, 16);
-                drawString("Battle is locked.");
-                newLine();
-            }
             newLine();
 
 
@@ -153,7 +147,6 @@ namespace ZeroKLobby
             h += line; // map name
             h += line; // counts
             if (battle.IsPassworded) h += line;
-            if (battle.IsLocked) h += line;
             if (founder.IsInGame) h += line; // "battle has been going on for at least..."
 
 

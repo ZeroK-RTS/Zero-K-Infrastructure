@@ -209,8 +209,7 @@ namespace ZeroKLobby.MicroLobby
                         using (var form = new AskBattlePasswordForm(battle.Founder.Name)) if (form.ShowDialog() == DialogResult.OK) ActionHandler.JoinBattle(battle.BattleID, form.Password);
                     } else 
                     {
-                        if (battle.IsLocked) ActionHandler.JoinBattleSpec(battle.BattleID);
-                        else ActionHandler.JoinBattle(battle.BattleID, null);    
+                        ActionHandler.JoinBattle(battle.BattleID, null);    
 
                     }
                     
@@ -374,9 +373,6 @@ namespace ZeroKLobby.MicroLobby
             }
             switch (word)
             {
-                case "LOCK":
-                    isMatch = battle.IsLocked;
-                    return true;
                 case "PASSWORD":
                     isMatch = battle.IsPassworded;
                     return true;

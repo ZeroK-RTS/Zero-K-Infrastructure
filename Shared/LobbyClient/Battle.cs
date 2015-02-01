@@ -31,7 +31,6 @@ namespace LobbyClient
         public string Ip { get; set; }
         public bool IsFull { get { return NonSpectatorCount == MaxPlayers; } }
         public bool IsInGame { get { return Founder.IsInGame; } }
-        public bool IsLocked { get; set; }
         public bool IsMission { get { return mod != null && mod.IsMission; } }
         public bool IsPassworded { get { return !string.IsNullOrEmpty(Password); } }
 

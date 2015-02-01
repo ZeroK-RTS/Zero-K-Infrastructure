@@ -102,7 +102,6 @@ namespace Springie.autohost
             tas.BattleUserStatusChanged += TasOnBattleUserStatusChanged;
             tas.BattleUserJoined += tas_BattleUserJoined;
             tas.MyBattleMapChanged += tas_MyBattleMapChanged;
-            tas.BattleLockChanged += tas_BattleLockChanged;
             tas.BattleOpened += tas_BattleOpened;
             tas.UserAdded += (o, u) => { if (u.Name == GetAccountName()) OpenBattleRoom(null, null); };
 
@@ -867,10 +866,6 @@ namespace Springie.autohost
             StopVote();
         }
 
-
-        void tas_BattleLockChanged(object sender, BattleInfoEventArgs e1) {
-            if (e1.BattleID == tas.MyBattleID) SayBattle("game " + (tas.MyBattle.IsLocked ? "locked" : "unlocked"), false);
-        }
 
         void tas_BattleOpened(object sender, Battle battle) {
             tas.ChangeMyBattleStatus(true, SyncStatuses.Synced);

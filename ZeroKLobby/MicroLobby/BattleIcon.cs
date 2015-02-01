@@ -151,15 +151,6 @@ namespace ZeroKLobby.MicroLobby
                 }
 
                 if (Battle.IsPassworded) drawIcon(ZklResources._lock);
-                if (Battle.IsLocked)
-                {
-                    int s = DpiMeasurement.ScaleValueX(20);
-                    g.DrawImage(ZklResources.redlight,
-                        DpiMeasurement.ScaleValueX(minimapSize + 3) - s,
-                        DpiMeasurement.ScaleValueY(minimapSize + 3) - s,
-                        s,
-                        s);
-                }
 
                 g.DrawImage(ZklResources.border, 0, 0, DpiMeasurement.ScaleValueX(70), DpiMeasurement.ScaleValueY(70));
             }

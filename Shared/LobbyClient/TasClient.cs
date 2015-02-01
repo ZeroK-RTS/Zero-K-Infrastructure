@@ -218,7 +218,6 @@ namespace LobbyClient
 
         public event EventHandler<BattleInfoEventArgs> BattleInfoChanged = delegate { };
 
-        public event EventHandler<BattleInfoEventArgs> BattleLockChanged = delegate { };
         public event EventHandler<BattleInfoEventArgs> BattleMapChanged = delegate { };
 
         
@@ -788,10 +787,6 @@ namespace LobbyClient
                 BattleMapChanged(this, bi);
             }
 
-            if (battle.IsLocked != isLocked) {
-                battle.IsLocked = isLocked;
-                BattleLockChanged(this, bi);
-            }
             BattleInfoChanged(this, bi);
         }
 
