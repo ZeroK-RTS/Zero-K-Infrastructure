@@ -67,7 +67,6 @@ namespace LobbyClient
         Dictionary<string, Channel> joinedChannels = new Dictionary<string, Channel>();
         int lastSpectatorCount;
         int lastUdpSourcePort;
-        int lastUserBattleStatus;
         int lastUserStatus;
         readonly string localIp;
         bool lockToChangeTo;
@@ -193,8 +192,12 @@ namespace LobbyClient
         public event EventHandler<Battle> MyBattleRemoved = delegate { }; // raised just after the battle is removed from the battle list
         public event EventHandler<Battle> BattleClosed = delegate { };
         public event EventHandler<Battle> BattleOpened = delegate { };
-
-
+        public event EventHandler<Battle> BattleJoined = delegate { };
+        public event EventHandler<string> Output = delegate { }; // outgoing command and arguments
+        public event EventHandler<EventArgs> HourChime = delegate { };
+        public event EventHandler<string> Input = delegate { };
+        public event EventHandler<UserBattleStatus> BattleUserStatusChanged = delegate { };
+        public event EventHandler<UserBattleStatus> BattleMyUserStatusChanged = delegate { };
 
 
 
@@ -204,32 +207,28 @@ namespace LobbyClient
         public event EventHandler<TasEventArgs> BattleDetailsChanged = delegate { };
 
         public event EventHandler<BattleInfoEventArgs> BattleInfoChanged = delegate { };
-        public event EventHandler<EventArgs<Battle>> BattleJoined = delegate { };
+
         public event EventHandler<BattleInfoEventArgs> BattleLockChanged = delegate { };
         public event EventHandler<BattleInfoEventArgs> BattleMapChanged = delegate { };
-        public event EventHandler<TasEventArgs> BattleMyUserStatusChanged = delegate { };
+
         
         public event EventHandler<EventArgs<User>> BattleStarted = delegate { };
-        public event EventHandler<TasEventArgs> BattleUserStatusChanged = delegate { };
+
         public event EventHandler<TasEventArgs> ChannelForceLeave = delegate { }; // i was kicked from a channel
         public event EventHandler<Channel> ChannelJoined = delegate { };
         public event EventHandler<CancelEventArgs<string>> ChannelLeaving = delegate { }; // raised before attempting to leave a channel
         public event EventHandler<TasEventArgs> ChannelLeft = delegate { };
         public event EventHandler<TasEventArgs> ChannelTopicChanged = delegate { };
         public event EventHandler<TasEventArgs> ConnectionLost = delegate { };
-        public event EventHandler<EventArgs> HourChime = delegate { };
-        public event EventHandler<string> Input = delegate { };
         public event EventHandler<TasEventArgs> JoinBattleFailed = delegate { };
         
 
         public event EventHandler<TasEventArgs> MyBattleHostExited = delegate { };
         public event EventHandler<BattleInfoEventArgs> MyBattleMapChanged = delegate { };
         public event EventHandler<TasEventArgs> MyBattleStarted = delegate { };
-        public event EventHandler<string> Output = delegate { }; // outgoing command and arguments
 
         public event EventHandler<CancelEventArgs<TasSayEventArgs>> PreviewSaid = delegate { };
         public event EventHandler<EventArgs<string>> Rang = delegate { };
-        public event EventHandler RequestBattleStatus = delegate { };
         public event EventHandler<TasEventArgs> StartRectAdded = delegate { };
         public event EventHandler<TasEventArgs> StartRectRemoved = delegate { };
 
@@ -333,16 +332,12 @@ namespace LobbyClient
             if (ubs != null)
             {
                 var clone = (UserBattleStatus)ubs.Clone();
-                clone.SetFrom(lastUserBattleStatus);
                 if (spectate.HasValue) clone.IsSpectator = spectate.Value;
                 if (syncStatus.HasValue) clone.SyncStatus = syncStatus.Value;
                 if (ally.HasValue) clone.AllyNumber = ally.Value;
                 if (team.HasValue) clone.TeamNumber = team.Value;
-                if (clone.ToInt() != lastUserBattleStatus)
-                {
-                    SendMyBattleStatus(clone);
-                    lastUserBattleStatus = clone.ToInt();
-                }
+                SendMyBattleStatus(clone);
+                   
             }
         }
 
@@ -382,24 +377,36 @@ namespace LobbyClient
 
 
 
-        public void ForceAlly(string username, int ally)
+        public async Task ForceAlly(string username, int ally)
         {
-            //con.SendCommand("FORCEALLYNO", username, ally);
+            var status = MyBattle.Users.FirstOrDefault(x => x.Name == username);
+            if (status != null) {
+                var ubs = status.Clone();
+                ubs.AllyNumber = ally;
+                await SendCommand(ubs);
+            }
         }
 
-        public void ForceColor(string username, int color)
+        public async Task ForceSpectator(string username, bool spectatorState = true)
         {
-            //con.SendCommand("FORCETEAMCOLOR", username, color);
+            var status = MyBattle.Users.FirstOrDefault(x => x.Name == username);
+            if (status != null)
+            {
+                var ubs = status.Clone();
+                ubs.IsSpectator = spectatorState;
+                await SendCommand(ubs);
+            }
         }
 
-        public void ForceSpectator(string username)
+        public async Task ForceTeam(string username, int team)
         {
-            //con.SendCommand("FORCESPECTATORMODE", username);
-        }
-
-        public void ForceTeam(string username, int team)
-        {
-            //con.SendCommand("FORCETEAMNO", username, team);
+            var status = MyBattle.Users.FirstOrDefault(x => x.Name == username);
+            if (status != null)
+            {
+                var ubs = status.Clone();
+                ubs.TeamNumber = team;
+                await SendCommand(ubs);
+            }
         }
 
         public void GameSaid(string username, string text)
@@ -494,7 +501,7 @@ namespace LobbyClient
         {
             UserName = userName;
             UserPassword = password;
-            return SendCommand(new Login() { Name = userName, PasswordHash = Utils.HashLobbyPassword(password), ClientType = clientType});
+            return SendCommand(new Login() { Name = userName, PasswordHash = Utils.HashLobbyPassword(password), ClientType = clientType, UserID = GetMyUserID()});
         }
 
 
@@ -536,7 +543,7 @@ namespace LobbyClient
             });
         }
 
-        
+      
 
 
 
@@ -561,10 +568,6 @@ namespace LobbyClient
         }
 
 
-        public void RenameAccount(string newName)
-        {
-            //con.SendCommand("RENAMEACCOUNT", newName);
-        }
 
         public void Ring(string username)
         {
@@ -629,15 +632,16 @@ namespace LobbyClient
         }
 
 
-        public void SendMyBattleStatus(UserBattleStatus status)
+        public Task SendMyBattleStatus(UserBattleStatus status)
         {
-            //con.SendCommand("MYBATTLESTATUS", status.ToInt(), status.TeamColor);
+            return SendCommand(status);
         }
 
 
-        public void SendRaw(string text)
+        public Task SendRaw(string text)
         {
-            //con.SendCommand("", text);
+            if (!text.EndsWith("\n")) text += "\n";
+            return SendData(Encoding.GetBytes(text));
         }
 
         public void SetHideCountry(string name, bool state) {
@@ -649,11 +653,7 @@ namespace LobbyClient
             //con.SendCommand("SETSCRIPTTAGS", data);
         }
 
-        public void SetBotMode(string name, bool botMode) {
-            //con.SendCommand("SETBOTMODE",name, botMode?"1":"0");
-        }
-
-
+     
         /// <summary>
         /// Starts game and automatically does hole punching if necessary
         /// </summary>
@@ -692,31 +692,6 @@ namespace LobbyClient
                         break;
 
 
-
-                    case "SERVERMSGBOX": // server messagebox
-                        InvokeSaid(new TasSayEventArgs(SayPlace.MessageBox,
-                                                       "",
-                                                       "",
-                                                       Utils.Glue(args, 0),
-                                                       false));
-                        break;
-
-                    case "CHANNELMESSAGE": // server broadcast to channel
-                        InvokeSaid(new TasSayEventArgs(SayPlace.Channel,
-                                                       args[0],
-                                                       "",
-                                                       Utils.Glue(args, 1),
-                                                       false));
-                        break;
-
-                    case "SAID": // someone said something in channel
-                        InvokeSaid(new TasSayEventArgs(SayPlace.Channel,
-                                                       args[0],
-                                                       args[1],
-                                                       Utils.Glue(args, 2),
-                                                       false));
-                        break;
-
                     case "RING":
                         Rang(this, new EventArgs<string>(args[0]));
                         break;
@@ -747,10 +722,6 @@ namespace LobbyClient
                         break;
 
 
-                    case "REQUESTBATTLESTATUS": // ask for status at the beginning of the battle
-                        RequestBattleStatus(this, new EventArgs());
-                        break;
-
                     case "JOINBATTLEFAILED": // user failed to join battle 
                         JoinBattleFailed(this, new TasEventArgs(args));
                         break;
@@ -767,10 +738,6 @@ namespace LobbyClient
                         OnUpdateBot(args);
                         break;
 
-
-                    case "CLIENTBATTLESTATUS": // player battle status has changed
-                        OnClientBattleStatus(args);
-                        break;
 
                     case "UPDATEBATTLEINFO": // update external battle info (lock and map)
                         OnUpdateBattleInfo(args);
@@ -854,26 +821,12 @@ namespace LobbyClient
             BattleInfoChanged(this, bi);
         }
 
-        void OnClientBattleStatus(string[] args)
-        {
-            var userIndex = MyBattle.GetUserIndex(args[0]);
-            if (userIndex != -1) {
-                var battleStatus = MyBattle.Users[userIndex];
-                battleStatus.SetFrom(int.Parse(args[1]));
-                MyBattle.Users[userIndex] = battleStatus;
-                if (battleStatus.Name == UserName) {
-                    lastUserBattleStatus = battleStatus.ToInt();
-                    BattleMyUserStatusChanged(this, new TasEventArgs(args));
-                }
-                BattleUserStatusChanged(this, new TasEventArgs(args));
-            }
-        }
 
         void OnUpdateBot(string[] args)
         {
             if (MyBattle != null && int.Parse(args[0]) == MyBattleID) {
                 var st = MyBattle.Bots.Single(bot => bot.Name == args[1]);
-                st.SetFrom(int.Parse(args[2]));
+                //st.SetFrom(int.Parse(args[2]));
                 BattleBotUpdated(this, new EventArgs<BotBattleStatus>(st));
             }
         }
@@ -891,7 +844,7 @@ namespace LobbyClient
         {
             if (MyBattle != null && int.Parse(args[0]) == MyBattleID) {
                 var bs = new BotBattleStatus(args[1], args[2], Utils.Glue(args, 5));
-                bs.SetFrom(int.Parse(args[3]));
+                //bs.SetFrom(int.Parse(args[3]));
                 MyBattle.Bots.Add(bs);
                 BattleBotAdded(this, new EventArgs<BotBattleStatus>(bs));
             }
@@ -1007,7 +960,7 @@ namespace LobbyClient
             if (user.Name == UserName) {
                 MyBattle = battle;
                 if (battle.Founder.Name == UserName) BattleOpened(this, battle);
-                BattleJoined(this, new EventArgs<Battle>(MyBattle));
+                BattleJoined(this, MyBattle);
             }
 
         }
@@ -1150,6 +1103,22 @@ namespace LobbyClient
         {
             UserRemoved(this, arg);
             existingUsers.Remove(arg.Name);
+        }
+
+        async Task Process(UserBattleStatus status)
+        {
+            var bat = MyBattle;
+            if (bat != null) {
+                var ubs = bat.Users.FirstOrDefault(x => x.Name == status.Name);
+                if (ubs != null) {
+                    bat.Users.RemoveAll(x => x.Name == status.Name);
+                    status.LobbyUser = existingUsers[status.Name];
+                    bat.Users.Add(status);
+
+                    if (status.Name == UserName) BattleMyUserStatusChanged(this, status);
+                    BattleUserStatusChanged(this, status);
+                }
+            }
         }
 
 

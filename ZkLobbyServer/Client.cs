@@ -196,6 +196,7 @@ namespace ZkLobbyServer
                                 foreach (var b in state.Battles.Values)
                                 {
                                     if (b != null) {
+                                        await SynchronizeUsers(b.Founder.Name);
                                         await
                                             SendCommand(new BattleAdded() {
                                                 Header =
@@ -217,6 +218,7 @@ namespace ZkLobbyServer
                                         foreach (var u in b.Users.ToList()) {
                                             await SynchronizeUsers(b.Users.Select(x => x.Name).ToArray());
                                             await SendCommand(new JoinedBattle() { BattleID = b.BattleID, User = u.Name });
+                                            await SendCommand(u);
                                         }
                                     }
                                 }
@@ -442,6 +444,8 @@ namespace ZkLobbyServer
                 battle.Users.Add(new UserBattleStatus(Name, User));
                 MyBattle = battle;
                 await Broadcast(state.Clients.Values, new JoinedBattle() { BattleID = battle.BattleID, User = Name }, Name);
+                
+                foreach (var u in battle.Users) await SendCommand(u);
             }
         }
 
@@ -453,15 +457,16 @@ namespace ZkLobbyServer
 
             if (bat == null) return;
 
-            
-            var ubs = bat.Users.First(x => x.Name == Name);
-            ubs.AllyNumber = status.AllyNumber;
-            ubs.TeamNumber = status.TeamNumber;
-            ubs.SyncStatus = status.SyncStatus;
-            ubs.IsSpectator = status.IsSpectator;
-            ubs.ScriptPassword = status.ScriptPassword;
+            if (Name == bat.Founder.Name || Name == status.Name) { // founder can set for all, others for self
+                var ubs = bat.Users.First(x => x.Name == Name);
+                ubs.AllyNumber = status.AllyNumber;
+                ubs.TeamNumber = status.TeamNumber;
+                ubs.SyncStatus = status.SyncStatus;
+                ubs.IsSpectator = status.IsSpectator;
+                ubs.ScriptPassword = status.ScriptPassword;
 
-            await Broadcast(bat.Users.Select(x => x.Name), ubs);
+                await Broadcast(bat.Users.Select(x => x.Name), ubs);
+            }
         }
 
 

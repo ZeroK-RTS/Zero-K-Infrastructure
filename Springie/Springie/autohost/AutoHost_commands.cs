@@ -73,7 +73,6 @@ namespace Springie.autohost
                             {
                                 tas.ForceAlly(u.Name, slot.AllyID);
                                 tas.ForceTeam(u.Name, slot.TeamID);
-                                tas.ForceColor(u.Name, slot.Color);
                                 freeSlots = freeSlots.Skip(1);
                             }
                         }

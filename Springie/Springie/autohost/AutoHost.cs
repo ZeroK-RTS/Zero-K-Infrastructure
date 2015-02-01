@@ -180,7 +180,7 @@ namespace Springie.autohost
             tas.Connect(Program.main.Config.ServerHost, Program.main.Config.ServerPort);
         }
 
-        void TasOnBattleUserStatusChanged(object sender, TasEventArgs tasEventArgs) {
+        void TasOnBattleUserStatusChanged(object sender, UserBattleStatus userBattleStatus) {
             PlayerCountDecreased();
         }
 

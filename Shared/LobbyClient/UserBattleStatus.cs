@@ -20,11 +20,18 @@ namespace LobbyClient
 		public int AllyNumber;
 		public bool IsSpectator;
         
+        [JsonIgnore]
         public DateTime JoinTime = DateTime.Now;
+
 		public string Name;
-		public string ScriptPassword;
-		public SyncStatuses SyncStatus = SyncStatuses.Unknown;
-		public User LobbyUser;
+		
+        
+        public string ScriptPassword;
+		
+        public SyncStatuses SyncStatus = SyncStatuses.Unknown;
+
+		[JsonIgnore]
+        public User LobbyUser;
 
 		public int TeamNumber;
 		
@@ -54,23 +61,6 @@ namespace LobbyClient
 		}
 
 
-		public void SetFrom(int status)
-		{
-			TeamNumber = (status >> 2) & 15;
-			AllyNumber = (status >> 6) & 15;
-			IsSpectator = (status & 1024) == 0;
-			SyncStatus = (SyncStatuses)((status >> 22) & 3);
-		}
-
-		public int ToInt()
-		{
-			var status = 0;
-			status += (TeamNumber & 15) << 2;
-			status += (AllyNumber & 15) << 6;
-			if (!IsSpectator) status |= 1024;
-			status += ((int)SyncStatus & 3) << 22;
-			return status;
-		}
 
 		public override bool Equals(object obj)
 		{
@@ -80,19 +70,6 @@ namespace LobbyClient
 			return Equals((UserBattleStatus)obj);
 		}
 
-		public override int GetHashCode()
-		{
-			unchecked
-			{
-				var result = AllyNumber;
-				result = (result*397) ^ IsSpectator.GetHashCode();
-				result = (result*397) ^ JoinTime.GetHashCode();
-				result = (result*397) ^ (Name != null ? Name.GetHashCode() : 0);
-				result = (result*397) ^ SyncStatus.GetHashCode();
-				result = (result*397) ^ TeamNumber;
-				return result;
-			}
-		}
 
 		public override string ToString()
 		{

@@ -145,6 +145,22 @@ namespace ZeroKLobby.Notifications
                         gameBox.Invalidate();
                     }
                     RefreshTooltip();
+
+
+                    var alliance =
+                        Enumerable.Range(0, TasClient.MaxAlliances - 1)
+                                  .FirstOrDefault(allyTeam => !battle.Users.Any(user => user.AllyNumber == allyTeam));
+                    var team = battle.GetFreeTeamID(client.UserName);
+
+
+                    var status = new UserBattleStatus
+                    {
+                        AllyNumber = alliance,
+                        TeamNumber = team,
+                        SyncStatus = HasAllResources() ? SyncStatuses.Synced : SyncStatuses.Unsynced,
+                        IsSpectator = desiredSpectatorState,
+                    };
+                    client.SendMyBattleStatus(status);
                 };
 
 
@@ -158,40 +174,6 @@ namespace ZeroKLobby.Notifications
                 };
 
             client.MyBattleHostExited += (s, e) => { barContainer.btnDetail.Text = "Start"; };
-
-            client.RequestBattleStatus += (s, e) =>
-                {
-                    var battle = client.MyBattle;
-
-                    var alliance =
-                        Enumerable.Range(0, TasClient.MaxAlliances - 1)
-                                  .FirstOrDefault(allyTeam => !battle.Users.Any(user => user.AllyNumber == allyTeam));
-                    var team = battle.GetFreeTeamID(client.UserName);
-
-                    /*				if (battle)
-{
- * 			var b = tas.MyBattle;
-return hostedMod.MissionSlots.Where(x => x.IsHuman).OrderByDescending(x => x.IsRequired).Where(
-x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !y.IsSpectator));
-
-	var slot = GetFreeSlots().FirstOrDefault();
-	if (slot != null)
-	{
-		tas.ForceAlly(u.Name, slot.AllyID);
-		tas.ForceTeam(u.Name, slot.TeamID);
-	}
-	else tas.ForceSpectator(u.Name);
-}*/
-
-                    var status = new UserBattleStatus
-                    {
-                        AllyNumber = alliance,
-                        TeamNumber = team,
-                        SyncStatus = HasAllResources() ? SyncStatuses.Synced : SyncStatuses.Unsynced,
-                        IsSpectator = desiredSpectatorState,
-                    };
-                    client.SendMyBattleStatus(status);
-                };
 
             client.MyBattleStarted += (s, e) =>
                 {

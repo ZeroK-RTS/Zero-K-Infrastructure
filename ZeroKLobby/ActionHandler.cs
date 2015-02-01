@@ -87,7 +87,7 @@ namespace ZeroKLobby
         /// </summary>
         public static void JoinBattle(int battleID, string password)
         {
-            EventHandler<EventArgs<Battle>> battleJoinHandler = null;
+            EventHandler<Battle> battleJoinHandler = null;
             EventHandler<TasEventArgs> battleJoinFailedHandler = null;
 
             battleJoinHandler = ((s, e) =>
@@ -298,10 +298,10 @@ namespace ZeroKLobby
                       var myHostName = e.Data.UserName;
                       var battle = Program.TasClient.ExistingBattles.Values.First(b => b.Founder.Name == myHostName);
 
-                      EventHandler<EventArgs<Battle>> battleJoined = null;
+                      EventHandler<Battle> battleJoined = null;
                       battleJoined = (s2, e2) =>
                         {
-                            if (e2.Data.BattleID == battle.BattleID)
+                            if (e2.BattleID == battle.BattleID)
                             {
                                 if (springieCommands != null)
                                 {

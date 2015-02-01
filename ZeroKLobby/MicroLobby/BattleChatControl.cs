@@ -290,13 +290,13 @@ namespace ZeroKLobby.MicroLobby
 		}
 
 
-		void TasClient_BattleJoined(object sender, EventArgs<Battle> e)
+		void TasClient_BattleJoined(object sender, Battle battle)
 		{
 			Reset();
-			SetMapImages(e.Data.MapName);
-		    minimapFuncBox.QueueMode = e.Data.IsQueue;
+			SetMapImages(battle.MapName);
+		    minimapFuncBox.QueueMode = battle.IsQueue;
 			foreach (var user in Program.TasClient.MyBattle.Users) AddUser(user.Name);
-			base.AddLine(new SelfJoinedBattleLine(e.Data));
+			base.AddLine(new SelfJoinedBattleLine(battle));
 		}
 
 		void TasClient_BattleMapChanged(object sender, BattleInfoEventArgs e1)
@@ -335,10 +335,9 @@ namespace ZeroKLobby.MicroLobby
 			}
 		}
 
-		void TasClient_BattleUserStatusChanged(object sender, TasEventArgs e)
+		void TasClient_BattleUserStatusChanged(object sender, UserBattleStatus ubs)
 		{
-			var userName = e.ServerParams[0];
-			RefreshBattleUser(userName);
+			RefreshBattleUser(ubs.Name);
 		}
 
 
