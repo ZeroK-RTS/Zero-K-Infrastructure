@@ -346,6 +346,22 @@ namespace ZkLobbyServer
             }
         }
 
+        async Task Process(LeaveChannel leaveChannel)
+        {
+            if (!IsLoggedIn) return;
+
+            Channel channel;
+            if (state.Rooms.TryGetValue(leaveChannel.Name, out channel)) {
+                User user;
+                if (channel.Users.TryRemove(Name, out user)) {
+                    var users = channel.Users.Keys.ToArray();
+                    await Broadcast(users, new ChannelUserRemoved() { ChannelName = channel.Name, UserName = Name });
+                    await SendCommand(new ChannelUserRemoved() { ChannelName = channel.Name, UserName = Name });
+                }
+            }
+        }
+
+
 
         async Task Process(Say say)
         {

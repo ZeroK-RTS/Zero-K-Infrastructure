@@ -165,6 +165,13 @@ namespace LobbyClient
         public string Password;
     }
 
+    [Message(Origin.Client)]
+    public class LeaveChannel
+    {
+        public string Name;
+    }
+
+
     [Message(Origin.Server)]
     public class ChannelUserAdded
     {

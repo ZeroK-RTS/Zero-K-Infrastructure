@@ -271,9 +271,9 @@ namespace ZeroKLobby.MicroLobby
         }
 
 
-        void TasClient_ChannelLeft(object sender, TasEventArgs e)
+        void TasClient_ChannelLeft(object sender, Channel channel)
         {
-            var channelName = e.ServerParams[0];
+            var channelName = channel.Name;
             var chatControl = GetChannelControl(channelName);
             toolTabs.RemoveChannelTab(channelName);
             if (chatControl != null)

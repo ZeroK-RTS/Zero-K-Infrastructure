@@ -214,7 +214,7 @@ namespace LobbyClient
         public event EventHandler<UserBattleStatus> BattleUserStatusChanged = delegate { };
         public event EventHandler<UserBattleStatus> BattleMyUserStatusChanged = delegate { };
         public event EventHandler<Channel> ChannelJoined = delegate { };
-
+        public event EventHandler<Channel> ChannelLeft = delegate { };
 
 
         
@@ -229,7 +229,7 @@ namespace LobbyClient
         public event EventHandler<BattleInfoEventArgs> BattleMapChanged = delegate { };
         
 
-        public event EventHandler<TasEventArgs> ChannelLeft = delegate { };
+
         public event EventHandler<TasEventArgs> ChannelTopicChanged = delegate { };
         public event EventHandler<TasEventArgs> ConnectionLost = delegate { };
         
@@ -462,12 +462,11 @@ namespace LobbyClient
         }
 
 
-        public void LeaveChannel(string channelName)
+        public async Task LeaveChannel(string channelName)
         {
-            var args = new CancelEventArgs<string>(channelName);
-            //con.SendCommand("LEAVE", channelName);
-            JoinedChannels.Remove(channelName);
-            ChannelLeft(this, new TasEventArgs(channelName));
+            if (joinedChannels.ContainsKey(channelName)) {
+                await SendCommand(new LeaveChannel() { Name = channelName });
+            }
         }
 
 
@@ -1015,6 +1014,7 @@ namespace LobbyClient
                 User org;
                 if (chan.Users.TryRemove(arg.UserName, out org))
                 {
+                    if (arg.UserName == UserName) ChannelLeft(this, chan);
                     ChannelUserRemoved(this, new ChannelUserRemovedInfo() { Channel = chan, User = org });
                 }
             }
