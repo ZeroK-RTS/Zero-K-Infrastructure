@@ -859,7 +859,8 @@ namespace LobbyClient
             var userName = args[1];
             var reason = Utils.Glue(args, 2);
             var channel = JoinedChannels[channelName];
-            channel.Users.Remove(userName);
+            User org;
+            channel.Users.TryRemove(userName, out org);
             //ChannelUserRemoved(this, new TasEventArgs(channelName, userName, reason));
         }
 
@@ -912,27 +913,11 @@ namespace LobbyClient
             JoinedChannels.Remove(channel);
             ChannelForceLeave(this, new TasEventArgs(args));
         }
-
-
-
-
+        
         async Task Process(BattleAdded bat)
         {
-            var h = bat.Header;
-
-            var newBattle = new Battle
-            {
-                BattleID = h.BattleID.Value,
-                Founder =  existingUsers[h.Founder],
-                Ip = h.Ip,
-                HostPort = h.Port,
-                MaxPlayers = h.MaxPlayers,
-                Password = h.Password,
-                EngineVersion = h.Engine,
-                MapName = h.Map,
-                Title = h.Title,
-                ModName = h.Game,
-            };
+            var newBattle = new Battle();
+            newBattle.UpdateWith(bat.Header,existingUsers);
             existingBattles[newBattle.BattleID] = newBattle;
             newBattle.Founder.IsInBattleRoom = true;
             
@@ -941,17 +926,20 @@ namespace LobbyClient
 
         async Task Process(JoinedBattle bat)
         {
-            var user = existingUsers[bat.User];
-            var battle = ExistingBattles[bat.BattleID];
-            battle.Users[user.Name] = new UserBattleStatus(user.Name, user);
-            user.IsInBattleRoom = true;
-            BattleUserJoined(this, new BattleUserEventArgs(user.Name, bat.BattleID));
-            if (user.Name == UserName) {
-                MyBattle = battle;
-                if (battle.Founder.Name == UserName) BattleOpened(this, battle);
-                BattleJoined(this, MyBattle);
+            User user;
+            existingUsers.TryGetValue(bat.User, out user);
+            Battle battle;
+            ExistingBattles.TryGetValue(bat.BattleID, out battle);
+            if (user != null && battle != null) {
+                battle.Users[user.Name] = new UserBattleStatus(user.Name, user);
+                user.IsInBattleRoom = true;
+                BattleUserJoined(this, new BattleUserEventArgs(user.Name, bat.BattleID));
+                if (user.Name == UserName) {
+                    MyBattle = battle;
+                    if (battle.Founder.Name == UserName) BattleOpened(this, battle);
+                    BattleJoined(this, MyBattle);
+                }
             }
-
         }
 
 

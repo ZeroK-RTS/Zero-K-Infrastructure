@@ -146,7 +146,7 @@ namespace LobbyClient
 
     public class Channel
     {
-        public List<string> Users = new List<string>();
+        public ConcurrentDictionary<string, User>  Users = new ConcurrentDictionary<string, User>();
         public string Name { get; set; }
         public string Topic { get; set; }
         public string TopicSetBy { get; set; }
@@ -275,12 +275,12 @@ namespace LobbyClient
         public string Engine;
         public string Game;
         public string Map;
-        public int MaxPlayers;
-        public int PlayerCount;
-        public int SpectatorCount;
+        public int? MaxPlayers;
+        public int? PlayerCount;
+        public int? SpectatorCount;
         public string Password;
         public string Title;
-        public int Port;
+        public int? Port;
         public string Ip;
         public string Founder;
     }

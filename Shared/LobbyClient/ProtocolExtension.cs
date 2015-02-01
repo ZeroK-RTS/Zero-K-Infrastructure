@@ -52,7 +52,6 @@ namespace LobbyClient
         public ProtocolExtension(TasClient tas, Action<string, Dictionary<string, string>> notifyUserExtensionChange) {
             this.tas = tas;
             this.notifyUserExtensionChange = notifyUserExtensionChange;
-            tas.PreviewChannelJoined += tas_PreviewChannelJoined;
             tas.PreviewSaid += tas_PreviewSaid;
             tas.LoginAccepted += (s, e) => tas.JoinChannel(ExtensionChannelName);
         }
@@ -67,7 +66,7 @@ namespace LobbyClient
         public void Publish(string name, Dictionary<string, string> data) {
             var dict = new Dictionary<string, string>(data);
             publishedUserAttributes[name] = dict;
-            tas.Say(SayPlace.Channel, ExtensionChannelName, FormatMessage(name, data), false);
+            //tas.Say(SayPlace.Channel, ExtensionChannelName, FormatMessage(name, data), false);
         }
 
 
@@ -147,10 +146,6 @@ namespace LobbyClient
             return input.Replace("|", "&divider&");
         }
 
-        string FormatMessage(string user, Dictionary<string, string> data) {
-            return string.Format("USER_EXT {0} {1}", user, Serialize(data));
-        }
-
         static string Serialize(Dictionary<string, string> data) {
             return string.Join("|", data.Select(x => string.Format("{0}|{1}", Escape(x.Key), Escape(x.Value))).ToArray());
         }
@@ -159,13 +154,6 @@ namespace LobbyClient
             return input.Replace("&divider&", "|");
         }
 
-
-        void tas_PreviewChannelJoined(object sender, CancelEventArgs<Channel> e) {
-            if (e.Data.Name == ExtensionChannelName) {
-                e.Cancel = true;
-                foreach (var kvp in publishedUserAttributes) tas.Say(SayPlace.Channel, ExtensionChannelName, FormatMessage(kvp.Key, kvp.Value), false);
-            }
-        }
 
 
         void tas_PreviewSaid(object sender, CancelEventArgs<TasSayEventArgs> e) {

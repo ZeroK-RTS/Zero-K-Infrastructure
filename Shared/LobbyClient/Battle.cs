@@ -33,7 +33,7 @@ namespace LobbyClient
         public bool IsInGame { get { return Founder.IsInGame; } }
         public bool IsLocked { get; set; }
         public bool IsMission { get { return mod != null && mod.IsMission; } }
-        public bool IsPassworded { get { return Password != null; } }
+        public bool IsPassworded { get { return !string.IsNullOrEmpty(Password); } }
         public bool IsReplay { get; set; }
 
         public string MapName { get; set; }
@@ -85,6 +85,20 @@ namespace LobbyClient
             ModOptions = new Dictionary<string, string>();
             Rectangles = new Dictionary<int, BattleRect>();
             Users = new ConcurrentDictionary<string, UserBattleStatus>();
+        }
+
+        public void UpdateWith(BattleHeader h, IDictionary<string,User> users)
+        {
+            if (h.BattleID != null) BattleID = h.BattleID.Value;
+            if (h.Founder != null) Founder = users[h.Founder];
+            if (h.Ip != null) Ip = h.Ip;
+            if (h.Port != null) HostPort = h.Port.Value;
+            if (h.MaxPlayers != null) MaxPlayers = h.MaxPlayers.Value;
+            if (h.Password != null) Password = h.Password;
+            if (h.Engine != null) EngineVersion = h.Engine;
+            if (h.Map != null) MapName = h.Map;
+            if (h.Title != null) Title = h.Title;
+            if (h.Game != null) ModName = h.Game;
         }
 
 

@@ -203,8 +203,10 @@ namespace ZkLobbyServer
                                 ClearMyLastKnownStateForOtherClients();
 
 
-                                await SendCommand(User);
-
+                                Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
+                                await SendCommand(response); // login accepted
+                                await SendCommand(User); // self data
+                                
                                 foreach (var b in state.Battles.Values)
                                 {
                                     if (b != null) {
@@ -235,15 +237,15 @@ namespace ZkLobbyServer
                                         }
                                     }
                                 }
+                                return;
 
                             }
                         }
                     }
                 }
+                await SendCommand(response);
             });
 
-            Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
-            await SendCommand(response);
         }
 
         public void ClearMyLastKnownStateForOtherClients()
@@ -410,6 +412,11 @@ namespace ZkLobbyServer
         }
 
 
+        Task Respond(string message)
+        {
+            return SendCommand(new Say() { Place = SayPlace.MessageBox, Target = Name, Text = message });
+        }
+
         async Task Process(OpenBattle openBattle)
         {
             if (!IsLoggedIn) return;
@@ -417,24 +424,22 @@ namespace ZkLobbyServer
             if (state.Battles.Values.Any(y => y.Founder == User))
             {
                 // already opened a battle 
-                await SendCommand(new Say() { Place = SayPlace.MessageBox, Target = Name, Text = "You already opened a battle" });
+                await Respond("You already opened a battle");
                 return;
             }
 
-            var alreadyJoinedBattle = MyBattle;
-            if (alreadyJoinedBattle != null)
-            {
-                // already in battle quit first
-                await Broadcast(alreadyJoinedBattle.Users.Keys, new LeftBattle { BattleID = alreadyJoinedBattle.BattleID, User = Name });
-
+            if (MyBattle != null) {
+                await Respond("You are already in a battle");
+                return;
             }
+
             var battleID = Interlocked.Increment(ref state.BattleCounter);
 
             var h = openBattle.Header;
             h.BattleID = battleID;
             h.Founder = Name;
             h.PlayerCount = 1; // is he reall spec?
-            var battle = new Battle(h.Engine, h.Password, h.Port, h.MaxPlayers, h.Map, h.Title, new Mod() { Name = h.Game })
+            var battle = new Battle(h.Engine, h.Password, h.Port.Value, h.MaxPlayers.Value, h.Map, h.Title, new Mod() { Name = h.Game })
             {
                 Ip = h.Ip,
                 BattleID = battleID,
@@ -444,9 +449,9 @@ namespace ZkLobbyServer
             state.Battles[battleID] = battle;
             MyBattle = battle;
             h.Password = h.Password != null ? "?" : null; // dont send pw to client
-            await Broadcast(state.Clients.Values, new BattleAdded() { Header = h }, Name);
-            await Broadcast(state.Clients.Values, new JoinedBattle() { BattleID = battleID, User = Name }, Name);
-
+            var clis = state.Clients.Values.ToList();
+            await Broadcast(clis, new BattleAdded() { Header = h }, Name);
+            await Broadcast(clis, new JoinedBattle() { BattleID = battleID, User = Name }, Name);
         }
 
 
@@ -454,25 +459,18 @@ namespace ZkLobbyServer
         {
             if (!IsLoggedIn) return;
 
-            var alreadyJoinedBattle = MyBattle;
-            if (alreadyJoinedBattle != null)
+            if (MyBattle != null)
             {
-                if (alreadyJoinedBattle.BattleID != join.BattleID) {
-                    // already in battle quit first
-                    await
-                        Broadcast(alreadyJoinedBattle.Users.Keys, new LeftBattle { BattleID = alreadyJoinedBattle.BattleID, User = Name });
-                } else {
-                    //already in same battle, do nothing
-                    return;
-                }
+                await Respond("You are already in other battle");
+                return;
             }
 
             Battle battle;
             if (state.Battles.TryGetValue(join.BattleID, out battle))
             {
-                if (battle.Password != join.Password)
+                if (battle.IsPassworded && battle.Password != join.Password)
                 {
-                    await SendCommand(new Say() { Place = SayPlace.MessageBox, Target = Name, Text = "Invalid password" });
+                    await Respond("Invalid password");
                     return;
                 }
                 battle.Users[Name] = new UserBattleStatus(Name, User);
