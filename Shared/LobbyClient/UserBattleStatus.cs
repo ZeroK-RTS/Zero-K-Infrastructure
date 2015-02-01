@@ -59,6 +59,8 @@ namespace LobbyClient
 	    }
 
 
+
+
 		public UserBattleStatus() {}
 
 

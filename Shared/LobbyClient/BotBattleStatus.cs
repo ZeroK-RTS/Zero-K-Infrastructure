@@ -1,3 +1,5 @@
+using System;
+
 namespace LobbyClient
 {
     public class BotBattleStatus:UserBattleStatus
@@ -9,6 +11,30 @@ namespace LobbyClient
         {
             this.owner = owner;
             this.aiLib = aiLib;
+        }
+
+        public UpdateBotStatus ToUpdateBotStatus()
+        {
+            return new UpdateBotStatus()
+            {
+                Name = Name,
+                AllyNumber = AllyNumber,
+                TeamNumber = TeamNumber,
+                Owner = owner,
+                AiLib = aiLib
+            };
+        }
+        
+        public void UpdateWith(UpdateBotStatus u)
+        {
+            if (u != null)
+            {
+                if (u.Name != Name) throw new Exception(string.Format("Applying update of {0} to user {1}", u.Name, Name));
+                if (u.AllyNumber.HasValue) AllyNumber = u.AllyNumber.Value;
+                if (u.TeamNumber.HasValue) TeamNumber = u.TeamNumber.Value;
+                if (u.AiLib != null) aiLib = u.AiLib;
+                if (u.Owner != null) owner = u.Owner;
+            }
         }
 
     } ;

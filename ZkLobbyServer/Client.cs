@@ -232,7 +232,7 @@ namespace ZkLobbyServer
                                             await SynchronizeUsers(u.Name);
                                             await SendCommand(new JoinedBattle() { BattleID = b.BattleID, User = u.Name });
                                             await SendCommand(u);
-                                        }
+                                       }
                                     }
                                 }
                                 return;
@@ -482,6 +482,7 @@ namespace ZkLobbyServer
                 await Broadcast(state.Clients.Values, new JoinedBattle() { BattleID = battle.BattleID, User = Name }, Name);
                 
                 foreach (var u in battle.Users.Values.Select(x=>x.ToUpdateBattleStatus()).ToList()) await SendCommand(u);
+                foreach (var u in battle.Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList()) await SendCommand(u);
             }
         }
 
@@ -510,6 +511,46 @@ namespace ZkLobbyServer
             Battle battle;
             if (state.Battles.TryGetValue(leave.BattleID, out battle)) {
                 await LeaveBattle(battle);
+            }
+        }
+
+
+        async Task Process(UpdateBotStatus add)
+        {
+            if (!IsLoggedIn) return;
+
+            var battle = MyBattle;
+            if (battle != null) {
+                BotBattleStatus ubs;
+                if (!battle.Bots.TryGetValue(add.Name, out ubs)) ubs = new BotBattleStatus(add.Name, Name, add.AiLib);
+                else if (add.Owner != Name && !User.IsAdmin && !User.IsBot && User != battle.Founder) {
+                    await Respond(string.Format("No permissions to edit bot {0}", add.Name));
+                    return;
+                }
+                ubs.UpdateWith(add);
+                battle.Bots[ubs.Name] = ubs;
+                await Broadcast(battle.Users.Keys, ubs.ToUpdateBotStatus());
+            }
+        }
+
+
+        async Task Process(RemoveBot rem)
+        {
+            if (!IsLoggedIn) return;
+
+            var battle = MyBattle;
+            if (battle != null)
+            {
+                var bot = battle.Bots[rem.Name];
+                if (bot.owner != Name  && !User.IsAdmin && !User.IsBot && User != battle.Founder)
+                {
+                    await Respond(string.Format("No permissions to edit bot {0}", rem.Name));
+                    return;
+                }
+                BotBattleStatus ubs;
+                if (battle.Bots.TryRemove(rem.Name, out ubs)) {
+                    await Broadcast(battle.Users.Keys, rem);
+                }
             }
         }
 

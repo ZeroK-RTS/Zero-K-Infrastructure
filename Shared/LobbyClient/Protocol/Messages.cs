@@ -354,6 +354,10 @@ namespace LobbyClient
         public string Owner;
     }
 
-
+    [Message(Origin.Client | Origin.Server)]
+    public class RemoveBot
+    {
+        public string Name;
+    }
 
 }
