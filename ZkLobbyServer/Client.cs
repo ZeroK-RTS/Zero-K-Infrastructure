@@ -566,7 +566,8 @@ namespace ZkLobbyServer
                     if (battle.Users.TryRemove(Name, out oldVal)) await Broadcast(state.Clients.Values, new LeftBattle() { BattleID = battle.BattleID, User = Name });
                     var bots = battle.Bots.Values.Where(x => x.owner == Name).ToList();
                     foreach (var b in bots) {
-                        await Broadcast(battle.Users.Keys, new RemoveBot() { Name = b.Name });
+                        BotBattleStatus obs;
+                        if (battle.Bots.TryRemove(b.Name, out obs)) await Broadcast(battle.Users.Keys, new RemoveBot() { Name = b.Name });
                     }
                 }
             }
