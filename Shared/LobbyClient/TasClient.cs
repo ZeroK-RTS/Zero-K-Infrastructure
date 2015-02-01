@@ -59,7 +59,6 @@ namespace LobbyClient
 
         readonly string appName = "UnknownClient";
         Dictionary<int, Battle> existingBattles = new Dictionary<int, Battle>();
-        Dictionary<string, ExistingChannel> existingChannels = new Dictionary<string, ExistingChannel>();
         Dictionary<string, User> existingUsers = new Dictionary<string, User>();
         readonly bool forcedLocalIP = false;
         readonly Invoker<Invoker> guiThreadInvoker;
@@ -93,7 +92,6 @@ namespace LobbyClient
             MyBattle = null;
             ConnectionFailed = false;
             ExistingUsers = new Dictionary<string, User>();
-            existingChannels = new Dictionary<string, ExistingChannel>();
             joinedChannels = new Dictionary<string, Channel>();
             existingBattles = new Dictionary<int, Battle>();
             isLoggedIn = false;
@@ -104,7 +102,6 @@ namespace LobbyClient
             ConnectionFailed = !wasRequested;
 
             ExistingUsers = new Dictionary<string, User>();
-            existingChannels = new Dictionary<string, ExistingChannel>();
             joinedChannels = new Dictionary<string, Channel>();
             existingBattles = new Dictionary<int, Battle>();
             MyBattle = null;
@@ -697,17 +694,6 @@ namespace LobbyClient
                         OnClientStatus(args);
                         break;
 
-                    case "CLIENTS": // client list sent after channel join
-                        OnClients(args);
-                        break;
-
-                    case "JOINED": // user joined one of my channels
-                        OnJoined(args);
-                        break;
-
-                    case "LEFT": // user left one of my channels
-                        OnLeft(args);
-                        break;
 
                     case "CHANNELTOPIC": // channel topic update (after joining a channel)
                         OnChannelTopic(args);
@@ -851,33 +837,6 @@ namespace LobbyClient
             c.TopicSetDate = ConvertMilisecondTime(args[2]);
             c.Topic = Utils.Glue(args, 3);
             ChannelTopicChanged(this, new TasEventArgs(args[0]));
-        }
-
-        void OnLeft(string[] args)
-        {
-            var channelName = args[0];
-            var userName = args[1];
-            var reason = Utils.Glue(args, 2);
-            var channel = JoinedChannels[channelName];
-            User org;
-            channel.Users.TryRemove(userName, out org);
-            //ChannelUserRemoved(this, new TasEventArgs(channelName, userName, reason));
-        }
-
-        void OnJoined(string[] args)
-        {
-            var channelName = args[0];
-            var userName = args[1];
-            var channel = JoinedChannels[channelName];
-            channel.Users.Add(userName);
-            //ChannelUserAdded(this, new TasEventArgs(channelName, userName));
-        }
-
-        void OnClients(string[] args)
-        {
-            var usrs = Utils.Glue(args, 1).Split(' ');
-            foreach (var s in usrs) JoinedChannels[args[0]].Users.Add(s);
-            //ChannelUsersAdded(this, new TasEventArgs(args));
         }
 
         void OnClientStatus(string[] args)
@@ -1039,12 +998,25 @@ namespace LobbyClient
         async Task Process(JoinChannelResponse response)
         {
             if (response.Success) {
-                JoinedChannels[response.Name] = response.Channel;
-                var cancelEvent = new CancelEventArgs<Channel>(response.Channel);
+                var chan = new Channel() {
+                    Name = response.Channel.Name,
+                    Topic = response.Channel.Topic,
+                    TopicSetBy = response.Channel.TopicSetBy,
+                    TopicSetDate = response.Channel.TopicSetDate,
+                };
+                
+                JoinedChannels[response.Name] = chan;
+
+                foreach (var u in response.Channel.Users) {
+                    User user;
+                    if (existingUsers.TryGetValue(u, out user)) chan.Users[u] = user;
+                }
+                
+                var cancelEvent = new CancelEventArgs<Channel>(chan);
                 PreviewChannelJoined(this, cancelEvent);
                 if (!cancelEvent.Cancel) {
-                    ChannelJoined(this, response.Channel);
-                    ChannelUserAdded(this, new ChannelUserInfo() {Channel = response.Channel, Users = response.Channel.Users.Select(x => existingUsers[x]).ToList()}); 
+                    ChannelJoined(this, chan);
+                    ChannelUserAdded(this, new ChannelUserInfo() {Channel = chan, Users = chan.Users.Values.ToList()}); 
                 }
             } else {
                 ChannelJoinFailed(this, response);
@@ -1055,11 +1027,12 @@ namespace LobbyClient
         {
             Channel chan;
             if (joinedChannels.TryGetValue(arg.ChannelName, out chan)) {
-                if (!chan.Users.Contains(arg.UserName)) {
-                    chan.Users.Add(arg.UserName);
-                    var users = new List<User>();
-                    users.Add(existingUsers[arg.UserName]);
-                    ChannelUserAdded(this, new ChannelUserInfo() { Channel = chan, Users = users});
+                if (!chan.Users.ContainsKey(arg.UserName)) {
+                    User user;
+                    if (existingUsers.TryGetValue(arg.UserName, out user)) {
+                        chan.Users[arg.UserName] = user;
+                        ChannelUserAdded(this, new ChannelUserInfo() { Channel = chan, Users = new List<User>(){user}});
+                    }
                 }
             }
         }
@@ -1067,12 +1040,11 @@ namespace LobbyClient
         async Task Process(ChannelUserRemoved arg)
         {
             Channel chan;
-            if (joinedChannels.TryGetValue(arg.ChannelName, out chan))
-            {
-                if (chan.Users.Contains(arg.UserName))
+            if (joinedChannels.TryGetValue(arg.ChannelName, out chan)) {
+                User org;
+                if (chan.Users.TryRemove(arg.UserName, out org))
                 {
-                    chan.Users.Remove(arg.UserName);
-                    ChannelUserRemoved(this, new ChannelUserRemovedInfo() { Channel = chan, User = existingUsers[arg.UserName] });
+                    ChannelUserRemoved(this, new ChannelUserRemovedInfo() { Channel = chan, User = org });
                 }
             }
         }

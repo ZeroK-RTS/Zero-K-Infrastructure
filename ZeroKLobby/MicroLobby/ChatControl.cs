@@ -141,7 +141,7 @@ namespace ZeroKLobby.MicroLobby
                         
                 };
 
-            if (channel != null) foreach (var userName in Program.TasClient.JoinedChannels[ChannelName].Users) AddUser(userName);
+            if (channel != null) foreach (var userName in Program.TasClient.JoinedChannels[ChannelName].Users.Keys) AddUser(userName);
         }
 
         void VoiceOnUserChanged(ulong steamID)
@@ -182,7 +182,7 @@ namespace ZeroKLobby.MicroLobby
         protected void AddUser(string userName) {
             Channel channel;
             if (Program.TasClient.JoinedChannels.TryGetValue(ChannelName, out channel)) {
-                if (!channel.Users.Contains(userName)) {
+                if (!channel.Users.ContainsKey(userName)) {
                     Trace.WriteLine("Trying to add a user to a channel he hasn't joined (" + ChannelName + "/" + userName + ").");
                     return;
                 }

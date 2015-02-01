@@ -84,10 +84,9 @@ namespace NightWatch
 							{
 							    Channel channel;
 							    if (!client.JoinedChannels.TryGetValue(e.Channel, out channel)) return;
-                                var chanusers = channel.Users.ToList();
 								foreach (var s in db.LobbyChannelSubscriptions.Where(x => x.Channel == e.Channel).Select(x=>x.Account))
 								{
-									if (!chanusers.Any(x=>x == s.Name)) {
+									if (!channel.Users.ContainsKey(s.Name)) {
 									    var fac = db.Factions.FirstOrDefault(x => x.Shortcut == e.Channel);
                                         // if faction channel check if allowed
                                         if (fac == null || (fac.FactionID == s.AccountID && s.Level >= GlobalConst.FactionChannelMinLevel)) {

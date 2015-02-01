@@ -52,13 +52,11 @@ namespace ZkLobbyServer
                 foreach (var chan in state.Rooms.Values.ToList())
                 {
                     List<string> usersToNotify = null;
-                    lock (chan.Users)
+                    if (chan.Users.ContainsKey(Name))
                     {
-                        if (chan.Users.Contains(Name))
-                        {
-                            chan.Users.Remove(Name);
-                            usersToNotify = chan.Users.ToList();
-                        }
+                        User org;
+                        chan.Users.TryRemove(Name, out org);
+                        usersToNotify = chan.Users.Keys.ToList();
                     }
                     if (usersToNotify != null) await Broadcast(usersToNotify, new ChannelUserRemoved() { ChannelName = chan.Name, UserName = Name });
                 }
@@ -325,32 +323,27 @@ namespace ZkLobbyServer
                 await SendCommand(new JoinChannelResponse() { Success = false, Reason = "invalid password" });
             }
 
-            List<string> users;
-            lock (channel.Users)
-            {
-                if (!channel.Users.Contains(Name)) channel.Users.Add(Name);
-                users = channel.Users.ToList();
+            if (channel.Users.TryAdd(Name, User)) {
+                var users = channel.Users.Keys.ToArray();
+                
+                await SynchronizeUsers(users);
+                await
+                    SendCommand(new JoinChannelResponse() {
+                        Success = true,
+                        Name = joinChannel.Name,
+                        Channel =
+                            new ChannelHeader() {
+                                Name = channel.Name,
+                                Password = channel.Password,
+                                Topic = channel.Topic,
+                                TopicSetBy = channel.TopicSetBy,
+                                TopicSetDate = channel.TopicSetDate,
+                                Users = new List<string>(users)
+                            }
+                    });
+
+                await Broadcast(users.Where(x => x != Name), new ChannelUserAdded { ChannelName = channel.Name, UserName = Name }, Name);
             }
-
-            await SynchronizeUsers(users.ToArray());
-            await
-                SendCommand(new JoinChannelResponse()
-                {
-                    Success = true,
-                    Name = joinChannel.Name,
-                    Channel =
-                        new Channel()
-                        {
-                            Name = channel.Name,
-                            Password = channel.Password,
-                            Topic = channel.Topic,
-                            TopicSetBy = channel.TopicSetBy,
-                            TopicSetDate = channel.TopicSetDate,
-                            Users = users
-                        }
-                });
-
-            await Broadcast(users.Where(x => x != Name), new ChannelUserAdded { ChannelName = channel.Name, UserName = Name }, Name);
         }
 
 
@@ -366,12 +359,7 @@ namespace ZkLobbyServer
                     Channel channel;
                     if (state.Rooms.TryGetValue(say.Target, out channel))
                     {
-                        bool isJoined;
-                        lock (channel.Users)
-                        {
-                            isJoined = channel.Users.Contains(Name);
-                        }
-                        if (isJoined) await Broadcast(channel.Users, say, Name);
+                        if (channel.Users.ContainsKey(Name)) await Broadcast(channel.Users.Keys, say, Name);
                     }
                     break;
 

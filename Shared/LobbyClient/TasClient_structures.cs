@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 
@@ -27,6 +28,16 @@ namespace LobbyClient
 			this.serverParams = new List<string>(serverParams);
 		}
 	} ;
+
+    public class Channel
+    {
+        public ConcurrentDictionary<string, User> Users = new ConcurrentDictionary<string, User>();
+        public string Name { get; set; }
+        public string Topic { get; set; }
+        public string TopicSetBy { get; set; }
+        public DateTime? TopicSetDate { get; set; }
+        public string Password;
+    }
 
 
 	public class BattleInfoEventArgs: EventArgs

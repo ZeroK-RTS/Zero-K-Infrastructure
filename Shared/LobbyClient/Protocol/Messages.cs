@@ -140,13 +140,13 @@ namespace LobbyClient
     [Message(Origin.Client)]
     public class CreateChannel
     {
-        public Channel Channel;
+        public ChannelHeader Channel;
     }
 
 
-    public class Channel
+    public class ChannelHeader
     {
-        public ConcurrentDictionary<string, User>  Users = new ConcurrentDictionary<string, User>();
+        public List<string> Users = new List<string>();
         public string Name { get; set; }
         public string Topic { get; set; }
         public string TopicSetBy { get; set; }
@@ -186,7 +186,7 @@ namespace LobbyClient
         public bool Success;
         public string Reason;
 
-        public Channel Channel;
+        public ChannelHeader Channel;
     }
 
     [Message(Origin.Server)]
