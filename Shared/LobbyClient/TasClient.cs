@@ -218,8 +218,8 @@ namespace LobbyClient
         public event EventHandler<BotBattleStatus> BattleBotAdded = delegate { };
         public event EventHandler<BotBattleStatus> BattleBotUpdated = delegate { };
         public event EventHandler<BotBattleStatus> BattleBotRemoved = delegate { };
+        public event EventHandler<TasEventArgs> ConnectionLost = delegate { };
         
-
         
         
         
@@ -227,10 +227,8 @@ namespace LobbyClient
         public event EventHandler<BattleInfoEventArgs> BattleInfoChanged = delegate { };
         public event EventHandler<BattleInfoEventArgs> BattleMapChanged = delegate { };
         
-
-
+        
         public event EventHandler<TasEventArgs> ChannelTopicChanged = delegate { };
-        public event EventHandler<TasEventArgs> ConnectionLost = delegate { };
         
         public event EventHandler<TasEventArgs> MyBattleHostExited = delegate { };
         public event EventHandler<BattleInfoEventArgs> MyBattleMapChanged = delegate { };
@@ -607,10 +605,6 @@ namespace LobbyClient
         {
             if (!text.EndsWith("\n")) text += "\n";
             return SendData(Encoding.GetBytes(text));
-        }
-
-        public void SetHideCountry(string name, bool state) {
-            //con.SendCommand("HIDECOUNTRYSET", name, state ? "1" : "0");
         }
 
         public void SetScriptTag(string data)
