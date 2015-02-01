@@ -193,6 +193,9 @@ namespace ZkLobbyServer
 
                                 ClearMyLastKnownStateForOtherClients();
 
+
+                                await SendCommand(User);
+
                                 foreach (var b in state.Battles.Values)
                                 {
                                     if (b != null) {
@@ -371,6 +374,29 @@ namespace ZkLobbyServer
                         await SendCommand(say);
                     } // todo else offline message?
                     break;
+
+                case SayPlace.Battle:
+                    if (MyBattle != null) {
+                        await Broadcast(MyBattle.Users.Select(x=>x.Name), say);
+                    }
+                    break;
+
+                case SayPlace.BattlePrivate:
+                    if (MyBattle != null && MyBattle.Founder.Name == Name) {
+                        var target = MyBattle.Users.FirstOrDefault(x => x.Name == say.Target);
+                        Client cli;
+                        if (target != null && state.Clients.TryGetValue(target.Name, out cli))
+                        {
+                            await cli.SendCommand(say);
+                        }
+                    }
+                    break;
+                case SayPlace.MessageBox:
+                    if (User.IsAdmin || User.IsBot) {
+                        await Broadcast(state.Clients.Values, say);
+                    }
+                    break;
+
             }
         }
 
