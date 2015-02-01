@@ -53,7 +53,7 @@ namespace LobbyClient
             this.tas = tas;
             this.notifyUserExtensionChange = notifyUserExtensionChange;
             tas.PreviewSaid += tas_PreviewSaid;
-            tas.LoginAccepted += (s, e) => tas.JoinChannel(ExtensionChannelName);
+            //tas.LoginAccepted += (s, e) => tas.JoinChannel(ExtensionChannelName);
         }
 
         internal Dictionary<string, string> Get(string name) {

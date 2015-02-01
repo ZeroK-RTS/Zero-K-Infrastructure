@@ -459,11 +459,7 @@ namespace LobbyClient
         public async Task LeaveBattle()
         {
             if (MyBattle != null) {
-                var bat = MyBattle;
                 await SendCommand(new LeaveBattle() { BattleID = MyBattleID });
-                bat.ScriptTags.Clear();
-                MyBattle = null;
-                //BattleClosed(this, new EventArgs<Battle>(bat));
             }
         }
 

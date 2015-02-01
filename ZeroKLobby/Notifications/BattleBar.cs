@@ -341,6 +341,7 @@ namespace ZeroKLobby.Notifications
             client.LeaveBattle();
 
             Program.NotifySection.RemoveBar(this);
+            NavigationControl.Instance.Path = "battles";
         }
 
         void AutoRespond() {
