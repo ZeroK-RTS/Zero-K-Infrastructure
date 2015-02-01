@@ -23,13 +23,13 @@ namespace ZeroKLobby.MicroLobby
         {
             var botNumber = Enumerable.Range(1, int.MaxValue).First(i => !Program.TasClient.MyBattle.Bots.Any(
                                 bt => bt.Name == "Bot_" + i));
-            var botStatus = Program.TasClient.MyBattleStatus.Clone();
             // new team        	
-            botStatus.TeamNumber = Enumerable.Range(0, TasClient.MaxTeams - 1).FirstOrDefault(
+            var teamNumber = Enumerable.Range(0, TasClient.MaxTeams - 1).FirstOrDefault(
                                     x => !Program.TasClient.MyBattle.Users.Values.Any(y => y.TeamNumber == x));
             //different alliance than player
-            botStatus.AllyNumber = Enumerable.Range(0, TasClient.MaxAlliances - 1).FirstOrDefault(x => x != botStatus.AllyNumber);
-            Program.TasClient.AddBot("Bot_" + botNumber, botStatus, botShortName);
+            var allyNumber = Enumerable.Range(0, TasClient.MaxAlliances - 1).FirstOrDefault(x => x != Program.TasClient.MyBattleStatus.AllyNumber);
+
+            Program.TasClient.AddBot("Bot_" + botNumber, botShortName, allyNumber, teamNumber);
         }
 
         static MenuItem GetAddBot()

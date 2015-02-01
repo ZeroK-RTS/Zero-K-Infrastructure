@@ -486,7 +486,7 @@ namespace ZkLobbyServer
         }
 
 
-        async Task Process(UpdateBattleStatus status)
+        async Task Process(UpdateUserBattleStatus status)
         {
             if (!IsLoggedIn) return;
             var bat = MyBattle;

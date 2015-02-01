@@ -334,7 +334,7 @@ namespace LobbyClient
     }
 
     [Message(Origin.Client | Origin.Server)]
-    public class UpdateBattleStatus
+    public class UpdateUserBattleStatus
     {
         public int? AllyNumber;
         public bool? IsSpectator;
@@ -344,6 +344,15 @@ namespace LobbyClient
     }
 
 
+    [Message(Origin.Client | Origin.Server)]
+    public class UpdateBotStatus
+    {
+        public int? AllyNumber;
+        public string Name;
+        public int? TeamNumber;
+        public string AiLib;
+        public string Owner;
+    }
 
 
 

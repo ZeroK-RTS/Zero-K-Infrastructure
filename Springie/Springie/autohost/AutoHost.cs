@@ -850,13 +850,7 @@ namespace Springie.autohost
             tas.ChangeMyBattleStatus(true, SyncStatuses.Synced);
             if (hostedMod.IsMission) {
                 foreach (MissionSlot slot in hostedMod.MissionSlots.Where(x => !x.IsHuman)) {
-                    var ubs = new UserBattleStatus();
-                    ubs.SyncStatus = SyncStatuses.Synced;
-                    ubs.AllyNumber = slot.AllyID;
-                    ubs.TeamNumber = slot.TeamID;
-                    ubs.IsSpectator = false;
-                    ubs.Name = slot.AiShortName;
-                    tas.AddBot(slot.TeamName, ubs, slot.AiShortName);
+                    tas.AddBot(slot.TeamName, slot.AiShortName, slot.AllyID, slot.TeamID);
                 }
             }
             if (SpawnConfig != null)

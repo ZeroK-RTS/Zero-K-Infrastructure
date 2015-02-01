@@ -36,7 +36,7 @@ namespace LobbyClient
 		public int TeamNumber;
 
 
-	    public void UpdateWith(UpdateBattleStatus u)
+	    public void UpdateWith(UpdateUserBattleStatus u)
 	    {
 	        if (u != null) {
                 if (u.Name != Name) throw new Exception(string.Format("Applying update of {0} to user {1}", u.Name, Name));
@@ -47,9 +47,9 @@ namespace LobbyClient
 	        }
 	    }
 
-	    public UpdateBattleStatus ToUpdateBattleStatus()
+	    public UpdateUserBattleStatus ToUpdateBattleStatus()
 	    {
-	        return new UpdateBattleStatus() {
+	        return new UpdateUserBattleStatus() {
 	            Name = Name,
 	            AllyNumber = AllyNumber,
 	            IsSpectator = IsSpectator,

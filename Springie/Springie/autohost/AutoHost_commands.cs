@@ -1100,10 +1100,7 @@ namespace Springie.autohost
                     }
                     else
                     {
-                        var botStatus = tas.MyBattleStatus.Clone();
-                        botStatus.TeamNumber = b.TeamID;
-                        botStatus.AllyNumber = b.AllyID;
-                        tas.AddBot(b.BotName.Replace(" ", "_"), botStatus, b.BotAI);
+                        tas.AddBot(b.BotName.Replace(" ", "_"), b.BotAI, b.AllyID, b.TeamID);
                     }
                 }
             }

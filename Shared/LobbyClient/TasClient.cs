@@ -313,10 +313,14 @@ namespace LobbyClient
             }
         }
 
-        public void AddBot(string name, UserBattleStatus status, string aiDll)
+        public Task AddBot(string name, string aiDll, int? allyNumber= null, int? teamNumber= null)
         {
-            if (name.Contains(" ")) throw new TasClientException("Bot name must not contain spaces. " + name);
-            //con.SendCommand("ADDBOT", name, status.ToInt(), teamColor, aiDll);
+            var u = new UpdateBotStatus();
+            if (aiDll != null) u.AiLib = aiDll;
+            if (name != null) u.Name = name;
+            if (allyNumber != null) u.AllyNumber = allyNumber;
+            if (teamNumber != null) u.TeamNumber = teamNumber;
+            return SendCommand(u);
         }
 
 
@@ -336,7 +340,7 @@ namespace LobbyClient
         {
             var ubs = MyBattleStatus;
             if (ubs != null) {
-                var status = new UpdateBattleStatus() { IsSpectator = spectate, Sync = syncStatus, AllyNumber = ally, TeamNumber = team, Name = UserName};
+                var status = new UpdateUserBattleStatus() { IsSpectator = spectate, Sync = syncStatus, AllyNumber = ally, TeamNumber = team, Name = UserName};
                 await SendCommand(status);
             }
         }
@@ -380,7 +384,7 @@ namespace LobbyClient
         public async Task ForceAlly(string username, int ally)
         {
             if (MyBattle != null && MyBattle.Users.ContainsKey(username)) {
-                var ubs = new UpdateBattleStatus() { Name = username, AllyNumber = ally };
+                var ubs = new UpdateUserBattleStatus() { Name = username, AllyNumber = ally };
                 await SendCommand(ubs);
             }
         }
@@ -389,7 +393,7 @@ namespace LobbyClient
         {
             if (MyBattle != null && MyBattle.Users.ContainsKey(username))
             {
-                var ubs = new UpdateBattleStatus() { Name = username, IsSpectator = spectatorState };
+                var ubs = new UpdateUserBattleStatus() { Name = username, IsSpectator = spectatorState };
                 await SendCommand(ubs);
             }
         }
@@ -398,7 +402,7 @@ namespace LobbyClient
         {
             if (MyBattle != null && MyBattle.Users.ContainsKey(username))
             {
-                var ubs = new UpdateBattleStatus() { Name = username, TeamNumber = team };
+                var ubs = new UpdateUserBattleStatus() { Name = username, TeamNumber = team };
                 await SendCommand(ubs);
             }
         }
@@ -645,6 +649,8 @@ namespace LobbyClient
         {
             //con.SendCommand("UPDATEBOT", name, battleStatus.ToInt(), teamColor);
         }
+
+
 
        
         /// <summary>
@@ -1026,7 +1032,7 @@ namespace LobbyClient
             existingUsers.Remove(arg.Name);
         }
 
-        async Task Process(UpdateBattleStatus status)
+        async Task Process(UpdateUserBattleStatus status)
         {
             var bat = MyBattle;
             if (bat != null) {
