@@ -14,7 +14,7 @@ namespace ZeroKWeb.Controllers
     {
         //
         // GET: /Users/
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]is
+        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
         public ActionResult ChangeHideCountry(int accountID, bool hideCountry)
         {
             var db = new ZkDataContext();
