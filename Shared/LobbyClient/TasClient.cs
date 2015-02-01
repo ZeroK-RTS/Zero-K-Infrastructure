@@ -64,17 +64,14 @@ namespace LobbyClient
         readonly Invoker<Invoker> guiThreadInvoker;
         bool isLoggedIn;
         Dictionary<string, Channel> joinedChannels = new Dictionary<string, Channel>();
-        int lastSpectatorCount;
+
         int lastUdpSourcePort;
         int lastUserStatus;
         readonly string localIp;
-        bool lockToChangeTo;
-        string mapToChangeTo;
         readonly Timer minuteTimer;
 
         int pingInterval = 30; // how often to ping server (in seconds)
         readonly Timer pingTimer;
-        readonly Random random = new Random();
         public string serverHost { get; private set; }
 
         int serverPort;
@@ -136,10 +133,9 @@ namespace LobbyClient
         public bool IsLoggedIn { get { return isLoggedIn; } }
 
         public Dictionary<string, Channel> JoinedChannels { get { return joinedChannels; } }
-        public int MessageID { get; private set; }
 
         public Battle MyBattle { get; protected set; }
-        public int MyBattleID { get { return MyBattle != null ? MyBattle.BattleID : 0; } }
+        //public int MyBattleID { get { return MyBattle != null ? MyBattle.BattleID : 0; } }
 
 
         public UserBattleStatus MyBattleStatus
@@ -152,6 +148,16 @@ namespace LobbyClient
                     return ubs;
                 }
                 return null;
+            }
+        }
+
+        public int MyBattleID
+        {
+            get
+            {
+                var bat = MyBattle;
+                if (bat != null) return bat.BattleID;
+                else return 0;
             }
         }
 
@@ -207,6 +213,8 @@ namespace LobbyClient
         public event EventHandler<string> Input = delegate { };
         public event EventHandler<UserBattleStatus> BattleUserStatusChanged = delegate { };
         public event EventHandler<UserBattleStatus> BattleMyUserStatusChanged = delegate { };
+        public event EventHandler<Channel> ChannelJoined = delegate { };
+
 
 
         
@@ -214,22 +222,17 @@ namespace LobbyClient
         public event EventHandler<EventArgs<BotBattleStatus>> BattleBotAdded = delegate { };
         public event EventHandler<EventArgs<BotBattleStatus>> BattleBotRemoved = delegate { };
         public event EventHandler<EventArgs<BotBattleStatus>> BattleBotUpdated = delegate { };
+        
+        
         public event EventHandler<TasEventArgs> BattleDetailsChanged = delegate { };
-
         public event EventHandler<BattleInfoEventArgs> BattleInfoChanged = delegate { };
-
         public event EventHandler<BattleInfoEventArgs> BattleMapChanged = delegate { };
+        
 
-        
-        
-        public event EventHandler<TasEventArgs> ChannelForceLeave = delegate { }; // i was kicked from a channel
-        public event EventHandler<Channel> ChannelJoined = delegate { };
         public event EventHandler<TasEventArgs> ChannelLeft = delegate { };
         public event EventHandler<TasEventArgs> ChannelTopicChanged = delegate { };
         public event EventHandler<TasEventArgs> ConnectionLost = delegate { };
-        public event EventHandler<TasEventArgs> JoinBattleFailed = delegate { };
         
-
         public event EventHandler<TasEventArgs> MyBattleHostExited = delegate { };
         public event EventHandler<BattleInfoEventArgs> MyBattleMapChanged = delegate { };
         public event EventHandler<TasEventArgs> MyBattleStarted = delegate { };
@@ -316,18 +319,14 @@ namespace LobbyClient
             //con.SendCommand("ADDBOT", name, status.ToInt(), teamColor, aiDll);
         }
 
-        public void ChangeLock(bool lck)
-        {
-            if (lck != lockToChangeTo) UpdateBattleInfo(lck, mapToChangeTo);
-        }
-
 
         public void ChangeMap(string name)
         {
-            {
-                mapToChangeTo = name;
-                UpdateBattleInfo(lockToChangeTo, name);
-            }
+            // todo imple,emtn
+            //{
+//                mapToChangeTo = name;
+  //              UpdateBattleInfo(lockToChangeTo, name);
+    //        }
         }
 
         public async Task ChangeMyBattleStatus(bool? spectate = null,
@@ -458,7 +457,7 @@ namespace LobbyClient
         public async Task LeaveBattle()
         {
             if (MyBattle != null) {
-                await SendCommand(new LeaveBattle() { BattleID = MyBattleID });
+                await SendCommand(new LeaveBattle() { BattleID = MyBattle.BattleID });
             }
         }
 
@@ -506,12 +505,9 @@ namespace LobbyClient
             MyBattle.Ip = localIp;
 
             //battle.Details.AddToParamList(objList);
-            mapToChangeTo = MyBattle.MapName;
-            lockToChangeTo = false;
 
             //con.SendCommand("OPENBATTLE", objList.ToArray());
 
-            lastSpectatorCount = 0;
 
             // send predefined starting rectangles
             //foreach (var v in MyBattle.Rectangles) con.SendCommand("ADDSTARTRECT", v.Key, v.Value.Left, v.Value.Top, v.Value.Right, v.Value.Bottom);
@@ -670,12 +666,6 @@ namespace LobbyClient
                 switch (command)
                 {
 
-
-                    case "FORCELEAVECHANNEL":
-                        OnForceLeaveChannel(args);
-                        break;
-
-
                     case "RING":
                         Rang(this, new EventArgs<string>(args[0]));
                         break;
@@ -695,9 +685,6 @@ namespace LobbyClient
                         break;
 
 
-                    case "JOINBATTLEFAILED": // user failed to join battle 
-                        JoinBattleFailed(this, new TasEventArgs(args));
-                        break;
 
                     case "ADDBOT": // bot added to battle
                         OnAddBot(args);
@@ -857,13 +844,6 @@ namespace LobbyClient
 
 
 
-        void OnForceLeaveChannel(string[] args)
-        {
-            var channel = args[0];
-            JoinedChannels.Remove(channel);
-            ChannelForceLeave(this, new TasEventArgs(args));
-        }
-        
         async Task Process(BattleAdded bat)
         {
             var newBattle = new Battle();
@@ -1066,15 +1046,6 @@ namespace LobbyClient
             var previewSaidEventArgs = new CancelEventArgs<TasSayEventArgs>(sayArgs);
             PreviewSaid(this, previewSaidEventArgs);
             if (!previewSaidEventArgs.Cancel) Said(this, sayArgs);
-        }
-
-
-        void UpdateBattleInfo(bool lck, string mapname)
-        {
-            {
-                lockToChangeTo = lck;
-                //con.SendCommand("UPDATEBATTLEINFO", MyBattle.Users.Count(user => user.IsSpectator), (lck ? 1 : 0), checksum, mapname);
-            }
         }
 
 

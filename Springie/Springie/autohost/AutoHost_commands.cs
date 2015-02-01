@@ -265,33 +265,6 @@ namespace Springie.autohost
             return true;
         }
 
-        DateTime lockedUntil = DateTime.MinValue;
-
-        public void ComLock(TasSayEventArgs e, string[] words)
-        {
-            if (words != null && words.Length == 1)
-            {
-                int timer;
-                if (int.TryParse(words[0], out timer))
-                {
-                    if (timer < 0) timer = 0;
-                    if (timer > MainConfig.MaxLockTime) timer = MainConfig.MaxLockTime;
-                    lockedUntil = DateTime.Now.AddSeconds(timer);
-                }
-            }
-            tas.ChangeLock(true);
-        }
-
-        public void ComUnlock(TasSayEventArgs e, string[] words)
-        {
-            if (DateTime.Now < lockedUntil) Respond(e, string.Format("Lock is timed, wait {0} seconds", (int)lockedUntil.Subtract(DateTime.Now).TotalSeconds));
-            else
-            {
-                tas.ChangeLock(false);
-                lockedUntil = DateTime.MinValue;
-            }
-        }
-
 
         public void ComAddBox(TasSayEventArgs e, string[] words)
         {
@@ -356,7 +329,6 @@ namespace Springie.autohost
             else
             {
                 if (teamCount == 0) teamCount = 2;
-                ComFix(e, words);
                 BalanceTeams(teamCount, false);
             }
         }
@@ -403,7 +375,6 @@ namespace Springie.autohost
             if (SpawnConfig == null) RunServerBalance(false, teamCount, true);
             else
             {
-                ComFix(e, words);
                 BalanceTeams(teamCount, true);
             }
         }
@@ -461,27 +432,6 @@ namespace Springie.autohost
             spring.ExitGame();
         }
 
-
-        /// <summary>
-        /// fixes ids
-        /// </summary>
-        /// <param name="e"></param>
-        /// <param name="words">if param is "silent" does not advertise id fixing</param>
-        /// <returns>true if id teams were already fixed</returns>
-        public bool ComFix(TasSayEventArgs e, params string[] words)
-        {
-            var b = tas.MyBattle;
-            var groups =
-                b.Users.Values.Where(x => !x.IsSpectator && x.SyncStatus != SyncStatuses.Unknown).GroupBy(x => x.TeamNumber).Where(g => g.Count() > 1);
-            if (groups.Count() > 0)
-            {
-                var id = 0;
-                foreach (var u in b.Users.Values.Where(x => !x.IsSpectator && x.SyncStatus != SyncStatuses.Unknown)) tas.ForceTeam(u.Name, id++);
-                if (words == null || words.Length == 0 || words[0] != "silent") SayBattle("team numbers fixed");
-                return false;
-            }
-            else return true;
-        }
 
         public void ComForce(TasSayEventArgs e, string[] words)
         {
@@ -693,7 +643,6 @@ namespace Springie.autohost
 
         public void ComRandom(TasSayEventArgs e, string[] words)
         {
-            ComFix(e, words);
             var b = tas.MyBattle;
 
             var actUsers = new List<UserBattleStatus>();

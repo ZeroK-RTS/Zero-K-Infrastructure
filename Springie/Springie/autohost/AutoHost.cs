@@ -99,7 +99,6 @@ namespace Springie.autohost
 
             tas.BattleUserLeft += tas_BattleUserLeft;
             tas.UserStatusChanged += tas_UserStatusChanged;
-            tas.BattleUserStatusChanged += TasOnBattleUserStatusChanged;
             tas.BattleUserJoined += tas_BattleUserJoined;
             tas.MyBattleMapChanged += tas_MyBattleMapChanged;
             tas.BattleOpened += tas_BattleOpened;
@@ -159,10 +158,6 @@ namespace Springie.autohost
                         // auto rehost to latest mod version
                         if (!string.IsNullOrEmpty(config.AutoUpdateRapidTag) && SpawnConfig == null) UpdateRapidMod(config.AutoUpdateRapidTag);
 
-                        if (lockedUntil != DateTime.MinValue && lockedUntil < DateTime.Now) {
-                            ComUnlock(TasSayEventArgs.Default, new string[]{});
-                        }
-
 
                     } catch (Exception ex) {
                         Trace.TraceError(ex.ToString());
@@ -177,10 +172,6 @@ namespace Springie.autohost
         public void Start()
         {
             tas.Connect(Program.main.Config.ServerHost, Program.main.Config.ServerPort);
-        }
-
-        void TasOnBattleUserStatusChanged(object sender, UserBattleStatus userBattleStatus) {
-            PlayerCountDecreased();
         }
 
         public void Dispose() {
@@ -373,13 +364,7 @@ namespace Springie.autohost
                     ComExit(e, words);
                     break;
 
-                case "lock":
-                    ComLock(e,words);
-                    break;
 
-                case "unlock":
-                    ComUnlock(e,words);
-                    break;
 
                 case "vote":
                     RegisterVote(e, words.Length < 1 || words[0] != "2");
@@ -427,10 +412,6 @@ namespace Springie.autohost
 
                 case "predict":
                     ComPredict(e, words);
-                    break;
-
-                case "fix":
-                    ComFix(e, words);
                     break;
 
                 case "rehost":
@@ -841,8 +822,6 @@ namespace Springie.autohost
 
         void spring_SpringExited(object sender, EventArgs e) {
             StopVote();
-            lockedUntil = DateTime.MinValue;
-            tas.ChangeLock(false);
             tas.ChangeMyUserStatus(false, false);
             Battle b = tas.MyBattle;
             foreach (string s in toNotify) {
@@ -937,19 +916,6 @@ namespace Springie.autohost
             if (e1.UserName == bossName) {
                 SayBattle("boss has left the battle");
                 bossName = "";
-            }
-
-            PlayerCountDecreased();
-
-        }
-
-
-        void PlayerCountDecreased() {
-            Battle battle = tas.MyBattle;
-            if (battle != null && battle.NonSpectatorCount < 2) {
-                // player left and only 2 remaining (springie itself + some noob) -> unlock
-                lockedUntil = DateTime.MinValue;
-                tas.ChangeLock(false);
             }
         }
 

@@ -67,13 +67,6 @@ namespace Springie.autohost
                                          0,
                                          new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
 
-
-            AddMissing(new CommandConfig("lock", 2, "[<seconds>] - locks the game, optional min limit in seconds"));
-
-            AddMissing(new CommandConfig("unlock", 2, " - unlocks the game"));
-
-            AddMissing(new CommandConfig("fix", 1, " - fixes teamnumbers", 5));
-
             AddMissing(new CommandConfig("votemap", 1, "[<mapname>..] - starts vote for new map, e.g. !votemap altored div"));
 
             AddMissing(new CommandConfig("votekick",

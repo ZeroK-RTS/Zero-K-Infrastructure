@@ -41,7 +41,6 @@ namespace ZeroKLobby.MicroLobby
             Program.FriendManager.FriendAdded += FriendManager_FriendAdded;
             Program.FriendManager.FriendRemoved += FriendManager_FriendRemoved;
             Program.TasClient.ChannelJoinFailed += TasClient_ChannelJoinFailed;
-            Program.TasClient.ChannelForceLeave += TasClient_ChannelForceLeave;
 
             foreach (var channel in Program.TasClient.JoinedChannels.Values.Where(c => !IsIgnoredChannel(c.Name))) CreateChannelControl(channel.Name);
             toolTabs.SelectChannelTab("Battle");
@@ -265,25 +264,6 @@ namespace ZeroKLobby.MicroLobby
             toolTabs.RemovePrivateTab(e.Data);
         }
 
-        void TasClient_BattleForceQuit(object sender, EventArgs e)
-        {
-            WarningBar.DisplayWarning("You were kicked from battle", "Forced leave battle");
-        }
-
-        void TasClient_ChannelForceLeave(object sender, TasEventArgs e)
-        {
-            var channelName = e.ServerParams[0];
-            var userName = e.ServerParams[1];
-            var reason = e.ServerParams[2];
-            WarningBar.DisplayWarning("You have been kicked from chat channel " + channelName + " by " + userName + ".\r\nReason: " + reason, "Forced leave channel");
-            var chatControl = GetChannelControl(channelName);
-            if (chatControl != null)
-            {
-                chatControl.Reset();
-                chatControl.Dispose();
-                toolTabs.RemoveChannelTab(channelName);
-            }
-        }
 
         void TasClient_ChannelJoinFailed(object sender, JoinChannelResponse joinChannelResponse)
         {

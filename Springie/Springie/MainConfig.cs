@@ -12,7 +12,6 @@ namespace Springie
 	public class MainConfig: IPlasmaDownloaderConfig
 	{
 		public static string SpringieVersion = "Springie " + Assembly.GetEntryAssembly().GetName().Version;
-	    public const int MaxLockTime = 240;
 	    public const int MapChangeDownloadWait = 120;
 
 

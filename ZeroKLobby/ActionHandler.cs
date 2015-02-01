@@ -84,24 +84,15 @@ namespace ZeroKLobby
         public static void JoinBattle(int battleID, string password)
         {
             EventHandler<Battle> battleJoinHandler = null;
-            EventHandler<TasEventArgs> battleJoinFailedHandler = null;
 
             battleJoinHandler = ((s, e) =>
               {
                   Program.TasClient.BattleJoined -= battleJoinHandler;
-                  Program.TasClient.JoinBattleFailed -= battleJoinFailedHandler;
                   if (Program.TasClient.MyBattle == null || !Program.TasClient.MyBattle.IsQueue) NavigationControl.Instance.Path = "chat/battle";
               });
 
-            battleJoinFailedHandler = ((s, e) =>
-              {
-                  Program.TasClient.BattleJoined -= battleJoinHandler;
-                  Program.TasClient.JoinBattleFailed -= battleJoinFailedHandler;
-                  MessageBox.Show(ZkData.Utils.Glue(e.ServerParams.ToArray()), "Battle joining failed");
-              });
 
             Program.TasClient.BattleJoined += battleJoinHandler;
-            Program.TasClient.JoinBattleFailed += battleJoinFailedHandler;
 
             //Program.JugglerBar.Deactivate();
 
