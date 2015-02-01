@@ -25,7 +25,7 @@ namespace Springie.autohost
         public bool AllReadyAndSynced(out List<string> usname)
         {
             usname = new List<string>();
-            foreach (var p in tas.MyBattle.Users)
+            foreach (var p in tas.MyBattle.Users.Values)
             {
                 if (p.IsSpectator) continue;
                 if (p.SyncStatus != SyncStatuses.Synced) usname.Add(p.Name);
@@ -33,18 +33,6 @@ namespace Springie.autohost
             return usname.Count == 0;
         }
 
-        public bool AllUniqueTeams(out List<string> username)
-        {
-            var teams = new List<int>();
-            username = new List<string>();
-            foreach (var p in tas.MyBattle.Users)
-            {
-                if (p.IsSpectator) continue;
-                if (teams.Contains(p.TeamNumber)) username.Add(p.Name);
-                else teams.Add(p.TeamNumber);
-            }
-            return username.Count == 0;
-        }
 
 
         public void BalanceTeams(int teamCount, bool clanwise)
@@ -56,7 +44,7 @@ namespace Springie.autohost
                 if (hostedMod.IsMission)
                 {
                     var freeSlots = GetFreeSlots();
-                    foreach (var u in b.Users.Where(x => !x.IsSpectator).ToList())
+                    foreach (var u in b.Users.Values.Where(x => !x.IsSpectator).ToList())
                     {
                         var curSlot = hostedMod.MissionSlots.FirstOrDefault(x => x.IsHuman && x.TeamID == u.TeamNumber && x.AllyID == u.AllyNumber);
                         if (curSlot != null && curSlot.IsRequired)
@@ -85,7 +73,7 @@ namespace Springie.autohost
 
                 //fill ranker table with players
                 var ranker = new List<UsRank>();
-                foreach (var u in b.Users) if (!u.IsSpectator) ranker.Add(new UsRank(ranker.Count, u.LobbyUser.EffectiveElo, clanwise ? (u.LobbyUser.Clan ?? "") : "", u));
+                foreach (var u in b.Users.Values) if (!u.IsSpectator) ranker.Add(new UsRank(ranker.Count, u.LobbyUser.EffectiveElo, clanwise ? (u.LobbyUser.Clan ?? "") : "", u));
                 var totalPlayers = ranker.Count;
 
                 var rand = new Random();
@@ -226,7 +214,7 @@ namespace Springie.autohost
                 SayBattle(String.Format("Mod {0} has {1} mission slots", hostedMod.Name, hostedMod.MissionSlots.Count()));
                 bool err = false;
                 var invalidUser =
-                    tas.MyBattle.Users.FirstOrDefault(
+                    tas.MyBattle.Users.Values.FirstOrDefault(
                         x => !x.IsSpectator && !hostedMod.MissionSlots.Any(y => y.IsHuman && y.TeamID == x.TeamNumber && y.AllyID == x.AllyNumber));
                 if (invalidUser != null)
                 {
@@ -253,7 +241,7 @@ namespace Springie.autohost
             var counts = new int[16];
             allyno = 0;
 
-            foreach (var p in tas.MyBattle.Users)
+            foreach (var p in tas.MyBattle.Users.Values)
             {
                 if (p.IsSpectator) continue;
                 counts[p.AllyNumber]++;
@@ -484,11 +472,11 @@ namespace Springie.autohost
         {
             var b = tas.MyBattle;
             var groups =
-                b.Users.Where(x => !x.IsSpectator && x.SyncStatus != SyncStatuses.Unknown).GroupBy(x => x.TeamNumber).Where(g => g.Count() > 1);
+                b.Users.Values.Where(x => !x.IsSpectator && x.SyncStatus != SyncStatuses.Unknown).GroupBy(x => x.TeamNumber).Where(g => g.Count() > 1);
             if (groups.Count() > 0)
             {
                 var id = 0;
-                foreach (var u in b.Users.Where(x => !x.IsSpectator && x.SyncStatus != SyncStatuses.Unknown)) tas.ForceTeam(u.Name, id++);
+                foreach (var u in b.Users.Values.Where(x => !x.IsSpectator && x.SyncStatus != SyncStatuses.Unknown)) tas.ForceTeam(u.Name, id++);
                 if (words == null || words.Length == 0 || words[0] != "silent") SayBattle("team numbers fixed");
                 return false;
             }
@@ -530,7 +518,7 @@ namespace Springie.autohost
             var b = tas.MyBattle;
             if (b != null)
             {
-                foreach (var u in b.Users)
+                foreach (var u in b.Users.Values)
                 {
                     User u2;
                     if (u.Name != tas.UserName && !u.IsSpectator && tas.GetExistingUser(u.Name, out u2)) if (u2.IsAway) ComForceSpectator(e, new[] { u.Name });
@@ -667,7 +655,7 @@ namespace Springie.autohost
 
             var serv = GlobalConst.GetSpringieService();
             var moves = new List<MovePlayerEntry>();
-            foreach (var u in tas.MyBattle.Users.Where(x => x.LobbyUser.Name != tas.MyBattle.Founder.Name))
+            foreach (var u in tas.MyBattle.Users.Values.Where(x => x.LobbyUser.Name != tas.MyBattle.Founder.Name))
             {
                 moves.Add(new MovePlayerEntry()
                           {
@@ -682,7 +670,7 @@ namespace Springie.autohost
         public void ComPredict(TasSayEventArgs e, string[] words)
         {
             var b = tas.MyBattle;
-            var grouping = b.Users.Where(u => !u.IsSpectator).GroupBy(u => u.AllyNumber).ToList();
+            var grouping = b.Users.Values.Where(u => !u.IsSpectator).GroupBy(u => u.AllyNumber).ToList();
             bool is1v1 = grouping.Count == 2 && grouping[0].Count() == 1 && grouping[1].Count() == 1;
             IGrouping<int, UserBattleStatus> oldg = null;
             foreach (var g in grouping)
@@ -709,7 +697,7 @@ namespace Springie.autohost
             var b = tas.MyBattle;
 
             var actUsers = new List<UserBattleStatus>();
-            foreach (var u in b.Users) if (!u.IsSpectator) actUsers.Add(u);
+            foreach (var u in b.Users.Values) if (!u.IsSpectator) actUsers.Add(u);
 
             var teamCount = 0;
             var teamnum = new List<int>();
@@ -785,7 +773,7 @@ namespace Springie.autohost
             if (words.Length == 0)
             {
                 // ringing idle
-                foreach (var p in tas.MyBattle.Users)
+                foreach (var p in tas.MyBattle.Users.Values)
                 {
                     if (p.IsSpectator) continue;
                     if ((p.SyncStatus != SyncStatuses.Synced) && (!spring.IsRunning || !spring.IsPlayerReady(p.Name))) usrlist.Add(p.Name);
@@ -1046,7 +1034,7 @@ namespace Springie.autohost
         {
             var b = tas.MyBattle;
             var i = 0;
-            var temp = b.Users.Select(u => u.Name).ToList();
+            var temp = b.Users.Values.Select(u => u.Name).ToList();
             if (spring.IsRunning) foreach (var u in spring.StartContext.Players)
                 {
                     if (!temp.Contains(u.Name)) temp.Add(u.Name);
@@ -1129,7 +1117,7 @@ namespace Springie.autohost
             if (balance.Players != null && balance.Players.Count > 0)
             {
                 
-                foreach (var user in tas.MyBattle.Users.Where(x => !x.IsSpectator && !balance.Players.Any(y => y.Name == x.Name))) tas.ForceSpectator(user.Name); // spec those that werent in response
+                foreach (var user in tas.MyBattle.Users.Values.Where(x => !x.IsSpectator && !balance.Players.Any(y => y.Name == x.Name))) tas.ForceSpectator(user.Name); // spec those that werent in response
                 foreach (var user in balance.Players.Where(x => x.IsSpectator)) tas.ForceSpectator(user.Name);
 
                 bool comsharing = false;

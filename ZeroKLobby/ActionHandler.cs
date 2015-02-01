@@ -73,11 +73,7 @@ namespace ZeroKLobby
         {
             if (ChangeDesiredSpectatorState(false))
             {
-                var newStatus = Program.TasClient.MyBattleStatus.Clone();
-                newStatus.AllyNumber = allyTeam;
-                newStatus.TeamNumber = Program.TasClient.MyBattle.GetFreeTeamID(Program.TasClient.UserName);
-                newStatus.IsSpectator = false;
-                Program.TasClient.SendMyBattleStatus(newStatus);
+                Program.TasClient.ChangeMyBattleStatus(false, team:Program.TasClient.MyBattle.GetFreeTeamID(Program.TasClient.UserName), ally:allyTeam);
             }
         }
 
@@ -123,7 +119,7 @@ namespace ZeroKLobby
             User user;
             if (client.ExistingUsers.TryGetValue(name, out user) && user.IsInBattleRoom)
             {
-                var bat = client.ExistingBattles.Values.FirstOrDefault(x => x.Users.Any(y => y.Name == name));
+                var bat = client.ExistingBattles.Values.FirstOrDefault(x => x.Users.ContainsKey(name));
                 if (bat != null)
                 {
                     string password = null;
@@ -142,11 +138,7 @@ namespace ZeroKLobby
         {
             if (ChangeDesiredSpectatorState(false))
             {
-                var newStatus = Program.TasClient.MyBattleStatus.Clone();
-                newStatus.AllyNumber = slot.AllyID;
-                newStatus.TeamNumber = slot.TeamID;
-                newStatus.IsSpectator = false;
-                Program.TasClient.SendMyBattleStatus(newStatus);
+                Program.TasClient.ChangeMyBattleStatus(false,null,slot.AllyID,slot.TeamID);
             }
         }
 
@@ -336,9 +328,7 @@ namespace ZeroKLobby
         {
             if (ChangeDesiredSpectatorState(true))
             {
-                var newStatus = Program.TasClient.MyBattleStatus.Clone();
-                newStatus.IsSpectator = true;
-                Program.TasClient.SendMyBattleStatus(newStatus);
+                Program.TasClient.ChangeMyBattleStatus(true);
             }
         }
 
@@ -383,11 +373,8 @@ namespace ZeroKLobby
         {
             if (ChangeDesiredSpectatorState(false))
             {
-                if (Program.TasClient.MyBattle != null)
-                {
-                    var newStatus = Program.TasClient.MyBattleStatus.Clone();
-                    newStatus.IsSpectator = false;
-                    Program.TasClient.SendMyBattleStatus(newStatus);
+                if (Program.TasClient.MyBattle != null) {
+                    Program.TasClient.ChangeMyBattleStatus(false);
                 }
             }
         }

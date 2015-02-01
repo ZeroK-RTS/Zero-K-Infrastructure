@@ -239,7 +239,7 @@ namespace Springie.autohost
                     for (int i = 0; i < c.ListenTo.Length; i++) {
                         if (c.ListenTo[i] == e.Place) {
                             // command is only for nonspecs
-                            if (!c.AllowSpecs) if (tas.MyBattle == null || !tas.MyBattle.Users.Any(x => x.LobbyUser.Name == e.UserName && !x.IsSpectator)) return false;
+                            if (!c.AllowSpecs) if (tas.MyBattle == null || !tas.MyBattle.Users.Values.Any(x => x.LobbyUser.Name == e.UserName && !x.IsSpectator)) return false;
 
                             int reqLevel = c.Level;
                             int ulevel = GetUserLevel(e);
@@ -251,7 +251,7 @@ namespace Springie.autohost
                             else {
                                 if (e.Place == SayPlace.Battle && tas.MyBattle != null && tas.MyBattle.NonSpectatorCount == 1 &&
                                     (!command.StartsWith("vote") && HasRights("vote" + command, e) &&
-                                        tas.MyBattle.Users.Any(u => u.Name == e.UserName && !u.IsSpectator))) {
+                                        tas.MyBattle.Users.Values.Any(u => u.Name == e.UserName && !u.IsSpectator))) {
                                     // server only has 1 player and we have rights for vote variant - we might as well just do it
                                     return true;
                                 }
@@ -767,7 +767,7 @@ namespace Springie.autohost
             return
                 hostedMod.MissionSlots.Where(x => x.IsHuman)
                          .OrderByDescending(x => x.IsRequired)
-                         .Where(x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !y.IsSpectator));
+                         .Where(x => !b.Users.Values.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !y.IsSpectator));
         }
 
 
@@ -847,7 +847,7 @@ namespace Springie.autohost
             tas.ChangeMyUserStatus(false, false);
             Battle b = tas.MyBattle;
             foreach (string s in toNotify) {
-                if (b != null && b.Users.Any(x => x.Name == s)) tas.Ring(s);
+                if (b != null && b.Users.ContainsKey(s)) tas.Ring(s);
                 tas.Say(SayPlace.User, s, "** Game just ended, join me! **", false);
             }
             toNotify.Clear();
@@ -861,7 +861,7 @@ namespace Springie.autohost
             //tas.ChangeLock(false);
             if (hostedMod.IsMission) {
                 var service = GlobalConst.GetContentService();
-                foreach (UserBattleStatus u in tas.MyBattle.Users.Where(x => !x.IsSpectator)) service.NotifyMissionRun(u.Name, hostedMod.ShortName);
+                foreach (UserBattleStatus u in tas.MyBattle.Users.Values.Where(x => !x.IsSpectator)) service.NotifyMissionRun(u.Name, hostedMod.ShortName);
             }
         
             StopVote();
@@ -1052,7 +1052,7 @@ namespace Springie.autohost
             if (spring.IsRunning) {
                 Battle b = tas.MyBattle;
                 var name = oldNewPair.New.Name;
-                if (name != tas.UserName && b.Users.Any(x => x.Name == name)) CheckForBattleExit();
+                if (name != tas.UserName && b.Users.ContainsKey(name)) CheckForBattleExit();
             }
             
         }

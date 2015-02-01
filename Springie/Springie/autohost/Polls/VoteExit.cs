@@ -19,7 +19,7 @@ namespace Springie.autohost.Polls
                 context = spring.StartContext;
                 foreach (var p in context.Players.Where(x => !x.IsSpectator))
                 {
-                    if (p.IsIngame || tas.MyBattle.Users.Any(x => x.Name == p.Name))
+                    if (p.IsIngame || tas.MyBattle.Users.ContainsKey(p.Name))
                     {
                         if (!tas.ExistingUsers[p.Name].IsAway) cnt++;
                     }

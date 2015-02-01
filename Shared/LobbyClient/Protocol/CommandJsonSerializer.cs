@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using ZkData;
 
 namespace LobbyClient
 {
@@ -35,7 +36,10 @@ namespace LobbyClient
 
         public CommandJsonSerializer()
         {
-            RegisterType<Welcome>();
+            foreach (var t in Utils.GetAllTypesWithAttribute<MessageAttribute>()) {
+                RegisterTypes(t);
+            } 
+/*            RegisterType<Welcome>();
             RegisterType<Login>();
             RegisterType<LoginResponse>();
             RegisterType<Register>();
@@ -58,7 +62,7 @@ namespace LobbyClient
             RegisterType<JoinBattle>();
             RegisterType<LeaveBattle>();
             RegisterType<BattleRemoved>();
-
+            */
 
             settings.Formatting = Formatting.None;
             settings.NullValueHandling = NullValueHandling.Ignore;

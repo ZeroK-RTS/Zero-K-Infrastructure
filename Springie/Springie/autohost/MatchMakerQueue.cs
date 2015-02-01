@@ -80,7 +80,7 @@ namespace Springie.autohost
                                 startingFrom = DateTime.Now;
                                 scheduledStart = startingFrom.AddSeconds(initialDelay); // start in one minute
                                 starting = true;
-                                foreach (var user in tas.MyBattle.Users) tas.Ring(user.Name);
+                                foreach (var user in tas.MyBattle.Users.Keys) tas.Ring(user);
                             }
                             else // postpone
                             {
@@ -118,7 +118,7 @@ namespace Springie.autohost
                     else
                     {
                         var spectators =
-                            tas.MyBattle.Users.Where(x => x.IsSpectator && x.Name != tas.MyBattle.Founder.Name && x.SyncStatus == SyncStatuses.Synced).ToList();
+                            tas.MyBattle.Users.Values.Where(x => x.IsSpectator && x.Name != tas.MyBattle.Founder.Name && x.SyncStatus == SyncStatuses.Synced).ToList();
 
                         foreach (var t in teams)
                         {
@@ -189,7 +189,7 @@ namespace Springie.autohost
         {
             if (exited && slave.tas.MyBattle.NonSpectatorCount < ah.config.MinToJuggle && !slave.spring.IsRunning)
             {
-                foreach (var p in slave.tas.MyBattle.Users.Where(x => !x.IsSpectator && x.Name != slave.tas.MyBattle.Founder.Name)) slave.tas.ForceJoinBattle(p.Name, tas.MyBattleID);
+                foreach (var p in slave.tas.MyBattle.Users.Values.Where(x => !x.IsSpectator && x.Name != slave.tas.MyBattle.Founder.Name)) slave.tas.ForceJoinBattle(p.Name, tas.MyBattleID);
                 Program.main.StopAutohost(slave);
             }
         }
@@ -197,7 +197,7 @@ namespace Springie.autohost
 
         List<List<UserBattleStatus>> BuildTeams()
         {
-            var orderedUsers = tas.MyBattle.Users.Where(x => x.SyncStatus == SyncStatuses.Synced && x.Name != tas.MyBattle.Founder.Name && !x.IsSpectator).OrderBy(x => x.JoinTime).ToList();
+            var orderedUsers = tas.MyBattle.Users.Values.Where(x => x.SyncStatus == SyncStatuses.Synced && x.Name != tas.MyBattle.Founder.Name && !x.IsSpectator).OrderBy(x => x.JoinTime).ToList();
             if (count < ah.config.MinToJuggle) return null; // not enough people
 
 
@@ -270,7 +270,7 @@ namespace Springie.autohost
 
         void UpdateCount()
         {
-            count = tas.MyBattle.Users.Count(x => x.SyncStatus == SyncStatuses.Synced && x.Name != tas.MyBattle.Founder.Name && !x.IsSpectator);
+            count = tas.MyBattle.Users.Values.Count(x => x.SyncStatus == SyncStatuses.Synced && x.Name != tas.MyBattle.Founder.Name && !x.IsSpectator);
         }
 
         static void SlaveStartSpring(AutoHost ah, List<UserBattleStatus> team)

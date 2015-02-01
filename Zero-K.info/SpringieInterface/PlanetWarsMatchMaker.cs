@@ -121,7 +121,7 @@ namespace ZeroKWeb
 
             Battle emptyHost =
                 tas.ExistingBattles.Values.FirstOrDefault(
-                    x => !x.IsInGame && x.Founder.Name.TrimNumbers() == pwHostName && x.Users.All(y => y.IsSpectator || y.Name == x.Founder.Name));
+                    x => !x.IsInGame && x.Founder.Name.TrimNumbers() == pwHostName && x.Users.Values.All(y => y.IsSpectator || y.Name == x.Founder.Name));
 
             if (emptyHost != null)
             {
@@ -138,7 +138,7 @@ namespace ZeroKWeb
                 var bat = tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == pwSpec);
                 if (bat != null)
                 {
-                    foreach (var b in bat.Users.Where(x => x.Name != pwSpec)) tas.ForceJoinBattle(b.Name, targetHost);
+                    foreach (var b in bat.Users.Values.Where(x => x.Name != pwSpec)) tas.ForceJoinBattle(b.Name, targetHost);
                 }
 
                 var text = string.Format("Battle for planet {0} starts on zk://@join_player:{1}  Roster: {2} vs {3}",
@@ -554,7 +554,7 @@ namespace ZeroKWeb
             var bat = tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == autohostName);
             if (bat != null && tas.ExistingBattles.Values.Any(x => x.Founder.Name == pwSpec))
             {
-                foreach (var b in bat.Users.Where(x => x.Name != autohostName)) tas.ForceJoinBattle(b.Name, pwSpec);
+                foreach (var b in bat.Users.Keys.Where(x => x != autohostName)) tas.ForceJoinBattle(b, pwSpec);
             }
         }
     }

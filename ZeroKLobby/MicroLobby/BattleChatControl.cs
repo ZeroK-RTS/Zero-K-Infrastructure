@@ -44,7 +44,7 @@ namespace ZeroKLobby.MicroLobby
 			Program.ModStore.ModLoaded += ModStoreModLoaded;
 
 
-			if (Program.TasClient.MyBattle != null) foreach (var user in Program.TasClient.MyBattle.Users) AddUser(user.Name);
+			if (Program.TasClient.MyBattle != null) foreach (var user in Program.TasClient.MyBattle.Users.Values) AddUser(user.Name);
 			ChatLine += (s, e) => { if (Program.TasClient.IsLoggedIn) Program.TasClient.Say(SayPlace.Battle, null, e.Data, false); };
 			playerBox.IsBattle = true;
 			playerBox.MouseDown += playerBox_MouseDown;
@@ -242,7 +242,8 @@ namespace ZeroKLobby.MicroLobby
 		void RefreshBattleUser(string userName)
 		{
 			if (Program.TasClient.MyBattle == null) return;
-			var userBattleStatus = Program.TasClient.MyBattle.Users.SingleOrDefault(u => u.Name == userName);
+			UserBattleStatus userBattleStatus;
+            Program.TasClient.MyBattle.Users.TryGetValue(userName, out userBattleStatus);
 			if (userBattleStatus != null)
 			{
 				AddUser(userName);
@@ -295,7 +296,7 @@ namespace ZeroKLobby.MicroLobby
 			Reset();
 			SetMapImages(battle.MapName);
 		    minimapFuncBox.QueueMode = battle.IsQueue;
-			foreach (var user in Program.TasClient.MyBattle.Users) AddUser(user.Name);
+			foreach (var user in Program.TasClient.MyBattle.Users.Values) AddUser(user.Name);
 			base.AddLine(new SelfJoinedBattleLine(battle));
 		}
 
@@ -310,12 +311,15 @@ namespace ZeroKLobby.MicroLobby
 		void TasClient_BattleUserJoined(object sender, BattleUserEventArgs e1)
 		{
 			var battleID = e1.BattleID;
-			if (Program.TasClient.MyBattle != null && battleID == Program.TasClient.MyBattle.BattleID)
+		    var tas = (TasClient)sender;
+			if (tas.MyBattle != null && battleID == tas.MyBattle.BattleID)
 			{
 				var userName = e1.UserName;
-				var userBattleStatus = Program.TasClient.MyBattle.Users.Single(u => u.Name == userName);
-				AddUser(userBattleStatus.Name);
-				AddLine(new JoinLine(userName));
+				UserBattleStatus userBattleStatus;
+			    if (tas.MyBattle.Users.TryGetValue(userName, out userBattleStatus)) {
+			        AddUser(userBattleStatus.Name);
+			        AddLine(new JoinLine(userName));
+			    }
 			}
 		}
 

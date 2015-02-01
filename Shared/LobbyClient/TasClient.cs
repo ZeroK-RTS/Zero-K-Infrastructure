@@ -114,16 +114,24 @@ namespace LobbyClient
 
         public override async Task OnLineReceived(string line)
         {
-            dynamic obj = CommandJsonSerializer.DeserializeLine(line);
-            Input(this, line);
-            await Process(obj);
+            try {
+                dynamic obj = CommandJsonSerializer.DeserializeLine(line);
+                Input(this, line);
+                await Process(obj);
+            } catch (Exception ex) {
+                Trace.TraceError("Error processing line {0} : {1}", line, ex);
+            }
         }
 
         public async Task SendCommand<T>(T data)
         {
-            var line = CommandJsonSerializer.SerializeToLine(data);
-            Output(this, line.TrimEnd('\n'));
-            await SendData(Encoding.GetBytes(line));
+            try {
+                var line = CommandJsonSerializer.SerializeToLine(data);
+                Output(this, line.TrimEnd('\n'));
+                await SendData(Encoding.GetBytes(line));
+            } catch (Exception ex) {
+                Trace.TraceError("Error sending {0} : {1}", data,ex);
+            }
         }
 
         static CommandJsonSerializer CommandJsonSerializer = new CommandJsonSerializer();
@@ -141,8 +149,12 @@ namespace LobbyClient
         {
             get
             {
-                if (MyBattle != null) return MyBattle.Users.SingleOrDefault(x => x.Name == UserName);
-                else return null;
+                if (MyBattle != null) {
+                    UserBattleStatus ubs;
+                    MyBattle.Users.TryGetValue(UserName, out ubs);
+                    return ubs;
+                }
+                return null;
             }
         }
 
@@ -322,21 +334,15 @@ namespace LobbyClient
             }
         }
 
-        public void ChangeMyBattleStatus(bool? spectate = null,
+        public async Task ChangeMyBattleStatus(bool? spectate = null,
                                          SyncStatuses? syncStatus = null,
                                          int? ally = null,
                                          int? team = null)
         {
             var ubs = MyBattleStatus;
-            if (ubs != null)
-            {
-                var clone = (UserBattleStatus)ubs.Clone();
-                if (spectate.HasValue) clone.IsSpectator = spectate.Value;
-                if (syncStatus.HasValue) clone.SyncStatus = syncStatus.Value;
-                if (ally.HasValue) clone.AllyNumber = ally.Value;
-                if (team.HasValue) clone.TeamNumber = team.Value;
-                SendMyBattleStatus(clone);
-                   
+            if (ubs != null) {
+                var status = new UpdateBattleStatus() { IsSpectator = spectate, Sync = syncStatus, AllyNumber = ally, TeamNumber = team, Name = UserName};
+                await SendCommand(status);
             }
         }
 
@@ -378,32 +384,26 @@ namespace LobbyClient
 
         public async Task ForceAlly(string username, int ally)
         {
-            var status = MyBattle.Users.FirstOrDefault(x => x.Name == username);
-            if (status != null) {
-                var ubs = status.Clone();
-                ubs.AllyNumber = ally;
+            if (MyBattle != null && MyBattle.Users.ContainsKey(username)) {
+                var ubs = new UpdateBattleStatus() { Name = username, AllyNumber = ally };
                 await SendCommand(ubs);
             }
         }
 
         public async Task ForceSpectator(string username, bool spectatorState = true)
         {
-            var status = MyBattle.Users.FirstOrDefault(x => x.Name == username);
-            if (status != null)
+            if (MyBattle != null && MyBattle.Users.ContainsKey(username))
             {
-                var ubs = status.Clone();
-                ubs.IsSpectator = spectatorState;
+                var ubs = new UpdateBattleStatus() { Name = username, IsSpectator = spectatorState };
                 await SendCommand(ubs);
             }
         }
 
         public async Task ForceTeam(string username, int team)
         {
-            var status = MyBattle.Users.FirstOrDefault(x => x.Name == username);
-            if (status != null)
+            if (MyBattle != null && MyBattle.Users.ContainsKey(username))
             {
-                var ubs = status.Clone();
-                ubs.TeamNumber = team;
+                var ubs = new UpdateBattleStatus() { Name = username, TeamNumber = team };
                 await SendCommand(ubs);
             }
         }
@@ -628,11 +628,6 @@ namespace LobbyClient
             }
         }
 
-
-        public Task SendMyBattleStatus(UserBattleStatus status)
-        {
-            return SendCommand(status);
-        }
 
 
         public Task SendRaw(string text)
@@ -948,7 +943,7 @@ namespace LobbyClient
         {
             var user = existingUsers[bat.User];
             var battle = ExistingBattles[bat.BattleID];
-            battle.Users.Add(new UserBattleStatus(user.Name,user));
+            battle.Users[user.Name] = new UserBattleStatus(user.Name, user);
             user.IsInBattleRoom = true;
             BattleUserJoined(this, new BattleUserEventArgs(user.Name, bat.BattleID));
             if (user.Name == UserName) {
@@ -964,32 +959,33 @@ namespace LobbyClient
         {
             var user = existingUsers[left.User];
             var bat = ExistingBattles[left.BattleID];
-            user.IsInBattleRoom = false;
-            bat.Users.RemoveAll(x => x.Name == left.User);
 
-            if (MyBattle != null && left.BattleID == MyBattleID)
-            {
-                if (UserName == left.User)
-                {
-                    bat.ScriptTags.Clear();
-                    bat.Bots.Clear();
+            if (bat != null) {
+                user.IsInBattleRoom = false;
+                UserBattleStatus removed;
+                bat.Users.TryRemove(left.User, out removed);
 
-                    MyBattle = null;
-                    BattleClosed(this, bat);
+                if (MyBattle != null && left.BattleID == MyBattleID) {
+                    if (UserName == left.User) {
+                        bat.ScriptTags.Clear();
+                        bat.Bots.Clear();
+
+                        MyBattle = null;
+                        BattleClosed(this, bat);
+                    }
                 }
+                BattleUserLeft(this, new BattleUserEventArgs(user.Name, left.BattleID));
             }
-           
-            BattleUserLeft(this, new BattleUserEventArgs(user.Name, left.BattleID));
         }
 
         async Task Process(BattleRemoved br)
         {
             Battle battle;
             if (!existingBattles.TryGetValue(br.BattleID, out battle)) return;
-            foreach (var u in battle.Users)
+            foreach (var u in battle.Users.Keys)
             {
                 User user;
-                if (ExistingUsers.TryGetValue(u.Name, out user)) user.IsInBattleRoom = false;
+                if (ExistingUsers.TryGetValue(u, out user)) user.IsInBattleRoom = false;
             }
             if (battle == MyBattle)
             {
@@ -1099,18 +1095,16 @@ namespace LobbyClient
             existingUsers.Remove(arg.Name);
         }
 
-        async Task Process(UserBattleStatus status)
+        async Task Process(UpdateBattleStatus status)
         {
             var bat = MyBattle;
             if (bat != null) {
-                var ubs = bat.Users.FirstOrDefault(x => x.Name == status.Name);
+                UserBattleStatus ubs;
+                bat.Users.TryGetValue(status.Name, out ubs);
                 if (ubs != null) {
-                    bat.Users.RemoveAll(x => x.Name == status.Name);
-                    status.LobbyUser = existingUsers[status.Name];
-                    bat.Users.Add(status);
-
-                    if (status.Name == UserName) BattleMyUserStatusChanged(this, status);
-                    BattleUserStatusChanged(this, status);
+                    ubs.UpdateWith(status);
+                    if (status.Name == UserName) BattleMyUserStatusChanged(this, ubs);
+                    BattleUserStatusChanged(this, ubs);
                 }
             }
         }

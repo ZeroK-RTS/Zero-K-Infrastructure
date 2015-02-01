@@ -34,7 +34,30 @@ namespace LobbyClient
         public User LobbyUser;
 
 		public int TeamNumber;
-		
+
+
+	    public void UpdateWith(UpdateBattleStatus u)
+	    {
+	        if (u != null) {
+                if (u.Name != Name) throw new Exception(string.Format("Applying update of {0} to user {1}", u.Name, Name));
+                if (u.AllyNumber.HasValue) AllyNumber = u.AllyNumber.Value;
+                if (u.TeamNumber.HasValue) TeamNumber = u.TeamNumber.Value;
+                if (u.IsSpectator.HasValue) IsSpectator = u.IsSpectator.Value;
+                if (u.Sync.HasValue) SyncStatus = u.Sync.Value;
+	        }
+	    }
+
+	    public UpdateBattleStatus ToUpdateBattleStatus()
+	    {
+	        return new UpdateBattleStatus() {
+	            Name = Name,
+	            AllyNumber = AllyNumber,
+	            IsSpectator = IsSpectator,
+	            Sync = SyncStatus,
+	            TeamNumber = TeamNumber
+	        };
+	    }
+
 
 		public UserBattleStatus() {}
 

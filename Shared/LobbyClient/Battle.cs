@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -13,7 +14,7 @@ using ZkData.UnitSyncLib;
 
 namespace LobbyClient
 {
-    public class Battle: ICloneable
+    public class Battle
     {
 
         /// <summary>
@@ -53,7 +54,7 @@ namespace LobbyClient
         public int SpectatorCount { get; set; }
         public string Title { get; set; }
 
-        public List<UserBattleStatus> Users { get; set; }
+        public ConcurrentDictionary<string,UserBattleStatus> Users { get; set; }
 
         
         public bool IsSpringieManaged
@@ -83,7 +84,7 @@ namespace LobbyClient
             Bots = new List<BotBattleStatus>();
             ModOptions = new Dictionary<string, string>();
             Rectangles = new Dictionary<int, BattleRect>();
-            Users = new List<UserBattleStatus>();
+            Users = new ConcurrentDictionary<string, UserBattleStatus>();
         }
 
 
@@ -134,7 +135,8 @@ namespace LobbyClient
 
                 playersExport = new List<UserBattleStatus>();
                 var isHost = localUser.Name == Founder.Name;
-                var myUbs = Users.SingleOrDefault(x => x.Name == localUser.Name);
+
+                var myUbs = Users[localUser.Name];
                 if (!isHost)
                 {
                     var sb = new StringBuilder();
@@ -190,7 +192,7 @@ namespace LobbyClient
                     if (startSetup != null && startSetup.BalanceTeamsResult != null && startSetup.BalanceTeamsResult.Players != null)
                     {
                         // if there is a balance results as a part of start setup, use values from this (override lobby state)
-                        users = new List<UserBattleStatus>(this.Users.Select(x => x.Clone()));
+                        users = Users.Values.ToList();
                         bots = new List<BotBattleStatus>(this.Bots.Select(x => (BotBattleStatus)x.Clone()));
                         foreach (var p in startSetup.BalanceTeamsResult.Players)
                         {
@@ -224,7 +226,7 @@ namespace LobbyClient
                     }
                     else
                     {
-                        users = this.Users;
+                        users = this.Users.Values.ToList();
                         bots = this.Bots;
                     }
 
@@ -375,32 +377,11 @@ namespace LobbyClient
             return
                 Enumerable.Range(0, TasClient.MaxTeams - 1).FirstOrDefault(
                     teamID =>
-                    !Users.Where(u => !u.IsSpectator).Any(user => user.Name != exceptUser && user.TeamNumber == teamID) &&
+                    !Users.Values.Where(u => !u.IsSpectator).Any(user => user.Name != exceptUser && user.TeamNumber == teamID) &&
                     !Bots.Any(x => x.TeamNumber == teamID));
         }
 
-        public int GetState(User founder)
-        {
-            var battleState = 0;
-            if (founder.IsInGame) battleState += 2;
-            if (IsFull) battleState++;
-            if (IsPassworded) battleState += 3;
-            if (IsReplay) battleState += 6;
-            return battleState;
-        }
 
-        public int GetUserIndex(string name)
-        {
-            for (var i = 0; i < Users.Count; ++i) if (Users[i].Name == name) return i;
-            return -1;
-        }
-
-
-        public void RemoveUser(string name)
-        {
-            var ret = GetUserIndex(name);
-            if (ret != -1) Users.RemoveAt(ret);
-        }
 
         public override string ToString()
         {
@@ -473,20 +454,6 @@ namespace LobbyClient
             script.AppendLine("  }");
         }
 
-        public object Clone()
-        {
-            var b = (Battle)MemberwiseClone();
-            if (Users != null) b.Users = new List<UserBattleStatus>(Users);
-            if (Rectangles != null)
-            {
-                // copy the dictionary
-                b.Rectangles = new Dictionary<int, BattleRect>();
-                foreach (var kvp in Rectangles) b.Rectangles.Add(kvp.Key, kvp.Value);
-            }
-            b.ModOptions = new Dictionary<string, string>(ModOptions);
-
-            return b;
-        }
 
         public  BattleContext GetContext()
         {
@@ -494,7 +461,7 @@ namespace LobbyClient
             ret.AutohostName = Founder.Name;
             ret.Map = MapName;
             ret.Mod = ModName;
-            ret.Players = Users.Where(x=>x.SyncStatus != SyncStatuses.Unknown).Select(x => new PlayerTeam() { AllyID = x.AllyNumber, Name = x.Name, LobbyID = x.LobbyUser.AccountID, TeamID = x.TeamNumber, IsSpectator = x.IsSpectator }).ToList();
+            ret.Players = Users.Values.Where(x=>x.SyncStatus != SyncStatuses.Unknown).Select(x => new PlayerTeam() { AllyID = x.AllyNumber, Name = x.Name, LobbyID = x.LobbyUser.AccountID, TeamID = x.TeamNumber, IsSpectator = x.IsSpectator }).ToList();
 
             ret.Bots = Bots.Select(x => new BotTeam() { BotName = x.Name, AllyID = x.AllyNumber, TeamID = x.TeamNumber, Owner = x.owner, BotAI = x.aiLib }).ToList();
             return ret;

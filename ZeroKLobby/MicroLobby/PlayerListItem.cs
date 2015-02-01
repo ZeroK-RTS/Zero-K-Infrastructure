@@ -63,10 +63,10 @@ namespace ZeroKLobby.MicroLobby
         }
         public UserBattleStatus UserBattleStatus
         {
-            get 
+            get
             {
                 if (isOfflineMode) return offlineUserBattleStatus;
-                return Program.TasClient.MyBattle == null ? null : Program.TasClient.MyBattle.Users.SingleOrDefault(u => u.Name == UserName);
+                return Program.TasClient.MyBattleStatus;
             }
         }
 

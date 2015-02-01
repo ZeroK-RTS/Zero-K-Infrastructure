@@ -26,7 +26,7 @@ namespace ZeroKLobby.MicroLobby
             var botStatus = Program.TasClient.MyBattleStatus.Clone();
             // new team        	
             botStatus.TeamNumber = Enumerable.Range(0, TasClient.MaxTeams - 1).FirstOrDefault(
-                                    x => !Program.TasClient.MyBattle.Users.Any(y => y.TeamNumber == x));
+                                    x => !Program.TasClient.MyBattle.Users.Values.Any(y => y.TeamNumber == x));
             //different alliance than player
             botStatus.AllyNumber = Enumerable.Range(0, TasClient.MaxAlliances - 1).FirstOrDefault(x => x != botStatus.AllyNumber);
             Program.TasClient.AddBot("Bot_" + botNumber, botStatus, botShortName);
@@ -35,8 +35,7 @@ namespace ZeroKLobby.MicroLobby
         static MenuItem GetAddBot()
         {
             var enabled = Program.TasClient.MyBattle != null; // && Program.ModStore.Ais != null && Program.ModStore.Ais.Any();
-            var addBotItem = new MenuItem("Add computer player (Bot)" + (enabled ? String.Empty : " (Loading)")) 
-                             { Visible = enabled };
+            var addBotItem = new MenuItem("Add computer player (Bot)" + (enabled ? String.Empty : " (Loading)")) { Visible = enabled };
 
             addBotItem.MenuItems.AddRange(GetAddBotItems());
 
@@ -280,7 +279,7 @@ namespace ZeroKLobby.MicroLobby
 
                 if (Program.TasClient.MyBattle != null)
                 {
-                    var battleStatus = Program.TasClient.MyBattle.Users.SingleOrDefault(u => u.Name == user.Name);
+                    var battleStatus = Program.TasClient.MyBattle.Users[user.Name];
                     var myStatus = Program.TasClient.MyBattleStatus;
 
                     if (isBattle)
@@ -409,14 +408,12 @@ namespace ZeroKLobby.MicroLobby
                 contextMenu.MenuItems.Add(headerItem);
                 contextMenu.MenuItems.Add("-");
 
-                foreach (var user in battle.Users)
+                foreach (var user in battle.Users.Values.Where(x => x != null))
                 {
-                    if (!user.LobbyUser.IsBot)
-                    {
-                        var item = new System.Windows.Forms.MenuItem(user.Name);
-                        item.Click += (s, e) => NavigationControl.Instance.Path = "chat/user/" + user.Name;
-                        contextMenu.MenuItems.Add(item);
-                    }
+                    var us = user.Name;
+                    var item = new MenuItem(user.Name);
+                    item.Click += (s, e) => NavigationControl.Instance.Path = "chat/user/" + us;
+                    contextMenu.MenuItems.Add(item);
                 }
             }
             catch (Exception e)
@@ -453,7 +450,7 @@ namespace ZeroKLobby.MicroLobby
 
         public static List<int> GetExistingTeams(out int freeAllyTeam)
         {
-            var nonSpecs = Program.TasClient.MyBattle.Users.Where(p => !p.IsSpectator);
+            var nonSpecs = Program.TasClient.MyBattle.Users.Values.Where(p => !p.IsSpectator);
             var existingTeams = nonSpecs.GroupBy(p => p.AllyNumber).Select(team => team.Key).ToList();
             var botTeams = Program.TasClient.MyBattle.Bots.Select(bot => bot.AllyNumber);
             existingTeams.AddRange(botTeams.ToArray());

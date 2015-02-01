@@ -143,8 +143,7 @@ namespace NightWatch
 
             foreach (var b in client.ExistingBattles.Values)
             {
-                if (!GlobalConst.IsZkMod(b.ModName)) continue;
-                foreach (var u in b.Users.Select(x => x.LobbyUser))
+                foreach (var u in b.Users.Values.Select(x => x.LobbyUser))
                 {
                     if (u.IsBot) continue;
                     if (u.IsInGame) ret.UsersFighting++;

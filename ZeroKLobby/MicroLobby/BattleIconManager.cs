@@ -121,7 +121,7 @@ namespace ZeroKLobby.MicroLobby
 
         void HandleFriendChanged(object sender, EventArgs<string> e)
         {
-            var battle = Program.TasClient.ExistingBattles.Values.SingleOrDefault(b => b.Users.Any(u => u.Name == e.Data));
+            var battle = Program.TasClient.ExistingBattles.Values.SingleOrDefault(b => b.Users.ContainsKey(e.Data));
             if (battle != null)
             {
                 var battleIcon = GetBattleIcon(battle.BattleID);

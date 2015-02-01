@@ -149,18 +149,10 @@ namespace ZeroKLobby.Notifications
 
                     var alliance =
                         Enumerable.Range(0, TasClient.MaxAlliances - 1)
-                                  .FirstOrDefault(allyTeam => !battle.Users.Any(user => user.AllyNumber == allyTeam));
+                                  .FirstOrDefault(allyTeam => !battle.Users.Values.Any(user => user.AllyNumber == allyTeam));
                     var team = battle.GetFreeTeamID(client.UserName);
 
-
-                    var status = new UserBattleStatus
-                    {
-                        AllyNumber = alliance,
-                        TeamNumber = team,
-                        SyncStatus = HasAllResources() ? SyncStatuses.Synced : SyncStatuses.Unsynced,
-                        IsSpectator = desiredSpectatorState,
-                    };
-                    client.SendMyBattleStatus(status);
+                    client.ChangeMyBattleStatus(desiredSpectatorState,HasAllResources() ? SyncStatuses.Synced : SyncStatuses.Unsynced,alliance,team);
                 };
 
 
@@ -383,21 +375,27 @@ namespace ZeroKLobby.Notifications
             var currentStatus = client.MyBattleStatus;
             if (battle == null || currentStatus == null) return;
 
-            var newStatus = currentStatus.Clone();
 
+            SyncStatuses? sync = null;
             if (currentStatus.SyncStatus != SyncStatuses.Synced) {
                 if (HasAllResources()) {
                     // if didnt have map and have now, set it
-                    newStatus.SyncStatus = SyncStatuses.Synced;
+                    sync = SyncStatuses.Synced;
                 }
             }
 
             // fix my id
-            if (battle.Users.Count(x => !x.IsSpectator && x.TeamNumber == currentStatus.TeamNumber) > 1) newStatus.TeamNumber = battle.GetFreeTeamID(client.UserName);
+            int? team = null;
 
-            newStatus.IsSpectator = radioSpec.Checked;
+            if (battle.Users.Values.Count(x => !x.IsSpectator && x.TeamNumber == currentStatus.TeamNumber) > 1) {
+                team  = battle.GetFreeTeamID(client.UserName);
+            }
 
-            if (newStatus != currentStatus) client.SendMyBattleStatus(newStatus);
+            bool spec = radioSpec.Checked;
+            if ((sync.HasValue && sync != currentStatus.SyncStatus) || (team.HasValue && team != currentStatus.TeamNumber) ||
+                (currentStatus.IsSpectator != spec)) {
+                client.ChangeMyBattleStatus(spec, sync, null, team);
+            }
         }
 
         bool HasAllResources() {

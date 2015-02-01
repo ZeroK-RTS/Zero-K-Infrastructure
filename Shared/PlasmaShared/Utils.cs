@@ -370,28 +370,7 @@ namespace ZkData
             return Path.Combine(directories);
         }
 
-        public static EventWaitHandle ParalellAction(Action action, ParalellActionContext context)
-        {
-            var waitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
-            context.WaitHandles.Add(waitHandle);
-            ThreadPool.QueueUserWorkItem(delegate
-                {
-                    try
-                    {
-                        action();
-                    }
-                    catch (Exception ex)
-                    {
-                        if (context.Error == null) context.Error = ex;
-                    }
-                    finally
-                    {
-                        waitHandle.Set();
-                    }
-                });
-            return waitHandle;
-        }
-
+     
         public static string PrintByteLength(long bytes)
         {
             if (bytes < 1024) return bytes.ToString();
@@ -461,20 +440,7 @@ namespace ZkData
         }
 
 
-        /// <summary>
-        /// shifts array by given number of indexes
-        /// </summary>
-        /// <param name="input">input array</param>
-        /// <param name="bynum">if bynum is negative, creates shorter array starting at abs(bynum) element of original arraym, if bynum is positive creates new array and makes bynum empty pieces in the beginning</param>
-        /// <returns>returned new array</returns>
-        public static T[] ShiftArray<T>(T[] input, int bynum)
-        {
-            var ret = new T[input.Length + bynum];
-            if (bynum == 0) input.CopyTo(ret, 0);
-            else if (bynum < 0) for (var i = 0; i < ret.Length; ++i) ret[i] = input[i - bynum];
-            else if (bynum > 0) for (var i = 0; i < input.Length; ++i) ret[i + bynum] = input[i];
-            return ret;
-        }
+    
 
         public static List<T> Shuffle<T>(this IEnumerable<T> source)
         {
@@ -534,13 +500,7 @@ namespace ZkData
                 });
         }
 
-        /// <summary>
-        /// Converts a unicode string to ASCII
-        /// </summary>
-        public static string ToAscii(this string text)
-        {
-            return Encoding.ASCII.GetString(Encoding.Convert(Encoding.Unicode, Encoding.ASCII, Encoding.Unicode.GetBytes(text)));
-        }
+     
 
         public static byte[] ToBytes(this Image image, int size)
         {
@@ -559,33 +519,7 @@ namespace ZkData
             return stream.ToArray();
         }
 
-        public static long ToUnix(DateTime t)
-        {
-            if (t == DateTime.MinValue) return 0;
-            return (long)(t.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
-        }
-
-        public static long ToUnix(TimeSpan t)
-        {
-            if (t == TimeSpan.MinValue) return 0;
-            return (long)t.TotalSeconds;
-        }
-
-        public class ParalellActionContext
-        {
-            public Exception Error { get; set; }
-            public List<EventWaitHandle> WaitHandles = new List<EventWaitHandle>();
-
-            public bool WaitAll(TimeSpan timeout)
-            {
-                return WaitHandle.WaitAll(WaitHandles.ToArray());
-            }
-
-            public bool WaitAll()
-            {
-                return WaitHandle.WaitAll(WaitHandles.ToArray());
-            }
-        }
+  
 
         /// <summary>
         /// Hash password with default hash used by remote server
@@ -735,6 +669,17 @@ namespace ZkData
         public static List<T> ToListWithLock<T>(this IList<T> source)
         {
             lock (source) return source.ToList();
+        }
+
+
+
+        public static IEnumerable<Type> GetAllTypesWithAttribute<T>()
+        {
+            return from a in AppDomain.CurrentDomain.GetAssemblies().AsParallel()
+                from t in a.GetTypes()
+                let attributes = t.GetCustomAttributes(typeof(T), true)
+                where attributes != null && attributes.Length > 0
+                select t;
         }
 
     }

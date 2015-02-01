@@ -313,7 +313,7 @@ namespace LobbyClient
     }
 
 
-        [Message(Origin.Client)]
+    [Message(Origin.Client)]
     public class JoinBattle
     {
         public string Password;
@@ -325,6 +325,17 @@ namespace LobbyClient
     {
         public int BattleID;
     }
+
+    [Message(Origin.Client | Origin.Server)]
+    public class UpdateBattleStatus
+    {
+        public int? AllyNumber;
+        public bool? IsSpectator;
+        public string Name;
+        public SyncStatuses? Sync;
+        public int? TeamNumber;
+    }
+
 
 
 

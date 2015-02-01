@@ -180,7 +180,7 @@ namespace ZeroKWeb.SpringieInterface
                 var conf = context.GetConfig();
                 if (bat != null && (conf == null || conf.MinToJuggle == null)) // if not qm room do not join those who are in battle
                 {
-                    List<string> inbatPlayers = bat.Users.Select(x => x.Name).ToList();
+                    List<string> inbatPlayers = bat.Users.Keys.ToList();
                     joinplayers.RemoveAll(x => inbatPlayers.Contains(x));
                 }
                 foreach (string jp in joinplayers.Distinct().Where(x => x != context.AutohostName)) tas.ForceJoinChannel(jp, channelName);

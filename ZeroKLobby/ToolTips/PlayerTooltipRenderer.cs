@@ -130,7 +130,7 @@ namespace ZeroKLobby
             }
             if (user.IsInBattleRoom)
             {
-                var battle = Program.TasClient.ExistingBattles.Values.SingleOrDefault(b => b.Users.Any(ub => ub.Name == user.Name));
+                var battle = Program.TasClient.ExistingBattles.Values.SingleOrDefault(b => b.Users.ContainsKey(user.Name));
                 var battleIcon = Program.BattleIconManager.GetBattleIcon(battle.BattleID);
                 if (battleIcon != null) g.DrawImageUnscaled(battleIcon.Image, x, y);
             }
