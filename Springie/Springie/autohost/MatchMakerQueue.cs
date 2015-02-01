@@ -80,7 +80,7 @@ namespace Springie.autohost
                                 startingFrom = DateTime.Now;
                                 scheduledStart = startingFrom.AddSeconds(initialDelay); // start in one minute
                                 starting = true;
-                                foreach (var user in tas.MyBattle.Users.Keys) tas.Ring(user);
+                                foreach (var user in tas.MyBattle.Users.Keys) tas.Ring(SayPlace.BattlePrivate, user);
                             }
                             else // postpone
                             {

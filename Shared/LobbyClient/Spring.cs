@@ -702,7 +702,7 @@ namespace LobbyClient
                             //User user;
                             //if (client.ExistingUsers.TryGetValue(kvp.Key, out user) && user.IsAway)
                             //{
-                            client.Ring(kvp.Key);
+                            client.Ring(SayPlace.BattlePrivate, kvp.Key);
                             client.Say(SayPlace.User, kvp.Key, "Please ready up ingame, game starting soon", false);
                             //}
                         }

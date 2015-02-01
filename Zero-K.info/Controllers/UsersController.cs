@@ -237,12 +237,8 @@ namespace ZeroKWeb.Controllers
 
             var str = string.Format("{0} {1} reports abuse by {2} {3} : {4}", Global.Account.Name, Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"), acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), text);
 
-            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, str, true);
-            foreach (var u in Global.Nightwatch.Tas.JoinedChannels[AuthService.ModeratorChannel].Users.Keys)
-            {
-                Global.Nightwatch.Tas.Ring(u);
-            }
-
+            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, str, true, isRing:true);
+            Global.Nightwatch.Tas.Ring(SayPlace.Channel, AuthService.ModeratorChannel, "Abuse report");
             return Content("Thank you. Your issue was reported. Moderators will now look into it.");
         }
 

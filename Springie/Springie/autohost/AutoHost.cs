@@ -825,7 +825,7 @@ namespace Springie.autohost
             tas.ChangeMyUserStatus(false, false);
             Battle b = tas.MyBattle;
             foreach (string s in toNotify) {
-                if (b != null && b.Users.ContainsKey(s)) tas.Ring(s);
+                if (b != null && b.Users.ContainsKey(s)) tas.Ring(SayPlace.BattlePrivate, s);
                 tas.Say(SayPlace.User, s, "** Game just ended, join me! **", false);
             }
             toNotify.Clear();

@@ -368,6 +368,12 @@ namespace ZkLobbyServer
             if (!IsLoggedIn) return;
 
             say.User = Name;
+            
+            if (say.Ring) { // ring permissions - bot/admin anywhere, others only to own battle 
+                if (!User.IsAdmin && !User.IsBot) {
+                    if ((say.Place != SayPlace.Battle && say.Place != SayPlace.BattlePrivate) || MyBattle == null || MyBattle.Founder != User) say.Ring = false;
+                }
+            }
 
             switch (say.Place)
             {

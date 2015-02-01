@@ -347,7 +347,7 @@ namespace ZeroKLobby.MicroLobby
 
 		void TasClient_Said(object sender, TasSayEventArgs e)
 		{
-			if (e.Place == SayPlace.Battle)
+			if (e.Place == SayPlace.Battle || e.Place == SayPlace.BattlePrivate)
 			{
 				if (e.Text.Contains(Program.Conf.LobbyPlayerName) && !Program.TasClient.MyUser.IsInGame && !e.IsEmote && e.UserName != GlobalConst.NightwatchName &&
 				    !e.Text.StartsWith(string.Format("[{0}]", Program.TasClient.UserName))) Program.MainWindow.NotifyUser("chat/battle", string.Format("{0}: {1}", e.UserName, e.Text), false, true);

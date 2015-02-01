@@ -739,12 +739,12 @@ namespace Springie.autohost
             var rang = "";
             foreach (var s in usrlist)
             {
-                tas.Ring(s);
+                tas.Ring(SayPlace.BattlePrivate, s);
                 rang += s + ", ";
             }
 
-            if (words.Length == 0 && usrlist.Count > 7) SayBattle("ringing all unready");
-            else SayBattle("ringing " + rang);
+            //if (words.Length == 0 && usrlist.Count > 7) SayBattle("ringing all unready");
+            //else SayBattle("ringing " + rang);
         }
 
 

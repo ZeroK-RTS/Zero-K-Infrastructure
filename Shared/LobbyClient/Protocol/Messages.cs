@@ -268,6 +268,7 @@ namespace LobbyClient
         public string User;
         public bool IsEmote;
         public string Text;
+        public bool Ring;
     }
 
     [Message(Origin.Client)]

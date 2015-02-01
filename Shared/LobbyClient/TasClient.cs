@@ -219,7 +219,7 @@ namespace LobbyClient
         public event EventHandler<BotBattleStatus> BattleBotUpdated = delegate { };
         public event EventHandler<BotBattleStatus> BattleBotRemoved = delegate { };
         public event EventHandler<TasEventArgs> ConnectionLost = delegate { };
-        
+        public event EventHandler<Say> Rang = delegate { };
         
         
         
@@ -235,7 +235,7 @@ namespace LobbyClient
         public event EventHandler<TasEventArgs> MyBattleStarted = delegate { };
 
         public event EventHandler<CancelEventArgs<TasSayEventArgs>> PreviewSaid = delegate { };
-        public event EventHandler<EventArgs<string>> Rang = delegate { };
+        
         public event EventHandler<TasEventArgs> StartRectAdded = delegate { };
         public event EventHandler<TasEventArgs> StartRectRemoved = delegate { };
 
@@ -537,9 +537,9 @@ namespace LobbyClient
 
 
 
-        public void Ring(string username)
+        public Task Ring(SayPlace place, string channel, string text = null)
         {
-            //con.SendCommand("RING", username);
+            return Say(place, channel, text ?? ("Ringing " + channel), false, isRing: true);
         }
 
 
@@ -574,7 +574,7 @@ namespace LobbyClient
         /// <param Name="inputtext">chat text</param>
         /// <param Name="isEmote">is message emote? (channel or battle only)</param>
         /// <param Name="linePrefix">text to be inserted in front of each line (example: "!pm xyz")</param>
-        public async Task Say(SayPlace place, string channel, string inputtext, bool isEmote, string linePrefix = "")
+        public async Task Say(SayPlace place, string channel, string inputtext, bool isEmote, string linePrefix = "", bool isRing = false)
         {
             if (String.IsNullOrEmpty(inputtext)) return;
             var lines = inputtext.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -593,7 +593,7 @@ namespace LobbyClient
                     await JoinChannel(args.Channel);
                 }
 
-                var say = new Say() { Target = args.Channel, Place = args.SayPlace, Text = args.Text, IsEmote = args.IsEmote };
+                var say = new Say() { Target = args.Channel, Place = args.SayPlace, Text = args.Text, IsEmote = args.IsEmote, Ring = isRing};
 
                 await SendCommand(say);
             }
@@ -679,11 +679,6 @@ namespace LobbyClient
                
                 switch (command)
                 {
-
-                    case "RING":
-                        Rang(this, new EventArgs<string>(args[0]));
-                        break;
-
 
                     case "REDIRECT": // server sends backup IP
                         OnRedirect(args);
@@ -924,6 +919,7 @@ namespace LobbyClient
         async Task Process(Say say)
         {
             InvokeSaid(new TasSayEventArgs(say.Place, say.Target,say.User, say.Text, say.IsEmote));
+            if (say.Ring) Rang(this, say);
         }
 
 
