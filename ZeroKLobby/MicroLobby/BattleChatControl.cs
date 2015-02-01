@@ -129,7 +129,7 @@ namespace ZeroKLobby.MicroLobby
 			var nonSpecs = PlayerListItems.Where(p => p.UserBattleStatus != null && !p.UserBattleStatus.IsSpectator);
 			var existingTeams = nonSpecs.GroupBy(i => i.UserBattleStatus.AllyNumber).Select(team => team.Key).ToList();
 
-			foreach (var bot in Program.TasClient.MyBattle.Bots)
+			foreach (var bot in Program.TasClient.MyBattle.Bots.Values)
 			{
 				var missionSlot = GetSlotByTeamID(bot.TeamNumber);
 				newList.Add(new PlayerListItem
@@ -153,7 +153,7 @@ namespace ZeroKLobby.MicroLobby
 		        foreach (var team in buttonTeams)
 		        {
 		            int numPlayers = nonSpecs.Where(p => p.UserBattleStatus.AllyNumber == team).Count();
-		            int numBots = Program.TasClient.MyBattle.Bots.Where(p => p.AllyNumber == team).Count();
+		            int numBots = Program.TasClient.MyBattle.Bots.Values.Where(p => p.AllyNumber == team).Count();
 		            int numTotal = numPlayers + numBots;
 
 		            var allianceName = "Team " + (team + 1) + (numTotal > 3 ? "  (" + numTotal + ")" : "");

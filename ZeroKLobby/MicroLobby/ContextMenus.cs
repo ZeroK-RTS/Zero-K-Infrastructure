@@ -21,7 +21,7 @@ namespace ZeroKLobby.MicroLobby
         private static List<Ai> springAi;
         private static void AddAIToTeam(string botShortName)
         {
-            var botNumber = Enumerable.Range(1, int.MaxValue).First(i => !Program.TasClient.MyBattle.Bots.Any(
+            var botNumber = Enumerable.Range(1, int.MaxValue).First(i => !Program.TasClient.MyBattle.Bots.Values.Any(
                                 bt => bt.Name == "Bot_" + i));
             // new team        	
             var teamNumber = Enumerable.Range(0, TasClient.MaxTeams - 1).FirstOrDefault(
@@ -100,7 +100,7 @@ namespace ZeroKLobby.MicroLobby
             var contextMenu = new ContextMenu();
             try
             {
-                var botStatus = Enumerable.Single<BotBattleStatus>(Program.TasClient.MyBattle.Bots, b => b.Name == botName);
+                var botStatus = Enumerable.Single<BotBattleStatus>(Program.TasClient.MyBattle.Bots.Values, b => b.Name == botName);
 
                 {
                     var item = new System.Windows.Forms.MenuItem("Remove") { Enabled = botStatus.owner == Program.TasClient.UserName };
@@ -122,9 +122,7 @@ namespace ZeroKLobby.MicroLobby
                                 var subItem = new System.Windows.Forms.MenuItem("Join Team " + (allyTeam + 1));
                                 subItem.Click += (s, e) =>
                                     {
-                                        var newStatus = botStatus.Clone();
-                                        newStatus.AllyNumber = at;
-                                        Program.TasClient.UpdateBot(botName, newStatus);
+                                        Program.TasClient.UpdateBot(botName, botStatus.aiLib, at, botStatus.TeamNumber);
                                     };
                                 item.MenuItems.Add(subItem);
                             }
@@ -134,9 +132,7 @@ namespace ZeroKLobby.MicroLobby
                     var newTeamItem = new System.Windows.Forms.MenuItem("New Team");
                     newTeamItem.Click += (s, e) =>
                         {
-                            var newStatus = botStatus.Clone();
-                            newStatus.AllyNumber = freeAllyTeam;
-                            Program.TasClient.UpdateBot(botName, newStatus);
+                            Program.TasClient.UpdateBot(botName, null, freeAllyTeam, null);
                         };
                     item.MenuItems.Add(newTeamItem);
                     contextMenu.MenuItems.Add(item);
@@ -452,7 +448,7 @@ namespace ZeroKLobby.MicroLobby
         {
             var nonSpecs = Program.TasClient.MyBattle.Users.Values.Where(p => !p.IsSpectator);
             var existingTeams = nonSpecs.GroupBy(p => p.AllyNumber).Select(team => team.Key).ToList();
-            var botTeams = Program.TasClient.MyBattle.Bots.Select(bot => bot.AllyNumber);
+            var botTeams = Program.TasClient.MyBattle.Bots.Values.Select(bot => bot.AllyNumber);
             existingTeams.AddRange(botTeams.ToArray());
             freeAllyTeam = Enumerable.Range(0, 100).First(allyTeam => !existingTeams.Contains(allyTeam));
             return existingTeams;

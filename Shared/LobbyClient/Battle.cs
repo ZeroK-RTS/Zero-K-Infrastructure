@@ -23,7 +23,7 @@ namespace LobbyClient
         readonly Mod mod;
 
         public int BattleID { get; set; }
-        public List<BotBattleStatus> Bots { get; set; }
+        public ConcurrentDictionary<string,BotBattleStatus> Bots { get; set; }
 
         public User Founder { get; set; }
 
@@ -79,7 +79,7 @@ namespace LobbyClient
 
         internal Battle()
         {
-            Bots = new List<BotBattleStatus>();
+            Bots = new ConcurrentDictionary<string, BotBattleStatus>();
             ModOptions = new Dictionary<string, string>();
             Rectangles = new Dictionary<int, BattleRect>();
             Users = new ConcurrentDictionary<string, UserBattleStatus>();
@@ -202,7 +202,7 @@ namespace LobbyClient
                     {
                         // if there is a balance results as a part of start setup, use values from this (override lobby state)
                         users = Users.Values.ToList();
-                        bots = new List<BotBattleStatus>(this.Bots.Select(x => (BotBattleStatus)x.Clone()));
+                        bots = new List<BotBattleStatus>(this.Bots.Values.Select(x => (BotBattleStatus)x.Clone()));
                         foreach (var p in startSetup.BalanceTeamsResult.Players)
                         {
                             var us = users.FirstOrDefault(x => x.Name == p.Name);
@@ -236,7 +236,7 @@ namespace LobbyClient
                     else
                     {
                         users = this.Users.Values.ToList();
-                        bots = this.Bots;
+                        bots = this.Bots.Values.ToList();
                     }
 
 
@@ -387,7 +387,7 @@ namespace LobbyClient
                 Enumerable.Range(0, TasClient.MaxTeams - 1).FirstOrDefault(
                     teamID =>
                     !Users.Values.Where(u => !u.IsSpectator).Any(user => user.Name != exceptUser && user.TeamNumber == teamID) &&
-                    !Bots.Any(x => x.TeamNumber == teamID));
+                    !Bots.Values.Any(x => x.TeamNumber == teamID));
         }
 
 
@@ -472,7 +472,7 @@ namespace LobbyClient
             ret.Mod = ModName;
             ret.Players = Users.Values.Where(x=>x.SyncStatus != SyncStatuses.Unknown).Select(x => new PlayerTeam() { AllyID = x.AllyNumber, Name = x.Name, LobbyID = x.LobbyUser.AccountID, TeamID = x.TeamNumber, IsSpectator = x.IsSpectator }).ToList();
 
-            ret.Bots = Bots.Select(x => new BotTeam() { BotName = x.Name, AllyID = x.AllyNumber, TeamID = x.TeamNumber, Owner = x.owner, BotAI = x.aiLib }).ToList();
+            ret.Bots = Bots.Values.Select(x => new BotTeam() { BotName = x.Name, AllyID = x.AllyNumber, TeamID = x.TeamNumber, Owner = x.owner, BotAI = x.aiLib }).ToList();
             return ret;
         }
     }

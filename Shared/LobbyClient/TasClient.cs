@@ -645,9 +645,12 @@ namespace LobbyClient
             ChangeMyUserStatus(false, true);
         }
 
-        public void UpdateBot(string name, UserBattleStatus battleStatus)
+        public async Task UpdateBot(string name, string aiDll, int? allyNumber = null, int? teamNumber = null)
         {
-            //con.SendCommand("UPDATEBOT", name, battleStatus.ToInt(), teamColor);
+            var bat = MyBattle;
+            if (bat != null && bat.Bots.ContainsKey(name)) {
+                await AddBot(name, aiDll, allyNumber, teamNumber);
+            }
         }
 
 
@@ -786,18 +789,18 @@ namespace LobbyClient
         void OnUpdateBot(string[] args)
         {
             if (MyBattle != null && int.Parse(args[0]) == MyBattleID) {
-                var st = MyBattle.Bots.Single(bot => bot.Name == args[1]);
+                //var st = MyBattle.Bots.Single(bot => bot.Name == args[1]);
                 //st.SetFrom(int.Parse(args[2]));
-                BattleBotUpdated(this, new EventArgs<BotBattleStatus>(st));
+                //BattleBotUpdated(this, new EventArgs<BotBattleStatus>(st));
             }
         }
 
         void OnRemoveBot(string[] args)
         {
             if (MyBattle != null && int.Parse(args[0]) == MyBattleID) {
-                var toDel = MyBattle.Bots.Single(bot => bot.Name == args[1]);
-                MyBattle.Bots.Remove(toDel);
-                BattleBotRemoved(this, new EventArgs<BotBattleStatus>(toDel));
+                //var toDel = MyBattle.Bots.Single(bot => bot.Name == args[1]);
+                //MyBattle.Bots.Remove(toDel);
+                //BattleBotRemoved(this, new EventArgs<BotBattleStatus>(toDel));
             }
         }
 
@@ -806,8 +809,8 @@ namespace LobbyClient
             if (MyBattle != null && int.Parse(args[0]) == MyBattleID) {
                 var bs = new BotBattleStatus(args[1], args[2], Utils.Glue(args, 5));
                 //bs.SetFrom(int.Parse(args[3]));
-                MyBattle.Bots.Add(bs);
-                BattleBotAdded(this, new EventArgs<BotBattleStatus>(bs));
+                //MyBattle.Bots.Add(bs);
+                //BattleBotAdded(this, new EventArgs<BotBattleStatus>(bs));
             }
         }
 

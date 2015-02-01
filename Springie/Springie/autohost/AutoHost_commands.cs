@@ -67,7 +67,7 @@ namespace Springie.autohost
                     }
 
                     // remove extra bots 
-                    foreach (var bot in b.Bots.Where(x => x.owner != tas.UserName)) tas.RemoveBot(bot.Name);
+                    foreach (var bot in b.Bots.Values.Where(x => x.owner != tas.UserName)) tas.RemoveBot(bot.Name);
                     return;
                 }
 
@@ -1083,20 +1083,17 @@ namespace Springie.autohost
                 }
             }
 
-            if (balance.DeleteBots) foreach (var b in tas.MyBattle.Bots) tas.RemoveBot(b.Name);
+            if (balance.DeleteBots) foreach (var b in tas.MyBattle.Bots.Keys) tas.RemoveBot(b);
             if (balance.Bots != null && balance.Bots.Count > 0)
             {
-                foreach (var b in tas.MyBattle.Bots.Where(x => !balance.Bots.Any(y => y.BotName == x.Name && y.Owner == x.owner))) tas.RemoveBot(b.Name);
+                foreach (var b in tas.MyBattle.Bots.Values.Where(x => !balance.Bots.Any(y => y.BotName == x.Name && y.Owner == x.owner))) tas.RemoveBot(b.Name);
 
                 foreach (var b in balance.Bots)
                 {
-                    var existing = tas.MyBattle.Bots.FirstOrDefault(x => x.owner == b.Owner && x.Name == b.BotName);
+                    var existing = tas.MyBattle.Bots.Values.FirstOrDefault(x => x.owner == b.Owner && x.Name == b.BotName);
                     if (existing != null)
                     {
-                        var upd = existing.Clone();
-                        upd.AllyNumber = b.AllyID;
-                        upd.TeamNumber = b.TeamID;
-                        tas.UpdateBot(existing.Name, upd);
+                        tas.UpdateBot(existing.Name, b.BotAI, b.AllyID, b.TeamID);
                     }
                     else
                     {
