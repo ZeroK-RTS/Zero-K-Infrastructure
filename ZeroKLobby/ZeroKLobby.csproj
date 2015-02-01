@@ -263,7 +263,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Flags.resx</DependentUpon>
     </Compile>
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="MicroLobby\ContextMenus.cs" />
     <Compile Include="Lines\ChimeLine.cs" />
     <Compile Include="Lines\FriendJoinedBattleLine.cs" />

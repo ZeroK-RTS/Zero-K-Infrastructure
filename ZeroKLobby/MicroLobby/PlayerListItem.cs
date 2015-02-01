@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Linq;
+using System.Web.Services.Description;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using LobbyClient;
@@ -66,7 +67,12 @@ namespace ZeroKLobby.MicroLobby
             get
             {
                 if (isOfflineMode) return offlineUserBattleStatus;
-                return Program.TasClient.MyBattleStatus;
+                var bat = Program.TasClient.MyBattle;
+                if (bat != null && UserName != null) {
+                    UserBattleStatus ubs;
+                    if (bat.Users.TryGetValue(UserName, out ubs)) return ubs;
+                }
+                return null;
             }
         }
 

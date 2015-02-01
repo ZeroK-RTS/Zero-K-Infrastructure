@@ -112,10 +112,7 @@ namespace LobbyClient
                     Trace.TraceWarning("Host port {0} was used, using backup port {1}", blockedPort, HostPort);
                 }
             } catch {}
-
-
-
-
+            
             EngineVersion = engineVersion;
             MaxPlayers = maxplayers;
             MapName = mapName;
