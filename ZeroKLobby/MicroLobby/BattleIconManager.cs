@@ -142,21 +142,20 @@ namespace ZeroKLobby.MicroLobby
             BattleAdded(this, new EventArgs<BattleIcon>(battleIcon));
         }
 
-        void TasClient_BattleInfoChanged(object sender, BattleInfoEventArgs e1)
+        void TasClient_BattleInfoChanged(object sender, OldNewPair<Battle> pair)
         {
-            var battleID = e1.BattleID;
-            var battle = Program.TasClient.ExistingBattles[battleID];
+            var battle = pair.New;
             var founder = battle.Founder;
-            var battleIcon = GetBattleIcon(battleID);
+            var battleIcon = GetBattleIcon(battle.BattleID);
             battleIcon.SetPlayers();
             battleIcon.IsInGame = founder.IsInGame;
             BattleChanged(this, new EventArgs<BattleIcon>(battleIcon));
         }
 
-        void TasClient_BattleMapChanged(object sender, BattleInfoEventArgs e1)
+        void TasClient_BattleMapChanged(object sender, OldNewPair<Battle> pair)
         {
-            var battleIcon = GetBattleIcon(e1.BattleID);
-            LoadMinimap(e1.MapName, battleIcon);
+            var battleIcon = GetBattleIcon(pair.New.BattleID);
+            LoadMinimap(pair.New.MapName, battleIcon);
         }
 
         void TasClient_BattleUserJoined(object sender, BattleUserEventArgs e1)

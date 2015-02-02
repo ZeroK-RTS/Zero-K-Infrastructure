@@ -266,7 +266,6 @@ namespace LobbyClient
         public string Game;
         public string Map;
         public int? MaxPlayers;
-        public int? PlayerCount;
         public int? SpectatorCount;
         public string Password;
         public string Title;
@@ -277,6 +276,12 @@ namespace LobbyClient
 
     [Message(Origin.Server)]
     public class BattleAdded
+    {
+        public BattleHeader Header;
+    }
+
+    [Message(Origin.Server | Origin.Client)]
+    public class BattleUpdate
     {
         public BattleHeader Header;
     }

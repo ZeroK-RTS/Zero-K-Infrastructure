@@ -945,7 +945,7 @@ namespace Springie.autohost
 
         public DateTime lastMapChange = DateTime.Now;
 
-        void tas_MyBattleMapChanged(object sender, BattleInfoEventArgs e1) {
+        void tas_MyBattleMapChanged(object sender, OldNewPair<Battle> oldNewPair) {
             lastMapChange = DateTime.Now;
 
             Battle b = tas.MyBattle;

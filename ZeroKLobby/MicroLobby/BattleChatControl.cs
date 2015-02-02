@@ -300,12 +300,12 @@ namespace ZeroKLobby.MicroLobby
 			base.AddLine(new SelfJoinedBattleLine(battle));
 		}
 
-		void TasClient_BattleMapChanged(object sender, BattleInfoEventArgs e1)
+		void TasClient_BattleMapChanged(object sender, OldNewPair<Battle> pair)
 		{
-			var battleID = e1.BattleID;
-			if (Program.TasClient.MyBattle == null || battleID != Program.TasClient.MyBattle.BattleID) return;
-			var mapName = e1.MapName;
-			SetMapImages(mapName);
+		    var tas = (TasClient)sender;
+		    if (tas.MyBattle == pair.New) {
+		        SetMapImages(pair.New.MapName);    
+		    }
 		}
 
 		void TasClient_BattleUserJoined(object sender, BattleUserEventArgs e1)

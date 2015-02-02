@@ -197,28 +197,16 @@ namespace LobbyClient
         public event EventHandler<CancelEventArgs<TasSayEventArgs>> PreviewSaid = delegate { };
         public event EventHandler<Battle> MyBattleHostExited = delegate { };
         public event EventHandler<Battle> MyBattleStarted = delegate { };
-
         public event EventHandler<SetRectangle> StartRectAdded = delegate { };
         public event EventHandler<SetRectangle> StartRectRemoved = delegate { };
-
+        public event EventHandler<OldNewPair<Battle>> BattleInfoChanged = delegate { };
+        public event EventHandler<OldNewPair<Battle>> BattleMapChanged = delegate { };
+        public event EventHandler<OldNewPair<Battle>> MyBattleMapChanged = delegate { };
         
 
         
-        public event EventHandler<BattleInfoEventArgs> BattleInfoChanged = delegate { };
-        public event EventHandler<BattleInfoEventArgs> BattleMapChanged = delegate { };
-        public event EventHandler<BattleInfoEventArgs> MyBattleMapChanged = delegate { };
-        
-
         public event EventHandler<TasEventArgs> BattleDetailsChanged = delegate { };
-
-
         public event EventHandler<TasEventArgs> ChannelTopicChanged = delegate { };
-        
-
-        
-        
-
-        
         public event EventHandler<EventArgs<User>> UserExtensionsChanged = delegate { };
         public event EventHandler<EventArgs<User>> MyExtensionsChanged = delegate { };
         
@@ -649,28 +637,6 @@ namespace LobbyClient
 
 
 
-        void OnUpdateBattleInfo(string[] args)
-        {
-            var battleID = Int32.Parse(args[0]);
-            var specCount = Int32.Parse(args[1]);
-            var mapName = Utils.Glue(args, 4);
-            var mapHash = Int32.Parse(args[3]);
-            var isLocked = Int32.Parse(args[2]) > 0;
-
-            Battle battle;
-            if (!existingBattles.TryGetValue(battleID, out battle)) return;
-            battle.SpectatorCount = specCount;
-
-            var bi = new BattleInfoEventArgs(battleID, specCount, mapName, mapHash, isLocked);
-
-            if (battle.MapName != mapName) {
-                battle.MapName = mapName;
-                if (battle == MyBattle) MyBattleMapChanged(this, bi);
-                BattleMapChanged(this, bi);
-            }
-
-            BattleInfoChanged(this, bi);
-        }
 
 
 
@@ -678,7 +644,7 @@ namespace LobbyClient
         async Task Process(BattleAdded bat)
         {
             var newBattle = new Battle();
-            newBattle.UpdateWith(bat.Header,existingUsers);
+            newBattle.UpdateWith(bat.Header,(n)=>existingUsers[n]);
             existingBattles[newBattle.BattleID] = newBattle;
             newBattle.Founder.IsInBattleRoom = true;
             
@@ -880,6 +846,23 @@ namespace LobbyClient
                     if (status.Name == UserName) BattleMyUserStatusChanged(this, ubs);
                     BattleUserStatusChanged(this, ubs);
                 }
+            }
+        }
+
+
+        async Task Process(BattleUpdate batUp)
+        {
+            var h = batUp.Header;
+            Battle bat;
+            if (existingBattles.TryGetValue(h.BattleID.Value, out bat)) {
+                var org = bat.Clone();
+                bat.UpdateWith(h, (n)=>existingUsers[n]);
+                var pair = new OldNewPair<Battle>(org, bat);
+                if (org.MapName != bat.MapName) {
+                    if (bat == MyBattle) MyBattleMapChanged(this, pair);
+                    BattleMapChanged(this, pair);
+                }
+                BattleInfoChanged(this, pair);
             }
         }
 

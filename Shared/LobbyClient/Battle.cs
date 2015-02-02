@@ -71,7 +71,7 @@ namespace LobbyClient
             }
         }
 
-        internal Battle()
+        public Battle()
         {
             Bots = new ConcurrentDictionary<string, BotBattleStatus>();
             ModOptions = new Dictionary<string, string>();
@@ -79,10 +79,11 @@ namespace LobbyClient
             Users = new ConcurrentDictionary<string, UserBattleStatus>();
         }
 
-        public void UpdateWith(BattleHeader h, IDictionary<string, User> users)
+
+        public void UpdateWith(BattleHeader h, Func<string, User> getUser)
         {
             if (h.BattleID != null) BattleID = h.BattleID.Value;
-            if (h.Founder != null) Founder = users[h.Founder];
+            if (h.Founder != null) Founder = getUser(h.Founder);
             if (h.Ip != null) Ip = h.Ip;
             if (h.Port != null) HostPort = h.Port.Value;
             if (h.MaxPlayers != null) MaxPlayers = h.MaxPlayers.Value;
@@ -91,6 +92,7 @@ namespace LobbyClient
             if (h.Map != null) MapName = h.Map;
             if (h.Title != null) Title = h.Title;
             if (h.Game != null) ModName = h.Game;
+            if (h.SpectatorCount != null) SpectatorCount = h.SpectatorCount.Value;
         }
 
 
@@ -417,6 +419,16 @@ namespace LobbyClient
 
             ret.Bots = Bots.Values.Select(x => new BotTeam() { BotName = x.Name, AllyID = x.AllyNumber, TeamID = x.TeamNumber, Owner = x.owner, BotAI = x.aiLib }).ToList();
             return ret;
+        }
+
+        public Battle Clone()
+        {
+            var clone = (Battle)this.MemberwiseClone();
+            clone.Users = new ConcurrentDictionary<string, UserBattleStatus>(this.Users);
+            clone.Bots = new ConcurrentDictionary<string, BotBattleStatus>(this.Bots);
+            clone.Rectangles = new ConcurrentDictionary<int, BattleRect>(this.Rectangles);
+            clone.ModOptions = new Dictionary<string, string>(ModOptions);
+            return clone;
         }
     }
 }

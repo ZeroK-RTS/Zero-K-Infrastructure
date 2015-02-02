@@ -221,7 +221,6 @@ namespace ZkLobbyServer
                                                         Ip = b.Ip,
                                                         Port = b.HostPort,
                                                         Title = b.Title,
-                                                        PlayerCount = b.NonSpectatorCount,
                                                         SpectatorCount = b.SpectatorCount,
                                                         MaxPlayers = b.MaxPlayers,
                                                         Password = b.Password != null ? "?" : null
@@ -480,13 +479,8 @@ namespace ZkLobbyServer
             var h = openBattle.Header;
             h.BattleID = battleID;
             h.Founder = Name;
-            h.PlayerCount = 1; // is he reall spec?
-            var battle = new Battle(h.Engine, h.Password, h.Port.Value, h.MaxPlayers.Value, h.Map, h.Title, h.Game)
-            {
-                Ip = h.Ip,
-                BattleID = battleID,
-                Founder = User
-            };
+            var battle = new Battle();
+            battle.UpdateWith(h, (n)=>state.Clients[n].User);
             battle.Users[Name] = new UserBattleStatus(Name, User);
             state.Battles[battleID] = battle;
             MyBattle = battle;
@@ -518,11 +512,33 @@ namespace ZkLobbyServer
                 battle.Users[Name] = new UserBattleStatus(Name, User);
                 MyBattle = battle;
                 await Broadcast(state.Clients.Values, new JoinedBattle() { BattleID = battle.BattleID, User = Name }, Name);
-                
+                await RecalcSpectators(battle);
+
                 foreach (var u in battle.Users.Values.Select(x=>x.ToUpdateBattleStatus()).ToList()) await SendCommand(u);
                 foreach (var u in battle.Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList()) await SendCommand(u);
                 foreach (var u in battle.Rectangles) await SendCommand(new SetRectangle(){Number = u.Key,Rectangle = u.Value});
+                
             }
+        }
+
+        async Task Process(BattleUpdate battleUpdate)
+        {
+            if (!IsLoggedIn) return;
+
+            var h = battleUpdate.Header;
+            if (h.BattleID == null && MyBattle != null) h.BattleID = MyBattle.BattleID;
+            Battle bat;
+            if (!state.Battles.TryGetValue(h.BattleID.Value, out bat)) {
+                await Respond("No such battle exists");
+                return;
+            }
+            if (bat.Founder != User && !User.IsAdmin && !User.IsBot) {
+                await Respond("You don't have permission to edit this battle");
+                return;
+            }
+            
+            bat.UpdateWith(h,(n)=>state.Clients[n].User);
+            await Broadcast(state.Clients.Keys, battleUpdate, Name);
         }
 
 
@@ -538,7 +554,17 @@ namespace ZkLobbyServer
                 if (bat.Users.TryGetValue(status.Name, out ubs)) {
                     ubs.UpdateWith(status);
                     await Broadcast(bat.Users.Keys, status);
+                    await RecalcSpectators(bat);
                 }
+            }
+        }
+
+        async Task RecalcSpectators(Battle bat)
+        {
+            var specCount = bat.Users.Values.Count(x => x.IsSpectator);
+            if (specCount != bat.SpectatorCount) {
+                bat.SpectatorCount = specCount;
+                await Broadcast(state.Clients.Values, new BattleUpdate() { Header = new BattleHeader() { SpectatorCount = specCount, BattleID = bat.BattleID} }, bat.Founder.Name);
             }
         }
 
@@ -550,6 +576,7 @@ namespace ZkLobbyServer
             Battle battle;
             if (state.Battles.TryGetValue(leave.BattleID, out battle)) {
                 await LeaveBattle(battle);
+                await RecalcSpectators(battle);
             }
         }
 
