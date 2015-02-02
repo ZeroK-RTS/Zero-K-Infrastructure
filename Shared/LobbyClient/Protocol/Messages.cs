@@ -343,4 +343,11 @@ namespace LobbyClient
         public string Name;
     }
 
+
+    [Message(Origin.Client)]
+    public class ChangeUserStatus
+    {
+        public bool? IsInGame;
+        public bool? IsAfk;
+    }
 }

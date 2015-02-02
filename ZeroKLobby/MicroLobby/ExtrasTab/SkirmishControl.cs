@@ -1211,7 +1211,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             script.AppendFormat("  MapHash={0};\n", mapCache.FirstOrDefault(x => x.InternalName == (string)mapName).Md5.ToString());
 
 
-            LobbyClient.Battle.GeneratePlayerSection(new List<UserBattleStatus>(),allUser,script,Bots,currentMod,Rectangles,ModOptions,null,null);
+            LobbyClient.Battle.GeneratePlayerSection(new List<UserBattleStatus>(),allUser,script,Bots,Rectangles,ModOptions,null,null);
             //Clipboard.SetText(script.ToString());
             return script.ToString();
         }

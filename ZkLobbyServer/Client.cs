@@ -115,7 +115,7 @@ namespace ZkLobbyServer
 
             await Task.WhenAll(targets.Where(x => x != null).Select(async (client) =>
             {
-                if (synchronizeUsers != null) await client.SynchronizeUsers(synchronizeUsers);
+                if (synchronizeUsers != null) await client.SynchronizeUsersToMe(synchronizeUsers);
                 await client.SendData(bytes);
             }));
         }
@@ -208,7 +208,7 @@ namespace ZkLobbyServer
                                 foreach (var b in state.Battles.Values)
                                 {
                                     if (b != null) {
-                                        await SynchronizeUsers(b.Founder.Name);
+                                        await SynchronizeUsersToMe(b.Founder.Name);
                                         await
                                             SendCommand(new BattleAdded() {
                                                 Header =
@@ -229,7 +229,7 @@ namespace ZkLobbyServer
                                             });
 
                                         foreach (var u in b.Users.Values.Select(x=>x.ToUpdateBattleStatus()).ToList()) {
-                                            await SynchronizeUsers(u.Name);
+                                            await SynchronizeUsersToMe(u.Name);
                                             await SendCommand(new JoinedBattle() { BattleID = b.BattleID, User = u.Name });
                                             await SendCommand(u);
                                        }
@@ -251,7 +251,7 @@ namespace ZkLobbyServer
             foreach (var c in state.Clients.Values.ToList()) c.LastKnownUserVersions[Name] = null;
         }
 
-        private async Task SynchronizeUsers(params string[] names)
+        private async Task SynchronizeUsersToMe(params string[] names)
         {
             foreach (var n in names)
             {
@@ -269,6 +269,22 @@ namespace ZkLobbyServer
                 }
             }
         }
+
+        private async Task UpdateSelfToWhoKnowsMe()
+        {
+            Interlocked.Increment(ref UserVersion);
+            // todo only sned to same channel, same battle or friends? 
+            foreach (var cli in state.Clients.Values.Where(x => x.LastKnownUserVersions.ContainsKey(Name))) {
+                int? last;
+                cli.LastKnownUserVersions.TryGetValue(Name, out last);
+                var ver = UserVersion;
+                if (last != null && last != ver) {
+                    await SendCommand(User);
+                    cli.LastKnownUserVersions[Name] = ver;
+                }
+            }
+        }
+
 
 
         async Task Process(Register register)
@@ -326,7 +342,7 @@ namespace ZkLobbyServer
             if (channel.Users.TryAdd(Name, User)) {
                 var users = channel.Users.Keys.ToArray();
                 
-                await SynchronizeUsers(users);
+                await SynchronizeUsersToMe(users);
                 await
                     SendCommand(new JoinChannelResponse() {
                         Success = true,
@@ -389,10 +405,10 @@ namespace ZkLobbyServer
                     Client client;
                     if (state.Clients.TryGetValue(say.Target, out client))
                     {
-                        await client.SynchronizeUsers(Name);
+                        await client.SynchronizeUsersToMe(Name);
                         await client.SendCommand(say);
 
-                        await SynchronizeUsers(say.Target);
+                        await SynchronizeUsersToMe(say.Target);
                         await SendCommand(say);
                     } // todo else offline message?
                     break;
@@ -449,7 +465,7 @@ namespace ZkLobbyServer
             h.BattleID = battleID;
             h.Founder = Name;
             h.PlayerCount = 1; // is he reall spec?
-            var battle = new Battle(h.Engine, h.Password, h.Port.Value, h.MaxPlayers.Value, h.Map, h.Title, new Mod() { Name = h.Game })
+            var battle = new Battle(h.Engine, h.Password, h.Port.Value, h.MaxPlayers.Value, h.Map, h.Title, h.Game)
             {
                 Ip = h.Ip,
                 BattleID = battleID,
@@ -518,6 +534,15 @@ namespace ZkLobbyServer
             if (state.Battles.TryGetValue(leave.BattleID, out battle)) {
                 await LeaveBattle(battle);
             }
+        }
+
+        async Task Process(ChangeUserStatus userStatus)
+        {
+            if (!IsLoggedIn) return;
+
+            if (userStatus.IsInGame != null) User.IsInGame = userStatus.IsInGame.Value;
+            if (userStatus.IsAfk != null) User.IsAway = userStatus.IsAfk.Value;
+            await UpdateSelfToWhoKnowsMe();
         }
 
 

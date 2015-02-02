@@ -195,19 +195,20 @@ namespace LobbyClient
         public event EventHandler<TasEventArgs> ConnectionLost = delegate { };
         public event EventHandler<Say> Rang = delegate { };
         public event EventHandler<CancelEventArgs<TasSayEventArgs>> PreviewSaid = delegate { };
-        
-        
+        public event EventHandler<Battle> MyBattleHostExited = delegate { };
+        public event EventHandler<Battle> MyBattleStarted = delegate { };
+
+
+
         public event EventHandler<TasEventArgs> BattleDetailsChanged = delegate { };
         public event EventHandler<BattleInfoEventArgs> BattleInfoChanged = delegate { };
         public event EventHandler<BattleInfoEventArgs> BattleMapChanged = delegate { };
-        
         public event EventHandler<TasEventArgs> ChannelTopicChanged = delegate { };
         
-        public event EventHandler<TasEventArgs> MyBattleHostExited = delegate { };
-        public event EventHandler<BattleInfoEventArgs> MyBattleMapChanged = delegate { };
-        public event EventHandler<TasEventArgs> MyBattleStarted = delegate { };
 
+        public event EventHandler<BattleInfoEventArgs> MyBattleMapChanged = delegate { };
         
+
         public event EventHandler<TasEventArgs> StartRectAdded = delegate { };
         public event EventHandler<TasEventArgs> StartRectRemoved = delegate { };
         
@@ -314,18 +315,9 @@ namespace LobbyClient
         }
 
 
-        public void ChangeMyUserStatus(bool? isAway = null, bool? isInGame = null)
+        public Task ChangeMyUserStatus(bool? isAway = null, bool? isInGame = null)
         {
-            User u;
-            if (MyUser != null) u = MyUser.Clone();
-            else u = new User();
-            if (isAway != null) u.IsAway = isAway.Value;
-            if (isInGame != null) u.IsInGame = isInGame.Value;
-//            if (MyUser == null || lastUserStatus != u.ToInt())
-  //          {
-                //con.SendCommand("MYSTATUS", u.ToInt());
-      //          lastUserStatus = u.ToInt();
-    //        }
+            return SendCommand(new ChangeUserStatus() { IsAfk = isAway, IsInGame = isInGame });
         }
 
 
@@ -684,24 +676,6 @@ namespace LobbyClient
 
 
 
-        void OnClientStatus(string[] args)
-        {
-            int status;
-            int.TryParse(args[1], out status);
-
-            var u = ExistingUsers[args[0]];
-            var old = u.Clone();
-            //u.FromInt(status);
-
-            //if (u.Name == UserName) lastUserStatus = u.ToInt();
-            if (MyBattle != null && MyBattle.Founder.Name == u.Name) {
-                if (u.IsInGame && old.IsInGame == false) MyBattleStarted(this, new TasEventArgs(args));
-                if (!u.IsInGame && old.IsInGame == true) MyBattleHostExited(this, new TasEventArgs(args));
-            }
-
-            //UserStatusChanged(this, new TasEventArgs(args));
-        }
-
 
         async Task Process(BattleAdded bat)
         {
@@ -793,6 +767,15 @@ namespace LobbyClient
             existingUsers.TryGetValue(user.Name, out old);
             existingUsers[user.Name] = user;
             if (old == null) UserAdded(this, user);
+            if (old != null) {
+                var bat = MyBattle;
+                if (bat != null && bat.Founder.Name == user.Name)
+                {
+                    if (user.IsInGame && !old.IsInGame) MyBattleStarted(this,bat );
+                    if (!user.IsInGame && old.IsInGame) MyBattleHostExited(this, bat);
+                }
+
+            }
             UserStatusChanged(this, new OldNewPair<User>(old, user));
         }
 

@@ -16,14 +16,8 @@ namespace LobbyClient
 {
     public class Battle
     {
-
-        /// <summary>
-        /// Full mod metadata - loaded only for joined battle
-        /// </summary>
-        readonly Mod mod;
-
         public int BattleID { get; set; }
-        public ConcurrentDictionary<string,BotBattleStatus> Bots { get; set; }
+        public ConcurrentDictionary<string, BotBattleStatus> Bots { get; set; }
 
         public User Founder { get; set; }
 
@@ -31,7 +25,7 @@ namespace LobbyClient
         public string Ip { get; set; }
         public bool IsFull { get { return NonSpectatorCount == MaxPlayers; } }
         public bool IsInGame { get { return Founder.IsInGame; } }
-        public bool IsMission { get { return mod != null && mod.IsMission; } }
+        public bool IsMission { get { return false; } }
         public bool IsPassworded { get { return !string.IsNullOrEmpty(Password); } }
 
         public string MapName { get; set; }
@@ -52,12 +46,12 @@ namespace LobbyClient
         public int SpectatorCount { get; set; }
         public string Title { get; set; }
 
-        public ConcurrentDictionary<string,UserBattleStatus> Users { get; set; }
+        public ConcurrentDictionary<string, UserBattleStatus> Users { get; set; }
 
-        
+
         public bool IsSpringieManaged
         {
-            get { return Founder != null && Founder.ClientType == Login.ClientTypes.SpringieManaged;}
+            get { return Founder != null && Founder.ClientType == Login.ClientTypes.SpringieManaged; }
         }
 
         public bool IsQueue
@@ -85,7 +79,7 @@ namespace LobbyClient
             Users = new ConcurrentDictionary<string, UserBattleStatus>();
         }
 
-        public void UpdateWith(BattleHeader h, IDictionary<string,User> users)
+        public void UpdateWith(BattleHeader h, IDictionary<string, User> users)
         {
             if (h.BattleID != null) BattleID = h.BattleID.Value;
             if (h.Founder != null) Founder = users[h.Founder];
@@ -100,25 +94,28 @@ namespace LobbyClient
         }
 
 
-        public Battle(string engineVersion, string password, int port, int maxplayers, string mapName, string title, Mod mod): this()
+        public Battle(string engineVersion, string password, int port, int maxplayers, string mapName, string title, string modname)
+            : this()
         {
             if (!String.IsNullOrEmpty(password)) Password = password;
             if (port == 0) HostPort = 8452; else HostPort = port;
-            try {
-                var ports = IPGlobalProperties.GetIPGlobalProperties().GetActiveUdpListeners().OrderBy(x => x.Port).Select(x=>x.Port).ToList();
-                if (ports.Contains(HostPort)) {
+            try
+            {
+                var ports = IPGlobalProperties.GetIPGlobalProperties().GetActiveUdpListeners().OrderBy(x => x.Port).Select(x => x.Port).ToList();
+                if (ports.Contains(HostPort))
+                {
                     var blockedPort = HostPort;
                     while (ports.Contains(HostPort)) HostPort++;
                     Trace.TraceWarning("Host port {0} was used, using backup port {1}", blockedPort, HostPort);
                 }
-            } catch {}
-            
+            }
+            catch { }
+
             EngineVersion = engineVersion;
             MaxPlayers = maxplayers;
             MapName = mapName;
             Title = title;
-            this.mod = mod;
-            ModName = mod.Name;
+            ModName = modname;
         }
 
 
@@ -168,7 +165,6 @@ namespace LobbyClient
                 }
                 else
                 {
-                    if (mod == null) throw new ApplicationException("Mod not downloaded yet");
 
                     var script = new StringBuilder();
 
@@ -178,11 +174,7 @@ namespace LobbyClient
                     script.AppendFormat("   ZkSearchTag={0};\n", zkSearchTag);
                     script.AppendFormat("  Mapname={0};\n", MapName);
 
-                    if (mod.IsMission) script.AppendFormat("  StartPosType=3;\n");
-                    else
-                    {
-                        script.AppendFormat("  StartPosType=2;\n");
-                    }
+                    script.AppendFormat("  StartPosType=2;\n");
 
                     script.AppendFormat("  GameType={0};\n", ModName);
                     script.AppendFormat("  AutohostPort={0};\n", loopbackListenPort);
@@ -208,7 +200,7 @@ namespace LobbyClient
                             var us = users.FirstOrDefault(x => x.Name == p.Name);
                             if (us == null)
                             {
-                                us = new UserBattleStatus(p.Name, new User() {AccountID = p.LobbyID}, Password);
+                                us = new UserBattleStatus(p.Name, new User() { AccountID = p.LobbyID }, Password);
                                 users.Add(us);
                             }
                             us.TeamNumber = p.TeamID;
@@ -240,7 +232,7 @@ namespace LobbyClient
                     }
 
 
-                    GeneratePlayerSection(playersExport, users, script, bots,mod,Rectangles,ModOptions,localUser,startSetup);
+                    GeneratePlayerSection(playersExport, users, script, bots, Rectangles, ModOptions, localUser, startSetup);
 
                     return script.ToString();
                 }
@@ -255,75 +247,41 @@ namespace LobbyClient
             List<UserBattleStatus> users,
             StringBuilder script,
             List<BotBattleStatus> bots,
-            Mod _mod,
-            Dictionary<int,BattleRect> _rectangles,
-            Dictionary<string,string> _modOptions,
+            Dictionary<int, BattleRect> _rectangles,
+            Dictionary<string, string> _modOptions,
             User localUser = null,
             SpringBattleStartSetup startSetup = null
            )
         {
-            if (_mod != null && _mod.IsMission) // mission stuff
+            // ordinary battle stuff
+
+            var userNum = 0;
+            var teamNum = 0;
+            var aiNum = 0;
+
+            //players is excluding self (so "springie doesn't appear as spec ingame") & excluding bots (bots is added later for each owner)
+            var non_botUsers = users.Where(u => !bots.Any(b => b.Name == u.Name)); //.OrderBy(x => x.TeamNumber);
+            if (localUser != null) //I am a server
+                non_botUsers = non_botUsers.Where(x => x.Name != localUser.Name);
+
+            foreach (var u in non_botUsers.OrderBy(x => x.TeamNumber))
             {
-                var aiNum = 0;
-                var declaredTeams = new HashSet<int>();
-                var orderedUsers = users.OrderBy(x => x.TeamNumber).ToList();
-                for (var i = 0; i < orderedUsers.Count; i++)
+                ScriptAddUser(script, userNum, playersExport, startSetup, teamNum, u);
+
+                if (!u.IsSpectator)
                 {
-                    var u = orderedUsers[i];
-                    ScriptAddUser(script, i, playersExport, startSetup, u.TeamNumber, u);
-                    if (!u.IsSpectator && !declaredTeams.Contains(u.TeamNumber))
-                    {
-                        ScriptAddTeam(script, u.TeamNumber, i, u,_mod);
-                        declaredTeams.Add(u.TeamNumber);
-                    }
+                    ScriptAddTeam(script, teamNum, userNum, u);
+                    teamNum++;
                 }
 
-                for (var i = 0; i < orderedUsers.Count; i++)
+                foreach (var b in bots.Where(x => x.owner == u.Name))
                 {
-                    var u = orderedUsers[i];
-                    foreach (var b in bots.Where(x => x.owner == u.Name))
-                    {
-                        ScriptAddBot(script, aiNum++, b.TeamNumber, i, b);
-                        if (!declaredTeams.Contains(b.TeamNumber))
-                        {
-                            ScriptAddTeam(script, b.TeamNumber, i, b,_mod);
-                            declaredTeams.Add(b.TeamNumber);
-                        }
-                    }
+                    ScriptAddBot(script, aiNum, teamNum, userNum, b);
+                    aiNum++;
+                    ScriptAddTeam(script, teamNum, userNum, b);
+                    teamNum++;
                 }
-            }
-            else
-            {
-                // ordinary battle stuff
-
-                var userNum = 0;
-                var teamNum = 0;
-                var aiNum = 0;
-
-                //players is excluding self (so "springie doesn't appear as spec ingame") & excluding bots (bots is added later for each owner)
-                var non_botUsers = users.Where(u => !bots.Any(b => b.Name == u.Name)); //.OrderBy(x => x.TeamNumber);
-                if (localUser != null) //I am a server
-                    non_botUsers = non_botUsers.Where(x => x.Name != localUser.Name);
-                
-                foreach (var u in non_botUsers.OrderBy(x => x.TeamNumber)) 
-                {
-                    ScriptAddUser(script, userNum, playersExport, startSetup, teamNum, u);
-
-                    if (!u.IsSpectator)
-                    {
-                        ScriptAddTeam(script, teamNum, userNum, u,_mod);
-                        teamNum++;
-                    }
-
-                    foreach (var b in bots.Where(x => x.owner == u.Name))
-                    {
-                        ScriptAddBot(script, aiNum, teamNum, userNum, b);
-                        aiNum++;
-                        ScriptAddTeam(script, teamNum, userNum, b,_mod);
-                        teamNum++;
-                    }
-                    userNum++;
-                }
+                userNum++;
             }
 
             // ALLIANCES
@@ -338,29 +296,19 @@ namespace LobbyClient
                 double left = 0, top = 0, right = 1, bottom = 1;
                 BattleRect rect;
                 if (_rectangles.TryGetValue(allyNumber, out rect)) rect.ToFractions(out left, out top, out right, out bottom);
-                script.AppendFormat(CultureInfo.InvariantCulture,"     StartRectLeft={0};\n", left);
-                script.AppendFormat(CultureInfo.InvariantCulture,"     StartRectTop={0};\n", top);
-                script.AppendFormat(CultureInfo.InvariantCulture,"     StartRectRight={0};\n", right);
-                script.AppendFormat(CultureInfo.InvariantCulture,"     StartRectBottom={0};\n", bottom);
+                script.AppendFormat(CultureInfo.InvariantCulture, "     StartRectLeft={0};\n", left);
+                script.AppendFormat(CultureInfo.InvariantCulture, "     StartRectTop={0};\n", top);
+                script.AppendFormat(CultureInfo.InvariantCulture, "     StartRectRight={0};\n", right);
+                script.AppendFormat(CultureInfo.InvariantCulture, "     StartRectBottom={0};\n", bottom);
                 script.AppendLine("}");
             }
 
             script.AppendLine();
 
-            if (!_mod.IsMission)
-            {
                 script.AppendLine("  [MODOPTIONS]");
                 script.AppendLine("  {");
 
-                var options = new Dictionary<string, string>();
-
-                // put standard modoptions to options dictionary
-                foreach (var o in _mod.Options.Where(x => x.Type != OptionType.Section))
-                {
-                    var v = o.Default;
-                    if (_modOptions.ContainsKey(o.Key)) v = _modOptions[o.Key];
-                    options[o.Key] = v;
-                }
+                var options = new Dictionary<string, string>(_modOptions);
 
                 // replace/add custom modoptions from startsetup (if they exist)
                 if (startSetup != null && startSetup.ModOptions != null) foreach (var entry in startSetup.ModOptions) options[entry.Key] = entry.Value;
@@ -369,7 +317,7 @@ namespace LobbyClient
                 foreach (var kvp in options) script.AppendFormat("    {0}={1};\n", kvp.Key, kvp.Value);
 
                 script.AppendLine("  }");
-            }
+
 
             script.AppendLine("}");
         }
@@ -415,22 +363,17 @@ namespace LobbyClient
             script.AppendLine("  }\n");
         }
 
-        static void ScriptAddTeam(StringBuilder script, int teamNum, int userNum, UserBattleStatus status, Mod mod)
+        static void ScriptAddTeam(StringBuilder script, int teamNum, int userNum, UserBattleStatus status)
         {
             // BOT TEAM
             script.AppendFormat("  [TEAM{0}]\n", teamNum);
             script.AppendLine("  {");
             script.AppendFormat("     TeamLeader={0};\n", userNum);
             script.AppendFormat("     AllyTeam={0};\n", status.AllyNumber);
-            var side = "mission";
-            script.AppendFormat("     Side={0};\n", mod.Sides[0]); // is this use of "mod" needed at all?
+            //var side = "mission";
+            //script.AppendFormat("     Side={0};\n", mod.Sides[0]); // is this use of "mod" needed at all?
 
             script.AppendFormat("     Handicap={0};\n", 0);
-            if (mod.IsMission)
-            {
-                script.AppendFormat("      StartPosX={0};\n", 0);
-                script.AppendFormat("      StartPosZ={0};\n", 0);
-            }
             script.AppendLine("  }");
         }
 
@@ -464,13 +407,13 @@ namespace LobbyClient
         }
 
 
-        public  BattleContext GetContext()
+        public BattleContext GetContext()
         {
             var ret = new BattleContext();
             ret.AutohostName = Founder.Name;
             ret.Map = MapName;
             ret.Mod = ModName;
-            ret.Players = Users.Values.Where(x=>x.SyncStatus != SyncStatuses.Unknown).Select(x => new PlayerTeam() { AllyID = x.AllyNumber, Name = x.Name, LobbyID = x.LobbyUser.AccountID, TeamID = x.TeamNumber, IsSpectator = x.IsSpectator }).ToList();
+            ret.Players = Users.Values.Where(x => x.SyncStatus != SyncStatuses.Unknown).Select(x => new PlayerTeam() { AllyID = x.AllyNumber, Name = x.Name, LobbyID = x.LobbyUser.AccountID, TeamID = x.TeamNumber, IsSpectator = x.IsSpectator }).ToList();
 
             ret.Bots = Bots.Values.Select(x => new BotTeam() { BotName = x.Name, AllyID = x.AllyNumber, TeamID = x.TeamNumber, Owner = x.owner, BotAI = x.aiLib }).ToList();
             return ret;

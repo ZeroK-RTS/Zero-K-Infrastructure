@@ -661,7 +661,7 @@ namespace Springie.autohost
             //Map mapi = null;
             //cache.GetMap(mapname, (m, x, y, z) => { mapi = m; }, (e) => { }, springPaths.SpringVersion);
             //int mint, maxt;
-            var b = new Battle(springPaths.SpringVersion, password, hostingPort, maxPlayers, mapname, title, hostedMod);
+            var b = new Battle(springPaths.SpringVersion, password, hostingPort, maxPlayers, mapname, title,modname);
             
 
             tas.OpenBattle(b);
@@ -963,7 +963,7 @@ namespace Springie.autohost
 
         public BattleContext slaveContextOverride;
 
-        void tas_MyStatusChangedToInGame(object sender, TasEventArgs e) {
+        void tas_MyStatusChangedToInGame(object sender, Battle battle) {
             spring.StartGame(tas, Program.main.Config.HostingProcessPriority, null, null, contextOverride:slaveContextOverride);
         }
 
