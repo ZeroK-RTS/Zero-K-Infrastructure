@@ -18,32 +18,6 @@ using ZkData;
 
 namespace LobbyClient
 {
-
-    public class OldNewPair<T>
-    {
-        public T Old;
-        public T New;
-
-        public OldNewPair(T old, T @new)
-        {
-            Old = old;
-            New = @new;
-        }
-    }
-
-    public class ChannelUserInfo
-    {
-        public Channel Channel;
-        public List<User> Users;
-    }
-
-    public class ChannelUserRemovedInfo
-    {
-        public Channel Channel;
-        public User User;
-        public string Reason;
-    }
-
     
     public class TasClient:Connection
     {
@@ -220,13 +194,12 @@ namespace LobbyClient
         public event EventHandler<BotBattleStatus> BattleBotRemoved = delegate { };
         public event EventHandler<TasEventArgs> ConnectionLost = delegate { };
         public event EventHandler<Say> Rang = delegate { };
-        
+        public event EventHandler<CancelEventArgs<TasSayEventArgs>> PreviewSaid = delegate { };
         
         
         public event EventHandler<TasEventArgs> BattleDetailsChanged = delegate { };
         public event EventHandler<BattleInfoEventArgs> BattleInfoChanged = delegate { };
         public event EventHandler<BattleInfoEventArgs> BattleMapChanged = delegate { };
-        
         
         public event EventHandler<TasEventArgs> ChannelTopicChanged = delegate { };
         
@@ -234,12 +207,10 @@ namespace LobbyClient
         public event EventHandler<BattleInfoEventArgs> MyBattleMapChanged = delegate { };
         public event EventHandler<TasEventArgs> MyBattleStarted = delegate { };
 
-        public event EventHandler<CancelEventArgs<TasSayEventArgs>> PreviewSaid = delegate { };
         
         public event EventHandler<TasEventArgs> StartRectAdded = delegate { };
         public event EventHandler<TasEventArgs> StartRectRemoved = delegate { };
-
-
+        
         public event EventHandler<EventArgs<User>> UserExtensionsChanged = delegate { };
         public event EventHandler<EventArgs<User>> MyExtensionsChanged = delegate { };
         
@@ -363,11 +334,6 @@ namespace LobbyClient
             serverHost = host;
             serverPort = port;
             Connect(host, port, forcedLocalIP ? localIp : null);
-        }
-
-        public static DateTime ConvertMilisecondTime(string arg)
-        {
-            return (new DateTime(1970, 1, 1, 0, 0, 0)).AddMilliseconds(double.Parse(arg, System.Globalization.CultureInfo.InvariantCulture));
         }
 
 
@@ -662,62 +628,6 @@ namespace LobbyClient
         }
 
        
-        /// <summary>
-        /// Primary method - processes commands from server
-        /// </summary>
-        /// <param Name="command">command Name</param>
-        /// <param Name="args">command arguments</param>
-        async Task ProcessCommand(object obj)
-        {
-            string command = "";
-            string[] args = new string[]{};
-
-            // is this really needed for the whole thread? it screws with date formatting
-            // Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            try
-            {
-               
-                switch (command)
-                {
-
-                    case "REDIRECT": // server sends backup IP
-                        OnRedirect(args);
-                        break;
-
-                    case "CLIENTSTATUS": // client's status changed
-                        OnClientStatus(args);
-                        break;
-
-
-                    case "CHANNELTOPIC": // channel topic update (after joining a channel)
-                        OnChannelTopic(args);
-                        break;
-
-
-                    case "UPDATEBATTLEINFO": // update external battle info (lock and map)
-                        OnUpdateBattleInfo(args);
-                        break;
-
-
-                    case "SETSCRIPTTAGS": // updates internal battle details
-                        OnSetScriptTags(args);
-                        break;
-
-                    case "ADDSTARTRECT":
-                        OnAddStartRect(args);
-                        break;
-
-                    case "REMOVESTARTRECT":
-                        OnRemoveStartRect(args);
-                        break;
-                }
-            }
-            catch (Exception e)
-            {
-                //not throwing "ApplicationException" because we can explicitly say its application fault here:
-                Trace.TraceError("TASC error: Error was thrown while processing chat command {0} \"{1}\" (check if chat event trigger faulty code in application): {2}", command, Utils.Glue(args), e);
-            }
-        }
 
         void OnRemoveStartRect(string[] args)
         {
@@ -774,15 +684,6 @@ namespace LobbyClient
 
 
 
-        void OnChannelTopic(string[] args)
-        {
-            var c = JoinedChannels[args[0]];
-            c.TopicSetBy = args[1];
-            c.TopicSetDate = ConvertMilisecondTime(args[2]);
-            c.Topic = Utils.Glue(args, 3);
-            ChannelTopicChanged(this, new TasEventArgs(args[0]));
-        }
-
         void OnClientStatus(string[] args)
         {
             int status;
@@ -800,14 +701,6 @@ namespace LobbyClient
 
             //UserStatusChanged(this, new TasEventArgs(args));
         }
-
-        void OnRedirect(string[] args)
-        {
-            var host = args[0];
-            var port = int.Parse(args[1]);
-            Connect(host, port);
-        }
-
 
 
         async Task Process(BattleAdded bat)

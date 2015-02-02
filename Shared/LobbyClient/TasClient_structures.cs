@@ -5,15 +5,6 @@ using System.Text;
 
 namespace LobbyClient
 {
-	/// <summary>
-	/// Basic channel information - for channel enumeration
-	/// </summary>
-	public class ExistingChannel
-	{
-		public string name;
-		public string topic;
-		public int userCount;
-	} ;
 
 	public class TasEventArgs: EventArgs
 	{
@@ -97,31 +88,30 @@ namespace LobbyClient
 		}
 	} ;
 
-	public class TasInputArgs: EventArgs
-	{
-		public string[] Args;
-		public string Command;
 
-		public TasInputArgs(string command, string[] args)
-		{
-			Command = command;
-			Args = args;
-		}
-	} ;
+    public class OldNewPair<T>
+    {
+        public T Old;
+        public T New;
 
-	public class TasClientException: Exception
-	{
-		public TasClientException() {}
-		public TasClientException(string message): base(message) {}
-	} ;
+        public OldNewPair(T old, T @new)
+        {
+            Old = old;
+            New = @new;
+        }
+    }
 
-	public class TasEventAgreementRecieved: EventArgs
-	{
-		public string Text { get; protected set; }
+    public class ChannelUserInfo
+    {
+        public Channel Channel;
+        public List<User> Users;
+    }
 
-		public TasEventAgreementRecieved(StringBuilder builder)
-		{
-			Text = builder.ToString();
-		}
-	}
+    public class ChannelUserRemovedInfo
+    {
+        public Channel Channel;
+        public User User;
+        public string Reason;
+    }
+
 }

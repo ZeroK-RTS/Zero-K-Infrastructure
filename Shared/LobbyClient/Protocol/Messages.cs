@@ -134,15 +134,6 @@ namespace LobbyClient
     }
 
 
-    /// <summary>
-    /// Attempts to create a channel
-    /// </summary>
-    [Message(Origin.Client)]
-    public class CreateChannel
-    {
-        public ChannelHeader Channel;
-    }
-
 
     public class ChannelHeader
     {
@@ -196,15 +187,6 @@ namespace LobbyClient
         public ChannelHeader Channel;
     }
 
-    [Message(Origin.Server)]
-    public class CreateRoomResponse
-    {
-        public string RoomID;
-        public bool Success;
-        public string Reason;
-
-        public Channel Channel;
-    }
 
     [Message(Origin.Server | Origin.Client)]
     public class User
