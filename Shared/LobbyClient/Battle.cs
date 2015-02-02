@@ -39,7 +39,7 @@ namespace LobbyClient
 
         public string Password;
 
-        public Dictionary<int, BattleRect> Rectangles { get; set; }
+        public ConcurrentDictionary<int, BattleRect> Rectangles { get; set; }
         public List<string> ScriptTags = new List<string>();
         public string EngineName = "spring";
         public string EngineVersion { get; set; }
@@ -75,7 +75,7 @@ namespace LobbyClient
         {
             Bots = new ConcurrentDictionary<string, BotBattleStatus>();
             ModOptions = new Dictionary<string, string>();
-            Rectangles = new Dictionary<int, BattleRect>();
+            Rectangles = new ConcurrentDictionary<int, BattleRect>();
             Users = new ConcurrentDictionary<string, UserBattleStatus>();
         }
 
@@ -247,7 +247,7 @@ namespace LobbyClient
             List<UserBattleStatus> users,
             StringBuilder script,
             List<BotBattleStatus> bots,
-            Dictionary<int, BattleRect> _rectangles,
+            IDictionary<int, BattleRect> _rectangles,
             Dictionary<string, string> _modOptions,
             User localUser = null,
             SpringBattleStartSetup startSetup = null

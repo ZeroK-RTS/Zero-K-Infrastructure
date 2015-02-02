@@ -198,19 +198,26 @@ namespace LobbyClient
         public event EventHandler<Battle> MyBattleHostExited = delegate { };
         public event EventHandler<Battle> MyBattleStarted = delegate { };
 
+        public event EventHandler<SetRectangle> StartRectAdded = delegate { };
+        public event EventHandler<SetRectangle> StartRectRemoved = delegate { };
 
-
-        public event EventHandler<TasEventArgs> BattleDetailsChanged = delegate { };
-        public event EventHandler<BattleInfoEventArgs> BattleInfoChanged = delegate { };
-        public event EventHandler<BattleInfoEventArgs> BattleMapChanged = delegate { };
-        public event EventHandler<TasEventArgs> ChannelTopicChanged = delegate { };
         
 
+        
+        public event EventHandler<BattleInfoEventArgs> BattleInfoChanged = delegate { };
+        public event EventHandler<BattleInfoEventArgs> BattleMapChanged = delegate { };
         public event EventHandler<BattleInfoEventArgs> MyBattleMapChanged = delegate { };
         
 
-        public event EventHandler<TasEventArgs> StartRectAdded = delegate { };
-        public event EventHandler<TasEventArgs> StartRectRemoved = delegate { };
+        public event EventHandler<TasEventArgs> BattleDetailsChanged = delegate { };
+
+
+        public event EventHandler<TasEventArgs> ChannelTopicChanged = delegate { };
+        
+
+        
+        
+
         
         public event EventHandler<EventArgs<User>> UserExtensionsChanged = delegate { };
         public event EventHandler<EventArgs<User>> MyExtensionsChanged = delegate { };
@@ -270,17 +277,30 @@ namespace LobbyClient
         }
 
 
-        public void AddBattleRectangle(int allyno, BattleRect rect)
+        public async Task AddBattleRectangle(int allyno, BattleRect rect)
         {
             {
-                if (allyno < Spring.MaxAllies && allyno >= 0)
-                {
-                    RemoveBattleRectangle(allyno);
-                    MyBattle.Rectangles.Add(allyno, rect);
-//                    con.SendCommand("ADDSTARTRECT", allyno, rect.Left, rect.Top, rect.Right, rect.Bottom);
+                if (allyno < Spring.MaxAllies && allyno >= 0) {
+                    await SendCommand(new SetRectangle() { Number = allyno, Rectangle = rect });
                 }
             }
         }
+
+        private async Task Process(SetRectangle rect)
+        {
+            var bat = MyBattle;
+            if (bat != null) {
+                if (rect.Rectangle == null) {
+                    BattleRect org;
+                    bat.Rectangles.TryRemove(rect.Number, out org);
+                    StartRectAdded(this, rect);
+                } else {
+                    bat.Rectangles[rect.Number] = rect.Rectangle;
+                    StartRectRemoved(this, rect);
+                }
+            }
+        }
+
 
         public Task AddBot(string name, string aiDll, int? allyNumber= null, int? teamNumber= null)
         {
@@ -478,12 +498,10 @@ namespace LobbyClient
             return SendCommand(new Register() { Name = username, PasswordHash = Utils.HashLobbyPassword(password) });
         }
 
-        public void RemoveBattleRectangle(int allyno)
+        public async Task RemoveBattleRectangle(int allyno)
         {
-            if (MyBattle.Rectangles.ContainsKey(allyno))
-            {
-                MyBattle.Rectangles.Remove(allyno);
-                //con.SendCommand("REMOVESTARTRECT", allyno);
+            if (MyBattle.Rectangles.ContainsKey(allyno)) {
+                await SendCommand(new SetRectangle() { Number = allyno, Rectangle = null });
             }
         }
 
@@ -620,26 +638,6 @@ namespace LobbyClient
         }
 
        
-
-        void OnRemoveStartRect(string[] args)
-        {
-            var allyNo = int.Parse(args[0]);
-            MyBattle.Rectangles.Remove(allyNo);
-            StartRectRemoved(this, new TasEventArgs(args));
-        }
-
-        void OnAddStartRect(string[] args)
-        {
-            var allyNo = int.Parse(args[0]);
-            var left = int.Parse(args[1]);
-            var top = int.Parse(args[2]);
-            var right = int.Parse(args[3]);
-            var bottom = int.Parse(args[4]);
-            var rect = new BattleRect(left, top, right, bottom);
-            MyBattle.Rectangles[allyNo] = rect;
-            StartRectAdded(this, new TasEventArgs(args));
-        }
-
         void OnSetScriptTags(string[] args)
         {
             //var bd = new BattleDetails();
@@ -718,9 +716,10 @@ namespace LobbyClient
 
                 if (MyBattle != null && left.BattleID == MyBattleID) {
                     if (UserName == left.User) {
+                        bat.Rectangles.Clear();
                         bat.ScriptTags.Clear();
                         bat.Bots.Clear();
-
+                        bat.ModOptions.Clear();
                         MyBattle = null;
                         BattleClosed(this, bat);
                     }

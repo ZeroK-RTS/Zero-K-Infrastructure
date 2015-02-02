@@ -282,6 +282,26 @@ namespace ZkLobbyServer
         }
 
 
+        private async Task Process(SetRectangle rect)
+        {
+            if (!IsLoggedIn) return;
+
+            var bat = MyBattle;
+            if (bat == null || (bat.Founder != User && !User.IsAdmin && !User.IsBot)) {
+                await Respond("No rights to set rectangle");
+                return;
+            }
+
+            if (rect.Rectangle == null) {
+                BattleRect org;
+                bat.Rectangles.TryRemove(rect.Number, out org);
+            } else {
+                bat.Rectangles[rect.Number] = rect.Rectangle;
+            }
+            await Broadcast(bat.Users.Keys, rect);
+        }
+
+
 
         async Task Process(Register register)
         {
@@ -501,6 +521,7 @@ namespace ZkLobbyServer
                 
                 foreach (var u in battle.Users.Values.Select(x=>x.ToUpdateBattleStatus()).ToList()) await SendCommand(u);
                 foreach (var u in battle.Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList()) await SendCommand(u);
+                foreach (var u in battle.Rectangles) await SendCommand(new SetRectangle(){Number = u.Key,Rectangle = u.Value});
             }
         }
 

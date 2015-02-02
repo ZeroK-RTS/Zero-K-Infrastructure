@@ -350,4 +350,11 @@ namespace LobbyClient
         public bool? IsInGame;
         public bool? IsAfk;
     }
+
+    [Message(Origin.Client | Origin.Server)]
+    public class SetRectangle
+    {
+        public int Number;
+        public BattleRect Rectangle;
+    }
 }
