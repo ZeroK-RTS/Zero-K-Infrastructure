@@ -462,7 +462,7 @@ namespace LobbyClient
                     new BattleHeader() {
                         Engine = nbattle.EngineVersion,
                         Game = nbattle.ModName,
-                        Ip = nbattle.Ip,
+                        Ip = nbattle.Ip ?? localIp,
                         Port = nbattle.HostPort,
                         Map = nbattle.MapName,
                         Password = nbattle.Password,

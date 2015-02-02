@@ -271,8 +271,11 @@ namespace ZeroKLobby.Notifications
                 {
                     if (client.IsLoggedIn)
                     {
-                        if (WindowsApi.IdleTime.TotalMinutes > Program.Conf.IdleTime) client.ChangeMyUserStatus(isAway: true);
-                        else client.ChangeMyUserStatus(isAway: false);
+                        if (WindowsApi.IdleTime.TotalMinutes > Program.Conf.IdleTime) {
+                            if (!client.MyUser.IsAway) client.ChangeMyUserStatus(isAway: true);
+                        } else {
+                            if (client.MyUser.IsAway) client.ChangeMyUserStatus(isAway: false);
+                        }
                         CheckMyBattle();
                     }
                     if (client.MyBattle != null && client.MyBattle.IsQueue)

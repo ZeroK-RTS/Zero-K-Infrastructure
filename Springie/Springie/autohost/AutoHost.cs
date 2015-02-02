@@ -662,11 +662,9 @@ namespace Springie.autohost
             //cache.GetMap(mapname, (m, x, y, z) => { mapi = m; }, (e) => { }, springPaths.SpringVersion);
             //int mint, maxt;
             var b = new Battle(springPaths.SpringVersion, password, hostingPort, maxPlayers, mapname, title,modname);
-            
-
             tas.OpenBattle(b);
-            tas.SetScriptTag("GAME/hosttype=SPRINGIE");
-            tas_MyBattleMapChanged(this, null);
+
+               
         }
 
 
@@ -853,12 +851,18 @@ namespace Springie.autohost
                     tas.AddBot(slot.TeamName, slot.AiShortName, slot.AllyID, slot.TeamID);
                 }
             }
+
+            tas_MyBattleMapChanged(this, null); // todo really hacky thing
+
             if (SpawnConfig != null)
             {
                 if (!string.IsNullOrEmpty(SpawnConfig.Handle)) tas.Say(SayPlace.User, SpawnConfig.Owner, SpawnConfig.Handle, true);
                     tas.Say(SayPlace.User, SpawnConfig.Owner, "I'm here! Ready to serve you! Join me!", true);
             }
             else ServerVerifyMap(true);
+
+
+            
         }
 
 
@@ -945,19 +949,21 @@ namespace Springie.autohost
             lastMapChange = DateTime.Now;
 
             Battle b = tas.MyBattle;
-            string mapName = b.MapName.ToLower();
+            if (b != null) {
+                string mapName = b.MapName.ToLower();
 
-            if (SpawnConfig == null) {
-                ComResetOptions(TasSayEventArgs.Default, new string[] { });
-                ComClearBox(TasSayEventArgs.Default, new string[]{});
-            }
+                if (SpawnConfig == null) {
+                    ComResetOptions(TasSayEventArgs.Default, new string[] { });
+                    ComClearBox(TasSayEventArgs.Default, new string[] { });
+                }
 
-            try {
-                var serv = GlobalConst.GetSpringieService();
-                string commands = serv.GetMapCommands(mapName);
-                if (!string.IsNullOrEmpty(commands)) foreach (string c in commands.Split('\n').Where(x => !string.IsNullOrEmpty(x))) RunCommand(c);
-            } catch (Exception ex) {
-                Trace.TraceError("Error procesing map commands: {0}", ex);
+                try {
+                    var serv = GlobalConst.GetSpringieService();
+                    string commands = serv.GetMapCommands(mapName);
+                    if (!string.IsNullOrEmpty(commands)) foreach (string c in commands.Split('\n').Where(x => !string.IsNullOrEmpty(x))) RunCommand(c);
+                } catch (Exception ex) {
+                    Trace.TraceError("Error procesing map commands: {0}", ex);
+                }
             }
         }
 

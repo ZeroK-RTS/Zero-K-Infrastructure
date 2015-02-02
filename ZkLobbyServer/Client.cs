@@ -18,8 +18,8 @@ namespace ZkLobbyServer
         int number;
 
         User User = new User();
+        
         public int UserVersion;
-
         public ConcurrentDictionary<string, int?> LastKnownUserVersions = new ConcurrentDictionary<string, int?>();
 
         public bool IsLoggedIn { get { return User != null && User.AccountID != 0; } }
@@ -272,17 +272,13 @@ namespace ZkLobbyServer
 
         private async Task UpdateSelfToWhoKnowsMe()
         {
-            Interlocked.Increment(ref UserVersion);
-            // todo only sned to same channel, same battle or friends? 
-            foreach (var cli in state.Clients.Values.Where(x => x.LastKnownUserVersions.ContainsKey(Name))) {
-                int? last;
-                cli.LastKnownUserVersions.TryGetValue(Name, out last);
-                var ver = UserVersion;
-                if (last != null && last != ver) {
-                    await SendCommand(User);
-                    cli.LastKnownUserVersions[Name] = ver;
-                }
+            var version = Interlocked.Increment(ref UserVersion);
+            int? ver;
+            var clients = state.Clients.Values.Where(x => x.LastKnownUserVersions.TryGetValue(Name, out ver) && ver != version).ToList();
+            foreach (var cli in clients) {
+                cli.LastKnownUserVersions[Name] = version;
             }
+            await Broadcast(clients, User);
         }
 
 
@@ -539,10 +535,16 @@ namespace ZkLobbyServer
         async Task Process(ChangeUserStatus userStatus)
         {
             if (!IsLoggedIn) return;
-
-            if (userStatus.IsInGame != null) User.IsInGame = userStatus.IsInGame.Value;
-            if (userStatus.IsAfk != null) User.IsAway = userStatus.IsAfk.Value;
-            await UpdateSelfToWhoKnowsMe();
+            bool changed = false;
+            if (userStatus.IsInGame != null && User.IsInGame != userStatus.IsInGame) {
+                User.IsInGame = userStatus.IsInGame.Value;
+                changed = true;
+            }
+            if (userStatus.IsAfk != null && User.IsAway != userStatus.IsAfk) {
+                User.IsAway = userStatus.IsAfk.Value;
+                changed = true;
+            }
+            if (changed) await UpdateSelfToWhoKnowsMe();
         }
 
 
