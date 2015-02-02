@@ -368,4 +368,39 @@ namespace LobbyClient
     {
         public Dictionary<string,string> Options = new Dictionary<string, string>();
     }
+
+    [Message(Origin.Client)]
+    public class KickFromBattle
+    {
+        public string Name;
+        public int BattleID;
+    }
+
+    [Message(Origin.Client)]
+    public class KickFromServer
+    {
+        public string Name;
+    }
+
+    [Message(Origin.Client)]
+    public class KickFromChannel
+    {
+        public string Name;
+        public string Channel;
+    }
+
+    [Message(Origin.Client)]
+    public class ForceJoinChannel
+    {
+        public string Name;
+        public string Channel;
+    }
+
+    [Message(Origin.Client)]
+    public class ForceJoinBattle
+    {
+        public string Name;
+        public int BattleID;
+    }
+
 }

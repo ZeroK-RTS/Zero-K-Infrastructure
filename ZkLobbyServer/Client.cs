@@ -656,6 +656,8 @@ namespace ZkLobbyServer
 
         async Task Process(SetModOptions options)
         {
+            if (!IsLoggedIn) return;
+
             var bat = MyBattle;
             if (bat != null)
             {

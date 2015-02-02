@@ -50,11 +50,9 @@ namespace LobbyClient
         public string serverHost { get; private set; }
 
         int serverPort;
-        string serverVersion;
+        public Dictionary<int, Battle> ExistingBattles { get { return existingBattles; } set { existingBattles = value; } }
 
         public bool ConnectionFailed { get; private set; }
-
-        public Dictionary<int, Battle> ExistingBattles { get { return existingBattles; } set { existingBattles = value; } }
 
         public Dictionary<string, User> ExistingUsers { get { return existingUsers; } set { existingUsers = value; } }
 
@@ -156,7 +154,7 @@ namespace LobbyClient
                 pingTimer.Interval = pingInterval*1000;
             }
         }
-        public string ServerSpringVersion { get; private set; }
+        public string ServerSpringVersion {get { return ServerWelcome != null ? ServerWelcome.Engine : null; }  }
 
         public string UserName { get; private set; }
         public string UserPassword { get; private set; }
