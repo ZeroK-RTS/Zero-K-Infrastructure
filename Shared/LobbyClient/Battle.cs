@@ -23,7 +23,7 @@ namespace LobbyClient
 
         public int HostPort { get; set; }
         public string Ip { get; set; }
-        public bool IsFull { get { return NonSpectatorCount == MaxPlayers; } }
+
         public bool IsInGame { get { return Founder.IsInGame; } }
         public bool IsMission { get { return false; } }
         public bool IsPassworded { get { return !string.IsNullOrEmpty(Password); } }
@@ -33,14 +33,13 @@ namespace LobbyClient
         public int MaxPlayers { get; set; }
 
         public string ModName { get; set; }
-        public Dictionary<string, string> ModOptions { get; private set; }
+        public Dictionary<string, string> ModOptions { get; set; }
 
         public int NonSpectatorCount { get { return Users.Count - SpectatorCount; } }
 
         public string Password;
 
         public ConcurrentDictionary<int, BattleRect> Rectangles { get; set; }
-        public List<string> ScriptTags = new List<string>();
         public string EngineName = "spring";
         public string EngineVersion { get; set; }
         public int SpectatorCount { get; set; }

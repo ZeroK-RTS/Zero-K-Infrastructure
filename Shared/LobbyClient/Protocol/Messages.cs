@@ -362,4 +362,10 @@ namespace LobbyClient
         public int Number;
         public BattleRect Rectangle;
     }
+
+    [Message(Origin.Client | Origin.Server)]
+    public class SetModOptions
+    {
+        public Dictionary<string,string> Options = new Dictionary<string, string>();
+    }
 }

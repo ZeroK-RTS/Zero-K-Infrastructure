@@ -176,14 +176,14 @@ namespace ZeroKLobby.MicroLobby
       ResumeLayout();
       if (offlineMode)
       {
-          SetScriptTags();
+          SetModOptions();
           return;
       }
 
-       SetScriptTags(Program.TasClient.MyBattle.ScriptTags); //set all buttons to match options from current battle
+      SetModOptions(Program.TasClient.MyBattle.ModOptions);
     }
 
-    public void SetScriptTags(IEnumerable<string> tags = null)
+    public void SetModOptions(Dictionary<string, string> modOptions = null)
     {
       if (offlineMode)
       {
@@ -199,7 +199,7 @@ namespace ZeroKLobby.MicroLobby
       }
       else
       {
-          changesBox.Text = ModStore.GetModOptionSummary(mod, tags, true);
+          changesBox.Text = ModStore.GetModOptionSummary(mod, modOptions, true);
           if (changesBox.Text.Length == 0) changesBox.Text = "All options are set to their default value.";
       }
       try
@@ -208,7 +208,7 @@ namespace ZeroKLobby.MicroLobby
         if (offlineMode)
             optionPairs = offlineOptions;
         else
-            optionPairs = Mod.GetModOptionPairs(tags);
+            optionPairs = modOptions;
 
         foreach (var setOption in optionPairs)
         {
@@ -255,7 +255,7 @@ namespace ZeroKLobby.MicroLobby
           return;
       }
 
-      Program.TasClient.BattleDetailsChanged += (s, e) => SetScriptTags(e.ServerParams);
+      Program.TasClient.ModOptionsChanged += (s, e) => SetModOptions(e.ModOptions);
       Program.SpringScanner.MetaData.GetModAsync(Program.TasClient.MyBattle.ModName,
                                                  mod => { if (!Disposing && IsHandleCreated && !IsDisposed) Invoke(new Action(() => HandleMod(mod))); },
                                                  exception => { });
@@ -325,7 +325,7 @@ namespace ZeroKLobby.MicroLobby
       ChangeApplied(vals, EventArgs.Empty);
       if (offlineMode)
       {
-          SetScriptTags();
+          SetModOptions();
           return;
       }
 

@@ -701,17 +701,7 @@ namespace Springie.autohost
 
         public void ComResetOptions(TasSayEventArgs e, string[] words)
         {
-            foreach (var opt in tas.MyBattle.ModOptions)
-            {
-                var entry = hostedMod.Options.FirstOrDefault(x => x.Key.ToLower() == opt.Key.ToLower());
-                if (entry != null && entry.Default != opt.Value)
-                {
-                    string str;
-                    entry.GetPair(entry.Default, out str);
-                    tas.SetScriptTag(str);
-                }
-            }
-
+            tas.SetModOptions(new Dictionary<string, string>());
             Respond(e, "Game options reset to defaults");
         }
 
@@ -992,15 +982,15 @@ namespace Springie.autohost
         }
 
 
-        public string GetOptionsString(TasSayEventArgs e, string[] words)
+        public Dictionary<string,string> GetOptionsDictionary(TasSayEventArgs e, string[] words)
         {
             var s = Utils.Glue(words);
-            var result = "";
+            var ret = new Dictionary<string, string>();
             var pairs = s.Split(new[] { ',' });
             if (pairs.Length == 0 || pairs[0].Length == 0)
             {
                 Respond(e, "requires key=value format");
-                return "";
+                return ret;
             }
             foreach (var pair in pairs)
             {
@@ -1008,7 +998,7 @@ namespace Springie.autohost
                 if (parts.Length != 2)
                 {
                     Respond(e, "requires key=value format");
-                    return "";
+                    return ret;
                 }
                 var key = parts[0];
                 var val = parts[1];
@@ -1021,10 +1011,8 @@ namespace Springie.autohost
                     {
                         found = true;
                         string res;
-                        if (o.GetPair(val, out res))
-                        {
-                            if (result != "") result += "\t";
-                            result += res;
+                        if (o.GetPair(val, out res)) {
+                            ret[key] = val;
                         }
                         else Respond(e, "Value " + val + " is not valid for this option");
 
@@ -1034,10 +1022,10 @@ namespace Springie.autohost
                 if (!found)
                 {
                     Respond(e, "No option called " + key + " found");
-                    return "";
+                    return ret;
                 }
             }
-            return result;
+            return ret;
         }
 
         public bool RunServerBalance(bool isGameStart, int? allyTeams, bool? clanWise)
@@ -1286,10 +1274,10 @@ namespace Springie.autohost
                 Respond(e, "Cannot set options while the game is running");
                 return;
             }
-            var ret = GetOptionsString(e, words);
-            if (ret != "")
+            var ret = GetOptionsDictionary(e, words);
+            if (ret.Count > 0)
             {
-                tas.SetScriptTag(ret);
+                tas.UpdateModOptions(ret);
                 Respond(e, "Options set");
             }
         }

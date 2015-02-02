@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
 using ZkData;
+using ZkData.UnitSyncLib;
 
 #endregion
 
@@ -202,10 +203,9 @@ namespace LobbyClient
         public event EventHandler<OldNewPair<Battle>> BattleInfoChanged = delegate { };
         public event EventHandler<OldNewPair<Battle>> BattleMapChanged = delegate { };
         public event EventHandler<OldNewPair<Battle>> MyBattleMapChanged = delegate { };
-        
+        public event EventHandler<Battle> ModOptionsChanged = delegate { };
 
         
-        public event EventHandler<TasEventArgs> BattleDetailsChanged = delegate { };
         public event EventHandler<TasEventArgs> ChannelTopicChanged = delegate { };
         public event EventHandler<EventArgs<User>> UserExtensionsChanged = delegate { };
         public event EventHandler<EventArgs<User>> MyExtensionsChanged = delegate { };
@@ -289,6 +289,15 @@ namespace LobbyClient
             }
         }
 
+        private async Task Process(SetModOptions options)
+        {
+            var bat = MyBattle;
+            if (bat != null) {
+                bat.ModOptions = options.Options;
+                ModOptionsChanged(this, bat);
+            }
+        }
+
 
         public Task AddBot(string name, string aiDll, int? allyNumber= null, int? teamNumber= null)
         {
@@ -301,13 +310,9 @@ namespace LobbyClient
         }
 
 
-        public void ChangeMap(string name)
+        public Task ChangeMap(string name)
         {
-            // todo imple,emtn
-            //{
-//                mapToChangeTo = name;
-  //              UpdateBattleInfo(lockToChangeTo, name);
-    //        }
+            return SendCommand(new BattleUpdate() { Header = new BattleHeader() { BattleID = MyBattleID, Map = name } });
         }
 
         public async Task ChangeMyBattleStatus(bool? spectate = null,
@@ -571,11 +576,22 @@ namespace LobbyClient
             return SendData(Encoding.GetBytes(text));
         }
 
-        public void SetScriptTag(string data)
+        public Task SetModOptions(Dictionary<string,string> data)
         {
-            //con.SendCommand("SETSCRIPTTAGS", data);
+            return SendCommand(new SetModOptions() { Options = data });
         }
 
+        public Task UpdateModOptions(Dictionary<string, string> data)
+        {
+            var cur = new Dictionary<string, string>(MyBattle.ModOptions);
+            foreach (var d in data) {
+                cur[d.Key] = d.Value;
+            }
+            return SetModOptions(cur);
+        }
+
+
+        
      
         /// <summary>
         /// Starts game and automatically does hole punching if necessary
@@ -626,21 +642,6 @@ namespace LobbyClient
         }
 
        
-        void OnSetScriptTags(string[] args)
-        {
-            //var bd = new BattleDetails();
-            //bd.Parse(Utils.Glue(args), MyBattle.ModOptions);
-            //MyBattle.Details = bd;
-            MyBattle.ScriptTags.AddRange(args);
-            BattleDetailsChanged(this, new TasEventArgs(args));
-        }
-
-
-
-
-
-
-
         async Task Process(BattleAdded bat)
         {
             var newBattle = new Battle();
@@ -683,7 +684,6 @@ namespace LobbyClient
                 if (MyBattle != null && left.BattleID == MyBattleID) {
                     if (UserName == left.User) {
                         bat.Rectangles.Clear();
-                        bat.ScriptTags.Clear();
                         bat.Bots.Clear();
                         bat.ModOptions.Clear();
                         MyBattle = null;
@@ -705,8 +705,6 @@ namespace LobbyClient
             }
             if (battle == MyBattle)
             {
-                battle.ScriptTags.Clear();
-                battle.Users.Clear();
                 BattleClosed(this, battle);
                 MyBattleRemoved(this, battle);
             }

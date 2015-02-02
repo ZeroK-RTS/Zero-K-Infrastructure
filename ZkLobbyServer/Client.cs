@@ -517,7 +517,7 @@ namespace ZkLobbyServer
                 foreach (var u in battle.Users.Values.Select(x=>x.ToUpdateBattleStatus()).ToList()) await SendCommand(u);
                 foreach (var u in battle.Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList()) await SendCommand(u);
                 foreach (var u in battle.Rectangles) await SendCommand(new SetRectangle(){Number = u.Key,Rectangle = u.Value});
-                
+                await SendCommand(new SetModOptions() {Options = battle.ModOptions});
             }
         }
 
@@ -653,6 +653,21 @@ namespace ZkLobbyServer
                 }
             }
         }
+
+        async Task Process(SetModOptions options)
+        {
+            var bat = MyBattle;
+            if (bat != null)
+            {
+                if (bat.Founder != User && !User.IsBot && !User.IsAdmin) {
+                    await Respond("You don't have permissions to change mod options here");
+                    return;
+                }
+                bat.ModOptions = options.Options;
+                await Broadcast(bat.Users.Keys, options);
+            }
+        }
+
 
         async Task RemoveBattle(Battle battle)
         {

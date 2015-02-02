@@ -23,7 +23,7 @@ namespace ZeroKLobby.MicroLobby
 
 		public ModStore()
 		{
-			Program.TasClient.BattleDetailsChanged += (s, e) => SetScriptTags(e.ServerParams);
+			Program.TasClient.ModOptionsChanged += (s, e) => SetModOptions(e.ModOptions);
 			Program.TasClient.BattleJoined += (s, e) =>
 				{
 					if (mod != null && mod.Name != Program.TasClient.MyBattle.ModName)
@@ -35,12 +35,10 @@ namespace ZeroKLobby.MicroLobby
 				};
 		}
 
-		public static string GetModOptionSummary(Mod mod, IEnumerable<string> tags, bool useSectionHeaders)
+		public static string GetModOptionSummary(Mod mod, Dictionary<string, string> setOptions, bool useSectionHeaders)
 		{
 			try
 			{
-				var setOptions = Mod.GetModOptionPairs(tags);
-
 				var sectionNames = mod.Options.Where(o => o.Type == OptionType.Section).ToDictionary(o => o.Key.ToUpper(), o => o.Name);
 
 				var sections = from option in mod.Options
@@ -104,7 +102,7 @@ namespace ZeroKLobby.MicroLobby
 					if (Program.TasClient.MyBattle.ModName == mod.Name)
 					{
 						this.mod = mod;
-						ChangedOptions = GetModOptionSummary(mod, Program.TasClient.MyBattle.ScriptTags, false);
+						ChangedOptions = GetModOptionSummary(mod, Program.TasClient.MyBattle.ModOptions, false);
 
 					}
 					else return;
@@ -112,9 +110,9 @@ namespace ZeroKLobby.MicroLobby
 			}
 		}
 
-		public void SetScriptTags(IEnumerable<string> tags)
+		public void SetModOptions(Dictionary<string,string> setOptions)
 		{
-			lock (locker) if (mod != null) ChangedOptions = GetModOptionSummary(mod, tags, false);
+			lock (locker) if (mod != null) ChangedOptions = GetModOptionSummary(mod, setOptions, false);
 		}
 	}
 }
