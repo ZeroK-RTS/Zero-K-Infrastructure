@@ -406,9 +406,9 @@ namespace LobbyClient
             return SendCommand(new KickFromBattle() { Name = username, BattleID = battleID, Reason = reason });
         }
 
-        public void AdminKickFromLobby(string username,string reason)
+        public Task AdminKickFromLobby(string username,string reason)
         {
-            //con.SendCommand("KICKUSER", username,reason);
+            return SendCommand(new KickFromServer() { Name = username, Reason = reason });
         }
 
         public void AdminSetTopic(string channel, string topic) {

@@ -315,8 +315,9 @@ namespace ZkLobbyServer
 
                 UserBattleStatus user;
                 if (bat.Users.TryGetValue(batKick.Name, out user)) {
-                    await Respond(string.Format("You were kicked from battle by {0} : {1}",  Name, batKick.Reason));
-                    await state.Clients[batKick.Name].Process(new LeaveBattle() { BattleID = batKick.BattleID.Value });
+                    var client = state.Clients[batKick.Name];
+                    await client.Respond(string.Format("You were kicked from battle by {0} : {1}",  Name, batKick.Reason));
+                    await client.Process(new LeaveBattle() { BattleID = batKick.BattleID.Value });
                 }
             }
         }
@@ -355,8 +356,27 @@ namespace ZkLobbyServer
                     return;
                 }
 
-                await Respond(string.Format("You were kicked from channel {0} by {1} : {2}", chanKick.ChannelName, Name, chanKick.Reason));
-                await state.Clients[chanKick.UserName].Process(new LeaveChannel() { ChannelName = chanKick.ChannelName });
+                var client = state.Clients[chanKick.UserName];
+                await client.Respond(string.Format("You were kicked from channel {0} by {1} : {2}", chanKick.ChannelName, Name, chanKick.Reason));
+                await client.Process(new LeaveChannel() { ChannelName = chanKick.ChannelName });
+            }
+        }
+
+        private async Task Process(KickFromServer kick)
+        {
+            if (!IsLoggedIn) return;
+
+            Client client;
+            if (state.Clients.TryGetValue(kick.Name, out client))
+            {
+                if (!User.IsAdmin)
+                {
+                    await Respond("No rights to execute kick");
+                    return;
+                }
+
+                await client.Respond(string.Format("You were kicked by {0} : {1}", Name, kick.Reason));
+                client.RequestClose();
             }
         }
 
