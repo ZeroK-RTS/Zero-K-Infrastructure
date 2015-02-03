@@ -520,8 +520,9 @@ namespace LobbyClient
             return SendCommand(new ForceJoinBattle() { Name = name, BattleID = battleID });
         }
 
-        public void ForceJoinChannel(string user, string channel, string password= null) {
-//            con.SendCommand(string.Format("FORCEJOIN {0} {1} {2}", user, channel, password));
+        public Task ForceJoinChannel(string user, string channel)
+        {
+            return SendCommand(new ForceJoinChannel() { UserName = user, ChannelName = channel });
         }
 
         public Task ForceLeaveChannel(string user, string channel, string reason = null)
