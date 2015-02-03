@@ -301,6 +301,26 @@ namespace ZkLobbyServer
         }
 
 
+        private async Task Process(KickFromBattle batKick)
+        {
+            if (!IsLoggedIn) return;
+
+            if (batKick.BattleID == null && MyBattle != null) batKick.BattleID = MyBattle.BattleID;
+            Battle bat;
+            if (state.Battles.TryGetValue(batKick.BattleID.Value, out bat)) {
+                if (bat.Founder != User && !User.IsAdmin && !User.IsBot) {
+                    await Respond("No rights to set rectangle");
+                    return;
+                }
+
+                UserBattleStatus user;
+                if (bat.Users.TryGetValue(batKick.Name, out user)) {
+                    await Respond(string.Format("You were kicked from battle by {0} : {1}",  Name, batKick.Reason));
+                    await state.Clients[batKick.Name].Process(new LeaveBattle() { BattleID = batKick.BattleID.Value });
+                }
+            }
+        }
+
 
         async Task Process(Register register)
         {

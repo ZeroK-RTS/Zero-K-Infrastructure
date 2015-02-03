@@ -373,7 +373,8 @@ namespace LobbyClient
     public class KickFromBattle
     {
         public string Name;
-        public int BattleID;
+        public int? BattleID;
+        public string Reason;
     }
 
     [Message(Origin.Client)]

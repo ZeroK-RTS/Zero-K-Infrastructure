@@ -401,9 +401,9 @@ namespace LobbyClient
             return SendCommand(new JoinChannel() { Name = channelName, Password = key });
         }
 
-        public void Kick(string username)
+        public Task Kick(string username, int? battleID=null, string reason = null)
         {
-            //con.SendCommand("KICKFROMBATTLE", username);
+            return SendCommand(new KickFromBattle() { Name = username, BattleID = battleID, Reason = reason });
         }
 
         public void AdminKickFromLobby(string username,string reason)
