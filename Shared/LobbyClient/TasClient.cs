@@ -510,17 +510,14 @@ namespace LobbyClient
         }
 
 
-        public void ForceJoinBattle(string name, string battleHostName, string password = null) {
+        public async Task ForceJoinBattle(string name, string battleHostName) {
             var battle = ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == battleHostName);
-            if (battle != null) ForceJoinBattle(name, battle.BattleID, password);
+            if (battle != null) await ForceJoinBattle(name, battle.BattleID);
         }
 
-        public void ForceJoinBattle(string name, int battleID, string password = null) {
-            User user;
-            Battle battle;
-            existingUsers.TryGetValue(name, out user);
-            existingBattles.TryGetValue(battleID, out battle);
-            //if (user != null && battle != null) con.SendCommand("FORCEJOINBATTLE", name, battleID, password);
+        public Task ForceJoinBattle(string name, int battleID)
+        {
+            return SendCommand(new ForceJoinBattle() { Name = name, BattleID = battleID });
         }
 
         public void ForceJoinChannel(string user, string channel, string password= null) {

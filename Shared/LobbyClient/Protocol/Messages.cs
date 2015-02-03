@@ -318,7 +318,7 @@ namespace LobbyClient
     [Message(Origin.Client)]
     public class LeaveBattle
     {
-        public int BattleID;
+        public int? BattleID;
     }
 
     [Message(Origin.Client | Origin.Server)]
@@ -381,6 +381,7 @@ namespace LobbyClient
     public class KickFromServer
     {
         public string Name;
+        public string Reason;
     }
 
     [Message(Origin.Client)]

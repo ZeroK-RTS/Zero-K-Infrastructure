@@ -286,7 +286,7 @@ namespace ZkLobbyServer
             if (!IsLoggedIn) return;
 
             var bat = MyBattle;
-            if (bat == null || (bat.Founder != User && !User.IsAdmin && !User.IsBot)) {
+            if (bat == null || (bat.Founder != User && !User.IsAdmin)) {
                 await Respond("No rights to set rectangle");
                 return;
             }
@@ -308,8 +308,8 @@ namespace ZkLobbyServer
             if (batKick.BattleID == null && MyBattle != null) batKick.BattleID = MyBattle.BattleID;
             Battle bat;
             if (state.Battles.TryGetValue(batKick.BattleID.Value, out bat)) {
-                if (bat.Founder != User && !User.IsAdmin && !User.IsBot) {
-                    await Respond("No rights to set rectangle");
+                if (bat.Founder != User && !User.IsAdmin) {
+                    await Respond("No rights to do a kick");
                     return;
                 }
 
@@ -321,6 +321,28 @@ namespace ZkLobbyServer
             }
         }
 
+        private async Task Process(ForceJoinBattle forceJoin)
+        {
+            if (!IsLoggedIn) return;
+
+            Battle bat;
+            if (state.Battles.TryGetValue(forceJoin.BattleID, out bat))
+            {
+                if (!User.IsAdmin)
+                {
+                    await Respond("No rights for force join");
+                    return;
+                }
+
+                Client client;
+                if (state.Clients.TryGetValue(forceJoin.Name, out client)) {
+                    if (client.MyBattle != null) await client.Process(new LeaveBattle());
+                    await client.Process(new JoinBattle() { BattleID = forceJoin.BattleID,Password = bat.Password});
+                }
+            }
+        }
+
+
         private async Task Process(KickFromChannel chanKick)
         {
             if (!IsLoggedIn) return;
@@ -328,7 +350,7 @@ namespace ZkLobbyServer
             Channel channel;
             User user;
             if (state.Rooms.TryGetValue(chanKick.ChannelName, out channel) && channel.Users.TryGetValue(chanKick.UserName, out user)) {
-                if (!User.IsAdmin && !User.IsBot) {
+                if (!User.IsAdmin) {
                     await Respond("No rights to execute kick");
                     return;
                 }
@@ -437,7 +459,7 @@ namespace ZkLobbyServer
             say.User = Name;
             
             if (say.Ring) { // ring permissions - bot/admin anywhere, others only to own battle 
-                if (!User.IsAdmin && !User.IsBot) {
+                if (!User.IsAdmin) {
                     if ((say.Place != SayPlace.Battle && say.Place != SayPlace.BattlePrivate) || MyBattle == null || MyBattle.Founder != User) say.Ring = false;
                 }
             }
@@ -480,7 +502,7 @@ namespace ZkLobbyServer
                     }
                     break;
                 case SayPlace.MessageBox:
-                    if (User.IsAdmin || User.IsBot) {
+                    if (User.IsAdmin) {
                         await Broadcast(state.Clients.Values, say);
                     }
                     break;
@@ -568,7 +590,7 @@ namespace ZkLobbyServer
                 await Respond("No such battle exists");
                 return;
             }
-            if (bat.Founder != User && !User.IsAdmin && !User.IsBot) {
+            if (bat.Founder != User && !User.IsAdmin) {
                 await Respond("You don't have permission to edit this battle");
                 return;
             }
@@ -609,8 +631,11 @@ namespace ZkLobbyServer
         {
             if (!IsLoggedIn) return;
 
+
+            if (leave.BattleID == null && MyBattle != null) leave.BattleID = MyBattle.BattleID;
+
             Battle battle;
-            if (state.Battles.TryGetValue(leave.BattleID, out battle)) {
+            if (state.Battles.TryGetValue(leave.BattleID.Value, out battle)) {
                 await LeaveBattle(battle);
                 await RecalcSpectators(battle);
             }
@@ -640,7 +665,7 @@ namespace ZkLobbyServer
             if (battle != null) {
                 BotBattleStatus ubs;
                 if (!battle.Bots.TryGetValue(add.Name, out ubs)) ubs = new BotBattleStatus(add.Name, Name, add.AiLib);
-                else if (add.Owner != Name && !User.IsAdmin && !User.IsBot && User != battle.Founder) {
+                else if (add.Owner != Name && !User.IsAdmin && User != battle.Founder) {
                     await Respond(string.Format("No permissions to edit bot {0}", add.Name));
                     return;
                 }
@@ -659,7 +684,7 @@ namespace ZkLobbyServer
             if (battle != null)
             {
                 var bot = battle.Bots[rem.Name];
-                if (bot.owner != Name  && !User.IsAdmin && !User.IsBot && User != battle.Founder)
+                if (bot.owner != Name  && !User.IsAdmin && User != battle.Founder)
                 {
                     await Respond(string.Format("No permissions to edit bot {0}", rem.Name));
                     return;
@@ -697,7 +722,7 @@ namespace ZkLobbyServer
             var bat = MyBattle;
             if (bat != null)
             {
-                if (bat.Founder != User && !User.IsBot && !User.IsAdmin) {
+                if (bat.Founder != User && !User.IsAdmin) {
                     await Respond("You don't have permissions to change mod options here");
                     return;
                 }
