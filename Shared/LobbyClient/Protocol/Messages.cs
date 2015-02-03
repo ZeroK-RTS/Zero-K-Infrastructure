@@ -44,7 +44,9 @@ namespace LobbyClient
         /// </summary>
         public string PasswordHash;
 
-        public string UserID;
+        public long UserID;
+
+        public string LobbyVersion;
 
         [Flags]
         public enum ClientTypes

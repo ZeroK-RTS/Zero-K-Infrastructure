@@ -241,7 +241,6 @@ namespace LobbyClient
 
             pingTimer = new Timer(pingInterval*1000) { AutoReset = true };
             pingTimer.Elapsed += OnPingTimer;
-            pingTimer.Start();
         }
 
 
@@ -321,6 +320,7 @@ namespace LobbyClient
             serverHost = host;
             serverPort = port;
             WasDisconnectRequested = false;
+            pingTimer.Start();
             Connect(host, port, forcedLocalIP ? localIp : null);
         }
 
@@ -426,7 +426,7 @@ namespace LobbyClient
         }
 
 
-        public static string GetMyUserID() {
+        public static long GetMyUserID() {
             var nics = NetworkInterface.GetAllNetworkInterfaces().Where(x=> !String.IsNullOrWhiteSpace(x.GetPhysicalAddress().ToString())
                 && x.NetworkInterfaceType != NetworkInterfaceType.Loopback && x.NetworkInterfaceType != NetworkInterfaceType.Tunnel);
 
@@ -434,9 +434,9 @@ namespace LobbyClient
 
             if (wantedNic != null)
             {
-                return Crc.Crc32(wantedNic.GetPhysicalAddress().GetAddressBytes()).ToString();
+                return Crc.Crc32(wantedNic.GetPhysicalAddress().GetAddressBytes());
             }
-            return "0";
+            return 0;
         }
 
 

@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Security.Principal;
 using System.Threading.Tasks;
+using LobbyClient;
 using Microsoft.Linq.Translations;
 using PlasmaShared;
 using ZkData;

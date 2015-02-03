@@ -20,7 +20,7 @@ namespace ZkLobbyServer
         public ConcurrentDictionary<string, Channel> Rooms = new ConcurrentDictionary<string, Channel>();
         public ConcurrentDictionary<int, Battle> Battles = new ConcurrentDictionary<int, Battle>();
 
-        public IGeoIP2Provider GeoIP;
+        public LoginChecker LoginChecker;
 
         public SharedServerState()
         {
@@ -28,7 +28,7 @@ namespace ZkLobbyServer
             Version = entry.GetName().Version.ToString();
             Engine = GlobalConst.DefaultEngineOverride;
             Game = "zk:stable";
-            GeoIP = new DatabaseReader("GeoLite2-Country.mmdb", FileAccessMode.Memory);
+            LoginChecker = new LoginChecker(this);
         }
     }
 }

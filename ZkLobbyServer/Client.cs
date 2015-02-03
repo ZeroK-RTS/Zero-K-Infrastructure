@@ -125,50 +125,7 @@ namespace ZkLobbyServer
         }
 
 
-        private static bool IsLanIP(IPAddress address)
-        {
-            var interfaces = NetworkInterface.GetAllNetworkInterfaces();
-            foreach (var iface in interfaces)
-            {
-                var properties = iface.GetIPProperties();
-                foreach (var ifAddr in properties.UnicastAddresses)
-                {
-                    if (ifAddr.IPv4Mask != null &&
-                        ifAddr.Address.AddressFamily == AddressFamily.InterNetwork &&
-                        CheckMask(ifAddr.Address, ifAddr.IPv4Mask, address))
-                        return true;
-                }
-            }
-            return false;
-        }
-
-        private static bool CheckMask(IPAddress address, IPAddress mask, IPAddress target)
-        {
-            if (mask == null)
-                return false;
-
-            var ba = address.GetAddressBytes();
-            var bm = mask.GetAddressBytes();
-            var bb = target.GetAddressBytes();
-
-            if (ba.Length != bm.Length || bm.Length != bb.Length)
-                return false;
-
-            for (var i = 0; i < ba.Length; i++)
-            {
-                int m = bm[i];
-
-                int a = ba[i] & m;
-                int b = bb[i] & m;
-
-                if (a != b)
-                    return false;
-            }
-
-            return true;
-        }
-
-     
+   
 
 
         public override async Task OnConnected()
@@ -207,109 +164,46 @@ namespace ZkLobbyServer
 
         async Task Process(Login login)
         {
-            var response = new LoginResponse();
-            await Task.Run(async () =>
-            {
-                using (var db = new ZkDataContext())
-                {
-                    var acc = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name == login.Name);
-                    if (acc == null)
-                    {
-                        response.ResultCode = LoginResponse.Code.InvalidName;
-                    }
-                    else
-                    {
-                        if (!acc.VerifyPassword(login.PasswordHash))
-                        {
-                            response.ResultCode = LoginResponse.Code.InvalidPassword;
-                        }
-                        else
-                        {
-                            // TODO banhammer check
-                            // TODO country check
-                            if (!state.Clients.TryAdd(login.Name, this))
-                            {
-                                response.ResultCode = LoginResponse.Code.AlreadyConnected;
-                            }
-                            else
-                            {
-                                response.ResultCode = LoginResponse.Code.Ok;
-                                // user.BanMute todo banmute
+            var response = await Task.Run(() => state.LoginChecker.Login(User, login, this));
+            if (response.ResultCode == LoginResponse.Code.Ok) {
+                ClearMyLastKnownStateForOtherClients();
 
+                Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
+                await SendCommand(response); // login accepted
+                await SendCommand(User); // self data
 
-                                User.Name = acc.Name;
-                                User.DisplayName = acc.SteamName;
-                                User.Avatar = acc.Avatar;
-                                User.SpringieLevel = acc.SpringieLevel;
-                                User.Level = acc.Level;
-                                User.EffectiveElo = (int)acc.EffectiveElo;
-                                User.Effective1v1Elo = (int)acc.Effective1v1Elo;
-                                User.SteamID = (ulong?)acc.SteamID;
-                                User.IsAdmin = acc.IsZeroKAdmin;
-                                User.IsBot = acc.IsBot;
-                                User.Country = acc.Country;
-                                User.ClientType = login.ClientType;
-                                User.Faction = acc.Faction != null ? acc.Faction.Shortcut : null;
-                                User.Clan = acc.Clan != null ? acc.Clan.Shortcut : null;
-                                User.AccountID = acc.AccountID;
-                                if (IsLanIP(IPAddress.Parse(RemoteEndpointIP))) {
-                                    User.Country = "CZ";
-                                } else {
-                                    try {
-                                        User.Country = state.GeoIP.Country(RemoteEndpointIP).Country.IsoCode;
-                                    } catch (Exception ex) {
-                                        Trace.TraceWarning("{0} Unable to resolve country", this);
-                                        User.Country = "??";
+                foreach (var b in state.Battles.Values) {
+                    if (b != null) {
+                        await SynchronizeUsersToMe(b.Founder.Name);
+                        await
+                            SendCommand(new BattleAdded() {
+                                Header =
+                                    new BattleHeader() {
+                                        BattleID = b.BattleID,
+                                        Engine = b.EngineVersion,
+                                        Game = b.ModName,
+                                        Founder = b.Founder.Name,
+                                        Map = b.MapName,
+                                        Ip = b.Ip,
+                                        Port = b.HostPort,
+                                        Title = b.Title,
+                                        SpectatorCount = b.SpectatorCount,
+                                        MaxPlayers = b.MaxPlayers,
+                                        Password = b.Password != null ? "?" : null
                                     }
-                                }
-                                
+                            });
 
-                                ClearMyLastKnownStateForOtherClients();
-
-
-                                Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
-                                await SendCommand(response); // login accepted
-                                await SendCommand(User); // self data
-                                
-                                foreach (var b in state.Battles.Values)
-                                {
-                                    if (b != null) {
-                                        await SynchronizeUsersToMe(b.Founder.Name);
-                                        await
-                                            SendCommand(new BattleAdded() {
-                                                Header =
-                                                    new BattleHeader() {
-                                                        BattleID = b.BattleID,
-                                                        Engine = b.EngineVersion,
-                                                        Game = b.ModName,
-                                                        Founder = b.Founder.Name,
-                                                        Map = b.MapName,
-                                                        Ip = b.Ip,
-                                                        Port = b.HostPort,
-                                                        Title = b.Title,
-                                                        SpectatorCount = b.SpectatorCount,
-                                                        MaxPlayers = b.MaxPlayers,
-                                                        Password = b.Password != null ? "?" : null
-                                                    }
-                                            });
-
-                                        foreach (var u in b.Users.Values.Select(x=>x.ToUpdateBattleStatus()).ToList()) {
-                                            await SynchronizeUsersToMe(u.Name);
-                                            await SendCommand(new JoinedBattle() { BattleID = b.BattleID, User = u.Name });
-                                            await SendCommand(u);
-                                       }
-                                    }
-                                }
-                                return;
-
-                            }
+                        foreach (var u in b.Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) {
+                            await SynchronizeUsersToMe(u.Name);
+                            await SendCommand(new JoinedBattle() { BattleID = b.BattleID, User = u.Name });
+                            await SendCommand(u);
                         }
                     }
                 }
-                await SendCommand(response);
-            });
-
+            } else await SendCommand(response);
         }
+
+        
 
         public void ClearMyLastKnownStateForOtherClients()
         {
@@ -556,7 +450,7 @@ namespace ZkLobbyServer
 
 
 
-        async Task Process(Say say)
+        public async Task Process(Say say)
         {
             if (!IsLoggedIn) return;
 
