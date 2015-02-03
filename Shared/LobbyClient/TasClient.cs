@@ -398,7 +398,7 @@ namespace LobbyClient
 
         public Task JoinChannel(string channelName, string key=null)
         {
-            return SendCommand(new JoinChannel() { Name = channelName, Password = key });
+            return SendCommand(new JoinChannel() { ChannelName = channelName, Password = key });
         }
 
         public Task Kick(string username, int? battleID=null, string reason = null)
@@ -435,7 +435,7 @@ namespace LobbyClient
         public async Task LeaveChannel(string channelName)
         {
             if (joinedChannels.ContainsKey(channelName)) {
-                await SendCommand(new LeaveChannel() { Name = channelName });
+                await SendCommand(new LeaveChannel() { ChannelName = channelName });
             }
         }
 
@@ -527,9 +527,9 @@ namespace LobbyClient
 //            con.SendCommand(string.Format("FORCEJOIN {0} {1} {2}", user, channel, password));
         }
 
-        public void ForceLeaveChannel(string user, string channel, string reason = null)
+        public Task ForceLeaveChannel(string user, string channel, string reason = null)
         {
-//            con.SendCommand(string.Format("FORCELEAVECHANNEL {0} {1} {2}", channel, user, reason));
+            return SendCommand(new KickFromChannel() { ChannelName = channel, UserName = user, Reason = reason });
         }
 
 
@@ -774,13 +774,13 @@ namespace LobbyClient
         {
             if (response.Success) {
                 var chan = new Channel() {
-                    Name = response.Channel.Name,
+                    Name = response.Channel.ChannelName,
                     Topic = response.Channel.Topic,
                     TopicSetBy = response.Channel.TopicSetBy,
                     TopicSetDate = response.Channel.TopicSetDate,
                 };
                 
-                JoinedChannels[response.Name] = chan;
+                JoinedChannels[response.ChannelName] = chan;
 
                 foreach (var u in response.Channel.Users) {
                     User user;

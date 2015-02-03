@@ -321,6 +321,22 @@ namespace ZkLobbyServer
             }
         }
 
+        private async Task Process(KickFromChannel chanKick)
+        {
+            if (!IsLoggedIn) return;
+
+            Channel channel;
+            User user;
+            if (state.Rooms.TryGetValue(chanKick.ChannelName, out channel) && channel.Users.TryGetValue(chanKick.UserName, out user)) {
+                if (!User.IsAdmin && !User.IsBot) {
+                    await Respond("No rights to execute kick");
+                    return;
+                }
+
+                await Respond(string.Format("You were kicked from channel {0} by {1} : {2}", chanKick.ChannelName, Name, chanKick.Reason));
+                await state.Clients[chanKick.UserName].Process(new LeaveChannel() { ChannelName = chanKick.ChannelName });
+            }
+        }
 
         async Task Process(Register register)
         {
@@ -368,7 +384,7 @@ namespace ZkLobbyServer
         async Task Process(JoinChannel joinChannel)
         {
             if (!IsLoggedIn) return;
-            var channel = state.Rooms.GetOrAdd(joinChannel.Name, (n) => { return new Channel() { Name = joinChannel.Name, }; });
+            var channel = state.Rooms.GetOrAdd(joinChannel.ChannelName, (n) => { return new Channel() { Name = joinChannel.ChannelName, }; });
             if (channel.Password != joinChannel.Password)
             {
                 await SendCommand(new JoinChannelResponse() { Success = false, Reason = "invalid password" });
@@ -381,10 +397,10 @@ namespace ZkLobbyServer
                 await
                     SendCommand(new JoinChannelResponse() {
                         Success = true,
-                        Name = joinChannel.Name,
+                        ChannelName = joinChannel.ChannelName,
                         Channel =
                             new ChannelHeader() {
-                                Name = channel.Name,
+                                ChannelName = channel.Name,
                                 Password = channel.Password,
                                 Topic = channel.Topic,
                                 TopicSetBy = channel.TopicSetBy,
@@ -402,7 +418,7 @@ namespace ZkLobbyServer
             if (!IsLoggedIn) return;
 
             Channel channel;
-            if (state.Rooms.TryGetValue(leaveChannel.Name, out channel)) {
+            if (state.Rooms.TryGetValue(leaveChannel.ChannelName, out channel)) {
                 User user;
                 if (channel.Users.TryRemove(Name, out user)) {
                     var users = channel.Users.Keys.ToArray();
@@ -475,7 +491,7 @@ namespace ZkLobbyServer
 
         Task Respond(string message)
         {
-            return SendCommand(new Say() { Place = SayPlace.MessageBox, Target = Name, Text = message });
+            return SendCommand(new Say() { Place = SayPlace.MessageBox, Target = Name, User = Name, Text = message });
         }
 
         async Task Process(OpenBattle openBattle)

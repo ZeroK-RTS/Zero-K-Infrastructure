@@ -138,7 +138,7 @@ namespace LobbyClient
     public class ChannelHeader
     {
         public List<string> Users = new List<string>();
-        public string Name { get; set; }
+        public string ChannelName { get; set; }
         public string Topic { get; set; }
         public string TopicSetBy { get; set; }
         public DateTime? TopicSetDate { get; set; }
@@ -152,14 +152,14 @@ namespace LobbyClient
     [Message(Origin.Client)]
     public class JoinChannel
     {
-        public string Name;
+        public string ChannelName;
         public string Password;
     }
 
     [Message(Origin.Client)]
     public class LeaveChannel
     {
-        public string Name;
+        public string ChannelName;
     }
 
 
@@ -180,7 +180,7 @@ namespace LobbyClient
     [Message(Origin.Server)]
     public class JoinChannelResponse
     {
-        public string Name;
+        public string ChannelName;
         public bool Success;
         public string Reason;
 
@@ -386,15 +386,16 @@ namespace LobbyClient
     [Message(Origin.Client)]
     public class KickFromChannel
     {
-        public string Name;
-        public string Channel;
+        public string UserName;
+        public string ChannelName;
+        public string Reason;
     }
 
     [Message(Origin.Client)]
     public class ForceJoinChannel
     {
-        public string Name;
-        public string Channel;
+        public string UserName;
+        public string ChannelName;
     }
 
     [Message(Origin.Client)]
