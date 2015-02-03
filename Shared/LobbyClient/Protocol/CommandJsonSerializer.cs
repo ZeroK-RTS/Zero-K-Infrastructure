@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using ZkData;
 
@@ -15,11 +16,6 @@ namespace LobbyClient
     [AttributeUsage(AttributeTargets.Class, Inherited = true)]
     public class MessageAttribute: Attribute
     {
-        /// <summary>
-        /// Overrides name, if unset, classname is used
-        /// </summary>
-        public string Name { get; set; }
-
         public Origin Direction { get; set; }
 
         public MessageAttribute(Origin direction)
@@ -36,34 +32,7 @@ namespace LobbyClient
 
         public CommandJsonSerializer()
         {
-            foreach (var t in Utils.GetAllTypesWithAttribute<MessageAttribute>()) {
-                RegisterTypes(t);
-            } 
-/*            RegisterType<Welcome>();
-            RegisterType<Login>();
-            RegisterType<LoginResponse>();
-            RegisterType<Register>();
-            RegisterType<RegisterResponse>();
-            RegisterType<JoinChannel>();
-            RegisterType<JoinChannelResponse>();
-            RegisterType<CreateChannel>();
-            RegisterType<CreateRoomResponse>();
-            RegisterType<User>();
-            RegisterType<ChannelUserAdded>();
-            RegisterType<ChannelUserRemoved>();
-            RegisterType<Say>();
-            RegisterType<UserDisconnected>();
-            RegisterType<OpenBattle>();
-            RegisterType<BattleAdded>();
-            RegisterType<UserBattleStatus>();
-            RegisterType<LeftBattle>();
-            RegisterType<JoinedBattle>();
-            RegisterType<LeftBattle>();
-            RegisterType<JoinBattle>();
-            RegisterType<LeaveBattle>();
-            RegisterType<BattleRemoved>();
-            */
-
+            RegisterTypes(Utils.GetAllTypesWithAttribute<MessageAttribute>().ToArray());
             settings.Formatting = Formatting.None;
             settings.NullValueHandling = NullValueHandling.Ignore;
         }
@@ -79,12 +48,6 @@ namespace LobbyClient
                 return JsonConvert.DeserializeObject(parts[1], type);
             }
             return null;
-        }
-
-        public void RegisterType<T>()
-        {
-            Type t = typeof(T);
-            knownTypes[t.Name] = t;
         }
 
         public void RegisterTypes(params Type[] types)
