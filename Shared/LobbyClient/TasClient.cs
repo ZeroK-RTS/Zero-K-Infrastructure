@@ -10,10 +10,11 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using ZkData;
 using ZkData.UnitSyncLib;
+using Timer = System.Timers.Timer;
 
 #endregion
 
@@ -36,14 +37,12 @@ namespace LobbyClient
         Dictionary<int, Battle> existingBattles = new Dictionary<int, Battle>();
         Dictionary<string, User> existingUsers = new Dictionary<string, User>();
         readonly bool forcedLocalIP = false;
-        readonly Invoker<Invoker> guiThreadInvoker;
         bool isLoggedIn;
         Dictionary<string, Channel> joinedChannels = new Dictionary<string, Channel>();
 
         int lastUdpSourcePort;
         int lastUserStatus;
         readonly string localIp;
-        readonly Timer minuteTimer;
 
         int pingInterval = 30; // how often to ping server (in seconds)
         readonly Timer pingTimer;
@@ -52,15 +51,12 @@ namespace LobbyClient
         int serverPort;
         public Dictionary<int, Battle> ExistingBattles { get { return existingBattles; } set { existingBattles = value; } }
 
-        public bool ConnectionFailed { get; private set; }
-
         public Dictionary<string, User> ExistingUsers { get { return existingUsers; } set { existingUsers = value; } }
 
         
         public override async Task OnConnected()
         {
             MyBattle = null;
-            ConnectionFailed = false;
             ExistingUsers = new Dictionary<string, User>();
             joinedChannels = new Dictionary<string, Channel>();
             existingBattles = new Dictionary<int, Battle>();
@@ -69,8 +65,6 @@ namespace LobbyClient
 
         public override async Task OnConnectionClosed(bool wasRequested)
         {
-            ConnectionFailed = !wasRequested;
-
             ExistingUsers = new Dictionary<string, User>();
             joinedChannels = new Dictionary<string, Channel>();
             existingBattles = new Dictionary<int, Battle>();
@@ -182,7 +176,6 @@ namespace LobbyClient
         public event EventHandler<Battle> BattleOpened = delegate { };
         public event EventHandler<Battle> BattleJoined = delegate { };
         public event EventHandler<string> Output = delegate { }; // outgoing command and arguments
-        public event EventHandler<EventArgs> HourChime = delegate { };
         public event EventHandler<string> Input = delegate { };
         public event EventHandler<UserBattleStatus> BattleUserStatusChanged = delegate { };
         public event EventHandler<UserBattleStatus> BattleMyUserStatusChanged = delegate { };
@@ -210,12 +203,11 @@ namespace LobbyClient
         
  
 
-        public TasClient(Invoker<Invoker> guiThreadInvoker, string appName, Login.ClientTypes? clientTypes = null, string ipOverride = null)
+        public TasClient(string appName, Login.ClientTypes? clientTypes = null, string ipOverride = null)
         {
             if (clientTypes.HasValue) this.clientType = clientTypes.Value;
             this.appName = appName;
-            this.guiThreadInvoker = guiThreadInvoker;
-
+            
 
             if (!string.IsNullOrEmpty(ipOverride))
             {
@@ -250,16 +242,6 @@ namespace LobbyClient
             pingTimer = new Timer(pingInterval*1000) { AutoReset = true };
             pingTimer.Elapsed += OnPingTimer;
             pingTimer.Start();
-
-            minuteTimer = new Timer(60000) { AutoReset = true };
-            minuteTimer.Elapsed += (s, e) =>
-                {
-                    if (DateTime.Now.Minute == 0)
-                        if (guiThreadInvoker != null) guiThreadInvoker(() => HourChime(this, new EventArgs()));
-                        else HourChime(this, new EventArgs());
-                };
-            minuteTimer.Start();
-
         }
 
 
@@ -331,17 +313,21 @@ namespace LobbyClient
             return SendCommand(new ChangeUserStatus() { IsAfk = isAway, IsInGame = isInGame });
         }
 
+        SynchronizationContext context;
 
         public void Connect(string host, int port)
         {
+            context = SynchronizationContext.Current;
             serverHost = host;
             serverPort = port;
+            WasDisconnectRequested = false;
             Connect(host, port, forcedLocalIP ? localIp : null);
         }
 
-
+        public bool WasDisconnectRequested { get; private set; }
         public void RequestDisconnect()
         {
+            WasDisconnectRequested = true;
             RequestClose();
         }
 
@@ -869,24 +855,19 @@ namespace LobbyClient
         }
 
 
+        DateTime lastPing;
 
         void OnPingTimer(object sender, EventArgs args)
         {
-/*            if (con != null && IsConnected) {
-                //if (lastPing != DateTime.MinValue && lastPing.Subtract(lastPong).TotalSeconds > pingInterval*2) {
-                    // server didnt respond to ping in 30-60s 
-                   // con.RequestClose();
-                //} else {
-                    lastPing = DateTime.UtcNow;
-                    con.SendCommand("PING");
-                //}
-            }
-            else if (ConnectionFailed && !IsConnected)
-            {
-                Connect(serverHost, serverPort);
-            }*/
+            if (context != null) context.Post(x=>PingTimerInternal(),null);
+            else PingTimerInternal();
         }
 
+        private void PingTimerInternal()
+        {
+            if (IsConnected) SendCommand(new Ping());
+            else if(!WasDisconnectRequested) Connect(serverHost, serverPort);
+        }
 
     }
 }

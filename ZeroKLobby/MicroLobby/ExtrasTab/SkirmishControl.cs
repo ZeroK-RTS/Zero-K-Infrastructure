@@ -1224,7 +1224,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             {
                 var script = currentMod.IsMission ? currentMod.MissionScript : Get_Startscript();
                 if (spring.IsRunning) spring.ExitGame();
-                TasClient client = new TasClient(null, "SkirmishTab", null, "127.0.0.1");
+                TasClient client = new TasClient("SkirmishTab", null, "127.0.0.1");
                 spring.SpringExited += Event_SpringExited;
                 infoLabel.Text = "Spring starting ...";
                 spring.StartGame(client, null, null, script, Program.Conf.UseSafeMode, Program.Conf.UseMtEngine);

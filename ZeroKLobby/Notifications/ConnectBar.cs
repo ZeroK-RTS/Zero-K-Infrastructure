@@ -29,7 +29,7 @@ namespace ZeroKLobby.Notifications
 				{
 					canRegister = false;
 					{
-						if (client.ConnectionFailed) lbState.Text = "disconnected due to network problem, autoreconnecting...";
+						if (!client.WasDisconnectRequested) lbState.Text = "disconnected due to network problem, autoreconnecting...";
 						else
 						{
 							lbState.Text = "disconnected";

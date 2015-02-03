@@ -406,4 +406,7 @@ namespace LobbyClient
         public int BattleID;
     }
 
+    [Message(Origin.Client | Origin.Server)]
+    public class Ping {}
+
 }

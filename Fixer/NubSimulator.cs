@@ -16,7 +16,7 @@ namespace Fixer
     {
         public void RunNub(int num)
         {
-            var tas = new TasClient(null, "Nubotron");
+            var tas = new TasClient("Nubotron");
             var name = "TestNub" + num;
             var ord = num / 16;
             var batname = "Test " + ord;

@@ -79,8 +79,7 @@ namespace Springie.autohost
             spring = new Spring(springPaths) { UseDedicatedServer = true };
             bool isManaged = SpawnConfig == null && config.Mode != AutohostMode.None;
 
-            tas = new TasClient(null,
-                                MainConfig.SpringieVersion,
+            tas = new TasClient(MainConfig.SpringieVersion,
                                 isManaged ? Login.ClientTypes.SpringieManaged : Login.ClientTypes.Springie,
                                 Program.main.Config.IpOverride);
 

@@ -18,7 +18,7 @@ namespace NightWatch
 
         public ChatRelay(TasClient zkTas, string password, List<string> channels)
         {
-            this.springTas = new TasClient(null, "ChatRelay");
+            this.springTas = new TasClient("ChatRelay");
             this.channels = channels;
             this.zkTas = zkTas;
             springTas.LoginAccepted += OnLoginAccepted;

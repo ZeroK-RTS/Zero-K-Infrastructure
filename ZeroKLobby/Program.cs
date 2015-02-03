@@ -248,8 +248,7 @@ namespace ZeroKLobby
                 Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
 
                 var isLinux = Environment.OSVersion.Platform == PlatformID.Unix;
-                TasClient = new TasClient(TasClientInvoker,
-                                          string.Format("ZK {0}{1}", SelfUpdater.CurrentVersion, isLinux ? " linux" : ""));
+                TasClient = new TasClient(string.Format("ZK {0}{1}", SelfUpdater.CurrentVersion, isLinux ? " linux" : ""));
 
                 SayCommandHandler = new SayCommandHandler(TasClient);
 

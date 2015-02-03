@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using LobbyClient;
 using ZeroKLobby.Lines;
 using ZkData;
+using Timer = System.Timers.Timer;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -21,6 +22,7 @@ namespace ZeroKLobby.MicroLobby
         readonly PlayerListItem searchResultsItem = new PlayerListItem { Title = "Search results", SortCategory = 1 };
         public bool CanLeave { get { return ChannelName != "Battle"; } }
         public static EventHandler<ChannelLineArgs> ChannelLineAdded = (sender, args) => { };
+        Timer minuteTimer;
         public string ChannelName { get; set; }
         public GameInfo GameInfo { get; set; }
         
@@ -95,14 +97,24 @@ namespace ZeroKLobby.MicroLobby
             Program.TasClient.Said += client_Said;
             Program.TasClient.UserRemoved += TasClient_UserRemoved;
             Program.TasClient.ChannelTopicChanged += TasClient_ChannelTopicChanged;
-            Program.TasClient.HourChime += client_HourChime;
-
+            
+            
+            
+            
             Program.SteamHandler.Voice.UserStartsTalking += VoiceOnUserChanged;
             Program.SteamHandler.Voice.UserStopsTalking += VoiceOnUserChanged;
             Program.SteamHandler.Voice.UserVoiceEnabled += VoiceOnUserChanged;
 
             Channel channel;
             Program.TasClient.JoinedChannels.TryGetValue(ChannelName, out channel);
+
+
+            minuteTimer = new Timer(60000) { AutoReset = true };
+            minuteTimer.Elapsed += (s, e) => {
+                if (DateTime.Now.Minute == 0) this.Invoke(new Action(() => AddLine(new ChimeLine())));
+            };
+            minuteTimer.Start();
+
 
             //Topic Box that displays over the channel
             topicBox.IRCForeColor = 14; //mirc grey. Unknown use
@@ -409,9 +421,6 @@ namespace ZeroKLobby.MicroLobby
             AddLine(new LeaveLine(userName, reason));
         }
 
-        void client_HourChime(object sender, EventArgs e) {
-            AddLine(new ChimeLine());
-        }
 
         void client_Said(object sender, TasSayEventArgs e) {
             if (e.Channel != ChannelName) return;
