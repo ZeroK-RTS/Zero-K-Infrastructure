@@ -1,6 +1,8 @@
 ﻿using System.Collections.Concurrent;
 using System.Reflection;
 using LobbyClient;
+using MaxMind.Db;
+using MaxMind.GeoIP2;
 using ZkData;
 
 namespace ZkLobbyServer
@@ -18,12 +20,15 @@ namespace ZkLobbyServer
         public ConcurrentDictionary<string, Channel> Rooms = new ConcurrentDictionary<string, Channel>();
         public ConcurrentDictionary<int, Battle> Battles = new ConcurrentDictionary<int, Battle>();
 
+        public IGeoIP2Provider GeoIP;
+
         public SharedServerState()
         {
             var entry = Assembly.GetEntryAssembly();
             Version = entry.GetName().Version.ToString();
             Engine = GlobalConst.DefaultEngineOverride;
             Game = "zk:stable";
+            GeoIP = new DatabaseReader("GeoLite2-Country.mmdb", FileAccessMode.Memory);
         }
     }
 }

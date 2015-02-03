@@ -76,6 +76,9 @@ namespace ZkData
             return InternalRun(tcp);
         }
 
+        public string RemoteEndpointIP { get; private set; }
+        public int RemoteEndpointPort { get; private set; }
+
         protected async Task InternalRun(TcpClient existingTcp, string host = null, int? port = null, string bindingIp = null)
         {
             closeRequestedExplicitly = false;
@@ -98,6 +101,10 @@ namespace ZkData
                 stream = tcp.GetStream();
                 reader = new StreamReader(stream, Encoding);
                 IsConnected = true;
+
+                RemoteEndpointIP = ((IPEndPoint)tcp.Client.RemoteEndPoint).Address.ToString();
+                RemoteEndpointPort = ((IPEndPoint)tcp.Client.RemoteEndPoint).Port;
+                
                 await OnConnected();
                 while (!token.IsCancellationRequested)
                 {
