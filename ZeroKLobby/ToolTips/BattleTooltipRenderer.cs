@@ -67,8 +67,10 @@ namespace ZeroKLobby
             if (founder.IsInGame)
             {
                 drawImage(ZklResources.boom, 16, 16);
-                var timeString = DateTime.Now.Subtract(founder.InGameSince.Value).PrintTimeRemaining();
-                drawString("The battle has been going on for at least " + timeString + ".");
+                if (founder.InGameSince != null) {
+                    var timeString = DateTime.Now.Subtract(founder.InGameSince.Value).PrintTimeRemaining();
+                    drawString("The battle has been going on for at least " + timeString + ".");
+                }
                 newLine();
             }
             if (battle.IsPassworded)

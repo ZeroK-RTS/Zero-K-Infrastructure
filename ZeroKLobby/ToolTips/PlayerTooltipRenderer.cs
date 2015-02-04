@@ -110,8 +110,10 @@ namespace ZeroKLobby
                 if (user.IsInGame)
                 {
                     drawImage(ZklResources.ingame, 16, 16);
-                    var time = DateTime.Now.Subtract(user.InGameSince.Value).PrintTimeRemaining();
-                    drawString("Playing since " + time + " ago.");
+                    if (user.InGameSince != null) {
+                        var time = DateTime.Now.Subtract(user.InGameSince.Value).PrintTimeRemaining();
+                        drawString("Playing since " + time + " ago.");
+                    }
                     newLine();
                 }
                 var top10 = Program.SpringieServer.GetTop10Rank(user.Name);
