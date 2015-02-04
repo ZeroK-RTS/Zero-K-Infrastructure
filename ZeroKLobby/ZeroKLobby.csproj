@@ -53,7 +53,7 @@
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>3</ApplicationRevision>
+    <ApplicationRevision>4</ApplicationRevision>
     <ApplicationVersion>3.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -93,6 +93,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NAudio.1.7.2\lib\net35\NAudio.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Steamworks.NET, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libs\Steamworks.NET.dll</HintPath>
@@ -106,12 +110,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AcceptAgreementForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AcceptAgreementForm.Designer.cs">
-      <DependentUpon>AcceptAgreementForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="ActionHandler.cs" />
     <Compile Include="BrowserInterop.cs" />
     <Compile Include="ButtonInfo.cs" />
@@ -265,7 +263,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Flags.resx</DependentUpon>
     </Compile>
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="MicroLobby\ContextMenus.cs" />
     <Compile Include="Lines\ChimeLine.cs" />
     <Compile Include="Lines\FriendJoinedBattleLine.cs" />
@@ -578,9 +575,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5.1">
       <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
+      <ProductName>Microsoft .NET Framework 4.5.1 %28x86 and x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -656,10 +653,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\AskBattlePasswordForm.resx">
       <DependentUpon>AskBattlePasswordForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AcceptAgreementForm.resx">
-      <DependentUpon>AcceptAgreementForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\PrivateMessageControl.resx">

@@ -61,7 +61,7 @@
         <span> (@(daysRemain)d @(hoursRemain)h remaining)</span>
     }
     <br/>
-    @if (Global.IsZeroKAdmin || Global.IsLobbyAdmin) {
+    @if (Global.IsZeroKAdmin) {
         <div class="admin">
             @Html.ActionLink("remove ban", "RemovePunishment","Users", new {punishmentID = p.PunishmentID}, new {@class="delete"})
         </div>

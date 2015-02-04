@@ -33,8 +33,7 @@ namespace ZeroKLobby.MicroLobby
             };
             Program.ToolTip.SetText(lookingGlass, "Search game, description, map or player");
             Program.ToolTip.SetText(searchBox, "Search game, description, map or player");
-            Program.ToolTip.SetText(button1, "Switches between Zero-K and Spring lobby servers");
-
+            
             hideEmptyBox.Checked = Program.Conf.HideEmptyBattles;
             hideFullBox.Checked = Program.Conf.HideNonJoinableBattles;
             showOfficialBox.Checked = Program.Conf.ShowOfficialBattles;
@@ -101,17 +100,6 @@ namespace ZeroKLobby.MicroLobby
         private void hidePasswordedBox_CheckedChanged(object sender, EventArgs e)
         {
             if (battleListControl != null) battleListControl.HidePassworded = hidePasswordedBox.Checked;
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (Program.TasClient.serverHost == GlobalConst.LobbyServerHost) {
-                Program.TasClient.RequestDisconnect();
-                Program.TasClient.Connect("lobby.springrts.com", 8200);
-            } else {
-                Program.TasClient.RequestDisconnect();
-                Program.TasClient.Connect(GlobalConst.LobbyServerHost, GlobalConst.LobbyServerPort);
-            }
         }
 
     }

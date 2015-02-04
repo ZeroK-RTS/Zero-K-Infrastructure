@@ -155,7 +155,6 @@ namespace ZeroKWeb
         }
 
         public static bool IsLobbyAccess { get { return HttpContext.Current.Request.Cookies[GlobalConst.LobbyAccessCookieName] != null; } }
-        public static bool IsLobbyAdmin { get { return IsAccountAuthorized && Account.IsLobbyAdministrator; } }
         public static bool IsZeroKAdmin { get { return IsAccountAuthorized && Account.IsZeroKAdmin; } }
         public static bool IsWebLobbyAccess { get { return HttpContext.Current.Session["weblobby"] != null; } }
         
@@ -276,10 +275,10 @@ namespace ZeroKWeb
                 var tas = nightwatch.Tas;
                 if (tas != null) {
                     foreach (var clan in orgArgs.OfType<Clan>().Where(x => x != null)) {
-                        tas.Say(TasClient.SayPlace.Channel, clan.GetClanChannel(), ev.PlainText, true);
+                        tas.Say(SayPlace.Channel, clan.GetClanChannel(), ev.PlainText, true);
                     }
                     foreach (var faction in orgArgs.OfType<Faction>().Where(x=>x!=null)) {
-                        tas.Say(TasClient.SayPlace.Channel, faction.Shortcut, ev.PlainText, true);
+                        tas.Say(SayPlace.Channel, faction.Shortcut, ev.PlainText, true);
                     }
                 }
             } catch (Exception ex) {

@@ -12,7 +12,7 @@ using ZkData;
 
 namespace ZeroKLobby.Notifications
 {
-    public partial class BattleBar: UserControl, INotifyBar
+    public partial class BattleBar : UserControl, INotifyBar
     {
         NotifyBarContainer barContainer;
         readonly TasClient client;
@@ -22,13 +22,10 @@ namespace ZeroKLobby.Notifications
         bool isVisible;
         string lastBattleFounder;
         string lastScript;
-        Battle previousBattle;
-
 
         readonly Random random = new Random();
         object speech;
         readonly Spring spring;
-        bool suppressSideChangeEvent;
         bool suppressSpecChange = false;
         readonly Timer timer = new Timer();
         object voice;
@@ -39,33 +36,36 @@ namespace ZeroKLobby.Notifications
         /// <summary>
         /// singleton, dont use, internal for designer
         /// </summary>
-        internal BattleBar() {
+        internal BattleBar()
+        {
             InitializeComponent();
 
             picoChat.ChatBackgroundColor = TextColor.background; //same color as Program.Conf.BgColor
             picoChat.IRCForeColor = 14; //mirc grey. Unknown use
 
-            Program.ToolTip.SetText(cbSide, "Choose the faction you wish to play.");
             picoChat.DefaultTooltip = "Last lines from room chat, click to enter full screen chat";
 
             client = Program.TasClient;
             spring = new Spring(Program.SpringPaths);
 
 
-            try {
+            try
+            {
                 // silly way to create speech and voice engines on runtime - needed due to mono crash
                 speech = Activator.CreateInstance(Type.GetType("ZeroKLobby.ChatToSpeech"), spring);
                 if (Program.Conf.EnableVoiceCommands) voice = Activator.CreateInstance(Type.GetType("ZeroKLobby.VoiceCommand.VoiceCommandEngine"), client, spring);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 Trace.TraceWarning("Failed to init VoiceCommands:{0}", ex.Message);
             }
 
             spring.SpringExited += (s, e) =>
                 {
                     client.ChangeMyUserStatus(isInGame: false);
-                    client.ChangeMyBattleStatus(ready: true);
 
-                    if (e.Data) {
+                    if (e.Data)
+                    {
                         Program.MainWindow.InvokeFunc(() =>
                             {
                                 var defaultButton = MessageBoxDefaultButton.Button2;
@@ -75,7 +75,8 @@ namespace ZeroKLobby.Notifications
                                                     "Spring engine has crashed, update your video and audio drivers please!",
                                                     MessageBoxButtons.YesNo,
                                                     icon,
-                                                    defaultButton) == DialogResult.Yes) {
+                                                    defaultButton) == DialogResult.Yes)
+                                {
                                     Program.Conf.UseSafeMode = true;
                                     Program.EngineConfigurator.Configure(true, 0);
                                 }
@@ -87,7 +88,7 @@ namespace ZeroKLobby.Notifications
 
             client.Rang += (s, e) =>
                 {
-                    if (e.Data == GlobalConst.NightwatchName)
+                    if (e.User == GlobalConst.NightwatchName)
                         //Nightwatch RING is from UserController.cs (website code)
                         MainWindow.Instance.NotifyUser("chat/zkadmin", "New report arrive at zkadmin channel", true, true);
                     else
@@ -105,7 +106,7 @@ namespace ZeroKLobby.Notifications
                     //client.ChangeMyUserStatus(false, false);
                     var battle = client.MyBattle;
                     lastBattleFounder = battle.Founder.Name;
-                    
+
                     if (battle.Founder.Name.StartsWith("PlanetWars") || battle.Founder.Name.StartsWith("Zk")) ChangeDesiredSpectatorState(false); // TODO pw unpsec hack, remove later
 
                     if (battle.IsQueue)
@@ -127,66 +128,41 @@ namespace ZeroKLobby.Notifications
                         barContainer.btnDetail.Visible = true;
                     }
 
-
-                    Program.SpringScanner.MetaData.GetModAsync(battle.ModName,
-                                                               (mod) =>
-                                                                   {
-                                                                       if (!Program.CloseOnNext) {
-                                                                           Program.MainWindow.InvokeFunc(() =>
-                                                                               {
-                                                                                   cbSide.Visible = mod.Sides.Length > 1;
-                                                                                   if (cbSide.Visible) {
-                                                                                       var previousSide = cbSide.SelectedItem != null
-                                                                                                          ? cbSide.SelectedItem.ToString()
-                                                                                                          : null;
-                                                                                       cbSide.Items.Clear();
-                                                                                       var cnt = 0;
-                                                                                       foreach (var side in mod.Sides) cbSide.Items.Add(new SideItem(side, mod.SideIcons[cnt++]));
-                                                                                       var pickedItem =
-                                                                                           cbSide.Items.OfType<SideItem>()
-                                                                                                 .FirstOrDefault(x => x.Side == previousSide);
-
-                                                                                       suppressSideChangeEvent = true;
-                                                                                       if (pickedItem != null) cbSide.SelectedItem = pickedItem;
-                                                                                       else cbSide.SelectedIndex = random.Next(cbSide.Items.Count);
-                                                                                       suppressSideChangeEvent = false;
-                                                                                   }
-                                                                                   
-                                                                               });
-                                                                       }
-                                                                   },
-                                                               (ex) => { },
-                                                               Program.SpringPaths.SpringVersion);
-
                     Program.Downloader.GetResource(DownloadType.MAP, battle.MapName);
                     Program.Downloader.GetResource(DownloadType.MOD, battle.ModName);
                     engineVersionNeeded = battle.EngineVersion;
                     if (engineVersionNeeded != Program.SpringPaths.SpringVersion) Program.Downloader.GetAndSwitchEngine(engineVersionNeeded);
                     else engineVersionNeeded = null;
 
-                    if (battle != previousBattle) {
-                        previousBattle = battle;
-                        if (gameBox.Image != null) gameBox.Image.Dispose();
-                        DpiMeasurement.DpiXYMeasurement(this);
-                        int scaledIconHeight = DpiMeasurement.ScaleValueY(BattleIcon.Height);
-                        int scaledIconWidth = DpiMeasurement.ScaleValueX(BattleIcon.Width);
-                        gameBox.Image = new Bitmap(scaledIconWidth, scaledIconHeight);
-                        using (var g = Graphics.FromImage(gameBox.Image)) {
-                            g.FillRectangle(Brushes.White, 0, 0, scaledIconWidth, scaledIconHeight);
-                            var bi = Program.BattleIconManager.GetBattleIcon(battle.BattleID);
-                            g.DrawImageUnscaled(bi.Image, 0, 0);
-                        }
-                        gameBox.Invalidate();
+                    if (gameBox.Image != null) gameBox.Image.Dispose();
+                    DpiMeasurement.DpiXYMeasurement(this);
+                    int scaledIconHeight = DpiMeasurement.ScaleValueY(BattleIcon.Height);
+                    int scaledIconWidth = DpiMeasurement.ScaleValueX(BattleIcon.Width);
+                    gameBox.Image = new Bitmap(scaledIconWidth, scaledIconHeight);
+                    using (var g = Graphics.FromImage(gameBox.Image))
+                    {
+                        g.FillRectangle(Brushes.White, 0, 0, scaledIconWidth, scaledIconHeight);
+                        var bi = Program.BattleIconManager.GetBattleIcon(battle.BattleID);
+                        g.DrawImageUnscaled(bi.Image, 0, 0);
                     }
+                    gameBox.Invalidate();
+
                     RefreshTooltip();
+
+
+                    var alliance =
+                        Enumerable.Range(0, TasClient.MaxAlliances - 1)
+                                  .FirstOrDefault(allyTeam => !battle.Users.Values.Any(user => user.AllyNumber == allyTeam));
+                    var team = battle.GetFreeTeamID(client.UserName);
+
+                    client.ChangeMyBattleStatus(desiredSpectatorState, HasAllResources() ? SyncStatuses.Synced : SyncStatuses.Unsynced, alliance, team);
                 };
 
-            cbSide.DrawMode = DrawMode.OwnerDrawFixed;
-            cbSide.DrawItem += cbSide_DrawItem;
 
             client.MyBattleMapChanged += (s, e) =>
                 {
-                    if (client.MyBattle != null && !Program.SpringScanner.HasResource(client.MyBattle.MapName)) {
+                    if (client.MyBattle != null && !Program.SpringScanner.HasResource(client.MyBattle.MapName))
+                    {
                         client.ChangeMyBattleStatus(syncStatus: SyncStatuses.Unsynced);
                         Program.Downloader.GetResource(DownloadType.MAP, client.MyBattle.MapName);
                     }
@@ -195,54 +171,22 @@ namespace ZeroKLobby.Notifications
 
             client.MyBattleHostExited += (s, e) => { barContainer.btnDetail.Text = "Start"; };
 
-            client.RequestBattleStatus += (s, e) =>
-                {
-                    var battle = client.MyBattle;
-
-                    var alliance =
-                        Enumerable.Range(0, TasClient.MaxAlliances - 1)
-                                  .FirstOrDefault(allyTeam => !battle.Users.Any(user => user.AllyNumber == allyTeam));
-                    var team = battle.GetFreeTeamID(client.UserName);
-
-                    /*				if (battle)
-{
- * 			var b = tas.MyBattle;
-return hostedMod.MissionSlots.Where(x => x.IsHuman).OrderByDescending(x => x.IsRequired).Where(
-x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !y.IsSpectator));
-
-	var slot = GetFreeSlots().FirstOrDefault();
-	if (slot != null)
-	{
-		tas.ForceAlly(u.Name, slot.AllyID);
-		tas.ForceTeam(u.Name, slot.TeamID);
-	}
-	else tas.ForceSpectator(u.Name);
-}*/
-
-                    var status = new UserBattleStatus
-                    {
-                        AllyNumber = alliance,
-                        TeamNumber = team,
-                        SyncStatus = HasAllResources() ? SyncStatuses.Synced : SyncStatuses.Unsynced,
-                        IsSpectator = desiredSpectatorState,
-                        Side = cbSide.SelectedIndex >= 0 ? cbSide.SelectedIndex : 0,
-                        TeamColor = Program.Conf.DefaultPlayerColorInt,
-                        IsReady = true,
-                    };
-                    client.SendMyBattleStatus(status);
-                };
-
             client.MyBattleStarted += (s, e) =>
                 {
-                    try {
+                    try
+                    {
                         barContainer.btnDetail.Text = "Rejoin";
-                        if (client.MyBattleStatus.SyncStatus == SyncStatuses.Synced) {
-                            if (Utils.VerifySpringInstalled()) {
+                        if (client.MyBattleStatus.SyncStatus == SyncStatuses.Synced)
+                        {
+                            if (Utils.VerifySpringInstalled())
+                            {
                                 if (spring.IsRunning) spring.ExitGame();
-                                lastScript = spring.StartGame(client, null, null, null, Program.Conf.UseSafeMode, client.MyBattleStatus.IsSpectator?Program.Conf.UseMtEngine:false); //use MT tag when in spectator slot
+                                lastScript = spring.StartGame(client, null, null, null, Program.Conf.UseSafeMode, client.MyBattleStatus.IsSpectator ? Program.Conf.UseMtEngine : false); //use MT tag when in spectator slot
                             }
                         }
-                    } catch (Exception ex) {
+                    }
+                    catch (Exception ex)
+                    {
                         MessageBox.Show("Error starting spring: " + ex.Message);
                     }
                     RefreshTooltip();
@@ -250,7 +194,8 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 
             client.BattleMyUserStatusChanged += (s, e) =>
                 {
-                    if (client.MyBattleStatus != null) {
+                    if (client.MyBattleStatus != null)
+                    {
                         barContainer.btnDetail.Enabled = client.MyBattleStatus.SyncStatus == SyncStatuses.Synced;
 
                         if (client.MyBattleStatus.IsSpectator && radioPlay.Checked) ChangeGuiSpectatorWithoutEvent(false); // i was spectated
@@ -263,12 +208,11 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
                     barContainer.btnDetail.Text = "Start";
                     if (gameBox.Image != null) gameBox.Image.Dispose();
                     gameBox.Image = null;
-                    cbSide.Visible = false;
                     RefreshTooltip();
                     Stop();
                 };
 
-            client.MyBattleEnded += (s, e) =>
+            client.MyBattleRemoved += (s, e) =>
                 {
                     var t = new Timer();
                     var tryCount = 0;
@@ -299,16 +243,15 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
                 {
                     if (gameBox.Image != null) gameBox.Image.Dispose();
                     gameBox.Image = null;
-                    cbSide.Visible = false;
                     RefreshTooltip();
                     Stop();
                 };
 
-            
+
             // process special queue message to display in label
             client.Said += (s, e) =>
             {
-                if (e.Place == TasSayEventArgs.Places.Battle && client.MyBattle != null && client.MyBattle.Founder.Name == e.UserName &&  e.Text.StartsWith("Queue"))
+                if (e.Place == SayPlace.Battle && client.MyBattle != null && client.MyBattle.Founder.Name == e.UserName && e.Text.StartsWith("Queue"))
                 {
                     var t = e.Text.Substring(6);
                     queueLabelFormatter = Regex.Replace(t,
@@ -326,9 +269,13 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 
             timer.Tick += (s, e) =>
                 {
-                    if (client.IsLoggedIn) {
-                        if (WindowsApi.IdleTime.TotalMinutes > Program.Conf.IdleTime) client.ChangeMyUserStatus(isAway: true);
-                        else client.ChangeMyUserStatus(isAway: false);
+                    if (client.IsLoggedIn)
+                    {
+                        if (WindowsApi.IdleTime.TotalMinutes > Program.Conf.IdleTime) {
+                            if (!client.MyUser.IsAway) client.ChangeMyUserStatus(isAway: true);
+                        } else {
+                            if (client.MyUser.IsAway) client.ChangeMyUserStatus(isAway: false);
+                        }
                         CheckMyBattle();
                     }
                     if (client.MyBattle != null && client.MyBattle.IsQueue)
@@ -355,7 +302,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
         {
             base.OnSizeChanged(e);
             //picoChat.Width = gameBox.Left - picoChat.Left + 5;
-            zkSplitContainer1.SplitterDistance = (int)(Math.Max(zkSplitContainer1.Width * 0.5, zkSplitContainer1.Width- gameBox.Width)); //make gameBox & miniChatBox to always have >0 size.
+            zkSplitContainer1.SplitterDistance = (int)(Math.Max(zkSplitContainer1.Width * 0.5, zkSplitContainer1.Width - gameBox.Width)); //make gameBox & miniChatBox to always have >0 size.
         }
 
         /// <summary>
@@ -363,34 +310,41 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
         /// </summary>
         /// <param name="state">new desired state</param>
         /// <returns>true if change allowed</returns>
-        public bool ChangeDesiredSpectatorState(bool state) {
+        public bool ChangeDesiredSpectatorState(bool state)
+        {
             desiredSpectatorState = state;
             ChangeGuiSpectatorWithoutEvent(state);
             return true;
         }
 
-        public static bool DownloadFailed(string name) {
-            if (!Program.SpringScanner.HasResource(name)) {
+        public static bool DownloadFailed(string name)
+        {
+            if (!Program.SpringScanner.HasResource(name))
+            {
                 var down = Program.Downloader.Downloads.FirstOrDefault(x => x.Name == name);
                 if (down == null || down.IsComplete == false || down.IsAborted) return true;
             }
             return false;
         }
 
-        public void Rejoin() {
-            if (Utils.VerifySpringInstalled()) {
+        public void Rejoin()
+        {
+            if (Utils.VerifySpringInstalled())
+            {
                 if (spring.IsRunning) spring.ExitGame();
-                if (client.MyBattle != null) spring.StartGame(client, null, null, null, Program.Conf.UseSafeMode,  client.MyBattleStatus.IsSpectator?Program.Conf.UseMtEngine:false); //use MT tag when in spectator slot. NOTE!: a non-spec player might rejoin game in spec slot & confuse this checks!
+                if (client.MyBattle != null) spring.StartGame(client, null, null, null, Program.Conf.UseSafeMode, client.MyBattleStatus.IsSpectator ? Program.Conf.UseMtEngine : false); //use MT tag when in spectator slot. NOTE!: a non-spec player might rejoin game in spec slot & confuse this checks!
                 else spring.StartGame(client, null, null, lastScript, Program.Conf.UseSafeMode, Program.Conf.UseMtEngine); //rejoining a running game from outside the battleroom???
             }
         }
 
-        public void StartManualBattle(int battleID, string password) {
+        public void StartManualBattle(int battleID, string password)
+        {
             Trace.TraceInformation("Joining battle {0}", battleID);
             var tas = Program.TasClient;
-            if (tas.MyBattle != null) {
+            if (tas.MyBattle != null)
+            {
                 Battle battle;
-                if (tas.ExistingBattles.TryGetValue(battleID, out battle)) tas.Say(TasClient.SayPlace.Battle, "", string.Format("Going to {0} zk://@join_player:{1}", battle.Title, battle.Founder.Name), true);
+                if (tas.ExistingBattles.TryGetValue(battleID, out battle)) tas.Say(SayPlace.Battle, "", string.Format("Going to {0} zk://@join_player:{1}", battle.Title, battle.Founder.Name), true);
                 tas.LeaveBattle();
             }
             if (!string.IsNullOrEmpty(password)) Program.TasClient.JoinBattle(battleID, password);
@@ -398,30 +352,37 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
         }
 
 
-        public static bool StillDownloading(string name) {
+        public static bool StillDownloading(string name)
+        {
             return !Program.SpringScanner.HasResource(name) && !DownloadFailed(name);
         }
 
-        public void Stop() {
+        public void Stop()
+        {
             Trace.TraceInformation("Closing current battle");
             isVisible = false;
             client.LeaveBattle();
 
             Program.NotifySection.RemoveBar(this);
+            NavigationControl.Instance.Path = "battles";
         }
 
-        void AutoRespond() {
-            if (client.MyBattle != null && client.MyBattleStatus != null && client.MyBattleStatus.SyncStatus != SyncStatuses.Synced) {
+        void AutoRespond()
+        {
+            if (client.MyBattle != null && client.MyBattleStatus != null && client.MyBattleStatus.SyncStatus != SyncStatuses.Synced)
+            {
                 var moddl = Program.Downloader.Downloads.FirstOrDefault(x => x.Name == client.MyBattle.ModName);
                 var mapdl = Program.Downloader.Downloads.FirstOrDefault(x => x.Name == client.MyBattle.MapName);
-                if (moddl != null && moddl.IsComplete != true) {
-                    client.Say(TasClient.SayPlace.Battle,
+                if (moddl != null && moddl.IsComplete != true)
+                {
+                    client.Say(SayPlace.Battle,
                                "",
                                string.Format("Mod download progress: {0}%, eta: {1}", Math.Round(moddl.TotalProgress), moddl.TimeRemaining),
                                true);
                 }
-                if (mapdl != null && mapdl.IsComplete != true) {
-                    client.Say(TasClient.SayPlace.Battle,
+                if (mapdl != null && mapdl.IsComplete != true)
+                {
+                    client.Say(SayPlace.Battle,
                                "",
                                string.Format("Map download progress: {0}%, eta: {1}", Math.Round(mapdl.TotalProgress), mapdl.TimeRemaining),
                                true);
@@ -429,7 +390,8 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
             }
         }
 
-        void ChangeGuiSpectatorWithoutEvent(bool newState) {
+        void ChangeGuiSpectatorWithoutEvent(bool newState)
+        {
             suppressSpecChange = true;
             if (newState) radioPlay.Checked = true;
             else radioSpec.Checked = true;
@@ -437,31 +399,43 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
         }
 
 
-        void CheckMyBattle() {
+        void CheckMyBattle()
+        {
             var battle = client.MyBattle;
             var currentStatus = client.MyBattleStatus;
             if (battle == null || currentStatus == null) return;
 
-            var newStatus = currentStatus.Clone();
 
-            if (currentStatus.SyncStatus != SyncStatuses.Synced) {
-                if (HasAllResources()) {
+            SyncStatuses? sync = null;
+            if (currentStatus.SyncStatus != SyncStatuses.Synced)
+            {
+                if (HasAllResources())
+                {
                     // if didnt have map and have now, set it
-                    newStatus.SyncStatus = SyncStatuses.Synced;
+                    sync = SyncStatuses.Synced;
                 }
             }
 
             // fix my id
-            if (battle.Users.Count(x => !x.IsSpectator && x.TeamNumber == currentStatus.TeamNumber) > 1) newStatus.TeamNumber = battle.GetFreeTeamID(client.UserName);
+            int? team = null;
 
-            newStatus.IsSpectator = radioSpec.Checked;
-            newStatus.IsReady = true;
+            if (battle.Users.Values.Count(x => !x.IsSpectator && x.TeamNumber == currentStatus.TeamNumber) > 1)
+            {
+                team = battle.GetFreeTeamID(client.UserName);
+            }
 
-            if (newStatus != currentStatus) client.SendMyBattleStatus(newStatus);
+            bool spec = radioSpec.Checked;
+            if ((sync.HasValue && sync != currentStatus.SyncStatus) || (team.HasValue && team != currentStatus.TeamNumber) ||
+                (currentStatus.IsSpectator != spec))
+            {
+                client.ChangeMyBattleStatus(spec, sync, null, team);
+            }
         }
 
-        bool HasAllResources() {
-            if (client != null && client.MyBattle != null) {
+        bool HasAllResources()
+        {
+            if (client != null && client.MyBattle != null)
+            {
                 var battle = client.MyBattle;
                 return Program.SpringScanner.HasResource(battle.MapName) && Program.SpringScanner.HasResource(battle.ModName) &&
                        (engineVersionNeeded == null || Program.SpringPaths.SpringVersion == engineVersionNeeded);
@@ -470,8 +444,10 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
         }
 
 
-        bool IsHostGameRunning() {
-            if (client != null) {
+        bool IsHostGameRunning()
+        {
+            if (client != null)
+            {
                 var bat = client.MyBattle;
                 if (bat != null) return bat.IsInGame;
             }
@@ -479,14 +455,16 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
         }
 
 
-        void ManualBattleStarted() {
+        void ManualBattleStarted()
+        {
             if (isVisible) Stop();
             isVisible = true;
             Program.NotifySection.AddBar(this);
         }
 
 
-        void RefreshTooltip() {
+        void RefreshTooltip()
+        {
             var bat = client.MyBattle;
             if (bat != null) Program.ToolTip.SetBattle(gameBox, bat.BattleID);
             else Program.ToolTip.SetText(gameBox, null);
@@ -494,10 +472,12 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 
 
 
-        public Control GetControl() {
+        public Control GetControl()
+        {
             return this;
         }
-        public void AddedToContainer(NotifyBarContainer container) {
+        public void AddedToContainer(NotifyBarContainer container)
+        {
             barContainer = container;
             container.btnDetail.Image = ZklResources.battle;
             container.btnDetail.Text = "Start";
@@ -507,23 +487,28 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
             container.TitleTooltip = "Use button on the left side to start a game";
         }
 
-        public void CloseClicked(NotifyBarContainer container) {
+        public void CloseClicked(NotifyBarContainer container)
+        {
             Stop();
         }
 
-        public void DetailClicked(NotifyBarContainer container) {
+        public void DetailClicked(NotifyBarContainer container)
+        {
             NavigationControl.Instance.Path = "chat/battle";
             if (IsHostGameRunning()) Rejoin();
-            else client.Say(TasClient.SayPlace.Battle, "", "!start", false);
+            else client.Say(SayPlace.Battle, "", "!start", false);
         }
 
-        void BattleIconManager_BattleChanged(object sender, EventArgs<BattleIcon> e) {
-            if (e.Data.Battle == Program.TasClient.MyBattle) {
+        void BattleIconManager_BattleChanged(object sender, EventArgs<BattleIcon> e)
+        {
+            if (e.Data.Battle == Program.TasClient.MyBattle)
+            {
                 DpiMeasurement.DpiXYMeasurement(this);
                 int scaledIconHeight = DpiMeasurement.ScaleValueY(BattleIcon.Height);
                 int scaledIconWidth = DpiMeasurement.ScaleValueX(BattleIcon.Width);
                 if (gameBox.Image == null) gameBox.Image = new Bitmap(scaledIconWidth, scaledIconHeight);
-                using (var g = Graphics.FromImage(gameBox.Image)) {
+                using (var g = Graphics.FromImage(gameBox.Image))
+                {
                     g.FillRectangle(Brushes.White, 0, 0, scaledIconWidth, scaledIconHeight);
                     g.DrawImageUnscaled(e.Data.Image, 0, 0);
                     gameBox.Invalidate();
@@ -531,38 +516,12 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
             }
         }
 
-        
-        void cbSide_DrawItem(object sender, DrawItemEventArgs e) {
-            e.DrawBackground();
-            e.DrawFocusRectangle();
-            if (e.Index < 0 || e.Index >= cbSide.Items.Count) return;
-            var item = cbSide.Items[e.Index] as SideItem;
-            if (item != null) {
-                if (item.Image != null) e.Graphics.DrawImage(item.Image, e.Bounds.Left, e.Bounds.Top, 16, 16);
-                TextRenderer.DrawText(e.Graphics, item.Side, cbSide.Font, new Point(e.Bounds.Left + 16, e.Bounds.Top), cbSide.ForeColor);
-            }
-            else
-                TextRenderer.DrawText(e.Graphics,
-                                      cbSide.Items[e.Index].ToString(),
-                                      cbSide.Font,
-                                      new Point(e.Bounds.Left, e.Bounds.Top),
-                                      cbSide.ForeColor);
-        }
-
-        void cbSide_SelectedIndexChanged(object sender, EventArgs e) {
-            if (suppressSideChangeEvent) return;
-            if (!client.IsLoggedIn) return;
-
-            var status = client.MyBattleStatus;
-            if (status == null) return;
-            client.ChangeMyBattleStatus(side: cbSide.SelectedIndex);
-        }
 
         private void zkSplitContainer1_SplitterMoving(object sender, SplitterCancelEventArgs e)
         {
             gameBox.Left = 0; //anchor gameBox to zkSplitContainer slider
         }
-        
+
         private void radioPlay_CheckedChanged(object sender, EventArgs e)
         {
             if (!suppressSpecChange)
@@ -588,13 +547,15 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
         public Image Image;
         public string Side;
 
-        public SideItem(string side, byte[] image) {
+        public SideItem(string side, byte[] image)
+        {
             Side = side;
             if (image != null && image.Length > 0) Image = Image.FromStream(new MemoryStream(image));
             else Image = null;
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return Side;
         }
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -6,74 +7,50 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
+using Newtonsoft.Json;
 using PlasmaShared;
 using ZkData;
 using ZkData.UnitSyncLib;
 
 namespace LobbyClient
 {
-    public class Battle: ICloneable
+    public class Battle
     {
-        public enum NatMode
-        {
-            None = 0,
-            HolePunching = 1,
-            FixedPorts = 2
-        };
-
-        /// <summary>
-        /// Full map metadata - loaded only for joined battle
-        /// </summary>
-        readonly Map map;
-        /// <summary>
-        /// Full mod metadata - loaded only for joined battle
-        /// </summary>
-        readonly Mod mod;
-
         public int BattleID { get; set; }
-        public List<BotBattleStatus> Bots { get; set; }
-        public BattleDetails Details { get; set; }
-        public List<string> DisabledUnits { get; set; }
+        public ConcurrentDictionary<string, BotBattleStatus> Bots { get; set; }
 
         public User Founder { get; set; }
 
         public int HostPort { get; set; }
         public string Ip { get; set; }
-        public bool IsFull { get { return NonSpectatorCount == MaxPlayers; } }
-        public bool IsInGame { get { return Founder.IsInGame; } }
-        public bool IsLocked { get; set; }
-        public bool IsMission { get { return mod != null && mod.IsMission; } }
-        public bool IsPassworded { get { return Password != "*"; } }
-        public bool IsReplay { get; set; }
 
-        public int? MapHash { get; set; }
+        public bool IsInGame { get { return Founder.IsInGame; } }
+        public bool IsMission { get { return false; } }
+        public bool IsPassworded { get { return !string.IsNullOrEmpty(Password); } }
+
         public string MapName { get; set; }
 
         public int MaxPlayers { get; set; }
 
-        public int? ModHash { get; set; }
         public string ModName { get; set; }
-        public Dictionary<string, string> ModOptions { get; private set; }
-        public NatMode Nat { get; set; }
+        public Dictionary<string, string> ModOptions { get; set; }
 
         public int NonSpectatorCount { get { return Users.Count - SpectatorCount; } }
 
-        public string Password = "*";
+        public string Password;
 
-        public int Rank { get; set; }
-        public Dictionary<int, BattleRect> Rectangles { get; set; }
-        public List<string> ScriptTags = new List<string>();
+        public ConcurrentDictionary<int, BattleRect> Rectangles { get; set; }
         public string EngineName = "spring";
         public string EngineVersion { get; set; }
         public int SpectatorCount { get; set; }
         public string Title { get; set; }
 
-        public List<UserBattleStatus> Users { get; set; }
+        public ConcurrentDictionary<string, UserBattleStatus> Users { get; set; }
 
 
         public bool IsSpringieManaged
         {
-            get { return Founder != null && Founder.IsSpringieManaged;}
+            get { return Founder != null && Founder.ClientType == Login.ClientTypes.SpringieManaged; }
         }
 
         public bool IsQueue
@@ -93,59 +70,55 @@ namespace LobbyClient
             }
         }
 
-        internal Battle()
+        public Battle()
         {
-            Bots = new List<BotBattleStatus>();
-            Details = new BattleDetails();
+            Bots = new ConcurrentDictionary<string, BotBattleStatus>();
             ModOptions = new Dictionary<string, string>();
-            Rectangles = new Dictionary<int, BattleRect>();
-            DisabledUnits = new List<string>();
-            Password = "*";
-            Nat = NatMode.None;
-            Users = new List<UserBattleStatus>();
+            Rectangles = new ConcurrentDictionary<int, BattleRect>();
+            Users = new ConcurrentDictionary<string, UserBattleStatus>();
         }
 
 
-        public Battle(string engineVersion, string password, int port, int maxplayers, int rank, Map map, string title, Mod mod, BattleDetails details): this()
+        public void UpdateWith(BattleHeader h, Func<string, User> getUser)
+        {
+            if (h.BattleID != null) BattleID = h.BattleID.Value;
+            if (h.Founder != null) Founder = getUser(h.Founder);
+            if (h.Ip != null) Ip = h.Ip;
+            if (h.Port != null) HostPort = h.Port.Value;
+            if (h.MaxPlayers != null) MaxPlayers = h.MaxPlayers.Value;
+            if (h.Password != null) Password = h.Password;
+            if (h.Engine != null) EngineVersion = h.Engine;
+            if (h.Map != null) MapName = h.Map;
+            if (h.Title != null) Title = h.Title;
+            if (h.Game != null) ModName = h.Game;
+            if (h.SpectatorCount != null) SpectatorCount = h.SpectatorCount.Value;
+        }
+
+
+        public Battle(string engineVersion, string password, int port, int maxplayers, string mapName, string title, string modname)
+            : this()
         {
             if (!String.IsNullOrEmpty(password)) Password = password;
             if (port == 0) HostPort = 8452; else HostPort = port;
-            try {
-                var ports = IPGlobalProperties.GetIPGlobalProperties().GetActiveUdpListeners().OrderBy(x => x.Port).Select(x=>x.Port).ToList();
-                if (ports.Contains(HostPort)) {
+            try
+            {
+                var ports = IPGlobalProperties.GetIPGlobalProperties().GetActiveUdpListeners().OrderBy(x => x.Port).Select(x => x.Port).ToList();
+                if (ports.Contains(HostPort))
+                {
                     var blockedPort = HostPort;
                     while (ports.Contains(HostPort)) HostPort++;
                     Trace.TraceWarning("Host port {0} was used, using backup port {1}", blockedPort, HostPort);
                 }
-            } catch {}
-
-
-
+            }
+            catch { }
 
             EngineVersion = engineVersion;
             MaxPlayers = maxplayers;
-            Rank = rank;
-            this.map = map;
-            MapName = map.Name;
-            MapHash = map.Checksum;
+            MapName = mapName;
             Title = title;
-            this.mod = mod;
-            ModName = mod.Name;
-            ModHash = mod.Checksum;
-            if (details != null) Details = details;
+            ModName = modname;
         }
 
-
-        public bool CanBeJoined(int playerRank)
-        {
-            return NonSpectatorCount > 0 && !IsLocked && MaxPlayers > NonSpectatorCount && Password == "*" && Rank >= playerRank;
-        }
-
-        public bool ContainsUser(string name, out UserBattleStatus status)
-        {
-            status = Users.SingleOrDefault(x => x.Name == name);
-            return status != null;
-        }
 
         /// <summary>
         /// Generates script
@@ -169,7 +142,8 @@ namespace LobbyClient
 
                 playersExport = new List<UserBattleStatus>();
                 var isHost = localUser.Name == Founder.Name;
-                var myUbs = Users.SingleOrDefault(x => x.Name == localUser.Name);
+
+                var myUbs = Users[localUser.Name];
                 if (!isHost)
                 {
                     var sb = new StringBuilder();
@@ -192,7 +166,6 @@ namespace LobbyClient
                 }
                 else
                 {
-                    if (mod == null) throw new ApplicationException("Mod not downloaded yet");
 
                     var script = new StringBuilder();
 
@@ -202,19 +175,12 @@ namespace LobbyClient
                     script.AppendFormat("   ZkSearchTag={0};\n", zkSearchTag);
                     script.AppendFormat("  Mapname={0};\n", MapName);
 
-                    if (mod.IsMission) script.AppendFormat("  StartPosType=3;\n");
-                    else
-                    {
-                        if (Details.StartPos == BattleStartPos.Choose) script.AppendFormat("  StartPosType=2;\n");
-                        else script.AppendFormat("  StartPosType=3;\n"); // workaround for random/fixed
-                        // script.AppendFormat("  StartPosType={0};\n", (int)Details.StartPos);
-                    }
+                    script.AppendFormat("  StartPosType=2;\n");
 
                     script.AppendFormat("  GameType={0};\n", ModName);
-                    if (ModHash.HasValue)
-                        script.AppendFormat("  ModHash={0};\n", ModHash.Value != 0 ? (uint)ModHash.Value : 1);
-                            // hack dont set to 1 when dedi srever is patched
-                    if (MapHash.HasValue) script.AppendFormat("  MapHash={0};\n", MapHash.Value != 0 ? (uint)MapHash.Value : 1);
+                    script.AppendFormat("  ModHash=1;\n");
+                    script.AppendFormat("  MapHash=1;\n");
+
                     script.AppendFormat("  AutohostPort={0};\n", loopbackListenPort);
                     script.AppendLine();
                     script.AppendFormat("  HostIP={0};\n", Ip);
@@ -225,23 +191,20 @@ namespace LobbyClient
 
                     //script.AppendFormat("  MyPlayerName={0};\n", localUser.Name);
 
-                    var positions = map.Positions != null ? map.Positions.ToList() : new List<StartPos>();
-                    if (Details.StartPos == BattleStartPos.Random) positions = positions.Shuffle();
-
                     List<UserBattleStatus> users;
                     List<BotBattleStatus> bots;
 
                     if (startSetup != null && startSetup.BalanceTeamsResult != null && startSetup.BalanceTeamsResult.Players != null)
                     {
                         // if there is a balance results as a part of start setup, use values from this (override lobby state)
-                        users = new List<UserBattleStatus>(this.Users.Select(x => x.Clone()));
-                        bots = new List<BotBattleStatus>(this.Bots.Select(x => (BotBattleStatus)x.Clone()));
+                        users = Users.Values.ToList();
+                        bots = new List<BotBattleStatus>(this.Bots.Values.Select(x => (BotBattleStatus)x.Clone()));
                         foreach (var p in startSetup.BalanceTeamsResult.Players)
                         {
                             var us = users.FirstOrDefault(x => x.Name == p.Name);
                             if (us == null)
                             {
-                                us = new UserBattleStatus(p.Name, new User() {LobbyID = p.LobbyID}, Password);
+                                us = new UserBattleStatus(p.Name, new User() { AccountID = p.LobbyID }, Password);
                                 users.Add(us);
                             }
                             us.TeamNumber = p.TeamID;
@@ -268,12 +231,12 @@ namespace LobbyClient
                     }
                     else
                     {
-                        users = this.Users;
-                        bots = this.Bots;
+                        users = this.Users.Values.ToList();
+                        bots = this.Bots.Values.ToList();
                     }
 
 
-                    GeneratePlayerSection(playersExport, localUser, startSetup, users, script, positions, bots);
+                    GeneratePlayerSection(playersExport, users, script, bots, Rectangles, ModOptions, localUser, startSetup);
 
                     return script.ToString();
                 }
@@ -284,77 +247,51 @@ namespace LobbyClient
             }
         }
 
-        void GeneratePlayerSection(List<UserBattleStatus> playersExport,
-            User localUser,
-            SpringBattleStartSetup startSetup,
+        public static void GeneratePlayerSection(List<UserBattleStatus> playersExport,
             List<UserBattleStatus> users,
             StringBuilder script,
-            List<StartPos> positions,
-            List<BotBattleStatus> bots)
+            List<BotBattleStatus> bots,
+            IDictionary<int, BattleRect> _rectangles,
+            Dictionary<string, string> _modOptions,
+            User localUser = null,
+            SpringBattleStartSetup startSetup = null
+           )
         {
-            if (mod != null && mod.IsMission) // mission stuff
+            // ordinary battle stuff
+
+            var userNum = 0;
+            var teamNum = 0;
+            var aiNum = 0;
+
+            //players is excluding self (so "springie doesn't appear as spec ingame") & excluding bots (bots is added later for each owner)
+            var non_botUsers = users.Where(u => !bots.Any(b => b.Name == u.Name)); //.OrderBy(x => x.TeamNumber);
+            if (localUser != null) //I am a server
+                non_botUsers = non_botUsers.Where(x => x.Name != localUser.Name);
+
+            foreach (var u in non_botUsers.OrderBy(x => x.TeamNumber))
             {
-                var aiNum = 0;
-                var declaredTeams = new HashSet<int>();
-                var orderedUsers = users.OrderBy(x => x.TeamNumber).ToList();
-                for (var i = 0; i < orderedUsers.Count; i++)
+                ScriptAddUser(script, userNum, playersExport, startSetup, teamNum, u);
+
+                if (!u.IsSpectator)
                 {
-                    var u = orderedUsers[i];
-                    ScriptAddUser(script, i, playersExport, startSetup, u.TeamNumber, u);
-                    if (!u.IsSpectator && !declaredTeams.Contains(u.TeamNumber))
-                    {
-                        ScriptAddTeam(script, u.TeamNumber, positions, i, u,mod,Details);
-                        declaredTeams.Add(u.TeamNumber);
-                    }
+                    ScriptAddTeam(script, teamNum, userNum, u);
+                    teamNum++;
                 }
 
-                for (var i = 0; i < orderedUsers.Count; i++)
+                foreach (var b in bots.Where(x => x.owner == u.Name))
                 {
-                    var u = orderedUsers[i];
-                    foreach (var b in bots.Where(x => x.owner == u.Name))
-                    {
-                        ScriptAddBot(script, aiNum++, b.TeamNumber, i, b);
-                        if (!declaredTeams.Contains(b.TeamNumber))
-                        {
-                            ScriptAddTeam(script, b.TeamNumber, positions, i, b,mod,Details);
-                            declaredTeams.Add(b.TeamNumber);
-                        }
-                    }
+                    ScriptAddBot(script, aiNum, teamNum, userNum, b);
+                    aiNum++;
+                    ScriptAddTeam(script, teamNum, userNum, b);
+                    teamNum++;
                 }
-            }
-            else
-            {
-                // ordinary battle stuff
-
-                var userNum = 0;
-                var teamNum = 0;
-                var aiNum = 0;
-                //players is excluding self (so "springie doesn't appear as spec ingame") & excluding bots (bots is added later for each owner)
-                foreach (var u in users.Where(u => !bots.Any(b => b.Name == u.Name)).OrderBy(x => x.TeamNumber).Where(x => x.Name != localUser.Name)) 
-                {
-                    ScriptAddUser(script, userNum, playersExport, startSetup, teamNum, u);
-
-                    if (!u.IsSpectator)
-                    {
-                        ScriptAddTeam(script, teamNum, positions, userNum, u,mod,Details);
-                        teamNum++;
-                    }
-
-                    foreach (var b in bots.Where(x => x.owner == u.Name))
-                    {
-                        ScriptAddBot(script, aiNum, teamNum, userNum, b);
-                        aiNum++;
-                        ScriptAddTeam(script, teamNum, positions, userNum, b,mod,Details);
-                        teamNum++;
-                    }
-                    userNum++;
-                }
+                userNum++;
             }
 
             // ALLIANCES
             script.AppendLine();
             foreach (var allyNumber in
-                users.Where(x => !x.IsSpectator).Select(x => x.AllyNumber).Union(bots.Select(x => x.AllyNumber)).Union(Rectangles.Keys).Distinct())
+                users.Where(x => !x.IsSpectator).Select(x => x.AllyNumber).Union(bots.Select(x => x.AllyNumber)).Union(_rectangles.Keys).Distinct())
             {
                 // get allies from each player, bot and rectangles (for koth)
                 script.AppendFormat("[ALLYTEAM{0}]\n", allyNumber);
@@ -362,41 +299,20 @@ namespace LobbyClient
                 script.AppendFormat("     NumAllies={0};\n", 0);
                 double left = 0, top = 0, right = 1, bottom = 1;
                 BattleRect rect;
-                if (Rectangles.TryGetValue(allyNumber, out rect)) rect.ToFractions(out left, out top, out right, out bottom);
-                script.AppendFormat(CultureInfo.InvariantCulture,"     StartRectLeft={0};\n", left);
-                script.AppendFormat(CultureInfo.InvariantCulture,"     StartRectTop={0};\n", top);
-                script.AppendFormat(CultureInfo.InvariantCulture,"     StartRectRight={0};\n", right);
-                script.AppendFormat(CultureInfo.InvariantCulture,"     StartRectBottom={0};\n", bottom);
+                if (_rectangles.TryGetValue(allyNumber, out rect)) rect.ToFractions(out left, out top, out right, out bottom);
+                script.AppendFormat(CultureInfo.InvariantCulture, "     StartRectLeft={0};\n", left);
+                script.AppendFormat(CultureInfo.InvariantCulture, "     StartRectTop={0};\n", top);
+                script.AppendFormat(CultureInfo.InvariantCulture, "     StartRectRight={0};\n", right);
+                script.AppendFormat(CultureInfo.InvariantCulture, "     StartRectBottom={0};\n", bottom);
                 script.AppendLine("}");
             }
 
             script.AppendLine();
-            script.AppendFormat("  NumRestrictions={0};\n", DisabledUnits.Count);
-            script.AppendLine();
-
-            if (!mod.IsMission)
-            {
-                script.AppendLine("  [RESTRICT]");
-                script.AppendLine("  {");
-                for (var i = 0; i < DisabledUnits.Count; ++i)
-                {
-                    script.AppendFormat("    Unit{0}={1};\n", i, DisabledUnits[i]);
-                    script.AppendFormat("    Limit{0}=0;\n", i);
-                }
-                script.AppendLine("  }");
 
                 script.AppendLine("  [MODOPTIONS]");
                 script.AppendLine("  {");
 
-                var options = new Dictionary<string, string>();
-
-                // put standard modoptions to options dictionary
-                foreach (var o in mod.Options.Where(x => x.Type != OptionType.Section))
-                {
-                    var v = o.Default;
-                    if (ModOptions.ContainsKey(o.Key)) v = ModOptions[o.Key];
-                    options[o.Key] = v;
-                }
+                var options = new Dictionary<string, string>(_modOptions);
 
                 // replace/add custom modoptions from startsetup (if they exist)
                 if (startSetup != null && startSetup.ModOptions != null) foreach (var entry in startSetup.ModOptions) options[entry.Key] = entry.Value;
@@ -405,7 +321,7 @@ namespace LobbyClient
                 foreach (var kvp in options) script.AppendFormat("    {0}={1};\n", kvp.Key, kvp.Value);
 
                 script.AppendLine("  }");
-            }
+
 
             script.AppendLine("}");
         }
@@ -422,39 +338,18 @@ namespace LobbyClient
             return
                 Enumerable.Range(0, TasClient.MaxTeams - 1).FirstOrDefault(
                     teamID =>
-                    !Users.Where(u => !u.IsSpectator).Any(user => user.Name != exceptUser && user.TeamNumber == teamID) &&
-                    !Bots.Any(x => x.TeamNumber == teamID));
-        }
-
-        public int GetState(User founder)
-        {
-            var battleState = 0;
-            if (founder.IsInGame) battleState += 2;
-            if (IsFull) battleState++;
-            if (IsPassworded) battleState += 3;
-            if (IsReplay) battleState += 6;
-            return battleState;
-        }
-
-        public int GetUserIndex(string name)
-        {
-            for (var i = 0; i < Users.Count; ++i) if (Users[i].Name == name) return i;
-            return -1;
+                    !Users.Values.Where(u => !u.IsSpectator).Any(user => user.Name != exceptUser && user.TeamNumber == teamID) &&
+                    !Bots.Values.Any(x => x.TeamNumber == teamID));
         }
 
 
-        public void RemoveUser(string name)
-        {
-            var ret = GetUserIndex(name);
-            if (ret != -1) Users.RemoveAt(ret);
-        }
 
         public override string ToString()
         {
             return String.Format("{0} {1} ({2}+{3}/{4})", ModName, MapName, NonSpectatorCount, SpectatorCount, MaxPlayers);
         }
 
-        public static void ScriptAddBot(StringBuilder script, int aiNum, int teamNum, int userNum, BotBattleStatus status)
+        static void ScriptAddBot(StringBuilder script, int aiNum, int teamNum, int userNum, BotBattleStatus status)
         {
             // AI
             var split = status.aiLib.Split('|');
@@ -472,40 +367,21 @@ namespace LobbyClient
             script.AppendLine("  }\n");
         }
 
-        public static void ScriptAddTeam(StringBuilder script, int teamNum, List<StartPos> positions, int userNum, UserBattleStatus status, Mod mod, BattleDetails Details)
+        static void ScriptAddTeam(StringBuilder script, int teamNum, int userNum, UserBattleStatus status)
         {
             // BOT TEAM
             script.AppendFormat("  [TEAM{0}]\n", teamNum);
             script.AppendLine("  {");
             script.AppendFormat("     TeamLeader={0};\n", userNum);
             script.AppendFormat("     AllyTeam={0};\n", status.AllyNumber);
-            script.AppendFormat(CultureInfo.InvariantCulture,"     RGBColor={0:F5} {1:F5} {2:F5};\n",
-                                (status.TeamColor & 255)/255.0,
-                                ((status.TeamColor >> 8) & 255)/255.0,
-                                ((status.TeamColor >> 16) & 255)/255.0);
-            var side = "mission";
-            if (mod.Sides.Length > status.Side) side = mod.Sides[status.Side];
-            script.AppendFormat("     Side={0};\n", side);
+            //var side = "mission";
+            //script.AppendFormat("     Side={0};\n", mod.Sides[0]); // is this use of "mod" needed at all?
 
             script.AppendFormat("     Handicap={0};\n", 0);
-            if (mod.IsMission)
-            {
-                script.AppendFormat("      StartPosX={0};\n", 0);
-                script.AppendFormat("      StartPosZ={0};\n", 0);
-            }
-            else
-            {
-                if ((Details.StartPos == BattleStartPos.Random || Details.StartPos == BattleStartPos.Fixed) && positions.Count > teamNum)
-                {
-                    var pos = positions[teamNum];
-                    script.AppendFormat("      StartPosX={0};\n", pos.x);
-                    script.AppendFormat("      StartPosZ={0};\n", pos.z);
-                }
-            }
             script.AppendLine("  }");
         }
 
-        public static void ScriptAddUser(StringBuilder script, int userNum, List<UserBattleStatus> playersExport, SpringBattleStartSetup startSetup, int teamNum, UserBattleStatus status)
+        static void ScriptAddUser(StringBuilder script, int userNum, List<UserBattleStatus> playersExport, SpringBattleStartSetup startSetup, int teamNum, UserBattleStatus status)
         {
             var export = status.Clone();
             export.TeamNumber = teamNum;
@@ -521,47 +397,40 @@ namespace LobbyClient
 
             if (status.LobbyUser != null)
             {
-                script.AppendFormat("     Rank={0};\n", status.LobbyUser.Rank);
                 script.AppendFormat("     CountryCode={0};\n", status.LobbyUser.Country);
-                script.AppendFormat("     LobbyID={0};\n", status.LobbyUser.LobbyID);
-                script.AppendFormat("     LobbyRank={0};\n", status.LobbyUser.Rank);
+                script.AppendFormat("     LobbyID={0};\n", status.LobbyUser.AccountID);
             }
             if (status.ScriptPassword != null) script.AppendFormat("     Password={0};\n", status.ScriptPassword);
 
             if (startSetup != null)
             {
-                var entry = startSetup.UserParameters.FirstOrDefault(x => x.LobbyID == status.LobbyUser.LobbyID);
+                var entry = startSetup.UserParameters.FirstOrDefault(x => x.LobbyID == status.LobbyUser.AccountID);
                 if (entry != null) foreach (var kvp in entry.Parameters) script.AppendFormat("     {0}={1};\n", kvp.Key, kvp.Value);
             }
             script.AppendLine("  }");
         }
 
-        public object Clone()
-        {
-            var b = (Battle)MemberwiseClone();
-            if (Details != null) b.Details = (BattleDetails)Details.Clone();
-            if (Users != null) b.Users = new List<UserBattleStatus>(Users);
-            if (Rectangles != null)
-            {
-                // copy the dictionary
-                b.Rectangles = new Dictionary<int, BattleRect>();
-                foreach (var kvp in Rectangles) b.Rectangles.Add(kvp.Key, kvp.Value);
-            }
 
-            if (DisabledUnits != null) b.DisabledUnits = new List<string>(DisabledUnits);
-            return b;
-        }
-
-        public  BattleContext GetContext()
+        public BattleContext GetContext()
         {
             var ret = new BattleContext();
             ret.AutohostName = Founder.Name;
             ret.Map = MapName;
             ret.Mod = ModName;
-            ret.Players = Users.Where(x=>x.SyncStatus != SyncStatuses.Unknown).Select(x => new PlayerTeam() { AllyID = x.AllyNumber, Name = x.Name, LobbyID = x.LobbyUser.LobbyID, TeamID = x.TeamNumber, IsSpectator = x.IsSpectator }).ToList();
+            ret.Players = Users.Values.Where(x => x.SyncStatus != SyncStatuses.Unknown).Select(x => new PlayerTeam() { AllyID = x.AllyNumber, Name = x.Name, LobbyID = x.LobbyUser.AccountID, TeamID = x.TeamNumber, IsSpectator = x.IsSpectator }).ToList();
 
-            ret.Bots = Bots.Select(x => new BotTeam() { BotName = x.Name, AllyID = x.AllyNumber, TeamID = x.TeamNumber, Owner = x.owner, BotAI = x.aiLib }).ToList();
+            ret.Bots = Bots.Values.Select(x => new BotTeam() { BotName = x.Name, AllyID = x.AllyNumber, TeamID = x.TeamNumber, Owner = x.owner, BotAI = x.aiLib }).ToList();
             return ret;
+        }
+
+        public Battle Clone()
+        {
+            var clone = (Battle)this.MemberwiseClone();
+            clone.Users = new ConcurrentDictionary<string, UserBattleStatus>(this.Users);
+            clone.Bots = new ConcurrentDictionary<string, BotBattleStatus>(this.Bots);
+            clone.Rectangles = new ConcurrentDictionary<int, BattleRect>(this.Rectangles);
+            clone.ModOptions = new Dictionary<string, string>(ModOptions);
+            return clone;
         }
     }
 }

@@ -80,7 +80,7 @@ namespace ZeroKLobby.MicroLobby
       {
         if (saidLine.AuthorName != Program.TasClient.UserName)
         {
-          Program.TasClient.Say(TasClient.SayPlace.User,
+          Program.TasClient.Say(SayPlace.User,
                                 UserName,
                                 String.Format("Answering machine: I have been idle for {0} minutes.", (int)WindowsApi.IdleTime.TotalMinutes),
                                 false);
@@ -111,16 +111,16 @@ namespace ZeroKLobby.MicroLobby
       AddLine(new FriendJoinedBattleLine(userName, battle));
     }
 
-    void TasClient_UserAdded(object sender, EventArgs<User> e)
+    void TasClient_UserAdded(object sender, User user)
     {
-      var userName = e.Data.Name;
+      var userName = user.Name;
       if (userName != UserName) return;
       AddLine(new JoinLine(userName));
     }
 
-    void TasClient_UserRemoved(object sender, TasEventArgs e)
+    void TasClient_UserRemoved(object sender, UserDisconnected e)
     {
-      var userName = e.ServerParams[0];
+      var userName = e.Name;
       if (userName != UserName) return;
       AddLine(new LeaveLine(userName));
     }

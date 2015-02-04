@@ -6,8 +6,7 @@ using System;
 
 namespace LobbyClient
 {
-    [Serializable]
-    public struct BattleRect
+    public class BattleRect
     {
         public const int Max = 200;
 
@@ -23,6 +22,9 @@ namespace LobbyClient
         public int Right { get { return right; } set { right = LimitByMax(value); } }
 
         public int Top { get { return top; } set { top = LimitByMax(value); } }
+
+        public BattleRect() {}
+
 
         public BattleRect(double left, double top, double right, double bottom)
         {

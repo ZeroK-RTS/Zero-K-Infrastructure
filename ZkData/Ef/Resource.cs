@@ -15,7 +15,6 @@ namespace ZkData
             Planets = new HashSet<Planet>();
             ResourceContentFiles = new HashSet<ResourceContentFile>();
             ResourceDependencies = new HashSet<ResourceDependency>();
-            ResourceSpringHashes = new HashSet<ResourceSpringHash>();
             SpringBattlesByMapResourceID = new HashSet<SpringBattle>();
             SpringBattlesByModID = new HashSet<SpringBattle>();
         }
@@ -65,7 +64,6 @@ namespace ZkData
         public virtual ICollection<Planet> Planets { get; set; }
         public virtual ICollection<ResourceContentFile> ResourceContentFiles { get; set; }
         public virtual ICollection<ResourceDependency> ResourceDependencies { get; set; }
-        public virtual ICollection<ResourceSpringHash> ResourceSpringHashes { get; set; }
         public virtual ICollection<SpringBattle> SpringBattlesByModID { get; set; }
         public virtual ICollection<SpringBattle> SpringBattlesByMapResourceID { get; set; }
 

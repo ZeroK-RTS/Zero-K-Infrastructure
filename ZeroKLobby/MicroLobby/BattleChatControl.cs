@@ -44,8 +44,8 @@ namespace ZeroKLobby.MicroLobby
 			Program.ModStore.ModLoaded += ModStoreModLoaded;
 
 
-			if (Program.TasClient.MyBattle != null) foreach (var user in Program.TasClient.MyBattle.Users) AddUser(user.Name);
-			ChatLine += (s, e) => { if (Program.TasClient.IsLoggedIn) Program.TasClient.Say(TasClient.SayPlace.Battle, null, e.Data, false); };
+			if (Program.TasClient.MyBattle != null) foreach (var user in Program.TasClient.MyBattle.Users.Values) AddUser(user.Name);
+			ChatLine += (s, e) => { if (Program.TasClient.IsLoggedIn) Program.TasClient.Say(SayPlace.Battle, null, e.Data, false); };
 			playerBox.IsBattle = true;
 			playerBox.MouseDown += playerBox_MouseDown;
 
@@ -129,7 +129,7 @@ namespace ZeroKLobby.MicroLobby
 			var nonSpecs = PlayerListItems.Where(p => p.UserBattleStatus != null && !p.UserBattleStatus.IsSpectator);
 			var existingTeams = nonSpecs.GroupBy(i => i.UserBattleStatus.AllyNumber).Select(team => team.Key).ToList();
 
-			foreach (var bot in Program.TasClient.MyBattle.Bots)
+			foreach (var bot in Program.TasClient.MyBattle.Bots.Values)
 			{
 				var missionSlot = GetSlotByTeamID(bot.TeamNumber);
 				newList.Add(new PlayerListItem
@@ -153,7 +153,7 @@ namespace ZeroKLobby.MicroLobby
 		        foreach (var team in buttonTeams)
 		        {
 		            int numPlayers = nonSpecs.Where(p => p.UserBattleStatus.AllyNumber == team).Count();
-		            int numBots = Program.TasClient.MyBattle.Bots.Where(p => p.AllyNumber == team).Count();
+		            int numBots = Program.TasClient.MyBattle.Bots.Values.Where(p => p.AllyNumber == team).Count();
 		            int numTotal = numPlayers + numBots;
 
 		            var allianceName = "Team " + (team + 1) + (numTotal > 3 ? "  (" + numTotal + ")" : "");
@@ -178,9 +178,9 @@ namespace ZeroKLobby.MicroLobby
             playerBox.EndUpdate();
 		}
 
-		protected override void client_ChannelUserAdded(object sender, TasEventArgs e) {}
+		protected override void client_ChannelUserAdded(object sender, ChannelUserInfo e) {}
 
-		protected override void client_ChannelUserRemoved(object sender, TasEventArgs e) {}
+		protected override void client_ChannelUserRemoved(object sender, ChannelUserRemovedInfo e) {}
 
 		void DrawMinimap()
 		{
@@ -242,7 +242,8 @@ namespace ZeroKLobby.MicroLobby
 		void RefreshBattleUser(string userName)
 		{
 			if (Program.TasClient.MyBattle == null) return;
-			var userBattleStatus = Program.TasClient.MyBattle.Users.SingleOrDefault(u => u.Name == userName);
+			UserBattleStatus userBattleStatus;
+            Program.TasClient.MyBattle.Users.TryGetValue(userName, out userBattleStatus);
 			if (userBattleStatus != null)
 			{
 				AddUser(userName);
@@ -276,7 +277,7 @@ namespace ZeroKLobby.MicroLobby
 			                                           	{
 			                                           		minimapBox.Image = null;
 			                                           		minimap = null;
-			                                           	}), Program.SpringPaths.SpringVersion);
+			                                           	}));
 		}
 
 		void ModStoreModLoaded(object sender, EventArgs<Mod> e)
@@ -290,32 +291,35 @@ namespace ZeroKLobby.MicroLobby
 		}
 
 
-		void TasClient_BattleJoined(object sender, EventArgs<Battle> e)
+		void TasClient_BattleJoined(object sender, Battle battle)
 		{
 			Reset();
-			SetMapImages(e.Data.MapName);
-		    minimapFuncBox.QueueMode = e.Data.IsQueue;
-			foreach (var user in Program.TasClient.MyBattle.Users) AddUser(user.Name);
-			base.AddLine(new SelfJoinedBattleLine(e.Data));
+			SetMapImages(battle.MapName);
+		    minimapFuncBox.QueueMode = battle.IsQueue;
+			foreach (var user in Program.TasClient.MyBattle.Users.Values) AddUser(user.Name);
+			base.AddLine(new SelfJoinedBattleLine(battle));
 		}
 
-		void TasClient_BattleMapChanged(object sender, BattleInfoEventArgs e1)
+		void TasClient_BattleMapChanged(object sender, OldNewPair<Battle> pair)
 		{
-			var battleID = e1.BattleID;
-			if (Program.TasClient.MyBattle == null || battleID != Program.TasClient.MyBattle.BattleID) return;
-			var mapName = e1.MapName;
-			SetMapImages(mapName);
+		    var tas = (TasClient)sender;
+		    if (tas.MyBattle == pair.New) {
+		        SetMapImages(pair.New.MapName);    
+		    }
 		}
 
 		void TasClient_BattleUserJoined(object sender, BattleUserEventArgs e1)
 		{
 			var battleID = e1.BattleID;
-			if (Program.TasClient.MyBattle != null && battleID == Program.TasClient.MyBattle.BattleID)
+		    var tas = (TasClient)sender;
+			if (tas.MyBattle != null && battleID == tas.MyBattle.BattleID)
 			{
 				var userName = e1.UserName;
-				var userBattleStatus = Program.TasClient.MyBattle.Users.Single(u => u.Name == userName);
-				AddUser(userBattleStatus.Name);
-				AddLine(new JoinLine(userName));
+				UserBattleStatus userBattleStatus;
+			    if (tas.MyBattle.Users.TryGetValue(userName, out userBattleStatus)) {
+			        AddUser(userBattleStatus.Name);
+			        AddLine(new JoinLine(userName));
+			    }
 			}
 		}
 
@@ -335,16 +339,15 @@ namespace ZeroKLobby.MicroLobby
 			}
 		}
 
-		void TasClient_BattleUserStatusChanged(object sender, TasEventArgs e)
+		void TasClient_BattleUserStatusChanged(object sender, UserBattleStatus ubs)
 		{
-			var userName = e.ServerParams[0];
-			RefreshBattleUser(userName);
+			RefreshBattleUser(ubs.Name);
 		}
 
 
 		void TasClient_Said(object sender, TasSayEventArgs e)
 		{
-			if (e.Place == TasSayEventArgs.Places.Battle && e.Origin == TasSayEventArgs.Origins.Player)
+			if (e.Place == SayPlace.Battle || e.Place == SayPlace.BattlePrivate)
 			{
 				if (e.Text.Contains(Program.Conf.LobbyPlayerName) && !Program.TasClient.MyUser.IsInGame && !e.IsEmote && e.UserName != GlobalConst.NightwatchName &&
 				    !e.Text.StartsWith(string.Format("[{0}]", Program.TasClient.UserName))) Program.MainWindow.NotifyUser("chat/battle", string.Format("{0}: {1}", e.UserName, e.Text), false, true);

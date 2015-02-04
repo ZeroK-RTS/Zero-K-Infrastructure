@@ -41,7 +41,7 @@ namespace Springie.autohost.Polls
             try {
                 bool val;
                 var moves =
-                    tas.MyBattle.Users.Where(x => x.Name != tas.MyBattle.Founder.Name)
+                    tas.MyBattle.Users.Values.Where(x => x.Name != tas.MyBattle.Founder.Name)
                        .Where(x => !userVotes.TryGetValue(x.Name, out val) || val)
                        .Select(x => new MovePlayerEntry() { BattleHost = host, PlayerName = x.Name })
                        .ToList(); // move all that didnt vote "no" 
@@ -57,7 +57,7 @@ namespace Springie.autohost.Polls
             bool val;
             try {
                 var moves =
-                    tas.MyBattle.Users.Where(x => x.Name != tas.MyBattle.Founder.Name)
+                    tas.MyBattle.Users.Values.Where(x => x.Name != tas.MyBattle.Founder.Name)
                        .Where(x => userVotes.TryGetValue(x.Name, out val) && val)
                        .Select(x => new MovePlayerEntry() { BattleHost = host, PlayerName = x.Name})
                        .ToList(); // move those that voted yes if there are at least 2

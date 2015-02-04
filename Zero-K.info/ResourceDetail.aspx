@@ -15,9 +15,7 @@
     Depends on:<br />
     <asp:Literal runat="server" ID="litLinks"></asp:Literal><br /><br />
 		
-    Spring hashes:<br />
-    <asp:Literal runat="server" ID="litHashes"></asp:Literal><br /><br />
-    
+   
     Possible files:<br />
 			<asp:GridView ID="GridView1" runat="server" AllowPaging="True" 
 				AllowSorting="True" AutoGenerateColumns="False" CellPadding="4" 

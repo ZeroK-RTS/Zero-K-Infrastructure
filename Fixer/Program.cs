@@ -219,10 +219,11 @@ namespace Fixer
         [STAThread]
         static void Main(string[] args)
         {
-            var ns = new NubSimulator();
-            ns.SpawnMany();
-            Console.ReadLine();
+            //var ns = new NubSimulator();
+            //ns.SpawnMany();
+            //Console.ReadLine();
 
+            MigrateDatabase();
             //FixDuplicatedAccounts();
             //BcryptPasswords();
             //var db = new ZkDataContext(true);
@@ -347,35 +348,6 @@ namespace Fixer
             db.SubmitAndMergeChanges();
         }
 
-
-        public static void FixHashes()
-        {
-            var db = new ZkDataContext();
-            foreach (var r in db.Resources.Include(x => x.ResourceSpringHashes))
-            {
-                var h84 = r.ResourceSpringHashes.Where(x => x.SpringVersion == "84").Select(x => x.SpringHash).SingleOrDefault();
-                var h840 = r.ResourceSpringHashes.Where(x => x.SpringVersion == "84.0").Select(x => x.SpringHash).SingleOrDefault();
-
-                if (h84 != h840)
-                {
-                    var entry = r.ResourceSpringHashes.SingleOrDefault(x => x.SpringVersion == "84.0");
-                    if (h84 != 0)
-                    {
-                        if (entry == null)
-                        {
-                            entry = new ResourceSpringHash() { SpringVersion = "84.0" };
-                            r.ResourceSpringHashes.Add(entry);
-                        }
-                        entry.SpringHash = h84;
-                    }
-                    else
-                    {
-                        if (entry != null) db.ResourceSpringHashes.DeleteOnSubmit(entry);
-                    }
-                }
-            }
-            db.SubmitChanges();
-        }
 
         public static void CountUserIDs()
         {

@@ -31,7 +31,7 @@ namespace ZkData
             #elif TEST
                 Mode = ModeType.Test;
             #else
-                Mode = ModeType.Local;
+                Mode = ModeType.Test;
             #endif
         }
 
@@ -46,6 +46,8 @@ namespace ZkData
 
                     LobbyServerHost = "localhost";
                     LobbyServerPort = 8200;
+
+                    OldSpringLobbyPort = 7000;
                     break;
                 case ModeType.Test:
                     BaseSiteUrl = "http://test.zero-k.info";
@@ -55,6 +57,8 @@ namespace ZkData
 
                     LobbyServerHost = "lobby.zero-k.info";
                     LobbyServerPort = 8202;
+
+                    OldSpringLobbyPort = 7000;
                     break;
                 case ModeType.Live:
                     BaseSiteUrl = "http://zero-k.info";
@@ -64,6 +68,8 @@ namespace ZkData
 
                     LobbyServerHost = "lobby.zero-k.info";
                     LobbyServerPort = 8200;
+
+                    OldSpringLobbyPort = 8200;
                     break;
             }
 
@@ -76,6 +82,10 @@ namespace ZkData
             
             mode = newMode;
         }
+
+        public static string OldSpringLobbyHost = "lobby.springrts.com";
+        public static int OldSpringLobbyPort;
+        
 
         public static BasicHttpBinding CreateBasicHttpBinding()
         {
@@ -198,6 +208,10 @@ namespace ZkData
         public const int PlanetWarsMaxTeamsize = 4;
         public const int MinPlanetWarsLevel = 10;
         public const int MinPlanetWarsElo = 1000;
+        
+        public const int LobbyProtocolPingInterval = 30;
+        public const int LobbyProtocolPingTimeout = 60;
+
         public static string ResourceBaseUrl;
         public static string SelfUpdaterBaseUrl;
         public static readonly string[] DefaultDownloadMirrors = {};

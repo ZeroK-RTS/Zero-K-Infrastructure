@@ -98,6 +98,14 @@
     <Compile Include="Migrations\201501261515552_RemovePlainHashedPasswords.Designer.cs">
       <DependentUpon>201501261515552_RemovePlainHashedPasswords.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201501281237432_RemoveLobbyAdminColumn.cs" />
+    <Compile Include="Migrations\201501281237432_RemoveLobbyAdminColumn.Designer.cs">
+      <DependentUpon>201501281237432_RemoveLobbyAdminColumn.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501290241027_RemoveSpringHashes.cs" />
+    <Compile Include="Migrations\201501290241027_RemoveSpringHashes.Designer.cs">
+      <DependentUpon>201501290241027_RemoveSpringHashes.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
     <Compile Include="CurrentLobbyStats.cs" />
@@ -168,7 +176,6 @@
     <Compile Include="Ef\Resource.cs" />
     <Compile Include="Ef\ResourceContentFile.cs" />
     <Compile Include="Ef\ResourceDependency.cs" />
-    <Compile Include="Ef\ResourceSpringHash.cs" />
     <Compile Include="Ef\RoleType.cs" />
     <Compile Include="Ef\RoleTypeHierarchy.cs" />
     <Compile Include="Ef\SpringBattle.cs" />
@@ -257,6 +264,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201501261515552_RemovePlainHashedPasswords.resx">
       <DependentUpon>201501261515552_RemovePlainHashedPasswords.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501281237432_RemoveLobbyAdminColumn.resx">
+      <DependentUpon>201501281237432_RemoveLobbyAdminColumn.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501290241027_RemoveSpringHashes.resx">
+      <DependentUpon>201501290241027_RemoveSpringHashes.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

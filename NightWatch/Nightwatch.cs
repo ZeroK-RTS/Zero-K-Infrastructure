@@ -49,7 +49,7 @@ namespace CaTracker
         public Nightwatch()
 		
         {
-            tas = new TasClient(null, "NightWatch", GlobalConst.ZkLobbyUserCpu);
+            tas = new TasClient("NightWatch");
 			config = new Config();
             Trace.Listeners.Add(new NightwatchTraceListener(tas));
         }
@@ -61,6 +61,16 @@ namespace CaTracker
 			tas.LoginDenied += tas_LoginDenied;
 			tas.LoginAccepted += tas_LoginAccepted;
 
+		    using (var db = new ZkDataContext()) {
+		        var acc = db.Accounts.FirstOrDefault(x => x.Name == GlobalConst.NightwatchName);
+		        if (acc != null) {
+		            acc.SetPasswordPlain(config.AccountPassword);
+		            acc.IsBot = true;
+		            acc.IsZeroKAdmin = true;
+		            db.SaveChanges();
+		        }
+		    }
+
             Auth = new AuthService(tas);
             adminCommands = new AdminCommands(tas);
             offlineMessages = new OfflineMessages(tas);
@@ -70,20 +80,20 @@ namespace CaTracker
 
 		    PayPalInterface = new PayPalInterface();
 		    PayPalInterface.Error += (e) =>
-		        { tas.Say(TasClient.SayPlace.Channel, "zkdev", "PAYMENT ERROR: " + e.ToString(), true); };
+		        { tas.Say(SayPlace.Channel, "zkdev", "PAYMENT ERROR: " + e.ToString(), true); };
 
 		    PayPalInterface.NewContribution += (c) =>
 		        {
-		            tas.Say(TasClient.SayPlace.Channel,
+		            tas.Say(SayPlace.Channel,
 		                    "zkdev",
 		                    string.Format("WOOHOO! {0:d} New contribution of {1:F2}€ by {2} - for the jar {3}", c.Time, c.Euros, c.Name.Split(new[]{' '},StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(), c.ContributionJar.Name),
 		                    true);
 		            if (c.AccountByAccountID == null)
-		                tas.Say(TasClient.SayPlace.Channel,
+		                tas.Say(SayPlace.Channel,
 		                        "zkdev",
                                 string.Format("Warning, user account unknown yet, payment remains unassigned. If you know user name, please assign it manually {0}/Contributions", GlobalConst.BaseSiteUrl),
 		                        true);
-                    else tas.Say(TasClient.SayPlace.Channel,
+                    else tas.Say(SayPlace.Channel,
                                 "zkdev",
                                 string.Format("It is {0} {2}/Users/Detail/{1}", c.AccountByAccountID.Name, c.AccountID, GlobalConst.BaseSiteUrl),
                                 true);
@@ -95,7 +105,7 @@ namespace CaTracker
 			return true;
 		}
 
-		void tas_Connected(object sender, TasEventArgs e)
+		void tas_Connected(object sender, Welcome welcome)
 		{
 			tas.Login(config.AccountName, config.AccountPassword);
 		}
@@ -105,7 +115,7 @@ namespace CaTracker
 			for (var i = 0; i < config.JoinChannels.Length; ++i) tas.JoinChannel(config.JoinChannels[i]);
 		}
 
-		void tas_LoginDenied(object sender, TasEventArgs e)
+		void tas_LoginDenied(object sender, LoginResponse loginResponse)
 		{
             Utils.StartAsync(() =>
             {

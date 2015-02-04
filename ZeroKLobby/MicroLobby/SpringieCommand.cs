@@ -43,7 +43,7 @@ namespace ZeroKLobby.MicroLobby
 		{
 			ActionHandler.HidePM(Command);
 			ActionHandler.HidePM(Reply);
-			Program.TasClient.Say(TasClient.SayPlace.User, autohostName, Command, false);
+			Program.TasClient.Say(SayPlace.User, autohostName, Command, false);
 		}
 
 		public static SpringieCommand Spawn(string modName, string title, string password)

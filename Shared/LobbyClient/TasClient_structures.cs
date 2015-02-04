@@ -1,18 +1,10 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 
 namespace LobbyClient
 {
-	/// <summary>
-	/// Basic channel information - for channel enumeration
-	/// </summary>
-	public class ExistingChannel
-	{
-		public string name;
-		public string topic;
-		public int userCount;
-	} ;
 
 	public class TasEventArgs: EventArgs
 	{
@@ -27,6 +19,16 @@ namespace LobbyClient
 			this.serverParams = new List<string>(serverParams);
 		}
 	} ;
+
+    public class Channel
+    {
+        public ConcurrentDictionary<string, User> Users = new ConcurrentDictionary<string, User>();
+        public string Name { get; set; }
+        public string Topic { get; set; }
+        public string TopicSetBy { get; set; }
+        public DateTime? TopicSetDate { get; set; }
+        public string Password;
+    }
 
 
 	public class BattleInfoEventArgs: EventArgs
@@ -61,95 +63,23 @@ namespace LobbyClient
 		}
 	}
 
-    public class KickedFromServerEventArgs : EventArgs
-    {
-        //WarningBar.DisplayWarning("You have been kicked server by " + name + ".\r\nReason: " + match.Groups[2].Value)
-        public string UserName { get; private set; }
-        public string Reason { get; private set; }
-
-        public KickedFromServerEventArgs(string userName, string reason = null)
-		{
-			UserName = userName;
-			Reason = reason;
-		}
-    }
-
-
-    public class UserLobbyVersionEventArgs: EventArgs {
-        public string Name;
-        public string LobbyVersion;
-        public UserLobbyVersionEventArgs() {}
-
-        public UserLobbyVersionEventArgs(string name, string lobbyVersion)
-        {
-            Name = name;
-            LobbyVersion = lobbyVersion;
-        }
-    }
-
-    public class UserIPEventArgs: EventArgs {
-        public string Name;
-        public string IP;
-        public UserIPEventArgs() {}
-
-        public UserIPEventArgs(string name, string ip)
-        {
-            Name = name;
-            IP = ip;
-        }
-    }
-
-    public class UserIDEventArgs : EventArgs
-    {
-        public string Name;
-        public long ID;
-        public UserIDEventArgs() { }
-
-        public UserIDEventArgs(string name, long id)
-        {
-            Name = name;
-            ID = id;
-        }
-    }
-
-
 
     public class TasSayEventArgs: EventArgs
 	{
-		public enum Origins
-		{
-			Server,
-			Player
-		}
-
-		public enum Places
-		{
-			Normal,
-			Motd,
-			Channel,
-			Battle,
-			MessageBox,
-			Broadcast,
-			Game,
-			Server
-		}
 
 		public string Channel { get; set; }
-		public static TasSayEventArgs Default = new TasSayEventArgs(Origins.Player, Places.Battle, "", "", "", false);
+		public static TasSayEventArgs Default = new TasSayEventArgs(SayPlace.Battle, "", "", "", false);
 
 		public bool IsEmote { get; set; }
 
-		public Origins Origin { get; set; }
-
-		public Places Place { get; set; }
+		public SayPlace Place { get; set; }
 
 		public string Text { get; set; }
 
 		public string UserName { get; set; }
 
-		public TasSayEventArgs(Origins origin, Places place, string channel, string username, string text, bool isEmote)
+		public TasSayEventArgs(SayPlace place, string channel, string username, string text, bool isEmote)
 		{
-			Origin = origin;
 			Place = place;
 			UserName = username;
 			Text = text;
@@ -158,31 +88,30 @@ namespace LobbyClient
 		}
 	} ;
 
-	public class TasInputArgs: EventArgs
-	{
-		public string[] Args;
-		public string Command;
 
-		public TasInputArgs(string command, string[] args)
-		{
-			Command = command;
-			Args = args;
-		}
-	} ;
+    public class OldNewPair<T>
+    {
+        public T Old;
+        public T New;
 
-	public class TasClientException: Exception
-	{
-		public TasClientException() {}
-		public TasClientException(string message): base(message) {}
-	} ;
+        public OldNewPair(T old, T @new)
+        {
+            Old = old;
+            New = @new;
+        }
+    }
 
-	public class TasEventAgreementRecieved: EventArgs
-	{
-		public string Text { get; protected set; }
+    public class ChannelUserInfo
+    {
+        public Channel Channel;
+        public List<User> Users;
+    }
 
-		public TasEventAgreementRecieved(StringBuilder builder)
-		{
-			Text = builder.ToString();
-		}
-	}
+    public class ChannelUserRemovedInfo
+    {
+        public Channel Channel;
+        public User User;
+        public string Reason;
+    }
+
 }

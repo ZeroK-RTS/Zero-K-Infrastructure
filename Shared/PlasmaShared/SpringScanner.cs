@@ -183,7 +183,7 @@ namespace ZkData
 
         bool isDisposed;
 
-        public CacheItem FindCacheEntry(string name, int springHash)
+        public CacheItem FindCacheEntry(string name)
         {
             lock (cache)
             {
@@ -197,22 +197,6 @@ namespace ZkData
         }
 
 
-        public int GetSpringHash(string name, string springVersion)
-        {
-            lock (cache)
-            {
-                springVersion = springVersion ?? springPaths.SpringVersion;
-                CacheItem item;
-                if (cache.NameIndex.TryGetValue(name, out item))
-                {
-                    SpringHashEntry match;
-                    if (string.IsNullOrEmpty(springVersion)) match = item.SpringHash.LastOrDefault();
-                    else match = item.SpringHash.FirstOrDefault(x => x.SpringVersion == springVersion);
-                    if (match != null) return match.SpringHash;
-                }
-            }
-            return 0;
-        }
 
 
         public bool HasResource(string name)
@@ -381,7 +365,6 @@ namespace ZkData
             }
             work.CacheItem.InternalName = result.InternalName;
             work.CacheItem.ResourceType = result.ResourceType;
-            work.CacheItem.SpringHash = result.SpringHashes.ToArray();
             Trace.WriteLine(string.Format("Adding {0}", work.CacheItem.InternalName));
             CacheItemAdd(work.CacheItem);
         }
@@ -615,10 +598,6 @@ namespace ZkData
             {
                 workItem.CacheItem.InternalName = info.Name;
                 workItem.CacheItem.ResourceType = info is Map ? ResourceType.Map : ResourceType.Mod;
-                var hashes = new List<SpringHashEntry>();
-                if (workItem.CacheItem.SpringHash != null) hashes.AddRange(workItem.CacheItem.SpringHash.Where(x => x.SpringVersion != springPaths.SpringVersion));
-                hashes.Add(new SpringHashEntry() { SpringHash = info.Checksum, SpringVersion = springPaths.SpringVersion });
-                workItem.CacheItem.SpringHash = hashes.ToArray();
 
                 CacheItemAdd(workItem.CacheItem);
 
@@ -656,7 +635,7 @@ namespace ZkData
                         try {
                              e = service.RegisterResource(PlasmaServiceVersion, springPaths.SpringVersion, workItem.CacheItem.Md5.ToString(),
                                 workItem.CacheItem.Length, info is Map ? ResourceType.Map : ResourceType.Mod, workItem.CacheItem.FileName, info.Name,
-                                info.Checksum, serializedData, mod != null ? mod.Dependencies.ToList() : null, minimap, metalMap, heightMap,
+                                serializedData, mod != null ? mod.Dependencies.ToList() : null, minimap, metalMap, heightMap,
                                 ms.ToArray());
                         } catch (Exception ex) {
                             Trace.TraceError("Error uploading data to server: {0}", ex);
@@ -833,8 +812,6 @@ namespace ZkData
             public ResourceType ResourceType;
 
             public string ShortPath { get { return GetShortPath(Folder, FileName); } }
-
-            public SpringHashEntry[] SpringHash;
         }
 
 

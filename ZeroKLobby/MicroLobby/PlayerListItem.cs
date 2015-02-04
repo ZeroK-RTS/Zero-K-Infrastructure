@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Linq;
+using System.Web.Services.Description;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using LobbyClient;
@@ -49,7 +50,7 @@ namespace ZeroKLobby.MicroLobby
                     && KnownGames.GetGame(Program.TasClient.MyBattle.ModName).IsPrimary;
             } 
         }
-        public bool IsSpringieBattle { get { return Program.TasClient.MyBattle != null && Program.TasClient.MyBattle.Founder.IsZkLobbyUser; } }
+
         public User User
         {
             get
@@ -63,10 +64,15 @@ namespace ZeroKLobby.MicroLobby
         }
         public UserBattleStatus UserBattleStatus
         {
-            get 
+            get
             {
                 if (isOfflineMode) return offlineUserBattleStatus;
-                return Program.TasClient.MyBattle == null ? null : Program.TasClient.MyBattle.Users.SingleOrDefault(u => u.Name == UserName);
+                var bat = Program.TasClient.MyBattle;
+                if (bat != null && UserName != null) {
+                    UserBattleStatus ubs;
+                    if (bat.Users.TryGetValue(UserName, out ubs)) return ubs;
+                }
+                return null;
             }
         }
 
@@ -155,15 +161,6 @@ namespace ZeroKLobby.MicroLobby
             {
                 var bot = BotBattleStatus;
                 x += 19;
-                var botColor = BotBattleStatus.TeamColorRGB;
-                if (!IsZeroKBattle)
-                {
-                    using (var brush = new SolidBrush(Color.FromArgb(botColor[0], botColor[1], botColor[2])))
-                    {
-                        g.SmoothingMode = SmoothingMode.AntiAlias;
-                        g.FillEllipse(brush, x, bounds.Top, bounds.Bottom - bounds.Top, bounds.Bottom - bounds.Top);
-                    }
-                }
                 drawImage(ZklResources.robot);
                 var botDisplayName = MissionSlot == null ? bot.aiLib : MissionSlot.TeamName;
                 drawText(botDisplayName + " (" + bot.owner + ")", foreColor, backColor);
@@ -183,21 +180,8 @@ namespace ZeroKLobby.MicroLobby
             if (isBattle)
             {
                 if (userStatus.IsSpectator && (Program.TasClient.MyBattle == null || !Program.TasClient.MyBattle.IsQueue || Program.TasClient.MyBattle.Founder.Name == userStatus.Name)) drawImage(ZklResources.spec);
-                else if (userStatus.SyncStatus == SyncStatuses.Synced && (IsSpringieBattle || userStatus.IsReady)) drawImage(ZklResources.ready);
+                else if (userStatus.SyncStatus == SyncStatuses.Synced) drawImage(ZklResources.ready);
                 else drawImage(ZklResources.unready);
-
-                if (!userStatus.IsSpectator)
-                {
-                    if (!IsZeroKBattle)
-                    {
-                        var userColor = userStatus.TeamColorRGB;
-                        using (var brush = new SolidBrush(Color.FromArgb(userColor[0], userColor[1], userColor[2])))
-                        {
-                            g.SmoothingMode = SmoothingMode.AntiAlias;
-                            g.FillEllipse(brush, x, bounds.Top, bounds.Bottom - bounds.Top, bounds.Bottom - bounds.Top);
-                        }
-                    }
-                }
             }
 
             drawImage(TextImage.GetUserImage(user.Name));

@@ -35,7 +35,7 @@ namespace ZeroKWeb
 
 		protected void btnLoginClicked(object sender, EventArgs e)
 		{
-			if (Global.IsAccountAuthorized && (Global.Account.IsLobbyAdministrator || Global.Account.IsZeroKAdmin)) {
+			if (Global.IsAccountAuthorized && (Global.Account.IsZeroKAdmin)) {
 				Session["login"] = true;
 				panelLogin.Visible = false;
 			} else {

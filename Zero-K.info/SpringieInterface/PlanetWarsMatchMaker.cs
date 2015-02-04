@@ -103,7 +103,7 @@ namespace ZeroKWeb
             tas.PreviewSaid += TasOnPreviewSaid;
             tas.UserRemoved += TasOnUserRemoved;
             tas.ChannelUserAdded += TasOnChannelUserAdded;
-            tas.ChannelJoined += (sender, args) => { if (args.ServerParams[0] == "extension") tas.Extensions.SendJsonData(GenerateLobbyCommand()); };
+            tas.ChannelJoined += (sender, args) => { if (args.Name == "extension") tas.Extensions.SendJsonData(GenerateLobbyCommand()); };
 
             timer = new Timer(10000);
             timer.AutoReset = true;
@@ -121,14 +121,14 @@ namespace ZeroKWeb
 
             Battle emptyHost =
                 tas.ExistingBattles.Values.FirstOrDefault(
-                    x => !x.IsInGame && x.Founder.Name.TrimNumbers() == pwHostName && x.Users.All(y => y.IsSpectator || y.Name == x.Founder.Name));
+                    x => !x.IsInGame && x.Founder.Name.TrimNumbers() == pwHostName && x.Users.Values.All(y => y.IsSpectator || y.Name == x.Founder.Name));
 
             if (emptyHost != null)
             {
                 var targetHost = emptyHost.Founder.Name;
                 RunningBattles[targetHost] = Challenge;
 
-                tas.Say(TasClient.SayPlace.User, targetHost, "!map " + Challenge.Map, false);
+                tas.Say(SayPlace.User, targetHost, "!map " + Challenge.Map, false);
                 Thread.Sleep(500);
                 foreach (string x in Challenge.Attackers) tas.ForceJoinBattle(x, emptyHost.BattleID);
                 foreach (string x in Challenge.Defenders) tas.ForceJoinBattle(x, emptyHost.BattleID);
@@ -138,7 +138,7 @@ namespace ZeroKWeb
                 var bat = tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == pwSpec);
                 if (bat != null)
                 {
-                    foreach (var b in bat.Users.Where(x => x.Name != pwSpec)) tas.ForceJoinBattle(b.Name, targetHost);
+                    foreach (var b in bat.Users.Values.Where(x => x.Name != pwSpec)) tas.ForceJoinBattle(b.Name, targetHost);
                 }
 
                 var text = string.Format("Battle for planet {0} starts on zk://@join_player:{1}  Roster: {2} vs {3}",
@@ -149,23 +149,23 @@ namespace ZeroKWeb
 
                 foreach (var fac in factions)
                 {
-                    tas.Say(TasClient.SayPlace.Channel, fac.Shortcut, text, true);
+                    tas.Say(SayPlace.Channel, fac.Shortcut, text, true);
                 }
 
                 Utils.StartAsync(() =>
                 {
                     Thread.Sleep(6000);
-                    tas.Say(TasClient.SayPlace.User, targetHost, "!balance", false);
+                    tas.Say(SayPlace.User, targetHost, "!balance", false);
                     Thread.Sleep(1000);
-                    tas.Say(TasClient.SayPlace.User, targetHost, "!endvote", false);
-                    tas.Say(TasClient.SayPlace.User, targetHost, "!forcestart", false);
+                    tas.Say(SayPlace.User, targetHost, "!endvote", false);
+                    tas.Say(SayPlace.User, targetHost, "!forcestart", false);
                 });
             }
             else
             {
                 foreach (var c in factions)
                 {
-                    tas.Say(TasClient.SayPlace.Channel, c.Shortcut, "Battle could not start - no autohost found", true);
+                    tas.Say(SayPlace.Channel, c.Shortcut, "Battle could not start - no autohost found", true);
                 }
             }
 
@@ -244,7 +244,7 @@ namespace ZeroKWeb
                 if (tas.ExistingUsers.TryGetValue(userName, out user))
                 {
                     var db = new ZkDataContext();
-                    Account account =  db.Accounts.Find(user.LobbyID);
+                    Account account =  db.Accounts.Find(user.AccountID);
                     if (account != null && account.FactionID == AttackingFaction.FactionID && account.CanPlayerPlanetWars())
                     {
                         // remove existing user from other options
@@ -254,7 +254,7 @@ namespace ZeroKWeb
                         if (attackOption.Attackers.Count < attackOption.TeamSize)
                         {
                             attackOption.Attackers.Add(user.Name);
-                            tas.Say(TasClient.SayPlace.Channel, user.Faction, string.Format("{0} joins attack on {1}", userName, attackOption.Name), true);
+                            tas.Say(SayPlace.Channel, user.Faction, string.Format("{0} joins attack on {1}", userName, attackOption.Name), true);
 
                             if (attackOption.Attackers.Count == attackOption.TeamSize) StartChallenge(attackOption);
                             else UpdateLobby();
@@ -272,13 +272,13 @@ namespace ZeroKWeb
                 if (tas.ExistingUsers.TryGetValue(userName, out user))
                 {
                     var db = new ZkDataContext();
-                    Account account = db.Accounts.Find(user.LobbyID);
+                    Account account = db.Accounts.Find(user.AccountID);
                     if (account != null && GetDefendingFactions(Challenge).Any(y => y.FactionID == account.FactionID) && account.CanPlayerPlanetWars())
                     {
                         if (!Challenge.Defenders.Any(y => y == user.Name))
                         {
                             Challenge.Defenders.Add(user.Name);
-                            tas.Say(TasClient.SayPlace.Channel, user.Faction, string.Format("{0} joins defense of {1}", userName, Challenge.Name), true);
+                            tas.Say(SayPlace.Channel, user.Faction, string.Format("{0} joins defense of {1}", userName, Challenge.Name), true);
 
                             if (Challenge.Defenders.Count == Challenge.TeamSize) AcceptChallenge();
                             else UpdateLobby();
@@ -308,7 +308,7 @@ namespace ZeroKWeb
             var message = string.Format("{0} won because nobody tried to defend", AttackingFaction.Name);
             foreach (var fac in factions)
             {
-                tas.Say(TasClient.SayPlace.Channel, fac.Shortcut, message, true);
+                tas.Say(SayPlace.Channel, fac.Shortcut, message, true);
             }
 
 
@@ -365,7 +365,7 @@ namespace ZeroKWeb
 
             UpdateLobby();
 
-            tas.Say(TasClient.SayPlace.Channel, AttackingFaction.Shortcut, "It's your turn! Select a planet to attack", true);
+            tas.Say(SayPlace.Channel, AttackingFaction.Shortcut, "It's your turn! Select a planet to attack", true);
         }
 
         void InternalAddOption(Planet planet)
@@ -402,16 +402,16 @@ namespace ZeroKWeb
         }
 
 
-        void TasOnChannelUserAdded(object sender, TasEventArgs args)
+        void TasOnChannelUserAdded(object sender, ChannelUserInfo e)
         {
-            string chan = args.ServerParams[0];
-            string userName = args.ServerParams[1];
-            Faction faction = factions.FirstOrDefault(x => x.Shortcut == chan);
-            if (faction != null)
-            {
-                var db = new ZkDataContext();
-                var acc = Account.AccountByName(db, userName);
-                if (acc != null && acc.CanPlayerPlanetWars()) UpdateLobby(userName);
+            string chan = e.Channel.Name;
+            foreach (var user in e.Users) {
+             Faction faction = factions.FirstOrDefault(x => x.Shortcut == chan);
+                if (faction != null) {
+                    var db = new ZkDataContext();
+                    var acc = Account.AccountByName(db, user.Name);
+                    if (acc != null && acc.CanPlayerPlanetWars()) UpdateLobby(user.Name);
+                }
             }
         }
 
@@ -422,8 +422,7 @@ namespace ZeroKWeb
         /// <param name="args"></param>
         void TasOnPreviewSaid(object sender, CancelEventArgs<TasSayEventArgs> args)
         {
-            if (args.Data.Text.StartsWith("!") && (args.Data.Place == TasSayEventArgs.Places.Channel || args.Data.Place == TasSayEventArgs.Places.Normal) &&
-                args.Data.Origin == TasSayEventArgs.Origins.Player && args.Data.UserName != GlobalConst.NightwatchName)
+            if (args.Data.Text.StartsWith("!") && (args.Data.Place == SayPlace.Channel || args.Data.Place == SayPlace.User) && args.Data.UserName != GlobalConst.NightwatchName)
             {
                 int targetPlanetId;
                 if (int.TryParse(args.Data.Text.Substring(1), out targetPlanetId)) JoinPlanet(args.Data.UserName, targetPlanetId);
@@ -433,13 +432,13 @@ namespace ZeroKWeb
         /// <summary>
         ///     Remove/reduce poll count due to lobby quits
         /// </summary>
-        void TasOnUserRemoved(object sender, TasEventArgs args)
+        void TasOnUserRemoved(object sender, UserDisconnected args)
         {
             if (Challenge == null)
             {
                 if (AttackOptions.Count > 0)
                 {
-                    string userName = args.ServerParams[0];
+                    string userName = args.Name;
                     int sumRemoved = 0;
                     foreach (AttackOption aop in AttackOptions) sumRemoved += aop.Attackers.RemoveAll(x => x == userName);
                     if (sumRemoved > 0) UpdateLobby();
@@ -447,7 +446,7 @@ namespace ZeroKWeb
             }
             else
             {
-                string userName = args.ServerParams[0];
+                string userName = args.Name;
                 if (Challenge.Defenders.RemoveAll(x => x == userName) > 0) UpdateLobby();
             }
         }
@@ -555,7 +554,7 @@ namespace ZeroKWeb
             var bat = tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == autohostName);
             if (bat != null && tas.ExistingBattles.Values.Any(x => x.Founder.Name == pwSpec))
             {
-                foreach (var b in bat.Users.Where(x => x.Name != autohostName)) tas.ForceJoinBattle(b.Name, pwSpec);
+                foreach (var b in bat.Users.Keys.Where(x => x != autohostName)) tas.ForceJoinBattle(b, pwSpec);
             }
         }
     }

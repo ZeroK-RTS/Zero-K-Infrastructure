@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using LobbyClient;
 using ZeroKLobby.Lines;
 using ZkData;
+using Timer = System.Timers.Timer;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -21,8 +22,10 @@ namespace ZeroKLobby.MicroLobby
         readonly PlayerListItem searchResultsItem = new PlayerListItem { Title = "Search results", SortCategory = 1 };
         public bool CanLeave { get { return ChannelName != "Battle"; } }
         public static EventHandler<ChannelLineArgs> ChannelLineAdded = (sender, args) => { };
+        Timer minuteTimer;
         public string ChannelName { get; set; }
         public GameInfo GameInfo { get; set; }
+        
         public bool IsTopicVisible {
             get { return topicPanel.Visible; }
             set {
@@ -90,18 +93,28 @@ namespace ZeroKLobby.MicroLobby
             Program.TasClient.ChannelUserAdded += client_ChannelUserAdded;
             Program.TasClient.ChannelUserRemoved += client_ChannelUserRemoved;
             Program.TasClient.UserStatusChanged += TasClient_UserStatusChanged;
-            Program.TasClient.ChannelUsersAdded += TasClient_ChannelUsersAdded;
+//            Program.TasClient.ChannelUsersAdded += TasClient_ChannelUsersAdded;
             Program.TasClient.Said += client_Said;
             Program.TasClient.UserRemoved += TasClient_UserRemoved;
             Program.TasClient.ChannelTopicChanged += TasClient_ChannelTopicChanged;
-            Program.TasClient.HourChime += client_HourChime;
-
+            
+            
+            
+            
             Program.SteamHandler.Voice.UserStartsTalking += VoiceOnUserChanged;
             Program.SteamHandler.Voice.UserStopsTalking += VoiceOnUserChanged;
             Program.SteamHandler.Voice.UserVoiceEnabled += VoiceOnUserChanged;
 
             Channel channel;
             Program.TasClient.JoinedChannels.TryGetValue(ChannelName, out channel);
+
+
+            minuteTimer = new Timer(60000) { AutoReset = true };
+            minuteTimer.Elapsed += (s, e) => {
+                if (DateTime.Now.Minute == 0) this.Invoke(new Action(() => AddLine(new ChimeLine())));
+            };
+            minuteTimer.Start();
+
 
             //Topic Box that displays over the channel
             topicBox.IRCForeColor = 14; //mirc grey. Unknown use
@@ -140,7 +153,7 @@ namespace ZeroKLobby.MicroLobby
                         
                 };
 
-            if (channel != null) foreach (var userName in Program.TasClient.JoinedChannels[ChannelName].ChannelUsers) AddUser(userName);
+            if (channel != null) foreach (var userName in Program.TasClient.JoinedChannels[ChannelName].Users.Keys) AddUser(userName);
         }
 
         void VoiceOnUserChanged(ulong steamID)
@@ -181,7 +194,7 @@ namespace ZeroKLobby.MicroLobby
         protected void AddUser(string userName) {
             Channel channel;
             if (Program.TasClient.JoinedChannels.TryGetValue(ChannelName, out channel)) {
-                if (!channel.ChannelUsers.Contains(userName)) {
+                if (!channel.Users.ContainsKey(userName)) {
                     Trace.WriteLine("Trying to add a user to a channel he hasn't joined (" + ChannelName + "/" + userName + ").");
                     return;
                 }
@@ -227,7 +240,7 @@ namespace ZeroKLobby.MicroLobby
                     else {
                         var userNameFound = playerListItem.UserName.ToUpper().Contains(word);
                         var countryFound = user.Country.ToUpper() == word;
-                        var countryNameFound = user.CountryName.ToUpper() == word;
+                        var countryNameFound = CountryNames.GetName(user.Country).ToUpper() == word;
                         var clanFound = user.Clan != null && user.Clan.ToUpper() == word;
                         var factionFound = user.Faction != null && user.Faction.ToUpper() == word;
                         if (!negation) {
@@ -267,7 +280,7 @@ namespace ZeroKLobby.MicroLobby
                     isMatch = user.IsAway;
                     return true;
                 case "ADMIN":
-                    isMatch = user.IsAdmin || user.IsZeroKAdmin;
+                    isMatch = user.IsAdmin;
                     return true;
                 case "INGAME":
                     isMatch = user.IsInGame;
@@ -328,7 +341,7 @@ namespace ZeroKLobby.MicroLobby
         void TasClient_ChannelTopicChanged(object sender, TasEventArgs e) {
             if (ChannelName == e.ServerParams[0]) {
                 var channel = Program.TasClient.JoinedChannels[ChannelName];
-                DateTime lastChange;
+                DateTime? lastChange;
                 Program.Conf.Topics.TryGetValue(channel.Name, out lastChange);
                 var topicLine = new TopicLine(channel.Topic, channel.TopicSetBy, channel.TopicSetDate);
                 topicBox.Reset();
@@ -338,43 +351,14 @@ namespace ZeroKLobby.MicroLobby
             }
         }
 
-        void TasClient_ChannelUsersAdded(object sender, TasEventArgs e) {
-            if (e.ServerParams[0] != ChannelName) return;
-            
-            List<string> invalidName = new List<string>();
-            foreach (var username in Program.TasClient.JoinedChannels[ChannelName].ChannelUsers)
-            {
-                try
-                {
-                    var user = Program.TasClient.ExistingUsers[username];
-                }
-                catch (System.Collections.Generic.KeyNotFoundException)
-                {
-                    Trace.TraceInformation("ChatControl ERROR: player \"{0}\" did not exist or wasn't notified using ADDUSER command. Ignoring this username.", username);
-                    invalidName.Add(username);
-                }
-            }
-            for (int i = 0; i < invalidName.Count; i++) {
-                Program.TasClient.JoinedChannels[ChannelName].ChannelUsers.Remove(invalidName[i]);
-            }
-            
-            playerListItems = (from name in Program.TasClient.JoinedChannels[ChannelName].ChannelUsers
-                               let user = Program.TasClient.ExistingUsers[name]
-                               select new PlayerListItem { UserName = user.Name }).ToList();
 
-            if (filtering) FilterPlayers();
-            else {
-                playerBox.AddItemRange(playerListItems);
-            }
+        void TasClient_UserRemoved(object sender, UserDisconnected e) {
+            var userName = e.Name;
+            if (PlayerListItems.Any(u => u.UserName == userName)) AddLine(new LeaveLine(userName, string.Format("User has disconnected ({0}).", e.Reason)));
         }
 
-        void TasClient_UserRemoved(object sender, TasEventArgs e) {
-            var userName = e.ServerParams[0];
-            if (PlayerListItems.Any(u => u.UserName == userName)) AddLine(new LeaveLine(userName, "User has disconnected."));
-        }
-
-        void TasClient_UserStatusChanged(object sender, TasEventArgs e) {
-            RefreshUser(e.ServerParams[0]);
+        void TasClient_UserStatusChanged(object sender, OldNewPair<User> oldNewPair) {
+            RefreshUser(oldNewPair.New.Name);
         }
 
         void chatBox_MouseDown(object sender, MouseEventArgs e) {
@@ -404,38 +388,51 @@ namespace ZeroKLobby.MicroLobby
             if (me.Button == MouseButtons.Right) ShowChatContextMenu(me.Location);
         }
 
-        protected virtual void client_ChannelUserAdded(object sender, TasEventArgs e) {
-            var channelName = e.ServerParams[0];
+        protected virtual void client_ChannelUserAdded(object sender, ChannelUserInfo e) {
+            var channelName = e.Channel.Name;
             if (ChannelName != channelName) return;
-            var userName = e.ServerParams[1];
-            AddUser(userName);
-            AddLine(new JoinLine(userName));
+
+            // todo fix/simplify code .. does not need separate adduser and mass add
+            if (e.Users.Count == 1) {
+                AddLine(new JoinLine(e.Users.First().Name));
+                AddUser(e.Users.First().Name);
+            } else {
+                foreach (var user in e.Users) {
+                    if (!playerListItems.Any(x => x.UserName == user.Name)) {
+                        playerListItems.Add(new PlayerListItem() { UserName = user.Name });
+                    }
+
+                }
+
+                if (filtering) FilterPlayers();
+                else {
+                    playerBox.AddItemRange(playerListItems.Where(x => !playerBox.Items.Any(y => y.UserName == x.UserName)).ToList());
+                }
+            }
+
         }
 
-        protected virtual void client_ChannelUserRemoved(object sender, TasEventArgs e) {
-            var channelName = e.ServerParams[0];
+        protected virtual void client_ChannelUserRemoved(object sender, ChannelUserRemovedInfo e) {
+            var channelName = e.Channel.Name;
             if (ChannelName != channelName) return;
-            var userName = e.ServerParams[1];
-            var reason = e.ServerParams[2];
+            var userName = e.User.Name;
+            var reason = e.Reason;
             RemoveUser(userName);
             AddLine(new LeaveLine(userName, reason));
         }
 
-        void client_HourChime(object sender, EventArgs e) {
-            AddLine(new ChimeLine());
-        }
 
         void client_Said(object sender, TasSayEventArgs e) {
             if (e.Channel != ChannelName) return;
-            if (e.Origin == TasSayEventArgs.Origins.Player) {
-                if (e.Place == TasSayEventArgs.Places.Channel) {
+            if (!string.IsNullOrEmpty(e.UserName)) {
+                if (e.Place == SayPlace.Channel) {
                     if (e.Text.Contains(Program.Conf.LobbyPlayerName) && e.UserName != GlobalConst.NightwatchName) Program.MainWindow.NotifyUser("chat/channel/" + e.Channel, string.Format("{0}: {1}", e.UserName, e.Text), false, true);
 
                     if (!e.IsEmote) AddLine(new SaidLine(e.UserName, e.Text));
                     else AddLine(new SaidExLine(e.UserName, e.Text));
                 }
             }
-            else if (e.Origin == TasSayEventArgs.Origins.Server && e.Place == TasSayEventArgs.Places.Channel) AddLine(new ChannelMessageLine(e.Text));
+            else if (e.Place == SayPlace.Channel) AddLine(new ChannelMessageLine(e.Text));
         }
 
         void hideButton_Click(object sender, EventArgs e) {

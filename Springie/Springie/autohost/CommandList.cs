@@ -29,7 +29,7 @@ namespace Springie.autohost
                                          1,
                                          "[<filters>..] - rings all unready or specific player(s), e.g. !ring - rings unready, !ring icho - rings Licho",
                                          5,
-                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
 
             AddMissing(new CommandConfig("listmaps", 1, "[<filters>..] - lists maps on server, e.g. !listmaps altor div", 10));
 
@@ -42,18 +42,18 @@ namespace Springie.autohost
                                          3,
                                          "<text> - says something in game",
                                          0,
-                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
 
             AddMissing(new CommandConfig("force",
                                          3,
                                          " - forces game start inside game",
                                          8,
-                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }) { AllowSpecs = false});
+                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }) { AllowSpecs = false});
             AddMissing(new CommandConfig("kick",
                                          3,
                                          "[<filters>..] - kicks a player",
                                          0,
-                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
 
             AddMissing(new CommandConfig("split", 1, "<\"h\"/\"v\"> <percent> - draws with given direction and percentual size, e.g. !split h 15"));
 
@@ -65,14 +65,7 @@ namespace Springie.autohost
                                          3,
                                          " - exits the game",
                                          0,
-                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
-
-
-            AddMissing(new CommandConfig("lock", 2, "[<seconds>] - locks the game, optional min limit in seconds"));
-
-            AddMissing(new CommandConfig("unlock", 2, " - unlocks the game"));
-
-            AddMissing(new CommandConfig("fix", 1, " - fixes teamnumbers", 5));
+                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
 
             AddMissing(new CommandConfig("votemap", 1, "[<mapname>..] - starts vote for new map, e.g. !votemap altored div"));
 
@@ -80,26 +73,26 @@ namespace Springie.autohost
                                          2,
                                          "[<playerame>..] - starts vote to kick a player, e.g. !votekick Licho",
                                          0,
-                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
 
             AddMissing(new CommandConfig("votespec",
                                          2,
                                          "[<playername>..] - starts vote to spectate player, e.g. !votespec Licho",
                                          0,
-                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
 
             AddMissing(new CommandConfig("votesplitplayers",
                                          2,
                                          "- starts vote to split the game into 2",
                                          0,
-                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
 
             
             AddMissing(new CommandConfig("splitplayers",
                                          3,
                                          " - splots players to 2 hosts based on their elo",
                                          2,
-                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
 
             AddMissing(new CommandConfig("voteforcestart", 2, " - starts vote to force game to start in lobby"));
 
@@ -107,42 +100,42 @@ namespace Springie.autohost
                                          2,
                                          " - starts vote to force game to start from game",
                                          0,
-                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
 
             AddMissing(new CommandConfig("voteexit",
                                          2,
                                          " - starts vote to exit game",
                                          0,
-                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
 
             AddMissing(new CommandConfig("voteresign",
                                                      0,
                                                      " - starts a vote to resign game",
                                                      0,
-                                                     new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+                                                     new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
 
             AddMissing(new CommandConfig("vote",
                                          0,
                                          "<number> - votes for given option (works from battle only), e.g. !vote 1",
                                          0,
-                                         new[] { TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+                                         new[] { SayPlace.Battle, SayPlace.Game }));
             AddMissing(new CommandConfig("y",
                                          0,
                                          "- votes for given option 1 (works from battle only), e.g. !y; !vote 1",
                                          0,
-                                         new[] { TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+                                         new[] { SayPlace.Battle, SayPlace.Game }));
             AddMissing(new CommandConfig("n",
                                          0,
                                          "- votes for given option 2 (works from battle only), e.g. !n; !vote 1",
                                          0,
-                                         new[] { TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+                                         new[] { SayPlace.Battle, SayPlace.Game }));
 
             AddMissing(new CommandConfig("rehost", 3, "[<modname>..] - rehosts game, e.g. !rehost abosol 2.23 - rehosts AA2.23"));
             AddMissing(new CommandConfig("voterehost",
                                          2,
                                          "[<modname>..] - votes to rehost game, e.g. !rehost abosol 2.23 - rehosts AA2.23",
                                          0,
-                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
 
             AddMissing(new CommandConfig("admins", 0, " - lists admins", 5));
 
@@ -150,28 +143,21 @@ namespace Springie.autohost
                                          0,
                                          "[<mapname>..] - looks for maplinks at unknown-files",
                                          5,
-                                         new[] { TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Normal }));
+                                         new[] { SayPlace.Battle, SayPlace.User }));
 
             AddMissing(new CommandConfig("modlink",
                                          0,
                                          "[<modname>..] - looks for modlinks at unknown-files",
                                          5,
-                                         new[] { TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Normal }));
+                                         new[] { SayPlace.Battle, SayPlace.User }));
 
             AddMissing(new CommandConfig("id", 3, "<idnumber> [<playername>..] - forces given player to an id"));
 
             AddMissing(new CommandConfig("team", 3, "<teamnumber> [<playername>..] - forces given player to a team"));
 
-            AddMissing(new CommandConfig("adduser", 0, "<pw> - technical command used for mid-game spectator join", 0, new[] { TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Normal }));
+            AddMissing(new CommandConfig("adduser", 0, "<pw> - technical command used for mid-game spectator join", 0, new[] { SayPlace.Battle, SayPlace.User }));
 
             AddMissing(new CommandConfig("helpall", 0, "- lists all commands known to Springie (sorted by command level)", 5));
-
-            AddMissing(new CommandConfig("fixcolors",
-                                         1,
-                                         "- changes too similar colors to more different (note that color difference is highly subjective and impossible to model mathematically, so it won't always produce results satisfying for all)",
-                                         10));
-
-            AddMissing(new CommandConfig("teamcolors", 1, "- assigns similar colors to allies", 10));
 
             AddMissing(new CommandConfig("setengine", 3, "[version] - sets a new spring version", 2));
 
@@ -179,7 +165,7 @@ namespace Springie.autohost
                                          0,
                                          "- responds with basic springie information",
                                          5,
-                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Channel }));
+                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Channel }));
 
             AddMissing(new CommandConfig("endvote", 3, "- ends current poll"));
 
@@ -221,7 +207,7 @@ namespace Springie.autohost
                                          2,
                                          "<name> - sets <name> as a new boss, use without parameter to remove any current boss. If there is a boss on server, other non-admin people have their rights reduced",
                                          0,
-                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
 
             AddMissing(new CommandConfig("spec", 3, "<username> - forces player to become spectator", 0));
 
@@ -233,13 +219,13 @@ namespace Springie.autohost
                                          3,
                                          "enables/disables .cheats in game",
                                          0,
-                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
             
             AddMissing(new CommandConfig("hostsay",
                                          3,
                                          "says something as host, useful for /nocost etc",
                                          0,
-                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
 
             AddMissing(new CommandConfig("notify",
                                          0,
@@ -247,8 +233,8 @@ namespace Springie.autohost
                                          0,
                                          new[]
                                          {
-                                             TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game,
-                                             TasSayEventArgs.Places.Channel
+                                             SayPlace.User, SayPlace.Battle, SayPlace.Game,
+                                             SayPlace.Channel
                                          }));
 
             AddMissing(new CommandConfig("saveboxes", 3, "- saves boxes for current map"));

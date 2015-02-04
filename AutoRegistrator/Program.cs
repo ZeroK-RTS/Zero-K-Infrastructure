@@ -93,9 +93,9 @@ namespace AutoRegistrator
 
             lock (Locker)
             {
-                foreach (var id in new ZkDataContext().Missions.Where(x => !x.IsScriptMission && x.ModRapidTag != "" && !x.IsDeleted).Select(x=>x.MissionID).ToList())
+                foreach (var id in new ZkDataContext(false).Missions.Where(x => !x.IsScriptMission && x.ModRapidTag != "" && !x.IsDeleted).Select(x=>x.MissionID).ToList())
                 {
-                    using (var db = new ZkDataContext())
+                    using (var db = new ZkDataContext(false))
                     {
                         var mis = db.Missions.Single(x => x.MissionID == id);
                         try
@@ -109,7 +109,7 @@ namespace AutoRegistrator
                                     Trace.TraceInformation("Updating mission {0} {1} to {2}", mis.MissionID, mis.Name, mis.Mod);
                                     var mu = new MissionUpdater();
                                     Mod modInfo = null;
-                                    Scanner.MetaData.GetMod(mis.NameWithVersion, m => { modInfo = m; }, (er) => { }, Paths.SpringVersion);
+                                    Scanner.MetaData.GetMod(mis.NameWithVersion, m => { modInfo = m; }, (er) => { });
                                     mis.Revision++;
                                     mu.UpdateMission(db, mis, modInfo);
                                     db.SubmitChanges();

@@ -9,7 +9,6 @@ namespace PlasmaShared
         public string InternalName;
         public int ResourceID;
         public ResourceType ResourceType;
-        public List<SpringHashEntry> SpringHashes;
         public float? FeaturedOrder;
 
         public ResourceData() { }
