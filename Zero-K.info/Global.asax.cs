@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Mvc;
@@ -86,8 +88,9 @@ namespace ZeroKWeb
 
             var nw = new Nightwatch();
             Application["Nightwatch"] = nw;
-            if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running) Application["PwMatchMaker"] = new PlanetWarsMatchMaker(nw.Tas);            
-            Global.Nightwatch.Start();
+            if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running) Application["PwMatchMaker"] = new PlanetWarsMatchMaker(nw.Tas);
+            new Thread(()=> nw.Start()).Start();
+            
 
             AreaRegistration.RegisterAllAreas();
             RegisterRoutes(RouteTable.Routes);
