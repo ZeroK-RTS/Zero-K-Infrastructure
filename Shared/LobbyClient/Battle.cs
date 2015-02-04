@@ -178,6 +178,9 @@ namespace LobbyClient
                     script.AppendFormat("  StartPosType=2;\n");
 
                     script.AppendFormat("  GameType={0};\n", ModName);
+                    script.AppendFormat("  ModHash=1;\n");
+                    script.AppendFormat("  MapHash=1;\n");
+
                     script.AppendFormat("  AutohostPort={0};\n", loopbackListenPort);
                     script.AppendLine();
                     script.AppendFormat("  HostIP={0};\n", Ip);

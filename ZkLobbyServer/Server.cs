@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using LobbyClient;
 using ZkData;
@@ -33,9 +34,21 @@ namespace ZkLobbyServer
             if (!Debugger.IsAttached) selfUpdater.StartChecking();
 #endif
 
-            var listener = new TcpListener(IPAddress.Any, GlobalConst.LobbyServerPort);
-            listener.Start(200);
-            while (true) {
+            bool ok = false;
+            TcpListener listener = null;
+            do {
+                try {
+                    listener = new TcpListener(IPAddress.Any, GlobalConst.LobbyServerPort);
+                    listener.Start(200);
+                    ok = true;
+                } catch (Exception ex) {
+                    Trace.TraceError("Error binding:{0}",ex);
+                    Thread.Sleep(1000);
+                }
+            } while (!ok);
+            
+            while (true)
+            {
                 var tcp = listener.AcceptTcpClient();
                 Task.Run(() => {
                     var client = new Client(sharedState);

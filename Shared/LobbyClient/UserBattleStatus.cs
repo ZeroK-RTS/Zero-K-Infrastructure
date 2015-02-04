@@ -26,7 +26,7 @@ namespace LobbyClient
 		public string Name;
 		
         
-        public string ScriptPassword;
+        public string ScriptPassword; // HACK reimplement this
 		
         public SyncStatuses SyncStatus = SyncStatuses.Unknown;
 
@@ -64,10 +64,10 @@ namespace LobbyClient
 		public UserBattleStatus() {}
 
 
-		public UserBattleStatus(string name, User lobbyUser, string scriptPassword = null)
+		public UserBattleStatus(string name, User lobbyUser, string password= null)
 		{
 		    Name = name;
-			ScriptPassword = scriptPassword;
+            if (password != null) ScriptPassword = password;
 			LobbyUser = lobbyUser;
 		}
 
