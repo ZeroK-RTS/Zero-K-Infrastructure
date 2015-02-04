@@ -68,6 +68,7 @@ namespace LobbyClient
             ExistingUsers = new Dictionary<string, User>();
             joinedChannels = new Dictionary<string, Channel>();
             existingBattles = new Dictionary<int, Battle>();
+
             MyBattle = null;
             isLoggedIn = false;
             ConnectionLost(this, new TasEventArgs(string.Format("Connection {0}", wasRequested ? "closed on user request" : "disconnected")));

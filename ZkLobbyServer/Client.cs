@@ -39,7 +39,7 @@ namespace ZkLobbyServer
         {
             this.state = state;
             number = Interlocked.Increment(ref state.ClientCounter);
-            Trace.TraceInformation("{0} connected", this);
+            Trace.TraceInformation("{0} accepted", this);
         }
 
         public override async Task OnConnectionClosed(bool wasRequested)
@@ -47,6 +47,7 @@ namespace ZkLobbyServer
             string reason = wasRequested ? "quit" : "connection failed";
             if (!string.IsNullOrEmpty(Name))
             {
+                ClearMyLastKnownStateForOtherClients();
 
                 Client client;
 
@@ -128,7 +129,7 @@ namespace ZkLobbyServer
 
         public override async Task OnConnected()
         {
-            
+            Trace.TraceInformation("{0} connected", this);
             await SendCommand(new Welcome() { Engine = state.Engine, Game = state.Game, Version = state.Version });
         }
 
@@ -205,7 +206,10 @@ namespace ZkLobbyServer
 
         public void ClearMyLastKnownStateForOtherClients()
         {
-            foreach (var c in state.Clients.Values.ToList()) c.LastKnownUserVersions[Name] = null;
+            foreach (var c in state.Clients.Values.ToList()) {
+                int? orgval;
+                c.LastKnownUserVersions.TryRemove(Name, out orgval);
+            }
         }
 
         private async Task SynchronizeUsersToMe(params string[] names)
@@ -216,9 +220,8 @@ namespace ZkLobbyServer
                 if (state.Clients.TryGetValue(n, out client))
                 {
                     int? lastKnownVersion;
-                    LastKnownUserVersions.TryGetValue(n, out lastKnownVersion);
                     var version = client.UserVersion;
-                    if (lastKnownVersion == null || lastKnownVersion != version)
+                    if (!LastKnownUserVersions.TryGetValue(n, out lastKnownVersion) || lastKnownVersion == null || lastKnownVersion != version)
                     {
                         await SendCommand(client.User);
                         LastKnownUserVersions[n] = version;
@@ -735,6 +738,8 @@ namespace ZkLobbyServer
                 if (state.Clients.TryGetValue(u, out client)) client.MyBattle = null;
                 await Broadcast(state.Clients.Values, new LeftBattle() { BattleID = battle.BattleID, User = u });
             }
+            Battle bat;
+            state.Battles.TryRemove(battle.BattleID, out bat);
             await Broadcast(state.Clients.Values, new BattleRemoved() { BattleID = battle.BattleID });
         }
     }

@@ -63,7 +63,7 @@ namespace Springie.autohost
             
             string version = config.SpringVersion ?? Program.main.Config.SpringVersion ?? GlobalConst.DefaultEngineOverride;
             springPaths = new SpringPaths(Program.main.paths.GetEngineFolderByVersion(version), Program.main.Config.DataDir);
-
+            
             Program.main.paths.SpringVersionChanged += (s, e) =>
                 {
                     if (!String.IsNullOrEmpty(requestedEngineChange) && requestedEngineChange == Program.main.paths.SpringVersion) {
@@ -617,14 +617,14 @@ namespace Springie.autohost
             if (!string.IsNullOrEmpty(config.BattlePassword)) password = config.BattlePassword;
 
             int maxPlayers = config.MaxPlayers;
-
+            string engine = springPaths.SpringVersion;
             if (SpawnConfig != null) {
                 modname = SpawnConfig.Mod;
                 if (SpawnConfig.MaxPlayers > 0) maxPlayers = SpawnConfig.MaxPlayers;
                 if (!String.IsNullOrEmpty(SpawnConfig.Map)) mapname = SpawnConfig.Map;
                 title = SpawnConfig.Title;
                 if (!String.IsNullOrEmpty(SpawnConfig.Password)) password = SpawnConfig.Password;
-                if (!String.IsNullOrEmpty(SpawnConfig.Engine))
+                if (!String.IsNullOrEmpty(SpawnConfig.Engine)) engine = SpawnConfig.Engine;
                 {
                     //Something needs to go here to properly tell Springie to use a specific engine version,
                     //attempted code below may or may not be responsible for recent springie drops, so commenting.
@@ -660,11 +660,15 @@ namespace Springie.autohost
             //Map mapi = null;
             //cache.GetMap(mapname, (m, x, y, z) => { mapi = m; }, (e) => { }, springPaths.SpringVersion);
             //int mint, maxt;
-            var b = new Battle(springPaths.SpringVersion, password, hostingPort, maxPlayers, mapname, title,modname);
+            if (!springPaths.HasEngineVersion(engine)) {
+                Program.main.Downloader.GetAndSwitchEngine(engine);
+            } else {
+                springPaths.SetEnginePath(springPaths.GetEngineFolderByVersion(engine));
+            }
+
+            var b = new Battle(engine, password, hostingPort, maxPlayers, mapname, title,modname);
             b.Ip = Program.main.Config.IpOverride;
             tas.OpenBattle(b);
-
-               
         }
 
 

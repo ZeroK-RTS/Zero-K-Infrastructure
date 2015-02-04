@@ -219,10 +219,11 @@ namespace Fixer
         [STAThread]
         static void Main(string[] args)
         {
-            var ns = new NubSimulator();
-            ns.SpawnMany();
-            Console.ReadLine();
+            //var ns = new NubSimulator();
+            //ns.SpawnMany();
+            //Console.ReadLine();
 
+            MigrateDatabase();
             //FixDuplicatedAccounts();
             //BcryptPasswords();
             //var db = new ZkDataContext(true);

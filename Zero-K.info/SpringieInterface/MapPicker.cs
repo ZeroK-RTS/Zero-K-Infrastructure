@@ -67,7 +67,7 @@ namespace ZeroKWeb.SpringieInterface
 					}
 					if (list != null) {
 						var r = new Random();
-						res.MapName = list[r.Next(list.Count)].InternalName;
+                        if (list.Count > 0)  res.MapName = list[r.Next(list.Count)].InternalName;
 					}
 				}
 			}
