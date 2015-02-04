@@ -706,6 +706,11 @@ namespace LobbyClient
             }
         }
 
+        async Task Process(Ping ping)
+        {
+            lastPing = DateTime.UtcNow;
+        }
+
         async Task Process(User user)
         {
             User old;

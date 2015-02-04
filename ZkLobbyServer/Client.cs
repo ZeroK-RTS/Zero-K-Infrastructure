@@ -9,6 +9,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using LobbyClient;
 using ZkData;
 using ZkData.UnitSyncLib;
@@ -23,8 +24,9 @@ namespace ZkLobbyServer
         public User User = new User();
         public int UserVersion;
         public ConcurrentDictionary<string, int?> LastKnownUserVersions = new ConcurrentDictionary<string, int?>();
-
         public bool IsLoggedIn { get { return User != null && User.AccountID != 0; } }
+        DateTime lastPingFromClient;
+        System.Timers.Timer timer;
 
         public override string ToString()
         {
@@ -40,6 +42,17 @@ namespace ZkLobbyServer
             this.state = state;
             number = Interlocked.Increment(ref state.ClientCounter);
             Trace.TraceInformation("{0} accepted", this);
+            timer = new System.Timers.Timer(GlobalConst.LobbyProtocolPingInterval*1000);
+            timer.Elapsed += TimerOnElapsed;
+        }
+
+        void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            if (DateTime.UtcNow.Subtract(lastPingFromClient).TotalSeconds >= GlobalConst.LobbyProtocolPingTimeout) {
+                RequestClose();
+            } else {
+                SendCommand(new Ping() { });
+            }
         }
 
         public override async Task OnConnectionClosed(bool wasRequested)
@@ -81,6 +94,7 @@ namespace ZkLobbyServer
 
                 state.Clients.TryRemove(Name, out client);
             }
+            timer.Stop();
             Trace.TraceInformation("{0} {1}", this, reason);
         }
 
@@ -131,6 +145,8 @@ namespace ZkLobbyServer
         {
             Trace.TraceInformation("{0} connected", this);
             await SendCommand(new Welcome() { Engine = state.Engine, Game = state.Game, Version = state.Version });
+            lastPingFromClient = DateTime.UtcNow;
+            timer.Start();
         }
 
 
@@ -159,7 +175,7 @@ namespace ZkLobbyServer
 
         async Task Process(Ping ping)
         {
-            
+            lastPingFromClient = DateTime.UtcNow;
         }
 
 

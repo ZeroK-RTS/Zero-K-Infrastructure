@@ -208,6 +208,10 @@ namespace ZkData
         public const int PlanetWarsMaxTeamsize = 4;
         public const int MinPlanetWarsLevel = 10;
         public const int MinPlanetWarsElo = 1000;
+        
+        public const int LobbyProtocolPingInterval = 30;
+        public const int LobbyProtocolPingTimeout = 60;
+
         public static string ResourceBaseUrl;
         public static string SelfUpdaterBaseUrl;
         public static readonly string[] DefaultDownloadMirrors = {};
