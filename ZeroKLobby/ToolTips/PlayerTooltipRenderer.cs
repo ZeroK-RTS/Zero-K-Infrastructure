@@ -69,7 +69,7 @@ namespace ZeroKLobby
             {
                 drawString("Country: ");
                 drawImage(flag, flag.Width, flag.Height);
-                drawString(user.CountryName);
+                drawString(CountryNames.GetName(user.Country));
                 newLine();
             }
             if (user.IsBot)
@@ -78,7 +78,7 @@ namespace ZeroKLobby
                 drawString("Bot");
                 newLine();
             }
-            if (user.IsAdmin || user.IsZeroKAdmin)
+            if (user.IsAdmin)
             {
                 drawImage(ZklResources.police, 16, 16);
                 drawString("Administrator");
@@ -94,12 +94,6 @@ namespace ZeroKLobby
             {
                 drawImage(ZklResources.steam, 16, 16);
                 drawString(string.Format("Steam name: {0}", user.DisplayName ?? user.Name));
-                newLine();
-            }
-            if (user.IsZkLobbyUser)
-            {
-                drawImage(ZklResources.ZK_logo_square, 16, 16);
-                drawString(string.Format("ZK lobby user ({0})", user.IsZkLinuxUser ? "Linux" : "Windows"));
                 newLine();
             }
             if (!user.IsBot)
@@ -136,7 +130,7 @@ namespace ZeroKLobby
             }
             if (user.IsInBattleRoom)
             {
-                var battle = Program.TasClient.ExistingBattles.Values.SingleOrDefault(b => b.Users.Any(ub => ub.Name == user.Name));
+                var battle = Program.TasClient.ExistingBattles.Values.SingleOrDefault(b => b.Users.ContainsKey(user.Name));
                 var battleIcon = Program.BattleIconManager.GetBattleIcon(battle.BattleID);
                 if (battleIcon != null) g.DrawImageUnscaled(battleIcon.Image, x, y);
             }
@@ -152,9 +146,8 @@ namespace ZeroKLobby
             h += 16; // name
             h += 16; // flag
             if (user.IsBot) h += 16; // bot icon
-            if (user.IsAdmin || user.IsZeroKAdmin) h += 16; // admin icon
+            if (user.IsAdmin) h += 16; // admin icon
             if (Program.FriendManager.Friends.Contains(user.Name)) h += 16; // friend icon
-            if (user.IsZkLobbyUser) h += 16; // SD icon
             if (!user.IsBot)
             {
                 h += 16; // rank text

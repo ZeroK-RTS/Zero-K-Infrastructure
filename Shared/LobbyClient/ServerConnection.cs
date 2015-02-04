@@ -47,30 +47,32 @@ namespace LobbyClient
         public event EventHandler ConnectionClosed;
 
 
-        public override void OnConnectionClosed(bool wasRequested)
+        public override Task OnConnectionClosed(bool wasRequested)
         {
-            if (ConnectionClosed != null) ConnectionClosed(this, EventArgs.Empty);
+            return Task.Run(() => { if (ConnectionClosed != null) ConnectionClosed(this, EventArgs.Empty); });
         }
 
-        public override void OnConnected()
+        public override Task OnConnected()
         {
-            if (Connected != null) Connected(this, EventArgs.Empty);
+            return Task.Run(() => { if (Connected != null) Connected(this, EventArgs.Empty); });
         }
 
-        public override void OnLineReceived(string line)
+        public override Task OnLineReceived(string line)
         {
-            ConnectionEventArgs command = null;
-            try
-            {
-                command = ParseCommand(line);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError("Error parsing command {0} {1}", line, ex);
-                throw;
-            }
+            return Task.Run(() => {
+                ConnectionEventArgs command = null;
+                try
+                {
+                    command = ParseCommand(line);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("Error parsing command {0} {1}", line, ex);
+                    throw;
+                }
 
-            if (command != null) if (CommandRecieved != null) CommandRecieved(this, command);
+                if (command != null) if (CommandRecieved != null) CommandRecieved(this, command);
+            });
         }
 
         public async Task SendCommand(string command, params object[] parameters)

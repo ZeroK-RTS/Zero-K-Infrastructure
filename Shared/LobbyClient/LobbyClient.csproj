@@ -60,12 +60,13 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="Battle.cs" />
-    <Compile Include="BattleDetails.cs" />
     <Compile Include="BattleRect.cs" />
     <Compile Include="BotBattleStatus.cs" />
-    <Compile Include="Channel.cs" />
+    <Compile Include="CountryNames.cs" />
     <Compile Include="Crc.cs" />
     <Compile Include="ProtocolExtension.cs" />
+    <Compile Include="Protocol\CommandJsonSerializer.cs" />
+    <Compile Include="Protocol\Messages.cs" />
     <Compile Include="PwMatchCommand.cs" />
     <Compile Include="SayingEventArgs.cs" />
     <Compile Include="ServerConnection.cs" />
@@ -74,7 +75,6 @@
     <Compile Include="Talker.cs" />
     <Compile Include="TasClient.cs" />
     <Compile Include="TasClient_structures.cs" />
-    <Compile Include="User.cs" />
     <Compile Include="UserBattleStatus.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -83,6 +83,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>

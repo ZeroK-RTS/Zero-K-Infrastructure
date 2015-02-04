@@ -71,7 +71,6 @@ namespace ZkData
         public virtual DbSet<Resource> Resources { get; set; }
         public virtual DbSet<ResourceContentFile> ResourceContentFiles { get; set; }
         public virtual DbSet<ResourceDependency> ResourceDependencies { get; set; }
-        public virtual DbSet<ResourceSpringHash> ResourceSpringHashes { get; set; }
         public virtual DbSet<RoleType> RoleTypes { get; set; }
         public virtual DbSet<RoleTypeHierarchy> RoleTypeHierarchies { get; set; }
         public virtual DbSet<SpringBattle> SpringBattles { get; set; }

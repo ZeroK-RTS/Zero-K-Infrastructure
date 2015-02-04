@@ -4,6 +4,7 @@ using System.Threading;
 using System.Windows.Forms;
 using LobbyClient;
 using ZeroKLobby.MicroLobby;
+using ZkData;
 
 namespace ZeroKLobby.Notifications
 {
@@ -28,7 +29,7 @@ namespace ZeroKLobby.Notifications
 				{
 					canRegister = false;
 					{
-						if (client.ConnectionFailed) lbState.Text = "disconnected due to network problem, autoreconnecting...";
+						if (!client.WasDisconnectRequested) lbState.Text = "disconnected due to network problem, autoreconnecting...";
 						else
 						{
 							lbState.Text = "disconnected";
@@ -51,42 +52,17 @@ namespace ZeroKLobby.Notifications
 
 			client.LoginDenied += (s, e) =>
 				{
-                    if (e.ServerParams[0] == "Bad username/password" && !string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword) && canRegister)
+                    if (e.ResultCode == LoginResponse.Code.InvalidName && !string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword) && canRegister)
 					{
 						lbState.Text = "Registering new account";
 						client.Register(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
 					}
-					else LoginWithDialog("Login denied: " + e.ServerParams[0], false);
+					else LoginWithDialog(string.Format("Login denied: {0} {1}",e.ResultCode, e.Reason), false);
 				};
 
-			client.RegistrationDenied += (s, e) => LoginWithDialog("Registration denied: " + e.ServerParams[0], true);
+			client.RegistrationDenied += (s, e) => LoginWithDialog(string.Format("Registration denied: {0} {1}", e.ResultCode.Description(), e.Reason), true);
 
-			client.RegistrationAccepted += (s, e) => client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
-
-			client.AgreementRecieved += (s, e) =>
-				{
-					lbState.Text = "Waiting to accept agreement";
-					var acceptForm = new AcceptAgreementForm { AgreementText = e.Text };
-					if (acceptForm.ShowDialog() == DialogResult.OK)
-					{
-						lbState.Text = "Sending accept agreement";
-						client.AcceptAgreement();
-						ZkData.Utils.SafeThread(() =>
-						{
-							if (!Program.CloseOnNext) client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
-						}).Start();
-					}
-					else
-					{
-						lbState.Text = "did not accept agreement";
-						ZkData.Utils.SafeThread(() =>
-						{
-							if (!Program.CloseOnNext) client.RequestDisconnect(); //server will re-ask AcceptAgreement if we re-connect
-						}).Start();
-
-					}
-				};
-
+            client.RegistrationAccepted += (s, e) => client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
 
 		}
 

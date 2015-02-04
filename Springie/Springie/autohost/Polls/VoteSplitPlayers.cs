@@ -14,7 +14,7 @@ namespace Springie.autohost.Polls
             if (!spring.IsRunning)
             {
                 question = "Split the game into two?";
-                winCount = tas.MyBattle.Users.Count(x => !x.IsSpectator) / 2 + 1;
+                winCount = tas.MyBattle.Users.Values.Count(x => !x.IsSpectator) / 2 + 1;
                 return true;
             }
             else
@@ -27,7 +27,7 @@ namespace Springie.autohost.Polls
         protected override bool AllowVote(TasSayEventArgs e)
         {
             if (tas.MyBattle == null) return false;
-            var entry = tas.MyBattle.Users.FirstOrDefault(x => x.Name == e.UserName);
+            var entry = tas.MyBattle.Users.Values.FirstOrDefault(x => x.Name == e.UserName);
             if (entry == null || entry.IsSpectator)
             {
                 ah.Respond(e, string.Format("Only players can vote"));

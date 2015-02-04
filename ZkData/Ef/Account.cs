@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Security.Principal;
 using System.Threading.Tasks;
+using LobbyClient;
 using Microsoft.Linq.Translations;
 using PlasmaShared;
 using ZkData;
@@ -24,6 +25,7 @@ namespace ZkData
             SpringieLevel = 1;
             FirstLogin = DateTime.UtcNow;
             LastLogin = DateTime.UtcNow;
+            Country = "??";
 
 
             AbuseReportsByAccountID = new HashSet<AbuseReport>();
@@ -89,7 +91,6 @@ namespace ZkData
         public double Elo1v1 { get; set; }
         public double Elo1v1Weight { get; set; }
         public double EloPw { get; set; }
-        public bool IsLobbyAdministrator { get; set; }
         public bool IsBot { get; set; }
        
         [NotMapped]
@@ -244,7 +245,7 @@ namespace ZkData
 
         public void SetPasswordHashed(string passwordHash)
         {
-            PasswordBcrypt = BCrypt.Net.BCrypt.HashPassword(passwordHash);
+            PasswordBcrypt = BCrypt.Net.BCrypt.HashPassword(passwordHash, 7);
         }
 
         public void SetPasswordPlain(string passwordPlain)
@@ -574,7 +575,6 @@ namespace ZkData
 
         public bool IsInRole(string role)
         {
-            if (role == "LobbyAdmin") return IsLobbyAdministrator;
             if (role == "ZkAdmin") return IsZeroKAdmin;
             else return string.IsNullOrEmpty(role);
         }

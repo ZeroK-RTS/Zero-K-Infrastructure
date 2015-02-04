@@ -127,7 +127,7 @@ namespace ZeroKWeb.SpringieInterface
 
                 if (splitTo != null) {
                     // set same map 
-                    tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!map " + context.Map, false);
+                    tas.Say(SayPlace.User, splitTo.Founder.Name, "!map " + context.Map, false);
 
                     var db = new ZkDataContext();
                     var ids = context.Players.Where(y => !y.IsSpectator).Select(x => (int?)x.LobbyID).ToList();
@@ -151,26 +151,26 @@ namespace ZeroKWeb.SpringieInterface
                     try {
                         foreach (var m in toMove) tas.ForceJoinBattle(m.Name, splitTo.BattleID);
                         Thread.Sleep(5000);
-                        tas.Say(TasClient.SayPlace.User, context.AutohostName, "!lock 180", false);
-                        tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!lock 180", false);
+                        tas.Say(SayPlace.User, context.AutohostName, "!lock 180", false);
+                        tas.Say(SayPlace.User, splitTo.Founder.Name, "!lock 180", false);
                         if (context.GetMode() == AutohostMode.Planetwars) {
-                            tas.Say(TasClient.SayPlace.User, context.AutohostName, "!map", false);
+                            tas.Say(SayPlace.User, context.AutohostName, "!map", false);
                             Thread.Sleep(500);
-                            tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!map", false);
+                            tas.Say(SayPlace.User, splitTo.Founder.Name, "!map", false);
                         }
-                        else tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!map " + context.Map, false);
+                        else tas.Say(SayPlace.User, splitTo.Founder.Name, "!map " + context.Map, false);
                         if (forceStart) {
-                            tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!balance", false);
-                            tas.Say(TasClient.SayPlace.User, context.AutohostName, "!balance", false);
-                            tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!forcestart", false);
-                            tas.Say(TasClient.SayPlace.User, context.AutohostName, "!forcestart", false);
+                            tas.Say(SayPlace.User, splitTo.Founder.Name, "!balance", false);
+                            tas.Say(SayPlace.User, context.AutohostName, "!balance", false);
+                            tas.Say(SayPlace.User, splitTo.Founder.Name, "!forcestart", false);
+                            tas.Say(SayPlace.User, context.AutohostName, "!forcestart", false);
                         }
 
-                        tas.Say(TasClient.SayPlace.User, context.AutohostName, "!endvote", false);
-                        tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!endvote", false);
+                        tas.Say(SayPlace.User, context.AutohostName, "!endvote", false);
+                        tas.Say(SayPlace.User, splitTo.Founder.Name, "!endvote", false);
 
-                        tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
-                        tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!start", false);
+                        tas.Say(SayPlace.User, context.AutohostName, "!start", false);
+                        tas.Say(SayPlace.User, splitTo.Founder.Name, "!start", false);
                     } catch (Exception ex) {
                         Trace.TraceError("Error when splitting: {0}", ex);
                     } 
@@ -496,7 +496,7 @@ namespace ZeroKWeb.SpringieInterface
             {
                 player = new PlayerTeam() { Name = matchUser };
                 User us;
-                if (Global.Nightwatch.Tas.GetExistingUser(matchUser, out us)) player.LobbyID = us.LobbyID;
+                if (Global.Nightwatch.Tas.GetExistingUser(matchUser, out us)) player.LobbyID = us.AccountID;
                 else
                 {
                     var db = new ZkDataContext();

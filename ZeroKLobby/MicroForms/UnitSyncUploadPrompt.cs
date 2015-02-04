@@ -42,7 +42,6 @@ namespace ZeroKLobby.MicroForms
             Program.ToolTip.SetText(thisInstance.rememberChoiceCheckbox, "Remember choice for this session only");
             thisInstance.detailText.WordWrap = false;
             var detailText = "Resource name: " + e.Data.Name + Environment.NewLine;
-            detailText = detailText + "File checksum: " + e.Data.Checksum + Environment.NewLine;
             detailText = detailText + "Archive name: " + e.Data.ArchiveName + Environment.NewLine;
             detailText = detailText + "Recommended action: Share multiplayer resource";
             thisInstance.detailText.Text = detailText;

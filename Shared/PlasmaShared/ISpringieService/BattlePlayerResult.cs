@@ -9,6 +9,5 @@ namespace PlasmaShared
         public bool IsVictoryTeam;
         public int LobbyID;
         public int? LoseTime;
-        public int Rank;
     }
 }

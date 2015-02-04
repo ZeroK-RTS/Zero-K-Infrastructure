@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using LobbyClient;
+using Newtonsoft.Json;
 using ZkData;
 using ZkData.UnitSyncLib;
 
@@ -14,26 +16,31 @@ namespace Fixer
     {
         public void RunNub(int num)
         {
-            var tas = new TasClient(null, "Nubotron", GlobalConst.ZkLobbyUserCpu);
+            var tas = new TasClient("Nubotron");
             var name = "TestNub" + num;
             var ord = num / 16;
             var batname = "Test " + ord;
 
-            tas.Connected += (sender, args) => { tas.Login(name, "dummy"); };
-            tas.LoginDenied += (sender, args) => { tas.Register(name, "dummy"); };
-            tas.AgreementRecieved += (sender, recieved) => {
-                tas.AcceptAgreement();
+            //tas.Input += (sender, args) => { Console.WriteLine(" < {0}", args); };
+            //tas.Output += (sender, args) => { Console.WriteLine(" > {0}", args); };
+
+            tas.Connected += (sender, args) => {
                 tas.Login(name, "dummy");
             };
+
+            tas.ConnectionLost += (sender, args) => { Console.WriteLine("disconnected"); };
+
+
+            tas.LoginAccepted += (sender, args) => { Console.WriteLine(name + " accepted"); };
+            tas.LoginDenied += (sender, args) => { tas.Register(name, "dummy"); };
 
             
 
             tas.UserAdded += (sender, args) => {
-                if (args.Data.Name == name) {
+                if (args.Name == name) {
                     tas.JoinChannel("bots");
                     if (num%16 == 0)
-                        tas.OpenBattle(new Battle("91.0", null, 4955, 16, 0, new Map("SmallDivide"), "Test " + ord,
-                            new Mod() { Name = "Zero-K v1.3.1.15" }, new BattleDetails()));
+                        tas.OpenBattle(new Battle("91.0", null, 4955, 16, "SmallDivide", "Test " + ord,"Zero-K v1.3.1.15"));
                     else {
                         var bat = tas.ExistingBattles.Values.FirstOrDefault(x => x.Title == batname);
                         if (bat != null) tas.JoinBattle(bat.BattleID);
@@ -41,30 +48,39 @@ namespace Fixer
                 }
             };
             tas.BattleFound += (sender, args) => {
-                if (args.Data.Title == batname) {
-                    tas.JoinBattle(args.Data.BattleID);
+                if (args.Title == batname) {
+                    //await Task.Delay(200);
+                    tas.JoinBattle(args.BattleID);
                 }
             };
-            
-            
-            
-            tas.Connect(GlobalConst.LobbyServerHost, GlobalConst.LobbyServerPort);
 
-            
-            while (true) {
-                Thread.Sleep(5000);
-            }
+            tas.Connect(GlobalConst.LobbyServerHost, GlobalConst.LobbyServerPort);
         }
 
-        public void SpawnMany()
+        public void RunNub2(int num)
         {
-            ThreadPool.SetMaxThreads(500, 500);
-            for (int i = 0; i < 100; i++) {
+            var con = new ServerConnection();
+            con.CommandRecieved += (sender, args) => {
+                if (args.Command == "TASServer") {
+                    con.SendCommand("LOGIN");
+                }
+            };
+
+            con.Connect(GlobalConst.LobbyServerHost, GlobalConst.LobbyServerPort);
+            
+        }
+
+
+        public async Task SpawnMany()
+        {
+            ThreadPool.SetMaxThreads(1000, 1000);
+            for (int i = 0; i < 1000; i++) {
                 int i1 = i;
                 //Thread.Sleep(100);
-                Task.Factory.StartNew(() => { RunNub(i1); });
+                RunNub(i1);
             }
-        }
+
+         }
 
 
     }

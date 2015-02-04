@@ -27,7 +27,6 @@ namespace LobbyClient
             SpringieLevel,
             ZkAdmin,
             BanMute,
-            BanLobby,
             SteamID,
             DisplayName,
         }
@@ -53,10 +52,8 @@ namespace LobbyClient
         public ProtocolExtension(TasClient tas, Action<string, Dictionary<string, string>> notifyUserExtensionChange) {
             this.tas = tas;
             this.notifyUserExtensionChange = notifyUserExtensionChange;
-            tas.PreviewChannelJoined += tas_PreviewChannelJoined;
             tas.PreviewSaid += tas_PreviewSaid;
-            tas.ChannelUserAdded += tas_ChannelUserAdded;
-            tas.LoginAccepted += (s, e) => tas.JoinChannel(ExtensionChannelName);
+            //tas.LoginAccepted += (s, e) => tas.JoinChannel(ExtensionChannelName);
         }
 
         internal Dictionary<string, string> Get(string name) {
@@ -69,23 +66,23 @@ namespace LobbyClient
         public void Publish(string name, Dictionary<string, string> data) {
             var dict = new Dictionary<string, string>(data);
             publishedUserAttributes[name] = dict;
-            tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, FormatMessage(name, data), false);
+            //tas.Say(SayPlace.Channel, ExtensionChannelName, FormatMessage(name, data), false);
         }
 
 
         public void SendJsonData(object data)
         {
-            tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, EncodeJson(data), false);
+            tas.Say(SayPlace.Channel, ExtensionChannelName, EncodeJson(data), false);
         }
 
 
         public void SendJsonData(string username, object data) {
-            tas.Say(TasClient.SayPlace.User, username, EncodeJson(data), false);
+            tas.Say(SayPlace.User, username, EncodeJson(data), false);
         }
 
         public void SendJsonDataToChannel(string channel, object data)
         {
-            tas.Say(TasClient.SayPlace.Channel, channel, EncodeJson(data), false);
+            tas.Say(SayPlace.Channel, channel, EncodeJson(data), false);
         }
 
 
@@ -149,10 +146,6 @@ namespace LobbyClient
             return input.Replace("|", "&divider&");
         }
 
-        string FormatMessage(string user, Dictionary<string, string> data) {
-            return string.Format("USER_EXT {0} {1}", user, Serialize(data));
-        }
-
         static string Serialize(Dictionary<string, string> data) {
             return string.Join("|", data.Select(x => string.Format("{0}|{1}", Escape(x.Key), Escape(x.Value))).ToArray());
         }
@@ -161,18 +154,6 @@ namespace LobbyClient
             return input.Replace("&divider&", "|");
         }
 
-        void tas_ChannelUserAdded(object sender, TasEventArgs e) {
-            if (e.ServerParams[0] == ExtensionChannelName && e.ServerParams[1] != tas.UserName) {
-                foreach (var kvp in publishedUserAttributes) tas.Say(TasClient.SayPlace.User, e.ServerParams[1], FormatMessage(kvp.Key, kvp.Value), false);
-            }
-        }
-
-        void tas_PreviewChannelJoined(object sender, CancelEventArgs<TasEventArgs> e) {
-            if (e.Data.ServerParams[0] == ExtensionChannelName) {
-                e.Cancel = true;
-                foreach (var kvp in publishedUserAttributes) tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, FormatMessage(kvp.Key, kvp.Value), false);
-            }
-        }
 
 
         void tas_PreviewSaid(object sender, CancelEventArgs<TasSayEventArgs> e) {

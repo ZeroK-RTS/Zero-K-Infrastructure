@@ -17,7 +17,7 @@ namespace NightWatch
             steamApi = new SteamWebApi(GlobalConst.SteamAppID, webApiKey);
             tas.Said += (sender, args) =>
             {
-                if (args.Place == TasSayEventArgs.Places.Normal && args.UserName != tas.UserName && args.Text.StartsWith("!linksteam"))
+                if (args.Place == SayPlace.User && args.UserName != tas.UserName && args.Text.StartsWith("!linksteam"))
                 {
                     var token = args.Text.Substring(11);
                     User user;
@@ -32,7 +32,7 @@ namespace NightWatch
 
                             using (var db = new ZkDataContext())
                             {
-                                var acc = db.Accounts.Find(user.LobbyID);
+                                var acc = db.Accounts.Find(user.AccountID);
                                 acc.SteamID = steamID;
                                 acc.SteamName = info.personaname;
                                 db.SubmitAndMergeChanges();

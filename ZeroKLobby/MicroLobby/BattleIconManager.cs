@@ -25,7 +25,7 @@ namespace ZeroKLobby.MicroLobby
         public BattleIconManager()
         {
             Program.TasClient.BattleFound += TasClient_BattleFound;
-            Program.TasClient.BattleEnded += TasClient_BattleEnded;
+            Program.TasClient.BattleRemoved += TasClient_BattleEnded;
             Program.TasClient.BattleMapChanged += TasClient_BattleMapChanged;
             Program.TasClient.BattleInfoChanged += TasClient_BattleInfoChanged;
             Program.TasClient.BattleUserJoined += TasClient_BattleUserJoined;
@@ -97,7 +97,7 @@ namespace ZeroKLobby.MicroLobby
                                                                    battleIcon.MinimapImage = null;
                                                                    BattleChanged(this, new EventArgs<BattleIcon>(battleIcon));
                                                                }
-                                                           }), Program.SpringPaths.SpringVersion);
+                                                           }));
         }
 
 
@@ -121,7 +121,7 @@ namespace ZeroKLobby.MicroLobby
 
         void HandleFriendChanged(object sender, EventArgs<string> e)
         {
-            var battle = Program.TasClient.ExistingBattles.Values.SingleOrDefault(b => b.Users.Any(u => u.Name == e.Data));
+            var battle = Program.TasClient.ExistingBattles.Values.SingleOrDefault(b => b.Users.ContainsKey(e.Data));
             if (battle != null)
             {
                 var battleIcon = GetBattleIcon(battle.BattleID);
@@ -130,33 +130,32 @@ namespace ZeroKLobby.MicroLobby
             }
         }
 
-        void TasClient_BattleEnded(object sender, EventArgs<Battle> e)
+        void TasClient_BattleEnded(object sender, Battle battle)
         {
-            RemoveBattleIcon(e.Data);
+            RemoveBattleIcon(battle);
         }
 
-        void TasClient_BattleFound(object sender, EventArgs<Battle> e)
+        void TasClient_BattleFound(object sender, Battle battle)
         {
-            var battleID = e.Data.BattleID;
+            var battleID = battle.BattleID;
             var battleIcon = AddBattle(battleID);
             BattleAdded(this, new EventArgs<BattleIcon>(battleIcon));
         }
 
-        void TasClient_BattleInfoChanged(object sender, BattleInfoEventArgs e1)
+        void TasClient_BattleInfoChanged(object sender, OldNewPair<Battle> pair)
         {
-            var battleID = e1.BattleID;
-            var battle = Program.TasClient.ExistingBattles[battleID];
+            var battle = pair.New;
             var founder = battle.Founder;
-            var battleIcon = GetBattleIcon(battleID);
+            var battleIcon = GetBattleIcon(battle.BattleID);
             battleIcon.SetPlayers();
             battleIcon.IsInGame = founder.IsInGame;
             BattleChanged(this, new EventArgs<BattleIcon>(battleIcon));
         }
 
-        void TasClient_BattleMapChanged(object sender, BattleInfoEventArgs e1)
+        void TasClient_BattleMapChanged(object sender, OldNewPair<Battle> pair)
         {
-            var battleIcon = GetBattleIcon(e1.BattleID);
-            LoadMinimap(e1.MapName, battleIcon);
+            var battleIcon = GetBattleIcon(pair.New.BattleID);
+            LoadMinimap(pair.New.MapName, battleIcon);
         }
 
         void TasClient_BattleUserJoined(object sender, BattleUserEventArgs e1)
@@ -185,10 +184,9 @@ namespace ZeroKLobby.MicroLobby
             Reset();
         }
 
-        void TasClient_UserStatusChanged(object sender, TasEventArgs e)
+        void TasClient_UserStatusChanged(object sender, OldNewPair<User> p)
         {
-            var userName = e.ServerParams[0];
-            var battle = Program.TasClient.ExistingBattles.Values.SingleOrDefault(b => b.Founder.Name == userName);
+            var battle = Program.TasClient.ExistingBattles.Values.SingleOrDefault(b => b.Founder.Name == p.New.Name);
             if (battle == null) return;
             var founder = battle.Founder;
             var battleIcon = GetBattleIcon(battle);

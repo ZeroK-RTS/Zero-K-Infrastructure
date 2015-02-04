@@ -71,7 +71,7 @@ namespace Springie.autohost
                         springPaths.SetEnginePath(Program.main.paths.GetEngineFolderByVersion(requestedEngineChange));
                         requestedEngineChange = null;
 
-                        tas.Say(TasClient.SayPlace.Battle, "", "rehosting to engine version " + springPaths.SpringVersion, true);
+                        tas.Say(SayPlace.Battle, "", "rehosting to engine version " + springPaths.SpringVersion, true);
                         ComRehost(TasSayEventArgs.Default, new string[] { });
                     }
                 };
@@ -79,10 +79,8 @@ namespace Springie.autohost
             spring = new Spring(springPaths) { UseDedicatedServer = true };
             bool isManaged = SpawnConfig == null && config.Mode != AutohostMode.None;
 
-            tas = new TasClient(null,
-                                MainConfig.SpringieVersion,
-                                isManaged ? GlobalConst.ZkSpringieManagedCpu : GlobalConst.ZkLobbyUserCpu,
-                                false,
+            tas = new TasClient(MainConfig.SpringieVersion,
+                                isManaged ? Login.ClientTypes.SpringieManaged : Login.ClientTypes.Springie,
                                 Program.main.Config.IpOverride);
 
             pollTimer = new Timer(PollTimeout*1000);
@@ -100,27 +98,19 @@ namespace Springie.autohost
 
             tas.BattleUserLeft += tas_BattleUserLeft;
             tas.UserStatusChanged += tas_UserStatusChanged;
-            tas.BattleUserStatusChanged += TasOnBattleUserStatusChanged;
             tas.BattleUserJoined += tas_BattleUserJoined;
             tas.MyBattleMapChanged += tas_MyBattleMapChanged;
-            tas.BattleLockChanged += tas_BattleLockChanged;
             tas.BattleOpened += tas_BattleOpened;
-            tas.UserAdded += (o, u) => { if (u.Data.Name == GetAccountName()) OpenBattleRoom(null, null); };
+            tas.UserAdded += (o, u) => { if (u.Name == GetAccountName()) OpenBattleRoom(null, null); };
 
             tas.RegistrationDenied += (s, e) =>
                 {
-                    Trace.TraceWarning("Registration denied: {0}", e.ServerParams[0]);
+                    Trace.TraceWarning("Registration denied: {0} {1}", e.ResultCode.Description(), e.Reason);
                     CloneNumber++;
                     tas.Login(GetAccountName(), config.Password);
                 };
 
             tas.RegistrationAccepted += (s, e) => tas.Login(GetAccountName(), config.Password);
-
-            tas.AgreementRecieved += (s, e) =>
-                {
-                    tas.AcceptAgreement();
-                    tas.Login(GetAccountName(), config.Password);
-                };
 
             tas.ConnectionLost += tas_ConnectionLost;
             tas.Connected += tas_Connected;
@@ -167,10 +157,6 @@ namespace Springie.autohost
                         // auto rehost to latest mod version
                         if (!string.IsNullOrEmpty(config.AutoUpdateRapidTag) && SpawnConfig == null) UpdateRapidMod(config.AutoUpdateRapidTag);
 
-                        if (lockedUntil != DateTime.MinValue && lockedUntil < DateTime.Now) {
-                            ComUnlock(TasSayEventArgs.Default, new string[]{});
-                        }
-
 
                     } catch (Exception ex) {
                         Trace.TraceError(ex.ToString());
@@ -185,10 +171,6 @@ namespace Springie.autohost
         public void Start()
         {
             tas.Connect(Program.main.Config.ServerHost, Program.main.Config.ServerPort);
-        }
-
-        void TasOnBattleUserStatusChanged(object sender, TasEventArgs tasEventArgs) {
-            PlayerCountDecreased();
         }
 
         public void Dispose() {
@@ -246,7 +228,7 @@ namespace Springie.autohost
                     for (int i = 0; i < c.ListenTo.Length; i++) {
                         if (c.ListenTo[i] == e.Place) {
                             // command is only for nonspecs
-                            if (!c.AllowSpecs) if (tas.MyBattle == null || !tas.MyBattle.Users.Any(x => x.LobbyUser.Name == e.UserName && !x.IsSpectator)) return false;
+                            if (!c.AllowSpecs) if (tas.MyBattle == null || !tas.MyBattle.Users.Values.Any(x => x.LobbyUser.Name == e.UserName && !x.IsSpectator)) return false;
 
                             int reqLevel = c.Level;
                             int ulevel = GetUserLevel(e);
@@ -256,9 +238,9 @@ namespace Springie.autohost
                                 return true; // ALL OK
                             }
                             else {
-                                if (e.Place == TasSayEventArgs.Places.Battle && tas.MyBattle != null && tas.MyBattle.NonSpectatorCount == 1 &&
+                                if (e.Place == SayPlace.Battle && tas.MyBattle != null && tas.MyBattle.NonSpectatorCount == 1 &&
                                     (!command.StartsWith("vote") && HasRights("vote" + command, e) &&
-                                        tas.MyBattle.Users.Any(u => u.Name == e.UserName && !u.IsSpectator))) {
+                                        tas.MyBattle.Users.Values.Any(u => u.Name == e.UserName && !u.IsSpectator))) {
                                     // server only has 1 player and we have rights for vote variant - we might as well just do it
                                     return true;
                                 }
@@ -275,7 +257,7 @@ namespace Springie.autohost
                     return false; // place not allowed for this command = ignore command
                 }
             }
-            if (e.Place != TasSayEventArgs.Places.Channel) Respond(e, "Sorry, I don't know command '" + command + "'");
+            if (e.Place != SayPlace.Channel) Respond(e, "Sorry, I don't know command '" + command + "'");
             return false;
         }
 
@@ -295,13 +277,13 @@ namespace Springie.autohost
         }
 
         public static void Respond(TasClient tas, Spring spring, TasSayEventArgs e, string text) {
-            var p = TasClient.SayPlace.User;
+            var p = SayPlace.User;
             bool emote = false;
-            if (e.Place == TasSayEventArgs.Places.Battle) {
-                p = TasClient.SayPlace.BattlePrivate;
+            if (e.Place == SayPlace.Battle) {
+                p = SayPlace.BattlePrivate;
                 emote = true;
             }
-            if (e.Place == TasSayEventArgs.Places.Game && spring.IsRunning) spring.SayGame(text);
+            if (e.Place == SayPlace.Game && spring.IsRunning) spring.SayGame(text);
             else tas.Say(p, e.UserName, text, emote);
         }
 
@@ -381,13 +363,7 @@ namespace Springie.autohost
                     ComExit(e, words);
                     break;
 
-                case "lock":
-                    ComLock(e,words);
-                    break;
 
-                case "unlock":
-                    ComUnlock(e,words);
-                    break;
 
                 case "vote":
                     RegisterVote(e, words.Length < 1 || words[0] != "2");
@@ -437,10 +413,6 @@ namespace Springie.autohost
                     ComPredict(e, words);
                     break;
 
-                case "fix":
-                    ComFix(e, words);
-                    break;
-
                 case "rehost":
                     ComRehost(e, words);
                     break;
@@ -475,14 +447,6 @@ namespace Springie.autohost
 
                 case "helpall":
                     ComHelpAll(e, words);
-                    break;
-
-                case "fixcolors":
-                    ComFixColors(e, words);
-                    break;
-
-                case "teamcolors":
-                    ComTeamColors(e, words);
                     break;
 
                 case "springie":
@@ -630,12 +594,12 @@ namespace Springie.autohost
 
 
         public static void SayBattle(TasClient tas, Spring spring, string text, bool ingame) {
-            tas.Say(TasClient.SayPlace.Battle, "", text, true);
+            tas.Say(SayPlace.Battle, "", text, true);
             if (spring.IsRunning && ingame) spring.SayGame(text);
         }
 
         public void SayBattlePrivate(string user, string text) {
-            if (!String.IsNullOrEmpty(text)) foreach (string line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)) tas.Say(TasClient.SayPlace.BattlePrivate, user, text, true);
+            if (!String.IsNullOrEmpty(text)) foreach (string line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)) tas.Say(SayPlace.BattlePrivate, user, text, true);
         }
 
         public void OpenBattleRoom(string modname, string mapname, bool now = true) {
@@ -648,8 +612,8 @@ namespace Springie.autohost
             if (String.IsNullOrEmpty(mapname)) mapname = config.Map;
 
             string title = config.Title.Replace("%1", MainConfig.SpringieVersion);
-            string password = "*";
-            
+
+            string password = null;
             if (!string.IsNullOrEmpty(config.BattlePassword)) password = config.BattlePassword;
 
             int maxPlayers = config.MaxPlayers;
@@ -687,25 +651,19 @@ namespace Springie.autohost
             }
 
             PackageDownloader.Version version = Program.main.Downloader.PackageDownloader.GetByTag(modname);
-            if (version != null && cache.GetResourceDataByInternalName(version.InternalName) != null) modname = version.InternalName;
+            if (version != null && version.InternalName != null) modname = version.InternalName;
 
-            hostedMod = new Mod();
-            cache.GetMod(modname, (m) => { hostedMod = m; }, (m) => { }, springPaths.SpringVersion);
+            hostedMod = new Mod() {Name = modname};
+            cache.GetMod(modname, (m) => { hostedMod = m; }, (m) => {});
             if (hostedMod.IsMission && !String.IsNullOrEmpty(hostedMod.MissionMap)) mapname = hostedMod.MissionMap;
 
-            Map mapi = null;
-            cache.GetMap(mapname, (m, x, y, z) => { mapi = m; }, (e) => { }, springPaths.SpringVersion);
+            //Map mapi = null;
+            //cache.GetMap(mapname, (m, x, y, z) => { mapi = m; }, (e) => { }, springPaths.SpringVersion);
             //int mint, maxt;
-            var b = new Battle(springPaths.SpringVersion, password, hostingPort, maxPlayers, 0, mapi, title, hostedMod, new BattleDetails());
-            // if hole punching enabled then we use it
-            if (Program.main.Config.UseHolePunching) b.Nat = Battle.NatMode.HolePunching;
-            else if (Program.main.Config.GargamelMode) b.Nat = Battle.NatMode.FixedPorts;
-            else b.Nat = Battle.NatMode.None; // else either no nat or fixed ports (for gargamel fake - to get client IPs)
-            
-
+            var b = new Battle(springPaths.SpringVersion, password, hostingPort, maxPlayers, mapname, title,modname);
             tas.OpenBattle(b);
-            tas.SetScriptTag("GAME/hosttype=SPRINGIE");
-            tas_MyBattleMapChanged(this, null);
+
+               
         }
 
 
@@ -786,7 +744,7 @@ namespace Springie.autohost
             return
                 hostedMod.MissionSlots.Where(x => x.IsHuman)
                          .OrderByDescending(x => x.IsRequired)
-                         .Where(x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !y.IsSpectator));
+                         .Where(x => !b.Users.Values.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !y.IsSpectator));
         }
 
 
@@ -855,19 +813,17 @@ namespace Springie.autohost
             tas.ExistingUsers.TryGetValue(e.Username, out us);
             bool isMuted = us != null && us.BanMute;
             if (Program.main.Config.RedirectGameChat && e.Username != tas.UserName && !e.Line.StartsWith("Allies:") &&
-                !e.Line.StartsWith("Spectators:") && !isMuted) tas.Say(TasClient.SayPlace.Battle, "", "[" + e.Username + "]" + e.Line, false);
+                !e.Line.StartsWith("Spectators:") && !isMuted) tas.Say(SayPlace.Battle, "", "[" + e.Username + "]" + e.Line, false);
         }
 
 
         void spring_SpringExited(object sender, EventArgs e) {
             StopVote();
-            lockedUntil = DateTime.MinValue;
-            tas.ChangeLock(false);
             tas.ChangeMyUserStatus(false, false);
             Battle b = tas.MyBattle;
             foreach (string s in toNotify) {
-                if (b != null && b.Users.Any(x => x.Name == s)) tas.Ring(s);
-                tas.Say(TasClient.SayPlace.User, s, "** Game just ended, join me! **", false);
+                if (b != null && b.Users.ContainsKey(s)) tas.Ring(SayPlace.BattlePrivate, s);
+                tas.Say(SayPlace.User, s, "** Game just ended, join me! **", false);
             }
             toNotify.Clear();
 
@@ -880,49 +836,38 @@ namespace Springie.autohost
             //tas.ChangeLock(false);
             if (hostedMod.IsMission) {
                 var service = GlobalConst.GetContentService();
-                foreach (UserBattleStatus u in tas.MyBattle.Users.Where(x => !x.IsSpectator)) service.NotifyMissionRun(u.Name, hostedMod.ShortName);
+                foreach (UserBattleStatus u in tas.MyBattle.Users.Values.Where(x => !x.IsSpectator)) service.NotifyMissionRun(u.Name, hostedMod.ShortName);
             }
         
             StopVote();
         }
 
 
-        void tas_BattleLockChanged(object sender, BattleInfoEventArgs e1) {
-            if (e1.BattleID == tas.MyBattleID) SayBattle("game " + (tas.MyBattle.IsLocked ? "locked" : "unlocked"), false);
-        }
-
-        void tas_BattleOpened(object sender, TasEventArgs e) {
-            tas.ChangeMyBattleStatus(true, false, SyncStatuses.Synced);
+        void tas_BattleOpened(object sender, Battle battle) {
+            tas.ChangeMyBattleStatus(true, SyncStatuses.Synced);
             if (hostedMod.IsMission) {
                 foreach (MissionSlot slot in hostedMod.MissionSlots.Where(x => !x.IsHuman)) {
-                    var ubs = new UserBattleStatus();
-                    ubs.SyncStatus = SyncStatuses.Synced;
-                    ubs.TeamColor = slot.Color;
-                    ubs.AllyNumber = slot.AllyID;
-                    ubs.TeamNumber = slot.TeamID;
-                    ubs.IsReady = true;
-                    ubs.IsSpectator = false;
-                    ubs.Name = slot.AiShortName;
-                    tas.AddBot(slot.TeamName, ubs, slot.Color, slot.AiShortName);
+                    tas.AddBot(slot.TeamName, slot.AiShortName, slot.AllyID, slot.TeamID);
                 }
             }
+
+            tas_MyBattleMapChanged(this, null); // todo really hacky thing
+
             if (SpawnConfig != null)
             {
-                if (!string.IsNullOrEmpty(SpawnConfig.Handle)) tas.Say(TasClient.SayPlace.User, SpawnConfig.Owner, SpawnConfig.Handle, true);
-                    tas.Say(TasClient.SayPlace.User, SpawnConfig.Owner, "I'm here! Ready to serve you! Join me!", true);
+                if (!string.IsNullOrEmpty(SpawnConfig.Handle)) tas.Say(SayPlace.User, SpawnConfig.Owner, SpawnConfig.Handle, true);
+                    tas.Say(SayPlace.User, SpawnConfig.Owner, "I'm here! Ready to serve you! Join me!", true);
             }
             else ServerVerifyMap(true);
+
+
+            
         }
 
 
         void tas_BattleUserJoined(object sender, BattleUserEventArgs e1) {
             if (e1.BattleID != tas.MyBattleID) return;
             string name = e1.UserName;
-
-            if (tas.ExistingUsers[name].BanLobby) {
-                tas.Kick(name);
-                return;
-            }
 
             string welc = config.Welcome;
             if (!string.IsNullOrEmpty(welc)) {
@@ -942,10 +887,10 @@ namespace Springie.autohost
             if (SpawnConfig == null) {
                 try {
                     var serv = GlobalConst.GetSpringieService();
-                    PlayerJoinResult ret = serv.AutohostPlayerJoined(tas.MyBattle.GetContext(), tas.ExistingUsers[name].LobbyID);
+                    PlayerJoinResult ret = serv.AutohostPlayerJoined(tas.MyBattle.GetContext(), tas.ExistingUsers[name].AccountID);
                     if (ret != null) {
-                        if (!string.IsNullOrEmpty(ret.PrivateMessage)) tas.Say(TasClient.SayPlace.User, name, ret.PrivateMessage, false);
-                        if (!string.IsNullOrEmpty(ret.PublicMessage)) tas.Say(TasClient.SayPlace.Battle, "", ret.PublicMessage, true);
+                        if (!string.IsNullOrEmpty(ret.PrivateMessage)) tas.Say(SayPlace.User, name, ret.PrivateMessage, false);
+                        if (!string.IsNullOrEmpty(ret.PublicMessage)) tas.Say(SayPlace.Battle, "", ret.PublicMessage, true);
                         if (ret.ForceSpec) tas.ForceSpectator(name);
                         if (ret.Kick) tas.Kick(name);
                     }
@@ -969,26 +914,13 @@ namespace Springie.autohost
                 SayBattle("boss has left the battle");
                 bossName = "";
             }
-
-            PlayerCountDecreased();
-
-        }
-
-
-        void PlayerCountDecreased() {
-            Battle battle = tas.MyBattle;
-            if (battle != null && battle.NonSpectatorCount < 2) {
-                // player left and only 2 remaining (springie itself + some noob) -> unlock
-                lockedUntil = DateTime.MinValue;
-                tas.ChangeLock(false);
-            }
         }
 
 
         // login accepted - join channels
 
         // im connected, let's login
-        void tas_Connected(object sender, TasEventArgs e) {
+        void tas_Connected(object sender, Welcome welcome) {
             tas.Login(GetAccountName(), config.Password);
         }
 
@@ -1002,9 +934,8 @@ namespace Springie.autohost
             foreach (string c in config.JoinChannels) tas.JoinChannel(c);
         }
 
-        void tas_LoginDenied(object sender, TasEventArgs e) {
-            //System.Console.WriteLine("Failed login for {0}: {1}", GetAccountName(), e.ServerParams[0]);
-            if (e.ServerParams[0] == "Invalid username or password") tas.Register(GetAccountName(), config.Password);
+        void tas_LoginDenied(object sender, LoginResponse loginResponse) {
+            if (loginResponse.ResultCode == LoginResponse.Code.InvalidName) tas.Register(GetAccountName(), config.Password);
             else {
                 CloneNumber++;
                 tas.Login(GetAccountName(), config.Password);
@@ -1013,39 +944,41 @@ namespace Springie.autohost
 
         public DateTime lastMapChange = DateTime.Now;
 
-        void tas_MyBattleMapChanged(object sender, BattleInfoEventArgs e1) {
+        void tas_MyBattleMapChanged(object sender, OldNewPair<Battle> oldNewPair) {
             lastMapChange = DateTime.Now;
 
             Battle b = tas.MyBattle;
-            string mapName = b.MapName.ToLower();
+            if (b != null) {
+                string mapName = b.MapName.ToLower();
 
-            if (SpawnConfig == null) {
-                ComResetOptions(TasSayEventArgs.Default, new string[] { });
-                ComClearBox(TasSayEventArgs.Default, new string[]{});
-            }
+                if (SpawnConfig == null) {
+                    ComResetOptions(TasSayEventArgs.Default, new string[] { });
+                    ComClearBox(TasSayEventArgs.Default, new string[] { });
+                }
 
-            try {
-                var serv = GlobalConst.GetSpringieService();
-                string commands = serv.GetMapCommands(mapName);
-                if (!string.IsNullOrEmpty(commands)) foreach (string c in commands.Split('\n').Where(x => !string.IsNullOrEmpty(x))) RunCommand(c);
-            } catch (Exception ex) {
-                Trace.TraceError("Error procesing map commands: {0}", ex);
+                try {
+                    var serv = GlobalConst.GetSpringieService();
+                    string commands = serv.GetMapCommands(mapName);
+                    if (!string.IsNullOrEmpty(commands)) foreach (string c in commands.Split('\n').Where(x => !string.IsNullOrEmpty(x))) RunCommand(c);
+                } catch (Exception ex) {
+                    Trace.TraceError("Error procesing map commands: {0}", ex);
+                }
             }
         }
 
         public BattleContext slaveContextOverride;
 
-        void tas_MyStatusChangedToInGame(object sender, TasEventArgs e) {
+        void tas_MyStatusChangedToInGame(object sender, Battle battle) {
             spring.StartGame(tas, Program.main.Config.HostingProcessPriority, null, null, contextOverride:slaveContextOverride);
         }
 
         void tas_Said(object sender, TasSayEventArgs e) {
             if (String.IsNullOrEmpty(e.UserName)) return;
-            if (Program.main.Config.RedirectGameChat && e.Place == TasSayEventArgs.Places.Battle && e.Origin == TasSayEventArgs.Origins.Player &&
+            if (Program.main.Config.RedirectGameChat && e.Place == SayPlace.Battle &&
                 e.UserName != tas.UserName && e.IsEmote == false && !tas.ExistingUsers[e.UserName].BanMute) spring.SayGame(string.Format("<{0}>{1}", e.UserName, e.Text));
             
             // check if it's command
-            if (e.Origin == TasSayEventArgs.Origins.Player && !e.IsEmote && e.Text.StartsWith("!")) {
+            if (!e.IsEmote && e.Text.StartsWith("!")) {
                 if (e.Text.Length < 2) return;
                 string[] allwords = e.Text.Substring(1).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 if (allwords.Length < 1) return;
@@ -1065,7 +998,7 @@ namespace Springie.autohost
                 }
                
 
-                if (e.Place == TasSayEventArgs.Places.Normal) {
+                if (e.Place == SayPlace.User) {
                     if (com != "say" && com != "admins" && com != "help" && com != "helpall" && com != "springie" && com != "listoptions" &&
                         com != "spawn" && com != "predict" && com != "notify" && com != "transmit" && com != "adduser") SayBattle(String.Format("{0} executed by {1}", com, e.UserName));
                 }
@@ -1075,10 +1008,11 @@ namespace Springie.autohost
         }
 
 
-        void tas_UserStatusChanged(object sender, TasEventArgs e) {
+        void tas_UserStatusChanged(object sender, OldNewPair<User> oldNewPair) {
             if (spring.IsRunning) {
                 Battle b = tas.MyBattle;
-                if (e.ServerParams[0] != tas.UserName && b.Users.Any(x => x.Name == e.ServerParams[0])) CheckForBattleExit();
+                var name = oldNewPair.New.Name;
+                if (name != tas.UserName && b.Users.ContainsKey(name)) CheckForBattleExit();
             }
             
         }

@@ -61,7 +61,6 @@ namespace PlasmaShared
                                                                   ResourceType resourceType,
                                                                   string archiveName,
                                                                   string internalName,
-                                                                  int springHash,
                                                                   byte[] serializedData,
                                                                   List<string> dependencies,
                                                                   byte[] minimap,

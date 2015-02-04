@@ -300,13 +300,12 @@ namespace LobbyClient
                     statsPlayers = players.ToDictionary(x => x.Name,
                                                         x => new BattlePlayerResult
                                                                  {
-                                                                     LobbyID = x.LobbyUser.LobbyID,
+                                                                     LobbyID = x.LobbyUser.AccountID,
                                                                      AllyNumber = x.AllyNumber,
                                                                      CommanderType = null,
                                                                      // todo commandertype
                                                                      IsSpectator = x.IsSpectator,
                                                                      IsVictoryTeam = false,
-                                                                     Rank = x.LobbyUser.Rank,
                                                                  });
                 }
                 if (isHosting) timer.Start();
@@ -527,7 +526,7 @@ namespace LobbyClient
                                 var result = service.SubmitSpringBattleResult(StartContext, lobbyPassword, battleResult, statsPlayers.Values.ToList(), statsData);
                                 if (result != null) {
                                     foreach (var line in result.Split('\n')) {
-                                        client.Say(TasClient.SayPlace.Battle, "", line, true);
+                                        client.Say(SayPlace.Battle, "", line, true);
                                     }
                                 }
                             }
@@ -594,7 +593,7 @@ namespace LobbyClient
 
 
         private void talker_SpringEvent(object sender, Talker.SpringEventArgs e) {
-            //this.client.Say(TasClient.SayPlace.Battle, "",string.Format("type:{0} param:{1} player:{2}-{3} text:{4}",e.EventType.ToString(), e.Param,e.PlayerNumber, e.PlayerName, e.Text),false);
+            //this.client.Say(SayPlace.Battle, "",string.Format("type:{0} param:{1} player:{2}-{3} text:{4}",e.EventType.ToString(), e.Param,e.PlayerNumber, e.PlayerName, e.Text),false);
             try {
                 switch (e.EventType) {
                     case Talker.SpringEventType.PLAYER_JOINED:
@@ -647,7 +646,7 @@ namespace LobbyClient
                         }  else 
                         {
                             //gameover before gamestart
-                            client.Say(TasClient.SayPlace.Battle, "", "DEBUG: recieved GAMEOVER before STARTPLAYING!", true);
+                            client.Say(SayPlace.Battle, "", "DEBUG: recieved GAMEOVER before STARTPLAYING!", true);
                         }
 
                         break;
@@ -703,8 +702,8 @@ namespace LobbyClient
                             //User user;
                             //if (client.ExistingUsers.TryGetValue(kvp.Key, out user) && user.IsAway)
                             //{
-                            client.Ring(kvp.Key);
-                            client.Say(TasClient.SayPlace.User, kvp.Key, "Please ready up ingame, game starting soon", false);
+                            client.Ring(SayPlace.BattlePrivate, kvp.Key);
+                            client.Say(SayPlace.User, kvp.Key, "Please ready up ingame, game starting soon", false);
                             //}
                         }
                         SayGame(string.Format("Game will be force started in {0} seconds", Math.Max(20, timeToWait - Math.Round(timeSinceStart))));

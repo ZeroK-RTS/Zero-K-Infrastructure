@@ -60,16 +60,9 @@ namespace ZeroKLobby
             newLine();
             drawString("Players: " + battle.NonSpectatorCount);
             drawString("Spectators: " + battle.SpectatorCount);
-            drawString("Friends: " + battle.Users.Count(u => Program.FriendManager.Friends.Contains(u.Name)));
+            drawString("Friends: " + battle.Users.Values.Count(u => Program.FriendManager.Friends.Contains(u.Name)));
             newLine();
 
-            if (battle.Rank > 0)
-            {
-                drawImage(Images.GetRank(battle.Rank), 16, 16);
-                var rankText = battle.Rank == 0 ? "Beginner" : string.Format(" > {0} hours", User.RankLimits[battle.Rank]);
-                drawString("Minimum Rank: " + rankText);
-                newLine();
-            }
 
             if (founder.IsInGame)
             {
@@ -85,25 +78,12 @@ namespace ZeroKLobby
                 newLine();
             }
 
-            if (battle.IsReplay)
-            {
-                drawImage(ZklResources.replay, 16, 16);
-                drawString("Battle is replay.");
-                newLine();
-            }
-
-            if (battle.IsLocked)
-            {
-                drawImage(ZklResources.redlight, 16, 16);
-                drawString("Battle is locked.");
-                newLine();
-            }
             newLine();
 
 
-            foreach (var player in battle.Users)
+            foreach (var player in battle.Users.Values)
             {
-                var user = Program.TasClient.ExistingUsers[player.Name];
+                var user = player.LobbyUser;
                 var icon = TextImage.GetUserImage(user.Name);
                 drawImage(icon, 16, 16);
                 Image flag;
@@ -167,10 +147,7 @@ namespace ZeroKLobby
             h += line; // map name
             h += line; // counts
             if (battle.IsPassworded) h += line;
-            if (battle.IsReplay) h += line;
-            if (battle.IsLocked) h += line;
             if (founder.IsInGame) h += line; // "battle has been going on for at least..."
-            if (battle.Rank > 0) h += line;
 
 
             h += line; // blank line

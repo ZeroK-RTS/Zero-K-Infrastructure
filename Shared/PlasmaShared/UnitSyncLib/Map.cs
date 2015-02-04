@@ -68,7 +68,6 @@ namespace ZkData.UnitSyncLib
             return MemberwiseClone();
         }
 
-        public int Checksum { get; set; }
 
         string IResourceInfo.Name { get { return Name; } set { Name = value; } }
 

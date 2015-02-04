@@ -18,7 +18,7 @@ namespace NightWatch
 
         public ChatRelay(TasClient zkTas, string password, List<string> channels)
         {
-            this.springTas = new TasClient(null, "ChatRelay", GlobalConst.ZkLobbyUserCpu);
+            this.springTas = new TasClient("ChatRelay");
             this.channels = channels;
             this.zkTas = zkTas;
             springTas.LoginAccepted += OnLoginAccepted;
@@ -26,7 +26,7 @@ namespace NightWatch
             springTas.Said += OnSaid;
             zkTas.Said += OnSaid;
 
-            SetupSpringTasConnection(password);
+            // HACK disable relay SetupSpringTasConnection(password);
         }
 
         void SetupSpringTasConnection(string password)
@@ -35,17 +35,17 @@ namespace NightWatch
                 Thread.Sleep(5000);
                 springTas.Login(GlobalConst.NightwatchName, password);
             });
-            springTas.Connect("lobby.springrts.com", 8200);
+            springTas.Connect(GlobalConst.OldSpringLobbyHost, GlobalConst.OldSpringLobbyPort);
             springTas.Connected += (sender, args) => springTas.Login(GlobalConst.NightwatchName, password);
         }
 
         void OnSaid(object sender, TasSayEventArgs args)
         {
             var tas = (TasClient)sender;
-            if (args.Place == TasSayEventArgs.Places.Channel && channels.Contains(args.Channel) && args.UserName != tas.UserName)
+            if (args.Place == SayPlace.Channel && channels.Contains(args.Channel) && args.UserName != tas.UserName)
             {
                 var otherTas = tas == zkTas ? springTas : zkTas;
-                otherTas.Say(TasClient.SayPlace.Channel, args.Channel, string.Format("<{0}> {1}", args.UserName, args.Text), args.IsEmote);
+                otherTas.Say(SayPlace.Channel, args.Channel, string.Format("<{0}> {1}", args.UserName, args.Text), args.IsEmote);
             }
         }
 

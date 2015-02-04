@@ -19,8 +19,8 @@ namespace ZeroKLobby.Notifications
             tas.PreviewSaid += (sender, e) =>
                 {
                     var args = e.Data;
-                    if ((tas.MyBattle != null && args.Place == TasSayEventArgs.Places.Battle && args.UserName == tas.MyBattle.Founder.Name) ||
-                         (args.Place == TasSayEventArgs.Places.Channel && args.UserName == GlobalConst.NightwatchName))
+                    if ((tas.MyBattle != null && args.Place == SayPlace.Battle && args.UserName == tas.MyBattle.Founder.Name) ||
+                         (args.Place == SayPlace.Channel && args.UserName == GlobalConst.NightwatchName))
                     {
                         //SPRINGIE's
                         if(args.Text.StartsWith("Poll:"))  //SPRINGIE start & end & mid of vote (OFFICIAL, COMPLETE)
@@ -153,13 +153,13 @@ namespace ZeroKLobby.Notifications
             return this;
         }
         void btnNo_Click(object sender, EventArgs e) {
-            if (isSpad) tas.Say(TasClient.SayPlace.Battle, "", "!vote n", false);
-            else tas.Say(TasClient.SayPlace.Battle, "", "!n", false);
+            if (isSpad) tas.Say(SayPlace.Battle, "", "!vote n", false);
+            else tas.Say(SayPlace.Battle, "", "!n", false);
         }
 
         void btnYes_Click(object sender, EventArgs e) {
-            if (isSpad) tas.Say(TasClient.SayPlace.Battle, "", "!vote y", false);
-            else tas.Say(TasClient.SayPlace.Battle, "", "!y", false);
+            if (isSpad) tas.Say(SayPlace.Battle, "", "!vote y", false);
+            else tas.Say(SayPlace.Battle, "", "!y", false);
         }
 
         void lbQuestion_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {

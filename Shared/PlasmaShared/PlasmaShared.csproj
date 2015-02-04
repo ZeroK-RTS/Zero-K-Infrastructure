@@ -87,7 +87,6 @@
     <Compile Include="IContentService\ResourceType.cs" />
     <Compile Include="IContentService\ReturnValue.cs" />
     <Compile Include="IContentService\ScriptMissionData.cs" />
-    <Compile Include="IContentService\SpringHashEntry.cs" />
     <Compile Include="IResourceInfo.cs" />
     <Compile Include="ISpringieService\AhConfig.cs" />
     <Compile Include="ISpringieService\AutohostMode.cs" />

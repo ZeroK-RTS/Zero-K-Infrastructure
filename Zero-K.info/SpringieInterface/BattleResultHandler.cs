@@ -54,7 +54,6 @@ namespace ZeroKWeb.SpringieInterface
                                                    CommanderType = p.CommanderType,
                                                    IsInVictoryTeam = p.IsVictoryTeam,
                                                    IsSpectator = p.IsSpectator,
-                                                   Rank = p.Rank,
                                                    LoseTime = p.LoseTime
                                                });
                 }
@@ -181,12 +180,12 @@ namespace ZeroKWeb.SpringieInterface
                 var conf = context.GetConfig();
                 if (bat != null && (conf == null || conf.MinToJuggle == null)) // if not qm room do not join those who are in battle
                 {
-                    List<string> inbatPlayers = bat.Users.Select(x => x.Name).ToList();
+                    List<string> inbatPlayers = bat.Users.Keys.ToList();
                     joinplayers.RemoveAll(x => inbatPlayers.Contains(x));
                 }
                 foreach (string jp in joinplayers.Distinct().Where(x => x != context.AutohostName)) tas.ForceJoinChannel(jp, channelName);
                 tas.JoinChannel(channelName); // join nightwatch and say it
-                tas.Say(TasClient.SayPlace.Channel, channelName, text.ToString(), true);
+                tas.Say(SayPlace.Channel, channelName, text.ToString(), true);
                 tas.LeaveChannel(channelName);
 
                 //text.Append(string.Format("Debriefing in #{0} - zk://chat/channel/{0}  ", channelName));

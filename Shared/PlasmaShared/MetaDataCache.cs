@@ -32,7 +32,6 @@ namespace ZkData
         readonly SpringScanner scanner;
         readonly WebClient webClientForMap = new WebClient() { Proxy = null };
         readonly WebClient webClientForMod = new WebClient() { Proxy = null };
-        public bool UseSpringHashes = false;
 
         public MetaDataCache(SpringPaths springPaths, SpringScanner scanner)
         {
@@ -52,7 +51,7 @@ namespace ZkData
             return string.Format("{0}/{1}.heightmap.jpg", resourceFolder, name.EscapePath());
         }
 
-        public void GetMap(string mapName, MapCallback callback, Action<Exception> errorCallback, string springVersion)
+        public void GetMap(string mapName, MapCallback callback, Action<Exception> errorCallback)
         {
             var metadataPath = GetMetadataPath(mapName);
             var minimapFile = GetMinimapPath(mapName);
@@ -65,7 +64,7 @@ namespace ZkData
                 Map map = null;
                 try
                 {
-                    map = GetMapMetadata(mapName, springVersion);
+                    map = GetMapMetadata(mapName);
                 }
                 catch (Exception e)
                 {
@@ -111,7 +110,7 @@ namespace ZkData
                     metadata = webClientForMap.DownloadData(String.Format("{0}/{1}.metadata.xml.gz", serverResourceUrlBase, mapName.EscapePath()));
                 }
 
-                var map = GetMapMetadata(metadata, springVersion);
+                var map = GetMapMetadata(metadata);
 
                 File.WriteAllBytes(minimapFile, minimap);
                 File.WriteAllBytes(heightMapFile, heightmap);
@@ -147,9 +146,9 @@ namespace ZkData
             }
         }
 
-        public void GetMapAsync(string mapName, MapCallback callback, Action<Exception> errorCallback, string springVersion)
+        public void GetMapAsync(string mapName, MapCallback callback, Action<Exception> errorCallback)
         {
-            Utils.StartAsync(() => GetMap(mapName, callback, errorCallback, springVersion));
+            Utils.StartAsync(() => GetMap(mapName, callback, errorCallback));
         }
 
 
@@ -168,7 +167,7 @@ namespace ZkData
             return string.Format("{0}/{1}.minimap.jpg", resourceFolder, name.EscapePath());
         }
 
-        public void GetMod(string modName, Action<Mod> callback, Action<Exception> errorCallback, string springVersion)
+        public void GetMod(string modName, Action<Mod> callback, Action<Exception> errorCallback)
         {
             var modPath = GetMetadataPath(modName);
 
@@ -178,7 +177,7 @@ namespace ZkData
                 Mod mod = null;
                 try
                 {
-                    mod = GetModMetadata(modName, springVersion);
+                    mod = GetModMetadata(modName);
                 }
                 catch (Exception e)
                 {
@@ -208,7 +207,7 @@ namespace ZkData
                     modData = webClientForMod.DownloadData(String.Format("{0}/{1}.metadata.xml.gz", GlobalConst.ResourceBaseUrl, modName.EscapePath()));
                 }
 
-                var mod = GetModMetadata(modData, springVersion);
+                var mod = GetModMetadata(modData);
 
                 File.WriteAllBytes(GetMetadataPath(modName), modData);
 
@@ -241,9 +240,9 @@ namespace ZkData
             }
         }
 
-        public void GetModAsync(string modName, Action<Mod> callback, Action<Exception> errorCallback, string springVersion)
+        public void GetModAsync(string modName, Action<Mod> callback, Action<Exception> errorCallback)
         {
-            Utils.StartAsync(() => GetMod(modName, callback, errorCallback, springVersion));
+            Utils.StartAsync(() => GetMod(modName, callback, errorCallback));
         }
 
         public ResourceData GetResourceDataByInternalName(string name)
@@ -299,78 +298,32 @@ namespace ZkData
             return serializedStream.ToArray().Compress();
         }
 
-        Map GetMapMetadata(string name, string springVersion)
+        Map GetMapMetadata(string name)
         {
             var data = File.ReadAllBytes(GetMetadataPath(name));
-            return GetMapMetadata(data, springVersion);
+            return GetMapMetadata(data);
         }
 
-        Map GetMapMetadata(byte[] data, string springVersion)
+        Map GetMapMetadata(byte[] data)
         {
             var ret = (Map)new XmlSerializer(typeof(Map)).Deserialize(new MemoryStream(data.Decompress()));
             ret.Name = ret.Name.Replace(".smf", ""); // hack remove this after server data reset
 
-            if (UseSpringHashes)
-            {
-                if (scanner != null)
-                {
-                    var hash = scanner.GetSpringHash(ret.Name, springVersion);
-                    ret.Checksum = hash;
-                }
-                else {
-                    var cs = GlobalConst.GetContentService();
-                    try
-                    {
-                        var rd = cs.GetResourceDataByInternalName(ret.Name);
-                        ret.Checksum = rd.SpringHashes.Single(x => x.SpringVersion == springVersion).SpringHash;
-                    }
-                    catch (Exception ex)
-                    {
-                        ret.Checksum = 0;
-                        Trace.TraceWarning(string.Format("Failed to get ResourcedData for {0}: {1}", ret.Name, ex));
-                    }
-                }
-            }
-            else ret.Checksum = 0;
-
             return ret;
         }
 
-        Mod GetModMetadata(byte[] data, string springVersion)
+        Mod GetModMetadata(byte[] data)
         {
             var ret = (Mod)new XmlSerializer(typeof(Mod)).Deserialize(new MemoryStream(data.Decompress()));
-
-            if (UseSpringHashes)
-            {
-                if (scanner != null)
-                {
-                    var hash = scanner.GetSpringHash(ret.Name, springVersion);
-                    ret.Checksum = hash;
-                }
-                else {
-                    var cs = GlobalConst.GetContentService();
-                    try
-                    {
-                        var rd = cs.GetResourceDataByInternalName(ret.Name);
-                        ret.Checksum = rd.SpringHashes.Single(x => x.SpringVersion == springVersion).SpringHash;
-                    }
-                    catch (Exception ex)
-                    {
-                        ret.Checksum = 0;
-                        Trace.TraceWarning(string.Format("Failed to get ResourcedData for {0}: {1}", ret.Name, ex));
-                    }
-                }
-            }
-            else ret.Checksum = 0;
 
             if (ret.Options != null) foreach (var option in ret.Options) if (option.Type == OptionType.Number) option.Default = option.Default.Replace(",", ".");
             return ret;
         }
 
-        Mod GetModMetadata(string name, string springVersion)
+        Mod GetModMetadata(string name)
         {
             var data = File.ReadAllBytes(GetMetadataPath(name));
-            return GetModMetadata(data, springVersion);
+            return GetModMetadata(data);
         }
 
 

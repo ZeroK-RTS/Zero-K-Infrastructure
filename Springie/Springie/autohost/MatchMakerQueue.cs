@@ -51,16 +51,10 @@ namespace Springie.autohost
             tas.BattleUserJoined += (sender, args) =>
             {
                 if (tas.MyBattleID != args.BattleID) return;
-                tas.Say(TasClient.SayPlace.BattlePrivate,
+                tas.Say(SayPlace.BattlePrivate,
                     args.UserName,
                     string.Format("Hi {0}, you are {1}. in the queue", args.UserName, tas.MyBattle.NonSpectatorCount),
                     true);
-                User user;
-                if (!tas.ExistingUsers.TryGetValue(args.UserName, out user) || (!user.IsZkLobbyUser && !user.ISSwlUser && !user.IsFlobby))
-                {
-                    tas.Say(TasClient.SayPlace.User, args.UserName, "Sorry, you need compatible lobby to play here (Zero-K lobby or SWL or FLobby). See https://github.com/spring/uberserver/issues/121", true);
-                    tas.Kick(args.UserName);
-                }
             };
 
             tas.BattleUserLeft += (sender, args) =>
@@ -86,7 +80,7 @@ namespace Springie.autohost
                                 startingFrom = DateTime.Now;
                                 scheduledStart = startingFrom.AddSeconds(initialDelay); // start in one minute
                                 starting = true;
-                                foreach (var user in tas.MyBattle.Users) tas.Ring(user.Name);
+                                foreach (var user in tas.MyBattle.Users.Keys) tas.Ring(SayPlace.BattlePrivate, user);
                             }
                             else // postpone
                             {
@@ -95,13 +89,13 @@ namespace Springie.autohost
                                 if (postpone > deadline) scheduledStart = deadline;
                                 else scheduledStart = postpone;
                             }
-                            tas.Say(TasClient.SayPlace.Battle,
+                            tas.Say(SayPlace.Battle,
                                 "",
                                 string.Format("Queue starting in {0}s", Math.Round(scheduledStart.Subtract(DateTime.Now).TotalSeconds)),
                                 true);
                         }
                         else // not enough to start
-                            tas.Say(TasClient.SayPlace.Battle, "", string.Format("Queue needs {0} more people", ah.config.MinToJuggle - count), true);
+                            tas.Say(SayPlace.Battle, "", string.Format("Queue needs {0} more people", ah.config.MinToJuggle - count), true);
                     }
                     else // users removed
                         StopIfCountLow();
@@ -120,11 +114,11 @@ namespace Springie.autohost
                     starting = false;
 
                     var teams = BuildTeams();
-                    if (teams == null) tas.Say(TasClient.SayPlace.Battle, "", "Queue cannot start yet because of skill differences", true);
+                    if (teams == null) tas.Say(SayPlace.Battle, "", "Queue cannot start yet because of skill differences", true);
                     else
                     {
                         var spectators =
-                            tas.MyBattle.Users.Where(x => x.IsSpectator && x.Name != tas.MyBattle.Founder.Name && x.SyncStatus == SyncStatuses.Synced).ToList();
+                            tas.MyBattle.Users.Values.Where(x => x.IsSpectator && x.Name != tas.MyBattle.Founder.Name && x.SyncStatus == SyncStatuses.Synced).ToList();
 
                         foreach (var t in teams)
                         {
@@ -195,7 +189,7 @@ namespace Springie.autohost
         {
             if (exited && slave.tas.MyBattle.NonSpectatorCount < ah.config.MinToJuggle && !slave.spring.IsRunning)
             {
-                foreach (var p in slave.tas.MyBattle.Users.Where(x => !x.IsSpectator && x.Name != slave.tas.MyBattle.Founder.Name)) slave.tas.ForceJoinBattle(p.Name, tas.MyBattleID);
+                foreach (var p in slave.tas.MyBattle.Users.Values.Where(x => !x.IsSpectator && x.Name != slave.tas.MyBattle.Founder.Name)) slave.tas.ForceJoinBattle(p.Name, tas.MyBattleID);
                 Program.main.StopAutohost(slave);
             }
         }
@@ -203,7 +197,7 @@ namespace Springie.autohost
 
         List<List<UserBattleStatus>> BuildTeams()
         {
-            var orderedUsers = tas.MyBattle.Users.Where(x => x.SyncStatus == SyncStatuses.Synced && x.Name != tas.MyBattle.Founder.Name && !x.IsSpectator).OrderBy(x => x.JoinTime).ToList();
+            var orderedUsers = tas.MyBattle.Users.Values.Where(x => x.SyncStatus == SyncStatuses.Synced && x.Name != tas.MyBattle.Founder.Name && !x.IsSpectator).OrderBy(x => x.JoinTime).ToList();
             if (count < ah.config.MinToJuggle) return null; // not enough people
 
 
@@ -270,13 +264,13 @@ namespace Springie.autohost
             if (count < ah.config.MinToJuggle)
             {
                 starting = false;
-                tas.Say(TasClient.SayPlace.Battle, "", string.Format("Queue needs {0} more people", ah.config.MinToJuggle - count), true);
+                tas.Say(SayPlace.Battle, "", string.Format("Queue needs {0} more people", ah.config.MinToJuggle - count), true);
             }
         }
 
         void UpdateCount()
         {
-            count = tas.MyBattle.Users.Count(x => x.SyncStatus == SyncStatuses.Synced && x.Name != tas.MyBattle.Founder.Name && !x.IsSpectator);
+            count = tas.MyBattle.Users.Values.Count(x => x.SyncStatus == SyncStatuses.Synced && x.Name != tas.MyBattle.Founder.Name && !x.IsSpectator);
         }
 
         static void SlaveStartSpring(AutoHost ah, List<UserBattleStatus> team)
@@ -284,7 +278,7 @@ namespace Springie.autohost
             var serv = GlobalConst.GetSpringieService();
 
             var context = ah.tas.MyBattle.GetContext();
-            context.Players = team.Select(x => new PlayerTeam() { AllyID = x.AllyNumber, Name = x.Name, LobbyID = x.LobbyUser.LobbyID, TeamID = x.TeamNumber, IsSpectator = false }).ToList();
+            context.Players = team.Select(x => new PlayerTeam() { AllyID = x.AllyNumber, Name = x.Name, LobbyID = x.LobbyUser.AccountID, TeamID = x.TeamNumber, IsSpectator = false }).ToList();
 
             var balance = serv.BalanceTeams(context, true, null, null);
             ah.ApplyBalanceResults(balance);
