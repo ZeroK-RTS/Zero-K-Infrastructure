@@ -140,7 +140,9 @@ namespace ZkLobbyServer
                 dynamic obj = state.Serializer.DeserializeLine(line);
                 await Process(obj);
             } catch (Exception ex) {
-                Trace.TraceError("{0} error processing line {1} : {2}", this, line, ex);
+                var message = string.Format("{0} error processing line {1} : {2}", this, line, ex);
+                Trace.TraceError(message);
+                Respond(message);
             }
         }
 
@@ -148,7 +150,7 @@ namespace ZkLobbyServer
         {
             try {
                 var line = state.Serializer.SerializeToLine(data);
-                await SendData(Encoding.GetBytes(line));
+                await SendString(line);
             } catch (Exception ex) {
                 Trace.TraceError("{0} error sending {1} : {2}", data, ex);
             }

@@ -78,7 +78,6 @@ namespace LobbyClient
         {
             try {
                 dynamic obj = CommandJsonSerializer.DeserializeLine(line);
-                Input(this, line);
                 await Process(obj);
             } catch (Exception ex) {
                 Trace.TraceError("Error processing line {0} : {1}", line, ex);
@@ -89,8 +88,7 @@ namespace LobbyClient
         {
             try {
                 var line = CommandJsonSerializer.SerializeToLine(data);
-                Output(this, line.TrimEnd('\n'));
-                await SendData(Encoding.GetBytes(line));
+                await SendString(line);
             } catch (Exception ex) {
                 Trace.TraceError("Error sending {0} : {1}", data,ex);
             }
@@ -176,8 +174,6 @@ namespace LobbyClient
         public event EventHandler<Battle> BattleClosed = delegate { };
         public event EventHandler<Battle> BattleOpened = delegate { };
         public event EventHandler<Battle> BattleJoined = delegate { };
-        public event EventHandler<string> Output = delegate { }; // outgoing command and arguments
-        public event EventHandler<string> Input = delegate { };
         public event EventHandler<UserBattleStatus> BattleUserStatusChanged = delegate { };
         public event EventHandler<UserBattleStatus> BattleMyUserStatusChanged = delegate { };
         public event EventHandler<Channel> ChannelJoined = delegate { };
@@ -556,7 +552,7 @@ namespace LobbyClient
         public Task SendRaw(string text)
         {
             if (!text.EndsWith("\n")) text += "\n";
-            return SendData(Encoding.GetBytes(text));
+            return SendString(text);
         }
 
         public Task SetModOptions(Dictionary<string,string> data)

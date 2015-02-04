@@ -973,11 +973,18 @@ namespace Springie.autohost
 
         public BattleContext slaveContextOverride;
 
+        public override string ToString()
+        {
+            return string.Format("[{0}]",tas.UserName);
+        }
+
         void tas_MyStatusChangedToInGame(object sender, Battle battle) {
             spring.StartGame(tas, Program.main.Config.HostingProcessPriority, null, null, contextOverride:slaveContextOverride);
         }
 
         void tas_Said(object sender, TasSayEventArgs e) {
+            if (e.Place == SayPlace.MessageBox) Trace.TraceInformation("{0} server message: {1}", this, e.Text);
+
             if (String.IsNullOrEmpty(e.UserName)) return;
             if (Program.main.Config.RedirectGameChat && e.Place == SayPlace.Battle &&
                 e.UserName != tas.UserName && e.IsEmote == false && !tas.ExistingUsers[e.UserName].BanMute) spring.SayGame(string.Format("<{0}>{1}", e.UserName, e.Text));

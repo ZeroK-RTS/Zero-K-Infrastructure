@@ -23,6 +23,9 @@ namespace ZkData
         public bool IsConnected { get; private set; }
         public static Encoding Encoding = new UTF8Encoding(false);
 
+        public event EventHandler<string> Input = delegate { };
+        public event EventHandler<string> Output = delegate { }; // outgoing command and arguments
+
         bool closeRequestedExplicitly;
 
         /// <summary>
@@ -110,6 +113,7 @@ namespace ZkData
                 {
                     var line = await reader.ReadLineAsync();
                     if (line == null) break; // disconnected cleanly
+                    Input(this, line);
                     await OnLineReceived(line);
                 }
             }
@@ -119,6 +123,12 @@ namespace ZkData
 
             }
             InternalClose();
+        }
+
+        public Task SendString(string line)
+        {
+            Output(this, line.TrimEnd('\n'));
+            return SendData(Encoding.GetBytes(line));
         }
 
         
