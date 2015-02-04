@@ -67,7 +67,8 @@ namespace LobbyClient
 		public UserBattleStatus(string name, User lobbyUser, string password= null)
 		{
 		    Name = name;
-            if (password != null) ScriptPassword = password;
+		    if (password != null) ScriptPassword = password;
+		    else ScriptPassword = name;
 			LobbyUser = lobbyUser;
 		}
 

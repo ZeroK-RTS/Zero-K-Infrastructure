@@ -204,7 +204,7 @@ namespace LobbyClient
                             var us = users.FirstOrDefault(x => x.Name == p.Name);
                             if (us == null)
                             {
-                                us = new UserBattleStatus(p.Name, new User() { AccountID = p.LobbyID }, Password);
+                                us = new UserBattleStatus(p.Name, new User() { AccountID = p.LobbyID }, Password); // TODO this "password" use does not look right
                                 users.Add(us);
                             }
                             us.TeamNumber = p.TeamID;
