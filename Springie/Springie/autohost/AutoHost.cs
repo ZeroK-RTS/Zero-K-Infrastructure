@@ -661,6 +661,7 @@ namespace Springie.autohost
             //cache.GetMap(mapname, (m, x, y, z) => { mapi = m; }, (e) => { }, springPaths.SpringVersion);
             //int mint, maxt;
             var b = new Battle(springPaths.SpringVersion, password, hostingPort, maxPlayers, mapname, title,modname);
+            b.Ip = Program.main.Config.IpOverride;
             tas.OpenBattle(b);
 
                

@@ -655,10 +655,13 @@ namespace LobbyClient
 
         async Task Process(LeftBattle left)
         {
-            var user = existingUsers[left.User];
-            var bat = ExistingBattles[left.BattleID];
+            User user;
+            Battle bat;
+            
+            existingUsers.TryGetValue(left.User, out user);
+            existingBattles.TryGetValue(left.BattleID, out bat);
 
-            if (bat != null) {
+            if (bat != null && user != null) {
                 user.IsInBattleRoom = false;
                 UserBattleStatus removed;
                 bat.Users.TryRemove(left.User, out removed);

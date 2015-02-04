@@ -20,9 +20,7 @@ namespace ZkLobbyServer
     {
         SharedServerState state;
         int number;
-
         public User User = new User();
-        
         public int UserVersion;
         public ConcurrentDictionary<string, int?> LastKnownUserVersions = new ConcurrentDictionary<string, int?>();
 
