@@ -172,7 +172,7 @@ namespace ZeroKLobby.MicroLobby
             if (e.Place == SayPlace.Channel && !IsIgnoredChannel(e.Channel)) Program.MainWindow.NotifyUser("chat/channel/" + e.Channel, null);
             else if (e.Place == SayPlace.User)
             {
-                var otherUserName = e.Channel;
+                var otherUserName = e.UserName;
 
                 // support for offline pm and persistent channels 
                 if (otherUserName == GlobalConst.NightwatchName && e.Text.StartsWith("!pm"))
