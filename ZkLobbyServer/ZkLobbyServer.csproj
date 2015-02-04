@@ -104,8 +104,14 @@
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
+  <Target Name="AfterBuild">
+    <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+      <Output TaskParameter="Assemblies" ItemName="AssemblyIdentity" />
+    </GetAssemblyIdentity>
+    <Exec Command="echo %(AssemblyIdentity.Version) &gt; &quot;$(TargetDir)$(TargetName).version.txt&quot;" />
+  </Target>
   <PropertyGroup>
-    <PostBuildEvent>if /i $(ConfigurationName) NEQ Release exit 0
+      <PostBuildEvent>if /i $(ConfigurationName) NEQ Release exit 0
 "$(ProjectDir)\..\packages\ilmerge.2.14.1208\tools\ILMerge.exe" /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetDir)$(TargetName).exe" "$(TargetDir)*.dll" /target:exe "/targetplatform:v4.5,%25ProgramFiles%25\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.1" /wildcards
 copy /Y "$(TargetDir)$(TargetName).all.pdb" "$(TargetName).pdb"
 copy /Y "$(TargetDir)$(TargetName).all.exe" "$(TargetName).exe"</PostBuildEvent>

@@ -286,15 +286,15 @@ namespace ZkLobbyServer
         {
             if (!IsLoggedIn) return;
 
+            if (!User.IsAdmin)
+            {
+                await Respond("No rights for force join");
+                return;
+            }
+
             Battle bat;
             if (state.Battles.TryGetValue(forceJoin.BattleID, out bat))
             {
-                if (!User.IsAdmin)
-                {
-                    await Respond("No rights for force join");
-                    return;
-                }
-
                 Client client;
                 if (state.Clients.TryGetValue(forceJoin.Name, out client)) {
                     if (client.MyBattle != null) await client.Process(new LeaveBattle());
