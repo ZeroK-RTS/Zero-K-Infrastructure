@@ -61,6 +61,16 @@ namespace CaTracker
 			tas.LoginDenied += tas_LoginDenied;
 			tas.LoginAccepted += tas_LoginAccepted;
 
+		    using (var db = new ZkDataContext()) {
+		        var acc = db.Accounts.FirstOrDefault(x => x.Name == GlobalConst.NightwatchName);
+		        if (acc != null) {
+		            acc.SetPasswordPlain(config.AccountPassword);
+		            acc.IsBot = true;
+		            acc.IsZeroKAdmin = true;
+		            db.SaveChanges();
+		        }
+		    }
+
             Auth = new AuthService(tas);
             adminCommands = new AdminCommands(tas);
             offlineMessages = new OfflineMessages(tas);

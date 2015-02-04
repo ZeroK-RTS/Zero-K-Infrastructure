@@ -8,8 +8,6 @@ namespace CaTracker
         string accountName = GlobalConst.NightwatchName;
 
         string accountPassword = new Secrets().GetNightwatchPassword();
-        int attemptReconnectInterval = 60;
-        bool attemptToRecconnect = true;
         string[] joinChannels = new[] { "main","zk" };
 
         string serverHost = GlobalConst.LobbyServerHost;
@@ -18,8 +16,7 @@ namespace CaTracker
         public string AccountName { get { return accountName; } set { accountName = value; } }
 
         public string AccountPassword { get { return accountPassword; } set { accountPassword = value; } }
-        public int AttemptReconnectInterval { get { return attemptReconnectInterval; } set { attemptReconnectInterval = value; } }
-       
+      
 
         public string[] JoinChannels { get { return joinChannels; } set { joinChannels = value; } }
         public string ServerHost { get { return serverHost; } set { serverHost = value; } }
