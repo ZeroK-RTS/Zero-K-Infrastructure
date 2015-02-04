@@ -126,8 +126,9 @@ namespace ZeroKLobby
         }
 
         public static Color GetFactionColor(string faction) {
-            if (FactionColors.ContainsKey(faction)) return FactionColors[faction];
-            else return Color.Black;
+            Color color;
+            if (FactionColors.TryGetValue(faction, out color)) return color;
+            return Color.Black;
         }
 
         public static Control GetHoveredControl(this Control parent) {
