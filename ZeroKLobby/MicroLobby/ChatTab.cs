@@ -163,6 +163,7 @@ namespace ZeroKLobby.MicroLobby
 
         void client_Said(object sender, TasSayEventArgs e)
         {
+            var tas = (TasClient)sender;
             if (Program.Conf.IgnoredUsers.Contains(e.UserName))
             {
                 return;
@@ -172,7 +173,7 @@ namespace ZeroKLobby.MicroLobby
             if (e.Place == SayPlace.Channel && !IsIgnoredChannel(e.Channel)) Program.MainWindow.NotifyUser("chat/channel/" + e.Channel, null);
             else if (e.Place == SayPlace.User)
             {
-                var otherUserName = e.UserName;
+                var otherUserName = e.UserName == tas.UserName ? e.Channel : e.UserName;
 
                 // support for offline pm and persistent channels 
                 if (otherUserName == GlobalConst.NightwatchName && e.Text.StartsWith("!pm"))
@@ -301,9 +302,11 @@ namespace ZeroKLobby.MicroLobby
 
         void TasClient_UserAdded(object sender, User user)
         {
-            var userName = Name;
+            var userName = user.Name;
             var pmControl = GetPrivateMessageControl(userName);
-            if (pmControl != null) toolTabs.SetIcon(userName, Program.FriendManager.Friends.Contains(userName) ? ZklResources.friend : TextImage.GetUserImage(userName), true);
+            if (pmControl != null)
+                toolTabs.SetIcon(userName, Program.FriendManager.Friends.Contains(userName) ? ZklResources.friend : TextImage.GetUserImage(userName),
+                    true);
         }
 
         void TasClient_UserRemoved(object sender, UserDisconnected e)
