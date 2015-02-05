@@ -67,7 +67,7 @@ namespace ZeroKLobby
             }
         }
         [Browsable(false)]
-        public int BgColorInt = Color.White.ToArgb();
+        public int BgColorInt = Color.FromArgb(0, 0, 0).ToArgb();
         [Browsable(false)]
         public bool BlockNonFriendPm;
 
@@ -136,7 +136,7 @@ namespace ZeroKLobby
         [XmlIgnore]
         public Color EmoteColor { get { return Color.FromArgb(EmoteColorInt); } set { EmoteColorInt = value.ToArgb(); } }
         [Browsable(false)]
-        public int EmoteColorInt = Color.FromArgb(178, 0, 178).ToArgb();
+        public int EmoteColorInt = Color.FromArgb(223, 0, 223).ToArgb();
         [Category("General")]
         [DisplayName("Enable voice commands (EXPERIMENTAL)")]
         [Description("Control the game using your voice")]
@@ -206,7 +206,7 @@ namespace ZeroKLobby
         [XmlIgnore]
         public Color LeaveColor { get { return Color.FromArgb(LeaveColorInt); } set { LeaveColorInt = value.ToArgb(); } }
         [Browsable(false)]
-        public int LeaveColorInt = Color.FromArgb(102, 54, 31).ToArgb();
+        public int LeaveColorInt = Color.FromArgb(153, 81, 47).ToArgb();
         [Category("Chat")]
         [DisplayName("Disable Context Menu on Leftclick")]
         [Description("Only right clicking shows context menu. Left clicking on a playername will select them in the player list.")]
@@ -218,7 +218,7 @@ namespace ZeroKLobby
         [XmlIgnore]
         public Color LinkColor { get { return Color.FromArgb(LinkColorInt); } set { LinkColorInt = value.ToArgb(); } }
         [Browsable(false)]
-        public int LinkColorInt = Color.Blue.ToArgb();
+        public int LinkColorInt = Color.FromArgb(128, 128, 255).ToArgb();
 
         [Category("Account")]
         [DisplayName("Lobby Player Name")]
@@ -251,7 +251,7 @@ namespace ZeroKLobby
         [XmlIgnore]
         public Color NoticeColor { get { return Color.FromArgb(NoticeColorInt); } set { NoticeColorInt = value.ToArgb(); } }
         [Browsable(false)]
-        public int NoticeColorInt = Color.Red.ToArgb();
+        public int NoticeColorInt = Color.FromArgb(255, 0, 0).ToArgb();
         [Category("Chat")]
         [DisplayName("Color: Tooltip text")]
         [Description("Color for text on tooltip")]
@@ -310,7 +310,7 @@ namespace ZeroKLobby
             }
         }
         [Browsable(false)]
-        public int TextColorInt = Color.Black.ToArgb();
+        public int TextColorInt = Color.FromArgb(255, 255, 255).ToArgb();
 
         /// <summary>
         /// Keeps datetime of last topic change for each channel
