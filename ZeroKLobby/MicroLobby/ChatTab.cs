@@ -163,6 +163,7 @@ namespace ZeroKLobby.MicroLobby
 
         void client_Said(object sender, TasSayEventArgs e)
         {
+            var tas = (TasClient)sender;
             if (Program.Conf.IgnoredUsers.Contains(e.UserName))
             {
                 return;
@@ -172,7 +173,7 @@ namespace ZeroKLobby.MicroLobby
             if (e.Place == SayPlace.Channel && !IsIgnoredChannel(e.Channel)) Program.MainWindow.NotifyUser("chat/channel/" + e.Channel, null);
             else if (e.Place == SayPlace.User)
             {
-                var otherUserName = e.UserName;
+                var otherUserName = e.UserName == tas.UserName ? e.Channel : e.UserName;
 
                 // support for offline pm and persistent channels 
                 if (otherUserName == GlobalConst.NightwatchName && e.Text.StartsWith("!pm"))
