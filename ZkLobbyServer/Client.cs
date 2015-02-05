@@ -652,11 +652,13 @@ namespace ZkLobbyServer
             if (!IsLoggedIn) return;
             bool changed = false;
             if (userStatus.IsInGame != null && User.IsInGame != userStatus.IsInGame) {
-                User.IsInGame = userStatus.IsInGame.Value;
+                if (userStatus.IsInGame == true) User.InGameSince = DateTime.UtcNow;
+                else User.InGameSince = null;
                 changed = true;
             }
             if (userStatus.IsAfk != null && User.IsAway != userStatus.IsAfk) {
-                User.IsAway = userStatus.IsAfk.Value;
+                if (userStatus.IsAfk == true) User.AwaySince = DateTime.UtcNow;
+                else User.AwaySince = null;
                 changed = true;
             }
             if (changed) await UpdateSelfToWhoKnowsMe();

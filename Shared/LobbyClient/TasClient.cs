@@ -693,12 +693,13 @@ namespace LobbyClient
                 User user;
                 if (ExistingUsers.TryGetValue(u, out user)) user.IsInBattleRoom = false;
             }
+            
+            existingBattles.Remove(br.BattleID);
             if (battle == MyBattle)
             {
                 BattleClosed(this, battle);
                 MyBattleRemoved(this, battle);
             }
-            existingBattles.Remove(br.BattleID);
             BattleRemoved(this, battle);
         }
 

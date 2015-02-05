@@ -97,6 +97,8 @@ namespace ZeroKLobby
         [STAThread]
         public static void Main(string[] args)
         {
+            GlobalConst.Mode = ModeType.Live;
+
             try
             {
                 //Stopwatch stopWatch = new Stopwatch(); stopWatch.Start();
