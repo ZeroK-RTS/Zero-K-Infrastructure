@@ -102,6 +102,7 @@
       <HintPath>..\Libs\Steamworks.NET.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Speech" />
@@ -456,6 +457,12 @@
     <Compile Include="VoiceCommand\Pluralizer.cs" />
     <Compile Include="VoiceCommand\VoiceCommandEngine.cs" />
     <Compile Include="VoiceCommand\VoiceRule.cs" />
+    <Compile Include="WelcomeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WelcomeForm.Designer.cs">
+      <DependentUpon>WelcomeForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="WindowsApi.cs" />
     <Compile Include="ZklResources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -1638,6 +1645,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\voice_talking.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bg_battle.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">

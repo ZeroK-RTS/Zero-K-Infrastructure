@@ -352,9 +352,10 @@ namespace ZeroKLobby
                 //Trace.TraceInformation("1 Runtime {0}", elapsedTime);
 
 
+                var welc = new WelcomeForm();
+                welc.Show();
 
-
-                Application.Run(MainWindow);
+                Application.Run(welc);
                 ShutDown();
             }
             catch (Exception ex)
