@@ -302,9 +302,11 @@ namespace ZeroKLobby.MicroLobby
 
         void TasClient_UserAdded(object sender, User user)
         {
-            var userName = Name;
+            var userName = user.Name;
             var pmControl = GetPrivateMessageControl(userName);
-            if (pmControl != null) toolTabs.SetIcon(userName, Program.FriendManager.Friends.Contains(userName) ? ZklResources.friend : TextImage.GetUserImage(userName), true);
+            if (pmControl != null)
+                toolTabs.SetIcon(userName, Program.FriendManager.Friends.Contains(userName) ? ZklResources.friend : TextImage.GetUserImage(userName),
+                    true);
         }
 
         void TasClient_UserRemoved(object sender, UserDisconnected e)
