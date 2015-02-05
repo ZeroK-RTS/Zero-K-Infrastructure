@@ -565,6 +565,7 @@ namespace ZkLobbyServer
             await Broadcast(clis, new JoinedBattle() { BattleID = battleID, User = Name }, Name);
         }
 
+        
 
         async Task Process(JoinBattle join)
         {

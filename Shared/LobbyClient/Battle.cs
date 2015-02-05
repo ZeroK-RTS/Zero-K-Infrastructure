@@ -19,7 +19,11 @@ namespace LobbyClient
         public int BattleID { get; set; }
         public ConcurrentDictionary<string, BotBattleStatus> Bots { get; set; }
 
-        public User Founder { get; set; }
+        public User Founder
+        {
+            get { return getUser(FounderName); }
+        }
+        public string FounderName { get; private set; }
 
         public int HostPort { get; set; }
         public string Ip { get; set; }
@@ -78,11 +82,14 @@ namespace LobbyClient
             Users = new ConcurrentDictionary<string, UserBattleStatus>();
         }
 
-
+        Func<string, User> getUser;
+        
+        
         public void UpdateWith(BattleHeader h, Func<string, User> getUser)
         {
+            this.getUser = getUser;
             if (h.BattleID != null) BattleID = h.BattleID.Value;
-            if (h.Founder != null) Founder = getUser(h.Founder);
+            if (h.Founder != null) FounderName = h.Founder;
             if (h.Ip != null) Ip = h.Ip;
             if (h.Port != null) HostPort = h.Port.Value;
             if (h.MaxPlayers != null) MaxPlayers = h.MaxPlayers.Value;

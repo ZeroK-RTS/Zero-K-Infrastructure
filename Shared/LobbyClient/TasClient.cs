@@ -318,6 +318,7 @@ namespace LobbyClient
             serverPort = port;
             WasDisconnectRequested = false;
             pingTimer.Start();
+
             Connect(host, port, forcedLocalIP ? localIp : null);
         }
 
@@ -620,11 +621,18 @@ namespace LobbyClient
             }
         }
 
-       
+        User UserGetter(string n)
+        {
+            User us;
+            if (existingUsers.TryGetValue(n, out us)) return us;
+            else return new User() { Name = n };
+        }
+
+
         async Task Process(BattleAdded bat)
         {
             var newBattle = new Battle();
-            newBattle.UpdateWith(bat.Header,(n)=>existingUsers[n]);
+            newBattle.UpdateWith(bat.Header, UserGetter);
             existingBattles[newBattle.BattleID] = newBattle;
             newBattle.Founder.IsInBattleRoom = true;
             
@@ -841,7 +849,7 @@ namespace LobbyClient
             Battle bat;
             if (existingBattles.TryGetValue(h.BattleID.Value, out bat)) {
                 var org = bat.Clone();
-                bat.UpdateWith(h, (n)=>existingUsers[n]);
+                bat.UpdateWith(h, UserGetter);
                 var pair = new OldNewPair<Battle>(org, bat);
                 if (org.MapName != bat.MapName) {
                     if (bat == MyBattle) MyBattleMapChanged(this, pair);

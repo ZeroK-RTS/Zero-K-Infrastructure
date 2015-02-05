@@ -64,6 +64,7 @@ namespace LobbyClient
 		public UserBattleStatus() {}
 
 
+
 		public UserBattleStatus(string name, User lobbyUser, string password= null)
 		{
 		    Name = name;

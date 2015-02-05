@@ -57,6 +57,7 @@ namespace CaTracker
 
 		public bool Start()
 		{
+
 			tas.Connected += tas_Connected;
 			tas.LoginDenied += tas_LoginDenied;
 			tas.LoginAccepted += tas_LoginAccepted;
