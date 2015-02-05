@@ -414,7 +414,7 @@ namespace ZkLobbyServer
             var channel = state.Rooms.GetOrAdd(joinChannel.ChannelName, (n) => new Channel() { Name = joinChannel.ChannelName, });
             if (channel.Password != joinChannel.Password)
             {
-                await SendCommand(new JoinChannelResponse() { Success = false, Reason = "invalid password" });
+                await SendCommand(new JoinChannelResponse() { Success = false, Reason = "invalid password", ChannelName = joinChannel.ChannelName});
             }
 
             if (channel.Users.TryAdd(Name, User)) {
