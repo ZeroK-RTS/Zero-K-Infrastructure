@@ -318,6 +318,7 @@ namespace LobbyClient
             serverPort = port;
             WasDisconnectRequested = false;
             pingTimer.Start();
+
             Connect(host, port, forcedLocalIP ? localIp : null);
         }
 
