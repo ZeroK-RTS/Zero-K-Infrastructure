@@ -254,20 +254,20 @@ namespace ZeroKLobby.MicroLobby
                 int x = 0;
                 int y = 0;
 
-                
-                PaintDivider(g, ref x, ref y, "Match maker queues");
-                foreach (BattleIcon t in view.Where(b=>b.Battle.IsQueue && !b.IsInGame))
-                {
-                    if (x + scaledIconWidth > Width)
-                    {
-                        x = 0;
-                        y += scaledIconHeight;
-                    }
-                    PainBattle(t, g, ref x, ref y, scaledIconWidth, scaledIconHeight);
-                }
 
-                x = 0;
-                y += scaledIconHeight;
+                if (view.Any(b => b.Battle.IsQueue && !b.IsInGame)) {
+                    PaintDivider(g, ref x, ref y, "Match maker queues");
+                    foreach (BattleIcon t in view.Where(b => b.Battle.IsQueue && !b.IsInGame)) {
+                        if (x + scaledIconWidth > Width) {
+                            x = 0;
+                            y += scaledIconHeight;
+                        }
+                        PainBattle(t, g, ref x, ref y, scaledIconWidth, scaledIconHeight);
+                    }
+
+                    x = 0;
+                    y += scaledIconHeight;
+                }
 
                 PaintDivider(g, ref x, ref y, "Custom battles");
                 PainOpenBattleButton(g, ref x, ref y, scaledMapCellWidth, scaledIconWidth);
