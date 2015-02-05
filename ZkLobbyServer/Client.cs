@@ -62,36 +62,21 @@ namespace ZkLobbyServer
             {
                 ClearMyLastKnownStateForOtherClients();
 
-                Client client;
-
                 // notify all channels where i am to all users that i left 
-                foreach (var chan in state.Rooms.Values.ToList())
-                {
-                    List<string> usersToNotify = null;
-                    if (chan.Users.ContainsKey(Name))
-                    {
-                        User org;
-                        chan.Users.TryRemove(Name, out org);
-                        usersToNotify = chan.Users.Keys.ToList();
-                    }
-                    if (usersToNotify != null) await Broadcast(usersToNotify, new ChannelUserRemoved() { ChannelName = chan.Name, UserName = Name });
+                foreach (var chan in state.Rooms.Values.Where(x=>x.Users.ContainsKey(Name)).ToList()) {
+                    await Process(new LeaveChannel() { ChannelName = chan.Name });
                 }
-
 
                 foreach (var b in state.Battles.Values.Where(x => x.Users.ContainsKey(Name))) {
                     await LeaveBattle(b);
                 }
                 
-
                 // notify clients which know about me that i left server
-                var knowMe = state.Clients.Values.Where(x =>
-                {
-                    int? last;
-                    return x != this && x.LastKnownUserVersions.TryGetValue(Name, out last) && last != null;
-                }).ToList();
+                var knowMe = state.Clients.Values.Where(x => x.LastKnownUserVersions.ContainsKey(Name));
 
                 await Broadcast(knowMe, new UserDisconnected() { Name = Name, Reason = reason });
 
+                Client client;
                 state.Clients.TryRemove(Name, out client);
             }
             timer.Stop();
@@ -426,7 +411,7 @@ namespace ZkLobbyServer
         async Task Process(JoinChannel joinChannel)
         {
             if (!IsLoggedIn) return;
-            var channel = state.Rooms.GetOrAdd(joinChannel.ChannelName, (n) => { return new Channel() { Name = joinChannel.ChannelName, }; });
+            var channel = state.Rooms.GetOrAdd(joinChannel.ChannelName, (n) => new Channel() { Name = joinChannel.ChannelName, });
             if (channel.Password != joinChannel.Password)
             {
                 await SendCommand(new JoinChannelResponse() { Success = false, Reason = "invalid password" });
