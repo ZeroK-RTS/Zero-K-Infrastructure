@@ -576,6 +576,9 @@
     <EmbeddedResource Include="SelectWritableFolder.resx">
       <DependentUpon>SelectWritableFolder.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="WelcomeForm.resx">
+      <DependentUpon>WelcomeForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ZklResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ZklResources.Designer.cs</LastGenOutput>
