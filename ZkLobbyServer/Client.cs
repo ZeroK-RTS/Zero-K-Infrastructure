@@ -616,6 +616,13 @@ namespace ZkLobbyServer
             if (Name == bat.Founder.Name || Name == status.Name) { // founder can set for all, others for self
                 UserBattleStatus ubs;
                 if (bat.Users.TryGetValue(status.Name, out ubs)) {
+                    
+                    // enfoce player count limit
+                    if (status.IsSpectator== false && bat.Users.Values.Count(x => !x.IsSpectator) >= bat.MaxPlayers) {
+                        // if unspeccing but there is already enough, force spec
+                        status.IsSpectator = true;
+                    }
+
                     ubs.UpdateWith(status);
                     await Broadcast(bat.Users.Keys, status);
                     await RecalcSpectators(bat);
