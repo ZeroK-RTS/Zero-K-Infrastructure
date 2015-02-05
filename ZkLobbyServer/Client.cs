@@ -363,17 +363,20 @@ namespace ZkLobbyServer
         {
             if (!IsLoggedIn) return;
 
-            Channel channel;
-            Client client;
-            if (state.Rooms.TryGetValue(forceJoin.ChannelName, out channel) && state.Clients.TryGetValue(forceJoin.UserName, out client))
+            if (!User.IsAdmin)
             {
-                if (!User.IsAdmin)
-                {
-                    await Respond("No rights to execute forcejoin");
-                    return;
-                }
+                await Respond("No rights to execute forcejoin");
+                return;
+            }
 
-                if (!channel.Users.ContainsKey(forceJoin.UserName)) await client.Process(new JoinChannel() { ChannelName = forceJoin.ChannelName, Password = channel.Password });
+
+            Client client;
+            if (state.Clients.TryGetValue(forceJoin.UserName, out client))
+            {
+                Channel channel;
+                state.Rooms.TryGetValue(forceJoin.ChannelName, out channel);
+
+                await client.Process(new JoinChannel() { ChannelName = forceJoin.ChannelName, Password = channel != null ? channel.Password : null });
             }
         }
 
