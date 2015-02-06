@@ -1652,6 +1652,11 @@
   <ItemGroup>
     <None Include="Resources\bg_battle.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Rise of the Machines.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">
   </Target>

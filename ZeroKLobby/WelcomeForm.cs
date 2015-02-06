@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using NAudio.Wave;
 
 namespace ZeroKLobby
 {
@@ -59,6 +60,10 @@ namespace ZeroKLobby
 
             Controls.Add(new BitmapButton() { Size = new Size(50, 50), Text = "SND", Left = 120, Top = Height - 100, Anchor = AnchorStyles.Bottom | AnchorStyles.Left });
 
+            var waveOut = new WaveOut();
+            var reader = new AudioFileReader("Rise of the Machines.mp3");
+            waveOut.Init(reader);
+            waveOut.Play();
         }
 
         protected override void OnDeactivate(EventArgs e)
