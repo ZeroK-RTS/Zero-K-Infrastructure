@@ -35,27 +35,21 @@ namespace ZeroKLobby.MicroLobby
             Program.FriendManager.FriendRemoved += HandleFriendChanged;
             Program.TasClient.ConnectionLost += TasClient_ConnectionLost;
             Program.TasClient.LoginAccepted += TasClient_LoginAccepted;
-            foreach (var battle in Program.TasClient.ExistingBattles.Values) AddBattle(battle.BattleID);
+            foreach (var battle in Program.TasClient.ExistingBattles.Values.ToList()) AddBattle(battle);
             Running = true;
         }
 
 
         public BattleIcon GetBattleIcon(int battleID)
         {
-            return BattleIcons.SingleOrDefault(b => b.Battle.BattleID == battleID);
+            return BattleIcons.FirstOrDefault(b => b.Battle.BattleID == battleID);
         }
 
-        public bool HasBattleIcon(int battleID)
+      
+        BattleIcon AddBattle(Battle battle)
         {
-            return BattleIcons.Any(b => b.Battle.BattleID == battleID);
-        }
+            RemoveBattleIcon(battle);
 
-
-        BattleIcon AddBattle(int battleID)
-        {
-            var battle = Program.TasClient.ExistingBattles[battleID];
-            //string modName = null;
-            //foreach (var game in KnownGames.List) if (game.Regex.IsMatch(battle.ModName)) modName = game.Shortcut;
             var founder = battle.Founder;
             var battleIcon = new BattleIcon(battle) { IsInGame = founder.IsInGame};
             try
@@ -137,8 +131,7 @@ namespace ZeroKLobby.MicroLobby
 
         void TasClient_BattleFound(object sender, Battle battle)
         {
-            var battleID = battle.BattleID;
-            var battleIcon = AddBattle(battleID);
+            var battleIcon = AddBattle(battle);
             BattleAdded(this, new EventArgs<BattleIcon>(battleIcon));
         }
 
@@ -186,7 +179,7 @@ namespace ZeroKLobby.MicroLobby
 
         void TasClient_UserStatusChanged(object sender, OldNewPair<User> p)
         {
-            var battle = Program.TasClient.ExistingBattles.Values.SingleOrDefault(b => b.Founder.Name == p.New.Name);
+            var battle = Program.TasClient.ExistingBattles.Values.FirstOrDefault(b => b.Founder.Name == p.New.Name);
             if (battle == null) return;
             var founder = battle.Founder;
             var battleIcon = GetBattleIcon(battle);

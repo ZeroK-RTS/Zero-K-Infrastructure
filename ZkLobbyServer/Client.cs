@@ -62,36 +62,21 @@ namespace ZkLobbyServer
             {
                 ClearMyLastKnownStateForOtherClients();
 
-                Client client;
-
                 // notify all channels where i am to all users that i left 
-                foreach (var chan in state.Rooms.Values.ToList())
-                {
-                    List<string> usersToNotify = null;
-                    if (chan.Users.ContainsKey(Name))
-                    {
-                        User org;
-                        chan.Users.TryRemove(Name, out org);
-                        usersToNotify = chan.Users.Keys.ToList();
-                    }
-                    if (usersToNotify != null) await Broadcast(usersToNotify, new ChannelUserRemoved() { ChannelName = chan.Name, UserName = Name });
+                foreach (var chan in state.Rooms.Values.Where(x=>x.Users.ContainsKey(Name)).ToList()) {
+                    await Process(new LeaveChannel() { ChannelName = chan.Name });
                 }
-
 
                 foreach (var b in state.Battles.Values.Where(x => x.Users.ContainsKey(Name))) {
                     await LeaveBattle(b);
                 }
                 
-
                 // notify clients which know about me that i left server
-                var knowMe = state.Clients.Values.Where(x =>
-                {
-                    int? last;
-                    return x != this && x.LastKnownUserVersions.TryGetValue(Name, out last) && last != null;
-                }).ToList();
+                var knowMe = state.Clients.Values.Where(x => x.LastKnownUserVersions.ContainsKey(Name));
 
                 await Broadcast(knowMe, new UserDisconnected() { Name = Name, Reason = reason });
 
+                Client client;
                 state.Clients.TryRemove(Name, out client);
             }
             timer.Stop();
@@ -363,17 +348,20 @@ namespace ZkLobbyServer
         {
             if (!IsLoggedIn) return;
 
-            Channel channel;
-            Client client;
-            if (state.Rooms.TryGetValue(forceJoin.ChannelName, out channel) && state.Clients.TryGetValue(forceJoin.UserName, out client))
+            if (!User.IsAdmin)
             {
-                if (!User.IsAdmin)
-                {
-                    await Respond("No rights to execute forcejoin");
-                    return;
-                }
+                await Respond("No rights to execute forcejoin");
+                return;
+            }
 
-                if (!channel.Users.ContainsKey(forceJoin.UserName)) await client.Process(new JoinChannel() { ChannelName = forceJoin.ChannelName, Password = channel.Password });
+
+            Client client;
+            if (state.Clients.TryGetValue(forceJoin.UserName, out client))
+            {
+                Channel channel;
+                state.Rooms.TryGetValue(forceJoin.ChannelName, out channel);
+
+                await client.Process(new JoinChannel() { ChannelName = forceJoin.ChannelName, Password = channel != null ? channel.Password : null });
             }
         }
 
@@ -423,10 +411,10 @@ namespace ZkLobbyServer
         async Task Process(JoinChannel joinChannel)
         {
             if (!IsLoggedIn) return;
-            var channel = state.Rooms.GetOrAdd(joinChannel.ChannelName, (n) => { return new Channel() { Name = joinChannel.ChannelName, }; });
+            var channel = state.Rooms.GetOrAdd(joinChannel.ChannelName, (n) => new Channel() { Name = joinChannel.ChannelName, });
             if (channel.Password != joinChannel.Password)
             {
-                await SendCommand(new JoinChannelResponse() { Success = false, Reason = "invalid password" });
+                await SendCommand(new JoinChannelResponse() { Success = false, Reason = "invalid password", ChannelName = joinChannel.ChannelName});
             }
 
             if (channel.Users.TryAdd(Name, User)) {
@@ -461,8 +449,8 @@ namespace ZkLobbyServer
                 User user;
                 if (channel.Users.TryRemove(Name, out user)) {
                     var users = channel.Users.Keys.ToArray();
-                    await Broadcast(users, new ChannelUserRemoved() { ChannelName = channel.Name, UserName = Name });
                     await SendCommand(new ChannelUserRemoved() { ChannelName = channel.Name, UserName = Name });
+                    await Broadcast(users, new ChannelUserRemoved() { ChannelName = channel.Name, UserName = Name });
                 }
             }
         }
@@ -628,6 +616,13 @@ namespace ZkLobbyServer
             if (Name == bat.Founder.Name || Name == status.Name) { // founder can set for all, others for self
                 UserBattleStatus ubs;
                 if (bat.Users.TryGetValue(status.Name, out ubs)) {
+                    
+                    // enfoce player count limit
+                    if (status.IsSpectator== false && bat.Users.Values.Count(x => !x.IsSpectator) >= bat.MaxPlayers) {
+                        // if unspeccing but there is already enough, force spec
+                        status.IsSpectator = true;
+                    }
+
                     ubs.UpdateWith(status);
                     await Broadcast(bat.Users.Keys, status);
                     await RecalcSpectators(bat);
@@ -664,11 +659,13 @@ namespace ZkLobbyServer
             if (!IsLoggedIn) return;
             bool changed = false;
             if (userStatus.IsInGame != null && User.IsInGame != userStatus.IsInGame) {
-                User.IsInGame = userStatus.IsInGame.Value;
+                if (userStatus.IsInGame == true) User.InGameSince = DateTime.UtcNow;
+                else User.InGameSince = null;
                 changed = true;
             }
             if (userStatus.IsAfk != null && User.IsAway != userStatus.IsAfk) {
-                User.IsAway = userStatus.IsAfk.Value;
+                if (userStatus.IsAfk == true) User.AwaySince = DateTime.UtcNow;
+                else User.AwaySince = null;
                 changed = true;
             }
             if (changed) await UpdateSelfToWhoKnowsMe();

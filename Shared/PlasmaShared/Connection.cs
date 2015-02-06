@@ -56,7 +56,7 @@ namespace ZkData
             }
             catch (Exception ex)
             {
-                Trace.TraceError("Error procesing connection close {0}", ex);
+                Trace.TraceError("{0} error procesing OnConnectionClosed: {1}", ex);
             }
         }
 
@@ -107,8 +107,13 @@ namespace ZkData
 
                 RemoteEndpointIP = ((IPEndPoint)tcp.Client.RemoteEndPoint).Address.ToString();
                 RemoteEndpointPort = ((IPEndPoint)tcp.Client.RemoteEndPoint).Port;
-                
-                await OnConnected();
+
+                try {
+                    await OnConnected();
+                } catch (Exception ex) {
+                    Trace.TraceError("{0} error processing OnConnected: {1}",this,ex);
+                }
+
                 while (!token.IsCancellationRequested)
                 {
                     var line = await reader.ReadLineAsync();
@@ -119,7 +124,7 @@ namespace ZkData
             }
             catch (Exception ex)
             {
-                if (!token.IsCancellationRequested) Trace.TraceWarning("Socket disconnected: {0}", ex);
+                if (!token.IsCancellationRequested) Trace.TraceWarning("{0} socket disconnected: {1}", this, ex.Message);
 
             }
             InternalClose();
@@ -144,11 +149,16 @@ namespace ZkData
                 {
                     if (cancellationTokenSource != null && !cancellationTokenSource.Token.IsCancellationRequested)
                     {
-                        Trace.TraceError("Error sending command {0}", ex);
+                        Trace.TraceWarning("{0} error sending command: {1}", this, ex.Message);
                         RequestClose();
                     }
                 }
             }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("[{0}:{1}]", RemoteEndpointIP, RemoteEndpointPort);
         }
     }
 }

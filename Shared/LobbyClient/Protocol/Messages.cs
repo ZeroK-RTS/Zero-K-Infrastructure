@@ -205,10 +205,10 @@ namespace LobbyClient
         public string Faction;
         public DateTime? InGameSince;
         public bool IsAdmin;
-        public bool IsAway;
+        public bool IsAway { get { return AwaySince != null; } }
         public bool IsBot;
         public bool IsInBattleRoom;
-        public bool IsInGame;
+        public bool IsInGame { get { return InGameSince != null; } }
         public bool BanMute;
         public int Level;
         public Login.ClientTypes ClientType;
