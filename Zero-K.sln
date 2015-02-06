@@ -12,9 +12,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobbyClient", "Shared\LobbyClient\LobbyClient.csproj", "{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroKLobby", "ZeroKLobby\ZeroKLobby.csproj", "{AA5F8640-FBBC-4007-9589-6C7CD26D4867}"
-	ProjectSection(ProjectDependencies) = postProject
-		{06EE7D11-6403-4ABF-AD73-24F8394BA69B} = {06EE7D11-6403-4ABF-AD73-24F8394BA69B}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Springie", "Springie\Springie\Springie.csproj", "{DD5A4F64-6C82-4F75-9EED-992378EC65FC}"
 EndProject
@@ -23,9 +20,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CMissionLib", "MissionEditor\CMissionLib\CMissionLib.csproj", "{025DB717-770F-4A29-BC33-FFDC3088E25B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MissionEditor", "MissionEditor\MissionEditor2\MissionEditor.csproj", "{713275BF-2FAB-4F51-8766-1E8182BCDAA4}"
-	ProjectSection(ProjectDependencies) = postProject
-		{06EE7D11-6403-4ABF-AD73-24F8394BA69B} = {06EE7D11-6403-4ABF-AD73-24F8394BA69B}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fixer", "Fixer\Fixer.csproj", "{D6BB29E2-0559-4B7E-8535-9A15230ABA9A}"
 EndProject
