@@ -137,10 +137,6 @@ namespace ZeroKLobby
         public Color EmoteColor { get { return Color.FromArgb(EmoteColorInt); } set { EmoteColorInt = value.ToArgb(); } }
         [Browsable(false)]
         public int EmoteColorInt = Color.FromArgb(178, 0, 178).ToArgb();
-        [Category("General")]
-        [DisplayName("Enable voice commands (EXPERIMENTAL)")]
-        [Description("Control the game using your voice")]
-        public bool EnableVoiceCommands { get; set; }
 
         [Category("General")]
         [DisplayName("Enable voice chat (push to talk)")]

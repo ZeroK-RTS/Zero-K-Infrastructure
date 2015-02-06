@@ -53,7 +53,6 @@ namespace ZeroKLobby.Notifications
             {
                 // silly way to create speech and voice engines on runtime - needed due to mono crash
                 speech = Activator.CreateInstance(Type.GetType("ZeroKLobby.ChatToSpeech"), spring);
-                if (Program.Conf.EnableVoiceCommands) voice = Activator.CreateInstance(Type.GetType("ZeroKLobby.VoiceCommand.VoiceCommandEngine"), client, spring);
             }
             catch (Exception ex)
             {
