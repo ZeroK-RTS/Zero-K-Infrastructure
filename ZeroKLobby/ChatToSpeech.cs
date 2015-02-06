@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !(__MonoCS__)
+
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Speech.Synthesis;
@@ -63,3 +65,5 @@ namespace ZeroKLobby
         }
     }
 }
+
+#endif
