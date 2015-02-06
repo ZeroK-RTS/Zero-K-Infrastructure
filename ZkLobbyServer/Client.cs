@@ -168,7 +168,7 @@ namespace ZkLobbyServer
         {
             var response = await Task.Run(() => state.LoginChecker.Login(User, login, this));
             if (response.ResultCode == LoginResponse.Code.Ok) {
-                ClearMyLastKnownStateForOtherClients();
+                //ClearMyLastKnownStateForOtherClients();
 
                 Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
                 await SendCommand(response); // login accepted

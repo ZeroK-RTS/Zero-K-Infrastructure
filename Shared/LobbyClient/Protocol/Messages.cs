@@ -220,6 +220,29 @@ namespace LobbyClient
             return (User)MemberwiseClone();
         }
 
+        public void UpdateWith(User u)
+        {
+            AccountID = u.AccountID;
+            SpringieLevel = u.SpringieLevel;
+            SteamID = u.SteamID;
+            AwaySince = u.AwaySince;
+            Clan = u.Clan;
+            Avatar = u.Avatar;
+            Country = u.Country;
+            EffectiveElo = u.EffectiveElo;
+            Effective1v1Elo = u.Effective1v1Elo;
+            Faction = u.Faction;
+            InGameSince = u.InGameSince;
+            IsAdmin = u.IsAdmin;
+            IsBot = u.IsBot;
+            // todo hacky fix IsInBattleRoom = u.IsInBattleRoom;
+            BanMute = u.BanMute;
+            Level = u.Level;
+            ClientType = u.ClientType;
+            DisplayName = u.DisplayName;
+            Name = u.Name;
+        }
+
         public override string ToString()
         {
             return Name;
