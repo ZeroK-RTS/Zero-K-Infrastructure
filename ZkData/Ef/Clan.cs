@@ -94,7 +94,12 @@ namespace ZkData
 
         public string GetClanChannel()
         {
-            return "clan_" + this.Shortcut;
+            return GetClanChannel(Shortcut);
+        }
+
+        public static string GetClanChannel(string clanShortcut)
+        {
+            return "clan_" + clanShortcut;
         }
     }
 }
