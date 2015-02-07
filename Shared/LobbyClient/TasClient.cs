@@ -831,8 +831,8 @@ namespace LobbyClient
 
         async Task Process(UserDisconnected arg)
         {
-            UserRemoved(this, arg);
             existingUsers.Remove(arg.Name);
+            UserRemoved(this, arg);
         }
 
         async Task Process(UpdateUserBattleStatus status)

@@ -60,7 +60,6 @@ namespace ZkLobbyServer
             string reason = wasRequested ? "quit" : "connection failed";
             if (!string.IsNullOrEmpty(Name))
             {
-                ClearMyLastKnownStateForOtherClients();
 
                 // notify all channels where i am to all users that i left 
                 foreach (var chan in state.Rooms.Values.Where(x=>x.Users.ContainsKey(Name)).ToList()) {
@@ -78,6 +77,8 @@ namespace ZkLobbyServer
 
                 Client client;
                 state.Clients.TryRemove(Name, out client);
+                
+                ClearMyLastKnownStateForOtherClients();
             }
             timer.Stop();
             Trace.TraceInformation("{0} {1}", this, reason);
@@ -198,7 +199,6 @@ namespace ZkLobbyServer
                         foreach (var u in b.Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) {
                             await SynchronizeUsersToMe(u.Name);
                             await SendCommand(new JoinedBattle() { BattleID = b.BattleID, User = u.Name });
-                            await SendCommand(u);
                         }
                     }
                 }
