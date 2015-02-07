@@ -77,11 +77,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthService.cs" />
-    <Compile Include="AdminCommands.cs" />
     <Compile Include="ChatRelay.cs" />
     <Compile Include="NightwatchTraceListener.cs" />
     <Compile Include="NwSteamHandler.cs" />
-    <Compile Include="ScheduledEvents.cs" />
     <Compile Include="Nightwatch.cs" />
     <Compile Include="MainConfig.cs" />
     <Compile Include="OfflineMessages.cs" />

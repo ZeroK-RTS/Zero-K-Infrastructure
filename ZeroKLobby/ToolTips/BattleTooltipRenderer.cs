@@ -68,7 +68,7 @@ namespace ZeroKLobby
             {
                 drawImage(ZklResources.boom, 16, 16);
                 if (founder.InGameSince != null) {
-                    var timeString = DateTime.Now.Subtract(founder.InGameSince.Value).PrintTimeRemaining();
+                    var timeString = DateTime.UtcNow.Subtract(founder.InGameSince.Value).PrintTimeRemaining();
                     drawString("The battle has been going on for at least " + timeString + ".");
                 }
                 newLine();

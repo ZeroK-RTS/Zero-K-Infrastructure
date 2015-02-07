@@ -693,12 +693,13 @@ namespace LobbyClient
                 User user;
                 if (ExistingUsers.TryGetValue(u, out user)) user.IsInBattleRoom = false;
             }
+            
+            existingBattles.Remove(br.BattleID);
             if (battle == MyBattle)
             {
                 BattleClosed(this, battle);
                 MyBattleRemoved(this, battle);
             }
-            existingBattles.Remove(br.BattleID);
             BattleRemoved(this, battle);
         }
 
@@ -719,11 +720,17 @@ namespace LobbyClient
             lastPing = DateTime.UtcNow;
         }
 
-        async Task Process(User user)
+        async Task Process(User userUpdate)
         {
-            User old;
-            existingUsers.TryGetValue(user.Name, out old);
+            User user;
+            User old = null;
+            existingUsers.TryGetValue(userUpdate.Name, out user);
+            if (user != null) {
+                old = user.Clone();
+                user.UpdateWith(userUpdate);
+            } else user = userUpdate;
             existingUsers[user.Name] = user;
+
             if (old == null) UserAdded(this, user);
             if (old != null) {
                 var bat = MyBattle;
@@ -824,8 +831,8 @@ namespace LobbyClient
 
         async Task Process(UserDisconnected arg)
         {
-            UserRemoved(this, arg);
             existingUsers.Remove(arg.Name);
+            UserRemoved(this, arg);
         }
 
         async Task Process(UpdateUserBattleStatus status)

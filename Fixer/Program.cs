@@ -179,13 +179,24 @@ namespace Fixer
 
         public static void FixStuff()
         {
-            var client = MissionEditor2.MissionServiceClientFactory.MakeClient();
-            var list = client.ListMissionInfos();
-            foreach (Mission m in list)
-            {
-                Console.WriteLine(m.Name);
-                Console.WriteLine(m.Description);
-            }
+            //UpdateMissionProgression(13);
+            /*
+            var db = new ZkDataContext();
+            int accountID = 5806;
+            List<CampaignJournal> unlockedJournals = new List<CampaignJournal>();
+            CampaignPlanet planet = db.CampaignPlanets.First(x => x.PlanetID == 13);
+            int campID = planet.CampaignID;
+            db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "Planet completed: {0}", planet));
+            //foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.PlanetID == planet.PlanetID && x.UnlockOnPlanetCompletion))
+            //{
+            //    unlockedJournals.Add(journal);
+            //}
+            //foreach (CampaignJournal uj in unlockedJournals)
+            //{
+            //    db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "{1} - Journal entry unlocked: {0}", uj, uj.CampaignPlanet));
+            //}
+            db.SubmitChanges();
+            */
         }
 
         public static void AddClanLeader()
@@ -223,7 +234,7 @@ namespace Fixer
             //ns.SpawnMany();
             //Console.ReadLine();
 
-            MigrateDatabase();
+            //MigrateDatabase();
             //FixDuplicatedAccounts();
             //BcryptPasswords();
             //var db = new ZkDataContext(true);
@@ -236,16 +247,14 @@ namespace Fixer
             //var post = db.ForumPosts.First(x => x.ForumPostID == 113893);
 
 
-
-
             //var db = new ZkDataContext(false);
             //db.Database.CreateIfNotExists();
 
             //PlanetwarsFixer.StartGalaxy(24,3919,3925);
             //AddClanLeader();
-            return;
+            //return;
             //TestPwMatch();
-            //FixStuff();
+            FixStuff();
 
             //var guid = Guid.NewGuid().ToString();
 
@@ -269,7 +278,7 @@ namespace Fixer
 
             //RandomizePlanetOwners(24);
             //GenerateStructures(24);
-            PlanetwarsFixer.GenerateArtefacts(24, new int[] { 3940, 3949, 3954, 3929, 3956 });
+            //PlanetwarsFixer.GenerateArtefacts(24, new int[] { 3940, 3949, 3954, 3929, 3956 });
 
             //SwapPlanetOwners(3948, 3955);
             //SwapPlanetOwners(3973, 3932);

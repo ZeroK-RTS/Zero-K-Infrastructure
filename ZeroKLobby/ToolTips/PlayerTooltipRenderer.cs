@@ -101,17 +101,17 @@ namespace ZeroKLobby
                 drawImage(Images.GetRank(user.Level), 16, 16);
                 drawString(string.Format("Level: {0}", user.Level));
                 newLine();
-                if (user.IsAway)
+                if (user.AwaySince.HasValue)
                 {
                     drawImage(ZklResources.away, 16, 16);
-                    drawString("User has been idle for " + DateTime.Now.Subtract(user.AwaySince.Value).PrintTimeRemaining() + ".");
+                    drawString("User has been idle for " + DateTime.UtcNow.Subtract(user.AwaySince.Value).PrintTimeRemaining() + ".");
                     newLine();
                 }
                 if (user.IsInGame)
                 {
                     drawImage(ZklResources.ingame, 16, 16);
                     if (user.InGameSince != null) {
-                        var time = DateTime.Now.Subtract(user.InGameSince.Value).PrintTimeRemaining();
+                        var time = DateTime.UtcNow.Subtract(user.InGameSince.Value).PrintTimeRemaining();
                         drawString("Playing since " + time + " ago.");
                     }
                     newLine();
@@ -132,9 +132,11 @@ namespace ZeroKLobby
             }
             if (user.IsInBattleRoom)
             {
-                var battle = Program.TasClient.ExistingBattles.Values.SingleOrDefault(b => b.Users.ContainsKey(user.Name));
-                var battleIcon = Program.BattleIconManager.GetBattleIcon(battle.BattleID);
-                if (battleIcon != null) g.DrawImageUnscaled(battleIcon.Image, x, y);
+                var battle = Program.TasClient.ExistingBattles.Values.FirstOrDefault(b => b.Users.ContainsKey(user.Name));
+                if (battle != null) {
+                    var battleIcon = Program.BattleIconManager.GetBattleIcon(battle.BattleID);
+                    if (battleIcon != null) g.DrawImageUnscaled(battleIcon.Image, x, y);
+                }
             }
 
         }

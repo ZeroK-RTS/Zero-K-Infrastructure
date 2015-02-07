@@ -606,6 +606,7 @@ namespace Springie.autohost
             if (!now && spring.IsRunning) spring.WaitForExit();
             Stop();
 
+            bossName = "";
             lastMapChange = DateTime.Now;
 
             if (String.IsNullOrEmpty(modname)) modname = config.Mod;
@@ -691,6 +692,7 @@ namespace Springie.autohost
             StopVote();
             spring.ExitGame();
             tas.ChangeMyUserStatus(false, false);
+            bossName = "";
             tas.LeaveBattle();
         }
 
