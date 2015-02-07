@@ -172,8 +172,9 @@ namespace ZkLobbyServer
                 //ClearMyLastKnownStateForOtherClients();
 
                 Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
-                await SendCommand(response); // login accepted
                 await SendCommand(User); // self data
+                await SendCommand(response); // login accepted
+                
 
                 foreach (var b in state.Battles.Values) {
                     if (b != null) {
