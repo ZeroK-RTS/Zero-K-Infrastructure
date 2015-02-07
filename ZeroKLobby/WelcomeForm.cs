@@ -54,8 +54,6 @@ namespace ZeroKLobby
             var waveOut = new WaveOut();
             var reader = new AudioFileReader("Rise of the Machines.mp3");
             waveOut.Init(reader);
-            waveOut.PlaybackStopped +=
-                (sender, args) => waveOut.Init(new AudioFileReader(@"d:\media\Mp3\music\Grégoire Lourme\Cinematic Volume 6 Science Fiction\03 Laser Tournament.mp3"));
             waveOut.Play();
         }
 
