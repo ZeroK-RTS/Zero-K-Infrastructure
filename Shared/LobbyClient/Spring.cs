@@ -344,7 +344,10 @@ namespace LobbyClient
                 
 
                 arg.Add(string.Format("--config \"{0}\"", paths.GetSpringConfigPath()));
-                process.StartInfo.EnvironmentVariables["OMP_WAIT_POLICY"] = "ACTIVE";
+                if (Environment.GetEnvironmentVariable("OMP_WAIT_POLICY") == null)
+                {
+                    process.StartInfo.EnvironmentVariables["OMP_WAIT_POLICY"] = "ACTIVE";
+                }
 
                 if (useSafeMode) arg.Add("--safemode");
                 arg.Add(string.Format("\"{0}\"", scriptPath));

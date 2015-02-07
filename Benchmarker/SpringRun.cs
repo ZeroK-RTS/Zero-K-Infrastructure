@@ -64,8 +64,10 @@ namespace Benchmarker
             process.StartInfo.EnvironmentVariables["SPRING_DATADIR"] = datadirs;
             process.StartInfo.EnvironmentVariables["SPRING_ISOLATED"] = test.Config.ConfigPath;
             process.StartInfo.EnvironmentVariables["SPRING_WRITEDIR"] = test.Config.ConfigPath;
-            process.StartInfo.EnvironmentVariables["OMP_WAIT_POLICY"] = "ACTIVE";
-            
+            if (Environment.GetEnvironmentVariable("OMP_WAIT_POLICY") == null)
+            {
+                process.StartInfo.EnvironmentVariables["OMP_WAIT_POLICY"] = "ACTIVE";
+            }
 
             var scriptPath = Path.GetTempFileName();
             File.WriteAllText(scriptPath, test.StartScript.GetScriptForTestCase(test, benchmark));
