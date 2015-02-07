@@ -35,7 +35,9 @@ namespace ZeroKLobby
             
             Controls.Add(new BitmapButton() { Size = new Size(250, 50), Text = "SinglePlayer", Left = 50, Top = 350});
             Controls.Add(new BitmapButton() { Size = new Size(250, 50), Text = "MultiPlayer", Left = 50, Top = 450});
-            Controls.Add(new BitmapButton() { Size = new Size(250, 50), Text = "Exit", Left = 50, Top = 550 });
+            var exitButton = new BitmapButton() { Size = new Size(250, 50), Text = "Exit", Left = 50, Top = 550 };
+            exitButton.Click += (sender, args) => Program.ShutDown();
+            Controls.Add(exitButton);
 
             var winButton = new BitmapButton() {
                 Size = new Size(50, 50),
@@ -44,18 +46,7 @@ namespace ZeroKLobby
                 Top = Height - 100,
                 Anchor = AnchorStyles.Bottom | AnchorStyles.Left
             };
-            winButton.Click += (sender, args) => {
-                if (FormBorderStyle == FormBorderStyle.None) {
-                    TopMost = false;
-                    WindowState = FormWindowState.Normal;
-                    FormBorderStyle = FormBorderStyle.Sizable;
-                } else {
-                    FormBorderStyle = FormBorderStyle.None;
-                    TopMost = true;
-                    WindowState = FormWindowState.Maximized;
-                }
-            };
-            
+            winButton.Click += SwitchWindowedFullscreenModes;
             Controls.Add(winButton);
 
             Controls.Add(new BitmapButton() { Size = new Size(50, 50), Text = "SND", Left = 120, Top = Height - 100, Anchor = AnchorStyles.Bottom | AnchorStyles.Left });
@@ -63,7 +54,22 @@ namespace ZeroKLobby
             var waveOut = new WaveOut();
             var reader = new AudioFileReader("Rise of the Machines.mp3");
             waveOut.Init(reader);
+            waveOut.PlaybackStopped +=
+                (sender, args) => waveOut.Init(new AudioFileReader(@"d:\media\Mp3\music\Grégoire Lourme\Cinematic Volume 6 Science Fiction\03 Laser Tournament.mp3"));
             waveOut.Play();
+        }
+
+        void SwitchWindowedFullscreenModes(object sender, EventArgs args)
+        {
+            if (FormBorderStyle == FormBorderStyle.None) {
+                TopMost = false;
+                WindowState = FormWindowState.Normal;
+                FormBorderStyle = FormBorderStyle.Sizable;
+            } else {
+                FormBorderStyle = FormBorderStyle.None;
+                TopMost = true;
+                WindowState = FormWindowState.Maximized;
+            }
         }
 
         protected override void OnDeactivate(EventArgs e)
