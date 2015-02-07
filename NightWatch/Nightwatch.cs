@@ -27,7 +27,6 @@ namespace CaTracker
         
         public TasClient Tas { get { return tas; } }
         public static Config config;
-        AdminCommands adminCommands;
         OfflineMessages offlineMessages;
         PlayerMover playerMover;
         ChatRelay chatRelay;
@@ -73,7 +72,6 @@ namespace CaTracker
 		    }
 
             Auth = new AuthService(tas);
-            adminCommands = new AdminCommands(tas);
             offlineMessages = new OfflineMessages(tas);
             playerMover = new PlayerMover(tas);
             SteamHandler = new NwSteamHandler(tas, new Secrets().GetSteamWebApiKey());
