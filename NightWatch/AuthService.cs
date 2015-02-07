@@ -14,8 +14,8 @@ namespace NightWatch
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.Single)]
     public class AuthService
     {
-        public const string ModeratorChannel = "zkadmin";
-        public const string Top20Channel = "zktop20";
+        public const string ModeratorChannel = GlobalConst.ModeratorChannel;
+        public const string Top20Channel = GlobalConst.Top20Channel;
 
         readonly TasClient client;
 
