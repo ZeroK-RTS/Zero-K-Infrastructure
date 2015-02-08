@@ -681,7 +681,7 @@ namespace ZkLobbyServer
             if (battle != null) {
                 BotBattleStatus ubs;
                 if (!battle.Bots.TryGetValue(add.Name, out ubs)) ubs = new BotBattleStatus(add.Name, Name, add.AiLib);
-                else if (add.Owner != Name && !User.IsAdmin && User != battle.Founder) {
+                else if (ubs.owner != Name && !User.IsAdmin && User != battle.Founder) {
                     await Respond(string.Format("No permissions to edit bot {0}", add.Name));
                     return;
                 }
