@@ -71,6 +71,14 @@ namespace ZeroKWeb.Controllers
             acc.Planets.Clear();
 
             acc.ResetQuotas();
+
+            // delete channel subscription
+            //if (!acc.IsZeroKAdmin || acc.IsZeroKAdmin)
+            //{
+            //    var channelSub = db.LobbyChannelSubscriptions.FirstOrDefault(x => x.Account == acc && x.Channel == acc.Clan.GetClanChannel());
+            //    db.LobbyChannelSubscriptions.DeleteOnSubmit(channelSub);
+            //}
+
             acc.Clan = null;
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} leaves clan {1}", acc, clan));
             db.SubmitChanges();

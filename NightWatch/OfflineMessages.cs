@@ -147,8 +147,14 @@ namespace NightWatch
 										if (chan != "main")
 										{
 											using (var db = new ZkDataContext()) {
-                                                Account account = Account.AccountByName(db, e.UserName);
-                                                if (chan == AuthService.ModeratorChannel && !(account.IsZeroKAdmin))
+												Faction channelFaction = db.Factions.FirstOrDefault(x=> chan == x.Name);
+												Clan channelClan = db.Clans.FirstOrDefault(x=> x.GetClanChannel() == chan);
+												Account account = Account.AccountByName(db, e.UserName);
+												if (!(account.IsZeroKAdmin) &&
+													((chan == AuthService.ModeratorChannel)	
+                                                    || (channelFaction != null && account.Faction != channelFaction)
+													//|| (channelClan != null && account.Clan != channelClan)
+                                                    ))
                                                 {
                                                     client.Say(SayPlace.User, user.Name, "Not authorized to subscribe to this channel", false);
                                                 }

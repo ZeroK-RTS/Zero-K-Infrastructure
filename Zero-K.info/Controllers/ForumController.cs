@@ -50,7 +50,7 @@ namespace ZeroKWeb.Controllers
             int page = GetPostPage(post);
 
 			db.ForumPosts.DeleteOnSubmit(post);
-			if (thread.ForumPosts.Count() <= 1  && !IsNormalThread(thread)) {
+			if (thread.ForumPosts.Count() <= 1 && IsNormalThread(thread)) {
                 db.ForumThreadLastReads.DeleteAllOnSubmit(db.ForumThreadLastReads.Where(x => x.ForumThreadID == thread.ForumThreadID).ToList());
 				db.ForumThreads.DeleteOnSubmit(thread);
 				db.SubmitChanges();

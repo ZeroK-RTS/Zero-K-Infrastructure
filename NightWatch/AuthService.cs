@@ -14,8 +14,8 @@ namespace NightWatch
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.Single)]
     public class AuthService
     {
-        public const string ModeratorChannel = "zkadmin";
-        public const string Top20Channel = "zktop20";
+        public const string ModeratorChannel = GlobalConst.ModeratorChannel;
+        public const string Top20Channel = GlobalConst.Top20Channel;
 
         readonly TasClient client;
 
@@ -37,18 +37,10 @@ namespace NightWatch
 
             this.client.UserAdded += (s, e) =>
                 {
-                    using (var db = new ZkDataContext())
-                    {
-                        var acc = db.Accounts.Find(e.AccountID);
-                        if (acc != null)
-                        {
-                            this.client.Extensions.PublishAccountData(acc);
-                            if (acc.SpringieLevel > 2 || acc.IsZeroKAdmin) client.ForceJoinChannel(e.Name, ModeratorChannel);
-                            if (topPlayers.IsTop20(e.AccountID)) client.ForceJoinChannel(e.Name, Top20Channel);
-                            if (acc.Clan != null) client.ForceJoinChannel(e.Name, acc.Clan.GetClanChannel());
-                            if (acc.Faction != null && acc.Level >= GlobalConst.FactionChannelMinLevel && acc.CanPlayerPlanetWars()) client.ForceJoinChannel(e.Name, acc.Faction.Shortcut);
-                        }
-                    }
+                    if (e.SpringieLevel > 2 || e.IsAdmin) client.ForceJoinChannel(e.Name, ModeratorChannel);
+                    if (topPlayers.IsTop20(e.AccountID)) client.ForceJoinChannel(e.Name, Top20Channel);
+                    if (e.Clan != null) client.ForceJoinChannel(e.Name, Clan.GetClanChannel(e.Clan));
+                    if (e.Faction != null && e.Level >= GlobalConst.FactionChannelMinLevel) client.ForceJoinChannel(e.Name, e.Faction);
                 };
 
             // TODO set bot mode
@@ -95,7 +87,8 @@ namespace NightWatch
                     try
                     {
                         var channel = args.Channel.Name;
-                        if (channel == ModeratorChannel) {
+                        if (channel == ModeratorChannel)
+                        {
                             var u = args.User;
                             if (u.SpringieLevel > 2 || u.IsAdmin) client.ForceJoinChannel(u.Name, ModeratorChannel);
                         }

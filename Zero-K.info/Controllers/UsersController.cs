@@ -7,6 +7,7 @@ using System.Web.Routing;
 using LobbyClient;
 using NightWatch;
 using ZkData;
+using System.Data.Entity.SqlServer;
 
 namespace ZeroKWeb.Controllers
 {
@@ -58,11 +59,14 @@ namespace ZeroKWeb.Controllers
             }
            if (acc.IsZeroKAdmin != zkAdmin)
             {
-                //reset chat priviledges to 2 if removing adminhood
+                //reset chat priviledges to 2 if removing adminhood; remove NW subsciption to admin channel
+                // FIXME needs to also terminate forbidden clan/faction subscriptions
                 if (zkAdmin == false)
                 {
                     Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - Springie rights: {0} -> {1}", acc.SpringieLevel, 2), true);
                     acc.SpringieLevel = 2;
+                    var channelSub = db.LobbyChannelSubscriptions.FirstOrDefault(x => x.Account == acc && x.Channel == GlobalConst.ModeratorChannel);
+                    db.LobbyChannelSubscriptions.DeleteOnSubmit(channelSub);
                 }
                 Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - Admin status: {0} -> {1}", acc.IsZeroKAdmin, zkAdmin), true);
                 acc.IsZeroKAdmin = zkAdmin;
@@ -105,7 +109,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             IQueryable<Account> ret = db.Accounts.Where(x=> !x.IsDeleted).AsQueryable();
 
-            if (!string.IsNullOrEmpty(name)) ret = ret.Where(x => x.Name.Contains(name));
+            if (!string.IsNullOrEmpty(name)) ret = ret.Where(x => SqlFunctions.PatIndex("%" + name + "%", x.Name) > 0);
             if (!string.IsNullOrEmpty(alias)) ret = ret.Where(x => x.Aliases.Contains(alias));
             if (!string.IsNullOrEmpty(ip)) ret = ret.Where(x => x.AccountIPs.Any(y => y.IP == ip));
             if (userID != null && userID != 0) ret = ret.Where(x => x.AccountUserIDs.Any(y => y.UserID == userID));
@@ -119,7 +123,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             IQueryable<Account> ret = db.Accounts.Where(x => !x.IsDeleted).AsQueryable();
 
-            if (!string.IsNullOrEmpty(name)) ret = ret.Where(x => x.Name.Contains(name));
+            if (!string.IsNullOrEmpty(name)) ret = ret.Where(x => SqlFunctions.PatIndex("%" + name + "%", x.Name) > 0);
             if (!string.IsNullOrEmpty(ip)) ret = ret.Where(x => x.AccountIPs.Any(y => y.IP == ip));
             if (userID != null && userID != 0) ret = ret.Where(x => x.AccountUserIDs.Any(y => y.UserID == userID));
 
