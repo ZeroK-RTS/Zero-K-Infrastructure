@@ -350,7 +350,11 @@ namespace ZeroKLobby.MicroLobby
 			if (e.Place == SayPlace.Battle || e.Place == SayPlace.BattlePrivate)
 			{
 				if (e.Text.Contains(Program.Conf.LobbyPlayerName) && !Program.TasClient.MyUser.IsInGame && !e.IsEmote && e.UserName != GlobalConst.NightwatchName &&
-				    !e.Text.StartsWith(string.Format("[{0}]", Program.TasClient.UserName))) Program.MainWindow.NotifyUser("chat/battle", string.Format("{0}: {1}", e.UserName, e.Text), false, true);
+					!e.Text.StartsWith(string.Format("[{0}]", Program.TasClient.UserName)))
+				{
+					Program.MainWindow.NotifyUser("chat/battle", string.Format("{0}: {1}", e.UserName, e.Text), false, true);
+					AddLine(new SaidExLine(e.UserName, e.Text));
+				}
 				if (!e.IsEmote) AddLine(new SaidLine(e.UserName, e.Text));
 				else AddLine(new SaidExLine(e.UserName, e.Text));
 			}
