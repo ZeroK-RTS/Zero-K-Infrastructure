@@ -24,8 +24,16 @@ namespace ZeroKLobby
             this.tas = tas;
             if (Environment.OSVersion.Platform == PlatformID.Unix)
             {
-                EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.libCSteamworks.so", "libCSteamworks.so");
-                EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.libsteam_api.so", "libsteam_api.so");
+				if (Environment.Is64BitProcess)
+				{
+					EmbeddedResourceExtractor.ExtractFile ("ZeroKLobby.NativeLibs.libCSteamworks-x86_64.so", "libCSteamworks.so");
+					EmbeddedResourceExtractor.ExtractFile ("ZeroKLobby.NativeLibs.libsteam_api-x86_64.so", "libsteam_api.so");
+				}
+				else
+				{
+					EmbeddedResourceExtractor.ExtractFile ("ZeroKLobby.NativeLibs.libCSteamworks.so", "libCSteamworks.so");
+					EmbeddedResourceExtractor.ExtractFile ("ZeroKLobby.NativeLibs.libsteam_api.so", "libsteam_api.so");
+				}
             }
             else
             {
