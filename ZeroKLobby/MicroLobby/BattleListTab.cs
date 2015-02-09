@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using ZkData;
@@ -13,6 +14,7 @@ namespace ZeroKLobby.MicroLobby
         public BattleListTab() 
         {
             Paint += BattleListTab_Enter; 
+            BackColor = Color.Transparent;
         }
 
         void BattleListTab_Enter(object sender, EventArgs e) //lazy initialization

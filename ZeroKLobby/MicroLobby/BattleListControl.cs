@@ -33,6 +33,7 @@ namespace ZeroKLobby.MicroLobby
         static Font dividerFont = new Font("Segoe UI", 15.25F, FontStyle.Bold);
         static SolidBrush dividerFontBrush = new SolidBrush(Program.Conf.TextColor);
 
+        
 
         public string FilterText
         {
@@ -120,6 +121,8 @@ namespace ZeroKLobby.MicroLobby
             hideFull = Program.Conf.HideNonJoinableBattles;
             hidePassworded = Program.Conf.HidePasswordedBattles;
             showOfficial = Program.Conf.ShowOfficialBattles;
+
+            BackColor = Color.Transparent;
 
             Repaint();
         }

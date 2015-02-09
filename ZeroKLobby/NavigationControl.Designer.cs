@@ -32,7 +32,6 @@
             this.urlBox = new System.Windows.Forms.TextBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.logoutButton = new ZeroKLobby.BitmapButton();
-            this.isBusyIcon = new System.Windows.Forms.PictureBox();
             this.goButton1 = new ZeroKLobby.BitmapButton();
             this.btnForward = new ZeroKLobby.BitmapButton();
             this.btnBack = new ZeroKLobby.BitmapButton();
@@ -56,9 +55,8 @@
             this.flowLayoutPanel1.BackColor = System.Drawing.Color.DimGray;
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.flowLayoutPanel1.MinimumSize = new System.Drawing.Size(300, 28);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
-            this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(0);
+            this.flowLayoutPanel1.MinimumSize = new System.Drawing.Size(300, 28);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(703, 28);
             this.flowLayoutPanel1.TabIndex = 5;
@@ -82,16 +80,6 @@
             this.logoutButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.logoutButton.UseVisualStyleBackColor = true;
             this.logoutButton.Click += new System.EventHandler(this.logoutButton_Click);
-            // 
-            // isBusyIcon
-            // 
-            this.isBusyIcon.Image = ((System.Drawing.Image)(resources.GetObject("isBusyIcon.Image")));
-            this.isBusyIcon.Location = new System.Drawing.Point(468, 36);
-            this.isBusyIcon.Name = "isBusyIcon";
-            this.isBusyIcon.Size = new System.Drawing.Size(25, 20);
-            this.isBusyIcon.TabIndex = 8;
-            this.isBusyIcon.TabStop = false;
-            this.isBusyIcon.Visible = false;
             // 
             // goButton1
             // 
@@ -150,8 +138,8 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Location = new System.Drawing.Point(0, 42);
             this.tabControl.Margin = new System.Windows.Forms.Padding(0);
-            this.tabControl.Padding = new System.Drawing.Point(0);
             this.tabControl.Name = "tabControl";
+            this.tabControl.Padding = new System.Drawing.Point(0, 0);
             this.tabControl.SelectedIndex = 0;
             this.tabControl.Size = new System.Drawing.Size(703, 185);
             this.tabControl.TabIndex = 0;
@@ -162,7 +150,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.DimGray;
-            this.Controls.Add(this.isBusyIcon);
             this.Controls.Add(this.goButton1);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.btnForward);
@@ -170,7 +157,6 @@
             this.Controls.Add(this.urlBox);
             this.Controls.Add(this.tabControl);
             this.Margin = new System.Windows.Forms.Padding(0);
-            this.Padding = new System.Windows.Forms.Padding(0);
             this.Name = "NavigationControl";
             this.Size = new System.Drawing.Size(703, 219);
             this.Resize += new System.EventHandler(this.NavigationControl_Resize);
@@ -187,7 +173,6 @@
         private BitmapButton btnBack;
         private BitmapButton btnForward;
         private BitmapButton goButton1;
-        public System.Windows.Forms.PictureBox isBusyIcon;
         private BitmapButton logoutButton;
     }
 }

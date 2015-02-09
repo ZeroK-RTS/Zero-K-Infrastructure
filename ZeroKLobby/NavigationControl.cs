@@ -259,8 +259,7 @@ namespace ZeroKLobby
             btnForward.Location = new System.Drawing.Point(btnForward.Location.X, height);
             urlBox.Location = new System.Drawing.Point(urlBox.Location.X, height);
             goButton1.Location = new System.Drawing.Point(goButton1.Location.X, height);
-            isBusyIcon.Location = new System.Drawing.Point(isBusyIcon.Location.X, height);
-
+            
             //resize the content area (which show chat & internal browser) according to Nav bar's height
             int heightPlusButton = height + btnBack.Height - tabControl.ItemSize.Height;
             int freeHeight = windowHeight - heightPlusButton;

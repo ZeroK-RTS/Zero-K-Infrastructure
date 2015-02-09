@@ -13,61 +13,14 @@ namespace ZeroKLobby
 {
     public partial class WelcomeForm : Form
     {
+        WaveOut waveOut;
+        AudioFileReader audioReader;
+
         public WelcomeForm()
         {
             InitializeComponent();
 
-            DoubleBuffered = true;
-
-            this.TopMost = true;
-            this.FormBorderStyle = FormBorderStyle.None;
-            this.WindowState = FormWindowState.Maximized;
-            this.BackgroundImage = ZklResources.bg_battle;
-            this.BackgroundImageLayout = ImageLayout.Stretch;
-
-
-            var avatar = new BitmapButton() { Size = new Size(75, 75), Left = 50, Top = 100, Image = ZklResources.grayuser};
-
-            Controls.Add(avatar);
-            Controls.Add(new BitmapButton() { Size = new Size(75, 30), Text = "Login", Left = 50, Top = 180 });
-            Controls.Add(new Label() {Text = "Licho", Left = 130, Top = 120, AutoSize = true, Font = new Font("Verdana",25), BackColor = Color.Transparent ,ForeColor = Color.White});
-
-            
-            Controls.Add(new BitmapButton() { Size = new Size(250, 50), Text = "SinglePlayer", Left = 50, Top = 350});
-            Controls.Add(new BitmapButton() { Size = new Size(250, 50), Text = "MultiPlayer", Left = 50, Top = 450});
-            var exitButton = new BitmapButton() { Size = new Size(250, 50), Text = "Exit", Left = 50, Top = 550 };
-            exitButton.Click += (sender, args) => Program.ShutDown();
-            Controls.Add(exitButton);
-
-            var winButton = new BitmapButton() {
-                Size = new Size(50, 50),
-                Text = "WIN",
-                Left = 50,
-                Top = Height - 100,
-                Anchor = AnchorStyles.Bottom | AnchorStyles.Left
-            };
-            winButton.Click += SwitchWindowedFullscreenModes;
-            Controls.Add(winButton);
-
-            Controls.Add(new BitmapButton() { Size = new Size(50, 50), Text = "SND", Left = 120, Top = Height - 100, Anchor = AnchorStyles.Bottom | AnchorStyles.Left });
-
-            var waveOut = new WaveOut();
-            var reader = new AudioFileReader("Rise of the Machines.mp3");
-            waveOut.Init(reader);
-            waveOut.Play();
-        }
-
-        void SwitchWindowedFullscreenModes(object sender, EventArgs args)
-        {
-            if (FormBorderStyle == FormBorderStyle.None) {
-                TopMost = false;
-                WindowState = FormWindowState.Normal;
-                FormBorderStyle = FormBorderStyle.Sizable;
-            } else {
-                FormBorderStyle = FormBorderStyle.None;
-                TopMost = true;
-                WindowState = FormWindowState.Maximized;
-            }
+            btnWindowed_Click(this, EventArgs.Empty);
         }
 
         protected override void OnDeactivate(EventArgs e)
@@ -82,9 +35,55 @@ namespace ZeroKLobby
             base.OnActivated(e);
         }
 
-        protected override void OnPaintBackground(PaintEventArgs e)
+        private void exitButton_Click(object sender, EventArgs e)
         {
-            base.OnPaintBackground(e);
+            Program.ShutDown();
+        }
+
+        private void btnWindowed_Click(object sender, EventArgs e)
+        {
+            if (FormBorderStyle == FormBorderStyle.None)
+            {
+                TopMost = false;
+                WindowState = FormWindowState.Normal;
+                FormBorderStyle = FormBorderStyle.Sizable;
+            }
+            else
+            {
+                FormBorderStyle = FormBorderStyle.None;
+                TopMost = true;
+                WindowState = FormWindowState.Maximized;
+            }
+        }
+
+        protected override void OnResizeBegin(EventArgs e)
+        {
+            SuspendLayout();
+            base.OnResizeBegin(e);
+        }
+
+        protected override void OnResizeEnd(EventArgs e)
+        {
+            base.OnResizeEnd(e);
+            ResumeLayout();
+        }
+
+        private void WelcomeForm_Load(object sender, EventArgs e)
+        {
+            waveOut = new WaveOut();
+            audioReader = new AudioFileReader("Rise of the Machines.mp3");
+            waveOut.Init(audioReader);
+            waveOut.Play();
+
+        }
+
+        private void btnSnd_Click(object sender, EventArgs e)
+        {
+            if (waveOut.PlaybackState == PlaybackState.Playing) waveOut.Stop();
+            else {
+                audioReader.Position = 0; 
+                waveOut.Play();
+            }
         }
     }
 }

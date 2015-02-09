@@ -353,7 +353,7 @@ namespace ZeroKLobby
                 var welc = new WelcomeForm();
                 welc.Show();
 
-                Application.Run(MainWindow);
+                Application.Run(welc);
                 ShutDown();
             }
             catch (Exception ex)

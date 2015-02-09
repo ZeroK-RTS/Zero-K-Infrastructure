@@ -108,6 +108,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionHandler.cs" />
+    <Compile Include="BgImages.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BgImages.resx</DependentUpon>
+    </Compile>
     <Compile Include="BrowserInterop.cs" />
     <Compile Include="ButtonInfo.cs" />
     <Compile Include="Buttons.Designer.cs">
@@ -454,6 +459,10 @@
       <DependentUpon>ZklResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Steam\ZklSteamHandler.cs" />
+    <EmbeddedResource Include="BgImages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>BgImages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Buttons.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Buttons.Designer.cs</LastGenOutput>
@@ -1636,9 +1645,23 @@
     <None Include="Resources\voice_talking.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\bg_battle.png" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="Resources\BgImages\bg_battle.png" />
+    <None Include="Resources\Buttons\exit.png" />
+    <None Include="Resources\Buttons\mp.png" />
+    <None Include="Resources\Buttons\snd.png" />
+    <None Include="Resources\Buttons\sp.png" />
+    <None Include="Resources\Buttons\win_minmax.png" />
+    <None Include="Resources\Buttons\ajax-loader.gif" />
+    <None Include="Resources\Buttons\add1.png" />
+    <None Include="Resources\Buttons\ajax-loader1.gif" />
+    <None Include="Resources\Buttons\game1.png" />
+    <None Include="Resources\Buttons\glaive_icon_241.png" />
+    <None Include="Resources\Buttons\home1.png" />
+    <None Include="Resources\Buttons\chat1.png" />
+    <None Include="Resources\Buttons\map1.png" />
+    <None Include="Resources\Buttons\panel_border_1281.png" />
+    <None Include="Resources\Buttons\panel_border_641.png" />
+    <None Include="Resources\Buttons\panel_border_961.png" />
     <Content Include="Rise of the Machines.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
