@@ -229,7 +229,7 @@ namespace Fixer
         {
             //GlobalConst.Mode = ModeType.Live;
             var db = new ZkDataContext();
-            var bats = db.SpringBattles.Where(x => x.StartTime >= from).ToList();
+            var bats = db.SpringBattles.Where(x => x.StartTime >= from && x.Duration >= 60*5).ToList();
             Console.WriteLine("Battles from {0}", from);
             var total = bats.Count;
             Console.WriteLine("Total: {0}",total);
