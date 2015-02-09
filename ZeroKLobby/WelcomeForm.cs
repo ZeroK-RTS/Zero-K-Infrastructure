@@ -19,20 +19,20 @@ namespace ZeroKLobby
         public WelcomeForm()
         {
             InitializeComponent();
-
             btnWindowed_Click(this, EventArgs.Empty);
         }
 
+        
         protected override void OnDeactivate(EventArgs e)
         {
-            this.TopMost = false;
             base.OnDeactivate(e);
+            this.TopMost = false;
         }
 
         protected override void OnActivated(EventArgs e)
         {
-            this.TopMost = true;
             base.OnActivated(e);
+            if (FormBorderStyle == FormBorderStyle.None) this.TopMost = true;
         }
 
         private void exitButton_Click(object sender, EventArgs e)
@@ -40,8 +40,27 @@ namespace ZeroKLobby
             Program.ShutDown();
         }
 
+
+        Image resizeStoredBackground;
+
+        protected override void OnResizeBegin(EventArgs e)
+        {
+            resizeStoredBackground = BackgroundImage;
+            BackgroundImage = null;
+            base.OnResizeBegin(e);
+        }
+
+        protected override void OnResizeEnd(EventArgs e)
+        {
+            base.OnResizeEnd(e);
+            BackgroundImage = resizeStoredBackground;
+        }
+
+
         private void btnWindowed_Click(object sender, EventArgs e)
         {
+            var image = BackgroundImage;
+            BackgroundImage = null;
             if (FormBorderStyle == FormBorderStyle.None)
             {
                 TopMost = false;
@@ -54,18 +73,7 @@ namespace ZeroKLobby
                 TopMost = true;
                 WindowState = FormWindowState.Maximized;
             }
-        }
-
-        protected override void OnResizeBegin(EventArgs e)
-        {
-            SuspendLayout();
-            base.OnResizeBegin(e);
-        }
-
-        protected override void OnResizeEnd(EventArgs e)
-        {
-            base.OnResizeEnd(e);
-            ResumeLayout();
+            BackgroundImage = image;
         }
 
         private void WelcomeForm_Load(object sender, EventArgs e)
@@ -74,7 +82,6 @@ namespace ZeroKLobby
             audioReader = new AudioFileReader("Rise of the Machines.mp3");
             waveOut.Init(audioReader);
             waveOut.Play();
-
         }
 
         private void btnSnd_Click(object sender, EventArgs e)

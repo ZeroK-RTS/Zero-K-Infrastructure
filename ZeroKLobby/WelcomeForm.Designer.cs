@@ -58,7 +58,6 @@ namespace ZeroKLobby
             // mainFrame
             // 
             this.mainFrame.BackColor = System.Drawing.Color.Transparent;
-            this.mainFrame.BackgroundImage = global::ZeroKLobby.BgImages.bg_battle;
             this.mainFrame.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.mainFrame.Controls.Add(this.btnSnd);
             this.mainFrame.Controls.Add(this.btnWindowed);
@@ -198,6 +197,8 @@ namespace ZeroKLobby
             // WelcomeForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.BackColor = System.Drawing.Color.White;
+            this.BackgroundImage = global::ZeroKLobby.BgImages.bg_battle;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1264, 730);
             this.Controls.Add(this.mainFrame);
