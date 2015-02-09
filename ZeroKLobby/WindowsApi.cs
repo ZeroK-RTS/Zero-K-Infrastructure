@@ -15,14 +15,6 @@ namespace ZeroKLobby
             }
         }
 
-        [DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern bool InternetSetCookie(string url, string cookieName, string cookieData);
-
-        public static bool InternetSetCookiePub(string url, string cookieName, string cookieData) {
-            if (Environment.OSVersion.Platform != PlatformID.Unix) return InternetSetCookie(url, cookieName, cookieData);
-            return true;
-        }
-
     
 		private static bool haveXprintIdle = true;
         public static TimeSpan CalculateIdleTime() {

@@ -99,6 +99,7 @@ namespace ZeroKLobby
         {
             try
             {
+                GlobalConst.Mode =ModeType.Live;
                 //Stopwatch stopWatch = new Stopwatch(); stopWatch.Start();
 
                 Trace.Listeners.Add(new ConsoleTraceListener());
@@ -143,7 +144,6 @@ namespace ZeroKLobby
                 WebRequest.DefaultWebProxy = null;
                 ThreadPool.SetMaxThreads(500, 2000);
                 ServicePointManager.Expect100Continue = false;
-                if (Environment.OSVersion.Platform != PlatformID.Unix && !Conf.UseExternalBrowser) { Utils.SetIeCompatibility(); } //set to current IE version
 
                 LoadConfig();
 
@@ -257,13 +257,11 @@ namespace ZeroKLobby
 
                 // log, for debugging
                 TasClient.Connected += (s, e) => Trace.TraceInformation("TASC connected");
-                TasClient.LoginAccepted += (s, e) =>
-                    {
-                        Trace.TraceInformation("TASC login accepted");
-                        Trace.TraceInformation("Server is using Spring version {0}", TasClient.ServerSpringVersion);
-                        if (Environment.OSVersion.Platform == PlatformID.Unix || Conf.UseExternalBrowser)
-                            MainWindow.navigationControl.Path = "battles";
-                    };
+                TasClient.LoginAccepted += (s, e) => {
+                    Trace.TraceInformation("TASC login accepted");
+                    Trace.TraceInformation("Server is using Spring version {0}", TasClient.ServerSpringVersion);
+                    MainWindow.navigationControl.Path = "battles";
+                };
 
                 TasClient.LoginDenied += (s, e) => Trace.TraceInformation("TASC login denied");
                 TasClient.ChannelJoined += (s, e) => { Trace.TraceInformation("TASC channel joined: " + e.Name); };
@@ -294,7 +292,7 @@ namespace ZeroKLobby
                 ConnectBar = new ConnectBar(TasClient);
                 ModStore = new ModStore();
                 ToolTip = new ToolTipHandler();
-                BrowserInterop = new BrowserInterop(TasClient, Conf);
+                BrowserInterop = new BrowserInterop();
                 BattleIconManager = new BattleIconManager();
 
                 Application.AddMessageFilter(ToolTip);
@@ -355,7 +353,7 @@ namespace ZeroKLobby
                 var welc = new WelcomeForm();
                 welc.Show();
 
-                Application.Run(welc);
+                Application.Run(MainWindow);
                 ShutDown();
             }
             catch (Exception ex)

@@ -47,38 +47,7 @@ namespace ZeroKLobby
         }
 
 
-        public static void SetIeCompatibility()
-        {
-            WebBrowser webBrowserInstance = new WebBrowser();
-            int iEnumber = webBrowserInstance.Version.Major; //reference: http://support.microsoft.com/kb/969393/en-us
-            int compatibilityCode = iEnumber * 1000;//Reference:http://msdn.microsoft.com/en-us/library/ee330730%28VS.85%29.aspx#browser_emulation
-            webBrowserInstance.Dispose();
-            Trace.TraceInformation("Using Internet Explorer {0}", iEnumber);
 
-            var fileName = Path.GetFileName(Application.ExecutablePath);
-            try
-            {
-                //Note: write to HKCU (HKEY_CURRENT_USER) instead of HKLM (HKEY_LOCAL_MACHINE) because HKLM need admin privilege while HKCU do not. Ref:http://stackoverflow.com/questions/4612255/regarding-ie9-webbrowser-control
-                Registry.SetValue(@"HKEY_CURRENT_USER\SOFTWARE\Microsoft\Internet Explorer\MAIN\FeatureControl\FEATURE_BROWSER_EMULATION",
-                                  fileName,
-                                  compatibilityCode);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(string.Format("Error setting IE compatibility: {0}", ex));
-            }
-            try //for 32 bit IE on 64 bit windows
-            {
-                Registry.SetValue(
-                    @"HKEY_CURRENT_USER\SOFTWARE\Wow6432Node\Microsoft\Internet Explorer\MAIN\FeatureControl\FEATURE_BROWSER_EMULATION",
-                    fileName,
-                    compatibilityCode);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(string.Format("Error setting IE compatibility: {0}", ex));
-            }
-        }
 
         public static void CheckPath(string path, bool delete = false) {
             if (delete) {

@@ -34,7 +34,6 @@
             this.logoutButton = new ZeroKLobby.BitmapButton();
             this.isBusyIcon = new System.Windows.Forms.PictureBox();
             this.goButton1 = new ZeroKLobby.BitmapButton();
-            this.reloadButton1 = new ZeroKLobby.BitmapButton();
             this.btnForward = new ZeroKLobby.BitmapButton();
             this.btnBack = new ZeroKLobby.BitmapButton();
             this.tabControl = new ZeroKLobby.HeadlessTabControl();
@@ -111,24 +110,6 @@
             this.goButton1.UseVisualStyleBackColor = true;
             this.goButton1.Click += new System.EventHandler(this.goButton1_Click);
             // 
-            // reloadButton1
-            // 
-            this.reloadButton1.BackColor = System.Drawing.Color.Transparent;
-            this.reloadButton1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("reloadButton1.BackgroundImage")));
-            this.reloadButton1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.reloadButton1.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.reloadButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.reloadButton1.ForeColor = System.Drawing.Color.White;
-            this.reloadButton1.Location = new System.Drawing.Point(403, 34);
-            this.reloadButton1.Name = "reloadButton1";
-            this.reloadButton1.Size = new System.Drawing.Size(58, 23);
-            this.reloadButton1.TabIndex = 7;
-            this.reloadButton1.Text = "Refresh";
-            this.reloadButton1.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.reloadButton1.UseVisualStyleBackColor = true;
-            this.reloadButton1.Visible = false;
-            this.reloadButton1.Click += new System.EventHandler(this.reloadButton1_Click);
-            // 
             // btnForward
             // 
             this.btnForward.BackColor = System.Drawing.Color.Transparent;
@@ -183,7 +164,6 @@
             this.BackColor = System.Drawing.Color.DimGray;
             this.Controls.Add(this.isBusyIcon);
             this.Controls.Add(this.goButton1);
-            this.Controls.Add(this.reloadButton1);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.btnForward);
             this.Controls.Add(this.btnBack);
@@ -206,7 +186,6 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private BitmapButton btnBack;
         private BitmapButton btnForward;
-        private BitmapButton reloadButton1;
         private BitmapButton goButton1;
         public System.Windows.Forms.PictureBox isBusyIcon;
         private BitmapButton logoutButton;

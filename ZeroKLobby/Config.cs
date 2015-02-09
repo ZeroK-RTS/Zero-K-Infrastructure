@@ -312,20 +312,7 @@ namespace ZeroKLobby
         /// Keeps datetime of last topic change for each channel
         /// </summary>
         public SerializableDictionary<string, DateTime?> Topics = new SerializableDictionary<string, DateTime?>();
-        [Category("WebBrowser")]
-        [DisplayName("Use external browser (forced on linux)")]
-        [Description("Disable internal browser. Opens home, planetwars, maps etc in external browser")]
-        public bool UseExternalBrowser { get; set; }
 
-        [Category("WebBrowser")]
-        [DisplayName("Open new window internally")]
-        [Description("Any hyperlink that wanted to open new window will be told to open in ZKL internally (except the hyperlinks in Springsetting GUI).")]
-        public bool InterceptPopup { get; set; }
-
-        [Category("WebBrowser")]
-        [DisplayName("Run only single instances")]
-        [Description("Internal browser will only run in single TAB and won't store different part of Zero-K site in different TAB. This saves system's memory but could make site navigation a bit slower.")]
-        public bool SingleInstance { get; set; }
         
         [Browsable(false)]
         public bool UseMtEngine { get; set; }

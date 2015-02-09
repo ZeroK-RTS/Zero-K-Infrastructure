@@ -10,7 +10,6 @@ namespace ZeroKLobby
 {
     public partial class NavigationControl: UserControl
     {
-        private Timer isBusyTimer = new Timer();
         static List<ButtonInfo> ButtonList { get; set; }
         bool CanGoBack { get { return backStack.Any(); } }
         bool CanGoForward { get { return forwardStack.Any(); } }
@@ -75,10 +74,6 @@ namespace ZeroKLobby
             SuspendLayout();//(Increase performance), Reference: http://msdn.microsoft.com/en-us/library/system.windows.forms.control.suspendlayout.aspx
             InitializeComponent();
 
-            isBusyTimer.Interval = 1020; //timer tick to update "isBusyIcon" every 1020 ms.
-            isBusyTimer.Tick += isBusyTimer_Tick;
-            isBusyTimer.Start();
-
             ButtonList = new List<ButtonInfo>() //normal arrangement
             {
                 new ButtonInfo() { Label = "HOME", TargetPath = GlobalConst.BaseSiteUrl + "/", Icon= Buttons.home, Height = 32,Width = 80 },
@@ -115,24 +110,7 @@ namespace ZeroKLobby
             
             lastTabPaths[chatTab] = string.Format("chat/channel/{0}", Program.Conf != null ? Program.Conf.AutoJoinChannels.OfType<string>().FirstOrDefault():"zk");
             AddTabPage(chatTab, "Chat");
-            if (Environment.OSVersion.Platform != PlatformID.Unix && !Program.Conf.UseExternalBrowser) {
-                if (!Program.Conf.SingleInstance) //run in multiple TAB?
-                {
-                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Maps", false), "Maps");
-                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Missions", false), "sp");
-                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Battles", false), "rp");
-                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Planetwars", false), "pw");
-                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Forum", true), "fm");
-                }
-                var home = AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl, true), "hm");
-                tabControl.SelectTab(home);
-                if (Program.Conf.InterceptPopup) 
-                {
-                    AddTabPage(new BrowserTab("http", false), "other"); //a tab with generic match that match 100% of random URL (block new window)
-                    ButtonList.Add(new ButtonInfo() { Label = "OTHER", TargetPath = "http", Height = 32, Width = 65,});
-                }
-                reloadButton1.Visible = true;
-            }
+
             var battles = new BattleListTab();
             AddTabPage(battles, "Battles");
             AddTabPage(new SettingsTab(), "Settings");
@@ -229,7 +207,6 @@ namespace ZeroKLobby
                 if (navigatable != null && navigatable.TryNavigate(path))
                 {
                     tabControl.SelectTab(tabPage);
-                    reloadButton1.Visible = navigatable.CanReload;
                     lastTabPaths[navigatable] = string.Join("/", path);
                     return new NavigationStep { Path = path };
                 }
@@ -281,7 +258,6 @@ namespace ZeroKLobby
             btnBack.Location = new System.Drawing.Point(btnBack.Location.X, height);
             btnForward.Location = new System.Drawing.Point(btnForward.Location.X, height);
             urlBox.Location = new System.Drawing.Point(urlBox.Location.X, height);
-            reloadButton1.Location = new System.Drawing.Point(reloadButton1.Location.X, height);
             goButton1.Location = new System.Drawing.Point(goButton1.Location.X, height);
             isBusyIcon.Location = new System.Drawing.Point(isBusyIcon.Location.X, height);
 
@@ -295,53 +271,17 @@ namespace ZeroKLobby
 
         public INavigatable CurrentNavigatable { get { return tabControl.SelectedTab.Controls.OfType<INavigatable>().FirstOrDefault(); } }
 
-        private void reloadButton1_Click(object sender, EventArgs e) //make webpage refresh
-        {
-            var navig = CurrentNavigatable;
-            if (navig != null && navig.CanReload) navig.Reload();
-        }
 
         private void goButton1_Click(object sender, EventArgs e)
         {
-            var navig = CurrentNavigatable;
-            string urlString = urlBox.Text;
-            if (navig != null && navig.CanReload && (urlString.StartsWith("http") || urlString.StartsWith("www.") || urlString.StartsWith("file://"))) //check if current TAB can handle website
-            {
-                bool success = navig.TryNavigate(urlString); //check if able to navigate Forward/Backward/Here in current TAB
-                if (!success)
-                {
-                    BrowserTab webbrowser = CurrentNavigatable as BrowserTab;
-                    webbrowser.Navigate(urlString); //navigate to new page in current TAB
-                    webbrowser.HintNewNavigation(urlString); //we hint the BrowserTab's this way because it have trouble differentiating between Advertisement's URL and urlBox's URL
-                }
-            }
-            else {  Path = urlString; } //perform general & common navigation specific to TAB (go to TAB and perform action)
+           Path = urlBox.Text; //perform general & common navigation specific to TAB (go to TAB and perform action)
         }
 
-        //add path to BACK/FORWARD history (skipping all checks) and update current TAB's pathString. Is called by BrowserTab.cs to indicate page have finish loading
-        public void AddToHistoryStack(String finalURL, String firstURL, Object obj)
-        {
-            INavigatable nav = GetINavigatableFromControl(obj);
-            lastTabPaths[nav] = finalURL;//if user navigate away from this TAB, display this page when he return
-
-            if (CurrentNavigatable == nav) //is in current TAB
-            {
-                if (CurrentPage != null && CurrentPage.ToString() != finalURL) backStack.Push(CurrentPage); //add current-page to HISTORY if new
-                if (finalURL != firstURL && backStack.Count > 0 && backStack.Peek().ToString() == firstURL) backStack.Pop(); //remove previous-page (from HISTORY) if current-page is just a duplicate of previous-page
-                CurrentPage = new NavigationStep { Path = finalURL.Split('/') }; //add new-page as current-page
-            }
-        }
 
         private void logoutButton_Click(object sender, EventArgs e)
         {
             Program.TasClient.RequestDisconnect();
             Program.Conf.LobbyPlayerName = "";
-        }
-
-
-        private void isBusyTimer_Tick(object sender, EventArgs e)
-        {
-            isBusyIcon.Visible = CurrentNavigatable.IsBusy;
         }
 
         private int clickCount = 0;

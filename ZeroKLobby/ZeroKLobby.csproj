@@ -210,9 +210,6 @@
     <Compile Include="MicroLobby\BattleListTab.Designer.cs">
       <DependentUpon>BattleListTab.cs</DependentUpon>
     </Compile>
-    <Compile Include="MicroLobby\BrowserTab.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="MicroLobby\ChatTab.cs">
       <SubType>UserControl</SubType>
     </Compile>

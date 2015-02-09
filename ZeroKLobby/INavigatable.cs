@@ -11,9 +11,6 @@ namespace ZeroKLobby
         bool TryNavigate(params string[] path);
 		bool Hilite(HiliteLevel level, string path);
 		string GetTooltip(params string[] path);
-        void Reload();
-        bool CanReload { get; }
-        bool IsBusy{ get; }
 	}
 
 	public enum HiliteLevel
