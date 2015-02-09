@@ -71,6 +71,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             minimapBox.MouseUp += Event_MinimapBox_MouseUp;
             skirmPlayerBox.IsBattle = true;
             skirmPlayerBox.MouseDown += Event_PlayerBox_MouseDown;
+            skirmPlayerBox.MouseUp += Event_PlayerBox_MouseUp;
 
             Program.SpringScanner.LocalResourceAdded += Event_SpringScanner_LocalResourceAdded;
             Program.SpringScanner.LocalResourceRemoved += Event_SpringScanner_LocalResourceAdded;
@@ -138,8 +139,18 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             Setup_ComboBox();
             if (!string.IsNullOrEmpty(Program.Conf.SkirmisherEngine))
                 engine_comboBox.SelectedItem = Program.Conf.SkirmisherEngine;
+            else 
+                engine_comboBox.SelectedItem = GlobalConst.DefaultEngineOverride ?? Program.TasClient.ServerSpringVersion;
+            
             if (!string.IsNullOrEmpty(Program.Conf.SkirmisherGame))
                 game_comboBox.SelectedItem = Program.Conf.SkirmisherGame;
+            else
+            {
+                var gameVer = Program.Downloader.PackageDownloader.GetByTag(KnownGames.GetDefaultGame().RapidTag);
+                if (gameVer!=null)
+                    game_comboBox.SelectedItem = gameVer.InternalName;
+            }
+            
             if (!string.IsNullOrEmpty(Program.Conf.SkirmisherMap))
                 map_comboBox.SelectedItem = Program.Conf.SkirmisherMap;
             
@@ -234,7 +245,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     string engineFolder = ZkData.Utils.MakePath(Program.SpringPaths.WritableDirectory, "engine");
                     engineList = System.IO.Directory.EnumerateDirectories(engineFolder, "*").ToList<string>();
                     for (int i = 0; i < engineList.Count; i++)
-                        engineList[i] = SkirmishControlTool.GetFolderName(engineList[i]);
+                        engineList[i] = SkirmishControlTool.GetFolderOrFileName(engineList[i]);
 
                     engineList = SkirmishControlTool.SortListByVersionName(engineList);
 
@@ -363,10 +374,10 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             {
                 if (minimap == null) return;
                 var boxColors = new[]
-		                        {
-		                            Color.Green, Color.Red, Color.Blue, Color.Cyan, Color.Yellow, Color.Magenta, Color.Gray, Color.Lime, Color.Maroon,
-		                            Color.Navy, Color.Olive, Color.Purple, Color.Silver, Color.Teal, Color.White,
-		                        };
+                                {
+                                    Color.Green, Color.Red, Color.Blue, Color.Cyan, Color.Yellow, Color.Magenta, Color.Gray, Color.Lime, Color.Maroon,
+                                    Color.Navy, Color.Olive, Color.Purple, Color.Silver, Color.Teal, Color.White,
+                                };
                 var xScale = (double)minimapBox.Width / minimapSize.Width;
                 // todo remove minimapSize and use minimap image directly when plasmaserver stuff fixed
                 var yScale = (double)minimapBox.Height / minimapSize.Height;
@@ -446,7 +457,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
             var newList = new List<PlayerListItem>();
             newList.Add(myItem);
-            List<PlayerListItem> playerListItems = new List<PlayerListItem>();
+            var playerListItems = new List<PlayerListItem>();
 
             if (!myItem.UserBattleStatus.IsSpectator || Bots.Count > 0) playerListItems.Add(myItem);
             var existingTeams = playerListItems.GroupBy(i => i.UserBattleStatus.AllyNumber).Select(team => team.Key).ToList();
@@ -576,10 +587,17 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             Refresh_PlayerBox();
         }
 
-        private void Event_PlayerBox_MouseDown(object sender, MouseEventArgs mea) //from BattleChatControl
-        {
-            if (currentMod != null && currentMod.IsMission) return; //disable shorcuts for mission mod
+        private bool isClick = false;
+        private void Event_PlayerBox_MouseDown(object sender, MouseEventArgs mea)    {    isClick=true;    }
 
+        //using MouseUp because it allow the PlayerBox's "HoverItem" to return correct value when we click on it rapidly
+        private void Event_PlayerBox_MouseUp(object sender, MouseEventArgs mea) //from BattleChatControl
+        {
+            if (!isClick) return;
+            isClick = false;
+
+            if (currentMod != null && currentMod.IsMission) return; //disable shorcuts for mission mod
+            //change ally
             if (mea.Button == MouseButtons.Left)
             {
                 if (skirmPlayerBox.HoverItem != null)
@@ -596,12 +614,14 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                         Set_MyBattleStatus(skirmPlayerBox.HoverItem.AllyTeam.Value, Get_FreeTeamID(myItem.UserName), false);
                 }
             }
-
+            //context menu
             if (mea.Button == MouseButtons.Right || !Program.Conf.LeftClickSelectsPlayer)
             {
-                if (skirmPlayerBox.HoverItem == null && mea.Button == MouseButtons.Right)
-                { //right click on empty space
-                    var cm = Get_PlayerContextMenu(myItem.User);
+                if (skirmPlayerBox.HoverItem != null && skirmPlayerBox.HoverItem.BotBattleStatus != null) //on bot name
+                {
+                    skirmPlayerBox.SelectedItem = skirmPlayerBox.HoverItem;
+
+                    var cm = Get_BotContextMenu(skirmPlayerBox.HoverItem.BotBattleStatus.Name);
                     Program.ToolTip.Visible = false;
                     try
                     {
@@ -615,26 +635,23 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     {
                         Program.ToolTip.Visible = true;
                     }
-                }
-                if (skirmPlayerBox.HoverItem != null)
+                }else //on name or empty space
                 {
-                    if (skirmPlayerBox.HoverItem.BotBattleStatus != null)
+                    skirmPlayerBox.SelectedItem = skirmPlayerBox.HoverItem;
+
+                    var cm = Get_PlayerContextMenu(myItem.User);
+                    Program.ToolTip.Visible = false;
+                    try
                     {
-                        skirmPlayerBox.SelectedItem = skirmPlayerBox.HoverItem;
-                        var cm = Get_BotContextMenu(skirmPlayerBox.HoverItem.BotBattleStatus.Name);
-                        Program.ToolTip.Visible = false;
-                        try
-                        {
-                            cm.Show(skirmPlayerBox, mea.Location);
-                        }
-                        catch (Exception ex)
-                        {
-                            Trace.TraceError("Error displaying tooltip: {0}", ex);
-                        }
-                        finally
-                        {
-                            Program.ToolTip.Visible = true;
-                        }
+                        cm.Show(skirmPlayerBox, mea.Location);
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceError("Error displaying tooltip: {0}", ex);
+                    }
+                    finally
+                    {
+                        Program.ToolTip.Visible = true;
                     }
                 }
             }
@@ -987,7 +1004,12 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     infoLabel.Text = "";
 
                 Set_InfoLabel();
-                Program.Conf.SkirmisherGame = gameName;
+                
+                var defGameVer = Program.Downloader.PackageDownloader.GetByTag(KnownGames.GetDefaultGame().RapidTag);
+                if (defGameVer!=null && gameName == defGameVer.InternalName)
+                    Program.Conf.SkirmisherGame = null; //tell Skirmisher to use default in next startup
+                else
+                    Program.Conf.SkirmisherGame = gameName;
 
             }
             else if ((sender as Control).Name == "engine_comboBox" && engine_comboBox.SelectedItem != null)
@@ -1008,7 +1030,11 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     infoLabel.Text = "";
 
                 Set_InfoLabel();
-                Program.Conf.SkirmisherEngine = (string)engine_comboBox.SelectedItem;
+                
+                if ((string)engine_comboBox.SelectedItem == (GlobalConst.DefaultEngineOverride ?? Program.TasClient.ServerSpringVersion))
+                    Program.Conf.SkirmisherEngine = null; //tell Skirmihser to use default in next run
+                else
+                    Program.Conf.SkirmisherEngine = (string)engine_comboBox.SelectedItem;
 
                 if (Program.SpringPaths.HasEngineVersion(springVersion))
                     springAi = SkirmishControlTool.GetSpringAIs(engineFolder);

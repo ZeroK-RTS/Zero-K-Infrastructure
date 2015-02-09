@@ -208,7 +208,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 aiVerFolderS = System.IO.Directory.EnumerateDirectories(aiFolder, "*").ToList<string>();
                 for (int j = 0; j < aiVerFolderS.Count; j++)
                 {
-                    aiVerFolder = GetFolderName(aiVerFolderS[j]);
+                    aiVerFolder = GetFolderOrFileName(aiVerFolderS[j]);
                     aiLibFolder = ZkData.Utils.MakePath(aiFolder, aiVerFolder); //eg: Spring/engine/98.0/AI/Skirmish/AAI/0.9
                     aiInfoFile = ZkData.Utils.MakePath(aiLibFolder, "AIInfo.lua"); //eg: Spring/engine/98.0/AI/Skirmish/AAI/0.9/AIInfo.lua
                     var bot = CrudeLUAReader.GetAIInfo(aiInfoFile);
@@ -222,7 +222,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         /// <summary>
         /// Convert "path/path/path/name" or "path\\path\\path\\name" into "name"
         /// </summary>
-        public static string GetFolderName(string input)
+        public static string GetFolderOrFileName(string input)
         {
             if (Environment.OSVersion.Platform == PlatformID.Unix)
                 return input.Substring(input.LastIndexOf("/") + 1); //remove full path, leave only folder name
@@ -242,7 +242,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 {
                     var mod = new Mod();
                 
-                    mod.ArchiveName = GetFolderName(path);
+                    mod.ArchiveName = GetFolderOrFileName(path);
                     
                     CrudeLUAReader.ParseModInfo(modinfo,ref mod);
 
@@ -269,7 +269,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             var rootFiles = Directory.EnumerateFiles(path);
             foreach(var pathOfFile in rootFiles)
             {
-                var fileName = GetFolderName(pathOfFile);
+                var fileName = GetFolderOrFileName(pathOfFile);
                 if(fileName.StartsWith("EngineOptions.lua",StringComparison.InvariantCultureIgnoreCase))
                     engineOptions = pathOfFile;
                 else if(fileName.StartsWith("ModOptions.lua",StringComparison.InvariantCultureIgnoreCase))
@@ -335,7 +335,8 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             {
                 var allText = stream.ReadToEnd();
                 int offset =0;
-                var table = ReadLUATable(0,allText,sidedataluaPath,out offset);
+                var config = new TableReaderConfig();
+                var table = TableReader.ParseTable(config,0,allText,sidedataluaPath,out offset);
                 
                 List<String> sides = new List<String>();
                 List<byte[]> sideIcons = new List<byte[]>();
@@ -364,7 +365,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                         var picBytes = new Byte[0];
                         try{
                         var picList = Directory.EnumerateFiles(picPath);
-                        using(FileStream fileStream2 = File.OpenRead(picList.First(x => SkirmishControlTool.GetFolderName(x).StartsWith(name,StringComparison.InvariantCultureIgnoreCase))))
+                        using(FileStream fileStream2 = File.OpenRead(picList.First(x => SkirmishControlTool.GetFolderOrFileName(x).StartsWith(name,StringComparison.InvariantCultureIgnoreCase))))
                         {
                             picBytes = new Byte[fileStream2.Length];
                             fileStream2.Read(picBytes,0,picBytes.Length);
@@ -396,7 +397,8 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             {
                 var allText = stream.ReadToEnd();
                 int offset =0;
-                var table = ReadLUATable(0,allText,filePath,out offset);
+                var config = new TableReaderConfig();
+                var table = TableReader.ParseTable(config,0,allText,filePath,out offset);
                 
                 var allSlots = new List<MissionSlot>();
                 
@@ -477,14 +479,15 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             {
                 var allText = stream.ReadToEnd();
                 int offset =0;
-                var table = ReadLUATable(0,allText,filePath,out offset);
+                var config = new TableReaderConfig();
+                var table = TableReader.ParseTable(config,0,allText,filePath,out offset);
                 
                 foreach (var kvp in table)
                 {
                     String key="";
-                       String valueIn="";
-                       String desc="";
-                       var aiInfoOne =  new AiInfoPair();
+                    String valueIn="";
+                    String desc="";
+                    var aiInfoOne =  new AiInfoPair();
                     foreach (var kvp2 in (kvp.Value as Dictionary<String,Object>))
                     {
                         var value = (kvp2.Value as String);
@@ -530,7 +533,8 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             {
                 var allText = stream.ReadToEnd();
                 int offset =0;
-                var table = ReadLUATable(0,allText,filePath,out offset);
+                var config = new TableReaderConfig();
+                var table = TableReader.ParseTable(config,0,allText,filePath,out offset);
                 
                 List<Ai> modAis = new List<Ai>();
                 
@@ -584,7 +588,8 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             {
                 var allText = stream.ReadToEnd();
                 int offset =0;
-                var table = ReadLUATable(0,allText,filePath,out offset);
+                var config = new TableReaderConfig();
+                var table = TableReader.ParseTable(config,0,allText,filePath,out offset);
                 
                 foreach (var kvp in table)
                 {
@@ -646,7 +651,8 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             {
                 var allText = stream.ReadToEnd();
                 int offset =0;
-                var table = ReadLUATable(0,allText,filePath,out offset);
+                var config = new TableReaderConfig();
+                var table = TableReader.ParseTable(config,0,allText,filePath,out offset);
                 
                 foreach (var kvp in table)
                 {
@@ -763,376 +769,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 modInfo.Options = modInfo.Options.ToList().Concat(allOptions).ToArray();
             else 
                 modInfo.Options = allOptions.ToArray();
-        }
-        
-        /// <summary>
-        /// Search the first bracket pairs "{}" in text file starting from startIndex, and then 
-        /// parse the content as Dictionary, then output the index of closing bracket "}" as offset.
-        /// Any syntax outside these bracket except comment syntax is ignored, 
-        /// and any logic syntax outside or inside the bracket is ignored.
-        /// </summary>
-        private static Dictionary<String,Object> ReadLUATable(int startIndex, String file, String filePath, out int offset)
-        {
-            var contentList =new Dictionary<String,Object>();
-            const String prefix="id_";
-            
-            const String stringGlue = "...";
-            
-            int stringCharType = 0;
-            char[] stringChars = new char[2]{'\'','"'};
-            bool blockStringChar = false;
-            
-            int blockStringCount = 0;
-            const String blockStringOpen = "[[";
-            const String blockStringClose = "]]";
-            bool blockStringString = false;
-            
-            int blockCommentCount = 0;
-            const String blockCommentOpen = "--[[";
-            const String blockCommentClose = "--]]";
-            bool blockComment = false;
-            
-            int commentCharCount = 0;
-            const String commentString = "--";
-            bool lineComment = false;
-            
-            bool inTable = false;
-            const char tableOpen = '{';
-            const char tableClose = '}';
-            
-            const char contentSeparator = ',';
-            int contentIndex = 0;
-            
-            char[] newLineChar = {'\n','\r'};
-            const char whitespaceA = ' ';
-            const char whitespaceB = '\t';
-            
-            String capturedValue1 = "";
-            String capturedValue2 = "";
-            Object capturedObject1 = null;
-            const char escapeCharSign = '\\';
-            bool isEscapeCharNow = false;
-            bool detectedUnspacedChar = false;
-            
-            bool detectedEqualSign = false;
-            const char equalSign = '=';
-            
-            int i=startIndex;
-            while(i<file.Length)
-            {
-                //string block, [[ ]] " '
-                if (!lineComment && !blockComment)
-                {
-                    if (blockStringString || blockStringChar)
-                    {
-                        //escape char for displaying " and ' char in string area
-                        if(file[i]==escapeCharSign)
-                        {
-                            if (!isEscapeCharNow)
-                            {
-                                blockStringCount = 0;
-                                
-                                isEscapeCharNow=true;
-                                
-                                i++;
-                                continue;
-                            }
-                            isEscapeCharNow=false;
-                        }
-                    }
-                    
-                    if (!isEscapeCharNow && !blockStringChar)
-                    {
-                        if (blockStringString)
-                        {
-                            if (file[i]==blockStringClose[blockStringCount])
-                            {                                
-                                blockStringCount++;
-                                if (blockStringCount==blockStringClose.Length)
-                                {
-                                    blockStringString=false;
-                                    blockStringCount=0;
-                                    
-                                    UndoCaptureThisChar(blockStringClose[0],detectedEqualSign,ref capturedValue1,ref capturedValue2);
-
-                                    i++;
-                                    continue;
-                                }
-                            }else
-                                blockStringCount=0;
-                        }else
-                        {
-                            if (file[i]==blockStringOpen[blockStringCount])
-                            {    
-                                blockStringCount++;
-                                if (blockStringCount==blockStringOpen.Length)
-                                {
-                                    blockStringString=true;
-                                    blockStringCount=0;
-                                    
-                                    UndoCaptureThisChar(blockStringOpen[0],detectedEqualSign,ref capturedValue1,ref capturedValue2);
-
-                                    i++;
-                                    continue;
-                                }
-                            }else
-                                blockStringCount=0;
-                        }
-                    }
-                    
-                    if (!isEscapeCharNow && !blockStringString)
-                    {
-                        if(blockStringChar)
-                        {
-                            if (file[i]==stringChars[stringCharType])
-                            {
-                                blockStringChar=false;
-                                
-                                i++;
-                                continue;
-                            }
-                        }else
-                        {
-                            if (file[i]==stringChars[0])
-                            {
-                                blockStringChar=true;
-                                stringCharType = 0;
-                                
-                                i++;
-                                continue;
-                            }else if (file[i]==stringChars[1])
-                            {
-                                blockStringChar=true;
-                                stringCharType = 1;
-                                
-                                i++;
-                                continue;
-                            }
-                        }
-                    }
-                    
-                    if (blockStringString || blockStringChar)
-                    {
-                        char newChar = file[i];
-                        
-                        if (isEscapeCharNow && file[i]=='n') //newline
-                            newChar = '\n';
-                        isEscapeCharNow = false;
-                        
-                        CaptureChar(newChar,detectedEqualSign,ref capturedValue1,ref capturedValue2);
-                        
-                        i++;
-                        continue;
-                    }
-                }
-                
-                //connector between string value, "..."
-                if (!detectedUnspacedChar && file[i]==stringGlue[0])
-                {
-                    i++;
-                    continue;
-                }
-                
-                //Whitespace
-                if (file[i]==whitespaceA || file[i]==whitespaceB)
-                {
-                    detectedUnspacedChar = false;
-                    
-                    i++;
-                    continue;
-                }
-                
-                //Newline
-                if (file[i]==newLineChar[0] || file[i]==newLineChar[1])
-                {
-                    lineComment = false;
-                    
-                    i++;
-                    continue;
-                }
-                
-                //Block comment
-                if (!blockComment)
-                {    
-                    if (file[i]==blockCommentOpen[blockCommentCount])
-                    {
-                        blockCommentCount++;
-                        if (blockCommentCount==blockCommentOpen.Length)
-                        {
-                            blockComment=true;
-                            blockCommentCount=0;
-                            
-                            i++;
-                            continue;
-                        }
-                    }else
-                        blockCommentCount=0;
-                }else
-                {
-                    if (file[i]==blockCommentClose[blockCommentCount])
-                    {
-                        blockCommentCount++;
-                        if (blockCommentCount==blockCommentClose.Length)
-                        {
-                            blockComment=false;
-                            blockCommentCount=0;
-                            
-                            i++;
-                            continue;
-                        }
-                    }else
-                        blockCommentCount=0;
-                    
-                    i++;
-                    continue;
-                }
-                
-                //Line comment, --
-                if(!lineComment)
-                {
-                    if (file[i]==commentString[commentCharCount])
-                    {
-                        commentCharCount++;
-                        if (commentCharCount==commentString.Length)
-                        {
-                            lineComment=true;
-                            commentCharCount=0;
-                            
-                            UndoCaptureThisChar(commentString[0],detectedEqualSign,ref capturedValue1,ref capturedValue2);
-                            
-                            i++;
-                            continue;
-                        }
-                    }else
-                        commentCharCount=0;
-                }else
-                {
-                    i++;
-                    continue;
-                }
-                
-                //{ and }
-                if (!inTable && file[i]==tableOpen)
-                {
-                    inTable = true;
-                    
-                    i++;
-                    continue;
-                }
-                else if (file[i]==tableOpen)
-                {
-                    int offsetIn = 0;
-                    var list = ReadLUATable(i,file,filePath,out offsetIn);
-                    capturedObject1=list;
-                    
-                    i = i+offsetIn;
-                    continue;
-                }
-                else if (file[i]==tableClose)
-                {
-                    if (!detectedEqualSign)
-                    {
-                        capturedValue2 = capturedValue1;
-                        capturedValue1 = prefix + contentIndex;
-                    }
-                    
-                    SaveKeyValuePair(capturedValue1,capturedValue2,capturedObject1,filePath,ref contentList);
-                    
-                    inTable = false;
-                    offset = (i-startIndex)+1; //is out
-                    return contentList;
-                }
-                if (!inTable)
-                {
-                    i++;
-                    continue;
-                }
-                
-                //content separator, ","
-                if (file[i]==contentSeparator)
-                {
-                    if (!detectedEqualSign)
-                    {
-                        capturedValue2 = capturedValue1;
-                        capturedValue1 = prefix + contentIndex;
-                    }
-                    
-                    SaveKeyValuePair(capturedValue1,capturedValue2,capturedObject1,filePath,ref contentList);
-                    
-                    capturedValue1 = "";
-                    capturedValue2 = "";
-                    capturedObject1 = null;
-                    detectedEqualSign = false;
-                    
-                    contentIndex++;
-                    
-                    i++;
-                    continue;
-                }
-                
-                //key value separator, =
-                if (file[i]==equalSign)
-                {
-                    detectedEqualSign = true;
-                    
-                    i++;
-                    continue;
-                }
-                
-                detectedUnspacedChar = true;
-                
-                CaptureChar(file[i],detectedEqualSign,ref capturedValue1,ref capturedValue2);
-
-                i++;
-            }
-            offset = file.Length;
-            return contentList;
-        }
-        
-        private static void CaptureChar(char toCapture, bool detectedEqualSign,ref String capturedValue1,ref String capturedValue2)
-        {
-            if (detectedEqualSign)
-                capturedValue2 = capturedValue2 + toCapture;
-            else
-                capturedValue1 = capturedValue1 + toCapture;
-        }
-        
-        private static void UndoCaptureThisChar(char charToUndo,bool detectedEqualSign,ref String capturedValue1,ref String capturedValue2)
-        {
-            if (detectedEqualSign)
-                capturedValue2 = capturedValue2.TrimEnd(charToUndo);
-            else
-                capturedValue1 = capturedValue1.TrimEnd(charToUndo);
-        }
-
-        private static void SaveKeyValuePair(String capturedValue1, String capturedValue2, Object capturedObject1, String filePath, ref Dictionary<String,Object> contentList)
-        {
-            if (capturedValue2!="" || capturedObject1!=null)
-            {
-                capturedValue1 = capturedValue1.Trim(new char[2]{'[',']'});
-
-                bool duplicate = false;
-                if(contentList.ContainsKey(capturedValue1))
-                {
-                    duplicate = true;
-                    System.Diagnostics.Trace.TraceWarning("CrudeLUAReader: detected duplicate value in " + filePath + " : " + capturedValue1 + "="+ contentList[capturedValue1]);
-                }
-
-                if (capturedObject1==null)
-                {
-                    if(duplicate) 
-                        contentList[capturedValue1] = capturedValue2;
-                    else
-                        contentList.Add(capturedValue1,capturedValue2);
-                }
-                else
-                {
-                    if(duplicate)
-                        contentList[capturedValue1]=capturedObject1;
-                    else
-                        contentList.Add(capturedValue1,capturedObject1);
-                }
-            }
         }
     }
 }
