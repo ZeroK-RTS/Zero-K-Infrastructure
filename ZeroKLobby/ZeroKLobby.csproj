@@ -262,10 +262,6 @@
     <Compile Include="Lines\FriendJoinedBattleLine.cs" />
     <Compile Include="Lines\TopicLine.cs" />
     <Compile Include="MicroLobby\AutoJoinManager.cs" />
-    <Compile Include="MicroLobby\GdiListBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="MicroLobby\GdiListBoxItem.cs" />
     <Compile Include="MicroLobby\HostDialog.cs">
       <SubType>Form</SubType>
     </Compile>
