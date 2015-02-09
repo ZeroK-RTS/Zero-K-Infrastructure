@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Mime;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using ZkData;
@@ -98,6 +100,8 @@ namespace PlasmaDownloader
                     if (source != null) {
                         var extension = source.Substring(source.LastIndexOf('.'));
                         var wc = new WebClient() { Proxy = null };
+                        var name = Assembly.GetEntryAssembly().GetName();
+                        wc.Headers.Add("user-agent", string.Format("{0} {1}",name.Name, name.Version));
                         var target = Path.GetTempFileName() + extension;
                         wc.DownloadProgressChanged += (s, e) =>
                             {
