@@ -139,8 +139,18 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             Setup_ComboBox();
             if (!string.IsNullOrEmpty(Program.Conf.SkirmisherEngine))
                 engine_comboBox.SelectedItem = Program.Conf.SkirmisherEngine;
+            else 
+                engine_comboBox.SelectedItem = GlobalConst.DefaultEngineOverride ?? Program.TasClient.ServerSpringVersion;
+            
             if (!string.IsNullOrEmpty(Program.Conf.SkirmisherGame))
                 game_comboBox.SelectedItem = Program.Conf.SkirmisherGame;
+            else
+            {
+                var gameVer = Program.Downloader.PackageDownloader.GetByTag(KnownGames.GetDefaultGame().RapidTag);
+                if (gameVer!=null)
+                    game_comboBox.SelectedItem = gameVer.InternalName;
+            }
+            
             if (!string.IsNullOrEmpty(Program.Conf.SkirmisherMap))
                 map_comboBox.SelectedItem = Program.Conf.SkirmisherMap;
             
@@ -364,10 +374,10 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             {
                 if (minimap == null) return;
                 var boxColors = new[]
-		                        {
-		                            Color.Green, Color.Red, Color.Blue, Color.Cyan, Color.Yellow, Color.Magenta, Color.Gray, Color.Lime, Color.Maroon,
-		                            Color.Navy, Color.Olive, Color.Purple, Color.Silver, Color.Teal, Color.White,
-		                        };
+                                {
+                                    Color.Green, Color.Red, Color.Blue, Color.Cyan, Color.Yellow, Color.Magenta, Color.Gray, Color.Lime, Color.Maroon,
+                                    Color.Navy, Color.Olive, Color.Purple, Color.Silver, Color.Teal, Color.White,
+                                };
                 var xScale = (double)minimapBox.Width / minimapSize.Width;
                 // todo remove minimapSize and use minimap image directly when plasmaserver stuff fixed
                 var yScale = (double)minimapBox.Height / minimapSize.Height;
@@ -578,7 +588,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         }
 
         private bool isClick = false;
-        private void Event_PlayerBox_MouseDown(object sender, MouseEventArgs mea)	{	isClick=true;	}
+        private void Event_PlayerBox_MouseDown(object sender, MouseEventArgs mea)    {    isClick=true;    }
 
         //using MouseUp because it allow the PlayerBox's "HoverItem" to return correct value when we click on it rapidly
         private void Event_PlayerBox_MouseUp(object sender, MouseEventArgs mea) //from BattleChatControl
@@ -994,7 +1004,12 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     infoLabel.Text = "";
 
                 Set_InfoLabel();
-                Program.Conf.SkirmisherGame = gameName;
+                
+                var defGameVer = Program.Downloader.PackageDownloader.GetByTag(KnownGames.GetDefaultGame().RapidTag);
+                if (defGameVer!=null && gameName == defGameVer.InternalName)
+                    Program.Conf.SkirmisherGame = null; //tell Skirmisher to use default in next startup
+                else
+                    Program.Conf.SkirmisherGame = gameName;
 
             }
             else if ((sender as Control).Name == "engine_comboBox" && engine_comboBox.SelectedItem != null)
@@ -1015,7 +1030,11 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     infoLabel.Text = "";
 
                 Set_InfoLabel();
-                Program.Conf.SkirmisherEngine = (string)engine_comboBox.SelectedItem;
+                
+                if ((string)engine_comboBox.SelectedItem == (GlobalConst.DefaultEngineOverride ?? Program.TasClient.ServerSpringVersion))
+                    Program.Conf.SkirmisherEngine = null; //tell Skirmihser to use default in next run
+                else
+                    Program.Conf.SkirmisherEngine = (string)engine_comboBox.SelectedItem;
 
                 if (Program.SpringPaths.HasEngineVersion(springVersion))
                     springAi = SkirmishControlTool.GetSpringAIs(engineFolder);
