@@ -225,11 +225,33 @@ namespace Fixer
         }
 
 
+        public static void GetGameStats(DateTime from)
+        {
+            //GlobalConst.Mode = ModeType.Live;
+            var db = new ZkDataContext();
+            var bats = db.SpringBattles.Where(x => x.StartTime >= from && x.Duration >= 60*5).ToList();
+            Console.WriteLine("Battles from {0}", from);
+            var total = bats.Count;
+            Console.WriteLine("Total: {0}",total);
+            var breakdown = bats.GroupBy(x => x.PlayerCount).OrderBy(x => x.Key).Select(x => new {
+                Size = x.Key,
+                Count = x.Count()
+            }).ToList();
+
+            foreach (var b in breakdown) {
+                Console.WriteLine("Size: {0}    Battles: {1}",b.Size,b.Count);    
+            }
+            
+
+            
+        }
+
 
 
         [STAThread]
         static void Main(string[] args)
         {
+            GetGameStats(new DateTime(2014,12,1));
             //var ns = new NubSimulator();
             //ns.SpawnMany();
             //Console.ReadLine();
@@ -254,7 +276,7 @@ namespace Fixer
             //AddClanLeader();
             //return;
             //TestPwMatch();
-            FixStuff();
+            //FixStuff();
 
             //var guid = Guid.NewGuid().ToString();
 

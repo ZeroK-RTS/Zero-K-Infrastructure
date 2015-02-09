@@ -567,6 +567,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ZklResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="NativeLibs\libCSteamworks-x86_64.so" />
+    <EmbeddedResource Include="NativeLibs\libsteam_api-x86_64.so" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.1">

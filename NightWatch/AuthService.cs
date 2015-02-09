@@ -36,12 +36,13 @@ namespace NightWatch
 
 
             this.client.UserAdded += (s, e) =>
-                {
-                    if (e.SpringieLevel > 2 || e.IsAdmin) client.ForceJoinChannel(e.Name, ModeratorChannel);
-                    if (topPlayers.IsTop20(e.AccountID)) client.ForceJoinChannel(e.Name, Top20Channel);
-                    if (e.Clan != null) client.ForceJoinChannel(e.Name, Clan.GetClanChannel(e.Clan));
-                    if (e.Faction != null && e.Level >= GlobalConst.FactionChannelMinLevel) client.ForceJoinChannel(e.Name, e.Faction);
-                };
+            {
+                if (e.Name == client.UserName) return;
+                if (e.SpringieLevel > 2 || e.IsAdmin) client.ForceJoinChannel(e.Name, ModeratorChannel);
+                if (topPlayers.IsTop20(e.AccountID)) client.ForceJoinChannel(e.Name, Top20Channel);
+                if (e.Clan != null) client.ForceJoinChannel(e.Name, Clan.GetClanChannel(e.Clan));
+                if (e.Faction != null && e.Level >= GlobalConst.FactionChannelMinLevel) client.ForceJoinChannel(e.Name, e.Faction);
+            };
 
             // TODO set bot mode
             //this.client.BattleFound +=
@@ -54,6 +55,7 @@ namespace NightWatch
                         var channel = args.Channel.Name;
                         foreach (var u in args.Users)
                         {
+                            if (u.Name == client.UserName) continue;
                             if (channel == ModeratorChannel)
                             {
                                 if (u.SpringieLevel <= 2 && !u.IsAdmin) client.ForceLeaveChannel(u.Name, ModeratorChannel);

@@ -30,7 +30,7 @@ namespace ZkLobbyServer
 
         public override string ToString()
         {
-            return string.Format("[{0} {1}:{2} {3}]", number, RemoteEndpointIP,RemoteEndpointPort, Name);
+            return string.Format("[{0} {1}:{2} {3}]", number, RemoteEndpointIP, RemoteEndpointPort, Name);
         }
 
         public string Name { get { return User.Name; } }
@@ -42,34 +42,40 @@ namespace ZkLobbyServer
             this.state = state;
             number = Interlocked.Increment(ref state.ClientCounter);
             Trace.TraceInformation("{0} accepted", this);
-            timer = new System.Timers.Timer(GlobalConst.LobbyProtocolPingInterval*1000);
+            timer = new System.Timers.Timer(GlobalConst.LobbyProtocolPingInterval * 1000);
             timer.Elapsed += TimerOnElapsed;
         }
 
         void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            if (DateTime.UtcNow.Subtract(lastPingFromClient).TotalSeconds >= GlobalConst.LobbyProtocolPingTimeout) {
+            if (DateTime.UtcNow.Subtract(lastPingFromClient).TotalSeconds >= GlobalConst.LobbyProtocolPingTimeout)
+            {
                 RequestClose();
-            } else {
+            }
+            else
+            {
                 SendCommand(new Ping() { });
             }
         }
 
         public override async Task OnConnectionClosed(bool wasRequested)
         {
+            timer.Stop();
             string reason = wasRequested ? "quit" : "connection failed";
             if (!string.IsNullOrEmpty(Name))
             {
 
                 // notify all channels where i am to all users that i left 
-                foreach (var chan in state.Rooms.Values.Where(x=>x.Users.ContainsKey(Name)).ToList()) {
+                foreach (var chan in state.Rooms.Values.Where(x => x.Users.ContainsKey(Name)).ToList())
+                {
                     await Process(new LeaveChannel() { ChannelName = chan.Name });
                 }
 
-                foreach (var b in state.Battles.Values.Where(x => x.Users.ContainsKey(Name))) {
+                foreach (var b in state.Battles.Values.Where(x => x.Users.ContainsKey(Name)))
+                {
                     await LeaveBattle(b);
                 }
-                
+
                 // notify clients which know about me that i left server
                 var knowMe = state.Clients.Values.Where(x => x.LastKnownUserVersions.ContainsKey(Name));
 
@@ -77,10 +83,9 @@ namespace ZkLobbyServer
 
                 Client client;
                 state.Clients.TryRemove(Name, out client);
-                
+
                 ClearMyLastKnownStateForOtherClients();
             }
-            timer.Stop();
             Trace.TraceInformation("{0} {1}", this, reason);
         }
 
@@ -124,7 +129,7 @@ namespace ZkLobbyServer
         }
 
 
-   
+
 
 
         public override async Task OnConnected()
@@ -138,10 +143,13 @@ namespace ZkLobbyServer
 
         public override async Task OnLineReceived(string line)
         {
-            try {
+            try
+            {
                 dynamic obj = state.Serializer.DeserializeLine(line);
                 await Process(obj);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 var message = string.Format("{0} error processing line {1} : {2}", this, line, ex);
                 Trace.TraceError(message);
                 Respond(message);
@@ -150,10 +158,13 @@ namespace ZkLobbyServer
 
         public async Task SendCommand<T>(T data)
         {
-            try {
+            try
+            {
                 var line = state.Serializer.SerializeToLine(data);
                 await SendString(line);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 Trace.TraceError("{0} error sending {1} : {2}", data, ex);
             }
         }
@@ -168,20 +179,26 @@ namespace ZkLobbyServer
         async Task Process(Login login)
         {
             var response = await Task.Run(() => state.LoginChecker.Login(User, login, this));
-            if (response.ResultCode == LoginResponse.Code.Ok) {
+            if (response.ResultCode == LoginResponse.Code.Ok)
+            {
                 //ClearMyLastKnownStateForOtherClients();
 
                 Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
-                await SendCommand(response); // login accepted
                 await SendCommand(User); // self data
+                await SendCommand(response); // login accepted
 
-                foreach (var b in state.Battles.Values) {
-                    if (b != null) {
+
+                foreach (var b in state.Battles.Values)
+                {
+                    if (b != null)
+                    {
                         await SynchronizeUsersToMe(b.Founder.Name);
                         await
-                            SendCommand(new BattleAdded() {
+                            SendCommand(new BattleAdded()
+                            {
                                 Header =
-                                    new BattleHeader() {
+                                    new BattleHeader()
+                                    {
                                         BattleID = b.BattleID,
                                         Engine = b.EngineVersion,
                                         Game = b.ModName,
@@ -196,20 +213,23 @@ namespace ZkLobbyServer
                                     }
                             });
 
-                        foreach (var u in b.Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) {
+                        foreach (var u in b.Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList())
+                        {
                             await SynchronizeUsersToMe(u.Name);
                             await SendCommand(new JoinedBattle() { BattleID = b.BattleID, User = u.Name });
                         }
                     }
                 }
-            } else await SendCommand(response);
+            }
+            else await SendCommand(response);
         }
 
-        
+
 
         public void ClearMyLastKnownStateForOtherClients()
         {
-            foreach (var c in state.Clients.Values.ToList()) {
+            foreach (var c in state.Clients.Values.ToList())
+            {
                 int? orgval;
                 c.LastKnownUserVersions.TryRemove(Name, out orgval);
             }
@@ -238,7 +258,8 @@ namespace ZkLobbyServer
             var version = Interlocked.Increment(ref UserVersion);
             int? ver;
             var clients = state.Clients.Values.Where(x => x.LastKnownUserVersions.TryGetValue(Name, out ver) && ver != version).ToList();
-            foreach (var cli in clients) {
+            foreach (var cli in clients)
+            {
                 cli.LastKnownUserVersions[Name] = version;
             }
             await Broadcast(clients, User);
@@ -250,15 +271,19 @@ namespace ZkLobbyServer
             if (!IsLoggedIn) return;
 
             var bat = MyBattle;
-            if (bat == null || (bat.Founder != User && !User.IsAdmin)) {
+            if (bat == null || (bat.Founder != User && !User.IsAdmin))
+            {
                 await Respond("No rights to set rectangle");
                 return;
             }
 
-            if (rect.Rectangle == null) {
+            if (rect.Rectangle == null)
+            {
                 BattleRect org;
                 bat.Rectangles.TryRemove(rect.Number, out org);
-            } else {
+            }
+            else
+            {
                 bat.Rectangles[rect.Number] = rect.Rectangle;
             }
             await Broadcast(bat.Users.Keys, rect);
@@ -271,16 +296,19 @@ namespace ZkLobbyServer
 
             if (batKick.BattleID == null && MyBattle != null) batKick.BattleID = MyBattle.BattleID;
             Battle bat;
-            if (state.Battles.TryGetValue(batKick.BattleID.Value, out bat)) {
-                if (bat.Founder != User && !User.IsAdmin) {
+            if (state.Battles.TryGetValue(batKick.BattleID.Value, out bat))
+            {
+                if (bat.Founder != User && !User.IsAdmin)
+                {
                     await Respond("No rights to do a kick");
                     return;
                 }
 
                 UserBattleStatus user;
-                if (bat.Users.TryGetValue(batKick.Name, out user)) {
+                if (bat.Users.TryGetValue(batKick.Name, out user))
+                {
                     var client = state.Clients[batKick.Name];
-                    await client.Respond(string.Format("You were kicked from battle by {0} : {1}",  Name, batKick.Reason));
+                    await client.Respond(string.Format("You were kicked from battle by {0} : {1}", Name, batKick.Reason));
                     await client.Process(new LeaveBattle() { BattleID = batKick.BattleID.Value });
                 }
             }
@@ -300,9 +328,10 @@ namespace ZkLobbyServer
             if (state.Battles.TryGetValue(forceJoin.BattleID, out bat))
             {
                 Client client;
-                if (state.Clients.TryGetValue(forceJoin.Name, out client)) {
+                if (state.Clients.TryGetValue(forceJoin.Name, out client))
+                {
                     if (client.MyBattle != null) await client.Process(new LeaveBattle());
-                    await client.Process(new JoinBattle() { BattleID = forceJoin.BattleID,Password = bat.Password});
+                    await client.Process(new JoinBattle() { BattleID = forceJoin.BattleID, Password = bat.Password });
                 }
             }
         }
@@ -314,8 +343,10 @@ namespace ZkLobbyServer
 
             Channel channel;
             User user;
-            if (state.Rooms.TryGetValue(chanKick.ChannelName, out channel) && channel.Users.TryGetValue(chanKick.UserName, out user)) {
-                if (!User.IsAdmin) {
+            if (state.Rooms.TryGetValue(chanKick.ChannelName, out channel) && channel.Users.TryGetValue(chanKick.UserName, out user))
+            {
+                if (!User.IsAdmin)
+                {
                     await Respond("No rights to execute kick");
                     return;
                 }
@@ -414,30 +445,33 @@ namespace ZkLobbyServer
             var channel = state.Rooms.GetOrAdd(joinChannel.ChannelName, (n) => new Channel() { Name = joinChannel.ChannelName, });
             if (channel.Password != joinChannel.Password)
             {
-                await SendCommand(new JoinChannelResponse() { Success = false, Reason = "invalid password", ChannelName = joinChannel.ChannelName});
+                await SendCommand(new JoinChannelResponse() { Success = false, Reason = "invalid password", ChannelName = joinChannel.ChannelName });
             }
 
-            if (channel.Users.TryAdd(Name, User)) {
-                var users = channel.Users.Keys.ToArray();
-                
-                await SynchronizeUsersToMe(users);
-                await
-                    SendCommand(new JoinChannelResponse() {
-                        Success = true,
-                        ChannelName = joinChannel.ChannelName,
-                        Channel =
-                            new ChannelHeader() {
-                                ChannelName = channel.Name,
-                                Password = channel.Password,
-                                Topic = channel.Topic,
-                                TopicSetBy = channel.TopicSetBy,
-                                TopicSetDate = channel.TopicSetDate,
-                                Users = new List<string>(users)
-                            }
-                    });
 
-                await Broadcast(users.Where(x => x != Name), new ChannelUserAdded { ChannelName = channel.Name, UserName = Name }, Name);
-            }
+            var added = channel.Users.TryAdd(Name, User);
+            var users = channel.Users.Keys.ToArray();
+
+            await SynchronizeUsersToMe(users);
+            await
+                SendCommand(new JoinChannelResponse()
+                {
+                    Success = true,
+                    ChannelName = joinChannel.ChannelName,
+                    Channel =
+                        new ChannelHeader()
+                        {
+                            ChannelName = channel.Name,
+                            Password = channel.Password,
+                            Topic = channel.Topic,
+                            TopicSetBy = channel.TopicSetBy,
+                            TopicSetDate = channel.TopicSetDate,
+                            Users = new List<string>(users)
+                        }
+                });
+
+
+            if (added) await Broadcast(users.Where(x => x != Name), new ChannelUserAdded { ChannelName = channel.Name, UserName = Name }, Name);
         }
 
         async Task Process(LeaveChannel leaveChannel)
@@ -445,9 +479,11 @@ namespace ZkLobbyServer
             if (!IsLoggedIn) return;
 
             Channel channel;
-            if (state.Rooms.TryGetValue(leaveChannel.ChannelName, out channel)) {
+            if (state.Rooms.TryGetValue(leaveChannel.ChannelName, out channel))
+            {
                 User user;
-                if (channel.Users.TryRemove(Name, out user)) {
+                if (channel.Users.TryRemove(Name, out user))
+                {
                     var users = channel.Users.Keys.ToArray();
                     await SendCommand(new ChannelUserRemoved() { ChannelName = channel.Name, UserName = Name });
                     await Broadcast(users, new ChannelUserRemoved() { ChannelName = channel.Name, UserName = Name });
@@ -462,9 +498,11 @@ namespace ZkLobbyServer
             if (!IsLoggedIn) return;
 
             say.User = Name;
-            
-            if (say.Ring) { // ring permissions - bot/admin anywhere, others only to own battle 
-                if (!User.IsAdmin) {
+
+            if (say.Ring)
+            { // ring permissions - bot/admin anywhere, others only to own battle 
+                if (!User.IsAdmin)
+                {
                     if ((say.Place != SayPlace.Battle && say.Place != SayPlace.BattlePrivate) || MyBattle == null || MyBattle.Founder != User) say.Ring = false;
                 }
             }
@@ -492,13 +530,15 @@ namespace ZkLobbyServer
                     break;
 
                 case SayPlace.Battle:
-                    if (MyBattle != null) {
+                    if (MyBattle != null)
+                    {
                         await Broadcast(MyBattle.Users.Keys, say);
                     }
                     break;
 
                 case SayPlace.BattlePrivate:
-                    if (MyBattle != null && MyBattle.Founder.Name == Name) {
+                    if (MyBattle != null && MyBattle.Founder.Name == Name)
+                    {
                         Client cli;
                         if (MyBattle.Users.ContainsKey(say.Target) && state.Clients.TryGetValue(say.Target, out cli))
                         {
@@ -507,7 +547,8 @@ namespace ZkLobbyServer
                     }
                     break;
                 case SayPlace.MessageBox:
-                    if (User.IsAdmin) {
+                    if (User.IsAdmin)
+                    {
                         await Broadcast(state.Clients.Values, say);
                     }
                     break;
@@ -532,7 +573,8 @@ namespace ZkLobbyServer
                 return;
             }
 
-            if (MyBattle != null) {
+            if (MyBattle != null)
+            {
                 await Respond("You are already in a battle");
                 return;
             }
@@ -543,7 +585,7 @@ namespace ZkLobbyServer
             h.BattleID = battleID;
             h.Founder = Name;
             var battle = new Battle();
-            battle.UpdateWith(h, (n)=>state.Clients[n].User);
+            battle.UpdateWith(h, (n) => state.Clients[n].User);
             battle.Users[Name] = new UserBattleStatus(Name, User);
             state.Battles[battleID] = battle;
             MyBattle = battle;
@@ -553,7 +595,7 @@ namespace ZkLobbyServer
             await Broadcast(clis, new JoinedBattle() { BattleID = battleID, User = Name }, Name);
         }
 
-        
+
 
         async Task Process(JoinBattle join)
         {
@@ -578,10 +620,10 @@ namespace ZkLobbyServer
                 await Broadcast(state.Clients.Values, new JoinedBattle() { BattleID = battle.BattleID, User = Name }, Name);
                 await RecalcSpectators(battle);
 
-                foreach (var u in battle.Users.Values.Select(x=>x.ToUpdateBattleStatus()).ToList()) await SendCommand(u);
+                foreach (var u in battle.Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) await SendCommand(u);
                 foreach (var u in battle.Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList()) await SendCommand(u);
-                foreach (var u in battle.Rectangles) await SendCommand(new SetRectangle(){Number = u.Key,Rectangle = u.Value});
-                await SendCommand(new SetModOptions() {Options = battle.ModOptions});
+                foreach (var u in battle.Rectangles) await SendCommand(new SetRectangle() { Number = u.Key, Rectangle = u.Value });
+                await SendCommand(new SetModOptions() { Options = battle.ModOptions });
             }
         }
 
@@ -592,16 +634,18 @@ namespace ZkLobbyServer
             var h = battleUpdate.Header;
             if (h.BattleID == null && MyBattle != null) h.BattleID = MyBattle.BattleID;
             Battle bat;
-            if (!state.Battles.TryGetValue(h.BattleID.Value, out bat)) {
+            if (!state.Battles.TryGetValue(h.BattleID.Value, out bat))
+            {
                 await Respond("No such battle exists");
                 return;
             }
-            if (bat.Founder != User && !User.IsAdmin) {
+            if (bat.Founder != User && !User.IsAdmin)
+            {
                 await Respond("You don't have permission to edit this battle");
                 return;
             }
-            
-            bat.UpdateWith(h,(n)=>state.Clients[n].User);
+
+            bat.UpdateWith(h, (n) => state.Clients[n].User);
             await Broadcast(state.Clients.Keys, battleUpdate, Name);
         }
 
@@ -613,12 +657,15 @@ namespace ZkLobbyServer
 
             if (bat == null) return;
 
-            if (Name == bat.Founder.Name || Name == status.Name) { // founder can set for all, others for self
+            if (Name == bat.Founder.Name || Name == status.Name)
+            { // founder can set for all, others for self
                 UserBattleStatus ubs;
-                if (bat.Users.TryGetValue(status.Name, out ubs)) {
-                    
+                if (bat.Users.TryGetValue(status.Name, out ubs))
+                {
+
                     // enfoce player count limit
-                    if (status.IsSpectator== false && bat.Users.Values.Count(x => !x.IsSpectator) >= bat.MaxPlayers) {
+                    if (status.IsSpectator == false && bat.Users.Values.Count(x => !x.IsSpectator) >= bat.MaxPlayers)
+                    {
                         // if unspeccing but there is already enough, force spec
                         status.IsSpectator = true;
                     }
@@ -633,9 +680,10 @@ namespace ZkLobbyServer
         async Task RecalcSpectators(Battle bat)
         {
             var specCount = bat.Users.Values.Count(x => x.IsSpectator);
-            if (specCount != bat.SpectatorCount) {
+            if (specCount != bat.SpectatorCount)
+            {
                 bat.SpectatorCount = specCount;
-                await Broadcast(state.Clients.Values, new BattleUpdate() { Header = new BattleHeader() { SpectatorCount = specCount, BattleID = bat.BattleID} }, bat.Founder.Name);
+                await Broadcast(state.Clients.Values, new BattleUpdate() { Header = new BattleHeader() { SpectatorCount = specCount, BattleID = bat.BattleID } }, bat.Founder.Name);
             }
         }
 
@@ -648,7 +696,8 @@ namespace ZkLobbyServer
             if (leave.BattleID == null && MyBattle != null) leave.BattleID = MyBattle.BattleID;
 
             Battle battle;
-            if (state.Battles.TryGetValue(leave.BattleID.Value, out battle)) {
+            if (state.Battles.TryGetValue(leave.BattleID.Value, out battle))
+            {
                 await LeaveBattle(battle);
                 await RecalcSpectators(battle);
             }
@@ -658,12 +707,14 @@ namespace ZkLobbyServer
         {
             if (!IsLoggedIn) return;
             bool changed = false;
-            if (userStatus.IsInGame != null && User.IsInGame != userStatus.IsInGame) {
+            if (userStatus.IsInGame != null && User.IsInGame != userStatus.IsInGame)
+            {
                 if (userStatus.IsInGame == true) User.InGameSince = DateTime.UtcNow;
                 else User.InGameSince = null;
                 changed = true;
             }
-            if (userStatus.IsAfk != null && User.IsAway != userStatus.IsAfk) {
+            if (userStatus.IsAfk != null && User.IsAway != userStatus.IsAfk)
+            {
                 if (userStatus.IsAfk == true) User.AwaySince = DateTime.UtcNow;
                 else User.AwaySince = null;
                 changed = true;
@@ -677,10 +728,12 @@ namespace ZkLobbyServer
             if (!IsLoggedIn) return;
 
             var battle = MyBattle;
-            if (battle != null) {
+            if (battle != null)
+            {
                 BotBattleStatus ubs;
                 if (!battle.Bots.TryGetValue(add.Name, out ubs)) ubs = new BotBattleStatus(add.Name, Name, add.AiLib);
-                else if (add.Owner != Name && !User.IsAdmin && User != battle.Founder) {
+                else if (ubs.owner != Name && !User.IsAdmin && User != battle.Founder)
+                {
                     await Respond(string.Format("No permissions to edit bot {0}", add.Name));
                     return;
                 }
@@ -699,13 +752,14 @@ namespace ZkLobbyServer
             if (battle != null)
             {
                 var bot = battle.Bots[rem.Name];
-                if (bot.owner != Name  && !User.IsAdmin && User != battle.Founder)
+                if (bot.owner != Name && !User.IsAdmin && User != battle.Founder)
                 {
                     await Respond(string.Format("No permissions to edit bot {0}", rem.Name));
                     return;
                 }
                 BotBattleStatus ubs;
-                if (battle.Bots.TryRemove(rem.Name, out ubs)) {
+                if (battle.Bots.TryRemove(rem.Name, out ubs))
+                {
                     await Broadcast(battle.Users.Keys, rem);
                 }
             }
@@ -714,15 +768,20 @@ namespace ZkLobbyServer
 
         async Task LeaveBattle(Battle battle)
         {
-            if (battle.Users.ContainsKey(Name)) {
-                if (Name == battle.Founder.Name) { // remove entire battle
+            if (battle.Users.ContainsKey(Name))
+            {
+                if (Name == battle.Founder.Name)
+                { // remove entire battle
                     await RemoveBattle(battle);
-                } else {
+                }
+                else
+                {
                     MyBattle = null;
                     UserBattleStatus oldVal;
                     if (battle.Users.TryRemove(Name, out oldVal)) await Broadcast(state.Clients.Values, new LeftBattle() { BattleID = battle.BattleID, User = Name });
                     var bots = battle.Bots.Values.Where(x => x.owner == Name).ToList();
-                    foreach (var b in bots) {
+                    foreach (var b in bots)
+                    {
                         BotBattleStatus obs;
                         if (battle.Bots.TryRemove(b.Name, out obs)) await Broadcast(battle.Users.Keys, new RemoveBot() { Name = b.Name });
                     }
@@ -737,7 +796,8 @@ namespace ZkLobbyServer
             var bat = MyBattle;
             if (bat != null)
             {
-                if (bat.Founder != User && !User.IsAdmin) {
+                if (bat.Founder != User && !User.IsAdmin)
+                {
                     await Respond("You don't have permissions to change mod options here");
                     return;
                 }
@@ -749,7 +809,8 @@ namespace ZkLobbyServer
 
         async Task RemoveBattle(Battle battle)
         {
-            foreach (var u in battle.Users.Keys) {
+            foreach (var u in battle.Users.Keys)
+            {
                 Client client;
                 if (state.Clients.TryGetValue(u, out client)) client.MyBattle = null;
                 await Broadcast(state.Clients.Values, new LeftBattle() { BattleID = battle.BattleID, User = u });
