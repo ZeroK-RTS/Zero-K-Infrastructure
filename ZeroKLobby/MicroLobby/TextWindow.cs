@@ -1167,7 +1167,7 @@ namespace ZeroKLobby.MicroLobby
                         e.Graphics.DrawImageUnscaled(buffer, 0, 0);
                     }
                     // var coords = displayRect
-                    ButtonRenderer.DrawButton(g,
+                    System.Windows.Forms.ButtonRenderer.DrawButton(g,
                                               new Rectangle(displayRect.Right - 200, displayRect.Top - 50, 100, 30),
                                               "Hide",
                                               Font,

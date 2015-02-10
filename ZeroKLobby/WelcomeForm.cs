@@ -19,7 +19,9 @@ namespace ZeroKLobby
         public WelcomeForm()
         {
             InitializeComponent();
+            //BackgroundImage = null;
             btnWindowed_Click(this, EventArgs.Empty);
+            popPanel.ButtonStyle = ButtonStyle.ShrakaStyle;
         }
 
         
@@ -53,6 +55,8 @@ namespace ZeroKLobby
         protected override void OnResizeEnd(EventArgs e)
         {
             base.OnResizeEnd(e);
+            popPanel.Width = Width / 2 - 20;
+            popPanel.Left = Width / 2;
             BackgroundImage = resizeStoredBackground;
         }
 

@@ -121,11 +121,18 @@
       <DependentUpon>Buttons.resx</DependentUpon>
     </Compile>
     <Compile Include="ChatToSpeech.cs" />
+    <Compile Include="Controls\ButtonRenderer.cs" />
+    <Compile Include="Controls\ButtonStyle.cs" />
     <Compile Include="Controls\MinimapFuncBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\MinimapFuncBox.Designer.cs">
       <DependentUpon>MinimapFuncBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DarkHive.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DarkHive.resx</DependentUpon>
     </Compile>
     <Compile Include="ExtendedWebBrowser.cs">
       <SubType>Component</SubType>
@@ -178,6 +185,11 @@
     </Compile>
     <Compile Include="SelectWritableFolder.Designer.cs">
       <DependentUpon>SelectWritableFolder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Shraka.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Shraka.resx</DependentUpon>
     </Compile>
     <Compile Include="Steam\SteamClientHelper.cs" />
     <Compile Include="Steam\SteamVoiceSystem.cs" />
@@ -465,8 +477,8 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Buttons.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Buttons.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Buttons.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Configs.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -475,6 +487,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\MinimapFuncBox.resx">
       <DependentUpon>MinimapFuncBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DarkHive.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DarkHive.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Flags.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -524,6 +540,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\BattleBar.resx">
       <DependentUpon>BattleBar.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FormLog.resx">
       <DependentUpon>FormLog.cs</DependentUpon>
@@ -568,6 +585,10 @@
     <Compile Include="Utils.cs" />
     <EmbeddedResource Include="SelectWritableFolder.resx">
       <DependentUpon>SelectWritableFolder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Shraka.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Shraka.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="WelcomeForm.resx">
       <DependentUpon>WelcomeForm.cs</DependentUpon>
@@ -1662,6 +1683,31 @@
     <None Include="Resources\Buttons\panel_border_1281.png" />
     <None Include="Resources\Buttons\panel_border_641.png" />
     <None Include="Resources\Buttons\panel_border_961.png" />
+    <None Include="Resources\Buttons\DarkHive\C.png" />
+    <None Include="Resources\Buttons\DarkHive\E.png" />
+    <None Include="Resources\Buttons\DarkHive\N.png" />
+    <None Include="Resources\Buttons\DarkHive\NE.png" />
+    <None Include="Resources\Buttons\DarkHive\NW.png" />
+    <None Include="Resources\Buttons\DarkHive\S.png" />
+    <None Include="Resources\Buttons\DarkHive\SE.png" />
+    <None Include="Resources\Buttons\DarkHive\SW.png" />
+    <None Include="Resources\Buttons\DarkHive\W.png" />
+    <None Include="Resources\DarkHive\E.png" />
+    <None Include="Resources\DarkHive\N.png" />
+    <None Include="Resources\DarkHive\NE.png" />
+    <None Include="Resources\DarkHive\NW.png" />
+    <None Include="Resources\DarkHive\S.png" />
+    <None Include="Resources\DarkHive\SE.png" />
+    <None Include="Resources\DarkHive\SW.png" />
+    <None Include="Resources\DarkHive\W.png" />
+    <None Include="Resources\Shraka\E.png" />
+    <None Include="Resources\Shraka\N.png" />
+    <None Include="Resources\Shraka\NE.png" />
+    <None Include="Resources\Shraka\NW.png" />
+    <None Include="Resources\Shraka\S.png" />
+    <None Include="Resources\Shraka\SE.png" />
+    <None Include="Resources\Shraka\SW.png" />
+    <None Include="Resources\Shraka\W.png" />
     <Content Include="Rise of the Machines.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
