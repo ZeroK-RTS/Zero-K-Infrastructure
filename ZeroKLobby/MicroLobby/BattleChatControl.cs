@@ -353,7 +353,6 @@ namespace ZeroKLobby.MicroLobby
 					!e.Text.StartsWith(string.Format("[{0}]", Program.TasClient.UserName)))
 				{
 					Program.MainWindow.NotifyUser("chat/battle", string.Format("{0}: {1}", e.UserName, e.Text), false, true);
-					AddLine(new SaidExLine(e.UserName, e.Text));
 				}
 				if (!e.IsEmote) AddLine(new SaidLine(e.UserName, e.Text));
 				else AddLine(new SaidExLine(e.UserName, e.Text));
