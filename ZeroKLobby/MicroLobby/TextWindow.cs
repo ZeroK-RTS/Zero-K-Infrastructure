@@ -470,9 +470,10 @@ namespace ZeroKLobby.MicroLobby
                 { //remove old text, create space for new text (recycle existing row)
                     int toRemove = (MaxTextLines / 10) + 1; //remove 10% of old text
 
+                    //calculate scrollbar offset:
                     int lineCount = 0;
                     int wrapCount = 0;
-                    while (lineCount < toRemove + 1) //calculate scrollbar offset:
+                    while (lineCount < toRemove + 1)
                     {
                         if (displayLines[wrapCount + lineCount].Previous)
                             wrapCount++;
@@ -482,8 +483,9 @@ namespace ZeroKLobby.MicroLobby
                     int vScrollBarOffset = wrapCount + lineCount - 1;
                     vScrollBarOffset = Math.Min(vScrollBarOffset, vScrollBar.Value - 1);
 
+                    //shift existing texts upward:
                     var x = 0;
-                    for (int i = toRemove; i < totalLines; i++) //shift existing texts upward:
+                    for (int i = toRemove; i < totalLines; i++)
                     {
                         textLines[x].TotalLines = textLines[i].TotalLines;
                         textLines[x].Width = textLines[i].Width;
@@ -492,14 +494,16 @@ namespace ZeroKLobby.MicroLobby
                         x++;
                     }
 
-                    for (var i = totalLines - toRemove; i < MaxTextLines; i++) //fill new space with empty string
+                    //fill new space with empty string
+                    for (var i = totalLines - toRemove; i < MaxTextLines; i++)
                     {
                         textLines[i].TotalLines = 0;
                         textLines[i].Line = "";
                         textLines[i].Width = 0;
                     }
 
-                    totalLines = totalLines - toRemove - 1; //set draw line to new space
+                    //set draw line to new space
+                    totalLines = totalLines - toRemove - 1;
 
                     if (Height != 0)
                     {
