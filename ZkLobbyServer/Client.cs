@@ -179,8 +179,7 @@ namespace ZkLobbyServer
         async Task Process(Login login)
         {
             var response = await Task.Run(() => state.LoginChecker.Login(User, login, this));
-            if (response.ResultCode == LoginResponse.Code.Ok)
-            {
+            if (response.ResultCode == LoginResponse.Code.Ok) {
                 //ClearMyLastKnownStateForOtherClients();
 
                 Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
@@ -188,17 +187,13 @@ namespace ZkLobbyServer
                 await SendCommand(response); // login accepted
 
 
-                foreach (var b in state.Battles.Values)
-                {
-                    if (b != null)
-                    {
+                foreach (var b in state.Battles.Values) {
+                    if (b != null) {
                         await SynchronizeUsersToMe(b.Founder.Name);
                         await
-                            SendCommand(new BattleAdded()
-                            {
+                            SendCommand(new BattleAdded() {
                                 Header =
-                                    new BattleHeader()
-                                    {
+                                    new BattleHeader() {
                                         BattleID = b.BattleID,
                                         Engine = b.EngineVersion,
                                         Game = b.ModName,
@@ -213,15 +208,18 @@ namespace ZkLobbyServer
                                     }
                             });
 
-                        foreach (var u in b.Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList())
-                        {
+                        foreach (var u in b.Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) {
                             await SynchronizeUsersToMe(u.Name);
                             await SendCommand(new JoinedBattle() { BattleID = b.BattleID, User = u.Name });
                         }
                     }
                 }
+            } else {
+                await SendCommand(response);
+                if (response.ResultCode == LoginResponse.Code.Banned) RequestClose();
             }
-            else await SendCommand(response);
+
+            
         }
 
 
