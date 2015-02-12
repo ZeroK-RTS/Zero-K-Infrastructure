@@ -134,6 +134,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DarkHive.resx</DependentUpon>
     </Compile>
+    <Compile Include="DarkHiveHover.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DarkHiveHover.resx</DependentUpon>
+    </Compile>
     <Compile Include="ExtendedWebBrowser.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -491,6 +496,10 @@
     <EmbeddedResource Include="DarkHive.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DarkHive.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DarkHiveHover.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DarkHiveHover.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Flags.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -1708,6 +1717,14 @@
     <None Include="Resources\Shraka\SE.png" />
     <None Include="Resources\Shraka\SW.png" />
     <None Include="Resources\Shraka\W.png" />
+    <None Include="Resources\DarkHiveHover\E.png" />
+    <None Include="Resources\DarkHiveHover\N.png" />
+    <None Include="Resources\DarkHiveHover\NE.png" />
+    <None Include="Resources\DarkHiveHover\NW.png" />
+    <None Include="Resources\DarkHiveHover\S.png" />
+    <None Include="Resources\DarkHiveHover\SE.png" />
+    <None Include="Resources\DarkHiveHover\SW.png" />
+    <None Include="Resources\DarkHiveHover\W.png" />
     <Content Include="Rise of the Machines.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

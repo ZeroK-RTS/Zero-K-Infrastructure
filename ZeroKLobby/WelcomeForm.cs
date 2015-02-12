@@ -20,7 +20,7 @@ namespace ZeroKLobby
         {
             InitializeComponent();
             //BackgroundImage = null;
-            btnWindowed_Click(this, EventArgs.Empty);
+            //btnWindowed_Click(this, EventArgs.Empty);
             popPanel.ButtonStyle = ButtonStyle.ShrakaStyle;
         }
 

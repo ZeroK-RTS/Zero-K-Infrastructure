@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Design;
 using System.Linq;
@@ -31,11 +32,27 @@ namespace ZeroKLobby
         }
 
 
-        [Description("Width of the rectangle")]
         public ButtonStyle ButtonStyle { get; set; }
-      
 
+        bool mouseOver;
 
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            base.OnMouseEnter(e);
+            mouseOver = true;
+        }
+
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            base.OnMouseLeave(e);
+            mouseOver = false;
+        }
+
+        protected override void OnClick(EventArgs e)
+        {
+            
+            base.OnClick(e);
+        }
 
 
         protected override void OnPaint(PaintEventArgs pevent)
@@ -44,6 +61,7 @@ namespace ZeroKLobby
             if (this.ButtonStyle != null) {
                 var rend = new ButtonRenderer();
                 rend.RenderToGraphics(pevent.Graphics, DisplayRectangle, ButtonStyle);
+                if (mouseOver) rend.RenderToGraphics(pevent.Graphics, DisplayRectangle, ButtonStyle.DarkHiveHoverStyle);
             }
         }
     }
