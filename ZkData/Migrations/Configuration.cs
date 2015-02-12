@@ -18,7 +18,7 @@ namespace ZkData.Migrations
             if (GlobalConst.Mode == ModeType.Local) {
                 // fill local DB with some basic test data
 
-                db.MiscVars.AddOrUpdate(x => x.VarName, new MiscVar { VarName = "NightwatchPassword", VarValue = "dummy" });
+                db.MiscVars.AddOrUpdate(x => x.VarName, new MiscVar { VarName = "NightwatchPassword", VarValue = "dummy" }, new MiscVar() { VarName = "GithubHookKey", VarValue = "secret"});
 
                 db.Accounts.AddOrUpdate(x => x.Name,
                     new Account {

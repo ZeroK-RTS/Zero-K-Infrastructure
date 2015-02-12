@@ -1,7 +1,11 @@
 ﻿using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using System.Web.Mvc;
 using LobbyClient;
+using Microsoft.Ajax.Utilities;
 using Newtonsoft.Json.Linq;
+using ZkData;
 
 namespace ZeroKWeb.Controllers
 {
@@ -11,8 +15,12 @@ namespace ZeroKWeb.Controllers
         public ActionResult Hook()
         {
             var eventType = Request.Headers["X-Github-Event"];
-            var signature = Request.Headers["X-Hub-Signature"]; // todo verify signature
-            
+            var signature = Request.Headers["X-Hub-Signature"];
+
+            var secretKey = new Secrets().GetGithubHookKey(new ZkDataContext());
+            var hash = new HMACSHA1(Encoding.UTF8.GetBytes(secretKey)).ComputeHash(Request.InputStream);
+            if (!string.Equals(hash.ToHex(), signature)) return Content("Signature does not match");
+            Request.InputStream.Seek(0, SeekOrigin.Begin);
 
             var content = new StreamReader(Request.InputStream).ReadToEnd();
 

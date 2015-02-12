@@ -25,5 +25,10 @@ namespace ZkData
             return GetVarValue(db, "SteamWebApiKey");
         }
 
+        public string GetGithubHookKey(ZkDataContext db = null)
+        {
+            return GetVarValue(db, "GithubHookKey");
+        }
+
     }
 }
