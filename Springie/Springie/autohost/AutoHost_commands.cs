@@ -311,7 +311,7 @@ namespace Springie.autohost
             }
             string[] usrs;
             int[] idx;
-            if (FilterUsers(Utils.ShiftArray(words, -1), out usrs, out idx) == 0) Respond(e, "no such player found");
+            if (FilterUsers(ZkData.Utils.ShiftArray(words, -1), out usrs, out idx) == 0) Respond(e, "no such player found");
             else
             {
                 SayBattle("Forcing " + usrs[0] + " to alliance " + (allyno + 1));
@@ -881,7 +881,7 @@ namespace Springie.autohost
             }
             string[] usrs;
             int[] idx;
-            if (FilterUsers(Utils.ShiftArray(words, -1), out usrs, out idx) == 0) Respond(e, "no such player found");
+            if (FilterUsers(ZkData.Utils.ShiftArray(words, -1), out usrs, out idx) == 0) Respond(e, "no such player found");
             else
             {
                 SayBattle("Forcing " + usrs[0] + " to team " + (teamno + 1));

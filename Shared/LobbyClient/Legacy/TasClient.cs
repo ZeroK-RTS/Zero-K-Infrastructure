@@ -18,12 +18,11 @@ using ZkData;
 
 namespace LobbyClient.Legacy
 {
+    [Obsolete]
     public class TasClient:Connection
     {
         public const int MaxAlliances = 16;
         public const int MaxTeams = 16;
-
-        public ProtocolExtension Extensions { get; private set; }
 
         public delegate void Invoker();
 
@@ -256,19 +255,7 @@ namespace LobbyClient.Legacy
                 }
             }
 
-            Extensions = new ProtocolExtension(this, (user, data) => {
-                                                                         User u;
-                                                                         if (ExistingUsers.TryGetValue(user, out u))
-                                                                         {
-                                                                             u.SetExtension(data);
-                                                                             if (invokeUserStatusChangedOnExtensions) UserStatusChanged(this, new TasEventArgs(u.Name, u.ToInt().ToString()));
-                                                                             if (user == username) MyExtensionsChanged(this, new EventArgs<User>(u));
-                                                                             UserExtensionsChanged(this, new EventArgs<User>(u));
-                                                                         }
-
-
-            });
-
+            
             pingTimer = new Timer(pingInterval*1000) { AutoReset = true };
             pingTimer.Elapsed += OnPingTimer;
             pingTimer.Start();

@@ -7,6 +7,7 @@ namespace LobbyClient.Legacy
 	/// <summary>
 	/// Basic channel information - for channel enumeration
 	/// </summary>
+    [Obsolete]
 	public class ExistingChannel
 	{
 		public string name;
@@ -14,6 +15,7 @@ namespace LobbyClient.Legacy
 		public int userCount;
 	} ;
 
+    [Obsolete]
 	public class TasEventArgs: EventArgs
 	{
 		List<string> serverParams = new List<string>();
@@ -28,7 +30,7 @@ namespace LobbyClient.Legacy
 		}
 	} ;
 
-
+    [Obsolete]
 	public class BattleInfoEventArgs: EventArgs
 	{
 		public int BattleID { get; private set; }
@@ -46,7 +48,7 @@ namespace LobbyClient.Legacy
 			IsLocked = isLocked;
 		}
 	}
-
+    [Obsolete]
 	public class BattleUserEventArgs: EventArgs
 	{
 		public int BattleID { get; private set; }
@@ -60,7 +62,7 @@ namespace LobbyClient.Legacy
 			ScriptPassword = scriptPassword;
 		}
 	}
-
+    [Obsolete]
     public class KickedFromServerEventArgs : EventArgs
     {
         //WarningBar.DisplayWarning("You have been kicked server by " + name + ".\r\nReason: " + match.Groups[2].Value)
@@ -74,7 +76,7 @@ namespace LobbyClient.Legacy
 		}
     }
 
-
+    [Obsolete]
     public class UserLobbyVersionEventArgs: EventArgs {
         public string Name;
         public string LobbyVersion;
@@ -86,7 +88,7 @@ namespace LobbyClient.Legacy
             LobbyVersion = lobbyVersion;
         }
     }
-
+    [Obsolete]
     public class UserIPEventArgs: EventArgs {
         public string Name;
         public string IP;
@@ -98,7 +100,7 @@ namespace LobbyClient.Legacy
             IP = ip;
         }
     }
-
+    [Obsolete]
     public class UserIDEventArgs : EventArgs
     {
         public string Name;
@@ -113,7 +115,7 @@ namespace LobbyClient.Legacy
     }
 
 
-
+    [Obsolete]
     public class TasSayEventArgs: EventArgs
 	{
 		public enum Origins
@@ -169,13 +171,13 @@ namespace LobbyClient.Legacy
 			Args = args;
 		}
 	} ;
-
+    [Obsolete]
 	public class TasClientException: Exception
 	{
 		public TasClientException() {}
 		public TasClientException(string message): base(message) {}
 	} ;
-
+    [Obsolete]
 	public class TasEventAgreementRecieved: EventArgs
 	{
 		public string Text { get; protected set; }

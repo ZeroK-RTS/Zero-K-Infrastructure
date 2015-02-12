@@ -292,7 +292,7 @@ namespace Springie.autohost
             if (allwords.Length < 1) return;
             string com = allwords[0];
             // remove first word (command)
-            string[] words = Utils.ShiftArray(allwords, -1);
+            string[] words = ZkData.Utils.ShiftArray(allwords, -1);
             RunCommand(TasSayEventArgs.Default, com, words);
         }
 
@@ -999,7 +999,7 @@ namespace Springie.autohost
                 string com = allwords[0];
 
                 // remove first word (command)
-                string[] words = Utils.ShiftArray(allwords, -1);
+                string[] words = ZkData.Utils.ShiftArray(allwords, -1);
 
                 
                 if (!HasRights(com, e)) {
