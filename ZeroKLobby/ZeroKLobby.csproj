@@ -196,6 +196,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Shraka.resx</DependentUpon>
     </Compile>
+    <Compile Include="Sounds.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Sounds.resx</DependentUpon>
+    </Compile>
     <Compile Include="Steam\SteamClientHelper.cs" />
     <Compile Include="Steam\SteamVoiceSystem.cs" />
     <Compile Include="Configs.Designer.cs">
@@ -598,6 +603,10 @@
     <EmbeddedResource Include="Shraka.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Shraka.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sounds.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Sounds.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="WelcomeForm.resx">
       <DependentUpon>WelcomeForm.cs</DependentUpon>
@@ -1725,9 +1734,11 @@
     <None Include="Resources\DarkHiveHover\SE.png" />
     <None Include="Resources\DarkHiveHover\SW.png" />
     <None Include="Resources\DarkHiveHover\W.png" />
-    <Content Include="Rise of the Machines.mp3">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <None Include="Resources\Sounds\button_click.wav" />
+    <None Include="Resources\Sounds\panel_move.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Sounds\menu_music_ROM.mp3" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">

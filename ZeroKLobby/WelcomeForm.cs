@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace ZeroKLobby
     public partial class WelcomeForm : Form
     {
         WaveOut waveOut;
-        AudioFileReader audioReader;
+        Mp3FileReader audioReader;
 
         public WelcomeForm()
         {
@@ -83,7 +84,7 @@ namespace ZeroKLobby
         private void WelcomeForm_Load(object sender, EventArgs e)
         {
             waveOut = new WaveOut();
-            audioReader = new AudioFileReader("Rise of the Machines.mp3");
+            audioReader =  new Mp3FileReader(new MemoryStream(Sounds.menu_music_ROM));
             waveOut.Init(audioReader);
             waveOut.Play();
         }
