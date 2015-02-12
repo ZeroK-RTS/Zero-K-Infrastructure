@@ -28,19 +28,22 @@ namespace ZeroKLobby
             FlatAppearance.MouseDownBackColor = Color.Transparent;
             FlatAppearance.MouseOverBackColor = Color.Transparent;
             DoubleBuffered = true;
-            ButtonStyle = ButtonStyle.DarkHiveStyle;
+            ButtonStyle = ButtonRenderer.StyleType.DarkHive;
             SetStyle(ControlStyles.SupportsTransparentBackColor, true);
         }
 
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public override Color ForeColor { get; set; }
 
-        public ButtonStyle ButtonStyle { get; set; }
+
+        public ButtonRenderer.StyleType ButtonStyle { get; set; }
 
         bool mouseOver;
 
         protected override void OnMouseEnter(EventArgs e)
         {
-            base.OnMouseEnter(e);
             mouseOver = true;
+            base.OnMouseEnter(e);
         }
 
         protected override void OnMouseLeave(EventArgs e)
@@ -65,12 +68,8 @@ namespace ZeroKLobby
 
         protected override void OnPaint(PaintEventArgs pevent)
         {
+            BackgroundImage =  ButtonRenderer.Instance.GetImageWithCache(DisplayRectangle, ButtonStyle, mouseOver ? ButtonRenderer.StyleType.DarkHiveHover : (ButtonRenderer.StyleType?)null);
             base.OnPaint(pevent);
-            if (this.ButtonStyle != null) {
-                var rend = new ButtonRenderer();
-                rend.RenderToGraphics(pevent.Graphics, DisplayRectangle, ButtonStyle.DarkHiveStyle);
-                if (mouseOver) rend.RenderToGraphics(pevent.Graphics, DisplayRectangle, ButtonStyle.DarkHiveHoverStyle);
-            }
         }
     }
 }

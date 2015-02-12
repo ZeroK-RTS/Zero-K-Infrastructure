@@ -81,7 +81,6 @@ namespace ZeroKLobby
             this.singleplayerButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.singleplayerButton.BackColor = System.Drawing.Color.Transparent;
             this.singleplayerButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.singleplayerButton.ButtonStyle = buttonStyle1;
             this.singleplayerButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.singleplayerButton.FlatAppearance.BorderSize = 0;
             this.singleplayerButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
@@ -102,7 +101,6 @@ namespace ZeroKLobby
             this.btnSnd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnSnd.BackColor = System.Drawing.Color.Transparent;
             this.btnSnd.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnSnd.ButtonStyle = buttonStyle1;
             this.btnSnd.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnSnd.FlatAppearance.BorderSize = 0;
             this.btnSnd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -120,7 +118,6 @@ namespace ZeroKLobby
             this.btnWindowed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnWindowed.BackColor = System.Drawing.Color.Transparent;
             this.btnWindowed.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnWindowed.ButtonStyle = buttonStyle1;
             this.btnWindowed.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnWindowed.FlatAppearance.BorderSize = 0;
             this.btnWindowed.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -138,7 +135,6 @@ namespace ZeroKLobby
             this.exitButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.exitButton.BackColor = System.Drawing.Color.Transparent;
             this.exitButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.exitButton.ButtonStyle = buttonStyle1;
             this.exitButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.exitButton.FlatAppearance.BorderSize = 0;
             this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -157,7 +153,6 @@ namespace ZeroKLobby
             this.multiplayerButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.multiplayerButton.BackColor = System.Drawing.Color.Transparent;
             this.multiplayerButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.multiplayerButton.ButtonStyle = buttonStyle1;
             this.multiplayerButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.multiplayerButton.FlatAppearance.BorderSize = 0;
             this.multiplayerButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -174,7 +169,6 @@ namespace ZeroKLobby
             // 
             this.avatarButton.BackColor = System.Drawing.Color.Transparent;
             this.avatarButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.avatarButton.ButtonStyle = buttonStyle1;
             this.avatarButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.avatarButton.FlatAppearance.BorderSize = 0;
             this.avatarButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -193,7 +187,6 @@ namespace ZeroKLobby
             | System.Windows.Forms.AnchorStyles.Right)));
             this.popPanel.BackColor = System.Drawing.Color.Transparent;
             this.popPanel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.popPanel.ButtonStyle = buttonStyle1;
             this.popPanel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.popPanel.FlatAppearance.BorderSize = 0;
             this.popPanel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
