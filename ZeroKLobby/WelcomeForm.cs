@@ -97,5 +97,12 @@ namespace ZeroKLobby
                 waveOut.Play();
             }
         }
+
+        int i;
+        private void singleplayerButton_Click(object sender, EventArgs e)
+        {
+            i++;
+            switchPanel1.SwitchContent(new BitmapButton() { Width = 100, Height = 50, Text = "test " + i });
+        }
     }
 }

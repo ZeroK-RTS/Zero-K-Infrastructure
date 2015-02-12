@@ -31,6 +31,7 @@ namespace ZeroKLobby
         /// </summary>
         private void InitializeComponent()
         {
+            ZeroKLobby.ButtonStyle buttonStyle1 = new ZeroKLobby.ButtonStyle();
             this.label1 = new System.Windows.Forms.Label();
             this.mainFrame = new System.Windows.Forms.Panel();
             this.singleplayerButton = new ZeroKLobby.BitmapButton();
@@ -40,6 +41,7 @@ namespace ZeroKLobby
             this.multiplayerButton = new ZeroKLobby.BitmapButton();
             this.avatarButton = new ZeroKLobby.BitmapButton();
             this.popPanel = new ZeroKLobby.BitmapButton();
+            this.switchPanel1 = new ZeroKLobby.Controls.SwitchPanel();
             this.mainFrame.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -59,6 +61,7 @@ namespace ZeroKLobby
             // 
             this.mainFrame.BackColor = System.Drawing.Color.Transparent;
             this.mainFrame.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.mainFrame.Controls.Add(this.switchPanel1);
             this.mainFrame.Controls.Add(this.singleplayerButton);
             this.mainFrame.Controls.Add(this.btnSnd);
             this.mainFrame.Controls.Add(this.btnWindowed);
@@ -78,6 +81,7 @@ namespace ZeroKLobby
             this.singleplayerButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.singleplayerButton.BackColor = System.Drawing.Color.Transparent;
             this.singleplayerButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.singleplayerButton.ButtonStyle = buttonStyle1;
             this.singleplayerButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.singleplayerButton.FlatAppearance.BorderSize = 0;
             this.singleplayerButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
@@ -91,12 +95,14 @@ namespace ZeroKLobby
             this.singleplayerButton.TabIndex = 7;
             this.singleplayerButton.Text = "Singleplayer";
             this.singleplayerButton.UseVisualStyleBackColor = false;
+            this.singleplayerButton.Click += new System.EventHandler(this.singleplayerButton_Click);
             // 
             // btnSnd
             // 
             this.btnSnd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnSnd.BackColor = System.Drawing.Color.Transparent;
             this.btnSnd.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnSnd.ButtonStyle = buttonStyle1;
             this.btnSnd.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnSnd.FlatAppearance.BorderSize = 0;
             this.btnSnd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -114,6 +120,7 @@ namespace ZeroKLobby
             this.btnWindowed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnWindowed.BackColor = System.Drawing.Color.Transparent;
             this.btnWindowed.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnWindowed.ButtonStyle = buttonStyle1;
             this.btnWindowed.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnWindowed.FlatAppearance.BorderSize = 0;
             this.btnWindowed.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -131,6 +138,7 @@ namespace ZeroKLobby
             this.exitButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.exitButton.BackColor = System.Drawing.Color.Transparent;
             this.exitButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.exitButton.ButtonStyle = buttonStyle1;
             this.exitButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.exitButton.FlatAppearance.BorderSize = 0;
             this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -149,6 +157,7 @@ namespace ZeroKLobby
             this.multiplayerButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.multiplayerButton.BackColor = System.Drawing.Color.Transparent;
             this.multiplayerButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.multiplayerButton.ButtonStyle = buttonStyle1;
             this.multiplayerButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.multiplayerButton.FlatAppearance.BorderSize = 0;
             this.multiplayerButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -165,6 +174,7 @@ namespace ZeroKLobby
             // 
             this.avatarButton.BackColor = System.Drawing.Color.Transparent;
             this.avatarButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.avatarButton.ButtonStyle = buttonStyle1;
             this.avatarButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.avatarButton.FlatAppearance.BorderSize = 0;
             this.avatarButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -183,6 +193,7 @@ namespace ZeroKLobby
             | System.Windows.Forms.AnchorStyles.Right)));
             this.popPanel.BackColor = System.Drawing.Color.Transparent;
             this.popPanel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.popPanel.ButtonStyle = buttonStyle1;
             this.popPanel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.popPanel.FlatAppearance.BorderSize = 0;
             this.popPanel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -193,6 +204,14 @@ namespace ZeroKLobby
             this.popPanel.Size = new System.Drawing.Size(533, 715);
             this.popPanel.TabIndex = 2;
             this.popPanel.UseVisualStyleBackColor = true;
+            // 
+            // switchPanel1
+            // 
+            this.switchPanel1.BackColor = System.Drawing.Color.Transparent;
+            this.switchPanel1.Location = new System.Drawing.Point(303, 153);
+            this.switchPanel1.Name = "switchPanel1";
+            this.switchPanel1.Size = new System.Drawing.Size(410, 451);
+            this.switchPanel1.TabIndex = 8;
             // 
             // WelcomeForm
             // 
@@ -224,5 +243,6 @@ namespace ZeroKLobby
         private BitmapButton btnWindowed;
         private BitmapButton btnSnd;
         private BitmapButton singleplayerButton;
+        private Controls.SwitchPanel switchPanel1;
     }
 }

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Design;
 using System.Linq;
+using System.Media;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
@@ -48,6 +49,13 @@ namespace ZeroKLobby
             mouseOver = false;
         }
 
+        protected override void OnMouseClick(MouseEventArgs e)
+        {
+            //var sp = new SoundPlayer(Sounds.button_click);
+            //sp.Play();
+            base.OnMouseClick(e);
+        }
+
         protected override void OnClick(EventArgs e)
         {
             
@@ -60,7 +68,7 @@ namespace ZeroKLobby
             base.OnPaint(pevent);
             if (this.ButtonStyle != null) {
                 var rend = new ButtonRenderer();
-                rend.RenderToGraphics(pevent.Graphics, DisplayRectangle, ButtonStyle);
+                rend.RenderToGraphics(pevent.Graphics, DisplayRectangle, ButtonStyle.DarkHiveStyle);
                 if (mouseOver) rend.RenderToGraphics(pevent.Graphics, DisplayRectangle, ButtonStyle.DarkHiveHoverStyle);
             }
         }
