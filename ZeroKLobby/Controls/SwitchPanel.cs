@@ -13,32 +13,38 @@ namespace ZeroKLobby.Controls
 {
     public partial class SwitchPanel : Panel
     {
-        Timer timer = new Timer();
-
         public SwitchPanel()
         {
             InitializeComponent();
+
             BackColor = Color.Transparent;
+            SetStyle(ControlStyles.SupportsTransparentBackColor, true);
             DoubleBuffered = true;
         }
 
-        Control currentTarget;
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public override Color BackColor { get; set; }
 
-        public async Task SwitchContent(Control newTarget)
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        protected override bool DoubleBuffered { get; set; }
+
+        Control currentTarget;
+        
+        public async Task SwitchContent(Control newTarget, bool animate = true)
         {
             var r = ClientRectangle;
 
-            var stepCount = 10;
-            var stepDelay = 10;
+            
+            if (currentTarget != null && animate) {
+                var stepCount = 10;
+                var stepDelay = 10;
+                SoundPalette.Play(SoundPalette.SoundType.Servo);
 
-            if (currentTarget != null) {
-                var player = new SoundPlayer(Sounds.panel_move);
-                player.Play();
+                currentTarget.Dock = DockStyle.None;
                 currentTarget.Width = r.Width;
                 currentTarget.Height = r.Height;
                 currentTarget.Left = r.Left;
                 currentTarget.Top = r.Top;
-                currentTarget.Dock = DockStyle.None;
                 for (int i = 0; i < stepCount; i++) {
                     currentTarget.Left = 0 - r.Width*i/stepCount;
                     await Task.Delay(stepDelay);
@@ -46,11 +52,11 @@ namespace ZeroKLobby.Controls
                 this.Controls.Remove(currentTarget);
                 this.Controls.Clear();
 
+                newTarget.Dock = DockStyle.None;
                 newTarget.Width = DisplayRectangle.Width;
                 newTarget.Height = DisplayRectangle.Height;
                 newTarget.Left = -r.Width;
                 newTarget.Top = 0;
-                newTarget.Dock = DockStyle.None;
                 this.Controls.Add(newTarget);
                 
                 for (int i = stepCount; i >=0; i--)
@@ -65,7 +71,6 @@ namespace ZeroKLobby.Controls
                 newTarget.Dock = DockStyle.Fill;
                 this.Controls.Add(newTarget);
                 currentTarget = newTarget;
-
             }
         }
 

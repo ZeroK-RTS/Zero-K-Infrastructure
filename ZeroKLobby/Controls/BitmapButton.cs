@@ -7,12 +7,10 @@ using System.Media;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
+using ZeroKLobby.Controls;
 
 namespace ZeroKLobby
 {
-    //]  Anarchid gradient is vertical 002c3d to 00688d with some transparency which seems fixed 
-//[17:32]  Anarchid ok opacity is 65% static 
-
     public class BitmapButton: Button
     {
 
@@ -22,14 +20,15 @@ namespace ZeroKLobby
             BackgroundImage = null;
             FlatStyle = FlatStyle.Flat;
             BackgroundImageLayout = ImageLayout.None;
-            ForeColor = Color.Transparent;
-            BackColor = Color.Transparent;
+            DoubleBuffered = true;
             FlatAppearance.BorderSize = 0;
             FlatAppearance.MouseDownBackColor = Color.Transparent;
             FlatAppearance.MouseOverBackColor = Color.Transparent;
-            DoubleBuffered = true;
-            ButtonStyle = ButtonRenderer.StyleType.DarkHive;
+            
             SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+
+            ButtonStyle = ButtonRenderer.StyleType.DarkHive;
+            SoundType = SoundPalette.SoundType.Click;
         }
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
@@ -40,9 +39,16 @@ namespace ZeroKLobby
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public override Image BackgroundImage { get; set; }
-        
-        
+
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        protected override bool DoubleBuffered { get; set; }
+
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]                    
+        public override Cursor Cursor { get; set; }
+
         public ButtonRenderer.StyleType ButtonStyle { get; set; }
+
+        public SoundPalette.SoundType SoundType { get; set; }
 
         bool mouseOver;
 
@@ -60,18 +66,11 @@ namespace ZeroKLobby
 
         protected override void OnMouseClick(MouseEventArgs e)
         {
-            //var sp = new SoundPlayer(Sounds.button_click);
-            //sp.Play();
+            SoundPalette.Play(SoundType);
             base.OnMouseClick(e);
         }
 
-        protected override void OnClick(EventArgs e)
-        {
-            
-            base.OnClick(e);
-        }
-
-
+      
         protected override void OnPaint(PaintEventArgs pevent)
         {
             BackgroundImage =  ButtonRenderer.Instance.GetImageWithCache(DisplayRectangle, ButtonStyle, mouseOver ? ButtonRenderer.StyleType.DarkHiveHover : (ButtonRenderer.StyleType?)null);

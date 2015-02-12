@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using NAudio.Wave;
+using ZkData;
 
 namespace ZeroKLobby
 {
@@ -20,9 +22,12 @@ namespace ZeroKLobby
         public WelcomeForm()
         {
             InitializeComponent();
+            //BackColor = Color.Transparent;
+            //SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+            //BackColor = Color.FromArgb(0, Color.Empty);
+            
             //BackgroundImage = null;
             //btnWindowed_Click(this, EventArgs.Empty);
-            popPanel.ButtonStyle = ButtonRenderer.StyleType.Shraka;
         }
 
         
@@ -83,6 +88,9 @@ namespace ZeroKLobby
 
         private void WelcomeForm_Load(object sender, EventArgs e)
         {
+            BackgroundImage = BgImages.bg_battle.GetResized(Width, Height, InterpolationMode.Default);
+            BackgroundImageLayout = ImageLayout.None;
+
             waveOut = new WaveOut();
             audioReader =  new Mp3FileReader(new MemoryStream(Sounds.menu_music_ROM));
             waveOut.Init(audioReader);
