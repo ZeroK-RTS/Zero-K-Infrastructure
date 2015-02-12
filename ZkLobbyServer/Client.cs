@@ -399,7 +399,9 @@ namespace ZkLobbyServer
         async Task Process(Register register)
         {
             var response = new RegisterResponse();
-            if (state.Clients.ContainsKey(register.Name))
+            if (!Utils.IsValidLobbyName(register.Name) || string.IsNullOrEmpty(register.PasswordHash)) {
+                response.ResultCode = RegisterResponse.Code.InvalidCharacters;
+            } else if (state.Clients.ContainsKey(register.Name))
             {
                 response.ResultCode = RegisterResponse.Code.AlreadyConnected;
             }
