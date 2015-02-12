@@ -16,16 +16,19 @@ namespace ZeroKWeb.Controllers
         public ActionResult Hook()
         {
             var eventType = Request.Headers["X-Github-Event"];
-            var signature = Request.Headers["X-Hub-Signature"];
+            var signature = Request.Headers["X-Hub-Signature"].Substring(5);
+
+
+            var ms = new MemoryStream();
+            Request.InputStream.CopyTo(ms);
+            byte[] data = ms.ToArray();
 
             var secretKey = new Secrets().GetGithubHookKey(new ZkDataContext());
-            var hash = new HMACSHA1(Encoding.UTF8.GetBytes(secretKey)).ComputeHash(Request.InputStream);
+            var hash = new HMACSHA1(Encoding.ASCII.GetBytes(secretKey)).ComputeHash(data);
+
             if (!string.Equals(hash.ToHex(), signature, StringComparison.InvariantCultureIgnoreCase)) return Content("Signature does not match");
-            Request.InputStream.Seek(0, SeekOrigin.Begin);
-
-            var content = new StreamReader(Request.InputStream).ReadToEnd();
-
-            dynamic payload = JObject.Parse(content);
+            
+            dynamic payload = JObject.Parse(Encoding.UTF8.GetString(data));
 
             string text = null;
 
