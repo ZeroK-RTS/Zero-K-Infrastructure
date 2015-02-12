@@ -35,7 +35,13 @@ namespace ZeroKLobby
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public override Color ForeColor { get; set; }
 
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public override Color BackColor { get; set; }
 
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public override Image BackgroundImage { get; set; }
+        
+        
         public ButtonRenderer.StyleType ButtonStyle { get; set; }
 
         bool mouseOver;
