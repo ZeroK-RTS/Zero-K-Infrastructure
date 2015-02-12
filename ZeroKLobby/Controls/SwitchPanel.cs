@@ -16,17 +16,16 @@ namespace ZeroKLobby.Controls
         public SwitchPanel()
         {
             InitializeComponent();
-
             BackColor = Color.Transparent;
             SetStyle(ControlStyles.SupportsTransparentBackColor, true);
             DoubleBuffered = true;
         }
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public override Color BackColor { get; set; }
+        public override Color BackColor { get { return base.BackColor; } set { base.BackColor = value; } }
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        protected override bool DoubleBuffered { get; set; }
+        protected override bool DoubleBuffered { get { return base.DoubleBuffered; } set { base.DoubleBuffered = value; } }
 
         Control currentTarget;
         

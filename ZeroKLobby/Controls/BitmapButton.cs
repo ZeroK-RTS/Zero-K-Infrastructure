@@ -16,6 +16,7 @@ namespace ZeroKLobby
 
         public BitmapButton() {
             BackColor = Color.Transparent;
+            ForeColor = Color.White;
             Cursor = Cursors.Hand;
             BackgroundImage = null;
             FlatStyle = FlatStyle.Flat;
@@ -32,19 +33,19 @@ namespace ZeroKLobby
         }
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public override Color ForeColor { get; set; }
+        public override Color ForeColor { get { return base.ForeColor; } set { base.ForeColor = value; }}
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public override Color BackColor { get; set; }
+        public override Color BackColor { get { return base.BackColor; } set { base.BackColor = value; } }
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public override Image BackgroundImage { get; set; }
+        public override Image BackgroundImage { get { return base.BackgroundImage; } set { base.BackgroundImage = value; } }
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        protected override bool DoubleBuffered { get; set; }
+        protected override bool DoubleBuffered { get { return base.DoubleBuffered; } set { base.DoubleBuffered = value; } }
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]                    
-        public override Cursor Cursor { get; set; }
+        public override Cursor Cursor { get { return base.Cursor; } set { base.Cursor = value; } }
 
         public ButtonRenderer.StyleType ButtonStyle { get; set; }
 

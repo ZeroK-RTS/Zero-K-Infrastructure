@@ -88,9 +88,6 @@ namespace ZeroKLobby
 
         private void WelcomeForm_Load(object sender, EventArgs e)
         {
-            BackgroundImage = BgImages.bg_battle.GetResized(Width, Height, InterpolationMode.Default);
-            BackgroundImageLayout = ImageLayout.None;
-
             waveOut = new WaveOut();
             audioReader =  new Mp3FileReader(new MemoryStream(Sounds.menu_music_ROM));
             waveOut.Init(audioReader);
