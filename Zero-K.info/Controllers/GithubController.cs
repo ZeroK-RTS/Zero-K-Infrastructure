@@ -7,7 +7,6 @@ namespace ZeroKWeb.Controllers
 {
     public class GithubController : Controller
     {
-        // GET: Github
         [HttpPost]
         public ActionResult Hook()
         {
