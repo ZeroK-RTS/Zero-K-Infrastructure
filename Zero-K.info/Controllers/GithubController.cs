@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web.Mvc;
@@ -19,7 +20,7 @@ namespace ZeroKWeb.Controllers
 
             var secretKey = new Secrets().GetGithubHookKey(new ZkDataContext());
             var hash = new HMACSHA1(Encoding.UTF8.GetBytes(secretKey)).ComputeHash(Request.InputStream);
-            if (!string.Equals(hash.ToHex(), signature)) return Content("Signature does not match");
+            if (!string.Equals(hash.ToHex(), signature, StringComparison.InvariantCultureIgnoreCase)) return Content("Signature does not match");
             Request.InputStream.Seek(0, SeekOrigin.Begin);
 
             var content = new StreamReader(Request.InputStream).ReadToEnd();
