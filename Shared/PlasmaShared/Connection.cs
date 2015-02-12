@@ -89,18 +89,17 @@ namespace ZkData
             cancellationTokenSource = new CancellationTokenSource();
 
             var token = cancellationTokenSource.Token;
-
-            if (existingTcp == null) {
-                if (bindingIp == null) tcp = new TcpClient();
-                else tcp = new TcpClient(new IPEndPoint(IPAddress.Parse(bindingIp), 0));
-            } else tcp = existingTcp;
-
-            token.Register(() => tcp.Close());
-
-
             try
             {
-                if (existingTcp == null) await tcp.ConnectAsync(host, port.Value);
+                token.Register(() => tcp.Close());
+                
+                if (existingTcp == null) {
+                    if (bindingIp == null) tcp = new TcpClient();
+                    else tcp = new TcpClient(new IPEndPoint(IPAddress.Parse(bindingIp), 0));
+                } else tcp = existingTcp;
+
+
+                if (existingTcp == null) await tcp.ConnectAsync(host, port.Value).WithCancellation(token);
                 stream = tcp.GetStream();
                 reader = new StreamReader(stream, Encoding);
                 IsConnected = true;
@@ -109,17 +108,17 @@ namespace ZkData
                 RemoteEndpointPort = ((IPEndPoint)tcp.Client.RemoteEndPoint).Port;
 
                 try {
-                    await OnConnected();
+                    await OnConnected().WithCancellation(token);
                 } catch (Exception ex) {
                     Trace.TraceError("{0} error processing OnConnected: {1}",this,ex);
                 }
 
                 while (!token.IsCancellationRequested)
                 {
-                    var line = await reader.ReadLineAsync();
+                    var line = await reader.ReadLineAsync().WithCancellation(token);
                     if (line == null) break; // disconnected cleanly
                     Input(this, line);
-                    await OnLineReceived(line);
+                    await OnLineReceived(line).WithCancellation(token);
                 }
             }
             catch (Exception ex)

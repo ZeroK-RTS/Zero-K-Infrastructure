@@ -672,6 +672,42 @@ namespace ZkData
         }
 
 
+        public static async Task<T> WithCancellation<T>(this Task<T> task, CancellationToken cancellationToken)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            using (cancellationToken.Register(s => ((TaskCompletionSource<bool>)s).TrySetResult(true), tcs))
+            {
+                if (task != await Task.WhenAny(task, tcs.Task))
+                {
+                    throw new OperationCanceledException(cancellationToken);
+                }
+            }
+            return task.Result;
+        }
+
+        public static async Task WithCancellation(this Task task, CancellationToken cancellationToken)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            using (cancellationToken.Register(s => ((TaskCompletionSource<bool>)s).TrySetResult(true), tcs))
+            {
+                if (task != await Task.WhenAny(task, tcs.Task))
+                {
+                    throw new OperationCanceledException(cancellationToken);
+                }
+            }
+        }
+
+
+        public static async Task<T> TimeoutAfter<T>(this Task<T> task, TimeSpan timeout)
+        {
+            if (task != await Task.WhenAny(task, Task.Delay(timeout)))
+            {
+                throw new TimeoutException();
+            }
+
+            return task.Result; // Task is guaranteed completed (WhenAny), so this won't block
+        }
+
 
         public static IEnumerable<Type> GetAllTypesWithAttribute<T>()
         {
