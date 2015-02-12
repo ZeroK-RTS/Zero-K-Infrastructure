@@ -52,6 +52,11 @@ namespace ZkLobbyServer
 
                 db.SaveChanges();
 
+
+                var banMute = Punishment.GetActivePunishment(acc.AccountID, ip, userID, x => x.BanMute, db);
+                if (banMute != null) user.BanMute = true;
+                
+
                 Punishment banPenalty = Punishment.GetActivePunishment(acc.AccountID, ip, userID, x => x.BanLobby, db);
 
                 if (banPenalty != null) {
