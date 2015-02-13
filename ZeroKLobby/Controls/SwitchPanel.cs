@@ -28,12 +28,26 @@ namespace ZeroKLobby.Controls
         protected override bool DoubleBuffered { get { return base.DoubleBuffered; } set { base.DoubleBuffered = value; } }
 
         Control currentTarget;
-        
+
+
+        private void SlideLeft(Control c, Rectangle r, double percent)
+        {
+            c.Left = (int)Math.Round(-r.Width * percent); 
+        }
+
+        private void SlideBottom(Control c, Rectangle r, double percent)
+        {
+            c.Top = (int)Math.Round(r.Height * percent); 
+        }
+
+
         public async Task SwitchContent(Control newTarget, bool animate = true)
         {
             var r = ClientRectangle;
 
-            
+
+            Action<Control, Rectangle, double> animator = SlideBottom;
+
             if (currentTarget != null && animate) {
                 var stepCount = 10;
                 var stepDelay = 10;
@@ -45,7 +59,7 @@ namespace ZeroKLobby.Controls
                 currentTarget.Left = r.Left;
                 currentTarget.Top = r.Top;
                 for (int i = 0; i < stepCount; i++) {
-                    currentTarget.Left = 0 - r.Width*i/stepCount;
+                    animator(currentTarget, r, (double)i/stepCount);
                     await Task.Delay(stepDelay);
                 }
                 this.Controls.Remove(currentTarget);
@@ -54,13 +68,11 @@ namespace ZeroKLobby.Controls
                 newTarget.Dock = DockStyle.None;
                 newTarget.Width = DisplayRectangle.Width;
                 newTarget.Height = DisplayRectangle.Height;
-                newTarget.Left = -r.Width;
-                newTarget.Top = 0;
                 this.Controls.Add(newTarget);
                 
                 for (int i = stepCount; i >=0; i--)
                 {
-                    newTarget.Left = 0 - r.Width * i / stepCount;
+                    animator(newTarget, r, (double)i/stepCount);
                     await Task.Delay(stepDelay);
                 }
 
