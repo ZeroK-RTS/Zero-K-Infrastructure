@@ -133,6 +133,7 @@
     <Compile Include="Controllers\CampaignController.cs" />
     <Compile Include="Controllers\FactionsController.cs" />
     <Compile Include="Controllers\ContributionsController.cs" />
+    <Compile Include="Controllers\GithubController.cs" />
     <Compile Include="Controllers\LobbyController.cs" />
     <Compile Include="Controllers\ReplaysController.cs" />
     <Compile Include="Controllers\UnitStatsController.cs" />
@@ -1435,6 +1436,7 @@
   <ItemGroup>
     <Folder Include="Img\news\" />
     <Folder Include="Resources\" />
+    <Folder Include="Views\Github\" />
     <Folder Include="Views\LobbyService\" />
   </ItemGroup>
   <ItemGroup>

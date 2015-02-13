@@ -64,6 +64,16 @@
     <Compile Include="BotBattleStatus.cs" />
     <Compile Include="CountryNames.cs" />
     <Compile Include="Crc.cs" />
+    <Compile Include="Legacy\Battle.cs" />
+    <Compile Include="Legacy\BattleDetails.cs" />
+    <Compile Include="Legacy\BattleRect.cs" />
+    <Compile Include="Legacy\BotBattleStatus.cs" />
+    <Compile Include="Legacy\Channel.cs" />
+    <Compile Include="Legacy\SayingEventArgs.cs" />
+    <Compile Include="Legacy\TasClient.cs" />
+    <Compile Include="Legacy\TasClient_structures.cs" />
+    <Compile Include="Legacy\User.cs" />
+    <Compile Include="Legacy\UserBattleStatus.cs" />
     <Compile Include="ProtocolExtension.cs" />
     <Compile Include="Protocol\CommandJsonSerializer.cs" />
     <Compile Include="Protocol\Messages.cs" />
@@ -114,8 +124,6 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Legacy\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>

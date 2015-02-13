@@ -135,6 +135,7 @@
       <DependentUpon>PromptForm.cs</DependentUpon>
     </Compile>
     <Compile Include="MicroForms\UnitSyncRetryPrompt.cs" />
+    <Compile Include="MicroLobby\ExtrasTab\TableReader.cs" />
     <Compile Include="MicroLobby\ExtrasTab\SkirmishControlTool.cs" />
     <Compile Include="MicroForms\UnitSyncUploadPrompt.cs" />
     <Compile Include="MicroLobby\HexToUnicodeConverter.cs">

@@ -13,12 +13,12 @@ namespace NightWatch
     public class ChatRelay
     {
         TasClient zkTas;
-        TasClient springTas;
+        LobbyClient.Legacy.TasClient springTas;
         List<string> channels;
 
         public ChatRelay(TasClient zkTas, string password, List<string> channels)
         {
-            this.springTas = new TasClient("ChatRelay");
+            this.springTas = new LobbyClient.Legacy.TasClient(null, "ChatRelay", 0);
             this.channels = channels;
             this.zkTas = zkTas;
             springTas.LoginAccepted += OnLoginAccepted;
@@ -26,7 +26,23 @@ namespace NightWatch
             springTas.Said += OnSaid;
             zkTas.Said += OnSaid;
 
-            // HACK disable relay SetupSpringTasConnection(password);
+            SetupSpringTasConnection(password);
+        }
+
+        void OnSaid(object sender, LobbyClient.Legacy.TasSayEventArgs args)
+        {
+            var tas = (LobbyClient.Legacy.TasClient)sender;
+            if (args.Place == LobbyClient.Legacy.TasSayEventArgs.Places.Channel && channels.Contains(args.Channel) && args.UserName != tas.UserName)
+            {
+                var otherTas = zkTas;
+                otherTas.Say(SayPlace.Channel, args.Channel, string.Format("<{0}> {1}", args.UserName, args.Text), args.IsEmote);
+            }
+        }
+
+        void OnLoginAccepted(object sender, LobbyClient.Legacy.TasEventArgs e)
+        {
+            var tas = (LobbyClient.Legacy.TasClient)sender;
+            foreach (var chan in channels) if (!tas.JoinedChannels.ContainsKey(chan)) tas.JoinChannel(chan);
         }
 
         void SetupSpringTasConnection(string password)
@@ -42,10 +58,9 @@ namespace NightWatch
         void OnSaid(object sender, TasSayEventArgs args)
         {
             var tas = (TasClient)sender;
-            if (args.Place == SayPlace.Channel && channels.Contains(args.Channel) && args.UserName != tas.UserName)
-            {
-                var otherTas = tas == zkTas ? springTas : zkTas;
-                otherTas.Say(SayPlace.Channel, args.Channel, string.Format("<{0}> {1}", args.UserName, args.Text), args.IsEmote);
+            if (args.Place == SayPlace.Channel && channels.Contains(args.Channel) && args.UserName != tas.UserName) {
+                var otherTas = springTas;
+                otherTas.Say(LobbyClient.Legacy.TasClient.SayPlace.Channel, args.Channel, string.Format("<{0}> {1}", args.UserName, args.Text), args.IsEmote);
             }
         }
 

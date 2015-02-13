@@ -179,8 +179,7 @@ namespace ZkLobbyServer
         async Task Process(Login login)
         {
             var response = await Task.Run(() => state.LoginChecker.Login(User, login, this));
-            if (response.ResultCode == LoginResponse.Code.Ok)
-            {
+            if (response.ResultCode == LoginResponse.Code.Ok) {
                 //ClearMyLastKnownStateForOtherClients();
 
                 Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
@@ -188,17 +187,13 @@ namespace ZkLobbyServer
                 await SendCommand(response); // login accepted
 
 
-                foreach (var b in state.Battles.Values)
-                {
-                    if (b != null)
-                    {
+                foreach (var b in state.Battles.Values) {
+                    if (b != null) {
                         await SynchronizeUsersToMe(b.Founder.Name);
                         await
-                            SendCommand(new BattleAdded()
-                            {
+                            SendCommand(new BattleAdded() {
                                 Header =
-                                    new BattleHeader()
-                                    {
+                                    new BattleHeader() {
                                         BattleID = b.BattleID,
                                         Engine = b.EngineVersion,
                                         Game = b.ModName,
@@ -213,15 +208,18 @@ namespace ZkLobbyServer
                                     }
                             });
 
-                        foreach (var u in b.Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList())
-                        {
+                        foreach (var u in b.Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) {
                             await SynchronizeUsersToMe(u.Name);
                             await SendCommand(new JoinedBattle() { BattleID = b.BattleID, User = u.Name });
                         }
                     }
                 }
+            } else {
+                await SendCommand(response);
+                if (response.ResultCode == LoginResponse.Code.Banned) RequestClose();
             }
-            else await SendCommand(response);
+
+            
         }
 
 
@@ -399,7 +397,9 @@ namespace ZkLobbyServer
         async Task Process(Register register)
         {
             var response = new RegisterResponse();
-            if (state.Clients.ContainsKey(register.Name))
+            if (!Utils.IsValidLobbyName(register.Name) || string.IsNullOrEmpty(register.PasswordHash)) {
+                response.ResultCode = RegisterResponse.Code.InvalidCharacters;
+            } else if (state.Clients.ContainsKey(register.Name))
             {
                 response.ResultCode = RegisterResponse.Code.AlreadyConnected;
             }
@@ -619,8 +619,9 @@ namespace ZkLobbyServer
                 MyBattle = battle;
                 await Broadcast(state.Clients.Values, new JoinedBattle() { BattleID = battle.BattleID, User = Name }, Name);
                 await RecalcSpectators(battle);
-
-                foreach (var u in battle.Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) await SendCommand(u);
+                await Broadcast(battle.Users.Keys.Where(x=>x!=Name), battle.Users[Name].ToUpdateBattleStatus(), Name);// send my UBS to others in battle
+                
+                foreach (var u in battle.Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) await SendCommand(u); // send other's status to self
                 foreach (var u in battle.Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList()) await SendCommand(u);
                 foreach (var u in battle.Rectangles) await SendCommand(new SetRectangle() { Number = u.Key, Rectangle = u.Value });
                 await SendCommand(new SetModOptions() { Options = battle.ModOptions });
