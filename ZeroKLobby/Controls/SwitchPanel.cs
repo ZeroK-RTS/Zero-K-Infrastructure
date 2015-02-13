@@ -29,6 +29,11 @@ namespace ZeroKLobby.Controls
 
         Control currentTarget;
 
+        public enum AnimType
+        {
+            SlideLeft = 1,
+            SlideBottom  =2
+        }
 
         private void SlideLeft(Control c, Rectangle r, double percent)
         {
@@ -41,14 +46,13 @@ namespace ZeroKLobby.Controls
         }
 
 
-        public async Task SwitchContent(Control newTarget, bool animate = true)
+        public async Task SwitchContent(Control newTarget, AnimType? animation = null)
         {
             var r = ClientRectangle;
 
+            var animator = GetAnimator(animation);
 
-            Action<Control, Rectangle, double> animator = SlideBottom;
-
-            if (currentTarget != null && animate) {
+            if (currentTarget != null && animator != null) {
                 var stepCount = 10;
                 var stepDelay = 10;
                 SoundPalette.Play(SoundPalette.SoundType.Servo);
@@ -83,6 +87,14 @@ namespace ZeroKLobby.Controls
                 this.Controls.Add(newTarget);
                 currentTarget = newTarget;
             }
+        }
+
+        Action<Control, Rectangle, double> GetAnimator(AnimType? animation)
+        {
+            Action<Control, Rectangle, double> animator = null;
+            if (animation == AnimType.SlideLeft) animator = SlideLeft;
+            else if (animation == AnimType.SlideBottom) animator = SlideBottom;
+            return animator;
         }
 
         protected override void OnPaint(PaintEventArgs pe)
