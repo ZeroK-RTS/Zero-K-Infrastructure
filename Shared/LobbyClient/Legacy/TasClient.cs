@@ -18,11 +18,12 @@ using ZkData;
 
 namespace LobbyClient.Legacy
 {
-    [Obsolete]
-    public class TasClient:Connection
+    public class TasClient
     {
         public const int MaxAlliances = 16;
         public const int MaxTeams = 16;
+
+        public ProtocolExtension Extensions { get; private set; }
 
         public delegate void Invoker();
 
@@ -39,6 +40,7 @@ namespace LobbyClient.Legacy
         StringBuilder agreementText;
 
         readonly string appName = "UnknownClient";
+        ServerConnection con;
         Dictionary<int, Battle> existingBattles = new Dictionary<int, Battle>();
         Dictionary<string, ExistingChannel> existingChannels = new Dictionary<string, ExistingChannel>();
         Dictionary<string, User> existingUsers = new Dictionary<string, User>();
@@ -78,41 +80,7 @@ namespace LobbyClient.Legacy
 
         public Dictionary<string, User> ExistingUsers { get { return existingUsers; } set { existingUsers = value; } }
 
-        
-        public override async Task OnConnected()
-        {
-            MyBattle = null;
-            MyBattleID = 0;
-            ConnectionFailed = false;
-            ExistingUsers = new Dictionary<string, User>();
-            existingChannels = new Dictionary<string, ExistingChannel>();
-            joinedChannels = new Dictionary<string, Channel>();
-            existingBattles = new Dictionary<int, Battle>();
-            isChanScanning = false;
-            isLoggedIn = false;
-            username = "";
-
-        }
-
-        public override async Task OnConnectionClosed(bool wasRequested)
-        {
-            ConnectionFailed = !wasRequested;
-            if (ConnectionLost != null) ConnectionLost(this, new TasEventArgs()); 
-        }
-
-        public override async Task OnLineReceived(string line)
-        {
-            var obj = CommandJsonSerializer.DeserializeLine(line);
-            await ProcessCommand(obj);
-        }
-
-        public async Task SendCommand<T>(T data)
-        {
-            var line = CommandJsonSerializer.SerializeToLine(data);
-            await SendData(Encoding.GetBytes(line));
-        }
-
-        static CommandJsonSerializer CommandJsonSerializer = new CommandJsonSerializer();
+        public bool IsConnected { get { return con != null && con.IsConnected; } }
 
         public bool IsLoggedIn { get { return isLoggedIn; } }
 
@@ -190,7 +158,7 @@ namespace LobbyClient.Legacy
         public event EventHandler<TasEventArgs> ChannelUserAdded = delegate { };
         public event EventHandler<TasEventArgs> ChannelUserRemoved = delegate { };
         public event EventHandler<TasEventArgs> ChannelUsersAdded = delegate { }; // raised after a group of clients is recieved in a batch
-        public event EventHandler<Welcome> Connected = delegate { };
+        public event EventHandler<TasEventArgs> Connected = delegate { };
         public event EventHandler<TasEventArgs> ConnectionLost = delegate { };
         public event EventHandler<TasEventArgs> Failure = delegate { }; //this event is fired whenever any failure events fire
         public event EventHandler<CancelEventArgs<string>> FilterBattleByMod;
@@ -234,6 +202,10 @@ namespace LobbyClient.Legacy
             this.appName = appName;
             this.guiThreadInvoker = guiThreadInvoker;
 
+            con = new ServerConnection();
+            con.ConnectionClosed += OnConnectionClosed;
+            con.CommandRecieved += OnCommandRecieved;
+            con.CommandSent += (s, e) => Output(this, e);
 
             if (!string.IsNullOrEmpty(ipOverride))
             {
@@ -255,7 +227,6 @@ namespace LobbyClient.Legacy
                 }
             }
 
-            
             pingTimer = new Timer(pingInterval*1000) { AutoReset = true };
             pingTimer.Elapsed += OnPingTimer;
             pingTimer.Start();
@@ -278,6 +249,10 @@ namespace LobbyClient.Legacy
             BattleOpenFailed += RaiseFailure;
         }
 
+        public void AcceptAgreement()
+        {
+            con.SendCommand("CONFIRMAGREEMENT");
+        }
 
         public void AddBattleRectangle(int allyno, BattleRect rect)
         {
@@ -286,7 +261,7 @@ namespace LobbyClient.Legacy
                 {
                     RemoveBattleRectangle(allyno);
                     MyBattle.Rectangles.Add(allyno, rect);
-//                    con.SendCommand("ADDSTARTRECT", allyno, rect.Left, rect.Top, rect.Right, rect.Bottom);
+                    con.SendCommand("ADDSTARTRECT", allyno, rect.Left, rect.Top, rect.Right, rect.Bottom);
                 }
             }
         }
@@ -294,7 +269,7 @@ namespace LobbyClient.Legacy
         public void AddBot(string name, UserBattleStatus status, int teamColor, string aiDll)
         {
             if (name.Contains(" ")) throw new TasClientException("Bot name must not contain spaces. " + name);
-            //con.SendCommand("ADDBOT", name, status.ToInt(), teamColor, aiDll);
+            con.SendCommand("ADDBOT", name, status.ToInt(), teamColor, aiDll);
         }
 
         public void ChangeLock(bool lck)
@@ -349,7 +324,7 @@ namespace LobbyClient.Legacy
             if (isInGame != null) u.IsInGame = isInGame.Value;
             if (MyUser == null || lastUserStatus != u.ToInt())
             {
-                //con.SendCommand("MYSTATUS", u.ToInt());
+                con.SendCommand("MYSTATUS", u.ToInt());
                 lastUserStatus = u.ToInt();
             }
         }
@@ -359,7 +334,18 @@ namespace LobbyClient.Legacy
         {
             serverHost = host;
             serverPort = port;
-            Connect(host, port, forcedLocalIP ? localIp : null);
+            MyBattle = null;
+            MyBattleID = 0;
+            ConnectionFailed = false;
+            ExistingUsers = new Dictionary<string, User>();
+            existingChannels = new Dictionary<string, ExistingChannel>();
+            joinedChannels = new Dictionary<string, Channel>();
+            existingBattles = new Dictionary<int, Battle>();
+            isChanScanning = false;
+            isLoggedIn = false;
+            username = "";
+            if (con.IsConnected) con.RequestClose();
+            con.Connect(host, port, forcedLocalIP ? localIp : null);
         }
 
         public static DateTime ConvertMilisecondTime(string arg)
@@ -367,10 +353,22 @@ namespace LobbyClient.Legacy
             return (new DateTime(1970, 1, 1, 0, 0, 0)).AddMilliseconds(double.Parse(arg, System.Globalization.CultureInfo.InvariantCulture));
         }
 
+        public void DisableUnits(params string[] units)
+        {
+            {
+                var temp = new List<string>(units);
+                foreach (var s in temp) if (!MyBattle.DisabledUnits.Contains(s)) MyBattle.DisabledUnits.Add(s);
+                if (MyBattle.DisabledUnits.Count > 0)
+                {
+                    con.SendCommand("DISABLEUNITS", MyBattle.DisabledUnits.ToArray());
+                    BattleDisabledUnitsChanged(this, new TasEventArgs(MyBattle.DisabledUnits.ToArray()));
+                }
+            }
+        }
 
         public void RequestDisconnect()
         {
-            RequestClose();
+            con.RequestClose();
         }
 
         void OnDisconnected()
@@ -388,25 +386,31 @@ namespace LobbyClient.Legacy
             else ConnectionLost(this, new TasEventArgs("Connection was closed"));
         }
 
+        public void EnableAllUnits()
+        {
+            MyBattle.DisabledUnits.Clear();
+            con.SendCommand("ENABLEALLUNITS");
+            BattleDisabledUnitsChanged(this, new TasEventArgs(MyBattle.DisabledUnits.ToArray()));
+        }
 
         public void ForceAlly(string username, int ally)
         {
-            //con.SendCommand("FORCEALLYNO", username, ally);
+            con.SendCommand("FORCEALLYNO", username, ally);
         }
 
         public void ForceColor(string username, int color)
         {
-            //con.SendCommand("FORCETEAMCOLOR", username, color);
+            con.SendCommand("FORCETEAMCOLOR", username, color);
         }
 
         public void ForceSpectator(string username)
         {
-            //con.SendCommand("FORCESPECTATORMODE", username);
+            con.SendCommand("FORCESPECTATORMODE", username);
         }
 
         public void ForceTeam(string username, int team)
         {
-            //con.SendCommand("FORCETEAMNO", username, team);
+            con.SendCommand("FORCETEAMNO", username, team);
         }
 
         public void GameSaid(string username, string text)
@@ -434,24 +438,29 @@ namespace LobbyClient.Legacy
         public void JoinBattle(int battleID, string password = "*")
         {
             if (string.IsNullOrEmpty(password)) password = "*";
-            //con.SendCommand("JOINBATTLE", battleID, password, random.Next());
+            con.SendCommand("JOINBATTLE", battleID, password, random.Next());
         }
 
 
         public void JoinChannel(string channelName, string key=null)
         {
-            //if (!String.IsNullOrEmpty(key)) con.SendCommand("JOIN", channelName, key);
-            //else con.SendCommand("JOIN", channelName);
+            if (con == null) 
+            {
+                System.Diagnostics.Trace.TraceError("ERROR TasClient/JoinChannel: No server connection yet");
+                return;
+            }
+            if (!String.IsNullOrEmpty(key)) con.SendCommand("JOIN", channelName, key);
+            else con.SendCommand("JOIN", channelName);
         }
 
         public void Kick(string username)
         {
-            //con.SendCommand("KICKFROMBATTLE", username);
+            con.SendCommand("KICKFROMBATTLE", username);
         }
 
         public void AdminKickFromLobby(string username,string reason)
         {
-            //con.SendCommand("KICKUSER", username,reason);
+            con.SendCommand("KICKUSER", username,reason);
         }
 
         public void AdminSetTopic(string channel, string topic) {
@@ -466,12 +475,31 @@ namespace LobbyClient.Legacy
             }
         }
 
+        public void AdminBan(string username, double duration, string reason)
+        {
+            con.SendCommand("BAN", username, duration, reason);
+        }
+
+        public void AdminUnban(string username)
+        {
+            con.SendCommand("UNBAN", username);
+        }
+
+        public void AdminBanIP(string ip, double duration, string reason)
+        {
+            con.SendCommand("BANIP", ip, duration, reason);
+        }
+
+        public void AdminUnbanIP(string ip)
+        {
+            con.SendCommand("UNBANIP", ip);
+        }
 
         public void LeaveBattle()
         {
             if (MyBattle != null)
             {
-                //con.SendCommand("LEAVEBATTLE");
+                con.SendCommand("LEAVEBATTLE");
                 var bat = MyBattle;
                 bat.ScriptTags.Clear();
                 MyBattle = null;
@@ -486,11 +514,17 @@ namespace LobbyClient.Legacy
             var args = new CancelEventArgs<string>(channelName);
             ChannelLeaving(this, args);
             if (args.Cancel) return;
-            //con.SendCommand("LEAVE", channelName);
+            con.SendCommand("LEAVE", channelName);
             JoinedChannels.Remove(channelName);
             ChannelLeft(this, new TasEventArgs(channelName));
         }
 
+        public void ListChannels()
+        {
+            isChanScanning = true;
+            ExistingChannels.Clear();
+            con.SendCommand("CHANNELS");
+        }
 
         public static string GetMyUserID() {
             var nics = NetworkInterface.GetAllNetworkInterfaces().Where(x=> !String.IsNullOrWhiteSpace(x.GetPhysicalAddress().ToString())
@@ -506,10 +540,13 @@ namespace LobbyClient.Legacy
         }
 
 
-        public Task Login(string userName, string password)
+        public void Login(string userName, string password)
         {
+            if (con == null) throw new TasClientException("Not connected");
+
             UserPassword = password;
-            return SendCommand(new Login() { Name = userName, PasswordHash = Utils.HashLobbyPassword(password) });
+
+            con.SendCommand("LOGIN", userName, Utils.HashLobbyPassword(password), cpu, localIp, appName, "\t" + GetMyUserID(), "\ta sp m cl p");
         }
 
 
@@ -547,12 +584,12 @@ namespace LobbyClient.Legacy
             mapChecksumToChangeTo = MyBattle.MapHash ?? 0;
             lockToChangeTo = false;
 
-            //con.SendCommand("OPENBATTLE", objList.ToArray());
+            con.SendCommand("OPENBATTLE", objList.ToArray());
 
             lastSpectatorCount = 0;
 
             // send predefined starting rectangles
-            //foreach (var v in MyBattle.Rectangles) con.SendCommand("ADDSTARTRECT", v.Key, v.Value.Left, v.Value.Top, v.Value.Right, v.Value.Bottom);
+            foreach (var v in MyBattle.Rectangles) con.SendCommand("ADDSTARTRECT", v.Key, v.Value.Left, v.Value.Top, v.Value.Right, v.Value.Bottom);
         }
 
 
@@ -560,7 +597,7 @@ namespace LobbyClient.Legacy
 
         public void Register(string username, string password)
         {
-            //con.SendCommand("REGISTER", username, Utils.HashLobbyPassword(password));
+            con.SendCommand("REGISTER", username, Utils.HashLobbyPassword(password));
         }
 
         public void RemoveBattleRectangle(int allyno)
@@ -568,24 +605,24 @@ namespace LobbyClient.Legacy
             if (MyBattle.Rectangles.ContainsKey(allyno))
             {
                 MyBattle.Rectangles.Remove(allyno);
-                //con.SendCommand("REMOVESTARTRECT", allyno);
+                con.SendCommand("REMOVESTARTRECT", allyno);
             }
         }
 
         public void RemoveBot(string name)
         {
-            //con.SendCommand("REMOVEBOT", name);
+            con.SendCommand("REMOVEBOT", name);
         }
 
 
         public void RenameAccount(string newName)
         {
-            //con.SendCommand("RENAMEACCOUNT", newName);
+            con.SendCommand("RENAMEACCOUNT", newName);
         }
 
         public void Ring(string username)
         {
-            //con.SendCommand("RING", username);
+            con.SendCommand("RING", username);
         }
 
 
@@ -599,16 +636,16 @@ namespace LobbyClient.Legacy
             Battle battle;
             existingUsers.TryGetValue(name, out user);
             existingBattles.TryGetValue(battleID, out battle);
-            //if (user != null && battle != null) con.SendCommand("FORCEJOINBATTLE", name, battleID, password);
+            if (user != null && battle != null) con.SendCommand("FORCEJOINBATTLE", name, battleID, password);
         }
 
         public void ForceJoinChannel(string user, string channel, string password= null) {
-//            con.SendCommand(string.Format("FORCEJOIN {0} {1} {2}", user, channel, password));
+            con.SendCommand(string.Format("FORCEJOIN {0} {1} {2}", user, channel, password));
         }
 
         public void ForceLeaveChannel(string user, string channel, string reason = null)
         {
-//            con.SendCommand(string.Format("FORCELEAVECHANNEL {0} {1} {2}", channel, user, reason));
+            con.SendCommand(string.Format("FORCELEAVECHANNEL {0} {1} {2}", channel, user, reason));
         }
 
 
@@ -634,7 +671,7 @@ namespace LobbyClient.Legacy
                 var args = new SayingEventArgs(place, channel, sentText, isEmote);
                 Saying(this, args);
                 if (args.Cancel) continue;
-                /*
+
                 switch (place)
                 {
                     case SayPlace.Channel:
@@ -655,37 +692,51 @@ namespace LobbyClient.Legacy
                         if (args.IsEmote) await con.SendCommand("SAYBATTLEPRIVATEEX", channel, args.Text);
                         else await con.SendCommand("SAYBATTLEPRIVATE", channel, args.Text);
                         break;
-                }*/
+                }
             }
         }
 
 
         public void SendMyBattleStatus(UserBattleStatus status)
         {
-            //con.SendCommand("MYBATTLESTATUS", status.ToInt(), status.TeamColor);
+            con.SendCommand("MYBATTLESTATUS", status.ToInt(), status.TeamColor);
         }
 
         public void SendMyBattleStatus(int battleStatus, int color)
         {
-            //con.SendCommand("MYBATTLESTATUS", battleStatus, color);
+            con.SendCommand("MYBATTLESTATUS", battleStatus, color);
         }
 
         public void SendRaw(string text)
         {
-            //con.SendCommand("", text);
+            con.SendCommand("", text);
         }
 
         public void SetHideCountry(string name, bool state) {
-            //con.SendCommand("HIDECOUNTRYSET", name, state ? "1" : "0");
+            con.SendCommand("HIDECOUNTRYSET", name, state ? "1" : "0");
         }
 
         public void SetScriptTag(string data)
         {
-            //con.SendCommand("SETSCRIPTTAGS", data);
+            con.SendCommand("SETSCRIPTTAGS", data);
         }
 
         public void SetBotMode(string name, bool botMode) {
-            //con.SendCommand("SETBOTMODE",name, botMode?"1":"0");
+            con.SendCommand("SETBOTMODE",name, botMode?"1":"0");
+        }
+
+        public void RequestLobbyVersion(string name) {
+            con.SendCommand("GETLOBBYVERSION", name); 
+        }
+
+
+        public void RequestUserIP(string name) {
+            con.SendCommand("GETIP",name);
+        }
+
+        public void RequestUserID(string name)
+        {
+            con.SendCommand("GETUSERID", name);
         }
 
 
@@ -706,12 +757,18 @@ namespace LobbyClient.Legacy
         public void UpdateBattleDetails(BattleDetails bd)
         {
             var objList = new List<object>();
-            //con.SendCommand("SETSCRIPTTAGS", bd.GetParamList());
+            con.SendCommand("SETSCRIPTTAGS", bd.GetParamList());
         }
 
         public void UpdateBot(string name, UserBattleStatus battleStatus, int teamColor)
         {
-            //con.SendCommand("UPDATEBOT", name, battleStatus.ToInt(), teamColor);
+            con.SendCommand("UPDATEBOT", name, battleStatus.ToInt(), teamColor);
+        }
+
+        void DispatchServerCommand(string command, string[] args)
+        {
+            if (guiThreadInvoker != null) guiThreadInvoker(() => DispatchServerCommandOnGuiThread(command, args));
+            else DispatchServerCommandOnGuiThread(command, args);
         }
 
         // FIXME: ugh
@@ -765,19 +822,8 @@ namespace LobbyClient.Legacy
         /// </summary>
         /// <param Name="command">command Name</param>
         /// <param Name="args">command arguments</param>
-        async Task ProcessCommand(object obj)
+        void DispatchServerCommandOnGuiThread(string command, string[] args)
         {
-            string command = "";
-            string[] args = new string[]{};
-
-            if (obj != null) {
-                if (obj is Welcome) {
-                    var welcome = obj as Welcome;
-                    OnTasServer(welcome);
-                }
-
-            }
-
             // is this really needed for the whole thread? it screws with date formatting
             // Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             try
@@ -793,6 +839,9 @@ namespace LobbyClient.Legacy
 
                 switch (command)
                 {
+                    case "TASServer": // happens after connecting to server
+                        OnTasServer(args);
+                        break;
 
                     case "ACCEPTED": // Login accepted
                         OnAccepted(args);
@@ -1029,6 +1078,10 @@ namespace LobbyClient.Legacy
 
                     case "AGREEMENT":
                         OnAgreement(args);
+                        break;
+
+                    case "PONG":
+                        lastPong = DateTime.UtcNow;
                         break;
 
                     case "AGREEMENTEND":
@@ -1485,13 +1538,12 @@ namespace LobbyClient.Legacy
             if (LoginAccepted != null) LoginAccepted(this, new TasEventArgs());
         }
 
-        public Welcome ServerWelcome = new Welcome();
-
-
-        void OnTasServer(Welcome welcome)
+        void OnTasServer(string[] args)
         {
-            ServerWelcome = welcome;
-            Connected(this, welcome);
+            serverVersion = args[0];
+            int.TryParse(args[2], out serverUdpHolePunchingPort);
+            ServerSpringVersion = args[1];
+            Connected(this, new TasEventArgs());
         }
 
         void InvokeSaid(TasSayEventArgs sayArgs)
@@ -1533,7 +1585,7 @@ namespace LobbyClient.Legacy
         {
             {
                 lockToChangeTo = lck;
-                //con.SendCommand("UPDATEBATTLEINFO", MyBattle.Users.Count(user => user.IsSpectator), (lck ? 1 : 0), checksum, mapname);
+                con.SendCommand("UPDATEBATTLEINFO", MyBattle.Users.Count(user => user.IsSpectator), (lck ? 1 : 0), checksum, mapname);
             }
         }
 
@@ -1545,15 +1597,28 @@ namespace LobbyClient.Legacy
                 if (n != lastSpectatorCount)
                 {
                     lastSpectatorCount = n;
-                    //con.SendCommand("UPDATEBATTLEINFO", n, lockToChangeTo ? 1 : 0, mapChecksumToChangeTo,  mapToChangeTo);
+                    con.SendCommand("UPDATEBATTLEINFO", n, lockToChangeTo ? 1 : 0, mapChecksumToChangeTo,  mapToChangeTo);
                 }
             }
         }
 
+        void OnCommandRecieved(object sender, ConnectionEventArgs args)
+        {
+            if (sender == con) DispatchServerCommand(args.Command, args.Parameters);
+        }
+
+        void OnConnectionClosed(object sender, EventArgs args)
+        {
+            ConnectionFailed = true;
+            OnDisconnected();
+        }
+
+        DateTime lastPing;
+        DateTime lastPong;
 
         void OnPingTimer(object sender, EventArgs args)
         {
-/*            if (con != null && IsConnected) {
+            if (con != null && IsConnected) {
                 //if (lastPing != DateTime.MinValue && lastPing.Subtract(lastPong).TotalSeconds > pingInterval*2) {
                     // server didnt respond to ping in 30-60s 
                    // con.RequestClose();
@@ -1565,7 +1630,7 @@ namespace LobbyClient.Legacy
             else if (ConnectionFailed && !IsConnected)
             {
                 Connect(serverHost, serverPort);
-            }*/
+            }
         }
 
         /// <summary>
@@ -1584,5 +1649,8 @@ namespace LobbyClient.Legacy
             SendUdpPacket(lastUdpSourcePort, serverHost, serverUdpHolePunchingPort);
         }
 
+        public void ChangePassword(string old, string newPass) {
+            con.SendCommand("CHANGEPASSWORD", Utils.HashLobbyPassword(old), Utils.HashLobbyPassword(newPass));
+        }
     }
 }
