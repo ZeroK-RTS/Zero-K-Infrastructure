@@ -27,10 +27,6 @@ namespace ZeroKLobby.MicroLobby
         public bool isZK = false;
         public UserBattleStatus offlineUserBattleStatus;
         public User offlineUserInfo;
-        /// <summary>
-        /// PlayerListItem will never render or draw any content when this flag is true.
-        /// </summary>
-        public bool isDummy = false;
         public int? AllyTeam { get; set; }
         public BotBattleStatus BotBattleStatus { get; set; }
         public string Button { get; set; }
@@ -99,8 +95,6 @@ namespace ZeroKLobby.MicroLobby
 
         public void DrawPlayerLine(Graphics g, Rectangle bounds, Color foreColor, Color backColor, bool grayedOut, bool isBattle)
         {
-            if (isDummy)
-                return;
 
             g.TextRenderingHint = TextRenderingHint.SystemDefault;
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;

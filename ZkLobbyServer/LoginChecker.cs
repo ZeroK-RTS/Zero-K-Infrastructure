@@ -37,7 +37,7 @@ namespace ZkLobbyServer
                 Account acc = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name == login.Name);
                 if (acc == null) return new LoginResponse { ResultCode = LoginResponse.Code.InvalidName };
                 if (!acc.VerifyPassword(login.PasswordHash)) return new LoginResponse { ResultCode = LoginResponse.Code.InvalidPassword };
-                if (!state.Clients.TryAdd(login.Name, client)) return new LoginResponse { ResultCode = LoginResponse.Code.AlreadyConnected };
+                if (state.Clients.ContainsKey(login.Name)) return new LoginResponse { ResultCode = LoginResponse.Code.AlreadyConnected };
                 
                 acc.Country = ResolveCountry(ip);
                 acc.LobbyVersion = lobbyVersion;
@@ -51,6 +51,11 @@ namespace ZkLobbyServer
                 LogUserID(db, acc, userID);
 
                 db.SaveChanges();
+
+
+                var banMute = Punishment.GetActivePunishment(acc.AccountID, ip, userID, x => x.BanMute, db);
+                if (banMute != null) user.BanMute = true;
+                
 
                 Punishment banPenalty = Punishment.GetActivePunishment(acc.AccountID, ip, userID, x => x.BanLobby, db);
 
@@ -139,7 +144,8 @@ namespace ZkLobbyServer
                     Trace.TraceError("VPN check error: {0}", ex);
                 }
 
-                return new LoginResponse { ResultCode = LoginResponse.Code.Ok };
+                if (state.Clients.TryAdd(login.Name, client)) return new LoginResponse { ResultCode = LoginResponse.Code.Ok };
+                else return new LoginResponse() {ResultCode = LoginResponse.Code.AlreadyConnected};
             }
         }
 

@@ -96,7 +96,11 @@ namespace LobbyClient
             InvalidPassword = 3,
 
             [Description("banned")]
-            Banned = 4
+            Banned = 4,
+
+            [Description("invalid name characters")]
+            InvalidCharacters = 5,
+
         }
 
         public Code ResultCode;

@@ -30,20 +30,7 @@ namespace Springie
             return Glue(args, 0);
         }
 
-        /// <summary>
-        /// shifts array by given number of indexes
-        /// </summary>
-        /// <param name="input">input array</param>
-        /// <param name="bynum">if bynum is negative, creates shorter array starting at abs(bynum) element of original arraym, if bynum is positive creates new array and makes bynum empty pieces in the beginning</param>
-        /// <returns>returned new array</returns>
-        public static T[] ShiftArray<T>(T[] input, int bynum)
-        {
-            var ret = new T[input.Length + bynum];
-            if (bynum == 0) input.CopyTo(ret, 0);
-            else if (bynum < 0) for (int i = 0; i < ret.Length; ++i) ret[i] = input[i - bynum];
-            else if (bynum > 0) for (int i = 0; i < input.Length; ++i) ret[i + bynum] = input[i];
-            return ret;
-        }
+     
 
         public static long ToUnix(DateTime t)
         {
