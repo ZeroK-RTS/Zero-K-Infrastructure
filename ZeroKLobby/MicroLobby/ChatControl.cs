@@ -15,6 +15,8 @@ namespace ZeroKLobby.MicroLobby
 {
     public partial class ChatControl: UserControl
     {
+        ZKLMouseClick playerBox_zklclick = new ZKLMouseClick();
+
         protected bool filtering;
         bool mouseIsDown;
         readonly PlayerListItem notResultsItem = new PlayerListItem { Title = "No match", SortCategory = 3 };
@@ -64,6 +66,8 @@ namespace ZeroKLobby.MicroLobby
             playerBox.MeasureItem += (s, e) => { }; // needed for ListBox.OnMeasureItem
             playerBox.BackColor = Program.Conf.BgColor;
             playerBox.ForeColor = Program.Conf.TextColor;
+            playerBox_zklclick.AttachTo(playerBox);
+            playerBox_zklclick.MouseClick += PlayerBox_MouseClick;
 
             playerSearchBox.BackColor = Program.Conf.BgColor;
             playerSearchBox.ForeColor = Program.Conf.TextColor;
@@ -439,18 +443,24 @@ namespace ZeroKLobby.MicroLobby
             IsTopicVisible = false;
         }
 
-        void playerBox_DoubleClick(object sender, EventArgs e) {
-            var playerListItem = playerBox.SelectedItem as PlayerListItem;
-            if (playerListItem != null && playerListItem.User != null) NavigationControl.Instance.Path = "chat/user/" + playerListItem.User.Name;
-        }
 
-        void playerBox_MouseClick(object sender, MouseEventArgs e) {
-            var item = playerBox.HoverItem;
-            if (item != null && item.UserName != null) {
-                playerBox.SelectedItem = item;
-                if (item.User != null && !Program.Conf.LeftClickSelectsPlayer) ShowPlayerContextMenu(item.User, playerBox, e.Location);
+        //using MouseUp because it allow the PlayerBox's "HoverItem" to show correct value when rapid clicking
+        protected virtual void PlayerBox_MouseClick(object sender, MouseEventArgs mea) //from BattleChatControl
+        {
+            if (playerBox_zklclick.clickCount % 2 == 0) 
+            { //Double click
+                var playerListItem = playerBox.SelectedItem as PlayerListItem;
+                if (playerListItem != null && playerListItem.User != null)
+                    NavigationControl.Instance.Path = "chat/user/" + playerListItem.User.Name;
+            } else 
+            {
+                var item = playerBox.HoverItem;
+                if (item != null && item.UserName != null) {
+                    playerBox.SelectedItem = item;
+                    if (item.User != null && !Program.Conf.LeftClickSelectsPlayer) ShowPlayerContextMenu(item.User, playerBox, mea.Location);
+                }
+                //playerBox.ClearSelected();
             }
-            //playerBox.ClearSelected();
         }
 
         void playerSearchBox_TextChanged(object sender, EventArgs e) {
@@ -489,6 +499,73 @@ namespace ZeroKLobby.MicroLobby
         {
             public string Channel;
             public IChatLine Line;
+        }
+
+        /// <summary>
+        /// Reimplement regular MouseClick event to add Right-button event and to create a consistent 
+        /// click behaviour for MONO (so that its similar to the one in NET)
+        /// </summary>
+        public class ZKLMouseClick
+        {
+            public event EventHandler<MouseEventArgs> MouseClick = delegate { };
+            public int clickCount = 0;
+
+            bool isDown;
+            long lastClick = DateTime.Now.Ticks;
+            Point lastLocation = new Point(0,0);
+            MouseButtons lastButton = MouseButtons.None;
+
+            readonly int systemDoubleClickTime = SystemInformation.DoubleClickTime * 10000; //10,000 ticks is a milisecond . http://msdn.microsoft.com/en-us/library/system.datetime.ticks.aspx
+
+            public void AttachTo(Control toListenTo)
+            {
+                toListenTo.MouseUp += MouseUp;
+                toListenTo.MouseDown += MouseDown;
+            }
+                        
+            bool IsDoubleClick(Point newLocation)
+            {
+                if( DateTime.Now.Ticks - lastClick <= systemDoubleClickTime &&
+               	    lastLocation.X - newLocation.X < 10 &&
+               	    lastLocation.Y - newLocation.Y < 10)
+                {
+               	    return true;
+                }
+                return false;
+            }
+
+            void UpdatePositionAndTime(Point newLocation)
+            {
+                lastClick = DateTime.Now.Ticks;
+                lastLocation = newLocation;
+            }
+
+            void MouseDown(object sender, MouseEventArgs mea) 
+            {
+                if (!isDown) {
+                    isDown= true;
+                    lastButton = mea.Button;
+                }
+            }
+
+            void MouseUp(object sender, MouseEventArgs mea) 
+            {
+                //check for mouseUp/Down pair
+                if (!isDown) return;
+                isDown = false;
+
+                if (lastButton != mea.Button) return;
+                lastButton = MouseButtons.None;
+
+                if (IsDoubleClick(mea.Location))
+                    clickCount = clickCount + 1;
+                else 
+                    clickCount = 1;
+
+                UpdatePositionAndTime(mea.Location);
+
+                MouseClick(sender, mea);
+            }
         }
     }
 }
