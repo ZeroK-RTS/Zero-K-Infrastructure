@@ -33,10 +33,10 @@ namespace ZeroKLobby
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WelcomeForm));
             this.label1 = new System.Windows.Forms.Label();
-            this.switchPanel1 = new ZeroKLobby.Controls.SwitchPanel();
-            this.btnSnd = new ZeroKLobby.BitmapButton();
             this.btnWindowed = new ZeroKLobby.BitmapButton();
+            this.btnSnd = new ZeroKLobby.BitmapButton();
             this.avatarButton = new ZeroKLobby.BitmapButton();
+            this.switchPanel1 = new ZeroKLobby.Controls.SwitchPanel();
             this.SuspendLayout();
             // 
             // label1
@@ -50,37 +50,6 @@ namespace ZeroKLobby
             this.label1.Size = new System.Drawing.Size(227, 38);
             this.label1.TabIndex = 1;
             this.label1.Text = "not logged in";
-            // 
-            // switchPanel1
-            // 
-            this.switchPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.switchPanel1.BackColor = System.Drawing.Color.Transparent;
-            this.switchPanel1.Location = new System.Drawing.Point(0, 81);
-            this.switchPanel1.Name = "switchPanel1";
-            this.switchPanel1.Size = new System.Drawing.Size(1264, 581);
-            this.switchPanel1.TabIndex = 8;
-            // 
-            // btnSnd
-            // 
-            this.btnSnd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnSnd.BackColor = System.Drawing.Color.Transparent;
-            this.btnSnd.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnSnd.BackgroundImage")));
-            this.btnSnd.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.btnSnd.ButtonStyle = ZeroKLobby.ButtonRenderer.StyleType.DarkHive;
-            this.btnSnd.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnSnd.FlatAppearance.BorderSize = 0;
-            this.btnSnd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSnd.ForeColor = System.Drawing.Color.White;
-            this.btnSnd.Location = new System.Drawing.Point(83, 668);
-            this.btnSnd.Name = "btnSnd";
-            this.btnSnd.Size = new System.Drawing.Size(50, 50);
-            this.btnSnd.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
-            this.btnSnd.TabIndex = 6;
-            this.btnSnd.Text = "blah";
-            this.btnSnd.UseVisualStyleBackColor = false;
-            this.btnSnd.Click += new System.EventHandler(this.btnSnd_Click);
             // 
             // btnWindowed
             // 
@@ -102,6 +71,26 @@ namespace ZeroKLobby
             this.btnWindowed.UseVisualStyleBackColor = false;
             this.btnWindowed.Click += new System.EventHandler(this.btnWindowed_Click);
             // 
+            // btnSnd
+            // 
+            this.btnSnd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnSnd.BackColor = System.Drawing.Color.Transparent;
+            this.btnSnd.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnSnd.BackgroundImage")));
+            this.btnSnd.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.btnSnd.ButtonStyle = ZeroKLobby.ButtonRenderer.StyleType.DarkHive;
+            this.btnSnd.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSnd.FlatAppearance.BorderSize = 0;
+            this.btnSnd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSnd.ForeColor = System.Drawing.Color.White;
+            this.btnSnd.Location = new System.Drawing.Point(83, 668);
+            this.btnSnd.Name = "btnSnd";
+            this.btnSnd.Size = new System.Drawing.Size(50, 50);
+            this.btnSnd.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.btnSnd.TabIndex = 6;
+            this.btnSnd.Text = "blah";
+            this.btnSnd.UseVisualStyleBackColor = false;
+            this.btnSnd.Click += new System.EventHandler(this.btnSnd_Click);
+            // 
             // avatarButton
             // 
             this.avatarButton.BackColor = System.Drawing.Color.Transparent;
@@ -119,6 +108,17 @@ namespace ZeroKLobby
             this.avatarButton.TabIndex = 0;
             this.avatarButton.Text = "blah";
             this.avatarButton.UseVisualStyleBackColor = false;
+            // 
+            // switchPanel1
+            // 
+            this.switchPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.switchPanel1.BackColor = System.Drawing.Color.Transparent;
+            this.switchPanel1.Location = new System.Drawing.Point(1, 81);
+            this.switchPanel1.Name = "switchPanel1";
+            this.switchPanel1.Size = new System.Drawing.Size(1264, 581);
+            this.switchPanel1.TabIndex = 8;
             // 
             // WelcomeForm
             // 

@@ -32,6 +32,7 @@
             this.singleplayerButton = new ZeroKLobby.BitmapButton();
             this.exitButton = new ZeroKLobby.BitmapButton();
             this.multiplayerButton = new ZeroKLobby.BitmapButton();
+            this.bitmapButton1 = new ZeroKLobby.BitmapButton();
             this.SuspendLayout();
             // 
             // singleplayerButton
@@ -97,11 +98,32 @@
             this.multiplayerButton.Text = "Multiplayer";
             this.multiplayerButton.UseVisualStyleBackColor = false;
             // 
+            // bitmapButton1
+            // 
+            this.bitmapButton1.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.bitmapButton1.BackColor = System.Drawing.Color.Transparent;
+            this.bitmapButton1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("bitmapButton1.BackgroundImage")));
+            this.bitmapButton1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.bitmapButton1.ButtonStyle = ZeroKLobby.ButtonRenderer.StyleType.DarkHive;
+            this.bitmapButton1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bitmapButton1.FlatAppearance.BorderSize = 0;
+            this.bitmapButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bitmapButton1.ForeColor = System.Drawing.Color.White;
+            this.bitmapButton1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bitmapButton1.Location = new System.Drawing.Point(389, 277);
+            this.bitmapButton1.Name = "bitmapButton1";
+            this.bitmapButton1.Size = new System.Drawing.Size(623, 50);
+            this.bitmapButton1.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.None;
+            this.bitmapButton1.TabIndex = 11;
+            this.bitmapButton1.Text = "Multiplayer";
+            this.bitmapButton1.UseVisualStyleBackColor = false;
+            // 
             // HomePage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Transparent;
+            this.Controls.Add(this.bitmapButton1);
             this.Controls.Add(this.singleplayerButton);
             this.Controls.Add(this.exitButton);
             this.Controls.Add(this.multiplayerButton);
@@ -117,5 +139,6 @@
         private BitmapButton singleplayerButton;
         private BitmapButton exitButton;
         private BitmapButton multiplayerButton;
+        private BitmapButton bitmapButton1;
     }
 }
