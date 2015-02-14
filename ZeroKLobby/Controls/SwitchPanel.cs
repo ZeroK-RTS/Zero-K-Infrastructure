@@ -48,14 +48,15 @@ namespace ZeroKLobby.Controls
 
         public async Task SwitchContent(Control newTarget, AnimType? animation = null)
         {
-            var r = ClientRectangle;
 
             var animator = GetAnimator(animation);
 
             if (currentTarget != null && animator != null) {
-                var stepCount = 15;
+                var stepCount = 10;
                 var stepDelay = 10;
                 SoundPalette.Play(SoundPalette.SoundType.Servo);
+
+                Rectangle r = GetChildrenBoundingRectangle(currentTarget);
 
                 for (int i = 0; i < stepCount; i++) {
                     foreach (var c in currentTarget.Controls.Cast<Control>()) {
@@ -68,7 +69,9 @@ namespace ZeroKLobby.Controls
 
                 newTarget.Dock = DockStyle.Fill;
                 Controls.Add(newTarget);
-                
+
+                r = GetChildrenBoundingRectangle(newTarget);
+
                 for (int i = stepCount; i >=0; i--)
                 {
                     foreach (var c in newTarget.Controls.Cast<Control>()) {
@@ -83,6 +86,16 @@ namespace ZeroKLobby.Controls
                 this.Controls.Add(newTarget);
                 currentTarget = newTarget;
             }
+        }
+
+        static Rectangle GetChildrenBoundingRectangle(Control currentTarget)
+        {
+            var r = Rectangle.Empty;
+            foreach (var c in currentTarget.Controls.OfType<Control>()) {
+                if (r.Width < c.Right) r.Width = c.Right;
+                if (r.Height < c.Bottom) r.Height = c.Bottom;
+            }
+            return r;
         }
 
         Action<Control, Rectangle, double> GetAnimator(AnimType? animation)
