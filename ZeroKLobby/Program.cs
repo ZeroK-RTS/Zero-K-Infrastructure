@@ -217,9 +217,9 @@ namespace ZeroKLobby
                         if (!mutex.WaitOne(10000, false))
                         {
                             MessageBox.Show(
-                                "Another copy of Zero-K lobby is still running" +
-                                "\nMake sure the other lobby is closed (check task manager) before starting new one",
-                                "There can be only one lobby running",
+                                "Another copy of Zero-K launcher is still running" +
+                                "\nMake sure the other launcher is closed (check task manager) before starting new one",
+                                "There can be only one launcher running",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Stop);
                             return;

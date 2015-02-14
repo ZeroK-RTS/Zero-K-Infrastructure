@@ -28,26 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.notifySection1 = new SpringDownloader.Notifications.NotifySection();
             this.navigationControl1 = new ZeroKLobby.NavigationControl();
+            this.notifySection1 = new SpringDownloader.Notifications.NotifySection();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
-            // tableLayoutPanel2
+            // navigationControl1
             // 
-            this.tableLayoutPanel2.ColumnCount = 1;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Controls.Add(this.notifySection1, 0, 1);
-            this.tableLayoutPanel2.Controls.Add(this.navigationControl1, 0, 0);
-            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 2;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(1024, 768);
-            this.tableLayoutPanel2.TabIndex = 0;
+            this.navigationControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.navigationControl1.BackColor = System.Drawing.Color.DimGray;
+            this.navigationControl1.Location = new System.Drawing.Point(679, 431);
+            this.navigationControl1.Margin = new System.Windows.Forms.Padding(0);
+            this.navigationControl1.Name = "navigationControl1";
+            this.navigationControl1.Path = "";
+            this.navigationControl1.Size = new System.Drawing.Size(345, 337);
+            this.navigationControl1.TabIndex = 1;
             // 
             // notifySection1
             // 
@@ -61,16 +57,25 @@
             this.notifySection1.Size = new System.Drawing.Size(1024, 1);
             this.notifySection1.TabIndex = 0;
             // 
-            // navigationControl1
+            // tableLayoutPanel2
             // 
-            this.navigationControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.navigationControl1.BackColor = System.Drawing.Color.DimGray;
-            this.navigationControl1.Location = new System.Drawing.Point(586, 216);
-            this.navigationControl1.Margin = new System.Windows.Forms.Padding(0);
-            this.navigationControl1.Name = "navigationControl1";
-            this.navigationControl1.Path = "";
-            this.navigationControl1.Size = new System.Drawing.Size(438, 552);
-            this.navigationControl1.TabIndex = 1;
+            this.tableLayoutPanel2.ColumnCount = 1;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.Controls.Add(this.notifySection1, 0, 1);
+            this.tableLayoutPanel2.Controls.Add(this.navigationControl1, 0, 0);
+            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 2;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(1024, 768);
+            this.tableLayoutPanel2.TabIndex = 0;
             // 
             // MainWindow
             // 
@@ -90,8 +95,9 @@
 
         #endregion
 
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private SpringDownloader.Notifications.NotifySection notifySection1;
         private NavigationControl navigationControl1;
+        private SpringDownloader.Notifications.NotifySection notifySection1;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+
     }
 }

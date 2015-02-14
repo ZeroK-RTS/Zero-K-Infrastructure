@@ -108,8 +108,10 @@ namespace ZeroKLobby.MicroLobby
         {
             InitializeComponent();
             AutoScroll = true;
-            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
-            BackColor = Program.Conf.BgColor;
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer | ControlStyles.SupportsTransparentBackColor, true);
+            //BackColor = Program.Conf.BgColor;
+            BackColor = Color.Transparent;
+
             FilterText = Program.Conf.BattleFilter;
             Disposed += BattleListControl_Disposed;
             Program.BattleIconManager.BattleAdded += HandleBattle;
@@ -122,7 +124,7 @@ namespace ZeroKLobby.MicroLobby
             hidePassworded = Program.Conf.HidePasswordedBattles;
             showOfficial = Program.Conf.ShowOfficialBattles;
 
-            BackColor = Color.Transparent;
+            
 
             Repaint();
         }

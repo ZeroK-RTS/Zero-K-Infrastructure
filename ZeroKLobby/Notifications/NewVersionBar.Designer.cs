@@ -41,7 +41,7 @@
             this.lbText.Name = "lbText";
             this.lbText.Size = new System.Drawing.Size(275, 13);
             this.lbText.TabIndex = 0;
-            this.lbText.Text = "Zero-K lobby self-update done, click restart to upgrade :-)";
+            this.lbText.Text = "Zero-K launcher self-update done, click restart to upgrade :-)";
             // 
             // panel1
             // 

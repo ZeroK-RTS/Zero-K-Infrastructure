@@ -50,7 +50,7 @@
         this.KeyPreview = true;
         this.MinimizeBox = false;
         this.Name = "FormLog";
-        this.Text = "Zero-K lobby log history";
+        this.Text = "Zero-K launcher log history";
         this.Load += new System.EventHandler(this.FormLog_Load);
         this.VisibleChanged += new System.EventHandler(this.FormLog_VisibleChanged);
         this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormLog_FormClosing);

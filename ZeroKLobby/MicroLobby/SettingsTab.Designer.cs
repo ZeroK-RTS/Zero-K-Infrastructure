@@ -500,7 +500,7 @@
             this.groupBox1.Size = new System.Drawing.Size(821, 481);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Zero-K lobby settings: (changes need restart)";
+            this.groupBox1.Text = "Zero-K launcher settings: (changes need restart)";
             // 
             // propertyGrid1
             // 

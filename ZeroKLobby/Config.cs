@@ -45,7 +45,7 @@ namespace ZeroKLobby
 
         [Category("Chat")]
         [DisplayName("Automatically Joined Channels")]
-        [Description("Zero-K lobby will automatically join these channels when connecting.")]
+        [Description("Zero-K launcher will automatically join these channels when connecting.")]
         [Browsable(true)]
         [Editor("System.Windows.Forms.Design.StringCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
             , typeof(UITypeEditor))]
@@ -174,7 +174,7 @@ namespace ZeroKLobby
 
         [Category("Quickmatching")]
         [DisplayName("Idle User Time")]
-        [Description("Idle minutes after which Zero-K lobby assumes the user is gone and quickmatching is stopped.")]
+        [Description("Idle minutes after which Zero-K launcher assumes the user is gone and quickmatching is stopped.")]
         public int IdleTime { get { return idleTime; } set { idleTime = value; } }
 
         [Category("Chat")]
