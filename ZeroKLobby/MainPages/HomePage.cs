@@ -19,7 +19,7 @@ namespace ZeroKLobby.MainPages
 
         private void singleplayerButton_Click(object sender, EventArgs e)
         {
-            Program.WelcomeForm.SwitchMainContent(new SinglePlayerPage());
+            //Program.WelcomeForm.SwitchMainContent(new SinglePlayerPage());
         }
     }
 }

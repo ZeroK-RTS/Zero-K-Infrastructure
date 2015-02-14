@@ -488,12 +488,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="MainPages\WelcomeForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainPages\WelcomeForm.Designer.cs">
-      <DependentUpon>WelcomeForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="WindowsApi.cs" />
     <Compile Include="ZklResources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -633,9 +627,6 @@
     <EmbeddedResource Include="Sounds.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Sounds.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainPages\WelcomeForm.resx">
-      <DependentUpon>WelcomeForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZklResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

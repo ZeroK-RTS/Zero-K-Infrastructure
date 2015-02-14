@@ -3,13 +3,18 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Media;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using NAudio.Wave;
 using PlasmaDownloader;
+using ZeroKLobby.Controls;
+using ZeroKLobby.MainPages;
 using ZkData;
 using SpringDownloader.Notifications;
 using ZeroKLobby.MicroLobby;
@@ -36,9 +41,17 @@ namespace ZeroKLobby
 
         public NotifySection NotifySection { get { return notifySection1; } }
 
+        WaveOut waveOut;
+        Mp3FileReader audioReader;
+
+
         public MainWindow()
         {
             InitializeComponent();
+            SetStyle(ControlStyles.SupportsTransparentBackColor | ControlStyles.DoubleBuffer, true);
+            
+            InitializePages();
+
             Instance = this;
 
             btnExit = new ToolStripMenuItem { Name = "btnExit", Size = new Size(92, 22), Text = "Exit" };
@@ -62,7 +75,69 @@ namespace ZeroKLobby
                 Program.Downloader.DownloadAdded += TorrentManager_DownloadAdded;
                 timer1.Start();
             }
+
+            var home = new HomePage();
+            switchPanel1.SwitchContent(home);
+            
+            //BackColor = Color.Transparent;
+            
+            //BackColor = Color.FromArgb(0, Color.Empty);
+
+            //BackgroundImage = null;
+            //btnWindowed_Click(this, EventArgs.Empty);
         }
+
+        public Task SwitchMainContent(Control content)
+        {
+            return switchPanel1.SwitchContent(content, SwitchPanel.AnimType.SlideLeft);
+        }
+
+        protected override void OnDeactivate(EventArgs e)
+        {
+            base.OnDeactivate(e);
+            this.TopMost = false;
+        }
+
+        protected override void OnActivated(EventArgs e)
+        {
+            base.OnActivated(e);
+            if (FormBorderStyle == FormBorderStyle.None) this.TopMost = true;
+        }
+
+
+        Image resizeStoredBackground;
+
+        protected override void OnResizeBegin(EventArgs e)
+        {
+            resizeStoredBackground = BackgroundImage;
+            BackgroundImage = null;
+            base.OnResizeBegin(e);
+        }
+
+        protected override void OnResizeEnd(EventArgs e)
+        {
+            base.OnResizeEnd(e);
+            //            popPanel.Width = Width / 2 - 20;
+            //popPanel.Left = Width / 2;
+            BackgroundImage = resizeStoredBackground;
+        }
+
+
+        public enum MainPages
+        {
+            Home = 0,
+            SinglePlayer = 1,
+            MultiPlayer = 2
+        }
+
+        Dictionary<MainPages, Control> pages = new Dictionary<MainPages, Control>();
+
+        public void InitializePages()
+        {
+            pages[MainPages.Home] = new HomePage();
+            pages[MainPages.SinglePlayer] = new SinglePlayerPage();
+        }
+
 
 
 
@@ -249,6 +324,14 @@ namespace ZeroKLobby
 
             if (Program.Conf.ConnectOnStartup) Program.ConnectBar.TryToConnectTasClient();
             else NotifySection.AddBar(Program.ConnectBar);
+
+            if (Environment.OSVersion.Platform != PlatformID.Unix)
+            {
+                waveOut = new WaveOut();
+                audioReader = new Mp3FileReader(new MemoryStream(Sounds.menu_music_ROM));
+                waveOut.Init(audioReader);
+                waveOut.Play();
+            }
         }
 
         void TorrentManager_DownloadAdded(object sender, EventArgs<Download> e)
@@ -289,6 +372,39 @@ namespace ZeroKLobby
             WindowState = FormWindowState.Minimized;
             systrayIcon.Visible = false;
             Hide();
+        }
+
+        private void btnSnd_Click(object sender, EventArgs e)
+        {
+            if (Environment.OSVersion.Platform != PlatformID.Unix)
+            {
+                if (waveOut.PlaybackState == PlaybackState.Playing) waveOut.Stop();
+                else
+                {
+                    audioReader.Position = 0;
+                    waveOut.Play();
+                }
+            }
+
+        }
+
+        private void btnWindowed_Click(object sender, EventArgs e)
+        {
+            var image = BackgroundImage;
+            BackgroundImage = null;
+            if (FormBorderStyle == FormBorderStyle.None)
+            {
+                TopMost = false;
+                WindowState = FormWindowState.Normal;
+                FormBorderStyle = FormBorderStyle.Sizable;
+            }
+            else
+            {
+                FormBorderStyle = FormBorderStyle.None;
+                TopMost = true;
+                WindowState = FormWindowState.Maximized;
+            }
+            BackgroundImage = image;
         }
     }
 }

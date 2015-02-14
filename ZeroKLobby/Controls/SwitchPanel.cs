@@ -35,14 +35,14 @@ namespace ZeroKLobby.Controls
             SlideBottom  =2
         }
 
-        private void SlideLeft(Control c, Rectangle r, double percent)
+        private void SlideLeft(Control c, Rectangle r, double percent, Rectangle original)
         {
-            c.Left = (int)Math.Round(-r.Width * percent); 
+            c.Left = (int)Math.Round(original.Left-r.Width * percent); 
         }
 
-        private void SlideBottom(Control c, Rectangle r, double percent)
+        private void SlideBottom(Control c, Rectangle r, double percent, Rectangle original)
         {
-            c.Top = (int)Math.Round(r.Height * percent); 
+            c.Top = (int)Math.Round(original.Top + r.Height * percent); 
         }
 
         void DrawSyblings(PaintEventArgs e)
@@ -94,8 +94,7 @@ namespace ZeroKLobby.Controls
 
 
 
-        public
-            async Task SwitchContent(Control newTarget, AnimType? animation = null)
+        public async Task SwitchContent(Control newTarget, AnimType? animation = null)
         {
 
             var animator = GetAnimator(animation);
@@ -107,9 +106,11 @@ namespace ZeroKLobby.Controls
 
                 Rectangle r = GetChildrenBoundingRectangle(currentTarget);
 
+                var bounds = currentTarget.Controls.OfType<Control>().ToDictionary(x => x, x => x.Bounds);
+
                 for (int i = 0; i < stepCount; i++) {
                     foreach (var c in currentTarget.Controls.Cast<Control>()) {
-                        animator(c, r, (double)i/stepCount);
+                        animator(c, r, (double)i/stepCount, bounds[c]);
                     }
                     await Task.Delay(stepDelay);
                 }
@@ -121,10 +122,12 @@ namespace ZeroKLobby.Controls
 
                 r = GetChildrenBoundingRectangle(newTarget);
 
+                bounds = newTarget.Controls.OfType<Control>().ToDictionary(x => x, x => x.Bounds);
+
                 for (int i = stepCount; i >=0; i--)
                 {
                     foreach (var c in newTarget.Controls.Cast<Control>()) {
-                        animator(c, r, (double)i/stepCount);
+                        animator(c, r, (double)i/stepCount, bounds[c]);
                     }
                     await Task.Delay(stepDelay);
                 }
@@ -147,9 +150,9 @@ namespace ZeroKLobby.Controls
             return r;
         }
 
-        Action<Control, Rectangle, double> GetAnimator(AnimType? animation)
+        Action<Control, Rectangle, double, Rectangle> GetAnimator(AnimType? animation)
         {
-            Action<Control, Rectangle, double> animator = null;
+            Action<Control, Rectangle, double, Rectangle> animator = null;
             if (animation == AnimType.SlideLeft) animator = SlideLeft;
             else if (animation == AnimType.SlideBottom) animator = SlideBottom;
             return animator;

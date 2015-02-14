@@ -19,7 +19,7 @@ namespace ZeroKLobby.MainPages
 
         private void tutorialButton_Click(object sender, EventArgs e)
         {
-            Program.WelcomeForm.SwitchMainContent(new HomePage());
+            //Program.WelcomeForm.SwitchMainContent(new HomePage());
         }
     }
 }

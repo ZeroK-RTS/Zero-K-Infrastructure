@@ -362,8 +362,7 @@ namespace ZeroKLobby
         }
 
         private static int getSpringZKCount = 0;
-        public static WelcomeForm WelcomeForm;
-
+        
         private static void GetSpringZK(object sender, EventArgs e)
         {
             if (sender is PlasmaDownloader.Packages.PackageDownloader)
