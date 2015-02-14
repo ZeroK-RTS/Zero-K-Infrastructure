@@ -19,7 +19,6 @@ namespace ZeroKLobby
             get { return _currentPage; }
             set {
                 _currentPage = value;
-                urlBox.Text = Path;
 
                 ButtonList.ForEach(x=>x.IsSelected = false); //unselect all button
 
@@ -228,12 +227,6 @@ namespace ZeroKLobby
             //e.Cancel = true;
         }
 
-        void urlBox_KeyDown(object sender, KeyEventArgs e) {
-            if (e.KeyData == Keys.Return) {
-                goButton1_Click(sender, e);
-                e.Handled = true;
-            }
-        }
 
         class NavigationStep
         {
@@ -255,13 +248,9 @@ namespace ZeroKLobby
             //NOTE: tweak here if not satisfy with Go/Forward/Backward button position. This override designer.
             flowLayoutPanel1.Width = windowWidth;
             int height = flowLayoutPanel1.Size.Height;
-            btnBack.Location = new System.Drawing.Point(btnBack.Location.X, height);
-            btnForward.Location = new System.Drawing.Point(btnForward.Location.X, height);
-            urlBox.Location = new System.Drawing.Point(urlBox.Location.X, height);
-            goButton1.Location = new System.Drawing.Point(goButton1.Location.X, height);
             
             //resize the content area (which show chat & internal browser) according to Nav bar's height
-            int heightPlusButton = height + btnBack.Height - tabControl.ItemSize.Height;
+            int heightPlusButton = height - tabControl.ItemSize.Height;
             int freeHeight = windowHeight - heightPlusButton;
             tabControl.Location = new System.Drawing.Point(tabControl.Location.X, heightPlusButton);
             tabControl.Height = freeHeight;
@@ -271,11 +260,6 @@ namespace ZeroKLobby
         public INavigatable CurrentNavigatable { get { return tabControl.SelectedTab.Controls.OfType<INavigatable>().FirstOrDefault(); } }
 
 
-        private void goButton1_Click(object sender, EventArgs e)
-        {
-           Path = urlBox.Text; //perform general & common navigation specific to TAB (go to TAB and perform action)
-        }
-
 
         private void logoutButton_Click(object sender, EventArgs e)
         {
@@ -283,18 +267,5 @@ namespace ZeroKLobby
             Program.Conf.LobbyPlayerName = "";
         }
 
-        private int clickCount = 0;
-        private long lastClick = 0;
-        private int systemDoubleClickTime = SystemInformation.DoubleClickTime * 10000;
-        private void urlBox_MouseDown(object sender, MouseEventArgs e)
-        {
-            //reference: http://stackoverflow.com/questions/5014825/triple-mouse-click-in-c
-            //10,000 ticks is a milisecond, therefore 2,000,000 ticks is 200milisecond . http://msdn.microsoft.com/en-us/library/system.datetime.ticks.aspx
-            //double click time: http://msdn.microsoft.com/en-us/library/system.windows.forms.systeminformation.doubleclicktime(v=vs.110).aspx
-            if (DateTime.Now.Ticks - lastClick <= systemDoubleClickTime) clickCount = clickCount + 1;
-            else clickCount = 1;
-            if (clickCount % 3 == 0) urlBox.SelectAll(); //select all text when triple click
-            lastClick = DateTime.Now.Ticks;
-        }
     }
 }

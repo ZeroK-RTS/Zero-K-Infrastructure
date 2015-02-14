@@ -29,23 +29,10 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NavigationControl));
-            this.urlBox = new System.Windows.Forms.TextBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.logoutButton = new ZeroKLobby.BitmapButton();
-            this.goButton1 = new ZeroKLobby.BitmapButton();
-            this.btnForward = new ZeroKLobby.BitmapButton();
-            this.btnBack = new ZeroKLobby.BitmapButton();
             this.tabControl = new ZeroKLobby.HeadlessTabControl();
             this.SuspendLayout();
-            // 
-            // urlBox
-            // 
-            this.urlBox.Location = new System.Drawing.Point(166, 34);
-            this.urlBox.Name = "urlBox";
-            this.urlBox.Size = new System.Drawing.Size(190, 20);
-            this.urlBox.TabIndex = 2;
-            this.urlBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.urlBox_KeyDown);
-            this.urlBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.urlBox_MouseDown);
             // 
             // flowLayoutPanel1
             // 
@@ -67,6 +54,7 @@
             this.logoutButton.BackColor = System.Drawing.Color.Transparent;
             this.logoutButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("logoutButton.BackgroundImage")));
             this.logoutButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.logoutButton.ButtonStyle = ZeroKLobby.ButtonRenderer.StyleType.DarkHive;
             this.logoutButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.logoutButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.logoutButton.ForeColor = System.Drawing.Color.White;
@@ -75,62 +63,12 @@
             this.logoutButton.Margin = new System.Windows.Forms.Padding(0, 0, 0, 3);
             this.logoutButton.Name = "logoutButton";
             this.logoutButton.Size = new System.Drawing.Size(96, 32);
+            this.logoutButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.logoutButton.TabIndex = 8;
             this.logoutButton.Text = "LOGOUT";
             this.logoutButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.logoutButton.UseVisualStyleBackColor = true;
             this.logoutButton.Click += new System.EventHandler(this.logoutButton_Click);
-            // 
-            // goButton1
-            // 
-            this.goButton1.BackColor = System.Drawing.Color.Transparent;
-            this.goButton1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("goButton1.BackgroundImage")));
-            this.goButton1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.goButton1.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.goButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.goButton1.ForeColor = System.Drawing.Color.White;
-            this.goButton1.Location = new System.Drawing.Point(362, 34);
-            this.goButton1.Name = "goButton1";
-            this.goButton1.Size = new System.Drawing.Size(35, 23);
-            this.goButton1.TabIndex = 6;
-            this.goButton1.Text = "Go";
-            this.goButton1.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.goButton1.UseVisualStyleBackColor = true;
-            this.goButton1.Click += new System.EventHandler(this.goButton1_Click);
-            // 
-            // btnForward
-            // 
-            this.btnForward.BackColor = System.Drawing.Color.Transparent;
-            this.btnForward.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnForward.BackgroundImage")));
-            this.btnForward.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnForward.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnForward.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnForward.ForeColor = System.Drawing.Color.White;
-            this.btnForward.Location = new System.Drawing.Point(85, 34);
-            this.btnForward.Name = "btnForward";
-            this.btnForward.Size = new System.Drawing.Size(75, 23);
-            this.btnForward.TabIndex = 4;
-            this.btnForward.Text = "Forward";
-            this.btnForward.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.btnForward.UseVisualStyleBackColor = true;
-            this.btnForward.Click += new System.EventHandler(this.btnForward_Click);
-            // 
-            // btnBack
-            // 
-            this.btnBack.BackColor = System.Drawing.Color.Transparent;
-            this.btnBack.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnBack.BackgroundImage")));
-            this.btnBack.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnBack.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnBack.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnBack.ForeColor = System.Drawing.Color.White;
-            this.btnBack.Location = new System.Drawing.Point(4, 34);
-            this.btnBack.Name = "btnBack";
-            this.btnBack.Size = new System.Drawing.Size(75, 23);
-            this.btnBack.TabIndex = 3;
-            this.btnBack.Text = "Back";
-            this.btnBack.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.btnBack.UseVisualStyleBackColor = true;
-            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
             // tabControl
             // 
@@ -150,11 +88,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.DimGray;
-            this.Controls.Add(this.goButton1);
             this.Controls.Add(this.flowLayoutPanel1);
-            this.Controls.Add(this.btnForward);
-            this.Controls.Add(this.btnBack);
-            this.Controls.Add(this.urlBox);
             this.Controls.Add(this.tabControl);
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "NavigationControl";
@@ -168,11 +102,7 @@
         #endregion
 
         private ZeroKLobby.HeadlessTabControl tabControl;
-        private System.Windows.Forms.TextBox urlBox;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private BitmapButton btnBack;
-        private BitmapButton btnForward;
-        private BitmapButton goButton1;
         private BitmapButton logoutButton;
     }
 }
