@@ -17,11 +17,12 @@ namespace ZeroKLobby.MicroLobby
     {
         ZKLMouseClick playerBox_zklclick = new ZKLMouseClick();
 
-        protected bool filtering;
+        protected bool filtering; //playerList filter
         bool mouseIsDown;
         readonly PlayerListItem notResultsItem = new PlayerListItem { Title = "No match", SortCategory = 3 };
         protected List<PlayerListItem> playerListItems = new List<PlayerListItem>();
         readonly PlayerListItem searchResultsItem = new PlayerListItem { Title = "Search results", SortCategory = 1 };
+        
         public bool CanLeave { get { return ChannelName != "Battle"; } }
         public static EventHandler<ChannelLineArgs> ChannelLineAdded = (sender, args) => { };
         Timer minuteTimer;
@@ -447,7 +448,7 @@ namespace ZeroKLobby.MicroLobby
         //using MouseUp because it allow the PlayerBox's "HoverItem" to show correct value when rapid clicking
         protected virtual void PlayerBox_MouseClick(object sender, MouseEventArgs mea) //from BattleChatControl
         {
-            if (playerBox_zklclick.clickCount % 2 == 0) 
+            if (playerBox_zklclick.clickCount >= 2) 
             { //Double click
                 var playerListItem = playerBox.SelectedItem as PlayerListItem;
                 if (playerListItem != null && playerListItem.User != null)
@@ -502,8 +503,9 @@ namespace ZeroKLobby.MicroLobby
         }
 
         /// <summary>
-        /// Reimplement regular MouseClick event to add Right-button event and to create a consistent 
-        /// click behaviour for MONO (so that its similar to the one in NET)
+        /// A reimplementation of regular MouseClick event using MouseDown & MouseUp pair which can be used
+        /// for the specific aim of delaying a click event until MouseUp, or/and to read Right-click event for
+        /// NET's Control which didn't allow them (such as ListBox), or/and to simply count successive clicks.
         /// </summary>
         public class ZKLMouseClick
         {
