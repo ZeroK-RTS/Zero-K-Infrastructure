@@ -96,6 +96,7 @@
             this.multiplayerButton.TabIndex = 8;
             this.multiplayerButton.Text = "Multiplayer";
             this.multiplayerButton.UseVisualStyleBackColor = false;
+            this.multiplayerButton.Click += new System.EventHandler(this.multiplayerButton_Click);
             // 
             // HomePage
             // 

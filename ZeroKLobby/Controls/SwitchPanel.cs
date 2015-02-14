@@ -37,7 +37,7 @@ namespace ZeroKLobby.Controls
 
         private void SlideLeft(Control c, Rectangle r, double percent, Rectangle original)
         {
-            c.Left = (int)Math.Round(original.Left-r.Width * percent); 
+            c.Left = (int)Math.Round(original.Left-r.Width * percent);
         }
 
         private void SlideBottom(Control c, Rectangle r, double percent, Rectangle original)
@@ -92,17 +92,15 @@ namespace ZeroKLobby.Controls
         }
 
 
+        const int stepCount = 10;
+        const int stepDelay = 10;
 
 
         public async Task SwitchContent(Control newTarget, AnimType? animation = null)
         {
-
             var animator = GetAnimator(animation);
 
             if (currentTarget != null && animator != null) {
-                var stepCount = 10;
-                var stepDelay = 10;
-                SoundPalette.Play(SoundPalette.SoundType.Servo);
 
                 Rectangle r = GetChildrenBoundingRectangle(currentTarget);
 
@@ -114,12 +112,14 @@ namespace ZeroKLobby.Controls
                     }
                     await Task.Delay(stepDelay);
                 }
+
+                foreach (var b in bounds) { b.Key.Bounds = b.Value; }
                 this.Controls.Remove(currentTarget);
                 this.Controls.Clear();
-
+                
                 newTarget.Dock = DockStyle.Fill;
                 Controls.Add(newTarget);
-
+                
                 r = GetChildrenBoundingRectangle(newTarget);
 
                 bounds = newTarget.Controls.OfType<Control>().ToDictionary(x => x, x => x.Bounds);
@@ -131,6 +131,7 @@ namespace ZeroKLobby.Controls
                     }
                     await Task.Delay(stepDelay);
                 }
+                foreach (var b in bounds) { b.Key.Bounds = b.Value; }
 
                 currentTarget = newTarget;
             } else {

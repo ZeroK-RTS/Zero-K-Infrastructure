@@ -19,7 +19,12 @@ namespace ZeroKLobby.MainPages
 
         private void singleplayerButton_Click(object sender, EventArgs e)
         {
-            //Program.WelcomeForm.SwitchMainContent(new SinglePlayerPage());
+            Program.MainWindow.SwitchPage(MainWindow.MainPages.SinglePlayer);
+        }
+
+        private void multiplayerButton_Click(object sender, EventArgs e)
+        {
+            Program.MainWindow.SwitchPage(MainWindow.MainPages.MultiPlayer);
         }
     }
 }

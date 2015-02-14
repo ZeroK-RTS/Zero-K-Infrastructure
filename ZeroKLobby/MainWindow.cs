@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -8,55 +7,71 @@ using System.Linq;
 using System.Media;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using NAudio.Wave;
 using PlasmaDownloader;
+using SpringDownloader.Notifications;
 using ZeroKLobby.Controls;
 using ZeroKLobby.MainPages;
-using ZkData;
-using SpringDownloader.Notifications;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
+using ZkData;
 
 namespace ZeroKLobby
 {
-    public partial class MainWindow : Form
+    public partial class MainWindow: Form
     {
+        public enum MainPages
+        {
+            Home = 0,
+            SinglePlayer = 1,
+            MultiPlayer = 2
+        }
 
-        string baloonTipPath = null;
+        Mp3FileReader audioReader;
+
+        string baloonTipPath;
 
         readonly ToolStripMenuItem btnExit;
 
         bool closeForReal;
         FormWindowState lastState = FormWindowState.Normal;
+        readonly Dictionary<MainPages, Control> pages = new Dictionary<MainPages, Control>();
+        Image resizeStoredBackground;
 
         readonly NotifyIcon systrayIcon;
         readonly Timer timer1 = new Timer();
         readonly ContextMenuStrip trayStrip;
-        public NavigationControl navigationControl { get { return navigationControl1; } }
-        public ChatTab ChatTab { get { return navigationControl1.ChatTab; } }
+        WaveOut waveOut;
+        public ChatTab ChatTab
+        {
+            get { return navigationControl1.ChatTab; }
+        }
         public static MainWindow Instance { get; private set; }
 
-        public NotifySection NotifySection { get { return notifySection1; } }
-
-        WaveOut waveOut;
-        Mp3FileReader audioReader;
+        public NotifySection NotifySection
+        {
+            get { return notifySection1; }
+        }
+        public NavigationControl navigationControl
+        {
+            get { return navigationControl1; }
+        }
 
 
         public MainWindow()
         {
             InitializeComponent();
             SetStyle(ControlStyles.SupportsTransparentBackColor | ControlStyles.DoubleBuffer, true);
-            
-            InitializePages();
+
+            pages[MainPages.Home] = new HomePage();
+            pages[MainPages.SinglePlayer] = new SinglePlayerPage();
 
             Instance = this;
 
             btnExit = new ToolStripMenuItem { Name = "btnExit", Size = new Size(92, 22), Text = "Exit" };
             btnExit.Click += btnExit_Click;
-
 
             trayStrip = new ContextMenuStrip();
             trayStrip.Items.AddRange(new ToolStripItem[] { btnExit });
@@ -67,8 +82,7 @@ namespace ZeroKLobby
             systrayIcon.MouseDown += systrayIcon_MouseDown;
             systrayIcon.BalloonTipClicked += systrayIcon_BalloonTipClicked;
 
-            if (Program.Downloader != null)
-            {
+            if (Program.Downloader != null) {
                 timer1.Interval = 250;
                 timer1.Tick += timer1_Tick;
 
@@ -78,34 +92,129 @@ namespace ZeroKLobby
 
             var home = new HomePage();
             switchPanel1.SwitchContent(home);
-            
+
             //BackColor = Color.Transparent;
-            
+
             //BackColor = Color.FromArgb(0, Color.Empty);
 
             //BackgroundImage = null;
             //btnWindowed_Click(this, EventArgs.Empty);
         }
 
-        public Task SwitchMainContent(Control content)
+
+        public void DisplayLog()
         {
-            return switchPanel1.SwitchContent(content, SwitchPanel.AnimType.SlideLeft);
+            if (!FormLog.Instance.Visible) {
+                FormLog.Instance.Visible = true;
+                FormLog.Instance.Focus();
+            } else FormLog.Instance.Visible = false;
         }
 
-        protected override void OnDeactivate(EventArgs e)
+
+        public void Exit()
         {
-            base.OnDeactivate(e);
-            this.TopMost = false;
+            if (closeForReal) return;
+            closeForReal = true;
+            Program.CloseOnNext = true;
+            InvokeFunc(() => { systrayIcon.Visible = false; });
+            InvokeFunc(Close);
+        }
+
+        public Control GetHoveredControl()
+        {
+            Control hovered;
+            try {
+                if (ActiveForm != null && ActiveForm.Visible && !(ActiveForm is ToolTipForm)) {
+                    hovered = ActiveForm.GetHoveredControl();
+                    if (hovered != null) return hovered;
+                }
+                foreach (Form lastForm in Application.OpenForms.OfType<Form>().Where(x => !(x is ToolTipForm) && x.Visible)) {
+                    hovered = lastForm.GetHoveredControl();
+                    if (hovered != null) return hovered;
+                }
+            } catch (Exception e) {
+                Trace.TraceError("MainWindow.GetHoveredControl error:", e);
+                    //random crash with NULL error on line 140, is weird since already have NULL check (high probability in Linux when we changed focus)
+            }
+            return null;
+        }
+
+        public void InvokeFunc(Action funcToInvoke)
+        {
+            try {
+                if (InvokeRequired) Invoke(funcToInvoke);
+                else funcToInvoke();
+            } catch (Exception ex) {
+                Trace.TraceError("Error invoking: {0}", ex);
+            }
+        }
+
+        /// <summary>
+        ///     Alerts user
+        /// </summary>
+        /// <param name="navigationPath">navigation path of event - alert is set on this and disabled if users goes there</param>
+        /// <param name="message">bubble message - setting null means no bubble</param>
+        /// <param name="useSound">use sound notification</param>
+        /// <param name="useFlashing">use flashing</param>
+        public void NotifyUser(string navigationPath, string message, bool useSound = false, bool useFlashing = false)
+        {
+            bool showBalloon =
+                !((Program.Conf.DisableChannelBubble && navigationPath.Contains("chat/channel/")) ||
+                  (Program.Conf.DisablePmBubble && navigationPath.Contains("chat/user/")));
+
+            bool isHidden = WindowState == FormWindowState.Minimized || Visible == false || ActiveForm == null;
+            bool isPathDifferent = navigationControl.Path != navigationPath;
+
+            if (isHidden || isPathDifferent) {
+                if (!string.IsNullOrEmpty(message)) {
+                    baloonTipPath = navigationPath;
+                    if (showBalloon) systrayIcon.ShowBalloonTip(5000, "Zero-K", TextColor.StripCodes(message), ToolTipIcon.Info);
+                }
+            }
+            if (isHidden && useFlashing) FlashWindow();
+            if (isPathDifferent) navigationControl.HilitePath(navigationPath, useFlashing ? HiliteLevel.Flash : HiliteLevel.Bold);
+            if (useSound) {
+                try {
+                    SystemSounds.Exclamation.Play();
+                } catch (Exception ex) {
+                    Trace.TraceError("Error exclamation play: {0}", ex); // Is this how it's done?
+                }
+            }
+        }
+
+        public void PopupSelf()
+        {
+            try {
+                if (!InvokeRequired) {
+                    FormWindowState finalState = lastState;
+                    bool wasminimized = WindowState == FormWindowState.Minimized;
+                    if (wasminimized) WindowState = FormWindowState.Maximized;
+                    Show();
+                    Activate();
+                    Focus();
+                    if (wasminimized) WindowState = finalState;
+                } else InvokeFunc(PopupSelf);
+            } catch (Exception ex) {
+                Trace.TraceWarning("Error popping up self: {0}", ex.Message);
+            }
+        }
+
+        public Task SwitchPage(MainPages page)
+        {
+            return switchPanel1.SwitchContent(pages[page], SwitchPanel.AnimType.SlideLeft);
         }
 
         protected override void OnActivated(EventArgs e)
         {
             base.OnActivated(e);
-            if (FormBorderStyle == FormBorderStyle.None) this.TopMost = true;
+            if (FormBorderStyle == FormBorderStyle.None) TopMost = true;
         }
 
-
-        Image resizeStoredBackground;
+        protected override void OnDeactivate(EventArgs e)
+        {
+            base.OnDeactivate(e);
+            TopMost = false;
+        }
 
         protected override void OnResizeBegin(EventArgs e)
         {
@@ -122,154 +231,14 @@ namespace ZeroKLobby
             BackgroundImage = resizeStoredBackground;
         }
 
-
-        public enum MainPages
-        {
-            Home = 0,
-            SinglePlayer = 1,
-            MultiPlayer = 2
-        }
-
-        Dictionary<MainPages, Control> pages = new Dictionary<MainPages, Control>();
-
-        public void InitializePages()
-        {
-            pages[MainPages.Home] = new HomePage();
-            pages[MainPages.SinglePlayer] = new SinglePlayerPage();
-        }
-
-
-
-
-        public void DisplayLog()
-        {
-            if (!FormLog.Instance.Visible)
-            {
-                FormLog.Instance.Visible = true;
-                FormLog.Instance.Focus();
-            }
-            else FormLog.Instance.Visible = false;
-        }
-
-
-        public void Exit()
-        {
-            if (closeForReal) return;
-            closeForReal = true;
-            Program.CloseOnNext = true;
-            InvokeFunc(() => { systrayIcon.Visible = false; });
-            InvokeFunc(Close);
-        }
-
-        public Control GetHoveredControl()
-        {
-            Control hovered;
-            try
-            {
-                if (ActiveForm != null && ActiveForm.Visible && !(ActiveForm is ToolTipForm))
-                {
-                    hovered = ActiveForm.GetHoveredControl();
-                    if (hovered != null)
-                        return hovered;
-                }
-                foreach (var lastForm in Application.OpenForms.OfType<Form>().Where(x => !(x is ToolTipForm) && x.Visible))
-                {
-                    hovered = lastForm.GetHoveredControl();
-                    if (hovered != null)
-                        return hovered;
-                }
-            }
-            catch (Exception e)
-            {
-                Trace.TraceError("MainWindow.GetHoveredControl error:", e); //random crash with NULL error on line 140, is weird since already have NULL check (high probability in Linux when we changed focus)
-            }
-            return null;
-        }
-
-        public void InvokeFunc(Action funcToInvoke)
-        {
-            try
-            {
-                if (InvokeRequired) Invoke(funcToInvoke);
-                else funcToInvoke();
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError("Error invoking: {0}", ex);
-            }
-        }
-
         /// <summary>
-        /// Alerts user
-        /// </summary>
-        /// <param name="navigationPath">navigation path of event - alert is set on this and disabled if users goes there</param>
-        /// <param name="message">bubble message - setting null means no bubble</param>
-        /// <param name="useSound">use sound notification</param>
-        /// <param name="useFlashing">use flashing</param>
-        public void NotifyUser(string navigationPath, string message, bool useSound = false, bool useFlashing = false)
-        {
-            var showBalloon =
-                !((Program.Conf.DisableChannelBubble && navigationPath.Contains("chat/channel/")) ||
-                  (Program.Conf.DisablePmBubble && navigationPath.Contains("chat/user/")));
-
-            var isHidden = WindowState == FormWindowState.Minimized || Visible == false || ActiveForm == null;
-            var isPathDifferent = navigationControl.Path != navigationPath;
-
-            if (isHidden || isPathDifferent)
-            {
-                if (!string.IsNullOrEmpty(message))
-                {
-                    baloonTipPath = navigationPath;
-                    if (showBalloon) systrayIcon.ShowBalloonTip(5000, "Zero-K", TextColor.StripCodes(message), ToolTipIcon.Info);
-                }
-            }
-            if (isHidden && useFlashing) FlashWindow();
-            if (isPathDifferent) navigationControl.HilitePath(navigationPath, useFlashing ? HiliteLevel.Flash : HiliteLevel.Bold);
-            if (useSound)
-            {
-                try
-                {
-                    SystemSounds.Exclamation.Play();
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceError("Error exclamation play: {0}", ex); // Is this how it's done?
-                }
-            }
-        }
-
-        public void PopupSelf()
-        {
-            try
-            {
-                if (!InvokeRequired)
-                {
-                    var finalState = lastState;
-                    var wasminimized = WindowState == FormWindowState.Minimized;
-                    if (wasminimized) WindowState = FormWindowState.Maximized;
-                    Show();
-                    Activate();
-                    Focus();
-                    if (wasminimized) WindowState = finalState;
-                }
-                else InvokeFunc(PopupSelf);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceWarning("Error popping up self: {0}", ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Flashes window if its not foreground - until it is foreground
+        ///     Flashes window if its not foreground - until it is foreground
         /// </summary>
         protected void FlashWindow()
         {
-            if (!Focused || !Visible || WindowState == FormWindowState.Minimized)
-            {
+            if (!Focused || !Visible || WindowState == FormWindowState.Minimized) {
                 Visible = true;
-                if (Environment.OSVersion.Platform != PlatformID.Unix)
-                {
+                if (Environment.OSVersion.Platform != PlatformID.Unix) {
                     // todo implement for linux with #define NET_WM_STATE_DEMANDS_ATTENTION=42
                     var info = new WindowsApi.FLASHWINFO();
                     info.hwnd = Handle;
@@ -283,31 +252,31 @@ namespace ZeroKLobby
 
         void UpdateDownloads()
         {
-            try
-            {
-                if (Program.Downloader != null && !Program.CloseOnNext)
-                {
+            try {
+                if (Program.Downloader != null && !Program.CloseOnNext) {
                     // remove aborted
-                    foreach (var pane in
+                    foreach (DownloadBar pane in
                         new List<INotifyBar>(Program.NotifySection.Bars).OfType<DownloadBar>()
-                                                                        .Where(x => x.Download.IsAborted || x.Download.IsComplete == true)) Program.NotifySection.RemoveBar(pane);
+                            .Where(x => x.Download.IsAborted || x.Download.IsComplete == true)) Program.NotifySection.RemoveBar(pane);
 
                     // update existing
-                    foreach (var pane in new List<INotifyBar>(Program.NotifySection.Bars).OfType<DownloadBar>()) pane.UpdateInfo();
+                    foreach (DownloadBar pane in new List<INotifyBar>(Program.NotifySection.Bars).OfType<DownloadBar>()) pane.UpdateInfo();
                 }
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 Trace.TraceError("Error updating transfers: {0}", ex);
             }
         }
 
-
-
-        void Window_StateChanged(object sender, EventArgs e)
+        void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (WindowState != FormWindowState.Minimized) lastState = WindowState;
+            Program.CloseOnNext = true;
+            if (Program.TasClient != null) Program.TasClient.RequestDisconnect();
+            Program.SaveConfig();
+            WindowState = FormWindowState.Minimized;
+            systrayIcon.Visible = false;
+            Hide();
         }
+
 
         void MainWindow_Load(object sender, EventArgs e)
         {
@@ -325,8 +294,7 @@ namespace ZeroKLobby
             if (Program.Conf.ConnectOnStartup) Program.ConnectBar.TryToConnectTasClient();
             else NotifySection.AddBar(Program.ConnectBar);
 
-            if (Environment.OSVersion.Platform != PlatformID.Unix)
-            {
+            if (Environment.OSVersion.Platform != PlatformID.Unix) {
                 waveOut = new WaveOut();
                 audioReader = new Mp3FileReader(new MemoryStream(Sounds.menu_music_ROM));
                 waveOut.Init(audioReader);
@@ -339,11 +307,42 @@ namespace ZeroKLobby
             Invoke(new Action(() => Program.NotifySection.AddBar(new DownloadBar(e.Data))));
         }
 
+        void Window_StateChanged(object sender, EventArgs e)
+        {
+            if (WindowState != FormWindowState.Minimized) lastState = WindowState;
+        }
+
         void btnExit_Click(object sender, EventArgs e)
         {
             Exit();
         }
 
+        void btnSnd_Click(object sender, EventArgs e)
+        {
+            if (Environment.OSVersion.Platform != PlatformID.Unix) {
+                if (waveOut.PlaybackState == PlaybackState.Playing) waveOut.Stop();
+                else {
+                    audioReader.Position = 0;
+                    waveOut.Play();
+                }
+            }
+        }
+
+        void btnWindowed_Click(object sender, EventArgs e)
+        {
+            Image image = BackgroundImage;
+            BackgroundImage = null;
+            if (FormBorderStyle == FormBorderStyle.None) {
+                TopMost = false;
+                WindowState = FormWindowState.Normal;
+                FormBorderStyle = FormBorderStyle.Sizable;
+            } else {
+                FormBorderStyle = FormBorderStyle.None;
+                TopMost = true;
+                WindowState = FormWindowState.Maximized;
+            }
+            BackgroundImage = image;
+        }
 
 
         void systrayIcon_BalloonTipClicked(object sender, EventArgs e)
@@ -362,49 +361,6 @@ namespace ZeroKLobby
         void timer1_Tick(object sender, EventArgs e)
         {
             UpdateDownloads();
-        }
-
-        private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            Program.CloseOnNext = true;
-            if (Program.TasClient != null) Program.TasClient.RequestDisconnect();
-            Program.SaveConfig();
-            WindowState = FormWindowState.Minimized;
-            systrayIcon.Visible = false;
-            Hide();
-        }
-
-        private void btnSnd_Click(object sender, EventArgs e)
-        {
-            if (Environment.OSVersion.Platform != PlatformID.Unix)
-            {
-                if (waveOut.PlaybackState == PlaybackState.Playing) waveOut.Stop();
-                else
-                {
-                    audioReader.Position = 0;
-                    waveOut.Play();
-                }
-            }
-
-        }
-
-        private void btnWindowed_Click(object sender, EventArgs e)
-        {
-            var image = BackgroundImage;
-            BackgroundImage = null;
-            if (FormBorderStyle == FormBorderStyle.None)
-            {
-                TopMost = false;
-                WindowState = FormWindowState.Normal;
-                FormBorderStyle = FormBorderStyle.Sizable;
-            }
-            else
-            {
-                FormBorderStyle = FormBorderStyle.None;
-                TopMost = true;
-                WindowState = FormWindowState.Maximized;
-            }
-            BackgroundImage = image;
         }
     }
 }

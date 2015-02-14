@@ -21,5 +21,10 @@ namespace ZeroKLobby.MainPages
         {
             //Program.WelcomeForm.SwitchMainContent(new HomePage());
         }
+
+        private void bitmapButton1_Click(object sender, EventArgs e)
+        {
+            Program.MainWindow.SwitchPage(MainWindow.MainPages.Home);
+        }
     }
 }
