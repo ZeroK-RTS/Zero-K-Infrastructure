@@ -227,19 +227,6 @@ namespace ZeroKLobby
             }
         }
 
-        void UpdateSystrayToolTip()
-        {
-            var sb = new StringBuilder();
-            var bat = Program.TasClient.MyBattle;
-            if (bat != null)
-            {
-                sb.AppendFormat("Players:{0}+{1}\n", bat.NonSpectatorCount, bat.SpectatorCount);
-                sb.AppendFormat("Battle:{0}\n", bat.Founder);
-            }
-            else sb.AppendFormat("idle");
-            var str = sb.ToString();
-            systrayIcon.Text = str.Substring(0, Math.Min(str.Length, 64)); // tooltip only allows 64 characters
-        }
 
 
         void Window_StateChanged(object sender, EventArgs e)
@@ -292,7 +279,6 @@ namespace ZeroKLobby
         void timer1_Tick(object sender, EventArgs e)
         {
             UpdateDownloads();
-            UpdateSystrayToolTip();
         }
 
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)

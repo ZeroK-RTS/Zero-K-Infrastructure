@@ -344,10 +344,10 @@ namespace ZeroKLobby
                 //Trace.TraceInformation("1 Runtime {0}", elapsedTime);
 
 
-                WelcomeForm = new WelcomeForm();
-                WelcomeForm.Show();
+                //WelcomeForm = new WelcomeForm();
+                //WelcomeForm.Show();
 
-                Application.Run(WelcomeForm);
+                Application.Run(MainWindow);
                 ShutDown();
             }
             catch (Exception ex)
