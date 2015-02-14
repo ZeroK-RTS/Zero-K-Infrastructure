@@ -32,9 +32,28 @@ namespace ZeroKLobby
             //btnWindowed_Click(this, EventArgs.Empty);
             var home = new HomePage();
             switchPanel1.SwitchContent(home);
+            
+            InitializePages();
         }
 
 
+
+        public enum MainPages
+        {
+            Home = 0,
+            SinglePlayer = 1,
+            MultiPlayer = 2
+        }
+
+        Dictionary<MainPages, Control> pages = new Dictionary<MainPages, Control>();
+
+        public void InitializePages()
+        {
+            pages[MainPages.Home] = new HomePage();
+            pages[MainPages.SinglePlayer] = new SinglePlayerPage();
+        }
+
+        
         public Task SwitchMainContent(Control content)
         {
             return switchPanel1.SwitchContent(content, SwitchPanel.AnimType.SlideLeft);

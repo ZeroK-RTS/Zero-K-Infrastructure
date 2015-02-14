@@ -1253,7 +1253,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 TasClient client = new TasClient("SkirmishTab", null, "127.0.0.1");
                 spring.SpringExited += Event_SpringExited;
                 infoLabel.Text = "Spring starting ...";
-                spring.StartGame(client, null, null, script, Program.Conf.UseSafeMode, Program.Conf.UseMtEngine);
+                spring.StartGame(client, null, null, script, Program.Conf.UseSafeMode);
             }
         }
 

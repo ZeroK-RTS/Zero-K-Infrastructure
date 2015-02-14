@@ -53,19 +53,23 @@
             // 
             this.notifySection1.AutoSize = true;
             this.notifySection1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.notifySection1.BackColor = System.Drawing.Color.Transparent;
             this.notifySection1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.notifySection1.Location = new System.Drawing.Point(1, 767);
+            this.notifySection1.Location = new System.Drawing.Point(0, 768);
+            this.notifySection1.Margin = new System.Windows.Forms.Padding(0);
             this.notifySection1.Name = "notifySection1";
             this.notifySection1.Size = new System.Drawing.Size(1024, 1);
             this.notifySection1.TabIndex = 0;
             // 
             // navigationControl1
             // 
-            this.navigationControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.navigationControl1.Location = new System.Drawing.Point(3, 3);
+            this.navigationControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.navigationControl1.BackColor = System.Drawing.Color.DimGray;
+            this.navigationControl1.Location = new System.Drawing.Point(586, 216);
+            this.navigationControl1.Margin = new System.Windows.Forms.Padding(0);
             this.navigationControl1.Name = "navigationControl1";
             this.navigationControl1.Path = "";
-            this.navigationControl1.Size = new System.Drawing.Size(1024, 766);
+            this.navigationControl1.Size = new System.Drawing.Size(438, 552);
             this.navigationControl1.TabIndex = 1;
             // 
             // MainWindow
@@ -74,7 +78,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1024, 768);
             this.Controls.Add(this.tableLayoutPanel2);
-            this.Padding = new System.Windows.Forms.Padding(0);
             this.Name = "MainWindow";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainWindow_FormClosing);
             this.Load += new System.EventHandler(this.MainWindow_Load);

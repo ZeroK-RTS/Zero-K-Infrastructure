@@ -194,9 +194,6 @@ namespace ZeroKLobby
         [Browsable(false)]
         public int JoinColorInt = Color.FromArgb(42, 140, 42).ToArgb();
 
-        [Browsable(false)]
-        public FormWindowState LastWindowState { get; set; }
-
         [Category("Chat")]
         [DisplayName("Color: Leaves")]
         [XmlIgnore]
@@ -238,10 +235,6 @@ namespace ZeroKLobby
         [Description("Tell ZKL to forget your Password and re-ask it each time it start. (Note: If ZKL crashed or forced to exit this might fail)")]
         public bool DiscardPassword { get; set; }
 
-        [Category("General")]
-        [DisplayName("Minimize to tray")]
-        [Description("Minimize to system tray instead of taskbar")]
-        public bool MinimizeToTray { get; set; }
         [Category("Chat")]
         [DisplayName("Color: Notice")]
         [XmlIgnore]
@@ -289,10 +282,6 @@ namespace ZeroKLobby
         [Description("Port of spring server")]
         public int SpringServerPort { get { return springServerPort; } set { springServerPort = value; } }
 
-        [Category("General")]
-        [DisplayName("Start Minimized")]
-        [Description("Should program start minimized")]
-        public bool StartMinimized { get; set; }
 
         [Category("Chat")]
         [DisplayName("Color: Default text")]
@@ -315,13 +304,7 @@ namespace ZeroKLobby
 
         
         [Browsable(false)]
-        public bool UseMtEngine { get; set; }
-        [Browsable(false)]
         public bool UseSafeMode { get; set; }
-		[Browsable(false)]
-        public Point windowLocation { get; set; }
-        [Browsable(false)]
-        public Size windowSize { get; set; }
 
         public Config()
         {

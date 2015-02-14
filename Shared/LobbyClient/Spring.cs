@@ -234,7 +234,7 @@ namespace LobbyClient
         /// <param name="userName">lobby user name - used to submit score</param>
         /// <param name="passwordHash">lobby password hash - used to submit score</param>
         /// <returns>generates script</returns>
-        public string StartGame(TasClient client, ProcessPriorityClass? priority, int? affinity, string scriptOverride, bool useSafeMode = false, bool useMultithreaded=false, BattleContext contextOverride = null, Battle battleOverride = null) {
+        public string StartGame(TasClient client, ProcessPriorityClass? priority, int? affinity, string scriptOverride, bool useSafeMode = false, BattleContext contextOverride = null, Battle battleOverride = null) {
             if (!File.Exists(paths.Executable) && !File.Exists(paths.DedicatedServer)) throw new ApplicationException(string.Format("Spring or dedicated server executable not found: {0}, {1}", paths.Executable, paths.DedicatedServer));
 
             this.client = client;
@@ -330,7 +330,7 @@ namespace LobbyClient
                     }
                     else
                     {
-                        process.StartInfo.FileName = useMultithreaded ? paths.MtExecutable : paths.Executable;
+                        process.StartInfo.FileName = paths.Executable;
                         process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.Executable);
                     }
                 }
@@ -338,7 +338,7 @@ namespace LobbyClient
                 {
                     Trace.TraceInformation("Using optirun {0} to start the game (OPTIRUN env var defined)", optirun);
                     process.StartInfo.FileName = optirun;
-                    arg.Add(string.Format("\"{0}\"", (useMultithreaded ? paths.MtExecutable : paths.Executable)));
+                    arg.Add(string.Format("\"{0}\"", paths.Executable));
                 }
 
                 
