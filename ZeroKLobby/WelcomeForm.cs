@@ -88,18 +88,22 @@ namespace ZeroKLobby
 
         private void WelcomeForm_Load(object sender, EventArgs e)
         {
-            waveOut = new WaveOut();
-            audioReader =  new Mp3FileReader(new MemoryStream(Sounds.menu_music_ROM));
-            waveOut.Init(audioReader);
-            waveOut.Play();
+            if (Environment.OSVersion.Platform != PlatformID.Unix) {
+                waveOut = new WaveOut();
+                audioReader = new Mp3FileReader(new MemoryStream(Sounds.menu_music_ROM));
+                waveOut.Init(audioReader);
+                waveOut.Play();
+            }
         }
 
         private void btnSnd_Click(object sender, EventArgs e)
         {
-            if (waveOut.PlaybackState == PlaybackState.Playing) waveOut.Stop();
-            else {
-                audioReader.Position = 0; 
-                waveOut.Play();
+            if (Environment.OSVersion.Platform != PlatformID.Unix) {
+                if (waveOut.PlaybackState == PlaybackState.Playing) waveOut.Stop();
+                else {
+                    audioReader.Position = 0;
+                    waveOut.Play();
+                }
             }
         }
 
