@@ -350,10 +350,10 @@ namespace ZeroKLobby
                 //Trace.TraceInformation("1 Runtime {0}", elapsedTime);
 
 
-                var welc = new WelcomeForm();
-                welc.Show();
+                WelcomeForm = new WelcomeForm();
+                WelcomeForm.Show();
 
-                Application.Run(welc);
+                Application.Run(WelcomeForm);
                 ShutDown();
             }
             catch (Exception ex)
@@ -368,6 +368,8 @@ namespace ZeroKLobby
         }
 
         private static int getSpringZKCount = 0;
+        public static WelcomeForm WelcomeForm;
+
         private static void GetSpringZK(object sender, EventArgs e)
         {
             if (sender is PlasmaDownloader.Packages.PackageDownloader)

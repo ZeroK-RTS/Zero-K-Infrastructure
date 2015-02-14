@@ -153,6 +153,18 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="GlobalHook.cs" />
+    <Compile Include="MainPages\HomePage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MainPages\HomePage.Designer.cs">
+      <DependentUpon>HomePage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MainPages\SinglePlayerPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MainPages\SinglePlayerPage.Designer.cs">
+      <DependentUpon>SinglePlayerPage.cs</DependentUpon>
+    </Compile>
     <Compile Include="MicroForms\PromptForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -519,6 +531,12 @@
       <LastGenOutput>Flags.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="MainPages\HomePage.resx">
+      <DependentUpon>HomePage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainPages\SinglePlayerPage.resx">
+      <DependentUpon>SinglePlayerPage.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MicroForms\PromptForm.resx">
       <DependentUpon>PromptForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -615,6 +633,9 @@
     <EmbeddedResource Include="Sounds.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Sounds.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WelcomeForm.resx">
+      <DependentUpon>WelcomeForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZklResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

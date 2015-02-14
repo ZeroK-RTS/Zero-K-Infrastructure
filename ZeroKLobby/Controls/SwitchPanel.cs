@@ -53,34 +53,30 @@ namespace ZeroKLobby.Controls
             var animator = GetAnimator(animation);
 
             if (currentTarget != null && animator != null) {
-                var stepCount = 10;
+                var stepCount = 15;
                 var stepDelay = 10;
                 SoundPalette.Play(SoundPalette.SoundType.Servo);
 
-                currentTarget.Dock = DockStyle.None;
-                currentTarget.Width = r.Width;
-                currentTarget.Height = r.Height;
-                currentTarget.Left = r.Left;
-                currentTarget.Top = r.Top;
                 for (int i = 0; i < stepCount; i++) {
-                    animator(currentTarget, r, (double)i/stepCount);
+                    foreach (var c in currentTarget.Controls.Cast<Control>()) {
+                        animator(c, r, (double)i/stepCount);
+                    }
                     await Task.Delay(stepDelay);
                 }
                 this.Controls.Remove(currentTarget);
                 this.Controls.Clear();
 
-                newTarget.Dock = DockStyle.None;
-                newTarget.Width = DisplayRectangle.Width;
-                newTarget.Height = DisplayRectangle.Height;
-                this.Controls.Add(newTarget);
+                newTarget.Dock = DockStyle.Fill;
+                Controls.Add(newTarget);
                 
                 for (int i = stepCount; i >=0; i--)
                 {
-                    animator(newTarget, r, (double)i/stepCount);
+                    foreach (var c in newTarget.Controls.Cast<Control>()) {
+                        animator(c, r, (double)i/stepCount);
+                    }
                     await Task.Delay(stepDelay);
                 }
 
-                newTarget.Dock = DockStyle.Fill;
                 currentTarget = newTarget;
             } else {
                 newTarget.Dock = DockStyle.Fill;
@@ -100,6 +96,37 @@ namespace ZeroKLobby.Controls
         protected override void OnPaint(PaintEventArgs pe)
         {
             base.OnPaint(pe);
+        }
+
+        private void PaintParentBackground(PaintEventArgs e)
+        {
+            if (Parent != null)
+            {
+                Rectangle rect = new Rectangle(Left, Top,
+                                               Width, Height);
+
+                e.Graphics.TranslateTransform(-rect.X, -rect.Y);
+
+                try
+                {
+                    using (PaintEventArgs pea =
+                                new PaintEventArgs(e.Graphics, rect))
+                    {
+                        pea.Graphics.SetClip(rect);
+                        InvokePaintBackground(Parent, pea);
+                        InvokePaint(Parent, pea);
+                    }
+                }
+                finally
+                {
+                    e.Graphics.TranslateTransform(rect.X, rect.Y);
+                }
+            }
+            else
+            {
+                e.Graphics.FillRectangle(SystemBrushes.Control,
+                                         ClientRectangle);
+            }
         }
     }
 }

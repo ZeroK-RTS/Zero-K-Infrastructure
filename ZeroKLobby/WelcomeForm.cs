@@ -10,6 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using NAudio.Wave;
+using ZeroKLobby.Controls;
+using ZeroKLobby.MainPages;
 using ZkData;
 
 namespace ZeroKLobby
@@ -28,8 +30,15 @@ namespace ZeroKLobby
             
             //BackgroundImage = null;
             //btnWindowed_Click(this, EventArgs.Empty);
+            var home = new HomePage();
+            switchPanel1.SwitchContent(home);
         }
 
+
+        public Task SwitchMainContent(Control content)
+        {
+            return switchPanel1.SwitchContent(content, SwitchPanel.AnimType.SlideLeft);
+        }
         
         protected override void OnDeactivate(EventArgs e)
         {
@@ -61,8 +70,8 @@ namespace ZeroKLobby
         protected override void OnResizeEnd(EventArgs e)
         {
             base.OnResizeEnd(e);
-            popPanel.Width = Width / 2 - 20;
-            popPanel.Left = Width / 2;
+//            popPanel.Width = Width / 2 - 20;
+            //popPanel.Left = Width / 2;
             BackgroundImage = resizeStoredBackground;
         }
 
