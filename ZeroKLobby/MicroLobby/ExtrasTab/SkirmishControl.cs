@@ -48,116 +48,11 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
         public SkirmishControl()
         {
-            Paint += Event_SkirmishControl_Enter;
-            Program.Downloader.DownloadAdded += Event_Downloader_DownloadAdded;
-        }
-
-        private void Event_SkirmishControl_Enter(object sender, EventArgs e)
-        {
-            modCache = new List<SpringScanner.CacheItem>();
-            mapCache = new List<SpringScanner.CacheItem>();
-            modCache_folder = new List<Mod>();
-            Bots = new List<BotBattleStatus>();
-            allUser = new List<UserBattleStatus>();
-        	
-            //MessageBox.Show("Work in progress");
-            //Note: always manually remove "((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();" from
-            //splitcontainer, it have history to cause crash in Linux. Unknown reason.
             InitializeComponent();
-            minimapBox = new PictureBox { Dock = DockStyle.Fill, SizeMode = PictureBoxSizeMode.CenterImage };
-            minimapPanel.Controls.Add(minimapBox);
-            minimapBox.MouseDown += Event_MinimapBox_MouseDown;
-            minimapBox.MouseMove += Event_MinimapBox_MouseMove;
-            minimapBox.MouseUp += Event_MinimapBox_MouseUp;
-            skirmPlayerBox.IsBattle = true;
-            skirmPlayerBox.MouseDown += Event_PlayerBox_MouseDown;
-            skirmPlayerBox.MouseUp += Event_PlayerBox_MouseUp;
-
-            Program.SpringScanner.LocalResourceAdded += Event_SpringScanner_LocalResourceAdded;
-            Program.SpringScanner.LocalResourceRemoved += Event_SpringScanner_LocalResourceAdded;
-
-            Setup_MyInfo();
-            DisabledUnits = new List<string>();
-            ModOptions = new Dictionary<string, string>();
-            Rectangles = new Dictionary<int, BattleRect>();
-            springAi = new List<Ai>();
-            presetStartPos = new float[25, 4]{
-            //  left    right   bottom  top
-                {0,     0.1f,   0,      0.1f},
-                {0.9f,  1,      0.9f,   1},
-                {0.9f,  1,      0,      0.1f},
-                {0,     0.1f,   0.9f,    1}, //corners
-                {0.45f, 0.55f,  0,      0.1f},
-                {0.45f, 0.55f,  0.9f,   1},
-                {0,     0.1f,   0.45f,  0.55f},
-                {0.9f,  1f,     0.45f,  0.55f},//half corner
-                {0.20f, 0.30f,  0,      0.1f},
-                {0.20f, 0.30f,  0.9f,   1},
-                {0.70f, 0.80f,  0,      0.1f},
-                {0.70f, 0.80f,  0.9f,   1}, //quarter corner
-                {0,     0.1f,   0.20f,  0.30f},
-                {0.9f,  1,      0.20f,  0.30f},
-                {0,     0.1f,   0.70f,  0.80f},
-                {0.9f,  1,      0.70f,  0.80f},//quarter corner
-                {0.20f, 0.30f,  0.20f,  0.30f},
-                {0.70f, 0.80f,  0.70f,  0.80f},
-                {0.70f, 0.80f,  0.20f,  0.30f},
-                {0.20f, 0.30f,  0.70f,  0.80f},//inner corner
-                {0.40f, 0.50f,  0.20f,  0.30f},
-                {0.40f, 0.50f,  0.70f,  0.80f},
-                {0.20f, 0.30f,  0.40f,  0.50f},
-                {0.70f, 0.80f,  0.40f,  0.50f},//inner half
-                {0.40f, 0.50f,  0.40f,  0.50f},//center
-            };
-
-            Rectangles.Add(0, new BattleRect(presetStartPos[0, 0], presetStartPos[0, 2], presetStartPos[0, 1], presetStartPos[0, 3]));
-            infoLabel.Text = "";
-            Refresh_PlayerBox(); //initialize playerlist window
-
-            lblSide.Visible = false;
-            sideCB.VisibleChanged += (s, e2) =>
-            {
-                lblSide.Visible = (s as ComboBox).Visible;
-            };
-            sideCB.Visible = false;
-            sideCB.DrawMode = DrawMode.OwnerDrawFixed;
-            sideCB.DrawItem += Event_SideCB_DrawItem;
-
-            uiTimer = new System.Windows.Forms.Timer();
-            uiTimer.Interval = 1000 / timerFPS; //timer tick to update minimpan & add micro delay to Layout update.
-            uiTimer.Tick += Event_uiTimer_Tick;
-            uiTimer.Start();
-
-            //linux compatibility 
-            //the text color is White on White when parent have DimGrey background
-            engine_comboBox.ForeColor = Color.Black;
-            game_comboBox.ForeColor = Color.Black;
-            map_comboBox.ForeColor = Color.Black;
-            sideCB.ForeColor = Color.Black;
-            skirmPlayerBox.ForeColor = Color.Black;
-
-            Setup_ComboBox();
-            if (!string.IsNullOrEmpty(Program.Conf.SkirmisherEngine))
-                engine_comboBox.SelectedItem = Program.Conf.SkirmisherEngine;
-            else 
-                engine_comboBox.SelectedItem = GlobalConst.DefaultEngineOverride ?? Program.TasClient.ServerSpringVersion;
             
-            if (!string.IsNullOrEmpty(Program.Conf.SkirmisherGame))
-                game_comboBox.SelectedItem = Program.Conf.SkirmisherGame;
-            else
-            {
-                var gameVer = Program.Downloader.PackageDownloader.GetByTag(KnownGames.GetDefaultGame().RapidTag);
-                if (gameVer!=null)
-                    game_comboBox.SelectedItem = gameVer.InternalName;
-            }
-            
-            if (!string.IsNullOrEmpty(Program.Conf.SkirmisherMap))
-                map_comboBox.SelectedItem = Program.Conf.SkirmisherMap;
-            
-            this.OnResize(new EventArgs()); //to fix control not filling the whole window at start
-            Paint -= Event_SkirmishControl_Enter;
         }
 
+   
         private void Setup_MyInfo()
         {
             string myName = Program.Conf.LobbyPlayerName == null ? "unnamed" : Program.Conf.LobbyPlayerName;
@@ -1412,6 +1307,112 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 //if (map_comboBox.SelectedItem != null)
                     //Program.ToolTip.SetMap(minimapBox, (string)map_comboBox.SelectedItem);
             }
+        }
+
+        private void SkirmishControl_Load(object sender, EventArgs e)
+        {
+            Program.Downloader.DownloadAdded += Event_Downloader_DownloadAdded;
+
+            modCache = new List<SpringScanner.CacheItem>();
+            mapCache = new List<SpringScanner.CacheItem>();
+            modCache_folder = new List<Mod>();
+            Bots = new List<BotBattleStatus>();
+            allUser = new List<UserBattleStatus>();
+
+            //MessageBox.Show("Work in progress");
+            //Note: always manually remove "((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();" from
+            //splitcontainer, it have history to cause crash in Linux. Unknown reason.
+            
+            minimapBox = new PictureBox { Dock = DockStyle.Fill, SizeMode = PictureBoxSizeMode.CenterImage };
+            minimapPanel.Controls.Add(minimapBox);
+            minimapBox.MouseDown += Event_MinimapBox_MouseDown;
+            minimapBox.MouseMove += Event_MinimapBox_MouseMove;
+            minimapBox.MouseUp += Event_MinimapBox_MouseUp;
+            skirmPlayerBox.IsBattle = true;
+            skirmPlayerBox.MouseDown += Event_PlayerBox_MouseDown;
+            skirmPlayerBox.MouseUp += Event_PlayerBox_MouseUp;
+
+            Program.SpringScanner.LocalResourceAdded += Event_SpringScanner_LocalResourceAdded;
+            Program.SpringScanner.LocalResourceRemoved += Event_SpringScanner_LocalResourceAdded;
+
+            Setup_MyInfo();
+            DisabledUnits = new List<string>();
+            ModOptions = new Dictionary<string, string>();
+            Rectangles = new Dictionary<int, BattleRect>();
+            springAi = new List<Ai>();
+            presetStartPos = new float[25, 4]{
+            //  left    right   bottom  top
+                {0,     0.1f,   0,      0.1f},
+                {0.9f,  1,      0.9f,   1},
+                {0.9f,  1,      0,      0.1f},
+                {0,     0.1f,   0.9f,    1}, //corners
+                {0.45f, 0.55f,  0,      0.1f},
+                {0.45f, 0.55f,  0.9f,   1},
+                {0,     0.1f,   0.45f,  0.55f},
+                {0.9f,  1f,     0.45f,  0.55f},//half corner
+                {0.20f, 0.30f,  0,      0.1f},
+                {0.20f, 0.30f,  0.9f,   1},
+                {0.70f, 0.80f,  0,      0.1f},
+                {0.70f, 0.80f,  0.9f,   1}, //quarter corner
+                {0,     0.1f,   0.20f,  0.30f},
+                {0.9f,  1,      0.20f,  0.30f},
+                {0,     0.1f,   0.70f,  0.80f},
+                {0.9f,  1,      0.70f,  0.80f},//quarter corner
+                {0.20f, 0.30f,  0.20f,  0.30f},
+                {0.70f, 0.80f,  0.70f,  0.80f},
+                {0.70f, 0.80f,  0.20f,  0.30f},
+                {0.20f, 0.30f,  0.70f,  0.80f},//inner corner
+                {0.40f, 0.50f,  0.20f,  0.30f},
+                {0.40f, 0.50f,  0.70f,  0.80f},
+                {0.20f, 0.30f,  0.40f,  0.50f},
+                {0.70f, 0.80f,  0.40f,  0.50f},//inner half
+                {0.40f, 0.50f,  0.40f,  0.50f},//center
+            };
+
+            Rectangles.Add(0, new BattleRect(presetStartPos[0, 0], presetStartPos[0, 2], presetStartPos[0, 1], presetStartPos[0, 3]));
+            infoLabel.Text = "";
+            Refresh_PlayerBox(); //initialize playerlist window
+
+            lblSide.Visible = false;
+            sideCB.VisibleChanged += (s, e2) =>
+            {
+                lblSide.Visible = (s as ComboBox).Visible;
+            };
+            sideCB.Visible = false;
+            sideCB.DrawMode = DrawMode.OwnerDrawFixed;
+            sideCB.DrawItem += Event_SideCB_DrawItem;
+
+            uiTimer = new System.Windows.Forms.Timer();
+            uiTimer.Interval = 1000 / timerFPS; //timer tick to update minimpan & add micro delay to Layout update.
+            uiTimer.Tick += Event_uiTimer_Tick;
+            uiTimer.Start();
+
+            //linux compatibility 
+            //the text color is White on White when parent have DimGrey background
+            engine_comboBox.ForeColor = Color.Black;
+            game_comboBox.ForeColor = Color.Black;
+            map_comboBox.ForeColor = Color.Black;
+            sideCB.ForeColor = Color.Black;
+            skirmPlayerBox.ForeColor = Color.Black;
+
+            Setup_ComboBox();
+            if (!string.IsNullOrEmpty(Program.Conf.SkirmisherEngine))
+                engine_comboBox.SelectedItem = Program.Conf.SkirmisherEngine;
+            else
+                engine_comboBox.SelectedItem = GlobalConst.DefaultEngineOverride ?? Program.TasClient.ServerSpringVersion;
+
+            if (!string.IsNullOrEmpty(Program.Conf.SkirmisherGame))
+                game_comboBox.SelectedItem = Program.Conf.SkirmisherGame;
+            else
+            {
+                var gameVer = Program.Downloader.PackageDownloader.GetByTag(KnownGames.GetDefaultGame().RapidTag);
+                if (gameVer != null)
+                    game_comboBox.SelectedItem = gameVer.InternalName;
+            }
+
+            if (!string.IsNullOrEmpty(Program.Conf.SkirmisherMap))
+                map_comboBox.SelectedItem = Program.Conf.SkirmisherMap;
+
         }
     }
 }

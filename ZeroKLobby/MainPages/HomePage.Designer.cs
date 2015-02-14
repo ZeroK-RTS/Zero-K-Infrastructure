@@ -47,11 +47,12 @@
             this.singleplayerButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.singleplayerButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.singleplayerButton.ForeColor = System.Drawing.Color.White;
+            this.singleplayerButton.Image = global::ZeroKLobby.Buttons.sp;
             this.singleplayerButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.singleplayerButton.Location = new System.Drawing.Point(22, 180);
             this.singleplayerButton.Name = "singleplayerButton";
             this.singleplayerButton.Size = new System.Drawing.Size(250, 50);
-            this.singleplayerButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.None;
+            this.singleplayerButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Servo;
             this.singleplayerButton.TabIndex = 10;
             this.singleplayerButton.Text = "Singleplayer";
             this.singleplayerButton.UseVisualStyleBackColor = false;
@@ -68,6 +69,7 @@
             this.exitButton.FlatAppearance.BorderSize = 0;
             this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.exitButton.ForeColor = System.Drawing.Color.White;
+            this.exitButton.Image = global::ZeroKLobby.Buttons.exit;
             this.exitButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.exitButton.Location = new System.Drawing.Point(22, 381);
             this.exitButton.Name = "exitButton";
@@ -76,6 +78,7 @@
             this.exitButton.TabIndex = 9;
             this.exitButton.Text = "Exit";
             this.exitButton.UseVisualStyleBackColor = false;
+            this.exitButton.Click += new System.EventHandler(this.exitButton_Click);
             // 
             // multiplayerButton
             // 
@@ -88,11 +91,12 @@
             this.multiplayerButton.FlatAppearance.BorderSize = 0;
             this.multiplayerButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.multiplayerButton.ForeColor = System.Drawing.Color.White;
+            this.multiplayerButton.Image = global::ZeroKLobby.Buttons.mp;
             this.multiplayerButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.multiplayerButton.Location = new System.Drawing.Point(22, 277);
             this.multiplayerButton.Name = "multiplayerButton";
             this.multiplayerButton.Size = new System.Drawing.Size(250, 50);
-            this.multiplayerButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.None;
+            this.multiplayerButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Servo;
             this.multiplayerButton.TabIndex = 8;
             this.multiplayerButton.Text = "Multiplayer";
             this.multiplayerButton.UseVisualStyleBackColor = false;

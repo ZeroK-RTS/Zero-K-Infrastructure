@@ -15,6 +15,7 @@ using SpringDownloader.Notifications;
 using ZeroKLobby.Controls;
 using ZeroKLobby.MainPages;
 using ZeroKLobby.MicroLobby;
+using ZeroKLobby.MicroLobby.ExtrasTab;
 using ZeroKLobby.Notifications;
 using ZkData;
 
@@ -24,9 +25,10 @@ namespace ZeroKLobby
     {
         public enum MainPages
         {
-            Home = 0,
-            SinglePlayer = 1,
-            MultiPlayer = 2
+            Home,
+            SinglePlayer ,
+            MultiPlayer,
+            Skirmish
         }
 
         Mp3FileReader audioReader;
@@ -67,6 +69,7 @@ namespace ZeroKLobby
 
             pages[MainPages.Home] = new HomePage();
             pages[MainPages.SinglePlayer] = new SinglePlayerPage();
+            pages[MainPages.Skirmish] = new SkirmishControl();
 
             Instance = this;
 
@@ -199,9 +202,9 @@ namespace ZeroKLobby
             }
         }
 
-        public Task SwitchPage(MainPages page)
+        public Task SwitchPage(MainPages page, bool animate = true)
         {
-            return switchPanel1.SwitchContent(pages[page], SwitchPanel.AnimType.SlideLeft);
+            return switchPanel1.SwitchContent(pages[page], animate ? SwitchPanel.AnimType.SlideLeft : (SwitchPanel.AnimType?)null);
         }
 
         protected override void OnActivated(EventArgs e)

@@ -135,6 +135,7 @@ namespace ZeroKLobby.Controls
 
                 currentTarget = newTarget;
             } else {
+                if (currentTarget != null) this.Controls.Remove(currentTarget);
                 newTarget.Dock = DockStyle.Fill;
                 this.Controls.Add(newTarget);
                 currentTarget = newTarget;

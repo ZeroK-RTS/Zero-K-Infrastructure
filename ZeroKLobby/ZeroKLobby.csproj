@@ -159,6 +159,12 @@
     <Compile Include="MainPages\HomePage.Designer.cs">
       <DependentUpon>HomePage.cs</DependentUpon>
     </Compile>
+    <Compile Include="MainPages\MultiPlayerPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MainPages\MultiPlayerPage.Designer.cs">
+      <DependentUpon>MultiPlayerPage.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainPages\SinglePlayerPage.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -181,9 +187,6 @@
     <Compile Include="MicroLobby\HexToUnicodeConverter.Designer.cs">
       <DependentUpon>HexToUnicodeConverter.cs</DependentUpon>
     </Compile>
-    <Compile Include="MicroLobby\ExtrasTab\ExtrasToolTabs.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="MicroLobby\ExtrasTab\SkirmishControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -195,9 +198,6 @@
     </Compile>
     <Compile Include="MicroLobby\TextColoringPanel.Designer.cs">
       <DependentUpon>TextColoringPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MicroLobby\ExtrasTab\ExtrasTab.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Notifications\PwBar.cs">
       <SubType>UserControl</SubType>
@@ -527,6 +527,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainPages\HomePage.resx">
       <DependentUpon>HomePage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainPages\MultiPlayerPage.resx">
+      <DependentUpon>MultiPlayerPage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainPages\SinglePlayerPage.resx">
       <DependentUpon>SinglePlayerPage.cs</DependentUpon>
@@ -1756,6 +1759,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Sounds\menu_music_ROM.mp3" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\back.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">
