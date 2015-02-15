@@ -60,7 +60,11 @@ namespace ZeroKLobby.MicroLobby
 
             var extras = new BitmapButton();
             extras.Text = "Extras";
-            extras.Click += (s, e) => { ContextMenus.GetChannelContextMenu(this).Show(extras, new Point(0, 0)); };
+            extras.Click += (s, e) => { 
+                var contextMenu = ContextMenus.GetChannelContextMenu(this);
+                contextMenu = LineDehighlighter(contextMenu, null);
+                contextMenu.Show(extras, new Point(0, 0));
+            };
             ChatBox.Controls.Add(extras);
 
             playerBox.DrawMode = DrawMode.OwnerDrawVariable;
@@ -310,8 +314,35 @@ namespace ZeroKLobby.MicroLobby
             if (filtering) FilterPlayers();
         }
 
-        void ShowChatContextMenu(Point location) {
+        /// <summary>
+        /// Grey out lines that do not contain the targeted text. Can be used by user to sort out who says what
+        /// </summary>
+        ContextMenu LineDehighlighter(ContextMenu cm, string word)
+        {
+            if (!string.IsNullOrWhiteSpace(word) || !string.IsNullOrWhiteSpace(ChatBox.LineHighlight))
+            {
+                cm.MenuItems.Add("-");
+            }
+            if (!string.IsNullOrWhiteSpace(ChatBox.LineHighlight))
+            {
+                var lineFilter = new System.Windows.Forms.MenuItem("Defocus Chatlines except: \"" + ChatBox.LineHighlight + "\"") { Checked = true};
+                lineFilter.Click += (s, e) => { ChatBox.LineHighlight = null; };
+                cm.MenuItems.Add(lineFilter);
+            }
+            if (ChatBox.LineHighlight!=word && !string.IsNullOrWhiteSpace(word))
+            {
+                var lineFilter = new System.Windows.Forms.MenuItem("Defocus Chatlines except: \"" + word + "\"") { Checked = false};
+                lineFilter.Click += (s, e) => { ChatBox.LineHighlight = word; };
+                cm.MenuItems.Add(lineFilter);
+            }
+            return cm;
+        }
+        
+        void ShowChatContextMenu(Point location, string word = null) {
             var contextMenu = ContextMenus.GetChannelContextMenu(this);
+
+            contextMenu = LineDehighlighter(contextMenu, word);
+
             try {
                 Program.ToolTip.Visible = false;
                 contextMenu.Show(ChatBox, location);
@@ -325,6 +356,9 @@ namespace ZeroKLobby.MicroLobby
 
         void ShowPlayerContextMenu(User user, Control control, Point location) {
             var contextMenu = ContextMenus.GetPlayerContextMenu(user, this is BattleChatControl);
+            
+            contextMenu = LineDehighlighter(contextMenu, user.Name);
+            
             try {
                 Program.ToolTip.Visible = false;
                 contextMenu.Show(control, location);
@@ -390,7 +424,8 @@ namespace ZeroKLobby.MicroLobby
                 }
             }
 
-            if (me.Button == MouseButtons.Right) ShowChatContextMenu(me.Location);
+            if (me.Button == MouseButtons.Right) 
+                ShowChatContextMenu(me.Location,word);
         }
 
         protected virtual void client_ChannelUserAdded(object sender, ChannelUserInfo e) {
