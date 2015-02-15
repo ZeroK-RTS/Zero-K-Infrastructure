@@ -85,10 +85,10 @@ Download: <select name="isDownloadable">
   </select>
   <br />
 <span title="Search for supported maps">
-  Supported: @Html.CheckBox("supported", true)
+  Supported: @Html.CheckBox("supported", false)
 </span>
 <span title="Search for featured maps">
-  Featured: @Html.CheckBox("featured", false)
+  Featured: @Html.CheckBox("featured", true)
 </span>
 <span title='Show maps that need to be manually tagged (sea, terrain, FFA etc diagnosed)' style='white-space:nowrap'>
   Needs tagging: @Html.CheckBox("needsTagging")
