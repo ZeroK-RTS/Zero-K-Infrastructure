@@ -1,4 +1,4 @@
-﻿namespace PlasmaShared.UnitSyncLib
+﻿namespace ZkData.UnitSyncLib
 {
     public static class VfsMode
     {

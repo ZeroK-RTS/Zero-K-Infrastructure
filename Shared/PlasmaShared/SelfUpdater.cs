@@ -6,9 +6,9 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading;
-using ServiceStack.Text;
+using Newtonsoft.Json;
 
-namespace PlasmaShared
+namespace ZkData
 {
     public class SelfUpdater
     {
@@ -46,9 +46,10 @@ namespace PlasmaShared
         /// <param name="updateName">Name of the program "Zero-K" or "Springie"</param>
         /// <param name="targetPath">Override target executable path</param>
         /// <param name="urlBase">Url location</param>
-        public SelfUpdater(string updateName = null, string targetPath = null, string urlBase = "http://zero-k.info/lobby")
+        public SelfUpdater(string updateName = null, string targetPath = null, string urlBase = null)
         {
             this.urlBase = urlBase;
+            if (string.IsNullOrEmpty(this.urlBase)) this.urlBase = GlobalConst.SelfUpdaterBaseUrl;
             var entry = Assembly.GetEntryAssembly();
             TargetExecutablePath = targetPath ?? entry.Location;
             CurrentVersion = entry.GetName().Version.ToString();
@@ -60,20 +61,14 @@ namespace PlasmaShared
         {
             if (targetFile == null) targetFile = TargetExecutablePath;
             LatestVersion = GetLatestVersion();
-            if (forced || (!string.IsNullOrEmpty(LatestVersion) && LatestVersion != CurrentVersion))
-            {
-
-
-
-                if (UpgradeFile(string.Format("{0}/{1}.exe", urlBase, urlUpdateName), targetFile))
-                {
+            if (forced || (!string.IsNullOrEmpty(LatestVersion) && LatestVersion != CurrentVersion)) {
+                if (UpgradeFile(string.Format("{0}/{1}.exe", urlBase, urlUpdateName), targetFile)) {
                     CurrentVersion = LatestVersion;
                     Trace.TraceInformation("{0} updated to {1}", targetFile, LatestVersion);
                     ProgramUpdated(targetFile);
                     return true;
-                }
-            }
-            return false;
+                } else return false; // failure
+            } else return true; // no failure
         }
 
         public static bool ReplaceFile(string filepath, byte[] data)
@@ -148,9 +143,9 @@ namespace PlasmaShared
                 var result = wg.DownloadData(new Uri(url));
                 if (result != null && result.Length > 0) return ReplaceFile(filepath, result);
             }
-            catch
+            catch (Exception ex)
             {
-                Trace.TraceWarning("Download of {0} failed", url);
+                Trace.TraceWarning("Download of {0} failed : {1}", url,ex);
             }
             return false;
         }
@@ -185,7 +180,7 @@ namespace PlasmaShared
                     man.Entries.Add(new ManifestEntry() { Md5 = md5.ToString(), FileName = fileName, Length = new FileInfo(fileName).Length });
                 }
             }
-            var text = JsonSerializer.SerializeToString(man);
+            var text = JsonConvert.SerializeObject(man);
 
             File.WriteAllText(string.Format("{0}.manifest.txt", urlUpdateName), text);
         }

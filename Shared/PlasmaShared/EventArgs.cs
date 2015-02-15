@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel;
 
-namespace PlasmaShared
+namespace ZkData
 {
     public class EventArgs<T>: EventArgs
     {

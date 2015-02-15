@@ -4,7 +4,7 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
-using PlasmaShared;
+using ZkData;
 using ZeroKLobby.MicroLobby;
 
 namespace ZeroKLobby
@@ -69,7 +69,7 @@ namespace ZeroKLobby
             {
                 drawString("Country: ");
                 drawImage(flag, flag.Width, flag.Height);
-                drawString(user.CountryName);
+                drawString(CountryNames.GetName(user.Country));
                 newLine();
             }
             if (user.IsBot)
@@ -78,7 +78,7 @@ namespace ZeroKLobby
                 drawString("Bot");
                 newLine();
             }
-            if (user.IsAdmin || user.IsZeroKAdmin)
+            if (user.IsAdmin)
             {
                 drawImage(ZklResources.police, 16, 16);
                 drawString("Administrator");
@@ -96,28 +96,24 @@ namespace ZeroKLobby
                 drawString(string.Format("Steam name: {0}", user.DisplayName ?? user.Name));
                 newLine();
             }
-            if (user.IsZkLobbyUser)
-            {
-                drawImage(ZklResources.ZK_logo_square, 16, 16);
-                drawString(string.Format("ZK lobby user ({0})", user.IsZkLinuxUser ? "Linux" : "Windows"));
-                newLine();
-            }
             if (!user.IsBot)
             {
                 drawImage(Images.GetRank(user.Level), 16, 16);
                 drawString(string.Format("Level: {0}", user.Level));
                 newLine();
-                if (user.IsAway)
+                if (user.AwaySince.HasValue)
                 {
                     drawImage(ZklResources.away, 16, 16);
-                    drawString("User has been idle for " + DateTime.Now.Subtract(user.AwaySince.Value).PrintTimeRemaining() + ".");
+                    drawString("User has been idle for " + DateTime.UtcNow.Subtract(user.AwaySince.Value).PrintTimeRemaining() + ".");
                     newLine();
                 }
                 if (user.IsInGame)
                 {
                     drawImage(ZklResources.ingame, 16, 16);
-                    var time = DateTime.Now.Subtract(user.InGameSince.Value).PrintTimeRemaining();
-                    drawString("Playing since " + time + " ago.");
+                    if (user.InGameSince != null) {
+                        var time = DateTime.UtcNow.Subtract(user.InGameSince.Value).PrintTimeRemaining();
+                        drawString("Playing since " + time + " ago.");
+                    }
                     newLine();
                 }
                 var top10 = Program.SpringieServer.GetTop10Rank(user.Name);
@@ -136,9 +132,11 @@ namespace ZeroKLobby
             }
             if (user.IsInBattleRoom)
             {
-                var battle = Program.TasClient.ExistingBattles.Values.SingleOrDefault(b => b.Users.Any(ub => ub.Name == user.Name));
-                var battleIcon = Program.BattleIconManager.GetBattleIcon(battle.BattleID);
-                if (battleIcon != null) g.DrawImageUnscaled(battleIcon.Image, x, y);
+                var battle = Program.TasClient.ExistingBattles.Values.FirstOrDefault(b => b.Users.ContainsKey(user.Name));
+                if (battle != null) {
+                    var battleIcon = Program.BattleIconManager.GetBattleIcon(battle.BattleID);
+                    if (battleIcon != null) g.DrawImageUnscaled(battleIcon.Image, x, y);
+                }
             }
 
         }
@@ -152,9 +150,8 @@ namespace ZeroKLobby
             h += 16; // name
             h += 16; // flag
             if (user.IsBot) h += 16; // bot icon
-            if (user.IsAdmin || user.IsZeroKAdmin) h += 16; // admin icon
+            if (user.IsAdmin) h += 16; // admin icon
             if (Program.FriendManager.Friends.Contains(user.Name)) h += 16; // friend icon
-            if (user.IsZkLobbyUser) h += 16; // SD icon
             if (!user.IsBot)
             {
                 h += 16; // rank text
@@ -162,6 +159,7 @@ namespace ZeroKLobby
                 if (user.IsInGame) h += 16; // ingame icon
                 h += 16; // skill text
             }
+            if (user.SteamID!=null) h += 16; //steam icon
             if (Program.SpringieServer.GetTop10Rank(user.Name) > 0) h += 16; // top 10
             if (user.IsInBattleRoom) h += 76; // battle icon
 

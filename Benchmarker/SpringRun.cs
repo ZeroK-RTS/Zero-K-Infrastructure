@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using PlasmaShared;
+using ZkData;
 
 namespace Benchmarker
 {
@@ -64,8 +64,6 @@ namespace Benchmarker
             process.StartInfo.EnvironmentVariables["SPRING_DATADIR"] = datadirs;
             process.StartInfo.EnvironmentVariables["SPRING_ISOLATED"] = test.Config.ConfigPath;
             process.StartInfo.EnvironmentVariables["SPRING_WRITEDIR"] = test.Config.ConfigPath;
-            process.StartInfo.EnvironmentVariables["OMP_WAIT_POLICY"] = "ACTIVE";
-            
 
             var scriptPath = Path.GetTempFileName();
             File.WriteAllText(scriptPath, test.StartScript.GetScriptForTestCase(test, benchmark));

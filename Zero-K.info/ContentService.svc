@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="ZeroKWeb.ContentService" CodeBehind="ContentService.svc.cs" %>

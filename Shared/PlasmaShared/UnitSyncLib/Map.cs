@@ -2,7 +2,7 @@ using System;
 using System.Drawing;
 using System.Xml.Serialization;
 
-namespace PlasmaShared.UnitSyncLib
+namespace ZkData.UnitSyncLib
 {
     [Serializable]
     public class Map: IResourceInfo, ICloneable
@@ -68,7 +68,6 @@ namespace PlasmaShared.UnitSyncLib
             return MemberwiseClone();
         }
 
-        public int Checksum { get; set; }
 
         string IResourceInfo.Name { get { return Name; } set { Name = value; } }
 

@@ -11,7 +11,7 @@ namespace Springie.autohost
 {
     public class CommandConfig
     {
-        TasSayEventArgs.Places[] listenTo = new[] { TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Game };
+        SayPlace[] listenTo = new[] { SayPlace.Battle, SayPlace.User, SayPlace.Game };
 
         [Category("Texts")]
         [Description("Help text to be displayed in !help listings.")]
@@ -26,7 +26,7 @@ namespace Springie.autohost
 
         [Category("Command")]
         [Description("From which places can you use this command. Normal = PM to server, Battle = battle lobby, Game = from running game.")]
-        public TasSayEventArgs.Places[] ListenTo { get { return listenTo; } set { listenTo = value; } }
+        public SayPlace[] ListenTo { get { return listenTo; } set { listenTo = value; } }
 
         public bool AllowSpecs { get; set; }
 
@@ -44,7 +44,7 @@ namespace Springie.autohost
         }
 
 
-        public CommandConfig(string name, int level, string helpText, int throttling, TasSayEventArgs.Places[] listenTo)
+        public CommandConfig(string name, int level, string helpText, int throttling, SayPlace[] listenTo)
             : this(name, level, helpText, throttling)
         {
             this.listenTo = listenTo;

@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using LobbyClient;
-using PlasmaShared;
+using ZkData;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -156,7 +156,7 @@ namespace ZeroKLobby.MicroLobby
                 }
                 else
                 {
-                    bool playerFound = x.Users.Any(u => u.Name.ToUpper().Contains(word));
+                    bool playerFound = x.Users.Values.Any(u => u.Name.ToUpper().Contains(word));
                     bool titleFound = x.Title.ToUpper().Contains(word);
                     bool modFound = x.ModName.ToUpper().Contains(word);
                     bool mapFound = x.MapName.ToUpper().Contains(word);
@@ -203,14 +203,13 @@ namespace ZeroKLobby.MicroLobby
             {
                 if (battle != null)
                 {
-                    if (battle.Password != "*")
+                    if (battle.IsPassworded)
                     {
                         // hack dialog Program.FormMain
                         using (var form = new AskBattlePasswordForm(battle.Founder.Name)) if (form.ShowDialog() == DialogResult.OK) ActionHandler.JoinBattle(battle.BattleID, form.Password);
                     } else 
                     {
-                        if (battle.IsLocked) ActionHandler.JoinBattleSpec(battle.BattleID);
-                        else ActionHandler.JoinBattle(battle.BattleID, null);    
+                        ActionHandler.JoinBattle(battle.BattleID, null);    
 
                     }
                     
@@ -255,20 +254,20 @@ namespace ZeroKLobby.MicroLobby
                 int x = 0;
                 int y = 0;
 
-                
-                PaintDivider(g, ref x, ref y, "Match maker queues");
-                foreach (BattleIcon t in view.Where(b=>b.Battle.IsQueue && !b.IsInGame))
-                {
-                    if (x + scaledIconWidth > Width)
-                    {
-                        x = 0;
-                        y += scaledIconHeight;
-                    }
-                    PainBattle(t, g, ref x, ref y, scaledIconWidth, scaledIconHeight);
-                }
 
-                x = 0;
-                y += scaledIconHeight;
+                if (view.Any(b => b.Battle.IsQueue && !b.IsInGame)) {
+                    PaintDivider(g, ref x, ref y, "Match maker queues");
+                    foreach (BattleIcon t in view.Where(b => b.Battle.IsQueue && !b.IsInGame)) {
+                        if (x + scaledIconWidth > Width) {
+                            x = 0;
+                            y += scaledIconHeight;
+                        }
+                        PainBattle(t, g, ref x, ref y, scaledIconWidth, scaledIconHeight);
+                    }
+
+                    x = 0;
+                    y += scaledIconHeight;
+                }
 
                 PaintDivider(g, ref x, ref y, "Custom battles");
                 PainOpenBattleButton(g, ref x, ref y, scaledMapCellWidth, scaledIconWidth);
@@ -374,11 +373,8 @@ namespace ZeroKLobby.MicroLobby
             }
             switch (word)
             {
-                case "LOCK":
-                    isMatch = battle.IsLocked;
-                    return true;
                 case "PASSWORD":
-                    isMatch = battle.Password != "*";
+                    isMatch = battle.IsPassworded;
                     return true;
                 case "INGAME":
                     isMatch = battle.IsInGame;

@@ -151,17 +151,6 @@ namespace ZeroKLobby.MicroLobby
                 }
 
                 if (Battle.IsPassworded) drawIcon(ZklResources._lock);
-                if (Battle.IsReplay) drawIcon(ZklResources.replay);
-                if (Battle.Rank > 0) drawIcon(Images.GetRank(Battle.Rank));
-                if (Battle.IsLocked)
-                {
-                    int s = DpiMeasurement.ScaleValueX(20);
-                    g.DrawImage(ZklResources.redlight,
-                        DpiMeasurement.ScaleValueX(minimapSize + 3) - s,
-                        DpiMeasurement.ScaleValueY(minimapSize + 3) - s,
-                        s,
-                        s);
-                }
 
                 g.DrawImage(ZklResources.border, 0, 0, DpiMeasurement.ScaleValueX(70), DpiMeasurement.ScaleValueY(70));
             }
@@ -197,11 +186,11 @@ namespace ZeroKLobby.MicroLobby
             int admins = 0;
             int mes = 0; // whether i'm in the battle (can be 0 or 1)
 
-            foreach (UserBattleStatus user in Battle.Users)
+            foreach (UserBattleStatus user in Battle.Users.Values)
             {
                 if (user.Name == Program.TasClient.UserName) mes++;
                 if (Program.FriendManager.Friends.Contains(user.Name)) friends++;
-                else if (user.LobbyUser.IsAdmin || user.LobbyUser.IsZeroKAdmin) admins++;
+                else if (user.LobbyUser.IsAdmin) admins++;
             }
 
             // make sure there aren't more little dudes than non-specs in a battle

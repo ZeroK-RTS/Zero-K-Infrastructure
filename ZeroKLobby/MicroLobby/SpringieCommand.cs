@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using LobbyClient;
-using PlasmaShared;
+using ZkData;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -27,7 +27,7 @@ namespace ZeroKLobby.MicroLobby
 		{
 			string ah;
 			if (autoHosts.TryGetValue(gameName, out ah) && Program.TasClient.ExistingUsers.ContainsKey(ah)) return ah;
-			else return autoHosts.Values.Shuffle().First(x => Program.TasClient.ExistingUsers.ContainsKey(x));
+			else return autoHosts.Values.Shuffle().FirstOrDefault(x => Program.TasClient.ExistingUsers.ContainsKey(x));
 		}
 
 		public static SpringieCommand Manage(int minPlayers, int maxPlayers, int teams)
@@ -43,7 +43,7 @@ namespace ZeroKLobby.MicroLobby
 		{
 			ActionHandler.HidePM(Command);
 			ActionHandler.HidePM(Reply);
-			Program.TasClient.Say(TasClient.SayPlace.User, autohostName, Command, false);
+			Program.TasClient.Say(SayPlace.User, autohostName, Command, false);
 		}
 
 		public static SpringieCommand Spawn(string modName, string title, string password)

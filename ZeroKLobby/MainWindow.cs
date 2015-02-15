@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using PlasmaDownloader;
-using PlasmaShared;
+using ZkData;
 using SpringDownloader.Notifications;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
@@ -332,7 +332,7 @@ namespace ZeroKLobby
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
             Program.CloseOnNext = true;
-            if (Program.TasClient != null) Program.TasClient.Disconnect();
+            if (Program.TasClient != null) Program.TasClient.RequestDisconnect();
             if (WindowState != FormWindowState.Minimized) Program.Conf.LastWindowState = WindowState;
             if (WindowState == FormWindowState.Normal) SavePosition();
             Program.SaveConfig();

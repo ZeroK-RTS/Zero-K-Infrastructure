@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using PlasmaShared;
+using ZkData;
 
 namespace ZeroKLobby.Notifications
 {

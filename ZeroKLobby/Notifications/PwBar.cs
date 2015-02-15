@@ -28,7 +28,7 @@ namespace ZeroKLobby.Notifications
             timer.Interval = 1000;
             timer.Tick += (sender, args) =>
             {
-                if (Program.NotifySection.Contains(this)) timerLabel.Text = PlasmaShared.Utils.PrintTimeRemaining((int)deadline.Subtract(DateTime.Now).TotalSeconds);
+                if (Program.NotifySection.Contains(this)) timerLabel.Text = ZkData.Utils.PrintTimeRemaining((int)deadline.Subtract(DateTime.Now).TotalSeconds);
             };
             timer.Start();
 
@@ -56,7 +56,7 @@ namespace ZeroKLobby.Notifications
                 else
                 {
                     deadline = DateTime.Now.AddSeconds(pw.DeadlineSeconds);
-                    timerLabel.Text = PlasmaShared.Utils.PrintTimeRemaining(pw.DeadlineSeconds);
+                    timerLabel.Text = ZkData.Utils.PrintTimeRemaining(pw.DeadlineSeconds);
 
                     if (pw.Mode == PwMatchCommand.ModeType.Attack)
                     {
@@ -110,8 +110,8 @@ namespace ZeroKLobby.Notifications
             PwMatchCommand.VoteOption opt1 = opt;
             but.Click += (s2, ev) =>
             {
-                if (Program.SpringScanner.HasResource(opt1.Map)) tas.Say(TasClient.SayPlace.User, GlobalConst.NightwatchName, "!" + opt1.PlanetID, true);
-                else tas.Say(TasClient.SayPlace.Channel, tas.MyUser.Faction, string.Format("wants to play {0}, but lacks the map..", opt1.PlanetID), true);
+                if (Program.SpringScanner.HasResource(opt1.Map)) tas.Say(SayPlace.User, GlobalConst.NightwatchName, "!" + opt1.PlanetID, true);
+                else tas.Say(SayPlace.Channel, tas.MyUser.Faction, string.Format("wants to play {0}, but lacks the map..", opt1.PlanetID), true);
             };
         }
 

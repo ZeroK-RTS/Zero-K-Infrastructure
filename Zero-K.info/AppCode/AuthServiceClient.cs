@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using PlasmaShared;
+using ZkData;
 using ZeroKWeb;
 
 namespace ZkData
@@ -23,7 +23,8 @@ namespace ZkData
                 try
                 {
                     cachedStats = Global.Nightwatch.Auth.GetCurrentStats();
-                    cachedStats.UsersLastMonth = new ZkDataContext().SpringBattlePlayers.Where(x=>x.SpringBattle.StartTime > DateTime.Now.AddDays(-31)).GroupBy(x=>x.AccountID).Count();
+                    var lastMonth = DateTime.Now.AddDays(-31);
+                    cachedStats.UsersLastMonth = new ZkDataContext().SpringBattlePlayers.Where(x=>x.SpringBattle.StartTime > lastMonth).GroupBy(x=>x.AccountID).Count();
                 }
                 catch (Exception ex)
                 {
@@ -43,15 +44,8 @@ namespace ZkData
         {
             if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(passwordHash)) return null;
             var db = new ZkDataContext();
-#if DEBUG
-            var acc = db.Accounts.FirstOrDefault(x => x.Name == login && x.LobbyID != null);
-            
-#else
             var acc = Account.AccountVerify(db, login, passwordHash);
-#endif
-
-            if (acc != null || Debugger.IsAttached) return acc;
-            else return Global.Nightwatch.Auth.VerifyAccount(login, passwordHash);
+            return acc;
         }
 
         public static Account VerifyAccountPlain(string login, string password)

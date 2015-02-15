@@ -12,7 +12,7 @@ using System.Text;
 using System.Xml.Serialization;
 using ZkData;
 
-namespace PlasmaShared.UnitSyncLib
+namespace ZkData.UnitSyncLib
 {
 	public partial class UnitSync: IDisposable
 	{
@@ -147,7 +147,6 @@ namespace PlasmaShared.UnitSyncLib
 			var map = new Map(mapName)
 			          {
 			          	ArchiveName = Path.GetFileName(archiveName),
-			          	Checksum = (int)checksum,
 			          	Name = mapName,
 			          	Description = mapInfo.description,
 			          	TidalStrength = mapInfo.tidalStrength,
@@ -201,7 +200,6 @@ namespace PlasmaShared.UnitSyncLib
 			          	PrimaryModVersion = NativeMethods.GetPrimaryModVersion(modIndex),
 			          	StartUnits = new SerializableDictionary<string, string>(GetStartUnits(modName, out sides)),
 			          	Sides = sides,
-			          	Checksum = (int)NativeMethods.GetPrimaryModChecksumFromName(modName),
 			          	Options = GetModOptions(archiveName).ToArray(),
 			          	SideIcons = GetSideIcons(sides).ToArray(),
 			          	Dependencies = GetModDependencies(modIndex).Where(x => x != modName && !string.IsNullOrEmpty(x)).ToArray(),

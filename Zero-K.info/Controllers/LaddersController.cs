@@ -1,12 +1,12 @@
 ﻿﻿using System;
 using System.Collections.Generic;
-﻿using System.Data.Linq;
-﻿using System.Data.Linq.SqlClient;
+﻿using System.Data.Entity;
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.Helpers;
 using System.Web.Mvc;
-using ZkData;
+﻿using Microsoft.Linq.Translations;
+﻿using ZkData;
 
 namespace ZeroKWeb.Controllers
 {
@@ -23,25 +23,28 @@ namespace ZeroKWeb.Controllers
 	    public ActionResult Games() {
 
 	        var db = new ZkDataContext();
-	        db.CommandTimeout = 600;
+	        db.Database.CommandTimeout = 600;
             
 	        var data = (List<GameStats>)HttpContext.Cache.Get("gameStats");
 	        if (data == null) {
-	            data = (from bat in db.SpringBattles
-	                    where bat.StartTime.Date < DateTime.Now.Date && bat.StartTime.Date > new DateTime(2011, 2, 3)
-	                    group bat by bat.StartTime.Date
+
+	            var start = new DateTime(2011, 2, 3);
+	            var end = DateTime.Now.Date;
+                data = (from bat in db.SpringBattles
+	                    where bat.StartTime < end && bat.StartTime > start
+	                    group bat by DbFunctions.TruncateTime(bat.StartTime)
 	                    into x orderby x.Key
 	                    let players = x.SelectMany(y => y.SpringBattlePlayers.Where(z => !z.IsSpectator)).Select(z => z.AccountID).Distinct().Count()
 	                    select
 	                        new GameStats
 	                        {
-	                            Day = x.Key,
+	                            Day = x.Key.Value, 
 	                            PlayersAndSpecs = x.SelectMany(y => y.SpringBattlePlayers).Select(z => z.AccountID).Distinct().Count(),
 	                            MinutesPerPlayer = x.Sum(y => y.Duration*y.PlayerCount)/60/players,
 	                            FirstGamePlayers =
 	                                x.SelectMany(y => y.SpringBattlePlayers)
 	                                 .GroupBy(y => y.Account)
-	                                 .Count(y => y.Any(z => z == y.Key.SpringBattlePlayers.First()))
+	                                 .Count(y => y.Any(z => z == y.Key.SpringBattlePlayers.FirstOrDefault()))
 	                        }).ToList();
 
                 HttpContext.Cache.Add("gameStats", data, null, DateTime.Now.AddHours(20), System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.Default, null);
@@ -67,11 +70,7 @@ namespace ZeroKWeb.Controllers
             }
 
             var db = new ZkDataContext();
-            db.CommandTimeout = 600;
-            var options = new DataLoadOptions();
-            options.LoadWith<Account>(x=>x.Clan);
-            options.LoadWith<Account>(x => x.Faction);
-            db.LoadOptions = options;
+            db.Database.CommandTimeout = 600;
 
             var monthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             var validAwards = db.SpringBattles.Where(x => x.StartTime >= monthStart && !x.ResourceByMapResourceID.InternalName.Contains("SpeedMetal")).SelectMany(x => x.AccountBattleAwards).GroupBy(x => x.AwardKey);
@@ -130,13 +129,12 @@ namespace ZeroKWeb.Controllers
                 awardItems.Add(awardItem);
             }
 
+            var lastMonth = DateTime.UtcNow.AddMonths(-1);
             var top50Accounts =
-                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1)) && x.Elo1v1Weight == GlobalConst.EloWeightMax).OrderByDescending(x => x.Elo1v1).
-                    Take(50).ToList();
+                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > lastMonth)).Include(x=>x.Clan).Include(x=>x.Faction).OrderByDescending(x => x.Effective1v1Elo).WithTranslations().Take(50).ToList();
 
             var top50Teams =
-                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1)) && x.EloWeight == GlobalConst.EloWeightMax).OrderByDescending(x => x.Elo).
-                    Take(50).ToList();
+                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > lastMonth)).Include(x => x.Clan).Include(x => x.Faction).OrderByDescending(x => x.EffectiveElo).WithTranslations().Take(50).ToList();
 
             LadderModel ladder = new LadderModel { AwardItems = awardItems, Top50Accounts = top50Accounts, Top50Teams = top50Teams };
             HttpContext.Cache.Add("ladderModel", ladder, null, DateTime.Now.AddHours(2), System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.Default, null);

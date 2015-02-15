@@ -16,6 +16,14 @@ namespace ZeroKLobby.MicroLobby
 	    ObservableCollection<PlayerListItem> realItems;
 	    Timer timer;
 	    public PlayerListItem HoverItem { get; set; }
+        public override int ItemHeight{
+            get {
+                DpiMeasurement.DpiXYMeasurement(this);
+                if (DesignMode || base.Items.Count==0) return 10;
+                return DpiMeasurement.ScaleValueY(((PlayerListItem)base.Items[0]).Height); //in MONO the ListBox's size doesn't seem to be calculated from OnMeasureItem() but from ItemHeight property, so we return the size here for MONO compatibility
+            }
+        }
+
 		public bool IsBattle { get; set; }
 	    const int stagingMs = 200; // staging only on linux
 	    DateTime lastChange = DateTime.UtcNow;
@@ -34,14 +42,20 @@ namespace ZeroKLobby.MicroLobby
 		        {
 		            try {
 		                BeginUpdate();
+		                int currentScroll = base.TopIndex;
+
 		                base.Items.Clear();
 		                base.Items.AddRange(realItems.ToArray());
+
+		                base.TopIndex = currentScroll;
 		                EndUpdate();
+
 		                timer.Stop();
 		            } catch (Exception ex) {
 		                Trace.TraceError("Error updating list: {0}",ex);
 		            }
 		        };
+		    IntegralHeight = false; //so that the playerlistBox completely fill the edge (not snap to some item size)
 		}
 
 	    void RealItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args) {
@@ -54,7 +68,10 @@ namespace ZeroKLobby.MicroLobby
 	            else {
 	                timer.Stop();
 	                lastChange = DateTime.UtcNow;
+
 	                BeginUpdate();
+	                int currentScroll = base.TopIndex; //read current scroll index. Ref: http://stackoverflow.com/questions/14318069/setting-the-scrollbar-position-of-listbox
+
 	                if (args.Action == NotifyCollectionChangedAction.Add) {
 	                    foreach (var item in args.NewItems) {
 	                        base.Items.Add(item);
@@ -69,6 +86,8 @@ namespace ZeroKLobby.MicroLobby
 	                    base.Items.Clear();
 	                    base.Items.AddRange(realItems.ToArray());
 	                }
+
+	                base.TopIndex = currentScroll;
 	                EndUpdate();
 	            }
 
@@ -81,10 +100,15 @@ namespace ZeroKLobby.MicroLobby
 	    public new ObservableCollection<PlayerListItem> Items { get { return realItems; } }
 	    public void AddItemRange(IEnumerable<PlayerListItem> items) {
             foreach (var i in items) realItems.Add(i);
-            BeginUpdate();
-            base.Items.Clear();
-            base.Items.AddRange(realItems.ToArray());
-            EndUpdate();
+
+            //BeginUpdate();
+            //int currentScroll = base.TopIndex;
+
+            //base.Items.Clear();
+            //base.Items.AddRange(realItems.ToArray());
+
+            //base.TopIndex = currentScroll;
+            //EndUpdate();
 	    }
 
 	    public string[] GetUserNames()
@@ -134,7 +158,7 @@ namespace ZeroKLobby.MicroLobby
             DpiMeasurement.DpiXYMeasurement(this);
             if (DesignMode) return;
             if (e.Index > -1 && e.Index < base.Items.Count)
-                e.ItemHeight = DpiMeasurement.ScaleValueY(((PlayerListItem)base.Items[e.Index]).Height); //GetItemRectangle() will measure the size of item (for drawing). We return a custom Height defined in PlayerListItems.cs
+                e.ItemHeight = DpiMeasurement.ScaleValueY(((PlayerListItem)base.Items[e.Index]).Height); //GetItemRectangle() will measure the size of item for drawing, so we return a custom Height defined in PlayerListItems.cs
 		}
 
 
@@ -142,16 +166,21 @@ namespace ZeroKLobby.MicroLobby
 		{
 			base.OnMouseMove(e);
 			var cursorPoint = new Point(e.X, e.Y);
+			
 			if (cursorPoint == previousLocation) return;
 			previousLocation = cursorPoint;
-
-			var hoverIndex = IndexFromPoint(cursorPoint);
+			
+			var hoverIndex = IndexFromPoint(cursorPoint); //note: this don't return value exceeding base.Items.Count -1
+			bool isOnEmpty = (hoverIndex >= base.Items.Count-1 && !GetItemRectangle(hoverIndex).Contains(cursorPoint));		
+			
+			if (isOnEmpty) hoverIndex = base.Items.Count; //we'll use this number when cursor is outside the list
+			
 			if (previousHoverIndex == hoverIndex) return;
 			previousHoverIndex = hoverIndex;
 
-			if (hoverIndex < 0 || hoverIndex >= base.Items.Count || !GetItemRectangle(hoverIndex).Contains(cursorPoint))
+			if (hoverIndex < 0 || hoverIndex >= base.Items.Count)
 			{
-				HoverItem = null;
+				HoverItem = null; //outside the list
 				Program.ToolTip.SetUser(this, null);
 			}
 			else

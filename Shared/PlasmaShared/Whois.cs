@@ -4,8 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace PlasmaShared
+namespace ZkData
 {
     public class Whois
     {
@@ -27,8 +28,10 @@ namespace PlasmaShared
         }
 
         public string QueryWhois(string command) {
-            var tcp = new TcpClient(whoisServer, 43);
+            var tcp = new TcpClient();
+            tcp.Connect(whoisServer, 43);
             var stream = tcp.GetStream();
+
             var streamWriter = new StreamWriter(stream);
             streamWriter.WriteLine(command);
             streamWriter.Flush();

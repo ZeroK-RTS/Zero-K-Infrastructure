@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using ZeroKLobby.MapDownloader;
 using ZeroKLobby.MicroLobby;
+using ZkData;
 
 namespace ZeroKLobby
 {
@@ -46,7 +47,7 @@ namespace ZeroKLobby
         public string Path {
             get { return CurrentPage != null ? CurrentPage.ToString() : string.Empty; }
             set {
-                if (value.ToLower().StartsWith("spring://")) value = value.Substring(9);
+                if (value.ToLower().StartsWith("zk://")) value = value.Substring(5);
 
                 var parts = value.Split('@');
                 for (var i = 1; i < parts.Length; i++) {
@@ -80,12 +81,12 @@ namespace ZeroKLobby
 
             ButtonList = new List<ButtonInfo>() //normal arrangement
             {
-                new ButtonInfo() { Label = "HOME", TargetPath = "http://zero-k.info/", Icon= Buttons.home, Height = 32,Width = 80 },
+                new ButtonInfo() { Label = "HOME", TargetPath = GlobalConst.BaseSiteUrl + "/", Icon= Buttons.home, Height = 32,Width = 80 },
                 new ButtonInfo() { Label = "CHAT", TargetPath = "chat", Icon= ZklResources.chat, Height = 32, Width = 65 },
                 new ButtonInfo()
                 {
                     Label = "SINGLEPLAYER",
-                    TargetPath = "http://zero-k.info/Missions",
+                    TargetPath = string.Format("{0}/Missions", GlobalConst.BaseSiteUrl),
                     Icon = Buttons.spherebot,
                     Width = 125,
                     Height = 32,
@@ -98,10 +99,10 @@ namespace ZeroKLobby
                     Height = 32,
                 },
                 
-                new ButtonInfo() { Label = "PLANETWARS", TargetPath = "http://zero-k.info/Planetwars", Height = 32,  },
-                new ButtonInfo() { Label = "MAPS", TargetPath = "http://zero-k.info/Maps", Icon = Buttons.map, Height = 32, Width = 75 },
-                new ButtonInfo() { Label = "REPLAYS", TargetPath = "http://zero-k.info/Battles", Icon = Buttons.video_icon, Height = 32, Width = 95 },
-                new ButtonInfo() { Label = "FORUM", TargetPath = "http://zero-k.info/Forum", Height = 32, Width = 65, },
+                new ButtonInfo() { Label = "PLANETWARS", TargetPath = string.Format("{0}/Planetwars/", GlobalConst.BaseSiteUrl), Height = 32,  },
+                new ButtonInfo() { Label = "MAPS", TargetPath = string.Format("{0}/Maps/", GlobalConst.BaseSiteUrl), Icon = Buttons.map, Height = 32, Width = 75 },
+                new ButtonInfo() { Label = "REPLAYS", TargetPath = string.Format("{0}/Battles/", GlobalConst.BaseSiteUrl), Icon = Buttons.video_icon, Height = 32, Width = 95 },
+                new ButtonInfo() { Label = "FORUM", TargetPath = string.Format("{0}/Forum/", GlobalConst.BaseSiteUrl), Height = 32, Width = 65, },
                 new ButtonInfo() { Label = "SETTINGS", TargetPath = "settings", Icon = Buttons.settings, Height = 32, Width = 100, Dock = DockStyle.Right},
                
             };
@@ -117,13 +118,13 @@ namespace ZeroKLobby
             if (Environment.OSVersion.Platform != PlatformID.Unix && !Program.Conf.UseExternalBrowser) {
                 if (!Program.Conf.SingleInstance) //run in multiple TAB?
                 {
-                    AddTabPage(new BrowserTab("http://zero-k.info/Maps", false), "Maps");
-                    AddTabPage(new BrowserTab("http://zero-k.info/Missions", false), "sp");
-                    AddTabPage(new BrowserTab("http://zero-k.info/Battles", false), "rp");
-                    AddTabPage(new BrowserTab("http://zero-k.info/Planetwars", false), "pw");
-                    AddTabPage(new BrowserTab("http://zero-k.info/Forum", true), "fm");
+                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Maps", false), "Maps");
+                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Missions", false), "sp");
+                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Battles", false), "rp");
+                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Planetwars", false), "pw");
+                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Forum", true), "fm");
                 }
-                var home = AddTabPage(new BrowserTab("http://zero-k.info/", true), "hm");
+                var home = AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl, true), "hm");
                 tabControl.SelectTab(home);
                 if (Program.Conf.InterceptPopup) 
                 {
@@ -333,7 +334,7 @@ namespace ZeroKLobby
 
         private void logoutButton_Click(object sender, EventArgs e)
         {
-            Program.TasClient.Disconnect();
+            Program.TasClient.RequestDisconnect();
             Program.Conf.LobbyPlayerName = "";
         }
 

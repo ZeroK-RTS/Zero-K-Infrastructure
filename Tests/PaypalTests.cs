@@ -5,8 +5,6 @@ using System.Text;
 using LobbyClient;
 using NUnit.Framework;
 using NightWatch;
-using PlasmaShared;
-using ServiceStack.Text;
 using ZkData;
 
 namespace Tests

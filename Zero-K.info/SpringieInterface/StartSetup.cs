@@ -9,36 +9,6 @@ using ZkData;
 
 namespace ZeroKWeb.SpringieInterface
 {
-    public class SpringBattleStartSetup
-    {
-        public List<ScriptKeyValuePair> ModOptions = new List<ScriptKeyValuePair>();
-        public List<UserCustomParameters> UserParameters = new List<UserCustomParameters>();
-        public BalanceTeamsResult BalanceTeamsResult;
-
-        #region Nested type: ScriptKeyValuePair
-
-        public class ScriptKeyValuePair
-        {
-            public string Key;
-            public string Value;
-        }
-
-        #endregion
-
-        #region Nested type: UserCustomParameters
-
-        public class UserCustomParameters
-        {
-            public int LobbyID;
-            public List<ScriptKeyValuePair> Parameters = new List<ScriptKeyValuePair>();
-        }
-
-        
-        #endregion
-    }
-
-    
-
     public class StartSetup
     {
         static bool listOnlyThatLevelsModules = false;  // may cause bugs
@@ -69,7 +39,7 @@ namespace ZeroKWeb.SpringieInterface
                             int cnt = biggest.Count() - other.Count();
                             if (cnt > 0) {
                                 foreach (Account a in
-                                    other.Select(x => db.Accounts.First(y => y.LobbyID == x.LobbyID)).OrderByDescending(x => x.Elo*x.EloWeight).Take(
+                                    other.Select(x => db.Accounts.First(y => y.AccountID == x.LobbyID)).OrderByDescending(x => x.Elo*x.EloWeight).Take(
                                         cnt)) accountIDsWithExtraComms.Add(a.AccountID);
                             }
                         }
@@ -87,7 +57,7 @@ namespace ZeroKWeb.SpringieInterface
                     planet = db.Galaxies.First(x => x.IsDefault).Planets.First(x => x.Resource.InternalName == context.Map);
                     attacker =
                         context.Players.Where(x => x.AllyID == 0 && !x.IsSpectator)
-                            .Select(x => db.Accounts.First(y => y.LobbyID == x.LobbyID))
+                            .Select(x => db.Accounts.First(y => y.AccountID == x.LobbyID))
                             .Where(x => x.Faction != null)
                             .Select(x => x.Faction)
                             .First();
@@ -104,7 +74,7 @@ namespace ZeroKWeb.SpringieInterface
 
                 
                 foreach (PlayerTeam p in context.Players) {
-                    Account user = Account.AccountByLobbyID(db, p.LobbyID);
+                    Account user = db.Accounts.Find(p.LobbyID);
                     if (user != null) {
                         var userParams = new List<SpringBattleStartSetup.ScriptKeyValuePair>();
                         ret.UserParameters.Add(new SpringBattleStartSetup.UserCustomParameters { LobbyID = p.LobbyID, Parameters = userParams });

@@ -13,8 +13,9 @@ namespace ZeroKWeb.Controllers
         public ActionResult Index(int pollID)
         {
             var db = new ZkDataContext();
-            var poll = db.Polls.Single(x => x.PollID == pollID);
-            return PartialView("PollView", poll);
+            var poll = db.Polls.FirstOrDefault(x => x.PollID == pollID);
+            if (poll != null) return PartialView("PollView", poll);
+            return null;
         }
 
         [Auth(Role = AuthRole.ZkAdmin)]
@@ -61,7 +62,7 @@ namespace ZeroKWeb.Controllers
 
                                 if (entries.Any())
                                 {
-                                    previous = entries.First().AccountByAccountID;
+                                    previous = entries.First().Account;
                                     db.AccountRoles.DeleteAllOnSubmit(entries);
                                     db.SubmitAndMergeChanges();
                                 }
@@ -69,7 +70,7 @@ namespace ZeroKWeb.Controllers
 
                             var entry = new AccountRole()
                                         {
-                                            AccountByAccountID = acc,
+                                            Account = acc,
                                             Inauguration = DateTime.UtcNow,
                                             Clan = p.Clan,
                                             Faction = p.Faction,

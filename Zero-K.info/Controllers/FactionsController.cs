@@ -54,6 +54,13 @@ namespace ZeroKWeb.Controllers
                 planet.OwnerAccountID = null;
             }
 
+            // delete channel subscription
+            if (!acc.IsZeroKAdmin || acc.IsZeroKAdmin)
+            {
+                var channelSub = db.LobbyChannelSubscriptions.FirstOrDefault(x => x.Account == acc && x.Channel == acc.Faction.Name);
+                db.LobbyChannelSubscriptions.DeleteOnSubmit(channelSub);
+            }
+
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} leaves faction {1}", acc, acc.Faction));
             db.SubmitChanges();
             PlanetwarsController.SetPlanetOwners(db);
@@ -113,7 +120,7 @@ namespace ZeroKWeb.Controllers
                 db.FactionTreaties.InsertOnSubmit(treaty);
                 treaty.FactionByAcceptingFactionID = db.Factions.Single(x => x.FactionID == acceptingFactionID);
             }
-            treaty.AccountByProposingAccountID = Account.AccountByAccountID(db, Global.AccountID);
+            treaty.AccountByProposingAccountID = db.Accounts.Find(Global.AccountID);
             treaty.FactionByProposingFactionID = db.Factions.Single(x => x.FactionID == Global.FactionID);
             treaty.TurnsRemaining = turns;
             treaty.TurnsTotal = turns;
@@ -125,7 +132,7 @@ namespace ZeroKWeb.Controllers
                 var effect = new TreatyEffect
                              {
                                  FactionByGivingFactionID = isReverse == true ? treaty.FactionByAcceptingFactionID : treaty.FactionByProposingFactionID,
-                                 FactionByReceivingFactionID =
+                                 FactionByReceivingFactionID = 
                                      isReverse == true ? treaty.FactionByProposingFactionID : treaty.FactionByAcceptingFactionID,
                                  TreatyEffectType = effectType,
                                  FactionTreaty = treaty

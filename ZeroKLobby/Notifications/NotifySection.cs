@@ -9,7 +9,7 @@ namespace SpringDownloader.Notifications
 {
 	public partial class NotifySection: UserControl
 	{
-        private Timer timedUpdate = new Timer();
+        readonly Timer uiUpdate = new Timer();
 		ScannerBar scannerBar;
 		public IEnumerable<INotifyBar> Bars { get { return Controls.OfType<NotifyBarContainer>().Select(x => x.BarContent); } }
 
@@ -17,8 +17,8 @@ namespace SpringDownloader.Notifications
 		{
 			InitializeComponent();
 
-            timedUpdate.Interval =100; //timer tick to add micro delay to Layout update.
-            timedUpdate.Tick += timedUpdate_Tick;
+            uiUpdate.Interval =100; //timer tick to add micro delay to Layout update.
+            uiUpdate.Tick += timedUpdate_Tick;
 		}
 
 		public void AddBar(INotifyBar bar)
@@ -26,18 +26,17 @@ namespace SpringDownloader.Notifications
 			if (!Bars.Contains(bar))
 			{
 				Controls.Add(new NotifyBarContainer(bar));
-				//Height = Controls.OfType<Control>().Sum(x => x.Height);
-                timedUpdate.Start(); //accumulate update for 50ms because Linux Mono have trouble with multiple add/remove bar spam.
+                uiUpdate.Start(); //accumulate update for 50ms because Linux Mono have trouble with multiple add/remove bar spam.
 			}
 		}
 
 		public void RemoveBar(object bar)
 		{
-			var container = Controls.OfType<NotifyBarContainer>().Where(x => x.BarContent == bar).SingleOrDefault();
+			var container = Controls.OfType<NotifyBarContainer>().FirstOrDefault(x => x.BarContent == bar);
             if (container != null)
             {
                 Controls.Remove(container);
-                timedUpdate.Start(); //accumulate update for 50ms because Linux Mono have trouble with multiple add/remove bar spam.
+                uiUpdate.Start(); //accumulate update for 50ms because Linux Mono have trouble with multiple add/remove bar spam.
             }
 		}
 
@@ -51,7 +50,7 @@ namespace SpringDownloader.Notifications
 
         private void timedUpdate_Tick(object sender, EventArgs e)
         {
-            timedUpdate.Stop(); //finish size update, stop timer.
+            uiUpdate.Stop(); //finish size update, stop timer.
             Height = Controls.OfType<Control>().Sum(x => x.Height);
 			Program.MainWindow.Invalidate(true);
         }

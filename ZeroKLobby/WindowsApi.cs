@@ -29,7 +29,7 @@ namespace ZeroKLobby
             if (Environment.OSVersion.Platform == PlatformID.Unix) {
 				if (haveXprintIdle)
 				{
-					var ret = PlasmaShared.Utils.ExecuteConsoleCommand("xprintidle");
+					var ret = ZkData.Utils.ExecuteConsoleCommand("xprintidle");
                 	if (ret != null) {
                     	int ms;
                     	if (int.TryParse(ret, out ms)) return TimeSpan.FromMilliseconds(ms);

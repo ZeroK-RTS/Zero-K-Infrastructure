@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml.Serialization;
 using PlasmaShared;
-using PlasmaShared.UnitSyncLib;
+using ZkData.UnitSyncLib;
 using ZkData;
 
 namespace ZeroKWeb
@@ -19,16 +19,19 @@ namespace ZeroKWeb
         public const int PlasmaServerApiVersion = 3;
         const int ThumbnailSize = 96;
 
-        public enum ReturnValue
-        {
-            Ok,
-            InvalidLogin,
-            ResourceNotFound,
-            InternalNameAlreadyExistsWithDifferentSpringHash,
-            Md5AlreadyExists,
-            Md5AlreadyExistsWithDifferentName,
-        }
+         public static ResourceData ToResourceData(Resource r)
+         {
+             var ret = new ResourceData() {
+                 ResourceID = r.ResourceID,
+                 InternalName = r.InternalName,
+                 ResourceType = r.TypeID,
+                 Dependencies = r.ResourceDependencies.Select(x => x.NeedsInternalName).ToList(),
+                 FeaturedOrder = r.FeaturedOrder,
+             };
+             return ret;
+         }
 
+   
         public static ReturnValue DeleteResource(string internalName)
         {
             var db = new ZkDataContext();
@@ -36,25 +39,35 @@ namespace ZeroKWeb
             if (todel == null) return ReturnValue.ResourceNotFound;
             RemoveResourceFiles(todel);
 
-            db.Resources.DeleteOnSubmit(todel);
+            db.Resources.Remove(todel);
             db.SubmitChanges();
             return ReturnValue.Ok;
         }
 
 
-        public static bool DownloadFile(string internalName,
-                                        out List<string> links,
-                                        out byte[] torrent,
-                                        out List<string> dependencies,
-                                        out ResourceType resourceType,
-                                        out string torrentFileName)
+        public static DownloadFileResult DownloadFile(string internalName)
         {
-            return ResourceLinkProvider.GetLinksAndTorrent(internalName,
+            List<string> links;
+            byte[] torrent;
+            List<string> dependencies;
+            ResourceType resourceType;
+            string torrentFileName;
+            var ok =  ResourceLinkProvider.GetLinksAndTorrent(internalName,
                                                            out links,
                                                            out torrent,
                                                            out dependencies,
                                                            out resourceType,
                                                            out torrentFileName);
+            if (ok) {
+                return new DownloadFileResult() {
+                    links = links,
+                    torrent = torrent,
+                    dependencies = dependencies,
+                    resourceType = resourceType,
+                    torrentFileName = torrentFileName,
+                };
+            }
+            return null;
         }
 
         public static List<string> GetLinkArray(ResourceContentFile cf)
@@ -67,7 +80,7 @@ namespace ZeroKWeb
         {
             var ret = FindResource(md5, internalName);
             if (ret == null) return null;
-            return new ResourceData(ret);
+            return ToResourceData(ret);
         }
 
         public static List<ResourceData> GetResourceList(DateTime? lastChange, out DateTime currentTime)
@@ -75,7 +88,7 @@ namespace ZeroKWeb
             var ct = DateTime.UtcNow;
             currentTime = ct;
             var db = new ZkDataContext();
-            return db.Resources.Where(x => lastChange == null || x.LastChange > lastChange).Select(r => new ResourceData(r)).ToList();
+            return db.Resources.Where(x => lastChange == null || x.LastChange > lastChange).AsEnumerable().Select(ToResourceData).ToList();
         }
 
 
@@ -96,7 +109,7 @@ namespace ZeroKWeb
 
         public static string GetTorrentPath(string name, string md5)
         {
-            return HttpContext.Current.Server.MapPath(String.Format("~/Resources/{0}", (object)GetTorrentFileName(name, md5)));
+            return Global.MapPath(String.Format("~/Resources/{0}", (object)GetTorrentFileName(name, md5)));
         }
 
         public static string GetTorrentPath(ResourceContentFile cf)
@@ -111,7 +124,6 @@ namespace ZeroKWeb
                                                    ResourceType resourceType,
                                                    string archiveName,
                                                    string internalName,
-                                                   int springHash,
                                                    byte[] serializedData,
                                                    List<string> dependencies,
                                                    byte[] minimap,
@@ -129,20 +141,14 @@ namespace ZeroKWeb
 
             var db = new ZkDataContext();
 
-            if (
-                db.Resources.Any(
-                    x =>
-                    x.InternalName == internalName && x.ResourceSpringHashes.Any(y => y.SpringVersion == springVersion && y.SpringHash != springHash))) return ReturnValue.InternalNameAlreadyExistsWithDifferentSpringHash;
 
             var contentFile = db.ResourceContentFiles.FirstOrDefault(x => x.Md5 == md5);
             if (contentFile != null)
             {
                 // content file already stored
                 if (contentFile.Resource.InternalName != internalName) return ReturnValue.Md5AlreadyExistsWithDifferentName;
-                if (contentFile.Resource.ResourceSpringHashes.Any(x => x.SpringVersion == springVersion)) return ReturnValue.Md5AlreadyExists;
 
                 // new spring version we add its hash
-                contentFile.Resource.ResourceSpringHashes.Add(new ResourceSpringHash { SpringVersion = springVersion, SpringHash = springHash });
                 StoreMetadata(md5, contentFile.Resource, serializedData, torrentData, minimap, metalMap, heightMap);
                 db.SubmitChanges();
                 return ReturnValue.Ok;
@@ -153,7 +159,7 @@ namespace ZeroKWeb
             if (resource == null)
             {
                 resource = new Resource { InternalName = internalName, TypeID = resourceType };
-                db.Resources.InsertOnSubmit(resource);
+                db.Resources.Add(resource);
                 StoreMetadata(md5, resource, serializedData, torrentData, minimap, metalMap, heightMap);
             }
 
@@ -176,12 +182,7 @@ namespace ZeroKWeb
 
             resource.ResourceContentFiles.Add(new ResourceContentFile { FileName = archiveName, Length = length, Md5 = md5 });
             File.WriteAllBytes(GetTorrentPath(internalName, md5), torrentData); // add new torrent file
-            if (!resource.ResourceSpringHashes.Any(x => x.SpringVersion == springVersion))
-            {
-                resource.ResourceSpringHashes.Add(new ResourceSpringHash { SpringVersion = springVersion, SpringHash = springHash });
-                StoreMetadata(md5, resource, serializedData, torrentData, minimap, metalMap, heightMap);
-            }
-
+          
             db.SubmitChanges();
 
             return ReturnValue.Ok;
@@ -189,7 +190,7 @@ namespace ZeroKWeb
 
         public static void RemoveResourceFiles(Resource resource)
         {
-            var file = String.Format("{0}/{1}", HttpContext.Current.Server.MapPath("~/Resources"), resource.InternalName.EscapePath());
+            var file = String.Format("{0}/{1}", Global.MapPath("~/Resources"), resource.InternalName.EscapePath());
             Utils.SafeDelete(String.Format("{0}.minimap.jpg", file));
             Utils.SafeDelete(String.Format("{0}.thumbnail.jpg", file));
             Utils.SafeDelete(String.Format("{0}.heightmap.jpg", file));
@@ -219,7 +220,7 @@ namespace ZeroKWeb
                                   byte[] metalMap,
                                   byte[] heightMap)
         {
-            var file = String.Format("{0}/{1}", HttpContext.Current.Server.MapPath("~/Resources"), resource.InternalName.EscapePath());
+            var file = String.Format("{0}/{1}", Global.MapPath("~/Resources"), resource.InternalName.EscapePath());
 
             resource.LastChange = DateTime.UtcNow;
 
@@ -277,7 +278,7 @@ namespace ZeroKWeb
                             encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, 100L);
 
                             var target = String.Format("{0}/{1}.thumbnail.jpg",
-                                                       HttpContext.Current.Server.MapPath("~/Resources"),
+                                                       Global.MapPath("~/Resources"),
                                                        resource.InternalName.EscapePath());
                             correctMinimap.Save(target, jgpEncoder, encoderParams);
                         }
@@ -286,44 +287,6 @@ namespace ZeroKWeb
             }
         }
 
-        public class ResourceData
-        {
-            public List<string> Dependencies;
-            public string InternalName;
-            public int ResourceID;
-            public ResourceType ResourceType;
-            public List<SpringHashEntry> SpringHashes;
-            public float? FeaturedOrder;
-            private int? MapFFAMaxTeams;
-            private bool? MapIs1v1;
-            private bool? MapIsFfa;
-            private bool? MapIsSpecial;
-            private bool? MapIsChickens;
-
-
-            public ResourceData() {}
-
-            public ResourceData(Resource r)
-            {
-                ResourceID = r.ResourceID;
-                InternalName = r.InternalName;
-                ResourceType = r.TypeID;
-                Dependencies = r.ResourceDependencies.Select(x => x.NeedsInternalName).ToList();
-                SpringHashes =
-                    r.ResourceSpringHashes.Select(x => new SpringHashEntry { SpringHash = x.SpringHash, SpringVersion = x.SpringVersion }).ToList();
-                FeaturedOrder = r.FeaturedOrder;
-                MapFFAMaxTeams = r.MapFFAMaxTeams;
-                MapIs1v1 = r.MapIs1v1;
-                MapIsFfa = r.MapIsFfa;
-                MapIsSpecial = r.MapIsSpecial;
-                MapIsChickens = r.MapIsChickens;
-            }
-        }
-
-        public class SpringHashEntry
-        {
-            public int SpringHash;
-            public string SpringVersion;
-        }
+     
     }
 }

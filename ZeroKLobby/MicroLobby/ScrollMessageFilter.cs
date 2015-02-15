@@ -3,11 +3,9 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-#if (!LINUX)
+#if (!__MonoCS__)
 using mshtml; 
 //will not compile in MonoDevelop
-//using preprocessor directive to skip. reference: http://msdn.microsoft.com/en-us/library/yt3yck0x.aspx
-//"LINUX" symbol is defined in LinuxDebug Project-option
 #endif
 
 
@@ -30,7 +28,7 @@ namespace ZeroKLobby.MicroLobby
                 if (control != null) {
 
                     if (control is WebBrowser) {
-						#if (!LINUX)
+						#if (!__MonoCS__)
 						var brows = control as WebBrowser;
                         if (brows.Document != null) //check whether the page exist before adding a scroll bar
                         {

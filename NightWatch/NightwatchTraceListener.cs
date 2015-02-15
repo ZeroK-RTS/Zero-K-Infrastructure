@@ -26,8 +26,8 @@ namespace NightWatch
             {
                 tas.JoinChannel("zkerror");
                 string history;
-                while (queue.TryDequeue(out history)) tas.Say(TasClient.SayPlace.Channel, "zkerror", history, true);
-                tas.Say(TasClient.SayPlace.Channel, "zkerror", text, true);
+                while (queue.TryDequeue(out history)) tas.Say(SayPlace.Channel, "zkerror", history, true);
+                tas.Say(SayPlace.Channel, "zkerror", text, true);
             }
             else queue.Enqueue(text); 
 

@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using MonoTorrent.Common;
 using PlasmaDownloader.Packages;
-using PlasmaShared;
+using ZkData;
 
 namespace PlasmaDownloader
 {

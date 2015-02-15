@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using Newtonsoft.Json;
 using PlasmaShared;
-using ServiceStack.Text;
 using ZkData;
 
 namespace LobbyClient
@@ -27,7 +27,6 @@ namespace LobbyClient
             SpringieLevel,
             ZkAdmin,
             BanMute,
-            BanLobby,
             SteamID,
             DisplayName,
         }
@@ -38,7 +37,7 @@ namespace LobbyClient
 
         readonly Dictionary<string, Dictionary<string, string>> publishedUserAttributes = new Dictionary<string, Dictionary<string, string>>();
 
-        readonly TasClient tas;
+        public TasClient tas { get; private set; }
         readonly Dictionary<string, Type> typeCache = new Dictionary<string, Type>()
         {
             { typeof(SiteToLobbyCommand).Name, typeof(SiteToLobbyCommand) },
@@ -53,10 +52,8 @@ namespace LobbyClient
         public ProtocolExtension(TasClient tas, Action<string, Dictionary<string, string>> notifyUserExtensionChange) {
             this.tas = tas;
             this.notifyUserExtensionChange = notifyUserExtensionChange;
-            tas.PreviewChannelJoined += tas_PreviewChannelJoined;
             tas.PreviewSaid += tas_PreviewSaid;
-            tas.ChannelUserAdded += tas_ChannelUserAdded;
-            tas.LoginAccepted += (s, e) => tas.JoinChannel(ExtensionChannelName);
+            //tas.LoginAccepted += (s, e) => tas.JoinChannel(ExtensionChannelName);
         }
 
         internal Dictionary<string, string> Get(string name) {
@@ -69,50 +66,23 @@ namespace LobbyClient
         public void Publish(string name, Dictionary<string, string> data) {
             var dict = new Dictionary<string, string>(data);
             publishedUserAttributes[name] = dict;
-            tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, FormatMessage(name, data), false);
-        }
-
-        public void PublishAccountData(Account acc) {
-            if (acc != null && tas.ExistingUsers.ContainsKey(acc.Name)) {
-                var data = new Dictionary<string, string>
-                {
-                    { Keys.Level.ToString(), acc.Level.ToString() },
-                    { Keys.EffectiveElo.ToString(), ((int)acc.EffectiveElo).ToString() },
-                    { Keys.Faction.ToString(), acc.Faction != null ? acc.Faction.Shortcut : "" },
-                    { Keys.Clan.ToString(), acc.Clan != null ? acc.Clan.Shortcut : "" },
-                    { Keys.Avatar.ToString(), acc.Avatar },
-                    { Keys.SpringieLevel.ToString(), acc.GetEffectiveSpringieLevel().ToString() },
-                };
-                if (acc.SteamID != null) data.Add(Keys.SteamID.ToString(), acc.SteamID.ToString());
-                if (!string.IsNullOrEmpty(acc.SteamName) && acc.SteamName != acc.Name) data.Add(Keys.DisplayName.ToString(), acc.SteamName);
-
-                if (acc.IsZeroKAdmin) data.Add(Keys.ZkAdmin.ToString(), "1");
-
-                if (acc.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanMute)) data.Add(Keys.BanMute.ToString(), "1");
-                if (acc.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanLobby)) data.Add(Keys.BanLobby.ToString(), "1");
-
-                tas.Extensions.Publish(acc.Name, data);
-
-                // if (acc.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby)) tas.AdminKickFromLobby(acc.Name, "Banned");
-                ZkData.Punishment penalty = acc.PunishmentsByAccountID.FirstOrDefault(x => x.BanExpires > DateTime.UtcNow && x.BanLobby);
-                if (penalty != null) tas.AdminKickFromLobby(acc.Name, string.Format("Banned until {0}, reason: {1}", penalty.BanExpires, penalty.Reason));
-				}
+            //tas.Say(SayPlace.Channel, ExtensionChannelName, FormatMessage(name, data), false);
         }
 
 
         public void SendJsonData(object data)
         {
-            tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, EncodeJson(data), false);
+            tas.Say(SayPlace.Channel, ExtensionChannelName, EncodeJson(data), false);
         }
 
 
         public void SendJsonData(string username, object data) {
-            tas.Say(TasClient.SayPlace.User, username, EncodeJson(data), false);
+            tas.Say(SayPlace.User, username, EncodeJson(data), false);
         }
 
         public void SendJsonDataToChannel(string channel, object data)
         {
-            tas.Say(TasClient.SayPlace.Channel, channel, EncodeJson(data), false);
+            tas.Say(SayPlace.Channel, channel, EncodeJson(data), false);
         }
 
 
@@ -147,7 +117,7 @@ namespace LobbyClient
                 }
 
                 if (type != null) {
-                    var decoded = JsonSerializer.DeserializeFromString(payload, type);
+                    var decoded = JsonConvert.DeserializeObject(payload, type);
                     if (decoded != null) JsonDataReceived(e, decoded);
                 }
             } catch (Exception ex) {
@@ -166,16 +136,14 @@ namespace LobbyClient
         }
 
         static string EncodeJson(object data) {
-            var payload = JsonSerializer.SerializeToString(data);
+            var payload = JsonConvert.SerializeObject(data, new JsonSerializerSettings() {Formatting = Formatting.None});
             return string.Format("!JSON {0} {1}", data.GetType().Name, payload);
         }
 
-        static string Escape(string input) {
+        static string Escape(string input)
+        {
+            if (string.IsNullOrEmpty(input)) return input;
             return input.Replace("|", "&divider&");
-        }
-
-        string FormatMessage(string user, Dictionary<string, string> data) {
-            return string.Format("USER_EXT {0} {1}", user, Serialize(data));
         }
 
         static string Serialize(Dictionary<string, string> data) {
@@ -186,18 +154,6 @@ namespace LobbyClient
             return input.Replace("&divider&", "|");
         }
 
-        void tas_ChannelUserAdded(object sender, TasEventArgs e) {
-            if (e.ServerParams[0] == ExtensionChannelName && e.ServerParams[1] != tas.UserName) {
-                foreach (var kvp in publishedUserAttributes) tas.Say(TasClient.SayPlace.User, e.ServerParams[1], FormatMessage(kvp.Key, kvp.Value), false);
-            }
-        }
-
-        void tas_PreviewChannelJoined(object sender, CancelEventArgs<TasEventArgs> e) {
-            if (e.Data.ServerParams[0] == ExtensionChannelName) {
-                e.Cancel = true;
-                foreach (var kvp in publishedUserAttributes) tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, FormatMessage(kvp.Key, kvp.Value), false);
-            }
-        }
 
 
         void tas_PreviewSaid(object sender, CancelEventArgs<TasSayEventArgs> e) {

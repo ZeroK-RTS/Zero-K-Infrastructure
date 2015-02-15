@@ -7,6 +7,7 @@ using System.Web.Routing;
 using LobbyClient;
 using NightWatch;
 using ZkData;
+using System.Data.Entity.SqlServer;
 
 namespace ZeroKWeb.Controllers
 {
@@ -14,34 +15,6 @@ namespace ZeroKWeb.Controllers
     {
         //
         // GET: /Users/
-
-
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
-        public ActionResult AutoResolveDuplicates()
-        {
-            var db = new ZkDataContext();
-
-            // fixes duplicate name by preserving last working lobbyID 
-            foreach (var dupl in db.Accounts.Where(x => x.LobbyID != null).GroupBy(x => x.Name).Where(x => x.Count() > 1))
-            {
-                List<Account> dupAccounts = db.Accounts.Where(x => x.Name == dupl.Key).ToList();
-                Account bestAccount = dupAccounts.OrderByDescending(x => x.LastLogin).First();
-                foreach (Account ac in dupAccounts) if (ac.LobbyID != bestAccount.LobbyID) ac.LobbyID = null;
-            }
-            db.SubmitChanges();
-
-            // fixes duplicate lobbyID by preserving newer account
-            foreach (var dupl in db.Accounts.GroupBy(x => x.LobbyID).Where(x => x.Count() > 1 && x.Key != null))
-            {
-                List<Account> dupAccounts = db.Accounts.Where(x => x.LobbyID == dupl.Key).ToList();
-                Account bestAccount = dupAccounts.OrderByDescending(x => x.Level).First();
-                foreach (Account ac in dupAccounts) if (ac.AccountID != bestAccount.AccountID) ac.LobbyID = null;
-            }
-            db.SubmitChanges();
-
-            return Redirect("Duplicates");
-        }
-
         [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
         public ActionResult ChangeHideCountry(int accountID, bool hideCountry)
         {
@@ -49,30 +22,28 @@ namespace ZeroKWeb.Controllers
             Account acc = db.Accounts.Single(x => x.AccountID == accountID);
 
             if (hideCountry) acc.Country = "??";
-            Global.Nightwatch.Tas.SetHideCountry(acc.Name, hideCountry);
+            // TODO reimplement ? Global.Nightwatch.Tas.SetHideCountry(acc.Name, hideCountry);
             db.SubmitChanges();
 
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
 
         [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
-        public ActionResult ChangeLobbyID(int accountID, int? newLobbyID)
+        public ActionResult ChangeAccountDeleted(int accountID, bool isDeleted)
         {
             var db = new ZkDataContext();
-            Account account = db.Accounts.Single(x => x.AccountID == accountID);
-            int? oldLobbyID = account.LobbyID;
-            account.LobbyID = newLobbyID;
-            db.SubmitChanges();
-            string response = string.Format("{0} lobby ID change from {1} -> {2}", account.Name, oldLobbyID, account.LobbyID);
-            foreach (Account duplicate in db.Accounts.Where(x => x.LobbyID == newLobbyID && x.AccountID != accountID))
+            Account acc = db.Accounts.Single(x => x.AccountID == accountID);
+
+            if (acc.IsDeleted != isDeleted)
             {
-                response += string.Format("\n Duplicate: {0} - {1} {2}",
-                                          duplicate.Name,
-                                          duplicate.AccountID,
-                                          Url.Action("Detail", new { id = duplicate.AccountID }));
+                Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Account {0} {1} deletion status changed by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name), true);
+                Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - {0} -> {1}", acc.IsDeleted, isDeleted), true);
+                acc.IsDeleted = isDeleted;
             }
-            return Content(response);
-        }
+            db.SubmitChanges();
+
+            return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
+        }     
 
         [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
         public ActionResult ChangePermissions(int accountID, int adminAccountID, int springieLevel, bool zkAdmin, bool vpnException)
@@ -80,20 +51,30 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             Account acc = db.Accounts.Single(x => x.AccountID == accountID);
             Account adminAcc = db.Accounts.Single(x => x.AccountID == adminAccountID);
-            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Permissions changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name), true);
+            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Permissions changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name), true);
             if (acc.SpringieLevel != springieLevel)
             {
-                Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - Springie rights: {0} -> {1}", acc.SpringieLevel, springieLevel), true);
+                Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - Springie rights: {0} -> {1}", acc.SpringieLevel, springieLevel), true);
                 acc.SpringieLevel = springieLevel;
             }
-            if (acc.IsZeroKAdmin != zkAdmin)
+           if (acc.IsZeroKAdmin != zkAdmin)
             {
-                Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - Admin status: {0} -> {1}", acc.IsZeroKAdmin, zkAdmin), true);
+                //reset chat priviledges to 2 if removing adminhood; remove NW subsciption to admin channel
+                // FIXME needs to also terminate forbidden clan/faction subscriptions
+                if (zkAdmin == false)
+                {
+                    Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - Springie rights: {0} -> {1}", acc.SpringieLevel, 2), true);
+                    acc.SpringieLevel = 2;
+                    var channelSub = db.LobbyChannelSubscriptions.FirstOrDefault(x => x.Account == acc && x.Channel == GlobalConst.ModeratorChannel);
+                    db.LobbyChannelSubscriptions.DeleteOnSubmit(channelSub);
+                }
+                Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - Admin status: {0} -> {1}", acc.IsZeroKAdmin, zkAdmin), true);
                 acc.IsZeroKAdmin = zkAdmin;
+                
             }
             if (acc.HasVpnException != vpnException)
             {
-                Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - VPN exception: {0} -> {1}", acc.HasVpnException, vpnException), true);
+                Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - VPN exception: {0} -> {1}", acc.HasVpnException, vpnException), true);
                 acc.HasVpnException = vpnException;
             }
             db.SubmitChanges();
@@ -106,7 +87,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult AdminUserDetail(int id)
         {
             var db = new ZkDataContext();
-            var user = Account.AccountByAccountID(db, id);
+            var user = db.Accounts.Find(id);
             return View("AdminUserDetail", user);
         }
 
@@ -117,35 +98,21 @@ namespace ZeroKWeb.Controllers
 
             int idint;
             Account user = null;
-            if (int.TryParse(id, out idint)) user = Account.AccountByAccountID(db, idint);
+            if (int.TryParse(id, out idint)) user = db.Accounts.Find(idint);
             if (user == null) user = Account.AccountByName(db, id);
             return View("UserDetail", user);
         }
 
-        public ActionResult Duplicates()
-        {
-            IEnumerable<Account> ret;
-
-            var db = new ZkDataContext();
-            ret =
-                db.ExecuteQuery<Account>(
-                    "select  * from account where lobbyid in (select lobbyid from (select lobbyid, count(*)  as cnt from account group by (lobbyid)) as lc where cnt > 1) and LobbyID is not null order by lobbyid");
-            ret =
-                ret.Union(
-                    db.ExecuteQuery<Account>(
-                        "select * from account where name in (select name from (select name, count(*)  as cnt from account where lobbyid is not null group by (name)) as lc where cnt > 1) order by name"));
-            return View(ret);
-        }
 
         public ActionResult Index(string name, string alias, string ip, int? userID = null)
         {
             var db = new ZkDataContext();
-            IQueryable<Account> ret = db.Accounts.AsQueryable();
+            IQueryable<Account> ret = db.Accounts.Where(x=> !x.IsDeleted).AsQueryable();
 
-            if (!string.IsNullOrEmpty(name)) ret = ret.Where(x => x.Name.Contains(name));
+            if (!string.IsNullOrEmpty(name)) ret = ret.Where(x => SqlFunctions.PatIndex("%" + name + "%", x.Name) > 0);
             if (!string.IsNullOrEmpty(alias)) ret = ret.Where(x => x.Aliases.Contains(alias));
-            if (!string.IsNullOrEmpty(ip)) ret = ret.Where(x => x.AccountIPS.Any(y => y.IP == ip));
-            if (userID != null && userID != 0) ret = ret.Where(x => x.AccountUserIDS.Any(y => y.UserID == userID));
+            if (!string.IsNullOrEmpty(ip)) ret = ret.Where(x => x.AccountIPs.Any(y => y.IP == ip));
+            if (userID != null && userID != 0) ret = ret.Where(x => x.AccountUserIDs.Any(y => y.UserID == userID));
 
             return View("UserList", ret.Take(100));
         }
@@ -154,11 +121,11 @@ namespace ZeroKWeb.Controllers
         public ActionResult NewUsers(string name, string ip, int? userID = null)
         {
             var db = new ZkDataContext();
-            IQueryable<Account> ret = db.Accounts.AsQueryable();
+            IQueryable<Account> ret = db.Accounts.Where(x => !x.IsDeleted).AsQueryable();
 
-            if (!string.IsNullOrEmpty(name)) ret = ret.Where(x => x.Name.Contains(name));
-            if (!string.IsNullOrEmpty(ip)) ret = ret.Where(x => x.AccountIPS.Any(y => y.IP == ip));
-            if (userID != null && userID != 0) ret = ret.Where(x => x.AccountUserIDS.Any(y => y.UserID == userID));
+            if (!string.IsNullOrEmpty(name)) ret = ret.Where(x => SqlFunctions.PatIndex("%" + name + "%", x.Name) > 0);
+            if (!string.IsNullOrEmpty(ip)) ret = ret.Where(x => x.AccountIPs.Any(y => y.IP == ip));
+            if (userID != null && userID != 0) ret = ret.Where(x => x.AccountUserIDs.Any(y => y.UserID == userID));
 
             return View("NewUsers", ret.OrderByDescending(x=> x.FirstLogin).Take(200));
         }
@@ -168,7 +135,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             int idint;
             Account user = null;
-            if (int.TryParse(id, out idint)) user = Account.AccountByLobbyID(db, idint);
+            if (int.TryParse(id, out idint)) user = db.Accounts.Find(idint);
             if (user == null) user = Account.AccountByName(db, id);
 
             return View("UserDetail", user);
@@ -223,20 +190,16 @@ namespace ZeroKWeb.Controllers
                 Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);
                 if (banLobby)
                 {
-                    Global.Nightwatch.Tas.AdminBan(acc.Name, banHours / 24, reason);
-                    if (banIP != null)
-                    {
-                        Global.Nightwatch.Tas.AdminBanIP(banIP, banHours / 24, reason);
-                    }
+                    Global.Nightwatch.Tas.AdminKickFromLobby(acc.Name, reason);
                 }
 
-                Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("New penalty for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")), true);
-                Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Reason: {0} ", reason), true);
+                Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format("New penalty for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")), true);
+                Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Reason: {0} ", reason), true);
             }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.ToString());
-                Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, ex.ToString(), false);
+                Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, ex.ToString(), false);
             }
             return RedirectToAction("Detail", new { id = accountID });
         }
@@ -245,7 +208,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult ReportToAdmin(int id)
         {
             var db = new ZkDataContext();
-            var acc = Account.AccountByAccountID(db, id);
+            var acc = db.Accounts.Find(id);
             return View("ReportToAdmin", acc);
         }
 
@@ -254,7 +217,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             int idint;
             Account user = null;
-            if (int.TryParse(id, out idint)) user = Account.AccountByLobbyID(db, idint);
+            if (int.TryParse(id, out idint)) user = db.Accounts.Find(idint);
             if (user == null) user = Account.AccountByName(db, id);
 
             return View("ReportToAdmin", user);
@@ -264,7 +227,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult ReportToAdminSubmit(int accountID, string text)
         {
             var db = new ZkDataContext();
-            var acc = Account.AccountByAccountID(db, accountID);
+            var acc = db.Accounts.Find(accountID);
             
             db.AbuseReports.InsertOnSubmit(new AbuseReport()
                                            {
@@ -278,12 +241,8 @@ namespace ZeroKWeb.Controllers
 
             var str = string.Format("{0} {1} reports abuse by {2} {3} : {4}", Global.Account.Name, Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"), acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), text);
 
-            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, str, true);
-            foreach (var u in Global.Nightwatch.Tas.JoinedChannels[AuthService.ModeratorChannel].ChannelUsers)
-            {
-                Global.Nightwatch.Tas.Ring(u);
-            }
-
+            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, str, true, isRing:true);
+            Global.Nightwatch.Tas.Ring(SayPlace.Channel, AuthService.ModeratorChannel, "Abuse report");
             return Content("Thank you. Your issue was reported. Moderators will now look into it.");
         }
 
@@ -298,28 +257,11 @@ namespace ZeroKWeb.Controllers
             string punisherName = "<unknown>";
             if (todel.CreatedAccountID != null)
             {
-                Account adminAcc = Account.AccountByAccountID(db, (int)todel.CreatedAccountID);
+                Account adminAcc = db.Accounts.Find((int)todel.CreatedAccountID);
                 punisherName = adminAcc.Name;
             }
-            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("{0} removed a punishment given by {1} ", Global.Account.Name, punisherName), true);
-            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("to {0} for: {1} ", acc.Name, todel.Reason), true);
-
-            if (todel.BanLobby)
-            {
-                Global.Nightwatch.Tas.AdminUnban(acc.Name);
-                if(todel.BanIP != null) Global.Nightwatch.Tas.AdminUnban(todel.BanIP);
-                var otherPenalty = Punishment.GetActivePunishment(acc.AccountID, null, null, x => x.BanLobby, db);
-                if (otherPenalty != null)
-                {
-                    var time = otherPenalty.BanExpires - DateTime.Now;
-                    double days = time.Value.TotalDays;
-                    Global.Nightwatch.Tas.AdminBan(acc.Name, days / 24, otherPenalty.Reason);
-                    if (otherPenalty.BanIP != null)
-                    {
-                        Global.Nightwatch.Tas.AdminBanIP(otherPenalty.BanIP, days / 24, otherPenalty.Reason);
-                    }
-                }
-            }
+            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format("{0} removed a punishment given by {1} ", Global.Account.Name, punisherName), true);
+            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format("to {0} for: {1} ", acc.Name, todel.Reason), true);
 
             return RedirectToAction("Detail", "Users", new { id = todel.AccountID });
         }
@@ -342,8 +284,8 @@ namespace ZeroKWeb.Controllers
                 if (acc != null)
                 {
                     firstAccID = firstAccID ?? acc.AccountID;
-                    uint? userID = banID ? (uint?)acc.AccountUserIDS.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
-                    string userIP = banIP ? acc.AccountIPS.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
+                    uint? userID = banID ? (uint?)acc.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
+                    string userIP = banIP ? acc.AccountIPs.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
                     System.Console.WriteLine(acc.Name, userID, userIP);
                     Punishment punishment = new Punishment
                     {
@@ -363,11 +305,7 @@ namespace ZeroKWeb.Controllers
                         Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);
                         if (banLobby)
                         {
-                            Global.Nightwatch.Tas.AdminBan(acc.Name, banHours / 24, reason);
-                            if (banIP)
-                            {
-                                Global.Nightwatch.Tas.AdminBanIP(userIP, banHours / 24, reason);
-                            }
+                            Global.Nightwatch.Tas.AdminKickFromLobby(acc.Name, reason);
                         }
                     }
                     catch (Exception ex)
@@ -377,7 +315,7 @@ namespace ZeroKWeb.Controllers
                 }
             }
             db.SubmitChanges();
-            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Mass ban executed by {4} for user series {0} ({1} - {2}): {3}",
+            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Mass ban executed by {4} for user series {0} ({1} - {2}): {3}",
                 name, startIndex, endIndex, Url.Action("Detail", "Users", new { id = firstAccID }, "http"), Global.Account.Name), true);
 
             return Index(name, null, null);
@@ -388,10 +326,10 @@ namespace ZeroKWeb.Controllers
             ZkDataContext db = new ZkDataContext();
             if (banHours > MaxBanHours) banHours = MaxBanHours;
             DateTime firstLoginAfter = maxAge != null? DateTime.UtcNow.AddHours(-(double)maxAge) : DateTime.MinValue; 
-            foreach (Account acc in db.Accounts.Where(x => x.AccountUserIDS.Any(y => y.UserID == userID) && (maxAge == null || x.FirstLogin > firstLoginAfter) ))
+            foreach (Account acc in db.Accounts.Where(x => x.AccountUserIDs.Any(y => y.UserID == userID) && (maxAge == null || x.FirstLogin > firstLoginAfter) ))
             {
-                uint? punishmentUserID = banID ? (uint?)acc.AccountUserIDS.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
-                string userIP = banIP ? acc.AccountIPS.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
+                uint? punishmentUserID = banID ? (uint?)acc.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
+                string userIP = banIP ? acc.AccountIPs.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
                 System.Console.WriteLine(acc.Name, userID, userIP);
                 Punishment punishment = new Punishment
                 {
@@ -409,13 +347,8 @@ namespace ZeroKWeb.Controllers
                 try
                 {
                     Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);
-                    if (banLobby)
-                    {
-                        Global.Nightwatch.Tas.AdminBan(acc.Name, banHours / 24, reason);
-                        if (banIP)
-                        {
-                            Global.Nightwatch.Tas.AdminBanIP(userIP, banHours / 24, reason);
-                        }
+                    if (banLobby) {
+                        Global.Nightwatch.Tas.AdminKickFromLobby(acc.Name, reason);
                     }
                 }
                 catch (Exception ex)
@@ -424,7 +357,7 @@ namespace ZeroKWeb.Controllers
                 }
             }
             db.SubmitChanges();
-            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Mass ban executed by {2} for userID {0} (max age {1})",
+            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Mass ban executed by {2} for userID {0} (max age {1})",
                 userID, maxAge, Global.Account.Name), true);
 
             return NewUsers(null, null, userID);
@@ -442,20 +375,27 @@ namespace ZeroKWeb.Controllers
             return new JsonResult() { Data = new
             {
                 acc.AccountID,
-                acc.LobbyID,
                 acc.Name,
                 acc.Aliases,
                 acc.FirstLogin,
                 acc.LastLogin,
-                acc.LobbyTimeRank,
                 acc.LobbyVersion,
                 acc.Language,
                 acc.Email,
                 acc.Country,
                 acc.EffectiveElo,
-                acc.IsLobbyAdministrator,
                 acc.IsBot,
             }, JsonRequestBehavior = JsonRequestBehavior.AllowGet};
+        }
+
+        [Auth(Role = AuthRole.ZkAdmin)]
+        public ActionResult SetPassword(int accountID, string newPassword)
+        {
+            var db = new ZkDataContext();
+            var acc = db.Accounts.Find(accountID);
+            acc.SetPasswordPlain(newPassword);
+            db.SaveChanges();
+            return Content(string.Format("{0} password set to {1}", acc.Name, newPassword));
         }
     }
 }

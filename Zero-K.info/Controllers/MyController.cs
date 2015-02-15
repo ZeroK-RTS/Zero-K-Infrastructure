@@ -225,7 +225,7 @@ namespace ZeroKWeb.Controllers
                     if (!useKudos && unlock.IsKudosOnly == true) return Content("That unlock cannot be bought using XP");
 
                     if (useKudos) {
-                        var acc = Account.AccountByAccountID(db, Global.AccountID);
+                        var acc = db.Accounts.Find(Global.AccountID);
                         if (acc.Kudos < unlock.KudosCost) return Content("Not enough kudos to unlock this");
                         acc.KudosPurchases.Add(new KudosPurchase() {Time = DateTime.UtcNow, Unlock = unlock, Account = acc, KudosValue = unlock.KudosCost??0});
                         db.SubmitAndMergeChanges();
@@ -296,9 +296,10 @@ namespace ZeroKWeb.Controllers
                     && (x.RequiredUnlockID == null || anyUnlockList.Contains(x.RequiredUnlockID ?? 0))
                     ).OrderBy(x => x.NeededLevel).ThenBy(x => x.XpCost).ThenBy(x => x.UnlockType).ToList();
 			unlocks = temp;
+		    var tempList = temp.Select(y => y.UnlockID).ToList();
 
 			future =
-				db.Unlocks.Where(x => !maxedUnlockList.Contains(x.UnlockID) && !temp.Select(y => y.UnlockID).Contains(x.UnlockID)).OrderBy(x => x.NeededLevel).
+				db.Unlocks.Where(x => !maxedUnlockList.Contains(x.UnlockID) && !tempList.Contains(x.UnlockID)).OrderBy(x => x.NeededLevel).
 					ThenBy(x => x.XpCost).ThenBy(x => x.Name).ToList();
 		}
 

@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using ZkData;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -13,7 +14,7 @@ namespace ZeroKLobby.MicroLobby
 
 		public SettingsTab()
 		{
-			InitializeComponent(); //Fixme: tooltip for button don't appear on Linux. Diagnosis so far: button failed to be the Child of the elements or had "" as name.
+			InitializeComponent();
 
 			helpButton.MouseUp += helpButton_MouseUp;
 
@@ -189,7 +190,7 @@ namespace ZeroKLobby.MicroLobby
 			helpForumItem.Click += helpForumItem_Click;
 			menu.MenuItems.Add(helpForumItem);
 			var adminsItem = new MenuItem("Ask an Administrator");
-			foreach (var admin in Program.TasClient.ExistingUsers.Values.Where(u => (u.IsAdmin || u.IsZeroKAdmin)&& !u.IsBot).OrderBy(u => u.IsAway ? 1 : 0))
+			foreach (var admin in Program.TasClient.ExistingUsers.Values.Where(u => (u.IsAdmin)&& !u.IsBot).OrderBy(u => u.IsAway ? 1 : 0))
 			{
 				var item = new MenuItem(admin.Name + (admin.IsAway ? " (Idle)" : String.Empty));
 				var adminName = admin.Name;
@@ -202,12 +203,7 @@ namespace ZeroKLobby.MicroLobby
 
 		void helpForumItem_Click(object sender, EventArgs e)
 		{
-            //try
-            //{
-            //    Process.Start("http://zero-k.info/Forum?categoryID=3");
-            //}
-            //catch {}
-            Program.MainWindow.navigationControl.Path = "http://zero-k.info/Forum?categoryID=3"; //open using Navigation Bar. If internal browser fail, it open external browser.
+            Program.MainWindow.navigationControl.Path = string.Format("{0}/Forum?categoryID=3", GlobalConst.BaseSiteUrl); //open using Navigation Bar. If internal browser fail, it open external browser.
 		}
 
 		void lobbyLogButton_Click(object sender, EventArgs e)
@@ -315,7 +311,7 @@ namespace ZeroKLobby.MicroLobby
 
         private void btnOfflineSkirmish_Click(object sender, EventArgs e)
         {
-            Program.MainWindow.navigationControl.Path = "spring://extra/skirmish";
+            Program.MainWindow.navigationControl.Path = "zk://extra/skirmish";
         }
 	}
 }

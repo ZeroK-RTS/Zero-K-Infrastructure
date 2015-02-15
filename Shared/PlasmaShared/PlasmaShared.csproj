@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -8,7 +8,7 @@
     <ProjectGuid>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AssemblyName>PlasmaShared</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <RootNamespace>PlasmaShared</RootNamespace>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -29,32 +29,10 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>3</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <CodeAnalysisRuleSet>..\rules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>3</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DefineConstants>TRACE</DefineConstants>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -67,6 +45,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>x86</PlatformTarget>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>
@@ -79,6 +58,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -87,89 +67,12 @@
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Deployment|AnyCPU'">
-    <OutputPath>bin\Deployment\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <WarningLevel>3</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-    <CodeAnalysisLogFile>bin\Release\PlasmaShared.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Deployment|x86'">
-    <OutputPath>bin\x86\Deployment\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <WarningLevel>3</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-    <CodeAnalysisLogFile>bin\Release\PlasmaShared.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-  </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="AuthTools.cs" />
     <Compile Include="ChangeEventArgs.cs" />
     <Compile Include="Connection.cs" />
-    <Compile Include="Data\Account.cs" />
-    <Compile Include="Data\AutohostMode.cs" />
-    <Compile Include="Data\Avatar.cs" />
-    <Compile Include="Data\Clan.cs" />
-    <Compile Include="Data\Commander.cs" />
-    <Compile Include="Data\CampaignPlanet.cs" />
-    <Compile Include="Data\CampaignJournal.cs" />
-    <Compile Include="Data\Decorations.cs" />
-    <Compile Include="Data\EnergyPriority.cs" />
-    <Compile Include="Data\Event.cs" />
-    <Compile Include="Data\Faction.cs" />
-    <Compile Include="Data\FactionTreaty.cs" />
-    <Compile Include="Data\ForumPost.cs" />
-    <Compile Include="Data\ForumThread.cs" />
-    <Compile Include="Data\Galaxy.cs" />
-    <Compile Include="Data\IAuthService.cs" />
-    <Compile Include="Data\LobbyMessage.cs" />
-    <Compile Include="Data\MapRating.cs" />
-    <Compile Include="Data\Mission.cs" />
-    <Compile Include="Data\News.cs" />
-    <Compile Include="Data\Planet.cs" />
-    <Compile Include="Data\PlanetStructure.cs" />
-    <Compile Include="Data\ProgramID.cs" />
-    <Compile Include="Data\Punishment.cs" />
-    <Compile Include="Data\Resource.cs" />
-    <Compile Include="Data\ResourceSpringHash.cs" />
-    <Compile Include="Data\ResourceType.cs" />
-    <Compile Include="Data\RoleType.cs" />
-    <Compile Include="Data\SpringBattle.cs" />
-    <Compile Include="Data\Structure.cs" />
-    <Compile Include="Data\StructureType.cs" />
-    <Compile Include="Data\TreatyState.cs" />
-    <Compile Include="Data\Unlock.cs" />
-    <Compile Include="Data\UnlockType.cs" />
-    <Compile Include="Data\ZkData.cs">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </Compile>
-    <Compile Include="Data\ZkData.designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </Compile>
-    <Compile Include="Data\ZkDataContext.cs" />
-    <Compile Include="DbExtensions.cs" />
+    <Compile Include="DbCloner.cs" />
     <Compile Include="Diagrams\Diagram.cs" />
     <Compile Include="Diagrams\Node.cs" />
     <Compile Include="Diagrams\Vector.cs" />
@@ -178,12 +81,30 @@
     <Compile Include="EventExtensions.cs" />
     <Compile Include="GlobalConst.cs" />
     <Compile Include="Hash.cs" />
-    <Compile Include="IMissionService.cs" />
+    <Compile Include="IContentService\AccountInfo.cs" />
+    <Compile Include="IContentService\IContentService.cs" />
+    <Compile Include="IContentService\ResourceData.cs" />
+    <Compile Include="IContentService\ResourceType.cs" />
+    <Compile Include="IContentService\ReturnValue.cs" />
+    <Compile Include="IContentService\ScriptMissionData.cs" />
     <Compile Include="IResourceInfo.cs" />
+    <Compile Include="ISpringieService\AhConfig.cs" />
+    <Compile Include="ISpringieService\AutohostMode.cs" />
+    <Compile Include="ISpringieService\BalanceTeamsResult.cs" />
+    <Compile Include="ISpringieService\BattleContext.cs" />
+    <Compile Include="ISpringieService\BattlePlayerResult.cs" />
+    <Compile Include="ISpringieService\BattleResult.cs" />
+    <Compile Include="ISpringieService\BotTeam.cs" />
+    <Compile Include="ISpringieService\CommandLevel.cs" />
+    <Compile Include="ISpringieService\ISpringieService.cs" />
+    <Compile Include="ISpringieService\MovePlayerEntry.cs" />
+    <Compile Include="ISpringieService\PlayerJoinResult.cs" />
+    <Compile Include="ISpringieService\PlayerTeam.cs" />
+    <Compile Include="ISpringieService\RecommendedMapResult.cs" />
+    <Compile Include="ISpringieService\RectInfo.cs" />
+    <Compile Include="ISpringieService\SpringBattleStartSetup.cs" />
     <Compile Include="LuaTable.cs" />
     <Compile Include="MetaDataCache.cs" />
-    <Compile Include="MissionUpdater.cs" />
-    <Compile Include="PayPalInterface.cs" />
     <Compile Include="Pool.cs" />
     <Compile Include="PoolFileInfo.cs" />
     <Compile Include="MapRegisteredEventArgs.cs" />
@@ -196,6 +117,7 @@
     <Compile Include="SdpArchive.cs" />
     <Compile Include="SelfUpdater.cs" />
     <Compile Include="SerializableDictionary.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="SpringPaths.cs" />
     <Compile Include="SpringScanner.cs" />
     <Compile Include="CsvTable.cs" />
@@ -216,42 +138,29 @@
     <Compile Include="UnitSyncLib\UnitSync.cs" />
     <Compile Include="UnitSyncLib\UnitSyncException.cs" />
     <Compile Include="UnitSyncLib\VfsMode.cs" />
-    <Compile Include="Web References\ContentService\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
     <Compile Include="Web References\ModStats\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
-    <Compile Include="Web References\SpringieInterfaceReference\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="WebReferences\StatsCollector.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Whois.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Ionic.Zip.Reduced">
-      <HintPath>..\..\Libs\Ionic.Zip.Reduced.dll</HintPath>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\..\packages\DotNetZip.1.9.1.8\lib\net20\Ionic.Zip.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.Text, Version=3.9.45.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\ServiceStack.Text.3.9.48\lib\net35\ServiceStack.Text.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="SharpCompress">
+    <Reference Include="SharpCompress, Version=0.9.0.0, Culture=neutral, PublicKeyToken=beaf6f427e128133, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\sharpcompress.0.9\lib\net40\SharpCompress.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.Linq" />
     <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Net" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
@@ -262,70 +171,16 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Data\ZkData.dbml">
-      <Generator>MSLinqToSQLGenerator</Generator>
-      <SubType>Designer</SubType>
-      <LastGenOutput>ZkData.designer.cs</LastGenOutput>
-    </None>
-    <None Include="Data\ZkData.dbml.namePrefs">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </None>
-    <None Include="Data\ZkData.dbml.syncPrefs">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </None>
-    <None Include="Data\ZkData.dbml.views">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\ContentService\AccountInfo.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\ContentService\ContentService.wsdl" />
-    <None Include="Web References\ContentService\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\ContentService\ResourceData.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\ContentService\ResourceType.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\ContentService\ReturnValue.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\ContentService\ScriptMissionData.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
     </None>
     <None Include="Web References\ModStats\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
     <None Include="Web References\ModStats\StatsCollector.wsdl" />
-    <None Include="Web References\SpringieInterfaceReference\AhConfig.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\SpringieInterfaceReference\BalanceTeamsResult.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\SpringieInterfaceReference\PlayerJoinResult.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\SpringieInterfaceReference\RecommendedMapResult.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\SpringieInterfaceReference\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\SpringieInterfaceReference\SpringBattleStartSetup.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\SpringieInterfaceReference\SpringieService.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -368,59 +223,14 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>PlasmaShared_ModStats_StatsCollector</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="http://zero-k.info/ContentService.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\ContentService\</RelPath>
-      <UpdateFromURL>http://zero-k.info/ContentService.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>PlasmaShared_ContentService_ContentService</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://zero-k.info/SpringieService.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\SpringieInterfaceReference\</RelPath>
-      <UpdateFromURL>http://zero-k.info/SpringieService.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>PlasmaShared_SpringieInterfaceReference_SpringieService</CachedSettingsPropName>
-    </WebReferenceUrl>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\ContentService\ContentService.disco" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Data\ZkData.dbml.layout">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\SpringieInterfaceReference\SpringieService.disco" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Data\ZkData.dbml.views_001.layout">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Data\ZkData.dbml.views_002.layout">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Data\ZkData.dbml.views_003.layout">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Data\ZkData.dbml.views_def.layout">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-    </EmbeddedResource>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Web References\ModStats\StatsCollector.disco" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>

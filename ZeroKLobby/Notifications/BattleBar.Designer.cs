@@ -32,7 +32,6 @@ namespace ZeroKLobby.Notifications
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BattleBar));
-            this.cbSide = new System.Windows.Forms.ComboBox();
             this.lbPlayers = new System.Windows.Forms.Label();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
@@ -49,18 +48,6 @@ namespace ZeroKLobby.Notifications
             this.zkSplitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gameBox)).BeginInit();
             this.SuspendLayout();
-            // 
-            // cbSide
-            // 
-            this.cbSide.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbSide.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.cbSide.FormattingEnabled = true;
-            this.cbSide.Location = new System.Drawing.Point(80, 3);
-            this.cbSide.Name = "cbSide";
-            this.cbSide.Size = new System.Drawing.Size(64, 21);
-            this.cbSide.TabIndex = 4;
-            this.cbSide.Visible = false;
-            this.cbSide.SelectedIndexChanged += new System.EventHandler(this.cbSide_SelectedIndexChanged);
             // 
             // lbPlayers
             // 
@@ -85,7 +72,6 @@ namespace ZeroKLobby.Notifications
             this.panel1.Controls.Add(this.zkSplitContainer1);
             this.panel1.Controls.Add(this.radioPlay);
             this.panel1.Controls.Add(this.radioSpec);
-            this.panel1.Controls.Add(this.cbSide);
             this.panel1.Controls.Add(this.lbPlayers);
             this.panel1.Controls.Add(this.lbQueue);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -213,8 +199,7 @@ namespace ZeroKLobby.Notifications
 
         #endregion
 
-				private System.Windows.Forms.ComboBox cbSide;
-				private System.Windows.Forms.Label lbPlayers;
+        private System.Windows.Forms.Label lbPlayers;
         private System.Windows.Forms.PictureBox gameBox;
         private ChatBox picoChat;
 				private System.Windows.Forms.ImageList imageList1;

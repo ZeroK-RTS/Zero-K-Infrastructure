@@ -95,7 +95,7 @@ namespace PlanetWarsReplayCreator
 				icon.Height = planetIconSize * 2;
 				Canvas.SetLeft(icon, chapter.Planet.X - icon.Width / 2);
 				Canvas.SetTop(icon, chapter.Planet.Y - icon.Height / 2);
-				icon.Fill = new ImageBrush { ImageSource = CreateImageSynchronously("http://zero-k.info/" + clanImageUrl) };
+				icon.Fill = new ImageBrush { ImageSource = CreateImageSynchronously(string.Format("{0}/{1}", GlobalConst.BaseSiteUrl, clanImageUrl)) };
 			}
 		}
 		private void nextButton_Click(object sender, RoutedEventArgs e)

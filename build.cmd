@@ -1,0 +1,1 @@
+"c:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe"  Zero-K.sln /T:Rebuild /p:Configuration=Release;DeployOnBuild=true;PublishProfile=Profile1

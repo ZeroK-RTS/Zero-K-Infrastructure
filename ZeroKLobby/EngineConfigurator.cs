@@ -200,6 +200,7 @@ namespace ZeroKLobby
         public static string ReadResourceString(string uri) {
             try {
                 var obj = Configs.ResourceManager.GetObject(uri);
+                if (obj == null) return null;
                 if (obj is string) return obj as string;
                 return Encoding.UTF8.GetString((byte[])obj);
             } catch (Exception ex) {

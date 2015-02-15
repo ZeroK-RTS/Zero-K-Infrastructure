@@ -1,4 +1,4 @@
-﻿@using PlasmaShared
+﻿@using ZkData
 @model Enum
 @Html.DropDownListFor(m => m, Enum.GetValues(Model.GetType()).Cast<Enum>().Select(m => {
     string enumVal = Enum.GetName(Model.GetType(), m);

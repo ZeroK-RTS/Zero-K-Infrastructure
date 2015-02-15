@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace PlasmaShared.UnitSyncLib
+namespace ZkData.UnitSyncLib
 {
     [Serializable]
     public class DependencyMissingException: Exception

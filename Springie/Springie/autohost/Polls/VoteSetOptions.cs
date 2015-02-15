@@ -1,5 +1,7 @@
 #region using
 
+using System.Collections.Generic;
+using System.Linq;
 using LobbyClient;
 
 #endregion
@@ -8,7 +10,7 @@ namespace Springie.autohost.Polls
 {
     public class VoteSetOptions: AbstractPoll
     {
-        string scriptTagsFormat;
+        Dictionary<string,string> scriptTagsFormat;
 
         public VoteSetOptions(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
 
@@ -23,8 +25,8 @@ namespace Springie.autohost.Polls
             else
             {
                 var wordFormat = Utils.Glue(words);
-                scriptTagsFormat = ah.GetOptionsString(e, words);
-                if (scriptTagsFormat == "") return false;
+                scriptTagsFormat = ah.GetOptionsDictionary(e, words);
+                if (scriptTagsFormat.Count==0) return false;
                 else
                 {
                     question  = "Set option " + wordFormat + "?";
@@ -34,7 +36,7 @@ namespace Springie.autohost.Polls
         }
 
         protected override void SuccessAction() {
-            tas.SetScriptTag(scriptTagsFormat);
+            tas.UpdateModOptions(scriptTagsFormat);
         }
     }
 }

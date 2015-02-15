@@ -11,6 +11,16 @@ namespace ZeroKWeb.Controllers
 	{
         public const int PageSize = GlobalConst.ForumPostsPerPage;
 
+        bool IsNormalThread(ForumThread thread)
+        {
+            if (thread.Clans != null && thread.Clans.Count > 0) return false;
+            if (thread.Missions != null && thread.Missions.Count > 0) return false;
+            if (thread.Planets != null && thread.Planets.Count > 0) return false;
+            if (thread.SpringBattles != null && thread.SpringBattles.Count > 0) return false;
+            if (thread.News != null && thread.News.Count > 0) return false;
+            return true;
+        }
+
         void ResetThreadLastPostTime(int threadID)
         {
             var db = new ZkDataContext();
@@ -37,11 +47,11 @@ namespace ZeroKWeb.Controllers
 			var thread = post.ForumThread;
             int threadID = thread.ForumThreadID;
             //int index = post.ForumThread.ForumPosts.IndexOf(post);
-            int page = GetPostPage((int)postID);
+            int page = GetPostPage(post);
 
 			db.ForumPosts.DeleteOnSubmit(post);
-			if (thread.ForumPosts.Count() <= 1) {
-                db.ForumThreadLastReads.DeleteAllOnSubmit(db.ForumThreadLastReads.Where(x => x.ForumThread == thread).ToList());
+			if (thread.ForumPosts.Count() <= 1 && IsNormalThread(thread)) {
+                db.ForumThreadLastReads.DeleteAllOnSubmit(db.ForumThreadLastReads.Where(x => x.ForumThreadID == thread.ForumThreadID).ToList());
 				db.ForumThreads.DeleteOnSubmit(thread);
 				db.SubmitChanges();
 				return RedirectToAction("Index");
@@ -66,14 +76,12 @@ namespace ZeroKWeb.Controllers
 			var db = new ZkDataContext();
 			var res = new IndexResult();
 
-			res.Categories = db.ForumCategories.Where(x => Equals(x.ParentForumCategoryID, categoryID)).OrderBy(x => x.SortOrder);
+			res.Categories = db.ForumCategories.Where(x => x.ParentForumCategoryID == categoryID).OrderBy(x => x.SortOrder);
 
 			res.Path = GetCategoryPath(categoryID, db);
 			res.CurrentCategory = res.Path.LastOrDefault();
 
-			//if (res.CurrentCategory != null && res.CurrentCategory.IsMissions) res.Threads = db.ForumThreads.Where(x => Equals(x.ForumCategoryID, categoryID) && !Global.IsLimitedMode || x.Missions.ModRapidTag.StartsWith("zk:")).OrderByDescending(x => x.LastPost);
-			//else
-            var threads = db.ForumThreads.Where(x => Equals(x.ForumCategoryID, categoryID)).OrderByDescending(x => x.IsPinned).ThenByDescending(x => x.LastPost);
+            var threads = db.ForumThreads.Where(x => x.ForumCategoryID == categoryID).OrderByDescending(x => x.IsPinned).ThenByDescending(x => x.LastPost);
             res.Page = page ?? 0;
             res.PageCount = ((threads.Count() - 1) / PageSize) + 1;
             res.Threads = threads.Skip((page ?? 0) * PageSize).Take(PageSize).ToList();
@@ -93,14 +101,14 @@ namespace ZeroKWeb.Controllers
                 return Content(string.Format("You cannot post while banned from forum!\nExpires: {0} UTC\nReason: {1}", penalty.BanExpires, penalty.Reason));
             }
 
-            var clan = db.Clans.FirstOrDefault(x => x.ForumThreadID == threadID);
-            if (clan != null && Global.ClanID != clan.ClanID)
-            {
-                return Content(string.Format("You are not a member of {0}, you cannot post in their clan thread", clan.ClanName));
-            }
-
-			if (threadID.HasValue)
+			if (threadID.HasValue && threadID > 0)
 			{
+                var clan = db.Clans.FirstOrDefault(x => x.ForumThreadID == threadID);
+                if (clan != null && Global.ClanID != clan.ClanID)
+                {
+                    return Content(string.Format("You are not a member of {0}, you cannot post in their clan thread", clan.ClanName));
+                }
+
 				var t = db.ForumThreads.Single(x => x.ForumThreadID == threadID.Value);
 				res.CurrentThread = t;
 				res.LastPosts = res.CurrentThread.ForumPosts.OrderByDescending(x => x.ForumPostID).Take(20);
@@ -121,7 +129,7 @@ namespace ZeroKWeb.Controllers
             if (threadID != null)
             {
                 var thread = res.CurrentThread;
-                res.CanSetTopic = (thread.ForumPosts.Count > 0 && thread.ForumPosts[0].ForumPostID == forumPostID 
+                res.CanSetTopic = (thread.ForumPosts.Count > 0 && thread.ForumPosts.First().ForumPostID == forumPostID 
                     && !category.IsClans && !category.IsMaps && !category.IsMissions && !category.IsPlanets && !category.IsSpringBattles);
             }
             else res.CanSetTopic = true;
@@ -132,7 +140,8 @@ namespace ZeroKWeb.Controllers
 		[Auth]
 		public ActionResult SubmitPost(int? threadID, int? categoryID, int? resourceID, int? missionID, int? springBattleID, int? clanID, int? planetID, string text, string title, int? forumPostID)
 		{
-			if (string.IsNullOrEmpty(text)) return Content("Please type some text :)");
+            if (threadID == null && missionID == null && resourceID == null && springBattleID == null && clanID ==null && planetID == null && forumPostID==null && string.IsNullOrWhiteSpace(title)) return Content("Cannot post new thread with blank title");
+			if (string.IsNullOrWhiteSpace(text)) return Content("Please type some text :)");
 
             var penalty = ZkData.Punishment.GetActivePunishment(Global.AccountID, "", 0, x => x.BanForum);
             if (penalty != null)
@@ -188,7 +197,6 @@ namespace ZeroKWeb.Controllers
                     thread = new ForumThread() { Title = "Map " +res.InternalName, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
 					thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsMaps);
 					res.ForumThread = thread;
-					thread.Resources = res;
 					db.ForumThreads.InsertOnSubmit(thread);
 				}
 
@@ -198,8 +206,7 @@ namespace ZeroKWeb.Controllers
                     if (bat.ForumThread != null) return Content("Double post");
                     thread = new ForumThread() { Title =  bat.FullTitle, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
 					thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsSpringBattles);
-					thread.SpringBattles = bat;
-					bat.ForumThread = thread;
+				    bat.ForumThread = thread;
 					db.ForumThreads.InsertOnSubmit(thread);
 				}
 
@@ -221,7 +228,6 @@ namespace ZeroKWeb.Controllers
                     thread = new ForumThread() { Title = "Planet " +planet.Name, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
 					thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsPlanets);
 					planet.ForumThread = thread;
-					thread.Planets = planet;
 					db.ForumThreads.InsertOnSubmit(thread);
 				}
 
@@ -245,7 +251,7 @@ namespace ZeroKWeb.Controllers
                         post.Text = text;
 
 
-                    } else thread.ForumPosts.Add(new ForumPost() { AuthorAccountID = Global.AccountID, Text = text });
+                    } else thread.ForumPosts.Add(new ForumPost() { AuthorAccountID = Global.AccountID, Text = text, Created = DateTime.UtcNow});
 
 					
                     thread.LastPost = DateTime.UtcNow;
@@ -272,7 +278,7 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             ForumPost post = db.ForumPosts.FirstOrDefault(x => x.ForumPostID == id);
-            int? page = GetPostPage((int)id);
+            int? page = GetPostPage(post);
             if (page == 0) page = null;
             ForumThread thread = post.ForumThread;
             return RedirectToAction("Thread", new { id = thread.ForumThreadID, page = page});
@@ -287,20 +293,23 @@ namespace ZeroKWeb.Controllers
             // TODO - indicate thread has been deleted
             if (t == null) return RedirectToAction("Index");
 
-            if (page == null)
-            {
-                if (postID == null) page = 0;
-                else page = GetPostPage((int)postID);
-            }
+		    if (page == null) {
+		        if (postID == null) page = 0;
+		        else {
+		            var post = t.ForumPosts.FirstOrDefault(x => x.ForumPostID == postID);
+		            page = GetPostPage(post);
+		        }
+		    }
+		
 
 			var cat = t.ForumCategory;
 			if (cat != null)
 			{
-				if (cat.IsMissions) return RedirectToAction("Detail", "Missions", new { id = t.Missions.MissionID });
-				if (cat.IsMaps) return RedirectToAction("Detail", "Maps", new { id = t.Resources.ResourceID });
-				if (cat.IsSpringBattles) return RedirectToAction("Detail", "Battles", new { id = t.SpringBattles.SpringBattleID });
+				if (cat.IsMissions) return RedirectToAction("Detail", "Missions", new { id = t.Missions.First().MissionID });
+				if (cat.IsMaps) return RedirectToAction("Detail", "Maps", new { id = t.Resources.First().ResourceID });
+				if (cat.IsSpringBattles) return RedirectToAction("Detail", "Battles", new { id = t.SpringBattles.First().SpringBattleID });
 				if (cat.IsClans) return RedirectToAction("Detail", "Clans", new { id = t.RestrictedClanID});
-				if (cat.IsPlanets) return RedirectToAction("Planet", "Planetwars", new { id = t.Planets.PlanetID});
+				if (cat.IsPlanets) return RedirectToAction("Planet", "Planetwars", new { id = t.Planets.First().PlanetID});
 			}
 
 			var res = new ThreadResult();
@@ -477,12 +486,11 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Thread", new { id = post.ForumThreadID, postID = forumPostID });
         }
 
-        public static int GetPostPage(int forumPostID)
+        public static int GetPostPage(ForumPost post)
         {
-            if (forumPostID == null) return 0;
-            var db = new ZkDataContext();
-            ForumPost post = db.ForumPosts.First(x => x.ForumPostID == forumPostID);
-            return post.ForumThread.ForumPosts.IndexOf(post) / PageSize;
+            if (post == null) return 0;
+            var index = post.ForumThread.ForumPosts.Count(x=>x.ForumPostID < post.ForumPostID);
+            return index / PageSize;
         }
 
         public ActionResult Search()
@@ -497,11 +505,11 @@ namespace ZeroKWeb.Controllers
             ZkDataContext db = new ZkDataContext();
             if (categoryIDs == null) categoryIDs = new List<int>();
 
-            var posts = db.ForumPosts.Where(x=> (String.IsNullOrEmpty(username) || x.Account.Name == username)
+            var posts = db.ForumPosts.Where(x=> (String.IsNullOrEmpty(username) || x.Account.Name == username && !x.Account.IsDeleted)
                 && (categoryIDs.Count == 0 || categoryIDs.Contains((int)x.ForumThread.ForumCategoryID))
                 && (x.ForumThread.RestrictedClanID == null || x.ForumThread.RestrictedClanID == Global.ClanID)
                 ).OrderByDescending(x=> x.Created).ToList();
-            if (firstPostOnly) posts = posts.Where(x => x.ForumThread.ForumPosts[0] == x).ToList();
+            if (firstPostOnly) posts = posts.Where(x => x.ForumThread.ForumPosts.First() == x).ToList();
             var invalidResults = new List<ForumPost>();
             if (!String.IsNullOrEmpty(keywords))
             {

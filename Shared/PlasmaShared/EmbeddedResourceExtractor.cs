@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace PlasmaShared
+namespace ZkData
 {
     public static class EmbeddedResourceExtractor
     {

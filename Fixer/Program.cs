@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Linq;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -13,12 +14,15 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
 //using LobbyClient;
 //using NightWatch;
 using CaTracker;
+using LobbyClient;
+using Microsoft.Linq.Translations;
 using PlasmaShared;
-using PlasmaShared.UnitSyncLib;
+using ZkData.UnitSyncLib;
 using ZeroKWeb;
 using ZkData;
 using Encoder = System.Drawing.Imaging.Encoder;
@@ -106,6 +110,40 @@ namespace Fixer
             }
         }
 
+        public static void FixDuplicatedAccounts()
+        {
+            GlobalConst.Mode = ModeType.Test;
+            var db = new ZkDataContext();
+            var duplicates = db.Accounts.GroupBy(x => x.Name).Where(x => x.Count() > 1).ToList();
+            foreach (var duplicateGroup in duplicates)
+            {
+                var keep = duplicateGroup.OrderByDescending(x => x.SpringBattlePlayers.Count()).ThenByDescending(x => x.LastLogin).First();
+                foreach (var todel in duplicateGroup.ToList())
+                    if (keep.AccountID != todel.AccountID)
+                    {
+                        try
+                        {
+                            db.ForumThreadLastReads.DeleteAllOnSubmit(todel.ForumThreadLastReads.ToList());
+                            db.AccountBattleAwards.DeleteAllOnSubmit(todel.AccountBattleAwards.ToList());
+                            db.Accounts.DeleteOnSubmit(todel);
+                            db.SubmitChanges();
+                            Console.WriteLine("Deleted {0}", todel.Name);
+                        }
+                        catch (Exception ex)
+                        {
+                            using (var db2 = new ZkDataContext())
+                            {
+                                var acc = db2.Accounts.Find(todel.AccountID);
+                                acc.IsDeleted = true;
+                                acc.Name = string.Format("___DELETED___{0}", todel.AccountID); // hacky way to avoid duplicates
+                                db2.SubmitChanges();
+                            }
+                            Console.WriteLine("Failed to delete {0}", todel.Name);
+                        }
+                    }
+            }
+        }
+
         public enum OptionType
         {
             Undefined = 0,
@@ -141,13 +179,24 @@ namespace Fixer
 
         public static void FixStuff()
         {
-            var client = MissionEditor2.MissionServiceClientFactory.MakeClient();
-            var list = client.ListMissionInfos();
-            foreach (Mission m in list)
-            {
-                Console.WriteLine(m.Name);
-                Console.WriteLine(m.Description);
-            }
+            //UpdateMissionProgression(13);
+            /*
+            var db = new ZkDataContext();
+            int accountID = 5806;
+            List<CampaignJournal> unlockedJournals = new List<CampaignJournal>();
+            CampaignPlanet planet = db.CampaignPlanets.First(x => x.PlanetID == 13);
+            int campID = planet.CampaignID;
+            db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "Planet completed: {0}", planet));
+            //foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.PlanetID == planet.PlanetID && x.UnlockOnPlanetCompletion))
+            //{
+            //    unlockedJournals.Add(journal);
+            //}
+            //foreach (CampaignJournal uj in unlockedJournals)
+            //{
+            //    db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "{1} - Journal entry unlocked: {0}", uj, uj.CampaignPlanet));
+            //}
+            db.SubmitChanges();
+            */
         }
 
         public static void AddClanLeader()
@@ -175,15 +224,59 @@ namespace Fixer
             db.SubmitAndMergeChanges();
         }
 
+
+        public static void GetGameStats(DateTime from)
+        {
+            //GlobalConst.Mode = ModeType.Live;
+            var db = new ZkDataContext();
+            var bats = db.SpringBattles.Where(x => x.StartTime >= from && x.Duration >= 60*5).ToList();
+            Console.WriteLine("Battles from {0}", from);
+            var total = bats.Count;
+            Console.WriteLine("Total: {0}",total);
+            var breakdown = bats.GroupBy(x => x.PlayerCount).OrderBy(x => x.Key).Select(x => new {
+                Size = x.Key,
+                Count = x.Count()
+            }).ToList();
+
+            foreach (var b in breakdown) {
+                Console.WriteLine("Size: {0}    Battles: {1}",b.Size,b.Count);    
+            }
+            
+
+            
+        }
+
+
+
         [STAThread]
         static void Main(string[] args)
         {
-            
-            PlanetwarsFixer.StartGalaxy(24,3919,3925);
+            //GetGameStats(new DateTime(2014,12,1));
+            //var ns = new NubSimulator();
+            //ns.SpawnMany();
+            //Console.ReadLine();
+
+            //MigrateDatabase();
+            //FixDuplicatedAccounts();
+            //BcryptPasswords();
+            //var db = new ZkDataContext(true);
+            //var test = db.Accounts.OrderByDescending(x => x.EffectiveElo).WithTranslations().Take(5).ToList();
+
+
+            //MigrateDatabase();
+            //var test = GlobalConst.GetContentService().DownloadFile("Zero-K v1.1.0");
+            //var db = new ZkDataContext();
+            //var post = db.ForumPosts.First(x => x.ForumPostID == 113893);
+
+
+            //var db = new ZkDataContext(false);
+            //db.Database.CreateIfNotExists();
+
+            //PlanetwarsFixer.StartGalaxy(24,3919,3925);
             //AddClanLeader();
-            return;
+            //return;
             //TestPwMatch();
-            //FixStuff();
+            FixStuff();
 
             //var guid = Guid.NewGuid().ToString();
 
@@ -204,10 +297,10 @@ namespace Fixer
             //PlanetwarsFixer.PurgeGalaxy(24, false, true);
             //PlanetwarsFixer.RandomizeMaps(24);
             //SetPlanetTeamSizes();
-            
+
             //RandomizePlanetOwners(24);
             //GenerateStructures(24);
-            PlanetwarsFixer.GenerateArtefacts(24, new int[] { 3940, 3949, 3954, 3929, 3956 });
+            //PlanetwarsFixer.GenerateArtefacts(24, new int[] { 3940, 3949, 3954, 3929, 3956 });
 
             //SwapPlanetOwners(3948, 3955);
             //SwapPlanetOwners(3973, 3932);
@@ -234,17 +327,44 @@ namespace Fixer
             //GetAverageElo();
         }
 
+        static void CountPlayers()
+        {
+            var db = new ZkDataContext();
+            var accs =
+                db.SpringBattles.OrderByDescending(x => x.SpringBattleID)
+                    .Take(5000)
+                    .SelectMany(x => x.SpringBattlePlayers)
+                    .Where(x => !x.IsSpectator)
+                    .Select(x => new { x.Account, x.SpringBattle.Duration })
+                    .GroupBy(x => x.Account)
+                    .Select(x => new { Account = x.Key, Duration = x.Sum(y => y.Duration) })
+                    .ToList();
+
+            var durOther = accs.Where(x => x.Account.LobbyVersion != null && !x.Account.LobbyVersion.StartsWith("ZK")).Sum(x => (long)x.Duration);
+            var durZk = accs.Where(x => x.Account.LobbyVersion != null && x.Account.LobbyVersion.StartsWith("ZK")).Sum(x => (long)x.Duration);
+
+            var cntOther = accs.Where(x => x.Account.LobbyVersion != null && !x.Account.LobbyVersion.StartsWith("ZK")).Count();
+            var cntZk = accs.Where(x => x.Account.LobbyVersion != null && x.Account.LobbyVersion.StartsWith("ZK")).Count();
+        }
+
+        static void MigrateDatabase()
+        {
+            var cloner = new DbCloner("zero-k_ef", "zero-k_test",
+                "Data Source=omega.licho.eu,100;Initial Catalog=zero-k_test;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true");
+            cloner.CloneAllTables();
+        }
+
         static void SetPlanetTeamSizes()
         {
-            var db = new ZkDataContext(true);
+            var db = new ZkDataContext();
             var gal = db.Galaxies.First(x => x.IsDefault);
-            var planets = gal.Planets.ToList().OrderBy(x=>x.Resource.MapDiagonal).ToList();
+            var planets = gal.Planets.ToList().OrderBy(x => x.Resource.MapDiagonal).ToList();
             var cnt = planets.Count;
             int num = 0;
             foreach (var p in planets)
             {
                 //if (num < cnt*0.15) p.TeamSize = 1;else 
-                if (num < cnt*0.80) p.TeamSize = 2;
+                if (num < cnt * 0.80) p.TeamSize = 2;
                 //else if (num < cnt*0.85) p.TeamSize = 3;
                 else p.TeamSize = 3;
                 num++;
@@ -254,48 +374,16 @@ namespace Fixer
 
         public static void RecalculateKudos()
         {
-            var db = new ZkDataContext(true);
+            var db = new ZkDataContext();
             foreach (var acc in db.Accounts.Where(x => x.KudosPurchases.Any() || x.ContributionsByAccountID.Any())) acc.Kudos = acc.KudosGained - acc.KudosSpent;
             db.SubmitAndMergeChanges();
         }
 
-        
-        public static void FixHashes()
-        {
-            var db = new ZkDataContext();
-            var lo = new DataLoadOptions();
-            lo.LoadWith<Resource>(x => x.ResourceSpringHashes);
-            db.LoadOptions = lo;
-            foreach (var r in db.Resources)
-            {
-                var h84 = r.ResourceSpringHashes.Where(x => x.SpringVersion == "84").Select(x => x.SpringHash).SingleOrDefault();
-                var h840 = r.ResourceSpringHashes.Where(x => x.SpringVersion == "84.0").Select(x => x.SpringHash).SingleOrDefault();
-
-                if (h84 != h840)
-                {
-                    var entry = r.ResourceSpringHashes.SingleOrDefault(x => x.SpringVersion == "84.0");
-                    if (h84 != 0)
-                    {
-                        if (entry == null)
-                        {
-                            entry = new ResourceSpringHash() { SpringVersion = "84.0" };
-                            r.ResourceSpringHashes.Add(entry);
-                        }
-                        entry.SpringHash = h84;
-                    }
-                    else
-                    {
-                        if (entry != null) db.ResourceSpringHashes.DeleteOnSubmit(entry);
-                    }
-                }
-            }
-            db.SubmitChanges();
-        }
 
         public static void CountUserIDs()
         {
             var db = new ZkDataContext();
-            var userIDs = db.AccountUserIDS.ToList();
+            var userIDs = db.AccountUserIDs.ToList();
             var uniqueIDs = userIDs.Select(x => x.UserID).Distinct().ToList();
             Dictionary<long, int> userIDCounts = new Dictionary<long, int>();
             System.Console.WriteLine("{0} userIDs, {1} uniques", userIDs.Count, uniqueIDs.Count);
@@ -349,16 +437,6 @@ namespace Fixer
         }
 
 
-        public static void FixDemoFiles()
-        {
-            var db = new ZkDataContext();
-            foreach (var sb in db.SpringBattles)
-            {
-                //sb.ReplayFileName = sb.ReplayFileName.Replace("http://springdemos.licho.eu/","http://zero-k.info/replays/");
-            }
-            //db.SubmitChanges();
-
-        }
 
         public static void FixMissionScripts()
         {
@@ -558,7 +636,7 @@ namespace Fixer
                 if (!alreadyCompleted)
                 {
                     System.Console.WriteLine("Planet completed: {0}", planet);
-                    foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.Planet == planet && x.UnlockOnPlanetCompletion))
+                    foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.CampaignPlanet.PlanetID == planet.PlanetID && x.UnlockOnPlanetCompletion))
                     {
                         unlockedJournals.Add(journal);
                     }
@@ -566,14 +644,14 @@ namespace Fixer
                 foreach (CampaignPlanet unlocked in unlockedPlanets)
                 {
                     System.Console.WriteLine("Planet unlocked: {0}", unlocked);
-                    foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.Planet == unlocked && x.UnlockOnPlanetUnlock))
+                    foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.CampaignPlanet.PlanetID == unlocked.PlanetID && x.UnlockOnPlanetUnlock))
                     {
                         unlockedJournals.Add(journal);
                     }
                 }
                 foreach (CampaignJournal uj in unlockedJournals)
                 {
-                    System.Console.WriteLine("{1} - Journal entry unlocked: {0}", uj, uj.Planet);
+                    System.Console.WriteLine("{1} - Journal entry unlocked: {0}", uj, uj.CampaignPlanet);
                 }
                 db.SubmitChanges();
             }
@@ -762,7 +840,7 @@ namespace Fixer
             var winPredicted = 0;
 
 
-            foreach (var sb in db.SpringBattles.Where(x => !x.IsMission && !x.HasBots && !x.IsFfa && x.IsEloProcessed && x.PlayerCount >= 8 && !x.EventSpringBattles.Any()).OrderByDescending(x => x.SpringBattleID))
+            foreach (var sb in db.SpringBattles.Where(x => !x.IsMission && !x.HasBots && !x.IsFfa && x.IsEloProcessed && x.PlayerCount >= 8 && !x.Events.Any()).OrderByDescending(x => x.SpringBattleID))
             {
 
                 var losers = sb.SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam).Select(x => new { Player = x, x.Account }).ToList();
@@ -840,7 +918,7 @@ namespace Fixer
 
                 foreach (var resource in db.Resources.Where(x => x.TypeID == ResourceType.Map))//&&x.MapSizeSquared == null))
                 {
-                    var file = String.Format("{0}/{1}.metadata.xml.gz", @"d:\zero-k.info\www\Resources", resource.InternalName.EscapePath());
+                    var file = String.Format("{0}/{1}.metadata.xml.gz", GlobalConst.SiteDiskPath + @"\Resources", resource.InternalName.EscapePath());
                     var map = (Map)new XmlSerializer(typeof(Map)).Deserialize(new MemoryStream(File.ReadAllBytes(file).Decompress()));
 
                     resource.MapWidth = map.Size.Width / 512;
@@ -864,7 +942,7 @@ namespace Fixer
                     resource.MapSizeSquared = (map.Size.Width / 512) * (map.Size.Height / 512);
                     resource.MapSizeRatio = (float)map.Size.Width / map.Size.Height;
 
-                    var minimap = String.Format("{0}/{1}.minimap.jpg", @"d:\zero-k.info\www\Resources", resource.InternalName.EscapePath());
+                    var minimap = String.Format("{0}/{1}.minimap.jpg", GlobalConst.SiteDiskPath + @"\Resources", resource.InternalName.EscapePath());
 
                     using (var im = Image.FromFile(minimap))
                     {
@@ -893,7 +971,7 @@ namespace Fixer
                             var encoderParams = new EncoderParameters(1);
                             encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, 100L);
 
-                            var target = String.Format("{0}/{1}.thumbnail.jpg", @"d:\zero-k.info\www\Resources", resource.InternalName.EscapePath());
+                            var target = String.Format("{0}/{1}.thumbnail.jpg", GlobalConst.SiteDiskPath + @"\Resources", resource.InternalName.EscapePath());
                             correctMinimap.Save(target, jgpEncoder, encoderParams);
                         }
                     }
@@ -915,8 +993,8 @@ namespace Fixer
                 Account acc = db.Accounts.FirstOrDefault(x => x.Name == name + i);
                 if (acc != null)
                 {
-                    int? userID = banID ? (int?)acc.AccountUserIDS.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
-                    string userIP = banIP ? acc.AccountIPS.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
+                    int? userID = banID ? (int?)acc.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
+                    string userIP = banIP ? acc.AccountIPs.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
                     System.Console.WriteLine(acc.Name, userID, userIP);
                     Punishment punishment = new Punishment
                     {
@@ -938,7 +1016,7 @@ namespace Fixer
 
         public static void TestPwMatch()
         {
-            Global.Nightwatch = new Nightwatch(Directory.GetCurrentDirectory());
+            Global.Nightwatch = new Nightwatch();
             Global.Nightwatch.Start();
             Global.PlanetWarsMatchMaker = new PlanetWarsMatchMaker(Global.Nightwatch.Tas);
             var db = new ZkDataContext();
@@ -954,7 +1032,7 @@ namespace Fixer
                 AcceptChallenge();
             });*/
 
-            
+
             Console.ReadLine();
 
         }

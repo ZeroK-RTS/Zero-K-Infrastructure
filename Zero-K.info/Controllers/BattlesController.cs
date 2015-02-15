@@ -1,12 +1,11 @@
  using System;
 using System.Collections.Generic;
-using System.Linq;
+ using System.Data.Entity;
+ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using ZkData;
 using ZeroKWeb.Models;
-using System.Data.Linq.SqlClient;
-using System.Data.Linq;
 
 namespace ZeroKWeb.Controllers
 {
@@ -18,7 +17,8 @@ namespace ZeroKWeb.Controllers
         public ActionResult Detail(int id)
         {
           var db = new ZkDataContext();
-          var bat = db.SpringBattles.Single(x => x.SpringBattleID == id);
+          var bat = db.SpringBattles.FirstOrDefault(x => x.SpringBattleID == id);
+            if (bat == null) return Content("No such battle exists");
           if (bat.ForumThread != null)
           {
             bat.ForumThread.UpdateLastRead(Global.AccountID, false);
@@ -38,11 +38,8 @@ namespace ZeroKWeb.Controllers
                                   bool? bots,
                                   int? offset) {
             var db = new ZkDataContext();
-            DataLoadOptions opt = new DataLoadOptions();
-            opt.LoadWith<BattleQuickInfo>(b => b.Players);
-            db.LoadOptions = opt;
 
-            IQueryable<SpringBattle> q = db.SpringBattles;
+            IQueryable<SpringBattle> q = db.SpringBattles.Include(x=>x.SpringBattlePlayers);
             
             if (!string.IsNullOrEmpty(battleTitle))
                 q = q.Where(b => b.Title.Contains(battleTitle));
@@ -66,18 +63,21 @@ namespace ZeroKWeb.Controllers
             if (players.HasValue)
                 q = q.Where(b => b.SpringBattlePlayers.Where(p => !p.IsSpectator).Count() == players.Value);
 
-            if (age.HasValue)
+            if (age.HasValue) {
+                DateTime limit = DateTime.UtcNow;
                 switch (age) {
                     case 1:
-                        q = q.Where(b => SqlMethods.DateDiffHour(b.StartTime, DateTime.UtcNow) < 24);
+                        limit = DateTime.Now.AddHours(-1);
                         break;
                     case 2:
-                        q = q.Where(b => SqlMethods.DateDiffHour(b.StartTime, DateTime.UtcNow) < 24 * 7);
+                        limit = DateTime.UtcNow.AddDays(-7);
                         break;
                     case 3:
-                        q = q.Where(b => SqlMethods.DateDiffHour(b.StartTime, DateTime.UtcNow) < 24 * 31);
+                        limit = DateTime.UtcNow.AddDays(-31);
                         break;
                 }
+                q = q.Where(b => b.StartTime >= limit);
+            }
 
             if (duration.HasValue)
                 q = q.Where(b => Math.Abs(b.Duration - duration.Value * 60) < 300);
@@ -88,20 +88,20 @@ namespace ZeroKWeb.Controllers
             if (bots.HasValue)
                 q = q.Where(b => b.HasBots == bots.Value);
 
-            var q2 = q
-                .OrderByDescending(b => b.StartTime)
-                .Select(b =>
+            q = q.OrderByDescending(b => b.StartTime);
+                
+
+            if (offset.HasValue) q = q.Skip(offset.Value);
+            q = q.Take(Global.AjaxScrollCount);
+
+            var result = q.ToList().Select(b =>
                     new BattleQuickInfo() {
                         Battle = b,
                         Players = b.SpringBattlePlayers,
                         Map = b.ResourceByMapResourceID,
                         Mod = b.ResourceByModResourceID
-                    });
+                    }).ToList();
 
-            if (offset.HasValue) q2 = q2.Skip(offset.Value);
-            q2 = q2.Take(Global.AjaxScrollCount);
-
-            var result = q2.ToList();
 
             //if(result.Count == 0)
             //    return Content("");

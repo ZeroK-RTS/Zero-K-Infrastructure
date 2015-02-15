@@ -4,39 +4,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using LobbyClient;
+using PlasmaShared;
 using ZeroKWeb.Controllers;
 using ZkData;
 
 namespace ZeroKWeb.SpringieInterface
 {
-    public class BattlePlayerResult
-    {
-        public int AllyNumber;
-        public string CommanderType;
-        public bool IsIngameReady;
-        public bool IsSpectator;
-        public bool IsVictoryTeam;
-        public int LobbyID;
-        public int? LoseTime;
-        public int Rank;
-    }
-
-    public class BattleResult
-    {
-        public int Duration;
-        public string EngineBattleID;
-        public string EngineVersion;
-        public DateTime? IngameStartTime;
-        public bool IsBots;
-        public bool IsMission;
-        public string Map;
-        public string Mod;
-        public string ReplayName;
-        public DateTime StartTime;
-        public string Title;
-    }
-
-
     public class BattleResultHandler
     {
         public static string SubmitSpringBattleResult(BattleContext context,
@@ -76,12 +49,11 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     sb.SpringBattlePlayers.Add(new SpringBattlePlayer
                                                {
-                                                   AccountID = db.Accounts.First(x => x.LobbyID == p.LobbyID).AccountID,
+                                                   AccountID = db.Accounts.First(x => x.AccountID == p.LobbyID).AccountID,
                                                    AllyNumber = p.AllyNumber,
                                                    CommanderType = p.CommanderType,
                                                    IsInVictoryTeam = p.IsVictoryTeam,
                                                    IsSpectator = p.IsSpectator,
-                                                   Rank = p.Rank,
                                                    LoseTime = p.LoseTime
                                                });
                 }
@@ -96,7 +68,7 @@ namespace ZeroKWeb.SpringieInterface
                     string awardType = partsSpace[1];
                     string awardText = partsSpace[2];
 
-                    SpringBattlePlayer player = sb.SpringBattlePlayers.FirstOrDefault(x => x.Account.Name == name && x.Account.LobbyID != null);
+                    SpringBattlePlayer player = sb.SpringBattlePlayers.FirstOrDefault(x => x.Account.Name == name);
                     if (player != null)
                     {
                         db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward
@@ -159,6 +131,8 @@ namespace ZeroKWeb.SpringieInterface
                 Dictionary<int, int> orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
 
                 sb.CalculateAllElo(noElo, isPlanetwars);
+                foreach (var u in sb.SpringBattlePlayers.Where(x => !x.IsSpectator)) u.Account.CheckLevelUp();
+                
                 db.SubmitAndMergeChanges();
 
                 try
@@ -177,10 +151,11 @@ namespace ZeroKWeb.SpringieInterface
                         try
                         {
                             string message =
-                                string.Format("Congratulations {0}! You just leveled up to level {1}. http://zero-k.info/Users/Detail/{2}",
+                                string.Format("Congratulations {0}! You just leveled up to level {1}. {3}/Users/Detail/{2}",
                                               account.Name,
                                               account.Level,
-                                              account.AccountID);
+                                              account.AccountID,
+                                              GlobalConst.BaseSiteUrl);
                             //text.AppendLine(message);
                             AuthServiceClient.SendLobbyMessage(account, message);
                         }
@@ -191,7 +166,7 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 }
 
-                text.AppendLine(string.Format("BATTLE DETAILS AND REPLAY ----> http://zero-k.info/Battles/Detail/{0} <-----", sb.SpringBattleID));
+                text.AppendLine(string.Format("BATTLE DETAILS AND REPLAY ----> {1}/Battles/Detail/{0} <-----", sb.SpringBattleID, GlobalConst.BaseSiteUrl));
 
                 // create debriefing room, join players there and output message
                 string channelName = "B" + sb.SpringBattleID;
@@ -203,17 +178,17 @@ namespace ZeroKWeb.SpringieInterface
 
 
                 var conf = context.GetConfig();
-                if (bat != null && (conf == null || context.GetConfig().MinToJuggle == null)) // if not qm room do not join those who are in battle
+                if (bat != null && (conf == null || conf.MinToJuggle == null)) // if not qm room do not join those who are in battle
                 {
-                    List<string> inbatPlayers = bat.Users.Select(x => x.Name).ToList();
+                    List<string> inbatPlayers = bat.Users.Keys.ToList();
                     joinplayers.RemoveAll(x => inbatPlayers.Contains(x));
                 }
                 foreach (string jp in joinplayers.Distinct().Where(x => x != context.AutohostName)) tas.ForceJoinChannel(jp, channelName);
                 tas.JoinChannel(channelName); // join nightwatch and say it
-                tas.Say(TasClient.SayPlace.Channel, channelName, text.ToString(), true);
+                tas.Say(SayPlace.Channel, channelName, text.ToString(), true);
                 tas.LeaveChannel(channelName);
 
-                //text.Append(string.Format("Debriefing in #{0} - spring://chat/channel/{0}  ", channelName));
+                //text.Append(string.Format("Debriefing in #{0} - zk://chat/channel/{0}  ", channelName));
                 return text.ToString();
             }
             catch (Exception ex)

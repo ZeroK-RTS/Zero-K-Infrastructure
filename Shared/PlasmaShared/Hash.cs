@@ -5,13 +5,13 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace PlasmaShared
+namespace ZkData
 {
     [Serializable]
     public struct Hash: ICloneable
     {
         public const int Size = 16;
-        readonly byte[] data;
+        public byte[] data;
 
         public Hash(byte[] source)
         {

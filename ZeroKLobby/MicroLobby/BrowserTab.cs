@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using ZkData;
 
 namespace ZeroKLobby
 {
@@ -54,7 +55,7 @@ namespace ZeroKLobby
             if (finishNavigation) //if HintNewNavigation() was never called (meaning user's navigation was by clicking URL, and not thru UrlBox and not thru NavigationControl.cs button): Will do the following processing:
             {
                 var url = e.Url.ToString();
-                if (string.IsNullOrEmpty(e.TargetFrameName) && url.StartsWith("http://zero-k.info") && !url.StartsWith("javascript:")) //if navigation is within Zero-K
+                if (string.IsNullOrEmpty(e.TargetFrameName) && url.StartsWith(GlobalConst.BaseSiteUrl) && !url.StartsWith("javascript:")) //if navigation is within Zero-K
                 {
                     var nav = Program.MainWindow.navigationControl.GetInavigatableByPath(url); //check which TAB this URL represent
                     if (url.Contains("@logout"))

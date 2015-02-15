@@ -9,9 +9,8 @@ using System.Windows.Forms;
 using JetBrains.Annotations;
 using LobbyClient;
 using PlasmaDownloader;
-using PlasmaShared;
-using PlasmaShared.ContentService;
-using PlasmaShared.UnitSyncLib;
+using ZkData;
+using ZkData.UnitSyncLib;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 
@@ -57,7 +56,7 @@ namespace ZeroKLobby
             EventHandler<CancelEventArgs<TasSayEventArgs>> hideMessage = null;
             hideMessage = (s, e) =>
               {
-                  if (e.Data.Place == TasSayEventArgs.Places.Normal && e.Data.Text == text)
+                  if (e.Data.Place == SayPlace.User && e.Data.Text == text)
                   {
                       e.Cancel = true;
                       Program.TasClient.PreviewSaid -= hideMessage;
@@ -74,11 +73,7 @@ namespace ZeroKLobby
         {
             if (ChangeDesiredSpectatorState(false))
             {
-                var newStatus = Program.TasClient.MyBattleStatus.Clone();
-                newStatus.AllyNumber = allyTeam;
-                newStatus.TeamNumber = Program.TasClient.MyBattle.GetFreeTeamID(Program.TasClient.UserName);
-                newStatus.IsSpectator = false;
-                Program.TasClient.SendMyBattleStatus(newStatus);
+                Program.TasClient.ChangeMyBattleStatus(false, team:Program.TasClient.MyBattle.GetFreeTeamID(Program.TasClient.UserName), ally:allyTeam);
             }
         }
 
@@ -88,25 +83,16 @@ namespace ZeroKLobby
         /// </summary>
         public static void JoinBattle(int battleID, string password)
         {
-            EventHandler<EventArgs<Battle>> battleJoinHandler = null;
-            EventHandler<TasEventArgs> battleJoinFailedHandler = null;
+            EventHandler<Battle> battleJoinHandler = null;
 
             battleJoinHandler = ((s, e) =>
               {
                   Program.TasClient.BattleJoined -= battleJoinHandler;
-                  Program.TasClient.JoinBattleFailed -= battleJoinFailedHandler;
                   if (Program.TasClient.MyBattle == null || !Program.TasClient.MyBattle.IsQueue) NavigationControl.Instance.Path = "chat/battle";
               });
 
-            battleJoinFailedHandler = ((s, e) =>
-              {
-                  Program.TasClient.BattleJoined -= battleJoinHandler;
-                  Program.TasClient.JoinBattleFailed -= battleJoinFailedHandler;
-                  MessageBox.Show(PlasmaShared.Utils.Glue(e.ServerParams.ToArray()), "Battle joining failed");
-              });
 
             Program.TasClient.BattleJoined += battleJoinHandler;
-            Program.TasClient.JoinBattleFailed += battleJoinFailedHandler;
 
             //Program.JugglerBar.Deactivate();
 
@@ -124,7 +110,7 @@ namespace ZeroKLobby
             User user;
             if (client.ExistingUsers.TryGetValue(name, out user) && user.IsInBattleRoom)
             {
-                var bat = client.ExistingBattles.Values.FirstOrDefault(x => x.Users.Any(y => y.Name == name));
+                var bat = client.ExistingBattles.Values.FirstOrDefault(x => x.Users.ContainsKey(name));
                 if (bat != null)
                 {
                     string password = null;
@@ -143,12 +129,7 @@ namespace ZeroKLobby
         {
             if (ChangeDesiredSpectatorState(false))
             {
-                var newStatus = Program.TasClient.MyBattleStatus.Clone();
-                newStatus.AllyNumber = slot.AllyID;
-                newStatus.TeamNumber = slot.TeamID;
-                newStatus.IsSpectator = false;
-                newStatus.TeamColor = slot.Color;
-                Program.TasClient.SendMyBattleStatus(newStatus);
+                Program.TasClient.ChangeMyBattleStatus(false,null,slot.AllyID,slot.TeamID);
             }
         }
 
@@ -176,7 +157,7 @@ namespace ZeroKLobby
                 switch (command)
                 {
                     case "logout":
-                        Program.TasClient.Disconnect();
+                        Program.TasClient.RequestDisconnect();
                         Program.Conf.LobbyPlayerName = "";
                         Program.ConnectBar.TryToConnectTasClient();
                         break;
@@ -198,7 +179,7 @@ namespace ZeroKLobby
                         break;
 
                     case "select_map":
-                        if (Program.TasClient.MyBattle != null) Program.TasClient.Say(TasClient.SayPlace.Battle, null, "!map " + arg, false);
+                        if (Program.TasClient.MyBattle != null) Program.TasClient.Say(SayPlace.Battle, null, "!map " + arg, false);
                         else
                         {
                             var name = String.Format("{0}'s game", Program.Conf.LobbyPlayerName);
@@ -279,15 +260,20 @@ namespace ZeroKLobby
         public static void SpawnAutohost(string gameName, string battleTitle, string password, IEnumerable<string> springieCommands)
         {
             var hostSpawnerName = SpringieCommand.GetHostSpawnerName(gameName);
+            if (hostSpawnerName == null) {
+                MessageBox.Show("Unable to locate AutoHost for given game type", "Error",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                return;
+            }
+            
 
             var spawnCommand = SpringieCommand.Spawn(gameName, battleTitle, password);
 
-            var waitingBar = WarningBar.DisplayWarning("Waiting for AutoHost to start");
+            var waitingBar = WarningBar.DisplayWarning("Waiting for AutoHost to start","Waiting for room");
 
             EventHandler<CancelEventArgs<TasSayEventArgs>> joinGame = null;
             joinGame = (s, e) =>
               {
-                  if (e.Data.Place == TasSayEventArgs.Places.Normal && e.Data.Origin == TasSayEventArgs.Origins.Player && (e.Data.Text == spawnCommand.Reply))
+                  if (e.Data.Place == SayPlace.User && (e.Data.Text == spawnCommand.Reply))
                   {
                       e.Cancel = true;
                       Program.NotifySection.RemoveBar(waitingBar);
@@ -295,21 +281,21 @@ namespace ZeroKLobby
                       var myHostName = e.Data.UserName;
                       var battle = Program.TasClient.ExistingBattles.Values.First(b => b.Founder.Name == myHostName);
 
-                      EventHandler<EventArgs<Battle>> battleJoined = null;
+                      EventHandler<Battle> battleJoined = null;
                       battleJoined = (s2, e2) =>
                         {
-                            if (e2.Data.BattleID == battle.BattleID)
+                            if (e2.BattleID == battle.BattleID)
                             {
                                 if (springieCommands != null)
                                 {
                                     foreach (var command in springieCommands)
                                     {
                                         HidePM(command);
-                                        Program.TasClient.Say(TasClient.SayPlace.User, myHostName, command, false);
+                                        Program.TasClient.Say(SayPlace.User, myHostName, command, false);
                                     }
                                 }
                                 HidePM("!map");
-                                Program.TasClient.Say(TasClient.SayPlace.User, myHostName, "!map", false);
+                                Program.TasClient.Say(SayPlace.User, myHostName, "!map", false);
                                 Program.TasClient.BattleJoined -= battleJoined;
                             }
                         };
@@ -322,7 +308,7 @@ namespace ZeroKLobby
 
             Program.TasClient.PreviewSaid += joinGame;
             HidePM(spawnCommand.Command);
-            Program.TasClient.Say(TasClient.SayPlace.User, hostSpawnerName, spawnCommand.Command, false);
+            Program.TasClient.Say(SayPlace.User, hostSpawnerName, spawnCommand.Command, false);
         }
 
 
@@ -333,9 +319,7 @@ namespace ZeroKLobby
         {
             if (ChangeDesiredSpectatorState(true))
             {
-                var newStatus = Program.TasClient.MyBattleStatus.Clone();
-                newStatus.IsSpectator = true;
-                Program.TasClient.SendMyBattleStatus(newStatus);
+                Program.TasClient.ChangeMyBattleStatus(true);
             }
         }
 
@@ -354,7 +338,7 @@ namespace ZeroKLobby
         {
             try
             {
-                var serv = new ContentService() { Proxy = null };
+                var serv = GlobalConst.GetContentService();
                 SinglePlayerBar.DownloadAndStartMission(serv.GetScriptMissionData(name));
             }
             catch (WebException ex)
@@ -380,11 +364,8 @@ namespace ZeroKLobby
         {
             if (ChangeDesiredSpectatorState(false))
             {
-                if (Program.TasClient.MyBattle != null)
-                {
-                    var newStatus = Program.TasClient.MyBattleStatus.Clone();
-                    newStatus.IsSpectator = false;
-                    Program.TasClient.SendMyBattleStatus(newStatus);
+                if (Program.TasClient.MyBattle != null) {
+                    Program.TasClient.ChangeMyBattleStatus(false);
                 }
             }
         }
@@ -393,13 +374,13 @@ namespace ZeroKLobby
         {
             Battle bat;
             if (!Program.TasClient.ExistingBattles.TryGetValue(battleId, out bat)) return;
-            Program.TasClient.Say(TasClient.SayPlace.User, bat.Founder.Name, string.Format("!adduser {0}", Program.TasClient.UserName),false);
+            Program.TasClient.Say(SayPlace.User, bat.Founder.Name, string.Format("!adduser {0}", Program.TasClient.UserName),false);
 
             var de = Program.Downloader.GetAndSwitchEngine(bat.EngineVersion);
             var dm = Program.Downloader.GetResource(DownloadType.MAP, bat.MapName);
             var dg = Program.Downloader.GetResource(DownloadType.MOD, bat.ModName);
         
-            PlasmaShared.Utils.StartAsync(() =>
+            ZkData.Utils.StartAsync(() =>
             {
                 if (de != null)
                 {

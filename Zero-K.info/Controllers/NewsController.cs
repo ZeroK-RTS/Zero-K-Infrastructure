@@ -6,7 +6,6 @@ using System.Linq;
 using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
-using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.Controllers
@@ -29,21 +28,6 @@ namespace ZeroKWeb.Controllers
             return View("NewsDetail", news);
         }
 
-	    public void MakeSpringNewsPosts()
-		{
-			var db =new ZkDataContext();
-			foreach (News n in db.News.Where(x=>x.SpringForumPostID == null && x.Created <= DateTime.UtcNow).OrderBy(x=>x.Created)) {
-				string bbuid = SpringForumController.GenBBUid();
-				string text = string.Format("[url={0}:{1}][size=150:{1}]  [b:{1}]{2}[/b:{1}][/size:{1}][/url:{1}]\n {3}",
-																		Url.Action("Thread", "Forum", new { id= n.ForumThreadID},"http"),
-																		bbuid,
-																		n.Title,
-																		n.Text);
-				
-				n.SpringForumPostID = SpringForumController.PostOrEdit(text, bbuid, n.SpringForumPostID, SpringForumController.TopicIdNews, n.Title, n.Created);
-				db.SubmitChanges();				
-			}
-		}
 
 
         [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
@@ -75,6 +59,7 @@ namespace ZeroKWeb.Controllers
 				}
 
                 news.HeadlineUntil = nn.HeadlineUntil;
+                string postText = news.Text;
 
                 if (nn.NewsID == 0)
                 {
@@ -86,21 +71,31 @@ namespace ZeroKWeb.Controllers
                                      ForumCategoryID = db.ForumCategories.Single(x => x.IsNews).ForumCategoryID
                                  };
 
-                    thread.ForumPosts.Add(new ForumPost() { Created = news.Created, Text = news.Text, AuthorAccountID = news.AuthorAccountID });
+                    
+                    thread.ForumPosts.Add(new ForumPost() { Created = news.Created, Text = postText, AuthorAccountID = news.AuthorAccountID });
                     db.ForumThreads.InsertOnSubmit(thread);
                     db.SubmitChanges();
                     news.ForumThreadID = thread.ForumThreadID;
                     db.News.InsertOnSubmit(news);
                 }
-                
 			    db.SubmitChanges();
+
+                // do it down here so it gets the correct news ID
+                if (!String.IsNullOrWhiteSpace(news.ImageRelativeUrl) && news.ForumThread != null)
+                {
+                    postText = "[img]" + news.ImageRelativeUrl + "[/img]" + Environment.NewLine + postText;
+                    news.ForumThread.ForumPosts.ElementAt(0).Text = postText;
+                    db.SubmitChanges();
+                }
+
 				if (im != null)
 				{
 					im.Save(Server.MapPath(news.ImageRelativeUrl));
+                    Image thumb = im.GetResized(120, (int)Math.Round(120.0 / im.Width * im.Height), InterpolationMode.HighQualityBicubic);
+                    thumb.Save(Server.MapPath(news.ThumbRelativeUrl));
 				}
 				scope.Complete();
 			}
-			if (nn.NewsID == 0) MakeSpringNewsPosts();
 			return Content("Posted!");
 		}
 	}

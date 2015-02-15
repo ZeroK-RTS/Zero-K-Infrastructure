@@ -7,7 +7,7 @@ using System.Linq;
 using JetBrains.Annotations;
 using PlasmaDownloader.Packages;
 using PlasmaDownloader.Torrents;
-using PlasmaShared;
+using ZkData;
 
 #endregion
 
@@ -91,12 +91,21 @@ namespace PlasmaDownloader
 
         [CanBeNull]
         public Download GetResource(DownloadType type, string name) {
+
             lock (downloads) {
                 downloads.RemoveAll(x => x.IsAborted || x.IsComplete != null); // remove already completed downloads from list}
-                var existing = downloads.SingleOrDefault(x => x.Name == name);
+                var existing = downloads.FirstOrDefault(x => x.Name == name);
                 if (existing != null) return existing;
+            }
 
-                if (scanner != null && scanner.HasResource(name)) return null;
+            if (scanner != null && scanner.HasResource(name)) return null;
+            
+            if (type == DownloadType.MOD || type == DownloadType.UNKNOWN)
+            {
+                packageDownloader.LoadMasterAndVersions(false).Wait();
+            }
+            
+            lock (downloads) {
 
                 if (type == DownloadType.DEMO) {
                     var target = new Uri(name);

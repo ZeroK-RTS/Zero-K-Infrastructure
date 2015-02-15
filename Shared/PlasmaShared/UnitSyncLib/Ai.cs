@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace PlasmaShared.UnitSyncLib
+namespace ZkData.UnitSyncLib
 {
     [Serializable]
     public class Ai

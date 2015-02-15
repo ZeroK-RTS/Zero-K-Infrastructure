@@ -6,7 +6,6 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using LobbyClient;
-using PlasmaShared;
 using ZkData;
 
 namespace ZeroKLobby

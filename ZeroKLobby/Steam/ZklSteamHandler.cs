@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using LobbyClient;
-using PlasmaShared;
 using Steamworks;
 using ZeroKLobby.Steam;
 using ZkData;
@@ -25,8 +24,16 @@ namespace ZeroKLobby
             this.tas = tas;
             if (Environment.OSVersion.Platform == PlatformID.Unix)
             {
-                EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.libCSteamworks.so", "libCSteamworks.so");
-                EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.libsteam_api.so", "libsteam_api.so");
+				if (Environment.Is64BitProcess)
+				{
+					EmbeddedResourceExtractor.ExtractFile ("ZeroKLobby.NativeLibs.libCSteamworks-x86_64.so", "libCSteamworks.so");
+					EmbeddedResourceExtractor.ExtractFile ("ZeroKLobby.NativeLibs.libsteam_api-x86_64.so", "libsteam_api.so");
+				}
+				else
+				{
+					EmbeddedResourceExtractor.ExtractFile ("ZeroKLobby.NativeLibs.libCSteamworks.so", "libCSteamworks.so");
+					EmbeddedResourceExtractor.ExtractFile ("ZeroKLobby.NativeLibs.libsteam_api.so", "libsteam_api.so");
+				}
             }
             else
             {
@@ -55,7 +62,7 @@ namespace ZeroKLobby
             tas.UserRemoved += (sender, args) =>
             {
                 User us;
-                if (tas.ExistingUsers.TryGetValue(args.ServerParams[0], out us) && us.SteamID.HasValue)
+                if (tas.ExistingUsers.TryGetValue(args.Name, out us) && us.SteamID.HasValue)
                 {
                     Voice.RemoveListenerSteamID(us.SteamID.Value);
                 }
@@ -100,7 +107,7 @@ namespace ZeroKLobby
             if (tas.MyUser.SteamID == null)
             {
                 string token = SteamHelper.GetClientAuthTokenHex();
-                if (!string.IsNullOrEmpty(token)) tas.Say(TasClient.SayPlace.User, GlobalConst.NightwatchName, string.Format("!linksteam {0}", token), false);
+                if (!string.IsNullOrEmpty(token)) tas.Say(SayPlace.User, GlobalConst.NightwatchName, string.Format("!linksteam {0}", token), false);
             }
             foreach (User u in tas.ExistingUsers.Values.ToList().Where(x => x.SteamID != null && friends.Contains(x.SteamID.Value))) AddFriend(u.Name);
             if (Program.Conf.EnableVoiceChat && Environment.OSVersion.Platform != PlatformID.Unix)

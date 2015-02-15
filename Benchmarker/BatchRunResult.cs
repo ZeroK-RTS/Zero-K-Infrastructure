@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using ServiceStack.Text;
+using Newtonsoft.Json;
 
 namespace Benchmarker
 {
@@ -87,7 +87,7 @@ namespace Benchmarker
 
         public static BatchRunResult Load(string path) {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            var ret = JsonSerializer.DeserializeFromString<BatchRunResult>(File.ReadAllText(path));
+            var ret = JsonConvert.DeserializeObject<BatchRunResult>(File.ReadAllText(path));
             if (ret != null) ret.batchFileName = path;
             return ret;
         }
@@ -106,7 +106,7 @@ namespace Benchmarker
             batchFileName = Path.Combine(folder, string.Format("batchResult_{0:yyyy-MM-dd_HH-mm-ss}.json", now));
             try
             {
-                File.WriteAllText(batchFileName, JsonSerializer.SerializeToString(this));
+                File.WriteAllText(batchFileName, JsonConvert.SerializeObject(this));
             }
             catch (Exception ex)
             {

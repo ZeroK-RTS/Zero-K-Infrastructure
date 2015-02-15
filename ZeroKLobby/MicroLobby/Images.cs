@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Windows;
+using LobbyClient;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -22,7 +23,7 @@ namespace ZeroKLobby.MicroLobby
         static Images()
         {
             assembly = Assembly.GetAssembly(typeof(Images));
-            foreach (var country in LobbyClient.User.CountryNames.Keys) CountryFlags[country] = (Image)Flags.ResourceManager.GetObject(country.ToLower());
+            foreach (var country in CountryNames.Names.Keys) CountryFlags[country] = (Image)Flags.ResourceManager.GetObject(country.ToLower());
             for (var i = 0; i < 9; i++) rankImages[i] = (Image)Ranks.ResourceManager.GetObject(string.Format("_{0}",i+1));
         }
 

@@ -8,9 +8,9 @@ namespace ZeroKLobby.Lines
         public DateTime Date { get; private set; }
         public string Topic { get; private set; }
         public string TopicSetBy { get; private set; }
-        public DateTime TopicSetDate { get; private set; }
+        public DateTime? TopicSetDate { get; private set; }
 
-        public TopicLine(string topic, string topicSetBy, DateTime topicSetDate)
+        public TopicLine(string topic, string topicSetBy, DateTime? topicSetDate)
         {
             Date = DateTime.Now;
             Topic = topic;

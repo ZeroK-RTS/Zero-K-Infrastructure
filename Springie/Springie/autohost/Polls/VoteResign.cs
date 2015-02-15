@@ -1,6 +1,6 @@
 using System.Linq;
 using LobbyClient;
-using PlasmaShared.SpringieInterfaceReference;
+using PlasmaShared;
 
 namespace Springie.autohost.Polls
 {
@@ -21,7 +21,7 @@ namespace Springie.autohost.Polls
                     int cnt = 0;
                     foreach (var p in context.Players.Where(x => x.AllyID == voteStarter.AllyID && !x.IsSpectator))
                     {
-                        if (p.IsIngame || tas.MyBattle.Users.Any(x => x.Name == p.Name))
+                        if (p.IsIngame || tas.MyBattle.Users.ContainsKey(p.Name))
                         {
                             if (!tas.ExistingUsers[p.Name].IsAway) cnt++;
                         }

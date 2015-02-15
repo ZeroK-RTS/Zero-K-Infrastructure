@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Windows.Forms;
 using PlasmaDownloader;
+using ZkData;
 
 namespace ZeroKLobby.Notifications
 {
@@ -35,7 +36,7 @@ namespace ZeroKLobby.Notifications
             }
             else
             {
-                LoadMinimapImage(Download.Name);
+                if (Download.TypeOfResource == DownloadType.MAP) LoadMinimapImage(Download.Name);
 
                 var dl = (long)(Download.TotalProgress/100.0*Download.TotalLength);
 
@@ -82,8 +83,7 @@ namespace ZeroKLobby.Notifications
                                                                    progress.Width = progress.Width - w;
                                                                    label.Width = label.Width - w;
                                                                }),
-                                                           e => { },
-                                                           null);
+                                                           e => { });
             }
             imageLoaded = true;
         }
@@ -115,7 +115,7 @@ namespace ZeroKLobby.Notifications
 
         void minimapBox_Click(object sender, EventArgs e)
         {
-            Utils.OpenWeb("http://zero-k.info/Maps/DetailName?name=" + Uri.EscapeDataString(Download.Name), true);
+            Utils.OpenWeb(GlobalConst.BaseSiteUrl + "/Maps/DetailName?name=" + Uri.EscapeDataString(Download.Name), true);
         }
     }
 }

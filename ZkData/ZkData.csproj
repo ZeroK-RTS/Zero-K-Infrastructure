@@ -1,0 +1,307 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{61D3BE0A-282D-462C-BA26-06670E5ACB3E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ZkData</RootNamespace>
+    <AssemblyName>ZkData</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BCrypt.Net, Version=0.1.5073.29922, Culture=neutral, PublicKeyToken=6bcd409ee6bc9292, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\BCrypt-Official.0.1.109\lib\BCrypt.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Zip.Reduced">
+      <HintPath>..\Libs\Ionic.Zip.Reduced.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Linq.Translations, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Linq.Translations.1.0.1\lib\net40\Microsoft.Linq.Translations.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Enums\DecorationIconPositions.cs" />
+    <Compile Include="Enums\DecorationIconTypes.cs" />
+    <Compile Include="Enums\UserLanguage.cs" />
+    <Compile Include="Migrations\201501132318070_UberServerSwap.cs" />
+    <Compile Include="Migrations\201501132318070_UberServerSwap.Designer.cs">
+      <DependentUpon>201501132318070_UberServerSwap.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501151328048_CaseSensitiveNames.cs" />
+    <Compile Include="Migrations\201501151328048_CaseSensitiveNames.Designer.cs">
+      <DependentUpon>201501151328048_CaseSensitiveNames.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501151611400_AddNameIndex.cs" />
+    <Compile Include="Migrations\201501151611400_AddNameIndex.Designer.cs">
+      <DependentUpon>201501151611400_AddNameIndex.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501252112416_AddPasswordBcrypt.cs" />
+    <Compile Include="Migrations\201501252112416_AddPasswordBcrypt.Designer.cs">
+      <DependentUpon>201501252112416_AddPasswordBcrypt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501260153434_FinishBcrypt.cs" />
+    <Compile Include="Migrations\201501260153434_FinishBcrypt.Designer.cs">
+      <DependentUpon>201501260153434_FinishBcrypt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501261515552_RemovePlainHashedPasswords.cs" />
+    <Compile Include="Migrations\201501261515552_RemovePlainHashedPasswords.Designer.cs">
+      <DependentUpon>201501261515552_RemovePlainHashedPasswords.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501281237432_RemoveLobbyAdminColumn.cs" />
+    <Compile Include="Migrations\201501281237432_RemoveLobbyAdminColumn.Designer.cs">
+      <DependentUpon>201501281237432_RemoveLobbyAdminColumn.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501290241027_RemoveSpringHashes.cs" />
+    <Compile Include="Migrations\201501290241027_RemoveSpringHashes.Designer.cs">
+      <DependentUpon>201501290241027_RemoveSpringHashes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserLanguageNoteAttribute.cs" />
+    <Compile Include="Enums\EnergyPriority.cs" />
+    <Compile Include="CurrentLobbyStats.cs" />
+    <Compile Include="Enums\TreatyState.cs" />
+    <Compile Include="Enums\UnlockType.cs" />
+    <Compile Include="DbExtensions.cs" />
+    <Compile Include="Ef\AbuseReport.cs" />
+    <Compile Include="Ef\Account.cs" />
+    <Compile Include="Ef\AccountBattleAward.cs" />
+    <Compile Include="Ef\AccountCampaignJournalProgress.cs" />
+    <Compile Include="Ef\AccountCampaignProgress.cs" />
+    <Compile Include="Ef\AccountCampaignVar.cs" />
+    <Compile Include="Ef\AccountForumVote.cs" />
+    <Compile Include="Ef\AccountIP.cs" />
+    <Compile Include="Ef\AccountPlanet.cs" />
+    <Compile Include="Ef\AccountRole.cs" />
+    <Compile Include="Ef\AccountUnlock.cs" />
+    <Compile Include="Ef\AccountUserID.cs" />
+    <Compile Include="Ef\AutohostConfig.cs" />
+    <Compile Include="Ef\Avatar.cs" />
+    <Compile Include="Ef\BlockedCompany.cs" />
+    <Compile Include="Ef\BlockedHost.cs" />
+    <Compile Include="Ef\Campaign.cs" />
+    <Compile Include="Ef\CampaignEvent.cs" />
+    <Compile Include="Ef\CampaignJournal.cs" />
+    <Compile Include="Ef\CampaignJournalVar.cs" />
+    <Compile Include="Ef\CampaignLink.cs" />
+    <Compile Include="Ef\CampaignPlanet.cs" />
+    <Compile Include="Ef\CampaignPlanetVar.cs" />
+    <Compile Include="Ef\CampaignVar.cs" />
+    <Compile Include="Ef\Clan.cs" />
+    <Compile Include="Ef\Commander.cs" />
+    <Compile Include="Ef\CommanderDecoration.cs" />
+    <Compile Include="Ef\CommanderDecorationIcon.cs" />
+    <Compile Include="Ef\CommanderDecorationSlot.cs" />
+    <Compile Include="Ef\CommanderModule.cs" />
+    <Compile Include="Ef\CommanderSlot.cs" />
+    <Compile Include="Ef\Contribution.cs" />
+    <Compile Include="Ef\ContributionJar.cs" />
+    <Compile Include="Ef\Event.cs" />
+    <Compile Include="Ef\Faction.cs" />
+    <Compile Include="Ef\FactionTreaty.cs" />
+    <Compile Include="Ef\ForumCategory.cs" />
+    <Compile Include="Ef\ForumLastRead.cs" />
+    <Compile Include="Ef\ForumPost.cs" />
+    <Compile Include="Ef\ForumPostEdit.cs" />
+    <Compile Include="Ef\ForumThread.cs" />
+    <Compile Include="Ef\ForumThreadLastRead.cs" />
+    <Compile Include="Ef\Galaxy.cs" />
+    <Compile Include="Ef\KudosPurchase.cs" />
+    <Compile Include="Ef\Link.cs" />
+    <Compile Include="Ef\LobbyChannelSubscription.cs" />
+    <Compile Include="Ef\LobbyMessage.cs" />
+    <Compile Include="Ef\MapRating.cs" />
+    <Compile Include="Ef\MiscVar.cs" />
+    <Compile Include="Ef\Mission.cs" />
+    <Compile Include="Ef\MissionScore.cs" />
+    <Compile Include="Ef\News.cs" />
+    <Compile Include="Ef\Planet.cs" />
+    <Compile Include="Ef\PlanetFaction.cs" />
+    <Compile Include="Ef\PlanetOwnerHistory.cs" />
+    <Compile Include="Ef\PlanetStructure.cs" />
+    <Compile Include="Ef\Poll.cs" />
+    <Compile Include="Ef\PollOption.cs" />
+    <Compile Include="Ef\PollVote.cs" />
+    <Compile Include="Ef\Punishment.cs" />
+    <Compile Include="Ef\Rating.cs" />
+    <Compile Include="Ef\Resource.cs" />
+    <Compile Include="Ef\ResourceContentFile.cs" />
+    <Compile Include="Ef\ResourceDependency.cs" />
+    <Compile Include="Ef\RoleType.cs" />
+    <Compile Include="Ef\RoleTypeHierarchy.cs" />
+    <Compile Include="Ef\SpringBattle.cs" />
+    <Compile Include="Ef\SpringBattlePlayer.cs" />
+    <Compile Include="Ef\StructureType.cs" />
+    <Compile Include="Ef\TreatyEffect.cs" />
+    <Compile Include="Ef\TreatyEffectType.cs" />
+    <Compile Include="Ef\Unlock.cs" />
+    <Compile Include="ZkDataContext.cs" />
+    <Compile Include="MissionService\IMissionService.cs" />
+    <Compile Include="Migrations\201412312111372_Init.cs" />
+    <Compile Include="Migrations\201412312111372_Init.Designer.cs">
+      <DependentUpon>201412312111372_Init.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501021512422_FixElo.cs" />
+    <Compile Include="Migrations\201501021512422_FixElo.Designer.cs">
+      <DependentUpon>201501021512422_FixElo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501031252225_FixCampaignLinkKey.cs" />
+    <Compile Include="Migrations\201501031252225_FixCampaignLinkKey.Designer.cs">
+      <DependentUpon>201501031252225_FixCampaignLinkKey.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501031335442_CampaignPlanetIndexReorder.cs" />
+    <Compile Include="Migrations\201501031335442_CampaignPlanetIndexReorder.Designer.cs">
+      <DependentUpon>201501031335442_CampaignPlanetIndexReorder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501031338090_CampaignPlanetIndexReorder2.cs" />
+    <Compile Include="Migrations\201501031338090_CampaignPlanetIndexReorder2.Designer.cs">
+      <DependentUpon>201501031338090_CampaignPlanetIndexReorder2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501031843539_PluralizeTablesAccident.cs" />
+    <Compile Include="Migrations\201501031843539_PluralizeTablesAccident.Designer.cs">
+      <DependentUpon>201501031843539_PluralizeTablesAccident.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501041114503_FixEventPlanetCampaignRelation.cs" />
+    <Compile Include="Migrations\201501041114503_FixEventPlanetCampaignRelation.Designer.cs">
+      <DependentUpon>201501041114503_FixEventPlanetCampaignRelation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="MissionService\MissionUpdater.cs" />
+    <Compile Include="PayPal\PayPalInterface.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="LobbyProtocolExtensionsExtensions.cs" />
+    <Compile Include="Secrets.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201412312111372_Init.resx">
+      <DependentUpon>201412312111372_Init.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501021512422_FixElo.resx">
+      <DependentUpon>201501021512422_FixElo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501031252225_FixCampaignLinkKey.resx">
+      <DependentUpon>201501031252225_FixCampaignLinkKey.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501031335442_CampaignPlanetIndexReorder.resx">
+      <DependentUpon>201501031335442_CampaignPlanetIndexReorder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501031338090_CampaignPlanetIndexReorder2.resx">
+      <DependentUpon>201501031338090_CampaignPlanetIndexReorder2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501031843539_PluralizeTablesAccident.resx">
+      <DependentUpon>201501031843539_PluralizeTablesAccident.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501041114503_FixEventPlanetCampaignRelation.resx">
+      <DependentUpon>201501041114503_FixEventPlanetCampaignRelation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501132318070_UberServerSwap.resx">
+      <DependentUpon>201501132318070_UberServerSwap.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501151328048_CaseSensitiveNames.resx">
+      <DependentUpon>201501151328048_CaseSensitiveNames.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501151611400_AddNameIndex.resx">
+      <DependentUpon>201501151611400_AddNameIndex.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501252112416_AddPasswordBcrypt.resx">
+      <DependentUpon>201501252112416_AddPasswordBcrypt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501260153434_FinishBcrypt.resx">
+      <DependentUpon>201501260153434_FinishBcrypt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501261515552_RemovePlainHashedPasswords.resx">
+      <DependentUpon>201501261515552_RemovePlainHashedPasswords.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501281237432_RemoveLobbyAdminColumn.resx">
+      <DependentUpon>201501281237432_RemoveLobbyAdminColumn.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501290241027_RemoveSpringHashes.resx">
+      <DependentUpon>201501290241027_RemoveSpringHashes.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\LobbyClient\LobbyClient.csproj">
+      <Project>{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}</Project>
+      <Name>LobbyClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">
+      <Project>{411A9E0E-FDC6-4E25-828A-0C2CD1CD96F8}</Project>
+      <Name>MonoTorrent</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Shared\PlasmaShared\PlasmaShared.csproj">
+      <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>
+      <Name>PlasmaShared</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="LICENSE.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -30,6 +30,7 @@ namespace System.Web.Mvc
     public static class HtmlHelperExtensions
     {
         public static MvcHtmlString AccountAvatar(this HtmlHelper helper, Account account) {
+            if (account.IsDeleted) return null;
             return new MvcHtmlString(string.Format("<img src='/img/avatars/{0}.png' class='avatar'>", account.Avatar));
         }
 
@@ -52,7 +53,7 @@ namespace System.Web.Mvc
             str = exp.Replace(str,
             	"<table border=\"0\" cellpadding=\"6\" cellspacing=\"0\" width=\"100%\">"+
             	"<tbody><tr><td style=\"border: 1px inset;\">"+
-            	"<em>quote:<br>$2</em>"+
+            	"<em>quote:<br/>$2</em>"+
             	"</td></tr></tbody>"+
             	"</table>");
             
@@ -71,20 +72,20 @@ namespace System.Web.Mvc
             exp = new Regex(@"\[s\]((.|\n)+?)\[/s\]", RegexOptions.IgnoreCase);
             str = exp.Replace(str, "<strike>$1</strike>");
 
-            // format the url tags: [url=www.website.com]my site[/url]
+                        // format the url tags: [url=www.website.com]my site[/url]
             // becomes: <a href="www.website.com">my site</a>
             exp = new Regex(@"\[url\=([^\]]+)\]([^\]]+)\[/url\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<a href=\"$1\">$2</a>");
+            str = exp.Replace(str, "<a href=\"$1\" target=\"_blank\">$2</a>");
 
             // format the img tags: [img]www.website.com/img/image.jpeg[/img]
             // becomes: <img src="www.website.com/img/image.jpeg" />
             exp = new Regex(@"\[img\]([^\[]+)\[/img\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<img src=\"$1\" />");
+            str = exp.Replace(str, "<a href=\"$1\" target=\"_blank\" ><img src=\"$1\" max-width=\"100%\" height=\"auto\"/></a>");
 
             // format img tags with alt: [img=www.website.com/img/image.jpeg]this is the alt text[/img]
             // becomes: <img src="www.website.com/img/image.jpeg" alt="this is the alt text" />
             exp = new Regex(@"\[img\=([^\]]+)\]([^\]]+)\[/img\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<img src=\"$1\" alt=\"$2\" />");
+            str = exp.Replace(str, "<a href=\"$1\" target=\"_blank\" ><img src=\"$1\" alt=\"$2\" max-width=\"100%\" height=\"auto\" /></a>");
 
             //format the colour tags: [color=red][/color]
             // becomes: <font color="red"></font>
@@ -100,27 +101,33 @@ namespace System.Web.Mvc
             str = Regex.Replace(str, @"(^|[\s])((mailto|spring|http|https|ftp|ftps)\://\S+)", @"$1<a href='$2'>$2</a>");
 
             // lastly, replace any new line characters with <br />
-            str = str.Replace("\r\n", "<br />\r\n");
+            str = str.Replace("\r\n", "<br/>\r\n");
             
 
-            // embed player to display gifv format (mp4, limited (for now) to be hosted on imgur)
-            exp = new Regex(@"\[gifv\]https?\://i\.imgur\.com/(\w+)\.(gifv|mp4)\[/gifv\]", RegexOptions.IgnoreCase);
-            /* 
-            temp hotfix - disabled and replaced by default gif - as [gifv] is live and used but bugged 
-            #190 - assigned to me (@mojj) 
-            */
-            /* 
+            // embed player to display videos (supported: mp4, 3gp, webm, ogg, ogv, gifv)
+            exp = new Regex(@"\[vid\](https?\:\/\/)((\w|-|_|\.|\/)+\.)(mp4|webm|ogg|ogv|3gp|gifv)\[/vid\]", RegexOptions.IgnoreCase);
             str = exp.Replace(str, 
-	    "<div style=\"width: auto; height: auto; text-align:center; line-height:0;\">" + 
-	    "<video webkit-playsinline=\"\" poster=\"https://i.imgur.com/$1h.jpg\" preload=\"auto\" autoplay=\"autoplay\" muted=\"muted\" loop=\"loop\" height=\"auto\" width=\"auto\">"+
-	    "<source src=\"https://i.imgur.com/$1.mp4\" type=\"video/mp4\">"+
-	    "<object type=\"application/x-shockwave-flash\" height=\"auto\" width=\"auto\" data=\"https://s.imgur.com/include/flash/gifplayer.swf?imgur_video=https://i.imgur.com/$1.mp4&imgur_width=auto&imgur_height=auto\"/>"+
-	    "</video>"+
-	    "</div>");
-            */
-            str = exp.Replace(str, 
-            	"<img src=\"https://i.imgur.com/$1.gif\" alt=\"https://i.imgur.com/$1.gif\" />"
-            );
+                "<div class=\"video-container\">"+
+                    "<video preload=\"auto\" height=\"auto\" width=\"auto\" controls=\"controls\">" +
+                        "<source type=\"video/webm\" src=\"$1$2" + "webm\">"+
+                        "<source type=\"video/mp4\" src=\"$1$2" + "mp4\">" +
+                        "<source type=\"video/ogg\" src=\"$1$2" + "ogg\">" +
+                        "<source type=\"video/ogv\" src=\"$1$2" + "ogv\">" +
+                        "<source type=\"video/3gp\" src=\"$1$2" +"3gp\">" +
+                        "Your browser does not support the video tag. Find out if your Browser is supported at www.w3schools.com/tags/tag_video.asp" +
+                    "</video>"+
+                "</div>");
+
+            // embed player to display gifv (supported: gifv)
+            exp = new Regex(@"\[gifv\](https?\:\/\/)((\w|-|_|\.|\/)+\.)(gifv|mp4|webm|gif)\[/gifv\]", RegexOptions.IgnoreCase);
+            str = exp.Replace(str,
+                "<div class=\"video-container\">" +
+                    "<video preload=\"auto\" height=\"auto\" width=\"auto\" autoplay=\"autoplay\" muted=\"muted\" loop=\"loop\" >" +
+                        "<source type=\"video/webm\" src=\"$1$2webm\">" +
+                        "<source type=\"video/mp4\" src=\"$1$2mp4\">" +
+                        "Your browser does not support the video tag. Find out if your Browser is supported at www.w3schools.com/tags/tag_video.asp" +
+                    "</video>" +
+                "</div>");
             		
             // spoiler tags: [spoiler]spoiler_text[/spoiler]
             // becomes: [Spoiler] and onClick displays the inner Content "spoiler_text" 
@@ -166,7 +173,7 @@ namespace System.Web.Mvc
                 return new MvcHtmlString(ret);
             }
             else {
-                var path = HttpContext.Current.Server.MapPath(name);
+                var path = Global.MapPath(name);
                 return new MvcHtmlString(File.ReadAllText(path));
             }
         }
@@ -191,7 +198,7 @@ namespace System.Web.Mvc
             if (lastRead != null && (lastTime == null || lastRead.LastRead > lastTime)) lastTime = lastRead.LastRead;
             ForumPost post = null;
             if (lastTime != null) post = thread.ForumPosts.FirstOrDefault(x => x.Created > lastTime);
-            int page = post != null ? ZeroKWeb.Controllers.ForumController.GetPostPage(post.ForumPostID) : (thread.PostCount-1)/GlobalConst.ForumPostsPerPage;
+            int page = post != null ? ZeroKWeb.Controllers.ForumController.GetPostPage(post) : (thread.PostCount-1)/GlobalConst.ForumPostsPerPage;
 
             string link;
             if (page > 0) link = url.Action("Thread", "Forum", new { id = thread.ForumThreadID, page = page});
@@ -212,8 +219,9 @@ namespace System.Web.Mvc
             return new MvcHtmlString(string.Format(format, link, HttpUtility.HtmlEncode(thread.Title)));
         }
 
-        public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account, bool colorize = true) {
+        public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account, bool colorize = true, bool ignoreDeleted = false) {
             if (account == null) return new MvcHtmlString("Nobody");
+            else if (account.IsDeleted && !ignoreDeleted) return new MvcHtmlString("{redacted}");
             else {
                 var clanStr = "";
                 var url = Global.UrlHelper();
@@ -330,7 +338,7 @@ namespace System.Web.Mvc
             else return new MvcHtmlString("");
 
             if (large == false) star = star + "_small";
-            return new MvcHtmlString(string.Format("<img src='/img/stars/{0}.png' alt='Donator star'/>", star));
+            return new MvcHtmlString(string.Format("<a href='/Contributions' target='_blank' ><img src='/img/stars/{0}.png' alt='Donator star'/></a>", star));
         }
 
         public static MvcHtmlString PrintDropships(this HtmlHelper helper, double? count, Faction faction) {
@@ -487,13 +495,13 @@ namespace System.Web.Mvc
                 factoids.Add("appoints: " +
                              string.Join(", ",
                                          rt.RoleTypeHierarchiesByMasterRoleTypeID.Where(x => x.CanAppoint)
-                                           .Select(x => x.RoleTypeBySlaveRoleTypeID.Name)));
+                                           .Select(x => x.SlaveRoleType.Name)));
             }
             if (rt.RoleTypeHierarchiesByMasterRoleTypeID.Any(x => x.CanRecall)) {
                 factoids.Add("recalls: " +
                              string.Join(", ",
                                          rt.RoleTypeHierarchiesByMasterRoleTypeID.Where(x => x.CanRecall)
-                                           .Select(x => x.RoleTypeBySlaveRoleTypeID.Name)));
+                                           .Select(x => x.SlaveRoleType.Name)));
             }
             if (rt.RightBomberQuota != 0) factoids.Add(string.Format("bomber quota {0:F0}%", rt.RightBomberQuota*100));
             if (rt.RightDropshipQuota != 0) factoids.Add(string.Format("dropship quota {0:F0}%", rt.RightDropshipQuota*100));
@@ -511,9 +519,9 @@ namespace System.Web.Mvc
 
         public static MvcHtmlString PrintFactionRoleHolders(this HtmlHelper helper, RoleType rt, Faction f) {
             List<MvcHtmlString> holders = new List<MvcHtmlString>();
-            foreach (AccountRole acc in rt.AccountRoles.Where(x=>x.AccountByAccountID.FactionID == f.FactionID)) 
+            foreach (AccountRole acc in rt.AccountRoles.Where(x=>x.Account.FactionID == f.FactionID)) 
             {
-                holders.Add(PrintAccount(helper, acc.AccountByAccountID));
+                holders.Add(PrintAccount(helper, acc.Account));
             }
             return new MvcHtmlString(String.Join(", ", holders));
         }
@@ -521,9 +529,9 @@ namespace System.Web.Mvc
         public static MvcHtmlString PrintClanRoleHolders(this HtmlHelper helper, RoleType rt, Clan c)
         {
             List<MvcHtmlString> holders = new List<MvcHtmlString>();
-            foreach (AccountRole acc in rt.AccountRoles.Where(x => x.AccountByAccountID.ClanID == c.ClanID))
+            foreach (AccountRole acc in rt.AccountRoles.Where(x => x.Account.ClanID == c.ClanID))
             {
-                holders.Add(PrintAccount(helper, acc.AccountByAccountID));
+                holders.Add(PrintAccount(helper, acc.Account));
             }
             return new MvcHtmlString(String.Join(", ", holders));
         }
@@ -746,7 +754,7 @@ namespace System.Web.Mvc
 //            // becomes: stuff
 //            exp = new Regex(@"\[quote\]((.|\n)+?)\[/quote\]", RegexOptions.IgnoreCase);
 //            str = exp.Replace(str,
-//                              "<table border=\"0\" cellpadding=\"6\" cellspacing=\"0\" width=\"100%\"><tbody><tr><td style=\"border: 1px inset;\"><em>quote:<br>$1</em></td></tr></tbody></table>");
+//                              "<table border=\"0\" cellpadding=\"6\" cellspacing=\"0\" width=\"100%\"><tbody><tr><td style=\"border: 1px inset;\"><em>quote:<br/>$1</em></td></tr></tbody></table>");
 //
 //            // format the italic tags: [i][/i]
 //            // becomes: <em></em>
@@ -827,8 +835,8 @@ namespace System.Web.Mvc
 //
 //            str = Regex.Replace(str, @"(^|[\s])((mailto|spring|http|https|ftp|ftps)\://\S+)", @"$1<a href='$2'>$2</a>");
 //
-//            // lastly, replace any new line characters with <br />
-//            str = str.Replace("\r\n", "<br />\r\n");
+//            // lastly, replace any new line characters with <br/>
+//            str = str.Replace("\r\n", "<br/>\r\n");
 //
 //            if (helper != null) {
 //                // todo remove condition in the future

@@ -11,13 +11,12 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using JetBrains.Annotations;
 using PlasmaDownloader;
-using PlasmaShared;
+using ZkData;
 
 namespace ZeroKLobby
 {
     public class Config: ICloneable, IPlasmaDownloaderConfig
     {
-        public const string BaseUrl = "http://zero-k.info/";
         public const string ConfigFileName = "ZeroKLobbyConfig.xml";
         public const string LogFile = "ZeroKLobbyErrors.txt";
 
@@ -28,7 +27,6 @@ namespace ZeroKLobby
         StringCollection friends = new StringCollection(); // lacks events for adding friends immediatly
         int idleTime = 5;
         StringCollection ignoredUsers = new StringCollection();
-        string manualSpringPath = @"C:\Program Files\Spring";
         bool showHourlyChimes = true;
         bool showOfficialBattles = true;
         bool hideEmptyBattles = false;
@@ -39,8 +37,8 @@ namespace ZeroKLobby
         string skirmisherGame;
         string skirmisherMap;
 
-        string springServerHost = "lobby.springrts.com";
-        int springServerPort = 8200;
+        string springServerHost = GlobalConst.LobbyServerHost;
+        int springServerPort = GlobalConst.LobbyServerPort;
 
         string snd_play_cmd = "aplay";
         string snd_play_path = "/usr/share/sounds/alsa/test.wav"; // probably present in other than archlinux distros...
@@ -101,8 +99,6 @@ namespace ZeroKLobby
         [Description("Path to sound played")]
         public string SndPlayPath { get { return snd_play_path; } set { snd_play_path = value; } }
 
-        [Browsable(false)]
-        public int DefaultPlayerColorInt = 16776960; // default teal color
         [Category("Debugging")]
         [DisplayName("Disable Lobby Auto Update")]
         [Description("Lobby will not update itself to latest release version. Use this if you are compiling your own lobby")]
@@ -115,6 +111,25 @@ namespace ZeroKLobby
         [DisplayName("Disable Bubble On Private Message")]
         public bool DisablePmBubble { get; set; }
 
+        [Category("Tooltip")]
+        [DisplayName("Disable player tooltip")]
+        [Description("Disable ZKL tooltip that display player status.")]
+        public bool DisablePlayerTooltip { get; set; }
+
+        [Category("Tooltip")]
+        [DisplayName("Disable battle tooltip")]
+        [Description("Disable ZKL tooltip that display room information.")]
+        public bool DisableBattleTooltip { get; set; }
+
+        [Category("Tooltip")]
+        [DisplayName("Disable map tooltip")]
+        [Description("Disable ZKL tooltip that display map and minimap information.")]
+        public bool DisableMapTooltip { get; set; }
+
+        [Category("Tooltip")]
+        [DisplayName("Disable text tooltip")]
+        [Description("Disable ZKL tooltip that display tips on buttons and options.")]
+        public bool DisableTextTooltip { get; set; }
 
         [Category("Chat")]
         [DisplayName("Color: Emote")]
@@ -122,10 +137,6 @@ namespace ZeroKLobby
         public Color EmoteColor { get { return Color.FromArgb(EmoteColorInt); } set { EmoteColorInt = value.ToArgb(); } }
         [Browsable(false)]
         public int EmoteColorInt = Color.FromArgb(178, 0, 178).ToArgb();
-        [Category("General")]
-        [DisplayName("Enable voice commands (EXPERIMENTAL)")]
-        [Description("Control the game using your voice")]
-        public bool EnableVoiceCommands { get; set; }
 
         [Category("General")]
         [DisplayName("Enable voice chat (push to talk)")]
@@ -135,7 +146,7 @@ namespace ZeroKLobby
         [Category("Devving")]
         [DisplayName("Enable UnitSync Dialog Box")]
         [Description("Allow ZKL to process new mod/map information without connecting to server, "
-        + "and give user the choice to keep this information only in local cache rather than sharing it with server. This option is meant to be used with Skirmisher Tab. This option won't work on Linux")]
+        + "and give user the choice to keep this information only in local cache rather than sharing it with server. This option is meant to be used with Skirmisher Tab. This option is force disabled on Linux")]
         public bool EnableUnitSyncPrompt { get; set; }
 
         [XmlIgnore]
@@ -300,7 +311,7 @@ namespace ZeroKLobby
         /// <summary>
         /// Keeps datetime of last topic change for each channel
         /// </summary>
-        public SerializableDictionary<string, DateTime> Topics = new SerializableDictionary<string, DateTime>();
+        public SerializableDictionary<string, DateTime?> Topics = new SerializableDictionary<string, DateTime?>();
         [Category("WebBrowser")]
         [DisplayName("Use external browser (forced on linux)")]
         [Description("Disable internal browser. Opens home, planetwars, maps etc in external browser")]
@@ -328,6 +339,8 @@ namespace ZeroKLobby
         public Config()
         {
             EnableVoiceChat = true;
+            SpringServerHost = GlobalConst.LobbyServerHost;
+            springServerPort = GlobalConst.LobbyServerPort;
         }
 
         public static Config Load(string path) {
@@ -337,6 +350,9 @@ namespace ZeroKLobby
                 try {
                     conf = (Config)xs.Deserialize(new StringReader(File.ReadAllText(path)));
                     conf.UpdateFadeColor();
+                    conf.SpringServerHost = GlobalConst.LobbyServerHost;
+                    conf.springServerPort = GlobalConst.LobbyServerPort;
+
                     return conf;
                 } catch (Exception ex) {
                     Trace.TraceError("Error reading config file: {0}", ex);
@@ -372,11 +388,11 @@ namespace ZeroKLobby
         }
 
         [Browsable(false)]
-        public int RepoMasterRefresh { get { return 120; } }
+        public int RepoMasterRefresh { get { return 0; } }
 
 
         [Browsable(false)]
-        public string PackageMasterUrl { get { return " http://repos.springrts.com/"; } }
+        public string PackageMasterUrl { get { return "http://repos.springrts.com/"; } }
     }
 
 

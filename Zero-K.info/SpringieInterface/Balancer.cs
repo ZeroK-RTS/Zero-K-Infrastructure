@@ -9,15 +9,6 @@ using ZkData;
 
 namespace ZeroKWeb.SpringieInterface
 {
-    public class BalanceTeamsResult
-    {
-        public List<BotTeam> Bots = new List<BotTeam>();
-        public bool CanStart = true;
-        public bool DeleteBots;
-        public string Message;
-        public List<PlayerTeam> Players = new List<PlayerTeam>();
-    }
-
     public class Balancer
     {
         const double MaxCbalanceDifference = 40;
@@ -136,11 +127,11 @@ namespace ZeroKWeb.SpringieInterface
 
                 if (splitTo != null) {
                     // set same map 
-                    tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!map " + context.Map, false);
+                    tas.Say(SayPlace.User, splitTo.Founder.Name, "!map " + context.Map, false);
 
                     var db = new ZkDataContext();
                     var ids = context.Players.Where(y => !y.IsSpectator).Select(x => (int?)x.LobbyID).ToList();
-                    var users = db.Accounts.Where(x => ids.Contains(x.LobbyID)).ToList();
+                    var users = db.Accounts.Where(x => ids.Contains(x.AccountID)).ToList();
                     var toMove = new List<Account>();
 
                     var moveCount = Math.Ceiling(users.Count/2.0);
@@ -152,7 +143,7 @@ namespace ZeroKWeb.SpringieInterface
 
                     // split while keeping clan groups together
                     // note disabled splittinhg by clan - use "x.ClanID ?? x.LobbyID" for clan balance
-                    foreach (var clanGrp in users.GroupBy(x => x.ClanID ?? x.LobbyID).OrderBy(x => x.Average(y => y.EffectiveElo))) {
+                    foreach (var clanGrp in users.GroupBy(x => x.ClanID ?? x.AccountID).OrderBy(x => x.Average(y => y.EffectiveElo))) {
                         toMove.AddRange(clanGrp);
                         if (toMove.Count >= moveCount) break;
                     }
@@ -160,26 +151,26 @@ namespace ZeroKWeb.SpringieInterface
                     try {
                         foreach (var m in toMove) tas.ForceJoinBattle(m.Name, splitTo.BattleID);
                         Thread.Sleep(5000);
-                        tas.Say(TasClient.SayPlace.User, context.AutohostName, "!lock 180", false);
-                        tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!lock 180", false);
+                        tas.Say(SayPlace.User, context.AutohostName, "!lock 180", false);
+                        tas.Say(SayPlace.User, splitTo.Founder.Name, "!lock 180", false);
                         if (context.GetMode() == AutohostMode.Planetwars) {
-                            tas.Say(TasClient.SayPlace.User, context.AutohostName, "!map", false);
+                            tas.Say(SayPlace.User, context.AutohostName, "!map", false);
                             Thread.Sleep(500);
-                            tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!map", false);
+                            tas.Say(SayPlace.User, splitTo.Founder.Name, "!map", false);
                         }
-                        else tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!map " + context.Map, false);
+                        else tas.Say(SayPlace.User, splitTo.Founder.Name, "!map " + context.Map, false);
                         if (forceStart) {
-                            tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!balance", false);
-                            tas.Say(TasClient.SayPlace.User, context.AutohostName, "!balance", false);
-                            tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!forcestart", false);
-                            tas.Say(TasClient.SayPlace.User, context.AutohostName, "!forcestart", false);
+                            tas.Say(SayPlace.User, splitTo.Founder.Name, "!balance", false);
+                            tas.Say(SayPlace.User, context.AutohostName, "!balance", false);
+                            tas.Say(SayPlace.User, splitTo.Founder.Name, "!forcestart", false);
+                            tas.Say(SayPlace.User, context.AutohostName, "!forcestart", false);
                         }
 
-                        tas.Say(TasClient.SayPlace.User, context.AutohostName, "!endvote", false);
-                        tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!endvote", false);
+                        tas.Say(SayPlace.User, context.AutohostName, "!endvote", false);
+                        tas.Say(SayPlace.User, splitTo.Founder.Name, "!endvote", false);
 
-                        tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
-                        tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!start", false);
+                        tas.Say(SayPlace.User, context.AutohostName, "!start", false);
+                        tas.Say(SayPlace.User, splitTo.Founder.Name, "!start", false);
                     } catch (Exception ex) {
                         Trace.TraceError("Error when splitting: {0}", ex);
                     } 
@@ -197,7 +188,7 @@ namespace ZeroKWeb.SpringieInterface
             foreach (
                 var p in
                     battleContext.Players.Where(x => !x.IsSpectator)
-                                 .Select(x => new { player = x, account = dataContext.Accounts.First(y => y.LobbyID == x.LobbyID) })) {
+                                 .Select(x => new { player = x, account = dataContext.Accounts.First(y => y.AccountID == x.LobbyID) })) {
                 if ((config.MinLevel != null && p.account.Level < config.MinLevel) || (config.MaxLevel != null && p.account.Level > config.MaxLevel) ||
                     (config.MinElo != null && p.account.EffectiveElo < config.MinElo) ||
                     (config.MaxElo != null && p.account.EffectiveElo > config.MaxElo)) {
@@ -220,8 +211,9 @@ namespace ZeroKWeb.SpringieInterface
                 ret.Players = b.Players.ToList();
 
                 var db = new ZkDataContext();
+                var nonSpecList = b.Players.Where(y => !y.IsSpectator).Select(y => (int?)y.LobbyID).ToList();
                 var accs =
-                    db.Accounts.Where(x => b.Players.Where(y => !y.IsSpectator).Select(y => (int?)y.LobbyID).ToList().Contains(x.LobbyID)).ToList();
+                    db.Accounts.Where(x => nonSpecList.Contains(x.AccountID)).ToList();
                 if (accs.Count < 1) {
                     ret.CanStart = false;
                     return ret;
@@ -242,19 +234,19 @@ namespace ZeroKWeb.SpringieInterface
                     if (unmovablePlayers != null && unmovablePlayers.Length > i) {
                         var unmovables = unmovablePlayers[i];
                         team.AddItem(new BalanceItem(unmovablePlayers[i].ToArray()) { CanBeMoved = false });
-                        accs.RemoveAll(x => unmovables.Any(y => y.LobbyID == x.LobbyID));
+                        accs.RemoveAll(x => unmovables.Any(y => y.AccountID == x.AccountID));
                     }
                 }
 
                 balanceItems = new List<BalanceItem>();
                 if (mode == BalanceMode.ClanWise) {
-                    var clanGroups = accs.GroupBy(x => x.ClanID ?? x.LobbyID).ToList();
+                    var clanGroups = accs.GroupBy(x => x.ClanID ?? x.AccountID).ToList();
                     if (teamCount > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize)) mode = BalanceMode.Normal;
                     else balanceItems.AddRange(clanGroups.Select(x => new BalanceItem(x.ToArray())));
                 }
                 if (mode == BalanceMode.FactionWise) {
                     balanceItems.Clear();
-                    var factionGroups = accs.GroupBy(x => x.FactionID ?? x.LobbyID).ToList();
+                    var factionGroups = accs.GroupBy(x => x.FactionID ?? x.AccountID).ToList();
                     balanceItems.AddRange(factionGroups.Select(x => new BalanceItem(x.ToArray())));
                 } 
 
@@ -504,12 +496,12 @@ namespace ZeroKWeb.SpringieInterface
             {
                 player = new PlayerTeam() { Name = matchUser };
                 User us;
-                if (Global.Nightwatch.Tas.GetExistingUser(matchUser, out us)) player.LobbyID = us.LobbyID;
+                if (Global.Nightwatch.Tas.GetExistingUser(matchUser, out us)) player.LobbyID = us.AccountID;
                 else
                 {
                     var db = new ZkDataContext();
                     var acc = Account.AccountByName(db, matchUser);
-                    if (acc != null && acc.LobbyID.HasValue) player.LobbyID = acc.LobbyID.Value;
+                    if (acc != null) player.LobbyID = acc.AccountID;
                 }
             }
             res.Players.Add(new PlayerTeam { AllyID = allyID , IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID, TeamID = player.TeamID });
@@ -553,8 +545,8 @@ namespace ZeroKWeb.SpringieInterface
                 // find specs with same IP as some player and kick them
                 using (var db = new ZkDataContext()) {
                     var ids = context.Players.Select(y => (int?)y.LobbyID).ToList();
-                    var ipByLobbyID = db.Accounts.Where(x => ids.Contains(x.LobbyID))
-                                        .ToDictionary(x => x.LobbyID, x => x.AccountIPS.OrderByDescending(y => y.LastLogin).Select(y=>y.IP).FirstOrDefault());
+                    var ipByLobbyID = db.Accounts.Where(x => ids.Contains(x.AccountID))
+                                        .ToDictionary(x => x.AccountID, x => x.AccountIPs.OrderByDescending(y => y.LastLogin).Select(y=>y.IP).FirstOrDefault());
                     // lobbyid -> ip mapping
 
                     var mode = context.GetMode();
@@ -582,7 +574,7 @@ namespace ZeroKWeb.SpringieInterface
             public readonly List<int> LobbyId;
 
             public BalanceItem(params Account[] accounts) {
-                LobbyId = accounts.Select(x => x.LobbyID ?? 0).ToList();
+                LobbyId = accounts.Select(x => x.AccountID).ToList();
                 EloSum = accounts.Sum(x => x.EffectiveElo);
                 Count = accounts.Length;
             }

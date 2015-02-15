@@ -34,7 +34,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using JetBrains.Annotations;
-using PlasmaShared;
+using ZkData;
 using ZeroKLobby;
 using System.Collections.Generic;
 
@@ -43,14 +43,14 @@ namespace ZeroKLobby.MicroLobby
     public partial class TextWindow: UserControl
     {
         private const int defaultMaxLines = 495; //about 10 pages
-        private const int HardMaximumLines = 2995; //absolute maximum to avoid extreme case. around 11 days of chat or 1% of 3 year of chat
+        private const int HardMaximumLines = 29950; //absolute maximum to avoid extreme case.
         private int MaxTextLines = 1; //this size is not fixed. It expand when detected spam, and maintain size when new line are added at slow interval.
         private int MaxDisplayLines = 1;
-        //old URL regex for reference: WwwMatch = @"((https?|www\.|spring://)[^\s,]+)";
+        //old URL regex for reference: WwwMatch = @"((https?|www\.|zk://)[^\s,]+)";
         //Regex note: [^<>()] : exclude <<< or >>> or ( or ) at end of URL
         //Regex note: [\w\d:#@%/!;$()~_?\+-=\\\.&]* : include any sort of character 1 or more times
         //Reference: http://en.wikipedia.org/wiki/Regular_expression#Basic_concepts
-        public const string WwwMatch = @"(www\.|www\d\.|(https?|ftp|irc|spring):((//)|(\\\\)))+[\w\d:#@%/!;$()~_?\+-=\\\.&]*[^<>()]"; //from http://icechat.codeplex.com/SourceControl/latest#532131
+        public const string WwwMatch = @"(www\.|www\d\.|(https?|ftp|irc|zk):((//)|(\\\\)))+[\w\d:#@%/!;$()~_?\+-=\\\.&]*[^<>()]"; //from http://icechat.codeplex.com/SourceControl/latest#532131
         int backColor;
         int curHighChar;
         int curHighLine;
@@ -281,13 +281,6 @@ namespace ZeroKLobby.MicroLobby
                         try
                         {
                             startHighLine = -1; // reset selection
-                            //if (clickedWord.StartsWith("spring://") || clickedWord.Contains("zero-k.info")) //tab name or zerok (or ZK) website
-                            //{
-                            //  Program.MainWindow.navigationControl.Path = clickedWord;
-                            //} else
-                            //{
-                            //  Utils.OpenWeb(clickedWord, false);
-                            //}
                             Program.MainWindow.navigationControl.Path = clickedWord; //request URL be opened (in internal browser or external depending on which is appropriate)
                         }
                         catch (Win32Exception ex)
@@ -357,52 +350,52 @@ namespace ZeroKLobby.MicroLobby
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            if (startHighLine > -1 && curHighLine > -1)
-            {
-                if (curHighLine < startHighLine || (curHighLine == startHighLine && curHighChar < startHighChar))
-                {
-                    int sw = startHighLine; //shift up/down role
-                    startHighLine = curHighLine;
-                    curHighLine = sw;
-                    sw = startHighChar;
-                    startHighChar = curHighChar;
-                    curHighChar = sw;
-                }
-
-                var buildString = new StringBuilder();
-                var tl = displayLines[startHighLine].TextLine;
-                for (var curLine = startHighLine; curLine <= curHighLine; ++curLine) //if have selected multiple line
-                {
-                    if (tl != displayLines[curLine].TextLine)
-                    {
-                        buildString.Append("\r\n");
-                        tl = displayLines[curLine].TextLine;
+            try {
+                if (startHighLine > -1 && curHighLine > -1) {
+                    if (curHighLine < startHighLine || (curHighLine == startHighLine && curHighChar < startHighChar)) {
+                        int sw = startHighLine; //shift up/down role
+                        startHighLine = curHighLine;
+                        curHighLine = sw;
+                        sw = startHighChar;
+                        startHighChar = curHighChar;
+                        curHighChar = sw;
                     }
-                    var s = new StringBuilder(displayLines[curLine].Line.StripAllCodes());
 
-                    /* Filter out non-text */
-                    if (curLine == curHighLine) s = s.Remove(curHighChar, s.Length - curHighChar);
-                    if (curLine == startHighLine) s = s.Remove(0, startHighChar);
+                    var buildString = new StringBuilder();
+                    var tl = displayLines[startHighLine].TextLine;
+                    for (var curLine = startHighLine; curLine <= curHighLine; ++curLine) //if have selected multiple line
+                    {
+                        if (tl != displayLines[curLine].TextLine) {
+                            buildString.Append("\r\n");
+                            tl = displayLines[curLine].TextLine;
+                        }
+                        var s = new StringBuilder(displayLines[curLine].Line.StripAllCodes());
 
-                    buildString.Append(s);
+                        /* Filter out non-text */
+                        if (curLine == curHighLine) s = s.Remove(curHighChar, s.Length - curHighChar);
+                        if (curLine == startHighLine) s = s.Remove(0, startHighChar);
+
+                        buildString.Append(s);
+                    }
+
+                    if (buildString.Length > 0) {
+                        Program.ToolTip.SetText(this, "-----COPIED TO CLIPBOARD-----\n" + buildString.ToString());
+                        //notify user that selection is copied
+                        Clipboard.SetText(buildString.ToString());
+                    }
                 }
 
-                if (buildString.Length > 0)
-                {
-                    Program.ToolTip.SetText(this, "-----COPIED TO CLIPBOARD-----\n" + buildString.ToString()); //notify user that selection is copied
-                    Clipboard.SetText(buildString.ToString());
+                // Supress highlighting
+                startHighLine = -1;
+                if (curHighLine != -1) {
+                    curHighLine = -1;
+                    Invalidate();
                 }
-            }
 
-            // Supress highlighting
-            startHighLine = -1;
-            if (curHighLine != -1)
-            {
-                curHighLine = -1;
-                Invalidate();
+                FocusInputRequested(this, EventArgs.Empty);
+            } catch (Exception ex) {
+                Trace.TraceError("{0}",ex);
             }
-
-            FocusInputRequested(this, EventArgs.Empty);
             base.OnMouseUp(e);
         }
 
@@ -477,9 +470,10 @@ namespace ZeroKLobby.MicroLobby
                 { //remove old text, create space for new text (recycle existing row)
                     int toRemove = (MaxTextLines / 10) + 1; //remove 10% of old text
 
+                    //calculate scrollbar offset:
                     int lineCount = 0;
                     int wrapCount = 0;
-                    while (lineCount < toRemove + 1) //calculate scrollbar offset:
+                    while (lineCount < toRemove + 1)
                     {
                         if (displayLines[wrapCount + lineCount].Previous)
                             wrapCount++;
@@ -489,8 +483,9 @@ namespace ZeroKLobby.MicroLobby
                     int vScrollBarOffset = wrapCount + lineCount - 1;
                     vScrollBarOffset = Math.Min(vScrollBarOffset, vScrollBar.Value - 1);
 
+                    //shift existing texts upward:
                     var x = 0;
-                    for (int i = toRemove; i < totalLines; i++) //shift existing texts upward:
+                    for (int i = toRemove; i < totalLines; i++)
                     {
                         textLines[x].TotalLines = textLines[i].TotalLines;
                         textLines[x].Width = textLines[i].Width;
@@ -499,14 +494,16 @@ namespace ZeroKLobby.MicroLobby
                         x++;
                     }
 
-                    for (var i = totalLines - toRemove; i < MaxTextLines; i++) //fill new space with empty string
+                    //fill new space with empty string
+                    for (var i = totalLines - toRemove; i < MaxTextLines; i++)
                     {
                         textLines[i].TotalLines = 0;
                         textLines[i].Line = "";
                         textLines[i].Width = 0;
                     }
 
-                    totalLines = totalLines - toRemove - 1; //set draw line to new space
+                    //set draw line to new space
+                    totalLines = totalLines - toRemove - 1;
 
                     if (Height != 0)
                     {

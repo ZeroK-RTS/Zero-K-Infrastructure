@@ -9,11 +9,11 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
+using Newtonsoft.Json;
 using PlasmaShared;
-using PlasmaShared.ContentService;
-using PlasmaShared.SpringieInterfaceReference;
-using ServiceStack.Text;
+using PlasmaShared.ModStats;
 using ZkData;
 using Timer = System.Timers.Timer;
 
@@ -196,7 +196,7 @@ namespace LobbyClient
             var text = sb.ToString();
             int whereIsTable = text.IndexOf('{');
             text = text.Substring(whereIsTable); // skip empty line or other info (if exist). Compatibility with Spring 94+
-            var data = JsonSerializer.DeserializeFromString<Dictionary<string, EngineConfigEntry>>(text);
+            var data = JsonConvert.DeserializeObject<Dictionary<string, EngineConfigEntry>>(text);
             return data;
         }
 
@@ -217,7 +217,7 @@ namespace LobbyClient
             {
                 talker.SendText(text);
             }
-            catch (NullReferenceException e) {
+            catch (NullReferenceException) {
                 // do nothing: null reference is expected when game is not running
                 // the property isRunning would be useful here if it didn't lie so much
             }
@@ -268,7 +268,7 @@ namespace LobbyClient
                 else {
                     List<UserBattleStatus> players;
                     battleGuid = Guid.NewGuid();
-                    var service = new SpringieService() { Proxy = null };
+                    var service = GlobalConst.GetSpringieService();
                     SpringBattleStartSetup startSetup = null;
                     if (isHosting && GlobalConst.IsZkMod(battle.ModName)) {
                         try {
@@ -300,13 +300,12 @@ namespace LobbyClient
                     statsPlayers = players.ToDictionary(x => x.Name,
                                                         x => new BattlePlayerResult
                                                                  {
-                                                                     LobbyID = x.LobbyUser.LobbyID,
+                                                                     LobbyID = x.LobbyUser.AccountID,
                                                                      AllyNumber = x.AllyNumber,
                                                                      CommanderType = null,
                                                                      // todo commandertype
                                                                      IsSpectator = x.IsSpectator,
                                                                      IsVictoryTeam = false,
-                                                                     Rank = x.LobbyUser.Rank,
                                                                  });
                 }
                 if (isHosting) timer.Start();
@@ -345,8 +344,6 @@ namespace LobbyClient
                 
 
                 arg.Add(string.Format("--config \"{0}\"", paths.GetSpringConfigPath()));
-                process.StartInfo.EnvironmentVariables["OMP_WAIT_POLICY"] = "ACTIVE";
-
                 if (useSafeMode) arg.Add("--safemode");
                 arg.Add(string.Format("\"{0}\"", scriptPath));
                 //Trace.TraceInformation("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
@@ -491,16 +488,16 @@ namespace LobbyClient
                 {
                     Trace.TraceInformation("Submitting score for mission " + modName);
                     try {
-                        using (var service = new ContentService { Proxy = null }) {
-                            service.SubmitMissionScoreCompleted += (s, e) =>
-                                {
-                                    if (e.Error != null) {
-                                        if (e.Error is WebException) Trace.TraceWarning("Error sending score: {0}", e.Error);
-                                        else Trace.TraceError("Error sending score: {0}", e.Error);
-                                    }
-                                };
-                            service.SubmitMissionScoreAsync(lobbyUserName, Utils.HashLobbyPassword(lobbyPassword), modName, score ?? 0, scoreFrame/30, missionVars);
-                        }
+                        var service = GlobalConst.GetContentService();
+                        Task.Factory.StartNew(() => {
+                            try {
+                                service.SubmitMissionScore(lobbyUserName, Utils.HashLobbyPassword(lobbyPassword), modName, score ?? 0, scoreFrame/30,
+                                    missionVars);
+                            } catch (Exception ex) {
+                                Trace.TraceError("Error sending score: {0}", ex);
+                            }
+                        });
+
                     } catch (Exception ex) {
                         Trace.TraceError(string.Format("Error sending mission score: {0}", ex));
                     }
@@ -511,8 +508,7 @@ namespace LobbyClient
                 // submit main stats
                 if (!isCheating && !isCrash && modOk && gameEndedOk) {
                     if (isHosting) {
-                        var service = new SpringieService() { Proxy = null };
-                        var mis = new ContentService() { Proxy = null };
+                        var service = GlobalConst.GetSpringieService();
                         try {
                             battleResult.EngineBattleID = gameId;
                             battleResult.ReplayName = demoFileName;
@@ -525,10 +521,10 @@ namespace LobbyClient
                             }
 
                             if (StartContext != null) {
-                                var result = service.SubmitSpringBattleResult(StartContext, lobbyPassword, battleResult, Enumerable.ToArray(statsPlayers.Values), statsData.ToArray());
+                                var result = service.SubmitSpringBattleResult(StartContext, lobbyPassword, battleResult, statsPlayers.Values.ToList(), statsData);
                                 if (result != null) {
                                     foreach (var line in result.Split('\n')) {
-                                        client.Say(TasClient.SayPlace.Battle, "", line, true);
+                                        client.Say(SayPlace.Battle, "", line, true);
                                     }
                                 }
                             }
@@ -595,7 +591,7 @@ namespace LobbyClient
 
 
         private void talker_SpringEvent(object sender, Talker.SpringEventArgs e) {
-            //this.client.Say(TasClient.SayPlace.Battle, "",string.Format("type:{0} param:{1} player:{2}-{3} text:{4}",e.EventType.ToString(), e.Param,e.PlayerNumber, e.PlayerName, e.Text),false);
+            //this.client.Say(SayPlace.Battle, "",string.Format("type:{0} param:{1} player:{2}-{3} text:{4}",e.EventType.ToString(), e.Param,e.PlayerNumber, e.PlayerName, e.Text),false);
             try {
                 switch (e.EventType) {
                     case Talker.SpringEventType.PLAYER_JOINED:
@@ -648,7 +644,7 @@ namespace LobbyClient
                         }  else 
                         {
                             //gameover before gamestart
-                            client.Say(TasClient.SayPlace.Battle, "", "DEBUG: recieved GAMEOVER before STARTPLAYING!", true);
+                            client.Say(SayPlace.Battle, "", "DEBUG: recieved GAMEOVER before STARTPLAYING!", true);
                         }
 
                         break;
@@ -704,8 +700,8 @@ namespace LobbyClient
                             //User user;
                             //if (client.ExistingUsers.TryGetValue(kvp.Key, out user) && user.IsAway)
                             //{
-                            client.Ring(kvp.Key);
-                            client.Say(TasClient.SayPlace.User, kvp.Key, "Please ready up ingame, game starting soon", false);
+                            client.Ring(SayPlace.BattlePrivate, kvp.Key);
+                            client.Say(SayPlace.User, kvp.Key, "Please ready up ingame, game starting soon", false);
                             //}
                         }
                         SayGame(string.Format("Game will be force started in {0} seconds", Math.Max(20, timeToWait - Math.Round(timeSinceStart))));

@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
+using ZkData;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -32,7 +33,7 @@ namespace ZeroKLobby.MicroLobby
             };
             Program.ToolTip.SetText(lookingGlass, "Search game, description, map or player");
             Program.ToolTip.SetText(searchBox, "Search game, description, map or player");
-
+            
             hideEmptyBox.Checked = Program.Conf.HideEmptyBattles;
             hideFullBox.Checked = Program.Conf.HideNonJoinableBattles;
             showOfficialBox.Checked = Program.Conf.ShowOfficialBattles;

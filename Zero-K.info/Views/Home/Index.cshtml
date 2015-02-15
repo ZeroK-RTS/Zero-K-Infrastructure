@@ -50,9 +50,9 @@
     @foreach (var n in Model.News.Take(4))
     {
 		<h1>@n.Title</h1>	
-        if (n.ImageRelativeUrl != null)
+        if (n.ThumbRelativeUrl != null)
         {
-			<img src="@n.ImageRelativeUrl" style="float:left; width:120px; margin: 6px;"/>
+			<a href="@n.ImageRelativeUrl"><img src="@n.ThumbRelativeUrl" style="float:left; width:120px; margin: 6px;"/></a>
         }
 		<p>@Html.BBCode(n.Text)</p>
 		<small>Posted by @Html.PrintAccount(n.Account) @n.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new { id = n.ForumThreadID }, null)
@@ -79,8 +79,7 @@
 <div id="sidebar" class="fright width-30">
   @if (!ZeroKWeb.Global.IsAccountAuthorized && !Global.IsLobbyAccess)
   {
-       <!--center><a class ="downloadbutton" href="http://zero-k.info/Wiki/Download" alt="Download" title="Download now Zero-K's latest version for free"></a></center-->
-	  <a onclick="window.location='http://zero-k.info/Wiki/Download';"><span class="downloadbutton"><span class="buttonSpan"></span><!--<img src="/img/downloadBlue.png" alt="Download" width="45" height="45" style="vertical-align:middle;" />--> Download</span></a>
+	  <a onclick="window.location='/Wiki/Download';"><span class="downloadbutton"><span class="buttonSpan"></span><!--<img src="/img/downloadBlue.png" alt="Download" width="45" height="45" style="vertical-align:middle;" />--> Download</span></a>
   }
 
 

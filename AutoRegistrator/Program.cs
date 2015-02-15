@@ -8,8 +8,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Ionic.Zlib;
 using PlasmaDownloader;
-using PlasmaShared;
-using PlasmaShared.UnitSyncLib;
+using ZkData.UnitSyncLib;
 using ZkData;
 
 namespace AutoRegistrator
@@ -48,7 +47,7 @@ namespace AutoRegistrator
             Scanner.Start();
             Downloader = new PlasmaDownloader.PlasmaDownloader(new Config(), Scanner, Paths);
             Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
-            Downloader.GetAndSwitchEngine("97.0.1-18-gf1dd749"); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
+            Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
             Downloader.PackagesChanged += Downloader_PackagesChanged;
 
             while (true) {Thread.Sleep(10000);}
@@ -94,9 +93,9 @@ namespace AutoRegistrator
 
             lock (Locker)
             {
-                foreach (var id in new ZkDataContext().Missions.Where(x => !x.IsScriptMission && x.ModRapidTag != "" && !x.IsDeleted).Select(x=>x.MissionID).ToList())
+                foreach (var id in new ZkDataContext(false).Missions.Where(x => !x.IsScriptMission && x.ModRapidTag != "" && !x.IsDeleted).Select(x=>x.MissionID).ToList())
                 {
-                    using (var db = new ZkDataContext())
+                    using (var db = new ZkDataContext(false))
                     {
                         var mis = db.Missions.Single(x => x.MissionID == id);
                         try
@@ -110,7 +109,7 @@ namespace AutoRegistrator
                                     Trace.TraceInformation("Updating mission {0} {1} to {2}", mis.MissionID, mis.Name, mis.Mod);
                                     var mu = new MissionUpdater();
                                     Mod modInfo = null;
-                                    Scanner.MetaData.GetMod(mis.NameWithVersion, m => { modInfo = m; }, (er) => { }, Paths.SpringVersion);
+                                    Scanner.MetaData.GetMod(mis.NameWithVersion, m => { modInfo = m; }, (er) => { });
                                     mis.Revision++;
                                     mu.UpdateMission(db, mis, modInfo);
                                     db.SubmitChanges();

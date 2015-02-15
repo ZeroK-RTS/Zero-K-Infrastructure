@@ -5,7 +5,6 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Transactions;
 using System.Web.Mvc;
-using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.Controllers
@@ -204,11 +203,11 @@ namespace ZeroKWeb.Controllers
                 else pageSize = 10;
             }
             IQueryable<Event> res = db.Events.AsQueryable();
-            if (planetID.HasValue) res = res.Where(x => x.EventPlanets.Any(y => y.PlanetID == planetID));
-            if (accountID.HasValue) res = res.Where(x => x.EventAccounts.Any(y => y.AccountID == accountID));
-            if (clanID.HasValue) res = res.Where(x => x.EventClans.Any(y => y.ClanID == clanID));
-            if (springBattleID.HasValue) res = res.Where(x => x.EventSpringBattles.Any(y => y.SpringBattleID == springBattleID));
-            if (factionID.HasValue) res = res.Where(x => x.EventFactions.Any(y => y.FactionID == factionID));
+            if (planetID.HasValue) res = res.Where(x => x.Planets.Any(y => y.PlanetID == planetID));
+            if (accountID.HasValue) res = res.Where(x => x.Accounts.Any(y => y.AccountID == accountID));
+            if (clanID.HasValue) res = res.Where(x => x.Clans.Any(y => y.ClanID == clanID));
+            if (springBattleID.HasValue) res = res.Where(x => x.SpringBattles.Any(y => y.SpringBattleID == springBattleID));
+            if (factionID.HasValue) res = res.Where(x => x.Factions.Any(y => y.FactionID == factionID));
             if (!string.IsNullOrEmpty(filter)) res = res.Where(x => x.Text.Contains(filter));
             res = res.OrderByDescending(x => x.EventID);
 
@@ -372,10 +371,11 @@ namespace ZeroKWeb.Controllers
                 {
                     AuthServiceClient.SendLobbyMessage(planet.Account,
                                                        string.Format(
-                                                           "Warning: long range scanners detected fleet of {0} ships inbound to your planet {1} http://zero-k.info/Planetwars/Planet/{2}",
+                                                           "Warning: long range scanners detected fleet of {0} ships inbound to your planet {1} {3}/Planetwars/Planet/{2}",
                                                            cnt,
                                                            planet.Name,
-                                                           planet.PlanetID));
+                                                           planet.PlanetID,
+                                                           GlobalConst.BaseSiteUrl));
                 }
                 PlanetFaction pac = planet.PlanetFactions.SingleOrDefault(x => x.FactionID == acc.FactionID);
                 if (pac == null)
@@ -424,6 +424,7 @@ namespace ZeroKWeb.Controllers
                     {
                         ps.OwnerAccountID = planet.OwnerAccountID;
                         ps.IsActive = false;
+                        ps.ActivatedOnTurn = null;
                     }
 
 
@@ -495,6 +496,7 @@ namespace ZeroKWeb.Controllers
                     foreach (PlanetStructure structure in planet.PlanetStructures.Where(x => x.StructureType.OwnerChangeDisablesThis))
                     {
                         structure.IsActive = false;
+                        structure.ActivatedOnTurn = null;
                         structure.Account = newAccount;
                     }
 
@@ -524,9 +526,10 @@ namespace ZeroKWeb.Controllers
                         {
                             AuthServiceClient.SendLobbyMessage(planet.Account,
                                                                string.Format(
-                                                                   "Warning, you just lost planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}",
+                                                                   "Warning, you just lost planet {0}!! {2}/PlanetWars/Planet/{1}",
                                                                    planet.Name,
-                                                                   planet.PlanetID));
+                                                                   planet.PlanetID,
+                                                                   GlobalConst.BaseSiteUrl));
                         }
                     }
                     else
@@ -544,9 +547,10 @@ namespace ZeroKWeb.Controllers
                                                                         sb));
                             AuthServiceClient.SendLobbyMessage(newAccount,
                                                                string.Format(
-                                                                   "Congratulations, you now own planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}",
+                                                                   "Congratulations, you now own planet {0}!! {2}/PlanetWars/Planet/{1}",
                                                                    planet.Name,
-                                                                   planet.PlanetID));
+                                                                   planet.PlanetID,
+                                                                   GlobalConst.BaseSiteUrl));
                         }
                         else
                         {
@@ -562,15 +566,17 @@ namespace ZeroKWeb.Controllers
 
                             AuthServiceClient.SendLobbyMessage(newAccount,
                                                                string.Format(
-                                                                   "Congratulations, you now own planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}",
+                                                                   "Congratulations, you now own planet {0}!! {2}/PlanetWars/Planet/{1}",
                                                                    planet.Name,
-                                                                   planet.PlanetID));
+                                                                   planet.PlanetID,
+                                                                   GlobalConst.BaseSiteUrl));
 
                             AuthServiceClient.SendLobbyMessage(planet.Account,
                                                                string.Format(
-                                                                   "Warning, you just lost planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}",
+                                                                   "Warning, you just lost planet {0}!! {2}/PlanetWars/Planet/{1}",
                                                                    planet.Name,
-                                                                   planet.PlanetID));
+                                                                   planet.PlanetID,
+                                                                   GlobalConst.BaseSiteUrl));
                         }
                     }
 
@@ -661,7 +667,7 @@ namespace ZeroKWeb.Controllers
                         x => x.RoleTypeID == role.RoleTypeID && (role.IsClanOnly ? x.ClanID == myAccount.ClanID : x.FactionID == myAccount.FactionID)).ToList();
                     if (entries.Any())
                     {
-                        previous = entries.First().AccountByAccountID;
+                        previous = entries.First().Account;
                         db.AccountRoles.DeleteAllOnSubmit(entries);
                     }
                 }
@@ -872,7 +878,7 @@ namespace ZeroKWeb.Controllers
             db.SubmitAndMergeChanges();
 
             var residue = db.StructureTypes.First(x => x.Name == "Residue"); // todo not nice use constant instead
-            target.PlanetStructures.Add(new PlanetStructure() { StructureType = residue, IsActive = true });
+            target.PlanetStructures.Add(new PlanetStructure() { StructureType = residue, IsActive = true, ActivatedOnTurn = null});
             db.SubmitAndMergeChanges();
 
 
@@ -945,7 +951,8 @@ namespace ZeroKWeb.Controllers
         {
             ZkDataContext db = new ZkDataContext();
             var factions = db.Factions.Where(x => !x.IsDeleted).ToList();
-            List<PwLadder> items = db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).Where(x => (x.Faction == null || !x.Faction.IsDeleted)).GroupBy(x => x.Faction).Select(x => new PwLadder
+            DateTime minDate = DateTime.UtcNow.AddMonths(-1);
+            List<PwLadder> items = db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > minDate)).Where(x => (x.Faction == null || !x.Faction.IsDeleted)).GroupBy(x => x.Faction).Select(x => new PwLadder
             {
                 Faction = x.Key,
                 Top10 = x.OrderByDescending(y => y.EloWeight).ThenByDescending(y => y.PwAttackPoints).ThenByDescending(y => y.Planets.Count).ThenByDescending(y => y.EloPw).Take(10).ToList()

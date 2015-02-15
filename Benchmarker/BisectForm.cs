@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using PlasmaDownloader;
-using PlasmaShared;
+using ZkData;
 
 namespace Benchmarker
 {

@@ -7,13 +7,15 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
+using System.Threading.Tasks;
 using MonoTorrent.Common;
-using PlasmaShared.ContentService;
-using PlasmaShared.UnitSyncLib;
+using Newtonsoft.Json;
+using PlasmaShared;
+using ZkData.UnitSyncLib;
 
 #endregion
 
-namespace PlasmaShared
+namespace ZkData
 {
     public class SpringScanner: IDisposable
     {
@@ -99,7 +101,7 @@ namespace PlasmaShared
         /// </summary>
         readonly List<FileSystemWatcher> packagesWatchers = new List<FileSystemWatcher>();
 
-        readonly ContentService.ContentService service = new ContentService.ContentService() { Proxy = null };
+        readonly IContentService service = GlobalConst.GetContentService();
 
         readonly SpringPaths springPaths;
 
@@ -159,9 +161,8 @@ namespace PlasmaShared
             SetupWatcherEvents(modsWatchers);
             SetupWatcherEvents(packagesWatchers);
 
-            service.RegisterResourceCompleted += HandleServiceRegisterResourceCompleted;
             Directory.CreateDirectory(springPaths.Cache);
-            cachePath = Utils.MakePath(springPaths.Cache, "ScannerCache.dat");
+            cachePath = Utils.MakePath(springPaths.Cache, "ScannerCache.json");
             Directory.CreateDirectory(Utils.MakePath(springPaths.Cache, "Resources"));
         }
 
@@ -176,14 +177,13 @@ namespace PlasmaShared
             isDisposed = true;
             if (unitSync != null) unitSync.Dispose(); //(visual studio recommend a dispose)
             unitSync = null;
-            service.Dispose();
             if (isCacheDirty) SaveCache();
             GC.SuppressFinalize(this);
         }
 
         bool isDisposed;
 
-        public CacheItem FindCacheEntry(string name, int springHash)
+        public CacheItem FindCacheEntry(string name)
         {
             lock (cache)
             {
@@ -197,22 +197,6 @@ namespace PlasmaShared
         }
 
 
-        public int GetSpringHash(string name, string springVersion)
-        {
-            lock (cache)
-            {
-                springVersion = springVersion ?? springPaths.SpringVersion;
-                CacheItem item;
-                if (cache.NameIndex.TryGetValue(name, out item))
-                {
-                    SpringHashEntry match;
-                    if (string.IsNullOrEmpty(springVersion)) match = item.SpringHash.LastOrDefault();
-                    else match = item.SpringHash.FirstOrDefault(x => x.SpringVersion == springVersion);
-                    if (match != null) return match.SpringHash;
-                }
-            }
-            return 0;
-        }
 
 
         public bool HasResource(string name)
@@ -381,8 +365,6 @@ namespace PlasmaShared
             }
             work.CacheItem.InternalName = result.InternalName;
             work.CacheItem.ResourceType = result.ResourceType;
-
-            work.CacheItem.SpringHash = result.SpringHashes;
             Trace.WriteLine(string.Format("Adding {0}", work.CacheItem.InternalName));
             CacheItemAdd(work.CacheItem);
         }
@@ -481,12 +463,11 @@ namespace PlasmaShared
         void InitialScan()
         {
             CacheFile loadedCache = null;
-            var serializer = new BinaryFormatter();
             if (File.Exists(cachePath))
             {
                 try
                 {
-                    using (var fs = File.OpenRead(cachePath)) loadedCache = (CacheFile)serializer.Deserialize(fs);
+                   loadedCache = JsonConvert.DeserializeObject<CacheFile>(File.ReadAllText(cachePath));
                 }
                 catch (Exception ex)
                 {
@@ -617,10 +598,6 @@ namespace PlasmaShared
             {
                 workItem.CacheItem.InternalName = info.Name;
                 workItem.CacheItem.ResourceType = info is Map ? ResourceType.Map : ResourceType.Mod;
-                var hashes = new List<SpringHashEntry>();
-                if (workItem.CacheItem.SpringHash != null) hashes.AddRange(workItem.CacheItem.SpringHash.Where(x => x.SpringVersion != springPaths.SpringVersion));
-                hashes.Add(new SpringHashEntry() { SpringHash = info.Checksum, SpringVersion = springPaths.SpringVersion });
-                workItem.CacheItem.SpringHash = hashes.ToArray();
 
                 CacheItemAdd(workItem.CacheItem);
 
@@ -653,21 +630,45 @@ namespace PlasmaShared
                     if (mod != null) userState = new KeyValuePair<Mod, byte[]>(mod, serializedData);
 
                     Trace.TraceInformation("uploading {0} to server", info.Name);
-                    service.RegisterResourceAsync(PlasmaServiceVersion,
-                                                  springPaths.SpringVersion,
-                                                  workItem.CacheItem.Md5.ToString(),
-                                                  workItem.CacheItem.Length,
-                                                  info is Map ? ResourceType.Map : ResourceType.Mod,
-                                                  workItem.CacheItem.FileName,
-                                                  info.Name,
-                                                  info.Checksum,
-                                                  serializedData,
-                                                  mod != null ? mod.Dependencies : null,
-                                                  minimap,
-                                                  metalMap,
-                                                  heightMap,
-                                                  ms.ToArray(),
-                                                  userState);
+                    Task.Factory.StartNew(() => {
+                        ReturnValue e;
+                        try {
+                             e = service.RegisterResource(PlasmaServiceVersion, springPaths.SpringVersion, workItem.CacheItem.Md5.ToString(),
+                                workItem.CacheItem.Length, info is Map ? ResourceType.Map : ResourceType.Mod, workItem.CacheItem.FileName, info.Name,
+                                serializedData, mod != null ? mod.Dependencies.ToList() : null, minimap, metalMap, heightMap,
+                                ms.ToArray());
+                        } catch (Exception ex) {
+                            Trace.TraceError("Error uploading data to server: {0}", ex);
+                            return;
+                        } finally {
+                            Interlocked.Decrement(ref itemsSending);
+                        }
+                        
+                        if (e != ReturnValue.Ok)
+                        {
+                            Trace.TraceWarning("Resource registering failed: {0}", e);
+                            return;
+                        }
+                        var mapArgs = userState as MapRegisteredEventArgs;
+                        if (mapArgs != null)
+                        {
+                            var mapName = mapArgs.MapName;
+                            MetaData.SaveMinimap(mapName, mapArgs.Minimap);
+                            MetaData.SaveMetalmap(mapName, mapArgs.MetalMap);
+                            MetaData.SaveHeightmap(mapName, mapArgs.HeightMap);
+                            MetaData.SaveMetadata(mapName, mapArgs.SerializedData);
+                            MapRegistered(this, mapArgs);
+                        }
+                        else
+                        {
+                            var kvp = (KeyValuePair<Mod, byte[]>)userState;
+                            var modInfo = kvp.Key;
+                            var serializedDataRet = kvp.Value;
+                            MetaData.SaveMetadata(modInfo.Name, serializedDataRet);
+                            ModRegistered(this, new EventArgs<Mod>(mod));
+                        }
+                    });
+
                     Interlocked.Increment(ref itemsSending);
                 }
                 catch (Exception e)
@@ -686,13 +687,11 @@ namespace PlasmaShared
 
         void SaveCache()
         {
-            lock (cache)
-            {
+            lock (cache) {
                 try
                 {
-                    var saver = new BinaryFormatter();
                     Directory.CreateDirectory(Path.GetDirectoryName(cachePath));
-                    using (var fs = File.OpenWrite(cachePath)) saver.Serialize(fs, cache);
+                    File.WriteAllText(cachePath, JsonConvert.SerializeObject(cache));
                 }
                 catch (Exception ex)
                 {
@@ -768,41 +767,6 @@ namespace PlasmaShared
         }
 
 
-        void HandleServiceRegisterResourceCompleted(object sender, RegisterResourceCompletedEventArgs e)
-        {
-            Interlocked.Decrement(ref itemsSending);
-            if (e.Cancelled) return;
-            if (e.Error != null)
-            {
-                Trace.TraceError("Error uploading data to server: {0}", e.Error);
-                return;
-            }
-            if (e.Result != ReturnValue.Ok)
-            {
-                Trace.TraceWarning("Resource registering failed: {0}", e.Result);
-                return;
-            }
-            var mapArgs = e.UserState as MapRegisteredEventArgs;
-            if (mapArgs != null)
-            {
-                var mapName = mapArgs.MapName;
-                MetaData.SaveMinimap(mapName, mapArgs.Minimap);
-                MetaData.SaveMetalmap(mapName, mapArgs.MetalMap);
-                MetaData.SaveHeightmap(mapName, mapArgs.HeightMap);
-                MetaData.SaveMetadata(mapName, mapArgs.SerializedData);
-                MapRegistered(this, mapArgs);
-            }
-            else
-            {
-                var kvp = (KeyValuePair<Mod, byte[]>)e.UserState;
-                var mod = kvp.Key;
-                var serializedData = kvp.Value;
-                MetaData.SaveMetadata(mod.Name, serializedData);
-                ModRegistered(this, new EventArgs<Mod>(mod));
-            }
-        }
-
-
         void HandleWatcherChange(object sender, FileSystemEventArgs e)
         {
             if (!Extensions.Contains(Path.GetExtension(e.Name))) return;
@@ -828,10 +792,10 @@ namespace PlasmaShared
         [Serializable]
         class CacheFile
         {
-            public readonly Dictionary<string, bool> FailedUnitSyncFiles = new Dictionary<string, bool>();
-            public readonly Dictionary<Hash, CacheItem> HashIndex = new Dictionary<Hash, CacheItem>();
-            public readonly Dictionary<string, CacheItem> NameIndex = new Dictionary<string, CacheItem>();
-            public readonly Dictionary<string, CacheItem> ShortPathIndex = new Dictionary<string, CacheItem>();
+            public Dictionary<string, bool> FailedUnitSyncFiles = new Dictionary<string, bool>();
+            public Dictionary<Hash, CacheItem> HashIndex = new Dictionary<Hash, CacheItem>();
+            public Dictionary<string, CacheItem> NameIndex = new Dictionary<string, CacheItem>();
+            public Dictionary<string, CacheItem> ShortPathIndex = new Dictionary<string, CacheItem>();
             public string SpringVersion;
         }
 
@@ -848,8 +812,6 @@ namespace PlasmaShared
             public ResourceType ResourceType;
 
             public string ShortPath { get { return GetShortPath(Folder, FileName); } }
-
-            public SpringHashEntry[] SpringHash;
         }
 
 

@@ -1,6 +1,5 @@
  @model ZeroKWeb.Controllers.MapsController.MapDetailData
 @using ZkData;
-@using PlasmaShared;
 @{
 	var m = Model.Resource;
 	var mi = Model.MapInfo;
@@ -24,14 +23,14 @@
 @Html.ActionLink("Back to List", "Index")
 <div class="">
     <div id="maps" class="relative fleft" style="width: @(size.Width)px; height: @(3*size.Height+10)px; margin: 10px;">
-        <a href='http://zero-k.info/Resources/@(m.MinimapName)' class="">
-            <img src='http://zero-k.info/Resources/@(m.MinimapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
+        <a href='/Resources/@(m.MinimapName)' class="">
+            <img src='/Resources/@(m.MinimapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
         </a>
-        <a href='http://zero-k.info/Resources/@(m.HeightmapName)' class="">
-            <img src='http://zero-k.info/Resources/@(m.HeightmapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
+        <a href='/Resources/@(m.HeightmapName)' class="">
+            <img src='/Resources/@(m.HeightmapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
         </a>
-        <a href='http://zero-k.info/Resources/@(m.MetalmapName)' class="">
-            <img src='http://zero-k.info/Resources/@(m.MetalmapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
+        <a href='/Resources/@(m.MetalmapName)' class="">
+            <img src='/Resources/@(m.MetalmapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
         </a>
     </div>
     <h2>@m.InternalName</h2>
@@ -117,7 +116,7 @@
     }
 
     <br class="clearfloat" />
-    @if (ZeroKWeb.Global.IsAccountAuthorized && (ZeroKWeb.Global.Account.IsZeroKAdmin || ZeroKWeb.Global.Account.IsLobbyAdministrator))
+    @if (ZeroKWeb.Global.IsAccountAuthorized && (ZeroKWeb.Global.Account.IsZeroKAdmin))
     {
 	
         <div style='border: 1px dashed teal; padding: 10px;'>
@@ -166,7 +165,7 @@
                                 <td>Featured order:</td><td>@Html.TextBox("featuredOrder", Model.Resource.FeaturedOrder)</td>
                             </tr>
                             <tr><td>Springie commands</td><td>
-                                <a href="http://knorke.darkstars.co.uk/startboxxy.html?map=@(m.InternalName)" target="_blank">Boxxy</a><br/>
+                                <!-- site down, remove or replace > <a href="http://knorke.darkstars.co.uk/startboxxy.html?map=@(m.InternalName)" target="_blank">Boxxy</a><br/></!-->
                                 @Html.TextArea("springieCommands", m.MapSpringieCommands, 8, 30, null)
                             </td></tr>    
         

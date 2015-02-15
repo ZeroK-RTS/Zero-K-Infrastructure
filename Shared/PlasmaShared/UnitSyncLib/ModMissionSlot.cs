@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PlasmaShared.UnitSyncLib
+namespace ZkData.UnitSyncLib
 {
 	[Serializable]
 	public class MissionSlot

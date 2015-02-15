@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 
-namespace PlasmaShared.UnitSyncLib
+namespace ZkData.UnitSyncLib
 {
 	[Serializable]
 	public class Mod: IResourceInfo
@@ -71,7 +71,6 @@ namespace PlasmaShared.UnitSyncLib
 		}
 
 		public string ArchiveName { get; set; }
-		public int Checksum { get; set; }
 
 		public string Name { get { return name; } set { name = value; } }
 	}

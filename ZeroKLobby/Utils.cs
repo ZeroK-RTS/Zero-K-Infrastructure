@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -10,6 +11,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using ZkData;
 
 namespace ZeroKLobby
 {
@@ -124,8 +126,9 @@ namespace ZeroKLobby
         }
 
         public static Color GetFactionColor(string faction) {
-            if (FactionColors.ContainsKey(faction)) return FactionColors[faction];
-            else return Color.Black;
+            Color color;
+            if (faction != null && FactionColors.TryGetValue(faction, out color)) return color;
+            return Color.Black;
         }
 
         public static Control GetHoveredControl(this Control parent) {
@@ -158,7 +161,7 @@ namespace ZeroKLobby
         }
 
         public static void OpenWeb(String url, bool openInternal) {
-            if (url.StartsWith("http://zero-k.info")) {
+            if (url.StartsWith(GlobalConst.BaseSiteUrl)) {
                 if (openInternal) Program.MainWindow.navigationControl.Path = url;
                 else Program.BrowserInterop.OpenUrl(url);
                 return;
@@ -302,7 +305,7 @@ namespace ZeroKLobby
 
 
         public static bool VerifySpringInstalled() {
-            if (Program.SpringPaths.SpringVersion == null) {
+            if (Program.SpringPaths.SpringVersion == null || !Program.SpringPaths.HasEngineVersion(Program.SpringPaths.SpringVersion)) {
                 MessageBox.Show("Cannot start yet, please wait until engine downloads",
                                 "Engine not prepared yet",
                                 MessageBoxButtons.OK,
@@ -356,29 +359,39 @@ namespace ZeroKLobby
 			}
         }
 
+        /// <summary>
+        /// Calculate reverse DPI scaling
+        /// </summary>
         public static int ReverseScaleValueX(double designHeight) {
             var output = designHeight*scaleDownRatioX;
-            output = Math.Round(output, 0, MidpointRounding.AwayFromZero);
-            return ((int)output); //multiply the scaleDOWN ratio to the original design height, then change type to integer, then return value;
+            return (int)(output + 0.5d); //equivalent to Round(output)
         }
 
+        /// <summary>
+        /// Calculate reverse DPI scaling
+        /// </summary>
         public static int ReverseScaleValueY(double designHeight) {
             var output = designHeight*scaleDownRatioY;
-            output = Math.Round(output, 0, MidpointRounding.AwayFromZero);
-            return ((int)output); //multiply the scaleDOWN ratio to the original design height, then change type to integer, then return value;
+            return (int)(output + 0.5d); //equivalent to Round(output)
         }
 
+        /// <summary>
+        /// Calculate DPI scaling
+        /// </summary>
         public static int ScaleValueX(double designWidth) {
             var output = designWidth*scaleUpRatioX;
-            output = Math.Round(output, 0, MidpointRounding.AwayFromZero);
-                //Reference: http://stackoverflow.com/questions/8844674/how-to-round-up-to-the-nearest-whole-number-in-c-sharp
-            return ((int)output); //multiply the scaleUP ratio to the original design height, then change type to integer, then return value;
+            return (int)(output + 0.5d); //equivalent to Round(output)
         }
 
+        /// <summary>
+        /// Calculate DPI scaling
+        /// </summary>
         public static int ScaleValueY(double designHeight) {
             var output = designHeight*scaleUpRatioY;
-            output = Math.Round(output, 0, MidpointRounding.AwayFromZero);
-            return ((int)output); //multiply the scaleUP ratio to the original design height, then change type to integer, then return value;
+            return (int)(output + 0.5d); //equivalent to Round(output)
         }
+
+
+
     }
 }

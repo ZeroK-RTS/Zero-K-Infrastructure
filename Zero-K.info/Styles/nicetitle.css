@@ -1,6 +1,6 @@
  .nicetitle, .ui-tooltip, .qtip
 {
-    background: #000 url("../img/border-1.png") repeat-x;
+    background: #000 url("/img/border-1.png") repeat-x;
     position: absolute;
     padding: 8px;
     top: 0px;

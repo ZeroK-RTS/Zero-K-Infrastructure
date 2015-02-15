@@ -2,17 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LobbyClient;
+using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.SpringieInterface
 {
-	public class RecommendedMapResult
-	{
-		public string MapName;
-		public string Message;
-	}
-
-	public class MapPicker
+    public class MapPicker
 	{
 
 		public static RecommendedMapResult GetRecommendedMap(BattleContext context, bool pickNew) {
@@ -27,7 +22,7 @@ namespace ZeroKWeb.SpringieInterface
 				    if (info != null)
 				    {
 				        res.MapName = info.Map;
-                        res.Message = String.Format("Welcome to planet {0} http://zero-k.info/PlanetWars/Planet/{1} attacked", info.Name, info.PlanetID);
+                        res.Message = String.Format("Welcome to planet {0} {2}/PlanetWars/Planet/{1} attacked", info.Name, info.PlanetID, GlobalConst.BaseSiteUrl);
 				    } else res.MapName = context.Map;
 				}
 				else { 
@@ -72,7 +67,7 @@ namespace ZeroKWeb.SpringieInterface
 					}
 					if (list != null) {
 						var r = new Random();
-						res.MapName = list[r.Next(list.Count)].InternalName;
+                        if (list.Count > 0)  res.MapName = list[r.Next(list.Count)].InternalName;
 					}
 				}
 			}

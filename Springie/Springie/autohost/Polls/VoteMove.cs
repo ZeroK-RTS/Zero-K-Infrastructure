@@ -1,7 +1,8 @@
 using System;
 using System.Linq;
 using LobbyClient;
-using PlasmaShared.SpringieInterfaceReference;
+using PlasmaShared;
+using ZkData;
 
 namespace Springie.autohost.Polls
 {
@@ -40,12 +41,12 @@ namespace Springie.autohost.Polls
             try {
                 bool val;
                 var moves =
-                    tas.MyBattle.Users.Where(x => x.Name != tas.MyBattle.Founder.Name)
+                    tas.MyBattle.Users.Values.Where(x => x.Name != tas.MyBattle.Founder.Name)
                        .Where(x => !userVotes.TryGetValue(x.Name, out val) || val)
                        .Select(x => new MovePlayerEntry() { BattleHost = host, PlayerName = x.Name })
-                       .ToArray(); // move all that didnt vote "no" 
-                var serv = new SpringieService();
-                serv.MovePlayers(tas.UserName, tas.UserPassword, moves.ToArray());
+                       .ToList(); // move all that didnt vote "no" 
+                var serv = GlobalConst.GetSpringieService();
+                serv.MovePlayers(tas.UserName, tas.UserPassword, moves);
             } catch (Exception ex) {
                 ah.SayBattle(ex.ToString());
             }
@@ -56,13 +57,13 @@ namespace Springie.autohost.Polls
             bool val;
             try {
                 var moves =
-                    tas.MyBattle.Users.Where(x => x.Name != tas.MyBattle.Founder.Name)
+                    tas.MyBattle.Users.Values.Where(x => x.Name != tas.MyBattle.Founder.Name)
                        .Where(x => userVotes.TryGetValue(x.Name, out val) && val)
                        .Select(x => new MovePlayerEntry() { BattleHost = host, PlayerName = x.Name})
-                       .ToArray(); // move those that voted yes if there are at least 2
-                if (moves.Length > 1) {
-                    var serv = new SpringieService();
-                    serv.MovePlayers(tas.UserName, tas.UserPassword, moves.ToArray());
+                       .ToList(); // move those that voted yes if there are at least 2
+                if (moves.Count > 1) {
+                    var serv = GlobalConst.GetSpringieService();
+                    serv.MovePlayers(tas.UserName, tas.UserPassword, moves);
                 }
             } catch (Exception ex) {
                 ah.SayBattle(ex.ToString());

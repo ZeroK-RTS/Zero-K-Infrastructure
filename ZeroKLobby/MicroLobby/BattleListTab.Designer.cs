@@ -29,13 +29,13 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.hidePasswordedBox = new System.Windows.Forms.CheckBox();
             this.showOfficialBox = new System.Windows.Forms.CheckBox();
             this.hideEmptyBox = new System.Windows.Forms.CheckBox();
             this.hideFullBox = new System.Windows.Forms.CheckBox();
             this.searchLabel = new System.Windows.Forms.Label();
             this.searchBox = new System.Windows.Forms.TextBox();
             this.battlePanel = new System.Windows.Forms.Panel();
-            this.hidePasswordedBox = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -54,6 +54,17 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(731, 31);
             this.panel1.TabIndex = 0;
+            // 
+            // hidePasswordedBox
+            // 
+            this.hidePasswordedBox.AutoSize = true;
+            this.hidePasswordedBox.Location = new System.Drawing.Point(389, 7);
+            this.hidePasswordedBox.Name = "hidePasswordedBox";
+            this.hidePasswordedBox.Size = new System.Drawing.Size(109, 17);
+            this.hidePasswordedBox.TabIndex = 7;
+            this.hidePasswordedBox.Text = "Hide Passworded";
+            this.hidePasswordedBox.UseVisualStyleBackColor = true;
+            this.hidePasswordedBox.CheckedChanged += new System.EventHandler(this.hidePasswordedBox_CheckedChanged);
             // 
             // showOfficialBox
             // 
@@ -112,17 +123,6 @@
             this.battlePanel.Name = "battlePanel";
             this.battlePanel.Size = new System.Drawing.Size(731, 432);
             this.battlePanel.TabIndex = 1;
-            // 
-            // hidePasswordedBox
-            // 
-            this.hidePasswordedBox.AutoSize = true;
-            this.hidePasswordedBox.Location = new System.Drawing.Point(389, 7);
-            this.hidePasswordedBox.Name = "hidePasswordedBox";
-            this.hidePasswordedBox.Size = new System.Drawing.Size(109, 17);
-            this.hidePasswordedBox.TabIndex = 7;
-            this.hidePasswordedBox.Text = "Hide Passworded";
-            this.hidePasswordedBox.UseVisualStyleBackColor = true;
-            this.hidePasswordedBox.CheckedChanged += new System.EventHandler(this.hidePasswordedBox_CheckedChanged);
             // 
             // BattleListTab
             // 

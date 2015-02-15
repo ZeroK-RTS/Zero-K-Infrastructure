@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PlasmaShared
+namespace ZkData
 {
     public class ChangeEventArgs<T> : EventArgs
     {

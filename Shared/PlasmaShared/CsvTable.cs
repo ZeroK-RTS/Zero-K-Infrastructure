@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace PlasmaShared
+namespace ZkData
 {
     public class CsvRow: IEnumerable<KeyValuePair<string, string>>
     {

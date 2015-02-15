@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace ZeroKLobby.MicroForms
@@ -16,7 +10,7 @@ namespace ZeroKLobby.MicroForms
         static Timer countDown;
         static int counter = 0;
 
-        public static void SpringScanner_UploadUnitsyncData(object sender, PlasmaShared.CancelEventArgs<PlasmaShared.IResourceInfo> e)
+        public static void SpringScanner_UploadUnitsyncData(object sender, ZkData.CancelEventArgs<ZkData.IResourceInfo> e)
         {
             if (thisInstance != null)
                 thisInstance.Dispose();
@@ -48,7 +42,6 @@ namespace ZeroKLobby.MicroForms
             Program.ToolTip.SetText(thisInstance.rememberChoiceCheckbox, "Remember choice for this session only");
             thisInstance.detailText.WordWrap = false;
             var detailText = "Resource name: " + e.Data.Name + Environment.NewLine;
-            detailText = detailText + "File checksum: " + e.Data.Checksum + Environment.NewLine;
             detailText = detailText + "Archive name: " + e.Data.ArchiveName + Environment.NewLine;
             detailText = detailText + "Recommended action: Share multiplayer resource";
             thisInstance.detailText.Text = detailText;

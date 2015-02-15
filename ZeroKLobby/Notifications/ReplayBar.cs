@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -67,7 +66,7 @@ namespace ZeroKLobby.Notifications
             var downEngine = Program.Downloader.GetAndSwitchEngine(engineVersion);
             if (downEngine != null) waitHandles.Add(downEngine.WaitHandle);
 
-            PlasmaShared.Utils.StartAsync(() =>
+            ZkData.Utils.StartAsync(() =>
             {
                 if (waitHandles.Any()) WaitHandle.WaitAll(waitHandles.ToArray());
 

@@ -4,16 +4,15 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
-using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using PlasmaDownloader;
-using PlasmaShared;
-using PlasmaShared.UnitSyncLib;
+using ZkData.UnitSyncLib;
 using LobbyClient;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
@@ -27,15 +26,15 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         Image minimap;
         Size minimapSize;
         private Spring spring;
-        List<SpringScanner.CacheItem> modCache = new List<SpringScanner.CacheItem>();
-        List<SpringScanner.CacheItem> mapCache = new List<SpringScanner.CacheItem>();
-        private List<BotBattleStatus> Bots = new List<BotBattleStatus>();
+        List<SpringScanner.CacheItem> modCache;
+        List<SpringScanner.CacheItem> mapCache;
+        List<Mod> modCache_folder; //mods in *.sdd folder located in datadir/games
+        private List<BotBattleStatus> Bots;
         Map currentMap;
-        private List<UserBattleStatus> allUser = new List<UserBattleStatus>();
+        private List<UserBattleStatus> allUser;
         private PlayerListItem myItem;
         private Ai[] aiList;
         private Mod currentMod;
-        private BattleDetails currentBattleDetail;
         private Dictionary<int, BattleRect> Rectangles;
         private List<string> DisabledUnits;
         private Dictionary<string, string> ModOptions;
@@ -55,6 +54,12 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
         private void Event_SkirmishControl_Enter(object sender, EventArgs e)
         {
+            modCache = new List<SpringScanner.CacheItem>();
+            mapCache = new List<SpringScanner.CacheItem>();
+            modCache_folder = new List<Mod>();
+            Bots = new List<BotBattleStatus>();
+            allUser = new List<UserBattleStatus>();
+        	
             //MessageBox.Show("Work in progress");
             //Note: always manually remove "((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();" from
             //splitcontainer, it have history to cause crash in Linux. Unknown reason.
@@ -66,13 +71,13 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             minimapBox.MouseUp += Event_MinimapBox_MouseUp;
             skirmPlayerBox.IsBattle = true;
             skirmPlayerBox.MouseDown += Event_PlayerBox_MouseDown;
+            skirmPlayerBox.MouseUp += Event_PlayerBox_MouseUp;
 
             Program.SpringScanner.LocalResourceAdded += Event_SpringScanner_LocalResourceAdded;
             Program.SpringScanner.LocalResourceRemoved += Event_SpringScanner_LocalResourceAdded;
 
             Setup_MyInfo();
             DisabledUnits = new List<string>();
-            currentBattleDetail = new BattleDetails();
             ModOptions = new Dictionary<string, string>();
             Rectangles = new Dictionary<int, BattleRect>();
             springAi = new List<Ai>();
@@ -134,8 +139,18 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             Setup_ComboBox();
             if (!string.IsNullOrEmpty(Program.Conf.SkirmisherEngine))
                 engine_comboBox.SelectedItem = Program.Conf.SkirmisherEngine;
+            else 
+                engine_comboBox.SelectedItem = GlobalConst.DefaultEngineOverride ?? Program.TasClient.ServerSpringVersion;
+            
             if (!string.IsNullOrEmpty(Program.Conf.SkirmisherGame))
                 game_comboBox.SelectedItem = Program.Conf.SkirmisherGame;
+            else
+            {
+                var gameVer = Program.Downloader.PackageDownloader.GetByTag(KnownGames.GetDefaultGame().RapidTag);
+                if (gameVer!=null)
+                    game_comboBox.SelectedItem = gameVer.InternalName;
+            }
+            
             if (!string.IsNullOrEmpty(Program.Conf.SkirmisherMap))
                 map_comboBox.SelectedItem = Program.Conf.SkirmisherMap;
             
@@ -146,16 +161,15 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         private void Setup_MyInfo()
         {
             string myName = Program.Conf.LobbyPlayerName == null ? "unnamed" : Program.Conf.LobbyPlayerName;
-            User myUser = User.Create(myName);
+            User myUser = new User { Name = myName };
             myUser.Country = "Unknown";
-            UserBattleStatus myBattleStatus = new UserBattleStatus(myName, myUser) { IsReady = true, AllyNumber = 0, SyncStatus = SyncStatuses.Unknown, IsSpectator = spectateCheckBox.Checked };
-            myBattleStatus.TeamColor = Program.Conf.DefaultPlayerColorInt;
+            UserBattleStatus myBattleStatus = new UserBattleStatus(myName, myUser) { AllyNumber = 0, SyncStatus = SyncStatuses.Unknown, IsSpectator = spectateCheckBox.Checked };
             myItem = new PlayerListItem
             {
                 UserName = myBattleStatus.Name,
                 AllyTeam = myBattleStatus.AllyNumber,
                 isOfflineMode = true,
-                isOfflineZK = false,
+                isZK = false,
             };
             myItem.offlineUserInfo = myUser;
             myItem.offlineUserBattleStatus = myBattleStatus;
@@ -228,15 +242,18 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 List<string> mapList = new List<string>();
                 try
                 {
-                    string engineFolder = PlasmaShared.Utils.MakePath(Program.SpringPaths.WritableDirectory, "engine");
+                    string engineFolder = ZkData.Utils.MakePath(Program.SpringPaths.WritableDirectory, "engine");
                     engineList = System.IO.Directory.EnumerateDirectories(engineFolder, "*").ToList<string>();
                     for (int i = 0; i < engineList.Count; i++)
-                        engineList[i] = SkirmishControlTool.GetFolderName(engineList[i]);
+                        engineList[i] = SkirmishControlTool.GetFolderOrFileName(engineList[i]);
 
                     engineList = SkirmishControlTool.SortListByVersionName(engineList);
 
                     modCache = Program.SpringScanner.GetAllModResource();
                     for (int i = 0; i < modCache.Count; i++) modList.Add(modCache[i].InternalName);
+                    modCache_folder.Clear();
+                    modCache_folder = SkirmishControlTool.GetPartialSddMods();
+                    for (int i = 0; i < modCache_folder.Count; i++) modList.Add(modCache_folder[i].Name + " " + modCache_folder[i].PrimaryModVersion);
                     modList = SkirmishControlTool.SortListByVersionName(modList);
 
                     mapCache = Program.SpringScanner.GetAllMapResource();
@@ -348,7 +365,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                                                        { //exceptions
                                                            minimapBox.Image = null;
                                                            minimap = null;
-                                                       }), springVersion);
+                                                       }));
         }
 
         private void Refresh_MinimapImage(bool invalidate= true)
@@ -357,10 +374,10 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             {
                 if (minimap == null) return;
                 var boxColors = new[]
-		                        {
-		                            Color.Green, Color.Red, Color.Blue, Color.Cyan, Color.Yellow, Color.Magenta, Color.Gray, Color.Lime, Color.Maroon,
-		                            Color.Navy, Color.Olive, Color.Purple, Color.Silver, Color.Teal, Color.White,
-		                        };
+                                {
+                                    Color.Green, Color.Red, Color.Blue, Color.Cyan, Color.Yellow, Color.Magenta, Color.Gray, Color.Lime, Color.Maroon,
+                                    Color.Navy, Color.Olive, Color.Purple, Color.Silver, Color.Teal, Color.White,
+                                };
                 var xScale = (double)minimapBox.Width / minimapSize.Width;
                 // todo remove minimapSize and use minimap image directly when plasmaserver stuff fixed
                 var yScale = (double)minimapBox.Height / minimapSize.Height;
@@ -436,12 +453,11 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             bool gameIsZK = game_comboBox.SelectedItem != null ? ((string)game_comboBox.SelectedItem).Contains("Zero-K") : false;
 
             myItem.offlineUserBattleStatus.SyncStatus = iamSynced;
-            myItem.isOfflineZK = gameIsZK;
-            myItem.offlineUserBattleStatus.Side = sideCB.SelectedIndex >= 0 ? sideCB.SelectedIndex : 0;
+            myItem.isZK = gameIsZK;
 
             var newList = new List<PlayerListItem>();
             newList.Add(myItem);
-            List<PlayerListItem> playerListItems = new List<PlayerListItem>();
+            var playerListItems = new List<PlayerListItem>();
 
             if (!myItem.UserBattleStatus.IsSpectator || Bots.Count > 0) playerListItems.Add(myItem);
             var existingTeams = playerListItems.GroupBy(i => i.UserBattleStatus.AllyNumber).Select(team => team.Key).ToList();
@@ -553,7 +569,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             return Enumerable.Range(0, TasClient.MaxTeams - 1).FirstOrDefault(teamID => myItem.offlineUserBattleStatus.TeamNumber != teamID && !Bots.Any(x => x.TeamNumber == teamID));
         }
 
-        private void Set_MyBattleStatus(int? allyNumber, int? teamNumber, int? teamColor, bool? isSpectator)
+        private void Set_MyBattleStatus(int? allyNumber, int? teamNumber, bool? isSpectator)
         {
             if (allyNumber.HasValue)
             {
@@ -561,7 +577,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 myItem.offlineUserBattleStatus.AllyNumber = allyNumber.Value;
             }
             if (teamNumber.HasValue) myItem.offlineUserBattleStatus.TeamNumber = teamNumber.Value;
-            if (teamColor.HasValue) myItem.offlineUserBattleStatus.TeamColor = teamColor.Value;
             if (isSpectator.HasValue)
             {
                 myItem.offlineUserBattleStatus.IsSpectator = isSpectator.Value;
@@ -572,32 +587,41 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             Refresh_PlayerBox();
         }
 
-        private void Event_PlayerBox_MouseDown(object sender, MouseEventArgs mea) //from BattleChatControl
-        {
-            if (currentMod != null && currentMod.IsMission) return; //disable shorcuts for mission mod
+        private bool isClick = false;
+        private void Event_PlayerBox_MouseDown(object sender, MouseEventArgs mea)    {    isClick=true;    }
 
+        //using MouseUp because it allow the PlayerBox's "HoverItem" to return correct value when we click on it rapidly
+        private void Event_PlayerBox_MouseUp(object sender, MouseEventArgs mea) //from BattleChatControl
+        {
+            if (!isClick) return;
+            isClick = false;
+
+            if (currentMod != null && currentMod.IsMission) return; //disable shorcuts for mission mod
+            //change ally
             if (mea.Button == MouseButtons.Left)
             {
                 if (skirmPlayerBox.HoverItem != null)
                 {
                     if (skirmPlayerBox.HoverItem.IsSpectatorsTitle)
-                        Set_MyBattleStatus(null, null, null, true); //spectator
+                        Set_MyBattleStatus(null, null, true); //spectator
                     else if (skirmPlayerBox.HoverItem.SlotButton != null) //mission
                     {
                         MissionSlot slot = skirmPlayerBox.HoverItem.MissionSlot;
-                        Set_MyBattleStatus(slot.AllyID, slot.TeamID, slot.Color, false);
+                        Set_MyBattleStatus(slot.AllyID, slot.TeamID, false);
                         return;
                     }
                     else if (skirmPlayerBox.HoverItem.Button!=null) //alliance
-                        Set_MyBattleStatus(skirmPlayerBox.HoverItem.AllyTeam.Value, Get_FreeTeamID(myItem.UserName), null, false);
+                        Set_MyBattleStatus(skirmPlayerBox.HoverItem.AllyTeam.Value, Get_FreeTeamID(myItem.UserName), false);
                 }
             }
-
+            //context menu
             if (mea.Button == MouseButtons.Right || !Program.Conf.LeftClickSelectsPlayer)
             {
-                if (skirmPlayerBox.HoverItem == null && mea.Button == MouseButtons.Right)
-                { //right click on empty space
-                    var cm = Get_PlayerContextMenu(myItem.User);
+                if (skirmPlayerBox.HoverItem != null && skirmPlayerBox.HoverItem.BotBattleStatus != null) //on bot name
+                {
+                    skirmPlayerBox.SelectedItem = skirmPlayerBox.HoverItem;
+
+                    var cm = Get_BotContextMenu(skirmPlayerBox.HoverItem.BotBattleStatus.Name);
                     Program.ToolTip.Visible = false;
                     try
                     {
@@ -611,26 +635,23 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     {
                         Program.ToolTip.Visible = true;
                     }
-                }
-                if (skirmPlayerBox.HoverItem != null)
+                }else //on name or empty space
                 {
-                    if (skirmPlayerBox.HoverItem.BotBattleStatus != null)
+                    skirmPlayerBox.SelectedItem = skirmPlayerBox.HoverItem;
+
+                    var cm = Get_PlayerContextMenu(myItem.User);
+                    Program.ToolTip.Visible = false;
+                    try
                     {
-                        skirmPlayerBox.SelectedItem = skirmPlayerBox.HoverItem;
-                        var cm = Get_BotContextMenu(skirmPlayerBox.HoverItem.BotBattleStatus.Name);
-                        Program.ToolTip.Visible = false;
-                        try
-                        {
-                            cm.Show(skirmPlayerBox, mea.Location);
-                        }
-                        catch (Exception ex)
-                        {
-                            Trace.TraceError("Error displaying tooltip: {0}", ex);
-                        }
-                        finally
-                        {
-                            Program.ToolTip.Visible = true;
-                        }
+                        cm.Show(skirmPlayerBox, mea.Location);
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceError("Error displaying tooltip: {0}", ex);
+                    }
+                    finally
+                    {
+                        Program.ToolTip.Visible = true;
                     }
                 }
             }
@@ -655,21 +676,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     item.Click += (s, e) =>
                     {
                         Bots.RemoveAll(b=> b.Name == botName);
-                        Refresh_PlayerBox();
-                    };
-                    contextMenu.MenuItems.Add(item);
-                }
-                {
-                    var item = new System.Windows.Forms.MenuItem("Set Color") { Enabled = botStatus.owner == myItem.UserName };
-                    item.Click += (s, e) =>
-                    {
-                        var botColor = botStatus.TeamColorRGB;
-                        var colorDialog = new ColorDialog { Color = Color.FromArgb(botColor[0], botColor[1], botColor[2]) };
-                        if (colorDialog.ShowDialog() == DialogResult.OK)
-                        {
-                            var newColor = (int)(MyCol)colorDialog.Color;
-                            Bots.FirstOrDefault(b => b.Name == botName).TeamColor = newColor;
-                        }
                         Refresh_PlayerBox();
                     };
                     contextMenu.MenuItems.Add(item);
@@ -753,22 +759,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     contextMenu.MenuItems.Add(allyWith);
                 }
 
-                var colorItem = new System.Windows.Forms.MenuItem("Select Color") { Enabled = myItem.UserName == user.Name && !myItem.offlineUserBattleStatus.IsSpectator };
-                colorItem.Click += (s, e) =>
-                {
-                    var myColor = myItem.offlineUserBattleStatus.TeamColorRGB;
-                    var colorDialog = new ColorDialog { Color = Color.FromArgb(myColor[0], myColor[1], myColor[2]) };
-                    if (colorDialog.ShowDialog() == DialogResult.OK)
-                    {
-                        var newColor = (int)(MyCol)colorDialog.Color;
-                        myItem.offlineUserBattleStatus.TeamColor = newColor;
-                        Program.Conf.DefaultPlayerColorInt = newColor;
-                        Program.SaveConfig();
-                        Refresh_PlayerBox();
-                    }
-                };
-                contextMenu.MenuItems.Add(colorItem);
-
                 contextMenu.MenuItems.Add(Get_SetAllyTeamItem(user));
 
                 contextMenu.MenuItems.Add("-");
@@ -844,15 +834,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             if (allyNumber.HasValue) botStatus.TeamNumber = allyNumber.Value;
             else botStatus.AllyNumber = Enumerable.Range(0, TasClient.MaxAlliances - 1).FirstOrDefault(x => x != botStatus.AllyNumber);
             
-            if (botColor.HasValue) botStatus.TeamColor = botColor.Value;
-            else
-            {
-                var boxColors = new[] { Color.Green, Color.Red, Color.Blue, Color.Cyan, Color.Yellow, Color.Magenta,
-                                        Color.Gray, Color.Lime, Color.Maroon, Color.Navy, Color.Olive, Color.Purple, Color.Silver,
-                                        Color.Teal, Color.White,Color.Black,};
-                botStatus.TeamColor = (int)(MyCol)boxColors[botStatus.TeamNumber % 16]; //cyclic 0-16
-            }
-
             Bots.Add(botStatus);
             Refresh_PlayerBox();
         }
@@ -929,7 +910,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                         var item = new MenuItem("Join Team " + (allyTeam + 1));
                         item.Click += (s, e) =>
                             {
-                                Set_MyBattleStatus(at, Get_FreeTeamID(user.Name), null, false);
+                                Set_MyBattleStatus(at, Get_FreeTeamID(user.Name), false);
                             };
                         setAllyTeamItem.MenuItems.Add(item);
                     }
@@ -940,7 +921,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 var newTeamItem = new System.Windows.Forms.MenuItem("Start New Team");
                 newTeamItem.Click += (s, e) =>
                     {
-                        Set_MyBattleStatus(freeAllyTeam, Get_FreeTeamID(myItem.UserName), null, false);
+                        Set_MyBattleStatus(freeAllyTeam, Get_FreeTeamID(myItem.UserName), false);
                     };
                 setAllyTeamItem.MenuItems.Add(newTeamItem);
 
@@ -949,7 +930,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     var specItem = new System.Windows.Forms.MenuItem("Spectate");
                     specItem.Click += (s, e) =>
                         {
-                            Set_MyBattleStatus(null,null, null, true);
+                            Set_MyBattleStatus(null,null,true);
                         };
                     setAllyTeamItem.MenuItems.Add(specItem);
                 }
@@ -978,40 +959,63 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             else if ((sender as Control).Name == "game_comboBox" && game_comboBox.SelectedItem != null)
             {
                 string gameName = (string)game_comboBox.SelectedItem;
-                //run GetMod() in new thread, then call "CallBack_Mod()" in current thread when finish(?). 
-                Program.SpringScanner.MetaData.GetModAsync(
-                    gameName,
-                    mod =>
+                
+                bool foundLocally=false;
+                for(int i=0; i<modCache_folder.Count;i++)
+                {
+                    var mod = modCache_folder[i];
+                    var modName = mod.Name + " " + mod.PrimaryModVersion;
+                    if (gameName == modName)
                     {
-                        Invoke(new Action(() =>
-                        {
-                            try { CallBack_Mod(mod); }
-                            catch (Exception ex) { Trace.TraceError("CallBack_Mod(mod) error: {0}", ex.ToString()); }
-                        })
-                        );
-                    }, 
-                    exception => { Trace.TraceError("CallBack_Mod(mod) error: {0}", exception.ToString()); },
-                    gameName);
-                //Program.SpringScanner.MetaData.GetModAsync(
-                //   (string)game_comboBox.SelectedItem,
-                //   mod=>{
-                //       try { CallBack_Mod(mod); }
-                //       catch (Exception ex) { Trace.TraceError("CallBack_Mod(mod) error: {0}", ex.ToString()); }
-                //       },
-                //   exception => { Trace.TraceError("CallBack_Mod(mod) error: {0}", exception.ToString()); },
-                //   (string)engine_comboBox.SelectedItem);
 
+                        modCache_folder[i] = SkirmishControlTool.GetOneSddMod(mod);
+                        CallBack_Mod(modCache_folder[i]);
+                        foundLocally = true;
+                        break;
+                    }
+                }
+
+                if (!foundLocally)
+                {
+                    //run GetMod() in new thread, then call "CallBack_Mod()" in current thread when finish(?). 
+                    //TODO: GetModAsync() is not an offline method, it rely on downloading server generated mod/map information to work. This can cause (minor) error if user downloaded a unique map or mod that server haven't process yet!
+                    Program.SpringScanner.MetaData.GetModAsync(
+                        gameName,
+                        mod =>
+                        Invoke(new Action(() => {
+                            try {
+                                CallBack_Mod(mod);
+                            } catch (Exception ex) {
+                                Trace.TraceError("CallBack_Mod(mod) error: {0}", ex.ToString());
+                            }
+                        })), 
+                        exception => Trace.TraceError("CallBack_Mod(mod) error: {0}", exception.ToString()));
+                    //Program.SpringScanner.MetaData.GetModAsync(
+                    //   (string)game_comboBox.SelectedItem,
+                    //   mod=>{
+                    //       try { CallBack_Mod(mod); }
+                    //       catch (Exception ex) { Trace.TraceError("CallBack_Mod(mod) error: {0}", ex.ToString()); }
+                    //       },
+                    //   exception => { Trace.TraceError("CallBack_Mod(mod) error: {0}", exception.ToString()); },
+                    //   (string)engine_comboBox.SelectedItem);
+                }
+                
                 if (infoLabel.Text.StartsWith("Select game"))
                     infoLabel.Text = "";
 
                 Set_InfoLabel();
-                Program.Conf.SkirmisherGame = gameName;
+                
+                var defGameVer = Program.Downloader.PackageDownloader.GetByTag(KnownGames.GetDefaultGame().RapidTag);
+                if (defGameVer!=null && gameName == defGameVer.InternalName)
+                    Program.Conf.SkirmisherGame = null; //tell Skirmisher to use default in next startup
+                else
+                    Program.Conf.SkirmisherGame = gameName;
 
             }
             else if ((sender as Control).Name == "engine_comboBox" && engine_comboBox.SelectedItem != null)
             {
                 string springVersion = (string)engine_comboBox.SelectedItem;
-                string engineFolder = PlasmaShared.Utils.MakePath(Program.SpringPaths.WritableDirectory, "engine");
+                string engineFolder = ZkData.Utils.MakePath(Program.SpringPaths.WritableDirectory, "engine");
                 if (Environment.OSVersion.Platform != PlatformID.Unix)
                     engineFolder = engineFolder + "\\" + springVersion;
                 else
@@ -1026,7 +1030,11 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     infoLabel.Text = "";
 
                 Set_InfoLabel();
-                Program.Conf.SkirmisherEngine = (string)engine_comboBox.SelectedItem;
+                
+                if ((string)engine_comboBox.SelectedItem == (GlobalConst.DefaultEngineOverride ?? Program.TasClient.ServerSpringVersion))
+                    Program.Conf.SkirmisherEngine = null; //tell Skirmihser to use default in next run
+                else
+                    Program.Conf.SkirmisherEngine = (string)engine_comboBox.SelectedItem;
 
                 if (Program.SpringPaths.HasEngineVersion(springVersion))
                     springAi = SkirmishControlTool.GetSpringAIs(engineFolder);
@@ -1088,7 +1096,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 foreach (MissionSlot slot in missionSlots.Where(s => s.IsHuman))
                 {
                     myItem.MissionSlot = slot;
-                    Set_MyBattleStatus(slot.AllyID, slot.TeamID, (int)(MyCol)slot.Color, false);
+                    Set_MyBattleStatus(slot.AllyID, slot.TeamID, false);
                     break;
                 }
 
@@ -1221,134 +1229,17 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             script.AppendFormat("  NumPlayers={0};\n", allUser.Count);
             script.AppendFormat("  NumTeams={0};\n", allUser.Where(u => !u.IsSpectator).ToList().Count);
             script.AppendFormat("  NumAllyTeams={0};\n", allUser.GroupBy(i => i.AllyNumber).Select(team => team.Key).Distinct().ToList().Count);
-            script.AppendFormat("  ModHash={0};\n", modCache.FirstOrDefault(x => x.InternalName == (string)gameName).Md5.ToString());
+            var modCacheItem = modCache.FirstOrDefault(x => x.InternalName == (string)gameName);
+            string modHash = "0";
+            if (modCacheItem!=null)
+                modHash = modCacheItem.Md5.ToString();
+            script.AppendFormat("  ModHash={0};\n", modHash);
             script.AppendFormat("  MapHash={0};\n", mapCache.FirstOrDefault(x => x.InternalName == (string)mapName).Md5.ToString());
 
-            var positions = currentMap.Positions != null ? currentMap.Positions.ToList() : new List<StartPos>();
 
-            Get_PlayerSection(allUser, script, positions);
+            LobbyClient.Battle.GeneratePlayerSection(new List<UserBattleStatus>(),allUser,script,Bots,Rectangles,ModOptions,null,null);
             //Clipboard.SetText(script.ToString());
             return script.ToString();
-        }
-
-        private void Get_PlayerSection(
-                         List<UserBattleStatus> users,
-                         StringBuilder script,
-                         List<StartPos> positions) //code from LobbyClient.Battle.cs
-        {
-            var playersExport = new List<UserBattleStatus>(); //dummy table for maintain compatibility with callins
-            if (currentMod.IsMission) // mission stuff
-            {
-                var aiNum = 0;
-                var declaredTeams = new HashSet<int>();
-                var orderedUsers = users.OrderBy(x => x.TeamNumber).ToList();
-                for (var i = 0; i < orderedUsers.Count; i++)
-                {
-                    var u = orderedUsers[i];
-                    LobbyClient.Battle.ScriptAddUser(script, i, playersExport, null, u.TeamNumber, u);
-                    if (!u.IsSpectator && !declaredTeams.Contains(u.TeamNumber))
-                    {
-                        LobbyClient.Battle.ScriptAddTeam(script, u.TeamNumber, positions, i, u, currentMod, currentBattleDetail);
-                        declaredTeams.Add(u.TeamNumber);
-                    }
-                }
-
-                for (var i = 0; i < orderedUsers.Count; i++)
-                {
-                    var u = orderedUsers[i];
-                    foreach (var b in Bots.Where(x => x.owner == u.Name))
-                    {
-                        LobbyClient.Battle.ScriptAddBot(script, aiNum++, b.TeamNumber, i, b);
-                        if (!declaredTeams.Contains(b.TeamNumber))
-                        {
-                            LobbyClient.Battle.ScriptAddTeam(script, b.TeamNumber, positions, i, b, currentMod, currentBattleDetail);
-                            declaredTeams.Add(b.TeamNumber);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                // ordinary battle stuff
-
-                var userNum = 0;
-                var teamNum = 0;
-                var aiNum = 0;
-                foreach (var u in users.Where(u => !Bots.Any(b => b.Name == u.Name)).OrderBy(x => x.TeamNumber)) //.Where(x => x.Name != localUser.Name))
-                {
-                    LobbyClient.Battle.ScriptAddUser(script, userNum, playersExport, null, teamNum, u);
-
-                    if (!u.IsSpectator)
-                    {
-                        LobbyClient.Battle.ScriptAddTeam(script, teamNum, positions, userNum, u, currentMod, currentBattleDetail);
-                        teamNum++;
-                    }
-
-                    foreach (var b in Bots.Where(x => x.owner == u.Name))
-                    {
-                        LobbyClient.Battle.ScriptAddBot(script, aiNum, teamNum, userNum, b);
-                        aiNum++;
-                        LobbyClient.Battle.ScriptAddTeam(script, teamNum, positions, userNum, b, currentMod, currentBattleDetail);
-                        teamNum++;
-                    }
-                    userNum++;
-                }
-            }
-
-            // ALLIANCES
-            script.AppendLine();
-            foreach (var allyNumber in
-                users.Where(x => !x.IsSpectator).Select(x => x.AllyNumber).Union(Bots.Select(x => x.AllyNumber)).Union(Rectangles.Keys).Distinct())
-            {
-                // get allies from each player, bot and rectangles (for koth)
-                script.AppendFormat("[ALLYTEAM{0}]\n", allyNumber);
-                script.AppendLine("{");
-                script.AppendFormat("     NumAllies={0};\n", 0);
-                double left = 0, top = 0, right = 1, bottom = 1;
-                BattleRect rect;
-                if (Rectangles.TryGetValue(allyNumber, out rect)) rect.ToFractions(out left, out top, out right, out bottom);
-                script.AppendFormat("     StartRectLeft={0};\n", left);
-                script.AppendFormat("     StartRectTop={0};\n", top);
-                script.AppendFormat("     StartRectRight={0};\n", right);
-                script.AppendFormat("     StartRectBottom={0};\n", bottom);
-                script.AppendLine("}");
-            }
-
-            script.AppendLine();
-            script.AppendFormat("  NumRestrictions={0};\n", DisabledUnits.Count);
-            script.AppendLine();
-
-            if (!currentMod.IsMission)
-            {
-                script.AppendLine("  [RESTRICT]");
-                script.AppendLine("  {");
-                for (var i = 0; i < DisabledUnits.Count; ++i)
-                {
-                    script.AppendFormat("    Unit{0}={1};\n", i, DisabledUnits[i]);
-                    script.AppendFormat("    Limit{0}=0;\n", i);
-                }
-                script.AppendLine("  }");
-
-                script.AppendLine("  [MODOPTIONS]");
-                script.AppendLine("  {");
-
-                var options = new Dictionary<string, string>();
-
-                // put standard modoptions to options dictionary
-                foreach (var o in currentMod.Options.Where(x => x.Type != OptionType.Section))
-                {
-                    var v = o.Default;
-                    if (ModOptions.ContainsKey(o.Key)) v = ModOptions[o.Key];
-                    options[o.Key] = v;
-                }
-
-                // write final options to script
-                foreach (var kvp in options) script.AppendFormat("    {0}={1};\n", kvp.Key, kvp.Value);
-
-                script.AppendLine("  }");
-            }
-
-            script.AppendLine("}");
         }
 
         private void Event_Startbutton_Click(object sender, EventArgs e)
@@ -1359,7 +1250,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             {
                 var script = currentMod.IsMission ? currentMod.MissionScript : Get_Startscript();
                 if (spring.IsRunning) spring.ExitGame();
-                TasClient client = new TasClient(null, "SkirmishTab", GlobalConst.ZkLobbyUserCpu, false, "127.0.0.1");
+                TasClient client = new TasClient("SkirmishTab", null, "127.0.0.1");
                 spring.SpringExited += Event_SpringExited;
                 infoLabel.Text = "Spring starting ...";
                 spring.StartGame(client, null, null, script, Program.Conf.UseSafeMode, Program.Conf.UseMtEngine);
@@ -1389,7 +1280,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     var item = new System.Windows.Forms.MenuItem("Join Team " + (allyTeam + 1));
                     item.Click += (s, e2) => 
                         {
-                            Set_MyBattleStatus(allyTeam, Get_FreeTeamID(myItem.UserName), null, false);
+                            Set_MyBattleStatus(allyTeam, Get_FreeTeamID(myItem.UserName),false);
                         };
                     menu.MenuItems.Add(item);
                 }
@@ -1436,6 +1327,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         void Event_MinimapBox_MouseMove(object sender, MouseEventArgs e)
         {
             if (currentMod!=null && currentMod.IsMission) return;
+            if (minimapPanel == null || minimapBox.Image == null) return;
 
             if (map_comboBox.SelectedItem == null)
             {

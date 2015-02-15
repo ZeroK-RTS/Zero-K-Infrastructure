@@ -7,12 +7,10 @@
 }           
 
 <div class="admin">
-    <h1>Administer @Html.PrintAccount(@Model)</h1>
+    <h1>Administer @Html.PrintAccount(@Model, true, true)</h1>
     AccountID: @Model.AccountID
     <br />
-    LobbyID: @Model.LobbyID
-    <br />
-    Lobby program: @Model.LobbyVersion  (checked @Model.LastLobbyVersionCheck)<br/>
+    Lobby program: @Model.LobbyVersion<br/>
     IP:
     <table>
         <thead>
@@ -24,7 +22,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (AccountIP x in Model.AccountIPS.OrderByDescending(x => x.LastLogin))
+            @foreach (AccountIP x in Model.AccountIPs.OrderByDescending(x => x.LastLogin))
             {
                 <tr>
                     <td>@x.IP</td>
@@ -47,7 +45,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (AccountUserID x in Model.AccountUserIDS.OrderByDescending(x => x.LastLogin))
+            @foreach (AccountUserID x in Model.AccountUserIDs.OrderByDescending(x => x.LastLogin))
             {
                 <tr>
                     <td>@x.UserID</td>
@@ -61,15 +59,15 @@
     <br />
     
     @{
-        var myIPs = Model.AccountIPS.Select(x => x.IP).ToList();
-        var myIDs = Model.AccountUserIDS.Select(x => x.UserID).ToList();
+        var myIPs = Model.AccountIPs.Select(x => x.IP).ToList();
+        var myIDs = Model.AccountUserIDs.Select(x => x.UserID).ToList();
         var brokenIDs = new List<Int64>() { 1236934115, 1199297835, -2130083051, 195445522, 1141552226 };
-        var smurfs = new ZkDataContext().Accounts.Where(x => x.AccountID != Model.AccountID && (x.AccountIPS.Any(y => myIPs.Contains(y.IP) && y.IP != "127.0.0.1" && y.IP != "127.0.1.1" && y.IP != "94.23.170.70")
-            || x.AccountUserIDS.Where(id => !brokenIDs.Contains(id.UserID)).Any(y => myIDs.Contains(y.UserID))));
+        var smurfs = new ZkDataContext().Accounts.Where(x => x.AccountID != Model.AccountID && (x.AccountIPs.Any(y => myIPs.Contains(y.IP) && y.IP != "127.0.0.1" && y.IP != "127.0.1.1" && y.IP != "94.23.170.70" && y.IP != "78.46.100.157")
+            || x.AccountUserIDs.Where(id => !brokenIDs.Contains(id.UserID)).Any(y => myIDs.Contains(y.UserID))));
         
         Int64? lastUserID = null;
-        if (Model.AccountUserIDS.Any()) {
-            lastUserID = Model.AccountUserIDS.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID;
+        if (Model.AccountUserIDs.Any()) {
+            lastUserID = Model.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID;
         }
     }
     <h2>Smurfs</h2>
@@ -77,7 +75,7 @@
     {
         <span>@Html.PrintAccount(ac)  -  @Html.ActionLink("admin", "AdminUserDetail", new{id=ac.AccountID})</span><br />
     }
-    
+    <br />
     <h2>Abuse reports</h2>
     <table>
     @foreach (var a in Model.AbuseReportsByAccountID)
@@ -88,6 +86,7 @@
     
     @if (Model.PunishmentsByAccountID.Any())
     {
+        <br />
         <h2>Old penalties</h2>
         foreach (Punishment p in Model.PunishmentsByAccountID.Where(x => x.IsExpired))
         {
@@ -95,23 +94,22 @@
         }
     }
 
-
+    <br />
     <h2>Modify user settings</h2>
-    <form method="post" action="@Url.Action("ChangeLobbyID", "Users", new { accountID = Model.AccountID })">
-        Change lobby ID: @Html.TextBox("newLobbyID")
-        <input type="submit" />
-    </form>
     Hide country flag: <form method="post" action="@Url.Action("ChangeHideCountry", "Users", new { accountID = Model.AccountID })">@Html.CheckBox("hideCountry")<input type="submit"/></form>
     <br />
+    Password reset: <form method="post" action="@Url.Action("SetPassword", "Users", new { accountID = Model.AccountID })">@Html.TextBox("newPassword")<input type="submit" /></form>
+    <br/>
+
     <h2>Modify user permissions</h2>
     <form method="post" action="@Url.Action("ChangePermissions", "Users", new { accountID = Model.AccountID, adminAccountID = Global.AccountID })">
         Springie level: @Html.TextBox("springieLevel", Model.SpringieLevel)
-        Zero K admin: @Html.CheckBox("zkAdmin", Model.IsZeroKAdmin)
+        Zero-K admin: @Html.CheckBox("zkAdmin", Model.IsZeroKAdmin)
         VPN exception: @Html.CheckBox("vpnException", Model.HasVpnException)
         <input type="submit" />
     </form>
 
-
+    <br />
     <h2>Issue a penalty</h2>
     <form action="@Url.Action("Punish", "Users", new { accountID = Model.AccountID })" method="post">
         Reason: @Html.TextBox("reason","Smurf")<br />
@@ -124,7 +122,7 @@
         Block commanders: @Html.CheckBox("banCommanders")<br />
         Block unlocks: @Html.CheckBox("banUnlocks")<br />
         <br />
-        IP: @Html.TextBox("banIP", Model.AccountIPS.OrderByDescending(x=>x.LastLogin).Select(x=>x.IP).FirstOrDefault())<br />
+        IP: @Html.TextBox("banIP", Model.AccountIPs.OrderByDescending(x=>x.LastLogin).Select(x=>x.IP).FirstOrDefault())<br />
         UserID: @Html.TextBox("banUserID", lastUserID != null && !brokenIDs.Contains((int)lastUserID) ? lastUserID.ToString() : "")<br />
         Ban site: @Html.CheckBox("banSite")<br />
         Ban lobby: @Html.CheckBox("banLobby")<br />
@@ -135,7 +133,10 @@
         <input type="submit" value="BAN" class="delete" />
     </form>
 
+    <br />
     <h2>Special functions</h2>
+    Hide ("delete") account: <form method="post" action="@Url.Action("ChangeAccountDeleted", "Users", new { accountID = Model.AccountID })">@Html.CheckBox("isDeleted")<input type="submit"/></form>
+    <br />
     <h3>Delete all posts</h3>
     <form action="@Url.Action("DeleteAllPostsByUser", "Forum", new { accountID = Model.AccountID })" method="post">
         This will <b>permanently</b> remove <b>all</b> of the user's posts.<br />

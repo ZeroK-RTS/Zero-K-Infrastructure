@@ -10,8 +10,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using CMissionLib;
 using MissionEditor2.Properties;
-using PlasmaShared;
-using PlasmaShared.UnitSyncLib;
+using ZkData.UnitSyncLib;
 using ZkData;
 using Binary = System.Data.Linq.Binary;
 using Mission = CMissionLib.Mission;
@@ -62,7 +61,7 @@ namespace MissionEditor2
 				var imageStream = new MemoryStream();
 				pngEncoder.Save(imageStream);
 				imageStream.Position = 0;
-				info.Image = new Binary(imageStream.ToArray());
+				info.Image = imageStream.ToArray();
 
 				if (ApplicationDeployment.IsNetworkDeployed) info.MissionEditorVersion = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
 				using (var unitSync = new UnitSync(Settings.Default.SpringPath)) info.SpringVersion = unitSync.Version;
@@ -74,7 +73,7 @@ namespace MissionEditor2
 				try
 				{
                     var paths = new SpringPaths(Settings.Default.SpringPath);
-                    using (var unitSync = new PlasmaShared.UnitSyncLib.UnitSync(paths))
+                    using (var unitSync = new ZkData.UnitSyncLib.UnitSync(paths))
 					{
 						var modPath = Path.Combine(paths.WritableDirectory, "games");
 						tempPath = Path.Combine(modPath, missionFileName);
@@ -82,13 +81,13 @@ namespace MissionEditor2
 					if (File.Exists(tempPath)) File.Delete(tempPath);
 					mission.CreateArchive(tempPath);
 
-					PlasmaShared.UnitSyncLib.Mod mod;
-					using (var unitSync = new PlasmaShared.UnitSyncLib.UnitSync(paths))
+					ZkData.UnitSyncLib.Mod mod;
+					using (var unitSync = new ZkData.UnitSyncLib.UnitSync(paths))
 					{
 						mod = unitSync.GetModFromArchive(mission.Mod.ArchiveName);
 						if (mod == null) throw new Exception("Mod metadata not extracted: mod not found");
 					}
-					info.Mutator = new Binary(File.ReadAllBytes(tempPath));
+					info.Mutator = File.ReadAllBytes(tempPath);
 					var client = MissionServiceClientFactory.MakeClient();
 					client.SendMission(info, slots, mission.Author, password, mod);
 					MessageBox.Show("Mission successfully uploaded.\n\rIt is now accessible from the lobby.\r\nPlease make sure it works!");

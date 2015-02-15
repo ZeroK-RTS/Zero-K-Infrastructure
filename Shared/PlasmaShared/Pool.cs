@@ -7,7 +7,7 @@ using System.Linq;
 
 #endregion
 
-namespace PlasmaShared
+namespace ZkData
 {
 	public class Pool
 	{

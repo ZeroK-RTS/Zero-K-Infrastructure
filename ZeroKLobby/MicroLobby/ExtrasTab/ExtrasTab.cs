@@ -1,13 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using PlasmaDownloader;
-using PlasmaShared;
 using System.Diagnostics;
 
 namespace ZeroKLobby.MicroLobby.ExtrasTab
@@ -34,7 +26,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
         public bool TryNavigate(params string[] path) //called by NavigationControl.cs when user press Navigation button or the URL button
         {
-            if (path.Length == 0) return false;
+            if (path.Length == 0) return false; 
             if (path[0] != PathHead) return false;
             if (path.Length == 2 && !String.IsNullOrEmpty(path[1]))
             {

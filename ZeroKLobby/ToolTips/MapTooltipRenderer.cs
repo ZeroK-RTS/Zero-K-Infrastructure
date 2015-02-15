@@ -2,8 +2,8 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using PlasmaShared;
-using PlasmaShared.UnitSyncLib;
+using ZkData;
+using ZkData.UnitSyncLib;
 
 namespace ZeroKLobby
 {
@@ -15,7 +15,7 @@ namespace ZeroKLobby
         public void SetMapTooltipRenderer(string mapName)
         {
             this.mapName = mapName;
-            Program.SpringScanner.MetaData.GetMapAsync(mapName, (map, minimap, heightmap, metalmap) => { this.map = map; }, (exc) => { }, Program.SpringPaths.SpringVersion);
+            Program.SpringScanner.MetaData.GetMapAsync(mapName, (map, minimap, heightmap, metalmap) => { this.map = map; }, (exc) => { });
         }
 
         public void Draw(Graphics g, Font font, Color foreColor)

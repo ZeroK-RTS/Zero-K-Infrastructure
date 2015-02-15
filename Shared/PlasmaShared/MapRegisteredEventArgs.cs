@@ -1,7 +1,7 @@
 ﻿using System;
-using PlasmaShared.UnitSyncLib;
+using ZkData.UnitSyncLib;
 
-namespace PlasmaShared
+namespace ZkData
 {
     public class MapRegisteredEventArgs: EventArgs
     {

@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 #endregion
 
-namespace PlasmaShared
+namespace ZkData
 {
     public class SpringPaths
     {

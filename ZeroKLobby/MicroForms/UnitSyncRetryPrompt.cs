@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace ZeroKLobby.MicroForms
@@ -16,7 +10,7 @@ namespace ZeroKLobby.MicroForms
         static Timer countDown;
         static int counter = 0;
 
-        public static void SpringScanner_RetryGetResourceInfo(object sender, PlasmaShared.CancelEventArgs<PlasmaShared.SpringScanner.CacheItem> e)
+        public static void SpringScanner_RetryGetResourceInfo(object sender, ZkData.CancelEventArgs<ZkData.SpringScanner.CacheItem> e)
         {
             if (thisInstance != null)
                 thisInstance.Dispose();
@@ -25,13 +19,6 @@ namespace ZeroKLobby.MicroForms
             {
                 e.Cancel = rememberedResult=="cancel";
                 return;
-            }
-
-            var springPath = Program.SpringPaths;
-            if (springPath.UnitSyncDirectory == "") //if never set Spring path yet
-            {
-                var defaultEnginePath = Utils.MakePath(springPath.WritableDirectory, "engine", ZkData.GlobalConst.DefaultEngineOverride);
-                springPath.SetEnginePath(defaultEnginePath); //DefaultEngineOverride at PlasmaShared/GlobalConst.cs
             }
 
             thisInstance = new PromptForm();

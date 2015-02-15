@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Windows.Forms;
-using PlasmaShared;
+using ZkData;
 
 namespace ZeroKLobby.Notifications
 {

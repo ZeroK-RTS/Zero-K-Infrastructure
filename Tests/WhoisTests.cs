@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using NUnit.Framework;
-using PlasmaShared;
+using ZkData;
 
 namespace Tests
 {
@@ -11,7 +12,7 @@ namespace Tests
     public class WhoisTests
     {
         [Test]
-        public void RunQuery() {
+        public async Task RunQuery() {
             var whois = new Whois();
             var data = whois.QueryByIp("31.7.187.232");
             Assert.AreEqual("PRIVAX-LTD", data["netname"]);

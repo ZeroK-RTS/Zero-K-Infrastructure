@@ -1,13 +1,9 @@
-﻿using LobbyClient;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using ZeroKLobby;
-using ZeroKLobby.Lines;
-using PlasmaShared.UnitSyncLib;
-using ZeroKLobby.MicroLobby.ExtrasTab;
+using ZkData;
 
 namespace ZeroKLobby.Controls
 {
@@ -16,6 +12,7 @@ namespace ZeroKLobby.Controls
         public MinimapFuncBox()
         {
             InitializeComponent();
+
             Program.ToolTip.SetText(btnGameOptions, "List available map/mod-options");
             Program.ToolTip.SetText(btnMapList, "List featured maps");
             Program.ToolTip.SetText(btnChangeTeam, "Create or move to new team");
@@ -70,7 +67,7 @@ namespace ZeroKLobby.Controls
 
         private void btnMapList_Click(object sender, EventArgs e)
         {
-            Program.MainWindow.navigationControl.Path = "http://zero-k.info/Maps";
+            Program.MainWindow.navigationControl.Path = string.Format("{0}/Maps", GlobalConst.BaseSiteUrl);
         }
 
         private void btnGameOptions_Click(object sender, EventArgs e)
