@@ -13,7 +13,7 @@ using ZkData;
 
 namespace ZeroKLobby.MicroLobby
 {
-    public partial class BattleListControl: ScrollableControl
+    public partial class BattleListControl : ScrollableControl
     {
         readonly Dictionary<BattleIcon, Point> battleIconPositions = new Dictionary<BattleIcon, Point>();
         Point openBattlePosition;
@@ -29,11 +29,11 @@ namespace ZeroKLobby.MicroLobby
         readonly bool sortByPlayers;
 
         List<BattleIcon> view = new List<BattleIcon>();
-        static Pen dividerPen = new Pen(Color.DarkCyan, 3) {DashStyle = DashStyle.Dash};
+        static Pen dividerPen = new Pen(Color.DarkCyan, 3) { DashStyle = DashStyle.Dash };
         static Font dividerFont = new Font("Segoe UI", 15.25F, FontStyle.Bold);
-        static SolidBrush dividerFontBrush = new SolidBrush(Program.Conf.TextColor);
+        static SolidBrush dividerFontBrush = new SolidBrush(Color.White);
 
-        
+
 
         public string FilterText
         {
@@ -123,9 +123,6 @@ namespace ZeroKLobby.MicroLobby
             hideFull = Program.Conf.HideNonJoinableBattles;
             hidePassworded = Program.Conf.HidePasswordedBattles;
             showOfficial = Program.Conf.ShowOfficialBattles;
-
-            
-
             Repaint();
         }
 
@@ -135,6 +132,7 @@ namespace ZeroKLobby.MicroLobby
             Program.BattleIconManager.BattleAdded -= HandleBattle;
             Program.BattleIconManager.RemovedBattle -= HandleBattle;
         }
+
 
         public static bool BattleWordFilter(Battle x, string[] words)
         {
@@ -212,12 +210,13 @@ namespace ZeroKLobby.MicroLobby
                     {
                         // hack dialog Program.FormMain
                         using (var form = new AskBattlePasswordForm(battle.Founder.Name)) if (form.ShowDialog() == DialogResult.OK) ActionHandler.JoinBattle(battle.BattleID, form.Password);
-                    } else 
+                    }
+                    else
                     {
-                        ActionHandler.JoinBattle(battle.BattleID, null);    
+                        ActionHandler.JoinBattle(battle.BattleID, null);
 
                     }
-                    
+
                 }
                 else if (OpenGameButtonHitTest(e.X, e.Y)) ShowHostDialog(KnownGames.GetDefaultGame());
             }
@@ -243,27 +242,65 @@ namespace ZeroKLobby.MicroLobby
             else UpdateTooltip(battle);
         }
 
+
+
+        private void PaintParentBackground(Control par, PaintEventArgs e)
+        {
+            var loc = par.PointToClient(Parent.PointToScreen(Location));
+            var rect = new Rectangle(loc.X, loc.Y, Width, Height);
+
+            e.Graphics.TranslateTransform(-rect.X, -rect.Y);
+            try
+            {
+                using (var pea = new PaintEventArgs(e.Graphics, rect))
+                {
+                    pea.Graphics.SetClip(rect);
+                    InvokePaintBackground(par, pea);
+                    //InvokePaint(par, pea);
+                }
+            }
+            finally
+            {
+                e.Graphics.TranslateTransform(rect.X, rect.Y);
+            }
+        }
+
+
+        protected override void OnPaintBackground(PaintEventArgs e)
+        {
+            //base.OnPaintBackground(e);
+            PaintParentBackground(Program.MainWindow.panelRight, e);
+        }
+
         protected override void OnPaint(PaintEventArgs pe)
         {
             try
             {
+
+                //pe.Graphics.DrawImage(Program.MainWindow.navigationControl,DisplayRectangle, Bounds, GraphicsUnit.Point);
+                Graphics g = pe.Graphics;
+
                 DpiMeasurement.DpiXYMeasurement();
                 int scaledIconWidth = DpiMeasurement.ScaleValueX(BattleIcon.Width);
                 int scaledIconHeight = DpiMeasurement.ScaleValueY(BattleIcon.Height);
                 int scaledMapCellWidth = DpiMeasurement.ScaleValueX(BattleIcon.MapCellSize.Width);
+                //base.OnPaint(pe);
 
-                base.OnPaint(pe);
-                Graphics g = pe.Graphics;
                 g.TranslateTransform(AutoScrollPosition.X, AutoScrollPosition.Y);
+
+
                 battleIconPositions.Clear();
                 int x = 0;
                 int y = 0;
 
 
-                if (view.Any(b => b.Battle.IsQueue && !b.IsInGame)) {
+                if (view.Any(b => b.Battle.IsQueue && !b.IsInGame))
+                {
                     PaintDivider(g, ref x, ref y, "Match maker queues");
-                    foreach (BattleIcon t in view.Where(b => b.Battle.IsQueue && !b.IsInGame)) {
-                        if (x + scaledIconWidth > Width) {
+                    foreach (BattleIcon t in view.Where(b => b.Battle.IsQueue && !b.IsInGame))
+                    {
+                        if (x + scaledIconWidth > Width)
+                        {
                             x = 0;
                             y += scaledIconHeight;
                         }
@@ -316,10 +353,11 @@ namespace ZeroKLobby.MicroLobby
 
             g.DrawLine(dividerPen, 5, y + 2, Width - 10, y + 2);
             y += 4;
-            g.DrawString(text, dividerFont, dividerFontBrush,new RectangleF(10,y , Width-20,30),new StringFormat()
+            g.DrawString(text, dividerFont, dividerFontBrush, new RectangleF(10, y, Width - 20, 30), new StringFormat()
             {
-                LineAlignment = StringAlignment.Center,Alignment = StringAlignment.Center
-            }  );
+                LineAlignment = StringAlignment.Center,
+                Alignment = StringAlignment.Center
+            });
             y += 24;
             g.DrawLine(dividerPen, 5, y + 2, Width - 10, y + 2);
             y += 4;
@@ -430,7 +468,7 @@ namespace ZeroKLobby.MicroLobby
 
         void Sort()
         {
-            IOrderedEnumerable<BattleIcon> ret = view.OrderBy(x=>x.Battle.IsInGame);
+            IOrderedEnumerable<BattleIcon> ret = view.OrderBy(x => x.Battle.IsInGame);
             ret = ret.OrderByDescending(x => x.Battle.IsSpringieManaged);
             if (sortByPlayers) ret = ret.ThenByDescending(bi => bi.Battle.NonSpectatorCount);
             ret = ret.ThenBy(x => x.Battle.Title);

@@ -8,13 +8,12 @@ using ZkData;
 
 namespace ZeroKLobby
 {
-    public partial class NavigationControl: UserControl
+    public partial class NavigationControl: HeadlessTabControl
     {
         static List<ButtonInfo> ButtonList { get; set; }
         bool CanGoBack { get { return backStack.Any(); } }
         bool CanGoForward { get { return forwardStack.Any(); } }
-
-
+        
         NavigationStep CurrentPage {
             get { return _currentPage; }
             set {
@@ -29,10 +28,12 @@ namespace ZeroKLobby
                 }
 
 
-                var navigable = tabControl.Controls.OfType<Object>().Select(GetINavigatableFromControl).FirstOrDefault(x => x != null && Path.StartsWith(x.PathHead)); //find TAB with correct PathHead
+                var navigable = Controls.OfType<Object>().Select(GetINavigatableFromControl).FirstOrDefault(x => x != null && Path.StartsWith(x.PathHead)); //find TAB with correct PathHead
                 if (navigable != null) navigable.Hilite(HiliteLevel.None, Path); //cancel hilite ChatTab's tab (if meet some condition)
             }
         }
+
+        FlowLayoutPanel flowLayoutPanel1; 
 
         NavigationStep _currentPage;
         readonly Stack<NavigationStep> backStack = new Stack<NavigationStep>();
@@ -75,35 +76,26 @@ namespace ZeroKLobby
 
             ButtonList = new List<ButtonInfo>() //normal arrangement
             {
-                new ButtonInfo() { Label = "HOME", TargetPath = GlobalConst.BaseSiteUrl + "/", Icon= Buttons.home, Height = 32,Width = 80 },
-                new ButtonInfo() { Label = "CHAT", TargetPath = "chat", Icon= ZklResources.chat, Height = 32, Width = 65 },
+                new ButtonInfo() { Label = "Chat", TargetPath = "chat", Icon= ZklResources.chat, Height = 32, Width = 65 },
                 new ButtonInfo()
                 {
-                    Label = "SINGLEPLAYER",
-                    TargetPath = string.Format("{0}/Missions", GlobalConst.BaseSiteUrl),
-                    Icon = Buttons.spherebot,
-                    Width = 125,
-                    Height = 32,
-                },
-                new ButtonInfo()
-                {
-                    Label = "MULTIPLAYER",
+                    Label = "Quick browse",
                     TargetPath = "battles", Icon =  ZklResources.battle,
                     Width = 115,
                     Height = 32,
                 },
-                
-                new ButtonInfo() { Label = "PLANETWARS", TargetPath = string.Format("{0}/Planetwars/", GlobalConst.BaseSiteUrl), Height = 32,  },
-                new ButtonInfo() { Label = "MAPS", TargetPath = string.Format("{0}/Maps/", GlobalConst.BaseSiteUrl), Icon = Buttons.map, Height = 32, Width = 75 },
-                new ButtonInfo() { Label = "REPLAYS", TargetPath = string.Format("{0}/Battles/", GlobalConst.BaseSiteUrl), Icon = Buttons.video_icon, Height = 32, Width = 95 },
-                new ButtonInfo() { Label = "FORUM", TargetPath = string.Format("{0}/Forum/", GlobalConst.BaseSiteUrl), Height = 32, Width = 65, },
-                new ButtonInfo() { Label = "SETTINGS", TargetPath = "settings", Icon = Buttons.settings, Height = 32, Width = 100, Dock = DockStyle.Right},
+                new ButtonInfo() { Label = "Extras", TargetPath = "extras", Height = 32,  },
+                new ButtonInfo() { Label = "Settings", TargetPath = "settings", Icon = Buttons.settings, Height = 32, Width = 100, Dock = DockStyle.Right},
+               
+
                
             };
 
+            flowLayoutPanel1 = new FlowLayoutPanel(); // TODO on parent
+
             Instance = this;
 
-            tabControl.TabPages.Clear();
+            TabPages.Clear();
 
             chatTab = new ChatTab();
             
@@ -115,16 +107,14 @@ namespace ZeroKLobby
             AddTabPage(new SettingsTab(), "Settings");
             AddTabPage(new ServerTab(), "Server");
             AddTabPage(new DownloaderTab(), "Rapid");
-            //AddTabPage(new MicroLobby.ExtrasTab.ExtrasTab(), "Extra");
-            
+
             foreach (var but in ButtonList) flowLayoutPanel1.Controls.Add(but.GetButton());
-            flowLayoutPanel1.Controls.Add(logoutButton);
-            flowLayoutPanel1.BringToFront();
+            //flowLayoutPanel1.BringToFront();
             ResumeLayout();
         }
 
         public INavigatable GetInavigatableByPath(string path) { //get which TAB has which PathHead (header)
-            foreach (TabPage tabPage in tabControl.Controls) {
+            foreach (TabPage tabPage in Controls) {
                 var navigatable = GetINavigatableFromControl(tabPage);
                 if (path.Contains(navigatable.PathHead)) return navigatable;
             }
@@ -136,7 +126,7 @@ namespace ZeroKLobby
             if (string.IsNullOrEmpty(navigationPath)) return false;
             if (hiliteLevel == HiliteLevel.Flash) foreach (var b in ButtonList) if (navigationPath.StartsWith(b.TargetPath)) b.IsAlerting = true; //make BUTTON turn red
 
-            var navigable = tabControl.Controls.OfType<Object>().Select(GetINavigatableFromControl).First(x => x != null && navigationPath.Contains(x.PathHead));
+            var navigable = Controls.OfType<Object>().Select(GetINavigatableFromControl).First(x => x != null && navigationPath.Contains(x.PathHead));
             if (navigable != null) return navigable.Hilite(hiliteLevel, navigationPath); //make ChatTab's tab to flash
             else return false;
         }
@@ -150,7 +140,7 @@ namespace ZeroKLobby
         }
 
         public void SwitchTab(string targetPath) { //called by ButtonInfo.cs when clicked. "targetPath" is usually a "PathHead"
-            foreach (TabPage tabPage in tabControl.Controls) {
+            foreach (TabPage tabPage in Controls) {
                 var nav = GetINavigatableFromControl(tabPage);
                 if (nav.PathHead == targetPath)
                 {
@@ -175,7 +165,7 @@ namespace ZeroKLobby
             tb.Dock = DockStyle.Fill;
             tb.Controls.Add(content);
             content.Dock = DockStyle.Fill;
-            tabControl.TabPages.Add(tb);
+            TabPages.Add(tb);
             return tb;
         }
 
@@ -200,12 +190,12 @@ namespace ZeroKLobby
 
         NavigationStep GoToPage(string[] path) // todo cleanup
         {
-            foreach (TabPage tabPage in tabControl.Controls)
+            foreach (TabPage tabPage in Controls)
             {
                 var navigatable = GetINavigatableFromControl(tabPage); //translate tab button into the page it represent
                 if (navigatable != null && navigatable.TryNavigate(path))
                 {
-                    tabControl.SelectTab(tabPage);
+                    SelectTab(tabPage);
                     lastTabPaths[navigatable] = string.Join("/", path);
                     return new NavigationStep { Path = path };
                 }
@@ -241,23 +231,23 @@ namespace ZeroKLobby
         {
             // todo  instead add flowlayoutpanel or tablelayout panel to entire navigation form and let i size elements as needed
 
-            int windowWidth = this.Size.Width;
-            int windowHeight = this.Size.Height;
+            //int windowWidth = this.Size.Width;
+            //int windowHeight = this.Size.Height;
 
             //this make back/forward/reload button follow Nav bar's height (this is not really important if Nav bar height remain constant)
             //NOTE: tweak here if not satisfy with Go/Forward/Backward button position. This override designer.
-            flowLayoutPanel1.Width = windowWidth;
+            /*flowLayoutPanel1.Width = windowWidth;
             int height = flowLayoutPanel1.Size.Height;
             
             //resize the content area (which show chat & internal browser) according to Nav bar's height
-            int heightPlusButton = height - tabControl.ItemSize.Height;
+            int heightPlusButton = height - ItemSize.Height;
             int freeHeight = windowHeight - heightPlusButton;
-            tabControl.Location = new System.Drawing.Point(tabControl.Location.X, heightPlusButton);
-            tabControl.Height = freeHeight;
-            tabControl.Width = windowWidth;
+            Location = new System.Drawing.Point(Location.X, heightPlusButton);
+            Height = freeHeight;
+            Width = windowWidth;*/
         }
 
-        public INavigatable CurrentNavigatable { get { return tabControl.SelectedTab.Controls.OfType<INavigatable>().FirstOrDefault(); } }
+        public INavigatable CurrentNavigatable { get { return SelectedTab.Controls.OfType<INavigatable>().FirstOrDefault(); } }
 
 
 

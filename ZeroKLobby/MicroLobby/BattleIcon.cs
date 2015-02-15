@@ -71,7 +71,7 @@ namespace ZeroKLobby.MicroLobby
         public int PlayerCount { get { return Battle.NonSpectatorCount; } }
 
 
-        public static Brush TextBrush = new SolidBrush(Program.Conf.TextColor);
+        public static Brush TextBrush = new SolidBrush(Color.White); //  Program.Conf.TextColor
         public static Font TitleFont = new Font("Segoe UI", 8.25F, FontStyle.Bold);
 
         public static Font QueueFont = new Font("Segoe UI", 13.25F, FontStyle.Bold);
@@ -161,7 +161,8 @@ namespace ZeroKLobby.MicroLobby
             var bitmap = new Bitmap(w, h);
             try
             {
-                using (Graphics g = Graphics.FromImage(bitmap)) g.FillRectangle(brush, 0, 0, w, h);
+                using (var g = Graphics.FromImage(bitmap)) ButtonRenderer.Instance.RenderToGraphics(g, new Rectangle(0,0,w,h), ButtonRenderer.StyleType.DarkHive );
+                //using (Graphics g = Graphics.FromImage(bitmap)) g.FillRectangle(brush, 0, 0, w, h);
             }
             catch
             {

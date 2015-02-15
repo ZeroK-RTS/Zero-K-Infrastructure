@@ -270,7 +270,7 @@
       <DependentUpon>SpringsettingForm.cs</DependentUpon>
     </Compile>
     <Compile Include="NavigationControl.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="NavigationControl.Designer.cs">
       <DependentUpon>NavigationControl.cs</DependentUpon>
@@ -1762,6 +1762,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Buttons\back.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\left.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">

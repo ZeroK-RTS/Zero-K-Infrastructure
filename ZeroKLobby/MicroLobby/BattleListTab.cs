@@ -13,8 +13,9 @@ namespace ZeroKLobby.MicroLobby
 
         public BattleListTab() 
         {
-            Paint += BattleListTab_Enter; 
-            BackColor = Color.Transparent;
+            Paint += BattleListTab_Enter;
+            BackColor = Color.White;
+            SetStyle(ControlStyles.DoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
         }
 
         void BattleListTab_Enter(object sender, EventArgs e) //lazy initialization
@@ -70,16 +71,52 @@ namespace ZeroKLobby.MicroLobby
             return false;
         }
 
-        public string GetTooltip(params string[] path) {
-            return null;
+
+        private void PaintParentBackground(Control par, PaintEventArgs e)
+        {
+            if (par != null)
+            {
+                Point loc = par.PointToClient(Parent.PointToScreen(Location));
+
+
+                Rectangle rect = new Rectangle(loc.X, loc.Y,
+                                               Width, Height);
+
+                e.Graphics.TranslateTransform(-rect.X, -rect.Y);
+
+                try
+                {
+                    using (PaintEventArgs pea =
+                                new PaintEventArgs(e.Graphics, rect))
+                    {
+                        pea.Graphics.SetClip(rect);
+                        InvokePaintBackground(par, pea);
+                        //InvokePaint(par, pea);
+                    }
+                }
+                finally
+                {
+                    e.Graphics.TranslateTransform(rect.X, rect.Y);
+                }
+            }
+            else
+            {
+                e.Graphics.FillRectangle(SystemBrushes.Control,
+                                         ClientRectangle);
+            }
         }
 
-        public void Reload() {
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            //PaintParentBackground(Program.MainWindow, e);
+            
+            //ClientRectangle = new Rectangle(DisplayRectangle.Left+20, DisplayRectangle.Top+20, DisplayRectangle.Width-40,DisplayRectangle.Height-40);
+            //ButtonRenderer.Instance.RenderToGraphics(e.Graphics,DisplayRectangle, ButtonRenderer.StyleType.Shraka );
+
+            base.OnPaint(e);
         }
 
-        public bool CanReload { get { return false; } }
 
-        public bool IsBusy { get { return false;} }
 
         void searchBox_TextChanged(object sender, EventArgs e) {
             if (!string.IsNullOrEmpty(searchBox.Text)) Program.MainWindow.navigationControl.Path = "battles/" + searchBox.Text;

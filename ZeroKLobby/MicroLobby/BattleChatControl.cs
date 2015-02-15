@@ -88,7 +88,7 @@ namespace ZeroKLobby.MicroLobby
 		protected override void OnResize(EventArgs e)
 		{
 			base.OnResize(e);
-            if (finishLoad)
+            if (finishLoad && minimapFuncBox.minimapSplitContainer1.Height > 1)
             {
                 DpiMeasurement.DpiXYMeasurement(this);
                 minimapFuncBox.minimapSplitContainer1.SplitterDistance = Math.Min(DpiMeasurement.ScaleValueY(23),minimapFuncBox.minimapSplitContainer1.Height); //always show button fully

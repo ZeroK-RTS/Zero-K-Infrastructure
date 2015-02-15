@@ -65,11 +65,11 @@ namespace ZeroKLobby
         public MainWindow()
         {
             InitializeComponent();
-            SetStyle(ControlStyles.SupportsTransparentBackColor | ControlStyles.DoubleBuffer, true);
+            SetStyle( ControlStyles.DoubleBuffer, true);
 
             pages[MainPages.Home] = new HomePage();
             pages[MainPages.SinglePlayer] = new SinglePlayerPage();
-            pages[MainPages.Skirmish] = new SkirmishControl();
+            pages[MainPages.Skirmish] = new BattleListTab();
 
             Instance = this;
 
@@ -96,11 +96,6 @@ namespace ZeroKLobby
             var home = new HomePage();
             switchPanel1.SwitchContent(home);
 
-            //BackColor = Color.Transparent;
-
-            //BackColor = Color.FromArgb(0, Color.Empty);
-
-            //BackgroundImage = null;
             //btnWindowed_Click(this, EventArgs.Empty);
         }
 
@@ -219,20 +214,6 @@ namespace ZeroKLobby
             TopMost = false;
         }
 
-        protected override void OnResizeBegin(EventArgs e)
-        {
-            resizeStoredBackground = BackgroundImage;
-            BackgroundImage = null;
-            base.OnResizeBegin(e);
-        }
-
-        protected override void OnResizeEnd(EventArgs e)
-        {
-            base.OnResizeEnd(e);
-            //            popPanel.Width = Width / 2 - 20;
-            //popPanel.Left = Width / 2;
-            BackgroundImage = resizeStoredBackground;
-        }
 
         /// <summary>
         ///     Flashes window if its not foreground - until it is foreground
@@ -365,5 +346,41 @@ namespace ZeroKLobby
         {
             UpdateDownloads();
         }
+
+        private void bitmapButton1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panelRight_Paint(object sender, PaintEventArgs e)
+        {
+            if (panelRight.BackgroundImage == null) {
+                var img = new Bitmap(panelRight.Width, panelRight.Height);
+                using (var g = Graphics.FromImage(img)) {
+                    g.TranslateTransform(-panelRight.Left, -panelRight.Top);
+                    InvokePaintBackground(this, new PaintEventArgs(g, panelRight.Bounds));
+                    g.TranslateTransform(panelRight.Left, panelRight.Top);
+
+                    //g.DrawImage(BackgroundImage, panelRight.ClientRectangle, panelRight.Left, panelRight.Top, panelRight.Width, panelRight.Height, GraphicsUnit.Pixel);
+                    ButtonRenderer.Instance.RenderToGraphics(g, panelRight.ClientRectangle, ButtonRenderer.StyleType.Shraka);
+                }
+                panelRight.BackgroundImageLayout = ImageLayout.None;
+                panelRight.BackgroundImage = img;    
+            }
+
+            
+
+        }
+
+        private void btnHide_Click(object sender, EventArgs e)
+        {
+            panelRight.Visible = false;
+        }
+
+        private void panelRight_SizeChanged(object sender, EventArgs e)
+        {
+            panelRight.BackgroundImage = null;
+        }
+
     }
 }
