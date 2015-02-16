@@ -40,7 +40,7 @@ namespace ZeroKLobby
         public bool Visible { get; set; }
         public DockStyle Dock { get; set; }
 
-        public Bitmap Icon { get; set; }
+        public Image Icon { get; set; }
 
         public ButtonInfo() {
             Visible = true;

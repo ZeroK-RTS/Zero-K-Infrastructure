@@ -182,29 +182,30 @@ namespace ZeroKLobby.MicroLobby
 
 		void UpdateHoverItem(MouseEventArgs e)
 		{
-			var cursorPoint = new Point(e.X, e.Y);
-			
-			if (cursorPoint == previousLocation) return;
-			previousLocation = cursorPoint;
-			
-			var hoverIndex = IndexFromPoint(cursorPoint); //note: this don't return value exceeding base.Items.Count -1
-			bool isOnEmpty = (hoverIndex >= base.Items.Count-1 && !GetItemRectangle(hoverIndex).Contains(cursorPoint));		
-			
-			if (isOnEmpty) hoverIndex = base.Items.Count; //we'll use this number when cursor is outside the list
-			
-			if (previousHoverIndex == hoverIndex) return;
-			previousHoverIndex = hoverIndex;
+		    try {
+		        var cursorPoint = new Point(e.X, e.Y);
 
-			if (hoverIndex < 0 || hoverIndex >= base.Items.Count)
-			{
-				HoverItem = null; //outside the list
-				Program.ToolTip.SetUser(this, null);
-			}
-			else
-			{
-				HoverItem = (PlayerListItem)base.Items[hoverIndex];
-				if (HoverItem.UserName != null) Program.ToolTip.SetUser(this, HoverItem.UserName);
-			}
+		        if (cursorPoint == previousLocation) return;
+		        previousLocation = cursorPoint;
+
+		        var hoverIndex = IndexFromPoint(cursorPoint); //note: this don't return value exceeding base.Items.Count -1
+		        bool isOnEmpty = (hoverIndex >= base.Items.Count - 1 && !GetItemRectangle(hoverIndex).Contains(cursorPoint));
+
+		        if (isOnEmpty) hoverIndex = base.Items.Count; //we'll use this number when cursor is outside the list
+
+		        if (previousHoverIndex == hoverIndex) return;
+		        previousHoverIndex = hoverIndex;
+
+		        if (hoverIndex < 0 || hoverIndex >= base.Items.Count) {
+		            HoverItem = null; //outside the list
+		            Program.ToolTip.SetUser(this, null);
+		        } else {
+		            HoverItem = (PlayerListItem)base.Items[hoverIndex];
+		            if (HoverItem.UserName != null) Program.ToolTip.SetUser(this, HoverItem.UserName);
+		        }
+		    } catch (Exception ex) {
+		        Trace.TraceError("Error updating hovered item: {0}",ex);
+		    }
 		}
 
 

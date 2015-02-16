@@ -278,7 +278,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 // todo remove minimapSize and use minimap image directly when plasmaserver stuff fixed
                 var yScale = (double)minimapBox.Height / minimapSize.Height;
                 var scale = Math.Min(xScale, yScale);
-                minimapBox.Image = minimap.GetResized((int)(scale * minimapSize.Width), (int)(scale * minimapSize.Height), InterpolationMode.HighQualityBicubic);
+                minimapBox.Image = minimap.GetResized((int)(scale * minimapSize.Width), (int)(scale * minimapSize.Height));
 
                 if (currentMod != null && currentMod.IsMission)
                 { //skip drawing startbox for Mission Mod (also, we didn't read their startbox). Also disabled startbox drag in Event_MinimapBox_MouseMove().

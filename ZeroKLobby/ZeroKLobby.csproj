@@ -135,9 +135,6 @@
     <Compile Include="Controls\SwitchPanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\SwitchPanel.Designer.cs">
-      <DependentUpon>SwitchPanel.cs</DependentUpon>
-    </Compile>
     <Compile Include="DarkHive.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

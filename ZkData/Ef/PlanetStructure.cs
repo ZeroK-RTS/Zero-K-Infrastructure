@@ -82,7 +82,7 @@ namespace ZkData
         {
             using (var image = Image.FromFile(folder + "/" + (!IsActive ? StructureType.DisabledMapIcon : StructureType.MapIcon)))
             {
-                using (var resized = image.GetResized(size, size, InterpolationMode.HighQualityBilinear))
+                using (var resized = image.GetResized(size, size))
                 {
                     var fileNameResized = GetFileNameResized(size);
                     resized.Save(folder + "/" + fileNameResized);

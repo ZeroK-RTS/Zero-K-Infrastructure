@@ -11,22 +11,8 @@ using System.Windows.Forms;
 
 namespace ZeroKLobby.Controls
 {
-    public partial class SwitchPanel : Panel
+    public class SwitchPanel:HeadlessTabControl
     {
-        public SwitchPanel()
-        {
-            InitializeComponent();
-            BackColor = Color.Transparent;
-            SetStyle(ControlStyles.SupportsTransparentBackColor, true);
-            DoubleBuffered = true;
-        }
-
-        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public override Color BackColor { get { return base.BackColor; } set { base.BackColor = value; } }
-
-        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        protected override bool DoubleBuffered { get { return base.DoubleBuffered; } set { base.DoubleBuffered = value; } }
-
         public Control CurrentTarget { get; private set; }
 
         public enum AnimType
@@ -45,59 +31,22 @@ namespace ZeroKLobby.Controls
             c.Top = (int)Math.Round(original.Top + r.Height * percent); 
         }
 
-        void DrawSyblings(PaintEventArgs e)
-        {
-            if (Parent != null) {
-                float tx = -Left, ty = -Top;
-
-                // make adjustments to tx and ty here if your control
-                // has a non-client area, borders or similar
-
-                e.Graphics.TranslateTransform(tx, ty);
-
-                using (PaintEventArgs pea = new PaintEventArgs(e.Graphics, e.ClipRectangle)) {
-                    InvokePaintBackground(Parent, pea);
-                    InvokePaint(Parent, pea);
-                }
-
-                e.Graphics.TranslateTransform(-tx, -ty);
-
-                // loop through children of parent which are under ourselves
-                int start = Parent.Controls.GetChildIndex(this);
-                Rectangle rect = new Rectangle(Left, Top, Width, Height);
-                for (int i = Parent.Controls.Count - 1; i > start; i--) {
-                    Control c = Parent.Controls[i];
-
-                    // skip ...
-                    // ... invisible controls
-                    // ... or controls that have zero width/height (Autosize Labels without content!)
-                    // ... or controls that don't intersect with ourselves
-                    if (!c.Visible || c.Width == 0 || c.Height == 0 || !rect.IntersectsWith(new Rectangle(c.Left, c.Top, c.Width, c.Height))) continue;
-
-                    using (Bitmap b = new Bitmap(c.Width, c.Height, e.Graphics)) {
-                        c.DrawToBitmap(b, new Rectangle(0, 0, c.Width, c.Height));
-
-                        tx = c.Left - Left;
-                        ty = c.Top - Top;
-
-                        // make adjustments to tx and ty here if your control
-                        // has a non-client area, borders or similar
-
-                        e.Graphics.TranslateTransform(tx, ty);
-                        e.Graphics.DrawImageUnscaled(b, new Point(0, 0));
-                        e.Graphics.TranslateTransform(-tx, -ty);
-                    }
-                }
-            }
-        }
-
-
+      
         const int stepCount = 10;
         const int stepDelay = 10;
 
 
         public async Task SwitchContent(Control newTarget, AnimType? animation = null)
         {
+            var tab = new TabPage();
+            newTarget.Dock = DockStyle.Fill;
+            tab.Controls.Add(newTarget);
+            TabPages.Add(tab);
+            SelectTab(tab);
+            CurrentTarget = newTarget;
+            return;
+            
+
             var animator = GetAnimator(animation);
 
             if (CurrentTarget != null && animator != null) {
@@ -160,40 +109,6 @@ namespace ZeroKLobby.Controls
             return animator;
         }
 
-        protected override void OnPaint(PaintEventArgs pe)
-        {
-            base.OnPaint(pe);
-        }
 
-        private void PaintParentBackground(PaintEventArgs e)
-        {
-            if (Parent != null)
-            {
-                Rectangle rect = new Rectangle(Left, Top,
-                                               Width, Height);
-
-                e.Graphics.TranslateTransform(-rect.X, -rect.Y);
-
-                try
-                {
-                    using (PaintEventArgs pea =
-                                new PaintEventArgs(e.Graphics, rect))
-                    {
-                        pea.Graphics.SetClip(rect);
-                        InvokePaintBackground(Parent, pea);
-                        InvokePaint(Parent, pea);
-                    }
-                }
-                finally
-                {
-                    e.Graphics.TranslateTransform(rect.X, rect.Y);
-                }
-            }
-            else
-            {
-                e.Graphics.FillRectangle(SystemBrushes.Control,
-                                         ClientRectangle);
-            }
-        }
     }
 }

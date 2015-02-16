@@ -118,9 +118,9 @@
             this.switchPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.switchPanel1.BackColor = System.Drawing.Color.Transparent;
             this.switchPanel1.Location = new System.Drawing.Point(0, 63);
             this.switchPanel1.Name = "switchPanel1";
+            this.switchPanel1.SelectedIndex = 0;
             this.switchPanel1.Size = new System.Drawing.Size(1386, 688);
             this.switchPanel1.TabIndex = 9;
             // 
@@ -214,7 +214,6 @@
             // MainWindow
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.BackgroundImage = global::ZeroKLobby.BgImages.bg_battle;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1386, 816);
             this.Controls.Add(this.lbMainPageTitle);

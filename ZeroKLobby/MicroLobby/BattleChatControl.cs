@@ -193,7 +193,7 @@ namespace ZeroKLobby.MicroLobby
 		        // todo remove minimapSize and use minimap image directly when plasmaserver stuff fixed
 		        var yScale = (double)minimapBox.Height/minimapSize.Height;
 		        var scale = Math.Min(xScale, yScale);
-		        minimapBox.Image = minimap.GetResized((int)(scale*minimapSize.Width), (int)(scale*minimapSize.Height), InterpolationMode.HighQualityBicubic);
+		        minimapBox.Image = minimap.GetResized((int)(scale*minimapSize.Width), (int)(scale*minimapSize.Height));
 		        using (var g = Graphics.FromImage(minimapBox.Image)) {
 		            g.TextRenderingHint = TextRenderingHint.AntiAlias;
 		            g.SmoothingMode = SmoothingMode.HighQuality;

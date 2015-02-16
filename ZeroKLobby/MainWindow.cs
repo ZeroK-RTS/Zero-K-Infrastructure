@@ -43,7 +43,6 @@ namespace ZeroKLobby
         bool closeForReal;
         FormWindowState lastState = FormWindowState.Normal;
         readonly Dictionary<MainPages, Control> pages = new Dictionary<MainPages, Control>();
-        Image resizeStoredBackground;
 
         readonly NotifyIcon systrayIcon;
         readonly Timer timer1 = new Timer();
@@ -338,8 +337,6 @@ namespace ZeroKLobby
 
         void btnWindowed_Click(object sender, EventArgs e)
         {
-            Image image = BackgroundImage;
-            BackgroundImage = null;
             if (FormBorderStyle == FormBorderStyle.None) {
                 TopMost = false;
                 WindowState = FormWindowState.Normal;
@@ -349,9 +346,23 @@ namespace ZeroKLobby
                 TopMost = true;
                 WindowState = FormWindowState.Maximized;
             }
-            BackgroundImage = image;
         }
 
+
+        protected override void OnPaintBackground(PaintEventArgs e)
+        {
+            if (BackgroundImage == null) {
+                BackgroundImageLayout = ImageLayout.None;
+                BackgroundImage = BgImages.bg_battle.GetResized(ClientRectangle.Width, ClientRectangle.Height);
+            }
+            base.OnPaintBackground(e);
+        }
+
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            base.OnSizeChanged(e);
+            BackgroundImage = null;
+        }
 
         void systrayIcon_BalloonTipClicked(object sender, EventArgs e)
         {

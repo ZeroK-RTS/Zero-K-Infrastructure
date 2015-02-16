@@ -127,10 +127,10 @@ namespace ZeroKLobby
                 e = SizeMult(e, downScale);
                 w = SizeMult(w, downScale);
 
-                northBrush = new TextureBrush(style.N.GetResized(n.Width, n.Height, InterpolationMode.Default), WrapMode.TileFlipY);
-                southBrush = new TextureBrush(style.S.GetResized(s.Width, s.Height, InterpolationMode.Default), WrapMode.TileFlipY);
-                eastBrush = new TextureBrush(style.E.GetResized(e.Width, e.Height, InterpolationMode.Default), WrapMode.TileFlipX);
-                westBrush = new TextureBrush(style.W.GetResized(w.Width, w.Height, InterpolationMode.Default), WrapMode.TileFlipX);
+                northBrush = new TextureBrush(style.N.GetResizedWithCache(n.Width, n.Height), WrapMode.TileFlipY);
+                southBrush = new TextureBrush(style.S.GetResizedWithCache(s.Width, s.Height), WrapMode.TileFlipY);
+                eastBrush = new TextureBrush(style.E.GetResizedWithCache(e.Width, e.Height), WrapMode.TileFlipX);
+                westBrush = new TextureBrush(style.W.GetResizedWithCache(w.Width, w.Height), WrapMode.TileFlipX);
             } else {
                 northBrush = new TextureBrush(style.N, WrapMode.TileFlipY);
                 southBrush = new TextureBrush(style.S, WrapMode.TileFlipY);
