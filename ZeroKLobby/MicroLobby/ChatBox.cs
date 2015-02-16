@@ -8,8 +8,10 @@ namespace ZeroKLobby.MicroLobby
     public class ChatBox: TextWindow
     {
         string filter;
+        string highlight;
         List<IChatLine> lines = new List<IChatLine>();
 
+        bool highlightActive;
         bool showHistory = true;
         bool showJoinLeave;
         public bool ShowHistory
@@ -39,18 +41,30 @@ namespace ZeroKLobby.MicroLobby
                 RefreshText();
             }
         }
+        
+        public string LineHighlight
+        {
+            get { return highlight; }
+            set
+            {
+                highlight = value;
+                highlightActive = !string.IsNullOrWhiteSpace(value);
+                RefreshText();
+            }
+        }
 
         public void AddLine(IChatLine line)
         {
             lines.Add(line);
-            if (PassesFilter(line)) WriteLine(line);
+            WriteLine(line);
         }
 
         public void RefreshText()
         {
             ClearTextWindow();
 
-            foreach (var line in lines) if (PassesFilter(line)) WriteLine(line);
+            foreach (var line in lines)
+                WriteLine(line);
         }
 
         public void Reset()
@@ -69,13 +83,24 @@ namespace ZeroKLobby.MicroLobby
             return true;
         }
 
+        bool DeHighlighted(string text)
+        {
+            return (text.Contains(highlight));
+        }
+
         void WriteLine(IChatLine line)
         {
-            var splitText = line.Text.Replace("\r\n", "\n").Replace("\\n", "\n").Split('\n');
-            AppendText(splitText[0]);
-            string padding = (line is TopicLine) ? "" : "        "; //padding to avoid player spoofing different player using multi-line & color & formating
-            for (int i = 1; i < splitText.Length;i++ )
-                AppendText(padding + splitText[i]); 
+            if (PassesFilter(line)) 
+            {
+                if (highlightActive && !DeHighlighted(line.Text))
+                    line = new HistoryLine(line.Text);
+
+                var splitText = line.Text.Replace("\r\n", "\n").Replace("\\n", "\n").Split('\n');
+                AppendText(splitText[0]);
+                string padding = (line is TopicLine) ? "" : "        "; //padding to avoid player spoofing different player using multi-line & color & formating
+                for (int i = 1; i < splitText.Length;i++ )
+                    AppendText(padding + splitText[i]);
+            }
         }
 
         private void InitializeComponent()  //minimum size >0 avoid chat window crash

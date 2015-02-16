@@ -47,7 +47,6 @@ namespace ZeroKLobby.MicroLobby
 			if (Program.TasClient.MyBattle != null) foreach (var user in Program.TasClient.MyBattle.Users.Values) AddUser(user.Name);
 			ChatLine += (s, e) => { if (Program.TasClient.IsLoggedIn) Program.TasClient.Say(SayPlace.Battle, null, e.Data, false); };
 			playerBox.IsBattle = true;
-			playerBox.MouseDown += playerBox_MouseDown;
 
             minimapFuncBox = new ZeroKLobby.Controls.MinimapFuncBox();
 
@@ -358,7 +357,7 @@ namespace ZeroKLobby.MicroLobby
 			}
 		}
 
-		void playerBox_MouseDown(object sender, MouseEventArgs mea)
+		protected override void PlayerBox_MouseClick(object sender, MouseEventArgs mea)
 		{
 			if (mea.Button == MouseButtons.Left)
 			{
@@ -383,6 +382,7 @@ namespace ZeroKLobby.MicroLobby
 				    } finally {
 				        Program.ToolTip.Visible = true;
 				    }
+					return;
 				}
                 //NOTE: code that display player's context menu on Left-mouse-click is in ChatControl.playerBox_MouseClick();
 			}
@@ -400,6 +400,7 @@ namespace ZeroKLobby.MicroLobby
 				    } finally {
 				        Program.ToolTip.Visible = true;
 				    }
+					return;
 				}
 				/*
 					if (playerBox.HoverItem.UserBattleStatus != null) {
@@ -410,6 +411,7 @@ namespace ZeroKLobby.MicroLobby
 						Program.ToolTip.Visible = true;
 					}*/
 			}
+			base.PlayerBox_MouseClick(sender, mea);
 		}
 
         private void InitializeComponent()

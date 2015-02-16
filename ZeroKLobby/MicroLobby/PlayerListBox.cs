@@ -160,10 +160,28 @@ namespace ZeroKLobby.MicroLobby
             }
 		}
 
+        bool mouseIsDown = false;
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            base.OnMouseDown(e);
+            mouseIsDown = true;
+            UpdateHoverItem(e);
+        }
+
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            base.OnMouseUp (e);
+            mouseIsDown = false;
+        }
 
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			base.OnMouseMove(e);
+			if (!mouseIsDown) UpdateHoverItem(e);
+		}
+
+		void UpdateHoverItem(MouseEventArgs e)
+		{
 			var cursorPoint = new Point(e.X, e.Y);
 			
 			if (cursorPoint == previousLocation) return;
