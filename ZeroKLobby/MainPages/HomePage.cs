@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace ZeroKLobby.MainPages
 {
-    public partial class HomePage : UserControl
+    public partial class HomePage:UserControl, IMainPage
     {
         public HomePage()
         {
@@ -31,5 +31,12 @@ namespace ZeroKLobby.MainPages
         {
             Program.ShutDown();
         }
+
+        public void GoBack()
+        {
+            Program.ShutDown();
+        }
+
+        public string Title { get { return null; } }
     }
 }

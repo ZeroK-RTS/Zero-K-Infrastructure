@@ -158,6 +158,7 @@
     <Compile Include="MainPages\HomePage.Designer.cs">
       <DependentUpon>HomePage.cs</DependentUpon>
     </Compile>
+    <Compile Include="MainPages\IMainPage.cs" />
     <Compile Include="MainPages\MultiPlayerPage.cs">
       <SubType>UserControl</SubType>
     </Compile>

@@ -177,12 +177,8 @@ namespace ZeroKLobby
 
 
 
-                if (Conf.IsFirstRun)
-                {
-                    Utils.CreateDesktopShortcut();
-                    if (Environment.OSVersion.Platform != PlatformID.Unix)
-                        Utils.RegisterProtocol();
-                }
+                if (Conf.IsFirstRun) Utils.CreateDesktopShortcut();
+                
 
                 SpringPaths = new SpringPaths(null, writableFolderOverride: contentDir);
                 SpringPaths.MakeFolders();

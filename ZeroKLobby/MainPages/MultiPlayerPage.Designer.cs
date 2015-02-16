@@ -29,140 +29,88 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MultiPlayerPage));
-            this.bitmapButton1 = new ZeroKLobby.BitmapButton();
-            this.skirmishButton = new ZeroKLobby.BitmapButton();
-            this.campaignButton = new ZeroKLobby.BitmapButton();
-            this.missonsButton = new ZeroKLobby.BitmapButton();
-            this.tutorialButton = new ZeroKLobby.BitmapButton();
+            this.btnSpectate = new ZeroKLobby.BitmapButton();
+            this.btnCustomBattles = new ZeroKLobby.BitmapButton();
+            this.btnJoinQueue = new ZeroKLobby.BitmapButton();
             this.SuspendLayout();
             // 
-            // bitmapButton1
+            // btnSpectate
             // 
-            this.bitmapButton1.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.bitmapButton1.BackColor = System.Drawing.Color.Transparent;
-            this.bitmapButton1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("bitmapButton1.BackgroundImage")));
-            this.bitmapButton1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.bitmapButton1.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
-            this.bitmapButton1.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bitmapButton1.FlatAppearance.BorderSize = 0;
-            this.bitmapButton1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
-            this.bitmapButton1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-            this.bitmapButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bitmapButton1.ForeColor = System.Drawing.Color.White;
-            this.bitmapButton1.Image = global::ZeroKLobby.Buttons.back;
-            this.bitmapButton1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.bitmapButton1.Location = new System.Drawing.Point(0, 5);
-            this.bitmapButton1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.bitmapButton1.Name = "bitmapButton1";
-            this.bitmapButton1.Size = new System.Drawing.Size(237, 57);
-            this.bitmapButton1.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Servo;
-            this.bitmapButton1.TabIndex = 20;
-            this.bitmapButton1.Text = "Back";
-            this.bitmapButton1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.bitmapButton1.UseVisualStyleBackColor = false;
-            this.bitmapButton1.Click += new System.EventHandler(this.bitmapButton1_Click);
+            this.btnSpectate.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.btnSpectate.BackColor = System.Drawing.Color.Transparent;
+            this.btnSpectate.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnSpectate.BackgroundImage")));
+            this.btnSpectate.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.btnSpectate.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
+            this.btnSpectate.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSpectate.FlatAppearance.BorderSize = 0;
+            this.btnSpectate.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.btnSpectate.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.btnSpectate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSpectate.ForeColor = System.Drawing.Color.White;
+            this.btnSpectate.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnSpectate.Location = new System.Drawing.Point(36, 436);
+            this.btnSpectate.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnSpectate.Name = "btnSpectate";
+            this.btnSpectate.Size = new System.Drawing.Size(375, 77);
+            this.btnSpectate.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.btnSpectate.TabIndex = 18;
+            this.btnSpectate.Text = "Watch a battle";
+            this.btnSpectate.UseVisualStyleBackColor = false;
             // 
-            // skirmishButton
+            // btnCustomBattles
             // 
-            this.skirmishButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.skirmishButton.BackColor = System.Drawing.Color.Transparent;
-            this.skirmishButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("skirmishButton.BackgroundImage")));
-            this.skirmishButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.skirmishButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
-            this.skirmishButton.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.skirmishButton.FlatAppearance.BorderSize = 0;
-            this.skirmishButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
-            this.skirmishButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-            this.skirmishButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.skirmishButton.ForeColor = System.Drawing.Color.White;
-            this.skirmishButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.skirmishButton.Location = new System.Drawing.Point(36, 540);
-            this.skirmishButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.skirmishButton.Name = "skirmishButton";
-            this.skirmishButton.Size = new System.Drawing.Size(375, 77);
-            this.skirmishButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
-            this.skirmishButton.TabIndex = 19;
-            this.skirmishButton.Text = "Skirmish";
-            this.skirmishButton.UseVisualStyleBackColor = false;
+            this.btnCustomBattles.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.btnCustomBattles.BackColor = System.Drawing.Color.Transparent;
+            this.btnCustomBattles.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnCustomBattles.BackgroundImage")));
+            this.btnCustomBattles.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.btnCustomBattles.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
+            this.btnCustomBattles.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnCustomBattles.FlatAppearance.BorderSize = 0;
+            this.btnCustomBattles.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.btnCustomBattles.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.btnCustomBattles.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCustomBattles.ForeColor = System.Drawing.Color.White;
+            this.btnCustomBattles.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnCustomBattles.Location = new System.Drawing.Point(36, 307);
+            this.btnCustomBattles.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnCustomBattles.Name = "btnCustomBattles";
+            this.btnCustomBattles.Size = new System.Drawing.Size(375, 77);
+            this.btnCustomBattles.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.btnCustomBattles.TabIndex = 17;
+            this.btnCustomBattles.Text = "Custom battle";
+            this.btnCustomBattles.UseVisualStyleBackColor = false;
+            this.btnCustomBattles.Click += new System.EventHandler(this.btnCustomBattles_Click);
             // 
-            // campaignButton
+            // btnJoinQueue
             // 
-            this.campaignButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.campaignButton.BackColor = System.Drawing.Color.Transparent;
-            this.campaignButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("campaignButton.BackgroundImage")));
-            this.campaignButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.campaignButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
-            this.campaignButton.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.campaignButton.FlatAppearance.BorderSize = 0;
-            this.campaignButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
-            this.campaignButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-            this.campaignButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.campaignButton.ForeColor = System.Drawing.Color.White;
-            this.campaignButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.campaignButton.Location = new System.Drawing.Point(36, 417);
-            this.campaignButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.campaignButton.Name = "campaignButton";
-            this.campaignButton.Size = new System.Drawing.Size(375, 77);
-            this.campaignButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
-            this.campaignButton.TabIndex = 18;
-            this.campaignButton.Text = "Campaign";
-            this.campaignButton.UseVisualStyleBackColor = false;
-            // 
-            // missonsButton
-            // 
-            this.missonsButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.missonsButton.BackColor = System.Drawing.Color.Transparent;
-            this.missonsButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("missonsButton.BackgroundImage")));
-            this.missonsButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.missonsButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
-            this.missonsButton.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.missonsButton.FlatAppearance.BorderSize = 0;
-            this.missonsButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
-            this.missonsButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-            this.missonsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.missonsButton.ForeColor = System.Drawing.Color.White;
-            this.missonsButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.missonsButton.Location = new System.Drawing.Point(36, 288);
-            this.missonsButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.missonsButton.Name = "missonsButton";
-            this.missonsButton.Size = new System.Drawing.Size(375, 77);
-            this.missonsButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
-            this.missonsButton.TabIndex = 17;
-            this.missonsButton.Text = "Custom battle";
-            this.missonsButton.UseVisualStyleBackColor = false;
-            // 
-            // tutorialButton
-            // 
-            this.tutorialButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.tutorialButton.BackColor = System.Drawing.Color.Transparent;
-            this.tutorialButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("tutorialButton.BackgroundImage")));
-            this.tutorialButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.tutorialButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
-            this.tutorialButton.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.tutorialButton.FlatAppearance.BorderSize = 0;
-            this.tutorialButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
-            this.tutorialButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-            this.tutorialButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.tutorialButton.ForeColor = System.Drawing.Color.White;
-            this.tutorialButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.tutorialButton.Location = new System.Drawing.Point(36, 165);
-            this.tutorialButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.tutorialButton.Name = "tutorialButton";
-            this.tutorialButton.Size = new System.Drawing.Size(375, 77);
-            this.tutorialButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
-            this.tutorialButton.TabIndex = 16;
-            this.tutorialButton.Text = "Join queue (recommended)";
-            this.tutorialButton.UseVisualStyleBackColor = false;
+            this.btnJoinQueue.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.btnJoinQueue.BackColor = System.Drawing.Color.Transparent;
+            this.btnJoinQueue.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnJoinQueue.BackgroundImage")));
+            this.btnJoinQueue.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.btnJoinQueue.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
+            this.btnJoinQueue.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnJoinQueue.FlatAppearance.BorderSize = 0;
+            this.btnJoinQueue.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.btnJoinQueue.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.btnJoinQueue.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnJoinQueue.ForeColor = System.Drawing.Color.White;
+            this.btnJoinQueue.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnJoinQueue.Location = new System.Drawing.Point(36, 184);
+            this.btnJoinQueue.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnJoinQueue.Name = "btnJoinQueue";
+            this.btnJoinQueue.Size = new System.Drawing.Size(375, 77);
+            this.btnJoinQueue.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.btnJoinQueue.TabIndex = 16;
+            this.btnJoinQueue.Text = "Join queue (recommended)";
+            this.btnJoinQueue.UseVisualStyleBackColor = false;
             // 
             // MultiPlayerPage
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.Transparent;
-            this.Controls.Add(this.bitmapButton1);
-            this.Controls.Add(this.skirmishButton);
-            this.Controls.Add(this.campaignButton);
-            this.Controls.Add(this.missonsButton);
-            this.Controls.Add(this.tutorialButton);
+            this.Controls.Add(this.btnSpectate);
+            this.Controls.Add(this.btnCustomBattles);
+            this.Controls.Add(this.btnJoinQueue);
             this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "MultiPlayerPage";
@@ -173,10 +121,8 @@
 
         #endregion
 
-        private BitmapButton bitmapButton1;
-        private BitmapButton skirmishButton;
-        private BitmapButton campaignButton;
-        private BitmapButton missonsButton;
-        private BitmapButton tutorialButton;
+        private BitmapButton btnSpectate;
+        private BitmapButton btnCustomBattles;
+        private BitmapButton btnJoinQueue;
     }
 }

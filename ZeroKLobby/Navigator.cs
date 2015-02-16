@@ -70,7 +70,7 @@ namespace ZeroKLobby
                     {
                         foreach (TabPage tabPage in tabs.Controls) {
                             var navigatable = GetINavigatableFromControl(tabPage); //translate tab button into the page it represent
-                            if (navigatable != null && navigatable.TryNavigate(value.Split('/'))) {
+                            if (navigatable != null && navigatable.TryNavigate(path.Split('/'))) {
                                 UpdateTabButtons(path);
                                 tabs.SelectTab(tabPage);
                                 lastTabPaths[navigatable] = path;

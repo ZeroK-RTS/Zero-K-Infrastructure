@@ -246,16 +246,7 @@ namespace ZeroKLobby.MicroLobby
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
-            try
-            {
-                var pnl = Program.MainWindow.panelRight;
-                var loc = pnl.PointToClient(PointToScreen(Location));
-                if (pnl.BackgroundImage != null) e.Graphics.DrawImage(pnl.BackgroundImage, e.ClipRectangle, loc.X, loc.Y, e.ClipRectangle.Width, e.ClipRectangle.Height, GraphicsUnit.Pixel);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError("Error rendering battle list BG: {0}", ex);
-            }
+            this.RenderParentsBackgroundImage(e);
         }
 
         protected override void OnPaint(PaintEventArgs e)

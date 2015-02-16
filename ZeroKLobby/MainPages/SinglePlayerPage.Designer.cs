@@ -29,38 +29,11 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SinglePlayerPage));
-            this.backButton = new ZeroKLobby.BitmapButton();
             this.skirmishButton = new ZeroKLobby.BitmapButton();
             this.campaignButton = new ZeroKLobby.BitmapButton();
             this.missonsButton = new ZeroKLobby.BitmapButton();
             this.tutorialButton = new ZeroKLobby.BitmapButton();
             this.SuspendLayout();
-            // 
-            // backButton
-            // 
-            this.backButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.backButton.BackColor = System.Drawing.Color.Transparent;
-            this.backButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("backButton.BackgroundImage")));
-            this.backButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.backButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
-            this.backButton.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.backButton.FlatAppearance.BorderSize = 0;
-            this.backButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
-            this.backButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-            this.backButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.backButton.ForeColor = System.Drawing.Color.White;
-            this.backButton.Image = global::ZeroKLobby.Buttons.back;
-            this.backButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.backButton.Location = new System.Drawing.Point(4, 5);
-            this.backButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.backButton.Name = "backButton";
-            this.backButton.Size = new System.Drawing.Size(237, 57);
-            this.backButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Servo;
-            this.backButton.TabIndex = 15;
-            this.backButton.Text = "Back";
-            this.backButton.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.backButton.UseVisualStyleBackColor = false;
-            this.backButton.Click += new System.EventHandler(this.backButton_Click);
             // 
             // skirmishButton
             // 
@@ -76,7 +49,7 @@
             this.skirmishButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.skirmishButton.ForeColor = System.Drawing.Color.White;
             this.skirmishButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.skirmishButton.Location = new System.Drawing.Point(40, 542);
+            this.skirmishButton.Location = new System.Drawing.Point(41, 514);
             this.skirmishButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.skirmishButton.Name = "skirmishButton";
             this.skirmishButton.Size = new System.Drawing.Size(375, 77);
@@ -100,7 +73,7 @@
             this.campaignButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.campaignButton.ForeColor = System.Drawing.Color.White;
             this.campaignButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.campaignButton.Location = new System.Drawing.Point(40, 418);
+            this.campaignButton.Location = new System.Drawing.Point(41, 390);
             this.campaignButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.campaignButton.Name = "campaignButton";
             this.campaignButton.Size = new System.Drawing.Size(375, 77);
@@ -124,7 +97,7 @@
             this.missonsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.missonsButton.ForeColor = System.Drawing.Color.White;
             this.missonsButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.missonsButton.Location = new System.Drawing.Point(40, 289);
+            this.missonsButton.Location = new System.Drawing.Point(41, 261);
             this.missonsButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.missonsButton.Name = "missonsButton";
             this.missonsButton.Size = new System.Drawing.Size(375, 77);
@@ -148,7 +121,7 @@
             this.tutorialButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.tutorialButton.ForeColor = System.Drawing.Color.White;
             this.tutorialButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.tutorialButton.Location = new System.Drawing.Point(40, 166);
+            this.tutorialButton.Location = new System.Drawing.Point(41, 138);
             this.tutorialButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tutorialButton.Name = "tutorialButton";
             this.tutorialButton.Size = new System.Drawing.Size(375, 77);
@@ -162,7 +135,6 @@
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.Transparent;
-            this.Controls.Add(this.backButton);
             this.Controls.Add(this.skirmishButton);
             this.Controls.Add(this.campaignButton);
             this.Controls.Add(this.missonsButton);
@@ -181,7 +153,6 @@
         private BitmapButton missonsButton;
         private BitmapButton campaignButton;
         private BitmapButton skirmishButton;
-        private BitmapButton backButton;
 
     }
 }

@@ -12,7 +12,7 @@ using ZkData;
 
 namespace ZeroKLobby.MainPages
 {
-    public partial class SinglePlayerPage : UserControl
+    public partial class SinglePlayerPage : UserControl, IMainPage
     {
         public SinglePlayerPage()
         {
@@ -22,11 +22,6 @@ namespace ZeroKLobby.MainPages
         private void tutorialButton_Click(object sender, EventArgs e)
         {
             Program.BrowserInterop.OpenUrl(string.Format("{0}//Missions/", GlobalConst.BaseSiteUrl));
-        }
-
-        private void backButton_Click(object sender, EventArgs e)
-        {
-            Program.MainWindow.SwitchPage(MainWindow.MainPages.Home);
         }
 
         private void missonsButton_Click(object sender, EventArgs e)
@@ -43,5 +38,12 @@ namespace ZeroKLobby.MainPages
         {
             Program.MainWindow.SwitchPage(MainWindow.MainPages.Skirmish, false);
         }
+
+        public void GoBack()
+        {
+            Program.MainWindow.SwitchPage(MainWindow.MainPages.Home);
+        }
+
+        public string Title { get { return "Singleplayer"; } }
     }
 }

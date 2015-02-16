@@ -162,19 +162,6 @@ namespace ZeroKLobby
             return String.Format("{0:D}:{1:D2}:{2:D2}", secs/3600, secs/60%60, secs%60);
         }
 
-        public static void RegisterProtocol() {
-            var executableName = Assembly.GetEntryAssembly().Location;
-            try {
-                SetProtocolRegistry(Registry.CurrentUser.CreateSubKey("Software\\Classes\\spring"), executableName);
-            } catch (Exception ex) {
-                Trace.TraceWarning("Error registering protocol: {0}", ex.Message);
-            }
-
-            // now try to set protocol globaly (like to fail on win7 + uac)
-            try {
-                SetProtocolRegistry(Registry.ClassesRoot, executableName);
-            } catch {}
-        }
 
         public static void SafeStart(string path, string args = null) {
             try {
@@ -285,15 +272,30 @@ namespace ZeroKLobby
         }
 
 
-        static void SetProtocolRegistry(RegistryKey protocolKey, string executableName) {
-            protocolKey.SetValue("", "URL:Spring Action");
-            protocolKey.SetValue("URL Protocol", "");
-            var defaultIconKey = protocolKey.CreateSubKey("DefaultIcon");
-            defaultIconKey.SetValue("", executableName);
-            var shellKey = protocolKey.CreateSubKey("shell");
-            var openKey = shellKey.CreateSubKey("open");
-            var commandKey = openKey.CreateSubKey("command");
-            commandKey.SetValue("", string.Format("\"{0}\" \"%1\"", executableName));
+        public static void RenderControlBgImage(this Control destination, Control source, PaintEventArgs e)
+        {
+            var loc = source.PointToClient(destination.PointToScreen(destination.Location));
+            if (source.BackgroundImage != null) e.Graphics.DrawImage(source.BackgroundImage, e.ClipRectangle, loc.X + e.ClipRectangle.X, loc.Y  + e.ClipRectangle.Y, e.ClipRectangle.Width, e.ClipRectangle.Height, GraphicsUnit.Pixel);
+        }
+
+        public static Control FindParentWithBgImage(this Control source)
+        {
+            var p = source.Parent;
+            while (p != null) {
+                if (p.BackgroundImage != null) return p;
+                p = p.Parent;
+            }
+            return null;
+        }
+
+        public static void RenderParentsBackground(this Control source, PaintEventArgs e)
+        {
+            try {
+                var par = source.FindParentWithBgImage();
+                if (par != null) source.RenderControlBgImage(par, e);
+            } catch (Exception ex) {
+                Trace.TraceError("Error rendering background image: {0}",ex);
+            }
         }
     }
 

@@ -29,7 +29,8 @@ namespace ZeroKLobby
             Home,
             SinglePlayer ,
             MultiPlayer,
-            Skirmish
+            Skirmish,
+            CustomBattles
         }
 
         Mp3FileReader audioReader;
@@ -75,6 +76,7 @@ namespace ZeroKLobby
             pages[MainPages.SinglePlayer] = new SinglePlayerPage();
             pages[MainPages.Skirmish] = new SkirmishControl();
             pages[MainPages.MultiPlayer] = new MultiPlayerPage();
+            pages[MainPages.CustomBattles] = new BattleListTab();
 
             Instance = this;
 
