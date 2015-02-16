@@ -260,7 +260,6 @@ namespace ZeroKLobby
                 TasClient.LoginAccepted += (s, e) => {
                     Trace.TraceInformation("TASC login accepted");
                     Trace.TraceInformation("Server is using Spring version {0}", TasClient.ServerSpringVersion);
-                    MainWindow.navigationControl.Path = "battles";
                 };
 
                 TasClient.LoginDenied += (s, e) => Trace.TraceInformation("TASC login denied");

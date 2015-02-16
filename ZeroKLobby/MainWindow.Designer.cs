@@ -73,9 +73,9 @@
             // 
             this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanel1.BackColor = System.Drawing.Color.Transparent;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(623, 760);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(836, 760);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(731, 47);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(355, 47);
             this.flowLayoutPanel1.TabIndex = 11;
             // 
             // btnHide
@@ -187,7 +187,7 @@
             this.Controls.Add(this.btnSnd);
             this.Controls.Add(this.notifySection1);
             this.DoubleBuffered = true;
-            this.Font = new System.Drawing.Font("Comic Sans MS", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(238)));
+            this.Font = new System.Drawing.Font("Comic Sans MS", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(238)));
             this.ForeColor = System.Drawing.Color.White;
             this.Name = "MainWindow";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainWindow_FormClosing);

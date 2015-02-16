@@ -222,7 +222,7 @@ namespace ZkData
             }
         }
 
-        public static Bitmap GetResized(this Image original, int newWidth, int newHeight, InterpolationMode mode)
+        public static Bitmap GetResized(this Image original, int newWidth, int newHeight, InterpolationMode mode = InterpolationMode.Default)
         {
             var resized = new Bitmap(newWidth, newHeight);
             using (var g = Graphics.FromImage(resized))

@@ -122,7 +122,6 @@
     </Compile>
     <Compile Include="ChatToSpeech.cs" />
     <Compile Include="Controls\FrameBorderRenderer.cs" />
-    <Compile Include="Controls\FrameStyle.cs" />
     <Compile Include="Controls\MinimapFuncBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -455,7 +454,6 @@
       <DependentUpon>WarningBar.cs</DependentUpon>
     </Compile>
     <Compile Include="MicroLobby\ScrollMessageFilter.cs" />
-    <Compile Include="Settings.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>

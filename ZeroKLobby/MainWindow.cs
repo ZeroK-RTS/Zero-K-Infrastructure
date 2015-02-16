@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LobbyClient;
 using NAudio.Wave;
 using PlasmaDownloader;
 using SpringDownloader.Notifications;
@@ -72,7 +73,8 @@ namespace ZeroKLobby
 
             pages[MainPages.Home] = new HomePage();
             pages[MainPages.SinglePlayer] = new SinglePlayerPage();
-            pages[MainPages.Skirmish] = new BattleListTab();
+            pages[MainPages.Skirmish] = new SkirmishControl();
+            pages[MainPages.MultiPlayer] = new MultiPlayerPage();
 
             Instance = this;
 
@@ -101,8 +103,11 @@ namespace ZeroKLobby
 
             navigator = new Navigator(navigationControl1, flowLayoutPanel1);
 
+
             //btnWindowed_Click(this, EventArgs.Empty);
             ResumeLayout();
+
+            Spring.AnySpringStarted += (sender, args) => { if (waveOut != null) waveOut.Stop(); };
         }
 
 
@@ -162,7 +167,7 @@ namespace ZeroKLobby
         /// <param name="useFlashing">use flashing</param>
         public void NotifyUser(string navigationPath, string message, bool useSound = false, bool useFlashing = false)
         {
-            bool showBalloon =
+            bool showBalloon = 
                 !((Program.Conf.DisableChannelBubble && navigationPath.Contains("chat/channel/")) ||
                   (Program.Conf.DisablePmBubble && navigationPath.Contains("chat/user/")));
 
@@ -353,10 +358,6 @@ namespace ZeroKLobby
             UpdateDownloads();
         }
 
-        private void bitmapButton1_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void panelRight_Paint(object sender, PaintEventArgs e)
         {
@@ -373,14 +374,12 @@ namespace ZeroKLobby
                 panelRight.BackgroundImageLayout = ImageLayout.None;
                 panelRight.BackgroundImage = img;    
             }
-
-            
-
         }
 
         private void btnHide_Click(object sender, EventArgs e)
         {
             panelRight.Visible = false;
+            Program.MainWindow.navigationControl.Path = "";
         }
 
         private void panelRight_SizeChanged(object sender, EventArgs e)

@@ -56,8 +56,8 @@ namespace ZeroKLobby
 
         public Control GetButton() {
             button = new BitmapButton();
-            //button.AutoSize = true;
-            //button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            button.AutoSize = true;
+            button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             button.Height = Height;
             button.Width = Width;
             button.TextAlign = ContentAlignment.MiddleCenter;
@@ -76,7 +76,12 @@ namespace ZeroKLobby
                 var panel = Program.MainWindow.panelRight;
                 if (navigator.CurrentNavigatable == navigator.GetNavigatableFromPath(TargetPath)) panel.Visible = !panel.Visible;
                 else panel.Visible = true;
-                Program.MainWindow.navigationControl.SwitchTab(TargetPath);
+                if (panel.Visible) {
+                    Program.MainWindow.navigationControl.SwitchTab(TargetPath);
+                }
+                else {
+                    Program.MainWindow.navigationControl.Path = "";
+                }
             };
             return button;
 

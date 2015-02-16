@@ -138,6 +138,13 @@ namespace LobbyClient
         public event EventHandler<EventArgs<bool>> SpringExited;
         public event EventHandler SpringStarted;
 
+
+        /// <summary>
+        /// Executes when any instance of spring starts
+        /// </summary>
+        public static EventHandler AnySpringStarted = (sender, args) => { };
+
+
         public Spring(SpringPaths springPaths) {
             paths = springPaths;
             timer.Elapsed += timer_Elapsed;
@@ -362,7 +369,10 @@ namespace LobbyClient
                 process.Start();
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
-                if (IsRunning && SpringStarted != null) SpringStarted(this, EventArgs.Empty);
+                if (IsRunning) {
+                    if (SpringStarted != null) SpringStarted(this, EventArgs.Empty);
+                    AnySpringStarted(this, EventArgs.Empty);
+                }
 
                 Utils.StartAsync(() =>
                     {

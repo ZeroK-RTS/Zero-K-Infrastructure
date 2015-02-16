@@ -305,5 +305,10 @@ namespace ZeroKLobby.MicroLobby
         {
             Program.MainWindow.navigationControl.Path = "zk://extra/skirmish";
         }
+
+        private void btnServerSocket_Click(object sender, EventArgs e)
+        {
+            Program.MainWindow.navigationControl.Path = "zk://server";
+        }
 	}
 }
