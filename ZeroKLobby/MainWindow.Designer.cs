@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
-            this.panelRight = new System.Windows.Forms.Panel();
+            this.panelRight = new ZeroKLobby.Controls.RightPanel();
             this.btnHide = new ZeroKLobby.BitmapButton();
             this.lbRightPanelTitle = new System.Windows.Forms.Label();
             this.navigationControl1 = new ZeroKLobby.HeadlessTabControl();
@@ -56,8 +56,7 @@
             this.panelRight.Size = new System.Drawing.Size(772, 748);
             this.panelRight.TabIndex = 10;
             this.panelRight.Visible = false;
-            this.panelRight.SizeChanged += new System.EventHandler(this.panelRight_SizeChanged);
-            this.panelRight.Paint += new System.Windows.Forms.PaintEventHandler(this.panelRight_Paint);
+            //this.panelRight.Paint += new System.Windows.Forms.PaintEventHandler(this.panelRight_Paint);
             // 
             // btnHide
             // 

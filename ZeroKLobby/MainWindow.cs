@@ -372,22 +372,6 @@ namespace ZeroKLobby
         }
 
 
-        private void panelRight_Paint(object sender, PaintEventArgs e)
-        {
-            if (panelRight.BackgroundImage == null) {
-                var img = new Bitmap(panelRight.Width, panelRight.Height);
-                using (var g = Graphics.FromImage(img)) {
-                    g.TranslateTransform(-panelRight.Left, -panelRight.Top);
-                    InvokePaintBackground(this, new PaintEventArgs(g, panelRight.Bounds));
-                    g.TranslateTransform(panelRight.Left, panelRight.Top);
-
-                    //g.DrawImage(BackgroundImage, panelRight.ClientRectangle, panelRight.Left, panelRight.Top, panelRight.Width, panelRight.Height, GraphicsUnit.Pixel);
-                    FrameBorderRenderer.Instance.RenderToGraphics(g, panelRight.ClientRectangle, FrameBorderRenderer.StyleType.Shraka);
-                }
-                panelRight.BackgroundImageLayout = ImageLayout.None;
-                panelRight.BackgroundImage = img;    
-            }
-        }
 
         private void btnHide_Click(object sender, EventArgs e)
         {
@@ -395,10 +379,6 @@ namespace ZeroKLobby
             Program.MainWindow.navigationControl.Path = "";
         }
 
-        private void panelRight_SizeChanged(object sender, EventArgs e)
-        {
-            panelRight.BackgroundImage = null;
-        }
 
         private void btnBack_Click(object sender, EventArgs e)
         {
