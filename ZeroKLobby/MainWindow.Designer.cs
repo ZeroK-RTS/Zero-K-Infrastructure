@@ -48,6 +48,8 @@
             this.panelRight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelRight.BackColor = System.Drawing.Color.Transparent;
+            this.panelRight.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panelRight.BackgroundImage")));
+            this.panelRight.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.panelRight.Controls.Add(this.btnHide);
             this.panelRight.Controls.Add(this.lbRightPanelTitle);
             this.panelRight.Controls.Add(this.navigationControl1);
@@ -56,7 +58,6 @@
             this.panelRight.Size = new System.Drawing.Size(772, 748);
             this.panelRight.TabIndex = 10;
             this.panelRight.Visible = false;
-            //this.panelRight.Paint += new System.Windows.Forms.PaintEventHandler(this.panelRight_Paint);
             // 
             // btnHide
             // 
@@ -125,7 +126,7 @@
             // 
             // btnWindowed
             // 
-            this.btnWindowed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnWindowed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnWindowed.BackColor = System.Drawing.Color.Transparent;
             this.btnWindowed.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnWindowed.BackgroundImage")));
             this.btnWindowed.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
@@ -145,7 +146,7 @@
             // 
             // btnSnd
             // 
-            this.btnSnd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnSnd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSnd.BackColor = System.Drawing.Color.Transparent;
             this.btnSnd.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnSnd.BackgroundImage")));
             this.btnSnd.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
@@ -245,11 +246,11 @@
         private BitmapButton btnSnd;
         private Controls.SwitchPanel switchPanel1;
         private BitmapButton btnHide;
-        public System.Windows.Forms.Panel panelRight;
         public System.Windows.Forms.Label lbRightPanelTitle;
         public System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private BitmapButton btnBack;
         public System.Windows.Forms.Label lbMainPageTitle;
+        public Controls.RightPanel panelRight;
 
     }
 }

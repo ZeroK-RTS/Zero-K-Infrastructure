@@ -35,14 +35,9 @@ namespace ZeroKLobby.Controls
 
                     var img = new Bitmap(Width, Height);
                     using (var g = Graphics.FromImage(img)) {
-                        //var pev = new PaintEventArgs(g, new Rectangle(0, 0, Width, Height));
-                        //this.RenderControlBgImage(parent, pev);
-
                         g.TranslateTransform(-Left, -Top);
-                        InvokePaintBackground(Program.MainWindow, new PaintEventArgs(g, Bounds));
+                        InvokePaintBackground(parent, new PaintEventArgs(g, Bounds));
                         g.TranslateTransform(Left, Top);
-
-                        //g.DrawImage(BackgroundImage, panelRight.ClientRectangle, panelRight.Left, panelRight.Top, panelRight.Width, panelRight.Height, GraphicsUnit.Pixel);
 
                         FrameBorderRenderer.Instance.RenderToGraphics(g, new Rectangle(0,0,Width,Height), FrameBorderRenderer.StyleType.Shraka);
                     }
