@@ -40,9 +40,6 @@ namespace ZeroKLobby
         string springServerHost = GlobalConst.LobbyServerHost;
         int springServerPort = GlobalConst.LobbyServerPort;
 
-        string snd_play_cmd = "aplay";
-        string snd_play_path = "/usr/share/sounds/alsa/test.wav"; // probably present in other than archlinux distros...
-
         [Category("Chat")]
         [DisplayName("Automatically Joined Channels")]
         [Description("Zero-K launcher will automatically join these channels when connecting.")]
@@ -89,16 +86,7 @@ namespace ZeroKLobby
         [Description("Place where all the content is saved")]
         public string DataFolder { get; set; }
         
-        [Category("General")]
-        [DisplayName("[UNIX] Sound play command")]
-        [Description("Name of command used to play sounds")]
-        public string SndPlayCmd { get { return snd_play_cmd; } set { snd_play_cmd = value; } }
-        
-        [Category("General")]
-        [DisplayName("[UNIX] Sound to play")]
-        [Description("Path to sound played")]
-        public string SndPlayPath { get { return snd_play_path; } set { snd_play_path = value; } }
-
+       
         [Category("Debugging")]
         [DisplayName("Disable Lobby Auto Update")]
         [Description("Lobby will not update itself to latest release version. Use this if you are compiling your own lobby")]

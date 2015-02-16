@@ -288,7 +288,7 @@ namespace ZeroKLobby
                 waveOut = new WaveOut();
                 audioReader = new Mp3FileReader(new MemoryStream(Sounds.menu_music_ROM));
                 waveOut.Init(audioReader);
-                waveOut.Play();
+                //waveOut.Play();
             }
         }
 

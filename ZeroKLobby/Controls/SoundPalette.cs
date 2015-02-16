@@ -21,6 +21,7 @@ namespace ZeroKLobby.Controls
 
         public static void Play(SoundType type)
         {
+            if (Environment.OSVersion.Platform == PlatformID.Unix) return;
             if (type != SoundType.None) {
                 Stream sound;
                 switch (type) {
@@ -34,6 +35,7 @@ namespace ZeroKLobby.Controls
                         sound = null;
                         break;
                 }
+
 
                 if (sound != null) {
                     var sp = new SoundPlayer(sound);

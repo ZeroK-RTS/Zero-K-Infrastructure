@@ -11,17 +11,25 @@ namespace ZeroKLobby
     {
         public HeadlessTabControl()
         {
-           SetStyle(ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer,true);
+           SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint,true);
+            SetRegion();
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
             SetRegion();
+            base.OnPaint(e);
         }
 
         protected override void OnPaintBackground(PaintEventArgs pevent)
         {
-            
+            SetRegion();
+            base.OnPaintBackground(pevent);
+        }
+
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            base.OnSizeChanged(e);
             SetRegion();
         }
 
