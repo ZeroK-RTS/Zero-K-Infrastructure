@@ -68,14 +68,14 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.minimapPanel);
-            this.splitContainer1.Panel1.Controls.Add(this.metalmapRadioButton);
-            this.splitContainer1.Panel1.Controls.Add(this.elevationRadioButton);
-            this.splitContainer1.Panel1.Controls.Add(this.normalRadioButton);
+            this.splitContainer1.Panel2.Controls.Add(this.minimapPanel);
+            this.splitContainer1.Panel2.Controls.Add(this.metalmapRadioButton);
+            this.splitContainer1.Panel2.Controls.Add(this.elevationRadioButton);
+            this.splitContainer1.Panel2.Controls.Add(this.normalRadioButton);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
+            this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
             this.splitContainer1.Size = new System.Drawing.Size(830, 487);
             this.splitContainer1.SplitterDistance = 445;
             this.splitContainer1.TabIndex = 0;
