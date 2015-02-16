@@ -95,7 +95,7 @@
             this.btnGameOptions.BackColor = System.Drawing.Color.Transparent;
             this.btnGameOptions.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnGameOptions.BackgroundImage")));
             this.btnGameOptions.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnGameOptions.ButtonStyle = ZeroKLobby.ButtonRenderer.StyleType.DarkHive;
+            this.btnGameOptions.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnGameOptions.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnGameOptions.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnGameOptions.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -116,7 +116,7 @@
             this.btnMapList.BackColor = System.Drawing.Color.Transparent;
             this.btnMapList.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnMapList.BackgroundImage")));
             this.btnMapList.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnMapList.ButtonStyle = ZeroKLobby.ButtonRenderer.StyleType.DarkHive;
+            this.btnMapList.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnMapList.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnMapList.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnMapList.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -137,7 +137,7 @@
             this.btnChangeTeam.BackColor = System.Drawing.Color.Transparent;
             this.btnChangeTeam.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnChangeTeam.BackgroundImage")));
             this.btnChangeTeam.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnChangeTeam.ButtonStyle = ZeroKLobby.ButtonRenderer.StyleType.DarkHive;
+            this.btnChangeTeam.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnChangeTeam.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnChangeTeam.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnChangeTeam.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -158,7 +158,7 @@
             this.btnAddAI.BackColor = System.Drawing.Color.Transparent;
             this.btnAddAI.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnAddAI.BackgroundImage")));
             this.btnAddAI.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnAddAI.ButtonStyle = ZeroKLobby.ButtonRenderer.StyleType.DarkHive;
+            this.btnAddAI.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnAddAI.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnAddAI.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnAddAI.FlatStyle = System.Windows.Forms.FlatStyle.Flat;

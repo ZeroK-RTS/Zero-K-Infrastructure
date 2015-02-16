@@ -33,7 +33,7 @@
             this.lbRightPanelTitle = new System.Windows.Forms.Label();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnHide = new ZeroKLobby.BitmapButton();
-            this.navigationControl1 = new ZeroKLobby.NavigationControl();
+            this.navigationControl1 = new ZeroKLobby.HeadlessTabControl();
             this.switchPanel1 = new ZeroKLobby.Controls.SwitchPanel();
             this.btnWindowed = new ZeroKLobby.BitmapButton();
             this.btnSnd = new ZeroKLobby.BitmapButton();
@@ -81,7 +81,7 @@
             this.btnHide.BackColor = System.Drawing.Color.Transparent;
             this.btnHide.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnHide.BackgroundImage")));
             this.btnHide.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.btnHide.ButtonStyle = ZeroKLobby.ButtonRenderer.StyleType.DarkHive;
+            this.btnHide.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnHide.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnHide.FlatAppearance.BorderSize = 0;
             this.btnHide.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
@@ -105,7 +105,6 @@
             this.navigationControl1.Location = new System.Drawing.Point(21, 28);
             this.navigationControl1.Margin = new System.Windows.Forms.Padding(0);
             this.navigationControl1.Name = "navigationControl1";
-            this.navigationControl1.Path = "";
             this.navigationControl1.SelectedIndex = 0;
             this.navigationControl1.Size = new System.Drawing.Size(731, 702);
             this.navigationControl1.TabIndex = 1;
@@ -127,7 +126,7 @@
             this.btnWindowed.BackColor = System.Drawing.Color.Transparent;
             this.btnWindowed.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnWindowed.BackgroundImage")));
             this.btnWindowed.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.btnWindowed.ButtonStyle = ZeroKLobby.ButtonRenderer.StyleType.DarkHive;
+            this.btnWindowed.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnWindowed.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnWindowed.FlatAppearance.BorderSize = 0;
             this.btnWindowed.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -147,7 +146,7 @@
             this.btnSnd.BackColor = System.Drawing.Color.Transparent;
             this.btnSnd.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnSnd.BackgroundImage")));
             this.btnSnd.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.btnSnd.ButtonStyle = ZeroKLobby.ButtonRenderer.StyleType.DarkHive;
+            this.btnSnd.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnSnd.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnSnd.FlatAppearance.BorderSize = 0;
             this.btnSnd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -201,7 +200,7 @@
 
         #endregion
 
-        private NavigationControl navigationControl1;
+        private HeadlessTabControl navigationControl1;
         private SpringDownloader.Notifications.NotifySection notifySection1;
         private BitmapButton btnWindowed;
         private BitmapButton btnSnd;

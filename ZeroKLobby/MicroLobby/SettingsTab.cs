@@ -182,7 +182,7 @@ namespace ZeroKLobby.MicroLobby
 		{
 			var menu = new ContextMenu();
 			var joinItem = new MenuItem("Ask in the ZK channel (#zk)");
-			joinItem.Click += (s, e) => NavigationControl.Instance.Path = "chat/channel/zk";
+			joinItem.Click += (s, e) => Program.MainWindow.navigationControl.Path = "chat/channel/zk";
 			menu.MenuItems.Add(joinItem);
 			var helpForumItem = new MenuItem("Ask in the Help Forum");
 			helpForumItem.Click += helpForumItem_Click;
@@ -192,7 +192,7 @@ namespace ZeroKLobby.MicroLobby
 			{
 				var item = new MenuItem(admin.Name + (admin.IsAway ? " (Idle)" : String.Empty));
 				var adminName = admin.Name;
-				item.Click += (s, e) => NavigationControl.Instance.Path = "chat/user/" + adminName;
+				item.Click += (s, e) => Program.MainWindow.navigationControl.Path = "chat/user/" + adminName;
 				adminsItem.MenuItems.Add(item);
 			}
 			menu.MenuItems.Add(adminsItem);

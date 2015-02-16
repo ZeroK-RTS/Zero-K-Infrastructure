@@ -6,7 +6,7 @@ using ZkData;
 
 namespace ZeroKLobby
 {
-    public class ButtonRenderer
+    public class FrameBorderRenderer
     {
         public enum StyleType
         {
@@ -17,11 +17,11 @@ namespace ZeroKLobby
 
 
         readonly Dictionary<CacheKey, Image> cachedImages = new Dictionary<CacheKey, Image>();
-        public static ButtonRenderer Instance = new ButtonRenderer();
-        public static Dictionary<StyleType, ButtonStyle> styles = new Dictionary<StyleType, ButtonStyle> {
+        public static FrameBorderRenderer Instance = new FrameBorderRenderer();
+        public static Dictionary<StyleType, FrameStyle> styles = new Dictionary<StyleType, FrameStyle> {
             {
                 StyleType.DarkHiveHover,
-                new ButtonStyle {
+                new FrameStyle {
                     N = DarkHiveHover.N,
                     NE = DarkHiveHover.NE,
                     NW = DarkHiveHover.NW,
@@ -34,7 +34,7 @@ namespace ZeroKLobby
                 }
             }, {
                 StyleType.DarkHive,
-                new ButtonStyle {
+                new FrameStyle {
                     N = DarkHive.N,
                     NE = DarkHive.NE,
                     NW = DarkHive.NW,
@@ -47,7 +47,7 @@ namespace ZeroKLobby
                 }
             }, {
                 StyleType.Shraka,
-                new ButtonStyle {
+                new FrameStyle {
                     N = Shraka.N,
                     NE = Shraka.NE,
                     NW = Shraka.NW,
@@ -83,7 +83,7 @@ namespace ZeroKLobby
 
         public void RenderToGraphics(Graphics g, Rectangle r, StyleType styleType)
         {
-            ButtonStyle style = styles[styleType];
+            FrameStyle style = styles[styleType];
             TextureBrush northBrush;
             TextureBrush southBrush;
             TextureBrush eastBrush;

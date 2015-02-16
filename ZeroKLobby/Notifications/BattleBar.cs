@@ -293,7 +293,7 @@ namespace ZeroKLobby.Notifications
 
             BattleChatControl.BattleLine += (s, e) => picoChat.AddLine(e.Data);
 
-            picoChat.MouseClick += (s, e) => NavigationControl.Instance.Path = "chat/battle";
+            picoChat.MouseClick += (s, e) => Program.MainWindow.navigationControl.Path = "chat/battle";
         }
 
         protected override void OnSizeChanged(EventArgs e)
@@ -362,7 +362,7 @@ namespace ZeroKLobby.Notifications
             client.LeaveBattle();
 
             Program.NotifySection.RemoveBar(this);
-            NavigationControl.Instance.Path = "battles";
+            Program.MainWindow.navigationControl.Path = "battles";
         }
 
         void AutoRespond()
@@ -492,7 +492,7 @@ namespace ZeroKLobby.Notifications
 
         public void DetailClicked(NotifyBarContainer container)
         {
-            NavigationControl.Instance.Path = "chat/battle";
+            Program.MainWindow.navigationControl.Path = "chat/battle";
             if (IsHostGameRunning()) Rejoin();
             else client.Say(SayPlace.Battle, "", "!start", false);
         }

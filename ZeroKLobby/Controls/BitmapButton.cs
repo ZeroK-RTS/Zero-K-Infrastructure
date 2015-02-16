@@ -28,7 +28,7 @@ namespace ZeroKLobby
             
             SetStyle(ControlStyles.SupportsTransparentBackColor, true);
 
-            ButtonStyle = ButtonRenderer.StyleType.DarkHive;
+            ButtonStyle = FrameBorderRenderer.StyleType.DarkHive;
             SoundType = SoundPalette.SoundType.Click;
         }
 
@@ -47,7 +47,7 @@ namespace ZeroKLobby
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]                    
         public override Cursor Cursor { get { return base.Cursor; } set { base.Cursor = value; } }
 
-        public ButtonRenderer.StyleType ButtonStyle { get; set; }
+        public FrameBorderRenderer.StyleType ButtonStyle { get; set; }
 
         public SoundPalette.SoundType SoundType { get; set; }
 
@@ -74,7 +74,7 @@ namespace ZeroKLobby
       
         protected override void OnPaint(PaintEventArgs pevent)
         {
-            BackgroundImage =  ButtonRenderer.Instance.GetImageWithCache(DisplayRectangle, ButtonStyle, mouseOver ? ButtonRenderer.StyleType.DarkHiveHover : (ButtonRenderer.StyleType?)null);
+            BackgroundImage =  FrameBorderRenderer.Instance.GetImageWithCache(DisplayRectangle, ButtonStyle, mouseOver ? FrameBorderRenderer.StyleType.DarkHiveHover : (FrameBorderRenderer.StyleType?)null);
             base.OnPaint(pevent);
         }
     }

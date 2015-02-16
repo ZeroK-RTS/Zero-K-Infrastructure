@@ -121,8 +121,8 @@
       <DependentUpon>Buttons.resx</DependentUpon>
     </Compile>
     <Compile Include="ChatToSpeech.cs" />
-    <Compile Include="Controls\ButtonRenderer.cs" />
-    <Compile Include="Controls\ButtonStyle.cs" />
+    <Compile Include="Controls\FrameBorderRenderer.cs" />
+    <Compile Include="Controls\FrameStyle.cs" />
     <Compile Include="Controls\MinimapFuncBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -199,6 +199,7 @@
     <Compile Include="MicroLobby\TextColoringPanel.Designer.cs">
       <DependentUpon>TextColoringPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Navigator.cs" />
     <Compile Include="Notifications\PwBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -268,12 +269,6 @@
     </Compile>
     <Compile Include="MicroLobby\SpringsettingForm.Designer.cs">
       <DependentUpon>SpringsettingForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="NavigationControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="NavigationControl.Designer.cs">
-      <DependentUpon>NavigationControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Notifications\MissionBar.cs">
       <SubType>UserControl</SubType>
@@ -570,10 +565,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\SpringsettingForm.resx">
       <DependentUpon>SpringsettingForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="NavigationControl.resx">
-      <DependentUpon>NavigationControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\BattleBar.resx">
       <DependentUpon>BattleBar.cs</DependentUpon>

@@ -42,7 +42,7 @@
             this.bitmapButton1.BackColor = System.Drawing.Color.Transparent;
             this.bitmapButton1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("bitmapButton1.BackgroundImage")));
             this.bitmapButton1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.bitmapButton1.ButtonStyle = ZeroKLobby.ButtonRenderer.StyleType.DarkHive;
+            this.bitmapButton1.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.bitmapButton1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.bitmapButton1.FlatAppearance.BorderSize = 0;
             this.bitmapButton1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
@@ -68,7 +68,7 @@
             this.skirmishButton.BackColor = System.Drawing.Color.Transparent;
             this.skirmishButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("skirmishButton.BackgroundImage")));
             this.skirmishButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.skirmishButton.ButtonStyle = ZeroKLobby.ButtonRenderer.StyleType.DarkHive;
+            this.skirmishButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.skirmishButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.skirmishButton.FlatAppearance.BorderSize = 0;
             this.skirmishButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
@@ -91,7 +91,7 @@
             this.campaignButton.BackColor = System.Drawing.Color.Transparent;
             this.campaignButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("campaignButton.BackgroundImage")));
             this.campaignButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.campaignButton.ButtonStyle = ZeroKLobby.ButtonRenderer.StyleType.DarkHive;
+            this.campaignButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.campaignButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.campaignButton.FlatAppearance.BorderSize = 0;
             this.campaignButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
@@ -114,7 +114,7 @@
             this.missonsButton.BackColor = System.Drawing.Color.Transparent;
             this.missonsButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("missonsButton.BackgroundImage")));
             this.missonsButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.missonsButton.ButtonStyle = ZeroKLobby.ButtonRenderer.StyleType.DarkHive;
+            this.missonsButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.missonsButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.missonsButton.FlatAppearance.BorderSize = 0;
             this.missonsButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
@@ -137,7 +137,7 @@
             this.tutorialButton.BackColor = System.Drawing.Color.Transparent;
             this.tutorialButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("tutorialButton.BackgroundImage")));
             this.tutorialButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.tutorialButton.ButtonStyle = ZeroKLobby.ButtonRenderer.StyleType.DarkHive;
+            this.tutorialButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.tutorialButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.tutorialButton.FlatAppearance.BorderSize = 0;
             this.tutorialButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;

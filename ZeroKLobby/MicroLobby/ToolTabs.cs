@@ -150,19 +150,19 @@ namespace ZeroKLobby.MicroLobby
                     {
                         if (control is BattleChatControl)
                         {
-                            NavigationControl.Instance.Path = "chat/battle";
+                            Program.MainWindow.navigationControl.Path = "chat/battle";
                         } else 
                         if (control is PrivateMessageControl)
                         {
                             var pmControl = (PrivateMessageControl)control;
                             var userName = pmControl.UserName;
-                            NavigationControl.Instance.Path = "chat/user/" + userName;
+                            Program.MainWindow.navigationControl.Path = "chat/user/" + userName;
                         } else 
                         if (control is ChatControl)
                         {
                             var chatControl = (ChatControl)control;
                             var channelName = chatControl.ChannelName;
-                            NavigationControl.Instance.Path = "chat/channel/" + channelName;
+                            Program.MainWindow.navigationControl.Path = "chat/channel/" + channelName;
                         }
                     } catch(Exception ex)
                     {

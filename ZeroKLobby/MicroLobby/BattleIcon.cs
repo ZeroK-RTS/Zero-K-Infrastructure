@@ -161,7 +161,7 @@ namespace ZeroKLobby.MicroLobby
             var bitmap = new Bitmap(w, h);
             try
             {
-                using (var g = Graphics.FromImage(bitmap)) ButtonRenderer.Instance.RenderToGraphics(g, new Rectangle(0,0,w,h), ButtonRenderer.StyleType.DarkHive );
+                using (var g = Graphics.FromImage(bitmap)) FrameBorderRenderer.Instance.RenderToGraphics(g, new Rectangle(0,0,w,h), FrameBorderRenderer.StyleType.DarkHive );
                 //using (Graphics g = Graphics.FromImage(bitmap)) g.FillRectangle(brush, 0, 0, w, h);
             }
             catch

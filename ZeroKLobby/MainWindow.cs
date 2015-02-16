@@ -48,7 +48,7 @@ namespace ZeroKLobby
         WaveOut waveOut;
         public ChatTab ChatTab
         {
-            get { return navigationControl1.ChatTab; }
+            get { return navigator.ChatTab; }
         }
         public static MainWindow Instance { get; private set; }
 
@@ -56,15 +56,18 @@ namespace ZeroKLobby
         {
             get { return notifySection1; }
         }
-        public NavigationControl navigationControl
+        public Navigator navigationControl
         {
-            get { return navigationControl1; }
+            get { return navigator; }
         }
+
+        Navigator navigator;
 
 
         public MainWindow()
         {
             InitializeComponent();
+            SuspendLayout();
             SetStyle( ControlStyles.DoubleBuffer, true);
 
             pages[MainPages.Home] = new HomePage();
@@ -96,7 +99,10 @@ namespace ZeroKLobby
             var home = new HomePage();
             switchPanel1.SwitchContent(home);
 
+            navigator = new Navigator(navigationControl1, flowLayoutPanel1);
+
             //btnWindowed_Click(this, EventArgs.Empty);
+            ResumeLayout();
         }
 
 
@@ -362,7 +368,7 @@ namespace ZeroKLobby
                     g.TranslateTransform(panelRight.Left, panelRight.Top);
 
                     //g.DrawImage(BackgroundImage, panelRight.ClientRectangle, panelRight.Left, panelRight.Top, panelRight.Width, panelRight.Height, GraphicsUnit.Pixel);
-                    ButtonRenderer.Instance.RenderToGraphics(g, panelRight.ClientRectangle, ButtonRenderer.StyleType.Shraka);
+                    FrameBorderRenderer.Instance.RenderToGraphics(g, panelRight.ClientRectangle, FrameBorderRenderer.StyleType.Shraka);
                 }
                 panelRight.BackgroundImageLayout = ImageLayout.None;
                 panelRight.BackgroundImage = img;    

@@ -299,7 +299,7 @@
             this.gameOptionButton.BackColor = System.Drawing.Color.Transparent;
             this.gameOptionButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("gameOptionButton.BackgroundImage")));
             this.gameOptionButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.gameOptionButton.ButtonStyle = ZeroKLobby.ButtonRenderer.StyleType.DarkHive;
+            this.gameOptionButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.gameOptionButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.gameOptionButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.gameOptionButton.ForeColor = System.Drawing.Color.White;
@@ -318,7 +318,7 @@
             this.editTeamButton.BackColor = System.Drawing.Color.Transparent;
             this.editTeamButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("editTeamButton.BackgroundImage")));
             this.editTeamButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.editTeamButton.ButtonStyle = ZeroKLobby.ButtonRenderer.StyleType.DarkHive;
+            this.editTeamButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.editTeamButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.editTeamButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.editTeamButton.ForeColor = System.Drawing.Color.White;
@@ -337,7 +337,7 @@
             this.addAIButton.BackColor = System.Drawing.Color.Transparent;
             this.addAIButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("addAIButton.BackgroundImage")));
             this.addAIButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.addAIButton.ButtonStyle = ZeroKLobby.ButtonRenderer.StyleType.DarkHive;
+            this.addAIButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.addAIButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.addAIButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.addAIButton.ForeColor = System.Drawing.Color.White;
@@ -357,7 +357,7 @@
             this.startbutton.BackColor = System.Drawing.Color.Transparent;
             this.startbutton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("startbutton.BackgroundImage")));
             this.startbutton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.startbutton.ButtonStyle = ZeroKLobby.ButtonRenderer.StyleType.DarkHive;
+            this.startbutton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.startbutton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.startbutton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.startbutton.ForeColor = System.Drawing.Color.White;

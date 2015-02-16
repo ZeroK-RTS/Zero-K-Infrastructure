@@ -4,7 +4,7 @@ using System.Drawing.Drawing2D;
 namespace ZeroKLobby
 {
     
-    public class ButtonStyle
+    public class FrameStyle
     {
         public Image NW;
         public Image NE;

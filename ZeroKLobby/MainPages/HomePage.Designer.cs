@@ -40,7 +40,7 @@
             this.singleplayerButton.BackColor = System.Drawing.Color.Transparent;
             this.singleplayerButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("singleplayerButton.BackgroundImage")));
             this.singleplayerButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.singleplayerButton.ButtonStyle = ZeroKLobby.ButtonRenderer.StyleType.DarkHive;
+            this.singleplayerButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.singleplayerButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.singleplayerButton.FlatAppearance.BorderSize = 0;
             this.singleplayerButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
@@ -65,7 +65,7 @@
             this.exitButton.BackColor = System.Drawing.Color.Transparent;
             this.exitButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("exitButton.BackgroundImage")));
             this.exitButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.exitButton.ButtonStyle = ZeroKLobby.ButtonRenderer.StyleType.DarkHive;
+            this.exitButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.exitButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.exitButton.FlatAppearance.BorderSize = 0;
             this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -88,7 +88,7 @@
             this.multiplayerButton.BackColor = System.Drawing.Color.Transparent;
             this.multiplayerButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("multiplayerButton.BackgroundImage")));
             this.multiplayerButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.multiplayerButton.ButtonStyle = ZeroKLobby.ButtonRenderer.StyleType.DarkHive;
+            this.multiplayerButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.multiplayerButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.multiplayerButton.FlatAppearance.BorderSize = 0;
             this.multiplayerButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
