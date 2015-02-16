@@ -62,7 +62,7 @@
             this.lbRightPanelTitle.ForeColor = System.Drawing.Color.White;
             this.lbRightPanelTitle.Location = new System.Drawing.Point(72, 14);
             this.lbRightPanelTitle.Name = "lbRightPanelTitle";
-            this.lbRightPanelTitle.Size = new System.Drawing.Size(61, 25);
+            this.lbRightPanelTitle.Size = new System.Drawing.Size(91, 38);
             this.lbRightPanelTitle.TabIndex = 2;
             this.lbRightPanelTitle.Text = "Chat";
             // 

@@ -318,6 +318,8 @@ namespace ZeroKLobby
                 var formGraphics = a.CreateGraphics(); //Reference: http://msdn.microsoft.com/en-us/library/system.drawing.graphics.dpix.aspx
                 dpiY = formGraphics.DpiY; //get current DPI
 				dpiX = formGraphics.DpiX;
+			    dpiX = 96;
+			    dpiY = 96;
 				formGraphics.Dispose();
 				Trace.TraceInformation("System DPI Value: dpiX= {0}, dpiY= {1}", dpiX, dpiY);
 				scaleUpRatioY = dpiY/96.0;

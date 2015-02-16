@@ -51,9 +51,10 @@
             this.bitmapButton1.ForeColor = System.Drawing.Color.White;
             this.bitmapButton1.Image = global::ZeroKLobby.Buttons.back;
             this.bitmapButton1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.bitmapButton1.Location = new System.Drawing.Point(0, 3);
+            this.bitmapButton1.Location = new System.Drawing.Point(0, 5);
+            this.bitmapButton1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.bitmapButton1.Name = "bitmapButton1";
-            this.bitmapButton1.Size = new System.Drawing.Size(158, 37);
+            this.bitmapButton1.Size = new System.Drawing.Size(237, 57);
             this.bitmapButton1.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Servo;
             this.bitmapButton1.TabIndex = 20;
             this.bitmapButton1.Text = "Back";
@@ -75,9 +76,10 @@
             this.skirmishButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.skirmishButton.ForeColor = System.Drawing.Color.White;
             this.skirmishButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.skirmishButton.Location = new System.Drawing.Point(24, 351);
+            this.skirmishButton.Location = new System.Drawing.Point(36, 540);
+            this.skirmishButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.skirmishButton.Name = "skirmishButton";
-            this.skirmishButton.Size = new System.Drawing.Size(250, 50);
+            this.skirmishButton.Size = new System.Drawing.Size(375, 77);
             this.skirmishButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.skirmishButton.TabIndex = 19;
             this.skirmishButton.Text = "Skirmish";
@@ -97,9 +99,10 @@
             this.campaignButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.campaignButton.ForeColor = System.Drawing.Color.White;
             this.campaignButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.campaignButton.Location = new System.Drawing.Point(24, 271);
+            this.campaignButton.Location = new System.Drawing.Point(36, 417);
+            this.campaignButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.campaignButton.Name = "campaignButton";
-            this.campaignButton.Size = new System.Drawing.Size(250, 50);
+            this.campaignButton.Size = new System.Drawing.Size(375, 77);
             this.campaignButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.campaignButton.TabIndex = 18;
             this.campaignButton.Text = "Campaign";
@@ -119,9 +122,10 @@
             this.missonsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.missonsButton.ForeColor = System.Drawing.Color.White;
             this.missonsButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.missonsButton.Location = new System.Drawing.Point(24, 187);
+            this.missonsButton.Location = new System.Drawing.Point(36, 288);
+            this.missonsButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.missonsButton.Name = "missonsButton";
-            this.missonsButton.Size = new System.Drawing.Size(250, 50);
+            this.missonsButton.Size = new System.Drawing.Size(375, 77);
             this.missonsButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.missonsButton.TabIndex = 17;
             this.missonsButton.Text = "Custom battle";
@@ -141,9 +145,10 @@
             this.tutorialButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.tutorialButton.ForeColor = System.Drawing.Color.White;
             this.tutorialButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.tutorialButton.Location = new System.Drawing.Point(24, 107);
+            this.tutorialButton.Location = new System.Drawing.Point(36, 165);
+            this.tutorialButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tutorialButton.Name = "tutorialButton";
-            this.tutorialButton.Size = new System.Drawing.Size(250, 50);
+            this.tutorialButton.Size = new System.Drawing.Size(375, 77);
             this.tutorialButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.tutorialButton.TabIndex = 16;
             this.tutorialButton.Text = "Join queue (recommended)";
@@ -151,8 +156,7 @@
             // 
             // MultiPlayerPage
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.bitmapButton1);
             this.Controls.Add(this.skirmishButton);
@@ -160,8 +164,9 @@
             this.Controls.Add(this.missonsButton);
             this.Controls.Add(this.tutorialButton);
             this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "MultiPlayerPage";
-            this.Size = new System.Drawing.Size(799, 516);
+            this.Size = new System.Drawing.Size(1198, 794);
             this.ResumeLayout(false);
 
         }

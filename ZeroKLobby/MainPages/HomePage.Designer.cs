@@ -49,9 +49,10 @@
             this.singleplayerButton.ForeColor = System.Drawing.Color.White;
             this.singleplayerButton.Image = global::ZeroKLobby.Buttons.sp;
             this.singleplayerButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.singleplayerButton.Location = new System.Drawing.Point(22, 180);
+            this.singleplayerButton.Location = new System.Drawing.Point(33, 277);
+            this.singleplayerButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.singleplayerButton.Name = "singleplayerButton";
-            this.singleplayerButton.Size = new System.Drawing.Size(250, 50);
+            this.singleplayerButton.Size = new System.Drawing.Size(375, 77);
             this.singleplayerButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Servo;
             this.singleplayerButton.TabIndex = 10;
             this.singleplayerButton.Text = "Singleplayer";
@@ -71,9 +72,10 @@
             this.exitButton.ForeColor = System.Drawing.Color.White;
             this.exitButton.Image = global::ZeroKLobby.Buttons.exit;
             this.exitButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.exitButton.Location = new System.Drawing.Point(22, 381);
+            this.exitButton.Location = new System.Drawing.Point(33, 586);
+            this.exitButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.exitButton.Name = "exitButton";
-            this.exitButton.Size = new System.Drawing.Size(250, 50);
+            this.exitButton.Size = new System.Drawing.Size(375, 77);
             this.exitButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.exitButton.TabIndex = 9;
             this.exitButton.Text = "Exit";
@@ -93,9 +95,10 @@
             this.multiplayerButton.ForeColor = System.Drawing.Color.White;
             this.multiplayerButton.Image = global::ZeroKLobby.Buttons.mp;
             this.multiplayerButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.multiplayerButton.Location = new System.Drawing.Point(22, 277);
+            this.multiplayerButton.Location = new System.Drawing.Point(33, 426);
+            this.multiplayerButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.multiplayerButton.Name = "multiplayerButton";
-            this.multiplayerButton.Size = new System.Drawing.Size(250, 50);
+            this.multiplayerButton.Size = new System.Drawing.Size(375, 77);
             this.multiplayerButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Servo;
             this.multiplayerButton.TabIndex = 8;
             this.multiplayerButton.Text = "Multiplayer";
@@ -104,15 +107,15 @@
             // 
             // HomePage
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.singleplayerButton);
             this.Controls.Add(this.exitButton);
             this.Controls.Add(this.multiplayerButton);
             this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "HomePage";
-            this.Size = new System.Drawing.Size(1031, 617);
+            this.Size = new System.Drawing.Size(1546, 949);
             this.ResumeLayout(false);
 
         }
