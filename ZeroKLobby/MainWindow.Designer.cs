@@ -38,6 +38,8 @@
             this.btnWindowed = new ZeroKLobby.BitmapButton();
             this.btnSnd = new ZeroKLobby.BitmapButton();
             this.notifySection1 = new SpringDownloader.Notifications.NotifySection();
+            this.btnBack = new ZeroKLobby.BitmapButton();
+            this.lbMainPageTitle = new System.Windows.Forms.Label();
             this.panelRight.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -117,9 +119,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.switchPanel1.BackColor = System.Drawing.Color.Transparent;
-            this.switchPanel1.Location = new System.Drawing.Point(0, 12);
+            this.switchPanel1.Location = new System.Drawing.Point(0, 63);
             this.switchPanel1.Name = "switchPanel1";
-            this.switchPanel1.Size = new System.Drawing.Size(1386, 739);
+            this.switchPanel1.Size = new System.Drawing.Size(1386, 688);
             this.switchPanel1.TabIndex = 9;
             // 
             // btnWindowed
@@ -134,9 +136,9 @@
             this.btnWindowed.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnWindowed.ForeColor = System.Drawing.Color.White;
             this.btnWindowed.Image = global::ZeroKLobby.Buttons.win_minmax;
-            this.btnWindowed.Location = new System.Drawing.Point(6, 757);
+            this.btnWindowed.Location = new System.Drawing.Point(1288, 769);
             this.btnWindowed.Name = "btnWindowed";
-            this.btnWindowed.Size = new System.Drawing.Size(50, 50);
+            this.btnWindowed.Size = new System.Drawing.Size(35, 35);
             this.btnWindowed.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.btnWindowed.TabIndex = 7;
             this.btnWindowed.UseVisualStyleBackColor = false;
@@ -154,9 +156,9 @@
             this.btnSnd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSnd.ForeColor = System.Drawing.Color.White;
             this.btnSnd.Image = global::ZeroKLobby.Buttons.snd;
-            this.btnSnd.Location = new System.Drawing.Point(77, 757);
+            this.btnSnd.Location = new System.Drawing.Point(1339, 769);
             this.btnSnd.Name = "btnSnd";
-            this.btnSnd.Size = new System.Drawing.Size(50, 50);
+            this.btnSnd.Size = new System.Drawing.Size(35, 35);
             this.btnSnd.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.btnSnd.TabIndex = 8;
             this.btnSnd.UseVisualStyleBackColor = false;
@@ -174,12 +176,48 @@
             this.notifySection1.Size = new System.Drawing.Size(1386, 0);
             this.notifySection1.TabIndex = 0;
             // 
+            // btnBack
+            // 
+            this.btnBack.BackColor = System.Drawing.Color.Transparent;
+            this.btnBack.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnBack.BackgroundImage")));
+            this.btnBack.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.btnBack.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
+            this.btnBack.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnBack.FlatAppearance.BorderSize = 0;
+            this.btnBack.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.btnBack.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.btnBack.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnBack.ForeColor = System.Drawing.Color.White;
+            this.btnBack.Image = global::ZeroKLobby.Buttons.left;
+            this.btnBack.Location = new System.Drawing.Point(12, 20);
+            this.btnBack.Name = "btnBack";
+            this.btnBack.Size = new System.Drawing.Size(37, 37);
+            this.btnBack.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.btnBack.TabIndex = 12;
+            this.btnBack.UseVisualStyleBackColor = false;
+            this.btnBack.Visible = false;
+            // 
+            // lbMainPageTitle
+            // 
+            this.lbMainPageTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbMainPageTitle.BackColor = System.Drawing.Color.Transparent;
+            this.lbMainPageTitle.Font = new System.Drawing.Font("Verdana", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.lbMainPageTitle.ForeColor = System.Drawing.Color.White;
+            this.lbMainPageTitle.Location = new System.Drawing.Point(55, 26);
+            this.lbMainPageTitle.Name = "lbMainPageTitle";
+            this.lbMainPageTitle.Size = new System.Drawing.Size(541, 25);
+            this.lbMainPageTitle.TabIndex = 13;
+            this.lbMainPageTitle.Text = "Page title";
+            // 
             // MainWindow
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackgroundImage = global::ZeroKLobby.BgImages.bg_battle;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1386, 816);
+            this.Controls.Add(this.lbMainPageTitle);
+            this.Controls.Add(this.btnBack);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.panelRight);
             this.Controls.Add(this.switchPanel1);
@@ -210,6 +248,8 @@
         public System.Windows.Forms.Panel panelRight;
         public System.Windows.Forms.Label lbRightPanelTitle;
         public System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private BitmapButton btnBack;
+        public System.Windows.Forms.Label lbMainPageTitle;
 
     }
 }
