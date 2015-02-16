@@ -13,21 +13,15 @@ namespace ZeroKLobby.MicroLobby
 
         public BattleListTab() 
         {
-            Paint += BattleListTab_Enter;
-            BackColor = Color.White;
-            SetStyle(ControlStyles.DoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
-        }
-
-        void BattleListTab_Enter(object sender, EventArgs e) //lazy initialization
-        {
-            Paint -= BattleListTab_Enter; //using "Paint" instead of "Enter" event because "Enter" is too lazy in Mono (have to click control)
-            SuspendLayout(); //pause
             InitializeComponent();
+            SetStyle(ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
+
+            SuspendLayout(); //pause
 
             if (DesignMode) return;
             var lookingGlass = new PictureBox
             {
-                Width =  (int)20,
+                Width = (int)20,
                 Height = (int)20,
                 Image = ZklResources.search,
                 SizeMode = PictureBoxSizeMode.CenterImage,
@@ -35,7 +29,7 @@ namespace ZeroKLobby.MicroLobby
             };
             Program.ToolTip.SetText(lookingGlass, "Search game, description, map or player");
             Program.ToolTip.SetText(searchBox, "Search game, description, map or player");
-            
+
             hideEmptyBox.Checked = Program.Conf.HideEmptyBattles;
             hideFullBox.Checked = Program.Conf.HideNonJoinableBattles;
             showOfficialBox.Checked = Program.Conf.ShowOfficialBattles;
@@ -46,6 +40,8 @@ namespace ZeroKLobby.MicroLobby
             battlePanel.Controls.Add(battleListControl);
             ResumeLayout();
         }
+
+
 
         public bool TryNavigate(params string[] path) {
             if (path.Length == 0) return false;
@@ -68,51 +64,6 @@ namespace ZeroKLobby.MicroLobby
 
         public bool Hilite(HiliteLevel level, string path) {
             return false;
-        }
-
-
-        private void PaintParentBackground(Control par, PaintEventArgs e)
-        {
-            if (par != null)
-            {
-                Point loc = par.PointToClient(Parent.PointToScreen(Location));
-
-
-                Rectangle rect = new Rectangle(loc.X, loc.Y,
-                                               Width, Height);
-
-                e.Graphics.TranslateTransform(-rect.X, -rect.Y);
-
-                try
-                {
-                    using (PaintEventArgs pea =
-                                new PaintEventArgs(e.Graphics, rect))
-                    {
-                        pea.Graphics.SetClip(rect);
-                        InvokePaintBackground(par, pea);
-                        //InvokePaint(par, pea);
-                    }
-                }
-                finally
-                {
-                    e.Graphics.TranslateTransform(rect.X, rect.Y);
-                }
-            }
-            else
-            {
-                e.Graphics.FillRectangle(SystemBrushes.Control,
-                                         ClientRectangle);
-            }
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            //PaintParentBackground(Program.MainWindow, e);
-            
-            //ClientRectangle = new Rectangle(DisplayRectangle.Left+20, DisplayRectangle.Top+20, DisplayRectangle.Width-40,DisplayRectangle.Height-40);
-            //ButtonRenderer.Instance.RenderToGraphics(e.Graphics,DisplayRectangle, ButtonRenderer.StyleType.Shraka );
-
-            base.OnPaint(e);
         }
 
 

@@ -108,7 +108,7 @@ namespace ZeroKLobby.MicroLobby
         {
             InitializeComponent();
             AutoScroll = true;
-            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
+            SetStyle(ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
             //BackColor = Color.White;
             //BackColor = Color;
 
@@ -244,11 +244,18 @@ namespace ZeroKLobby.MicroLobby
 
 
 
-    protected override void OnPaintBackground(PaintEventArgs e)
+        protected override void OnPaintBackground(PaintEventArgs e)
         {
-            var pnl = Program.MainWindow.panelRight;
-            var loc = pnl.PointToClient(PointToScreen(Location));
-            e.Graphics.DrawImage(pnl.BackgroundImage, e.ClipRectangle, loc.X, loc.Y, e.ClipRectangle.Width, e.ClipRectangle.Height, GraphicsUnit.Pixel);
+            try
+            {
+                var pnl = Program.MainWindow.panelRight;
+                var loc = pnl.PointToClient(PointToScreen(Location));
+                if (pnl.BackgroundImage != null) e.Graphics.DrawImage(pnl.BackgroundImage, e.ClipRectangle, loc.X, loc.Y, e.ClipRectangle.Width, e.ClipRectangle.Height, GraphicsUnit.Pixel);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error rendering battle list BG: {0}", ex);
+            }
         }
 
         protected override void OnPaint(PaintEventArgs e)

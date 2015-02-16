@@ -72,7 +72,10 @@ namespace ZeroKLobby
                 button.TextImageRelation = TextImageRelation.ImageBeforeText;
             }
             button.Click += (sender, args) => {
-                Program.MainWindow.panelRight.Visible = true;
+                var navigator = Program.MainWindow.navigationControl;
+                var panel = Program.MainWindow.panelRight;
+                if (navigator.CurrentNavigatable == navigator.GetNavigatableFromPath(TargetPath)) panel.Visible = !panel.Visible;
+                else panel.Visible = true;
                 Program.MainWindow.navigationControl.SwitchTab(TargetPath);
             };
             return button;

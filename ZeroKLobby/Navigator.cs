@@ -152,6 +152,11 @@ namespace ZeroKLobby
             if (CanGoForward) GoForward();
         }
 
+        public INavigatable GetNavigatableFromPath(string path)
+        {
+            return tabs.Controls.OfType<Control>().Select(GetINavigatableFromControl).FirstOrDefault(x => path.StartsWith(x.PathHead));
+        }
+
         public void SwitchTab(string targetPath)
         { //called by ButtonInfo.cs when clicked. "targetPath" is usually a "PathHead"
             foreach (TabPage tabPage in tabs.Controls) {
