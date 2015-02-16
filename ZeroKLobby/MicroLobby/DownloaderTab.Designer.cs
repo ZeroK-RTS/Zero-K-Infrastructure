@@ -160,7 +160,7 @@
             // DownloaderTab
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.DimGray;
             this.Controls.Add(this.panel2);
             this.ForeColor = System.Drawing.Color.White;

@@ -411,7 +411,7 @@
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(702, 649);
             this.Controls.Add(this.btnBisect);
             this.Controls.Add(this.btnRefresh);
