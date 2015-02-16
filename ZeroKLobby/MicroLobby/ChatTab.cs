@@ -45,6 +45,7 @@ namespace ZeroKLobby.MicroLobby
             foreach (var channel in Program.TasClient.JoinedChannels.Values.Where(c => !IsIgnoredChannel(c.Name))) CreateChannelControl(channel.Name);
             toolTabs.SelectChannelTab("Battle");
             ResumeLayout();
+            Title = "Chat";
         }
 
         public void CloseChannelTab(string key)
@@ -327,6 +328,7 @@ namespace ZeroKLobby.MicroLobby
                 if (path[1] == "battle")
                 {
                     toolTabs.SelectChannelTab("Battle");
+                    Title = "Joined battle chat";
                 }
             }
             if (path.Length == 3 && !String.IsNullOrEmpty(path[1]) && !String.IsNullOrEmpty(path[2]))
@@ -336,12 +338,14 @@ namespace ZeroKLobby.MicroLobby
                 {
                     var userName = path[2];
                     OpenPrivateMessageChannel(userName);
+                    Title = "Private chat with "+ userName;
 
                 }
                 else if (type == "channel")
                 {
                     var channelName = path[2];
                     OpenChannel(channelName);
+                    Title = "Chat #" + channelName;
                 }
             }
             return true;
@@ -362,18 +366,6 @@ namespace ZeroKLobby.MicroLobby
             return false;
         }
 
-        public string GetTooltip(params string[] path)
-        {
-            return null;
-        }
-
-        public void Reload()
-        {
-
-        }
-
-        public bool CanReload { get { return false; } }
-
-        public bool IsBusy { get { return false; } }
+        public string Title { get; private set; }
     }
 }

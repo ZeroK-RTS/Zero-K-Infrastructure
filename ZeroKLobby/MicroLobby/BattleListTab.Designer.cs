@@ -157,5 +157,6 @@
         private System.Windows.Forms.Panel battlePanel;
         private System.Windows.Forms.CheckBox hidePasswordedBox;
 
+        public string Title { get { return "Custom battles"; } }
     }
 }

@@ -111,7 +111,9 @@ namespace ZeroKLobby.MicroLobby
 			return false;
 		}
 
-		public string GetTooltip(params string[] path)
+	    public string Title { get { return "Settings"; } }
+
+	    public string GetTooltip(params string[] path)
 		{
 			return null;
 		}

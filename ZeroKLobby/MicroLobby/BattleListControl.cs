@@ -244,29 +244,7 @@ namespace ZeroKLobby.MicroLobby
 
 
 
-        private void PaintParentBackground(Control par, PaintEventArgs e)
-        {
-            var loc = par.PointToClient(Parent.PointToScreen(Location));
-            var rect = new Rectangle(loc.X, loc.Y, Width, Height);
-            
-            e.Graphics.TranslateTransform(-rect.X, -rect.Y);
-            try
-            {
-                using (var pea = new PaintEventArgs(e.Graphics, rect))
-                {
-                    pea.Graphics.SetClip(rect);
-                    InvokePaintBackground(par, pea);
-                    //InvokePaint(par, pea);
-                }
-            }
-            finally
-            {
-                e.Graphics.TranslateTransform(rect.X, rect.Y);
-            }
-        }
-
-
-        protected override void OnPaintBackground(PaintEventArgs e)
+    protected override void OnPaintBackground(PaintEventArgs e)
         {
             var pnl = Program.MainWindow.panelRight;
             var loc = pnl.PointToClient(PointToScreen(Location));

@@ -24,7 +24,6 @@ namespace ZeroKLobby.MapDownloader
 
         Program.Downloader.PackagesChanged += Downloader_PackagesChanged;
         Program.Downloader.SelectedPackagesChanged += Downloader_SelectedPackagesChanged;
-        Program.Downloader.PackageDownloader.MasterManifestDownloaded += PackageDownloader_MasterManifestDownloaded;
         UpdateAvailablePackages();
         UpdateSelectedPackages();
     }
@@ -87,24 +86,12 @@ namespace ZeroKLobby.MapDownloader
       return false;
     }
 
-    public string GetTooltip(params string[] path)
-    {
-      return null;
-    }
-
-      public void Reload() {
-          
-      }
-
-      public bool CanReload { get { return false; } }
-
-      bool manifestDownloading = false;
-      public bool IsBusy { get { return manifestDownloading; } }
-
-      void PackageDownloader_MasterManifestDownloaded(object sender, EventArgs e)
+      public string Title
       {
-          manifestDownloading = false;
+          get { return "Rapid downloader"; }
       }
+
+
 
       void Downloader_PackagesChanged(object sender, EventArgs e)
     {
@@ -128,7 +115,6 @@ namespace ZeroKLobby.MapDownloader
 
     void btnReload_Click(object sender, EventArgs e)
     {
-        manifestDownloading = true;
         Program.Downloader.PackageDownloader.LoadMasterAndVersions(true);
     }
 

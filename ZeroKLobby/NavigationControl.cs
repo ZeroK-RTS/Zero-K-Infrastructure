@@ -187,6 +187,10 @@ namespace ZeroKLobby
             GoToPage(CurrentPage.Path);
         }
 
+        private void SetHeader(string text)
+        {
+            Program.MainWindow.lbRightPanelTitle.Text = text;
+        }
 
         NavigationStep GoToPage(string[] path) // todo cleanup
         {
@@ -197,6 +201,8 @@ namespace ZeroKLobby
                 {
                     SelectTab(tabPage);
                     lastTabPaths[navigatable] = string.Join("/", path);
+                    SetHeader(navigatable.Title);
+
                     return new NavigationStep { Path = path };
                 }
             }

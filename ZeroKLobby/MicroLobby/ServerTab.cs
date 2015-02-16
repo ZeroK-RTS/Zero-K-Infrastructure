@@ -64,6 +64,8 @@ namespace ZeroKLobby.MicroLobby
             return false;
         }
 
+        public string Title { get { return "Server connection"; } }
+
         public string GetTooltip(params string[] path) {
             return null;
         }

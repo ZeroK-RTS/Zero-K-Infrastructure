@@ -30,8 +30,8 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.panelRight = new System.Windows.Forms.Panel();
-            this.lbRightPanelTitle = new System.Windows.Forms.Label();
             this.btnHide = new ZeroKLobby.BitmapButton();
+            this.lbRightPanelTitle = new System.Windows.Forms.Label();
             this.navigationControl1 = new ZeroKLobby.NavigationControl();
             this.switchPanel1 = new ZeroKLobby.Controls.SwitchPanel();
             this.btnWindowed = new ZeroKLobby.BitmapButton();
@@ -55,17 +55,6 @@
             this.panelRight.SizeChanged += new System.EventHandler(this.panelRight_SizeChanged);
             this.panelRight.Paint += new System.Windows.Forms.PaintEventHandler(this.panelRight_Paint);
             // 
-            // lbRightPanelTitle
-            // 
-            this.lbRightPanelTitle.AutoSize = true;
-            this.lbRightPanelTitle.Font = new System.Drawing.Font("Verdana", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lbRightPanelTitle.ForeColor = System.Drawing.Color.White;
-            this.lbRightPanelTitle.Location = new System.Drawing.Point(72, 14);
-            this.lbRightPanelTitle.Name = "lbRightPanelTitle";
-            this.lbRightPanelTitle.Size = new System.Drawing.Size(91, 38);
-            this.lbRightPanelTitle.TabIndex = 2;
-            this.lbRightPanelTitle.Text = "Chat";
-            // 
             // btnHide
             // 
             this.btnHide.BackColor = System.Drawing.Color.Transparent;
@@ -86,6 +75,17 @@
             this.btnHide.TabIndex = 3;
             this.btnHide.UseVisualStyleBackColor = false;
             this.btnHide.Click += new System.EventHandler(this.btnHide_Click);
+            // 
+            // lbRightPanelTitle
+            // 
+            this.lbRightPanelTitle.AutoSize = true;
+            this.lbRightPanelTitle.Font = new System.Drawing.Font("Verdana", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.lbRightPanelTitle.ForeColor = System.Drawing.Color.White;
+            this.lbRightPanelTitle.Location = new System.Drawing.Point(72, 14);
+            this.lbRightPanelTitle.Name = "lbRightPanelTitle";
+            this.lbRightPanelTitle.Size = new System.Drawing.Size(61, 25);
+            this.lbRightPanelTitle.TabIndex = 2;
+            this.lbRightPanelTitle.Text = "Chat";
             // 
             // navigationControl1
             // 
@@ -195,9 +195,9 @@
         private BitmapButton btnWindowed;
         private BitmapButton btnSnd;
         private Controls.SwitchPanel switchPanel1;
-        private System.Windows.Forms.Label lbRightPanelTitle;
         private BitmapButton btnHide;
         public System.Windows.Forms.Panel panelRight;
+        public System.Windows.Forms.Label lbRightPanelTitle;
 
     }
 }
