@@ -108,9 +108,9 @@ namespace ZeroKLobby.MicroLobby
         {
             InitializeComponent();
             AutoScroll = true;
-            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer | ControlStyles.SupportsTransparentBackColor, true);
-            //BackColor = Program.Conf.BgColor;
-            BackColor = Color.Transparent;
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
+            //BackColor = Color.White;
+            //BackColor = Color;
 
             FilterText = Program.Conf.BattleFilter;
             Disposed += BattleListControl_Disposed;
@@ -248,7 +248,7 @@ namespace ZeroKLobby.MicroLobby
         {
             var loc = par.PointToClient(Parent.PointToScreen(Location));
             var rect = new Rectangle(loc.X, loc.Y, Width, Height);
-
+            
             e.Graphics.TranslateTransform(-rect.X, -rect.Y);
             try
             {
@@ -268,22 +268,27 @@ namespace ZeroKLobby.MicroLobby
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
-            //base.OnPaintBackground(e);
-            PaintParentBackground(Program.MainWindow.panelRight, e);
+            var pnl = Program.MainWindow.panelRight;
+            var loc = pnl.PointToClient(PointToScreen(Location));
+            e.Graphics.DrawImage(pnl.BackgroundImage, e.ClipRectangle, loc.X, loc.Y, e.ClipRectangle.Width, e.ClipRectangle.Height, GraphicsUnit.Pixel);
         }
 
-        protected override void OnPaint(PaintEventArgs pe)
+        protected override void OnPaint(PaintEventArgs e)
         {
             try
             {
 
                 //pe.Graphics.DrawImage(Program.MainWindow.navigationControl,DisplayRectangle, Bounds, GraphicsUnit.Point);
-                Graphics g = pe.Graphics;
+                Graphics g = e.Graphics;
 
                 int scaledIconWidth = (int)BattleIcon.Width;
                 int scaledIconHeight = (int)BattleIcon.Height;
                 int scaledMapCellWidth = (int)BattleIcon.MapCellSize.Width;
                 //base.OnPaint(pe);
+
+                //PaintParentBackground(Program.MainWindow.panelRight, pe);
+
+
 
                 g.TranslateTransform(AutoScrollPosition.X, AutoScrollPosition.Y);
 
@@ -340,9 +345,9 @@ namespace ZeroKLobby.MicroLobby
 
                 AutoScrollMinSize = new Size(0, y + scaledIconHeight);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Trace.WriteLine("Error in drawing battles: " + e);
+                Trace.WriteLine("Error in drawing battles: " + ex);
             }
         }
 

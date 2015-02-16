@@ -63,7 +63,7 @@
             this.minimapSplitContainer1.Panel2.Controls.Add(this.mapPanel);
             this.minimapSplitContainer1.Panel2MinSize = 10;
             this.minimapSplitContainer1.Size = new System.Drawing.Size(0, 0);
-            this.minimapSplitContainer1.SplitterDistance = 150;
+            this.minimapSplitContainer1.SplitterDistance = 10;
             this.minimapSplitContainer1.SplitterWidth = 6;
             this.minimapSplitContainer1.TabIndex = 1;
             // 
@@ -87,7 +87,7 @@
             this.layoutPanel.Name = "layoutPanel";
             this.layoutPanel.RowCount = 1;
             this.layoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.layoutPanel.Size = new System.Drawing.Size(2116, 38);
+            this.layoutPanel.Size = new System.Drawing.Size(36, 38);
             this.layoutPanel.TabIndex = 2;
             // 
             // btnGameOptions
@@ -100,11 +100,11 @@
             this.btnGameOptions.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnGameOptions.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnGameOptions.ForeColor = System.Drawing.Color.White;
-            this.btnGameOptions.Location = new System.Drawing.Point(1058, 0);
+            this.btnGameOptions.Location = new System.Drawing.Point(18, 0);
             this.btnGameOptions.Margin = new System.Windows.Forms.Padding(0);
             this.btnGameOptions.MinimumSize = new System.Drawing.Size(0, 35);
             this.btnGameOptions.Name = "btnGameOptions";
-            this.btnGameOptions.Size = new System.Drawing.Size(529, 38);
+            this.btnGameOptions.Size = new System.Drawing.Size(9, 38);
             this.btnGameOptions.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.btnGameOptions.TabIndex = 18;
             this.btnGameOptions.Text = "Options";
@@ -121,11 +121,11 @@
             this.btnMapList.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnMapList.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnMapList.ForeColor = System.Drawing.Color.White;
-            this.btnMapList.Location = new System.Drawing.Point(1587, 0);
+            this.btnMapList.Location = new System.Drawing.Point(27, 0);
             this.btnMapList.Margin = new System.Windows.Forms.Padding(0);
             this.btnMapList.MinimumSize = new System.Drawing.Size(0, 35);
             this.btnMapList.Name = "btnMapList";
-            this.btnMapList.Size = new System.Drawing.Size(529, 38);
+            this.btnMapList.Size = new System.Drawing.Size(9, 38);
             this.btnMapList.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.btnMapList.TabIndex = 17;
             this.btnMapList.Text = "Maps";
@@ -146,7 +146,7 @@
             this.btnChangeTeam.Margin = new System.Windows.Forms.Padding(0);
             this.btnChangeTeam.MinimumSize = new System.Drawing.Size(0, 35);
             this.btnChangeTeam.Name = "btnChangeTeam";
-            this.btnChangeTeam.Size = new System.Drawing.Size(529, 38);
+            this.btnChangeTeam.Size = new System.Drawing.Size(9, 38);
             this.btnChangeTeam.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.btnChangeTeam.TabIndex = 16;
             this.btnChangeTeam.Text = "Teams";
@@ -163,11 +163,11 @@
             this.btnAddAI.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnAddAI.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAddAI.ForeColor = System.Drawing.Color.White;
-            this.btnAddAI.Location = new System.Drawing.Point(529, 0);
+            this.btnAddAI.Location = new System.Drawing.Point(9, 0);
             this.btnAddAI.Margin = new System.Windows.Forms.Padding(0);
             this.btnAddAI.MinimumSize = new System.Drawing.Size(0, 35);
             this.btnAddAI.Name = "btnAddAI";
-            this.btnAddAI.Size = new System.Drawing.Size(529, 38);
+            this.btnAddAI.Size = new System.Drawing.Size(9, 38);
             this.btnAddAI.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.btnAddAI.TabIndex = 15;
             this.btnAddAI.Text = "Add AI";
@@ -182,7 +182,7 @@
             this.mapPanel.Location = new System.Drawing.Point(0, 0);
             this.mapPanel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.mapPanel.Name = "mapPanel";
-            this.mapPanel.Size = new System.Drawing.Size(2116, 1360);
+            this.mapPanel.Size = new System.Drawing.Size(0, 38);
             this.mapPanel.TabIndex = 2;
             // 
             // MinimapFuncBox
