@@ -27,7 +27,7 @@ namespace ZeroKLobby.Controls
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         protected override bool DoubleBuffered { get { return base.DoubleBuffered; } set { base.DoubleBuffered = value; } }
 
-        Control currentTarget;
+        public Control CurrentTarget { get; private set; }
 
         public enum AnimType
         {
@@ -100,21 +100,21 @@ namespace ZeroKLobby.Controls
         {
             var animator = GetAnimator(animation);
 
-            if (currentTarget != null && animator != null) {
+            if (CurrentTarget != null && animator != null) {
 
-                Rectangle r = GetChildrenBoundingRectangle(currentTarget);
+                Rectangle r = GetChildrenBoundingRectangle(CurrentTarget);
 
-                var bounds = currentTarget.Controls.OfType<Control>().ToDictionary(x => x, x => x.Bounds);
+                var bounds = CurrentTarget.Controls.OfType<Control>().ToDictionary(x => x, x => x.Bounds);
 
                 for (int i = 0; i < stepCount; i++) {
-                    foreach (var c in currentTarget.Controls.Cast<Control>()) {
+                    foreach (var c in CurrentTarget.Controls.Cast<Control>()) {
                         animator(c, r, (double)i/stepCount, bounds[c]);
                     }
                     await Task.Delay(stepDelay);
                 }
 
                 foreach (var b in bounds) { b.Key.Bounds = b.Value; }
-                this.Controls.Remove(currentTarget);
+                this.Controls.Remove(CurrentTarget);
                 this.Controls.Clear();
                 
                 newTarget.Dock = DockStyle.Fill;
@@ -133,12 +133,12 @@ namespace ZeroKLobby.Controls
                 }
                 foreach (var b in bounds) { b.Key.Bounds = b.Value; }
 
-                currentTarget = newTarget;
+                CurrentTarget = newTarget;
             } else {
-                if (currentTarget != null) this.Controls.Remove(currentTarget);
+                if (CurrentTarget != null) this.Controls.Remove(CurrentTarget);
                 newTarget.Dock = DockStyle.Fill;
                 this.Controls.Add(newTarget);
-                currentTarget = newTarget;
+                CurrentTarget = newTarget;
             }
         }
 

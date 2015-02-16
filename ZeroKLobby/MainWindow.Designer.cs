@@ -30,10 +30,10 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.panelRight = new System.Windows.Forms.Panel();
-            this.lbRightPanelTitle = new System.Windows.Forms.Label();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnHide = new ZeroKLobby.BitmapButton();
+            this.lbRightPanelTitle = new System.Windows.Forms.Label();
             this.navigationControl1 = new ZeroKLobby.HeadlessTabControl();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.switchPanel1 = new ZeroKLobby.Controls.SwitchPanel();
             this.btnWindowed = new ZeroKLobby.BitmapButton();
             this.btnSnd = new ZeroKLobby.BitmapButton();
@@ -59,27 +59,6 @@
             this.panelRight.SizeChanged += new System.EventHandler(this.panelRight_SizeChanged);
             this.panelRight.Paint += new System.Windows.Forms.PaintEventHandler(this.panelRight_Paint);
             // 
-            // lbRightPanelTitle
-            // 
-            this.lbRightPanelTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbRightPanelTitle.Font = new System.Drawing.Font("Verdana", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lbRightPanelTitle.ForeColor = System.Drawing.Color.White;
-            this.lbRightPanelTitle.Location = new System.Drawing.Point(72, 14);
-            this.lbRightPanelTitle.Name = "lbRightPanelTitle";
-            this.lbRightPanelTitle.Size = new System.Drawing.Size(680, 25);
-            this.lbRightPanelTitle.TabIndex = 2;
-            this.lbRightPanelTitle.Text = "Chat";
-            // 
-            // flowLayoutPanel1
-            // 
-            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.flowLayoutPanel1.BackColor = System.Drawing.Color.Transparent;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(836, 760);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(355, 47);
-            this.flowLayoutPanel1.TabIndex = 11;
-            // 
             // btnHide
             // 
             this.btnHide.BackColor = System.Drawing.Color.Transparent;
@@ -101,6 +80,18 @@
             this.btnHide.UseVisualStyleBackColor = false;
             this.btnHide.Click += new System.EventHandler(this.btnHide_Click);
             // 
+            // lbRightPanelTitle
+            // 
+            this.lbRightPanelTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbRightPanelTitle.Font = new System.Drawing.Font("Verdana", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.lbRightPanelTitle.ForeColor = System.Drawing.Color.White;
+            this.lbRightPanelTitle.Location = new System.Drawing.Point(72, 14);
+            this.lbRightPanelTitle.Name = "lbRightPanelTitle";
+            this.lbRightPanelTitle.Size = new System.Drawing.Size(680, 25);
+            this.lbRightPanelTitle.TabIndex = 2;
+            this.lbRightPanelTitle.Text = "Chat";
+            // 
             // navigationControl1
             // 
             this.navigationControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -112,6 +103,15 @@
             this.navigationControl1.SelectedIndex = 0;
             this.navigationControl1.Size = new System.Drawing.Size(731, 702);
             this.navigationControl1.TabIndex = 1;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowLayoutPanel1.BackColor = System.Drawing.Color.Transparent;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(836, 760);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(355, 47);
+            this.flowLayoutPanel1.TabIndex = 11;
             // 
             // switchPanel1
             // 
@@ -196,6 +196,7 @@
             this.btnBack.TabIndex = 12;
             this.btnBack.UseVisualStyleBackColor = false;
             this.btnBack.Visible = false;
+            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
             // lbMainPageTitle
             // 

@@ -288,7 +288,7 @@ namespace ZeroKLobby
             return null;
         }
 
-        public static void RenderParentsBackground(this Control source, PaintEventArgs e)
+        public static void RenderParentsBackgroundImage(this Control source, PaintEventArgs e)
         {
             try {
                 var par = source.FindParentWithBgImage();

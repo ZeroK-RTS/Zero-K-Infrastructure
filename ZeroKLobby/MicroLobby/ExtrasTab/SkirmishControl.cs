@@ -10,6 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using PlasmaDownloader;
+using ZeroKLobby.MainPages;
 using ZkData.UnitSyncLib;
 using LobbyClient;
 using System.Globalization;
@@ -20,7 +21,7 @@ using ZkData;
 
 namespace ZeroKLobby.MicroLobby.ExtrasTab
 {
-    public partial class SkirmishControl : UserControl
+    public partial class SkirmishControl : UserControl, IMainPage
     { //Mix match from BattleChatControl.cs, Benchmarker/MainForm.cs, Springie/AutoHost_commands.cs
         private PictureBox minimapBox;
         Image minimap;
@@ -1414,5 +1415,12 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 map_comboBox.SelectedItem = Program.Conf.SkirmisherMap;
 
         }
+
+        public void GoBack()
+        {
+            Program.MainWindow.SwitchPage(MainWindow.MainPages.SinglePlayer, false);
+        }
+
+        public string Title { get { return "Skirmish"; } }
     }
 }

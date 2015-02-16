@@ -3,11 +3,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using ZeroKLobby.MainPages;
 using ZkData;
 
 namespace ZeroKLobby.MicroLobby
 {
-    public partial class BattleListTab: UserControl, INavigatable
+    public partial class BattleListTab: UserControl, INavigatable, IMainPage
     {
         BattleListControl battleListControl;
 
@@ -91,5 +92,9 @@ namespace ZeroKLobby.MicroLobby
             if (battleListControl != null) battleListControl.HidePassworded = hidePasswordedBox.Checked;
         }
 
+        public void GoBack()
+        {
+            Program.MainWindow.SwitchPage(MainWindow.MainPages.MultiPlayer, false);
+        }
     }
 }

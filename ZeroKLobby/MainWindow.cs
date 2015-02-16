@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -100,8 +101,7 @@ namespace ZeroKLobby
                 timer1.Start();
             }
 
-            var home = new HomePage();
-            switchPanel1.SwitchContent(home);
+            SwitchPage(MainPages.Home, false);
 
             navigator = new Navigator(navigationControl1, flowLayoutPanel1);
 
@@ -212,7 +212,18 @@ namespace ZeroKLobby
 
         public Task SwitchPage(MainPages page, bool animate = true)
         {
-            return switchPanel1.SwitchContent(pages[page], animate ? SwitchPanel.AnimType.SlideLeft : (SwitchPanel.AnimType?)null);
+            var target = pages[page];
+            var ipage = target as IMainPage;
+            if (ipage != null) {
+                lbMainPageTitle.Text = ipage.Title;
+                if (page == MainPages.Home) btnBack.Visible = false;
+                else btnBack.Visible = true;
+            } else {
+                btnBack.Visible = false;
+                lbMainPageTitle.Text = "";
+            }
+
+            return switchPanel1.SwitchContent(target, animate ? SwitchPanel.AnimType.SlideLeft : (SwitchPanel.AnimType?)null);
         }
 
         protected override void OnActivated(EventArgs e)
@@ -387,6 +398,12 @@ namespace ZeroKLobby
         private void panelRight_SizeChanged(object sender, EventArgs e)
         {
             panelRight.BackgroundImage = null;
+        }
+
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            var page = switchPanel1.CurrentTarget as IMainPage;
+            if (page != null) page.GoBack();
         }
 
     }
