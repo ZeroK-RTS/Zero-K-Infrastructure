@@ -134,9 +134,8 @@ namespace ZeroKLobby.Notifications
                     else engineVersionNeeded = null;
 
                     if (gameBox.Image != null) gameBox.Image.Dispose();
-                    DpiMeasurement.DpiXYMeasurement(this);
-                    int scaledIconHeight = DpiMeasurement.ScaleValueY(BattleIcon.Height);
-                    int scaledIconWidth = DpiMeasurement.ScaleValueX(BattleIcon.Width);
+                int scaledIconHeight = (int)BattleIcon.Height;
+                    int scaledIconWidth = (int)BattleIcon.Width;
                     gameBox.Image = new Bitmap(scaledIconWidth, scaledIconHeight);
                     using (var g = Graphics.FromImage(gameBox.Image))
                     {
@@ -502,9 +501,8 @@ namespace ZeroKLobby.Notifications
         {
             if (e.Data.Battle == Program.TasClient.MyBattle)
             {
-                DpiMeasurement.DpiXYMeasurement(this);
-                int scaledIconHeight = DpiMeasurement.ScaleValueY(BattleIcon.Height);
-                int scaledIconWidth = DpiMeasurement.ScaleValueX(BattleIcon.Width);
+                int scaledIconHeight = (int)BattleIcon.Height;
+                int scaledIconWidth = (int)BattleIcon.Width;
                 if (gameBox.Image == null) gameBox.Image = new Bitmap(scaledIconWidth, scaledIconHeight);
                 using (var g = Graphics.FromImage(gameBox.Image))
                 {

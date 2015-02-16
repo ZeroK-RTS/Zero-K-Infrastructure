@@ -25,11 +25,10 @@ namespace ZeroKLobby.MicroLobby
             InitializeComponent();
 
             if (DesignMode) return;
-            DpiMeasurement.DpiXYMeasurement(this);
             var lookingGlass = new PictureBox
             {
-                Width =  DpiMeasurement.ScaleValueY(20),
-                Height = DpiMeasurement.ScaleValueY(20),
+                Width =  (int)20,
+                Height = (int)20,
                 Image = ZklResources.search,
                 SizeMode = PictureBoxSizeMode.CenterImage,
                 Dock = DockStyle.Left

@@ -90,8 +90,7 @@ namespace ZeroKLobby.MicroLobby
 			base.OnResize(e);
             if (finishLoad && minimapFuncBox.minimapSplitContainer1.Height > 1)
             {
-                DpiMeasurement.DpiXYMeasurement(this);
-                minimapFuncBox.minimapSplitContainer1.SplitterDistance = Math.Min(DpiMeasurement.ScaleValueY(23),minimapFuncBox.minimapSplitContainer1.Height); //always show button fully
+                minimapFuncBox.minimapSplitContainer1.SplitterDistance = Math.Min((int)23,minimapFuncBox.minimapSplitContainer1.Height); //always show button fully
                 DrawMinimap();
             }
 		}

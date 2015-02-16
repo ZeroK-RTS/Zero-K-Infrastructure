@@ -23,13 +23,12 @@ namespace ZeroKLobby
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
             User user;
             if (!Program.TasClient.ExistingUsers.TryGetValue(userName, out user)) return;
-            DpiMeasurement.DpiXYMeasurement();
-            var x = DpiMeasurement.ScaleValueX(1);
+            var x = (int)1;
             var y = 0;
             Action newLine = () =>
                 {
-                    x = DpiMeasurement.ScaleValueX(1);
-                    y += DpiMeasurement.ScaleValueY(16);
+                x = (int)1;
+                y += (int)16;
                 };
             Action<string> drawString = (text) =>
                 {
@@ -46,8 +45,8 @@ namespace ZeroKLobby
 
             Action<Image, int, int> drawImage = (image, w, h) =>
                 {
-                    g.DrawImage(image, x, y, DpiMeasurement.ScaleValueX(w), DpiMeasurement.ScaleValueY(h));
-                    x += DpiMeasurement.ScaleValueX(w + 3);
+                    g.DrawImage(image, x, y, (int)w, (int)h);
+                    x += (int)(w + 3);
                 };
             using (var boldFont = new Font(font, FontStyle.Bold)) TextRenderer.DrawText(g, user.Name, boldFont, new Point(x, y), foreColor);
 
@@ -126,7 +125,7 @@ namespace ZeroKLobby
                 if (!string.IsNullOrEmpty(user.Avatar))
                 {
                     var image = Program.ServerImages.GetAvatarImage(user);
-                    if (image != null) g.DrawImage(image, DpiMeasurement.ScaleValueX(302 - 65), 0, DpiMeasurement.ScaleValueX(64), DpiMeasurement.ScaleValueY(64));
+                    if (image != null) g.DrawImage(image, (int)(302 - 65), 0, (int)64, (int)64);
                 }
 
             }
@@ -163,8 +162,7 @@ namespace ZeroKLobby
             if (Program.SpringieServer.GetTop10Rank(user.Name) > 0) h += 16; // top 10
             if (user.IsInBattleRoom) h += 76; // battle icon
 
-            DpiMeasurement.DpiXYMeasurement();
-            return new Size(DpiMeasurement.ScaleValueX(302), DpiMeasurement.ScaleValueY(h));
+            return new Size((int)302, (int)h);
         }
     }
 }
