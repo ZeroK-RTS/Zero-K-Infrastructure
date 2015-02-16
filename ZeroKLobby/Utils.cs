@@ -274,7 +274,7 @@ namespace ZeroKLobby
 
         public static void RenderControlBgImage(this Control destination, Control source, PaintEventArgs e)
         {
-            var loc = source.PointToClient(destination.PointToScreen(destination.Location));
+            var loc = source.PointToClient(destination.Parent.PointToScreen(destination.Location));
             if (source.BackgroundImage != null) e.Graphics.DrawImage(source.BackgroundImage, e.ClipRectangle, loc.X + e.ClipRectangle.X, loc.Y  + e.ClipRectangle.Y, e.ClipRectangle.Width, e.ClipRectangle.Height, GraphicsUnit.Pixel);
         }
 

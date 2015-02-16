@@ -38,7 +38,7 @@ namespace ZeroKLobby.Controls
 
         public async Task SwitchContent(Control newTarget, AnimType? animation = null)
         {
-            var tab = new TabPage();
+            var tab = new TransparentTabPage();
             newTarget.Dock = DockStyle.Fill;
             tab.Controls.Add(newTarget);
             TabPages.Add(tab);
