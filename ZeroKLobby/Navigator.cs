@@ -54,50 +54,49 @@ namespace ZeroKLobby
                 value = parts[0];
 
                 if (value == path) return;
-
-
-                ButtonList.ForEach(x => x.IsSelected = false); //unselect all button
-
-                var selbut = ButtonList.Where(x => Path.StartsWith(x.TargetPath)).OrderByDescending(x => x.TargetPath.Length).FirstOrDefault();
-                if (selbut != null)
-                {
-                    selbut.IsSelected = true;
-                    selbut.IsAlerting = false;
-                }
-
-
-                var navigable =
-                    tabs.Controls.OfType<Object>().Select(GetINavigatableFromControl).FirstOrDefault(x => x != null && Path.StartsWith(x.PathHead));
-                //find TAB with correct PathHead
-                if (navigable != null) navigable.Hilite(HiliteLevel.None, Path); //cancel hilite ChatTab's tab (if meet some condition)
-
-
+                
                 if (value.StartsWith("www."))
                 {
                     value = "http://" + value;
                 } //create "http://www"
 
-                if (value.StartsWith("http://") || value.StartsWith("https://") || value.StartsWith("file://"))
-                {
+                if (value.StartsWith("http://") || value.StartsWith("https://") || value.StartsWith("file://")) {
                     Program.BrowserInterop.OpenUrl(value); //this open external browser
-                }
-                else
-                {
-                    foreach (TabPage tabPage in tabs.Controls)
+                } else {
+                    path = value;
+                    if (string.IsNullOrEmpty(value)) {
+                        ButtonList.ForEach(x => x.IsSelected = false); //unselect all button
+                    }
                     {
-                        var navigatable = GetINavigatableFromControl(tabPage); //translate tab button into the page it represent
-                        if (navigatable != null && navigatable.TryNavigate(value.Split('/')))
-                        {
-                            path = value;
-                            tabs.SelectTab(tabPage);
-                            lastTabPaths[navigatable] = path;
-                            SetHeader(navigatable.Title);
-                            backStack.Push(path);
+                        foreach (TabPage tabPage in tabs.Controls) {
+                            var navigatable = GetINavigatableFromControl(tabPage); //translate tab button into the page it represent
+                            if (navigatable != null && navigatable.TryNavigate(value.Split('/'))) {
+                                UpdateTabButtons(path);
+                                tabs.SelectTab(tabPage);
+                                lastTabPaths[navigatable] = path;
+                                SetHeader(navigatable.Title);
+                                backStack.Push(path);
+                            }
                         }
                     }
                 }
 
             }
+        }
+
+        void UpdateTabButtons(string newPath)
+        {
+            ButtonList.ForEach(x => x.IsSelected = false); //unselect all button
+
+            var selbut = ButtonList.Where(x => newPath.StartsWith(x.TargetPath)).OrderByDescending(x => x.TargetPath.Length).FirstOrDefault();
+            if (selbut != null) {
+                selbut.IsSelected = true;
+                selbut.IsAlerting = false;
+            }
+
+            var navigable = tabs.Controls.OfType<Object>().Select(GetINavigatableFromControl).FirstOrDefault(x => x != null && newPath.StartsWith(x.PathHead));
+            //find TAB with correct PathHead
+            if (navigable != null) navigable.Hilite(HiliteLevel.None, newPath); //cancel hilite ChatTab's tab (if meet some condition)
         }
 
         Control buttonPanel;
