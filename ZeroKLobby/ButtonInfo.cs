@@ -45,7 +45,7 @@ namespace ZeroKLobby
         public ButtonInfo() {
             Visible = true;
             Width = 100;
-            Height = 25;
+            Height = 35;
             Dock = DockStyle.Left;
         }
 
@@ -71,8 +71,10 @@ namespace ZeroKLobby
                 button.TextAlign = ContentAlignment.MiddleCenter;
                 button.TextImageRelation = TextImageRelation.ImageBeforeText;
             }
-            button.Click += (sender, args) =>
-                { Program.MainWindow.navigationControl.SwitchTab(TargetPath); };
+            button.Click += (sender, args) => {
+                Program.MainWindow.panelRight.Visible = true;
+                Program.MainWindow.navigationControl.SwitchTab(TargetPath);
+            };
             return button;
 
         }

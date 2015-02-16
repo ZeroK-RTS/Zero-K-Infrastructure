@@ -9,11 +9,21 @@ namespace ZeroKLobby
 {
     public class HeadlessTabControl:TabControl
     {
+        public HeadlessTabControl()
+        {
+            SetRegion();
+        }
+
         protected override void OnSizeChanged(EventArgs e)
         {
             base.OnSizeChanged(e);
-            Region = new Region(new Rectangle(4, this.ItemSize.Height + 4, Width - 8, Height - this.ItemSize.Height - 8)); //Note: the margin (+-4) doesn't seem to be effected by DPI scaling
+            SetRegion();
+        }
 
+        void SetRegion()
+        {
+            Region = new Region(new Rectangle(4, this.ItemSize.Height + 4, Width - 8, Height - this.ItemSize.Height - 8));
+                //Note: the margin (+-4) doesn't seem to be effected by DPI scaling
         }
     }
 }
