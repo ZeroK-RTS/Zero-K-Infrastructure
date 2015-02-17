@@ -68,8 +68,10 @@ namespace ZeroKLobby
 
         public MainWindow()
         {
+            this.Font = Config.MenuFont;
             InitializeComponent();
             SuspendLayout();
+            
             SetStyle( ControlStyles.DoubleBuffer, true);
 
             pages[MainPages.Home] = new HomePage();

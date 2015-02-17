@@ -57,7 +57,6 @@
             this.lbMainPageTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lbMainPageTitle.BackColor = System.Drawing.Color.Transparent;
-            this.lbMainPageTitle.Font = new System.Drawing.Font("Verdana", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.lbMainPageTitle.ForeColor = System.Drawing.Color.White;
             this.lbMainPageTitle.Location = new System.Drawing.Point(55, 26);
             this.lbMainPageTitle.Name = "lbMainPageTitle";
@@ -127,7 +126,6 @@
             // 
             this.lbRightPanelTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbRightPanelTitle.Font = new System.Drawing.Font("Verdana", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.lbRightPanelTitle.ForeColor = System.Drawing.Color.White;
             this.lbRightPanelTitle.Location = new System.Drawing.Point(72, 14);
             this.lbRightPanelTitle.Name = "lbRightPanelTitle";
@@ -224,7 +222,6 @@
             this.Controls.Add(this.btnSnd);
             this.Controls.Add(this.notifySection1);
             this.DoubleBuffered = true;
-            this.Font = new System.Drawing.Font("Comic Sans MS", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(238)));
             this.ForeColor = System.Drawing.Color.White;
             this.Name = "MainWindow";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainWindow_FormClosing);

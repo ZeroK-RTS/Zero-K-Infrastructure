@@ -292,11 +292,15 @@ namespace ZeroKLobby
         {
             try {
                 var par = source.FindParentWithBgImage();
-                if (par != null) source.RenderControlBgImage(par, e);
+                if (par != null) {
+                    source.RenderControlBgImage(par, e);
+                    return true;
+                }
                 else return false;
             } catch (Exception ex) {
                 Trace.TraceError("Error rendering background image: {0}",ex);
             }
+            return false;
         }
     }
 

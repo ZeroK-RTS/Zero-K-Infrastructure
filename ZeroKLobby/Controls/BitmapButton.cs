@@ -25,7 +25,7 @@ namespace ZeroKLobby
             FlatAppearance.BorderSize = 0;
             FlatAppearance.MouseDownBackColor = Color.Transparent;
             FlatAppearance.MouseOverBackColor = Color.Transparent;
-            
+
             SetStyle(ControlStyles.SupportsTransparentBackColor, true);
 
             ButtonStyle = FrameBorderRenderer.StyleType.DarkHive;

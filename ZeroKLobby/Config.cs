@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Design;
+using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,18 @@ namespace ZeroKLobby
     {
         public const string ConfigFileName = "ZeroKLobbyConfig.xml";
         public const string LogFile = "ZeroKLobbyErrors.txt";
+
+        public readonly Color BgColor = Color.Black;
+        public static readonly Font MenuFont = new Font("Verdana", 16, GraphicsUnit.Pixel);
+        static PrivateFontCollection PrivateFontCollection = new PrivateFontCollection();
+
+        static Config()
+        {
+            PrivateFontCollection.AddFontFile("Sm.ttf"); // TODO copy out from resources
+            MenuFont = new Font(PrivateFontCollection.Families[0], 20, GraphicsUnit.Pixel);
+        }
+
+    
 
 
         StringCollection autoJoinChannels = new StringCollection() { KnownGames.GetDefaultGame().Channel };
@@ -52,19 +65,10 @@ namespace ZeroKLobby
         [Browsable(false)]
         public string BattleFilter { get; set; }
 
-        [Category("Chat")]
-        [DisplayName("Color: Background")]
-        [Description("Background color for chat window and playerlist")]
-        [XmlIgnore]
-        public Color BgColor {
-            get { return Color.FromArgb(BgColorInt); }
-            set {
-                BgColorInt = value.ToArgb();
-                UpdateFadeColor();
-            }
-        }
-        [Browsable(false)]
-        public int BgColorInt = Color.White.ToArgb();
+
+        
+        
+
         [Browsable(false)]
         public bool BlockNonFriendPm;
 
@@ -283,7 +287,7 @@ namespace ZeroKLobby
             }
         }
         [Browsable(false)]
-        public int TextColorInt = Color.Black.ToArgb();
+        public int TextColorInt = Color.White.ToArgb();
 
         /// <summary>
         /// Keeps datetime of last topic change for each channel
@@ -351,7 +355,12 @@ namespace ZeroKLobby
 
         [Browsable(false)]
         public string PackageMasterUrl { get { return "http://repos.springrts.com/"; } }
+
+
+        
     }
+
+
 
 
     /**********************/

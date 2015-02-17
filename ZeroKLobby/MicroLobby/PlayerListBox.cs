@@ -135,11 +135,11 @@ namespace ZeroKLobby.MicroLobby
 				if (DesignMode) return;
 				if (e.Index >= 0 && e.Index <= base.Items.Count)
 				{
-					e.DrawBackground();
+					//e.DrawBackground();
 					e.DrawFocusRectangle();
 					base.OnDrawItem(e);
 					var item = (PlayerListItem)base.Items[e.Index];
-					item.DrawPlayerLine(e.Graphics, e.Bounds, e.ForeColor, e.BackColor, item.IsGrayedOut, IsBattle);
+					item.DrawPlayerLine(e.Graphics, e.Bounds, e.ForeColor, item.IsGrayedOut, IsBattle);
 				}
 			}
 			catch (Exception ex)
@@ -213,7 +213,9 @@ namespace ZeroKLobby.MicroLobby
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			var itemRegion = new Region(e.ClipRectangle);
-			e.Graphics.FillRegion(new SolidBrush(BackColor), itemRegion);
+            SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+		    if (!this.RenderParentsBackgroundImage(e)) e.Graphics.FillRegion(new SolidBrush(BackColor), itemRegion);
+		    
 			if (base.Items.Count > 0)
 			{
 				for (var i = 0; i < base.Items.Count; ++i)
