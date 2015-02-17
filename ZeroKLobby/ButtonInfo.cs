@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using ZeroKLobby.Controls;
 
 namespace ZeroKLobby
 {
@@ -36,7 +37,7 @@ namespace ZeroKLobby
         /// If true, lobby wont remember subpath for this button and instead go directly to target location
         /// </summary>
         public string TargetPath;
-        Button button;
+        BitmapButton button;
         public bool Visible { get; set; }
         public DockStyle Dock { get; set; }
 
@@ -56,6 +57,7 @@ namespace ZeroKLobby
 
         public Control GetButton() {
             button = new BitmapButton();
+            button.SoundType = SoundPalette.SoundType.Servo;
             button.AutoSize = true;
             button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             button.Height = Height;

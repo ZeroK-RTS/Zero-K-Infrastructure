@@ -52,7 +52,7 @@
             this.btnSpectate.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnSpectate.Name = "btnSpectate";
             this.btnSpectate.Size = new System.Drawing.Size(375, 77);
-            this.btnSpectate.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.btnSpectate.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Servo;
             this.btnSpectate.TabIndex = 18;
             this.btnSpectate.Text = "Watch a battle";
             this.btnSpectate.UseVisualStyleBackColor = false;
@@ -75,7 +75,7 @@
             this.btnCustomBattles.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnCustomBattles.Name = "btnCustomBattles";
             this.btnCustomBattles.Size = new System.Drawing.Size(375, 77);
-            this.btnCustomBattles.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.btnCustomBattles.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Servo;
             this.btnCustomBattles.TabIndex = 17;
             this.btnCustomBattles.Text = "Custom battle";
             this.btnCustomBattles.UseVisualStyleBackColor = false;
@@ -99,7 +99,7 @@
             this.btnJoinQueue.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnJoinQueue.Name = "btnJoinQueue";
             this.btnJoinQueue.Size = new System.Drawing.Size(375, 77);
-            this.btnJoinQueue.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.btnJoinQueue.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Servo;
             this.btnJoinQueue.TabIndex = 16;
             this.btnJoinQueue.Text = "Join queue (recommended)";
             this.btnJoinQueue.UseVisualStyleBackColor = false;

@@ -53,7 +53,7 @@
             this.skirmishButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.skirmishButton.Name = "skirmishButton";
             this.skirmishButton.Size = new System.Drawing.Size(375, 77);
-            this.skirmishButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.skirmishButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Servo;
             this.skirmishButton.TabIndex = 14;
             this.skirmishButton.Text = "Skirmish";
             this.skirmishButton.UseVisualStyleBackColor = false;
@@ -77,7 +77,7 @@
             this.campaignButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.campaignButton.Name = "campaignButton";
             this.campaignButton.Size = new System.Drawing.Size(375, 77);
-            this.campaignButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.campaignButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Servo;
             this.campaignButton.TabIndex = 13;
             this.campaignButton.Text = "Campaign";
             this.campaignButton.UseVisualStyleBackColor = false;
@@ -101,7 +101,7 @@
             this.missonsButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.missonsButton.Name = "missonsButton";
             this.missonsButton.Size = new System.Drawing.Size(375, 77);
-            this.missonsButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.missonsButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Servo;
             this.missonsButton.TabIndex = 12;
             this.missonsButton.Text = "Missions";
             this.missonsButton.UseVisualStyleBackColor = false;
@@ -125,7 +125,7 @@
             this.tutorialButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tutorialButton.Name = "tutorialButton";
             this.tutorialButton.Size = new System.Drawing.Size(375, 77);
-            this.tutorialButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.tutorialButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Servo;
             this.tutorialButton.TabIndex = 11;
             this.tutorialButton.Text = "Tutorial";
             this.tutorialButton.UseVisualStyleBackColor = false;

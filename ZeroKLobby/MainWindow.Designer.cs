@@ -74,7 +74,7 @@
             this.btnHide.Location = new System.Drawing.Point(21, 8);
             this.btnHide.Name = "btnHide";
             this.btnHide.Size = new System.Drawing.Size(37, 37);
-            this.btnHide.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.btnHide.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Servo;
             this.btnHide.TabIndex = 3;
             this.btnHide.UseVisualStyleBackColor = false;
             this.btnHide.Click += new System.EventHandler(this.btnHide_Click);
