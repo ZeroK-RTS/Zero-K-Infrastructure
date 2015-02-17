@@ -1,0 +1,69 @@
+[GAME]
+{
+	HostIP=127.0.0.1;
+	HostPort=8452;
+	IsHost=1;
+	MyPlayerName=PathTest;
+
+	Mapname=DeltaSiegeDry;
+	GameType=Zero-K v1.1.3.6;
+
+	startpostype=3;
+	[mapoptions]
+	{
+	}
+	[modoptions]
+	{
+		disablemapdamage=1;
+		teamdeathmode=none;
+		minspeed=1;
+		maxunits=10000;
+		pathfinder=normal;
+	}
+
+	NumPlayers=1;
+	NumUsers=2;
+
+	[PLAYER1]
+	{
+		Name=PathTest;
+		Spectator=0;
+		IsFromDemo=0;
+		Team=1;
+	}
+	[AI0]
+	{
+		Name=Bot1;
+		ShortName=NullAI;
+		Version=0.1;
+		Team=0;
+		IsFromDemo=0;
+		Host=1;
+	}
+
+	[TEAM0]
+	{
+		TeamLeader=1;
+		StartPosX=1;
+		StartPosZ=1;
+		AllyTeam=1;
+		RGBColor=1 0 0;
+	}
+	[TEAM1]
+	{
+		TeamLeader=1;
+		StartPosX=1;
+		StartPosZ=1;
+		AllyTeam=0;
+		RGBColor=0 0 1;
+	}
+
+	[ALLYTEAM1]
+	{
+		NumAllies=0;
+	}
+	[ALLYTEAM0]
+	{
+		NumAllies=0;
+	}
+}

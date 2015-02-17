@@ -1,0 +1,236 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AssemblyName>PlasmaShared</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <RootNamespace>PlasmaShared</RootNamespace>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>3</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>3</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="AuthTools.cs" />
+    <Compile Include="ChangeEventArgs.cs" />
+    <Compile Include="Connection.cs" />
+    <Compile Include="DbCloner.cs" />
+    <Compile Include="Diagrams\Diagram.cs" />
+    <Compile Include="Diagrams\Node.cs" />
+    <Compile Include="Diagrams\Vector.cs" />
+    <Compile Include="EmbeddedResourceExtractor.cs" />
+    <Compile Include="EventArgs.cs" />
+    <Compile Include="EventExtensions.cs" />
+    <Compile Include="GlobalConst.cs" />
+    <Compile Include="Hash.cs" />
+    <Compile Include="IContentService\AccountInfo.cs" />
+    <Compile Include="IContentService\IContentService.cs" />
+    <Compile Include="IContentService\ResourceData.cs" />
+    <Compile Include="IContentService\ResourceType.cs" />
+    <Compile Include="IContentService\ReturnValue.cs" />
+    <Compile Include="IContentService\ScriptMissionData.cs" />
+    <Compile Include="IResourceInfo.cs" />
+    <Compile Include="ISpringieService\AhConfig.cs" />
+    <Compile Include="ISpringieService\AutohostMode.cs" />
+    <Compile Include="ISpringieService\BalanceTeamsResult.cs" />
+    <Compile Include="ISpringieService\BattleContext.cs" />
+    <Compile Include="ISpringieService\BattlePlayerResult.cs" />
+    <Compile Include="ISpringieService\BattleResult.cs" />
+    <Compile Include="ISpringieService\BotTeam.cs" />
+    <Compile Include="ISpringieService\CommandLevel.cs" />
+    <Compile Include="ISpringieService\ISpringieService.cs" />
+    <Compile Include="ISpringieService\MovePlayerEntry.cs" />
+    <Compile Include="ISpringieService\PlayerJoinResult.cs" />
+    <Compile Include="ISpringieService\PlayerTeam.cs" />
+    <Compile Include="ISpringieService\RecommendedMapResult.cs" />
+    <Compile Include="ISpringieService\RectInfo.cs" />
+    <Compile Include="ISpringieService\SpringBattleStartSetup.cs" />
+    <Compile Include="LuaTable.cs" />
+    <Compile Include="MetaDataCache.cs" />
+    <Compile Include="Pool.cs" />
+    <Compile Include="PoolFileInfo.cs" />
+    <Compile Include="MapRegisteredEventArgs.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="ResharperAttribs.cs" />
+    <Compile Include="SdpArchive.cs" />
+    <Compile Include="SelfUpdater.cs" />
+    <Compile Include="SerializableDictionary.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="SpringPaths.cs" />
+    <Compile Include="SpringScanner.cs" />
+    <Compile Include="CsvTable.cs" />
+    <Compile Include="SteamWebApi.cs" />
+    <Compile Include="UnitSyncLib\Ai.cs" />
+    <Compile Include="UnitSyncLib\AiInfoPair.cs" />
+    <Compile Include="UnitSyncLib\DependencyMissingException.cs" />
+    <Compile Include="UnitSyncLib\ModMissionSlot.cs" />
+    <Compile Include="Utils.cs" />
+    <Compile Include="UnitSyncLib\ListOption.cs" />
+    <Compile Include="UnitSyncLib\Map.cs" />
+    <Compile Include="UnitSyncLib\MapInfo.cs" />
+    <Compile Include="UnitSyncLib\Mod.cs" />
+    <Compile Include="UnitSyncLib\NativeMethods.cs" />
+    <Compile Include="UnitSyncLib\Option.cs" />
+    <Compile Include="UnitSyncLib\StartPos.cs" />
+    <Compile Include="UnitSyncLib\UnitInfo.cs" />
+    <Compile Include="UnitSyncLib\UnitSync.cs" />
+    <Compile Include="UnitSyncLib\UnitSyncException.cs" />
+    <Compile Include="UnitSyncLib\VfsMode.cs" />
+    <Compile Include="Web References\ModStats\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Whois.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\..\packages\DotNetZip.1.9.1.8\lib\net20\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpCompress, Version=0.9.0.0, Culture=neutral, PublicKeyToken=beaf6f427e128133, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\sharpcompress.0.9\lib\net40\SharpCompress.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.Services" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\ModStats\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\ModStats\StatsCollector.wsdl" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MonoTorrent\MonoTorrent.csproj">
+      <Project>{411A9E0E-FDC6-4E25-828A-0C2CD1CD96F8}</Project>
+      <Name>MonoTorrent</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="http://planet-wars.eu/ModStats/StatsCollector.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\ModStats\</RelPath>
+      <UpdateFromURL>http://planet-wars.eu/ModStats/StatsCollector.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>PlasmaShared_ModStats_StatsCollector</CachedSettingsPropName>
+    </WebReferenceUrl>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Web References\ModStats\StatsCollector.disco" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+</Project>
