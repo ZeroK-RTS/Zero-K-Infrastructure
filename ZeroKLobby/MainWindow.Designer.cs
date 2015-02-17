@@ -29,19 +29,63 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.lbMainPageTitle = new System.Windows.Forms.Label();
+            this.btnBack = new ZeroKLobby.BitmapButton();
             this.panelRight = new ZeroKLobby.Controls.RightPanel();
             this.btnHide = new ZeroKLobby.BitmapButton();
             this.lbRightPanelTitle = new System.Windows.Forms.Label();
             this.navigationControl1 = new ZeroKLobby.HeadlessTabControl();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.switchPanel1 = new ZeroKLobby.Controls.SwitchPanel();
             this.btnWindowed = new ZeroKLobby.BitmapButton();
             this.btnSnd = new ZeroKLobby.BitmapButton();
             this.notifySection1 = new SpringDownloader.Notifications.NotifySection();
-            this.btnBack = new ZeroKLobby.BitmapButton();
-            this.lbMainPageTitle = new System.Windows.Forms.Label();
             this.panelRight.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowLayoutPanel1.BackColor = System.Drawing.Color.Transparent;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(836, 760);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(355, 47);
+            this.flowLayoutPanel1.TabIndex = 11;
+            // 
+            // lbMainPageTitle
+            // 
+            this.lbMainPageTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbMainPageTitle.BackColor = System.Drawing.Color.Transparent;
+            this.lbMainPageTitle.Font = new System.Drawing.Font("Verdana", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.lbMainPageTitle.ForeColor = System.Drawing.Color.White;
+            this.lbMainPageTitle.Location = new System.Drawing.Point(55, 26);
+            this.lbMainPageTitle.Name = "lbMainPageTitle";
+            this.lbMainPageTitle.Size = new System.Drawing.Size(541, 25);
+            this.lbMainPageTitle.TabIndex = 13;
+            this.lbMainPageTitle.Text = "Page title";
+            // 
+            // btnBack
+            // 
+            this.btnBack.BackColor = System.Drawing.Color.Transparent;
+            this.btnBack.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnBack.BackgroundImage")));
+            this.btnBack.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.btnBack.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
+            this.btnBack.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnBack.FlatAppearance.BorderSize = 0;
+            this.btnBack.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.btnBack.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.btnBack.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnBack.ForeColor = System.Drawing.Color.White;
+            this.btnBack.Image = global::ZeroKLobby.Buttons.left;
+            this.btnBack.Location = new System.Drawing.Point(12, 20);
+            this.btnBack.Name = "btnBack";
+            this.btnBack.Size = new System.Drawing.Size(37, 37);
+            this.btnBack.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Servo;
+            this.btnBack.TabIndex = 12;
+            this.btnBack.UseVisualStyleBackColor = false;
+            this.btnBack.Visible = false;
+            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
             // panelRight
             // 
@@ -96,21 +140,12 @@
             this.navigationControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.navigationControl1.Location = new System.Drawing.Point(21, 28);
+            this.navigationControl1.Location = new System.Drawing.Point(21, 39);
             this.navigationControl1.Margin = new System.Windows.Forms.Padding(0);
             this.navigationControl1.Name = "navigationControl1";
             this.navigationControl1.SelectedIndex = 0;
-            this.navigationControl1.Size = new System.Drawing.Size(731, 702);
+            this.navigationControl1.Size = new System.Drawing.Size(731, 691);
             this.navigationControl1.TabIndex = 1;
-            // 
-            // flowLayoutPanel1
-            // 
-            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.flowLayoutPanel1.BackColor = System.Drawing.Color.Transparent;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(836, 760);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(355, 47);
-            this.flowLayoutPanel1.TabIndex = 11;
             // 
             // switchPanel1
             // 
@@ -174,41 +209,6 @@
             this.notifySection1.Name = "notifySection1";
             this.notifySection1.Size = new System.Drawing.Size(1386, 0);
             this.notifySection1.TabIndex = 0;
-            // 
-            // btnBack
-            // 
-            this.btnBack.BackColor = System.Drawing.Color.Transparent;
-            this.btnBack.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnBack.BackgroundImage")));
-            this.btnBack.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.btnBack.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
-            this.btnBack.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnBack.FlatAppearance.BorderSize = 0;
-            this.btnBack.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
-            this.btnBack.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-            this.btnBack.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnBack.ForeColor = System.Drawing.Color.White;
-            this.btnBack.Image = global::ZeroKLobby.Buttons.left;
-            this.btnBack.Location = new System.Drawing.Point(12, 20);
-            this.btnBack.Name = "btnBack";
-            this.btnBack.Size = new System.Drawing.Size(37, 37);
-            this.btnBack.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Servo;
-            this.btnBack.TabIndex = 12;
-            this.btnBack.UseVisualStyleBackColor = false;
-            this.btnBack.Visible = false;
-            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
-            // 
-            // lbMainPageTitle
-            // 
-            this.lbMainPageTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbMainPageTitle.BackColor = System.Drawing.Color.Transparent;
-            this.lbMainPageTitle.Font = new System.Drawing.Font("Verdana", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lbMainPageTitle.ForeColor = System.Drawing.Color.White;
-            this.lbMainPageTitle.Location = new System.Drawing.Point(55, 26);
-            this.lbMainPageTitle.Name = "lbMainPageTitle";
-            this.lbMainPageTitle.Size = new System.Drawing.Size(541, 25);
-            this.lbMainPageTitle.TabIndex = 13;
-            this.lbMainPageTitle.Text = "Page title";
             // 
             // MainWindow
             // 
