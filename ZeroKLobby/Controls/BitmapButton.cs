@@ -65,9 +65,14 @@ namespace ZeroKLobby
             mouseOver = false;
         }
 
-        protected override void OnMouseClick(MouseEventArgs e)
+        protected override void OnMouseDown(MouseEventArgs mevent)
         {
             SoundPalette.Play(SoundType);
+            base.OnMouseDown(mevent);
+        }
+
+        protected override void OnMouseClick(MouseEventArgs e)
+        {
             base.OnMouseClick(e);
         }
 

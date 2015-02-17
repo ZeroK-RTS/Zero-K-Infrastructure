@@ -407,10 +407,18 @@ namespace ZeroKLobby.MicroLobby
             ScrollWindow(e.Delta > 0);
         }
 
+        protected override void OnPaintBackground(PaintEventArgs e)
+        {
+            //this.RenderParentsBackgroundImage(e);
+            //base.OnPaintBackground(e);
+        }
+
         protected override void OnPaint([NotNull] PaintEventArgs e)
         {
             if (e == null) throw new ArgumentNullException("e");
-            base.OnPaint(e);
+            //base.OnPaint(e);
+
+            ///BackgroundImage = BgImages.bg_battle;
             if (!e.ClipRectangle.IsEmpty) OnDisplayText(e);
         }
 
@@ -752,12 +760,9 @@ namespace ZeroKLobby.MicroLobby
 
                     //g.Clear(IrcColor.colors[backColor]);
 
-                    if (BackgroundImage != null)
-                    {
+                    if (!this.RenderParentsBackgroundImage(e)) {
                         g.FillRectangle(new SolidBrush(TextColor.GetColor(backColor)), displayRect);
-                        g.DrawImage(BackgroundImage, displayRect.Left, displayRect.Top, displayRect.Width, displayRect.Height);
                     }
-                    else g.FillRectangle(new SolidBrush(TextColor.GetColor(backColor)), displayRect);
 
                     g.InterpolationMode = InterpolationMode.Low;
                     g.SmoothingMode = SmoothingMode.HighSpeed;

@@ -288,11 +288,12 @@ namespace ZeroKLobby
             return null;
         }
 
-        public static void RenderParentsBackgroundImage(this Control source, PaintEventArgs e)
+        public static bool RenderParentsBackgroundImage(this Control source, PaintEventArgs e)
         {
             try {
                 var par = source.FindParentWithBgImage();
                 if (par != null) source.RenderControlBgImage(par, e);
+                else return false;
             } catch (Exception ex) {
                 Trace.TraceError("Error rendering background image: {0}",ex);
             }
