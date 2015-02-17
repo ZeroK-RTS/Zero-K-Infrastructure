@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.lbMainPageTitle = new System.Windows.Forms.Label();
             this.btnBack = new ZeroKLobby.BitmapButton();
@@ -66,8 +65,6 @@
             // 
             // btnBack
             // 
-            this.btnBack.BackColor = System.Drawing.Color.Transparent;
-            this.btnBack.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnBack.BackgroundImage")));
             this.btnBack.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.btnBack.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnBack.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -104,7 +101,6 @@
             // btnHide
             // 
             this.btnHide.BackColor = System.Drawing.Color.Transparent;
-            this.btnHide.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnHide.BackgroundImage")));
             this.btnHide.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.btnHide.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnHide.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -160,7 +156,6 @@
             // 
             this.btnWindowed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnWindowed.BackColor = System.Drawing.Color.Transparent;
-            this.btnWindowed.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnWindowed.BackgroundImage")));
             this.btnWindowed.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.btnWindowed.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnWindowed.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -180,7 +175,6 @@
             // 
             this.btnSnd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSnd.BackColor = System.Drawing.Color.Transparent;
-            this.btnSnd.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnSnd.BackgroundImage")));
             this.btnSnd.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.btnSnd.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnSnd.Cursor = System.Windows.Forms.Cursors.Hand;

@@ -532,9 +532,6 @@
     <EmbeddedResource Include="MainPages\SinglePlayerPage.resx">
       <DependentUpon>SinglePlayerPage.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainWindow.resx">
-      <DependentUpon>MainWindow.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="MicroForms\PromptForm.resx">
       <DependentUpon>PromptForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -1764,6 +1761,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Buttons\left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BgImages\blue_galaxy.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BgImages\bg_battle.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">
