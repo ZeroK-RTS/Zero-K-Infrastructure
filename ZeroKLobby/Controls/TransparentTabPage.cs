@@ -17,12 +17,10 @@ namespace ZeroKLobby.Controls
         protected override void OnPaintBackground(PaintEventArgs e)
         {
             this.RenderParentsBackgroundImage(e);
-            //base.OnPaintBackground(e);
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            //base.OnPaint(e);
         }
     }
 }

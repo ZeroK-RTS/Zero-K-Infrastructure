@@ -35,7 +35,7 @@ namespace ZeroKLobby.Controls
         const int stepCount = 10;
         const int stepDelay = 10;
 
-
+        
         public async Task SwitchContent(Control newTarget, AnimType? animation = null)
         {
             var tab = new TransparentTabPage();

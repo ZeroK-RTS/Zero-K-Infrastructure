@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
+using ZeroKLobby.Controls;
 using ZeroKLobby.MapDownloader;
 using ZeroKLobby.MicroLobby;
 using ZkData;
@@ -188,7 +189,7 @@ namespace ZeroKLobby
         TabPage AddTabPage(Control content, string name = null)
         {
             name = name ?? content.Text ?? content.Name;
-            var tb = new TabPage(name);
+            var tb = new TransparentTabPage();
             tb.Dock = DockStyle.Fill;
             tb.Controls.Add(content);
             content.Dock = DockStyle.Fill;
