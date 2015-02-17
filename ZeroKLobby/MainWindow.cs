@@ -47,7 +47,7 @@ namespace ZeroKLobby
         readonly NotifyIcon systrayIcon;
         readonly Timer timer1 = new Timer();
         readonly ContextMenuStrip trayStrip;
-        WaveOut waveOut;
+        DirectSoundOut waveOut;
         public ChatTab ChatTab
         {
             get { return navigator.ChatTab; }
@@ -304,7 +304,7 @@ namespace ZeroKLobby
             else NotifySection.AddBar(Program.ConnectBar);
 
             if (Environment.OSVersion.Platform != PlatformID.Unix) {
-                waveOut = new WaveOut();
+                waveOut = new DirectSoundOut();
                 audioReader = new Mp3FileReader(new MemoryStream(Sounds.menu_music_ROM));
                 waveOut.Init(audioReader);
                 //waveOut.Play();
