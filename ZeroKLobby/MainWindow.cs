@@ -78,6 +78,8 @@ namespace ZeroKLobby
             pages[MainPages.MultiPlayer] = new MultiPlayerPage();
             pages[MainPages.CustomBattles] = new BattleListTab();
 
+            foreach (var c in pages.Values) switchPanel1.SetupTabPage(c);
+
             Instance = this;
 
             btnExit = new ToolStripMenuItem { Name = "btnExit", Size = new Size(92, 22), Text = "Exit" };

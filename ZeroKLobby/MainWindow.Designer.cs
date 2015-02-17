@@ -48,7 +48,6 @@
             this.panelRight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelRight.BackColor = System.Drawing.Color.Transparent;
-            this.panelRight.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panelRight.BackgroundImage")));
             this.panelRight.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.panelRight.Controls.Add(this.btnHide);
             this.panelRight.Controls.Add(this.lbRightPanelTitle);
@@ -192,7 +191,7 @@
             this.btnBack.Location = new System.Drawing.Point(12, 20);
             this.btnBack.Name = "btnBack";
             this.btnBack.Size = new System.Drawing.Size(37, 37);
-            this.btnBack.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.btnBack.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Servo;
             this.btnBack.TabIndex = 12;
             this.btnBack.UseVisualStyleBackColor = false;
             this.btnBack.Visible = false;

@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Media;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows.Forms;
 
 namespace ZeroKLobby.Controls
@@ -32,61 +34,72 @@ namespace ZeroKLobby.Controls
         }
 
       
-        const int stepCount = 10;
+        const int animationTimeMs = 150;
         const int stepDelay = 10;
 
-        
+        public TabPage SetupTabPage(Control content)
+        {
+            var tab = Controls.OfType<TransparentTabPage>().FirstOrDefault(x => x.Controls.OfType<Control>().First() == content);
+            if (tab == null) {
+                tab = new TransparentTabPage();
+                content.Dock = DockStyle.Fill;
+                tab.Controls.Add(content);
+                TabPages.Add(tab);
+            }
+            return tab;
+        }
+
+
+
+        TransparentTabPage empty = new TransparentTabPage();
+
         public async Task SwitchContent(Control newTarget, AnimType? animation = null)
         {
-            var tab = new TransparentTabPage();
-            newTarget.Dock = DockStyle.Fill;
-            tab.Controls.Add(newTarget);
-            TabPages.Add(tab);
-            SelectTab(tab);
-            CurrentTarget = newTarget;
-            return;
-            
-
             var animator = GetAnimator(animation);
 
             if (CurrentTarget != null && animator != null) {
 
+                var sw = new Stopwatch();
                 Rectangle r = GetChildrenBoundingRectangle(CurrentTarget);
 
                 var bounds = CurrentTarget.Controls.OfType<Control>().ToDictionary(x => x, x => x.Bounds);
 
-                for (int i = 0; i < stepCount; i++) {
+                sw.Start();
+                long elapsed;
+                while ((elapsed = sw.ElapsedMilliseconds) < animationTimeMs) {
                     foreach (var c in CurrentTarget.Controls.Cast<Control>()) {
-                        animator(c, r, (double)i/stepCount, bounds[c]);
+                        animator(c, r, (double)elapsed/animationTimeMs, bounds[c]);
                     }
                     await Task.Delay(stepDelay);
-                }
+                } 
+                sw.Stop();
 
                 foreach (var b in bounds) { b.Key.Bounds = b.Value; }
-                this.Controls.Remove(CurrentTarget);
-                this.Controls.Clear();
-                
-                newTarget.Dock = DockStyle.Fill;
-                Controls.Add(newTarget);
+
+                var tab = SetupTabPage(newTarget);
+                SelectTab(tab);
+                CurrentTarget = newTarget;
                 
                 r = GetChildrenBoundingRectangle(newTarget);
 
                 bounds = newTarget.Controls.OfType<Control>().ToDictionary(x => x, x => x.Bounds);
 
-                for (int i = stepCount; i >=0; i--)
+                sw.Start();
+                while ((elapsed = sw.ElapsedMilliseconds) < animationTimeMs)
                 {
-                    foreach (var c in newTarget.Controls.Cast<Control>()) {
-                        animator(c, r, (double)i/stepCount, bounds[c]);
+                    foreach (var c in CurrentTarget.Controls.Cast<Control>())
+                    {
+                        animator(c, r, 1.0-(double)elapsed / animationTimeMs, bounds[c]);
                     }
                     await Task.Delay(stepDelay);
-                }
+                } 
+                sw.Stop();
+
                 foreach (var b in bounds) { b.Key.Bounds = b.Value; }
 
                 CurrentTarget = newTarget;
             } else {
-                if (CurrentTarget != null) this.Controls.Remove(CurrentTarget);
-                newTarget.Dock = DockStyle.Fill;
-                this.Controls.Add(newTarget);
+                SelectTab(SetupTabPage(newTarget));
                 CurrentTarget = newTarget;
             }
         }
