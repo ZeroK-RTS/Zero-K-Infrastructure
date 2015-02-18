@@ -104,6 +104,7 @@ namespace ZeroKLobby
                 Trace.Listeners.Add(new ConsoleTraceListener());
                 Trace.Listeners.Add(new LogTraceListener());
 
+                /*
                 if (Environment.OSVersion.Platform != PlatformID.Unix)
                 {
                     var ver = GetNetVersionFromRegistry();
@@ -113,7 +114,7 @@ namespace ZeroKLobby
                             "Program is unable to run", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
-
+                */
 
                 Directory.SetCurrentDirectory(StartupPath);
 
