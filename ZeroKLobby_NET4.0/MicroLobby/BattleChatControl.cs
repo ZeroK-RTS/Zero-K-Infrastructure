@@ -177,9 +177,9 @@ namespace ZeroKLobby.MicroLobby
             playerBox.EndUpdate();
 		}
 
-		protected override void client_ChannelUserAdded(object sender, ChannelUserInfo e) {}
+		protected override void client_ChannelUserAdded(object sender, EventArgs<ChannelUserInfo> e) {}
 
-		protected override void client_ChannelUserRemoved(object sender, ChannelUserRemovedInfo e) {}
+		protected override void client_ChannelUserRemoved(object sender, EventArgs<ChannelUserRemovedInfo> e) {}
 
 		void DrawMinimap()
 		{
@@ -290,20 +290,20 @@ namespace ZeroKLobby.MicroLobby
 		}
 
 
-		void TasClient_BattleJoined(object sender, Battle battle)
+		void TasClient_BattleJoined(object sender, EventArgs<Battle> battle)
 		{
 			Reset();
-			SetMapImages(battle.MapName);
-		    minimapFuncBox.QueueMode = battle.IsQueue;
+			SetMapImages(battle.Data.MapName);
+		    minimapFuncBox.QueueMode = battle.Data.IsQueue;
 			foreach (var user in Program.TasClient.MyBattle.Users.Values) AddUser(user.Name);
-			base.AddLine(new SelfJoinedBattleLine(battle));
+			base.AddLine(new SelfJoinedBattleLine(battle.Data));
 		}
 
-		void TasClient_BattleMapChanged(object sender, OldNewPair<Battle> pair)
+		void TasClient_BattleMapChanged(object sender, EventArgs<OldNewPair<Battle>> pair)
 		{
 		    var tas = (TasClient)sender;
-		    if (tas.MyBattle == pair.New) {
-		        SetMapImages(pair.New.MapName);    
+		    if (tas.MyBattle == pair.Data.New) {
+		        SetMapImages(pair.Data.New.MapName);    
 		    }
 		}
 
@@ -338,9 +338,9 @@ namespace ZeroKLobby.MicroLobby
 			}
 		}
 
-		void TasClient_BattleUserStatusChanged(object sender, UserBattleStatus ubs)
+		void TasClient_BattleUserStatusChanged(object sender, EventArgs<UserBattleStatus> ubs)
 		{
-			RefreshBattleUser(ubs.Name);
+			RefreshBattleUser(ubs.Data.Name);
 		}
 
 

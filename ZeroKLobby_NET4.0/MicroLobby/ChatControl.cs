@@ -391,13 +391,13 @@ namespace ZeroKLobby.MicroLobby
         }
 
 
-        void TasClient_UserRemoved(object sender, UserDisconnected e) {
-            var userName = e.Name;
-            if (PlayerListItems.Any(u => u.UserName == userName)) AddLine(new LeaveLine(userName, string.Format("User has disconnected ({0}).", e.Reason)));
+        void TasClient_UserRemoved(object sender, EventArgs<UserDisconnected> e) {
+            var userName = e.Data.Name;
+            if (PlayerListItems.Any(u => u.UserName == userName)) AddLine(new LeaveLine(userName, string.Format("User has disconnected ({0}).", e.Data.Reason)));
         }
 
-        void TasClient_UserStatusChanged(object sender, OldNewPair<User> oldNewPair) {
-            RefreshUser(oldNewPair.New.Name);
+        void TasClient_UserStatusChanged(object sender, EventArgs<OldNewPair<User>> oldNewPair) {
+            RefreshUser(oldNewPair.Data.New.Name);
         }
 
         void chatBox_MouseDown(object sender, MouseEventArgs e) {
@@ -428,16 +428,16 @@ namespace ZeroKLobby.MicroLobby
                 ShowChatContextMenu(me.Location,word);
         }
 
-        protected virtual void client_ChannelUserAdded(object sender, ChannelUserInfo e) {
-            var channelName = e.Channel.Name;
+        protected virtual void client_ChannelUserAdded(object sender, EventArgs<ChannelUserInfo> e) {
+            var channelName = e.Data.Channel.Name;
             if (ChannelName != channelName) return;
 
             // todo fix/simplify code .. does not need separate adduser and mass add
-            if (e.Users.Count == 1) {
-                AddLine(new JoinLine(e.Users.First().Name));
-                AddUser(e.Users.First().Name);
+            if (e.Data.Users.Count == 1) {
+                AddLine(new JoinLine(e.Data.Users.First().Name));
+                AddUser(e.Data.Users.First().Name);
             } else {
-                foreach (var user in e.Users) {
+                foreach (var user in e.Data.Users) {
                     if (!playerListItems.Any(x => x.UserName == user.Name)) {
                         playerListItems.Add(new PlayerListItem() { UserName = user.Name });
                     }
@@ -452,11 +452,11 @@ namespace ZeroKLobby.MicroLobby
 
         }
 
-        protected virtual void client_ChannelUserRemoved(object sender, ChannelUserRemovedInfo e) {
-            var channelName = e.Channel.Name;
+        protected virtual void client_ChannelUserRemoved(object sender, EventArgs<ChannelUserRemovedInfo> e) {
+            var channelName = e.Data.Channel.Name;
             if (ChannelName != channelName) return;
-            var userName = e.User.Name;
-            var reason = e.Reason;
+            var userName = e.Data.User.Name;
+            var reason = e.Data.Reason;
             RemoveUser(userName);
             AddLine(new LeaveLine(userName, reason));
         }

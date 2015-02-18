@@ -62,7 +62,7 @@ namespace ZeroKLobby
             tas.UserRemoved += (sender, args) =>
             {
                 User us;
-                if (tas.ExistingUsers.TryGetValue(args.Name, out us) && us.SteamID.HasValue)
+                if (tas.ExistingUsers.TryGetValue(args.Data.Name, out us) && us.SteamID.HasValue)
                 {
                     Voice.RemoveListenerSteamID(us.SteamID.Value);
                 }

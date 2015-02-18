@@ -76,17 +76,17 @@ namespace ZeroKLobby.MicroLobby
 
         public bool IsBusy { get { return false; } }
 
-        void TasClient_Input(object sender, string o) {
-            if (o != null) {
-                var entry = new FromServerLine(o);
+        void TasClient_Input(object sender, EventArgs<string> o) {
+            if (o.Data != null) {
+                var entry = new FromServerLine(o.Data);
                 entries.Add(entry);
                 if (prevVis) Program.MainWindow.InvokeFunc(() => textBox.AddLine(entry));
             }
         }
 
-        void TasClient_Output(object sender, string o) {
-            if (o != null) {
-                var entry = new ToServerLine(o);
+        void TasClient_Output(object sender, EventArgs<string> o) {
+            if (o.Data != null) {
+                var entry = new ToServerLine(o.Data);
                 entries.Add(entry);
                 if (prevVis) Program.MainWindow.InvokeFunc(() => textBox.AddLine(entry));
             }

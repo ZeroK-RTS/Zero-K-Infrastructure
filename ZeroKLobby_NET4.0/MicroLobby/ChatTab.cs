@@ -150,9 +150,9 @@ namespace ZeroKLobby.MicroLobby
         }
 
 
-        void client_ChannelJoined(object sender, Channel channel)
+        void client_ChannelJoined(object sender, EventArgs<Channel> channel)
         {
-            var channelName = channel.Name;
+            var channelName = channel.Data.Name;
             CreateChannelControl(channelName);
             if (focusWhenJoin == channelName)
             {
@@ -266,15 +266,15 @@ namespace ZeroKLobby.MicroLobby
         }
 
 
-        void TasClient_ChannelJoinFailed(object sender, JoinChannelResponse joinChannelResponse)
+        void TasClient_ChannelJoinFailed(object sender, EventArgs<JoinChannelResponse> joinChannelResponse)
         {
-            WarningBar.DisplayWarning("Channel Joining Error - " + joinChannelResponse.Reason, "Cannot join channel");
+            WarningBar.DisplayWarning("Channel Joining Error - " + joinChannelResponse.Data.Reason, "Cannot join channel");
         }
 
 
-        void TasClient_ChannelLeft(object sender, Channel channel)
+        void TasClient_ChannelLeft(object sender, EventArgs<Channel> channel)
         {
-            var channelName = channel.Name;
+            var channelName = channel.Data.Name;
             var chatControl = GetChannelControl(channelName);
             toolTabs.RemoveChannelTab(channelName);
             if (chatControl != null)
@@ -300,18 +300,18 @@ namespace ZeroKLobby.MicroLobby
             if (!string.IsNullOrEmpty(lang)) Program.TasClient.JoinChannel(lang);
         }
 
-        void TasClient_UserAdded(object sender, User user)
+        void TasClient_UserAdded(object sender, EventArgs<User> user)
         {
-            var userName = user.Name;
+            var userName = user.Data.Name;
             var pmControl = GetPrivateMessageControl(userName);
             if (pmControl != null)
                 toolTabs.SetIcon(userName, Program.FriendManager.Friends.Contains(userName) ? ZklResources.friend : TextImage.GetUserImage(userName),
                     true);
         }
 
-        void TasClient_UserRemoved(object sender, UserDisconnected e)
+        void TasClient_UserRemoved(object sender, EventArgs<UserDisconnected> e)
         {
-            var userName = e.Name;
+            var userName = e.Data.Name;
             var pmControl = GetPrivateMessageControl(userName);
             if (pmControl != null) toolTabs.SetIcon(userName, ZklResources.grayuser, true);
         }

@@ -52,15 +52,15 @@ namespace ZeroKLobby.Notifications
 
 			client.LoginDenied += (s, e) =>
 				{
-                    if (e.ResultCode == LoginResponse.Code.InvalidName && !string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword) && canRegister)
+                    if (e.Data.ResultCode == LoginResponse.Code.InvalidName && !string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword) && canRegister)
 					{
 						lbState.Text = "Registering new account";
 						client.Register(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
 					}
-					else LoginWithDialog(string.Format("Login denied: {0} {1}",e.ResultCode, e.Reason), false);
+					else LoginWithDialog(string.Format("Login denied: {0} {1}",e.Data.ResultCode, e.Data.Reason), false);
 				};
 
-			client.RegistrationDenied += (s, e) => LoginWithDialog(string.Format("Registration denied: {0} {1}", e.ResultCode.Description(), e.Reason), true);
+			client.RegistrationDenied += (s, e) => LoginWithDialog(string.Format("Registration denied: {0} {1}", e.Data.ResultCode.Description(), e.Data.Reason), true);
 
             client.RegistrationAccepted += (s, e) => client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
 
