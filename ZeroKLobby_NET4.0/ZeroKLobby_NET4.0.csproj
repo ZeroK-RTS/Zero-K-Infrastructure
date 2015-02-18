@@ -72,7 +72,6 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>..\rules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
     <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
   </PropertyGroup>
@@ -105,7 +104,7 @@
       <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.4.0.8\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="RestSharp">
       <HintPath>..\packages\RestSharp.105.0.0\lib\net4-client\RestSharp.dll</HintPath>
@@ -162,7 +161,6 @@
     <Compile Include="Benchmarker\GraphsForm.Designer.cs" />
     <Compile Include="Benchmarker\MainForm.cs" />
     <Compile Include="Benchmarker\MainForm.Designer.cs" />
-    <Compile Include="Benchmarker\Properties\AssemblyInfo.cs" />
     <Compile Include="Benchmarker\SpringRun.cs" />
     <Compile Include="Benchmarker\StartScript.cs" />
     <Compile Include="Benchmarker\TestCase.cs" />
@@ -248,7 +246,6 @@
     <Compile Include="MicroLobby\ExtrasTab\ExtrasTab.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MonoTorrent\AssemblyInfo.cs" />
     <Compile Include="MonoTorrent\MonoTorrent.BEncoding\BEncodedDictionary.cs" />
     <Compile Include="MonoTorrent\MonoTorrent.BEncoding\BEncodedList.cs" />
     <Compile Include="MonoTorrent\MonoTorrent.BEncoding\BEncodedNumber.cs" />
@@ -266,8 +263,6 @@
     <Compile Include="MonoTorrent\MonoTorrent.Client\PieceWriter\NtfsSparseFile.cs" />
     <Compile Include="MonoTorrent\MonoTorrent.Client\PieceWriter\PieceData.cs" />
     <Compile Include="MonoTorrent\MonoTorrent.Client\PieceWriter\PieceWriter.cs" />
-    <Compile Include="MonoTorrent\MonoTorrent.Client\Tasks\DelegateTask.cs" />
-    <Compile Include="MonoTorrent\MonoTorrent.Client\Tasks\Task.cs" />
     <Compile Include="MonoTorrent\MonoTorrent.Client\TorrentFileStream.cs" />
     <Compile Include="MonoTorrent\MonoTorrent.Common\AsyncResult.cs" />
     <Compile Include="MonoTorrent\MonoTorrent.Common\BitField.cs" />
@@ -294,6 +289,10 @@
     <Compile Include="PlasmaDownloader\Download.cs" />
     <Compile Include="PlasmaDownloader\EngineDownload.cs" />
     <Compile Include="PlasmaDownloader\IPlasmaDownloaderConfig.cs" />
+    <Compile Include="PlasmaDownloader\Packages\BitArray.cs" />
+    <Compile Include="PlasmaDownloader\Packages\PackageDownload.cs" />
+    <Compile Include="PlasmaDownloader\Packages\PackageDownloader.cs" />
+    <Compile Include="PlasmaDownloader\Packages\StreamExtension.cs" />
     <Compile Include="PlasmaDownloader\PlasmaDownloader.cs" />
     <Compile Include="PlasmaDownloader\Torrents\TorrentDownload.cs" />
     <Compile Include="PlasmaDownloader\Torrents\TorrentDownloader.cs" />
@@ -867,8 +866,6 @@
     <None Include="LobbyClient\LobbyClient.csproj" />
     <None Include="LobbyClient\packages.config" />
     <None Include="LobbyClient\Resources\CountryNames.txt" />
-    <None Include="MonoTorrent\AssemblyInfo.cs.in" />
-    <None Include="MonoTorrent\ChangeLog" />
     <None Include="MonoTorrent\MonoTorrent.BEncoding\ChangeLog" />
     <None Include="MonoTorrent\MonoTorrent.Client\ChangeLog" />
     <None Include="MonoTorrent\MonoTorrent.Client\CLASS DESCRIPTION" />
@@ -1959,7 +1956,6 @@
     <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui\pathTests\Results" />
     <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui\Widgets" />
     <Folder Include="Benchmarker\Benchmarks\Scripts" />
-    <Folder Include="Benchmarker\Properties" />
     <Folder Include="LobbyClient" />
     <Folder Include="LobbyClient\Legacy" />
     <Folder Include="LobbyClient\Protocol" />
@@ -1969,10 +1965,10 @@
     <Folder Include="MonoTorrent\MonoTorrent.Client" />
     <Folder Include="MonoTorrent\MonoTorrent.Client\Managers" />
     <Folder Include="MonoTorrent\MonoTorrent.Client\PieceWriter" />
-    <Folder Include="MonoTorrent\MonoTorrent.Client\Tasks" />
     <Folder Include="MonoTorrent\MonoTorrent.Common" />
     <Folder Include="MonoTorrent\MonoTorrent.Common\EventArgs" />
     <Folder Include="PlasmaDownloader" />
+    <Folder Include="PlasmaDownloader\Packages" />
     <Folder Include="PlasmaDownloader\Torrents" />
     <Folder Include="PlasmaShared" />
     <Folder Include="PlasmaShared\Diagrams" />
