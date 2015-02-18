@@ -14,10 +14,14 @@ namespace LobbyClient
 
         static CountryNames()
         {
+            /*
             Assembly assembly = Assembly.GetExecutingAssembly();
             //Stream countryNames = assembly.GetManifestResourceStream(typeof(User), "Resources.CountryNames.txt"); //Fixme: GetManifestResourceStream with only 1 argument do not work in MonoDevelop
-            Stream countryNames = assembly.GetManifestResourceStream("Resources.CountryNames.txt");
+            Stream countryNames = assembly.GetManifestResourceStream("LobbyClient.Resources.CountryNames.txt");
+            
             var reader = new StreamReader(countryNames);
+            */
+            var reader = new StreamReader(new MemoryStream(ZeroKLobby.ZklResources.CountryNames));
 
             string line;
             while ((line = reader.ReadLine()) != null)
