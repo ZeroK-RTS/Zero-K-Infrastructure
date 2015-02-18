@@ -49,17 +49,17 @@ namespace LobbyClient
 
         public override Task OnConnectionClosed(bool wasRequested)
         {
-            return Task.Run(() => { if (ConnectionClosed != null) ConnectionClosed(this, EventArgs.Empty); });
+            return TaskEx.Run(() => { if (ConnectionClosed != null) ConnectionClosed(this, EventArgs.Empty); });
         }
 
         public override Task OnConnected()
         {
-            return Task.Run(() => { if (Connected != null) Connected(this, EventArgs.Empty); });
+            return TaskEx.Run(() => { if (Connected != null) Connected(this, EventArgs.Empty); });
         }
 
         public override Task OnLineReceived(string line)
         {
-            return Task.Run(() => {
+            return TaskEx.Run(() => {
                 ConnectionEventArgs command = null;
                 try
                 {
