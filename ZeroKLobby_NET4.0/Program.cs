@@ -338,7 +338,7 @@ namespace ZeroKLobby
                 ConnectBar.MaximumSize = connectbarSize;
                 //End battlebar size hax
 
-                if (!Debugger.IsAttached && !Conf.DisableAutoUpdate) Program.SelfUpdater.StartChecking();
+                if (!Debugger.IsAttached && !Conf.DisableAutoUpdate1) Program.SelfUpdater.StartChecking();
 
                 //if (Conf.IsFirstRun) Utils.OpenWeb(GlobalConst.BaseSiteUrl + "/Wiki/LobbyStart", false);
 
