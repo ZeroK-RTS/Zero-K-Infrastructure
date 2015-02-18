@@ -136,7 +136,8 @@ namespace LobbyClient
         }
 
         static string EncodeJson(object data) {
-            var payload = JsonConvert.SerializeObject(data, new JsonSerializerSettings() {Formatting = Formatting.None});
+            //var payload = JsonConvert.SerializeObject(data, new JsonSerializerSettings() {Formatting = Formatting.None});
+            var payload = JsonConvert.SerializeObject(data,Formatting.None);
             return string.Format("!JSON {0} {1}", data.GetType().Name, payload);
         }
 

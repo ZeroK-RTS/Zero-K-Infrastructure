@@ -33,7 +33,7 @@ namespace LobbyClient
         public CommandJsonSerializer()
         {
             RegisterTypes(Utils.GetAllTypesWithAttribute<MessageAttribute>().ToArray());
-            settings.Formatting = Formatting.None;
+            //settings.Formatting = Formatting.None;
             settings.NullValueHandling = NullValueHandling.Ignore;
         }
 
@@ -57,7 +57,7 @@ namespace LobbyClient
 
         public string SerializeToLine<T>(T value)
         {
-            return string.Format("{0} {1}\n", typeof(T).Name, JsonConvert.SerializeObject(value, settings));
+            return string.Format("{0} {1}\n", typeof(T).Name, JsonConvert.SerializeObject(value, Formatting.None,settings));
         }
     }
 
