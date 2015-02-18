@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{AA5F8640-FBBC-4007-9589-6C7CD26D4867}</ProjectGuid>
+    <ProjectGuid>{D9361735-A7C5-42F7-A066-0347613F0A7A}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ZeroKLobby</RootNamespace>
@@ -107,6 +107,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionHandler.cs" />
+    <Compile Include="Benchmarker\Batch.cs" />
+    <Compile Include="Benchmarker\BatchRunResult.cs" />
+    <Compile Include="Benchmarker\Benchmark.cs" />
+    <Compile Include="Benchmarker\BisectForm.cs" />
+    <Compile Include="Benchmarker\BisectForm.Designer.cs" />
+    <Compile Include="Benchmarker\Config.cs" />
+    <Compile Include="Benchmarker\GraphsForm.cs" />
+    <Compile Include="Benchmarker\GraphsForm.Designer.cs" />
+    <Compile Include="Benchmarker\MainForm.cs" />
+    <Compile Include="Benchmarker\MainForm.Designer.cs" />
+    <Compile Include="Benchmarker\Properties\AssemblyInfo.cs" />
+    <Compile Include="Benchmarker\SpringRun.cs" />
+    <Compile Include="Benchmarker\StartScript.cs" />
+    <Compile Include="Benchmarker\TestCase.cs" />
     <Compile Include="BrowserInterop.cs" />
     <Compile Include="ButtonInfo.cs" />
     <Compile Include="Buttons.Designer.cs">
@@ -128,6 +142,33 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="GlobalHook.cs" />
+    <Compile Include="LobbyClient\Battle.cs" />
+    <Compile Include="LobbyClient\BattleRect.cs" />
+    <Compile Include="LobbyClient\BotBattleStatus.cs" />
+    <Compile Include="LobbyClient\CountryNames.cs" />
+    <Compile Include="LobbyClient\Crc.cs" />
+    <Compile Include="LobbyClient\Legacy\Battle.cs" />
+    <Compile Include="LobbyClient\Legacy\BattleDetails.cs" />
+    <Compile Include="LobbyClient\Legacy\BattleRect.cs" />
+    <Compile Include="LobbyClient\Legacy\BotBattleStatus.cs" />
+    <Compile Include="LobbyClient\Legacy\Channel.cs" />
+    <Compile Include="LobbyClient\Legacy\SayingEventArgs.cs" />
+    <Compile Include="LobbyClient\Legacy\TasClient.cs" />
+    <Compile Include="LobbyClient\Legacy\TasClient_structures.cs" />
+    <Compile Include="LobbyClient\Legacy\User.cs" />
+    <Compile Include="LobbyClient\Legacy\UserBattleStatus.cs" />
+    <Compile Include="LobbyClient\ProtocolExtension.cs" />
+    <Compile Include="LobbyClient\Protocol\CommandJsonSerializer.cs" />
+    <Compile Include="LobbyClient\Protocol\Messages.cs" />
+    <Compile Include="LobbyClient\PwMatchCommand.cs" />
+    <Compile Include="LobbyClient\SayingEventArgs.cs" />
+    <Compile Include="LobbyClient\ServerConnection.cs" />
+    <Compile Include="LobbyClient\Spring.cs" />
+    <Compile Include="LobbyClient\SpringieServer.cs" />
+    <Compile Include="LobbyClient\Talker.cs" />
+    <Compile Include="LobbyClient\TasClient.cs" />
+    <Compile Include="LobbyClient\TasClient_structures.cs" />
+    <Compile Include="LobbyClient\UserBattleStatus.cs" />
     <Compile Include="MicroForms\PromptForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -162,12 +203,126 @@
     <Compile Include="MicroLobby\ExtrasTab\ExtrasTab.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="MonoTorrent\AssemblyInfo.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.BEncoding\BEncodedDictionary.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.BEncoding\BEncodedList.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.BEncoding\BEncodedNumber.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.BEncoding\BEncodedString.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.BEncoding\BEncodingException.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.BEncoding\IBEncodedValue.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.BEncoding\RawReader.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\Block.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\ClientEngine.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\FileStreamBuffer.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\Logger.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\Managers\BufferManager.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\Piece.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\PieceWriter\DiskWriter.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\PieceWriter\NtfsSparseFile.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\PieceWriter\PieceData.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\PieceWriter\PieceWriter.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\Tasks\DelegateTask.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\Tasks\Task.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\TorrentFileStream.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\AsyncResult.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\BitField.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\Check.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\Enums.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\EventArgs\TorrentCreatorEventArgs.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\HashAlgoFactory.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\Hashes.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\InfoHash.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\MonoTorrentCollectionBase.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\ToolBox.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\Torrent.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\TorrentCreator.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\TorrentCreatorAsyncResult.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\TorrentException.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\TorrentFile.cs" />
+    <Compile Include="MonoTorrent\MyHttpUtility.cs" />
     <Compile Include="Notifications\PwBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Notifications\PwBar.Designer.cs">
       <DependentUpon>PwBar.cs</DependentUpon>
     </Compile>
+    <Compile Include="PlasmaDownloader\Download.cs" />
+    <Compile Include="PlasmaDownloader\EngineDownload.cs" />
+    <Compile Include="PlasmaDownloader\IPlasmaDownloaderConfig.cs" />
+    <Compile Include="PlasmaDownloader\PlasmaDownloader.cs" />
+    <Compile Include="PlasmaDownloader\Torrents\TorrentDownload.cs" />
+    <Compile Include="PlasmaDownloader\Torrents\TorrentDownloader.cs" />
+    <Compile Include="PlasmaDownloader\WebDownload.cs" />
+    <Compile Include="PlasmaDownloader\WebFileDownload.cs" />
+    <Compile Include="PlasmaDownloader\WebMultiDownload.cs" />
+    <Compile Include="PlasmaShared\AuthTools.cs" />
+    <Compile Include="PlasmaShared\ChangeEventArgs.cs" />
+    <Compile Include="PlasmaShared\Connection.cs" />
+    <Compile Include="PlasmaShared\CsvTable.cs" />
+    <Compile Include="PlasmaShared\DbCloner.cs" />
+    <Compile Include="PlasmaShared\Diagrams\Diagram.cs" />
+    <Compile Include="PlasmaShared\Diagrams\Node.cs" />
+    <Compile Include="PlasmaShared\Diagrams\Vector.cs" />
+    <Compile Include="PlasmaShared\EmbeddedResourceExtractor.cs" />
+    <Compile Include="PlasmaShared\EventArgs.cs" />
+    <Compile Include="PlasmaShared\EventExtensions.cs" />
+    <Compile Include="PlasmaShared\GlobalConst.cs" />
+    <Compile Include="PlasmaShared\Hash.cs" />
+    <Compile Include="PlasmaShared\IContentService\AccountInfo.cs" />
+    <Compile Include="PlasmaShared\IContentService\IContentService.cs" />
+    <Compile Include="PlasmaShared\IContentService\ResourceData.cs" />
+    <Compile Include="PlasmaShared\IContentService\ResourceType.cs" />
+    <Compile Include="PlasmaShared\IContentService\ReturnValue.cs" />
+    <Compile Include="PlasmaShared\IContentService\ScriptMissionData.cs" />
+    <Compile Include="PlasmaShared\IResourceInfo.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\AhConfig.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\AutohostMode.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\BalanceTeamsResult.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\BattleContext.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\BattlePlayerResult.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\BattleResult.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\BotTeam.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\CommandLevel.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\ISpringieService.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\MovePlayerEntry.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\PlayerJoinResult.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\PlayerTeam.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\RecommendedMapResult.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\RectInfo.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\SpringBattleStartSetup.cs" />
+    <Compile Include="PlasmaShared\LuaTable.cs" />
+    <Compile Include="PlasmaShared\MapRegisteredEventArgs.cs" />
+    <Compile Include="PlasmaShared\MetaDataCache.cs" />
+    <Compile Include="PlasmaShared\Pool.cs" />
+    <Compile Include="PlasmaShared\PoolFileInfo.cs" />
+    <Compile Include="PlasmaShared\Properties\Settings.Designer.cs" />
+    <Compile Include="PlasmaShared\ResharperAttribs.cs" />
+    <Compile Include="PlasmaShared\SdpArchive.cs" />
+    <Compile Include="PlasmaShared\SelfUpdater.cs" />
+    <Compile Include="PlasmaShared\SerializableDictionary.cs" />
+    <Compile Include="PlasmaShared\Service References\ContentServiceReference\Reference.cs" />
+    <Compile Include="PlasmaShared\Settings.cs" />
+    <Compile Include="PlasmaShared\SpringPaths.cs" />
+    <Compile Include="PlasmaShared\SpringScanner.cs" />
+    <Compile Include="PlasmaShared\SteamWebApi.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\Ai.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\AiInfoPair.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\DependencyMissingException.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\ListOption.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\Map.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\MapInfo.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\Mod.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\ModMissionSlot.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\NativeMethods.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\Option.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\StartPos.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\UnitInfo.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\UnitSync.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\UnitSyncException.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\VfsMode.cs" />
+    <Compile Include="PlasmaShared\Utils.cs" />
+    <Compile Include="PlasmaShared\Web References\ModStats\Reference.cs" />
+    <Compile Include="PlasmaShared\Whois.cs" />
     <Compile Include="SelectWritableFolder.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -455,6 +610,9 @@
       <DependentUpon>ZklResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Steam\ZklSteamHandler.cs" />
+    <EmbeddedResource Include="Benchmarker\BisectForm.resx" />
+    <EmbeddedResource Include="Benchmarker\GraphsForm.resx" />
+    <EmbeddedResource Include="Benchmarker\MainForm.resx" />
     <EmbeddedResource Include="Buttons.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Buttons.Designer.cs</LastGenOutput>
@@ -622,7 +780,93 @@
     <Resource Include="Images\add.png" />
     <EmbeddedResource Include="NativeLibs\libCSteamworks.so" />
     <EmbeddedResource Include="NativeLibs\libsteam_api.so" />
+    <None Include="Benchmarker\app.config" />
+    <None Include="Benchmarker\Benchmarker.csproj" />
+    <None Include="Benchmarker\Benchmarks\Configs\ZKL_default\LuaUI\Config\ZK_data.lua" />
+    <None Include="Benchmarker\Benchmarks\Configs\ZKL_default\LuaUI\Config\ZK_order.lua" />
+    <None Include="Benchmarker\Benchmarks\Configs\ZKL_default\LuaUI\pathTests\config\DeltaSiegeDry.lua" />
+    <None Include="Benchmarker\Benchmarks\Configs\ZKL_default\springsettings.cfg" />
+    <None Include="Benchmarker\Benchmarks\Configs\ZKL_with_lights\LuaUI\Config\ZK_data.lua" />
+    <None Include="Benchmarker\Benchmarks\Configs\ZKL_with_lights\LuaUI\Config\ZK_order.lua" />
+    <None Include="Benchmarker\Benchmarks\Configs\ZKL_with_lights\LuaUI\pathTests\config\DeltaSiegeDry.lua" />
+    <None Include="Benchmarker\Benchmarks\Configs\ZKL_with_lights\springsettings.cfg" />
+    <None Include="Benchmarker\Benchmarks\fps_war2_test.batch" />
+    <None Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\LuaRules\Benchmarks\benchmarks.lua" />
+    <None Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\LuaRules\draw.lua" />
+    <None Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\LuaRules\main.lua" />
+    <None Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\LuaRules\resultFile.lua" />
+    <None Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\LuaUI\Widgets\dbg_fpslog_direct.lua" />
+    <None Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\modinfo.lua" />
+    <None Include="Benchmarker\Benchmarks\games\dynlights.sdd\LuaRules\Gadgets\unit_peace_spawner.lua" />
+    <None Include="Benchmarker\Benchmarks\games\dynlights.sdd\LuaUI\Widgets\dbg_fpslog_direct.lua" />
+    <None Include="Benchmarker\Benchmarks\games\dynlights.sdd\modinfo.lua" />
+    <None Include="Benchmarker\Benchmarks\games\dynlights.sdd\modinfo.lua.org" />
+    <None Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\info.txt" />
+    <None Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\LuaRules\Gadgets\dbg_fps_log.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\LuaRules\Gadgets\unit_terraform_map.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\LuaUI\Widgets\dbg_exit.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\LuaUI\Widgets\dbg_fpslog_direct.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\modinfo.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\units\armnanotc.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\units\terraunit.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_test.sdd\LuaRules\Gadgets\dbg_fps_log.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_test.sdd\LuaUI\Widgets\dbg_fpslog_direct.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_test.sdd\modinfo.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_war.sdd\LuaRules\Gadgets\unit_war_spawner.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_war.sdd\LuaUI\Widgets\dbg_fpslog_direct.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_war.sdd\modinfo.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_war2.sdd\LuaRules\Gadgets\dbg_fps_log.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_war2.sdd\LuaRules\Gadgets\game_over.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_war2.sdd\LuaRules\Gadgets\unit_war_spawner.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_war2.sdd\LuaUI\Widgets\dbg_exit.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_war2.sdd\LuaUI\Widgets\dbg_fpslog_direct.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_war2.sdd\modinfo.lua" />
+    <None Include="Benchmarker\Benchmarks\games\path_test.sdd\LuaRules\Gadgets\game_over.lua" />
+    <None Include="Benchmarker\Benchmarks\games\path_test.sdd\LuaRules\Gadgets\start_unit_setup.lua" />
+    <None Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui\pathTests\Config\Crossing_4_final.lua" />
+    <None Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui\pathTests\Results\readme.txt" />
+    <None Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui\Widgets\cmd_path_tester.lua" />
+    <None Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui\Widgets\cmd_path_test_creator.lua" />
+    <None Include="Benchmarker\Benchmarks\games\path_test.sdd\modinfo.lua" />
+    <None Include="Benchmarker\Benchmarks\Scripts\cai_vs_cai.txt" />
+    <None Include="Benchmarker\Benchmarks\Scripts\dynlights.txt" />
+    <None Include="Benchmarker\Benchmarks\Scripts\jk6cai.txt" />
+    <None Include="Benchmarker\Benchmarks\Scripts\null_vs_null_ai.txt" />
+    <None Include="Benchmarker\Benchmarks\Scripts\path_test_script.txt" />
+    <None Include="Benchmarker\Benchmarks\Scripts\player_vs_null_ai.txt" />
+    <None Include="Benchmarker\License-LGPL.txt" />
+    <None Include="Benchmarker\packages.config" />
+    <None Include="LobbyClient\app.config" />
+    <None Include="LobbyClient\LobbyClient.csproj" />
+    <None Include="LobbyClient\packages.config" />
+    <None Include="LobbyClient\Resources\CountryNames.txt" />
+    <None Include="MonoTorrent\AssemblyInfo.cs.in" />
+    <None Include="MonoTorrent\ChangeLog" />
+    <None Include="MonoTorrent\MonoTorrent.BEncoding\ChangeLog" />
+    <None Include="MonoTorrent\MonoTorrent.Client\ChangeLog" />
+    <None Include="MonoTorrent\MonoTorrent.Client\CLASS DESCRIPTION" />
+    <None Include="MonoTorrent\MonoTorrent.Client\CodeRoadmap.txt" />
+    <None Include="MonoTorrent\MonoTorrent.Client\Managers\ChangeLog" />
+    <None Include="MonoTorrent\MonoTorrent.Client\Mono.Security.dll" />
+    <None Include="MonoTorrent\MonoTorrent.Common\ChangeLog" />
+    <None Include="MonoTorrent\MonoTorrent.csproj" />
     <None Include="packages.config" />
+    <None Include="PlasmaDownloader\app.config" />
+    <None Include="PlasmaDownloader\packages.config" />
+    <None Include="PlasmaDownloader\PlasmaDownloader.csproj" />
+    <None Include="PlasmaShared\app.config" />
+    <None Include="PlasmaShared\packages.config" />
+    <None Include="PlasmaShared\PlasmaShared.csproj" />
+    <None Include="PlasmaShared\PlasmaShared.csproj.DotSettings" />
+    <None Include="PlasmaShared\Properties\Settings.settings" />
+    <None Include="PlasmaShared\Service References\ContentServiceReference\configuration.svcinfo" />
+    <None Include="PlasmaShared\Service References\ContentServiceReference\configuration91.svcinfo" />
+    <None Include="PlasmaShared\Service References\ContentServiceReference\ContentService.disco" />
+    <None Include="PlasmaShared\Service References\ContentServiceReference\ContentService.wsdl" />
+    <None Include="PlasmaShared\Service References\ContentServiceReference\Reference.svcmap" />
+    <None Include="PlasmaShared\Web References\ModStats\Reference.map" />
+    <None Include="PlasmaShared\Web References\ModStats\StatsCollector.disco" />
+    <None Include="PlasmaShared\Web References\ModStats\StatsCollector.wsdl" />
     <None Include="Properties\app.manifest">
       <SubType>Designer</SubType>
     </None>
@@ -1632,6 +1876,87 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\voice_talking.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Benchmarker" />
+    <Folder Include="Benchmarker\Benchmarks" />
+    <Folder Include="Benchmarker\Benchmarks\Configs" />
+    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_default" />
+    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_default\LuaUI" />
+    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_default\LuaUI\Config" />
+    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_default\LuaUI\pathTests" />
+    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_default\LuaUI\pathTests\config" />
+    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_with_lights" />
+    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_with_lights\LuaUI" />
+    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_with_lights\LuaUI\Config" />
+    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_with_lights\LuaUI\pathTests" />
+    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_with_lights\LuaUI\pathTests\config" />
+    <Folder Include="Benchmarker\Benchmarks\games" />
+    <Folder Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd" />
+    <Folder Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\LuaRules" />
+    <Folder Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\LuaRules\Benchmarks" />
+    <Folder Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\LuaUI" />
+    <Folder Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\LuaUI\Widgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\dynlights.sdd" />
+    <Folder Include="Benchmarker\Benchmarks\games\dynlights.sdd\LuaRules" />
+    <Folder Include="Benchmarker\Benchmarks\games\dynlights.sdd\LuaRules\Gadgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\dynlights.sdd\LuaUI" />
+    <Folder Include="Benchmarker\Benchmarks\games\dynlights.sdd\LuaUI\Widgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_terraform.sdd" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\LuaRules" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\LuaRules\Gadgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\LuaUI" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\LuaUI\Widgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\units" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_test.sdd" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_test.sdd\LuaRules" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_test.sdd\LuaRules\Gadgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_test.sdd\LuaUI" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_test.sdd\LuaUI\Widgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_war.sdd" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_war.sdd\LuaRules" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_war.sdd\LuaRules\Gadgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_war.sdd\LuaUI" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_war.sdd\LuaUI\Widgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_war2.sdd" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_war2.sdd\LuaRules" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_war2.sdd\LuaRules\Gadgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_war2.sdd\LuaUI" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_war2.sdd\LuaUI\Widgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd" />
+    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd\LuaRules" />
+    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd\LuaRules\Gadgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui" />
+    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui\pathTests" />
+    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui\pathTests\Config" />
+    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui\pathTests\Results" />
+    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui\Widgets" />
+    <Folder Include="Benchmarker\Benchmarks\Scripts" />
+    <Folder Include="Benchmarker\Properties" />
+    <Folder Include="LobbyClient" />
+    <Folder Include="LobbyClient\Legacy" />
+    <Folder Include="LobbyClient\Protocol" />
+    <Folder Include="LobbyClient\Resources" />
+    <Folder Include="MonoTorrent" />
+    <Folder Include="MonoTorrent\MonoTorrent.BEncoding" />
+    <Folder Include="MonoTorrent\MonoTorrent.Client" />
+    <Folder Include="MonoTorrent\MonoTorrent.Client\Managers" />
+    <Folder Include="MonoTorrent\MonoTorrent.Client\PieceWriter" />
+    <Folder Include="MonoTorrent\MonoTorrent.Client\Tasks" />
+    <Folder Include="MonoTorrent\MonoTorrent.Common" />
+    <Folder Include="MonoTorrent\MonoTorrent.Common\EventArgs" />
+    <Folder Include="PlasmaDownloader" />
+    <Folder Include="PlasmaDownloader\Torrents" />
+    <Folder Include="PlasmaShared" />
+    <Folder Include="PlasmaShared\Diagrams" />
+    <Folder Include="PlasmaShared\IContentService" />
+    <Folder Include="PlasmaShared\ISpringieService" />
+    <Folder Include="PlasmaShared\Properties" />
+    <Folder Include="PlasmaShared\Service References" />
+    <Folder Include="PlasmaShared\Service References\ContentServiceReference" />
+    <Folder Include="PlasmaShared\UnitSyncLib" />
+    <Folder Include="PlasmaShared\Web References" />
+    <Folder Include="PlasmaShared\Web References\ModStats" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">
