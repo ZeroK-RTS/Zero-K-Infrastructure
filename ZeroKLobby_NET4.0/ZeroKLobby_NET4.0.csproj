@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{D9361735-A7C5-42F7-A066-0347613F0A7A}</ProjectGuid>
+    <ProjectGuid>{09B6C92A-AF10-49E3-92D5-CA07D0D54EF0}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ZeroKLobby</RootNamespace>
@@ -113,7 +113,7 @@
       <HintPath>..\packages\sharpcompress.0.9\lib\net40\SharpCompress.dll</HintPath>
     </Reference>
     <Reference Include="Steamworks.NET">
-      <HintPath>Libs\Steamworks.NET.dll</HintPath>
+      <HintPath>..\Libs\Steamworks.NET.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -1992,7 +1992,7 @@
   </Target>
   <PropertyGroup>
     <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">if /i $(ConfigurationName) NEQ Release exit 0
-"$(ProjectDir)\..\packages\ilmerge.2.13.0307\tools\ILMerge.exe" /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetDir)$(TargetName).exe" "$(TargetDir)*.dll" /target:exe "/targetplatform:v4,%ProgramFiles%\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client" /wildcards /t:winexe
+"$(SolutionDir)packages\ilmerge.2.13.0307\ILMerge.exe"  /wildcards /t:winexe /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetDir)$(TargetName).exe" "$(TargetDir)*.dll" /target:exe "/targetplatform:v4,%ProgramFiles%\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client"
 copy /Y "$(TargetDir)$(TargetName).all.pdb" "$(TargetName).pdb"
 copy /Y "$(TargetDir)$(TargetName).all.exe" "$(TargetName).exe"</PostBuildEvent>
   </PropertyGroup>
