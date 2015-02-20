@@ -21,7 +21,10 @@ namespace Springie.autohost.Polls
                 {
                     if (p.IsIngame || tas.MyBattle.Users.ContainsKey(p.Name))
                     {
-                        if (!tas.ExistingUsers[p.Name].IsAway) cnt++;
+                        //Note: "ExistingUsers" is empty if users disconnected from lobby but still ingame.
+
+                        bool afk = tas.ExistingUsers.ContainsKey(p.Name) && tas.ExistingUsers[p.Name].IsAway;
+                        if (!afk) cnt++;
                     }
                 }
                 winCount = cnt / 2 + 1;

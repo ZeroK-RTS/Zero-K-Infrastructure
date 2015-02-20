@@ -201,6 +201,11 @@ namespace Springie.autohost
 
 
         public int GetUserLevel(TasSayEventArgs e) {
+            if (!tas.ExistingUsers.ContainsKey(e.UserName))
+            {
+                Respond(e, string.Format("Please connect to lobby for right verification"));
+                return 0; //1 is default, but we return 0 to avoid right abuse (by Disconnecting from Springie and say thru Spring)
+            }
             return GetUserLevel(e.UserName);
         }
 
