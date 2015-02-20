@@ -1,0 +1,2001 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{09B6C92A-AF10-49E3-92D5-CA07D0D54EF0}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ZeroKLobby</RootNamespace>
+    <AssemblyName>Zero-K</AssemblyName>
+    <ApplicationIcon>SpringDownloader.ico</ApplicationIcon>
+    <ManifestCertificateThumbprint>FC2212B55F1B9944395B70DF91CE4D38FC17189D</ManifestCertificateThumbprint>
+    <ManifestKeyFile>SpringDownloader_TemporaryKey.pfx</ManifestKeyFile>
+    <GenerateManifests>true</GenerateManifests>
+    <SignManifests>false</SignManifests>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <TargetZone>Custom</TargetZone>
+    <SignAssembly>false</SignAssembly>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <StartupObject>ZeroKLobby.Program</StartupObject>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <PublishUrl>ftp://zero-k.info/zero-k.info/www/lobby/</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Background</UpdateMode>
+    <UpdateInterval>1</UpdateInterval>
+    <UpdateIntervalUnits>Hours</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>true</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <InstallUrl>http://zero-k.info/lobby/</InstallUrl>
+    <SupportUrl>http://zero-k.info/</SupportUrl>
+    <ErrorReportUrl>http://code.google.com/p/zero-k/issues/entry</ErrorReportUrl>
+    <ProductName>Zero-K</ProductName>
+    <PublisherName>Zero-K</PublisherName>
+    <MinimumRequiredVersion>3.0.0.0</MinimumRequiredVersion>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>publish.htm</WebPage>
+    <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
+    <TrustUrlParameters>true</TrustUrlParameters>
+    <ApplicationRevision>4</ApplicationRevision>
+    <ApplicationVersion>3.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <NoWin32Manifest>False</NoWin32Manifest>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <NoStdLib>False</NoStdLib>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;LIVE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\rules.ruleset</CodeAnalysisRuleSet>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;LIVE</DefineConstants>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\packages\DotNetZip.1.9.1.8\lib\net20\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.Threading.Tasks">
+      <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Threading.Tasks.Extensions">
+      <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Threading.Tasks.Extensions.Desktop">
+      <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>..\packages\RestSharp.105.0.0\lib\net4-client\RestSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpCompress">
+      <HintPath>..\packages\sharpcompress.0.9\lib\net40\SharpCompress.dll</HintPath>
+    </Reference>
+    <Reference Include="Steamworks.NET">
+      <HintPath>..\Libs\Steamworks.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.IO">
+      <HintPath>..\packages\Microsoft.Bcl.1.1.9\lib\net40\System.IO.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Runtime">
+      <HintPath>..\packages\Microsoft.Bcl.1.1.9\lib\net40\System.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Speech" />
+    <Reference Include="System.Threading.Tasks">
+      <HintPath>..\packages\Microsoft.Bcl.1.1.9\lib\net40\System.Threading.Tasks.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="NAudio">
+      <HintPath>..\packages\NAudio.1.7.2\lib\net35\NAudio.dll</HintPath>
+    </Reference>
+    <Reference Include="ZedGraph">
+      <HintPath>..\packages\ZedGraph.5.1.6\lib\net35-Client\ZedGraph.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ActionHandler.cs" />
+    <Compile Include="Benchmarker\Batch.cs" />
+    <Compile Include="Benchmarker\BatchRunResult.cs" />
+    <Compile Include="Benchmarker\Benchmark.cs" />
+    <Compile Include="Benchmarker\BisectForm.cs" />
+    <Compile Include="Benchmarker\BisectForm.Designer.cs" />
+    <Compile Include="Benchmarker\Config.cs" />
+    <Compile Include="Benchmarker\GraphsForm.cs" />
+    <Compile Include="Benchmarker\GraphsForm.Designer.cs" />
+    <Compile Include="Benchmarker\MainForm.cs" />
+    <Compile Include="Benchmarker\MainForm.Designer.cs" />
+    <Compile Include="Benchmarker\SpringRun.cs" />
+    <Compile Include="Benchmarker\StartScript.cs" />
+    <Compile Include="Benchmarker\TestCase.cs" />
+    <Compile Include="BrowserInterop.cs" />
+    <Compile Include="ButtonInfo.cs" />
+    <Compile Include="Buttons.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Buttons.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ChatToSpeech.cs" />
+    <Compile Include="Controls\MinimapFuncBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\MinimapFuncBox.Designer.cs">
+      <DependentUpon>MinimapFuncBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExtendedWebBrowser.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\ZkSplitContainer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GlobalHook.cs" />
+    <Compile Include="LobbyClient\Battle.cs" />
+    <Compile Include="LobbyClient\BattleRect.cs" />
+    <Compile Include="LobbyClient\BotBattleStatus.cs" />
+    <Compile Include="LobbyClient\CountryNames.cs" />
+    <Compile Include="LobbyClient\Crc.cs" />
+    <Compile Include="LobbyClient\Legacy\Battle.cs" />
+    <Compile Include="LobbyClient\Legacy\BattleDetails.cs" />
+    <Compile Include="LobbyClient\Legacy\BattleRect.cs" />
+    <Compile Include="LobbyClient\Legacy\BotBattleStatus.cs" />
+    <Compile Include="LobbyClient\Legacy\Channel.cs" />
+    <Compile Include="LobbyClient\Legacy\SayingEventArgs.cs" />
+    <Compile Include="LobbyClient\Legacy\TasClient.cs" />
+    <Compile Include="LobbyClient\Legacy\TasClient_structures.cs" />
+    <Compile Include="LobbyClient\Legacy\User.cs" />
+    <Compile Include="LobbyClient\Legacy\UserBattleStatus.cs" />
+    <Compile Include="LobbyClient\ProtocolExtension.cs" />
+    <Compile Include="LobbyClient\Protocol\CommandJsonSerializer.cs" />
+    <Compile Include="LobbyClient\Protocol\Messages.cs" />
+    <Compile Include="LobbyClient\PwMatchCommand.cs" />
+    <Compile Include="LobbyClient\SayingEventArgs.cs" />
+    <Compile Include="LobbyClient\ServerConnection.cs" />
+    <Compile Include="LobbyClient\Spring.cs" />
+    <Compile Include="LobbyClient\SpringieServer.cs" />
+    <Compile Include="LobbyClient\Talker.cs" />
+    <Compile Include="LobbyClient\TasClient.cs" />
+    <Compile Include="LobbyClient\TasClient_structures.cs" />
+    <Compile Include="LobbyClient\UserBattleStatus.cs" />
+    <Compile Include="MicroForms\PromptForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MicroForms\PromptForm.Designer.cs">
+      <DependentUpon>PromptForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroForms\UnitSyncRetryPrompt.cs" />
+    <Compile Include="MicroLobby\ExtrasTab\TableReader.cs" />
+    <Compile Include="MicroLobby\ExtrasTab\SkirmishControlTool.cs" />
+    <Compile Include="MicroForms\UnitSyncUploadPrompt.cs" />
+    <Compile Include="MicroLobby\HexToUnicodeConverter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\HexToUnicodeConverter.Designer.cs">
+      <DependentUpon>HexToUnicodeConverter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\ExtrasTab\ExtrasToolTabs.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\ExtrasTab\SkirmishControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\ExtrasTab\SkirmishControl.Designer.cs">
+      <DependentUpon>SkirmishControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\TextColoringPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\TextColoringPanel.Designer.cs">
+      <DependentUpon>TextColoringPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\ExtrasTab\ExtrasTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MonoTorrent\MonoTorrent.BEncoding\BEncodedDictionary.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.BEncoding\BEncodedList.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.BEncoding\BEncodedNumber.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.BEncoding\BEncodedString.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.BEncoding\BEncodingException.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.BEncoding\IBEncodedValue.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.BEncoding\RawReader.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\Block.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\ClientEngine.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\FileStreamBuffer.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\Logger.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\Managers\BufferManager.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\Piece.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\PieceWriter\DiskWriter.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\PieceWriter\NtfsSparseFile.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\PieceWriter\PieceData.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\PieceWriter\PieceWriter.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Client\TorrentFileStream.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\AsyncResult.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\BitField.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\Check.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\Enums.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\EventArgs\TorrentCreatorEventArgs.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\HashAlgoFactory.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\Hashes.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\InfoHash.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\MonoTorrentCollectionBase.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\ToolBox.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\Torrent.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\TorrentCreator.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\TorrentCreatorAsyncResult.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\TorrentException.cs" />
+    <Compile Include="MonoTorrent\MonoTorrent.Common\TorrentFile.cs" />
+    <Compile Include="MonoTorrent\MyHttpUtility.cs" />
+    <Compile Include="Notifications\PwBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\PwBar.Designer.cs">
+      <DependentUpon>PwBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PlasmaDownloader\Download.cs" />
+    <Compile Include="PlasmaDownloader\EngineDownload.cs" />
+    <Compile Include="PlasmaDownloader\IPlasmaDownloaderConfig.cs" />
+    <Compile Include="PlasmaDownloader\Packages\BitArray.cs" />
+    <Compile Include="PlasmaDownloader\Packages\PackageDownload.cs" />
+    <Compile Include="PlasmaDownloader\Packages\PackageDownloader.cs" />
+    <Compile Include="PlasmaDownloader\Packages\StreamExtension.cs" />
+    <Compile Include="PlasmaDownloader\PlasmaDownloader.cs" />
+    <Compile Include="PlasmaDownloader\Torrents\TorrentDownload.cs" />
+    <Compile Include="PlasmaDownloader\Torrents\TorrentDownloader.cs" />
+    <Compile Include="PlasmaDownloader\WebDownload.cs" />
+    <Compile Include="PlasmaDownloader\WebFileDownload.cs" />
+    <Compile Include="PlasmaDownloader\WebMultiDownload.cs" />
+    <Compile Include="PlasmaShared\AuthTools.cs" />
+    <Compile Include="PlasmaShared\ChangeEventArgs.cs" />
+    <Compile Include="PlasmaShared\Connection.cs" />
+    <Compile Include="PlasmaShared\CsvTable.cs" />
+    <Compile Include="PlasmaShared\DbCloner.cs" />
+    <Compile Include="PlasmaShared\Diagrams\Diagram.cs" />
+    <Compile Include="PlasmaShared\Diagrams\Node.cs" />
+    <Compile Include="PlasmaShared\Diagrams\Vector.cs" />
+    <Compile Include="PlasmaShared\EmbeddedResourceExtractor.cs" />
+    <Compile Include="PlasmaShared\EventArgs.cs" />
+    <Compile Include="PlasmaShared\EventExtensions.cs" />
+    <Compile Include="PlasmaShared\GlobalConst.cs" />
+    <Compile Include="PlasmaShared\Hash.cs" />
+    <Compile Include="PlasmaShared\IContentService\AccountInfo.cs" />
+    <Compile Include="PlasmaShared\IContentService\IContentService.cs" />
+    <Compile Include="PlasmaShared\IContentService\ResourceData.cs" />
+    <Compile Include="PlasmaShared\IContentService\ResourceType.cs" />
+    <Compile Include="PlasmaShared\IContentService\ReturnValue.cs" />
+    <Compile Include="PlasmaShared\IContentService\ScriptMissionData.cs" />
+    <Compile Include="PlasmaShared\IResourceInfo.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\AhConfig.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\AutohostMode.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\BalanceTeamsResult.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\BattleContext.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\BattlePlayerResult.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\BattleResult.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\BotTeam.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\CommandLevel.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\ISpringieService.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\MovePlayerEntry.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\PlayerJoinResult.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\PlayerTeam.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\RecommendedMapResult.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\RectInfo.cs" />
+    <Compile Include="PlasmaShared\ISpringieService\SpringBattleStartSetup.cs" />
+    <Compile Include="PlasmaShared\LuaTable.cs" />
+    <Compile Include="PlasmaShared\MapRegisteredEventArgs.cs" />
+    <Compile Include="PlasmaShared\MetaDataCache.cs" />
+    <Compile Include="PlasmaShared\Pool.cs" />
+    <Compile Include="PlasmaShared\PoolFileInfo.cs" />
+    <Compile Include="PlasmaShared\Properties\Settings.Designer.cs" />
+    <Compile Include="PlasmaShared\ResharperAttribs.cs" />
+    <Compile Include="PlasmaShared\SdpArchive.cs" />
+    <Compile Include="PlasmaShared\SelfUpdater.cs" />
+    <Compile Include="PlasmaShared\SerializableDictionary.cs" />
+    <Compile Include="PlasmaShared\Service References\ContentServiceReference\Reference.cs" />
+    <Compile Include="PlasmaShared\Settings.cs" />
+    <Compile Include="PlasmaShared\SpringPaths.cs" />
+    <Compile Include="PlasmaShared\SpringScanner.cs" />
+    <Compile Include="PlasmaShared\SteamWebApi.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\Ai.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\AiInfoPair.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\DependencyMissingException.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\ListOption.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\Map.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\MapInfo.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\Mod.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\ModMissionSlot.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\NativeMethods.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\Option.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\StartPos.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\UnitInfo.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\UnitSync.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\UnitSyncException.cs" />
+    <Compile Include="PlasmaShared\UnitSyncLib\VfsMode.cs" />
+    <Compile Include="PlasmaShared\Utils.cs" />
+    <Compile Include="PlasmaShared\Web References\ModStats\Reference.cs" />
+    <Compile Include="PlasmaShared\Whois.cs" />
+    <Compile Include="SelectWritableFolder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SelectWritableFolder.Designer.cs">
+      <DependentUpon>SelectWritableFolder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Steam\SteamClientHelper.cs" />
+    <Compile Include="Steam\SteamVoiceSystem.cs" />
+    <Compile Include="Configs.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Configs.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\BitmapButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\HeadlessTabControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="EngineConfigurator.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="INavigatable.cs" />
+    <Compile Include="KnownGames.cs" />
+    <Compile Include="Lines\SelfJoinedBattleLine.cs" />
+    <Compile Include="MainWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainWindow.Designer.cs">
+      <DependentUpon>MainWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\BattleListControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\BattleListControl.Designer.cs">
+      <DependentUpon>BattleListControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\BattleListTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\BattleListTab.Designer.cs">
+      <DependentUpon>BattleListTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\BrowserTab.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\ChatTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\ChatTab.Designer.cs">
+      <DependentUpon>ChatTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\SpringsettingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\SpringsettingForm.Designer.cs">
+      <DependentUpon>SpringsettingForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NavigationControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="NavigationControl.Designer.cs">
+      <DependentUpon>NavigationControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Notifications\MissionBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\MissionBar.Designer.cs">
+      <DependentUpon>MissionBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Notifications\NotifySection.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\NotifySection.Designer.cs">
+      <DependentUpon>NotifySection.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Notifications\ReplayBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\ReplayBar.Designer.cs">
+      <DependentUpon>ReplayBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Notifications\SinglePlayerBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\SinglePlayerBar.Designer.cs">
+      <DependentUpon>SinglePlayerBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Flags.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Flags.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\ContextMenus.cs" />
+    <Compile Include="Lines\ChimeLine.cs" />
+    <Compile Include="Lines\FriendJoinedBattleLine.cs" />
+    <Compile Include="Lines\TopicLine.cs" />
+    <Compile Include="MicroLobby\AutoJoinManager.cs" />
+    <Compile Include="MicroLobby\GdiListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\GdiListBoxItem.cs" />
+    <Compile Include="MicroLobby\HostDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\HostDialog.Designer.cs">
+      <DependentUpon>HostDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\ModStore.cs" />
+    <Compile Include="MicroLobby\ServerTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\ServerTab.Designer.cs">
+      <DependentUpon>ServerTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\SettingsTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\SettingsTab.Designer.cs">
+      <DependentUpon>SettingsTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\SpringieCommand.cs" />
+    <Compile Include="MicroLobby\TextImage.cs" />
+    <Compile Include="MicroLobby\ModOptionsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\MyCol.cs" />
+    <Compile Include="Notifications\GenericBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\GenericBar.Designer.cs">
+      <DependentUpon>GenericBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Notifications\NewVersionBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\NewVersionBar.Designer.cs">
+      <DependentUpon>NewVersionBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Notifications\ScannerBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\ScannerBar.Designer.cs">
+      <DependentUpon>ScannerBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Notifications\VoteBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\VoteBar.Designer.cs">
+      <DependentUpon>VoteBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Ranks.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Ranks.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ServerImagesHandler.cs" />
+    <Compile Include="ToolTips\BattleTooltipRenderer.cs" />
+    <Compile Include="MicroLobby\AskBattlePasswordForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\AskBattlePasswordForm.Designer.cs">
+      <DependentUpon>AskBattlePasswordForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\ChatBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\HistoryManager.cs" />
+    <Compile Include="Lines\BroadcastLine.cs" />
+    <Compile Include="Lines\ChannelMessageLine.cs" />
+    <Compile Include="Lines\FromServerLine.cs" />
+    <Compile Include="Lines\HistoryLine.cs" />
+    <Compile Include="Lines\IChatLine.cs" />
+    <Compile Include="Lines\JoinLine.cs" />
+    <Compile Include="Lines\LeaveLine.cs" />
+    <Compile Include="Lines\SaidExLine.cs" />
+    <Compile Include="Lines\SaidLine.cs" />
+    <Compile Include="Lines\ServerMessageLine.cs" />
+    <Compile Include="Lines\ToServerLine.cs" />
+    <Compile Include="MicroLobby\BattleChatControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\BattleIcon.cs" />
+    <Compile Include="MicroLobby\BattleIconManager.cs" />
+    <Compile Include="MicroLobby\DudeRenderer.cs" />
+    <Compile Include="MicroLobby\FriendManager.cs" />
+    <Compile Include="MicroLobby\GameInfo.cs" />
+    <Compile Include="MicroLobby\TextColor.cs" />
+    <Compile Include="MicroLobby\TextWindow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\TextWindow.designer.cs">
+      <DependentUpon>TextWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\Images.cs" />
+    <Compile Include="MicroLobby\LoginForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\LoginForm.Designer.cs">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\PrivateMessageControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\PrivateMessageControl.Designer.cs">
+      <DependentUpon>PrivateMessageControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\SayCommandHandler.cs" />
+    <Compile Include="MicroLobby\SendBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\ToolTabs.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\ConnectBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\INotifyBar.cs" />
+    <Compile Include="Notifications\DownloadBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\DownloadBar.designer.cs">
+      <DependentUpon>DownloadBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\PlayerListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\ChatControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\ChatControl.Designer.cs">
+      <DependentUpon>ChatControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\PopupNotify.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Notifications\BattleBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\BattleBar.Designer.cs">
+      <DependentUpon>BattleBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ToolTips\IToolTipRenderer.cs" />
+    <Compile Include="ToolTips\MapTooltipRenderer.cs" />
+    <Compile Include="ToolTips\PlayerTooltipRenderer.cs" />
+    <Compile Include="MicroLobby\PlayerListItem.cs" />
+    <Compile Include="Notifications\WarningBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\WarningBar.Designer.cs">
+      <DependentUpon>WarningBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\ScrollMessageFilter.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Config.cs" />
+    <Compile Include="ErrorHandling.cs" />
+    <Compile Include="FormLog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormLog.Designer.cs">
+      <DependentUpon>FormLog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\DownloaderTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\DownloaderTab.Designer.cs">
+      <DependentUpon>DownloaderTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Notifications\NotifyBarContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\NotifyBarContainer.Designer.cs">
+      <DependentUpon>NotifyBarContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WindowsApi.cs" />
+    <Compile Include="ZklResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ZklResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Steam\ZklSteamHandler.cs" />
+    <EmbeddedResource Include="Benchmarker\BisectForm.resx" />
+    <EmbeddedResource Include="Benchmarker\GraphsForm.resx" />
+    <EmbeddedResource Include="Benchmarker\MainForm.resx" />
+    <EmbeddedResource Include="Buttons.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Buttons.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configs.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Configs.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\MinimapFuncBox.resx">
+      <DependentUpon>MinimapFuncBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Flags.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Flags.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroForms\PromptForm.resx">
+      <DependentUpon>PromptForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\BattleChatControl.resx">
+      <DependentUpon>BattleChatControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\ExtrasTab\SkirmishControl.resx">
+      <DependentUpon>SkirmishControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\PwBar.resx">
+      <DependentUpon>PwBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainWindow.resx">
+      <DependentUpon>MainWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\BattleListTab.resx">
+      <DependentUpon>BattleListTab.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\ChatControl.resx">
+      <DependentUpon>ChatControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\ChatTab.resx">
+      <DependentUpon>ChatTab.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\ModOptionsControl.resx">
+      <DependentUpon>ModOptionsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\PlayerListBox.resx">
+      <DependentUpon>PlayerListBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\PopupNotify.resx">
+      <DependentUpon>PopupNotify.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\SpringsettingForm.resx">
+      <DependentUpon>SpringsettingForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NavigationControl.resx">
+      <DependentUpon>NavigationControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\BattleBar.resx">
+      <DependentUpon>BattleBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormLog.resx">
+      <DependentUpon>FormLog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\DownloaderTab.resx">
+      <DependentUpon>DownloaderTab.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\MissionBar.resx">
+      <DependentUpon>MissionBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\NotifyBarContainer.resx">
+      <DependentUpon>NotifyBarContainer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\NotifySection.resx">
+      <DependentUpon>NotifySection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\ReplayBar.resx">
+      <DependentUpon>ReplayBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\ScannerBar.resx">
+      <DependentUpon>ScannerBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\SinglePlayerBar.resx">
+      <DependentUpon>SinglePlayerBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\VoteBar.resx">
+      <DependentUpon>VoteBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Ranks.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Ranks.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="ToolTips\TextTooltipRenderer.cs" />
+    <Compile Include="ToolTips\ToolTipForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ToolTips\ToolTipHandler.cs" />
+    <Compile Include="Utils.cs" />
+    <EmbeddedResource Include="SelectWritableFolder.resx">
+      <DependentUpon>SelectWritableFolder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ZklResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ZklResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NativeLibs\libCSteamworks-x86_64.so" />
+    <EmbeddedResource Include="NativeLibs\libsteam_api-x86_64.so" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5.1">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5.1 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\add.png" />
+    <EmbeddedResource Include="NativeLibs\libCSteamworks.so" />
+    <EmbeddedResource Include="NativeLibs\libsteam_api.so" />
+    <None Include="Benchmarker\app.config" />
+    <None Include="Benchmarker\Benchmarker.csproj" />
+    <None Include="Benchmarker\Benchmarks\Configs\ZKL_default\LuaUI\Config\ZK_data.lua" />
+    <None Include="Benchmarker\Benchmarks\Configs\ZKL_default\LuaUI\Config\ZK_order.lua" />
+    <None Include="Benchmarker\Benchmarks\Configs\ZKL_default\LuaUI\pathTests\config\DeltaSiegeDry.lua" />
+    <None Include="Benchmarker\Benchmarks\Configs\ZKL_default\springsettings.cfg" />
+    <None Include="Benchmarker\Benchmarks\Configs\ZKL_with_lights\LuaUI\Config\ZK_data.lua" />
+    <None Include="Benchmarker\Benchmarks\Configs\ZKL_with_lights\LuaUI\Config\ZK_order.lua" />
+    <None Include="Benchmarker\Benchmarks\Configs\ZKL_with_lights\LuaUI\pathTests\config\DeltaSiegeDry.lua" />
+    <None Include="Benchmarker\Benchmarks\Configs\ZKL_with_lights\springsettings.cfg" />
+    <None Include="Benchmarker\Benchmarks\fps_war2_test.batch" />
+    <None Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\LuaRules\Benchmarks\benchmarks.lua" />
+    <None Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\LuaRules\draw.lua" />
+    <None Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\LuaRules\main.lua" />
+    <None Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\LuaRules\resultFile.lua" />
+    <None Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\LuaUI\Widgets\dbg_fpslog_direct.lua" />
+    <None Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\modinfo.lua" />
+    <None Include="Benchmarker\Benchmarks\games\dynlights.sdd\LuaRules\Gadgets\unit_peace_spawner.lua" />
+    <None Include="Benchmarker\Benchmarks\games\dynlights.sdd\LuaUI\Widgets\dbg_fpslog_direct.lua" />
+    <None Include="Benchmarker\Benchmarks\games\dynlights.sdd\modinfo.lua" />
+    <None Include="Benchmarker\Benchmarks\games\dynlights.sdd\modinfo.lua.org" />
+    <None Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\info.txt" />
+    <None Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\LuaRules\Gadgets\dbg_fps_log.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\LuaRules\Gadgets\unit_terraform_map.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\LuaUI\Widgets\dbg_exit.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\LuaUI\Widgets\dbg_fpslog_direct.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\modinfo.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\units\armnanotc.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\units\terraunit.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_test.sdd\LuaRules\Gadgets\dbg_fps_log.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_test.sdd\LuaUI\Widgets\dbg_fpslog_direct.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_test.sdd\modinfo.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_war.sdd\LuaRules\Gadgets\unit_war_spawner.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_war.sdd\LuaUI\Widgets\dbg_fpslog_direct.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_war.sdd\modinfo.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_war2.sdd\LuaRules\Gadgets\dbg_fps_log.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_war2.sdd\LuaRules\Gadgets\game_over.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_war2.sdd\LuaRules\Gadgets\unit_war_spawner.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_war2.sdd\LuaUI\Widgets\dbg_exit.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_war2.sdd\LuaUI\Widgets\dbg_fpslog_direct.lua" />
+    <None Include="Benchmarker\Benchmarks\games\fps_war2.sdd\modinfo.lua" />
+    <None Include="Benchmarker\Benchmarks\games\path_test.sdd\LuaRules\Gadgets\game_over.lua" />
+    <None Include="Benchmarker\Benchmarks\games\path_test.sdd\LuaRules\Gadgets\start_unit_setup.lua" />
+    <None Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui\pathTests\Config\Crossing_4_final.lua" />
+    <None Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui\pathTests\Results\readme.txt" />
+    <None Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui\Widgets\cmd_path_tester.lua" />
+    <None Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui\Widgets\cmd_path_test_creator.lua" />
+    <None Include="Benchmarker\Benchmarks\games\path_test.sdd\modinfo.lua" />
+    <None Include="Benchmarker\Benchmarks\Scripts\cai_vs_cai.txt" />
+    <None Include="Benchmarker\Benchmarks\Scripts\dynlights.txt" />
+    <None Include="Benchmarker\Benchmarks\Scripts\jk6cai.txt" />
+    <None Include="Benchmarker\Benchmarks\Scripts\null_vs_null_ai.txt" />
+    <None Include="Benchmarker\Benchmarks\Scripts\path_test_script.txt" />
+    <None Include="Benchmarker\Benchmarks\Scripts\player_vs_null_ai.txt" />
+    <None Include="Benchmarker\License-LGPL.txt" />
+    <None Include="Benchmarker\packages.config" />
+    <None Include="LobbyClient\app.config" />
+    <None Include="LobbyClient\LobbyClient.csproj" />
+    <None Include="LobbyClient\packages.config" />
+    <None Include="LobbyClient\Resources\CountryNames.txt" />
+    <None Include="MonoTorrent\MonoTorrent.BEncoding\ChangeLog" />
+    <None Include="MonoTorrent\MonoTorrent.Client\ChangeLog" />
+    <None Include="MonoTorrent\MonoTorrent.Client\CLASS DESCRIPTION" />
+    <None Include="MonoTorrent\MonoTorrent.Client\CodeRoadmap.txt" />
+    <None Include="MonoTorrent\MonoTorrent.Client\Managers\ChangeLog" />
+    <None Include="MonoTorrent\MonoTorrent.Client\Mono.Security.dll" />
+    <None Include="MonoTorrent\MonoTorrent.Common\ChangeLog" />
+    <None Include="MonoTorrent\MonoTorrent.csproj" />
+    <None Include="packages.config" />
+    <None Include="PlasmaDownloader\app.config" />
+    <None Include="PlasmaDownloader\packages.config" />
+    <None Include="PlasmaDownloader\PlasmaDownloader.csproj" />
+    <None Include="PlasmaShared\app.config" />
+    <None Include="PlasmaShared\packages.config" />
+    <None Include="PlasmaShared\PlasmaShared.csproj" />
+    <None Include="PlasmaShared\PlasmaShared.csproj.DotSettings" />
+    <None Include="PlasmaShared\Properties\Settings.settings" />
+    <None Include="PlasmaShared\Service References\ContentServiceReference\configuration.svcinfo" />
+    <None Include="PlasmaShared\Service References\ContentServiceReference\configuration91.svcinfo" />
+    <None Include="PlasmaShared\Service References\ContentServiceReference\ContentService.disco" />
+    <None Include="PlasmaShared\Service References\ContentServiceReference\ContentService.wsdl" />
+    <None Include="PlasmaShared\Service References\ContentServiceReference\Reference.svcmap" />
+    <None Include="PlasmaShared\Web References\ModStats\Reference.map" />
+    <None Include="PlasmaShared\Web References\ModStats\StatsCollector.disco" />
+    <None Include="PlasmaShared\Web References\ModStats\StatsCollector.wsdl" />
+    <None Include="Properties\app.manifest">
+      <SubType>Designer</SubType>
+    </None>
+    <EmbeddedResource Include="MicroLobby\HostDialog.resx">
+      <DependentUpon>HostDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\GenericBar.resx">
+      <DependentUpon>GenericBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\NewVersionBar.resx">
+      <DependentUpon>NewVersionBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\SettingsTab.resx">
+      <DependentUpon>SettingsTab.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\TextWindow.resources" />
+    <EmbeddedResource Include="Notifications\WarningBar.resx">
+      <DependentUpon>WarningBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\ConnectBar.resx">
+      <DependentUpon>ConnectBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\AskBattlePasswordForm.resx">
+      <DependentUpon>AskBattlePasswordForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\PrivateMessageControl.resx">
+      <DependentUpon>PrivateMessageControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\LoginForm.resx">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\DownloadBar.resx">
+    </EmbeddedResource>
+    <None Include="Resources\Conf\lups0.cfg" />
+    <None Include="Resources\Conf\lups1.cfg" />
+    <None Include="Resources\Conf\lups2.cfg" />
+    <None Include="Resources\Conf\lups3.cfg" />
+    <None Include="Resources\Conf\lups4.cfg" />
+    <None Include="Resources\Conf\springsettings0.cfg" />
+    <None Include="Resources\Conf\springsettings1.cfg" />
+    <None Include="Resources\Conf\springsettings2.cfg" />
+    <None Include="Resources\Conf\springsettings3.cfg" />
+    <None Include="Resources\Conf\springsettings4.cfg" />
+    <None Include="SpringDownloader_TemporaryKey.pfx" />
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Conf\cmdcolors.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Conf\selectkeys.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Conf\uikeys.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ae.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\af.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ag.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ai.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\al.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\am.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\an.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ao.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\as.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\at.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\au.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\aw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ax.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\az.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ba.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\be.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bi.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bj.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\br.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bv.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\by.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\bz.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ca.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\catalonia.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ci.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ck.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cl.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\co.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cu.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cv.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cx.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\cz.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\de.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\dj.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\dk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\dm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\do.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\dz.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ec.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ee.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\eg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\eh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\england.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\er.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\es.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\et.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\europeanunion.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\fam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\fi.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\fj.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\fk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\fm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\fo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\fr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ga.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gi.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gl.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gq.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gu.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\gy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\hk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\hm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\hn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\hr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ht.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\hu.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ch.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\id.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ie.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\il.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\in.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\io.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\iq.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ir.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\is.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\it.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\jm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\jo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\jp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ke.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\kg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\kh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ki.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\km.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\kn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\kp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\kr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\kw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ky.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\kz.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\la.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\lb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\lc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\li.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\lk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\lr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ls.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\lt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\lu.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\lv.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ly.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ma.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\md.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\me.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ml.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mq.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ms.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mu.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mv.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mx.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\my.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\mz.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\na.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\nc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ne.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\nf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ng.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ni.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\nl.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\no.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\np.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\nr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\nu.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\nz.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\om.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\pa.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\pe.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\pf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\pg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ph.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\pk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\pl.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\pm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\pn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\pr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ps.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\pt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\pw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\py.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\qa.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\re.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ro.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\rs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ru.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\rw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sa.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\scotland.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\se.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\si.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sj.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sl.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\so.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\st.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sv.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\sz.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\td.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\th.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tj.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tl.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\to.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tv.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\tz.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ua.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ug.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\um.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\us.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\uy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\uz.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\va.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\vc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ve.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\vg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\vi.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\vn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\vu.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\wales.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\wf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ws.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\ye.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\yt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\za.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\zm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flags\zw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ranks\1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ranks\2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ranks\3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ranks\4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ranks\5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ranks\6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ranks\7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ranks\8.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ranks\9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\battle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\boom.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\border.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cup.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\download.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\friend.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\game.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\grayuser.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\green.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\chat.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ingame.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\jimi.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\lock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\napoleon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\police.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\red.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\redlight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Remove.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\replay.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\robot.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\search.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\smurf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\soldier.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\springlogo_glass.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\star.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\user.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\warning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\WebDown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\yellow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ZK_logo_square.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayerStates\away.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayerStates\away.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayerStates\quickmatch_off.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayerStates\ready.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayerStates\spec.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayerStates\unready.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ZK_logo_square.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SpringDownloader.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="SpringDownloader.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\logout.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\game.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\glaive_icon_24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\home.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\chat.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\license.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\map.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\panel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\panel_border_128.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\panel_border_64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\panel_border_96.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\settings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\spherebot.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\video-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="NativeLibs\CSteamworks.dll" />
+    <EmbeddedResource Include="NativeLibs\steam_api.dll" />
+    <EmbeddedResource Include="NativeLibs\steam_appid.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\steam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\voice_off.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\voice_talking.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Benchmarker" />
+    <Folder Include="Benchmarker\Benchmarks" />
+    <Folder Include="Benchmarker\Benchmarks\Configs" />
+    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_default" />
+    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_default\LuaUI" />
+    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_default\LuaUI\Config" />
+    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_default\LuaUI\pathTests" />
+    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_default\LuaUI\pathTests\config" />
+    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_with_lights" />
+    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_with_lights\LuaUI" />
+    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_with_lights\LuaUI\Config" />
+    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_with_lights\LuaUI\pathTests" />
+    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_with_lights\LuaUI\pathTests\config" />
+    <Folder Include="Benchmarker\Benchmarks\games" />
+    <Folder Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd" />
+    <Folder Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\LuaRules" />
+    <Folder Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\LuaRules\Benchmarks" />
+    <Folder Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\LuaUI" />
+    <Folder Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\LuaUI\Widgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\dynlights.sdd" />
+    <Folder Include="Benchmarker\Benchmarks\games\dynlights.sdd\LuaRules" />
+    <Folder Include="Benchmarker\Benchmarks\games\dynlights.sdd\LuaRules\Gadgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\dynlights.sdd\LuaUI" />
+    <Folder Include="Benchmarker\Benchmarks\games\dynlights.sdd\LuaUI\Widgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_terraform.sdd" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\LuaRules" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\LuaRules\Gadgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\LuaUI" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\LuaUI\Widgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\units" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_test.sdd" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_test.sdd\LuaRules" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_test.sdd\LuaRules\Gadgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_test.sdd\LuaUI" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_test.sdd\LuaUI\Widgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_war.sdd" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_war.sdd\LuaRules" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_war.sdd\LuaRules\Gadgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_war.sdd\LuaUI" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_war.sdd\LuaUI\Widgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_war2.sdd" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_war2.sdd\LuaRules" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_war2.sdd\LuaRules\Gadgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_war2.sdd\LuaUI" />
+    <Folder Include="Benchmarker\Benchmarks\games\fps_war2.sdd\LuaUI\Widgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd" />
+    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd\LuaRules" />
+    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd\LuaRules\Gadgets" />
+    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui" />
+    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui\pathTests" />
+    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui\pathTests\Config" />
+    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui\pathTests\Results" />
+    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui\Widgets" />
+    <Folder Include="Benchmarker\Benchmarks\Scripts" />
+    <Folder Include="LobbyClient" />
+    <Folder Include="LobbyClient\Legacy" />
+    <Folder Include="LobbyClient\Protocol" />
+    <Folder Include="LobbyClient\Resources" />
+    <Folder Include="MonoTorrent" />
+    <Folder Include="MonoTorrent\MonoTorrent.BEncoding" />
+    <Folder Include="MonoTorrent\MonoTorrent.Client" />
+    <Folder Include="MonoTorrent\MonoTorrent.Client\Managers" />
+    <Folder Include="MonoTorrent\MonoTorrent.Client\PieceWriter" />
+    <Folder Include="MonoTorrent\MonoTorrent.Common" />
+    <Folder Include="MonoTorrent\MonoTorrent.Common\EventArgs" />
+    <Folder Include="PlasmaDownloader" />
+    <Folder Include="PlasmaDownloader\Packages" />
+    <Folder Include="PlasmaDownloader\Torrents" />
+    <Folder Include="PlasmaShared" />
+    <Folder Include="PlasmaShared\Diagrams" />
+    <Folder Include="PlasmaShared\IContentService" />
+    <Folder Include="PlasmaShared\ISpringieService" />
+    <Folder Include="PlasmaShared\Properties" />
+    <Folder Include="PlasmaShared\Service References" />
+    <Folder Include="PlasmaShared\Service References\ContentServiceReference" />
+    <Folder Include="PlasmaShared\UnitSyncLib" />
+    <Folder Include="PlasmaShared\Web References" />
+    <Folder Include="PlasmaShared\Web References\ModStats" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+    <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+      <Output TaskParameter="Assemblies" ItemName="AssemblyIdentity" />
+    </GetAssemblyIdentity>
+    <Exec Command="echo %(AssemblyIdentity.Version) &gt; &quot;$(TargetDir)$(TargetName).version.txt&quot;" />
+  </Target>
+  <PropertyGroup>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">if /i $(ConfigurationName) NEQ Release exit 0
+"$(SolutionDir)packages\ilmerge.2.13.0307\ILMerge.exe" /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetDir)$(TargetName).exe" "$(TargetDir)*.dll" /target:exe "/targetplatform:v4,%ProgramFiles%\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client" /wildcards /t:winexe 
+copy /Y "$(TargetDir)$(TargetName).all.pdb" "$(TargetName).pdb"
+copy /Y "$(TargetDir)$(TargetName).all.exe" "$(TargetName).exe"</PostBuildEvent>
+  </PropertyGroup>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
+</Project>
