@@ -38,15 +38,15 @@ namespace ZeroKLobby
 
         string baloonTipPath;
 
-        readonly ToolStripMenuItem btnExit;
+        ToolStripMenuItem btnExit;
 
         bool closeForReal;
         FormWindowState lastState = FormWindowState.Normal;
         readonly Dictionary<MainPages, Control> pages = new Dictionary<MainPages, Control>();
 
-        readonly NotifyIcon systrayIcon;
+        NotifyIcon systrayIcon;
         readonly Timer timer1 = new Timer();
-        readonly ContextMenuStrip trayStrip;
+        ContextMenuStrip trayStrip;
         DirectSoundOut waveOut;
         public ChatTab ChatTab
         {
@@ -68,12 +68,37 @@ namespace ZeroKLobby
 
         public MainWindow()
         {
+            Instance = this;
             this.Font = Config.MenuFont;
             InitializeComponent();
             SuspendLayout();
+            SetStyle(ControlStyles.DoubleBuffer, true);
             
-            SetStyle( ControlStyles.DoubleBuffer, true);
+            btnBack.Image = Buttons.left.GetResized(40, 40);
+            btnHide.Image = Buttons.down.GetResized(32, 32);
+            
+            SetupMainPages();
+            SetupSystray();
+            navigator = new Navigator(navigationControl1, flowLayoutPanel1);
+            
+            if (Program.Downloader != null) {
+                timer1.Interval = 250;
+                timer1.Tick += timer1_Tick;
 
+                Program.Downloader.DownloadAdded += TorrentManager_DownloadAdded;
+                timer1.Start();
+            }
+
+
+            ResumeLayout();
+
+            Spring.AnySpringStarted += (sender, args) => { if (waveOut != null) waveOut.Stop(); };
+
+            btnWindowed_Click(this, EventArgs.Empty); // switch to fullscreen
+        }
+
+        void SetupMainPages()
+        {
             pages[MainPages.Home] = new HomePage();
             pages[MainPages.SinglePlayer] = new SinglePlayerPage();
             pages[MainPages.Skirmish] = new SkirmishControl();
@@ -81,9 +106,11 @@ namespace ZeroKLobby
             pages[MainPages.CustomBattles] = new BattleListTab();
 
             foreach (var c in pages.Values) switchPanel1.SetupTabPage(c);
+            SwitchPage(MainPages.Home, false);
+        }
 
-            Instance = this;
-
+        void SetupSystray()
+        {
             btnExit = new ToolStripMenuItem { Name = "btnExit", Size = new Size(92, 22), Text = "Exit" };
             btnExit.Click += btnExit_Click;
 
@@ -95,24 +122,6 @@ namespace ZeroKLobby
             systrayIcon = new NotifyIcon { ContextMenuStrip = trayStrip, Text = "Zero-K Launcher", Visible = true };
             systrayIcon.MouseDown += systrayIcon_MouseDown;
             systrayIcon.BalloonTipClicked += systrayIcon_BalloonTipClicked;
-
-            if (Program.Downloader != null) {
-                timer1.Interval = 250;
-                timer1.Tick += timer1_Tick;
-
-                Program.Downloader.DownloadAdded += TorrentManager_DownloadAdded;
-                timer1.Start();
-            }
-
-            SwitchPage(MainPages.Home, false);
-
-            navigator = new Navigator(navigationControl1, flowLayoutPanel1);
-
-
-            //btnWindowed_Click(this, EventArgs.Empty);
-            ResumeLayout();
-
-            Spring.AnySpringStarted += (sender, args) => { if (waveOut != null) waveOut.Stop(); };
         }
 
 
@@ -309,7 +318,8 @@ namespace ZeroKLobby
                 waveOut = new DirectSoundOut();
                 audioReader = new Mp3FileReader(new MemoryStream(Sounds.menu_music_ROM));
                 waveOut.Init(audioReader);
-                //waveOut.Play();
+                
+                btnSnd_Click(this, EventArgs.Empty);
             }
         }
 
@@ -331,10 +341,14 @@ namespace ZeroKLobby
         void btnSnd_Click(object sender, EventArgs e)
         {
             if (Environment.OSVersion.Platform != PlatformID.Unix) {
-                if (waveOut.PlaybackState == PlaybackState.Playing) waveOut.Stop();
+                if (waveOut.PlaybackState == PlaybackState.Playing) {
+                    waveOut.Stop();
+                    btnSnd.Image = Buttons.soundOff.GetResizedWithCache(32, 32);
+                }
                 else {
                     audioReader.Position = 0;
                     waveOut.Play();
+                    btnSnd.Image = Buttons.soundOn.GetResizedWithCache(32, 32);
                 }
             }
         }
@@ -345,10 +359,12 @@ namespace ZeroKLobby
                 TopMost = false;
                 WindowState = FormWindowState.Normal;
                 FormBorderStyle = FormBorderStyle.Sizable;
+                btnWindowed.Image = Buttons.win_max.GetResizedWithCache(32, 32);
             } else {
                 FormBorderStyle = FormBorderStyle.None;
                 TopMost = true;
                 WindowState = FormWindowState.Maximized;
+                btnWindowed.Image = Buttons.win_min.GetResizedWithCache(32, 32);
             }
         }
 

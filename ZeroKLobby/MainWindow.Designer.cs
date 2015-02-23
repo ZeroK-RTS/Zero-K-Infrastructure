@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.lbMainPageTitle = new System.Windows.Forms.Label();
             this.btnBack = new ZeroKLobby.BitmapButton();
@@ -57,14 +58,17 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lbMainPageTitle.BackColor = System.Drawing.Color.Transparent;
             this.lbMainPageTitle.ForeColor = System.Drawing.Color.White;
-            this.lbMainPageTitle.Location = new System.Drawing.Point(55, 26);
+            this.lbMainPageTitle.Location = new System.Drawing.Point(68, 12);
             this.lbMainPageTitle.Name = "lbMainPageTitle";
-            this.lbMainPageTitle.Size = new System.Drawing.Size(541, 25);
+            this.lbMainPageTitle.Size = new System.Drawing.Size(528, 50);
             this.lbMainPageTitle.TabIndex = 13;
             this.lbMainPageTitle.Text = "Page title";
+            this.lbMainPageTitle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // btnBack
             // 
+            this.btnBack.BackColor = System.Drawing.Color.Transparent;
+            this.btnBack.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnBack.BackgroundImage")));
             this.btnBack.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.btnBack.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnBack.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -73,10 +77,9 @@
             this.btnBack.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.btnBack.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnBack.ForeColor = System.Drawing.Color.White;
-            this.btnBack.Image = global::ZeroKLobby.Buttons.left;
-            this.btnBack.Location = new System.Drawing.Point(12, 20);
+            this.btnBack.Location = new System.Drawing.Point(12, 12);
             this.btnBack.Name = "btnBack";
-            this.btnBack.Size = new System.Drawing.Size(37, 37);
+            this.btnBack.Size = new System.Drawing.Size(50, 50);
             this.btnBack.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Servo;
             this.btnBack.TabIndex = 12;
             this.btnBack.UseVisualStyleBackColor = false;
@@ -101,6 +104,7 @@
             // btnHide
             // 
             this.btnHide.BackColor = System.Drawing.Color.Transparent;
+            this.btnHide.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnHide.BackgroundImage")));
             this.btnHide.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.btnHide.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnHide.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -109,10 +113,9 @@
             this.btnHide.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.btnHide.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnHide.ForeColor = System.Drawing.Color.White;
-            this.btnHide.Image = global::ZeroKLobby.Buttons.down;
-            this.btnHide.Location = new System.Drawing.Point(21, 8);
+            this.btnHide.Location = new System.Drawing.Point(15, 10);
             this.btnHide.Name = "btnHide";
-            this.btnHide.Size = new System.Drawing.Size(37, 37);
+            this.btnHide.Size = new System.Drawing.Size(42, 42);
             this.btnHide.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Servo;
             this.btnHide.TabIndex = 3;
             this.btnHide.UseVisualStyleBackColor = false;
@@ -120,14 +123,13 @@
             // 
             // lbRightPanelTitle
             // 
-            this.lbRightPanelTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.lbRightPanelTitle.ForeColor = System.Drawing.Color.White;
-            this.lbRightPanelTitle.Location = new System.Drawing.Point(72, 14);
+            this.lbRightPanelTitle.Location = new System.Drawing.Point(68, 10);
             this.lbRightPanelTitle.Name = "lbRightPanelTitle";
-            this.lbRightPanelTitle.Size = new System.Drawing.Size(680, 25);
+            this.lbRightPanelTitle.Size = new System.Drawing.Size(680, 42);
             this.lbRightPanelTitle.TabIndex = 2;
             this.lbRightPanelTitle.Text = "Chat";
+            this.lbRightPanelTitle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // navigationControl1
             // 
@@ -156,13 +158,13 @@
             // 
             this.btnWindowed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnWindowed.BackColor = System.Drawing.Color.Transparent;
+            this.btnWindowed.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnWindowed.BackgroundImage")));
             this.btnWindowed.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.btnWindowed.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnWindowed.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnWindowed.FlatAppearance.BorderSize = 0;
             this.btnWindowed.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnWindowed.ForeColor = System.Drawing.Color.White;
-            this.btnWindowed.Image = global::ZeroKLobby.Buttons.win_minmax;
             this.btnWindowed.Location = new System.Drawing.Point(1288, 769);
             this.btnWindowed.Name = "btnWindowed";
             this.btnWindowed.Size = new System.Drawing.Size(35, 35);
@@ -175,13 +177,13 @@
             // 
             this.btnSnd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSnd.BackColor = System.Drawing.Color.Transparent;
+            this.btnSnd.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnSnd.BackgroundImage")));
             this.btnSnd.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.btnSnd.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnSnd.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnSnd.FlatAppearance.BorderSize = 0;
             this.btnSnd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSnd.ForeColor = System.Drawing.Color.White;
-            this.btnSnd.Image = global::ZeroKLobby.Buttons.snd;
             this.btnSnd.Location = new System.Drawing.Point(1339, 769);
             this.btnSnd.Name = "btnSnd";
             this.btnSnd.Size = new System.Drawing.Size(35, 35);

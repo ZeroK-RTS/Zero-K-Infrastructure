@@ -532,6 +532,9 @@
     <EmbeddedResource Include="MainPages\SinglePlayerPage.resx">
       <DependentUpon>SinglePlayerPage.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="MainWindow.resx">
+      <DependentUpon>MainWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MicroForms\PromptForm.resx">
       <DependentUpon>PromptForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -624,6 +627,7 @@
     <EmbeddedResource Include="ZklResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ZklResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="NativeLibs\libCSteamworks-x86_64.so" />
     <EmbeddedResource Include="NativeLibs\libsteam_api-x86_64.so" />
@@ -1647,16 +1651,10 @@
     <None Include="Resources\Buttons\game.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Buttons\glaive_icon_24.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Buttons\home.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Buttons\chat.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Buttons\license.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Buttons\map.png" />
@@ -1700,29 +1698,8 @@
     <None Include="Resources\BgImages\bg_battle.png" />
     <None Include="Resources\Buttons\exit.png" />
     <None Include="Resources\Buttons\mp.png" />
-    <None Include="Resources\Buttons\snd.png" />
     <None Include="Resources\Buttons\sp.png" />
-    <None Include="Resources\Buttons\win_minmax.png" />
     <None Include="Resources\Buttons\ajax-loader.gif" />
-    <None Include="Resources\Buttons\add1.png" />
-    <None Include="Resources\Buttons\ajax-loader1.gif" />
-    <None Include="Resources\Buttons\game1.png" />
-    <None Include="Resources\Buttons\glaive_icon_241.png" />
-    <None Include="Resources\Buttons\home1.png" />
-    <None Include="Resources\Buttons\chat1.png" />
-    <None Include="Resources\Buttons\map1.png" />
-    <None Include="Resources\Buttons\panel_border_1281.png" />
-    <None Include="Resources\Buttons\panel_border_641.png" />
-    <None Include="Resources\Buttons\panel_border_961.png" />
-    <None Include="Resources\Buttons\DarkHive\C.png" />
-    <None Include="Resources\Buttons\DarkHive\E.png" />
-    <None Include="Resources\Buttons\DarkHive\N.png" />
-    <None Include="Resources\Buttons\DarkHive\NE.png" />
-    <None Include="Resources\Buttons\DarkHive\NW.png" />
-    <None Include="Resources\Buttons\DarkHive\S.png" />
-    <None Include="Resources\Buttons\DarkHive\SE.png" />
-    <None Include="Resources\Buttons\DarkHive\SW.png" />
-    <None Include="Resources\Buttons\DarkHive\W.png" />
     <None Include="Resources\DarkHive\E.png" />
     <None Include="Resources\DarkHive\N.png" />
     <None Include="Resources\DarkHive\NE.png" />
@@ -1767,6 +1744,34 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\BgImages\bg_battle.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\soundOff.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\soundOn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\downloads.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\link.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\win_max.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\win_min.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\qb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\extras.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\ZK_logo_128.ico" />
+    <Content Include="Resources\ZK_logo_128.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">

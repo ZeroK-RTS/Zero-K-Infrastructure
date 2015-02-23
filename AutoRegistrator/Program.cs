@@ -62,10 +62,8 @@ namespace AutoRegistrator
         {
             foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByTag.Keys)) {
                 if (ver.EndsWith(":test") || ver.EndsWith(":latest")) {
-                    if (!Downloader.PackageDownloader.SelectedPackages.Contains(ver))
                     {
                         Trace.TraceInformation("Selecting package: {0}",ver);
-                        Downloader.PackageDownloader.SelectPackage(ver);
                         Downloader.GetResource(DownloadType.MOD, ver);
                     }
 

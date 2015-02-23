@@ -23,15 +23,12 @@ namespace ZeroKLobby.MapDownloader
         InitializeComponent();
 
         Program.Downloader.PackagesChanged += Downloader_PackagesChanged;
-        Program.Downloader.SelectedPackagesChanged += Downloader_SelectedPackagesChanged;
         UpdateAvailablePackages();
-        UpdateSelectedPackages();
     }
 
     void DownloaderTab_Disposed(object sender, EventArgs e)
     {
       Program.Downloader.PackagesChanged -= Downloader_PackagesChanged;
-      Program.Downloader.SelectedPackagesChanged -= Downloader_SelectedPackagesChanged;
     }
 
     void AddNode(string name)
@@ -66,13 +63,6 @@ namespace ZeroKLobby.MapDownloader
         ResumeLayout();
     }
 
-    void UpdateSelectedPackages()
-    {
-      lbInstalled.BeginUpdate();
-      lbInstalled.Items.Clear();
-      foreach (var item in new List<string>(Program.Downloader.PackageDownloader.SelectedPackages)) lbInstalled.Items.Add(item);
-      lbInstalled.EndUpdate();
-    }
 
     public string PathHead { get { return "rapid"; } }
 
@@ -103,24 +93,15 @@ namespace ZeroKLobby.MapDownloader
       }
     }
 
-    void Downloader_SelectedPackagesChanged(object sender, EventArgs e)
-    {
-      if (InvokeRequired) Invoke(new EventHandler(Downloader_SelectedPackagesChanged));
-      else
-      {
-        Trace.TraceInformation("Selected packages changed");
-        UpdateSelectedPackages();
-      }
-    }
 
     void btnReload_Click(object sender, EventArgs e)
     {
-        Program.Downloader.PackageDownloader.LoadMasterAndVersions(true);
+        Program.Downloader.PackageDownloader.LoadMasterAndVersions();
     }
 
     void lbInstalled_DoubleClick(object sender, EventArgs e)
     {
-      if (lbInstalled.SelectedIndex >= 0) Program.Downloader.PackageDownloader.DeselectPackage(lbInstalled.Items[lbInstalled.SelectedIndex].ToString());
+      //if (lbInstalled.SelectedIndex >= 0)
     }
 
     void tvAvailable_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)

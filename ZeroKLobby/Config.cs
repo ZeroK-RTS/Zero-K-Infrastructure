@@ -22,13 +22,17 @@ namespace ZeroKLobby
         public const string LogFile = "ZeroKLobbyErrors.txt";
 
         public readonly Color BgColor = Color.Black;
-        public static readonly Font MenuFont = new Font("Verdana", 16, GraphicsUnit.Pixel);
-        static PrivateFontCollection PrivateFontCollection = new PrivateFontCollection();
+        public static readonly Font MenuFont = new Font("Verdana", 20, GraphicsUnit.Pixel);
+        private static readonly PrivateFontCollection pfc = new PrivateFontCollection();
 
         static Config()
         {
-            PrivateFontCollection.AddFontFile("Sm.ttf"); // TODO copy out from resources
-            MenuFont = new Font(PrivateFontCollection.Families[0], 20, GraphicsUnit.Pixel);
+            // TODO copy out from resources
+            if (File.Exists("Sm.ttf"))
+            { 
+                pfc.AddFontFile("Sm.ttf"); 
+                MenuFont = new Font(pfc.Families[0], 20, GraphicsUnit.Pixel);
+            }
         }
 
     

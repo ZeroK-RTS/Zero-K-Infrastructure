@@ -73,16 +73,6 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap back {
-            get {
-                object obj = ResourceManager.GetObject("back", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap chat {
             get {
                 object obj = ResourceManager.GetObject("chat", resourceCulture);
@@ -103,9 +93,29 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap downloads {
+            get {
+                object obj = ResourceManager.GetObject("downloads", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap exit {
             get {
                 object obj = ResourceManager.GetObject("exit", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap extras {
+            get {
+                object obj = ResourceManager.GetObject("extras", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -123,26 +133,6 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap glaive_icon_24 {
-            get {
-                object obj = ResourceManager.GetObject("glaive_icon_24", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap home {
-            get {
-                object obj = ResourceManager.GetObject("home", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap left {
             get {
                 object obj = ResourceManager.GetObject("left", resourceCulture);
@@ -151,28 +141,12 @@ namespace ZeroKLobby {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Camera icon by DesignContest
-        ///CC-BY 3.0
-        ///
-        ///ajax_loader.gif by www.ajaxload.info
-        ///Free for use.
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static string license {
+        internal static System.Drawing.Bitmap link {
             get {
-                return ResourceManager.GetString("license", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Camera icon by DesignContest
-        ///CC-BY 3.0
-        ///
-        ///ajax_loader.gif by www.ajaxload.info
-        ///Free for use.
-        /// </summary>
-        internal static string license1 {
-            get {
-                return ResourceManager.GetString("license1", resourceCulture);
+                object obj = ResourceManager.GetObject("link", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -249,6 +223,16 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap qb {
+            get {
+                object obj = ResourceManager.GetObject("qb", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap settings {
             get {
                 object obj = ResourceManager.GetObject("settings", resourceCulture);
@@ -259,9 +243,19 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap snd {
+        internal static System.Drawing.Bitmap soundOff {
             get {
-                object obj = ResourceManager.GetObject("snd", resourceCulture);
+                object obj = ResourceManager.GetObject("soundOff", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap soundOn {
+            get {
+                object obj = ResourceManager.GetObject("soundOn", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -299,9 +293,19 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap win_minmax {
+        internal static System.Drawing.Bitmap win_max {
             get {
-                object obj = ResourceManager.GetObject("win_minmax", resourceCulture);
+                object obj = ResourceManager.GetObject("win_max", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap win_min {
+            get {
+                object obj = ResourceManager.GetObject("win_min", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
