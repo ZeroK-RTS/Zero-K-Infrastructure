@@ -51,9 +51,6 @@ namespace ZeroKLobby.Controls
         }
 
 
-
-        TransparentTabPage empty = new TransparentTabPage();
-
         public async Task SwitchContent(Control newTarget, AnimType? animation = null)
         {
             var animator = GetAnimator(animation);
