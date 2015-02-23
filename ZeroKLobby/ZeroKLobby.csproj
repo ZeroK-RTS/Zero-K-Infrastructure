@@ -144,6 +144,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DarkHive.resx</DependentUpon>
     </Compile>
+    <Compile Include="DarkHiveGlow.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DarkHiveGlow.resx</DependentUpon>
+    </Compile>
     <Compile Include="DarkHiveHover.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -363,6 +368,11 @@
       <DependentUpon>Ranks.resx</DependentUpon>
     </Compile>
     <Compile Include="ServerImagesHandler.cs" />
+    <Compile Include="TechPanel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TechPanel.resx</DependentUpon>
+    </Compile>
     <Compile Include="ToolTips\BattleTooltipRenderer.cs" />
     <Compile Include="MicroLobby\AskBattlePasswordForm.cs">
       <SubType>Form</SubType>
@@ -514,6 +524,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DarkHive.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="DarkHiveGlow.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DarkHiveGlow.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="DarkHiveHover.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DarkHiveHover.Designer.cs</LastGenOutput>
@@ -623,6 +637,10 @@
     <EmbeddedResource Include="Sounds.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Sounds.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TechPanel.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>TechPanel.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="ZklResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -1770,6 +1788,22 @@
     <None Include="Resources\Buttons\extras.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\TechPanel\W.png" />
+    <None Include="Resources\TechPanel\SW.png" />
+    <None Include="Resources\TechPanel\SE.png" />
+    <None Include="Resources\TechPanel\S.png" />
+    <None Include="Resources\TechPanel\NW.png" />
+    <None Include="Resources\TechPanel\NE.png" />
+    <None Include="Resources\TechPanel\N.png" />
+    <None Include="Resources\TechPanel\E.png" />
+    <None Include="Resources\DarkHiveGlow\W.png" />
+    <None Include="Resources\DarkHiveGlow\SW.png" />
+    <None Include="Resources\DarkHiveGlow\SE.png" />
+    <None Include="Resources\DarkHiveGlow\S.png" />
+    <None Include="Resources\DarkHiveGlow\NW.png" />
+    <None Include="Resources\DarkHiveGlow\NE.png" />
+    <None Include="Resources\DarkHiveGlow\N.png" />
+    <None Include="Resources\DarkHiveGlow\E.png" />
     <Content Include="Resources\ZK_logo_128.ico" />
     <Content Include="Resources\ZK_logo_128.png" />
   </ItemGroup>

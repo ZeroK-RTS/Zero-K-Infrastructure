@@ -17,6 +17,10 @@ namespace ZeroKLobby.MainPages
         public SinglePlayerPage()
         {
             InitializeComponent();
+            tutorialButton.Font = Config.MenuFont;
+            campaignButton.Font = Config.MenuFont;
+            missonsButton.Font = Config.MenuFont;
+            skirmishButton.Font = Config.MenuFont;
         }
 
         private void tutorialButton_Click(object sender, EventArgs e)

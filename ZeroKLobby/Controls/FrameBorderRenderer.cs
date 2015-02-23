@@ -10,9 +10,11 @@ namespace ZeroKLobby
     {
         public enum StyleType
         {
-            DarkHive = 1,
-            DarkHiveHover = 2,
-            Shraka = 3
+            DarkHive,
+            DarkHiveHover,
+            Shraka,
+            DarkHiveGlow,
+            TechPanel
         }
 
         public class FrameStyle
@@ -60,8 +62,33 @@ namespace ZeroKLobby
                     E = DarkHive.E,
                     W = DarkHive.W,
                     FillBrush = new SolidBrush(Color.FromArgb(179, 0, 0, 0))
-                }
-            }, {
+                }}, {
+                StyleType.DarkHiveGlow,
+                new FrameStyle {
+                    N = DarkHiveGlow.N,
+                    NE = DarkHiveGlow.NE,
+                    NW = DarkHiveGlow.NW,
+                    S = DarkHiveGlow.S,
+                    SE = DarkHiveGlow.SE,
+                    SW = DarkHiveGlow.SW,
+                    E = DarkHiveGlow.E,
+                    W = DarkHiveGlow.W,
+                    FillBrush = new SolidBrush(Color.FromArgb(179, 0, 0, 0))
+                }},
+                {
+                StyleType.TechPanel,
+                new FrameStyle {
+                    N = TechPanel.N,
+                    NE = TechPanel.NE,
+                    NW = TechPanel.NW,
+                    S = TechPanel.S,
+                    SE = TechPanel.SE,
+                    SW = TechPanel.SW,
+                    E = TechPanel.E,
+                    W = TechPanel.W,
+                    FillBrush = new SolidBrush(Color.FromArgb(179, 0, 0, 0))
+                }},
+                {
                 StyleType.Shraka,
                 new FrameStyle {
                     N = Shraka.N,

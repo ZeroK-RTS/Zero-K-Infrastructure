@@ -16,6 +16,9 @@ namespace ZeroKLobby.MainPages
         public HomePage()
         {
             InitializeComponent();
+            singleplayerButton.Font = Config.MenuFont;
+            multiplayerButton.Font = Config.MenuFont;
+            exitButton.Font = Config.MenuFont;
         }
 
         private void singleplayerButton_Click(object sender, EventArgs e)

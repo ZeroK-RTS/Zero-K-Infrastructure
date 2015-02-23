@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using LobbyClient;
 using NAudio.Wave;
 using PlasmaDownloader;
@@ -69,14 +70,17 @@ namespace ZeroKLobby
         public MainWindow()
         {
             Instance = this;
-            this.Font = Config.MenuFont;
             InitializeComponent();
             SuspendLayout();
             SetStyle(ControlStyles.DoubleBuffer, true);
             
             btnBack.Image = Buttons.left.GetResized(40, 40);
             btnHide.Image = Buttons.down.GetResized(32, 32);
-            
+
+            lbMainPageTitle.Font = Config.MenuFont;
+            lbRightPanelTitle.Font = Config.MenuFont;
+
+
             SetupMainPages();
             SetupSystray();
             navigator = new Navigator(navigationControl1, flowLayoutPanel1);
@@ -95,6 +99,32 @@ namespace ZeroKLobby
             Spring.AnySpringStarted += (sender, args) => { if (waveOut != null) waveOut.Stop(); };
 
             btnWindowed_Click(this, EventArgs.Empty); // switch to fullscreen
+        }
+
+        void MainWindow_Load(object sender, EventArgs e)
+        {
+            if (Debugger.IsAttached) Text = "==== DEBUGGING ===";
+            else Text = "Zero-K launcher";
+            Text += " " + Assembly.GetEntryAssembly().GetName().Version;
+
+            Icon = ZklResources.ZkIcon;
+            systrayIcon.Icon = ZklResources.ZkIcon;
+
+            Program.SpringScanner.Start();
+
+            if (Program.StartupArgs != null && Program.StartupArgs.Length > 0) navigationControl.Path = Program.StartupArgs[0];
+
+            if (Program.Conf.ConnectOnStartup) Program.ConnectBar.TryToConnectTasClient();
+            else NotifySection.AddBar(Program.ConnectBar);
+
+            if (Environment.OSVersion.Platform != PlatformID.Unix)
+            {
+                waveOut = new DirectSoundOut();
+                audioReader = new Mp3FileReader(new MemoryStream(Sounds.menu_music_ROM));
+                waveOut.Init(audioReader);
+
+                btnSnd_Click(this, EventArgs.Empty);
+            }
         }
 
         void SetupMainPages()
@@ -298,30 +328,7 @@ namespace ZeroKLobby
         }
 
 
-        void MainWindow_Load(object sender, EventArgs e)
-        {
-            if (Debugger.IsAttached) Text = "==== DEBUGGING ===";
-            else Text = "Zero-K launcher";
-            Text += " " + Assembly.GetEntryAssembly().GetName().Version;
 
-            Icon = ZklResources.ZkIcon;
-            systrayIcon.Icon = ZklResources.ZkIcon;
-
-            Program.SpringScanner.Start();
-
-            if (Program.StartupArgs != null && Program.StartupArgs.Length > 0) navigationControl.Path = Program.StartupArgs[0];
-
-            if (Program.Conf.ConnectOnStartup) Program.ConnectBar.TryToConnectTasClient();
-            else NotifySection.AddBar(Program.ConnectBar);
-
-            if (Environment.OSVersion.Platform != PlatformID.Unix) {
-                waveOut = new DirectSoundOut();
-                audioReader = new Mp3FileReader(new MemoryStream(Sounds.menu_music_ROM));
-                waveOut.Init(audioReader);
-                
-                btnSnd_Click(this, EventArgs.Empty);
-            }
-        }
 
         void TorrentManager_DownloadAdded(object sender, EventArgs<Download> e)
         {

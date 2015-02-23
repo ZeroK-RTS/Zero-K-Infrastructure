@@ -112,10 +112,10 @@ namespace ZeroKLobby
 
             ButtonList = new List<ButtonInfo>() //normal arrangement
             {
-                new ButtonInfo() { Label = "Chat", TargetPath = "chat", Icon = ZklResources.chat},
-                new ButtonInfo() { Label = "Quick browse", TargetPath = "battles", Icon = ZklResources.battle },
-                new ButtonInfo() { Label = "Extras", TargetPath = "extras", Icon= Buttons.map.GetResizedWithCache(18,18) },
-                new ButtonInfo() {Label = "Settings",TargetPath = "settings",Icon = Buttons.settings.GetResizedWithCache(18,18)},
+                new ButtonInfo() { Label = "Chat", TargetPath = "chat", Icon = Buttons.chat.GetResizedWithCache(32,32)},
+                new ButtonInfo() { Label = "Quick browse", TargetPath = "battles", Icon = Buttons.qb.GetResized(32,32) },
+                new ButtonInfo() { Label = "Extras", TargetPath = "extras", Icon= Buttons.extras.GetResized(32,32) },
+                new ButtonInfo() {Label = "Settings",TargetPath = "settings",Icon = Buttons.settings.GetResized(32,32)},
             };
 
             foreach (var b in ButtonList) buttonPanel.Controls.Add(b.GetButton());

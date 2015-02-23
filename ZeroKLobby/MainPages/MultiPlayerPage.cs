@@ -15,6 +15,9 @@ namespace ZeroKLobby.MainPages
         public MultiPlayerPage()
         {
             InitializeComponent();
+            btnCustomBattles.Font = Config.MenuFont;
+            btnJoinQueue.Font = Config.MenuFont;
+            btnSpectate.Font = Config.MenuFont;
         }
 
 

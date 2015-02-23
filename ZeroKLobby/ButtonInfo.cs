@@ -45,8 +45,8 @@ namespace ZeroKLobby
 
         public ButtonInfo() {
             Visible = true;
-            Width = 100;
-            Height = 35;
+            Width = 42;
+            Height = 42;
             Dock = DockStyle.Left;
         }
 
@@ -58,12 +58,12 @@ namespace ZeroKLobby
         public Control GetButton() {
             button = new BitmapButton();
             button.SoundType = SoundPalette.SoundType.Servo;
-            button.AutoSize = true;
-            button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            //button.AutoSize = true;
+            //button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             button.Height = Height;
             button.Width = Width;
             button.TextAlign = ContentAlignment.MiddleCenter;
-            button.Text = Label;
+            //button.Text = Label;
             button.Margin = new Padding(0, 0, 0, 3);
             button.Cursor = Cursors.Hand;
             //button.Dock = Dock;

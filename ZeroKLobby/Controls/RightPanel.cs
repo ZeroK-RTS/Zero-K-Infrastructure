@@ -39,7 +39,7 @@ namespace ZeroKLobby.Controls
                         InvokePaintBackground(parent, new PaintEventArgs(g, Bounds));
                         g.TranslateTransform(Left, Top);
 
-                        FrameBorderRenderer.Instance.RenderToGraphics(g, new Rectangle(0,0,Width,Height), FrameBorderRenderer.StyleType.Shraka);
+                        FrameBorderRenderer.Instance.RenderToGraphics(g, new Rectangle(0,0,Width,Height), FrameBorderRenderer.StyleType.TechPanel);
                     }
                     BackgroundImageLayout = ImageLayout.None;
                     BackgroundImage = img;
