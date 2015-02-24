@@ -26,8 +26,11 @@ namespace ZeroKLobby
                 var changed = isSelected != value;
                 isSelected = value;
                 //button.BackColor = isSelected ? Color.PowderBlue : SystemColors.ButtonFace;
-                button.ForeColor = isSelected ? Color.Aqua: Color.White;
-                if (changed) InvokePropertyChanged("IsSelected");
+                if (changed) {
+                    button.ForeColor = isSelected ? Color.Aqua : Color.White;
+                    button.ButtonStyle = isSelected ? FrameBorderRenderer.StyleType.DarkHiveGlow : FrameBorderRenderer.StyleType.DarkHive;
+                    InvokePropertyChanged("IsSelected");
+                }
             }
         }
         public int Height { get; set; }
@@ -57,7 +60,7 @@ namespace ZeroKLobby
 
         public Control GetButton() {
             button = new BitmapButton();
-            button.SoundType = SoundPalette.SoundType.Servo;
+            button.SoundType = SoundPalette.SoundType.Click;
             //button.AutoSize = true;
             //button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             button.Height = Height;

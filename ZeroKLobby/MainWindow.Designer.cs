@@ -116,7 +116,7 @@
             this.btnHide.Location = new System.Drawing.Point(15, 10);
             this.btnHide.Name = "btnHide";
             this.btnHide.Size = new System.Drawing.Size(42, 42);
-            this.btnHide.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Servo;
+            this.btnHide.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.btnHide.TabIndex = 3;
             this.btnHide.UseVisualStyleBackColor = false;
             this.btnHide.Click += new System.EventHandler(this.btnHide_Click);
@@ -148,10 +148,10 @@
             this.switchPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.switchPanel1.Location = new System.Drawing.Point(0, 63);
+            this.switchPanel1.Location = new System.Drawing.Point(12, 63);
             this.switchPanel1.Name = "switchPanel1";
             this.switchPanel1.SelectedIndex = 0;
-            this.switchPanel1.Size = new System.Drawing.Size(1386, 688);
+            this.switchPanel1.Size = new System.Drawing.Size(1359, 688);
             this.switchPanel1.TabIndex = 9;
             // 
             // btnWindowed
@@ -165,7 +165,7 @@
             this.btnWindowed.FlatAppearance.BorderSize = 0;
             this.btnWindowed.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnWindowed.ForeColor = System.Drawing.Color.White;
-            this.btnWindowed.Location = new System.Drawing.Point(1288, 769);
+            this.btnWindowed.Location = new System.Drawing.Point(1298, 769);
             this.btnWindowed.Name = "btnWindowed";
             this.btnWindowed.Size = new System.Drawing.Size(35, 35);
             this.btnWindowed.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
@@ -207,7 +207,7 @@
             // MainWindow
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(1386, 816);
             this.Controls.Add(this.lbMainPageTitle);
             this.Controls.Add(this.btnBack);

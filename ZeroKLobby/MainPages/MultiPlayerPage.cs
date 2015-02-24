@@ -27,6 +27,7 @@ namespace ZeroKLobby.MainPages
         }
 
         public string Title { get { return "Multiplayer"; } }
+        public Image MainWindowBgImage { get { return BgImages.blue_galaxy; } }
 
         private void btnCustomBattles_Click(object sender, EventArgs e)
         {

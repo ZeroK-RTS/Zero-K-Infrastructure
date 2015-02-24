@@ -96,5 +96,7 @@ namespace ZeroKLobby.MicroLobby
         {
             Program.MainWindow.SwitchPage(MainWindow.MainPages.MultiPlayer, false);
         }
+
+        public Image MainWindowBgImage { get { return BgImages.blue_galaxy; }}
     }
 }

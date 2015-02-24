@@ -115,6 +115,7 @@ namespace ZeroKLobby
                 new ButtonInfo() { Label = "Chat", TargetPath = "chat", Icon = Buttons.chat.GetResizedWithCache(32,32)},
                 new ButtonInfo() { Label = "Quick browse", TargetPath = "battles", Icon = Buttons.qb.GetResized(32,32) },
                 new ButtonInfo() { Label = "Extras", TargetPath = "extras", Icon= Buttons.extras.GetResized(32,32) },
+                new ButtonInfo() { Label = "Downloads", TargetPath = "downloads", Icon = Buttons.downloads.GetResized(32,32) },
                 new ButtonInfo() {Label = "Settings",TargetPath = "settings",Icon = Buttons.settings.GetResized(32,32)},
             };
 

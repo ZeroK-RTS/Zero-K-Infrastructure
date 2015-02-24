@@ -74,13 +74,6 @@ namespace ZeroKLobby.Controls
 
                 foreach (var b in bounds) { b.Key.Bounds = b.Value; }
 
-                /*
-                Program.MainWindow.BackgroundImage = BgImages.blue_galaxy.GetResizedWithCache(Program.MainWindow.ClientRectangle.Width,
-    Program.MainWindow.ClientRectangle.Height);
-
-                Program.MainWindow.panelRight.BackgroundImage = null;*/
-
-
                 var tab = SetupTabPage(newTarget);
                 SelectTab(tab);
                 CurrentTarget = newTarget;

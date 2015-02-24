@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using ZeroKLobby.MicroLobby.ExtrasTab;
 using ZkData;
 
 namespace ZeroKLobby.MainPages
 {
+    
     public partial class SinglePlayerPage : UserControl, IMainPage
     {
         public SinglePlayerPage()
@@ -21,6 +15,10 @@ namespace ZeroKLobby.MainPages
             campaignButton.Font = Config.MenuFont;
             missonsButton.Font = Config.MenuFont;
             skirmishButton.Font = Config.MenuFont;
+
+            tutorialButton.Image = Buttons.link.GetResizedWithCache(32, 32);
+            campaignButton.Image = Buttons.link.GetResizedWithCache(32, 32);
+            missonsButton.Image = Buttons.link.GetResizedWithCache(32, 32);
         }
 
         private void tutorialButton_Click(object sender, EventArgs e)
@@ -49,5 +47,7 @@ namespace ZeroKLobby.MainPages
         }
 
         public string Title { get { return "Singleplayer"; } }
+
+        public Image MainWindowBgImage { get { return BgImages.bg_battle; } }
     }
 }

@@ -24,12 +24,12 @@ using ZkData;
 
 namespace ZeroKLobby
 {
-    public partial class MainWindow: Form
+    public partial class MainWindow : Form
     {
         public enum MainPages
         {
             Home,
-            SinglePlayer ,
+            SinglePlayer,
             MultiPlayer,
             Skirmish,
             CustomBattles
@@ -73,7 +73,7 @@ namespace ZeroKLobby
             InitializeComponent();
             SuspendLayout();
             SetStyle(ControlStyles.DoubleBuffer, true);
-            
+
             btnBack.Image = Buttons.left.GetResized(40, 40);
             btnHide.Image = Buttons.down.GetResized(32, 32);
 
@@ -84,8 +84,9 @@ namespace ZeroKLobby
             SetupMainPages();
             SetupSystray();
             navigator = new Navigator(navigationControl1, flowLayoutPanel1);
-            
-            if (Program.Downloader != null) {
+
+            if (Program.Downloader != null)
+            {
                 timer1.Interval = 250;
                 timer1.Tick += timer1_Tick;
 
@@ -98,7 +99,7 @@ namespace ZeroKLobby
 
             Spring.AnySpringStarted += (sender, args) => { if (waveOut != null) waveOut.Stop(); };
 
-            btnWindowed_Click(this, EventArgs.Empty); // switch to fullscreen
+            //btnWindowed_Click(this, EventArgs.Empty); // switch to fullscreen
         }
 
         void MainWindow_Load(object sender, EventArgs e)
@@ -157,10 +158,12 @@ namespace ZeroKLobby
 
         public void DisplayLog()
         {
-            if (!FormLog.Instance.Visible) {
+            if (!FormLog.Instance.Visible)
+            {
                 FormLog.Instance.Visible = true;
                 FormLog.Instance.Focus();
-            } else FormLog.Instance.Visible = false;
+            }
+            else FormLog.Instance.Visible = false;
         }
 
 
@@ -176,28 +179,36 @@ namespace ZeroKLobby
         public Control GetHoveredControl()
         {
             Control hovered;
-            try {
-                if (ActiveForm != null && ActiveForm.Visible && !(ActiveForm is ToolTipForm)) {
+            try
+            {
+                if (ActiveForm != null && ActiveForm.Visible && !(ActiveForm is ToolTipForm))
+                {
                     hovered = ActiveForm.GetHoveredControl();
                     if (hovered != null) return hovered;
                 }
-                foreach (Form lastForm in Application.OpenForms.OfType<Form>().Where(x => !(x is ToolTipForm) && x.Visible)) {
+                foreach (Form lastForm in Application.OpenForms.OfType<Form>().Where(x => !(x is ToolTipForm) && x.Visible))
+                {
                     hovered = lastForm.GetHoveredControl();
                     if (hovered != null) return hovered;
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 Trace.TraceError("MainWindow.GetHoveredControl error:", e);
-                    //random crash with NULL error on line 140, is weird since already have NULL check (high probability in Linux when we changed focus)
+                //random crash with NULL error on line 140, is weird since already have NULL check (high probability in Linux when we changed focus)
             }
             return null;
         }
 
         public void InvokeFunc(Action funcToInvoke)
         {
-            try {
+            try
+            {
                 if (InvokeRequired) Invoke(funcToInvoke);
                 else funcToInvoke();
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 Trace.TraceError("Error invoking: {0}", ex);
             }
         }
@@ -211,25 +222,31 @@ namespace ZeroKLobby
         /// <param name="useFlashing">use flashing</param>
         public void NotifyUser(string navigationPath, string message, bool useSound = false, bool useFlashing = false)
         {
-            bool showBalloon = 
+            bool showBalloon =
                 !((Program.Conf.DisableChannelBubble && navigationPath.Contains("chat/channel/")) ||
                   (Program.Conf.DisablePmBubble && navigationPath.Contains("chat/user/")));
 
             bool isHidden = WindowState == FormWindowState.Minimized || Visible == false || ActiveForm == null;
             bool isPathDifferent = navigationControl.Path != navigationPath;
 
-            if (isHidden || isPathDifferent) {
-                if (!string.IsNullOrEmpty(message)) {
+            if (isHidden || isPathDifferent)
+            {
+                if (!string.IsNullOrEmpty(message))
+                {
                     baloonTipPath = navigationPath;
                     if (showBalloon) systrayIcon.ShowBalloonTip(5000, "Zero-K", TextColor.StripCodes(message), ToolTipIcon.Info);
                 }
             }
             if (isHidden && useFlashing) FlashWindow();
             if (isPathDifferent) navigationControl.HilitePath(navigationPath, useFlashing ? HiliteLevel.Flash : HiliteLevel.Bold);
-            if (useSound) {
-                try {
+            if (useSound)
+            {
+                try
+                {
                     SystemSounds.Exclamation.Play();
-                } catch (Exception ex) {
+                }
+                catch (Exception ex)
+                {
                     Trace.TraceError("Error exclamation play: {0}", ex); // Is this how it's done?
                 }
             }
@@ -237,8 +254,10 @@ namespace ZeroKLobby
 
         public void PopupSelf()
         {
-            try {
-                if (!InvokeRequired) {
+            try
+            {
+                if (!InvokeRequired)
+                {
                     FormWindowState finalState = lastState;
                     bool wasminimized = WindowState == FormWindowState.Minimized;
                     if (wasminimized) WindowState = FormWindowState.Maximized;
@@ -246,26 +265,40 @@ namespace ZeroKLobby
                     Activate();
                     Focus();
                     if (wasminimized) WindowState = finalState;
-                } else InvokeFunc(PopupSelf);
-            } catch (Exception ex) {
+                }
+                else InvokeFunc(PopupSelf);
+            }
+            catch (Exception ex)
+            {
                 Trace.TraceWarning("Error popping up self: {0}", ex.Message);
             }
         }
 
-        public Task SwitchPage(MainPages page, bool animate = true)
+
+        Image lastBgImage;
+        public async Task SwitchPage(MainPages page, bool animate = true)
         {
             var target = pages[page];
-            var ipage = target as IMainPage;
-            if (ipage != null) {
+            var ipage = (IMainPage)target;
+            if (ipage != null)
+            {
                 lbMainPageTitle.Text = ipage.Title;
                 if (page == MainPages.Home) btnBack.Visible = false;
                 else btnBack.Visible = true;
-            } else {
+            }
+            else
+            {
                 btnBack.Visible = false;
                 lbMainPageTitle.Text = "";
             }
 
-            return switchPanel1.SwitchContent(target, animate ? SwitchPanel.AnimType.SlideLeft : (SwitchPanel.AnimType?)null);
+            await switchPanel1.SwitchContent(target, animate ? SwitchPanel.AnimType.SlideLeft : (SwitchPanel.AnimType?)null);
+            if (ipage != null && lastBgImage != ipage.MainWindowBgImage)
+            {
+                lastBgImage = ipage.MainWindowBgImage;
+                BackgroundImage = null;
+            }
+
         }
 
         protected override void OnActivated(EventArgs e)
@@ -286,9 +319,11 @@ namespace ZeroKLobby
         /// </summary>
         protected void FlashWindow()
         {
-            if (!Focused || !Visible || WindowState == FormWindowState.Minimized) {
+            if (!Focused || !Visible || WindowState == FormWindowState.Minimized)
+            {
                 Visible = true;
-                if (Environment.OSVersion.Platform != PlatformID.Unix) {
+                if (Environment.OSVersion.Platform != PlatformID.Unix)
+                {
                     // todo implement for linux with #define NET_WM_STATE_DEMANDS_ATTENTION=42
                     var info = new WindowsApi.FLASHWINFO();
                     info.hwnd = Handle;
@@ -302,8 +337,10 @@ namespace ZeroKLobby
 
         void UpdateDownloads()
         {
-            try {
-                if (Program.Downloader != null && !Program.CloseOnNext) {
+            try
+            {
+                if (Program.Downloader != null && !Program.CloseOnNext)
+                {
                     // remove aborted
                     foreach (DownloadBar pane in
                         new List<INotifyBar>(Program.NotifySection.Bars).OfType<DownloadBar>()
@@ -312,7 +349,9 @@ namespace ZeroKLobby
                     // update existing
                     foreach (DownloadBar pane in new List<INotifyBar>(Program.NotifySection.Bars).OfType<DownloadBar>()) pane.UpdateInfo();
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 Trace.TraceError("Error updating transfers: {0}", ex);
             }
         }
@@ -347,12 +386,15 @@ namespace ZeroKLobby
 
         void btnSnd_Click(object sender, EventArgs e)
         {
-            if (Environment.OSVersion.Platform != PlatformID.Unix) {
-                if (waveOut.PlaybackState == PlaybackState.Playing) {
+            if (Environment.OSVersion.Platform != PlatformID.Unix)
+            {
+                if (waveOut.PlaybackState == PlaybackState.Playing)
+                {
                     waveOut.Stop();
                     btnSnd.Image = Buttons.soundOff.GetResizedWithCache(32, 32);
                 }
-                else {
+                else
+                {
                     audioReader.Position = 0;
                     waveOut.Play();
                     btnSnd.Image = Buttons.soundOn.GetResizedWithCache(32, 32);
@@ -362,12 +404,15 @@ namespace ZeroKLobby
 
         void btnWindowed_Click(object sender, EventArgs e)
         {
-            if (FormBorderStyle == FormBorderStyle.None) {
+            if (FormBorderStyle == FormBorderStyle.None)
+            {
                 TopMost = false;
                 WindowState = FormWindowState.Normal;
                 FormBorderStyle = FormBorderStyle.Sizable;
                 btnWindowed.Image = Buttons.win_max.GetResizedWithCache(32, 32);
-            } else {
+            }
+            else
+            {
                 FormBorderStyle = FormBorderStyle.None;
                 TopMost = true;
                 WindowState = FormWindowState.Maximized;
@@ -378,9 +423,13 @@ namespace ZeroKLobby
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
-            if (BackgroundImage == null) {
-                BackgroundImageLayout = ImageLayout.None;
-                BackgroundImage = BgImages.bg_battle.GetResized(ClientRectangle.Width, ClientRectangle.Height);
+            if (BackgroundImage == null)
+            {
+                var target = (IMainPage)switchPanel1.CurrentTarget;
+                if (target != null && target.MainWindowBgImage != null)
+                {
+                    BackgroundImage = target.MainWindowBgImage.GetResized(ClientRectangle.Width, ClientRectangle.Height);
+                }
             }
             base.OnPaintBackground(e);
         }

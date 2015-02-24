@@ -48,7 +48,7 @@
             this.skirmishButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.skirmishButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.skirmishButton.ForeColor = System.Drawing.Color.White;
-            this.skirmishButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.skirmishButton.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.skirmishButton.Location = new System.Drawing.Point(41, 514);
             this.skirmishButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.skirmishButton.Name = "skirmishButton";
@@ -72,7 +72,7 @@
             this.campaignButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.campaignButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.campaignButton.ForeColor = System.Drawing.Color.White;
-            this.campaignButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.campaignButton.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.campaignButton.Location = new System.Drawing.Point(41, 390);
             this.campaignButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.campaignButton.Name = "campaignButton";
@@ -96,7 +96,7 @@
             this.missonsButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.missonsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.missonsButton.ForeColor = System.Drawing.Color.White;
-            this.missonsButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.missonsButton.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.missonsButton.Location = new System.Drawing.Point(41, 261);
             this.missonsButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.missonsButton.Name = "missonsButton";
@@ -120,7 +120,7 @@
             this.tutorialButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.tutorialButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.tutorialButton.ForeColor = System.Drawing.Color.White;
-            this.tutorialButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.tutorialButton.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.tutorialButton.Location = new System.Drawing.Point(41, 138);
             this.tutorialButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tutorialButton.Name = "tutorialButton";

@@ -121,6 +121,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Buttons.resx</DependentUpon>
     </Compile>
+    <Compile Include="CachedResourceManager.cs" />
     <Compile Include="ChatToSpeech.cs" />
     <Compile Include="Controls\FrameBorderRenderer.cs" />
     <Compile Include="Controls\MinimapFuncBox.cs">
@@ -506,6 +507,7 @@
     <EmbeddedResource Include="BgImages.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>BgImages.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Buttons.resx">
       <Generator>ResXFileCodeGenerator</Generator>

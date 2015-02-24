@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿using System.Drawing;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ZeroKLobby.MainPages
 {
@@ -6,5 +7,6 @@ namespace ZeroKLobby.MainPages
     {
         void GoBack();
         string Title { get; }
+        Image MainWindowBgImage { get; }
     }
 }

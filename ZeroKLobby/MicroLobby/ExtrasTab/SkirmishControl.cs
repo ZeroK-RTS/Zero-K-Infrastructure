@@ -1422,5 +1422,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         }
 
         public string Title { get { return "Skirmish"; } }
+        public Image MainWindowBgImage { get { return BgImages.bg_battle; } }
     }
 }
