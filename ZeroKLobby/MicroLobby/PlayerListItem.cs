@@ -15,7 +15,7 @@ namespace ZeroKLobby.MicroLobby
     {
         readonly Font boldFont = new Font(Config.GeneralFont, FontStyle.Bold);
 
-        Font font = Config.GeneralFont;
+        Font font = Config.ChatFont;
 
         int height = 16;
         /// <summary>
@@ -87,7 +87,7 @@ namespace ZeroKLobby.MicroLobby
 
         public void Dispose()
         {
-            font.Dispose();
+            //font.Dispose();
             boldFont.Dispose();
         }
 
