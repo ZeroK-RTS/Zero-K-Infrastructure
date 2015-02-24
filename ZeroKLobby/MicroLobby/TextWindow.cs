@@ -762,6 +762,8 @@ namespace ZeroKLobby.MicroLobby
 
                     if (!this.RenderParentsBackgroundImage(e)) {
                         g.FillRectangle(new SolidBrush(TextColor.GetColor(backColor)), displayRect);
+                    } else {
+                        g.FillRectangle(new SolidBrush(Color.FromArgb(100,0,0,0)), displayRect);
                     }
 
                     g.InterpolationMode = InterpolationMode.Low;

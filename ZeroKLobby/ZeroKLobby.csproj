@@ -719,9 +719,6 @@
     <EmbeddedResource Include="Notifications\NewVersionBar.resx">
       <DependentUpon>NewVersionBar.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MicroLobby\SettingsTab.resx">
-      <DependentUpon>SettingsTab.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\TextWindow.resources" />
     <EmbeddedResource Include="Notifications\WarningBar.resx">
       <DependentUpon>WarningBar.cs</DependentUpon>

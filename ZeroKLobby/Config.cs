@@ -21,7 +21,7 @@ namespace ZeroKLobby
         public const string ConfigFileName = "ZeroKLobbyConfig.xml";
         public const string LogFile = "ZeroKLobbyErrors.txt";
 
-        public readonly Color BgColor = Color.FromArgb(255,0,140,120);
+        public readonly Color BgColor = Color.FromArgb(255,0,60,80);
         public static readonly Font MenuFont = new Font("Verdana", 20, GraphicsUnit.Pixel);
         public readonly static Font ChatFont = new Font("Microsoft Sans Serif", 14, GraphicsUnit.Pixel);
         public readonly static  Font GeneralFont = new Font("Microsoft Sans Serif", 14, GraphicsUnit.Pixel);

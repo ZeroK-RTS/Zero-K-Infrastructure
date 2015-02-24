@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsTab));
             this.panel1 = new System.Windows.Forms.Panel();
             this.splitContainerAtMid = new ZeroKLobby.ZkSplitContainer();
             this.btnServerSocket = new ZeroKLobby.BitmapButton();
@@ -131,7 +130,6 @@
             // btnServerSocket
             // 
             this.btnServerSocket.BackColor = System.Drawing.Color.Transparent;
-            this.btnServerSocket.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnServerSocket.BackgroundImage")));
             this.btnServerSocket.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btnServerSocket.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnServerSocket.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -149,7 +147,6 @@
             // btnCustom
             // 
             this.btnCustom.BackColor = System.Drawing.Color.Transparent;
-            this.btnCustom.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnCustom.BackgroundImage")));
             this.btnCustom.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btnCustom.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnCustom.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -167,7 +164,6 @@
             // btnBenchmarker
             // 
             this.btnBenchmarker.BackColor = System.Drawing.Color.Transparent;
-            this.btnBenchmarker.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnBenchmarker.BackgroundImage")));
             this.btnBenchmarker.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btnBenchmarker.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnBenchmarker.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -194,7 +190,6 @@
             // btnDisplay
             // 
             this.btnDisplay.BackColor = System.Drawing.Color.Transparent;
-            this.btnDisplay.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnDisplay.BackgroundImage")));
             this.btnDisplay.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btnDisplay.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnDisplay.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -223,7 +218,6 @@
             // developmentButton
             // 
             this.developmentButton.BackColor = System.Drawing.Color.Transparent;
-            this.developmentButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("developmentButton.BackgroundImage")));
             this.developmentButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.developmentButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.developmentButton.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -241,7 +235,6 @@
             // btnDefaults
             // 
             this.btnDefaults.BackColor = System.Drawing.Color.Transparent;
-            this.btnDefaults.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnDefaults.BackgroundImage")));
             this.btnDefaults.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btnDefaults.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnDefaults.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -259,7 +252,6 @@
             // helpButton
             // 
             this.helpButton.BackColor = System.Drawing.Color.Transparent;
-            this.helpButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpButton.BackgroundImage")));
             this.helpButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.helpButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.helpButton.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -276,7 +268,6 @@
             // btnRestart
             // 
             this.btnRestart.BackColor = System.Drawing.Color.Transparent;
-            this.btnRestart.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnRestart.BackgroundImage")));
             this.btnRestart.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btnRestart.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnRestart.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -295,7 +286,6 @@
             // lobbyLogButton
             // 
             this.lobbyLogButton.BackColor = System.Drawing.Color.Transparent;
-            this.lobbyLogButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("lobbyLogButton.BackgroundImage")));
             this.lobbyLogButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.lobbyLogButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.lobbyLogButton.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -313,7 +303,6 @@
             // gameLogButton
             // 
             this.gameLogButton.BackColor = System.Drawing.Color.Transparent;
-            this.gameLogButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("gameLogButton.BackgroundImage")));
             this.gameLogButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.gameLogButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.gameLogButton.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -331,7 +320,6 @@
             // btnRapid
             // 
             this.btnRapid.BackColor = System.Drawing.Color.Transparent;
-            this.btnRapid.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnRapid.BackgroundImage")));
             this.btnRapid.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btnRapid.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnRapid.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -349,7 +337,6 @@
             // button1
             // 
             this.button1.BackColor = System.Drawing.Color.Transparent;
-            this.button1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button1.BackgroundImage")));
             this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.button1.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.button1.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -376,7 +363,6 @@
             // button2
             // 
             this.button2.BackColor = System.Drawing.Color.Transparent;
-            this.button2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button2.BackgroundImage")));
             this.button2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.button2.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.button2.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -403,7 +389,6 @@
             // button3
             // 
             this.button3.BackColor = System.Drawing.Color.Transparent;
-            this.button3.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button3.BackgroundImage")));
             this.button3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.button3.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.button3.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -429,7 +414,6 @@
             // button4
             // 
             this.button4.BackColor = System.Drawing.Color.Transparent;
-            this.button4.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button4.BackgroundImage")));
             this.button4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.button4.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.button4.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -455,7 +439,6 @@
             // button5
             // 
             this.button5.BackColor = System.Drawing.Color.Transparent;
-            this.button5.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button5.BackgroundImage")));
             this.button5.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.button5.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.button5.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -487,7 +470,6 @@
             // btnBrowse
             // 
             this.btnBrowse.BackColor = System.Drawing.Color.Transparent;
-            this.btnBrowse.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnBrowse.BackgroundImage")));
             this.btnBrowse.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btnBrowse.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnBrowse.Cursor = System.Windows.Forms.Cursors.Hand;

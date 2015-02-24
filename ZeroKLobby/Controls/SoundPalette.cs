@@ -39,7 +39,7 @@ namespace ZeroKLobby.Controls
 
                 if (sound != null) {
                     var sp = new SoundPlayer(sound);
-                    sp.Play();
+                    //sp.Play();
                 }
             }
         }
