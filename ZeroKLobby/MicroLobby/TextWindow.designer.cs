@@ -48,7 +48,6 @@ namespace ZeroKLobby.MicroLobby
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.Controls.Add(this.vScrollBar);
             this.DoubleBuffered = true;
-            this.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "TextWindow";
             this.Size = new System.Drawing.Size(295, 239);
             this.ResumeLayout(false);

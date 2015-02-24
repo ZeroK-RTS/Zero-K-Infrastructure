@@ -52,7 +52,6 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(12, 59);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(85, 17);
@@ -62,7 +61,6 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(12, 91);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(69, 17);
@@ -90,7 +88,6 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.Location = new System.Drawing.Point(15, 119);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(46, 17);
@@ -105,7 +102,6 @@
             this.okButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.okButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.okButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.okButton.ForeColor = System.Drawing.Color.White;
             this.okButton.Location = new System.Drawing.Point(295, 330);
             this.okButton.Name = "okButton";
@@ -163,7 +159,6 @@
             this.advancedOptionsGroup.Controls.Add(this.rapidTagBox);
             this.advancedOptionsGroup.Controls.Add(this.label5);
             this.advancedOptionsGroup.Controls.Add(this.label3);
-            this.advancedOptionsGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.advancedOptionsGroup.ForeColor = System.Drawing.Color.White;
             this.advancedOptionsGroup.Location = new System.Drawing.Point(8, 141);
             this.advancedOptionsGroup.Name = "advancedOptionsGroup";
@@ -192,7 +187,6 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.Location = new System.Drawing.Point(10, 63);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(134, 17);
@@ -202,7 +196,6 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.Location = new System.Drawing.Point(10, 32);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(87, 17);

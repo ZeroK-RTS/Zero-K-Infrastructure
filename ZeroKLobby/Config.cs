@@ -23,6 +23,11 @@ namespace ZeroKLobby
 
         public readonly Color BgColor = Color.Black;
         public static readonly Font MenuFont = new Font("Verdana", 20, GraphicsUnit.Pixel);
+        public readonly static Font ChatFont = new Font("Microsoft Sans Serif", 12, GraphicsUnit.Pixel);
+        public readonly static  Font GeneralFont = new Font("Microsoft Sans Serif", 13, GraphicsUnit.Pixel);
+        public readonly static Font GeneralFontBig = new Font("Microsoft Sans Serif", 15, FontStyle.Bold, GraphicsUnit.Pixel);
+        public readonly static Font GeneralFontSmall = new Font("Microsoft Sans Serif", 9, GraphicsUnit.Pixel);
+        
         static readonly PrivateFontCollection pfc = new PrivateFontCollection();
 
         static Config()
@@ -79,8 +84,6 @@ namespace ZeroKLobby
         [Browsable(false)]
         public bool BlockNonFriendPm;
 
-        [Browsable(false)]
-        public readonly Font ChatFont = new Font("Microsoft Sans Serif", 11);
 
         [Category("Connection")]
         [DisplayName("Connect on startup")]
@@ -290,23 +293,11 @@ namespace ZeroKLobby
         }
         [Browsable(false)]
         public int NoticeColorInt = Color.Red.ToArgb();
-        [Category("Chat")]
-        [DisplayName("Color: Tooltip text")]
-        [Description("Color for text on tooltip")]
-        [XmlIgnore]
-        public Color OtherTextColor
-        {
-            get { return Color.FromArgb(OtherTextColorInt); }
-            set
-            {
-                OtherTextColorInt = value.ToArgb();
-                UpdateFadeColor();
-            }
-        }
 
 
-        [Browsable(false)]
-        public int OtherTextColorInt = Color.Black.ToArgb();
+        public readonly Color TooltipColor = Color.White;
+
+
         [Browsable(false)]
         public bool ResetUiKeysHack4 { get; set; }
 

@@ -109,7 +109,6 @@
             // lbQuestion
             // 
             this.lbQuestion.AutoSize = true;
-            this.lbQuestion.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.lbQuestion.LinkColor = System.Drawing.Color.DeepSkyBlue;
             this.lbQuestion.Location = new System.Drawing.Point(83, 9);
             this.lbQuestion.Name = "lbQuestion";

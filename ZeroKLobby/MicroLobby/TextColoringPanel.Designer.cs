@@ -340,7 +340,6 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.sendBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.sendBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.sendBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.sendBox.Location = new System.Drawing.Point(3, 3);
             this.sendBox.Multiline = true;
@@ -357,7 +356,6 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.chatBox.ChatBackgroundColor = 0;
-            this.chatBox.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chatBox.HideScroll = false;
             this.chatBox.IRCForeColor = 0;
             this.chatBox.Location = new System.Drawing.Point(3, 94);

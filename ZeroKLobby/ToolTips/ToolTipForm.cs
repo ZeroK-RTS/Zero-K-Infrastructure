@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
+using System.Web.Services.Description;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 
@@ -20,6 +22,9 @@ namespace ZeroKLobby
         private static MapTooltipRenderer mapTooltipRenderer;
         private static TextTooltipRenderer textTooltipRenderer;
         private static ToolTipForm nt;
+
+        const int BorderWidth = 20;
+        const int BorderHeight = 20;
 
         protected override CreateParams CreateParams
         {
@@ -51,7 +56,8 @@ namespace ZeroKLobby
             toolTipRenderer = renderer;
 
             //BringToFront();
-            ForeColor = Program.Conf.OtherTextColor;
+            Font = Config.GeneralFont;
+            ForeColor = Program.Conf.TooltipColor;
 
             SetStyle(ControlStyles.UserPaint | ControlStyles.UserMouse | ControlStyles.DoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
             SetStyle(ControlStyles.Selectable, false);
@@ -114,24 +120,39 @@ namespace ZeroKLobby
 
         public Size? GetTooltipSize()
         {
-            if (toolTipRenderer != null) return toolTipRenderer.GetSize(Font);
-            else return null;
+            if (toolTipRenderer != null) {
+                var s = toolTipRenderer.GetSize(Font);
+                if (s != null) {
+                    return new Size(s.Value.Width+BorderWidth, s.Value.Height + BorderHeight); // add borders
+                }
+            }
+            return null;
+        }
+
+        protected override void OnPaintBackground(PaintEventArgs e)
+        {
+            try {
+                using (var bgbrush = new SolidBrush(Color.FromArgb(255,0,120,160))) {
+                    e.Graphics.FillRectangle(bgbrush,e.ClipRectangle);
+                }
+                FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, DisplayRectangle, FrameBorderRenderer.StyleType.TechPanel);
+            } catch (Exception ex) {
+                Trace.TraceError("Error rendering tooltip bg: {0}",ex);
+            }
         }
 
         protected override void OnPaint([NotNull] PaintEventArgs e)
         {
             if (e == null) throw new ArgumentNullException("e");
-            base.OnPaint(e);
-            if (toolTipRenderer == null || !active)
-                return;
+            if (toolTipRenderer == null || !active) return;
             try
             {
-                e.Graphics.DrawRectangle(Pens.Black, 0, 0, Width - 1, Height - 1);
+                e.Graphics.TranslateTransform(BorderWidth/2, BorderHeight/2); // border shift
                 toolTipRenderer.Draw(e.Graphics, Font, ForeColor);
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Trace.TraceError("Tooltip paint error: {0}", ex.ToString());
+                Trace.TraceError("Tooltip paint error: {0}", ex.ToString());
             }
         }
     }

@@ -21,6 +21,7 @@ namespace ZeroKLobby
         public void Draw(Graphics g, Font font, Color foreColor)
         {
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            var fbrush = new SolidBrush(foreColor);
             User user;
             if (!Program.TasClient.ExistingUsers.TryGetValue(userName, out user)) return;
             var x = (int)1;
@@ -32,14 +33,16 @@ namespace ZeroKLobby
                 };
             Action<string> drawString = (text) =>
                 {
-                    TextRenderer.DrawText(g, text, font, new Point(x, y), foreColor);
-                    x += (int)Math.Ceiling((double)TextRenderer.MeasureText(g, text, font).Width); //Note: TextRenderer measurement already DPI aware
+                    g.DrawString(text, font, fbrush, new Point(x, y));
+                    x += (int)Math.Ceiling(g.MeasureString(text, font).Width); 
                 };
             
             Action<string, Color> drawString2 = (text, color) =>
             {
-                TextRenderer.DrawText(g, text, font, new Point(x, y), color);
-                x += (int)Math.Ceiling((double)TextRenderer.MeasureText(g, text, font).Width); //Note: TextRenderer measurement already DPI aware
+                using (var brush = new SolidBrush(color)) {
+                    g.DrawString(text, font, brush, new Point(x, y));
+                }
+                x += (int)Math.Ceiling((double)g.MeasureString(text, font).Width);
             };
 
 
@@ -48,7 +51,7 @@ namespace ZeroKLobby
                     g.DrawImage(image, x, y, (int)w, (int)h);
                     x += (int)(w + 3);
                 };
-            using (var boldFont = new Font(font, FontStyle.Bold)) TextRenderer.DrawText(g, user.Name, boldFont, new Point(x, y), foreColor);
+            using (var boldFont = new Font(font, FontStyle.Bold)) g.DrawString(user.Name, boldFont, fbrush, new Point(x, y));
 
             newLine();
 
@@ -137,6 +140,7 @@ namespace ZeroKLobby
                     if (battleIcon != null) g.DrawImageUnscaled(battleIcon.Image, x, y);
                 }
             }
+            fbrush.Dispose();
 
         }
 

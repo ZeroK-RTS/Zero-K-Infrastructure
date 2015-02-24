@@ -67,14 +67,11 @@ namespace ZeroKLobby.MicroLobby
                 OnPropertyChanged("BitmapSource"); // notify wpf about icon change
             }
         }
-        public static Font ModFont = new Font("Segoe UI", 8.25F, FontStyle.Regular);
-        public int PlayerCount { get { return Battle.NonSpectatorCount; } }
-
+        public static Font ModFont = Config.GeneralFontSmall;
 
         public static Brush TextBrush = new SolidBrush(Color.White); //  Program.Conf.TextColor
-        public static Font TitleFont = new Font("Segoe UI", 8.25F, FontStyle.Bold);
-
-        public static Font QueueFont = new Font("Segoe UI", 13.25F, FontStyle.Bold);
+        public static Font TitleFont = Config.GeneralFont;
+        public static Font QueueFont = Config.GeneralFont;
         public static Brush QueueBrush = new SolidBrush(Program.Conf.TextColor);
         public static Brush QueueBrushOutline = new SolidBrush(Program.Conf.BgColor);
 

@@ -69,6 +69,7 @@ namespace ZeroKLobby
 
         public MainWindow()
         {
+            Font = Config.GeneralFont;
             Instance = this;
             InitializeComponent();
             SuspendLayout();

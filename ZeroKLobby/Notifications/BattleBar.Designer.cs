@@ -111,7 +111,6 @@ namespace ZeroKLobby.Notifications
             this.picoChat.ChatBackgroundColor = 0;
             this.picoChat.DefaultTooltip = null;
             this.picoChat.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.picoChat.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.picoChat.HideScroll = true;
             this.picoChat.IRCForeColor = 0;
             this.picoChat.Location = new System.Drawing.Point(0, 0);
@@ -168,7 +167,6 @@ namespace ZeroKLobby.Notifications
             // 
             // lbQueue
             // 
-            this.lbQueue.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.lbQueue.Location = new System.Drawing.Point(3, 3);
             this.lbQueue.Name = "lbQueue";
             this.lbQueue.Size = new System.Drawing.Size(141, 73);

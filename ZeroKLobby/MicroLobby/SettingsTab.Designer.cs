@@ -156,7 +156,6 @@
             this.btnCustom.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnCustom.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnCustom.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCustom.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.btnCustom.ForeColor = System.Drawing.Color.White;
             this.btnCustom.Location = new System.Drawing.Point(527, 12);
             this.btnCustom.Name = "btnCustom";
@@ -202,7 +201,6 @@
             this.btnDisplay.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnDisplay.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnDisplay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.btnDisplay.ForeColor = System.Drawing.Color.White;
             this.btnDisplay.Location = new System.Drawing.Point(32, 88);
             this.btnDisplay.Name = "btnDisplay";
@@ -285,7 +283,6 @@
             this.btnRestart.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnRestart.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnRestart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRestart.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.btnRestart.ForeColor = System.Drawing.Color.Red;
             this.btnRestart.Location = new System.Drawing.Point(81, 167);
             this.btnRestart.Name = "btnRestart";
@@ -359,7 +356,6 @@
             this.button1.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.button1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.button1.ForeColor = System.Drawing.Color.White;
             this.button1.Location = new System.Drawing.Point(187, 12);
             this.button1.Name = "button1";
@@ -387,7 +383,6 @@
             this.button2.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.button2.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.button2.ForeColor = System.Drawing.Color.White;
             this.button2.Location = new System.Drawing.Point(269, 12);
             this.button2.Name = "button2";
@@ -415,7 +410,6 @@
             this.button3.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.button3.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.button3.ForeColor = System.Drawing.Color.White;
             this.button3.Location = new System.Drawing.Point(350, 12);
             this.button3.Name = "button3";
@@ -442,7 +436,6 @@
             this.button4.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.button4.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.button4.ForeColor = System.Drawing.Color.White;
             this.button4.Location = new System.Drawing.Point(431, 12);
             this.button4.Name = "button4";
@@ -469,7 +462,6 @@
             this.button5.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.button5.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.button5.ForeColor = System.Drawing.Color.White;
             this.button5.Location = new System.Drawing.Point(106, 12);
             this.button5.Name = "button5";
@@ -528,7 +520,6 @@
             this.groupBox1.BackColor = System.Drawing.Color.DimGray;
             this.groupBox1.Controls.Add(this.propertyGrid1);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.groupBox1.ForeColor = System.Drawing.Color.White;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.MinimumSize = new System.Drawing.Size(300, 150);

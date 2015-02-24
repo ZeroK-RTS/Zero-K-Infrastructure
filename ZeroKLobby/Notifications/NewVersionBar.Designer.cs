@@ -36,7 +36,6 @@
             // lbText
             // 
             this.lbText.AutoSize = true;
-            this.lbText.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.lbText.Location = new System.Drawing.Point(13, 15);
             this.lbText.Name = "lbText";
             this.lbText.Size = new System.Drawing.Size(275, 13);
