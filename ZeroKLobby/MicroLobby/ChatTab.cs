@@ -345,7 +345,7 @@ namespace ZeroKLobby.MicroLobby
                 {
                     var channelName = path[2];
                     OpenChannel(channelName);
-                    Title = "Chat #" + channelName;
+                    Title = "Chat " + channelName;
                 }
             }
             return true;

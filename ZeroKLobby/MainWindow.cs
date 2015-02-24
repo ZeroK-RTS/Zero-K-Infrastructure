@@ -99,7 +99,7 @@ namespace ZeroKLobby
 
             Spring.AnySpringStarted += (sender, args) => { if (waveOut != null) waveOut.Stop(); };
 
-            //btnWindowed_Click(this, EventArgs.Empty); // switch to fullscreen
+            btnWindowed_Click(this, EventArgs.Empty); // switch to fullscreen
         }
 
         void MainWindow_Load(object sender, EventArgs e)
@@ -297,6 +297,7 @@ namespace ZeroKLobby
             {
                 lastBgImage = ipage.MainWindowBgImage;
                 BackgroundImage = null;
+                panelRight.BackgroundImage = null;
             }
 
         }
@@ -438,6 +439,7 @@ namespace ZeroKLobby
         {
             base.OnSizeChanged(e);
             BackgroundImage = null;
+            panelRight.BackgroundImage = null;
         }
 
         void systrayIcon_BalloonTipClicked(object sender, EventArgs e)
