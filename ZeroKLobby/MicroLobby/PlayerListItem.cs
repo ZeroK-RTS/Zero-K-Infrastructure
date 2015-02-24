@@ -13,9 +13,9 @@ namespace ZeroKLobby.MicroLobby
 {
     public class PlayerListItem: IDisposable
     {
-        readonly Font boldFont = new Font(Config.ChatFont, FontStyle.Bold);
+        readonly Font boldFont = new Font(Config.GeneralFont, FontStyle.Bold);
 
-        Font font = Config.ChatFont;
+        Font font = Config.GeneralFont;
 
         int height = 16;
         /// <summary>

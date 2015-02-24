@@ -19,7 +19,9 @@ namespace ZeroKLobby.MicroLobby
         readonly ChatBox textBox;
         const int DisplayLines = 500;
 
-        public ServerTab() {
+        public ServerTab()
+        {
+            Font = Config.ChatFont;
             InitializeComponent();
             if (Process.GetCurrentProcess().ProcessName == "devenv" && !Debugger.IsAttached) return;
             textBox = new ChatBox { Dock = DockStyle.Fill };

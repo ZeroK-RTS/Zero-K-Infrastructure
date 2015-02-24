@@ -21,10 +21,10 @@ namespace ZeroKLobby
         public const string ConfigFileName = "ZeroKLobbyConfig.xml";
         public const string LogFile = "ZeroKLobbyErrors.txt";
 
-        public readonly Color BgColor = Color.Black;
+        public readonly Color BgColor = Color.FromArgb(255,0,140,120);
         public static readonly Font MenuFont = new Font("Verdana", 20, GraphicsUnit.Pixel);
-        public readonly static Font ChatFont = new Font("Microsoft Sans Serif", 12, GraphicsUnit.Pixel);
-        public readonly static  Font GeneralFont = new Font("Microsoft Sans Serif", 13, GraphicsUnit.Pixel);
+        public readonly static Font ChatFont = new Font("Microsoft Sans Serif", 14, GraphicsUnit.Pixel);
+        public readonly static  Font GeneralFont = new Font("Microsoft Sans Serif", 14, GraphicsUnit.Pixel);
         public readonly static Font GeneralFontBig = new Font("Microsoft Sans Serif", 15, FontStyle.Bold, GraphicsUnit.Pixel);
         public readonly static Font GeneralFontSmall = new Font("Microsoft Sans Serif", 9, GraphicsUnit.Pixel);
         

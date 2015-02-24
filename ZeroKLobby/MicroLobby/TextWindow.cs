@@ -792,7 +792,7 @@ namespace ZeroKLobby.MicroLobby
 
                         var underline = false;
                         var isInUrl = false;
-                        var font = new Font(Font.Name, Font.Size, Font.Style);
+                        var font = new Font(Font.Name, Font.Size, Font.Style, Font.Unit);
 
                         var redline = -1;
                         if (ShowUnreadLine)
@@ -837,7 +837,7 @@ namespace ZeroKLobby.MicroLobby
                             {
                                 underline = false;
                                 font.SafeDispose();
-                                font = new Font(Font.Name, Font.Size, Font.Style);
+                                font = new Font(Font.Name, Font.Size, Font.Style, Font.Unit);
                             }
 
                             if (line.Length > 0)
@@ -913,7 +913,7 @@ namespace ZeroKLobby.MicroLobby
                                                 line.Remove(0, 1);
                                                 i = -1;
                                                 font.SafeDispose();
-                                                font = new Font(Font.Name, Font.Size, Font.Style | FontStyle.Underline);
+                                                font = new Font(Font.Name, Font.Size, Font.Style | FontStyle.Underline, Font.Unit);
                                                 isInUrl = true;
                                                 break;
 
@@ -943,7 +943,7 @@ namespace ZeroKLobby.MicroLobby
                                                 line.Remove(0, 1);
                                                 i = -1;
                                                 font.SafeDispose();
-                                                font = new Font(Font.Name, Font.Size, Font.Style);
+                                                font = new Font(Font.Name, Font.Size, Font.Style, Font.Unit);
                                                 isInUrl = false;
                                                 break;
                                             case TextColor.UnderlineChar:
@@ -974,8 +974,8 @@ namespace ZeroKLobby.MicroLobby
 
                                                 underline = !underline;
                                                 font.SafeDispose();
-                                                if (underline) font = new Font(Font.Name, Font.Size, Font.Style | FontStyle.Underline);
-                                                else {font = new Font(Font.Name, Font.Size, Font.Style);}
+                                                if (underline) font = new Font(Font.Name, Font.Size, Font.Style | FontStyle.Underline, Font.Unit);
+                                                else {font = new Font(Font.Name, Font.Size, Font.Style, Font.Unit);}
                                                 break;
                                             case TextColor.NewColorChar:
                                                 //draw whats previously in the string

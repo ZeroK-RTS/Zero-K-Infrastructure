@@ -132,7 +132,7 @@ namespace ZeroKLobby
         protected override void OnPaintBackground(PaintEventArgs e)
         {
             try {
-                using (var bgbrush = new SolidBrush(Color.FromArgb(255,0,120,160))) {
+                using (var bgbrush = new SolidBrush(Color.FromArgb(255,0,120,160))) { // todo hacky bg, fix properly in techpanel instead
                     e.Graphics.FillRectangle(bgbrush,e.ClipRectangle);
                 }
                 FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, DisplayRectangle, FrameBorderRenderer.StyleType.TechPanel);

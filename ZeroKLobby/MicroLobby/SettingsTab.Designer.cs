@@ -31,7 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsTab));
             this.panel1 = new System.Windows.Forms.Panel();
             this.splitContainerAtMid = new ZeroKLobby.ZkSplitContainer();
-            this.btnOfflineSkirmish = new ZeroKLobby.BitmapButton();
+            this.btnServerSocket = new ZeroKLobby.BitmapButton();
             this.btnCustom = new ZeroKLobby.BitmapButton();
             this.btnBenchmarker = new ZeroKLobby.BitmapButton();
             this.label1 = new System.Windows.Forms.Label();
@@ -58,7 +58,6 @@
             this.cbHwCursor = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
-            this.btnServerSocket = new ZeroKLobby.BitmapButton();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerAtMid)).BeginInit();
             this.splitContainerAtMid.Panel1.SuspendLayout();
@@ -94,7 +93,6 @@
             // 
             this.splitContainerAtMid.Panel1.AutoScroll = true;
             this.splitContainerAtMid.Panel1.Controls.Add(this.btnServerSocket);
-            this.splitContainerAtMid.Panel1.Controls.Add(this.btnOfflineSkirmish);
             this.splitContainerAtMid.Panel1.Controls.Add(this.btnCustom);
             this.splitContainerAtMid.Panel1.Controls.Add(this.btnBenchmarker);
             this.splitContainerAtMid.Panel1.Controls.Add(this.label1);
@@ -130,23 +128,23 @@
             this.splitContainerAtMid.SplitterDistance = 203;
             this.splitContainerAtMid.TabIndex = 0;
             // 
-            // btnOfflineSkirmish
+            // btnServerSocket
             // 
-            this.btnOfflineSkirmish.BackColor = System.Drawing.Color.Transparent;
-            this.btnOfflineSkirmish.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnOfflineSkirmish.BackgroundImage")));
-            this.btnOfflineSkirmish.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnOfflineSkirmish.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
-            this.btnOfflineSkirmish.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnOfflineSkirmish.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnOfflineSkirmish.ForeColor = System.Drawing.Color.White;
-            this.btnOfflineSkirmish.Location = new System.Drawing.Point(452, 167);
-            this.btnOfflineSkirmish.Name = "btnOfflineSkirmish";
-            this.btnOfflineSkirmish.Size = new System.Drawing.Size(77, 23);
-            this.btnOfflineSkirmish.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
-            this.btnOfflineSkirmish.TabIndex = 41;
-            this.btnOfflineSkirmish.Text = "Skirmisher";
-            this.btnOfflineSkirmish.UseVisualStyleBackColor = true;
-            this.btnOfflineSkirmish.Click += new System.EventHandler(this.btnOfflineSkirmish_Click);
+            this.btnServerSocket.BackColor = System.Drawing.Color.Transparent;
+            this.btnServerSocket.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnServerSocket.BackgroundImage")));
+            this.btnServerSocket.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnServerSocket.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
+            this.btnServerSocket.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnServerSocket.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnServerSocket.ForeColor = System.Drawing.Color.White;
+            this.btnServerSocket.Location = new System.Drawing.Point(538, 138);
+            this.btnServerSocket.Name = "btnServerSocket";
+            this.btnServerSocket.Size = new System.Drawing.Size(118, 23);
+            this.btnServerSocket.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.btnServerSocket.TabIndex = 42;
+            this.btnServerSocket.Text = "Server Log";
+            this.btnServerSocket.UseVisualStyleBackColor = true;
+            this.btnServerSocket.Click += new System.EventHandler(this.btnServerSocket_Click);
             // 
             // btnCustom
             // 
@@ -157,7 +155,7 @@
             this.btnCustom.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnCustom.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCustom.ForeColor = System.Drawing.Color.White;
-            this.btnCustom.Location = new System.Drawing.Point(527, 12);
+            this.btnCustom.Location = new System.Drawing.Point(548, 12);
             this.btnCustom.Name = "btnCustom";
             this.btnCustom.Size = new System.Drawing.Size(108, 23);
             this.btnCustom.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
@@ -214,7 +212,7 @@
             // cbSafeMode
             // 
             this.cbSafeMode.AutoSize = true;
-            this.cbSafeMode.Location = new System.Drawing.Point(494, 51);
+            this.cbSafeMode.Location = new System.Drawing.Point(548, 58);
             this.cbSafeMode.Name = "cbSafeMode";
             this.cbSafeMode.Size = new System.Drawing.Size(77, 17);
             this.cbSafeMode.TabIndex = 36;
@@ -308,7 +306,7 @@
             this.lobbyLogButton.Size = new System.Drawing.Size(124, 23);
             this.lobbyLogButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.lobbyLogButton.TabIndex = 18;
-            this.lobbyLogButton.Text = "Lobby Diagnostic Log";
+            this.lobbyLogButton.Text = "Launcher Log";
             this.lobbyLogButton.UseVisualStyleBackColor = false;
             this.lobbyLogButton.Click += new System.EventHandler(this.lobbyLogButton_Click);
             // 
@@ -326,7 +324,7 @@
             this.gameLogButton.Size = new System.Drawing.Size(124, 23);
             this.gameLogButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.gameLogButton.TabIndex = 40;
-            this.gameLogButton.Text = "Game Diagnostic Log";
+            this.gameLogButton.Text = "Game Log";
             this.gameLogButton.UseVisualStyleBackColor = true;
             this.gameLogButton.Click += new System.EventHandler(this.gameLogButton_Click);
             // 
@@ -357,7 +355,7 @@
             this.button1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.ForeColor = System.Drawing.Color.White;
-            this.button1.Location = new System.Drawing.Point(187, 12);
+            this.button1.Location = new System.Drawing.Point(208, 12);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
@@ -384,7 +382,7 @@
             this.button2.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button2.ForeColor = System.Drawing.Color.White;
-            this.button2.Location = new System.Drawing.Point(269, 12);
+            this.button2.Location = new System.Drawing.Point(290, 12);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
@@ -396,7 +394,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(112, 55);
+            this.label2.Location = new System.Drawing.Point(141, 58);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(85, 13);
             this.label2.TabIndex = 30;
@@ -411,7 +409,7 @@
             this.button3.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button3.ForeColor = System.Drawing.Color.White;
-            this.button3.Location = new System.Drawing.Point(350, 12);
+            this.button3.Location = new System.Drawing.Point(371, 12);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
             this.button3.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
@@ -422,7 +420,7 @@
             // 
             // tbResy
             // 
-            this.tbResy.Location = new System.Drawing.Point(303, 51);
+            this.tbResy.Location = new System.Drawing.Point(332, 54);
             this.tbResy.Name = "tbResy";
             this.tbResy.Size = new System.Drawing.Size(62, 20);
             this.tbResy.TabIndex = 29;
@@ -437,7 +435,7 @@
             this.button4.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button4.ForeColor = System.Drawing.Color.White;
-            this.button4.Location = new System.Drawing.Point(431, 12);
+            this.button4.Location = new System.Drawing.Point(452, 12);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 23);
             this.button4.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
@@ -448,7 +446,7 @@
             // 
             // tbResx
             // 
-            this.tbResx.Location = new System.Drawing.Point(234, 51);
+            this.tbResx.Location = new System.Drawing.Point(263, 54);
             this.tbResx.Name = "tbResx";
             this.tbResx.Size = new System.Drawing.Size(63, 20);
             this.tbResx.TabIndex = 28;
@@ -463,7 +461,7 @@
             this.button5.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button5.ForeColor = System.Drawing.Color.White;
-            this.button5.Location = new System.Drawing.Point(106, 12);
+            this.button5.Location = new System.Drawing.Point(127, 12);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(75, 23);
             this.button5.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
@@ -482,7 +480,7 @@
             "Fullscreen"});
             this.cbWindowed.Location = new System.Drawing.Point(29, 54);
             this.cbWindowed.Name = "cbWindowed";
-            this.cbWindowed.Size = new System.Drawing.Size(77, 21);
+            this.cbWindowed.Size = new System.Drawing.Size(92, 21);
             this.cbWindowed.TabIndex = 27;
             this.cbWindowed.SelectionChangeCommitted += new System.EventHandler(this.settingsControlChanged);
             // 
@@ -507,7 +505,7 @@
             // cbHwCursor
             // 
             this.cbHwCursor.AutoSize = true;
-            this.cbHwCursor.Location = new System.Drawing.Point(384, 51);
+            this.cbHwCursor.Location = new System.Drawing.Point(417, 58);
             this.cbHwCursor.Name = "cbHwCursor";
             this.cbHwCursor.Size = new System.Drawing.Size(104, 17);
             this.cbHwCursor.TabIndex = 26;
@@ -538,24 +536,6 @@
             this.propertyGrid1.Size = new System.Drawing.Size(815, 462);
             this.propertyGrid1.TabIndex = 0;
             this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid1_PropertyValueChanged);
-            // 
-            // btnServerSocket
-            // 
-            this.btnServerSocket.BackColor = System.Drawing.Color.Transparent;
-            this.btnServerSocket.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnServerSocket.BackgroundImage")));
-            this.btnServerSocket.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnServerSocket.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
-            this.btnServerSocket.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnServerSocket.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnServerSocket.ForeColor = System.Drawing.Color.White;
-            this.btnServerSocket.Location = new System.Drawing.Point(548, 167);
-            this.btnServerSocket.Name = "btnServerSocket";
-            this.btnServerSocket.Size = new System.Drawing.Size(87, 23);
-            this.btnServerSocket.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
-            this.btnServerSocket.TabIndex = 42;
-            this.btnServerSocket.Text = "Server socket";
-            this.btnServerSocket.UseVisualStyleBackColor = true;
-            this.btnServerSocket.Click += new System.EventHandler(this.btnServerSocket_Click);
             // 
             // SettingsTab
             // 
@@ -605,7 +585,6 @@
         private BitmapButton btnBrowse;
         private BitmapButton btnBenchmarker;
         private BitmapButton btnCustom;
-        private BitmapButton btnOfflineSkirmish;
         private BitmapButton developmentButton;
         private BitmapButton btnServerSocket;
 

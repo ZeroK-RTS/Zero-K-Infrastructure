@@ -88,6 +88,9 @@ namespace ZeroKLobby
                     Program.MainWindow.navigationControl.Path = "";
                 }
             };
+
+            Program.ToolTip.SetText(button, Label);
+
             return button;
 
         }
