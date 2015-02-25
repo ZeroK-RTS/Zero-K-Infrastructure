@@ -89,7 +89,17 @@ namespace ZeroKWeb.Controllers
             }
         }
 
-        public ContentResult JsonSearch(string callback, string search,
+        public class EnableCORSAttribute : ActionFilterAttribute
+        {
+            public override void OnActionExecuting(ActionExecutingContext filterContext)
+            {
+                filterContext.RequestContext.HttpContext.Response.AddHeader("Access-Control-Allow-Origin", "*");
+                base.OnActionExecuting(filterContext);
+            }
+        }
+
+        [EnableCORS]
+        public JsonResult JsonSearch(string search,
                                        bool? featured,
                                        int? offset,
                                        bool? assymetrical,
@@ -123,7 +133,7 @@ namespace ZeroKWeb.Controllers
                                 special,
                                 out ret);
             var retval =
-                ret.Select(
+                ret.ToList().Select(
                     x =>
                     new
                     {
@@ -161,8 +171,8 @@ namespace ZeroKWeb.Controllers
                         x.PlanetWarsIconSize,
                         x.RatingPollID,
                         x.ThumbnailName
-                    }).ToList();
-            return Content(String.Format("{0}({1});",callback,new JavaScriptSerializer().Serialize(retval)),"application/javascript");
+                    });
+            return Json(retval, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult PlanetImageSelect(int resourceID) {
