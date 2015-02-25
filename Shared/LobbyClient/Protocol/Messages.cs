@@ -216,6 +216,7 @@ namespace LobbyClient
         public bool BanMute;
         public int Level;
         public Login.ClientTypes ClientType;
+        public string LobbyVersion;
         public string Name;
         public string DisplayName;
 
@@ -243,6 +244,7 @@ namespace LobbyClient
             BanMute = u.BanMute;
             Level = u.Level;
             ClientType = u.ClientType;
+            LobbyVersion = u.LobbyVersion;
             DisplayName = u.DisplayName;
             Name = u.Name;
         }

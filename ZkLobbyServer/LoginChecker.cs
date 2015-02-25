@@ -44,6 +44,7 @@ namespace ZkLobbyServer
                 acc.LastLogin = DateTime.UtcNow;
 
                 user.ClientType = login.ClientType;
+                user.LobbyVersion = login.LobbyVersion;
                 UpdateUserFromAccount(user, acc);
 
                 LogIP(db, acc, ip);
