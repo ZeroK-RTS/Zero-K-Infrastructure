@@ -22,7 +22,13 @@ namespace ZeroKLobby.MicroLobby
             }
         }
 
-		public bool CanRegister { get; private set; }
+	    protected override void OnPaintBackground(PaintEventArgs e)
+	    {
+            base.OnPaintBackground(e);
+            FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, DisplayRectangle, FrameBorderRenderer.StyleType.Shraka);
+	    }
+
+	    public bool CanRegister { get; private set; }
 
 		public LoginForm(bool register = false)
 		{
@@ -32,6 +38,8 @@ namespace ZeroKLobby.MicroLobby
 		    Program.SteamHandler.SteamHelper.SteamOnline += SteamApiOnSteamOnline;
             rgName.Text = Program.SteamHandler.SteamName;
 			tbPassword.Text = Program.Conf.LobbyPlayerPassword;
+
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
 		}
 
 	    void SteamApiOnSteamOnline()

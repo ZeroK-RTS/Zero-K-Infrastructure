@@ -86,7 +86,7 @@ namespace ZeroKLobby
                     SW = TechPanel.SW,
                     E = TechPanel.E,
                     W = TechPanel.W,
-                    FillBrush = new SolidBrush(Color.FromArgb(179, 0, 0, 0))
+                    FillBrush = new SolidBrush(Color.FromArgb(179, 19, 65, 73)) //  #134149
                 }},
                 {
                 StyleType.Shraka,
