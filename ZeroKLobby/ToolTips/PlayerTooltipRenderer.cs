@@ -106,7 +106,7 @@ namespace ZeroKLobby
                 if (user.AwaySince.HasValue)
                 {
                     drawImage(ZklResources.away, 16, 16);
-                    drawString("User has been idle for " + DateTime.UtcNow.Subtract(user.AwaySince.Value).PrintTimeRemaining() + ".");
+                    drawString("User idle for " + DateTime.UtcNow.Subtract(user.AwaySince.Value).PrintTimeRemaining() + ".");
                     newLine();
                 }
                 if (user.IsInGame)

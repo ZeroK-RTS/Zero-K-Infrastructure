@@ -31,6 +31,8 @@ namespace ZeroKLobby
             public Size FillOffsetTopLeft = Size.Empty;
             public Size FillOffsetBottomRight = Size.Empty;
             public Brush FillBrush = Brushes.Transparent;
+
+            public InterpolationMode Interpolation = InterpolationMode.HighQualityBicubic;
         }
 
 
@@ -86,8 +88,9 @@ namespace ZeroKLobby
                     SW = TechPanel.SW,
                     E = TechPanel.E,
                     W = TechPanel.W,
-                    FillBrush = new SolidBrush(Color.FromArgb(255, 19, 65, 73)) //  #134149
-                }},
+                    FillBrush = new SolidBrush(Color.FromArgb(255, 19, 65, 73)),
+                    Interpolation = InterpolationMode.NearestNeighbor
+                 }},
                 {
                 StyleType.Shraka,
                 new FrameStyle {
@@ -154,10 +157,10 @@ namespace ZeroKLobby
                 e = SizeMult(e, downScale);
                 w = SizeMult(w, downScale);
 
-                northBrush = new TextureBrush(style.N.GetResizedWithCache(n.Width, n.Height), WrapMode.TileFlipY);
-                southBrush = new TextureBrush(style.S.GetResizedWithCache(s.Width, s.Height), WrapMode.TileFlipY);
-                eastBrush = new TextureBrush(style.E.GetResizedWithCache(e.Width, e.Height), WrapMode.TileFlipX);
-                westBrush = new TextureBrush(style.W.GetResizedWithCache(w.Width, w.Height), WrapMode.TileFlipX);
+                northBrush = new TextureBrush(style.N.GetResizedWithCache(n.Width, n.Height, style.Interpolation), WrapMode.TileFlipY);
+                southBrush = new TextureBrush(style.S.GetResizedWithCache(s.Width, s.Height, style.Interpolation), WrapMode.TileFlipY);
+                eastBrush = new TextureBrush(style.E.GetResizedWithCache(e.Width, e.Height, style.Interpolation), WrapMode.TileFlipX);
+                westBrush = new TextureBrush(style.W.GetResizedWithCache(w.Width, w.Height, style.Interpolation), WrapMode.TileFlipX);
             } else {
                 northBrush = new TextureBrush(style.N, WrapMode.TileFlipY);
                 southBrush = new TextureBrush(style.S, WrapMode.TileFlipY);
@@ -169,6 +172,7 @@ namespace ZeroKLobby
             using (southBrush)
             using (eastBrush)
             using (westBrush) {
+                g.InterpolationMode = style.Interpolation;
                 g.DrawImage(style.NW, 0, 0, nw.Width, nw.Height);
                 g.DrawImage(style.NE, r.Width - ne.Width - 1, 0, ne.Width, ne.Height);
                 g.DrawImage(style.SE, r.Width - se.Width - 1, r.Height - se.Height - 1, se.Width, se.Height);

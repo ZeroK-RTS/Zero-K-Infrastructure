@@ -143,7 +143,7 @@ namespace ZeroKLobby
         {
             try {
                 using (var bgbrush = new SolidBrush(BackColor))
-                { // todo hacky bg, fix properly in techpanel instead
+                {
                     e.Graphics.FillRectangle(bgbrush,e.ClipRectangle);
                 }
                 FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, DisplayRectangle, FrameBorderRenderer.StyleType.TechPanel);
@@ -160,6 +160,7 @@ namespace ZeroKLobby
             {
                 e.Graphics.TranslateTransform(BorderWidth/2, BorderHeight/2); // border shift
                 toolTipRenderer.Draw(e.Graphics, Font, ForeColor);
+                e.Graphics.TranslateTransform(-BorderWidth / 2, -BorderHeight / 2); // border shift
             }
             catch (Exception ex)
             {
