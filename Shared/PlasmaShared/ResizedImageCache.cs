@@ -45,13 +45,13 @@ namespace PlasmaShared
 
         public static readonly ResizedImageCache Instance = new ResizedImageCache();
 
-        public Image GetResizedWithCache(Image source, int width, int height)
+        public Image GetResizedWithCache(Image source, int width, int height, InterpolationMode mode = InterpolationMode.HighQualityBicubic)
         {
             var key = new CacheKey(source, width, height);
             return cachedImages.GetOrAdd(key, (k) => {
                 var resized = new Bitmap(k.Width, k.Height);
                 using (var g = Graphics.FromImage(resized)) {
-                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    g.InterpolationMode = mode;
                     g.DrawImage(source, 0, 0, k.Width, k.Height);    
                 }
                 return resized;

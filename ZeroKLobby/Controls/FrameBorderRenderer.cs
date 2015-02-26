@@ -36,7 +36,7 @@ namespace ZeroKLobby
 
         readonly Dictionary<CacheKey, Image> cachedImages = new Dictionary<CacheKey, Image>();
         public static FrameBorderRenderer Instance = new FrameBorderRenderer();
-        public static Dictionary<StyleType, FrameStyle> styles = new Dictionary<StyleType, FrameStyle> {
+        public static Dictionary<StyleType, FrameStyle> Styles = new Dictionary<StyleType, FrameStyle> {
             {
                 StyleType.DarkHiveHover,
                 new FrameStyle {
@@ -86,7 +86,7 @@ namespace ZeroKLobby
                     SW = TechPanel.SW,
                     E = TechPanel.E,
                     W = TechPanel.W,
-                    FillBrush = new SolidBrush(Color.FromArgb(179, 19, 65, 73)) //  #134149
+                    FillBrush = new SolidBrush(Color.FromArgb(255, 19, 65, 73)) //  #134149
                 }},
                 {
                 StyleType.Shraka,
@@ -126,7 +126,7 @@ namespace ZeroKLobby
 
         public void RenderToGraphics(Graphics g, Rectangle r, StyleType styleType)
         {
-            FrameStyle style = styles[styleType];
+            FrameStyle style = Styles[styleType];
             TextureBrush northBrush;
             TextureBrush southBrush;
             TextureBrush eastBrush;

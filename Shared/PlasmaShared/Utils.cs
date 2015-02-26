@@ -234,9 +234,9 @@ namespace ZkData
             return resized;
         }
 
-        public static Image GetResizedWithCache(this Image original, int newWidth, int newHeight)
+        public static Image GetResizedWithCache(this Image original, int newWidth, int newHeight, InterpolationMode mode = InterpolationMode.HighQualityBicubic)
         {
-            return ResizedImageCache.Instance.GetResizedWithCache(original, newWidth, newHeight);
+            return ResizedImageCache.Instance.GetResizedWithCache(original, newWidth, newHeight, mode);
         }
 
 

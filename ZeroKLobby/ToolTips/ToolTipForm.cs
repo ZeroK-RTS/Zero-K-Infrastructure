@@ -61,6 +61,16 @@ namespace ZeroKLobby
 
             SetStyle(ControlStyles.UserPaint | ControlStyles.UserMouse | ControlStyles.DoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
             SetStyle(ControlStyles.Selectable, false);
+
+            if (Environment.OSVersion.Platform == PlatformID.Unix) {
+                BackColor = ((SolidBrush)FrameBorderRenderer.Styles[FrameBorderRenderer.StyleType.TechPanel].FillBrush).Color;
+            } else {
+                AllowTransparency = true;
+                BackColor = Color.FromArgb(255, 255, 0, 255);
+                TransparencyKey = BackColor;
+            }
+            
+            
         }
 
 
@@ -132,7 +142,8 @@ namespace ZeroKLobby
         protected override void OnPaintBackground(PaintEventArgs e)
         {
             try {
-                using (var bgbrush = new SolidBrush(Color.FromArgb(255,0,120,160))) { // todo hacky bg, fix properly in techpanel instead
+                using (var bgbrush = new SolidBrush(BackColor))
+                { // todo hacky bg, fix properly in techpanel instead
                     e.Graphics.FillRectangle(bgbrush,e.ClipRectangle);
                 }
                 FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, DisplayRectangle, FrameBorderRenderer.StyleType.TechPanel);
