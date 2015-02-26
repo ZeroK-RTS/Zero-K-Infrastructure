@@ -69,6 +69,7 @@ namespace ZeroKLobby
             //button.Text = Label;
             button.Margin = new Padding(0, 0, 0, 3);
             button.Cursor = Cursors.Hand;
+            button.Margin = new Padding(5,0,0,5);
             //button.Dock = Dock;
             if (Icon != null) {
                 button.Image = Icon;
