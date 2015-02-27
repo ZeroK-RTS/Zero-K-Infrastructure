@@ -32,7 +32,6 @@ namespace ZeroKLobby
         bool hideEmptyBattles = false;
         bool hideNonJoinableBattles = false;
         bool hidePasswordedBattles = false;
-        bool disableAutoUpdate = true;
 
         string skirmisherEngine;
         string skirmisherGame;
@@ -103,7 +102,7 @@ namespace ZeroKLobby
         [Category("Debugging")]
         [DisplayName("Disable Lobby Auto Update")]
         [Description("Lobby will not update itself to latest release version. Use this if you are compiling your own lobby")]
-        public bool DisableAutoUpdate1 { get {return disableAutoUpdate;} set {disableAutoUpdate=value;} }
+        public bool DisableAutoUpdate { get; set; }
         [Category("Chat")]
         [DisplayName("Disable Bubble On Channel Highlight")]
         [Description("Disable the system tray bubble when someone says your name in a public channel.")]

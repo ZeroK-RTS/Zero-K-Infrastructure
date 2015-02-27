@@ -246,6 +246,9 @@ namespace ZeroKLobby.MicroLobby
 
         private void RemoveTab(string key)
         {   
+            if (!controls.ContainsKey(key))
+                return;
+            
             panel.Controls.Remove(controls[key]);
             controls.Remove(key);
             if (Program.ToolTip != null)
