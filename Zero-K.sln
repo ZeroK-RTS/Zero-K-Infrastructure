@@ -1,6 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
+# SharpDevelop 5.1
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlasmaShared", "Shared\PlasmaShared\PlasmaShared.csproj", "{B24E7FB3-A3FB-4B67-A499-721F9B34A404}"
@@ -45,6 +46,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZkData", "ZkData\ZkData.csproj", "{61D3BE0A-282D-462C-BA26-06670E5ACB3E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZkLobbyServer", "ZkLobbyServer\ZkLobbyServer.csproj", "{1A6022DF-9AF2-4BA3-A61C-87BE507A6F4A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroKLobby_NET4.0", "ZeroKLobby_NET4.0\ZeroKLobby_NET4.0.csproj", "{09B6C92A-AF10-49E3-92D5-CA07D0D54EF0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -124,6 +127,10 @@ Global
 		{1A6022DF-9AF2-4BA3-A61C-87BE507A6F4A}.Debug|x86.Build.0 = Debug|x86
 		{1A6022DF-9AF2-4BA3-A61C-87BE507A6F4A}.Release|x86.ActiveCfg = Release|x86
 		{1A6022DF-9AF2-4BA3-A61C-87BE507A6F4A}.Release|x86.Build.0 = Release|x86
+		{09B6C92A-AF10-49E3-92D5-CA07D0D54EF0}.Debug|x86.ActiveCfg = Debug|x86
+		{09B6C92A-AF10-49E3-92D5-CA07D0D54EF0}.Debug|x86.Build.0 = Debug|x86
+		{09B6C92A-AF10-49E3-92D5-CA07D0D54EF0}.Release|x86.ActiveCfg = Release|x86
+		{09B6C92A-AF10-49E3-92D5-CA07D0D54EF0}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

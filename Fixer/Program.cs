@@ -251,7 +251,7 @@ namespace Fixer
         [STAThread]
         static void Main(string[] args)
         {
-            GetGameStats(new DateTime(2014,12,1));
+            //GetGameStats(new DateTime(2014,12,1));
             //var ns = new NubSimulator();
             //ns.SpawnMany();
             //Console.ReadLine();
@@ -276,7 +276,7 @@ namespace Fixer
             //AddClanLeader();
             //return;
             //TestPwMatch();
-            //FixStuff();
+            FixStuff();
 
             //var guid = Guid.NewGuid().ToString();
 
@@ -636,7 +636,7 @@ namespace Fixer
                 if (!alreadyCompleted)
                 {
                     System.Console.WriteLine("Planet completed: {0}", planet);
-                    foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.CampaignPlanet == planet && x.UnlockOnPlanetCompletion))
+                    foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.CampaignPlanet.PlanetID == planet.PlanetID && x.UnlockOnPlanetCompletion))
                     {
                         unlockedJournals.Add(journal);
                     }
@@ -644,7 +644,7 @@ namespace Fixer
                 foreach (CampaignPlanet unlocked in unlockedPlanets)
                 {
                     System.Console.WriteLine("Planet unlocked: {0}", unlocked);
-                    foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.CampaignPlanet == unlocked && x.UnlockOnPlanetUnlock))
+                    foreach (CampaignJournal journal in db.CampaignJournals.Where(x => x.CampaignID == campID && x.CampaignPlanet.PlanetID == unlocked.PlanetID && x.UnlockOnPlanetUnlock))
                     {
                         unlockedJournals.Add(journal);
                     }

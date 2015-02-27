@@ -15,11 +15,14 @@ namespace ZeroKLobby.MicroLobby
 {
     public partial class ChatControl: UserControl
     {
-        protected bool filtering;
+        ZKLMouseClick playerBox_zklclick = new ZKLMouseClick();
+
+        protected bool filtering; //playerList filter
         bool mouseIsDown;
         readonly PlayerListItem notResultsItem = new PlayerListItem { Title = "No match", SortCategory = 3 };
         protected List<PlayerListItem> playerListItems = new List<PlayerListItem>();
         readonly PlayerListItem searchResultsItem = new PlayerListItem { Title = "Search results", SortCategory = 1 };
+        
         public bool CanLeave { get { return ChannelName != "Battle"; } }
         public static EventHandler<ChannelLineArgs> ChannelLineAdded = (sender, args) => { };
         Timer minuteTimer;
@@ -57,13 +60,19 @@ namespace ZeroKLobby.MicroLobby
 
             var extras = new BitmapButton();
             extras.Text = "Extras";
-            extras.Click += (s, e) => { ContextMenus.GetChannelContextMenu(this).Show(extras, new Point(0, 0)); };
+            extras.Click += (s, e) => { 
+                var contextMenu = ContextMenus.GetChannelContextMenu(this);
+                contextMenu = LineDehighlighter(contextMenu, null);
+                contextMenu.Show(extras, new Point(0, 0));
+            };
             ChatBox.Controls.Add(extras);
 
             playerBox.DrawMode = DrawMode.OwnerDrawVariable;
             playerBox.MeasureItem += (s, e) => { }; // needed for ListBox.OnMeasureItem
             playerBox.BackColor = Program.Conf.BgColor;
             playerBox.ForeColor = Program.Conf.TextColor;
+            playerBox_zklclick.AttachTo(playerBox);
+            playerBox_zklclick.MouseClick += PlayerBox_MouseClick;
 
             playerSearchBox.BackColor = Program.Conf.BgColor;
             playerSearchBox.ForeColor = Program.Conf.TextColor;
@@ -305,8 +314,35 @@ namespace ZeroKLobby.MicroLobby
             if (filtering) FilterPlayers();
         }
 
-        void ShowChatContextMenu(Point location) {
+        /// <summary>
+        /// Grey out lines that do not contain the targeted text. Can be used by user to sort out who says what
+        /// </summary>
+        ContextMenu LineDehighlighter(ContextMenu cm, string word)
+        {
+            if (!string.IsNullOrWhiteSpace(word) || !string.IsNullOrWhiteSpace(ChatBox.LineHighlight))
+            {
+                cm.MenuItems.Add("-");
+            }
+            if (!string.IsNullOrWhiteSpace(ChatBox.LineHighlight))
+            {
+                var lineFilter = new System.Windows.Forms.MenuItem("Defocus Chatlines except: \"" + ChatBox.LineHighlight + "\"") { Checked = true};
+                lineFilter.Click += (s, e) => { ChatBox.LineHighlight = null; };
+                cm.MenuItems.Add(lineFilter);
+            }
+            if (ChatBox.LineHighlight!=word && !string.IsNullOrWhiteSpace(word))
+            {
+                var lineFilter = new System.Windows.Forms.MenuItem("Defocus Chatlines except: \"" + word + "\"") { Checked = false};
+                lineFilter.Click += (s, e) => { ChatBox.LineHighlight = word; };
+                cm.MenuItems.Add(lineFilter);
+            }
+            return cm;
+        }
+        
+        void ShowChatContextMenu(Point location, string word = null) {
             var contextMenu = ContextMenus.GetChannelContextMenu(this);
+
+            contextMenu = LineDehighlighter(contextMenu, word);
+
             try {
                 Program.ToolTip.Visible = false;
                 contextMenu.Show(ChatBox, location);
@@ -320,6 +356,9 @@ namespace ZeroKLobby.MicroLobby
 
         void ShowPlayerContextMenu(User user, Control control, Point location) {
             var contextMenu = ContextMenus.GetPlayerContextMenu(user, this is BattleChatControl);
+            
+            contextMenu = LineDehighlighter(contextMenu, user.Name);
+            
             try {
                 Program.ToolTip.Visible = false;
                 contextMenu.Show(control, location);
@@ -385,7 +424,8 @@ namespace ZeroKLobby.MicroLobby
                 }
             }
 
-            if (me.Button == MouseButtons.Right) ShowChatContextMenu(me.Location);
+            if (me.Button == MouseButtons.Right) 
+                ShowChatContextMenu(me.Location,word);
         }
 
         protected virtual void client_ChannelUserAdded(object sender, ChannelUserInfo e) {
@@ -439,18 +479,24 @@ namespace ZeroKLobby.MicroLobby
             IsTopicVisible = false;
         }
 
-        void playerBox_DoubleClick(object sender, EventArgs e) {
-            var playerListItem = playerBox.SelectedItem as PlayerListItem;
-            if (playerListItem != null && playerListItem.User != null) NavigationControl.Instance.Path = "chat/user/" + playerListItem.User.Name;
-        }
 
-        void playerBox_MouseClick(object sender, MouseEventArgs e) {
-            var item = playerBox.HoverItem;
-            if (item != null && item.UserName != null) {
-                playerBox.SelectedItem = item;
-                if (item.User != null && !Program.Conf.LeftClickSelectsPlayer) ShowPlayerContextMenu(item.User, playerBox, e.Location);
+        //using MouseUp because it allow the PlayerBox's "HoverItem" to show correct value when rapid clicking
+        protected virtual void PlayerBox_MouseClick(object sender, MouseEventArgs mea) //from BattleChatControl
+        {
+            if (playerBox_zklclick.clickCount >= 2) 
+            { //Double click
+                var playerListItem = playerBox.SelectedItem as PlayerListItem;
+                if (playerListItem != null && playerListItem.User != null)
+                    NavigationControl.Instance.Path = "chat/user/" + playerListItem.User.Name;
+            } else 
+            {
+                var item = playerBox.HoverItem;
+                if (item != null && item.UserName != null) {
+                    playerBox.SelectedItem = item;
+                    if (item.User != null && !Program.Conf.LeftClickSelectsPlayer) ShowPlayerContextMenu(item.User, playerBox, mea.Location);
+                }
+                //playerBox.ClearSelected();
             }
-            //playerBox.ClearSelected();
         }
 
         void playerSearchBox_TextChanged(object sender, EventArgs e) {
@@ -489,6 +535,74 @@ namespace ZeroKLobby.MicroLobby
         {
             public string Channel;
             public IChatLine Line;
+        }
+
+        /// <summary>
+        /// A reimplementation of regular MouseClick event using MouseDown & MouseUp pair which can be used
+        /// for the specific aim of delaying a click event until MouseUp, or/and to read Right-click event for
+        /// NET's Control which didn't allow them (such as ListBox), or/and to simply count successive clicks.
+        /// </summary>
+        public class ZKLMouseClick
+        {
+            public event EventHandler<MouseEventArgs> MouseClick = delegate { };
+            public int clickCount = 0;
+
+            bool isDown;
+            long lastClick = DateTime.Now.Ticks;
+            Point lastLocation = new Point(0,0);
+            MouseButtons lastButton = MouseButtons.None;
+
+            readonly int systemDoubleClickTime = SystemInformation.DoubleClickTime * 10000; //10,000 ticks is a milisecond . http://msdn.microsoft.com/en-us/library/system.datetime.ticks.aspx
+
+            public void AttachTo(Control toListenTo)
+            {
+                toListenTo.MouseUp += MouseUp;
+                toListenTo.MouseDown += MouseDown;
+            }
+                        
+            bool IsDoubleClick(Point newLocation)
+            {
+                if( DateTime.Now.Ticks - lastClick <= systemDoubleClickTime &&
+               	    lastLocation.X - newLocation.X < 10 &&
+               	    lastLocation.Y - newLocation.Y < 10)
+                {
+               	    return true;
+                }
+                return false;
+            }
+
+            void UpdatePositionAndTime(Point newLocation)
+            {
+                lastClick = DateTime.Now.Ticks;
+                lastLocation = newLocation;
+            }
+
+            void MouseDown(object sender, MouseEventArgs mea) 
+            {
+                if (!isDown) {
+                    isDown= true;
+                    lastButton = mea.Button;
+                }
+            }
+
+            void MouseUp(object sender, MouseEventArgs mea) 
+            {
+                //check for mouseUp/Down pair
+                if (!isDown) return;
+                isDown = false;
+
+                if (lastButton != mea.Button) return;
+                lastButton = MouseButtons.None;
+
+                if (IsDoubleClick(mea.Location))
+                    clickCount = clickCount + 1;
+                else 
+                    clickCount = 1;
+
+                UpdatePositionAndTime(mea.Location);
+
+                MouseClick(sender, mea);
+            }
         }
     }
 }

@@ -1000,8 +1000,8 @@ namespace Springie.autohost
                     Respond(e, "requires key=value format");
                     return ret;
                 }
-                var key = parts[0];
-                var val = parts[1];
+                var key = parts[0].Trim(); //Trim() to make "key = value format" ignore whitespace 
+                var val = parts[1].Trim();
 
                 var found = false;
                 var mod = hostedMod;
