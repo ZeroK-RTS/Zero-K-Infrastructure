@@ -13,11 +13,9 @@ namespace ZeroKLobby.MicroLobby
 {
     public class PlayerListItem: IDisposable
     {
-        //readonly Font boldFont = new Font("Microsoft Sans Serif", 9, FontStyle.Bold);
-        readonly Font boldFont = new Font(Program.Conf.ChatFont.FontFamily, Program.Conf.ChatFont.Size - 2, FontStyle.Bold);
+        readonly Font boldFont = new Font(Config.GeneralFont, FontStyle.Bold);
 
-        //Font font = new Font("Segoe UI", 9, FontStyle.Regular);
-        Font font = new Font(Program.Conf.ChatFont.FontFamily, Program.Conf.ChatFont.Size - 2, FontStyle.Regular);
+        Font font = Config.ChatFont;
 
         int height = 16;
         /// <summary>
@@ -89,11 +87,11 @@ namespace ZeroKLobby.MicroLobby
 
         public void Dispose()
         {
-            font.Dispose();
+            //font.Dispose();
             boldFont.Dispose();
         }
 
-        public void DrawPlayerLine(Graphics g, Rectangle bounds, Color foreColor, Color backColor, bool grayedOut, bool isBattle)
+        public void DrawPlayerLine(Graphics g, Rectangle bounds, Color foreColor,  bool grayedOut, bool isBattle)
         {
 
             g.TextRenderingHint = TextRenderingHint.SystemDefault;
@@ -109,9 +107,9 @@ namespace ZeroKLobby.MicroLobby
                     x += 19;
                 };
 
-            Action<string, Color, Color> drawText = (text, fore, back) =>
+            Action<string, Color> drawText = (text, fore) =>
                 {
-                    TextRenderer.DrawText(g, text, font, new Point(bounds.Left + x, bounds.Top), fore, back);
+                    TextRenderer.DrawText(g, text, font, new Point(bounds.Left + x, bounds.Top), fore);
                     x += TextRenderer.MeasureText(g, text, font).Width;
                 };
 
@@ -120,7 +118,7 @@ namespace ZeroKLobby.MicroLobby
             {
                 font = boldFont;
                 if (Title == "Search results:") drawImage(ZklResources.search);
-                TextRenderer.DrawText(g, Title, font, bounds, foreColor, backColor, TextFormatFlags.HorizontalCenter);
+                TextRenderer.DrawText(g, Title, font, bounds, foreColor, TextFormatFlags.HorizontalCenter);
                 return;
             }
 
@@ -128,7 +126,7 @@ namespace ZeroKLobby.MicroLobby
             if (Button != null)
             {
                 font = boldFont;
-                ButtonRenderer.DrawButton(g, bounds, Button, font, false, PushButtonState.Normal);
+                System.Windows.Forms.ButtonRenderer.DrawButton(g, bounds, Button, font, false, PushButtonState.Normal);
                 return;
             }
 
@@ -146,7 +144,7 @@ namespace ZeroKLobby.MicroLobby
                     }
                 }
                 x += bounds.Bottom - bounds.Top + 2;
-                drawText(slotText, foreColor, backColor);
+                drawText(slotText, foreColor);
                 return;
             }
 
@@ -157,7 +155,7 @@ namespace ZeroKLobby.MicroLobby
                 x += 19;
                 drawImage(ZklResources.robot);
                 var botDisplayName = MissionSlot == null ? bot.aiLib : MissionSlot.TeamName;
-                drawText(botDisplayName + " (" + bot.owner + ")", foreColor, backColor);
+                drawText(botDisplayName + " (" + bot.owner + ")", foreColor);
                 return;
             }
 
@@ -167,7 +165,7 @@ namespace ZeroKLobby.MicroLobby
 
             if (UserName != null && user == null)
             {
-                drawText(UserName + " has left.", foreColor, backColor);
+                drawText(UserName + " has left.", foreColor);
                 return;
             }
 
@@ -194,7 +192,7 @@ namespace ZeroKLobby.MicroLobby
             }
 
             var userDisplayName = MissionSlot == null ? user.Name : String.Format("{1}: {0}", MissionSlot.TeamName, user.Name);
-            drawText(userDisplayName, foreColor, backColor);
+            drawText(userDisplayName, foreColor);
             var top10 = Program.SpringieServer.GetTop10Rank(user.Name);
             if (top10 > 0)
             {
@@ -214,8 +212,7 @@ namespace ZeroKLobby.MicroLobby
                 if (MissionSlot != null)
                     if (userStatus.AllyNumber != MissionSlot.AllyID)
                         drawText(string.Format("Wrong alliance ({0} instead of {1}).", userStatus.AllyNumber, MissionSlot.AllyID),
-                                 Color.Red,
-                                 backColor);
+                                 Color.Red);
 
             if (user.SteamID != null) {
                 bool isEnabled;

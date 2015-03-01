@@ -107,7 +107,6 @@
             // lbInfo
             // 
             this.lbInfo.AutoSize = true;
-            this.lbInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.lbInfo.ForeColor = System.Drawing.Color.Red;
             this.lbInfo.Location = new System.Drawing.Point(15, 198);
             this.lbInfo.Name = "lbInfo";
@@ -270,7 +269,7 @@
             // 
             this.AcceptButton = this.btnSubmit;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.DimGray;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(287, 221);

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MinimapFuncBox));
             this.minimapSplitContainer1 = new ZeroKLobby.ZkSplitContainer();
             this.layoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.btnGameOptions = new ZeroKLobby.BitmapButton();
@@ -43,6 +44,7 @@
             // 
             // minimapSplitContainer1
             // 
+            this.minimapSplitContainer1.BackColor = System.Drawing.Color.Transparent;
             this.minimapSplitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.minimapSplitContainer1.IsSplitterFixed = true;
             this.minimapSplitContainer1.Location = new System.Drawing.Point(0, 0);
@@ -59,8 +61,9 @@
             // 
             this.minimapSplitContainer1.Panel2.Controls.Add(this.mapPanel);
             this.minimapSplitContainer1.Panel2MinSize = 10;
-            this.minimapSplitContainer1.Size = new System.Drawing.Size(198, 172);
-            this.minimapSplitContainer1.SplitterDistance = 25;
+            this.minimapSplitContainer1.Size = new System.Drawing.Size(0, 0);
+            this.minimapSplitContainer1.SplitterDistance = 10;
+            this.minimapSplitContainer1.SplitterWidth = 6;
             this.minimapSplitContainer1.TabIndex = 1;
             // 
             // layoutPanel
@@ -78,27 +81,30 @@
             this.layoutPanel.Controls.Add(this.btnAddAI, 0, 0);
             this.layoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.layoutPanel.Location = new System.Drawing.Point(0, 0);
-            this.layoutPanel.MinimumSize = new System.Drawing.Size(24, 23);
+            this.layoutPanel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.layoutPanel.MinimumSize = new System.Drawing.Size(36, 35);
             this.layoutPanel.Name = "layoutPanel";
             this.layoutPanel.RowCount = 1;
             this.layoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.layoutPanel.Size = new System.Drawing.Size(198, 25);
+            this.layoutPanel.Size = new System.Drawing.Size(36, 38);
             this.layoutPanel.TabIndex = 2;
             // 
             // btnGameOptions
             // 
             this.btnGameOptions.BackColor = System.Drawing.Color.Transparent;
-            this.btnGameOptions.BackgroundImage = global::ZeroKLobby.Buttons.panel;
+            this.btnGameOptions.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnGameOptions.BackgroundImage")));
             this.btnGameOptions.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnGameOptions.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnGameOptions.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnGameOptions.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnGameOptions.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnGameOptions.ForeColor = System.Drawing.Color.White;
-            this.btnGameOptions.Location = new System.Drawing.Point(98, 0);
+            this.btnGameOptions.Location = new System.Drawing.Point(18, 0);
             this.btnGameOptions.Margin = new System.Windows.Forms.Padding(0);
-            this.btnGameOptions.MinimumSize = new System.Drawing.Size(0, 23);
+            this.btnGameOptions.MinimumSize = new System.Drawing.Size(0, 35);
             this.btnGameOptions.Name = "btnGameOptions";
-            this.btnGameOptions.Size = new System.Drawing.Size(49, 25);
+            this.btnGameOptions.Size = new System.Drawing.Size(9, 38);
+            this.btnGameOptions.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.btnGameOptions.TabIndex = 18;
             this.btnGameOptions.Text = "Options";
             this.btnGameOptions.UseVisualStyleBackColor = true;
@@ -107,17 +113,19 @@
             // btnMapList
             // 
             this.btnMapList.BackColor = System.Drawing.Color.Transparent;
-            this.btnMapList.BackgroundImage = global::ZeroKLobby.Buttons.panel;
+            this.btnMapList.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnMapList.BackgroundImage")));
             this.btnMapList.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnMapList.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnMapList.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnMapList.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnMapList.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnMapList.ForeColor = System.Drawing.Color.White;
-            this.btnMapList.Location = new System.Drawing.Point(147, 0);
+            this.btnMapList.Location = new System.Drawing.Point(27, 0);
             this.btnMapList.Margin = new System.Windows.Forms.Padding(0);
-            this.btnMapList.MinimumSize = new System.Drawing.Size(0, 23);
+            this.btnMapList.MinimumSize = new System.Drawing.Size(0, 35);
             this.btnMapList.Name = "btnMapList";
-            this.btnMapList.Size = new System.Drawing.Size(51, 25);
+            this.btnMapList.Size = new System.Drawing.Size(9, 38);
+            this.btnMapList.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.btnMapList.TabIndex = 17;
             this.btnMapList.Text = "Maps";
             this.btnMapList.UseVisualStyleBackColor = true;
@@ -126,17 +134,19 @@
             // btnChangeTeam
             // 
             this.btnChangeTeam.BackColor = System.Drawing.Color.Transparent;
-            this.btnChangeTeam.BackgroundImage = global::ZeroKLobby.Buttons.panel;
+            this.btnChangeTeam.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnChangeTeam.BackgroundImage")));
             this.btnChangeTeam.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnChangeTeam.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnChangeTeam.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnChangeTeam.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnChangeTeam.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnChangeTeam.ForeColor = System.Drawing.Color.White;
             this.btnChangeTeam.Location = new System.Drawing.Point(0, 0);
             this.btnChangeTeam.Margin = new System.Windows.Forms.Padding(0);
-            this.btnChangeTeam.MinimumSize = new System.Drawing.Size(0, 23);
+            this.btnChangeTeam.MinimumSize = new System.Drawing.Size(0, 35);
             this.btnChangeTeam.Name = "btnChangeTeam";
-            this.btnChangeTeam.Size = new System.Drawing.Size(49, 25);
+            this.btnChangeTeam.Size = new System.Drawing.Size(9, 38);
+            this.btnChangeTeam.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.btnChangeTeam.TabIndex = 16;
             this.btnChangeTeam.Text = "Teams";
             this.btnChangeTeam.UseVisualStyleBackColor = false;
@@ -145,17 +155,19 @@
             // btnAddAI
             // 
             this.btnAddAI.BackColor = System.Drawing.Color.Transparent;
-            this.btnAddAI.BackgroundImage = global::ZeroKLobby.Buttons.panel;
+            this.btnAddAI.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnAddAI.BackgroundImage")));
             this.btnAddAI.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnAddAI.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnAddAI.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnAddAI.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnAddAI.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAddAI.ForeColor = System.Drawing.Color.White;
-            this.btnAddAI.Location = new System.Drawing.Point(49, 0);
+            this.btnAddAI.Location = new System.Drawing.Point(9, 0);
             this.btnAddAI.Margin = new System.Windows.Forms.Padding(0);
-            this.btnAddAI.MinimumSize = new System.Drawing.Size(0, 23);
+            this.btnAddAI.MinimumSize = new System.Drawing.Size(0, 35);
             this.btnAddAI.Name = "btnAddAI";
-            this.btnAddAI.Size = new System.Drawing.Size(49, 25);
+            this.btnAddAI.Size = new System.Drawing.Size(9, 38);
+            this.btnAddAI.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.btnAddAI.TabIndex = 15;
             this.btnAddAI.Text = "Add AI";
             this.btnAddAI.UseVisualStyleBackColor = true;
@@ -167,20 +179,20 @@
             this.mapPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.mapPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mapPanel.Location = new System.Drawing.Point(0, 0);
+            this.mapPanel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.mapPanel.Name = "mapPanel";
-            this.mapPanel.Size = new System.Drawing.Size(198, 143);
+            this.mapPanel.Size = new System.Drawing.Size(0, 38);
             this.mapPanel.TabIndex = 2;
             // 
             // MinimapFuncBox
             // 
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoSize = true;
-            this.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.minimapSplitContainer1);
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "MinimapFuncBox";
-            this.Size = new System.Drawing.Size(198, 172);
+            this.Size = new System.Drawing.Size(0, 0);
             this.minimapSplitContainer1.Panel1.ResumeLayout(false);
             this.minimapSplitContainer1.Panel1.PerformLayout();
             this.minimapSplitContainer1.Panel2.ResumeLayout(false);

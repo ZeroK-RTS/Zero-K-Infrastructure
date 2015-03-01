@@ -44,13 +44,13 @@
         // FormLog
         // 
         this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
         this.ClientSize = new System.Drawing.Size(452, 311);
         this.Controls.Add(this.tbLog);
         this.KeyPreview = true;
         this.MinimizeBox = false;
         this.Name = "FormLog";
-        this.Text = "Zero-K lobby log history";
+        this.Text = "Zero-K launcher log history";
         this.Load += new System.EventHandler(this.FormLog_Load);
         this.VisibleChanged += new System.EventHandler(this.FormLog_VisibleChanged);
         this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormLog_FormClosing);

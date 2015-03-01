@@ -134,9 +134,8 @@ namespace ZeroKLobby.Notifications
                     else engineVersionNeeded = null;
 
                     if (gameBox.Image != null) gameBox.Image.Dispose();
-                    DpiMeasurement.DpiXYMeasurement(this);
-                    int scaledIconHeight = DpiMeasurement.ScaleValueY(BattleIcon.Height);
-                    int scaledIconWidth = DpiMeasurement.ScaleValueX(BattleIcon.Width);
+                int scaledIconHeight = (int)BattleIcon.Height;
+                    int scaledIconWidth = (int)BattleIcon.Width;
                     gameBox.Image = new Bitmap(scaledIconWidth, scaledIconHeight);
                     using (var g = Graphics.FromImage(gameBox.Image))
                     {
@@ -180,7 +179,7 @@ namespace ZeroKLobby.Notifications
                             if (Utils.VerifySpringInstalled())
                             {
                                 if (spring.IsRunning) spring.ExitGame();
-                                lastScript = spring.StartGame(client, null, null, null, Program.Conf.UseSafeMode, client.MyBattleStatus.IsSpectator ? Program.Conf.UseMtEngine : false); //use MT tag when in spectator slot
+                                lastScript = spring.StartGame(client, null, null, null, Program.Conf.UseSafeMode);
                             }
                         }
                     }
@@ -294,7 +293,7 @@ namespace ZeroKLobby.Notifications
 
             BattleChatControl.BattleLine += (s, e) => picoChat.AddLine(e.Data);
 
-            picoChat.MouseClick += (s, e) => NavigationControl.Instance.Path = "chat/battle";
+            picoChat.MouseClick += (s, e) => Program.MainWindow.navigationControl.Path = "chat/battle";
         }
 
         protected override void OnSizeChanged(EventArgs e)
@@ -331,8 +330,8 @@ namespace ZeroKLobby.Notifications
             if (Utils.VerifySpringInstalled())
             {
                 if (spring.IsRunning) spring.ExitGame();
-                if (client.MyBattle != null) spring.StartGame(client, null, null, null, Program.Conf.UseSafeMode, client.MyBattleStatus.IsSpectator ? Program.Conf.UseMtEngine : false); //use MT tag when in spectator slot. NOTE!: a non-spec player might rejoin game in spec slot & confuse this checks!
-                else spring.StartGame(client, null, null, lastScript, Program.Conf.UseSafeMode, Program.Conf.UseMtEngine); //rejoining a running game from outside the battleroom???
+                if (client.MyBattle != null) spring.StartGame(client, null, null, null, Program.Conf.UseSafeMode); //use MT tag when in spectator slot. NOTE!: a non-spec player might rejoin game in spec slot & confuse this checks!
+                else spring.StartGame(client, null, null, lastScript, Program.Conf.UseSafeMode); //rejoining a running game from outside the battleroom???
             }
         }
 
@@ -363,7 +362,7 @@ namespace ZeroKLobby.Notifications
             client.LeaveBattle();
 
             Program.NotifySection.RemoveBar(this);
-            NavigationControl.Instance.Path = "battles";
+            Program.MainWindow.navigationControl.Path = "battles";
         }
 
         void AutoRespond()
@@ -493,7 +492,7 @@ namespace ZeroKLobby.Notifications
 
         public void DetailClicked(NotifyBarContainer container)
         {
-            NavigationControl.Instance.Path = "chat/battle";
+            Program.MainWindow.navigationControl.Path = "chat/battle";
             if (IsHostGameRunning()) Rejoin();
             else client.Say(SayPlace.Battle, "", "!start", false);
         }
@@ -502,9 +501,8 @@ namespace ZeroKLobby.Notifications
         {
             if (e.Data.Battle == Program.TasClient.MyBattle)
             {
-                DpiMeasurement.DpiXYMeasurement(this);
-                int scaledIconHeight = DpiMeasurement.ScaleValueY(BattleIcon.Height);
-                int scaledIconWidth = DpiMeasurement.ScaleValueX(BattleIcon.Width);
+                int scaledIconHeight = (int)BattleIcon.Height;
+                int scaledIconWidth = (int)BattleIcon.Width;
                 if (gameBox.Image == null) gameBox.Image = new Bitmap(scaledIconWidth, scaledIconHeight);
                 using (var g = Graphics.FromImage(gameBox.Image))
                 {

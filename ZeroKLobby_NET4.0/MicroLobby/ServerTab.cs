@@ -19,7 +19,9 @@ namespace ZeroKLobby.MicroLobby
         readonly ChatBox textBox;
         const int DisplayLines = 500;
 
-        public ServerTab() {
+        public ServerTab()
+        {
+            Font = Config.ChatFont;
             InitializeComponent();
             if (Process.GetCurrentProcess().ProcessName == "devenv" && !Debugger.IsAttached) return;
             textBox = new ChatBox { Dock = DockStyle.Fill };
@@ -63,6 +65,8 @@ namespace ZeroKLobby.MicroLobby
         public bool Hilite(HiliteLevel level, string path) {
             return false;
         }
+
+        public string Title { get { return "Server connection"; } }
 
         public string GetTooltip(params string[] path) {
             return null;

@@ -32,7 +32,6 @@ namespace ZeroKLobby.MicroLobby
 
             Program.ToolTip.SetText(cbSafeMode, "Turns off many things that are known to cause problems (on PC/Mac's with lower-end graphic cards). Use if the game is crashing.\nWill override Springsetting.cfg");
             Program.ToolTip.SetText(cbHwCursor,"HW cursor is uneffected by ingame lag, but it can become invisible on some machines");
-            Program.ToolTip.SetText(cbMtEngine, "Use MT engine for non-multiplayer 91 game (unstable!). Note: this option isn't applicable for 97+, it is already multithreading by default.");
            
             Program.ToolTip.SetText(cbWindowed, "Windowed: Run game on desktop in a window\nBorderless: Run game on desktop in a borderless window\nFullscreen: Run game fullscreen");
             Program.ToolTip.SetText(button5, "Springsettings.cfg and Lups.cfg tuned for performance and compatibility; many graphical features are disabled");
@@ -46,7 +45,6 @@ namespace ZeroKLobby.MicroLobby
             Program.ToolTip.SetText(lobbyLogButton, "Diagnostic log for ZKL lobby client ( Useful to report things such as: download issue or lobby issue)");
             Program.ToolTip.SetText(gameLogButton, "Diagnostic log for Spring engine (Useful to report things such as: ingame graphic bug or game crash)");
             Program.ToolTip.SetText(btnDefaults, "Local data reset?");
-            Program.ToolTip.SetText(btnOfflineSkirmish, "Create custom offline game versus AI");
 		}
 
 
@@ -67,7 +65,6 @@ namespace ZeroKLobby.MicroLobby
             tbResy.Text = Program.EngineConfigurator.GetConfigValue("YResolution");
             refreshingConfig = false;
             cbSafeMode.Checked = Program.Conf.UseSafeMode;
-		    cbMtEngine.Checked = Program.Conf.UseMtEngine;
 		}
 
 
@@ -99,7 +96,6 @@ namespace ZeroKLobby.MicroLobby
             Program.EngineConfigurator.SetConfigValue("WindowPosY", "0"); // neded for borderless
             Program.EngineConfigurator.SetConfigValue("WindowPosX", "0"); // neded for borderless
             Program.Conf.UseSafeMode = cbSafeMode.Checked;
-	        Program.Conf.UseMtEngine = cbMtEngine.Checked;
 	    }
 
 	    public string PathHead { get { return "settings"; } }
@@ -114,7 +110,9 @@ namespace ZeroKLobby.MicroLobby
 			return false;
 		}
 
-		public string GetTooltip(params string[] path)
+	    public string Title { get { return "Settings"; } }
+
+	    public string GetTooltip(params string[] path)
 		{
 			return null;
 		}
@@ -131,8 +129,7 @@ namespace ZeroKLobby.MicroLobby
 		{
 			RefreshConfig();
             //make sure the split start at 203 (relative to any DPI scale)
-            DpiMeasurement.DpiXYMeasurement(this);
-            int splitDistance = DpiMeasurement.ScaleValueY(203);//DpiMeasurement is a static class stored in ZeroKLobby\Util.cs
+	        int splitDistance = (int)203;//DpiMeasurement is a static class stored in ZeroKLobby\Util.cs
             splitContainerAtMid.SplitterDistance = splitDistance;
 		}
 
@@ -184,7 +181,7 @@ namespace ZeroKLobby.MicroLobby
 		{
 			var menu = new ContextMenu();
 			var joinItem = new MenuItem("Ask in the ZK channel (#zk)");
-			joinItem.Click += (s, e) => NavigationControl.Instance.Path = "chat/channel/zk";
+			joinItem.Click += (s, e) => Program.MainWindow.navigationControl.Path = "chat/channel/zk";
 			menu.MenuItems.Add(joinItem);
 			var helpForumItem = new MenuItem("Ask in the Help Forum");
 			helpForumItem.Click += helpForumItem_Click;
@@ -194,7 +191,7 @@ namespace ZeroKLobby.MicroLobby
 			{
 				var item = new MenuItem(admin.Name + (admin.IsAway ? " (Idle)" : String.Empty));
 				var adminName = admin.Name;
-				item.Click += (s, e) => NavigationControl.Instance.Path = "chat/user/" + adminName;
+				item.Click += (s, e) => Program.MainWindow.navigationControl.Path = "chat/user/" + adminName;
 				adminsItem.MenuItems.Add(item);
 			}
 			menu.MenuItems.Add(adminsItem);
@@ -283,11 +280,6 @@ namespace ZeroKLobby.MicroLobby
             Program.SaveConfig();
         }
 
-        private void cbMtEngine_CheckedChanged(object sender, EventArgs e) {
-            //Program.EngineConfigurator.SetConfigValue("WorkerThreadCount", cbMtEngine.Checked?"-1":"1"); //Spring 97
-            Program.Conf.UseMtEngine = cbMtEngine.Checked;
-            Program.SaveConfig();
-        }
 
         private void btnBenchmarker_Click(object sender, EventArgs e) {
             var benchmarker = new Benchmarker.MainForm(Program.SpringPaths, Program.SpringScanner, Program.Downloader);
@@ -303,8 +295,7 @@ namespace ZeroKLobby.MicroLobby
         {
             if (Program.MainWindow!=null && Program.MainWindow.WindowState == FormWindowState.Minimized) return;
 			//prevent splitter from being dragged when window resize
-            DpiMeasurement.DpiXYMeasurement(this); //this measurement use cached value. It won't cost anything if another measurement was already done in other control element
-            int splitDistance = DpiMeasurement.ScaleValueY(203);//DpiMeasurement is a static class stored in ZeroKLobby\Util.cs
+            int splitDistance = (int)203;//DpiMeasurement is a static class stored in ZeroKLobby\Util.cs
             splitDistance = Math.Min(splitDistance, splitContainerAtMid.Width - splitContainerAtMid.Panel2MinSize);
             splitContainerAtMid.SplitterDistance = splitDistance; //must obey minimum size constraint
         }
@@ -312,6 +303,11 @@ namespace ZeroKLobby.MicroLobby
         private void btnOfflineSkirmish_Click(object sender, EventArgs e)
         {
             Program.MainWindow.navigationControl.Path = "zk://extra/skirmish";
+        }
+
+        private void btnServerSocket_Click(object sender, EventArgs e)
+        {
+            Program.MainWindow.navigationControl.Path = "zk://server";
         }
 	}
 }

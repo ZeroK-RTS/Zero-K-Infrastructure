@@ -28,27 +28,28 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SkirmishControl));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.minimapPanel = new System.Windows.Forms.Panel();
             this.metalmapRadioButton = new System.Windows.Forms.RadioButton();
             this.elevationRadioButton = new System.Windows.Forms.RadioButton();
             this.normalRadioButton = new System.Windows.Forms.RadioButton();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.lblSide = new System.Windows.Forms.Label();
             this.sideCB = new System.Windows.Forms.ComboBox();
-            this.gameOptionButton = new ZeroKLobby.BitmapButton();
             this.infoLabel = new System.Windows.Forms.Label();
-            this.editTeamButton = new ZeroKLobby.BitmapButton();
-            this.addAIButton = new ZeroKLobby.BitmapButton();
             this.spectateCheckBox = new System.Windows.Forms.CheckBox();
-            this.startbutton = new ZeroKLobby.BitmapButton();
             this.map_comboBox = new System.Windows.Forms.ComboBox();
             this.lblEngine = new System.Windows.Forms.Label();
             this.game_comboBox = new System.Windows.Forms.ComboBox();
             this.lblGame = new System.Windows.Forms.Label();
             this.engine_comboBox = new System.Windows.Forms.ComboBox();
             this.lbMap = new System.Windows.Forms.Label();
-            this.lblSide = new System.Windows.Forms.Label();
             this.skirmPlayerBox = new ZeroKLobby.MicroLobby.PlayerListBox();
+            this.gameOptionButton = new ZeroKLobby.BitmapButton();
+            this.editTeamButton = new ZeroKLobby.BitmapButton();
+            this.addAIButton = new ZeroKLobby.BitmapButton();
+            this.startbutton = new ZeroKLobby.BitmapButton();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -65,16 +66,16 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.minimapPanel);
-            this.splitContainer1.Panel1.Controls.Add(this.metalmapRadioButton);
-            this.splitContainer1.Panel1.Controls.Add(this.elevationRadioButton);
-            this.splitContainer1.Panel1.Controls.Add(this.normalRadioButton);
+            this.splitContainer1.Panel2.Controls.Add(this.minimapPanel);
+            this.splitContainer1.Panel2.Controls.Add(this.metalmapRadioButton);
+            this.splitContainer1.Panel2.Controls.Add(this.elevationRadioButton);
+            this.splitContainer1.Panel2.Controls.Add(this.normalRadioButton);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(512, 320);
-            this.splitContainer1.SplitterDistance = 275;
+            this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
+            this.splitContainer1.Size = new System.Drawing.Size(830, 487);
+            this.splitContainer1.SplitterDistance = 445;
             this.splitContainer1.TabIndex = 0;
             // 
             // minimapPanel
@@ -84,7 +85,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.minimapPanel.Location = new System.Drawing.Point(0, 0);
             this.minimapPanel.Name = "minimapPanel";
-            this.minimapPanel.Size = new System.Drawing.Size(275, 297);
+            this.minimapPanel.Size = new System.Drawing.Size(445, 464);
             this.minimapPanel.TabIndex = 3;
             // 
             // metalmapRadioButton
@@ -92,7 +93,7 @@
             this.metalmapRadioButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.metalmapRadioButton.AutoSize = true;
             this.metalmapRadioButton.BackColor = System.Drawing.Color.Transparent;
-            this.metalmapRadioButton.Location = new System.Drawing.Point(141, 297);
+            this.metalmapRadioButton.Location = new System.Drawing.Point(226, 464);
             this.metalmapRadioButton.Name = "metalmapRadioButton";
             this.metalmapRadioButton.Size = new System.Drawing.Size(97, 17);
             this.metalmapRadioButton.TabIndex = 2;
@@ -105,7 +106,7 @@
             this.elevationRadioButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.elevationRadioButton.AutoSize = true;
             this.elevationRadioButton.BackColor = System.Drawing.Color.Transparent;
-            this.elevationRadioButton.Location = new System.Drawing.Point(66, 297);
+            this.elevationRadioButton.Location = new System.Drawing.Point(151, 464);
             this.elevationRadioButton.Name = "elevationRadioButton";
             this.elevationRadioButton.Size = new System.Drawing.Size(69, 17);
             this.elevationRadioButton.TabIndex = 1;
@@ -119,7 +120,7 @@
             this.normalRadioButton.AutoSize = true;
             this.normalRadioButton.BackColor = System.Drawing.Color.Transparent;
             this.normalRadioButton.Checked = true;
-            this.normalRadioButton.Location = new System.Drawing.Point(2, 297);
+            this.normalRadioButton.Location = new System.Drawing.Point(87, 464);
             this.normalRadioButton.Name = "normalRadioButton";
             this.normalRadioButton.Size = new System.Drawing.Size(58, 17);
             this.normalRadioButton.TabIndex = 0;
@@ -131,8 +132,8 @@
             // splitContainer2
             // 
             this.splitContainer2.BackColor = System.Drawing.Color.DimGray;
-            this.splitContainer2.ForeColor = System.Drawing.Color.White;
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.ForeColor = System.Drawing.Color.White;
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -157,9 +158,19 @@
             this.splitContainer2.Panel2.Controls.Add(this.lblGame);
             this.splitContainer2.Panel2.Controls.Add(this.engine_comboBox);
             this.splitContainer2.Panel2.Controls.Add(this.lbMap);
-            this.splitContainer2.Size = new System.Drawing.Size(233, 320);
-            this.splitContainer2.SplitterDistance = 140;
+            this.splitContainer2.Size = new System.Drawing.Size(381, 487);
+            this.splitContainer2.SplitterDistance = 213;
             this.splitContainer2.TabIndex = 0;
+            // 
+            // lblSide
+            // 
+            this.lblSide.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblSide.AutoSize = true;
+            this.lblSide.Location = new System.Drawing.Point(3, 205);
+            this.lblSide.Name = "lblSide";
+            this.lblSide.Size = new System.Drawing.Size(31, 13);
+            this.lblSide.TabIndex = 28;
+            this.lblSide.Text = "Side:";
             // 
             // sideCB
             // 
@@ -167,101 +178,32 @@
             this.sideCB.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.sideCB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.sideCB.FormattingEnabled = true;
-            this.sideCB.Location = new System.Drawing.Point(40, 106);
+            this.sideCB.Location = new System.Drawing.Point(40, 200);
             this.sideCB.Name = "sideCB";
             this.sideCB.Size = new System.Drawing.Size(112, 21);
             this.sideCB.TabIndex = 27;
-            // 
-            // gameOptionButton
-            // 
-            this.gameOptionButton.BackColor = System.Drawing.Color.Transparent;
-            this.gameOptionButton.BackgroundImage = global::ZeroKLobby.Buttons.panel;
-            this.gameOptionButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.gameOptionButton.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.gameOptionButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.gameOptionButton.ForeColor = System.Drawing.Color.White;
-            this.gameOptionButton.Margin = new System.Windows.Forms.Padding(0);
-            this.gameOptionButton.Location = new System.Drawing.Point(152, 77);
-            this.gameOptionButton.Name = "gameOptionButton";
-            this.gameOptionButton.Size = new System.Drawing.Size(78, 23);
-            this.gameOptionButton.TabIndex = 26;
-            this.gameOptionButton.Text = "Game Option";
-            this.gameOptionButton.UseVisualStyleBackColor = true;
-            this.gameOptionButton.Click += new System.EventHandler(this.Event_GameOptionButton_Click);
             // 
             // infoLabel
             // 
             this.infoLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.infoLabel.AutoSize = true;
-            this.infoLabel.Location = new System.Drawing.Point(84, 152);
+            this.infoLabel.Location = new System.Drawing.Point(84, 246);
             this.infoLabel.Name = "infoLabel";
             this.infoLabel.Size = new System.Drawing.Size(35, 13);
             this.infoLabel.TabIndex = 25;
             this.infoLabel.Text = "label1";
             // 
-            // editTeamButton
-            // 
-            this.editTeamButton.BackColor = System.Drawing.Color.Transparent;
-            this.editTeamButton.BackgroundImage = global::ZeroKLobby.Buttons.panel;
-            this.editTeamButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.editTeamButton.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.editTeamButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.editTeamButton.ForeColor = System.Drawing.Color.White;
-            this.editTeamButton.Margin = new System.Windows.Forms.Padding(0);
-            this.editTeamButton.Location = new System.Drawing.Point(77, 77);
-            this.editTeamButton.Name = "editTeamButton";
-            this.editTeamButton.Size = new System.Drawing.Size(75, 23);
-            this.editTeamButton.TabIndex = 24;
-            this.editTeamButton.Text = "Edit Team";
-            this.editTeamButton.UseVisualStyleBackColor = true;
-            this.editTeamButton.Click += new System.EventHandler(this.Event_EditTeamButton_Click);
-            // 
-            // addAIButton
-            // 
-            this.addAIButton.BackColor = System.Drawing.Color.Transparent;
-            this.addAIButton.BackgroundImage = global::ZeroKLobby.Buttons.panel;
-            this.addAIButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.addAIButton.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.addAIButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.addAIButton.ForeColor = System.Drawing.Color.White;
-            this.addAIButton.Margin = new System.Windows.Forms.Padding(0);
-            this.addAIButton.Location = new System.Drawing.Point(0, 77);
-            this.addAIButton.Name = "addAIButton";
-            this.addAIButton.Size = new System.Drawing.Size(75, 23);
-            this.addAIButton.TabIndex = 23;
-            this.addAIButton.Text = "Add AI";
-            this.addAIButton.UseVisualStyleBackColor = true;
-            this.addAIButton.Click += new System.EventHandler(this.Event_AddAIButton_Click);
-            // 
             // spectateCheckBox
             // 
             this.spectateCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.spectateCheckBox.AutoSize = true;
-            this.spectateCheckBox.Location = new System.Drawing.Point(3, 127);
+            this.spectateCheckBox.Location = new System.Drawing.Point(3, 221);
             this.spectateCheckBox.Name = "spectateCheckBox";
             this.spectateCheckBox.Size = new System.Drawing.Size(69, 17);
             this.spectateCheckBox.TabIndex = 22;
             this.spectateCheckBox.Text = "Spectate";
             this.spectateCheckBox.UseVisualStyleBackColor = true;
             this.spectateCheckBox.CheckedChanged += new System.EventHandler(this.Event_SpectateCheckBox_CheckedChanged);
-            // 
-            // startbutton
-            // 
-            this.startbutton.BackColor = System.Drawing.Color.Transparent;
-            this.startbutton.BackgroundImage = global::ZeroKLobby.Buttons.panel;
-            this.startbutton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.startbutton.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.startbutton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.startbutton.ForeColor = System.Drawing.Color.White;
-            this.startbutton.Margin = new System.Windows.Forms.Padding(0);
-            this.startbutton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.startbutton.Location = new System.Drawing.Point(3, 147);
-            this.startbutton.Name = "startbutton";
-            this.startbutton.Size = new System.Drawing.Size(75, 23);
-            this.startbutton.TabIndex = 21;
-            this.startbutton.Text = "Start Game";
-            this.startbutton.UseVisualStyleBackColor = true;
-            this.startbutton.Click += new System.EventHandler(this.Event_Startbutton_Click);
             // 
             // map_comboBox
             // 
@@ -274,7 +216,7 @@
             this.map_comboBox.IntegralHeight = false;
             this.map_comboBox.Location = new System.Drawing.Point(52, 50);
             this.map_comboBox.Name = "map_comboBox";
-            this.map_comboBox.Size = new System.Drawing.Size(178, 21);
+            this.map_comboBox.Size = new System.Drawing.Size(326, 21);
             this.map_comboBox.TabIndex = 20;
             this.map_comboBox.SelectedIndexChanged += new System.EventHandler(this.Event_ComboBox_SelectedIndexChanged);
             // 
@@ -298,7 +240,7 @@
             this.game_comboBox.IntegralHeight = false;
             this.game_comboBox.Location = new System.Drawing.Point(52, 27);
             this.game_comboBox.Name = "game_comboBox";
-            this.game_comboBox.Size = new System.Drawing.Size(178, 21);
+            this.game_comboBox.Size = new System.Drawing.Size(326, 21);
             this.game_comboBox.TabIndex = 19;
             this.game_comboBox.SelectedIndexChanged += new System.EventHandler(this.Event_ComboBox_SelectedIndexChanged);
             // 
@@ -322,7 +264,7 @@
             this.engine_comboBox.IntegralHeight = false;
             this.engine_comboBox.Location = new System.Drawing.Point(52, 3);
             this.engine_comboBox.Name = "engine_comboBox";
-            this.engine_comboBox.Size = new System.Drawing.Size(178, 21);
+            this.engine_comboBox.Size = new System.Drawing.Size(326, 21);
             this.engine_comboBox.TabIndex = 18;
             this.engine_comboBox.SelectedIndexChanged += new System.EventHandler(this.Event_ComboBox_SelectedIndexChanged);
             // 
@@ -335,16 +277,6 @@
             this.lbMap.TabIndex = 17;
             this.lbMap.Text = "Map:";
             // 
-            // lblSide
-            // 
-            this.lblSide.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblSide.AutoSize = true;
-            this.lblSide.Location = new System.Drawing.Point(3, 111);
-            this.lblSide.Name = "lblSide";
-            this.lblSide.Size = new System.Drawing.Size(31, 13);
-            this.lblSide.TabIndex = 28;
-            this.lblSide.Text = "Side:";
-            // 
             // skirmPlayerBox
             // 
             this.skirmPlayerBox.BackColor = System.Drawing.Color.White;
@@ -352,21 +284,102 @@
             this.skirmPlayerBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
             this.skirmPlayerBox.FormattingEnabled = true;
             this.skirmPlayerBox.HoverItem = null;
+            this.skirmPlayerBox.IntegralHeight = false;
             this.skirmPlayerBox.IsBattle = false;
+            this.skirmPlayerBox.ItemHeight = 10;
             this.skirmPlayerBox.Location = new System.Drawing.Point(0, 0);
             this.skirmPlayerBox.Name = "skirmPlayerBox";
-            this.skirmPlayerBox.Size = new System.Drawing.Size(233, 140);
+            this.skirmPlayerBox.Size = new System.Drawing.Size(381, 213);
             this.skirmPlayerBox.TabIndex = 0;
+            // 
+            // gameOptionButton
+            // 
+            this.gameOptionButton.BackColor = System.Drawing.Color.Transparent;
+            this.gameOptionButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("gameOptionButton.BackgroundImage")));
+            this.gameOptionButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.gameOptionButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
+            this.gameOptionButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.gameOptionButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.gameOptionButton.ForeColor = System.Drawing.Color.White;
+            this.gameOptionButton.Location = new System.Drawing.Point(152, 77);
+            this.gameOptionButton.Margin = new System.Windows.Forms.Padding(0);
+            this.gameOptionButton.Name = "gameOptionButton";
+            this.gameOptionButton.Size = new System.Drawing.Size(78, 23);
+            this.gameOptionButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.gameOptionButton.TabIndex = 26;
+            this.gameOptionButton.Text = "Game Option";
+            this.gameOptionButton.UseVisualStyleBackColor = true;
+            this.gameOptionButton.Click += new System.EventHandler(this.Event_GameOptionButton_Click);
+            // 
+            // editTeamButton
+            // 
+            this.editTeamButton.BackColor = System.Drawing.Color.Transparent;
+            this.editTeamButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("editTeamButton.BackgroundImage")));
+            this.editTeamButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.editTeamButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
+            this.editTeamButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.editTeamButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.editTeamButton.ForeColor = System.Drawing.Color.White;
+            this.editTeamButton.Location = new System.Drawing.Point(77, 77);
+            this.editTeamButton.Margin = new System.Windows.Forms.Padding(0);
+            this.editTeamButton.Name = "editTeamButton";
+            this.editTeamButton.Size = new System.Drawing.Size(75, 23);
+            this.editTeamButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.editTeamButton.TabIndex = 24;
+            this.editTeamButton.Text = "Edit Team";
+            this.editTeamButton.UseVisualStyleBackColor = true;
+            this.editTeamButton.Click += new System.EventHandler(this.Event_EditTeamButton_Click);
+            // 
+            // addAIButton
+            // 
+            this.addAIButton.BackColor = System.Drawing.Color.Transparent;
+            this.addAIButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("addAIButton.BackgroundImage")));
+            this.addAIButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.addAIButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
+            this.addAIButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.addAIButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.addAIButton.ForeColor = System.Drawing.Color.White;
+            this.addAIButton.Location = new System.Drawing.Point(0, 77);
+            this.addAIButton.Margin = new System.Windows.Forms.Padding(0);
+            this.addAIButton.Name = "addAIButton";
+            this.addAIButton.Size = new System.Drawing.Size(75, 23);
+            this.addAIButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.addAIButton.TabIndex = 23;
+            this.addAIButton.Text = "Add AI";
+            this.addAIButton.UseVisualStyleBackColor = true;
+            this.addAIButton.Click += new System.EventHandler(this.Event_AddAIButton_Click);
+            // 
+            // startbutton
+            // 
+            this.startbutton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.startbutton.BackColor = System.Drawing.Color.Transparent;
+            this.startbutton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("startbutton.BackgroundImage")));
+            this.startbutton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.startbutton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
+            this.startbutton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.startbutton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.startbutton.ForeColor = System.Drawing.Color.White;
+            this.startbutton.Location = new System.Drawing.Point(3, 241);
+            this.startbutton.Margin = new System.Windows.Forms.Padding(0);
+            this.startbutton.Name = "startbutton";
+            this.startbutton.Size = new System.Drawing.Size(75, 23);
+            this.startbutton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.startbutton.TabIndex = 21;
+            this.startbutton.Text = "Start Game";
+            this.startbutton.UseVisualStyleBackColor = true;
+            this.startbutton.Click += new System.EventHandler(this.Event_Startbutton_Click);
             // 
             // SkirmishControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSize = true;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.splitContainer1);
+            this.DoubleBuffered = true;
             this.MinimumSize = new System.Drawing.Size(512, 320);
             this.Name = "SkirmishControl";
-            this.Size = new System.Drawing.Size(512, 320);
+            this.Size = new System.Drawing.Size(830, 487);
+            this.Load += new System.EventHandler(this.SkirmishControl_Load);
             this.Resize += new System.EventHandler(this.Event_SkirmishControl_Resize);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();

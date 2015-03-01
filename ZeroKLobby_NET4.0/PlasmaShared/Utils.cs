@@ -17,6 +17,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Encoder = System.Drawing.Imaging.Encoder;
+using PlasmaShared; //because the namespace is ZkData even thought this file is located in PlasmaShared
 
 #endregion
 
@@ -222,15 +223,20 @@ namespace ZkData
             }
         }
 
-        public static Bitmap GetResized(this Image original, int newWidth, int newHeight, InterpolationMode mode)
+        public static Image GetResized(this Image original, int newWidth, int newHeight)
         {
             var resized = new Bitmap(newWidth, newHeight);
             using (var g = Graphics.FromImage(resized))
             {
-                g.InterpolationMode = mode;
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 g.DrawImage(original, 0, 0, newWidth, newHeight);
             }
             return resized;
+        }
+
+        public static Image GetResizedWithCache(this Image original, int newWidth, int newHeight, InterpolationMode mode = InterpolationMode.HighQualityBicubic)
+        {
+            return ResizedImageCache.Instance.GetResizedWithCache(original, newWidth, newHeight, mode);
         }
 
 

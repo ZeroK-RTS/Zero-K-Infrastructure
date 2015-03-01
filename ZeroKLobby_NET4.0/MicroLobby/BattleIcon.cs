@@ -62,19 +62,16 @@ namespace ZeroKLobby.MicroLobby
                     resizedMinimap = null;
                     return;
                 }
-                resizedMinimap = new Bitmap(value, DpiMeasurement.ScaleValueX(minimapSize), DpiMeasurement.ScaleValueY(minimapSize));
+                resizedMinimap = new Bitmap(value, (int)minimapSize, (int)minimapSize);
                 dirty = true;
                 OnPropertyChanged("BitmapSource"); // notify wpf about icon change
             }
         }
-        public static Font ModFont = new Font("Segoe UI", 8.25F, FontStyle.Regular);
-        public int PlayerCount { get { return Battle.NonSpectatorCount; } }
+        public static Font ModFont = Config.GeneralFontSmall;
 
-
-        public static Brush TextBrush = new SolidBrush(Program.Conf.TextColor);
-        public static Font TitleFont = new Font("Segoe UI", 8.25F, FontStyle.Bold);
-
-        public static Font QueueFont = new Font("Segoe UI", 13.25F, FontStyle.Bold);
+        public static Brush TextBrush = new SolidBrush(Color.White); //  Program.Conf.TextColor
+        public static Font TitleFont = Config.GeneralFont;
+        public static Font QueueFont = Config.GeneralFont;
         public static Brush QueueBrush = new SolidBrush(Program.Conf.TextColor);
         public static Brush QueueBrushOutline = new SolidBrush(Program.Conf.BgColor);
 
@@ -109,35 +106,35 @@ namespace ZeroKLobby.MicroLobby
             if (resizedMinimap == null) return; // wait, map is not downloaded
 
             if (finishedMinimap != null) finishedMinimap.Dispose();
-            finishedMinimap = new Bitmap(DpiMeasurement.ScaleValueX(ZklResources.border.Width), DpiMeasurement.ScaleValueY(ZklResources.border.Height));
+            finishedMinimap = new Bitmap((int)ZklResources.border.Width, (int)ZklResources.border.Height);
 
             using (Graphics g = Graphics.FromImage(finishedMinimap))
             {
-                g.DrawImage(resizedMinimap, DpiMeasurement.ScaleValueX(6), DpiMeasurement.ScaleValueY(5));
+                g.DrawImage(resizedMinimap, (int)6, (int)5);
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                int x = DpiMeasurement.ScaleValueX(10);
-                int y = DpiMeasurement.ScaleValueY(minimapSize - 20);
+                int x = (int)10;
+                int y = (int)(minimapSize - 20);
                 Action<Image> drawIcon = image =>
                 {
-                    g.DrawImage(image, x, y, DpiMeasurement.ScaleValueX(20), DpiMeasurement.ScaleValueY(20));
-                    x += DpiMeasurement.ScaleValueX(30);
+                    g.DrawImage(image, x, y, (int)20, (int)20);
+                    x += (int)30;
                 };
 
                 if (IsInGame)
                 {
                     g.DrawImage(ZklResources.boom,
-                        DpiMeasurement.ScaleValueX(10),
-                        DpiMeasurement.ScaleValueY(10),
-                        DpiMeasurement.ScaleValueX(50),
-                        DpiMeasurement.ScaleValueY(50));
+                        (int)10,
+                        (int)10,
+                        (int)50,
+                        (int)50);
                 }
                 if (Battle.IsOfficial() && Battle.IsSpringieManaged && !Battle.IsQueue)
                 {
                     g.DrawImage(ZklResources.star,
-                        DpiMeasurement.ScaleValueX(48),
-                        DpiMeasurement.ScaleValueY(8),
-                        DpiMeasurement.ScaleValueX(15),
-                        DpiMeasurement.ScaleValueY(15));
+                        (int)48,
+                        (int)8,
+                        (int)15,
+                        (int)15);
                 }
                 if (Battle.IsOfficial() && Battle.IsQueue)
                 {
@@ -145,14 +142,14 @@ namespace ZeroKLobby.MicroLobby
                         QueueFont,
                         QueueBrush,
                         QueueBrushOutline,
-                        new Rectangle(4, 4, DpiMeasurement.ScaleValueX(62), DpiMeasurement.ScaleValueY(62)),
+                        new Rectangle(4, 4, (int)62, (int)62),
                         new StringFormat() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center},
                         3);
                 }
 
                 if (Battle.IsPassworded) drawIcon(ZklResources._lock);
 
-                g.DrawImage(ZklResources.border, 0, 0, DpiMeasurement.ScaleValueX(70), DpiMeasurement.ScaleValueY(70));
+                g.DrawImage(ZklResources.border, 0, 0, (int)70, (int)70);
             }
         }
 
@@ -161,7 +158,8 @@ namespace ZeroKLobby.MicroLobby
             var bitmap = new Bitmap(w, h);
             try
             {
-                using (Graphics g = Graphics.FromImage(bitmap)) g.FillRectangle(brush, 0, 0, w, h);
+                using (var g = Graphics.FromImage(bitmap)) FrameBorderRenderer.Instance.RenderToGraphics(g, new Rectangle(0,0,w,h), FrameBorderRenderer.StyleType.DarkHive );
+                //using (Graphics g = Graphics.FromImage(bitmap)) g.FillRectangle(brush, 0, 0, w, h);
             }
             catch
             {
@@ -205,17 +203,16 @@ namespace ZeroKLobby.MicroLobby
                 0,
                 maxPlayers,
                 mes > 0,
-                DpiMeasurement.ScaleValueX(playersBoxSize.Width),
-                DpiMeasurement.ScaleValueY(playersBoxSize.Height));
+                (int)playersBoxSize.Width,
+                (int)playersBoxSize.Height);
         }
 
         void UpdateImage()
         {
-            DpiMeasurement.DpiXYMeasurement();
             MakeMinimap();
             RenderPlayers();
-            int scaledWidth = DpiMeasurement.ScaleValueX(Width);
-            int scaledHeight = DpiMeasurement.ScaleValueY(Height);
+            int scaledWidth = (int)Width;
+            int scaledHeight = (int)Height;
             image = MakeSolidColorBitmap(BackBrush, scaledWidth, scaledHeight);
             using (Graphics g = Graphics.FromImage(image))
             {
@@ -224,22 +221,22 @@ namespace ZeroKLobby.MicroLobby
                     image = MakeSolidColorBitmap(BackBrush, scaledWidth, scaledHeight);
                     return;
                 }
-                if (finishedMinimap != null) g.DrawImageUnscaled(finishedMinimap, DpiMeasurement.ScaleValueX(3), DpiMeasurement.ScaleValueY(3));
+                if (finishedMinimap != null) g.DrawImageUnscaled(finishedMinimap, (int)3, (int)3);
                 else
                 {
                     g.DrawImage(ZklResources.download,
-                        DpiMeasurement.ScaleValueX(4),
-                        DpiMeasurement.ScaleValueY(3),
-                        DpiMeasurement.ScaleValueX(61),
-                        DpiMeasurement.ScaleValueY(64));
+                        (int)4,
+                        (int)3,
+                        (int)61,
+                        (int)64);
                     g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                     g.InterpolationMode = InterpolationMode.Default;
                 }
                 g.SetClip(new Rectangle(0, 0, scaledWidth, scaledHeight));
                 String mod_and_engine_name = string.Format("{0}     {1}{2}", Battle.ModName, Battle.EngineName, Battle.EngineVersion);
-                int y = DpiMeasurement.ScaleValueY(3);
-                int offset = DpiMeasurement.ScaleValueY(16);
-                int curMapCellSize = DpiMeasurement.ScaleValueX(MapCellSize.Width);
+                int y = (int)3;
+                int offset = (int)16;
+                int curMapCellSize = (int)MapCellSize.Width;
                 g.DrawString(Battle.Title, TitleFont, TextBrush, curMapCellSize, y + offset * 0);
                 if (g.MeasureString(mod_and_engine_name, ModFont).Width < scaledWidth - curMapCellSize)
                 {
@@ -248,8 +245,8 @@ namespace ZeroKLobby.MicroLobby
                 }
                 else
                 {
-                    int offset_offset = DpiMeasurement.ScaleValueY(4); //this squishes modName & engine-name and dude-icons together abit
-                    int offset_offset2 = DpiMeasurement.ScaleValueY(6); //this squished modName & engine-name into 2 tight lines
+                    int offset_offset = (int)4; //this squishes modName & engine-name and dude-icons together abit
+                    int offset_offset2 = (int)6; //this squished modName & engine-name into 2 tight lines
                     g.DrawString(Battle.ModName, ModFont, TextBrush, curMapCellSize, y + offset * 1 - offset_offset);
                     g.DrawString(string.Format("{0}{1}", Battle.EngineName, Battle.EngineVersion),
                         ModFont,

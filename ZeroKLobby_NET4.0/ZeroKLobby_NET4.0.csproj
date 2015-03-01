@@ -151,6 +151,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionHandler.cs" />
+    <Compile Include="BgImages.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BgImages.resx</DependentUpon>
+    </Compile>
     <Compile Include="Benchmarker\Batch.cs" />
     <Compile Include="Benchmarker\BatchRunResult.cs" />
     <Compile Include="Benchmarker\Benchmark.cs" />
@@ -171,12 +176,39 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Buttons.resx</DependentUpon>
     </Compile>
+    <Compile Include="CachedResourceManager.cs" />
     <Compile Include="ChatToSpeech.cs" />
+    <Compile Include="Controls\FrameBorderRenderer.cs" />
     <Compile Include="Controls\MinimapFuncBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\MinimapFuncBox.Designer.cs">
       <DependentUpon>MinimapFuncBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\RightPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\SoundPalette.cs" />
+    <Compile Include="Controls\SwitchPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\TransparentTabPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="DarkHive.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DarkHive.resx</DependentUpon>
+    </Compile>
+    <Compile Include="DarkHiveGlow.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DarkHiveGlow.resx</DependentUpon>
+    </Compile>
+    <Compile Include="DarkHiveHover.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DarkHiveHover.resx</DependentUpon>
     </Compile>
     <Compile Include="ExtendedWebBrowser.cs">
       <SubType>Component</SubType>
@@ -185,6 +217,25 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="GlobalHook.cs" />
+    <Compile Include="MainPages\HomePage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MainPages\HomePage.Designer.cs">
+      <DependentUpon>HomePage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MainPages\IMainPage.cs" />
+    <Compile Include="MainPages\MultiPlayerPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MainPages\MultiPlayerPage.Designer.cs">
+      <DependentUpon>MultiPlayerPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MainPages\SinglePlayerPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MainPages\SinglePlayerPage.Designer.cs">
+      <DependentUpon>SinglePlayerPage.cs</DependentUpon>
+    </Compile>
     <Compile Include="LobbyClient\Battle.cs" />
     <Compile Include="LobbyClient\BattleRect.cs" />
     <Compile Include="LobbyClient\BotBattleStatus.cs" />
@@ -228,9 +279,6 @@
     <Compile Include="MicroLobby\HexToUnicodeConverter.Designer.cs">
       <DependentUpon>HexToUnicodeConverter.cs</DependentUpon>
     </Compile>
-    <Compile Include="MicroLobby\ExtrasTab\ExtrasToolTabs.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="MicroLobby\ExtrasTab\SkirmishControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -243,9 +291,7 @@
     <Compile Include="MicroLobby\TextColoringPanel.Designer.cs">
       <DependentUpon>TextColoringPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="MicroLobby\ExtrasTab\ExtrasTab.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="Navigator.cs" />
     <Compile Include="MonoTorrent\MonoTorrent.BEncoding\BEncodedDictionary.cs" />
     <Compile Include="MonoTorrent\MonoTorrent.BEncoding\BEncodedList.cs" />
     <Compile Include="MonoTorrent\MonoTorrent.BEncoding\BEncodedNumber.cs" />
@@ -341,6 +387,7 @@
     <Compile Include="PlasmaShared\PoolFileInfo.cs" />
     <Compile Include="PlasmaShared\Properties\Settings.Designer.cs" />
     <Compile Include="PlasmaShared\ResharperAttribs.cs" />
+    <Compile Include="PlasmaShared\ResizedImageCache.cs" />
     <Compile Include="PlasmaShared\SdpArchive.cs" />
     <Compile Include="PlasmaShared\SelfUpdater.cs" />
     <Compile Include="PlasmaShared\SerializableDictionary.cs" />
@@ -372,6 +419,16 @@
     </Compile>
     <Compile Include="SelectWritableFolder.Designer.cs">
       <DependentUpon>SelectWritableFolder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Shraka.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Shraka.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Sounds.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Sounds.resx</DependentUpon>
     </Compile>
     <Compile Include="Steam\SteamClientHelper.cs" />
     <Compile Include="Steam\SteamVoiceSystem.cs" />
@@ -409,9 +466,6 @@
     <Compile Include="MicroLobby\BattleListTab.Designer.cs">
       <DependentUpon>BattleListTab.cs</DependentUpon>
     </Compile>
-    <Compile Include="MicroLobby\BrowserTab.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="MicroLobby\ChatTab.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -423,12 +477,6 @@
     </Compile>
     <Compile Include="MicroLobby\SpringsettingForm.Designer.cs">
       <DependentUpon>SpringsettingForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="NavigationControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="NavigationControl.Designer.cs">
-      <DependentUpon>NavigationControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Notifications\MissionBar.cs">
       <SubType>UserControl</SubType>
@@ -464,10 +512,6 @@
     <Compile Include="Lines\FriendJoinedBattleLine.cs" />
     <Compile Include="Lines\TopicLine.cs" />
     <Compile Include="MicroLobby\AutoJoinManager.cs" />
-    <Compile Include="MicroLobby\GdiListBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="MicroLobby\GdiListBoxItem.cs" />
     <Compile Include="MicroLobby\HostDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -523,6 +567,11 @@
       <DependentUpon>Ranks.resx</DependentUpon>
     </Compile>
     <Compile Include="ServerImagesHandler.cs" />
+    <Compile Include="TechPanel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TechPanel.resx</DependentUpon>
+    </Compile>
     <Compile Include="ToolTips\BattleTooltipRenderer.cs" />
     <Compile Include="MicroLobby\AskBattlePasswordForm.cs">
       <SubType>Form</SubType>
@@ -619,7 +668,6 @@
       <DependentUpon>WarningBar.cs</DependentUpon>
     </Compile>
     <Compile Include="MicroLobby\ScrollMessageFilter.cs" />
-    <Compile Include="Settings.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -657,10 +705,15 @@
     <EmbeddedResource Include="Benchmarker\BisectForm.resx" />
     <EmbeddedResource Include="Benchmarker\GraphsForm.resx" />
     <EmbeddedResource Include="Benchmarker\MainForm.resx" />
+    <EmbeddedResource Include="BgImages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>BgImages.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Buttons.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Buttons.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Buttons.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Configs.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -670,10 +723,34 @@
     <EmbeddedResource Include="Controls\MinimapFuncBox.resx">
       <DependentUpon>MinimapFuncBox.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="DarkHive.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DarkHive.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DarkHiveGlow.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DarkHiveGlow.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DarkHiveHover.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DarkHiveHover.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Flags.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Flags.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainPages\HomePage.resx">
+      <DependentUpon>HomePage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainPages\MultiPlayerPage.resx">
+      <DependentUpon>MultiPlayerPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainPages\SinglePlayerPage.resx">
+      <DependentUpon>SinglePlayerPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainWindow.resx">
+      <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroForms\PromptForm.resx">
       <DependentUpon>PromptForm.cs</DependentUpon>
@@ -686,10 +763,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\PwBar.resx">
       <DependentUpon>PwBar.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainWindow.resx">
-      <DependentUpon>MainWindow.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\BattleListTab.resx">
       <DependentUpon>BattleListTab.cs</DependentUpon>
@@ -712,12 +785,9 @@
     <EmbeddedResource Include="MicroLobby\SpringsettingForm.resx">
       <DependentUpon>SpringsettingForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NavigationControl.resx">
-      <DependentUpon>NavigationControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Notifications\BattleBar.resx">
       <DependentUpon>BattleBar.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FormLog.resx">
       <DependentUpon>FormLog.cs</DependentUpon>
@@ -763,9 +833,22 @@
     <EmbeddedResource Include="SelectWritableFolder.resx">
       <DependentUpon>SelectWritableFolder.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Shraka.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Shraka.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sounds.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Sounds.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TechPanel.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>TechPanel.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="ZklResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ZklResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="NativeLibs\libCSteamworks-x86_64.so" />
     <EmbeddedResource Include="NativeLibs\libsteam_api-x86_64.so" />
@@ -903,9 +986,6 @@
     <EmbeddedResource Include="Notifications\NewVersionBar.resx">
       <DependentUpon>NewVersionBar.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MicroLobby\SettingsTab.resx">
-      <DependentUpon>SettingsTab.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\TextWindow.resources" />
     <EmbeddedResource Include="Notifications\WarningBar.resx">
       <DependentUpon>WarningBar.cs</DependentUpon>
@@ -935,6 +1015,9 @@
     <None Include="Resources\Conf\springsettings2.cfg" />
     <None Include="Resources\Conf\springsettings3.cfg" />
     <None Include="Resources\Conf\springsettings4.cfg" />
+    <None Include="SM.TTF">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="SpringDownloader_TemporaryKey.pfx" />
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
@@ -1852,16 +1935,10 @@
     <None Include="Resources\Buttons\game.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Buttons\glaive_icon_24.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Buttons\home.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Buttons\chat.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Buttons\license.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Buttons\map.png" />
@@ -1902,7 +1979,7 @@
     <None Include="Resources\voice_talking.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Benchmarker" />
+   <Folder Include="Benchmarker" />
     <Folder Include="Benchmarker\Benchmarks" />
     <Folder Include="Benchmarker\Benchmarks\Configs" />
     <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_default" />
@@ -1980,6 +2057,99 @@
     <Folder Include="PlasmaShared\UnitSyncLib" />
     <Folder Include="PlasmaShared\Web References" />
     <Folder Include="PlasmaShared\Web References\ModStats" />
+    <None Include="Resources\BgImages\bg_battle.png" />
+    <None Include="Resources\Buttons\exit.png" />
+    <None Include="Resources\Buttons\mp.png" />
+    <None Include="Resources\Buttons\sp.png" />
+    <None Include="Resources\Buttons\ajax-loader.gif" />
+    <None Include="Resources\DarkHive\E.png" />
+    <None Include="Resources\DarkHive\N.png" />
+    <None Include="Resources\DarkHive\NE.png" />
+    <None Include="Resources\DarkHive\NW.png" />
+    <None Include="Resources\DarkHive\S.png" />
+    <None Include="Resources\DarkHive\SE.png" />
+    <None Include="Resources\DarkHive\SW.png" />
+    <None Include="Resources\DarkHive\W.png" />
+    <None Include="Resources\Shraka\E.png" />
+    <None Include="Resources\Shraka\N.png" />
+    <None Include="Resources\Shraka\NE.png" />
+    <None Include="Resources\Shraka\NW.png" />
+    <None Include="Resources\Shraka\S.png" />
+    <None Include="Resources\Shraka\SE.png" />
+    <None Include="Resources\Shraka\SW.png" />
+    <None Include="Resources\Shraka\W.png" />
+    <None Include="Resources\DarkHiveHover\E.png" />
+    <None Include="Resources\DarkHiveHover\N.png" />
+    <None Include="Resources\DarkHiveHover\NE.png" />
+    <None Include="Resources\DarkHiveHover\NW.png" />
+    <None Include="Resources\DarkHiveHover\S.png" />
+    <None Include="Resources\DarkHiveHover\SE.png" />
+    <None Include="Resources\DarkHiveHover\SW.png" />
+    <None Include="Resources\DarkHiveHover\W.png" />
+    <None Include="Resources\Sounds\button_click.wav" />
+    <None Include="Resources\Sounds\panel_move.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Sounds\menu_music_ROM.mp3" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\back.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BgImages\blue_galaxy.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BgImages\bg_battle.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\soundOff.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\soundOn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\downloads.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\link.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\win_max.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\win_min.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\qb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Buttons\extras.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TechPanel\W.png" />
+    <None Include="Resources\TechPanel\SW.png" />
+    <None Include="Resources\TechPanel\SE.png" />
+    <None Include="Resources\TechPanel\S.png" />
+    <None Include="Resources\TechPanel\NW.png" />
+    <None Include="Resources\TechPanel\NE.png" />
+    <None Include="Resources\TechPanel\N.png" />
+    <None Include="Resources\TechPanel\E.png" />
+    <None Include="Resources\DarkHiveGlow\W.png" />
+    <None Include="Resources\DarkHiveGlow\SW.png" />
+    <None Include="Resources\DarkHiveGlow\SE.png" />
+    <None Include="Resources\DarkHiveGlow\S.png" />
+    <None Include="Resources\DarkHiveGlow\NW.png" />
+    <None Include="Resources\DarkHiveGlow\NE.png" />
+    <None Include="Resources\DarkHiveGlow\N.png" />
+    <None Include="Resources\DarkHiveGlow\E.png" />
+    <Content Include="Resources\ZK_logo_128.ico" />
+    <Content Include="Resources\ZK_logo_128.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">

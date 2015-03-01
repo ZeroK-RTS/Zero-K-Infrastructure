@@ -112,8 +112,7 @@ namespace ZeroKLobby.MicroLobby
             InitializeComponent();
 
             foreach (Control c in Controls) c.Font = SystemFonts.MessageBoxFont;
-            NotifyTitle.Font = new Font(SystemFonts.MessageBoxFont.Name, 12f, FontStyle.Regular, GraphicsUnit.Point);
-            //this.NotifyMessage.Font = new Font(SystemFonts.MessageBoxFont.Name, 10f, FontStyle.Regular, GraphicsUnit.Point);
+            NotifyTitle.Font = Config.GeneralFont;
 
             Title = titleText;
             Message = messageText;

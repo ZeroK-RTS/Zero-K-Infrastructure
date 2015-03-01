@@ -20,13 +20,11 @@ namespace ZeroKLobby.MicroForms
             if (DesignMode) return;
             if (!detailBox.Visible)
             {
-                DpiMeasurement.DpiXYMeasurement();
-                Size = new Size(DpiMeasurement.ScaleValueX(formWidth), DpiMeasurement.ScaleValueY(formHeight - detailHeight));
+                Size = new Size((int)formWidth, (int)(formHeight - detailHeight));
             }
             else
             {
-                DpiMeasurement.DpiXYMeasurement();
-                Size = new Size(DpiMeasurement.ScaleValueX(formWidth), DpiMeasurement.ScaleValueY(formHeight));
+                Size = new Size((int)formWidth, (int)formHeight);
             }
         }
     }

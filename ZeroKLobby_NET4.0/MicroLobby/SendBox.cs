@@ -35,7 +35,7 @@ namespace ZeroKLobby.MicroLobby
         {
             Multiline = true;
             WordWrap = false; //long text continue to the right instead of appearing in new line
-            this.Font = Program.Conf.ChatFont;
+            this.Font = Config.ChatFont;
             this.BackColor = Program.Conf.BgColor;
             this.ForeColor = Program.Conf.TextColor;
             this.KeyDown += SendBox_KeyDown;

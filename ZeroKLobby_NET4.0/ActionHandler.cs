@@ -88,7 +88,7 @@ namespace ZeroKLobby
             battleJoinHandler = ((s, e) =>
               {
                   Program.TasClient.BattleJoined -= battleJoinHandler;
-                  if (Program.TasClient.MyBattle == null || !Program.TasClient.MyBattle.IsQueue) NavigationControl.Instance.Path = "chat/battle";
+                  if (Program.TasClient.MyBattle == null || !Program.TasClient.MyBattle.IsQueue) Program.MainWindow.navigationControl.Path = "chat/battle";
               });
 
 
@@ -302,7 +302,7 @@ namespace ZeroKLobby
 
                       Program.TasClient.BattleJoined += battleJoined;
                       JoinBattle(battle.BattleID, password);
-                      NavigationControl.Instance.Path = "chat/battle";
+                      Program.MainWindow.navigationControl.Path = "chat/battle";
                   }
               };
 

@@ -1,39 +1,36 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using ZeroKLobby.MainPages;
 using ZkData;
 
 namespace ZeroKLobby.MicroLobby
 {
-    public partial class BattleListTab: UserControl, INavigatable
+    public partial class BattleListTab: UserControl, INavigatable, IMainPage
     {
         BattleListControl battleListControl;
 
         public BattleListTab() 
         {
-            Paint += BattleListTab_Enter; 
-        }
-
-        void BattleListTab_Enter(object sender, EventArgs e) //lazy initialization
-        {
-            Paint -= BattleListTab_Enter; //using "Paint" instead of "Enter" event because "Enter" is too lazy in Mono (have to click control)
-            SuspendLayout(); //pause
             InitializeComponent();
+            SetStyle(ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
+
+            SuspendLayout(); //pause
 
             if (DesignMode) return;
-            DpiMeasurement.DpiXYMeasurement(this);
             var lookingGlass = new PictureBox
             {
-                Width =  DpiMeasurement.ScaleValueY(20),
-                Height = DpiMeasurement.ScaleValueY(20),
+                Width = (int)20,
+                Height = (int)20,
                 Image = ZklResources.search,
                 SizeMode = PictureBoxSizeMode.CenterImage,
                 Dock = DockStyle.Left
             };
             Program.ToolTip.SetText(lookingGlass, "Search game, description, map or player");
             Program.ToolTip.SetText(searchBox, "Search game, description, map or player");
-            
+
             hideEmptyBox.Checked = Program.Conf.HideEmptyBattles;
             hideFullBox.Checked = Program.Conf.HideNonJoinableBattles;
             showOfficialBox.Checked = Program.Conf.ShowOfficialBattles;
@@ -44,6 +41,8 @@ namespace ZeroKLobby.MicroLobby
             battlePanel.Controls.Add(battleListControl);
             ResumeLayout();
         }
+
+
 
         public bool TryNavigate(params string[] path) {
             if (path.Length == 0) return false;
@@ -68,16 +67,7 @@ namespace ZeroKLobby.MicroLobby
             return false;
         }
 
-        public string GetTooltip(params string[] path) {
-            return null;
-        }
 
-        public void Reload() {
-        }
-
-        public bool CanReload { get { return false; } }
-
-        public bool IsBusy { get { return false;} }
 
         void searchBox_TextChanged(object sender, EventArgs e) {
             if (!string.IsNullOrEmpty(searchBox.Text)) Program.MainWindow.navigationControl.Path = "battles/" + searchBox.Text;
@@ -102,5 +92,11 @@ namespace ZeroKLobby.MicroLobby
             if (battleListControl != null) battleListControl.HidePassworded = hidePasswordedBox.Checked;
         }
 
+        public void GoBack()
+        {
+            Program.MainWindow.SwitchPage(MainWindow.MainPages.MultiPlayer, false);
+        }
+
+        public Image MainWindowBgImage { get { return BgImages.blue_galaxy; }}
     }
 }

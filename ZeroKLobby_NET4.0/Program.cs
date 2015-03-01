@@ -99,6 +99,7 @@ namespace ZeroKLobby
         {
             try
             {
+                GlobalConst.Mode =ModeType.Live;
                 //Stopwatch stopWatch = new Stopwatch(); stopWatch.Start();
 
                 Trace.Listeners.Add(new ConsoleTraceListener());
@@ -115,6 +116,7 @@ namespace ZeroKLobby
                     }
                 }
                 */
+
 
                 Directory.SetCurrentDirectory(StartupPath);
 
@@ -144,7 +146,6 @@ namespace ZeroKLobby
                 WebRequest.DefaultWebProxy = null;
                 ThreadPool.SetMaxThreads(500, 2000);
                 ServicePointManager.Expect100Continue = false;
-                if (Environment.OSVersion.Platform != PlatformID.Unix && !Conf.UseExternalBrowser) { Utils.SetIeCompatibility(); } //set to current IE version
 
                 LoadConfig();
 
@@ -178,12 +179,8 @@ namespace ZeroKLobby
 
 
 
-                if (Conf.IsFirstRun)
-                {
-                    Utils.CreateDesktopShortcut();
-                    if (Environment.OSVersion.Platform != PlatformID.Unix)
-                        Utils.RegisterProtocol();
-                }
+                if (Conf.IsFirstRun) Utils.CreateDesktopShortcut();
+                
 
                 SpringPaths = new SpringPaths(null, writableFolderOverride: contentDir);
                 SpringPaths.MakeFolders();
@@ -218,9 +215,9 @@ namespace ZeroKLobby
                         if (!mutex.WaitOne(10000, false))
                         {
                             MessageBox.Show(
-                                "Another copy of Zero-K lobby is still running" +
-                                "\nMake sure the other lobby is closed (check task manager) before starting new one",
-                                "There can be only one lobby running",
+                                "Another copy of Zero-K launcher is still running" +
+                                "\nMake sure the other launcher is closed (check task manager) before starting new one",
+                                "There can be only one launcher running",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Stop);
                             return;
@@ -258,13 +255,10 @@ namespace ZeroKLobby
 
                 // log, for debugging
                 TasClient.Connected += (s, e) => Trace.TraceInformation("TASC connected");
-                TasClient.LoginAccepted += (s, e) =>
-                    {
-                        Trace.TraceInformation("TASC login accepted");
-                        Trace.TraceInformation("Server is using Spring version {0}", TasClient.ServerSpringVersion);
-                        if (Environment.OSVersion.Platform == PlatformID.Unix || Conf.UseExternalBrowser)
-                            MainWindow.navigationControl.Path = "battles";
-                    };
+                TasClient.LoginAccepted += (s, e) => {
+                    Trace.TraceInformation("TASC login accepted");
+                    Trace.TraceInformation("Server is using Spring version {0}", TasClient.ServerSpringVersion);
+                };
 
                 TasClient.LoginDenied += (s, e) => Trace.TraceInformation("TASC login denied");
                 TasClient.ChannelJoined += (s, e) => { Trace.TraceInformation("TASC channel joined: " + e.Data.Name); };
@@ -295,7 +289,7 @@ namespace ZeroKLobby
                 ConnectBar = new ConnectBar(TasClient);
                 ModStore = new ModStore();
                 ToolTip = new ToolTipHandler();
-                BrowserInterop = new BrowserInterop(TasClient, Conf);
+                BrowserInterop = new BrowserInterop();
                 BattleIconManager = new BattleIconManager();
 
                 Application.AddMessageFilter(ToolTip);
@@ -308,12 +302,6 @@ namespace ZeroKLobby
                 MainWindow = new MainWindow();
 
                 Application.AddMessageFilter(new ScrollMessageFilter());
-
-
-                if (Conf.StartMinimized) MainWindow.WindowState = FormWindowState.Minimized;
-                else MainWindow.WindowState = FormWindowState.Normal;
-                MainWindow.Size = new Size(Math.Min(SystemInformation.VirtualScreen.Width - 30, MainWindow.Width),
-                                            Math.Min(SystemInformation.VirtualScreen.Height - 30, MainWindow.Height)); //in case user have less space than 1024x768
 
                 BattleBar = new BattleBar();
                 NewVersionBar = new NewVersionBar(SelfUpdater);
@@ -343,17 +331,13 @@ namespace ZeroKLobby
 
                 //if (Conf.IsFirstRun) Utils.OpenWeb(GlobalConst.BaseSiteUrl + "/Wiki/LobbyStart", false);
 
-                // download primary engine & game
-                MainWindow.Paint += GetSpringZK;
-                Downloader.PackageDownloader.MasterManifestDownloaded += GetSpringZK;
-
-
                 // Format and display the TimeSpan value.
                 //stopWatch.Stop(); TimeSpan ts = stopWatch.Elapsed; string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
                 //Trace.TraceInformation("1 Runtime {0}", elapsedTime);
 
 
-
+                //WelcomeForm = new WelcomeForm();
+                //WelcomeForm.Show();
 
                 Application.Run(MainWindow);
                 ShutDown();
@@ -369,28 +353,7 @@ namespace ZeroKLobby
             if (ErrorHandling.HasFatalException && !Program.CloseOnNext) Application.Restart();
         }
 
-        private static int getSpringZKCount = 0;
-        private static void GetSpringZK(object sender, EventArgs e)
-        {
-            if (sender is PlasmaDownloader.Packages.PackageDownloader)
-                Downloader.PackageDownloader.MasterManifestDownloaded -= GetSpringZK;
-            if (sender is PlasmaDownloader.Packages.PackageDownloader)
-                MainWindow.Paint -= GetSpringZK;
-
-            getSpringZKCount++;
-            if (getSpringZKCount < 2)
-                return;
-
-            // download primary game after rapid list have been downloaded and MainWindow is visible
-            Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion);
-            var defaultTag = KnownGames.GetDefaultGame().RapidTag;
-            if (!Downloader.PackageDownloader.SelectedPackages.Contains(defaultTag))
-            {
-                Downloader.PackageDownloader.SelectPackage(defaultTag);
-                if (Downloader.PackageDownloader.GetByTag(defaultTag) != null) Downloader.GetResource(PlasmaDownloader.DownloadType.MOD, defaultTag);
-            }
-        }
-
+       
         public static PwBar PwBar { get; private set; }
 
         internal static void SaveConfig()

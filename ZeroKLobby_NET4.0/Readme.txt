@@ -11,6 +11,10 @@ ZeroKLobby can also be updated using copy-paste :
 5) ZeroKLobby -> ZeroKLobby_NET4.0
 - But must avoid overwriting: package.config, app.config and ZeroKLobby_NET4.0.csproj. Any new file for ZeroKLobby_NET4.0 should be included manually from within IDE.
 
+6) Check *.csproj for Benchmarker, LobbyClient, PlasmaShared, and MonoTorrent for addition of file and add them to ZeroKLobby_NET4.0.csproj
+
+Use Tortoise Git diff window for all those inspection.
+
 This project is targeted for Window XP compatibility (NET Framework 4.0 Client).
 
 

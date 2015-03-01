@@ -235,11 +235,11 @@ namespace ZeroKLobby.MicroLobby
                     contextMenu.MenuItems.Add("-");
 
                     var details = new MenuItem("Details");
-                    details.Click += (s, e) => NavigationControl.Instance.Path = string.Format("{1}/Users/LobbyDetail/{0}", user.AccountID, GlobalConst.BaseSiteUrl);
+                    details.Click += (s, e) => Program.MainWindow.navigationControl.Path = string.Format("{1}/Users/LobbyDetail/{0}", user.AccountID, GlobalConst.BaseSiteUrl);
                     contextMenu.MenuItems.Add(details);
 
                     var pmItem = new MenuItem("Send Message");
-                    pmItem.Click += (s, e) => NavigationControl.Instance.Path = "chat/user/" + user.Name;
+                    pmItem.Click += (s, e) => Program.MainWindow.navigationControl.Path = "chat/user/" + user.Name;
                     contextMenu.MenuItems.Add(pmItem);
 
                     if (Program.FriendManager.Friends.Contains(user.Name))
@@ -269,7 +269,7 @@ namespace ZeroKLobby.MicroLobby
                     contextMenu.MenuItems.Add(ignoreUser);
 
                     var reportUser = new MenuItem("Report User");
-                    reportUser.Click += (s, e) => NavigationControl.Instance.Path = string.Format("{1}/Users/ReportToAdminFromLobby/{0}", user.Name, GlobalConst.BaseSiteUrl);
+                    reportUser.Click += (s, e) => Program.MainWindow.navigationControl.Path = string.Format("{1}/Users/ReportToAdminFromLobby/{0}", user.Name, GlobalConst.BaseSiteUrl);
                     contextMenu.MenuItems.Add(reportUser);
                 }
 
@@ -327,7 +327,7 @@ namespace ZeroKLobby.MicroLobby
                 contextMenu.MenuItems.Add("-");
 
                 var details = new System.Windows.Forms.MenuItem("Details");
-                details.Click += (s, e) => NavigationControl.Instance.Path = string.Format("{1}/Users/LobbyDetail/{0}", control.UserName, GlobalConst.BaseSiteUrl);
+                details.Click += (s, e) => Program.MainWindow.navigationControl.Path = string.Format("{1}/Users/LobbyDetail/{0}", control.UserName, GlobalConst.BaseSiteUrl);
                 contextMenu.MenuItems.Add(details);
 
                 if (Program.FriendManager.Friends.Contains(control.UserName))
@@ -351,7 +351,7 @@ namespace ZeroKLobby.MicroLobby
                 contextMenu.MenuItems.Add(joinItem);
 
                 var reportUser = new System.Windows.Forms.MenuItem("Report User");
-                reportUser.Click += (s, e) => NavigationControl.Instance.Path = string.Format("{1}/Users/ReportToAdminFromLobby/{0}", control.UserName, GlobalConst.BaseSiteUrl);
+                reportUser.Click += (s, e) => Program.MainWindow.navigationControl.Path = string.Format("{1}/Users/ReportToAdminFromLobby/{0}", control.UserName, GlobalConst.BaseSiteUrl);
                 contextMenu.MenuItems.Add(reportUser);
 
                 contextMenu.MenuItems.Add("-");
@@ -408,7 +408,7 @@ namespace ZeroKLobby.MicroLobby
                 {
                     var us = user.Name;
                     var item = new MenuItem(user.Name);
-                    item.Click += (s, e) => NavigationControl.Instance.Path = "chat/user/" + us;
+                    item.Click += (s, e) => Program.MainWindow.navigationControl.Path = "chat/user/" + us;
                     contextMenu.MenuItems.Add(item);
                 }
             }

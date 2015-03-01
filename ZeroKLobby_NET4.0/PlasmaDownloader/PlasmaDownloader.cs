@@ -51,11 +51,6 @@ namespace PlasmaDownloader
             remove { packageDownloader.PackagesChanged -= value; }
         }
 
-        public event EventHandler SelectedPackagesChanged {
-            add { packageDownloader.SelectedPackagesChanged += value; }
-            remove { packageDownloader.SelectedPackagesChanged -= value; }
-        }
-
         public PlasmaDownloader(IPlasmaDownloaderConfig config, SpringScanner scanner, SpringPaths springPaths) {
             SpringPaths = springPaths;
             Config = config;
@@ -102,7 +97,7 @@ namespace PlasmaDownloader
             
             if (type == DownloadType.MOD || type == DownloadType.UNKNOWN)
             {
-                packageDownloader.LoadMasterAndVersions(false).Wait();
+                packageDownloader.LoadMasterAndVersions().Wait();
             }
             
             lock (downloads) {

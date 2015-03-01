@@ -16,7 +16,7 @@ namespace ZeroKLobby
         {
           var size = (Size)GetSize(font);  
           
-          TextRenderer.DrawText(g, text, font,new Rectangle(0,0, size.Width, size.Height), foreColor, TextFormatFlags.WordBreak);
+          using (var fbrush = new SolidBrush(foreColor)) g.DrawString(text, font, fbrush, new Rectangle(0,0, size.Width, size.Height));
         }
 
         public Size? GetSize(Font font)

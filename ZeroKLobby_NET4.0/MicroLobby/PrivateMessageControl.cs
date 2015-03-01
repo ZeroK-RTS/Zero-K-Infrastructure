@@ -23,7 +23,7 @@ namespace ZeroKLobby.MicroLobby
     public PrivateMessageControl(string name)
     {
         InitializeComponent();
-        ChatBox.Font = Program.Conf.ChatFont;
+        ChatBox.Font = Config.ChatFont;
         Name = name;
         UserName = name;
         ChatBox.MouseUp += autoscrollRichTextBox1_MouseUp;
