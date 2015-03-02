@@ -311,6 +311,10 @@ namespace Springie.autohost
                     ComListMods(e, words);
                     break;
 
+                case "voteboss":
+                    ComVoteBoss(e, words);
+                    break;
+
                 case "help":
                     ComHelp(e, words);
                     break;
