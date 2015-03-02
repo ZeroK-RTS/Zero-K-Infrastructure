@@ -132,7 +132,7 @@
                 <b>First Login:</b> @Model.FirstLogin.ToAgoString(), <b>Last Login:</b> @Model.LastLogin.ToAgoString()
                 <br />
                 
-                @if (Global.IsZeroKAdmin) {
+                @if (Global.IsZeroKAdmin || (Model.AccountID == Global.AccountID)) {
                     <div class="admin">
                         <b>Elo (all):</b> @Math.Round(@Model.EffectiveElo)
                         <b>Elo (1v1):</b> @Math.Round(@Model.Effective1v1Elo)
