@@ -34,7 +34,13 @@ namespace ZeroKWeb.Controllers
 
             switch (eventType) {
                 case "issues":
-                    text = string.Format("{0} has {1} issue {2} {3}",payload.sender.login,  payload.action, payload.issue.title, payload.issue.url);
+                    var values = new [] {payload.repository.name ,payload.sender.login,  payload.action, payload.issue.title, payload.issue.html_url};
+                    text = string.Format("[{0}] {1} has {2} issue {3} {4}",values);
+                    break;
+
+                case "pull_request":
+                    var values = new [] {payload.repository.name ,payload.sender.login,  payload.action, payload.number, payload.pull_request.title , payload.pull_request.html_url};
+                    text = string.Format("[{0}] {1} has {2} pull request #{3}: {4} ({5})",values);
                     break;
             }
 
