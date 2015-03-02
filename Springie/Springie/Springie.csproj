@@ -123,13 +123,11 @@
     <Compile Include="autohost\Polls\VoteMove.cs" />
     <Compile Include="autohost\Polls\VoteStart.cs" />
     <Compile Include="autohost\Polls\IVotable.cs" />
-    <Compile Include="autohost\Polls\VoteBoss.cs" />
     <Compile Include="autohost\Polls\VoteExit.cs" />
     <Compile Include="autohost\Polls\VoteForce.cs" />
     <Compile Include="autohost\Polls\VoteForceStart.cs" />
     <Compile Include="autohost\Polls\VoteKick.cs" />
     <Compile Include="autohost\Polls\VoteMap.cs" />
-    <Compile Include="autohost\Polls\VoteRehost.cs" />
     <Compile Include="autohost\Polls\VoteResign.cs" />
     <Compile Include="autohost\Polls\VoteSetOptions.cs" />
     <Compile Include="autohost\Polls\VoteSpec.cs" />

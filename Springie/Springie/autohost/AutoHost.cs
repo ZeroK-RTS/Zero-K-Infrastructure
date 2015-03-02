@@ -319,10 +319,6 @@ namespace Springie.autohost
                     ComMap(e, words);
                     break;
 
-                case "admins":
-                    ComAdmins(e, words);
-                    break;
-
                 case "start":
                     if (tas.MyBattle != null) {
                         int cnt = tas.MyBattle.NonSpectatorCount;
@@ -422,10 +418,6 @@ namespace Springie.autohost
                     ComRehost(e, words);
                     break;
 
-                //case "voterehost":
-                //    StartVote(new VoteRehost(tas, spring, this), e, words);
-                //    break;
-
                 case "random":
                     ComRandom(e, words);
                     break;
@@ -436,10 +428,6 @@ namespace Springie.autohost
 
                 case "say":
                     ComSay(e, words);
-                    break;
-
-                case "id":
-                    ComTeam(e, words);
                     break;
 
                 case "team":
@@ -481,10 +469,6 @@ namespace Springie.autohost
 
                 case "boss":
                     ComBoss(e, words);
-                    break;
-
-                case "voteboss":
-                    StartVote(new VoteBoss(tas, spring, this), e, words);
                     break;
 
                 case "setpassword":
