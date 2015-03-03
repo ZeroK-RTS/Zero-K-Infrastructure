@@ -1199,7 +1199,7 @@ namespace Springie.autohost
                     }
                     requestedEngineChange = specificVer; //in autohost.cs
                     Respond(e, "Preparing engine change to " + specificVer);
-                    var springCheck = Program.main.Downloader.GetAndSwitchEngine(specificVer);
+                    var springCheck = Program.main.Downloader.GetAndSwitchEngine(specificVer,springPaths);//will trigger springPaths.SpringVersionChanged event
                     if (springCheck == null) ; //Respond(e, "Engine available");
                     else
                         Respond(e, "Downloading engine. " + springCheck.IndividualProgress + "%");

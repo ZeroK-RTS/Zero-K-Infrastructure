@@ -64,9 +64,9 @@ namespace Springie.autohost
             string version = config.SpringVersion ?? Program.main.Config.SpringVersion ?? GlobalConst.DefaultEngineOverride;
             springPaths = new SpringPaths(Program.main.paths.GetEngineFolderByVersion(version), Program.main.Config.DataDir);
             
-            Program.main.paths.SpringVersionChanged += (s, e) =>
+            springPaths.SpringVersionChanged += (s, e) =>
                 {
-                    if (!String.IsNullOrEmpty(requestedEngineChange) && requestedEngineChange == Program.main.paths.SpringVersion) {
+                    if (!String.IsNullOrEmpty(requestedEngineChange) && requestedEngineChange == springPaths.SpringVersion) {
                         config.SpringVersion = requestedEngineChange;
                         springPaths.SetEnginePath(Program.main.paths.GetEngineFolderByVersion(requestedEngineChange));
                         requestedEngineChange = null;
@@ -651,7 +651,7 @@ namespace Springie.autohost
             //cache.GetMap(mapname, (m, x, y, z) => { mapi = m; }, (e) => { }, springPaths.SpringVersion);
             //int mint, maxt;
             if (!springPaths.HasEngineVersion(engine)) {
-                Program.main.Downloader.GetAndSwitchEngine(engine);
+                Program.main.Downloader.GetAndSwitchEngine(engine,springPaths);
             } else {
                 springPaths.SetEnginePath(springPaths.GetEngineFolderByVersion(engine));
             }
