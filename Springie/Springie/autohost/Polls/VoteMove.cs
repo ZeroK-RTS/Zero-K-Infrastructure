@@ -3,7 +3,7 @@ using System.Linq;
 using LobbyClient;
 using PlasmaShared;
 using ZkData;
-
+ 
 namespace Springie.autohost.Polls
 {
     public class VoteMove: AbstractPoll
