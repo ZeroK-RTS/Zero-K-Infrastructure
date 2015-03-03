@@ -603,7 +603,7 @@ namespace Springie.autohost
             var host = words[0];
 
             var target_battle = tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == host);
-            if (target_battle == NULL)
+            if (target_battle == null)
             {
                 Respond(e, string.Format("Host {0} not found", words[0]));
                 return;
