@@ -605,14 +605,14 @@ namespace Springie.autohost
             var target_battle = tas.ExistingBattles.Values.Any(x => x.Founder.Name == host);
             if (!target_battle)
             {
-                ah.Respond(e, string.Format("Host {0} not found", words[0]));
-                return false;
+                Respond(e, string.Format("Host {0} not found", words[0]));
+                return;
             }
 
             if (target_battle.IsPassworded)
             {
-                ah.Respond(e, string.Format("Move forbidden: host {0} is passworded.", words[0]));
-                return false;
+                Respond(e, string.Format("Move forbidden: host {0} is passworded.", words[0]));
+                return;
             }
 
             var serv = GlobalConst.GetSpringieService();
