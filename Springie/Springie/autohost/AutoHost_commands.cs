@@ -476,11 +476,6 @@ namespace Springie.autohost
             }
         }
 
-        public void ComVoteBoss(TasSayEventArgs e, string[] words)
-        {
-            Respond(e, "!voteboss is deprecated, vote on changes directly instead.");
-        }
-
         public void ComForceStart(TasSayEventArgs e, string[] words)
         {
             int allyno;

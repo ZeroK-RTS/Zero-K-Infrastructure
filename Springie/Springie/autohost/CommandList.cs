@@ -197,8 +197,6 @@ namespace Springie.autohost
 
             AddMissing(new CommandConfig("spec", 3, "<username> - forces player to become spectator", 0));
 
-            AddMissing(new CommandConfig("voteboss", 2, "- deprecated. Use direct votes instead.", 0));
-
             AddMissing(new CommandConfig("predict", 0, "predicts chances of victory", 0));
 
             AddMissing(new CommandConfig("specafk", 2, "forces all AFK player to become spectators", 0));
