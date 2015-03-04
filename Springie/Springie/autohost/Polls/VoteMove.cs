@@ -25,9 +25,16 @@ namespace Springie.autohost.Polls
             }
             host = words[0];
 
-            if (!tas.ExistingBattles.Values.Any(x => x.Founder.Name == host))
+            var target_battle = tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == host);
+            if (target_battle == null)
             {
                 ah.Respond(e, string.Format("Host {0} not found", words[0]));
+                return false;
+            }
+
+            if (target_battle.IsPassworded)
+            {
+                ah.Respond(e, string.Format("Move forbidden: host {0} is passworded.", words[0]));
                 return false;
             }
 

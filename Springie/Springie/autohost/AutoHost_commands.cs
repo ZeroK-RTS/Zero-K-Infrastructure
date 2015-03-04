@@ -476,6 +476,11 @@ namespace Springie.autohost
             }
         }
 
+        public void ComVoteBoss(TasSayEventArgs e, string[] words)
+        {
+            Respond(e, "!voteboss is deprecated, vote on changes directly instead.");
+        }
+
         public void ComForceStart(TasSayEventArgs e, string[] words)
         {
             int allyno;
@@ -866,30 +871,6 @@ namespace Springie.autohost
             tas.StartGame();
         }
 
-        public void ComTeam(TasSayEventArgs e, string[] words)
-        {
-            if (words.Length < 2)
-            {
-                Respond(e, "this command needs 2 parameters (team number and player name)");
-                return;
-            }
-            var teamno = 0;
-            if (!Int32.TryParse(words[0], out teamno) || --teamno < 0 || teamno >= Spring.MaxTeams)
-            {
-                Respond(e, "invalid team number");
-                return;
-            }
-            string[] usrs;
-            int[] idx;
-            if (FilterUsers(ZkData.Utils.ShiftArray(words, -1), out usrs, out idx) == 0) Respond(e, "no such player found");
-            else
-            {
-                SayBattle("Forcing " + usrs[0] + " to team " + (teamno + 1));
-                tas.ForceTeam(usrs[0], teamno);
-            }
-        }
-
-
         internal static int Filter(string[] source, string[] words, out string[] resultVals, out int[] resultIndexes)
         {
             int i;
@@ -1091,14 +1072,6 @@ namespace Springie.autohost
             }
         }
 
-
-        void ComAdmins(TasSayEventArgs e, string[] words)
-        {
-            tas.Say(SayPlace.User, e.UserName, "---", false);
-            foreach (var u in tas.ExistingUsers.Values.Where(x => x.SpringieLevel >= 3)) tas.Say(SayPlace.User, e.UserName, " " + u.Name + " (level " + u.SpringieLevel + ")", false);
-            tas.Say(SayPlace.User, e.UserName, "---", false);
-        }
-
         void ComHelp(TasSayEventArgs e, string[] words)
         {
             var ulevel = GetUserLevel(e);
@@ -1231,7 +1204,7 @@ namespace Springie.autohost
                     }
                     requestedEngineChange = specificVer; //in autohost.cs
                     Respond(e, "Preparing engine change to " + specificVer);
-                    var springCheck = Program.main.Downloader.GetAndSwitchEngine(specificVer);
+                    var springCheck = Program.main.Downloader.GetAndSwitchEngine(specificVer,springPaths);//will trigger springPaths.SpringVersionChanged event
                     if (springCheck == null) ; //Respond(e, "Engine available");
                     else
                         Respond(e, "Downloading engine. " + springCheck.IndividualProgress + "%");

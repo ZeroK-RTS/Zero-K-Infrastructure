@@ -126,18 +126,11 @@ namespace Springie.autohost
                                          new[] { SayPlace.Battle, SayPlace.Game }));
             AddMissing(new CommandConfig("n",
                                          0,
-                                         "- votes for given option 2 (works from battle only), e.g. !n; !vote 1",
+                                         "- votes for given option 2 (works from battle only), e.g. !n; !vote 2",
                                          0,
                                          new[] { SayPlace.Battle, SayPlace.Game }));
 
             AddMissing(new CommandConfig("rehost", 3, "[<modname>..] - rehosts game, e.g. !rehost abosol 2.23 - rehosts AA2.23"));
-            AddMissing(new CommandConfig("voterehost",
-                                         2,
-                                         "[<modname>..] - votes to rehost game, e.g. !rehost abosol 2.23 - rehosts AA2.23",
-                                         0,
-                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
-
-            AddMissing(new CommandConfig("admins", 0, " - lists admins", 5));
 
             AddMissing(new CommandConfig("maplink",
                                          0,
@@ -150,8 +143,6 @@ namespace Springie.autohost
                                          "[<modname>..] - looks for modlinks at unknown-files",
                                          5,
                                          new[] { SayPlace.Battle, SayPlace.User }));
-
-            AddMissing(new CommandConfig("id", 3, "<idnumber> [<playername>..] - forces given player to an id"));
 
             AddMissing(new CommandConfig("team", 3, "<teamnumber> [<playername>..] - forces given player to a team"));
 
@@ -202,14 +193,11 @@ namespace Springie.autohost
             AddMissing(new CommandConfig("boss",
                                          3,
                                          "<name> - sets <name> as a new boss, use w5ithout parameter to remove any current boss. If there is a boss on server, other non-admin people have their rights reduced"));
-
-            AddMissing(new CommandConfig("voteboss",
-                                         2,
-                                         "<name> - sets <name> as a new boss, use without parameter to remove any current boss. If there is a boss on server, other non-admin people have their rights reduced",
-                                         0,
-                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
+ 
 
             AddMissing(new CommandConfig("spec", 3, "<username> - forces player to become spectator", 0));
+
+            AddMissing(new CommandConfig("voteboss", 2, "- deprecated. Use direct votes instead.", 0));
 
             AddMissing(new CommandConfig("predict", 0, "predicts chances of victory", 0));
 
@@ -237,10 +225,9 @@ namespace Springie.autohost
                                              SayPlace.Channel
                                          }));
 
-            AddMissing(new CommandConfig("saveboxes", 3, "- saves boxes for current map"));
-            AddMissing(new CommandConfig("move", 3, "<where> - moves players to a new host"));
-            AddMissing(new CommandConfig("votemove", 2, "<where> - vote to move players to a new host"));
-
+            AddMissing(new CommandConfig("saveboxes", 4, "- saves boxes for current map"));
+            AddMissing(new CommandConfig("move", 4, "<where> - moves players to a new host"));
+            AddMissing(new CommandConfig("votemove", 2, "<where> - moves players to a new host"));
 
             if (config != null && config.CommandLevels != null)
             {
