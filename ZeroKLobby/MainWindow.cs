@@ -116,8 +116,8 @@ namespace ZeroKLobby
 
             if (Program.StartupArgs != null && Program.StartupArgs.Length > 0) navigationControl.Path = Program.StartupArgs[0];
 
-            if (Program.Conf.ConnectOnStartup) Program.ConnectBar.TryToConnectTasClient();
-            else NotifySection.AddBar(Program.ConnectBar);
+            connectBar.Init(Program.TasClient);
+            if (Program.Conf.ConnectOnStartup) connectBar.TryToConnectTasClient();
 
             if (Environment.OSVersion.Platform != PlatformID.Unix)
             {

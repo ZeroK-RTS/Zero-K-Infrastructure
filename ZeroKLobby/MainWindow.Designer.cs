@@ -40,6 +40,7 @@
             this.btnWindowed = new ZeroKLobby.BitmapButton();
             this.btnSnd = new ZeroKLobby.BitmapButton();
             this.notifySection1 = new SpringDownloader.Notifications.NotifySection();
+            this.connectBar = new ZeroKLobby.Notifications.ConnectBar();
             this.panelRight.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -204,11 +205,21 @@
             this.notifySection1.Size = new System.Drawing.Size(1386, 0);
             this.notifySection1.TabIndex = 0;
             // 
+            // connectBar
+            // 
+            this.connectBar.BackColor = System.Drawing.Color.Transparent;
+            this.connectBar.Location = new System.Drawing.Point(0, 754);
+            this.connectBar.MinimumSize = new System.Drawing.Size(300, 60);
+            this.connectBar.Name = "connectBar";
+            this.connectBar.Size = new System.Drawing.Size(364, 60);
+            this.connectBar.TabIndex = 14;
+            // 
             // MainWindow
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(1386, 816);
+            this.Controls.Add(this.connectBar);
             this.Controls.Add(this.lbMainPageTitle);
             this.Controls.Add(this.btnBack);
             this.Controls.Add(this.flowLayoutPanel1);
@@ -242,6 +253,7 @@
         private BitmapButton btnBack;
         public System.Windows.Forms.Label lbMainPageTitle;
         public Controls.RightPanel panelRight;
+        public Notifications.ConnectBar connectBar;
 
     }
 }

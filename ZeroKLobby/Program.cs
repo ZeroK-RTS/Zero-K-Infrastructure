@@ -31,7 +31,6 @@ namespace ZeroKLobby
         public static BrowserInterop BrowserInterop { get; private set; }
         public static bool CloseOnNext;
         public static Config Conf = new Config();
-        public static ConnectBar ConnectBar { get; private set; }
         public static PlasmaDownloader.PlasmaDownloader Downloader { get; private set; }
         public static EngineConfigurator EngineConfigurator { get; set; }
         public static FriendManager FriendManager;
@@ -284,7 +283,6 @@ namespace ZeroKLobby
                         }
                     };
 
-                ConnectBar = new ConnectBar(TasClient);
                 ModStore = new ModStore();
                 ToolTip = new ToolTipHandler();
                 BrowserInterop = new BrowserInterop();
@@ -306,36 +304,7 @@ namespace ZeroKLobby
                 VoteBar = new VoteBar();
                 PwBar = new PwBar();
 
-                //This make the size of every bar constant (only for height).
-                //We wanted to make them constant because the bar get DPI-scaled twice/thrice/multiple-time (especially for reusable bar). 
-                //Setting maximum height upon creation will hopefully make sure it is not DPI-scaled multiple time.
-                var votebarSize = new Size(0, VoteBar.Height);
-                // Reference: http://stackoverflow.com/questions/5314041/set-minimum-window-size-in-c-sharp-net
-                var newversionbarSize = new Size(0, NewVersionBar.Height);
-                var battlebarSize = new Size(0, BattleBar.Height);
-                var connectbarSize = new Size(0, ConnectBar.Height);
-
-                VoteBar.MinimumSize = votebarSize; //fix minimum size forever
-                VoteBar.MaximumSize = votebarSize; //fix maximum size forever
-                NewVersionBar.MinimumSize = newversionbarSize;
-                NewVersionBar.MaximumSize = newversionbarSize;
-                BattleBar.MinimumSize = battlebarSize;
-                BattleBar.MaximumSize = battlebarSize;
-                ConnectBar.MinimumSize = connectbarSize;
-                ConnectBar.MaximumSize = connectbarSize;
-                //End battlebar size hax
-
                 if (!Debugger.IsAttached && !Conf.DisableAutoUpdate) Program.SelfUpdater.StartChecking();
-
-                //if (Conf.IsFirstRun) Utils.OpenWeb(GlobalConst.BaseSiteUrl + "/Wiki/LobbyStart", false);
-
-                // Format and display the TimeSpan value.
-                //stopWatch.Stop(); TimeSpan ts = stopWatch.Elapsed; string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
-                //Trace.TraceInformation("1 Runtime {0}", elapsedTime);
-
-
-                //WelcomeForm = new WelcomeForm();
-                //WelcomeForm.Show();
 
                 Application.Run(MainWindow);
                 ShutDown();
