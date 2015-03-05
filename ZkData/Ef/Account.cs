@@ -545,7 +545,7 @@ namespace ZkData
 
         public void SetName(string value)
         {
-            if (!string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(value))
+            if (!string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(value) && Name!=value)
             {
                 List<string> aliases = null;
                 if (!string.IsNullOrEmpty(Aliases)) aliases = new List<string>(Aliases.Split(','));

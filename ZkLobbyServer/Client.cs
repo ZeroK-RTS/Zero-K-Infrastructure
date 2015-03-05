@@ -424,6 +424,8 @@ namespace ZkLobbyServer
                             {
                                 acc = new Account() { Name = register.Name };
                                 acc.SetPasswordHashed(register.PasswordHash);
+                                acc.SetName(register.Name);
+                                acc.SetAvatar();
                                 db.Accounts.Add(acc);
                                 db.SaveChanges();
 

@@ -64,9 +64,9 @@ namespace Springie.autohost
             string version = config.SpringVersion ?? Program.main.Config.SpringVersion ?? GlobalConst.DefaultEngineOverride;
             springPaths = new SpringPaths(Program.main.paths.GetEngineFolderByVersion(version), Program.main.Config.DataDir);
             
-            Program.main.paths.SpringVersionChanged += (s, e) =>
+            springPaths.SpringVersionChanged += (s, e) =>
                 {
-                    if (!String.IsNullOrEmpty(requestedEngineChange) && requestedEngineChange == Program.main.paths.SpringVersion) {
+                    if (!String.IsNullOrEmpty(requestedEngineChange) && requestedEngineChange == springPaths.SpringVersion) {
                         config.SpringVersion = requestedEngineChange;
                         springPaths.SetEnginePath(Program.main.paths.GetEngineFolderByVersion(requestedEngineChange));
                         requestedEngineChange = null;
@@ -311,16 +311,16 @@ namespace Springie.autohost
                     ComListMods(e, words);
                     break;
 
+                case "voteboss":
+                    ComVoteBoss(e, words);
+                    break;
+
                 case "help":
                     ComHelp(e, words);
                     break;
 
                 case "map":
                     ComMap(e, words);
-                    break;
-
-                case "admins":
-                    ComAdmins(e, words);
                     break;
 
                 case "start":
@@ -422,10 +422,6 @@ namespace Springie.autohost
                     ComRehost(e, words);
                     break;
 
-                //case "voterehost":
-                //    StartVote(new VoteRehost(tas, spring, this), e, words);
-                //    break;
-
                 case "random":
                     ComRandom(e, words);
                     break;
@@ -436,10 +432,6 @@ namespace Springie.autohost
 
                 case "say":
                     ComSay(e, words);
-                    break;
-
-                case "id":
-                    ComTeam(e, words);
                     break;
 
                 case "team":
@@ -481,10 +473,6 @@ namespace Springie.autohost
 
                 case "boss":
                     ComBoss(e, words);
-                    break;
-
-                case "voteboss":
-                    StartVote(new VoteBoss(tas, spring, this), e, words);
                     break;
 
                 case "setpassword":
@@ -667,7 +655,7 @@ namespace Springie.autohost
             //cache.GetMap(mapname, (m, x, y, z) => { mapi = m; }, (e) => { }, springPaths.SpringVersion);
             //int mint, maxt;
             if (!springPaths.HasEngineVersion(engine)) {
-                Program.main.Downloader.GetAndSwitchEngine(engine);
+                Program.main.Downloader.GetAndSwitchEngine(engine,springPaths);
             } else {
                 springPaths.SetEnginePath(springPaths.GetEngineFolderByVersion(engine));
             }
