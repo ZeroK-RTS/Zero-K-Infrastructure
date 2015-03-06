@@ -10,43 +10,42 @@ namespace ZeroKLobby.MicroLobby
 		public string LoginValue {
             get
             {
-                if (!CanRegister) return tbLogin.Text;
-                else return rgName.Text;
+                return tbLogin.Text;
             } 
         }
 
 		public string PasswordValue { 
             get {
-                if (!CanRegister) return tbPassword.Text;
-                else return rgPassword.Text;;
+                return tbPassword.Text;
             }
         }
 
 	    protected override void OnPaintBackground(PaintEventArgs e)
 	    {
-            base.OnPaintBackground(e);
+            //base.OnPaintBackground(e);
             FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, DisplayRectangle, FrameBorderRenderer.StyleType.Shraka);
 	    }
 
-	    public bool CanRegister { get; private set; }
 
-		public LoginForm(bool register = false)
+		public LoginForm()
 		{
             InitializeComponent();
-            if ((string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) && string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) || register) tabControl1.SelectedTab = tabPage2; // register as primary no data about pass and name
-            tbLogin.Text = Program.Conf.LobbyPlayerName;
-		    Program.SteamHandler.SteamHelper.SteamOnline += SteamApiOnSteamOnline;
-            rgName.Text = Program.SteamHandler.SteamName;
-			tbPassword.Text = Program.Conf.LobbyPlayerPassword;
 
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
-		}
+            tbLogin.Text = Program.Conf.LobbyPlayerName;
+		    if (string.IsNullOrEmpty(tbLogin.Text)) {
+		        tbLogin.Text = Program.SteamHandler.SteamName;
+                Program.SteamHandler.SteamHelper.SteamOnline += SteamApiOnSteamOnline;
+		    }
+		    tbPassword.Text = Program.Conf.LobbyPlayerPassword;
+        }
 
 	    void SteamApiOnSteamOnline()
 	    {
 	        Program.MainWindow.InvokeFunc(() =>
 	        {
-	            rgName.Text = Program.SteamHandler.SteamName;
+	            if (string.IsNullOrEmpty(tbLogin.Text)) {
+	                tbLogin.Text = Program.SteamHandler.SteamName;
+	            }
 	            Program.SteamHandler.SteamHelper.SteamOnline -= SteamApiOnSteamOnline;
 	        });
 	    }
@@ -57,12 +56,6 @@ namespace ZeroKLobby.MicroLobby
 			Close();
 		}
 
-		void btnRegister_Click(object sender, EventArgs e)
-		{
-			DialogResult = DialogResult.OK;
-			CanRegister = true;
-			Close();
-		}
 
 		void btnSubmit_Click(object sender, EventArgs e)
 		{

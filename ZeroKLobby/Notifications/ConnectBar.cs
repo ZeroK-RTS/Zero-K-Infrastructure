@@ -13,7 +13,6 @@ namespace ZeroKLobby.Notifications
 	/// </summary>
 	public class ConnectBar: UserControl
 	{
-		bool canRegister = false;
 	    TasClient client;
 
 		Label lbState;
@@ -28,7 +27,6 @@ namespace ZeroKLobby.Notifications
 	        client = tasClient;
 
 	        client.ConnectionLost += (s, e) => {
-	            canRegister = false;
 	            {
 	                if (!client.WasDisconnectRequested) lbState.Text = "disconnected due to network problem, autoreconnecting...";
 	                else {
@@ -39,22 +37,21 @@ namespace ZeroKLobby.Notifications
 	        };
 
 	        client.Connected += (s, e) => {
-	            canRegister = false;
 	            lbState.Text = "Connected, logging in ...";
-	            if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) LoginWithDialog("Please enter your name and password", true);
+	            if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) LoginWithDialog("Please enter your name and password");
 	            else client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
 	        };
 
 	        client.LoginAccepted += (s, e) => { lbState.Text = client.UserName; };
 
 	        client.LoginDenied += (s, e) => {
-	            if (e.ResultCode == LoginResponse.Code.InvalidName && !string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword) && canRegister) {
+	            if (e.ResultCode == LoginResponse.Code.InvalidName && !string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) {
 	                lbState.Text = "Registering new account";
 	                client.Register(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
-	            } else LoginWithDialog(string.Format("Login denied: {0} {1}", e.ResultCode, e.Reason), false);
+	            } else LoginWithDialog(string.Format("Login denied: {0} {1}", e.ResultCode, e.Reason));
 	        };
 
-	        client.RegistrationDenied += (s, e) => LoginWithDialog(string.Format("Registration denied: {0} {1}", e.ResultCode.Description(), e.Reason), true);
+	        client.RegistrationDenied += (s, e) => LoginWithDialog(string.Format("Registration denied: {0} {1}", e.ResultCode.Description(), e.Reason));
 
 	        client.RegistrationAccepted += (s, e) => client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
 	    }
@@ -165,33 +162,26 @@ namespace ZeroKLobby.Notifications
 
 		}
 
-	    void LoginWithDialog(string text, bool register = false)
+	    void LoginWithDialog(string text)
 		{
 			do
 			{
-                var loginForm = new LoginForm(register);
+                var loginForm = new LoginForm();
 				loginForm.InfoText = text;
-				if (loginForm.ShowDialog() == DialogResult.Cancel) 
+			    //loginForm.Parent = this;
+                if (loginForm.ShowDialog() == DialogResult.Cancel) 
 				{
 					tasClientConnectCalled = false;
 					client.RequestDisconnect();
 					lbState.Text = "Login cancelled, press button on left to login again";
 					return;
 				}
-				canRegister = loginForm.CanRegister;
 				Program.Conf.LobbyPlayerName = loginForm.LoginValue;
 				Program.Conf.LobbyPlayerPassword = loginForm.PasswordValue;
 				if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) MessageBox.Show("Please fill player name and password", "Missing information", MessageBoxButtons.OK, MessageBoxIcon.Information); 
 			} while (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword));
 			Program.SaveConfig();
-			if (canRegister)
-			{
-			  client.Register(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
-			}
-			else
-			{
-			  client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
-			}
+    	    client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
 		}
 
         private void btnLogout_Click(object sender, System.EventArgs e)
