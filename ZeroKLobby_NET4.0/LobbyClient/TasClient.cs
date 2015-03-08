@@ -78,7 +78,7 @@ namespace LobbyClient
         {
             try {
                 dynamic obj = CommandJsonSerializer.DeserializeLine(line);
-                await Process(obj);
+                await (Task)Process(obj); //explicit specify as Task<> to fix "GetAwaiter() not defined". Reference: http://stackoverflow.com/questions/11853812/task-does-not-contain-a-definition-for-getawaiter
             } catch (Exception ex) {
                 Trace.TraceError("Error processing line {0} : {1}", line, ex);
             }
