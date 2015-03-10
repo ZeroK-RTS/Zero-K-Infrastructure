@@ -106,11 +106,12 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             	}
             	
             	const char nullChar = '\0';
+                const char whiteSpace = ' ';
             	string engineName = "";
             	int i=24;
                 while(i<firstLine.Length)
                 {
-                    if (firstLine[i] == nullChar)
+                    if (firstLine[i] == nullChar || firstLine[i] == whiteSpace)
                         break;
                     engineName = engineName + firstLine[i];
                     i++;
