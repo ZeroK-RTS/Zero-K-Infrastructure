@@ -135,6 +135,11 @@
       <DependentUpon>PromptForm.cs</DependentUpon>
     </Compile>
     <Compile Include="MicroForms\UnitSyncRetryPrompt.cs" />
+    <Compile Include="MicroLobby\ExtrasTab\LocalReplay.cs" />
+    <Compile Include="MicroLobby\ExtrasTab\LocalReplay.Designer.cs">
+      <DependentUpon>LocalReplay.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\ExtrasTab\ReplayListItem.cs" />
     <Compile Include="MicroLobby\ExtrasTab\TableReader.cs" />
     <Compile Include="MicroLobby\ExtrasTab\SkirmishControlTool.cs" />
     <Compile Include="MicroForms\UnitSyncUploadPrompt.cs" />
@@ -478,6 +483,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\BattleChatControl.resx">
       <DependentUpon>BattleChatControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\ExtrasTab\LocalReplay.resx">
+      <DependentUpon>LocalReplay.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\ExtrasTab\SkirmishControl.resx">
       <DependentUpon>SkirmishControl.cs</DependentUpon>
