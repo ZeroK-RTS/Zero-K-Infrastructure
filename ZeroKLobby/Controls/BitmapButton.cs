@@ -19,14 +19,16 @@ namespace ZeroKLobby
             ForeColor = Color.White;
             Cursor = Cursors.Hand;
             BackgroundImage = null;
-            FlatStyle = FlatStyle.Flat;
             BackgroundImageLayout = ImageLayout.None;
             DoubleBuffered = true;
             FlatAppearance.BorderSize = 0;
             FlatAppearance.MouseDownBackColor = Color.Transparent;
             FlatAppearance.MouseOverBackColor = Color.Transparent;
-
+            FlatAppearance.CheckedBackColor = Color.Transparent;
+            FlatStyle = FlatStyle.Flat;
+            
             SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+            SetStyle(ControlStyles.Selectable,false);
 
             ButtonStyle = FrameBorderRenderer.StyleType.DarkHive;
             SoundType = SoundPalette.SoundType.Click;
@@ -71,12 +73,16 @@ namespace ZeroKLobby
             base.OnMouseDown(mevent);
         }
 
-        protected override void OnMouseClick(MouseEventArgs e)
+
+        /// <summary>
+        /// Disable border when button is default button of form
+        /// </summary>
+        public override void NotifyDefault(bool value)
         {
-            base.OnMouseClick(e);
+            //base.NotifyDefault(value);
         }
 
-      
+
         protected override void OnPaint(PaintEventArgs pevent)
         {
             BackgroundImage =  FrameBorderRenderer.Instance.GetImageWithCache(DisplayRectangle, ButtonStyle, mouseOver ? FrameBorderRenderer.StyleType.DarkHiveHover : (FrameBorderRenderer.StyleType?)null);

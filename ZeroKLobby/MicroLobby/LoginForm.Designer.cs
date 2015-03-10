@@ -34,6 +34,8 @@
             this.tbPassword = new System.Windows.Forms.TextBox();
             this.lbInfo = new System.Windows.Forms.Label();
             this.btnCancel = new ZeroKLobby.BitmapButton();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnSubmit
@@ -46,25 +48,25 @@
             this.btnSubmit.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnSubmit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSubmit.ForeColor = System.Drawing.Color.White;
-            this.btnSubmit.Location = new System.Drawing.Point(12, 188);
+            this.btnSubmit.Location = new System.Drawing.Point(70, 255);
             this.btnSubmit.Name = "btnSubmit";
-            this.btnSubmit.Size = new System.Drawing.Size(107, 23);
+            this.btnSubmit.Size = new System.Drawing.Size(104, 44);
             this.btnSubmit.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.btnSubmit.TabIndex = 3;
-            this.btnSubmit.Text = "Login";
+            this.btnSubmit.Text = "OK";
             this.btnSubmit.UseVisualStyleBackColor = true;
             this.btnSubmit.Click += new System.EventHandler(this.btnSubmit_Click);
             // 
             // tbLogin
             // 
-            this.tbLogin.Location = new System.Drawing.Point(112, 40);
+            this.tbLogin.Location = new System.Drawing.Point(237, 123);
             this.tbLogin.Name = "tbLogin";
             this.tbLogin.Size = new System.Drawing.Size(146, 20);
             this.tbLogin.TabIndex = 1;
             // 
             // tbPassword
             // 
-            this.tbPassword.Location = new System.Drawing.Point(112, 113);
+            this.tbPassword.Location = new System.Drawing.Point(237, 184);
             this.tbPassword.Name = "tbPassword";
             this.tbPassword.Size = new System.Drawing.Size(146, 20);
             this.tbPassword.TabIndex = 2;
@@ -72,13 +74,13 @@
             // 
             // lbInfo
             // 
-            this.lbInfo.AutoSize = true;
             this.lbInfo.ForeColor = System.Drawing.Color.Red;
-            this.lbInfo.Location = new System.Drawing.Point(38, 9);
+            this.lbInfo.Location = new System.Drawing.Point(29, 20);
             this.lbInfo.Name = "lbInfo";
-            this.lbInfo.Size = new System.Drawing.Size(29, 13);
+            this.lbInfo.Size = new System.Drawing.Size(414, 51);
             this.lbInfo.TabIndex = 5;
             this.lbInfo.Text = "Error";
+            this.lbInfo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnCancel
             // 
@@ -90,14 +92,32 @@
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancel.ForeColor = System.Drawing.Color.White;
-            this.btnCancel.Location = new System.Drawing.Point(174, 188);
+            this.btnCancel.Location = new System.Drawing.Point(286, 255);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.Size = new System.Drawing.Size(97, 44);
             this.btnCancel.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.btnCancel.TabIndex = 4;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(109, 126);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(65, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Login name:";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(121, 187);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(56, 13);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "Password:";
             // 
             // LoginForm
             // 
@@ -105,7 +125,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.DimGray;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(287, 221);
+            this.ClientSize = new System.Drawing.Size(482, 331);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.lbInfo);
             this.Controls.Add(this.tbLogin);
             this.Controls.Add(this.tbPassword);
@@ -131,5 +153,7 @@
         private System.Windows.Forms.Label lbInfo;
                 private BitmapButton btnSubmit;
                 private BitmapButton btnCancel;
+                private System.Windows.Forms.Label label1;
+                private System.Windows.Forms.Label label2;
 	}
 }

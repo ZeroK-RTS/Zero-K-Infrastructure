@@ -29,7 +29,11 @@ namespace ZeroKLobby.MicroLobby
 
 		public LoginForm()
 		{
+            Font = Config.GeneralFontBig;
+
             InitializeComponent();
+		    
+
 
             tbLogin.Text = Program.Conf.LobbyPlayerName;
 		    if (string.IsNullOrEmpty(tbLogin.Text)) {
@@ -67,5 +71,7 @@ namespace ZeroKLobby.MicroLobby
 		{
             Icon = ZklResources.ZkIcon;
         }
+
+  
 	}
 }

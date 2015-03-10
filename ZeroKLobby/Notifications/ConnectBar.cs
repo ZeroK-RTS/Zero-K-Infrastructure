@@ -38,7 +38,7 @@ namespace ZeroKLobby.Notifications
 
 	        client.Connected += (s, e) => {
 	            lbState.Text = "Connected, logging in ...";
-	            if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) LoginWithDialog("Please enter your name and password");
+	            if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) LoginWithDialog("Please choose your name and password");
 	            else client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
 	        };
 
