@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace ZeroKLobby.MicroLobby
@@ -32,8 +33,12 @@ namespace ZeroKLobby.MicroLobby
             Font = Config.GeneralFontBig;
 
             InitializeComponent();
-		    
 
+            var textBackColor = Color.FromArgb(255, 0, 100, 140);
+		   
+		    lbInfo.BackColor = textBackColor;
+		    label1.BackColor = textBackColor;
+		    label2.BackColor = textBackColor;
 
             tbLogin.Text = Program.Conf.LobbyPlayerName;
 		    if (string.IsNullOrEmpty(tbLogin.Text)) {

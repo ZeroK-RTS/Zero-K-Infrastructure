@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.lbMainPageTitle = new System.Windows.Forms.Label();
+            this.connectBar = new ZeroKLobby.Notifications.ConnectBar();
             this.btnBack = new ZeroKLobby.BitmapButton();
             this.panelRight = new ZeroKLobby.Controls.RightPanel();
             this.btnHide = new ZeroKLobby.BitmapButton();
@@ -40,7 +41,6 @@
             this.btnWindowed = new ZeroKLobby.BitmapButton();
             this.btnSnd = new ZeroKLobby.BitmapButton();
             this.notifySection1 = new SpringDownloader.Notifications.NotifySection();
-            this.connectBar = new ZeroKLobby.Notifications.ConnectBar();
             this.panelRight.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -65,6 +65,17 @@
             this.lbMainPageTitle.TabIndex = 13;
             this.lbMainPageTitle.Text = "Page title";
             this.lbMainPageTitle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // connectBar
+            // 
+            this.connectBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.connectBar.BackColor = System.Drawing.Color.Transparent;
+            this.connectBar.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+            this.connectBar.Location = new System.Drawing.Point(0, 754);
+            this.connectBar.MinimumSize = new System.Drawing.Size(300, 60);
+            this.connectBar.Name = "connectBar";
+            this.connectBar.Size = new System.Drawing.Size(364, 60);
+            this.connectBar.TabIndex = 14;
             // 
             // btnBack
             // 
@@ -204,15 +215,6 @@
             this.notifySection1.Name = "notifySection1";
             this.notifySection1.Size = new System.Drawing.Size(1386, 0);
             this.notifySection1.TabIndex = 0;
-            // 
-            // connectBar
-            // 
-            this.connectBar.BackColor = System.Drawing.Color.Transparent;
-            this.connectBar.Location = new System.Drawing.Point(0, 754);
-            this.connectBar.MinimumSize = new System.Drawing.Size(300, 60);
-            this.connectBar.Name = "connectBar";
-            this.connectBar.Size = new System.Drawing.Size(364, 60);
-            this.connectBar.TabIndex = 14;
             // 
             // MainWindow
             // 

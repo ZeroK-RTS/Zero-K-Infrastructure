@@ -74,6 +74,7 @@
             // 
             // lbInfo
             // 
+            this.lbInfo.BackColor = System.Drawing.Color.Transparent;
             this.lbInfo.ForeColor = System.Drawing.Color.Red;
             this.lbInfo.Location = new System.Drawing.Point(29, 20);
             this.lbInfo.Name = "lbInfo";
@@ -104,6 +105,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
+            this.label1.BackColor = System.Drawing.Color.Transparent;
             this.label1.Location = new System.Drawing.Point(109, 126);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(65, 13);
@@ -113,6 +115,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
+            this.label2.BackColor = System.Drawing.Color.Transparent;
             this.label2.Location = new System.Drawing.Point(121, 187);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(56, 13);

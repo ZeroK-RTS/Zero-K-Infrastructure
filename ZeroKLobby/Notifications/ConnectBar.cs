@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using LobbyClient;
 using ZeroKLobby.MicroLobby;
@@ -21,6 +22,7 @@ namespace ZeroKLobby.Notifications
         private BitmapButton btnProfile;
         private BitmapButton btnLogout;
 		readonly object tryConnectLocker = new object();
+	    PlayerListItem playerItem;
 
 	    public void Init(TasClient tasClient)
 	    {
@@ -28,7 +30,7 @@ namespace ZeroKLobby.Notifications
 
 	        client.ConnectionLost += (s, e) => {
 	            {
-	                if (!client.WasDisconnectRequested) lbState.Text = "disconnected due to network problem, autoreconnecting...";
+	                if (!client.WasDisconnectRequested) lbState.Text = "disconnected, reconnecting...";
 	                else {
 	                    lbState.Text = "disconnected";
 	                    tasClientConnectCalled = false;
@@ -37,18 +39,31 @@ namespace ZeroKLobby.Notifications
 	        };
 
 	        client.Connected += (s, e) => {
+                btnLogout.Text = "Logout";
 	            lbState.Text = "Connected, logging in ...";
-	            if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) LoginWithDialog("Please choose your name and password");
+	            if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) LoginWithDialog("Please choose your name and password.\nThis will create a new account if it does not exist.");
 	            else client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
 	        };
 
-	        client.LoginAccepted += (s, e) => { lbState.Text = client.UserName; };
+	        client.LoginAccepted += (s, e) => {
+	            lbState.Text = client.UserName;
+	            pictureBox1.Image = Program.ServerImages.GetAvatarImage(client.MyUser);
+	            playerItem = new PlayerListItem() { UserName = client.UserName };
+	        };
 
 	        client.LoginDenied += (s, e) => {
 	            if (e.ResultCode == LoginResponse.Code.InvalidName && !string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) {
-	                lbState.Text = "Registering new account";
-	                client.Register(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
-	            } else LoginWithDialog(string.Format("Login denied: {0} {1}", e.ResultCode, e.Reason));
+	                if (
+	                    MessageBox.Show(string.Format("Account '{0}' does not exist yet, do you want to create it?", Program.Conf.LobbyPlayerName), "Confirm account registration",
+	                        MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+	                    lbState.Text = "Registering a new account";
+	                    client.Register(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
+	                } else {
+                        LoginWithDialog(string.Format("Login denied: {0} {1}", e.ResultCode.Description(), e.Reason));
+	                }
+	            } else {
+	                LoginWithDialog(string.Format("Login denied: {0} {1}\nChoose a different name to create new account.", e.ResultCode.Description(), e.Reason));
+	            }
 	        };
 
 	        client.RegistrationDenied += (s, e) => LoginWithDialog(string.Format("Registration denied: {0} {1}", e.ResultCode.Description(), e.Reason));
@@ -61,6 +76,7 @@ namespace ZeroKLobby.Notifications
 		{
 			InitializeComponent();
 	        this.Font = Config.GeneralFont;
+	        btnProfile.Image = Buttons.link.GetResized(16, 16);
 	        //this.ForeColor = Program.Conf.TextColor;
 		}
 
@@ -116,6 +132,7 @@ namespace ZeroKLobby.Notifications
             this.btnLogout.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.btnLogout.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnLogout.ForeColor = System.Drawing.Color.White;
+            this.btnLogout.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnLogout.Location = new System.Drawing.Point(154, 38);
             this.btnLogout.Name = "btnLogout";
             this.btnLogout.Size = new System.Drawing.Size(75, 23);
@@ -137,6 +154,7 @@ namespace ZeroKLobby.Notifications
             this.btnProfile.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.btnProfile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnProfile.ForeColor = System.Drawing.Color.White;
+            this.btnProfile.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnProfile.Location = new System.Drawing.Point(73, 38);
             this.btnProfile.Name = "btnProfile";
             this.btnProfile.Size = new System.Drawing.Size(75, 23);
@@ -171,9 +189,7 @@ namespace ZeroKLobby.Notifications
 			    //loginForm.Parent = this;
                 if (loginForm.ShowDialog() == DialogResult.Cancel) 
 				{
-					tasClientConnectCalled = false;
-					client.RequestDisconnect();
-					lbState.Text = "Login cancelled, press button on left to login again";
+			        DoLogout();
 					return;
 				}
 				Program.Conf.LobbyPlayerName = loginForm.LoginValue;
@@ -186,10 +202,20 @@ namespace ZeroKLobby.Notifications
 
         private void btnLogout_Click(object sender, System.EventArgs e)
         {
-            Program.TasClient.RequestDisconnect();
-            Program.Conf.LobbyPlayerName = "";
-            Program.MainWindow.connectBar.TryToConnectTasClient();
+            if (client.IsLoggedIn) DoLogout();
+            else TryToConnectTasClient();
         }
+
+	    public void DoLogout()
+	    {
+            tasClientConnectCalled = false;
+            client.RequestDisconnect();
+	        Program.Conf.LobbyPlayerName = "";
+            lbState.Text = "Press button to login again";
+            btnLogout.Text = "Login";
+	        pictureBox1.Image = null;
+	        playerItem = null;
+	    }
 
         private void btnProfile_Click(object sender, System.EventArgs e)
         {
@@ -197,5 +223,17 @@ namespace ZeroKLobby.Notifications
         }
 
 
+	    protected override void OnPaint(PaintEventArgs e)
+	    {
+	        if (playerItem != null) {
+	            lbState.Visible = false;
+	        } else lbState.Visible = true;
+            base.OnPaint(e);
+	        if (playerItem != null) {
+	            playerItem.DrawPlayerLine(e.Graphics, lbState.Bounds, Program.Conf.TextColor, false,false);
+	        }
+            
+            
+	    }
 	}
 }

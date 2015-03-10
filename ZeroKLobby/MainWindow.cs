@@ -100,7 +100,7 @@ namespace ZeroKLobby
 
             Spring.AnySpringStarted += (sender, args) => { if (waveOut != null) waveOut.Stop(); };
 
-            //btnWindowed_Click(this, EventArgs.Empty); // switch to fullscreen
+            btnWindowed_Click(this, EventArgs.Empty); // switch to fullscreen
         }
 
         void MainWindow_Load(object sender, EventArgs e)
@@ -125,7 +125,7 @@ namespace ZeroKLobby
                 audioReader = new Mp3FileReader(new MemoryStream(Sounds.menu_music_ROM));
                 waveOut.Init(audioReader);
 
-                //btnSnd_Click(this, EventArgs.Empty);
+                btnSnd_Click(this, EventArgs.Empty);
             }
         }
 

@@ -42,6 +42,6 @@ namespace ZeroKLobby.MainPages
         }
 
         public string Title { get { return null; } }
-        public Image MainWindowBgImage { get { return BgImages.blue_galaxy; }}
+        public Image MainWindowBgImage { get { return BgImages.bg_battle; }}
     }
 }

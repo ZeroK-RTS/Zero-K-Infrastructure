@@ -157,9 +157,7 @@ namespace ZeroKLobby
                 switch (command)
                 {
                     case "logout":
-                        Program.TasClient.RequestDisconnect();
-                        Program.Conf.LobbyPlayerName = "";
-                        Program.MainWindow.connectBar.TryToConnectTasClient();
+                        Program.MainWindow.connectBar.DoLogout();
                         break;
 
                     case "start_mission":
