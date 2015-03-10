@@ -88,6 +88,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             char escapeCharSign = config.escapeCharSign;
             bool isEscapeCharNow = false;
             bool detectedUnspacedChar = false;
+            bool capture2isByStringChar = false;
             
             bool detectedEqualSign = false;
             char equalSign = config.equalSign;
@@ -190,6 +191,15 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     {
                         char newChar = text[i];
                         
+                        if (detectedEqualSign)
+                        {
+                            if(!capture2isByStringChar)
+                            {
+                                capturedValue2="";
+                                capture2isByStringChar=true;
+                            }
+                        }
+                        
                         if (isEscapeCharNow && text[i]=='n') //newline
                             newChar = '\n';
                         isEscapeCharNow = false;
@@ -213,8 +223,8 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 {
                     detectedUnspacedChar = false;
                     
-                    i++;
-                    continue;
+                    //i++;
+                    //continue;
                 }
                 
                 //Newline
@@ -300,12 +310,13 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     var list = ParseTable(config,i,text,filePath,out offsetIn);
                     capturedObject1=list;
                     
-                    bool saved = SaveKeyValuePair(prefix,contentIndex,capturedValue1,capturedValue2,capturedObject1,filePath,detectedEqualSign,ref contentList);
+                    bool saved = SaveKeyValuePair(prefix,contentIndex,capturedValue1,capturedValue2,capturedObject1,capture2isByStringChar,filePath,detectedEqualSign,ref contentList);
                     
                     capturedValue1 = "";
 			        capturedValue2 = "";
 			        capturedObject1 = null;
 			        detectedEqualSign = false;
+			        capture2isByStringChar=false;
 			        
 			        if (saved) contentIndex++;
                     
@@ -314,7 +325,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 }
                 else if (text[i]==tableClose)
                 {                 
-                    SaveKeyValuePair(prefix,contentIndex,capturedValue1,capturedValue2,capturedObject1,filePath,detectedEqualSign,ref contentList);
+                    SaveKeyValuePair(prefix,contentIndex,capturedValue1,capturedValue2,capturedObject1,capture2isByStringChar,filePath,detectedEqualSign,ref contentList);
                     
                     inTable = false;
                     offset = (i-startIndex)+1; //is out
@@ -329,12 +340,13 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 //content separator, ","
                 if (text[i]==contentSeparator)
                 {                  
-                    bool saved = SaveKeyValuePair(prefix,contentIndex,capturedValue1,capturedValue2,capturedObject1,filePath,detectedEqualSign,ref contentList);
+                    bool saved = SaveKeyValuePair(prefix,contentIndex,capturedValue1,capturedValue2,capturedObject1,capture2isByStringChar,filePath,detectedEqualSign,ref contentList);
                             
 			        capturedValue1 = "";
 			        capturedValue2 = "";
 			        capturedObject1 = null;
 			        detectedEqualSign = false;
+			        capture2isByStringChar=false;
 			        
 			        if (saved) contentIndex++;
 	        
@@ -377,9 +389,13 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 capturedValue1 = capturedValue1.TrimEnd(charToUndo);
         }
 
-        private static bool SaveKeyValuePair(String prefix,int contentIndex,String capturedValue1,String capturedValue2,Object capturedObject1,String filePath, bool detectedEqualSign, ref Dictionary<String,Object> contentList)
+        private static bool SaveKeyValuePair(String prefix,int contentIndex,String capturedValue1,String capturedValue2,Object capturedObject1,bool capture2isByStringChar, String filePath, bool detectedEqualSign, ref Dictionary<String,Object> contentList)
         {
         	capturedValue1 = capturedValue1.Trim(new char[2]{'[',']'});
+        	capturedValue1 = capturedValue1.Trim();
+        	
+        	if (!capture2isByStringChar)
+        	    capturedValue2 = capturedValue2.Trim();
         	
         	if (!detectedEqualSign) //didn't explicitly mention key valu pair
             {
