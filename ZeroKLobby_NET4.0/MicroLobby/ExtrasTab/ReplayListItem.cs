@@ -26,6 +26,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         public string gameName;
         public string hostName;
         public bool haveBeenUpdated;
+        public bool crash;
 
         public int Height { get { return height; } set { height = value; } }
 
