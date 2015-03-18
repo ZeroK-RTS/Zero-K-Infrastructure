@@ -385,7 +385,8 @@ namespace ZeroKLobby
                 return;
 
             // download primary game after rapid list have been downloaded and MainWindow is visible
-            Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion);
+            if (!Utils.VerifySpringInstalled(false))
+                Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion);
             var defaultTag = KnownGames.GetDefaultGame().RapidTag;
             if (!Downloader.PackageDownloader.SelectedPackages.Contains(defaultTag))
             {
