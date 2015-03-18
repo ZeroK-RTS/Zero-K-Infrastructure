@@ -177,13 +177,6 @@ namespace ZeroKLobby
 
 
 
-                if (Conf.IsFirstRun)
-                {
-                    Utils.CreateDesktopShortcut();
-                    if (Environment.OSVersion.Platform != PlatformID.Unix)
-                        Utils.RegisterProtocol();
-                }
-
                 SpringPaths = new SpringPaths(null, writableFolderOverride: contentDir);
                 SpringPaths.MakeFolders();
                 SpringPaths.SetEnginePath(Utils.MakePath(SpringPaths.WritableDirectory, "engine", ZkData.GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion));
@@ -227,6 +220,17 @@ namespace ZeroKLobby
                     }
                 }
                 catch (AbandonedMutexException) { }
+
+                if (Conf.IsFirstRun)
+                {
+                    DialogResult result = MessageBox.Show("Create a desktop icon for Zero-K?", "Zero-K", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.Yes) 
+                    {
+                        Utils.CreateDesktopShortcut();
+                    }
+                    if (Environment.OSVersion.Platform != PlatformID.Unix)
+                        Utils.RegisterProtocol();
+                }
 
                 FriendManager = new FriendManager();
                 AutoJoinManager = new AutoJoinManager();
@@ -381,7 +385,8 @@ namespace ZeroKLobby
                 return;
 
             // download primary game after rapid list have been downloaded and MainWindow is visible
-            Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion);
+            if (!Utils.VerifySpringInstalled(false))
+                Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion);
             var defaultTag = KnownGames.GetDefaultGame().RapidTag;
             if (!Downloader.PackageDownloader.SelectedPackages.Contains(defaultTag))
             {

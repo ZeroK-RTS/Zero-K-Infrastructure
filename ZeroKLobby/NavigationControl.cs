@@ -336,6 +336,7 @@ namespace ZeroKLobby
         {
             Program.TasClient.RequestDisconnect();
             Program.Conf.LobbyPlayerName = "";
+            Program.Conf.LobbyPlayerPassword = "";
         }
 
 

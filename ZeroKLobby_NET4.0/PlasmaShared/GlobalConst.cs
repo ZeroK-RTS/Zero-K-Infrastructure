@@ -123,7 +123,7 @@ namespace ZkData
         public const int CommanderProfileCount = 6;
         public const int NumCommanderLevels = 5;
 
-        public const string DefaultEngineOverride = "91.0"; // hack for ZKL using tasclient's engine - override here for missions etc
+        public const string DefaultEngineOverride = "98.0.1-398-g80e6cfa"; // hack for ZKL using tasclient's engine - override here for missions etc
 
         public const int MinDurationForXP = 240;    // seconds
         public const int MinDurationForElo = 60;
@@ -181,7 +181,7 @@ namespace ZkData
         public const bool CanChangeClanFaction = true;
         public const double MaxPwEloDifference = 120;
 
-        public const PlanetWarsModes PlanetWarsMode = PlanetWarsModes.Running;
+        public const PlanetWarsModes PlanetWarsMode = PlanetWarsModes.AllOffline;
 
         public const string MetalIcon = "/img/luaui/ibeam.png";
         public const string EnergyIcon = "/img/luaui/energy.png";

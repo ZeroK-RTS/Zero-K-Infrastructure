@@ -16,7 +16,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             Controls.Add(toolTabs);
 
             toolTabs.AddTab("skirmish", "Skirmish", new SkirmishControl(), ZklResources.battle, "Custom battle against AI", 3);
-            //toolTabs.AddTab("mission", "Mission", new SkirmishControl(), ZklResources.battle, "not available yet", 2);
+            toolTabs.AddTab("history", "LocalReplay", new LocalReplay(),null, "replay from previous game", 2);
 
             toolTabs.SelectTab("skirmish");
             ResumeLayout();

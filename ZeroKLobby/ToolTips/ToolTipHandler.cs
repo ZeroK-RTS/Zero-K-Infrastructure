@@ -189,8 +189,11 @@ namespace ZeroKLobby
                         ny = mp.Y - tooltip.Height - 8;
                     }
 
-                    SetWindowPos(tooltip.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_ToolTipOption); //refresh tooltip's Z-order to be on top
-                    tooltip.SetDesktopLocation(nx, ny); //note: SetWindowPos() positioning won't work in Linux (so we shouldn't replace this with SetWindowPos)
+                    if (Environment.OSVersion.Platform != PlatformID.Unix)
+                    {
+                        SetWindowPos(tooltip.Handle, HWND_TOPMOST, 0, 0, 0,0, SWP_ToolTipOption); //refresh tooltip's Z-order to be on top
+                    }
+                    tooltip.SetDesktopLocation(nx, ny); 
 
                     var newSize = tooltip.GetTooltipSize();
                     if (newSize.HasValue && newSize.Value != tooltip.Size) tooltip.Size = newSize.Value;

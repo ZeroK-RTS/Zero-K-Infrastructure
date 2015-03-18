@@ -68,18 +68,25 @@ namespace PlasmaDownloader
             packageDownloader.Dispose();
         }
 
-        public Download GetAndSwitchEngine(string version) {
+        /// <summary>
+        /// Download requested Spring version, then call SetEnginePath() after finishes.
+        /// Parameter "forSpringPaths" allow you to set a custom SpringPath for which to call SetEnginePath() 
+        /// on behalf off (is useful for Autohost which run multiple Spring version but is sharing single downloader)
+        /// </summary>
+        public Download GetAndSwitchEngine(string version, SpringPaths forSpringPaths=null ) {
+            if (forSpringPaths == null) 
+                forSpringPaths = SpringPaths;
             lock (downloads) {
                 downloads.RemoveAll(x => x.IsAborted || x.IsComplete != null); // remove already completed downloads from list}
                 var existing = downloads.SingleOrDefault(x => x.Name == version);
                 if (existing != null) return existing;
 
                 if (SpringPaths.HasEngineVersion(version)) {
-                    SpringPaths.SetEnginePath(SpringPaths.GetEngineFolderByVersion(version));
+                    forSpringPaths.SetEnginePath(SpringPaths.GetEngineFolderByVersion(version));
                     return null;
                 }
                 else {
-                    var down = new EngineDownload(version, SpringPaths);
+                    var down = new EngineDownload(version, forSpringPaths);
                     downloads.Add(down);
                     DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down));
                     down.Start();

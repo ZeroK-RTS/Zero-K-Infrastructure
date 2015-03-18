@@ -253,7 +253,12 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     for (int i = 0; i < modCache.Count; i++) modList.Add(modCache[i].InternalName);
                     modCache_folder.Clear();
                     modCache_folder = SkirmishControlTool.GetPartialSddMods();
-                    for (int i = 0; i < modCache_folder.Count; i++) modList.Add(modCache_folder[i].Name + " " + modCache_folder[i].PrimaryModVersion);
+                    for (int i = 0; i < modCache_folder.Count; i++)
+                    {
+                        var version = modCache_folder[i].PrimaryModVersion;
+                        version = string.IsNullOrWhiteSpace(version) ? "" : " " + version;
+                        modList.Add(modCache_folder[i].Name + version);
+                    }
                     modList = SkirmishControlTool.SortListByVersionName(modList);
 
                     mapCache = Program.SpringScanner.GetAllMapResource();
@@ -964,7 +969,9 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 for(int i=0; i<modCache_folder.Count;i++)
                 {
                     var mod = modCache_folder[i];
-                    var modName = mod.Name + " " + mod.PrimaryModVersion;
+                    var version = modCache_folder[i].PrimaryModVersion;
+                    version = string.IsNullOrWhiteSpace(version) ? "" : " " + version;
+                    var modName = mod.Name + version;
                     if (gameName == modName)
                     {
 
