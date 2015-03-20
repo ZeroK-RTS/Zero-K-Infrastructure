@@ -48,7 +48,7 @@ namespace Springie.autohost
                                          3,
                                          " - forces game start inside game",
                                          8,
-                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }) { AllowSpecs = false});
+                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
             AddMissing(new CommandConfig("kick",
                                          3,
                                          "[<filters>..] - kicks a player",
@@ -57,7 +57,7 @@ namespace Springie.autohost
 
             AddMissing(new CommandConfig("split", 1, "<\"h\"/\"v\"> <percent> - draws with given direction and percentual size, e.g. !split h 15"));
 
-            AddMissing(new CommandConfig("transmit", 0, "Internal command transfer to ingame"));
+            AddMissing(new CommandConfig("transmit", 0, "Internal command transfer to ingame") { AllowSpecs = true});
 
             AddMissing(new CommandConfig("corners", 1, "<\"a\"/\"b\"> <percent> - draws corners (a or b mode differ in ordering), e.g. !corners a 15"));
 
@@ -112,7 +112,7 @@ namespace Springie.autohost
                                                      0,
                                                      " - starts a vote to resign game",
                                                      0,
-                                                     new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
+                                                     new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }) { AllowSpecs = true});
 
             AddMissing(new CommandConfig("vote",
                                          0,
@@ -146,7 +146,7 @@ namespace Springie.autohost
 
             AddMissing(new CommandConfig("team", 3, "<teamnumber> [<playername>..] - forces given player to a team"));
 
-            AddMissing(new CommandConfig("adduser", 0, "<pw> - technical command used for mid-game spectator join", 0, new[] { SayPlace.Battle, SayPlace.User }));
+            AddMissing(new CommandConfig("adduser", 0, "<pw> - technical command used for mid-game spectator join", 0, new[] { SayPlace.Battle, SayPlace.User }) { AllowSpecs = true});
 
             AddMissing(new CommandConfig("helpall", 0, "- lists all commands known to Springie (sorted by command level)", 5));
 
@@ -156,7 +156,7 @@ namespace Springie.autohost
                                          0,
                                          "- responds with basic springie information",
                                          5,
-                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Channel }));
+                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Channel }) { AllowSpecs = true});
 
             AddMissing(new CommandConfig("endvote", 3, "- ends current poll"));
 
@@ -182,7 +182,7 @@ namespace Springie.autohost
             AddMissing(new CommandConfig("spawn",
                                          -2,
                                          "<configs> - creates new autohost. Example: !spawn mod=ca:stable,title=My PWN game,password=secret",
-                                         0));
+                                         0) { AllowSpecs = true});
 
             AddMissing(new CommandConfig("setpassword", 3, "<newpassword> - sets server password (needs !rehost to apply)"));
 
@@ -199,7 +199,7 @@ namespace Springie.autohost
 
             AddMissing(new CommandConfig("voteboss", 2, "- deprecated. Use direct votes instead.", 0));
 
-            AddMissing(new CommandConfig("predict", 0, "predicts chances of victory", 0));
+            AddMissing(new CommandConfig("predict", 0, "predicts chances of victory", 0) { AllowSpecs = true});
 
             AddMissing(new CommandConfig("specafk", 2, "forces all AFK player to become spectators", 0));
 
@@ -223,7 +223,7 @@ namespace Springie.autohost
                                          {
                                              SayPlace.User, SayPlace.Battle, SayPlace.Game,
                                              SayPlace.Channel
-                                         }));
+                                         }) { AllowSpecs = true});
 
             AddMissing(new CommandConfig("saveboxes", 4, "- saves boxes for current map"));
             AddMissing(new CommandConfig("move", 4, "<where> - moves players to a new host"));
