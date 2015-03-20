@@ -202,7 +202,7 @@ namespace Springie.autohost
 
         public bool GetUserAdminStatus(TasSayEventArgs e) {
             if (!tas.ExistingUsers.ContainsKey(e.UserName)) return false;
-            return tas.ExistingUsers[e.UserName].IsZeroKAdmin;
+            return tas.ExistingUsers[e.UserName].IsAdmin;
         }
 
         public int GetUserLevel(TasSayEventArgs e) {
