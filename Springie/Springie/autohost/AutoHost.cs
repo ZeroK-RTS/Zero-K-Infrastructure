@@ -200,6 +200,11 @@ namespace Springie.autohost
     }*/
 
 
+        public bool GetUserAdminStatus(TasSayEventArgs e) {
+            if (!tas.ExistingUsers.ContainsKey(e.UserName)) return false;
+            return tas.ExistingUsers[e.UserName].IsAdmin;
+        }
+
         public int GetUserLevel(TasSayEventArgs e) {
             if (!tas.ExistingUsers.ContainsKey(e.UserName))
             {
@@ -233,7 +238,7 @@ namespace Springie.autohost
                     for (int i = 0; i < c.ListenTo.Length; i++) {
                         if (c.ListenTo[i] == e.Place) {
                             // command is only for nonspecs
-                            if (!c.AllowSpecs) if (tas.MyBattle == null || !tas.MyBattle.Users.Values.Any(x => x.LobbyUser.Name == e.UserName && !x.IsSpectator)) return false;
+                            if (!c.AllowSpecs && !GetUserAdminStatus(e)) if (tas.MyBattle == null || !tas.MyBattle.Users.Values.Any(x => x.LobbyUser.Name == e.UserName && !x.IsSpectator)) return false;
 
                             int reqLevel = c.Level;
                             int ulevel = GetUserLevel(e);
