@@ -11,7 +11,7 @@ namespace Springie.autohost
 
         public CommandList(AhConfig config)
         {
-            AddMissing(new CommandConfig("help", 0, " - lists all commands available specifically to you", 5));
+            AddMissing(new CommandConfig("help", 0, " - lists all commands available specifically to you", 5) { AllowSpecs = true});
 
             AddMissing(new CommandConfig("random",
                                          1,
@@ -29,7 +29,7 @@ namespace Springie.autohost
                                          1,
                                          "[<filters>..] - rings all unready or specific player(s), e.g. !ring - rings unready, !ring icho - rings Licho",
                                          5,
-                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
+                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }) { AllowSpecs = true});
 
             AddMissing(new CommandConfig("listmaps", 1, "[<filters>..] - lists maps on server, e.g. !listmaps altor div", 10));
 
@@ -148,7 +148,7 @@ namespace Springie.autohost
 
             AddMissing(new CommandConfig("adduser", 0, "<pw> - technical command used for mid-game spectator join", 0, new[] { SayPlace.Battle, SayPlace.User }) { AllowSpecs = true});
 
-            AddMissing(new CommandConfig("helpall", 0, "- lists all commands known to Springie (sorted by command level)", 5));
+            AddMissing(new CommandConfig("helpall", 0, "- lists all commands known to Springie (sorted by command level)", 5) { AllowSpecs = true});
 
             AddMissing(new CommandConfig("setengine", 3, "[version] - sets a new spring version", 2));
 
