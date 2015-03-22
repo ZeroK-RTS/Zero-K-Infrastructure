@@ -209,7 +209,7 @@ namespace Springie.autohost
             if (tas.MyBattle == null) return true;
             if (spring.IsRunning)  {
                 PlayerTeam user = spring.StartContext.Players.FirstOrDefault(x => x.Name == e.UserName && !x.IsSpectator);
-                return ((user != null) && !user.IsSpectator);
+                return ((user == null) || user.IsSpectator);
             } else {
                 return !tas.MyBattle.Users.Values.Any(x => x.LobbyUser.Name == e.UserName && !x.IsSpectator);
             }
