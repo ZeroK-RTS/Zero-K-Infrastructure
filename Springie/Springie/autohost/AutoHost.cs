@@ -205,6 +205,16 @@ namespace Springie.autohost
             return tas.ExistingUsers[e.UserName].IsAdmin;
         }
 
+        public bool GetUserIsSpectator (TasSayEventArgs e) {
+            if (tas.MyBattle == null) return true;
+            if (spring.IsRunning)  {
+                PlayerTeam user = spring.StartContext.Players.FirstOrDefault(x => x.Name == e.UserName && !x.IsSpectator);
+                return ((user != null) && !user.IsSpectator);
+            } else {
+                return !tas.MyBattle.Users.Values.Any(x => x.LobbyUser.Name == e.UserName && !x.IsSpectator);
+            }
+        }
+
         public int GetUserLevel(TasSayEventArgs e) {
             if (!tas.ExistingUsers.ContainsKey(e.UserName))
             {
@@ -238,7 +248,7 @@ namespace Springie.autohost
                     for (int i = 0; i < c.ListenTo.Length; i++) {
                         if (c.ListenTo[i] == e.Place) {
                             // command is only for nonspecs
-                            if (!c.AllowSpecs && !GetUserAdminStatus(e)) if (tas.MyBattle == null || !tas.MyBattle.Users.Values.Any(x => x.LobbyUser.Name == e.UserName && !x.IsSpectator)) return false;
+                            if (!c.AllowSpecs && !GetUserAdminStatus(e) && GetUserIsSpectator(e)) return false;
 
                             int reqLevel = c.Level;
                             int ulevel = GetUserLevel(e);
