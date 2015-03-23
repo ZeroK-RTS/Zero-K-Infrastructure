@@ -201,6 +201,7 @@ namespace Springie.autohost
 
 	public bool GetUserAdminStatus(TasSayEventArgs e) {
 		if (!tas.ExistingUsers.ContainsKey(e.UserName)) return false;
+		if (!String.IsNullOrEmpty(bossName) && (bossName == e.UserName)) return true;
 		return tas.ExistingUsers[e.UserName].IsAdmin;
 	}
 
