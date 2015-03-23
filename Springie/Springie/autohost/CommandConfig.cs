@@ -61,7 +61,7 @@ namespace Springie.autohost
             Name = name;
             Level = level;
             HelpText = helpText;
-            AllowSpecs = true;
+            AllowSpecs = false;
         }
     } ;
 }
