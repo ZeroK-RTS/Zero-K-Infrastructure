@@ -627,9 +627,8 @@ namespace Springie.autohost
             {
                 if (oldg != null)
                 {
-                    // FIXME use 1v1 elo for 1v1 prediction
-                    var t1elo = oldg.Average(x => x.LobbyUser.EffectiveElo);
-                    var t2elo = g.Average(x => x.LobbyUser.EffectiveElo);
+                    var t1elo = oldg.Average(x => (is1v1 ? x.LobbyUser.Effective1v1Elo : x.LobbyUser.EffectiveElo));
+                    var t2elo = g.Average(x => (is1v1 ? x.LobbyUser.Effective1v1Elo : x.LobbyUser.EffectiveElo));
                     Respond(e,
                             String.Format("team {0} has {1}% chance to win over team {2}",
                                           oldg.Key + 1,
