@@ -91,6 +91,12 @@ namespace ZeroKWeb.Controllers
             return View("AdminUserDetail", user);
         }
 
+        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
+        public ActionResult ReportLog ()
+        {
+            return View("ReportLog");
+        }
+
 
         public ActionResult Detail(string id)
         {
