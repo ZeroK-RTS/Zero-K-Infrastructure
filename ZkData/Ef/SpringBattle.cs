@@ -24,7 +24,7 @@ namespace ZkData
         public int ModResourceID { get; set; }
         public DateTime StartTime { get; set; }
         public int Duration { get; set; }
-        public int WarmUpDuration { get; set; }
+        public int? WarmUpDuration { get; set; }
         public int PlayerCount { get; set; }
         public bool HasBots { get; set; }
         public bool IsMission { get; set; }
