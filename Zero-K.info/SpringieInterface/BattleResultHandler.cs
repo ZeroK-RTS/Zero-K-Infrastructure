@@ -32,6 +32,7 @@ namespace ZeroKWeb.SpringieInterface
                          {
                              HostAccountID = acc.AccountID,
                              Duration = result.Duration,
+                             WarmUpDuration = result.WarmUpDuration,
                              EngineGameID = result.EngineBattleID,
                              MapResourceID = db.Resources.Single(x => x.InternalName == result.Map).ResourceID,
                              ModResourceID = db.Resources.Single(x => x.InternalName == result.Mod).ResourceID,

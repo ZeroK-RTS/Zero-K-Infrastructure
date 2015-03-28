@@ -550,7 +550,7 @@ namespace LobbyClient
 
         private void StatsMarkDead(string name, bool isDead) {
             BattlePlayerResult sp;
-            if (statsPlayers.TryGetValue(name, out sp)) sp.LoseTime = isDead ? (int)DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds : (int?)null;
+            if (statsPlayers.TryGetValue(name, out sp)) sp.LoseTime = isDead ? (int)DateTime.UtcNow.Subtract(battleResult.IngameStartTime ?? battleResult.StartTime).TotalSeconds : (int?)null;
         }
 
         private void process_ErrorDataReceived(object sender, DataReceivedEventArgs e) {
@@ -640,6 +640,7 @@ namespace LobbyClient
                         {
                             gameEndedOk = true;
                             battleResult.Duration = (int)DateTime.UtcNow.Subtract(battleResult.IngameStartTime ?? battleResult.StartTime).TotalSeconds;
+                            battleResult.WarmUpDuration = ((int)DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds) - battleResult.Duration;
                             if (GameOver != null) GameOver(this, new SpringLogEventArgs(e.PlayerName));
                         }  else 
                         {

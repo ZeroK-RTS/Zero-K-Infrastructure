@@ -59,6 +59,9 @@
                 Duration:
             </td>
             <td>@TimeSpan.FromSeconds(Model.Duration).ToNiceString()
+            @if(Model.WarmUpDuration.HasValue) {
+            	+ @TimeSpan.FromSeconds(Model.WarmUpDuration).ToNiceString() warm-up
+            }
             </td>
         </tr>
         <tr>
