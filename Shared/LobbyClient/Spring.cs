@@ -640,6 +640,7 @@ namespace LobbyClient
                         {
                             gameEndedOk = true;
                             battleResult.Duration = (int)DateTime.UtcNow.Subtract(battleResult.IngameStartTime ?? battleResult.StartTime).TotalSeconds;
+                            battleResult.WarmUpDuration = (int)battleResult.IngameStartTime.Subtract(battleResult.StartTime).TotalSeconds;
                             if (GameOver != null) GameOver(this, new SpringLogEventArgs(e.PlayerName));
                         }  else 
                         {
