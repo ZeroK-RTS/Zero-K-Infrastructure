@@ -5,6 +5,7 @@ namespace PlasmaShared
     public class BattleResult
     {
         public int Duration;
+        public int WarmUpDuration;
         public string EngineBattleID;
         public string EngineVersion;
         public DateTime? IngameStartTime;
