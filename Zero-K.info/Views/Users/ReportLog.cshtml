@@ -3,11 +3,12 @@
            
 @{
     Page.Title = "Report log";
+    DateTime weekAgo = DateTime.UtcNow.AddDays(-7);
 }
 
 <h2>Reports</h2>
 <table>
-@foreach (var report in new ZkDataContext().AbuseReports.Where(x => x.Time > DateTime.UtcNow.AddDays(-7)).OrderBy(x => x.Time).ToList())
+@foreach (var report in new ZkDataContext().AbuseReports.Where(x => x.Time > weekAgo).OrderBy(x => x.Time).ToList())
 {
   <tr>
     <td> Report on @Html.PrintAccount(new ZkDataContext().Accounts.Single(x => x.AccountID == report.AccountID)) </td>
