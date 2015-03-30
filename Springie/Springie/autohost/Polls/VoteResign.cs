@@ -18,18 +18,7 @@ namespace Springie.autohost.Polls
                 if (voteStarter != null)
                 {
                     question = string.Format("Resign team {0}?", voteStarter.AllyID + 1);
-                    int cnt = 0;
-                    foreach (var p in context.Players.Where(x => x.AllyID == voteStarter.AllyID && !x.IsSpectator))
-                    {
-                        if (p.IsIngame || tas.MyBattle.Users.ContainsKey(p.Name))
-                        {
-                            //Note: "ExistingUsers" is empty if users disconnected from lobby but still ingame.
-
-                            bool afk = tas.ExistingUsers.ContainsKey(p.Name) && tas.ExistingUsers[p.Name].IsAway;
-                            if (!afk) cnt++;
-                        }
-                    }
-                    winCount = cnt / 2 + 1;
+                    winCount = context.Players.Count(x => x.AllyID == voteStarter.AllyID && !x.IsSpectator) / 2 + 1;
                     return true;
                 }
             }
