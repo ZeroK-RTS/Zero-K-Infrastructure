@@ -1,0 +1,18 @@
+@using ZkData
+@using ZeroKWeb
+           
+@{
+    Page.Title = "Report log";
+}
+
+<h2>Reports</h2>
+<table>
+@foreach (var report in new ZkDataContext().AbuseReports.Where(x => x.Time > DateTime.UtcNow.AddDays(-7)).OrderBy(x => x.Time).ToList())
+{
+  <tr>
+    <td> Report on @Html.PrintAccount(db.Accounts.Single(x => x.AccountID == report.AccountID)) </td>
+    <td> By @Html.PrintAccount(db.Accounts.Single(x => x.AccountID == report.ReporterAccountID)) </td>
+    <td> @report.text </td>
+  </tr>
+}
+</table>
