@@ -12,7 +12,7 @@
   <tr>
     <td> Report on @Html.PrintAccount(new ZkDataContext().Accounts.Single(x => x.AccountID == report.AccountID)) </td>
     <td> By @Html.PrintAccount(new ZkDataContext().Accounts.Single(x => x.AccountID == report.ReporterAccountID)) </td>
-    <td> @report.text </td>
+    <td> @report.Text </td>
   </tr>
 }
 </table>
