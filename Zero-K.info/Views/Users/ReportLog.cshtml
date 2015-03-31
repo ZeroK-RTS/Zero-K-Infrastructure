@@ -8,12 +8,13 @@
 
 <h2>Reports</h2>
 <table>
-@foreach (var report in new ZkDataContext().AbuseReports.Where(x => x.Time > weekAgo).OrderBy(x => x.Time).ToList())
+@foreach (var report in new ZkDataContext().AbuseReports.Where(x => x.Time > weekAgo).OrderByDescending(x => x.Time).ToList())
 {
   <tr>
-    <td> Report on @Html.PrintAccount(new ZkDataContext().Accounts.Single(x => x.AccountID == report.AccountID)) </td>
+    <td> @report.Time </td>
+    <td> On @Html.PrintAccount(new ZkDataContext().Accounts.Single(x => x.AccountID == report.AccountID)) </td>
     <td> By @Html.PrintAccount(new ZkDataContext().Accounts.Single(x => x.AccountID == report.ReporterAccountID)) </td>
-    <td> @report.Text </td>
+    <td> @Html.BBCode(report.Text) </td>
   </tr>
 }
 </table>
