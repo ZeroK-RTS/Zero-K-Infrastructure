@@ -257,7 +257,7 @@ namespace ZeroKLobby.MicroLobby
         protected Panel playerBoxSearchBarContainer;
         public PlayerListBox playerBox;
         private Panel searchBarContainer;
-        private TextBox playerSearchBox;
+        protected TextBox playerSearchBox;
         private Panel topicPanel;
         private BitmapButton hideButton;
         private ChatBox topicBox;
