@@ -132,20 +132,20 @@ namespace ZeroKLobby.MicroLobby
 			{
 				var missionSlot = GetSlotByTeamID(bot.TeamNumber);
 				newList.Add(new PlayerListItem
-				            { BotBattleStatus = bot, SortCategory = bot.AllyNumber*2 + 1, AllyTeam = bot.AllyNumber, MissionSlot = missionSlot });
+				            { BotBattleStatus = bot, SortCategory = bot.AllyNumber * 2 + 1 + (int)PlayerListItem.SortCats.Uncategorized, AllyTeam = bot.AllyNumber, MissionSlot = missionSlot });
 				existingTeams.Add(bot.AllyNumber);
 			}
 
 			// add section headers
 		    if (Program.TasClient.MyBattle.IsQueue)
 		    {
-                newList.Add(new PlayerListItem { Button = "Spectators", SortCategory = 100, IsSpectatorsTitle = true, Height = 25 });
-                newList.Add(new PlayerListItem { Button = "Queued players", SortCategory = 0, AllyTeam = 0, IsSpectatorsTitle = false, Height = 25 });
+                newList.Add(new PlayerListItem { Button = "Spectators", SortCategory = (int)PlayerListItem.SortCats.SpectatorTitle, IsSpectatorsTitle = true, Height = 25 });
+                newList.Add(new PlayerListItem { Button = "Queued players", SortCategory = (int)PlayerListItem.SortCats.QueueTitle, AllyTeam = 0, IsSpectatorsTitle = false, Height = 25 });
 		        newList = newList.OrderBy(x => x.UserName).ToList();
 		    }
 		    else
 		    {
-		        if (PlayerListItems.Any(i => i.UserBattleStatus != null && i.UserBattleStatus.IsSpectator)) newList.Add(new PlayerListItem { Button = "Spectators", SortCategory = 100, IsSpectatorsTitle = true, Height = 25 });
+		        if (PlayerListItems.Any(i => i.UserBattleStatus != null && i.UserBattleStatus.IsSpectator)) newList.Add(new PlayerListItem { Button = "Spectators", SortCategory = (int)PlayerListItem.SortCats.SpectatorTitle, IsSpectatorsTitle = true, Height = 25 });
 
 		        var buttonTeams = existingTeams.Distinct();
 		        if (missionSlots != null) buttonTeams = buttonTeams.Concat(missionSlots.Select(s => s.AllyID)).Distinct();
@@ -161,7 +161,7 @@ namespace ZeroKLobby.MicroLobby
 		                var slot = missionSlots.FirstOrDefault(s => s.AllyID == team);
 		                if (slot != null) allianceName = slot.AllyName;
 		            }
-		            newList.Add(new PlayerListItem { Button = allianceName, SortCategory = team*2, AllyTeam = team, Height = 25 });
+		            newList.Add(new PlayerListItem { Button = allianceName, SortCategory = team * 2 + (int)PlayerListItem.SortCats.Uncategorized, AllyTeam = team, Height = 25 });
 		        }
 
 		        newList = newList.OrderBy(x => x.ToString()).ToList();
@@ -330,6 +330,8 @@ namespace ZeroKLobby.MicroLobby
                 minimapFuncBox.Visible = false; //hide buttons when leaving game 
 				playerListItems.Clear();
 				playerBox.Items.Clear();
+				filtering = false;
+				playerSearchBox.Text = string.Empty;
 			}
 			if (PlayerListItems.Any(i => i.UserName == userName))
 			{
