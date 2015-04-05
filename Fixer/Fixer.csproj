@@ -94,13 +94,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AutoRegistrator\AutoRegistrator.csproj">
+      <Project>{a243d9f0-b7fa-4db9-ad98-ddde85624049}</Project>
+      <Name>AutoRegistrator</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Benchmarker\Benchmarker.csproj">
       <Project>{67501a5b-b6bb-467e-85da-22d81c40829c}</Project>
       <Name>Benchmarker</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MissionEditor\MissionEditor2\MissionEditor.csproj">
-      <Project>{713275bf-2fab-4f51-8766-1e8182bcdaa4}</Project>
-      <Name>MissionEditor</Name>
     </ProjectReference>
     <ProjectReference Include="..\NightWatch\NightWatch.csproj">
       <Project>{6CE1E0F1-447C-4871-9246-CC7CCB359D89}</Project>

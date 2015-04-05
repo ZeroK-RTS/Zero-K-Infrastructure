@@ -13,7 +13,7 @@ using ZkData;
 
 namespace AutoRegistrator
 {
-    static class Program
+    public static class Program
     {
 
         public static SpringPaths Paths;
