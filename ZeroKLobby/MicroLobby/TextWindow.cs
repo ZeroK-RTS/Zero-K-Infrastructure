@@ -309,7 +309,7 @@ namespace ZeroKLobby.MicroLobby
                 line = vScrollBar.Value - line;
             }
 
-            hoveredWord = ReturnWord(line, e.Location.X);
+            hoveredWord = ReturnWord(line, e.Location.X).Trim(new char[4] { ' ', '\t', ',', '.' });
 
             //get the current character the mouse is over. 
             curHighLine = ((Height + (LineSize/2)) - e.Y)/LineSize;
@@ -320,7 +320,7 @@ namespace ZeroKLobby.MicroLobby
             if (startHighLine != -1) Invalidate();
             base.OnMouseMove(e);
 
-            var word = HoveredWord.Trim();
+            var word = HoveredWord;
             if (word == previousWord) return;
             previousWord = word;
             if (word.Length == 0)

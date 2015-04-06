@@ -179,6 +179,7 @@ namespace Fixer
 
         public static void FixStuff()
         {
+            DuplicateFinder.GetDuplicates();
             //UpdateMissionProgression(13);
             /*
             var db = new ZkDataContext();

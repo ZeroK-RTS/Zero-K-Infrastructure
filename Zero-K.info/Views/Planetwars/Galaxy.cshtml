@@ -175,14 +175,14 @@
 	{
 		clan = p.Account.Clan;
 	}
-	<div style="position: absolute; left: @(por.Left)px; top: @(por.Top)px; width: @(por.Width)px; height: @(por.Height)px; font-size: 12px; font-weight: bold; " >
-		<table style="position: absolute; border: 0; padding: 0; text-align: center; font-size: 10px; z-index: 5; line-height: .85; width:100%; height:25%;"><tr>
+	<div style="position: absolute; left: @(por.Left)px; top: @(por.Top)px; width: @(por.Width)px; height: @(por.Height)px; font-size: small; font-weight: bold; " >
+		<table style="position: absolute; border: 0; padding: 0; text-align: center; font-size: smaller; z-index: 5; line-height: .85; width:100%; height:25%;"><tr>
 		<td style="vertical-align: bottom;" ><div style="display:inline-block;">
 			<a href='@Url.Action("Planet", new { id = p.PlanetID })' class="planetname" nicetitle="$planet$@p.PlanetID" style="color: #ffffff; color: @(faction!= null ? Faction.FactionColor(faction, Global.FactionID): "#ffffff");">
 			@p.Name<br />
 			@if (clan != null && Global.Clan != null && clan.ClanID == Global.Clan.ClanID)
 			{
-				<span style="font-size: 8px">@p.Account.Name</span>
+				<span style="font-size: x-small">@p.Account.Name</span>
 			}
 			</a>
 		</div></td></tr></table>
@@ -230,7 +230,7 @@
                 {
                     
                     <img src='@ships.Faction.GetShipImageUrl()' width='@(Math.Round(13 + 12.0 * ships.Dropships / (double)maxDropships))' />
-                    <span style="font-size: 10px; color: #ffffff;">@ships.Dropships</span><br />
+                    <span style="font-size: small; color: #ffffff;">@ships.Dropships</span><br />
                 }
 			</span>
 		}
