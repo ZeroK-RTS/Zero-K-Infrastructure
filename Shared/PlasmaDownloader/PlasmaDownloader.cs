@@ -153,5 +153,35 @@ namespace PlasmaDownloader
                 return null;
             }
         }
+
+        public Download GetDependenciesOnly(string resourceName)
+        {
+            packageDownloader.LoadMasterAndVersions(false).Wait();
+            var dep = packageDownloader.GetPackageDependencies(resourceName);
+            if (dep == null)
+            {
+                if (torrentDownloader == null)
+                    torrentDownloader = new TorrentDownloader(this); //lazy initialization
+                dep = torrentDownloader.GetFileDependencies(resourceName);
+            }
+            if (dep != null)
+            {
+                Download down = null;
+                foreach (var dept in dep)
+                {
+                    if (!string.IsNullOrEmpty(dept))
+                    {
+                        var dd = GetResource(DownloadType.UNKNOWN, dept);
+                        if (dd != null)
+                        {
+                            if (down == null) down = dd;
+                            else down.AddNeededDownload(dd);
+                        }
+                    }
+                }
+                return down;
+            }
+            return null;
+        }
     }
 }

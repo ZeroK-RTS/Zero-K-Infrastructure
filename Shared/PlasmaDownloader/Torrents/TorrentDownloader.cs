@@ -94,6 +94,17 @@ namespace PlasmaDownloader.Torrents
             return down;
         }
 
+        public string[] GetFileDependencies(string name)
+        {
+            DownloadFileResult e;
+            try {
+                e = plasmaService.DownloadFile(name);
+                return e.dependencies.ToArray();
+            } catch (Exception ex) {
+                Trace.TraceError("Error fetching information for {0}: {1}", name, ex);
+                return null;
+            }
+        }
 
         string GetDestPath(DownloadType type, string fileName)
         {
