@@ -30,11 +30,10 @@ namespace PlasmaDownloader.Packages
 
     public class PackageDownloader : IDisposable
     {
-        bool isRefreshing;
-        bool refreshed;
+        public bool isRefreshing;
+        public bool refreshed;
         string masterContent;
-        DateTime LastRefresh;
-        readonly TimeSpan _3Second;
+        public DateTime LastRefresh;
         readonly string masterUrl;
         readonly PlasmaDownloader plasmaDownloader;
         readonly Timer refreshTimer;
@@ -53,9 +52,6 @@ namespace PlasmaDownloader.Packages
 
         public PackageDownloader(PlasmaDownloader plasmaDownloader)
         {
-            LastRefresh = DateTime.Now.Subtract(new TimeSpan(0, 0, 6));
-            _3Second = new TimeSpan(0, 0, 3);
-
             this.plasmaDownloader = plasmaDownloader;
             masterUrl = this.plasmaDownloader.Config.PackageMasterUrl;
             LoadRepositories();
@@ -158,13 +154,7 @@ namespace PlasmaDownloader.Packages
         {
             return Task.Factory.StartNew(() =>
             {
-                if (!refreshed && isRefreshing)
-                {
-                    do Thread.Sleep(500); while (isRefreshing); //keep caller waiting until we deliver a refreshed copy.
-                    return;
-                }
-                if (refreshed && isRefreshing) return;
-                if (refreshed && DateTime.Now.Subtract(LastRefresh) <= _3Second) return;
+                if (isRefreshing) return;
                 LastRefresh = DateTime.Now;
                 isRefreshing = true;
 
