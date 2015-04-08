@@ -18,7 +18,7 @@ namespace Springie.autohost.Polls
                 if (voteStarter != null)
                 {
                     question = string.Format("Resign team {0}?", voteStarter.AllyID + 1);
-                    winCount = context.Players.Count(x => x.AllyID == voteStarter.AllyID && !x.IsSpectator) * 0.6 + 1;
+                    winCount = context.Players.Count(x => x.AllyID == voteStarter.AllyID && !x.IsSpectator) * 2/3 + 1;
                     return true;
                 }
             }
