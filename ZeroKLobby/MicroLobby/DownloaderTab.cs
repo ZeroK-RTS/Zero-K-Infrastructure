@@ -9,6 +9,8 @@ namespace ZeroKLobby.MapDownloader
 {
   public partial class DownloaderTab: UserControl, INavigatable
   {
+      Timer antiSpamTimer;
+
     public DownloaderTab()
     {
         Paint += DownloaderTab_Enter;
@@ -130,6 +132,19 @@ namespace ZeroKLobby.MapDownloader
     {
         manifestDownloading = true;
         Program.Downloader.PackageDownloader.LoadMasterAndVersions(true);
+
+        btnReload.Enabled = false;
+        antiSpamTimer = new Timer();
+        antiSpamTimer.Interval = 20*1000;
+        antiSpamTimer.Tick += antiSpamTimer_Tick;
+        antiSpamTimer.Start();
+    }
+
+    void antiSpamTimer_Tick(object sender, EventArgs e)
+    {
+        btnReload.Enabled = true;
+        antiSpamTimer.Stop();
+        antiSpamTimer.Dispose();
     }
 
     void lbInstalled_DoubleClick(object sender, EventArgs e)

@@ -109,7 +109,7 @@ namespace PlasmaDownloader
             
             if (type == DownloadType.MOD || type == DownloadType.UNKNOWN)
             {
-                packageDownloader.LoadMasterAndVersions(false).Wait();
+                RefreshAndWaitRapidIfNeeded();
             }
             
             lock (downloads) {
@@ -156,7 +156,7 @@ namespace PlasmaDownloader
 
         public Download GetDependenciesOnly(string resourceName)
         {
-            packageDownloader.LoadMasterAndVersions(false).Wait();
+            RefreshAndWaitRapidIfNeeded();
             var dep = packageDownloader.GetPackageDependencies(resourceName);
             if (dep == null)
             {
@@ -182,6 +182,26 @@ namespace PlasmaDownloader
                 return down;
             }
             return null;
+        }
+
+        void RefreshAndWaitRapidIfNeeded() //2 minute anti-spam
+        {
+            if (!packageDownloader.refreshed) //edge case: we are unusually early?
+            {
+                if (packageDownloader.isRefreshing)
+                    //Wait until refresh is done
+                    do System.Threading.Thread.Sleep(500); while (packageDownloader.isRefreshing);
+                else
+                    packageDownloader.LoadMasterAndVersions(false).Wait();
+
+                return;
+            }
+            //package is stale?
+            if (DateTime.Now.Subtract(packageDownloader.LastRefresh).TotalMinutes >= 2)
+            {
+                packageDownloader.LoadMasterAndVersions(false).Wait();
+                return;
+            }
         }
     }
 }
