@@ -215,7 +215,7 @@ div.button_2
 	background: url(/img/download_button.png) no-repeat 0 0;
 	font-family: 'Klavika', Helvetica, Arial, sans-serif;
 	color: #FFF;
-	font-size: 18px;
+	font-size: large;
 	text-decoration: none;
 	text-align: center;
 	vertical-align:middle;
@@ -231,7 +231,7 @@ span.button_2text
 {
     font-family: 'Klavika', Helvetica, Arial, sans-serif;
     color: #FFF;
-    font-size: 18px;
+    font-size: large;
     line-height: 1;
     text-decoration: none;
     text-align: center;

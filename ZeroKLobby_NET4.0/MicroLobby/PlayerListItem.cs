@@ -13,6 +13,22 @@ namespace ZeroKLobby.MicroLobby
 {
     public class PlayerListItem: IDisposable
     {
+        /// <summary>
+        /// Important values used to make sure playerlist shows name in correct order during searching and/or in battleroom
+        /// </summary>
+        public enum SortCats
+        {
+            SearchTitle = 0,
+            SearchMatchedPlayer = 1,
+            SearchNoMatchTitle =2,
+            SearchNoMatchPlayer = 3,
+            //others
+            Uncategorized = 4,
+            QueueTitle = 5,
+            SpectatorTitle = 101,
+            Spectators = 102,
+        }
+
         //readonly Font boldFont = new Font("Microsoft Sans Serif", 9, FontStyle.Bold);
         readonly Font boldFont = new Font(Program.Conf.ChatFont.FontFamily, Program.Conf.ChatFont.Size - 2, FontStyle.Bold);
 
@@ -78,6 +94,7 @@ namespace ZeroKLobby.MicroLobby
         public PlayerListItem()
         {
             height = (int)font.Size*2;
+            SortCategory = (int)SortCats.Uncategorized;
         }
 
         ~PlayerListItem()
@@ -229,22 +246,25 @@ namespace ZeroKLobby.MicroLobby
 
         public override string ToString()
         {
+            if (SortCategory < (int)SortCats.Uncategorized)
+                return SortCategory.ToString("00000") + UserName??string.Empty; //for ChatControl's search-filter only
+
             var name = string.Empty;
             if (MissionSlot != null)
             {
-                SortCategory = MissionSlot.TeamID;
+                SortCategory = MissionSlot.TeamID + (int)PlayerListItem.SortCats.Uncategorized;
                 name = MissionSlot.TeamName;
             }
             else if (UserBattleStatus != null)
             {
                 name = UserBattleStatus.Name;
-                if (UserBattleStatus.IsSpectator) SortCategory = 101;
-                else SortCategory = UserBattleStatus.AllyNumber*2 + 1;
+                if (UserBattleStatus.IsSpectator) SortCategory = (int)PlayerListItem.SortCats.Spectators;
+                else SortCategory = UserBattleStatus.AllyNumber * 2 + 1 + (int)PlayerListItem.SortCats.Uncategorized;
             }
             else if (BotBattleStatus != null)
             {
                 name = BotBattleStatus.Name;
-                SortCategory = BotBattleStatus.AllyNumber*2 + 1;
+                SortCategory = BotBattleStatus.AllyNumber * 2 + 1 + (int)PlayerListItem.SortCats.Uncategorized;
             }
             else if (UserName != null) name = UserName;
             else if (Title != null) name = Title;

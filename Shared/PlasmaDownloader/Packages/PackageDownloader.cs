@@ -30,8 +30,10 @@ namespace PlasmaDownloader.Packages
 
     public class PackageDownloader : IDisposable
     {
-        bool isRefreshing;
+        public bool isRefreshing;
+        public bool refreshed;
         string masterContent;
+        public DateTime LastRefresh;
         readonly string masterUrl;
         readonly PlasmaDownloader plasmaDownloader;
         readonly Timer refreshTimer;
@@ -102,6 +104,24 @@ namespace PlasmaDownloader.Packages
             return null;
         }
 
+        public string[] GetPackageDependencies(string packageNameTag)
+        {
+            List<Repository> repositoriesCopy;
+            lock (repositories) repositoriesCopy = Repositories.ToList();
+            foreach (var repo in repositoriesCopy)
+            {
+                if (!string.IsNullOrEmpty(repo.BaseUrl))
+                {
+                    Version versionEntry;
+                    if (repo.VersionsByTag.TryGetValue(packageNameTag, out versionEntry))
+                        return versionEntry.Dependencies;
+
+                    if (repo.VersionsByInternalName.TryGetValue(packageNameTag, out versionEntry))
+                        return versionEntry.Dependencies;
+                }
+            }
+            return null;
+        }
 
         internal PackageDownload GetPackageDownload(string name)
         {
@@ -135,7 +155,9 @@ namespace PlasmaDownloader.Packages
             return Task.Factory.StartNew(() =>
             {
                 if (isRefreshing) return;
+                LastRefresh = DateTime.Now;
                 isRefreshing = true;
+
                 try
                 {
                     if (refreshTimer != null) refreshTimer.Stop();
@@ -197,6 +219,8 @@ namespace PlasmaDownloader.Packages
                 finally
                 {
                     isRefreshing = false;
+                    refreshed = true;
+                    LastRefresh = DateTime.Now;
                     Utils.StartAsync(() => MasterManifestDownloaded(this, EventArgs.Empty));
                     if (refreshTimer != null) refreshTimer.Start();
                 }

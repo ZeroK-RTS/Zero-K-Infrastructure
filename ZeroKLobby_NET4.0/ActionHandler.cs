@@ -159,6 +159,7 @@ namespace ZeroKLobby
                     case "logout":
                         Program.TasClient.RequestDisconnect();
                         Program.Conf.LobbyPlayerName = "";
+                        Program.Conf.LobbyPlayerPassword = "";
                         Program.ConnectBar.TryToConnectTasClient();
                         break;
 

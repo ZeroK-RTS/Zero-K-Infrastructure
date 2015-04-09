@@ -5,7 +5,7 @@ div#menu a /*menu bar*/
 {
 	text-align: center; 
 	font-family: sm, sans-serif;
-	font-size: 13px;
+	font-size: smaller;
 }
 
 div#menu a span {display:none;} /*menu text sayings*/

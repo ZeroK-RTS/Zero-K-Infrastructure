@@ -123,7 +123,7 @@ namespace ZkData
         public const int CommanderProfileCount = 6;
         public const int NumCommanderLevels = 5;
 
-        public const string DefaultEngineOverride = "98.0.1-398-g80e6cfa"; // hack for ZKL using tasclient's engine - override here for missions etc
+        public const string DefaultEngineOverride = "98.0.1-451-g0804ae1"; // hack for ZKL using tasclient's engine - override here for missions etc
 
         public const int MinDurationForXP = 240;    // seconds
         public const int MinDurationForElo = 60;
@@ -173,7 +173,7 @@ namespace ZkData
         public const int DefaultBomberCapacity = 10;
         public const int AttackPointsForVictory = 2;
         public const int AttackPointsForDefeat = 1;
-        public const int MaxClanSkilledSize = 16;
+        public const int MaxClanSkilledSize = 999;
         public const int ClanLeaveLimit = 100;
         public const int FactionChannelMinLevel = 10;
         public const bool RotatePWMaps = false;

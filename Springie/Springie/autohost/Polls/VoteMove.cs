@@ -16,7 +16,7 @@ namespace Springie.autohost.Polls
 
         protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount)
         {
-            winCount = 0;
+            winCount = (tas.MyBattle != null) ? tas.MyBattle.Users.Count : 1;
             question = null;
             if (words.Length < 1)
             {
@@ -49,9 +49,9 @@ namespace Springie.autohost.Polls
                 bool val;
                 var moves =
                     tas.MyBattle.Users.Values.Where(x => x.Name != tas.MyBattle.Founder.Name)
-                       .Where(x => !userVotes.TryGetValue(x.Name, out val) || val)
+                       .Where(x => userVotes.TryGetValue(x.Name, out val) && val)
                        .Select(x => new MovePlayerEntry() { BattleHost = host, PlayerName = x.Name })
-                       .ToList(); // move all that didnt vote "no" 
+                       .ToList(); // move those that voted yes
                 var serv = GlobalConst.GetSpringieService();
                 serv.MovePlayers(tas.UserName, tas.UserPassword, moves);
             } catch (Exception ex) {

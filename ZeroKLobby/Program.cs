@@ -377,7 +377,7 @@ namespace ZeroKLobby
         {
             if (sender is PlasmaDownloader.Packages.PackageDownloader)
                 Downloader.PackageDownloader.MasterManifestDownloaded -= GetSpringZK;
-            if (sender is PlasmaDownloader.Packages.PackageDownloader)
+            if (sender is MainWindow)
                 MainWindow.Paint -= GetSpringZK;
 
             getSpringZKCount++;

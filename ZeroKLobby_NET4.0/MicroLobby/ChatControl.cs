@@ -19,9 +19,9 @@ namespace ZeroKLobby.MicroLobby
 
         protected bool filtering; //playerList filter
         bool mouseIsDown;
-        readonly PlayerListItem notResultsItem = new PlayerListItem { Title = "No match", SortCategory = 3 };
+        readonly PlayerListItem notResultsItem = new PlayerListItem { Title = "No match", SortCategory = (int)PlayerListItem.SortCats.SearchNoMatchTitle };
         protected List<PlayerListItem> playerListItems = new List<PlayerListItem>();
-        readonly PlayerListItem searchResultsItem = new PlayerListItem { Title = "Search results", SortCategory = 1 };
+        readonly PlayerListItem searchResultsItem = new PlayerListItem { Title = "Search results", SortCategory = (int)PlayerListItem.SortCats.SearchTitle };
         
         public bool CanLeave { get { return ChannelName != "Battle"; } }
         public static EventHandler<ChannelLineArgs> ChannelLineAdded = (sender, args) => { };
@@ -213,12 +213,10 @@ namespace ZeroKLobby.MicroLobby
             var item = new PlayerListItem { UserName = userName };
             playerListItems.Add(item);
 
-            if (filtering) FilterPlayers();
-            else {
-                playerBox.Items.Remove(playerBox.Items.SingleOrDefault(u => u.UserName == userName));
-                playerBox.Items.Add(item);
-                SortByTeam();
-            }
+            playerBox.Items.Remove(playerBox.Items.SingleOrDefault(u => u.UserName == userName));
+            playerBox.Items.Add(item);
+
+            if (filtering) FilterPlayers(); else SortByTeam();
         }
 
 
@@ -267,11 +265,11 @@ namespace ZeroKLobby.MicroLobby
                     }
                 }
                 if (match) {
-                    playerListItem.SortCategory = 2;
+                    playerListItem.SortCategory = (int)PlayerListItem.SortCats.SearchMatchedPlayer;
                     playerListItem.IsGrayedOut = false;
                 }
                 else {
-                    playerListItem.SortCategory = 4;
+                    playerListItem.SortCategory = (int)PlayerListItem.SortCats.SearchNoMatchPlayer;
                     playerListItem.IsGrayedOut = true;
                 }
             }
@@ -444,10 +442,8 @@ namespace ZeroKLobby.MicroLobby
 
                 }
 
-                if (filtering) FilterPlayers();
-                else {
-                    playerBox.AddItemRange(playerListItems.Where(x => !playerBox.Items.Any(y => y.UserName == x.UserName)).ToList());
-                }
+                playerBox.AddItemRange(playerListItems.Where(x => !playerBox.Items.Any(y => y.UserName == x.UserName)).ToList());
+                FilterPlayers();
             }
 
         }
@@ -502,8 +498,16 @@ namespace ZeroKLobby.MicroLobby
         void playerSearchBox_TextChanged(object sender, EventArgs e) {
             if (!String.IsNullOrEmpty(playerSearchBox.Text)) {
                 filtering = true;
-                if (!playerBox.Items.Contains(searchResultsItem)) playerBox.Items.Add(searchResultsItem);
-                if (!playerBox.Items.Contains(notResultsItem)) playerBox.Items.Add(notResultsItem);
+                if (!playerBox.Items.Contains(searchResultsItem))
+                {
+                    if (this is BattleChatControl)
+                    { //strip out buttons and label
+                        playerBox.Items.Clear();
+                        playerBox.AddItemRange(playerListItems.Where(x => !playerBox.Items.Any(y => y.UserName == x.UserName)).ToList());
+                    }
+                    playerBox.Items.Add(searchResultsItem);
+                    playerBox.Items.Add(notResultsItem);
+                }
                 FilterPlayers();
             }
             else {
@@ -512,7 +516,7 @@ namespace ZeroKLobby.MicroLobby
                 playerBox.Items.Remove(searchResultsItem);
                 playerBox.Items.Remove(notResultsItem);
                 foreach (var item in playerListItems) {
-                    item.SortCategory = 0;
+                    item.SortCategory = (int)PlayerListItem.SortCats.Uncategorized;
                     item.IsGrayedOut = false;
                 }
                 SortByTeam();

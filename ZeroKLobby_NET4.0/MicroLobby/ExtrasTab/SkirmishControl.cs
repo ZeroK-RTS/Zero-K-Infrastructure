@@ -253,7 +253,12 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     for (int i = 0; i < modCache.Count; i++) modList.Add(modCache[i].InternalName);
                     modCache_folder.Clear();
                     modCache_folder = SkirmishControlTool.GetPartialSddMods();
-                    for (int i = 0; i < modCache_folder.Count; i++) modList.Add(modCache_folder[i].Name + " " + modCache_folder[i].PrimaryModVersion);
+                    for (int i = 0; i < modCache_folder.Count; i++)
+                    {
+                        var version = modCache_folder[i].PrimaryModVersion;
+                        version = string.IsNullOrWhiteSpace(version) ? "" : " " + version;
+                        modList.Add(modCache_folder[i].Name + version);
+                    }
                     modList = SkirmishControlTool.SortListByVersionName(modList);
 
                     mapCache = Program.SpringScanner.GetAllMapResource();
@@ -467,13 +472,13 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 for (int i = 0; i < botsMissionSlot.Count; i++)
                 {
                     BotBattleStatus bot = Bots[i];
-                    newList.Add(new PlayerListItem { BotBattleStatus = bot, SortCategory = bot.AllyNumber * 2 + 1, AllyTeam = bot.AllyNumber, MissionSlot = botsMissionSlot[i] });
+                    newList.Add(new PlayerListItem { BotBattleStatus = bot, SortCategory = bot.AllyNumber * 2 + 1 + (int)PlayerListItem.SortCats.Uncategorized, AllyTeam = bot.AllyNumber, MissionSlot = botsMissionSlot[i] });
                     existingTeams.Add(bot.AllyNumber);
                 }
                 for (int i = botsMissionSlot.Count; i < Bots.Count; i++) //include any extra bots added by user
                 {
                     BotBattleStatus bot = Bots[i];
-                    newList.Add(new PlayerListItem { BotBattleStatus = bot, SortCategory = bot.AllyNumber * 2 + 1, AllyTeam = bot.AllyNumber, MissionSlot = null });
+                    newList.Add(new PlayerListItem { BotBattleStatus = bot, SortCategory = bot.AllyNumber * 2 + 1 + (int)PlayerListItem.SortCats.Uncategorized, AllyTeam = bot.AllyNumber, MissionSlot = null });
                     existingTeams.Add(bot.AllyNumber);
                 }
             }
@@ -482,13 +487,13 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 for (int i = 0; i < Bots.Count; i++)
                 {
                     BotBattleStatus bot = Bots[i];
-                    newList.Add(new PlayerListItem { BotBattleStatus = bot, SortCategory = bot.AllyNumber * 2 + 1, AllyTeam = bot.AllyNumber, MissionSlot = null });
+                    newList.Add(new PlayerListItem { BotBattleStatus = bot, SortCategory = bot.AllyNumber * 2 + 1 + (int)PlayerListItem.SortCats.Uncategorized, AllyTeam = bot.AllyNumber, MissionSlot = null });
                     existingTeams.Add(bot.AllyNumber);
                 }
             }
 
             // add section headers
-            if (playerListItems.Any(i => i.UserBattleStatus != null && i.UserBattleStatus.IsSpectator)) newList.Add(new PlayerListItem { Button = "Spectators", SortCategory = 100, IsSpectatorsTitle = true, Height = 25 });
+            if (playerListItems.Any(i => i.UserBattleStatus != null && i.UserBattleStatus.IsSpectator)) newList.Add(new PlayerListItem { Button = "Spectators", SortCategory = (int)PlayerListItem.SortCats.SpectatorTitle, IsSpectatorsTitle = true, Height = 25 });
 
             var rectangles2 = new Dictionary<int, BattleRect>();
 
@@ -508,7 +513,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     var slot = missionSlots.FirstOrDefault(s => s.AllyID == team);
                     if (slot != null) allianceName = slot.AllyName;
                 }
-                newList.Add(new PlayerListItem { Button = allianceName, SortCategory = team * 2, AllyTeam = team, Height = 25 });
+                newList.Add(new PlayerListItem { Button = allianceName, SortCategory = team * 2 + (int)PlayerListItem.SortCats.Uncategorized, AllyTeam = team, Height = 25 });
             }
 
             //copy new startBox position, but keep old one and remove any extras
@@ -964,7 +969,9 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 for(int i=0; i<modCache_folder.Count;i++)
                 {
                     var mod = modCache_folder[i];
-                    var modName = mod.Name + " " + mod.PrimaryModVersion;
+                    var version = modCache_folder[i].PrimaryModVersion;
+                    version = string.IsNullOrWhiteSpace(version) ? "" : " " + version;
+                    var modName = mod.Name + version;
                     if (gameName == modName)
                     {
 

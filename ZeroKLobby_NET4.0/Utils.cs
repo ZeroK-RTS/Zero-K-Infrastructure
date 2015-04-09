@@ -304,12 +304,13 @@ namespace ZeroKLobby
         }
 
 
-        public static bool VerifySpringInstalled() {
+        public static bool VerifySpringInstalled(bool showMessageBox = true) {
             if (Program.SpringPaths.SpringVersion == null || !Program.SpringPaths.HasEngineVersion(Program.SpringPaths.SpringVersion)) {
-                MessageBox.Show("Cannot start yet, please wait until engine downloads",
-                                "Engine not prepared yet",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Information);
+                if (showMessageBox)
+                    MessageBox.Show("Cannot start yet, please wait until engine downloads",
+                                    "Engine not prepared yet",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Information);
                 return false;
             }
             else return true;
