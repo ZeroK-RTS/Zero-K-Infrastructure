@@ -47,6 +47,11 @@ namespace ZeroKLobby.Notifications
             label1.Text = string.Format("Starting mission {0} - please wait", missionName);
 
             var down = Program.Downloader.GetResource(DownloadType.MOD, missionName);
+            if (down==null)
+            {   //okay Mission exist, but lets check for dependency!
+                down = Program.Downloader.GetDependenciesOnly(missionName);
+            }
+
             var engine = Program.Downloader.GetAndSwitchEngine(Program.SpringPaths.SpringVersion);
 
             ZkData.Utils.StartAsync(() =>
