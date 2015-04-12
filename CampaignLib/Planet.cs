@@ -23,12 +23,12 @@ namespace CampaignLib
         [DataMember]
         public bool HideIfLocked { get; set; }
         [DataMember]
-        public List<Planet> LinkedPlanets { get; set; }
+        public List<String> LinkedPlanets { get; set; }
 
         public Planet(string id)
         {
             ID = id;
-            LinkedPlanets = new List<Planet>();
+            LinkedPlanets = new List<String>();
             MissionID = -1;
         }
     }

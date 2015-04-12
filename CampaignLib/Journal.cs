@@ -19,7 +19,7 @@ namespace CampaignLib
         [DataMember]
         public string Category { get; set; }
         [DataMember]
-        public Planet Planet { get; set; }
+        public string PlanetID { get; set; }
         [DataMember]
         public List<JournalPart> JournalParts { get; set; }
 

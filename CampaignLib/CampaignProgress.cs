@@ -27,11 +27,16 @@ namespace CampaignLib
             JournalProgress = new Dictionary<string, JournalProgressData>();
         }
 
+        [DataContract]
         public class PlanetProgressData
         {
+            [DataMember]
             public string planetID;
+            [DataMember]
             public bool played = false;
+            [DataMember]
             public bool unlocked = false;
+            [DataMember]
             public bool completed = false;
 
             public PlanetProgressData(string planetID)
@@ -40,10 +45,14 @@ namespace CampaignLib
             }
         }
 
+        [DataContract]
         public class JournalProgressData
         {
+            [DataMember]
             public string journalID;
+            [DataMember]
             public bool unlocked = false;
+            [DataMember]
             public string textSnapshot = "";
 
             public JournalProgressData(string journalID)

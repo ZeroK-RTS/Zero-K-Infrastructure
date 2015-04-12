@@ -19,20 +19,19 @@ namespace CampaignLib
         [DataMember]
         public string Image { get; set; }
         [DataMember]
-        public Dictionary<CampaignVar, Object> VariablesRequired { get; set; }
+        public Dictionary<String, Object> VariablesRequired { get; set; }
 
         public JournalPart(string id)
         {
             ID = id;
-            VariablesRequired = new Dictionary<CampaignVar, object>();
+            VariablesRequired = new Dictionary<String, object>();
         }
 
         public bool Accept()
         {
             foreach (var testVar in VariablesRequired)
             {
-                // left is the var actually stored in campaign records; right is what it ought to be
-                if (testVar.Key.Value != testVar.Value) return false;
+                // TODO: get campaign vars
             }
             return true;
         }
