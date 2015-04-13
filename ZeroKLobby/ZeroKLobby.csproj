@@ -1433,6 +1433,9 @@
     <None Include="Resources\Flags\zw.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Flags\unknown.png" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Resources\Ranks\1.png" />
   </ItemGroup>
   <ItemGroup>
