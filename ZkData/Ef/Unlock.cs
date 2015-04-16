@@ -76,7 +76,7 @@ namespace ZkData
         [NotMapped]
         public string ImageUrl
         {
-            get { return string.Format((string)"https://raw.githubusercontent.com/ZeroK-RTS/Zero-K/master/unitpics/{0}.png", (object)Code); }
+            get { return string.Format((string)"/img/avatars/{0}.png", (object)Code); }
         }
     }
 }
