@@ -73,7 +73,11 @@
     <h2>Smurfs</h2>
     @foreach (var ac in smurfs)
     {
-        <span>@Html.PrintAccount(ac)  -  @Html.ActionLink("admin", "AdminUserDetail", new{id=ac.AccountID})</span><br />
+        <span>@Html.PrintAccount(ac)  -  @Html.ActionLink("admin", "AdminUserDetail", new{id=ac.AccountID})</span>
+        if(ac.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby)) {
+            <font color="#FF0000"><b>(BANNED)</b></font>
+        }
+        <br />
     }
     <br />
     <h2>Abuse reports</h2>

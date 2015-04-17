@@ -104,7 +104,7 @@ namespace PlasmaDownloader
             
             if (type == DownloadType.MOD || type == DownloadType.UNKNOWN)
             {
-                packageDownloader.LoadMasterAndVersions().Wait();
+                RefreshAndWaitRapidIfNeeded();
             }
             
             lock (downloads) {
@@ -146,6 +146,56 @@ namespace PlasmaDownloader
                 if (type == DownloadType.GAME) throw new ApplicationException(string.Format("{0} download not supported in this version", type));
 
                 return null;
+            }
+        }
+
+        public Download GetDependenciesOnly(string resourceName)
+        {
+            RefreshAndWaitRapidIfNeeded();
+            var dep = packageDownloader.GetPackageDependencies(resourceName);
+            if (dep == null)
+            {
+                if (torrentDownloader == null)
+                    torrentDownloader = new TorrentDownloader(this); //lazy initialization
+                dep = torrentDownloader.GetFileDependencies(resourceName);
+            }
+            if (dep != null)
+            {
+                Download down = null;
+                foreach (var dept in dep)
+                {
+                    if (!string.IsNullOrEmpty(dept))
+                    {
+                        var dd = GetResource(DownloadType.UNKNOWN, dept);
+                        if (dd != null)
+                        {
+                            if (down == null) down = dd;
+                            else down.AddNeededDownload(dd);
+                        }
+                    }
+                }
+                return down;
+            }
+            return null;
+        }
+
+        void RefreshAndWaitRapidIfNeeded() //2 minute anti-spam
+        {
+            if (!packageDownloader.refreshed) //edge case: we are unusually early?
+            {
+                if (packageDownloader.isRefreshing)
+                    //Wait until refresh is done
+                    do System.Threading.Thread.Sleep(500); while (packageDownloader.isRefreshing);
+                else
+                    packageDownloader.LoadMasterAndVersions(false).Wait();
+
+                return;
+            }
+            //package is stale?
+            if (DateTime.Now.Subtract(packageDownloader.LastRefresh).TotalMinutes >= 2)
+            {
+                packageDownloader.LoadMasterAndVersions(false).Wait();
+                return;
             }
         }
     }

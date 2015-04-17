@@ -8,7 +8,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Cache;
-using System.Net.Http;
+//using System.Net.Http; //Net 4.5.1
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
@@ -38,10 +38,14 @@ namespace PlasmaDownloader.Packages
         readonly PlasmaDownloader plasmaDownloader;
         readonly Timer refreshTimer;
         List<Repository> repositories = new List<Repository>();
+        List<string> selectedPackages = new List<string>();
 
         public List<Repository> Repositories { get { return repositories; } }
 
+        public List<string> SelectedPackages { get { return selectedPackages; } }
+
         public event EventHandler PackagesChanged = delegate { };
+        public event EventHandler SelectedPackagesChanged = delegate { };
         public event EventHandler MasterManifestDownloaded = delegate { };
 
         public DateTime MasterLastModified;
@@ -51,6 +55,7 @@ namespace PlasmaDownloader.Packages
             this.plasmaDownloader = plasmaDownloader;
             masterUrl = this.plasmaDownloader.Config.PackageMasterUrl;
             LoadRepositories();
+            LoadSelectedPackages();
             if (plasmaDownloader.Config.RepoMasterRefresh > 0)
             {
                 refreshTimer = new Timer(this.plasmaDownloader.Config.RepoMasterRefresh * 1000);
@@ -58,7 +63,7 @@ namespace PlasmaDownloader.Packages
                 refreshTimer.Elapsed += RefreshTimerElapsed;
                 refreshTimer.Start();
             }
-            LoadMasterAndVersions();
+            LoadMasterAndVersions(true);
 
         }
 
@@ -69,6 +74,13 @@ namespace PlasmaDownloader.Packages
                 refreshTimer.Stop();
                 refreshTimer.Elapsed -= RefreshTimerElapsed;
             }
+        }
+
+        public void DeselectPackage(string name)
+        {
+            lock (selectedPackages) selectedPackages.Remove(name);
+            SaveSelectedPackages();
+            SelectedPackagesChanged(this, EventArgs.Empty);
         }
 
 
@@ -123,6 +135,7 @@ namespace PlasmaDownloader.Packages
                     if (repo.VersionsByTag.TryGetValue(name, out versionEntry))
                     {
                         // find by package name
+                        SelectPackage(versionEntry.Name); // select it if it was requested by direct package name
                         return CreateDownload(repo, versionEntry);
                     }
 
@@ -137,7 +150,7 @@ namespace PlasmaDownloader.Packages
             return null;
         }
 
-        public Task LoadMasterAndVersions()
+        public Task LoadMasterAndVersions(bool downloadSelected)
         {
             return Task.Factory.StartNew(() =>
             {
@@ -189,7 +202,14 @@ namespace PlasmaDownloader.Packages
 
                     Task.WaitAll(waiting.ToArray()); //wait until all "repositories" element finish downloading.
 
-                    
+                    if (downloadSelected) {
+                        foreach (var result in waiting.Select(x => x.Result)) {
+                            if (result.HasChanged) hasChanged = true;
+                            if (result.ChangedVersions != null) foreach (var ver in result.ChangedVersions) if (selectedPackages.Contains(ver.Name)) 
+                                Utils.StartAsync(()=> { plasmaDownloader.GetResource(DownloadType.UNKNOWN, ver.Name); });
+                        }
+                    }
+
                     if (hasChanged)
                     {
                         SaveRepositories();
@@ -205,6 +225,24 @@ namespace PlasmaDownloader.Packages
                     if (refreshTimer != null) refreshTimer.Start();
                 }
             });
+        }
+
+        public void SelectPackage(string key)
+        {
+            var isNew = false;
+            lock (selectedPackages)
+            {
+                if (!selectedPackages.Contains(key))
+                {
+                    isNew = true;
+                    selectedPackages.Add(key);
+                }
+            }
+            if (isNew)
+            {
+                SaveSelectedPackages();
+                SelectedPackagesChanged(this, EventArgs.Empty);
+            }
         }
 
         PackageDownload CreateDownload(Repository repo, Version versionEntry)
@@ -248,6 +286,26 @@ namespace PlasmaDownloader.Packages
             }
         }
 
+        void LoadSelectedPackages()
+        {
+            try
+            {
+                var path = Utils.MakePath(plasmaDownloader.SpringPaths.WritableDirectory, "packages", "selected.list");
+                if (File.Exists(path))
+                {
+                    var text = File.ReadAllText(path);
+                    var newPackages = new List<string>();
+                    foreach (var s in text.Split('\n')) if (!string.IsNullOrEmpty(s)) newPackages.Add(s);
+                    lock (selectedPackages) selectedPackages = newPackages;
+                }
+                else
+                    Trace.TraceWarning("PackageDownloader : File don't exist : {0}", path);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning("Unable to load selected packages list: {0}", ex);
+            }
+        }
 
         bool ParseMaster(Stream stream)
         {
@@ -293,10 +351,32 @@ namespace PlasmaDownloader.Packages
             }
         }
 
+        void SaveSelectedPackages()
+        {
+            try
+            {
+                var path = Utils.MakePath(plasmaDownloader.SpringPaths.WritableDirectory, "packages", "selected.list");
+                var sb = new StringBuilder();
+
+                lock (selectedPackages)
+                {
+                    foreach (var entry in selectedPackages)
+                    {
+                        sb.Append(entry);
+                        sb.Append('\n');
+                    }
+                }
+                File.WriteAllText(path, sb.ToString());
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning("Unable to load selected packages list: {0}", ex);
+            }
+        }
 
         void RefreshTimerElapsed(object sender, ElapsedEventArgs e)
         {
-            LoadMasterAndVersions();
+            LoadMasterAndVersions(true);
         }
 
         [Serializable]
