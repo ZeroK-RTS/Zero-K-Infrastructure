@@ -7,16 +7,11 @@ using System.Threading.Tasks;
 
 namespace CampaignLib
 {
-    [DataContract]
     public class CampaignProgress
     {
-        [DataMember]
         public string CampaignID { get; set; }
-        [DataMember]
         public Dictionary<string, CampaignVar> CampaignVars { get; set; }
-        [DataMember]
         public Dictionary<string, PlanetProgressData> PlanetProgress { get; set; }
-        [DataMember]
         public Dictionary<string, JournalProgressData> JournalProgress { get; set; }
 
         public CampaignProgress(string id)
@@ -27,16 +22,12 @@ namespace CampaignLib
             JournalProgress = new Dictionary<string, JournalProgressData>();
         }
 
-        [DataContract]
+        
         public class PlanetProgressData
         {
-            [DataMember]
             public string planetID;
-            [DataMember]
             public bool played = false;
-            [DataMember]
             public bool unlocked = false;
-            [DataMember]
             public bool completed = false;
 
             public PlanetProgressData(string planetID)
@@ -45,14 +36,12 @@ namespace CampaignLib
             }
         }
 
-        [DataContract]
+        
         public class JournalProgressData
         {
-            [DataMember]
             public string journalID;
-            [DataMember]
             public bool unlocked = false;
-            [DataMember]
+            public bool read = false;
             public string textSnapshot = "";
 
             public JournalProgressData(string journalID)
