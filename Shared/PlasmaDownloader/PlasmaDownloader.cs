@@ -187,14 +187,14 @@ namespace PlasmaDownloader
                     //Wait until refresh is done
                     do System.Threading.Thread.Sleep(500); while (packageDownloader.isRefreshing);
                 else
-                    packageDownloader.LoadMasterAndVersions(false).Wait();
+                    packageDownloader.LoadMasterAndVersions().Wait();
 
                 return;
             }
             //package is stale?
             if (DateTime.Now.Subtract(packageDownloader.LastRefresh).TotalMinutes >= 2)
             {
-                packageDownloader.LoadMasterAndVersions(false).Wait();
+                packageDownloader.LoadMasterAndVersions().Wait();
                 return;
             }
         }
