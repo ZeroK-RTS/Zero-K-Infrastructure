@@ -74,6 +74,7 @@ namespace ZkLobbyServer
                 foreach (var b in state.Battles.Values.Where(x => x.Users.ContainsKey(Name)))
                 {
                     await LeaveBattle(b);
+                    await RecalcSpectators(b);
                 }
 
                 // notify clients which know about me that i left server
