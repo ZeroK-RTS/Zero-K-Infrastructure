@@ -24,6 +24,11 @@ namespace ZeroKLobby.MicroLobby
 	    protected override void OnPaintBackground(PaintEventArgs e)
 	    {
             //base.OnPaintBackground(e);
+	        /*if (Environment.OSVersion.Platform != PlatformID.Unix) {
+	            using (var br = new SolidBrush(Color.FromArgb(255,0,255,255))) {
+	                e.Graphics.FillRectangle(br, e.ClipRectangle);
+	            }
+	        }*/
             FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, DisplayRectangle, FrameBorderRenderer.StyleType.Shraka);
 	    }
 
@@ -31,8 +36,10 @@ namespace ZeroKLobby.MicroLobby
 		public LoginForm()
 		{
             Font = Config.GeneralFontBig;
-
             InitializeComponent();
+		    //AllowTransparency = true;
+		    //TransparencyKey = Color.FromArgb(255, 255, 255, );
+		    
 
             var textBackColor = Color.FromArgb(255, 0, 100, 140);
 		   

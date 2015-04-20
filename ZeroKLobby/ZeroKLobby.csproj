@@ -188,7 +188,9 @@
       <DependentUpon>PromptForm.cs</DependentUpon>
     </Compile>
     <Compile Include="MicroForms\UnitSyncRetryPrompt.cs" />
-    <Compile Include="MicroLobby\ExtrasTab\LocalReplay.cs" />
+    <Compile Include="MicroLobby\ExtrasTab\LocalReplay.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="MicroLobby\ExtrasTab\LocalReplay.Designer.cs">
       <DependentUpon>LocalReplay.cs</DependentUpon>
     </Compile>
@@ -202,10 +204,10 @@
     <Compile Include="MicroLobby\HexToUnicodeConverter.Designer.cs">
       <DependentUpon>HexToUnicodeConverter.cs</DependentUpon>
     </Compile>
-    <Compile Include="MicroLobby\ExtrasTab\SkirmishControl.cs">
+    <Compile Include="MainPages\SkirmishControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MicroLobby\ExtrasTab\SkirmishControl.Designer.cs">
+    <Compile Include="MainPages\SkirmishControl.Designer.cs">
       <DependentUpon>SkirmishControl.cs</DependentUpon>
     </Compile>
     <Compile Include="MicroLobby\TextColoringPanel.cs">
@@ -261,16 +263,16 @@
     <Compile Include="MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="MicroLobby\BattleListControl.cs">
+    <Compile Include="MainPages\BattleListControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="MicroLobby\BattleListControl.Designer.cs">
+    <Compile Include="MainPages\BattleListControl.Designer.cs">
       <DependentUpon>BattleListControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="MicroLobby\BattleListTab.cs">
+    <Compile Include="MainPages\BattleListTab.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MicroLobby\BattleListTab.Designer.cs">
+    <Compile Include="MainPages\BattleListTab.Designer.cs">
       <DependentUpon>BattleListTab.cs</DependentUpon>
     </Compile>
     <Compile Include="MicroLobby\ChatTab.cs">
@@ -565,13 +567,13 @@
     <EmbeddedResource Include="MicroLobby\ExtrasTab\LocalReplay.resx">
       <DependentUpon>LocalReplay.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MicroLobby\ExtrasTab\SkirmishControl.resx">
+    <EmbeddedResource Include="MainPages\SkirmishControl.resx">
       <DependentUpon>SkirmishControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\PwBar.resx">
       <DependentUpon>PwBar.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MicroLobby\BattleListTab.resx">
+    <EmbeddedResource Include="MainPages\BattleListTab.resx">
       <DependentUpon>BattleListTab.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\ChatControl.resx">
