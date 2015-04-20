@@ -14,6 +14,9 @@ namespace CampaignLib
         public string Blurb { get; set; }
         public string Image { get; set; }
         public int MissionID { get; set; }
+        public float X { get; set; }
+        public float Y { get; set; }
+        public bool StartUnlocked { get; set; }
         public bool HideIfLocked { get; set; }
         public List<String> LinkedPlanets { get; set; }
 
@@ -22,7 +25,10 @@ namespace CampaignLib
             ID = id;
             LinkedPlanets = new List<String>();
             MissionID = -1;
+            StartUnlocked = false;
 			HideIfLocked = true;
+            X = 500;
+            Y = 500;
         }
     }
 }

@@ -33,7 +33,8 @@ namespace ZeroKLobby.MainPages
 
         private void campaignButton_Click(object sender, EventArgs e)
         {
-            Program.BrowserInterop.OpenUrl(string.Format("{0}//Campaign/", GlobalConst.BaseSiteUrl));
+            //Program.BrowserInterop.OpenUrl(string.Format("{0}//Campaign/", GlobalConst.BaseSiteUrl));
+            Program.MainWindow.SwitchPage(MainWindow.MainPages.Campaign, false);
         }
 
         private void skirmishButton_Click(object sender, EventArgs e)

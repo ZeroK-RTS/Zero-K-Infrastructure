@@ -188,7 +188,16 @@
       <DependentUpon>PromptForm.cs</DependentUpon>
     </Compile>
     <Compile Include="MicroForms\UnitSyncRetryPrompt.cs" />
-    <Compile Include="MicroLobby\ExtrasTab\LocalReplay.cs" />
+    <Compile Include="MicroLobby\Campaign\CampaignManager.cs" />
+    <Compile Include="MicroLobby\Campaign\CampaignControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\Campaign\CampaignControl.Designer.cs">
+      <DependentUpon>CampaignControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\ExtrasTab\LocalReplay.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="MicroLobby\ExtrasTab\LocalReplay.Designer.cs">
       <DependentUpon>LocalReplay.cs</DependentUpon>
     </Compile>
@@ -562,6 +571,9 @@
     <EmbeddedResource Include="MicroLobby\BattleChatControl.resx">
       <DependentUpon>BattleChatControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\Campaign\CampaignControl.resx">
+      <DependentUpon>CampaignControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\ExtrasTab\LocalReplay.resx">
       <DependentUpon>LocalReplay.cs</DependentUpon>
     </EmbeddedResource>
@@ -696,6 +708,10 @@
     <ProjectReference Include="..\Benchmarker\Benchmarker.csproj">
       <Project>{67501A5B-B6BB-467E-85DA-22D81C40829C}</Project>
       <Name>Benchmarker</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CampaignLib\CampaignLib.csproj">
+      <Project>{f3ccbc28-c1ac-40a2-be89-51575f2ab27a}</Project>
+      <Name>CampaignLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\Shared\LobbyClient\LobbyClient.csproj">
       <Project>{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}</Project>

@@ -7,15 +7,17 @@ using System.Threading.Tasks;
 
 namespace CampaignLib
 {
-    public class CampaignProgress
+    public class CampaignSave
     {
+        public string Name { get; set; }
         public string CampaignID { get; set; }
         public Dictionary<string, CampaignVar> CampaignVars { get; set; }
         public Dictionary<string, PlanetProgressData> PlanetProgress { get; set; }
         public Dictionary<string, JournalProgressData> JournalProgress { get; set; }
 
-        public CampaignProgress(string id)
+        public CampaignSave(string name, string id)
         {
+            Name = name;
             CampaignID = id;
             CampaignVars = new Dictionary<string,CampaignVar>();
             PlanetProgress = new Dictionary<string, PlanetProgressData>();

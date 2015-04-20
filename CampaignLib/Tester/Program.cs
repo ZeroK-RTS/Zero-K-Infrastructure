@@ -25,12 +25,12 @@ namespace CampaignLib.Tester
 
         static void WriteCampaignProgress(Campaign campaign)
         {
-            CampaignProgress progress = new CampaignProgress(campaign.ID);
-            var progress1 = new CampaignProgress.JournalProgressData("journal1") { unlocked = true };
+            CampaignSave progress = new CampaignSave("save1", campaign.ID);
+            var progress1 = new CampaignSave.JournalProgressData("journal1") { unlocked = true };
             progress1.textSnapshot = campaign.Journals["journal1"].GetJournalText();
-            progress.JournalProgress.Add("journal1", new CampaignProgress.JournalProgressData("journal1") { unlocked = true });
+            progress.JournalProgress.Add("journal1", new CampaignSave.JournalProgressData("journal1") { unlocked = true });
 
-            var progress2 = new CampaignProgress.PlanetProgressData("planet1");
+            var progress2 = new CampaignSave.PlanetProgressData("planet1");
             progress2.unlocked = true;
             progress.PlanetProgress.Add("planet1", progress2);
 
@@ -57,8 +57,8 @@ namespace CampaignLib.Tester
         static void CreateCampaignSample()
         {
             Campaign newCampaign = new Campaign("testCampaign") { Name = "Test Campaign" };
-            Planet planet1 = new Planet("planet1") { Name = "Licho", HideIfLocked = false };
-            Planet planet2 = new Planet("planet2") { Name = "Saktoth", HideIfLocked = false };
+            Planet planet1 = new Planet("planet1") { Name = "Licho", HideIfLocked = false, X = 200, Y = 400 };
+            Planet planet2 = new Planet("planet2") { Name = "Saktoth", HideIfLocked = false, X = 300, Y = 320 };
 
             planet1.LinkedPlanets.Add(planet2.ID);
 

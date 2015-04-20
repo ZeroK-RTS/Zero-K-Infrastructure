@@ -14,6 +14,7 @@ namespace CampaignLib
         public string Icon { get; set; }
         public string Category { get; set; }
         public string PlanetID { get; set; }
+        public bool StartUnlocked { get; set; }
         public List<String> JournalPartIDs { get; set; }
 
         public Journal(string id)
