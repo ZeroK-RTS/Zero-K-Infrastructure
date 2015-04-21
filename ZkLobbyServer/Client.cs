@@ -618,7 +618,12 @@ namespace ZkLobbyServer
                     await Respond("Invalid password");
                     return;
                 }
-                battle.Users[Name] = new UserBattleStatus(Name, User);
+                var ubs = new UserBattleStatus(Name, User);
+                if (battle.Users.Values.Count(x => !x.IsSpectator) >= battle.MaxPlayers)
+                {
+                    ubs.IsSpectator = true;
+                }
+                battle.Users[Name] = ubs;
                 MyBattle = battle;
                 await Broadcast(state.Clients.Values, new JoinedBattle() { BattleID = battle.BattleID, User = Name }, Name);
                 await RecalcSpectators(battle);
@@ -668,7 +673,7 @@ namespace ZkLobbyServer
                 {
 
                     // enfoce player count limit
-                    if (status.IsSpectator == false && bat.Users.Values.Count(x => !x.IsSpectator) >= bat.MaxPlayers)
+                    if (status.IsSpectator == false && bat.Users[status.Name].IsSpectator == true && bat.Users.Values.Count(x => !x.IsSpectator) >= bat.MaxPlayers)
                     {
                         // if unspeccing but there is already enough, force spec
                         status.IsSpectator = true;
