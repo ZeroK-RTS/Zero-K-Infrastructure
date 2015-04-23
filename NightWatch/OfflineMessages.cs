@@ -47,7 +47,7 @@ namespace NightWatch
 						List<LobbyMessage> messages;
 					    foreach (var user in e.Users) {
 					        using (var db = new ZkDataContext()) {
-					            messages = db.LobbyMessages.Where(x => x.TargetName == user.Name && x.Channel == chan).ToList();
+					            messages = db.LobbyMessages.Where(x => x.TargetName == user.Name && x.Channel == chan).OrderBy(x => x.Created).ToList();
 					            db.LobbyMessages.DeleteAllOnSubmit(messages);
 					            db.SubmitChanges();
 					        }
@@ -230,7 +230,7 @@ namespace NightWatch
 						using (var db = new ZkDataContext())
 						
 						{
-							messages = db.LobbyMessages.Where(x => (x.TargetLobbyID == user.AccountID || x.TargetName == user.Name) && x.Channel == null).ToList();
+							messages = db.LobbyMessages.Where(x => (x.TargetLobbyID == user.AccountID || x.TargetName == user.Name) && x.Channel == null).OrderBy(x => x.Created).ToList();
 							db.LobbyMessages.DeleteAllOnSubmit(messages);
 							db.SubmitChanges();
 						}

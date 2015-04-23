@@ -211,6 +211,7 @@ namespace ZeroKLobby.Notifications
             tasClientConnectCalled = false;
             client.RequestDisconnect();
 	        Program.Conf.LobbyPlayerName = "";
+            Program.Conf.LobbyPlayerPassword = "";
             lbState.Text = "Press button to login again";
             btnLogout.Text = "Login";
 	        pictureBox1.Image = null;

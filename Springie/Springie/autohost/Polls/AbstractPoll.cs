@@ -44,7 +44,13 @@ namespace Springie.autohost.Polls
                 if (WinCount <= 1 && tas.MyBattle.NonSpectatorCount != 0 &&
                         tas.MyBattle.Users.Values.All(u => u.Name != e.UserName || u.IsSpectator))
                     WinCount = 2;
-                ah.SayBattle(string.Format("Poll: {0} [!y=0/{1}, !n=0/{1}]", Question, WinCount));
+
+                if (WinCount == 1) {
+                    SuccessAction();
+                    return false;
+                } else if (!Vote(e, true)) {
+                    ah.SayBattle(string.Format("Poll: {0} [!y=0/{1}, !n=0/{1}]", Question, WinCount));
+                }
                 return true;
             }
             else return false;

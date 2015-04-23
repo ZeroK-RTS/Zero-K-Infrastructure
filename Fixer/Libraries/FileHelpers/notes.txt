@@ -1,0 +1,3 @@
+Licensed under LGPL
+
+http://www.filehelpers.com/

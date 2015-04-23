@@ -40,6 +40,7 @@ namespace ZkLobbyServer
                 if (state.Clients.ContainsKey(login.Name)) return new LoginResponse { ResultCode = LoginResponse.Code.AlreadyConnected };
                 
                 acc.Country = ResolveCountry(ip);
+                if (acc.Country == null || String.IsNullOrEmpty(acc.Country)) acc.Country = "unknown";
                 acc.LobbyVersion = lobbyVersion;
                 acc.LastLogin = DateTime.UtcNow;
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Globalization;
+using System.Diagnostics;
 
 namespace ZeroKLobby.MicroLobby.ExtrasTab
 {
@@ -101,6 +102,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             	
             	if (text=="")
             	{
+                    replayItem.crash = false;
             	    replayItem.haveBeenUpdated=true;
             	    return;
             	}
@@ -255,10 +257,13 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             	replayItem.balance = versusCount;
             	replayItem.hostName = hostName;
         	}
+            replayItem.crash = false;
         	replayItem.haveBeenUpdated=true;
         	}catch(Exception e)
         	{
-        	    System.Diagnostics.Trace.TraceError("LocalReplay info reader error: {0}",e);
+                replayItem.crash = true;
+                replayItem.haveBeenUpdated = false;
+        	    Trace.TraceError("LocalReplay info reader error: {0}",e);
         	}
 		}
 		
@@ -275,20 +280,34 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             
             demoFiles = demoFiles.Reverse();
             
-            listBoxDemoList.BeginUpdate();
             foreach (var pathOfFiles in demoFiles)
             {	
                 var replayItem = new ReplayListItem();
             	
                 replayItem.filePath = pathOfFiles;
             	replayItem.fileName = SkirmishControlTool.GetFolderOrFileName(pathOfFiles);
-
-            	listBoxDemoList.Items.Add(replayItem);
+   	
+                InvokeIfNeeded(() =>
+                {//crossthread calls
+                    listBoxDemoList.Items.Add(replayItem);
+                });
             }
-            listBoxDemoList.EndUpdate();
             
             buttonRefresh.Enabled=true;
 		}
+
+        public void InvokeIfNeeded(Action acc) //for crossthread call safety
+        {
+            try
+            {
+                if (InvokeRequired) Invoke(acc);
+                else acc();
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.ToString());
+            }
+        }
 
 		Keys keyPress;
         void listBoxDemoList_KeyDown(object sender, KeyEventArgs e)
@@ -369,9 +388,14 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 		void MakeInfoLabel(int index)
 		{
 		    ReplayListItem replay = (ReplayListItem)listBoxDemoList.Items[index];
+            if (replay.crash)
+            {
+                label1.Text = "Error: Demo is being used";
+                return;
+            }
+
 		    string info = "";
-		    if (replay.replaySize>0)
-		        info = "Size: " + replay.replaySize + " kB\n";
+	        info = "Size: " + replay.replaySize + " kB\n";
 		    if (replay.gameName!=null)
 		        info = info + "Game: " + replay.gameName+ "\n";
 		    if (replay.balance!=null)
@@ -419,7 +443,10 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         void BtnLaunchClick(object sender, EventArgs e)
         {
             ReplayListItem item = (ReplayListItem)listBoxDemoList.SelectedItem;
-            ActionHandler.StartReplay(item.filePath,item.gameName,item.mapName,item.engine);
+            if (item.mapName == null || item.engine == null || item.gameName == null)
+                label1.Text = "Error: The demo is empty";
+            else
+                ActionHandler.StartReplay(item.filePath,item.gameName,item.mapName,item.engine);
         }
         void ButtonRefreshClick(object sender, EventArgs e)
         {

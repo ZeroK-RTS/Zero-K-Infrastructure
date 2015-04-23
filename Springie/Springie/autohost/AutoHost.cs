@@ -199,6 +199,21 @@ namespace Springie.autohost
       }
     }*/
 
+	public bool GetUserAdminStatus(TasSayEventArgs e) {
+		if (!tas.ExistingUsers.ContainsKey(e.UserName)) return false;
+		if (!String.IsNullOrEmpty(bossName) && (bossName == e.UserName)) return true;
+		return tas.ExistingUsers[e.UserName].IsAdmin;
+	}
+
+	public bool GetUserIsSpectator (TasSayEventArgs e) {
+		if (tas.MyBattle == null) return true;
+		if (spring.IsRunning)  {
+			PlayerTeam user = spring.StartContext.Players.FirstOrDefault(x => x.Name == e.UserName && !x.IsSpectator);
+			return ((user == null) || user.IsSpectator);
+		} else {
+			return !tas.MyBattle.Users.Values.Any(x => x.LobbyUser.Name == e.UserName && !x.IsSpectator);
+		}
+	}
 
         public int GetUserLevel(TasSayEventArgs e) {
             if (!tas.ExistingUsers.ContainsKey(e.UserName))
@@ -233,7 +248,7 @@ namespace Springie.autohost
                     for (int i = 0; i < c.ListenTo.Length; i++) {
                         if (c.ListenTo[i] == e.Place) {
                             // command is only for nonspecs
-                            if (!c.AllowSpecs) if (tas.MyBattle == null || !tas.MyBattle.Users.Values.Any(x => x.LobbyUser.Name == e.UserName && !x.IsSpectator)) return false;
+                            if (!c.AllowSpecs && !GetUserAdminStatus(e) && GetUserIsSpectator(e)) return false;
 
                             int reqLevel = c.Level;
                             int ulevel = GetUserLevel(e);
@@ -243,19 +258,11 @@ namespace Springie.autohost
                                 return true; // ALL OK
                             }
                             else {
-                                if (e.Place == SayPlace.Battle && tas.MyBattle != null && tas.MyBattle.NonSpectatorCount == 1 &&
-                                    (!command.StartsWith("vote") && HasRights("vote" + command, e) &&
-                                        tas.MyBattle.Users.Values.Any(u => u.Name == e.UserName && !u.IsSpectator))) {
-                                    // server only has 1 player and we have rights for vote variant - we might as well just do it
-                                    return true;
-                                }
-                                else {
-                                    Respond(e,
-                                            String.Format("Sorry, you do not have rights to execute {0}{1}",
-                                                          command,
-                                                          (!string.IsNullOrEmpty(bossName) ? ", ask boss admin " + bossName : "")));
+                                Respond(e,
+                                    String.Format("Sorry, you do not have rights to execute {0}{1}",
+                                        command,
+                                        (!string.IsNullOrEmpty(bossName) ? ", ask boss admin " + bossName : "")));
                                     return false;
-                                }
                             }
                         }
                     }
@@ -309,10 +316,6 @@ namespace Springie.autohost
 
                 case "listmods":
                     ComListMods(e, words);
-                    break;
-
-                case "voteboss":
-                    ComVoteBoss(e, words);
                     break;
 
                 case "help":
