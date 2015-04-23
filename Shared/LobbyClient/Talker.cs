@@ -87,7 +87,7 @@ namespace LobbyClient
     {
       close = true;
       var udclose = new UdpClient();
-      udclose.Send(new byte[2] { 0, (byte)SpringEventType.SERVER_QUIT }, 1, "127.0.0.1", loopbackPort);
+      udclose.Send(new byte[2] { 0, (byte)SpringEventType.SERVER_QUIT }, 2, "127.0.0.1", loopbackPort);
       thread.Join(1000);
     }
 
