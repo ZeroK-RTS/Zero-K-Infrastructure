@@ -204,9 +204,7 @@
     <Compile Include="MicroLobby\HexToUnicodeConverter.Designer.cs">
       <DependentUpon>HexToUnicodeConverter.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainPages\SkirmishControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="MainPages\SkirmishControl.cs" />
     <Compile Include="MainPages\SkirmishControl.Designer.cs">
       <DependentUpon>SkirmishControl.cs</DependentUpon>
     </Compile>
@@ -263,9 +261,7 @@
     <Compile Include="MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainPages\BattleListControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="MainPages\BattleListControl.cs" />
     <Compile Include="MainPages\BattleListControl.Designer.cs">
       <DependentUpon>BattleListControl.cs</DependentUpon>
     </Compile>
