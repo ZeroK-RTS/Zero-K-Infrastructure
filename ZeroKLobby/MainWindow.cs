@@ -138,7 +138,7 @@ namespace ZeroKLobby
             pages[MainPages.Skirmish] = new SkirmishControl();
             pages[MainPages.MultiPlayer] = new MultiPlayerPage();
             pages[MainPages.CustomBattles] = new BattleListTab();
-            pages[MainPages.Campaign] = new CampaignControl();
+            pages[MainPages.Campaign] = new CampaignPage();
 
             foreach (var c in pages.Values) switchPanel1.SetupTabPage(c);
             SwitchPage(MainPages.Home, false);

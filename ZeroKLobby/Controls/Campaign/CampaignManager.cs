@@ -23,7 +23,7 @@ namespace ZeroKLobby.MicroLobby.Campaign
             currentCampaign = JsonConvert.DeserializeObject<CampaignLib.Campaign>(campaignJson);
 
             string journalPartsJson = File.ReadAllText(campaignDir + "journalParts.json");
-            journalParts = JsonConvert.DeserializeObject<Dictionary<string, JournalPart>>("journalPartsJson");
+            journalParts = JsonConvert.DeserializeObject<Dictionary<string, JournalPart>>(journalPartsJson);
 
             Trace.TraceInformation("Loaded campaign {0}", currentCampaign.Name);
         }
@@ -47,11 +47,34 @@ namespace ZeroKLobby.MicroLobby.Campaign
             return result;
         }
 
+        public List<Planet> GetVisiblePlanets()
+        {
+            List<Planet> result = new List<Planet>();
+            foreach (KeyValuePair<string, Planet> planetEntry in currentCampaign.Planets)
+            {
+                if (IsPlanetVisible(planetEntry.Key)) result.Add(planetEntry.Value);
+            }
+            return result;
+        }
+
         public bool IsPlanetUnlocked(string planetID)
         {
             if (!currentCampaign.Planets.ContainsKey(planetID)) return false;
             if (!currentCampaignSave.PlanetProgress.ContainsKey(planetID)) return false;
             return currentCampaignSave.PlanetProgress[planetID].unlocked;
+        }
+
+        public bool IsPlanetVisible(string planetID)
+        {
+            if (!currentCampaign.Planets.ContainsKey(planetID)) return false;
+            if (!currentCampaignSave.PlanetProgress.ContainsKey(planetID)) return false;
+            if (!currentCampaign.Planets[planetID].HideIfLocked) return true;
+            return currentCampaignSave.PlanetProgress[planetID].unlocked;
+        }
+
+        public CampaignLib.Campaign GetCampaign()
+        {
+            return currentCampaign;
         }
     }
 }

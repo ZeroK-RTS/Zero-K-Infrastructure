@@ -1,0 +1,50 @@
+{
+  "Name": "Test Campaign",
+  "ID": "testCampaign",
+  "Blurb": null,
+  "Background": "galaxy4",
+  "Icon": null,
+  "Planets": {
+    "planet1": {
+      "Name": "Licho",
+      "ID": "planet1",
+      "Blurb": null,
+      "Image": "planet_terran",
+      "MissionID": -1,
+      "X": 200.0,
+      "Y": 400.0,
+	  "Size": 48,
+      "StartUnlocked": false,
+      "HideIfLocked": false,
+      "LinkedPlanets": [
+        "planet2"
+      ]
+    },
+    "planet2": {
+      "Name": "Saktoth",
+      "ID": "planet2",
+      "Blurb": null,
+      "Image": "planet_rockygrey",
+      "MissionID": -1,
+      "X": 500.0,
+      "Y": 320.0,
+	  "Size": 64,
+      "StartUnlocked": false,
+      "HideIfLocked": false,
+      "LinkedPlanets": []
+    }
+  },
+  "Journals": {
+    "journal1": {
+      "Name": "Entry 1",
+      "ID": "journal1",
+      "Icon": null,
+      "Category": null,
+      "PlanetID": "planet1",
+      "StartUnlocked": false,
+      "JournalPartIDs": [
+        "journal1_1"
+      ]
+    }
+  }
+}

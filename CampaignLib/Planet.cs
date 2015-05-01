@@ -16,6 +16,7 @@ namespace CampaignLib
         public int MissionID { get; set; }
         public float X { get; set; }
         public float Y { get; set; }
+        public float Size { get; set; }
         public bool StartUnlocked { get; set; }
         public bool HideIfLocked { get; set; }
         public List<String> LinkedPlanets { get; set; }
@@ -29,6 +30,7 @@ namespace CampaignLib
 			HideIfLocked = true;
             X = 500;
             Y = 500;
+            Size = 48;
         }
     }
 }

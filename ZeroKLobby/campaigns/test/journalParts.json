@@ -1,0 +1,9 @@
+{
+  "journal1_1": {
+    "Name": "Entry 1 part 1",
+    "ID": "journal1_1",
+    "Text": "The quick brown fox jumps over the lazy dog",
+    "Image": null,
+    "VariablesRequired": {}
+  }
+}

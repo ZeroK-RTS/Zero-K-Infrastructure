@@ -1,6 +1,6 @@
-﻿namespace ZeroKLobby.MicroLobby.Campaign
+﻿namespace ZeroKLobby.Campaign
 {
-    partial class CampaignControl
+    partial class GalaxyControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -34,12 +34,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.Black;
             this.Name = "Galaxy";
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
     }
 }
