@@ -258,19 +258,11 @@ namespace Springie.autohost
                                 return true; // ALL OK
                             }
                             else {
-                                if (e.Place == SayPlace.Battle && tas.MyBattle != null && tas.MyBattle.NonSpectatorCount == 1 &&
-                                    (!command.StartsWith("vote") && HasRights("vote" + command, e) &&
-                                        tas.MyBattle.Users.Values.Any(u => u.Name == e.UserName && !u.IsSpectator))) {
-                                    // server only has 1 player and we have rights for vote variant - we might as well just do it
-                                    return true;
-                                }
-                                else {
-                                    Respond(e,
-                                            String.Format("Sorry, you do not have rights to execute {0}{1}",
-                                                          command,
-                                                          (!string.IsNullOrEmpty(bossName) ? ", ask boss admin " + bossName : "")));
+                                Respond(e,
+                                    String.Format("Sorry, you do not have rights to execute {0}{1}",
+                                        command,
+                                        (!string.IsNullOrEmpty(bossName) ? ", ask boss admin " + bossName : "")));
                                     return false;
-                                }
                             }
                         }
                     }

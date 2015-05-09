@@ -149,7 +149,7 @@ namespace ZeroKLobby
 
 
                 var contentDir = !string.IsNullOrEmpty(Conf.DataFolder) ? Conf.DataFolder : StartupPath;
-                if (!Directory.Exists(contentDir) || !SpringPaths.IsDirectoryWritable(contentDir) || pickInitFolder)
+                if (!Directory.Exists(contentDir) || !SpringPaths.IsDirectoryWritable(contentDir) || pickInitFolder || contentDir.Contains("Local\\Apps"))
                 {
                     var dc = new SelectWritableFolder() { SelectedPath = SpringPaths.GetMySpringDocPath() };
                     if (dc.ShowDialog() != DialogResult.OK) return;

@@ -218,9 +218,20 @@ namespace ZeroKLobby.MicroLobby
             }
             else if (e.Button == MouseButtons.Right)
             {
-                // todo - disable OnMouseMove while this is open to stop battle tooltips floating under it
-                ContextMenus.GetBattleListContextMenu(battle).Show(Parent, e.Location);
+                var cm = ContextMenus.GetBattleListContextMenu(battle);
                 Program.ToolTip.Visible = false;
+                try
+                {
+                    cm.Show(Parent, e.Location);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("BattleListControl Error displaying tooltip: {0}", ex);
+                }
+                finally
+                {
+                    Program.ToolTip.Visible = true;
+                }
             }
         }
 
