@@ -148,7 +148,7 @@ namespace NightWatch
 										{
 											using (var db = new ZkDataContext()) {
 												Faction channelFaction = db.Factions.FirstOrDefault(x=> chan == x.Name);
-												Clan channelClan = db.Clans.FirstOrDefault(x=> x.GetClanChannel() == chan);
+												//Clan channelClan = db.Clans.FirstOrDefault(x=> x.GetClanChannel() == chan);
 												Account account = Account.AccountByName(db, e.UserName);
 												if (!(account.IsZeroKAdmin) &&
 													((chan == AuthService.ModeratorChannel)	
