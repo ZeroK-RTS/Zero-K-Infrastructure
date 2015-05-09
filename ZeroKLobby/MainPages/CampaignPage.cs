@@ -17,9 +17,9 @@ namespace ZeroKLobby.MicroLobby.Campaign
     public partial class CampaignPage : UserControl, IMainPage
     {
         CampaignManager manager;
-        List<Planet> planetsToRender = new List<Planet>();
         Dictionary<string, BitmapButton> buttons = new Dictionary<string, BitmapButton>();
-        PlanetInfoPanel planetInfoPanel;
+        
+        JournalPanel journalPanel;
 
         public CampaignPage()
         {
@@ -33,32 +33,22 @@ namespace ZeroKLobby.MicroLobby.Campaign
             saveButton.Font = Config.MenuFont;
             loadButton.Font = Config.MenuFont;
 
+            journalButton.Click += (sender, eventArgs) =>
+                {
+                    if (journalPanel != null)
+                    {
+                        journalPanel.Dispose();
+                    }
+                    journalPanel = new JournalPanel();
+                    journalPanel.Left = 240;  // FIXME don't hardcode this kind of thing!!
+                    journalPanel.LoadJournalEntries(manager.GetCampaign().Journals, manager.GetSave().JournalProgress);
+                    journalPanel.Parent = this;
+                    journalPanel.BringToFront();
+                };
+
             galControl.BackgroundImage = (Bitmap)GalaxyResources.ResourceManager.GetObject(manager.GetCampaign().Background);
             galControl.BackgroundImageLayout = ImageLayout.Stretch;
-
-            planetsToRender = manager.GetUnlockedPlanets();
-            foreach (Planet planet in planetsToRender)
-            {
-                Button button = new Button();
-                button.Parent = this.galControl;
-                button.Width = 48;
-                button.Height = 48;
-                button.Location = new Point((int)planet.X, (int)planet.Y);
-                button.BackgroundImage = (Bitmap)GalaxyResources.ResourceManager.GetObject(planet.Image);
-                button.BackgroundImageLayout = ImageLayout.Stretch;
-                button.BackColor = Color.Transparent;
-                button.ForeColor = Color.Transparent;
-                button.Click += (sender, eventArgs) =>
-                    {
-                        if (planetInfoPanel != null)
-                        {
-                            planetInfoPanel.Dispose();
-                        }
-                        planetInfoPanel = new PlanetInfoPanel();
-                        planetInfoPanel.Parent = galControl;
-                        planetInfoPanel.SetParams(planet);
-                    };
-            }
+            galControl.SetPlanets(manager.GetVisiblePlanets());
         }
 
         public void GoBack()

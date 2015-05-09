@@ -1,26 +1,20 @@
 {
   "CampaignID": "testCampaign",
   "CampaignVars": {},
-  "PlanetProgress": {
-    "planet1": {
-      "planetID": "planet1",
+  "MissionProgress": {
+    "mission1": {
+      "missionID": "mission1",
       "played": false,
       "unlocked": true,
       "completed": true
     },
-	"planet2": {
-      "planetID": "planet2",
-      "played": false,
-      "unlocked": true,
-      "completed": false
-    }
   },
   "JournalProgress": {
     "journal1": {
       "journalID": "journal1",
       "unlocked": true,
       "read": false,
-      "textSnapshot": ""
+      "textSnapshot": "Slow and steady wins the race"
     }
   }
 }

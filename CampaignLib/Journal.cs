@@ -11,7 +11,7 @@ namespace CampaignLib
     {
         public string Name { get; set; }
         public string ID { get; set; }
-        public string Icon { get; set; }
+        public string Image { get; set; }
         public string Category { get; set; }
         public string PlanetID { get; set; }
         public bool StartUnlocked { get; set; }

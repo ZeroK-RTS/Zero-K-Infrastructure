@@ -60,21 +60,31 @@ namespace ZeroKLobby.MicroLobby.Campaign
         public bool IsPlanetUnlocked(string planetID)
         {
             if (!currentCampaign.Planets.ContainsKey(planetID)) return false;
-            if (!currentCampaignSave.PlanetProgress.ContainsKey(planetID)) return false;
-            return currentCampaignSave.PlanetProgress[planetID].unlocked;
+            var planetMissions = currentCampaign.Planets[planetID].Missions;
+            var missionProgress = currentCampaignSave.MissionProgress;
+            foreach (Mission planetMission in planetMissions)
+            {
+                if (!missionProgress.ContainsKey(planetMission.ID)) continue;
+                if (missionProgress[planetMission.ID].unlocked) return true;
+            }
+            return false;
         }
 
         public bool IsPlanetVisible(string planetID)
         {
             if (!currentCampaign.Planets.ContainsKey(planetID)) return false;
-            if (!currentCampaignSave.PlanetProgress.ContainsKey(planetID)) return false;
             if (!currentCampaign.Planets[planetID].HideIfLocked) return true;
-            return currentCampaignSave.PlanetProgress[planetID].unlocked;
+            return IsPlanetUnlocked(planetID);
         }
 
         public CampaignLib.Campaign GetCampaign()
         {
             return currentCampaign;
+        }
+
+        public CampaignSave GetSave()
+        {
+            return currentCampaignSave;
         }
     }
 }

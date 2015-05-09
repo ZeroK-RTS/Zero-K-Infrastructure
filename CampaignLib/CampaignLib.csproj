@@ -52,6 +52,7 @@
     <Compile Include="Campaign.cs" />
     <Compile Include="CampaignVar.cs" />
     <Compile Include="CampaignSave.cs" />
+    <Compile Include="Mission.cs" />
     <Compile Include="JournalPart.cs" />
     <Compile Include="Journal.cs" />
     <Compile Include="Planet.cs" />

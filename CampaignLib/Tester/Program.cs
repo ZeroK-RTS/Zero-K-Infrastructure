@@ -30,9 +30,9 @@ namespace CampaignLib.Tester
             progress1.textSnapshot = campaign.Journals["journal1"].GetJournalText();
             progress.JournalProgress.Add("journal1", new CampaignSave.JournalProgressData("journal1") { unlocked = true });
 
-            var progress2 = new CampaignSave.PlanetProgressData("planet1");
+            var progress2 = new CampaignSave.MissionProgressData("mission1");
             progress2.unlocked = true;
-            progress.PlanetProgress.Add("planet1", progress2);
+            progress.MissionProgress.Add("mission1", progress2);
 
             string progressJson = JsonConvert.SerializeObject(progress, Formatting.Indented);
             File.WriteAllText("test_progress.json", progressJson);

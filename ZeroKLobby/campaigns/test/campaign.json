@@ -18,7 +18,15 @@
       "HideIfLocked": false,
       "LinkedPlanets": [
         "planet2"
-      ]
+      ],
+	  "Missions": [
+		{
+			"Name":"Tutorial 1",
+			"ID":"mission1",
+			"SiteNum":140,
+			"IsMainQuest":true,
+		},
+	  ]
     },
     "planet2": {
       "Name": "Saktoth",
@@ -38,8 +46,8 @@
     "journal1": {
       "Name": "Entry 1",
       "ID": "journal1",
-      "Icon": null,
-      "Category": null,
+      "Image": null,
+      "Category": "Other",
       "PlanetID": "planet1",
       "StartUnlocked": false,
       "JournalPartIDs": [

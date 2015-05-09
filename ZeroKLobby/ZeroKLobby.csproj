@@ -122,11 +122,23 @@
       <DependentUpon>Buttons.resx</DependentUpon>
     </Compile>
     <Compile Include="CachedResourceManager.cs" />
+    <Compile Include="Controls\Campaign\JournalPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Campaign\JournalPanel.Designer.cs">
+      <DependentUpon>JournalPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Campaign\PlanetInfoPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\Campaign\PlanetInfoPanel.Designer.cs">
       <DependentUpon>PlanetInfoPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TransparentTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\TransparentTextBox.Designer.cs">
+      <DependentUpon>TransparentTextBox.cs</DependentUpon>
     </Compile>
     <Compile Include="GalaxyResources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -550,11 +562,17 @@
       <LastGenOutput>Configs.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Campaign\JournalPanel.resx">
+      <DependentUpon>JournalPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\Campaign\PlanetInfoPanel.resx">
       <DependentUpon>PlanetInfoPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\MinimapFuncBox.resx">
       <DependentUpon>MinimapFuncBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\TransparentTextBox.resx">
+      <DependentUpon>TransparentTextBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DarkHive.resx">
       <Generator>ResXFileCodeGenerator</Generator>

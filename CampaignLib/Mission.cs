@@ -7,30 +7,23 @@ using System.Threading.Tasks;
 
 namespace CampaignLib
 {
-    public class Planet
+    public class Mission
     {
         public string Name { get; set; }
         public string ID { get; set; }
-        public string Blurb { get; set; }
+        public int SiteNum { get; set; }
+        public bool IsMainQuest { get; set; }
+        public string Archive { get; set; }
         public string Image { get; set; }
-        public float X { get; set; }
-        public float Y { get; set; }
-        public float Size { get; set; }
         public bool StartUnlocked { get; set; }
         public bool HideIfLocked { get; set; }
-        public List<String> LinkedPlanets { get; set; }
-        public List<Mission> Missions { get; set; }
 
-        public Planet(string id)
+        public Mission(string id)
         {
             ID = id;
-            LinkedPlanets = new List<String>();
-            Missions = new List<Mission>();
             StartUnlocked = false;
 			HideIfLocked = true;
-            X = 500;
-            Y = 500;
-            Size = 48;
+            IsMainQuest = true;
         }
     }
 }

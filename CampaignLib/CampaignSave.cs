@@ -12,7 +12,7 @@ namespace CampaignLib
         public string Name { get; set; }
         public string CampaignID { get; set; }
         public Dictionary<string, CampaignVar> CampaignVars { get; set; }
-        public Dictionary<string, PlanetProgressData> PlanetProgress { get; set; }
+        public Dictionary<string, MissionProgressData> MissionProgress { get; set; }
         public Dictionary<string, JournalProgressData> JournalProgress { get; set; }
 
         public CampaignSave(string name, string id)
@@ -20,21 +20,21 @@ namespace CampaignLib
             Name = name;
             CampaignID = id;
             CampaignVars = new Dictionary<string,CampaignVar>();
-            PlanetProgress = new Dictionary<string, PlanetProgressData>();
+            MissionProgress = new Dictionary<string, MissionProgressData>();
             JournalProgress = new Dictionary<string, JournalProgressData>();
         }
 
         
-        public class PlanetProgressData
+        public class MissionProgressData
         {
-            public string planetID;
+            public string missionID;
             public bool played = false;
             public bool unlocked = false;
             public bool completed = false;
 
-            public PlanetProgressData(string planetID)
+            public MissionProgressData(string missionID)
             {
-                this.planetID = planetID;
+                this.missionID = missionID;
             }
         }
 

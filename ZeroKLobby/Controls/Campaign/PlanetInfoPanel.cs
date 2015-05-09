@@ -13,16 +13,31 @@ namespace ZeroKLobby.Controls.Campaign
 {
     public partial class PlanetInfoPanel : UserControl
     {
+        Planet planet;
+
         public PlanetInfoPanel()
         {
             InitializeComponent();
+            planetNameBox.Font = Config.MenuFont;
         }
 
         public void SetParams(Planet planet)
         {
-            planetPictureBox.BackgroundImage = (Bitmap)GalaxyResources.ResourceManager.GetObject(planet.Image);
-            blurbWindow.ClearTextWindow();
-            blurbWindow.AppendText(planet.Blurb ?? "No description... yet");
+            this.planet = planet;
+            planetNameBox.AppendText(planet.Name);
+            planetImageBox.BackgroundImage = (Bitmap)GalaxyResources.ResourceManager.GetObject(planet.Image);
+            planetBlurbBox.AppendText(planet.Blurb ?? "No description... yet");
+
+            var missions = planet.Missions;
+            foreach (Mission mission in missions)
+            {
+                BitmapButton button = new BitmapButton();
+                button.Text = String.Format("{1}{0}", mission.Name, mission.IsMainQuest ? "" : "OPTIONAL: ");
+                //button.Left = 4;
+                button.AutoSize = true;
+                button.Parent = missionFlowLayout;
+                button.Width = button.Parent.Width - 8; // FIXME donut hardcode
+            }
         }
 
         private void closeButton_Click(object sender, EventArgs e)
