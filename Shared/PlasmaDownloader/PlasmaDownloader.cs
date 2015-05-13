@@ -101,7 +101,7 @@ namespace PlasmaDownloader
 
             lock (downloads) {
                 downloads.RemoveAll(x => x.IsAborted || x.IsComplete != null); // remove already completed downloads from list}
-                var existing = downloads.FirstOrDefault(x => x.Name == name);
+                var existing = downloads.FirstOrDefault(x => x.Name == name || x.Alias == name);
                 if (existing != null) return existing;
             }
 
@@ -132,6 +132,7 @@ namespace PlasmaDownloader
                 if (type == DownloadType.MOD || type == DownloadType.UNKNOWN) {
                     var down = packageDownloader.GetPackageDownload(name);
                     if (down != null) {
+                        down.Alias = name;
                         downloads.Add(down);
                         DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down));
                         return down;
