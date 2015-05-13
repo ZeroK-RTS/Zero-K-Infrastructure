@@ -313,7 +313,7 @@ namespace LobbyClient
                 script.AppendFormat(CultureInfo.InvariantCulture, "     StartRectTop={0};\n", top);
                 script.AppendFormat(CultureInfo.InvariantCulture, "     StartRectRight={0};\n", right);
                 script.AppendFormat(CultureInfo.InvariantCulture, "     StartRectBottom={0};\n", bottom);
-                startboxes.AppendFormat("[{0}] = { {1}, {2}, {3}, {4} }, ", allyNumber, left, top, right, bottom);
+                startboxes.AppendFormat(CultureInfo.InvariantCulture, "[{0}] = { {1}, {2}, {3}, {4} }, ", allyNumber, left, top, right, bottom);
                 script.AppendLine("}");
             }
 
