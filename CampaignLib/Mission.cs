@@ -11,6 +11,8 @@ namespace CampaignLib
     {
         public string Name { get; set; }
         public string ID { get; set; }
+        public string IntroJournal { get; set; }
+        public string DownloadArchive { get; set; }
         public int SiteNum { get; set; }
         public bool IsMainQuest { get; set; }
         public string Archive { get; set; }

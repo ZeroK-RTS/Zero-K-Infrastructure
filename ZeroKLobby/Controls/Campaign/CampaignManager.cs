@@ -10,7 +10,7 @@ using System.Diagnostics;
 
 namespace ZeroKLobby.MicroLobby.Campaign
 {
-    class CampaignManager
+    public class CampaignManager
     {
         CampaignLib.Campaign currentCampaign;
         Dictionary<string, JournalPart> journalParts;
@@ -28,10 +28,12 @@ namespace ZeroKLobby.MicroLobby.Campaign
             Trace.TraceInformation("Loaded campaign {0}", currentCampaign.Name);
         }
 
-        public void LoadCampaignSave(string campaignName, string saveName)
+        public void LoadCampaignSave(string campaignName, string saveName, bool isFullDir = false)
         {
-            string saveDir = "./campaignsaves/" + campaignName + "/";
-            string saveJson = File.ReadAllText(saveDir + saveName + ".json");
+
+            string saveDir = "";
+            if (!isFullDir) saveDir = "./campaignsaves/" + campaignName + "/";
+            string saveJson = File.ReadAllText(saveDir + saveName + (isFullDir ? "" : ".json"));
             currentCampaignSave = JsonConvert.DeserializeObject<CampaignSave>(saveJson);
 
             Trace.TraceInformation("Loaded save {0} for campaign {1}", currentCampaignSave.Name, currentCampaign.Name);
@@ -77,6 +79,78 @@ namespace ZeroKLobby.MicroLobby.Campaign
             return IsPlanetUnlocked(planetID);
         }
 
+        public bool IsJournalRead(string journalID)
+        {
+            if (!currentCampaign.Journals.ContainsKey(journalID)) return false;
+            if (currentCampaignSave.JournalProgress[journalID] == null) return false;
+            return currentCampaignSave.JournalProgress[journalID].read;
+        }
+
+        public bool IsJournalUnlocked(string journalID)
+        {
+            if (!currentCampaign.Journals.ContainsKey(journalID)) return false;
+            if (currentCampaign.Journals[journalID].StartUnlocked) return true;
+            if (!currentCampaignSave.JournalProgress.ContainsKey(journalID)) return false;
+            return currentCampaignSave.JournalProgress[journalID].unlocked;
+        }
+
+        public List<JournalViewEntry> GetVisibleJournals()
+        {
+            List<JournalViewEntry> ret = new List<JournalViewEntry>();
+            foreach (var kvp in currentCampaign.Journals)
+            {
+                if (IsJournalUnlocked(kvp.Key))
+                {
+                    ret.Add(GetJournalViewEntry(kvp.Key));
+                }
+            }
+            return ret;
+        }
+
+        public JournalViewEntry GetJournalViewEntry(string journalID)
+        {
+            string text = "";
+            Journal journal = currentCampaign.Journals[journalID];
+            if (currentCampaignSave.JournalProgress.ContainsKey(journalID))
+                text = currentCampaignSave.JournalProgress[journalID].textSnapshot;
+            if (String.IsNullOrEmpty(text))
+                text = GetJournalTextSnapshot(journalID);
+            JournalViewEntry entry = new JournalViewEntry(journalID, journal.Name, journal.Category, text);
+            return entry;
+        }
+
+        public string GetJournalTextSnapshot(string journalID)
+        {
+            if (!currentCampaign.Journals.ContainsKey(journalID)) throw new Exception("Journal " + journalID + " does not exist in campaign");
+
+            List<string> fragments = new List<string>();
+            Journal journal = currentCampaign.Journals[journalID];
+            foreach (string partID in journal.JournalPartIDs)
+            {
+                if (!journalParts.ContainsKey(partID)) throw new Exception("Journal part " + partID + " does not exist in campaign");
+                var part = journalParts[partID];
+                foreach (var requiredVar in part.VariablesRequired)
+                {
+                    // TODO: var check here to see if the fragment should be used
+                }
+                fragments.Add(part.Text);
+            }
+            return String.Concat(fragments);
+        }
+
+        public void UnlockJournal(string journalID)
+        {
+            if (!currentCampaign.Journals.ContainsKey(journalID)) throw new Exception("Journal " + journalID + " does not exist in campaign");
+
+            String textSnapshot = GetJournalTextSnapshot(journalID);
+            if (currentCampaignSave.JournalProgress.ContainsKey(journalID))
+            {
+                currentCampaignSave.JournalProgress[journalID].unlocked = true;
+                currentCampaignSave.JournalProgress[journalID].textSnapshot = textSnapshot;
+            }
+            else currentCampaignSave.JournalProgress.Add(journalID, new CampaignSave.JournalProgressData(journalID) { unlocked = true, textSnapshot = textSnapshot });
+        }
+
         public CampaignLib.Campaign GetCampaign()
         {
             return currentCampaign;
@@ -85,6 +159,24 @@ namespace ZeroKLobby.MicroLobby.Campaign
         public CampaignSave GetSave()
         {
             return currentCampaignSave;
+        }
+
+        public class JournalViewEntry
+        {
+            public string id;
+            public string name;
+            public string category;
+            public string text;
+            public string image;
+
+            public JournalViewEntry(string id, string name, string category, string text, string image = null)
+            {
+                this.id = id;
+                this.name = name;
+                this.category = category;
+                this.text = text;
+                this.image = image;
+            }
         }
     }
 }

@@ -5,5 +5,21 @@
     "Text": "The quick brown fox jumps over the lazy dog",
     "Image": null,
     "VariablesRequired": {}
+  },
+  "tutorialIntro_1": {
+	"Name": "TutorialIntro part 1",
+    "ID": "tutorialIntro_1",
+    "Text": "This is the first line of text.",
+    "Image": null,
+    "VariablesRequired": {}
+  },
+  "tutorialIntro_2": {
+	"Name": "TutorialIntro part 2",
+    "ID": "tutorialIntro_2",
+    "Text": "
+	
+	This is the second line of text.",
+    "Image": null,
+    "VariablesRequired": {}
   }
 }

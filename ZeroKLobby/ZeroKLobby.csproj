@@ -122,6 +122,18 @@
       <DependentUpon>Buttons.resx</DependentUpon>
     </Compile>
     <Compile Include="CachedResourceManager.cs" />
+    <Compile Include="Controls\Campaign\JournalPopupPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Campaign\JournalPopupPanel.Designer.cs">
+      <DependentUpon>JournalPopupPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Campaign\JournalSubPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Campaign\JournalSubPanel.Designer.cs">
+      <DependentUpon>JournalSubPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Campaign\JournalPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -561,6 +573,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Configs.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Campaign\JournalPopupPanel.resx">
+      <DependentUpon>JournalPopupPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Campaign\JournalSubPanel.resx">
+      <DependentUpon>JournalSubPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\Campaign\JournalPanel.resx">
       <DependentUpon>JournalPanel.cs</DependentUpon>

@@ -1,6 +1,6 @@
 ﻿namespace ZeroKLobby.Controls.Campaign
 {
-    partial class JournalPanel
+    partial class JournalPopupPanel
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,22 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(JournalPanel));
-            this.journalTree = new System.Windows.Forms.TreeView();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(JournalPopupPanel));
             this.closeButton = new ZeroKLobby.BitmapButton();
             this.subpanel = new ZeroKLobby.Controls.Campaign.JournalSubPanel();
+            this.playButton = new ZeroKLobby.BitmapButton();
             this.SuspendLayout();
-            // 
-            // journalTree
-            // 
-            this.journalTree.BackColor = System.Drawing.Color.DimGray;
-            this.journalTree.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.journalTree.ForeColor = System.Drawing.Color.White;
-            this.journalTree.Location = new System.Drawing.Point(4, 21);
-            this.journalTree.Name = "journalTree";
-            this.journalTree.Size = new System.Drawing.Size(299, 550);
-            this.journalTree.TabIndex = 6;
-            this.journalTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.journalTree_AfterSelect);
             // 
             // closeButton
             // 
@@ -63,7 +52,7 @@
             this.closeButton.Size = new System.Drawing.Size(75, 23);
             this.closeButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.closeButton.TabIndex = 3;
-            this.closeButton.Text = "Close";
+            this.closeButton.Text = "Back";
             this.closeButton.UseVisualStyleBackColor = false;
             this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
             // 
@@ -72,22 +61,43 @@
             this.subpanel.AutoSize = true;
             this.subpanel.BackColor = System.Drawing.Color.Transparent;
             this.subpanel.ForeColor = System.Drawing.Color.White;
-            this.subpanel.Location = new System.Drawing.Point(310, 21);
+            this.subpanel.Location = new System.Drawing.Point(3, 18);
             this.subpanel.Name = "subpanel";
             this.subpanel.Size = new System.Drawing.Size(483, 553);
             this.subpanel.TabIndex = 7;
             // 
-            // JournalPanel
+            // playButton
+            // 
+            this.playButton.BackColor = System.Drawing.Color.Transparent;
+            this.playButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("playButton.BackgroundImage")));
+            this.playButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.playButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
+            this.playButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.playButton.FlatAppearance.BorderSize = 0;
+            this.playButton.FlatAppearance.CheckedBackColor = System.Drawing.Color.Transparent;
+            this.playButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.playButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.playButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.playButton.ForeColor = System.Drawing.Color.White;
+            this.playButton.Location = new System.Drawing.Point(411, 577);
+            this.playButton.Name = "playButton";
+            this.playButton.Size = new System.Drawing.Size(75, 23);
+            this.playButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.playButton.TabIndex = 8;
+            this.playButton.Text = "Play";
+            this.playButton.UseVisualStyleBackColor = false;
+            // 
+            // JournalPopupPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
+            this.Controls.Add(this.playButton);
             this.Controls.Add(this.subpanel);
-            this.Controls.Add(this.journalTree);
             this.Controls.Add(this.closeButton);
             this.ForeColor = System.Drawing.Color.White;
-            this.Name = "JournalPanel";
-            this.Size = new System.Drawing.Size(800, 603);
+            this.Name = "JournalPopupPanel";
+            this.Size = new System.Drawing.Size(489, 603);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -96,7 +106,7 @@
         #endregion
 
         private BitmapButton closeButton;
-        private System.Windows.Forms.TreeView journalTree;
         private JournalSubPanel subpanel;
+        private BitmapButton playButton;
     }
 }

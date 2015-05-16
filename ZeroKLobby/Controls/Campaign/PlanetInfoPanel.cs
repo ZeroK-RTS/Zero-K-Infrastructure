@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CampaignLib;
+using ZeroKLobby.MicroLobby.Campaign;
 
 namespace ZeroKLobby.Controls.Campaign
 {
@@ -37,6 +38,7 @@ namespace ZeroKLobby.Controls.Campaign
                 button.AutoSize = true;
                 button.Parent = missionFlowLayout;
                 button.Width = button.Parent.Width - 8; // FIXME donut hardcode
+                button.Click += (sender, eventArgs) => ((CampaignPage)this.Parent.Parent).EnterMission(mission);
             }
         }
 

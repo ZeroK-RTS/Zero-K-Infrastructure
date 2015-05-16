@@ -56,6 +56,7 @@
             this.loadButton.TabIndex = 4;
             this.loadButton.Text = "Load";
             this.loadButton.UseVisualStyleBackColor = false;
+            this.loadButton.Click += loadButton_Click;
             // 
             // saveButton
             // 
@@ -77,6 +78,7 @@
             this.saveButton.TabIndex = 3;
             this.saveButton.Text = "Save";
             this.saveButton.UseVisualStyleBackColor = false;
+            this.saveButton.Click += saveButton_Click;
             // 
             // commButton
             // 
@@ -143,6 +145,8 @@
             this.ResumeLayout(false);
 
         }
+
+        
 
         #endregion
 

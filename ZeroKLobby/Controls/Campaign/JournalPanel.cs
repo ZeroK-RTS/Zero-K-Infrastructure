@@ -8,51 +8,43 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CampaignLib;
+using ZeroKLobby.MicroLobby.Campaign;
 
 namespace ZeroKLobby.Controls.Campaign
 {
     public partial class JournalPanel : UserControl
     {
-        private List<JournalEntry> savedJournals;
+        private List<CampaignManager.JournalViewEntry> journals;
 
         public JournalPanel()
         {
             InitializeComponent();
-            journalTitleBox.Font = Config.MenuFont;
-            savedJournals = new List<JournalEntry>();
+            journals = new List<CampaignManager.JournalViewEntry>();
         }
 
-        public void LoadJournalEntry(JournalEntry entry)
+        public void LoadJournalEntry(CampaignManager.JournalViewEntry entry)
         {
-            journalTitleBox.Clear();
-            journalTextBox.Clear();
-            journalTitleBox.AppendText(entry.journal.Name);
-            //journalImageBox.BackgroundImage = ;
-            journalTextBox.AppendText(entry.savedData.textSnapshot);
+            subpanel.LoadJournalEntry(entry);
         }
 
-        public void LoadJournalEntries(Dictionary<string, Journal> journals, Dictionary<string, CampaignSave.JournalProgressData> journalProgress)
+        public void LoadJournalEntries(List<CampaignManager.JournalViewEntry> journals)
         {
+            this.journals = journals;
             Dictionary<string, TreeNode> categoryNodes = new Dictionary<string, TreeNode>();
 
             journalTree.Nodes.Clear();
-            savedJournals = new List<JournalEntry>();
-            foreach (var bla in journalProgress)
-            {
-                savedJournals.Add(new JournalEntry { journal = journals[bla.Value.journalID], savedData = bla.Value });
-            }
 
-            var categories = savedJournals.Select(x => x.journal.Category).ToList();
+            var categories = journals.Select(x => x.category).ToList();
             foreach (var category in categories)
             {
                 categoryNodes.Add(category, journalTree.Nodes.Add(category));
             }
 
-            foreach (JournalEntry entry in savedJournals)
+            foreach (CampaignManager.JournalViewEntry entry in journals)
             {
-                TreeNode node = new TreeNode(entry.journal.Name);
-                node.Tag = entry.journal.ID;
-                categoryNodes[entry.journal.Category].Nodes.Add(node);
+                TreeNode node = new TreeNode(entry.name);
+                node.Tag = entry.id;
+                categoryNodes[entry.category].Nodes.Add(node);
             }
         }
 
@@ -60,7 +52,7 @@ namespace ZeroKLobby.Controls.Campaign
         {
             var node = e.Node;
             if (node == null) return;
-            JournalEntry entry = savedJournals.FirstOrDefault(x => x.journal.ID == (string)node.Tag);
+            CampaignManager.JournalViewEntry entry = journals.FirstOrDefault(x => x.id == (string)node.Tag);
             if (entry != null) LoadJournalEntry(entry);
             //else journalTitleBox.AppendText(node.Name);
         }
@@ -68,12 +60,6 @@ namespace ZeroKLobby.Controls.Campaign
         private void closeButton_Click(object sender, EventArgs e)
         {
             this.Dispose();
-        }
-
-        public class JournalEntry
-        {
-            public Journal journal;
-            public CampaignSave.JournalProgressData savedData;
         }
     }
 }

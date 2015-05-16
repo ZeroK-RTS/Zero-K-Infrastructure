@@ -27,7 +27,7 @@ namespace CampaignLib.Tester
         {
             CampaignSave progress = new CampaignSave("save1", campaign.ID);
             var progress1 = new CampaignSave.JournalProgressData("journal1") { unlocked = true };
-            progress1.textSnapshot = campaign.Journals["journal1"].GetJournalText();
+            //progress1.textSnapshot = campaign.Journals["journal1"].GetJournalText();
             progress.JournalProgress.Add("journal1", new CampaignSave.JournalProgressData("journal1") { unlocked = true });
 
             var progress2 = new CampaignSave.MissionProgressData("mission1");

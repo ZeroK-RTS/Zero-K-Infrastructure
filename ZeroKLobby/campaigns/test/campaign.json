@@ -24,6 +24,8 @@
 			"Name":"Tutorial 1",
 			"ID":"mission1",
 			"SiteNum":140,
+			"IntroJournal":"tutorialIntro",
+			"DownloadArchive":"Tutorial - Running Start r320",
 			"IsMainQuest":true,
 		},
 	  ]
@@ -52,6 +54,19 @@
       "StartUnlocked": false,
       "JournalPartIDs": [
         "journal1_1"
+      ]
+    },
+	"tutorialIntro": {
+      "Name": "Tutorial Intro",
+      "ID": "tutorialIntro",
+      "Image": null,
+      "Category": "Tutorial",
+      "PlanetID": "planet1",
+      "StartUnlocked": false,
+	  "UnlockOnPlanetUnlock": false,
+	  "UnlockOnPlanetCompletion": false,
+      "JournalPartIDs": [
+        "tutorialIntro_1", "tutorialIntro_2"
       ]
     }
   }
