@@ -378,11 +378,6 @@ namespace ZeroKLobby.MicroLobby
                         buildString.Append(s);
                     }
 
-                    if (buildString.Length > 0) {
-                        Program.ToolTip.SetText(this, "-----COPIED TO CLIPBOARD-----\n" + buildString.ToString());
-                        //notify user that selection is copied
-                        Clipboard.SetText(buildString.ToString());
-                    }
                 }
 
                 // Supress highlighting
