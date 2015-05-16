@@ -23,12 +23,10 @@ namespace ZeroKLobby.Notifications
         string lastBattleFounder;
         string lastScript;
 
-        readonly Random random = new Random();
         object speech;
         readonly Spring spring;
         bool suppressSpecChange = false;
         readonly Timer timer = new Timer();
-        object voice;
         string queueLabelFormatter = "";
         DateTime queueTarget;
 
