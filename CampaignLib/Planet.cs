@@ -13,9 +13,9 @@ namespace CampaignLib
         public string ID { get; set; }
         public string Blurb { get; set; }
         public string Image { get; set; }
-        public float X { get; set; }
-        public float Y { get; set; }
-        public float Size { get; set; }
+        public double X { get; set; }
+        public double Y { get; set; }
+        public double Size { get; set; }
         public bool StartUnlocked { get; set; }
         public bool HideIfLocked { get; set; }
         public List<String> LinkedPlanets { get; set; }

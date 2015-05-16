@@ -18,6 +18,7 @@ namespace ZeroKLobby.Controls.Campaign
         {
             InitializeComponent();
             journalTitleBox.Font = Config.MenuFont;
+            journalTextBox.ScrollBars = ScrollBars.Vertical;
         }
 
         public void LoadJournalEntry(CampaignManager.JournalViewEntry entry)

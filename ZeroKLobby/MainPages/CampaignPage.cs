@@ -29,9 +29,9 @@ namespace ZeroKLobby.MicroLobby.Campaign
         public CampaignPage()
         {
             InitializeComponent();
-            manager = new CampaignManager();
-            manager.LoadCampaign("test");
-            manager.LoadCampaignSave("test", "save1");
+            manager = new CampaignManager(this);
+            manager.LoadCampaign("sunrise");
+            //manager.LoadCampaignSave("test", "save1");
 
             journalButton.Font = Config.MenuFont;
             commButton.Font = Config.MenuFont;
@@ -46,14 +46,19 @@ namespace ZeroKLobby.MicroLobby.Campaign
                     }
                     journalPanel = new JournalPanel();
                     journalPanel.Left = 240;  // FIXME don't hardcode this kind of thing!!
-                    journalPanel.LoadJournalEntries(manager.GetVisibleJournals());
+                    journalPanel.LoadJournalEntries(CampaignManager.GetVisibleJournals());
                     journalPanel.Parent = this;
                     journalPanel.BringToFront();
                 };
 
             galControl.BackgroundImage = (Bitmap)GalaxyResources.ResourceManager.GetObject(manager.GetCampaign().Background);
             galControl.BackgroundImageLayout = ImageLayout.Stretch;
-            galControl.SetPlanets(manager.GetVisiblePlanets());
+            ReloadPlanets();
+        }
+
+        public void ReloadPlanets()
+        {
+            galControl.SetPlanets(CampaignManager.GetVisiblePlanets());
         }
 
         // TODO: replace with own dialog
@@ -95,30 +100,25 @@ namespace ZeroKLobby.MicroLobby.Campaign
         public void EnterMission(Mission mission)
         {
             string missionJournal = mission.IntroJournal;
-            if (missionJournal == null || !manager.IsJournalUnlocked(missionJournal))
+            if (missionJournal == null || !CampaignManager.IsJournalUnlocked(missionJournal))
             {
                 // popup journal
-                manager.UnlockJournal(missionJournal);
+                CampaignManager.UnlockJournal(missionJournal);
                 if (journalPopupPanel != null)
                 {
                     journalPopupPanel.Dispose();
                 }
                 journalPopupPanel = new JournalPopupPanel();
                 journalPopupPanel.Left = 300;  // FIXME don't hardcode this kind of thing!!
-                journalPopupPanel.LoadJournalEntry(manager.GetJournalViewEntry(missionJournal));
+                journalPopupPanel.LoadJournalEntry(CampaignManager.GetJournalViewEntry(missionJournal));
                 journalPopupPanel.SetMission(mission);
                 journalPopupPanel.Parent = this;
                 journalPopupPanel.BringToFront();
             }
             else
             {
-                PlayMission(mission);
+                CampaignManager.PlayMission(mission);
             }
-        }
-
-        public void PlayMission(Mission mission)
-        {
-            ActionHandler.StartMission(mission.DownloadArchive);
         }
 
         public void GoBack()

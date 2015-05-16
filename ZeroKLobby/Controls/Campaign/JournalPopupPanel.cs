@@ -26,7 +26,7 @@ namespace ZeroKLobby.Controls.Campaign
 
         public void SetMission(Mission mission)
         {
-            playButton.Click += (sender, eventArgs) => ((CampaignPage)this.Parent.Parent).PlayMission(mission);
+            playButton.Click += (sender, eventArgs) => CampaignManager.PlayMission(mission);
         }
 
         private void closeButton_Click(object sender, EventArgs e)

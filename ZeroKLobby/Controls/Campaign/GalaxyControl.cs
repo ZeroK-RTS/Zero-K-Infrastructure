@@ -17,7 +17,7 @@ namespace ZeroKLobby.Campaign
         Bitmap background;
         List<Planet> planetsToRender = new List<Planet>();
         List<Button> planetButtons = new List<Button>();
-        Dictionary<Planet, Planet> connections = new Dictionary<Planet, Planet>();
+        List<PlanetConnection> connections = new List<PlanetConnection>();
         PlanetInfoPanel planetInfoPanel;
 
         public GalaxyControl()
@@ -28,17 +28,22 @@ namespace ZeroKLobby.Campaign
 
         public void SetPlanets(List<Planet> planets)
         {
+            foreach (Button button in planetButtons)
+            {
+                button.Dispose();
+            }
+
             planetsToRender = planets;
             planetButtons = new List<Button>();
-            connections = new Dictionary<Planet, Planet>();
+            connections = new List<PlanetConnection>();
 
             foreach (Planet planet in planets)
             {
                 Button button = new Button();
                 button.Parent = this;
-                button.Width = 48;
-                button.Height = 48;
-                button.Location = new Point((int)planet.X, (int)planet.Y);
+                button.Width = (int)planet.Size;
+                button.Height = (int)planet.Size;
+                button.Location = new Point((int)(planet.X), (int)(planet.Y));
                 button.BackgroundImage = (Bitmap)GalaxyResources.ResourceManager.GetObject(planet.Image);
                 button.BackgroundImageLayout = ImageLayout.Stretch;
                 button.BackColor = Color.Transparent;
@@ -57,7 +62,7 @@ namespace ZeroKLobby.Campaign
                 foreach (string linkedPlanetID in planet.LinkedPlanets)
                 {
                     Planet linkedPlanet = planets.FirstOrDefault(x => x.ID == linkedPlanetID);
-                    if (linkedPlanet != null) connections.Add(planet, linkedPlanet);
+                    if (linkedPlanet != null) connections.Add(new PlanetConnection(planet, linkedPlanet));
                 }
             }
         }
@@ -69,14 +74,14 @@ namespace ZeroKLobby.Campaign
 
             using (Pen myPen = new Pen(Color.White))
             {
-                myPen.Width = 4;
+                myPen.Width = 2;
                 myPen.EndCap = System.Drawing.Drawing2D.LineCap.Round;
                 myPen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
                 foreach (var connection in connections)
                 {
-                    Planet planet1 = connection.Key;
-                    Planet planet2 = connection.Value;
-                    g.DrawLine(myPen, planet1.X, planet1.Y, planet2.X, planet2.Y);
+                    Planet planet1 = connection.planet1;
+                    Planet planet2 = connection.planet2;
+                    g.DrawLine(myPen, (int)planet1.X, (int)planet1.Y, (int)planet2.X, (int)planet2.Y);
                 }
             }
         }
@@ -84,6 +89,18 @@ namespace ZeroKLobby.Campaign
         public void SetBackground(string background)
         {
             this.background = new Bitmap(background);
+        }
+
+        public class PlanetConnection
+        {
+            public Planet planet1 { get; protected set; }
+            public Planet planet2 { get; protected set; }
+
+            public PlanetConnection(Planet planet1, Planet planet2)
+            {
+                this.planet1 = planet1;
+                this.planet2 = planet2;
+            }
         }
     }
 }

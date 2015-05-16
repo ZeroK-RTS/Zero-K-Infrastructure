@@ -83,9 +83,9 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap planet_green {
+        internal static System.Drawing.Bitmap planet_desert_large {
             get {
-                object obj = ResourceManager.GetObject("planet_green", resourceCulture);
+                object obj = ResourceManager.GetObject("planet_desert_large", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +93,9 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap planet_green2 {
+        internal static System.Drawing.Bitmap planet_desert_small {
             get {
-                object obj = ResourceManager.GetObject("planet_green2", resourceCulture);
+                object obj = ResourceManager.GetObject("planet_desert_small", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -103,9 +103,79 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap planet_icesmall {
+        internal static System.Drawing.Bitmap planet_desert2 {
             get {
-                object obj = ResourceManager.GetObject("planet_icesmall", resourceCulture);
+                object obj = ResourceManager.GetObject("planet_desert2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap planet_desert3 {
+            get {
+                object obj = ResourceManager.GetObject("planet_desert3", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap planet_desert4 {
+            get {
+                object obj = ResourceManager.GetObject("planet_desert4", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap planet_desertorange {
+            get {
+                object obj = ResourceManager.GetObject("planet_desertorange", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap planet_green_large {
+            get {
+                object obj = ResourceManager.GetObject("planet_green_large", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap planet_green_large2 {
+            get {
+                object obj = ResourceManager.GetObject("planet_green_large2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap planet_ice {
+            get {
+                object obj = ResourceManager.GetObject("planet_ice", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap planet_ice_tiny {
+            get {
+                object obj = ResourceManager.GetObject("planet_ice_tiny", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -143,6 +213,56 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap planet_rockybrown_large {
+            get {
+                object obj = ResourceManager.GetObject("planet_rockybrown_large", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap planet_rockybrown_large2 {
+            get {
+                object obj = ResourceManager.GetObject("planet_rockybrown_large2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap planet_rockybrown_small {
+            get {
+                object obj = ResourceManager.GetObject("planet_rockybrown_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap planet_rockybrown_small2 {
+            get {
+                object obj = ResourceManager.GetObject("planet_rockybrown_small2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap planet_rockybrown_small3 {
+            get {
+                object obj = ResourceManager.GetObject("planet_rockybrown_small3", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap planet_rockybrown2 {
             get {
                 object obj = ResourceManager.GetObject("planet_rockybrown2", resourceCulture);
@@ -153,9 +273,49 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap planet_rockygrey {
+        internal static System.Drawing.Bitmap planet_rockygrey_large {
             get {
-                object obj = ResourceManager.GetObject("planet_rockygrey", resourceCulture);
+                object obj = ResourceManager.GetObject("planet_rockygrey_large", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap planet_rockygrey_small {
+            get {
+                object obj = ResourceManager.GetObject("planet_rockygrey_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap planet_rockylunar_large {
+            get {
+                object obj = ResourceManager.GetObject("planet_rockylunar_large", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap planet_rockylunar_tiny {
+            get {
+                object obj = ResourceManager.GetObject("planet_rockylunar_tiny", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap planet_snow_large {
+            get {
+                object obj = ResourceManager.GetObject("planet_snow_large", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -173,6 +333,46 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap planet_terran_large {
+            get {
+                object obj = ResourceManager.GetObject("planet_terran_large", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap planet_terran_small {
+            get {
+                object obj = ResourceManager.GetObject("planet_terran_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap planet_terran_small2 {
+            get {
+                object obj = ResourceManager.GetObject("planet_terran_small2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap planet_terran_tiny {
+            get {
+                object obj = ResourceManager.GetObject("planet_terran_tiny", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap planet_terran2 {
             get {
                 object obj = ResourceManager.GetObject("planet_terran2", resourceCulture);
@@ -183,9 +383,19 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap planet_terranlarge {
+        internal static System.Drawing.Bitmap planet_water {
             get {
-                object obj = ResourceManager.GetObject("planet_terranlarge", resourceCulture);
+                object obj = ResourceManager.GetObject("planet_water", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap planet_water_large {
+            get {
+                object obj = ResourceManager.GetObject("planet_water_large", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

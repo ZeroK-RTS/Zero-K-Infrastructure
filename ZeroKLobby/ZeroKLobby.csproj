@@ -252,7 +252,9 @@
     <Compile Include="MicroLobby\HexToUnicodeConverter.Designer.cs">
       <DependentUpon>HexToUnicodeConverter.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainPages\SkirmishControl.cs" />
+    <Compile Include="MainPages\SkirmishControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="MainPages\SkirmishControl.Designer.cs">
       <DependentUpon>SkirmishControl.cs</DependentUpon>
     </Compile>
@@ -309,7 +311,9 @@
     <Compile Include="MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainPages\BattleListControl.cs" />
+    <Compile Include="MainPages\BattleListControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MainPages\BattleListControl.Designer.cs">
       <DependentUpon>BattleListControl.cs</DependentUpon>
     </Compile>
@@ -791,6 +795,12 @@
     <EmbeddedResource Include="NativeLibs\libsteam_api.so" />
     <None Include="campaignsaves\test\save1.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="campaigns\sunrise\campaign.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="campaigns\sunrise\journalParts.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="campaigns\test\campaign.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -1910,7 +1920,43 @@
     <None Include="Resources\Planets\planet_terran.png" />
     <None Include="Resources\Planets\planet_terran2.png" />
     <None Include="Resources\Planets\planet_rockygrey.png" />
+    <None Include="Resources\87.png" />
+    <None Include="Resources\88.png" />
+    <None Include="Resources\43.png" />
+    <None Include="Resources\86.png" />
+    <None Include="Resources\82.png" />
+    <None Include="Resources\80.png" />
+    <None Include="Resources\83.png" />
+    <None Include="Resources\30.png" />
+    <None Include="Resources\39.png" />
     <Content Include="Resources\Galaxies\galaxy4.jpg" />
+    <None Include="Resources\Planets\planet_desert_large.png" />
+    <None Include="Resources\Planets\planet_green_large.png" />
+    <None Include="Resources\Planets\planet_green_large2.png" />
+    <None Include="Resources\Planets\planet_ice_small.png" />
+    <None Include="Resources\Planets\planet_ice_tiny.png" />
+    <None Include="Resources\Planets\planet_rockybrown_large.png" />
+    <None Include="Resources\Planets\planet_rockybrown_large2.png" />
+    <None Include="Resources\Planets\planet_rockygrey_large.png" />
+    <None Include="Resources\Planets\planet_rockygrey_small.png" />
+    <None Include="Resources\Planets\planet_rockylunar_large.png" />
+    <None Include="Resources\Planets\planet_rockylunar_tiny.png" />
+    <None Include="Resources\Planets\planet_terran_large.png" />
+    <None Include="Resources\Planets\planet_terran_small.png" />
+    <None Include="Resources\Planets\planet_terran_small2.png" />
+    <None Include="Resources\Planets\planet_terran_tiny.png" />
+    <None Include="Resources\Planets\planet_rockybrown_small.png" />
+    <None Include="Resources\Planets\planet_rockybrown_small2.png" />
+    <None Include="Resources\Planets\planet_rockybrown_small3.png" />
+    <None Include="Resources\Planets\planet_water.png" />
+    <None Include="Resources\Planets\planet_water_large.png" />
+    <None Include="Resources\Planets\planet_desertorange.png" />
+    <None Include="Resources\Planets\planet_desert2.png" />
+    <None Include="Resources\Planets\planet_desert3.png" />
+    <None Include="Resources\Planets\planet_desert4.png" />
+    <None Include="Resources\Planets\planet_desert_small.png" />
+    <None Include="Resources\Planets\planet_ice.png" />
+    <None Include="Resources\Planets\planet_snow_large.png" />
     <Content Include="Resources\ZK_logo_128.ico" />
     <Content Include="Resources\ZK_logo_128.png" />
   </ItemGroup>

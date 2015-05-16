@@ -12,9 +12,22 @@ namespace ZeroKLobby.MicroLobby.Campaign
 {
     public class CampaignManager
     {
+        static CampaignManager campaignManager;
+        CampaignPage campaignPage;
         CampaignLib.Campaign currentCampaign;
         Dictionary<string, JournalPart> journalParts;
         CampaignSave currentCampaignSave;
+
+        public CampaignManager(CampaignPage campaignPage)
+        {
+            this.campaignPage = campaignPage;
+            campaignManager = this;
+        }
+
+        // todo
+        public static void NotifyMissionCompletion()
+        {
+        }
 
         public void LoadCampaign(string campaignName)
         {
@@ -24,6 +37,8 @@ namespace ZeroKLobby.MicroLobby.Campaign
 
             string journalPartsJson = File.ReadAllText(campaignDir + "journalParts.json");
             journalParts = JsonConvert.DeserializeObject<Dictionary<string, JournalPart>>(journalPartsJson);
+
+            currentCampaignSave = new CampaignSave("temp", currentCampaign.ID);
 
             Trace.TraceInformation("Loaded campaign {0}", currentCampaign.Name);
         }
@@ -39,31 +54,47 @@ namespace ZeroKLobby.MicroLobby.Campaign
             Trace.TraceInformation("Loaded save {0} for campaign {1}", currentCampaignSave.Name, currentCampaign.Name);
         }
 
-        public List<Planet> GetUnlockedPlanets()
+        public static void PlayMission(Mission mission)
+        {
+            MarkMissionPlayed(mission.ID);
+            ActionHandler.StartMission(mission.DownloadArchive);
+        }
+
+        public static void EnterMission(Mission mission)
+        {
+            campaignManager.campaignPage.EnterMission(mission);
+        }
+
+        public static List<Planet> GetUnlockedPlanets()
         {
             List<Planet> result = new List<Planet>();
-            foreach (KeyValuePair<string, Planet> planetEntry in currentCampaign.Planets)
+            if (campaignManager == null) return result;
+
+            foreach (KeyValuePair<string, Planet> planetEntry in campaignManager.currentCampaign.Planets)
             {
                 if (IsPlanetUnlocked(planetEntry.Key)) result.Add(planetEntry.Value);
             }
             return result;
         }
 
-        public List<Planet> GetVisiblePlanets()
+        public static List<Planet> GetVisiblePlanets()
         {
             List<Planet> result = new List<Planet>();
-            foreach (KeyValuePair<string, Planet> planetEntry in currentCampaign.Planets)
+            if (campaignManager == null) return result;
+            foreach (KeyValuePair<string, Planet> planetEntry in campaignManager.currentCampaign.Planets)
             {
                 if (IsPlanetVisible(planetEntry.Key)) result.Add(planetEntry.Value);
             }
             return result;
         }
 
-        public bool IsPlanetUnlocked(string planetID)
+        public static bool IsPlanetUnlocked(string planetID)
         {
-            if (!currentCampaign.Planets.ContainsKey(planetID)) return false;
-            var planetMissions = currentCampaign.Planets[planetID].Missions;
-            var missionProgress = currentCampaignSave.MissionProgress;
+            if (campaignManager == null) return false;
+
+            if (!campaignManager.currentCampaign.Planets.ContainsKey(planetID)) return false;
+            var planetMissions = campaignManager.currentCampaign.Planets[planetID].Missions;
+            var missionProgress = campaignManager.currentCampaignSave.MissionProgress;
             foreach (Mission planetMission in planetMissions)
             {
                 if (!missionProgress.ContainsKey(planetMission.ID)) continue;
@@ -72,32 +103,89 @@ namespace ZeroKLobby.MicroLobby.Campaign
             return false;
         }
 
-        public bool IsPlanetVisible(string planetID)
+        public static bool IsPlanetVisible(string planetID)
         {
-            if (!currentCampaign.Planets.ContainsKey(planetID)) return false;
-            if (!currentCampaign.Planets[planetID].HideIfLocked) return true;
+            if (campaignManager == null) return false;
+            if (!campaignManager.currentCampaign.Planets.ContainsKey(planetID)) return false;
+            if (!campaignManager.currentCampaign.Planets[planetID].HideIfLocked) return true;
             return IsPlanetUnlocked(planetID);
         }
 
-        public bool IsJournalRead(string journalID)
+        public static bool IsMissionUnlocked(Mission mission)
         {
-            if (!currentCampaign.Journals.ContainsKey(journalID)) return false;
-            if (currentCampaignSave.JournalProgress[journalID] == null) return false;
-            return currentCampaignSave.JournalProgress[journalID].read;
+            if (mission.StartUnlocked) return true;
+            if (campaignManager == null) return false;
+            //if (!campaignManager.currentCampaign.Planets.ContainsKey(planetID)) return false;
+            //if (!campaignManager.currentCampaign.Planets[planetID].HideIfLocked) return true;
+            
+            var missionProgress = campaignManager.currentCampaignSave.MissionProgress;
+            if (!missionProgress.ContainsKey(mission.ID)) return false;
+            if (missionProgress[mission.ID].unlocked) return true;
+            return false;
         }
 
-        public bool IsJournalUnlocked(string journalID)
+        public static void UnlockMission(string missionID)
         {
-            if (!currentCampaign.Journals.ContainsKey(journalID)) return false;
-            if (currentCampaign.Journals[journalID].StartUnlocked) return true;
-            if (!currentCampaignSave.JournalProgress.ContainsKey(journalID)) return false;
-            return currentCampaignSave.JournalProgress[journalID].unlocked;
+            if (campaignManager == null) return;
+            //if (!currentCampaign.Planets.ContainsKey(missionID)) throw new Exception("Planet " + missionID + " does not exist in campaign");
+
+            if (campaignManager.currentCampaignSave.MissionProgress.ContainsKey(missionID))
+            {
+                campaignManager.currentCampaignSave.MissionProgress[missionID].unlocked = true;
+            }
+            else campaignManager.currentCampaignSave.MissionProgress.Add(missionID, new CampaignSave.MissionProgressData(missionID) { unlocked = true });
         }
 
-        public List<JournalViewEntry> GetVisibleJournals()
+        public static void CompleteMission(string missionID)
+        {
+            if (campaignManager == null) return;
+            //if (!currentCampaign.Planets.ContainsKey(missionID)) throw new Exception("Planet " + missionID + " does not exist in campaign");
+
+            if (campaignManager.currentCampaignSave.MissionProgress.ContainsKey(missionID))
+            {
+                //campaignManager.currentCampaignSave.MissionProgress[missionID].unlocked = true;
+                campaignManager.currentCampaignSave.MissionProgress[missionID].completed = true;
+            }
+            else campaignManager.currentCampaignSave.MissionProgress.Add(missionID, new CampaignSave.MissionProgressData(missionID) { completed = true });
+        }
+
+        public static void MarkMissionPlayed(string missionID)
+        {
+            if (campaignManager == null) return;
+            //if (!currentCampaign.Planets.ContainsKey(missionID)) throw new Exception("Planet " + missionID + " does not exist in campaign");
+
+            if (campaignManager.currentCampaignSave.MissionProgress.ContainsKey(missionID))
+            {
+                campaignManager.currentCampaignSave.MissionProgress[missionID].played = true;
+            }
+            else campaignManager.currentCampaignSave.MissionProgress.Add(missionID, new CampaignSave.MissionProgressData(missionID) { played = true });
+        }
+
+        public static bool IsJournalRead(string journalID)
+        {
+            if (campaignManager == null) return false;
+
+            if (!campaignManager.currentCampaign.Journals.ContainsKey(journalID)) return false;
+            if (campaignManager.currentCampaignSave.JournalProgress[journalID] == null) return false;
+            return campaignManager.currentCampaignSave.JournalProgress[journalID].read;
+        }
+
+        public static bool IsJournalUnlocked(string journalID)
+        {
+            if (campaignManager == null) return false;
+
+            if (!campaignManager.currentCampaign.Journals.ContainsKey(journalID)) return false;
+            if (campaignManager.currentCampaign.Journals[journalID].StartUnlocked) return true;
+            if (!campaignManager.currentCampaignSave.JournalProgress.ContainsKey(journalID)) return false;
+            return campaignManager.currentCampaignSave.JournalProgress[journalID].unlocked;
+        }
+
+        public static List<JournalViewEntry> GetVisibleJournals()
         {
             List<JournalViewEntry> ret = new List<JournalViewEntry>();
-            foreach (var kvp in currentCampaign.Journals)
+            if (campaignManager == null) return ret;
+
+            foreach (var kvp in campaignManager.currentCampaign.Journals)
             {
                 if (IsJournalUnlocked(kvp.Key))
                 {
@@ -107,28 +195,32 @@ namespace ZeroKLobby.MicroLobby.Campaign
             return ret;
         }
 
-        public JournalViewEntry GetJournalViewEntry(string journalID)
+        public static JournalViewEntry GetJournalViewEntry(string journalID)
         {
+            if (campaignManager == null) return null;
+
             string text = "";
-            Journal journal = currentCampaign.Journals[journalID];
-            if (currentCampaignSave.JournalProgress.ContainsKey(journalID))
-                text = currentCampaignSave.JournalProgress[journalID].textSnapshot;
+            Journal journal = campaignManager.currentCampaign.Journals[journalID];
+            if (campaignManager.currentCampaignSave.JournalProgress.ContainsKey(journalID))
+                text = campaignManager.currentCampaignSave.JournalProgress[journalID].textSnapshot;
             if (String.IsNullOrEmpty(text))
                 text = GetJournalTextSnapshot(journalID);
             JournalViewEntry entry = new JournalViewEntry(journalID, journal.Name, journal.Category, text);
             return entry;
         }
 
-        public string GetJournalTextSnapshot(string journalID)
+        public static string GetJournalTextSnapshot(string journalID)
         {
-            if (!currentCampaign.Journals.ContainsKey(journalID)) throw new Exception("Journal " + journalID + " does not exist in campaign");
+            if (campaignManager == null) return null;
+
+            if (!campaignManager.currentCampaign.Journals.ContainsKey(journalID)) throw new Exception("Journal " + journalID + " does not exist in campaign");
 
             List<string> fragments = new List<string>();
-            Journal journal = currentCampaign.Journals[journalID];
+            Journal journal = campaignManager.currentCampaign.Journals[journalID];
             foreach (string partID in journal.JournalPartIDs)
             {
-                if (!journalParts.ContainsKey(partID)) throw new Exception("Journal part " + partID + " does not exist in campaign");
-                var part = journalParts[partID];
+                if (!campaignManager.journalParts.ContainsKey(partID)) throw new Exception("Journal part " + partID + " does not exist in campaign");
+                var part = campaignManager.journalParts[partID];
                 foreach (var requiredVar in part.VariablesRequired)
                 {
                     // TODO: var check here to see if the fragment should be used
@@ -138,17 +230,19 @@ namespace ZeroKLobby.MicroLobby.Campaign
             return String.Concat(fragments);
         }
 
-        public void UnlockJournal(string journalID)
+        public static void UnlockJournal(string journalID)
         {
-            if (!currentCampaign.Journals.ContainsKey(journalID)) throw new Exception("Journal " + journalID + " does not exist in campaign");
+            if (campaignManager == null) return;
+
+            if (!campaignManager.currentCampaign.Journals.ContainsKey(journalID)) throw new Exception("Journal " + journalID + " does not exist in campaign");
 
             String textSnapshot = GetJournalTextSnapshot(journalID);
-            if (currentCampaignSave.JournalProgress.ContainsKey(journalID))
+            if (campaignManager.currentCampaignSave.JournalProgress.ContainsKey(journalID))
             {
-                currentCampaignSave.JournalProgress[journalID].unlocked = true;
-                currentCampaignSave.JournalProgress[journalID].textSnapshot = textSnapshot;
+                campaignManager.currentCampaignSave.JournalProgress[journalID].unlocked = true;
+                campaignManager.currentCampaignSave.JournalProgress[journalID].textSnapshot = textSnapshot;
             }
-            else currentCampaignSave.JournalProgress.Add(journalID, new CampaignSave.JournalProgressData(journalID) { unlocked = true, textSnapshot = textSnapshot });
+            else campaignManager.currentCampaignSave.JournalProgress.Add(journalID, new CampaignSave.JournalProgressData(journalID) { unlocked = true, textSnapshot = textSnapshot });
         }
 
         public CampaignLib.Campaign GetCampaign()

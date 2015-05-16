@@ -32,6 +32,7 @@ namespace ZeroKLobby.Controls.Campaign
             var missions = planet.Missions;
             foreach (Mission mission in missions)
             {
+                if (!CampaignManager.IsMissionUnlocked(mission)) continue;
                 BitmapButton button = new BitmapButton();
                 button.Text = String.Format("{1}{0}", mission.Name, mission.IsMainQuest ? "" : "OPTIONAL: ");
                 //button.Left = 4;

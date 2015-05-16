@@ -122,39 +122,102 @@
     <value>resources\galaxies\galaxy4.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="planet_desert" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\planets\planet_desert.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\Planets\planet_desert.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="planet_green" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\planets\planet_green.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="planet_desert2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_desert2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="planet_green2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\planets\planet_green2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="planet_desert3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_desert3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="planet_icesmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\planets\planet_icesmall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="planet_desert4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_desert4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="planet_desertorange" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_desertorange.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="planet_desert_large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_desert_large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="planet_desert_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_desert_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="planet_green_large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_green_large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="planet_green_large2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_green_large2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="planet_ice" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_ice.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="planet_ice_tiny" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_ice_tiny.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="planet_purple" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\planets\planet_purple.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\Planets\planet_purple.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="planet_rocky" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\planets\planet_rocky.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\Planets\planet_rocky.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="planet_rockybrown" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\planets\planet_rockybrown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\Planets\planet_rockybrown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="planet_rockybrown2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\planets\planet_rockybrown2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\Planets\planet_rockybrown2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="planet_rockygrey" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\planets\planet_rockygrey.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="planet_rockybrown_large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_rockybrown_large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="planet_rockybrown_large2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_rockybrown_large2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="planet_rockybrown_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_rockybrown_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="planet_rockybrown_small2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_rockybrown_small2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="planet_rockybrown_small3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_rockybrown_small3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="planet_rockygrey_large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_rockygrey_large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="planet_rockygrey_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_rockygrey_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="planet_rockylunar_large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_rockylunar_large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="planet_rockylunar_tiny" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_rockylunar_tiny.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="planet_snow_large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_snow_large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="planet_terran" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\planets\planet_terran.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\Planets\planet_terran.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="planet_terran2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\planets\planet_terran2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\Planets\planet_terran2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="planet_terranlarge" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\planets\planet_terranlarge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="planet_terran_large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_terran_large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="planet_terran_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_terran_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="planet_terran_small2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_terran_small2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="planet_terran_tiny" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_terran_tiny.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="planet_water" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_water.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="planet_water_large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Planets\planet_water_large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

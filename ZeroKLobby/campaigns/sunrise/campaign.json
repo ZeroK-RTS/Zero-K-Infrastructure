@@ -1,0 +1,943 @@
+{
+  "Name": "Sunrise",
+  "ID": "sunrise",
+  "Blurb": "An epic journey that takes place after the end",
+  "Background": "galaxy4",
+  "Icon": null,
+  "Planets": {
+    "planet1": {
+      "Name": "Isis",
+      "ID": "planet1",
+      "Blurb": "A dry desert world, most notable for its towering ridges. Absence of water and high insolation strongly discourage organic life.",
+      "Image": "planet_desert_small",
+      "X": 614.4,
+      "Y": 576.0,
+      "Size": 40.0,
+      "StartUnlocked": true,
+      "HideIfLocked": false,
+      "LinkedPlanets": [
+        "planet2"
+      ],
+      "Missions": [
+        {
+          "Name": "Tutorial - Running Start",
+          "ID": "mission1",
+          "IntroJournal": null,
+          "DownloadArchive": "Tutorial - Running Start r320",
+          "SiteNum": 140,
+          "IsMainQuest": true,
+          "Archive": null,
+          "Image": null,
+          "UnlockOnPreviousPlanetCompletion": true,
+          "StartUnlocked": true,
+          "HideIfLocked": true
+        }
+      ]
+    },
+    "planet2": {
+      "Name": "Mun",
+      "ID": "planet2",
+      "Blurb": "A small, rocky moon orbiting a gas giant.",
+      "Image": "planet_rockygrey_small",
+      "X": 512.0,
+      "Y": 614.4,
+      "Size": 32.0,
+      "StartUnlocked": true,
+      "HideIfLocked": false,
+      "LinkedPlanets": [
+        "planet5"
+      ],
+      "Missions": [
+        {
+          "Name": "Tutorial 2 - A Day Out",
+          "ID": "mission2",
+          "IntroJournal": null,
+          "DownloadArchive": "Tutorial 2 - A Day Out r247",
+          "SiteNum": 156,
+          "IsMainQuest": true,
+          "Archive": null,
+          "Image": null,
+          "UnlockOnPreviousPlanetCompletion": true,
+          "StartUnlocked": false,
+          "HideIfLocked": true
+        }
+      ]
+    },
+    "planet3": {
+      "Name": "Tyrian",
+      "ID": "planet3",
+      "Blurb": "An important source of rare minerals before the Fall. Numerous quarries and military facilities dot the landscape.",
+      "Image": "planet_terran",
+      "X": 430.08,
+      "Y": 652.8,
+      "Size": 48.0,
+      "StartUnlocked": false,
+      "HideIfLocked": false,
+      "LinkedPlanets": [],
+      "Missions": [
+        {
+          "Name": "Sunrise Pilot Episode (beta v0.34)",
+          "ID": "mission3",
+          "IntroJournal": "journal4",
+          "DownloadArchive": "Sunrise Pilot Episode (beta v0.34) r189",
+          "SiteNum": 165,
+          "IsMainQuest": true,
+          "Archive": null,
+          "Image": null,
+          "UnlockOnPreviousPlanetCompletion": true,
+          "StartUnlocked": false,
+          "HideIfLocked": true
+        }
+      ]
+    },
+    "planet5": {
+      "Name": "Fenghuang 42",
+      "ID": "planet5",
+      "Blurb": "A medium-sized asteroid with a highly eccentric orbit around a mostly unremarkable star.",
+      "Image": "planet_rockylunar_tiny",
+      "X": 378.88,
+      "Y": 552.96,
+      "Size": 24.0,
+      "StartUnlocked": true,
+      "HideIfLocked": false,
+      "LinkedPlanets": [
+        "planet6",
+        "planet8"
+      ],
+      "Missions": [
+        {
+          "Name": "Sunrise Episode 1 - Awakening",
+          "ID": "mission5",
+          "IntroJournal": "journal6",
+          "DownloadArchive": "Sunrise Episode 1 - Awakening r189",
+          "SiteNum": 174,
+          "IsMainQuest": true,
+          "Archive": null,
+          "Image": null,
+          "UnlockOnPreviousPlanetCompletion": true,
+          "StartUnlocked": true,
+          "HideIfLocked": true
+        }
+      ]
+    },
+    "planet6": {
+      "Name": "Scheren",
+      "ID": "planet6",
+      "Blurb": "Once a lush garden world, most of the native biosphere has been destroyed by orbital bombardment.",
+      "Image": "planet_rockygrey_large",
+      "X": 337.92,
+      "Y": 499.2,
+      "Size": 48.0,
+      "StartUnlocked": false,
+      "HideIfLocked": false,
+      "LinkedPlanets": [
+        "planet9"
+      ],
+      "Missions": [
+        {
+          "Name": "Sunrise Episode 2M - The First Law",
+          "ID": "mission6",
+          "IntroJournal": "journal8",
+          "DownloadArchive": "Sunrise Episode 2M - The First Law r212",
+          "SiteNum": 177,
+          "IsMainQuest": true,
+          "Archive": null,
+          "Image": null,
+          "UnlockOnPreviousPlanetCompletion": true,
+          "StartUnlocked": false,
+          "HideIfLocked": true
+        }
+      ]
+    },
+    "planet8": {
+      "Name": "Faul I",
+      "ID": "planet8",
+      "Blurb": "A small, arid world with little native life detected on the surface.",
+      "Image": "planet_desertorange",
+      "X": 460.8,
+      "Y": 522.24,
+      "Size": 32.0,
+      "StartUnlocked": false,
+      "HideIfLocked": false,
+      "LinkedPlanets": [
+        "planet9"
+      ],
+      "Missions": [
+        {
+          "Name": "Sunrise Episode 2D - Gallus Ranch",
+          "ID": "mission8",
+          "IntroJournal": "journal10",
+          "DownloadArchive": "Sunrise Episode 2D - Gallus Ranch r171",
+          "SiteNum": 182,
+          "IsMainQuest": true,
+          "Archive": null,
+          "Image": null,
+          "UnlockOnPreviousPlanetCompletion": true,
+          "StartUnlocked": false,
+          "HideIfLocked": true
+        }
+      ]
+    },
+    "planet9": {
+      "Name": "Antikythera",
+      "ID": "planet9",
+      "Blurb": "A cold Earth-sized planet that with extensive ship manufacturing facilities. Much of the surface is covered by snow all year round.",
+      "Image": "planet_snow_large",
+      "X": 419.84,
+      "Y": 453.12,
+      "Size": 48.0,
+      "StartUnlocked": false,
+      "HideIfLocked": false,
+      "LinkedPlanets": [
+        "planet10",
+        "planet11",
+        "planet16"
+      ],
+      "Missions": [
+        {
+          "Name": "Sunrise Episode 3 - To Reach the Sky",
+          "ID": "mission9",
+          "IntroJournal": "journal12",
+          "DownloadArchive": "Sunrise Episode 3 - To Reach the Sky r163",
+          "SiteNum": 186,
+          "IsMainQuest": true,
+          "Archive": null,
+          "Image": null,
+          "UnlockOnPreviousPlanetCompletion": true,
+          "StartUnlocked": false,
+          "HideIfLocked": true
+        }
+      ]
+    },
+    "planet10": {
+      "Name": "Edda",
+      "ID": "planet10",
+      "Blurb": "Now largely abandoned, this cold, lonely world was once a major Ascended base before the Fall. The rugged terrain and harsh seas discourage wide-scale settlement.",
+      "Image": "planet_ice",
+      "X": 399.36,
+      "Y": 376.32,
+      "Size": 48.0,
+      "StartUnlocked": false,
+      "HideIfLocked": false,
+      "LinkedPlanets": [],
+      "Missions": [
+        {
+          "Name": "Sunrise Episode 4C - A Link to the Past",
+          "ID": "mission10",
+          "IntroJournal": "journal15",
+          "DownloadArchive": "Sunrise Episode 4C - A Link to the Past r142",
+          "SiteNum": 193,
+          "IsMainQuest": true,
+          "Archive": null,
+          "Image": null,
+          "UnlockOnPreviousPlanetCompletion": true,
+          "StartUnlocked": false,
+          "HideIfLocked": true
+        }
+      ]
+    },
+    "planet11": {
+      "Name": "Apokia II",
+      "ID": "planet11",
+      "Blurb": "Remarkably infertile and resource-poor for a \"garden\" world, this backwoods planet has little to recommend it.",
+      "Image": "planet_terran_small",
+      "X": 542.72,
+      "Y": 476,
+      "Size": 40.0,
+      "StartUnlocked": false,
+      "HideIfLocked": false,
+      "LinkedPlanets": [
+        "planet12"
+      ],
+      "Missions": [
+        {
+          "Name": "Sunrise Episode 4E - Barbarian Frontier",
+          "ID": "mission11",
+          "IntroJournal": "journal18",
+          "DownloadArchive": "Sunrise Episode 4E - Barbarian Frontier r92",
+          "SiteNum": 194,
+          "IsMainQuest": true,
+          "Archive": null,
+          "Image": null,
+          "UnlockOnPreviousPlanetCompletion": true,
+          "StartUnlocked": false,
+          "HideIfLocked": true
+        }
+      ]
+    },
+    "planet12": {
+      "Name": "Tryphon",
+      "ID": "planet12",
+      "Blurb": "An Imperial colony of modest means, forming a bulwark against the barbarians encroaching on the Trajan Sector. The planet is mostly temperate, with a relatively low ocean coverage.",
+      "Image": "planet_terran2",
+      "X": 665.6,
+      "Y": 506.88,
+      "Size": 48.0,
+      "StartUnlocked": false,
+      "HideIfLocked": false,
+      "LinkedPlanets": [
+        "planet13"
+      ],
+      "Missions": [
+        {
+          "Name": "Sunrise Episode 5E - Rebellion",
+          "ID": "mission12",
+          "IntroJournal": "journal20",
+          "DownloadArchive": "Sunrise Episode 5E - Rebellion r86",
+          "SiteNum": 196,
+          "IsMainQuest": true,
+          "Archive": null,
+          "Image": null,
+          "UnlockOnPreviousPlanetCompletion": true,
+          "StartUnlocked": false,
+          "HideIfLocked": true
+        }
+      ]
+    },
+    "planet13": {
+      "Name": "Barchan",
+      "ID": "planet13",
+      "Blurb": "Dry, dusty plains punctuated by rocky mountains and, recently, a horde of violent war machines.",
+      "Image": "planet_desert3",
+      "X": 788.48,
+      "Y": 506.88,
+      "Size": 48.0,
+      "StartUnlocked": false,
+      "HideIfLocked": false,
+      "LinkedPlanets": [
+        "planet14",
+        "planet17"
+      ],
+      "Missions": [
+        {
+          "Name": "Sunrise Episode 6E - Show of Force",
+          "ID": "mission13",
+          "IntroJournal": "journal23",
+          "DownloadArchive": "Sunrise Episode 6E - Show of Force r68",
+          "SiteNum": 202,
+          "IsMainQuest": true,
+          "Archive": null,
+          "Image": null,
+          "UnlockOnPreviousPlanetCompletion": true,
+          "StartUnlocked": false,
+          "HideIfLocked": true
+        }
+      ]
+    },
+    "planet14": {
+      "Name": "Belisarius",
+      "ID": "planet14",
+      "Blurb": "Located on the border of the Imperial Core Sector, this arid, rocky planet guards the way to the Throne.",
+      "Image": "planet_rockybrown_large",
+      "X": 819.2,
+      "Y": 430.0,
+      "Size": 54.0,
+      "StartUnlocked": false,
+      "HideIfLocked": false,
+      "LinkedPlanets": [
+        "planet15"
+      ],
+      "Missions": [
+        {
+          "Name": "Sunrise Episode 7E - Great Migration",
+          "ID": "mission14",
+          "IntroJournal": "journal26",
+          "DownloadArchive": "Sunrise Episode 7E - Great Migration r71",
+          "SiteNum": 208,
+          "IsMainQuest": true,
+          "Archive": null,
+          "Image": null,
+          "UnlockOnPreviousPlanetCompletion": true,
+          "StartUnlocked": false,
+          "HideIfLocked": true
+        }
+      ]
+    },
+    "planet15": {
+      "Name": "Throne",
+      "ID": "planet15",
+      "Blurb": "The ancient seat of the Empire through all its iterations, this terran world is even more powerful as a symbol than as a military, industrial or cultural hub.",
+      "Image": "planet_terran_large",
+      "X": 778.24,
+      "Y": 353.28,
+      "Size": 50.0,
+      "StartUnlocked": false,
+      "HideIfLocked": false,
+      "LinkedPlanets": [],
+      "Missions": [
+        {
+          "Name": "Sunrise Episode 8E - The King is Dead",
+          "ID": "mission15",
+          "IntroJournal": "journal29",
+          "DownloadArchive": "Sunrise Episode 8E - The King is Dead r57",
+          "SiteNum": 217,
+          "IsMainQuest": true,
+          "Archive": null,
+          "Image": null,
+          "UnlockOnPreviousPlanetCompletion": true,
+          "StartUnlocked": false,
+          "HideIfLocked": true
+        }
+      ]
+    },
+    "planet16": {
+      "Name": "Rossum",
+      "ID": "planet16",
+      "Blurb": "Sandy deserts encroach on the small Planetwars-era outpost situated here. The planet appears to have been abandoned to the elements.",
+      "Image": "planet_desert",
+      "X": 307.2,
+      "Y": 422.4,
+      "Size": 40.0,
+      "StartUnlocked": false,
+      "HideIfLocked": false,
+      "LinkedPlanets": [],
+      "Missions": [
+        {
+          "Name": "Sunrise Episode 4M - Ambush at Rossum",
+          "ID": "mission16",
+          "IntroJournal": "journal34",
+          "DownloadArchive": "Sunrise Episode 4M - Ambush at Rossum r15",
+          "SiteNum": 220,
+          "IsMainQuest": true,
+          "Archive": null,
+          "Image": null,
+          "UnlockOnPreviousPlanetCompletion": true,
+          "StartUnlocked": false,
+          "HideIfLocked": true
+        }
+      ]
+    },
+    "planet17": {
+      "Name": "Nimitz",
+      "ID": "planet17",
+      "Blurb": "In a few hundred million years this could have been a teeming garden world; as it is, the only lifeforms that thrive are robots.",
+      "Image": "planet_rockygrey_large",
+      "X": 849.92,
+      "Y": 576.0,
+      "Size": 48.0,
+      "StartUnlocked": false,
+      "HideIfLocked": false,
+      "LinkedPlanets": [],
+      "Missions": [
+        {
+          "Name": "Carrier has Arrived",
+          "ID": "mission17",
+          "IntroJournal": "journal36",
+          "DownloadArchive": "Carrier has Arrived r65",
+          "SiteNum": 201,
+          "IsMainQuest": true,
+          "Archive": null,
+          "Image": null,
+          "UnlockOnPreviousPlanetCompletion": true,
+          "StartUnlocked": false,
+          "HideIfLocked": true
+        }
+      ]
+    },
+    "planet18": {
+      "Name": "Lanning",
+      "ID": "planet18",
+      "Blurb": "Most humans would enjoy the sandy beaches and pleasing weather of this world's many islands, but the robots do not seem to be particularly interested.",
+      "Image": "planet_terran",
+      "X": 235.52,
+      "Y": 360.96,
+      "Size": 48.0,
+      "StartUnlocked": false,
+      "HideIfLocked": false,
+      "LinkedPlanets": [],
+      "Missions": [
+        {
+          "Name": "Experimental Teams Training Mission [WIP]",
+          "ID": "mission18",
+          "IntroJournal": "journal37",
+          "DownloadArchive": "Experimental Teams Training Mission [WIP] r70",
+          "SiteNum": 210,
+          "IsMainQuest": true,
+          "Archive": null,
+          "Image": null,
+          "UnlockOnPreviousPlanetCompletion": true,
+          "StartUnlocked": false,
+          "HideIfLocked": true
+        }
+      ]
+    }
+  },
+  "Journals": {
+    "journal4": {
+      "Name": "Planet: Tyrian",
+      "ID": "journal4",
+      "Image": null,
+      "Category": "Planet",
+      "PlanetID": "planet3",
+      "MissionID": "mission3",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": true,
+      "UnlockOnMissionCompletion": false,
+      "JournalPartIDs": [
+        "journal4_1"
+      ]
+    },
+    "journal6": {
+      "Name": "Chapter 1-1: Rise and Shine",
+      "ID": "journal6",
+      "Image": null,
+      "Category": "Story: Intro",
+      "PlanetID": "planet5",
+      "MissionID": "mission5",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": true,
+      "UnlockOnMissionCompletion": false,
+      "JournalPartIDs": [
+        "journal6_1"
+      ]
+    },
+    "journal8": {
+      "Name": "Chapter 2-1(M): The Revolutionary",
+      "ID": "journal8",
+      "Image": null,
+      "Category": "Story: Intro",
+      "PlanetID": "planet6",
+      "MissionID": "mission6",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": true,
+      "UnlockOnMissionCompletion": false,
+      "JournalPartIDs": [
+        "journal8_1"
+      ]
+    },
+    "journal10": {
+      "Name": "Chapter 2-1(D): Derelict Station",
+      "ID": "journal10",
+      "Image": null,
+      "Category": "Story: Intro",
+      "PlanetID": "planet8",
+      "MissionID": "mission8",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": true,
+      "UnlockOnMissionCompletion": false,
+      "JournalPartIDs": [
+        "journal10_1"
+      ]
+    },
+    "journal12": {
+      "Name": "Chapter 3-1: The Stars Above",
+      "ID": "journal12",
+      "Image": null,
+      "Category": "Story: Intro",
+      "PlanetID": "planet9",
+      "MissionID": "mission9",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": true,
+      "UnlockOnMissionCompletion": false,
+      "JournalPartIDs": [
+        "journal12_1"
+      ]
+    },
+    "journal15": {
+      "Name": "Chapter 1-1: The Vikings Attack",
+      "ID": "journal15",
+      "Image": null,
+      "Category": "Story: Cybernetics",
+      "PlanetID": "planet10",
+      "MissionID": "mission10",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": true,
+      "UnlockOnMissionCompletion": false,
+      "JournalPartIDs": [
+        "journal15_1"
+      ]
+    },
+    "journal18": {
+      "Name": "Chapter 1-1: Backwater Station",
+      "ID": "journal18",
+      "Image": null,
+      "Category": "Story: Empire",
+      "PlanetID": "planet11",
+      "MissionID": "mission11",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": true,
+      "UnlockOnMissionCompletion": false,
+      "JournalPartIDs": [
+        "journal18_1"
+      ]
+    },
+    "journal20": {
+      "Name": "Chapter 2-1: Friend and Foe",
+      "ID": "journal20",
+      "Image": null,
+      "Category": "Story: Empire",
+      "PlanetID": "planet12",
+      "MissionID": "mission12",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": true,
+      "UnlockOnMissionCompletion": false,
+      "JournalPartIDs": [
+        "journal20_1"
+      ]
+    },
+    "journal23": {
+      "Name": "Chapter 3-1: An Invitation to a Party",
+      "ID": "journal23",
+      "Image": null,
+      "Category": "Story: Empire",
+      "PlanetID": "planet13",
+      "MissionID": "mission13",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": true,
+      "UnlockOnMissionCompletion": false,
+      "JournalPartIDs": [
+        "journal23_1"
+      ]
+    },
+    "journal26": {
+      "Name": "Chapter 4-1: Into the Valley of Death",
+      "ID": "journal26",
+      "Image": null,
+      "Category": "Story: Empire",
+      "PlanetID": "planet14",
+      "MissionID": "mission14",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": true,
+      "UnlockOnMissionCompletion": false,
+      "JournalPartIDs": [
+        "journal26_1"
+      ]
+    },
+    "journal29": {
+      "Name": "Chapter 5-1: Across the Rubicon",
+      "ID": "journal29",
+      "Image": null,
+      "Category": "Story: Empire",
+      "PlanetID": "planet15",
+      "MissionID": "mission15",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": true,
+      "UnlockOnMissionCompletion": false,
+      "JournalPartIDs": [
+        "journal29_1"
+      ]
+    },
+    "journal34": {
+      "Name": "Chapter 1-1: Intruders",
+      "ID": "journal34",
+      "Image": null,
+      "Category": "Story: Machines",
+      "PlanetID": "planet16",
+      "MissionID": "mission16",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": true,
+      "UnlockOnMissionCompletion": false,
+      "JournalPartIDs": [
+        "journal34_1"
+      ]
+    },
+    "journal36": {
+      "Name": "History: The Nimitz Incident",
+      "ID": "journal36",
+      "Image": null,
+      "Category": "Story: Empire",
+      "PlanetID": "planet17",
+      "MissionID": "mission17",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": true,
+      "UnlockOnMissionCompletion": false,
+      "JournalPartIDs": [
+        "journal36_1"
+      ]
+    },
+    "journal37": {
+      "Name": "Chapter 2-1: Field of Honor",
+      "ID": "journal37",
+      "Image": null,
+      "Category": "Story: Machines",
+      "PlanetID": "planet18",
+      "MissionID": "mission18",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": true,
+      "UnlockOnMissionCompletion": false,
+      "JournalPartIDs": [
+        "journal37_1"
+      ]
+    },
+    "journal7": {
+      "Name": "Chapter 1-2: From the Ashes",
+      "ID": "journal7",
+      "Image": null,
+      "Category": "Story: Intro",
+      "PlanetID": "planet5",
+      "MissionID": "mission5",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": false,
+      "UnlockOnMissionCompletion": true,
+      "JournalPartIDs": [
+        "journal7_1"
+      ]
+    },
+    "journal9": {
+      "Name": "Chapter 2-2(M): Ancient History",
+      "ID": "journal9",
+      "Image": null,
+      "Category": "Story: Intro",
+      "PlanetID": "planet6",
+      "MissionID": "mission6",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": false,
+      "UnlockOnMissionCompletion": true,
+      "JournalPartIDs": [
+        "journal9_1"
+      ]
+    },
+    "journal11": {
+      "Name": "Chapter 2-2(D): A Strange Experiment",
+      "ID": "journal11",
+      "Image": null,
+      "Category": "Story: Intro",
+      "PlanetID": "planet8",
+      "MissionID": "mission8",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": false,
+      "UnlockOnMissionCompletion": true,
+      "JournalPartIDs": [
+        "journal11_1"
+      ]
+    },
+    "journal13": {
+      "Name": "Chapter 3-2: A New Dawn",
+      "ID": "journal13",
+      "Image": null,
+      "Category": "Story: Intro",
+      "PlanetID": "planet9",
+      "MissionID": "mission9",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": false,
+      "UnlockOnMissionCompletion": true,
+      "JournalPartIDs": [
+        "journal13_1"
+      ]
+    },
+    "journal14": {
+      "Name": "State of the Galaxy",
+      "ID": "journal14",
+      "Image": null,
+      "Category": "Story: Intro",
+      "PlanetID": "planet9",
+      "MissionID": "mission9",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": false,
+      "UnlockOnMissionCompletion": true,
+      "JournalPartIDs": [
+        "journal14_1"
+      ]
+    },
+    "journal16": {
+      "Name": "Chapter 1-2: First Rays of Spring",
+      "ID": "journal16",
+      "Image": null,
+      "Category": "Story: Cybernetics",
+      "PlanetID": "planet10",
+      "MissionID": "mission10",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": false,
+      "UnlockOnMissionCompletion": true,
+      "JournalPartIDs": [
+        "journal16_1"
+      ]
+    },
+    "journal17": {
+      "Name": "Planet: Edda",
+      "ID": "journal17",
+      "Image": null,
+      "Category": "Planet",
+      "PlanetID": "planet10",
+      "MissionID": "mission10",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": true,
+      "UnlockOnMissionCompletion": false,
+      "JournalPartIDs": [
+        "journal17_1"
+      ]
+    },
+    "journal19": {
+      "Name": "Chapter 1-2: A Legion and a Mystery",
+      "ID": "journal19",
+      "Image": null,
+      "Category": "Story: Empire",
+      "PlanetID": "planet11",
+      "MissionID": "mission11",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": false,
+      "UnlockOnMissionCompletion": true,
+      "JournalPartIDs": [
+        "journal19_1"
+      ]
+    },
+    "journal21": {
+      "Name": "Chapter 2-2(1): Parade Ground",
+      "ID": "journal21",
+      "Image": null,
+      "Category": "Story: Empire",
+      "PlanetID": "planet12",
+      "MissionID": "mission12",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": false,
+      "UnlockOnMissionCompletion": false,
+      "JournalPartIDs": [
+        "journal21_1"
+      ]
+    },
+    "journal22": {
+      "Name": "Chapter 2-2(2): Mourning and Retribution",
+      "ID": "journal22",
+      "Image": null,
+      "Category": "Story: Empire",
+      "PlanetID": "planet12",
+      "MissionID": "mission12",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": false,
+      "UnlockOnMissionCompletion": false,
+      "JournalPartIDs": [
+        "journal22_1"
+      ]
+    },
+    "journal24": {
+      "Name": "Chapter 3-2: Veni, Vidi, Vici",
+      "ID": "journal24",
+      "Image": null,
+      "Category": "Story: Empire",
+      "PlanetID": "planet13",
+      "MissionID": "mission13",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": false,
+      "UnlockOnMissionCompletion": true,
+      "JournalPartIDs": [
+        "journal24_1"
+      ]
+    },
+    "journal25": {
+      "Name": "Recovered Log 1: Ira Dei",
+      "ID": "journal25",
+      "Image": null,
+      "Category": "Story: Empire",
+      "PlanetID": "planet13",
+      "MissionID": "mission13",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": false,
+      "UnlockOnMissionCompletion": true,
+      "JournalPartIDs": [
+        "journal25_1"
+      ]
+    },
+    "journal27": {
+      "Name": "Chapter 4-2: Gaze of the Abyss",
+      "ID": "journal27",
+      "Image": null,
+      "Category": "Story: Empire",
+      "PlanetID": "planet14",
+      "MissionID": "mission14",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": false,
+      "UnlockOnMissionCompletion": true,
+      "JournalPartIDs": [
+        "journal27_1"
+      ]
+    },
+    "journal28": {
+      "Name": "Planet: Belisarius",
+      "ID": "journal28",
+      "Image": null,
+      "Category": "Planet",
+      "PlanetID": "planet14",
+      "MissionID": "mission14",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": true,
+      "UnlockOnMissionCompletion": false,
+      "JournalPartIDs": [
+        "journal28_1"
+      ]
+    },
+    "journal30": {
+      "Name": "Chapter 5-2: In Memoriam",
+      "ID": "journal30",
+      "Image": null,
+      "Category": "Story: Empire",
+      "PlanetID": "planet15",
+      "MissionID": "mission15",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": false,
+      "UnlockOnMissionCompletion": true,
+      "JournalPartIDs": [
+        "journal30_1"
+      ]
+    },
+    "journal31": {
+      "Name": "Ending 1: Long Live The Queen",
+      "ID": "journal31",
+      "Image": null,
+      "Category": "Story: Empire",
+      "PlanetID": "planet15",
+      "MissionID": "mission15",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": false,
+      "UnlockOnMissionCompletion": false,
+      "JournalPartIDs": [
+        "journal31_1"
+      ]
+    },
+    "journal32": {
+      "Name": "Ending 2: Destiny's Fork",
+      "ID": "journal32",
+      "Image": null,
+      "Category": "Story: Empire",
+      "PlanetID": "planet15",
+      "MissionID": "mission15",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": false,
+      "UnlockOnMissionCompletion": false,
+      "JournalPartIDs": [
+        "journal32_1"
+      ]
+    },
+    "journal33": {
+      "Name": "Ending 3: Ashes to Ashes",
+      "ID": "journal33",
+      "Image": null,
+      "Category": "Story: Empire",
+      "PlanetID": "planet15",
+      "MissionID": "mission15",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": false,
+      "UnlockOnMissionCompletion": false,
+      "JournalPartIDs": [
+        "journal33_1"
+      ]
+    },
+    "journal35": {
+      "Name": "Chapter 1-2: War Machine",
+      "ID": "journal35",
+      "Image": null,
+      "Category": "Story: Machines",
+      "PlanetID": "planet16",
+      "MissionID": "mission16",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": false,
+      "UnlockOnMissionCompletion": true,
+      "JournalPartIDs": [
+        "journal35_1"
+      ]
+    },
+    "journal38": {
+      "Name": "Chapter 2-2: The Binding Chains",
+      "ID": "journal38",
+      "Image": null,
+      "Category": "Story: Machines",
+      "PlanetID": "planet18",
+      "MissionID": "mission18",
+      "StartUnlocked": false,
+      "UnlockOnMissionUnlock": false,
+      "UnlockOnMissionCompletion": true,
+      "JournalPartIDs": [
+        "journal38_1"
+      ]
+    }
+  }
+}

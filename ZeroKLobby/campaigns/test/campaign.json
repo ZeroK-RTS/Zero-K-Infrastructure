@@ -51,7 +51,7 @@
       "Image": null,
       "Category": "Other",
       "PlanetID": "planet1",
-      "StartUnlocked": false,
+      "StartUnlocked": true,
       "JournalPartIDs": [
         "journal1_1"
       ]

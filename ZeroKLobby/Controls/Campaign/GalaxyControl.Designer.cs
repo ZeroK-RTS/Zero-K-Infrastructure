@@ -30,12 +30,14 @@
         {
             this.SuspendLayout();
             // 
-            // Galaxy
+            // GalaxyControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
-            this.Name = "Galaxy";
+            this.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.Name = "GalaxyControl";
+            this.Size = new System.Drawing.Size(146, 146);
             this.ResumeLayout(false);
 
         }

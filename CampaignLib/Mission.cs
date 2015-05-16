@@ -17,6 +17,7 @@ namespace CampaignLib
         public bool IsMainQuest { get; set; }
         public string Archive { get; set; }
         public string Image { get; set; }
+        public bool UnlockOnPreviousPlanetCompletion { get; set; }
         public bool StartUnlocked { get; set; }
         public bool HideIfLocked { get; set; }
 
@@ -26,6 +27,7 @@ namespace CampaignLib
             StartUnlocked = false;
 			HideIfLocked = true;
             IsMainQuest = true;
+            UnlockOnPreviousPlanetCompletion = true;
         }
     }
 }

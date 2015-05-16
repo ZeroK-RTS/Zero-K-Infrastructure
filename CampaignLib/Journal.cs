@@ -14,9 +14,10 @@ namespace CampaignLib
         public string Image { get; set; }
         public string Category { get; set; }
         public string PlanetID { get; set; }
+        public string MissionID { get; set; }
         public bool StartUnlocked { get; set; }
-        public bool UnlockOnPlanetUnlock { get; set; }
-        public bool UnlockOnPlanetCompletion { get; set; }
+        public bool UnlockOnMissionUnlock { get; set; }
+        public bool UnlockOnMissionCompletion { get; set; }
         public List<String> JournalPartIDs { get; set; }
 
         public Journal(string id)
@@ -24,8 +25,8 @@ namespace CampaignLib
             ID = id;
             JournalPartIDs = new List<String>();
             StartUnlocked = false;
-            UnlockOnPlanetUnlock = false;
-            UnlockOnPlanetCompletion = false;
+            UnlockOnMissionUnlock = false;
+            UnlockOnMissionCompletion = false;
         }
 
         //public List<Planet> Planets { get; set; }
