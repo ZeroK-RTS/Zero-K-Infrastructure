@@ -49,6 +49,10 @@ namespace PlasmaDownloader
 
         public int Length { get; protected internal set; }
         public string Name { get; protected set; }
+        /// <summary>
+        /// Alternate name/tag for the download
+        /// </summary>
+        public string Alias { get; set; }
 
         public virtual IEnumerable<Download> NeededDownloads { get { return neededDownloads; } }
 
