@@ -296,8 +296,8 @@ namespace LobbyClient
             }
 
             // ALLIANCES AND START BOXES
-            // var startboxes = new StringBuilder();
-            // startboxes.AppendFormat("return { ");
+            var startboxes = new StringBuilder();
+            startboxes.Append("return { ");
             script.AppendLine();
             foreach (var allyNumber in
                 users.Where(x => !x.IsSpectator).Select(x => x.AllyNumber).Union(bots.Select(x => x.AllyNumber)).Union(_rectangles.Keys).Distinct())
@@ -313,17 +313,20 @@ namespace LobbyClient
                 script.AppendFormat(CultureInfo.InvariantCulture, "     StartRectTop={0};\n", top);
                 script.AppendFormat(CultureInfo.InvariantCulture, "     StartRectRight={0};\n", right);
                 script.AppendFormat(CultureInfo.InvariantCulture, "     StartRectBottom={0};\n", bottom);
-                // startboxes.AppendFormat(CultureInfo.InvariantCulture, "[{0}] = { {1}, {2}, {3}, {4} }, ", allyNumber, left, top, right, bottom);
+                startboxes.AppendFormat(CultureInfo.InvariantCulture, "[{0}] = ", allyNumber);
+                startboxes.Append("{ ");
+                startboxes.AppendFormat(CultureInfo.InvariantCulture, "{0}, {1}, {2}, {3}", left, top, right, bottom);
+                startboxes.Append(" }, ");
                 script.AppendLine("}");
             }
 
-            // startboxes.AppendFormat("}");
+            startboxes.Append("}");
             script.AppendLine();
 
                 script.AppendLine("  [MODOPTIONS]");
                 script.AppendLine("  {");
 
-                // script.AppendFormat("    startboxes={0};\n", startboxes.ToString());
+                script.AppendFormat("    startboxes={0};\n", startboxes.ToString());
 
                 var options = new Dictionary<string, string>(_modOptions);
 
