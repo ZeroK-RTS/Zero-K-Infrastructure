@@ -335,6 +335,18 @@ namespace Springie.autohost
 
                     break;
 
+                case "startshuffled":
+                    tas.UpdateModOptions(new Dictionary<string, string>() 
+                        {{ "shuffledbox", "1" }}
+                    );
+                    if (tas.MyBattle != null)
+                    {
+                        int cnt = tas.MyBattle.NonSpectatorCount;
+                        if (cnt == 1) ComStart(e, words);
+                        else StartVote(new VoteStart(tas, spring, this), e, words);
+                    }
+                    break;
+
                 case "forcestart":
                     ComForceStart(e, words);
                     break;

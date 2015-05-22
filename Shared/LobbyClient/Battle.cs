@@ -295,6 +295,18 @@ namespace LobbyClient
                 userNum++;
             }
 
+            //Shuffle startbox
+            if (_modOptions.ContainsKey("shuffledbox"))
+            {
+                List<KeyValuePair<int,BattleRect>> shuffled = _rectangles.Shuffle();
+                int cnt = 0;
+                foreach (var keyValue in _rectangles)
+                {
+                    _rectangles[keyValue.Key] = shuffled[cnt].Value;
+                    cnt++;
+                }
+            }
+
             // ALLIANCES AND START BOXES
             // var startboxes = new StringBuilder();
             // startboxes.AppendFormat("return { ");
