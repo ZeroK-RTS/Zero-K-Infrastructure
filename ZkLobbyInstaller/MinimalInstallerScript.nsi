@@ -1,13 +1,50 @@
 #Author: xponen, for Zero-K, (from a modified Basic Example Script written by Joost Verburg)
 #Date: 18 May 2015
-#Function: Display licence, download ZKL, and download & Install NET Framework if needed.
+#Function: Display code-of-conduct, download ZKL, and download & Install NET Framework if needed.
+#Required Plugin: 
+#    Stock plugin (preinstalled with NSIS)
+#    UAC plugin (http://nsis.sourceforge.net/UAC_plug-in , REQUIRE NSIS version 2.46)
 
+;--------------------------------
+;Pre-Initialization stuff
+#set best compression, ref: http://www.symantec.com/connect/articles/advanced-nsis-scripting-part-1
+SetCompressor /FINAL /SOLID lzma
+SetCompressorDictSize 64
+
+# Request elevated privilege
+!include "${NSISDIR}\UAC.nsh"
+!include LogicLib.nsh
+
+# Initialize
 Var EST_ZKL_MAP_GAME_SPRING_SIZE_MB
-
 Function .onInit
-	IntOp $EST_ZKL_MAP_GAME_SPRING_SIZE_MB 600 + 0
+	StrCpy $EST_ZKL_MAP_GAME_SPRING_SIZE_MB 600
+	
+	uac_tryagain:
+	!insertmacro UAC_RunElevated
+	${Switch} $0
+	${Case} 0
+		${IfThen} $1 = 1 ${|} Quit ${|} ;we are the outer process, the inner process has done its work, we are done
+		${IfThen} $3 <> 0 ${|} ${Break} ${|} ;we are admin, let the show go on
+		${If} $1 = 3 ;RunAs completed successfully, but with a non-admin user
+			MessageBox MB_YESNO|MB_ICONEXCLAMATION|MB_TOPMOST|MB_SETFOREGROUND "Zero-K Lobby downloader requires admin privileges, try again" /SD IDNO IDYES uac_tryagain IDNO 0
+		${EndIf}
+		;fall-through and die
+	${Case} 1223
+		MessageBox MB_ICONSTOP|MB_TOPMOST|MB_SETFOREGROUND "Zero-K Lobby downloader requires admin privileges, aborting!"
+		Quit
+	${Case} 1062
+		MessageBox MB_ICONSTOP|MB_TOPMOST|MB_SETFOREGROUND "Logon service not running, aborting!"
+		Quit
+	${Default}
+		MessageBox MB_ICONSTOP|MB_TOPMOST|MB_SETFOREGROUND "Unable to elevate, error $0"
+		Quit
+	${EndSwitch}
+	SetShellVarContext all
 FunctionEnd
 
+;--------------------------------
+;User Interface stuff
 ;--------------------------------
 ;Include Modern UI
 !include "MUI2.nsh"
@@ -21,8 +58,8 @@ OutFile "Zero-K Lobby Setup.exe"
 ;Default installation folder
 InstallDir "$DOCUMENTS\My Games\Spring"
 
-;Request application privileges for Windows Vista
-RequestExecutionLevel admin #for installing NET Framework
+;Request application privileges
+RequestExecutionLevel user #not needed (always set to user), because UAC will be controlled by UAC plugin
 
 ;--------------------------------
 ;Interface Settings
@@ -32,29 +69,33 @@ RequestExecutionLevel admin #for installing NET Framework
 
 ;--------------------------------
 ;Pages
-!define MUI_PAGE_HEADER_SUBTEXT "Please review the licences before downloading Zero-K Lobby"
-!define MUI_PAGE_HEADER_TEXT "Licences"
-!define MUI_LICENSEPAGE_BUTTON "OK"
-!define MUI_LICENSEPAGE_TEXT_TOP "Scroll down to see the rest of the licence"
-!define MUI_LICENSEPAGE_TEXT_BOTTOM  "$\nPress OK if you agree"
-!insertmacro MUI_PAGE_LICENSE "legal.txt"
+!define MUI_PAGE_HEADER_SUBTEXT "Please review the Zero-K community's code of conduct before continuing Zero-K Lobby Setup."
+!define MUI_PAGE_HEADER_TEXT "Zero-K Community's Code of Conduct,"
+!define MUI_LICENSEPAGE_CHECKBOX true
+!define MUI_LICENSEPAGE_CHECKBOX_TEXT "I accept these code of conduct."
+!define MUI_LICENSEPAGE_BUTTON "Next"
+!define MUI_LICENSEPAGE_TEXT_TOP "Press Page Down to see the rest of the code of conduct."
+!define MUI_LICENSEPAGE_TEXT_BOTTOM  "Please review the code of conduct before continuing Zero-K Lobby setup. If you accept the code of conduct, click the checkbox below. Click Next to continue."
+!insertmacro MUI_PAGE_LICENSE "codeconduct.txt"
 
 !define MUI_PAGE_HEADER_TEXT "Component"
-!define MUI_PAGE_HEADER_SUBTEXT "Choose which features of Zero-K you want to download"
-!define MUI_COMPONENTSPAGE_TEXT_TOP  "Map and Game will be downloaded by later by Zero-K Lobby. Press Next"
+!define MUI_PAGE_HEADER_SUBTEXT "Choose which features of Zero-K you want to download."
+!define MUI_COMPONENTSPAGE_TEXT_TOP  "Map and Game is to be downloaded by Zero-K Lobby later. Click Next to continue.$\n(pre-installable media is being planned.)"
 !insertmacro MUI_PAGE_COMPONENTS
 
 !define MUI_PAGE_HEADER_SUBTEXT "Choose the folder in which you want to place Zero-K Lobby"
-!define MUI_DIRECTORYPAGE_TEXT_TOP "No game data will be placed here yet. Press Install"
+!define MUI_DIRECTORYPAGE_TEXT_TOP "Target folder should have at least 600MB disk space for Zero-K Lobby to download a bare minimum of Games, Spring engines, Maps and Replays.  Click Install to continue."
 !define MUI_PAGE_HEADER_TEXT "Directory"
 !insertmacro MUI_PAGE_DIRECTORY
 
 !define MUI_PAGE_HEADER_SUBTEXT "Please wait while Zero-K Lobby being downloaded"
 !define MUI_PAGE_HEADER_TEXT  "Installation"
+!define MUI_INSTFILESPAGE_FINISHHEADER_SUBTEXT  "Setup was completed successfully, click Next to continue."
+!define MUI_INSTFILESPAGE_ABORTHEADER_SUBTEXT  "Setup was not completed successfully, click Cancel to exit."
 !insertmacro MUI_PAGE_INSTFILES
 
 !define MUI_FINISHPAGE_TITLE "Complete Zero-K Lobby Setup"
-!define MUI_FINISHPAGE_TEXT "Press Launch, and wait for Zero-K Lobby to appear to finish setup..."
+!define MUI_FINISHPAGE_TEXT "Setup need to launch Zero-K Lobby to finish the setup.$\n$\nPress Launch, and please wait for Zero-K Lobby to pop-up to finish the rest of Zero-K Lobby setup."
 !define MUI_FINISHPAGE_BUTTON "Launch"
 !insertmacro MUI_PAGE_FINISH
   
@@ -65,16 +106,39 @@ RequestExecutionLevel admin #for installing NET Framework
 ;--------------------------------
 ;DirectioryPage stuff
 
-Function .onVerifyInstDir
-	!include "FileFunc.nsh"
-	
-	#check writability
+!include "FileFunc.nsh"
+Function verifyWriteable
+	#require low-privilege to check for user-writable folder
+	StrCpy $0 "0" #error flag (0|1)
+	#1. check special folder
 	ClearErrors
-	FileOpen $0 "$INSTDIR\Test14124152.txt" w
-	FileClose $0
-	Delete "$INSTDIR\Test14124152.txt"
-	IfErrors 0 end
-		Abort # "Error: Target directory isn't writable!"
+	${GetFileAttributes} "$INSTDIR" "SYSTEM" $0
+	IfErrors test #folder didn't exist, try create new folder
+		StrCmp "$0" "1" 0 write  #is system, abort
+			Goto end
+	write:
+		#2. check file write
+		FileOpen $0 "$INSTDIR\Test14124152.txt" w
+		FileClose $0
+		Delete "$INSTDIR\Test14124152.txt"
+		IfErrors 0 end
+			StrCpy $0 "1" # "Error: Target directory isn't writable!"
+			Goto end
+	test:
+		#3. check folder creation
+		ClearErrors
+		CreateDirectory "$INSTDIR"
+		RMDir "$INSTDIR"
+		IfErrors 0 end
+			StrCpy $0 "1" # "Error: Target directory not writable"
+			Goto end
+	end:
+FunctionEnd
+
+Function .onVerifyInstDir
+	!insertmacro UAC_AsUser_Call Function verifyWriteable ${UAC_SYNCREGISTERS}|${UAC_SYNCINSTDIR}
+	StrCmp "$0" "1" 0 end
+		Abort
 	end:
 FunctionEnd
 
@@ -87,6 +151,7 @@ FunctionEnd
 !include WinVer.nsh
 
 Function DownloadAndInstallNet
+		Abort
 		${If} ${IsWinXP}
 			Push 4
 			Push 0
@@ -98,7 +163,7 @@ Function DownloadAndInstallNet
 		${EndIf}
 		Call FoundDotNETVersion
 		Pop $0
-		${IfNot} $0 == 1
+		${If} $0 == 0
 			${If} ${IsWinXP}
 				MessageBox MB_OK|MB_ICONEXCLAMATION|MB_DEFBUTTON1 "NET Framework 4.0 isn't found in your system.$\n$\nSetup will install NET Framework 4.0"
 				DetailPrint "Downloading: http://download.microsoft.com/download/1/B/E/1BE39E79-7E39-46A3-96FF-047F95396215/dotNetFx40_Full_setup.exe"
@@ -115,7 +180,7 @@ Function DownloadAndInstallNet
 				DetailPrint "Download Failed: $0"
 				MessageBox MB_OK|MB_ICONEXCLAMATION|MB_DEFBUTTON1 "NET Framework download failed$\n$\nError:$0"
 				Abort
-
+			
 			${If} ${IsWinXP}
 				#Banner download ref: http://nsis.sourceforge.net/How_to_Automatically_download_and_install_a_particular_version_of_.NET_if_it_is_not_already_installed
 				Banner::show /NOUNLOAD "Waiting for NET4.0 Websetup ..."
@@ -127,6 +192,7 @@ Function DownloadAndInstallNet
 				Banner::show /NOUNLOAD "Waiting for NET4.5.1 Websetup ..."
 				DetailPrint "Running $INSTDIR\dotNetFx452-KB2901954-Web.exe"
 				nsExec::ExecToStack "$INSTDIR\dotNetFx452-KB2901954-Web.exe" /norestart
+				Push $0
 				Banner::destroy
 
 			${EndIf}
@@ -215,9 +281,9 @@ Function .onInstSuccess
 		Goto end
 	continue:
 	${If} ${IsWinXP}
-		ExecShell "open" "$INSTDIR\Zero-K_NET4.0.exe"
+		!insertmacro UAC_AsUser_ExecShell "open" "$INSTDIR\Zero-K_NET4.0.exe" "" "" ""
 	${Else}
-		ExecShell "open" "$INSTDIR\Zero-K.exe"
+		!insertmacro UAC_AsUser_ExecShell "open" "$INSTDIR\Zero-K.exe" "" "" ""
 	${EndIf}
 	end:
 FunctionEnd
