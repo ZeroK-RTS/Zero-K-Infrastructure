@@ -18,6 +18,7 @@ SetCompressorDictSize 64
 # Initialize
 Var EST_ZKL_MAP_GAME_SPRING_SIZE_MB
 Function .onInit
+	ReserveFile ZeroKLobbyConfig.xml #add into Installer
 	StrCpy $EST_ZKL_MAP_GAME_SPRING_SIZE_MB 600
 	
 	uac_tryagain:
@@ -84,7 +85,7 @@ RequestExecutionLevel user #not needed (always set to user), because UAC will be
 !insertmacro MUI_PAGE_COMPONENTS
 
 !define MUI_PAGE_HEADER_SUBTEXT "Choose the folder in which you want to place Zero-K Lobby"
-!define MUI_DIRECTORYPAGE_TEXT_TOP "Target folder should have at least 600MB disk space for Zero-K Lobby to download a bare minimum of Games, Spring engines, Maps and Replays.  Click Install to continue."
+!define MUI_DIRECTORYPAGE_TEXT_TOP "Target folder should have at least 600MB disk space available for Zero-K Lobby to save minimum amount of Game, Spring engine, and Map files.  Click Install to continue."
 !define MUI_PAGE_HEADER_TEXT "Directory"
 !insertmacro MUI_PAGE_DIRECTORY
 
@@ -95,8 +96,11 @@ RequestExecutionLevel user #not needed (always set to user), because UAC will be
 !insertmacro MUI_PAGE_INSTFILES
 
 !define MUI_FINISHPAGE_TITLE "Complete Zero-K Lobby Setup"
-!define MUI_FINISHPAGE_TEXT "Setup need to launch Zero-K Lobby to finish the setup.$\n$\nPress Launch, and please wait for Zero-K Lobby to pop-up to finish the rest of Zero-K Lobby setup."
-!define MUI_FINISHPAGE_BUTTON "Launch"
+!define MUI_FINISHPAGE_TEXT "Setup need to launch Zero-K Lobby to finish the setup.$\n$\nPlease launch Zero-K Lobby and wait for it to pop-up, to finish the rest of setup."
+!define MUI_FINISHPAGE_BUTTON "Finish"
+!define MUI_FINISHPAGE_RUN
+!define MUI_FINISHPAGE_RUN_TEXT "Launch Zero-K Lobby now"
+!define MUI_FINISHPAGE_RUN_FUNCTION runZeroKLobby
 !insertmacro MUI_PAGE_FINISH
   
 ;--------------------------------
@@ -253,12 +257,32 @@ Section "Zero-K Lobby" ZKL
 	zklExist:
 	Call DownloadAndInstallNet
 	
+	#Write basic config file
+	SetOverwrite on
+	File ZeroKLobbyConfig.xml
+	
 	#check diskspace
+	DetailPrint "Checking disk space"
 	StrCpy $1 $INSTDIR  3
 	${DriveSpace} $1 "/D=F /S=M" $0 #Freespace in Megabyte
 	IntOp $0 $0 - $EST_ZKL_MAP_GAME_SPRING_SIZE_MB
 	${If} $0 <= 0
-		MessageBox MB_OK|MB_ICONINFORMATION "Disk space might be too low for game data.$\nPlease configure ZKL for a different data directory later."
+		MessageBox MB_OK|MB_ICONINFORMATION "Disk space might be too low for game data.$\n$\nIt is recommended to set a separate game data folder. Zero-K Lobby will prompt you for this."
+		FileOpen $0 $INSTDIR\ZeroKLobbyConfig.xml a
+		IfErrors end1 #unknown error
+			FileSeek $0 -9 END #right before the word </Config>
+			FileWrite $0 "  <DataFolder>invalid</DataFolder>$\r$\n"
+			FileWrite $0 "</Config>"
+			FileClose $0
+		end1:
+	${Else}
+		FileOpen $0 $INSTDIR\ZeroKLobbyConfig.xml a
+		IfErrors end2 #unknown error
+			FileSeek $0 -9 END #right before the word </Config>
+			FileWrite $0 "  <DataFolder>$INSTDIR</DataFolder>$\r$\n"
+			FileWrite $0 "</Config>"
+			FileClose $0
+		end2:
 	${EndIf}
 SectionEnd
 ;--------------------------------
@@ -274,16 +298,17 @@ SectionEnd
 
 ;--------------------------------
 ;Post installation
-Function .onInstSuccess
-	IfRebootFlag 0 continue
-		MessageBox MB_YESNO|MB_ICONQUESTION|MB_DEFBUTTON1 "NET Framework require reboot.$\nRestart Computer now?" IDNO continue
-		Reboot
-		Goto end
-	continue:
+Function runZeroKLobby
 	${If} ${IsWinXP}
 		!insertmacro UAC_AsUser_ExecShell "open" "$INSTDIR\Zero-K_NET4.0.exe" "" "" ""
 	${Else}
 		!insertmacro UAC_AsUser_ExecShell "open" "$INSTDIR\Zero-K.exe" "" "" ""
 	${EndIf}
+FunctionEnd
+
+Function .onInstSuccess
+	IfRebootFlag 0 end
+		MessageBox MB_YESNO|MB_ICONQUESTION|MB_DEFBUTTON1 "NET Framework require reboot.$\nRestart Computer now?" IDNO end
+		Reboot
 	end:
 FunctionEnd
