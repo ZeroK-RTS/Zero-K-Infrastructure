@@ -299,7 +299,7 @@ namespace LobbyClient
             var startboxes = new StringBuilder();
             startboxes.Append("return { ");
             script.AppendLine();
-            foreach (int allyNumber = 1; allyNumber <= 32; allyNumber++)
+            for (int allyNumber = 1; allyNumber <= 32; allyNumber++)
             {
                 script.AppendFormat("[ALLYTEAM{0}]\n", allyNumber);
                 script.AppendLine("{");
