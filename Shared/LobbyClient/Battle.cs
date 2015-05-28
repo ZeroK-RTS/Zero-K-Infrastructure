@@ -296,34 +296,33 @@ namespace LobbyClient
             }
 
             // ALLIANCES AND START BOXES
-            // var startboxes = new StringBuilder();
-            // startboxes.AppendFormat("return { ");
+            var startboxes = new StringBuilder();
+            startboxes.Append("return { ");
             script.AppendLine();
-            foreach (var allyNumber in
-                users.Where(x => !x.IsSpectator).Select(x => x.AllyNumber).Union(bots.Select(x => x.AllyNumber)).Union(_rectangles.Keys).Distinct())
+            for (int allyNumber = 1; allyNumber <= Spring.MaxAllies; allyNumber++)
             {
-                // get allies from each player, bot and rectangles (for koth)
                 script.AppendFormat("[ALLYTEAM{0}]\n", allyNumber);
                 script.AppendLine("{");
-                script.AppendFormat("     NumAllies={0};\n", 0);
-                double left = 0, top = 0, right = 1, bottom = 1;
+                script.AppendLine("     NumAllies=0;");
                 BattleRect rect;
-                if (_rectangles.TryGetValue(allyNumber, out rect)) rect.ToFractions(out left, out top, out right, out bottom);
-                script.AppendFormat(CultureInfo.InvariantCulture, "     StartRectLeft={0};\n", left);
-                script.AppendFormat(CultureInfo.InvariantCulture, "     StartRectTop={0};\n", top);
-                script.AppendFormat(CultureInfo.InvariantCulture, "     StartRectRight={0};\n", right);
-                script.AppendFormat(CultureInfo.InvariantCulture, "     StartRectBottom={0};\n", bottom);
-                // startboxes.AppendFormat(CultureInfo.InvariantCulture, "[{0}] = { {1}, {2}, {3}, {4} }, ", allyNumber, left, top, right, bottom);
+                if (_rectangles.TryGetValue(allyNumber, out rect)) {
+                    double left = 0, top = 0, right = 1, bottom = 1;
+                    rect.ToFractions(out left, out top, out right, out bottom);
+                    startboxes.AppendFormat(CultureInfo.InvariantCulture, "[{0}] = ", allyNumber);
+                    startboxes.Append("{ ");
+                    startboxes.AppendFormat(CultureInfo.InvariantCulture, "{0}, {1}, {2}, {3}", left, top, right, bottom);
+                    startboxes.Append(" }, ");
+                }
                 script.AppendLine("}");
             }
 
-            // startboxes.AppendFormat("}");
+            startboxes.Append("}");
             script.AppendLine();
 
                 script.AppendLine("  [MODOPTIONS]");
                 script.AppendLine("  {");
 
-                // script.AppendFormat("    startboxes={0};\n", startboxes.ToString());
+                script.AppendFormat("    startboxes={0};\n", startboxes.ToString());
 
                 var options = new Dictionary<string, string>(_modOptions);
 
