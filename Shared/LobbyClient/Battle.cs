@@ -43,6 +43,7 @@ namespace LobbyClient
 
         public string Password;
 
+        public bool ShuffleBox { get; set; }
         public ConcurrentDictionary<int, BattleRect> Rectangles { get; set; }
         public string EngineName = "spring";
         public string EngineVersion { get; set; }
@@ -243,7 +244,7 @@ namespace LobbyClient
                     }
 
 
-                    GeneratePlayerSection(playersExport, users, script, bots, Rectangles, ModOptions, localUser, startSetup);
+                    GeneratePlayerSection(playersExport, users, script, bots, Rectangles, ModOptions, localUser, startSetup,ShuffleBox);
 
                     return script.ToString();
                 }
@@ -261,7 +262,8 @@ namespace LobbyClient
             IDictionary<int, BattleRect> _rectangles,
             Dictionary<string, string> _modOptions,
             User localUser = null,
-            SpringBattleStartSetup startSetup = null
+            SpringBattleStartSetup startSetup = null,
+            bool shuffleBox = false
            )
         {
             // ordinary battle stuff
@@ -293,6 +295,18 @@ namespace LobbyClient
                     teamNum++;
                 }
                 userNum++;
+            }
+
+            //Shuffle startbox
+            if (shuffleBox)
+            {
+                List<KeyValuePair<int,BattleRect>> shuffled = _rectangles.Shuffle();
+                int cnt = 0;
+                foreach (var keyValue in _rectangles)
+                {
+                    _rectangles[keyValue.Key] = shuffled[cnt].Value;
+                    cnt++;
+                }
             }
 
             // ALLIANCES AND START BOXES
@@ -333,6 +347,9 @@ namespace LobbyClient
                 // write final options to script
                 foreach (var kvp in options) script.AppendFormat("    {0}={1};\n", kvp.Key, kvp.Value);
 
+                // signal to game if we shuffled the box (optional)
+                if (shuffleBox) script.AppendLine("    shuffledbox=1;\n");
+                
                 script.AppendLine("  }");
 
 

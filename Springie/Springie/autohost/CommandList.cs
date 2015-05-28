@@ -25,6 +25,16 @@ namespace Springie.autohost
 
             AddMissing(new CommandConfig("start", 1, " - starts game", 5));
 
+            AddMissing(new CommandConfig("shufflebox",
+                                         2,
+                                         "<1|0> - shuffle alliance startbox at start of game and add a flag \"shuffledbox=1|0\" to modoptions",
+                                         5));
+
+            AddMissing(new CommandConfig("voteshufflebox",
+                                         1,
+                                         "<1|0> - start a vote to shuffle box",
+                                         5));
+
             AddMissing(new CommandConfig("ring",
                                          1,
                                          "[<filters>..] - rings all unready or specific player(s), e.g. !ring - rings unready, !ring icho - rings Licho",

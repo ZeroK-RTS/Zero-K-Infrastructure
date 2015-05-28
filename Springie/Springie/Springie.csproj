@@ -118,6 +118,7 @@
     <Compile Include="autohost\CommandList.cs" />
     <Compile Include="autohost\MatchMakerQueue.cs" />
     <Compile Include="autohost\Polls\AbstractPoll.cs" />
+    <Compile Include="autohost\Polls\VoteShuffleBox.cs" />
     <Compile Include="autohost\Polls\VotePlanet.cs" />
     <Compile Include="autohost\Polls\VoteResetOptions.cs" />
     <Compile Include="autohost\Polls\VoteMove.cs" />
