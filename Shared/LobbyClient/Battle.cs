@@ -43,7 +43,8 @@ namespace LobbyClient
 
         public string Password;
 
-        public bool ShuffleBox { get; set; }
+        public bool RngEveryBox { get; set; }
+        public bool RngActiveBox { get; set; }
         public ConcurrentDictionary<int, BattleRect> Rectangles { get; set; }
         public string EngineName = "spring";
         public string EngineVersion { get; set; }
@@ -244,7 +245,7 @@ namespace LobbyClient
                     }
 
 
-                    GeneratePlayerSection(playersExport, users, script, bots, Rectangles, ModOptions, localUser, startSetup,ShuffleBox);
+                    GeneratePlayerSection(playersExport, users, script, bots, Rectangles, ModOptions, localUser, startSetup, RngEveryBox, RngActiveBox);
 
                     return script.ToString();
                 }
@@ -263,7 +264,8 @@ namespace LobbyClient
             Dictionary<string, string> _modOptions,
             User localUser = null,
             SpringBattleStartSetup startSetup = null,
-            bool shuffleBox = false
+            bool rndEveryBox = false,
+            bool rndActiveBox = false
            )
         {
             // ordinary battle stuff
@@ -297,10 +299,41 @@ namespace LobbyClient
                 userNum++;
             }
 
-            //Shuffle startbox
-            if (shuffleBox)
+            //remove _rectangle reference to original object
+            if (rndEveryBox || rndActiveBox)
             {
-                List<KeyValuePair<int,BattleRect>> shuffled = _rectangles.Shuffle();
+                var aCopy = new Dictionary<int, BattleRect>();
+                foreach (var keyValue in _rectangles) aCopy.Add(keyValue.Key, keyValue.Value);
+                _rectangles = aCopy;
+            }
+
+            //Shuffle active startboxes
+            if (rndActiveBox)
+            {
+                //extract active startboxes
+                var aCopy = new Dictionary<int, BattleRect>();
+                foreach (var allyNumber in
+                users.Where(x => !x.IsSpectator).Select(x => x.AllyNumber).Union(bots.Select(x => x.AllyNumber)).Union(_rectangles.Keys).Distinct())
+                {
+                    BattleRect rect;
+                    if (_rectangles.TryGetValue(allyNumber, out rect)) aCopy.Add(allyNumber, rect);
+                }
+
+                //shuffle active startboxes, save into _rectangle
+                List<KeyValuePair<int, BattleRect>> shuffled = aCopy.Shuffle();
+                int cnt = 0;
+                foreach (var keyValue in aCopy)
+                {
+                    _rectangles[keyValue.Key] = shuffled[cnt].Value;
+                    cnt++;
+                }
+
+            }
+
+            //Shuffle every startbox
+            if (rndEveryBox)
+            {
+                List<KeyValuePair<int, BattleRect>> shuffled = _rectangles.Shuffle();
                 int cnt = 0;
                 foreach (var keyValue in _rectangles)
                 {
@@ -348,7 +381,7 @@ namespace LobbyClient
                 foreach (var kvp in options) script.AppendFormat("    {0}={1};\n", kvp.Key, kvp.Value);
 
                 // signal to game if we shuffled the box (optional)
-                if (shuffleBox) script.AppendLine("    shuffledbox=1;\n");
+                if (rndEveryBox || rndActiveBox) script.AppendLine("    shuffledbox=1;\n");
                 
                 script.AppendLine("  }");
 
