@@ -428,30 +428,15 @@ namespace Springie.autohost
         {
             if (tas.MyBattle == null) return;
 
-            if (words.Length != 1 || !(words[0] == "all" || words[0] == "occupied" || words[0] == "off"))
+            int x;
+            if (words.Length != 1 || !Int32.TryParse(words[0], out x))
             {
-                Respond(e, "Parameters must be \"off\" \"all\" or \"occupied\"");
+                Respond(e, "You must specify 1 or 0 as parameter");
                 return;
             }
 
-            switch (words[0])
-            {
-                case "all":
-                    tas.MyBattle.RngEveryBox = true;
-                    tas.MyBattle.RngActiveBox = false;
-                    Respond(e, "Shuffling of all start-box is on");
-                    break;
-                case "occupied":
-                    tas.MyBattle.RngEveryBox = false;
-                    tas.MyBattle.RngActiveBox = true;
-                    Respond(e, "Shuffling of occupied start-boxes is on");
-                    break;
-                default:
-                    tas.MyBattle.RngEveryBox = false;
-                    tas.MyBattle.RngActiveBox = false;
-                    Respond(e, "Shuffling of start-boxes is off");
-                    break;
-            }
+            tas.MyBattle.ShuffleBox = (x>0);
+            Respond(e, (x > 0)?"Startbox shuffling is active":"Startbox shuffling is off");
             return;
         }
 
