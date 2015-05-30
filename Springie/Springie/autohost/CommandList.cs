@@ -26,8 +26,13 @@ namespace Springie.autohost
             AddMissing(new CommandConfig("start", 1, " - starts game", 5));
 
             AddMissing(new CommandConfig("shufflebox",
-                                         3,
-                                         "<off|all|occupied> - shuffle the start-boxes at game-start and add \"shuffledbox=0|1\" flag to modoptions, e.g. !shufflebox occupied - shuffle player\'s occupied box, !shufflebox all - include empty start-box",
+                                         2,
+                                         "<1|0> - shuffle alliance startbox at start of game and add a flag \"shuffledbox=1|0\" to modoptions",
+                                         5));
+
+            AddMissing(new CommandConfig("voteshufflebox",
+                                         1,
+                                         "<1|0> - start a vote to shuffle box",
                                          5));
 
             AddMissing(new CommandConfig("ring",
@@ -72,11 +77,6 @@ namespace Springie.autohost
                                          " - exits the game",
                                          0,
                                          new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
-
-            AddMissing(new CommandConfig("voteshufflebox",
-                             1,
-                             "<off|all|occupied> - start a vote to shuffle box",
-                             5));
 
             AddMissing(new CommandConfig("votemap", 1, "[<mapname>..] - starts vote for new map, e.g. !votemap altored div"));
 
@@ -205,7 +205,7 @@ namespace Springie.autohost
 
             AddMissing(new CommandConfig("boss",
                                          3,
-                                         "<name> - sets <name> as a new boss, use without parameter to remove any current boss. If there is a boss on server, other non-admin people have their rights reduced"));
+                                         "<name> - sets <name> as a new boss, use w5ithout parameter to remove any current boss. If there is a boss on server, other non-admin people have their rights reduced"));
  
 
             AddMissing(new CommandConfig("spec", 3, "<username> - forces player to become spectator", 0));

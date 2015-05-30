@@ -24,45 +24,26 @@ namespace Springie.autohost.Polls
                 AutoHost.Respond(tas, spring, e, "Cannot set options while the game is running");
                 return false;
             }
-            if (words.Length != 1 || !(words[0] == "all" || words[0] == "occupied" || words[0] == "off"))
+            int x;
+            if (words.Length != 1 || !Int32.TryParse(words[0], out x))
             {
-                AutoHost.Respond(tas, spring, e, "Parameters must be \"off\" \"all\" or \"occupied\"");
+                AutoHost.Respond(tas, spring, e, "Parameters must be a 1 or 0");
+                return false;
+            }
+            //Already voted for?
+            if (x > 0 && tas.MyBattle.ShuffleBox)
+            {
+                AutoHost.Respond(tas, spring, e, "Startbox shuffling already active.");
+                return false;
+            }
+            else if (x <= 0 && !tas.MyBattle.ShuffleBox)
+            {
+                AutoHost.Respond(tas, spring, e, "Startbox shuffling already off.");
                 return false;
             }
 
-            switch (words[0])
-            {
-                case "all":
-                    if (tas.MyBattle.RngEveryBox)
-                    {
-                        AutoHost.Respond(tas, spring, e, "Shuffling of all start-box is already on");
-                        return false;
-                    }
-                    question = "Activate shuffling of all start-box?";
-                    tas.MyBattle.RngEveryBox = true;
-                    tas.MyBattle.RngActiveBox = false;
-                    break;
-                case "occupied":
-                    if (tas.MyBattle.RngActiveBox)
-                    {
-                        AutoHost.Respond(tas, spring, e, "Shuffling of occupied start-boxes is already on");
-                        return false;
-                    }
-                    question = "Activate shuffling of occupied start-boxes?";
-                    tas.MyBattle.RngEveryBox = false;
-                    tas.MyBattle.RngActiveBox = true;
-                    break;
-                default:
-                    if (!(tas.MyBattle.RngEveryBox || tas.MyBattle.RngActiveBox))
-                    {
-                        AutoHost.Respond(tas, spring, e, "Shuffling of start-boxes is already off");
-                        return false;
-                    }
-                    question = "Deactivate shuffling of start-boxes?";
-                    tas.MyBattle.RngEveryBox=false;
-                    tas.MyBattle.RngActiveBox = false;
-                    break;
-            }
+            question = (x > 0)?"Activate startbox shuffling":"Deactivate startbox shuffling";
+            shuffleBox = (x > 0);
             return true;
         }
 
