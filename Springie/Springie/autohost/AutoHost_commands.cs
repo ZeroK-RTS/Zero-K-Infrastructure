@@ -424,21 +424,6 @@ namespace Springie.autohost
             }
         }
 
-        public void ComShuffleBox(TasSayEventArgs e, string[] words)
-        {
-            if (tas.MyBattle == null) return;
-
-            int x;
-            if (words.Length != 1 || !Int32.TryParse(words[0], out x))
-            {
-                Respond(e, "You must specify 1 or 0 as parameter");
-                return;
-            }
-
-            tas.MyBattle.ShuffleBox = (x>0);
-            Respond(e, (x > 0)?"Startbox shuffling is active":"Startbox shuffling is off");
-            return;
-        }
 
         public void ComExit(TasSayEventArgs e, string[] words)
         {

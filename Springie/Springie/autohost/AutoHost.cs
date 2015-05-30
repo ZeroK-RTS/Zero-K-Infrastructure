@@ -335,14 +335,6 @@ namespace Springie.autohost
 
                     break;
 
-                case "shufflebox":
-                    ComShuffleBox(e, words);
-                    break;
-
-                case "voteshufflebox":
-                    StartVote(new VoteShuffleBox(tas, spring, this), e, words);
-                    break;
-
                 case "forcestart":
                     ComForceStart(e, words);
                     break;
