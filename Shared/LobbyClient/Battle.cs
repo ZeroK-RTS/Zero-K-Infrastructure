@@ -299,7 +299,7 @@ namespace LobbyClient
             var startboxes = new StringBuilder();
             startboxes.Append("return { ");
             script.AppendLine();
-            for (int allyNumber = 1; allyNumber <= Spring.MaxAllies; allyNumber++)
+            for (int allyNumber = 0; allyNumber < Spring.MaxAllies; allyNumber++)
             {
                 script.AppendFormat("[ALLYTEAM{0}]\n", allyNumber);
                 script.AppendLine("{");
