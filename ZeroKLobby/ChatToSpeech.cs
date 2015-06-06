@@ -22,6 +22,7 @@ namespace ZeroKLobby
                 speechSynthesizer = new SpeechSynthesizer();
                 voices = speechSynthesizer.GetInstalledVoices();
                 spring.LogLineAdded += spring_LogLineAdded;
+                spring.SpringExited += spring_SpringExited;
             }
             catch (Exception ex)
             {
@@ -62,6 +63,11 @@ namespace ZeroKLobby
             {
                 Trace.TraceError("Error in text to speech: {0}", ex);
             }
+        }
+
+        void spring_SpringExited(object sender, ZkData.EventArgs<bool> e)
+        {
+            if (speechSynthesizer!=null) speechSynthesizer.SpeakAsyncCancelAll();
         }
     }
 }
