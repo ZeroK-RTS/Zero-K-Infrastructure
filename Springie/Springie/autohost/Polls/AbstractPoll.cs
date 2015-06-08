@@ -28,7 +28,7 @@ namespace Springie.autohost.Polls
 
             if (spring.IsRunning)
             {
-                var entry = context.Players.FirstOrDefault(x => x.Name == e.UserName);
+                var entry = spring.StartContext.Players.FirstOrDefault(x => x.Name == e.UserName);
                 if (entry == null || entry.IsSpectator)
                 {
                     ah.Respond(e, string.Format("You must be a player in the game"));
