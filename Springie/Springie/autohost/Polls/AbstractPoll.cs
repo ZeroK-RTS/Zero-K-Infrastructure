@@ -24,7 +24,29 @@ namespace Springie.autohost.Polls
         }
 
         protected virtual bool AllowVote(TasSayEventArgs e) {
-            return true;
+            if (tas.MyBattle == null) return false;
+
+            if (spring.IsRunning)
+            {
+                var entry = context.Players.FirstOrDefault(x => x.Name == e.UserName);
+                if (entry == null || entry.IsSpectator)
+                {
+                    ah.Respond(e, string.Format("You must be a player in the game"));
+                    return false;
+                }
+                else return true;
+            }
+            else
+            {
+                UserBattleStatus entry;
+                tas.MyBattle.Users.TryGetValue(e.UserName, out entry);
+                if (entry == null || entry.IsSpectator)
+                {
+                    ah.Respond(e, string.Format("Only players can vote"));
+                    return false;
+                }
+                else return true;
+            }
         }
 
 
