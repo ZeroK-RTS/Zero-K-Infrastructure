@@ -1045,15 +1045,18 @@ namespace ZeroKLobby.MicroLobby
                                                     {
                                                         var randomChar = ch[0].ToString();
                                                         symbolWidth = tmpG.MeasureString(randomChar, font, 0, sf).Width;
-                                                        if (symbolWidth>0) //skip when symbol width == 0 (symptom obtained from trial-n-error)
-                                                            using (var brush = new SolidBrush(TextColor.GetColor(curForeColor))) {
+                                                        if (symbolWidth > 0) //don't draw when symbol width == 0 (symptom obtained from trial-n-error)
+                                                        {
+                                                            using (var brush = new SolidBrush(TextColor.GetColor(curForeColor)))
+                                                            {
                                                                 g.DrawString(randomChar,
                                                                              font,
                                                                              brush,
                                                                              startX,
                                                                              startY,
                                                                              sf);
-                                                             }
+                                                            }
+                                                        }
                                                     }
                                                     startX += symbolWidth;
 
@@ -1065,6 +1068,7 @@ namespace ZeroKLobby.MicroLobby
 
                                                     break;
                                                 }
+
                                                 //curLine is "the line being processed here" (not user's line)
                                                 //startHightLine is "the line where highlight start"
                                                 //curHighLine is "the line where highlight end"
@@ -1289,164 +1293,200 @@ namespace ZeroKLobby.MicroLobby
 
         int ReturnChar(int lineNumber, int x)
         {
-            if (lineNumber < TotalDisplayLines && lineNumber >= 0)
+            try
             {
-                var g = CreateGraphics();
-
-                g.SmoothingMode = SmoothingMode.AntiAlias;
-                g.TextRenderingHint = TextRenderingHint.AntiAlias;
-
-                var sf = StringFormat.GenericTypographic;
-                sf.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
-
-                var lineEmot = displayLines[lineNumber].Line.StripAllCodesExceptEmot();
-                var line = displayLines[lineNumber].Line.StripAllCodes(); //get all character of the line (Note: StripAllCodes() is a function in TextColor.cs)
-
-                //do line-width check once if "x" is greater than line width, else check every character for the correct position where "x" is pointing at. 
-                //int width = (int)g.MeasureString(line, Font, 0, sf).Width; //<-- you can uncomment this and comment the next line. The bad thing is: it underestimate end position if there's emotIcon, it cut some char during selection
-                int width = (int)g.MeasureString(lineEmot, Font, 0, sf).Width;
-                if (x > width)
+                if (lineNumber < TotalDisplayLines && lineNumber >= 0)
                 {
-                    g.Dispose();
-                    return line.Length; //end of line
-                }
+                    var g = CreateGraphics();
 
-                //check every character INCLUDING icon position for the correct position where "x" is pointing at.
-                float lookWidth = 0;
-                for (var i = 0; i < line.Length; i++) //check every character in a line
-                {
-                    if ((char)lineEmot[i] == TextColor.EmotChar)
-                    {
-                        var emotNumber = Convert.ToInt32(lineEmot.ToString().Substring(i + 1, 3));
-                        lineEmot = lineEmot.Remove(i, 4);
-                        var bm = TextImage.GetImage(emotNumber);
-                        lookWidth += bm.Width;
-                        i--; //halt pointer position for this time once (at second try the emot char will be gone, its size is added and continue checking the other stuff)
-                        continue;
-                    }
-                    float charWidth = g.MeasureString(line[i].ToString(), Font, 0, sf).Width;
-                    lookWidth += charWidth;
-                    if ((int)lookWidth >= (x + (int)charWidth/2)) //check whether this character is on cursor position or not.  Note: char checking & x-coordinate is checked from left to right (everything is from left to right)
+                    g.SmoothingMode = SmoothingMode.AntiAlias;
+                    g.TextRenderingHint = TextRenderingHint.AntiAlias;
+
+                    var sf = StringFormat.GenericTypographic;
+                    sf.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+
+                    var lineEmot = displayLines[lineNumber].Line.StripAllCodesExceptEmot();
+                    var line = displayLines[lineNumber].Line.StripAllCodes(); //get all character of the line (Note: StripAllCodes() is a function in TextColor.cs)
+
+                    //do line-width check once if "x" is greater than line width, else check every character for the correct position where "x" is pointing at. 
+                    //int width = (int)g.MeasureString(line, Font, 0, sf).Width; //<-- you can uncomment this and comment the next line. The bad thing is: it underestimate end position if there's emotIcon, it cut some char during selection
+                    int width = (int)g.MeasureString(lineEmot, Font, 0, sf).Width;
+                    if (x > width)
                     {
                         g.Dispose();
-                        return i;
+                        return line.Length; //end of line
                     }
+
+                    //check every character INCLUDING icon position for the correct position where "x" is pointing at.
+                    float lookWidth = 0;
+                    for (var i = 0; i < line.Length; i++) //check every character in a line
+                    {
+                        if ((char)lineEmot[i] == TextColor.EmotChar)
+                        {
+                            var emotNumber = Convert.ToInt32(lineEmot.ToString().Substring(i + 1, 3));
+                            lineEmot = lineEmot.Remove(i, 4);
+                            var bm = TextImage.GetImage(emotNumber);
+                            lookWidth += bm.Width;
+                            i--; //halt pointer position for this time once (at second try the emot char will be gone, its size is added and continue checking the other stuff)
+                            continue;
+                        }
+                        float charWidth = g.MeasureString(line[i].ToString(), Font, 0, sf).Width;
+                        lookWidth += charWidth;
+                        if ((int)lookWidth >= (x + (int)charWidth / 2)) //check whether this character is on cursor position or not.  Note: char checking & x-coordinate is checked from left to right (everything is from left to right)
+                        {
+                            g.Dispose();
+                            return i;
+                        }
+                    }
+                    g.Dispose();
+                    return line.Length;
                 }
-                g.Dispose();
-                return line.Length;
+            }
+            catch (Exception ee)
+            {
+                Trace.WriteLine(String.Format("TextWindow ReturnChar: lineNumber {0}, x {1}", lineNumber, x));
+                Trace.WriteLine("TextWindow ReturnChar Error:" + ee.Message, ee.StackTrace);
             }
             return 0;
         }
 
         string ReturnWord(int lineNumber, int x)
         {
-            if (lineNumber < TotalDisplayLines && lineNumber >= 0)
+            try
             {
-                var g = CreateGraphics();
-                g.SmoothingMode = SmoothingMode.AntiAlias;
-                g.TextRenderingHint = TextRenderingHint.AntiAlias;
-
-                var sf = StringFormat.GenericTypographic;
-                sf.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
-
-                var lineEmot = displayLines[lineNumber].Line.StripAllCodesExceptEmot();
-                var line = displayLines[lineNumber].Line.StripAllCodes();
-
-                //do line-width check once if "x" is greater than line width,
-                int width = (int)g.MeasureString(line, Font, 0, sf).Width;
-                //int width = (int)g.MeasureString(lineEmot, Font, 0, sf).Width; / //<-- you can uncomment this and comment the previous line. The bad thing is: will overestimate hyperlinks ending, which make you able to click empty space
-                if (x > width)
+                if (lineNumber < TotalDisplayLines && lineNumber >= 0)
                 {
-                    g.Dispose();
-                    return "";
-                }
-                if (x <= 0)
-                {
-                    g.Dispose();
-                    return "";
-                }
+                    var g = CreateGraphics();
+                    g.SmoothingMode = SmoothingMode.AntiAlias;
+                    g.TextRenderingHint = TextRenderingHint.AntiAlias;
 
-                var space = 0;
-                var foundSpace = false;
-                float lookWidth = 0;
-                for (var i = 0; i < line.Length; i++)
-                {
-                    if ((char)lineEmot[i] == TextColor.EmotChar) //equal to an emot icon
+                    var sf = StringFormat.GenericTypographic;
+                    sf.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+
+                    var lineEmot = displayLines[lineNumber].Line.StripAllCodesExceptEmot();
+                    var line = displayLines[lineNumber].Line.StripAllCodes();
+
+                    //do line-width check once if "x" is greater than line width,
+                    int width = (int)g.MeasureString(line, Font, 0, sf).Width;
+                    //int width = (int)g.MeasureString(lineEmot, Font, 0, sf).Width; / //<-- you can uncomment this and comment the previous line. The bad thing is: will overestimate hyperlinks ending, which make you able to click empty space
+                    if (x > width)
                     {
-                        int emotNumber = Convert.ToInt32(lineEmot.ToString().Substring(i + 1, 3));
-                        lineEmot = lineEmot.Remove(i, 4); //clear emot char from lineEmot
-                        Image bm = TextImage.GetImage(emotNumber);
-                        lookWidth += bm.Width; //add emot size
-                        i--; //halt pointer position for this time once (at second try the emot char will be gone, its size is added and continue checking the other stuff)
-                        continue;
+                        g.Dispose();
+                        return "";
+                    }
+                    if (x <= 0)
+                    {
+                        g.Dispose();
+                        return "";
                     }
 
-                    if ((int)lookWidth >= x && foundSpace)
+                    var space = 0;
+                    var foundSpace = false;
+                    float lookWidth = 0;
+                    for (var i = 0; i < line.Length; i++)
                     {
-                        if (displayLines[lineNumber].Previous && lineNumber > 0 && space == 0)
+                        if ((char)lineEmot[i] == TextColor.EmotChar) //equal to an emot icon
                         {
-                            // this line wraps from the previous one. 
-                            var prevline = displayLines[lineNumber - 1].Line.StripAllCodes();
+                            int emotNumber = Convert.ToInt32(lineEmot.ToString().Substring(i + 1, 3));
+                            lineEmot = lineEmot.Remove(i, 4); //clear emot char from lineEmot
+                            Image bm = TextImage.GetImage(emotNumber);
+                            lookWidth += bm.Width; //add emot size
+                            i--; //halt pointer position for this time once (at second try the emot char will be gone, its size is added and continue checking the other stuff)
+                            continue;
+                        }
+
+                        if ((int)lookWidth >= x && foundSpace)
+                        {
+                            if (displayLines[lineNumber].Previous && lineNumber > 0 && space == 0)
+                            {
+                                // this line wraps from the previous one. 
+                                var prevline = displayLines[lineNumber - 1].Line.StripAllCodes();
+                                int prevwidth = (int)g.MeasureString(prevline, Font, 0, sf).Width;
+                                g.Dispose();
+                                return ReturnWord(lineNumber - 1, prevwidth);
+                            }
+                            g.Dispose();
+                            return line.Substring(space, i - space); //Substring(space, i - space), in example: xxx__Yxxxx_T_xxx OR Yxx_T_xxxxx__xxx (where T is pointing at spaces, Y pointing at 1st letter)
+                        }
+
+                        if (line[i] == (char)32) //equal to "space"
+                        {
+                            if (!foundSpace)
+                            {
+                                if ((int)lookWidth >= x)
+                                {
+                                    foundSpace = true; //current position, in example: xxx__xxxxx_T_xxx (where T is pointing at space on right)
+                                    i--; //halt pointer position for this time once (at second loop the mid-code will be executed to return the Substring)
+                                }
+                                else space = i + 1; //i + 1 position, in example: xxx__Yxxxx__xxx (Y at 1st letter after a space)
+                            }
+                        }
+
+                        lookWidth += g.MeasureString(line[i].ToString(), Font, 0, sf).Width;
+                    }
+                    if (displayLines[lineNumber].Previous && lineNumber > 0 && space == 0)
+                    {
+                        // this line wraps from the previous one. 
+                        var prevline = displayLines[lineNumber - 1].Line.StripAllCodes();
+                        if (prevline[prevline.Length - 1] != ' ')
+                        {
                             int prevwidth = (int)g.MeasureString(prevline, Font, 0, sf).Width;
                             g.Dispose();
                             return ReturnWord(lineNumber - 1, prevwidth);
                         }
-                        g.Dispose();
-                        return line.Substring(space, i - space); //Substring(space, i - space), in example: xxx__Yxxxx_T_xxx OR Yxx_T_xxxxx__xxx (where T is pointing at spaces, Y pointing at 1st letter)
                     }
 
-                    if (line[i] == (char)32) //equal to "space"
+                    if (!foundSpace && space < line.Length)
                     {
-                        if (!foundSpace)
+                        //wrap to the next line
+                        if (lineNumber < TotalDisplayLines)
                         {
-                            if ((int)lookWidth >= x)
+                            var extra = "";
+                            var currentLine = displayLines[lineNumber].TextLine;
+
+                            while (lineNumber < TotalDisplayLines)
                             {
-                                foundSpace = true; //current position, in example: xxx__xxxxx_T_xxx (where T is pointing at space on right)
-                                i--; //halt pointer position for this time once (at second loop the mid-code will be executed to return the Substring)
+                                lineNumber++;
+                                if (displayLines[lineNumber].TextLine != currentLine) break;
+
+                                extra += displayLines[lineNumber].Line.StripAllCodes();
+                                if (extra.IndexOf(' ') > -1)
+                                {
+                                    extra = extra.Substring(0, extra.IndexOf(' '));
+                                    break;
+                                }
                             }
-                            else space = i + 1; //i + 1 position, in example: xxx__Yxxxx__xxx (Y at 1st letter after a space)
+                            g.Dispose();
+                            return line.Substring(space) + extra;
                         }
                     }
-
-                    lookWidth += g.MeasureString(line[i].ToString(), Font, 0, sf).Width;
+                    g.Dispose();
                 }
-                if (displayLines[lineNumber].Previous && lineNumber > 0 && space == 0)
-                {
-                    // this line wraps from the previous one. 
-                    var prevline = displayLines[lineNumber - 1].Line.StripAllCodes();
-                    if (prevline[prevline.Length - 1] != ' ')
-                    {
-                        int prevwidth = (int)g.MeasureString(prevline, Font, 0, sf).Width;
-                        g.Dispose();
-                        return ReturnWord(lineNumber - 1, prevwidth);
-                    }
-                }
+            }
+            catch (Exception ee)
+            {
+                //Try{}catch added in ReturnWord() & ReturnChar() due to a crash:
+                //FATAL: System.Runtime.InteropServices.ExternalException (0x80004005): A generic error occurred in GDI+.
+                //    at System.Drawing.Graphics.MeasureString(String text, Font font, SizeF layoutArea, StringFormat stringFormat)
+                //    at System.Drawing.Graphics.MeasureString(String text, Font font, Int32 width, StringFormat format)
+                //    at ZeroKLobby.MicroLobby.TextWindow.ReturnWord(Int32 lineNumber, Int32 x)
+                //    at ZeroKLobby.MicroLobby.TextWindow.OnMouseMove(MouseEventArgs e)
+                //    at System.Windows.Forms.Control.WmMouseMove(Message& m)
+                //    at System.Windows.Forms.Control.WndProc(Message& m)
+                //    at System.Windows.Forms.ScrollableControl.WndProc(Message& m)
+                //    at System.Windows.Forms.UserControl.WndProc(Message& m)
+                //    at System.Windows.Forms.Control.ControlNativeWindow.OnMessage(Message& m)
+                //    at System.Windows.Forms.Control.ControlNativeWindow.WndProc(Message& m)
+                //    at System.Windows.Forms.NativeWindow.Callback(IntPtr hWnd, Int32 msg, IntPtr wparam, IntPtr lparam)
+                //System: Window 8
+                //Untested possible cause: 
+                // 1) maybe font in Win8 didn't support certain character?
+                //Eliminated possible cause:
+                // 2) Null character from History -- didn't crash
+                // 3) weird player's country flag -- didn't crash, only broke a player tooltip
 
-                if (!foundSpace && space < line.Length)
-                {
-                    //wrap to the next line
-                    if (lineNumber < TotalDisplayLines)
-                    {
-                        var extra = "";
-                        var currentLine = displayLines[lineNumber].TextLine;
-
-                        while (lineNumber < TotalDisplayLines)
-                        {
-                            lineNumber++;
-                            if (displayLines[lineNumber].TextLine != currentLine) break;
-
-                            extra += displayLines[lineNumber].Line.StripAllCodes();
-                            if (extra.IndexOf(' ') > -1)
-                            {
-                                extra = extra.Substring(0, extra.IndexOf(' '));
-                                break;
-                            }
-                        }
-                        g.Dispose();
-                        return line.Substring(space) + extra;
-                    }
-                }
-                g.Dispose();
+                Trace.WriteLine(String.Format("TextWindow ReturnWord: lineNumber {0}, x {1}", lineNumber, x));
+                Trace.WriteLine("TextWindow ReturnWord Error:" + ee.Message, ee.StackTrace);
             }
             return "";
         }
