@@ -202,13 +202,6 @@
     <Compile Include="SpringieService.svc.cs">
       <DependentUpon>SpringieService.svc</DependentUpon>
     </Compile>
-    <Compile Include="UnlocksAdmin.aspx.cs">
-      <DependentUpon>UnlocksAdmin.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="UnlocksAdmin.aspx.designer.cs">
-      <DependentUpon>UnlocksAdmin.aspx</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="ContentService.svc" />
@@ -1261,7 +1254,6 @@
     <Content Include="Styles\nicetitle.css" />
     <Content Include="Styles\stars.css" />
     <Content Include="Styles\style.css" />
-    <Content Include="UnlocksAdmin.aspx" />
     <Content Include="Views\Maps\PlanetImageSelect.cshtml" />
     <None Include="AppCode\ModStatsDb.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
