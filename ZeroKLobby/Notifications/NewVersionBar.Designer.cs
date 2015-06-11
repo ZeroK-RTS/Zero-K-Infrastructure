@@ -36,12 +36,11 @@
             // lbText
             // 
             this.lbText.AutoSize = true;
-            this.lbText.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.lbText.Location = new System.Drawing.Point(13, 15);
             this.lbText.Name = "lbText";
             this.lbText.Size = new System.Drawing.Size(275, 13);
             this.lbText.TabIndex = 0;
-            this.lbText.Text = "Zero-K lobby self-update done, click restart to upgrade :-)";
+            this.lbText.Text = "Zero-K launcher self-update done, click restart to upgrade :-)";
             // 
             // panel1
             // 
@@ -55,7 +54,7 @@
             // NewVersionBar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.panel1);
             this.Name = "NewVersionBar";

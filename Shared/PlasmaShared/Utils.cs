@@ -16,6 +16,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using PlasmaShared;
 using Encoder = System.Drawing.Imaging.Encoder;
 
 #endregion
@@ -222,15 +223,20 @@ namespace ZkData
             }
         }
 
-        public static Bitmap GetResized(this Image original, int newWidth, int newHeight, InterpolationMode mode)
+        public static Image GetResized(this Image original, int newWidth, int newHeight)
         {
             var resized = new Bitmap(newWidth, newHeight);
             using (var g = Graphics.FromImage(resized))
             {
-                g.InterpolationMode = mode;
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 g.DrawImage(original, 0, 0, newWidth, newHeight);
             }
             return resized;
+        }
+
+        public static Image GetResizedWithCache(this Image original, int newWidth, int newHeight, InterpolationMode mode = InterpolationMode.HighQualityBicubic)
+        {
+            return ResizedImageCache.Instance.GetResizedWithCache(original, newWidth, newHeight, mode);
         }
 
 
@@ -680,6 +686,42 @@ namespace ZkData
             return true;
         }
 
+
+        public static async Task<T> WithCancellation<T>(this Task<T> task, CancellationToken cancellationToken)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            using (cancellationToken.Register(s => ((TaskCompletionSource<bool>)s).TrySetResult(true), tcs))
+            {
+                if (task != await Task.WhenAny(task, tcs.Task))
+                {
+                    throw new OperationCanceledException(cancellationToken);
+                }
+            }
+            return task.Result;
+        }
+
+        public static async Task WithCancellation(this Task task, CancellationToken cancellationToken)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            using (cancellationToken.Register(s => ((TaskCompletionSource<bool>)s).TrySetResult(true), tcs))
+            {
+                if (task != await Task.WhenAny(task, tcs.Task))
+                {
+                    throw new OperationCanceledException(cancellationToken);
+                }
+            }
+        }
+
+
+        public static async Task<T> TimeoutAfter<T>(this Task<T> task, TimeSpan timeout)
+        {
+            if (task != await Task.WhenAny(task, Task.Delay(timeout)))
+            {
+                throw new TimeoutException();
+            }
+
+            return task.Result; // Task is guaranteed completed (WhenAny), so this won't block
+        }
 
 
         public static IEnumerable<Type> GetAllTypesWithAttribute<T>()

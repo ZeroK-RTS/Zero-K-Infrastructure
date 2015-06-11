@@ -34,7 +34,6 @@
             // lbText
             // 
             this.lbText.AutoSize = true;
-            this.lbText.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.lbText.Location = new System.Drawing.Point(20, 16);
             this.lbText.Name = "lbText";
             this.lbText.Size = new System.Drawing.Size(46, 15);
@@ -44,7 +43,7 @@
             // WarningBar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.lbText);
             this.Name = "WarningBar";

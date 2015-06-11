@@ -7,9 +7,9 @@
 		/// </summary>
 		private System.ComponentModel.IContainer components = null;
 		private System.Windows.Forms.ListBox listBoxDemoList;
-		private System.Windows.Forms.Button btnLaunch;
+		private ZeroKLobby.BitmapButton btnLaunch;
 		private System.Windows.Forms.Panel panel1;
-		private System.Windows.Forms.Button buttonRefresh;
+		private ZeroKLobby.BitmapButton buttonRefresh;
 		private System.Windows.Forms.Label label1;
 		
 		/// <summary>
@@ -33,11 +33,12 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LocalReplay));
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
-            this.buttonRefresh = new System.Windows.Forms.Button();
+            this.buttonRefresh = new ZeroKLobby.BitmapButton();
             this.listBoxDemoList = new System.Windows.Forms.ListBox();
-            this.btnLaunch = new System.Windows.Forms.Button();
+            this.btnLaunch = new ZeroKLobby.BitmapButton();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -67,9 +68,18 @@
             // buttonRefresh
             // 
             this.buttonRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonRefresh.BackColor = System.Drawing.Color.Transparent;
+            this.buttonRefresh.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("editTeamButton.BackgroundImage")));
+            this.buttonRefresh.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.buttonRefresh.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
+            this.buttonRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.buttonRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonRefresh.ForeColor = System.Drawing.Color.White;
             this.buttonRefresh.Location = new System.Drawing.Point(413, 263);
+            this.buttonRefresh.Margin = new System.Windows.Forms.Padding(0);
             this.buttonRefresh.Name = "buttonRefresh";
             this.buttonRefresh.Size = new System.Drawing.Size(96, 22);
+            this.buttonRefresh.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.buttonRefresh.TabIndex = 52;
             this.buttonRefresh.Text = "Refresh";
             this.buttonRefresh.UseVisualStyleBackColor = true;
@@ -101,6 +111,8 @@
             // 
             // LocalReplay
             // 
+            this.BackColor = System.Drawing.Color.DimGray;
+            this.ForeColor = System.Drawing.Color.White;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;

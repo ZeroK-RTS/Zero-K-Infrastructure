@@ -46,7 +46,7 @@ namespace Springie
             if (!string.IsNullOrEmpty(Config.ExecutableName)) paths.OverrideDedicatedServer(Config.ExecutableName);
             paths.MakeFolders();
 
-            MetaCache = new MetaDataCache(paths, null);
+            MetaCache = new MetaDataCache(paths);
 
             timer = new Timer(30000);
             timer.Elapsed += timer_Elapsed;

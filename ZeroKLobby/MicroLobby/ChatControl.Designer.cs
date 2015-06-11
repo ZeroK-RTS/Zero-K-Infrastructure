@@ -130,7 +130,6 @@ namespace ZeroKLobby.MicroLobby
             // 
             this.sendBox.AcceptsTab = true;
             this.sendBox.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.sendBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.sendBox.Location = new System.Drawing.Point(0, 773);
             this.sendBox.Multiline = true;
             this.sendBox.Name = "sendBox";
@@ -153,7 +152,6 @@ namespace ZeroKLobby.MicroLobby
             // 
             this.topicBox.ChatBackgroundColor = 0;
             this.topicBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.topicBox.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.topicBox.HideScroll = false;
             this.topicBox.IRCForeColor = 0;
             this.topicBox.Location = new System.Drawing.Point(0, 0);
@@ -189,7 +187,6 @@ namespace ZeroKLobby.MicroLobby
             this.ChatBox.BackColor = System.Drawing.Color.DimGray;
             this.ChatBox.ChatBackgroundColor = 0;
             this.ChatBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ChatBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.ChatBox.ForeColor = System.Drawing.Color.White;
             this.ChatBox.HideScroll = false;
             this.ChatBox.IRCForeColor = 0;
@@ -229,7 +226,7 @@ namespace ZeroKLobby.MicroLobby
             // ChatControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.Controls.Add(this.splitContainer1);
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Padding = new System.Windows.Forms.Padding(0);

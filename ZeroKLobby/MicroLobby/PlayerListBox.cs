@@ -18,9 +18,8 @@ namespace ZeroKLobby.MicroLobby
 	    public PlayerListItem HoverItem { get; set; }
         public override int ItemHeight{
             get {
-                DpiMeasurement.DpiXYMeasurement(this);
                 if (DesignMode || base.Items.Count==0) return 10;
-                return DpiMeasurement.ScaleValueY(((PlayerListItem)base.Items[0]).Height); //in MONO the ListBox's size doesn't seem to be calculated from OnMeasureItem() but from ItemHeight property, so we return the size here for MONO compatibility
+                return (int)((PlayerListItem)base.Items[0]).Height; //in MONO the ListBox's size doesn't seem to be calculated from OnMeasureItem() but from ItemHeight property, so we return the size here for MONO compatibility
             }
         }
 
@@ -136,11 +135,11 @@ namespace ZeroKLobby.MicroLobby
 				if (DesignMode) return;
 				if (e.Index >= 0 && e.Index <= base.Items.Count)
 				{
-					e.DrawBackground();
+					//e.DrawBackground();
 					e.DrawFocusRectangle();
 					base.OnDrawItem(e);
 					var item = (PlayerListItem)base.Items[e.Index];
-					item.DrawPlayerLine(e.Graphics, e.Bounds, e.ForeColor, e.BackColor, item.IsGrayedOut, IsBattle);
+					item.DrawPlayerLine(e.Graphics, e.Bounds, e.ForeColor, item.IsGrayedOut, IsBattle);
 				}
 			}
 			catch (Exception ex)
@@ -155,10 +154,10 @@ namespace ZeroKLobby.MicroLobby
 		protected override void OnMeasureItem(MeasureItemEventArgs e)
 		{
 			base.OnMeasureItem(e);
-            DpiMeasurement.DpiXYMeasurement(this);
-            if (DesignMode) return;
-            if (e.Index > -1 && e.Index < base.Items.Count)
-                e.ItemHeight = DpiMeasurement.ScaleValueY(((PlayerListItem)base.Items[e.Index]).Height); //GetItemRectangle() will measure the size of item for drawing, so we return a custom Height defined in PlayerListItems.cs
+		    if (DesignMode) return;
+            if (e.Index > -1 && e.Index < base.Items.Count) {
+                e.ItemHeight = (int)((PlayerListItem)base.Items[e.Index]).Height;
+            }
 		}
 
         bool mouseIsDown = false;
@@ -183,29 +182,30 @@ namespace ZeroKLobby.MicroLobby
 
 		void UpdateHoverItem(MouseEventArgs e)
 		{
-			var cursorPoint = new Point(e.X, e.Y);
-			
-			if (cursorPoint == previousLocation) return;
-			previousLocation = cursorPoint;
-			
-			var hoverIndex = IndexFromPoint(cursorPoint); //note: this don't return value exceeding base.Items.Count -1
-			bool isOnEmpty = (hoverIndex >= base.Items.Count-1 && !GetItemRectangle(hoverIndex).Contains(cursorPoint));		
-			
-			if (isOnEmpty) hoverIndex = base.Items.Count; //we'll use this number when cursor is outside the list
-			
-			if (previousHoverIndex == hoverIndex) return;
-			previousHoverIndex = hoverIndex;
+		    try {
+		        var cursorPoint = new Point(e.X, e.Y);
 
-			if (hoverIndex < 0 || hoverIndex >= base.Items.Count)
-			{
-				HoverItem = null; //outside the list
-				Program.ToolTip.SetUser(this, null);
-			}
-			else
-			{
-				HoverItem = (PlayerListItem)base.Items[hoverIndex];
-				if (HoverItem.UserName != null) Program.ToolTip.SetUser(this, HoverItem.UserName);
-			}
+		        if (cursorPoint == previousLocation) return;
+		        previousLocation = cursorPoint;
+
+		        var hoverIndex = IndexFromPoint(cursorPoint); //note: this don't return value exceeding base.Items.Count -1
+		        bool isOnEmpty = (hoverIndex >= base.Items.Count - 1 && !GetItemRectangle(hoverIndex).Contains(cursorPoint));
+
+		        if (isOnEmpty) hoverIndex = base.Items.Count; //we'll use this number when cursor is outside the list
+
+		        if (previousHoverIndex == hoverIndex) return;
+		        previousHoverIndex = hoverIndex;
+
+		        if (hoverIndex < 0 || hoverIndex >= base.Items.Count) {
+		            HoverItem = null; //outside the list
+		            Program.ToolTip.SetUser(this, null);
+		        } else {
+		            HoverItem = (PlayerListItem)base.Items[hoverIndex];
+		            if (HoverItem.UserName != null) Program.ToolTip.SetUser(this, HoverItem.UserName);
+		        }
+		    } catch (Exception ex) {
+		        Trace.TraceError("Error updating hovered item: {0}",ex);
+		    }
 		}
 
 
@@ -213,7 +213,9 @@ namespace ZeroKLobby.MicroLobby
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			var itemRegion = new Region(e.ClipRectangle);
-			e.Graphics.FillRegion(new SolidBrush(BackColor), itemRegion);
+            SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+		    if (!this.RenderParentsBackgroundImage(e)) e.Graphics.FillRegion(new SolidBrush(BackColor), itemRegion);
+		    
 			if (base.Items.Count > 0)
 			{
 				for (var i = 0; i < base.Items.Count; ++i)

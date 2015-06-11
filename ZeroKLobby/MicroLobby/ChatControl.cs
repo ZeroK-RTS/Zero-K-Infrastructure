@@ -77,7 +77,7 @@ namespace ZeroKLobby.MicroLobby
             playerSearchBox.BackColor = Program.Conf.BgColor;
             playerSearchBox.ForeColor = Program.Conf.TextColor;
 
-            ChatBox.Font = Program.Conf.ChatFont; //make sure this is done before HistoryManager adds text, or text becomes black.
+            ChatBox.Font = Config.ChatFont; //make sure this is done before HistoryManager adds text, or text becomes black.
 
             Name = name;
             ChannelName = name;
@@ -483,7 +483,7 @@ namespace ZeroKLobby.MicroLobby
             { //Double click
                 var playerListItem = playerBox.SelectedItem as PlayerListItem;
                 if (playerListItem != null && playerListItem.User != null)
-                    NavigationControl.Instance.Path = "chat/user/" + playerListItem.User.Name;
+                    Program.MainWindow.navigationControl.Path = "chat/user/" + playerListItem.User.Name;
             } else 
             {
                 var item = playerBox.HoverItem;

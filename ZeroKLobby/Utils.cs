@@ -47,38 +47,7 @@ namespace ZeroKLobby
         }
 
 
-        public static void SetIeCompatibility()
-        {
-            WebBrowser webBrowserInstance = new WebBrowser();
-            int iEnumber = webBrowserInstance.Version.Major; //reference: http://support.microsoft.com/kb/969393/en-us
-            int compatibilityCode = iEnumber * 1000;//Reference:http://msdn.microsoft.com/en-us/library/ee330730%28VS.85%29.aspx#browser_emulation
-            webBrowserInstance.Dispose();
-            Trace.TraceInformation("Using Internet Explorer {0}", iEnumber);
 
-            var fileName = Path.GetFileName(Application.ExecutablePath);
-            try
-            {
-                //Note: write to HKCU (HKEY_CURRENT_USER) instead of HKLM (HKEY_LOCAL_MACHINE) because HKLM need admin privilege while HKCU do not. Ref:http://stackoverflow.com/questions/4612255/regarding-ie9-webbrowser-control
-                Registry.SetValue(@"HKEY_CURRENT_USER\SOFTWARE\Microsoft\Internet Explorer\MAIN\FeatureControl\FEATURE_BROWSER_EMULATION",
-                                  fileName,
-                                  compatibilityCode);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(string.Format("Error setting IE compatibility: {0}", ex));
-            }
-            try //for 32 bit IE on 64 bit windows
-            {
-                Registry.SetValue(
-                    @"HKEY_CURRENT_USER\SOFTWARE\Wow6432Node\Microsoft\Internet Explorer\MAIN\FeatureControl\FEATURE_BROWSER_EMULATION",
-                    fileName,
-                    compatibilityCode);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(string.Format("Error setting IE compatibility: {0}", ex));
-            }
-        }
 
         public static void CheckPath(string path, bool delete = false) {
             if (delete) {
@@ -193,19 +162,6 @@ namespace ZeroKLobby
             return String.Format("{0:D}:{1:D2}:{2:D2}", secs/3600, secs/60%60, secs%60);
         }
 
-        public static void RegisterProtocol() {
-            var executableName = Assembly.GetEntryAssembly().Location;
-            try {
-                SetProtocolRegistry(Registry.CurrentUser.CreateSubKey("Software\\Classes\\spring"), executableName);
-            } catch (Exception ex) {
-                Trace.TraceWarning("Error registering protocol: {0}", ex.Message);
-            }
-
-            // now try to set protocol globaly (like to fail on win7 + uac)
-            try {
-                SetProtocolRegistry(Registry.ClassesRoot, executableName);
-            } catch {}
-        }
 
         public static void SafeStart(string path, string args = null) {
             try {
@@ -317,82 +273,36 @@ namespace ZeroKLobby
         }
 
 
-        static void SetProtocolRegistry(RegistryKey protocolKey, string executableName) {
-            protocolKey.SetValue("", "URL:Spring Action");
-            protocolKey.SetValue("URL Protocol", "");
-            var defaultIconKey = protocolKey.CreateSubKey("DefaultIcon");
-            defaultIconKey.SetValue("", executableName);
-            var shellKey = protocolKey.CreateSubKey("shell");
-            var openKey = shellKey.CreateSubKey("open");
-            var commandKey = openKey.CreateSubKey("command");
-            commandKey.SetValue("", string.Format("\"{0}\" \"%1\"", executableName));
-        }
-    }
-
-    public static class DpiMeasurement
-    {
-        public static double dpiX = 0;
-        public static double dpiY = 0;
-        public static double scaleDownRatioX = 0;
-        public static double scaleDownRatioY = 0;
-        public static double scaleUpRatioX = 0;
-        public static double scaleUpRatioY = 0;
-
-        public static void DpiXYMeasurement()
+        public static void RenderControlBgImage(this Control destination, Control source, PaintEventArgs e)
         {
-            if (dpiY == 0 || dpiX == 0)
-            {
-                DpiXYMeasurement(new Control());
+            var loc = source.PointToClient(destination.Parent.PointToScreen(destination.Location));
+            if (source.BackgroundImage != null) e.Graphics.DrawImage(source.BackgroundImage, e.ClipRectangle, loc.X + e.ClipRectangle.X, loc.Y  + e.ClipRectangle.Y, e.ClipRectangle.Width, e.ClipRectangle.Height, GraphicsUnit.Pixel);
+        }
+
+        public static Control FindParentWithBgImage(this Control source)
+        {
+            var p = source.Parent;
+            while (p != null) {
+                if (p.BackgroundImage != null) return p;
+                p = p.Parent;
             }
-        }
-        public static void DpiXYMeasurement(Control a) {
-			if (dpiY == 0 || dpiX == 0) {
-                var formGraphics = a.CreateGraphics(); //Reference: http://msdn.microsoft.com/en-us/library/system.drawing.graphics.dpix.aspx
-                dpiY = formGraphics.DpiY; //get current DPI
-				dpiX = formGraphics.DpiX;
-				formGraphics.Dispose();
-				Trace.TraceInformation("System DPI Value: dpiX= {0}, dpiY= {1}", dpiX, dpiY);
-				scaleUpRatioY = dpiY/96.0;
-                //get scaleUP ratio, 96 is the original DPI. Preserve decimal, Reference: http://www.dotnetperls.com/divide
-                scaleDownRatioY = 96.0/dpiY; //get scaleDown ratio (to counter-act DPI virtualization/scaling)
-                scaleUpRatioX = dpiX/96.0;
-                scaleDownRatioX = 96.0/dpiX;
-			}
+            return null;
         }
 
-        /// <summary>
-        /// Calculate reverse DPI scaling
-        /// </summary>
-        public static int ReverseScaleValueX(double designHeight) {
-            var output = designHeight*scaleDownRatioX;
-            return (int)(output + 0.5d); //equivalent to Round(output)
+        public static bool RenderParentsBackgroundImage(this Control source, PaintEventArgs e)
+        {
+            try {
+                var par = source.FindParentWithBgImage();
+                if (par != null) {
+                    source.RenderControlBgImage(par, e);
+                    return true;
+                }
+                else return false;
+            } catch (Exception ex) {
+                Trace.TraceError("Error rendering background image: {0}",ex);
+            }
+            return false;
         }
-
-        /// <summary>
-        /// Calculate reverse DPI scaling
-        /// </summary>
-        public static int ReverseScaleValueY(double designHeight) {
-            var output = designHeight*scaleDownRatioY;
-            return (int)(output + 0.5d); //equivalent to Round(output)
-        }
-
-        /// <summary>
-        /// Calculate DPI scaling
-        /// </summary>
-        public static int ScaleValueX(double designWidth) {
-            var output = designWidth*scaleUpRatioX;
-            return (int)(output + 0.5d); //equivalent to Round(output)
-        }
-
-        /// <summary>
-        /// Calculate DPI scaling
-        /// </summary>
-        public static int ScaleValueY(double designHeight) {
-            var output = designHeight*scaleUpRatioY;
-            return (int)(output + 0.5d); //equivalent to Round(output)
-        }
-
-
-
     }
+
 }

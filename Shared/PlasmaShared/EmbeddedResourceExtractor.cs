@@ -10,11 +10,12 @@ namespace ZkData
     {
         public static bool ExtractFile(string resourceName, string targetFile)
         {
-            if (File.Exists(targetFile)) return true;
+            
             var startAssembly = System.Reflection.Assembly.GetEntryAssembly();
             using (var s = startAssembly.GetManifestResourceStream(resourceName))
                 if (s != null)
                 {
+                    if (File.Exists(targetFile) && new FileInfo(targetFile).Length == s.Length) return true;
                     using (var fs = new FileStream(targetFile, FileMode.Create))
                     {
                         s.CopyTo(fs);

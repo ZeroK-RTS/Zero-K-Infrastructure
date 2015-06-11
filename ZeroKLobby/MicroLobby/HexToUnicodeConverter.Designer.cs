@@ -78,7 +78,6 @@
             // sendBox2
             // 
             this.sendBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.sendBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.sendBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.sendBox2.Location = new System.Drawing.Point(32, 0);
             this.sendBox2.Multiline = true;
@@ -92,7 +91,6 @@
             // sendBox1
             // 
             this.sendBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.sendBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.sendBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.sendBox1.Location = new System.Drawing.Point(45, 26);
             this.sendBox1.Multiline = true;
@@ -106,7 +104,7 @@
             // HexToUnicodeConverter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(173, 76);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);

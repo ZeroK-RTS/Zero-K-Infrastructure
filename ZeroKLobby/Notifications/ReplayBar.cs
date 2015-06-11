@@ -85,7 +85,7 @@ namespace ZeroKLobby.Notifications
                 try
                 {
                     var optirun = Environment.GetEnvironmentVariable("OPTIRUN"); //get OPTIRUN filename from OS
-                    string springFilename = Program.Conf.UseMtEngine ? Program.SpringPaths.MtExecutable : Program.SpringPaths.Executable; //use springMT or standard
+                    string springFilename = Program.SpringPaths.Executable; //use springMT or standard
                     if (string.IsNullOrEmpty(optirun))
                     {
                         Process.Start(springFilename, string.Format("\"{0}\" --config \"{1}\"", path, Program.SpringPaths.GetSpringConfigPath()));

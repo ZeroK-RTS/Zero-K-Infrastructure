@@ -34,7 +34,7 @@ namespace ZeroKLobby
             Battle battle;
             User founder;
             if (!GetBattleAndFounder(out battle, out founder)) return;
-
+            var fbrush = new SolidBrush(foreColor);
             var x = 1; // margin
             var y = 3;
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
@@ -45,8 +45,8 @@ namespace ZeroKLobby
                 };
             Action<string> drawString = text =>
                 {
-                    TextRenderer.DrawText(g, text, font, new Point(x, y), foreColor);
-                    x += (int)Math.Ceiling((double)TextRenderer.MeasureText(g, text, font).Width);
+                    g.DrawString(text, font,fbrush, new Point(x, y));
+                    x += (int)Math.Ceiling((double)g.MeasureString(text, font).Width);
                 };
             Action<Image, int, int> drawImage = (image, w, h) =>
                 {
@@ -69,7 +69,7 @@ namespace ZeroKLobby
                 drawImage(ZklResources.boom, 16, 16);
                 if (founder.InGameSince != null) {
                     var timeString = DateTime.UtcNow.Subtract(founder.InGameSince.Value).PrintTimeRemaining();
-                    drawString("The battle has been going on for at least " + timeString + ".");
+                    drawString("Battle running for " + timeString + ".");
                 }
                 newLine();
             }
@@ -135,7 +135,7 @@ namespace ZeroKLobby
                     newLine();
                 }
             }
-
+            fbrush.Dispose();
         }
 
         public Size? GetSize(Font font)

@@ -145,7 +145,7 @@ namespace ZkData
         public SpringScanner(SpringPaths springPaths)
         {
             this.springPaths = springPaths;
-            MetaData = new MetaDataCache(springPaths, this);
+            MetaData = new MetaDataCache(springPaths);
 
             foreach (var folder in springPaths.DataDirectories)
             {

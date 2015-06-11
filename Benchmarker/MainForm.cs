@@ -120,7 +120,7 @@ namespace Benchmarker
                                         tbGame.Text,
                                         tbMap.Text,
                                         cbConfigs.SelectedItem as Config,
-                                        cmbScripts.SelectedItem as StartScript) {UseMultithreaded = cbMultiThread.Checked};
+                                        cmbScripts.SelectedItem as StartScript);
             int arg;
             int.TryParse(tbBenchmarkArg.Text, out arg);
             testCase.BenchmarkArg = arg;
