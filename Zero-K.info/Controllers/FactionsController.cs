@@ -55,10 +55,10 @@ namespace ZeroKWeb.Controllers
             }
 
             // delete channel subscription
-            if (!acc.IsZeroKAdmin || acc.IsZeroKAdmin)
+            if (true)   //(!acc.IsZeroKAdmin)
             {
-                var channelSub = db.LobbyChannelSubscriptions.FirstOrDefault(x => x.Account == acc && x.Channel == acc.Faction.Name);
-                db.LobbyChannelSubscriptions.DeleteOnSubmit(channelSub);
+                var channelSub = db.LobbyChannelSubscriptions.FirstOrDefault(x => x.AccountID == acc.AccountID && x.Channel == acc.Faction.Name);
+                if (channelSub != null) db.LobbyChannelSubscriptions.DeleteOnSubmit(channelSub);
             }
 
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} leaves faction {1}", acc, acc.Faction));
