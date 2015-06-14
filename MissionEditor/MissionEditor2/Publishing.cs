@@ -79,7 +79,7 @@ namespace MissionEditor2
 						tempPath = Path.Combine(modPath, missionFileName);
 					}
 					if (File.Exists(tempPath)) File.Delete(tempPath);
-					mission.CreateArchive(tempPath);
+					mission.CreateArchive(tempPath, true);
 
 					ZkData.UnitSyncLib.Mod mod;
 					using (var unitSync = new ZkData.UnitSyncLib.UnitSync(paths))
