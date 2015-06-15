@@ -103,6 +103,11 @@ namespace ZeroKLobby
         [DisplayName("Disable Lobby Auto Update")]
         [Description("Lobby will not update itself to latest release version. Use this if you are compiling your own lobby")]
         public bool DisableAutoUpdate { get; set; }
+        [Category("Debugging")]
+        [DisplayName("Clean cache")]
+        [Description("If set to true, ZKL will delete the cache on next application start. This setting will then set itself to false.")]
+        public bool CleanCache { get; set; }
+
         [Category("Chat")]
         [DisplayName("Disable Bubble On Channel Highlight")]
         [Description("Disable the system tray bubble when someone says your name in a public channel.")]
@@ -341,6 +346,7 @@ namespace ZeroKLobby
             EnableVoiceChat = true;
             SpringServerHost = GlobalConst.LobbyServerHost;
             springServerPort = GlobalConst.LobbyServerPort;
+            CleanCache = true;  // FIXME: remove after issue #654 is resolved
         }
 
         public static Config Load(string path) {

@@ -198,7 +198,41 @@ namespace ZeroKLobby
                 //};
 
                 SaveConfig();
-
+                if (Conf.CleanCache)
+                {
+                    try
+                    {
+                        var path = Program.SpringPaths.WritableDirectory;
+                        bool backupChatlogs = false;
+                        string sdPath = Utils.MakePath(path, "cache", "SD");
+                        string chatHistoryPath = Utils.MakePath(sdPath, "ChatHistory");
+                        string backupPath = Utils.MakePath(path, "_chatlogBackup");
+                        // save chatlogs and such
+                        if (Directory.Exists(chatHistoryPath))
+                        {
+                            if (Directory.Exists(backupPath))
+                                Directory.Delete(backupPath, true);
+                            Directory.Move(chatHistoryPath, backupPath);
+                            backupChatlogs = true;
+                        }
+                        Directory.Delete(Utils.MakePath(path, "cache"), true);
+                        if (backupChatlogs)
+                        {
+                            if (!Directory.Exists(sdPath))
+                                Directory.CreateDirectory(sdPath);
+                            Directory.Move(backupPath, chatHistoryPath);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceError(ex.ToString());
+                    }
+                    finally
+                    {
+                        Conf.CleanCache = false;
+                        SaveConfig();
+                    }
+                }
 
                 try
                 {
