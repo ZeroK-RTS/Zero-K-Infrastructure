@@ -68,7 +68,7 @@ namespace Springie.autohost
                                          0,
                                          new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
 
-            AddMissing(new CommandConfig("votemap", 1, "[<mapname>..] - starts vote for new map, e.g. !votemap altored div"));
+            AddMissing(new CommandConfig("votemap", 1, "[<mapname>..] - starts vote for new map, e.g. !votemap altored div"){ AllowSpecs = true});
 
             AddMissing(new CommandConfig("votekick",
                                          2,
@@ -119,17 +119,17 @@ namespace Springie.autohost
                                          0,
                                          "<number> - votes for given option (works from battle only), e.g. !vote 1",
                                          0,
-                                         new[] { SayPlace.Battle, SayPlace.Game }));
+                                         new[] { SayPlace.Battle, SayPlace.Game }){ AllowSpecs = true});
             AddMissing(new CommandConfig("y",
                                          0,
                                          "- votes for given option 1 (works from battle only), e.g. !y; !vote 1",
                                          0,
-                                         new[] { SayPlace.Battle, SayPlace.Game }));
+                                         new[] { SayPlace.Battle, SayPlace.Game }){ AllowSpecs = true});
             AddMissing(new CommandConfig("n",
                                          0,
                                          "- votes for given option 2 (works from battle only), e.g. !n; !vote 2",
                                          0,
-                                         new[] { SayPlace.Battle, SayPlace.Game }));
+                                         new[] { SayPlace.Battle, SayPlace.Game }){ AllowSpecs = true});
 
             AddMissing(new CommandConfig("rehost", 3, "[<modname>..] - rehosts game, e.g. !rehost abosol 2.23 - rehosts AA2.23"));
 

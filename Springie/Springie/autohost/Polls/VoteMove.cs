@@ -43,6 +43,10 @@ namespace Springie.autohost.Polls
 
         }
 
+        protected override bool AllowVote(TasSayEventArgs e)
+        {
+        	return true;
+        }
 
         protected override void SuccessAction() {
             try {
