@@ -75,7 +75,7 @@ namespace CaTracker
             offlineMessages = new OfflineMessages(tas);
             playerMover = new PlayerMover(tas);
             SteamHandler = new NwSteamHandler(tas, new Secrets().GetSteamWebApiKey());
-            chatRelay = new ChatRelay(tas, new Secrets().GetNightwatchPassword(), new List<string>() { "zkdev", "sy", "moddev" }); 
+            chatRelay = new ChatRelay(tas, new Secrets().GetNightwatchPassword(), new List<string>() { "zkdev", "sy", "moddev","weblobbydev","ai"});
 
 		    PayPalInterface = new PayPalInterface();
 		    PayPalInterface.Error += (e) =>
