@@ -31,6 +31,7 @@ namespace ZeroKLobby
         public static BrowserInterop BrowserInterop { get; private set; }
         public static bool CloseOnNext;
         public static Config Conf = new Config();
+        public static ConnectBar ConnectBar { get; private set; }
         public static PlasmaDownloader.PlasmaDownloader Downloader { get; private set; }
         public static EngineConfigurator EngineConfigurator { get; set; }
         public static FriendManager FriendManager;
@@ -98,7 +99,6 @@ namespace ZeroKLobby
         {
             try
             {
-                GlobalConst.Mode =ModeType.Live;
                 //Stopwatch stopWatch = new Stopwatch(); stopWatch.Start();
 
                 Trace.Listeners.Add(new ConsoleTraceListener());
@@ -143,6 +143,7 @@ namespace ZeroKLobby
                 WebRequest.DefaultWebProxy = null;
                 ThreadPool.SetMaxThreads(500, 2000);
                 ServicePointManager.Expect100Continue = false;
+                if (Environment.OSVersion.Platform != PlatformID.Unix && !Conf.UseExternalBrowser) { Utils.SetIeCompatibility(); } //set to current IE version
 
                 LoadConfig();
 
@@ -243,9 +244,9 @@ namespace ZeroKLobby
                         if (!mutex.WaitOne(10000, false))
                         {
                             MessageBox.Show(
-                                "Another copy of Zero-K launcher is still running" +
-                                "\nMake sure the other launcher is closed (check task manager) before starting new one",
-                                "There can be only one launcher running",
+                                "Another copy of Zero-K lobby is still running" +
+                                "\nMake sure the other lobby is closed (check task manager) before starting new one",
+                                "There can be only one lobby running",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Stop);
                             return;
@@ -261,6 +262,8 @@ namespace ZeroKLobby
                     {
                         Utils.CreateDesktopShortcut();
                     }
+                    if (Environment.OSVersion.Platform != PlatformID.Unix)
+                        Utils.RegisterProtocol();
                 }
 
                 FriendManager = new FriendManager();
@@ -292,10 +295,13 @@ namespace ZeroKLobby
 
                 // log, for debugging
                 TasClient.Connected += (s, e) => Trace.TraceInformation("TASC connected");
-                TasClient.LoginAccepted += (s, e) => {
-                    Trace.TraceInformation("TASC login accepted");
-                    Trace.TraceInformation("Server is using Spring version {0}", TasClient.ServerSpringVersion);
-                };
+                TasClient.LoginAccepted += (s, e) =>
+                    {
+                        Trace.TraceInformation("TASC login accepted");
+                        Trace.TraceInformation("Server is using Spring version {0}", TasClient.ServerSpringVersion);
+                        if (Environment.OSVersion.Platform == PlatformID.Unix || Conf.UseExternalBrowser)
+                            MainWindow.navigationControl.Path = "battles";
+                    };
 
                 TasClient.LoginDenied += (s, e) => Trace.TraceInformation("TASC login denied");
                 TasClient.ChannelJoined += (s, e) => { Trace.TraceInformation("TASC channel joined: " + e.Name); };
@@ -323,9 +329,10 @@ namespace ZeroKLobby
                         }
                     };
 
+                ConnectBar = new ConnectBar(TasClient);
                 ModStore = new ModStore();
                 ToolTip = new ToolTipHandler();
-                BrowserInterop = new BrowserInterop();
+                BrowserInterop = new BrowserInterop(TasClient, Conf);
                 BattleIconManager = new BattleIconManager();
 
                 Application.AddMessageFilter(ToolTip);
@@ -339,12 +346,51 @@ namespace ZeroKLobby
 
                 Application.AddMessageFilter(new ScrollMessageFilter());
 
+
+                if (Conf.StartMinimized) MainWindow.WindowState = FormWindowState.Minimized;
+                else MainWindow.WindowState = FormWindowState.Normal;
+                MainWindow.Size = new Size(Math.Min(SystemInformation.VirtualScreen.Width - 30, MainWindow.Width),
+                                            Math.Min(SystemInformation.VirtualScreen.Height - 30, MainWindow.Height)); //in case user have less space than 1024x768
+
                 BattleBar = new BattleBar();
                 NewVersionBar = new NewVersionBar(SelfUpdater);
                 VoteBar = new VoteBar();
                 PwBar = new PwBar();
 
+                //This make the size of every bar constant (only for height).
+                //We wanted to make them constant because the bar get DPI-scaled twice/thrice/multiple-time (especially for reusable bar). 
+                //Setting maximum height upon creation will hopefully make sure it is not DPI-scaled multiple time.
+                var votebarSize = new Size(0, VoteBar.Height);
+                // Reference: http://stackoverflow.com/questions/5314041/set-minimum-window-size-in-c-sharp-net
+                var newversionbarSize = new Size(0, NewVersionBar.Height);
+                var battlebarSize = new Size(0, BattleBar.Height);
+                var connectbarSize = new Size(0, ConnectBar.Height);
+
+                VoteBar.MinimumSize = votebarSize; //fix minimum size forever
+                VoteBar.MaximumSize = votebarSize; //fix maximum size forever
+                NewVersionBar.MinimumSize = newversionbarSize;
+                NewVersionBar.MaximumSize = newversionbarSize;
+                BattleBar.MinimumSize = battlebarSize;
+                BattleBar.MaximumSize = battlebarSize;
+                ConnectBar.MinimumSize = connectbarSize;
+                ConnectBar.MaximumSize = connectbarSize;
+                //End battlebar size hax
+
                 if (!Debugger.IsAttached && !Conf.DisableAutoUpdate) Program.SelfUpdater.StartChecking();
+
+                //if (Conf.IsFirstRun) Utils.OpenWeb(GlobalConst.BaseSiteUrl + "/Wiki/LobbyStart", false);
+
+                // download primary engine & game
+                MainWindow.Paint += GetSpringZK;
+                Downloader.PackageDownloader.MasterManifestDownloaded += GetSpringZK;
+
+
+                // Format and display the TimeSpan value.
+                //stopWatch.Stop(); TimeSpan ts = stopWatch.Elapsed; string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+                //Trace.TraceInformation("1 Runtime {0}", elapsedTime);
+
+
+
 
                 Application.Run(MainWindow);
                 ShutDown();
@@ -360,7 +406,29 @@ namespace ZeroKLobby
             if (ErrorHandling.HasFatalException && !Program.CloseOnNext) Application.Restart();
         }
 
-       
+        private static int getSpringZKCount = 0;
+        private static void GetSpringZK(object sender, EventArgs e)
+        {
+            if (sender is PlasmaDownloader.Packages.PackageDownloader)
+                Downloader.PackageDownloader.MasterManifestDownloaded -= GetSpringZK;
+            if (sender is MainWindow)
+                MainWindow.Paint -= GetSpringZK;
+
+            getSpringZKCount++;
+            if (getSpringZKCount < 2)
+                return;
+
+            // download primary game after rapid list have been downloaded and MainWindow is visible
+            if (!Utils.VerifySpringInstalled(false))
+                Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion);
+            var defaultTag = KnownGames.GetDefaultGame().RapidTag;
+            if (!Downloader.PackageDownloader.SelectedPackages.Contains(defaultTag))
+            {
+                Downloader.PackageDownloader.SelectPackage(defaultTag);
+                if (Downloader.PackageDownloader.GetByTag(defaultTag) != null) Downloader.GetResource(PlasmaDownloader.DownloadType.MOD, defaultTag);
+            }
+        }
+
         public static PwBar PwBar { get; private set; }
 
         internal static void SaveConfig()

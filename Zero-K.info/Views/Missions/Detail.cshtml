@@ -64,7 +64,7 @@ $(function() {
     
     @if (false && !Global.IsLobbyAccess && !m.IsScriptMission) {    // FIXME: investigate why script (specifically mod tag) fails to autoupdate with stable
       <div class="border-test">
-        If you don't have Zero-K launcher, download the mission archive and run Spring with the provided script:
+        If you don't have Zero-K lobby, download the mission archive and run Spring with the provided script:
 
         <a href='@Url.Action("File", "Missions", new { name = m.MissionID })'>@m.SanitizedFileName</a>
         and <a href='@Url.Action("Script", "Missions", new { id = m.MissionID })'>script.txt</a>

@@ -138,13 +138,6 @@ namespace LobbyClient
         public event EventHandler<EventArgs<bool>> SpringExited;
         public event EventHandler SpringStarted;
 
-
-        /// <summary>
-        /// Executes when any instance of spring starts
-        /// </summary>
-        public static EventHandler AnySpringStarted = (sender, args) => { };
-
-
         public Spring(SpringPaths springPaths) {
             paths = springPaths;
             timer.Elapsed += timer_Elapsed;
@@ -241,7 +234,7 @@ namespace LobbyClient
         /// <param name="userName">lobby user name - used to submit score</param>
         /// <param name="passwordHash">lobby password hash - used to submit score</param>
         /// <returns>generates script</returns>
-        public string StartGame(TasClient client, ProcessPriorityClass? priority, int? affinity, string scriptOverride, bool useSafeMode = false, BattleContext contextOverride = null, Battle battleOverride = null) {
+        public string StartGame(TasClient client, ProcessPriorityClass? priority, int? affinity, string scriptOverride, bool useSafeMode = false, bool useMultithreaded=false, BattleContext contextOverride = null, Battle battleOverride = null) {
             if (!File.Exists(paths.Executable) && !File.Exists(paths.DedicatedServer)) throw new ApplicationException(string.Format("Spring or dedicated server executable not found: {0}, {1}", paths.Executable, paths.DedicatedServer));
 
             this.client = client;
@@ -337,7 +330,7 @@ namespace LobbyClient
                     }
                     else
                     {
-                        process.StartInfo.FileName = paths.Executable;
+                        process.StartInfo.FileName = useMultithreaded ? paths.MtExecutable : paths.Executable;
                         process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.Executable);
                     }
                 }
@@ -345,7 +338,7 @@ namespace LobbyClient
                 {
                     Trace.TraceInformation("Using optirun {0} to start the game (OPTIRUN env var defined)", optirun);
                     process.StartInfo.FileName = optirun;
-                    arg.Add(string.Format("\"{0}\"", paths.Executable));
+                    arg.Add(string.Format("\"{0}\"", (useMultithreaded ? paths.MtExecutable : paths.Executable)));
                 }
 
                 
@@ -369,10 +362,7 @@ namespace LobbyClient
                 process.Start();
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
-                if (IsRunning) {
-                    if (SpringStarted != null) SpringStarted(this, EventArgs.Empty);
-                    AnySpringStarted(this, EventArgs.Empty);
-                }
+                if (IsRunning && SpringStarted != null) SpringStarted(this, EventArgs.Empty);
 
                 Utils.StartAsync(() =>
                     {

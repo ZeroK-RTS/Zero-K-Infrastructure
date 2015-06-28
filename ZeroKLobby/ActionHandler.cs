@@ -88,7 +88,7 @@ namespace ZeroKLobby
             battleJoinHandler = ((s, e) =>
               {
                   Program.TasClient.BattleJoined -= battleJoinHandler;
-                  if (Program.TasClient.MyBattle == null || !Program.TasClient.MyBattle.IsQueue) Program.MainWindow.navigationControl.Path = "chat/battle";
+                  if (Program.TasClient.MyBattle == null || !Program.TasClient.MyBattle.IsQueue) NavigationControl.Instance.Path = "chat/battle";
               });
 
 
@@ -157,7 +157,10 @@ namespace ZeroKLobby
                 switch (command)
                 {
                     case "logout":
-                        Program.MainWindow.connectBar.DoLogout();
+                        Program.TasClient.RequestDisconnect();
+                        Program.Conf.LobbyPlayerName = "";
+                        Program.Conf.LobbyPlayerPassword = "";
+                        Program.ConnectBar.TryToConnectTasClient();
                         break;
 
                     case "start_mission":
@@ -300,7 +303,7 @@ namespace ZeroKLobby
 
                       Program.TasClient.BattleJoined += battleJoined;
                       JoinBattle(battle.BattleID, password);
-                      Program.MainWindow.navigationControl.Path = "chat/battle";
+                      NavigationControl.Instance.Path = "chat/battle";
                   }
               };
 

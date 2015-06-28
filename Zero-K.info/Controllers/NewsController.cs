@@ -91,7 +91,7 @@ namespace ZeroKWeb.Controllers
 				if (im != null)
 				{
 					im.Save(Server.MapPath(news.ImageRelativeUrl));
-                    Image thumb = im.GetResized(120, (int)Math.Round(120.0 / im.Width * im.Height));
+                    Image thumb = im.GetResized(120, (int)Math.Round(120.0 / im.Width * im.Height), InterpolationMode.HighQualityBicubic);
                     thumb.Save(Server.MapPath(news.ThumbRelativeUrl));
 				}
 				scope.Complete();

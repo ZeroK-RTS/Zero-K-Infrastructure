@@ -14,7 +14,7 @@ namespace ZeroKWeb.Controllers
         //
         // GET: /Campaign/
 
-        public Image GenerateGalaxyImage(int campaignID, double zoom = 1, double antiAliasingFactor = 4) {
+        public Bitmap GenerateGalaxyImage(int campaignID, double zoom = 1, double antiAliasingFactor = 4) {
             zoom *= antiAliasingFactor;
             using (var db = new ZkDataContext()) {
                 Campaign camp = db.Campaigns.Single(x => x.CampaignID == campaignID);
@@ -47,7 +47,7 @@ namespace ZeroKWeb.Controllers
                         if (antiAliasingFactor == 1) return im;
                         else {
                             zoom /= antiAliasingFactor;
-                            return im.GetResized((int)(background.Width*zoom), (int)(background.Height*zoom));
+                            return im.GetResized((int)(background.Width*zoom), (int)(background.Height*zoom), InterpolationMode.HighQualityBicubic);
                         }
                     }
                 }
@@ -65,7 +65,7 @@ namespace ZeroKWeb.Controllers
             string cachePath = Server.MapPath(string.Format("/img/galaxies/campaign/render_{0}.jpg", camp.CampaignID));
             // /*
             if (camp.IsDirty || !System.IO.File.Exists(cachePath)) {
-                using (Image im = GenerateGalaxyImage(camp.CampaignID)) {
+                using (Bitmap im = GenerateGalaxyImage(camp.CampaignID)) {
                     im.SaveJpeg(cachePath, 85);
                     camp.IsDirty = false;
                     camp.MapWidth = im.Width;
