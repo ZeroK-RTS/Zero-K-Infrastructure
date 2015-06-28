@@ -1,0 +1,1 @@
+this folder is needed because the stupid table.save function fails silently if the directory it wants to write to doesn't exist

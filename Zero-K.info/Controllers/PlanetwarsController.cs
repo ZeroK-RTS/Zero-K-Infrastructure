@@ -229,7 +229,7 @@ namespace ZeroKWeb.Controllers
         }
 
         // FIXME: having issues with bitmap parameters; setting AA factor to 1 as fallback (was 4)
-        public Image GenerateGalaxyImage(int galaxyID, double zoom = 1, double antiAliasingFactor = 1)
+        public Bitmap GenerateGalaxyImage(int galaxyID, double zoom = 1, double antiAliasingFactor = 1)
         {
             zoom *= antiAliasingFactor;
             using (var db = new ZkDataContext())
@@ -285,7 +285,7 @@ namespace ZeroKWeb.Controllers
                         else
                         {
                             zoom /= antiAliasingFactor;
-                            return im.GetResized((int)(background.Width * zoom), (int)(background.Height * zoom));
+                            return im.GetResized((int)(background.Width * zoom), (int)(background.Height * zoom), InterpolationMode.HighQualityBicubic);
                         }
                     }
                 }
@@ -309,7 +309,7 @@ namespace ZeroKWeb.Controllers
             string cachePath = Server.MapPath(string.Format("/img/galaxies/render_{0}.jpg", gal.GalaxyID));
             if (gal.IsDirty || !System.IO.File.Exists(cachePath))
             {
-                using (var im = GenerateGalaxyImage(gal.GalaxyID))
+                using (Bitmap im = GenerateGalaxyImage(gal.GalaxyID))
                 {
                     im.SaveJpeg(cachePath, 85);
                     gal.IsDirty = false;

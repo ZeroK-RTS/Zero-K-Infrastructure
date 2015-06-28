@@ -87,9 +87,10 @@ namespace ZeroKLobby.MicroLobby
 		protected override void OnResize(EventArgs e)
 		{
 			base.OnResize(e);
-            if (finishLoad && minimapFuncBox.minimapSplitContainer1.Height > 1)
+            if (finishLoad)
             {
-                minimapFuncBox.minimapSplitContainer1.SplitterDistance = Math.Min((int)23,minimapFuncBox.minimapSplitContainer1.Height); //always show button fully
+                DpiMeasurement.DpiXYMeasurement(this);
+                minimapFuncBox.minimapSplitContainer1.SplitterDistance = Math.Min(DpiMeasurement.ScaleValueY(23),minimapFuncBox.minimapSplitContainer1.Height); //always show button fully
                 DrawMinimap();
             }
 		}
@@ -193,7 +194,7 @@ namespace ZeroKLobby.MicroLobby
 		        // todo remove minimapSize and use minimap image directly when plasmaserver stuff fixed
 		        var yScale = (double)minimapBox.Height/minimapSize.Height;
 		        var scale = Math.Min(xScale, yScale);
-		        minimapBox.Image = minimap.GetResized((int)(scale*minimapSize.Width), (int)(scale*minimapSize.Height));
+		        minimapBox.Image = minimap.GetResized((int)(scale*minimapSize.Width), (int)(scale*minimapSize.Height), InterpolationMode.HighQualityBicubic);
 		        using (var g = Graphics.FromImage(minimapBox.Image)) {
 		            g.TextRenderingHint = TextRenderingHint.AntiAlias;
 		            g.SmoothingMode = SmoothingMode.HighQuality;
@@ -221,7 +222,7 @@ namespace ZeroKLobby.MicroLobby
 		                    format.Alignment = StringAlignment.Center;
 		                    format.LineAlignment = StringAlignment.Center;
 
-		                    using (var font = new Font(Config.GeneralFontBig, FontStyle.Bold)) g.DrawStringWithOutline((allyTeam + 1).ToString(), font, Brushes.White, Brushes.Black, numberRect, format, 5);
+		                    using (var font = new Font("Arial", 13f, FontStyle.Bold)) g.DrawStringWithOutline((allyTeam + 1).ToString(), font, Brushes.White, Brushes.Black, numberRect, format, 5);
 		                }
 		            }
 		        }

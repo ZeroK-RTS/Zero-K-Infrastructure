@@ -198,7 +198,7 @@ namespace ZeroKWeb.Controllers
             if (image != null && image.ContentLength > 0)
             {
                 var im = Image.FromStream(image.InputStream);
-                if (im.Width != 64 || im.Height != 64) im = im.GetResized(64, 64);
+                if (im.Width != 64 || im.Height != 64) im = im.GetResized(64, 64, InterpolationMode.HighQualityBicubic);
                 db.SubmitChanges(); // needed to get clan id for image url - stupid way really
                 im.Save(Server.MapPath(clan.GetImageUrl()));
             }
