@@ -437,16 +437,17 @@ namespace LobbyClient
                     }
 
                     // FIXME: why are these even null in the first place?
-                    if (mapName == null && line.StartsWith("Using map")) mapName = line.Substring(10).Trim();
+                    if (mapName == null && line.StartsWith("Using map", true, null)) mapName = line.Substring(10).Trim();
 
-                    if (modName == null && line.StartsWith("Using game")) modName = line.Substring(11).Trim();
+                    if (modName == null && line.StartsWith("Using game", true, null)) modName = line.Substring(11).Trim();
 
+                    // obsolete? see above where [DedicatedServer] is pruned
                     if (line.StartsWith("recording demo")) demoFileName = Path.GetFileName(line.Substring(15).Trim());  // 91.0
                     else if (line.StartsWith("[DedicatedServer] recording demo")) demoFileName = Path.GetFileName(line.Substring(33).Trim());    // 95.0 and later
 
-                    if (line.StartsWith("Using demofile")) return; // do nothing if its demo
+                    if (line.StartsWith("Using demofile", true, null)) return; // do nothing if its demo
 
-                    if (line.StartsWith("GameID: ") && gameId == null) gameId = line.Substring(8).Trim();
+                    if (line.StartsWith("GameID: ", true, null) && gameId == null) gameId = line.Substring(8).Trim();
 
                     if (line.StartsWith("STATS:")) statsData.Add(line.Substring(6));
 
@@ -479,7 +480,7 @@ namespace LobbyClient
                     // obsolete, hanlded by pm messages 
                     //if (line.StartsWith("STATS:")) statsData.Add(line.Substring(6));
 
-                    if (line.StartsWith("Cheating!") || line.StartsWith("Cheating is enabled!")) isCheating = true;
+                    if (line.StartsWith("Cheating!", true, null) || line.StartsWith("Cheating is enabled!", true, null)) isCheating = true;
 
                     if (line.StartsWith("Error") || line.StartsWith("LuaRules") || line.StartsWith("Internal error") || line.StartsWith("LuaCOB") ||
                         (line.StartsWith("Failed to load") && !line.Contains("duplicate name"))) hasError = true;
