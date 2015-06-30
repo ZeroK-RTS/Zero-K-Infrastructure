@@ -38,7 +38,7 @@ namespace Springie.autohost.Polls
                 return false;
             }
 
-            question = string.Format("Move all to {0}?", host);
+            question = string.Format("Do you want to join {0}?", host);
             return true;
 
         }
