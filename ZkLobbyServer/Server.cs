@@ -19,7 +19,7 @@ namespace ZkLobbyServer
         {
             selfUpdater.ProgramUpdated += s => {
                 {
-                    Task.WaitAll(sharedState.Clients.Values.Select((client) => client.SendCommand(new Say {
+                    Task.WaitAll(sharedState.GetAllClients().Select((client) => client.SendCommand(new Say {
                         IsEmote = true,
                         Place = SayPlace.MessageBox,
                         Text = "Server self-updating to new version",

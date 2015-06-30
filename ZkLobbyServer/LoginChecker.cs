@@ -37,7 +37,7 @@ namespace ZkLobbyServer
                 Account acc = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name == login.Name);
                 if (acc == null) return new LoginResponse { ResultCode = LoginResponse.Code.InvalidName };
                 if (!acc.VerifyPassword(login.PasswordHash)) return new LoginResponse { ResultCode = LoginResponse.Code.InvalidPassword };
-                if (state.Clients.ContainsKey(login.Name)) return new LoginResponse { ResultCode = LoginResponse.Code.AlreadyConnected };
+                if (state.GetClients(login.Name).Any()) return new LoginResponse { ResultCode = LoginResponse.Code.AlreadyConnected };
                 
                 acc.Country = ResolveCountry(ip);
                 if (acc.Country == null || String.IsNullOrEmpty(acc.Country)) acc.Country = "unknown";
@@ -146,8 +146,8 @@ namespace ZkLobbyServer
                     Trace.TraceError("VPN check error: {0}", ex);
                 }
 
-                if (state.Clients.TryAdd(login.Name, client)) return new LoginResponse { ResultCode = LoginResponse.Code.Ok };
-                else return new LoginResponse() {ResultCode = LoginResponse.Code.AlreadyConnected};
+                state.AddClient(client);
+                return new LoginResponse { ResultCode = LoginResponse.Code.Ok };
             }
         }
 
@@ -253,8 +253,8 @@ namespace ZkLobbyServer
 
         void Talk(string text)
         {
-            Client cli;
-            if (state.Clients.TryGetValue(GlobalConst.NightwatchName, out cli)) cli.Process(new Say { IsEmote = true, Place = SayPlace.Channel, Target = "zkadmin", Text = text });
+            Client cli = state.GetClients(GlobalConst.NightwatchName).FirstOrDefault();
+            if (cli !=null) cli.Process(new Say { IsEmote = true, Place = SayPlace.Channel, Target = "zkadmin", Text = text });
         }
     }
 }
