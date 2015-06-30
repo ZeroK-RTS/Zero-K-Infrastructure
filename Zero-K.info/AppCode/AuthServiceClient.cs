@@ -6,6 +6,9 @@ using ZeroKWeb;
 
 namespace ZkData
 {
+    ///  <summary>
+    ///      Used to verify user accounts; also sends lobby messages via Nightwatch
+    ///  </summary>
     public class AuthServiceClient
     {
         //static IAuthService channel;

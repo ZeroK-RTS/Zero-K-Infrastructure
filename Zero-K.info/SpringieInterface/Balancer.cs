@@ -114,6 +114,11 @@ namespace ZeroKWeb.SpringieInterface
             return max - min;
         }
 
+        /// <summary>
+        /// Split a too-large game into two equivalent smaller games
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="forceStart">Start the game as soon as the split occurs; so no chance for the players to escape</param>
         public static void SplitAutohost(BattleContext context, bool forceStart = false) {
             var tas = Global.Nightwatch.Tas;
             try {
@@ -180,6 +185,14 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
+        /// <summary>
+        /// Force spec all players who don't meet the Elo or level requirements
+        /// </summary>
+        /// <param name="battleContext"></param>
+        /// <param name="dataContext">The Zero-K database to check <see cref="Account"/> account details against</param>
+        /// <param name="config"></param>
+        /// <param name="actionsDescription"></param>
+        /// <returns>True if no players need to be specced, false otherwise</returns>
         static bool CheckPlayersMinimumConditions(BattleContext battleContext,
                                                   ZkDataContext dataContext,
                                                   AutohostConfig config,
@@ -203,6 +216,14 @@ namespace ZeroKWeb.SpringieInterface
             return ok;
         }
 
+        /// <summary>
+        /// The function that actually moves players arounds
+        /// </summary>
+        /// <param name="teamCount"></param>
+        /// <param name="mode"></param>
+        /// <param name="b"></param>
+        /// <param name="unmovablePlayers"></param>
+        /// <returns></returns>
         BalanceTeamsResult LegacyBalance(int teamCount, BalanceMode mode, BattleContext b, params List<Account>[] unmovablePlayers) {
             var ret = new BalanceTeamsResult();
 
@@ -341,6 +362,15 @@ namespace ZeroKWeb.SpringieInterface
             return ret;
         }
 
+        /// <summary>
+        /// Calls <see cref="LegacyBalance"/> with the appropriate parameters depending on game settings and conditions
+        /// </summary>
+        /// <param name="isGameStart">If true and <see cref="AutohostMode"/> is none, do nothing (i.e. don't autobalance custom rooms at start)</param>
+        /// <param name="allyCount"></param>
+        /// <param name="clanWise"></param>
+        /// <param name="config"></param>
+        /// <param name="playerCount"></param>
+        /// <remarks>Also removes bots from team games, and tells people to add bots to a chicken game if absent</remarks>
         static BalanceTeamsResult PerformBalance(BattleContext context,
                                                  bool isGameStart,
                                                  int? allyCount,
@@ -507,6 +537,9 @@ namespace ZeroKWeb.SpringieInterface
             res.Players.Add(new PlayerTeam { AllyID = allyID , IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID, TeamID = player.TeamID });
         }
 
+        /// <summary>
+        /// Gets the best balance (lowest standard deviation between teams)
+        /// </summary>
         void RecursiveBalance(int itemIndex) {
             if (iterationsChecked > 2000000) return;
 
@@ -540,6 +573,11 @@ namespace ZeroKWeb.SpringieInterface
             AuthServiceClient.SendLobbyMessage(account, userMessage);
         }
 
+        /// <summary>
+        /// Makes <see cref="Springie"/> print a message if two or more people have the same IP
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="res">The <see cref="BalanceTeamsResult"/> to write the message to</param>
         static void VerifySpecCheaters(BattleContext context, BalanceTeamsResult res) {
             try {
                 // find specs with same IP as some player and kick them

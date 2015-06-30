@@ -24,6 +24,11 @@ namespace ZeroKWeb.Controllers
             return View(data);
         }
 
+        /// <summary>
+        /// Get map detail page given map name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public ActionResult DetailName(string name) {
             var db = new ZkDataContext();
             var res = db.Resources.Single(x => x.InternalName == name);
@@ -31,7 +36,9 @@ namespace ZeroKWeb.Controllers
             return View("Detail", GetMapDetailData(res, db));
         }
 
-
+        /// <summary>
+        /// Map list; params are for filter
+        /// </summary>
         public ActionResult Index(string search,
                                   bool? supported,                               
                                   bool? featured,
@@ -175,6 +182,10 @@ namespace ZeroKWeb.Controllers
             return Json(retval, JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// Brings up the planet image selector page
+        /// </summary>
+        /// <param name="resourceID">The ID of the map to assign a planet image to</param>
         public ActionResult PlanetImageSelect(int resourceID) {
             var res = new PlanetImageSelectData();
             var db = new ZkDataContext();

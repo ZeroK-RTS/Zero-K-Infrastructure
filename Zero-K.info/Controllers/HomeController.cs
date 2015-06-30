@@ -75,6 +75,11 @@ namespace ZeroKWeb.Controllers
 			return sb.ToString();
 		}
 
+        /// <summary>
+        /// Gets the appropriate tooltip for an object, e.g. a <see cref="ForumThread"/> or a <see cref="Clan"/>
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
 		[NoCache]
 		public ActionResult GetTooltip(string key)
 		{
@@ -138,6 +143,9 @@ namespace ZeroKWeb.Controllers
 			return Content(ret);
 		}
 
+        /// <summary>
+        /// Go to home page; also updates news read dates
+        /// </summary>
 		public ActionResult Index()
 		{
             if (Request[GlobalConst.ASmallCakeCookieName] != null)
