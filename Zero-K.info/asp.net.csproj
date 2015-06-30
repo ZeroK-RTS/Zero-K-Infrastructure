@@ -1037,6 +1037,8 @@
     <Content Include="Img\stars\star_blue_small.png" />
     <Content Include="Img\stars\star_brown.png" />
     <Content Include="Img\stars\star_brown_small.png" />
+    <Content Include="Img\stars\star_diamond.png" />
+    <Content Include="Img\stars\star_diamond_small.png" />
     <Content Include="Img\stars\star_green.png" />
     <Content Include="Img\stars\star_green_small.png" />
     <Content Include="Img\stars\star_orange.png" />
