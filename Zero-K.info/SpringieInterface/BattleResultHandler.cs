@@ -10,6 +10,9 @@ using ZkData;
 
 namespace ZeroKWeb.SpringieInterface
 {
+    /// <summary>
+    /// Handle everything to do with battle results: change Elo and XP, awards, PlanetWars effects...
+    /// </summary>
     public class BattleResultHandler
     {
         public static string SubmitSpringBattleResult(BattleContext context,

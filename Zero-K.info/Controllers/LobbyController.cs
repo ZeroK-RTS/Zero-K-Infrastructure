@@ -15,6 +15,11 @@ namespace ZeroKWeb.Controllers
         // GET: /Lobby/
 
         // should this use [Auth] as well?
+
+        /// <summary>
+        /// Used to start a <see cref="Mission"/>, replay or such in ZKL or Weblobby
+        /// </summary>
+        /// <param name="link"></param>
         public ActionResult SendCommand(string link) {
             if (Global.Account == null) return Content("You must be logged in to the site");
             var name = Global.Account.Name;

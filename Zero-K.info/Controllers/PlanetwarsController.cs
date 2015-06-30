@@ -13,6 +13,7 @@ namespace ZeroKWeb.Controllers
     {
         //
         // GET: /Planetwars/
+
         [Auth]
         public ActionResult BombPlanet(int planetID, int count, bool? useWarp)
         {
@@ -151,6 +152,9 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Planet", new { id = planetID });
         }
 
+        /// <summary>
+        /// Demolish an existing structure (not destroyed from bombing or such)
+        /// </summary>
         [Auth]
         public ActionResult DestroyStructure(int planetID, int structureTypeID)
         {
@@ -228,6 +232,9 @@ namespace ZeroKWeb.Controllers
             return View(ret);
         }
 
+        /// <summary>
+        /// Makes an image: galaxy background with planet images drawn on it (cheaper than rendering each planet individually)
+        /// </summary>
         // FIXME: having issues with bitmap parameters; setting AA factor to 1 as fallback (was 4)
         public Bitmap GenerateGalaxyImage(int galaxyID, double zoom = 1, double antiAliasingFactor = 1)
         {
@@ -292,7 +299,9 @@ namespace ZeroKWeb.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Go to main Planetwars page
+        /// </summary>
         public ActionResult Index(int? galaxyID = null)
         {
             if (GlobalConst.PlanetWarsMode != PlanetWarsModes.Running)

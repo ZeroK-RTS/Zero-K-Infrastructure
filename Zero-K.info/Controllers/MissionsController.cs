@@ -53,6 +53,11 @@ namespace ZeroKWeb.Controllers
                         });
         }
 
+        /// <summary>
+        /// Gets the <see cref="Mission"/> mutator file
+        /// </summary>
+        /// <param name="name">The <see cref="Mission"/> name or ID</param>
+        /// <returns>A <see cref="FileContentResult"/> representing the <see cref="Mission"/> mutator</returns>
         public ActionResult File(string name)
         {
             var id = 0;
@@ -64,6 +69,9 @@ namespace ZeroKWeb.Controllers
             return File(m.Mutator.ToArray(), "application/octet-stream", m.SanitizedFileName);
         }
 
+        /// <summary>
+        /// The <see cref="Mission"/> list; params are filters
+        /// </summary>
         public ActionResult Index(string search, int? offset, bool? sp, bool? coop, bool? adversarial, bool? featured)
         {
             if (featured == null) featured = true;
@@ -130,7 +138,11 @@ namespace ZeroKWeb.Controllers
             return Content("");
         }
 
-
+        /// <summary>
+        /// Gets the <see cref="Mission"/> script file
+        /// </summary>
+        /// <param name="name">The <see cref="Mission"/> name or ID</param>
+        /// <returns>A <see cref="FileContentResult"/> representing the <see cref="Mission"/> script</returns>
         public ActionResult Script(int id)
         {
             var m = new ZkDataContext().Missions.Single(x => x.MissionID == id);

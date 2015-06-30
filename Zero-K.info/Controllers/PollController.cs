@@ -10,6 +10,9 @@ namespace ZeroKWeb.Controllers
         //
         // GET: /Poll/
 
+        /// <summary>
+        /// View a specific poll
+        /// </summary>
         public ActionResult Index(int pollID)
         {
             var db = new ZkDataContext();
@@ -31,6 +34,9 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("UserVotes", new { id = Global.AccountID });
         }
 
+        /// <summary>
+        /// Automatically close old polls
+        /// </summary>
         public static void AutoClosePolls()
         {
             var db = new ZkDataContext();
@@ -104,8 +110,9 @@ namespace ZeroKWeb.Controllers
             db.SubmitAndMergeChanges();
         }
 
-
-
+        /// <summary>
+        /// Starts a poll to elect someone to a <see cref="RoleType"/>, or remove an existing holder
+        /// </summary>
         [Auth()]
         public ActionResult NominateRole(int roleTypeID, string text, bool isRemoval = false, int? removalAccountID = null)
         {

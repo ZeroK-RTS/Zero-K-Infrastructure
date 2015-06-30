@@ -28,8 +28,11 @@ namespace ZeroKWeb.Controllers
             return View("NewsDetail", news);
         }
 
-
-
+        /// <summary>
+        /// Make a new <see cref="News"/> item or edit an existing one
+        /// </summary>
+        /// <param name="nn">The existing <see cref="News"/> item, if editing</param>
+        /// <remarks>Also makes or edits a <see cref="ForumThread"/> and its starting <see cref="ForumPost"/></remarks>
         [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
 		public ActionResult PostNews(News nn, HttpPostedFileBase image)
 		{
@@ -80,6 +83,7 @@ namespace ZeroKWeb.Controllers
                 }
 			    db.SubmitChanges();
 
+                // add image to the start of the forum post we made
                 // do it down here so it gets the correct news ID
                 if (!String.IsNullOrWhiteSpace(news.ImageRelativeUrl) && news.ForumThread != null)
                 {

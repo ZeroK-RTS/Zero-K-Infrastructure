@@ -40,6 +40,9 @@ namespace ZeroKWeb.Controllers
             return View("ThankYou");
         }
 
+        /// <summary>
+        /// Manually input a contribution
+        /// </summary>
         [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult AddContribution(int accountID,int kudos, string item, string currency, double gross, double grossEur, double netEur, string email, string comment, bool isSpring, DateTime date) {
             using (var db = new ZkDataContext()) {

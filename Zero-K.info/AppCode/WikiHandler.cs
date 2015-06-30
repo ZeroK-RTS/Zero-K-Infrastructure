@@ -83,6 +83,15 @@ namespace ZeroKWeb
             return piece.Trim();
         }
 
+        /// <summary>
+        /// Converts a wiki on Google Code to a HTML string for display on the site.
+        /// </summary>
+        /// <param name="node">What page to get, e.g. IconGuide for the icon guide</param>
+        /// <param name="body">The HTML from the Google code page</param>
+        /// <param name="isOnlyBody">If false, append the div and span tags to the output (for display as a standalone page)</param>
+        /// <remarks>
+        /// Yes, this thing actually takes existing HTML, cuts it up and stitches its own content in, then lets someone else display it. Vile.
+        /// </remarks>
         private static string FormatGoogleCodeWiki(string node, string language, string body, bool isOnlyBody = false)
         {
             string availableLanguages;            
@@ -109,6 +118,13 @@ namespace ZeroKWeb
                 content;
         }
 
+        /// <summary>
+        /// Uses <see cref="MarkdownHelper"/> to convert a Github wiki page to HTML for display on the site.
+        /// </summary>
+        /// <param name="node">What page to get, e.g. IconGuide for the icon guide</param>
+        /// <param name="html">The HTML of the page as displayed on Github site (used only to get author)</param>
+        /// <param name="raw">The raw Markdown of the Github wiki page</param>
+        /// <param name="isOnlyBody">If false, append the div and span tags to the output (for display as a standalone page)</param>
         private static string FormatGitHubWiki(string node, string html, string raw, bool isOnlyBody = false)
         {
             string availableLanguages;
@@ -134,6 +150,14 @@ namespace ZeroKWeb
                 content;
         }
 
+        /// <summary>
+        /// Try to get a HTML string of the appropriate wiki page for display on the site
+        /// </summary>
+        /// <param name="node">What page to get, e.g. IconGuide for the icon guide</param>
+        /// <param name="isOnlyBody"If false, append the div and span tags to the output (for display as a standalone page)></param>
+        /// <remarks>
+        /// Works with both Google Code and Github, but only the former is currently enabled
+        /// </remarks>
         private static string TryLoadWiki(string node, string language = "", bool isOnlyBody = false)
         {
             string key = "wiki_" + node + "_" + (String.IsNullOrEmpty(language) ? "en" : language);
@@ -185,6 +209,14 @@ namespace ZeroKWeb
             return ret;
         }
 
+        /// <summary>
+        /// Try to get a HTML string of the appropriate wiki page for display on the site
+        /// </summary>
+        /// <param name="node">What page to get, e.g. IconGuide for the icon guide</param>
+        /// <param name="isOnlyBody"If false, append the div and span tags to the output (for display as a standalone page)></param>
+        /// <remarks>
+        /// Works with both Google Code and Github, but only the former is currently enabled
+        /// </remarks>
         public static string LoadWiki(string node, string forceLanguage = "", bool isOnlyBody = false)
         {
             try

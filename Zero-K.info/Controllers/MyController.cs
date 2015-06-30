@@ -9,10 +9,22 @@ using ZkData;
 
 namespace ZeroKWeb.Controllers
 {
+    /// <summary>
+    /// Handles personal stuff like <see cref="Commander"/> designs
+    /// </summary>
 	public class MyController: Controller
 	{
 		//
 		// GET: /My/
+
+        /// <summary>
+        /// Add, modify or delete a <see cref="Commander"/>
+        /// </summary>
+        /// <param name="profileNumber">The <see cref="Commander"/> profile number on the page (1-6)</param>
+        /// <param name="name"></param>
+        /// <param name="chassis">The <see cref="Unlock"/> ID of the commander chassis to use</param>
+        /// <param name="deleteCommander">If not null or empty, delete the <see cref="Commander"/></param>
+        /// <returns></returns>
 		[Auth]
 		public ActionResult CommanderProfile(int profileNumber, string name, int? chassis, string deleteCommander)
 		{
@@ -180,6 +192,9 @@ namespace ZeroKWeb.Controllers
 			return GetCommanderProfileView(db, profileNumber);
 		}
 
+        /// <summary>
+        /// Go to the <see cref="Commander"/> configuration page
+        /// </summary>
 		[Auth]
 		public ActionResult Commanders()
 		{
@@ -198,7 +213,9 @@ namespace ZeroKWeb.Controllers
 			return RedirectToAction("Detail", "Users", new { id = Global.AccountID });
 		}
 
-
+        /// <summary>
+        /// Reset all the user's unlocks
+        /// </summary>
 		public ActionResult Reset()
 		{
 			var db = new ZkDataContext();
@@ -207,6 +224,10 @@ namespace ZeroKWeb.Controllers
 			return RedirectToAction("UnlockList");
 		}
 
+        /// <summary>
+        /// Unlock the specified <see cref="Unlock"/> for the current user
+        /// </summary>
+        /// <param name="id">The ID of the <see cref="Unlock"/> to unlock</param>
         [Auth]
         public ActionResult Unlock(int id, bool useKudos = false)
         {
@@ -247,6 +268,9 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("UnlockList");
         }
 
+        /// <summary>
+        /// List all <see cref="Unlock"/>s, divided into what we can unlock and what is currently inaccessible to us
+        /// </summary>
 		[Auth]
 		public ActionResult UnlockList()
 		{
@@ -282,6 +306,12 @@ namespace ZeroKWeb.Controllers
 			                   });
 		}
 
+        /// <summary>
+        /// Get all <see cref="Unlock"/>s that the user can buy or could buy in the future
+        /// </summary>
+        /// <param name="db"></param>
+        /// <param name="unlocks">This stores the unlocks we can get now (sufficient XP, level, kudos, etc.)</param>
+        /// <param name="future">This stores everything we don't have that is not in the previous list</param>
 		void GetUnlockLists(ZkDataContext db, out List<Unlock> unlocks, out List<Unlock> future)
 		{
 			var maxedUnlockList =
