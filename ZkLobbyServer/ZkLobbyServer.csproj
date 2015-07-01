@@ -74,6 +74,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientConnection.cs" />
     <Compile Include="LoginChecker.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Program.cs" />
