@@ -27,7 +27,7 @@ namespace ZkLobbyServer
         }
 
 
-        public LoginResponse Login(User user, Login login, Client client)
+        public LoginResponse Login(User user, Login login, ClientConnection client)
         {
             string ip = client.RemoteEndpointIP;
             long userID = login.UserID;
@@ -37,7 +37,6 @@ namespace ZkLobbyServer
                 Account acc = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name == login.Name);
                 if (acc == null) return new LoginResponse { ResultCode = LoginResponse.Code.InvalidName };
                 if (!acc.VerifyPassword(login.PasswordHash)) return new LoginResponse { ResultCode = LoginResponse.Code.InvalidPassword };
-                if (state.Clients.ContainsKey(login.Name)) return new LoginResponse { ResultCode = LoginResponse.Code.AlreadyConnected };
                 
                 acc.Country = ResolveCountry(ip);
                 if (acc.Country == null || String.IsNullOrEmpty(acc.Country)) acc.Country = "unknown";
@@ -146,8 +145,8 @@ namespace ZkLobbyServer
                     Trace.TraceError("VPN check error: {0}", ex);
                 }
 
-                if (state.Clients.TryAdd(login.Name, client)) return new LoginResponse { ResultCode = LoginResponse.Code.Ok };
-                else return new LoginResponse() {ResultCode = LoginResponse.Code.AlreadyConnected};
+                return new LoginResponse { ResultCode = LoginResponse.Code.Ok };
+
             }
         }
 

@@ -51,7 +51,7 @@ namespace ZkLobbyServer
             {
                 var tcp = listener.AcceptTcpClient();
                 Task.Run(() => {
-                    var client = new Client(sharedState);
+                    var client = new ClientConnection(sharedState);
                     client.RunOnExistingTcp(tcp);
                 });
                 
