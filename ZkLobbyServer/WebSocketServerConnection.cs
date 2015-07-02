@@ -43,7 +43,7 @@ namespace ZkLobbyServer
             token.Register(wsc.Close);
 
             IsConnected = true;
-
+            
             try
             {
                 await OnConnected();
@@ -60,11 +60,13 @@ namespace ZkLobbyServer
 
                 while (wsc.IsConnected && !token.IsCancellationRequested) {
                     var message = await wsc.ReadMessageAsync(token);
-                    if (message.Length == 0) break;
-                    using (var sr = new StreamReader(message, Encoding)) {
-                        var line = await sr.ReadToEndAsync();
-                        LogInput(line);
-                        await OnLineReceived(line);
+                    if (message != null) {
+                        if (message.Length == 0) break;
+                        using (var sr = new StreamReader(message, Encoding)) {
+                            var line = await sr.ReadToEndAsync();
+                            LogInput(line);
+                            await OnLineReceived(line);
+                        }
                     }
                 }
             }

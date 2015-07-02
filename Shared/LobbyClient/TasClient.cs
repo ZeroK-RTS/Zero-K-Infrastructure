@@ -21,7 +21,7 @@ using Timer = System.Timers.Timer;
 namespace LobbyClient
 {
     
-    public class TasClient:TcpConnection
+    public class TasClient:WebSocketClientConnection
     {
         public const int MaxAlliances = 16;
         public const int MaxTeams = 16;

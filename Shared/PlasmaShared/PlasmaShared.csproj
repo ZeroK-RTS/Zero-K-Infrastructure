@@ -123,6 +123,7 @@
     <Compile Include="CsvTable.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="TcpConnection.cs" />
+    <Compile Include="WebSocketClientConnection.cs" />
     <Compile Include="UnitSyncLib\Ai.cs" />
     <Compile Include="UnitSyncLib\AiInfoPair.cs" />
     <Compile Include="UnitSyncLib\DependencyMissingException.cs" />
@@ -167,6 +168,9 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.Services" />
+    <Reference Include="WebSocket4Net">
+      <HintPath>..\..\packages\WebSocket4Net.0.12\lib\net45\WebSocket4Net.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
