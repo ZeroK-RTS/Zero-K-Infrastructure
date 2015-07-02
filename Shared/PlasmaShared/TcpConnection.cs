@@ -20,7 +20,7 @@ namespace ZkData
         }
 
 
-        public override Task Connect(string host, int port, string bindingIp = null)
+        public Task Connect(string host, int port, string bindingIp = null)
         {
             return InternalRun(null, host, port, bindingIp);
         }

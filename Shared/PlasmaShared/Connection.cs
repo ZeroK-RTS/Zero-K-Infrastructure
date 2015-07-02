@@ -25,7 +25,6 @@ namespace ZkData
         public event EventHandler<string> Input = delegate { };
         public event EventHandler<string> Output = delegate { }; // outgoing command and arguments
         
-        public abstract Task Connect(string host, int port, string bindingIp = null);
         public abstract Task OnConnected();
         public abstract Task OnConnectionClosed(bool wasRequested);
         public abstract Task OnLineReceived(string line);

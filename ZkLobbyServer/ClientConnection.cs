@@ -12,6 +12,12 @@ using ZkData;
 
 namespace ZkLobbyServer
 {
+    public abstract class WebSocketServerConnection: Connection
+    {
+        
+
+    }
+
     public class ClientConnection: TcpConnection
     {
 
