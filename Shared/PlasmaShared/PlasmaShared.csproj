@@ -122,6 +122,7 @@
     <Compile Include="SpringScanner.cs" />
     <Compile Include="CsvTable.cs" />
     <Compile Include="SteamWebApi.cs" />
+    <Compile Include="TcpConnection.cs" />
     <Compile Include="UnitSyncLib\Ai.cs" />
     <Compile Include="UnitSyncLib\AiInfoPair.cs" />
     <Compile Include="UnitSyncLib\DependencyMissingException.cs" />

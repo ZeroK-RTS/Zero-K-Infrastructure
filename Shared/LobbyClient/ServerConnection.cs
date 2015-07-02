@@ -39,7 +39,7 @@ namespace LobbyClient
     /// <summary>
     /// Handles communiction with server on low level
     /// </summary>
-    public class ServerConnection: Connection
+    public class ServerConnection: TcpConnection
     {
         public event EventHandler<ConnectionEventArgs> CommandRecieved;
         public event EventHandler<EventArgs<KeyValuePair<string, object[]>>> CommandSent = delegate { };

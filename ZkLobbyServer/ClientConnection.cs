@@ -12,7 +12,7 @@ using ZkData;
 
 namespace ZkLobbyServer
 {
-    public class ClientConnection: Connection
+    public class ClientConnection: TcpConnection
     {
 
         int number;
