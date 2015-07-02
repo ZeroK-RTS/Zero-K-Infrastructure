@@ -24,26 +24,16 @@ namespace ZkData
 
         public event EventHandler<string> Input = delegate { };
         public event EventHandler<string> Output = delegate { }; // outgoing command and arguments
-        
+
         public abstract Task OnConnected();
         public abstract Task OnConnectionClosed(bool wasRequested);
         public abstract Task OnLineReceived(string line);
 
 
-        protected virtual void LogInput(string inp)
-        {
-            Input(this,inp);
-        }
-
-        protected virtual void LogOutput(string outp)
-        {
-            Output(this, outp);
-        }
-
         /// <summary>
         ///     Closes connection to remote server
         /// </summary>
-        public virtual void RequestClose()
+        public void RequestClose()
         {
             IsConnected = false;
             closeRequestedExplicitly = true;
@@ -66,5 +56,15 @@ namespace ZkData
         }
 
         protected abstract void InternalClose();
+
+        protected virtual void LogInput(string inp)
+        {
+            Input(this, inp);
+        }
+
+        protected virtual void LogOutput(string outp)
+        {
+            Output(this, outp);
+        }
     }
 }

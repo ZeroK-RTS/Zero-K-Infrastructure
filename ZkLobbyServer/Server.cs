@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -6,6 +7,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using LobbyClient;
+using vtortola.WebSockets;
 using ZkData;
 
 namespace ZkLobbyServer
@@ -19,7 +21,7 @@ namespace ZkLobbyServer
         {
             selfUpdater.ProgramUpdated += s => {
                 {
-                    Task.WaitAll(sharedState.Clients.Values.Select((client) => client.SendCommand(new Say {
+                    Task.WaitAll(sharedState.ConnectedUsers.Values.Select((client) => client.SendCommand(new Say {
                         IsEmote = true,
                         Place = SayPlace.MessageBox,
                         Text = "Server self-updating to new version",
@@ -35,24 +37,29 @@ namespace ZkLobbyServer
 #endif
 
             bool ok = false;
-            TcpListener listener = null;
+            WebSocketListener listener = null;
             do {
                 try {
-                    listener = new TcpListener(IPAddress.Any, GlobalConst.LobbyServerPort);
-                    listener.Start(200);
+                    listener = new WebSocketListener(new IPEndPoint(IPAddress.Any, GlobalConst.LobbyServerPort));
+                    var rfc6455 = new vtortola.WebSockets.Rfc6455.WebSocketFactoryRfc6455(listener);
+                    listener.Standards.RegisterStandard(rfc6455);
+                    listener.Start();
                     ok = true;
                 } catch (Exception ex) {
                     Trace.TraceError("Error binding:{0}",ex);
                     Thread.Sleep(1000);
                 }
             } while (!ok);
-            
+
+
+
+            var token = new CancellationToken();
             while (true)
             {
-                var tcp = listener.AcceptTcpClient();
+                var wsc = listener.AcceptWebSocketAsync(token).Result;
                 Task.Run(() => {
                     var client = new ClientConnection(sharedState);
-                    client.RunOnExistingTcp(tcp);
+                    client.RunOnAcceptedWebSocket(wsc);
                 });
                 
             }

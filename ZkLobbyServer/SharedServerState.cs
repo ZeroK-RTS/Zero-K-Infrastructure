@@ -16,7 +16,7 @@ namespace ZkLobbyServer
         public int BattleCounter;
         public CommandJsonSerializer Serializer = new CommandJsonSerializer();
 
-        public ConcurrentDictionary<string, Client> Clients = new ConcurrentDictionary<string, Client>();
+        public ConcurrentDictionary<string, ConnectedUser> ConnectedUsers = new ConcurrentDictionary<string, ConnectedUser>();
         public ConcurrentDictionary<string, Channel> Rooms = new ConcurrentDictionary<string, Channel>();
         public ConcurrentDictionary<int, Battle> Battles = new ConcurrentDictionary<int, Battle>();
 

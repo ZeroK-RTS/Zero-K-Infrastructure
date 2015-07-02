@@ -76,15 +76,25 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="vtortola.WebSockets">
+      <HintPath>..\packages\vtortola.WebSocketListener.2.1.7.0\lib\net45\vtortola.WebSockets.dll</HintPath>
+    </Reference>
+    <Reference Include="vtortola.WebSockets.Deflate">
+      <HintPath>..\packages\vtortola.WebSocketListener.2.1.7.0\lib\net45\vtortola.WebSockets.Deflate.dll</HintPath>
+    </Reference>
+    <Reference Include="vtortola.WebSockets.Rfc6455">
+      <HintPath>..\packages\vtortola.WebSocketListener.2.1.7.0\lib\net45\vtortola.WebSockets.Rfc6455.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientConnection.cs" />
     <Compile Include="LoginChecker.cs" />
-    <Compile Include="Client.cs" />
+    <Compile Include="ConnectedUser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="SharedServerState.cs" />
+    <Compile Include="WebSocketServerConnection.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

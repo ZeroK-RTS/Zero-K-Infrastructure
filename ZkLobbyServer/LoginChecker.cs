@@ -252,8 +252,8 @@ namespace ZkLobbyServer
 
         void Talk(string text)
         {
-            Client cli;
-            if (state.Clients.TryGetValue(GlobalConst.NightwatchName, out cli)) cli.Process(new Say { IsEmote = true, Place = SayPlace.Channel, Target = "zkadmin", Text = text });
+            ConnectedUser cli;
+            if (state.ConnectedUsers.TryGetValue(GlobalConst.NightwatchName, out cli)) cli.Process(new Say { IsEmote = true, Place = SayPlace.Channel, Target = "zkadmin", Text = text });
         }
     }
 }

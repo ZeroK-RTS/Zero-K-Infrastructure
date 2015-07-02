@@ -8,23 +8,18 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using LobbyClient;
+using RestSharp.Extensions;
 using ZkData;
 
 namespace ZkLobbyServer
 {
-    public abstract class WebSocketServerConnection: Connection
-    {
-        
-
-    }
-
-    public class ClientConnection: TcpConnection
+    public class ClientConnection: WebSocketServerConnection
     {
 
         int number;
         
         SharedServerState state;
-        Client client;
+        ConnectedUser connectedUser;
 
         DateTime lastPingFromClient;
         System.Timers.Timer timer;
@@ -64,15 +59,15 @@ namespace ZkLobbyServer
 
                 Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
                 
-                client = state.Clients.GetOrAdd(user.Name, (n) => new Client(state, user));
-                client.Connections.TryAdd(this, true);
-                client.User = user;
+                connectedUser = state.ConnectedUsers.GetOrAdd(user.Name, (n) => new ConnectedUser(state, user));
+                connectedUser.Connections.TryAdd(this, true);
+                connectedUser.User = user;
 
-                await client.Broadcast(state.Clients.Values, client.User); // send self to all
+                await connectedUser.Broadcast(state.ConnectedUsers.Values, connectedUser.User); // send self to all
                 
                 await SendCommand(response); // login accepted
 
-                foreach (var c in state.Clients.Values.Where(x=>x!=client)) await SendCommand(c.User); // send others to self
+                foreach (var c in state.ConnectedUsers.Values.Where(x=>x!=connectedUser)) await SendCommand(c.User); // send others to self
                 
                 foreach (var b in state.Battles.Values)
                 {
@@ -123,7 +118,7 @@ namespace ZkLobbyServer
             {
                 response.ResultCode = RegisterResponse.Code.InvalidCharacters;
             }
-            else if (state.Clients.ContainsKey(register.Name))
+            else if (state.ConnectedUsers.ContainsKey(register.Name))
             {
                 response.ResultCode = RegisterResponse.Code.AlreadyConnected;
             }
@@ -173,7 +168,7 @@ namespace ZkLobbyServer
         {
             get
             {
-                if (client != null) return client.Name;
+                if (connectedUser != null) return connectedUser.Name;
                 else return null;
             }
         }
@@ -185,7 +180,7 @@ namespace ZkLobbyServer
                 dynamic obj = state.Serializer.DeserializeLine(line);
                 if (obj is Ping || obj is Login || obj is Register) {
                     await Process(obj);
-                } else await client.Process(obj);
+                } else await connectedUser.Process(obj);
             }
             catch (Exception ex)
             {
@@ -228,7 +223,7 @@ namespace ZkLobbyServer
             timer.Stop();
             string reason = wasRequested ? "quit" : "connection failed";
             if (!string.IsNullOrEmpty(Name)) {
-                await client.RemoveConnection(this, reason);
+                await connectedUser.RemoveConnection(this, reason);
             }
             Trace.TraceInformation("{0} {1}", this, reason);
         }
