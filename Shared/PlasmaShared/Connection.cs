@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Net.WebSockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -20,7 +19,7 @@ namespace ZkData
     /// </summary>
     public abstract class Connection
     {
-        protected WebSocket wsc;
+        protected TcpClient tcp;
         public bool IsConnected { get; private set; }
         public static Encoding Encoding = new UTF8Encoding(false);
 
@@ -45,7 +44,7 @@ namespace ZkData
         {
             try
             {
-                wsc.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None);
+                tcp.Close();
             }
             catch { }
 
@@ -61,7 +60,9 @@ namespace ZkData
             }
         }
 
+        StreamReader reader;
         CancellationTokenSource cancellationTokenSource;
+        NetworkStream stream;
 
         public abstract Task OnConnected();
         public abstract Task OnConnectionClosed(bool wasRequested);
@@ -73,15 +74,15 @@ namespace ZkData
             return InternalRun(null, host, port, bindingIp);
         }
 
-        public Task RunOnExistingTcp(WebSocket wsc)
+        public Task RunOnExistingTcp(TcpClient tcp)
         {
-            return InternalRun(wsc);
+            return InternalRun(tcp);
         }
 
         public string RemoteEndpointIP { get; private set; }
         public int RemoteEndpointPort { get; private set; }
 
-        protected async Task InternalRun(WebSocket existingWsc, string host = null, int? port = null, string bindingIp = null)
+        protected async Task InternalRun(TcpClient existingTcp, string host = null, int? port = null, string bindingIp = null)
         {
             closeRequestedExplicitly = false;
 
@@ -89,26 +90,23 @@ namespace ZkData
 
             var token = cancellationTokenSource.Token;
 
+            if (existingTcp == null) {
+                if (bindingIp == null) tcp = new TcpClient();
+                else tcp = new TcpClient(new IPEndPoint(IPAddress.Parse(bindingIp), 0));
+            } else tcp = existingTcp;
+
+            token.Register(() => tcp.Close());
 
 
             try
             {
-                if (existingWsc == null)
-                {
-                    ClientWebSocket wsclient = new ClientWebSocket();
-                    await wsclient.ConnectAsync(new Uri(string.Format("{0}:{1}", host, port)), CancellationToken.None);
-                    wsc = wsclient;
-                }
-                else wsc = existingWsc;
-
-                token.Register(() => wsc.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None));
-
-                //stream = tcp.GetStream();
-                //reader = new StreamReader(stream, Encoding);
+                if (existingTcp == null) await tcp.ConnectAsync(host, port.Value);
+                stream = tcp.GetStream();
+                reader = new StreamReader(stream, Encoding);
                 IsConnected = true;
 
-                //RemoteEndpointIP = ((IPEndPoint)wsc.tcp.Client.RemoteEndPoint).Address.ToString();
-                //RemoteEndpointPort = ((IPEndPoint)tcp.Client.RemoteEndPoint).Port;
+                RemoteEndpointIP = ((IPEndPoint)tcp.Client.RemoteEndPoint).Address.ToString();
+                RemoteEndpointPort = ((IPEndPoint)tcp.Client.RemoteEndPoint).Port;
 
                 try {
                     await OnConnected();
@@ -116,13 +114,10 @@ namespace ZkData
                     Trace.TraceError("{0} error processing OnConnected: {1}",this,ex);
                 }
 
-                while (!token.IsCancellationRequested && wsc.State == WebSocketState.Open) {
-                    var buf = new byte[4096];
-                    var mes = await wsc.ReceiveAsync(new ArraySegment<byte>(buf), token);
-                    if (mes.MessageType == WebSocketMessageType.Close) {
-                        break;
-                    }
-                    var line = Encoding.GetString(buf);
+                while (!token.IsCancellationRequested)
+                {
+                    var line = await reader.ReadLineAsync();
+                    if (line == null) break; // disconnected cleanly
                     Input(this, line);
                     await OnLineReceived(line);
                 }
@@ -148,7 +143,7 @@ namespace ZkData
             {
                 try
                 {
-                    await wsc.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Binary, false, cancellationTokenSource.Token);
+                    await stream.WriteAsync(buffer, 0, buffer.Length, cancellationTokenSource.Token);
                 }
                 catch (Exception ex)
                 {
