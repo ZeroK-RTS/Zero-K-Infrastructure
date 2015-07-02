@@ -37,6 +37,7 @@ namespace ZkData.UnitSyncLib
 
         public int MinWind { get; set; }
         public string Name { get; set; }
+        public string[] Dependencies { get; set; }
 
         public Option[] Options { get; set; }
         public StartPos[] Positions { get; set; }

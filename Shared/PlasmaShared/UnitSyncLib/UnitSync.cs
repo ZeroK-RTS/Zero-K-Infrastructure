@@ -100,6 +100,9 @@ namespace ZkData.UnitSyncLib
 			map.Minimap = GetMinimap(map);
 			map.Heightmap = GetHeightMap(map.Name);
 			map.Metalmap = GetMetalMap(map.Name);
+
+            // TODO dependencies
+            // TODO replicate in CMissionlib sigh
 			return map;
 		}
 
