@@ -9,7 +9,7 @@ using ZkData;
 
 namespace ZkLobbyServer
 {
-    public abstract class WebSocketTransport: ITransport
+    /*public abstract class WebSocketTransport: ITransport
     {
         protected CancellationTokenSource cancellationTokenSource;
         bool closeRequestedExplicitly;
@@ -102,5 +102,5 @@ namespace ZkLobbyServer
                 }
             }
         }
-    }
+    }*/
 }

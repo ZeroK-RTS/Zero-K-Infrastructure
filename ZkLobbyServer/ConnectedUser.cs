@@ -75,7 +75,7 @@ namespace ZkLobbyServer
         {
             //send identical command to many clients
             var line = state.Serializer.SerializeToLine(data);
-            await Task.WhenAll(targets.Where(x => x != null).Select(async (client) => {await client.SendCommand(line);}));
+            await Task.WhenAll(targets.Where(x => x != null).Select(async (client) => {await client.SendLine(line);}));
         }
 
         public async Task SendLine(string line)

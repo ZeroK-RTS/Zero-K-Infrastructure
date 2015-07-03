@@ -43,13 +43,11 @@ namespace ZkLobbyServer
         {
             this.state = state;
             number = Interlocked.Increment(ref state.ClientCounter);
-
-            transport.OnCommandReceived = OnCommandReceived;
-            transport.OnConnectionClosed = OnConnectionClosed;
-            transport.OnConnected = OnConnected;
-
-            timer = new Timer(GlobalConst.LobbyProtocolPingInterval*1000);
+            this.transport = transport;
+            timer = new Timer(GlobalConst.LobbyProtocolPingInterval * 1000);
             timer.Elapsed += TimerOnElapsed;
+
+            transport.ConnectAndRun(OnCommandReceived, OnConnected, OnConnectionClosed);
         }
 
         public async Task OnCommandReceived(string line)

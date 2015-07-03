@@ -161,8 +161,8 @@ namespace LobbyClient
         public string UserName { get; private set; }
         public string UserPassword { get; private set; }
 
-        public event EventHandler<string> Input;
-        public event EventHandler<string> Output;
+        public event EventHandler<string> Input = delegate {};
+        public event EventHandler<string> Output = delegate {};
         public event EventHandler<User> UserAdded = delegate { };
         public event EventHandler<UserDisconnected> UserRemoved = delegate { };
         public event EventHandler<OldNewPair<User>> UserStatusChanged = delegate { };
@@ -330,12 +330,9 @@ namespace LobbyClient
             WasDisconnectRequested = false;
             pingTimer.Start();
 
-            var con = new TcpTransport();
+            var con = new TcpTransport(host,port, forcedLocalIP ? localIp:null);
             transport = con;
-            con.OnConnected = OnConnected;
-            con.OnCommandReceived = OnCommandReceived;
-            con.OnConnectionClosed = OnConnectionClosed;
-            con.Connect(host, port, forcedLocalIP ? localIp : null);
+            con.ConnectAndRun(OnCommandReceived, OnConnected, OnConnectionClosed);
         }
 
         public bool WasDisconnectRequested { get; private set; }

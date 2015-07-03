@@ -11,27 +11,32 @@ namespace ZkData
 {
     public class TcpTransport: ITransport
     {
+        Func<string, Task> OnCommandReceived { get; set; }
+        Func<Task> OnConnected { get; set; }
+        Func<bool, Task> OnConnectionClosed { get; set; }
         protected CancellationTokenSource cancellationTokenSource;
         protected bool closeRequestedExplicitly;
+        readonly string host;
+        readonly int port;
 
 
         StreamReader reader;
         NetworkStream stream;
         protected TcpClient tcp;
         public static Encoding Encoding = new UTF8Encoding(false);
-        public virtual bool IsConnected { get; protected set; }
 
-
-        public Task Connect(string host, int port, string bindingIp = null)
+        public TcpTransport(TcpClient existingTcp)
         {
-            return InternalRun(null, host, port, bindingIp);
+            this.tcp = existingTcp;
         }
 
-        public Task RunOnExistingTcp(TcpClient tcp)
+        public TcpTransport(string host, int port, string bindingIp = null)
         {
-            return InternalRun(tcp);
+            if (bindingIp == null) tcp = new TcpClient();
+            else tcp = new TcpClient(new IPEndPoint(IPAddress.Parse(bindingIp), 0));
+            this.host = host;
+            this.port = port;
         }
-
 
         protected void InternalClose()
         {
@@ -48,24 +53,51 @@ namespace ZkData
             }
         }
 
+        public virtual bool IsConnected { get; protected set; }
 
-        protected async Task InternalRun(TcpClient existingTcp, string host = null, int? port = null, string bindingIp = null)
+
+        /// <summary>
+        ///     Closes connection to remote server
+        /// </summary>
+        public void RequestClose()
         {
+            IsConnected = false;
+            closeRequestedExplicitly = true;
+            if (cancellationTokenSource != null) //in case never connected yet
+                cancellationTokenSource.Cancel();
+        }
+
+
+        public async Task SendLine(string command)
+        {
+            var buffer = Encoding.GetBytes(command);
+            if (IsConnected) {
+                try {
+                    await stream.WriteAsync(buffer, 0, buffer.Length, cancellationTokenSource.Token);
+                } catch (Exception ex) {
+                    if (cancellationTokenSource != null && !cancellationTokenSource.Token.IsCancellationRequested) {
+                        Trace.TraceWarning("{0} error sending command: {1}", this, ex.Message);
+                        RequestClose();
+                    }
+                }
+            }
+        }
+
+        public async Task ConnectAndRun(Func<string, Task> onLineReceived, Func<Task> onConnected, Func<bool, Task> onConnectionClosed)
+        {
+            OnCommandReceived = onLineReceived;
+            OnConnected = onConnected;
+            OnConnectionClosed = onConnectionClosed;
             closeRequestedExplicitly = false;
 
             cancellationTokenSource = new CancellationTokenSource();
 
             var token = cancellationTokenSource.Token;
 
-            if (existingTcp == null) {
-                if (bindingIp == null) tcp = new TcpClient();
-                else tcp = new TcpClient(new IPEndPoint(IPAddress.Parse(bindingIp), 0));
-            } else tcp = existingTcp;
-
             token.Register(() => tcp.Close());
 
             try {
-                if (existingTcp == null) await tcp.ConnectAsync(host, port.Value);
+                if (!tcp.Connected) await tcp.ConnectAsync(host, port);
                 stream = tcp.GetStream();
                 reader = new StreamReader(stream, Encoding);
                 IsConnected = true;
@@ -88,37 +120,6 @@ namespace ZkData
                 if (!token.IsCancellationRequested) Trace.TraceWarning("{0} socket disconnected: {1}", this, ex.Message);
             }
             InternalClose();
-        }
-
-        /// <summary>
-        ///     Closes connection to remote server
-        /// </summary>
-        public void RequestClose()
-        {
-            IsConnected = false;
-            closeRequestedExplicitly = true;
-            if (cancellationTokenSource != null) //in case never connected yet
-                cancellationTokenSource.Cancel();
-        }
-
-
-        public Func<Task> OnConnected { get; set; }
-        public Func<bool, Task> OnConnectionClosed { get; set; }
-        public Func<string, Task> OnCommandReceived { get; set; }
-
-        public async Task SendLine(string command)
-        {
-            byte[] buffer = Encoding.GetBytes(command);
-            if (IsConnected) {
-                try {
-                    await stream.WriteAsync(buffer, 0, buffer.Length, cancellationTokenSource.Token);
-                } catch (Exception ex) {
-                    if (cancellationTokenSource != null && !cancellationTokenSource.Token.IsCancellationRequested) {
-                        Trace.TraceWarning("{0} error sending command: {1}", this, ex.Message);
-                        RequestClose();
-                    }
-                }
-            }
         }
 
         public string RemoteEndpointAddress { get; private set; }

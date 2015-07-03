@@ -45,9 +45,8 @@ namespace ZkLobbyServer
                 var tcp = await listener.AcceptTcpClientAsync();
                 Task.Run(() =>
                 {
-                    var transport = new TcpTransport();
+                    var transport = new TcpTransport(tcp);
                     onTransportAcccepted(transport);
-                    transport.RunOnExistingTcp(tcp);
                 });
             }
         }

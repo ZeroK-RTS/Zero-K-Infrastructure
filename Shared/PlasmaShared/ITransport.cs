@@ -6,9 +6,7 @@ namespace ZkData
     public interface ITransport
     {
         bool IsConnected { get; }
-        Func<string, Task> OnCommandReceived { get; set; }
-        Func<Task> OnConnected { get; set; }
-        Func<bool, Task> OnConnectionClosed { get; set; }
+        Task ConnectAndRun(Func<string, Task> onLineReceived, Func<Task> onConnected, Func<bool, Task> onConnectionClosed);
         string RemoteEndpointAddress { get; }
         int RemoteEndpointPort { get; }
         void RequestClose();
