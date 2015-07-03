@@ -21,8 +21,10 @@ using Timer = System.Timers.Timer;
 namespace LobbyClient
 {
     
-    public class TasClient:WebSocketClientConnection
+    public class TasClient
     {
+        ITransport transport;
+
         public const int MaxAlliances = 16;
         public const int MaxTeams = 16;
 
@@ -31,6 +33,11 @@ namespace LobbyClient
         public delegate void Invoker();
 
         public delegate void Invoker<TArg>(TArg arg);
+
+        public bool IsConnected
+        {
+            get { return transport != null && transport.IsConnected; }
+        }
 
 
         readonly string appName = "UnknownClient";
@@ -54,7 +61,7 @@ namespace LobbyClient
         public Dictionary<string, User> ExistingUsers { get { return existingUsers; } set { existingUsers = value; } }
 
         
-        public override async Task OnConnected()
+        public async Task OnConnected()
         {
             MyBattle = null;
             ExistingUsers = new Dictionary<string, User>();
@@ -63,7 +70,7 @@ namespace LobbyClient
             isLoggedIn = false;
         }
 
-        public override async Task OnConnectionClosed(bool wasRequested)
+        public async Task OnConnectionClosed(bool wasRequested)
         {
             ExistingUsers = new Dictionary<string, User>();
             joinedChannels = new Dictionary<string, Channel>();
@@ -74,9 +81,10 @@ namespace LobbyClient
             ConnectionLost(this, new TasEventArgs(string.Format("Connection {0}", wasRequested ? "closed on user request" : "disconnected")));
         }
 
-        public override async Task OnLineReceived(string line)
+        public async Task OnCommandReceived(string line)
         {
             try {
+                Input(this, line);
                 dynamic obj = CommandJsonSerializer.DeserializeLine(line);
                 await Process(obj);
             } catch (Exception ex) {
@@ -88,7 +96,8 @@ namespace LobbyClient
         {
             try {
                 var line = CommandJsonSerializer.SerializeToLine(data);
-                await SendString(line);
+                Output(this, line);
+                await transport.SendCommand(line);
             } catch (Exception ex) {
                 Trace.TraceError("Error sending {0} : {1}", data,ex);
             }
@@ -152,6 +161,8 @@ namespace LobbyClient
         public string UserName { get; private set; }
         public string UserPassword { get; private set; }
 
+        public event EventHandler<string> Input;
+        public event EventHandler<string> Output;
         public event EventHandler<User> UserAdded = delegate { };
         public event EventHandler<UserDisconnected> UserRemoved = delegate { };
         public event EventHandler<OldNewPair<User>> UserStatusChanged = delegate { };
@@ -319,14 +330,19 @@ namespace LobbyClient
             WasDisconnectRequested = false;
             pingTimer.Start();
 
-            Connect(host, port, forcedLocalIP ? localIp : null);
+            var con = new TcpTransport();
+            transport = con;
+            con.OnConnected = OnConnected;
+            con.OnCommandReceived = OnCommandReceived;
+            con.OnConnectionClosed = OnConnectionClosed;
+            con.Connect(host, port, forcedLocalIP ? localIp : null);
         }
 
         public bool WasDisconnectRequested { get; private set; }
         public void RequestDisconnect()
         {
             WasDisconnectRequested = true;
-            RequestClose();
+            transport.RequestClose();
         }
 
 
@@ -553,7 +569,8 @@ namespace LobbyClient
         public Task SendRaw(string text)
         {
             if (!text.EndsWith("\n")) text += "\n";
-            return SendString(text);
+            Output(this, text);
+            return transport.SendCommand(text);
         }
 
         public Task SetModOptions(Dictionary<string,string> data)

@@ -103,6 +103,7 @@
     <Compile Include="ISpringieService\RecommendedMapResult.cs" />
     <Compile Include="ISpringieService\RectInfo.cs" />
     <Compile Include="ISpringieService\SpringBattleStartSetup.cs" />
+    <Compile Include="ITransport.cs" />
     <Compile Include="LuaTable.cs" />
     <Compile Include="MetaDataCache.cs" />
     <Compile Include="Pool.cs" />
@@ -122,7 +123,7 @@
     <Compile Include="SpringScanner.cs" />
     <Compile Include="CsvTable.cs" />
     <Compile Include="SteamWebApi.cs" />
-    <Compile Include="TcpConnection.cs" />
+    <Compile Include="TcpTransport.cs" />
     <Compile Include="WebSocketClientConnection.cs" />
     <Compile Include="UnitSyncLib\Ai.cs" />
     <Compile Include="UnitSyncLib\AiInfoPair.cs" />
