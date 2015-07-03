@@ -71,7 +71,6 @@
   <ItemGroup>
     <Compile Include="AuthTools.cs" />
     <Compile Include="ChangeEventArgs.cs" />
-    <Compile Include="Connection.cs" />
     <Compile Include="DbCloner.cs" />
     <Compile Include="Diagrams\Diagram.cs" />
     <Compile Include="Diagrams\Node.cs" />

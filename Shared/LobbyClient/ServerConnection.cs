@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using ZkData;
@@ -20,14 +21,14 @@ namespace LobbyClient
 
         public string Command { get { return command; } set { command = value; } }
 
-        public Connection Connection { get; set; }
+        public ServerConnection Connection { get; set; }
 
         public string[] Parameters { get; set; }
 
 
         public ConnectionEventArgs() { }
 
-        public ConnectionEventArgs(Connection connection, string command, string[] parameters)
+        public ConnectionEventArgs(ServerConnection connection, string command, string[] parameters)
         {
             Connection = connection;
             this.command = command;
@@ -39,25 +40,27 @@ namespace LobbyClient
     /// <summary>
     /// Handles communiction with server on low level
     /// </summary>
-    public class ServerConnection: WebSocketClientConnection
+    public class ServerConnection
     {
         public event EventHandler<ConnectionEventArgs> CommandRecieved;
         public event EventHandler<EventArgs<KeyValuePair<string, object[]>>> CommandSent = delegate { };
         public event EventHandler Connected;
         public event EventHandler ConnectionClosed;
 
+        TcpTransport transport;
+        public bool IsConnected { get { return transport != null && transport.IsConnected; } }
 
-        public override Task OnConnectionClosed(bool wasRequested)
+        public Task OnConnectionClosed(bool wasRequested)
         {
             return Task.Run(() => { if (ConnectionClosed != null) ConnectionClosed(this, EventArgs.Empty); });
         }
 
-        public override Task OnConnected()
+        public Task OnConnected()
         {
             return Task.Run(() => { if (Connected != null) Connected(this, EventArgs.Empty); });
         }
 
-        public override Task OnLineReceived(string line)
+        public Task OnLineReceived(string line)
         {
             return Task.Run(() => {
                 ConnectionEventArgs command = null;
@@ -77,12 +80,12 @@ namespace LobbyClient
 
         public async Task SendCommand(string command, params object[] parameters)
         {
-            if (IsConnected)
+            if (transport!=null && transport.IsConnected)
             {
                 try
                 {
-                    var buffer = Encoding.GetBytes(PrepareCommand(command, parameters));
-                    await SendData(buffer);
+                    var line = PrepareCommand(command, parameters);
+                    await transport.SendLine(line);
                     CommandSent(this, new EventArgs<KeyValuePair<string, object[]>>(new KeyValuePair<string, object[]>(command, parameters)));
                 }
                 catch (Exception ex)
@@ -130,6 +133,18 @@ namespace LobbyClient
             }
             sb.Append('\n');
             return sb.ToString();
+        }
+
+        public void Connect(string lobbyServerHost, int lobbyServerPort, string bindingIPoverride = null)
+        {
+            transport = new TcpTransport(lobbyServerHost,lobbyServerPort, bindingIPoverride);
+            transport.ConnectAndRun(OnLineReceived, OnConnected, OnConnectionClosed);
+        }
+
+        public void RequestClose()
+        {
+            if (transport!=null) transport.RequestClose();
+            
         }
     }
 }

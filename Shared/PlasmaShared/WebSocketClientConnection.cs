@@ -9,6 +9,7 @@ using WebSocket4Net;
 
 namespace ZkData
 {
+    /*
     public abstract class WebSocketClientConnection: Connection
     {
         protected WebSocket wsc;
@@ -84,5 +85,5 @@ namespace ZkData
             wsc.Open();
             
         }
-    }
+    }*/
 }
