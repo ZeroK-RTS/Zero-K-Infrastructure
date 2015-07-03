@@ -12,6 +12,6 @@ namespace ZkData
         string RemoteEndpointAddress { get; }
         int RemoteEndpointPort { get; }
         void RequestClose();
-        Task SendCommand(string command);
+        Task SendLine(string command);
     }
 }

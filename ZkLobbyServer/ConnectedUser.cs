@@ -74,23 +74,22 @@ namespace ZkLobbyServer
         public async Task Broadcast<T>(IEnumerable<ConnectedUser> targets, T data)
         {
             //send identical command to many clients
-            var bytes = Connection.Encoding.GetBytes(state.Serializer.SerializeToLine(data));
-            await Task.WhenAll(targets.Where(x => x != null).Select(async (client) => {await client.SendData(bytes);}));
+            var line = state.Serializer.SerializeToLine(data);
+            await Task.WhenAll(targets.Where(x => x != null).Select(async (client) => {await client.SendCommand(line);}));
         }
 
-
-        public async Task SendData(byte[] data)
+        public async Task SendLine(string line)
         {
-            await Task.WhenAll(Connections.Keys.Select(async (con) => { await con.SendData(data); }));
+            await Task.WhenAll(Connections.Keys.Select(async (con) => { await con.SendLine(line); }));
         }
+
 
 
         public async Task SendCommand<T>(T data)
         {
             try {
                 var line = state.Serializer.SerializeToLine(data);
-                var bytes = Connection.Encoding.GetBytes(line);
-                await SendData(bytes);
+                await SendLine(line);
             }
             catch (Exception ex)
             {

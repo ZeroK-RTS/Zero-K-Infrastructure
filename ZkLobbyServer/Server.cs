@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using LobbyClient;
@@ -36,6 +35,12 @@ namespace ZkLobbyServer
             if (!Debugger.IsAttached) selfUpdater.StartChecking();
 #endif
 
+            var tcpServerListener = new TcpTransportServerListener();
+            if (tcpServerListener.Bind(20)) {
+                tcpServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); }).Wait();
+            }
+
+            /*
             bool ok = false;
             WebSocketListener listener = null;
             do {
@@ -62,7 +67,7 @@ namespace ZkLobbyServer
                     client.RunOnAcceptedWebSocket(wsc);
                 });
                 
-            }
+            }*/
         }
     }
 }

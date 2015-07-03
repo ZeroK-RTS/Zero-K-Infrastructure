@@ -106,7 +106,7 @@ namespace ZkData
         public Func<bool, Task> OnConnectionClosed { get; set; }
         public Func<string, Task> OnCommandReceived { get; set; }
 
-        public async Task SendCommand(string command)
+        public async Task SendLine(string command)
         {
             byte[] buffer = Encoding.GetBytes(command);
             if (IsConnected) {

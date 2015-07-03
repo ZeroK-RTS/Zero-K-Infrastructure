@@ -97,7 +97,7 @@ namespace LobbyClient
             try {
                 var line = CommandJsonSerializer.SerializeToLine(data);
                 Output(this, line);
-                await transport.SendCommand(line);
+                await transport.SendLine(line);
             } catch (Exception ex) {
                 Trace.TraceError("Error sending {0} : {1}", data,ex);
             }
@@ -570,7 +570,7 @@ namespace LobbyClient
         {
             if (!text.EndsWith("\n")) text += "\n";
             Output(this, text);
-            return transport.SendCommand(text);
+            return transport.SendLine(text);
         }
 
         public Task SetModOptions(Dictionary<string,string> data)
