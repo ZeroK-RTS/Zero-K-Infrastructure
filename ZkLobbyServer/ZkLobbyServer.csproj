@@ -96,7 +96,8 @@
     <Compile Include="Server.cs" />
     <Compile Include="SharedServerState.cs" />
     <Compile Include="TcpTransportServerListener.cs" />
-    <Compile Include="WebSocketServerConnection.cs" />
+    <Compile Include="WebSocketServerTransport.cs" />
+    <Compile Include="WebSocketTransportServerListener.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

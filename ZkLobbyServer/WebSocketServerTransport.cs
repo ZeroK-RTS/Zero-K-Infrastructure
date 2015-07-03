@@ -9,17 +9,44 @@ using ZkData;
 
 namespace ZkLobbyServer
 {
-    /*public abstract class WebSocketTransport: ITransport
+    public class WebSocketServerTransport: ITransport
     {
+        Func<Task> OnConnected { get; set; }
+        Func<bool, Task> OnConnectionClosed { get; set; }
+        Func<string, Task> OnLineReceived { get; set; }
         protected CancellationTokenSource cancellationTokenSource;
         bool closeRequestedExplicitly;
-        WebSocket wsc;
+        readonly WebSocket wsc;
         public static Encoding Encoding = new UTF8Encoding(false);
 
-
-        public async void RunOnAcceptedWebSocket(WebSocket wsc)
+        public WebSocketServerTransport(WebSocket acceptedWebsocket)
         {
-            this.wsc = wsc;
+            this.wsc = acceptedWebsocket;
+        }
+
+
+        protected void InternalClose()
+        {
+            try {
+                wsc.Close();
+            } catch {}
+
+            IsConnected = false;
+
+            try {
+                OnConnectionClosed(closeRequestedExplicitly);
+            } catch (Exception ex) {
+                Trace.TraceError("{0} error procesing OnConnectionClosed: {1}", ex);
+            }
+        }
+
+        public bool IsConnected { get; private set; }
+
+        public async Task ConnectAndRun(Func<string, Task> onLineReceived, Func<Task> onConnected, Func<bool, Task> onConnectionClosed)
+        {
+            this.OnLineReceived = onLineReceived;
+            this.OnConnected = onConnected;
+            this.OnConnectionClosed = onConnectionClosed;
 
             closeRequestedExplicitly = false;
 
@@ -45,7 +72,7 @@ namespace ZkLobbyServer
                         if (message.Length == 0) break;
                         using (var sr = new StreamReader(message, Encoding)) {
                             var line = await sr.ReadToEndAsync();
-                            await OnCommandReceived(line);
+                            await OnLineReceived(line);
                         }
                     }
                 }
@@ -55,28 +82,6 @@ namespace ZkLobbyServer
             InternalClose();
         }
 
-
-        public async Task SendCommand(byte[] buffer) {}
-
-        protected void InternalClose()
-        {
-            try {
-                wsc.Close();
-            } catch {}
-
-            IsConnected = false;
-
-            try {
-                OnConnectionClosed(closeRequestedExplicitly);
-            } catch (Exception ex) {
-                Trace.TraceError("{0} error procesing OnConnectionClosed: {1}", ex);
-            }
-        }
-
-        public bool IsConnected { get; private set; }
-        public Func<string, Task> OnCommandReceived { get; set; }
-        public Func<Task> OnConnected { get; set; }
-        public Func<bool, Task> OnConnectionClosed { get; set; }
         public string RemoteEndpointAddress { get; private set; }
         public int RemoteEndpointPort { get; private set; }
 
@@ -102,5 +107,5 @@ namespace ZkLobbyServer
                 }
             }
         }
-    }*/
+    }
 }

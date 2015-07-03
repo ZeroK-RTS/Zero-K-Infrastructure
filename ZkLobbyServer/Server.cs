@@ -40,34 +40,13 @@ namespace ZkLobbyServer
                 tcpServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); }).Wait();
             }
 
-            /*
-            bool ok = false;
-            WebSocketListener listener = null;
-            do {
-                try {
-                    listener = new WebSocketListener(new IPEndPoint(IPAddress.Any, GlobalConst.LobbyServerPort));
-                    var rfc6455 = new vtortola.WebSockets.Rfc6455.WebSocketFactoryRfc6455(listener);
-                    listener.Standards.RegisterStandard(rfc6455);
-                    listener.Start();
-                    ok = true;
-                } catch (Exception ex) {
-                    Trace.TraceError("Error binding:{0}",ex);
-                    Thread.Sleep(1000);
-                }
-            } while (!ok);
-
-
-
-            var token = new CancellationToken();
-            while (true)
+            /*var tcpServerListener = new TcpTransportServerListener();
+            if (tcpServerListener.Bind(20))
             {
-                var wsc = listener.AcceptWebSocketAsync(token).Result;
-                Task.Run(() => {
-                    var client = new ClientConnection(sharedState);
-                    client.RunOnAcceptedWebSocket(wsc);
-                });
-                
+                tcpServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); }).Wait();
             }*/
+
+          
         }
     }
 }

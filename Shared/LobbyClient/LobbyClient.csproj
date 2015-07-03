@@ -79,7 +79,7 @@
     <Compile Include="Protocol\Messages.cs" />
     <Compile Include="PwMatchCommand.cs" />
     <Compile Include="SayingEventArgs.cs" />
-    <Compile Include="ServerConnection.cs" />
+    <Compile Include="Legacy\ServerConnection.cs" />
     <Compile Include="Spring.cs" />
     <Compile Include="SpringieServer.cs" />
     <Compile Include="Talker.cs" />
