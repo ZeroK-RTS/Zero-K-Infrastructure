@@ -37,14 +37,14 @@ namespace ZkLobbyServer
 
             var tcpServerListener = new TcpTransportServerListener();
             if (tcpServerListener.Bind(20)) {
-                tcpServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); }).Wait();
+                tcpServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); });
             }
 
-            /*var tcpServerListener = new TcpTransportServerListener();
-            if (tcpServerListener.Bind(20))
+            var wscServerListener = new WebSocketTransportServerListener();
+            if (wscServerListener.Bind(20))
             {
-                tcpServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); }).Wait();
-            }*/
+                wscServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); });
+            }
 
           
         }

@@ -20,7 +20,7 @@ namespace ZkLobbyServer
             WebSocketListener listener = null;
             do {
                 try {
-                    listener = new WebSocketListener(new IPEndPoint(IPAddress.Any, GlobalConst.LobbyServerPort));
+                    listener = new WebSocketListener(new IPEndPoint(IPAddress.Any, GlobalConst.LobbyServerPort+1));
                     var rfc6455 = new WebSocketFactoryRfc6455(listener);
                     listener.Standards.RegisterStandard(rfc6455);
                     listener.Start();
