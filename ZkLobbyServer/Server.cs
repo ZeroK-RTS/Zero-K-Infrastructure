@@ -14,11 +14,11 @@ namespace ZkLobbyServer
     public class Server
     {
         SharedServerState sharedState = new SharedServerState();
-        SelfUpdater selfUpdater = new SelfUpdater("ZkLobbyServer");
+//        SelfUpdater selfUpdater = new SelfUpdater("ZkLobbyServer");
 
         public async Task Run()
         {
-            selfUpdater.ProgramUpdated += s => {
+  /*          selfUpdater.ProgramUpdated += s => {
                 {
                     Task.WaitAll(sharedState.ConnectedUsers.Values.Select((client) => client.SendCommand(new Say {
                         IsEmote = true,
@@ -30,7 +30,7 @@ namespace ZkLobbyServer
                     Process.Start(s);
                     Environment.Exit(0);
                 }
-            };
+            };*/
 #if !DEBUG
             if (!Debugger.IsAttached) selfUpdater.StartChecking();
 #endif

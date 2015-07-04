@@ -16,6 +16,7 @@ using NightWatch;
 using ZeroKWeb.Controllers;
 using ZkData;
 using System.Web.Optimization;
+using ZkLobbyServer;
 
 namespace ZeroKWeb
 {
@@ -85,6 +86,11 @@ namespace ZeroKWeb
         protected void Application_Start()
         {
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            var zkls = new Server();
+
+            Application["zkls"] = zkls;
+            zkls.Run();
 
             var nw = new Nightwatch();
             Application["Nightwatch"] = nw;

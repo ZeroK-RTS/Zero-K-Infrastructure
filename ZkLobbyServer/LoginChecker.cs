@@ -23,7 +23,7 @@ namespace ZkLobbyServer
         public LoginChecker(SharedServerState state)
         {
             this.state = state;
-            geoIP = new DatabaseReader("GeoLite2-Country.mmdb", FileAccessMode.Memory);
+            geoIP = new DatabaseReader(@"c:\work\Zero-K-Infrastructure\ZkLobbyServer\bin\Debug\GeoLite2-Country.mmdb", FileAccessMode.Memory);
         }
 
 

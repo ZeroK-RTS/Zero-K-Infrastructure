@@ -24,7 +24,7 @@ namespace ZkLobbyServer
 
         public SharedServerState()
         {
-            var entry = Assembly.GetEntryAssembly();
+            var entry = Assembly.GetExecutingAssembly();
             Version = entry.GetName().Version.ToString();
             Engine = GlobalConst.DefaultEngineOverride;
             Game = "zk:stable";

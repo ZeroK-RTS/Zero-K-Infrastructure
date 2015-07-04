@@ -109,9 +109,6 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
-    <Reference Include="WebActivatorEx">
-      <HintPath>..\packages\WebActivatorEx.2.0.6\lib\net40\WebActivatorEx.dll</HintPath>
-    </Reference>
     <Reference Include="WebGrease, Version=1.5.2.14234, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
@@ -1424,6 +1421,10 @@
     <ProjectReference Include="..\ZkData\ZkData.csproj">
       <Project>{61d3be0a-282d-462c-ba26-06670e5acb3e}</Project>
       <Name>ZkData</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ZkLobbyServer\ZkLobbyServer.csproj">
+      <Project>{1a6022df-9af2-4ba3-a61c-87be507a6f4a}</Project>
+      <Name>ZkLobbyServer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
