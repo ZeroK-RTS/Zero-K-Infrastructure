@@ -16,8 +16,6 @@ namespace ZkData
         Func<bool, Task> OnConnectionClosed { get; set; }
         protected CancellationTokenSource cancellationTokenSource;
         protected bool closeRequestedExplicitly;
-        readonly string host;
-        readonly int port;
 
 
         StreamReader reader;
@@ -34,8 +32,8 @@ namespace ZkData
         {
             if (bindingIp == null) tcp = new TcpClient();
             else tcp = new TcpClient(new IPEndPoint(IPAddress.Parse(bindingIp), 0));
-            this.host = host;
-            this.port = port;
+            RemoteEndpointAddress = host;
+            RemoteEndpointPort = port;
         }
 
         protected void InternalClose()
@@ -97,7 +95,7 @@ namespace ZkData
             token.Register(() => tcp.Close());
 
             try {
-                if (!tcp.Connected) await tcp.ConnectAsync(host, port);
+                if (!tcp.Connected) await tcp.ConnectAsync(RemoteEndpointAddress, RemoteEndpointPort);
                 stream = tcp.GetStream();
                 reader = new StreamReader(stream, Encoding);
                 IsConnected = true;

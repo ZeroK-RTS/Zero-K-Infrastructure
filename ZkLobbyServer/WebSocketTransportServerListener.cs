@@ -17,7 +17,7 @@ namespace ZkLobbyServer
         public bool Bind(int retryCount)
         {
             var ok = false;
-            WebSocketListener listener = null;
+            
             do {
                 try {
                     listener = new WebSocketListener(new IPEndPoint(IPAddress.Any, GlobalConst.LobbyServerPort+1));

@@ -69,11 +69,10 @@ namespace ZkLobbyServer
                 while (wsc.IsConnected && !token.IsCancellationRequested) {
                     var message = await wsc.ReadMessageAsync(token);
                     if (message != null) {
-                        if (message.Length == 0) break;
-                        using (var sr = new StreamReader(message, Encoding)) {
-                            var line = await sr.ReadToEndAsync();
-                            await OnLineReceived(line);
-                        }
+                        var ms = new MemoryStream();
+                        await message.CopyToAsync(ms);
+                        var line = Encoding.GetString(ms.ToArray());
+                        await OnLineReceived(line);
                     }
                 }
             } catch (Exception ex) {
@@ -97,8 +96,9 @@ namespace ZkLobbyServer
         {
             if (IsConnected && wsc.IsConnected) {
                 try {
-                    var buffer = Encoding.GetBytes(command);
-                    using (var messageWriter = wsc.CreateMessageWriter(WebSocketMessageType.Binary)) await new MemoryStream(buffer).CopyToAsync(messageWriter);
+                    //var buffer = Encoding.GetBytes(command);
+                    using (var messageWriter = wsc.CreateMessageWriter(WebSocketMessageType.Text)) await new StreamWriter(messageWriter, Encoding).WriteLineAsync(command);
+                    
                 } catch (Exception ex) {
                     if (cancellationTokenSource != null && !cancellationTokenSource.Token.IsCancellationRequested) {
                         Trace.TraceWarning("{0} error sending command: {1}", this, ex.Message);

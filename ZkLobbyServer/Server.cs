@@ -16,7 +16,7 @@ namespace ZkLobbyServer
         SharedServerState sharedState = new SharedServerState();
         SelfUpdater selfUpdater = new SelfUpdater("ZkLobbyServer");
 
-        public void Run()
+        public async Task Run()
         {
             selfUpdater.ProgramUpdated += s => {
                 {
@@ -34,19 +34,19 @@ namespace ZkLobbyServer
 #if !DEBUG
             if (!Debugger.IsAttached) selfUpdater.StartChecking();
 #endif
+            List<Task> tasks = new List<Task>();
 
             var tcpServerListener = new TcpTransportServerListener();
             if (tcpServerListener.Bind(20)) {
-                tcpServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); });
+                tasks.Add(tcpServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); }));
             }
 
             var wscServerListener = new WebSocketTransportServerListener();
-            if (wscServerListener.Bind(20))
-            {
-                wscServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); });
+            if (wscServerListener.Bind(20)) {
+                tasks.Add(wscServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); }));
             }
 
-          
+            await Task.WhenAll(tasks);
         }
     }
 }

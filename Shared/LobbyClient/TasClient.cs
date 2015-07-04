@@ -330,7 +330,7 @@ namespace LobbyClient
             WasDisconnectRequested = false;
             pingTimer.Start();
 
-            var con = new TcpTransport(host,port, forcedLocalIP ? localIp:null);
+            var con = new TcpTransport(host,port+1, forcedLocalIP ? localIp:null);
             transport = con;
             con.ConnectAndRun(OnCommandReceived, OnConnected, OnConnectionClosed);
         }
