@@ -379,7 +379,8 @@ namespace System.Web.Mvc
             var contribs = account.ContributionsByAccountID.ToList();
             var total = 0;
             foreach (var contrib in contribs) total += contrib.KudosValue;
-            if (total >= GlobalConst.KudosForGold) star = "star_yellow";
+            if (total >= GlobalConst.KudosForDiamond) star = "star_diamond";
+            else if (total >= GlobalConst.KudosForGold) star = "star_yellow";
             else if (total >= GlobalConst.KudosForSilver) star = "star_white";
             else if (total >= GlobalConst.KudosForBronze) star = "star_brown";
             else return new MvcHtmlString("");
