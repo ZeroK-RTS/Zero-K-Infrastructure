@@ -71,7 +71,6 @@
   <ItemGroup>
     <Compile Include="AuthTools.cs" />
     <Compile Include="ChangeEventArgs.cs" />
-    <Compile Include="Connection.cs" />
     <Compile Include="DbCloner.cs" />
     <Compile Include="Diagrams\Diagram.cs" />
     <Compile Include="Diagrams\Node.cs" />
@@ -103,6 +102,7 @@
     <Compile Include="ISpringieService\RecommendedMapResult.cs" />
     <Compile Include="ISpringieService\RectInfo.cs" />
     <Compile Include="ISpringieService\SpringBattleStartSetup.cs" />
+    <Compile Include="ITransport.cs" />
     <Compile Include="LuaTable.cs" />
     <Compile Include="MetaDataCache.cs" />
     <Compile Include="Pool.cs" />
@@ -122,6 +122,8 @@
     <Compile Include="SpringScanner.cs" />
     <Compile Include="CsvTable.cs" />
     <Compile Include="SteamWebApi.cs" />
+    <Compile Include="TcpTransport.cs" />
+    <Compile Include="WebSocketClientConnection.cs" />
     <Compile Include="UnitSyncLib\Ai.cs" />
     <Compile Include="UnitSyncLib\AiInfoPair.cs" />
     <Compile Include="UnitSyncLib\DependencyMissingException.cs" />
@@ -166,6 +168,9 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.Services" />
+    <Reference Include="WebSocket4Net">
+      <HintPath>..\..\packages\WebSocket4Net.0.12\lib\net45\WebSocket4Net.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
