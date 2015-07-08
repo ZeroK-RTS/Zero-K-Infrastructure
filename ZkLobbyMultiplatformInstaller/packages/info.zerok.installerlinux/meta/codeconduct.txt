@@ -1,0 +1,69 @@
+﻿###Short Version###
+##TL;DR##
+  Treat other players with respect and don't lose your temper. 
+
+#DOs#
+1. Respect other players 
+2. Help newbies 
+3. Cooperate with your team 
+
+#DON'Ts#
+5. Don't intentionally ruin games 
+6. Don't cheat 
+7. Don't abuse other players 
+
+###Long Version###
+##Code of Conduct - General rules of Zero-K community##
+
+#0. Don't make a game better-off without your presence#
+   This is the fundamental rule that underpins the rest of the CoC. Individuals who wilfully act to degrade to worsen the experience of others can and will be removed, even if they do not violate the letter of any other part of the code. 
+
+#1. Respect other players#
+   Zero-K is a multi-player community and as such we should attempt to create a positive, welcoming and friendly gaming environment at all times. When questioning others actions or opinions, do so respectfully and thoughtfully. Do not blame others for a loss or insult other players. 
+
+#2. Help newbies#
+   Offer new players friendly advice and help them with any issues they may have. It is encouraged for you to take on a mentor mindset and teach them how to play. Be forgiving to players who have trouble pulling their weight and try to give them advice on how they can best help the team and improve their game. 
+
+#3. Cooperate with your team#
+   Try to act and coordinate for the mutual success of the whole team. In a team game, cooperating, coordinating and planning strategies as a group will lead to greater success and a better team atmosphere. Realize that a player with higher Elo probably knows what they are talking about. Do not wilfully make things worse for your allies. 
+
+#4. Abide by penalties issued by moderators#
+   Moderator arbitration is intended to resolve disputes, not prolong them; as such, we expect you to respect and abide by their decisions. If you feel a moderator has acted unjustly, you may bring it up respectfully through the appropriate channels; however, mute/ban dodging of any kind is punishable by immediate banning of any alternate accounts used and an extension or increase in the original punishment. 
+
+#5. Don't intentionally grief games#
+   Deliberately attacking or blocking allied units with the intent to cause your team to lose is the most serious violation. Never attempt to intentionally grief the game for your teammates. If you do not wish to play a certain game or with certain players, leave the game. Do not self-destruct your units with the intent of denying them to your allies. This sometimes requires a judgement call by moderators, new players will be given the benefit of the doubt, smurfs and verbally abusive players will not. 
+
+#6. No cheating#
+   Cheating includes using any method that would give you information that is usually obscured by the fog of war. Game modifications and widgets that control your units, sound warnings, place marks, etc are fine. Also be careful what you say when you are spectating, do not give away intel. 
+
+#7. Don't abuse other players#
+   Do not take out your anger on other players. Do not swear at them, blame them for defeat or smack talk them. Some moderate use of language in frustration is tolerated but not encouraged, but do not direct it at other players. We do not tolerate language that is abusive, bigoted, obscene, racist or sexist. 
+
+#8. Forum topics to avoid#
+   Refrain from discussion of politics or religion in the forums. 
+
+##Elaborations##
+
+#Comment/Forum-post guidelines#
+   As a rule, comments and forum posts should follow at least two of the three "nots": 
+ - Not be rude 
+ - Not be false 
+ - Not be damaging 
+This is adapted from Slate Star Codex (where it is known as "true, kind and necessary"); an explanation can be found there. 
+
+#Cooperating with your team#
+   In a team game, players are expected to play to the best of their ability and refrain from knowingly compromising the team's chances of victory. Some degree of experimentation is encouraged, but doing something you know to be useless, against the wishes of your team, is considered trolling. 
+
+In general, the DON'Ts: 
+ - Don't do something that you know or have good reason to believe will significantly reduce the team's chances of victory, even when your team asks you not to 
+ - Don't do something that you know or have good reason to believe is very likely to result in defeat for your team, without the express consent of your team. 
+
+Use the reasonable person standard to figure out which actions fall under which category. When in doubt, discuss with your team, or do it in a 1v1 or FFA. 
+
+#Resigning in teamgames#
+   There can be disagreements within a team about whether the team is able to win. If you think the game is lost do not sabotage your team in an attempt to finish the game faster, this includes destruction of your own units. Do not destroy your own units, the team can use them if you choose to resign. 
+
+Players are free to resign throughout the game. They are also free to start votes for the entire team to resign with the !resign command. Overuse of this command (as with any command) can be annoying. 
+
+#Abiding by moderator penalties#
+   Making forum threads complaining about how unjust one's penalty was and insulting the moderation/administration team is one of the most common reactions by trolls to moderator action. It is also strongly anticorrelated with the original penalty being found on review to be, in fact, unjustified. Don't do this. 

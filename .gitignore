@@ -132,6 +132,9 @@ packages/
 # This line needs to be after the ignore of the build folder (and the packages folder if the line above has been uncommented)
 !packages/build/
 
+#Packages qt installer framework
+!ZkLobbyMultiplatformInstaller/packages
+
 # Windows Azure Build Output
 csx/
 *.build.csdef
