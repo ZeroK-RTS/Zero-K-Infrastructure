@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+	<DisplayName>Zero-K Maps pack</DisplayName>
+	<Description>Zero-K Maps pack</Description>
+	<Version>0.1.0-1</Version>
+	<ReleaseDate>2015-05-23</ReleaseDate>
+	<!--<Script>installscript.qs</Script>-->
+	<Licenses>
+		<License name="GNU GENERAL PUBLIC LICENSE Version 3" file="gpl3.txt"/>
+	</Licenses>
+	<Name>info.zerok.maps</Name>
+    <SortingPriority>1</SortingPriority>
+    <RequiresAdminRights>true</RequiresAdminRights>
+</Package>

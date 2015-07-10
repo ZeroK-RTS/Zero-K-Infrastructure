@@ -132,9 +132,6 @@ packages/
 # This line needs to be after the ignore of the build folder (and the packages folder if the line above has been uncommented)
 !packages/build/
 
-#Packages qt installer framework
-!ZkLobbyMultiplatformInstaller/packages
-
 # Windows Azure Build Output
 csx/
 *.build.csdef
@@ -188,3 +185,9 @@ Zero-K.info/img/news/*
 UberServer/server.db
 UberServer/server.log.old
 Zero-K.info/Deploy/*
+
+#Packages qt installer framework
+!ZkLobbyMultiplatformInstaller/packages
+!ZkLobbyMultiplatformInstaller/packages/info.zerok.maps
+ZkLobbyMultiplatformInstaller/Zero-K.run
+ZkLobbyMultiplatformInstaller/Zero-K.exe

@@ -1,6 +1,28 @@
-function Component()
+var Dir = new function () {
+    this.toNativeSparator = function (path) {
+        if (systemInfo.productType === "windows")
+            return path.replace(/\//g, '\\');
+        return path;
+    }
+};
+
+function Component() {
+    component.loaded.connect(this, Component.prototype.loaded );
+}
+
+Component.prototype.loaded = function()
 {
-    // default constructor
+
+    if (systemInfo.kernelType === "linux"){
+
+        installer.componentByName("info.zerok.lobby.linux").setValue("Default", true);
+        installer.componentByName("info.zerok.engine.linux").setValue("Default", true);
+
+        installer.componentByName("info.zerok.lobby.seven").setValue("Virtual", true);
+        installer.componentByName("info.zerok.lobby.xp").setValue("Virtual", true);
+        installer.componentByName("info.zerok.engine.win").setValue("Virtual", true);
+    }
+
 }
 
 Component.prototype.createOperations = function()
@@ -12,8 +34,6 @@ Component.prototype.createOperations = function()
 
         if (systemInfo.productType === "ubuntu"){
 
-            //var result = QMessageBox.question("quit.question", "Installer", "Ubuntu",
-            //                          QMessageBox.Yes | QMessageBox.No);
 
             mono = installer.execute( "/bin/which", new Array( "mono" ) )[0];
             if (!mono) {
@@ -49,6 +69,9 @@ Component.prototype.createOperations = function()
                 component.addElevatedOperation("Execute", "apt-get", "install", "libsdl-2-2.0-0", "-y");
                 //QMessageBox["warning"]( "libsdl2Error", "No libsdl!", "You need libsdl2-2.0-0. Please install libsdl2-2.0-0 using the System Package Management tools." );
             }
+        }
+        else{
+            QMessageBox["warning"]( "DistroError", "No supported!", "Your Distribution of GNU/Linux is not suported at the moment, not solving dependencies please report this name: " + systemInfo.productType );
         }
     }
 }
