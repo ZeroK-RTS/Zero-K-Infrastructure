@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package>
-    <DisplayName>Zero-K Rts</DisplayName>
-    <Description>Zero-K Rts for .net 4.5.1</Description>
+    <DisplayName>Zero-K Rts xp</DisplayName>
+    <Description>Zero-K Rts for .net 4.0</Description>
     <Version>0.1.0-1</Version>
-    <Default>true</Default>
     <ReleaseDate>2015-05-23</ReleaseDate>
     <Script>installscript.qs</Script>
     <Licenses>
@@ -12,6 +11,7 @@
         <License name="Creative Commons (CC0 1.0)" file="cc0.txt"/>
         <License name="GNU GENERAL PUBLIC LICENSE Version 3" file="gpl3.txt"/>
     </Licenses>
-    <Name>info.zerok.installer</Name>
+    <Name>info.zerok.lobby.xp</Name>
+    <SortingPriority>5</SortingPriority>
     <RequiresAdminRights>true</RequiresAdminRights>
 </Package>

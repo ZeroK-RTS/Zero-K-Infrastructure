@@ -6,9 +6,23 @@ var Dir = new function () {
     }
 };
 
-function Component()
+function Component() {
+    component.loaded.connect(this, Component.prototype.loaded );
+}
+
+Component.prototype.loaded = function()
 {
-    // default constructor
+
+    if ((systemInfo.productType === "windows") && (systemInfo.prettyProductName === "Windows XP")){
+
+        installer.componentByName("info.zerok.lobby.xp").setValue("Default", true);
+        installer.componentByName("info.zerok.engine.win").setValue("Default", true);
+
+        installer.componentByName("info.zerok.lobby.seven").setValue("Virtual", true);
+        installer.componentByName("info.zerok.lobby.linux").setValue("Virtual", true);
+        installer.componentByName("info.zerok.engine.linux").setValue("Virtual", true);
+    }
+
 }
 
 Component.prototype.createOperations = function()
@@ -29,10 +43,10 @@ Component.prototype.createOperations = function()
                                             "{0,1602,5100}",
                                             "@TargetDir@\\dotNetFx40_Full_setup.exe",
                                             "/norestart");
-                    component.addElevatedOperation("Delete", "@TargetDir@\\dotNetFx40_Full_setup.exe");
+                    component.addElevatedOperation("Delete", "@TargetDir@\\dotnet\\dotNetFx40_Full_setup.exe");
             }
-            component.addOperation("CreateShortcut", "@TargetDir@\\Zero-k.exe", "@DesktopDir@\\Zero-K.lnk");
-            component.addOperation("CreateShortcut", "@TargetDir@\\Zero-k.exe", "@AllUsersStartMenuProgramsPath@\\Zero-K.lnk");
+            //component.addOperation("CreateShortcut", "@TargetDir@\\Zero-k.exe", "@DesktopDir@\\Zero-K.lnk");
+            //component.addOperation("CreateShortcut", "@TargetDir@\\Zero-k.exe", "@AllUsersStartMenuProgramsPath@\\Zero-K.lnk");
 
         }
     }
