@@ -21,19 +21,22 @@ namespace ZkLobbyServer
         }
 
 
-        public async Task Run()
+        public void Run()
         {
-            SynchronizationContext.SetSynchronizationContext(null);
+            new Thread(() =>
+            {
+                SynchronizationContext.SetSynchronizationContext(null);
 
-            var tasks = new List<Task>();
+                var tasks = new List<Task>();
 
-            var tcpServerListener = new TcpTransportServerListener();
-            if (tcpServerListener.Bind(20)) tasks.Add(tcpServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); }));
+                var tcpServerListener = new TcpTransportServerListener();
+                if (tcpServerListener.Bind(20)) tasks.Add(tcpServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); }));
 
-            var wscServerListener = new WebSocketTransportServerListener();
-            if (wscServerListener.Bind(20)) tasks.Add(wscServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); }));
+                var wscServerListener = new WebSocketTransportServerListener();
+                if (wscServerListener.Bind(20)) tasks.Add(wscServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); }));
 
-            await Task.WhenAll(tasks);
+                Task.WaitAll(tasks.ToArray());
+            }).Start();
         }
     }
 }
