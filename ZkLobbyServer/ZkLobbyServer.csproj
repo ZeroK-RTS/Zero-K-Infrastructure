@@ -128,8 +128,8 @@
     <Exec Command="echo %(AssemblyIdentity.Version) &gt; &quot;$(TargetDir)$(TargetName).version.txt&quot;" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>if /i $(ConfigurationName) NEQ Release exit 0
-"$(ProjectDir)\..\packages\LibZ.Bootstrap.1.1.0.2\tools\libz.exe" inject-dll --assembly "$(TargetName).exe" --include *.dll --move</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
