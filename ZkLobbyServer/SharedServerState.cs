@@ -22,13 +22,13 @@ namespace ZkLobbyServer
 
         public LoginChecker LoginChecker;
 
-        public SharedServerState()
+        public SharedServerState(string geoIPpath)
         {
             var entry = Assembly.GetExecutingAssembly();
             Version = entry.GetName().Version.ToString();
             Engine = GlobalConst.DefaultEngineOverride;
             Game = "zk:stable";
-            LoginChecker = new LoginChecker(this);
+            LoginChecker = new LoginChecker(this, geoIPpath);
         }
     }
 }

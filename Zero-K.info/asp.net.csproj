@@ -1273,6 +1273,9 @@
     <Content Include="Img\eclipselogowide.xcf" />
     <Content Include="Img\zk_logo.png_org" />
     <Content Include="packages.config" />
+    <Content Include="GeoLite2-Country.mmdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="PetitaMedium.eot" />
     <None Include="PetitaMedium.ttf" />
     <None Include="Properties\PublishProfiles\Profile1.pubxml" />

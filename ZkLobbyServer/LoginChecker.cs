@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -20,10 +21,10 @@ namespace ZkLobbyServer
 
         readonly SharedServerState state;
 
-        public LoginChecker(SharedServerState state)
+        public LoginChecker(SharedServerState state, string geoipPath)
         {
             this.state = state;
-            geoIP = new DatabaseReader(@"c:\work\Zero-K-Infrastructure\ZkLobbyServer\bin\Debug\GeoLite2-Country.mmdb", FileAccessMode.Memory);
+            geoIP = new DatabaseReader(Path.Combine(geoipPath,"GeoLite2-Country.mmdb"), FileAccessMode.Memory);
         }
 
 

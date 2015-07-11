@@ -13,38 +13,25 @@ namespace ZkLobbyServer
 {
     public class Server
     {
-        SharedServerState sharedState = new SharedServerState();
-//        SelfUpdater selfUpdater = new SelfUpdater("ZkLobbyServer");
+        readonly SharedServerState sharedState;
+
+        public Server(string geoIPpath)
+        {
+            sharedState = new SharedServerState(geoIPpath);
+        }
+
 
         public async Task Run()
         {
-  /*          selfUpdater.ProgramUpdated += s => {
-                {
-                    Task.WaitAll(sharedState.ConnectedUsers.Values.Select((client) => client.SendCommand(new Say {
-                        IsEmote = true,
-                        Place = SayPlace.MessageBox,
-                        Text = "Server self-updating to new version",
-                        User = client.User.Name
-                    })).ToArray());
+            SynchronizationContext.SetSynchronizationContext(null);
 
-                    Process.Start(s);
-                    Environment.Exit(0);
-                }
-            };*/
-#if !DEBUG
-            if (!Debugger.IsAttached) selfUpdater.StartChecking();
-#endif
-            List<Task> tasks = new List<Task>();
+            var tasks = new List<Task>();
 
             var tcpServerListener = new TcpTransportServerListener();
-            if (tcpServerListener.Bind(20)) {
-                tasks.Add(tcpServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); }));
-            }
+            if (tcpServerListener.Bind(20)) tasks.Add(tcpServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); }));
 
             var wscServerListener = new WebSocketTransportServerListener();
-            if (wscServerListener.Bind(20)) {
-                tasks.Add(wscServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); }));
-            }
+            if (wscServerListener.Bind(20)) tasks.Add(wscServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); }));
 
             await Task.WhenAll(tasks);
         }
