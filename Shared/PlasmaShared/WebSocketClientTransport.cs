@@ -61,7 +61,7 @@ namespace ZkData
             closeRequestedExplicitly = false;
 
             wsc = new WebSocket(string.Format("ws://{0}:{1}", RemoteEndpointAddress, RemoteEndpointPort)); // note bindingIp not supported
-
+            wsc.EnableAutoSendPing = true;
             wsc.Opened += (sender, args) =>
             {
                 IsConnected = true;
