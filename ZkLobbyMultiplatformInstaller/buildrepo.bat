@@ -1,1 +1,1 @@
-repogen.exe -p packages repo
+repogen.exe -p packages repo --update-new-packages
