@@ -1,2 +1,2 @@
 #!/bin/sh
-binarycreator --offline-only -c config/config.xml -p packages Zero-K.run
+binarycreator -c config/config.xml -p packages Zero-K --ignore-translations --online-only

@@ -32,6 +32,12 @@ Component.prototype.createOperations = function()
 
     if (installer.isInstaller()){
 
+        var d = "Type=Application\nComment=Open source RTS game with physical projectiles, smart units and powerful UI, running on the Spring engine\nKeywords=zero-k;Zero-K;rts;spring;springrts;\nIcon=zero-k\nTerminal=false\nHomepage=https://zero-k.info\nCategories=Game;\n";
+        var desktopIcon = "Name=Zero-K\nGenericName=Zero-K\nExec=@TargetDir@/Zero-K\n" + d;
+
+        component.addOperation("CreateDesktopEntry", "Zero-K.desktop", desktopIcon);
+        component.addOperation("InstallIcons", "@TargetDir@/share/icons");
+
         if (systemInfo.productType === "ubuntu"){
 
 

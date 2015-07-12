@@ -1,1 +1,1 @@
-repogen.exe -p packages repository
+repogen.exe -p packages repo

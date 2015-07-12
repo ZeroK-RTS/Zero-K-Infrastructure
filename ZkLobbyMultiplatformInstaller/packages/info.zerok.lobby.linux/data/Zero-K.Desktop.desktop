@@ -1,8 +1,0 @@
-[Desktop Entry]
-Name=Zero-K
-Comment=Open source RTS game with physical projectiles, smart units and powerful UI, running on the Spring engine.
-Exec=mono ~/zk/Lobby/Zero-K
-Icon=~/zk/Lobby/zero-k.png
-Terminal=false
-Type=Application
-Categories=Game;
