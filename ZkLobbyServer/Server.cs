@@ -13,40 +13,30 @@ namespace ZkLobbyServer
 {
     public class Server
     {
-        SharedServerState sharedState = new SharedServerState();
-        SelfUpdater selfUpdater = new SelfUpdater("ZkLobbyServer");
+        readonly SharedServerState sharedState;
 
-        public async Task Run()
+        public Server(string geoIPpath)
         {
-            selfUpdater.ProgramUpdated += s => {
-                {
-                    Task.WaitAll(sharedState.ConnectedUsers.Values.Select((client) => client.SendCommand(new Say {
-                        IsEmote = true,
-                        Place = SayPlace.MessageBox,
-                        Text = "Server self-updating to new version",
-                        User = client.User.Name
-                    })).ToArray());
+            sharedState = new SharedServerState(geoIPpath);
+        }
 
-                    Process.Start(s);
-                    Environment.Exit(0);
-                }
-            };
-#if !DEBUG
-            if (!Debugger.IsAttached) selfUpdater.StartChecking();
-#endif
-            List<Task> tasks = new List<Task>();
 
-            var tcpServerListener = new TcpTransportServerListener();
-            if (tcpServerListener.Bind(20)) {
-                tasks.Add(tcpServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); }));
-            }
+        public void Run()
+        {
+            new Thread(() =>
+            {
+                SynchronizationContext.SetSynchronizationContext(null);
 
-            var wscServerListener = new WebSocketTransportServerListener();
-            if (wscServerListener.Bind(20)) {
-                tasks.Add(wscServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); }));
-            }
+                var tasks = new List<Task>();
 
-            await Task.WhenAll(tasks);
+                var tcpServerListener = new TcpTransportServerListener();
+                if (tcpServerListener.Bind(20)) tasks.Add(tcpServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); }));
+
+                var wscServerListener = new WebSocketTransportServerListener();
+                if (wscServerListener.Bind(20)) tasks.Add(wscServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); }));
+
+                Task.WaitAll(tasks.ToArray());
+            }).Start();
         }
     }
 }
