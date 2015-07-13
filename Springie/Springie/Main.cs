@@ -108,6 +108,9 @@ namespace Springie
             lock (autoHosts)
             {
                 ah = new AutoHost(MetaCache, config, GetFreeHostingPort(), spawnData);
+                var otherClone = autoHosts.Where(x => x.config.Login == config.Login).Max(x => (int?)x.CloneNumber);
+                if (otherClone.HasValue) ah.CloneNumber = otherClone.Value + 1;
+                
                 autoHosts.Add(ah);
             }
             return ah;
