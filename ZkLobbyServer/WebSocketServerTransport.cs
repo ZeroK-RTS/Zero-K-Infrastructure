@@ -97,11 +97,10 @@ namespace ZkLobbyServer
             if (IsConnected && wsc.IsConnected) {
                 try {
                     //var buffer = Encoding.GetBytes(command);
-                    using (var messageWriter = wsc.CreateMessageWriter(WebSocketMessageType.Text)) await new StreamWriter(messageWriter, Encoding).WriteAsync(command);
+                    /*using (var messageWriter = wsc.CreateMessageWriter(WebSocketMessageType.Text)) await new StreamWriter(messageWriter, Encoding).WriteAsync(command);*/
 
-                    /*var buf = Encoding.GetBytes(command);
-                    lock (this) 
-                        using (var messageWriter = wsc.CreateMessageWriter(WebSocketMessageType.Text)) messageWriter.Write(buf,0, buf.Length);*/
+                    var buf = Encoding.GetBytes(command);
+                    lock (this) using (var messageWriter = wsc.CreateMessageWriter(WebSocketMessageType.Text)) messageWriter.Write(buf,0, buf.Length);
                     
                 } catch (Exception ex) {
                     if (cancellationTokenSource != null && !cancellationTokenSource.Token.IsCancellationRequested) {
