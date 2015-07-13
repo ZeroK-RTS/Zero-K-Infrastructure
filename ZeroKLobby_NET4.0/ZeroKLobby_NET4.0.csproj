@@ -65,7 +65,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;LIVE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -154,12 +154,18 @@
     <Compile Include="Benchmarker\Batch.cs" />
     <Compile Include="Benchmarker\BatchRunResult.cs" />
     <Compile Include="Benchmarker\Benchmark.cs" />
-    <Compile Include="Benchmarker\BisectForm.cs" />
+    <Compile Include="Benchmarker\BisectForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Benchmarker\BisectForm.Designer.cs" />
     <Compile Include="Benchmarker\Config.cs" />
-    <Compile Include="Benchmarker\GraphsForm.cs" />
+    <Compile Include="Benchmarker\GraphsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Benchmarker\GraphsForm.Designer.cs" />
-    <Compile Include="Benchmarker\MainForm.cs" />
+    <Compile Include="Benchmarker\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Benchmarker\MainForm.Designer.cs" />
     <Compile Include="Benchmarker\SpringRun.cs" />
     <Compile Include="Benchmarker\StartScript.cs" />
@@ -1914,86 +1920,7 @@
   <ItemGroup>
     <None Include="Resources\voice_talking.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Benchmarker" />
-    <Folder Include="Benchmarker\Benchmarks" />
-    <Folder Include="Benchmarker\Benchmarks\Configs" />
-    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_default" />
-    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_default\LuaUI" />
-    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_default\LuaUI\Config" />
-    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_default\LuaUI\pathTests" />
-    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_default\LuaUI\pathTests\config" />
-    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_with_lights" />
-    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_with_lights\LuaUI" />
-    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_with_lights\LuaUI\Config" />
-    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_with_lights\LuaUI\pathTests" />
-    <Folder Include="Benchmarker\Benchmarks\Configs\ZKL_with_lights\LuaUI\pathTests\config" />
-    <Folder Include="Benchmarker\Benchmarks\games" />
-    <Folder Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd" />
-    <Folder Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\LuaRules" />
-    <Folder Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\LuaRules\Benchmarks" />
-    <Folder Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\LuaUI" />
-    <Folder Include="Benchmarker\Benchmarks\games\ca-benchmark.sdd\LuaUI\Widgets" />
-    <Folder Include="Benchmarker\Benchmarks\games\dynlights.sdd" />
-    <Folder Include="Benchmarker\Benchmarks\games\dynlights.sdd\LuaRules" />
-    <Folder Include="Benchmarker\Benchmarks\games\dynlights.sdd\LuaRules\Gadgets" />
-    <Folder Include="Benchmarker\Benchmarks\games\dynlights.sdd\LuaUI" />
-    <Folder Include="Benchmarker\Benchmarks\games\dynlights.sdd\LuaUI\Widgets" />
-    <Folder Include="Benchmarker\Benchmarks\games\fps_terraform.sdd" />
-    <Folder Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\LuaRules" />
-    <Folder Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\LuaRules\Gadgets" />
-    <Folder Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\LuaUI" />
-    <Folder Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\LuaUI\Widgets" />
-    <Folder Include="Benchmarker\Benchmarks\games\fps_terraform.sdd\units" />
-    <Folder Include="Benchmarker\Benchmarks\games\fps_test.sdd" />
-    <Folder Include="Benchmarker\Benchmarks\games\fps_test.sdd\LuaRules" />
-    <Folder Include="Benchmarker\Benchmarks\games\fps_test.sdd\LuaRules\Gadgets" />
-    <Folder Include="Benchmarker\Benchmarks\games\fps_test.sdd\LuaUI" />
-    <Folder Include="Benchmarker\Benchmarks\games\fps_test.sdd\LuaUI\Widgets" />
-    <Folder Include="Benchmarker\Benchmarks\games\fps_war.sdd" />
-    <Folder Include="Benchmarker\Benchmarks\games\fps_war.sdd\LuaRules" />
-    <Folder Include="Benchmarker\Benchmarks\games\fps_war.sdd\LuaRules\Gadgets" />
-    <Folder Include="Benchmarker\Benchmarks\games\fps_war.sdd\LuaUI" />
-    <Folder Include="Benchmarker\Benchmarks\games\fps_war.sdd\LuaUI\Widgets" />
-    <Folder Include="Benchmarker\Benchmarks\games\fps_war2.sdd" />
-    <Folder Include="Benchmarker\Benchmarks\games\fps_war2.sdd\LuaRules" />
-    <Folder Include="Benchmarker\Benchmarks\games\fps_war2.sdd\LuaRules\Gadgets" />
-    <Folder Include="Benchmarker\Benchmarks\games\fps_war2.sdd\LuaUI" />
-    <Folder Include="Benchmarker\Benchmarks\games\fps_war2.sdd\LuaUI\Widgets" />
-    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd" />
-    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd\LuaRules" />
-    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd\LuaRules\Gadgets" />
-    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui" />
-    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui\pathTests" />
-    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui\pathTests\Config" />
-    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui\pathTests\Results" />
-    <Folder Include="Benchmarker\Benchmarks\games\path_test.sdd\Luaui\Widgets" />
-    <Folder Include="Benchmarker\Benchmarks\Scripts" />
-    <Folder Include="LobbyClient" />
-    <Folder Include="LobbyClient\Legacy" />
-    <Folder Include="LobbyClient\Protocol" />
-    <Folder Include="LobbyClient\Resources" />
-    <Folder Include="MonoTorrent" />
-    <Folder Include="MonoTorrent\MonoTorrent.BEncoding" />
-    <Folder Include="MonoTorrent\MonoTorrent.Client" />
-    <Folder Include="MonoTorrent\MonoTorrent.Client\Managers" />
-    <Folder Include="MonoTorrent\MonoTorrent.Client\PieceWriter" />
-    <Folder Include="MonoTorrent\MonoTorrent.Common" />
-    <Folder Include="MonoTorrent\MonoTorrent.Common\EventArgs" />
-    <Folder Include="PlasmaDownloader" />
-    <Folder Include="PlasmaDownloader\Packages" />
-    <Folder Include="PlasmaDownloader\Torrents" />
-    <Folder Include="PlasmaShared" />
-    <Folder Include="PlasmaShared\Diagrams" />
-    <Folder Include="PlasmaShared\IContentService" />
-    <Folder Include="PlasmaShared\ISpringieService" />
-    <Folder Include="PlasmaShared\Properties" />
-    <Folder Include="PlasmaShared\Service References" />
-    <Folder Include="PlasmaShared\Service References\ContentServiceReference" />
-    <Folder Include="PlasmaShared\UnitSyncLib" />
-    <Folder Include="PlasmaShared\Web References" />
-    <Folder Include="PlasmaShared\Web References\ModStats" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">
   </Target>
