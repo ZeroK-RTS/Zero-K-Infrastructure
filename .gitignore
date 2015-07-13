@@ -187,7 +187,6 @@ UberServer/server.log.old
 Zero-K.info/Deploy/*
 
 #Packages qt installer framework
-!ZkLobbyMultiplatformInstaller/packages
-!ZkLobbyMultiplatformInstaller/packages/info.zerok.maps
+!ZkLobbyMultiplatformInstaller/packages/*
 ZkLobbyMultiplatformInstaller/Zero-K
 ZkLobbyMultiplatformInstaller/Zero-K.exe
