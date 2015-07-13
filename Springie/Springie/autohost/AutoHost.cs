@@ -39,7 +39,7 @@ namespace Springie.autohost
         int timerTick;
 
         public string BossName { get { return bossName; } set { bossName = value; } }
-        public int CloneNumber { get; private set; }
+        public int CloneNumber { get; set; }
 
         public SpawnConfig SpawnConfig { get; private set; }
         public MetaDataCache cache;
