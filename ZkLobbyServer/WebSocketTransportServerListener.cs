@@ -34,11 +34,11 @@ namespace ZkLobbyServer
             return ok;
         }
 
-        public async Task RunLoop(Action<ITransport> onTransportAcccepted)
+        public void RunLoop(Action<ITransport> onTransportAcccepted)
         {
             var token = new CancellationToken();
             while (true) {
-                var wsc = await listener.AcceptWebSocketAsync(token);
+                var wsc = listener.AcceptWebSocketAsync(token).Result;
                 Task.Run(() => {
                     var transport = new WebSocketServerTransport(wsc);
                     onTransportAcccepted(transport);

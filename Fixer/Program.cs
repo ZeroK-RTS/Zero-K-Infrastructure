@@ -253,9 +253,10 @@ namespace Fixer
         static void Main(string[] args)
         {
             //GetGameStats(new DateTime(2014,12,1));
-            //var ns = new NubSimulator();
-            //ns.SpawnMany();
-            //Console.ReadLine();
+            Thread.Sleep(10000);
+            var ns = new NubSimulator();
+            ns.SpawnMany();
+            Console.ReadLine();
 
             //MigrateDatabase();
             //FixDuplicatedAccounts();

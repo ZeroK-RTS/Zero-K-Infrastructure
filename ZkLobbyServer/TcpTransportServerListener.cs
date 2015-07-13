@@ -20,7 +20,7 @@ namespace ZkLobbyServer
             do {
                 try {
                     listener = new TcpListener(new IPEndPoint(IPAddress.Any, GlobalConst.LobbyServerPort));
-                    listener.Start(200);
+                    listener.Start(1000);
                     ok = true;
                 } catch (Exception ex) {
                     Trace.TraceError("Error binding:{0}", ex);
@@ -30,10 +30,10 @@ namespace ZkLobbyServer
             return ok;
         }
 
-        public async Task RunLoop(Action<ITransport> onTransportAcccepted)
+        public void RunLoop(Action<ITransport> onTransportAcccepted)
         {
             while (true) {
-                var tcp = await listener.AcceptTcpClientAsync();
+                var tcp = listener.AcceptTcpClient();
                 Task.Run(() => {
                     var transport = new TcpTransport(tcp);
                     onTransportAcccepted(transport);
