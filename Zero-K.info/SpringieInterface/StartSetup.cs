@@ -13,6 +13,9 @@ namespace ZeroKWeb.SpringieInterface
     {
         static bool listOnlyThatLevelsModules = false;  // may cause bugs
 
+        /// <summary>
+        /// Sets up all the things that Springie needs to know for the battle: how to balance, who to get extra commanders, what PlanetWars structures to create, etc.
+        /// </summary>
         public static SpringBattleStartSetup GetSpringBattleStartSetup(BattleContext context) {
             try {
                 AutohostMode mode = context.GetMode();
@@ -26,9 +29,9 @@ namespace ZeroKWeb.SpringieInterface
                 
                 var commanderTypes = new LuaTable();
                 var db = new ZkDataContext();
-
-                var accountIDsWithExtraComms = new List<int>();
+                
                 // calculate to whom to send extra comms
+                var accountIDsWithExtraComms = new List<int>();
                 if (mode == AutohostMode.Planetwars || mode == AutohostMode.Generic || mode == AutohostMode.GameFFA ||
                     mode == AutohostMode.Teams) {
                     IOrderedEnumerable<IGrouping<int, PlayerTeam>> groupedByTeam =
@@ -48,8 +51,7 @@ namespace ZeroKWeb.SpringieInterface
 
                 bool is1v1 = context.Players.Where(x => !x.IsSpectator).ToList().Count == 2 && context.Bots.Count == 0;
 
-
-
+                // write Planetwars details to modoptions (for widget)
                 Faction attacker = null;
                 Faction defender = null;
                 Planet planet = null;
@@ -71,8 +73,7 @@ namespace ZeroKWeb.SpringieInterface
                     ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "planet", Value = planet.Name });
                 }
 
-
-                
+                // write player custom keys (level, elo, is muted, etc.)
                 foreach (PlayerTeam p in context.Players) {
                     Account user = db.Accounts.Find(p.LobbyID);
                     if (user != null) {
@@ -92,6 +93,7 @@ namespace ZeroKWeb.SpringieInterface
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "admin", Value = (user.IsZeroKAdmin ? "1" : "0") });
 
                         if (!p.IsSpectator) {
+                            // set valid PW structure attackers
                             if (mode == AutohostMode.Planetwars)
                             {
                                 bool allied = user.Faction != null && defender != null && user.Faction != defender &&
@@ -121,6 +123,7 @@ namespace ZeroKWeb.SpringieInterface
                             var pc = new LuaTable();
 
                             if (!userCommandersBanned) {
+                                // set up commander data
                                 foreach (Commander c in user.Commanders.Where(x => x.Unlock != null && x.ProfileNumber <= GlobalConst.CommanderProfileCount)) {
                                     try {
                                         if (string.IsNullOrEmpty(c.Name) || c.Name.Any(x => x == '"') )
@@ -225,6 +228,8 @@ namespace ZeroKWeb.SpringieInterface
                 }
 
                 ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "commanderTypes", Value = commanderTypes.ToBase64String() });
+
+                // set PW structures
                 if (mode == AutohostMode.Planetwars)
                 {
                     string owner = planet.Faction != null ? planet.Faction.Shortcut : "";

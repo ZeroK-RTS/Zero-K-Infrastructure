@@ -123,6 +123,9 @@ namespace ZeroKWeb.Controllers
             return View("UserList", ret.Take(100));
         }
 
+        /// <summary>
+        /// Lists the newest 200 users to crate an account who also match the specified params
+        /// </summary>
         [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
         public ActionResult NewUsers(string name, string ip, int? userID = null)
         {
@@ -136,6 +139,10 @@ namespace ZeroKWeb.Controllers
             return View("NewUsers", ret.OrderByDescending(x=> x.FirstLogin).Take(200));
         }
 
+        /// <summary>
+        /// Get user detail page by username or <see cref="Account"/> ID
+        /// </summary>
+        /// <param name="id">Name or ID</param>
         public ActionResult LobbyDetail(string id)
         {
             var db = new ZkDataContext();
@@ -149,6 +156,11 @@ namespace ZeroKWeb.Controllers
 
         const int MaxBanHours = 24 * 36525;   // 100 years
 
+        /// <summary>
+        /// Apply a <see cref="Punishment"/> (e.g. bans) and notifies lobby server
+        /// </summary>
+        /// <param name="accountID"><see cref="Account"/> ID of the person being punished</param>
+        /// <param name="reason">Displayed reason for the penalty</param>
         [Auth(Role = AuthRole.ZkAdmin | AuthRole.LobbyAdmin)]
         public ActionResult Punish(int accountID,
                                    string reason,
@@ -191,6 +203,7 @@ namespace ZeroKWeb.Controllers
             acc.PunishmentsByAccountID.Add(punishment);
             db.SubmitChanges();
 
+            // notify lobby of changes and post log message
             try
             {
                 Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);

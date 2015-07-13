@@ -11,6 +11,11 @@ namespace ZeroKWeb.Controllers
 	{
         public const int PageSize = GlobalConst.ForumPostsPerPage;
 
+        /// <summary>
+        /// Returns false for <see cref="News"/> posts and comment threads on <see cref="Clan"/>s, <see cref="Mission"/>s, PlanetWars <see cref="Planet"/>s and <see cref="SpringBattle"/>s; true otherwise
+        /// </summary>
+        /// <param name="thread"></param>
+        /// <returns></returns>
         bool IsNormalThread(ForumThread thread)
         {
             if (thread.Clans != null && thread.Clans.Count > 0) return false;
@@ -21,6 +26,9 @@ namespace ZeroKWeb.Controllers
             return true;
         }
 
+        /// <summary>
+        /// Set the last post time of the thread to current time (includes edits)
+        /// </summary>
         void ResetThreadLastPostTime(int threadID)
         {
             var db = new ZkDataContext();
@@ -71,6 +79,11 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// Go to forum index, or a subforum
+        /// </summary>
+        /// <param name="categoryID">Subforum category ID</param>
+        /// <param name="page">Page of subforum (i.e. display older threads)</param>
 		public ActionResult Index(int? categoryID, int? page = null)
 		{
 			var db = new ZkDataContext();
@@ -89,6 +102,13 @@ namespace ZeroKWeb.Controllers
 			return View(res);
 		}
 
+        /// <summary>
+        /// Make a new post or edit an existing one
+        /// </summary>
+        /// <param name="categoryID">The ID of the subforum the <see cref="ForumPost"/> is/will be in</param>
+        /// <param name="threadID">The <see cref="ForumThread"/> ID, if not a new thread</param>
+        /// <param name="forumPostID">The <see cref="ForumPost"/> ID, if editing an existing post</param>
+        /// <returns></returns>
         [Auth]
 		public ActionResult NewPost(int? categoryID, int? threadID, int? forumPostID)
 		{
@@ -137,6 +157,12 @@ namespace ZeroKWeb.Controllers
 			return View(res);
 		}
 
+        /// <summary>
+        /// Try to make a new post or edit an existing one; make a new thread if approriate
+        /// </summary>
+        /// <param name="threadID">The <see cref="ForumThread"/> ID, if not a new thread</param>
+        /// <param name="categoryID">The ID of the subforum the <see cref="ForumPost"/> is/will be in</param>
+        /// <param name="forumPostID">The <see cref="ForumPost"/> ID, if editing an existing post</param>
 		[Auth]
 		public ActionResult SubmitPost(int? threadID, int? categoryID, int? resourceID, int? missionID, int? springBattleID, int? clanID, int? planetID, string text, string title, int? forumPostID)
 		{
@@ -274,6 +300,9 @@ namespace ZeroKWeb.Controllers
 			}
 		}
 
+        /// <summary>
+        /// Redirects to a thread page given a specified <see cref="ForumPost"/> ID
+        /// </summary>
         public ActionResult Post(int id)
         {
             var db = new ZkDataContext();
@@ -285,6 +314,13 @@ namespace ZeroKWeb.Controllers
 
         }
 
+        /// <summary>
+        /// Go to a specific <see cref="ForumThread"/>
+        /// </summary>
+        /// <param name="lastPost">Go to last post</param>
+        /// <param name="lastSeen">UNUSED</param>
+        /// <param name="postID">A specific <see cref="ForumPost"/> ID to go to</param>
+        /// <returns></returns>
 		public ActionResult Thread(int id, bool? lastPost, bool? lastSeen, int? postID, int? page)
 		{
 			var db = new ZkDataContext();
@@ -395,6 +431,11 @@ namespace ZeroKWeb.Controllers
             return View("EditHistory", post);
 	    }
 
+        /// <summary>
+        /// Upvote or downvote a post
+        /// </summary>
+        /// <param name="delta">+1 or -1</param>
+        /// <returns></returns>
         [Auth]
         public ActionResult VotePost(int forumPostID, int delta)
         {
@@ -457,6 +498,9 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Thread", new { id = post.ForumThreadID, postID = forumPostID});
         }
 
+        /// <summary>
+        /// Removes an existing vote on a post
+        /// </summary>
         [Auth]
         public ActionResult CancelVotePost(int forumPostID)
         {
@@ -542,6 +586,12 @@ namespace ZeroKWeb.Controllers
             return View("SearchResults", new SearchResult {Posts = posts.Take(100).ToList(), DisplayAsPosts = resultsAsPosts});
         }
 
+        /// <summary>
+        /// Marks all threads as read
+        /// </summary>
+        /// <param name="categoryID">The subforum category ID; will be applied to all subforums if null</param>
+        /// <returns></returns>
+        /// <remarks>Unlike the normal system that tags a thread as read, this one sets a single date value for one or all subforums; a thread is read if its last post is older than this date</remarks>
         [Auth]
         public ActionResult MarkAllAsRead(int? categoryID)
         {

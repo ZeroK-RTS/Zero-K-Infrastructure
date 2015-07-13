@@ -19,6 +19,9 @@ namespace ZeroKWeb.Controllers
 	        public int FirstGamePlayers { get; set; }
 	    }
 
+        /// <summary>
+        /// Gets a chart of game activity since February 2011
+        /// </summary>
 	    [OutputCache(Duration = 3600*2)]
 	    public ActionResult Games() {
 
@@ -62,6 +65,10 @@ namespace ZeroKWeb.Controllers
             return File(chart.GetBytes("png"), "image/png");
 		}
 
+        /// <summary>
+        /// Returns information for ladder, awards hall of fame page
+        /// </summary>
+        /// <returns></returns>
         private LadderModel GetLadder()
         {
             LadderModel cached = (LadderModel)HttpContext.Cache.Get("ladderModel");

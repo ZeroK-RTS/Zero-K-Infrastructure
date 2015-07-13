@@ -10,6 +10,16 @@ namespace ZeroKWeb.SpringieInterface
     public class MapPicker
 	{
 
+        /// <summary>
+        /// Picks a map and writes a message if applicable
+        /// </summary>
+        /// <param name="context">The battle whose map needs selection</param>
+        /// <param name="pickNew">If false and not in PlanetWars, don't pick a new map</param>
+        /// <remarks>
+        ///     <para>For Planetwars, picks the map given by the Planetwars matchmaker; else picks a featured map with the appropriate tags</para>
+        ///     <para>For team and chickens games, picks a map of appropriate size based on current player count</para>
+        ///     <para>For FFA, prefer maps that have a number of boxes equal to player count, or at least a number of boxes that is a multiple of player count</para>
+        /// </remarks>
 		public static RecommendedMapResult GetRecommendedMap(BattleContext context, bool pickNew) {
 			var mode = context.GetMode();
 		    var config = context.GetConfig();

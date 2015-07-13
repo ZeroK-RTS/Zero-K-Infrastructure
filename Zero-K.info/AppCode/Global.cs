@@ -171,6 +171,11 @@ namespace ZeroKWeb
             }            
         } }
 
+        /// <summary>
+        /// Converts a given string and its arguments into an Event
+        /// </summary>
+        /// <param name="format">String to format; converted objects are inserted into the string - e.g. "Planet {0} captured by {1}"</param>
+        /// <param name="args">Objects can be DB objects of various types; e.g. <see cref="Account"/>, <see cref="Clan"/>, <see cref="Planet"/></param>
         [StringFormatMethod("format")]
         public static Event CreateEvent(string format, params object[] args)
         {
@@ -288,6 +293,13 @@ namespace ZeroKWeb
             return ev;
         }
 
+        /// <summary>
+        /// Converts a given string and its arguments into a CampaignEvent; used for the online SP campaign
+        /// </summary>
+        /// <param name="accountID">Player's account ID</param>
+        /// <param name="campaignID">Campaign ID</param>
+        /// <param name="format">String to format; converted objects are inserted into the string - e.g. "Journal unlocked: {0}"</param>
+        /// <param name="args">Objects can be <see cref="Account"/> or <see cref="CampaignPlanet"/></param>
         public static CampaignEvent CreateCampaignEvent(int accountID, int campaignID, string format, params object[] args)
         {
             var ev = new CampaignEvent() { AccountID = accountID, CampaignID = campaignID, Time = DateTime.UtcNow };

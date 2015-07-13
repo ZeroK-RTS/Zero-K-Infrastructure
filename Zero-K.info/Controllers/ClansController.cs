@@ -16,6 +16,9 @@ namespace ZeroKWeb.Controllers
         //
         // GET: /Clans/
 
+        /// <summary>
+        /// Clan list
+        /// </summary>
         public ActionResult Index()
         {
             var db = new ZkDataContext();
@@ -51,7 +54,9 @@ namespace ZeroKWeb.Controllers
         }
 
 
-
+        /// <summary>
+        /// Clan leaving logic (including after kick)
+        /// </summary>
         public static Clan PerformLeaveClan(int accountID, ZkDataContext db = null)
         {
             if (db == null) db = new ZkDataContext();
@@ -100,7 +105,9 @@ namespace ZeroKWeb.Controllers
             return clan;
         }
 
-
+        /// <summary>
+        /// Clan leaving (<see cref="PerformLeaveClan"/>) + redirect
+        /// </summary>
         [Auth]
         public ActionResult LeaveClan()
         {
@@ -144,6 +151,9 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", new { id = clanID });
         }
 
+        /// <summary>
+        /// Creates a clan and redirects to the new clan page
+        /// </summary>
         [Auth]
         public ActionResult SubmitCreate(Clan clan, HttpPostedFileBase image, HttpPostedFileBase bgimage, bool noFaction = false)
         {

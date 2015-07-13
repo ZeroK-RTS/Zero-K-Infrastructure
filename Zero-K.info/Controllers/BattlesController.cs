@@ -14,6 +14,9 @@ namespace ZeroKWeb.Controllers
         //
         // GET: /Battles/
 
+        /// <summary>
+        /// Returns the page of the <see cref="SpringBattle"/> with the specified ID
+        /// </summary>
         public ActionResult Detail(int id)
         {
           var db = new ZkDataContext();
@@ -27,6 +30,9 @@ namespace ZeroKWeb.Controllers
           return View(bat);
         }
 
+        /// <summary>
+        /// Returns the main battle replay list; params filter
+        /// </summary>
         public ActionResult Index(string battleTitle,
                                   string map,
                                   string mod,
@@ -111,6 +117,9 @@ namespace ZeroKWeb.Controllers
                 return View(result);
         }
 
+        /// <summary>
+        /// Returns a page with the <see cref="SpringBattle"/> infolog
+        /// </summary>
         [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult Logs(int id)
         {

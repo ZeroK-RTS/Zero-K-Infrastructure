@@ -14,7 +14,10 @@ namespace ZeroKWeb.Controllers
         //
         // GET: /Campaign/
 
-        public Image GenerateGalaxyImage(int campaignID, double zoom = 1, double antiAliasingFactor = 4) {
+        /// <summary>
+        /// Makes an image: campaign background with planet images drawn on it (cheaper than rendering each planet individually)
+        /// </summary>
+        public Bitmap GenerateGalaxyImage(int campaignID, double zoom = 1, double antiAliasingFactor = 4) {
             zoom *= antiAliasingFactor;
             using (var db = new ZkDataContext()) {
                 Campaign camp = db.Campaigns.Single(x => x.CampaignID == campaignID);
@@ -47,13 +50,16 @@ namespace ZeroKWeb.Controllers
                         if (antiAliasingFactor == 1) return im;
                         else {
                             zoom /= antiAliasingFactor;
-                            return im.GetResized((int)(background.Width*zoom), (int)(background.Height*zoom));
+                            return im.GetResized((int)(background.Width*zoom), (int)(background.Height*zoom), InterpolationMode.HighQualityBicubic);
                         }
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// Main campaign page; currently jsut the default galaxy + related links
+        /// </summary>
         [Auth]
         public ActionResult Index(int? campaignID = null)
         {
@@ -65,7 +71,7 @@ namespace ZeroKWeb.Controllers
             string cachePath = Server.MapPath(string.Format("/img/galaxies/campaign/render_{0}.jpg", camp.CampaignID));
             // /*
             if (camp.IsDirty || !System.IO.File.Exists(cachePath)) {
-                using (Image im = GenerateGalaxyImage(camp.CampaignID)) {
+                using (Bitmap im = GenerateGalaxyImage(camp.CampaignID)) {
                     im.SaveJpeg(cachePath, 85);
                     camp.IsDirty = false;
                     camp.MapWidth = im.Width;
@@ -77,6 +83,9 @@ namespace ZeroKWeb.Controllers
             return View("CampaignMap", camp);
         }
 
+        /// <summary>
+        /// Go to journal page
+        /// </summary>
         public ActionResult Journals(int? campaignID = null)
         {
             if (Global.Account == null) return Content("You must be logged in to view campaign info");

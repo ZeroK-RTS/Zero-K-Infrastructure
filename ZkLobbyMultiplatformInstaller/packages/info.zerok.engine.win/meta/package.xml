@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>Spring RTS Engine Windows</DisplayName>
+    <Description>Spring RTS Engine for Windows</Description>
+    <Version>0.1.0-1</Version>
+    <ReleaseDate>2015-05-23</ReleaseDate>
+    <!--<Script>installscript.qs</Script>-->
+    <Licenses>
+        <License name="GNU GENERAL PUBLIC LICENSE Version 3" file="gpl3.txt"/>
+    </Licenses>
+    <Name>info.zerok.engine.win</Name>
+    <SortingPriority>3</SortingPriority>
+    <RequiresAdminRights>true</RequiresAdminRights>
+</Package>

@@ -57,8 +57,8 @@ namespace ZeroKWeb.Controllers
             // delete channel subscription
             if (!acc.IsZeroKAdmin || acc.IsZeroKAdmin)
             {
-                var channelSub = db.LobbyChannelSubscriptions.FirstOrDefault(x => x.Account == acc && x.Channel == acc.Faction.Name);
-                db.LobbyChannelSubscriptions.DeleteOnSubmit(channelSub);
+                var channelSub = db.LobbyChannelSubscriptions.FirstOrDefault(x => x.AccountID == acc.AccountID && x.Channel == acc.Faction.Name);
+                if (channelSub != null) db.LobbyChannelSubscriptions.DeleteOnSubmit(channelSub);
             }
 
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} leaves faction {1}", acc, acc.Faction));
@@ -94,7 +94,21 @@ namespace ZeroKWeb.Controllers
             return View("FactionTreatyDefinition", treaty);
         }
 
-
+        /// <summary>
+        /// Create or modify a PlanetWars <see cref="FactionTreaty"/>
+        /// </summary>
+        /// <param name="factionTreatyID">Existing <see cref="FactionTreaty"/> ID, if modifying one</param>
+        /// <param name="turns">How long the treaty lasts</param>
+        /// <param name="acceptingFactionID"></param>
+        /// <param name="effectTypeID"><see cref="TreatyEffect"/> to add or remove, if applicable</param>
+        /// <param name="effectValue"></param>
+        /// <param name="planetID">Specifies the <see cref="Planet"/> for planet-based effects</param>
+        /// <param name="isReverse"></param>
+        /// <param name="note">Diplomatic note readable by both parties, to better communicate their intentions</param>
+        /// <param name="add">If not null or empty, add the specified <see cref="TreatyEffect"/></param>
+        /// <param name="delete">Delete the specified <see cref="TreatyEffect"/>?</param>
+        /// <param name="propose">If not null or empty, this is a newly proposed treaty</param>
+        /// <returns></returns>
         public ActionResult ModifyTreaty(int factionTreatyID,
                                          int? turns,
                                          int? acceptingFactionID,
@@ -222,6 +236,9 @@ namespace ZeroKWeb.Controllers
 
         }
 
+        /// <summary>
+        /// Set faction secret topic (applied to lobby channel as well)
+        /// </summary>
         public ActionResult SetTopic(int factionID, string secretTopic) {
             var db = new ZkDataContext();
             var fac = db.Factions.Single(x => x.FactionID == factionID);
