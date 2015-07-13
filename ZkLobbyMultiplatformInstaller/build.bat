@@ -1,1 +1,1 @@
-binarycreator.exe --offline-only -c config\config.xml -p packages Zero-K.exe
+binarycreator.exe -c config\config.xml -p packages Zero-K --ignore-translations --online-only

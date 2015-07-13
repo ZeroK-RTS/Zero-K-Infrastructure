@@ -17,4 +17,13 @@
 
     <TargetDir>@HomeDir@/Zero-K</TargetDir>
     <AllowSpaceInPath>true</AllowSpaceInPath>
+
+    <RepositorySettingsPageVisible>false</RepositorySettingsPageVisible>
+    <RemoteRepositories>
+        <Repository>
+            <Url>http://zero-k.info/repo</Url>
+            <DisplayName>Zero-K Online Repository</DisplayName>
+        </Repository>
+    </RemoteRepositories>
+
 </Installer>

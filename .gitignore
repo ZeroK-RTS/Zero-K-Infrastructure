@@ -189,5 +189,5 @@ Zero-K.info/Deploy/*
 #Packages qt installer framework
 !ZkLobbyMultiplatformInstaller/packages
 !ZkLobbyMultiplatformInstaller/packages/info.zerok.maps
-ZkLobbyMultiplatformInstaller/Zero-K.run
+ZkLobbyMultiplatformInstaller/Zero-K
 ZkLobbyMultiplatformInstaller/Zero-K.exe
