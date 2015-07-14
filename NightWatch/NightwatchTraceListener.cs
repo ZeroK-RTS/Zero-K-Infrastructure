@@ -35,6 +35,7 @@ namespace NightWatch
 
         public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string message)
         {
+            if (eventType == TraceEventType.Information) return;
             SendError(string.Format("{0} {1} {2}", DateTime.Now, eventType, message));
         }
 
