@@ -27,7 +27,6 @@ namespace CaTracker
         
         public TasClient Tas { get { return tas; } }
         public static Config config;
-        OfflineMessages offlineMessages;
         PlayerMover playerMover;
         ChatRelay chatRelay;
         public PayPalInterface PayPalInterface { get; protected set; }
@@ -72,7 +71,6 @@ namespace CaTracker
 		    }
 
             Auth = new AuthService(tas);
-            offlineMessages = new OfflineMessages(tas);
             playerMover = new PlayerMover(tas);
             SteamHandler = new NwSteamHandler(tas, new Secrets().GetSteamWebApiKey());
             chatRelay = new ChatRelay(tas, new Secrets().GetNightwatchPassword(), new List<string>() { "zkdev", "sy", "moddev","weblobbydev","ai"});

@@ -157,8 +157,6 @@
     <Compile Include="Ef\Galaxy.cs" />
     <Compile Include="Ef\KudosPurchase.cs" />
     <Compile Include="Ef\Link.cs" />
-    <Compile Include="Ef\LobbyChannelSubscription.cs" />
-    <Compile Include="Ef\LobbyMessage.cs" />
     <Compile Include="Ef\MapRating.cs" />
     <Compile Include="Ef\MiscVar.cs" />
     <Compile Include="Ef\Mission.cs" />

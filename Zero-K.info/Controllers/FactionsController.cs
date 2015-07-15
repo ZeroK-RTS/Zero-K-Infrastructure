@@ -54,12 +54,6 @@ namespace ZeroKWeb.Controllers
                 planet.OwnerAccountID = null;
             }
 
-            // delete channel subscription
-            if (!acc.IsZeroKAdmin || acc.IsZeroKAdmin)
-            {
-                var channelSub = db.LobbyChannelSubscriptions.FirstOrDefault(x => x.AccountID == acc.AccountID && x.Channel == acc.Faction.Name);
-                if (channelSub != null) db.LobbyChannelSubscriptions.DeleteOnSubmit(channelSub);
-            }
 
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} leaves faction {1}", acc, acc.Faction));
             db.SubmitChanges();

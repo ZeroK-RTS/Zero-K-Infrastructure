@@ -53,7 +53,6 @@ namespace ZkData
             ForumThreadsByLastPostAccountID = new HashSet<ForumThread>();
             ForumThreadLastReads = new HashSet<ForumThreadLastRead>();
             KudosPurchases = new HashSet<KudosPurchase>();
-            LobbyChannelSubscriptions = new HashSet<LobbyChannelSubscription>();
             Missions = new HashSet<Mission>();
             MissionScores = new HashSet<MissionScore>();
             News = new HashSet<News>();
@@ -164,7 +163,6 @@ namespace ZkData
         public virtual ICollection<ForumThread> ForumThreadsByLastPostAccountID { get; set; }
         public virtual ICollection<ForumThreadLastRead> ForumThreadLastReads { get; set; }
         public virtual ICollection<KudosPurchase> KudosPurchases { get; set; }
-        public virtual ICollection<LobbyChannelSubscription> LobbyChannelSubscriptions { get; set; }
         public virtual ICollection<Mission> Missions { get; set; }
         public virtual ICollection<MissionScore> MissionScores { get; set; }
         public virtual ICollection<News> News { get; set; }

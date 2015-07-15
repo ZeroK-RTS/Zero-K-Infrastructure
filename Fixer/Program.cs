@@ -671,16 +671,6 @@ namespace Fixer
             }
         }
 
-        public static void PrintNightwatchSubscriptions(string channel)
-        {
-            ZkDataContext db = new ZkDataContext();
-            var subscriptions = db.LobbyChannelSubscriptions.Where(x => x.Channel == channel);
-            foreach (var entry in subscriptions)
-            {
-                Account acc = entry.Account;
-                System.Console.WriteLine(acc);
-            }
-        }
 
         public static void GetClanStackWinRate(int clanID, int minElo)
         {
