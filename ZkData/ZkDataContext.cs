@@ -78,6 +78,7 @@ namespace ZkData
         public virtual DbSet<TreatyEffectType> TreatyEffectTypes { get; set; }
         public virtual DbSet<Unlock> Unlocks { get; set; }
         public virtual DbSet<MiscVar> MiscVars { get; set; }
+        public virtual DbSet<LobbyChatHistory> LobbyChatHistories { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
