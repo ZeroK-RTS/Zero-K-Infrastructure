@@ -117,7 +117,7 @@
                     		}
                     @foreach (var award in Model.AccountBattleAwards.Where(x => x.AccountID == u.AccountID))
                     {
-                        <img src="img/Awards/trophy_@(award.AwardKey).png" height="30" title="@award.AwardDescription"/>
+                        <img src="/img/Awards/trophy_@(award.AwardKey).png" height="30" title="@award.AwardDescription"/>
                     }
                 </span>
                 <br />
