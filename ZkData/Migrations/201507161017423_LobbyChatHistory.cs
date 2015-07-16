@@ -30,7 +30,7 @@ namespace ZkData.Migrations
                 .ForeignKey("dbo.Accounts", t => t.TargetAccount_AccountID)
                 .ForeignKey("dbo.Accounts", t => t.UserAccount_AccountID)
                 .Index(t => t.Target)
-                .Index(t => t.Time)
+                .Index(t => t.Time, clustered: true)
                 .Index(t => t.User)
                 .Index(t => t.TargetAccount_AccountID)
                 .Index(t => t.UserAccount_AccountID);

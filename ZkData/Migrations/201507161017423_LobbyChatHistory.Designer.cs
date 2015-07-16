@@ -13,7 +13,7 @@ namespace ZkData.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201507152209585_LobbyChatHistory"; }
+            get { return "201507161017423_LobbyChatHistory"; }
         }
         
         string IMigrationMetadata.Source

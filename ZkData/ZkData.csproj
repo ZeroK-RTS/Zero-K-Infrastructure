@@ -107,10 +107,6 @@
     <Compile Include="Migrations\201501290241027_RemoveSpringHashes.Designer.cs">
       <DependentUpon>201501290241027_RemoveSpringHashes.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201507152209585_LobbyChatHistory.cs" />
-    <Compile Include="Migrations\201507152209585_LobbyChatHistory.Designer.cs">
-      <DependentUpon>201507152209585_LobbyChatHistory.cs</DependentUpon>
-    </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
     <Compile Include="CurrentLobbyStats.cs" />
@@ -273,9 +269,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201501290241027_RemoveSpringHashes.resx">
       <DependentUpon>201501290241027_RemoveSpringHashes.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201507152209585_LobbyChatHistory.resx">
-      <DependentUpon>201507152209585_LobbyChatHistory.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

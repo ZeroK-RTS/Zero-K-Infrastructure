@@ -18,7 +18,7 @@ namespace ZkData
         public string Target { get; set; }
 
         public string Text { get; set; }
-        [Index]
+        [Index(IsClustered = true)]
         public DateTime Time { get; set; }
 
         [MaxLength(255)]

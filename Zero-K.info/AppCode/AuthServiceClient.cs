@@ -40,7 +40,7 @@ namespace ZkData
 
         public static void SendLobbyMessage(Account account, string text)
         {
-            // HACK implement Global.Nightwatch.Auth.SendLobbyMessage(account, text);
+            Global.Nightwatch.Auth.SendLobbyMessage(account, text);
             
         }
 
