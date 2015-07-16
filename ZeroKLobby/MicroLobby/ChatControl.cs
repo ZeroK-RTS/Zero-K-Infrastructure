@@ -80,6 +80,7 @@ namespace ZeroKLobby.MicroLobby
 
             Name = name;
             ChannelName = name;
+            if (!DesignMode) HistoryManager.InsertLastLines(ChannelName, ChatBox);
 
             playerBox.Sorted = true;
             var lookingGlass = new PictureBox { Width = 20, Height = 20, Image = ZklResources.search, SizeMode = PictureBoxSizeMode.CenterImage };
@@ -177,6 +178,7 @@ namespace ZeroKLobby.MicroLobby
                  (line is SaidExLine && Program.Conf.IgnoredUsers.Contains(((SaidExLine)line).AuthorName)))) return;
             ChatBox.AddLine(line);
             ChannelLineAdded(this, new ChannelLineArgs() { Channel = ChannelName, Line = line });
+            HistoryManager.LogLine(ChannelName, line);
         }
 
         public void GoToSendBox() {

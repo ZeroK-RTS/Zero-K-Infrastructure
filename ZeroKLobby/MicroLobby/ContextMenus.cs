@@ -187,6 +187,10 @@ namespace ZeroKLobby.MicroLobby
                 showHistoryLines.Click += (s, e) => chatControl.ChatBox.ShowHistory = !chatControl.ChatBox.ShowHistory;
                 contextMenu.MenuItems.Add(showHistoryLines);
 
+                var historyItem = new System.Windows.Forms.MenuItem("Open History");
+                historyItem.Click += (s, e) => HistoryManager.OpenHistory(chatControl.ChannelName);
+                contextMenu.MenuItems.Add(historyItem);
+
                 if (chatControl.CanLeave)
                 {
                     var leaveItem = new System.Windows.Forms.MenuItem("Leave Channel");
@@ -360,6 +364,9 @@ namespace ZeroKLobby.MicroLobby
                 showHistoryLines.Click += (s, e) => control.ChatBox.ShowHistory = !control.ChatBox.ShowHistory;
                 contextMenu.MenuItems.Add(showHistoryLines);
 
+                var historyItem = new System.Windows.Forms.MenuItem("Open History");
+                historyItem.Click += (s, e) => HistoryManager.OpenHistory(control.UserName);
+                contextMenu.MenuItems.Add(historyItem);
 
                 if (control.CanClose)
                 {
