@@ -106,31 +106,6 @@ namespace NightWatch
 
 
 
-
-        public void SendLobbyMessage(Account account, string text)
-        {
-            User ex;
-            if (client.ExistingUsers.TryGetValue(account.Name, out ex)) client.Say(SayPlace.User, account.Name, text, false);
-            else
-            {
-                var message = new LobbyMessage
-                {
-                    SourceLobbyID = client.MyUser != null ? client.MyUser.AccountID : 0,
-                    SourceName = client.UserName,
-                    Created = DateTime.UtcNow,
-                    Message = text,
-                    TargetName = account.Name,
-                    TargetLobbyID = account.AccountID
-                };
-                using (var db = new ZkDataContext())
-                {
-                    db.LobbyMessages.InsertOnSubmit(message);
-                    db.SubmitChanges();
-                }
-            }
-        }
-
-
         public CurrentLobbyStats GetCurrentStats()
         {
             var ret = new CurrentLobbyStats();
@@ -151,5 +126,9 @@ namespace NightWatch
         }
 
 
+        public void SendLobbyMessage(Account account, string text)
+        {
+            client.Say(SayPlace.User, client.UserName, text, false);
+        }
     }
 }

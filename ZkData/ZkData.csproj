@@ -71,6 +71,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Ef\LobbyChatHistory.cs" />
     <Compile Include="Enums\DecorationIconPositions.cs" />
     <Compile Include="Enums\DecorationIconTypes.cs" />
     <Compile Include="Enums\UserLanguage.cs" />
@@ -105,6 +106,18 @@
     <Compile Include="Migrations\201501290241027_RemoveSpringHashes.cs" />
     <Compile Include="Migrations\201501290241027_RemoveSpringHashes.Designer.cs">
       <DependentUpon>201501290241027_RemoveSpringHashes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201507161438007_LobbyChatHistory.cs" />
+    <Compile Include="Migrations\201507161438007_LobbyChatHistory.Designer.cs">
+      <DependentUpon>201507161438007_LobbyChatHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201507161450589_LobbyChatWasReadBit.cs" />
+    <Compile Include="Migrations\201507161450589_LobbyChatWasReadBit.Designer.cs">
+      <DependentUpon>201507161450589_LobbyChatWasReadBit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201507161631010_AddLogoutTime.cs" />
+    <Compile Include="Migrations\201507161631010_AddLogoutTime.Designer.cs">
+      <DependentUpon>201507161631010_AddLogoutTime.cs</DependentUpon>
     </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
@@ -157,8 +170,6 @@
     <Compile Include="Ef\Galaxy.cs" />
     <Compile Include="Ef\KudosPurchase.cs" />
     <Compile Include="Ef\Link.cs" />
-    <Compile Include="Ef\LobbyChannelSubscription.cs" />
-    <Compile Include="Ef\LobbyMessage.cs" />
     <Compile Include="Ef\MapRating.cs" />
     <Compile Include="Ef\MiscVar.cs" />
     <Compile Include="Ef\Mission.cs" />
@@ -270,6 +281,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201501290241027_RemoveSpringHashes.resx">
       <DependentUpon>201501290241027_RemoveSpringHashes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507161438007_LobbyChatHistory.resx">
+      <DependentUpon>201507161438007_LobbyChatHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507161450589_LobbyChatWasReadBit.resx">
+      <DependentUpon>201507161450589_LobbyChatWasReadBit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507161631010_AddLogoutTime.resx">
+      <DependentUpon>201507161631010_AddLogoutTime.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

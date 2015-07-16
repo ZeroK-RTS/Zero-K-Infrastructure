@@ -27,7 +27,7 @@ namespace ZeroKLobby.Lines
             if (me) textColor = TextColor.History;
             else if (hilite) textColor = TextColor.Error;
 
-            Text = TextColor.Text + "[" + TextColor.Date + Date.ToShortTimeString() + TextColor.Text + "] " + icon + " " + TextColor.Username +
+            Text = TextColor.Text + "[" + TextColor.Date + Date.ToLocalTime().ToShortTimeString() + TextColor.Text + "] " + icon + " " + TextColor.Username +
                    AuthorName + textColor + " " + Message;
         }
 

@@ -14,6 +14,7 @@ namespace ZkLobbyServer
     public class Server
     {
         readonly SharedServerState sharedState;
+        
 
         public Server(string geoIPpath)
         {

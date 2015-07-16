@@ -1,5 +1,9 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Data.Entity;
+using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using LobbyClient;
 using MaxMind.Db;
 using MaxMind.GeoIP2;
@@ -9,18 +13,18 @@ namespace ZkLobbyServer
 {
     public class SharedServerState
     {
-        public string Version { get; private set; }
+        public int BattleCounter;
+        public ConcurrentDictionary<int, Battle> Battles = new ConcurrentDictionary<int, Battle>();
+        public int ClientCounter;
+        public ConcurrentDictionary<string, ConnectedUser> ConnectedUsers = new ConcurrentDictionary<string, ConnectedUser>();
         public string Engine { get; set; }
         public string Game { get; set; }
-        public int ClientCounter;
-        public int BattleCounter;
-        public CommandJsonSerializer Serializer = new CommandJsonSerializer();
-
-        public ConcurrentDictionary<string, ConnectedUser> ConnectedUsers = new ConcurrentDictionary<string, ConnectedUser>();
-        public ConcurrentDictionary<string, Channel> Rooms = new ConcurrentDictionary<string, Channel>();
-        public ConcurrentDictionary<int, Battle> Battles = new ConcurrentDictionary<int, Battle>();
 
         public LoginChecker LoginChecker;
+        public ConcurrentDictionary<string, Channel> Rooms = new ConcurrentDictionary<string, Channel>();
+        public CommandJsonSerializer Serializer = new CommandJsonSerializer();
+        public string Version { get; private set; }
+
 
         public SharedServerState(string geoIPpath)
         {
@@ -29,6 +33,16 @@ namespace ZkLobbyServer
             Engine = GlobalConst.DefaultEngineOverride;
             Game = "zk:stable";
             LoginChecker = new LoginChecker(this, geoIPpath);
+        }
+
+        public async Task StoreChatHistory(Say say)
+        {
+            using (var db = new ZkDataContext()) {
+                var historyEntry = new LobbyChatHistory();
+                historyEntry.SetFromSay(say);
+                db.LobbyChatHistories.Add(historyEntry);
+                await db.SaveChangesAsync();
+            }
         }
     }
 }

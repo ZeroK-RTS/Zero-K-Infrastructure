@@ -282,6 +282,7 @@ namespace LobbyClient
         public bool IsEmote;
         public string Text;
         public bool Ring;
+        public DateTime? Time;
     }
 
     [Message(Origin.Client)]

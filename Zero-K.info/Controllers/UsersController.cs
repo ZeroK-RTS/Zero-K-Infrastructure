@@ -65,8 +65,7 @@ namespace ZeroKWeb.Controllers
                 {
                     Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - Springie rights: {0} -> {1}", acc.SpringieLevel, 2), true);
                     acc.SpringieLevel = 2;
-                    var channelSub = db.LobbyChannelSubscriptions.FirstOrDefault(x => x.Account == acc && x.Channel == GlobalConst.ModeratorChannel);
-                    db.LobbyChannelSubscriptions.DeleteOnSubmit(channelSub);
+                    
                 }
                 Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - Admin status: {0} -> {1}", acc.IsZeroKAdmin, zkAdmin), true);
                 acc.IsZeroKAdmin = zkAdmin;
