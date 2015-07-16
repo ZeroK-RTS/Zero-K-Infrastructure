@@ -53,8 +53,6 @@ namespace ZkData
         public virtual DbSet<Galaxy> Galaxies { get; set; }
         public virtual DbSet<KudosPurchase> KudosPurchases { get; set; }
         public virtual DbSet<Link> Links { get; set; }
-        public virtual DbSet<LobbyChannelSubscription> LobbyChannelSubscriptions { get; set; }
-        public virtual DbSet<LobbyMessage> LobbyMessages { get; set; }
         public virtual DbSet<MapRating> MapRatings { get; set; }
         public virtual DbSet<Mission> Missions { get; set; }
         public virtual DbSet<MissionScore> MissionScores { get; set; }
@@ -80,6 +78,7 @@ namespace ZkData
         public virtual DbSet<TreatyEffectType> TreatyEffectTypes { get; set; }
         public virtual DbSet<Unlock> Unlocks { get; set; }
         public virtual DbSet<MiscVar> MiscVars { get; set; }
+        public virtual DbSet<LobbyChatHistory> LobbyChatHistories { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

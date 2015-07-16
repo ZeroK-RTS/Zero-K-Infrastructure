@@ -265,9 +265,28 @@ namespace ZkLobbyServer
                             Users = new List<string>(users)
                         }
                 });
-
+            
+            await SendMissedChannelMessages(channel);
 
             if (added) await Broadcast(users, new ChannelUserAdded { ChannelName = channel.Name, UserName = Name });
+        }
+
+
+        async Task SendMissedChannelMessages(Channel channel)
+        {
+            using (var db = new ZkDataContext()) {
+                var acc = await db.Accounts.FindAsync(User.AccountID);
+                await
+                    db.LobbyChatHistories.Where(x => x.Target == channel.Name && x.SayPlace == SayPlace.Channel && x.Time >= acc.LastLogout)
+                        .OrderByDescending(x => x.Time)
+                        .Take(1000)
+                        .OrderBy(x => x.Time)
+                        .ForEachAsync(
+                            async (chatHistory) => {
+                                await
+                                    SendCommand(chatHistory.ToSay());
+                            });
+            }
         }
 
         public async Task Process(LeaveChannel leaveChannel)
@@ -294,6 +313,7 @@ namespace ZkLobbyServer
             if (!IsLoggedIn) return;
 
             say.User = Name;
+            say.Time = DateTime.UtcNow;
 
             if (say.Ring)
             { // ring permissions - bot/admin anywhere, others only to own battle 
@@ -309,17 +329,19 @@ namespace ZkLobbyServer
                     Channel channel;
                     if (state.Rooms.TryGetValue(say.Target, out channel))
                     {
-                        if (channel.Users.ContainsKey(Name)) await Broadcast(channel.Users.Keys, say);
+                        if (channel.Users.ContainsKey(Name)) {
+                            await Broadcast(channel.Users.Keys, say);
+                            await state.StoreChatHistory(say);
+                        }
                     }
                     break;
 
                 case SayPlace.User:
                     ConnectedUser connectedUser;
-                    if (state.ConnectedUsers.TryGetValue(say.Target, out connectedUser))
-                    {
-                        await connectedUser.SendCommand(say);
-                        await SendCommand(say);
-                    } // todo else offline message?
+                    if (state.ConnectedUsers.TryGetValue(say.Target, out connectedUser)) await connectedUser.SendCommand(say);
+                    else await state.StoreChatHistory(say);
+                    await SendCommand(say);
+                    
                     break;
 
                 case SayPlace.Battle:
@@ -333,9 +355,9 @@ namespace ZkLobbyServer
                     if (MyBattle != null && MyBattle.Founder.Name == Name)
                     {
                         ConnectedUser cli;
-                        if (MyBattle.Users.ContainsKey(say.Target) && state.ConnectedUsers.TryGetValue(say.Target, out cli))
+                        if (MyBattle.Users.ContainsKey(say.Target))
                         {
-                            await cli.SendCommand(say);
+                            if (state.ConnectedUsers.TryGetValue(say.Target, out cli)) await cli.SendCommand(say);
                         }
                     }
                     break;
@@ -370,6 +392,12 @@ namespace ZkLobbyServer
 
                 ConnectedUser connectedUser;
                 state.ConnectedUsers.TryRemove(Name, out connectedUser);
+
+                using (var db = new ZkDataContext()) {
+                    var acc = await db.Accounts.FindAsync(User.AccountID);
+                    acc.LastLogout = DateTime.UtcNow;
+                    await db.SaveChangesAsync();
+                }
             }
         }
 

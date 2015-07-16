@@ -8,26 +8,14 @@ namespace ZeroKLobby.MicroLobby
 {
 	class SpringieCommand
 	{
-		static readonly Dictionary<string, string> autoHosts = new Dictionary<string, string>()
-		                                                       {
-		                                                       	{ "sa:latest", "Boron" },
-		                                                       	{ "thecursed:latest", "[GJL]autohost" },
-		                                                       	{ "xta:latest", "Helium" },
-		                                                       	{ "nota:latest", "Nitrogen" },
-		                                                       	{ "zk:stable", "Springiee" },
-		                                                       	{ "zk:test", "Oxygen" },
-		                                                       	{ "evo:test", "Lithium" },
-		                                                       	{ "s44:test", "Nickel" },
-                                                                { "kp:latest", "Silicon1" }
-		                                                       };
 		public string Command { get; set; }
 		public string Reply { get; set; }
 
 		public static string GetHostSpawnerName(string gameName)
 		{
-			string ah;
-			if (autoHosts.TryGetValue(gameName, out ah) && Program.TasClient.ExistingUsers.ContainsKey(ah)) return ah;
-			else return autoHosts.Values.Shuffle().FirstOrDefault(x => Program.TasClient.ExistingUsers.ContainsKey(x));
+		    return Program.TasClient.ExistingUsers.Where(x => x.Value.IsBot && (x.Value.ClientType & Login.ClientTypes.SpringieManaged) > 0).OrderByDescending(x=>x.Key.StartsWith("Springiee"))
+		        .Select(x => x.Key)
+		        .FirstOrDefault();
 		}
 
 		public static SpringieCommand Manage(int minPlayers, int maxPlayers, int teams)

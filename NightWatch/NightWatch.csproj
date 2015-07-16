@@ -82,7 +82,6 @@
     <Compile Include="NwSteamHandler.cs" />
     <Compile Include="Nightwatch.cs" />
     <Compile Include="MainConfig.cs" />
-    <Compile Include="OfflineMessages.cs" />
     <Compile Include="PlayerMover.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TopPlayers.cs" />

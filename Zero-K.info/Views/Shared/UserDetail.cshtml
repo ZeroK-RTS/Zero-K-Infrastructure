@@ -187,7 +187,7 @@
             <h3>Trophies:</h3>
             @foreach (var award in Model.AccountBattleAwards.GroupBy(x => x.AwardKey).OrderByDescending(x => x.Count())) {
                 <div class="fleft border" style="margin: 3px;">
-                    <img src="img/Awards/trophy_@(award.Key).png" height="30" alt="@award.Key" title="@award.First().AwardDescription.Split(',').First()"/>
+                    <img src="/img/Awards/trophy_@(award.Key).png" height="30" alt="@award.Key" title="@award.First().AwardDescription.Split(',').First()"/>
                     <br />
                     <center>@award.Count()</center>
                 </div>

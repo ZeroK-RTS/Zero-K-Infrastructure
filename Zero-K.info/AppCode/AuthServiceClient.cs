@@ -41,6 +41,7 @@ namespace ZkData
         public static void SendLobbyMessage(Account account, string text)
         {
             Global.Nightwatch.Auth.SendLobbyMessage(account, text);
+            
         }
 
         public static Account VerifyAccountHashed(string login, string passwordHash)
