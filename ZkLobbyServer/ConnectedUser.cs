@@ -266,6 +266,16 @@ namespace ZkLobbyServer
                         }
                 });
 
+            await
+                SendCommand(new Say() {
+                    IsEmote = true,
+                    Place = SayPlace.Channel,
+                    Text = "bla bla",
+                    Time = DateTime.UtcNow.AddDays(-1),
+                    User = "Server",
+                    Target = joinChannel.ChannelName
+                });
+
 
             if (added) await Broadcast(users, new ChannelUserAdded { ChannelName = channel.Name, UserName = Name });
         }

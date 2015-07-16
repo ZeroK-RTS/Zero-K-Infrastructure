@@ -16,7 +16,7 @@ namespace ZeroKLobby.Lines
             Date = date ?? DateTime.Now;
             Message = message;
             var icon = TextImage.GetUserImageCode(author);
-            Text = TextColor.Text + "[" + TextColor.Date + Date.ToShortTimeString() + TextColor.Text + "] " + icon + " " + TextColor.Emote + "* " +
+            Text = TextColor.Text + "[" + TextColor.Date + Date.ToLocalTime().ToShortTimeString() + TextColor.Text + "] " + icon + " " + TextColor.Emote + "* " +
                    AuthorName + " " + Message;
         }
 

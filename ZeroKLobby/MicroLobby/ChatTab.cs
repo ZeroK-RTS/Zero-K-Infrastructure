@@ -174,8 +174,6 @@ namespace ZeroKLobby.MicroLobby
             {
                 var otherUserName = e.UserName == tas.UserName ? e.Channel : e.UserName;
 
-
-
                 var pmControl = GetPrivateMessageControl(otherUserName);
                 // block non friend messages 
                 if (pmControl == null && Program.Conf.BlockNonFriendPm && !Program.FriendManager.Friends.Contains(otherUserName) && !Program.TasClient.ExistingUsers[e.UserName].IsBot)
@@ -189,8 +187,8 @@ namespace ZeroKLobby.MicroLobby
                 else
                 {
                     pmControl = pmControl ?? CreatePrivateMessageControl(otherUserName);
-                    if (!e.IsEmote) pmControl.AddLine(new SaidLine(e.UserName, e.Text));
-                    else pmControl.AddLine(new SaidExLine(e.UserName, e.Text));
+                    if (!e.IsEmote) pmControl.AddLine(new SaidLine(e.UserName, e.Text, e.Time));
+                    else pmControl.AddLine(new SaidExLine(e.UserName, e.Text, e.Time));
                     if (e.UserName != Program.TasClient.MyUser.Name)
                     {
                         MainWindow.Instance.NotifyUser("chat/user/" + otherUserName,

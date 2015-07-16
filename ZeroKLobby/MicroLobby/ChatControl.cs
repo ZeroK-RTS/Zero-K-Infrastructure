@@ -27,7 +27,6 @@ namespace ZeroKLobby.MicroLobby
         public static EventHandler<ChannelLineArgs> ChannelLineAdded = (sender, args) => { };
         Timer minuteTimer;
         public string ChannelName { get; set; }
-        public GameInfo GameInfo { get; set; }
         
         public bool IsTopicVisible {
             get { return topicPanel.Visible; }
@@ -463,7 +462,7 @@ namespace ZeroKLobby.MicroLobby
                     if (e.Text.Contains(Program.Conf.LobbyPlayerName) && e.UserName != GlobalConst.NightwatchName) Program.MainWindow.NotifyUser("chat/channel/" + e.Channel, string.Format("{0}: {1}", e.UserName, e.Text), false, true);
 
                     if (!e.IsEmote) AddLine(new SaidLine(e.UserName, e.Text, e.Time));
-                    else AddLine(new SaidExLine(e.UserName, e.Text));
+                    else AddLine(new SaidExLine(e.UserName, e.Text, e.Time));
                 }
             }
             else if (e.Place == SayPlace.Channel) AddLine(new ChannelMessageLine(e.Text));
