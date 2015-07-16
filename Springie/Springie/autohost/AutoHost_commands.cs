@@ -832,34 +832,20 @@ namespace Springie.autohost
             List<string> usname;
             if (!AllReadyAndSynced(out usname))
             {
-                SayBattle("cannot start, " + Utils.Glue(usname.ToArray()) + " does not have the map/game yet");
+                SayBattle("Cannot start, " + Utils.Glue(usname.ToArray()) + " does not have the map/game yet");
                 return;
             }
 
-            if (SpawnConfig != null)
+            if (SpawnConfig == null && config != null && config.Mode != AutohostMode.None)
             {
-                int allyno;
-                int alliances;
-                if (!BalancedTeams(out allyno, out alliances))
+                if (!RunServerBalance(true, null, null))
                 {
-                    SayBattle("cannot start, alliance " + (allyno + 1) + " not fair. Use !forcestart to override");
+                    SayBattle("Cannot start a game at the moment.");
                     return;
                 }
             }
-            else
-            {
-                if (config != null && config.Mode != AutohostMode.None)
-                {
-                    if (!RunServerBalance(true, null, null))
-                    {
-                        SayBattle("Cannot start a game atm");
-                        return;
-                    }
 
-                }
-            }
-
-            SayBattle("please wait, game is about to start");
+            SayBattle("Please wait, game is about to start.");
             StopVote();
             lastSplitPlayersCountCalled = 0;
             tas.StartGame();
