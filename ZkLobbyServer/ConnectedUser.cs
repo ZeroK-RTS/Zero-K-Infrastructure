@@ -309,7 +309,10 @@ namespace ZkLobbyServer
                     Channel channel;
                     if (state.Rooms.TryGetValue(say.Target, out channel))
                     {
-                        if (channel.Users.ContainsKey(Name)) await Broadcast(channel.Users.Keys, say);
+                        if (channel.Users.ContainsKey(Name)) {
+                            await Broadcast(channel.Users.Keys, say);
+                            state.OnSaid(this, say);
+                        }
                     }
                     break;
 
@@ -319,13 +322,15 @@ namespace ZkLobbyServer
                     {
                         await connectedUser.SendCommand(say);
                         await SendCommand(say);
-                    } // todo else offline message?
+                    }
+                    state.OnSaid(this, say);
                     break;
 
                 case SayPlace.Battle:
                     if (MyBattle != null)
                     {
                         await Broadcast(MyBattle.Users.Keys, say);
+                        state.OnSaid(this, say);
                     }
                     break;
 
@@ -333,9 +338,10 @@ namespace ZkLobbyServer
                     if (MyBattle != null && MyBattle.Founder.Name == Name)
                     {
                         ConnectedUser cli;
-                        if (MyBattle.Users.ContainsKey(say.Target) && state.ConnectedUsers.TryGetValue(say.Target, out cli))
+                        if (MyBattle.Users.ContainsKey(say.Target))
                         {
-                            await cli.SendCommand(say);
+                            if (state.ConnectedUsers.TryGetValue(say.Target, out cli)) await cli.SendCommand(say);
+                            state.OnSaid(this, say);
                         }
                     }
                     break;
@@ -343,6 +349,7 @@ namespace ZkLobbyServer
                     if (User.IsAdmin)
                     {
                         await Broadcast(state.ConnectedUsers.Values, say);
+                        state.OnSaid(this, say);
                     }
                     break;
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Reflection;
 using LobbyClient;
 using MaxMind.Db;
@@ -20,7 +21,14 @@ namespace ZkLobbyServer
         public ConcurrentDictionary<string, Channel> Rooms = new ConcurrentDictionary<string, Channel>();
         public ConcurrentDictionary<int, Battle> Battles = new ConcurrentDictionary<int, Battle>();
 
+        public event EventHandler<Say> Said = (s, e) => { };
+
         public LoginChecker LoginChecker;
+
+        public void OnSaid(object sender, Say say)
+        {
+            Said(sender, say);
+        }
 
         public SharedServerState(string geoIPpath)
         {
