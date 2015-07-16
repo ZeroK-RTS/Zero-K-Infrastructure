@@ -27,5 +27,22 @@ namespace ZkData
 
         public bool IsEmote { get; set; }
 
+
+        public Say ToSay()
+        {
+            return new Say() { IsEmote = IsEmote, Place = SayPlace, User = User, Ring = Ring, Target = Target, Text = Text, Time = Time };
+        }
+
+        public void SetFromSay(Say say)
+        {
+            this.IsEmote = say.IsEmote;
+            this.SayPlace = say.Place;
+            this.User = say.User;
+            this.Ring = say.Ring;
+            this.Target = say.Target;
+            this.Text = say.Text;
+            this.Time = say.Time ?? DateTime.UtcNow;
+        }
+
     }
 }

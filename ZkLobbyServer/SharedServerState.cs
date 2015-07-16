@@ -38,15 +38,9 @@ namespace ZkLobbyServer
         public async Task StoreChatHistory(Say say)
         {
             using (var db = new ZkDataContext()) {
-                db.LobbyChatHistories.Add(new LobbyChatHistory() {
-                    Text = say.Text,
-                    IsEmote = say.IsEmote,
-                    Ring = say.Ring,
-                    User = say.User,
-                    Target = say.Target,
-                    SayPlace = say.Place,
-                    Time = say.Time ?? DateTime.UtcNow,
-                });
+                var historyEntry = new LobbyChatHistory();
+                historyEntry.SetFromSay(say);
+                db.LobbyChatHistories.Add(historyEntry);
                 await db.SaveChangesAsync();
             }
         }

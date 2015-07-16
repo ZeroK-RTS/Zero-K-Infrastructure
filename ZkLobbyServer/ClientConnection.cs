@@ -155,16 +155,7 @@ namespace ZkLobbyServer
                         .Take(100).OrderBy(x=>x.Time)
                         .ForEachAsync(
                             async (chatHistory) => {
-                                await
-                                    SendCommand(new Say() {
-                                        IsEmote = chatHistory.IsEmote,
-                                        Ring = chatHistory.Ring,
-                                        Text = chatHistory.Text,
-                                        User = chatHistory.User,
-                                        Time = chatHistory.Time,
-                                        Place = chatHistory.SayPlace,
-                                        Target = chatHistory.Target
-                                    });
+                                await SendCommand(chatHistory.ToSay());
                             });
             }
         }
