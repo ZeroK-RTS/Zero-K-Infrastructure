@@ -28,10 +28,10 @@ namespace ZkData
         public bool IsEmote { get; set; }
 
 
-        public int? UserAccountID { get; set; }
-        public virtual Account UserAccount { get; set; }
+        /// <summary>
+        /// was private message read already?
+        /// </summary>
+        public bool WasRead { get; set; }
 
-        public int? TargetAccountID { get; set; }
-        public virtual Account TargetAccount { get; set; }
     }
 }

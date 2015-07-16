@@ -294,6 +294,7 @@ namespace ZkLobbyServer
             if (!IsLoggedIn) return;
 
             say.User = Name;
+            say.Time = DateTime.UtcNow;
 
             if (say.Ring)
             { // ring permissions - bot/admin anywhere, others only to own battle 
@@ -311,26 +312,23 @@ namespace ZkLobbyServer
                     {
                         if (channel.Users.ContainsKey(Name)) {
                             await Broadcast(channel.Users.Keys, say);
-                            state.OnSaid(this, say);
+                            await state.StoreChatHistory(say);
                         }
                     }
                     break;
 
                 case SayPlace.User:
                     ConnectedUser connectedUser;
-                    if (state.ConnectedUsers.TryGetValue(say.Target, out connectedUser))
-                    {
-                        await connectedUser.SendCommand(say);
-                        await SendCommand(say);
-                    }
-                    state.OnSaid(this, say);
+                    if (state.ConnectedUsers.TryGetValue(say.Target, out connectedUser)) await connectedUser.SendCommand(say);
+                    else await state.StoreChatHistory(say);
+                    await SendCommand(say);
+                    
                     break;
 
                 case SayPlace.Battle:
                     if (MyBattle != null)
                     {
                         await Broadcast(MyBattle.Users.Keys, say);
-                        state.OnSaid(this, say);
                     }
                     break;
 
@@ -341,7 +339,6 @@ namespace ZkLobbyServer
                         if (MyBattle.Users.ContainsKey(say.Target))
                         {
                             if (state.ConnectedUsers.TryGetValue(say.Target, out cli)) await cli.SendCommand(say);
-                            state.OnSaid(this, say);
                         }
                     }
                     break;
@@ -349,7 +346,6 @@ namespace ZkLobbyServer
                     if (User.IsAdmin)
                     {
                         await Broadcast(state.ConnectedUsers.Values, say);
-                        state.OnSaid(this, say);
                     }
                     break;
 

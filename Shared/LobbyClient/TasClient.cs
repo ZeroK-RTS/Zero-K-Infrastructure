@@ -536,7 +536,7 @@ namespace LobbyClient
         /// <param Name="inputtext">chat text</param>
         /// <param Name="isEmote">is message emote? (channel or battle only)</param>
         /// <param Name="linePrefix">text to be inserted in front of each line (example: "!pm xyz")</param>
-        public async Task Say(SayPlace place, string channel, string inputtext, bool isEmote, string linePrefix = "", bool isRing = false)
+        public async Task Say(SayPlace place, string channel, string inputtext, bool isEmote, bool isRing = false)
         {
             if (String.IsNullOrEmpty(inputtext)) return;
             var lines = inputtext.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -545,9 +545,7 @@ namespace LobbyClient
             {
                 if (String.IsNullOrEmpty(text)) continue;
 
-                var sentText = linePrefix + text;
-
-                var args = new SayingEventArgs(place, channel, sentText, isEmote);
+                var args = new SayingEventArgs(place, channel, text, isEmote);
                 Saying(this, args);
                 if (args.Cancel) continue;
 
@@ -773,7 +771,7 @@ namespace LobbyClient
 
         async Task Process(Say say)
         {
-            InvokeSaid(new TasSayEventArgs(say.Place, say.Target,say.User, say.Text, say.IsEmote));
+            InvokeSaid(new TasSayEventArgs(say.Place, say.Target,say.User, say.Text, say.IsEmote) {Time = say.Time});
             if (say.Ring) Rang(this, say);
         }
 

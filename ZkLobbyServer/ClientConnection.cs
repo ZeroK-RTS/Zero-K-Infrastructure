@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -52,11 +53,14 @@ namespace ZkLobbyServer
 
         public async Task OnCommandReceived(string line)
         {
-            try {
+            try
+            {
                 dynamic obj = state.Serializer.DeserializeLine(line);
                 if (obj is Ping || obj is Login || obj is Register) await Process(obj);
                 else await connectedUser.Process(obj);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 var message = string.Format("{0} error processing line {1} : {2}", this, line, ex);
                 Trace.TraceError(message);
                 SendCommand(new Say() { Place = SayPlace.MessageBox, Target = Name, User = Name, Text = message });
@@ -85,25 +89,30 @@ namespace ZkLobbyServer
         {
             var user = new User();
             var response = await Task.Run(() => state.LoginChecker.Login(user, login, this));
-            if (response.ResultCode == LoginResponse.Code.Ok) {
-                Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
-
+            if (response.ResultCode == LoginResponse.Code.Ok)
+            {
                 connectedUser = state.ConnectedUsers.GetOrAdd(user.Name, (n) => new ConnectedUser(state, user));
                 connectedUser.Connections.TryAdd(this, true);
                 connectedUser.User = user;
 
+                Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
+                
                 await connectedUser.Broadcast(state.ConnectedUsers.Values, connectedUser.User); // send self to all
 
                 await SendCommand(response); // login accepted
 
                 foreach (var c in state.ConnectedUsers.Values.Where(x => x != connectedUser)) await SendCommand(c.User); // send others to self
 
-                foreach (var b in state.Battles.Values) {
-                    if (b != null) {
+                foreach (var b in state.Battles.Values)
+                {
+                    if (b != null)
+                    {
                         await
-                            SendCommand(new BattleAdded() {
+                            SendCommand(new BattleAdded()
+                            {
                                 Header =
-                                    new BattleHeader() {
+                                    new BattleHeader()
+                                    {
                                         BattleID = b.BattleID,
                                         Engine = b.EngineVersion,
                                         Game = b.ModName,
@@ -121,9 +130,44 @@ namespace ZkLobbyServer
                         foreach (var u in b.Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) await SendCommand(new JoinedBattle() { BattleID = b.BattleID, User = u.Name });
                     }
                 }
-            } else {
+
+
+                
+                await SendPrivateOfflineMessages();
+
+
+
+            }
+            else
+            {
                 await SendCommand(response);
                 if (response.ResultCode == LoginResponse.Code.Banned) transport.RequestClose();
+            }
+        }
+
+        async Task SendPrivateOfflineMessages()
+        {
+            using (var db = new ZkDataContext()) {
+                await
+                    db.LobbyChatHistories.Where(x => x.Target == Name && x.SayPlace == SayPlace.User)
+                        .OrderByDescending(x => x.Time)
+                        .Take(100).OrderBy(x=>x.Time)
+                        .ForEachAsync(
+                            async (chatHistory) => {
+                                await
+                                    SendCommand(new Say() {
+                                        IsEmote = chatHistory.IsEmote,
+                                        Ring = chatHistory.Ring,
+                                        Text = chatHistory.Text,
+                                        User = chatHistory.User,
+                                        Time = chatHistory.Time,
+                                        Place = chatHistory.SayPlace,
+                                        Target = chatHistory.Target
+                                    });
+                                chatHistory.WasRead = true;
+                            });
+
+                await db.SaveChangesAsync();
             }
         }
 
@@ -133,14 +177,19 @@ namespace ZkLobbyServer
             var response = new RegisterResponse();
             if (!Utils.IsValidLobbyName(register.Name) || string.IsNullOrEmpty(register.PasswordHash)) response.ResultCode = RegisterResponse.Code.InvalidCharacters;
             else if (state.ConnectedUsers.ContainsKey(register.Name)) response.ResultCode = RegisterResponse.Code.AlreadyConnected;
-            else {
-                await Task.Run(() => {
-                    using (var db = new ZkDataContext()) {
+            else
+            {
+                await Task.Run(() =>
+                {
+                    using (var db = new ZkDataContext())
+                    {
                         var acc = db.Accounts.FirstOrDefault(x => x.Name == register.Name);
                         if (acc != null) response.ResultCode = RegisterResponse.Code.InvalidName;
-                        else {
+                        else
+                        {
                             if (string.IsNullOrEmpty(register.PasswordHash)) response.ResultCode = RegisterResponse.Code.InvalidPassword;
-                            else {
+                            else
+                            {
                                 acc = new Account() { Name = register.Name };
                                 acc.SetPasswordHashed(register.PasswordHash);
                                 acc.SetName(register.Name);
@@ -171,10 +220,13 @@ namespace ZkLobbyServer
 
         public async Task SendCommand<T>(T data)
         {
-            try {
+            try
+            {
                 var line = state.Serializer.SerializeToLine(data);
                 await SendLine(line);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 Trace.TraceError("{0} error sending {1} : {2}", data, ex);
             }
         }
@@ -182,9 +234,12 @@ namespace ZkLobbyServer
 
         public async Task SendLine(string line)
         {
-            try {
+            try
+            {
                 await transport.SendLine(line);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 Trace.TraceError("{0} error sending {1} : {2}", line, ex);
             }
         }

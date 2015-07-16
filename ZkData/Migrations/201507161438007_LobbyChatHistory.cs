@@ -21,19 +21,11 @@ namespace ZkData.Migrations
                         Time = c.DateTime(nullable: false),
                         User = c.String(maxLength: 255),
                         IsEmote = c.Boolean(nullable: false),
-                        UserAccountID = c.Int(),
-                        TargetAccountID = c.Int(),
-                        TargetAccount_AccountID = c.Int(),
-                        UserAccount_AccountID = c.Int(),
                     })
-                .PrimaryKey(t => t.LobbyChatHistoryID)
-                .ForeignKey("dbo.Accounts", t => t.TargetAccount_AccountID)
-                .ForeignKey("dbo.Accounts", t => t.UserAccount_AccountID)
+                .PrimaryKey(t => t.LobbyChatHistoryID, clustered:false)
                 .Index(t => t.Target)
                 .Index(t => t.Time, clustered: true)
-                .Index(t => t.User)
-                .Index(t => t.TargetAccount_AccountID)
-                .Index(t => t.UserAccount_AccountID);
+                .Index(t => t.User);
             
             DropTable("dbo.LobbyChannelSubscriptions");
             DropTable("dbo.LobbyMessages");
@@ -65,10 +57,6 @@ namespace ZkData.Migrations
                     })
                 .PrimaryKey(t => new { t.AccountID, t.Channel });
             
-            DropForeignKey("dbo.LobbyChatHistories", "UserAccount_AccountID", "dbo.Accounts");
-            DropForeignKey("dbo.LobbyChatHistories", "TargetAccount_AccountID", "dbo.Accounts");
-            DropIndex("dbo.LobbyChatHistories", new[] { "UserAccount_AccountID" });
-            DropIndex("dbo.LobbyChatHistories", new[] { "TargetAccount_AccountID" });
             DropIndex("dbo.LobbyChatHistories", new[] { "User" });
             DropIndex("dbo.LobbyChatHistories", new[] { "Time" });
             DropIndex("dbo.LobbyChatHistories", new[] { "Target" });

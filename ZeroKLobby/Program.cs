@@ -441,7 +441,6 @@ namespace ZeroKLobby
 
         private static void FinalizeShutdown()
         {
-            HistoryManager.FlushBuffer();
             Conf.IsFirstRun = false;
 
             if (Conf.DiscardPlayerName == true) { Conf.LobbyPlayerName = ""; }

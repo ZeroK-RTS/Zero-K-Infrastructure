@@ -339,7 +339,6 @@
     <Compile Include="MicroLobby\ChatBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MicroLobby\HistoryManager.cs" />
     <Compile Include="Lines\BroadcastLine.cs" />
     <Compile Include="Lines\ChannelMessageLine.cs" />
     <Compile Include="Lines\FromServerLine.cs" />

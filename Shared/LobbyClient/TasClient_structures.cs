@@ -79,6 +79,8 @@ namespace LobbyClient
 
 		public string UserName { get; set; }
 
+        public DateTime? Time { get; set; }
+
 		public TasSayEventArgs(SayPlace place, string channel, string username, string text, bool isEmote)
 		{
 			Place = place;

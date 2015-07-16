@@ -81,7 +81,6 @@ namespace ZeroKLobby.MicroLobby
 
             Name = name;
             ChannelName = name;
-            if (!DesignMode) HistoryManager.InsertLastLines(ChannelName, ChatBox);
 
             playerBox.Sorted = true;
             var lookingGlass = new PictureBox { Width = 20, Height = 20, Image = ZklResources.search, SizeMode = PictureBoxSizeMode.CenterImage };
@@ -179,7 +178,6 @@ namespace ZeroKLobby.MicroLobby
                  (line is SaidExLine && Program.Conf.IgnoredUsers.Contains(((SaidExLine)line).AuthorName)))) return;
             ChatBox.AddLine(line);
             ChannelLineAdded(this, new ChannelLineArgs() { Channel = ChannelName, Line = line });
-            HistoryManager.LogLine(ChannelName, line);
         }
 
         public void GoToSendBox() {
@@ -464,7 +462,7 @@ namespace ZeroKLobby.MicroLobby
                 if (e.Place == SayPlace.Channel) {
                     if (e.Text.Contains(Program.Conf.LobbyPlayerName) && e.UserName != GlobalConst.NightwatchName) Program.MainWindow.NotifyUser("chat/channel/" + e.Channel, string.Format("{0}: {1}", e.UserName, e.Text), false, true);
 
-                    if (!e.IsEmote) AddLine(new SaidLine(e.UserName, e.Text));
+                    if (!e.IsEmote) AddLine(new SaidLine(e.UserName, e.Text, e.Time));
                     else AddLine(new SaidExLine(e.UserName, e.Text));
                 }
             }

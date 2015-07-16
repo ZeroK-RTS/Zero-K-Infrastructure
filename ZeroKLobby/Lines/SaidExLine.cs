@@ -10,10 +10,10 @@ namespace ZeroKLobby.Lines
         public string Message { get; set; }
 
 
-        public SaidExLine(string author, string message)
+        public SaidExLine(string author, string message, DateTime? date = null)
         {
             AuthorName = author;
-            Date = DateTime.Now;
+            Date = date ?? DateTime.Now;
             Message = message;
             var icon = TextImage.GetUserImageCode(author);
             Text = TextColor.Text + "[" + TextColor.Date + Date.ToShortTimeString() + TextColor.Text + "] " + icon + " " + TextColor.Emote + "* " +

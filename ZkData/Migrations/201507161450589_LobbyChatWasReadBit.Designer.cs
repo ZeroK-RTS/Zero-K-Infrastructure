@@ -7,13 +7,13 @@ namespace ZkData.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.2-31219")]
-    public sealed partial class LobbyChatHistory : IMigrationMetadata
+    public sealed partial class LobbyChatWasReadBit : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(LobbyChatHistory));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(LobbyChatWasReadBit));
         
         string IMigrationMetadata.Id
         {
-            get { return "201507161017423_LobbyChatHistory"; }
+            get { return "201507161450589_LobbyChatWasReadBit"; }
         }
         
         string IMigrationMetadata.Source
