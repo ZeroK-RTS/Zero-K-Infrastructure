@@ -25,6 +25,7 @@ namespace ZkData
             SpringieLevel = 1;
             FirstLogin = DateTime.UtcNow;
             LastLogin = DateTime.UtcNow;
+            LastLogout = DateTime.UtcNow;
             Country = "??";
 
 
@@ -83,6 +84,8 @@ namespace ZkData
         public string Email { get; set; }
         public DateTime FirstLogin { get; set; }
         public DateTime LastLogin { get; set; }
+        public DateTime LastLogout { get; set; }
+
         [StringLength(8000)]
         public string Aliases { get; set; }
         public double Elo { get; set; }

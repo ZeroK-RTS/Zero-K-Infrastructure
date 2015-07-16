@@ -148,8 +148,9 @@ namespace ZkLobbyServer
         async Task SendPrivateOfflineMessages()
         {
             using (var db = new ZkDataContext()) {
+                var acc = await db.Accounts.FindAsync(connectedUser.User.AccountID);
                 await
-                    db.LobbyChatHistories.Where(x => x.Target == Name && x.SayPlace == SayPlace.User)
+                    db.LobbyChatHistories.Where(x => x.Target == Name && x.SayPlace == SayPlace.User && x.Time >= acc.LastLogout)
                         .OrderByDescending(x => x.Time)
                         .Take(100).OrderBy(x=>x.Time)
                         .ForEachAsync(
@@ -164,10 +165,7 @@ namespace ZkLobbyServer
                                         Place = chatHistory.SayPlace,
                                         Target = chatHistory.Target
                                     });
-                                chatHistory.WasRead = true;
                             });
-
-                await db.SaveChangesAsync();
             }
         }
 

@@ -265,19 +265,36 @@ namespace ZkLobbyServer
                             Users = new List<string>(users)
                         }
                 });
-
-            await
-                SendCommand(new Say() {
-                    IsEmote = true,
-                    Place = SayPlace.Channel,
-                    Text = "bla bla",
-                    Time = DateTime.UtcNow.AddDays(-1),
-                    User = "Server",
-                    Target = joinChannel.ChannelName
-                });
-
+            
+            await SendMissedChannelMessages(channel);
 
             if (added) await Broadcast(users, new ChannelUserAdded { ChannelName = channel.Name, UserName = Name });
+        }
+
+
+        async Task SendMissedChannelMessages(Channel channel)
+        {
+            using (var db = new ZkDataContext()) {
+                var acc = await db.Accounts.FindAsync(User.AccountID);
+                await
+                    db.LobbyChatHistories.Where(x => x.Target == channel.Name && x.SayPlace == SayPlace.Channel && x.Time >= acc.LastLogout)
+                        .OrderByDescending(x => x.Time)
+                        .Take(1000)
+                        .OrderBy(x => x.Time)
+                        .ForEachAsync(
+                            async (chatHistory) => {
+                                await
+                                    SendCommand(new Say() {
+                                        IsEmote = chatHistory.IsEmote,
+                                        Ring = chatHistory.Ring,
+                                        Text = chatHistory.Text,
+                                        User = chatHistory.User,
+                                        Time = chatHistory.Time,
+                                        Place = chatHistory.SayPlace,
+                                        Target = chatHistory.Target
+                                    });
+                            });
+            }
         }
 
         public async Task Process(LeaveChannel leaveChannel)
@@ -383,6 +400,12 @@ namespace ZkLobbyServer
 
                 ConnectedUser connectedUser;
                 state.ConnectedUsers.TryRemove(Name, out connectedUser);
+
+                using (var db = new ZkDataContext()) {
+                    var acc = await db.Accounts.FindAsync(User.AccountID);
+                    acc.LastLogout = DateTime.UtcNow;
+                    await db.SaveChangesAsync();
+                }
             }
         }
 

@@ -27,11 +27,5 @@ namespace ZkData
 
         public bool IsEmote { get; set; }
 
-
-        /// <summary>
-        /// was private message read already?
-        /// </summary>
-        public bool WasRead { get; set; }
-
     }
 }

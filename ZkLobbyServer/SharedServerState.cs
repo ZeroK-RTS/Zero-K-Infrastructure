@@ -33,30 +33,6 @@ namespace ZkLobbyServer
             Engine = GlobalConst.DefaultEngineOverride;
             Game = "zk:stable";
             LoginChecker = new LoginChecker(this, geoIPpath);
-
-            /*JoinedChannel += async (sender, added) => {
-                using (var db = new ZkDataContext()) {
-                    await
-                        db.LobbyChatHistories.Where(x => x.Target == added.ChannelName && x.SayPlace == SayPlace.Channel)
-                            .OrderByDescending(x => x.Time)
-                            .Take(1000)
-                            .ForEachAsync(async (chatHistory) => {
-                                ConnectedUser conus;
-                                if (ConnectedUsers.TryGetValue(added.UserName, out conus)) {
-                                    await
-                                        conus.SendCommand(new Say() {
-                                            IsEmote = chatHistory.IsEmote,
-                                            Ring = chatHistory.Ring,
-                                            Text = chatHistory.Text,
-                                            User = chatHistory.User,
-                                            Time = chatHistory.Time,
-                                            Place = chatHistory.SayPlace,
-                                            Target = chatHistory.Target
-                                        });
-                                }
-                            });
-                }
-            };*/
         }
 
         public async Task StoreChatHistory(Say say)

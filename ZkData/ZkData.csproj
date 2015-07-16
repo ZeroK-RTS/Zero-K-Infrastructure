@@ -115,6 +115,10 @@
     <Compile Include="Migrations\201507161450589_LobbyChatWasReadBit.Designer.cs">
       <DependentUpon>201507161450589_LobbyChatWasReadBit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201507161631010_AddLogoutTime.cs" />
+    <Compile Include="Migrations\201507161631010_AddLogoutTime.Designer.cs">
+      <DependentUpon>201507161631010_AddLogoutTime.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
     <Compile Include="CurrentLobbyStats.cs" />
@@ -283,6 +287,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201507161450589_LobbyChatWasReadBit.resx">
       <DependentUpon>201507161450589_LobbyChatWasReadBit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507161631010_AddLogoutTime.resx">
+      <DependentUpon>201507161631010_AddLogoutTime.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
