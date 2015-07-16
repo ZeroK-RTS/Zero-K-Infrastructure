@@ -133,7 +133,7 @@ namespace ZkLobbyServer
 
 
                 
-                await SendPrivateOfflineMessages();
+                await SendMissedPrivateMessages();
 
 
 
@@ -145,7 +145,7 @@ namespace ZkLobbyServer
             }
         }
 
-        async Task SendPrivateOfflineMessages()
+        async Task SendMissedPrivateMessages()
         {
             using (var db = new ZkDataContext()) {
                 var acc = await db.Accounts.FindAsync(connectedUser.User.AccountID);
