@@ -33,7 +33,6 @@ namespace CaTracker
 
         public AuthService Auth { get; private set; }
 
-        public NwSteamHandler SteamHandler { get; private set; }
 
         public List<Battle> GetPlanetWarsBattles() {
             if (tas==null || tas.ExistingBattles == null) return new List<Battle>();
@@ -72,7 +71,6 @@ namespace CaTracker
 
             Auth = new AuthService(tas);
             playerMover = new PlayerMover(tas);
-            SteamHandler = new NwSteamHandler(tas, new Secrets().GetSteamWebApiKey());
             chatRelay = new ChatRelay(tas, new Secrets().GetNightwatchPassword(), new List<string>() { "zkdev", "sy", "moddev","weblobbydev","ai"});
 
 		    PayPalInterface = new PayPalInterface();

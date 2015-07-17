@@ -19,7 +19,7 @@ using Ping = LobbyClient.Ping;
 
 namespace ZkLobbyServer
 {
-    public class ConnectedUser:ICommandSender
+    public class ConnectedUser : ICommandSender
     {
         public ConcurrentDictionary<ClientConnection, bool> Connections = new ConcurrentDictionary<ClientConnection, bool>();
         SharedServerState state;
@@ -40,10 +40,10 @@ namespace ZkLobbyServer
         public ConnectedUser(SharedServerState state, User user)
         {
             this.state = state;
-            
+
         }
 
-        
+
 
         public async Task SendLine(string line)
         {
@@ -54,7 +54,8 @@ namespace ZkLobbyServer
 
         public async Task SendCommand<T>(T data)
         {
-            try {
+            try
+            {
                 var line = state.Serializer.SerializeToLine(data);
                 await SendLine(line);
             }
@@ -232,7 +233,7 @@ namespace ZkLobbyServer
                             Users = new List<string>(users)
                         }
                 });
-            
+
             await state.OfflineMessageHandler.SendMissedMessages(this, SayPlace.Channel, joinChannel.ChannelName, User.AccountID);
 
             if (added) await state.Broadcast(users, new ChannelUserAdded { ChannelName = channel.Name, UserName = Name });
@@ -262,7 +263,7 @@ namespace ZkLobbyServer
         {
             if (!IsLoggedIn) return;
             if (User.BanMute) return; // block all say for muted
-            
+
             say.User = Name;
             say.Time = DateTime.UtcNow;
 
@@ -280,7 +281,8 @@ namespace ZkLobbyServer
                     Channel channel;
                     if (state.Rooms.TryGetValue(say.Target, out channel))
                     {
-                        if (channel.Users.ContainsKey(Name)) {
+                        if (channel.Users.ContainsKey(Name))
+                        {
                             await state.Broadcast(channel.Users.Keys, say);
                             await state.OfflineMessageHandler.StoreChatHistory(say);
                         }
@@ -292,7 +294,7 @@ namespace ZkLobbyServer
                     if (state.ConnectedUsers.TryGetValue(say.Target, out connectedUser)) await connectedUser.SendCommand(say);
                     else await state.OfflineMessageHandler.StoreChatHistory(say);
                     await SendCommand(say);
-                    
+
                     break;
 
                 case SayPlace.Battle:
@@ -326,7 +328,8 @@ namespace ZkLobbyServer
         public async Task RemoveConnection(ClientConnection con, string reason)
         {
             bool dummy;
-            if (Connections.TryRemove(con, out dummy) && Connections.Count == 0) {
+            if (Connections.TryRemove(con, out dummy) && Connections.Count == 0)
+            {
                 // notify all channels where i am to all users that i left 
                 foreach (var chan in state.Rooms.Values.Where(x => x.Users.ContainsKey(Name)).ToList())
                 {
@@ -344,7 +347,8 @@ namespace ZkLobbyServer
                 ConnectedUser connectedUser;
                 state.ConnectedUsers.TryRemove(Name, out connectedUser);
 
-                using (var db = new ZkDataContext()) {
+                using (var db = new ZkDataContext())
+                {
                     var acc = await db.Accounts.FindAsync(User.AccountID);
                     acc.LastLogout = DateTime.UtcNow;
                     await db.SaveChangesAsync();
@@ -418,8 +422,8 @@ namespace ZkLobbyServer
                 MyBattle = battle;
                 await state.Broadcast(state.ConnectedUsers.Values, new JoinedBattle() { BattleID = battle.BattleID, User = Name });
                 await RecalcSpectators(battle);
-                await state.Broadcast(battle.Users.Keys.Where(x=>x!=Name), battle.Users[Name].ToUpdateBattleStatus());// send my UBS to others in battle
-                
+                await state.Broadcast(battle.Users.Keys.Where(x => x != Name), battle.Users[Name].ToUpdateBattleStatus());// send my UBS to others in battle
+
                 foreach (var u in battle.Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) await SendCommand(u); // send other's status to self
                 foreach (var u in battle.Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList()) await SendCommand(u);
                 foreach (var u in battle.Rectangles) await SendCommand(new SetRectangle() { Number = u.Key, Rectangle = u.Value });
@@ -618,6 +622,22 @@ namespace ZkLobbyServer
             Battle bat;
             state.Battles.TryRemove(battle.BattleID, out bat);
             await state.Broadcast(state.ConnectedUsers.Values, new BattleRemoved() { BattleID = battle.BattleID });
+        }
+
+        public async Task Process(LinkSteam linkSteam)
+        {
+            await Task.Delay(2000); // steam is slow to get the ticket from client .. wont verify if its checked too soon
+            var steamID = state.SteamWebApi.WebValidateAuthToken(linkSteam.Token);
+            var info = state.SteamWebApi.WebGetPlayerInfo(steamID);
+
+            using (var db = new ZkDataContext())
+            {
+                var acc = await db.Accounts.FindAsync(User.AccountID);
+                acc.SteamID = steamID;
+                acc.SteamName = info.personaname;
+                await db.SaveChangesAsync();
+                await state.PublishAccountUpdate(acc);
+            }
         }
     }
 

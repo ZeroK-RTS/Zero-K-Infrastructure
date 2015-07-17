@@ -453,4 +453,10 @@ namespace LobbyClient
         public string Command;
     }
 
+    [Message(Origin.Client)]
+    public class LinkSteam
+    {
+        public string Token;
+    }
+
 }

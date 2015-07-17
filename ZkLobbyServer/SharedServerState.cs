@@ -25,6 +25,8 @@ namespace ZkLobbyServer
         public OfflineMessageHandler OfflineMessageHandler = new OfflineMessageHandler();
         public ConcurrentDictionary<string, Channel> Rooms = new ConcurrentDictionary<string, Channel>();
         public CommandJsonSerializer Serializer = new CommandJsonSerializer();
+        public SteamWebApi SteamWebApi;
+
         public string Version { get; private set; }
 
 
@@ -35,6 +37,7 @@ namespace ZkLobbyServer
             Engine = GlobalConst.DefaultEngineOverride;
             Game = "zk:stable";
             LoginChecker = new LoginChecker(this, geoIPpath);
+            SteamWebApi = new SteamWebApi(GlobalConst.SteamAppID, new Secrets().GetSteamWebApiKey());
         }
 
         /// <summary>

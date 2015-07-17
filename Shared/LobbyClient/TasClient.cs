@@ -909,5 +909,9 @@ namespace LobbyClient
             else if(!WasDisconnectRequested) Connect(serverHost, serverPort);
         }
 
+        public Task LinkSteam(string token)
+        {
+            return SendCommand(new LinkSteam() { Token = token });
+        }
     }
 }

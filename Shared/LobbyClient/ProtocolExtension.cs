@@ -16,22 +16,7 @@ namespace LobbyClient
     {
         public const string ExtensionChannelName = "extension";
 
-
-        public enum Keys
-        {
-            Level,
-            EffectiveElo,
-            Faction,
-            Clan,
-            Avatar,
-            SpringieLevel,
-            ZkAdmin,
-            BanMute,
-            SteamID,
-            DisplayName,
-        }
-
-
+        
         readonly Action<string, Dictionary<string, string>> notifyUserExtensionChange = (s, dictionary) => { };
 
 
