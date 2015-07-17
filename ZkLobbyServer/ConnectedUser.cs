@@ -19,7 +19,7 @@ using Ping = LobbyClient.Ping;
 
 namespace ZkLobbyServer
 {
-    public class ConnectedUser
+    public class ConnectedUser:ICommandSender
     {
         public ConcurrentDictionary<ClientConnection, bool> Connections = new ConcurrentDictionary<ClientConnection, bool>();
         SharedServerState state;
@@ -266,28 +266,11 @@ namespace ZkLobbyServer
                         }
                 });
             
-            await SendMissedChannelMessages(channel);
+            await state.OfflineMessageHandler.SendMissedMessages(this, SayPlace.Channel, joinChannel.ChannelName, User.AccountID);
 
             if (added) await Broadcast(users, new ChannelUserAdded { ChannelName = channel.Name, UserName = Name });
         }
 
-
-        async Task SendMissedChannelMessages(Channel channel)
-        {
-            using (var db = new ZkDataContext()) {
-                var acc = await db.Accounts.FindAsync(User.AccountID);
-                await
-                    db.LobbyChatHistories.Where(x => x.Target == channel.Name && x.SayPlace == SayPlace.Channel && x.Time >= acc.LastLogout)
-                        .OrderByDescending(x => x.Time)
-                        .Take(1000)
-                        .OrderBy(x => x.Time)
-                        .ForEachAsync(
-                            async (chatHistory) => {
-                                await
-                                    SendCommand(chatHistory.ToSay());
-                            });
-            }
-        }
 
         public async Task Process(LeaveChannel leaveChannel)
         {
@@ -331,7 +314,7 @@ namespace ZkLobbyServer
                     {
                         if (channel.Users.ContainsKey(Name)) {
                             await Broadcast(channel.Users.Keys, say);
-                            await state.StoreChatHistory(say);
+                            await state.OfflineMessageHandler.StoreChatHistory(say);
                         }
                     }
                     break;
@@ -339,7 +322,7 @@ namespace ZkLobbyServer
                 case SayPlace.User:
                     ConnectedUser connectedUser;
                     if (state.ConnectedUsers.TryGetValue(say.Target, out connectedUser)) await connectedUser.SendCommand(say);
-                    else await state.StoreChatHistory(say);
+                    else await state.OfflineMessageHandler.StoreChatHistory(say);
                     await SendCommand(say);
                     
                     break;

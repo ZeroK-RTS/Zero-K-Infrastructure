@@ -23,7 +23,10 @@ namespace ZkLobbyServer
         public LoginChecker LoginChecker;
         public ConcurrentDictionary<string, Channel> Rooms = new ConcurrentDictionary<string, Channel>();
         public CommandJsonSerializer Serializer = new CommandJsonSerializer();
+        public OfflineMessageHandler OfflineMessageHandler = new OfflineMessageHandler();
         public string Version { get; private set; }
+
+
 
 
         public SharedServerState(string geoIPpath)
@@ -35,14 +38,5 @@ namespace ZkLobbyServer
             LoginChecker = new LoginChecker(this, geoIPpath);
         }
 
-        public async Task StoreChatHistory(Say say)
-        {
-            using (var db = new ZkDataContext()) {
-                var historyEntry = new LobbyChatHistory();
-                historyEntry.SetFromSay(say);
-                db.LobbyChatHistories.Add(historyEntry);
-                await db.SaveChangesAsync();
-            }
-        }
     }
 }
