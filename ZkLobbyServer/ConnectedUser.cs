@@ -261,7 +261,8 @@ namespace ZkLobbyServer
         public async Task Process(Say say)
         {
             if (!IsLoggedIn) return;
-
+            if (User.BanMute) return; // block all say for muted
+            
             say.User = Name;
             say.Time = DateTime.UtcNow;
 
