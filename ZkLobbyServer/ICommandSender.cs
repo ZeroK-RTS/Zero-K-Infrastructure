@@ -5,5 +5,6 @@ namespace ZkLobbyServer
     public interface ICommandSender
     {
         Task SendCommand<T>(T obj);
+        Task SendLine(string line);
     }
 }

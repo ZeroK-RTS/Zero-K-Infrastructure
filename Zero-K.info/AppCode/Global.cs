@@ -12,6 +12,7 @@ using CaTracker;
 using JetBrains.Annotations;
 using LobbyClient;
 using ZkData;
+using ZkLobbyServer;
 
 namespace ZeroKWeb
 {
@@ -39,6 +40,19 @@ namespace ZeroKWeb
             }
             set { nightwatch = value; }
         }
+
+        static SharedServerState serverState;
+        public static SharedServerState ServerState
+        {
+            get
+            {
+                if (serverState != null) return serverState;
+                serverState = (SharedServerState)HttpContext.Current.Application["zkls"];
+                return serverState;
+            }
+            set { serverState = value; }
+        }
+
 
         static PlanetWarsMatchMaker planetWarsMatchMaker;
         public static PlanetWarsMatchMaker PlanetWarsMatchMaker

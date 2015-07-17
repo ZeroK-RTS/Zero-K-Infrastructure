@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using LobbyClient;
 using ZkData;
 using ZeroKWeb;
 
@@ -36,12 +37,6 @@ namespace ZkData
 
                 return cachedStats;
             }
-        }
-
-        public static void SendLobbyMessage(Account account, string text)
-        {
-            Global.Nightwatch.Auth.SendLobbyMessage(account, text);
-            
         }
 
         public static Account VerifyAccountHashed(string login, string passwordHash)

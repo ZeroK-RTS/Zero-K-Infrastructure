@@ -55,7 +55,7 @@ namespace ZeroKWeb.Controllers
 
                         db.SubmitAndMergeChanges();
 
-                        AuthServiceClient.SendLobbyMessage(acc, string.Format("You were recalled from the function of {0} by a vote", p.RoleType.Name));
+                        Global.ServerState.GhostPm(acc.Name, string.Format("You were recalled from the function of {0} by a vote", p.RoleType.Name));
                     }
                     else
                     {
@@ -99,7 +99,7 @@ namespace ZeroKWeb.Controllers
                                                    yes,
                                                    no));
 
-                            AuthServiceClient.SendLobbyMessage(acc, string.Format("Congratulations!! You were elected into a function of {0} by a vote", p.RoleType.Name));
+                            Global.ServerState.GhostPm(acc.Name, string.Format("Congratulations!! You were elected into a function of {0} by a vote", p.RoleType.Name));
                         }
                     }
                 }

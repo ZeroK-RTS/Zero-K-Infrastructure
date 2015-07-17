@@ -97,7 +97,7 @@ namespace ZkLobbyServer
 
                 Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
                 
-                await connectedUser.Broadcast(state.ConnectedUsers.Values, connectedUser.User); // send self to all
+                await state.Broadcast(state.ConnectedUsers.Values, connectedUser.User); // send self to all
 
                 await SendCommand(response); // login accepted
 

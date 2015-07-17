@@ -128,6 +128,7 @@ namespace NightWatch
 
         public void SendLobbyMessage(Account account, string text)
         {
+
             client.Say(SayPlace.User, client.UserName, text, false);
         }
     }

@@ -160,7 +160,7 @@ namespace ZeroKWeb.SpringieInterface
                                               account.AccountID,
                                               GlobalConst.BaseSiteUrl);
                             //text.AppendLine(message);
-                            AuthServiceClient.SendLobbyMessage(account, message);
+                            Global.ServerState.GhostPm(account.Name, message);
                         }
                         catch (Exception ex)
                         {
