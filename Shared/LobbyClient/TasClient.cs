@@ -28,7 +28,6 @@ namespace LobbyClient
         public const int MaxAlliances = 16;
         public const int MaxTeams = 16;
 
-        public ProtocolExtension Extensions { get; private set; }
 
         public delegate void Invoker();
 
@@ -166,6 +165,8 @@ namespace LobbyClient
         public event EventHandler<User> UserAdded = delegate { };
         public event EventHandler<UserDisconnected> UserRemoved = delegate { };
         public event EventHandler<OldNewPair<User>> UserStatusChanged = delegate { };
+        public event EventHandler<OldNewPair<User>> MyUserStatusChanged = delegate { };
+
         public event EventHandler<Battle> BattleFound = delegate { };
         public event EventHandler<ChannelUserInfo> ChannelUserAdded = delegate { };
         public event EventHandler<ChannelUserRemovedInfo> ChannelUserRemoved = delegate { };
@@ -208,8 +209,8 @@ namespace LobbyClient
 
         
         public event EventHandler<TasEventArgs> ChannelTopicChanged = delegate { };
-        public event EventHandler<EventArgs<User>> UserExtensionsChanged = delegate { };
-        public event EventHandler<EventArgs<User>> MyExtensionsChanged = delegate { };
+        
+        
         
  
 
@@ -238,16 +239,6 @@ namespace LobbyClient
                     }
                 }
             }
-
-            Extensions = new ProtocolExtension(this, (user, data) => {
-                                                                         User u;
-                                                                         if (ExistingUsers.TryGetValue(user, out u))
-                                                                         {
-                                                                             UserExtensionsChanged(this, new EventArgs<User>(u));
-                                                                         }
-
-
-            });
 
             pingTimer = new Timer(pingInterval*1000) { AutoReset = true };
             pingTimer.Elapsed += OnPingTimer;
@@ -753,8 +744,8 @@ namespace LobbyClient
                     if (user.IsInGame && !old.IsInGame) MyBattleStarted(this,bat );
                     if (!user.IsInGame && old.IsInGame) MyBattleHostExited(this, bat);
                 }
-
             }
+            if (user.Name == UserName) MyUserStatusChanged(this, new OldNewPair<User>(old,user));
             UserStatusChanged(this, new OldNewPair<User>(old, user));
         }
 

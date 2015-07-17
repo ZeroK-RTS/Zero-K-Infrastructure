@@ -52,11 +52,13 @@ namespace ZeroKLobby
             };
 
 
-            tas.MyExtensionsChanged += (sender, args) => { if (SteamHelper.IsOnline && SteamID != 0) OnLoggedToBothSteamAndTas(); };
-            tas.UserExtensionsChanged += (sender, args) =>
+            tas.MyUserStatusChanged += (sender, args) => { if (SteamHelper.IsOnline && SteamID != 0) OnLoggedToBothSteamAndTas(); };
+            tas.UserStatusChanged += (sender, args) =>
             {
-                if (args.Data.SteamID != null) Voice.AddListenerSteamID(args.Data.SteamID.Value); // todo only for battle in future
-                if (args.Data.SteamID != null && SteamID != 0 && friends.Contains(args.Data.SteamID.Value)) AddFriend(args.Data.Name);
+                if (args.New.SteamID != null && args.Old.SteamID != args.New.SteamID && args.New.SteamID !=0) {
+                    Voice.AddListenerSteamID(args.New.SteamID.Value); // todo only for battle in future
+                    if (friends.Contains(args.New.SteamID.Value)) AddFriend(args.New.Name);
+                }
             };
 
             tas.UserRemoved += (sender, args) =>
