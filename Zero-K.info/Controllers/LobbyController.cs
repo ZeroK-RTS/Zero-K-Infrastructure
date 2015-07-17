@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using LobbyClient;
@@ -20,12 +21,10 @@ namespace ZeroKWeb.Controllers
         /// Used to start a <see cref="Mission"/>, replay or such in ZKL or Weblobby
         /// </summary>
         /// <param name="link"></param>
-        public ActionResult SendCommand(string link) {
+        public async Task<ActionResult> SendCommand(string link) {
             if (Global.Account == null) return Content("You must be logged in to the site");
-            var name = Global.Account.Name;
-            var tas = Global.Nightwatch.Tas;
-            if (!tas.ExistingUsers.ContainsKey(name)) return Content("You need to start your lobby program first - Zero-K lobby or WebLobby");
-            Global.Nightwatch.Tas.Extensions.SendJsonData(name, new ProtocolExtension.SiteToLobbyCommand{SpringLink = link});
+            if (!Global.ServerState.IsLobbyConnected(Global.Account.Name)) return Content("Your lobby program is not running");
+            await Global.ServerState.SendSiteToLobbyCommand(Global.Account.Name, new SiteToLobbyCommand() { Command = link });
             return Content("");
         }
 

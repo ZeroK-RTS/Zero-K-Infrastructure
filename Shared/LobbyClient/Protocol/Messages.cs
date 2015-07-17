@@ -447,4 +447,10 @@ namespace LobbyClient
     [Message(Origin.Client | Origin.Server)]
     public class Ping {}
 
+    [Message(Origin.Server)]
+    public class SiteToLobbyCommand
+    {
+        public string Command;
+    }
+
 }

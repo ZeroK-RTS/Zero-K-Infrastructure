@@ -181,9 +181,5 @@ namespace LobbyClient
         }
 
    
-        public class SiteToLobbyCommand
-        {
-            public string SpringLink { get; set; }
-        }
     }
 }

@@ -204,6 +204,8 @@ namespace LobbyClient
         public event EventHandler<OldNewPair<Battle>> MyBattleMapChanged = delegate { };
         public event EventHandler<Battle> ModOptionsChanged = delegate { };
 
+        public event EventHandler<SiteToLobbyCommand> SiteToLobbyCommandReceived = delegate { };
+
         
         public event EventHandler<TasEventArgs> ChannelTopicChanged = delegate { };
         public event EventHandler<EventArgs<User>> UserExtensionsChanged = delegate { };
@@ -754,6 +756,12 @@ namespace LobbyClient
 
             }
             UserStatusChanged(this, new OldNewPair<User>(old, user));
+        }
+
+
+        async Task Process(SiteToLobbyCommand command)
+        {
+            SiteToLobbyCommandReceived(this, command);
         }
 
 

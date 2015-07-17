@@ -97,5 +97,16 @@ namespace ZkLobbyServer
                 Text = text
             });
         }
+
+        public async Task SendSiteToLobbyCommand(string user, SiteToLobbyCommand command)
+        {
+            ConnectedUser conUs;
+            if (ConnectedUsers.TryGetValue(user, out conUs)) await conUs.SendCommand(command);
+        }
+
+        public bool IsLobbyConnected(string user)
+        {
+            return ConnectedUsers.ContainsKey(user);
+        }
     }
 }
