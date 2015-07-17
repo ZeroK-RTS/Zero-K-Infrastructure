@@ -108,5 +108,14 @@ namespace ZkLobbyServer
         {
             return ConnectedUsers.ContainsKey(user);
         }
+
+        public async Task PublishAccountUpdate(Account acc)
+        {
+            ConnectedUser conus;
+            if (ConnectedUsers.TryGetValue(acc.Name, out conus)) {
+                LoginChecker.UpdateUserFromAccount(conus.User, acc);
+                await Broadcast(ConnectedUsers.Values, conus.User);
+            }
+        }
     }
 }

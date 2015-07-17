@@ -229,7 +229,6 @@
     <Compile Include="MissionService\MissionUpdater.cs" />
     <Compile Include="PayPal\PayPalInterface.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="LobbyProtocolExtensionsExtensions.cs" />
     <Compile Include="Secrets.cs" />
   </ItemGroup>
   <ItemGroup>

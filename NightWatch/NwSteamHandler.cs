@@ -36,6 +36,7 @@ namespace NightWatch
                                 acc.SteamID = steamID;
                                 acc.SteamName = info.personaname;
                                 db.SubmitAndMergeChanges();
+                                
                                 tas.Extensions.PublishAccountData(acc);
                             }
                         });

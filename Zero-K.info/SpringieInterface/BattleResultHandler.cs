@@ -140,7 +140,7 @@ namespace ZeroKWeb.SpringieInterface
 
                 try
                 {
-                    foreach (Account a in sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account)) Global.Nightwatch.Tas.Extensions.PublishAccountData(a);
+                    foreach (Account a in sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account)) Global.ServerState.PublishAccountUpdate(a);
                 }
                 catch (Exception ex)
                 {

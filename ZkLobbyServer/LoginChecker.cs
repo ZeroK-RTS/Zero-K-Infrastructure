@@ -233,7 +233,7 @@ namespace ZkLobbyServer
             }
         }
 
-        static void UpdateUserFromAccount(User user, Account acc)
+        public static void UpdateUserFromAccount(User user, Account acc)
         {
             user.Name = acc.Name;
             user.DisplayName = acc.SteamName;
