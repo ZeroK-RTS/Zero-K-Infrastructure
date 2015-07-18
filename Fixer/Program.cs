@@ -179,7 +179,8 @@ namespace Fixer
 
         public static void FixStuff()
         {
-            DuplicateFinder.GetDuplicates();
+            //AddClanLeader(530, 5806);
+            //
             //UpdateMissionProgression(13);
             /*
             var db = new ZkDataContext();
@@ -199,30 +200,46 @@ namespace Fixer
             db.SubmitChanges();
             */
         }
-
-        public static void AddClanLeader()
+        public static void AddClanLeader(int clanID, int? leaderID)
         {
             var db = new ZkDataContext();
             var role = db.RoleTypes.First(x => x.IsClanOnly);
-            foreach (var clan in db.Clans.Where(x => !x.IsDeleted))
+            Clan clan = db.Clans.FirstOrDefault(x => x.ClanID == clanID);
+
+            if (!clan.AccountRoles.Any(y => y.RoleType.IsClanOnly))
             {
-                if (!clan.AccountRoles.Any(y => y.RoleType.IsClanOnly))
+                Account picked = null;
+                if (leaderID != null) picked = db.Accounts.FirstOrDefault(x => x.AccountID == leaderID);
+                if (picked == null) picked = clan.Accounts.Where(x => x.LastLogin >= DateTime.UtcNow.AddDays(-7)).OrderByDescending(x => x.Level).FirstOrDefault();
+                if (picked == null) picked = clan.Accounts.OrderByDescending(x => x.LastLogin).FirstOrDefault();
+                if (picked != null)
                 {
-                    var picked = clan.Accounts.Where(x => x.LastLogin >= DateTime.UtcNow.AddDays(-7)).OrderByDescending(x => x.Level).FirstOrDefault();
-                    if (picked == null) clan.Accounts.OrderByDescending(x => x.LastLogin).FirstOrDefault();
-                    if (picked != null)
+                    if (picked.ClanID != clanID)
                     {
-                        clan.AccountRoles.Add(new AccountRole()
-                        {
-                            AccountID = picked.AccountID,
-                            ClanID = clan.ClanID,
-                            Inauguration = DateTime.UtcNow,
-                            RoleTypeID = role.RoleTypeID
-                        });
+                        picked.ClanID = clanID;
                     }
+
+                    clan.AccountRoles.Add(new AccountRole()
+                    {
+                        AccountID = picked.AccountID,
+                        ClanID = clan.ClanID,
+                        Inauguration = DateTime.UtcNow,
+                        RoleTypeID = role.RoleTypeID
+                    });
+                    clan.IsDeleted = false;
                 }
             }
-            db.SubmitAndMergeChanges();
+            db.SubmitChanges();
+        }
+
+        public static void AddClanLeaders()
+        {
+            var db = new ZkDataContext();
+            foreach (var clan in db.Clans.Where(x => !x.IsDeleted))
+            {
+                AddClanLeader(clan.ClanID, null);
+            }
+            //db.SubmitAndMergeChanges();
         }
 
 
@@ -253,10 +270,10 @@ namespace Fixer
         static void Main(string[] args)
         {
             //GetGameStats(new DateTime(2014,12,1));
-            Thread.Sleep(10000);
-            var ns = new NubSimulator();
-            ns.SpawnMany();
-            Console.ReadLine();
+            //Thread.Sleep(10000);
+            //var ns = new NubSimulator();
+            //ns.SpawnMany();
+            //Console.ReadLine();
 
             //MigrateDatabase();
             //FixDuplicatedAccounts();
@@ -327,6 +344,8 @@ namespace Fixer
             //GetClanStackWinRate(465, 2000); //Mean
             //GetForumVotesByUserVoterAgnostic(161294);
             //GetAverageElo();
+
+            //DuplicateFinder.GetDuplicates();
         }
 
         static void CountPlayers()
