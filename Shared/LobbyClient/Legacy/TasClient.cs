@@ -23,7 +23,6 @@ namespace LobbyClient.Legacy
         public const int MaxAlliances = 16;
         public const int MaxTeams = 16;
 
-        public ProtocolExtension Extensions { get; private set; }
 
         public delegate void Invoker();
 

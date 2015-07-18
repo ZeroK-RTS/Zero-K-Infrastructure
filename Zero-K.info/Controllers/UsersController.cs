@@ -77,7 +77,8 @@ namespace ZeroKWeb.Controllers
                 acc.HasVpnException = vpnException;
             }
             db.SubmitChanges();
-            Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);
+            
+            Global.ServerState.PublishAccountUpdate(acc);
             
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
@@ -205,11 +206,7 @@ namespace ZeroKWeb.Controllers
             // notify lobby of changes and post log message
             try
             {
-                Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);
-                if (banLobby)
-                {
-                    Global.Nightwatch.Tas.AdminKickFromLobby(acc.Name, reason);
-                }
+                Global.Nightwatch.Tas.AdminKickFromLobby(acc.Name, reason);
 
                 Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format("New penalty for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")), true);
                 Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Reason: {0} ", reason), true);
@@ -320,11 +317,7 @@ namespace ZeroKWeb.Controllers
 
                     try
                     {
-                        Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);
-                        if (banLobby)
-                        {
-                            Global.Nightwatch.Tas.AdminKickFromLobby(acc.Name, reason);
-                        }
+                        Global.Nightwatch.Tas.AdminKickFromLobby(acc.Name, reason);
                     }
                     catch (Exception ex)
                     {
@@ -364,10 +357,7 @@ namespace ZeroKWeb.Controllers
 
                 try
                 {
-                    Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);
-                    if (banLobby) {
-                        Global.Nightwatch.Tas.AdminKickFromLobby(acc.Name, reason);
-                    }
+                    Global.Nightwatch.Tas.AdminKickFromLobby(acc.Name, reason);
                 }
                 catch (Exception ex)
                 {

@@ -103,7 +103,9 @@ namespace ZeroKWeb
             tas.PreviewSaid += TasOnPreviewSaid;
             tas.UserRemoved += TasOnUserRemoved;
             tas.ChannelUserAdded += TasOnChannelUserAdded;
-            tas.ChannelJoined += (sender, args) => { if (args.Name == "extension") tas.Extensions.SendJsonData(GenerateLobbyCommand()); };
+            
+            // TODO reimplement this 
+            // tas.ChannelJoined += (sender, args) => { if (args.Name == "extension") tas.Extensions.SendJsonData(GenerateLobbyCommand()); };
 
             timer = new Timer(10000);
             timer.AutoReset = true;
@@ -220,13 +222,13 @@ namespace ZeroKWeb
 
         public void UpdateLobby()
         {
-            tas.Extensions.SendJsonData(GenerateLobbyCommand());
+            // TODO reimplement tas.Extensions.SendJsonData(GenerateLobbyCommand());
             SaveStateToDb();
         }
 
         public void UpdateLobby(string player)
         {
-            tas.Extensions.SendJsonData(player, GenerateLobbyCommand());
+            // TODO reimplement tas.Extensions.SendJsonData(player, GenerateLobbyCommand());
         }
 
         List<Faction> GetDefendingFactions(AttackOption target)

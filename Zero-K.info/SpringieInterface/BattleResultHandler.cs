@@ -140,7 +140,7 @@ namespace ZeroKWeb.SpringieInterface
 
                 try
                 {
-                    foreach (Account a in sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account)) Global.Nightwatch.Tas.Extensions.PublishAccountData(a);
+                    foreach (Account a in sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account)) Global.ServerState.PublishAccountUpdate(a);
                 }
                 catch (Exception ex)
                 {
@@ -160,7 +160,7 @@ namespace ZeroKWeb.SpringieInterface
                                               account.AccountID,
                                               GlobalConst.BaseSiteUrl);
                             //text.AppendLine(message);
-                            AuthServiceClient.SendLobbyMessage(account, message);
+                            Global.ServerState.GhostPm(account.Name, message);
                         }
                         catch (Exception ex)
                         {

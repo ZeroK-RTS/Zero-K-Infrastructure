@@ -15,7 +15,7 @@ using Timer = System.Timers.Timer;
 
 namespace ZkLobbyServer
 {
-    public class ClientConnection
+    public class ClientConnection:ICommandSender
     {
         string Name
         {
@@ -97,7 +97,7 @@ namespace ZkLobbyServer
 
                 Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
                 
-                await connectedUser.Broadcast(state.ConnectedUsers.Values, connectedUser.User); // send self to all
+                await state.Broadcast(state.ConnectedUsers.Values, connectedUser.User); // send self to all
 
                 await SendCommand(response); // login accepted
 
@@ -132,11 +132,7 @@ namespace ZkLobbyServer
                 }
 
 
-                
-                await SendMissedPrivateMessages();
-
-
-
+                await state.OfflineMessageHandler.SendMissedMessages(this, SayPlace.User, Name, user.AccountID);
             }
             else
             {
@@ -145,20 +141,6 @@ namespace ZkLobbyServer
             }
         }
 
-        async Task SendMissedPrivateMessages()
-        {
-            using (var db = new ZkDataContext()) {
-                var acc = await db.Accounts.FindAsync(connectedUser.User.AccountID);
-                await
-                    db.LobbyChatHistories.Where(x => x.Target == Name && x.SayPlace == SayPlace.User && x.Time >= acc.LastLogout)
-                        .OrderByDescending(x => x.Time)
-                        .Take(100).OrderBy(x=>x.Time)
-                        .ForEachAsync(
-                            async (chatHistory) => {
-                                await SendCommand(chatHistory.ToSay());
-                            });
-            }
-        }
 
 
         public async Task Process(Register register)
