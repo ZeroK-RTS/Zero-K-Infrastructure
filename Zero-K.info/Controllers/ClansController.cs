@@ -218,7 +218,8 @@ namespace ZeroKWeb.Controllers
                         }
                         member.FactionID = clan.FactionID;
                     }
-                    db.Events.InsertOnSubmit(Global.CreateEvent("Clan {0} moved to faction {1}", orgClan, clan.Faction));
+                    db.SubmitChanges(); // make sure event gets correct details
+                    db.Events.InsertOnSubmit(Global.CreateEvent("Clan {0} moved to faction {1}", orgClan, orgClan.Faction));
                 }
                 db.SubmitChanges();
             }
