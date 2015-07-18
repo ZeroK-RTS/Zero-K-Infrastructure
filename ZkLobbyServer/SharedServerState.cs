@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using LobbyClient;
 using MaxMind.Db;
@@ -107,6 +108,7 @@ namespace ZkLobbyServer
             if (ConnectedUsers.TryGetValue(user, out conUs)) await conUs.SendCommand(command);
         }
 
+        
         public bool IsLobbyConnected(string user)
         {
             return ConnectedUsers.ContainsKey(user);
