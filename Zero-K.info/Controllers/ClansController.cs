@@ -209,6 +209,7 @@ namespace ZeroKWeb.Controllers
                 if (clan.FactionID != orgClan.FactionID)   
                 {
                     // set factions of members
+                    Faction oldFaction = orgClan.Faction;
                     orgClan.FactionID = clan.FactionID; 
                     foreach (Account member in orgClan.Accounts)
                     {
@@ -219,7 +220,10 @@ namespace ZeroKWeb.Controllers
                         member.FactionID = clan.FactionID;
                     }
                     db.SubmitChanges(); // make sure event gets correct details
-                    db.Events.InsertOnSubmit(Global.CreateEvent("Clan {0} moved to faction {1}", orgClan, orgClan.Faction));
+                    if (clan.FactionID != null) 
+                        db.Events.InsertOnSubmit(Global.CreateEvent("Clan {0} moved to faction {1}", orgClan, orgClan.Faction));
+                    else
+                        db.Events.InsertOnSubmit(Global.CreateEvent("Clan {0} left faction {1}", orgClan, oldFaction));
                 }
                 db.SubmitChanges();
             }
