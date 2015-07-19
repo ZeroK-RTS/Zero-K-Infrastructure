@@ -35,173 +35,7 @@ namespace Springie.autohost
 
 
 
-        public void BalanceTeams(int teamCount, bool clanwise)
-        {
-            try
-            {
-                var b = tas.MyBattle;
-
-                if (hostedMod.IsMission)
-                {
-                    var freeSlots = GetFreeSlots();
-                    foreach (var u in b.Users.Values.Where(x => !x.IsSpectator).ToList())
-                    {
-                        var curSlot = hostedMod.MissionSlots.FirstOrDefault(x => x.IsHuman && x.TeamID == u.TeamNumber && x.AllyID == u.AllyNumber);
-                        if (curSlot != null && curSlot.IsRequired)
-                        {
-                        }
-                        else
-                        {
-                            var slot = freeSlots.FirstOrDefault();
-                            if (slot == null)
-                            {
-                                if (curSlot == null) tas.ForceSpectator(u.Name);
-                            }
-                            else if (slot.IsRequired || curSlot == null)
-                            {
-                                tas.ForceAlly(u.Name, slot.AllyID);
-                                tas.ForceTeam(u.Name, slot.TeamID);
-                                freeSlots = freeSlots.Skip(1);
-                            }
-                        }
-                    }
-
-                    // remove extra bots 
-                    foreach (var bot in b.Bots.Values.Where(x => x.owner != tas.UserName)) tas.RemoveBot(bot.Name);
-                    return;
-                }
-
-                //fill ranker table with players
-                var ranker = new List<UsRank>();
-                foreach (var u in b.Users.Values) if (!u.IsSpectator) ranker.Add(new UsRank(ranker.Count, u.LobbyUser.EffectiveElo, clanwise ? (u.LobbyUser.Clan ?? "") : "", u));
-                var totalPlayers = ranker.Count;
-
-                var rand = new Random();
-
-                //sanity check for teamCount (1<teamCount<playerCount)
-                if (teamCount < 1) teamCount = 1;
-                if (teamCount > ranker.Count) teamCount = ranker.Count;
-
-                //initialize teamSums & teamUsers & teamClans table (no value set yet)
-                var teamUsers = new List<UsRank>[teamCount];
-                for (var i = 0; i < teamUsers.Length; ++i) teamUsers[i] = new List<UsRank>();
-                var teamSums = new double[teamCount];
-
-                var teamClans = new List<string>[teamCount];
-                for (var i = 0; i < teamClans.Length; ++i) teamClans[i] = new List<string>();
-
-                var clans = "";
-                // remove clans that have less than 2 members - those are irelevant
-                foreach (var u in ranker)
-                {
-                    if (u.Clan != "")
-                    {
-                        if (ranker.FindAll(delegate(UsRank x) { return x.Clan == u.Clan; }).Count < 2) u.Clan = "";
-                        else clans += u.Clan + ", ";
-                    }
-                }
-                if (clans != "") SayBattle("those clan are being balanced: " + clans);
-
-                // this cycle performs actual user adding to teams
-                var cnt = 0;
-                while (ranker.Count > 0)
-                {
-                    var minsum = Double.MaxValue;
-                    var minid = 0;
-                    for (var i = 0; i < teamCount; ++i)
-                    {
-                        var l = teamUsers[i];
-                        // pick only current "row" and find the one with least sum
-                        if (l.Count == cnt / teamCount)
-                        {
-                            if (teamSums[i] < minsum)
-                            {
-                                minid = i;
-                                minsum = teamSums[i];
-                            }
-                        }
-                    }
-
-                    var candidates = new List<UsRank>();
-
-                    // get list of clans assigned to other teams
-                    var assignedClans = new List<string>();
-                    for (var i = 0; i < teamClans.Length; ++i) if (i != minid) assignedClans.AddRange(teamClans[i]);
-
-                    // first try to get some with same clan
-                    if (teamClans[minid].Count > 0) candidates.AddRange(ranker.Where(x => x.Clan != "" && teamClans[minid].Contains(x.Clan)));
-
-                    // we dont have any candidates try to get clanner from unassigned clan
-                    if (candidates.Count == 0) candidates.AddRange(ranker.Where(x => x.Clan != "" && !assignedClans.Contains(x.Clan)));
-
-                    // we still dont have any candidates try to get anyone
-                    if (candidates.Count == 0) candidates.AddRange(ranker);
-
-                    var maxElo = Double.MinValue;
-                    var maxUsers = new List<UsRank>();
-                    // get candidate which increases team elo most (round elo to tens to add some randomness)
-                    foreach (var c in candidates)
-                    {
-                        var newElo = ((teamUsers[minid].Sum(x => x.Elo) + Math.Round(c.Elo / 10) * 10)) / (teamUsers.Count() + 1);
-                        if (newElo > maxElo)
-                        {
-                            maxUsers.Clear();
-                            maxUsers.Add(c);
-                            maxElo = newElo;
-                        }
-                        else if (newElo == maxElo) maxUsers.Add(c);
-                    }
-                    var pickedUser = maxUsers[rand.Next(maxUsers.Count)];
-
-                    teamUsers[minid].Add(pickedUser);
-                    teamSums[minid] = maxElo;
-
-                    if (pickedUser.Clan != "")
-                    {
-                        // if we work with clans add user's clan to clan list for his team
-                        if (!teamClans[minid].Contains(pickedUser.Clan)) teamClans[minid].Add(pickedUser.Clan);
-                    }
-
-                    ranker.Remove(pickedUser);
-
-                    cnt++;
-                }
-
-                // alliances for allinace permutations
-                var allys = new List<int>();
-                for (var i = 0; i < teamCount; ++i) allys.Add(i);
-
-                var t = "";
-
-                for (var i = 0; i < teamCount; ++i)
-                {
-                    // permute one alliance
-                    var rdindex = rand.Next(allys.Count);
-                    var allynum = allys[rdindex];
-                    allys.RemoveAt(rdindex);
-
-                    if (teamUsers[i].Count > 0)
-                    {
-                        if (i > 0) t += ":";
-                        t += (allynum + 1) + "=" + Math.Round(teamSums[i]);
-                    }
-
-                    foreach (var u in teamUsers[i]) tas.ForceAlly(u.User.Name, allynum);
-                }
-
-                t += ")";
-
-                SayBattle(String.Format("{0} players balanced {2} to {1} teams (ratings {3}",
-                                        totalPlayers,
-                                        teamCount,
-                                        clanwise ? "respecting clans" : "",
-                                        t));
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError("Error balancing teams: {0}",ex);
-            }
-        }
+        
 
 
 
@@ -325,12 +159,7 @@ namespace Springie.autohost
             var teamCount = 0;
             if (words.Length > 0) Int32.TryParse(words[0], out teamCount);
 
-            if (SpawnConfig == null) RunServerBalance(false, teamCount == 0 ? (int?)null : teamCount, false);
-            else
-            {
-                if (teamCount == 0) teamCount = 2;
-                BalanceTeams(teamCount, false);
-            }
+            RunServerBalance(false, teamCount == 0 ? (int?)null : teamCount, false);
         }
 
         public void ComBoss(TasSayEventArgs e, string[] words)
@@ -372,11 +201,7 @@ namespace Springie.autohost
             var teamCount = 2;
             if (words.Length > 0) Int32.TryParse(words[0], out teamCount);
             else teamCount = 2;
-            if (SpawnConfig == null) RunServerBalance(false, teamCount, true);
-            else
-            {
-                BalanceTeams(teamCount, true);
-            }
+            RunServerBalance(false, teamCount, true);
         }
 
         public void ComClearBox(TasSayEventArgs e, string[] words)
