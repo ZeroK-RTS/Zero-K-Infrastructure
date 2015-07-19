@@ -45,5 +45,10 @@ namespace ZkLobbyServer
                 });
             }
         }
+
+        public void Stop()
+        {
+            listener.Stop();
+        }
     }
 }
