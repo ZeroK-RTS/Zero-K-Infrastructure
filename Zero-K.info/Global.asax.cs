@@ -27,6 +27,7 @@ namespace ZeroKWeb
     {
         const string DbListKey = "ZkDataContextList";
         DateTime lastPollCheck = DateTime.UtcNow;
+        ServerRunner zkServerRunner;
 
         public MvcApplication() {
             ZkDataContext.DataContextCreated += context =>
@@ -87,10 +88,10 @@ namespace ZeroKWeb
         {
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            var zkls = new ServerRunner(Server.MapPath("~"));
+            zkServerRunner = new ServerRunner(Server.MapPath("~"));
 
-            Application["zkls"] = zkls.SharedState;
-            zkls.Run();
+            Application["zkls"] = zkServerRunner.SharedState;
+            zkServerRunner.Run();
 
             var nw = new Nightwatch();
             Application["Nightwatch"] = nw;
@@ -100,6 +101,12 @@ namespace ZeroKWeb
 
             AreaRegistration.RegisterAllAreas();
             RegisterRoutes(RouteTable.Routes);
+        }
+
+
+        protected void Application_End()
+        {
+            zkServerRunner.Stop();
         }
 
         string GetUserIP() {
