@@ -24,8 +24,10 @@ namespace ZkLobbyServer
 
         public void Run()
         {
+            SynchronizationContext.SetSynchronizationContext(null);
+
             var tcpServerListener = new TcpTransportServerListener();
-            if (tcpServerListener.Bind(10)) {
+            if (tcpServerListener.Bind(20)) {
                 var thread = new Thread(() => {
                     SynchronizationContext.SetSynchronizationContext(null);
                     tcpServerListener.RunLoop((t) => { var client = new ClientConnection(t, SharedState); });
@@ -35,7 +37,7 @@ namespace ZkLobbyServer
             }
 
             var wscServerListener = new WebSocketTransportServerListener();
-            if (wscServerListener.Bind(10)) {
+            if (wscServerListener.Bind(20)) {
                 var thread = new Thread(() => {
                     SynchronizationContext.SetSynchronizationContext(null);
                     wscServerListener.RunLoop((t) => { var client = new ClientConnection(t, SharedState); });
