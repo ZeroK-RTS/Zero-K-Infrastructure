@@ -11,14 +11,14 @@ using ZkData;
 
 namespace ZkLobbyServer
 {
-    public class Server
+    public class ServerRunner
     {
-        readonly SharedServerState sharedState;
+        public SharedServerState SharedState { get; private set; }
         
 
-        public Server(string geoIPpath)
+        public ServerRunner(string geoIPpath)
         {
-            sharedState = new SharedServerState(geoIPpath);
+            SharedState = new SharedServerState(geoIPpath);
         }
 
 
@@ -28,7 +28,7 @@ namespace ZkLobbyServer
             if (tcpServerListener.Bind(10)) {
                 var thread = new Thread(() => {
                     SynchronizationContext.SetSynchronizationContext(null);
-                    tcpServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); });
+                    tcpServerListener.RunLoop((t) => { var client = new ClientConnection(t, SharedState); });
                 });
                 thread.Start();
                 thread.Priority = ThreadPriority.AboveNormal;
@@ -38,7 +38,7 @@ namespace ZkLobbyServer
             if (wscServerListener.Bind(10)) {
                 var thread = new Thread(() => {
                     SynchronizationContext.SetSynchronizationContext(null);
-                    wscServerListener.RunLoop((t) => { var client = new ClientConnection(t, sharedState); });
+                    wscServerListener.RunLoop((t) => { var client = new ClientConnection(t, SharedState); });
                 });
                 thread.Start();
                 thread.Priority = ThreadPriority.AboveNormal;

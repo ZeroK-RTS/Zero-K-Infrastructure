@@ -41,7 +41,7 @@ namespace ZeroKWeb.Controllers
             Faction faction = acc.Faction;
 
             if (!keepClan && acc.Clan != null) ClansController.PerformLeaveClan(Global.AccountID);
-            db.AccountRoles.DeleteAllOnSubmit(acc.AccountRolesByAccountID.Where(x => !keepClan || x.ClanID == null));
+            db.AccountRoles.DeleteAllOnSubmit(acc.AccountRolesByAccountID.Where(x => !keepClan || x.ClanID == null).ToList());
             acc.ResetQuotas();
 
             foreach (var ps in acc.PlanetStructures)

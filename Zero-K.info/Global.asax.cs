@@ -87,9 +87,9 @@ namespace ZeroKWeb
         {
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            var zkls = new Server(Server.MapPath("~"));
+            var zkls = new ServerRunner(Server.MapPath("~"));
 
-            Application["zkls"] = zkls;
+            Application["zkls"] = zkls.SharedState;
             zkls.Run();
 
             var nw = new Nightwatch();
