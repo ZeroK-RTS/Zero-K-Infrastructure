@@ -102,10 +102,6 @@
       <Project>{67501a5b-b6bb-467e-85da-22d81c40829c}</Project>
       <Name>Benchmarker</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NightWatch\NightWatch.csproj">
-      <Project>{6CE1E0F1-447C-4871-9246-CC7CCB359D89}</Project>
-      <Name>NightWatch</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Shared\LobbyClient\LobbyClient.csproj">
       <Project>{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}</Project>
       <Name>LobbyClient</Name>

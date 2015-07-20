@@ -13,10 +13,12 @@ using ZkData;
 
 namespace ZkLobbyServer
 {
-    public class SharedServerState
+    public class ZkLobbyServer
     {
+        ChatRelay chatRelay;
         public int BattleCounter;
         public ConcurrentDictionary<int, Battle> Battles = new ConcurrentDictionary<int, Battle>();
+        public ChannelManager ChannelManager;
         public int ClientCounter;
         public ConcurrentDictionary<string, ConnectedUser> ConnectedUsers = new ConcurrentDictionary<string, ConnectedUser>();
         public string Engine { get; set; }
@@ -25,13 +27,14 @@ namespace ZkLobbyServer
         public LoginChecker LoginChecker;
         public OfflineMessageHandler OfflineMessageHandler = new OfflineMessageHandler();
         public ConcurrentDictionary<string, Channel> Rooms = new ConcurrentDictionary<string, Channel>();
+        public EventHandler<Say> Said = delegate { };
         public CommandJsonSerializer Serializer = new CommandJsonSerializer();
         public SteamWebApi SteamWebApi;
 
         public string Version { get; private set; }
 
 
-        public SharedServerState(string geoIPpath)
+        public ZkLobbyServer(string geoIPpath)
         {
             var entry = Assembly.GetExecutingAssembly();
             Version = entry.GetName().Version.ToString();
@@ -39,6 +42,8 @@ namespace ZkLobbyServer
             Game = "zk:stable";
             LoginChecker = new LoginChecker(this, geoIPpath);
             SteamWebApi = new SteamWebApi(GlobalConst.SteamAppID, new Secrets().GetSteamWebApiKey());
+            chatRelay = new ChatRelay(this, new Secrets().GetNightwatchPassword(), new List<string>() { "zkdev", "sy", "moddev", "weblobbydev", "ai" });
+            ChannelManager = new ChannelManager(this);
         }
 
         /// <summary>
@@ -61,6 +66,58 @@ namespace ZkLobbyServer
                 ConnectedUsers.TryGetValue(x, out cli);
                 return cli;
             }), data);
+        }
+
+        public async Task ForceJoinBattle(string playerName, string battleHost)
+        {
+            var bat = Battles.Values.FirstOrDefault(x => x.FounderName == battleHost);
+            if (bat != null) await ForceJoinBattle(playerName, bat);
+        }
+
+        public async Task ForceJoinBattle(string player, Battle bat)
+        {
+            ConnectedUser connectedUser;
+            if (ConnectedUsers.TryGetValue(player, out connectedUser)) {
+                if (connectedUser.MyBattle != null) await connectedUser.Process(new LeaveBattle());
+                await connectedUser.Process(new JoinBattle() { BattleID = bat.BattleID, Password = bat.Password });
+            }
+        }
+
+        public List<Battle> GetPlanetBattles(Planet planet)
+        {
+            return GetPlanetWarsBattles().Where(x => x.MapName == planet.Resource.InternalName).ToList();
+        }
+
+        public List<Battle> GetPlanetWarsBattles()
+        {
+            return Battles.Values.Where(x => x.Founder.Name.StartsWith("PlanetWars")).ToList();
+        }
+
+        public Task GhostChanSay(string channelName, string text, bool isEmote = true, bool isRing = false)
+        {
+            return
+                GhostSay(new Say() {
+                    User = GlobalConst.NightwatchName,
+                    IsEmote = isEmote,
+                    Place = SayPlace.Channel,
+                    Time = DateTime.UtcNow,
+                    Target = channelName,
+                    Text = text,
+                    Ring = isRing
+                });
+        }
+
+        public Task GhostPm(string name, string text)
+        {
+            return
+                GhostSay(new Say() {
+                    User = GlobalConst.NightwatchName,
+                    IsEmote = true,
+                    Place = SayPlace.User,
+                    Time = DateTime.UtcNow,
+                    Target = name,
+                    Text = text
+                });
         }
 
         /// <summary>
@@ -89,31 +146,28 @@ namespace ZkLobbyServer
                     if (Battles.TryGetValue(battleID.Value, out battle)) await Broadcast(battle.Users.Keys, say);
                     break;
             }
+
+            await OnSaid(say);
         }
 
-        public Task GhostPm(string name, string text)
-        {
-            return GhostSay(new Say()
-            {
-                User = GlobalConst.NightwatchName,
-                IsEmote = true,
-                Place = SayPlace.User,
-                Time = DateTime.UtcNow,
-                Target = name,
-                Text = text
-            });
-        }
 
-        public async Task SendSiteToLobbyCommand(string user, SiteToLobbyCommand command)
-        {
-            ConnectedUser conUs;
-            if (ConnectedUsers.TryGetValue(user, out conUs)) await conUs.SendCommand(command);
-        }
-
-        
         public bool IsLobbyConnected(string user)
         {
             return ConnectedUsers.ContainsKey(user);
+        }
+
+        public void KickFromServer(string kickerName, string kickeeName, string reason)
+        {
+            ConnectedUser conus;
+            if (ConnectedUsers.TryGetValue(kickeeName, out conus)) {
+                conus.Respond(string.Format("You were kicked by {0} : {1}", kickerName, reason));
+                conus.RequestCloseAll();
+            }
+        }
+
+        public virtual async Task OnSaid(Say say)
+        {
+            Said(this, say);
         }
 
         public async Task PublishAccountUpdate(Account acc)
@@ -122,6 +176,24 @@ namespace ZkLobbyServer
             if (ConnectedUsers.TryGetValue(acc.Name, out conus)) {
                 LoginChecker.UpdateUserFromAccount(conus.User, acc);
                 await Broadcast(ConnectedUsers.Values, conus.User);
+            }
+        }
+
+        public async Task SendSiteToLobbyCommand(string user, SiteToLobbyCommand command)
+        {
+            ConnectedUser conUs;
+            if (ConnectedUsers.TryGetValue(user, out conUs)) await conUs.SendCommand(command);
+        }
+
+        public async Task SetTopic(string channel, string topic, string author)
+        {
+            // todo persist in db
+            Channel chan;
+            if (Rooms.TryGetValue(channel, out chan)) {
+                chan.Topic.Text = topic;
+                chan.Topic.SetDate = DateTime.UtcNow;
+                chan.Topic.SetBy = author;
+                await Broadcast(chan.Users.Keys, new ChangeTopic() { ChannelName = chan.Name, Topic = chan.Topic });
             }
         }
     }

@@ -140,15 +140,36 @@ namespace LobbyClient
     }
 
 
-
+    [Message(Origin.Server)]
     public class ChannelHeader
     {
         public List<string> Users = new List<string>();
         public string ChannelName { get; set; }
-        public string Topic { get; set; }
-        public string TopicSetBy { get; set; }
-        public DateTime? TopicSetDate { get; set; }
         public string Password;
+        public Topic Topic { get; set; }
+
+        public ChannelHeader()
+        {
+            Topic = new Topic();
+        }
+    }
+
+    public class Topic
+    {
+        public string Text { get; set; }
+        public string SetBy { get; set; }
+        public DateTime? SetDate { get; set; }
+    }
+
+    [Message(Origin.Client | Origin.Server)]
+    public class ChangeTopic
+    {
+        public string ChannelName { get; set; }
+        public Topic Topic { get; set; }
+        public ChangeTopic()
+        {
+            Topic = new Topic();
+        }
     }
 
 

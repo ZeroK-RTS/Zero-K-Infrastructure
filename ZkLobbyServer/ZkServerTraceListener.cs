@@ -12,13 +12,13 @@ namespace ZkLobbyServer
 {
     public class ZkServerTraceListener: TraceListener
     {
-        public SharedServerState SharedServerState { get; set; }
+        public ZkLobbyServer ZkLobbyServer { get; set; }
 
         ConcurrentQueue<Say> queue = new ConcurrentQueue<Say>();
 
-        public ZkServerTraceListener(SharedServerState sharedServerState = null)
+        public ZkServerTraceListener(ZkLobbyServer zkLobbyServer = null)
         {
-            this.SharedServerState = sharedServerState;
+            this.ZkLobbyServer = zkLobbyServer;
         }
 
         public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string message)
@@ -53,11 +53,11 @@ namespace ZkLobbyServer
             if (type == TraceEventType.Error || type == TraceEventType.Critical) { 
                 var say = new Say() { Place = SayPlace.Channel, Target = "zkerror", Text = text, User = GlobalConst.NightwatchName, Time=DateTime.UtcNow};
 
-                if (SharedServerState != null) {
+                if (ZkLobbyServer != null) {
                     // server runnin, flush queue and add new say
                     Say history;
-                    while (queue.TryDequeue(out history)) await SharedServerState.GhostSay(history);
-                    await SharedServerState.GhostSay(say);
+                    while (queue.TryDequeue(out history)) await ZkLobbyServer.GhostSay(history);
+                    await ZkLobbyServer.GhostSay(say);
                 } else queue.Enqueue(say); // server not running (stuff intiializing) store in queueu
             }
         }

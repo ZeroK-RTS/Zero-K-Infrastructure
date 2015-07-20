@@ -22,7 +22,7 @@ namespace ZkLobbyServer
     public class ConnectedUser : ICommandSender
     {
         public ConcurrentDictionary<ClientConnection, bool> Connections = new ConcurrentDictionary<ClientConnection, bool>();
-        SharedServerState state;
+        ZkLobbyServer state;
         public User User = new User();
 
         public bool IsLoggedIn { get { return User != null && User.AccountID != 0; } }
@@ -37,7 +37,7 @@ namespace ZkLobbyServer
 
         public Battle MyBattle;
 
-        public ConnectedUser(SharedServerState state, User user)
+        public ConnectedUser(ZkLobbyServer state, User user)
         {
             this.state = state;
 
@@ -125,14 +125,8 @@ namespace ZkLobbyServer
             }
 
             Battle bat;
-            if (state.Battles.TryGetValue(forceJoin.BattleID, out bat))
-            {
-                ConnectedUser connectedUser;
-                if (state.ConnectedUsers.TryGetValue(forceJoin.Name, out connectedUser))
-                {
-                    if (connectedUser.MyBattle != null) await connectedUser.Process(new LeaveBattle());
-                    await connectedUser.Process(new JoinBattle() { BattleID = forceJoin.BattleID, Password = bat.Password });
-                }
+            if (state.Battles.TryGetValue(forceJoin.BattleID, out bat)) {
+                await state.ForceJoinBattle(forceJoin.Name, bat);
             }
         }
 
@@ -170,8 +164,7 @@ namespace ZkLobbyServer
                     return;
                 }
 
-                await connectedUser.Respond(string.Format("You were kicked by {0} : {1}", Name, kick.Reason));
-                connectedUser.RequestCloseAll();
+                state.KickFromServer(Name, kick.Name, kick.Reason);
             }
         }
 
@@ -207,10 +200,17 @@ namespace ZkLobbyServer
         public async Task Process(JoinChannel joinChannel)
         {
             if (!IsLoggedIn) return;
+
+            if (!await state.ChannelManager.CanJoin(User.AccountID, joinChannel.ChannelName)) {
+                await SendCommand(new JoinChannelResponse() { Success = false, Reason = "you don't have permission to join this channel", ChannelName = joinChannel.ChannelName });
+                return;
+            }
+
             var channel = state.Rooms.GetOrAdd(joinChannel.ChannelName, (n) => new Channel() { Name = joinChannel.ChannelName, });
             if (channel.Password != joinChannel.Password)
             {
                 await SendCommand(new JoinChannelResponse() { Success = false, Reason = "invalid password", ChannelName = joinChannel.ChannelName });
+                return;
             }
 
 
@@ -228,8 +228,6 @@ namespace ZkLobbyServer
                             ChannelName = channel.Name,
                             Password = channel.Password,
                             Topic = channel.Topic,
-                            TopicSetBy = channel.TopicSetBy,
-                            TopicSetDate = channel.TopicSetDate,
                             Users = new List<string>(users)
                         }
                 });
@@ -322,6 +320,8 @@ namespace ZkLobbyServer
                     break;
 
             }
+
+            await state.OnSaid(say);
         }
 
 
@@ -356,7 +356,7 @@ namespace ZkLobbyServer
             }
         }
 
-        Task Respond(string message)
+        public Task Respond(string message)
         {
             return SendCommand(new Say() { Place = SayPlace.MessageBox, Target = Name, User = Name, Text = message });
         }

@@ -8,7 +8,9 @@ namespace ZkLobbyServer
 {
     public class OfflineMessageHandler
     {
-        public async Task SendMissedMessages(ICommandSender sender, SayPlace place, string target, int accountID, int maxCount = 1000)
+        const int OfflineMessageResendCount = 1000;
+
+        public async Task SendMissedMessages(ICommandSender sender, SayPlace place, string target, int accountID, int maxCount = OfflineMessageResendCount)
         {
             using (var db = new ZkDataContext()) {
                 var acc = await db.Accounts.FindAsync(accountID);

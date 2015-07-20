@@ -208,7 +208,7 @@ namespace LobbyClient
         public event EventHandler<SiteToLobbyCommand> SiteToLobbyCommandReceived = delegate { };
 
         
-        public event EventHandler<TasEventArgs> ChannelTopicChanged = delegate { };
+        public event EventHandler<ChangeTopic> ChannelTopicChanged = delegate { };
         
         
         
@@ -791,8 +791,6 @@ namespace LobbyClient
                 var chan = new Channel() {
                     Name = response.Channel.ChannelName,
                     Topic = response.Channel.Topic,
-                    TopicSetBy = response.Channel.TopicSetBy,
-                    TopicSetDate = response.Channel.TopicSetDate,
                 };
                 
                 JoinedChannels[response.ChannelName] = chan;
@@ -806,7 +804,13 @@ namespace LobbyClient
                 PreviewChannelJoined(this, cancelEvent);
                 if (!cancelEvent.Cancel) {
                     ChannelJoined(this, chan);
-                    ChannelUserAdded(this, new ChannelUserInfo() {Channel = chan, Users = chan.Users.Values.ToList()}); 
+                    ChannelUserAdded(this, new ChannelUserInfo() {Channel = chan, Users = chan.Users.Values.ToList()});
+                    if (!string.IsNullOrEmpty(chan.Topic.Text)) {
+                        ChannelTopicChanged(this, new ChangeTopic() {
+                            ChannelName = chan.Name,
+                            Topic = chan.Topic
+                        });
+                    }
                 }
             } else {
                 ChannelJoinFailed(this, response);
@@ -878,6 +882,16 @@ namespace LobbyClient
         }
 
 
+        async Task Process(ChangeTopic changeTopic)
+        {
+            Channel chan;
+            if (joinedChannels.TryGetValue(changeTopic.ChannelName, out chan)) {
+                chan.Topic = changeTopic.Topic;
+            }
+            ChannelTopicChanged(this, changeTopic);
+        }
+
+        
         void InvokeSaid(TasSayEventArgs sayArgs)
         {
             var previewSaidEventArgs = new CancelEventArgs<TasSayEventArgs>(sayArgs);

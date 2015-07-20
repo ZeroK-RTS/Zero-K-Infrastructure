@@ -61,7 +61,7 @@ namespace ZeroKWeb
             return ChallengeTime.Value.AddMinutes(GlobalConst.PlanetWarsMinutesToAccept);
         }
 
-        public PlanetWarsMatchMaker(TasClient tas)
+        public PlanetWarsMatchMaker(ZkLobbyServer.ZkLobbyServer tas)
         {
             AttackOptions = new List<AttackOption>();
             RunningBattles = new Dictionary<string, AttackOption>();
@@ -99,12 +99,12 @@ namespace ZeroKWeb
                 AttackerSideChangeTime = gal.AttackerSideChangeTime ?? DateTime.UtcNow;
             }
 
-            this.tas = tas;
-            tas.PreviewSaid += TasOnPreviewSaid;
-            tas.UserRemoved += TasOnUserRemoved;
-            tas.ChannelUserAdded += TasOnChannelUserAdded;
             
             // TODO reimplement this 
+            // this.tas = tas;
+            // tas.PreviewSaid += TasOnPreviewSaid;
+            // tas.UserRemoved += TasOnUserRemoved;
+            // tas.ChannelUserAdded += TasOnChannelUserAdded;
             // tas.ChannelJoined += (sender, args) => { if (args.Name == "extension") tas.Extensions.SendJsonData(GenerateLobbyCommand()); };
 
             timer = new Timer(10000);

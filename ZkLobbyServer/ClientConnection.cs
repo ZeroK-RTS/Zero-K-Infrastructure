@@ -30,7 +30,7 @@ namespace ZkLobbyServer
         DateTime lastPingFromClient;
         readonly int number;
 
-        readonly SharedServerState state;
+        readonly ZkLobbyServer state;
         readonly Timer timer;
 
         ITransport transport;
@@ -40,7 +40,7 @@ namespace ZkLobbyServer
         }
 
 
-        public ClientConnection(ITransport transport, SharedServerState state)
+        public ClientConnection(ITransport transport, ZkLobbyServer state)
         {
             this.state = state;
             number = Interlocked.Increment(ref state.ClientCounter);
@@ -133,6 +133,13 @@ namespace ZkLobbyServer
 
 
                 await state.OfflineMessageHandler.SendMissedMessages(this, SayPlace.User, Name, user.AccountID);
+
+                foreach (var chan in await state.ChannelManager.GetDefaultChannels(user.AccountID)) {
+                    await connectedUser.Process(new JoinChannel() {
+                        ChannelName = chan,
+                        Password = null
+                    });
+                }
             }
             else
             {

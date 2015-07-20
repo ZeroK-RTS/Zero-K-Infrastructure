@@ -5,7 +5,6 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
 using LobbyClient;
-using NightWatch;
 using ZkData;
 using System.Data.Entity.SqlServer;
 
@@ -36,8 +35,8 @@ namespace ZeroKWeb.Controllers
 
             if (acc.IsDeleted != isDeleted)
             {
-                Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Account {0} {1} deletion status changed by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name), true);
-                Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - {0} -> {1}", acc.IsDeleted, isDeleted), true);
+                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Account {0} {1} deletion status changed by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name));
+                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - {0} -> {1}", acc.IsDeleted, isDeleted));
                 acc.IsDeleted = isDeleted;
             }
             db.SubmitChanges();
@@ -51,10 +50,10 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             Account acc = db.Accounts.Single(x => x.AccountID == accountID);
             Account adminAcc = db.Accounts.Single(x => x.AccountID == adminAccountID);
-            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Permissions changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name), true);
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Permissions changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
             if (acc.SpringieLevel != springieLevel)
             {
-                Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - Springie rights: {0} -> {1}", acc.SpringieLevel, springieLevel), true);
+                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Springie rights: {0} -> {1}", acc.SpringieLevel, springieLevel));
                 acc.SpringieLevel = springieLevel;
             }
            if (acc.IsZeroKAdmin != zkAdmin)
@@ -63,25 +62,27 @@ namespace ZeroKWeb.Controllers
                 // FIXME needs to also terminate forbidden clan/faction subscriptions
                 if (zkAdmin == false)
                 {
-                    Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - Springie rights: {0} -> {1}", acc.SpringieLevel, 2), true);
+                    Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Springie rights: {0} -> {1}", acc.SpringieLevel, 2));
                     acc.SpringieLevel = 2;
                     
                 }
-                Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - Admin status: {0} -> {1}", acc.IsZeroKAdmin, zkAdmin), true);
+                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Admin status: {0} -> {1}", acc.IsZeroKAdmin, zkAdmin));
                 acc.IsZeroKAdmin = zkAdmin;
                 
             }
             if (acc.HasVpnException != vpnException)
             {
-                Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format(" - VPN exception: {0} -> {1}", acc.HasVpnException, vpnException), true);
+                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - VPN exception: {0} -> {1}", acc.HasVpnException, vpnException));
                 acc.HasVpnException = vpnException;
             }
             db.SubmitChanges();
             
-            Global.ServerState.PublishAccountUpdate(acc);
+            Global.Server.PublishAccountUpdate(acc);
             
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
+
+
 
         [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
         public ActionResult AdminUserDetail(int id)
@@ -206,15 +207,15 @@ namespace ZeroKWeb.Controllers
             // notify lobby of changes and post log message
             try
             {
-                Global.Nightwatch.Tas.AdminKickFromLobby(acc.Name, reason);
+                Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
 
-                Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format("New penalty for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")), true);
-                Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Reason: {0} ", reason), true);
+                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("New penalty for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")));
+                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Reason: {0} ", reason));
             }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.ToString());
-                Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, ex.ToString(), false);
+                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, ex.ToString());
             }
             return RedirectToAction("Detail", new { id = accountID });
         }
@@ -256,8 +257,7 @@ namespace ZeroKWeb.Controllers
 
             var str = string.Format("{0} {1} reports abuse by {2} {3} : {4}", Global.Account.Name, Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"), acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), text);
 
-            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, str, true, isRing:true);
-            Global.Nightwatch.Tas.Ring(SayPlace.Channel, AuthService.ModeratorChannel, "Abuse report");
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str, isRing:true);
             return Content("Thank you. Your issue was reported. Moderators will now look into it.");
         }
 
@@ -275,8 +275,8 @@ namespace ZeroKWeb.Controllers
                 Account adminAcc = db.Accounts.Find((int)todel.CreatedAccountID);
                 punisherName = adminAcc.Name;
             }
-            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format("{0} removed a punishment given by {1} ", Global.Account.Name, punisherName), true);
-            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format("to {0} for: {1} ", acc.Name, todel.Reason), true);
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} removed a punishment given by {1} ", Global.Account.Name, punisherName));
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("to {0} for: {1} ", acc.Name, todel.Reason));
 
             return RedirectToAction("Detail", "Users", new { id = todel.AccountID });
         }
@@ -317,7 +317,7 @@ namespace ZeroKWeb.Controllers
 
                     try
                     {
-                        Global.Nightwatch.Tas.AdminKickFromLobby(acc.Name, reason);
+                        Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
                     }
                     catch (Exception ex)
                     {
@@ -326,8 +326,8 @@ namespace ZeroKWeb.Controllers
                 }
             }
             db.SubmitChanges();
-            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Mass ban executed by {4} for user series {0} ({1} - {2}): {3}",
-                name, startIndex, endIndex, Url.Action("Detail", "Users", new { id = firstAccID }, "http"), Global.Account.Name), true);
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Mass ban executed by {4} for user series {0} ({1} - {2}): {3}",
+                name, startIndex, endIndex, Url.Action("Detail", "Users", new { id = firstAccID }, "http"), Global.Account.Name));
 
             return Index(name, null, null);
         }
@@ -357,7 +357,7 @@ namespace ZeroKWeb.Controllers
 
                 try
                 {
-                    Global.Nightwatch.Tas.AdminKickFromLobby(acc.Name, reason);
+                    Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
                 }
                 catch (Exception ex)
                 {
@@ -365,8 +365,8 @@ namespace ZeroKWeb.Controllers
                 }
             }
             db.SubmitChanges();
-            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Mass ban executed by {2} for userID {0} (max age {1})",
-                userID, maxAge, Global.Account.Name), true);
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Mass ban executed by {2} for userID {0} (max age {1})",
+                userID, maxAge, Global.Account.Name));
 
             return NewUsers(null, null, userID);
         }

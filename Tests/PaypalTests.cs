@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using LobbyClient;
 using NUnit.Framework;
-using NightWatch;
 using ZkData;
 
 namespace Tests
