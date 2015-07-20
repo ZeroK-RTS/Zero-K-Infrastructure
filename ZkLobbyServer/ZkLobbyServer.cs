@@ -181,9 +181,22 @@ namespace ZkLobbyServer
             }
         }
 
-        public void ForceJoinBattle(string playerName, string battleHost)
+        public async Task ForceJoinBattle(string playerName, string battleHost)
         {
-            throw new NotImplementedException();
+            var bat = Battles.Values.FirstOrDefault(x => x.FounderName == battleHost);
+            if (bat != null) {
+                await ForceJoinBattle(playerName, bat);
+            }
+        }
+
+        public async Task ForceJoinBattle(string player, Battle bat)
+        {
+            ConnectedUser connectedUser;
+            if (ConnectedUsers.TryGetValue(player, out connectedUser))
+            {
+                if (connectedUser.MyBattle != null) await connectedUser.Process(new LeaveBattle());
+                await connectedUser.Process(new JoinBattle() { BattleID = bat.BattleID, Password = bat.Password });
+            }
         }
 
         public List<Battle> GetPlanetWarsBattles()

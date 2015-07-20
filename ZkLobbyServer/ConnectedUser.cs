@@ -125,14 +125,8 @@ namespace ZkLobbyServer
             }
 
             Battle bat;
-            if (state.Battles.TryGetValue(forceJoin.BattleID, out bat))
-            {
-                ConnectedUser connectedUser;
-                if (state.ConnectedUsers.TryGetValue(forceJoin.Name, out connectedUser))
-                {
-                    if (connectedUser.MyBattle != null) await connectedUser.Process(new LeaveBattle());
-                    await connectedUser.Process(new JoinBattle() { BattleID = forceJoin.BattleID, Password = bat.Password });
-                }
+            if (state.Battles.TryGetValue(forceJoin.BattleID, out bat)) {
+                await state.ForceJoinBattle(forceJoin.Name, bat);
             }
         }
 
