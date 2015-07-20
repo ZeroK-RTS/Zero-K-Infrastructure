@@ -78,7 +78,6 @@
   <ItemGroup>
     <Compile Include="AuthService.cs" />
     <Compile Include="ChatRelay.cs" />
-    <Compile Include="NightwatchTraceListener.cs" />
     <Compile Include="Nightwatch.cs" />
     <Compile Include="MainConfig.cs" />
     <Compile Include="PlayerMover.cs" />

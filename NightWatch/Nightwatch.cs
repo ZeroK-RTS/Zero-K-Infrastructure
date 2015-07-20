@@ -48,7 +48,6 @@ namespace CaTracker
         {
             tas = new TasClient("NightWatch");
 			config = new Config();
-            Trace.Listeners.Add(new NightwatchTraceListener(tas));
         }
 
 

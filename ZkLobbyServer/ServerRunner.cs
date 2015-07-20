@@ -16,33 +16,54 @@ namespace ZkLobbyServer
         public SharedServerState SharedState { get; private set; }
         
 
+        List<Thread> listenThreads = new List<Thread>();
+        List<ITransportServerListener> listeners = new List<ITransportServerListener>();
+
         public ServerRunner(string geoIPpath)
         {
             SharedState = new SharedServerState(geoIPpath);
         }
 
 
+
         public void Run()
         {
-            var tcpServerListener = new TcpTransportServerListener();
-            if (tcpServerListener.Bind(10)) {
-                var thread = new Thread(() => {
-                    SynchronizationContext.SetSynchronizationContext(null);
-                    tcpServerListener.RunLoop((t) => { var client = new ClientConnection(t, SharedState); });
-                });
-                thread.Start();
-                thread.Priority = ThreadPriority.AboveNormal;
+            SynchronizationContext.SetSynchronizationContext(null);
+
+            listeners.Add(new TcpTransportServerListener());
+            listeners.Add(new WebSocketTransportServerListener());
+
+            foreach (var listener in listeners) {
+                if (listener.Bind(20)) {
+                    ITransportServerListener l = listener;
+                    var thread = new Thread(() =>
+                    {
+                        SynchronizationContext.SetSynchronizationContext(null);
+                        l.RunLoop((t) => { var client = new ClientConnection(t, SharedState); });
+                    });
+                    listenThreads.Add(thread);
+                    thread.Start();
+                    thread.Priority = ThreadPriority.AboveNormal;                    
+                }
+            }
+        }
+
+        public void Stop()
+        {
+            foreach (var l in listeners) {
+                try {
+                    l.Stop();
+                }
+                catch { }
             }
 
-            var wscServerListener = new WebSocketTransportServerListener();
-            if (wscServerListener.Bind(10)) {
-                var thread = new Thread(() => {
-                    SynchronizationContext.SetSynchronizationContext(null);
-                    wscServerListener.RunLoop((t) => { var client = new ClientConnection(t, SharedState); });
-                });
-                thread.Start();
-                thread.Priority = ThreadPriority.AboveNormal;
+            foreach (var t in listenThreads) {
+                try {
+                    t.Abort();
+                }
+                catch { }
             }
+            
         }
     }
 }

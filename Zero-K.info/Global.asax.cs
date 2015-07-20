@@ -27,6 +27,7 @@ namespace ZeroKWeb
     {
         const string DbListKey = "ZkDataContextList";
         DateTime lastPollCheck = DateTime.UtcNow;
+        ServerRunner zkServerRunner;
 
         public MvcApplication() {
             ZkDataContext.DataContextCreated += context =>
@@ -87,11 +88,16 @@ namespace ZeroKWeb
         {
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            var zkls = new ServerRunner(Server.MapPath("~"));
+            var listener = new ZkServerTraceListener();
+            Trace.Listeners.Add(listener);
 
-            Application["zkls"] = zkls.SharedState;
-            zkls.Run();
+            zkServerRunner = new ServerRunner(Server.MapPath("~"));
 
+            Application["zkls"] = zkServerRunner.SharedState;
+            zkServerRunner.Run();
+            listener.SharedServerState = zkServerRunner.SharedState;
+            
+            
             var nw = new Nightwatch();
             Application["Nightwatch"] = nw;
             if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running) Application["PwMatchMaker"] = new PlanetWarsMatchMaker(nw.Tas);
@@ -100,6 +106,12 @@ namespace ZeroKWeb
 
             AreaRegistration.RegisterAllAreas();
             RegisterRoutes(RouteTable.Routes);
+        }
+
+
+        protected void Application_End()
+        {
+            zkServerRunner.Stop();
         }
 
         string GetUserIP() {

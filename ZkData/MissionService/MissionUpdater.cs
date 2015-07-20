@@ -94,13 +94,16 @@ namespace ZkData
 
 
             var basePath = GlobalConst.SiteDiskPath + @"\resources\";
+            if (!Directory.Exists(basePath)) Directory.CreateDirectory(basePath);
             File.WriteAllBytes(string.Format(@"{2}\{0}_{1}.torrent", resource.InternalName.EscapePath(), md5, basePath), torrentStream.ToArray());
             
             File.WriteAllBytes(string.Format(@"{1}\{0}.metadata.xml.gz", resource.InternalName.EscapePath(), basePath),
                                    MetaDataCache.SerializeAndCompressMetaData(modInfo));
             
-            File.WriteAllBytes(string.Format(GlobalConst.SiteDiskPath + @"\img\missions\{0}.png", mission.MissionID, basePath), mission.Image.ToArray());
-
+            var imgPath = GlobalConst.SiteDiskPath + @"\img\missions\";
+            if (!Directory.Exists(imgPath)) Directory.CreateDirectory(imgPath);
+            
+            File.WriteAllBytes(string.Format(imgPath + "{0}.png", mission.MissionID, basePath), mission.Image.ToArray());
         }
 
         static string FixScript(Mission mission, ZipFile zf, string scriptName)
