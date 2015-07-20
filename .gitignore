@@ -187,6 +187,11 @@ UberServer/server.log.old
 Zero-K.info/Deploy/*
 
 #Packages qt installer framework
-!ZkLobbyMultiplatformInstaller/packages/*
-ZkLobbyMultiplatformInstaller/Zero-K
-ZkLobbyMultiplatformInstaller/Zero-K.exe
+!ZkLobbyMultiplatformInstaller/packages/
+!ZkLobbyMultiplatformInstaller/packages/info.zerok.game/
+!ZkLobbyMultiplatformInstaller/packages/info.zerok.game/data/packages/
+!ZkLobbyMultiplatformInstaller/packages/info.zerok.maps/
+ZkLobbyMultiplatformInstaller/Zero-K-Offline-Install
+ZkLobbyMultiplatformInstaller/Zero-K-Online-Install
+ZkLobbyMultiplatformInstaller/Zero-K-Offline-Install.exe
+ZkLobbyMultiplatformInstaller/Zero-K-Online-Install.exe
