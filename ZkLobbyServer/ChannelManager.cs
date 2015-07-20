@@ -46,6 +46,11 @@ namespace ZkLobbyServer
             }
         }
 
+        public void AddClanChannel(Clan clan)
+        {
+            clanChannels[clan.GetClanChannel()] = clan;
+        }
+        
         public List<string> GetDefaultChannels(Account acc)
         {
             var ret = new List<string>() { "zk", GlobalConst.ModeratorChannel, GlobalConst.Top20Channel };

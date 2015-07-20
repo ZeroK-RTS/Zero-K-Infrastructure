@@ -279,8 +279,8 @@ namespace ZeroKWeb.Controllers
             }
 
             //scope.Complete();
+            Global.Server.ChannelManager.AddClanChannel(clan);;
             Global.Server.SetTopic(clan.GetClanChannel(), clan.SecretTopic, Global.Account.Name);
-            Global.Server.RefreshClanChannel(clan.GetClanChannel());
             //}
             return RedirectToAction("Detail", new { id = clan.ClanID });
         }
