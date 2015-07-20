@@ -27,7 +27,6 @@ namespace CaTracker
         
         public TasClient Tas { get { return tas; } }
         public static Config config;
-        PlayerMover playerMover;
         public PayPalInterface PayPalInterface { get; protected set; }
 
         public AuthService Auth { get; private set; }
@@ -68,7 +67,6 @@ namespace CaTracker
 		    }
 
             Auth = new AuthService(tas);
-            playerMover = new PlayerMover(tas);
 
 		    PayPalInterface = new PayPalInterface();
 		    PayPalInterface.Error += (e) =>
