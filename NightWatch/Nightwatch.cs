@@ -26,8 +26,6 @@ namespace CaTracker
         TasClient tas;
         
         public TasClient Tas { get { return tas; } }
-        public static Config config;
-        public PayPalInterface PayPalInterface { get; protected set; }
 
         public AuthService Auth { get; private set; }
 
@@ -45,73 +43,18 @@ namespace CaTracker
 		
         {
             tas = new TasClient("NightWatch");
-			config = new Config();
         }
 
 
 		public bool Start()
 		{
 
-			tas.Connected += tas_Connected;
-			tas.LoginDenied += tas_LoginDenied;
-			tas.LoginAccepted += tas_LoginAccepted;
-
-		    using (var db = new ZkDataContext()) {
-		        var acc = db.Accounts.FirstOrDefault(x => x.Name == GlobalConst.NightwatchName);
-		        if (acc != null) {
-		            acc.SetPasswordPlain(config.AccountPassword);
-		            acc.IsBot = true;
-		            acc.IsZeroKAdmin = true;
-		            db.SaveChanges();
-		        }
-		    }
 
             Auth = new AuthService(tas);
 
-		    PayPalInterface = new PayPalInterface();
-		    PayPalInterface.Error += (e) =>
-		        { tas.Say(SayPlace.Channel, "zkdev", "PAYMENT ERROR: " + e.ToString(), true); };
-
-		    PayPalInterface.NewContribution += (c) =>
-		        {
-		            tas.Say(SayPlace.Channel,
-		                    "zkdev",
-		                    string.Format("WOOHOO! {0:d} New contribution of {1:F2}€ by {2} - for the jar {3}", c.Time, c.Euros, c.Name.Split(new[]{' '},StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(), c.ContributionJar.Name),
-		                    true);
-		            if (c.AccountByAccountID == null)
-		                tas.Say(SayPlace.Channel,
-		                        "zkdev",
-                                string.Format("Warning, user account unknown yet, payment remains unassigned. If you know user name, please assign it manually {0}/Contributions", GlobalConst.BaseSiteUrl),
-		                        true);
-                    else tas.Say(SayPlace.Channel,
-                                "zkdev",
-                                string.Format("It is {0} {2}/Users/Detail/{1}", c.AccountByAccountID.Name, c.AccountID, GlobalConst.BaseSiteUrl),
-                                true);
-		        };
-            
-
-    		tas.Connect(config.ServerHost, config.ServerPort);
 
 			return true;
 		}
 
-		void tas_Connected(object sender, Welcome welcome)
-		{
-			tas.Login(config.AccountName, config.AccountPassword);
-		}
-
-		void tas_LoginAccepted(object sender, TasEventArgs e)
-		{
-			for (var i = 0; i < config.JoinChannels.Length; ++i) tas.JoinChannel(config.JoinChannels[i]);
-		}
-
-		void tas_LoginDenied(object sender, LoginResponse loginResponse)
-		{
-            Utils.StartAsync(() =>
-            {
-                Thread.Sleep(5000);
-                tas.Login(config.AccountName, config.AccountPassword);
-            });
-		}
 	}
 }

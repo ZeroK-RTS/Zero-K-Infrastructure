@@ -78,7 +78,6 @@
   <ItemGroup>
     <Compile Include="AuthService.cs" />
     <Compile Include="Nightwatch.cs" />
-    <Compile Include="MainConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TopPlayers.cs" />
   </ItemGroup>

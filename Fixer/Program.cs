@@ -1029,7 +1029,7 @@ namespace Fixer
         {
             Global.Nightwatch = new Nightwatch();
             Global.Nightwatch.Start();
-            Global.PlanetWarsMatchMaker = new PlanetWarsMatchMaker(Global.Nightwatch.Tas);
+            // Global.PlanetWarsMatchMaker = new PlanetWarsMatchMaker(Global.Nightwatch.Tas);
             var db = new ZkDataContext();
             var gal = db.Galaxies.First(x => x.IsDefault);
             Global.PlanetWarsMatchMaker.AddAttackOption(gal.Planets.Skip(1).First());

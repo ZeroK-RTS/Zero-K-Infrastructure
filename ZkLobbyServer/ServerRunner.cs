@@ -13,7 +13,7 @@ namespace ZkLobbyServer
 {
     public class ServerRunner
     {
-        public ZkLobbyServer ZkLobby { get; private set; }
+        public ZkLobbyServer ZkLobbyServer { get; private set; }
         
 
         List<Thread> listenThreads = new List<Thread>();
@@ -21,7 +21,7 @@ namespace ZkLobbyServer
 
         public ServerRunner(string geoIPpath)
         {
-            ZkLobby = new ZkLobbyServer(geoIPpath);
+            ZkLobbyServer = new ZkLobbyServer(geoIPpath);
         }
 
 
@@ -39,7 +39,7 @@ namespace ZkLobbyServer
                     var thread = new Thread(() =>
                     {
                         SynchronizationContext.SetSynchronizationContext(null);
-                        l.RunLoop((t) => { var client = new ClientConnection(t, ZkLobby); });
+                        l.RunLoop((t) => { var client = new ClientConnection(t, ZkLobbyServer); });
                     });
                     listenThreads.Add(thread);
                     thread.Start();

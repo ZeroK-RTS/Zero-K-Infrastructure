@@ -12,6 +12,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
 using CaTracker;
+using LobbyClient;
 using NightWatch;
 using ZeroKWeb.Controllers;
 using ZkData;
@@ -23,16 +24,17 @@ namespace ZeroKWeb
     // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
     // visit http://go.microsoft.com/?LinkId=9394801
 
-    public class MvcApplication: HttpApplication
+    public class MvcApplication : HttpApplication
     {
         const string DbListKey = "ZkDataContextList";
         DateTime lastPollCheck = DateTime.UtcNow;
-        ServerRunner zkServerRunner;
 
-        public MvcApplication() {
+        public MvcApplication()
+        {
             ZkDataContext.DataContextCreated += context =>
                 {
-                    if (HttpContext.Current != null) {
+                    if (HttpContext.Current != null)
+                    {
                         var dbs = HttpContext.Current.Items[DbListKey] as List<ZkDataContext>;
                         if (dbs != null) dbs.Add(context);
                     }
@@ -41,11 +43,15 @@ namespace ZeroKWeb
             EndRequest += (sender, args) =>
                 {
                     var dbs = HttpContext.Current.Items[DbListKey] as List<ZkDataContext>;
-                    if (dbs != null) {
-                        foreach (var db in dbs) {
-                            try {
+                    if (dbs != null)
+                    {
+                        foreach (var db in dbs)
+                        {
+                            try
+                            {
                                 db.Dispose();
-                            } catch {}
+                            }
+                            catch { }
                             ;
                         }
                     }
@@ -57,7 +63,8 @@ namespace ZeroKWeb
         }
 
 
-        public static void RegisterRoutes(RouteCollection routes) {
+        public static void RegisterRoutes(RouteCollection routes)
+        {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
             routes.IgnoreRoute("Resources/{*pathInfo}");
             routes.IgnoreRoute("img/{*pathInfo}");
@@ -79,7 +86,8 @@ namespace ZeroKWeb
             routes.MapRoute("Root", "", new { controller = "Home", action = "Index", id = "" });
         }
 
-        public override string GetVaryByCustomString(HttpContext context, string custom) {
+        public override string GetVaryByCustomString(HttpContext context, string custom)
+        {
             if (custom == GlobalConst.LobbyAccessCookieName) return Global.IsLobbyAccess.ToString();
             return base.GetVaryByCustomString(context, custom);
         }
@@ -87,39 +95,28 @@ namespace ZeroKWeb
         protected void Application_Start()
         {
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-
-            var listener = new ZkServerTraceListener();
-            Trace.Listeners.Add(listener);
-
-            zkServerRunner = new ServerRunner(Server.MapPath("~"));
-
-            Application["zkls"] = zkServerRunner.ZkLobby;
-            zkServerRunner.Run();
-            listener.ZkLobbyServer = zkServerRunner.ZkLobby;
-            
-            
-            var nw = new Nightwatch();
-            Application["Nightwatch"] = nw;
-            if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running) Application["PwMatchMaker"] = new PlanetWarsMatchMaker(nw.Tas);
-            new Thread(()=> nw.Start()).Start();
-            
-
             AreaRegistration.RegisterAllAreas();
             RegisterRoutes(RouteTable.Routes);
+
+            Global.StartApplication(this);
+
+
         }
 
 
         protected void Application_End()
         {
-            zkServerRunner.Stop();
+            Global.StopApplication();
         }
 
-        string GetUserIP() {
+        string GetUserIP()
+        {
             var ip = Context.Request.ServerVariables["REMOTE_ADDR"];
             return ip;
         }
 
-        void MvcApplication_Error(object sender, EventArgs e) {
+        void MvcApplication_Error(object sender, EventArgs e)
+        {
             Exception ex = Context.Server.GetLastError();
             if (!ex.Message.Contains("was not found or does not implement IController")) Trace.TraceError(ex.ToString());
             //var context = HttpContext.Current;
@@ -133,35 +130,42 @@ namespace ZeroKWeb
         }
 
 
-        void MvcApplication_PostAuthenticateRequest(object sender, EventArgs e) {
-            if (DateTime.UtcNow.Subtract(lastPollCheck).TotalMinutes > 15) {
+        void MvcApplication_PostAuthenticateRequest(object sender, EventArgs e)
+        {
+            if (DateTime.UtcNow.Subtract(lastPollCheck).TotalMinutes > 15)
+            {
                 PollController.AutoClosePolls();
                 lastPollCheck = DateTime.UtcNow;
             }
 
             Account acc = null;
-            if (FormsAuthentication.IsEnabled && User.Identity.IsAuthenticated) {
+            if (FormsAuthentication.IsEnabled && User.Identity.IsAuthenticated)
+            {
                 acc = Account.AccountByName(new ZkDataContext(), User.Identity.Name);
             }
             else if (Request[GlobalConst.ASmallCakeCookieName] != null)
             {
                 var testAcc = Account.AccountByName(new ZkDataContext(), Request[GlobalConst.ASmallCakeLoginCookieName]);
                 if (testAcc != null) if (ValidateSiteAuthToken(testAcc, Request[GlobalConst.ASmallCakeCookieName])) acc = testAcc;
-            } 
-            
+            }
+
             if (acc == null) if (Request[GlobalConst.LoginCookieName] != null) acc = AuthServiceClient.VerifyAccountHashed(Request[GlobalConst.LoginCookieName], Request[GlobalConst.PasswordHashCookieName]);
 
-            if (acc != null) {
+            if (acc != null)
+            {
                 var ip = GetUserIP();
-                using (var db = new ZkDataContext()) {
+                using (var db = new ZkDataContext())
+                {
                     var penalty = Punishment.GetActivePunishment(acc.AccountID, ip, null, x => x.BanSite, db);
-                    if (penalty != null) {
+                    if (penalty != null)
+                    {
                         Response.Write(string.Format("You are banned! (IP match to account {0})\n", penalty.AccountByAccountID.Name));
                         Response.Write(string.Format("Ban expires: {0} UTC\n", penalty.BanExpires));
                         Response.Write(string.Format("Reason: {0}\n", penalty.Reason));
                         Response.End();
                     }
-                    else {
+                    else
+                    {
                         HttpContext.Current.User = acc;
                         FormsAuthentication.SetAuthCookie(acc.Name, false);
                     }
@@ -169,8 +173,10 @@ namespace ZeroKWeb
             }
         }
 
-        void OnPostAcquireRequestState(object sender, EventArgs eventArgs) {
-            if (Request.QueryString["weblobby"] != null) {
+        void OnPostAcquireRequestState(object sender, EventArgs eventArgs)
+        {
+            if (Request.QueryString["weblobby"] != null)
+            {
                 // save weblobby info
                 Session["weblobby"] = Request.QueryString["weblobby"];
             }

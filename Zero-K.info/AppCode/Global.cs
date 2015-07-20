@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Mime;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
@@ -41,30 +42,15 @@ namespace ZeroKWeb
             set { nightwatch = value; }
         }
 
-        static ZkLobbyServer.ZkLobbyServer server;
-        public static ZkLobbyServer.ZkLobbyServer Server
-        {
-            get
-            {
-                if (server != null) return server;
-                server = (ZkLobbyServer.ZkLobbyServer)HttpContext.Current.Application["zkls"];
-                return server;
-            }
-            set { server = value; }
-        }
+        public static ZkLobbyServer.ZkLobbyServer Server { get; private set; }
 
+        public static ServerRunner ZkServerRunner { get; private set; }
+
+
+        public static PayPalInterface PayPalInterface { get; private set; }
 
         static PlanetWarsMatchMaker planetWarsMatchMaker;
-        public static PlanetWarsMatchMaker PlanetWarsMatchMaker
-        {
-            get
-            {
-                if (planetWarsMatchMaker != null) return planetWarsMatchMaker;
-                planetWarsMatchMaker = (PlanetWarsMatchMaker)HttpContext.Current.Application["PwMatchMaker"];
-                return planetWarsMatchMaker;
-            }
-            set { planetWarsMatchMaker = value; }
-        }
+        public static PlanetWarsMatchMaker PlanetWarsMatchMaker { get; private set; }
 
         public const int AjaxScrollCount = 40;
         public static Account Account
@@ -370,5 +356,64 @@ namespace ZeroKWeb
 
             return new UrlHelper(requestContext);
         }
+
+        public static void StartApplication(MvcApplication mvcApplication)
+        {
+            var listener = new ZkServerTraceListener();
+            Trace.Listeners.Add(listener);
+
+            ZkServerRunner = new ServerRunner(mvcApplication.Server.MapPath("~"));
+            Server = ZkServerRunner.ZkLobbyServer;
+            ZkServerRunner.Run();
+            listener.ZkLobbyServer = Server;
+
+            SetupPaypalInterface();
+
+
+            if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running) PlanetWarsMatchMaker = new PlanetWarsMatchMaker(Server);
+
+        }
+
+        public static void StopApplication()
+        {
+            
+        }
+
+        static void SetupPaypalInterface()
+        {
+            PayPalInterface = new PayPalInterface();
+            PayPalInterface.Error +=
+                (e) =>
+                {
+                    Global.Server.GhostSay(new Say()
+                    {
+                        IsEmote = true,
+                        Target = "zkdev",
+                        User = GlobalConst.NightwatchName,
+                        Text = "PAYMENT ERROR: " + e.ToString()
+                    });
+                };
+
+            PayPalInterface.NewContribution += (c) =>
+            {
+                string message = string.Format("WOOHOO! {0:d} New contribution of {1:F2}€ by {2} - for the jar {3}", c.Time, c.Euros,
+                    c.Name.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(), c.ContributionJar.Name);
+
+                Global.Server.GhostSay(new Say() { IsEmote = true, Target = "zkdev", User = GlobalConst.NightwatchName, Text = message });
+
+                if (c.AccountByAccountID != null)
+                {
+                    Global.Server.GhostSay(new Say()
+                    {
+                        IsEmote = true,
+                        Target = "zkdev",
+                        User = GlobalConst.NightwatchName,
+                        Text = string.Format("It is {0} {2}/Users/Detail/{1}", c.AccountByAccountID.Name, c.AccountID, GlobalConst.BaseSiteUrl)
+                    });
+                }
+            };
+        }
+
+
     }
 }
