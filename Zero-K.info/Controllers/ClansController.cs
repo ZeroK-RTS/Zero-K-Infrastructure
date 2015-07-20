@@ -279,8 +279,8 @@ namespace ZeroKWeb.Controllers
             }
 
             //scope.Complete();
-            Global.Nightwatch.Tas.AdminSetTopic(clan.GetClanChannel(), clan.SecretTopic);
-            Global.Nightwatch.Tas.AdminSetChannelPassword(clan.GetClanChannel(), clan.Password);
+            Global.Server.SetTopic(clan.GetClanChannel(), clan.SecretTopic);
+            Global.Server.RefreshClanChannel(clan.GetClanChannel());
             //}
             return RedirectToAction("Detail", new { id = clan.ClanID });
         }

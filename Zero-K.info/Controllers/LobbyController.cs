@@ -47,7 +47,7 @@ namespace ZeroKWeb.Controllers
             db.SubmitChanges();
 
             var str = string.Format("{0} added new blocked VPN company: {1}", Global.Account.Name, companyName);
-            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, str, true);
+            Global.Server.GhostChanSay(AuthService.ModeratorChannel, str);
             return  RedirectToAction("BlockedVPNs");
         }
 
@@ -64,7 +64,7 @@ namespace ZeroKWeb.Controllers
             db.SubmitChanges();
 
             var str = string.Format("{0} added new blocked VPN host: {1}", Global.Account.Name, hostname);
-            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, str, true);
+            Global.Server.GhostChanSay(AuthService.ModeratorChannel, str);
             return RedirectToAction("BlockedVPNs");
         }
 
@@ -77,7 +77,7 @@ namespace ZeroKWeb.Controllers
             db.BlockedCompanies.DeleteOnSubmit(todel);
             db.SubmitAndMergeChanges();
             var str = string.Format("{0} removed blocked VPN company: {1}", Global.Account.Name, name);
-            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, str, true);
+            Global.Server.GhostChanSay(AuthService.ModeratorChannel, str);
             return RedirectToAction("BlockedVPNs");
         }
 
@@ -90,7 +90,7 @@ namespace ZeroKWeb.Controllers
             db.BlockedHosts.DeleteOnSubmit(todel);
             db.SubmitAndMergeChanges();
             var str = string.Format("{0} removed blocked VPN host: {1}", Global.Account.Name, name);
-            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, str, true);
+            Global.Server.GhostChanSay(AuthService.ModeratorChannel, str);
             return RedirectToAction("BlockedVPNs");
         }
 

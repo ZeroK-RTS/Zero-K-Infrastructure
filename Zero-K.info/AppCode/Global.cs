@@ -99,7 +99,6 @@ namespace ZeroKWeb
         {
             get { return IsAccountAuthorized && Account.IsZeroKAdmin; }
         }
-        public static Nightwatch Nightwatch { get; set; }
         public static PayPalInterface PayPalInterface { get; private set; }
         public static PlanetWarsMatchMaker PlanetWarsMatchMaker { get; private set; }
         public static ZkLobbyServer.ZkLobbyServer Server { get; private set; }

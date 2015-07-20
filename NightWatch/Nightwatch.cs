@@ -30,14 +30,6 @@ namespace CaTracker
         public AuthService Auth { get; private set; }
 
 
-        public List<Battle> GetPlanetWarsBattles() {
-            if (tas==null || tas.ExistingBattles == null) return new List<Battle>();
-            else return tas.ExistingBattles.Values.Where(x => x.Founder.Name.StartsWith("PlanetWars")).ToList();
-        }
-
-        public List<Battle> GetPlanetBattles(Planet planet) {
-            return GetPlanetWarsBattles().Where(x => x.MapName == planet.Resource.InternalName).ToList();
-        }
 
         public Nightwatch()
 		

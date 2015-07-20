@@ -1027,8 +1027,8 @@ namespace Fixer
 
         public static void TestPwMatch()
         {
-            Global.Nightwatch = new Nightwatch();
-            Global.Nightwatch.Start();
+            //Global.Nightwatch = new Nightwatch();
+            //Global.Nightwatch.Start();
             // Global.PlanetWarsMatchMaker = new PlanetWarsMatchMaker(Global.Nightwatch.Tas);
             var db = new ZkDataContext();
             var gal = db.Galaxies.First(x => x.IsDefault);

@@ -82,7 +82,7 @@ namespace ZeroKWeb
             {
                 foreach (var m in moves)
                 {
-                    Global.Nightwatch.Tas.ForceJoinBattle(m.PlayerName, m.BattleHost);
+                    Global.Server.ForceJoinBattle(m.PlayerName, m.BattleHost);
                 }
             }
             catch (Exception ex)

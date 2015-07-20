@@ -102,28 +102,5 @@ namespace NightWatch
                     }
                 };
         }
-
-
-
-
-        public CurrentLobbyStats GetCurrentStats()
-        {
-            var ret = new CurrentLobbyStats();
-            foreach (var u in client.ExistingUsers.Values) if (!u.IsBot && !u.IsInGame && !u.IsInBattleRoom) ret.UsersIdle++;
-
-            foreach (var b in client.ExistingBattles.Values)
-            {
-                foreach (var u in b.Users.Values.Select(x => x.LobbyUser))
-                {
-                    if (u.IsBot) continue;
-                    if (u.IsInGame) ret.UsersFighting++;
-                    else if (u.IsInBattleRoom) ret.UsersWaiting++;
-                }
-                if (b.IsInGame) ret.BattlesRunning++;
-                else ret.BattlesWaiting++;
-            }
-            return ret;
-        }
-
     }
 }

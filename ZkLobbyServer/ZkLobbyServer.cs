@@ -116,6 +116,21 @@ namespace ZkLobbyServer
             });
         }
 
+        public Task GhostChanSay(string channelName, string text, bool isEmote = true, bool isRing = false)
+        {
+            return GhostSay(new Say()
+            {
+                User = GlobalConst.NightwatchName,
+                IsEmote = isEmote,
+                Place = SayPlace.Channel,
+                Time = DateTime.UtcNow,
+                Target = channelName,
+                Text = text,
+                Ring = isRing
+            });
+        }
+
+
         public async Task SendSiteToLobbyCommand(string user, SiteToLobbyCommand command)
         {
             ConnectedUser conUs;
@@ -136,5 +151,36 @@ namespace ZkLobbyServer
                 await Broadcast(ConnectedUsers.Values, conus.User);
             }
         }
+
+        public async Task SetTopic(string channel, string topic)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RefreshClanChannel(string getClanChannel)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void KickFromLobby(string name, string reason)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ForceJoinBattle(string playerName, string battleHost)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Battle> GetPlanetWarsBattles()
+        {
+            return Battles.Values.Where(x => x.Founder.Name.StartsWith("PlanetWars")).ToList();
+        }
+
+        public List<Battle> GetPlanetBattles(Planet planet)
+        {
+            return GetPlanetWarsBattles().Where(x => x.MapName == planet.Resource.InternalName).ToList();
+        }
+
     }
 }
