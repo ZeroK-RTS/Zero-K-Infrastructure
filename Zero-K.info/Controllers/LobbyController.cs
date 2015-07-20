@@ -6,7 +6,6 @@ using System.Web;
 using System.Web.Mvc;
 using LobbyClient;
 using ZkData;
-using NightWatch;
 
 namespace ZeroKWeb.Controllers
 {
@@ -47,7 +46,7 @@ namespace ZeroKWeb.Controllers
             db.SubmitChanges();
 
             var str = string.Format("{0} added new blocked VPN company: {1}", Global.Account.Name, companyName);
-            Global.Server.GhostChanSay(AuthService.ModeratorChannel, str);
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str);
             return  RedirectToAction("BlockedVPNs");
         }
 
@@ -64,7 +63,7 @@ namespace ZeroKWeb.Controllers
             db.SubmitChanges();
 
             var str = string.Format("{0} added new blocked VPN host: {1}", Global.Account.Name, hostname);
-            Global.Server.GhostChanSay(AuthService.ModeratorChannel, str);
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str);
             return RedirectToAction("BlockedVPNs");
         }
 
@@ -77,7 +76,7 @@ namespace ZeroKWeb.Controllers
             db.BlockedCompanies.DeleteOnSubmit(todel);
             db.SubmitAndMergeChanges();
             var str = string.Format("{0} removed blocked VPN company: {1}", Global.Account.Name, name);
-            Global.Server.GhostChanSay(AuthService.ModeratorChannel, str);
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str);
             return RedirectToAction("BlockedVPNs");
         }
 
@@ -90,7 +89,7 @@ namespace ZeroKWeb.Controllers
             db.BlockedHosts.DeleteOnSubmit(todel);
             db.SubmitAndMergeChanges();
             var str = string.Format("{0} removed blocked VPN host: {1}", Global.Account.Name, name);
-            Global.Server.GhostChanSay(AuthService.ModeratorChannel, str);
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str);
             return RedirectToAction("BlockedVPNs");
         }
 

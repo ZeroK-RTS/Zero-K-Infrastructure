@@ -200,10 +200,17 @@ namespace ZkLobbyServer
         public async Task Process(JoinChannel joinChannel)
         {
             if (!IsLoggedIn) return;
+
+            if (!await state.ChannelManager.CanJoin(User.AccountID, joinChannel.ChannelName)) {
+                await SendCommand(new JoinChannelResponse() { Success = false, Reason = "you don't have permission to join this channel", ChannelName = joinChannel.ChannelName });
+                return;
+            }
+
             var channel = state.Rooms.GetOrAdd(joinChannel.ChannelName, (n) => new Channel() { Name = joinChannel.ChannelName, });
             if (channel.Password != joinChannel.Password)
             {
                 await SendCommand(new JoinChannelResponse() { Success = false, Reason = "invalid password", ChannelName = joinChannel.ChannelName });
+                return;
             }
 
 

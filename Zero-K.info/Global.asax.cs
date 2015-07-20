@@ -12,7 +12,6 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
 using LobbyClient;
-using NightWatch;
 using ZeroKWeb.Controllers;
 using ZkData;
 using System.Web.Optimization;

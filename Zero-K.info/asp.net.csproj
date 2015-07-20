@@ -1411,10 +1411,6 @@
     <Content Include="Views\Battles\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NightWatch\NightWatch.csproj">
-      <Project>{6CE1E0F1-447C-4871-9246-CC7CCB359D89}</Project>
-      <Name>NightWatch</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Shared\LobbyClient\LobbyClient.csproj">
       <Project>{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}</Project>
       <Name>LobbyClient</Name>

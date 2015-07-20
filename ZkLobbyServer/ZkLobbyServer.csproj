@@ -84,6 +84,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChannelManager.cs" />
     <Compile Include="ChatRelay.cs" />
     <Compile Include="ClientConnection.cs" />
     <Compile Include="ICommandSender.cs" />

@@ -28,6 +28,8 @@ namespace ZkLobbyServer
         public CommandJsonSerializer Serializer = new CommandJsonSerializer();
         public SteamWebApi SteamWebApi;
         ChatRelay chatRelay;
+        public ChannelManager ChannelManager;
+
 
         public EventHandler<Say> Said = delegate { };
 
@@ -43,6 +45,7 @@ namespace ZkLobbyServer
             LoginChecker = new LoginChecker(this, geoIPpath);
             SteamWebApi = new SteamWebApi(GlobalConst.SteamAppID, new Secrets().GetSteamWebApiKey());
             chatRelay = new ChatRelay(this, new Secrets().GetNightwatchPassword(), new List<string>() { "zkdev", "sy", "moddev", "weblobbydev", "ai" });
+            ChannelManager = new ChannelManager(this);
         }
 
         public virtual async Task OnSaid(Say say)
