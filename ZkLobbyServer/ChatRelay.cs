@@ -7,22 +7,21 @@ using System.Threading.Tasks;
 using System.Timers;
 using LobbyClient;
 using ZkData;
+using ZkLobbyServer;
 
 namespace NightWatch
 {
     public class ChatRelay
     {
-        TasClient zkTas;
+        SharedServerState state;
         LobbyClient.Legacy.TasClient springTas;
         List<string> channels;
 
-        public ChatRelay(TasClient zkTas, string password, List<string> channels)
+        public ChatRelay(SharedServerState state, string password, List<string> channels)
         {
             this.springTas = new LobbyClient.Legacy.TasClient(null, "ChatRelay", 0);
             this.channels = channels;
-            this.zkTas = zkTas;
             springTas.LoginAccepted += OnLoginAccepted;
-            zkTas.LoginAccepted += OnLoginAccepted;
             springTas.Said += OnSaid;
             zkTas.Said += OnSaid;
 
@@ -32,10 +31,15 @@ namespace NightWatch
         void OnSaid(object sender, LobbyClient.Legacy.TasSayEventArgs args)
         {
             var tas = (LobbyClient.Legacy.TasClient)sender;
-            if (args.Place == LobbyClient.Legacy.TasSayEventArgs.Places.Channel && channels.Contains(args.Channel) && args.UserName != tas.UserName)
-            {
-                var otherTas = zkTas;
-                otherTas.Say(SayPlace.Channel, args.Channel, string.Format("<{0}> {1}", args.UserName, args.Text), args.IsEmote);
+            if (args.Place == LobbyClient.Legacy.TasSayEventArgs.Places.Channel && channels.Contains(args.Channel) && args.UserName != tas.UserName) {
+                state.GhostSay(new Say() {
+                    Place = SayPlace.Channel,
+                    Text = args.Text,
+                    IsEmote = args.IsEmote,
+                    Time = DateTime.UtcNow,
+                    Target = args.Channel,
+                    User = args.UserName,
+                });
             }
         }
 
@@ -64,10 +68,5 @@ namespace NightWatch
             }
         }
 
-        void OnLoginAccepted(object sender, TasEventArgs tasEventArgs)
-        {
-            var tas = (TasClient)sender;
-            foreach (var chan in channels) if (!tas.JoinedChannels.ContainsKey(chan)) tas.JoinChannel(chan);
-        }
     }
 }

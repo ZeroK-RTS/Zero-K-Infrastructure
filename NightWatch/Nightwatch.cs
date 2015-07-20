@@ -28,7 +28,6 @@ namespace CaTracker
         public TasClient Tas { get { return tas; } }
         public static Config config;
         PlayerMover playerMover;
-        ChatRelay chatRelay;
         public PayPalInterface PayPalInterface { get; protected set; }
 
         public AuthService Auth { get; private set; }
@@ -70,7 +69,6 @@ namespace CaTracker
 
             Auth = new AuthService(tas);
             playerMover = new PlayerMover(tas);
-            chatRelay = new ChatRelay(tas, new Secrets().GetNightwatchPassword(), new List<string>() { "zkdev", "sy", "moddev","weblobbydev","ai"});
 
 		    PayPalInterface = new PayPalInterface();
 		    PayPalInterface.Error += (e) =>

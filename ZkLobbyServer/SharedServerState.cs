@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using LobbyClient;
 using MaxMind.Db;
 using MaxMind.GeoIP2;
+using NightWatch;
 using ZkData;
 
 namespace ZkLobbyServer
@@ -27,6 +28,7 @@ namespace ZkLobbyServer
         public ConcurrentDictionary<string, Channel> Rooms = new ConcurrentDictionary<string, Channel>();
         public CommandJsonSerializer Serializer = new CommandJsonSerializer();
         public SteamWebApi SteamWebApi;
+        ChatRelay chatRelay;
 
         public string Version { get; private set; }
 
@@ -39,6 +41,7 @@ namespace ZkLobbyServer
             Game = "zk:stable";
             LoginChecker = new LoginChecker(this, geoIPpath);
             SteamWebApi = new SteamWebApi(GlobalConst.SteamAppID, new Secrets().GetSteamWebApiKey());
+            chatRelay = new ChatRelay(this, new Secrets().GetNightwatchPassword(), new List<string>() { "zkdev", "sy", "moddev", "weblobbydev", "ai" });
         }
 
         /// <summary>

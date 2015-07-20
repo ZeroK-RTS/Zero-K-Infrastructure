@@ -1437,6 +1437,7 @@
     <Folder Include="Resources\" />
     <Folder Include="Views\Github\" />
     <Folder Include="Views\LobbyService\" />
+    <Folder Include="Weblobby\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\News\Index.cshtml" />
