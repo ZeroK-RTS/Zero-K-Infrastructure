@@ -96,6 +96,7 @@
     <Compile Include="TcpTransportServerListener.cs" />
     <Compile Include="WebSocketServerTransport.cs" />
     <Compile Include="WebSocketTransportServerListener.cs" />
+    <Compile Include="ZkServerTraceListener.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

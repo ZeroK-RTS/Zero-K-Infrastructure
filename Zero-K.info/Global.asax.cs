@@ -88,11 +88,16 @@ namespace ZeroKWeb
         {
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
+            var listener = new ZkServerTraceListener();
+            Trace.Listeners.Add(listener);
+
             zkServerRunner = new ServerRunner(Server.MapPath("~"));
 
             Application["zkls"] = zkServerRunner.SharedState;
             zkServerRunner.Run();
-
+            listener.SharedServerState = zkServerRunner.SharedState;
+            
+            
             var nw = new Nightwatch();
             Application["Nightwatch"] = nw;
             if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running) Application["PwMatchMaker"] = new PlanetWarsMatchMaker(nw.Tas);
