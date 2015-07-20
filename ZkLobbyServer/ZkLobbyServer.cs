@@ -152,9 +152,19 @@ namespace ZkLobbyServer
             }
         }
 
-        public async Task SetTopic(string channel, string topic)
+        public async Task SetTopic(string channel, string topic, string author)
         {
-            throw new NotImplementedException();
+            // todo persist in db
+            Channel chan;
+            if (Rooms.TryGetValue(channel, out chan)) {
+                chan.Topic.Text = topic;
+                chan.Topic.SetDate = DateTime.UtcNow;
+                chan.Topic.SetBy = author;
+                await Broadcast(chan.Users.Keys, new ChangeTopic() {
+                    ChannelName = chan.Name,
+                    Topic = chan.Topic
+                });
+            }
         }
 
         public void RefreshClanChannel(string getClanChannel)

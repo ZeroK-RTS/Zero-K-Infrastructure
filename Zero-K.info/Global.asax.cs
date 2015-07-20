@@ -11,7 +11,6 @@ using System.Web.Configuration;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
-using CaTracker;
 using LobbyClient;
 using NightWatch;
 using ZeroKWeb.Controllers;

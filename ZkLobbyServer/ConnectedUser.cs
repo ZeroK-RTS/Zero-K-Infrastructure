@@ -228,8 +228,6 @@ namespace ZkLobbyServer
                             ChannelName = channel.Name,
                             Password = channel.Password,
                             Topic = channel.Topic,
-                            TopicSetBy = channel.TopicSetBy,
-                            TopicSetDate = channel.TopicSetDate,
                             Users = new List<string>(users)
                         }
                 });

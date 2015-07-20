@@ -18,7 +18,6 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 //using LobbyClient;
 //using NightWatch;
-using CaTracker;
 using LobbyClient;
 using Microsoft.Linq.Translations;
 using PlasmaShared;
