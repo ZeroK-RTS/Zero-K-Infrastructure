@@ -46,17 +46,18 @@ namespace NightWatch
                                         string format,
                                         params object[] args)
         {
+            if (eventType == TraceEventType.Information) return;
             SendError(string.Format("{0} {1} {2}", DateTime.Now, eventType, string.Format(format,args)));
         }
 
         public override void Write(string message)
         {
-            SendError(string.Format("{0} DEBUG {1}", DateTime.Now, message));
+            //SendError(string.Format("{0} DEBUG {1}", DateTime.Now, message));
         }
 
         public override void WriteLine(string message)
         {
-            SendError(string.Format("{0} DEBUG {1}", DateTime.Now, message));
+            //SendError(string.Format("{0} DEBUG {1}", DateTime.Now, message));
         }
 
     }
