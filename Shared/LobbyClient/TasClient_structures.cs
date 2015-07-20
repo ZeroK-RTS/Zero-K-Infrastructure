@@ -24,9 +24,7 @@ namespace LobbyClient
     {
         public ConcurrentDictionary<string, User> Users = new ConcurrentDictionary<string, User>();
         public string Name { get; set; }
-        public string Topic { get; set; }
-        public string TopicSetBy { get; set; }
-        public DateTime? TopicSetDate { get; set; }
+        public Topic Topic { get; set; }
         public string Password;
     }
 
@@ -78,6 +76,8 @@ namespace LobbyClient
 		public string Text { get; set; }
 
 		public string UserName { get; set; }
+
+        public DateTime? Time { get; set; }
 
 		public TasSayEventArgs(SayPlace place, string channel, string username, string text, bool isEmote)
 		{

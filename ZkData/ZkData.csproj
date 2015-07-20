@@ -53,6 +53,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.Linq.Translations.1.0.1\lib\net40\Microsoft.Linq.Translations.dll</HintPath>
     </Reference>
+    <Reference Include="MumbleIntegration">
+      <HintPath>..\Zero-K.info\Bin\MumbleIntegration.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -71,9 +74,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Ef\LobbyChatHistory.cs" />
     <Compile Include="Enums\DecorationIconPositions.cs" />
     <Compile Include="Enums\DecorationIconTypes.cs" />
     <Compile Include="Enums\UserLanguage.cs" />
+    <Compile Include="LogEntry.cs" />
     <Compile Include="Migrations\201501132318070_UberServerSwap.cs" />
     <Compile Include="Migrations\201501132318070_UberServerSwap.Designer.cs">
       <DependentUpon>201501132318070_UberServerSwap.cs</DependentUpon>
@@ -106,9 +111,24 @@
     <Compile Include="Migrations\201501290241027_RemoveSpringHashes.Designer.cs">
       <DependentUpon>201501290241027_RemoveSpringHashes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201507161438007_LobbyChatHistory.cs" />
+    <Compile Include="Migrations\201507161438007_LobbyChatHistory.Designer.cs">
+      <DependentUpon>201507161438007_LobbyChatHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201507161450589_LobbyChatWasReadBit.cs" />
+    <Compile Include="Migrations\201507161450589_LobbyChatWasReadBit.Designer.cs">
+      <DependentUpon>201507161450589_LobbyChatWasReadBit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201507161631010_AddLogoutTime.cs" />
+    <Compile Include="Migrations\201507161631010_AddLogoutTime.Designer.cs">
+      <DependentUpon>201507161631010_AddLogoutTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201507200930225_LogEntries.cs" />
+    <Compile Include="Migrations\201507200930225_LogEntries.Designer.cs">
+      <DependentUpon>201507200930225_LogEntries.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
-    <Compile Include="CurrentLobbyStats.cs" />
     <Compile Include="Enums\TreatyState.cs" />
     <Compile Include="Enums\UnlockType.cs" />
     <Compile Include="DbExtensions.cs" />
@@ -157,8 +177,6 @@
     <Compile Include="Ef\Galaxy.cs" />
     <Compile Include="Ef\KudosPurchase.cs" />
     <Compile Include="Ef\Link.cs" />
-    <Compile Include="Ef\LobbyChannelSubscription.cs" />
-    <Compile Include="Ef\LobbyMessage.cs" />
     <Compile Include="Ef\MapRating.cs" />
     <Compile Include="Ef\MiscVar.cs" />
     <Compile Include="Ef\Mission.cs" />
@@ -218,7 +236,6 @@
     <Compile Include="MissionService\MissionUpdater.cs" />
     <Compile Include="PayPal\PayPalInterface.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="LobbyProtocolExtensionsExtensions.cs" />
     <Compile Include="Secrets.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -270,6 +287,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201501290241027_RemoveSpringHashes.resx">
       <DependentUpon>201501290241027_RemoveSpringHashes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507161438007_LobbyChatHistory.resx">
+      <DependentUpon>201507161438007_LobbyChatHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507161450589_LobbyChatWasReadBit.resx">
+      <DependentUpon>201507161450589_LobbyChatWasReadBit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507161631010_AddLogoutTime.resx">
+      <DependentUpon>201507161631010_AddLogoutTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507200930225_LogEntries.resx">
+      <DependentUpon>201507200930225_LogEntries.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

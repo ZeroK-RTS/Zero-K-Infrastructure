@@ -78,8 +78,7 @@ namespace ZeroKLobby.MicroLobby
                 {
                     if (Program.TasClient.IsLoggedIn)
                     {
-                        if (Program.TasClient.ExistingUsers.ContainsKey(userName)) Program.TasClient.Say(SayPlace.User, userName, e.Data, false);
-                        else Program.TasClient.Say(SayPlace.User, GlobalConst.NightwatchName, e.Data, false, string.Format("!pm {0} ", userName)); // send using PM
+                        Program.TasClient.Say(SayPlace.User, userName, e.Data, false);
                     }
                 };
             return pmControl;
@@ -175,77 +174,30 @@ namespace ZeroKLobby.MicroLobby
             {
                 var otherUserName = e.UserName == tas.UserName ? e.Channel : e.UserName;
 
-                // support for offline pm and persistent channels 
-                if (otherUserName == GlobalConst.NightwatchName && e.Text.StartsWith("!pm"))
+                var pmControl = GetPrivateMessageControl(otherUserName);
+                // block non friend messages 
+                if (pmControl == null && Program.Conf.BlockNonFriendPm && !Program.FriendManager.Friends.Contains(otherUserName) && !Program.TasClient.ExistingUsers[e.UserName].IsBot)
                 {
-                    // message received
-                    if (e.UserName == GlobalConst.NightwatchName)
-                    {
-                        var regex = Regex.Match(e.Text, "!pm\\|([^\\|]*)\\|([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)");
-                        if (regex.Success)
-                        {
-                            var chan = regex.Groups[1].Value;
-                            var name = regex.Groups[2].Value;
-                            var time = DateTime.Parse(regex.Groups[3].Value, CultureInfo.InvariantCulture).ToLocalTime();
-                            var text = regex.Groups[4].Value;
-
-                            if (string.IsNullOrEmpty(chan))
-                            {
-                                var pmControl = GetPrivateMessageControl(name) ?? CreatePrivateMessageControl(name);
-                                pmControl.AddLine(new SaidLine(name, text, time));
-                                MainWindow.Instance.NotifyUser("chat/user/" + name, string.Format("{0}: {1}", name, text), false, true);
-                            }
-                            else
-                            {
-                                var chatControl = GetChannelControl(chan) ?? CreateChannelControl(chan);
-                                chatControl.AddLine(new SaidLine(name, text, time));
-                                Program.MainWindow.NotifyUser("chat/channel/" + chan, null);
-                            }
-                        }
-                        else
-                        {
-                            Trace.TraceWarning("Incomprehensible Nightwatch message: {0}", e.Text);
-                        }
-                    }
-                    else // message sent to nightwatch
-                    {
-                        var regex = Regex.Match(e.Text, "!pm ([^ ]+) (.*)");
-                        if (regex.Success)
-                        {
-                            var name = regex.Groups[1].Value;
-                            var text = regex.Groups[2].Value;
-                            var pmControl = GetPrivateMessageControl(name) ?? CreatePrivateMessageControl(name);
-                            pmControl.AddLine(new SaidLine(Program.Conf.LobbyPlayerName, text));
-                        }
-                    }
+                    if (e.UserName != Program.TasClient.UserName)
+                        Program.TasClient.Say(SayPlace.User,
+                                              otherUserName,
+                                              "Sorry, I'm busy and do not receive messages. If you want to ask something, use #zk channel. If you have issue to report use http://code.google.com/p/zero-k/issues/list",
+                                              false);
                 }
                 else
                 {
-
-                    var pmControl = GetPrivateMessageControl(otherUserName);
-                    // block non friend messages 
-                    if (pmControl == null && Program.Conf.BlockNonFriendPm && !Program.FriendManager.Friends.Contains(otherUserName) && !Program.TasClient.ExistingUsers[e.UserName].IsBot)
+                    pmControl = pmControl ?? CreatePrivateMessageControl(otherUserName);
+                    if (!e.IsEmote) pmControl.AddLine(new SaidLine(e.UserName, e.Text, e.Time));
+                    else pmControl.AddLine(new SaidExLine(e.UserName, e.Text, e.Time));
+                    if (e.UserName != Program.TasClient.MyUser.Name)
                     {
-                        if (e.UserName != Program.TasClient.UserName)
-                            Program.TasClient.Say(SayPlace.User,
-                                                  otherUserName,
-                                                  "Sorry, I'm busy and do not receive messages. If you want to ask something, use #zk channel. If you have issue to report use http://code.google.com/p/zero-k/issues/list",
-                                                  false);
-                    }
-                    else
-                    {
-                        pmControl = pmControl ?? CreatePrivateMessageControl(otherUserName);
-                        if (!e.IsEmote) pmControl.AddLine(new SaidLine(e.UserName, e.Text));
-                        else pmControl.AddLine(new SaidExLine(e.UserName, e.Text));
-                        if (e.UserName != Program.TasClient.MyUser.Name)
-                        {
-                            MainWindow.Instance.NotifyUser("chat/user/" + otherUserName,
-                                                           string.Format("{0}: {1}", otherUserName, e.Text),
-                                                           false,
-                                                           true);
-                        }
+                        MainWindow.Instance.NotifyUser("chat/user/" + otherUserName,
+                                                       string.Format("{0}: {1}", otherUserName, e.Text),
+                                                       false,
+                                                       true);
                     }
                 }
+
 
             }
             else if (e.Place == SayPlace.MessageBox) Trace.TraceInformation("TASC: {0}", e.Text);

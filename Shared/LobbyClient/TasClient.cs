@@ -28,7 +28,6 @@ namespace LobbyClient
         public const int MaxAlliances = 16;
         public const int MaxTeams = 16;
 
-        public ProtocolExtension Extensions { get; private set; }
 
         public delegate void Invoker();
 
@@ -166,6 +165,8 @@ namespace LobbyClient
         public event EventHandler<User> UserAdded = delegate { };
         public event EventHandler<UserDisconnected> UserRemoved = delegate { };
         public event EventHandler<OldNewPair<User>> UserStatusChanged = delegate { };
+        public event EventHandler<OldNewPair<User>> MyUserStatusChanged = delegate { };
+
         public event EventHandler<Battle> BattleFound = delegate { };
         public event EventHandler<ChannelUserInfo> ChannelUserAdded = delegate { };
         public event EventHandler<ChannelUserRemovedInfo> ChannelUserRemoved = delegate { };
@@ -204,10 +205,12 @@ namespace LobbyClient
         public event EventHandler<OldNewPair<Battle>> MyBattleMapChanged = delegate { };
         public event EventHandler<Battle> ModOptionsChanged = delegate { };
 
+        public event EventHandler<SiteToLobbyCommand> SiteToLobbyCommandReceived = delegate { };
+
         
-        public event EventHandler<TasEventArgs> ChannelTopicChanged = delegate { };
-        public event EventHandler<EventArgs<User>> UserExtensionsChanged = delegate { };
-        public event EventHandler<EventArgs<User>> MyExtensionsChanged = delegate { };
+        public event EventHandler<ChangeTopic> ChannelTopicChanged = delegate { };
+        
+        
         
  
 
@@ -236,16 +239,6 @@ namespace LobbyClient
                     }
                 }
             }
-
-            Extensions = new ProtocolExtension(this, (user, data) => {
-                                                                         User u;
-                                                                         if (ExistingUsers.TryGetValue(user, out u))
-                                                                         {
-                                                                             UserExtensionsChanged(this, new EventArgs<User>(u));
-                                                                         }
-
-
-            });
 
             pingTimer = new Timer(pingInterval*1000) { AutoReset = true };
             pingTimer.Elapsed += OnPingTimer;
@@ -536,7 +529,7 @@ namespace LobbyClient
         /// <param Name="inputtext">chat text</param>
         /// <param Name="isEmote">is message emote? (channel or battle only)</param>
         /// <param Name="linePrefix">text to be inserted in front of each line (example: "!pm xyz")</param>
-        public async Task Say(SayPlace place, string channel, string inputtext, bool isEmote, string linePrefix = "", bool isRing = false)
+        public async Task Say(SayPlace place, string channel, string inputtext, bool isEmote, bool isRing = false)
         {
             if (String.IsNullOrEmpty(inputtext)) return;
             var lines = inputtext.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -545,9 +538,7 @@ namespace LobbyClient
             {
                 if (String.IsNullOrEmpty(text)) continue;
 
-                var sentText = linePrefix + text;
-
-                var args = new SayingEventArgs(place, channel, sentText, isEmote);
+                var args = new SayingEventArgs(place, channel, text, isEmote);
                 Saying(this, args);
                 if (args.Cancel) continue;
 
@@ -753,9 +744,15 @@ namespace LobbyClient
                     if (user.IsInGame && !old.IsInGame) MyBattleStarted(this,bat );
                     if (!user.IsInGame && old.IsInGame) MyBattleHostExited(this, bat);
                 }
-
             }
+            if (user.Name == UserName) MyUserStatusChanged(this, new OldNewPair<User>(old,user));
             UserStatusChanged(this, new OldNewPair<User>(old, user));
+        }
+
+
+        async Task Process(SiteToLobbyCommand command)
+        {
+            SiteToLobbyCommandReceived(this, command);
         }
 
 
@@ -773,7 +770,7 @@ namespace LobbyClient
 
         async Task Process(Say say)
         {
-            InvokeSaid(new TasSayEventArgs(say.Place, say.Target,say.User, say.Text, say.IsEmote));
+            InvokeSaid(new TasSayEventArgs(say.Place, say.Target,say.User, say.Text, say.IsEmote) {Time = say.Time});
             if (say.Ring) Rang(this, say);
         }
 
@@ -794,8 +791,6 @@ namespace LobbyClient
                 var chan = new Channel() {
                     Name = response.Channel.ChannelName,
                     Topic = response.Channel.Topic,
-                    TopicSetBy = response.Channel.TopicSetBy,
-                    TopicSetDate = response.Channel.TopicSetDate,
                 };
                 
                 JoinedChannels[response.ChannelName] = chan;
@@ -809,7 +804,13 @@ namespace LobbyClient
                 PreviewChannelJoined(this, cancelEvent);
                 if (!cancelEvent.Cancel) {
                     ChannelJoined(this, chan);
-                    ChannelUserAdded(this, new ChannelUserInfo() {Channel = chan, Users = chan.Users.Values.ToList()}); 
+                    ChannelUserAdded(this, new ChannelUserInfo() {Channel = chan, Users = chan.Users.Values.ToList()});
+                    if (!string.IsNullOrEmpty(chan.Topic.Text)) {
+                        ChannelTopicChanged(this, new ChangeTopic() {
+                            ChannelName = chan.Name,
+                            Topic = chan.Topic
+                        });
+                    }
                 }
             } else {
                 ChannelJoinFailed(this, response);
@@ -881,6 +882,16 @@ namespace LobbyClient
         }
 
 
+        async Task Process(ChangeTopic changeTopic)
+        {
+            Channel chan;
+            if (joinedChannels.TryGetValue(changeTopic.ChannelName, out chan)) {
+                chan.Topic = changeTopic.Topic;
+            }
+            ChannelTopicChanged(this, changeTopic);
+        }
+
+        
         void InvokeSaid(TasSayEventArgs sayArgs)
         {
             var previewSaidEventArgs = new CancelEventArgs<TasSayEventArgs>(sayArgs);
@@ -903,5 +914,9 @@ namespace LobbyClient
             else if(!WasDisconnectRequested) Connect(serverHost, serverPort);
         }
 
+        public Task LinkSteam(string token)
+        {
+            return SendCommand(new LinkSteam() { Token = token });
+        }
     }
 }

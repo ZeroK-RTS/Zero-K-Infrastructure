@@ -76,16 +76,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuthService.cs" />
-    <Compile Include="ChatRelay.cs" />
-    <Compile Include="NightwatchTraceListener.cs" />
-    <Compile Include="NwSteamHandler.cs" />
-    <Compile Include="Nightwatch.cs" />
-    <Compile Include="MainConfig.cs" />
-    <Compile Include="OfflineMessages.cs" />
-    <Compile Include="PlayerMover.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TopPlayers.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\LobbyClient\LobbyClient.csproj">

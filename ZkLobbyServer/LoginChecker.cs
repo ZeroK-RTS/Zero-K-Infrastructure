@@ -19,9 +19,9 @@ namespace ZkLobbyServer
     {
         readonly IGeoIP2Provider geoIP;
 
-        readonly SharedServerState state;
+        readonly ZkLobbyServer state;
 
-        public LoginChecker(SharedServerState state, string geoipPath)
+        public LoginChecker(ZkLobbyServer state, string geoipPath)
         {
             this.state = state;
             geoIP = new DatabaseReader(Path.Combine(geoipPath,"GeoLite2-Country.mmdb"), FileAccessMode.Memory);
@@ -233,7 +233,7 @@ namespace ZkLobbyServer
             }
         }
 
-        static void UpdateUserFromAccount(User user, Account acc)
+        public static void UpdateUserFromAccount(User user, Account acc)
         {
             user.Name = acc.Name;
             user.DisplayName = acc.SteamName;

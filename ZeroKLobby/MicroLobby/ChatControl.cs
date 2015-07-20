@@ -27,7 +27,6 @@ namespace ZeroKLobby.MicroLobby
         public static EventHandler<ChannelLineArgs> ChannelLineAdded = (sender, args) => { };
         Timer minuteTimer;
         public string ChannelName { get; set; }
-        public GameInfo GameInfo { get; set; }
         
         public bool IsTopicVisible {
             get { return topicPanel.Visible; }
@@ -42,7 +41,7 @@ namespace ZeroKLobby.MicroLobby
                 if (value) Program.Conf.Topics.Remove(ChannelName);
                 else {
                     Channel channel;
-                    if (Program.TasClient.JoinedChannels.TryGetValue(ChannelName, out channel)) Program.Conf.Topics[channel.Name] = channel.TopicSetDate;
+                    if (Program.TasClient.JoinedChannels.TryGetValue(ChannelName, out channel)) Program.Conf.Topics[channel.Name] = channel.Topic.SetDate;
                 }
             }
         }
@@ -375,15 +374,15 @@ namespace ZeroKLobby.MicroLobby
         }
 
 
-        void TasClient_ChannelTopicChanged(object sender, TasEventArgs e) {
-            if (ChannelName == e.ServerParams[0]) {
+        void TasClient_ChannelTopicChanged(object sender, ChangeTopic changeTopic) {
+            if (ChannelName == changeTopic.ChannelName) {
                 var channel = Program.TasClient.JoinedChannels[ChannelName];
                 DateTime? lastChange;
                 Program.Conf.Topics.TryGetValue(channel.Name, out lastChange);
-                var topicLine = new TopicLine(channel.Topic, channel.TopicSetBy, channel.TopicSetDate);
+                var topicLine = new TopicLine(channel.Topic.Text, channel.Topic.SetBy, channel.Topic.SetDate);
                 topicBox.Reset();
                 topicBox.AddLine(topicLine);
-                if (channel.Topic != null && lastChange != channel.TopicSetDate) IsTopicVisible = true;
+                if (channel.Topic != null && lastChange != channel.Topic.SetDate) IsTopicVisible = true;
                 else IsTopicVisible = false;
             }
         }
@@ -464,8 +463,8 @@ namespace ZeroKLobby.MicroLobby
                 if (e.Place == SayPlace.Channel) {
                     if (e.Text.Contains(Program.Conf.LobbyPlayerName) && e.UserName != GlobalConst.NightwatchName) Program.MainWindow.NotifyUser("chat/channel/" + e.Channel, string.Format("{0}: {1}", e.UserName, e.Text), false, true);
 
-                    if (!e.IsEmote) AddLine(new SaidLine(e.UserName, e.Text));
-                    else AddLine(new SaidExLine(e.UserName, e.Text));
+                    if (!e.IsEmote) AddLine(new SaidLine(e.UserName, e.Text, e.Time));
+                    else AddLine(new SaidExLine(e.UserName, e.Text, e.Time));
                 }
             }
             else if (e.Place == SayPlace.Channel) AddLine(new ChannelMessageLine(e.Text));

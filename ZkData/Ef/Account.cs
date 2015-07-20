@@ -25,6 +25,7 @@ namespace ZkData
             SpringieLevel = 1;
             FirstLogin = DateTime.UtcNow;
             LastLogin = DateTime.UtcNow;
+            LastLogout = DateTime.UtcNow;
             Country = "??";
 
 
@@ -53,7 +54,6 @@ namespace ZkData
             ForumThreadsByLastPostAccountID = new HashSet<ForumThread>();
             ForumThreadLastReads = new HashSet<ForumThreadLastRead>();
             KudosPurchases = new HashSet<KudosPurchase>();
-            LobbyChannelSubscriptions = new HashSet<LobbyChannelSubscription>();
             Missions = new HashSet<Mission>();
             MissionScores = new HashSet<MissionScore>();
             News = new HashSet<News>();
@@ -84,6 +84,8 @@ namespace ZkData
         public string Email { get; set; }
         public DateTime FirstLogin { get; set; }
         public DateTime LastLogin { get; set; }
+        public DateTime LastLogout { get; set; }
+
         [StringLength(8000)]
         public string Aliases { get; set; }
         public double Elo { get; set; }
@@ -164,7 +166,6 @@ namespace ZkData
         public virtual ICollection<ForumThread> ForumThreadsByLastPostAccountID { get; set; }
         public virtual ICollection<ForumThreadLastRead> ForumThreadLastReads { get; set; }
         public virtual ICollection<KudosPurchase> KudosPurchases { get; set; }
-        public virtual ICollection<LobbyChannelSubscription> LobbyChannelSubscriptions { get; set; }
         public virtual ICollection<Mission> Missions { get; set; }
         public virtual ICollection<MissionScore> MissionScores { get; set; }
         public virtual ICollection<News> News { get; set; }

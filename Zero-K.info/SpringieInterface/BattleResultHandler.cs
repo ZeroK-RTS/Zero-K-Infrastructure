@@ -140,7 +140,7 @@ namespace ZeroKWeb.SpringieInterface
 
                 try
                 {
-                    foreach (Account a in sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account)) Global.Nightwatch.Tas.Extensions.PublishAccountData(a);
+                    foreach (Account a in sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account)) Global.Server.PublishAccountUpdate(a);
                 }
                 catch (Exception ex)
                 {
@@ -160,7 +160,7 @@ namespace ZeroKWeb.SpringieInterface
                                               account.AccountID,
                                               GlobalConst.BaseSiteUrl);
                             //text.AppendLine(message);
-                            AuthServiceClient.SendLobbyMessage(account, message);
+                            Global.Server.GhostPm(account.Name, message);
                         }
                         catch (Exception ex)
                         {
@@ -171,13 +171,13 @@ namespace ZeroKWeb.SpringieInterface
 
                 text.AppendLine(string.Format("BATTLE DETAILS AND REPLAY ----> {1}/Battles/Detail/{0} <-----", sb.SpringBattleID, GlobalConst.BaseSiteUrl));
 
+                /*
                 // create debriefing room, join players there and output message
                 string channelName = "B" + sb.SpringBattleID;
                 var joinplayers = new List<string>();
                 joinplayers.AddRange(context.Players.Select(x => x.Name)); // add those who were there at start
                 joinplayers.AddRange(sb.SpringBattlePlayers.Select(x => x.Account.Name)); // add those who played
-                TasClient tas = Global.Nightwatch.Tas;
-                Battle bat = tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == context.AutohostName); // add those in lobby atm
+                Battle bat = Global.Server.Battles.Values.FirstOrDefault(x => x.Founder.Name == context.AutohostName); // add those in lobby atm
 
 
                 var conf = context.GetConfig();
@@ -189,7 +189,7 @@ namespace ZeroKWeb.SpringieInterface
                 foreach (string jp in joinplayers.Distinct().Where(x => x != context.AutohostName)) tas.ForceJoinChannel(jp, channelName);
                 tas.JoinChannel(channelName); // join nightwatch and say it
                 tas.Say(SayPlace.Channel, channelName, text.ToString(), true);
-                tas.LeaveChannel(channelName);
+                tas.LeaveChannel(channelName);*/
 
                 //text.Append(string.Format("Debriefing in #{0} - zk://chat/channel/{0}  ", channelName));
                 return text.ToString();
