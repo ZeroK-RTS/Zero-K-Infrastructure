@@ -57,12 +57,12 @@ namespace ZkLobbyServer
                 catch { }
             }
 
-            foreach (var t in listenThreads) {
+            /*foreach (var t in listenThreads) {
                 try {
                     t.Abort();
                 }
                 catch { }
-            }
+            }*/
             
         }
     }
