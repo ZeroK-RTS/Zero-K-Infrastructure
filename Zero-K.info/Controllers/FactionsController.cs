@@ -239,7 +239,7 @@ namespace ZeroKWeb.Controllers
             if (Global.Account.FactionID == fac.FactionID && Global.Account.HasFactionRight(x=>x.RightEditTexts)) {
                 fac.SecretTopic = secretTopic;
                 db.SubmitAndMergeChanges();
-                Global.Server.SetTopic(fac.Shortcut,secretTopic);
+                Global.Server.SetTopic(fac.Shortcut,secretTopic, Global.Account.Name);
                 return RedirectToAction("Detail", new { id = fac.FactionID });
             }
             return Content("Denied");

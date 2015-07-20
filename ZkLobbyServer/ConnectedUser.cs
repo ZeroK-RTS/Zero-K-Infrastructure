@@ -170,8 +170,7 @@ namespace ZkLobbyServer
                     return;
                 }
 
-                await connectedUser.Respond(string.Format("You were kicked by {0} : {1}", Name, kick.Reason));
-                connectedUser.RequestCloseAll();
+                state.KickFromServer(Name, kick.Name, kick.Reason);
             }
         }
 
@@ -356,7 +355,7 @@ namespace ZkLobbyServer
             }
         }
 
-        Task Respond(string message)
+        public Task Respond(string message)
         {
             return SendCommand(new Say() { Place = SayPlace.MessageBox, Target = Name, User = Name, Text = message });
         }

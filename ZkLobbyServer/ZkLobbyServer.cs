@@ -172,9 +172,13 @@ namespace ZkLobbyServer
             throw new NotImplementedException();
         }
 
-        public void KickFromLobby(string name, string reason)
+        public void KickFromServer(string kickerName, string kickeeName, string reason)
         {
-            throw new NotImplementedException();
+            ConnectedUser conus;
+            if (ConnectedUsers.TryGetValue(kickeeName, out conus)) {
+                conus.Respond(string.Format("You were kicked by {0} : {1}", kickerName, reason));
+                conus.RequestCloseAll();
+            }
         }
 
         public void ForceJoinBattle(string playerName, string battleHost)

@@ -208,7 +208,7 @@ namespace ZeroKWeb.Controllers
             // notify lobby of changes and post log message
             try
             {
-                Global.Server.KickFromLobby(acc.Name, reason);
+                Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
 
                 Global.Server.GhostChanSay(AuthService.ModeratorChannel, string.Format("New penalty for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")));
                 Global.Server.GhostChanSay(AuthService.ModeratorChannel, string.Format("Reason: {0} ", reason));
@@ -318,7 +318,7 @@ namespace ZeroKWeb.Controllers
 
                     try
                     {
-                        Global.Server.KickFromLobby(acc.Name, reason);
+                        Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
                     }
                     catch (Exception ex)
                     {
@@ -358,7 +358,7 @@ namespace ZeroKWeb.Controllers
 
                 try
                 {
-                    Global.Server.KickFromLobby(acc.Name, reason);
+                    Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
                 }
                 catch (Exception ex)
                 {
