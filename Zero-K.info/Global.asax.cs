@@ -93,9 +93,9 @@ namespace ZeroKWeb
 
             zkServerRunner = new ServerRunner(Server.MapPath("~"));
 
-            Application["zkls"] = zkServerRunner.SharedState;
+            Application["zkls"] = zkServerRunner.ZkLobby;
             zkServerRunner.Run();
-            listener.SharedServerState = zkServerRunner.SharedState;
+            listener.ZkLobbyServer = zkServerRunner.ZkLobby;
             
             
             var nw = new Nightwatch();

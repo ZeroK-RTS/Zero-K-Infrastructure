@@ -78,7 +78,7 @@ namespace ZeroKWeb.Controllers
             }
             db.SubmitChanges();
             
-            Global.ServerState.PublishAccountUpdate(acc);
+            Global.Server.PublishAccountUpdate(acc);
             
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }

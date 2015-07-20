@@ -377,7 +377,7 @@ namespace ZeroKWeb.Controllers
                 if (useWarp == true) acc.SpendWarps(cnt);
 
                 if (planet.Account != null) {
-                    Global.ServerState.GhostPm(planet.Account.Name, string.Format(
+                    Global.Server.GhostPm(planet.Account.Name, string.Format(
                         "Warning: long range scanners detected fleet of {0} ships inbound to your planet {1} {3}/Planetwars/Planet/{2}",
                         cnt,
                         planet.Name,
@@ -530,7 +530,7 @@ namespace ZeroKWeb.Controllers
                                                                     clan,
                                                                     sb));
                         if (account != null) {
-                            Global.ServerState.GhostPm(planet.Account.Name, string.Format(
+                            Global.Server.GhostPm(planet.Account.Name, string.Format(
                                 "Warning, you just lost planet {0}!! {2}/PlanetWars/Planet/{1}",
                                 planet.Name,
                                 planet.PlanetID,
@@ -550,7 +550,7 @@ namespace ZeroKWeb.Controllers
                                                                         newFaction,
                                                                         newAccount.Clan,
                                                                         sb));
-                            Global.ServerState.GhostPm(newAccount.Name, string.Format(
+                            Global.Server.GhostPm(newAccount.Name, string.Format(
                                 "Congratulations, you now own planet {0}!! {2}/PlanetWars/Planet/{1}",
                                 planet.Name,
                                 planet.PlanetID,
@@ -568,13 +568,13 @@ namespace ZeroKWeb.Controllers
                                                                         planet.Account.Clan,
                                                                         sb));
 
-                            Global.ServerState.GhostPm(newAccount.Name, string.Format(
+                            Global.Server.GhostPm(newAccount.Name, string.Format(
                                 "Congratulations, you now own planet {0}!! {2}/PlanetWars/Planet/{1}",
                                 planet.Name,
                                 planet.PlanetID,
                                 GlobalConst.BaseSiteUrl));
 
-                            Global.ServerState.GhostPm(planet.Account.Name, string.Format(
+                            Global.Server.GhostPm(planet.Account.Name, string.Format(
                                 "Warning, you just lost planet {0}!! {2}/PlanetWars/Planet/{1}",
                                 planet.Name,
                                 planet.PlanetID,
@@ -645,7 +645,7 @@ namespace ZeroKWeb.Controllers
                                                             role.IsClanOnly ? (object)myAccount.Clan : myAccount.Faction,
                                                             role,
                                                             myAccount));
-                Global.ServerState.GhostPm(targetAccount.Name, string.Format("You were recalled from the function of {0} by {1}", role.Name, myAccount.Name));
+                Global.Server.GhostPm(targetAccount.Name, string.Format("You were recalled from the function of {0} by {1}", role.Name, myAccount.Name));
                 db.SubmitAndMergeChanges();
                 return RedirectToAction("Detail", "Users", new { id = accountID });
             }
@@ -698,7 +698,7 @@ namespace ZeroKWeb.Controllers
                                                                 role,
                                                                 myAccount));
                 }
-                Global.ServerState.GhostPm(targetAccount.Name, string.Format("You were appointed for the function of {0} by {1}", role.Name, myAccount.Name));
+                Global.Server.GhostPm(targetAccount.Name, string.Format("You were appointed for the function of {0} by {1}", role.Name, myAccount.Name));
                 db.SubmitAndMergeChanges();
                 return RedirectToAction("Detail", "Users", new { id = accountID });
             }

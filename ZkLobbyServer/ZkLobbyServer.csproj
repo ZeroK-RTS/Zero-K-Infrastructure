@@ -93,7 +93,7 @@
     <Compile Include="OfflineMessageHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerRunner.cs" />
-    <Compile Include="SharedServerState.cs" />
+    <Compile Include="ZkLobbyServer.cs" />
     <Compile Include="TcpTransportServerListener.cs" />
     <Compile Include="WebSocketServerTransport.cs" />
     <Compile Include="WebSocketTransportServerListener.cs" />

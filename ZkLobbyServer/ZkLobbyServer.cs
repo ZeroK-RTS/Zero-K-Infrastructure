@@ -9,12 +9,11 @@ using System.Threading.Tasks;
 using LobbyClient;
 using MaxMind.Db;
 using MaxMind.GeoIP2;
-using NightWatch;
 using ZkData;
 
 namespace ZkLobbyServer
 {
-    public class SharedServerState
+    public class ZkLobbyServer
     {
         public int BattleCounter;
         public ConcurrentDictionary<int, Battle> Battles = new ConcurrentDictionary<int, Battle>();
@@ -30,10 +29,12 @@ namespace ZkLobbyServer
         public SteamWebApi SteamWebApi;
         ChatRelay chatRelay;
 
+        public EventHandler<Say> Said = delegate { };
+
         public string Version { get; private set; }
 
 
-        public SharedServerState(string geoIPpath)
+        public ZkLobbyServer(string geoIPpath)
         {
             var entry = Assembly.GetExecutingAssembly();
             Version = entry.GetName().Version.ToString();
@@ -42,6 +43,11 @@ namespace ZkLobbyServer
             LoginChecker = new LoginChecker(this, geoIPpath);
             SteamWebApi = new SteamWebApi(GlobalConst.SteamAppID, new Secrets().GetSteamWebApiKey());
             chatRelay = new ChatRelay(this, new Secrets().GetNightwatchPassword(), new List<string>() { "zkdev", "sy", "moddev", "weblobbydev", "ai" });
+        }
+
+        public virtual async Task OnSaid(Say say)
+        {
+            Said(this, say);
         }
 
         /// <summary>
@@ -72,7 +78,8 @@ namespace ZkLobbyServer
         public async Task GhostSay(Say say, int? battleID = null)
         {
             if (say.Time == null) say.Time = DateTime.UtcNow;
-
+            
+            
             switch (say.Place) {
                 case SayPlace.Channel:
                     Channel channel;
@@ -92,6 +99,8 @@ namespace ZkLobbyServer
                     if (Battles.TryGetValue(battleID.Value, out battle)) await Broadcast(battle.Users.Keys, say);
                     break;
             }
+
+            await OnSaid(say);
         }
 
         public Task GhostPm(string name, string text)

@@ -22,7 +22,7 @@ namespace ZkLobbyServer
     public class ConnectedUser : ICommandSender
     {
         public ConcurrentDictionary<ClientConnection, bool> Connections = new ConcurrentDictionary<ClientConnection, bool>();
-        SharedServerState state;
+        ZkLobbyServer state;
         public User User = new User();
 
         public bool IsLoggedIn { get { return User != null && User.AccountID != 0; } }
@@ -37,7 +37,7 @@ namespace ZkLobbyServer
 
         public Battle MyBattle;
 
-        public ConnectedUser(SharedServerState state, User user)
+        public ConnectedUser(ZkLobbyServer state, User user)
         {
             this.state = state;
 
@@ -322,6 +322,8 @@ namespace ZkLobbyServer
                     break;
 
             }
+
+            await state.OnSaid(say);
         }
 
 

@@ -30,7 +30,7 @@ namespace ZkLobbyServer
         DateTime lastPingFromClient;
         readonly int number;
 
-        readonly SharedServerState state;
+        readonly ZkLobbyServer state;
         readonly Timer timer;
 
         ITransport transport;
@@ -40,7 +40,7 @@ namespace ZkLobbyServer
         }
 
 
-        public ClientConnection(ITransport transport, SharedServerState state)
+        public ClientConnection(ITransport transport, ZkLobbyServer state)
         {
             this.state = state;
             number = Interlocked.Increment(ref state.ClientCounter);

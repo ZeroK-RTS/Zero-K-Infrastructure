@@ -1,29 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Timers;
 using LobbyClient;
 using ZkData;
-using ZkLobbyServer;
 
-namespace NightWatch
+namespace ZkLobbyServer
 {
+    /// <summary>
+    /// Relays chat from old spring server and back
+    /// </summary>
     public class ChatRelay
     {
-        SharedServerState state;
+        ZkLobbyServer state;
         LobbyClient.Legacy.TasClient springTas;
         List<string> channels;
 
-        public ChatRelay(SharedServerState state, string password, List<string> channels)
+        public ChatRelay(ZkLobbyServer state, string password, List<string> channels)
         {
             this.springTas = new LobbyClient.Legacy.TasClient(null, "ChatRelay", 0);
             this.channels = channels;
             springTas.LoginAccepted += OnLoginAccepted;
             springTas.Said += OnSaid;
-            zkTas.Said += OnSaid;
+            state.Said += OnSaid;
 
             SetupSpringTasConnection(password);
         }
@@ -59,12 +57,10 @@ namespace NightWatch
             springTas.Connected += (sender, args) => springTas.Login(GlobalConst.NightwatchName, password);
         }
 
-        void OnSaid(object sender, TasSayEventArgs args)
+        void OnSaid(object sender, Say say)
         {
-            var tas = (TasClient)sender;
-            if (args.Place == SayPlace.Channel && channels.Contains(args.Channel) && args.UserName != tas.UserName) {
-                var otherTas = springTas;
-                otherTas.Say(LobbyClient.Legacy.TasClient.SayPlace.Channel, args.Channel, string.Format("<{0}> {1}", args.UserName, args.Text), args.IsEmote);
+            if (say.Place == SayPlace.Channel && channels.Contains(say.Target)) {
+                springTas.Say(LobbyClient.Legacy.TasClient.SayPlace.Channel, say.Target, string.Format("<{0}> {1}", say.User, say.Text), say.IsEmote);
             }
         }
 

@@ -570,7 +570,7 @@ namespace ZeroKWeb.SpringieInterface
 
         static void SpecPlayerOnCondition(PlayerTeam player, Account account, string userMessage) {
             player.IsSpectator = true;
-            Global.ServerState.GhostPm(account.Name, userMessage);
+            Global.Server.GhostPm(account.Name, userMessage);
         }
 
         /// <summary>

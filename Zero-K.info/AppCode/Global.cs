@@ -41,16 +41,16 @@ namespace ZeroKWeb
             set { nightwatch = value; }
         }
 
-        static SharedServerState serverState;
-        public static SharedServerState ServerState
+        static ZkLobbyServer.ZkLobbyServer server;
+        public static ZkLobbyServer.ZkLobbyServer Server
         {
             get
             {
-                if (serverState != null) return serverState;
-                serverState = (SharedServerState)HttpContext.Current.Application["zkls"];
-                return serverState;
+                if (server != null) return server;
+                server = (ZkLobbyServer.ZkLobbyServer)HttpContext.Current.Application["zkls"];
+                return server;
             }
-            set { serverState = value; }
+            set { server = value; }
         }
 
 
