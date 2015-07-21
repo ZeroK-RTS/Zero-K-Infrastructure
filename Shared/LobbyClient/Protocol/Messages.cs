@@ -306,8 +306,8 @@ namespace LobbyClient
         public bool Ring;
         public DateTime? Time;
         
-        [JsonIgnore]
-        public bool IsGhostSay;
+        [JsonIgnore] 
+        public bool IsGhostSay; // a bit ugly, move to other place, its only needed in Said event in server internals
     }
 
     [Message(Origin.Client)]
