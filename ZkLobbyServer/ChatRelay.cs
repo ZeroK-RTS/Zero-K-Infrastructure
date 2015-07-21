@@ -32,7 +32,7 @@ namespace ZkLobbyServer
 
         void OnZkServerSaid(object sender, Say say)
         {
-            if (!say.AllowRelay && say.Place == SayPlace.Channel && channels.Contains(say.Target)) springTas.Say(TasClient.SayPlace.Channel, say.Target, string.Format("<{0}> {1}", say.User, say.Text), say.IsEmote);
+            if (say.AllowRelay && say.Place == SayPlace.Channel && channels.Contains(say.Target)) springTas.Say(TasClient.SayPlace.Channel, say.Target, string.Format("<{0}> {1}", say.User, say.Text), say.IsEmote);
         }
 
         void SetupSpringTasConnection(string password)
