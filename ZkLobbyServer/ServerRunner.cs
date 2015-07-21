@@ -57,13 +57,15 @@ namespace ZkLobbyServer
                 catch { }
             }
 
+            ZkLobbyServer.MarkDisconnectAll();
+
             /*foreach (var t in listenThreads) {
                 try {
                     t.Abort();
                 }
                 catch { }
             }*/
-            
+
         }
     }
 }
