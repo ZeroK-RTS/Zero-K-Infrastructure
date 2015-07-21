@@ -29,8 +29,7 @@ namespace ZkLobbyServer
 
         void OnSaid(object sender, LobbyClient.Legacy.TasSayEventArgs args)
         {
-            var tas = (LobbyClient.Legacy.TasClient)sender;
-            if (args.Place == LobbyClient.Legacy.TasSayEventArgs.Places.Channel && channels.Contains(args.Channel) && args.UserName != tas.UserName) {
+            if (args.Place == LobbyClient.Legacy.TasSayEventArgs.Places.Channel && channels.Contains(args.Channel) && args.UserName != springTas.UserName) {
                 state.GhostSay(new Say() {
                     Place = SayPlace.Channel,
                     Text = args.Text,
@@ -60,7 +59,7 @@ namespace ZkLobbyServer
 
         void OnSaid(object sender, Say say)
         {
-            if (say.Place == SayPlace.Channel && channels.Contains(say.Target)) {
+            if (!say.IsGhostSay && say.Place == SayPlace.Channel && channels.Contains(say.Target)) {
                 springTas.Say(LobbyClient.Legacy.TasClient.SayPlace.Channel, say.Target, string.Format("<{0}> {1}", say.User, say.Text), say.IsEmote);
             }
         }

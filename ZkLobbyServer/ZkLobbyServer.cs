@@ -126,6 +126,7 @@ namespace ZkLobbyServer
         public async Task GhostSay(Say say, int? battleID = null)
         {
             if (say.Time == null) say.Time = DateTime.UtcNow;
+            say.IsGhostSay = true;
 
             switch (say.Place) {
                 case SayPlace.Channel:

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Reflection;
+using Newtonsoft.Json;
 using ZkData;
 
 namespace LobbyClient
@@ -304,6 +305,9 @@ namespace LobbyClient
         public string Text;
         public bool Ring;
         public DateTime? Time;
+        
+        [JsonIgnore]
+        public bool IsGhostSay;
     }
 
     [Message(Origin.Client)]
