@@ -17,6 +17,7 @@ namespace ZkLobbyServer
 
         public ChatRelay(ZkLobbyServer state, string password, List<string> channels)
         {
+            this.state = state;
             this.springTas = new LobbyClient.Legacy.TasClient(null, "ChatRelay", 0);
             this.channels = channels;
             springTas.LoginAccepted += OnLoginAccepted;

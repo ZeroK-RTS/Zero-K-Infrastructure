@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package>
-    <DisplayName>Zero-K Rts xp</DisplayName>
-    <Description>Zero-K Rts for .net 4.0</Description>
+    <DisplayName>Zero-K RTS Lobby XP</DisplayName>
+    <Description>Zero-K RTS Lobby for .net 4.0</Description>
     <Version>0.1.0-1</Version>
     <ReleaseDate>2015-05-23</ReleaseDate>
     <Script>installscript.qs</Script>
