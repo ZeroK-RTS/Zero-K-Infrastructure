@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Name>Zero-K</Name>
+    <Version>1.0.0</Version>
+
+    <Title>Zero-K</Title>
+    <Publisher>Zero-K</Publisher>
+    <ProductUrl>http://zero-k.info/</ProductUrl>
+    <RunProgramDescription>Zero-K</RunProgramDescription>
+    <StartMenuDir>Zero-K</StartMenuDir>
+
+    <InstallerApplicationIcon>zero-k</InstallerApplicationIcon>
+    <InstallerWindowIcon>zero-k</InstallerWindowIcon>
+
+    <WizardStyle>Aero</WizardStyle>
+    <Watermark>jeremy_gooch_gl.png</Watermark>
+
+    <TargetDir>@HomeDir@/Zero-K</TargetDir>
+    <AllowSpaceInPath>true</AllowSpaceInPath>
+
+</Installer>
