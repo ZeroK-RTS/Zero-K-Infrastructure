@@ -15,7 +15,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml.Serialization;
 using LobbyClient;
-using NightWatch;
 using ZkData.UnitSyncLib;
 using ZkData;
 using Encoder = System.Drawing.Imaging.Encoder;

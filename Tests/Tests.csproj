@@ -74,10 +74,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NightWatch\NightWatch.csproj">
-      <Project>{6ce1e0f1-447c-4871-9246-cc7ccb359d89}</Project>
-      <Name>NightWatch</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Shared\LobbyClient\LobbyClient.csproj">
       <Project>{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}</Project>
       <Name>LobbyClient</Name>

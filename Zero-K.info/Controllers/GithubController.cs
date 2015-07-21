@@ -46,7 +46,7 @@ namespace ZeroKWeb.Controllers
                     break;
             }
 
-            if (text != null) Global.Nightwatch.Tas.Say(SayPlace.Channel, "zkdev", text, true);
+            if (text != null) Global.Server.GhostChanSay("zkdev", text);
 
             return Content("");
         }

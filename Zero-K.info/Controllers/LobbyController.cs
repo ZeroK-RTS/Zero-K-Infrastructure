@@ -6,7 +6,6 @@ using System.Web;
 using System.Web.Mvc;
 using LobbyClient;
 using ZkData;
-using NightWatch;
 
 namespace ZeroKWeb.Controllers
 {
@@ -23,8 +22,8 @@ namespace ZeroKWeb.Controllers
         /// <param name="link"></param>
         public async Task<ActionResult> SendCommand(string link) {
             if (Global.Account == null) return Content("You must be logged in to the site");
-            if (!Global.ServerState.IsLobbyConnected(Global.Account.Name)) return Content("Your lobby program is not running");
-            await Global.ServerState.SendSiteToLobbyCommand(Global.Account.Name, new SiteToLobbyCommand() { Command = link });
+            if (!Global.Server.IsLobbyConnected(Global.Account.Name)) return Content("Your lobby program is not running");
+            await Global.Server.SendSiteToLobbyCommand(Global.Account.Name, new SiteToLobbyCommand() { Command = link });
             return Content("");
         }
 
@@ -47,7 +46,7 @@ namespace ZeroKWeb.Controllers
             db.SubmitChanges();
 
             var str = string.Format("{0} added new blocked VPN company: {1}", Global.Account.Name, companyName);
-            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, str, true);
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str);
             return  RedirectToAction("BlockedVPNs");
         }
 
@@ -64,7 +63,7 @@ namespace ZeroKWeb.Controllers
             db.SubmitChanges();
 
             var str = string.Format("{0} added new blocked VPN host: {1}", Global.Account.Name, hostname);
-            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, str, true);
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str);
             return RedirectToAction("BlockedVPNs");
         }
 
@@ -77,7 +76,7 @@ namespace ZeroKWeb.Controllers
             db.BlockedCompanies.DeleteOnSubmit(todel);
             db.SubmitAndMergeChanges();
             var str = string.Format("{0} removed blocked VPN company: {1}", Global.Account.Name, name);
-            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, str, true);
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str);
             return RedirectToAction("BlockedVPNs");
         }
 
@@ -90,7 +89,7 @@ namespace ZeroKWeb.Controllers
             db.BlockedHosts.DeleteOnSubmit(todel);
             db.SubmitAndMergeChanges();
             var str = string.Format("{0} removed blocked VPN host: {1}", Global.Account.Name, name);
-            Global.Nightwatch.Tas.Say(SayPlace.Channel, AuthService.ModeratorChannel, str, true);
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str);
             return RedirectToAction("BlockedVPNs");
         }
 
