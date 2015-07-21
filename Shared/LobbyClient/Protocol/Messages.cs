@@ -306,8 +306,11 @@ namespace LobbyClient
         public bool Ring;
         public DateTime? Time;
         
+        /// <summary>
+        /// Do not relay to old spring
+        /// </summary>
         [JsonIgnore] 
-        public bool IsGhostSay; // a bit ugly, move to other place, its only needed in Said event in server internals
+        public bool AllowRelay = true; // a bit ugly, move to other place, its only needed in Said event in server internals
     }
 
     [Message(Origin.Client)]
