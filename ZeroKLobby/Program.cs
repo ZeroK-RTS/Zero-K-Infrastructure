@@ -257,7 +257,7 @@ namespace ZeroKLobby
                 if (Conf.IsFirstRun)
                 {
                     DialogResult result = MessageBox.Show("Create a desktop icon for Zero-K?", "Zero-K", MessageBoxButtons.YesNo);
-                    if (result == DialogResult.Yes) 
+                    if (result == DialogResult.Yes)
                     {
                         Utils.CreateDesktopShortcut();
                     }
@@ -313,14 +313,10 @@ namespace ZeroKLobby
                     }
                 };
 
-                TasClient.Extensions.JsonDataReceived += (eventArgs, o) =>
+                TasClient.SiteToLobbyCommandReceived += (eventArgs, o) =>
                     {
-                        var command = o as ProtocolExtension.SiteToLobbyCommand;
-                        if (command != null)
-                        {
-                            MainWindow.navigationControl.Path = command.SpringLink;
-                            MainWindow.PopupSelf();
-                        }
+                        MainWindow.navigationControl.Path = o.Command;
+                        MainWindow.PopupSelf();
                     };
 
                 ModStore = new ModStore();

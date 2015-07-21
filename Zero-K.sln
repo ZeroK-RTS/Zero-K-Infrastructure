@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlasmaShared", "Shared\Plas
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlasmaDownloader", "Shared\PlasmaDownloader\PlasmaDownloader.csproj", "{F3F74776-46A9-4415-B76E-CEEC771C2ABA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NightWatch", "NightWatch\NightWatch.csproj", "{6CE1E0F1-447C-4871-9246-CC7CCB359D89}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobbyClient", "Shared\LobbyClient\LobbyClient.csproj", "{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroKLobby", "ZeroKLobby\ZeroKLobby.csproj", "{AA5F8640-FBBC-4007-9589-6C7CD26D4867}"
@@ -60,10 +58,6 @@ Global
 		{F3F74776-46A9-4415-B76E-CEEC771C2ABA}.Debug|x86.Build.0 = Debug|x86
 		{F3F74776-46A9-4415-B76E-CEEC771C2ABA}.Release|x86.ActiveCfg = Release|x86
 		{F3F74776-46A9-4415-B76E-CEEC771C2ABA}.Release|x86.Build.0 = Release|x86
-		{6CE1E0F1-447C-4871-9246-CC7CCB359D89}.Debug|x86.ActiveCfg = Debug|x86
-		{6CE1E0F1-447C-4871-9246-CC7CCB359D89}.Debug|x86.Build.0 = Debug|x86
-		{6CE1E0F1-447C-4871-9246-CC7CCB359D89}.Release|x86.ActiveCfg = Release|x86
-		{6CE1E0F1-447C-4871-9246-CC7CCB359D89}.Release|x86.Build.0 = Release|x86
 		{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}.Debug|x86.ActiveCfg = Debug|x86
 		{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}.Debug|x86.Build.0 = Debug|x86
 		{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}.Release|x86.ActiveCfg = Release|x86

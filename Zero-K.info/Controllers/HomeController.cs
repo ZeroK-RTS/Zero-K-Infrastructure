@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -143,6 +144,67 @@ namespace ZeroKWeb.Controllers
 			return Content(ret);
 		}
 
+
+        public static CurrentLobbyStats GetCachedLobbyStats()
+        {
+            if (DateTime.UtcNow.Subtract(lastStatsCheck).TotalMinutes < 2) return cachedStats;
+            else
+            {
+                lastStatsCheck = DateTime.UtcNow;
+                try
+                {
+                    var ret = GetCurrentLobbyStats();
+
+                    cachedStats = ret;
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("Error getting lobby stats: {0}", ex);
+                }
+
+                return cachedStats;
+            }
+        }
+
+        static CurrentLobbyStats cachedStats = new CurrentLobbyStats();
+        static DateTime lastStatsCheck = DateTime.MinValue;
+
+        public class CurrentLobbyStats
+        {
+            public int UsersIdle;
+            public int BattlesRunning;
+            public int UsersFighting;
+            public int BattlesWaiting;
+            public int UsersWaiting;
+            public int UsersLastMonth;
+        }
+
+
+        static CurrentLobbyStats GetCurrentLobbyStats()
+        {
+            var ret = new CurrentLobbyStats();
+            ret.UsersIdle = Global.Server.ConnectedUsers.Values.Count(x => !x.User.IsBot && !x.User.IsInGame && !x.User.IsInBattleRoom);
+
+            foreach (var b in Global.Server.Battles.Values)
+            {
+                foreach (var u in b.Users.Values.Select(x => x.LobbyUser))
+                {
+                    if (u.IsBot) continue;
+                    if (u.IsInGame) ret.UsersFighting++;
+                    else if (u.IsInBattleRoom) ret.UsersWaiting++;
+                }
+                if (b.IsInGame) ret.BattlesRunning++;
+                else ret.BattlesWaiting++;
+            }
+
+            var lastMonth = DateTime.Now.AddDays(-31);
+            ret.UsersLastMonth = new ZkDataContext().SpringBattlePlayers.Where(x => x.SpringBattle.StartTime > lastMonth).GroupBy(x => x.AccountID).Count();
+            return ret;
+        }
+
+
+
+
         /// <summary>
         /// Go to home page; also updates news read dates
         /// </summary>
@@ -163,7 +225,7 @@ namespace ZeroKWeb.Controllers
 			             			x => x.Elo1v1).Take(10)
 			             };
 
-			result.LobbyStats = AuthServiceClient.GetLobbyStats();
+			result.LobbyStats = GetCachedLobbyStats();
 			result.News = db.News.Where(x => x.Created < DateTime.UtcNow).OrderByDescending(x => x.Created);
 			if (Global.Account != null) {
 				result.Headlines =

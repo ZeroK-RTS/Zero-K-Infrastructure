@@ -41,7 +41,7 @@ namespace ZeroKLobby.MicroLobby
                 if (value) Program.Conf.Topics.Remove(ChannelName);
                 else {
                     Channel channel;
-                    if (Program.TasClient.JoinedChannels.TryGetValue(ChannelName, out channel)) Program.Conf.Topics[channel.Name] = channel.TopicSetDate;
+                    if (Program.TasClient.JoinedChannels.TryGetValue(ChannelName, out channel)) Program.Conf.Topics[channel.Name] = channel.Topic.SetDate;
                 }
             }
         }
@@ -374,15 +374,15 @@ namespace ZeroKLobby.MicroLobby
         }
 
 
-        void TasClient_ChannelTopicChanged(object sender, TasEventArgs e) {
-            if (ChannelName == e.ServerParams[0]) {
+        void TasClient_ChannelTopicChanged(object sender, ChangeTopic changeTopic) {
+            if (ChannelName == changeTopic.ChannelName) {
                 var channel = Program.TasClient.JoinedChannels[ChannelName];
                 DateTime? lastChange;
                 Program.Conf.Topics.TryGetValue(channel.Name, out lastChange);
-                var topicLine = new TopicLine(channel.Topic, channel.TopicSetBy, channel.TopicSetDate);
+                var topicLine = new TopicLine(channel.Topic.Text, channel.Topic.SetBy, channel.Topic.SetDate);
                 topicBox.Reset();
                 topicBox.AddLine(topicLine);
-                if (channel.Topic != null && lastChange != channel.TopicSetDate) IsTopicVisible = true;
+                if (channel.Topic != null && lastChange != channel.Topic.SetDate) IsTopicVisible = true;
                 else IsTopicVisible = false;
             }
         }

@@ -7,5 +7,6 @@ namespace ZkLobbyServer
     public interface ITransportServerListener {
         bool Bind(int retryCount);
         void RunLoop(Action<ITransport> onTransportAcccepted);
+        void Stop();
     }
 }

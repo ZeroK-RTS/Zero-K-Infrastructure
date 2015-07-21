@@ -167,7 +167,7 @@
 	var por = p.PlanetOverlayRectangle(Model);
 	Clan clan = null;
     Faction faction = p.Faction;
-	var autohost = Global.Nightwatch.GetPlanetBattles(p).OrderByDescending(x=>x.Users.Count).FirstOrDefault();
+	var autohost = Global.Server.GetPlanetBattles(p).OrderByDescending(x=>x.Users.Count).FirstOrDefault();
 
 	int shipCount = p.PlanetFactions.Sum(x => (int?)x.Dropships) ?? 0;
 

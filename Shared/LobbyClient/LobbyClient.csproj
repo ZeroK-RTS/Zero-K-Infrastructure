@@ -74,10 +74,8 @@
     <Compile Include="Legacy\TasClient_structures.cs" />
     <Compile Include="Legacy\User.cs" />
     <Compile Include="Legacy\UserBattleStatus.cs" />
-    <Compile Include="ProtocolExtension.cs" />
     <Compile Include="Protocol\CommandJsonSerializer.cs" />
     <Compile Include="Protocol\Messages.cs" />
-    <Compile Include="PwMatchCommand.cs" />
     <Compile Include="SayingEventArgs.cs" />
     <Compile Include="Legacy\ServerConnection.cs" />
     <Compile Include="Spring.cs" />

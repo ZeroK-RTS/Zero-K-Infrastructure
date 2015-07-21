@@ -47,22 +47,23 @@ namespace ZeroKWeb
 		public Mission GetMission(string missionName)
 		{
 			var db = new ZkDataContext();
+            db.Configuration.ProxyCreationEnabled = false;
 			var prev = db.Missions.Where(x => x.Name == missionName).Include(x=>x.Mutator).SingleOrDefault();
-			db.SubmitChanges();
 			return prev;
 		}
 
 		public Mission GetMissionByID(int missionID)
 		{
 			var db = new ZkDataContext();
+            db.Configuration.ProxyCreationEnabled = false;
 			var prev = db.Missions.Where(x => x.MissionID == missionID).Include(x=>x.Mutator).SingleOrDefault();
-			db.SubmitChanges();
 			return prev;
 		}
 
 	    public IEnumerable<Mission> ListMissionInfos()
 	    {
 	        var db = new ZkDataContext();
+	        db.Configuration.ProxyCreationEnabled = false;
 	        var list = db.Missions.ToList();
 	        foreach (var m in list) {
 	            m.Mutator = new byte[] { };

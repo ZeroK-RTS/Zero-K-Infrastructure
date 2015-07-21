@@ -84,16 +84,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChannelManager.cs" />
+    <Compile Include="ChatRelay.cs" />
     <Compile Include="ClientConnection.cs" />
+    <Compile Include="ICommandSender.cs" />
     <Compile Include="ITransportServerListener.cs" />
     <Compile Include="LoginChecker.cs" />
     <Compile Include="ConnectedUser.cs" />
+    <Compile Include="OfflineMessageHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Server.cs" />
-    <Compile Include="SharedServerState.cs" />
+    <Compile Include="ServerRunner.cs" />
+    <Compile Include="ZkLobbyServer.cs" />
     <Compile Include="TcpTransportServerListener.cs" />
     <Compile Include="WebSocketServerTransport.cs" />
     <Compile Include="WebSocketTransportServerListener.cs" />
+    <Compile Include="ZkServerTraceListener.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

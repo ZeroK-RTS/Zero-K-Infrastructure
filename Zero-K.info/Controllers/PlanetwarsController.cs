@@ -23,7 +23,7 @@ namespace ZeroKWeb.Controllers
             Planet planet = db.Planets.Single(x => x.PlanetID == planetID);
             bool accessible = (useWarp == true) ? planet.CanBombersWarp(acc.Faction) : planet.CanBombersAttack(acc.Faction);
             if (!accessible) return Content("You cannot attack here");
-            if (Global.Nightwatch.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot bomb planet");
+            if (Global.Server.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot bomb planet");
 
             bool selfbomb = acc.FactionID == planet.OwnerFactionID;
             if (count < 0) count = 0;
@@ -120,7 +120,7 @@ namespace ZeroKWeb.Controllers
             using (var db = new ZkDataContext())
             {
                 Planet planet = db.Planets.Single(p => p.PlanetID == planetID);
-                if (Global.Nightwatch.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot build structures");
+                if (Global.Server.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot build structures");
                 Account acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
                 if (acc.FactionID != planet.OwnerFactionID) return Content("Planet is not under your control.");
 
@@ -161,7 +161,7 @@ namespace ZeroKWeb.Controllers
             using (var db = new ZkDataContext())
             {
                 Planet planet = db.Planets.Single(p => p.PlanetID == planetID);
-                if (Global.Nightwatch.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot destroy structures");
+                if (Global.Server.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot destroy structures");
                 Account acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
                 StructureType structureType = db.StructureTypes.SingleOrDefault(s => s.StructureTypeID == structureTypeID);
                 Faction faction = planet.Faction;
@@ -362,7 +362,7 @@ namespace ZeroKWeb.Controllers
             int there = planet.PlanetFactions.Where(x => x.FactionID == acc.FactionID).Sum(x => (int?)x.Dropships) ?? 0;
             bool accessible = useWarp == true ? planet.CanDropshipsWarp(acc.Faction) : planet.CanDropshipsAttack(acc.Faction);
             if (!accessible) return Content(string.Format("That planet cannot be attacked"));
-            if (Global.Nightwatch.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot send ships");
+            if (Global.Server.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot send ships");
 
             int cnt = Math.Max(count, 0);
 
@@ -376,15 +376,13 @@ namespace ZeroKWeb.Controllers
                 acc.SpendDropships(cnt);
                 if (useWarp == true) acc.SpendWarps(cnt);
 
-                if (planet.Account != null)
-                {
-                    AuthServiceClient.SendLobbyMessage(planet.Account,
-                                                       string.Format(
-                                                           "Warning: long range scanners detected fleet of {0} ships inbound to your planet {1} {3}/Planetwars/Planet/{2}",
-                                                           cnt,
-                                                           planet.Name,
-                                                           planet.PlanetID,
-                                                           GlobalConst.BaseSiteUrl));
+                if (planet.Account != null) {
+                    Global.Server.GhostPm(planet.Account.Name, string.Format(
+                        "Warning: long range scanners detected fleet of {0} ships inbound to your planet {1} {3}/Planetwars/Planet/{2}",
+                        cnt,
+                        planet.Name,
+                        planet.PlanetID,
+                        GlobalConst.BaseSiteUrl));
                 }
                 PlanetFaction pac = planet.PlanetFactions.SingleOrDefault(x => x.FactionID == acc.FactionID);
                 if (pac == null)
@@ -531,14 +529,12 @@ namespace ZeroKWeb.Controllers
                                                                     account,
                                                                     clan,
                                                                     sb));
-                        if (account != null)
-                        {
-                            AuthServiceClient.SendLobbyMessage(planet.Account,
-                                                               string.Format(
-                                                                   "Warning, you just lost planet {0}!! {2}/PlanetWars/Planet/{1}",
-                                                                   planet.Name,
-                                                                   planet.PlanetID,
-                                                                   GlobalConst.BaseSiteUrl));
+                        if (account != null) {
+                            Global.Server.GhostPm(planet.Account.Name, string.Format(
+                                "Warning, you just lost planet {0}!! {2}/PlanetWars/Planet/{1}",
+                                planet.Name,
+                                planet.PlanetID,
+                                GlobalConst.BaseSiteUrl));
                         }
                     }
                     else
@@ -554,12 +550,11 @@ namespace ZeroKWeb.Controllers
                                                                         newFaction,
                                                                         newAccount.Clan,
                                                                         sb));
-                            AuthServiceClient.SendLobbyMessage(newAccount,
-                                                               string.Format(
-                                                                   "Congratulations, you now own planet {0}!! {2}/PlanetWars/Planet/{1}",
-                                                                   planet.Name,
-                                                                   planet.PlanetID,
-                                                                   GlobalConst.BaseSiteUrl));
+                            Global.Server.GhostPm(newAccount.Name, string.Format(
+                                "Congratulations, you now own planet {0}!! {2}/PlanetWars/Planet/{1}",
+                                planet.Name,
+                                planet.PlanetID,
+                                GlobalConst.BaseSiteUrl));
                         }
                         else
                         {
@@ -573,19 +568,17 @@ namespace ZeroKWeb.Controllers
                                                                         planet.Account.Clan,
                                                                         sb));
 
-                            AuthServiceClient.SendLobbyMessage(newAccount,
-                                                               string.Format(
-                                                                   "Congratulations, you now own planet {0}!! {2}/PlanetWars/Planet/{1}",
-                                                                   planet.Name,
-                                                                   planet.PlanetID,
-                                                                   GlobalConst.BaseSiteUrl));
+                            Global.Server.GhostPm(newAccount.Name, string.Format(
+                                "Congratulations, you now own planet {0}!! {2}/PlanetWars/Planet/{1}",
+                                planet.Name,
+                                planet.PlanetID,
+                                GlobalConst.BaseSiteUrl));
 
-                            AuthServiceClient.SendLobbyMessage(planet.Account,
-                                                               string.Format(
-                                                                   "Warning, you just lost planet {0}!! {2}/PlanetWars/Planet/{1}",
-                                                                   planet.Name,
-                                                                   planet.PlanetID,
-                                                                   GlobalConst.BaseSiteUrl));
+                            Global.Server.GhostPm(planet.Account.Name, string.Format(
+                                "Warning, you just lost planet {0}!! {2}/PlanetWars/Planet/{1}",
+                                planet.Name,
+                                planet.PlanetID,
+                                GlobalConst.BaseSiteUrl));
                         }
                     }
 
@@ -652,8 +645,7 @@ namespace ZeroKWeb.Controllers
                                                             role.IsClanOnly ? (object)myAccount.Clan : myAccount.Faction,
                                                             role,
                                                             myAccount));
-                AuthServiceClient.SendLobbyMessage(targetAccount,
-                                                   string.Format("You were recalled from the function of {0} by {1}", role.Name, myAccount.Name));
+                Global.Server.GhostPm(targetAccount.Name, string.Format("You were recalled from the function of {0} by {1}", role.Name, myAccount.Name));
                 db.SubmitAndMergeChanges();
                 return RedirectToAction("Detail", "Users", new { id = accountID });
             }
@@ -706,8 +698,7 @@ namespace ZeroKWeb.Controllers
                                                                 role,
                                                                 myAccount));
                 }
-                AuthServiceClient.SendLobbyMessage(targetAccount,
-                                                   string.Format("You were appointed for the function of {0} by {1}", role.Name, myAccount.Name));
+                Global.Server.GhostPm(targetAccount.Name, string.Format("You were appointed for the function of {0} by {1}", role.Name, myAccount.Name));
                 db.SubmitAndMergeChanges();
                 return RedirectToAction("Detail", "Users", new { id = accountID });
             }

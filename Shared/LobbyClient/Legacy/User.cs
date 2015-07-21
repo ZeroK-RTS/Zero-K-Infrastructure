@@ -127,10 +127,5 @@ namespace LobbyClient.Legacy
             return Name;
         }
 
-        string GetExtension(ProtocolExtension.Keys key) {
-            string txt;
-            Extensions.TryGetValue(key.ToString(), out txt);
-            return txt;
-        }
     }
 }

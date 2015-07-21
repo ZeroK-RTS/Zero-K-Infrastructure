@@ -35,7 +35,8 @@ namespace ZeroKLobby.Notifications
             pnl.Controls.Add(timerLabel);
             pnl.Controls.Add(headerLabel);
 
-            tas.Extensions.JsonDataReceived += (sender, e) =>
+            // TODO pw handling 
+            /*tas.Extensions.JsonDataReceived += (sender, e) =>
             {
                 var newPw = e as PwMatchCommand;
                 if (newPw != null)
@@ -43,9 +44,9 @@ namespace ZeroKLobby.Notifications
                     pw = newPw;
                     UpdateGui();
                 }
-            };
+            };*/
 
-            tas.MyExtensionsChanged += (sender, args) => UpdateGui();
+            tas.MyUserStatusChanged += (sender, args) => UpdateGui();
         }
 
         void UpdateGui()

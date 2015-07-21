@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
@@ -39,6 +40,11 @@ namespace ZkLobbyServer
                     onTransportAcccepted(transport);
                 });
             }
+        }
+
+        public void Stop()
+        {
+            listener.Stop();
         }
     }
 }

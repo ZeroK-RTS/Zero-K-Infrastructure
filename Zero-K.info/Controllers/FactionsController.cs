@@ -41,7 +41,7 @@ namespace ZeroKWeb.Controllers
             Faction faction = acc.Faction;
 
             if (!keepClan && acc.Clan != null) ClansController.PerformLeaveClan(Global.AccountID);
-            db.AccountRoles.DeleteAllOnSubmit(acc.AccountRolesByAccountID.Where(x => !keepClan || x.ClanID == null));
+            db.AccountRoles.DeleteAllOnSubmit(acc.AccountRolesByAccountID.Where(x => !keepClan || x.ClanID == null).ToList());
             acc.ResetQuotas();
 
             foreach (var ps in acc.PlanetStructures)
@@ -239,7 +239,7 @@ namespace ZeroKWeb.Controllers
             if (Global.Account.FactionID == fac.FactionID && Global.Account.HasFactionRight(x=>x.RightEditTexts)) {
                 fac.SecretTopic = secretTopic;
                 db.SubmitAndMergeChanges();
-                Global.Nightwatch.Tas.AdminSetTopic(fac.Shortcut,secretTopic);
+                Global.Server.SetTopic(fac.Shortcut,secretTopic, Global.Account.Name);
                 return RedirectToAction("Detail", new { id = fac.FactionID });
             }
             return Content("Denied");
