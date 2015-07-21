@@ -41,8 +41,8 @@ namespace ZkLobbyServer
                 Thread.Sleep(5000);
                 springTas.Login(GlobalConst.NightwatchName, password);
             });
-            springTas.Connect(GlobalConst.OldSpringLobbyHost, GlobalConst.OldSpringLobbyPort);
             springTas.Connected += (sender, args) => springTas.Login(GlobalConst.NightwatchName, password);
+            springTas.Connect(GlobalConst.OldSpringLobbyHost, GlobalConst.OldSpringLobbyPort);
         }
 
         void OnSpringTasLoginAccepted(object sender, TasEventArgs e)
