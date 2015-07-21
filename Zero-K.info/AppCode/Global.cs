@@ -267,7 +267,10 @@ namespace ZeroKWeb
             if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running) PlanetWarsMatchMaker = new PlanetWarsMatchMaker(Server);
         }
 
-        public static void StopApplication() {}
+        public static void StopApplication()
+        {
+            ZkServerRunner.Stop();
+        }
 
         public static UrlHelper UrlHelper()
         {
