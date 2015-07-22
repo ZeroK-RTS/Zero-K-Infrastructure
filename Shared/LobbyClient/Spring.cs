@@ -317,12 +317,11 @@ namespace LobbyClient
 
                     script = new ScriptGenerator().GenerateScript(StartContext, startSetup, talker.LoopbackPort, battleGuid.ToString(), host,port);
 
-                    talker.SetPlayers(players);
-                    statsPlayers = players.ToDictionary(x => x.Name,
+                    statsPlayers = StartContext.Players.ToDictionary(x => x.Name,
                                                         x => new BattlePlayerResult
                                                                  {
-                                                                     LobbyID = x.LobbyUser.AccountID,
-                                                                     AllyNumber = x.AllyNumber,
+                                                                     LobbyID = x.LobbyID,
+                                                                     AllyNumber = x.AllyID,
                                                                      CommanderType = null,
                                                                      // todo commandertype
                                                                      IsSpectator = x.IsSpectator,
@@ -511,7 +510,7 @@ namespace LobbyClient
                         {
                             try
                             {
-                                service.SubmitMissionScore(lobbyUserName, Utils.HashLobbyPassword(lobbyPassword), modName, score ?? 0, scoreFrame / 30,
+                                service.SubmitMissionScore(lobbyUserName, Utils.HashLobbyPassword(lobbyPassword), StartContext.Mod, score ?? 0, scoreFrame / 30,
                                     missionVars);
                             }
                             catch (Exception ex)
