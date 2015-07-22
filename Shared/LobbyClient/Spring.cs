@@ -264,11 +264,12 @@ namespace LobbyClient
 
 
 
-        public string HostGame(BattleContext context = null, string myName = null)
+        public string HostGame(BattleContext context, string host, int port, string myName = null )
         {
             if (!File.Exists(paths.Executable) && !File.Exists(paths.DedicatedServer)) throw new ApplicationException(string.Format("Spring or dedicated server executable not found: {0}, {1}", paths.Executable, paths.DedicatedServer));
 
             wasKilled = false;
+            string script = null;
 
             if (!IsRunning)
             {
@@ -314,7 +315,7 @@ namespace LobbyClient
                         Trace.TraceError("Error getting start setup: {0}", ex);
                     }
 
-                    script = battle.GenerateScript(out players, client.MyUser, talker.LoopbackPort, battleGuid.ToString(), startSetup);
+                    script = new ScriptGenerator().GenerateScript(StartContext, startSetup, talker.LoopbackPort, battleGuid.ToString(), host,port);
 
                     talker.SetPlayers(players);
                     statsPlayers = players.ToDictionary(x => x.Name,
@@ -463,7 +464,7 @@ namespace LobbyClient
 
                     if (line.StartsWith("STATS:")) statsData.Add(line.Substring(6));
 
-                    if (line.Contains("SCORE: ") && !isCheating && battleResult.IsMission)
+                    if (line.Contains("SCORE: ") && !isCheating && StartContext.IsMission)
                     {
                         var match = Regex.Match(line, "SCORE: ([^ ]+)");
                         if (match.Success)
@@ -485,7 +486,7 @@ namespace LobbyClient
                             scoreFrame = gameframe;
                         }
                     }
-                    if (line.Contains("MISSIONVARS:") && battleResult.IsMission)
+                    if (line.Contains("MISSIONVARS:") && StartContext.IsMission)
                     {
                         var match = Regex.Match(line, "MISSIONVARS: ([^ ]+)");
                         missionVars = match.Groups[1].Value.Trim();
@@ -502,7 +503,7 @@ namespace LobbyClient
                 }
                 if (score != null || !String.IsNullOrEmpty(missionVars))
                 {
-                    Trace.TraceInformation("Submitting score for mission " + modName);
+                    Trace.TraceInformation("Submitting score for mission " + StartContext.Mod);
                     try
                     {
                         var service = GlobalConst.GetContentService();
@@ -571,7 +572,7 @@ namespace LobbyClient
                         var statsService = new StatsCollector { Proxy = null };
                         try
                         {
-                            statsService.SubmitGameEx(gameId, modName, mapName, statsData.ToArray());
+                            statsService.SubmitGameEx(gameId, StartContext.Mod, StartContext.Map, statsData.ToArray());
                         }
                         catch (Exception ex)
                         {

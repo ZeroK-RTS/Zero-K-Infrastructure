@@ -13,5 +13,7 @@ namespace PlasmaShared
         public string Title;
         public bool IsMission;
         public string EngineVersion;
+        public Dictionary<int, BattleRect> Rectangles { get; set; }
+        public IDictionary<string, string> ModOptions { get; set; }
     }
 }

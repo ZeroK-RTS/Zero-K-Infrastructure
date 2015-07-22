@@ -10,6 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using PlasmaDownloader;
+using PlasmaShared;
 using ZkData.UnitSyncLib;
 using LobbyClient;
 using System.Globalization;
@@ -1244,7 +1245,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             script.AppendFormat("  MapHash={0};\n", mapCache.FirstOrDefault(x => x.InternalName == (string)mapName).Md5.ToString());
 
 
-            LobbyClient.Battle.GeneratePlayerSection(new List<UserBattleStatus>(),allUser,script,Bots,Rectangles,ModOptions,null,null);
+            GeneratePlayerSection(new List<UserBattleStatus>(),allUser,script,Bots,Rectangles,ModOptions,null,null);
             //Clipboard.SetText(script.ToString());
             return script.ToString();
         }
