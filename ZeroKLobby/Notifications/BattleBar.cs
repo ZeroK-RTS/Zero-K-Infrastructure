@@ -180,7 +180,7 @@ namespace ZeroKLobby.Notifications
                             if (Utils.VerifySpringInstalled())
                             {
                                 if (spring.IsRunning) spring.ExitGame();
-                                lastScript = spring.StartGame(client, null, null, null, Program.Conf.UseSafeMode, client.MyBattleStatus.IsSpectator ? Program.Conf.UseMtEngine : false); //use MT tag when in spectator slot
+                                lastScript = spring.ConnectGame(client.MyBattle.Ip, client.MyBattle.HostPort, client.UserName); //use MT tag when in spectator slot
                             }
                         }
                     }
@@ -331,8 +331,8 @@ namespace ZeroKLobby.Notifications
             if (Utils.VerifySpringInstalled())
             {
                 if (spring.IsRunning) spring.ExitGame();
-                if (client.MyBattle != null) spring.StartGame(client, null, null, null, Program.Conf.UseSafeMode, client.MyBattleStatus.IsSpectator ? Program.Conf.UseMtEngine : false); //use MT tag when in spectator slot. NOTE!: a non-spec player might rejoin game in spec slot & confuse this checks!
-                else spring.StartGame(client, null, null, lastScript, Program.Conf.UseSafeMode, Program.Conf.UseMtEngine); //rejoining a running game from outside the battleroom???
+                if (client.MyBattle != null) spring.ConnectGame(client.MyBattle.Ip,client.MyBattle.HostPort,client.UserName); 
+                else spring.RunLocalScriptGame(lastScript); //rejoining a running game from outside the battleroom???
             }
         }
 

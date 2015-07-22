@@ -23,6 +23,7 @@ namespace ZkData
         public string SpringVersion { get { return springVersion; } }
         public string UnitSyncDirectory { get; private set; }
         public string WritableDirectory { get; private set; }
+        public bool SafeMode { get; set; }
         public event EventHandler SpringVersionChanged;
 
         public SpringPaths(string springPath, string writableFolderOverride = null)
