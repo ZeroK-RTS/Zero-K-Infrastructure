@@ -264,7 +264,7 @@ namespace LobbyClient
 
 
 
-        public string HostGame(BattleContext context, string host, int port, string myName = null )
+        public string HostGame(BattleContext context, string host, int port, string myName = null, string myPassword = null )
         {
             if (!File.Exists(paths.Executable) && !File.Exists(paths.DedicatedServer)) throw new ApplicationException(string.Format("Spring or dedicated server executable not found: {0}, {1}", paths.Executable, paths.DedicatedServer));
 
@@ -315,7 +315,7 @@ namespace LobbyClient
                         Trace.TraceError("Error getting start setup: {0}", ex);
                     }
 
-                    script = new ScriptGenerator().GenerateScript(StartContext, startSetup, talker.LoopbackPort, battleGuid.ToString(), host,port);
+                    script = ScriptGenerator.GenerateHostScript(StartContext, startSetup, talker.LoopbackPort, battleGuid.ToString(), host,port, myName, myPassword);
 
                     statsPlayers = StartContext.Players.ToDictionary(x => x.Name,
                                                         x => new BattlePlayerResult

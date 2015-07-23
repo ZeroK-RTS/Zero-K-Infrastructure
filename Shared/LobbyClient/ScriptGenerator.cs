@@ -14,7 +14,15 @@ namespace LobbyClient
 {
     class ScriptGenerator
     {
-        public string GenerateConnectScript(string host, int port, string userName, string password)
+        /// <summary>
+        /// GEnerates script for connecting to game
+        /// </summary>
+        /// <param name="host"></param>
+        /// <param name="port"></param>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public static string GenerateConnectScript(string host, int port, string userName, string password)
         {
             var sb = new StringBuilder();
             sb.AppendLine("[GAME]");
@@ -29,7 +37,50 @@ namespace LobbyClient
         }
 
 
-        public static void GeneratePlayerSection(StringBuilder script, BattleContext startContext, SpringBattleStartSetup setup)
+        /// <summary>
+        /// Generates script for hosting a game
+        /// </summary>
+        public static string GenerateHostScript(BattleContext startContext, SpringBattleStartSetup startSetup, int loopbackListenPort,
+                                                string zkSearchTag, string host, int port, string myname = null, string mypassword = null)
+        {
+            var previousCulture = Thread.CurrentThread.CurrentCulture;
+            try {
+                Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
+                var script = new StringBuilder();
+
+                script.AppendLine("[GAME]");
+                script.AppendLine("{");
+
+                script.AppendFormat("   ZkSearchTag={0};\n", zkSearchTag);
+                script.AppendFormat("  Mapname={0};\n", startContext.Map);
+
+                script.AppendFormat("  StartPosType=2;\n");
+
+                script.AppendFormat("  GameType={0};\n", startContext.Mod);
+                script.AppendFormat("  ModHash=1;\n");
+                script.AppendFormat("  MapHash=1;\n");
+
+                script.AppendFormat("  AutohostPort={0};\n", loopbackListenPort);
+                script.AppendLine();
+                script.AppendFormat("  HostIP={0};\n", host);
+                script.AppendFormat("  HostPort={0};\n", port);
+                //script.AppendFormat("  SourcePort={0};\n", 8300);
+                script.AppendFormat("  IsHost=1;\n");
+                script.AppendLine();
+
+                if (!string.IsNullOrEmpty(myname)) script.AppendFormat("  MyPlayerName={0};\n", myname);
+                if (!string.IsNullOrEmpty(mypassword) || !string.IsNullOrEmpty(myname)) script.AppendFormat("  MyPasswd={0};\n", mypassword??myname);
+
+                GeneratePlayerSection(script, startContext, startSetup);
+
+                return script.ToString();
+            } finally {
+                Thread.CurrentThread.CurrentCulture = previousCulture;
+            }
+        }
+
+        static void GeneratePlayerSection(StringBuilder script, BattleContext startContext, SpringBattleStartSetup setup)
         {
             // ordinary battle stuff
 
@@ -37,9 +88,8 @@ namespace LobbyClient
             var teamNum = 0;
             var aiNum = 0;
 
-
             foreach (var u in startContext.Players) {
-                ScriptAddUser(script, userNum, u, teamNum, setup.UserParameters.FirstOrDefault(x=>x.LobbyID==u.LobbyID));
+                ScriptAddUser(script, userNum, u, teamNum, setup.UserParameters.FirstOrDefault(x => x.LobbyID == u.LobbyID));
 
                 if (!u.IsSpectator) {
                     ScriptAddTeam(script, teamNum, userNum, u.AllyID);
@@ -96,87 +146,6 @@ namespace LobbyClient
             script.AppendLine("}");
         }
 
-        /// <summary>
-        /// Generates script
-        /// </summary>
-        /// <param name="playersExport">list of players</param>
-        /// <param name="localUser">myself</param>
-        /// <param name="loopbackListenPort">listen port for autohost interface</param>
-        /// <param name="zkSearchTag">hackish search tag</param>
-        /// <param name="startSetup">structure with custom extra data</param>
-        /// <returns></returns>
-        public string GenerateScript(BattleContext startContext, SpringBattleStartSetup startSetup, int loopbackListenPort, string zkSearchTag, string host, int port)
-        {
-            var previousCulture = Thread.CurrentThread.CurrentCulture;
-            try {
-                Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
-                var script = new StringBuilder();
-
-                script.AppendLine("[GAME]");
-                script.AppendLine("{");
-
-                script.AppendFormat("   ZkSearchTag={0};\n", zkSearchTag);
-                script.AppendFormat("  Mapname={0};\n", startContext.Map);
-
-                script.AppendFormat("  StartPosType=2;\n");
-
-                script.AppendFormat("  GameType={0};\n", startContext.Mod);
-                script.AppendFormat("  ModHash=1;\n");
-                script.AppendFormat("  MapHash=1;\n");
-
-                script.AppendFormat("  AutohostPort={0};\n", loopbackListenPort);
-                script.AppendLine();
-                script.AppendFormat("  HostIP={0};\n", host);
-                script.AppendFormat("  HostPort={0};\n", port);
-                //script.AppendFormat("  SourcePort={0};\n", 8300);
-                script.AppendFormat("  IsHost=1;\n");
-                script.AppendLine();
-
-                //script.AppendFormat("  MyPlayerName={0};\n", localUser.Name);
-
-                /*List<UserBattleStatus> users;
-                List<BotBattleStatus> bots;
-
-                if (startSetup != null && startSetup.BalanceTeamsResult != null && startSetup.BalanceTeamsResult.Players != null) {
-                    // if there is a balance results as a part of start setup, use values from this (override lobby state)
-                    users = Users.Values.ToList();
-                    bots = new List<BotBattleStatus>(this.Bots.Values.Select(x => (BotBattleStatus)x.Clone()));
-                    foreach (var p in startSetup.BalanceTeamsResult.Players) {
-                        var us = users.FirstOrDefault(x => x.Name == p.Name);
-                        if (us == null) {
-                            us = new UserBattleStatus(p.Name, new User() { AccountID = p.LobbyID }, Password);
-                                // TODO this "password" use does not look right
-                            users.Add(us);
-                        }
-                        us.TeamNumber = p.TeamID;
-                        us.IsSpectator = p.IsSpectator;
-                        us.AllyNumber = p.AllyID;
-                    }
-                    foreach (var p in startSetup.BalanceTeamsResult.Bots) {
-                        var bot = bots.FirstOrDefault(x => x.Name == p.BotName);
-                        if (bot == null) {
-                            bot = new BotBattleStatus(p.BotName, p.Owner, p.BotAI);
-                            bots.Add(bot);
-                        }
-                        bot.AllyNumber = bot.AllyNumber;
-                        bot.TeamNumber = bot.TeamNumber;
-                    }
-
-                    foreach (var u in users.Where(x => !startSetup.BalanceTeamsResult.Players.Any(y => y.Name == x.Name))) u.IsSpectator = true;
-                } else {
-                    users = this.Users.Values.ToList();
-                    bots = this.Bots.Values.ToList();
-                }*/
-
-                GeneratePlayerSection(script, startContext, startSetup);
-
-                return script.ToString();
-            } finally {
-                Thread.CurrentThread.CurrentCulture = previousCulture;
-            }
-        }
-
 
         static void ScriptAddBot(StringBuilder script, int aiNum, int teamNum, int userNum, string botAI, string botName)
         {
@@ -186,7 +155,8 @@ namespace LobbyClient
             script.AppendLine("  {");
             script.AppendFormat("    Name={0};\n", botName);
             script.AppendFormat("    ShortName={0};\n", split[0]);
-            script.AppendFormat("    Version={0};\n", split.Length > 1 ? split[1] : ""); //having no value is better. Related file: ResolveSkirmishAIKey() at Spring/ExternalAI/IAILibraryManager.cpp 
+            script.AppendFormat("    Version={0};\n", split.Length > 1 ? split[1] : "");
+                //having no value is better. Related file: ResolveSkirmishAIKey() at Spring/ExternalAI/IAILibraryManager.cpp 
             script.AppendFormat("    Team={0};\n", teamNum);
             script.AppendFormat("    Host={0};\n", userNum);
             script.AppendLine("    IsFromDemo=0;");
@@ -207,7 +177,8 @@ namespace LobbyClient
             script.AppendLine("  }");
         }
 
-        static void ScriptAddUser(StringBuilder script, int userNum, PlayerTeam pteam, int teamNum, SpringBattleStartSetup.UserCustomParameters customParameters)
+        static void ScriptAddUser(StringBuilder script, int userNum, PlayerTeam pteam, int teamNum,
+                                  SpringBattleStartSetup.UserCustomParameters customParameters)
         {
             // PLAYERS
             script.AppendFormat("  [PLAYER{0}]\n", userNum);
