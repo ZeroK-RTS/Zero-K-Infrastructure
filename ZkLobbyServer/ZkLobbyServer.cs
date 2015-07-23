@@ -196,5 +196,20 @@ namespace ZkLobbyServer
                 await Broadcast(chan.Users.Keys, new ChangeTopic() { ChannelName = chan.Name, Topic = chan.Topic });
             }
         }
+
+        /// <summary>
+        /// Mark all users as disconnected, fixes chat history repeat
+        /// </summary>
+        public void MarkDisconnectAll()
+        {
+            var db = new ZkDataContext();
+            foreach (var u in ConnectedUsers.Values) {
+                if (u != null && u.IsLoggedIn) {
+                    var acc = db.Accounts.Find(u.User.AccountID);
+                    acc.LastLogout = DateTime.UtcNow;
+                }
+            }
+            db.SaveChanges();
+        }
     }
 }
