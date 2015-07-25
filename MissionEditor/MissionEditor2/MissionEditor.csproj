@@ -465,9 +465,6 @@
     <Content Include="MissionBase\LuaUI\Fonts\FreeSansBold_16.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="MissionBase\LuaUI\modfonts.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="MissionBase\LuaUI\Widgets\mission_camera_monitor.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
