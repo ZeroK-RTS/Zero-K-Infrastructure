@@ -31,7 +31,7 @@ namespace ZkData
             #elif TEST
                 Mode = ModeType.Test;
             #else
-                Mode = ModeType.Local;
+                Mode = ModeType.Test;
             #endif
         }
 
@@ -52,10 +52,10 @@ namespace ZkData
                 case ModeType.Test:
                     BaseSiteUrl = "http://test.zero-k.info";
                     ZkDataContextConnectionString =
-                        "Data Source=zero-k.info;Initial Catalog=zero-k_test;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
+                        "Data Source=test.zero-k.info;Initial Catalog=zero-k_test;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
                     SpringieNode = "omega";
 
-                    LobbyServerHost = "lobby.zero-k.info";
+                    LobbyServerHost = "test.zero-k.info";
                     LobbyServerPort = 8202;
 
                     OldSpringLobbyPort = 7000;
@@ -66,7 +66,7 @@ namespace ZkData
                         "Data Source=zero-k.info;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
                     SpringieNode = "omega";
 
-                    LobbyServerHost = "lobby.zero-k.info";
+                    LobbyServerHost = "zero-k.info";
                     LobbyServerPort = 8200;
 
                     OldSpringLobbyPort = 8200;
