@@ -163,9 +163,8 @@ namespace LobbyClient
             ret.Title = Title;
             ret.EngineVersion = EngineVersion;
             ret.IsMission = IsMission;
-            ret.Players = Users.Values.Where(x => x.SyncStatus != SyncStatuses.Unknown).Select(x => new PlayerTeam() { AllyID = x.AllyNumber, Name = x.Name, LobbyID = x.LobbyUser.AccountID, TeamID = x.TeamNumber, IsSpectator = x.IsSpectator }).ToList();
-
-            ret.Bots = Bots.Values.Select(x => new BotTeam() { BotName = x.Name, AllyID = x.AllyNumber, TeamID = x.TeamNumber, Owner = x.owner, BotAI = x.aiLib }).ToList();
+            ret.Players = Users.Values.Where(x => x.SyncStatus != SyncStatuses.Unknown).Select(x => x.ToPlayerTeam()).ToList();
+            ret.Bots = Bots.Values.Select(x => x.ToBotTeam()).ToList();
             return ret;
         }
 

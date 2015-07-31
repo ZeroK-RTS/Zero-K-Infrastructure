@@ -12,7 +12,7 @@ using BattleRect = PlasmaShared.BattleRect;
 
 namespace LobbyClient
 {
-    class ScriptGenerator
+    public class ScriptGenerator
     {
         /// <summary>
         /// GEnerates script for connecting to game
@@ -52,10 +52,10 @@ namespace LobbyClient
                 script.AppendLine("[GAME]");
                 script.AppendLine("{");
 
-                script.AppendFormat("   ZkSearchTag={0};\n", zkSearchTag);
+                script.AppendFormat("  ZkSearchTag={0};\n", zkSearchTag);
                 script.AppendFormat("  Mapname={0};\n", startContext.Map);
 
-                script.AppendFormat("  StartPosType=2;\n");
+                script.AppendFormat("  StartPosType={0};\n", startContext.IsMission ? 3 : 2);
 
                 script.AppendFormat("  GameType={0};\n", startContext.Mod);
                 script.AppendFormat("  ModHash=1;\n");

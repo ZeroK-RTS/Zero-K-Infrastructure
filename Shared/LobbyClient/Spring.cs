@@ -133,6 +133,8 @@ namespace LobbyClient
         }
         public BattleContext StartContext { get; private set; }
         public bool UseDedicatedServer;
+        string lobbyUserName;
+        string lobbyPassword;
         public event EventHandler BattleStarted = (sender, args) => { };
 
         public event EventHandler<SpringLogEventArgs> GameOver; // game has ended
@@ -249,17 +251,14 @@ namespace LobbyClient
         }
 
 
-        public string ConnectGame(string ip, int port, string username)
+        public string ConnectGame(string ip, int port, string myName, string myPassword = null)
         {
-            return null;
+            lobbyUserName = myName;
+            lobbyPassword = myPassword;
+            return ScriptGenerator.GenerateConnectScript(ip, port, myName, myPassword);
         }
 
-        public string RunLocalScriptGame(string script)
-        {
-
-            return null;
-        }
-
+   
         
         public string HostGame(BattleContext context, string host, int port, string myName = null, string myPassword = null )
         {
@@ -564,7 +563,7 @@ namespace LobbyClient
                                 {
                                     foreach (var line in result.Split('\n'))
                                     {
-                                        client.Say(SayPlace.Battle, "", line, true);
+                                        // HACK TODO client.Say(SayPlace.Battle, "", line, true);
                                     }
                                 }
                             }
@@ -776,6 +775,11 @@ namespace LobbyClient
         public void WaitForExit()
         {
             process.WaitForExit();
+        }
+
+        public void RunLocalScriptGame(object script)
+        {
+            throw new NotImplementedException();
         }
     }
 }
