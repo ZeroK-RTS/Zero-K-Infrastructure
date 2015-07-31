@@ -453,14 +453,14 @@ namespace LobbyClient
                     if (line.StartsWith("[AddGameSetupArchivesToVFS]")) line = line.Replace("[AddGameSetupArchivesToVFS] ", "");
 
                     // FIXME: why are these even null in the first place?
-                    if (String.IsNullOrEmpty(mapName) == null && line.StartsWith("Using map", true, null)) mapName = line.Substring(10).Trim();
+                    if (String.IsNullOrEmpty(StartContext.Map) && line.StartsWith("Using map", true, null)) StartContext.Map = line.Substring(10).Trim();
 
-                    if (String.IsNullOrEmpty(modName) && line.StartsWith("Using game", true, null))
+                    if (String.IsNullOrEmpty(StartContext.Mod) && line.StartsWith("Using game", true, null))
                     {
                         int archiveNameIndex = line.IndexOf("(archive", 11);
-                        modName = line.Substring(11, archiveNameIndex - 11).Trim();
+                        StartContext.Mod = line.Substring(11, archiveNameIndex - 11).Trim();
                         
-                        Trace.TraceInformation("Mod name: " + modName);
+                        Trace.TraceInformation("Mod name: " + StartContext.Mod);
                     }
 
                     // obsolete? see above where [DedicatedServer] is pruned
