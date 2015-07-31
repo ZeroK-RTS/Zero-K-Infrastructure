@@ -52,10 +52,10 @@ namespace ZkData
                 case ModeType.Test:
                     BaseSiteUrl = "http://test.zero-k.info";
                     ZkDataContextConnectionString =
-                        "Data Source=omega.licho.eu,100;Initial Catalog=zero-k_test;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
+                        "Data Source=test.zero-k.info;Initial Catalog=zero-k_test;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
                     SpringieNode = "omega";
 
-                    LobbyServerHost = "lobby.zero-k.info";
+                    LobbyServerHost = "test.zero-k.info";
                     LobbyServerPort = 8202;
 
                     OldSpringLobbyPort = 7000;
@@ -63,10 +63,10 @@ namespace ZkData
                 case ModeType.Live:
                     BaseSiteUrl = "http://zero-k.info";
                     ZkDataContextConnectionString =
-                        "Data Source=omega.licho.eu,100;Initial Catalog=zero-k_ef;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
+                        "Data Source=zero-k.info;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
                     SpringieNode = "omega";
 
-                    LobbyServerHost = "lobby.zero-k.info";
+                    LobbyServerHost = "zero-k.info";
                     LobbyServerPort = 8200;
 
                     OldSpringLobbyPort = 8200;

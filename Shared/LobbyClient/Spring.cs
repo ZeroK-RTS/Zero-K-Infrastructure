@@ -450,9 +450,22 @@ namespace LobbyClient
                         }
                     }
 
+                    if (line.StartsWith("[AddGameSetupArchivesToVFS]")) line = line.Replace("[AddGameSetupArchivesToVFS] ", "");
+
+                    // FIXME: why are these even null in the first place?
+                    if (String.IsNullOrEmpty(mapName) == null && line.StartsWith("Using map", true, null)) mapName = line.Substring(10).Trim();
+
+                    if (String.IsNullOrEmpty(modName) && line.StartsWith("Using game", true, null))
+                    {
+                        int archiveNameIndex = line.IndexOf("(archive", 11);
+                        modName = line.Substring(11, archiveNameIndex - 11).Trim();
+                        
+                        Trace.TraceInformation("Mod name: " + modName);
+                    }
+
                     // obsolete? see above where [DedicatedServer] is pruned
                     if (line.StartsWith("recording demo")) demoFileName = Path.GetFileName(line.Substring(15).Trim());  // 91.0
-                    else if (line.StartsWith("[DedicatedServer] recording demo")) demoFileName = Path.GetFileName(line.Substring(33).Trim());    // 95.0 and later
+                    //else if (line.StartsWith("[DedicatedServer] recording demo")) demoFileName = Path.GetFileName(line.Substring(33).Trim());    // 95.0 and later
 
                     if (line.StartsWith("Using demofile", true, null)) return; // do nothing if its demo
 

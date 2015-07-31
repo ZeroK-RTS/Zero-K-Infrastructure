@@ -18,6 +18,7 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 local camState = {}
+local lastManualCam = {}
 
 local function PlaySound(fileName, ...)
   local path = "LuaUI/Sounds/"..fileName
@@ -123,9 +124,13 @@ function MissionEvent(e)
   elseif e.logicType == "SetCameraPosDirAction" then
     if e.rx then e.rx = math.rad(e.rx) end
     if e.ry then e.ry = math.rad(e.ry) end
-    local cam = {
-      px = e.px, py = e.py, pz = e.pz, rx = e.rx, ry = e.ry, mode = 4,
-    }
+    local cam = lastManualCam
+    cam.px = e.px or cam.px
+    cam.py = e.py or cam.py
+    cam.pz = e.pz or cam.pz
+    cam.rx = e.rx or cam.rx
+    cam.ry = e.ry or cam.ry
+    cam.mode = 4
     Spring.SetCameraState(cam, math.max(e.time, 0))
   elseif e.logicType == "BeautyShotAction" then
     WG.BeautyShot(e.unitID, e)
