@@ -121,7 +121,7 @@ namespace ZeroKWeb.SpringieInterface
 
                 }
 
-                bool noElo = (extraData.FirstOrDefault(x => x.StartsWith("noElo")) != null);
+                bool noElo = (extraData.FirstOrDefault(x => x.StartsWith("noElo", true, System.Globalization.CultureInfo.CurrentCulture)) != null);
                 try
                 {
                     db.SubmitChanges();
