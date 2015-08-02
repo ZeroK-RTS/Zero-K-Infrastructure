@@ -94,6 +94,20 @@ function MissionEvent(e)
       else
 	Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing Objectives widget for action " .. e.logicType)
       end
+  elseif e.logicType == "AddUnitsToObjectiveAction" then
+      if WG.AddUnitOrPosToObjective then
+	for unitID in pairs(e.units) do
+	  WG.AddUnitOrPosToObjective(e.id, unitID)
+	end
+      else
+	Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing or out-of-date Objectives widget for action " .. e.logicType)
+      end
+  elseif e.logicType == "AddPointToObjectiveAction" then
+      if WG.AddUnitOrPosToObjective then
+	WG.AddUnitOrPosToObjective(e.id, {e.x, e.y})
+      else
+	Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing or out-of-date Objectives widget for action " .. e.logicType)
+      end
   elseif e.logicType == "EnterCutsceneAction" then
       if WG.Cutscene and WG.Cutscene.EnterCutscene then
         WG.Cutscene.EnterCutscene(e.instant, e.skippable)
