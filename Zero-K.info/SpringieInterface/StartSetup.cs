@@ -86,6 +86,8 @@ namespace ZeroKWeb.SpringieInterface
                                        { Key = "faction", Value = user.Faction != null ? user.Faction.Shortcut : "" });
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair
                                        { Key = "clan", Value = user.Clan != null ? user.Clan.Shortcut : "" });
+                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair
+                                       { Key = "clanfull", Value = user.Clan != null ? user.Clan.ClanName : "" });
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "level", Value = user.Level.ToString() });
                         double elo =  mode == AutohostMode.Planetwars ? user.EffectivePwElo : (is1v1 ? user.Effective1v1Elo : user.EffectiveElo);
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "elo", Value = Math.Round(elo).ToString() }); // elo for ingame is just ordering for auto /take
