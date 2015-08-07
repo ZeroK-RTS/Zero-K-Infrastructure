@@ -237,16 +237,23 @@ namespace ZeroKLobby
             get
             {
                 if (!string.IsNullOrEmpty(cachedPassword)) return cachedPassword;
-                var isoStore = GetIsolatedStorage();
-                using (var file = isoStore.OpenFile("zkl_password.txt", FileMode.OpenOrCreate, FileAccess.Read, FileShare.ReadWrite))
-                using (var sr = new StreamReader(file)) cachedPassword= sr.ReadToEnd().Trim();
-                return cachedPassword;
+                try {
+                    var isoStore = GetIsolatedStorage();
+                    using (var file = isoStore.OpenFile("zkl_password.txt", FileMode.OpenOrCreate, FileAccess.Read, FileShare.ReadWrite)) using (var sr = new StreamReader(file)) cachedPassword = sr.ReadToEnd().Trim();
+                    return cachedPassword;
+                } catch (Exception ex) {
+                    Trace.TraceWarning("Error loading password from local storage: {0}",ex);
+                    return null;
+                }
             }
             set
             {
-                IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
-                using (var file = isoStore.OpenFile("zkl_password.txt", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
-                using (var sr = new StreamWriter(file)) sr.Write(value);
+                try {
+                    IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
+                    using (var file = isoStore.OpenFile("zkl_password.txt", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite)) using (var sr = new StreamWriter(file)) sr.Write(value);
+                } catch (Exception ex) {
+                    Trace.TraceWarning("Error saving password to local storage: {0}",ex);
+                }
                 cachedPassword = value;
             }
         }
