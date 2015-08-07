@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Design;
 using System.IO;
+using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -230,8 +231,33 @@ namespace ZeroKLobby
         [Category("Account")]
         [DisplayName("Lobby Password")]
         [PasswordPropertyText(true)]
+        [XmlIgnore]
         [Description("Player password from lobby (tasclient), needed for widget online profile")]
-        public string LobbyPlayerPassword { get; set; }
+        public string LobbyPlayerPassword {
+            get
+            {
+                if (!string.IsNullOrEmpty(cachedPassword)) return cachedPassword;
+                var isoStore = GetIsolatedStorage();
+                using (var file = isoStore.OpenFile("zkl_password.txt", FileMode.OpenOrCreate, FileAccess.Read, FileShare.ReadWrite))
+                using (var sr = new StreamReader(file)) cachedPassword= sr.ReadToEnd().Trim();
+                return cachedPassword;
+            }
+            set
+            {
+                IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
+                using (var file = isoStore.OpenFile("zkl_password.txt", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                using (var sr = new StreamWriter(file)) sr.Write(value);
+                cachedPassword = value;
+            }
+        }
+
+        static IsolatedStorageFile GetIsolatedStorage()
+        {
+            IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
+            return isoStore;
+        }
+
+        string cachedPassword;
 
         [Category("Account")]
         [DisplayName("Forget Player Name")]
