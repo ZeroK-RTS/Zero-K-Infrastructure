@@ -114,7 +114,7 @@ namespace LobbyClient
                 script.AppendLine("{");
                 script.AppendLine("     NumAllies=0;");
                 BattleRect rect;
-                if (startContext.Rectangles.TryGetValue(allyNumber, out rect)) {
+                if (startContext.Rectangles!=null && startContext.Rectangles.TryGetValue(allyNumber, out rect)) {
                     double left = 0, top = 0, right = 1, bottom = 1;
                     rect.ToFractions(out left, out top, out right, out bottom);
                     startboxes.AppendFormat(CultureInfo.InvariantCulture, "[{0}] = ", allyNumber);

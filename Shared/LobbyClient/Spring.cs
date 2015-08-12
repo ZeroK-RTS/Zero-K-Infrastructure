@@ -255,7 +255,9 @@ namespace LobbyClient
         {
             lobbyUserName = myName;
             lobbyPassword = myPassword;
-            return ScriptGenerator.GenerateConnectScript(ip, port, myName, myPassword);
+            var script=  ScriptGenerator.GenerateConnectScript(ip, port, myName, myPassword);
+            StartSpring(script);
+            return script;
         }
 
    
@@ -326,63 +328,63 @@ namespace LobbyClient
                 }
                 if (isHosting) timer.Start();
 
-                File.WriteAllText(scriptPath, script);
-
-                LogLines = new StringBuilder();
-
-                var optirun = Environment.GetEnvironmentVariable("OPTIRUN");
-
-                process = new Process();
-                process.StartInfo.CreateNoWindow = true;
-                List<string> arg = new List<string>();
-
-
-                if (string.IsNullOrEmpty(optirun))
-                {
-                    if (UseDedicatedServer)
-                    {
-                        process.StartInfo.FileName = paths.DedicatedServer;
-                        process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.DedicatedServer);
-                    }
-                    else
-                    {
-                        process.StartInfo.FileName = paths.Executable;
-                        process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.Executable);
-                    }
-                }
-                else
-                {
-                    Trace.TraceInformation("Using optirun {0} to start the game (OPTIRUN env var defined)", optirun);
-                    process.StartInfo.FileName = optirun;
-                    arg.Add(string.Format("\"{0}\"", (paths.Executable)));
-                }
-
-
-
-                arg.Add(string.Format("--config \"{0}\"", paths.GetSpringConfigPath()));
-                if (paths.SafeMode) arg.Add("--safemode");
-                arg.Add(string.Format("\"{0}\"", scriptPath));
-                //Trace.TraceInformation("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
-
-                process.StartInfo.Arguments = string.Join(" ", arg);
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
-                process.Exited += springProcess_Exited;
-                process.ErrorDataReceived += process_ErrorDataReceived;
-                process.OutputDataReceived += process_OutputDataReceived;
-                process.EnableRaisingEvents = true;
-
-                gamePrivateMessages = new Dictionary<string, int>();
-                battleResult.StartTime = DateTime.UtcNow;
-                process.Start();
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
-                if (IsRunning && SpringStarted != null) SpringStarted(this, EventArgs.Empty);
+                StartSpring(script);
                 return script;
             }
             else Trace.TraceError("Spring already running");
             return null;
+        }
+
+        void StartSpring(string script)
+        {
+            scriptPath = Path.GetTempFileName();
+            File.WriteAllText(scriptPath, script);
+
+            LogLines = new StringBuilder();
+
+            var optirun = Environment.GetEnvironmentVariable("OPTIRUN");
+
+            process = new Process();
+            process.StartInfo.CreateNoWindow = true;
+            List<string> arg = new List<string>();
+
+            if (string.IsNullOrEmpty(optirun)) {
+                if (UseDedicatedServer) {
+                    process.StartInfo.FileName = paths.DedicatedServer;
+                    process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.DedicatedServer);
+                } else {
+                    process.StartInfo.FileName = paths.Executable;
+                    process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.Executable);
+                }
+            } else {
+                Trace.TraceInformation("Using optirun {0} to start the game (OPTIRUN env var defined)", optirun);
+                process.StartInfo.FileName = optirun;
+                arg.Add(string.Format("\"{0}\"", (paths.Executable)));
+            }
+
+            arg.Add(string.Format("--config \"{0}\"", paths.GetSpringConfigPath()));
+            if (paths.SafeMode) arg.Add("--safemode");
+            arg.Add(string.Format("\"{0}\"", scriptPath));
+            //Trace.TraceInformation("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
+
+            process.StartInfo.Arguments = string.Join(" ", arg);
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            //process.StartInfo.RedirectStandardInput = true;
+            process.Exited += springProcess_Exited;
+            process.ErrorDataReceived += process_ErrorDataReceived;
+            process.OutputDataReceived += process_OutputDataReceived;
+            process.EnableRaisingEvents = true;
+
+            gamePrivateMessages = new Dictionary<string, int>();
+            battleResult.StartTime = DateTime.UtcNow;
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+
+            //process.StandardInput.Write(script);
+            if (IsRunning && SpringStarted != null) SpringStarted(this, EventArgs.Empty);
         }
 
 
@@ -615,6 +617,7 @@ namespace LobbyClient
         private void springProcess_Exited(object sender, EventArgs e)
         {
             var isCrash = process.ExitCode != 0 && !wasKilled;
+            process.UnsubscribeEvents(this);
             try
             {
                 if (!process.WaitForExit(2000)) process.Kill();
