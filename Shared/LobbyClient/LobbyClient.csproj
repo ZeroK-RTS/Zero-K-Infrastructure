@@ -83,6 +83,7 @@
     <Compile Include="ScriptGenerator.cs" />
     <Compile Include="Spring.cs" />
     <Compile Include="SpringieServer.cs" />
+    <Compile Include="SpringSettings.cs" />
     <Compile Include="Talker.cs" />
     <Compile Include="TasClient.cs" />
     <Compile Include="TasClient_structures.cs" />
