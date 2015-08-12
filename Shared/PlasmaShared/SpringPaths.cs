@@ -19,7 +19,6 @@ namespace ZkData
         public List<string> DataDirectories { get; private set; }
         public string DedicatedServer { get; private set; }
         public string Executable { get; private set; }
-        public string MtExecutable { get; private set; }
         public string SpringVersion { get { return springVersion; } }
         public string UnitSyncDirectory { get; private set; }
         public string WritableDirectory { get; private set; }
@@ -139,11 +138,8 @@ namespace ZkData
             UnitSyncDirectory = springPath;
 
             Executable = Utils.MakePath(springPath, Environment.OSVersion.Platform == PlatformID.Unix ? "spring" : "spring.exe");
-            MtExecutable = Utils.MakePath(springPath, Environment.OSVersion.Platform == PlatformID.Unix ? "spring-multithreaded" : "spring-multithreaded.exe");
             DedicatedServer = Utils.MakePath(springPath, Environment.OSVersion.Platform == PlatformID.Unix ? "spring-dedicated" : "spring-dedicated.exe");
             Cache = Utils.MakePath(WritableDirectory, "cache", "SD");
-
-            MtExecutable = File.Exists(MtExecutable) ? MtExecutable : Executable; //a case where MT spring no longer exist in Spring >91 
 
             var ov = springVersion;
             if (springPath != "") springVersion = GetSpringVersion(Executable);
