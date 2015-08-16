@@ -251,7 +251,6 @@ namespace LobbyClient
                 statsPlayers.Clear();
                 statsData.Clear();
 
-                List<UserBattleStatus> players;
                 battleGuid = Guid.NewGuid();
                 var service = GlobalConst.GetSpringieService();
                 SpringBattleStartSetup startSetup = null;
