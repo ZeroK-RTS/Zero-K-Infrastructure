@@ -30,9 +30,9 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         List<SpringScanner.CacheItem> modCache;
         List<SpringScanner.CacheItem> mapCache;
         List<Mod> modCache_folder; //mods in *.sdd folder located in datadir/games
-        private List<BotBattleStatus> Bots;
+        private List<BotBattleStatus> Bots = new List<BotBattleStatus>();
         Map currentMap;
-        private List<UserBattleStatus> allUser;
+        private List<UserBattleStatus> allUser = new List<UserBattleStatus>();
         private PlayerListItem myItem;
         private Ai[] aiList;
         private Mod currentMod;
@@ -1215,7 +1215,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 Map = map_comboBox.SelectedItem.ToString(),
                 Mod = game_comboBox.SelectedItem.ToString(),
                 IsMission = currentMod.IsMission,
-                Players = allUser.Select(x=>x.ToPlayerTeam()).ToList(),
+                Players = allUser.Where(x=>!Bots.Contains(x)).Select(x=>x.ToPlayerTeam()).ToList(),
                 Bots = Bots.Select(x=>x.ToBotTeam()).ToList(),
                 Rectangles = Rectangles,
                 EngineVersion = engine_comboBox.SelectedItem.ToString()
@@ -1238,10 +1238,13 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
         private void Event_SpringExited(object sender, EventArgs<bool> e)
         {
-            if (infoLabel.Text.StartsWith("Spring starting"))
-                infoLabel.Text = "";
-            if (e.Data)
-                infoLabel.Text = "Spring crashed"; 
+            this.Invoke(new Action(()=>
+            {
+                if (infoLabel.Text.StartsWith("Spring starting"))
+                    infoLabel.Text = "";
+                if (e.Data)
+                    infoLabel.Text = "Spring crashed";
+            }));
 
             spring.SpringExited -= Event_SpringExited;
         }

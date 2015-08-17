@@ -217,8 +217,10 @@ namespace LobbyClient
 
         public string ConnectGame(string ip, int port, string myName, string myPassword = null)
         {
+            battleResult = new BattleResult();
             lobbyUserName = myName;
             lobbyPassword = myPassword;
+            isHosting = false;
             var script=  ScriptGenerator.GenerateConnectScript(ip, port, myName, myPassword);
             StartSpring(script);
             return script;
@@ -588,11 +590,11 @@ namespace LobbyClient
             catch { }
 
             process = null;
-            talker.Close();
+            talker?.Close();
             talker = null;
             Thread.Sleep(1000);
             var logText = LogLines.ToString();
-            ParseInfolog(logText, isCrash);
+            if (isHosting) ParseInfolog(logText, isCrash);
 
             try
             {
