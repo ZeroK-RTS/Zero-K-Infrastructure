@@ -160,7 +160,7 @@ namespace LobbyClient
                 if (IsRunning)
                 {
                     SayGame("/kill"); // todo dont do this if talker does not work (not a host)
-                    process.WaitForExit(5000);
+                    process.WaitForExit(20000);
                     if (!IsRunning) return;
 
                     Console.WriteLine("Terminating Spring process due to /kill timeout");
