@@ -24,10 +24,6 @@ namespace Benchmarker
         /// Map to use (override)
         /// </summary>
         public string Map { get; set; }
-        /// <summary>
-        /// Whether to use multithreaded engine
-        /// </summary>
-        public bool UseMultithreaded { get; set; }
 
         /// <summary>
         /// StartScript to use
