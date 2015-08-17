@@ -634,8 +634,8 @@ namespace ZkData
                         ReturnValue e;
                         try {
                             var dependencies = new List<string>();
-                            if (mod!= null) dependencies.AddRange(mod.Dependencies);
-                            if (map != null) dependencies.AddRange(map.Dependencies);
+                            if (mod!= null && mod.Dependencies!=null) dependencies.AddRange(mod.Dependencies);
+                            if (map != null && map.Dependencies!=null) dependencies.AddRange(map.Dependencies);
 
                              e = service.RegisterResource(PlasmaServiceVersion, springPaths.SpringVersion, workItem.CacheItem.Md5.ToString(),
                                 workItem.CacheItem.Length, info is Map ? ResourceType.Map : ResourceType.Mod, workItem.CacheItem.FileName, info.Name,

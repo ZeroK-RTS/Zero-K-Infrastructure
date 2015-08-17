@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using ZkData;
 using Steamworks;
 
 namespace ZeroKLobby.Steam
 {
+    // see handling corrupted state exceptions https://msdn.microsoft.com/en-us/magazine/dd419661.aspx?f=255&MSPPError=-2147217396
     public class SteamClientHelper : IDisposable
     {
         int tickCounter;
@@ -25,6 +27,7 @@ namespace ZeroKLobby.Steam
         }
 
 
+        [HandleProcessCorruptedStateExceptions]
         void TimerOnElapsed(object sender)
         {
             try {

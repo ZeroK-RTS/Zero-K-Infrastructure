@@ -61,6 +61,8 @@
   <ItemGroup>
     <Compile Include="Action.cs" />
     <Compile Include="Actions\GUI\BeautyShotAction.cs" />
+    <Compile Include="Actions\GUI\AddUnitsToObjectiveAction.cs" />
+    <Compile Include="Actions\GUI\AddPointToObjectiveAction.cs" />
     <Compile Include="Actions\GUI\StopCutsceneActionsAction.cs" />
     <Compile Include="Actions\Logic\GiveTargetedOrdersAction.cs" />
     <Compile Include="Actions\Logic\MakeUnitsNeutralAction.cs" />
