@@ -55,7 +55,7 @@ namespace ZeroKLobby
             tas.MyUserStatusChanged += (sender, args) => { if (SteamHelper.IsOnline && SteamID != 0) OnLoggedToBothSteamAndTas(); };
             tas.UserStatusChanged += (sender, args) =>
             {
-                if (args.New.SteamID != null && args.Old.SteamID != args.New.SteamID && args.New.SteamID !=0) {
+                if (args?.New?.SteamID != null && args?.Old?.SteamID != args?.New?.SteamID && args?.New?.SteamID !=0) {
                     Voice.AddListenerSteamID(args.New.SteamID.Value); // todo only for battle in future
                     if (friends.Contains(args.New.SteamID.Value)) AddFriend(args.New.Name);
                 }
