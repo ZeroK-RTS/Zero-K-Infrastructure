@@ -122,6 +122,47 @@
       <DependentUpon>Buttons.resx</DependentUpon>
     </Compile>
     <Compile Include="CachedResourceManager.cs" />
+    <Compile Include="Controls\Campaign\JournalPopupPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Campaign\JournalPopupPanel.Designer.cs">
+      <DependentUpon>JournalPopupPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Campaign\JournalSubPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Campaign\JournalSubPanel.Designer.cs">
+      <DependentUpon>JournalSubPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Campaign\JournalPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Campaign\JournalPanel.Designer.cs">
+      <DependentUpon>JournalPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Campaign\PlanetInfoPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Campaign\PlanetInfoPanel.Designer.cs">
+      <DependentUpon>PlanetInfoPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TransparentTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\TransparentTextBox.Designer.cs">
+      <DependentUpon>TransparentTextBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GalaxyResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GalaxyResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Campaign\GalaxyControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Campaign\GalaxyControl.Designer.cs">
+      <DependentUpon>GalaxyControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="ChatToSpeech.cs" />
     <Compile Include="Controls\FrameBorderRenderer.cs" />
     <Compile Include="Controls\MinimapFuncBox.cs">
@@ -188,6 +229,13 @@
       <DependentUpon>PromptForm.cs</DependentUpon>
     </Compile>
     <Compile Include="MicroForms\UnitSyncRetryPrompt.cs" />
+    <Compile Include="Controls\Campaign\CampaignManager.cs" />
+    <Compile Include="MainPages\CampaignPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MainPages\CampaignPage.Designer.cs">
+      <DependentUpon>CampaignPage.cs</DependentUpon>
+    </Compile>
     <Compile Include="MicroLobby\ExtrasTab\LocalReplay.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -204,7 +252,9 @@
     <Compile Include="MicroLobby\HexToUnicodeConverter.Designer.cs">
       <DependentUpon>HexToUnicodeConverter.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainPages\SkirmishControl.cs" />
+    <Compile Include="MainPages\SkirmishControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="MainPages\SkirmishControl.Designer.cs">
       <DependentUpon>SkirmishControl.cs</DependentUpon>
     </Compile>
@@ -261,7 +311,9 @@
     <Compile Include="MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainPages\BattleListControl.cs" />
+    <Compile Include="MainPages\BattleListControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MainPages\BattleListControl.Designer.cs">
       <DependentUpon>BattleListControl.cs</DependentUpon>
     </Compile>
@@ -522,8 +574,23 @@
       <LastGenOutput>Configs.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Campaign\JournalPopupPanel.resx">
+      <DependentUpon>JournalPopupPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Campaign\JournalSubPanel.resx">
+      <DependentUpon>JournalSubPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Campaign\JournalPanel.resx">
+      <DependentUpon>JournalPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Campaign\PlanetInfoPanel.resx">
+      <DependentUpon>PlanetInfoPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\MinimapFuncBox.resx">
       <DependentUpon>MinimapFuncBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\TransparentTextBox.resx">
+      <DependentUpon>TransparentTextBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DarkHive.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -542,6 +609,10 @@
       <LastGenOutput>Flags.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="GalaxyResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>GalaxyResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainPages\HomePage.resx">
       <DependentUpon>HomePage.cs</DependentUpon>
     </EmbeddedResource>
@@ -559,6 +630,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\BattleChatControl.resx">
       <DependentUpon>BattleChatControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainPages\CampaignPage.resx">
+      <DependentUpon>CampaignPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Campaign\GalaxyControl.resx">
+      <DependentUpon>GalaxyControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\ExtrasTab\LocalReplay.resx">
       <DependentUpon>LocalReplay.cs</DependentUpon>
@@ -695,6 +772,10 @@
       <Project>{67501A5B-B6BB-467E-85DA-22D81C40829C}</Project>
       <Name>Benchmarker</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CampaignLib\CampaignLib.csproj">
+      <Project>{f3ccbc28-c1ac-40a2-be89-51575f2ab27a}</Project>
+      <Name>CampaignLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Shared\LobbyClient\LobbyClient.csproj">
       <Project>{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}</Project>
       <Name>LobbyClient</Name>
@@ -712,6 +793,21 @@
     <Resource Include="Images\add.png" />
     <EmbeddedResource Include="NativeLibs\libCSteamworks.so" />
     <EmbeddedResource Include="NativeLibs\libsteam_api.so" />
+    <None Include="campaignsaves\test\save1.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="campaigns\sunrise\campaign.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="campaigns\sunrise\journalParts.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="campaigns\test\campaign.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="campaigns\test\journalParts.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\app.manifest">
       <SubType>Designer</SubType>
@@ -1812,9 +1908,59 @@
     <None Include="Resources\DarkHiveGlow\NE.png" />
     <None Include="Resources\DarkHiveGlow\N.png" />
     <None Include="Resources\DarkHiveGlow\E.png" />
+    <None Include="Resources\Planets\planet_rocky.png" />
+    <None Include="Resources\Planets\planet_desert.png" />
+    <None Include="Resources\Planets\planet_rockybrown.png" />
+    <None Include="Resources\Planets\planet_green.png" />
+    <None Include="Resources\Planets\planet_icesmall.png" />
+    <None Include="Resources\Planets\planet_green2.png" />
+    <None Include="Resources\Planets\planet_purple.png" />
+    <None Include="Resources\Planets\planet_rockybrown2.png" />
+    <None Include="Resources\Planets\planet_terranlarge.png" />
+    <None Include="Resources\Planets\planet_terran.png" />
+    <None Include="Resources\Planets\planet_terran2.png" />
+    <None Include="Resources\Planets\planet_rockygrey.png" />
+    <None Include="Resources\87.png" />
+    <None Include="Resources\88.png" />
+    <None Include="Resources\43.png" />
+    <None Include="Resources\86.png" />
+    <None Include="Resources\82.png" />
+    <None Include="Resources\80.png" />
+    <None Include="Resources\83.png" />
+    <None Include="Resources\30.png" />
+    <None Include="Resources\39.png" />
+    <Content Include="Resources\Galaxies\galaxy4.jpg" />
+    <None Include="Resources\Planets\planet_desert_large.png" />
+    <None Include="Resources\Planets\planet_green_large.png" />
+    <None Include="Resources\Planets\planet_green_large2.png" />
+    <None Include="Resources\Planets\planet_ice_small.png" />
+    <None Include="Resources\Planets\planet_ice_tiny.png" />
+    <None Include="Resources\Planets\planet_rockybrown_large.png" />
+    <None Include="Resources\Planets\planet_rockybrown_large2.png" />
+    <None Include="Resources\Planets\planet_rockygrey_large.png" />
+    <None Include="Resources\Planets\planet_rockygrey_small.png" />
+    <None Include="Resources\Planets\planet_rockylunar_large.png" />
+    <None Include="Resources\Planets\planet_rockylunar_tiny.png" />
+    <None Include="Resources\Planets\planet_terran_large.png" />
+    <None Include="Resources\Planets\planet_terran_small.png" />
+    <None Include="Resources\Planets\planet_terran_small2.png" />
+    <None Include="Resources\Planets\planet_terran_tiny.png" />
+    <None Include="Resources\Planets\planet_rockybrown_small.png" />
+    <None Include="Resources\Planets\planet_rockybrown_small2.png" />
+    <None Include="Resources\Planets\planet_rockybrown_small3.png" />
+    <None Include="Resources\Planets\planet_water.png" />
+    <None Include="Resources\Planets\planet_water_large.png" />
+    <None Include="Resources\Planets\planet_desertorange.png" />
+    <None Include="Resources\Planets\planet_desert2.png" />
+    <None Include="Resources\Planets\planet_desert3.png" />
+    <None Include="Resources\Planets\planet_desert4.png" />
+    <None Include="Resources\Planets\planet_desert_small.png" />
+    <None Include="Resources\Planets\planet_ice.png" />
+    <None Include="Resources\Planets\planet_snow_large.png" />
     <Content Include="Resources\ZK_logo_128.ico" />
     <Content Include="Resources\ZK_logo_128.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">
   </Target>

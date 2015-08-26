@@ -1,0 +1,20 @@
+{
+  "CampaignID": "testCampaign",
+  "CampaignVars": {},
+  "MissionProgress": {
+    "mission1": {
+      "missionID": "mission1",
+      "played": false,
+      "unlocked": true,
+      "completed": true
+    },
+  },
+  "JournalProgress": {
+    "journal1": {
+      "journalID": "journal1",
+      "unlocked": true,
+      "read": false,
+      "textSnapshot": "Slow and steady wins the race"
+    }
+  }
+}
