@@ -109,7 +109,10 @@ namespace ZeroKLobby.Notifications
                     if (Utils.VerifySpringInstalled())
                     {
                         var spring = new Spring(Program.SpringPaths);
-                        spring.RunLocalScriptGame(modInfo.MissionScript);
+                        spring.StartGame(Program.TasClient,
+                                         null,
+                                         null,
+                                         modInfo.MissionScript, Program.Conf.UseSafeMode, Program.Conf.UseMtEngine);
 
                         var cs = GlobalConst.GetContentService();
                         cs.NotifyMissionRun(Program.Conf.LobbyPlayerName, missionName);

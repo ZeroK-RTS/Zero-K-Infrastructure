@@ -50,8 +50,7 @@ namespace ZeroKLobby
                         User userData;
                         bool ban = Program.TasClient.ExistingUsers.TryGetValue(name, out userData) && userData.BanMute;
                         var sayText = match.Groups[2].Value;
-                        
-                        bool validText = (name != Program.Conf.LobbyPlayerName && !string.IsNullOrEmpty(text) && !Regex.IsMatch(sayText, "Start [0-9]+$") && !sayText.StartsWith("I choose: "));
+                        bool validText = (name != Program.Conf.LobbyPlayerName && !string.IsNullOrEmpty(text) && !Regex.IsMatch(sayText, "Start [0-9]+$"));
                         if (validText && !ban)
                         {
                             if (voices.Count > 1) speechSynthesizer.SelectVoice(voices[name.GetHashCode() % voices.Count].VoiceInfo.Name);

@@ -9,7 +9,6 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using LobbyClient;
-using PlasmaShared;
 using ZkData.UnitSyncLib;
 using ZeroKLobby.Lines;
 using ZkData;
