@@ -638,5 +638,46 @@
             <local:UnitEnteredAreaControl />
         </DataTemplate>
 
+        <!-- ======== Objective templates ======== -->
+        
+        <DataTemplate x:Key="AddUnitsToObjectiveAction">
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Label Grid.Column="0" Grid.Row="0">Objective ID</Label>
+                <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Mission.Objectives, ElementName=window}" SelectedItem="{Binding ID}" />
+                <Label Grid.Row="1" Grid.Column="0">Unit group</Label>
+                <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Mission.AllGroups, ElementName=window}" SelectedItem="{Binding Group}" />
+                <TextBlock Grid.Row="2" Grid.ColumnSpan="2">This adds all units in the selected group to the objective.<LineBreak />
+                A unit must be within radar or LOS range for the objectives widget to find it.
+                </TextBlock>
+            </Grid>
+        </DataTemplate>
+        
+        <DataTemplate x:Key="AddPointToObjectiveAction">
+            <DockPanel>
+                <ToolBarTray DockPanel.Dock="Top">
+                    <ToolBar>
+                        <Label>Objective ID:</Label>
+                        <ComboBox ItemsSource="{Binding Mission.Objectives, ElementName=window}" SelectedItem="{Binding ID}" />
+                    </ToolBar>
+                </ToolBarTray>
+                <DockPanel DockPanel.Dock="Bottom" Background="White">
+                    <Label DockPanel.Dock="Left">Map Zoom</Label>
+                    <Slider Name="zoomSlider" Minimum="0.01" Maximum="2" Value="1" />
+                </DockPanel>
+                <ScrollViewer HorizontalScrollBarVisibility="Auto">
+                    <ContentControl Content="{StaticResource markerPointCanvas}" />
+                </ScrollViewer>
+            </DockPanel>
+        </DataTemplate>
+
     </UserControl.Resources>
 </UserControl>

@@ -229,7 +229,9 @@ namespace MissionEditor2
             addAction("Wait", () => new WaitAction(), "Misc");
 
             addAction("Add Objective", () => new AddObjectiveAction("newObj"), "GUI");
-            addAction("Modify Objective", () => new ModifyObjectiveAction("newObj"), "GUI");
+            addAction("Modify Objective", () => new ModifyObjectiveAction(), "GUI");
+            addAction("Add Units to Objective", () => new AddUnitsToObjectiveAction(), "GUI");
+            addAction("Add Point to Objective", () => new AddPointToObjectiveAction(Mission.Map.Texture.Width / 2, Mission.Map.Texture.Height / 2), "GUI");
             addAction("Enter Cutscene", () => new EnterCutsceneAction(), "GUI");
             addAction("Leave Cutscene", () => new LeaveCutsceneAction(), "GUI");
             addAction("Display Counters", () => new DisplayCountersAction(), "GUI");

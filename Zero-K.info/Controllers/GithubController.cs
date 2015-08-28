@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -41,8 +42,18 @@ namespace ZeroKWeb.Controllers
                     break;
 
                 case "pull_request":
-                    values = new [] {payload.repository.name ,payload.sender.login,  payload.action, payload.number, payload.pull_request.title , payload.pull_request.html_url};
-                    text = string.Format("[{0}] {1} has {2} pull request #{3}: {4} ({5})",values);
+                    values = new [] {payload.repository.name ,payload.sender.login,  payload.action, payload.number, payload.pull_request.title , payload.pull_request.html_url, payload.pull_request.body};
+                    text = string.Format("[{0}] {1} has {2} pull request #{3}: {4} ({5})\n{6}",values);
+                    break;
+
+                case "push":
+                    List<string> commitMessages = new List<string>();
+                    foreach (dynamic commit in payload.commits)
+                    {
+                        commitMessages.Add(commit.message);
+                    }
+
+                    text = $"[{payload.repository.name}] {payload.sender.login} has pushed {commitMessages.Count} commits: {payload.compare}\n{string.Join("\n", commitMessages)}";
                     break;
             }
 

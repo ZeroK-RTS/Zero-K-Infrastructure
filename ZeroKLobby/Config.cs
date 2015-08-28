@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Design;
 using System.IO;
+using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -230,8 +231,40 @@ namespace ZeroKLobby
         [Category("Account")]
         [DisplayName("Lobby Password")]
         [PasswordPropertyText(true)]
+        [XmlIgnore]
         [Description("Player password from lobby (tasclient), needed for widget online profile")]
-        public string LobbyPlayerPassword { get; set; }
+        public string LobbyPlayerPassword {
+            get
+            {
+                if (!string.IsNullOrEmpty(cachedPassword)) return cachedPassword;
+                try {
+                    var isoStore = GetIsolatedStorage();
+                    using (var file = isoStore.OpenFile("zkl_password.txt", FileMode.OpenOrCreate, FileAccess.Read, FileShare.ReadWrite)) using (var sr = new StreamReader(file)) cachedPassword = sr.ReadToEnd().Trim();
+                    return cachedPassword;
+                } catch (Exception ex) {
+                    Trace.TraceWarning("Error loading password from local storage: {0}",ex);
+                    return null;
+                }
+            }
+            set
+            {
+                try {
+                    IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
+                    using (var file = isoStore.OpenFile("zkl_password.txt", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite)) using (var sr = new StreamWriter(file)) sr.Write(value);
+                } catch (Exception ex) {
+                    Trace.TraceWarning("Error saving password to local storage: {0}",ex);
+                }
+                cachedPassword = value;
+            }
+        }
+
+        static IsolatedStorageFile GetIsolatedStorage()
+        {
+            IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
+            return isoStore;
+        }
+
+        string cachedPassword;
 
         [Category("Account")]
         [DisplayName("Forget Player Name")]
@@ -333,9 +366,9 @@ namespace ZeroKLobby
         public bool SingleInstance { get; set; }
         
         [Browsable(false)]
-        public bool UseMtEngine { get; set; }
-        [Browsable(false)]
         public bool UseSafeMode { get; set; }
+
+
 		[Browsable(false)]
         public Point windowLocation { get; set; }
         [Browsable(false)]

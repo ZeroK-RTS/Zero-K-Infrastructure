@@ -31,12 +31,12 @@ namespace Benchmarker
             List<string> arg = new List<string>();
 
             if (string.IsNullOrEmpty(optirun)) {
-                process.StartInfo.FileName = test.UseMultithreaded ? paths.MtExecutable : paths.Executable;
+                process.StartInfo.FileName = paths.Executable;
             }
             else {
                 Trace.TraceInformation("Using optirun {0} to start the game (OPTIRUN env var defined)", optirun);
                 process.StartInfo.FileName = optirun;
-                arg.Add(string.Format("\"{0}\"", ( test.UseMultithreaded ? paths.MtExecutable : paths.Executable)));
+                arg.Add(string.Format("\"{0}\"", ( paths.Executable)));
             }
 
 

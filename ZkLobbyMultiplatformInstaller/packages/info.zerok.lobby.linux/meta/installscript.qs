@@ -38,81 +38,109 @@ Component.prototype.createOperations = function()
         component.addOperation("CreateDesktopEntry", "Zero-K.desktop", desktopIcon);
         component.addOperation("InstallIcons", "@TargetDir@/share/icons");
 
-        if (systemInfo.productType === "ubuntu"){
+        if (systemInfo.productType === "ubuntu" || systemInfo.productType === "debian"){
 
             mono = installer.execute( "/bin/which", new Array( "mono" ) )[0];
             if (!mono) {
                 component.addElevatedOperation("Execute", "apt-get", "update");
                 component.addElevatedOperation("Execute", "apt-get", "install", "mono-complete", "-y");
-                //QMessageBox["warning"]( "monoError", "No mono!", "You need mono. Please install mono-complete using the System Package Management tools." );
             }
 
             xprintidle = installer.execute( "/bin/which", new Array( "xprintidle" ) )[0];
             if (!xprintidle) {
                 component.addElevatedOperation("Execute", "apt-get", "update");
                 component.addElevatedOperation("Execute", "apt-get", "install", "xprintidle", "-y");
-                //QMessageBox["warning"]( "xprintidleError", "No xprintidle!", "You need xprintidle. Please install xprintidle using the System Package Management tools." );
             }
 
             p7zip = installer.execute( "/bin/which", new Array( "p7zip" ) )[0];
             if (!p7zip) {
                 component.addElevatedOperation("Execute", "apt-get", "update");
                 component.addElevatedOperation("Execute", "apt-get", "install", "p7zip-full", "-y");
-                //QMessageBox["warning"]( "p7zipError", "No p7zip!", "You need xprintidle. Please install p7zip using the System Package Management tools." );
             }
 
             wget = installer.execute( "/bin/which", new Array( "wget" ) )[0];
             if (!wget) {
                 component.addElevatedOperation("Execute", "apt-get", "update");
                 component.addElevatedOperation("Execute", "apt-get", "install", "wget", "-y");
-                //QMessageBox["warning"]( "wgetError", "No wget!", "You need wget. Please install wget using the System Package Management tools." );
             }
 
             libsdl2 = installer.execute( "/bin/which", new Array( "sdl2-config" ) )[0];
             if (!libsdl2) {
                 component.addElevatedOperation("Execute", "apt-get", "update");
                 component.addElevatedOperation("Execute", "apt-get", "install", "libsdl-2-2.0-0", "-y");
-                //QMessageBox["warning"]( "libsdl2Error", "No libsdl!", "You need libsdl2-2.0-0. Please install libsdl2-2.0-0 using the System Package Management tools." );
             }
         }
-        else if (systemInfo.productType === "opensuse"){
+        
+        else if (systemInfo.productType === "opensuse" || systemInfo.productType === "suse"){
 
             mono = installer.execute( "/bin/which", new Array( "mono" ) )[0];
             if (!mono) {
                 component.addElevatedOperation("Execute", "zypper", "refresh");
                 component.addElevatedOperation("Execute", "zypper", "-n", "-q", "install", "mono-complete");
-                //QMessageBox["warning"]( "monoError", "No mono!", "You need mono. Please install mono-complete using the System Package Management tools." );
             }
-// xprintidle broken in opensuse :(
-/* 
+            
+            // xprintidle broken in opensuse :(
+            /*
             xprintidle = installer.execute( "/bin/which", new Array( "xprintidle" ) )[0];
             if (!xprintidle) {
                 component.addElevatedOperation("Execute", "zypper", "refresh");
                 component.addElevatedOperation("Execute", "zypper", "-n", "-q", "install", "xprintidle");
-                //QMessageBox["warning"]( "xprintidleError", "No xprintidle!", "You need xprintidle. Please install xprintidle using the System Package Management tools." );
             }
-*/
+            */
+            
             p7zip = installer.execute( "/bin/which", new Array( "p7zip" ) )[0];
             if (!p7zip) {
                 component.addElevatedOperation("Execute", "zypper", "refresh");
                 component.addElevatedOperation("Execute", "zypper", "-n", "-q", "install", "p7zip");
-                //QMessageBox["warning"]( "p7zipError", "No p7zip!", "You need xprintidle. Please install p7zip using the System Package Management tools." );
             }
 
             wget = installer.execute( "/bin/which", new Array( "wget" ) )[0];
             if (!wget) {
                 component.addElevatedOperation("Execute", "zypper", "refresh");
                 component.addElevatedOperation("Execute", "zypper", "-n", "-q", "install", "wget");
-                //QMessageBox["warning"]( "wgetError", "No wget!", "You need wget. Please install wget using the System Package Management tools." );
             }
 
             libsdl2 = installer.execute( "/bin/which", new Array( "sdl2-config" ) )[0];
             if (!libsdl2) {
                 component.addElevatedOperation("Execute", "zypper", "refresh");
                 component.addElevatedOperation("Execute", "zypper", "-n", "-q", "install", "libSDL2-2_0-0");
-                //QMessageBox["warning"]( "libsdl2Error", "No libsdl!", "You need libsdl2-2.0-0. Please install libsdl2-2.0-0 using the System Package Management tools." );
             }
         }
+        
+        else if (systemInfo.productType === "fedora" || systemInfo.productType === "redhat"){
+
+            mono = installer.execute( "/bin/which", new Array( "mono" ) )[0];
+            if (!mono) {
+                component.addElevatedOperation("Execute", "dnf", "check-update");
+                component.addElevatedOperation("Execute", "dnf", "-y", "install", "mono-core");
+            }
+            // xprintidle not available on fedora
+            /*
+            xprintidle = installer.execute( "/bin/which", new Array( "xprintidle" ) )[0];
+            if (!xprintidle) {
+                component.addElevatedOperation("Execute", "dnf", "check-update");
+                component.addElevatedOperation("Execute", "dnf", "-y", "install", "xprintidle");
+            }
+            */
+            p7zip = installer.execute( "/bin/which", new Array( "p7zip" ) )[0];
+            if (!p7zip) {
+                component.addElevatedOperation("Execute", "dnf", "check-update");
+                component.addElevatedOperation("Execute", "dnf", "-y", "install", "p7zip");
+            }
+
+            wget = installer.execute( "/bin/which", new Array( "wget" ) )[0];
+            if (!wget) {
+                component.addElevatedOperation("Execute", "dnf", "check-update");
+                component.addElevatedOperation("Execute", "dnf", "-y", "install", "wget");
+            }
+
+            libsdl2 = installer.execute( "/bin/which", new Array( "sdl2-config" ) )[0];
+            if (!libsdl2) {
+                component.addElevatedOperation("Execute", "dnf", "check-update");
+                component.addElevatedOperation("Execute", "dnf", "-y", "install", "SDL2");
+            }
+        }
+        
         else{
             QMessageBox["warning"]( "DistroError", "No supported!", "Your Distribution of GNU/Linux is not suported at the moment, not solving dependencies please report this name: " + systemInfo.productType );
         }
