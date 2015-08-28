@@ -12,6 +12,9 @@ namespace CMissionLib.Actions
         string description="Some text to describe your objective";
         //bool useCustomColor;
         //int[] color;
+        bool hasCameraTarget;
+        double x, y;
+        string groupTarget;
 
 		public AddObjectiveAction(string id)
 		{
@@ -65,6 +68,37 @@ namespace CMissionLib.Actions
         [DataMember]
         public int[] Color { get; set; }
          */
+
+        [DataMember]
+        public double Y {
+            get { return y; }
+            set
+            {
+                y = value;
+                RaisePropertyChanged("Y");
+            }
+        }
+        [DataMember]
+        public double X
+        {
+            get { return x; }
+            set
+            {
+                x = value;
+                RaisePropertyChanged("X");
+            }
+        }
+
+        [DataMember]
+        public string GroupTarget
+        {
+            get { return groupTarget; }
+            set
+            {
+                groupTarget = value;
+                RaisePropertyChanged("GroupTarget");
+            }
+        }
 
 		public override LuaTable GetLuaTable(Mission mission)
 		{

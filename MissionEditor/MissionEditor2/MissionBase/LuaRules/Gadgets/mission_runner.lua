@@ -48,8 +48,7 @@ local lastFinishedUnits = {} -- key: teamID, value: unitID
 local allowTransfer = false
 local factoryExpectedUnits = {} -- key: factoryID, value: {unitDefID, groups: group set}
 local repeatFactoryGroups = {} -- key: factoryID, value: group set
-local objectives = {}	-- [index] = {id, title, description, color, unitsOrPositions = {}}	-- important: widget must be able to access on demand
-local unitsWithObjectives = {}
+local objectives = {}	-- [index] = {id, title, description, color, target}	-- important: widget must be able to access on demand
 local wantUpdateDisabledUnits = false
 
 _G.displayedCountdowns = displayedCountdowns
@@ -917,7 +916,7 @@ local actionsTable = {
           end
         end,
   AddObjectiveAction = function(action)
-          objectives[#objectives+1] = {id = action.args.id, title = action.args.title, description = action.args.description, status = "Incomplete", unitsOrPositions = {}}
+          objectives[#objectives+1] = {id = action.args.id, title = action.args.title, description = action.args.description, status = "Incomplete"}
           UnsyncedEventFunc(action)
         end,
   ModifyObjectiveAction = function(action)
@@ -935,32 +934,6 @@ local actionsTable = {
               end
               
               obj.status = action.args.status or obj.status
-              break
-            end
-          end
-          UnsyncedEventFunc(action)
-        end,
-  AddUnitsToObjectiveAction = function(action)
-          for i=1,#objectives do
-            local obj = objectives[i]
-            if obj.id == action.args.id then
-              local groupName = action.args.group
-              local units = FindUnitsInGroup(groupName)
-              for unitID in pairs(units) do
-                obj.unitsOrPositions[#obj.unitsOrPositions + 1] = unitID
-                unitsWithObjectives[unitID] = true
-              end
-              action.args.units = units
-              break
-            end
-          end
-          UnsyncedEventFunc(action)
-        end,
-  AddPointToObjectiveAction = function(action)
-          for i=1,#objectives do
-            local obj = objectives[i]
-            if obj.id == action.args.id then
-              obj.unitsOrPositions[#obj.unitsOrPositions + 1] = {action.args.x, action.args.y}
               break
             end
           end
@@ -1006,8 +979,6 @@ local unsyncedActions = {
   ClearConvoMessageQueueAction = true,
   AddObjectiveAction = true,
   ModifyObjectiveAction = true,
-  AddUnitsToObjectiveAction = true,
-  AddPointToObjectiveAction = true,
   SoundAction = true,
   MusicAction = true,
   MusicLoopAction = true,
@@ -1340,19 +1311,6 @@ function gadget:UnitDestroyed(unitID, unitDefID, unitTeam)
   unitGroups[unitID] = nil
   factoryExpectedUnits[unitID] = nil
   repeatFactoryGroups[unitID] = nil
-  
-  if unitsWithObjectives[unitID] then
-    for i=1, #objectives do
-      local obj = objectives[i]
-      for j=#obj.unitsOrPositions, 1, -1 do
-        unitOrPos = obj.unitsOrPositions[j]
-        if unitOrPos == unitID then
-          table.remove(obj.unitsOrPositions, j)
-        end
-      end
-    end
-    unitsWithObjectives[unitID] = nil
-  end
 end
 
 

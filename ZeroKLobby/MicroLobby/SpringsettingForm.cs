@@ -81,7 +81,7 @@ namespace ZeroKLobby.MicroLobby
                     return;
                 }
 
-                settingsOptions = new SpringSettings().GetEngineConfigOptions(Program.SpringPaths);
+                settingsOptions = new Spring(Program.SpringPaths).GetEngineConfigOptions();
 
                 var location = 0;
                 foreach (var kvp in settingsOptions) //ref: http://www.dotnetperls.com/dictionary, http://stackoverflow.com/questions/10556205/deserializing-a-json-with-variable-name-value-pairs-into-object-in-c-sharp

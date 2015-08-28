@@ -26,6 +26,7 @@ namespace Springie
 	    public bool UseHolePunching { get; set; }
 	    public bool GargamelMode { get { return gargamelMode; } set { gargamelMode = value; } }
 		public int HostingPortStart = 8452;
+        public ProcessPriorityClass HostingProcessPriority { get { return hostingProcessPriority; } set { hostingProcessPriority = value; } }
 		public string IpOverride;
         public int MaxInstances = 100;
 
