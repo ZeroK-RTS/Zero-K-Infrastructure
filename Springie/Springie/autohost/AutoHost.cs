@@ -234,7 +234,7 @@ namespace Springie.autohost
         }
 
 
-        public bool HasRights(string command, TasSayEventArgs e) {
+        public bool HasRights(string command, TasSayEventArgs e, bool hideRightsMessage = false) {
             foreach (CommandConfig c in Commands.Commands) {
                 if (c.Name == command) {
                     if (c.Throttling > 0) {
@@ -258,11 +258,14 @@ namespace Springie.autohost
                                 return true; // ALL OK
                             }
                             else {
-                                Respond(e,
-                                    String.Format("Sorry, you do not have rights to execute {0}{1}",
-                                        command,
-                                        (!string.IsNullOrEmpty(bossName) ? ", ask boss admin " + bossName : "")));
-                                    return false;
+                                if (!hideRightsMessage)
+                                {
+                                    Respond(e,
+                                        String.Format("Sorry, you do not have rights to execute {0}{1}",
+                                            command,
+                                            (!string.IsNullOrEmpty(bossName) ? ", ask boss admin " + bossName : "")));
+                                }
+                                return false;
                             }
                         }
                     }
@@ -324,6 +327,10 @@ namespace Springie.autohost
 
                 case "map":
                     ComMap(e, words);
+                    break;
+
+                case "mapremote":
+                    ComMapRemote(e, words);
                     break;
 
                 case "start":
@@ -997,12 +1004,12 @@ namespace Springie.autohost
                 // remove first word (command)
                 string[] words = ZkData.Utils.ShiftArray(allwords, -1);
 
-                
-                if (!HasRights(com, e)) {
-                    if (!com.StartsWith("vote")) {
-                        com = "vote" + com;
+                string voteCom = "vote" + com;
+                bool hasVoteVersion = !com.StartsWith("vote") && Commands.Commands.Any(x => x.Name == voteCom);
 
-                        if (!Commands.Commands.Any(x => x.Name == com) || !HasRights(com, e)) return;
+                if (!HasRights(com, e)) {
+                    if (hasVoteVersion) {
+                        if (!HasRights(voteCom, e)) return;
                     }
                     else return;
                 }
