@@ -223,7 +223,7 @@ namespace Springie.autohost
                                          new[]
                                          {
                                              SayPlace.User, SayPlace.Battle, SayPlace.Game,
-                                             SayPlace.Channel
+                                             //SayPlace.Channel // this does silly stuff with !notify in #zk
                                          })
                                          { AllowSpecs = true});
 
