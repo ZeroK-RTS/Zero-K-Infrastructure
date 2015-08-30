@@ -47,8 +47,17 @@ $(function() {
 <div class="wrapper">
   <div class="border-test width-50">
     <!info>
-    <h2>@m.Name</h2>
-    By @Html.PrintAccount(m.Account)
+    <table>
+        <tr>
+            <td>
+                <img width='96' height='96' border='1' src='@Href(string.Format("~/img/missions/{0}.png", Model.Mission.MissionID))' class='fleft' />
+            </td>
+            <td>
+                <h2>@m.Name</h2>
+                By @Html.PrintAccount(m.Account)
+            </td>
+        </tr>
+    </table>
     @if (m.MinHumans < 2) {
       <br />
         <br />
