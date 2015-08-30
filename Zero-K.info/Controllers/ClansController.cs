@@ -196,27 +196,27 @@ namespace ZeroKWeb.Controllers
                 orgClan.Description = clan.Description;
                 orgClan.SecretTopic = clan.SecretTopic;
                 orgClan.Password = clan.Password;
-                bool shortcutChanged = orgShortCut != orgClan.Shortcut;
+                bool shortcutChanged = orgShortCut != clan.Shortcut;
 
                 if (image != null && image.ContentLength > 0)
                 {
                     var im = Image.FromStream(image.InputStream);
                     if (im.Width != 64 || im.Height != 64) im = im.GetResized(64, 64, InterpolationMode.HighQualityBicubic);
-                    im.Save(Server.MapPath(orgClan.GetImageUrl()));
+                    im.Save(Server.MapPath(clan.GetImageUrl()));
                 }
                 else if (shortcutChanged)
                 {
-                    System.IO.File.Move(orgImageUrl, orgClan.GetImageUrl());
+                    System.IO.File.Move(orgImageUrl, clan.GetImageUrl());
                 }
 
                 if (bgimage != null && bgimage.ContentLength > 0)
                 {
                     var im = Image.FromStream(bgimage.InputStream);
-                    im.Save(Server.MapPath(orgClan.GetBGImageUrl()));
+                    im.Save(Server.MapPath(clan.GetBGImageUrl()));
                 }
                 else if (shortcutChanged)
                 {
-                    System.IO.File.Move(orgBGImageUrl, orgClan.GetBGImageUrl());
+                    System.IO.File.Move(orgBGImageUrl, clan.GetBGImageUrl());
                 }
 
                 if (clan.FactionID != orgClan.FactionID)   
