@@ -110,7 +110,8 @@ namespace ZeroKWeb.Controllers
         /// <param name="forumPostID">The <see cref="ForumPost"/> ID, if editing an existing post</param>
         /// <returns></returns>
         [Auth]
-		public ActionResult NewPost(int? categoryID, int? threadID, int? forumPostID)
+        [ValidateInput(false)]
+        public ActionResult NewPost(int? categoryID, int? threadID, int? forumPostID)
 		{
 			var res = new NewPostResult();
 			var db = new ZkDataContext();
