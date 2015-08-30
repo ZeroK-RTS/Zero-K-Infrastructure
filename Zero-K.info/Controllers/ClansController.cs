@@ -188,11 +188,15 @@ namespace ZeroKWeb.Controllers
                 }
 
                 orgClan = db.Clans.Single(x => x.ClanID == clan.ClanID);
+                string orgImageUrl = orgClan.GetImageUrl();
+                string orgBGImageUrl = orgClan.GetBGImageUrl();
+                string orgShortCut = clan.Shortcut;
                 orgClan.ClanName = clan.ClanName;
                 orgClan.Shortcut = clan.Shortcut;
                 orgClan.Description = clan.Description;
                 orgClan.SecretTopic = clan.SecretTopic;
                 orgClan.Password = clan.Password;
+                bool shortcutChanged = orgShortCut != orgClan.Shortcut;
 
                 if (image != null && image.ContentLength > 0)
                 {
@@ -200,10 +204,19 @@ namespace ZeroKWeb.Controllers
                     if (im.Width != 64 || im.Height != 64) im = im.GetResized(64, 64, InterpolationMode.HighQualityBicubic);
                     im.Save(Server.MapPath(orgClan.GetImageUrl()));
                 }
+                else if (shortcutChanged)
+                {
+                    System.IO.File.Move(orgImageUrl, orgClan.GetImageUrl());
+                }
+
                 if (bgimage != null && bgimage.ContentLength > 0)
                 {
                     var im = Image.FromStream(bgimage.InputStream);
                     im.Save(Server.MapPath(orgClan.GetBGImageUrl()));
+                }
+                else if (shortcutChanged)
+                {
+                    System.IO.File.Move(orgBGImageUrl, orgClan.GetBGImageUrl());
                 }
 
                 if (clan.FactionID != orgClan.FactionID)   
