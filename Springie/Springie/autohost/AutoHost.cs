@@ -861,10 +861,9 @@ namespace Springie.autohost
                 if (!string.IsNullOrEmpty(SpawnConfig.Handle)) tas.Say(SayPlace.User, SpawnConfig.Owner, SpawnConfig.Handle, true);
                     tas.Say(SayPlace.User, SpawnConfig.Owner, "I'm here! Ready to serve you! Join me!", true);
             }
-            else ServerVerifyMap(true);
-
-
-            
+            else if (DateTime.Now - lastMapChange < TimeSpan.FromSeconds(1))
+                ServerVerifyMap(true);
+                
         }
 
 
