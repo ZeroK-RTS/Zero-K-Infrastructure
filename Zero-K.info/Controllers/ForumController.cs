@@ -110,7 +110,6 @@ namespace ZeroKWeb.Controllers
         /// <param name="forumPostID">The <see cref="ForumPost"/> ID, if editing an existing post</param>
         /// <returns></returns>
         [Auth]
-        [ValidateInput(false)]
         public ActionResult NewPost(int? categoryID, int? threadID, int? forumPostID)
 		{
 			var res = new NewPostResult();
@@ -165,7 +164,8 @@ namespace ZeroKWeb.Controllers
         /// <param name="categoryID">The ID of the subforum the <see cref="ForumPost"/> is/will be in</param>
         /// <param name="forumPostID">The <see cref="ForumPost"/> ID, if editing an existing post</param>
 		[Auth]
-		public ActionResult SubmitPost(int? threadID, int? categoryID, int? resourceID, int? missionID, int? springBattleID, int? clanID, int? planetID, string text, string title, int? forumPostID)
+        [ValidateInput(false)]
+        public ActionResult SubmitPost(int? threadID, int? categoryID, int? resourceID, int? missionID, int? springBattleID, int? clanID, int? planetID, string text, string title, int? forumPostID)
 		{
             if (threadID == null && missionID == null && resourceID == null && springBattleID == null && clanID ==null && planetID == null && forumPostID==null && string.IsNullOrWhiteSpace(title)) return Content("Cannot post new thread with blank title");
 			if (string.IsNullOrWhiteSpace(text)) return Content("Please type some text :)");
