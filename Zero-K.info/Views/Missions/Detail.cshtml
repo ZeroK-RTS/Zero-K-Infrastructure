@@ -49,10 +49,10 @@ $(function() {
     <!info>
     <table>
         <tr>
-            <td>
+            <td class="forumPostText">
                 <img width='96' height='96' border='1' src='@Href(string.Format("~/img/missions/{0}.png", Model.Mission.MissionID))' class='fleft' />
             </td>
-            <td>
+            <td valign="top">
                 <h2>@m.Name</h2>
                 By @Html.PrintAccount(m.Account)
             </td>
