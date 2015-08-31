@@ -974,7 +974,7 @@ namespace Springie.autohost
         }
 
         void tas_MyStatusChangedToInGame(object sender, Battle battle) {
-            spring.HostGame(tas.MyBattle.GetContext(), battle.Ip, battle.HostPort);
+            spring.StartGame(tas, Program.main.Config.HostingProcessPriority, null, null, contextOverride:slaveContextOverride);
         }
 
         void tas_Said(object sender, TasSayEventArgs e) {

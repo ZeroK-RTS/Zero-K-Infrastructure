@@ -12,7 +12,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using PlasmaShared;
 using ZkData;
 using ZkData.UnitSyncLib;
 using Timer = System.Timers.Timer;
