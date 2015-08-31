@@ -17,7 +17,7 @@ namespace ZkData
 
         string GetModInfo(string missionNameWithVersion, string modName, string nameWithoutVersion, string shortName)
         {
-            const bool hideFromModList = false;
+            const bool hideFromModList = true;
             var sb = new StringBuilder();
             sb.AppendLine("local modinfo = {");
             sb.AppendFormat("  name          =	[[{0}]],\n", missionNameWithVersion);
