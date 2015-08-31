@@ -13,8 +13,8 @@
   @Html.TextBox("mod", "Zero-K")
   <br />
   Player Involved:
-  @*@Html.TextBox("user")*@
-  @Html.TextBox("user", Global.IsAccountAuthorized ? Global.Account.Name : "")
+  @Html.TextBox("user")
+  @*Html.TextBox("user", Global.IsAccountAuthorized ? Global.Account.Name : "")*@
   # of Players:
   @Html.TextBox("players")
   <br />
