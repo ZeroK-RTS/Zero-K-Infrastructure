@@ -190,7 +190,7 @@ namespace ZeroKWeb.Controllers
                 orgClan = db.Clans.Single(x => x.ClanID == clan.ClanID);
                 string orgImageUrl = Server.MapPath(orgClan.GetImageUrl());
                 string orgBGImageUrl = Server.MapPath(orgClan.GetBGImageUrl());
-                string orgShortcut = clan.Shortcut;
+                string orgShortcut = orgClan.Shortcut;
                 string newImageUrl = Server.MapPath(clan.GetImageUrl());
                 string newBGImageUrl = Server.MapPath(clan.GetBGImageUrl());
                 orgClan.ClanName = clan.ClanName;
@@ -211,8 +211,9 @@ namespace ZeroKWeb.Controllers
                     //if (System.IO.File.Exists(newImageUrl)) System.IO.File.Delete(newImageUrl);
                     //System.IO.File.Move(orgImageUrl, newImageUrl);
                     try {
-                        var im = Image.FromFile(orgImageUrl);
-                        im.Save(newImageUrl);
+                        //var im = Image.FromFile(orgImageUrl);
+                        //im.Save(newImageUrl);
+                        System.IO.File.Copy(orgImageUrl, newImageUrl, true);
                     } catch (System.IO.FileNotFoundException fnfex) // shouldn't happen but hey
                     {
                         return Content("A clan image is required");
@@ -230,8 +231,9 @@ namespace ZeroKWeb.Controllers
                     //System.IO.File.Move(orgBGImageUrl, newBGImageUrl);
                     try
                     {
-                        var im = Image.FromFile(orgBGImageUrl);
-                        im.Save(newBGImageUrl);
+                        //var im = Image.FromFile(orgBGImageUrl);
+                        //im.Save(newBGImageUrl);
+                        System.IO.File.Copy(orgBGImageUrl, newBGImageUrl, true);
                     }
                     catch (System.IO.FileNotFoundException fnfex)
                     {
