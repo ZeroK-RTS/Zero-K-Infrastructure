@@ -384,7 +384,7 @@ namespace ZeroKWeb
                 db = new ZkDataContext();
                 planet = db.CampaignPlanets.FirstOrDefault(p => p.MissionID == missionID);
 
-                throw new Exception("DEBUG: Campaign " + campID + ", planet " + planet.PlanetID);
+                //throw new Exception("DEBUG: Campaign " + campID + ", planet " + planet.PlanetID);
                 if (!alreadyCompleted)
                 {
                     db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "Planet completed: {0}", planet));
