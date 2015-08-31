@@ -188,35 +188,39 @@ namespace ZeroKWeb.Controllers
                 }
 
                 orgClan = db.Clans.Single(x => x.ClanID == clan.ClanID);
-                string orgImageUrl = orgClan.GetImageUrl();
-                string orgBGImageUrl = orgClan.GetBGImageUrl();
-                string orgShortCut = clan.Shortcut;
+                string orgImageUrl = Server.MapPath(orgClan.GetImageUrl());
+                string orgBGImageUrl = Server.MapPath(orgClan.GetBGImageUrl());
+                string orgShortcut = clan.Shortcut;
+                string newImageUrl = Server.MapPath(clan.GetImageUrl());
+                string newBGImageUrl = Server.MapPath(clan.GetBGImageUrl());
                 orgClan.ClanName = clan.ClanName;
                 orgClan.Shortcut = clan.Shortcut;
                 orgClan.Description = clan.Description;
                 orgClan.SecretTopic = clan.SecretTopic;
                 orgClan.Password = clan.Password;
-                bool shortcutChanged = orgShortCut != clan.Shortcut;
+                bool shortcutChanged = orgShortcut != clan.Shortcut;
 
                 if (image != null && image.ContentLength > 0)
                 {
                     var im = Image.FromStream(image.InputStream);
                     if (im.Width != 64 || im.Height != 64) im = im.GetResized(64, 64, InterpolationMode.HighQualityBicubic);
-                    im.Save(Server.MapPath(clan.GetImageUrl()));
+                    im.Save(newImageUrl);
                 }
                 else if (shortcutChanged)
                 {
-                    System.IO.File.Move(orgImageUrl, clan.GetImageUrl());
+                    if (System.IO.File.Exists(newImageUrl)) System.IO.File.Delete(newImageUrl);
+                    System.IO.File.Move(orgImageUrl, newImageUrl);
                 }
 
                 if (bgimage != null && bgimage.ContentLength > 0)
                 {
                     var im = Image.FromStream(bgimage.InputStream);
-                    im.Save(Server.MapPath(clan.GetBGImageUrl()));
+                    im.Save(newBGImageUrl);
                 }
                 else if (shortcutChanged)
                 {
-                    System.IO.File.Move(orgBGImageUrl, clan.GetBGImageUrl());
+                    if (System.IO.File.Exists(newBGImageUrl)) System.IO.File.Delete(newBGImageUrl);
+                    System.IO.File.Move(orgBGImageUrl, newBGImageUrl);
                 }
 
                 if (clan.FactionID != orgClan.FactionID)   
