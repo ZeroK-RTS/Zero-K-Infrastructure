@@ -208,8 +208,15 @@ namespace ZeroKWeb.Controllers
                 }
                 else if (shortcutChanged)
                 {
-                    if (System.IO.File.Exists(newImageUrl)) System.IO.File.Delete(newImageUrl);
-                    System.IO.File.Move(orgImageUrl, newImageUrl);
+                    //if (System.IO.File.Exists(newImageUrl)) System.IO.File.Delete(newImageUrl);
+                    //System.IO.File.Move(orgImageUrl, newImageUrl);
+                    try {
+                        var im = Image.FromFile(orgImageUrl);
+                        im.Save(newImageUrl);
+                    } catch (System.IO.FileNotFoundException fnfex) // shouldn't happen but hey
+                    {
+                        return Content("A clan image is required");
+                    }
                 }
 
                 if (bgimage != null && bgimage.ContentLength > 0)
@@ -219,8 +226,17 @@ namespace ZeroKWeb.Controllers
                 }
                 else if (shortcutChanged)
                 {
-                    if (System.IO.File.Exists(newBGImageUrl)) System.IO.File.Delete(newBGImageUrl);
-                    System.IO.File.Move(orgBGImageUrl, newBGImageUrl);
+                    //if (System.IO.File.Exists(newBGImageUrl)) System.IO.File.Delete(newBGImageUrl);
+                    //System.IO.File.Move(orgBGImageUrl, newBGImageUrl);
+                    try
+                    {
+                        var im = Image.FromFile(orgBGImageUrl);
+                        im.Save(newBGImageUrl);
+                    }
+                    catch (System.IO.FileNotFoundException fnfex)
+                    {
+                        // there wasn't an original background image, do nothing
+                    }
                 }
 
                 if (clan.FactionID != orgClan.FactionID)   
