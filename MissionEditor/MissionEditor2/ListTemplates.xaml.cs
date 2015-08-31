@@ -128,49 +128,66 @@ namespace MissionEditor2
 		void MarkerPointCanvas_Loaded(object sender, RoutedEventArgs e)
 		{
 			var currentLogic = MainWindow.Instance.CurrentLogic;
-			if (currentLogic is MarkerPointAction)
-			{
-				var flagPole = new Ellipse { Height = 20, Width = 20, Stroke = Brushes.Red, StrokeThickness = 5 };
-				var action = (MarkerPointAction) currentLogic;
-				var markerCanvas = (Canvas) e.Source;
-				markerCanvas.Children.Add(flagPole);
-				foreach (var unit in MainWindow.Instance.Mission.AllUnits) UnitIcon.PlaceSimplifiedUnit(markerCanvas, unit);
-				Action refreshPosition = delegate
-					{
-						Canvas.SetLeft(flagPole, action.X - flagPole.Width/2);
-						Canvas.SetTop(flagPole, action.Y - flagPole.Height/2);
-					};
-				refreshPosition();
-				markerCanvas.MouseDown += (s, ea) =>
-					{
-						var mousePos = ea.GetPosition(markerCanvas);
-						action.X = mousePos.X;
-						action.Y = mousePos.Y;
-						refreshPosition();
-					};
-				markerCanvas.Unloaded += (s, ea) => markerCanvas.Children.Clear();
-			}
-			else if (currentLogic is SetCameraPointTargetAction)
-			{
-				var camera = new Ellipse { Height = 20, Width = 20, Stroke = Brushes.Red, StrokeThickness = 5 };
-				var action = (SetCameraPointTargetAction) currentLogic;
-				var markerCanvas = (Canvas) e.Source;
-				markerCanvas.Children.Add(camera);
-				foreach (var unit in MainWindow.Instance.Mission.AllUnits) UnitIcon.PlaceSimplifiedUnit(markerCanvas, unit);
-				Action refreshPosition = delegate
-					{
-						Canvas.SetLeft(camera, action.X - camera.Width/2);
-						Canvas.SetTop(camera, action.Y - camera.Height/2);
-					};
-				refreshPosition();
-				markerCanvas.MouseDown += (s, ea) =>
-					{
-						var mousePos = ea.GetPosition(markerCanvas);
-						action.X = mousePos.X;
-						action.Y = mousePos.Y;
-						refreshPosition();
-					};
-			}
+			var flagPole = new Ellipse { Height = 20, Width = 20, Stroke = Brushes.Red, StrokeThickness = 5 };
+
+			var markerCanvas = (Canvas) e.Source;
+			markerCanvas.Children.Add(flagPole);
+			foreach (var unit in MainWindow.Instance.Mission.AllUnits) UnitIcon.PlaceSimplifiedUnit(markerCanvas, unit);
+
+            if (currentLogic is MarkerPointAction)
+            {
+                var action = (MarkerPointAction)currentLogic;
+                Action refreshPosition = delegate
+                    {
+                        Canvas.SetLeft(flagPole, action.X - flagPole.Width / 2);
+                        Canvas.SetTop(flagPole, action.Y - flagPole.Height / 2);
+                    };
+                refreshPosition();
+                markerCanvas.MouseDown += (s, ea) =>
+                    {
+                        var mousePos = ea.GetPosition(markerCanvas);
+                        action.X = mousePos.X;
+                        action.Y = mousePos.Y;
+                        refreshPosition();
+                    };
+            }
+            else if (currentLogic is SetCameraPointTargetAction)
+            {
+                var action = (SetCameraPointTargetAction)currentLogic;
+                Action refreshPosition = delegate
+                {
+                    Canvas.SetLeft(flagPole, action.X - flagPole.Width / 2);
+                    Canvas.SetTop(flagPole, action.Y - flagPole.Height / 2);
+                };
+                refreshPosition();
+                markerCanvas.MouseDown += (s, ea) =>
+                {
+                    var mousePos = ea.GetPosition(markerCanvas);
+                    action.X = mousePos.X;
+                    action.Y = mousePos.Y;
+                    refreshPosition();
+                };
+            }
+            else if (currentLogic is AddPointToObjectiveAction)
+            {
+                var action = (AddPointToObjectiveAction)currentLogic;
+                Action refreshPosition = delegate
+                {
+                    Canvas.SetLeft(flagPole, action.X - flagPole.Width / 2);
+                    Canvas.SetTop(flagPole, action.Y - flagPole.Height / 2);
+                };
+                refreshPosition();
+                markerCanvas.MouseDown += (s, ea) =>
+                {
+                    var mousePos = ea.GetPosition(markerCanvas);
+                    action.X = mousePos.X;
+                    action.Y = mousePos.Y;
+                    refreshPosition();
+                };
+            }
+
+			markerCanvas.Unloaded += (s, ea) => markerCanvas.Children.Clear();
+			
 		}
 
 
