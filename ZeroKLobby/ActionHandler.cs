@@ -375,7 +375,7 @@ namespace ZeroKLobby
             }
         }
 
-        /*public static void JoinBattleSpec(int battleId)
+        public static void JoinBattleSpec(int battleId)
         {
             Battle bat;
             if (!Program.TasClient.ExistingBattles.TryGetValue(battleId, out bat)) return;
@@ -407,8 +407,11 @@ namespace ZeroKLobby
                 var spring = new Spring(Program.SpringPaths);
                 
                 Thread.Sleep(200);// give host time to adduser
-                spring.HostGame(Program.TasClient, null, null, null, Program.Conf.UseSafeMode, battleOverride: bat);
+                spring.StartGame(Program.TasClient, null, null, null, Program.Conf.UseSafeMode, battleOverride: bat);
             });
-        }*/
+           
+
+
+        }
     }
 }
