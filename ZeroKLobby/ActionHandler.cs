@@ -295,8 +295,12 @@ namespace ZeroKLobby
                                         Program.TasClient.Say(SayPlace.User, myHostName, command, false);
                                     }
                                 }
-                                HidePM("!map");
-                                Program.TasClient.Say(SayPlace.User, myHostName, "!map", false);
+                                // random map if we aren't picking a random one
+                                if (springieCommands == null || !springieCommands.Any(x => x.StartsWith("!map")))
+                                {
+                                    HidePM("!map");
+                                    Program.TasClient.Say(SayPlace.User, myHostName, "!map", false);
+                                }
                                 Program.TasClient.BattleJoined -= battleJoined;
                             }
                         };
