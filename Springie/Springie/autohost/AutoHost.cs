@@ -236,6 +236,7 @@ namespace Springie.autohost
 
         public bool HasRights(string command, TasSayEventArgs e) {
             foreach (CommandConfig c in Commands.Commands) {
+                if (!c.ListenTo.Contains(e.Place)) continue;
                 if (c.Name == command) {
                     if (c.Throttling > 0) {
                         var diff = (int)DateTime.Now.Subtract(c.lastCall).TotalSeconds;
