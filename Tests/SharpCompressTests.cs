@@ -18,7 +18,7 @@ namespace Tests
         public void TestModifyZip() {
 
             var zf = ZipArchive.Open(new MemoryStream(File.ReadAllBytes(@"c:\temp\bench.zip")));
-            var entry = zf.Entries.First(x => x.FilePath == "poznamka.txt");
+            var entry = zf.Entries.First(x => x.Key == "poznamka.txt");
             var stream = entry.OpenEntryStream();
             var text = new StreamReader(stream).ReadToEnd();
             text = text + " haf haf";
