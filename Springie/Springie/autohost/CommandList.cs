@@ -36,6 +36,7 @@ namespace Springie.autohost
 
             AddMissing(new CommandConfig("listmods", 1, "[<filters>..] - lists games on server, e.g. !listmods absolute 2.23", 5));
             AddMissing(new CommandConfig("map", 3, "[<filters>..] - changes server map, eg. !map altor div"));
+            AddMissing(new CommandConfig("mapremote", 0, "[<filters>..] - changes server map, eg. !map altor div"));    // see https://github.com/ZeroK-RTS/Zero-K-Infrastructure/issues/756
 
             AddMissing(new CommandConfig("forcestart", 3, " - starts game forcibly (ignoring warnings)", 5));
 
