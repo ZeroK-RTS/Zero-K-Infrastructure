@@ -234,6 +234,22 @@ namespace ZeroKLobby
                     }
                 }
 
+                // write license files
+                try {
+                    var path = Program.SpringPaths.WritableDirectory;
+                    var pathGPL = Utils.MakePath(path, "license_GPLv3");
+                    string gpl = Encoding.UTF8.GetString(License.GPLv3);
+                    if (!File.Exists(pathGPL))
+                        File.WriteAllText(pathGPL, gpl);
+                    var pathMIT = Utils.MakePath(path, "license_MIT");
+                    string mit = Encoding.UTF8.GetString(License.MITlicense);
+                    if (!File.Exists(pathMIT))
+                        File.WriteAllText(pathMIT, mit);
+                } catch (Exception ex)
+                {
+                    Trace.TraceError(ex.ToString());
+                }
+
                 try
                 {
                     if (!Debugger.IsAttached)
@@ -384,8 +400,6 @@ namespace ZeroKLobby
                 // Format and display the TimeSpan value.
                 //stopWatch.Stop(); TimeSpan ts = stopWatch.Elapsed; string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
                 //Trace.TraceInformation("1 Runtime {0}", elapsedTime);
-
-
 
 
                 Application.Run(MainWindow);
