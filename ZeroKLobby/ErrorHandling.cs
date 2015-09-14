@@ -41,8 +41,13 @@ namespace ZeroKLobby
                         }
                         */
                         string newPath = Utils.MakePath(Program.StartupPath, Path.GetFileNameWithoutExtension(Config.LogFile) + "_backup" + Path.GetExtension(Config.LogFile));
-                        File.Copy(logPath, newPath, true);
-                        File.Delete(logPath);
+                        try {
+                            File.Copy(logPath, newPath, true);
+                            File.Delete(logPath);
+                        } catch (Exception ex)
+                        {
+                            Trace.TraceError("Error backing up debug file: " + ex.ToString());
+                        }
                     }
                 }
                 using (var s = File.AppendText(logPath))
