@@ -79,7 +79,14 @@
     <Compile Include="EmbeddedResourceExtractor.cs" />
     <Compile Include="EventArgs.cs" />
     <Compile Include="EventExtensions.cs" />
-    <Compile Include="ForumParser\BTag.cs" />
+    <Compile Include="ForumParser\Tags\BTag.cs" />
+    <Compile Include="ForumParser\Tags\ITag.cs" />
+    <Compile Include="ForumParser\Tags\LiteralTag.cs" />
+    <Compile Include="ForumParser\Tags\Abstract\OpeningTag.cs" />
+    <Compile Include="ForumParser\Parser.cs" />
+    <Compile Include="ForumParser\Tags\QuoteTag.cs" />
+    <Compile Include="ForumParser\Tags\Abstract\ScanningTag.cs" />
+    <Compile Include="ForumParser\Tags\Abstract\Tag.cs" />
     <Compile Include="GlobalConst.cs" />
     <Compile Include="Hash.cs" />
     <Compile Include="IContentService\AccountInfo.cs" />

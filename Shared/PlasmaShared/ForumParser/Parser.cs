@@ -1,15 +1,32 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Web.Services.Description;
 
 namespace PlasmaShared.ForumParser
 {
     public class Parser
     {
-        public string Parse(string input) {
-            var candidates = new List<Tag> { new BTagClose(), new BTagOpen() };
+        public List<Tag> InitCandidates() {
+            var ret = new List<Tag>();
+            foreach (var t in Assembly.GetExecutingAssembly().GetTypes())
+            {
+                if (typeof(Tag).IsAssignableFrom(t) && t != typeof(LiteralTag) && !t.IsAbstract && !typeof(TerminalTag).IsAssignableFrom(t))
+                {
+                    var tag = (Tag)t.GetConstructor(new Type[] { }).Invoke(null);
+                    ret.Add(tag);
+                }
+            }
+            return ret;
+        }
 
+        public string Parse(string input) {
+            var candidates = InitCandidates();
+            
             var tags = new LinkedList<Tag>();
+            var terminals = new List<TerminalTag>() { new NewLineTag(), new SpaceTag(), new LiteralTag() }; // order matters
 
             var pos = 0;
             var scanStart = 0;
@@ -29,21 +46,30 @@ namespace PlasmaShared.ForumParser
                     } else if (ret == false) candidates.Remove(c);
                 }
 
-                if (candidates.Count == 0)
+                if (candidates.Count == 0) // we are not matching any tags
                 {
                     if (pos - scanStart >= 0)
                     {
-                        var rootLit = tags.Last?.Value as LiteralTag;
-                        if (rootLit != null) rootLit.Append(input.Substring(scanStart, pos - scanStart + 1));
-                        else
+                        for (int i = scanStart; i <= pos; i++)
                         {
-                            var lit = new LiteralTag(input.Substring(scanStart, pos - scanStart + 1));
-                            tags.AddLast(lit);
+                            var scanChar = input[i];
+                            var term = terminals.First(x => x.ScanLetter(scanChar) == true);
+                            var lastTerm = tags.Last?.Value as TerminalTag;
+
+                            if (lastTerm?.GetType() == term.GetType())
+                            {
+                                lastTerm.Append(scanChar);
+                            } else
+                            {
+                                term = term.Create(); // create fresh instance
+                                term.Append(scanChar);
+                                tags.AddLast(term);
+                            }
+
                         }
                     }
                     scanStart = pos + 1;
-                    candidates.Add(new BTagOpen());
-                    candidates.Add(new BTagClose());
+                    candidates = InitCandidates();
                 }
                 pos++;
             }

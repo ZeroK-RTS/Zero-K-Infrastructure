@@ -268,11 +268,7 @@ namespace Fixer
 
         [STAThread]
         static void Main(string[] args) {
-            var ret = new Parser().Parse("bla bla[b]asdas[/b]asda[b]asd[/b]s");
-            var ret2 = new Parser().Parse("[b]bla bla[b]asdas[/b]as[/b]da[b]asd[/b]s");
-
-            var ret3 = new Parser().Parse("[b]bla blaasdas[/b]as[/b]da[b]asd[/b]s");
-
+            var ret = new Parser().Parse("[b][i][[b]room[[/i][/i][/i][/b]");
             return;
 
 
