@@ -21,9 +21,9 @@ using System.Xml.Serialization;
 using LobbyClient;
 using Microsoft.Linq.Translations;
 using PlasmaShared;
-using PlasmaShared.ForumParser;
 using ZkData.UnitSyncLib;
 using ZeroKWeb;
+using ZeroKWeb.ForumParser;
 using ZkData;
 using Encoder = System.Drawing.Imaging.Encoder;
 
@@ -268,7 +268,7 @@ namespace Fixer
 
         [STAThread]
         static void Main(string[] args) {
-            var ret = new ForumWikiParser().ProcessToHtml("[b][i]room[/i][/b][b]bla[/b]");
+            var ret = new ForumWikiParser().ProcessToHtml("[b][i]room[/i][/b][b]bla[/b]", null);
             return;
 
 

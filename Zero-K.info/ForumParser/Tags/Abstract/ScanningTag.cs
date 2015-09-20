@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PlasmaShared.ForumParser
+namespace ZeroKWeb.ForumParser
 {
     public abstract class ScanningTag: Tag
     {

@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
+using System.Web.Mvc;
 
-namespace PlasmaShared.ForumParser
+namespace ZeroKWeb.ForumParser
 {
     public abstract class TerminalTag: Tag
     {
@@ -20,7 +20,7 @@ namespace PlasmaShared.ForumParser
             return letter == ' ' || letter == '\t';
         }
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self) {
+        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
             sb.Append(Content);
             return self.Next;
         }
@@ -36,7 +36,7 @@ namespace PlasmaShared.ForumParser
             return letter == '\n';
         }
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self) {
+        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
             sb.Append("<br/>");
             return self.Next;
         }
@@ -54,7 +54,7 @@ namespace PlasmaShared.ForumParser
             return true;
         }
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self) {
+        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
             sb.Append(Content); // todo sanitize
             return self.Next;
         }

@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
 
-namespace PlasmaShared.ForumParser
+namespace ZeroKWeb.ForumParser
 {
     public abstract class OpeningTag: ScanningTag
     {

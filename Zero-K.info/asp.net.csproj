@@ -31,6 +31,7 @@
     <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
     <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
@@ -135,6 +136,16 @@
     <Compile Include="Controllers\ReplaysController.cs" />
     <Compile Include="Controllers\UnitStatsController.cs" />
     <Compile Include="AppCode\MarkdownHelper.cs" />
+    <Compile Include="ForumParser\ForumWikiParser.cs" />
+    <Compile Include="ForumParser\Tags\Abstract\OpeningTag.cs" />
+    <Compile Include="ForumParser\Tags\Abstract\ScanningTag.cs" />
+    <Compile Include="ForumParser\Tags\Abstract\Tag.cs" />
+    <Compile Include="ForumParser\Tags\BTag.cs" />
+    <Compile Include="ForumParser\Tags\ITag.cs" />
+    <Compile Include="ForumParser\Tags\QuoteTag.cs" />
+    <Compile Include="ForumParser\Tags\STag.cs" />
+    <Compile Include="ForumParser\Tags\TerminalTags.cs" />
+    <Compile Include="ForumParser\Tags\UTag.cs" />
     <Compile Include="Helpers\MarkdownHelper.cs" />
     <Compile Include="SpringieInterface\Balancer.cs" />
     <Compile Include="AppCode\Global.cs" />

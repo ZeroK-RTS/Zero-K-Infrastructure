@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
+using System.Web.Mvc;
 
-namespace PlasmaShared.ForumParser
+namespace ZeroKWeb.ForumParser
 {
     /// <summary>
     /// [q]some text[/q] - quoting someone
@@ -14,7 +12,7 @@ namespace PlasmaShared.ForumParser
         public override string Match { get; } = "[q]";
 
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self) {
+        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
             sb.Append(
                 "<table border=\"0\" cellpadding=\"6\" cellspacing=\"0\" width=\"100%\"><tbody><tr><td style=\"border: 1px inset;\"><em>quote:<br/>");
             return self.Next;
@@ -32,7 +30,7 @@ namespace PlasmaShared.ForumParser
     {
         public override string Match { get; } = "[/q]";
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self)
+        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html)
         {
             sb.Append("</em></td></tr></tbody></table>");
             return self.Next;

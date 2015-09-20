@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Web.Mvc;
 
-namespace PlasmaShared.ForumParser
+namespace ZeroKWeb.ForumParser
 {
     public class ForumWikiParser
     {
@@ -31,9 +32,9 @@ namespace PlasmaShared.ForumParser
             return nonterminalTags.Select(x => x.Create()).ToList();
         }
 
-        public string ProcessToHtml(string input) {
+        public string ProcessToHtml(string input, HtmlHelper html) {
             var tags = ParseToTags(input);
-            return RenderTags(tags);
+            return RenderTags(tags, html);
         }
 
         /// <summary>
@@ -81,13 +82,13 @@ namespace PlasmaShared.ForumParser
         /// </summary>
         /// <param name="tags"></param>
         /// <returns></returns>
-        static string RenderTags(LinkedList<Tag> tags) {
+        static string RenderTags(LinkedList<Tag> tags, HtmlHelper html) {
             var sb = new StringBuilder();
 
             tags = EliminateUnclosedTags(tags);
 
             var node = tags.First;
-            while (node != null) node = node.Value.Translate(sb, node);
+            while (node != null) node = node.Value.Translate(sb, node, html);
             return sb.ToString();
         }
 

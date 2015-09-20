@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
+using System.Web.Mvc;
 
-namespace PlasmaShared.ForumParser
+namespace ZeroKWeb.ForumParser
 {
     public class STagOpen : OpeningTag<STagClose>
     {
         public override string Match { get; } = "[s]";
 
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self)
+        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html)
         {
             sb.Append("<strike>");
             return self.Next;
@@ -27,7 +25,7 @@ namespace PlasmaShared.ForumParser
     {
         public override string Match { get; } = "[/s]";
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self)
+        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html)
         {
             sb.Append("</strike>");
             return self.Next;
