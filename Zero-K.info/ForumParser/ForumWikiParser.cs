@@ -29,7 +29,18 @@ namespace ZeroKWeb.ForumParser
         }
 
         List<Tag> InitNonTerminals() {
+#if DEBUG
+            var ret = new List<Tag>(nonterminalTags.Count);
+            foreach (var nt in nonterminalTags)
+            {
+                var created = nt.Create();
+                if (created.GetType() != nt.GetType()) throw new ApplicationException("Each parser tag must create its own clone");
+                ret.Add(created);
+            }
+            return ret;
+#else
             return nonterminalTags.Select(x => x.Create()).ToList();
+#endif
         }
 
         public string ProcessToHtml(string input, HtmlHelper html) {
@@ -111,8 +122,8 @@ namespace ZeroKWeb.ForumParser
                     var closedPair = openClosePairs.FirstOrDefault(y => y.Item2 == type);
                     if (closedPair != null)
                     {
-                        var peek = openedTagsStack.Peek();
-                        if (peek == null || peek.GetType() != closedPair.Item1) toDel.Add(tag);
+                        Tag peek;                       
+                        if (openedTagsStack.Count == 0 || ((peek = openedTagsStack.Peek()) == null) || peek.GetType() != closedPair.Item1) toDel.Add(tag);
                         else openedTagsStack.Pop();
                     }
                 }

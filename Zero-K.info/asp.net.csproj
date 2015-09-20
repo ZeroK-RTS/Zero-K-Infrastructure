@@ -140,6 +140,7 @@
     <Compile Include="ForumParser\Tags\Abstract\OpeningTag.cs" />
     <Compile Include="ForumParser\Tags\Abstract\ScanningTag.cs" />
     <Compile Include="ForumParser\Tags\Abstract\Tag.cs" />
+    <Compile Include="ForumParser\Tags\AtSignTag.cs" />
     <Compile Include="ForumParser\Tags\BTag.cs" />
     <Compile Include="ForumParser\Tags\ITag.cs" />
     <Compile Include="ForumParser\Tags\QuoteTag.cs" />

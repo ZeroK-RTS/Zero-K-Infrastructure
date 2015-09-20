@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using System.Web;
 using System.Web.Mvc;
 
 namespace ZeroKWeb.ForumParser
 {
     public abstract class TerminalTag: Tag
     {
-        protected StringBuilder Content = new StringBuilder();
+        public StringBuilder Content = new StringBuilder();
 
         public virtual void Append(char part)
         {
@@ -55,7 +56,7 @@ namespace ZeroKWeb.ForumParser
         }
 
         public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.Append(Content); // todo sanitize
+            sb.Append(HttpUtility.HtmlEncode(Content));
             return self.Next;
         }
 

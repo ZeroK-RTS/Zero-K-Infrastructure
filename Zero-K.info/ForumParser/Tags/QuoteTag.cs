@@ -45,16 +45,27 @@ namespace ZeroKWeb.ForumParser
     /// <summary>
     /// [quote] alias for [q] tag
     /// </summary>
-    public class QuoteTagOpen : QTagOpen
+    public class QuoteTagOpen:OpeningTag<QuoteTagClose>
     {
         public override string Match { get; } = "[quote]";
+        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
+            return new QTagOpen().Translate(sb, self, html);
+        }
+
+        public override Tag Create() => new QuoteTagOpen();
     }
 
     /// <summary>
     /// [/quote] alias for [/q] tag
     /// </summary>
-    public class QuoteTagClose : QTagClose
+    public class QuoteTagClose : ScanningTag
     {
         public override string Match { get; } = "[/quote]";
+
+        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
+            return new QTagClose().Translate(sb, self, html);
+        }
+
+        public override Tag Create() => new QuoteTagClose();
     }
 }

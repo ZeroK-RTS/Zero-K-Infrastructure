@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Web.Mvc.Html;
 using System.Web.WebPages;
 using ZeroKWeb;
+using ZeroKWeb.ForumParser;
 using ZkData;
 
 namespace System.Web.Mvc
@@ -44,6 +45,7 @@ namespace System.Web.Mvc
         // todo all calls must provide helper!
         public static MvcHtmlString BBCode(this HtmlHelper helper, string str) {
             if (str == null) return null;
+            return new MvcHtmlString(new ForumWikiParser().ProcessToHtml(str, helper));
 
             str = HttpUtility.HtmlEncode(str);
             str = ProcessAtSignTags(str);
