@@ -83,7 +83,7 @@
     <Compile Include="ForumParser\Tags\ITag.cs" />
     <Compile Include="ForumParser\Tags\LiteralTag.cs" />
     <Compile Include="ForumParser\Tags\Abstract\OpeningTag.cs" />
-    <Compile Include="ForumParser\Parser.cs" />
+    <Compile Include="ForumParser\ForumWikiParser.cs" />
     <Compile Include="ForumParser\Tags\QuoteTag.cs" />
     <Compile Include="ForumParser\Tags\Abstract\ScanningTag.cs" />
     <Compile Include="ForumParser\Tags\Abstract\Tag.cs" />

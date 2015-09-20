@@ -268,7 +268,7 @@ namespace Fixer
 
         [STAThread]
         static void Main(string[] args) {
-            var ret = new Parser().Parse("[b][i][[b]room[[/i][/i][/i][/b]");
+            var ret = new ForumWikiParser().ProcessToHtml("[b][i]room[/i][/b][b]bla[/b]");
             return;
 
 
