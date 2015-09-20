@@ -80,8 +80,10 @@
     <Compile Include="EventArgs.cs" />
     <Compile Include="EventExtensions.cs" />
     <Compile Include="ForumParser\Tags\BTag.cs" />
+    <Compile Include="ForumParser\Tags\STag.cs" />
+    <Compile Include="ForumParser\Tags\UTag.cs" />
     <Compile Include="ForumParser\Tags\ITag.cs" />
-    <Compile Include="ForumParser\Tags\LiteralTag.cs" />
+    <Compile Include="ForumParser\Tags\TerminalTags.cs" />
     <Compile Include="ForumParser\Tags\Abstract\OpeningTag.cs" />
     <Compile Include="ForumParser\ForumWikiParser.cs" />
     <Compile Include="ForumParser\Tags\QuoteTag.cs" />
