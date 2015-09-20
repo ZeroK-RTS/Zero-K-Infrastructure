@@ -6,7 +6,7 @@ namespace ZeroKWeb.ForumParser
     {
         public abstract string Match { get; }
 
-        int pos = 0;
+        protected int pos = 0;
 
         public override bool? ScanLetter(char letter)
         {

@@ -146,6 +146,7 @@
     <Compile Include="ForumParser\Tags\QuoteTag.cs" />
     <Compile Include="ForumParser\Tags\STag.cs" />
     <Compile Include="ForumParser\Tags\TerminalTags.cs" />
+    <Compile Include="ForumParser\Tags\UrlTag.cs" />
     <Compile Include="ForumParser\Tags\UTag.cs" />
     <Compile Include="Helpers\MarkdownHelper.cs" />
     <Compile Include="SpringieInterface\Balancer.cs" />

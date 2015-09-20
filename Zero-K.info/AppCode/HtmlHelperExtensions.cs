@@ -48,40 +48,10 @@ namespace System.Web.Mvc
             return new MvcHtmlString(new ForumWikiParser().ProcessToHtml(str, helper));
 
             str = HttpUtility.HtmlEncode(str);
-            str = ProcessAtSignTags(str);
 
             Regex exp;
-            // format the bold tags: [b][/b]
-            // becomes: <strong></strong>
-            exp = new Regex(@"\[b\]((.|\n)+?)\[/b\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<strong>$1</strong>");
 
-            // format the quote tags: [quote][/quote] and [q][/q]
-            // becomes: stuff
-            exp = new Regex(@"\[(quote|q)\]((.|\n)+?)\[/(quote|q)\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str,
-            	"<table border=\"0\" cellpadding=\"6\" cellspacing=\"0\" width=\"100%\">"+
-            	"<tbody><tr><td style=\"border: 1px inset;\">"+
-            	"<em>quote:<br/>$2</em>"+
-            	"</td></tr></tbody>"+
-            	"</table>");
-            
-            // format the italic tags: [i][/i]
-            // becomes: <em></em>
-            exp = new Regex(@"\[i\]((.|\n)+?)\[/i\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<em>$1</em>");
-
-            // format the underline tags: [u][/u]
-            // becomes: <u></u>
-            exp = new Regex(@"\[u\]((.|\n)+?)\[/u\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<u>$1</u>");
-
-            // format the strike tags: [s][/s]
-            // becomes: <strike></strike>
-            exp = new Regex(@"\[s\]((.|\n)+?)\[/s\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<strike>$1</strike>");
-
-                        // format the url tags: [url=www.website.com]my site[/url]
+            // format the url tags: [url=www.website.com]my site[/url]
             // becomes: <a href="www.website.com">my site</a>
             exp = new Regex(@"\[url\=([^\]]+)\]([^\]]+)\[/url\]", RegexOptions.IgnoreCase);
             str = exp.Replace(str, "<a href=\"$1\" target=\"_blank\">$2</a>");

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web.Mvc;
 
 namespace ZeroKWeb.ForumParser
@@ -49,7 +50,7 @@ namespace ZeroKWeb.ForumParser
         }
 
         /// <summary>
-        /// Parses input string to tag list
+        ///     Parses input string to tag list
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -89,7 +90,7 @@ namespace ZeroKWeb.ForumParser
         }
 
         /// <summary>
-        /// Renders final tags to html string builder
+        ///     Renders final tags to html string builder
         /// </summary>
         /// <param name="tags"></param>
         /// <returns></returns>
@@ -105,7 +106,7 @@ namespace ZeroKWeb.ForumParser
 
 
         /// <summary>
-        /// Elimintes unclosed tags or unopened tags like [b] without closing [/b]
+        ///     Elimintes unclosed tags or unopened tags like [b] without closing [/b]
         /// </summary>
         /// <param name="input">parsed tags</param>
         /// <returns></returns>
@@ -122,7 +123,7 @@ namespace ZeroKWeb.ForumParser
                     var closedPair = openClosePairs.FirstOrDefault(y => y.Item2 == type);
                     if (closedPair != null)
                     {
-                        Tag peek;                       
+                        Tag peek;
                         if (openedTagsStack.Count == 0 || ((peek = openedTagsStack.Peek()) == null) || peek.GetType() != closedPair.Item1) toDel.Add(tag);
                         else openedTagsStack.Pop();
                     }
@@ -136,7 +137,7 @@ namespace ZeroKWeb.ForumParser
         }
 
         /// <summary>
-        /// Parses terminal symbols - like string constants
+        ///     Parses terminal symbols - like string constants
         /// </summary>
         /// <param name="input">string to be prcessed</param>
         /// <param name="scanStart">start position</param>
@@ -157,6 +158,10 @@ namespace ZeroKWeb.ForumParser
                     tags.AddLast(term);
                 }
             }
+        }
+
+        public static bool IsValidLink(string content) {
+            return Regex.IsMatch(content, @"(mailto|spring|http|https|ftp|ftps|zk)\://.+", RegexOptions.IgnoreCase);
         }
     }
 }
