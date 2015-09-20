@@ -42,29 +42,9 @@ namespace System.Web.Mvc
         /// <summary>
         /// Uses regexes to turn a string into BBcode
         /// </summary>
-        // todo all calls must provide helper!
         public static MvcHtmlString BBCode(this HtmlHelper helper, string str) {
             if (str == null) return null;
             return new MvcHtmlString(new ForumWikiParser().ProcessToHtml(str, helper));
-
-            str = HttpUtility.HtmlEncode(str);
-
-            Regex exp;
-            
-
-            // embed player to display gifv (supported: gifv)
-            exp = new Regex(@"\[gifv\](https?\:\/\/)((\w|-|_|\.|\/)+\.)(gifv|mp4|webm|gif)\[/gifv\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str,
-                "<div class=\"video-container\">" +
-                    "<video preload=\"auto\" height=\"auto\" width=\"auto\" autoplay=\"autoplay\" muted=\"muted\" loop=\"loop\" >" +
-                        "<source type=\"video/webm\" src=\"$1$2webm\">" +
-                        "<source type=\"video/mp4\" src=\"$1$2mp4\">" +
-                        "Your browser does not support the video tag. Find out if your Browser is supported at www.w3schools.com/tags/tag_video.asp" +
-                    "</video>" +
-                "</div>");
-            		
-
-            return new MvcHtmlString(str);
         }
 
         /// <summary>
