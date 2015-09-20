@@ -50,14 +50,7 @@ namespace System.Web.Mvc
             str = HttpUtility.HtmlEncode(str);
 
             Regex exp;
-
-
-            //format the colour tags: [color=red][/color]
-            // becomes: <font color="red"></font>
-            // supports UK English and US English spelling of colour/color
-            exp = new Regex(@"\[(color|colour)\=([^\]]+)\]([^\]]+)\[/(color|colour)\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<font color=\"$2\">$3</font>");
-
+            
             // format the size tags: [size=3][/size]
             // becomes: <font size="+3"></font>
             exp = new Regex(@"\[size\=([^\]]+)\]([^\]]+)\[/size\]", RegexOptions.IgnoreCase);

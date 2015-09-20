@@ -5,6 +5,7 @@ using System.Web.Mvc;
 
 namespace ZeroKWeb.ForumParser
 {
+    // [color=red][/color]
     public class ColorOpenTag: OpeningArgsTag<ColorCloseTag>
     {
         public override string Match { get; } = "[color=";
