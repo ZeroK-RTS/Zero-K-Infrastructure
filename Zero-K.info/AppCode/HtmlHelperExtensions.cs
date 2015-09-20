@@ -52,20 +52,6 @@ namespace System.Web.Mvc
             Regex exp;
             
 
-            // embed player to display videos (supported: mp4, 3gp, webm, ogg, ogv, gifv)
-            exp = new Regex(@"\[vid\](https?\:\/\/)((\w|-|_|\.|\/)+\.)(mp4|webm|ogg|ogv|3gp|gifv)\[/vid\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, 
-                "<div class=\"video-container\">"+
-                    "<video preload=\"auto\" height=\"auto\" width=\"auto\" controls=\"controls\">" +
-                        "<source type=\"video/webm\" src=\"$1$2" + "webm\">"+
-                        "<source type=\"video/mp4\" src=\"$1$2" + "mp4\">" +
-                        "<source type=\"video/ogg\" src=\"$1$2" + "ogg\">" +
-                        "<source type=\"video/ogv\" src=\"$1$2" + "ogv\">" +
-                        "<source type=\"video/3gp\" src=\"$1$2" +"3gp\">" +
-                        "Your browser does not support the video tag. Find out if your Browser is supported at www.w3schools.com/tags/tag_video.asp" +
-                    "</video>"+
-                "</div>");
-
             // embed player to display gifv (supported: gifv)
             exp = new Regex(@"\[gifv\](https?\:\/\/)((\w|-|_|\.|\/)+\.)(gifv|mp4|webm|gif)\[/gifv\]", RegexOptions.IgnoreCase);
             str = exp.Replace(str,
@@ -77,12 +63,6 @@ namespace System.Web.Mvc
                     "</video>" +
                 "</div>");
             		
-            			
-            if (helper != null) {
-                // todo remove condition in the future
-                exp = new Regex(@"\[poll\]([0-9]+)\[/poll\]", RegexOptions.IgnoreCase);
-                str = exp.Replace(str, m => helper.Action("Index", "Poll", new { pollID = m.Groups[1].Value }).ToHtmlString());
-            }
 
             return new MvcHtmlString(str);
         }
