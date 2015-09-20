@@ -137,11 +137,15 @@
     <Compile Include="Controllers\UnitStatsController.cs" />
     <Compile Include="AppCode\MarkdownHelper.cs" />
     <Compile Include="ForumParser\ForumWikiParser.cs" />
+    <Compile Include="ForumParser\Tags\Abstract\IOpeningTag.cs" />
+    <Compile Include="ForumParser\Tags\Abstract\OpeningArgsTag.cs" />
     <Compile Include="ForumParser\Tags\Abstract\OpeningTag.cs" />
+    <Compile Include="ForumParser\Tags\Abstract\ScanningArgsTag.cs" />
     <Compile Include="ForumParser\Tags\Abstract\ScanningTag.cs" />
     <Compile Include="ForumParser\Tags\Abstract\Tag.cs" />
     <Compile Include="ForumParser\Tags\AtSignTag.cs" />
     <Compile Include="ForumParser\Tags\BTag.cs" />
+    <Compile Include="ForumParser\Tags\ColorTag.cs" />
     <Compile Include="ForumParser\Tags\ImgTag.cs" />
     <Compile Include="ForumParser\Tags\ITag.cs" />
     <Compile Include="ForumParser\Tags\QuoteTag.cs" />

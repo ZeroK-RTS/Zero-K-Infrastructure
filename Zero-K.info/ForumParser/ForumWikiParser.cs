@@ -24,7 +24,7 @@ namespace ZeroKWeb.ForumParser
                     nonterminalTags.Add(tag);
 
                     // find matching open close pairs and store them
-                    if (typeof(OpeningTag).IsAssignableFrom(t)) openClosePairs.Add(new Tuple<Type, Type>(t, ((OpeningTag)tag).ClosingTagType));
+                    if (typeof(IOpeningTag).IsAssignableFrom(t)) openClosePairs.Add(new Tuple<Type, Type>(t, ((IOpeningTag)tag).ClosingTagType));
                 }
             }
         }

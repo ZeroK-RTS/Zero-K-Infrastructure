@@ -2,7 +2,7 @@
 
 namespace ZeroKWeb.ForumParser
 {
-    public abstract class OpeningTag<T>: ScanningTag, IOpeningTag
+    public abstract class OpeningArgsTag<T> : ScanningArgsTag, IOpeningTag
     {
         public virtual Type ClosingTagType => typeof(T);
     }

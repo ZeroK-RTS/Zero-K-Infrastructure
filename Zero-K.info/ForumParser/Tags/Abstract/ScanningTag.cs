@@ -1,19 +1,14 @@
-﻿using System;
-
-namespace ZeroKWeb.ForumParser
+﻿namespace ZeroKWeb.ForumParser
 {
     public abstract class ScanningTag: Tag
     {
+        protected int pos;
         public abstract string Match { get; }
 
-        protected int pos = 0;
-
-        public override bool? ScanLetter(char letter)
-        {
-            if (Char.ToLower(Match[pos++]) != Char.ToLower(letter)) return false;
+        public override bool? ScanLetter(char letter) {
+            if (char.ToLower(Match[pos++]) != char.ToLower(letter)) return false;
             if (pos == Match.Length) return true;
             return null;
         }
-
     }
 }

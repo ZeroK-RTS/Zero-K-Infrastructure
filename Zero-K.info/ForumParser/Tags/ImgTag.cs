@@ -6,29 +6,15 @@ using System.Web.Mvc;
 namespace ZeroKWeb.ForumParser
 {
     /// <summary>
-    /// [img]http://url[/img]  or [img=http://url][/img]
+    ///     [img]http://url[/img]  or [img=http://url][/img]
     /// </summary>
-    public class ImgOpenTag: OpeningTag<ImgCloseTag>
+    public class ImgOpenTag: OpeningArgsTag<ImgCloseTag>
     {
-        readonly StringBuilder args = new StringBuilder();
         public override string Match { get; } = "[img";
+        public override char MatchTerminator { get; } = ']';
 
+        protected override bool ValidateArgs() => args.Length == 0 || ForumWikiParser.IsValidLink(args.ToString(1, args.Length - 1));
 
-        public override bool? ScanLetter(char letter) {
-            if (pos >= Match.Length)
-            {
-                if (letter == ']')
-                {
-                    if (args.Length == 0) return true; // closed [img]
-                    if (ForumWikiParser.IsValidLink(args.ToString(1, args.Length - 1))) return true; //  [img=url]
-                    return false;
-                }
-                if (letter == '\n') return false;
-                args.Append(letter);
-            } else if (char.ToLower(Match[pos++]) != char.ToLower(letter)) return false;
-
-            return null;
-        }
 
         public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
             var closingTag = ForumWikiParser.NextNodeOfType<ImgCloseTag>(self);
