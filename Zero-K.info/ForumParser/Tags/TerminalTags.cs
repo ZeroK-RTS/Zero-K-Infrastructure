@@ -54,7 +54,7 @@ namespace ZeroKWeb.ForumParser
         }
 
         public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            if (ForumWikiParser.IsValidLink(Content.ToString())) sb.AppendFormat("<a href='{0}'>{0}</a>", Content); // implicit linkification
+            if (ForumWikiParser.IsValidLink(Content.ToString())) sb.AppendFormat("<a href=\"{0}\">{0}</a>", Content); // implicit linkification
             else sb.Append(HttpUtility.HtmlEncode(Content));
 
             return self.Next;
