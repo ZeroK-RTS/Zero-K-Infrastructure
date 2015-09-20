@@ -51,16 +51,6 @@ namespace System.Web.Mvc
 
             Regex exp;
             
-            // format the size tags: [size=3][/size]
-            // becomes: <font size="+3"></font>
-            exp = new Regex(@"\[size\=([^\]]+)\]([^\]]+)\[/size\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<font size=\"+$1\">$2</font>");
-
-            str = Regex.Replace(str, @"(^|[\s])((mailto|spring|http|https|ftp|ftps)\://\S+)", @"$1<a href='$2'>$2</a>");
-
-            // lastly, replace any new line characters with <br />
-            str = str.Replace("\r\n", "<br/>\r\n");
-            
 
             // embed player to display videos (supported: mp4, 3gp, webm, ogg, ogv, gifv)
             exp = new Regex(@"\[vid\](https?\:\/\/)((\w|-|_|\.|\/)+\.)(mp4|webm|ogg|ogv|3gp|gifv)\[/vid\]", RegexOptions.IgnoreCase);
@@ -87,17 +77,6 @@ namespace System.Web.Mvc
                     "</video>" +
                 "</div>");
             		
-            // spoiler tags: [spoiler]spoiler_text[/spoiler]
-            // becomes: [Spoiler] and onClick displays the inner Content "spoiler_text" 
-            // (taken from jquery.expand.js -> "post score below threshold")
-            exp = new Regex(@"\[spoiler\]([^\[]+)\[/spoiler\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, 
-            	"<small class=\"expand\">" + 
-		"<a nicetitle-processed=\"Expand/Collapse\" style=\"display:block\" href=\"#\">[Spoiler]</a>" + 
-		"</small>" + 
-		"<div style=\"display: none;\" class=\"collapse\">" +
-                "$1" +
-                "</div>");
             			
             if (helper != null) {
                 // todo remove condition in the future

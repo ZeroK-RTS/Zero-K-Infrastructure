@@ -268,7 +268,7 @@ namespace Fixer
 
         [STAThread]
         static void Main(string[] args) {
-            var ret = new ForumWikiParser().ProcessToHtml("ha [size=huge][color=red]colored[/color][/size]   [img]http://zero-k.info/[/img] as", null);
+            var ret = new ForumWikiParser().ProcessToHtml("ha [spoiler][b]dont spoil[/b][/spoiler]", null);
             return;
 
 

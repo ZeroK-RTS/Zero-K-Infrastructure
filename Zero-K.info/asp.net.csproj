@@ -150,6 +150,7 @@
     <Compile Include="ForumParser\Tags\ITag.cs" />
     <Compile Include="ForumParser\Tags\QuoteTag.cs" />
     <Compile Include="ForumParser\Tags\SizeTag.cs" />
+    <Compile Include="ForumParser\Tags\SpoilerTag.cs" />
     <Compile Include="ForumParser\Tags\STag.cs" />
     <Compile Include="ForumParser\Tags\TerminalTags.cs" />
     <Compile Include="ForumParser\Tags\UrlTag.cs" />
