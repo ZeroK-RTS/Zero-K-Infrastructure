@@ -61,7 +61,7 @@ namespace PlasmaShared.ForumParser
                                 lastTerm.Append(scanChar);
                             } else
                             {
-                                term = term.Create(); // create fresh instance
+                                term = (TerminalTag)term.Create(); // create fresh instance
                                 term.Append(scanChar);
                                 tags.AddLast(term);
                             }

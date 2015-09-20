@@ -10,8 +10,14 @@ namespace PlasmaShared.ForumParser
     {
         public override string Match { get; } = "[i]";
 
-        public override void RenderSelf(StringBuilder sb) {
+
+        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self) {
             sb.Append("<em>");
+            return self.Next;
+        }
+
+        public override Tag Create() {
+            return new ITagOpen();
         }
     }
 
@@ -22,6 +28,10 @@ namespace PlasmaShared.ForumParser
         public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self) {
             sb.Append("</em>");
             return self.Next;
+        }
+
+        public override Tag Create() {
+            return new ITagClose();
         }
     }
 }

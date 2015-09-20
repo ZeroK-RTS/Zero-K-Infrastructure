@@ -8,8 +8,6 @@ namespace PlasmaShared.ForumParser
     {
         protected StringBuilder Content = new StringBuilder();
 
-        public abstract TerminalTag Create();
-
         public virtual void Append(char part)
         {
             Content.Append(part);
@@ -27,7 +25,7 @@ namespace PlasmaShared.ForumParser
             return self.Next;
         }
 
-        public override TerminalTag Create() {
+        public override Tag Create() {
             return new SpaceTag();
         }
     }
@@ -43,7 +41,7 @@ namespace PlasmaShared.ForumParser
             return self.Next;
         }
 
-        public override TerminalTag Create() {
+        public override Tag Create() {
             return new NewLineTag();
         }
     }
@@ -61,7 +59,7 @@ namespace PlasmaShared.ForumParser
             return self.Next;
         }
 
-        public override TerminalTag Create() {
+        public override Tag Create() {
             return new LiteralTag();
         }
     }

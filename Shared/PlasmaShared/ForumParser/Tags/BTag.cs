@@ -12,6 +12,10 @@ namespace PlasmaShared.ForumParser
             sb.Append("</strong>");
             return self.Next;
         }
+
+        public override Tag Create() {
+            return new BTagClose();
+        }
     }
 
 
@@ -19,8 +23,14 @@ namespace PlasmaShared.ForumParser
     {
         public override string Match { get; } = "[b]";
 
-        public override void RenderSelf(StringBuilder sb) {
+
+        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self) {
             sb.Append("<strong>");
+            return self.Next;
+        }
+
+        public override Tag Create() {
+            return new BTagOpen();
         }
     }
 
@@ -43,6 +53,10 @@ namespace PlasmaShared.ForumParser
                 sb.Append("*");
                 return self.Next;
             }
+        }
+
+        public override Tag Create() {
+            return new StarTag();
         }
     }
 

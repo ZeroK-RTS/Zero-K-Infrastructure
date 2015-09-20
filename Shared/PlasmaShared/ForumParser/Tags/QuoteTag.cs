@@ -13,10 +13,15 @@ namespace PlasmaShared.ForumParser
     {
         public override string Match { get; } = "[q]";
 
-        public override void RenderSelf(StringBuilder sb)
-        {
+
+        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self) {
             sb.Append(
                 "<table border=\"0\" cellpadding=\"6\" cellspacing=\"0\" width=\"100%\"><tbody><tr><td style=\"border: 1px inset;\"><em>quote:<br/>");
+            return self.Next;
+        }
+
+        public override Tag Create() {
+            return new QTagOpen();
         }
     }
 
@@ -31,6 +36,10 @@ namespace PlasmaShared.ForumParser
         {
             sb.Append("</em></td></tr></tbody></table>");
             return self.Next;
+        }
+
+        public override Tag Create() {
+            return new QTagClose();
         }
     }
 
