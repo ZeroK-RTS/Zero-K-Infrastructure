@@ -37,7 +37,7 @@ namespace ZeroKWeb.ForumParser
         public override string Match { get; } = "[/img]";
 
         public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            throw new NotImplementedException(); // this should never be actually executed, opening tag handles it
+            throw new ApplicationException("This isn't happening"); // should not be called
         }
 
         public override Tag Create() => new ImgCloseTag();

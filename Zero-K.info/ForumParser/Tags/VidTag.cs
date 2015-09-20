@@ -38,7 +38,7 @@ namespace ZeroKWeb.ForumParser
         public override string Match { get; } = "[/vid]";
 
         public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            throw new NotImplementedException(); // should not be called
+            throw new ApplicationException("This isn't happening"); // should not be called
         }
 
         public override Tag Create() => new VidCloseTag();
