@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Web.Mvc.Html;
 using System.Web.WebPages;
 using ZeroKWeb;
+using ZeroKWeb.ForumParser;
 using ZkData;
 
 namespace System.Web.Mvc
@@ -41,120 +42,9 @@ namespace System.Web.Mvc
         /// <summary>
         /// Uses regexes to turn a string into BBcode
         /// </summary>
-        // todo all calls must provide helper!
         public static MvcHtmlString BBCode(this HtmlHelper helper, string str) {
             if (str == null) return null;
-
-            str = HttpUtility.HtmlEncode(str);
-            str = ProcessAtSignTags(str);
-
-            Regex exp;
-            // format the bold tags: [b][/b]
-            // becomes: <strong></strong>
-            exp = new Regex(@"\[b\]((.|\n)+?)\[/b\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<strong>$1</strong>");
-
-            // format the quote tags: [quote][/quote] and [q][/q]
-            // becomes: stuff
-            exp = new Regex(@"\[(quote|q)\]((.|\n)+?)\[/(quote|q)\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str,
-            	"<table border=\"0\" cellpadding=\"6\" cellspacing=\"0\" width=\"100%\">"+
-            	"<tbody><tr><td style=\"border: 1px inset;\">"+
-            	"<em>quote:<br/>$2</em>"+
-            	"</td></tr></tbody>"+
-            	"</table>");
-            
-            // format the italic tags: [i][/i]
-            // becomes: <em></em>
-            exp = new Regex(@"\[i\]((.|\n)+?)\[/i\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<em>$1</em>");
-
-            // format the underline tags: [u][/u]
-            // becomes: <u></u>
-            exp = new Regex(@"\[u\]((.|\n)+?)\[/u\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<u>$1</u>");
-
-            // format the strike tags: [s][/s]
-            // becomes: <strike></strike>
-            exp = new Regex(@"\[s\]((.|\n)+?)\[/s\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<strike>$1</strike>");
-
-                        // format the url tags: [url=www.website.com]my site[/url]
-            // becomes: <a href="www.website.com">my site</a>
-            exp = new Regex(@"\[url\=([^\]]+)\]([^\]]+)\[/url\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<a href=\"$1\" target=\"_blank\">$2</a>");
-
-            // format the img tags: [img]www.website.com/img/image.jpeg[/img]
-            // becomes: <img src="www.website.com/img/image.jpeg" />
-            exp = new Regex(@"\[img\]([^\[]+)\[/img\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<a href=\"$1\" target=\"_blank\" ><img src=\"$1\" max-width=\"100%\" height=\"auto\"/></a>");
-
-            // format img tags with alt: [img=www.website.com/img/image.jpeg]this is the alt text[/img]
-            // becomes: <img src="www.website.com/img/image.jpeg" alt="this is the alt text" />
-            exp = new Regex(@"\[img\=([^\]]+)\]([^\]]+)\[/img\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<a href=\"$1\" target=\"_blank\" ><img src=\"$1\" alt=\"$2\" max-width=\"100%\" height=\"auto\" /></a>");
-
-            //format the colour tags: [color=red][/color]
-            // becomes: <font color="red"></font>
-            // supports UK English and US English spelling of colour/color
-            exp = new Regex(@"\[(color|colour)\=([^\]]+)\]([^\]]+)\[/(color|colour)\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<font color=\"$2\">$3</font>");
-
-            // format the size tags: [size=3][/size]
-            // becomes: <font size="+3"></font>
-            exp = new Regex(@"\[size\=([^\]]+)\]([^\]]+)\[/size\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<font size=\"+$1\">$2</font>");
-
-            str = Regex.Replace(str, @"(^|[\s])((mailto|spring|http|https|ftp|ftps)\://\S+)", @"$1<a href='$2'>$2</a>");
-
-            // lastly, replace any new line characters with <br />
-            str = str.Replace("\r\n", "<br/>\r\n");
-            
-
-            // embed player to display videos (supported: mp4, 3gp, webm, ogg, ogv, gifv)
-            exp = new Regex(@"\[vid\](https?\:\/\/)((\w|-|_|\.|\/)+\.)(mp4|webm|ogg|ogv|3gp|gifv)\[/vid\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, 
-                "<div class=\"video-container\">"+
-                    "<video preload=\"auto\" height=\"auto\" width=\"auto\" controls=\"controls\">" +
-                        "<source type=\"video/webm\" src=\"$1$2" + "webm\">"+
-                        "<source type=\"video/mp4\" src=\"$1$2" + "mp4\">" +
-                        "<source type=\"video/ogg\" src=\"$1$2" + "ogg\">" +
-                        "<source type=\"video/ogv\" src=\"$1$2" + "ogv\">" +
-                        "<source type=\"video/3gp\" src=\"$1$2" +"3gp\">" +
-                        "Your browser does not support the video tag. Find out if your Browser is supported at www.w3schools.com/tags/tag_video.asp" +
-                    "</video>"+
-                "</div>");
-
-            // embed player to display gifv (supported: gifv)
-            exp = new Regex(@"\[gifv\](https?\:\/\/)((\w|-|_|\.|\/)+\.)(gifv|mp4|webm|gif)\[/gifv\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str,
-                "<div class=\"video-container\">" +
-                    "<video preload=\"auto\" height=\"auto\" width=\"auto\" autoplay=\"autoplay\" muted=\"muted\" loop=\"loop\" >" +
-                        "<source type=\"video/webm\" src=\"$1$2webm\">" +
-                        "<source type=\"video/mp4\" src=\"$1$2mp4\">" +
-                        "Your browser does not support the video tag. Find out if your Browser is supported at www.w3schools.com/tags/tag_video.asp" +
-                    "</video>" +
-                "</div>");
-            		
-            // spoiler tags: [spoiler]spoiler_text[/spoiler]
-            // becomes: [Spoiler] and onClick displays the inner Content "spoiler_text" 
-            // (taken from jquery.expand.js -> "post score below threshold")
-            exp = new Regex(@"\[spoiler\]([^\[]+)\[/spoiler\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, 
-            	"<small class=\"expand\">" + 
-		"<a nicetitle-processed=\"Expand/Collapse\" style=\"display:block\" href=\"#\">[Spoiler]</a>" + 
-		"</small>" + 
-		"<div style=\"display: none;\" class=\"collapse\">" +
-                "$1" +
-                "</div>");
-            			
-            if (helper != null) {
-                // todo remove condition in the future
-                exp = new Regex(@"\[poll\]([0-9]+)\[/poll\]", RegexOptions.IgnoreCase);
-                str = exp.Replace(str, m => helper.Action("Index", "Poll", new { pollID = m.Groups[1].Value }).ToHtmlString());
-            }
-
-            return new MvcHtmlString(str);
+            return new MvcHtmlString(new ForumWikiParser().ProcessToHtml(str, helper));
         }
 
         /// <summary>

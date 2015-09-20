@@ -23,6 +23,7 @@ using Microsoft.Linq.Translations;
 using PlasmaShared;
 using ZkData.UnitSyncLib;
 using ZeroKWeb;
+using ZeroKWeb.ForumParser;
 using ZkData;
 using Encoder = System.Drawing.Imaging.Encoder;
 
@@ -266,8 +267,11 @@ namespace Fixer
 
 
         [STAThread]
-        static void Main(string[] args)
-        {
+        static void Main(string[] args) {
+            var ret = new ForumWikiParser().ProcessToHtml("ha [gifv]http://zooerk.gifv[/gifv] some", null);
+            return;
+
+
             //GetGameStats(new DateTime(2014,12,1));
             //Thread.Sleep(10000);
             //var ns = new NubSimulator();
