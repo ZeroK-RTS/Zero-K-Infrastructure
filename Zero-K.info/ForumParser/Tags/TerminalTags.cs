@@ -9,8 +9,7 @@ namespace ZeroKWeb.ForumParser
     {
         public StringBuilder Content = new StringBuilder();
 
-        public virtual void Append(char part)
-        {
+        public virtual void Append(char part) {
             Content.Append(part);
         }
     }
@@ -48,7 +47,6 @@ namespace ZeroKWeb.ForumParser
     }
 
 
-
     public class LiteralTag: TerminalTag
     {
         public override bool? ScanLetter(char letter) {
@@ -56,7 +54,9 @@ namespace ZeroKWeb.ForumParser
         }
 
         public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.Append(HttpUtility.HtmlEncode(Content));
+            if (ForumWikiParser.IsValidLink(Content.ToString())) sb.AppendFormat("<a href='{0}'>{0}</a>", Content); // implicit linkification
+            else sb.Append(HttpUtility.HtmlEncode(Content));
+
             return self.Next;
         }
 

@@ -51,11 +51,6 @@ namespace System.Web.Mvc
 
             Regex exp;
 
-            // format the url tags: [url=www.website.com]my site[/url]
-            // becomes: <a href="www.website.com">my site</a>
-            exp = new Regex(@"\[url\=([^\]]+)\]([^\]]+)\[/url\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<a href=\"$1\" target=\"_blank\">$2</a>");
-
             // format the img tags: [img]www.website.com/img/image.jpeg[/img]
             // becomes: <img src="www.website.com/img/image.jpeg" />
             exp = new Regex(@"\[img\]([^\[]+)\[/img\]", RegexOptions.IgnoreCase);
