@@ -16,6 +16,7 @@ namespace Springie.autohost.Polls
         protected Dictionary<string, bool> userVotes = new Dictionary<string, bool>();
 
         public string Question { get; private set; }
+        public string Creator { get; private set; }
 
         public AbstractPoll(TasClient tas, Spring spring, AutoHost ah) {
             this.tas = tas;
@@ -38,6 +39,7 @@ namespace Springie.autohost.Polls
             if (PerformInit(e, words, out question, out winCount)) {
                 WinCount = winCount;
                 Question = question;
+                Creator = e.UserName;
                 if (WinCount <= 0) WinCount = tas.MyBattle != null ? (tas.MyBattle.NonSpectatorCount/2 + 1) : 1;
                 if (WinCount <= 0) WinCount = 1;
                 // If vote is started by a spec while there are players present don't let the number go below 2.

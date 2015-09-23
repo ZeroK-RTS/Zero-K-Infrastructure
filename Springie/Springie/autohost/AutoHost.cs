@@ -462,7 +462,7 @@ namespace Springie.autohost
                     break;
 
                 case "endvote":
-                    StopVote();
+                    StopVote(e);
                     SayBattle("poll cancelled");
                     break;
 
@@ -700,7 +700,19 @@ namespace Springie.autohost
             tas.LeaveBattle();
         }
 
-        public void StopVote() {
+        public void StopVote(TasSayEventArgs e = null) {
+            if (e != null)
+            {
+                string name = e.UserName;
+                if (name != null && activePoll != null && name != ((AbstractPoll)activePoll).Creator)
+                {
+                    if (GetUserLevel(name) < GlobalConst.SpringieBossEffectiveRights)
+                    {
+                        Respond(e, "Sorry, you do not have rights to end this vote");
+                        return;
+                    }
+                }
+            }
             if (activePoll != null) activePoll.End();
             if (pollTimer != null) pollTimer.Enabled = false;
             activePoll = null;
