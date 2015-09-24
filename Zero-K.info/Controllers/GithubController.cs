@@ -52,8 +52,8 @@ namespace ZeroKWeb.Controllers
                     {
                         commitMessages.Add(commit.message);
                     }
-
-                    text = $"[{payload.repository.name}] {payload.sender.login} has pushed {commitMessages.Count} commits: {payload.compare}\n{string.Join("\n", commitMessages)}";
+                    if (commitMessages.Count > 0)
+                        text = $"[{payload.repository.name}] {payload.sender.login} has pushed {commitMessages.Count} commits: {payload.compare}\n{string.Join("\n", commitMessages)}";
                     break;
             }
 
