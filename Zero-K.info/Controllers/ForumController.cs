@@ -269,7 +269,7 @@ namespace ZeroKWeb.Controllers
 				var lastPost = thread.ForumPosts.OrderByDescending(x => x.ForumPostID).FirstOrDefault();
 
                 //double post preventer
-                if (lastPost == null || lastPost.AuthorAccountID != Global.AccountID || lastPost.Text != text || (String.IsNullOrEmpty(title) && title != currentTitle))
+                if (lastPost == null || lastPost.AuthorAccountID != Global.AccountID || lastPost.Text != text || (!String.IsNullOrEmpty(title) && title != currentTitle))
 				{
                     if (forumPostID != null) {
                         var post = thread.ForumPosts.Single(x => x.ForumPostID == forumPostID);
