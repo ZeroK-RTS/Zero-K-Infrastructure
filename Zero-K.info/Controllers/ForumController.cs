@@ -180,9 +180,14 @@ namespace ZeroKWeb.Controllers
 			using (var scope = new TransactionScope())
 			{
 				var thread = db.ForumThreads.SingleOrDefault(x => x.ForumThreadID == threadID);
+				string currentTitle = null;
 
 				// update title
-                if (thread != null && !String.IsNullOrEmpty(title)) thread.Title = title;
+				if (thread != null && !String.IsNullOrEmpty(title))
+				{
+					currentTitle = thread.Title;
+					thread.Title = title;
+				}
 				if (thread != null && planetID != null)
 				{
 					var planet = db.Planets.Single(x => x.PlanetID == planetID);
@@ -264,7 +269,7 @@ namespace ZeroKWeb.Controllers
 				var lastPost = thread.ForumPosts.OrderByDescending(x => x.ForumPostID).FirstOrDefault();
 
                 //double post preventer
-                if (lastPost == null || lastPost.AuthorAccountID != Global.AccountID || lastPost.Text != text)
+                if (lastPost == null || lastPost.AuthorAccountID != Global.AccountID || lastPost.Text != text || (String.IsNullOrEmpty(title) && title != currentTitle))
 				{
                     if (forumPostID != null) {
                         var post = thread.ForumPosts.Single(x => x.ForumPostID == forumPostID);
