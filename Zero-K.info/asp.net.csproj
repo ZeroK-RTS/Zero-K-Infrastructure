@@ -137,6 +137,7 @@
     <Compile Include="Controllers\UnitStatsController.cs" />
     <Compile Include="AppCode\MarkdownHelper.cs" />
     <Compile Include="ForumParser\ForumWikiParser.cs" />
+    <Compile Include="ForumParser\ParserExtensions.cs" />
     <Compile Include="ForumParser\Tags\Abstract\IOpeningTag.cs" />
     <Compile Include="ForumParser\Tags\Abstract\OpeningArgsTag.cs" />
     <Compile Include="ForumParser\Tags\Abstract\OpeningTag.cs" />

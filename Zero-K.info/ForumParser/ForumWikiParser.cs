@@ -163,12 +163,5 @@ namespace ZeroKWeb.ForumParser
         public static bool IsValidLink(string content) {
             return Regex.IsMatch(content, "(mailto|spring|http|https|ftp|ftps|zk)\\://[^\\\"']+$", RegexOptions.IgnoreCase);
         }
-
-        public static LinkedListNode<Tag> NextNodeOfType<T>(LinkedListNode<Tag> node)
-        {
-            while (node != null && !(node.Value is T)) node = node.Next;
-            return node;
-        }
-
     }
 }

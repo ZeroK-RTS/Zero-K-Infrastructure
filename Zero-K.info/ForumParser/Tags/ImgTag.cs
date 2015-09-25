@@ -17,7 +17,7 @@ namespace ZeroKWeb.ForumParser
 
 
         public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            var closingTag = ForumWikiParser.NextNodeOfType<ImgCloseTag>(self);
+            var closingTag = self.NextNodeOfType<ImgCloseTag>();
 
             // get url either from param or from inner literal between tags
             var url = args.Length == 0 ? (self.Next?.Value as LiteralTag)?.Content.ToString() : args.ToString(1, args.Length - 1);

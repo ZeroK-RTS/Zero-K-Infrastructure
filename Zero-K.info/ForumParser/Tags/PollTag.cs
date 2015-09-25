@@ -11,7 +11,7 @@ namespace ZeroKWeb.ForumParser
         public override string Match { get; } = "[poll]";
 
         public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            var closing = ForumWikiParser.NextNodeOfType<PollOpenTag>(self);
+            var closing = self.NextNodeOfType<PollOpenTag>();
             if (html != null)
             {
                 var content = (self.Next?.Value as LiteralTag)?.Content.ToString();

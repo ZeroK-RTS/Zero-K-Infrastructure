@@ -12,7 +12,7 @@ namespace ZeroKWeb.ForumParser
         public override string Match { get; } = "[gifv]";
 
         public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            var closing = ForumWikiParser.NextNodeOfType<GifvCloseTag>(self);
+            var closing = self.NextNodeOfType<GifvCloseTag>();
 
             var content = (self.Next?.Value as LiteralTag)?.Content.ToString();
             if (!string.IsNullOrEmpty(content))
