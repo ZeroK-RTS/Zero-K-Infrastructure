@@ -704,7 +704,7 @@ namespace Springie.autohost
             if (e != null)
             {
                 string name = e.UserName;
-                if (name != null && activePoll != null && name != ((AbstractPoll)activePoll).Creator)
+                if (name != null && activePoll != null && name != activePoll.Creator)
                 {
                     if (GetUserLevel(name) < GlobalConst.SpringieBossEffectiveRights)
                     {
