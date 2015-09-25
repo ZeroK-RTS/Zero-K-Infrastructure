@@ -11,18 +11,25 @@ namespace ZeroKWeb.ForumParser
     {
         public override string Match { get; } = "*";
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            if (self.Next?.Value is LiteralTag && self.Next?.Next?.Value is StarTag)
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+
+            var node = self.Next;
+
+            // to bolden text - find second star tag
+            while (node != null && (node.Value is SpaceTag || node.Value is LiteralTag || node.Value is StarTag))
             {
-                sb.Append("<strong>");
-                self.Next.Value.Translate(sb, self.Next, html);
-                sb.Append("</strong>");
-                return self.Next.Next.Next;
-            } else
-            {
-                sb.Append("*");
-                return self.Next;
+                if (node.Value is StarTag)
+                {
+                    context.Append("<strong>");
+                    self.Next.TranslateUntil(context, node); 
+                    context.Append("</strong>");
+                    return node.Next;
+                }
+                node = node.Next;
             }
+
+            context.Append("*");
+            return self.Next;
         }
 
         public override Tag Create() {

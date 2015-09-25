@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using System.Web.Mvc.Html;
 using Antlr.Runtime.Misc;
 
 namespace ZeroKWeb.ForumParser
@@ -34,6 +35,11 @@ namespace ZeroKWeb.ForumParser
         public static string GetOriginalContentUntilWhiteSpaceOrEndline(this LinkedListNode<Tag> node)
         {
             return node.GetOriginalContentWhileCondition(x => !(x.Value is SpaceTag) && !(x.Value is NewLineTag));
+        }
+
+        public static void TranslateUntil(this LinkedListNode<Tag> startNode, TranslateContext context, LinkedListNode<Tag> endNode) {
+            var n = startNode;
+            while (n != null && n != endNode) n = n.Value.Translate(context, n);
         }
 
     }

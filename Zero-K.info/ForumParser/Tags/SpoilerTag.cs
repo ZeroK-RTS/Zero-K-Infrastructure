@@ -11,8 +11,8 @@ namespace ZeroKWeb.ForumParser
     {
         public override string Match { get; } = "[spoiler]";
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.AppendFormat(
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.AppendFormat(
                 "<small class=\"expand\"><a nicetitle-processed=\"Expand/Collapse\" style=\"display:block\" href=\"#\">[Spoiler]</a></small><div style=\"display: none;\" class=\"collapse\">");
             return self.Next;
         }
@@ -24,8 +24,8 @@ namespace ZeroKWeb.ForumParser
     {
         public override string Match { get; } = "[/spoiler]";
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.Append("</div>");
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.Append("</div>");
             return self.Next;
         }
 

@@ -11,8 +11,8 @@ namespace ZeroKWeb.ForumParser
         public override string Match { get; } = "[color=";
         public override char MatchTerminator { get; } = ']';
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.AppendFormat("<font color=\"{0}\">", args);
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.AppendFormat("<font color=\"{0}\">", args);
             return self.Next;
         }
 
@@ -36,8 +36,8 @@ namespace ZeroKWeb.ForumParser
     {
         public override string Match { get; } = "[/color]";
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.Append("</font>");
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.Append("</font>");
             return self.Next;
         }
 

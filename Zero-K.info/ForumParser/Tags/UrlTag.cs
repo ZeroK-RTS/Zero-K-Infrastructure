@@ -14,8 +14,8 @@ namespace ZeroKWeb.ForumParser
 
         protected override bool ValidateArgs() => ForumWikiParser.IsValidLink(args.ToString());
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.AppendFormat("<a href=\"{0}\" target=\"_blank\">", args);
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.AppendFormat("<a href=\"{0}\" target=\"_blank\">", args);
             return self.Next;
         }
 
@@ -26,8 +26,8 @@ namespace ZeroKWeb.ForumParser
     {
         public override string Match { get; } = "[/url]";
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.Append("</a>");
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.Append("</a>");
             return self.Next;
         }
 

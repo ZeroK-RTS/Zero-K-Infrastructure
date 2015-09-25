@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Mvc;
+using JetBrains.Annotations;
 
 namespace ZeroKWeb.ForumParser
 {
@@ -95,13 +96,14 @@ namespace ZeroKWeb.ForumParser
         /// <param name="tags"></param>
         /// <returns></returns>
         static string RenderTags(LinkedList<Tag> tags, HtmlHelper html) {
-            var sb = new StringBuilder();
+
+            var context = new TranslateContext(html);
 
             tags = EliminateUnclosedTags(tags);
 
             var node = tags.First;
-            while (node != null) node = node.Value.Translate(sb, node, html);
-            return sb.ToString();
+            while (node != null) node = node.Value.Translate(context, node);
+            return context.ToString();
         }
 
 
@@ -162,6 +164,30 @@ namespace ZeroKWeb.ForumParser
 
         public static bool IsValidLink(string content) {
             return Regex.IsMatch(content, "(mailto|spring|http|https|ftp|ftps|zk)\\://[^\\\"']+$", RegexOptions.IgnoreCase);
+        }
+    }
+
+    public class TranslateContext
+    {
+        StringBuilder sb= new StringBuilder();
+        public HtmlHelper Html;
+
+        public TranslateContext(HtmlHelper html) {
+
+            Html = html;
+        }
+
+        public void Append(object str) {
+            sb.Append(str);
+        }
+
+        [StringFormatMethod("formatString")]
+        public void AppendFormat(string formatString, params object[] args) {
+            sb.AppendFormat(formatString, args);
+        }
+
+        public override string ToString() {
+            return sb.ToString();
         }
     }
 }

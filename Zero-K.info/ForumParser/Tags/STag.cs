@@ -9,9 +9,9 @@ namespace ZeroKWeb.ForumParser
         public override string Match { get; } = "[s]";
 
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html)
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self)
         {
-            sb.Append("<strike>");
+            context.Append("<strike>");
             return self.Next;
         }
 
@@ -25,9 +25,9 @@ namespace ZeroKWeb.ForumParser
     {
         public override string Match { get; } = "[/s]";
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html)
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self)
         {
-            sb.Append("</strike>");
+            context.Append("</strike>");
             return self.Next;
         }
 

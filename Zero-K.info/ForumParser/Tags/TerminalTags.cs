@@ -22,8 +22,8 @@ namespace ZeroKWeb.ForumParser
             return letter == ' ' || letter == '\t';
         }
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.Append(content);
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.Append(content);
             return self.Next;
         }
 
@@ -38,8 +38,8 @@ namespace ZeroKWeb.ForumParser
             return letter == '\n';
         }
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.Append("<br/>");
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.Append("<br/>");
             return self.Next;
         }
 
@@ -55,9 +55,9 @@ namespace ZeroKWeb.ForumParser
             return true;
         }
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            if (ForumWikiParser.IsValidLink(content.ToString())) sb.AppendFormat("<a href=\"{0}\">{0}</a>", content); // implicit linkification
-            else sb.Append(HttpUtility.HtmlEncode(content));
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            if (ForumWikiParser.IsValidLink(content.ToString())) context.AppendFormat("<a href=\"{0}\">{0}</a>", content); // implicit linkification
+            else context.Append(HttpUtility.HtmlEncode(content));
 
             return self.Next;
         }
