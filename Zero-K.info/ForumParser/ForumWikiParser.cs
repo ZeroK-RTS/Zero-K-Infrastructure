@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Mvc;
-using JetBrains.Annotations;
 
 namespace ZeroKWeb.ForumParser
 {
@@ -164,30 +162,6 @@ namespace ZeroKWeb.ForumParser
 
         public static bool IsValidLink(string content) {
             return Regex.IsMatch(content, "(mailto|spring|http|https|ftp|ftps|zk)\\://[^\\\"']+$", RegexOptions.IgnoreCase);
-        }
-    }
-
-    public class TranslateContext
-    {
-        StringBuilder sb= new StringBuilder();
-        public HtmlHelper Html;
-
-        public TranslateContext(HtmlHelper html) {
-
-            Html = html;
-        }
-
-        public void Append(object str) {
-            sb.Append(str);
-        }
-
-        [StringFormatMethod("formatString")]
-        public void AppendFormat(string formatString, params object[] args) {
-            sb.AppendFormat(formatString, args);
-        }
-
-        public override string ToString() {
-            return sb.ToString();
         }
     }
 }
