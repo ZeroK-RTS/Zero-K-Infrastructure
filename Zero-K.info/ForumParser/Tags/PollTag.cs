@@ -14,7 +14,7 @@ namespace ZeroKWeb.ForumParser
             var closing = self.NextNodeOfType<PollOpenTag>();
             if (html != null)
             {
-                var content = (self.Next?.Value as LiteralTag)?.Content.ToString();
+                var content = self.Next.GetOriginalContentUntilNode(closing);
                 int pollID;
                 if (!string.IsNullOrEmpty(content) && int.TryParse(content, out pollID)) sb.Append(html.Action("Index", "Poll", new { pollID }));
             }

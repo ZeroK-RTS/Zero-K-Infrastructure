@@ -14,7 +14,7 @@ namespace ZeroKWeb.ForumParser
         public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
             var closing = self.NextNodeOfType<GifvCloseTag>();
 
-            var content = (self.Next?.Value as LiteralTag)?.Content.ToString();
+            var content = self.Next.GetOriginalContentUntilNode(closing);
             if (!string.IsNullOrEmpty(content))
             {
                 var match = Regex.Match(content, @"(https?\:\/\/)((\w|-|_|\.|\/)+\.)(gifv|mp4|webm|gif)", RegexOptions.IgnoreCase);

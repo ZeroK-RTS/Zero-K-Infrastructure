@@ -7,11 +7,13 @@ namespace ZeroKWeb.ForumParser
 {
     public abstract class TerminalTag: Tag
     {
-        public StringBuilder Content = new StringBuilder();
+        protected StringBuilder content = new StringBuilder();
 
         public virtual void Append(char part) {
-            Content.Append(part);
+            content.Append(part);
         }
+
+        public override string GetOriginalContent() => content.ToString();
     }
 
     public class SpaceTag: TerminalTag
@@ -21,7 +23,7 @@ namespace ZeroKWeb.ForumParser
         }
 
         public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.Append(Content);
+            sb.Append(content);
             return self.Next;
         }
 
@@ -54,8 +56,8 @@ namespace ZeroKWeb.ForumParser
         }
 
         public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            if (ForumWikiParser.IsValidLink(Content.ToString())) sb.AppendFormat("<a href=\"{0}\">{0}</a>", Content); // implicit linkification
-            else sb.Append(HttpUtility.HtmlEncode(Content));
+            if (ForumWikiParser.IsValidLink(content.ToString())) sb.AppendFormat("<a href=\"{0}\">{0}</a>", content); // implicit linkification
+            else sb.Append(HttpUtility.HtmlEncode(content));
 
             return self.Next;
         }

@@ -20,7 +20,7 @@ namespace ZeroKWeb.ForumParser
             var closingTag = self.NextNodeOfType<ImgCloseTag>();
 
             // get url either from param or from inner literal between tags
-            var url = args.Length == 0 ? (self.Next?.Value as LiteralTag)?.Content.ToString() : args.ToString(1, args.Length - 1);
+            var url = args.Length == 0 ? self.Next.GetOriginalContentUntilNode(closingTag) : args.ToString(1, args.Length - 1);
 
             if (ForumWikiParser.IsValidLink(url)) sb.AppendFormat("<a href=\"{0}\" target=\"_blank\" ><img src=\"{0}\" max-width=\"100%\" height=\"auto\"/></a>", url);
 

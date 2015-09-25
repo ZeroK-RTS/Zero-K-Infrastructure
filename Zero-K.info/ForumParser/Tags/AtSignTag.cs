@@ -10,7 +10,7 @@ namespace ZeroKWeb.ForumParser
     public class AtSignTag: ScanningTag
     {
         public override string Match { get; } = "@";
-
+        
         public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
 
             if (self.Previous == null || self.Previous.Value is SpaceTag || self.Previous.Value is NewLineTag) // previous is space or newline
@@ -18,7 +18,7 @@ namespace ZeroKWeb.ForumParser
                 var nextLit = self.Next?.Value as LiteralTag; // next is string
                 if (nextLit != null)
                 {
-                    var val = nextLit.Content.ToString(); // get next string
+                    var val = self.Next.GetOriginalContentUntilWhiteSpaceOrEndline(); // get next string
                     var db = new ZkDataContext();
 
                     var acc = Account.AccountByName(db, val);
