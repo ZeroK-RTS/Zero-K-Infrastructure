@@ -161,7 +161,7 @@ namespace Springie.autohost
                                          new[] { SayPlace.User, SayPlace.Battle, SayPlace.Channel })
                                          { AllowSpecs = true});
 
-            AddMissing(new CommandConfig("endvote", 3, "- ends current poll"));
+            AddMissing(new CommandConfig("endvote", 1, "- ends current poll"));
 
             AddMissing(new CommandConfig("addbox", 1, "<left> <top> <width> <height> [<number>] - adds a new box rectangle"));
 
