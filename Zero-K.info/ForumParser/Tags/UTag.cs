@@ -9,8 +9,8 @@ namespace ZeroKWeb.ForumParser
         public override string Match { get; } = "[u]";
 
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.Append("<u>");
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.Append("<u>");
             return self.Next;
         }
 
@@ -23,8 +23,8 @@ namespace ZeroKWeb.ForumParser
     {
         public override string Match { get; } = "[/u]";
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.Append("</u>");
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.Append("</u>");
             return self.Next;
         }
 

@@ -9,7 +9,11 @@ namespace ZeroKWeb.ForumParser
         public abstract string Match { get; }
         public abstract char MatchTerminator { get; }
 
-        public override bool? ScanLetter(char letter) {
+        protected StringBuilder matchedString = new StringBuilder();
+
+        public override bool? ScanLetter(ParseContext context, char letter) {
+            matchedString.Append(letter);
+
             if (pos >= Match.Length)
             {
                 if (letter == MatchTerminator)
@@ -25,5 +29,7 @@ namespace ZeroKWeb.ForumParser
         }
 
         protected abstract bool ValidateArgs();
+
+        public override string GetOriginalContent() => matchedString.ToString();
     }
 }

@@ -10,13 +10,13 @@ namespace ZeroKWeb.ForumParser
     {
         public override string Match { get; } = "[poll]";
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            var closing = ForumWikiParser.NextNodeOfType<PollOpenTag>(self);
-            if (html != null)
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            var closing = self.NextNodeOfType<PollOpenTag>();
+            if (context.Html != null)
             {
-                var content = (self.Next?.Value as LiteralTag)?.Content.ToString();
+                var content = self.Next.GetOriginalContentUntilNode(closing);
                 int pollID;
-                if (!string.IsNullOrEmpty(content) && int.TryParse(content, out pollID)) sb.Append(html.Action("Index", "Poll", new { pollID }));
+                if (!string.IsNullOrEmpty(content) && int.TryParse(content, out pollID)) context.Append(context.Html.Action("Index", "Poll", new { pollID }));
             }
 
             return closing.Next;
@@ -29,7 +29,7 @@ namespace ZeroKWeb.ForumParser
     {
         public override string Match { get; } = "[/poll]";
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
             throw new NotImplementedException(); // should not be executed
         }
 

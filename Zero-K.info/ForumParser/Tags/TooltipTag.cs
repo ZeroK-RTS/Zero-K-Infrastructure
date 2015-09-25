@@ -10,8 +10,8 @@ namespace ZeroKWeb.ForumParser
         public override string Match { get; } = "[tooltip=";
         public override char MatchTerminator { get; } = ']';
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.AppendFormat("<span nicetitle=\"{0}\">", args);
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.AppendFormat("<span nicetitle=\"{0}\">", args);
             return self.Next;
         }
 
@@ -27,8 +27,8 @@ namespace ZeroKWeb.ForumParser
     {
         public override string Match { get; } = "[/tooltip]";
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.Append("</span>");
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.Append("</span>");
             return self.Next;
         }
 

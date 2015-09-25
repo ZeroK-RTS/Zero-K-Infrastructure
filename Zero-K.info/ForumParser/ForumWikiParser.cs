@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Mvc;
 
@@ -65,10 +64,11 @@ namespace ZeroKWeb.ForumParser
             while (pos < input.Length)
             {
                 var letter = input[pos];
+                var context = new ParseContext(pos, input, tags.Last);
 
                 foreach (var c in candidates.ToList())
                 {
-                    var ret = c.ScanLetter(letter);
+                    var ret = c.ScanLetter(context, letter);
                     if (ret == true)
                     {
                         tags.AddLast(c);
@@ -95,13 +95,14 @@ namespace ZeroKWeb.ForumParser
         /// <param name="tags"></param>
         /// <returns></returns>
         static string RenderTags(LinkedList<Tag> tags, HtmlHelper html) {
-            var sb = new StringBuilder();
+
+            var context = new TranslateContext(html);
 
             tags = EliminateUnclosedTags(tags);
 
             var node = tags.First;
-            while (node != null) node = node.Value.Translate(sb, node, html);
-            return sb.ToString();
+            while (node != null) node = node.Value.Translate(context, node);
+            return context.ToString();
         }
 
 
@@ -147,7 +148,9 @@ namespace ZeroKWeb.ForumParser
             for (var i = scanStart; i <= pos; i++)
             {
                 var scanChar = input[i];
-                var term = terminalTags.First(x => x.ScanLetter(scanChar) == true);
+
+                var context = new ParseContext(pos, input, tags.Last); // match so far not set correctly here
+                var term = terminalTags.First(x => x.ScanLetter(context, scanChar) == true);
                 var lastTerm = tags.Last?.Value as TerminalTag;
 
                 if (lastTerm?.GetType() == term.GetType()) lastTerm.Append(scanChar);
@@ -163,12 +166,5 @@ namespace ZeroKWeb.ForumParser
         public static bool IsValidLink(string content) {
             return Regex.IsMatch(content, "(mailto|spring|http|https|ftp|ftps|zk)\\://[^\\\"']+$", RegexOptions.IgnoreCase);
         }
-
-        public static LinkedListNode<Tag> NextNodeOfType<T>(LinkedListNode<Tag> node)
-        {
-            while (node != null && !(node.Value is T)) node = node.Next;
-            return node;
-        }
-
     }
 }

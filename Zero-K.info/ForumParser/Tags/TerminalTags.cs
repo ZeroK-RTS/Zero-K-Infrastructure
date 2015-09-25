@@ -7,21 +7,23 @@ namespace ZeroKWeb.ForumParser
 {
     public abstract class TerminalTag: Tag
     {
-        public StringBuilder Content = new StringBuilder();
+        protected StringBuilder content = new StringBuilder();
 
         public virtual void Append(char part) {
-            Content.Append(part);
+            content.Append(part);
         }
+
+        public override string GetOriginalContent() => content.ToString();
     }
 
     public class SpaceTag: TerminalTag
     {
-        public override bool? ScanLetter(char letter) {
+        public override bool? ScanLetter(ParseContext context, char letter) {
             return letter == ' ' || letter == '\t';
         }
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.Append(Content);
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.Append(content);
             return self.Next;
         }
 
@@ -32,12 +34,12 @@ namespace ZeroKWeb.ForumParser
 
     public class NewLineTag: TerminalTag
     {
-        public override bool? ScanLetter(char letter) {
+        public override bool? ScanLetter(ParseContext context, char letter) {
             return letter == '\n';
         }
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.Append("<br/>");
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.Append("<br/>");
             return self.Next;
         }
 
@@ -49,13 +51,13 @@ namespace ZeroKWeb.ForumParser
 
     public class LiteralTag: TerminalTag
     {
-        public override bool? ScanLetter(char letter) {
+        public override bool? ScanLetter(ParseContext context, char letter) {
             return true;
         }
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            if (ForumWikiParser.IsValidLink(Content.ToString())) sb.AppendFormat("<a href=\"{0}\">{0}</a>", Content); // implicit linkification
-            else sb.Append(HttpUtility.HtmlEncode(Content));
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            if (ForumWikiParser.IsValidLink(content.ToString())) context.AppendFormat("<a href=\"{0}\">{0}</a>", content); // implicit linkification
+            else context.Append(HttpUtility.HtmlEncode(content));
 
             return self.Next;
         }

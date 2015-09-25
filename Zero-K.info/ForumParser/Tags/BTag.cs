@@ -8,9 +8,9 @@ namespace ZeroKWeb.ForumParser
     {
         public override string Match { get; } = "[/b]";
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html)
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self)
         {
-            sb.Append("</strong>");
+            context.Append("</strong>");
             return self.Next;
         }
 
@@ -25,8 +25,8 @@ namespace ZeroKWeb.ForumParser
         public override string Match { get; } = "[b]";
 
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.Append("<strong>");
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.Append("<strong>");
             return self.Next;
         }
 
