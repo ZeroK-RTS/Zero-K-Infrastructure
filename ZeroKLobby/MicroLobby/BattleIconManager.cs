@@ -179,7 +179,8 @@ namespace ZeroKLobby.MicroLobby
 
         void TasClient_UserStatusChanged(object sender, OldNewPair<User> p)
         {
-            var battle = Program.TasClient.ExistingBattles.Values.FirstOrDefault(b => b.Founder.Name == p.New.Name);
+            if (p == null || p.New == null) return; // paranoid safety; see http://zero-k.info/Forum/Post/142284#142284
+            var battle = Program.TasClient.ExistingBattles.Values.FirstOrDefault(b => b.FounderName == p.New.Name);
             if (battle == null) return;
             var founder = battle.Founder;
             var battleIcon = GetBattleIcon(battle);

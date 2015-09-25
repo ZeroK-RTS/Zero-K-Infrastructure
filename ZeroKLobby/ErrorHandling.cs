@@ -15,9 +15,45 @@ namespace ZeroKLobby
 
         static void HandleException(string e, bool sendWeb) {
             try {
-                // write to error log
-                using (var s = File.AppendText(Utils.MakePath(Program.StartupPath, Config.LogFile))) s.WriteLine("===============\r\n{0}\r\n{1}\r\n", DateTime.Now.ToString("g"), e);
                 Trace.TraceError(e);
+                
+                // write to error log
+                string logPath = Utils.MakePath(Program.StartupPath, Config.LogFile);
+
+                // if our log file is too big, back it up and clear
+                if (File.Exists(logPath))
+                {
+                    FileInfo info = new FileInfo(logPath);
+                    if (info.Length > 50 * 1024 * 1024) // 50 MB
+                    {
+                        /*  // needlessly complicated
+                        bool copySuccess = false;
+                        for (int i = 0; i < 999; i++)
+                        {
+                            string newPath = Utils.MakePath(Program.StartupPath, Path.GetFileNameWithoutExtension(Config.LogFile) + "_" + i + Path.GetExtension(Config.LogFile));
+                            bool exists = File.Exists(newPath);
+                            if (!exists)
+                            {
+                                File.Copy(logPath, newPath);
+                                copySuccess = true;
+                                break;
+                            }
+                        }
+                        */
+                        string newPath = Utils.MakePath(Program.StartupPath, Path.GetFileNameWithoutExtension(Config.LogFile) + "_backup" + Path.GetExtension(Config.LogFile));
+                        try {
+                            File.Copy(logPath, newPath, true);
+                            File.Delete(logPath);
+                        } catch (Exception ex)
+                        {
+                            Trace.TraceError("Error backing up debug file: " + ex.ToString());
+                        }
+                    }
+                }
+                using (var s = File.AppendText(logPath))
+                {
+                    s.WriteLine("===============\r\n{0}\r\n{1}\r\n", DateTime.Now.ToString("g"), e);
+                }
             } catch {}
         }
     }

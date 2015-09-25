@@ -121,13 +121,16 @@
     <Compile Include="Controls\MinimapFuncBox.Designer.cs">
       <DependentUpon>MinimapFuncBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExtendedWebBrowser.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="ExtendedWebBrowser.cs" />
     <Compile Include="Controls\ZkSplitContainer.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="GlobalHook.cs" />
+    <Compile Include="License.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>License.resx</DependentUpon>
+    </Compile>
     <Compile Include="MicroForms\PromptForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -480,6 +483,10 @@
       <LastGenOutput>Flags.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="License.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>License.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="MicroForms\PromptForm.resx">
       <DependentUpon>PromptForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -677,6 +684,8 @@
     <None Include="Resources\Conf\springsettings2.cfg" />
     <None Include="Resources\Conf\springsettings3.cfg" />
     <None Include="Resources\Conf\springsettings4.cfg" />
+    <None Include="Resources\License\GPLv3" />
+    <None Include="Resources\License\MITlicense" />
     <None Include="SpringDownloader_TemporaryKey.pfx" />
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
@@ -1646,6 +1655,7 @@
   <ItemGroup>
     <None Include="Resources\voice_talking.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">
   </Target>

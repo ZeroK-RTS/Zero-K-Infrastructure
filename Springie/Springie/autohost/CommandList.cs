@@ -36,6 +36,7 @@ namespace Springie.autohost
 
             AddMissing(new CommandConfig("listmods", 1, "[<filters>..] - lists games on server, e.g. !listmods absolute 2.23", 5));
             AddMissing(new CommandConfig("map", 3, "[<filters>..] - changes server map, eg. !map altor div"));
+            AddMissing(new CommandConfig("mapremote", 0, "[<filters>..] - changes server map, eg. !map altor div"));    // see https://github.com/ZeroK-RTS/Zero-K-Infrastructure/issues/756
 
             AddMissing(new CommandConfig("forcestart", 3, " - starts game forcibly (ignoring warnings)", 5));
 
@@ -160,7 +161,7 @@ namespace Springie.autohost
                                          new[] { SayPlace.User, SayPlace.Battle, SayPlace.Channel })
                                          { AllowSpecs = true});
 
-            AddMissing(new CommandConfig("endvote", 3, "- ends current poll"));
+            AddMissing(new CommandConfig("endvote", 1, "- ends current poll"));
 
             AddMissing(new CommandConfig("addbox", 1, "<left> <top> <width> <height> [<number>] - adds a new box rectangle"));
 
@@ -223,7 +224,7 @@ namespace Springie.autohost
                                          new[]
                                          {
                                              SayPlace.User, SayPlace.Battle, SayPlace.Game,
-                                             SayPlace.Channel
+                                             //SayPlace.Channel // this does silly stuff with !notify in #zk
                                          })
                                          { AllowSpecs = true});
 

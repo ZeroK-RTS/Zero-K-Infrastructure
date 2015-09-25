@@ -1578,12 +1578,21 @@ function gadget:Load(zip)
     repeatFactoryGroups = data.repeatFactoryGroups
     factoryExpectedUnits = data.factoryExpectedUnits
     triggers = data.triggers
-    allTriggers = data.triggers
+    allTriggers = data.allTriggers
     objectives = data.objectives
     cheatingWasEnabled = data.cheatingWasEnabled
     allowTransfer = data.allowTransfer
-    GG.mission.cheatingWasEnabled = cheatingWasEnabled
-    GG.mission.allowTransfer = allowTransfer
+    GG.mission = {
+      scores = scores,
+      counters = counters,
+      countdowns = countdowns,
+      unitGroups = unitGroups,
+      triggers = triggers,
+      allTriggers = allTriggers,
+      objectives = objectives,
+      cheatingWasEnabled = cheatingWasEnabled,
+      allowTransfer = allowTransfer,
+    }
     gameStarted = true 
   end
   

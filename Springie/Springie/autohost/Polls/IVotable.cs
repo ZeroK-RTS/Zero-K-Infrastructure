@@ -7,5 +7,6 @@ namespace Springie.autohost.Polls
         bool Setup(TasSayEventArgs e, string[] words);
         void End();
         bool Vote(TasSayEventArgs e, bool vote);
+        string Creator { get; }
     }
 }
