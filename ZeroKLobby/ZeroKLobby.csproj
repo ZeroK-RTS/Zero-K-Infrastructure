@@ -155,13 +155,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DarkHiveHover.resx</DependentUpon>
     </Compile>
-    <Compile Include="ExtendedWebBrowser.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Controls\ZkSplitContainer.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="GlobalHook.cs" />
+    <Compile Include="License.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>License.resx</DependentUpon>
+    </Compile>
     <Compile Include="MainPages\HomePage.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -204,7 +206,9 @@
     <Compile Include="MicroLobby\HexToUnicodeConverter.Designer.cs">
       <DependentUpon>HexToUnicodeConverter.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainPages\SkirmishControl.cs" />
+    <Compile Include="MainPages\SkirmishControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="MainPages\SkirmishControl.Designer.cs">
       <DependentUpon>SkirmishControl.cs</DependentUpon>
     </Compile>
@@ -261,7 +265,9 @@
     <Compile Include="MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainPages\BattleListControl.cs" />
+    <Compile Include="MainPages\BattleListControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MainPages\BattleListControl.Designer.cs">
       <DependentUpon>BattleListControl.cs</DependentUpon>
     </Compile>
@@ -542,6 +548,10 @@
       <LastGenOutput>Flags.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="License.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>License.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainPages\HomePage.resx">
       <DependentUpon>HomePage.cs</DependentUpon>
     </EmbeddedResource>
@@ -754,6 +764,8 @@
     <None Include="Resources\Conf\springsettings2.cfg" />
     <None Include="Resources\Conf\springsettings3.cfg" />
     <None Include="Resources\Conf\springsettings4.cfg" />
+    <None Include="Resources\License\GPLv3" />
+    <None Include="Resources\License\MITlicense" />
     <None Include="SM.TTF">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
