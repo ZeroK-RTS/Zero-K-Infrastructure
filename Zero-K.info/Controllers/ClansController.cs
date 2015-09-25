@@ -188,22 +188,57 @@ namespace ZeroKWeb.Controllers
                 }
 
                 orgClan = db.Clans.Single(x => x.ClanID == clan.ClanID);
+                string orgImageUrl = Server.MapPath(orgClan.GetImageUrl());
+                string orgBGImageUrl = Server.MapPath(orgClan.GetBGImageUrl());
+                string orgShortcut = orgClan.Shortcut;
+                string newImageUrl = Server.MapPath(clan.GetImageUrl());
+                string newBGImageUrl = Server.MapPath(clan.GetBGImageUrl());
                 orgClan.ClanName = clan.ClanName;
                 orgClan.Shortcut = clan.Shortcut;
                 orgClan.Description = clan.Description;
                 orgClan.SecretTopic = clan.SecretTopic;
                 orgClan.Password = clan.Password;
+                bool shortcutChanged = orgShortcut != clan.Shortcut;
 
                 if (image != null && image.ContentLength > 0)
                 {
                     var im = Image.FromStream(image.InputStream);
                     if (im.Width != 64 || im.Height != 64) im = im.GetResized(64, 64, InterpolationMode.HighQualityBicubic);
-                    im.Save(Server.MapPath(orgClan.GetImageUrl()));
+                    im.Save(newImageUrl);
                 }
+                else if (shortcutChanged)
+                {
+                    //if (System.IO.File.Exists(newImageUrl)) System.IO.File.Delete(newImageUrl);
+                    //System.IO.File.Move(orgImageUrl, newImageUrl);
+                    try {
+                        //var im = Image.FromFile(orgImageUrl);
+                        //im.Save(newImageUrl);
+                        System.IO.File.Copy(orgImageUrl, newImageUrl, true);
+                    } catch (System.IO.FileNotFoundException fnfex) // shouldn't happen but hey
+                    {
+                        return Content("A clan image is required");
+                    }
+                }
+
                 if (bgimage != null && bgimage.ContentLength > 0)
                 {
                     var im = Image.FromStream(bgimage.InputStream);
-                    im.Save(Server.MapPath(orgClan.GetBGImageUrl()));
+                    im.Save(newBGImageUrl);
+                }
+                else if (shortcutChanged)
+                {
+                    //if (System.IO.File.Exists(newBGImageUrl)) System.IO.File.Delete(newBGImageUrl);
+                    //System.IO.File.Move(orgBGImageUrl, newBGImageUrl);
+                    try
+                    {
+                        //var im = Image.FromFile(orgBGImageUrl);
+                        //im.Save(newBGImageUrl);
+                        System.IO.File.Copy(orgBGImageUrl, newBGImageUrl, true);
+                    }
+                    catch (System.IO.FileNotFoundException fnfex)
+                    {
+                        // there wasn't an original background image, do nothing
+                    }
                 }
 
                 if (clan.FactionID != orgClan.FactionID)   

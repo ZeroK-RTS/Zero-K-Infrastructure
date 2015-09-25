@@ -265,16 +265,19 @@ namespace ZeroKWeb.Controllers
         public ActionResult RemovePunishment(int punishmentID) {
             var db = new ZkDataContext();
             var todel = db.Punishments.First(x => x.PunishmentID == punishmentID);
-            db.Punishments.DeleteOnSubmit(todel);
-            db.SubmitAndMergeChanges();
 
             Account acc = todel.AccountByAccountID;
             string punisherName = "<unknown>";
+            string reason = todel.Reason ?? "<unknown reason>";
             if (todel.CreatedAccountID != null)
             {
                 Account adminAcc = db.Accounts.Find((int)todel.CreatedAccountID);
-                punisherName = adminAcc.Name;
+                if (adminAcc != null) punisherName = adminAcc.Name;
             }
+
+            db.Punishments.DeleteOnSubmit(todel);
+            db.SubmitAndMergeChanges();
+            
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} removed a punishment given by {1} ", Global.Account.Name, punisherName));
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("to {0} for: {1} ", acc.Name, todel.Reason));
 

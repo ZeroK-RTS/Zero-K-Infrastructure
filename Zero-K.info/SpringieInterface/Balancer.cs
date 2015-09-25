@@ -122,69 +122,79 @@ namespace ZeroKWeb.SpringieInterface
         /// <param name="context"></param>
         /// <param name="forceStart">Start the game as soon as the split occurs; so no chance for the players to escape</param>
         public static void SplitAutohost(BattleContext context, bool forceStart = false) {
-            //var tas = Global.Nightwatch.Tas;
-            //try {
-            //    //find first one that isnt running and is using same mode (by name)
-            //    var splitTo =
-            //        tas.ExistingBattles.Values.FirstOrDefault(
-            //            x =>
-            //            !x.Founder.IsInGame && x.NonSpectatorCount == 0 && x.Founder.Name != context.AutohostName && !x.IsPassworded &&
-            //            x.Founder.Name.TrimNumbers() ==
-            //            context.AutohostName.TrimNumbers());
+            var server = Global.Server;
+            try
+            {
+                //find first one that isnt running and is using same mode (by name)
+                var splitTo =
+                    server.Battles.Values.FirstOrDefault(
+                        x =>
+                        !x.Founder.IsInGame && x.NonSpectatorCount == 0 && x.Founder.Name != context.AutohostName && !x.IsPassworded &&
+                        x.Founder.Name.TrimNumbers() ==
+                        context.AutohostName.TrimNumbers());
 
-            //    if (splitTo != null) {
-            //        // set same map 
-            //        tas.Say(SayPlace.User, splitTo.Founder.Name, "!map " + context.Map, false);
+                if (splitTo != null)
+                {
+                    // set same map 
+                    server.GhostPm(splitTo.Founder.Name, "!map " + context.Map);
 
-            //        var db = new ZkDataContext();
-            //        var ids = context.Players.Where(y => !y.IsSpectator).Select(x => (int?)x.LobbyID).ToList();
-            //        var users = db.Accounts.Where(x => ids.Contains(x.AccountID)).ToList();
-            //        var toMove = new List<Account>();
+                    var db = new ZkDataContext();
+                    var ids = context.Players.Where(y => !y.IsSpectator).Select(x => (int?)x.LobbyID).ToList();
+                    var users = db.Accounts.Where(x => ids.Contains(x.AccountID)).ToList();
+                    var toMove = new List<Account>();
 
-            //        var moveCount = Math.Ceiling(users.Count/2.0);
+                    var moveCount = Math.Ceiling(users.Count / 2.0);
 
-            //        /*if (users.Count%2 == 0 && users.Count%4 != 0) {
-            //            // in case of say 18 people, move 10 nubs out, keep 8 pros
-            //            moveCount = users.Count/2 + 1;
-            //        }*/
+                    /*if (users.Count%2 == 0 && users.Count%4 != 0) {
+                        // in case of say 18 people, move 10 nubs out, keep 8 pros
+                        moveCount = users.Count/2 + 1;
+                    }*/
 
-            //        // split while keeping clan groups together
-            //        // note disabled splittinhg by clan - use "x.ClanID ?? x.LobbyID" for clan balance
-            //        foreach (var clanGrp in users.GroupBy(x => x.ClanID ?? x.AccountID).OrderBy(x => x.Average(y => y.EffectiveElo))) {
-            //            toMove.AddRange(clanGrp);
-            //            if (toMove.Count >= moveCount) break;
-            //        }
+                    // split while keeping clan groups together
+                    // note disabled splittinhg by clan - use "x.ClanID ?? x.LobbyID" for clan balance
+                    foreach (var clanGrp in users.GroupBy(x => x.ClanID ?? x.AccountID).OrderBy(x => x.Average(y => y.EffectiveElo)))
+                    {
+                        toMove.AddRange(clanGrp);
+                        if (toMove.Count >= moveCount) break;
+                    }
 
-            //        try {
-            //            foreach (var m in toMove) tas.ForceJoinBattle(m.Name, splitTo.BattleID);
-            //            Thread.Sleep(5000);
-            //            tas.Say(SayPlace.User, context.AutohostName, "!lock 180", false);
-            //            tas.Say(SayPlace.User, splitTo.Founder.Name, "!lock 180", false);
-            //            if (context.GetMode() == AutohostMode.Planetwars) {
-            //                tas.Say(SayPlace.User, context.AutohostName, "!map", false);
-            //                Thread.Sleep(500);
-            //                tas.Say(SayPlace.User, splitTo.Founder.Name, "!map", false);
-            //            }
-            //            else tas.Say(SayPlace.User, splitTo.Founder.Name, "!map " + context.Map, false);
-            //            if (forceStart) {
-            //                tas.Say(SayPlace.User, splitTo.Founder.Name, "!balance", false);
-            //                tas.Say(SayPlace.User, context.AutohostName, "!balance", false);
-            //                tas.Say(SayPlace.User, splitTo.Founder.Name, "!forcestart", false);
-            //                tas.Say(SayPlace.User, context.AutohostName, "!forcestart", false);
-            //            }
+                    try
+                    {
+                        foreach (var m in toMove) server.ForceJoinBattle(m.Name, splitTo.FounderName);
+                        Thread.Sleep(5000);
+                        server.GhostPm(context.AutohostName, "!lock 180");
+                        server.GhostPm(splitTo.Founder.Name, "!lock 180");
+                        if (context.GetMode() == AutohostMode.Planetwars)
+                        {
+                            server.GhostPm(context.AutohostName, "!map");
+                            Thread.Sleep(500);
+                            server.GhostPm(splitTo.Founder.Name, "!map");
+                        }
+                        else server.GhostPm(splitTo.Founder.Name, "!map " + context.Map);
+                        if (forceStart)
+                        {
+                            server.GhostPm(splitTo.Founder.Name, "!balance");
+                            server.GhostPm(context.AutohostName, "!balance");
+                            server.GhostPm(splitTo.Founder.Name, "!forcestart");
+                            server.GhostPm(context.AutohostName, "!forcestart");
+                        }
 
-            //            tas.Say(SayPlace.User, context.AutohostName, "!endvote", false);
-            //            tas.Say(SayPlace.User, splitTo.Founder.Name, "!endvote", false);
+                        server.GhostPm(context.AutohostName, "!endvote");
+                        server.GhostPm(splitTo.Founder.Name, "!endvote");
 
-            //            tas.Say(SayPlace.User, context.AutohostName, "!start", false);
-            //            tas.Say(SayPlace.User, splitTo.Founder.Name, "!start", false);
-            //        } catch (Exception ex) {
-            //            Trace.TraceError("Error when splitting: {0}", ex);
-            //        } 
-            //    }
-            //} catch (Exception ex) {
-            //    Trace.TraceError(ex.ToString());
-            //}
+                        server.GhostPm(context.AutohostName, "!start");
+                        server.GhostPm(splitTo.Founder.Name, "!start");
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceError("Error when splitting: {0}", ex);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.ToString());
+            }
         }
 
         /// <summary>

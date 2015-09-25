@@ -102,6 +102,7 @@ namespace ZeroKLobby
 
         public static Control GetHoveredControl(this Control parent) {
             var thisControl = parent;
+            if (thisControl == null) return null;	// yeah an NPE could happen here... don't ask how
             var globalPos = Control.MousePosition;
             var relativePos = thisControl.PointToClient(globalPos);
 

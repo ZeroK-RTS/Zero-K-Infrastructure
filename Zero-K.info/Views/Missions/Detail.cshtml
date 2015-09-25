@@ -47,8 +47,19 @@ $(function() {
 <div class="wrapper">
   <div class="border-test width-50">
     <!info>
-    <h2>@m.Name</h2>
-    By @Html.PrintAccount(m.Account)
+    <table>
+        <tr>
+            <td>
+                <img width='96' height='96' border='1' src='@Href(string.Format("~/img/missions/{0}.png", Model.Mission.MissionID))' class='fleft' />
+            </td>
+            <td valign="top">
+                <h2>@m.Name</h2>
+                By @Html.PrintAccount(m.Account)
+                <br />
+                @Html.BBCode(Model.Mission.Description)
+            </td>
+        </tr>
+    </table>
     @if (m.MinHumans < 2) {
       <br />
         <br />
@@ -72,8 +83,7 @@ $(function() {
       @*<!close zk warning>*@
 			<br />
     }
-    <span class="">@Html.BBCode(Model.Mission.Description)
-      <br />
+    <span class="">
       <br />
       Players: @m.MinToMaxHumansString<br />
       <small>@Html.PrintLines(m.GetPseudoTags())</small> Map: @Html.PrintMap(m.Map)<br />
