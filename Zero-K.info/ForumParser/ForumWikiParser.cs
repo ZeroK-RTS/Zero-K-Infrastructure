@@ -64,10 +64,11 @@ namespace ZeroKWeb.ForumParser
             while (pos < input.Length)
             {
                 var letter = input[pos];
+                var context = new ParseContext(pos, input, tags.Last);
 
                 foreach (var c in candidates.ToList())
                 {
-                    var ret = c.ScanLetter(letter);
+                    var ret = c.ScanLetter(context, letter);
                     if (ret == true)
                     {
                         tags.AddLast(c);
@@ -147,7 +148,9 @@ namespace ZeroKWeb.ForumParser
             for (var i = scanStart; i <= pos; i++)
             {
                 var scanChar = input[i];
-                var term = terminalTags.First(x => x.ScanLetter(scanChar) == true);
+
+                var context = new ParseContext(pos, input, tags.Last); // match so far not set correctly here
+                var term = terminalTags.First(x => x.ScanLetter(context, scanChar) == true);
                 var lastTerm = tags.Last?.Value as TerminalTag;
 
                 if (lastTerm?.GetType() == term.GetType()) lastTerm.Append(scanChar);

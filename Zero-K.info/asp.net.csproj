@@ -137,6 +137,7 @@
     <Compile Include="Controllers\UnitStatsController.cs" />
     <Compile Include="AppCode\MarkdownHelper.cs" />
     <Compile Include="ForumParser\ForumWikiParser.cs" />
+    <Compile Include="ForumParser\ParseContext.cs" />
     <Compile Include="ForumParser\ParserExtensions.cs" />
     <Compile Include="ForumParser\Tags\Abstract\IOpeningTag.cs" />
     <Compile Include="ForumParser\Tags\Abstract\OpeningArgsTag.cs" />
@@ -148,6 +149,7 @@
     <Compile Include="ForumParser\Tags\BTag.cs" />
     <Compile Include="ForumParser\Tags\ColorTag.cs" />
     <Compile Include="ForumParser\Tags\GifvTag.cs" />
+    <Compile Include="ForumParser\Tags\HeaderTag.cs" />
     <Compile Include="ForumParser\Tags\ImgTag.cs" />
     <Compile Include="ForumParser\Tags\ITag.cs" />
     <Compile Include="ForumParser\Tags\PollTag.cs" />
@@ -161,6 +163,7 @@
     <Compile Include="ForumParser\Tags\UrlTag.cs" />
     <Compile Include="ForumParser\Tags\UTag.cs" />
     <Compile Include="ForumParser\Tags\VidTag.cs" />
+    <Compile Include="ForumParser\TocEntry.cs" />
     <Compile Include="ForumParser\TranslateContext.cs" />
     <Compile Include="Helpers\MarkdownHelper.cs" />
     <Compile Include="SpringieInterface\Balancer.cs" />

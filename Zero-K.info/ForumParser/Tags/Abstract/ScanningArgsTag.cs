@@ -11,7 +11,7 @@ namespace ZeroKWeb.ForumParser
 
         protected StringBuilder matchedString = new StringBuilder();
 
-        public override bool? ScanLetter(char letter) {
+        public override bool? ScanLetter(ParseContext context, char letter) {
             matchedString.Append(letter);
 
             if (pos >= Match.Length)

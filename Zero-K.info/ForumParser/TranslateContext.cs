@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 using System.Web.Mvc;
 using JetBrains.Annotations;
 
@@ -11,11 +12,12 @@ namespace ZeroKWeb.ForumParser
     {
         readonly StringBuilder sb = new StringBuilder();
 
-        public TranslateContext(HtmlHelper html)
-        {
+        readonly List<TocEntry> tocEntries = new List<TocEntry>();
+
+        public TranslateContext(HtmlHelper html) {
             Html = html;
         }
-        
+
         /// <summary>
         ///     Html helper to be used by translation
         /// </summary>
@@ -25,9 +27,16 @@ namespace ZeroKWeb.ForumParser
         ///     Appends raw html
         /// </summary>
         /// <param name="str"></param>
-        public void Append(object str)
-        {
+        public void Append(object str) {
             sb.Append(str);
+        }
+
+        /// <summary>
+        /// Adds entry for table of content (headers)
+        /// </summary>
+        /// <param name="entry"></param>
+        public void AddTocEntry(TocEntry entry) {
+            tocEntries.Add(entry);
         }
 
 
@@ -37,8 +46,7 @@ namespace ZeroKWeb.ForumParser
         /// <param name="formatString"></param>
         /// <param name="args"></param>
         [StringFormatMethod("formatString")]
-        public void AppendFormat(string formatString, params object[] args)
-        {
+        public void AppendFormat(string formatString, params object[] args) {
             sb.AppendFormat(formatString, args);
         }
 
@@ -46,8 +54,7 @@ namespace ZeroKWeb.ForumParser
         ///     Returns resulting Html
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
-        {
+        public override string ToString() {
             return sb.ToString();
         }
     }

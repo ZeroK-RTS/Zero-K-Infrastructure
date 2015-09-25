@@ -18,7 +18,7 @@ namespace ZeroKWeb.ForumParser
 
     public class SpaceTag: TerminalTag
     {
-        public override bool? ScanLetter(char letter) {
+        public override bool? ScanLetter(ParseContext context, char letter) {
             return letter == ' ' || letter == '\t';
         }
 
@@ -34,7 +34,7 @@ namespace ZeroKWeb.ForumParser
 
     public class NewLineTag: TerminalTag
     {
-        public override bool? ScanLetter(char letter) {
+        public override bool? ScanLetter(ParseContext context, char letter) {
             return letter == '\n';
         }
 
@@ -51,7 +51,7 @@ namespace ZeroKWeb.ForumParser
 
     public class LiteralTag: TerminalTag
     {
-        public override bool? ScanLetter(char letter) {
+        public override bool? ScanLetter(ParseContext context, char letter) {
             return true;
         }
 
