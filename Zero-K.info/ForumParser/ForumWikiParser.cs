@@ -122,8 +122,13 @@ namespace ZeroKWeb.ForumParser
                 }
             }
 
-            foreach (var td in toDel) input.Remove(td); // delete extra closing tags
-            while (openedTagsStack.Count > 0) input.Remove(openedTagsStack.Pop()); // delete extra opening tags
+            foreach (var td in toDel) input.Find(td).Value = new LiteralTag(td.GetOriginalContent()); // replace extra closing tags with literals
+
+            while (openedTagsStack.Count > 0)  // replace extra opening tags with literals
+            {
+                var pop = openedTagsStack.Pop();
+                input.Find(pop).Value = new LiteralTag(pop.GetOriginalContent());
+            }
 
             return input;
         }

@@ -20,6 +20,7 @@ using System.Xml.Serialization;
 //using NightWatch;
 using LobbyClient;
 using Microsoft.Linq.Translations;
+using Newtonsoft.Json.Linq;
 using PlasmaShared;
 using ZkData.UnitSyncLib;
 using ZeroKWeb;
@@ -268,15 +269,8 @@ namespace Fixer
 
         [STAThread]
         static void Main(string[] args) {
-            var ret = new ForumWikiParser().ProcessToHtml(@"== some header ==
-=== lesser header ===
-= huge header =
- * list
- * of
- * things
-  * to
-  * come
- * soon", null);
+
+            var ret = new ForumWikiParser().ProcessToHtml(@"[b]sopme[i]inner[/i][/b][b]unclosed[/i]unopened", null);
             return;
 
 

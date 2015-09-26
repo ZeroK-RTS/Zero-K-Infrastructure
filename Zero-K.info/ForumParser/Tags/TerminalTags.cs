@@ -55,6 +55,12 @@ namespace ZeroKWeb.ForumParser
             return true;
         }
 
+        public LiteralTag() {}
+
+        public LiteralTag(string str) {
+            this.content.Append(str);
+        }
+
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
             if (ForumWikiParser.IsValidLink(content.ToString())) context.AppendFormat("<a href=\"{0}\">{0}</a>", content); // implicit linkification
             else context.Append(HttpUtility.HtmlEncode(content));
