@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using System.Web;
 
 namespace ZeroKWeb.ForumParser
 {
     /// <summary>
-    /// = header =  or == header ==  generates h1 to h6 headers along with anchor for table of content
+    ///     = header =  or == header ==  generates h1 to h6 headers along with anchor for table of content
     /// </summary>
     public class HeaderTag: Tag
     {
@@ -27,18 +28,16 @@ namespace ZeroKWeb.ForumParser
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
             var level = GetOriginalContent().Length;
 
+            var ender = self.Next.FirstNode(x => x.Value is HeaderTag || x.Value is NewLineTag);
+            if (ender?.Value is HeaderTag)
             {
-                var ender = self.Next.FirstNode(x => x.Value is HeaderTag || x.Value is NewLineTag);
-                if (ender?.Value is HeaderTag)
-                {
-                    var name = self.Next.GetOriginalContentUntilNode(ender).Trim();
-                    var link = name.Replace(" ", "_").Replace("\"", "_").Replace("'", "_");
+                var name = HttpUtility.HtmlEncode(self.Next.GetOriginalContentUntilNode(ender).Trim());
+                var link = name.Replace(" ", "_").Replace("\"", "_").Replace("'", "_");
 
-                    context.AppendFormat("<h{0}>{2}<a name=\"{1}\"/></h{0}>", level, link, name);
-                    context.AddTocEntry(new TocEntry(name, link, level));
+                context.AppendFormat("<h{0}>{2}<a name=\"{1}\"></a></h{0}>", level, link, name);
+                context.AddTocEntry(new TocEntry(name, link, level));
 
-                    return ender.Next;
-                }
+                return ender.Next;
             }
 
             context.Append(content);

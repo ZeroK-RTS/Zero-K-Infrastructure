@@ -44,6 +44,10 @@ namespace ZeroKWeb.ForumParser
             var n = start;
             do
             {
+                var thisLineStar = n.FirstNode(x => (x.Value is StarTag || x.Value is NewLineTag));
+                if (thisLineStar == null || thisLineStar.Value is NewLineTag || ListPrefixLevel(thisLineStar) == 0) return n;
+                n = thisLineStar;
+
                 var endline = n.FirstNode(x => x.Value is NewLineTag);
                 var p = ListPrefixLevel(n);
                 if (p == level) // same level add item
@@ -51,26 +55,15 @@ namespace ZeroKWeb.ForumParser
                     context.Append("<li>\n");
                     n.Next?.Next?.TranslateUntilNode(context, endline);
                     context.Append("</li>\n");
+                    n = endline?.Next;
                 } else if (p > level) // increasing level, start list, recursion
                 {
                     context.Append("<ul>\n");
-                    endline = ProcessListContent(context, p, n);
+                    n = ProcessListContent(context, p, n);
                     context.Append("</ul>\n");
                 } else // decreasing level
-                    return n.Previous?.Previous; // this is continuation of lower level ul, return endline so taht code can resume
+                    return n; // this is continuation of lower level ul, return endline so taht code can resume
 
-                n = endline?.Next;
-
-                if (n != null) // advance to next line - if possible
-                {
-                    var nextLineStar = n.FirstNode(x => (x.Value is StarTag || x.Value is NewLineTag));
-                    if (nextLineStar?.Value is StarTag)
-                    {
-                        var nextPrefix = ListPrefixLevel(nextLineStar);
-                        if (nextPrefix > 0) n = nextLineStar; // move to star on next line
-                        else break; // stop ul list - invalid prefix 
-                    } else break; // stop ul, not starred list at all
-                }
             } while (n != null);
             return n;
         }

@@ -270,7 +270,13 @@ namespace Fixer
         [STAThread]
         static void Main(string[] args) {
 
-            var ret = new ForumWikiParser().ProcessToHtml(@"[b]sopme[i]inner[/i][/b][b]unclosed[/i]unopened", null);
+            var ret = new ForumWikiParser().ProcessToHtml(@"
+  * line
+  * second
+ * off
+ * off
+cle
+", null);
             return;
 
 

@@ -48,6 +48,16 @@ namespace ZeroKWeb.ForumParser
             return null;
         }
 
+        public static LinkedListNode<Tag> FirstNodeReverse(this LinkedListNode<Tag> startNode, Func<LinkedListNode<Tag>, bool> condition)
+        {
+            while (startNode != null)
+            {
+                if (condition(startNode)) return startNode;
+                startNode = startNode.Previous;
+            }
+            return null;
+        }
+
 
         public static void TranslateUntilNode(this LinkedListNode<Tag> startNode, TranslateContext context, LinkedListNode<Tag> endNode) {
             startNode.TranslateWhile(context, x => x != endNode);
