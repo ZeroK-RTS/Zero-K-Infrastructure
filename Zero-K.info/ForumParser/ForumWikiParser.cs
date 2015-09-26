@@ -116,9 +116,12 @@ namespace ZeroKWeb.ForumParser
                 else if (tag.Mode == OpeningClosingMode.Closing)
                 {
                     if (openedTagsStack.Count == 0) toDel.Add(tag);
-                    var peek = openedTagsStack.Peek();
-                    if (peek.IsClosedBy(tag)) openedTagsStack.Pop();
-                    else toDel.Add(tag);
+                    else
+                    {
+                        var peek = openedTagsStack.Peek();
+                        if (peek.IsClosedBy(tag)) openedTagsStack.Pop();
+                        else toDel.Add(tag);
+                    }
                 }
             }
 

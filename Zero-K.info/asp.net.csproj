@@ -110,6 +110,7 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WebGrease, Version=1.5.2.14234, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
@@ -151,6 +152,7 @@
     <Compile Include="ForumParser\Tags\ColorTag.cs" />
     <Compile Include="ForumParser\Tags\GifvTag.cs" />
     <Compile Include="ForumParser\Tags\HeaderTag.cs" />
+    <Compile Include="ForumParser\Tags\HtmlTag.cs" />
     <Compile Include="ForumParser\Tags\ImgTag.cs" />
     <Compile Include="ForumParser\Tags\ITag.cs" />
     <Compile Include="ForumParser\Tags\PollTag.cs" />

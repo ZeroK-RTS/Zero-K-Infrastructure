@@ -65,7 +65,8 @@ namespace ZeroKWeb.ForumParser
         }
 
         public static bool IsValidLink(this string content) {
-            return Regex.IsMatch(content, "(mailto|spring|http|https|ftp|ftps|zk)\\://[^\\\"']+$", RegexOptions.IgnoreCase);
+            if (content == null) return false;
+            return Regex.IsMatch(content, "^(mailto|spring|http|https|ftp|ftps|zk)\\://[^\\\"']+$", RegexOptions.IgnoreCase);
         }
     }
 }
