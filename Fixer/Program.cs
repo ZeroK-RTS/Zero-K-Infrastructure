@@ -268,7 +268,14 @@ namespace Fixer
 
         [STAThread]
         static void Main(string[] args) {
-            var ret = new ForumWikiParser().ProcessToHtml("== level 2 == \n === level 3 === \n", null);
+            var ret = new ForumWikiParser().ProcessToHtml(@"== some header ==
+
+ * list
+ * of
+ * things
+  * to
+  * come
+ * soon", null);
             return;
 
 

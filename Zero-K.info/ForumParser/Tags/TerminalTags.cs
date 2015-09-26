@@ -35,7 +35,7 @@ namespace ZeroKWeb.ForumParser
     public class NewLineTag: TerminalTag
     {
         public override bool? ScanLetter(ParseContext context, char letter) {
-            return letter == '\n';
+            return letter == '\n' || letter=='\r';
         }
 
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {

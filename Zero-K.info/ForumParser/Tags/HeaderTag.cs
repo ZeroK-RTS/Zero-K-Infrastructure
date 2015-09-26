@@ -13,7 +13,7 @@ namespace ZeroKWeb.ForumParser
                 if (context.PreviousTag == null || context.PreviousTag.Value is SpaceTag || context.PreviousTag.Value is NewLineTag)
                 {
                     content.Append(letter);
-                    if (context.NextChar == null || context.NextChar == ' ' || context.NextChar == '\n') return true;
+                    if (context.NextChar == null || context.NextChar == ' ' || context.NextChar == '\n' || context.NextChar=='\r') return true;
                     return null;
                 }
             }
