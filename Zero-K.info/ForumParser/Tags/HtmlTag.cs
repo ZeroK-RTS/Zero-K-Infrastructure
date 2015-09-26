@@ -29,6 +29,7 @@ namespace ZeroKWeb.ForumParser
             ["h4"] = new List<string>(),
             ["h5"] = new List<string>(),
             ["h6"] = new List<string>(),
+            ["hr"] = new List<string>(),
             ["i"] = new List<string>(),
             ["img"] = new List<string> { "src", "alt", "border", "height", "width", "align", "title", "nicetitle" },
             ["li"] = new List<string>(),

@@ -270,7 +270,7 @@ namespace Fixer
         [STAThread]
         static void Main(string[] args) {
 
-            var ret = new ForumWikiParser().ProcessToHtml(@"<a href='http://bla' nicetitle='zero'>next</a> <table>bla<table><tr><td>some</td></tr></table>", null);
+            var ret = new ForumWikiParser().ProcessToHtml(@"some{{{code<b>s</b> quote\n}}} bla", null);
             return;
 
 

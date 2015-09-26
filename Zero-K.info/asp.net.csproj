@@ -149,6 +149,7 @@
     <Compile Include="ForumParser\Tags\Abstract\Tag.cs" />
     <Compile Include="ForumParser\Tags\AtSignTag.cs" />
     <Compile Include="ForumParser\Tags\BTag.cs" />
+    <Compile Include="ForumParser\Tags\CodeTag.cs" />
     <Compile Include="ForumParser\Tags\ColorTag.cs" />
     <Compile Include="ForumParser\Tags\GifvTag.cs" />
     <Compile Include="ForumParser\Tags\HeaderTag.cs" />
