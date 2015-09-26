@@ -269,7 +269,8 @@ namespace Fixer
         [STAThread]
         static void Main(string[] args) {
             var ret = new ForumWikiParser().ProcessToHtml(@"== some header ==
-
+=== lesser header ===
+= huge header =
  * list
  * of
  * things

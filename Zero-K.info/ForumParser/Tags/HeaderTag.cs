@@ -13,6 +13,7 @@ namespace ZeroKWeb.ForumParser
                 if (context.PreviousTag == null || context.PreviousTag.Value is SpaceTag || context.PreviousTag.Value is NewLineTag)
                 {
                     content.Append(letter);
+                    if (content.Length > 6) return false;
                     if (context.NextChar == null || context.NextChar == ' ' || context.NextChar == '\n' || context.NextChar=='\r') return true;
                     return null;
                 }
@@ -24,7 +25,7 @@ namespace ZeroKWeb.ForumParser
             var prev = self.Previous;
             var level = GetOriginalContent().Length;
 
-            if ((prev == null || prev.Value is SpaceTag) && self.Next?.Value is SpaceTag)
+            if ((prev == null || prev.Value is SpaceTag || prev.Value is NewLineTag) && self.Next?.Value is SpaceTag)
             {
                 var ender = self.Next.FirstNode(x => x.Next == null || x.Next.Value is NewLineTag);
                 if (ender.Value is SpaceTag) ender = ender.Previous;
