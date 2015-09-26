@@ -47,13 +47,15 @@ namespace ZeroKWeb.Controllers
                     break;
 
                 case "push":
-                    List<string> commitMessages = new List<string>();
-                    foreach (dynamic commit in payload.commits)
+                    var sb = new StringBuilder();
+                    int count = 0;
+                    dynamic commits = payload.commits;
+                    foreach (dynamic commit in commits)
                     {
-                        commitMessages.Add(commit.message);
+                        sb.AppendFormat("\n {0} ({1})", commit.message, commit.url);
+                        count++;
                     }
-                    if (commitMessages.Count > 0)
-                        text = $"[{payload.repository.name}] {payload.sender.login} has pushed {commitMessages.Count} commits: {payload.compare}\n{string.Join("\n", commitMessages)}";
+                    text = $"[{payload.repository.name}] {payload.sender.login} has pushed {count} commits: {sb}\n";
                     break;
             }
 
