@@ -19,7 +19,7 @@ namespace ZeroKWeb.ForumParser
         }
     }
 
-    public class ITagClose: ScanningTag
+    public class ITagClose: ClosingTag
     {
         public override string Match { get; } = "[/i]";
 

@@ -23,7 +23,7 @@ namespace ZeroKWeb.ForumParser
         }
     }
 
-    public class TooltipCloseTag: ScanningTag
+    public class TooltipCloseTag: ClosingTag
     {
         public override string Match { get; } = "[/tooltip]";
 

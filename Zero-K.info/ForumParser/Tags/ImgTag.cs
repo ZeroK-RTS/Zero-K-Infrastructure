@@ -32,7 +32,7 @@ namespace ZeroKWeb.ForumParser
     }
 
 
-    public class ImgCloseTag: ScanningTag
+    public class ImgCloseTag: ClosingTag
     {
         public override string Match { get; } = "[/img]";
 

@@ -25,7 +25,7 @@ namespace ZeroKWeb.ForumParser
         public override Tag Create() => new PollOpenTag();
     }
 
-    public class PollCloseTag: ScanningTag
+    public class PollCloseTag: ClosingTag
     {
         public override string Match { get; } = "[/poll]";
 

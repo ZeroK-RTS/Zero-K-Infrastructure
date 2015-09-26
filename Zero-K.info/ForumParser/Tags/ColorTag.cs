@@ -32,7 +32,7 @@ namespace ZeroKWeb.ForumParser
         public override Tag Create() => new ColorOpenTag();
     }
 
-    public class ColorCloseTag: ScanningTag
+    public class ColorCloseTag: ClosingTag
     {
         public override string Match { get; } = "[/color]";
 

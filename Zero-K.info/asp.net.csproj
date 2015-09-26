@@ -139,7 +139,8 @@
     <Compile Include="ForumParser\ForumWikiParser.cs" />
     <Compile Include="ForumParser\ParseContext.cs" />
     <Compile Include="ForumParser\ParserExtensions.cs" />
-    <Compile Include="ForumParser\Tags\Abstract\IOpeningTag.cs" />
+    <Compile Include="ForumParser\Tags\Abstract\ClosingTag.cs" />
+    <Compile Include="ForumParser\Tags\Abstract\IOpeningClosing.cs" />
     <Compile Include="ForumParser\Tags\Abstract\OpeningArgsTag.cs" />
     <Compile Include="ForumParser\Tags\Abstract\OpeningTag.cs" />
     <Compile Include="ForumParser\Tags\Abstract\ScanningArgsTag.cs" />

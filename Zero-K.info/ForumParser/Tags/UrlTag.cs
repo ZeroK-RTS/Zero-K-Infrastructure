@@ -22,7 +22,7 @@ namespace ZeroKWeb.ForumParser
         public override Tag Create() => new UrlOpenTag();
     }
 
-    public class UrlCloseTag: ScanningTag
+    public class UrlCloseTag: ClosingTag
     {
         public override string Match { get; } = "[/url]";
 

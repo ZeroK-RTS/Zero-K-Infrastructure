@@ -33,7 +33,7 @@ namespace ZeroKWeb.ForumParser
         public override Tag Create() => new VidOpenTag();
     }
 
-    public class VidCloseTag: ScanningTag
+    public class VidCloseTag: ClosingTag
     {
         public override string Match { get; } = "[/vid]";
 

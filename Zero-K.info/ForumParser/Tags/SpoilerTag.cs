@@ -20,7 +20,7 @@ namespace ZeroKWeb.ForumParser
         public override Tag Create() => new SpoilerOpenTag();
     }
 
-    public class SpoilerCloseTag: ScanningTag
+    public class SpoilerCloseTag: ClosingTag
     {
         public override string Match { get; } = "[/spoiler]";
 

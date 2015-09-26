@@ -19,7 +19,7 @@ namespace ZeroKWeb.ForumParser
         }
     }
 
-    public class UTagClose: ScanningTag
+    public class UTagClose: ClosingTag
     {
         public override string Match { get; } = "[/u]";
 

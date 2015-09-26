@@ -33,7 +33,7 @@ namespace ZeroKWeb.ForumParser
         public override Tag Create() => new GifvOpenTag();
     }
 
-    public class GifvCloseTag: ScanningTag
+    public class GifvCloseTag: ClosingTag
     {
         public override string Match { get; } = "[/gifv]";
 

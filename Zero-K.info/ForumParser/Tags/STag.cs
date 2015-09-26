@@ -21,7 +21,7 @@ namespace ZeroKWeb.ForumParser
         }
     }
 
-    public class STagClose : ScanningTag
+    public class STagClose : ClosingTag
     {
         public override string Match { get; } = "[/s]";
 

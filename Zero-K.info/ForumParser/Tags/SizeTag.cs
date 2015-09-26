@@ -22,7 +22,7 @@ namespace ZeroKWeb.ForumParser
         }
     }
 
-    public class SizeCloseTag: ScanningTag
+    public class SizeCloseTag: ClosingTag
     {
         public override string Match { get; } = "[/size]";
 

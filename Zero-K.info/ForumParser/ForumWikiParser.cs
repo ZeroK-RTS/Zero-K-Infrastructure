@@ -11,19 +11,15 @@ namespace ZeroKWeb.ForumParser
     {
         static readonly List<Tag> nonterminalTags = new List<Tag>();
         static readonly List<TerminalTag> terminalTags = new List<TerminalTag> { new NewLineTag(), new SpaceTag(), new LiteralTag() };
-        static readonly List<Tuple<Type, Type>> openClosePairs = new List<Tuple<Type, Type>>();
 
         static ForumWikiParser() {
             // load all classes using reflection
             foreach (var t in Assembly.GetExecutingAssembly().GetTypes())
             {
-                if (typeof(Tag).IsAssignableFrom(t) && t != typeof(LiteralTag) && !t.IsAbstract && !typeof(TerminalTag).IsAssignableFrom(t))
+                if (typeof(Tag).IsAssignableFrom(t) && !t.IsAbstract && !typeof(TerminalTag).IsAssignableFrom(t))
                 {
                     var tag = (Tag)t.GetConstructor(new Type[] { }).Invoke(null);
                     nonterminalTags.Add(tag);
-
-                    // find matching open close pairs and store them
-                    if (typeof(IOpeningTag).IsAssignableFrom(t)) openClosePairs.Add(new Tuple<Type, Type>(t, ((IOpeningTag)tag).ClosingTagType));
                 }
             }
         }
@@ -95,7 +91,6 @@ namespace ZeroKWeb.ForumParser
         /// <param name="tags"></param>
         /// <returns></returns>
         static string RenderTags(LinkedList<Tag> tags, HtmlHelper html) {
-
             var context = new TranslateContext(html);
 
             tags = EliminateUnclosedTags(tags);
@@ -117,17 +112,13 @@ namespace ZeroKWeb.ForumParser
 
             foreach (var tag in input)
             {
-                var type = tag.GetType();
-                if (openClosePairs.Any(y => y.Item1 == type)) openedTagsStack.Push(tag);
-                else
+                if (tag.Mode == OpeningClosingMode.Opening) openedTagsStack.Push(tag);
+                else if (tag.Mode == OpeningClosingMode.Closing)
                 {
-                    var closedPair = openClosePairs.FirstOrDefault(y => y.Item2 == type);
-                    if (closedPair != null)
-                    {
-                        Tag peek;
-                        if (openedTagsStack.Count == 0 || ((peek = openedTagsStack.Peek()) == null) || peek.GetType() != closedPair.Item1) toDel.Add(tag);
-                        else openedTagsStack.Pop();
-                    }
+                    if (openedTagsStack.Count == 0) toDel.Add(tag);
+                    var peek = openedTagsStack.Peek();
+                    if (peek.IsClosedBy(tag)) openedTagsStack.Pop();
+                    else toDel.Add(tag);
                 }
             }
 

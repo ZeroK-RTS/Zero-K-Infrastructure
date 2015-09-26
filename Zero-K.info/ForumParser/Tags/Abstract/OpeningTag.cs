@@ -1,9 +1,8 @@
-﻿using System;
-
-namespace ZeroKWeb.ForumParser
+﻿namespace ZeroKWeb.ForumParser
 {
-    public abstract class OpeningTag<T>: ScanningTag, IOpeningTag
+    public abstract class OpeningTag<T>: ScanningTag
     {
-        public virtual Type ClosingTagType => typeof(T);
+        public override OpeningClosingMode Mode { get; } = OpeningClosingMode.Opening;
+        public override bool IsClosedBy(Tag closer) => closer?.GetType() == typeof(T);
     }
 }

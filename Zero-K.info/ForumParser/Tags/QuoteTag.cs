@@ -26,7 +26,7 @@ namespace ZeroKWeb.ForumParser
     /// <summary>
     /// [/q]
     /// </summary>
-    public class QTagClose : ScanningTag
+    public class QTagClose : ClosingTag
     {
         public override string Match { get; } = "[/q]";
 
@@ -58,7 +58,7 @@ namespace ZeroKWeb.ForumParser
     /// <summary>
     /// [/quote] alias for [/q] tag
     /// </summary>
-    public class QuoteTagClose : ScanningTag
+    public class QuoteTagClose : ClosingTag
     {
         public override string Match { get; } = "[/quote]";
 
