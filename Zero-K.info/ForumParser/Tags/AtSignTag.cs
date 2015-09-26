@@ -18,7 +18,7 @@ namespace ZeroKWeb.ForumParser
                 var nextLit = self.Next?.Value as LiteralTag; // next is string
                 if (nextLit != null)
                 {
-                    var val = self.Next.GetOriginalContentUntilWhiteSpaceOrEndline(); // get next string
+                    var val = self.Next.GetOriginalContentWhileCondition(x=>x.Value is LiteralTag || x.Value is StarTag || x.Value is UnderscoreTag); // get next string
                     var db = new ZkDataContext();
 
                     var acc = Account.AccountByName(db, val);
