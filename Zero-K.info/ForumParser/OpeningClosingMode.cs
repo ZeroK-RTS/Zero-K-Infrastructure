@@ -1,8 +1,5 @@
-﻿using System;
-
-namespace ZeroKWeb.ForumParser
+﻿namespace ZeroKWeb.ForumParser
 {
-
     public enum OpeningClosingMode
     {
         SelfClosed = 0,

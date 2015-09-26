@@ -62,7 +62,7 @@ namespace ZeroKWeb.ForumParser
         }
 
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
-            if (ForumWikiParser.IsValidLink(content.ToString())) context.AppendFormat("<a href=\"{0}\">{0}</a>", content); // implicit linkification
+            if (content.ToString().IsValidLink()) context.AppendFormat("<a href=\"{0}\">{0}</a>", content); // implicit linkification
             else context.Append(HttpUtility.HtmlEncode(content));
 
             return self.Next;

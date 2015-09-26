@@ -13,7 +13,7 @@ namespace ZeroKWeb.ForumParser
         public override string Match { get; } = "[img";
         public override char MatchTerminator { get; } = ']';
 
-        protected override bool ValidateArgs() => args.Length == 0 || ForumWikiParser.IsValidLink(args.ToString(1, args.Length - 1));
+        protected override bool ValidateArgs() => args.Length == 0 || args.ToString(1, args.Length - 1).IsValidLink();
 
 
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
@@ -22,7 +22,7 @@ namespace ZeroKWeb.ForumParser
             // get url either from param or from inner literal between tags
             var url = args.Length == 0 ? self.Next.GetOriginalContentUntilNode(closingTag) : args.ToString(1, args.Length - 1);
 
-            if (ForumWikiParser.IsValidLink(url)) context.AppendFormat("<a href=\"{0}\" target=\"_blank\" ><img src=\"{0}\" max-width=\"100%\" height=\"auto\"/></a>", url);
+            if (url.IsValidLink()) context.AppendFormat("<a href=\"{0}\" target=\"_blank\" ><img src=\"{0}\" max-width=\"100%\" height=\"auto\"/></a>", url);
 
             return closingTag?.Next; // move to after closing img
         }

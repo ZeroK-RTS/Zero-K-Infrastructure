@@ -12,7 +12,7 @@ namespace ZeroKWeb.ForumParser
         public override string Match { get; } = "[url=";
         public override char MatchTerminator { get; } = ']';
 
-        protected override bool ValidateArgs() => ForumWikiParser.IsValidLink(args.ToString());
+        protected override bool ValidateArgs() => args.ToString().IsValidLink();
 
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
             context.AppendFormat("<a href=\"{0}\" target=\"_blank\">", args);

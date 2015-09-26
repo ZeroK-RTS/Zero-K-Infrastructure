@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using Antlr.Runtime.Misc;
 
 namespace ZeroKWeb.ForumParser
@@ -61,6 +62,10 @@ namespace ZeroKWeb.ForumParser
 
         public static void TranslateUntilNode(this LinkedListNode<Tag> startNode, TranslateContext context, LinkedListNode<Tag> endNode) {
             startNode.TranslateWhile(context, x => x != endNode);
+        }
+
+        public static bool IsValidLink(this string content) {
+            return Regex.IsMatch(content, "(mailto|spring|http|https|ftp|ftps|zk)\\://[^\\\"']+$", RegexOptions.IgnoreCase);
         }
     }
 }

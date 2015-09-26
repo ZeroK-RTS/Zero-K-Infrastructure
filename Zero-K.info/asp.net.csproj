@@ -140,8 +140,8 @@
     <Compile Include="ForumParser\ParseContext.cs" />
     <Compile Include="ForumParser\ParserExtensions.cs" />
     <Compile Include="ForumParser\Tags\Abstract\ClosingTag.cs" />
-    <Compile Include="ForumParser\Tags\Abstract\IOpeningClosing.cs" />
     <Compile Include="ForumParser\Tags\Abstract\OpeningArgsTag.cs" />
+    <Compile Include="ForumParser\OpeningClosingMode.cs" />
     <Compile Include="ForumParser\Tags\Abstract\OpeningTag.cs" />
     <Compile Include="ForumParser\Tags\Abstract\ScanningArgsTag.cs" />
     <Compile Include="ForumParser\Tags\Abstract\ScanningTag.cs" />
