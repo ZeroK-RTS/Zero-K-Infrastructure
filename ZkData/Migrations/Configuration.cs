@@ -47,7 +47,9 @@ namespace ZkData.Migrations
                     new ForumCategory { Title = "Battles", IsSpringBattles = true }, 
                     new ForumCategory { Title = "Missions", IsMissions = true },
                     new ForumCategory { Title = "Clans", IsClans = true }, 
-                    new ForumCategory { Title = "Planets", IsPlanets = true });
+                    new ForumCategory { Title = "Planets", IsPlanets = true },
+                    new ForumCategory { Title = "Wiki", IsWiki = true }
+                    );
 
                 db.AutohostConfigs.AddOrUpdate(x=>x.Login, new AutohostConfig() {
                     Login = "Springiee",

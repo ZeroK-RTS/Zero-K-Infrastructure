@@ -270,7 +270,7 @@ namespace Fixer
         [STAThread]
         static void Main(string[] args) {
 
-            var ret = new ForumWikiParser().ProcessToHtml("some _\"em*pha*sis\"_ on", null);
+            var ret = new ForumWikiParser().ProcessToHtml("[b]@Licho[/b]", null);
             return;
 
 

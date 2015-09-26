@@ -129,6 +129,10 @@
     <Compile Include="Migrations\201507200930225_LogEntries.Designer.cs">
       <DependentUpon>201507200930225_LogEntries.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201509261703355_WikiForumCategory.cs" />
+    <Compile Include="Migrations\201509261703355_WikiForumCategory.Designer.cs">
+      <DependentUpon>201509261703355_WikiForumCategory.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
     <Compile Include="Enums\TreatyState.cs" />
@@ -301,6 +305,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201507200930225_LogEntries.resx">
       <DependentUpon>201507200930225_LogEntries.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201509261703355_WikiForumCategory.resx">
+      <DependentUpon>201509261703355_WikiForumCategory.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

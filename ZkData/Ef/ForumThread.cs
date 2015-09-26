@@ -21,7 +21,6 @@ namespace ZkData
             Resources = new HashSet<Resource>();
             SpringBattles = new HashSet<SpringBattle>();
             ForumPosts = new HashSet<ForumPost>();
-            
         }
 
         public int ForumThreadID { get; set; }
@@ -38,6 +37,9 @@ namespace ZkData
         public int? ForumCategoryID { get; set; }
         public bool IsPinned { get; set; }
         public int? RestrictedClanID { get; set; }
+
+        [MaxLength(100)]
+        public string WikiKey { get; set; }
 
         public virtual Account AccountByCreatedAccountID { get; set; }
         public virtual Account AccountByLastPostAccountID { get; set; }

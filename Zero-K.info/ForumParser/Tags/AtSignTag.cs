@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Web.Mvc;
 using ZkData;
 
@@ -10,15 +9,16 @@ namespace ZeroKWeb.ForumParser
     public class AtSignTag: ScanningTag
     {
         public override string Match { get; } = "@";
-        
-        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
 
-            if (self.Previous == null || self.Previous.Value is SpaceTag || self.Previous.Value is NewLineTag) // previous is space or newline
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            if (!(self.Previous?.Value is LiteralTag)) // previous is space or newline
             {
-                var nextLit = self.Next?.Value as LiteralTag; // next is string
-                if (nextLit != null)
+                var val = self.Next.GetOriginalContentWhileCondition(x => x.Value is LiteralTag || x.Value is StarTag || x.Value is UnderscoreTag);
+                    // get next string
+
+                if (!string.IsNullOrEmpty(val))
                 {
-                    var val = self.Next.GetOriginalContentWhileCondition(x=>x.Value is LiteralTag || x.Value is StarTag || x.Value is UnderscoreTag); // get next string
+                    val = val.Trim();
                     var db = new ZkDataContext();
 
                     var acc = Account.AccountByName(db, val);
