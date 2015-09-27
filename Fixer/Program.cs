@@ -248,26 +248,29 @@ namespace Fixer
         {
             //GlobalConst.Mode = ModeType.Live;
             var db = new ZkDataContext();
-            var bats = db.SpringBattles.Where(x => x.StartTime >= from && x.Duration >= 60*5).ToList();
+            var bats = db.SpringBattles.Where(x => x.StartTime >= from && x.Duration >= 60 * 5).ToList();
             Console.WriteLine("Battles from {0}", from);
             var total = bats.Count;
-            Console.WriteLine("Total: {0}",total);
-            var breakdown = bats.GroupBy(x => x.PlayerCount).OrderBy(x => x.Key).Select(x => new {
+            Console.WriteLine("Total: {0}", total);
+            var breakdown = bats.GroupBy(x => x.PlayerCount).OrderBy(x => x.Key).Select(x => new
+            {
                 Size = x.Key,
                 Count = x.Count()
             }).ToList();
 
-            foreach (var b in breakdown) {
-                Console.WriteLine("Size: {0}    Battles: {1}",b.Size,b.Count);    
+            foreach (var b in breakdown)
+            {
+                Console.WriteLine("Size: {0}    Battles: {1}", b.Size, b.Count);
             }
-            
 
-            
+
+
         }
 
 
-        public static void ImportWiki() {
-            var wikiNodes = File.ReadAllLines(@"c:\temp\wikiIndex.txt").Select(x => x.Trim().Split(new [] { ' ','\t'})[0]).ToList();
+        public static void ImportWiki()
+        {
+            var wikiNodes = File.ReadAllLines(@"c:\temp\wikiIndex.txt").Select(x => x.Trim().Split(new[] { ' ', '\t' })[0]).ToList();
             foreach (var node in wikiNodes)
             {
                 using (var wc = new WebClient())
@@ -275,7 +278,7 @@ namespace Fixer
                 {
                     var str = wc.DownloadString($"https://zero-k.googlecode.com/svn/wiki/{node}.wiki");
 
-                    var thread = db.ForumCategories.First(x=>x.IsWiki).ForumThreads.FirstOrDefault(x => x.WikiKey == node);
+                    var thread = db.ForumCategories.First(x => x.IsWiki).ForumThreads.FirstOrDefault(x => x.WikiKey == node);
                     if (thread == null)
                     {
                         thread = new ForumThread();
@@ -285,12 +288,17 @@ namespace Fixer
 
                     var licho = db.Accounts.First(x => x.Name == "Licho");
 
-                    var match = Regex.Match(str, "\\#summary ([^\n\r]+)");
-                    if (match.Success)
-                    {
-                        var s = match.Groups[1].Value.Trim();
-                        thread.Title = s.Substring(0, Math.Min(300, s.Length));
-                    } else thread.Title = node;
+                    var title = node;
+                    str =Regex.Replace(str, "\\#summary ([^\n\r]+)",
+                        me =>
+                        {
+                            title = me.Groups[1].Value;
+                            return "";
+                        });
+
+                    str = Regex.Replace(str, "\\#labels ([^\n\r]+)", "");
+
+                    thread.Title = title.Substring(0, Math.Min(300, title.Length));
 
                     thread.WikiKey = node;
                     thread.AccountByCreatedAccountID = licho;
@@ -311,10 +319,11 @@ namespace Fixer
 
 
         [STAThread]
-        static void Main(string[] args) {
-            //ImportWiki();
-            
-            
+        static void Main(string[] args)
+        {
+            ImportWiki();
+
+
 
             var ret = new ForumWikiParser().ProcessToHtml(" * first line\n\n * second\n * thurd", null);
             return;

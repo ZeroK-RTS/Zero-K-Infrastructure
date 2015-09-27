@@ -44,7 +44,11 @@ namespace ZeroKWeb.ForumParser
 
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
             // split document to <p> paragraphs using newlines ..
-            if (!context.ParagraphOpen) context.Append("<p>");
+            if (!context.ParagraphOpen)
+            {
+                context.Append("<p>");
+                context.ParagraphOpen = true;
+            }
             else context.Append("</p><p>");
             return self.Next;
         }

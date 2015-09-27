@@ -10,7 +10,7 @@ namespace ZeroKWeb.ForumParser
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
             var closing = self.FirstNode(x => x.Value is CodeCloseTag);
             var str = self.Next.GetOriginalContentUntilNode(closing);
-            context.AppendFormat("<pre class='code'>{0}</pre>", HttpUtility.HtmlEncode(str));
+            context.AppendFormat("<pre>{0}</pre>", HttpUtility.HtmlEncode(str));
             return closing.Next;
         }
 

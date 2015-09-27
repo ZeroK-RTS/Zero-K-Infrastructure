@@ -14,11 +14,16 @@ namespace ZeroKWeb.ForumParser
 
         readonly List<TocEntry> tocEntries = new List<TocEntry>();
 
-        public bool ParagraphOpen;
+        int? tocPosition;
 
         public TranslateContext(HtmlHelper html) {
             Html = html;
         }
+
+        /// <summary>
+        ///     Signals whether paragraphs is open or not (for auto paragraphs by \n)
+        /// </summary>
+        public bool ParagraphOpen { get; set; }
 
         /// <summary>
         ///     Html helper to be used by translation
@@ -34,13 +39,17 @@ namespace ZeroKWeb.ForumParser
         }
 
         /// <summary>
-        /// Adds entry for table of content (headers)
+        ///     Adds entry for table of content (headers)
         /// </summary>
         /// <param name="entry"></param>
         public void AddTocEntry(TocEntry entry) {
             tocEntries.Add(entry);
         }
 
+
+        public void AppendToc() {
+            tocPosition = sb.Length;
+        }
 
         /// <summary>
         ///     Appends raw html
@@ -50,6 +59,18 @@ namespace ZeroKWeb.ForumParser
         [StringFormatMethod("formatString")]
         public void AppendFormat(string formatString, params object[] args) {
             sb.AppendFormat(formatString, args);
+        }
+
+        public void InsertAt(int position, string text) {
+            sb.Insert(position, text);
+        }
+
+        /// <summary>
+        ///     do final tweaks - render TOC
+        /// </summary>
+        public void FinishRendering() {
+            if (ParagraphOpen) Append("</p>");
+            if (tocPosition != null) InsertAt(tocPosition.Value, WikiTocTag.RenderToc(tocEntries));
         }
 
         /// <summary>

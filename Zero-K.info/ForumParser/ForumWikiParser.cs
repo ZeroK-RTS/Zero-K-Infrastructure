@@ -103,7 +103,8 @@ namespace ZeroKWeb.ForumParser
 
             var node = tags.First;
             while (node != null) node = node.Value.Translate(context, node);
-            if (context.ParagraphOpen) context.Append("</p>");
+            context.FinishRendering();
+
             return context.ToString();
         }
 

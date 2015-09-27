@@ -554,11 +554,6 @@ span.button_2text
   position: absolute;
 }
 
-.code {
-    background-color: #eee;
-    max-width: 70em;
-}
-
 .wikitable {
    border-spacing: 0;
    border: 1px solid #ccc;
