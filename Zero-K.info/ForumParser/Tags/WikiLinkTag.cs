@@ -6,6 +6,10 @@ using ZkData;
 
 namespace ZeroKWeb.ForumParser
 {
+    /// <summary>
+    /// [WikiKey display name]
+    /// [ValidUrl display name]
+    /// </summary>
     public class WikiLinkTag: ScanningArgsTag
     {
         public override string Match { get; } = "[";
