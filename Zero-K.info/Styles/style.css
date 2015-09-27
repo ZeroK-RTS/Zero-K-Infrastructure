@@ -558,3 +558,12 @@ span.button_2text
     background-color: #eee;
     max-width: 70em;
 }
+
+.wikitable {
+   border-spacing: 0;
+   border: 1px solid #ccc;
+}
+
+.wikitable td {
+    border: 1px solid #ccc; padding: 5px;
+}

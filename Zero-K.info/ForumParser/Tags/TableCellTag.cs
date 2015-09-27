@@ -4,7 +4,7 @@ using System.Linq;
 namespace ZeroKWeb.ForumParser
 {
     /// <summary>
-    ///  construct tables using || something || 
+    ///     construct tables using || something ||
     /// </summary>
     public class TableCellTag: ScanningTag
     {
@@ -15,35 +15,32 @@ namespace ZeroKWeb.ForumParser
 
             if (cellCount > 0)
             {
-                context.Append("<table>");
+                context.Append("<table class='wikitable'>");
 
                 var n = self;
-                do
+                while (n?.Value is TableCellTag)
                 {
-                    if (n.Value is TableCellTag)
+                    if (cellCount != n.AsEnumerable().Skip(1).TakeWhile(x => !(x.Value is NewLineTag)).Count(x => x.Value is TableCellTag)) break;
+
+                    context.Append("<tr>");
+
+                    LinkedListNode<Tag> nextStop;
+                    while ((nextStop = n.Next.FirstNode(x => x.Value is NewLineTag || x.Value is TableCellTag))?.Value is TableCellTag)
                     {
-                        var cnt = n.AsEnumerable().Skip(1).TakeWhile(x => !(x.Value is NewLineTag)).Count(x => x.Value is TableCellTag);
-                        if (cnt == cellCount)
-                        {
-                            context.Append("<tr>");
-                            do
-                            {
-                                context.Append("<td>");
-                                n = n.Next.TranslateWhile(context, x => !(x.Value is NewLineTag || x.Value is TableCellTag));
-                                context.Append("</td>");
-                            } while (n?.Value is TableCellTag);
-                            context.Append("</tr>");
-                            n = n.FirstNode(x => x.Value is NewLineTag)?.Next; // move after nextline
-                        } else break;
-                    } else break;
+                        context.Append("<td>");
+                        n.Next.TranslateUntilNode(context, nextStop);
+                        context.Append("</td>");
+                        n = nextStop;
+                    }
 
-                    n = n.FirstNode(x => x.Value is NewLineTag)?.Next;
-                } while (n != null);
+                    context.Append("</tr>");
 
+                    n = n.FirstNode(x => x.Value is NewLineTag)?.Next; // move after nextline
+                }
                 context.Append("</table>");
                 return n;
-
-            } else context.Append(GetOriginalContent());
+            }
+            context.Append(GetOriginalContent());
 
             return self.Next;
         }

@@ -69,8 +69,8 @@ namespace ZeroKWeb.ForumParser
         }
 
 
-        public static void TranslateUntilNode(this LinkedListNode<Tag> startNode, TranslateContext context, LinkedListNode<Tag> endNode) {
-            startNode.TranslateWhile(context, x => x != endNode);
+        public static LinkedListNode<Tag> TranslateUntilNode(this LinkedListNode<Tag> startNode, TranslateContext context, LinkedListNode<Tag> endNode) {
+            return startNode.TranslateWhile(context, x => x != endNode);
         }
 
         public static bool IsValidLink(this string content) {
