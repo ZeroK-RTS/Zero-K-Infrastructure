@@ -266,11 +266,51 @@ namespace Fixer
         }
 
 
+        public static void ImportWiki() {
+            var wikiNodes = File.ReadAllLines(@"c:\temp\wikiIndex.txt").Select(x => x.Trim().Split(new [] { ' ','\t'})[0]).ToList();
+            foreach (var node in wikiNodes)
+            {
+                using (var wc = new WebClient())
+                using (var db = new ZkDataContext())
+                {
+                    var str = wc.DownloadString($"https://zero-k.googlecode.com/svn/wiki/{node}.wiki");
+
+                    var thread = db.ForumCategories.First(x=>x.IsWiki).ForumThreads.FirstOrDefault(x => x.Title == node);
+                    if (thread == null)
+                    {
+                        thread = new ForumThread();
+                        thread.ForumCategory = db.ForumCategories.First(x => x.IsWiki);
+                        db.ForumThreads.Add(thread);
+                    }
+
+                    var licho = db.Accounts.First(x => x.Name == "Licho");
+
+                    thread.Title = node;
+                    thread.AccountByCreatedAccountID = licho;
+
+                    var post = thread.ForumPosts.OrderBy(x => x.ForumPostID).FirstOrDefault();
+                    if (post == null)
+                    {
+                        post = new ForumPost();
+                        thread.ForumPosts.Add(post);
+                    }
+                    post.Text = str;
+                    post.Account = licho;
+
+                    db.SaveChanges();
+                }
+            }
+        }
+
 
         [STAThread]
         static void Main(string[] args) {
+            //ImportWiki();
+            
+            
 
-            var ret = new ForumWikiParser().ProcessToHtml("[b]@Licho[/b]", null);
+            var ret = new ForumWikiParser().ProcessToHtml(@" * <img src='http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaUI/Images/epicmenu/robot2.png' height=16 align='center' /> [http://zero-k.info/Static/UnitGuide Unit List] 
+", null);
             return;
 
 
