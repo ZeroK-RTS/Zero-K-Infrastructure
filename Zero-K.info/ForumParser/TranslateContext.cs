@@ -14,6 +14,8 @@ namespace ZeroKWeb.ForumParser
 
         readonly List<TocEntry> tocEntries = new List<TocEntry>();
 
+        public bool ParagraphOpen;
+
         public TranslateContext(HtmlHelper html) {
             Html = html;
         }

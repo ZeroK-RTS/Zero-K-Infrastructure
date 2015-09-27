@@ -38,7 +38,7 @@ namespace ZeroKWeb.ForumParser
                 var name = HttpUtility.HtmlEncode(self.Next.GetOriginalContentUntilNode(ender).Trim());
                 var link = name.Replace(" ", "_").Replace("\"", "_").Replace("'", "_");
 
-                context.AppendFormat("<h{0}>{2}<a name=\"{1}\"></a></h{0}>", level, link, name);
+                context.AppendFormat("<h{0}><a name=\"{1}\"></a>{2}</h{0}>", level, link, name);
                 context.AddTocEntry(new TocEntry(name, link, level));
 
                 return ender.Next;
