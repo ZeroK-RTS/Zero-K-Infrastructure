@@ -85,7 +85,7 @@ namespace System.Web.Mvc
 
 
         public static MvcHtmlString IncludeWiki(this HtmlHelper helper, string node) {
-            return helper.BBCode(new ZkDataContext().ForumCategories.First(x=>x.IsWiki).ForumThreads.FirstOrDefault(x=>x.Title==node)?.ForumPosts.OrderBy(x=>x.ForumPostID).FirstOrDefault()?.Text);
+            return helper.BBCode(new ZkDataContext().ForumCategories.First(x=>x.IsWiki).ForumThreads.FirstOrDefault(x=>x.WikiKey==node)?.ForumPosts.OrderBy(x=>x.ForumPostID).FirstOrDefault()?.Text);
         }
 
         /// <summary>

@@ -6,7 +6,7 @@ using ZkData;
 
 namespace ZeroKWeb.ForumParser
 {
-    public class WikiLink: ScanningArgsTag
+    public class WikiLinkTag: ScanningArgsTag
     {
         public override string Match { get; } = "[";
         public override char MatchTerminator { get; } = ']';
@@ -27,12 +27,12 @@ namespace ZeroKWeb.ForumParser
             return self.Next;
         }
 
-        public override Tag Create() => new WikiLink();
+        public override Tag Create() => new WikiLinkTag();
 
         protected override bool ValidateArgs() {
             var parts = args.ToString().Split(' ');
             if (string.IsNullOrEmpty(parts[0])) return false;
-            using (var db = new ZkDataContext()) return parts[0].IsValidLink() || db.ForumCategories.First(x=>x.IsWiki).ForumThreads.Any(x => x.Title == parts[0]);
+            using (var db = new ZkDataContext()) return parts[0].IsValidLink() || db.ForumCategories.First(x=>x.IsWiki).ForumThreads.Any(x => x.WikiKey == parts[0]);
         }
     }
 }

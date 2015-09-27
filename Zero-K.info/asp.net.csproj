@@ -163,7 +163,7 @@
     <Compile Include="ForumParser\Tags\UrlTag.cs" />
     <Compile Include="ForumParser\Tags\UTag.cs" />
     <Compile Include="ForumParser\Tags\VidTag.cs" />
-    <Compile Include="ForumParser\Tags\WikiLink.cs" />
+    <Compile Include="ForumParser\Tags\WikiLinkTag.cs" />
     <Compile Include="ForumParser\TocEntry.cs" />
     <Compile Include="ForumParser\TranslateContext.cs" />
     <Compile Include="SpringieInterface\Balancer.cs" />

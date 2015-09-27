@@ -275,7 +275,7 @@ namespace Fixer
                 {
                     var str = wc.DownloadString($"https://zero-k.googlecode.com/svn/wiki/{node}.wiki");
 
-                    var thread = db.ForumCategories.First(x=>x.IsWiki).ForumThreads.FirstOrDefault(x => x.Title == node);
+                    var thread = db.ForumCategories.First(x=>x.IsWiki).ForumThreads.FirstOrDefault(x => x.WikiKey == node);
                     if (thread == null)
                     {
                         thread = new ForumThread();
@@ -285,7 +285,14 @@ namespace Fixer
 
                     var licho = db.Accounts.First(x => x.Name == "Licho");
 
-                    thread.Title = node;
+                    var match = Regex.Match(str, "\\#summary ([^\n\r]+)");
+                    if (match.Success)
+                    {
+                        var s = match.Groups[1].Value.Trim();
+                        thread.Title = s.Substring(0, Math.Min(300, s.Length));
+                    } else thread.Title = node;
+
+                    thread.WikiKey = node;
                     thread.AccountByCreatedAccountID = licho;
 
                     var post = thread.ForumPosts.OrderBy(x => x.ForumPostID).FirstOrDefault();
@@ -305,7 +312,7 @@ namespace Fixer
 
         [STAThread]
         static void Main(string[] args) {
-            //ImportWiki();
+            ImportWiki();
             
             
 

@@ -24,7 +24,7 @@ namespace ZeroKWeb.ForumParser
 
             // to bolden text - find second star tag
             var node = self.Next;
-            while (node != null && (node.Value is SpaceTag || node.Value is LiteralTag || node.Value is StarTag || node.Value is UnderscoreTag))
+            while (node != null && (node.Value is SpaceTag || node.Value is LiteralTag || node.Value is StarTag || node.Value is UnderscoreTag || node.Value.Mode == OpeningClosingMode.SelfClosed))
             {
                 if (node.Value is StarTag)
                 {

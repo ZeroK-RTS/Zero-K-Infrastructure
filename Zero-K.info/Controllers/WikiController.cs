@@ -10,7 +10,7 @@ namespace ZeroKWeb.Controllers
         // GET: /Wiki/
         public ActionResult Index(string node, string language = "") {
             var post =
-                new ZkDataContext().ForumCategories.First(x=>x.IsWiki).ForumThreads.FirstOrDefault(x => x.Title == node)?.ForumPosts.OrderBy(x => x.ForumPostID).FirstOrDefault();
+                new ZkDataContext().ForumCategories.First(x=>x.IsWiki).ForumThreads.FirstOrDefault(x => x.WikiKey == node)?.ForumPosts.OrderBy(x => x.ForumPostID).FirstOrDefault();
 
             return View(post);
         }
