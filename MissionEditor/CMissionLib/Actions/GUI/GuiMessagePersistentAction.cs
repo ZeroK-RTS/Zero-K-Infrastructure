@@ -11,9 +11,9 @@ namespace CMissionLib.Actions
 	{
 		string imagePath;
 		string message;
-		int width = 320;
-        int height = 100;
-        int fontSize = 12;
+		int width = 360;
+		int height = 160;
+		int fontSize = 12;
 
 		public GuiMessagePersistentAction(string message)
 		{
