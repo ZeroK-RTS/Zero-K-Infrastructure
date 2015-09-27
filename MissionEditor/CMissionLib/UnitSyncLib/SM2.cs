@@ -62,17 +62,20 @@ namespace CMissionLib.UnitSyncLib
 			UnitSync.NativeMethods.RemoveAllArchives();
             // load the tiles
 
-            BitmapSource ret;
+            WriteableBitmap ret;
             try {
-                ret = Tiles.LoadTiles(tileFiles, tileIndices, tilesX, tilesY, detail);
+                ret = (WriteableBitmap)Tiles.LoadTiles(tileFiles, tileIndices, tilesX, tilesY, detail);
             } catch (System.Exception ex)
             {
+                // some maps (e.g. Glacies) fail to load the tiles properly; use minimap as a fallback 
+
                 //if (map.Texture == null) throw new System.Exception("Unable to load map texture");
                 //var newBitmap = new Bitmap(GetBitmap(map.Texture), new Size(map.Texture.PixelWidth / 8, map.Texture.PixelHeight / 8));
 
                 map.Minimap = unitSync.GetMinimap(map);
-
-                ret = ConvertBitmap(map.Minimap);
+                ret = new WriteableBitmap(ConvertBitmap(map.Minimap));
+                ret.Freeze();
+                //ret.Unlock();
             }
 
             return ret;
