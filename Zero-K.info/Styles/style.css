@@ -554,3 +554,11 @@ span.button_2text
   position: absolute;
 }
 
+.wikitable {
+   border-spacing: 0;
+   border: 1px solid #ccc;
+}
+
+.wikitable td {
+    border: 1px solid #ccc; padding: 5px;
+}

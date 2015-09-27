@@ -1,12 +1,18 @@
-﻿@model ZeroKWeb.Controllers.WikiController.WikiData
+﻿@model ZkData.ForumPost
 @{
-    Page.Title =  Model.Node + " wiki";
+    Page.Title =  Model.ForumThread.Title + " wiki";
     ViewBag.StaticBackground = true;
     ViewBag.OpaqueBody = true;
+    
 }
-@Model.Content
+<h1>@Model.ForumThread.Title</h1>
 
-@if (Model.Node == "LobbyStart") {
+@Html.ActionLink("Edit this wiki entry", "Thread", "Forum", new { id = Model.ForumThreadID, postID = 0 }, null)<br/>
+
+@Html.BBCode(Model.Text)
+
+
+@if (Model.ForumThread.Title == "LobbyStart") {
     <script type="text/javascript">
         $(document).ready(function () {
             _gaq.push(['_trackEvent', 'Lobby', 'First start']);

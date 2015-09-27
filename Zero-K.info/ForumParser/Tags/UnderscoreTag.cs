@@ -8,7 +8,7 @@ namespace ZeroKWeb.ForumParser
 
             // to bolden text - find second star tag
             var node = self.Next;
-            while (node != null && (node.Value is SpaceTag || node.Value is LiteralTag || node.Value is StarTag || node.Value is UnderscoreTag))
+            while (node != null && !(node.Value is NewLineTag) && node.Value.Mode == OpeningClosingMode.SelfClosed)
             {
                 if (node.Value is UnderscoreTag)
                 {
@@ -23,6 +23,15 @@ namespace ZeroKWeb.ForumParser
             context.Append(GetOriginalContent());
             return self.Next;
 
+        }
+
+        public override bool? ScanLetter(ParseContext context, char letter) {
+            if (letter == '_')
+            {
+                var lastLit = (context.PreviousTag?.Value as LiteralTag)?.GetOriginalContent();
+                if (lastLit.IsValidLink()) return false;
+            }
+            return base.ScanLetter(context, letter);
         }
 
         public override Tag Create() => new UnderscoreTag();

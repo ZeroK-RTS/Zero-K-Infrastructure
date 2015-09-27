@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 using System.Web;
-using System.Web.Mvc;
 
 namespace ZeroKWeb.ForumParser
 {
@@ -9,17 +8,18 @@ namespace ZeroKWeb.ForumParser
     {
         protected StringBuilder content = new StringBuilder();
 
-        public virtual void Append(char part) {
-            content.Append(part);
-        }
-
         public override string GetOriginalContent() => content.ToString();
     }
 
     public class SpaceTag: TerminalTag
     {
         public override bool? ScanLetter(ParseContext context, char letter) {
-            return letter == ' ' || letter == '\t';
+            if (letter == ' ' || letter == '\t')
+            {
+                content.Append(letter);
+                return true;
+            }
+            return false;
         }
 
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
@@ -27,49 +27,63 @@ namespace ZeroKWeb.ForumParser
             return self.Next;
         }
 
-        public override Tag Create() {
-            return new SpaceTag();
-        }
+        public override Tag Create() => new SpaceTag();
     }
 
     public class NewLineTag: TerminalTag
     {
         public override bool? ScanLetter(ParseContext context, char letter) {
-            return letter == '\n' || letter=='\r';
+            if (letter == '\n' || letter == '\r')
+            {
+                if (content.ToString().Contains("\n")) return false; // allow only one \n in the same tag
+                content.Append(letter);
+                return true;
+            }
+            return false;
         }
 
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
-            context.Append("<br/>");
+            // split document to <p> paragraphs using newlines ..
+            if (!context.ParagraphOpen)
+            {
+                context.Append("<p>");
+                context.ParagraphOpen = true;
+            }
+            else context.Append("</p><p>");
             return self.Next;
         }
 
-        public override Tag Create() {
-            return new NewLineTag();
-        }
+        public override Tag Create() => new NewLineTag();
     }
 
 
     public class LiteralTag: TerminalTag
     {
-        public override bool? ScanLetter(ParseContext context, char letter) {
-            return true;
-        }
-
         public LiteralTag() {}
 
         public LiteralTag(string str) {
-            this.content.Append(str);
+            content.Append(str);
+        }
+
+        public override bool? ScanLetter(ParseContext context, char letter) {
+            if (letter == ' ' || letter == '\t' || letter == '\r' || letter == '\n') return false;
+            content.Append(letter);
+            return true;
         }
 
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
-            if (content.ToString().IsValidLink()) context.AppendFormat("<a href=\"{0}\">{0}</a>", content); // implicit linkification
-            else context.Append(HttpUtility.HtmlEncode(content));
+            var csr = content.ToString();
+
+            if (csr.IsValidLink())
+            {
+                // implicit linkification and imagifination
+                if (csr.EndsWith(".png") || csr.EndsWith(".gif") || csr.EndsWith(".jpg") || csr.EndsWith(".jpeg")) context.AppendFormat("<a href=\"{0}\" target=\"_blank\" ><img src=\"{0}\" max-width=\"100%\" height=\"auto\"/></a>", csr);
+                else context.AppendFormat("<a href=\"{0}\">{0}</a>", csr);
+            } else context.Append(HttpUtility.HtmlEncode(content));
 
             return self.Next;
         }
 
-        public override Tag Create() {
-            return new LiteralTag();
-        }
+        public override Tag Create() => new LiteralTag();
     }
 }

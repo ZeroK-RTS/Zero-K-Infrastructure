@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
 namespace ZkData
@@ -26,7 +27,13 @@ namespace ZkData
         public int ForumThreadID { get; set; }
         [Required]
         [StringLength(300)]
+        [Index]
         public string Title { get; set; }
+
+        [Index]
+        [MaxLength(100)]
+        public string WikiKey { get; set; }
+
         public DateTime Created { get; set; }
         public int? CreatedAccountID { get; set; }
         public DateTime? LastPost { get; set; }
@@ -37,9 +44,6 @@ namespace ZkData
         public int? ForumCategoryID { get; set; }
         public bool IsPinned { get; set; }
         public int? RestrictedClanID { get; set; }
-
-        [MaxLength(100)]
-        public string WikiKey { get; set; }
 
         public virtual Account AccountByCreatedAccountID { get; set; }
         public virtual Account AccountByLastPostAccountID { get; set; }

@@ -12,7 +12,8 @@ namespace ZeroKWeb.ForumParser
         static readonly List<Tag> nonterminalTags = new List<Tag>();
         static readonly List<TerminalTag> terminalTags = new List<TerminalTag> { new NewLineTag(), new SpaceTag(), new LiteralTag() };
 
-        static ForumWikiParser() {
+        static ForumWikiParser()
+        {
             // load all classes using reflection
             foreach (var t in Assembly.GetExecutingAssembly().GetTypes())
             {
@@ -24,7 +25,8 @@ namespace ZeroKWeb.ForumParser
             }
         }
 
-        List<Tag> InitNonTerminals() {
+        List<Tag> InitNonTerminals()
+        {
 #if DEBUG
             var ret = new List<Tag>(nonterminalTags.Count);
             foreach (var nt in nonterminalTags)
@@ -39,7 +41,8 @@ namespace ZeroKWeb.ForumParser
 #endif
         }
 
-        public string ProcessToHtml(string input, HtmlHelper html) {
+        public string ProcessToHtml(string input, HtmlHelper html)
+        {
             var tags = ParseToTags(input);
             return RenderTags(tags, html);
         }
@@ -49,7 +52,8 @@ namespace ZeroKWeb.ForumParser
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        LinkedList<Tag> ParseToTags(string input) {
+        LinkedList<Tag> ParseToTags(string input)
+        {
             var candidates = InitNonTerminals();
 
             var tags = new LinkedList<Tag>();
@@ -70,7 +74,8 @@ namespace ZeroKWeb.ForumParser
                         tags.AddLast(c);
                         candidates.Clear();
                         scanStart = pos + 1;
-                    } else if (ret == false) candidates.Remove(c);
+                    }
+                    else if (ret == false) candidates.Remove(c);
                 }
 
                 if (candidates.Count == 0) // we are not matching any nonterminal tags
@@ -90,13 +95,16 @@ namespace ZeroKWeb.ForumParser
         /// </summary>
         /// <param name="tags"></param>
         /// <returns></returns>
-        static string RenderTags(LinkedList<Tag> tags, HtmlHelper html) {
+        static string RenderTags(LinkedList<Tag> tags, HtmlHelper html)
+        {
             var context = new TranslateContext(html);
 
             tags = EliminateUnclosedTags(tags);
 
             var node = tags.First;
             while (node != null) node = node.Value.Translate(context, node);
+            context.FinishRendering();
+
             return context.ToString();
         }
 
@@ -106,7 +114,8 @@ namespace ZeroKWeb.ForumParser
         /// </summary>
         /// <param name="input">parsed tags</param>
         /// <returns></returns>
-        static LinkedList<Tag> EliminateUnclosedTags(LinkedList<Tag> input) {
+        static LinkedList<Tag> EliminateUnclosedTags(LinkedList<Tag> input)
+        {
             var openedTagsStack = new Stack<Tag>();
             var toDel = new List<Tag>();
 
@@ -143,21 +152,18 @@ namespace ZeroKWeb.ForumParser
         /// <param name="scanStart">start position</param>
         /// <param name="pos">end position (included)</param>
         /// <param name="tags">current tags linked list to be added to</param>
-        static void ParseTerminals(string input, int scanStart, int pos, LinkedList<Tag> tags) {
+        static void ParseTerminals(string input, int scanStart, int pos, LinkedList<Tag> tags)
+        {
             for (var i = scanStart; i <= pos; i++)
             {
                 var scanChar = input[i];
 
                 var context = new ParseContext(pos, input, tags.Last); // match so far not set correctly here
-                var term = terminalTags.First(x => x.ScanLetter(context, scanChar) == true);
-                var lastTerm = tags.Last?.Value as TerminalTag;
 
-                if (lastTerm?.GetType() == term.GetType()) lastTerm.Append(scanChar);
-                else
+                var lastTerm = tags.Last?.Value as TerminalTag;
+                if (lastTerm == null || lastTerm.ScanLetter(context, scanChar) == false)
                 {
-                    term = (TerminalTag)term.Create(); // create fresh instance
-                    term.Append(scanChar);
-                    tags.AddLast(term);
+                    tags.AddLast(terminalTags.Select(x => x.Create()).First(x => x.ScanLetter(context, scanChar) != false));
                 }
             }
         }

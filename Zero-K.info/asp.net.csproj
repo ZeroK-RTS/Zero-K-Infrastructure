@@ -50,10 +50,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="MarkdownDeep, Version=1.1.4117.36784, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MarkdownDeep.NET.1.4\lib\.NetFramework 3.5\MarkdownDeep.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Linq.Translations, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -136,8 +132,9 @@
     <Compile Include="Controllers\LobbyController.cs" />
     <Compile Include="Controllers\ReplaysController.cs" />
     <Compile Include="Controllers\UnitStatsController.cs" />
-    <Compile Include="AppCode\MarkdownHelper.cs" />
     <Compile Include="ForumParser\ForumWikiParser.cs" />
+    <Compile Include="ForumParser\LinkedListNodeBackEnumerator.cs" />
+    <Compile Include="ForumParser\LinkedListNodeEnumerator.cs" />
     <Compile Include="ForumParser\ParseContext.cs" />
     <Compile Include="ForumParser\ParserExtensions.cs" />
     <Compile Include="ForumParser\Tags\Abstract\ClosingTag.cs" />
@@ -153,6 +150,7 @@
     <Compile Include="ForumParser\Tags\ColorTag.cs" />
     <Compile Include="ForumParser\Tags\GifvTag.cs" />
     <Compile Include="ForumParser\Tags\HeaderTag.cs" />
+    <Compile Include="ForumParser\Tags\HrLineTag.cs" />
     <Compile Include="ForumParser\Tags\HtmlTag.cs" />
     <Compile Include="ForumParser\Tags\ImgTag.cs" />
     <Compile Include="ForumParser\Tags\ITag.cs" />
@@ -162,15 +160,17 @@
     <Compile Include="ForumParser\Tags\SpoilerTag.cs" />
     <Compile Include="ForumParser\Tags\STag.cs" />
     <Compile Include="ForumParser\Tags\StarTag.cs" />
+    <Compile Include="ForumParser\Tags\TableCellTag.cs" />
     <Compile Include="ForumParser\Tags\TerminalTags.cs" />
     <Compile Include="ForumParser\Tags\TooltipTag.cs" />
     <Compile Include="ForumParser\Tags\UnderscoreTag.cs" />
     <Compile Include="ForumParser\Tags\UrlTag.cs" />
     <Compile Include="ForumParser\Tags\UTag.cs" />
     <Compile Include="ForumParser\Tags\VidTag.cs" />
+    <Compile Include="ForumParser\Tags\WikiLinkTag.cs" />
+    <Compile Include="ForumParser\Tags\WikiTocTag.cs" />
     <Compile Include="ForumParser\TocEntry.cs" />
     <Compile Include="ForumParser\TranslateContext.cs" />
-    <Compile Include="Helpers\MarkdownHelper.cs" />
     <Compile Include="SpringieInterface\Balancer.cs" />
     <Compile Include="AppCode\Global.cs" />
     <Compile Include="AppCode\HtmlHelperExtensions.cs" />
@@ -179,7 +179,6 @@
     <Compile Include="SpringieInterface\MapPicker.cs" />
     <Compile Include="AppCode\NoCache.cs" />
     <Compile Include="AppCode\SpotlightHandler.cs" />
-    <Compile Include="AppCode\WikiHandler.cs" />
     <Compile Include="Controllers\BattlesController.cs" />
     <Compile Include="Controllers\ForumController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
