@@ -35,9 +35,10 @@ namespace ZeroKWeb.ForumParser
             return node.GetOriginalContentWhileCondition(x => !(x.Value is SpaceTag) && !(x.Value is NewLineTag));
         }
 
-        public static void TranslateWhile(this LinkedListNode<Tag> startNode, TranslateContext context, Func<LinkedListNode<Tag>, bool> condition) {
+        public static LinkedListNode<Tag> TranslateWhile(this LinkedListNode<Tag> startNode, TranslateContext context, Func<LinkedListNode<Tag>, bool> condition) {
             var n = startNode;
             while (n != null && condition(n)) n = n.Value.Translate(context, n);
+            return n;
         }
 
         public static LinkedListNode<Tag> FirstNode(this LinkedListNode<Tag> startNode, Func<LinkedListNode<Tag>, bool> condition) {
@@ -49,14 +50,22 @@ namespace ZeroKWeb.ForumParser
             return null;
         }
 
-        public static LinkedListNode<Tag> FirstNodeReverse(this LinkedListNode<Tag> startNode, Func<LinkedListNode<Tag>, bool> condition)
-        {
+        public static LinkedListNode<Tag> FirstNodeReverse(this LinkedListNode<Tag> startNode, Func<LinkedListNode<Tag>, bool> condition) {
             while (startNode != null)
             {
                 if (condition(startNode)) return startNode;
                 startNode = startNode.Previous;
             }
             return null;
+        }
+
+
+        public static IEnumerable<LinkedListNode<T>> AsEnumerable<T>(this LinkedListNode<T> startNode) {
+            return new LinkedListNodeEnumerator<T>(startNode);
+        }
+
+        public static IEnumerable<LinkedListNode<T>> AsReverseEnumerable<T>(this LinkedListNode<T> startNode) {
+            return new LinkedListNodeBackEnumerator<T>(startNode);
         }
 
 

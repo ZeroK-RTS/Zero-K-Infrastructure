@@ -133,6 +133,8 @@
     <Compile Include="Controllers\ReplaysController.cs" />
     <Compile Include="Controllers\UnitStatsController.cs" />
     <Compile Include="ForumParser\ForumWikiParser.cs" />
+    <Compile Include="ForumParser\LinkedListNodeBackEnumerator.cs" />
+    <Compile Include="ForumParser\LinkedListNodeEnumerator.cs" />
     <Compile Include="ForumParser\ParseContext.cs" />
     <Compile Include="ForumParser\ParserExtensions.cs" />
     <Compile Include="ForumParser\Tags\Abstract\ClosingTag.cs" />
@@ -158,6 +160,7 @@
     <Compile Include="ForumParser\Tags\SpoilerTag.cs" />
     <Compile Include="ForumParser\Tags\STag.cs" />
     <Compile Include="ForumParser\Tags\StarTag.cs" />
+    <Compile Include="ForumParser\Tags\TableCellTag.cs" />
     <Compile Include="ForumParser\Tags\TerminalTags.cs" />
     <Compile Include="ForumParser\Tags\TooltipTag.cs" />
     <Compile Include="ForumParser\Tags\UnderscoreTag.cs" />

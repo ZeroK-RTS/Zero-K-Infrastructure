@@ -316,7 +316,7 @@ namespace Fixer
             
             
 
-            var ret = new ForumWikiParser().ProcessToHtml(@"==Install engine and lobby client== ", null);
+            var ret = new ForumWikiParser().ProcessToHtml(" * first line\n\n * second\n * thurd", null);
             return;
 
 
