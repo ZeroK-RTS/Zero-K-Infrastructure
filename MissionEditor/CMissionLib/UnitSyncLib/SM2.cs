@@ -21,15 +21,15 @@ namespace CMissionLib.UnitSyncLib
 			UnitSync.NativeMethods.AddAllArchives(map.ArchiveName);
 			ProgressChanged(this, new ProgressChangedEventArgs(0, "Extracting map"));
 
-            var mapDir = UnitSync.NativeMethods.GetMapFileName(UnitSync.NativeMethods.GetMapIndex(map.Name));
-            var smfFileData = unitSync.ReadVfsFile(mapDir);
-            BinaryReader reader;
-            try {
-                reader = new BinaryReader(new MemoryStream(smfFileData));
-            } catch (System.ArgumentNullException nullEx)
-            {
-                throw new System.ArgumentNullException("smfFileData", "Unable to read SMF: " + mapDir);
-            }
+			var mapDir = UnitSync.NativeMethods.GetMapFileName(UnitSync.NativeMethods.GetMapIndex(map.Name));
+			var smfFileData = unitSync.ReadVfsFile(mapDir);
+			BinaryReader reader;
+			try {
+				reader = new BinaryReader(new MemoryStream(smfFileData));
+			} catch (System.ArgumentNullException nullEx)
+			{
+				throw new System.ArgumentNullException("smfFileData", "Unable to read SMF: " + mapDir);
+			}
 			var smfHeader = reader.ReadStruct<SMFHeader>();
 			smfHeader.SelfCheck();
 			var mapWidth = smfHeader.mapx;
@@ -60,55 +60,55 @@ namespace CMissionLib.UnitSyncLib
 			Tiles.ProgressChanged += (s, e) => ProgressChanged(this, e);
 
 			UnitSync.NativeMethods.RemoveAllArchives();
-            // load the tiles
+			// load the tiles
 
-            WriteableBitmap ret;
-            try {
-                ret = (WriteableBitmap)Tiles.LoadTiles(tileFiles, tileIndices, tilesX, tilesY, detail);
-            } catch (System.Exception ex)
-            {
-                // some maps (e.g. Glacies) fail to load the tiles properly; use minimap as a fallback 
+			WriteableBitmap ret;
+			try {
+				ret = (WriteableBitmap)Tiles.LoadTiles(tileFiles, tileIndices, tilesX, tilesY, detail);
+			} catch (System.Exception ex)
+			{
+				// some maps (e.g. Glacies) fail to load the tiles properly; use minimap as a fallback 
 
-                //if (map.Texture == null) throw new System.Exception("Unable to load map texture");
-                //var newBitmap = new Bitmap(GetBitmap(map.Texture), new Size(map.Texture.PixelWidth / 8, map.Texture.PixelHeight / 8));
+				//if (map.Texture == null) throw new System.Exception("Unable to load map texture");
+				//var newBitmap = new Bitmap(GetBitmap(map.Texture), new Size(map.Texture.PixelWidth / 8, map.Texture.PixelHeight / 8));
 
-                map.Minimap = unitSync.GetMinimap(map);
-                ret = new WriteableBitmap(ConvertBitmap(map.Minimap));
-                ret.Freeze();
-                //ret.Unlock();
-            }
+				map.Minimap = unitSync.GetMinimap(map);
+				ret = new WriteableBitmap(ConvertBitmap(map.Minimap));
+				ret.Freeze();
+				//ret.Unlock();
+			}
 
-            return ret;
+			return ret;
 		}
 
-        // http://stackoverflow.com/questions/2284353/is-there-a-good-way-to-convert-between-bitmapsource-and-bitmap
-        Bitmap GetBitmap(BitmapSource source)
-        {
-            Bitmap bmp = new Bitmap(
-              source.PixelWidth,
-              source.PixelHeight,
-              PixelFormat.Format32bppPArgb);
-            BitmapData data = bmp.LockBits(
-              new Rectangle(Point.Empty, bmp.Size),
-              ImageLockMode.WriteOnly,
-              PixelFormat.Format32bppPArgb);
-            source.CopyPixels(
-              System.Windows.Int32Rect.Empty,
-              data.Scan0,
-              data.Height * data.Stride,
-              data.Stride);
-            bmp.UnlockBits(data);
-            return bmp;
-        }
+		// http://stackoverflow.com/questions/2284353/is-there-a-good-way-to-convert-between-bitmapsource-and-bitmap
+		Bitmap GetBitmap(BitmapSource source)
+		{
+			Bitmap bmp = new Bitmap(
+			  source.PixelWidth,
+			  source.PixelHeight,
+			  PixelFormat.Format32bppPArgb);
+			BitmapData data = bmp.LockBits(
+			  new Rectangle(Point.Empty, bmp.Size),
+			  ImageLockMode.WriteOnly,
+			  PixelFormat.Format32bppPArgb);
+			source.CopyPixels(
+			  System.Windows.Int32Rect.Empty,
+			  data.Scan0,
+			  data.Height * data.Stride,
+			  data.Stride);
+			bmp.UnlockBits(data);
+			return bmp;
+		}
 
-        BitmapSource ConvertBitmap(Bitmap source)
-        {
-            return System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                          source.GetHbitmap(),
-                          System.IntPtr.Zero,
-                          System.Windows.Int32Rect.Empty,
-                          BitmapSizeOptions.FromEmptyOptions());
-        }
+		BitmapSource ConvertBitmap(Bitmap source)
+		{
+			return System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+						  source.GetHbitmap(),
+						  System.IntPtr.Zero,
+						  System.Windows.Int32Rect.Empty,
+						  BitmapSizeOptions.FromEmptyOptions());
+		}
 
-    }
+	}
 }
