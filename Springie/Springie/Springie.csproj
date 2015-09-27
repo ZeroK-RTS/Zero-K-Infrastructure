@@ -104,7 +104,16 @@
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.Services" />
@@ -194,6 +203,10 @@
     <ProjectReference Include="..\..\Shared\PlasmaShared\PlasmaShared.csproj">
       <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>
       <Name>PlasmaShared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ZkData\ZkData.csproj">
+      <Project>{61d3be0a-282d-462c-ba26-06670e5acb3e}</Project>
+      <Name>ZkData</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
