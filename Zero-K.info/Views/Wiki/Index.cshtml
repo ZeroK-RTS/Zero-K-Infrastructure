@@ -6,7 +6,11 @@
     
 }
 <h1>@Model.ForumThread.Title</h1>
+
+@Html.ActionLink("Edit this wiki entry", "Thread", "Forum", new { id = Model.ForumThreadID, postID = 0 }, null)<br/>
+
 @Html.BBCode(Model.Text)
+
 
 @if (Model.ForumThread.Title == "LobbyStart") {
     <script type="text/javascript">
