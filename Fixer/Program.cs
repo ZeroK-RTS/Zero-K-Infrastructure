@@ -312,12 +312,11 @@ namespace Fixer
 
         [STAThread]
         static void Main(string[] args) {
-            ImportWiki();
+            //ImportWiki();
             
             
 
-            var ret = new ForumWikiParser().ProcessToHtml(@" * <img src='http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaUI/Images/epicmenu/robot2.png' height=16 align='center' /> [http://zero-k.info/Static/UnitGuide Unit List] 
-", null);
+            var ret = new ForumWikiParser().ProcessToHtml(@"==Install engine and lobby client== ", null);
             return;
 
 

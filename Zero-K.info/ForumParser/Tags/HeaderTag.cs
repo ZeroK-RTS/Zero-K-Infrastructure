@@ -14,22 +14,26 @@ namespace ZeroKWeb.ForumParser
         public override bool? ScanLetter(ParseContext context, char letter) {
             if (letter == '=')
             {
-                if (context.PreviousTag == null || context.PreviousTag.Value is SpaceTag || context.PreviousTag.Value is NewLineTag)
+                content.Append(letter);
+
+                if (content.Length > 6) return false; // max is h6
+
+                if (context.NextChar != '=')
                 {
-                    content.Append(letter);
-                    if (content.Length > 6) return false; // max is h6
-                    if (context.NextChar == null || context.NextChar == ' ' || context.NextChar == '\n' || context.NextChar == '\r') return true;
-                    return null;
+                    if (context.PreviousTag == null || context.PreviousTag.Value is SpaceTag || context.PreviousTag.Value is NewLineTag ||
+                        context.NextChar == null || context.NextChar == ' ' || context.NextChar == '\r' || context.NextChar == '\n') return true;
+                    return false;
                 }
-            }
-            return false;
+
+                return null;
+            } else return false;
         }
 
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
             var level = GetOriginalContent().Length;
 
             var ender = self.Next.FirstNode(x => x.Value is HeaderTag || x.Value is NewLineTag);
-            if (ender?.Value is HeaderTag)
+            if (ender?.Value is HeaderTag && ender.Value.GetOriginalContent().Length == level)
             {
                 var name = HttpUtility.HtmlEncode(self.Next.GetOriginalContentUntilNode(ender).Trim());
                 var link = name.Replace(" ", "_").Replace("\"", "_").Replace("'", "_");
