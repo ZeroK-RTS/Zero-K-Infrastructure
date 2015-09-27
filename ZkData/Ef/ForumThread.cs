@@ -29,6 +29,11 @@ namespace ZkData
         [StringLength(300)]
         [Index]
         public string Title { get; set; }
+
+        [Index]
+        [MaxLength(100)]
+        public string WikiKey { get; set; }
+
         public DateTime Created { get; set; }
         public int? CreatedAccountID { get; set; }
         public DateTime? LastPost { get; set; }

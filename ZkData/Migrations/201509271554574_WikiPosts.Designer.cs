@@ -7,13 +7,13 @@ namespace ZkData.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.2-31219")]
-    public sealed partial class RemoveWikiKey : IMigrationMetadata
+    public sealed partial class WikiPosts : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(RemoveWikiKey));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(WikiPosts));
         
         string IMigrationMetadata.Id
         {
-            get { return "201509270043179_RemoveWikiKey"; }
+            get { return "201509271554574_WikiPosts"; }
         }
         
         string IMigrationMetadata.Source

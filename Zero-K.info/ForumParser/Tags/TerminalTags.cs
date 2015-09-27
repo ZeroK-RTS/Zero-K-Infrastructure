@@ -62,7 +62,15 @@ namespace ZeroKWeb.ForumParser
         }
 
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
-            if (content.ToString().IsValidLink()) context.AppendFormat("<a href=\"{0}\">{0}</a>", content); // implicit linkification
+            var csr = content.ToString();
+
+            if (csr.IsValidLink())
+            { // implicit linkification and imagifination
+                if (csr.EndsWith(".png") || csr.EndsWith(".gif") || csr.EndsWith(".jpg") || csr.EndsWith(".jpeg"))
+                {
+                    context.AppendFormat("<a href=\"{0}\" target=\"_blank\" ><img src=\"{0}\" max-width=\"100%\" height=\"auto\"/></a>", csr);
+                } else context.AppendFormat("<a href=\"{0}\">{0}</a>", csr); 
+            }
             else context.Append(HttpUtility.HtmlEncode(content));
 
             return self.Next;
