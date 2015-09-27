@@ -13,7 +13,7 @@ namespace ZeroKWeb.ForumParser
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
             if (!(self.Previous?.Value is LiteralTag)) // previous is space or newline
             {
-                var val = self.Next.GetOriginalContentWhileCondition(x => x.Value is LiteralTag || x.Value is StarTag || x.Value is UnderscoreTag);
+                var val = self.Next.GetOriginalContentWhileCondition(x => x.Value is LiteralTag || x.Value is StarTag);
                     // get next string
 
                 if (!string.IsNullOrEmpty(val))

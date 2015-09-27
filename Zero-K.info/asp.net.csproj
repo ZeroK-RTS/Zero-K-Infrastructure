@@ -159,7 +159,6 @@
     <Compile Include="ForumParser\Tags\StarTag.cs" />
     <Compile Include="ForumParser\Tags\TerminalTags.cs" />
     <Compile Include="ForumParser\Tags\TooltipTag.cs" />
-    <Compile Include="ForumParser\Tags\UnderscoreTag.cs" />
     <Compile Include="ForumParser\Tags\UrlTag.cs" />
     <Compile Include="ForumParser\Tags\UTag.cs" />
     <Compile Include="ForumParser\Tags\VidTag.cs" />
