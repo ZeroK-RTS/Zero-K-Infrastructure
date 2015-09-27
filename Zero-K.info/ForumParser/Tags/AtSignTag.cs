@@ -11,9 +11,9 @@ namespace ZeroKWeb.ForumParser
         public override string Match { get; } = "@";
 
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
-            if (!(self.Previous?.Value is LiteralTag)) // previous is space or newline
+            if (!(self.Previous?.Value is LiteralTag)) // previous is not a continuous text
             {
-                var val = self.Next.GetOriginalContentWhileCondition(x => x.Value is LiteralTag || x.Value is StarTag);
+                var val = self.Next.GetOriginalContentWhileCondition(x => x.Value is LiteralTag || x.Value is StarTag || x.Value is UnderscoreTag);
                     // get next string
 
                 if (!string.IsNullOrEmpty(val))
