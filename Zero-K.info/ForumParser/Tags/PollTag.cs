@@ -11,7 +11,7 @@ namespace ZeroKWeb.ForumParser
         public override string Match { get; } = "[poll]";
 
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
-            var closing = self.NextNodeOfType<PollOpenTag>();
+            var closing = self.NextNodeOfType<PollCloseTag>();
             if (context.Html != null)
             {
                 var content = self.Next.GetOriginalContentUntilNode(closing);
