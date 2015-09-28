@@ -666,21 +666,6 @@ namespace ZkData
             return da.Length > 0 ? da[0].Description : e.ToString();
         }
 
-        public static bool IsValidLobbyName(string name)
-        {
-            if (string.IsNullOrEmpty(name)) return false;
-            foreach (var c in name) {
-                if (c >= 'a' && c<='z') continue;
-                if (c >= 'A' && c<='Z') continue;
-                if (c >= '0' && c<='9') continue;
-                if (c == '_') continue;
-                if (c == '[' || c == ']') continue;
-                return false;
-            }
-            return true;
-        }
-
-
 
         public static IEnumerable<Type> GetAllTypesWithAttribute<T>()
         {

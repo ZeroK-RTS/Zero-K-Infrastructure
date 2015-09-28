@@ -18,7 +18,7 @@ namespace ZeroKWeb.ForumParser
 
                 if (!string.IsNullOrEmpty(val))
                 {
-                    val = val.Trim();
+                    val = Account.StripInvalidLobbyNameChars(val.Trim());
                     var db = new ZkDataContext();
 
                     var acc = Account.AccountByName(db, val);
