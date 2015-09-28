@@ -14,9 +14,7 @@ namespace ZeroKWeb.ForumParser
             return self.Next;
         }
 
-        public override Tag Create() {
-            return new BTagOpen();
-        }
+        public override Tag Create() => new BTagOpen();
     }
 
     public class BTagClose : ClosingTag
@@ -29,10 +27,7 @@ namespace ZeroKWeb.ForumParser
             return self.Next;
         }
 
-        public override Tag Create()
-        {
-            return new BTagClose();
-        }
+        public override Tag Create()=>new BTagClose();
     }
 
 }

@@ -12,15 +12,15 @@ namespace ZeroKWeb.ForumParser
         public override char MatchTerminator { get; } = ']';
 
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
-            context.AppendFormat("<font color=\"{0}\">", args);
+            context.AppendFormat("<font color=\"{0}\">", arguments);
             return self.Next;
         }
 
-        protected override bool ValidateArgs() {
+        protected override bool ValidateArgs(string args) {
             if (args.Length == 0) return false;
             try
             {
-                ColorTranslator.FromHtml(args.ToString());
+                ColorTranslator.FromHtml(args);
                 return true;
             }
             catch

@@ -22,7 +22,7 @@ namespace ZeroKWeb.ForumParser
         }
 
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
-            var parts = args.ToString().Split(new[] { ' ' }, 2);
+            var parts = arguments.Split(new[] { ' ' }, 2);
             var name = parts.Length > 1 ? parts[1] : parts[0];
             var link = parts[0];
             if (link.IsValidLink()) context.AppendFormat("<a href=\"{0}\">{1}</a>", link, name);
@@ -33,10 +33,10 @@ namespace ZeroKWeb.ForumParser
 
         public override Tag Create() => new WikiLinkTag();
 
-        protected override bool ValidateArgs() {
-            var parts = args.ToString().Split(' ');
+        protected override bool ValidateArgs(ParseContext context, string args) {
+            var parts = args.Split(' ');
             if (string.IsNullOrEmpty(parts[0])) return false;
-            using (var db = new ZkDataContext()) return parts[0].IsValidLink() || db.ForumCategories.First(x=>x.IsWiki).ForumThreads.Any(x => x.WikiKey == parts[0]);
+            using (var db = new ZkDataContext()) return parts[0].IsValidLink() || context.IsWikiKey(parts[0]);
         }
     }
 }

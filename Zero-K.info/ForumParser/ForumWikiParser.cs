@@ -25,21 +25,6 @@ namespace ZeroKWeb.ForumParser
             }
         }
 
-        List<Tag> InitNonTerminals()
-        {
-#if DEBUG
-            var ret = new List<Tag>(nonterminalTags.Count);
-            foreach (var nt in nonterminalTags)
-            {
-                var created = nt.Create();
-                if (created.GetType() != nt.GetType()) throw new ApplicationException("Each parser tag must create its own clone");
-                ret.Add(created);
-            }
-            return ret;
-#else
-            return nonterminalTags.Select(x => x.Create()).ToList();
-#endif
-        }
 
         public string ProcessToHtml(string input, HtmlHelper html)
         {
@@ -47,47 +32,47 @@ namespace ZeroKWeb.ForumParser
             return RenderTags(tags, html);
         }
 
+        ParseContext context = new ParseContext();
+        
         /// <summary>
         ///     Parses input string to tag list
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        LinkedList<Tag> ParseToTags(string input)
-        {
-            var candidates = InitNonTerminals();
+        LinkedList<Tag> ParseToTags(string input) {
 
-            var tags = new LinkedList<Tag>();
+            var candidates = new List<Tag>(nonterminalTags);
 
-            var pos = 0;
-            var scanStart = 0;
+            context.Setup(input);
 
-            while (pos < input.Length)
+            while (context.Pos < input.Length)
             {
-                var letter = input[pos];
-                var context = new ParseContext(pos, input, tags.Last);
-
-                foreach (var c in candidates.ToList())
-                {
+                var letter = context.CurrentLetter;
+                
+                for (int ci = candidates.Count-1; ci>=0 ; ci--) {
+                    var c = candidates[ci];
                     var ret = c.ScanLetter(context, letter);
                     if (ret == true)
                     {
-                        tags.AddLast(c);
-                        candidates.Clear();
-                        scanStart = pos + 1;
+                        context.AddTag(c.Create().Init(context.MatchedString));
+                        candidates = new List<Tag>(nonterminalTags);
+                        context.ResetScanPos();
+                        break;
                     }
-                    else if (ret == false) candidates.Remove(c);
+                    else if (ret == false) candidates.RemoveAt(ci);
                 }
 
                 if (candidates.Count == 0) // we are not matching any nonterminal tags
                 {
-                    if (pos - scanStart >= 0) ParseTerminals(input, scanStart, pos, tags);
-                    scanStart = pos + 1;
-                    candidates = InitNonTerminals();
+                    ParseTerminals(context);
+                    context.ResetScanPos();
+                    candidates = new List<Tag>(nonterminalTags);
                 }
-                pos++;
+
+                context.AdvancePos();
             }
 
-            return tags;
+            return context.Tags;
         }
 
         /// <summary>
@@ -134,12 +119,12 @@ namespace ZeroKWeb.ForumParser
                 }
             }
 
-            foreach (var td in toDel) input.Find(td).Value = new LiteralTag(td.GetOriginalContent()); // replace extra closing tags with literals
+            foreach (var td in toDel) input.Find(td).Value = new LiteralTag(td.Text); // replace extra closing tags with literals
 
             while (openedTagsStack.Count > 0)  // replace extra opening tags with literals
             {
                 var pop = openedTagsStack.Pop();
-                input.Find(pop).Value = new LiteralTag(pop.GetOriginalContent());
+                input.Find(pop).Value = new LiteralTag(pop.Text);
             }
 
             return input;
@@ -148,22 +133,19 @@ namespace ZeroKWeb.ForumParser
         /// <summary>
         ///     Parses terminal symbols - like string constants
         /// </summary>
-        /// <param name="input">string to be prcessed</param>
-        /// <param name="scanStart">start position</param>
-        /// <param name="pos">end position (included)</param>
-        /// <param name="tags">current tags linked list to be added to</param>
-        static void ParseTerminals(string input, int scanStart, int pos, LinkedList<Tag> tags)
-        {
-            for (var i = scanStart; i <= pos; i++)
+        static void ParseTerminals(ParseContext context) {
+            for (var i = context.ScanStartPos; i <= context.Pos; i++)
             {
-                var scanChar = input[i];
+                var scanChar = context.Input[i];
 
-                var context = new ParseContext(pos, input, tags.Last); // match so far not set correctly here
-
-                var lastTerm = tags.Last?.Value as TerminalTag;
+                var lastTerm = context.PreviousTag?.Value as TerminalTag;
                 if (lastTerm == null || lastTerm.ScanLetter(context, scanChar) == false)
                 {
-                    tags.AddLast(terminalTags.Select(x => x.Create()).First(x => x.ScanLetter(context, scanChar) != false));
+                    context.AddTag(terminalTags.Select(x => (TerminalTag)x.Create()).First(x => x.ScanLetter(context, scanChar) != false).AppendChar(scanChar));
+
+                } else
+                {
+                    lastTerm.AppendChar(scanChar);
                 }
             }
         }

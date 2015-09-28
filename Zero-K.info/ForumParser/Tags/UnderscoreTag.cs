@@ -20,7 +20,7 @@ namespace ZeroKWeb.ForumParser
                 node = node.Next;
             }
 
-            context.Append(GetOriginalContent());
+            context.Append(Text);
             return self.Next;
 
         }
@@ -28,8 +28,8 @@ namespace ZeroKWeb.ForumParser
         public override bool? ScanLetter(ParseContext context, char letter) {
             if (letter == '_')
             {
-                var lastLit = (context.PreviousTag?.Value as LiteralTag)?.GetOriginalContent();
-                if (lastLit.IsValidLink()) return false;
+                var lastLit = (context.PreviousTag?.Value as LiteralTag);
+                if (lastLit?.Text.IsValidLink() == true) return false;
             }
             return base.ScanLetter(context, letter);
         }

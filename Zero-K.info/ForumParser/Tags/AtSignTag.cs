@@ -13,8 +13,8 @@ namespace ZeroKWeb.ForumParser
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
             if (!(self.Previous?.Value is LiteralTag)) // previous is not a continuous text
             {
-                var val = self.Next.GetOriginalContentWhileCondition(x => x.Value is LiteralTag || x.Value is StarTag || x.Value is UnderscoreTag);
-                    // get next string
+                var ender = self.Next.FirstNode(x => !(x.Value is LiteralTag || x.Value is UnderscoreTag));
+                var val = self.Next.GetOriginalContentUntilNode(ender); // get next string
 
                 if (!string.IsNullOrEmpty(val))
                 {
@@ -25,19 +25,19 @@ namespace ZeroKWeb.ForumParser
                     if (acc != null)
                     {
                         context.Append(context.Html.PrintAccount(acc));
-                        return self.Next.Next;
+                        return ender;
                     }
                     var clan = db.Clans.FirstOrDefault(x => x.Shortcut == val);
                     if (clan != null)
                     {
                         context.Append(context.Html.PrintClan(clan));
-                        return self.Next.Next;
+                        return ender;
                     }
                     var fac = db.Factions.FirstOrDefault(x => x.Shortcut == val);
                     if (fac != null)
                     {
                         context.Append(context.Html.PrintFaction(fac, false));
-                        return self.Next.Next;
+                        return ender;
                     }
                     if (val.StartsWith("b", StringComparison.InvariantCultureIgnoreCase))
                     {
@@ -48,7 +48,7 @@ namespace ZeroKWeb.ForumParser
                             if (bat != null)
                             {
                                 context.Append(context.Html.PrintBattle(bat));
-                                return self.Next.Next;
+                                return ender;
                             }
                         }
                     }

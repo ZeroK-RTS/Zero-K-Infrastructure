@@ -17,7 +17,7 @@ namespace ZeroKWeb.ForumParser
             var sb = new StringBuilder();
             while (node != null && whileCondition(node))
             {
-                sb.Append(node.Value.GetOriginalContent());
+                sb.Append(node.Value.Text);
                 node = node.Next;
             }
             return sb.ToString();

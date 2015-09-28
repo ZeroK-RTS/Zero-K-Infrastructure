@@ -40,8 +40,6 @@ namespace ZeroKWeb.ForumParser
             return sb.ToString();
         }
 
-        protected override bool ValidateArgs() {
-            return true;
-        }
+        protected override bool ValidateArgs(string args) => true;
     }
 }

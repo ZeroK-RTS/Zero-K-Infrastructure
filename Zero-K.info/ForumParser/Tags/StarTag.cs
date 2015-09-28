@@ -13,7 +13,7 @@ namespace ZeroKWeb.ForumParser
         static int ListPrefixLevel(LinkedListNode<Tag> star) {
             var el = star?.Previous?.Previous?.Value;
             var prefix = star?.Previous?.Value as SpaceTag;
-            if ((el == null || el is NewLineTag) && prefix != null && star.Next?.Value is SpaceTag) return prefix.GetOriginalContent().Length;
+            if ((el == null || el is NewLineTag) && prefix != null && star.Next?.Value is SpaceTag) return prefix.Text.Length;
             return 0;
         }
 

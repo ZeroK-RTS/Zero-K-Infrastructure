@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using JetBrains.Annotations;
+using ZkData;
 
 namespace ZeroKWeb.ForumParser
 {
@@ -15,6 +17,13 @@ namespace ZeroKWeb.ForumParser
         readonly List<TocEntry> tocEntries = new List<TocEntry>();
 
         int? tocPosition;
+
+        HashSet<string> wikiKeyCache = new HashSet<string>();
+
+        public bool IsWikiKey(string key) {
+            if (wikiKeyCache==null) wikiKeyCache = new HashSet<string>(new ZkDataContext().ForumThreads.Where(x=>x.WikiKey!=null).Select(x=>x.WikiKey));
+            return wikiKeyCache.Contains(key);
+        }
 
         public TranslateContext(HtmlHelper html) {
             Html = html;

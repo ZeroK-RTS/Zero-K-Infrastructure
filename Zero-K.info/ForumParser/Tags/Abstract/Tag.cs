@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 using System.Web.Mvc;
+using ZkData.Migrations;
 
 namespace ZeroKWeb.ForumParser
 {
@@ -10,6 +11,11 @@ namespace ZeroKWeb.ForumParser
         public abstract bool? ScanLetter(ParseContext context, char letter);
         public abstract LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self);
         public abstract Tag Create();
-        public abstract string GetOriginalContent();
+        public virtual string Text { get; protected set; }
+        public virtual Tag Init(string text) 
+        {
+            Text = text;
+            return this;
+        }
     }
 }

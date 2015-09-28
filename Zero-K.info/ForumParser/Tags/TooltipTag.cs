@@ -11,15 +11,14 @@ namespace ZeroKWeb.ForumParser
         public override char MatchTerminator { get; } = ']';
 
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
-            context.AppendFormat("<span nicetitle=\"{0}\">", args);
+            context.AppendFormat("<span nicetitle=\"{0}\">", arguments);
             return self.Next;
         }
 
         public override Tag Create() => new TooltipOpenTag();
 
-        protected override bool ValidateArgs() {
-            var str = args.ToString();
-            return args.Length > 0 && !str.Contains("'") && !str.Contains("\"");
+        protected override bool ValidateArgs(string args) {
+            return args.Length > 0 && !args.Contains("'") && !args.Contains("\"");
         }
     }
 

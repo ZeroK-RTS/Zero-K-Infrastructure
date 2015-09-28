@@ -41,8 +41,8 @@ namespace ZeroKWeb.ForumParser
                 context.Append("</table>");
                 return n;
             }
-            context.Append(GetOriginalContent());
-
+            context.Append(Text);
+            
             return self.Next;
         }
 

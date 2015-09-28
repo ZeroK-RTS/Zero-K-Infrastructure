@@ -9,14 +9,10 @@ namespace ZeroKWeb.ForumParser
     /// </summary>
     public class HeaderTag: Tag
     {
-        readonly StringBuilder content = new StringBuilder();
-
         public override bool? ScanLetter(ParseContext context, char letter) {
             if (letter == '=')
             {
-                content.Append(letter);
-
-                if (content.Length > 6) return false; // max is h6
+                if (context.MatchedString.Length > 6) return false; // max is h6
 
                 if (context.NextChar != '=')
                 {
@@ -30,10 +26,10 @@ namespace ZeroKWeb.ForumParser
         }
 
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
-            var level = GetOriginalContent().Length;
+            var level = Text.Length;
 
             var ender = self.Next.FirstNode(x => x.Value is HeaderTag || x.Value is NewLineTag);
-            if (ender?.Value is HeaderTag && ender.Value.GetOriginalContent().Length == level)
+            if (ender?.Value is HeaderTag && ender.Value.Text.Length == level)
             {
                 var name = HttpUtility.HtmlEncode(self.Next.GetOriginalContentUntilNode(ender).Trim());
                 var link = name.Replace(" ", "_").Replace("\"", "_").Replace("'", "_");
@@ -44,12 +40,10 @@ namespace ZeroKWeb.ForumParser
                 return ender.Next;
             }
 
-            context.Append(content);
+            context.Append(Text);
             return self.Next;
         }
 
         public override Tag Create() => new HeaderTag();
-
-        public override string GetOriginalContent() => content.ToString();
     }
 }
