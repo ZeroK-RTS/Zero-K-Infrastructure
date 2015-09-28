@@ -9,7 +9,7 @@ namespace ZeroKWeb.ForumParser
     /// </summary>
     public class HeaderTag: Tag
     {
-        public override bool? ScanLetter(ParseContext context, char letter) {
+        public override bool? AcceptsLetter(ParseContext context, char letter) {
             if (letter == '=')
             {
                 if (context.MatchedString.Length > 6) return false; // max is h6

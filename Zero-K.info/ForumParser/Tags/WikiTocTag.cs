@@ -18,9 +18,9 @@ namespace ZeroKWeb.ForumParser
 
         public override Tag Create() => new WikiTocTag();
 
-        public override bool? ScanLetter(ParseContext context, char letter) {
+        public override bool? AcceptsLetter(ParseContext context, char letter) {
             if (letter == '\r' || letter == '\n') return false;
-            return base.ScanLetter(context, letter);
+            return base.AcceptsLetter(context, letter);
         }
 
         public static string RenderToc(IEnumerable<TocEntry> tocEntries) {

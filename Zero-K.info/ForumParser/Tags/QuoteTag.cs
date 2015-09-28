@@ -18,9 +18,7 @@ namespace ZeroKWeb.ForumParser
             return self.Next;
         }
 
-        public override Tag Create() {
-            return new QTagOpen();
-        }
+        public override Tag Create() => new QTagOpen();
     }
 
     /// <summary>

@@ -6,8 +6,8 @@ namespace ZeroKWeb.ForumParser
     {
         public abstract string Match { get; }
 
-        public override bool? ScanLetter(ParseContext context, char letter) {
-            if (Match[context.MatchedString.Length-1].ToLower() != letter.ToLower()) return false;
+        public override bool? AcceptsLetter(ParseContext context, char letter) {
+            if (Match[context.MatchedString.Length-1] != context.CurrentCharLowerCase) return false;
             if (context.MatchedString.Length == Match.Length) return true;
             return null;
         }

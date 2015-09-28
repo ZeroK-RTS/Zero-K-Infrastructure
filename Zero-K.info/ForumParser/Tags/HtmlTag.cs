@@ -62,10 +62,10 @@ namespace ZeroKWeb.ForumParser
         public override OpeningClosingMode Mode => mode;
 
 
-        public override bool? ScanLetter(ParseContext context, char letter) {
+        public override bool? AcceptsLetter(ParseContext context, char letter) {
             if (letter == '\r' || letter == '\n') return false; // don't allow multiline html
             if (context.MatchedString.Length == 1 && context.MatchedString[0] != '<') return false;
-            if (context.MatchedString.Length == 2 && context.MatchedString[0] == ' ') return false;
+            if (context.MatchedString.Length == 2 && context.MatchedString[1] == ' ') return false;
 
             if (context.MatchedString.Length > 2 && letter == '>')
             {

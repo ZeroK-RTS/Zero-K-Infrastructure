@@ -26,7 +26,7 @@ namespace ZeroKWeb.ForumParser
 
     public class SpaceTag: TerminalTag
     {
-        public override bool? ScanLetter(ParseContext context, char letter) {
+        public override bool? AcceptsLetter(ParseContext context, char letter) {
             if (letter == ' ' || letter == '\t') { return true;}
             return false;
         }
@@ -36,7 +36,7 @@ namespace ZeroKWeb.ForumParser
 
     public class NewLineTag: TerminalTag
     {
-        public override bool? ScanLetter(ParseContext context, char letter) {
+        public override bool? AcceptsLetter(ParseContext context, char letter) {
             if (letter == '\n' || letter == '\r')
             {
                 if (sb.ToString().Contains("\n")) return false; // allow only one \n in the same tag
@@ -62,7 +62,7 @@ namespace ZeroKWeb.ForumParser
             sb.Append(str);
         }
 
-        public override bool? ScanLetter(ParseContext context, char letter) {
+        public override bool? AcceptsLetter(ParseContext context, char letter) {
             if (letter == ' ' || letter == '\t' || letter == '\r' || letter == '\n') return false;
             return true;
         }

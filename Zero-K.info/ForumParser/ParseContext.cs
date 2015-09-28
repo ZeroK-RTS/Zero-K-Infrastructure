@@ -1,31 +1,37 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using ZkData;
 
 namespace ZeroKWeb.ForumParser
 {
     public class ParseContext
     {
-        HashSet<string> wikiKeyCache = new HashSet<string>();
+        readonly StringBuilder sb = new StringBuilder();
+        HashSet<string> wikiKeyCache;
         public LinkedList<Tag> Tags { get; private set; } = new LinkedList<Tag>();
 
-
-        public char CurrentLetter { get; private set; }
+        public char CurrentChar { get; private set; }
         public int Pos { get; private set; }
         public string Input { get; private set; }
         public LinkedListNode<Tag> PreviousTag => Tags.Last;
         public char? NextChar { get; private set; }
+        public char CurrentCharLowerCase { get; private set; }
+
         public string MatchedString { get; private set; }
-        public int ScanStartPos { get; private set; }
+        public int NonterminalStartPos { get; private set; }
 
         public void Setup(string input) {
             Tags = new LinkedList<Tag>();
             Pos = 0;
             Input = input;
-            CurrentLetter = Input[Pos];
+            CurrentChar = Input[Pos];
             NextChar = Input.Length > Pos + 1 ? Input[Pos + 1] : (char?)null;
-            MatchedString = input.Substring(0, 1);
-            ScanStartPos = 0;
+            CurrentCharLowerCase = CurrentChar.ToLower();
+            sb.Clear();
+            sb.Append(CurrentChar);
+            MatchedString = sb.ToString();
+            NonterminalStartPos = 0;
         }
 
         public bool IsWikiKey(string key) {
@@ -33,9 +39,10 @@ namespace ZeroKWeb.ForumParser
             return wikiKeyCache.Contains(key);
         }
 
-        public void ResetScanPos() {
-            ScanStartPos = Pos + 1;
-            MatchedString = Input.Substring(ScanStartPos, Pos - ScanStartPos + 1);
+        public void ResetNonterminalPos() {
+            NonterminalStartPos = Pos + 1;
+            sb.Clear();
+            MatchedString = string.Empty;
         }
 
         public void AdvancePos() {
@@ -43,8 +50,10 @@ namespace ZeroKWeb.ForumParser
             if (Pos < Input.Length)
             {
                 NextChar = Input.Length > Pos + 1 ? Input[Pos + 1] : (char?)null;
-                CurrentLetter = Input[Pos];
-                MatchedString = Input.Substring(ScanStartPos, Pos - ScanStartPos + 1);
+                CurrentChar = Input[Pos];
+                CurrentCharLowerCase = CurrentChar.ToLower();
+                sb.Append(CurrentChar);
+                MatchedString = sb.ToString();
             }
         }
 

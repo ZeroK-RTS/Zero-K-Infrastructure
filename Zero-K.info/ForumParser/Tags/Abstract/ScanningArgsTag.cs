@@ -8,7 +8,7 @@ namespace ZeroKWeb.ForumParser
         public abstract char MatchTerminator { get; }
         protected string arguments;
         
-        public override bool? ScanLetter(ParseContext context, char letter) {
+        public override bool? AcceptsLetter(ParseContext context, char letter) {
             if (context.MatchedString.Length > Match.Length)
             {
                 if (letter == MatchTerminator)
@@ -17,7 +17,7 @@ namespace ZeroKWeb.ForumParser
                     return false;
                 }
                 if (letter == '\n') return false;
-            } else if (Match[context.MatchedString.Length-1].ToLower() != letter.ToLower()) return false;
+            } else if (Match[context.MatchedString.Length-1] != context.CurrentCharLowerCase) return false;
 
             return null;
         }

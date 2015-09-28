@@ -73,9 +73,11 @@ namespace ZeroKWeb.ForumParser
             return startNode.TranslateWhile(context, x => x != endNode);
         }
 
+        static Regex linkMatcher = new Regex("^(mailto|spring|http|https|ftp|ftps|zk)\\://[^\\\"']+$", RegexOptions.Compiled);
+
         public static bool IsValidLink(this string content) {
             if (string.IsNullOrEmpty(content)) return false;
-            return Regex.IsMatch(content, "^(mailto|spring|http|https|ftp|ftps|zk)\\://[^\\\"']+$", RegexOptions.IgnoreCase);
+            return linkMatcher.IsMatch(content);
         }
 
         public static char ToLower(this char high) {
