@@ -7,8 +7,8 @@ namespace ZeroKWeb.ForumParser
     /// </summary>
     public class HrLineTag:ScanningTag
     {
-        public override bool? ScanLetter(ParseContext context, char letter) {
-            var ret =base.ScanLetter(context, letter);
+        public override bool? AcceptsLetter(ParseContext context, char letter) {
+            var ret =base.AcceptsLetter(context, letter);
             if (ret == true && !(context.NextChar ==null|| context.NextChar =='\r' || context.NextChar=='\n')) return false;
             return ret;
         }

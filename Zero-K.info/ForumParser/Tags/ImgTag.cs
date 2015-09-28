@@ -13,14 +13,14 @@ namespace ZeroKWeb.ForumParser
         public override string Match { get; } = "[img";
         public override char MatchTerminator { get; } = ']';
 
-        protected override bool ValidateArgs() => args.Length == 0 || args.ToString(1, args.Length - 1).IsValidLink();
+        protected override bool ValidateArgs(ParseContext context, string args) => args.Length == 0 || args.Substring(1, args.Length - 1).IsValidLink();
 
 
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
             var closingTag = self.NextNodeOfType<ImgCloseTag>();
 
             // get url either from param or from inner literal between tags
-            var url = args.Length == 0 ? self.Next.GetOriginalContentUntilNode(closingTag) : args.ToString(1, args.Length - 1);
+            var url = arguments.Length == 0 ? self.Next.GetOriginalContentUntilNode(closingTag) : arguments.Substring(1, arguments.Length - 1);
 
             if (url.IsValidLink()) context.AppendFormat("<a href=\"{0}\" target=\"_blank\" ><img src=\"{0}\" max-width=\"100%\" height=\"auto\"/></a>", url);
 

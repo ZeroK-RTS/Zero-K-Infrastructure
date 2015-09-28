@@ -20,18 +20,18 @@ namespace ZeroKWeb.ForumParser
                 node = node.Next;
             }
 
-            context.Append(GetOriginalContent());
+            context.Append(Text);
             return self.Next;
 
         }
 
-        public override bool? ScanLetter(ParseContext context, char letter) {
+        public override bool? AcceptsLetter(ParseContext context, char letter) {
             if (letter == '_')
             {
-                var lastLit = (context.PreviousTag?.Value as LiteralTag)?.GetOriginalContent();
-                if (lastLit.IsValidLink()) return false;
+                var lastLit = (context.PreviousTag?.Value as LiteralTag);
+                if (lastLit?.Text.IsValidLink() == true) return false;
             }
-            return base.ScanLetter(context, letter);
+            return base.AcceptsLetter(context, letter);
         }
 
         public override Tag Create() => new UnderscoreTag();

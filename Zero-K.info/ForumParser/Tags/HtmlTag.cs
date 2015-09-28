@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace ZeroKWeb.ForumParser
@@ -56,66 +56,36 @@ namespace ZeroKWeb.ForumParser
             ["var"] = new List<string>()
         };
 
-        StringBuilder content = new StringBuilder();
-
         string htmlTag;
 
         OpeningClosingMode mode;
         public override OpeningClosingMode Mode => mode;
 
 
-        public override bool? ScanLetter(ParseContext context, char letter) {
-            content.Append(letter);
-
+        public override bool? AcceptsLetter(ParseContext context, char letter) {
             if (letter == '\r' || letter == '\n') return false; // don't allow multiline html
-            if (content[0] != '<') return false;
+            if (context.MatchedString.Length == 1 && context.MatchedString[0] != '<') return false;
+            if (context.MatchedString.Length == 2 && context.MatchedString[1] == ' ') return false;
 
-            if (htmlTag == null && content.Length > 2)
+            if (context.MatchedString.Length > 2 && letter == '>')
             {
-                if (letter == ' ' || letter == '/' || letter == '>')
+                var tag = Regex.Match(context.MatchedString, "</?([a-z]+)[ />]").Groups[1].Value;
+
+                // invalid opening tag
+                if (!validTags.ContainsKey(tag)) return false;
+
+                if (context.MatchedString.StartsWith("</")) return true; // for closing elements, end here
+
+                var csr = context.MatchedString;
+                if (!csr.EndsWith("/>")) csr = $"{csr}</{tag}>"; // close tag for xelement parsing
+                try
                 {
-                    if (content.ToString().StartsWith("</"))
-                    {
-                        mode = OpeningClosingMode.Closing;
-                        htmlTag = content.ToString(2, content.Length - 3);
-                        return letter == '>' && validTags.ContainsKey(htmlTag); // for closing elements, end here
-                    }
-                    mode = OpeningClosingMode.Opening;
-                    htmlTag = content.ToString(1, content.Length - 2);
-                    if (!validTags.ContainsKey(htmlTag)) return false;
+                    XElement.Parse(csr);
+                    return true;
                 }
-            }
-
-            if (htmlTag != null)
-            {
-                var csr = content.ToString();
-                if (csr.EndsWith(">"))
+                catch
                 {
-                    if (csr.EndsWith("/>")) mode = OpeningClosingMode.SelfClosed;
-                    else csr = $"{csr}</{htmlTag}>"; // close tag for xelement parsing
-                    try
-                    {
-                        var parsed = XElement.Parse(csr);
-                        var validAttrs = validTags[htmlTag];
-
-                        // remove invalid attributes
-                        foreach (var attr in parsed.Attributes().ToList())
-                        {
-                            var name = attr.Name.ToString();
-
-                            if (!validAttrs.Contains(name)) parsed.SetAttributeValue(attr.Name, null);
-                            if ((name == "src" || name == "href") && !attr.Value.IsValidLink()) parsed.SetAttributeValue(attr.Name, null);
-                        }
-
-                        csr = parsed.ToString(); // turn back to string
-                        if (mode == OpeningClosingMode.Opening) csr = csr.Substring(0, csr.Length - 3 - htmlTag.Length);
-                        content = new StringBuilder(csr);
-                        return true;
-                    }
-                    catch
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
 
@@ -128,13 +98,43 @@ namespace ZeroKWeb.ForumParser
         }
 
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
-            context.Append(content);
+            context.Append(Text);
             return self.Next;
         }
 
+        public override Tag Init(string text) {
+            if (text.EndsWith("/>")) mode = OpeningClosingMode.SelfClosed;
+            else if (text.StartsWith("</")) mode = OpeningClosingMode.Closing;
+            else mode = OpeningClosingMode.Opening;
+
+            htmlTag = Regex.Match(text, "</?([a-z]+)[ />]").Groups[1].Value;
+
+            if (mode == OpeningClosingMode.Closing)
+            {
+                Text = $"</{htmlTag}>";
+                return this;
+            }
+
+            if (mode == OpeningClosingMode.Opening) text = $"{text}</{htmlTag}>"; // close tag for xelement parsing
+
+            var parsed = XElement.Parse(text);
+            var validAttrs = validTags[htmlTag];
+
+            // remove invalid attributes
+            foreach (var attr in parsed.Attributes().ToList())
+            {
+                var name = attr.Name.ToString();
+
+                if (!validAttrs.Contains(name)) parsed.SetAttributeValue(attr.Name, null);
+                if ((name == "src" || name == "href") && !attr.Value.IsValidLink()) parsed.SetAttributeValue(attr.Name, null);
+            }
+
+            text = parsed.ToString(); // turn back to string
+            if (mode == OpeningClosingMode.Opening) text = text.Substring(0, text.Length - 3 - htmlTag.Length);
+            Text = text;
+            return this;
+        }
+
         public override Tag Create() => new HtmlTag();
-
-
-        public override string GetOriginalContent() => content.ToString();
     }
 }
