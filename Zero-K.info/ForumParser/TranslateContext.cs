@@ -21,11 +21,6 @@ namespace ZeroKWeb.ForumParser
         }
 
         /// <summary>
-        ///     Signals whether paragraphs is open or not (for auto paragraphs by \n)
-        /// </summary>
-        public bool ParagraphOpen { get; set; }
-
-        /// <summary>
         ///     Html helper to be used by translation
         /// </summary>
         public HtmlHelper Html { get; private set; }
@@ -69,7 +64,6 @@ namespace ZeroKWeb.ForumParser
         ///     do final tweaks - render TOC
         /// </summary>
         public void FinishRendering() {
-            if (ParagraphOpen) Append("</p>");
             if (tocPosition != null) InsertAt(tocPosition.Value, WikiTocTag.RenderToc(tocEntries));
         }
 
