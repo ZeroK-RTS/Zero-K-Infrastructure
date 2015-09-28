@@ -40,9 +40,12 @@ namespace ZeroKWeb.ForumParser
 
         public void AdvancePos() {
             Pos++;
-            NextChar = Input.Length > Pos + 1 ? Input[Pos + 1] : (char?)null;
-            CurrentLetter = Input[Pos];
-            MatchedString = Input.Substring(ScanStartPos, Pos - ScanStartPos + 1);
+            if (Pos < Input.Length)
+            {
+                NextChar = Input.Length > Pos + 1 ? Input[Pos + 1] : (char?)null;
+                CurrentLetter = Input[Pos];
+                MatchedString = Input.Substring(ScanStartPos, Pos - ScanStartPos + 1);
+            }
         }
 
         public void AddTag(Tag tag) {

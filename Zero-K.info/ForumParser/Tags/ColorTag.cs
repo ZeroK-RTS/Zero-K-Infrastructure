@@ -16,7 +16,7 @@ namespace ZeroKWeb.ForumParser
             return self.Next;
         }
 
-        protected override bool ValidateArgs(string args) {
+        protected override bool ValidateArgs(ParseContext context, string args) {
             if (args.Length == 0) return false;
             try
             {

@@ -18,13 +18,6 @@ namespace ZeroKWeb.ForumParser
 
         int? tocPosition;
 
-        HashSet<string> wikiKeyCache = new HashSet<string>();
-
-        public bool IsWikiKey(string key) {
-            if (wikiKeyCache==null) wikiKeyCache = new HashSet<string>(new ZkDataContext().ForumThreads.Where(x=>x.WikiKey!=null).Select(x=>x.WikiKey));
-            return wikiKeyCache.Contains(key);
-        }
-
         public TranslateContext(HtmlHelper html) {
             Html = html;
         }

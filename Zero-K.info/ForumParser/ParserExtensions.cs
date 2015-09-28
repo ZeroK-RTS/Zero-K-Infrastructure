@@ -77,5 +77,10 @@ namespace ZeroKWeb.ForumParser
             if (string.IsNullOrEmpty(content)) return false;
             return Regex.IsMatch(content, "^(mailto|spring|http|https|ftp|ftps|zk)\\://[^\\\"']+$", RegexOptions.IgnoreCase);
         }
+
+        public static char ToLower(this char high) {
+            if (high >= 'A' && high <= 'Z') return (char)(high - 'A' + 'a');
+            return high;
+        }
     }
 }

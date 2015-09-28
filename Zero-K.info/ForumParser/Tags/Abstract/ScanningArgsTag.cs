@@ -17,7 +17,7 @@ namespace ZeroKWeb.ForumParser
                     return false;
                 }
                 if (letter == '\n') return false;
-            } else if (char.ToLower(Match[context.MatchedString.Length-1]) != char.ToLower(letter)) return false;
+            } else if (Match[context.MatchedString.Length-1].ToLower() != letter.ToLower()) return false;
 
             return null;
         }

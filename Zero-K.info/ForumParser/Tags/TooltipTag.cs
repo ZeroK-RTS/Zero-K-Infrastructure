@@ -17,7 +17,7 @@ namespace ZeroKWeb.ForumParser
 
         public override Tag Create() => new TooltipOpenTag();
 
-        protected override bool ValidateArgs(string args) {
+        protected override bool ValidateArgs(ParseContext context, string args) {
             return args.Length > 0 && !args.Contains("'") && !args.Contains("\"");
         }
     }

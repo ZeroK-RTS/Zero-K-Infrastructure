@@ -13,7 +13,7 @@ namespace ZeroKWeb.ForumParser
         public override string Match { get; } = "[img";
         public override char MatchTerminator { get; } = ']';
 
-        protected override bool ValidateArgs(string args) => args.Length == 0 || args.Substring(1, args.Length - 1).IsValidLink();
+        protected override bool ValidateArgs(ParseContext context, string args) => args.Length == 0 || args.Substring(1, args.Length - 1).IsValidLink();
 
 
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
