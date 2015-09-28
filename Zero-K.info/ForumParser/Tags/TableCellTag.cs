@@ -13,7 +13,8 @@ namespace ZeroKWeb.ForumParser
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
             var cellCount = self.AsEnumerable().Skip(1).TakeWhile(x => !(x.Value is NewLineTag)).Count(x => x.Value is TableCellTag);
 
-            if (cellCount > 0)
+            // only start tables if this tag appears on start of line
+            if (cellCount > 0 && self.AsReverseEnumerable().TakeWhile(x => !(x.Value is NewLineTag)).All(x => x.Value is SpaceTag)) 
             {
                 context.Append("<table class='wikitable'>");
 

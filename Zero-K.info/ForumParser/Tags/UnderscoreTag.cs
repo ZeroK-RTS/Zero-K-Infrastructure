@@ -8,7 +8,7 @@ namespace ZeroKWeb.ForumParser
 
             // to bolden text - find second star tag
             var node = self.Next;
-            while (node != null && !(node.Value is NewLineTag) && node.Value.Mode == OpeningClosingMode.SelfClosed)
+            while (node != null && !(node.Value is NewLineTag) && node.Value.Mode == OpeningClosingMode.SelfClosed && !(node.Value is TableCellTag))
             {
                 if (node.Value is UnderscoreTag)
                 {
