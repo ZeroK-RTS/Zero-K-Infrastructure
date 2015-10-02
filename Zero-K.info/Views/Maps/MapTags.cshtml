@@ -4,6 +4,9 @@
   Layout = "";
 }
 
+@if (m.FeaturedOrder == true) {
+  <img src='/img/star_40.png' style="width: 32px; height: 32px" title="Map is featured" />
+}
 @if (m.MapIsFfa == true) {
   <img src='/img/map_tags/ffa.png' style="width: 32px; height: 32px" title="Free For All" />
 }
@@ -19,3 +22,4 @@
 @if (m.MapIsAssymetrical == true) {
   <img src='/img/map_tags/assymetrical.png' style="width: 32px; height: 32px" title="Map layout is asymmetrical" />
 }
+ 
