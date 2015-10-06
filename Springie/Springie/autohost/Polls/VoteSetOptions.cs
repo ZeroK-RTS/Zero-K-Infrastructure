@@ -15,6 +15,11 @@ namespace Springie.autohost.Polls
         public VoteSetOptions(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
 
         protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount) {
+            if (ah.config.Mode == AutohostMode.Serious)
+            {
+                AutoHost.Respond(tas, spring, e, "Serious host, no custom options");
+                return false;
+            }
             winCount = 0;
             question = null;
             if (spring.IsRunning)
