@@ -19,7 +19,7 @@
 
     @RenderSection("head", false)
 
-    @if (!Global.IsLobbyAccess && ViewBag.Minimal != true && !Global.IsWebLobbyAccess)
+    @if (!Global.IsAccountAuthorized && ViewBag.Minimal == null && !Global.IsLobbyAccess)
     {
         //******should instead check cookie for design mode and choose style accordingly******
         if (ViewBag.StaticBackground == true)
@@ -65,7 +65,7 @@
 
     <div id='ajaxScrollProgress' class="border">Loading...<img src='/img/Loader.gif' class="vcenter" /></div>
 
-    @if (!Global.IsAccountAuthorized ||ViewBag.Minimal == null && !Global.IsWebLobbyAccess)
+    @if (!Global.IsAccountAuthorized && ViewBag.Minimal == null && !Global.IsLobbyAccess)
     {
         <div id="fadetoblack">
         </div>
