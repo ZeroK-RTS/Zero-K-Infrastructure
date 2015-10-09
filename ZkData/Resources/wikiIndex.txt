@@ -1,0 +1,195 @@
+	Abbreviations	List of used abbreviations in Zero-K.   Manual Site	Aug 16	skasski@gmx.at	 
+	GameplayDosAndDonts	Things to do (or not do) in a game   Site Manual	Aug 8	skasski@gmx.at	 
+	Download	Download and installation instructions   Site Download Install compiling	Jun 30	testozor	 
+	SpecificUnitGuides	Includes all Ground units & Striders.   Site Manual	May 16	authorityblade	 
+	Overdrive	Manual entry for the overdrive system.   Manual	May 16	skasski@gmx.at	 
+	WindgenfarmGuide		May 8	skasski@gmx.at	 
+	FAQ	Frequently Asked Questions   Site	Apr 20	gnurps@o2.pl	 
+	Credits	Project credits   Site	Mar 26	gnurps@o2.pl	 
+	ZKQuotes	Random humor >_>	Mar 7	kingraptorowns	 
+	Shields	Properties and behavior of shields.   Manual	Feb 2015	gnurps@o2.pl	 
+	Fanart	Useful userbars and logos to embed into your homepage   Site	Feb 2015	anmeldekram71@web.de	 
+	OTAnames		Jan 2015	googl3frog	 
+	ReplaysAndVideos	A list of ZK replays and videos useful for showcasing different strategies, how certain units should be used, etc.	Dec 2014	authorityblade	 
+	CodeOfConduct	A Draft of general rules of Zero-K community   Manual	Dec 2014	kingraptorowns	 
+	MissionEditorStartPage	  MissionEditor	Nov 2014	kingraptorowns	 
+	MissionEditorCutsceneTutorial	Tutorial for using cutscenes in Mission Editor.   MissionEditor Tutorial	Nov 2014	kingraptorowns	 
+	PrivacyPolicy		Nov 2014	kingraptorowns	 
+	CommanderGuide	Guide to modular commanders.   Manual	Nov 2014	gnurps@o2.pl	 
+	Cloak	Documentation of invisibility cloaking.   Manual	Nov 2014	testozor	 
+	TourneyArchive	Archive of past ZK tournaments   tourney list	Nov 2014	anmeldekram71@web.de	 
+	ReleaseNotes2	Page for storing and drafting release notes	Oct 2014	gnurps@o2.pl	 
+	FactionRising		Oct 2014	gnurps@o2.pl	 
+	FactionLiberty	  Site	Oct 2014	gnurps@o2.pl	 
+	WaterGameplayGuide	Strategy guide to current sea gameplay.	Oct 2014	gnurps@o2.pl	 
+	SpecificUnitGuides_2	Includes all Air, Sea & Special units/structures.   Manual	Sep 2014	gnurps@o2.pl	 
+	StrategyTreatise	A page for general rambling about strategy and tactics, including in the context of game design and balance (To be expanded).   Manual	Sep 2014	authorityblade	 
+	Guide_Airplanes	A guide pertaining to the effective use of Airplanes.	Sep 2014	gnurps@o2.pl	 
+	StructuresAndStatics	Includes all Economical/Support, Static defense & Superweapons.	Sep 2014	authorityblade	 
+	Retreat	Documentation on automated retreat system.   Manual	Sep 2014	authorityblade	 
+	Guide_CloakyBots	A guide pertaining to the effective use of Cloaky Bots.	Sep 2014	authorityblade	 
+	MatchProposal	Alternate way to arrange games	Sep 2014	jalich	 
+	ManualPlanetWarsShips	This manual page explains ships in PW.	Sep 2014	gnurps@o2.pl	 
+	PlanetWarsDesign	Design summary for Planetwars online campaign   PlanetWars	Sep 2014	googl3frog	 
+	PlanetWarsMain	Design summary for Planetwars online campaign	Sep 2014	googl3frog	 
+	Manual	Manual Index   Manual	Sep 2014	googl3frog	 
+	ManualPlanetWarsAttacking	This manual page explains attacking in PW.	Sep 2014	googl3frog	 
+	PlanetWarsShips	This manual page explains attacking in PW.	Sep 2014	googl3frog	 
+	Planetwars13	Announcement page for PW 13	Sep 2014	googl3frog	 
+	ManualPlanetWarsEconomy	This manual page explains the basics of PlanetWars economy.   PlanetWars Manual	Sep 2014	googl3frog	 
+	ManualPlanetWarsStructures	This manual page explains the basics of PW structures.   PlanetWars Manual	Sep 2014	gnurps@o2.pl	 
+	ManualPlanetWarsRoles	This manual page explains the basics of PlanetWars roles.	Sep 2014	gnurps@o2.pl	 
+	ManualPlanetWarsEvents	  PlanetWars Manual	Sep 2014	googl3frog	 
+	ManualPlanetWarsTurn	This manual page explains the turn mechanics in PW.	Sep 2014	googl3frog	 
+	ManualPlanetWarsInfluence	This manual page explains Influence Points.   PlanetWars Manual	Sep 2014	googl3frog	 
+	FactionHegemony		Sep 2014	googl3frog	 
+	SteamAchievements	List of ideas/suggestions for Steam Achievements.	Sep 2014	gnurps@o2.pl	 
+	Developing	  Featured	Aug 2014	kingraptorowns	 
+	NewbieIntro	  Site	Jul 2014	kingraptorowns	 
+	Features	  Site	Jul 2014	kingraptorowns	 
+	LobbyStart	Introductory page for new Zero-K lobby users   Site	Jul 2014	kingraptorowns	 
+	HowToFixLag	One-sentence summary of this page.	Jun 2014	googl3frog	 
+	empiricalDPS		Jun 2014	googl3frog	 
+	Guide_ShieldBots	A guide pertaining to the effective use of Shield Bots.	Jun 2014	gnurps@o2.pl	 
+	UnitClassComparisonChart	Side-by-side stat comparisons for various classes of units (i.e Raiders, Riots, Skirmishers, Assaults).	Jun 2014	authorityblade	 
+	UnitRenames	Unit rename propositions	Jun 2014	authorityblade	 
+	TeamsGuide	Basic introduction to the teams gamemode, meant for newer players   Manual Tutorial	May 2014	StyxoA	 
+	1v1StrategyGuide	A guide to playing 1v1. Most material is taken from http://zero-k.info/Forum/Thread/5883 and written in a more newbie friendly way. Contribute to this page if you can!   Tutorial Manual	May 2014	authorityblade	 
+	UnitGuide	Unit guide info	May 2014	wagonrepairer	 
+	WeaponClasses	Common weapon classes of units found in Zero-K.   Manual	May 2014	testozor	 
+	Terraforming	Documentation of terraforming capabilities.   Manual	May 2014	kingraptorowns	 
+	IconGuide	Explanation of the unit mapicons.   Manual	Apr 2014	kingraptorowns	 
+	unitstates	  Manual	Apr 2014	kingraptorowns	 
+	UnitClasses	Explanation of the unit classes in ZK.   Manual	Apr 2014	gnurps@o2.pl	 
+	AdvGuide	This is supposed to be chapter two of the Getting Started guides. The successor to [NewbieGuide]. Topics are taken only from [DidYouKnow]. Explanations here will help when creating DidYouKnow-loading screens. The emphasis lies on *basics*. Not tactics, strategies, complex game or engine concepts & quirks - these get their own guides.	Apr 2014	gnurps@o2.pl	 
+	EconomyGuide2	Development of a new economy guide.	Apr 2014	gnurps@o2.pl	 
+	GameplayGuide	A guide for new players aimed at preventing lack of expansion etc.	Apr 2014	gnurps@o2.pl	 
+	CampaignMissions	List of planned missions for the ZK campaign.   Singleplayer	Apr 2014	kingraptorowns	 
+	Description		Apr 2014	googl3frog	 
+	Saktoth	Saktoth's page	Mar 2014	oscar.evans	 
+	SituationalMusicSuggestions	List and recommend tracks for various ingame events in case situational playback ever becomes a thing.	Mar 2014	kingraptorowns	 
+	CaptureTheFlag	CaptureTheFlag guide.   Manual Guide	Mar 2014	TomFyuri	 
+	2v2TourneyFeb2014	One-sentence summary of this page.	Feb 2014	googl3frog	 
+	SeaBalanceAim	One-sentence summary of this page.	Feb 2014	googl3frog	 
+	ManualStrategyFFA	How to play FFA.   Manual	Feb 2014	gnurps@o2.pl	 
+	GameOptions	Special options you can set before starting the game.   Manual	Feb 2014	TomFyuri	 
+	IntelDrivers	  Site	Feb 2014	theAngrySpider2K	 
+	BomberReloadInterface	Interface between bomber command and refuel pad handler	Jan 2014	googl3frog	 
+	factorypage_amph		Jan 2014	gnurps@o2.pl	 
+	Repair	Documentation of the repair system.   Manual	Dec 2013	gnurps@o2.pl	 
+	OtherSeaBalanceIdeas	Other Sea Balance ideas	Dec 2013	googl3frog	 
+	SeaBalance	Sea Balance ideas	Dec 2013	googl3frog	 
+	TeamsIntro	Basic introduction to the teams gamemode, meant for newer players   Manual Tutorial	Dec 2013	StyxoA	 
+	Media	Screenshots and videos of Zero-K   Site Media	Nov 2013	kingraptorowns	 
+	UserSystemSpecs	System specs of several technically competent users, for use in testing engine.	Nov 2013	RogerSheriff	 
+	TestingSchedule	Things to test on a regular basis	Nov 2013	kingraptorowns	 
+	Hardware	One-sentence summary of this page.   Survey Hardware Requirements	Nov 2013	theAngrySpider2K	 
+	Campaign	Concept and notes for the ZK campaign.   Singleplayer	Nov 2013	kingraptorowns	 
+	DevelopmentTasks	Page for storing development tasks.	Nov 2013	googl3frog	 
+	NewEngineTodo	Bugs and progress for new engine compatibility.	Nov 2013	googl3frog	 
+	HelpForRtsPlayers	Comparison and contrast between ZK and Starcraft or other RTS games.   Manual	Oct 2013	kingraptorowns	 
+	MakingVideos	Instructions how to record ingame video	Oct 2013	wagonrepairer	 
+	PlanetWarsStory		Oct 2013	kingraptorowns	 
+	ManualPlanetWarsStarships	This manual page explains PW starships.   PlanetWars Manual	Oct 2013	kingraptorowns	 
+	FactionSynPact	  Site	Oct 2013	testozor	 
+	FactionDynasty	  Site	Oct 2013	kingraptorowns	 
+	PlanetWarsFactions	Factions and story from previous Planet Wars   PlanetWars	Oct 2013	kingraptorowns	 
+	KeybindFile	  keybind	Sep 2013	wagonrepairer	 
+	AnimatorGUI	How to use the Animator GUI widget.   animation development Widget	Sep 2013	wagonrepairer	 
+	SimplePlanetWars2	Derivative of current PlanetWars, intended for 2-faction system.	Sep 2013	kingraptorowns	 
+	LKRS_PW	Combination of all PW suggestions to hopefully achieve something well defined and implementable.   PlanetWars	Sep 2013	kingraptorowns	 
+	MissionEditorWINE	How to get the Zero-k Mission editor working in WINE on linux.   MissionEditor Tutorial	Aug 2013	theAngrySpider2K	 
+	EconomyGuide	Basic Economy Management.   Manual	Aug 2013	skasski@gmx.at	 
+	Development_Artwork	Coordinating Artwork Contributions	Aug 2013	theAngrySpider2K	 
+	zkdota	ZKDOTA guide.	Aug 2013	petushkov.egor	 
+	HotKeys	Instructions on creating your own custom keys.   Manual	Jul 2013	wagonrepairer	 
+	Awards	Awards description.   awards Manual	Jul 2013	wagonrepairer	 
+	ReleaseNotes	Page for storing and drafting release notes	Jul 2013	googl3frog	 
+	AggressionGuide	Why you should be attacking   Manual	Jul 2013	theAngrySpider2K	 
+	RaiderGuide	  Raiders Guide Manual	Jul 2013	theAngrySpider2K	 
+	CommanderDesign	  Commanders Development Discussion	Jun 2013	frameworld@arcor.de	 
+	CeaseFires	Describing the ceasefire system.   ceasefire Manual	Jun 2013	wagonrepairer	 
+	Benchmarker	Tool for benchmarking and comparing various engine and mod variants	Jun 2013	jalich	 
+	NewbieGuide	  Manual	Jun 2013	kingraptorowns	 
+	Chicken	Explanation of the chicken gamemode.   Manual	Jun 2013	kingraptorowns	 
+	Guide_Spiderbots	A guide pertaining to the effective use of Spiderbots.	Apr 2013	authorityblade	 
+	ZKFluff	Pseudo-technical descriptions of the science and technology in Zero-K.	Mar 2013	authorityblade	 
+	CommanderModules		Mar 2013	oscar.evans	 
+	KudosUnlockPacks	Proposal for packs to be unlocked by Kudos	Feb 2013	kingraptorowns	 
+	Kudos	Proposal of Kudos system	Feb 2013	kingraptorowns	 
+	2013ZK1v1TournamentRules		Feb 2013	m_ritoniemi@windowslive.com	 
+	UnlockSVN		Dec 2012	kingraptorowns	 
+	maackey	maackey's user page	Dec 2012	maackey	 
+	KingRaptor	KingRaptor's user page   User	Nov 2012	kingraptorowns	 
+	TrailerScript		Nov 2012	jalich	 
+	Campaign_Relic	Concept and notes for Relic, a ZK mini-campaign.   Singleplayer Obsolete	Nov 2012	kingraptorowns	 
+	DidYouKnow	Collection of "Did you know..?"s to be used in loading screens.   Tutorial	Oct 2012	msafwan86nnss	 
+	Sandbox	One-sentence summary of this page.	Oct 2012	kingraptorowns	 
+	Story	The backstory of Zero-K.   Singleplayer	Oct 2012	kingraptorowns	 
+	MakingStable	Instructions how to release stable version.	Oct 2012	jalich	 
+	luckywaldo7	luckywaldo7's user page   User	Oct 2012	luckywaldo7	 
+	Funkencool	Funkencool's projects and ideas   User	Oct 2012	luckywaldo7	 
+	PlanetWarsReloaded	Ideas on reworking of PW   PlanetWars Featured	Sep 2012	alex.pyattaev	 
+	FeatureTransportAi	Documentation of the use of Transport AI.   Manual	Aug 2012	alex.pyattaev	 
+	HeadHunter	An old-school OTA-BA-CA-ZK-<your mod name here> player.	Aug 2012	alex.pyattaev	 
+	Capture	Documentation of the capture system.   Manual	Aug 2012	kingraptorowns	 
+	ManualPlanetWarsDiplomacy	This manual page explains the basics of PlanetWars diplomacy.   PlanetWars Manual	Aug 2012	kingraptorowns	 
+	FactionCybernetic	  Site	Jul 2012	kingraptorowns	 
+	FactionMachines	  Site	Jul 2012	kingraptorowns	 
+	FactionEmpire	  Site	Jul 2012	kingraptorowns	 
+	1v1Tournament		Jul 2012	oscar.evans	 
+	Test		Jul 2012	sfireman007	 
+	Localization	  Site	Jul 2012	sfireman007	 
+	Shaun	Shaun's page	Jun 2012	shaun@massive.ch	 
+	NewChat	Overview of features and implementation	Jun 2012	jalich	 
+	IonStorm	NeonStorms task list   User Site	May 2012	frameworld@arcor.de	 
+	BalanceGuidelines		May 2012	kingraptorowns	 
+	ChecklistWidgets	If anyone redo widgets, please read through the following points and use them as one of your check-lists or idea sources.	Apr 2012	frameworld@arcor.de	 
+	AdLines		Apr 2012	jalich	 
+	Harvey	  User	Apr 2012	harveynewell123	 
+	ReadingList	Interesting dev-related links	Mar 2012	lccquantum	 
+	FeudalPlanetWars		Mar 2012	oscar.evans	 
+	Advertisement		Mar 2012	oscar.evans	 
+	amphfactory	Amph factory ideas.	Feb 2012	oscar.evans	 
+	LichoPlanetWars	Incremental advances to current PW   PlanetWars	Jan 2012	jalich	 
+	KRPlanetWars	KR's PlanetWars design	Jan 2012	kingraptorowns	 
+	SteamSubmissionCollaboration		Jan 2012	msafwan86nnss	 
+	AtiDrivers	  Site	Jan 2012	kingraptorowns	 
+	PlayerJuggler	  Site Manual	Jan 2012	jalich	 
+	VoiceCommandsForDevs	Developer discussion of voice commands	Dec 2011	lccquantum	 
+	KRSea	KR's sea rework idea.	Dec 2011	kingraptorowns	 
+	DesignGoals		Dec 2011	skasski@gmx.at	 
+	MatchMaking	design proposal for automated match-making system   Manual	Dec 2011	googl3frog	 
+	SimplePlanetWars		Nov 2011	googl3frog	 
+	ClanBackup	Backup of clan info	Nov 2011	kingraptorowns	 
+	EncodingRules	Which encodings to use in ZK (it is multilingual after all)	Oct 2011	alex.pyattaev	 
+	Interface	Basic GUI / Interface   Site Manual	Oct 2011	3rexcit	 
+	Hotkeys	Hotkeys, shortcuts, keyboard things.	Oct 2011	skasski@gmx.at	 
+	AdminCodeOfConduct	Code of conduct for admins.   Manual	Oct 2011	apj.pekkarinen	 
+	ManualPlanetWarsFAQ	Frequently Asked Questions   Manual Site	Sep 2011	frameworld@arcor.de	 
+	Donate	Donation information   Site	Sep 2011	sebs@2xs.org	 
+	FixingAccounts	intructions on how to fix accounts after lobby server failure/lost password   Site	Aug 2011	jalich	 
+	LevelRankBadge		Aug 2011	maackey	 
+	Links	Links shown in the link box on our homepage   Site	Jul 2011	3rexcit	 
+	MapBoxes	Map Boxes	Jul 2011	googl3frog	 
+	Rafal		Jul 2011	carabusx	 
+	LookingFor	  Site	Jul 2011	jalich	 
+	News	  Site	Jul 2011	jalich	 
+	ModulesDev		Jun 2011	frameworld@arcor.de	 
+	GraphicsSettings	Setting and testing of graphics defaults for release	Jun 2011	jalich	 
+	DLLocations	Locations where Zero-K is downloadable	May 2011	3rexcit	 
+	Archl_Page_ZeroRaider_mod		May 2011	lililjlj	 
+	PlanetWarsRound3		May 2011	jalich	 
+	Licho	Licho's user page   User	Apr 2011	jalich	 
+	PRWanted		Apr 2011	jalich	 
+	PlanetWarsStructureTypes		Apr 2011	jalich	 
+	Plans	Plans and upcoming features of Zero K	Apr 2011	jalich	 
+	UpgradesProposal	Proposal for upgrades and unlocks	Mar 2011	kingraptorowns	 
+	Upgrades		Mar 2011	kingraptorowns	 
+	CustomKeys	Instructions on creating your own custom keys.   Manual	Jan 2011	kingraptorowns	 
+	Intro	Introduction to Zero-K   Obsolete	Jan 2011	jalich	 
+	UnitAI	Documentation of the smart Unit AI   Manual	Dec 2010	kingraptorowns	 
+	ZeroKCampaignMissions		Nov 2010	oscar.evans	 
+	MissionEditorCompatibility	  MissionEditor	Nov 2010	lccquantum	 
+	MissionEditorTutorial	Tutorial: Attack of the Chickens   MissionEditor Tutorial	Oct 2010	lccquantum	 
+	FactoryOrdersTutorial	Factory Orders Tutorial.   MissionEditor Tutorial	Oct 2010	lccquantum	 
