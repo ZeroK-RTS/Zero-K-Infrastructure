@@ -79,7 +79,6 @@
     <Compile Include="Ef\LobbyChatHistory.cs" />
     <Compile Include="Enums\DecorationIconPositions.cs" />
     <Compile Include="Enums\DecorationIconTypes.cs" />
-    <Compile Include="Enums\UserLanguage.cs" />
     <Compile Include="LogEntry.cs" />
     <Compile Include="Migrations\201501132318070_UberServerSwap.cs" />
     <Compile Include="Migrations\201501132318070_UberServerSwap.Designer.cs">
@@ -132,6 +131,10 @@
     <Compile Include="Migrations\201509271554574_WikiPosts.cs" />
     <Compile Include="Migrations\201509271554574_WikiPosts.Designer.cs">
       <DependentUpon>201509271554574_WikiPosts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201510092151106_RemoveUserLanguage.cs" />
+    <Compile Include="Migrations\201510092151106_RemoveUserLanguage.Designer.cs">
+      <DependentUpon>201510092151106_RemoveUserLanguage.cs</DependentUpon>
     </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
@@ -313,6 +316,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201509271554574_WikiPosts.resx">
       <DependentUpon>201509271554574_WikiPosts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201510092151106_RemoveUserLanguage.resx">
+      <DependentUpon>201510092151106_RemoveUserLanguage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
