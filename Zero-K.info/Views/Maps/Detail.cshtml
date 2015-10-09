@@ -33,7 +33,11 @@
             <img src='/Resources/@(m.MetalmapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
         </a>
     </div>
-    <h2>@m.InternalName</h2>
+    <h2>@m.InternalName 
+	@if (m.FeaturedOrder != null) {
+		<img src="/img/star_40.png" title="Featured" alt="Featured">
+	}
+	</h2>
     @if (planet!=null) {
         <h2>Planet @Html.PrintPlanet(planet)</h2>
     }
@@ -69,26 +73,6 @@
         <table style="font-size: small">
             <tr>
                 <td>Size: </td><td>@m.MapWidth x @m.MapHeight</td>
-            </tr>
-            <tr>
-                <td>Wind:</td>
-                <td>@mi.MinWind - @mi.MaxWind</td>
-            </tr>
-            <tr>
-                <td>Metal:</td>
-                <td>@mi.MaxMetal</td>
-            </tr>
-            <tr>
-                <td>Tidal:</td>
-                <td>@mi.TidalStrength</td>
-            </tr>
-            <tr>
-                <td>Gravity:</td>
-                <td>@mi.Gravity</td>
-            </tr>
-            <tr>
-                <td>Extractor radius:</td>
-                <td>@mi.ExtractorRadius</td>
             </tr>
         </table>
     }

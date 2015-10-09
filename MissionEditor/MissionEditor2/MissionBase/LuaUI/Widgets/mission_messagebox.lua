@@ -113,12 +113,8 @@ local function _ShowPersistentMessageBox(text, width, height, fontsize, imageDir
 	--local x = math.floor((vsx - width)/2)
 	local y = math.floor((vsy - height)/2)
 	
-	if not width then
-		width = 360
-	end
-	if not height then
-		height = 160
-	end
+	width = width or 360
+	height = height or 160
 	
 	-- we have an existing box, dispose of it
 	--if msgBoxPersistent then
@@ -148,6 +144,9 @@ local function _ShowPersistentMessageBox(text, width, height, fontsize, imageDir
 		
 		scrollPersistent.height	= height - 8 - 8
 		--scrollPersistent:Invalidate()
+		
+		stackPersistent.y = height - 6
+		--stackPersistent.Invalidate()
 		
 		-- recreate textbox to make sure it never fails to update text
 		textPersistent:Dispose()

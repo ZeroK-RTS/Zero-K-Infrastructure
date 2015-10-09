@@ -123,8 +123,9 @@
                 }
             
             
-
-                <a href="@Html.PrintSpringLink("chat/user/" + Model.Name)"> Chat with @Model.Name in the lobby </a><br />
+		@if (Model.AccountID != Global.AccountID) {
+                	<a href="@Html.PrintSpringLink("chat/user/" + Model.Name)"> Chat with @Model.Name in the lobby </a><br />
+            	}
                 @if (Model.IsZeroKAdmin) {
                     <div>
                         <b> @Model.Name </b> is a <b>Zero-K Administrator</b>
