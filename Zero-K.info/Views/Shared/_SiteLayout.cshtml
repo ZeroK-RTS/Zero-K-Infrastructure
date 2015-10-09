@@ -110,22 +110,6 @@
                                        }>
                     @RenderBody()
                 </div>
-                @if (Global.IsAccountAuthorized) {
-                    <div>
-                        <br/>
-                        <h3>Advertisement</h3>
-                        <script type="text/javascript">
-                            google_ad_client = "ca-pub-9694351454481658";
-                            /* podelne */
-                            google_ad_slot = "9206337938";
-                            google_ad_width = 728;
-                            google_ad_height = 90;
-
-                        </script>
-                        <script type="text/javascript"
-                                src="http://pagead2.googlesyndication.com/pagead/show_ads.js"> </script>
-                    </div>
-                }
 
                 <div id="footer" class="border">
                     <span class="center">Zero-K is a free real time strategy (RTS), that aims to be the
@@ -148,20 +132,6 @@
                 @RenderBody()
             </div>
             <br/>
-            if (Global.IsAccountAuthorized) {
-                <div style="clear:both;">
-                    <h3>Advertisement</h3>
-                    <script type="text/javascript"> 
-                        google_ad_client = "ca-pub-9694351454481658";
-                        /* podelne */
-                        google_ad_slot = "9206337938";
-                        google_ad_width = 728;
-                        google_ad_height = 90;
-                    </script>
-                    <script type="text/javascript"
-                            src="http://pagead2.googlesyndication.com/pagead/show_ads.js"> </script>
-                </div>
-            }
         }
 
     </body>
