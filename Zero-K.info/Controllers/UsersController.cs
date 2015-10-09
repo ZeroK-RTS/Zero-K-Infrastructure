@@ -391,7 +391,6 @@ namespace ZeroKWeb.Controllers
                 acc.FirstLogin,
                 acc.LastLogin,
                 acc.LobbyVersion,
-                acc.Language,
                 acc.Email,
                 acc.Country,
                 acc.EffectiveElo,
