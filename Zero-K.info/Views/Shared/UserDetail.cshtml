@@ -190,7 +190,7 @@
             }
 
         </div>
-                    }
+    }
 
 
     @if (Global.IsZeroKAdmin)
@@ -237,16 +237,17 @@
             <!--div>
                 @Html.Partial("UnlockedTechnologies", Model.AccountUnlocks)
             </div-->
-            @if (Model.AccountID == Global.AccountID) {
-            <a href='@Url.Action("Commanders", "My")'>Configure Commanders</a>
-}
-<br />
-@foreach (Commander comm in Model.Commanders)
-{
-    <span class="fleft border"><center><img src='@comm.Unlock.ImageUrl' alt="unlock" title='$commander$@comm.CommanderID' /><br />@HttpContext.Current.Server.HtmlEncode(comm.Name)</center></span>
-}
-<br class="clearfloat" />
-</div>
+            @if (Model.AccountID == Global.AccountID)
+            {
+                <a href='@Url.Action("Commanders", "My")'>Configure Commanders</a>
+            }
+            <br />
+            @foreach (Commander comm in Model.Commanders)
+            {
+                <span class="fleft border"><center><img src='@comm.Unlock.ImageUrl' alt="unlock" title='$commander$@comm.CommanderID' /><br />@HttpContext.Current.Server.HtmlEncode(comm.Name)</center></span>
+            }
+            <br class="clearfloat" />
+        </div>
 
 
         if (Model.SpringBattlePlayers.Any())
