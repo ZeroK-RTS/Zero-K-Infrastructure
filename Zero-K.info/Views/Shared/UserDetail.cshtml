@@ -183,7 +183,7 @@
             {
                 @:Clan: @Html.PrintClan(Model.Clan)
             }
-            @if (Model.Faction != null)
+            @if (Model.Faction != null && GlobalConst.PlanetWarsMode != PlanetWarsModes.AllOffline)
             {
                 <br />
                 @Html.Partial("~/Views/Users/UserRoleList.cshtml", Model)
@@ -293,28 +293,31 @@
         }
         <br class="clearfloat" />
 
-        <div id="usr_planetwars" class="border relative">
+        if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running)
+        {
+            <div id="usr_planetwars" class="border relative">
 
 
-            @if (Model.Planets.Any())
-            {
-                <h3>Planets owned</h3>
-                <table>
-                    @foreach (Planet p in Model.Planets)
-                    {
-                        <tr>
-                            <td>@Html.PrintPlanet(p) </td>
-                        </tr>
-                    }
-                </table>
-            }
+                @if (Model.Planets.Any())
+                {
+                    <h3>Planets owned</h3>
+                    <table>
+                        @foreach (Planet p in Model.Planets)
+                        {
+                            <tr>
+                                <td>@Html.PrintPlanet(p) </td>
+                            </tr>
+                        }
+                    </table>
+                }
 
 
-            <h3>PlanetWars events</h3>
-            @Html.Action("Events", "Planetwars", new { accountID = Model.AccountID, partial = true })
+                <h3>PlanetWars events</h3>
+                @Html.Action("Events", "Planetwars", new { accountID = Model.AccountID, partial = true })
 
-            <span style="color: #222; font-family: Skir; font-size: 500%; opacity: .75; position: absolute; right: 5%; top: 5%; z-index: -20">PlanetWars</span>
-        </div>
+                <span style="color: #222; font-family: Skir; font-size: 500%; opacity: .75; position: absolute; right: 5%; top: 5%; z-index: -20">PlanetWars</span>
+            </div>
+        }
     }
 
     @if (Global.IsZeroKAdmin && Global.AccountID == Model.AccountID)
