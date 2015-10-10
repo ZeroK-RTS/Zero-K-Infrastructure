@@ -1,38 +1,38 @@
- @using ZeroKWeb
+@using ZeroKWeb
 @if (!Global.IsLobbyAccess || Global.IsAccountAuthorized)
 {
 
     if (!(Global.IsAccountAuthorized))
     {
-@*<!login>*@
-    <form method="post" action="@Url.Action("Logon", "Home")" style="padding: 0; margin: 0;" >
-    Name:
-    <input type="text" name="login" />
-    &nbsp;&nbsp; Password:
-    <input type="password" name="password" />
-    &nbsp;&nbsp;
-    <input type="image" value="Login" src="/img/login.png" style="border: none; width: 25px;
+        @*<!login>*@
+        <form method="post" action="@Url.Action("Logon", "Home")" style="padding: 0; margin: 0;">
+            Name:
+            <input type="text" name="login" />
+            &nbsp;&nbsp; Password:
+            <input type="password" name="password" />
+            &nbsp;&nbsp;
+            <input type="image" value="Login" src="/img/login.png" style="border: none; width: 25px;
         height: 25px; vertical-align: middle;" title="Login with your Zero-K lobby account" alt="Login" />
-        <small>
-        (<a href="/Wiki/FAQ#11._I_forgot_my_password_/_username._Help_me_pls!" target="_blank">Forgot password / username?</a> /
-        <a href="/Wiki/LobbyStart" target="_blank">Create an account</a>)
-        </small>
-    <input type="hidden" name="referer" value="@(Request["ReturnUrl"] != null ? Request["ReturnUrl"] : Request.Url.ToString())" />
-    </form>        
+            <small>
+                (<a href="/Wiki/FAQ#11._I_forgot_my_password_/_username._Help_me_pls!" target="_blank">Forgot password / username?</a> /
+                <a href="/Wiki/LobbyStart" target="_blank">Create an account</a>)
+            </small>
+            <input type="hidden" name="referer" value="@(Request["ReturnUrl"] != null ? Request["ReturnUrl"] : Request.Url.ToString())" />
+        </form>
     }
     else
-    {        
-    <form method="post" action="@Url.Action("Logout", "Home")@(Global.IsLobbyAccess ? "@logout" : "")"  style="padding: 0; margin: 0; display:inline" >
-    @Html.PrintAccount(Global.Account)
-        <input type="hidden" name="referer" value="@Request.Url" /> | @Html.PrintClan(Global.Clan) | @Html.PrintFaction(Global.Account.Faction, false) | <span nicetitle="Your level based on experience">Level: @Global.Account.Level</span> | <span nicetitle="Points available to spend on commander unlocks">Tech Points: @Global.Account.AvailableXP</span> | <span nicetitle="Metagame currency that you can get by donating to Zero-K. You can use it to get access to unique commander decorations">Kudos: @Global.Account.Kudos</span> | @Html.PrintMetal(Global.Account) | @Html.PrintDropships(Global.Account) | @Html.PrintBombers(Global.Account) | @Html.PrintWarps(Global.Account) | Logout 
-    <input type="image" value="Logout" src="/img/logout.png" style="border: none; width: 25px;
+    {
+        <form method="post" action="@Url.Action("Logout", "Home")@(Global.IsLobbyAccess ? "@logout" : "")" style="padding: 0; margin: 0; display:inline">
+            @Html.PrintAccount(Global.Account)
+            <input type="hidden" name="referer" value="@Request.Url" /> | @Html.PrintClan(Global.Clan) | @Html.PrintFaction(Global.Account.Faction, false) | <span nicetitle="Your level based on experience">Level: @Global.Account.Level</span> | <span nicetitle="Points available to spend on commander unlocks">Tech Points: @Global.Account.AvailableXP</span> | <span nicetitle="Metagame currency that you can get by donating to Zero-K. You can use it to get access to unique commander decorations">Kudos: @Global.Account.Kudos</span> | @Html.PrintMetal(Global.Account) | @Html.PrintDropships(Global.Account) | @Html.PrintBombers(Global.Account) | @Html.PrintWarps(Global.Account) | Logout
+            <input type="image" value="Logout" src="/img/logout.png" style="border: none; width: 25px;
         height: 25px; vertical-align: middle;" alt="Logout" title="Logout" />
-    </form>
-    //if not using zklobby
+        </form>
+        //if not using zklobby
         if (!Global.IsLobbyAccess)
         {
-    <div align="right" style="vertical-align: middle; display:block; float:right; padding:5px;"><a href="@Url.Action("SwitchSkin","Home")" title="Switch to an alternative skin"><img style="vertical-align: middle;" align="right" src="/img/switch_skin.png" alt="Switch skin" /></a>
-    </div>
+            <div align="right" style="vertical-align: middle; display:block; float:right; padding:5px;">
+            </div>
         }
     }
 }

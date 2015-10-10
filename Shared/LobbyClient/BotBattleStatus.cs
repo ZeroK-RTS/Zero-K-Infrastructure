@@ -1,5 +1,4 @@
 using System;
-using PlasmaShared;
 
 namespace LobbyClient
 {
@@ -38,9 +37,5 @@ namespace LobbyClient
             }
         }
 
-        public BotTeam ToBotTeam()
-        {
-            return new BotTeam() { BotName = this.Name, AllyID = this.AllyNumber, TeamID = this.TeamNumber, Owner = this.owner, BotAI = this.aiLib };
-        }
     } ;
 }

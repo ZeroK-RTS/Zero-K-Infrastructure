@@ -53,6 +53,7 @@ local unitsWithObjectives = {}
 local wantUpdateDisabledUnits = false
 
 _G.displayedCountdowns = displayedCountdowns
+_G.lastFinishedUnits = lastFinishedUnits
 _G.factoryExpectedUnits = factoryExpectedUnits
 _G.repeatFactoryGroups = repeatFactoryGroups
 
@@ -1574,16 +1575,31 @@ function gadget:Load(zip)
     counters = data.counters
     countdowns = data.countdowns
     displayedCountdowns = data.displayedCountdowns
-    unitGroups = data.unitGroups
-    repeatFactoryGroups = data.repeatFactoryGroups
-    factoryExpectedUnits = data.factoryExpectedUnits
+    unitGroups = GG.SaveLoad.GetNewUnitIDKeys(data.unitGroups)
+    repeatFactoryGroups = GG.SaveLoad.GetNewUnitIDKeys(data.repeatFactoryGroups)
+    factoryExpectedUnits = GG.SaveLoad.GetNewUnitIDKeys(data.factoryExpectedUnits)
     triggers = data.triggers
-    allTriggers = data.triggers
+    allTriggers = data.allTriggers
     objectives = data.objectives
     cheatingWasEnabled = data.cheatingWasEnabled
     allowTransfer = data.allowTransfer
-    GG.mission.cheatingWasEnabled = cheatingWasEnabled
-    GG.mission.allowTransfer = allowTransfer
+    
+    lastFinishedUnits = {}
+    for teamID, unitID in pairs(data.lastFinishedUnits) do
+      lastFinishedUnits[teamID] = GG.SaveLoad.GetNewUnitID(unitID)
+    end
+    
+    GG.mission = {
+      scores = scores,
+      counters = counters,
+      countdowns = countdowns,
+      unitGroups = unitGroups,
+      triggers = triggers,
+      allTriggers = allTriggers,
+      objectives = objectives,
+      cheatingWasEnabled = cheatingWasEnabled,
+      allowTransfer = allowTransfer,
+    }
     gameStarted = true 
   end
   
@@ -1728,7 +1744,8 @@ function gadget:Save(zip)
   local toSave = MakeRealTable(SYNCED.mission)
   toSave.displayedCountdowns = MakeRealTable(SYNCED.displayedCountdowns)
   toSave.factoryExpectedUnits = MakeRealTable(SYNCED.factoryExpectedUnits)
-  toSave.repeatFactoryGroups = MakeRealTable(SYNCED.repeatFactoryGroups)  
+  toSave.repeatFactoryGroups = MakeRealTable(SYNCED.repeatFactoryGroups)
+  toSave.lastFinishedUnits = MakeRealTable(SYNCED.repeatFactoryGroups)
   
   GG.SaveLoad.WriteSaveData(zip, SAVE_FILE, toSave)
 end

@@ -31,6 +31,7 @@
     <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
     <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
@@ -48,10 +49,6 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
-    <Reference Include="MarkdownDeep, Version=1.1.4117.36784, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MarkdownDeep.NET.1.4\lib\.NetFramework 3.5\MarkdownDeep.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Linq.Translations, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -109,6 +106,7 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WebGrease, Version=1.5.2.14234, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
@@ -134,8 +132,45 @@
     <Compile Include="Controllers\LobbyController.cs" />
     <Compile Include="Controllers\ReplaysController.cs" />
     <Compile Include="Controllers\UnitStatsController.cs" />
-    <Compile Include="AppCode\MarkdownHelper.cs" />
-    <Compile Include="Helpers\MarkdownHelper.cs" />
+    <Compile Include="ForumParser\ForumWikiParser.cs" />
+    <Compile Include="ForumParser\LinkedListNodeBackEnumerator.cs" />
+    <Compile Include="ForumParser\LinkedListNodeEnumerator.cs" />
+    <Compile Include="ForumParser\ParseContext.cs" />
+    <Compile Include="ForumParser\ParserExtensions.cs" />
+    <Compile Include="ForumParser\Tags\Abstract\ClosingTag.cs" />
+    <Compile Include="ForumParser\Tags\Abstract\OpeningArgsTag.cs" />
+    <Compile Include="ForumParser\OpeningClosingMode.cs" />
+    <Compile Include="ForumParser\Tags\Abstract\OpeningTag.cs" />
+    <Compile Include="ForumParser\Tags\Abstract\ScanningArgsTag.cs" />
+    <Compile Include="ForumParser\Tags\Abstract\ScanningTag.cs" />
+    <Compile Include="ForumParser\Tags\Abstract\Tag.cs" />
+    <Compile Include="ForumParser\Tags\AtSignTag.cs" />
+    <Compile Include="ForumParser\Tags\BTag.cs" />
+    <Compile Include="ForumParser\Tags\CodeTag.cs" />
+    <Compile Include="ForumParser\Tags\ColorTag.cs" />
+    <Compile Include="ForumParser\Tags\GifvTag.cs" />
+    <Compile Include="ForumParser\Tags\HeaderTag.cs" />
+    <Compile Include="ForumParser\Tags\HrLineTag.cs" />
+    <Compile Include="ForumParser\Tags\HtmlTag.cs" />
+    <Compile Include="ForumParser\Tags\ImgTag.cs" />
+    <Compile Include="ForumParser\Tags\ITag.cs" />
+    <Compile Include="ForumParser\Tags\PollTag.cs" />
+    <Compile Include="ForumParser\Tags\QuoteTag.cs" />
+    <Compile Include="ForumParser\Tags\SizeTag.cs" />
+    <Compile Include="ForumParser\Tags\SpoilerTag.cs" />
+    <Compile Include="ForumParser\Tags\STag.cs" />
+    <Compile Include="ForumParser\Tags\StarTag.cs" />
+    <Compile Include="ForumParser\Tags\TableCellTag.cs" />
+    <Compile Include="ForumParser\Tags\TerminalTags.cs" />
+    <Compile Include="ForumParser\Tags\TooltipTag.cs" />
+    <Compile Include="ForumParser\Tags\UnderscoreTag.cs" />
+    <Compile Include="ForumParser\Tags\UrlTag.cs" />
+    <Compile Include="ForumParser\Tags\UTag.cs" />
+    <Compile Include="ForumParser\Tags\VidTag.cs" />
+    <Compile Include="ForumParser\Tags\WikiLinkTag.cs" />
+    <Compile Include="ForumParser\Tags\WikiTocTag.cs" />
+    <Compile Include="ForumParser\TocEntry.cs" />
+    <Compile Include="ForumParser\TranslateContext.cs" />
     <Compile Include="SpringieInterface\Balancer.cs" />
     <Compile Include="AppCode\Global.cs" />
     <Compile Include="AppCode\HtmlHelperExtensions.cs" />
@@ -144,7 +179,6 @@
     <Compile Include="SpringieInterface\MapPicker.cs" />
     <Compile Include="AppCode\NoCache.cs" />
     <Compile Include="AppCode\SpotlightHandler.cs" />
-    <Compile Include="AppCode\WikiHandler.cs" />
     <Compile Include="Controllers\BattlesController.cs" />
     <Compile Include="Controllers\ForumController.cs" />
     <Compile Include="Controllers\HomeController.cs" />

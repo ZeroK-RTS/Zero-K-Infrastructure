@@ -41,15 +41,6 @@ namespace ZeroKWeb.Controllers
 			return sb.ToString();
 		}
 
-		public ActionResult SwitchSkin()
-		{
-			var newValue = "";
-			if (Request["minimalDesign"] == "1") newValue = "0";
-			else newValue = "1";
-			Response.Cookies.Add(new HttpCookie("minimalDesign", newValue) { Expires = DateTime.Now.AddMonths(6)});
-			return RedirectToAction("Index");
-		}
-
 
         public ActionResult Download() {
 

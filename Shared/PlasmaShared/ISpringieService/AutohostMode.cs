@@ -23,6 +23,9 @@ namespace PlasmaShared
 
         [Description("Generic")]
         Generic = 7,
+
+        [Description("Serious games")]
+        Serious = 10,
     }
 
 }

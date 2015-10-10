@@ -379,6 +379,13 @@ namespace Springie.autohost
             else Respond(e, "Cannot find such map.");
         }
 
+        public void ComMapRemote(TasSayEventArgs e, params string[] words)
+        {
+            if (HasRights("map", e, true)) ComMap(e, words);
+            else if (HasRights("votemap", e, true)) RunCommand(e, "votemap", words);
+            else Respond(e, "You do not have rights to change map");
+        }
+
         public void ComPlanet(TasSayEventArgs e, params string[] words)
         {
             if (spring.IsRunning)

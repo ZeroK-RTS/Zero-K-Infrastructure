@@ -189,15 +189,14 @@ namespace ZeroKLobby.MicroLobby
 			previousLocation = cursorPoint;
 			
 			var hoverIndex = IndexFromPoint(cursorPoint);
-			bool isOnEmpty = hoverIndex == ListBox.NoMatches;
+			bool isOnEmpty = (hoverIndex == ListBox.NoMatches) || (hoverIndex > base.Items.Count);  //sometimes can be 65535 which causes a fatal crash
 			
-			//if (isOnEmpty) hoverIndex = base.Items.Count; //we'll use this number when cursor is outside the list //no, it looks ridiculous
+			//if (isOnEmpty) hoverIndex = base.Items.Count; //we'll use this number when cursor is outside the list
 			
 			if (previousHoverIndex == hoverIndex) return;
 			previousHoverIndex = hoverIndex;
 			
 			if (isOnEmpty)
-			//if (hoverIndex < 0 || hoverIndex >= base.Items.Count)
 			{
 				HoverItem = null; //outside the list
 				Program.ToolTip.SetUser(this, null);

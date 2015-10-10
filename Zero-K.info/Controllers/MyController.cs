@@ -355,19 +355,6 @@ namespace ZeroKWeb.Controllers
 			public IEnumerable<Unlock> FutureUnlocks;
 			public IEnumerable<Unlock> Unlocks;
 		}
-
-				
-		[Auth]
-	    public ActionResult LanguageChange(string language)
-		{
-			var db = new ZkDataContext();
-            var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
-            
-            language = language.ToLower();
-			acc.Language = language == "auto" ? "" : language;
-			db.SubmitChanges();
 			
-            return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
-		}
 	}
 }

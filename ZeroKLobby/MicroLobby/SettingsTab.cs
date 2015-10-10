@@ -32,7 +32,8 @@ namespace ZeroKLobby.MicroLobby
 
             Program.ToolTip.SetText(cbSafeMode, "Turns off many things that are known to cause problems (on PC/Mac's with lower-end graphic cards). Use if the game is crashing.\nWill override Springsetting.cfg");
             Program.ToolTip.SetText(cbHwCursor,"HW cursor is uneffected by ingame lag, but it can become invisible on some machines");
-            
+            Program.ToolTip.SetText(cbMtEngine, "Use MT engine for non-multiplayer 91 game (unstable!). Note: this option isn't applicable for 97+, it is already multithreading by default.");
+           
             Program.ToolTip.SetText(cbWindowed, "Windowed: Run game on desktop in a window\nBorderless: Run game on desktop in a borderless window\nFullscreen: Run game fullscreen");
             Program.ToolTip.SetText(button5, "Springsettings.cfg and Lups.cfg tuned for performance and compatibility; many graphical features are disabled");
             Program.ToolTip.SetText(button1, "Springsettings.cfg and Lups.cfg for performance; some graphical features are disabled");
@@ -66,6 +67,7 @@ namespace ZeroKLobby.MicroLobby
             tbResy.Text = Program.EngineConfigurator.GetConfigValue("YResolution");
             refreshingConfig = false;
             cbSafeMode.Checked = Program.Conf.UseSafeMode;
+		    cbMtEngine.Checked = Program.Conf.UseMtEngine;
 		}
 
 
@@ -97,6 +99,7 @@ namespace ZeroKLobby.MicroLobby
             Program.EngineConfigurator.SetConfigValue("WindowPosY", "0"); // neded for borderless
             Program.EngineConfigurator.SetConfigValue("WindowPosX", "0"); // neded for borderless
             Program.Conf.UseSafeMode = cbSafeMode.Checked;
+	        Program.Conf.UseMtEngine = cbMtEngine.Checked;
 	    }
 
 	    public string PathHead { get { return "settings"; } }
@@ -277,7 +280,12 @@ namespace ZeroKLobby.MicroLobby
         private void cbSafeMode_CheckedChanged(object sender, EventArgs e)
         {
             Program.Conf.UseSafeMode = cbSafeMode.Checked;
-            Program.SpringPaths.SafeMode = cbSafeMode.Checked;
+            Program.SaveConfig();
+        }
+
+        private void cbMtEngine_CheckedChanged(object sender, EventArgs e) {
+            //Program.EngineConfigurator.SetConfigValue("WorkerThreadCount", cbMtEngine.Checked?"-1":"1"); //Spring 97
+            Program.Conf.UseMtEngine = cbMtEngine.Checked;
             Program.SaveConfig();
         }
 

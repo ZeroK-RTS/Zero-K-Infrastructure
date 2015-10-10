@@ -110,7 +110,7 @@ namespace ZeroKWeb.Controllers
         /// <param name="forumPostID">The <see cref="ForumPost"/> ID, if editing an existing post</param>
         /// <returns></returns>
         [Auth]
-		public ActionResult NewPost(int? categoryID, int? threadID, int? forumPostID)
+        public ActionResult NewPost(int? categoryID, int? threadID, int? forumPostID)
 		{
 			var res = new NewPostResult();
 			var db = new ZkDataContext();
@@ -164,7 +164,8 @@ namespace ZeroKWeb.Controllers
         /// <param name="categoryID">The ID of the subforum the <see cref="ForumPost"/> is/will be in</param>
         /// <param name="forumPostID">The <see cref="ForumPost"/> ID, if editing an existing post</param>
 		[Auth]
-		public ActionResult SubmitPost(int? threadID, int? categoryID, int? resourceID, int? missionID, int? springBattleID, int? clanID, int? planetID, string text, string title, int? forumPostID)
+        [ValidateInput(false)]
+        public ActionResult SubmitPost(int? threadID, int? categoryID, int? resourceID, int? missionID, int? springBattleID, int? clanID, int? planetID, string text, string title, int? forumPostID)
 		{
             if (threadID == null && missionID == null && resourceID == null && springBattleID == null && clanID ==null && planetID == null && forumPostID==null && string.IsNullOrWhiteSpace(title)) return Content("Cannot post new thread with blank title");
 			if (string.IsNullOrWhiteSpace(text)) return Content("Please type some text :)");
@@ -179,9 +180,14 @@ namespace ZeroKWeb.Controllers
 			using (var scope = new TransactionScope())
 			{
 				var thread = db.ForumThreads.SingleOrDefault(x => x.ForumThreadID == threadID);
+				string currentTitle = null;
 
 				// update title
-                if (thread != null && !String.IsNullOrEmpty(title)) thread.Title = title;
+				if (thread != null && !String.IsNullOrEmpty(title))
+				{
+					currentTitle = thread.Title;
+					thread.Title = title;
+				}
 				if (thread != null && planetID != null)
 				{
 					var planet = db.Planets.Single(x => x.PlanetID == planetID);
@@ -263,7 +269,7 @@ namespace ZeroKWeb.Controllers
 				var lastPost = thread.ForumPosts.OrderByDescending(x => x.ForumPostID).FirstOrDefault();
 
                 //double post preventer
-                if (lastPost == null || lastPost.AuthorAccountID != Global.AccountID || lastPost.Text != text)
+                if (lastPost == null || lastPost.AuthorAccountID != Global.AccountID || lastPost.Text != text || (!String.IsNullOrEmpty(title) && title != currentTitle))
 				{
                     if (forumPostID != null) {
                         var post = thread.ForumPosts.Single(x => x.ForumPostID == forumPostID);
