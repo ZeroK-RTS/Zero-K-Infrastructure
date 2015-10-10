@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using Newtonsoft.Json;
+using PlasmaShared;
 using ZkData;
 
 namespace LobbyClient

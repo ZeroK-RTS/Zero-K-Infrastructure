@@ -36,15 +36,15 @@ namespace ZeroKWeb.SpringieInterface
                              HostAccountID = acc.AccountID,
                              Duration = result.Duration,
                              EngineGameID = result.EngineBattleID,
-                             MapResourceID = db.Resources.Single(x => x.InternalName == result.Map).ResourceID,
-                             ModResourceID = db.Resources.Single(x => x.InternalName == result.Mod).ResourceID,
-                             HasBots = result.IsBots,
-                             IsMission = result.IsMission,
+                             MapResourceID = db.Resources.Single(x => x.InternalName == context.Map).ResourceID,
+                             ModResourceID = db.Resources.Single(x => x.InternalName == context.Mod).ResourceID,
+                             HasBots = context.Bots.Any(),
+                             IsMission = context.IsMission,
                              PlayerCount = players.Count(x => !x.IsSpectator),
                              StartTime = result.StartTime,
-                             Title = result.Title,
+                             Title = context.Title,
                              ReplayFileName = result.ReplayName,
-                             EngineVersion = result.EngineVersion,
+                             EngineVersion = context.EngineVersion,
                          };
                 db.SpringBattles.InsertOnSubmit(sb);
 
@@ -110,7 +110,7 @@ namespace ZeroKWeb.SpringieInterface
                             } 
                         }
 
-                        PlanetWarsTurnHandler.EndTurn(result.Map, extraData, db, winNum, sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).ToList(), text, sb, sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.AllyNumber == 0).Select(x => x.Account).ToList());
+                        PlanetWarsTurnHandler.EndTurn(context.Map, extraData, db, winNum, sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).ToList(), text, sb, sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.AllyNumber == 0).Select(x => x.Account).ToList());
 
                         Global.PlanetWarsMatchMaker.RemoveFromRunningBattles(context.AutohostName);
                     }

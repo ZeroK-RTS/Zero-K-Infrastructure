@@ -366,9 +366,9 @@ namespace ZeroKLobby
         public bool SingleInstance { get; set; }
         
         [Browsable(false)]
-        public bool UseMtEngine { get; set; }
-        [Browsable(false)]
         public bool UseSafeMode { get; set; }
+
+
 		[Browsable(false)]
         public Point windowLocation { get; set; }
         [Browsable(false)]

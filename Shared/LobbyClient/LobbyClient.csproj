@@ -57,10 +57,12 @@
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>LobbyClient</RootNamespace>
+  </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="Battle.cs" />
-    <Compile Include="BattleRect.cs" />
     <Compile Include="BotBattleStatus.cs" />
     <Compile Include="CountryNames.cs" />
     <Compile Include="Crc.cs" />
@@ -78,8 +80,10 @@
     <Compile Include="Protocol\Messages.cs" />
     <Compile Include="SayingEventArgs.cs" />
     <Compile Include="Legacy\ServerConnection.cs" />
+    <Compile Include="ScriptGenerator.cs" />
     <Compile Include="Spring.cs" />
     <Compile Include="SpringieServer.cs" />
+    <Compile Include="SpringSettings.cs" />
     <Compile Include="Talker.cs" />
     <Compile Include="TasClient.cs" />
     <Compile Include="TasClient_structures.cs" />
