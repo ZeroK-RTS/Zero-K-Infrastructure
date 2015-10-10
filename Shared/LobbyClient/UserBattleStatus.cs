@@ -3,6 +3,7 @@
 using System;
 using System.Net;
 using Newtonsoft.Json;
+using PlasmaShared;
 
 #endregion
 
@@ -112,5 +113,17 @@ namespace LobbyClient
 		{
 			return !Equals(left, right);
 		}
+
+
+	    public PlayerTeam ToPlayerTeam()
+	    {
+	        return new PlayerTeam() {
+	            AllyID = this.AllyNumber,
+	            Name = this.Name,
+	            LobbyID = this.LobbyUser.AccountID,
+	            TeamID = this.TeamNumber,
+	            IsSpectator = this.IsSpectator
+	        };
+	    }
 	} ;
 }

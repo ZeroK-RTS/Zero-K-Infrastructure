@@ -6,14 +6,8 @@ namespace PlasmaShared
     {
         public int Duration;
         public string EngineBattleID;
-        public string EngineVersion;
         public DateTime? IngameStartTime;
-        public bool IsBots;
-        public bool IsMission;
-        public string Map;
-        public string Mod;
-        public string ReplayName;
         public DateTime StartTime;
-        public string Title;
+        public string ReplayName { get; set; }
     }
 }

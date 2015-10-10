@@ -42,8 +42,8 @@ namespace ZeroKWeb.Controllers
                     break;
 
                 case "pull_request":
-                    values = new [] {payload.repository.name ,payload.sender.login,  payload.action, payload.number, payload.pull_request.title , payload.pull_request.html_url};
-                    text = string.Format("[{0}] {1} has {2} pull request #{3}: {4} ({5})",values);
+                    values = new [] {payload.repository.name ,payload.sender.login,  payload.action, payload.number, payload.pull_request.title , payload.pull_request.html_url, payload.pull_request.body};
+                    text = string.Format("[{0}] {1} has {2} pull request #{3}: {4} ({5})\n{6}",values);
                     break;
 
                 case "push":
