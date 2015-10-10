@@ -745,9 +745,8 @@ namespace LobbyClient
             process.WaitForExit();
         }
 
-        public void RunLocalScriptGame(object script)
-        {
-            throw new NotImplementedException();
+        public void RunLocalScriptGame(string script) {
+            StartSpring(script);
         }
     }
 }
