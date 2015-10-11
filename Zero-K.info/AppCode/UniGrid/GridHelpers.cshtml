@@ -188,20 +188,20 @@
     } else {
         <div class="ui-widget ui-corner-all ui-widget-content" style="margin: 5px" id="@grid.ID">
             <div class="ui-widget-header ui-corner-top" style="text-align: center">@grid.Title</div>
-            @GridHelpers.GridJs(grid)
-            @GridHelpers.Pager(Html, grid)
-            @GridHelpers.Hidden(Html, grid)
+            @GridJs(grid)
+            @Pager(Html, grid)
+            @Hidden(Html, grid)
 
 
             <table style="width: 100%">
                 <thead>
-                    @GridHelpers.TableHeader(grid)
+                    @TableHeader(grid)
                 </thead>
                 <tbody>
-                    @GridHelpers.TableData(grid)
+                    @TableData(grid)
                 </tbody>
             </table>
-            @GridHelpers.Pager(Html, grid)
+            @Pager(Html, grid)
         </div>
     }
 }
