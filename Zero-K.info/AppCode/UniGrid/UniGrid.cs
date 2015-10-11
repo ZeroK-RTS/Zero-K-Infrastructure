@@ -61,6 +61,11 @@ namespace ZeroKWeb
 
         public string CsvFileName { get; set; }
 
+        public UniGridCol<T> AddCol(string description = null, Func<T, object> commonFormat = null) {
+            var c = new UniGridCol<T>(description, commonFormat);
+            Cols.Add(c);
+            return c;
+        }
 
         public string GenerateCsv(string delimiter = ";")
         {

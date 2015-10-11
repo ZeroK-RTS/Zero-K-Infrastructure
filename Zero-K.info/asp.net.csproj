@@ -284,6 +284,7 @@
     <Content Include="Img\download_button.png" />
     <Content Include="Img\dropship.png" />
     <Content Include="Img\edit_pencil.png" />
+    <Content Include="Img\excel.png" />
     <Content Include="Img\factions\Ascended.png" />
     <Content Include="Img\factions\Ascended_ship.png" />
     <Content Include="Img\factions\Cybernetic.png" />
@@ -1063,6 +1064,8 @@
     <Content Include="Img\screenshots\tropical.jpg" />
     <Content Include="Img\screenshots\warrior_temple_foot.png" />
     <Content Include="Img\search_img.png" />
+    <Content Include="Img\sort_down_green.png" />
+    <Content Include="Img\sort_up_green.png" />
     <Content Include="Img\star.png" />
     <Content Include="Img\stars\crystal-stars.png" />
     <Content Include="Img\stars\crystal-stars_small.png" />
@@ -1294,7 +1297,7 @@
     <Content Include="Styles\stars.css" />
     <Content Include="Styles\style.css" />
     <Content Include="Views\Maps\PlanetImageSelect.cshtml" />
-    <Content Include="AppCode\UniGrid\GridHelpers.cshtml" />
+    <Content Include="App_Code\GridHelpers.cshtml" />
     <None Include="AppCode\ModStatsDb.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
       <LastGenOutput>ModStatsDb.designer.cs</LastGenOutput>
@@ -1399,7 +1402,6 @@
     <Content Include="Views\Planetwars\PwMatchMaker.cshtml" />
     <Content Include="Views\Planetwars\GalaxyOffline.cshtml" />
     <Content Include="Views\Planetwars\GalaxyOfflinePW12.cshtml" />
-    <Content Include="Views\Forum\ForumPaginator.cshtml" />
     <Content Include="Views\Forum\ThreadPaginator.cshtml" />
   </ItemGroup>
   <ItemGroup>

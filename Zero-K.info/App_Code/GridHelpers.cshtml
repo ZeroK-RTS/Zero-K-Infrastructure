@@ -22,7 +22,7 @@
                         primary: "ui-icon-seek-first"
                     }
                 });
-
+            
             $(".js-grid-prev").button(
                 {
                     icons: {
@@ -157,7 +157,7 @@ if (col.IsSelector)
 @helper Pager(System.Web.Mvc.HtmlHelper Html, IUniGrid grid)
 {
     <div class='ui-corner-all' style="margin:4px">
-        <a href="#" class="js-grid-first @(grid.PageNumber <= 1 ? "js-disabled" : "")" onclick="gridSetPage('@grid.ID', 1);return false" style="height:20px"></a>
+        <a href="#" class="js-grid-first @(grid.PageNumber <= 1 ? "js-disabled" : "")" onclick="gridSetPage('@grid.ID', 1);return false;" style="height:20px"></a>
         <a href="#" class="js-grid-prev @(grid.PageNumber <= 1 ? "js-disabled" : "")" onclick="gridSetPage('@grid.ID', @(grid.PageNumber - 1));return false;" style="height:20px"></a>
         <span>
             Page
@@ -165,7 +165,7 @@ if (col.IsSelector)
             of @grid.PageCount (@grid.RecordCount records)
         </span>
         <a href="#" class="js-grid-next @(grid.PageNumber >= grid.PageCount ? "js-disabled" : "")" onclick="gridSetPage('@grid.ID', @(grid.PageNumber + 1));return false;" style="height:20px"></a>
-        <a href="#" class="js-grid-end @(grid.PageNumber >= grid.PageCount ? "js-disabled" : "")" onclick="gridSetPage('@grid.ID', @grid.PageCount);return false" style="height:20px"></a>
+        <a href="#" class="js-grid-end @(grid.PageNumber >= grid.PageCount ? "js-disabled" : "")" onclick="gridSetPage('@grid.ID', @grid.PageCount);return false;" style="height:20px"></a>
         <span>&nbsp;&nbsp;&nbsp;<a href="#" onclick="gridGetCsv('@grid.ID');return false;" nicetitle="Download as excel - CSV"><img src="~/Img/excel.png" style="height: 25px; border:0;" /></a></span>
     </div>
 }

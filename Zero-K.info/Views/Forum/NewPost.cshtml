@@ -1,25 +1,30 @@
 ﻿@model ZeroKWeb.Controllers.ForumController.NewPostResult
 @{
-  Page.Title = "New post";
+    Page.Title = "New post";
 }
 
 @{Html.RenderPartial("ForumPath", Model.Path);}
 
-@if (Model.CurrentThread != null) {
-  <h3>@Html.ActionLink(Model.CurrentThread.Title, "Thread", new { id = Model.CurrentThread.ForumThreadID })</h3>
-} else {
-  <h3>Post new topic</h3>
+@if (Model.CurrentThread != null)
+{
+    <h3>@Html.ActionLink(Model.CurrentThread.Title, "Thread", new { id = Model.CurrentThread.ForumThreadID })</h3>
+}
+else
+{
+    <h3>Post new topic</h3>
 }
 
 
 <form method="post" action="@Url.Action("SubmitPost", "Forum", new { threadID = Model.CurrentThread != null ? (int?)Model.CurrentThread.ForumThreadID : null, categoryID = Model.CurrentCategory.ForumCategoryID, forumPostID = Model.EditedPost != null ? (int?)Model.EditedPost.ForumPostID : null })">
-@if (Model.CanSetTopic) {
-  @:Title: <input type="text" name="title" cols="50" value="@(Model.EditedPost != null ? Model.EditedPost.ForumThread.Title:null)"/><br/>
+    @if (Model.CanSetTopic)
+    {
+        @:Title: <input type="text" name="title" cols="50" value="@(Model.EditedPost != null ? Model.EditedPost.ForumThread.Title:null)" /><br />
 }
 
-<textarea name="text" rows="8" cols="80">@(Model.EditedPost != null ? Model.EditedPost.Text:null)</textarea><br />
-<input  class="textbutton" type="submit" value="Submit Post" />
+    <textarea name="text" rows="8" cols="80">@(Model.EditedPost != null ? Model.EditedPost.Text : null)</textarea><br />
+    <input class="textbutton" type="submit" value="Submit Post" />
 </form>
-@if (Model.LastPosts != null && Model.CurrentThread != null) {
-  @Html.Partial("~/Views/Forum/PostList.cshtml", Model.LastPosts)
+@if (Model.LastPosts != null && Model.CurrentThread != null)
+{
+    @Html.Partial("~/Views/Forum/PostList.cshtml", Model.LastPosts)
 }
