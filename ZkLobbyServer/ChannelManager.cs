@@ -71,15 +71,15 @@ namespace ZkLobbyServer
 
         public void Refresh(int count = 20)
         {
-            var lastMonth = DateTime.UtcNow.AddMonths(-1);
+            var ladderTimeout = DateTime.UtcNow.AddMonths(-GlobalConst.LadderActivityDays);
             using (var db = new ZkDataContext()) {
                 topTeam =
-                    db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > lastMonth))
+                    db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout))
                         .OrderByDescending(x => x.Elo)
                         .Take(count)
                         .ToList();
                 top1v1 =
-                    db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > lastMonth))
+                    db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout))
                         .OrderByDescending(x => x.Elo1v1)
                         .Take(count)
                         .ToList();
