@@ -1019,6 +1019,7 @@ namespace Springie.autohost
 
                 if (!HasRights(com, e)) {
                     if (hasVoteVersion) {
+                        com = voteCom;
                         if (!HasRights(voteCom, e)) return;
                     }
                     else return;
