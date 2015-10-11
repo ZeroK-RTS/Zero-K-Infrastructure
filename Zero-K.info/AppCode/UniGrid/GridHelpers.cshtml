@@ -8,11 +8,11 @@
         gridData = typeof (gridData) == 'undefined' ? {}: gridData; // declare griddate if it does not already exist
 
         gridData['@grid.ID'] = {};
-        
+
         // fill up griddata with values
         @foreach (var sel in grid.SelectedKeys) {
             @: gridData['@grid.ID'][@sel] = '1';
-        }
+                        }
 
 
         $(document).ready(function () {
@@ -55,7 +55,7 @@
             gridFormHookSelections('@grid.ID', getGridForm('@grid.ID'));
         });
 
-       
+
         function getGridForm(gridID) {
             return $("#" + gridID + "page").closest('form');
         }
@@ -83,7 +83,7 @@
             form.find('input').unbind();
             form.submit();
         }
-        
+
         function gridSelect(gridID, elem) {
             var checked = elem.attr('checked') == 'checked';
             var value = elem.val();
@@ -98,7 +98,7 @@
             var url = form.attr("action") +"?" + form.serialize()+ "&" + gridID + "csv=True";
             window.location = url;
         }
-        
+
         function gridToggleRows(gridID,el) {
             var form = getGridForm(gridID);
             var checked = el.attr('checked') == 'checked';
@@ -108,10 +108,10 @@
                 gridSelect(gridID, $(this));
             });
         }
-        
+
         function gridFormHookSelections(gridID, form, name) {
             if (name == null) name = gridID + "sel";
-            
+
             form.submit(function () {
                 jQuery.each(gridData[gridID], function(key, val) {
                     if (val == '1') {
@@ -124,7 +124,7 @@
                 });
             });
         }
-            
+
     </script>
 }
 @helper Hidden(System.Web.Mvc.HtmlHelper Html, IUniGrid grid)
@@ -135,19 +135,21 @@
 }
 @helper Column(IUniGrid grid, IUniGridCol col)
 {
-    if (col.IsSelector) {
-        <input type="checkbox" onclick="gridToggleRows('@grid.ID',$(this))"/>
-    }
-    <a href="#" onclick="gridSetSort('@grid.ID','@col.ID');return false;">@col.Description
+if (col.IsSelector)
+{
+        <input type="checkbox" onclick="gridToggleRows('@grid.ID',$(this))" />
+}
+    <a href="#" onclick="gridSetSort('@grid.ID','@col.ID');return false;">
+        @col.Description
         @if (!string.IsNullOrEmpty(grid.OrderColumn) && col.ID == grid.OrderColumn)
+    {
+        if (grid.OrderIsDescending)
         {
-            if (grid.OrderIsDescending)
-            {
-            <img class="icon" src="/img/sort_up_green.png" />
+                <img class="icon" src="~/img/sort_up_green.png" />
             }
             else
             {
-            <img class="icon" src="/img/sort_down_green.png" />
+                <img class="icon" src="~/img/sort_down_green.png" />
             }
         }
     </a>
@@ -155,20 +157,22 @@
 @helper Pager(System.Web.Mvc.HtmlHelper Html, IUniGrid grid)
 {
     <div class='ui-corner-all' style="margin:4px">
-        <a href="#" class="js-grid-first @(grid.PageNumber <= 1 ? "js-disabled" : "")"  onclick="gridSetPage('@grid.ID', 1);return false" style="height:20px"></a>
-        <a href="#" class="js-grid-prev @(grid.PageNumber <= 1 ? "js-disabled" : "")"   onclick="gridSetPage('@grid.ID', @(grid.PageNumber - 1));return false" style="height:20px"></a>
-        <span>Strana
+        <a href="#" class="js-grid-first @(grid.PageNumber <= 1 ? "js-disabled" : "")" onclick="gridSetPage('@grid.ID', 1);return false" style="height:20px"></a>
+        <a href="#" class="js-grid-prev @(grid.PageNumber <= 1 ? "js-disabled" : "")" onclick="gridSetPage('@grid.ID', @(grid.PageNumber - 1));return false;" style="height:20px"></a>
+        <span>
+            Page
             <input type="text" onblur="return gridSetPage('@grid.ID', $(this).val())" style="width:40px" value="@grid.PageNumber" />
-            z @grid.PageCount (@grid.RecordCount záznamů)</span>
-        <a href="#" class="js-grid-next @(grid.PageNumber >= grid.PageCount ? "js-disabled" : "")"   onclick="gridSetPage('@grid.ID', @(grid.PageNumber + 1));return false" style="height:20px"></a>
-        <a href="#" class="js-grid-end @(grid.PageNumber >= grid.PageCount ? "js-disabled" : "")"   onclick="gridSetPage('@grid.ID', @grid.PageCount);return false" style="height:20px"></a>
-        <span>&nbsp;&nbsp;&nbsp;<a href="#" onclick="gridGetCsv('@grid.ID');return false;" nicetitle="Stáhnout jako excel - CSV"><img src="/Img/excel.png" style="height: 25px; border:0;"/></a></span>
+            of @grid.PageCount (@grid.RecordCount records)
+        </span>
+        <a href="#" class="js-grid-next @(grid.PageNumber >= grid.PageCount ? "js-disabled" : "")" onclick="gridSetPage('@grid.ID', @(grid.PageNumber + 1));return false;" style="height:20px"></a>
+        <a href="#" class="js-grid-end @(grid.PageNumber >= grid.PageCount ? "js-disabled" : "")" onclick="gridSetPage('@grid.ID', @grid.PageCount);return false" style="height:20px"></a>
+        <span>&nbsp;&nbsp;&nbsp;<a href="#" onclick="gridGetCsv('@grid.ID');return false;" nicetitle="Download as excel - CSV"><img src="~/Img/excel.png" style="height: 25px; border:0;" /></a></span>
     </div>
 }
 @helper TableHeader(IUniGrid grid)
 {
     <tr>
-        @foreach (var col in grid.BaseCols.Where(x=>x.AllowWeb))
+        @foreach (var col in grid.BaseCols.Where(x => x.AllowWeb))
         {
             <th class="ui-state-default" style="width:@col.Width;">
                 @Column(grid, col)
@@ -180,17 +184,20 @@
 {
     @grid.RenderTableRows()
 }
-@helper RenderTable(System.Web.Mvc.HtmlHelper Html, IUniGrid grid)
+@helper RenderTable(System.Web.Mvc.HtmlHelper html, IUniGrid grid)
 {
     grid.PrepareRenderData();
-    if (grid.CsvRequested) {
+    if (grid.CsvRequested)
+    {
         grid.RenderCsv();
-    } else {
+    }
+    else
+    {
         <div class="ui-widget ui-corner-all ui-widget-content" style="margin: 5px" id="@grid.ID">
             <div class="ui-widget-header ui-corner-top" style="text-align: center">@grid.Title</div>
             @GridJs(grid)
-            @Pager(Html, grid)
-            @Hidden(Html, grid)
+            @Pager(html, grid)
+            @Hidden(html, grid)
 
 
             <table style="width: 100%">
@@ -201,7 +208,7 @@
                     @TableData(grid)
                 </tbody>
             </table>
-            @Pager(Html, grid)
+            @Pager(html, grid)
         </div>
     }
 }
