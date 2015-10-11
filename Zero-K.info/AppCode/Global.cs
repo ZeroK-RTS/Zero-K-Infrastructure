@@ -53,21 +53,6 @@ namespace ZeroKWeb
                 else return 0;
             }
         }
-        public static string DisplayLanguage
-        {
-            get { return ResolveLanguage(); }
-        }
-        public static UserLanguage DisplayLanguageAsEnum
-        {
-            get
-            {
-                try {
-                    return (UserLanguage)Enum.Parse(typeof(UserLanguage), DisplayLanguage, true);
-                } catch (Exception ex) {
-                    return UserLanguage.auto;
-                }
-            }
-        }
         public static int FactionID
         {
             get
@@ -313,21 +298,6 @@ namespace ZeroKWeb
             }
         }
 
-        static string ResolveLanguage()
-        {
-            if (IsAccountAuthorized) {
-                var db = new ZkDataContext();
-                var acc = db.Accounts.Single(x => x.AccountID == AccountID);
-                var manualLanguage = acc == null ? null : acc.Language;
-
-                if (!String.IsNullOrEmpty(manualLanguage)) return manualLanguage;
-            }
-
-            var ri = ResolveCountry();
-            if (ri != null && !String.IsNullOrEmpty(ri.TwoLetterISORegionName)) return ri.TwoLetterISORegionName;
-
-            return "en";
-        }
 
         static void SetupPaypalInterface()
         {

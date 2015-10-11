@@ -35,7 +35,6 @@
             this.btnCustom = new ZeroKLobby.BitmapButton();
             this.btnBenchmarker = new ZeroKLobby.BitmapButton();
             this.label1 = new System.Windows.Forms.Label();
-            this.cbMtEngine = new System.Windows.Forms.CheckBox();
             this.btnDisplay = new ZeroKLobby.BitmapButton();
             this.cbSafeMode = new System.Windows.Forms.CheckBox();
             this.developmentButton = new ZeroKLobby.BitmapButton();
@@ -97,7 +96,6 @@
             this.splitContainerAtMid.Panel1.Controls.Add(this.btnCustom);
             this.splitContainerAtMid.Panel1.Controls.Add(this.btnBenchmarker);
             this.splitContainerAtMid.Panel1.Controls.Add(this.label1);
-            this.splitContainerAtMid.Panel1.Controls.Add(this.cbMtEngine);
             this.splitContainerAtMid.Panel1.Controls.Add(this.btnDisplay);
             this.splitContainerAtMid.Panel1.Controls.Add(this.cbSafeMode);
             this.splitContainerAtMid.Panel1.Controls.Add(this.developmentButton);
@@ -187,17 +185,6 @@
             this.label1.Size = new System.Drawing.Size(71, 13);
             this.label1.TabIndex = 23;
             this.label1.Text = "Game details:";
-            // 
-            // cbMtEngine
-            // 
-            this.cbMtEngine.AutoSize = true;
-            this.cbMtEngine.Location = new System.Drawing.Point(350, 75);
-            this.cbMtEngine.Name = "cbMtEngine";
-            this.cbMtEngine.Size = new System.Drawing.Size(179, 17);
-            this.cbMtEngine.TabIndex = 37;
-            this.cbMtEngine.Text = "Enable Spring 91 Multi-threading";
-            this.cbMtEngine.UseVisualStyleBackColor = true;
-            this.cbMtEngine.CheckedChanged += new System.EventHandler(this.cbMtEngine_CheckedChanged);
             // 
             // btnDisplay
             // 
@@ -549,7 +536,6 @@
 
         private ZeroKLobby.ZkSplitContainer splitContainerAtMid;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.CheckBox cbMtEngine;
         private System.Windows.Forms.CheckBox cbSafeMode;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;

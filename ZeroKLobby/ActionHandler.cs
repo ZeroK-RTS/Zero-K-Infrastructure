@@ -180,11 +180,11 @@ namespace ZeroKLobby
                         break;
 
                     case "select_map":
-                        if (Program.TasClient.MyBattle != null) Program.TasClient.Say(SayPlace.Battle, null, "!map " + arg, false);
+                        if (Program.TasClient.MyBattle != null) Program.TasClient.Say(SayPlace.Battle, null, "!mapremote " + arg, false);
                         else
                         {
                             var name = String.Format("{0}'s game", Program.Conf.LobbyPlayerName);
-                            SpawnAutohost(KnownGames.List.First(x => x.IsPrimary).RapidTag, name, null, new List<string> { "!map " + arg });
+                            SpawnAutohost(KnownGames.List.First(x => x.IsPrimary).RapidTag, name, null, new List<string> { "!mapremote " + arg });
                         }
                         break;
 
@@ -375,7 +375,7 @@ namespace ZeroKLobby
             }
         }
 
-        public static void JoinBattleSpec(int battleId)
+        /*public static void JoinBattleSpec(int battleId)
         {
             Battle bat;
             if (!Program.TasClient.ExistingBattles.TryGetValue(battleId, out bat)) return;
@@ -407,11 +407,8 @@ namespace ZeroKLobby
                 var spring = new Spring(Program.SpringPaths);
                 
                 Thread.Sleep(200);// give host time to adduser
-                spring.StartGame(Program.TasClient, null, null, null, Program.Conf.UseSafeMode, battleOverride: bat);
+                spring.HostGame(Program.TasClient, null, null, null, Program.Conf.UseSafeMode, battleOverride: bat);
             });
-           
-
-
-        }
+        }*/
     }
 }

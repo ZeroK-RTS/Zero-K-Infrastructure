@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Linq;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -20,9 +21,12 @@ using System.Xml.Serialization;
 //using NightWatch;
 using LobbyClient;
 using Microsoft.Linq.Translations;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PlasmaShared;
 using ZkData.UnitSyncLib;
 using ZeroKWeb;
+using ZeroKWeb.ForumParser;
 using ZkData;
 using Encoder = System.Drawing.Imaging.Encoder;
 
@@ -246,28 +250,70 @@ namespace Fixer
         {
             //GlobalConst.Mode = ModeType.Live;
             var db = new ZkDataContext();
-            var bats = db.SpringBattles.Where(x => x.StartTime >= from && x.Duration >= 60*5).ToList();
+            var bats = db.SpringBattles.Where(x => x.StartTime >= from && x.Duration >= 60 * 5).ToList();
             Console.WriteLine("Battles from {0}", from);
             var total = bats.Count;
-            Console.WriteLine("Total: {0}",total);
-            var breakdown = bats.GroupBy(x => x.PlayerCount).OrderBy(x => x.Key).Select(x => new {
+            Console.WriteLine("Total: {0}", total);
+            var breakdown = bats.GroupBy(x => x.PlayerCount).OrderBy(x => x.Key).Select(x => new
+            {
                 Size = x.Key,
                 Count = x.Count()
             }).ToList();
 
-            foreach (var b in breakdown) {
-                Console.WriteLine("Size: {0}    Battles: {1}",b.Size,b.Count);    
+            foreach (var b in breakdown)
+            {
+                Console.WriteLine("Size: {0}    Battles: {1}", b.Size, b.Count);
             }
-            
 
-            
+
+
         }
 
 
 
-        [STAThread]
-        static void Main(string[] args)
+
+        public class MiniBat
         {
+            public int ID;
+            public int Duration;
+            public int MapID;
+            public List<List<int>> Players = new List<List<int>>();
+        }
+
+        public static void SaveMiniBats(string path) {
+            var js = JsonSerializer.Create();
+            using (var fs = File.OpenWrite(path)) 
+            using (var tw = new StreamWriter(fs)) js.Serialize(tw, GetMiniBats());
+        }
+
+
+        [STAThread]
+        static void Main(string[] args) {
+            //var ret = new ForumWikiParser().ProcessToHtml("[B]bold[/b]", null);
+            //return;
+
+            return;
+
+            /*
+            //ImportWiki();
+            var db = new ZkDataContext();
+            var wikis = db.ForumCategories.First(x => x.IsWiki).ForumThreads.Select(x => new { key=x.WikiKey, text= x.ForumPosts.First().Text}).ToList();
+
+            var parser = new ForumWikiParser();
+            for (int i = 0; i < 100; i++)
+            {
+                var sw = Stopwatch.StartNew();
+                foreach (var w in wikis)
+                {
+                    //Console.WriteLine(w.key);
+                    parser.ProcessToHtml(w.text, null);
+                }
+                sw.Stop();
+                Console.WriteLine("total: {0}ms, item: {1:D}ms", sw.ElapsedMilliseconds, sw.ElapsedMilliseconds/wikis.Count);
+            }*/
+
+
+
             //GetGameStats(new DateTime(2014,12,1));
             //Thread.Sleep(10000);
             //var ns = new NubSimulator();
@@ -345,6 +391,21 @@ namespace Fixer
             //GetAverageElo();
 
             //DuplicateFinder.GetDuplicates();
+        }
+
+        static IEnumerable<MiniBat> GetMiniBats() {
+
+            foreach (var bid in new ZkDataContext().SpringBattles.Where(x => !x.IsMission && !x.HasBots).Select(x=>x.SpringBattleID))
+            {
+                using (var db = new ZkDataContext())
+                {
+                    var b = db.SpringBattles.Find(bid);
+                    var bat = new MiniBat() { ID = b.SpringBattleID, Duration = b.Duration, MapID = b.MapResourceID, Players = new List<List<int>>() };
+
+                    foreach (var team in b.SpringBattlePlayers.GroupBy(x => x.AllyNumber).OrderByDescending(x => x.First().IsInVictoryTeam))bat.Players.Add(team.Select(x => x.AccountID).ToList());
+                    yield return bat;
+                }
+            }
         }
 
         static void CountPlayers()

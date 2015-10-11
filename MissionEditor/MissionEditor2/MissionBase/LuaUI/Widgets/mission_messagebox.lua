@@ -39,6 +39,7 @@ local TIME_TO_FLASH = 3	-- seconds
 local CONVO_BOX_HEIGHT = 96
 local CONVO_BOX_WIDTH_MIN = 400
 local PERSISTENT_SUBBAR_HEIGHT = 24
+local PERSISTENT_IMAGE_HEIGHT = 96
 
 local convoString 	-- for non-Chili convobox; stores the current string to display
 local convoImg		-- for non-Chili convobox; stores the current image to display
@@ -75,7 +76,7 @@ local function ShowMessageBox(text, width, height, fontsize, pause)
     children = {
       Chili.Button:New{ 
         caption = 'Close', 
-        OnMouseUp = { function(self) 
+        OnClick = { function(self) 
           window:Dispose()
           if pause then
             Spring.SendCommands("pause 0")
@@ -112,12 +113,8 @@ local function _ShowPersistentMessageBox(text, width, height, fontsize, imageDir
 	--local x = math.floor((vsx - width)/2)
 	local y = math.floor((vsy - height)/2)
 	
-	if not width then
-		width = 320
-	end
-	if not height then
-		height = 100
-	end
+	width = width or 360
+	height = height or 160
 	
 	-- we have an existing box, dispose of it
 	--if msgBoxPersistent then
@@ -133,12 +130,12 @@ local function _ShowPersistentMessageBox(text, width, height, fontsize, imageDir
 		
 		local x = ((imageDir and imagePersistent.width + imagePersistent.x) or 0) + 5
 		if imageDir then
-			imagePersistent.width = height * 0.8
-			imagePersistent.height = height * 0.8
+			imagePersistent.width = PERSISTENT_IMAGE_HEIGHT
+			imagePersistent.height = PERSISTENT_IMAGE_HEIGHT
 			imagePersistent.file = imageDir
 			imagePersistent.color = {1, 1, 1, 1}
 			
-			scrollPersistent.width = (width - x - 8)
+			scrollPersistent.width = (width - x - 12)
 		else
 			imagePersistent.color = {1, 1, 1, 0}
 			scrollPersistent.width = (width - 6 - 8)
@@ -147,6 +144,9 @@ local function _ShowPersistentMessageBox(text, width, height, fontsize, imageDir
 		
 		scrollPersistent.height	= height - 8 - 8
 		--scrollPersistent:Invalidate()
+		
+		stackPersistent.y = height - 6
+		--stackPersistent.Invalidate()
 		
 		-- recreate textbox to make sure it never fails to update text
 		textPersistent:Dispose()
@@ -189,8 +189,8 @@ local function _ShowPersistentMessageBox(text, width, height, fontsize, imageDir
 	msgBoxPersistent.origColor = msgBoxPersistent.color
 
 	imagePersistent = Chili.Image:New {
-		width = height * 0.8,
-		height = height * 0.8,
+		width = PERSISTENT_IMAGE_HEIGHT,
+		height = PERSISTENT_IMAGE_HEIGHT,
 		y = 10;
 		x = 5;
 		keepAspect = true,
@@ -204,7 +204,7 @@ local function _ShowPersistentMessageBox(text, width, height, fontsize, imageDir
 		right	= 4,
 		y		= 8,
 		height	= height - 8 - 8,
-		width   = width - x - 8,
+		width   = width - x - 12,
 		horizontalScrollbar = false,
 		scrollbarSize = 6,
 	}
@@ -305,6 +305,8 @@ local function ShowConvoBoxNoChili(data)
   end
   if data.sound then
     Spring.PlaySoundFile(data.sound, 1, 'ui')
+  else
+    Spring.PlaySoundFile("sounds/message_team.wav", 1, "ui")
   end
   convoExpireFrame = Spring.GetGameFrame() + (data.time or 150)
 end
@@ -359,6 +361,8 @@ local function ShowConvoBoxChili(data)
   
   if data.sound then
     Spring.PlaySoundFile(data.sound, 1, 'ui')
+  else
+    Spring.PlaySoundFile("sounds/message_team.wav", 1, "ui")
   end
   
   convoExpireFrame = Spring.GetGameFrame() + (data.time or 150)
@@ -521,7 +525,7 @@ function widget:Initialize()
   
   -- testing
   --[[
-  local str = 'In some remote corner of the universe, poured out and glittering in innumerable solar systems, there once was a star on which clever animals invented knowledge. That was the highest and most mendacious minute of "world history"—yet only a minute. After nature had drawn a few breaths the star grew cold, and the clever animals had to die.'
+  local str = 'In some remote corner of the universe, poured out and glittering in innumerable solar systems, there once was a star on which clever animals invented knowledge. That was the highest and most mendacious minute of "world history"Â—yet only a minute. After nature had drawn a few breaths the star grew cold, and the clever animals had to die.'
   local str2 = 'Enemy nuclear silo spotted!'
   
   WG.ShowPersistentMessageBox(str, 320, 100, 12, "LuaUI/Images/advisor2.jpg")

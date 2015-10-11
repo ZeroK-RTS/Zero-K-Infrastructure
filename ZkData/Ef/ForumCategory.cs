@@ -26,6 +26,7 @@ namespace ZkData
         public bool IsClans { get; set; }
         public bool IsPlanets { get; set; }
         public bool IsNews { get; set; }
+        public bool IsWiki { get; set; }
 
         public virtual ICollection<ForumCategory> ChildForumCategories { get; set; }
         public virtual ForumCategory ParentForumCategory { get; set; }

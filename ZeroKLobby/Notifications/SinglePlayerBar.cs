@@ -59,10 +59,7 @@ namespace ZeroKLobby.Notifications
 
 			if (Utils.VerifySpringInstalled())
 			{
-				spring.StartGame(Program.TasClient,
-								null,
-								null,
-								profile.StartScript.Replace("%MOD%", modInternalName).Replace("%MAP%", profile.MapName).Replace("%NAME%", name), Program.Conf.UseSafeMode, Program.Conf.UseMtEngine);
+				spring.RunLocalScriptGame(profile.StartScript.Replace("%MOD%", modInternalName).Replace("%MAP%", profile.MapName).Replace("%NAME%", name));
                 var serv = GlobalConst.GetContentService();
 				serv.NotifyMissionRun(Program.Conf.LobbyPlayerName, profile.Name);
 			}
