@@ -4,10 +4,10 @@
 @{
     Page.Title = "Forum " + string.Join(" > ", Model.Path.Select(x => x.Title));
 
-    var grid = new UniGrid<ForumThread>(Model.Threads,"Threads in " + Model.CurrentCategory.Title);
+    var grid = new UniGrid<ForumThread>(Model.Threads,"Threads in " + Model.CurrentCategory?.Title);
     grid.AddCol("",StickyMark).SetSort(x=>x.IsPinned).SetWidth("25px");
     grid.AddCol("Title", x => Html.Print(x)).SetSort(x => x.Title);
-    if (Model.CurrentCategory.IsWiki)
+    if (Model.CurrentCategory?.IsWiki == true)
     {
         grid.AddCol("Wiki", x => x.WikiKey).SetSort(x => x.WikiKey).SetWidth("150px");
     }
@@ -94,7 +94,7 @@
         <div>
             @using (Ajax.BeginForm("Index", Global.GetAjaxOptions("page")))
             {
-                <input type="hidden" name="categoryID" value="@Model.CurrentCategory.ForumCategoryID"/>
+                <input type="hidden" name="categoryID" value="@(Model.CurrentCategory?.ForumCategoryID)"/>
                 @GridHelpers.RenderTable(Html, grid)
             }
         </div>
