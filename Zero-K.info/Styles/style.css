@@ -92,7 +92,7 @@ div#simplestyle
     margin: 10px;
 }
 
-div#ajaxScrollProgress
+div#busy
 {
 	background: #190c02; /*bgcolor of load.gif*/
 	position: fixed;

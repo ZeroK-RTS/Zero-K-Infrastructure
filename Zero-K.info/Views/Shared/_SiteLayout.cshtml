@@ -48,22 +48,7 @@
     }
 </head>
 <body class="">
-    <script type="text/javascript">
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-20510497-1']);
-        _gaq.push(['_trackPageview']);
-
-        (function () {
-            var ga = document.createElement('script');
-            ga.type = 'text/javascript';
-            ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(ga, s);
-        })();
-    </script>
-
-    <div id='ajaxScrollProgress' class="border">Loading...<img src='/img/Loader.gif' class="vcenter" /></div>
+    <div id='busy' class="border">Loading...<img src='/img/Loader.gif' class="vcenter" /></div>
 
     @if (!Global.IsAccountAuthorized && ViewBag.Minimal == null && !Global.IsLobbyAccess)
     {
@@ -112,5 +97,25 @@
             @RenderBody()
         </div>
     }
+
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-20510497-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function () {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+        })();
+
+        $(function() {
+            GlobalPageInit();
+        });
+    </script>
+
 </body>
 </html>

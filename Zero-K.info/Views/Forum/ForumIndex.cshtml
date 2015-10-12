@@ -11,10 +11,10 @@
     {
         grid.AddCol("Wiki", x => x.WikiKey).SetSort(x => x.WikiKey).SetWidth("150px");
     }
-    grid.AddCol("Author", x => Html.PrintAccount(x.AccountByCreatedAccountID)).SetSort(x => x.AccountByCreatedAccountID.Name).SetWidth("150px");
-    grid.AddCol("Posts", x => x.PostCount).SetSort(x => x.PostCount).SetWidth("20px");
-    grid.AddCol("Views", x => x.ViewCount).SetSort(x => x.ViewCount).SetWidth("20px");
-    grid.AddCol("Last", LastPost).SetWidth("200px").SetSort(x=>x.LastPost);
+    grid.AddCol("Author", x => Html.PrintAccount(x.AccountByCreatedAccountID)).SetSort(x => x.AccountByCreatedAccountID.Name).SetWidth("200px");
+    grid.AddCol("Posts", x => x.PostCount).SetSort(x => x.PostCount).SetWidth("70px");
+    grid.AddCol("Views", x => x.ViewCount).SetSort(x => x.ViewCount).SetWidth("70px");
+    grid.AddCol("Last", x=>x.LastPost.ToAgoString()).SetWidth("150px").SetSort(x=>x.LastPost);
 
 
     @helper StickyMark(ForumThread t) {
@@ -28,10 +28,6 @@
         {
             <img src="~/img/sticky.png" width="25"/>
         }
-    }
-
-    @helper LastPost(ForumThread t) {
-        <span><small>@Html.PrintAccount(t.AccountByLastPostAccountID ?? t.AccountByCreatedAccountID) @t.LastPost.ToAgoString()</small></span>
     }
 }
 <div id="page">
