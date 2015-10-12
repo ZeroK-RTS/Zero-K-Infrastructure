@@ -29,7 +29,7 @@ niceTitlesJS.ieFixTitleField = function () {
 niceTitlesJS.installNiceTitleListener = function () {
   //Jquery selector for all elements with "nicetitle" attibute
   //  This works for existing and new elements, so ajax calls will be fine
-  $("[nicetitle]").live("mouseenter",
+    $(document).on("[nicetitle]","mouseenter", 
     function (event) {
       var nicetitle = $(this).attr("nicetitle");
       var qtipOptions =

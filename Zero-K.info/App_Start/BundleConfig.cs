@@ -5,10 +5,8 @@ public class BundleConfig
     public static void RegisterBundles(BundleCollection bundles)
     {
         bundles.Add(new ScriptBundle("~/bundles/main").Include(
-            "~/Scripts/MicrosoftAjax.js",
-            "~/Scripts/MicrosoftMvcAjax.js",
-            "~/Scripts/jquery-1.5.2.min.js",
-            "~/Scripts/jquery-ui-1.8.14.custom.min.js",
+            "~/Scripts/jquery-1.11.3.min.js",
+            "~/Scripts/jquery-ui.min.js",
             "~/Scripts/jquery.ui.stars.js",
             "~/Scripts/jquery.tablesorter.min.js",
             "~/Scripts/jquery.qtip.pack.js",
@@ -27,7 +25,7 @@ public class BundleConfig
             "~/Styles/jquery.ui.stars.css",
             "~/Styles/style.css",
             "~/Styles/jquery.qtip.min.css",
-            "~/Styles/dark-hive/jquery-ui-1.8.14.custom.css",
+            "~/Styles/dark-hive/jquery-ui.css",
             "~/Styles/nicetitle.css"));
     }
 }

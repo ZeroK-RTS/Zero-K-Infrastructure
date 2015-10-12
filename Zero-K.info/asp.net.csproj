@@ -1259,8 +1259,8 @@
     <Content Include="Scripts\galleria\themes\classic\galleria.classic.css" />
     <Content Include="Scripts\galleria\themes\classic\galleria.classic.js" />
     <Content Include="Scripts\galleria\themes\classic\galleria.classic.min.js" />
-    <Content Include="Scripts\jquery-1.5.2.min.js" />
-    <Content Include="Scripts\jquery-ui-1.8.14.custom.min.js" />
+    <Content Include="Scripts\jquery-1.11.3.min.js" />
+    <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.expand.js" />
     <Content Include="Scripts\jquery.qtip.pack.js" />
     <Content Include="Scripts\jquery.tablesorter.js" />
@@ -1287,7 +1287,7 @@
     <Content Include="Styles\dark-hive\images\ui-icons_a83300_256x240.png" />
     <Content Include="Styles\dark-hive\images\ui-icons_cccccc_256x240.png" />
     <Content Include="Styles\dark-hive\images\ui-icons_ffffff_256x240.png" />
-    <Content Include="Styles\dark-hive\jquery-ui-1.8.14.custom.css" />
+    <Content Include="Styles\dark-hive\jquery-ui.css" />
     <Content Include="Styles\fonts.css" />
     <Content Include="Styles\jquery.qtip.min.css" />
     <Content Include="Styles\jquery.ui.stars.css" />
@@ -1349,9 +1349,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Scripts\jquery.validate.min.js" />
-    <Content Include="Scripts\MicrosoftAjax.js" />
-    <Content Include="Scripts\MicrosoftMvcAjax.js" />
-    <Content Include="Scripts\MicrosoftMvcValidation.js" />
     <Content Include="Views\Web.config">
       <SubType>Designer</SubType>
     </Content>
