@@ -215,8 +215,9 @@ namespace ZeroKWeb
                 if (Server != null) {
                     foreach (var clan in orgArgs.OfType<Clan>().Where(x => x != null)) Server.GhostSay(
                         new Say() { User = GlobalConst.NightwatchName, IsEmote = true, Place = SayPlace.Channel,Target = clan.GetClanChannel(), Text = ev.PlainText});
-                    foreach (var faction in orgArgs.OfType<Faction>().Where(x => x != null)) Server.GhostSay(
-                         new Say() { User = GlobalConst.NightwatchName, IsEmote = true, Place = SayPlace.Channel, Target = faction.Shortcut, Text = ev.PlainText });
+                    foreach (var faction in orgArgs.OfType<Faction>().Where(x => x != null))
+                        Server.GhostSay(
+                            new Say() { User = GlobalConst.NightwatchName, IsEmote = true, Place = SayPlace.Channel, Target = faction.Shortcut, Text = ev.PlainText });
                 }
             } catch (Exception ex) {
                 Trace.TraceError("Error sending event to channels: {0}", ex);
