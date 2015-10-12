@@ -830,8 +830,8 @@ body .ui-tooltip {
 /* Component containers
 ----------------------------------*/
 .ui-widget {
-	font-family: Verdana,Arial,sans-serif;
-	font-size: 1.1em;
+/*	font-family: Verdana,Arial,sans-serif;
+	font-size: 1.1em;*/
 }
 .ui-widget .ui-widget {
 	font-size: 1em;
@@ -849,7 +849,7 @@ body .ui-tooltip {
 	color: #ffffff;
 }
 .ui-widget-content a {
-	color: #ffffff;
+/*	color: #ffffff;*/
 }
 .ui-widget-header {
 	border: 1px solid #333333;
