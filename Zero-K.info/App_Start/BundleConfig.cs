@@ -5,9 +5,9 @@ public class BundleConfig
     public static void RegisterBundles(BundleCollection bundles)
     {
         bundles.Add(new ScriptBundle("~/bundles/main").Include(
-            "~/Scripts/browser-css.js",
             "~/Scripts/jquery-{version}.js",
-            "~/Scripts/jquery.unobtrusive.ajax.js",
+            "~/Scripts/jquery.unobtrusive-ajax.js",
+            "~/Scripts/browser-css.js",
             "~/Scripts/jquery-ui.min.js",
             "~/Scripts/jquery.ui.stars.js",
             "~/Scripts/jquery.qtip.min.js",

@@ -8,6 +8,7 @@ using System.Web.Hosting;
 using System.Web.Mvc;
 using System.Globalization;
 using System.Linq;
+using System.Web.Mvc.Ajax;
 using System.Web.Routing;
 using JetBrains.Annotations;
 using LobbyClient;
@@ -300,6 +301,13 @@ namespace ZeroKWeb
         }
 
 
+        public static AjaxOptions GetAjaxOptions(string targetID, bool updateHistory = true)
+        {
+            var ret = new AjaxOptions { UpdateTargetId = targetID, OnComplete = string.Format("GlobalPageInit($('#{0}'))", targetID), };
+            if (updateHistory) ret.OnSuccess = string.Format("ReplaceHistory($('#{0}').find('form').serialize())", targetID);
+            return ret;
+        }
+        
         static void SetupPaypalInterface()
         {
             PayPalInterface = new PayPalInterface();

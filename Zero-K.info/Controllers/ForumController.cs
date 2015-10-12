@@ -96,7 +96,7 @@ namespace ZeroKWeb.Controllers
 
             res.Threads = db.ForumThreads.Where(x => x.ForumCategoryID == categoryID).OrderByDescending(x => x.IsPinned).ThenByDescending(x => x.LastPost);
 
-			return View(res);
+			return View("ForumIndex", res);
 		}
 
         /// <summary>

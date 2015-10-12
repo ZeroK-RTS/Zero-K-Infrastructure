@@ -1,0 +1,98 @@
+﻿@using ZeroKWeb
+@using ZkData
+@model ZeroKWeb.Controllers.ForumController.IndexResult
+@{
+    Page.Title = "Forum " + string.Join(" > ", Model.Path.Select(x => x.Title));
+
+    var grid = new UniGrid<ForumThread>(Model.Threads,"Threads in " + Model.CurrentCategory.Title);
+    grid.AddCol("",StickyMark);
+    grid.AddCol("Thread", x => Html.Print(x)).SetSort(x => x.Title);
+    grid.AddCol("Author", x => Html.PrintAccount(x.AccountByCreatedAccountID)).SetSort(x => x.AccountByCreatedAccountID.Name);
+    grid.AddCol("Posts", x => x.PostCount).SetSort(x => x.PostCount);
+    grid.AddCol("Views", x => x.ViewCount).SetSort(x => x.ViewCount);
+    grid.AddCol("Last", LastPost);
+
+
+    @helper StickyMark(ForumThread t) {
+        if (t.IsLocked && t.IsPinned)
+        {
+            <img src="~/img/stickylock.png" width="25"/>
+        } else if (t.IsLocked)
+        {
+            <img src="~/img/lock.png" width="25"/>
+        } else if (t.IsPinned)
+        {
+            <img src="~/img/sticky.png" width="25"/>
+        }
+    }
+
+    @helper LastPost(ForumThread t) {
+        <span>@Html.PrintAccount(t.AccountByLastPostAccountID ?? t.AccountByCreatedAccountID) (@t.LastPost.ToAgoString())</span>
+    }
+}
+<div id="page">
+    <h2>Zero-K forums</h2>
+
+    @{ Html.RenderPartial("ForumPath", Model.Path); }
+    @if (Global.Account != null)
+    {
+        <span class="textbutton" style="float: right">@Html.ActionLink("Mark all as read", "MarkAllAsRead", new { categoryID = (Model.CurrentCategory != null) ? Model.CurrentCategory.ForumCategoryID : null as int? })</span>
+        <br />
+    }
+    @if (Model.Categories.Any())
+    {
+        // forum index
+        <table>
+            <tr>
+                <td style="vertical-align: top">
+                    <table>
+                        <tr>
+                            <td>Forum</td>
+                            <td>Threads</td>
+                        </tr>
+                        @foreach (var cat in Model.Categories)
+                        {
+                            <tr>
+                                <td>
+                                    <h3>@Html.ActionLink(cat.Title, "Index", new { categoryID = cat.ForumCategoryID })</h3>
+                                </td>
+                                <td>@cat.ForumThreads.Count()</td>
+                            </tr>
+                        }
+                    </table>
+                </td>
+                <td style="vertical-align: top">
+                    <h3>Latest posts</h3>
+                    <small>
+                        <table>
+                            @foreach (var t in new ZkDataContext().ForumThreads.Where(x => x.RestrictedClanID == null || x.RestrictedClanID == Global.ClanID).OrderByDescending(x => x.LastPost).Take(40))
+                            {
+                                <tr>
+                                    <td>@Html.Print(t)</td>
+                                    <td>@t.LastPost.ToAgoString()</td>
+                                </tr>
+                            }
+                        </table>
+                    </small>
+                </td>
+            </tr>
+        </table>
+    }
+
+    @if (Model.CurrentCategory != null && !Model.CurrentCategory.IsLocked)
+    {
+        <h3 class="textbutton">@Html.ActionLink("Post new topic", "NewPost", new { categoryID = Model.CurrentCategory.ForumCategoryID })</h3>
+        <br />
+    }
+
+    @if (Model.Threads.Any())
+    {
+        <div>
+            @using (Ajax.BeginForm("Index", Global.GetAjaxOptions("page")))
+            {
+                <input type="hidden" name="categoryID" value="@Model.CurrentCategory.ForumCategoryID"/>
+                @GridHelpers.RenderTable(Html, grid)
+            }
+        </div>
+    }
+</div>
