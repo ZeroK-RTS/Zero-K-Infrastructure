@@ -1263,8 +1263,6 @@
     <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.expand.js" />
     <Content Include="Scripts\jquery.qtip.min.js" />
-    <Content Include="Scripts\jquery.tablesorter.js" />
-    <Content Include="Scripts\jquery.tablesorter.min.js" />
     <Content Include="Scripts\jquery.ui.stars.js" />
     <Content Include="Scripts\jquery.ui.stars.min.js" />
     <Content Include="Scripts\nicetitle.js" />

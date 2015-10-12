@@ -8,7 +8,6 @@ public class BundleConfig
             "~/Scripts/jquery-1.11.3.min.js",
             "~/Scripts/jquery-ui.min.js",
             "~/Scripts/jquery.ui.stars.js",
-            "~/Scripts/jquery.tablesorter.min.js",
             "~/Scripts/jquery.qtip.min.js",
             "~/Scripts/site_main.js",
             "~/Scripts/base.js",
