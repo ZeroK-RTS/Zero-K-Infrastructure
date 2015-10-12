@@ -120,7 +120,7 @@ function GlobalPageInit(root) {
 
     s.find(":submit").button();
     s.find(":button").button();
-    s.find("a.js_button").button();
+    s.find(".js_button").button();
     s.find(".js_accordion").accordion();
 
 

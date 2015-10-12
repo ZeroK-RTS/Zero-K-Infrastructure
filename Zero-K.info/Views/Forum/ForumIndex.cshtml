@@ -59,11 +59,19 @@
                 <td style="vertical-align: top">
 
                     <div>
-                        Filter: @Html.EditorFor(x=>x.Search)
+                        Filter: @Html.EditorFor(x => x.Search)
                         <label>
                             @Html.EditorFor(x => x.OnlyMy) <span>my</span>
                         </label>
                         <button type="submit">Search</button>
+
+                        @if (Model.CurrentCategory != null && !Model.CurrentCategory.IsLocked)
+                        {
+                            <span class="textbutton" style="float:right">
+                                @Html.ActionLink("Post new topic", "NewPost", new { categoryID = Model.CurrentCategory?.ForumCategoryID })
+                            </span>
+                        }
+
                     </div>
 
                     <span id="@(grid.PagerPrefixID)">
@@ -72,16 +80,11 @@
 
 
                     <span id="@grid.PagerSuffixID">
-                        @if (Model.CurrentCategory != null && !Model.CurrentCategory.IsLocked)
-                        {
-                            <span class="textbutton">
-                                @Html.ActionLink("Post new topic", "NewPost", new { categoryID = Model.CurrentCategory?.ForumCategoryID })
-                            </span>
-                        }
+                        
 
                         @if (Global.Account != null && Model.Threads.Any())
                         {
-                            <span class="textbutton" style="float: right">@Html.ActionLink("Mark all as read", "MarkAllAsRead", new { categoryID = Model.CurrentCategory?.ForumCategoryID })</span>
+                            <span class="js_button" style="float: right;">@Html.ActionLink("Mark all as read", "MarkAllAsRead", new { categoryID = Model.CurrentCategory?.ForumCategoryID })</span>
                         }
                     </span>
 
