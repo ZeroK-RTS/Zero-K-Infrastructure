@@ -2,7 +2,7 @@
 
 html
 {
-    /*background: #000 url("../img/bg_bluehex.gif") fixed;*/
+    /*background: #000 url("/img/bg_bluehex.gif") fixed;*/
     background: #000;
 	color: #ede;
 	font-family: font, sans-serif;
@@ -272,25 +272,6 @@ span.button_2text
 	display: none;
 }
 
-/* Forums
-----------------------------------------------*/
-.forum_row:hover
-{
-	/*
-	background: #444;
-	border: 1px solid #38bfec;
-	*/
-}
-
-.toggleFalse
-{
-	background: url("/img/bg_black_translucent.png");
-}
-
-.toggleTrue
-{
-	background: url("/img/bg_111_translucent.png");
-}
 
 /* Single Player missions
 ----------------------------------------------*/
@@ -467,7 +448,7 @@ span.button_2text
 {
   background-color:#204040;
   border-style: solid;
-  border-image: url("dark-hive/images/tech_button.png") 24 24 24 24 fill / 15px 15px 15px 15px;
+  border-image: url("/styles/dark-hive/images/tech_button.png") 24 24 24 24 fill / 15px 15px 15px 15px;
   border-radius: 10px;
   border-color:transparent;
   max-width: 700px;

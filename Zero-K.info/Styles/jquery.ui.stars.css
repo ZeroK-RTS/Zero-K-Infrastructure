@@ -24,7 +24,7 @@
   width: 14px;
   height: 14px;
   display: block;
-  background: url(../img/stars/crystal-stars_small.png) no-repeat 0 0;
+  background: url(/img/stars/crystal-stars_small.png) no-repeat 0 0;
 }
 .ui-stars-star a {
   background-position: 0 -28px;
