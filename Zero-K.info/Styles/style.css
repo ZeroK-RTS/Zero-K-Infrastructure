@@ -562,3 +562,12 @@ span.button_2text
 .wikitable td {
     border: 1px solid #ccc; padding: 5px;
 }
+
+tr.odd {
+    /*background-color: #cfe1e8;*/
+}
+
+.grid tr.even {
+    background-color: #326464;
+    background-color: rgba(50,100,100,0.5);
+}

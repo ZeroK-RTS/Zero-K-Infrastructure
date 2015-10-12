@@ -145,11 +145,11 @@ if (col.IsSelector)
     {
         if (grid.OrderIsDescending)
         {
-                <img class="icon" src="~/img/sort_up_green.png" />
+                <img class="icon16" src="~/img/sort_up_green.png" />
             }
             else
             {
-                <img class="icon" src="~/img/sort_down_green.png" />
+                <img class="icon16" src="~/img/sort_down_green.png" />
             }
         }
     </a>
@@ -200,7 +200,7 @@ if (col.IsSelector)
             @Hidden(html, grid)
 
 
-            <table style="width: 100%">
+            <table style="width: 100%" class="grid">
                 <thead>
                     @TableHeader(grid)
                 </thead>

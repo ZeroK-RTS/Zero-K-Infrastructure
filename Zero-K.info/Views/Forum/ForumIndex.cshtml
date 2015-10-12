@@ -5,12 +5,16 @@
     Page.Title = "Forum " + string.Join(" > ", Model.Path.Select(x => x.Title));
 
     var grid = new UniGrid<ForumThread>(Model.Threads,"Threads in " + Model.CurrentCategory.Title);
-    grid.AddCol("",StickyMark);
-    grid.AddCol("Thread", x => Html.Print(x)).SetSort(x => x.Title);
-    grid.AddCol("Author", x => Html.PrintAccount(x.AccountByCreatedAccountID)).SetSort(x => x.AccountByCreatedAccountID.Name);
-    grid.AddCol("Posts", x => x.PostCount).SetSort(x => x.PostCount);
-    grid.AddCol("Views", x => x.ViewCount).SetSort(x => x.ViewCount);
-    grid.AddCol("Last", LastPost);
+    grid.AddCol("",StickyMark).SetSort(x=>x.IsPinned).SetWidth("25px");
+    grid.AddCol("Title", x => Html.Print(x)).SetSort(x => x.Title);
+    if (Model.CurrentCategory.IsWiki)
+    {
+        grid.AddCol("Wiki", x => x.WikiKey).SetSort(x => x.WikiKey).SetWidth("150px");
+    }
+    grid.AddCol("Author", x => Html.PrintAccount(x.AccountByCreatedAccountID)).SetSort(x => x.AccountByCreatedAccountID.Name).SetWidth("150px");
+    grid.AddCol("Posts", x => x.PostCount).SetSort(x => x.PostCount).SetWidth("20px");
+    grid.AddCol("Views", x => x.ViewCount).SetSort(x => x.ViewCount).SetWidth("20px");
+    grid.AddCol("Last", LastPost).SetWidth("200px").SetSort(x=>x.LastPost);
 
 
     @helper StickyMark(ForumThread t) {
@@ -27,7 +31,7 @@
     }
 
     @helper LastPost(ForumThread t) {
-        <span>@Html.PrintAccount(t.AccountByLastPostAccountID ?? t.AccountByCreatedAccountID) (@t.LastPost.ToAgoString())</span>
+        <span><small>@Html.PrintAccount(t.AccountByLastPostAccountID ?? t.AccountByCreatedAccountID) @t.LastPost.ToAgoString()</small></span>
     }
 }
 <div id="page">
