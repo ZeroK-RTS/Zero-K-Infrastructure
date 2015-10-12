@@ -71,7 +71,7 @@ namespace ZkLobbyServer
 
         public void Refresh(int count = 20)
         {
-            var ladderTimeout = DateTime.UtcNow.AddMonths(-GlobalConst.LadderActivityDays);
+            var ladderTimeout = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
             using (var db = new ZkDataContext()) {
                 topTeam =
                     db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout))
