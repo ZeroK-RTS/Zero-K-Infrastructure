@@ -45,7 +45,7 @@ namespace ZeroKWeb
         
         public List<string> GetEloTop10()
         {
-            DateTime lastMonth = DateTime.UtcNow.AddMonths(-1);
+            DateTime lastMonth = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
             using (var db = new ZkDataContext())
 
                 return
