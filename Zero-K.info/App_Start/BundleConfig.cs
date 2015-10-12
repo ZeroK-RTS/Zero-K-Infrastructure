@@ -6,10 +6,13 @@ public class BundleConfig
     {
         bundles.Add(new ScriptBundle("~/bundles/main").Include(
             "~/Scripts/browser-css.js",
-            "~/Scripts/jquery-1.11.3.min.js",
+            "~/Scripts/jquery-{version}.js",
+            "~/Scripts/jquery.unobtrusive.ajax.js",
             "~/Scripts/jquery-ui.min.js",
             "~/Scripts/jquery.ui.stars.js",
             "~/Scripts/jquery.qtip.min.js",
+            "~/Scripts/jquery.ba-bbq.js",
+            "~/Scripts/jquery.history.js",
             "~/Scripts/nicetitle.js",
             "~/Scripts/raphael-min.js",
             "~/Scripts/site_main.js"));
