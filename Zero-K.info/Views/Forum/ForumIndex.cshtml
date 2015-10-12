@@ -17,90 +17,83 @@
     grid.AddCol("Last", x => x.LastPost.ToAgoString()).SetWidth("150px").SetSort(x => x.LastPost);
 }
 
-@helper StickyMark(ForumThread t)
-{
-if (t.IsLocked && t.IsPinned)
-{
-        <img src="~/img/stickylock.png" width="25" />
-}
-else if (t.IsLocked)
-{
-        <img src="~/img/lock.png" width="25" />
-}
-else if (t.IsPinned)
-{
-        <img src="~/img/sticky.png" width="25" />
-}
+@helper StickyMark(ForumThread t) {
+    if (t.IsLocked && t.IsPinned)
+    {
+        <img src="~/img/stickylock.png" width="25"/>
+    } else if (t.IsLocked)
+    {
+        <img src="~/img/lock.png" width="25"/>
+    } else if (t.IsPinned)
+    {
+        <img src="~/img/sticky.png" width="25"/>
+    }
 }
 
 <div id="page">
-    @Html.Partial("ForumPath", Model.Path)
+    @using (Ajax.BeginForm("Index", Global.GetAjaxOptions("page")))
+    {
+        @Html.HiddenFor(x=>x.CategoryID)
+        @Html.Partial("ForumPath", Model.Path)
 
-    <span>
-        @foreach (var cat in Model.Categories)
-        {
-            <span>
-                <b>@Html.ActionLink(cat.Title, "Index", new { categoryID = cat.ForumCategoryID })</b>
-                &nbsp; &nbsp;
-            </span>
-        }
-    </span>
-
-
-    <table>
-        <tr>
-            <td style="vertical-align: middle">
-                <table>
-                    <tr>
-                        <td></td>
-                    </tr>
-                </table>
-            </td>
-
-            <td style="vertical-align: top">
-                <span id="@(grid.PagerPrefixID)">
-
-
-                    @if (Model.CurrentCategory != null && !Model.CurrentCategory.IsLocked)
-                    {
-                        <span class="textbutton">
-                            @Html.ActionLink("Post new topic", "NewPost", new { categoryID = Model.CurrentCategory?.ForumCategoryID })
-                        </span>
-                    }
-                    
-                    Filter: @Html.TextBox("search")
-                    <label>
-                        @Html.CheckBox("my")
-                        my
-                    </label>
-
+        <span>
+            @foreach (var cat in Model.Categories)
+            {
+                <span>
+                    <b>@Html.ActionLink(cat.Title, "Index", new { categoryID = cat.ForumCategoryID })</b>
+                    &nbsp; &nbsp;
                 </span>
+            }
+        </span>
 
+        <table>
+            <tr>
+                <td style="vertical-align: middle">
+                    <table>
+                        <tr>
+                            <td></td>
+                        </tr>
+                    </table>
+                </td>
 
+                <td style="vertical-align: top">
 
-                <span id="@grid.PagerSuffixID">
-                    
-                    @if (Global.Account != null && Model.Threads.Any())
-                    {
-                        <span class="textbutton" style="float: right">@Html.ActionLink("Mark all as read", "MarkAllAsRead", new { categoryID = (Model.CurrentCategory != null) ? Model.CurrentCategory.ForumCategoryID : null as int? })</span>
-                    }
-                </span>
-
-
-                @if (Model.Threads.Any())
-                {
                     <div>
-                        @using (Ajax.BeginForm("Index", Global.GetAjaxOptions("page")))
-                        {
-                            <input type="hidden" name="categoryID" value="@(Model.CurrentCategory?.ForumCategoryID)" />
-
-                                    @GridHelpers.RenderTable(Html, grid)
-                        }
+                        Filter: @Html.EditorFor(x=>x.Search)
+                        <label>
+                            @Html.EditorFor(x => x.OnlyMy) <span>my</span>
+                        </label>
+                        <button type="submit">Search</button>
                     </div>
-                }
-            </td>
-        </tr>
-    </table>
+
+                    <span id="@(grid.PagerPrefixID)">
+                    </span>
 
 
+
+                    <span id="@grid.PagerSuffixID">
+                        @if (Model.CurrentCategory != null && !Model.CurrentCategory.IsLocked)
+                        {
+                            <span class="textbutton">
+                                @Html.ActionLink("Post new topic", "NewPost", new { categoryID = Model.CurrentCategory?.ForumCategoryID })
+                            </span>
+                        }
+
+                        @if (Global.Account != null && Model.Threads.Any())
+                        {
+                            <span class="textbutton" style="float: right">@Html.ActionLink("Mark all as read", "MarkAllAsRead", new { categoryID = Model.CurrentCategory?.ForumCategoryID })</span>
+                        }
+                    </span>
+
+
+                    @if (Model.Threads.Any())
+                    {
+                        <div>
+                            @GridHelpers.RenderTable(Html, grid)
+                        </div>
+                    }
+                </td>
+            </tr>
+        </table>
+    }
 </div>
