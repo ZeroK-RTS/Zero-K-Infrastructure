@@ -13,6 +13,7 @@ public class BundleConfig
             "~/Scripts/jquery.qtip.min.js",
             "~/Scripts/jquery.ba-bbq.js",
             "~/Scripts/jquery.history.js",
+            "~/Scripts/jquery.expand.js",
             "~/Scripts/nicetitle.js",
             "~/Scripts/raphael-min.js",
             "~/Scripts/site_main.js"));
