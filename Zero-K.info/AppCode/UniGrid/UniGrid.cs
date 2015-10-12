@@ -12,7 +12,6 @@ namespace ZeroKWeb
     {
         public List<UniGridCol<T>> Cols = new List<UniGridCol<T>>();
 
-        public Func<T, object> ItemFormat;
         private int _pageNumber;
 
         public List<string> SelectedKeys { get; set; }
@@ -208,12 +207,12 @@ namespace ZeroKWeb
             return string.Format("\"{0}\"", input.Replace("\"", "\"\""));
         }
 
-        public IQueryable<T> GetCurrentPageData()
+        IQueryable<T> GetCurrentPageData()
         {
             return RenderData.Skip((PageNumber - 1) * PageSize).Take(PageSize);
         }
 
-        public static IQueryable<TOrder> OrderBy<TOrder>(IQueryable<TOrder> source, LambdaExpression orderingExpression, bool isAscending = false)
+        static IQueryable<TOrder> OrderBy<TOrder>(IQueryable<TOrder> source, LambdaExpression orderingExpression, bool isAscending = false)
         {
             if (orderingExpression == null) return source;
 
@@ -225,15 +224,5 @@ namespace ZeroKWeb
             return source.Provider.CreateQuery<TOrder>(resultExp);
         }
 
-        public MvcHtmlString RenderItems(Func<T, object> itemFormat = null)
-        {
-            if (itemFormat != null) ItemFormat = itemFormat;
-            var sb = new StringBuilder();
-            foreach (T r in GetCurrentPageData())
-            {
-                sb.AppendLine(ItemFormat(r).ToString());
-            }
-            return new MvcHtmlString(sb.ToString());
-        }
     }
 }

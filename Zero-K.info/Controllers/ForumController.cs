@@ -94,7 +94,14 @@ namespace ZeroKWeb.Controllers
 			res.Path = GetCategoryPath(categoryID, db);
 			res.CurrentCategory = res.Path.LastOrDefault();
 
-            res.Threads = db.ForumThreads.Where(x => x.ForumCategoryID == categoryID).OrderByDescending(x => x.IsPinned).ThenByDescending(x => x.LastPost);
+            var threads = db.ForumThreads.AsQueryable();
+            if (categoryID != null)
+            {
+                threads = threads.Where(x => x.ForumCategoryID == categoryID);
+            }
+            threads = threads.Where(x => x.RestrictedClanID == null || x.RestrictedClanID == Global.ClanID);
+
+            res.Threads = threads.OrderByDescending(x => x.IsPinned).ThenByDescending(x => x.LastPost);
 
 			return View("ForumIndex", res);
 		}

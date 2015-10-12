@@ -549,6 +549,10 @@ tr.odd {
 }
 
 .grid tr.even {
-    background-color: #326464;
-    background-color: rgba(50,100,100,0.5);
+    background-color: #1e5050;
+    background-color: rgba(30,80,80,0.3);
+}
+
+.grid_wrapper {
+    background: none;
 }
