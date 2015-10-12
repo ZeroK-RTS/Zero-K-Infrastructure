@@ -9,7 +9,7 @@ public class BundleConfig
             "~/Scripts/jquery-ui.min.js",
             "~/Scripts/jquery.ui.stars.js",
             "~/Scripts/jquery.tablesorter.min.js",
-            "~/Scripts/jquery.qtip.pack.js",
+            "~/Scripts/jquery.qtip.min.js",
             "~/Scripts/site_main.js",
             "~/Scripts/base.js",
             "~/Scripts/browser-css.js",
@@ -27,5 +27,7 @@ public class BundleConfig
             "~/Styles/jquery.qtip.min.css",
             "~/Styles/dark-hive/jquery-ui.css",
             "~/Styles/nicetitle.css"));
+
+        
     }
 }
