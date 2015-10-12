@@ -427,9 +427,9 @@ namespace ZeroKWeb.SpringieInterface
                     case AutohostMode.Teams:
                     case AutohostMode.Serious:
                     {
-                        var map = db.Resources.Single(x => x.InternalName == context.Map);
-                        res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams ?? 2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
-                        res.DeleteBots = mode == AutohostMode.Teams;
+                        //var map = db.Resources.Single(x => x.InternalName == context.Map);
+                        res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
+                        res.DeleteBots = true;
                         return res;
                     }
                     case AutohostMode.Game1v1:

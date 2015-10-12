@@ -48,6 +48,7 @@ local lastFinishedUnits = {} -- key: teamID, value: unitID
 local allowTransfer = false
 local factoryExpectedUnits = {} -- key: factoryID, value: {unitDefID, groups: group set}
 local repeatFactoryGroups = {} -- key: factoryID, value: group set
+local ghosts = {} -- key: incrementing index, value: unit details  -- TODO
 local objectives = {}	-- [index] = {id, title, description, color, unitsOrPositions = {}}	-- important: widget must be able to access on demand
 local unitsWithObjectives = {}
 local wantUpdateDisabledUnits = false
@@ -64,6 +65,7 @@ GG.mission = {
   unitGroups = unitGroups,
   triggers = triggers,
   allTriggers = allTriggers,
+  ghosts = ghosts,
   objectives = objectives,
   cheatingWasEnabled = cheatingWasEnabled,
   allowTransfer = allowTransfer,
@@ -502,6 +504,18 @@ local actionsTable = {
           for unitID in pairs(FindUnitsInGroup(action.args.group)) do
             Spring.DestroyUnit(unitID, true, not action.args.explode)
           end
+          
+          for i=#ghosts,1,-1 do
+            local ghost = ghosts[i]
+            for group in pairs(ghost.groups) do
+              if (group == action.args.group) then
+                SendToUnsynced("GhostRemovedEvent", i)
+                table.remove(ghosts, i)
+                break
+              end
+            end
+          end
+          
         end,
   ExecuteTriggersAction = function(action)
           for _, triggerIndex in ipairs(action.args.triggers) do
@@ -674,27 +688,29 @@ local actionsTable = {
           local gameframe = Spring.GetGameFrame()
           for _, unit in ipairs(action.args.units) do
             if Spring.GetTeamInfo(unit.player) then
+              local ud = UnitDefNames[unit.unitDefName]
+              local isBuilding = ud.isBuilding or ud.isFactory or not ud.canMove
+              local cardinalHeading = "n"
+              if unit.heading > 45 and unit.heading <= 135 then
+                cardinalHeading = "e"
+              elseif unit.heading > 135 and unit.heading <= 225 then
+                cardinalHeading = "s"
+              elseif unit.heading > 225 and unit.heading <= 315 then
+                cardinalHeading = "w"
+              end
+              
               if unit.isGhost then
                 for group in pairs(unit.groups) do
                   unit[#unit + 1] = group
                 end
+                unit.cardinalHeading = cardinalHeading
+                unit.isBuilding = isBuilding
+                local ghostID = #ghosts+1
+                ghosts[ghostID] = unit
                 _G.ghostEventArgs = unit
-                SendToUnsynced("GhostEvent")
+                SendToUnsynced("GhostEvent", ghostID)
                 _G.ghostEventArgs = nil
               else
-                local ud = UnitDefNames[unit.unitDefName]
-                local isBuilding = ud.isBuilding or ud.isFactory or not ud.canMove
-                local cardinalHeading = "n"
-                --if isBuilding then
-                  if unit.heading > 45 and unit.heading <= 135 then
-                    cardinalHeading = "e"
-                  elseif unit.heading > 135 and unit.heading <= 225 then
-                    cardinalHeading = "s"
-                  elseif unit.heading > 225 and unit.heading <= 315 then
-                    cardinalHeading = "w"
-                  end
-                --end
-                
                 -- ZK mex placement
                 if ud.customParams.ismex and GG.metalSpots then
                   local function GetClosestMetalSpot(x, z)
@@ -1604,6 +1620,7 @@ function gadget:Load(zip)
   end
   
   SendToUnsynced("SendMissionObjectives")
+  -- TODO transmit ghosts as well
 end
 
 --------------------------------------------------------------------------------
@@ -1641,29 +1658,38 @@ end
 
 
 local ghosts = {}
+local cardinalHeadings = {s = 0, w = 90, n = 180, e = 270}
 
-function GhostEvent()
+function GhostEvent(_, ghostID)
   local ghost= {}
   local ghostSynced = SYNCED.ghostEventArgs
   for k, v in spairs(ghostSynced) do
     ghost[k] = v
   end
-  ghosts[ghost] = true
+  ghosts[ghostID] = ghost
   local _, _, _, teamID = Spring.GetPlayerInfo(ghost.player)
   ghost.unitDefID = UnitDefNames[ghost.unitDefName].id
   ghost.teamID = teamID
+  if ghost.isBuilding then
+    local ch = ghost.cardinalHeading or "n"
+    ghost.heading = cardinalHeadings[ch] or ghost.heading
+  end
 end
 
+function GhostRemovedEvent(_,ghostID)
+  table.remove(ghosts, ghostID)
+end
 
 local startTime = Spring.GetTimer()
 
 function gadget:DrawWorld()
-  for ghost in pairs(ghosts) do
+  for ghostID, ghost in pairs(ghosts) do
     gl.PushMatrix()
     local t = Spring.DiffTimers(Spring.GetTimer(), startTime)
     local alpha = (math.sin(t*6)+1)/6+1/3 -- pulse
     gl.Color(0.7, 0.7, 1, alpha)
     gl.Translate(ghost.x, Spring.GetGroundHeight(ghost.x, ghost.y), ghost.y)
+    gl.Rotate(ghost.heading, 0, 1, 0)
     gl.DepthTest(true)
     gl.UnitShape(ghost.unitDefID, ghost.teamID)
     gl.PopMatrix()
@@ -1679,7 +1705,7 @@ end
 
 function gadget:UnitFinished(unitID, unitDefID, unitTeam)
   local x, y, z = Spring.GetUnitPosition(unitID)
-  for ghost in pairs(ghosts) do
+  for ghostID, ghost in pairs(ghosts) do
     if unitDefID == ghost.unitDefID and getDistance(x, z, ghost.x, ghost.y) < 100 then -- ghost.y is no typo
       local groups = {}
       for i=1, #ghost do
@@ -1692,7 +1718,7 @@ function gadget:UnitFinished(unitID, unitDefID, unitTeam)
         teamID = ghost.teamID,
       }
       Spring.SendLuaRulesMsg(magic..table.show(args))
-      ghosts[ghost] = nil
+      ghosts[ghostID] = nil
       break
     end
   end
@@ -1720,6 +1746,7 @@ end
 function gadget:Initialize()
   gadgetHandler:AddSyncAction('MissionEvent', WrapToLuaUI)
   gadgetHandler:AddSyncAction('GhostEvent', GhostEvent)
+  gadgetHandler:AddSyncAction('GhostRemovedEvent', GhostRemovedEvent)
   gadgetHandler:AddSyncAction('ScoreEvent', ScoreEvent)
   gadgetHandler:AddSyncAction('SendMissionObjectives', SendMissionObjectives)
   for _,callIn in pairs(callInList) do
@@ -1731,6 +1758,7 @@ end
 function gadget:Shutdown()
   gadgetHandler:RemoveSyncAction('MissionEvent')
   gadgetHandler:RemoveSyncAction('GhostEvent')
+  gadgetHandler:RemoveSyncAction('GhostRemovedEvent')
   gadgetHandler:RemoveSyncAction('ScoreEvent')
   gadgetHandler:RemoveSyncAction('SendMissionObjectives')
 end
