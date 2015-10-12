@@ -94,12 +94,9 @@ namespace ZeroKWeb.Controllers
 			res.Path = GetCategoryPath(categoryID, db);
 			res.CurrentCategory = res.Path.LastOrDefault();
 
-            var threads = db.ForumThreads.Where(x => x.ForumCategoryID == categoryID).OrderByDescending(x => x.IsPinned).ThenByDescending(x => x.LastPost);
-            res.Page = page ?? 0;
-            res.PageCount = ((threads.Count() - 1) / PageSize) + 1;
-            res.Threads = threads.Skip((page ?? 0) * PageSize).Take(PageSize).ToList();
+            res.Threads = db.ForumThreads.Where(x => x.ForumCategoryID == categoryID).OrderByDescending(x => x.IsPinned).ThenByDescending(x => x.LastPost);
 
-			return View(res);
+			return View("ForumIndex", res);
 		}
 
         /// <summary>
@@ -386,10 +383,8 @@ namespace ZeroKWeb.Controllers
 		{
 			public IEnumerable<ForumCategory> Categories;
 			public ForumCategory CurrentCategory;
-            public int? Page;
-            public int PageCount;
 			public IEnumerable<ForumCategory> Path;
-			public IEnumerable<ForumThread> Threads;
+			public IQueryable<ForumThread> Threads;
 		}
 
 		public class NewPostResult

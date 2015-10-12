@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -30,25 +32,30 @@
     <RestorePackages>true</RestorePackages>
     <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
     <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
-    <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
     <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+    <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="CookComputing.XmlRpcV2, Version=2.5.0.0, Culture=neutral, PublicKeyToken=a7d6e17aa302004d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libs\CookComputing.XmlRpcV2.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Linq.Translations, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -59,9 +66,9 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -75,51 +82,57 @@
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.2\lib\net45\System.Web.Helpers.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="System.Web.Mvc, Version=5.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.2\lib\net45\System.Web.Mvc.dll</HintPath>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Optimization, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.2\lib\net45\System.Web.Razor.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.2\lib\net45\System.Web.WebPages.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.2\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.2\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="WebGrease, Version=1.5.2.14234, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
+    <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppCode\Auth.cs" />
     <Compile Include="AppCode\AuthServiceClient.cs" />
+    <Compile Include="AppCode\UniGrid\Col.cs" />
+    <Compile Include="AppCode\UniGrid\HCol.cs" />
     <Compile Include="AppCode\ModStatsDb.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ModStatsDb.dbml</DependentUpon>
     </Compile>
+    <Compile Include="AppCode\UniGrid\IUniGrid.cs" />
+    <Compile Include="AppCode\UniGrid\IUniGridCol.cs" />
+    <Compile Include="AppCode\UniGrid\UniGrid.cs" />
+    <Compile Include="AppCode\UniGrid\UniGridCol.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="ContentService.svc.cs">
       <DependentUpon>ContentService.svc</DependentUpon>
@@ -278,6 +291,7 @@
     <Content Include="Img\download_button.png" />
     <Content Include="Img\dropship.png" />
     <Content Include="Img\edit_pencil.png" />
+    <Content Include="Img\excel.png" />
     <Content Include="Img\factions\Ascended.png" />
     <Content Include="Img\factions\Ascended_ship.png" />
     <Content Include="Img\factions\Cybernetic.png" />
@@ -285,16 +299,21 @@
     <Content Include="Img\factions\Dynasty.png" />
     <Content Include="Img\factions\Dynasty_ship.png" />
     <Content Include="Img\factions\Empire.png" />
+    <Content Include="Img\factions\Empire1.png" />
+    <Content Include="Img\factions\Empire3.png" />
     <Content Include="Img\factions\Empire_ship.png" />
     <Content Include="Img\factions\Hegemony.png" />
     <Content Include="Img\factions\Hegemony_ship.png" />
     <Content Include="Img\factions\Liberty.png" />
     <Content Include="Img\factions\Liberty_ship.png" />
     <Content Include="Img\factions\Machines.png" />
+    <Content Include="Img\factions\Machines1.png" />
+    <Content Include="Img\factions\Machines3.png" />
     <Content Include="Img\factions\Machines_ship.png" />
     <Content Include="Img\factions\Mercenary.png" />
     <Content Include="Img\factions\Rising.png" />
     <Content Include="Img\factions\Rising_ship.png" />
+    <Content Include="Img\factions\shipsource.txt" />
     <Content Include="Img\factions\SynPact.png" />
     <Content Include="Img\factions\Synpact_ship.png" />
     <Content Include="Img\factions\Trueborn.png" />
@@ -576,7 +595,11 @@
     <Content Include="Img\galaxies\galaxy2.jpg" />
     <Content Include="Img\galaxies\galaxy3.jpg" />
     <Content Include="Img\galaxies\galaxy4.jpg" />
+    <Content Include="Img\galaxies\galaxy4alt.jpg" />
     <Content Include="Img\galaxies\galaxy5.jpg" />
+    <Content Include="Img\galaxies\origin.txt" />
+    <Content Include="Img\galaxies\render_19.jpg" />
+    <Content Include="Img\galaxies\render_24.jpg" />
     <Content Include="Img\hof\r1_clans.jpg" />
     <Content Include="Img\hof\r1_map.jpg" />
     <Content Include="Img\hof\r1_winner.jpg" />
@@ -1057,6 +1080,8 @@
     <Content Include="Img\screenshots\tropical.jpg" />
     <Content Include="Img\screenshots\warrior_temple_foot.png" />
     <Content Include="Img\search_img.png" />
+    <Content Include="Img\sort_down_green.png" />
+    <Content Include="Img\sort_up_green.png" />
     <Content Include="Img\star.png" />
     <Content Include="Img\stars\crystal-stars.png" />
     <Content Include="Img\stars\crystal-stars_small.png" />
@@ -1230,34 +1255,18 @@
     <Content Include="Img\Loader.gif" />
     <Content Include="MissionService.svc" />
     <Content Include="ResourceDetail.aspx" />
-    <Content Include="Scripts\galleria\galleria-1.2.5.js" />
-    <Content Include="Scripts\galleria\galleria-1.2.5.min.js" />
-    <Content Include="Scripts\galleria\plugins\flickr\flickr-demo.html" />
-    <Content Include="Scripts\galleria\plugins\flickr\flickr-loader.gif" />
-    <Content Include="Scripts\galleria\plugins\flickr\galleria.flickr.js" />
-    <Content Include="Scripts\galleria\plugins\flickr\galleria.flickr.min.js" />
-    <Content Include="Scripts\galleria\plugins\flickr\loader.gif" />
-    <Content Include="Scripts\galleria\plugins\history\galleria.history.js" />
-    <Content Include="Scripts\galleria\plugins\history\galleria.history.min.js" />
-    <Content Include="Scripts\galleria\plugins\history\history-demo.html" />
-    <Content Include="Scripts\galleria\plugins\picasa\galleria.picasa.js" />
-    <Content Include="Scripts\galleria\plugins\picasa\galleria.picasa.min.js" />
-    <Content Include="Scripts\galleria\plugins\picasa\loader.gif" />
-    <Content Include="Scripts\galleria\plugins\picasa\picasa-demo.html" />
-    <Content Include="Scripts\galleria\themes\classic\classic-demo.html" />
-    <Content Include="Scripts\galleria\themes\classic\classic-loader.gif" />
-    <Content Include="Scripts\galleria\themes\classic\classic-map.png" />
-    <Content Include="Scripts\galleria\themes\classic\galleria.classic.css" />
-    <Content Include="Scripts\galleria\themes\classic\galleria.classic.js" />
-    <Content Include="Scripts\galleria\themes\classic\galleria.classic.min.js" />
-    <Content Include="Scripts\jquery-1.5.2.min.js" />
-    <Content Include="Scripts\jquery-ui-1.8.14.custom.min.js" />
+    <Content Include="Scripts\browser-css.js" />
+    <None Include="Scripts\jquery-2.1.4.intellisense.js" />
+    <Content Include="Scripts\jquery-2.1.4.js" />
+    <Content Include="Scripts\jquery-2.1.4.min.js" />
+    <Content Include="Scripts\jquery-ui.min.js" />
+    <Content Include="Scripts\jquery.ba-bbq.js" />
     <Content Include="Scripts\jquery.expand.js" />
-    <Content Include="Scripts\jquery.qtip.pack.js" />
-    <Content Include="Scripts\jquery.tablesorter.js" />
-    <Content Include="Scripts\jquery.tablesorter.min.js" />
+    <Content Include="Scripts\jquery.history.js" />
+    <Content Include="Scripts\jquery.qtip.min.js" />
     <Content Include="Scripts\jquery.ui.stars.js" />
-    <Content Include="Scripts\jquery.ui.stars.min.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\nicetitle.js" />
     <Content Include="Scripts\raphael-min.js" />
     <Content Include="Scripts\site_main.js" />
@@ -1278,16 +1287,18 @@
     <Content Include="Styles\dark-hive\images\ui-icons_a83300_256x240.png" />
     <Content Include="Styles\dark-hive\images\ui-icons_cccccc_256x240.png" />
     <Content Include="Styles\dark-hive\images\ui-icons_ffffff_256x240.png" />
-    <Content Include="Styles\dark-hive\jquery-ui-1.8.14.custom.css" />
+    <Content Include="Styles\dark-hive\jquery-ui.css" />
     <Content Include="Styles\fonts.css" />
     <Content Include="Styles\jquery.qtip.min.css" />
     <Content Include="Styles\jquery.ui.stars.css" />
+    <Content Include="Styles\js.css" />
     <Content Include="Styles\levelrank.css" />
     <Content Include="Styles\menu.css" />
     <Content Include="Styles\nicetitle.css" />
     <Content Include="Styles\stars.css" />
     <Content Include="Styles\style.css" />
     <Content Include="Views\Maps\PlanetImageSelect.cshtml" />
+    <Content Include="App_Code\GridHelpers.cshtml" />
     <None Include="AppCode\ModStatsDb.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
       <LastGenOutput>ModStatsDb.designer.cs</LastGenOutput>
@@ -1312,12 +1323,13 @@
     <Content Include="GeoLite2-Country.mmdb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Img\factions\ships.xcf" />
     <None Include="PetitaMedium.eot" />
     <None Include="PetitaMedium.ttf" />
     <None Include="Properties\PublishProfiles\Profile1.pubxml" />
     <None Include="RevoPop.eot" />
     <None Include="RevoPop.ttf" />
-    <None Include="Scripts\galleria\LICENSE" />
+    <Content Include="Scripts\jquery-2.1.4.min.map" />
     <None Include="Skir.eot" />
     <None Include="Skir.ttf" />
     <None Include="SM.eot" />
@@ -1338,10 +1350,6 @@
       <DependentUpon>Web.config</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Scripts\jquery.validate.min.js" />
-    <Content Include="Scripts\MicrosoftAjax.js" />
-    <Content Include="Scripts\MicrosoftMvcAjax.js" />
-    <Content Include="Scripts\MicrosoftMvcValidation.js" />
     <Content Include="Views\Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -1392,7 +1400,6 @@
     <Content Include="Views\Planetwars\PwMatchMaker.cshtml" />
     <Content Include="Views\Planetwars\GalaxyOffline.cshtml" />
     <Content Include="Views\Planetwars\GalaxyOfflinePW12.cshtml" />
-    <Content Include="Views\Forum\ForumPaginator.cshtml" />
     <Content Include="Views\Forum\ThreadPaginator.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -1408,7 +1415,7 @@
     <Content Include="Views\Wiki\Index.cshtml" />
     <Content Include="Views\Static\Index.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Forum\Index.cshtml" />
+    <Content Include="Views\Forum\ForumIndex.cshtml" />
     <Content Include="Views\Forum\Thread.cshtml" />
     <Content Include="Views\Forum\NewPost.cshtml" />
     <Content Include="Views\Forum\ForumPath.cshtml" />
@@ -1531,4 +1538,11 @@
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
 </Project>

@@ -2,7 +2,7 @@
 @model ZeroKWeb.Controllers.ForumController.ThreadResult
 
 @{
-    var penalty = ZkData.Punishment.GetActivePunishment(Global.AccountID, "", 0, x=>x.BanForum);
+    var penalty = ZkData.Punishment.GetActivePunishment(Global.AccountID, "", 0, x => x.BanForum);
 }
 
 @{
@@ -21,9 +21,9 @@
 <h3>@Html.ActionLink(Model.CurrentThread.Title, "Thread", new { id = Model.CurrentThread.ForumThreadID })</h3>
 
 @if (!Model.CurrentThread.IsLocked)
-{   
+{
     <br />
-    if(penalty != null)
+    if (penalty != null)
     {
         <h3 class="textbutton" nicetitle="@string.Format("Forum ban\nExpires: {0} UTC\nReason: {1}", penalty.BanExpires, penalty.Reason)" style="color: #666666">Post comment</h3>
     }
@@ -41,11 +41,11 @@
             <select name="newcat">
                 @foreach (var c in db.ForumCategories.Where(x => !x.IsClans && !x.IsMaps && !x.IsMissions && !x.IsPlanets && !x.IsSpringBattles))
                 {
-                    <option value="@c.ForumCategoryID" @(c.ForumCategoryID == Model.CurrentThread.ForumCategoryID ? "selected='selected'":"")>@c.Title</option>
+                    <option value="@c.ForumCategoryID" @(c.ForumCategoryID == Model.CurrentThread.ForumCategoryID ? "selected='selected'" : "")>@c.Title</option>
                 }
             </select>
-            Pinned: @Html.CheckBox("isPinned", Model.CurrentThread.IsPinned)<br/>
-            Locked: @Html.CheckBox("isLocked", Model.CurrentThread.IsLocked)<br/>
+            Pinned: @Html.CheckBox("isPinned", Model.CurrentThread.IsPinned)<br />
+            Locked: @Html.CheckBox("isLocked", Model.CurrentThread.IsLocked)<br />
 
             <input type="submit" value="move" />
         </form>
@@ -56,9 +56,9 @@
 @Html.Partial("~/Views/Forum/PostList.cshtml", Model.Posts)
 @Html.Partial("~/Views/Forum/ThreadPaginator.cshtml", Model)
 @if (!Model.CurrentThread.IsLocked)
-{   
+{
     <br />
-    if(penalty != null)
+    if (penalty != null)
     {
         <h3 class="textbutton" nicetitle="@string.Format("Forum ban\nExpires: {0} UTC\nReason: {1}", penalty.BanExpires, penalty.Reason)" style="color: #666666">Post comment</h3>
     }

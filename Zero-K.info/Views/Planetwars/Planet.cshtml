@@ -290,7 +290,7 @@
       {
           if (planet.PlanetStructures.Any(x => x.StructureTypeID == structureType.StructureTypeID))
           {
-                    <a nicetitle="$structuretype$@structureType.StructureTypeID" href="@Url.Action("DestroyStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })" class="delete">Destroy @structureType.Name (@Html.PrintMetal(structureType.Cost * GlobalConst.SelfDestructRefund))</a><br />
+                    <a nicetitle="$structuretype$@structureType.StructureTypeID" href="@Url.Action("DestroyStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })" class="js_confirm">Destroy @structureType.Name (@Html.PrintMetal(structureType.Cost * GlobalConst.SelfDestructRefund))</a><br />
           }
       }
   }
