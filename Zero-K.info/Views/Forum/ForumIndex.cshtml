@@ -33,7 +33,7 @@
 <div id="page">
     @using (Ajax.BeginForm("Index", Global.GetAjaxOptions("page")))
     {
-        @Html.HiddenFor(x=>x.CategoryID)
+        @Html.HiddenFor(x => x.CategoryID)
         @Html.Partial("ForumPath", Model.Path)
 
         <span>
@@ -45,58 +45,33 @@
                 </span>
             }
         </span>
+        <br/>
 
-        <table>
-            <tr>
-                <td style="vertical-align: middle">
-                    <table>
-                        <tr>
-                            <td></td>
-                        </tr>
-                    </table>
-                </td>
-
-                <td style="vertical-align: top">
-
-                    <div>
-                        Filter: @Html.EditorFor(x => x.Search)
-                        <label>
-                            @Html.EditorFor(x => x.OnlyMy) <span>my</span>
-                        </label>
-                        <button type="submit">Search</button>
-
-                        @if (Model.CurrentCategory != null && !Model.CurrentCategory.IsLocked)
-                        {
-                            <span class="textbutton" style="float:right">
+        <div>
+            @if (Model.CurrentCategory != null && !Model.CurrentCategory.IsLocked)
+            {
+                <span class="textbutton">
                                 @Html.ActionLink("Post new topic", "NewPost", new { categoryID = Model.CurrentCategory?.ForumCategoryID })
                             </span>
-                        }
+            }
 
-                    </div>
+            &nbsp;Filter: @Html.EditorFor(x => x.Search)
+            <label>
+                @Html.EditorFor(x => x.OnlyMy) <span>my</span>
+            </label>
+            <button type="submit">Search</button>
 
-                    <span id="@(grid.PagerPrefixID)">
-                    </span>
+            @if (Global.Account != null && Model.Threads.Any())
+            {
+                <span class="textbutton" style="float: right;">@Html.ActionLink("Mark all as read", "MarkAllAsRead", new { categoryID = Model.CurrentCategory?.ForumCategoryID })</span>
+            }
+        </div>
 
-
-
-                    <span id="@grid.PagerSuffixID">
-                        
-
-                        @if (Global.Account != null && Model.Threads.Any())
-                        {
-                            <span class="js_button" style="float: right;">@Html.ActionLink("Mark all as read", "MarkAllAsRead", new { categoryID = Model.CurrentCategory?.ForumCategoryID })</span>
-                        }
-                    </span>
-
-
-                    @if (Model.Threads.Any())
-                    {
-                        <div>
-                            @GridHelpers.RenderTable(Html, grid)
-                        </div>
-                    }
-                </td>
-            </tr>
-        </table>
+        if (Model.Threads.Any())
+        {
+            <div>
+                @GridHelpers.RenderTable(Html, grid)
+            </div>
+        }
     }
 </div>
