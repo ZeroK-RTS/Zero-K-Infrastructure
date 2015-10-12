@@ -17,6 +17,7 @@ namespace ZeroKWeb
         string Title { get; }
         bool CsvRequested { get; }
         void PrepareRenderData();
+        bool AllowCsvExport { get; }
         MvcHtmlString RenderTableRows();
         void RenderCsv(Encoding encoding = null, string delimiter = ";");
         List<string> SelectedKeys { get; } 

@@ -18,7 +18,7 @@
 	</span>
 } else {
 	for (int i = 1; i <= GlobalConst.CommanderProfileCount; i++) {
-		using (Ajax.BeginForm("CommanderProfile", new { profileNumber = i }, new AjaxOptions() { UpdateTargetId = "com" + i, InsertionMode = InsertionMode.Replace, HttpMethod = "post", LoadingElementId = "ajaxScrollProgress" })) {
+		using (Ajax.BeginForm("CommanderProfile", new { profileNumber = i }, new AjaxOptions() { UpdateTargetId = "com" + i, InsertionMode = InsertionMode.Replace, HttpMethod = "post", LoadingElementId = "busy" })) {
 		<div id='com@(i)' class="fleft border" style="min-height: 600px;">
 			@{Html.RenderAction("CommanderProfile", new { profileNumber = i });}
 		</div>

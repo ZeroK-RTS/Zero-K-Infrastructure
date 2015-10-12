@@ -82,21 +82,32 @@ namespace ZeroKWeb.Controllers
         /// <summary>
         /// Go to forum index, or a subforum
         /// </summary>
-        /// <param name="categoryID">Subforum category ID</param>
-        /// <param name="page">Page of subforum (i.e. display older threads)</param>
-		public ActionResult Index(int? categoryID, int? page = null)
+
+        public ActionResult Index(IndexResult model)
 		{
 			var db = new ZkDataContext();
-			var res = new IndexResult();
+			model = model ?? new IndexResult();
 
-			res.Categories = db.ForumCategories.Where(x => x.ParentForumCategoryID == categoryID).OrderBy(x => x.SortOrder);
+			model.Categories = db.ForumCategories.Where(x => x.ParentForumCategoryID == model.CategoryID).OrderBy(x => x.SortOrder);
 
-			res.Path = GetCategoryPath(categoryID, db);
-			res.CurrentCategory = res.Path.LastOrDefault();
+			model.Path = GetCategoryPath(model.CategoryID, db);
+			model.CurrentCategory = model.Path.LastOrDefault();
 
-            res.Threads = db.ForumThreads.Where(x => x.ForumCategoryID == categoryID).OrderByDescending(x => x.IsPinned).ThenByDescending(x => x.LastPost);
+            var threads = db.ForumThreads.AsQueryable();
+            if (model.CategoryID != null)
+            {
+                threads = threads.Where(x => x.ForumCategoryID == model.CategoryID);
+            }
+            threads = threads.Where(x => x.RestrictedClanID == null || x.RestrictedClanID == Global.ClanID);
 
-			return View("ForumIndex", res);
+            if (model.OnlyMy) threads = threads.Where(x => x.CreatedAccountID == Global.AccountID || x.ForumPosts.Any(y => y.AuthorAccountID == Global.AccountID));
+
+            if (!string.IsNullOrEmpty(model.Search)) threads = threads.Where(x => x.Title.Contains(model.Search) || x.WikiKey.Contains(model.Search));
+
+
+            model.Threads = threads.OrderByDescending(x => x.IsPinned).ThenByDescending(x => x.LastPost);
+
+			return View("ForumIndex", model);
 		}
 
         /// <summary>
@@ -381,6 +392,10 @@ namespace ZeroKWeb.Controllers
 
 		public class IndexResult
 		{
+            public int? CategoryID { get; set; }
+            public string Search { get; set; }
+            public bool OnlyMy { get; set; }
+            public int? AccountID { get; set; }
 			public IEnumerable<ForumCategory> Categories;
 			public ForumCategory CurrentCategory;
 			public IEnumerable<ForumCategory> Path;

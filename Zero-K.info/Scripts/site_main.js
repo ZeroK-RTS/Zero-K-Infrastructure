@@ -120,7 +120,7 @@ function GlobalPageInit(root) {
 
     s.find(":submit").button();
     s.find(":button").button();
-    s.find("a.js_button").button();
+    s.find(".js_button").button();
     s.find(".js_accordion").accordion();
 
 
@@ -148,10 +148,10 @@ function GlobalPageInit(root) {
 
     It also updates form when user scrolls to bottom - sending current offset to it, this continues until controller returns data.
 
-    AjaxScrollProgress element is made visible to display loading progress
+    busy element is made visible to display loading progress
     */
     var frm = s.find("#ajaxScrollForm");
-    var prg = s.find("#ajaxScrollProgress");
+    var prg = s.find("#busy");
     var target = s.find("#ajaxScrollTarget");
 
     if (frm && typeof frm.attr("id") != "undefined") {
@@ -202,6 +202,3 @@ function GlobalPageInit(root) {
     });
 }
 
-$(document).ready(function() {
-    GlobalPageInit();
-});

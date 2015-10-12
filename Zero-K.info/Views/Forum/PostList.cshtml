@@ -6,7 +6,6 @@
     var penalty = ZkData.Punishment.GetActivePunishment(Global.AccountID, "", 0, x=>x.BanForum);
     var netVotes = (Global.Account != null ? Global.Account.ForumTotalUpvotes - Global.Account.ForumTotalDownvotes : 0);
 }
-<script type="text/javascript" src='@Href("~/Scripts/jquery.expand.js")' > </script>
 <script type="text/javascript">
     $(function () {
         $("small.expand").toggler({ speed: 0 });
