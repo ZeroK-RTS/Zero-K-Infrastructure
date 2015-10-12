@@ -129,6 +129,8 @@ namespace ZkData
         public const int MinDurationForElo = 60;
         public const int MinDurationForPlanetwars = 0;
 
+        public const int LadderActivityDays = 7;
+
         public const int XpForMissionOrBots = 25;
         public const int XpForMissionOrBotsVictory = 50;
 
