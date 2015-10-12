@@ -1,9 +1,9 @@
 ﻿function DynDialog(selector, url) {
-    $.get(url, function (data) {
+    $.get(url, function(data) {
         var t = $(selector);
         t.html(data);
         GlobalPageInit(t);
-        t.dialog('open');
+        t.dialog("open");
     });
 }
 
@@ -18,14 +18,14 @@ function ReplaceHistory(params) {
 
 function SendLobbyCommand(link) {
     $.ajax({
-        url: '/Lobby/SendCommand',
+        url: "/Lobby/SendCommand",
         data: {
             link: link
         },
-        success: function (data) {
+        success: function(data) {
             if (data != null && data.length > 0) alert(data);
         },
-        error: function () {
+        error: function() {
             alert("Error sending the command to lobby, please try again later");
         }
     });
@@ -38,10 +38,10 @@ var ajaxScrollEnabled = true;
 
 
 function GlobalPageInit(root) {
-    var s = $(document);
-    if (root != null) s = root;
+    var s = root;
+    if (s == null) s = $(document);
 
-    s.find('.js_table').dataTable({
+    s.find(".js_table").dataTable({
         "bJQueryUI": true,
         "bLengthChange": false,
         "iDisplayLength": 50,
@@ -49,7 +49,7 @@ function GlobalPageInit(root) {
         aaSorting: []
     });
 
-    s.find('.js_simpletable').dataTable({
+    s.find(".js_simpletable").dataTable({
         "bJQueryUI": true,
         "bPaginate": false,
         "bLengthChange": false,
@@ -61,14 +61,13 @@ function GlobalPageInit(root) {
     });
 
 
-
-    s.find('.js_tabs').tabs({
+    s.find(".js_tabs").tabs({
         selected: parseInt($.getUrlVars().tab),
         ajaxOptions: {
-            success: function (xhr, status, index, anchor) {
-                $(document).find('.js_tabs').each(function () {
+            success: function(xhr, status, index, anchor) {
+                $(document).find(".js_tabs").each(function() {
                     GlobalPageInit($(this));
-                    ReplaceHistory("tab=" + $(this).tabs('option', 'selected'));
+                    ReplaceHistory("tab=" + $(this).tabs("option", "selected"));
                 });
             }
         }
@@ -84,8 +83,8 @@ function GlobalPageInit(root) {
     });*/
 
 
-    s.find(".js_confirm").click(function () {
-        var answer = confirm('Do you really want to do it?');
+    s.find(".js_confirm").click(function() {
+        var answer = confirm("Do you really want to do it?");
         return answer;
     });
 
@@ -96,10 +95,10 @@ function GlobalPageInit(root) {
             hide: "fade",
             modal: false,
             width: 800,
-            buttons: { "Close": function () { $(this).dialog('close'); } }
+            buttons: { "Close": function() { $(this).dialog("close"); } }
         }
     );
-    
+
     s.find(".js_datepicker").datepicker($.datepicker.regional["en"]);
 
     s.find(":submit").button();
@@ -108,23 +107,23 @@ function GlobalPageInit(root) {
     s.find(".js_accordion").accordion();
 
 
-    s.find('#busy').hide()  // hide it initially
-            .ajaxStart(function () {
-                isBusy = true;
-                setTimeout("if (isBusy) $('#busy').show('fade');", 4000);
-            })
-            .ajaxStop(function () {
-                isBusy = false;
-                $(this).hide();
-            });
+    s.find("#busy").hide() // hide it initially
+        .ajaxStart(function() {
+            isBusy = true;
+            setTimeout("if (isBusy) $('#busy').show('fade');", 4000);
+        })
+        .ajaxStop(function() {
+            isBusy = false;
+            $(this).hide();
+        });
 
 
-    s.find('.js_selectrow').click(function () {
-        var tr = $(this).closest('tr');
-        if (tr.hasClass('row_selected'))
-            tr.removeClass('row_selected');
+    s.find(".js_selectrow").click(function() {
+        var tr = $(this).closest("tr");
+        if (tr.hasClass("row_selected"))
+            tr.removeClass("row_selected");
         else
-            tr.addClass('row_selected');
+            tr.addClass("row_selected");
     });
 
     /* ajax form updater and scorll based loader
@@ -138,8 +137,8 @@ function GlobalPageInit(root) {
     var prg = s.find("#ajaxScrollProgress");
     var target = s.find("#ajaxScrollTarget");
 
-    if (frm && typeof frm.attr("id") != 'undefined') {
-        window.onscroll = function () {
+    if (frm && typeof frm.attr("id") != "undefined") {
+        window.onscroll = function() {
             if (!ajaxScrollEnabled) {
                 return;
             }
@@ -147,25 +146,25 @@ function GlobalPageInit(root) {
             var page = $("body");
             // bugfix for ebkit based stuff 
             // chrome needs scrolLTop out of jquery by the page. Object Opera, IE, Firefox take the original dom property
-            var scrollTop = (typeof jQuery.browser.mozilla != 'undefined' || typeof jQuery.browser.msie != 'undefined' || typeof jQuery.browser.opera != 'undefined') ? el.scrollTop : page.scrollTop();
+            var scrollTop = (typeof jQuery.browser.mozilla != "undefined" || typeof jQuery.browser.msie != "undefined" || typeof jQuery.browser.opera != "undefined") ? el.scrollTop : page.scrollTop();
             if (el.scrollHeight - (scrollTop + el.clientHeight) < 50) {
                 ajaxScrollEnabled = false;
                 prg.show();
-                $.post(frm.attr("action"), frm.serialize() + "&offset=" + ajaxScrollOffset, function (ret) {
+                $.post(frm.attr("action"), frm.serialize() + "&offset=" + ajaxScrollOffset, function(ret) {
                     target.append(ret);
                     ajaxScrollOffset = ajaxScrollOffset + ajaxScrollCount;
-                    if (ret == '') ajaxScrollEnabled = false;
+                    if (ret == "") ajaxScrollEnabled = false;
                     else ajaxScrollEnabled = true;
                     prg.hide();
                 });
             }
         };
 
-        frm.submit(function () {
+        frm.submit(function() {
             ajaxScrollEnabled = false;
             ajaxScrollOffset = 0;
             prg.show();
-            $.post(frm.attr("action"), frm.serialize() + "&offset=" + ajaxScrollOffset, function (ret) {
+            $.post(frm.attr("action"), frm.serialize() + "&offset=" + ajaxScrollOffset, function(ret) {
                 target.html(ret);
                 ajaxScrollOffset = ajaxScrollCount;
                 ajaxScrollEnabled = true;
@@ -177,17 +176,15 @@ function GlobalPageInit(root) {
 
 
     // img zoomer
-    s.find("img.zoom").each(function () {
-        $.data(this, 'size', { width: $(this).width(), height: $(this).height() });
-    }).hover(function () {
-        $(this).stop().animate({ height: $.data(this, 'size').height * 4, width: $.data(this, 'size').width * 4 }, 300);
-    }, function () {
-        $(this).stop().animate({ height: $.data(this, 'size').height, width: $.data(this, 'size').width }, 600);
+    s.find("img.zoom").each(function() {
+        $.data(this, "size", { width: $(this).width(), height: $(this).height() });
+    }).hover(function() {
+        $(this).stop().animate({ height: $.data(this, "size").height * 4, width: $.data(this, "size").width * 4 }, 300);
+    }, function() {
+        $(this).stop().animate({ height: $.data(this, "size").height, width: $.data(this, "size").width }, 600);
     });
 }
 
-$(document).ready(function () {
+$(document).ready(function() {
     GlobalPageInit();
 });
-
-
