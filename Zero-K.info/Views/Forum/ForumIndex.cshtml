@@ -36,8 +36,7 @@
     @{ Html.RenderPartial("ForumPath", Model.Path); }
     @if (Global.Account != null)
     {
-        <span class="textbutton" style="float: right">@Html.ActionLink("Mark all as read", "MarkAllAsRead", new { categoryID = (Model.CurrentCategory != null) ? Model.CurrentCategory.ForumCategoryID : null as int? })</span>
-        <br />
+        <span id="@grid.PagerSuffixID" class="textbutton" style="float: right">@Html.ActionLink("Mark all as read", "MarkAllAsRead", new { categoryID = (Model.CurrentCategory != null) ? Model.CurrentCategory.ForumCategoryID : null as int? })</span>
     }
     @if (Model.Categories.Any())
     {
@@ -81,8 +80,9 @@
 
     @if (Model.CurrentCategory != null && !Model.CurrentCategory.IsLocked)
     {
-        <h3 class="textbutton">@Html.ActionLink("Post new topic", "NewPost", new { categoryID = Model.CurrentCategory.ForumCategoryID })</h3>
-        <br />
+        <span id="@(grid.PagerPrefixID)" class="textbutton">
+            @Html.ActionLink("Post new topic", "NewPost", new { categoryID = Model.CurrentCategory.ForumCategoryID })
+        </span>
     }
 
     @if (Model.Threads.Any())
@@ -91,6 +91,7 @@
             @using (Ajax.BeginForm("Index", Global.GetAjaxOptions("page")))
             {
                 <input type="hidden" name="categoryID" value="@(Model.CurrentCategory?.ForumCategoryID)"/>
+
                 @GridHelpers.RenderTable(Html, grid)
             }
         </div>

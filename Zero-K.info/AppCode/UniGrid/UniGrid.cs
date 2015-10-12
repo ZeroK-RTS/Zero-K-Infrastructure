@@ -92,8 +92,8 @@ namespace ZeroKWeb
         /// </summary>
         /// <param name="encoding">warning default encoding windows-1250</param>
         /// <param name="delimiter"></param>
-        public void RenderCsv(Encoding encoding = null, string delimiter = ";")
-        {
+        public void RenderCsv(Encoding encoding = null, string delimiter = ";") {
+            if (!AllowCsvExport) return;
             if (encoding == null) encoding = Encoding.GetEncoding("windows-1250");
             var csv = GenerateCsv(delimiter);
 
@@ -135,6 +135,8 @@ namespace ZeroKWeb
                 if (col != null) RenderData = OrderBy(RenderData, col.SortExpression, !OrderIsDescending);
             }
         }
+
+        public bool AllowCsvExport { get; set; }
 
         public IEnumerable<IUniGridCol> BaseCols
         {
@@ -196,6 +198,8 @@ namespace ZeroKWeb
 
 
         public int RecordCount { get; private set; }
+        public string PagerPrefixID => ID + "_pager_prefix";
+        public string PagerSuffixID => ID + "_pager_suffix";
 
         #endregion
 
