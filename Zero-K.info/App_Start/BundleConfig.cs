@@ -9,11 +9,11 @@ public class BundleConfig
             "~/Scripts/jquery-ui.min.js",
             "~/Scripts/jquery.ui.stars.js",
             "~/Scripts/jquery.qtip.min.js",
-            "~/Scripts/site_main.js",
             "~/Scripts/base.js",
             "~/Scripts/browser-css.js",
             "~/Scripts/nicetitle.js",
-            "~/Scripts/raphael-min.js"));
+            "~/Scripts/raphael-min.js",
+            "~/Scripts/site_main.js"));
 
         bundles.Add(new StyleBundle("~/bundles/maincss").Include(
             "~/Styles/fonts.css",

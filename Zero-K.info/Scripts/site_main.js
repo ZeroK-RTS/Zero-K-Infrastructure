@@ -41,26 +41,6 @@ function GlobalPageInit(root) {
     var s = root;
     if (s == null) s = $(document);
 
-    s.find(".js_table").dataTable({
-        "bJQueryUI": true,
-        "bLengthChange": false,
-        "iDisplayLength": 50,
-        "bRetrieve": true,
-        aaSorting: []
-    });
-
-    s.find(".js_simpletable").dataTable({
-        "bJQueryUI": true,
-        "bPaginate": false,
-        "bLengthChange": false,
-        "bFilter": false,
-        "bSort": false,
-        "bInfo": false,
-        "bRetrieve": true,
-        "bAutoWidth": false
-    });
-
-
     s.find(".js_tabs").tabs({
         selected: parseInt($.getUrlVars().tab),
         ajaxOptions: {
