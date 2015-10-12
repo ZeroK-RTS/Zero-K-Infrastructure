@@ -292,16 +292,21 @@
     <Content Include="Img\factions\Dynasty.png" />
     <Content Include="Img\factions\Dynasty_ship.png" />
     <Content Include="Img\factions\Empire.png" />
+    <Content Include="Img\factions\Empire1.png" />
+    <Content Include="Img\factions\Empire3.png" />
     <Content Include="Img\factions\Empire_ship.png" />
     <Content Include="Img\factions\Hegemony.png" />
     <Content Include="Img\factions\Hegemony_ship.png" />
     <Content Include="Img\factions\Liberty.png" />
     <Content Include="Img\factions\Liberty_ship.png" />
     <Content Include="Img\factions\Machines.png" />
+    <Content Include="Img\factions\Machines1.png" />
+    <Content Include="Img\factions\Machines3.png" />
     <Content Include="Img\factions\Machines_ship.png" />
     <Content Include="Img\factions\Mercenary.png" />
     <Content Include="Img\factions\Rising.png" />
     <Content Include="Img\factions\Rising_ship.png" />
+    <Content Include="Img\factions\shipsource.txt" />
     <Content Include="Img\factions\SynPact.png" />
     <Content Include="Img\factions\Synpact_ship.png" />
     <Content Include="Img\factions\Trueborn.png" />
@@ -583,7 +588,11 @@
     <Content Include="Img\galaxies\galaxy2.jpg" />
     <Content Include="Img\galaxies\galaxy3.jpg" />
     <Content Include="Img\galaxies\galaxy4.jpg" />
+    <Content Include="Img\galaxies\galaxy4alt.jpg" />
     <Content Include="Img\galaxies\galaxy5.jpg" />
+    <Content Include="Img\galaxies\origin.txt" />
+    <Content Include="Img\galaxies\render_19.jpg" />
+    <Content Include="Img\galaxies\render_24.jpg" />
     <Content Include="Img\hof\r1_clans.jpg" />
     <Content Include="Img\hof\r1_map.jpg" />
     <Content Include="Img\hof\r1_winner.jpg" />
@@ -1239,12 +1248,12 @@
     <Content Include="Img\Loader.gif" />
     <Content Include="MissionService.svc" />
     <Content Include="ResourceDetail.aspx" />
+    <Content Include="Scripts\browser-css.js" />
     <Content Include="Scripts\jquery-1.11.3.min.js" />
     <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.expand.js" />
     <Content Include="Scripts\jquery.qtip.min.js" />
     <Content Include="Scripts\jquery.ui.stars.js" />
-    <Content Include="Scripts\jquery.ui.stars.min.js" />
     <Content Include="Scripts\nicetitle.js" />
     <Content Include="Scripts\raphael-min.js" />
     <Content Include="Scripts\site_main.js" />
@@ -1301,6 +1310,7 @@
     <Content Include="GeoLite2-Country.mmdb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Img\factions\ships.xcf" />
     <None Include="PetitaMedium.eot" />
     <None Include="PetitaMedium.ttf" />
     <None Include="Properties\PublishProfiles\Profile1.pubxml" />

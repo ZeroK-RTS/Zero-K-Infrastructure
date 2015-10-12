@@ -5,6 +5,7 @@ public class BundleConfig
     public static void RegisterBundles(BundleCollection bundles)
     {
         bundles.Add(new ScriptBundle("~/bundles/main").Include(
+            "~/Scripts/browser-css.js",
             "~/Scripts/jquery-1.11.3.min.js",
             "~/Scripts/jquery-ui.min.js",
             "~/Scripts/jquery.ui.stars.js",
