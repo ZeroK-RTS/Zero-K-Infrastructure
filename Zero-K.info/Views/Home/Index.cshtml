@@ -83,7 +83,7 @@
     </div>
 </div>
 <div id="sidebar" class="fright width-30">
-    @if (!ZeroKWeb.Global.IsAccountAuthorized && !Global.IsLobbyAccess)
+    @if (!Global.IsAccountAuthorized && !Global.IsLobbyAccess)
     {
         <a onclick="window.location='/Wiki/Download';"><span class="downloadbutton"><span class="buttonSpan"></span><!--<img src="/img/downloadBlue.png" alt="Download" width="45" height="45" style="vertical-align:middle;" />--> Download</span></a>
     }
@@ -98,7 +98,7 @@
     </div>
 
     <div class="border">
-        <h2><a href='/Forum'>Forums</a></h2>
+        <h2><a href='@Url.Action("Index","Forum")'>Forums</a></h2>
         @foreach (var t in Model.NewThreads)
         {
             @Html.Print(t.ForumThread)<br />
@@ -106,7 +106,7 @@
     </div>
 
     <div id="topten" class="border">
-        <h2><a href='/Ladders'>Top Players</a></h2>
+        <h2><a href='@Url.Action("Index","Ladders")'>Top Players</a></h2>
         <table cellpadding='0' cellspacing='0'>
             <tr>
                 <th width="30" align="left">#</th>
