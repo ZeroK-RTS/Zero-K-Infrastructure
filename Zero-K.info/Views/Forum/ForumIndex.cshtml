@@ -13,7 +13,6 @@
     }
     grid.AddCol("Author", x => Html.PrintAccount(x.AccountByCreatedAccountID)).SetSort(x => x.AccountByCreatedAccountID.Name).SetWidth("200px");
     grid.AddCol("Posts", x => x.PostCount).SetSort(x => x.PostCount).SetWidth("70px");
-    grid.AddCol("Views", x => x.ViewCount).SetSort(x => x.ViewCount).SetWidth("70px");
     grid.AddCol("Last", x => x.LastPost.ToAgoString()).SetWidth("150px").SetSort(x => x.LastPost);
 }
 
@@ -34,17 +33,20 @@
     @using (Ajax.BeginForm("Index", Global.GetAjaxOptions("page")))
     {
         @Html.HiddenFor(x => x.CategoryID)
-        @Html.Partial("ForumPath", Model.Path)
+        <div class="infoCell">
+            @Html.Partial("ForumPath", Model.Path)
 
-        <span>
-            @foreach (var cat in Model.Categories)
-            {
-                <span>
-                    <b>@Html.ActionLink(cat.Title, "Index", new { categoryID = cat.ForumCategoryID })</b>
-                    &nbsp; &nbsp;
-                </span>
-            }
-        </span>
+            <span>
+                @foreach (var cat in Model.Categories)
+                {
+                    <span>
+                        <b>@Html.ActionLink(cat.Title, "Index", new { categoryID = cat.ForumCategoryID })</b>
+                        &nbsp; &nbsp;
+                    </span>
+                }
+            </span>
+        </div>
+
         <br/>
         <br/>
 

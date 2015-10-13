@@ -164,7 +164,7 @@ if (col.IsSelector)
 }
 @helper Pager(System.Web.Mvc.HtmlHelper Html, IUniGrid grid)
 {
-    <div class='ui-corner-all @(grid.ID)_pager' style="margin: 4px">
+    <div class='@(grid.ID)_pager' style="margin: 4px">
         @if (grid.PageCount > 1)
         {
             <a href="#" class="js-grid-first @(grid.PageNumber <= 1 ? "js-disabled" : "")" onclick="gridSetPage('@grid.ID', 1);return false;" style="height: 20px"></a>
@@ -189,7 +189,7 @@ if (col.IsSelector)
     <tr>
         @foreach (var col in grid.BaseCols.Where(x => x.AllowWeb))
         {
-            <th class="ui-state-default" style="width:@col.Width;">
+            <th class="" style="width:@col.Width;">
                 @Column(grid, col)
             </th>
         }
@@ -209,8 +209,8 @@ if (col.IsSelector)
     }
     else
     {
-        <div class="ui-widget ui-corner-all ui-widget-content grid_wrapper" style="margin: 5px" id="@grid.ID">
-            <div class="ui-widget-header ui-corner-top" style="text-align: center">@grid.Title</div>
+        <div class="border" style="margin: 5px" id="@grid.ID">
+            <div class="" style="text-align: center">@grid.Title</div>
             @GridJs(grid)
             @Pager(html, grid)
             @Hidden(html, grid)
