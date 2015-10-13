@@ -163,8 +163,9 @@ function GlobalPageInit(root) {
             var page = $("body");
             // bugfix for ebkit based stuff 
             // chrome needs scrolLTop out of jquery by the page. Object Opera, IE, Firefox take the original dom property
-            var scrollTop = el.scrollTop;
-            if (scrollTop == null) scrollTop = page.scrollTop();
+            //var scrollTop = el.scrollTop;
+            //if (scrollTop == null || scrollTop == 0)
+              var scrollTop = page.scrollTop();
             if (el.scrollHeight - (scrollTop + el.clientHeight) < 50) {
                 ajaxScrollEnabled = false;
                 prg.show();
