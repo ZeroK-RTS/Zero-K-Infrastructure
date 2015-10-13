@@ -90,12 +90,12 @@ namespace Fixer
                 db.Database.ExecuteSqlCommand("delete from factiontreaties");
                 db.Database.ExecuteSqlCommand("delete from treatyeffects");
 
-                db.Database.ExecuteSqlCommand("delete from forumthreads where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsPlanets).ForumCategoryID);
+                db.Database.ExecuteSqlCommand("delete from forumthreads where forumcategoryid={0}", db.ForumCategories.Single(x => x.ForumMode ==ForumMode.Planets).ForumCategoryID);
 
                 if (resetclans)
                 {
                     db.Database.ExecuteSqlCommand("delete from clans");
-                    db.Database.ExecuteSqlCommand("delete from forumthreads where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsClans).ForumCategoryID);
+                    db.Database.ExecuteSqlCommand("delete from forumthreads where forumcategoryid={0}", db.ForumCategories.Single(x => x.ForumMode==ForumMode.Clans).ForumCategoryID);
                 }
             }
         }

@@ -136,6 +136,10 @@
     <Compile Include="Migrations\201510092151106_RemoveUserLanguage.Designer.cs">
       <DependentUpon>201510092151106_RemoveUserLanguage.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201510132208570_ForumCategoryInSingleField.cs" />
+    <Compile Include="Migrations\201510132208570_ForumCategoryInSingleField.Designer.cs">
+      <DependentUpon>201510132208570_ForumCategoryInSingleField.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
     <Compile Include="Enums\TreatyState.cs" />
@@ -319,6 +323,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201510092151106_RemoveUserLanguage.resx">
       <DependentUpon>201510092151106_RemoveUserLanguage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201510132208570_ForumCategoryInSingleField.resx">
+      <DependentUpon>201510132208570_ForumCategoryInSingleField.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

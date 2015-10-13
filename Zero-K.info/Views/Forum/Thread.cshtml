@@ -39,7 +39,7 @@
     <div class="admin">
         <form action="@Url.Action("AdminThread", new { threadID = Model.CurrentThread.ForumThreadID })" method="post">
             <select name="newcat">
-                @foreach (var c in db.ForumCategories.Where(x => !x.IsClans && !x.IsMaps && !x.IsMissions && !x.IsPlanets && !x.IsSpringBattles))
+                @foreach (var c in db.ForumCategories)
                 {
                     <option value="@c.ForumCategoryID" @(c.ForumCategoryID == Model.CurrentThread.ForumCategoryID ? "selected='selected'" : "")>@c.Title</option>
                 }

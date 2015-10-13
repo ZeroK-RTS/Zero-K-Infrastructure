@@ -4,10 +4,10 @@
 @{
     Page.Title = "Forum " + string.Join(" > ", Model.Path.Select(x => x.Title));
 
-    var grid = new UniGrid<ForumThread>(Model.Threads, "Threads in " + Model.CurrentCategory?.Title);
+    var grid = new UniGrid<ForumThread>(Model.Threads);
     grid.AddCol("", StickyMark).SetSort(x => x.IsPinned).SetWidth("25px");
     grid.AddCol("Title", x => Html.Print(x)).SetSort(x => x.Title);
-    if (Model.CurrentCategory?.IsWiki == true)
+    if (Model.CurrentCategory?.ForumMode == ForumMode.Wiki)
     {
         grid.AddCol("Wiki", x => x.WikiKey).SetSort(x => x.WikiKey).SetWidth("150px");
     }
@@ -46,13 +46,14 @@
             }
         </span>
         <br/>
+        <br/>
 
         <div>
-            @if (Model.CurrentCategory != null && !Model.CurrentCategory.IsLocked)
+            @if (Model.CurrentCategory == null || !Model.CurrentCategory.IsLocked)
             {
-                <span class="textbutton">
+                <span class="textbutton" id="@grid.PagerPrefixID">
                                 @Html.ActionLink("Post new topic", "NewPost", new { categoryID = Model.CurrentCategory?.ForumCategoryID })
-                            </span>
+                </span>
             }
 
             &nbsp;Filter: @Html.EditorFor(x => x.Search)
@@ -63,7 +64,7 @@
 
             @if (Global.Account != null && Model.Threads.Any())
             {
-                <span class="textbutton" style="float: right;">@Html.ActionLink("Mark all as read", "MarkAllAsRead", new { categoryID = Model.CurrentCategory?.ForumCategoryID })</span>
+                <span class="textbutton" style="float: right;" id="@grid.PagerSuffixID">@Html.ActionLink("Mark all as read", "MarkAllAsRead", new { categoryID = Model.CurrentCategory?.ForumCategoryID })</span>
             }
         </div>
 

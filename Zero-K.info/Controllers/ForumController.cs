@@ -142,6 +142,9 @@ namespace ZeroKWeb.Controllers
 				res.LastPosts = res.CurrentThread.ForumPosts.OrderByDescending(x => x.ForumPostID).Take(20);
 				if (!categoryID.HasValue) categoryID = t.ForumCategoryID;
 			}
+            if (!categoryID.HasValue)
+                categoryID =
+                    db.ForumCategories.Where(x => !x.IsLocked && x.ForumMode == ForumMode.General).OrderBy(x => x.SortOrder).First().ForumCategoryID; // post in general by default
 
 			res.Path = GetCategoryPath(categoryID, db);
             var category = res.Path.LastOrDefault();
@@ -158,7 +161,7 @@ namespace ZeroKWeb.Controllers
             {
                 var thread = res.CurrentThread;
                 res.CanSetTopic = (thread.ForumPosts.Count > 0 && thread.ForumPosts.First().ForumPostID == forumPostID 
-                    && !category.IsClans && !category.IsMaps && !category.IsMissions && !category.IsPlanets && !category.IsSpringBattles);
+                    && (category.ForumMode == ForumMode.General|| category.ForumMode == ForumMode.Wiki));
             }
             else res.CanSetTopic = true;
 
@@ -235,7 +238,7 @@ namespace ZeroKWeb.Controllers
 					var res = db.Resources.Single(x => x.ResourceID == resourceID);
                     if (res.ForumThread != null) return Content("Double post");
                     thread = new ForumThread() { Title = "Map " +res.InternalName, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
-					thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsMaps);
+					thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.ForumMode==ForumMode.Maps);
 					res.ForumThread = thread;
 					db.ForumThreads.InsertOnSubmit(thread);
 				}
@@ -245,7 +248,7 @@ namespace ZeroKWeb.Controllers
 					var bat = db.SpringBattles.Single(x => x.SpringBattleID == springBattleID);
                     if (bat.ForumThread != null) return Content("Double post");
                     thread = new ForumThread() { Title =  bat.FullTitle, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
-					thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsSpringBattles);
+					thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.ForumMode ==ForumMode.SpringBattles);
 				    bat.ForumThread = thread;
 					db.ForumThreads.InsertOnSubmit(thread);
 				}
@@ -255,7 +258,7 @@ namespace ZeroKWeb.Controllers
 					var clan = db.Clans.Single(x => x.ClanID == clanID);
                     if (clan.ForumThread != null) return Content("Double post");
                     thread = new ForumThread() { Title = "Clan " +clan.ClanName, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
-					thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsClans);
+					thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.ForumMode ==ForumMode.Clans);
 					clan.ForumThread = thread;
 					thread.Clan = clan;
 					db.ForumThreads.InsertOnSubmit(thread);
@@ -266,7 +269,7 @@ namespace ZeroKWeb.Controllers
 					var planet = db.Planets.Single(x => x.PlanetID == planetID);
                     if (planet.ForumThread != null) return Content("Double post");
                     thread = new ForumThread() { Title = "Planet " +planet.Name, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
-					thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsPlanets);
+					thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.ForumMode==ForumMode.Planets);
 					planet.ForumThread = thread;
 					db.ForumThreads.InsertOnSubmit(thread);
 				}
@@ -355,11 +358,11 @@ namespace ZeroKWeb.Controllers
 			var cat = t.ForumCategory;
 			if (cat != null)
 			{
-				if (cat.IsMissions) return RedirectToAction("Detail", "Missions", new { id = t.Missions.First().MissionID });
-				if (cat.IsMaps) return RedirectToAction("Detail", "Maps", new { id = t.Resources.First().ResourceID });
-				if (cat.IsSpringBattles) return RedirectToAction("Detail", "Battles", new { id = t.SpringBattles.First().SpringBattleID });
-				if (cat.IsClans) return RedirectToAction("Detail", "Clans", new { id = t.RestrictedClanID});
-				if (cat.IsPlanets) return RedirectToAction("Planet", "Planetwars", new { id = t.Planets.First().PlanetID});
+				if (cat.ForumMode == ForumMode.Missions) return RedirectToAction("Detail", "Missions", new { id = t.Missions.First().MissionID });
+				if (cat.ForumMode ==ForumMode.Maps) return RedirectToAction("Detail", "Maps", new { id = t.Resources.First().ResourceID });
+				if (cat.ForumMode ==ForumMode.SpringBattles) return RedirectToAction("Detail", "Battles", new { id = t.SpringBattles.First().SpringBattleID });
+				if (cat.ForumMode ==ForumMode.Clans) return RedirectToAction("Detail", "Clans", new { id = t.RestrictedClanID});
+				if (cat.ForumMode == ForumMode.Planets) return RedirectToAction("Planet", "Planetwars", new { id = t.Planets.First().PlanetID});
 			}
 
 			var res = new ThreadResult();

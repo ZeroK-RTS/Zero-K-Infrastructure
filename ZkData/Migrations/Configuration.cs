@@ -25,11 +25,11 @@ namespace ZkData.Migrations
                 {
                     var str = wc.DownloadString($"https://zero-k.googlecode.com/svn/wiki/{node}.wiki");
 
-                    var thread = db.ForumCategories.First(x => x.IsWiki).ForumThreads.FirstOrDefault(x => x.WikiKey == node);
+                    var thread = db.ForumThreads.FirstOrDefault(x => x.WikiKey == node);
                     if (thread == null)
                     {
                         thread = new ForumThread();
-                        thread.ForumCategory = db.ForumCategories.First(x => x.IsWiki);
+                        thread.ForumCategory = db.ForumCategories.First(x => x.ForumMode == ForumMode.Wiki);
                         db.ForumThreads.Add(thread);
                     }
 
@@ -139,14 +139,14 @@ namespace ZkData.Migrations
             }
 
             db.ForumCategories.AddOrUpdate(x => x.Title,
-                new ForumCategory { Title = "General discussion", },
-                new ForumCategory { Title = "News", IsNews = true },
-                new ForumCategory { Title = "Maps", IsMaps = true },
-                new ForumCategory { Title = "Battles", IsSpringBattles = true },
-                new ForumCategory { Title = "Missions", IsMissions = true },
-                new ForumCategory { Title = "Clans", IsClans = true },
-                new ForumCategory { Title = "Planets", IsPlanets = true },
-                new ForumCategory { Title = "Wiki", IsWiki = true });
+                new ForumCategory { Title = "General discussion",ForumMode = ForumMode.General},
+                new ForumCategory { Title = "News", ForumMode = ForumMode.News, IsLocked = true},
+                new ForumCategory { Title = "Maps", ForumMode = ForumMode.Maps, IsLocked =true},
+                new ForumCategory { Title = "Battles", ForumMode = ForumMode.SpringBattles, IsLocked = true},
+                new ForumCategory { Title = "Missions", ForumMode = ForumMode.Missions, IsLocked = true},
+                new ForumCategory { Title = "Clans", ForumMode = ForumMode.Clans, IsLocked = true},
+                new ForumCategory { Title = "Planets", ForumMode = ForumMode.Planets, IsLocked = true},
+                new ForumCategory { Title = "Wiki", ForumMode = ForumMode.Wiki, IsLocked = true});
 
 
             db.SaveChanges();
