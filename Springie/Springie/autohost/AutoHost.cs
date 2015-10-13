@@ -994,6 +994,8 @@ namespace Springie.autohost
         }
 
         void tas_MyStatusChangedToInGame(object sender, Battle battle) {
+            spring.lobbyUserName = tas.UserName; // hack until removed when springie moves to server
+            spring.lobbyPassword = tas.UserPassword;  // spring class needs this to submit results
             spring.HostGame(tas.MyBattle.GetContext(), battle.Ip, battle.HostPort);
         }
 

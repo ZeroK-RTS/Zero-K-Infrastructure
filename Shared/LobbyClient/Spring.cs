@@ -121,8 +121,8 @@ namespace LobbyClient
         }
         public BattleContext StartContext { get; private set; }
         public bool UseDedicatedServer;
-        string lobbyUserName;
-        string lobbyPassword;
+        public string lobbyUserName;
+        public string lobbyPassword;
         public event EventHandler BattleStarted = (sender, args) => { };
 
         public event EventHandler<SpringLogEventArgs> GameOver; // game has ended
