@@ -1,11 +1,11 @@
 #menu table{width:100%;}
-#menu td { vertical-align: middle;}
+#menu td { vertical-align: middle; padding:0; }
 
 div#menu a /*menu bar*/
 {
-	text-align: center; 
+	display: block;
+	position: relative; /* tooltips use "absolute" position, so parent must not be static */
 	font-family: sm, sans-serif;
-	font-size: smaller;
 }
 
 div#menu a span {display:none;} /*menu text sayings*/
@@ -16,7 +16,8 @@ div#menu a:hover span
 	position: absolute; 
 	background: #000;
 	color: #cbd3d4;
-	top: -0.55em; left: 100%; width: 125px;
+	left: 100%; width: 125px;
+	margin-top:-1.55em; /*display tooltip at same height as :hover'ed link*/
 	padding: 5px; margin: 10px;
 	border: 1px solid #222;
 	
@@ -29,10 +30,22 @@ div#menu a:hover span
 	
 	font-family: sans-serif;
 	font-weight: bold;
-	opacity: .9;
 }
 
-ul.menu {list-style-type: none; padding: 0;margin: 10px; } /*toplevel menu*/
+ul.menu > li > a /* menu links */
+{
+	padding:10px;
+	text-align: center; 
+}
+
+ul.menu li  ul  li  a /*sub-menu links, or menu sub-links*/
+{
+	padding:4px 2px;
+	text-align: left;
+	font-size: smaller;
+}
+
+ul.menu {list-style-type: none; padding: 0; margin: 0; } /*toplevel menu*/
 
 ul.menu li > ul {display:none;} /*list menu*/
 
@@ -42,11 +55,11 @@ ul.menu li:hover > ul /*dropdown part*/
 	position:absolute;
 	background: #000 url("/img/border-1.png") repeat-x scroll 50% 0;
 	padding: 5px;
-    margin: 0px;
+	margin: 0px;
 	border: 1px solid #2a8eaf;
 	border-top: none;
 	border-radius: 3px;
-    box-shadow: 0 0 3px 3px #000;
+	box-shadow: 0 0 3px 3px #000;
 	list-style-type: none; 
 	z-index: 50;
 }
@@ -67,17 +80,17 @@ ul.menu li:hover > ul li:hover
 .gecko div#mainContentWrapper div#menu
 {
 	position: relative;
-    z-index: 100;
+	z-index: 100;
 }
 .webkit div#mainContentWrapper div#menu
 {
 	position: relative;
-    z-index: 100;
+	z-index: 100;
 }
 .opera div#mainContentWrapper div#menu
 {
 	position: relative;
-    z-index: 100;
+	z-index: 100;
 }
 /**/
 
@@ -85,16 +98,16 @@ ul.menu li:hover > ul li:hover
 .gecko div#simplestyle div#menu
 {
 	position: relative;
-    z-index: 100;
+	z-index: 100;
 }
 .webkit div#simplestyle div#menu
 {
 	position: relative;
-    z-index: 100;
+	z-index: 100;
 }
 .opera div#simplestyle div#menu
 {
 	position: relative;
-    z-index: 100;
+	z-index: 100;
 }
 /**/
