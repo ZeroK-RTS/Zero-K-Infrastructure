@@ -19,7 +19,7 @@
 
     @RenderSection("head", false)
 
-    @if (!Global.IsAccountAuthorized && ViewBag.Minimal == null && !Global.IsLobbyAccess)
+    @if (ViewBag.Minimal == null && !Global.IsLobbyAccess)
     {
         //******should instead check cookie for design mode and choose style accordingly******
         if (ViewBag.StaticBackground == true)
@@ -50,37 +50,37 @@
 <body class="">
     <div id='busy' class="border">Loading...<img src='/img/Loader.gif' class="vcenter" /></div>
 
-    @if (!Global.IsAccountAuthorized && ViewBag.Minimal == null && !Global.IsLobbyAccess)
+    @if (ViewBag.Minimal == null && !Global.IsLobbyAccess)
     {
         <div id="fadetoblack">
         </div>
-            <div id="mainContentWrapper" class="wrapper">
-                <div id="header" class="text-center">
-                    <a href="/">
-                        <img src="/img/zk_logo.png" height="150px" alt="Zero K" />
-                    </a>
-                </div>
-                <div class="border" id="menu" style="padding: 0">
-                    @Html.Partial("TopMenu")
-                </div>
-              
-                <div class="border relative">
-                    @Html.Partial("LoginBar")
-                </div>
-              
-
-                <div id="renderbody" @if (ViewBag.NoBorder == null) { <text> class="border" </text>  } @if (ViewBag.OpaqueBody == true) { <text> style="opacity: 1" </text>  }>
-                    @RenderBody()
-                </div>
-
-                <div id="footer" class="border">
-                    <span class="center">
-                        Zero-K is a free real time strategy (RTS), that aims to be the
-                        best open source multi-platform strategy game available :-)
-                    </span>
-                </div>
-                <!close footer>
+        <div id="mainContentWrapper" class="wrapper">
+            <div id="header" class="text-center">
+                <a href="/">
+                    <img src="/img/zk_logo.png" height="150px" alt="Zero K" />
+                </a>
             </div>
+            <div class="border" id="menu" style="padding: 0">
+                @Html.Partial("TopMenu")
+            </div>
+
+            <div class="border relative">
+                @Html.Partial("LoginBar")
+            </div>
+
+
+            <div id="renderbody" @if (ViewBag.NoBorder == null) { <text> class="border" </text>   } @if (ViewBag.OpaqueBody == true) { <text> style="opacity: 1" </text>   }>
+                @RenderBody()
+            </div>
+
+            <div id="footer" class="border">
+                <span class="center">
+                    Zero-K is a free real time strategy (RTS), that aims to be the
+                    best open source multi-platform strategy game available :-)
+                </span>
+            </div>
+            <!close footer>
+        </div>
     }
     else
     {
@@ -90,9 +90,9 @@
                 <div class="border" id="menu" style="padding: 0">
                     @Html.Partial("TopMenu")
                 </div>
-                    <div class="border relative" style="padding: 0 10px 0 10px;">
-                        @Html.Partial("LoginBar")
-                    </div>
+                <div class="border relative" style="padding: 0 10px 0 10px;">
+                    @Html.Partial("LoginBar")
+                </div>
             }
             @RenderBody()
         </div>
@@ -112,7 +112,7 @@
             s.parentNode.insertBefore(ga, s);
         })();
 
-        $(function() {
+        $(function () {
             GlobalPageInit();
         });
     </script>
