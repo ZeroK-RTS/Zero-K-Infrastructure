@@ -20,13 +20,13 @@
 @helper StickyMark(ForumThread t) {
     if (t.IsLocked && t.IsPinned)
     {
-        <img src="~/img/stickylock.png" width="25"/>
+        <img src="~/img/stickylock.png" class="icon16"/>
     } else if (t.IsLocked)
     {
-        <img src="~/img/lock.png" width="25"/>
+        <img src="~/img/lock.png" class="icon16"/>
     } else if (t.IsPinned)
     {
-        <img src="~/img/sticky.png" width="25"/>
+        <img src="~/img/sticky.png" class="icon16"/>
     }
 }
 
