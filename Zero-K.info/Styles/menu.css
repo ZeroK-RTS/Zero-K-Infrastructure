@@ -17,8 +17,9 @@ div#menu a:hover span
 	background: #000;
 	color: #cbd3d4;
 	left: 100%; width: 125px;
-	margin-top:-1.55em; /*display tooltip at same height as :hover'ed link*/
-	padding: 5px; margin: 10px;
+	margin-top: -1.55em; /*display tooltip at same height as :hover'ed link*/
+	margin-left: 10px;
+	padding: 5px;
 	border: 1px solid #222;
 	
 	border-radius: 10px 10px 10px 10px ;
