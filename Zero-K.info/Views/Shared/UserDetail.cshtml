@@ -161,7 +161,6 @@
                         <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)
                     </div>
                 }
-                <a href="@Url.Action("SubmitSearch", "Forum", new { username = Model.Name })">Find all posts by this user</a>
 
                 @{ double ratio = (Model.Xp - Account.GetXpForLevel(Model.Level)) / (double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)); }
                 <div title='Your XP: @Model.Xp (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio*100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
@@ -270,7 +269,7 @@
         if (Model.ForumPosts.Any())
         {
             <div id="usr_forumposts" class="fleft border">
-                <h3>@Html.ActionLink("Posted threads", "Index", "Forum", new {OnlyMy=true}, null)</h3>
+                <h3>@Html.ActionLink("Posted threads", "Index", "Forum", new {User=Global.Account?.Name}, null)</h3>
                 <span>@Model.ForumPosts.Count() posts in @Model.ForumThreadsByLastPostAccountID.Count threads</span>
                 <br />
                 @foreach (ForumThread t in Model.ForumPosts.OrderByDescending(x => x.ForumPostID).Select(x => x.ForumThread).Where(x => x != null).Distinct().Take(10))

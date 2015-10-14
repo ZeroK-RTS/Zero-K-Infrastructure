@@ -52,15 +52,13 @@
 
         <div>
             &nbsp;Filter: @Html.EditorFor(x => x.Search)
-            <label>
-                @Html.EditorFor(x => x.OnlyMy) <span>only my</span>
-            </label>
             @if (Global.IsAccountAuthorized)
             {
                 <label>
                     @Html.EditorFor(x => x.OnlyUnread)<span>only unread</span>
                 </label>
             }
+            &nbsp; user: @Html.TextBoxFor(x=>x.User)
             <button type="submit">Search</button><br/>
 
             @if (Model.CurrentCategory == null || !Model.CurrentCategory.IsLocked)

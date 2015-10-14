@@ -98,7 +98,7 @@
     </div>
 
     <div class="border">
-        <h2><a href='@Url.Action("Index","Forum")'>Forums</a></h2>
+        <h2><a href='@Url.Action("Index","Forum", new {OnlyUnread= true})'>Forums</a></h2>
         @foreach (var t in Model.NewThreads)
         {
             @Html.Print(t.ForumThread)<br />

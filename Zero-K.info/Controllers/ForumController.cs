@@ -7,17 +7,17 @@ using ZkData;
 
 namespace ZeroKWeb.Controllers
 {
-    public class ForumController : Controller
+    public class ForumController: Controller
     {
         public const int PageSize = GlobalConst.ForumPostsPerPage;
 
         /// <summary>
-        /// Returns false for <see cref="News"/> posts and comment threads on <see cref="Clan"/>s, <see cref="Mission"/>s, PlanetWars <see cref="Planet"/>s and <see cref="SpringBattle"/>s; true otherwise
+        ///     Returns false for <see cref="News" /> posts and comment threads on <see cref="Clan" />s, <see cref="Mission" />s,
+        ///     PlanetWars <see cref="Planet" />s and <see cref="SpringBattle" />s; true otherwise
         /// </summary>
         /// <param name="thread"></param>
         /// <returns></returns>
-        bool IsNormalThread(ForumThread thread)
-        {
+        bool IsNormalThread(ForumThread thread) {
             if (thread.Clans != null && thread.Clans.Count > 0) return false;
             if (thread.Missions != null && thread.Missions.Count > 0) return false;
             if (thread.Planets != null && thread.Planets.Count > 0) return false;
@@ -27,35 +27,32 @@ namespace ZeroKWeb.Controllers
         }
 
         /// <summary>
-        /// Set the last post time of the thread to current time (includes edits)
+        ///     Set the last post time of the thread to current time (includes edits)
         /// </summary>
-        void ResetThreadLastPostTime(int threadID)
-        {
+        void ResetThreadLastPostTime(int threadID) {
             var db = new ZkDataContext();
             var thread = db.ForumThreads.FirstOrDefault(x => x.ForumThreadID == threadID);
-            DateTime lastPost = thread.Created;
-            foreach (ForumPost p in thread.ForumPosts.Reverse())
+            var lastPost = thread.Created;
+            foreach (var p in thread.ForumPosts.Reverse())
             {
                 if (p.ForumPostEdits.Count > 0)
                 {
                     var lastEdit = p.ForumPostEdits.Last().EditTime;
                     if (lastEdit > lastPost) lastPost = lastEdit;
-                }
-                else if (p.Created > lastPost) lastPost = p.Created;
+                } else if (p.Created > lastPost) lastPost = p.Created;
             }
             thread.LastPost = lastPost;
             db.SubmitChanges();
         }
 
         [Auth(Role = AuthRole.ZkAdmin)]
-        public ActionResult DeletePost(int? postID)
-        {
+        public ActionResult DeletePost(int? postID) {
             var db = new ZkDataContext();
             var post = db.ForumPosts.Single(x => x.ForumPostID == postID);
             var thread = post.ForumThread;
-            int threadID = thread.ForumThreadID;
+            var threadID = thread.ForumThreadID;
             //int index = post.ForumThread.ForumPosts.IndexOf(post);
-            int page = GetPostPage(post);
+            var page = GetPostPage(post);
 
             db.ForumPosts.DeleteOnSubmit(post);
             if (thread.ForumPosts.Count() <= 1 && IsNormalThread(thread))
@@ -67,25 +64,22 @@ namespace ZeroKWeb.Controllers
             }
             db.SubmitChanges();
             ResetThreadLastPostTime(threadID);
-            return RedirectToAction("Thread", new { id = threadID, page = page });
+            return RedirectToAction("Thread", new { id = threadID, page });
         }
 
         [Auth(Role = AuthRole.ZkAdmin)]
-        public ActionResult DeleteAllPostsByUser(int accountID, string accountName)
-        {
+        public ActionResult DeleteAllPostsByUser(int accountID, string accountName) {
             var db = new ZkDataContext();
-            Account acc = db.Accounts.FirstOrDefault(x => x.AccountID == accountID);
+            var acc = db.Accounts.FirstOrDefault(x => x.AccountID == accountID);
             if (acc.Name != accountName) return Content("Invalid safety code");
-            foreach (ForumPost p in acc.ForumPosts) DeletePost(p.ForumPostID);
+            foreach (var p in acc.ForumPosts) DeletePost(p.ForumPostID);
             return RedirectToAction("Index");
         }
 
         /// <summary>
-        /// Go to forum index, or a subforum
+        ///     Go to forum index, or a subforum
         /// </summary>
-
-        public ActionResult Index(IndexResult model)
-        {
+        public ActionResult Index(IndexResult model) {
             var db = new ZkDataContext();
             model = model ?? new IndexResult();
 
@@ -95,26 +89,30 @@ namespace ZeroKWeb.Controllers
             model.CurrentCategory = model.Path.LastOrDefault();
 
             var threads = db.ForumThreads.AsQueryable();
+
+            if (model.CategoryID != null) threads = threads.Where(x => x.ForumCategoryID == model.CategoryID);
+
             threads = threads.Where(x => x.RestrictedClanID == null || x.RestrictedClanID == Global.ClanID);
 
-            if (model.CategoryID != null)
+            int? filterAccountID = null;
+            if (!string.IsNullOrEmpty(model.User))
             {
-                threads = threads.Where(x => x.ForumCategoryID == model.CategoryID);
+                filterAccountID =
+                    (db.Accounts.FirstOrDefault(x => x.Name == model.User) ?? db.Accounts.FirstOrDefault(x => x.Name.Contains(model.User)))?.AccountID;
             }
-            
-            if (model.OnlyMy) threads = threads.Where(x => x.CreatedAccountID == Global.AccountID || x.ForumPosts.Any(y => y.AuthorAccountID == Global.AccountID));
+            if (filterAccountID.HasValue) threads = threads.Where(x => x.CreatedAccountID == filterAccountID || x.ForumPosts.Any(y => y.AuthorAccountID == filterAccountID));
 
+            
             if (model.OnlyUnread && Global.IsAccountAuthorized)
             {
                 threads = from t in threads
-                          let read = t.ForumThreadLastReads.FirstOrDefault(x => x.AccountID == Global.AccountID)
-                          let readForum = t.ForumCategory.ForumLastReads.FirstOrDefault(x => x.AccountID == Global.AccountID)
-                          where (read == null || t.LastPost > read.LastRead) && (readForum == null || t.LastPost > readForum.LastRead)
-                          select t;
+                    let read = t.ForumThreadLastReads.FirstOrDefault(x => x.AccountID == Global.AccountID)
+                    let readForum = t.ForumCategory.ForumLastReads.FirstOrDefault(x => x.AccountID == Global.AccountID)
+                    where (read == null || t.LastPost > read.LastRead) && (readForum == null || t.LastPost > readForum.LastRead)
+                    select t;
             }
 
             if (!string.IsNullOrEmpty(model.Search)) threads = threads.Where(x => x.Title.Contains(model.Search) || x.WikiKey.Contains(model.Search));
-
 
             model.Threads = threads.OrderByDescending(x => x.IsPinned).ThenByDescending(x => x.LastPost);
 
@@ -122,31 +120,29 @@ namespace ZeroKWeb.Controllers
         }
 
         /// <summary>
-        /// Make a new post or edit an existing one
+        ///     Make a new post or edit an existing one
         /// </summary>
-        /// <param name="categoryID">The ID of the subforum the <see cref="ForumPost"/> is/will be in</param>
-        /// <param name="threadID">The <see cref="ForumThread"/> ID, if not a new thread</param>
-        /// <param name="forumPostID">The <see cref="ForumPost"/> ID, if editing an existing post</param>
+        /// <param name="categoryID">The ID of the subforum the <see cref="ForumPost" /> is/will be in</param>
+        /// <param name="threadID">The <see cref="ForumThread" /> ID, if not a new thread</param>
+        /// <param name="forumPostID">The <see cref="ForumPost" /> ID, if editing an existing post</param>
         /// <returns></returns>
         [Auth]
-        public ActionResult NewPost(int? categoryID, int? threadID, int? forumPostID)
-        {
+        public ActionResult NewPost(int? categoryID, int? threadID, int? forumPostID) {
             var res = new NewPostResult();
             var db = new ZkDataContext();
 
-            var penalty = ZkData.Punishment.GetActivePunishment(Global.AccountID, "", 0, x => x.BanForum);
+            var penalty = Punishment.GetActivePunishment(Global.AccountID, "", 0, x => x.BanForum);
             if (penalty != null)
             {
-                return Content(string.Format("You cannot post while banned from forum!\nExpires: {0} UTC\nReason: {1}", penalty.BanExpires, penalty.Reason));
+                return
+                    Content(
+                        string.Format("You cannot post while banned from forum!\nExpires: {0} UTC\nReason: {1}", penalty.BanExpires, penalty.Reason));
             }
 
             if (threadID.HasValue && threadID > 0)
             {
                 var clan = db.Clans.FirstOrDefault(x => x.ForumThreadID == threadID);
-                if (clan != null && Global.ClanID != clan.ClanID)
-                {
-                    return Content(string.Format("You are not a member of {0}, you cannot post in their clan thread", clan.ClanName));
-                }
+                if (clan != null && Global.ClanID != clan.ClanID) return Content(string.Format("You are not a member of {0}, you cannot post in their clan thread", clan.ClanName));
 
                 var t = db.ForumThreads.Single(x => x.ForumThreadID == threadID.Value);
                 res.CurrentThread = t;
@@ -154,49 +150,60 @@ namespace ZeroKWeb.Controllers
                 if (!categoryID.HasValue) categoryID = t.ForumCategoryID;
             }
             if (!categoryID.HasValue)
+            {
                 categoryID =
-                    db.ForumCategories.Where(x => !x.IsLocked && x.ForumMode == ForumMode.General).OrderBy(x => x.SortOrder).First().ForumCategoryID; // post in general by default
+                    db.ForumCategories.Where(x => !x.IsLocked && x.ForumMode == ForumMode.General).OrderBy(x => x.SortOrder).First().ForumCategoryID;
+                    // post in general by default
+            }
 
             res.Path = GetCategoryPath(categoryID, db);
             var category = res.Path.LastOrDefault();
             res.CurrentCategory = category;
             if (forumPostID != null)
             {
-                ForumPost post = db.ForumPosts.Single(x => x.ForumPostID == forumPostID);
-                if (!Global.IsZeroKAdmin && Global.AccountID != post.AuthorAccountID)
-                {
-                    return Content("You cannot edit this post");
-                }
+                var post = db.ForumPosts.Single(x => x.ForumPostID == forumPostID);
+                if (!Global.IsZeroKAdmin && Global.AccountID != post.AuthorAccountID) return Content("You cannot edit this post");
                 res.EditedPost = post;
             }
             if (threadID != null)
             {
                 var thread = res.CurrentThread;
-                res.CanSetTopic = (thread.ForumPosts.Count > 0 && thread.ForumPosts.First().ForumPostID == forumPostID
-                    && (category.ForumMode == ForumMode.General || category.ForumMode == ForumMode.Wiki));
-            }
-            else res.CanSetTopic = true;
+                res.CanSetTopic = (thread.ForumPosts.Count > 0 && thread.ForumPosts.First().ForumPostID == forumPostID &&
+                                   (category.ForumMode == ForumMode.General || category.ForumMode == ForumMode.Wiki));
+            } else res.CanSetTopic = true;
 
             return View(res);
         }
 
         /// <summary>
-        /// Try to make a new post or edit an existing one; make a new thread if approriate
+        ///     Try to make a new post or edit an existing one; make a new thread if approriate
         /// </summary>
-        /// <param name="threadID">The <see cref="ForumThread"/> ID, if not a new thread</param>
-        /// <param name="categoryID">The ID of the subforum the <see cref="ForumPost"/> is/will be in</param>
-        /// <param name="forumPostID">The <see cref="ForumPost"/> ID, if editing an existing post</param>
-		[Auth]
+        /// <param name="threadID">The <see cref="ForumThread" /> ID, if not a new thread</param>
+        /// <param name="categoryID">The ID of the subforum the <see cref="ForumPost" /> is/will be in</param>
+        /// <param name="forumPostID">The <see cref="ForumPost" /> ID, if editing an existing post</param>
+        [Auth]
         [ValidateInput(false)]
-        public ActionResult SubmitPost(int? threadID, int? categoryID, int? resourceID, int? missionID, int? springBattleID, int? clanID, int? planetID, string text, string title, int? forumPostID)
-        {
-            if (threadID == null && missionID == null && resourceID == null && springBattleID == null && clanID == null && planetID == null && forumPostID == null && string.IsNullOrWhiteSpace(title)) return Content("Cannot post new thread with blank title");
+        public ActionResult SubmitPost(
+            int? threadID,
+            int? categoryID,
+            int? resourceID,
+            int? missionID,
+            int? springBattleID,
+            int? clanID,
+            int? planetID,
+            string text,
+            string title,
+            int? forumPostID) {
+            if (threadID == null && missionID == null && resourceID == null && springBattleID == null && clanID == null && planetID == null &&
+                forumPostID == null && string.IsNullOrWhiteSpace(title)) return Content("Cannot post new thread with blank title");
             if (string.IsNullOrWhiteSpace(text)) return Content("Please type some text :)");
 
-            var penalty = ZkData.Punishment.GetActivePunishment(Global.AccountID, "", 0, x => x.BanForum);
+            var penalty = Punishment.GetActivePunishment(Global.AccountID, "", 0, x => x.BanForum);
             if (penalty != null)
             {
-                return Content(string.Format("You cannot post while banned from forum!\nExpires: {0} UTC\nReason: {1}", penalty.BanExpires, penalty.Reason));
+                return
+                    Content(
+                        string.Format("You cannot post while banned from forum!\nExpires: {0} UTC\nReason: {1}", penalty.BanExpires, penalty.Reason));
             }
 
             var db = new ZkDataContext();
@@ -206,7 +213,7 @@ namespace ZeroKWeb.Controllers
                 string currentTitle = null;
 
                 // update title
-                if (thread != null && !String.IsNullOrEmpty(title))
+                if (thread != null && !string.IsNullOrEmpty(title))
                 {
                     currentTitle = thread.Title;
                     thread.Title = title;
@@ -232,7 +239,6 @@ namespace ZeroKWeb.Controllers
                     thread.Title = "Map " + map.InternalName;
                 }
 
-
                 if (threadID == null && categoryID.HasValue) // new thread
                 {
                     var cat = db.ForumCategories.Single(x => x.ForumCategoryID == categoryID.Value);
@@ -250,7 +256,12 @@ namespace ZeroKWeb.Controllers
                 {
                     var res = db.Resources.Single(x => x.ResourceID == resourceID);
                     if (res.ForumThread != null) return Content("Double post");
-                    thread = new ForumThread() { Title = "Map " + res.InternalName, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
+                    thread = new ForumThread
+                    {
+                        Title = "Map " + res.InternalName,
+                        CreatedAccountID = Global.AccountID,
+                        LastPostAccountID = Global.AccountID
+                    };
                     thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.ForumMode == ForumMode.Maps);
                     res.ForumThread = thread;
                     db.ForumThreads.InsertOnSubmit(thread);
@@ -260,7 +271,7 @@ namespace ZeroKWeb.Controllers
                 {
                     var bat = db.SpringBattles.Single(x => x.SpringBattleID == springBattleID);
                     if (bat.ForumThread != null) return Content("Double post");
-                    thread = new ForumThread() { Title = bat.FullTitle, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
+                    thread = new ForumThread { Title = bat.FullTitle, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
                     thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.ForumMode == ForumMode.SpringBattles);
                     bat.ForumThread = thread;
                     db.ForumThreads.InsertOnSubmit(thread);
@@ -270,7 +281,12 @@ namespace ZeroKWeb.Controllers
                 {
                     var clan = db.Clans.Single(x => x.ClanID == clanID);
                     if (clan.ForumThread != null) return Content("Double post");
-                    thread = new ForumThread() { Title = "Clan " + clan.ClanName, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
+                    thread = new ForumThread
+                    {
+                        Title = "Clan " + clan.ClanName,
+                        CreatedAccountID = Global.AccountID,
+                        LastPostAccountID = Global.AccountID
+                    };
                     thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.ForumMode == ForumMode.Clans);
                     clan.ForumThread = thread;
                     thread.Clan = clan;
@@ -281,7 +297,12 @@ namespace ZeroKWeb.Controllers
                 {
                     var planet = db.Planets.Single(x => x.PlanetID == planetID);
                     if (planet.ForumThread != null) return Content("Double post");
-                    thread = new ForumThread() { Title = "Planet " + planet.Name, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
+                    thread = new ForumThread
+                    {
+                        Title = "Planet " + planet.Name,
+                        CreatedAccountID = Global.AccountID,
+                        LastPostAccountID = Global.AccountID
+                    };
                     thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.ForumMode == ForumMode.Planets);
                     planet.ForumThread = thread;
                     db.ForumThreads.InsertOnSubmit(thread);
@@ -293,25 +314,23 @@ namespace ZeroKWeb.Controllers
                 var lastPost = thread.ForumPosts.OrderByDescending(x => x.ForumPostID).FirstOrDefault();
 
                 //double post preventer
-                if (lastPost == null || lastPost.AuthorAccountID != Global.AccountID || lastPost.Text != text || (!String.IsNullOrEmpty(title) && title != currentTitle))
+                if (lastPost == null || lastPost.AuthorAccountID != Global.AccountID || lastPost.Text != text ||
+                    (!string.IsNullOrEmpty(title) && title != currentTitle))
                 {
                     if (forumPostID != null)
                     {
                         var post = thread.ForumPosts.Single(x => x.ForumPostID == forumPostID);
                         if (post.AuthorAccountID != Global.AccountID && !Global.Account.IsZeroKAdmin) throw new ApplicationException("Not authorized to edit the post");
-                        post.ForumPostEdits.Add(new ForumPostEdit()
-                        {
-                            EditorAccountID = Global.AccountID,
-                            EditTime = DateTime.UtcNow,
-                            OriginalText = post.Text,
-                            NewText = text
-                        });
+                        post.ForumPostEdits.Add(
+                            new ForumPostEdit
+                            {
+                                EditorAccountID = Global.AccountID,
+                                EditTime = DateTime.UtcNow,
+                                OriginalText = post.Text,
+                                NewText = text
+                            });
                         post.Text = text;
-
-
-                    }
-                    else thread.ForumPosts.Add(new ForumPost() { AuthorAccountID = Global.AccountID, Text = text, Created = DateTime.UtcNow });
-
+                    } else thread.ForumPosts.Add(new ForumPost { AuthorAccountID = Global.AccountID, Text = text, Created = DateTime.UtcNow });
 
                     thread.LastPost = DateTime.UtcNow;
                     thread.LastPostAccountID = Global.AccountID;
@@ -320,42 +339,39 @@ namespace ZeroKWeb.Controllers
 
                     db.SubmitChanges();
                 }
-                int lastPage = ((thread.PostCount - 1) / PageSize);
+                var lastPage = ((thread.PostCount - 1)/PageSize);
                 scope.Complete();
 
                 if (missionID.HasValue) return RedirectToAction("Detail", "Missions", new { id = missionID });
-                else if (resourceID.HasValue) return RedirectToAction("Detail", "Maps", new { id = resourceID });
-                else if (springBattleID.HasValue) return RedirectToAction("Detail", "Battles", new { id = springBattleID });
-                else if (clanID.HasValue) return RedirectToAction("Detail", "Clans", new { id = clanID });
-                else if (planetID.HasValue) return RedirectToAction("Planet", "Planetwars", new { id = planetID });
-                else if (forumPostID.HasValue) return RedirectToAction("Thread", new { id = thread.ForumThreadID, postID = forumPostID });
-                else return RedirectToAction("Thread", new { id = thread.ForumThreadID, page = lastPage });
+                if (resourceID.HasValue) return RedirectToAction("Detail", "Maps", new { id = resourceID });
+                if (springBattleID.HasValue) return RedirectToAction("Detail", "Battles", new { id = springBattleID });
+                if (clanID.HasValue) return RedirectToAction("Detail", "Clans", new { id = clanID });
+                if (planetID.HasValue) return RedirectToAction("Planet", "Planetwars", new { id = planetID });
+                if (forumPostID.HasValue) return RedirectToAction("Thread", new { id = thread.ForumThreadID, postID = forumPostID });
+                return RedirectToAction("Thread", new { id = thread.ForumThreadID, page = lastPage });
             }
         }
 
         /// <summary>
-        /// Redirects to a thread page given a specified <see cref="ForumPost"/> ID
+        ///     Redirects to a thread page given a specified <see cref="ForumPost" /> ID
         /// </summary>
-        public ActionResult Post(int id)
-        {
+        public ActionResult Post(int id) {
             var db = new ZkDataContext();
-            ForumPost post = db.ForumPosts.FirstOrDefault(x => x.ForumPostID == id);
+            var post = db.ForumPosts.FirstOrDefault(x => x.ForumPostID == id);
             int? page = GetPostPage(post);
             if (page == 0) page = null;
-            ForumThread thread = post.ForumThread;
-            return RedirectToAction("Thread", new { id = thread.ForumThreadID, page = page });
-
+            var thread = post.ForumThread;
+            return RedirectToAction("Thread", new { id = thread.ForumThreadID, page });
         }
 
         /// <summary>
-        /// Go to a specific <see cref="ForumThread"/>
+        ///     Go to a specific <see cref="ForumThread" />
         /// </summary>
         /// <param name="lastPost">Go to last post</param>
         /// <param name="lastSeen">UNUSED</param>
-        /// <param name="postID">A specific <see cref="ForumPost"/> ID to go to</param>
+        /// <param name="postID">A specific <see cref="ForumPost" /> ID to go to</param>
         /// <returns></returns>
-		public ActionResult Thread(int id, bool? lastPost, bool? lastSeen, int? postID, int? page)
-        {
+        public ActionResult Thread(int id, bool? lastPost, bool? lastSeen, int? postID, int? page) {
             var db = new ZkDataContext();
             var t = db.ForumThreads.FirstOrDefault(x => x.ForumThreadID == id);
 
@@ -371,7 +387,6 @@ namespace ZeroKWeb.Controllers
                     page = GetPostPage(post);
                 }
             }
-
 
             var cat = t.ForumCategory;
             if (cat != null)
@@ -390,15 +405,14 @@ namespace ZeroKWeb.Controllers
 
             res.Path = GetCategoryPath(t.ForumCategoryID, db);
             res.CurrentThread = t;
-            res.PageCount = ((t.PostCount - 1) / PageSize) + 1;
+            res.PageCount = ((t.PostCount - 1)/PageSize) + 1;
             res.Page = page;
-            res.Posts = t.ForumPosts.AsQueryable().Skip((page ?? 0) * PageSize).Take(PageSize).ToList();
+            res.Posts = t.ForumPosts.AsQueryable().Skip((page ?? 0)*PageSize).Take(PageSize).ToList();
 
             return View(res);
         }
 
-        static IEnumerable<ForumCategory> GetCategoryPath(int? categoryID, ZkDataContext db)
-        {
+        static IEnumerable<ForumCategory> GetCategoryPath(int? categoryID, ZkDataContext db) {
             var path = new List<ForumCategory>();
             var id = categoryID;
             while (id != null)
@@ -411,48 +425,8 @@ namespace ZeroKWeb.Controllers
             return path;
         }
 
-        public class IndexResult
-        {
-            public int? CategoryID { get; set; }
-            public string Search { get; set; }
-            public bool OnlyMy { get; set; }
-            public int? AccountID { get; set; }
-            public bool OnlyUnread { get; set; }
-            public IEnumerable<ForumCategory> Categories;
-            public ForumCategory CurrentCategory;
-            public IEnumerable<ForumCategory> Path;
-            public IQueryable<ForumThread> Threads;
-        }
-
-        public class NewPostResult
-        {
-            public ForumCategory CurrentCategory;
-            public ForumThread CurrentThread;
-            public IEnumerable<ForumPost> LastPosts;
-            public IEnumerable<ForumCategory> Path;
-            public ForumPost EditedPost;
-            public bool CanSetTopic;
-        }
-
-        public class ThreadResult
-        {
-            public ForumThread CurrentThread;
-            public int GoToPost;
-            public int? Page;
-            public int PageCount;
-            public IEnumerable<ForumCategory> Path;
-            public List<ForumPost> Posts;
-        }
-
-        public class SearchResult
-        {
-            public List<ForumPost> Posts;
-            public bool DisplayAsPosts;
-        }
-
         [Auth(Role = AuthRole.ZkAdmin)]
-        public ActionResult AdminThread(int threadID, int newcat, bool isPinned, bool isLocked)
-        {
+        public ActionResult AdminThread(int threadID, int newcat, bool isPinned, bool isLocked) {
             var db = new ZkDataContext();
             var thread = db.ForumThreads.Single(x => x.ForumThreadID == threadID);
             thread.ForumCategoryID = newcat;
@@ -462,52 +436,43 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index", new { categoryID = newcat });
         }
 
-        public ActionResult EditHistory(int forumPostID)
-        {
+        public ActionResult EditHistory(int forumPostID) {
             var db = new ZkDataContext();
             var post = db.ForumPosts.First(x => x.ForumPostID == forumPostID);
             return View("EditHistory", post);
         }
 
         /// <summary>
-        /// Upvote or downvote a post
+        ///     Upvote or downvote a post
         /// </summary>
         /// <param name="delta">+1 or -1</param>
         /// <returns></returns>
         [Auth]
-        public ActionResult VotePost(int forumPostID, int delta)
-        {
+        public ActionResult VotePost(int forumPostID, int delta) {
             var db = new ZkDataContext();
-            Account myAcc = Global.Account;
+            var myAcc = Global.Account;
 
-            if (myAcc.Level < GlobalConst.MinLevelForForumVote)
-            {
-                return Content(string.Format("You cannot vote until you are level {0} or higher", GlobalConst.MinLevelForForumVote));
-            }
-            if ((Global.Account.ForumTotalUpvotes - Global.Account.ForumTotalDownvotes) < GlobalConst.MinNetKarmaToVote)
-            {
-                return Content("Your net karma is too low to vote");
-            }
+            if (myAcc.Level < GlobalConst.MinLevelForForumVote) return Content(string.Format("You cannot vote until you are level {0} or higher", GlobalConst.MinLevelForForumVote));
+            if ((Global.Account.ForumTotalUpvotes - Global.Account.ForumTotalDownvotes) < GlobalConst.MinNetKarmaToVote) return Content("Your net karma is too low to vote");
 
             if (delta > 1) delta = 1;
             else if (delta < -1) delta = -1;
 
-            ForumPost post = db.ForumPosts.First(x => x.ForumPostID == forumPostID);
-            Account author = post.Account;
+            var post = db.ForumPosts.First(x => x.ForumPostID == forumPostID);
+            var author = post.Account;
             if (author.AccountID == Global.AccountID) return Content("Cannot vote for your own posts");
             if (myAcc.VotesAvailable <= 0) return Content("Out of votes");
 
-            AccountForumVote existingVote = db.AccountForumVotes.SingleOrDefault(x => x.ForumPostID == forumPostID && x.AccountID == Global.AccountID);
-            if (existingVote != null)   // clear existing vote
+            var existingVote = db.AccountForumVotes.SingleOrDefault(x => x.ForumPostID == forumPostID && x.AccountID == Global.AccountID);
+            if (existingVote != null) // clear existing vote
             {
-                int oldDelta = existingVote.Vote;
+                var oldDelta = existingVote.Vote;
                 // reverse vote effects
                 if (oldDelta > 0)
                 {
                     author.ForumTotalUpvotes = author.ForumTotalUpvotes - oldDelta;
                     post.Upvotes = post.Upvotes - oldDelta;
-                }
-                else if (oldDelta < 0)
+                } else if (oldDelta < 0)
                 {
                     author.ForumTotalDownvotes = author.ForumTotalDownvotes + oldDelta;
                     post.Downvotes = post.Downvotes + oldDelta;
@@ -518,8 +483,7 @@ namespace ZeroKWeb.Controllers
             {
                 author.ForumTotalUpvotes = author.ForumTotalUpvotes + delta;
                 post.Upvotes = post.Upvotes + delta;
-            }
-            else if (delta < 0)
+            } else if (delta < 0)
             {
                 author.ForumTotalDownvotes = author.ForumTotalDownvotes - delta;
                 post.Downvotes = post.Downvotes - delta;
@@ -527,7 +491,7 @@ namespace ZeroKWeb.Controllers
 
             if (delta != 0)
             {
-                AccountForumVote voteEntry = new AccountForumVote { AccountID = Global.AccountID, ForumPostID = forumPostID, Vote = delta };
+                var voteEntry = new AccountForumVote { AccountID = Global.AccountID, ForumPostID = forumPostID, Vote = delta };
                 db.AccountForumVotes.InsertOnSubmit(voteEntry);
                 myAcc.VotesAvailable--;
             }
@@ -538,26 +502,24 @@ namespace ZeroKWeb.Controllers
         }
 
         /// <summary>
-        /// Removes an existing vote on a post
+        ///     Removes an existing vote on a post
         /// </summary>
         [Auth]
-        public ActionResult CancelVotePost(int forumPostID)
-        {
+        public ActionResult CancelVotePost(int forumPostID) {
             var db = new ZkDataContext();
-            AccountForumVote existingVote = db.AccountForumVotes.SingleOrDefault(x => x.ForumPostID == forumPostID && x.AccountID == Global.AccountID);
+            var existingVote = db.AccountForumVotes.SingleOrDefault(x => x.ForumPostID == forumPostID && x.AccountID == Global.AccountID);
             if (existingVote == null) return Content("No existing vote to remove");
 
-            ForumPost post = db.ForumPosts.First(x => x.ForumPostID == forumPostID);
-            Account author = post.Account;
+            var post = db.ForumPosts.First(x => x.ForumPostID == forumPostID);
+            var author = post.Account;
 
-            int delta = existingVote.Vote;
+            var delta = existingVote.Vote;
             // reverse vote effects
             if (delta > 0)
             {
                 author.ForumTotalUpvotes = author.ForumTotalUpvotes - delta;
                 post.Upvotes = post.Upvotes - delta;
-            }
-            else if (delta < 0)
+            } else if (delta < 0)
             {
                 author.ForumTotalDownvotes = author.ForumTotalDownvotes + delta;
                 post.Downvotes = post.Downvotes + delta;
@@ -569,35 +531,41 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Thread", new { id = post.ForumThreadID, postID = forumPostID });
         }
 
-        public static int GetPostPage(ForumPost post)
-        {
+        public static int GetPostPage(ForumPost post) {
             if (post == null) return 0;
             var index = post.ForumThread.ForumPosts.Count(x => x.ForumPostID < post.ForumPostID);
-            return index / PageSize;
+            return index/PageSize;
         }
 
-        public ActionResult Search()
-        {
+        public ActionResult Search() {
             return View("Search");
         }
 
-        public ActionResult SubmitSearch(string keywords, string username, List<int> categoryIDs, bool firstPostOnly = false, bool resultsAsPosts = true)
-        {
-            if (String.IsNullOrEmpty(keywords) && String.IsNullOrEmpty(username)) return Content("You must enter keywords and/or username");
+        public ActionResult SubmitSearch(
+            string keywords,
+            string username,
+            List<int> categoryIDs,
+            bool firstPostOnly = false,
+            bool resultsAsPosts = true) {
+            if (string.IsNullOrEmpty(keywords) && string.IsNullOrEmpty(username)) return Content("You must enter keywords and/or username");
 
-            ZkDataContext db = new ZkDataContext();
+            var db = new ZkDataContext();
             if (categoryIDs == null) categoryIDs = new List<int>();
 
-            var posts = db.ForumPosts.Where(x => (String.IsNullOrEmpty(username) || x.Account.Name == username && !x.Account.IsDeleted)
-                && (categoryIDs.Count == 0 || categoryIDs.Contains((int)x.ForumThread.ForumCategoryID))
-                && (x.ForumThread.RestrictedClanID == null || x.ForumThread.RestrictedClanID == Global.ClanID)
-                ).OrderByDescending(x => x.Created).ToList();
+            var posts =
+                db.ForumPosts.Where(
+                    x =>
+                        (string.IsNullOrEmpty(username) || x.Account.Name == username && !x.Account.IsDeleted) &&
+                        (categoryIDs.Count == 0 || categoryIDs.Contains((int)x.ForumThread.ForumCategoryID)) &&
+                        (x.ForumThread.RestrictedClanID == null || x.ForumThread.RestrictedClanID == Global.ClanID))
+                    .OrderByDescending(x => x.Created)
+                    .ToList();
             if (firstPostOnly) posts = posts.Where(x => x.ForumThread.ForumPosts.First() == x).ToList();
             var invalidResults = new List<ForumPost>();
-            if (!String.IsNullOrEmpty(keywords))
+            if (!string.IsNullOrEmpty(keywords))
             {
-                string[] keywordArray = keywords.Split(null as string[], StringSplitOptions.RemoveEmptyEntries);
-                foreach (ForumPost p in posts)
+                var keywordArray = keywords.Split(null as string[], StringSplitOptions.RemoveEmptyEntries);
+                foreach (var p in posts)
                 {
                     /*  // use this for an OR search
                     bool success = false;
@@ -612,13 +580,7 @@ namespace ZeroKWeb.Controllers
                     if (!success) invalidResults.Add(p);
                     */
                     // AND search
-                    foreach (string word in keywordArray)
-                    {
-                        if (!p.Text.Contains(word))
-                        {
-                            invalidResults.Add(p);
-                        }
-                    }
+                    foreach (var word in keywordArray) if (!p.Text.Contains(word)) invalidResults.Add(p);
                 }
             }
             posts = posts.Where(x => !invalidResults.Contains(x)).ToList();
@@ -626,32 +588,77 @@ namespace ZeroKWeb.Controllers
         }
 
         /// <summary>
-        /// Marks all threads as read
+        ///     Marks all threads as read
         /// </summary>
         /// <param name="categoryID">The subforum category ID; will be applied to all subforums if null</param>
         /// <returns></returns>
-        /// <remarks>Unlike the normal system that tags a thread as read, this one sets a single date value for one or all subforums; a thread is read if its last post is older than this date</remarks>
+        /// <remarks>
+        ///     Unlike the normal system that tags a thread as read, this one sets a single date value for one or all
+        ///     subforums; a thread is read if its last post is older than this date
+        /// </remarks>
         [Auth]
-        public ActionResult MarkAllAsRead(int? categoryID)
-        {
-            ZkDataContext db = new ZkDataContext();
+        public ActionResult MarkAllAsRead(int? categoryID) {
+            var db = new ZkDataContext();
             if (categoryID != null)
             {
                 var lastRead = db.ForumLastReads.FirstOrDefault(x => x.AccountID == Global.AccountID && x.ForumCategoryID == categoryID);
-                if (lastRead == null) db.ForumLastReads.InsertOnSubmit(new ForumLastRead { AccountID = Global.AccountID, ForumCategoryID = (int)categoryID, LastRead = DateTime.UtcNow });
-                else lastRead.LastRead = DateTime.UtcNow;
-            }
-            else
+                if (lastRead == null)
+                {
+                    db.ForumLastReads.InsertOnSubmit(
+                        new ForumLastRead { AccountID = Global.AccountID, ForumCategoryID = (int)categoryID, LastRead = DateTime.UtcNow });
+                } else lastRead.LastRead = DateTime.UtcNow;
+            } else
             {
-                foreach (int categoryID2 in db.ForumCategories.Select(x => x.ForumCategoryID))
+                foreach (var categoryID2 in db.ForumCategories.Select(x => x.ForumCategoryID))
                 {
                     var lastRead = db.ForumLastReads.FirstOrDefault(x => x.AccountID == Global.AccountID && x.ForumCategoryID == categoryID2);
-                    if (lastRead == null) db.ForumLastReads.InsertOnSubmit(new ForumLastRead { AccountID = Global.AccountID, ForumCategoryID = categoryID2, LastRead = DateTime.UtcNow });
-                    else lastRead.LastRead = DateTime.UtcNow;
+                    if (lastRead == null)
+                    {
+                        db.ForumLastReads.InsertOnSubmit(
+                            new ForumLastRead { AccountID = Global.AccountID, ForumCategoryID = categoryID2, LastRead = DateTime.UtcNow });
+                    } else lastRead.LastRead = DateTime.UtcNow;
                 }
             }
             db.SubmitChanges();
-            return RedirectToAction("Index", new { categoryID = categoryID });
+            return RedirectToAction("Index", new { categoryID });
+        }
+
+        public class IndexResult
+        {
+            public IEnumerable<ForumCategory> Categories;
+            public ForumCategory CurrentCategory;
+            public IEnumerable<ForumCategory> Path;
+            public IQueryable<ForumThread> Threads;
+            public int? CategoryID { get; set; }
+            public string Search { get; set; }
+            public bool OnlyUnread { get; set; }
+            public string User { get; set; }
+        }
+
+        public class NewPostResult
+        {
+            public bool CanSetTopic;
+            public ForumCategory CurrentCategory;
+            public ForumThread CurrentThread;
+            public ForumPost EditedPost;
+            public IEnumerable<ForumPost> LastPosts;
+            public IEnumerable<ForumCategory> Path;
+        }
+
+        public class ThreadResult
+        {
+            public ForumThread CurrentThread;
+            public int GoToPost;
+            public int? Page;
+            public int PageCount;
+            public IEnumerable<ForumCategory> Path;
+            public List<ForumPost> Posts;
+        }
+
+        public class SearchResult
+        {
+            public bool DisplayAsPosts;
+            public List<ForumPost> Posts;
         }
     }
 }
