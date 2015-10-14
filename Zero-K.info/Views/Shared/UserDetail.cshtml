@@ -153,13 +153,11 @@
 
                 @if (Global.IsZeroKAdmin || (Model.AccountID == Global.AccountID))
                 {
-                    <div class="admin">
-                        <b>Elo (all):</b> @Math.Round(@Model.EffectiveElo)
-                        <b>Elo (1v1):</b> @Math.Round(@Model.Effective1v1Elo)
-                        <b>Elo (PW):</b> @Math.Round(@Model.EffectivePwElo)
-                        <br />
-                        <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)
-                    </div>
+                    <b>Elo (all):</b> @Math.Round(@Model.EffectiveElo)
+                    <b>Elo (1v1):</b> @Math.Round(@Model.Effective1v1Elo)
+                    <b>Elo (PW):</b> @Math.Round(@Model.EffectivePwElo)
+                    <br />
+                    <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)
                 }
 
                 @{ double ratio = (Model.Xp - Account.GetXpForLevel(Model.Level)) / (double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)); }
@@ -189,7 +187,7 @@
             }
 
         </div>
-    }
+                    }
 
 
     @if (Global.IsZeroKAdmin)
@@ -269,7 +267,7 @@
         if (Model.ForumPosts.Any())
         {
             <div id="usr_forumposts" class="fleft border">
-                <h3>@Html.ActionLink("Posted threads", "Index", "Forum", new {User=Global.Account?.Name}, null)</h3>
+                <h3>@Html.ActionLink("Posted threads", "Index", "Forum", new { User = Global.Account?.Name }, null)</h3>
                 <span>@Model.ForumPosts.Count() posts in @Model.ForumThreadsByLastPostAccountID.Count threads</span>
                 <br />
                 @foreach (ForumThread t in Model.ForumPosts.OrderByDescending(x => x.ForumPostID).Select(x => x.ForumThread).Where(x => x != null).Distinct().Take(10))

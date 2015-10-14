@@ -58,7 +58,7 @@
                     @Html.EditorFor(x => x.OnlyUnread)<span>only unread</span>
                 </label>
             }
-            &nbsp; user: @Html.TextBoxFor(x=>x.User)
+            &nbsp; player: @Html.TextBoxFor(x=>x.User)
             <button type="submit">Search</button><br/>
 
             @if (Model.CurrentCategory == null || !Model.CurrentCategory.IsLocked)
