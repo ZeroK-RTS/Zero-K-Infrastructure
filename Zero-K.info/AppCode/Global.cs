@@ -244,6 +244,7 @@ namespace ZeroKWeb
             var listener = new ZkServerTraceListener();
             Trace.Listeners.Add(listener);
 
+            ForumPostIndexer = new ForumPostIndexer();
             ZkServerRunner = new ServerRunner(mvcApplication.Server.MapPath("~"));
             Server = ZkServerRunner.ZkLobbyServer;
             ZkServerRunner.Run();
@@ -253,6 +254,8 @@ namespace ZeroKWeb
 
             if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running) PlanetWarsMatchMaker = new PlanetWarsMatchMaker(Server);
         }
+
+        public static ForumPostIndexer ForumPostIndexer { get; private set; }
 
         public static void StopApplication()
         {

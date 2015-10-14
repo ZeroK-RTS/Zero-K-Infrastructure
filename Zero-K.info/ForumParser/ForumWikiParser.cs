@@ -35,7 +35,7 @@ namespace ZeroKWeb.ForumParser
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        LinkedList<Tag> ParseToTags(string input) {
+        public LinkedList<Tag> ParseToTags(string input) {
             var candidates = new List<Tag>();
 
             context.Setup(input);
@@ -119,7 +119,7 @@ namespace ZeroKWeb.ForumParser
         /// </summary>
         /// <param name="input">parsed tags</param>
         /// <returns></returns>
-        static LinkedList<Tag> EliminateUnclosedTags(LinkedList<Tag> input) {
+        public static LinkedList<Tag> EliminateUnclosedTags(LinkedList<Tag> input) {
             var openedTagsStack = new Stack<Tag>();
             var toDel = new List<Tag>();
 

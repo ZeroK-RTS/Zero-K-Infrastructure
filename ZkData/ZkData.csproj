@@ -76,6 +76,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Ef\ForumPostWord.cs" />
+    <Compile Include="Ef\Word.cs" />
     <Compile Include="Ef\LobbyChatHistory.cs" />
     <Compile Include="Enums\DecorationIconPositions.cs" />
     <Compile Include="Enums\DecorationIconTypes.cs" />
@@ -145,6 +147,10 @@
     <Compile Include="Migrations\201510141216236_RequiredMissions.cs" />
     <Compile Include="Migrations\201510141216236_RequiredMissions.Designer.cs">
       <DependentUpon>201510141216236_RequiredMissions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201510141341531_Indexes.cs" />
+    <Compile Include="Migrations\201510141341531_Indexes.Designer.cs">
+      <DependentUpon>201510141341531_Indexes.cs</DependentUpon>
     </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
@@ -335,6 +341,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201510141216236_RequiredMissions.resx">
       <DependentUpon>201510141216236_RequiredMissions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201510141341531_Indexes.resx">
+      <DependentUpon>201510141341531_Indexes.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

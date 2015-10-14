@@ -82,6 +82,8 @@ namespace ZkData
         public virtual DbSet<MiscVar> MiscVars { get; set; }
         public virtual DbSet<LobbyChatHistory> LobbyChatHistories { get; set; }
         public virtual DbSet<LogEntry> LogEntries { get; set; }
+        public virtual DbSet<Word> IndexWords { get; set; }
+        public virtual DbSet<ForumPostWord> IndexForumPosts { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

@@ -122,6 +122,7 @@
   <ItemGroup>
     <Compile Include="AppCode\Auth.cs" />
     <Compile Include="AppCode\AuthServiceClient.cs" />
+    <Compile Include="AppCode\ForumPostIndexer.cs" />
     <Compile Include="AppCode\UniGrid\Col.cs" />
     <Compile Include="AppCode\UniGrid\HCol.cs" />
     <Compile Include="AppCode\ModStatsDb.designer.cs">
