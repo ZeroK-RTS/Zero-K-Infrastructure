@@ -118,12 +118,13 @@ function GlobalPageInit(root) {
 
     s.find(".js_datepicker").datepicker($.datepicker.regional["en"]);
 
+    // buttonification
     s.find(":submit").button();
     s.find(":button").button();
     s.find(".js_button").button();
     s.find(".js_accordion").accordion();
 
-
+    // busy loading indicator
     s.find("#busy").hide() // hide it initially
         .ajaxStart(function() {
             isBusy = true;
@@ -134,7 +135,7 @@ function GlobalPageInit(root) {
             $(this).hide();
         });
 
-
+    // selection for gird
     s.find(".js_selectrow").click(function() {
         var tr = $(this).closest("tr");
         if (tr.hasClass("row_selected"))
@@ -202,5 +203,7 @@ function GlobalPageInit(root) {
     }, function() {
         $(this).stop().animate({ height: $.data(this, "size").height, width: $.data(this, "size").width }, 600);
     });
+
+    $(".js_expand").toggler({speed:0});
 }
 

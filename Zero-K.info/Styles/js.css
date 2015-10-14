@@ -1,6 +1,5 @@
-﻿.js_table {
-}
-
+﻿
+/* on click asks for confirmation*/
 .js_confirm {
 }
 
@@ -23,9 +22,11 @@
 .js_tabs {
 }
 
-.js_simpletable {
+/* zooms image*/
+.js_zoom {
 }
 
-
-.js_zoom {
+/* expands element*/
+.js_expand {
+    
 }

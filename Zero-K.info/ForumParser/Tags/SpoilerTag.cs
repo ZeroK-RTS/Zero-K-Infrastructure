@@ -13,7 +13,7 @@ namespace ZeroKWeb.ForumParser
 
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
             context.AppendFormat(
-                "<small class=\"expand\"><a nicetitle-processed=\"Expand/Collapse\" style=\"display:block\" href=\"#\">[Spoiler]</a></small><div style=\"display: none;\" class=\"collapse\">");
+                "<small class=\"js_expand\"><a nicetitle-processed=\"Expand/Collapse\" style=\"display:block\" href=\"#\">[Spoiler]</a></small><div style=\"display: none;\" class=\"collapse\">");
             return self.Next;
         }
 

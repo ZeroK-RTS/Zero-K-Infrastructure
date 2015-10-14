@@ -9,11 +9,6 @@
     string bgStyle = "";
 }
 @section head {
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $("#tabs").tabs();
-        });
-    </script>
 }
 @Html.ActionLink("Back to clan list", "Index", "Clans")
 <div id="clanBlock">
@@ -95,7 +90,7 @@
 
 </div>
 
-<div id="tabs">
+<div class="js_tabs">
     <ul>
         <li><a href="#events"><span>Events</span></a></li>
     </ul>

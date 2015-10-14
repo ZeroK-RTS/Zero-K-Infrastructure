@@ -68,11 +68,6 @@
 }
 @section head {
 	<script type="text/javascript">
-		$(document).ready(function () {
-			$("#tabs").tabs();
-		});
-	</script>
-	<script type="text/javascript">
         window.onload = function () 
         {
             var paper = Raphael(document.getElementById("minimap"), @mapWidth, @mapHeight);
@@ -121,7 +116,7 @@
 	</script>
 }
 @Html.Partial("PlanetSummary", Model)
-<div id="tabs">
+<div class="js_tabs">
 	<ul>
 		<li><a href="#influence"><span>Influence</span></a></li>
 		<li><a href="#dropships"><span>Starships</span></a></li>

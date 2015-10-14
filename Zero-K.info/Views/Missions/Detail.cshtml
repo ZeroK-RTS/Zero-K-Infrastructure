@@ -2,11 +2,6 @@
 @using ZkData
 @using ZeroKWeb
 
-<script type="text/javascript">
-$(function() {
-    $("h3.expand").toggler({ speed: 0}); 
-});
-</script>
 
 @{
   var m = Model.Mission;
@@ -184,7 +179,7 @@ $(function() {
   {
     <br />
     <br />
-    <h3 class="expand">Story</h3>
+    <h3 class="js_expand">Story</h3>
     <div id="story" class="collapse width-90">
         @Html.BBCode(m.DescriptionStory)
     </div>
