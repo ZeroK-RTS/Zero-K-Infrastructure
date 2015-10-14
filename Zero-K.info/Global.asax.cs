@@ -107,6 +107,7 @@ namespace ZeroKWeb
         }
 
 
+
         static bool ValidateSiteAuthToken(Account acc, string token)
         {
             return acc.VerifyPassword(token);

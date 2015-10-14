@@ -37,6 +37,7 @@ namespace ZeroKWeb.ForumParser
         /// <returns></returns>
         public LinkedList<Tag> ParseToTags(string input) {
             var candidates = new List<Tag>();
+            if (string.IsNullOrEmpty(input)) return new LinkedList<Tag>();
 
             context.Setup(input);
 

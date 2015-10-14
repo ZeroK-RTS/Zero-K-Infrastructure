@@ -290,7 +290,10 @@ namespace Fixer
         [STAThread]
         static void Main(string[] args) {
             //var ret = new ForumWikiParser().ProcessToHtml("[B]bold[/b]", null);
-            //return;
+            //return
+            GlobalConst.Mode= ModeType.Test;
+            var indexer = new ForumPostIndexer();
+            indexer.IndexAll();
 
             return;
 

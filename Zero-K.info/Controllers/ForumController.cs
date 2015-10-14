@@ -112,7 +112,12 @@ namespace ZeroKWeb.Controllers
                     select t;
             }
 
-            if (!string.IsNullOrEmpty(model.Search)) threads = threads.Where(x => x.Title.Contains(model.Search) || x.WikiKey.Contains(model.Search));
+            if (!string.IsNullOrEmpty(model.Search))
+            {
+                var threadList =
+                    Global.ForumPostIndexer.FilterPosts(db.ForumPosts, model.Search).Select(x => x.ForumThreadID).Distinct().Take(1000).ToList();
+                threads = threads.Where(x => x.Title.Contains(model.Search) || x.WikiKey.Contains(model.Search) || threadList.Contains(x.ForumThreadID));
+            }
 
             model.Threads = threads.OrderByDescending(x => x.ForumCategoryID == model.CategoryID && x.IsPinned).ThenByDescending(x => x.LastPost);
 

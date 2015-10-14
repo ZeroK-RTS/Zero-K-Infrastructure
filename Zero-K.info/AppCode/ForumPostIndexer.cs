@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
@@ -14,17 +15,12 @@ namespace ZeroKWeb
         readonly ConcurrentDictionary<string, int> wordIDs = new ConcurrentDictionary<string, int>();
 
         public ForumPostIndexer() {
-            using (var db = new ZkDataContext())
-            {
-                if (!db.IndexWords.Any())
-                {
-                    foreach (var post in db.ForumPosts)
-                    {
-                        IndexPost(post);
-                    }
-                }
-            }
+            IndexAll();
             ZkDataContext.AfterEntityChange += ZkDataContextOnAfterEntityChange;
+        }
+
+        public void IndexAll() {
+            using (var db = new ZkDataContext()) foreach (var post in db.ForumPosts.Where(x => x.Text != "" && !x.ForumPostWords.Any())) IndexPost(post);
         }
 
         int GetWordID(string word) {
@@ -44,6 +40,20 @@ namespace ZeroKWeb
             }
         }
 
+        public IQueryable<ForumPost> FilterPosts(IQueryable<ForumPost> input, string term)
+        {
+            foreach (var id in SplitTermToWordIDs(term))
+            {
+                input = input.Where(x => x.ForumPostWords.Any(y => y.WordID == id));
+            }
+            return input;
+        }
+
+
+        public List<int> SplitTermToWordIDs(string term) {
+            return term.Split(' ', '\t', '\n').Select(SanitizeWord).Where(x => !string.IsNullOrEmpty(x)).Select(GetWordID).Distinct().ToList();
+        }
+
         void ZkDataContextOnAfterEntityChange(object sender, DbEntityEntry dbEntityEntry) {
             var post = dbEntityEntry.Entity as ForumPost;
             if (post != null && dbEntityEntry.State != EntityState.Deleted) IndexPost(post);
@@ -55,7 +65,11 @@ namespace ZeroKWeb
 
         public void IndexPost(ForumPost post) {
             var words =
-                ForumWikiParser.EliminateUnclosedTags(parser.ParseToTags(post.Text)).Where(x => x is LiteralTag && x.Text?.Length < 100).Select(x=>SanitizeWord(x.Text)).Where(x=>!string.IsNullOrEmpty(x)).ToList();
+                ForumWikiParser.EliminateUnclosedTags(parser.ParseToTags(post.Text))
+                    .Where(x => x is LiteralTag && x.Text?.Length < 100)
+                    .Select(x => SanitizeWord(x.Text))
+                    .Where(x => !string.IsNullOrEmpty(x))
+                    .ToList();
 
             using (var db = new ZkDataContext())
             {
