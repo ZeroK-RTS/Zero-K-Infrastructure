@@ -246,7 +246,7 @@ namespace ZeroKWeb.Controllers
 					Take(10);
 			}
 
-			return View(result);
+			return View("HomeIndex",result);
 		}
 
 

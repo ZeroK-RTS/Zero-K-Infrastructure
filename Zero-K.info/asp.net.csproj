@@ -1426,14 +1426,14 @@
     <Content Include="Views\Maps\MapTags.cshtml" />
     <Content Include="Views\Wiki\Index.cshtml" />
     <Content Include="Views\Static\Index.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\HomeIndex.cshtml" />
     <Content Include="Views\Forum\ForumIndex.cshtml" />
     <Content Include="Views\Forum\Thread.cshtml" />
     <Content Include="Views\Forum\NewPost.cshtml" />
     <Content Include="Views\Forum\ForumPath.cshtml" />
     <Content Include="Views\Shared\CommentList.cshtml" />
     <Content Include="Views\Shared\UserDetail.cshtml" />
-    <Content Include="Views\Battles\Detail.cshtml" />
+    <Content Include="Views\Battles\BattleDetail.cshtml" />
     <Content Include="Views\My\UnlockList.cshtml" />
     <Content Include="Views\Users\UserList.cshtml" />
     <Content Include="Views\Shared\UnlockedTechnologies.cshtml" />
@@ -1461,7 +1461,7 @@
     <Content Include="Views\Planetwars\Minimap.cshtml" />
     <Content Include="Views\Shared\InfluenceList.cshtml" />
     <Content Include="Views\Shared\MapInfoBox.cshtml" />
-    <Content Include="Views\Battles\Index.cshtml" />
+    <Content Include="Views\Battles\BattleIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\LobbyClient\LobbyClient.csproj">

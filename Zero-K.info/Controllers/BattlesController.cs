@@ -27,7 +27,7 @@ namespace ZeroKWeb.Controllers
             bat.ForumThread.UpdateLastRead(Global.AccountID, false);
             db.SubmitChanges();
           }
-          return View(bat);
+          return View("BattleDetail", bat);
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace ZeroKWeb.Controllers
             if (offset.HasValue)
                 return View("BattleTileList", result);
             else
-                return View(result);
+                return View("BattleIndex", result);
         }
 
         /// <summary>
