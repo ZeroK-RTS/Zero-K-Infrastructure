@@ -95,6 +95,7 @@ namespace ZkData
         public double Elo1v1Weight { get; set; }
         public double EloPw { get; set; }
         public bool IsBot { get; set; }
+        public bool CanPlayMultiplayer { get; set; } = true;
        
         [NotMapped]
         public string NewPasswordPlain {set {SetPasswordPlain(value);}}

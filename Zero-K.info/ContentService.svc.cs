@@ -190,8 +190,23 @@ namespace ZeroKWeb
                         scoreEntry.GameSeconds = gameSeconds;
                     }
                 }
+
                 acc.CheckLevelUp();
                 db.SubmitChanges();
+
+                if (!acc.CanPlayMultiplayer)
+                {
+                    if (
+                        db.Missions.Where(x => x.RequiredForMultiplayer)
+                            .All(y => y.MissionScores.Any(z => z.AccountID == acc.AccountID && z.Score != 0)))
+                    {
+                        acc.CanPlayMultiplayer = true;
+                        db.SaveChanges();
+                        Global.Server.PublishAccountUpdate(acc);
+                        Global.Server.GhostPm(acc.Name, "Congratulations! You are now authorized to play MultiPlayer games!");
+                    }
+                }
+
 
                 // ====================
                 // campaign stuff

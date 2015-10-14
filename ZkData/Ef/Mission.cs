@@ -105,6 +105,8 @@ namespace ZkData
         [DataMember]
         public int? DifficultyRatingPollID { get; set; }
 
+        public bool RequiredForMultiplayer { get; set; }
+
         public virtual Account Account { get; set; }
         public virtual ICollection<CampaignPlanet> CampaignPlanets { get; set; }
         public virtual ForumThread ForumThread { get; set; }
