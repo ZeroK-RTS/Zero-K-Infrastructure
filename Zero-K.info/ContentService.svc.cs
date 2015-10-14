@@ -167,7 +167,7 @@ namespace ZeroKWeb
 
                 var mission = db.Missions.Single(x => x.Name == missionName);
 
-                if (score != 0)
+                if (score != 0 || mission.RequiredForMultiplayer)
                 {
                     var scoreEntry = mission.MissionScores.FirstOrDefault(x => x.AccountID == acc.AccountID);
                     if (scoreEntry == null)
