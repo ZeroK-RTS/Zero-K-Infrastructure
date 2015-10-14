@@ -114,7 +114,7 @@ namespace ZeroKWeb.Controllers
 
             if (!string.IsNullOrEmpty(model.Search)) threads = threads.Where(x => x.Title.Contains(model.Search) || x.WikiKey.Contains(model.Search));
 
-            model.Threads = threads.OrderByDescending(x => x.IsPinned).ThenByDescending(x => x.LastPost);
+            model.Threads = threads.OrderByDescending(x => x.ForumCategoryID == model.CategoryID && x.IsPinned).ThenByDescending(x => x.LastPost);
 
             return View("ForumIndex", model);
         }
