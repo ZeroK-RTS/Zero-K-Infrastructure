@@ -135,8 +135,8 @@ namespace ZeroKWeb.SpringieInterface
 
                 sb.CalculateAllElo(noElo, isPlanetwars);
                 foreach (var u in sb.SpringBattlePlayers.Where(x => !x.IsSpectator)) u.Account.CheckLevelUp();
-                
-                db.SubmitAndMergeChanges();
+
+                db.SaveChanges();
 
                 try
                 {

@@ -79,6 +79,8 @@
     <Compile Include="Ef\LobbyChatHistory.cs" />
     <Compile Include="Enums\DecorationIconPositions.cs" />
     <Compile Include="Enums\DecorationIconTypes.cs" />
+    <Compile Include="IEntityAfterChange.cs" />
+    <Compile Include="IEntityBeforeChange.cs" />
     <Compile Include="LogEntry.cs" />
     <Compile Include="Migrations\201501132318070_UberServerSwap.cs" />
     <Compile Include="Migrations\201501132318070_UberServerSwap.Designer.cs">
