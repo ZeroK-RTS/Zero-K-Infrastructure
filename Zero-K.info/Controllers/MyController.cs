@@ -249,9 +249,9 @@ namespace ZeroKWeb.Controllers
                         var acc = db.Accounts.Find(Global.AccountID);
                         if (acc.Kudos < unlock.KudosCost) return Content("Not enough kudos to unlock this");
                         acc.KudosPurchases.Add(new KudosPurchase() {Time = DateTime.UtcNow, Unlock = unlock, Account = acc, KudosValue = unlock.KudosCost??0});
-                        db.SubmitAndMergeChanges();
+                        db.SaveChanges();
                         acc.Kudos = acc.KudosGained - acc.KudosSpent;
-                        db.SubmitAndMergeChanges();
+                        db.SaveChanges();
                     }
                     
                     var au = db.AccountUnlocks.SingleOrDefault(x => x.AccountID == Global.AccountID && x.UnlockID == id);
@@ -261,7 +261,7 @@ namespace ZeroKWeb.Controllers
                         db.AccountUnlocks.InsertOnSubmit(au);
                     }
                     else au.Count++;
-                    db.SubmitAndMergeChanges();
+                    db.SaveChanges();
                 }
                 scope.Complete();
             }

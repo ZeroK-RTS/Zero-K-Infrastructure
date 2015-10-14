@@ -74,7 +74,7 @@ namespace ZeroKWeb.Controllers
             BlockedCompany todel = db.BlockedCompanies.First(x => x.CompanyID == companyID);
             string name = todel.CompanyName;
             db.BlockedCompanies.DeleteOnSubmit(todel);
-            db.SubmitAndMergeChanges();
+            db.SaveChanges();
             var str = string.Format("{0} removed blocked VPN company: {1}", Global.Account.Name, name);
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str);
             return RedirectToAction("BlockedVPNs");
@@ -87,7 +87,7 @@ namespace ZeroKWeb.Controllers
             BlockedHost todel = db.BlockedHosts.First(x => x.HostID == hostID);
             string name = todel.HostName;
             db.BlockedHosts.DeleteOnSubmit(todel);
-            db.SubmitAndMergeChanges();
+            db.SaveChanges();
             var str = string.Format("{0} removed blocked VPN host: {1}", Global.Account.Name, name);
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str);
             return RedirectToAction("BlockedVPNs");

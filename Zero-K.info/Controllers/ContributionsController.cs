@@ -29,9 +29,9 @@ namespace ZeroKWeb.Controllers
             if (contrib.AccountByAccountID != null) return Content(string.Format("This contribution has been assigned to {0}, thank you.", contrib.AccountByAccountID.Name));
             var acc = db.Accounts.Find(Global.AccountID);
             contrib.AccountByAccountID = acc;
-            db.SubmitAndMergeChanges();
+            db.SaveChanges();
             acc.Kudos = acc.KudosGained - acc.KudosSpent;
-            db.SubmitAndMergeChanges();
+            db.SaveChanges();
 
             return Content(string.Format("Thank you!! {0} Kudos have been added to your account {1}", contrib.KudosValue, contrib.AccountByAccountID.Name));
         }
@@ -64,9 +64,9 @@ namespace ZeroKWeb.Controllers
                                   Email = email
                               };
                 db.Contributions.InsertOnSubmit(contrib);
-                db.SubmitAndMergeChanges();
+                db.SaveChanges();
                 acc.Kudos = acc.KudosGained - acc.KudosSpent;
-                db.SubmitAndMergeChanges();
+                db.SaveChanges();
             }
 
 

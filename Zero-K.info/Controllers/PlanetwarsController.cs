@@ -109,7 +109,7 @@ namespace ZeroKWeb.Controllers
                 db.Events.InsertOnSubmit(Global.CreateEvent(str, args.ToArray()));
             }
 
-            db.SubmitAndMergeChanges();
+            db.SaveChanges();
             SetPlanetOwners();
             return RedirectToAction("Planet", new { id = planetID });
         }
@@ -587,7 +587,7 @@ namespace ZeroKWeb.Controllers
                 }
                 ReturnPeacefulDropshipsHome(db, planet);
             }
-            db.SubmitAndMergeChanges();
+            db.SaveChanges();
         }
 
 
@@ -646,7 +646,7 @@ namespace ZeroKWeb.Controllers
                                                             role,
                                                             myAccount));
                 Global.Server.GhostPm(targetAccount.Name, string.Format("You were recalled from the function of {0} by {1}", role.Name, myAccount.Name));
-                db.SubmitAndMergeChanges();
+                db.SaveChanges();
                 return RedirectToAction("Detail", "Users", new { id = accountID });
             }
             else return Content("Cannot recall");
@@ -699,7 +699,7 @@ namespace ZeroKWeb.Controllers
                                                                 myAccount));
                 }
                 Global.Server.GhostPm(targetAccount.Name, string.Format("You were appointed for the function of {0} by {1}", role.Name, myAccount.Name));
-                db.SubmitAndMergeChanges();
+                db.SaveChanges();
                 return RedirectToAction("Detail", "Users", new { id = accountID });
             }
             else return Content("Cannot recall");
@@ -751,7 +751,7 @@ namespace ZeroKWeb.Controllers
             if (!acc.CanSetPriority(structure)) return Content("Cannot set priority");
             structure.EnergyPriority = priority;
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} changed energy priority of {1} on {2} to {3}", acc, structure.StructureType, planet, priority));
-            db.SubmitAndMergeChanges();
+            db.SaveChanges();
             return RedirectToAction("Planet", new { id = planet.PlanetID });
         }
 
@@ -774,7 +774,7 @@ namespace ZeroKWeb.Controllers
 
             if (structure.IsActive && !structure.StructureType.IsSingleUse) return ActivateTargetedStructure(planetID, structureTypeID);
 
-            db.SubmitAndMergeChanges();
+            db.SaveChanges();
             return RedirectToAction("Planet", new { id = planet.PlanetID });
         }
 
@@ -812,7 +812,7 @@ namespace ZeroKWeb.Controllers
                 db.PlanetStructures.DeleteOnSubmit(structure);
             }
 
-            db.SubmitAndMergeChanges();
+            db.SaveChanges();
             SetPlanetOwners(db);    //this is needed for the buster to update ownership after planet destruction
 
             if (ret != null) return ret;
@@ -836,7 +836,7 @@ namespace ZeroKWeb.Controllers
 
             db.Links.InsertOnSubmit(new Link { PlanetID1 = source.PlanetID, PlanetID2 = target.PlanetID, GalaxyID = source.GalaxyID });
             db.Events.InsertOnSubmit(Global.CreateEvent("A new link was created between {0} planet {1} and {2} planet {3} by the {4}", source.Faction, source, target.Faction, target, structure.StructureType));
-            db.SubmitAndMergeChanges();
+            db.SaveChanges();
             return null;
         }
 
@@ -875,13 +875,11 @@ namespace ZeroKWeb.Controllers
             }
 
             db.Events.InsertOnSubmit(Global.CreateEvent("A {4} fired from {0} {1} has destroyed {2} {3}!", source.Faction, source, target.Faction, target, structure.StructureType));
-            db.SubmitAndMergeChanges();
+            db.SaveChanges();
 
             var residue = db.StructureTypes.First(x => x.Name == "Residue"); // todo not nice use constant instead
             target.PlanetStructures.Add(new PlanetStructure() { StructureType = residue, IsActive = true, ActivatedOnTurn = null});
-            db.SubmitAndMergeChanges();
-
-
+            db.SaveChanges();
 
             return null;
         }
@@ -943,7 +941,7 @@ namespace ZeroKWeb.Controllers
                         source.Faction,
                         source));
             }
-            db.SubmitAndMergeChanges();
+            db.SaveChanges();
             return null;
         }
 

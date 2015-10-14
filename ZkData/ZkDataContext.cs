@@ -798,22 +798,6 @@ namespace ZkData
         public void SubmitAndMergeChanges()
         {
             SaveChanges();
-            // HACK reimplement this
-
-            /*            try
-                        {
-                            SubmitChanges(ConflictMode.ContinueOnConflict);
-                        }
-
-                        catch (ChangeConflictException)
-                        {
-                            // Automerge database values for members that client has modified
-                            ChangeConflicts.ResolveAll(RefreshMode.KeepChanges);
-
-                            // Submit succeeds on second try.
-                            SubmitChanges();
-                        }*/
-
         }
 
 

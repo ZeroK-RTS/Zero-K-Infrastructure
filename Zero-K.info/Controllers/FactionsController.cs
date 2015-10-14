@@ -64,7 +64,7 @@ namespace ZeroKWeb.Controllers
             {
                 Account acc2 = db2.Accounts.Single(x => x.AccountID == Global.AccountID);
                 acc2.FactionID = null;
-                db2.SubmitAndMergeChanges();
+                db2.SaveChanges();
 
                 PlanetwarsController.SetPlanetOwners(db2);
             }
@@ -156,14 +156,14 @@ namespace ZeroKWeb.Controllers
             if (delete != null) {
                 db.TreatyEffects.DeleteOnSubmit(db.TreatyEffects.Single(x=>x.TreatyEffectID == delete));
             }
-            db.SubmitAndMergeChanges();
+            db.SaveChanges();
 
             if (!string.IsNullOrEmpty(propose)) {
                 treaty.TreatyState = TreatyState.Proposed;
                 
                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} proposes a new treaty between {1} and {2} - {3}",treaty.AccountByProposingAccountID, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID, treaty));
 
-                db.SubmitAndMergeChanges();
+                db.SaveChanges();
                 return RedirectToAction("Detail", new { id = treaty.ProposingFactionID});
             }
 
@@ -179,9 +179,8 @@ namespace ZeroKWeb.Controllers
             if (treaty.CanCancel(acc)) {
                 treaty.TreatyState = TreatyState.Invalid;
                 db.Events.InsertOnSubmit(Global.CreateEvent("Treaty {0} between {1} and {2} cancelled by {3}", treaty, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID, acc));
-                db.SubmitAndMergeChanges();
+                db.SaveChanges();
 
-                
                 return RedirectToAction("Detail", new { id = Global.FactionID });
             }
             return Content("Cannot cancel");
@@ -199,8 +198,8 @@ namespace ZeroKWeb.Controllers
                 treaty.FactionByProposingFactionID = acc.Faction;
                 treaty.TreatyState = TreatyState.Invalid;
                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} modified treaty proposal {1} between {2} and {3}", acc, treaty, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID));
-                db.SubmitAndMergeChanges();
-               
+                db.SaveChanges();
+
                 return View("FactionTreatyDefinition", treaty);
 
             }
@@ -221,8 +220,7 @@ namespace ZeroKWeb.Controllers
                 treaty.AcceptedAccountID = acc.AccountID;
                 treaty.TreatyState = TreatyState.Accepted;
                 db.Events.InsertOnSubmit(Global.CreateEvent("Treaty {0} between {1} and {2} accepted by {3}", treaty, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID, acc));
-                db.SubmitAndMergeChanges();
-
+                db.SaveChanges();
 
                 return RedirectToAction("Detail", new { id = Global.FactionID });
             }
@@ -238,7 +236,7 @@ namespace ZeroKWeb.Controllers
             var fac = db.Factions.Single(x => x.FactionID == factionID);
             if (Global.Account.FactionID == fac.FactionID && Global.Account.HasFactionRight(x=>x.RightEditTexts)) {
                 fac.SecretTopic = secretTopic;
-                db.SubmitAndMergeChanges();
+                db.SaveChanges();
                 Global.Server.SetTopic(fac.Shortcut,secretTopic, Global.Account.Name);
                 return RedirectToAction("Detail", new { id = fac.FactionID });
             }

@@ -266,7 +266,7 @@ public static class PlanetWarsTurnHandler
             text.AppendLine(ev.PlainText);
         }
 
-        db.SubmitAndMergeChanges();
+        db.SaveChanges();
 
         gal.DecayInfluence();
         gal.SpreadInfluence();
@@ -303,7 +303,7 @@ public static class PlanetWarsTurnHandler
 
         int? oldOwner = planet.OwnerAccountID;
         gal.Turn++;
-        db.SubmitAndMergeChanges();
+        db.SaveChanges();
 
         db = new ZkDataContext(); // is this needed - attempt to fix setplanetownersbeing buggy
         PlanetwarsController.SetPlanetOwners(db, sb);
@@ -364,7 +364,7 @@ public static class PlanetWarsTurnHandler
             {
                 text.AppendLine("Map cycler - no maps found");
             }
-            db.SubmitAndMergeChanges();
+            db.SaveChanges();
         }
     }
 }
