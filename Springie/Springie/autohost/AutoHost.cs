@@ -599,7 +599,7 @@ namespace Springie.autohost
 
         public static void SayBattle(TasClient tas, Spring spring, string text, bool ingame) {
             tas.Say(SayPlace.Battle, "", text, true);
-            if (spring.IsRunning && ingame) spring.SayGame(text);
+            if (spring != null && spring.IsRunning && ingame) spring.SayGame(text);
         }
 
         public void SayBattlePrivate(string user, string text) {
