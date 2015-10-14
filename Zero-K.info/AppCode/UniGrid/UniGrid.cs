@@ -135,6 +135,8 @@ namespace ZeroKWeb
             }
         }
 
+        public bool RenderHeaders => Cols.Any(y => !string.IsNullOrEmpty(y.Description));
+
         public bool AllowCsvExport { get; set; }
 
         public IEnumerable<IUniGridCol> BaseCols

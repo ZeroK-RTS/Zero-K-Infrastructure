@@ -164,7 +164,7 @@ if (col.IsSelector)
 }
 @helper Pager(System.Web.Mvc.HtmlHelper Html, IUniGrid grid)
 {
-    <div class='@(grid.ID)_pager' style="margin: 4px">
+    <div class='@(grid.ID)_pager grid_pager'>
         @if (grid.PageCount > 1)
         {
             <a href="#" class="js-grid-first @(grid.PageNumber <= 1 ? "js-disabled" : "")" onclick="gridSetPage('@grid.ID', 1);return false;" style="height: 20px"></a>
@@ -189,7 +189,7 @@ if (col.IsSelector)
     <tr>
         @foreach (var col in grid.BaseCols.Where(x => x.AllowWeb))
         {
-            <th class="" style="width:@col.Width;">
+            <th style="width:@col.Width;">
                 @Column(grid, col)
             </th>
         }
@@ -200,7 +200,7 @@ if (col.IsSelector)
     @grid.RenderTableRows()
 }
 
-@helper RenderTable(System.Web.Mvc.HtmlHelper html, IUniGrid grid)
+@helper RenderTable(System.Web.Mvc.HtmlHelper html, IUniGrid grid, string cssClass = null)
 {
     grid.PrepareRenderData();
     if (grid.AllowCsvExport && grid.CsvRequested)
@@ -209,17 +209,19 @@ if (col.IsSelector)
     }
     else
     {
-        <div class="border" style="margin: 5px" id="@grid.ID">
-            <div class="" style="text-align: center">@grid.Title</div>
+        <div class="@(cssClass ?? "grid")" id="@grid.ID">
+            <div class="grid_title">@grid.Title</div>
             @GridJs(grid)
             @Pager(html, grid)
             @Hidden(html, grid)
 
-
-            <table style="width: 100%" class="grid">
-                <thead>
-                    @TableHeader(grid)
-                </thead>
+            <table class="grid_table">
+                @if (grid.RenderHeaders)
+                {
+                    <thead>
+                        @TableHeader(grid)
+                    </thead>
+                }
                 <tbody>
                     @TableData(grid)
                 </tbody>

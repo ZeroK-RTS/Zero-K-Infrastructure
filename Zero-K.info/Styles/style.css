@@ -544,15 +544,29 @@ span.button_2text
     border: 1px solid #ccc; padding: 5px;
 }
 
-tr.odd {
-    /*background-color: #cfe1e8;*/
+
+.grid {
+    margin: 10px;
+    padding: 5px;
+    border-style: solid;
+    border-radius: 15px;
+    border-image: url("/styles/dark-hive/images/tech_button.png") 24 fill / 15px stretch;
+    background: #333;
+    box-shadow: 0 0 3px 3px #000;
+    -moz-box-shadow: 0 0 3px 3px #000;
+    -webkit-box-shadow: 0 0 3px 3px #000;
+    margin: 5px;
+    
+}
+.grid_title {
+   text-align: center;
 }
 
-.grid tr.even {
-    /*background-color: #1e5050;
-    background-color: rgba(30,80,80,0.3);*/
+.grid_table {
+    width: 100%;    
 }
 
-.grid_wrapper {
-    background: none;
+.grid_pager {
+    margin: 4px;
 }
+
