@@ -290,33 +290,7 @@ namespace ZeroKWeb.Controllers
 			return Redirect(referer);
 		}
 
-        [OutputCache(Duration = 3600*24)]
-		public ActionResult Sitemap()
-		{
-			var sb = new StringBuilder();
-			var db = new ZkDataContext();
-
-			foreach (var x in db.Missions) sb.AppendLine(Url.Action("Detail", "Missions", new { id = x.MissionID }, "http"));
-
-			foreach (var x in db.Resources.Where(x=>x.TypeID == ResourceType.Map)) sb.AppendLine(Url.Action("Detail", "Maps", new { id = x.ResourceID }, "http"));
-
-			foreach (var x in db.ForumThreads) sb.AppendLine(Url.Action("Thread", "Forum", new { id = x.ForumThreadID }, "http"));
-
-            var wikiIndex = new WebClient().DownloadString("http://zero-k.googlecode.com/svn/wiki/");
-			var matches = Regex.Matches(wikiIndex, "\"([^\"]+)\"");
-			foreach (Match m in matches)
-			{
-				if (m.Groups[1].Value.EndsWith(".wiki"))
-				{
-					var name = m.Groups[1].Value;
-					name = name.Substring(0, name.Length - 5);
-
-					sb.AppendLine(Url.Action("Index", "Wiki", new { node = name }, "http"));
-				}
-			}
-
-			return Content(sb.ToString());
-		}
+  
 
 		string GetCommanderTooltip(int commanderID)
 		{
