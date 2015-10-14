@@ -221,7 +221,7 @@ namespace ZeroKWeb.SpringieInterface
                     (config.MinElo != null && p.account.EffectiveElo < config.MinElo) ||
                     (config.MaxElo != null && p.account.EffectiveElo > config.MaxElo) ||
                     (!p.account.CanPlayMultiplayer &&
-                     (config.AutohostMode == AutohostMode.Generic || config.AutohostMode == AutohostMode.Serious ||
+                     (config.AutohostMode == AutohostMode.Serious ||
                       config.AutohostMode == AutohostMode.Planetwars || config.AutohostMode == AutohostMode.Teams)))
                 {
                     SpecPlayerOnCondition(
