@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
+using System.Threading.Tasks;
 using ZeroKWeb.ForumParser;
 using ZkData;
 
@@ -15,7 +16,7 @@ namespace ZeroKWeb
         readonly ConcurrentDictionary<string, int> wordIDs = new ConcurrentDictionary<string, int>();
 
         public ForumPostIndexer() {
-            IndexAll();
+            Task.Factory.StartNew(IndexAll);
             ZkDataContext.AfterEntityChange += ZkDataContextOnAfterEntityChange;
         }
 
