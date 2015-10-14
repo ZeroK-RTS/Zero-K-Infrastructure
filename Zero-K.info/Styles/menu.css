@@ -6,6 +6,7 @@ div#menu a /*menu bar*/
 	display: block;
 	position: relative; /* tooltips use "absolute" position, so parent must not be static */
 	font-family: sm, sans-serif;
+	font-size: 14px;
 }
 
 div#menu a span {display:none;} /*menu text sayings*/
@@ -35,7 +36,7 @@ div#menu a:hover span
 
 ul.menu > li > a /* menu links */
 {
-	padding:10px;
+	padding:8px;
 	text-align: center; 
 }
 
