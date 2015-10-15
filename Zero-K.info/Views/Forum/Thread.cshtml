@@ -1,36 +1,18 @@
 ﻿@using ZeroKWeb
 @model ZeroKWeb.Controllers.ForumController.ThreadResult
-
-@{
-    var penalty = ZkData.Punishment.GetActivePunishment(Global.AccountID, "", 0, x => x.BanForum);
-}
-
 @{
     Page.Title = Model.CurrentThread.Title + " - forum thread";
 }
-@if (Model.GoToPost > 0)
-{
-    <script language="javascript" type="text/javascript">
-        $(document).ready(function () {
-            document.getElementById("post@(Model.GoToPost)").scrollIntoView();
-        });
-    </script>
-}
-@{Html.RenderPartial("ForumPath", Model.Path);}
+<span class="infoCell">
+    @{Html.RenderPartial("ForumPath", Model.Path);}
+</span>
 
 <h3>@Html.ActionLink(Model.CurrentThread.Title, "Thread", new { id = Model.CurrentThread.ForumThreadID })</h3>
 
 @if (!Model.CurrentThread.IsLocked)
 {
     <br />
-    if (penalty != null)
-    {
-        <h3 class="textbutton" nicetitle="@string.Format("Forum ban\nExpires: {0} UTC\nReason: {1}", penalty.BanExpires, penalty.Reason)" style="color: #666666">Post comment</h3>
-    }
-    else
-    {
-        <h3 class="textbutton">@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3>
-    }
+     <h3 class="textbutton">@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3>
     <br />
 }
 @if (Global.IsZeroKAdmin)
@@ -58,13 +40,15 @@
 @if (!Model.CurrentThread.IsLocked)
 {
     <br />
-    if (penalty != null)
-    {
-        <h3 class="textbutton" nicetitle="@string.Format("Forum ban\nExpires: {0} UTC\nReason: {1}", penalty.BanExpires, penalty.Reason)" style="color: #666666">Post comment</h3>
-    }
-    else
-    {
-        <h3 class="textbutton">@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3>
-    }
+    <h3 class="textbutton">@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3>
     <br />
+}
+
+@if (Model.GoToPost > 0)
+{
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            document.getElementById("post@(Model.GoToPost)").scrollIntoView();
+        });
+    </script>
 }
