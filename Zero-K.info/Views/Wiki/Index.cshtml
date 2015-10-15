@@ -1,21 +1,10 @@
 ﻿@model ZkData.ForumPost
 @{
-    Page.Title =  Model.ForumThread.Title + " wiki";
+    Page.Title =  Model.ForumThread.WikiKey;
     ViewBag.StaticBackground = true;
     ViewBag.OpaqueBody = true;
     
 }
 <h1>@Model.ForumThread.Title</h1>
-
 @Html.ActionLink("Edit this wiki entry", "Thread", "Forum", new { id = Model.ForumThreadID, postID = 0 }, null)<br/>
-
 @Html.BBCode(Model.Text)
-
-
-@if (Model.ForumThread.Title == "LobbyStart") {
-    <script type="text/javascript">
-        $(document).ready(function () {
-            _gaq.push(['_trackEvent', 'Lobby', 'First start']);
-        });
-    </script>
-}
