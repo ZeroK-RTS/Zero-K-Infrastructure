@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
@@ -41,12 +42,8 @@ namespace ZeroKWeb
             }
         }
 
-        public IQueryable<ForumPost> FilterPosts(IQueryable<ForumPost> input, string term)
-        {
-            foreach (var id in SplitTermToWordIDs(term))
-            {
-                input = input.Where(x => x.ForumPostWords.Any(y => y.WordID == id));
-            }
+        public IQueryable<ForumPost> FilterPosts(IQueryable<ForumPost> input, string term) {
+            foreach (var id in SplitTermToWordIDs(term)) input = input.Where(x => x.ForumPostWords.Any(y => y.WordID == id));
             return input;
         }
 

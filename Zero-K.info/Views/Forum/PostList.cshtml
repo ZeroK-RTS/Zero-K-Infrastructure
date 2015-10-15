@@ -55,12 +55,12 @@
                 {
                     <small class="js_expand">post score below threshold</small>    //FIXME: figure out a way to color it grey
                     <div class="collapse width-90">
-                        @Html.BBCode(p.Text)
+                        @Html.BBCodeCached(p)
                     </div>
                 }
                 else
                 {
-                    @Html.BBCode(p.Text)
+                    @Html.BBCodeCached(p)
                 }
                 @{
                 var divID = "ForumPostVoteForm" + p.ForumPostID;
