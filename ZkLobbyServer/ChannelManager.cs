@@ -51,8 +51,9 @@ namespace ZkLobbyServer
             clanChannels[clan.GetClanChannel()] = clan;
         }
         
-        public List<string> GetDefaultChannels(Account acc)
-        {
+        public List<string> GetDefaultChannels(Account acc) {
+            if (acc.IsBot) return new List<string>() { "bots" };
+
             var ret = new List<string>() { "zk", GlobalConst.ModeratorChannel, GlobalConst.Top20Channel };
             if (acc.Clan != null) ret.Add(acc.Clan.GetClanChannel());
             if (acc.Faction != null) ret.Add(acc.Faction.Shortcut);
