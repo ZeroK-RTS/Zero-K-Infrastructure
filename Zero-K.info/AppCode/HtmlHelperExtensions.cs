@@ -51,6 +51,12 @@ namespace System.Web.Mvc
             return Global.ForumPostCache.GetCachedHtml(post, helper);
         }
 
+        public static MvcHtmlString BBCodeCached(this HtmlHelper helper, News news)
+        {
+            return Global.ForumPostCache.GetCachedHtml(news, helper);
+        }
+
+
         /// <summary>
         /// Used for boolean dropdown selections on the site; e.g. map search filter
         /// </summary>
@@ -90,8 +96,8 @@ namespace System.Web.Mvc
 
         public static MvcHtmlString IncludeWiki(this HtmlHelper helper, string node) {
             var post = new ZkDataContext().ForumThreads.FirstOrDefault(x => x.WikiKey == node)?.ForumPosts.OrderBy(x => x.ForumPostID).FirstOrDefault();
-            if (post != null) return Global.ForumPostCache.GetCachedHtml(post, helper);
-            return null;
+            if (post == null) return null;
+            return Global.ForumPostCache.GetCachedHtml(post, helper);
         }
 
         /// <summary>
