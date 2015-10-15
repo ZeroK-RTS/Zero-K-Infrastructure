@@ -149,12 +149,9 @@ namespace ZeroKLobby.Notifications
                     RefreshTooltip();
 
 
-                    var alliance =
-                        Enumerable.Range(0, TasClient.MaxAlliances - 1)
-                                  .FirstOrDefault(allyTeam => !battle.Users.Values.Any(user => user.AllyNumber == allyTeam));
                     var team = battle.GetFreeTeamID(client.UserName);
 
-                    client.ChangeMyBattleStatus(desiredSpectatorState, HasAllResources() ? SyncStatuses.Synced : SyncStatuses.Unsynced, alliance, team);
+                    client.ChangeMyBattleStatus(desiredSpectatorState, HasAllResources() ? SyncStatuses.Synced : SyncStatuses.Unsynced, 0, team);
                 };
 
 
