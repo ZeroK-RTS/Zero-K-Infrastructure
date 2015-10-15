@@ -49,7 +49,10 @@
 </head>
 <body class="">
     <div id='busy' class="border">Loading...<img src='/img/Loader.gif' class="vcenter" /></div>
-
+    @if (ViewBag.Error != null)
+    {
+        <h3 style="color:red">@ViewBag.Error</h3>
+    }
     @if (ViewBag.Minimal == null && !Global.IsLobbyAccess)
     {
         <div id="fadetoblack">

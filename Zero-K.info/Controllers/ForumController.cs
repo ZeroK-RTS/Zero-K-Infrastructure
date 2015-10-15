@@ -198,6 +198,7 @@ namespace ZeroKWeb.Controllers
             int? planetID,
             string text,
             string title,
+            string wikiKey,
             int? forumPostID) {
             if (threadID == null && missionID == null && resourceID == null && springBattleID == null && clanID == null && planetID == null &&
                 forumPostID == null && string.IsNullOrWhiteSpace(title)) return Content("Cannot post new thread with blank title");
@@ -215,6 +216,8 @@ namespace ZeroKWeb.Controllers
             using (var scope = new TransactionScope())
             {
                 var thread = db.ForumThreads.SingleOrDefault(x => x.ForumThreadID == threadID);
+                var category = thread?.ForumCategory;
+                if (category == null && categoryID != null) category = db.ForumCategories.FirstOrDefault(x => x.ForumCategoryID == categoryID);
                 string currentTitle = null;
 
                 // update title
@@ -313,6 +316,32 @@ namespace ZeroKWeb.Controllers
                     db.ForumThreads.InsertOnSubmit(thread);
                 }
 
+                if (thread == null && category?.ForumMode == ForumMode.Wiki) 
+                {
+                    if (string.IsNullOrEmpty(wikiKey) || !Account.IsValidLobbyName(wikiKey))
+                    {
+                        ViewBag.Error = "You need to set a valid wiki key";
+                        return RedirectToAction("Index","Wiki",new {node=wikiKey});
+                    }
+                    if (db.ForumThreads.Any(y => y.WikiKey == wikiKey))
+                    {
+                        ViewBag.Error = "This wiki key already exists";
+                        return RedirectToAction("Index", "Wiki", new { node = wikiKey });
+                    }
+
+                    thread = new ForumThread
+                    {
+                        Title = title,
+                        CreatedAccountID = Global.AccountID,
+                        LastPostAccountID = Global.AccountID,
+                        ForumCategory = category,
+                        WikiKey = wikiKey
+                    };
+                    
+                    db.ForumThreads.InsertOnSubmit(thread);
+                }
+
+
                 if (thread == null) return Content("Thread not found");
                 if (thread.IsLocked) return Content("Thread is locked");
 
@@ -325,7 +354,7 @@ namespace ZeroKWeb.Controllers
                     if (forumPostID != null)
                     {
                         var post = thread.ForumPosts.Single(x => x.ForumPostID == forumPostID);
-                        if (post.AuthorAccountID != Global.AccountID && !Global.Account.IsZeroKAdmin) throw new ApplicationException("Not authorized to edit the post");
+                        if (!(post.AuthorAccountID == Global.AccountID || Global.Account.IsZeroKAdmin || (thread.ForumCategory?.ForumMode == ForumMode.Wiki && Global.Account.CanEditWiki()))) throw new ApplicationException("Not authorized to edit the post");
                         post.ForumPostEdits.Add(
                             new ForumPostEdit
                             {
@@ -347,12 +376,14 @@ namespace ZeroKWeb.Controllers
                 var lastPage = ((thread.PostCount - 1)/PageSize);
                 scope.Complete();
 
+                
                 if (missionID.HasValue) return RedirectToAction("Detail", "Missions", new { id = missionID });
                 if (resourceID.HasValue) return RedirectToAction("Detail", "Maps", new { id = resourceID });
                 if (springBattleID.HasValue) return RedirectToAction("Detail", "Battles", new { id = springBattleID });
                 if (clanID.HasValue) return RedirectToAction("Detail", "Clans", new { id = clanID });
                 if (planetID.HasValue) return RedirectToAction("Planet", "Planetwars", new { id = planetID });
                 if (forumPostID.HasValue) return RedirectToAction("Thread", new { id = thread.ForumThreadID, postID = forumPostID });
+                if (!string.IsNullOrEmpty(wikiKey)) return RedirectToAction("Index","Wiki",new {node=wikiKey});
                 return RedirectToAction("Thread", new { id = thread.ForumThreadID, page = lastPage });
             }
         }
@@ -401,6 +432,7 @@ namespace ZeroKWeb.Controllers
                 if (cat.ForumMode == ForumMode.SpringBattles) return RedirectToAction("Detail", "Battles", new { id = t.SpringBattles.First().SpringBattleID });
                 if (cat.ForumMode == ForumMode.Clans) return RedirectToAction("Detail", "Clans", new { id = t.RestrictedClanID });
                 if (cat.ForumMode == ForumMode.Planets) return RedirectToAction("Planet", "Planetwars", new { id = t.Planets.First().PlanetID });
+                if (cat.ForumMode == ForumMode.Wiki) return RedirectToAction("Index", "Wiki", new { node = t.WikiKey });
             }
 
             var res = new ThreadResult();

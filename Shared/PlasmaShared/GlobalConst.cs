@@ -23,7 +23,7 @@ namespace ZkData
             get { return mode; }
             set { SetMode(value);}
         }
-
+        
         static GlobalConst()
         {
             #if LIVE
@@ -217,12 +217,16 @@ namespace ZkData
         public const int LobbyProtocolPingInterval = 30;
         public const int LobbyProtocolPingTimeout = 60;
 
+        public const int WikiEditLevel = 20;
+
         public static string ResourceBaseUrl;
         public static string SelfUpdaterBaseUrl;
         public static readonly string[] DefaultDownloadMirrors = {};
         public static readonly string EngineDownloadPath = "http://springrts.com/dl/";
         public static string LobbyServerHost;
         public static int LobbyServerPort;
+
+
 
         public static bool IsZkMod(string name)
         {

@@ -582,6 +582,7 @@ namespace ZkData
 
         [NotMapped]
         public IIdentity Identity { get { return this; } }
+        public bool CanEditWiki() => Level >= GlobalConst.WikiEditLevel;
 
         public int GetEffectiveSpringieLevel()
         {
