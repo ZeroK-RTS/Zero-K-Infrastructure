@@ -152,6 +152,7 @@ namespace ZkData.Migrations
 
             var genId = db.ForumCategories.First(x => x.Title == "General discussion").ForumCategoryID;
             var pwId = db.ForumCategories.First(x => x.Title == "PlanetWars").ForumCategoryID;
+            var wikiId = db.ForumCategories.First(x => x.Title == "Wiki").ForumCategoryID;
 
             db.ForumCategories.AddOrUpdate(
                 x => x.Title,
@@ -165,6 +166,16 @@ namespace ZkData.Migrations
                 x => x.Title,
                 new ForumCategory { Title = "Planets", ForumMode = ForumMode.Planets, IsLocked = true, SortOrder = 1, ParentForumCategoryID = pwId },
                 new ForumCategory { Title = "Clans", ForumMode = ForumMode.Clans, SortOrder = 2, IsLocked = true, ParentForumCategoryID = pwId });
+
+            db.ForumCategories.AddOrUpdate(
+                x => x.Title,
+                new ForumCategory { Title = "Manual", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 1, ParentForumCategoryID = wikiId },
+                new ForumCategory { Title = "Tutorials", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 2, ParentForumCategoryID = wikiId },
+                new ForumCategory { Title = "DeveloperGuide", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 3, ParentForumCategoryID = wikiId },
+                new ForumCategory { Title = "MissionEditor", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 4, ParentForumCategoryID = wikiId },
+                new ForumCategory { Title = "Notes", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 5, ParentForumCategoryID = wikiId },
+                new ForumCategory { Title = "Site", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 6, ParentForumCategoryID = wikiId });
+
 
             db.SaveChanges();
 
