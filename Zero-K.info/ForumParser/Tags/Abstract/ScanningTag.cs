@@ -1,13 +1,14 @@
-﻿namespace ZeroKWeb.ForumParser
+﻿using System.Text;
+
+namespace ZeroKWeb.ForumParser
 {
     public abstract class ScanningTag: Tag
     {
-        protected int pos;
         public abstract string Match { get; }
 
-        public override bool? ScanLetter(char letter) {
-            if (char.ToLower(Match[pos++]) != char.ToLower(letter)) return false;
-            if (pos == Match.Length) return true;
+        public override bool? AcceptsLetter(ParseContext context, char letter) {
+            if (Match[context.MatchedString.Length-1] != context.CurrentCharLowerCase) return false;
+            if (context.MatchedString.Length == Match.Length) return true;
             return null;
         }
     }

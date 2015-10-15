@@ -70,6 +70,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="AuthTools.cs" />
+    <Compile Include="BattleRect.cs" />
     <Compile Include="ChangeEventArgs.cs" />
     <Compile Include="DbCloner.cs" />
     <Compile Include="Diagrams\Diagram.cs" />

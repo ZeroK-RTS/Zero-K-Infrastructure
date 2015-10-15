@@ -9,8 +9,8 @@ namespace ZeroKWeb.ForumParser
         public override string Match { get; } = "[i]";
 
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.Append("<em>");
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.Append("<em>");
             return self.Next;
         }
 
@@ -19,12 +19,12 @@ namespace ZeroKWeb.ForumParser
         }
     }
 
-    public class ITagClose: ScanningTag
+    public class ITagClose: ClosingTag
     {
         public override string Match { get; } = "[/i]";
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.Append("</em>");
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.Append("</em>");
             return self.Next;
         }
 

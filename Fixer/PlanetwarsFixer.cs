@@ -27,7 +27,7 @@ namespace Fixer
         {
             var db = new ZkDataContext();
             db.StructureTypes.DeleteAllOnSubmit(db.StructureTypes.Where(x => x.Unlock != null));
-            db.SubmitAndMergeChanges();
+            db.SaveChanges();
 
             foreach (var u in db.Unlocks.Where(x => x.UnlockType == UnlockTypes.Unit))
             {
@@ -49,8 +49,7 @@ namespace Fixer
                 };
                 db.StructureTypes.InsertOnSubmit(s);
             }
-            db.SubmitAndMergeChanges();
-
+            db.SaveChanges();
         }
 
         public static void PurgeGalaxy(int galaxyID, bool resetclans = false, bool resetroles = false)
@@ -90,12 +89,12 @@ namespace Fixer
                 db.Database.ExecuteSqlCommand("delete from factiontreaties");
                 db.Database.ExecuteSqlCommand("delete from treatyeffects");
 
-                db.Database.ExecuteSqlCommand("delete from forumthreads where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsPlanets).ForumCategoryID);
+                db.Database.ExecuteSqlCommand("delete from forumthreads where forumcategoryid={0}", db.ForumCategories.Single(x => x.ForumMode ==ForumMode.Planets).ForumCategoryID);
 
                 if (resetclans)
                 {
                     db.Database.ExecuteSqlCommand("delete from clans");
-                    db.Database.ExecuteSqlCommand("delete from forumthreads where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsClans).ForumCategoryID);
+                    db.Database.ExecuteSqlCommand("delete from forumthreads where forumcategoryid={0}", db.ForumCategories.Single(x => x.ForumMode==ForumMode.Clans).ForumCategoryID);
                 }
             }
         }
@@ -241,9 +240,7 @@ namespace Fixer
                     planet.Faction = faction;
                 }
 
-                db.SubmitAndMergeChanges();
-                
-
+                db.SaveChanges();
 
                 /*foreach (Account acc in db.Accounts)
                 {

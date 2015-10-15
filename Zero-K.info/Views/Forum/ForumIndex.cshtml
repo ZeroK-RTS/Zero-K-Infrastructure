@@ -1,0 +1,84 @@
+﻿@using ZeroKWeb
+@using ZkData
+@model ZeroKWeb.Controllers.ForumController.IndexResult
+@{
+    Page.Title = "Forum " + string.Join(" > ", Model.Path.Select(x => x.Title));
+
+    var grid = new UniGrid<ForumThread>(Model.Threads);
+    grid.AddCol("", StickyMark).SetSort(x => x.IsPinned).SetWidth("25px");
+    grid.AddCol("Title", x => Html.Print(x)).SetSort(x => x.Title);
+    if (Model.CurrentCategory?.ForumMode == ForumMode.Wiki)
+    {
+        grid.AddCol("Wiki", x => x.WikiKey).SetSort(x => x.WikiKey).SetWidth("150px");
+    }
+    grid.AddCol("Author", x => Html.PrintAccount(x.AccountByCreatedAccountID)).SetSort(x => x.AccountByCreatedAccountID.Name).SetWidth("200px");
+    grid.AddCol("Posts", x => x.PostCount).SetSort(x => x.PostCount).SetWidth("70px");
+    grid.AddCol("Last", x => x.LastPost.ToAgoString()).SetWidth("150px").SetSort(x => x.LastPost);
+}
+
+@helper StickyMark(ForumThread t) {
+    if (t.IsLocked && t.IsPinned)
+    {
+        <img src="~/img/stickylock.png" class="icon16"/>
+    } else if (t.IsLocked)
+    {
+        <img src="~/img/lock.png" class="icon16"/>
+    } else if (t.IsPinned)
+    {
+        <img src="~/img/sticky.png" class="icon16"/>
+    }
+}
+
+<div id="page">
+    @using (Ajax.BeginForm("Index", Global.GetAjaxOptions("page")))
+    {
+        @Html.HiddenFor(x => x.CategoryID)
+        <div class="infoCell">
+            @Html.Partial("ForumPath", Model.Path)
+
+            <span>
+                @foreach (var cat in Model.Categories)
+                {
+                    <span>
+                        <b>@Html.ActionLink(cat.Title, "Index", new { categoryID = cat.ForumCategoryID })</b>
+                        &nbsp; &nbsp;
+                    </span>
+                }
+            </span>
+        </div>
+
+        <br/>
+        <br/>
+
+        <div>
+            &nbsp;Filter: @Html.EditorFor(x => x.Search)
+            @if (Global.IsAccountAuthorized)
+            {
+                <label>
+                    @Html.EditorFor(x => x.OnlyUnread)<span>only unread</span>
+                </label>
+            }
+            &nbsp; player: @Html.TextBoxFor(x=>x.User)
+            <button type="submit">Search</button><br/>
+
+            @if (Model.CurrentCategory == null || !Model.CurrentCategory.IsLocked)
+            {
+                <span class="textbutton" id="@grid.PagerPrefixID">
+                    @Html.ActionLink("Post new topic", "NewPost", new { categoryID = Model.CurrentCategory?.ForumCategoryID })
+                </span>
+            }
+            
+            @if (Global.Account != null && Model.Threads.Any())
+            {
+                <span class="textbutton" style="float: right;" id="@grid.PagerSuffixID">@Html.ActionLink("Mark all as read", "MarkAllAsRead", new { categoryID = Model.CurrentCategory?.ForumCategoryID })</span>
+            }
+        </div>
+
+        if (Model.Threads.Any())
+        {
+            <div>
+                @GridHelpers.RenderTable(Html, grid)
+            </div>
+        }
+    }
+</div>

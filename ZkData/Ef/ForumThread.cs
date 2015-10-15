@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
 namespace ZkData
@@ -21,13 +22,18 @@ namespace ZkData
             Resources = new HashSet<Resource>();
             SpringBattles = new HashSet<SpringBattle>();
             ForumPosts = new HashSet<ForumPost>();
-            
         }
 
         public int ForumThreadID { get; set; }
         [Required]
         [StringLength(300)]
+        [Index]
         public string Title { get; set; }
+
+        [Index]
+        [MaxLength(100)]
+        public string WikiKey { get; set; }
+
         public DateTime Created { get; set; }
         public int? CreatedAccountID { get; set; }
         public DateTime? LastPost { get; set; }

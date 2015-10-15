@@ -16,7 +16,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using PlasmaShared;
 using Encoder = System.Drawing.Imaging.Encoder;
 
 #endregion
@@ -223,7 +222,7 @@ namespace ZkData
             }
         }
 
-        public static Bitmap GetResized(this Image original, int newWidth, int newHeight, InterpolationMode mode =  InterpolationMode.HighQualityBicubic)
+        public static Bitmap GetResized(this Image original, int newWidth, int newHeight, InterpolationMode mode)
         {
             var resized = new Bitmap(newWidth, newHeight);
             using (var g = Graphics.FromImage(resized))
@@ -232,11 +231,6 @@ namespace ZkData
                 g.DrawImage(original, 0, 0, newWidth, newHeight);
             }
             return resized;
-        }
-
-        public static Image GetResizedWithCache(this Image original, int newWidth, int newHeight, InterpolationMode mode = InterpolationMode.HighQualityBicubic)
-        {
-            return ResizedImageCache.Instance.GetResizedWithCache(original, newWidth, newHeight, mode);
         }
 
 
@@ -670,57 +664,6 @@ namespace ZkData
         {
             var da = (DescriptionAttribute[])(e.GetType().GetField(e.ToString()).GetCustomAttributes(typeof(DescriptionAttribute), false));
             return da.Length > 0 ? da[0].Description : e.ToString();
-        }
-
-        public static bool IsValidLobbyName(string name)
-        {
-            if (string.IsNullOrEmpty(name)) return false;
-            foreach (var c in name) {
-                if (c >= 'a' && c<='z') continue;
-                if (c >= 'A' && c<='Z') continue;
-                if (c >= '0' && c<='9') continue;
-                if (c == '_') continue;
-                if (c == '[' || c == ']') continue;
-                return false;
-            }
-            return true;
-        }
-
-
-        public static async Task<T> WithCancellation<T>(this Task<T> task, CancellationToken cancellationToken)
-        {
-            var tcs = new TaskCompletionSource<bool>();
-            using (cancellationToken.Register(s => ((TaskCompletionSource<bool>)s).TrySetResult(true), tcs))
-            {
-                if (task != await Task.WhenAny(task, tcs.Task))
-                {
-                    throw new OperationCanceledException(cancellationToken);
-                }
-            }
-            return task.Result;
-        }
-
-        public static async Task WithCancellation(this Task task, CancellationToken cancellationToken)
-        {
-            var tcs = new TaskCompletionSource<bool>();
-            using (cancellationToken.Register(s => ((TaskCompletionSource<bool>)s).TrySetResult(true), tcs))
-            {
-                if (task != await Task.WhenAny(task, tcs.Task))
-                {
-                    throw new OperationCanceledException(cancellationToken);
-                }
-            }
-        }
-
-
-        public static async Task<T> TimeoutAfter<T>(this Task<T> task, TimeSpan timeout)
-        {
-            if (task != await Task.WhenAny(task, Task.Delay(timeout)))
-            {
-                throw new TimeoutException();
-            }
-
-            return task.Result; // Task is guaranteed completed (WhenAny), so this won't block
         }
 
 

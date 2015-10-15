@@ -364,12 +364,17 @@ namespace ZeroKLobby
             catch (Exception ex)
             {
                 ErrorHandling.HandleException(ex, true);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             finally
             {
                 ShutDown();
             }
-            if (ErrorHandling.HasFatalException && !Program.CloseOnNext) Application.Restart();
+            if (ErrorHandling.HasFatalException && !Program.CloseOnNext)
+            {
+                if (Debugger.IsAttached) Debugger.Break();
+                Application.Restart();
+            }
         }
 
        
@@ -433,6 +438,7 @@ namespace ZeroKLobby
             try
             {
                 ErrorHandling.HandleException(e.Exception, true);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             catch { }
         }
@@ -442,6 +448,7 @@ namespace ZeroKLobby
             try
             {
                 ErrorHandling.HandleException((Exception)e.ExceptionObject, e.IsTerminating);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             catch { }
         }
@@ -452,6 +459,7 @@ namespace ZeroKLobby
             try
             {
                 ErrorHandling.HandleException((Exception)e.ExceptionObject, e.IsTerminating);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             catch { }
         }

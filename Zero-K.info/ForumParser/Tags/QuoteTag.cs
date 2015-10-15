@@ -12,27 +12,25 @@ namespace ZeroKWeb.ForumParser
         public override string Match { get; } = "[q]";
 
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.Append(
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.Append(
                 "<table border=\"0\" cellpadding=\"6\" cellspacing=\"0\" width=\"100%\"><tbody><tr><td style=\"border: 1px inset;\"><em>quote:<br/>");
             return self.Next;
         }
 
-        public override Tag Create() {
-            return new QTagOpen();
-        }
+        public override Tag Create() => new QTagOpen();
     }
 
     /// <summary>
     /// [/q]
     /// </summary>
-    public class QTagClose : ScanningTag
+    public class QTagClose : ClosingTag
     {
         public override string Match { get; } = "[/q]";
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html)
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self)
         {
-            sb.Append("</em></td></tr></tbody></table>");
+            context.Append("</em></td></tr></tbody></table>");
             return self.Next;
         }
 
@@ -48,8 +46,8 @@ namespace ZeroKWeb.ForumParser
     public class QuoteTagOpen:OpeningTag<QuoteTagClose>
     {
         public override string Match { get; } = "[quote]";
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            return new QTagOpen().Translate(sb, self, html);
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            return new QTagOpen().Translate(context, self);
         }
 
         public override Tag Create() => new QuoteTagOpen();
@@ -58,12 +56,12 @@ namespace ZeroKWeb.ForumParser
     /// <summary>
     /// [/quote] alias for [/q] tag
     /// </summary>
-    public class QuoteTagClose : ScanningTag
+    public class QuoteTagClose : ClosingTag
     {
         public override string Match { get; } = "[/quote]";
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            return new QTagClose().Translate(sb, self, html);
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            return new QTagClose().Translate(context, self);
         }
 
         public override Tag Create() => new QuoteTagClose();

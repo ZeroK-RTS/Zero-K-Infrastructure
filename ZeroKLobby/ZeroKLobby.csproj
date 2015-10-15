@@ -130,6 +130,7 @@
     <Compile Include="Controls\MinimapFuncBox.Designer.cs">
       <DependentUpon>MinimapFuncBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="ExtendedWebBrowser.cs" />
     <Compile Include="Controls\RightPanel.cs">
       <SubType>Component</SubType>
     </Compile>

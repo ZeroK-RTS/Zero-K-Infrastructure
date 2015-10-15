@@ -51,8 +51,9 @@ namespace ZkLobbyServer
             clanChannels[clan.GetClanChannel()] = clan;
         }
         
-        public List<string> GetDefaultChannels(Account acc)
-        {
+        public List<string> GetDefaultChannels(Account acc) {
+            if (acc.IsBot) return new List<string>() { "bots" };
+
             var ret = new List<string>() { "zk", GlobalConst.ModeratorChannel, GlobalConst.Top20Channel };
             if (acc.Clan != null) ret.Add(acc.Clan.GetClanChannel());
             if (acc.Faction != null) ret.Add(acc.Faction.Shortcut);
@@ -71,15 +72,15 @@ namespace ZkLobbyServer
 
         public void Refresh(int count = 20)
         {
-            var lastMonth = DateTime.UtcNow.AddMonths(-1);
+            var ladderTimeout = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
             using (var db = new ZkDataContext()) {
                 topTeam =
-                    db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > lastMonth))
+                    db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout))
                         .OrderByDescending(x => x.Elo)
                         .Take(count)
                         .ToList();
                 top1v1 =
-                    db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > lastMonth))
+                    db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout))
                         .OrderByDescending(x => x.Elo1v1)
                         .Take(count)
                         .ToList();

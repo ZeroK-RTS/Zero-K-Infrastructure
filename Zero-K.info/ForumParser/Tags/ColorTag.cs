@@ -11,16 +11,16 @@ namespace ZeroKWeb.ForumParser
         public override string Match { get; } = "[color=";
         public override char MatchTerminator { get; } = ']';
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.AppendFormat("<font color=\"{0}\">", args);
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.AppendFormat("<font color=\"{0}\">", arguments);
             return self.Next;
         }
 
-        protected override bool ValidateArgs() {
+        protected override bool ValidateArgs(ParseContext context, string args) {
             if (args.Length == 0) return false;
             try
             {
-                ColorTranslator.FromHtml(args.ToString());
+                ColorTranslator.FromHtml(args);
                 return true;
             }
             catch
@@ -32,12 +32,12 @@ namespace ZeroKWeb.ForumParser
         public override Tag Create() => new ColorOpenTag();
     }
 
-    public class ColorCloseTag: ScanningTag
+    public class ColorCloseTag: ClosingTag
     {
         public override string Match { get; } = "[/color]";
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.Append("</font>");
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.Append("</font>");
             return self.Next;
         }
 

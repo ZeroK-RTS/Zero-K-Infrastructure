@@ -391,7 +391,7 @@ namespace ZeroKWeb
 
             gal.AttackerSideCounter = AttackerSideCounter;
             gal.AttackerSideChangeTime = AttackerSideChangeTime;
-            db.SubmitAndMergeChanges();
+            db.SaveChanges();
         }
 
 

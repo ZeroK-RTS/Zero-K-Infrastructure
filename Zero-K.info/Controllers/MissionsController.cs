@@ -48,7 +48,7 @@ namespace ZeroKWeb.Controllers
                         new MissionDetailData
                         {
                             Mission = mission,
-                            TopScores = mission.MissionScores.OrderByDescending(x => x.Score).AsQueryable(),
+                            TopScores = mission.MissionScores.Where(x=> x.Score > 0).OrderByDescending(x => x.Score).AsQueryable(),
                             MyRating = mission.Ratings.SingleOrDefault(x => x.AccountID == Global.AccountID) ?? new Rating(),
                         });
         }

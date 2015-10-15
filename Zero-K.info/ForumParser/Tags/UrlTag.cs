@@ -12,22 +12,22 @@ namespace ZeroKWeb.ForumParser
         public override string Match { get; } = "[url=";
         public override char MatchTerminator { get; } = ']';
 
-        protected override bool ValidateArgs() => ForumWikiParser.IsValidLink(args.ToString());
+        protected override bool ValidateArgs(ParseContext context, string args) => args.IsValidLink();
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.AppendFormat("<a href=\"{0}\" target=\"_blank\">", args);
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.AppendFormat("<a href=\"{0}\" target=\"_blank\">", arguments);
             return self.Next;
         }
 
         public override Tag Create() => new UrlOpenTag();
     }
 
-    public class UrlCloseTag: ScanningTag
+    public class UrlCloseTag: ClosingTag
     {
         public override string Match { get; } = "[/url]";
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.Append("</a>");
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.Append("</a>");
             return self.Next;
         }
 

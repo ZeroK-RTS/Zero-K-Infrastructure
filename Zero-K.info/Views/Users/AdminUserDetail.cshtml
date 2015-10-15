@@ -29,6 +29,7 @@
                     <td>@x.LoginCount</td>
                     <td>@x.FirstLogin</td>
                     <td>@x.LastLogin</td>
+                    <td><a target="_blank" href="http://whatismyipaddress.com/ip/@x.IP">Lookup IP for VPN or such</a> </td>
                 </tr>
             }
         </tbody>
@@ -82,10 +83,12 @@
     <br />
     <h2>Abuse reports</h2>
     <table>
+    <tbody style="vertical-align:top; background-color:#222">
     @foreach (var a in Model.AbuseReportsByAccountID)
-    {
-        <tr><td>@a.Time</td><td>@Html.PrintAccount(a.AccountByReporterAccountID)</td><td>@Html.BBCode(a.Text)</td></tr>
+    {        
+        <tr><td>@a.Time</td><td>@Html.PrintAccount(a.AccountByReporterAccountID)</td><td style="padding-bottom:25px;">@Html.BBCode(a.Text)</td></tr>        
     }
+    </tbody>
     </table>
     
     @if (Model.PunishmentsByAccountID.Any())
@@ -134,7 +137,7 @@
         Set rights to zero: @Html.CheckBox("setRightsToZero")<br />
         Ban hours: @Html.TextBox("banHours",1)<br />
 
-        <input type="submit" value="BAN" class="delete" />
+        <input type="submit" value="BAN" class="js_confirm" />
     </form>
 
     <br />
@@ -147,6 +150,6 @@
         This action <b>cannot</b> be undone!<br />
         <br />
         Enter the target's user name to confirm: @Html.TextBox("accountName")
-        <input type="submit" value="DELETE" class="delete" />
+        <input type="submit" value="DELETE" class="js_confirm" />
     </form>
 </div>

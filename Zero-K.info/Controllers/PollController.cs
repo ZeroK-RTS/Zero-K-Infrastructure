@@ -53,7 +53,7 @@ namespace ZeroKWeb.Controllers
                         db.AccountRoles.DeleteAllOnSubmit(toDelete);
                         db.Events.InsertOnSubmit(Global.CreateEvent("{0} was removed from the {1} role of {2} by a vote - {3} for, {4} against", acc, (object)p.Clan ?? p.Faction, p.RoleType, yes, no));
 
-                        db.SubmitAndMergeChanges();
+                        db.SaveChanges();
 
                         Global.Server.GhostPm(acc.Name, string.Format("You were recalled from the function of {0} by a vote", p.RoleType.Name));
                     }
@@ -70,7 +70,7 @@ namespace ZeroKWeb.Controllers
                                 {
                                     previous = entries.First().Account;
                                     db.AccountRoles.DeleteAllOnSubmit(entries);
-                                    db.SubmitAndMergeChanges();
+                                    db.SaveChanges();
                                 }
                             }
 
@@ -107,7 +107,7 @@ namespace ZeroKWeb.Controllers
                 p.IsHeadline = false;
                 db.Polls.DeleteOnSubmit(p);
             }
-            db.SubmitAndMergeChanges();
+            db.SaveChanges();
         }
 
         /// <summary>

@@ -71,7 +71,7 @@ namespace ZeroKWeb.Controllers
                                      Created = news.Created,
                                      CreatedAccountID = news.AuthorAccountID,
                                      Title = news.Title,
-                                     ForumCategoryID = db.ForumCategories.Single(x => x.IsNews).ForumCategoryID
+                                     ForumCategoryID = db.ForumCategories.Single(x => x.ForumMode == ForumMode.News).ForumCategoryID
                                  };
 
                     

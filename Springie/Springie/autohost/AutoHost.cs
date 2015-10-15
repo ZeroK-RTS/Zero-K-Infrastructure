@@ -48,7 +48,7 @@ namespace Springie.autohost
 
         public Mod hostedMod;
         public int hostingPort { get; private set; }
-        public readonly Spring spring;
+        public Spring spring;
 
         public SpringPaths springPaths;
         public TasClient tas;
@@ -76,7 +76,6 @@ namespace Springie.autohost
                     }
                 };
 
-            spring = new Spring(springPaths) { UseDedicatedServer = true };
             bool isManaged = SpawnConfig == null && config.Mode != AutohostMode.None;
 
             tas = new TasClient(MainConfig.SpringieVersion,
@@ -88,13 +87,7 @@ namespace Springie.autohost
             pollTimer.AutoReset = false;
             pollTimer.Elapsed += pollTimer_Elapsed;
 
-            spring.SpringExited += spring_SpringExited;
-            spring.GameOver += spring_GameOver;
-
-            spring.SpringExited += spring_SpringExited;
-            spring.SpringStarted += spring_SpringStarted;
-            spring.PlayerSaid += spring_PlayerSaid;
-            spring.BattleStarted += spring_BattleStarted;
+            SetupSpring();
 
             tas.BattleUserLeft += tas_BattleUserLeft;
             tas.UserStatusChanged += tas_UserStatusChanged;
@@ -166,6 +159,20 @@ namespace Springie.autohost
                 };
             timer.Start();
            
+        }
+
+        void SetupSpring() {
+            spring?.UnsubscribeEvents(this);
+
+            spring = new Spring(springPaths) { UseDedicatedServer = true };
+
+            spring.SpringExited += spring_SpringExited;
+            spring.GameOver += spring_GameOver;
+
+            spring.SpringExited += spring_SpringExited;
+            spring.SpringStarted += spring_SpringStarted;
+            spring.PlayerSaid += spring_PlayerSaid;
+            spring.BattleStarted += spring_BattleStarted;
         }
 
         public void Start()
@@ -599,15 +606,14 @@ namespace Springie.autohost
 
         public static void SayBattle(TasClient tas, Spring spring, string text, bool ingame) {
             tas.Say(SayPlace.Battle, "", text, true);
-            if (spring.IsRunning && ingame) spring.SayGame(text);
+            if (spring != null && spring.IsRunning && ingame) spring.SayGame(text);
         }
 
         public void SayBattlePrivate(string user, string text) {
             if (!String.IsNullOrEmpty(text)) foreach (string line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)) tas.Say(SayPlace.BattlePrivate, user, text, true);
         }
 
-        public void OpenBattleRoom(string modname, string mapname, bool now = true) {
-            if (!now && spring.IsRunning) spring.WaitForExit();
+        public void OpenBattleRoom(string modname, string mapname) {
             Stop();
 
             bossName = "";
@@ -694,7 +700,6 @@ namespace Springie.autohost
 
         public void Stop() {
             StopVote();
-            spring.ExitGame();
             tas.ChangeMyUserStatus(false, false);
             bossName = "";
             tas.LeaveBattle();
@@ -994,7 +999,10 @@ namespace Springie.autohost
         }
 
         void tas_MyStatusChangedToInGame(object sender, Battle battle) {
-            spring.StartGame(tas, Program.main.Config.HostingProcessPriority, null, null, contextOverride:slaveContextOverride);
+            SetupSpring();
+            spring.lobbyUserName = tas.UserName; // hack until removed when springie moves to server
+            spring.lobbyPassword = tas.UserPassword;  // spring class needs this to submit results
+            spring.HostGame(tas.MyBattle.GetContext(), battle.Ip, battle.HostPort);
         }
 
         void tas_Said(object sender, TasSayEventArgs e) {
@@ -1019,6 +1027,7 @@ namespace Springie.autohost
 
                 if (!HasRights(com, e)) {
                     if (hasVoteVersion) {
+                        com = voteCom;
                         if (!HasRights(voteCom, e)) return;
                     }
                     else return;

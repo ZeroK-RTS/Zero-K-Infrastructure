@@ -79,6 +79,9 @@ namespace ZeroKWeb.SpringieInterface
                     if (user != null) {
                         var userParams = new List<SpringBattleStartSetup.ScriptKeyValuePair>();
                         ret.UserParameters.Add(new SpringBattleStartSetup.UserCustomParameters { LobbyID = p.LobbyID, Parameters = userParams });
+                        
+                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "LobbyID", Value = user.AccountID.ToString() });
+                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "CountryCode", Value = user.Country });
 
                         bool userBanMuted = user.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanMute);
                         if (userBanMuted) userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "muted", Value = "1" });

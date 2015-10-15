@@ -1,9 +1,11 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ZkData
 {
     public class Rating
     {
+        [Key]
         public int RatingID { get; set; }
         public int AccountID { get; set; }
         public int? MissionID { get; set; }

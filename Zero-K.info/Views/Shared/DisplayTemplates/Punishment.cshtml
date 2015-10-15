@@ -63,7 +63,7 @@
     <br/>
     @if (Global.IsZeroKAdmin) {
         <div class="admin">
-            @Html.ActionLink("remove ban", "RemovePunishment","Users", new {punishmentID = p.PunishmentID}, new {@class="delete"})
+            @Html.ActionLink("remove ban", "RemovePunishment","Users", new {punishmentID = p.PunishmentID}, new {@class="js_confirm"})
         </div>
     }
 </div>

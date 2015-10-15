@@ -298,7 +298,7 @@ namespace ZkLobbyServer
                 case SayPlace.Battle:
                     if (MyBattle != null)
                     {
-                        await state.Broadcast(MyBattle.Users.Keys, say);
+                        await state.Broadcast(MyBattle?.Users?.Keys, say);
                     }
                     break;
 

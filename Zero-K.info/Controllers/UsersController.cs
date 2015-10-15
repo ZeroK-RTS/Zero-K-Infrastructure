@@ -253,7 +253,7 @@ namespace ZeroKWeb.Controllers
                                                Time = DateTime.UtcNow,
                                                Text = text
                                            });
-            db.SubmitAndMergeChanges();
+            db.SaveChanges();
 
             var str = string.Format("{0} {1} reports abuse by {2} {3} : {4}", Global.Account.Name, Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"), acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), text);
 
@@ -276,8 +276,8 @@ namespace ZeroKWeb.Controllers
             }
 
             db.Punishments.DeleteOnSubmit(todel);
-            db.SubmitAndMergeChanges();
-            
+            db.SaveChanges();
+
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} removed a punishment given by {1} ", Global.Account.Name, punisherName));
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("to {0} for: {1} ", acc.Name, todel.Reason));
 
@@ -391,7 +391,6 @@ namespace ZeroKWeb.Controllers
                 acc.FirstLogin,
                 acc.LastLogin,
                 acc.LobbyVersion,
-                acc.Language,
                 acc.Email,
                 acc.Country,
                 acc.EffectiveElo,

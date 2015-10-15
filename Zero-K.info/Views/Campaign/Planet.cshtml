@@ -18,12 +18,6 @@
     var mapHeight = 500;
 }
 @section head {
-    <script type="text/javascript" src='@Href("~/Scripts/jquery.expand.js")' > </script>
-    <script type="text/javascript">
-        $(function () {
-            $("h4.expand").toggler({ speed: 0 });
-        });
-    </script>
 	<script type="text/javascript">
 	    $(document).ready(function () {
 	        $("#tabs").tabs();
@@ -108,7 +102,7 @@
     <div id="journals" class="journal">
         @foreach (CampaignJournal journal in journals)
         {
-            <h4 class="expand">@journal.Title</h4>
+            <h4 class="js_expand">@journal.Title</h4>
             <div id="@journal.Title" class="collapse width-90">
                 @Html.BBCode(journal.Text)
             </div>

@@ -9,25 +9,24 @@ namespace ZeroKWeb.ForumParser
         public override string Match { get; } = "[size=";
         public override char MatchTerminator { get; } = ']';
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.AppendFormat("<font size=\"{0}\">", args);
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.AppendFormat("<font size=\"{0}\">", arguments);
             return self.Next;
         }
 
         public override Tag Create() => new SizeOpenTag();
 
-        protected override bool ValidateArgs() {
-            var str = args.ToString();
-            return args.Length > 0 && !str.Contains("'") && !str.Contains("\"");
+        protected override bool ValidateArgs(ParseContext context, string args) {
+            return args.Length > 0 && !args.Contains("'") && !args.Contains("\"");
         }
     }
 
-    public class SizeCloseTag: ScanningTag
+    public class SizeCloseTag: ClosingTag
     {
         public override string Match { get; } = "[/size]";
 
-        public override LinkedListNode<Tag> Translate(StringBuilder sb, LinkedListNode<Tag> self, HtmlHelper html) {
-            sb.Append("</font>");
+        public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
+            context.Append("</font>");
             return self.Next;
         }
 

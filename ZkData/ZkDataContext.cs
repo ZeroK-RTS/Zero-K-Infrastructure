@@ -1,7 +1,9 @@
 using System;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Diagnostics;
+using System.Linq;
 using ZkData.Migrations;
 
 namespace ZkData
@@ -80,6 +82,8 @@ namespace ZkData
         public virtual DbSet<MiscVar> MiscVars { get; set; }
         public virtual DbSet<LobbyChatHistory> LobbyChatHistories { get; set; }
         public virtual DbSet<LogEntry> LogEntries { get; set; }
+        public virtual DbSet<Word> IndexWords { get; set; }
+        public virtual DbSet<ForumPostWord> IndexForumPosts { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -764,16 +768,38 @@ namespace ZkData
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<ZkDataContext, Configuration>());
         }
 
-        public void SubmitChanges()
-        {
-            SubmitAndMergeChanges();
+        public void SubmitChanges() {
+            SaveChanges();
         }
+
+
+        public static event EventHandler<DbEntityEntry> BeforeEntityChange;
+        public static event EventHandler<DbEntityEntry> AfterEntityChange;
 
         public override int SaveChanges()
         {
             try
             {
-                return base.SaveChanges();
+                var changes = ChangeTracker.Entries().Where(x => x.State == EntityState.Modified || x.State == EntityState.Added || x.State == EntityState.Deleted).ToList();
+
+                foreach (var change in changes)
+                {
+                    var ic = change.Entity as IEntityBeforeChange;
+                    ic?.BeforeChange(change);
+                    BeforeEntityChange?.Invoke(this, change);
+                }
+
+                var ret =  base.SaveChanges();
+
+                foreach (var change in changes)
+                {
+                    var ic = change.Entity as IEntityAfterChange;
+                    ic?.AfterChange(change);
+                    AfterEntityChange?.Invoke(this, change);
+                }
+
+                return ret;
+
             }
             catch (DbEntityValidationException e)
             {
@@ -793,27 +819,6 @@ namespace ZkData
                 }
                 throw;
             }
-        }
-
-        public void SubmitAndMergeChanges()
-        {
-            SaveChanges();
-            // HACK reimplement this
-
-            /*            try
-                        {
-                            SubmitChanges(ConflictMode.ContinueOnConflict);
-                        }
-
-                        catch (ChangeConflictException)
-                        {
-                            // Automerge database values for members that client has modified
-                            ChangeConflicts.ResolveAll(RefreshMode.KeepChanges);
-
-                            // Submit succeeds on second try.
-                            SubmitChanges();
-                        }*/
-
         }
 
 
