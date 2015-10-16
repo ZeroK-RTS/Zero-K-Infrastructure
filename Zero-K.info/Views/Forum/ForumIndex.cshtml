@@ -81,4 +81,19 @@
             </div>
         }
     }
+
+    <script type="text/javascript">
+        $("input[name='Search']").autocomplete({
+            minLength: 1,
+            delay: 0,
+            source: '@Url.Action("Threads", "Autocomplete")',
+            select: function (event, ui) {
+                $("input[name='Search']").val(ui.item.value);
+            }
+        }).data('ui-autocomplete')._renderItem = function (ul, item) {
+            return $("<li></li>").data("item.autocomplete", item).append($("<a></a>").html(item.label)).appendTo(ul);
+        };
+
+
+    </script>
 </div>

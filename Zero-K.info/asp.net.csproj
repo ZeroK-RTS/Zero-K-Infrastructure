@@ -139,6 +139,7 @@
     <Compile Include="ContentService.svc.cs">
       <DependentUpon>ContentService.svc</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\AutocompleteController.cs" />
     <Compile Include="Controllers\ClansController.cs" />
     <Compile Include="Controllers\CampaignController.cs" />
     <Compile Include="Controllers\FactionsController.cs" />
@@ -1486,6 +1487,7 @@
   <ItemGroup>
     <Folder Include="Img\news\" />
     <Folder Include="Resources\" />
+    <Folder Include="Views\Autocomplete\" />
     <Folder Include="Views\Github\" />
     <Folder Include="Views\LobbyService\" />
     <Folder Include="Weblobby\" />
