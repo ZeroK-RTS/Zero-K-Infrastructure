@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Web.Mvc;
 using ZkData;
@@ -16,7 +17,7 @@ namespace ZeroKWeb.Controllers
             var ret = new List<AutocompleteItem>();
 
             ret.AddRange(CompleteUsers(term, db));
-            ret.AddRange(CompleteThreads(term, db));
+            ret.AddRange(CompleteThreads(term, null, db));
             ret.AddRange(CompleteMissions(term, db));
             ret.AddRange(CompleteMaps(term, db));
 
@@ -37,9 +38,9 @@ namespace ZeroKWeb.Controllers
             return Json(CompleteMissions(term, new ZkDataContext()), JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult Threads(string term)
+        public ActionResult Threads(string term, int? categoryID = null)
         {
-            return Json(CompleteThreads(term, new ZkDataContext()), JsonRequestBehavior.AllowGet);
+            return Json(CompleteThreads(term, categoryID, new ZkDataContext()), JsonRequestBehavior.AllowGet);
         }
 
 
@@ -61,9 +62,9 @@ namespace ZeroKWeb.Controllers
                             });
         }
 
-        IEnumerable<AutocompleteItem> CompleteThreads(string term, ZkDataContext db) {
+        IEnumerable<AutocompleteItem> CompleteThreads(string term, int? categoryID, ZkDataContext db) {
             return
-                db.ForumThreads.Where(x => (x.WikiKey != null && x.WikiKey.Contains(term)) || x.Title.Contains(term))
+                db.ForumThreads.Where(x=> categoryID == null || x.ForumCategoryID == categoryID).Where(x => (x.WikiKey != null && x.WikiKey.Contains(term)) || x.Title.Contains(term))
                     .OrderByDescending(x => x.LastPost)
                     .Take(autocompleteCount)
                     .ToList()
@@ -96,8 +97,8 @@ namespace ZeroKWeb.Controllers
         }
 
         IEnumerable<AutocompleteItem> CompleteUsers(string term, ZkDataContext db) {
-            return
-                db.Accounts.Where(x => x.Name.Contains(term) && !x.IsDeleted)
+            term = term.ToLower();
+            return db.Accounts.Where(x => x.Name.ToLower().Contains(term) && !x.IsDeleted)
                     .Take(autocompleteCount)
                     .ToList()
                     .Select(

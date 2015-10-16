@@ -139,7 +139,13 @@ namespace System.Web.Mvc
                 }
             }
 
-            return new MvcHtmlString(string.Format(format, link, HttpUtility.HtmlEncode(thread.Title)));
+            string title = HttpUtility.HtmlEncode(thread.Title);
+            if (!string.IsNullOrEmpty(thread.WikiKey))
+            {
+                title = string.Format("<span style='color:lightblue'>[{0}]</span> {1}", thread.WikiKey, title);
+            }
+
+            return new MvcHtmlString(string.Format(format, link, title));
         }
 
         /// <summary>
