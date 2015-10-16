@@ -234,6 +234,7 @@ namespace ZeroKWeb.Controllers
 
 
 			var accessibleThreads = db.ForumThreads.Where(x => x.RestrictedClanID == null || x.RestrictedClanID == Global.ClanID);
+            accessibleThreads = accessibleThreads.Where(x => x.ForumCategory.ForumMode != ForumMode.Archive);
 			if (!Global.IsAccountAuthorized) result.NewThreads = accessibleThreads.OrderByDescending(x => x.LastPost).Take(10).Select(x => new NewThreadEntry() { ForumThread = x });
 			else
 			{

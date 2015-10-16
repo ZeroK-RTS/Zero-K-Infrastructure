@@ -91,6 +91,7 @@ namespace ZeroKWeb.Controllers
             var threads = db.ForumThreads.AsQueryable();
 
             if (model.CategoryID != null) threads = threads.Where(x => x.ForumCategoryID == model.CategoryID);
+            else threads = threads.Where(x => x.ForumCategory.ForumMode != ForumMode.Archive);
 
             threads = threads.Where(x => x.RestrictedClanID == null || x.RestrictedClanID == Global.ClanID);
 

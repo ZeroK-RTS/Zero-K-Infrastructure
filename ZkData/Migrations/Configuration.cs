@@ -153,6 +153,7 @@ namespace ZkData.Migrations
             var genId = db.ForumCategories.First(x => x.Title == "General discussion").ForumCategoryID;
             var pwId = db.ForumCategories.First(x => x.Title == "PlanetWars").ForumCategoryID;
             var wikiId = db.ForumCategories.First(x => x.Title == "Wiki").ForumCategoryID;
+            var offtopic = db.ForumCategories.First(x => x.Title == "Off topic").ForumCategoryID;
 
             db.ForumCategories.AddOrUpdate(
                 x => x.Title,
@@ -175,6 +176,10 @@ namespace ZkData.Migrations
                 new ForumCategory { Title = "MissionEditor", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 4, ParentForumCategoryID = wikiId },
                 new ForumCategory { Title = "Notes", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 5, ParentForumCategoryID = wikiId },
                 new ForumCategory { Title = "Site", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 6, ParentForumCategoryID = wikiId });
+
+            db.ForumCategories.AddOrUpdate(
+                x => x.Title,
+                new ForumCategory { Title = "Archive", ForumMode = ForumMode.Archive, IsLocked = true, SortOrder = 1, ParentForumCategoryID = offtopic });
 
 
             db.SaveChanges();

@@ -12,7 +12,8 @@ namespace ZkData
         SpringBattles = 4,
         Clans = 5,
         Planets = 6,
-        Wiki = 7
+        Wiki = 7,
+        Archive = 8,
     }
     public class ForumCategory
     {

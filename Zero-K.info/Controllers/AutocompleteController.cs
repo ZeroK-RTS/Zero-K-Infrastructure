@@ -64,7 +64,7 @@ namespace ZeroKWeb.Controllers
 
         IEnumerable<AutocompleteItem> CompleteThreads(string term, int? categoryID, ZkDataContext db) {
             return
-                db.ForumThreads.Where(x=> categoryID == null || x.ForumCategoryID == categoryID).Where(x => (x.WikiKey != null && x.WikiKey.Contains(term)) || x.Title.Contains(term))
+                db.ForumThreads.Where(x=> x.ForumCategoryID == categoryID || (categoryID==null && x.ForumCategory.ForumMode != ForumMode.Archive)).Where(x => (x.WikiKey != null && x.WikiKey.Contains(term)) || x.Title.Contains(term))
                     .OrderByDescending(x => x.LastPost)
                     .Take(autocompleteCount)
                     .ToList()
